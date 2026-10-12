@@ -1546,6 +1546,64 @@ async def cancel_generation(request:Request):
     return {"ok":True,"requestId":rid,"state":"CANCEL_REQUESTED"}
 
 
+
+@app.post("/api/lalm_station/github-context")
+async def set_thread_github_context(request: Request):
+    """Save only verified repo/path provenance in the currently owned chat."""
+    key,session=_session(request)
+    _,account=_account_session(request)
+    owner=str((account or {}).get("id") or "")
+    if not owner.startswith("google:"):
+        raise HTTPException(401,"Sign in to retain repository context")
+    identity,record,repo,default=github_connection._explorer_owner(request)
+    if owner!=identity:
+        raise HTTPException(403,"GitHub/account ownership mismatch")
+    data=await request.json()
+    thread_id=str(data.get("threadId") or "")
+    kind=str(data.get("kind") or "")
+    if not 0<len(thread_id)<=160 or kind not in ("file","dir"):
+        raise HTTPException(422,"Valid thread and read-only context kind required")
+    try:
+        branch=github_connection.explorer.safe_branch(data.get("branch") or default)
+        path=github_connection.explorer.safe_path(data.get("path"))
+        snapshot=github_connection.explorer.pinned_tree(
+            github_connection._api,record["token"],repo,branch)
+        if str(data.get("sourceSha") or "")!=snapshot["sourceSha"]:
+            raise HTTPException(409,"Repository revision changed; refresh before saving context")
+        if path:
+            row=next((item for item in snapshot["items"]
+                      if item["path"]==path and item["type"]==kind),None)
+            if row is None:raise HTTPException(404,"Path not verified in selected repository")
+        elif kind!="dir":
+            raise HTTPException(422,"Root must be a directory")
+        directory=path if kind=="dir" else path.rpartition("/")[0]
+        candidate=github_connection.normalize_thread_context({
+            "repo":repo,"branch":snapshot["branch"],"sourceSha":snapshot["sourceSha"],
+            "directory":directory,"lastFile":path if kind=="file" else "",
+        })
+        if not candidate:raise HTTPException(422,"Verified context invalid")
+    except github_connection.explorer.ExplorerError as exc:
+        raise HTTPException(422,str(exc)) from None
+    with _lock:
+        _refresh_account_chat(session,force=True)
+        if str(session.get("ownerGoogleId") or "")!=owner:
+            raise HTTPException(403,"Thread owner could not be verified")
+        thread=next((item for item in session["threads"] if item.get("id")==thread_id),None)
+        if not thread:raise HTTPException(404,"Chat thread not found")
+        prior=copy.deepcopy(thread.get("githubContext"))
+        if kind=="dir" and prior and prior.get("repo")==candidate["repo"] and prior.get("directory")==directory:
+            candidate["lastFile"]=str(prior.get("lastFile") or "")[:220]
+        thread["githubContext"]=candidate
+        try:
+            _commit_revision(session)
+        except HTTPException as exc:
+            thread["githubContext"]=prior
+            if exc.status_code==409:_restore_chat_from_store(session)
+            raise
+    return {"ok":True,"threadId":thread_id,"githubContext":candidate,
+            "revision":session["revision"],"status":"VERIFIED_READ_ONLY_CONTEXT"}
+
+
 @app.post("/api/lalm_station/send",status_code=202)
 async def send(request:Request):
     key,s=_session(request)
