@@ -92,6 +92,20 @@ function parseListing(source){
   return {path:requested,entries:items,
     incomplete:/\(First \d+ entries\.\)/.test(source)};
 }
+/* Directory priority is invariant; the selected sort applies within each type. */
+function sortDirectoryEntries(entries,mode,dates=new Map()){
+  return [...entries].sort((a,b)=>{
+    const folderFirst=(a.type==="dir"?0:1)-(b.type==="dir"?0:1);
+    if(folderFirst)return folderFirst;
+    const byPath=()=>a.path.localeCompare(b.path);
+    if(mode==="type")return byPath();
+    if(mode==="size")return (b.sizeBytes??-1)-(a.sizeBytes??-1)||byPath();
+    if(mode==="files")return (b.fileCount??-1)-(a.fileCount??-1)||byPath();
+    if(mode==="modified")return (dates.get(b.path)||"").localeCompare(dates.get(a.path)||"")||byPath();
+    const byName=mode==="name-desc"?b.name.localeCompare(a.name):a.name.localeCompare(b.name);
+    return byName||byPath();
+  });
+}
 function render(container,source,options={}){
   const listing=parseListing(source);
   if(!listing)return false;
@@ -255,15 +269,7 @@ function render(container,source,options={}){
     list.replaceChildren();
     const scope=state.items.filter(x=>filter.value==="all"||x.type===filter.value);
     const term=state.search?"":search.value.trim().toLowerCase();
-    const rows=scope.filter(x=>!term||x.path.toLowerCase().includes(term));
-    const type=sort.value;
-    rows.sort((a,b)=>{
-      if(type==="type")return a.type.localeCompare(b.type)||a.path.localeCompare(b.path);
-      if(type==="size")return (b.sizeBytes??-1)-(a.sizeBytes??-1)||a.path.localeCompare(b.path);
-      if(type==="files")return (b.fileCount??-1)-(a.fileCount??-1)||a.path.localeCompare(b.path);
-      if(type==="modified")return (state.dates.get(b.path)||"").localeCompare(state.dates.get(a.path)||"")||a.path.localeCompare(b.path);
-      return type==="name-desc"?b.name.localeCompare(a.name):a.name.localeCompare(b.name);
-    });
+    const rows=sortDirectoryEntries(scope.filter(x=>!term||x.path.toLowerCase().includes(term)),sort.value,state.dates);
     for(const item of rows)list.appendChild(rowFor(item));
     if(!rows.length)list.appendChild(el("div","repo-explorer-meta","No matching entries."));
   }
@@ -350,5 +356,5 @@ function render(container,source,options={}){
   if(state.info){breadcrumbs();stats();renderRows();}
   return true;
 }
-window.SwrlzGitHubExplorerV223={render,parseDirectoryResponse:parseListing,version:"224",reset:()=>{historyCache.clear();stateCache.clear();}};
+window.SwrlzGitHubExplorerV223={render,parseDirectoryResponse:parseListing,sortDirectoryEntries,version:"225",reset:()=>{historyCache.clear();stateCache.clear();}};
 })();

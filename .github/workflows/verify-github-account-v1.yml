@@ -35,6 +35,7 @@ on:
       - feature/github-natural-file-read-v222
       - feature/github-explorer-ui-v223
       - fix/github-explorer-subfolders-v224
+      - fix/github-explorer-directories-first-v225
       - feature/version-literacy-content-layout-v199
   workflow_dispatch:
 
