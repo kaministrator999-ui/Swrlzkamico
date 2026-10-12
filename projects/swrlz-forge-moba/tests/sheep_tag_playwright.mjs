@@ -44,6 +44,9 @@ async function nativeButton(page,id){
 async function worldTap(page,x,z,y=0){
   const p=await page.evaluate(({x,z,y})=>window.SWYRL_ENGINE_SHEEP_TAG.pointScreen(x,z,y),{x,z,y});
   assert.ok(p&&Number.isFinite(p.x)&&Number.isFinite(p.y),'World order did not project into the real canvas');
+  // Only native Play building placement offsets the finger; movement, rescue,
+  // house inspection and the stopped map creator retain their original taps.
+  if(touchPages.has(page)&&(await page.evaluate(()=>window.SWYRL_ENGINE_SHEEP_TAG.uiStatus().build)))p.y+=64;
   const hit=await page.evaluate(({x,y})=>{
     const n=document.elementFromPoint(x,y);return !!n&&(n.tagName==='CANVAS'||n.id==='viewport');
   },p);
@@ -110,7 +113,11 @@ async function visibleBuildSite(page,kind){
       {kind,x:unit.pos[0]+dx,z:unit.pos[2]+dz});
     if(!fit.ok)continue;
     const p=await page.evaluate(({x,z})=>window.SWYRL_ENGINE_SHEEP_TAG.pointScreen(x,z),fit);
-    const free=await page.evaluate(p=>{const n=document.elementFromPoint(p.x,p.y);return n?.tagName==='CANVAS'||n?.id==='viewport';},p);
+    const free=await page.evaluate(({p,touch})=>{
+      if(touch)for(const n of document.querySelectorAll('#sheepTagHUD .st-score,#sheepTagHUD .st-phase,#sheepTagHUD .st-event,#sheepTagHUD .st-attack-feedback')){
+        if(n.hidden||!n.getClientRects().length)continue;const r=n.getBoundingClientRect();if(p.x>=r.left-16&&p.x<=r.right+16&&p.y<r.bottom+24)return false;}
+      return [p,{x:p.x,y:p.y+(touch?64:0)}].every(q=>{const n=document.elementFromPoint(q.x,q.y);return n?.tagName==='CANVAS'||n?.id==='viewport';});
+    },{p,touch:touchPages.has(page)});
     if(p.visible&&free)sites.push(fit);
   }
   assert.ok(sites.length,'No visible clear construction site beside the authored sheep spawn');
@@ -139,8 +146,8 @@ try{
     await page.locator('#perfPreset').selectOption('medium',{force:true});
     await page.evaluate(()=>window.__sheepTestClock.freeze());await frames(page,2);
     const canonical=await saved(page);
-    assert.equal(canonical.version,10.2,'Wrong native project release');
-    assert.equal(await page.evaluate(()=>window.SWRLZ_FORGE_BUILD?.version),'v10.2','Wrong sealed engine release');
+    assert.equal(canonical.version,10.3,'Wrong native project release');
+    assert.equal(await page.evaluate(()=>window.SWRLZ_FORGE_BUILD?.version),'v10.3','Wrong sealed engine release');
     assert.equal(canonical.project.kind,'sheep-tag');
     assert.equal(canonical.project.sheepTag.duration,1200,'Classic starter survival timer changed');
     assert.equal(canonical.project.sheepTag.headstart,30,'Sheep need a real building head start');
