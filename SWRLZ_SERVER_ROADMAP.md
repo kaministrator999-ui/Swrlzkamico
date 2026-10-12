@@ -1,3 +1,15 @@
+## UPDATE STARTED — 2026-10-12 — v222 name-based GitHub file reading without forced extensions
+
+**User intent:** §wyrlz should not require the user to know filenames' extensions or directories. Resolve a requested name against read-only GitHub repository evidence; if same-named/stem-matching files occur in multiple directories or extensions, explicitly show the matching full paths and ask which one to read. Preserve previously closed v221 Stage 1 read-only gate.
+
+**Architecture:** Continue `hf_space/github_connection.py` as single owner for authenticated selected-repository reading and capability restrictions. Resolve requests using complete GitHub default-branch commit tree; never guess, never pick arbitrarily, and never trust model-generated paths as authority. Pin retrieved source content to the resolved commit SHA. Unsupported/incomplete tree ⇒ fail closed. Neither read-only Stage 1 nor separate §E game-engine governance may be bypassed.
+
+**Source:** Exact published v221 candidate `f05900407818be66e276360da427b8b0bebb461e` → branch `feature/github-natural-file-read-v222` at `a2f9b8005230d9189a4a0caa36fc59b2a551647d` [draft PR #125](https://github.com/kaministrator999-ui/Swrlzkamico/pull/125). Changed `hf_space/github_connection.py`, regression suite `hf_space/test_github_staged_read_v221.py`, and GitHub account workflow branch allowlist. Source owner unchanged.
+
+**CI:** [GitHub account run #38294669968](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38294669968) **SUCCESS**; [HF Candidate Offline run #38294706198](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38294706198) **SUCCESS** at same SHA. Synthetic source-traversal includes extensionless unique match, same stem with distinct extensions, duplicate same basename in distinct directories, explicit path selection, natural repo-scoped utterance, and incomplete-tree denial. Do not claim real signed-in owner acceptance from CI.
+
+**State:** SOURCE + CI ACCEPTED / GUARDED EXISTING CHAT PUBLICATION NEXT / LIVE SIGNED-IN BEHAVIOR UNVERIFIED. Runtime baselines Repository Work 1.0.162, Server 2.3.374, LALM Engine 2.1.196, Web Chat 1.5.109, Online Research 1.0.31; no version bumps until publication receipt.
+
 ## UPDATE FINISHED — 2026-10-12 — v221 Stage 1 §wyrlz GitHub repository reading only
 
 **Result:** User-directed initial GitHub learning stage implemented, exact-source regression checks **SUCCESS**, one guarded existing Chat Hugging Face publication **COMPLETED/SUCCESS**, runtime versions atomically registered. Real signed-in Google/GitHub owner behavior and complete 700M comprehension remain **UNVERIFIED**.
