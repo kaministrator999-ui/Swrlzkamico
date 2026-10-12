@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=6c928770b16ae16fe4694f93d45d6af9a07f3fa5
-REQUEST_NONCE=2026-10-11-v2113-assistant-identity-source-guard-001
+SOURCE_REF=ccf4ee25cd206e10505cb432ea60b3af960c8ace
+REQUEST_NONCE=2026-10-11-v212-github-actions-workflow-workbench-integrated-v2113-001
