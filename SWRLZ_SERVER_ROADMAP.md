@@ -1,3 +1,17 @@
+## UPDATE CHECKPOINT — 2026-10-12 — v215 §E atomic starter-pack workbench source and three CI gates verified
+
+**User's engineering goal:** §wyrlz should reliably inspect its existing §E browser editor on GitHub, build starter packs from native editor sources, and eventually evolve verified packs into playable mode/editor features and engine updates. The current §E production code lives at `main:projects/swrlz-forge-moba/`, separate from `kamiloki/Swyrlz` Chat source and runtime. `§tart_§E.md` now links `docs/engineering/SWRLZ_ENGINE_PACK_AUTHORING_V215.md` for the real native pack→Projects registration→runtime/patch→desktop/mobile CI→dedicated §E deploy ladder; this documentation does NOT deploy or alter the existing v10.0 engine.
+
+**New Chat/GitHub source:** [draft PR #115](https://github.com/kaministrator999-ui/Swrlzkamico/pull/115), branch `feature/engine-starter-pack-atomic-v215@adb3a4d4a6bcbdc54062bc7af1324ebeaa07857e` based on previously guarded-published v214 source `344d2e47a678c05e05c319ed716028a99b524604`. `hf_space/engine_starter_pack_v215.py` adds `@GitHub engine pack help`, `@GitHub engine pack SEED as PACK on feature/branch`, `@GitHub engine pack verify PACK on feature/branch`. Appends Google-owner-scoped one-time proposal and enforces live OAuth/role, selected canonical repo, main/branch SHA and source-blob checks. Builds one editable `scenes/PACK.swyrl.json` and one immutable-provenance `starter-packs/PACK.starter.json` in **one Git tree/commit and a non-forced feature ref advance**, with no overwrite. Packs keep existing rules/gameplay type and remain `draft-unregistered`. Verify rereads branch files and validates SHA-256, byte count, actor/layer IDs and scope. No arbitrary model-authored game runtime writes, Projects activation, engine resealing, PR merge, or §E deployment.
+
+**Chat/UI:** Existing v214 project guide extended; new Starter packs button prepares `@GitHub engine pack help`, with actual progress phases and source 1.1.12. Prior v214 project-aware GitHub source, v211.3 assistant identity checks, encrypted native Chat history, and release boundaries preserved.
+
+**Exact candidate CI:** [GitHub/account + v215 pack tests #38216951013](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38216951013) SUCCESS, [HF offline #38216953682](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38216953682) SUCCESS, [mobile UI #38216953691](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38216953691) SUCCESS, all same exact source SHA `adb3a4d4a6bcbdc54062bc7af1324ebeaa07857e`. Earlier intermediate failures were static-test assertions, repaired with no real GitHub writes. CI is synthetic, not signed-in acceptance.
+
+**Baseline version authority:** `runtime@4216f510b83be2523102ce65f567cff37c510c24`, Repository Work 1.0.157, Server Runtime 2.3.369, Web Chat 1.5.107, LALM Engine 2.1.193, Google Account 1.0.15. Guarded single HF source release next, preserve existing Space rollback. Do not mark tested/working in real private account or engine gameplay until observed.
+
+**Status:** SOURCE VERIFIED / GUARDED CHAT RELEASE NEXT / §E ENGINE PACK REGISTRATION & LIVE ACCEPTANCE NOT IMPLEMENTED.
+
 ## UPDATE FINISHED — 2026-10-11 — v214 §E engine/editor starter project-aware GitHub assistant
 
 **Outcome:** INTEGRATED EXACT SOURCE / GOOGLE ACCOUNT + PROJECT/ENGINE CI / HF OFFLINE / MOBILE **SUCCESS**; ONE GUARDED EXISTING CHAT HF SPACE PUBLICATION **SUCCESS**; ATOMIC RUNTIME MODULE VERSION READBACK **SUCCESS**; SIGNED-IN OWNER TOOL/SCENE ACCEPTANCE **PENDING**.
