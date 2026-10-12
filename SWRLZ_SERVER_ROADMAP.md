@@ -1,3 +1,15 @@
+## UPDATE STARTED — 2026-10-12 — v219 Chat conversational freshness false-search repair
+
+**User request:** Continue the reliability and reasoning development milestones from the §tart handoff. First bounded task: prevent ordinary social greetings like "How are you today?" from triggering public online search solely because of a freshness word, while preserving explicit web, weather, time, and genuine current-information requests.
+
+**Architecture reconciliation:** `hf_space/online_tools.py:classify_online_request` owns public web-request intent. `hf_space/social_checkin.py:is_simple_checkin` already owns narrow social-checkin recognition. `hf_space/model_router.py:dispatch` consumes the classification. Reuse these existing authorities; do not add a duplicate tool router, profile, Chat store or online provider. Preserve the separate §E engine lane. Primary Focus: clean-room §wyrlz Chat response/tool judgment. Focus Group: LALM Engine/model router + Online Research classifier + Web Chat user-visible activity. This is a source-only test candidate until validated and released.
+
+**Source baseline:** independently released Chat source `feature/engine-code-context-verification-v218@23a540ab0257e14009147d7202be203743c8641f`, review branch `fix/chat-social-freshness-v219-20261012` from the same exact SHA. Runtime registry baseline: Repository Work 1.0.159, Server Runtime 2.3.371, Web Chat 1.5.109, LALM Engine 2.1.195, Online Research 1.0.30. Main at `00642006b4bd31b402f8897d1bee91e898078095`. No release/versions reserved.
+
+**Acceptance:** narrowly route recognized pure greetings to no web request; explicit search/current headlines/weather/time/code-freshness cases stay routed. Add deterministic tests, run exact-source CI, independently classify source and live acceptance. Explicitly preserve owner-specific memory/history and real web requests. No silent production trigger or false claims. Finish/reconcile with source SHA, CI, version and activation receipts.
+
+**Status:** STARTED / implementation and validation pending.
+
 ## UPDATE CHECKPOINT — 2026-10-12 — v217+v218 source-grounded coding assistant prepared for guarded §wyrlz Chat release
 
 **Intent:** User wants §wyrlz Chat to use real GitHub projects and engine source much like ChatGPT's supervised coding workflow: inspect architecture, plan new mechanics/starter concepts, choose relevant current code, propose reviewable patches, and check actual CI evidence. This is **not weight retraining**, a complete autonomous coding loop or a production game-engine release.
