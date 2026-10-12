@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.190
-REVISION=2.1.190-direct-product-identity-router-all-models
+VERSION=2.1.191
+REVISION=2.1.191-github-model-guided-workflow-tools-v212
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active

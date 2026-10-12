@@ -1,6 +1,6 @@
 ID=web-chat
-VERSION=1.5.104
-REVISION=1.5.104-native-chat-first-message-display-before-inference
+VERSION=1.5.105
+REVISION=1.5.105-github-workflow-guide-operation-specific-access-v212
 KIND=web-interface
 SOURCE_BRANCH=runtime
 STATUS=active
