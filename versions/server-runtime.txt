@@ -1,6 +1,6 @@
 ID=server-runtime
-VERSION=2.3.365
-REVISION=2.3.365-hf-v2112-native-first-send-ack-visibility
+VERSION=2.3.366
+REVISION=2.3.366-hf-v2113-app-assistant-identity-clarity
 KIND=server-runtime
 SOURCE_BRANCH=runtime
 STATUS=active
