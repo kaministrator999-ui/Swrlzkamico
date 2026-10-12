@@ -344,6 +344,20 @@
     @media(prefers-reduced-motion:reduce){body:not(.motion-full) .work-shade,body:not(.motion-full) .work-surface,body:not(.motion-full) .message-evidence summary::before{transition:none!important}}
     @media(max-width:760px){.work-surface{width:100vw}.work-surface-button{padding:4px 6px}.work-surface-button .work-label{display:none}.top-model{display:none}.message-evidence{margin-left:38px}}
 
+
+    /* v223: bounded, responsive GitHub directory explorer; source remains text-only. */
+    .repo-explorer{border:1px solid rgba(126,214,255,.3);border-radius:14px;padding:12px;margin:8px 0;background:rgba(3,18,34,.85);min-width:0;max-width:100%;box-sizing:border-box}
+    .repo-explorer-header,.repo-explorer-controls{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+    .repo-explorer-title{font-weight:800;overflow-wrap:anywhere}.repo-explorer-meta{font-size:11px;color:#a4c5d7;margin:5px 0}
+    .repo-explorer button,.repo-explorer select{border:1px solid rgba(126,214,255,.3);border-radius:8px;background:#09253b;color:#e6f5ff;padding:7px;min-height:36px}
+    .repo-explorer-controls{justify-content:flex-start;margin:10px 0}.repo-explorer-controls select{min-width:120px;max-width:100%}
+    .repo-explorer-list{overflow:auto;max-height:220px;overscroll-behavior:contain}.repo-explorer.expanded .repo-explorer-list{max-height:min(68vh,750px)}
+    .repo-explorer.fullscreen{position:fixed;inset:10px;z-index:9999;overflow:auto;max-height:calc(100dvh - 20px);box-shadow:0 0 0 100vmax rgba(0,0,0,.75)}
+    .repo-explorer.fullscreen .repo-explorer-list{max-height:calc(100dvh - 185px)}
+    .repo-explorer-entry{display:flex;gap:8px;align-items:center;padding:9px 3px;border-bottom:1px solid rgba(126,214,255,.1);overflow-wrap:anywhere}
+    .repo-explorer-entry span{min-width:0;overflow-wrap:anywhere}.repo-explorer-entry button{margin-left:auto;flex-shrink:0}
+    .repo-explorer-empty{font-size:12px;color:#a4c5d7}
+
     /* User-scoped GitHub connector: no browser token storage and no repo writes. */
     .github-connect{margin:9px 7px 6px;padding:10px;border:1px solid rgba(126,214,255,.20);border-radius:11px;background:rgba(3,22,39,.62);display:flex;flex-direction:column;gap:7px}
     .github-connect-title{font:800 10px var(--font-telemetry);color:#d1eaff;letter-spacing:.06em}
@@ -1356,8 +1370,64 @@
           }
           if(cursor<raw.length)appendInlineStyles(parent,raw.slice(cursor));
         };
+
+        // v223: treat only exact, bounded directory listings as explorer data.
+        // No HTML from GitHub or the model is interpreted as markup.
+        const appendRepositoryExplorer=value=>{
+          const raw=String(value||"").trim();
+          const lines=raw.split("\n");
+          const title=lines[0]?.match(/^GitHub directory:\s*(\/[^\n]*)$/);
+          if(!title||lines.length>3000)return false;
+          const entries=[];
+          for(const line of lines.slice(1)){
+            if(!line.trim())continue;
+            const m=line.match(/^\s*[-*•]\s*(dir|file)\s+(.+?)\s*$/i);
+            if(!m)return false;
+            const name=m[2].trim();
+            if(!name||name.length>260||/[<>]/.test(name))return false;
+            entries.push({type:m[1].toLowerCase(),name});
+          }
+          if(!entries.length)return false;
+          const card=document.createElement("section");card.className="repo-explorer";
+          card.setAttribute("aria-label","GitHub repository directory");
+          const header=document.createElement("div");header.className="repo-explorer-header";
+          const heading=document.createElement("strong");heading.className="repo-explorer-title";heading.textContent="📁 GitHub · "+title[1];
+          const fullscreen=document.createElement("button");fullscreen.type="button";fullscreen.textContent="⛶ Full screen";
+          fullscreen.onclick=()=>{card.classList.toggle("fullscreen");fullscreen.textContent=card.classList.contains("fullscreen")?"Close full screen":"⛶ Full screen";};
+          header.append(heading,fullscreen);
+          const folders=entries.filter(x=>x.type==="dir").length;
+          const meta=document.createElement("div");meta.className="repo-explorer-meta";
+          meta.textContent=entries.length+" entries · "+folders+" folders · "+(entries.length-folders)+" files · current directory only";
+          const controls=document.createElement("div");controls.className="repo-explorer-controls";
+          const sort=document.createElement("select");sort.setAttribute("aria-label","Sort repository entries");
+          [["name","Name"],["type","Type"],["name-desc","Name Z–A"]].forEach(([v,t])=>sort.add(new Option(t,v)));
+          const filter=document.createElement("select");filter.setAttribute("aria-label","Filter repository entries");
+          [["all","All items"],["file","Files"],["dir","Folders"]].forEach(([v,t])=>filter.add(new Option(t,v)));
+          const toggle=document.createElement("button");toggle.type="button";toggle.textContent="Expand";
+          toggle.onclick=()=>{card.classList.toggle("expanded");toggle.textContent=card.classList.contains("expanded")?"Collapse":"Expand";};
+          controls.append(sort,filter,toggle);
+          const list=document.createElement("div");list.className="repo-explorer-list";list.tabIndex=0;
+          const render=()=>{
+            list.replaceChildren();
+            const rows=entries.filter(x=>filter.value==="all"||x.type===filter.value).sort((a,b)=>sort.value==="type"?(a.type.localeCompare(b.type)||a.name.localeCompare(b.name)):sort.value==="name-desc"?b.name.localeCompare(a.name):a.name.localeCompare(b.name));
+            for(const item of rows){
+              const row=document.createElement("div");row.className="repo-explorer-entry";
+              const name=document.createElement("span");name.textContent=(item.type==="dir"?"📁 ":"📄 ")+item.name;
+              const copy=document.createElement("button");copy.type="button";copy.textContent="Copy path";
+              copy.setAttribute("aria-label","Copy "+item.name+" path");
+              copy.onclick=async()=>{try{await navigator.clipboard.writeText((title[1]==="/ "?"":title[1].replace(/^\/|\/$/g,"")+"/")+item.name);copy.textContent="Copied";}catch(_){copy.textContent="Unavailable";}};
+              row.append(name,copy);list.appendChild(row);
+            }
+            if(!rows.length){const empty=document.createElement("div");empty.className="repo-explorer-empty";empty.textContent="No matching entries";list.appendChild(empty);}
+          };
+          sort.onchange=render;filter.onchange=render;render();
+          const note=document.createElement("div");note.className="repo-explorer-meta";note.textContent="Size and commit dates require verified GitHub metadata; not inferred from filenames.";
+          card.append(header,meta,controls,list,note);container.appendChild(card);
+          return true;
+        };
         const appendText=value=>{
           if(!value)return;
+          if(appendRepositoryExplorer(value))return;
           const root=document.createElement("div");root.className="message-text";
           const lines=String(value).replace(/\r\n?/g,"\n").split("\n");let list=null,listType="";
           const closeList=()=>{list=null;listType="";};
