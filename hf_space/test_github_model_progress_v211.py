@@ -5,6 +5,8 @@ from unittest import mock
 from fastapi import HTTPException
 sys.path.insert(0,str(Path(__file__).parent))
 import github_connection as gh
+# Historical mutation test cases use test-only capability mode.
+gh.GITHUB_CAPABILITY_STAGE = "legacy-test-only"
 
 REPO="owner/repo"
 OWNER="google:verified-owner"

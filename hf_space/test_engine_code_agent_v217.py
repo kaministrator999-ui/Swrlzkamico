@@ -8,6 +8,8 @@ from fastapi import HTTPException
 sys.path.insert(0,str(Path(__file__).parent))
 import engine_code_agent_v217 as agent
 import github_connection as gh
+# Historical mutation test cases use test-only capability mode.
+gh.GITHUB_CAPABILITY_STAGE = "legacy-test-only"
 import forge_project_tools_v213 as engine
 
 OWNER="google:owner"
