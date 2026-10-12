@@ -276,7 +276,7 @@ def _confirm_draft(gh, rec, repo, proposal):
     return (
         "GitHub confirmed a new editor-native DRAFT scene: https://github.com/" + repo +
         "/blob/" + branch + "/" + destination + "\nCommit " + commit[:12] +
-        ". Source scene is preserved, no production branch merged or game deployed. "
+        ". Source scene is preserved; NOT merged or deployed. "
         "This is a starting scene copy; gameplay divergence/Projects-card registration and CI remain to be authored."
     )
 
