@@ -16,6 +16,8 @@ def apply(html):
         'snap=s?.rules.buildSnap??.15,aligned=stLanesSnapHouse(kind,x,z,snap),snappedX=aligned.x,snappedZ=aligned.z,angle=')
     html = once(html, 'for(const u of s.units)if(!u.captured&&!u.isIllusion&&!(kind===',
                         'for(const u of s.units)if(u.id!==owner.id&&!u.captured&&!u.isIllusion&&!(kind===')
+    html = once(html, "stUiFeedback(name + ' ordered. Your sheep will walk to the construction site.');",
+                        "stUiFeedback(name + ' ordered at the displayed footprint.');")
     # A migration in the appended module upgrades the old saved default while
     # custom collision radii remain configurable. Old map assets stay intact.
     html = once(html, 'ST_WOLF_RADIUS=.68;', 'ST_WOLF_RADIUS=.78;')
