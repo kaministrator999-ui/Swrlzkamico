@@ -80,7 +80,7 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
   await page.goto(base+'/index.html?'+query,{waitUntil:'domcontentloaded',timeout:60000});
   await page.waitForFunction(()=>window.SWYRL_ENGINE_SHEEP_TAG_CREATOR&&window.SWYRL_ENGINE_SHEEP_TAG?.viewStatus&&window.SWYRL_ENGINE_AGENT.project().canonicalId==='sheep-tag-meadow',undefined,{timeout:60000});
   await page.locator('#perfPreset').selectOption('medium',{force:true});await page.evaluate(()=>window.__archiveClock.freeze());await frames(page,2);
-  const canonical=await saved(page);assert.equal(await page.evaluate(()=>window.SWRLZ_FORGE_BUILD?.version),'v10.3');
+  const canonical=await saved(page);assert.equal(await page.evaluate(()=>window.SWRLZ_FORGE_BUILD?.version),'v10.4');
   assert.equal(canonical.scene.actors.filter(a=>a.type==='st-sheep').length,8);assert.equal(canonical.scene.actors.filter(a=>a.type==='st-wolf').length,3);
   assert.equal(canonical.scene.actors.length,92,'Wrong native Archive map package');assert.equal(canonical.editor.layers.length,6,'Archive starter needs its six native map layers');
   assert.equal(canonical.project.sheepTag.preset,'archive');assert.equal(canonical.project.sheepTag.events,false,'Default starter forces experimental events');
@@ -256,12 +256,13 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
   assert.deepEqual(unit(await state(page)).pos,wolfGround,'Wolf upper pursuit teleported');
   s=await until(page,s=>unit(s).onUpper&&unit(s).pos[1]>3&&distance(unit(s).pos,[-18,0,-20])<.3,'Actual wolf ramp pursuit',160);
   await stop(page);
-  const roof=fixture(canonical,models,{sheep:[[-18,0,-6],[24,0,-24]],wolves:[[-16.1,0,-18]],pieces:elevatedPieces.slice(0,2),rules:{headstart:8,elevated:true,wolvesUseRamps:false,wolfDamage:85,wolfSpeed:2}});
+  const roof=fixture(canonical,models,{sheep:[[-18,0,-6],[24,0,-24]],wolves:[[-16,0,-18]],pieces:elevatedPieces.slice(0,2),rules:{headstart:8,elevated:true,wolvesUseRamps:false,wolfDamage:85,wolfSpeed:2,fogMode:'team',wolfVision:6}});
   await load(page,roof);await move(page,-17.07,-18,{layer:'upper'});s=await until(page,s=>unit(s).onUpper&&distance(unit(s).pos,[-17.07,0,-18])<.06,'Reach deck over ground hunter',140);
-  assert.ok(distance(unit(s,roof.wolves[0]).pos,unit(s).pos)<1.05,'Height fixture has no hunter within ground tag range at the deck edge: '+JSON.stringify(s.units));
+  const groundReach=s.rules.wolfRadius+s.rules.sheepRadius+.1;
+  assert.ok(distance(unit(s,roof.wolves[0]).pos,unit(s).pos)<groundReach,'Height fixture has no hunter within ground tag range at the deck edge: '+JSON.stringify(s.units));
   await until(page,s=>s.headstartRemaining===0,'Release ground hunter for vertical-contact proof',180);
   await frames(page,25);s=await state(page);assert.equal(unit(s,roof.sheep[0]).captured,false,'Ground wolf tagged through the raised floor');
-  assert.ok(distance(unit(s,roof.wolves[0]).pos,unit(s).pos)<1.05,'Released hunter left the tested ground-contact range');
+  assert.ok(distance(unit(s,roof.wolves[0]).pos,unit(s).pos)<groundReach,'Released hunter left the tested ground-contact range');
   assert.equal((await command(page,'role',{role:'wolf'})).ok,true);
   assert.equal((await command(page,'move',{x:-18,z:-18,layer:'upper'})).ok,false,'Disabled wolf ramp setting was ignored');
   assert.equal((await command(page,'attack',{id:roof.buildings[1]})).ok,true,'Wolf cannot attack a supporting wall');

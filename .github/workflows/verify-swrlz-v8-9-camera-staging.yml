@@ -1,4 +1,4 @@
-name: Validate §E v10.3 camera-safe storybook staging
+name: Validate §E v10.4 camera-safe storybook staging
 on:
   push:
     branches: [main]
@@ -12,10 +12,11 @@ on:
       - "projects/swrlz-forge-moba/patches/v10_1_sheep_tag_archive.py"
       - "projects/swrlz-forge-moba/scenes/sheep-tag-moonbell-archive.swyrl.json"
       - "projects/swrlz-forge-moba/tests/sheep_archive_playwright.mjs"
-      - "projects/swrlz-forge-moba/patches/v10_3_sheep_touch_offset.py"
+      - "projects/swrlz-forge-moba/patches/v10_4_sheep_lanes.py"
       - "projects/swrlz-forge-moba/runtime/sheep_touch_selection.js"
       - "projects/swrlz-forge-moba/runtime/sheep_placement_grid.js"
       - "projects/swrlz-forge-moba/runtime/sheep_touch_offset.js"
+      - "projects/swrlz-forge-moba/runtime/sheep_lanes.js"
       - "projects/swrlz-forge-moba/tests/sheep_touch_playwright.mjs"
       - "projects/swrlz-forge-moba/patches/v9_0_animation_studio.py"
       - "projects/swrlz-forge-moba/patches/v9_1_character_rigs.py"
@@ -68,12 +69,12 @@ jobs:
           raw=gzip.decompress(base64.b64decode(''.join((root/p).read_text().strip() for p in manifest['chunks'])))
           assert len(raw)==manifest['baseBytes'] and hashlib.sha256(raw).hexdigest()==manifest['baseSha256']
           s=raw.decode('utf-8')
-          assert len(manifest['patches'])==63
-          assert manifest['patches'][-1]=='patches/v10_3_sheep_touch_offset.py'
+          assert len(manifest['patches'])==64
+          assert manifest['patches'][-1]=='patches/v10_4_sheep_lanes.py'
           for path in manifest['patches']:s=mod['load_patch'](root/path)(s)
           assert len(s.encode())==manifest['finalBytes']
           assert hashlib.sha256(s.encode()).hexdigest()==manifest['finalSha256']
-          for feature in ('V10_3_SHEEP_TOUCH_OFFSET','stTouchPlacementScreen','stTouchPlacementGround','touchPlacement','SWYRL_ENGINE_SHEEP_TAG','sheep-tag-meadow','sheep-tag-moonbell-archive','swyrl-sheep-tag-map-v1','SWYRL_ENGINE_TRANSPORT','animeCineRewind','animeCineFastForward','SWYRL_ENGINE_STAFF','rigFullStaffStatus','painted-full-v1','assets/anime/kami-full-staff.png','SWYRL_ENGINE_RIG','SWYRL_ENGINE_SCENERY','SWYRL_ENGINE_SOCKETS','SWYRL_ENGINE_EMERGENCE','SWYRL_ENGINE_RELIEF',
+          for feature in ('V10_4_SHEEP_LANES','stTouchPlacementScreen','stTouchPlacementGround','touchPlacement','SWYRL_ENGINE_SHEEP_TAG','sheep-tag-meadow','sheep-tag-moonbell-archive','swyrl-sheep-tag-map-v1','SWYRL_ENGINE_TRANSPORT','animeCineRewind','animeCineFastForward','SWYRL_ENGINE_STAFF','rigFullStaffStatus','painted-full-v1','assets/anime/kami-full-staff.png','SWYRL_ENGINE_RIG','SWYRL_ENGINE_SCENERY','SWYRL_ENGINE_SOCKETS','SWYRL_ENGINE_EMERGENCE','SWYRL_ENGINE_RELIEF',
                           'anime-rig-sockets-v1','anime-book-emergence-v1','anime-character-relief-v1','animeMakePaperBook','popLowStageTrim','animePopupStageSafety','popKamiArt',
                           'popSwyrlzArt','animePopSanitize','animeDirectorInstall',
                           'animePopUp','popupHinge','popUpStatus','animeUpdateCelLayers'):

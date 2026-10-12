@@ -86,6 +86,7 @@ function fixture(canonical,prototypes,options={}){
   const piece=(type,pos,id,extra={})=>({...structuredClone(prototypes[type]||first(type)),id,name:'Touch '+id,type,position:[...pos],rotation:[0,0,0],scale:[1,1,1],baked:true,visible:true,...extra});
   data.scene.actors=[piece('st-meadow',[0,0,0],'touch-meadow'),piece('st-pen',[0,0,0],'touch-pen'),
     piece('st-sheep',options.sheep||[-16.5,0,-23],'touch-sheep'),piece('st-wolf',options.wolf||[28,0,28],'touch-wolf'),
+    ...(options.extraSheep||[]).map((pos,i)=>piece('st-sheep',pos,'touch-teammate-'+i)),
     ...(options.pieces||[{type:'st-farm',pos:[-18,0,-18]},{type:'st-income',pos:[-15,0,-18]}]).map((spec,i)=>
       piece(spec.type,spec.pos,'touch-building-'+i,{...(spec.rotation?{rotation:spec.rotation}:{}),...(spec.scale?{scale:spec.scale}:{})}))];
   data.project.sheepTag={...canonical.project.sheepTag,preset:'classic',duration:300,headstart:120,bounds:40,startGold:500,role:'sheep',buildSnap:.15,
@@ -127,8 +128,61 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
   await page.goto(base+'/index.html?'+query,{waitUntil:'domcontentloaded',timeout:60000});
   await page.waitForFunction(()=>window.SWYRL_ENGINE_SHEEP_TAG?.uiStatus&&window.SWYRL_ENGINE_AGENT.project().canonicalId==='sheep-tag-meadow',undefined,{timeout:60000});
   await page.locator('#perfPreset').selectOption('medium',{force:true});await page.evaluate(()=>window.__sheepTouchClock.freeze());await frames(page,2);
-  assert.equal(await page.evaluate(()=>window.SWRLZ_FORGE_BUILD?.version),'v10.3','Wrong engine release');
+  assert.equal(await page.evaluate(()=>window.SWRLZ_FORGE_BUILD?.version),'v10.4','Wrong engine release');
   const canonical=await saved(page),prototypes=await models(page,canonical),houses=fixture(canonical,prototypes);
+
+  const self=fixture(canonical,prototypes,{sheep:[-18.85,0,-18],pieces:[]});
+  await load(page,self);await focus(page,[-18,0,-10]);await tap(page,'stBuildFarm');
+  let selfGuide=await previewAt(page,-18,-18);assert.equal(selfGuide.valid,true,'Building under the sheep is shown as blocked');
+  await worldTap(page,-18,-18);let selfState=await state(page);
+  assert.equal(selfState.buildings.length,1,'Self placement did not start construction on release');
+  close(selfState.buildings[0].pos[0],selfGuide.center[0],'Self building/preview X');close(selfState.buildings[0].pos[2],selfGuide.center[1],'Self building/preview Z');
+  close(controlled(selfState).pos[0],-19.495,'Builder moved to its nearest clear west side');close(controlled(selfState).pos[2],-18,'Builder retained tangent position');
+  assert.equal(controlled(selfState).order,null,'Self building needlessly orders the builder to walk away before constructing');
+  assert.equal(selfState.houseLanes.lastBuilderExit.buildingId,selfState.buildings[0].id);
+  await page.screenshot({path:resolve(output,mode.name+'-build-at-feet.png')});
+  await stop(page);assert.deepEqual(authored(await saved(page)),authored(self),'Stop saved temporary builder ejection');
+  pass('native_touch_or_mouse_builds_at_sheep_feet_and_bumps_to_nearest_side');
+
+  for(const [raw,expected,gap]of [[-15.75,-15.6,0],[-14.85,-15,.6]]){
+    const adjacent=fixture(canonical,prototypes,{pieces:[{type:'st-farm',pos:[-18,0,-18]}]});
+    await load(page,adjacent);await focus(page,[-16.5,0,-10]);await tap(page,'stBuildFarm');
+    const guide=await previewAt(page,raw,-18);assert.equal(guide.valid,true,'Intentional house edge is blocked');close(guide.center[0],expected,'Rendered adjacency snap');
+    await worldTap(page,raw,-18);const placed=await until(page,s=>s.buildings.length===2,'Snapped adjacent house construction');
+    const building=placed.buildings.find(b=>b.id!=='touch-building-0');close(building.pos[0],expected,'Committed adjacency snap');
+    close(Math.abs(building.pos[0]+18)-2.4,gap,'Actual collision gap');
+    const route=await page.evaluate(gap=>window.SWYRL_ENGINE_SHEEP_TAG.previewPath({from:[-18+(2.4+gap)/2,-21],to:[-18+(2.4+gap)/2,-15],species:'sheep'}),gap);
+    if(gap)assert.equal(route.reachable,true,'The one-step house lane rejects sheep');
+    await stop(page);assert.deepEqual(authored(await saved(page)),authored(adjacent),'Snapped runtime houses changed native export');
+  }
+  pass('native_house_preview_and_commit_snap_flush_or_one_sheep_only_step');
+
+  const crowd=fixture(canonical,prototypes,{extraSheep:[[-16.5,0,-18]],pieces:[{type:'st-farm',pos:[-18,0,-18]},{type:'st-farm',pos:[-15,0,-18]}]});
+  await load(page,crowd);await worldTap(page,-16.5,-14.5);
+  const traffic=await page.evaluate(()=>{
+    const states=[];let arrived=false;
+    for(let i=0;i<160&&!arrived;i++){
+      window.__sheepTouchClock.step(1,50);const s=window.SWYRL_ENGINE_SHEEP_TAG.status(),living=s.units.filter(u=>!u.captured&&!u.isIllusion);
+      for(let a=0;a<living.length;a++)for(let b=a+1;b<living.length;b++)if(Math.abs(living[a].pos[1]-living[b].pos[1])<1.2){
+        const d=Math.hypot(living[a].pos[0]-living[b].pos[0],living[a].pos[2]-living[b].pos[2]);
+        if(d<living[a].radius+living[b].radius+.0149)throw Error('Actual native bodies overlapped on frame '+i);
+      }
+      const u=s.units.find(u=>u.id===s.controlledId);states.push(u.traffic?.mode);arrived=Math.hypot(u.pos[0]+16.5,u.pos[2]+14.5)<.3;
+    }return {states,arrived};
+  });
+  assert.ok(traffic.states.some(mode=>/alternate|backing|waiting/.test(mode||'')),'The sheep never encountered lane traffic');
+  assert.equal(traffic.arrived,true,'The sheep did not clear the occupied lane');
+  await page.screenshot({path:resolve(output,mode.name+'-sheep-lane-traffic.png')});await stop(page);
+  pass('native_following_sheep_yields_or_reroutes_without_overlap_each_frame');
+
+  const priority=fixture(canonical,prototypes,{sheep:[-9,0,-18],wolf:[-13,0,-18],pieces:[{type:'st-farm',pos:[-15.6,0,-18]}],rules:{headstart:0,wolfVision:40}});
+  await load(page,priority);const priorityWolf=(await state(page)).units.find(u=>u.kind==='wolf');
+  close(priorityWolf.radius,.78,'Larger default wolf collision');assert.deepEqual(priorityWolf.order,{action:'attack',id:'touch-sheep'},'Wolf chooses house before reachable sheep');
+  assert.match(priorityWolf.ai.intent,/reachable sheep/);
+  const tagged=await until(page,s=>controlled(s).captured,'Wolf physically reaching and tagging prioritized sheep',100);
+  assert.equal(tagged.attacks.length,0,'Wolf attacked the nearby house before reaching an exposed sheep');
+  await stop(page);assert.deepEqual(authored(await saved(page)),authored(priority),'Wolf pursuit changed the native map');
+  pass('larger_native_wolf_prioritizes_and_tags_reachable_sheep_before_house');
 
   await load(page,houses);let s=await state(page);const a='touch-building-0',b='touch-building-1';
   assert.equal((await ui(page)).buildingSelection.mode,'double-tap');
