@@ -1,3 +1,15 @@
+## UPDATE STARTED — 2026-10-12 — v221 Stage 1 GitHub repository reading only
+
+**Owner correction / new immediate priority:** Begin teaching §wyrlz's smaller Chat model GitHub engineering by allowing only repository reading, before file creation. Keep all other GitHub tool capabilities locked, including file edits/deletions, branch/issue/PR creation, workflow triggers and engine code mutations. Build progressively and verify each tier before turning on another.
+
+**Architecture ownership:** Single source-controlled `GITHUB_CAPABILITY_STAGE=read-repository` in `hf_space/github_connection.py`, enforced at OAuth upgrade/callback, effective-operation permissions, legacy mutation helper, explicit `@GitHub` commands, and model-facing `agent_events` dispatch. Read-only selected-repo listing (`@GitHub files [directory]`), exact file read (`@GitHub read file PATH`), and existing read-only §tart startup traversal remain. Owner-scoped Google GitHub OAuth and selected repository remain the identity authority. Model cannot self-promote stages through prompts. Prior write-flow tests retain isolated test-only simulation, not production write authority.
+
+**Source:** Pinned published Chat v220 source `302d3b3669bb22275fc42f7fd7b394984412bb0a` → `feature/github-staged-read-only-v221@f05900407818be66e276360da427b8b0bebb461e`; [draft PR #124](https://github.com/kaministrator999-ui/Swrlzkamico/pull/124). Dedicated new `hf_space/test_github_staged_read_v221.py`, existing regression tests unchanged in purpose, and GitHub account CI workflow expanded. No §E engine source or deployment route changed.
+
+**Exact source CI:** [GitHub account #38288886639](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38288886639) **SUCCESS**; [HF Candidate Offline Validation #38288893042](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38288893042) **SUCCESS** at exact final source SHA. Initial GitHub account run #38288751625 failed when denied-write response accidentally hid allowed read; revised source corrected it and both new tests passed. This failure remains in the ledger.
+
+**Production and versions:** SOURCE AND BOTH CI VERIFIED / GUARDED CHAT RELEASE NEXT / LIVE OWNER READING + DENIED-WRITE ACCEPTANCE PENDING. Current runtime baseline Repository Work 1.0.161, Server Runtime 2.3.373, Web Chat 1.5.109, LALM Engine 2.1.196, Online Research 1.0.31, Google Account 1.0.15. No version is reserved until successfully published. Do not publish to §E Space.
+
 ## UPDATE FINISHED — 2026-10-12 — v220 Chat owner-scoped history intent over public freshness
 
 **Outcome:** Existing-authority private-history source judgment improved, mandatory offline regression CI **SUCCESS**, one guarded existing Hugging Face Chat Space publication **COMPLETED/SUCCESS**, runtime module versions advanced atomically. Real signed-in owner history/model response acceptance **PENDING**.
