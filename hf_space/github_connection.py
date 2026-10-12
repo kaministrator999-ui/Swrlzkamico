@@ -715,7 +715,8 @@ def _github_command(user, prompt):
                 "@GitHub code search TERM, @GitHub file history PATH, @GitHub compare main...feature/name, "
                 "@GitHub pr review NUMBER, @GitHub issue inspect NUMBER, @GitHub checks SHA, "
                 "@GitHub edit file PATH on feature/name replace OLD :: NEW, "
-                "@GitHub pr draft feature/name into main. "
+                "@GitHub pr draft feature/name into main, @GitHub project brief, @GitHub dependencies, "
+                "@GitHub triage, @GitHub project readiness. "
                 "Workflow creation needs separate GitHub workflow OAuth scope; writes require a fresh preflight and explicit confirmation.")
     if lower in ("workflows", "workflow list", "workflow runs", "workflow guide") or lower.startswith(("workflow inspect ", "run status ")):
         return github_workflows_v212.execute(sys.modules[__name__], user, "@GitHub " + cmd)
@@ -822,7 +823,7 @@ def command_events(data):
 
 
 # v211 GitHub model-planned READ tools, with observable lifecycle and no raw thought exposure.
-_AGENT_TOOLS = ("permissions", "files", "branches", "issues", "pulls", "commits", "workflows", "workflow runs", "workflow guide", "overview", "tree", "project guide")
+_AGENT_TOOLS = ("permissions", "files", "branches", "issues", "pulls", "commits", "workflows", "workflow runs", "workflow guide", "overview", "tree", "project guide", "project brief", "dependencies", "triage", "project readiness")
 
 
 def is_github_conversation(prompt):
@@ -893,6 +894,10 @@ def _agent_fallback_plan(prompt):
         (r"\b(teach|learn|guide|how|setup|set up|templates?)\b", "workflow guide"),
         (r"\b(runs?|jobs?|failures?)\b", "workflow runs"),
         (r"\b(repository|repo|project|architecture|overview)\b", "overview"),
+        (r"\b(onboard|documentation|contributing|project rules)\b", "project brief"),
+        (r"\b(dependencies|build files|packages|requirements)\b", "dependencies"),
+        (r"\b(triage|prioritize|backlog)\b", "triage"),
+        (r"\b(release readiness|release checks|release status)\b", "project readiness"),
         (r"\b(structure|tree|layout|map)\b", "tree"),
         (r"\b(files?|folders?|directories|directory)\b", "files"),
     ):
@@ -909,7 +914,7 @@ def _agent_model_plan_events(prompt, generator):
     instruction = (
         "Choose 1 to 3 read-only GitHub checks relevant to this request. "
         "Return ONLY JSON, e.g. {\"tools\":[\"permissions\",\"pulls\"]}. "
-        "Valid tools: permissions, files, branches, issues, pulls, commits, workflows, workflow runs, workflow guide, overview, tree, project guide. Specific read-only PR/issue IDs, checks SHAs, code search terms, file-history paths, or compare refs are allowed ONLY when the user explicitly named those identifiers. "
+        "Valid tools: permissions, files, branches, issues, pulls, commits, workflows, workflow runs, workflow guide, overview, tree, project guide, project brief, dependencies, triage, project readiness. Specific read-only PR/issue IDs, checks SHAs, code search terms, file-history paths, or compare refs are allowed ONLY when the user explicitly named those identifiers. "
         "Specific files PATH or read file PATH permitted only when PATH is in the user request. "
         "Do not propose writes, URL fetches, authorization changes or other commands. "
         "No chain-of-thought. User request: " + str(prompt)[:900]
