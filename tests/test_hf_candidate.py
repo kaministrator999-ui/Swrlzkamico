@@ -226,6 +226,14 @@ class Candidate(unittest.TestCase):
     time.sleep(.01)
   self.assertIs(captured.get("privateHistoryIntent"),True,captured)
 
+ def test_v221_github_capabilities_read_repository_only(self):
+  import github_connection as gh
+  self.assertEqual(gh.GITHUB_CAPABILITY_STAGE,"read-repository")
+  self.assertTrue(gh._read_stage_command("@GitHub files"))
+  self.assertTrue(gh._read_stage_command("@GitHub read file README.md"))
+  self.assertFalse(gh._read_stage_command("@GitHub create branch feature/test from main"))
+  self.assertFalse(gh._read_stage_command("@GitHub confirm abc123XYZ"))
+
  def test_model_routes_fail_closed(self):
   self.assertEqual([r.model_id for r in routes()],["r39","stock","700m","coder","compare"])
   self.assertTrue(routes()[1].available)
