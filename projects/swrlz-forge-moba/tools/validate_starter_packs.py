@@ -128,9 +128,9 @@ def verify_pack(root, name):
             or report["projectKind"] != scene_info.get("projectKind")
             or report["template"] != origin["seed"]):
         raise InvalidPack("Pack metadata and actual scene bytes/type disagree")
-    return {"valid": True, "level": "draft-pack-source-only",
+    return {**report, "valid": True, "level": "draft-pack-source-only",
             "registration": "NOT REGISTERED", "gameplay": "NOT VERIFIED",
-            "id": name, "sourceMain": origin["engineMainSha"], **report}
+            "id": name, "sourceMain": origin["engineMainSha"]}
 
 
 def main(argv=None):
