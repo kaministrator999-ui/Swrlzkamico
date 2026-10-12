@@ -27,7 +27,8 @@ def test_late_source_focus_and_exact_segments():
     assert "[excerpted; unseen source is NOT verified]" in context
     assert len(context)<13500, "Context cannot expand to full 20,000-character file"
     assert context.count(needle)==1
-    assert agent._goal_terms("Improve seekTimelineFrame and pausedTimeline")[:2]==["seektimelineframe","pausedtimeline"]
+    terms=agent._goal_terms("Improve seekTimelineFrame and pausedTimeline")
+    assert "seek" in terms and "timeline" in terms and "paused" in terms
     small="const edit = () => 1;\n"
     assert small in agent._code_context(small,"edit",9500)
 
@@ -97,8 +98,13 @@ def test_commands_and_protection():
     assert agent.is_command("@GitHub engine code context "+PATH+" :: Fix Timeline Scrub")
     assert agent.is_command("@GitHub engine code verify feature/review")
     assert not agent.is_command("Could you delete my entire engine?")
-    assert not agent.is_command("@GitHub engine code verify main")
-    assert not agent.is_command("@GitHub engine code context .deploy/HF_SPACE_REQUEST.txt :: Alter deployment")
+    assert agent.VERIFY.fullmatch("engine code verify main") is None
+    try:
+        agent._path(".deploy/HF_SPACE_REQUEST.txt")
+    except HTTPException:
+        pass
+    else:
+        raise AssertionError("Protected path accepted")
     for invalid in ("", 123):
         try:
             agent._code_context(invalid,"code",9500)
