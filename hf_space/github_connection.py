@@ -1256,6 +1256,27 @@ def _read_context_from_result(user, prompt, result):
         return None
 
 
+
+def normalize_thread_context(value):
+    """Only bounded provenance and path hints; no tokens, repository bodies."""
+    if not isinstance(value, dict):
+        return None
+    repo = str(value.get("repo") or "")
+    sha = str(value.get("sourceSha") or "")
+    try:
+        branch = explorer.safe_branch(value.get("branch"))
+        directory = explorer.safe_path(value.get("directory"))
+        last_file = explorer.safe_path(value.get("lastFile"), allow_root=True)
+    except explorer.ExplorerError:
+        return None
+    if not _REPO.fullmatch(repo) or not _FILE_SHA.fullmatch(sha):
+        return None
+    return {"repo": repo, "branch": branch, "sourceSha": sha,
+            "directory": directory, "lastFile": last_file,
+            "kind": "file" if last_file else "directory",
+            "capturedAt": int(time.time())}
+
+
 def _implicit_repo_command(prompt, context):
     """Narrow thread-local follow-ups. Never guess global chat intent."""
     if not isinstance(context, dict) or not _REPO.fullmatch(str(context.get("repo") or "")):
