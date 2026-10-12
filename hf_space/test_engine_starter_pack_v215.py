@@ -172,6 +172,9 @@ def test_station_and_git_owner_constraints():
     assert "engine_starter_pack_v215.confirm(" in text
     assert "engine_starter_pack_v215.events(" in text
     assert "engine_starter_pack_v215.is_command(prompt)" in text
+    chat=(root.parent/"chat/§wyrlz/index.html").read_text()
+    assert 'id="githubStarterPackGuide"' in chat
+    assert 'prompt.value="@GitHub engine pack help"' in chat
     assert "force" in __import__("inspect").getsource(pack._git_ref_update)
     assert '"force": False' in __import__("inspect").getsource(pack._git_ref_update)
     assert "DEPLOY_REQUEST" not in str(pack._build_pack("sheep-tag-meadow","dawn-meadow",SCENE,MANIFEST,SEED_BLOB,MANIFEST_BLOB,MAIN)[0])
