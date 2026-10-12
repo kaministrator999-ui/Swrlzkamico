@@ -86,6 +86,7 @@ async function loadFixture(page,canonical,farm,options={}){
   const wolves=actors.filter(a=>a.type==='st-wolf').slice(0,1);
   const shop=actors.find(a=>a.type==='st-shop');
   const keep=actors.filter(a=>a.type==='st-meadow'||a.type==='st-pen');
+  keep.find(a=>a.type==='st-pen').position=options.pen||[0,0,0];
   sheep.forEach((a,index)=>{a.position=options.sheep?.[index]||[18,0,-18];a.rotation=[0,0,0];});
   wolves[0].position=options.wolf||[-18,0,18];wolves[0].rotation=[0,0,0];
   data.scene.actors=[...keep,...sheep,...wolves,...(options.shops||[]).map((position,index)=>
@@ -98,6 +99,7 @@ async function loadFixture(page,canonical,farm,options={}){
   await frames(page,2);
   assert.deepEqual(authored(await saved(page)),authored(data),'Native import changed the authored fixture');
   await nativeButton(page,'playBtn');
+  assert.equal((await state(page)).active,true,'Authored fixture failed Play preflight: '+JSON.stringify(await page.evaluate(()=>window.SWYRL_ENGINE_SHEEP_TAG.validateStarts())));
   return {data,sheep:sheep.map(a=>a.id),wolf:wolves[0].id};
 }
 async function visibleBuildSite(page,kind){
@@ -245,12 +247,12 @@ try{
     // Continuous authored farm wall: sheep fit its 0.6-unit gaps; larger wolves
     // cannot route through or around its boundary-to-boundary barrier.
     const wall=[];for(let x=-15;x<=15;x+=3)wall.push([x,0,0]);
-    await loadFixture(page,canonical,farm,{sheep:[[1.5,0,-6]],wolf:[10,0,10],farms:wall,rules:{bounds:16}});
+    await loadFixture(page,canonical,farm,{sheep:[[1.5,0,-6]],wolf:[10,0,10],farms:wall,pen:[-10,0,10],rules:{bounds:16}});
     assert.equal((await command(page,'move',{x:1.5,z:6})).ok,true,'Sheep cannot enter its narrow farm passage');
     s=await until(page,s=>s.units.find(u=>u.controlled).pos[2]>5.5,'Sheep-only passage',150);
     assert.ok(s.units.find(u=>u.controlled).pos[0]>1.2&&s.units.find(u=>u.controlled).pos[0]<1.8,'Sheep crossed through a farm rather than the gap');
     await tap(page,'stStop');await frames(page,1);
-    await loadFixture(page,canonical,farm,{sheep:[[10,0,10]],wolf:[1.5,0,-6],farms:wall,rules:{bounds:16,role:'wolf',headstart:0}});
+    await loadFixture(page,canonical,farm,{sheep:[[10,0,10]],wolf:[1.5,0,-6],farms:wall,pen:[-10,0,10],rules:{bounds:16,role:'wolf',headstart:0}});
     const wolfBefore=(await state(page)).units.find(u=>u.controlled).pos;
     const blocked=await command(page,'move',{x:1.5,z:6});assert.equal(blocked.ok,false,'Wolf fitted into the sheep-only farm gap');
     assert.match(blocked.reason,/route/i);await frames(page,5);
