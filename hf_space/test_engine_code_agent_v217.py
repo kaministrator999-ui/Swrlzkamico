@@ -154,6 +154,58 @@ def test_atomic_confirmation_enforces_current_sha_and_source_hash():
         assert "changed" in answer and "No commit" in answer
 
 
+
+def test_real_git_tree_model_file_selection():
+    tree={"truncated":False,"tree":[
+        {"type":"blob","path":JS,"size":2000},
+        {"type":"blob","path":PY,"size":4000},
+        {"type":"blob","path":engine.ROOT+"/DEPLOY_REQUEST.json","size":600}]}
+    with mock.patch.object(agent.engine,"_github",return_value=tree):
+        choices=agent._candidate_paths(gh,RECORD,REPO,HEAD,"Improve anime timeline speed playback")
+    assert choices==[JS]
+    def pick(data):
+        yield {"type":"STATUS","phase":"GENERATING"}
+        yield {"type":"DELTA","text":json.dumps({"paths":[JS]})}
+        yield {"type":"COMPLETED"}
+    updates=list(agent._pick_model_events(pick,"timeline speed",choices))
+    assert updates[-1]=={"type":"PICK_RESULT","paths":[JS]}
+    def inject(data):
+        yield {"type":"DELTA","text":json.dumps({"paths":[engine.ROOT+"/DEPLOY_REQUEST.json"]})}
+        yield {"type":"COMPLETED"}
+    assert list(agent._pick_model_events(inject,"try protected paths",choices))[-1]["paths"]==[]
+    with mock.patch.object(agent.engine,"_github",return_value={"truncated":True,"tree":tree["tree"]}):
+        try:agent._candidate_paths(gh,RECORD,REPO,HEAD,"anime timeline speed")
+        except HTTPException:pass
+        else:raise AssertionError("Truncated Git tree accepted")
+
+
+def test_auto_task_source_selection_and_prepared_diff():
+    inventory={"truncated":False,"tree":[{"type":"blob","path":JS,"size":2000},
+                                               {"type":"blob","path":PY,"size":4000}]}
+    def local(data):
+        if data["requestId"]=="engine-file-selection":
+            response={"paths":[JS]}
+        else:
+            response={"edits":[{"path":JS,"old":"starter-old","new":"starter-new"}]}
+        yield {"type":"DELTA","text":json.dumps(response)}
+        yield {"type":"COMPLETED"}
+    with mock.patch.object(gh,"_config",return_value={}), \
+         mock.patch.object(gh,"_load",return_value=RECORD), \
+         mock.patch.object(agent.engine,"_access",return_value={}), \
+         mock.patch.object(agent.engine,"_branch_head",return_value=("feature/editor-work",HEAD)), \
+         mock.patch.object(agent.approvals,"_branch_sha",return_value=MAIN), \
+         mock.patch.object(agent.engine,"_manifest",side_effect=fake_manifest), \
+         mock.patch.object(agent.engine,"_github",return_value=inventory), \
+         mock.patch.object(gh,"_text",side_effect=fake_doc), \
+         mock.patch.object(agent.approvals,"_store",return_value="exampleCODE0123"):
+        events=list(agent.events(gh,{"userId":OWNER,
+                    "prompt":"@GitHub engine code task Improve anime timeline speed playback on feature/editor-work"},local))
+    assert any(e.get("phase")=="ENGINE_CODE_FILES_SELECTED" for e in events)
+    assert any(e.get("phase")=="ENGINE_CODE_DIFF_READY" for e in events)
+    response="".join(e.get("text","") for e in events)
+    assert "+export function timeline(){return 'starter-new';}" in response
+    assert "NOTHING WRITTEN" in response
+
 def test_routing_and_engine_release_boundary():
     conn=Path(gh.__file__).read_text()
     assert agent.is_command("@GitHub engine code help")
@@ -172,5 +224,7 @@ if __name__=="__main__":
     test_model_only_proposes_without_mutation_and_shows_exact_diff()
     test_bad_model_output_fails_closed()
     test_atomic_confirmation_enforces_current_sha_and_source_hash()
+    test_real_git_tree_model_file_selection()
+    test_auto_task_source_selection_and_prepared_diff()
     test_routing_and_engine_release_boundary()
     print("v217 model-to-GitHub engine code proposal safety tests passed")
