@@ -32,6 +32,7 @@ on:
       - feature/engine-source-code-agent-v217
       - feature/engine-code-context-verification-v218
       - feature/github-staged-read-only-v221
+      - feature/github-natural-file-read-v222
       - feature/version-literacy-content-layout-v199
   workflow_dispatch:
 
