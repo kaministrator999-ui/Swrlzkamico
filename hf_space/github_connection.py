@@ -673,6 +673,8 @@ def _github_command(user, prompt):
             return github_project_v213.confirm(sys.modules[__name__], c, rec, user, repo, action)
         if kind in ("engine-scene-draft", "engine-review-pr"):
             return forge_project_tools_v213.confirm(sys.modules[__name__], c, rec, user, repo, action)
+        if kind == "engine-atomic-pack":
+            return engine_starter_pack_v215.confirm(sys.modules[__name__], c, rec, user, repo, action)
         preflight = _effective_access(rec, repo, "issue-write" if kind == "issue" else "branch-write")
         if not preflight["allowed"]:
             return _permission_message(preflight)
