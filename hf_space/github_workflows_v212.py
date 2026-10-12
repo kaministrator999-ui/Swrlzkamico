@@ -140,6 +140,25 @@ def _triggers_manually(body):
                 re.search(r"(?m)^on:\s*workflow_dispatch\s*$", body))
 
 
+def _checked_retry_source(gh, rec, repo, run):
+    """Verify the exact workflow YAML used by a prior run, not its display name."""
+    path = str(run.get("path") or "")
+    sha = str(run.get("head_sha") or "")
+    if not path.startswith(".github/workflows/") or not _SHA.fullmatch(sha):
+        return None
+    filename = path[len(".github/workflows/"):]
+    try:
+        _safe_workflow(filename)
+    except HTTPException:
+        return None
+    if _PROTECTED.search(filename) or _PROTECTED.search(str(run.get("name") or "")):
+        return None
+    source = gh._read_optional(rec["token"], repo, path, sha, 25000)
+    if not source or not _SHA.fullmatch(str(source.get("sha") or "")) or _PROTECTED.search(source["body"]):
+        return None
+    return {"path": path, "sourceBlob": source["sha"], "headSha": sha}
+
+
 def _proposal_key(code):
     return "swrlz:github:proposal:" + hashlib.sha256(code.encode()).hexdigest()
 
@@ -330,9 +349,11 @@ def _propose(gh, c, rec, user, repo, cmd):
         run = _github_get(gh, rec["token"], repo, "/actions/runs/" + ident)
         if not isinstance(run, dict) or str(run.get("id") or "") != ident or run.get("status") != "completed" or run.get("conclusion") != "failure":
             return "The run is not a verified completed failure; nothing scheduled."
-        if _PROTECTED.search(str(run.get("name") or "")) or _PROTECTED.search(str(run.get("path") or "")):
-            return "Protected production workflow retry remains under its own release gate."
-        code = _store(gh, c, user, repo, {"kind":"workflow-retry", "runId":ident, "runName":str(run.get("name") or "")[:120]})
+        source = _checked_retry_source(gh, rec, repo, run)
+        if not source:
+            return "Run's exact workflow definition could not be verified safe; retry it in GitHub Actions UI, not Chat."
+        code = _store(gh, c, user, repo, {"kind":"workflow-retry", "runId":ident,
+                       "runName":str(run.get("name") or "")[:120], **source})
         return ("**Retry failed Actions jobs proposal — NOT executed**\nRepository: " + repo +
                 "\nRun: #" + ident + " · " + gh._safe_fragment(run.get("name"), 110) +
                 "\nOnly previously failed jobs are eligible. Runtime/billing may be affected.\n" +
@@ -362,10 +383,14 @@ def _propose(gh, c, rec, user, repo, cmd):
             return ("Protected/production workflow cannot be dispatched through §wyrlz Chat. "
                     "Use the repository's existing reviewed deployment/approval path; no trigger attempted.")
         head = _branch_sha(gh, rec["token"], repo, ref)
+        target_yaml = gh._read_optional(rec["token"], repo, _workflow_path(name), head, 25000)
+        if not target_yaml or not _triggers_manually(target_yaml["body"]) or _PROTECTED.search(target_yaml["body"]):
+            return "Target branch workflow YAML is missing, not manually triggerable, or protected; no dispatch proposal."
         pending = {"kind": "workflow-dispatch", "name": name, "branch": ref,
                    "branchSha": head, "workflowId": int(info.get("id") or 0),
-                   "workflowSha": str(body.get("sha") or ""), "inputs": inputs}
-        if not pending["workflowId"] or not _SHA.fullmatch(pending["workflowSha"]):
+                   "workflowSha": str(body.get("sha") or ""),
+                   "targetWorkflowSha": str(target_yaml.get("sha") or ""), "inputs": inputs}
+        if not pending["workflowId"] or not _SHA.fullmatch(pending["workflowSha"]) or not _SHA.fullmatch(pending["targetWorkflowSha"]):
             return "Workflow identity/blob is unverified; nothing queued."
         code = _store(gh, c, user, repo, pending)
         return ("**Manual GitHub Actions run — NOT triggered**\nRepository: " + repo +
@@ -398,6 +423,11 @@ def confirm(gh, c, rec, user, repo, pending):
                 or str(info.get("name") or "")[:120] != pending.get("runName")
                 or _PROTECTED.search(str(info.get("name") or ""))):
             return "Run state or identity changed; no retry submitted."
+        source = _checked_retry_source(gh, rec, repo, info)
+        if (not source or source.get("path") != pending.get("path")
+                or source.get("sourceBlob") != pending.get("sourceBlob")
+                or source.get("headSha") != pending.get("headSha")):
+            return "Run workflow source could not be reverified as the approved safe source; no retry."
         receipt = _write_request(rec["token"], "POST",
                     gh.GITHUB_API + "/repos/" + repo + "/actions/runs/" + ident + "/rerun-failed-jobs", {})
         return ("GitHub accepted a retry request for failed jobs of run #" + ident +
@@ -453,6 +483,10 @@ def confirm(gh, c, rec, user, repo, pending):
         return "Workflow YAML changed or manual trigger not verified; no dispatch."
     if _PROTECTED.search(body["body"]):
         return "Workflow content has privileged operations; no dispatch attempted."
+    target_yaml = gh._read_optional(rec["token"], repo, _workflow_path(name), head, 25000)
+    if (not target_yaml or str(target_yaml.get("sha") or "") != str(pending.get("targetWorkflowSha") or "")
+            or not _triggers_manually(target_yaml["body"]) or _PROTECTED.search(target_yaml["body"])):
+        return "Target ref's workflow source changed or is protected; no dispatch."
     inputs = pending.get("inputs")
     if not isinstance(inputs, dict) or _parse_dispatch_inputs(",".join(k + "=" + v for k, v in inputs.items())) != inputs:
         return "Workflow input approval invalid; no dispatch."
