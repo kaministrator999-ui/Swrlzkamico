@@ -778,6 +778,14 @@
           <div class="github-connect-actions">
             <button id="githubRepoSave" type="button">Use repository</button>
             <button id="githubReadStart" type="button">Read §tart</button>
+            <label for="githubCheckOperation" style="font-size:0.78rem">Check</label>
+            <select id="githubCheckOperation" aria-label="GitHub capability to check">
+              <option value="read">Read repository</option>
+              <option value="issue-write">Create issues</option>
+              <option value="branch-write">Create branches/PRs</option>
+              <option value="workflow-dispatch">Manually run Actions</option>
+              <option value="workflow-create">Create Actions YAML</option>
+            </select>
             <button id="githubCheckAccess" type="button">Check permissions</button>
             <button id="githubAuthorizeAccess" type="button" hidden>Authorize required access</button>
           </div>
@@ -864,7 +872,7 @@
       const workArtifactList = document.getElementById("workArtifactList");
       const workEvidenceCount = document.getElementById("workEvidenceCount");
       const workEvidenceList = document.getElementById("workEvidenceList");
-      const SWRLZ_CHAT_VERSION = "1.1.08";
+      const SWRLZ_CHAT_VERSION = "1.1.09";
       const navTraceId = "chat-ui-" + Date.now().toString(36) + "-" + crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
       let lastUiStatusCamera = "";
       let companionState="idle";
@@ -1753,7 +1761,7 @@
           }
         }
         const rawPhase=String(last.phase||g.phase||last.type||"QUEUED").toUpperCase();
-        const phaseLabels={CONNECTING:"Connecting",QUEUED:"Queued",LOADING:"Loading model",BUDGETED:"Preparing context",CONTEXT:"Preparing context",DIAGNOSTIC_READY:"Preparing response",PROGRAMMING_INTENT:"Planning code change",MEMORY_CANDIDATE:"Preparing context",SEARCH_STARTED:"Starting web search",SEARCH_PROVIDER_VISIT:"Searching website",SEARCH_PROVIDER_RESULTS:"Search results found",SEARCH_PROVIDER_EMPTY:"No results from provider",SEARCH_PROVIDER_SELECTED:"Search provider selected",SEARCH_PROVIDER_ERROR:"Search provider failed",PAGE_FETCH_STARTED:"Visiting website",PAGE_FETCH_COMPLETE:"Website fetched",PAGE_FETCH_ERROR:"Website fetch failed",RESEARCH_STARTED:"Starting online research",RESEARCH_COMPLETE:"Online research complete",RESEARCH_REASONER_ERROR:"Research fallback engaged",WEATHER_FETCH_STARTED:"Starting weather lookup",WEATHER_GEOCODE_VISIT:"Finding weather location",WEATHER_GEOCODE_COMPLETE:"Location resolved",WEATHER_FORECAST_VISIT:"Fetching weather",WEATHER_FORECAST_COMPLETE:"Weather received",WEATHER_FETCH_COMPLETE:"Weather lookup complete",TIME_GEOCODE_VISIT:"Finding time location",TIME_GEOCODE_COMPLETE:"Time location resolved",TIME_FETCH_COMPLETE:"Time lookup complete",ONLINE_RESEARCH:"Online research complete",GENERATING:"Starting inference",GITHUB_MODEL_PLAN_STARTED:"Choosing GitHub checks",GITHUB_MODEL_LOADING:"Loading local reasoning model",GITHUB_MODEL_GENERATING:"Planning GitHub tools",GITHUB_MODEL_PROGRESS:"Evaluating tool plan",GITHUB_PLAN_READY:"GitHub plan selected",GITHUB_PERMISSION_CHECK:"Checking GitHub access",GITHUB_PERMISSION_VERIFIED:"GitHub read access verified",GITHUB_TOOL_STARTED:"Retrieving GitHub evidence",GITHUB_TOOL_COMPLETE:"GitHub result received",GITHUB_EVIDENCE_COMPLETE:"GitHub checks complete",GITHUB_ACCESS_UNVERIFIED:"GitHub access unverified",GITHUB_APPROVAL_REQUIRED:"GitHub confirmation required",COMPLETE:"Complete",COMPLETED:"Complete",FAILED:"Failed"};
+        const phaseLabels={CONNECTING:"Connecting",QUEUED:"Queued",LOADING:"Loading model",BUDGETED:"Preparing context",CONTEXT:"Preparing context",DIAGNOSTIC_READY:"Preparing response",PROGRAMMING_INTENT:"Planning code change",MEMORY_CANDIDATE:"Preparing context",SEARCH_STARTED:"Starting web search",SEARCH_PROVIDER_VISIT:"Searching website",SEARCH_PROVIDER_RESULTS:"Search results found",SEARCH_PROVIDER_EMPTY:"No results from provider",SEARCH_PROVIDER_SELECTED:"Search provider selected",SEARCH_PROVIDER_ERROR:"Search provider failed",PAGE_FETCH_STARTED:"Visiting website",PAGE_FETCH_COMPLETE:"Website fetched",PAGE_FETCH_ERROR:"Website fetch failed",RESEARCH_STARTED:"Starting online research",RESEARCH_COMPLETE:"Online research complete",RESEARCH_REASONER_ERROR:"Research fallback engaged",WEATHER_FETCH_STARTED:"Starting weather lookup",WEATHER_GEOCODE_VISIT:"Finding weather location",WEATHER_GEOCODE_COMPLETE:"Location resolved",WEATHER_FORECAST_VISIT:"Fetching weather",WEATHER_FORECAST_COMPLETE:"Weather received",WEATHER_FETCH_COMPLETE:"Weather lookup complete",TIME_GEOCODE_VISIT:"Finding time location",TIME_GEOCODE_COMPLETE:"Time location resolved",TIME_FETCH_COMPLETE:"Time lookup complete",ONLINE_RESEARCH:"Online research complete",GENERATING:"Starting inference",GITHUB_MODEL_PLAN_STARTED:"Choosing GitHub checks",GITHUB_MODEL_LOADING:"Loading local reasoning model",GITHUB_MODEL_GENERATING:"Planning GitHub tools",GITHUB_MODEL_PROGRESS:"Evaluating tool plan",GITHUB_PLAN_READY:"GitHub plan selected",GITHUB_PERMISSION_CHECK:"Checking GitHub access",GITHUB_PERMISSION_VERIFIED:"GitHub read access verified",GITHUB_TOOL_STARTED:"Retrieving GitHub evidence",GITHUB_TOOL_COMPLETE:"GitHub result received",GITHUB_EVIDENCE_COMPLETE:"GitHub checks complete",GITHUB_WORKFLOW_PERMISSION_CHECK:"Checking Actions access",GITHUB_WORKFLOW_RESULT:"Workflow result ready",GITHUB_ACCESS_UNVERIFIED:"GitHub access unverified",GITHUB_APPROVAL_REQUIRED:"GitHub confirmation required",COMPLETE:"Complete",COMPLETED:"Complete",FAILED:"Failed"};
         const phase=phaseLabels[rawPhase]||rawPhase.replace(/_/g," ").toLowerCase().replace(/^./,c=>c.toUpperCase());
         const label=g.terminal?(g.terminalType||phase):(String(g.text||"").length?"Streaming response":phase);
         const activitySite=String(last.site||"").trim();
@@ -2787,6 +2795,7 @@
       const githubRepoSave=document.getElementById("githubRepoSave");
       const githubReadStart=document.getElementById("githubReadStart");
       const githubCheckAccess=document.getElementById("githubCheckAccess");
+      const githubCheckOperation=document.getElementById("githubCheckOperation");
       const githubAuthorizeAccess=document.getElementById("githubAuthorizeAccess");
       let githubAuthorizationPath="";
       let githubLinked=false;
@@ -2822,10 +2831,9 @@
             const response=await fetch("/api/github/default-repo",{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify({repository:repo})});
             if(!response.ok)throw new Error("Selected repository could not be verified.");
           }
-          const operation=window.prompt("Which operation should §wyrlz check? Type read, issue-write, or branch-write.","read");
-          if(operation===null)return;
-          if(!["read","issue-write","branch-write"].includes(operation.trim()))throw new Error("Choose read, issue-write or branch-write.");
-          const response=await fetch("/api/github/capabilities?operation="+encodeURIComponent(operation.trim()),{credentials:"same-origin",cache:"no-store"});
+          const operation=githubCheckOperation.value;
+          if(!["read","issue-write","branch-write","workflow-dispatch","workflow-create"].includes(operation))throw new Error("Unsupported GitHub capability.");
+          const response=await fetch("/api/github/capabilities?operation="+encodeURIComponent(operation),{credentials:"same-origin",cache:"no-store"});
           const data=await response.json().catch(()=>({}));
           if(!response.ok)throw new Error(data.detail||"GitHub verification unavailable.");
           githubConnectStatus.textContent="Verified for "+data.repository+": available "+(data.available||[]).join(", ")+
