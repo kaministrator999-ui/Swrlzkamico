@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v10.1
+title: §wyrl§ Engine v10.2
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -10,19 +10,25 @@ header: mini
 short_description: Sheep Tag, paper theatre, Dragon Den and Starforge
 ---
 
-# §wyrl§ Engine · Maker v10.1
+# §wyrl§ Engine · Maker v10.2
 
-## Current v10.1 candidate · Sheep Tag Design Archive
+## Current v10.2 candidate · Sheep selection and placement
 
-The uploaded **SE_Sheep_Tag_Complete_Design_Archive.docx**, prepared 11 October 2026, guides the next Sheep Tag starter. **Sheep Tag · Moonbell Meadow** is selected in **Projects** or with `?project=sheep-tag-meadow`; its native map is `scenes/sheep-tag-moonbell-archive.swyrl.json`. Its default **Archive** preset enables the four experimental player ideas while leaving special events off. The new map contains **92 baked actors, six populated layers, eight sheep and three wolves**, with roads, twelve thorn bushes, two no-build zones, the central wisp pen and four merchants. The released 66-actor meadow and every prior media asset remain unchanged.
+In **Sheep Tag · Moonbell Meadow**, sheep select a house or building with a **double tap or double click** on the same building. A single tap/click orders ground movement with the controlled sheep; when the tapped building blocks that ground point, the order uses a nearby reachable passage. Wolves keep their single-tap attack controls. Movement still follows physical routes, and deliberately sealed sheep pockets remain legal.
 
-The classic survival, construction, wolf demolition and wisp-rescue loop remains independently playable. The archive revision adds precise placement with readable species-sized passages, wolf chase and breach planning, purposeful sheep formations, and role-limited fog/vision. Deliberately placing houses too closely may trap a sheep; the engine preserves that mistake. **Classic** disables experimental magic. **Archive** exposes thorn sensing, conversion of an existing house in a settlement of nine or more allied houses into a fading stealth totem, connected walkable walls and ramps, and progression-earned **Illusive Split**. A warned event pool is separately opt-in. Timings, costs, ranges, team ratio and cooldowns are provisional playtest values, not adopted permanent balance.
+During construction, a temporary **ground grid and full footprint boundary** show where the building will stand. Houses occupy 2.4 × 2.4 ground units; walls and ramps occupy 2.4 × 6. The guide follows rotation and the selected **0.15-unit fine snap** or **3-unit coarse snap** (readable major grid lines and fine edge ticks), with green for a valid site and red for a rejected site. Placement guides do not add collision or enter saved maps, and disappear when placement ends.
 
-**Map Creator** provides curated terrain painting, hazards, landmarks, sheep/wolf spawns, no-build zones, species path previews, independent map Save/Load and native Play/Stop revision. The archive decision ledger distinguishes player ideas from assistant suggestions: pond cleansing, advanced illusion tiers, automatic structural collapse and a future multi-game hub are not included in this candidate. [Archive requirements and decisions](SHEEP_TAG_ARCHIVE.md) and [Sheep Tag instructions](SHEEP_TAG.md) describe the scope.
+Packaging uses **62 governed patches and the unchanged 23 assets**: `patches/v10_2_sheep_touch_placement.py`, artifact `swyrl_engine_v10_2.html`, marker `SWYRL_ENGINE_DEPLOY_MARKER: V10_2_SHEEP_TOUCH_PLACEMENT`. The previous 61 patches, published runtime source and all map/media assets remain unchanged. Exact bytes and SHA-256 resolve from the sealed manifest and generated `SOURCE.json`.
 
-Packaging uses **61 governed patches and 23 assets**: `patches/v10_1_sheep_tag_archive.py`, artifact `swyrl_engine_v10_1.html`, marker `SWYRL_ENGINE_DEPLOY_MARKER: V10_1_SHEEP_TAG_ARCHIVE`. The old 60 patches, old Sheep Tag runtime source, 66-actor map and all 22 assets are preserved. Exact bytes and SHA-256 resolve from the sealed manifest and generated `SOURCE.json`.
+Acceptance requires **eleven desktop/phone browser suites** and all **six engine CI workflows**, including `tests/sheep_touch_playwright.mjs` for real canvas single/double taps, reachable passage movement, wolf attacks, grid bounds/rotation/snap/rejection and placement cleanup. Existing archive, creator, animation and Den regressions remain required. This candidate text does not claim v10.2 checks or deployment have passed. Production authority requires the final deliberate `DEPLOY_REQUEST.json`, terminal success of its exact dedicated deployment, and hosted matching of the marker, normalized HTML, `SOURCE.json` and all 23 assets. [Sheep Tag controls](SHEEP_TAG.md) and [archive decisions](SHEEP_TAG_ARCHIVE.md) describe the game.
 
-Acceptance requires the ten-suite desktop/phone browser matrix, all six engine CI workflows, meaningful classic/experimental/creator Play tests and prior animation/Den regressions. This candidate text makes no claim that those v10.1 checks have passed. Production authority resolves from the final deliberate `DEPLOY_REQUEST.json`, its exact terminal-success dedicated deployment, and hosted matching of the current marker, normalized HTML, `SOURCE.json` and all 23 assets. Source checks alone do not certify a hosted release.
+## Historical verified v10.1 · Sheep Tag Design Archive
+
+The v10.1 release is verified live: merged source `86aa05b494db007d9aebc073f0c7242756376447`, final trigger `1779223f8b92024f2625e68046ad9582ca80f594`, [deployment 38223924840](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38223924840) and [hosted audit 38224004659](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38224004659). It seals **61 patches, 23 assets and 1,464,129 bytes**, SHA-256 `ef72eb9177a81537c5f6f56f65d620ac9593b4e08da6eae4f1bc4e34b5c9b8f1`. All six engine CI workflows and ten desktop/phone browser suites passed, followed by nineteen live archive cases on each layout. Marker: `V10_1_SHEEP_TAG_ARCHIVE`; artifact: `swyrl_engine_v10_1.html`. These receipts certify v10.1.
+
+The player's **SE_Sheep_Tag_Complete_Design_Archive.docx**, prepared 11 October 2026, guides this starter. Choose **Sheep Tag · Moonbell Meadow** in **Projects** or use `?project=sheep-tag-meadow`; `scenes/sheep-tag-moonbell-archive.swyrl.json` retains **92 baked actors, six populated layers, eight sheep and three wolves**, with twelve thorns, two no-build zones, the central wisp pen and four merchants. The default **Archive** preset enables thorn sensing, nine-house totem conversion, connected raised routes and Illusive Split; events remain off. **Classic** independently retains survival, construction, wolf demolition and wisp rescue. Values remain provisional and adjustable.
+
+**Map Creator** provides terrain painting, hazards, landmarks, spawns, no-build zones, species path previews, independent map Save/Load and native Play/Stop revision. The released 66-actor meadow and all prior media remain preserved. Pond cleansing, advanced illusion tiers, automatic structural collapse and a future multi-game hub remain outside this release's scope.
 
 ## Historical verified v10.0 · Sheep Tag Starter
 
@@ -95,12 +101,12 @@ Desktop first-person verification is recorded with the source. Headset VR, VR co
 
 Source: https://github.com/kaministrator999-ui/Swrlzkamico/tree/main/projects/swrlz-forge-moba
 
-Marker: `SWYRL_ENGINE_DEPLOY_MARKER: V10_0_SHEEP_TAG_STARTER`
+Marker: `SWYRL_ENGINE_DEPLOY_MARKER: V10_2_SHEEP_TOUCH_PLACEMENT`
 
 
 ### Release verification
 
-The released v10.0 source and production receipts are recorded above. The current v10.1 candidate requires its own ten-suite browser matrix, six engine CI workflows, final dedicated deployment and exact hosted package audit.
+The verified v10.1 source and production receipts are recorded above. The current v10.2 candidate requires its own eleven-suite desktop/phone browser matrix, six engine CI workflows, final dedicated deployment and exact hosted package audit.
 
 The previous **v9.3 Connected Character Pieces** release is verified live: [deployment 37893678594](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37893678594) and [exact hosted audit 37893722231](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37893722231) passed. Source [`84d8966f4240`](https://github.com/kaministrator999-ui/Swrlzkamico/commit/84d8966f4240cef8ebe037dbc03baac43099c06e) seals 52 patches, **980,767 bytes**, SHA-256 `caba518b67524567899d93a74308bc894cf40413fd69b330b8f7f5f7b6c042be`, with all fourteen media assets. These receipts certify v9.3; v10.0 requires its own final deployment and hosted audit.
 

@@ -4,7 +4,7 @@ on:
     branches: [main]
   workflow_dispatch:
   workflow_run:
-    workflows: ["Deploy §wyrl§ Engine v10.1 to Hugging Face"]
+    workflows: ["Deploy §wyrl§ Engine v10.2 to Hugging Face"]
     types: [completed]
     branches: [main]
 permissions:
