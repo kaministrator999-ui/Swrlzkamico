@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v10.3",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V10_3_SHEEP_TOUCH_OFFSET",
-  "reason": "Deploy Sheep Tag touch placement above the finger from PR #127. Touch construction projects the preview and ground footprint above the contact point so the player can see the exact snapped location and boundaries. Release commits that displayed location; desktop mouse placement remains direct. Double-tap building selection, the ground placement grid, the existing 92-piece Moonbell Meadow archive map, editable rules and native creator remain available. All six engine workflows and eleven remote desktop/phone browser suites passed on 11903850bb1f1f3639433e2e036b36ed57b61314. Matrix: https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38310570023. The sealed package contains 63 governed patches, 23 assets and 1,501,714 HTML bytes, SHA-256 6b0f2f461ea2bb1595e0be2ef4dbc58a114ecb39bd8e1828ac745cd0b7ed2653. All 62 earlier patches, runtime modules, payloads and all 23 existing assets remain unchanged. This dedicated request is the final repository mutation for this engine release. Completion requires the exact dedicated deployment, normalized hosted HTML/SOURCE/all 23 assets, hosted audit and live desktop/phone playtests.",
-  "sourceCommit": "de24b04c95e13993313b0abd3496b6fb2602c9be",
-  "sourceIntegritySha256": "6b0f2f461ea2bb1595e0be2ef4dbc58a114ecb39bd8e1828ac745cd0b7ed2653"
+  "releaseVersion": "v10.4",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V10_4_SHEEP_LANES",
+  "reason": "Deploy Sheep Tag house lanes and physical creature traffic from PR #130. Sheep construct at their own feet with a nearest-clear-side ejection. Nearby houses snap flush or with a .6-unit sheep-only lane. Larger wolves pursue reachable sheep before buildings; swept body collision, alternate routes and backing out keep creatures from overlapping. Touch placement and the native editor/map/rules remain available. All six engine workflows and eleven desktop/phone suites passed on 9a66f50d1e37295200c228a8c0653e35ef9bdf04. Matrix: https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38316190232. The sealed package contains 64 patches, 23 unchanged assets, 1,520,413 HTML bytes and SHA-256 f2c2eeb2a28d91239b3cb7afd48c0d189373a260bd12a851e3aaa8fd92524a2d. All 63 older patches/runtime modules/assets/payloads remain intact. This request is the final repository mutation; completion requires exact deployment and hosted verification.",
+  "sourceCommit": "6d04109c27dfcd7e732e2550f3184db82755e999",
+  "sourceIntegritySha256": "f2c2eeb2a28d91239b3cb7afd48c0d189373a260bd12a851e3aaa8fd92524a2d"
 }
