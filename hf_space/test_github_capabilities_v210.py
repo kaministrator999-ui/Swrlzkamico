@@ -32,7 +32,8 @@ def test_scopes_and_live_repository_rights():
         assert denied["authorizeUrl"] == "/api/github/start?access=public-write"
         assert denied["available"] == ["read"]
         granted = gh._effective_access({**RECORD, "scopes": "read:user, public_repo"}, REPO, "issue-write")
-        assert granted["allowed"] and granted["available"] == ["read", "issue-write", "branch-write"]
+        assert granted["allowed"] and set(["read", "issue-write", "branch-write"]).issubset(granted["available"])
+        assert "workflow-dispatch" in granted["available"] and "workflow-create" not in granted["available"]
         no_role = gh._effective_access({**RECORD, "scopes": "repo"}, REPO, "issue-write")
         assert no_role["allowed"]
     with mock.patch.object(gh, "_api", return_value=repo_info(private=True)):
