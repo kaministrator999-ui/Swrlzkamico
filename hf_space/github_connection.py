@@ -22,6 +22,7 @@ import github_project_v213
 import forge_project_tools_v213
 import engine_starter_pack_v215
 import engine_code_agent_v217
+import github_explorer_v223 as explorer
 from cryptography.fernet import Fernet, InvalidToken
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import JSONResponse, RedirectResponse
@@ -639,6 +640,96 @@ def capabilities(request: Request, operation: str = "read"):
         if exc.status_code in (401, 403, 404):
             raise HTTPException(409, _unverified_read_message(repo)) from None
         raise
+
+
+
+# Stage 1 Explorer routes are reads over the verified Google account's
+# selected GitHub repository. No arbitrary repo argument or provider URL.
+def _explorer_owner(request):
+    if GITHUB_CAPABILITY_STAGE != "read-repository":
+        raise HTTPException(403, _READ_STAGE_DESCRIPTION)
+    owner, _cfg, record = _current_connection(request)
+    repo = _repo_name(record.get("repo"))
+    grant = _effective_access(record, repo, "read")
+    if not grant.get("allowed"):
+        raise HTTPException(403, "GitHub repository reading is not authorized")
+    return owner, record, repo, grant["defaultBranch"]
+
+
+def _explorer_failure(exc):
+    if isinstance(exc, explorer.ExplorerError):
+        raise HTTPException(422, str(exc)) from None
+    raise exc
+
+
+@router.get("/api/github/explorer/directory")
+def explorer_directory(request: Request, path: str = "", branch: str = ""):
+    _owner, record, repo, default = _explorer_owner(request)
+    try:
+        snapshot = explorer.pinned_tree(_api, record["token"], repo, branch or default)
+        return explorer.directory(snapshot, path)
+    except explorer.ExplorerError as exc:
+        _explorer_failure(exc)
+
+
+@router.get("/api/github/explorer/search")
+def explorer_search(request: Request, q: str, path: str = "", branch: str = ""):
+    _owner, record, repo, default = _explorer_owner(request)
+    try:
+        snapshot = explorer.pinned_tree(_api, record["token"], repo, branch or default)
+        return explorer.find_files(snapshot, q, path)
+    except explorer.ExplorerError as exc:
+        _explorer_failure(exc)
+
+
+@router.get("/api/github/explorer/file")
+def explorer_file(request: Request, path: str, branch: str = ""):
+    _owner, record, repo, default = _explorer_owner(request)
+    try:
+        snapshot = explorer.pinned_tree(_api, record["token"], repo, branch or default)
+        clean = explorer.safe_path(path, allow_root=False)
+        match = next((x for x in snapshot["items"] if x["path"] == clean and x["type"] == "file"), None)
+        if match is None:
+            raise explorer.ExplorerError("File was not found at the verified source revision")
+        if not isinstance(match.get("sizeBytes"), int) or match["sizeBytes"] > 120000:
+            return {"repository": repo, "branch": snapshot["branch"], "sourceSha": snapshot["sourceSha"],
+                    "path": clean, "sizeBytes": match.get("sizeBytes"), "readable": False,
+                    "message": "This file exceeds the bounded text preview or has unknown size."}
+        blob = _read_optional(record["token"], repo, clean, snapshot["sourceSha"], 120000)
+        if not blob:
+            return {"repository": repo, "branch": snapshot["branch"], "sourceSha": snapshot["sourceSha"],
+                    "path": clean, "sizeBytes": match["sizeBytes"], "readable": False,
+                    "message": "GitHub could not provide bounded UTF-8 source text."}
+        return {"repository": repo, "branch": snapshot["branch"], "sourceSha": snapshot["sourceSha"],
+                "path": clean, "sizeBytes": match["sizeBytes"],
+                "blobSha": blob.get("sha"), "readable": True,
+                "content": str(blob.get("body") or "")[:120000]}
+    except explorer.ExplorerError as exc:
+        _explorer_failure(exc)
+
+
+@router.get("/api/github/explorer/history")
+def explorer_history(request: Request, path: str, branch: str = ""):
+    _owner, record, repo, default = _explorer_owner(request)
+    try:
+        snapshot = explorer.pinned_tree(_api, record["token"], repo, branch or default)
+        clean = explorer.safe_path(path, allow_root=False)
+        if not any(x["path"] == clean for x in snapshot["items"]):
+            raise explorer.ExplorerError("Requested path is not in verified Git tree")
+        result = explorer.history(_api, record["token"], repo, snapshot["sourceSha"], clean)
+        result["sourceSha"] = snapshot["sourceSha"]
+        return result
+    except explorer.ExplorerError as exc:
+        _explorer_failure(exc)
+
+
+@router.get("/api/github/explorer/compare")
+def explorer_compare(request: Request, base: str, head: str):
+    _owner, record, repo, _default = _explorer_owner(request)
+    try:
+        return explorer.comparison(_api, record["token"], repo, base, head)
+    except explorer.ExplorerError as exc:
+        _explorer_failure(exc)
 
 
 def _unverified_read_message(repo):
