@@ -823,7 +823,7 @@ def command_events(data):
 
 
 # v211 GitHub model-planned READ tools, with observable lifecycle and no raw thought exposure.
-_AGENT_TOOLS = ("permissions", "files", "branches", "issues", "pulls", "commits", "workflows", "workflow runs", "workflow guide", "overview", "tree", "project guide", "project brief", "dependencies", "triage", "project readiness")
+_AGENT_TOOLS = ("permissions", "files", "branches", "issues", "pulls", "commits", "workflows", "workflow runs", "workflow guide", "overview", "tree", "project guide", "project brief", "dependencies", "triage", "project readiness", "branch policy", "releases")
 
 
 def is_github_conversation(prompt):
@@ -898,6 +898,8 @@ def _agent_fallback_plan(prompt):
         (r"\b(dependencies|build files|packages|requirements)\b", "dependencies"),
         (r"\b(triage|prioritize|backlog)\b", "triage"),
         (r"\b(release readiness|release checks|release status)\b", "project readiness"),
+        (r"\b(branch protection|rulesets?|branch rules|branch policy)\b", "branch policy"),
+        (r"\b(releases|versions|tags)\b", "releases"),
         (r"\b(structure|tree|layout|map)\b", "tree"),
         (r"\b(files?|folders?|directories|directory)\b", "files"),
     ):
@@ -914,7 +916,7 @@ def _agent_model_plan_events(prompt, generator):
     instruction = (
         "Choose 1 to 3 read-only GitHub checks relevant to this request. "
         "Return ONLY JSON, e.g. {\"tools\":[\"permissions\",\"pulls\"]}. "
-        "Valid tools: permissions, files, branches, issues, pulls, commits, workflows, workflow runs, workflow guide, overview, tree, project guide, project brief, dependencies, triage, project readiness. Specific read-only PR/issue IDs, checks SHAs, code search terms, file-history paths, or compare refs are allowed ONLY when the user explicitly named those identifiers. "
+        "Valid tools: permissions, files, branches, issues, pulls, commits, workflows, workflow runs, workflow guide, overview, tree, project guide, project brief, dependencies, triage, project readiness, branch policy, releases. Specific read-only PR/issue IDs, checks SHAs, code search terms, file-history paths, or compare refs are allowed ONLY when the user explicitly named those identifiers. "
         "Specific files PATH or read file PATH permitted only when PATH is in the user request. "
         "Do not propose writes, URL fetches, authorization changes or other commands. "
         "No chain-of-thought. User request: " + str(prompt)[:900]
