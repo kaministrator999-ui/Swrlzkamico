@@ -1,6 +1,6 @@
 ID=online-research
-VERSION=1.0.30
-REVISION=1.0.30-original-songwriting-technique-search-v196
+VERSION=1.0.31
+REVISION=1.0.31-social-checkin-no-unwanted-web-v219
 KIND=online-research
 SOURCE_BRANCH=runtime
 STATUS=active
