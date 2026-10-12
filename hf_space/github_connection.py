@@ -679,6 +679,9 @@ def _github_command(user, prompt):
             return ("GitHub confirmed branch creation: " + repo + "/" + action["branch"]) if result.get("ref") else "GitHub did not confirm branch creation."
         return "Unknown GitHub proposal; nothing written."
 
+    if github_workflows_v212.is_command(prompt):
+        return github_workflows_v212.execute(sys.modules[__name__], user, prompt)
+
     operation = ("issue-write" if lower.startswith("create issue ") else
                  "branch-write" if lower.startswith("create branch ") else "read")
     try:
