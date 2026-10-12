@@ -213,7 +213,7 @@ def _code_context(body, goal, budget=9500):
     independently retrieved blob. Offset labels are *outside* source fences.
     This avoids the old 'first 5,400 chars' blind spot in large engine modules.
     """
-    if not isinstance(body, str) or not 1300 <= budget <= 12000:
+    if not isinstance(body, str) or not body.strip() or not 1300 <= budget <= 12000:
         raise HTTPException(422, "Invalid coding context")
     if len(body) <= budget:
         return ("[complete source: " + str(len(body)) + " characters]\n" +
