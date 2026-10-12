@@ -21,6 +21,7 @@ import github_workflows_v212
 import github_project_v213
 import forge_project_tools_v213
 import engine_starter_pack_v215
+import engine_code_agent_v217
 from cryptography.fernet import Fernet, InvalidToken
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import JSONResponse, RedirectResponse
@@ -635,7 +636,7 @@ def _post_github(token, path, body):
 def is_github_command(prompt):
     # Only anchored user commands. An ordinary discussion about GitHub
     # must not perform any repository operation.
-    if github_workflows_v212.is_command(prompt) or github_project_v213.is_command(prompt) or forge_project_tools_v213.is_command(prompt) or engine_starter_pack_v215.is_command(prompt):
+    if github_workflows_v212.is_command(prompt) or github_project_v213.is_command(prompt) or forge_project_tools_v213.is_command(prompt) or engine_starter_pack_v215.is_command(prompt) or engine_code_agent_v217.is_command(prompt):
         return True
     return bool(re.match(
         r"^@github\s+(help(?:\s|$)|permissions|capabilities|branches(?:\s|$)|files(?:\s|$)|read file\s+|issues(?:\s|$)|pulls(?:\s|$)|commits(?:\s|$)|create issue\s+|create branch\s+|confirm\s+)",
@@ -675,6 +676,8 @@ def _github_command(user, prompt):
             return forge_project_tools_v213.confirm(sys.modules[__name__], c, rec, user, repo, action)
         if kind == "engine-atomic-pack":
             return engine_starter_pack_v215.confirm(sys.modules[__name__], c, rec, user, repo, action)
+        if kind == "engine-code-patch":
+            return engine_code_agent_v217.confirm(sys.modules[__name__], c, rec, user, repo, action)
         preflight = _effective_access(rec, repo, "issue-write" if kind == "issue" else "branch-write")
         if not preflight["allowed"]:
             return _permission_message(preflight)
@@ -693,6 +696,8 @@ def _github_command(user, prompt):
             return ("GitHub confirmed branch creation: " + repo + "/" + action["branch"]) if result.get("ref") else "GitHub did not confirm branch creation."
         return "Unknown GitHub proposal; nothing written."
 
+    if engine_code_agent_v217.is_command(prompt):
+        return "This source edit needs the Station model stream. Use Chat, not the legacy read-only command processor."
     if github_project_v213.is_command(prompt):
         return github_project_v213.execute(sys.modules[__name__], user, prompt)
     if engine_starter_pack_v215.is_command(prompt):
@@ -1003,6 +1008,9 @@ def agent_events(data, model_generator=None):
                "reason": "Checking requested GitHub write authorization and confirmation.",
                "categories": ["GITHUB", "TOOL", "PERMISSION"]}
         yield from command_events(data)
+        return
+    if engine_code_agent_v217.is_command(prompt):
+        yield from engine_code_agent_v217.events(sys.modules[__name__], data, model_generator)
         return
     if github_project_v213.is_command(prompt):
         yield from github_project_v213.events(sys.modules[__name__], data)
