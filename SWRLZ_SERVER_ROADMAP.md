@@ -1,3 +1,25 @@
+## UPDATE FINISHED — 2026-10-11 — v214 §E engine/editor starter project-aware GitHub assistant
+
+**Outcome:** INTEGRATED EXACT SOURCE / GOOGLE ACCOUNT + PROJECT/ENGINE CI / HF OFFLINE / MOBILE **SUCCESS**; ONE GUARDED EXISTING CHAT HF SPACE PUBLICATION **SUCCESS**; ATOMIC RUNTIME MODULE VERSION READBACK **SUCCESS**; SIGNED-IN OWNER TOOL/SCENE ACCEPTANCE **PENDING**.
+
+**User's broader goal:** Grow §wyrlz into a dependable editor/starter-pack/engine developer, not just a GitHub command interface. Built the first §E-specialized development vertical slice while explicitly reserving multi-file engine patching, playable-mode integration and deployment for later validated tiers.
+
+**Concurrent release reconciliation:** Instead of overwriting published v213 general project engineering `002f4bde2b2d142647019b22da21382c7047b2d6` with the independent v212-base [prototype draft PR #113](https://github.com/kaministrator999-ui/Swrlzkamico/pull/113), created/published [integrated draft PR #114](https://github.com/kaministrator999-ui/Swrlzkamico/pull/114) `feature/forge-engine-agent-v214-integrated@344d2e47a678c05e05c319ed716028a99b524604` based EXACTLY on v213. Preserves all released v213 general GitHub project tools and v212 Actions workflows, Chat save, model identity and Google OAuth.
+
+**Functional scope:** New `hf_space/forge_project_tools_v213.py`, `hf_space/ENGINE_PROJECT_AGENT_V213.md`, tests and Station/Chat connections. The verified selected GitHub repository's **main** branch owns actual `projects/swrlz-forge-moba/` §E source and dedicated release; the separately published Chat branch does not. Tools `@GitHub engine help/status/starters/plan GOAL` inspect true sealed v10.0 manifest, existing saved scene list, engine dedicated release path, and produce bounded source/test/action plans. `@GitHub engine clone SEED as SLUG on feature/BRANCH` stages one user-confirmed, current-source SHA/branch-verified, no-overwrite draft native scene; `@GitHub engine review feature/BRANCH` stages an engine-only draft PR after consent. Distinguish draft scene vs Projects card/game mode; no self-authorized OAuth grant, arbitrary model-generated engine code, direct production branch/DEPLOY_REQUEST mutation, §E deploy or false live gameplay claim. Chat UI adds an §E editor/engine tool button; Chat source 1.1.11. Durable next capability ladder added to `docs/engineering/SWRLZ_ENGINE_AGENT_V214_BUILD_LADDER.md` and linked from root `§tart_§E.md`; these are **documentation-only main mutations**, not an engine build/deploy.
+
+**Exact integrated CI:** [GitHub/account #38201458286](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38201458286), [HF candidate offline #38201487551](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38201487551), [mobile integrity #38201487572](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38201487572) all **SUCCESS** at pinned source `344d2e47a678c05e05c319ed716028a99b524604`. CI covers synthetic source mapping, scene scaffold, owner scope/approval/replay, stale main/branch and PR diff; no actual OAuth user run/engine gameplay tested.
+
+**Guarded Chat publication:** Canonical `main:.deploy/HF_SPACE_REQUEST.txt` nonce `2026-10-11-v214-forge-engine-editor-starter-agent-001`, request commit `3846c9d1ac52dc9ab950892bd35851cd48c2840b`; [HF Actions #38201554915](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38201554915) terminal **SUCCESS**. Existing `kamiloki/Swyrlz` new Space revision `dd1f94c96e39327f5e58b04ae806d274bd7a1ae4`, rollback revision `c88edf6c652d27831b43120ee80648cfd54bf8e4`. Release artifact `hf-release-checkpoint` ID `11725987150`, rollback artifact `hf-rollback-checkpoint` ID `11725927233`. Receipt `DEPLOYED_UNVERIFIED`, not known-good. Dedicated `kamiloki/swrlz-forge-moba` Space/60-patch engine were **not** deployed or altered.
+
+**Atomic registered versions:** `runtime@4216f510b83be2523102ce65f567cff37c510c24`: Repository Work **1.0.157**, Server Runtime **2.3.369**, Web Chat **1.5.107**, LALM Engine/Station **2.1.193**; Google Account **1.0.15 unchanged**. Other modules/registry unchanged. Independent readback verified.
+
+**Full report:** [reports/V214_FORGE_ENGINE_GITHUB_AGENT_RELEASE_2026-10-11.md](reports/V214_FORGE_ENGINE_GITHUB_AGENT_RELEASE_2026-10-11.md).
+
+**Next engineering tier:** Safe multi-file engine/editor patch workbench with reviewed diff, deterministic manifest re-sealing, actual native editor/game mode registration, build/CI/Playwright desktop-phone repair loop and separate guarded §E release. This is future work, NOT claimed as v214 finished.
+
+**Status:** FINISHED — VERIFIED TOOL SOURCE/CI/CHAT DEPLOY/REGISTRY. SIGNED-IN OWNER AND REAL §E PROJECT ACCEPTANCE PENDING.
+
 ## UPDATE FINISHED — 2026-10-11 — v213 GitHub project development, source evidence, reviewed edits and governed release
 
 **Outcome:** EXACT SOURCE/GOOGLE-GITHUB REGRESSIONS/HF OFFLINE/MOBILE CI **SUCCESS** / EXISTING SPACE GUARDED PUBLICATION **SUCCESS** / RUNTIME VERSION ATOMIC READBACK **SUCCESS** / LIVE SIGNED-IN OWNER AND REAL GITHUB WRITE ACCEPTANCE **PENDING**.
