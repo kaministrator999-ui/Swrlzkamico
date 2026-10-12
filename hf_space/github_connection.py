@@ -1148,6 +1148,88 @@ def _github_command(user, prompt):
     return "Supported: @GitHub permissions, files, read file, issues, pulls, commits, create issue, create branch."
 
 
+
+# Thread-aware GitHub continuity is derived from verified read results,
+# never a model assertion or user-provided account identity.
+def _read_context_from_result(user, prompt, result):
+    body = str(result or "")
+    if not (body.startswith("## GitHub directory: ") or body.startswith("## GitHub file: ")
+            or body.startswith("## GitHub repository statistics") or body.startswith("## GitHub file matches")):
+        return None
+    try:
+        cfg = _config()
+        record = _load(cfg, user)
+        if not record:
+            return None
+        repo = _repo_name(record.get("repo"))
+        auth = _effective_access(record, repo, "read")
+        if not auth.get("allowed"):
+            return None
+        branch = auth["defaultBranch"]
+        commit = _api(record["token"], "/repos/" + repo + "/commits/" + quote(branch, safe=""))
+        sha = str(commit.get("sha") or "") if isinstance(commit, dict) else ""
+        if not _FILE_SHA.fullmatch(sha):
+            return None
+        directory = ""
+        file_path = ""
+        match = re.match(r"^## GitHub directory: (.*)", body)
+        if match:
+            directory = match[1].strip().strip("/")
+        match = re.match(r"^## GitHub file: ([^\n]+)", body)
+        if match:
+            file_path = match[1].strip()
+            directory = file_path.rpartition("/")[0]
+        match = re.search(r"^Scope: (.*?)(?: \(recursive\))?$", body, re.M)
+        if match:
+            directory = match[1].strip().strip("/")
+        try:
+            if directory:
+                explorer.safe_path(directory, allow_root=False)
+            if file_path:
+                explorer.safe_path(file_path, allow_root=False)
+        except explorer.ExplorerError:
+            return None
+        return {"repo": repo, "branch": branch, "sourceSha": sha,
+                "directory": directory, "lastFile": file_path,
+                "kind": "file" if file_path else "directory",
+                "capturedAt": int(time.time())}
+    except (HTTPException, ValueError, KeyError):
+        return None
+
+
+def _implicit_repo_command(prompt, context):
+    """Narrow thread-local follow-ups. Never guess global chat intent."""
+    if not isinstance(context, dict) or not _REPO.fullmatch(str(context.get("repo") or "")):
+        return None
+    q = re.sub(r"\s+", " ", str(prompt or "").strip()).lower().rstrip("?.!")
+    if len(q) > 180 or not q or q.startswith("@") or re.search(
+            r"\b(?:create|edit|delete|remove|push|commit|merge|deploy|modify|write|trigger|dispatch|run)\b", q):
+        return None
+    directory = str(context.get("directory") or "")
+    last_file = str(context.get("lastFile") or "")
+    scope = (" " + directory) if directory else ""
+    if re.fullmatch(r"(?:and )?(?:how many|what(?:'s| is) the number of)\s+(?:total )?(?:files?|folders?|directories|dirs?|items?)(?: (?:are )?(?:there|in (?:here|this (?:folder|directory|repo|repository))))?", q):
+        return "@GitHub stats" + scope
+    if re.fullmatch(r"(?:and )?(?:dirs?|directories|folders?|files?)", q):
+        return "@GitHub stats" + scope
+    if re.fullmatch(r"(?:list|show|browse|open)\s+(?:the )?(?:files|folders|directory|contents)(?: (?:here|in (?:here|this (?:directory|folder|repo|repository))))?",q):
+        return "@GitHub files" + scope
+    if re.fullmatch(r"(?:show|list|what are)\s+(?:the )?(?:largest|biggest)(?: \d{1,2})? (?:files|items)(?: (?:in|here).*)?", q):
+        return "@GitHub largest" + scope
+    if re.fullmatch(r"(?:when was|when did|what is)\s+(?:that|the|this) (?:file|source)(?: (?:last )?(?:changed|modified|created|added))?",q) and last_file:
+        return "@GitHub history " + last_file
+    if re.fullmatch(r"(?:read|open|show)(?: me)? (?:that|this|the previous|the last) file",q) and last_file:
+        return "@GitHub read file " + last_file
+    filetype = re.fullmatch(r"(?:show|find|list|which|how many)\s+(?:the |all )?([a-z0-9+#.-]{2,24}) files(?: (?:here|in (?:this directory|the repo)))?",q)
+    if filetype:
+        suffix = filetype[1]
+        return "@GitHub search " + (suffix if suffix.startswith(".") else "."+suffix)
+    term = re.fullmatch(r"(?:where (?:is|are)|find|which files? (?:handle|contain|implement))\s+(?:the )?([a-z0-9_. -]{2,60})(?: (?:files?|code|implementation))?",q)
+    if term:
+        return "@GitHub search " + term[1].strip().replace(" ", "-")
+    return None
+
+
 def command_events(data):
     yield {"type": "STATUS", "phase": "GITHUB_ACTION", "reason": "Verifying requested GitHub capability"}
     try:
@@ -1156,6 +1238,9 @@ def command_events(data):
         report = "GitHub action unavailable (" + str(exc.status_code) + "): " + str(exc.detail) + ". No write success assumed."
     except Exception:
         report = "GitHub action verification or execution failed. No write success assumed."
+    context = _read_context_from_result(str(data.get("userId") or ""), str(data.get("prompt") or ""), report)
+    if context:
+        yield {"type": "GITHUB_CONTEXT", "context": context}
     yield {"type": "DELTA", "text": report}
     yield {"type": "COMPLETED", "phase": "COMPLETE"}
 
@@ -1324,6 +1409,10 @@ def agent_events(data, model_generator=None):
     """Station-facing tool events: observed progress, no secret or raw reasoning."""
     user = str(data.get("userId") or "")
     prompt = str(data.get("prompt") or "").strip()
+    followup = _implicit_repo_command(prompt, data.get("githubContext")) if GITHUB_CAPABILITY_STAGE=="read-repository" else None
+    if followup:
+        prompt = followup
+        data = {**data, "prompt": prompt}
     exact = is_github_command(prompt)
     # The sole Stage-1 runtime entrypoint: no legacy read/workflow/engine agent
     # can execute by bypassing the explicit list/read allowlist below.
