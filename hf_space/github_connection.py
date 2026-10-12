@@ -18,6 +18,7 @@ from urllib.parse import quote, urlencode, urlparse
 import requests
 import sys
 import github_workflows_v212
+import forge_project_tools_v213
 from cryptography.fernet import Fernet, InvalidToken
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import JSONResponse, RedirectResponse
@@ -627,7 +628,7 @@ def _post_github(token, path, body):
 def is_github_command(prompt):
     # Only anchored user commands. An ordinary discussion about GitHub
     # must not perform any repository operation.
-    if github_workflows_v212.is_command(prompt):
+    if github_workflows_v212.is_command(prompt) or forge_project_tools_v213.is_command(prompt):
         return True
     return bool(re.match(
         r"^@github\s+(help(?:\s|$)|permissions|capabilities|branches(?:\s|$)|files(?:\s|$)|read file\s+|issues(?:\s|$)|pulls(?:\s|$)|commits(?:\s|$)|create issue\s+|create branch\s+|confirm\s+)",
@@ -661,6 +662,8 @@ def _github_command(user, prompt):
         kind = action.get("kind")
         if kind in ("workflow-file", "workflow-dispatch", "workflow-pr", "workflow-retry"):
             return github_workflows_v212.confirm(sys.modules[__name__], c, rec, user, repo, action)
+        if kind in ("engine-scene-draft", "engine-review-pr"):
+            return forge_project_tools_v213.confirm(sys.modules[__name__], c, rec, user, repo, action)
         preflight = _effective_access(rec, repo, "issue-write" if kind == "issue" else "branch-write")
         if not preflight["allowed"]:
             return _permission_message(preflight)
@@ -681,6 +684,8 @@ def _github_command(user, prompt):
 
     if github_workflows_v212.is_command(prompt):
         return github_workflows_v212.execute(sys.modules[__name__], user, prompt)
+    if forge_project_tools_v213.is_command(prompt):
+        return forge_project_tools_v213.execute(sys.modules[__name__], user, prompt)
 
     operation = ("issue-write" if lower.startswith("create issue ") else
                  "branch-write" if lower.startswith("create branch ") else "read")
@@ -701,7 +706,10 @@ def _github_command(user, prompt):
                 "@GitHub workflows, @GitHub workflow runs, @GitHub workflow inspect name.yml, "
                 "@GitHub run status ID, @GitHub workflow create python-check as check.yml on feature/my-checks, "
                 "@GitHub workflow dispatch name.yml on main, @GitHub workflow pr feature/checks into main, "
-                "@GitHub run retry RUN_ID. "
+                "@GitHub run retry RUN_ID, @GitHub engine help, @GitHub engine status, "
+                "@GitHub engine starters, @GitHub engine plan GOAL, "
+                "@GitHub engine clone sheep-tag-meadow as arena-draft on feature/arena, "
+                "@GitHub engine review feature/arena. "
                 "Workflow creation needs separate GitHub workflow OAuth scope; writes require a fresh preflight and explicit confirmation.")
     if lower in ("workflows", "workflow list", "workflow runs", "workflow guide") or lower.startswith(("workflow inspect ", "run status ")):
         return github_workflows_v212.execute(sys.modules[__name__], user, "@GitHub " + cmd)
@@ -808,7 +816,7 @@ def command_events(data):
 
 
 # v211 GitHub model-planned READ tools, with observable lifecycle and no raw thought exposure.
-_AGENT_TOOLS = ("permissions", "files", "branches", "issues", "pulls", "commits", "workflows", "workflow runs", "workflow guide")
+_AGENT_TOOLS = ("permissions", "files", "branches", "issues", "pulls", "commits", "workflows", "workflow runs", "workflow guide", "engine status", "engine starters")
 
 
 def is_github_conversation(prompt):
@@ -854,6 +862,8 @@ def _agent_fallback_plan(prompt):
         (r"\bbranches?\b", "branches"),
         (r"\bcommits?\b", "commits"),
         (r"\b(workflows?|actions)\b", "workflows"),
+        (r"\b(?:§e|game engine|forge engine)\b", "engine status"),
+        (r"\b(?:starter pack|starter scenes?)\b", "engine starters"),
         (r"\b(teach|learn|guide|how|setup|set up|templates?)\b", "workflow guide"),
         (r"\b(runs?|jobs?|failures?)\b", "workflow runs"),
         (r"\b(files?|folders?|directories|directory)\b", "files"),
@@ -871,7 +881,7 @@ def _agent_model_plan_events(prompt, generator):
     instruction = (
         "Choose 1 to 3 read-only GitHub checks relevant to this request. "
         "Return ONLY JSON, e.g. {\"tools\":[\"permissions\",\"pulls\"]}. "
-        "Valid tools: permissions, files, branches, issues, pulls, commits, workflows, workflow runs, workflow guide. "
+        "Valid tools: permissions, files, branches, issues, pulls, commits, workflows, workflow runs, workflow guide, engine status, engine starters. "
         "Specific files PATH or read file PATH permitted only when PATH is in the user request. "
         "Do not propose writes, URL fetches, authorization changes or other commands. "
         "No chain-of-thought. User request: " + str(prompt)[:900]
@@ -946,6 +956,9 @@ def agent_events(data, model_generator=None):
         return
     if github_workflows_v212.is_command(prompt) and not re.match(r"^@github\s+confirm\s+", prompt, re.I):
         yield from github_workflows_v212.events(sys.modules[__name__], data)
+        return
+    if forge_project_tools_v213.is_command(prompt) or forge_project_tools_v213.is_conversation(prompt):
+        yield from forge_project_tools_v213.events(sys.modules[__name__], data)
         return
     if not (exact or is_github_conversation(prompt)):
         return
