@@ -22,8 +22,8 @@ _SHA = re.compile(r"^[a-f0-9]{40}$")
 _PROTECTED = re.compile(r"(?:deploy|publish|release|production|rollback|delete|secret|token|credential|destroy|billing|manual-hf|hf-space-request|promote|infra)", re.I)
 _LIMIT = 600
 COMMAND = re.compile(
-    r"^@github\s+(?:workflows(?:\s|$)|workflow\s+(?:guide|runs|inspect|create|dispatch)(?:\s|$)|"
-    r"run\s+status\s+[0-9]+(?:\s|$)|confirm\s+)", re.I
+    r"^@github\s+(?:workflows(?:\s|$)|workflow\s+(?:guide|runs|inspect|create|dispatch|pr)(?:\s|$)|"
+    r"run\s+(?:status|retry)\s+[0-9]+(?:\s|$)|confirm\s+)", re.I
 )
 
 _TEMPLATES = {
@@ -161,7 +161,7 @@ def _write_request(token, method, url, body):
         result = requests.request(method, url, headers=headers, json=body, timeout=18)
         if result.status_code in (401, 403, 404, 409, 422):
             raise HTTPException(result.status_code, "GitHub rejected workflow change or dispatch; no success confirmed")
-        if result.status_code not in ((200, 201) if method == "PUT" else (200, 204)):
+        if result.status_code not in ((200, 201) if method == "PUT" else (200, 201, 202, 204)):
             raise HTTPException(502, "GitHub did not return a confirmed workflow response")
         if result.status_code == 204:
             return {"accepted": True, "workflowRunId": None}
@@ -253,6 +253,7 @@ def _read(gh, rec, repo, command):
             "7. §wyrlz templates: python-check, node-check, repo-audit. Commands:\n"
             "   @GitHub workflow create python-check as syntax-check.yml on feature/my-checks\n"
             "   @GitHub workflow dispatch syntax-check.yml on main\n"
+            "   @GitHub workflow pr feature/my-checks into main; @GitHub run retry 123456\n"
             "   @GitHub workflow runs; @GitHub run status 123456\n"
             "   Proposals require @GitHub confirm CODE; no silent OAuth upgrade, production deploy or merge.")
     raise HTTPException(422, "Unsupported read-only GitHub workflow command")
@@ -279,6 +280,8 @@ def _parse_dispatch_inputs(raw):
 
 def _propose(gh, c, rec, user, repo, cmd):
     created = re.fullmatch(r"workflow create (python-check|node-check|repo-audit) as (\S+) on (\S+)", cmd)
+    pull = re.fullmatch(r"workflow pr (\S+) into (\S+)", cmd)
+    retry = re.fullmatch(r"run retry ([1-9][0-9]{0,14})", cmd)
     dispatched = re.fullmatch(r"workflow dispatch (\S+) on (\S+)(?: with (.+))?", cmd)
     if created:
         template, name, branch = created.groups()
@@ -300,6 +303,40 @@ def _propose(gh, c, rec, user, repo, cmd):
                 chr(96)*3 + "yaml\n" + preview + chr(96)*3 +
                 "\nTo create on that branch within 10 minutes, send @GitHub confirm " + code +
                 ". Otherwise nothing changes.")
+    if pull:
+        source, target = pull.groups()
+        source = _safe_ref(source, authoring=True)
+        target = _safe_ref(target)
+        access = gh._effective_access(rec, repo, "branch-write")
+        if not access["allowed"]:
+            return gh._permission_message(access)
+        if target != access["defaultBranch"] or source == target:
+            return "Workflow review PRs may target only the repository default branch, never an automatic merge."
+        sha = _branch_sha(gh, rec["token"], repo, source)
+        directory = _github_get(gh, rec["token"], repo, "/contents/.github/workflows?ref=" + quote(source, safe=""))
+        if not isinstance(directory, list) or not any(str(item.get("path") or "").startswith(".github/workflows/") for item in directory if isinstance(item, dict)):
+            return "No workflow directory found on proposed source branch; cannot verify a review target."
+        code = _store(gh, c, user, repo, {"kind":"workflow-pr", "branch":source, "base":target, "branchSha":sha})
+        return ("**Draft workflow PR proposal — NOT created**\nRepository: " + repo +
+                "\nHead: " + source + " @" + sha[:12] + "\nBase: " + target +
+                "\nReview the diff and GitHub Actions security before merging. " +
+                "A pull request does not merge or run workflow YAML automatically.\n" +
+                "Explicitly send @GitHub confirm " + code + " within 10 minutes.")
+    if retry:
+        ident = retry.group(1)
+        access = gh._effective_access(rec, repo, "workflow-dispatch")
+        if not access["allowed"]:
+            return gh._permission_message(access)
+        run = _github_get(gh, rec["token"], repo, "/actions/runs/" + ident)
+        if not isinstance(run, dict) or str(run.get("id") or "") != ident or run.get("status") != "completed" or run.get("conclusion") != "failure":
+            return "The run is not a verified completed failure; nothing scheduled."
+        if _PROTECTED.search(str(run.get("name") or "")) or _PROTECTED.search(str(run.get("path") or "")):
+            return "Protected production workflow retry remains under its own release gate."
+        code = _store(gh, c, user, repo, {"kind":"workflow-retry", "runId":ident, "runName":str(run.get("name") or "")[:120]})
+        return ("**Retry failed Actions jobs proposal — NOT executed**\nRepository: " + repo +
+                "\nRun: #" + ident + " · " + gh._safe_fragment(run.get("name"), 110) +
+                "\nOnly previously failed jobs are eligible. Runtime/billing may be affected.\n" +
+                "Explicitly send @GitHub confirm " + code + " within 10 minutes.")
     if dispatched:
         name, ref, input_text = dispatched.groups()
         name = _safe_workflow(name)
@@ -339,18 +376,52 @@ def _propose(gh, c, rec, user, repo, cmd):
 def confirm(gh, c, rec, user, repo, pending):
     """One-use proposal is already consumed & account/repo verified by v210."""
     kind = pending.get("kind")
-    if kind not in ("workflow-file", "workflow-dispatch"):
+    if kind not in ("workflow-file", "workflow-dispatch", "workflow-pr", "workflow-retry"):
         return "Unrecognized workflow proposal; nothing changed."
-    op = "workflow-create" if kind == "workflow-file" else "workflow-dispatch"
+    op = ("workflow-create" if kind == "workflow-file" else
+          "branch-write" if kind == "workflow-pr" else "workflow-dispatch")
     permission = gh._effective_access(rec, repo, op)
     if not permission["allowed"]:
         return gh._permission_message(permission)
-    branch = _safe_ref(pending.get("branch"), authoring=kind == "workflow-file")
+    if kind == "workflow-retry":
+        ident = str(pending.get("runId") or "")
+        if not _RUN.fullmatch(ident):
+            return "Invalid retry proposal; no request sent."
+        info = _github_get(gh, rec["token"], repo, "/actions/runs/" + ident)
+        if (not isinstance(info, dict) or str(info.get("id") or "") != ident
+                or info.get("status") != "completed" or info.get("conclusion") != "failure"
+                or str(info.get("name") or "")[:120] != pending.get("runName")
+                or _PROTECTED.search(str(info.get("name") or ""))):
+            return "Run state or identity changed; no retry submitted."
+        receipt = _write_request(rec["token"], "POST",
+                    gh.GITHUB_API + "/repos/" + repo + "/actions/runs/" + ident + "/rerun-failed-jobs", {})
+        return ("GitHub accepted a retry request for failed jobs of run #" + ident +
+                ". This is NOT a completed run. Inspect @GitHub run status " + ident +
+                " for actual status. https://github.com/" + repo + "/actions/runs/" + ident)
+    branch = _safe_ref(pending.get("branch"), authoring=kind in ("workflow-file","workflow-pr"))
     head = _branch_sha(gh, rec["token"], repo, branch)
     initial_sha = str(pending.get("baseSha") or pending.get("branchSha") or "")
     if head != initial_sha:
         return "Branch moved since proposal; no write or dispatch attempted. Create a fresh proposal."
     name = _safe_workflow(pending.get("name"))
+    if kind == "workflow-pr":
+        base = _safe_ref(pending.get("base"))
+        if base != permission["defaultBranch"]:
+            return "PR base changed; proposal expired without a change."
+        directory = _github_get(gh, rec["token"], repo, "/contents/.github/workflows?ref=" + quote(branch, safe=""))
+        if not isinstance(directory, list):
+            return "Cannot reverify workflow files; no PR created."
+        receipt = _write_request(rec["token"], "POST",
+                    gh.GITHUB_API + "/repos/" + repo + "/pulls", {
+                        "title":"Review GitHub Actions workflow changes from " + branch,
+                        "head":branch, "base":base, "draft":True,
+                        "body":"Review workflow YAML, permission scopes, manual triggers and any security implications before merge. Created through explicit §wyrlz owner confirmation."
+                    })
+        number = receipt.get("number")
+        url = str(receipt.get("html_url") or "")
+        if not isinstance(number,int) or not url.startswith("https://github.com/" + repo + "/pull/"):
+            return "GitHub PR response unverified; inspect repository before retrying."
+        return "GitHub confirmed DRAFT PR #" + str(number) + ": " + url + ". NOT merged; no workflow dispatched."
     if kind == "workflow-file":
         template = pending.get("template")
         if template not in _TEMPLATES or _already_exists(gh, rec["token"], repo, _workflow_path(name), branch):
@@ -403,7 +474,7 @@ def execute(gh, user, prompt):
         return "GitHub is not connected. Explicitly authorize it in Chat Settings; §wyrlz cannot obtain access silently."
     repo = gh._repo_name(rec.get("repo"))
     cmd = re.sub(r"^@github\s+", "", str(prompt).strip(), flags=re.I).strip()
-    if cmd.startswith("workflow create ") or cmd.startswith("workflow dispatch "):
+    if cmd.startswith(("workflow create ", "workflow dispatch ", "workflow pr ", "run retry ")):
         return _propose(gh, c, rec, user, repo, cmd)
     access = gh._effective_access(rec, repo, "read")
     if not access["allowed"]:
@@ -414,7 +485,8 @@ def execute(gh, user, prompt):
 def events(gh, data):
     prompt = str(data.get("prompt") or "")
     action = ("workflow-create" if "workflow create " in prompt.lower() else
-              "workflow-dispatch" if "workflow dispatch " in prompt.lower() else "read")
+              "workflow-dispatch" if "workflow dispatch " in prompt.lower() or "run retry " in prompt.lower() else
+              "branch-write" if "workflow pr " in prompt.lower() else "read")
     yield {"type": "STATUS", "phase": "GITHUB_WORKFLOW_PERMISSION_CHECK",
            "reason": "Checking actual GitHub " + action + " access.", "categories": ["GITHUB", "WORKFLOW", "PERMISSION"]}
     try:
