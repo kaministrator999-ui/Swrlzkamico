@@ -195,8 +195,8 @@ try{
     const controlled=s.units.find(u=>u.id===s.controlledId),moveSite={x:controlled.pos[0],z:controlled.pos[2]-6};
     await tap(page,'stSelectMine');await worldTap(page,moveSite.x,moveSite.z);
     s=await until(page,s=>distance(s.units.find(u=>u.id===s.controlledId).pos,[moveSite.x,0,moveSite.z])<.6,'Visible canvas move');
+    await tap(page,'stBuildIncome');assert.equal(await page.locator('#stBuildIncome').getAttribute('aria-pressed'),'true');await frames(page,1);
     const site=await visibleBuildSite(page,'st-income'),beforeBuild=await state(page);
-    await tap(page,'stBuildIncome');assert.equal(await page.locator('#stBuildIncome').getAttribute('aria-pressed'),'true');
     await worldTap(page,site.x,site.z);
     let constructing=await until(page,s=>s.buildings.some(b=>b.owner===s.controlledId&&b.kind==='st-income'),'Visible construction order',200);
     const income=constructing.buildings.find(b=>b.owner===constructing.controlledId&&b.kind==='st-income');
@@ -227,8 +227,9 @@ try{
     assert.ok(!s.buildings.some(b=>b.id===income.id),'Visible Sell did not clear the selected owned farm');
     close(s.gold-beforeSell.gold,55,'Upgraded income farm sell refund');
     await tap(page,'stSelectMine');
+    await tap(page,'stBuildFarm');await frames(page,1);
     const freeSite=await visibleBuildSite(page,'st-farm'),beforeFree=await state(page);
-    await tap(page,'stBuildFarm');await worldTap(page,freeSite.x,freeSite.z);
+    await worldTap(page,freeSite.x,freeSite.z);
     s=await until(page,s=>s.buildings.some(b=>b.owner===s.controlledId&&b.kind==='st-farm'),'Visible free farm construction',150);
     assert.ok(s.gold>=beforeFree.gold,'Free blocking farm incorrectly spent the sheep’s gold');
     const freeFarm=s.buildings.find(b=>b.owner===s.controlledId&&b.kind==='st-farm');
