@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=2873e1a161d0a79b0156e22fbbda3b02a4f2a451
-REQUEST_NONCE=2026-10-12-v224-nested-github-directory-parser-001
+SOURCE_REF=c367946cd00c7630d397174a136c383dbcfb6c9c
+REQUEST_NONCE=2026-10-12-v225-directory-first-sort-all-modes-001
