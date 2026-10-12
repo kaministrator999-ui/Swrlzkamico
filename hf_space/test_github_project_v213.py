@@ -112,7 +112,7 @@ def test_command_and_path_guards():
         assert gh.is_github_command(cmd)
     assert not gp.is_command("Please delete the repo")
     for value in ("../oops.py",".deploy/HF_SPACE_REQUEST.txt",".github/workflows/ci.yml",
-                  "versions/server-runtime.txt","src/secret.json","VERSION.txt","src/a.png",
+                  "versions/server-runtime.txt","src/secret.json","src/.env.production","VERSION.txt","src/a.png",
                   "src/../module.py"):
         try:gp._path(value,editing=True)
         except HTTPException:pass
@@ -196,6 +196,23 @@ def test_protected_diff_never_generates_pr():
         assert "protected paths" in got
 
 
+def test_compare_rest_path_is_precisely_allowed():
+    class Response:
+        status_code=200
+        def raise_for_status(self):return None
+        def json(self):return {"files":[]}
+    with mock.patch.object(gh.requests,"get",return_value=Response()) as get:
+        checked=gh._api("mock-token","/repos/team/app/compare/main...feature%2Ftest?per_page=30")
+        assert checked["files"] == []
+        assert "/compare/main...feature%2Ftest" in get.call_args.args[0]
+        try:
+            gh._api("mock-token","/repos/team/app/contents/../../other")
+        except ValueError:
+            pass
+        else:
+            raise AssertionError("Unsafe traversal passed GitHub URL boundary")
+
+
 def test_project_progress_and_model_read_ownership():
     with mock.patch.object(gh,"_config",return_value={}),\
          mock.patch.object(gh,"_load",return_value=REC),\
@@ -207,6 +224,14 @@ def test_project_progress_and_model_read_ownership():
     assert gh._agent_allowed_tool("overview","show my repo overview")=="overview"
     assert gh._agent_allowed_tool("tree","show my repo map")=="tree"
     assert gh._agent_allowed_tool("edit file src/demo.py","edit my repo file") is None
+    assert gh._agent_allowed_tool("pr review 7","Review PR #7 in my repo") == "pr review 7"
+    assert gh._agent_allowed_tool("issue inspect 8","Inspect issue #8 in my repo") == "issue inspect 8"
+    assert gh._agent_allowed_tool("checks "+FEATURE,"Check CI "+FEATURE+" in my repo") == "checks "+FEATURE
+    assert gh._agent_allowed_tool("code search greet","Find code greet in my repo") == "code search greet"
+    assert gh._agent_allowed_tool("file history src/demo.py","Show history of src/demo.py in my repo") == "file history src/demo.py"
+    assert gh._agent_allowed_tool("compare main...feature/test","Compare main with feature/test in my repo") == "compare main...feature/test"
+    assert gh._agent_allowed_tool("pr review 99","Review PR #7 in my repo") is None
+    assert gh._agent_allowed_tool("code search secret","Find code greet in my repo") is None
     assert "server-only-token" not in str(events)
     root=Path(__file__).parent.parent
     station=(root/"hf_space/station.py").read_text()
@@ -221,5 +246,6 @@ if __name__=="__main__":
     test_branch_staleness_and_repo_role_guard()
     test_draft_pr_confirmation_and_no_merge()
     test_protected_diff_never_generates_pr()
+    test_compare_rest_path_is_precisely_allowed()
     test_project_progress_and_model_read_ownership()
     print("v213 GitHub project evidence and confirmed edit tests passed")
