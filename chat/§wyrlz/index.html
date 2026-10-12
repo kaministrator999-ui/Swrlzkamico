@@ -539,6 +539,7 @@
     .side-menu .version-box{margin-top:12px;flex:0 0 auto}
   </style>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="/chat/§wyrlz/assets/github-explorer-v223.js"></script>
 </head>
 <body>
   <header class="top-edge" id="topEdge" data-component="top-edge" data-state="ready" aria-label="Chat status">
@@ -1373,67 +1374,17 @@
 
         // v223: treat only exact, bounded directory listings as explorer data.
         // No HTML from GitHub or the model is interpreted as markup.
-        const appendRepositoryExplorer=value=>{
-          const raw=String(value||"").trim();
-          const lines=raw.split("\n");
-          const title=lines[0]?.match(/^(?:##\s*)?GitHub directory:\s*(\/[^\n]*)$/);
-          if(!title||lines.length>3000)return false;
-          const entries=[];
-          for(const line of lines.slice(1)){
-            if(!line.trim())continue;
-            const m=line.match(/^\s*[-*•]\s*(dir|file)\s+(.+?)\s*$/i);
-            if(!m){if(/^\(First \d+ entries\.\)$/.test(line.trim()))continue;return false;}
-            const name=m[2].trim().replace(/^\/+/, "");
-            if(!name||name.length>260||/[<>]/.test(name))return false;
-            entries.push({type:m[1].toLowerCase(),name});
-          }
-          if(!entries.length)return false;
-          const card=document.createElement("section");card.className="repo-explorer";
-          card.setAttribute("aria-label","GitHub repository directory");
-          const header=document.createElement("div");header.className="repo-explorer-header";
-          const heading=document.createElement("strong");heading.className="repo-explorer-title";heading.textContent="📁 GitHub · "+title[1];
-          const fullscreen=document.createElement("button");fullscreen.type="button";fullscreen.textContent="⛶ Full screen";
-          fullscreen.onclick=()=>{card.classList.toggle("fullscreen");fullscreen.textContent=card.classList.contains("fullscreen")?"Close full screen":"⛶ Full screen";};
-          header.append(heading,fullscreen);
-          const folders=entries.filter(x=>x.type==="dir").length;
-          const meta=document.createElement("div");meta.className="repo-explorer-meta";
-          meta.textContent=entries.length+" displayed entries · "+folders+" folders · "+(entries.length-folders)+" files · current directory only"+(raw.includes("(First 60 entries.)")?" · partial listing":"");
-          const controls=document.createElement("div");controls.className="repo-explorer-controls";
-          const sort=document.createElement("select");sort.setAttribute("aria-label","Sort repository entries");
-          [["name","Name A–Z"],["name-desc","Name Z–A"],["type","Type"]].forEach(([v,t])=>sort.add(new Option(t,v)));
-          const filter=document.createElement("select");filter.setAttribute("aria-label","Filter repository entries");
-          [["all","All items"],["file","Files"],["dir","Folders"]].forEach(([v,t])=>filter.add(new Option(t,v)));
-          const toggle=document.createElement("button");toggle.type="button";toggle.textContent="Expand";
-          toggle.onclick=()=>{card.classList.toggle("expanded");toggle.textContent=card.classList.contains("expanded")?"Collapse":"Expand";};
-          controls.append(sort,filter,toggle);
-          const list=document.createElement("div");list.className="repo-explorer-list";list.tabIndex=0;
-          const render=()=>{
-            list.replaceChildren();
-            const rows=entries.filter(x=>filter.value==="all"||x.type===filter.value).sort((a,b)=>sort.value==="type"?(a.type.localeCompare(b.type)||a.name.localeCompare(b.name)):sort.value==="name-desc"?b.name.localeCompare(a.name):a.name.localeCompare(b.name));
-            for(const item of rows){
-              const row=document.createElement("div");row.className="repo-explorer-entry";
-              const name=document.createElement("span");name.textContent=(item.type==="dir"?"📁 ":"📄 ")+item.name;
-              const copy=document.createElement("button");copy.type="button";copy.textContent="Copy path";
-              copy.setAttribute("aria-label","Copy "+item.name+" path");
-              copy.onclick=async()=>{try{await navigator.clipboard.writeText((title[1]==="/"? "":title[1].replace(/^\/|\/$/g,"")+"/")+item.name);copy.textContent="Copied";}catch(_){copy.textContent="Unavailable";}};
-              const open=document.createElement("button");open.type="button";open.textContent=item.type==="dir"?"Browse":"Read";
-              open.onclick=()=>{
-                const path=item.name;
-                const query=item.type==="dir"?"@GitHub files "+path:"@GitHub read file "+path;
-                const field=document.querySelector('textarea, [contenteditable="true"]');
-                if(field&&field.tagName==="TEXTAREA"){field.value=query;field.dispatchEvent(new Event("input",{bubbles:true}));field.focus();}
-                else if(field&&field.isContentEditable){field.textContent=query;field.dispatchEvent(new Event("input",{bubbles:true}));field.focus();}
-                else navigator.clipboard?.writeText(query).catch(()=>{});
-              };
-              row.append(name,open,copy);list.appendChild(row);
-            }
-            if(!rows.length){const empty=document.createElement("div");empty.className="repo-explorer-empty";empty.textContent="No matching entries";list.appendChild(empty);}
-          };
-          sort.onchange=render;filter.onchange=render;render();
-          const note=document.createElement("div");note.className="repo-explorer-meta";note.textContent="Size and commit dates require verified GitHub metadata; not inferred from filenames.";
-          card.append(header,meta,controls,list,note);container.appendChild(card);
-          return true;
-        };
+        const appendRepositoryExplorer=value=>window.SwrlzGitHubExplorerV223?.render(container,value,{
+          messageId,
+          accountId:()=>chatAccountUser?.id||"",
+          threadId:()=>activeThreadId||"",
+          preparePrompt:text=>{
+            prompt.value=String(text||"");
+            prompt.dispatchEvent(new Event("input",{bubbles:true}));
+            prompt.focus();
+          },
+          contextUpdated:()=>scheduleStationSync()
+        })===true;
         const appendText=value=>{
           if(!value)return;
           if(appendRepositoryExplorer(value))return;
