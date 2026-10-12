@@ -22,6 +22,8 @@ jobs:
       - name: Check exact deploy run and live source with every bundled asset
         env:
           GH_TOKEN: ${{ github.token }}
+          DEPLOY_EVENT_HEAD: ${{ github.event.workflow_run.head_sha }}
+          DEPLOY_EVENT_CONCLUSION: ${{ github.event.workflow_run.conclusion }}
         run: |
           python - <<'PY'
           import hashlib,json,os,re,subprocess,time,urllib.request
@@ -29,14 +31,15 @@ jobs:
           engine='projects/swrlz-forge-moba'
           request=json.loads(Path(engine+'/DEPLOY_REQUEST.json').read_text())
           trigger=subprocess.check_output(['git','log','-1','--format=%H','--',engine+'/DEPLOY_REQUEST.json'],text=True).strip()
-          source_commit=request['sourceCommit']
-          def committed(path):
-              return subprocess.check_output(['git','show',source_commit+':'+engine+'/'+path])
-          manifest=json.loads(committed('source-manifest.json'))
-          expected=request['sourceIntegritySha256']
-          assert manifest['finalSha256']==expected
+          requested_request=request
+          requested_trigger=trigger
+          event=os.environ['GITHUB_EVENT_NAME']
+          assert event in ('pull_request','workflow_dispatch','workflow_run'),'Unsupported hosted audit event'
+          if event=='workflow_run':
+              assert os.environ['DEPLOY_EVENT_HEAD']==requested_trigger,'Deployment event is not the current requested trigger'
+              assert os.environ['DEPLOY_EVENT_CONCLUSION']=='success','The requested deployment event failed; publication audit stays strict'
           repo='kaministrator999-ui/Swrlzkamico'
-          url=f'https://api.github.com/repos/{repo}/actions/workflows/deploy-swrlz-forge-moba.yml/runs?per_page=40'
+          url=f'https://api.github.com/repos/{repo}/actions/workflows/deploy-swrlz-forge-moba.yml/runs?per_page=100'
           headers={'Authorization':'Bearer '+os.environ['GH_TOKEN'],'Accept':'application/vnd.github+json',
                    'X-GitHub-Api-Version':'2022-11-28'}
           def load(url,extra=None):
@@ -52,7 +55,37 @@ jobs:
                         ' CONCLUSION='+str(final['conclusion'])+' URL='+str(final['html_url']),flush=True)
                   if final['status']=='completed':break
               time.sleep(5)
-          assert final and final['status']=='completed' and final['conclusion']=='success','Exact dedicated deployment did not succeed'
+          assert final and final['status']=='completed','Exact dedicated deployment did not finish'
+          requested_run=final
+          audit_scope='current-requested-release'
+          if final['conclusion']!='success':
+              # A recovery PR may verify the still-published predecessor. This
+              # cannot turn a failed deployment's workflow_run audit green.
+              assert event in ('pull_request','workflow_dispatch'),'Exact requested deployment did not succeed'
+              assert final['conclusion'] is not None,'Requested deployment has no terminal conclusion'
+              published=[run for run in runs if run.get('status')=='completed' and run.get('conclusion')=='success'
+                         and run.get('event')=='push' and run.get('head_branch')=='main'
+                         and run.get('head_sha')!=requested_trigger and run.get('created_at','')<final['created_at']]
+              assert published,'No successful predecessor deployment is available to audit'
+              final=max(published,key=lambda run:(run['created_at'],run['id']))
+              trigger=final['head_sha']
+              # Read both the release request and source from the successful
+              # deploy commit; current main metadata is not published authority.
+              request=json.loads(subprocess.check_output(['git','show',trigger+':'+engine+'/DEPLOY_REQUEST.json']))
+              audit_scope='prior-published-release-after-terminal-failure'
+              print('PUBLISHED_RELEASE_FALLBACK FAILED_REQUESTED_DEPLOY_TRIGGER='+requested_trigger+
+                    ' FAILED_RUN='+requested_run['html_url']+' PUBLISHED_DEPLOY_TRIGGER='+trigger+
+                    ' PUBLISHED_RUN='+final['html_url'],flush=True)
+          assert final['conclusion']=='success','Published authority is not a successful dedicated deployment'
+          assert request['target']=='kamiloki/swrlz-forge-moba','Unexpected published Space target'
+          source_commit=request['sourceCommit']
+          def committed(path):
+              return subprocess.check_output(['git','show',source_commit+':'+engine+'/'+path])
+          manifest=json.loads(committed('source-manifest.json'))
+          expected=request['sourceIntegritySha256']
+          assert manifest['finalSha256']==expected
+          print('HOSTED_AUDIT_SCOPE='+audit_scope+' PUBLISHED_VERSION='+request['releaseVersion']+
+                ' PUBLISHED_SOURCE_COMMIT='+source_commit,flush=True)
           root='https://kamiloki-swrlz-forge-moba.static.hf.space/'
           def normalized(payload):
               return re.sub(rb'(?<=<head>)<script>window\.huggingface=\{variables:\{.*?\}\};</script>',b'',payload,count=1)
@@ -91,7 +124,14 @@ jobs:
               print('LIVE_ASSET_OK='+path,flush=True)
           audit={'releaseVersion':request['releaseVersion'],'sourceCommit':source_commit,'deployTrigger':trigger,
                  'deployRun':final['html_url'],'appUrl':root,'sourceBytes':len(html),'sourceSha256':digest,
-                 'assets':receipt['assets'],'result':'exact-source-and-all-assets-match'}
+                 'assets':receipt['assets'],'auditScope':audit_scope,
+                 'requestedRelease':{'releaseVersion':requested_request['releaseVersion'],
+                                     'sourceCommit':requested_request['sourceCommit'],
+                                     'sourceIntegritySha256':requested_request['sourceIntegritySha256'],
+                                     'deployTrigger':requested_trigger,'deployRun':requested_run['html_url'],
+                                     'deployConclusion':requested_run['conclusion']},
+                 'result':('prior-published-source-and-all-assets-match' if audit_scope!='current-requested-release'
+                           else 'exact-source-and-all-assets-match')}
           Path('swyrl-hosted-audit.json').write_text(json.dumps(audit,indent=2)+'\n')
           print('HOSTED_HTML_BYTES='+str(len(html))+' SHA256='+digest)
           print('LIVE_SOURCE_AND_ALL_ASSETS_VERIFIED')
