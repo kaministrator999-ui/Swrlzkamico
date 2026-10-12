@@ -20,6 +20,11 @@ def fake_api(_token,path):
         return [{"type":"file","path":"README.md"},{"type":"dir","path":"src"}]
     if path=="/repos/"+REPO+"/contents/src?ref=main":
         return [{"type":"file","path":"src/app.py"}]
+    if path=="/repos/"+REPO+"/commits/main":
+        return {"sha":"b"*40}
+    if path=="/repos/"+REPO+"/git/trees/"+("b"*40)+"?recursive=1":
+        return {"truncated":False,"tree":[{"type":"blob","mode":"100644","path":"README.md"},
+                                         {"type":"blob","mode":"100644","path":"src/app.py"}]}
     raise AssertionError("Unexpected API call "+path)
 
 def test_stage_one_reading():
@@ -34,7 +39,7 @@ def test_stage_one_reading():
                 "@GitHub engine code task improve editor on feature/name"):
         assert not gh._read_stage_command(cmd),cmd
     def read_file(_token, repo, path, ref, max_bytes=100000):
-        assert (repo,path,ref)==(REPO,"README.md","main")
+        assert (repo,path,ref)==(REPO,"README.md","b"*40)
         return {"body":"# Demo\nHello source.","sha":"a"*40,"url":"https://github.com/example/demo"}
     with mock.patch.object(gh,"_config",return_value={}), \
          mock.patch.object(gh,"_load",return_value=REC), \
@@ -103,9 +108,93 @@ def test_model_and_commands_cannot_bypass_stage():
             assert any("fail closed" in x.get("text","") for x in result)
     assert gh.is_start_request("Read the §tart document and follow the project startup contract")
 
+
+def test_v222_filename_resolution_and_ambiguous_paths():
+    sha="b"*40
+    choices=[
+        {"path":"README.md","type":"blob","mode":"100644"},
+        {"path":"src/app.py","type":"blob","mode":"100644"},
+        {"path":"src/config.py","type":"blob","mode":"100644"},
+        {"path":"docs/config.json","type":"blob","mode":"100644"},
+        {"path":"src/server.toml","type":"blob","mode":"100644"},
+        {"path":"lib/server.toml","type":"blob","mode":"100644"},
+        {"path":"src/.env","type":"blob","mode":"100644"},
+        {"path":"assets/config","type":"tree","mode":"040000"},
+    ]
+    def api(_token,path):
+        if path=="/repos/"+REPO:
+            return {"full_name":REPO,"private":False,"default_branch":"main",
+                    "permissions":{"pull":True}}
+        if path=="/repos/"+REPO+"/commits/main":
+            return {"sha":sha}
+        if path=="/repos/"+REPO+"/git/trees/"+sha+"?recursive=1":
+            return {"tree":choices,"truncated":False}
+        raise AssertionError(path)
+    reads=[]
+    def bounded(_token,repo,path,ref,max_bytes=100000):
+        reads.append((repo,path,ref))
+        return {"body":"exact source for "+path,"sha":"f"*40,
+                "url":"https://github.com/example/demo/blob/"+sha+"/"+path}
+    with mock.patch.object(gh,"_config",return_value={}), \
+         mock.patch.object(gh,"_load",return_value=REC), \
+         mock.patch.object(gh,"_api",side_effect=api), \
+         mock.patch.object(gh,"_read_optional",side_effect=bounded):
+        # Extension isn't required; unique match is read at the verified SHA.
+        result=gh._github_command(USER,"@GitHub read the app file")
+        assert "src/app.py" in result and reads==[(REPO,"src/app.py",sha)],result
+        result=gh._github_command(USER,"@GitHub read file README")
+        assert "README.md" in result
+        result=gh._github_command(USER,"@GitHub read file src/.env")
+        assert "src/.env" in result
+        before=len(reads)
+        response=gh._github_command(USER,"@GitHub read file config")
+        assert "Which one should I read?" in response,response
+        assert "src/config.py" in response and "docs/config.json" in response,response
+        assert len(reads)==before,"Ambiguous file unexpectedly read"
+        response=gh._github_command(USER,"@GitHub read file server.toml")
+        assert "src/server.toml" in response and "lib/server.toml" in response
+        assert len(reads)==before
+        response=gh._github_command(USER,"@GitHub read file src/config")
+        assert "src/config.py" in response and len(reads)==before+1
+        response=gh._github_command(USER,"@GitHub read file docs/config.json")
+        assert "docs/config.json" in response and len(reads)==before+2
+        response=gh._github_command(USER,"@GitHub read file nonexistent")
+        assert "No matching file was found" in response and len(reads)==before+2
+        assert "config" == gh._natural_repo_read_target("Read the config file in our repository")
+        assert gh._natural_repo_read_target("Read the config file") is None
+        result=list(gh.agent_events({"userId":USER,
+                                      "prompt":"Read the config file in our repository"}))
+        assert any("Which one should I read?" in str(e.get("text") or "") for e in result)
+        assert not any(e.get("phase")=="GITHUB_STAGE_LOCKED" for e in result)
+        assert len(reads)==before+2
+        assert gh._read_stage_command("@GitHub read file app")
+        assert gh._read_stage_command("@GitHub open the app file")
+        assert not gh._read_stage_command("@GitHub create file app.py")
+
+
+def test_v222_incomplete_tree_never_auto_selects():
+    sha="b"*40
+    def api(_token,path):
+        if path=="/repos/"+REPO: return {"full_name":REPO,"private":False,
+                                         "default_branch":"main","permissions":{"pull":True}}
+        if path=="/repos/"+REPO+"/commits/main": return {"sha":sha}
+        if path=="/repos/"+REPO+"/git/trees/"+sha+"?recursive=1":
+            return {"tree":[{"path":"src/config.py","type":"blob","mode":"100644"}],
+                    "truncated":True}
+        raise AssertionError(path)
+    with mock.patch.object(gh,"_config",return_value={}), \
+         mock.patch.object(gh,"_load",return_value=REC), \
+         mock.patch.object(gh,"_api",side_effect=api), \
+         mock.patch.object(gh,"_read_optional",side_effect=AssertionError("Truncated-tree read")):
+        result=gh._github_command(USER,"@GitHub read file config")
+        assert "incomplete" in result and "full repository path" in result,result
+
+
 if __name__=="__main__":
     test_stage_one_reading()
     test_locked_writes_even_with_oauth_grants()
     test_oauth_write_and_prior_pending_code()
     test_model_and_commands_cannot_bypass_stage()
+    test_v222_filename_resolution_and_ambiguous_paths()
+    test_v222_incomplete_tree_never_auto_selects()
     print("GitHub Stage 1 repository reading and locked mutation gates PASS")
