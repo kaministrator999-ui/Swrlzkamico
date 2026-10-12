@@ -13,7 +13,8 @@ import engine_starter_pack_v215 as packs
 import github_workflows_v212 as approvals
 
 ROOT=engine.ROOT + "/"
-COMMAND=re.compile(r"^@github\s+engine\s+code\s+(?:help|inspect|plan|propose)(?:\s|$)", re.I)
+COMMAND=re.compile(r"^@github\s+engine\s+code\s+(?:help|inspect|plan|propose|task)(?:\s|$)", re.I)
+TASK=re.compile(r"^engine code task (.{8,300}) on ((?:feature|fix|chore)/\S+)$",re.I|re.S)
 PROPOSE=re.compile(r"^engine code propose ([^\s]+) on (\S+) :: (.{8,300})$", re.I|re.S)
 INSPECT=re.compile(r"^engine code inspect (\S+)$", re.I)
 PLAN=re.compile(r"^engine code plan (.{8,300})$", re.I|re.S)
@@ -101,6 +102,87 @@ def _parse(raw,paths,bodies):
     return edits if set(edits)==set(paths) else None
 
 
+
+def _candidate_paths(gh, rec, repo, sha, goal):
+    """Find real current editor code paths; model cannot invent a path."""
+    tree=engine._github(gh,rec,repo,"/git/trees/"+sha+"?recursive=1")
+    if not isinstance(tree,dict) or tree.get("truncated") or not isinstance(tree.get("tree"),list):
+        raise HTTPException(409,"GitHub engine source tree incomplete; no automatic path selection")
+    matches=[]
+    words=[w for w in re.findall(r"[a-z0-9]{4,}",goal.lower()) if w not in
+           ("please","could","would","about","build","create","make","with","that","from","engine","editor")]
+    for item in tree["tree"]:
+        if not isinstance(item,dict) or item.get("type")!="blob":
+            continue
+        path=str(item.get("path") or "")
+        try:_path(path)
+        except HTTPException:continue
+        size=item.get("size")
+        if not isinstance(size,int) or size>85000 or size<10:continue
+        base=path.split("/")[-1].lower()
+        score=sum(4 for term in words if term in base)
+        if "scene" in goal.lower() and ("scene" in base or "stage" in base):
+            score+=3
+        if "timeline" in goal.lower() and "timeline" in base:
+            score+=6
+        if "sheep" in goal.lower() and "sheep" in base:
+            score+=6
+        if "anime" in goal.lower() and "anime" in base:
+            score+=5
+        if "build" in goal.lower() and path.endswith("build_space.py"):
+            score+=3
+        matches.append((score,path))
+    matches.sort(key=lambda x:(-x[0],x[1]))
+    # Strong name-level source relevance, or no edit is proposed.
+    if not matches or matches[0][0]<3:
+        return []
+    return [x[1] for x in matches[:35]]
+
+
+def _pick_model_events(model, goal, candidates):
+    if model is None:
+        yield {"type":"PICK_RESULT","paths":[]}
+        return
+    prompt=("Read this verified GitHub §wyrl§ Engine file inventory and select ONE or TWO "
+            "real existing source files relevant to this change. Return ONLY JSON object "
+            "{\"paths\":[\"exact path\"]}. Never invent paths or include private reasoning. "
+            "Do not choose GitHub/CI/deploy files, only provided candidates. "
+            "If the task is too broad or needs multiple subsystems return {\"paths\":[]}. "
+            "GOAL: "+goal+"\nVERIFIED FILE CANDIDATES:\n"+"\n".join(candidates))
+    messages=[]
+    complete=False
+    size=0
+    try:
+        for event in model({"prompt":prompt,"history":[],"profile":"","userProfile":"",
+                            "requestId":"engine-file-selection","githubPlanning":True}):
+            if not isinstance(event,dict):continue
+            if event.get("type")=="STATUS" and event.get("phase") in ("LOADING","GENERATING"):
+                yield {"type":"STATUS","phase":"ENGINE_CODE_FILE_SELECTION",
+                       "reason":"Local coding model is mapping the goal to verified engine files.",
+                       "categories":["ENGINE","INFERENCE","GITHUB"]}
+            if event.get("type")=="DELTA":
+                token=str(event.get("text") or "")
+                size+=len(token)
+                if size>2500:break
+                messages.append(token)
+            if event.get("type")=="FAILED":break
+            if event.get("type") in ("COMPLETE","COMPLETED"):
+                complete=True
+                break
+    except Exception:
+        pass
+    paths=[]
+    if complete:
+        try:
+            obj=json.loads("".join(messages).strip())
+            if isinstance(obj,dict) and set(obj)=={"paths"} and isinstance(obj["paths"],list):
+                items=obj["paths"]
+                if 1<=len(items)<=2 and all(isinstance(p,str) and p in candidates for p in items):
+                    paths=_paths(",".join(items))
+        except (ValueError,HTTPException):
+            pass
+    yield {"type":"PICK_RESULT","paths":paths}
+
 def _model_events(generator,goal,paths,bodies):
     if generator is None:
         yield {"type":"MODEL_RESULT","edits":None}
@@ -180,7 +262,7 @@ def _plan(gh,rec,repo,goal):
     return (report+"\n\nNext: use @GitHub engine code inspect FULL_PATH to read evidence, then "
             "@GitHub engine code propose FULL_PATH on feature/branch :: GOAL "
             "to ask the local coder for a source-matched change and complete diff. "
-            "Up to 2 existing source files. Reviewed edits remain source-only until independent "
+            "Up to 2 existing source files. Automatic task selection uses current Git tree. Reviewed edits remain source-only until independent "
             "CI, engine manifest sealing and a separately approved engine release.")
 
 
@@ -201,6 +283,7 @@ def events(gh,data,model=None):
             result=("## Engine coding workbench\n"
                     "@GitHub engine code plan DESCRIBE GOAL\n"
                     "@GitHub engine code inspect projects/swrlz-forge-moba/runtime/anime_timeline.js\n"
+                    "@GitHub engine code task Improve anime timeline scrubbing on feature/my-change\n"
                     "@GitHub engine code propose projects/swrlz-forge-moba/runtime/anime_timeline.js "
                     "on feature/my-change :: SPECIFIC TASK\n"
                     "One or two explicit existing files, bounded local model edits, exact diff review, "
@@ -217,13 +300,33 @@ def events(gh,data,model=None):
                    "reason":"Mapping editor/scene/runtime/manifest source from GitHub.",
                    "categories":["GITHUB","ENGINE","TOOL"]}
             yield {"type":"DELTA","text":_plan(gh,rec,repo,match[1])}
-        elif (match:=PROPOSE.fullmatch(cmd)):
-            raw,branch,goal=match.groups()
-            paths=_paths(raw)
+        elif (match:=PROPOSE.fullmatch(cmd)) or (match:=TASK.fullmatch(cmd)):
+            automatic=bool(TASK.fullmatch(cmd))
+            if automatic:
+                goal,branch=match.groups()
+                paths=None
+            else:
+                raw,branch,goal=match.groups()
+                paths=_paths(raw)
             yield {"type":"STATUS","phase":"ENGINE_CODE_ACCESS",
                    "reason":"Revalidating account and review branch before using local coding inference.",
                    "categories":["GITHUB","ENGINE","PERMISSION"]}
             branch,head,main,manifest=_authority(gh,rec,repo,branch)
+            if automatic:
+                candidates=_candidate_paths(gh,rec,repo,head,goal)
+                if not candidates:
+                    raise HTTPException(422,"No strongly relevant engine source file in current Git tree; use code plan/inspect")
+                paths=[]
+                for update in _pick_model_events(model,goal,candidates):
+                    if update.get("type")=="PICK_RESULT":
+                        paths=update["paths"]
+                    else:
+                        yield update
+                if not paths:
+                    raise HTTPException(422,"Coding model could not verify a relevant one/two-file source selection; narrow the task")
+                yield {"type":"STATUS","phase":"ENGINE_CODE_FILES_SELECTED",
+                       "reason":"Model chose actual existing engine code paths: "+", ".join(paths),
+                       "categories":["GITHUB","ENGINE","INFERENCE"]}
             yield {"type":"STATUS","phase":"ENGINE_CODE_SOURCE",
                    "reason":"Reading exact current GitHub source blobs and engine manifest.",
                    "categories":["GITHUB","ENGINE","TOOL"]}
