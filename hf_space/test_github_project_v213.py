@@ -57,6 +57,13 @@ def _api(_token,path):
                 "/repos/"+REPO+"/commits/"+FEATURE+"/check-runs?per_page=50"):
         return {"check_runs":[{"name":"Syntax check","status":"completed","conclusion":"success"},
                               {"name":"Integration","status":"in_progress","conclusion":None}]}
+    if path=="/repos/"+REPO+"/releases?per_page=12":
+        return [{"tag_name":"v1.0","name":"Initial stable release","draft":False,
+                 "prerelease":False,"published_at":"2026-10-11T00:00:00Z"}]
+    if path=="/repos/"+REPO+"/branches/main/protection":
+        return {"required_status_checks":{"contexts":["unit-tests"]},
+                "required_pull_request_reviews":{"required_approving_review_count":1},
+                "required_linear_history":{"enabled":True}}
     if path=="/repos/"+REPO+"/issues?state=open&per_page=8":
         return [{"number":8,"title":"Unexpected behavior"}]
     if path=="/repos/"+REPO+"/pulls?state=open&per_page=8":
@@ -115,7 +122,7 @@ def test_bounded_read_research():
 
 
 def test_command_and_path_guards():
-    for cmd in ("@GitHub overview","@GitHub project brief","@GitHub dependencies","@GitHub triage","@GitHub project readiness","@GitHub code search greet","@GitHub compare main...feature/test",
+    for cmd in ("@GitHub overview","@GitHub project brief","@GitHub dependencies","@GitHub triage","@GitHub project readiness","@GitHub branch policy","@GitHub releases","@GitHub code search greet","@GitHub compare main...feature/test",
                 "@GitHub pr review 7", "@GitHub edit file src/demo.py on feature/test replace before :: after",
                 "@GitHub pr draft feature/test into main"):
         assert gp.is_command(cmd)
@@ -223,6 +230,21 @@ def test_source_grounded_onboarding_triage_and_release_checklist():
         assert "Observed HEAD: "+MAIN in readiness
         assert "NOT a production readiness certificate" in readiness
         assert "incomplete/failing/unknown" in readiness
+        releases=gp._summary(gh,REC,REPO,"releases")
+        assert "v1.0" in releases and "Initial stable release" in releases
+        policy=gp._summary(gh,REC,REPO,"branch policy")
+        assert "unit-tests" in policy and "Required PR reviews: configured" in policy
+
+
+def test_unknown_branch_protection_does_not_mean_unprotected():
+    def denied(token,path):
+        if path.endswith("/branches/main/protection"):
+            raise HTTPException(403,"No access to policy")
+        return _api(token,path)
+    with mock.patch.object(gh,"_api",side_effect=denied):
+        report=gp._summary(gh,REC,REPO,"branch policy")
+        assert "could NOT be verified" in report
+        assert "do not infer the branch is unprotected" in report
 
 
 def test_compare_rest_path_is_precisely_allowed():
@@ -277,5 +299,6 @@ if __name__=="__main__":
     test_protected_diff_never_generates_pr()
     test_compare_rest_path_is_precisely_allowed()
     test_source_grounded_onboarding_triage_and_release_checklist()
+    test_unknown_branch_protection_does_not_mean_unprotected()
     test_project_progress_and_model_read_ownership()
     print("v213 GitHub project evidence and confirmed edit tests passed")
