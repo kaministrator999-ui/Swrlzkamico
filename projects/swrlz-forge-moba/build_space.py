@@ -13,6 +13,18 @@ PAYLOAD = ROOT / "payload"
 def sha256(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
+def validate_space_metadata(readme: str) -> None:
+    """Catch the Space's single-line summary limit before writing a package."""
+    sections = readme.split("---", 2)
+    if len(sections) != 3 or sections[0].strip():
+        raise SystemExit("SPACE_README.md needs YAML front matter")
+    fields = dict(line.split(":", 1) for line in sections[1].splitlines() if ":" in line)
+    description = fields.get("short_description", "").strip()
+    if description[:1] in ("\"", "'") and description[-1:] == description[:1]:
+        description = description[1:-1]
+    if not description or description.startswith(("|", ">")) or len(description) > 60:
+        raise SystemExit("Space short_description must be a single line of 1–60 characters")
+
 def load_patch(path: Path):
     spec = importlib.util.spec_from_file_location(f"swrlz_patch_{path.stem}", path)
     if spec is None or spec.loader is None:
@@ -27,6 +39,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--output", required=True)
     args = ap.parse_args()
+    space_readme = (ROOT / "SPACE_README.md").read_text(encoding="utf-8")
+    validate_space_metadata(space_readme)
 
     manifest = json.loads((ROOT / "source-manifest.json").read_text(encoding="utf-8"))
     part_names = manifest.get("chunks") or [p.relative_to(ROOT).as_posix() for p in sorted(PAYLOAD.glob("part-*.txt"))]
@@ -65,7 +79,7 @@ def main():
     out = Path(args.output)
     out.mkdir(parents=True, exist_ok=True)
     (out / "index.html").write_bytes(html)
-    (out / "README.md").write_text((ROOT / "SPACE_README.md").read_text(encoding="utf-8"), encoding="utf-8")
+    (out / "README.md").write_text(space_readme, encoding="utf-8")
     # Native game starter source and episode screening travel with the engine.
     assets = {}
     media_paths = ["episodes/ghosts-in-different-forms-ep01.html",

@@ -7,7 +7,7 @@ sdk: static
 app_file: index.html
 fullWidth: true
 header: mini
-short_description: Sheep Tag maps, anime paper theatre, Dragon Den and Starforge.
+short_description: Sheep Tag, paper theatre, Dragon Den and Starforge
 ---
 
 # §wyrl§ Engine · Maker v10.1
