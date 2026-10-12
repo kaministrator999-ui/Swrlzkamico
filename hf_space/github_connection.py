@@ -815,6 +815,11 @@ def is_github_conversation(prompt):
     q = str(prompt or "").strip()
     if re.match(r"^@github\s+(?:ask|explore|analyze)\s+\S", q, re.I):
         return True
+    if (re.search(r"\b(?:github|repo|repository|actions|workflow|workflows)\b", q, re.I)
+            and re.match(r"^(?:please\s+)?(?:teach|explain|how\s+(?:can|do|would)|"
+                         r"(?:can|could|would)\s+you\s+(?:please\s+)?"
+                         r"(?:create|build|set\s+up|trigger|dispatch|retry|rerun))\b", q, re.I)):
+        return True
     return bool(
         re.match(r"^(?:(?:please\s+)?|(?:can|could|would|will)\s+you\s+(?:please\s+)?)(?:check|show|list|review|inspect|summarize|look\s+at|find|read)\b", q, re.I)
         and re.search(r"\b(?:my|our|the)\s+(?:github|repo|repository|pull\s+requests?|prs?|issues?|branches?|commits?|workflows?|actions|runs?)\b", q, re.I)
@@ -849,6 +854,7 @@ def _agent_fallback_plan(prompt):
         (r"\bbranches?\b", "branches"),
         (r"\bcommits?\b", "commits"),
         (r"\b(workflows?|actions)\b", "workflows"),
+        (r"\b(teach|learn|guide|how|setup|set up|templates?)\b", "workflow guide"),
         (r"\b(runs?|jobs?|failures?)\b", "workflow runs"),
         (r"\b(files?|folders?|directories|directory)\b", "files"),
     ):
@@ -964,9 +970,14 @@ def agent_events(data, model_generator=None):
                    "categories": ["GITHUB", "TOOL", "APPROVAL"]}
             yield {"type": "DELTA", "text":
                    "I can inspect GitHub, but a conversational plan cannot authorize a repository change. "
-                   "For supported writes, use @GitHub create issue TITLE :: BODY or "
-                   "@GitHub create branch feature/name from main. Each needs separate confirmation. "
-                   "No write attempted."}
+                   ("For GitHub Actions, start with @GitHub workflow guide. "
+                    "Then use @GitHub workflow create python-check as syntax.yml on feature/my-checks, "
+                    "@GitHub workflow pr feature/my-checks into main, or "
+                    "@GitHub workflow dispatch syntax.yml on main. "
+                    if re.search(r"\\b(?:workflow|actions|dispatch|run|retry)\\b", natural, re.I) else
+                    "For other supported writes, use @GitHub create issue TITLE :: BODY or "
+                    "@GitHub create branch feature/name from main. ") +
+                   "Each supported mutation needs a separate explicit confirmation. No write attempted."}
             yield {"type": "COMPLETED", "phase": "COMPLETE"}
             return
         yield {"type": "STATUS", "phase": "GITHUB_MODEL_PLAN_STARTED",
