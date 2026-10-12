@@ -969,12 +969,12 @@ def agent_events(data, model_generator=None):
                    "reason": "Conversational planning cannot authorize a write.",
                    "categories": ["GITHUB", "TOOL", "APPROVAL"]}
             yield {"type": "DELTA", "text":
-                   "I can inspect GitHub, but a conversational plan cannot authorize a repository change. "
+                   "I can inspect GitHub, but a conversational plan cannot authorize a repository change. " +
                    ("For GitHub Actions, start with @GitHub workflow guide. "
                     "Then use @GitHub workflow create python-check as syntax.yml on feature/my-checks, "
                     "@GitHub workflow pr feature/my-checks into main, or "
                     "@GitHub workflow dispatch syntax.yml on main. "
-                    if re.search(r"\\b(?:workflow|actions|dispatch|run|retry)\\b", natural, re.I) else
+                    if re.search(r"\b(?:workflow|actions|dispatch|run|retry)\b", natural, re.I) else
                     "For other supported writes, use @GitHub create issue TITLE :: BODY or "
                     "@GitHub create branch feature/name from main. ") +
                    "Each supported mutation needs a separate explicit confirmation. No write attempted."}
