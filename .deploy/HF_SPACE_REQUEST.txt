@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=002f4bde2b2d142647019b22da21382c7047b2d6
-REQUEST_NONCE=2026-10-11-v213-github-project-engineering-evidence-scoped-edit-001
+SOURCE_REF=344d2e47a678c05e05c319ed716028a99b524604
+REQUEST_NONCE=2026-10-11-v214-forge-engine-editor-starter-agent-001
