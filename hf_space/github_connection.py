@@ -635,7 +635,7 @@ def _post_github(token, path, body):
 def is_github_command(prompt):
     # Only anchored user commands. An ordinary discussion about GitHub
     # must not perform any repository operation.
-    if github_workflows_v212.is_command(prompt) or github_project_v213.is_command(prompt) or forge_project_tools_v213.is_command(prompt):
+    if github_workflows_v212.is_command(prompt) or github_project_v213.is_command(prompt) or forge_project_tools_v213.is_command(prompt) or engine_starter_pack_v215.is_command(prompt):
         return True
     return bool(re.match(
         r"^@github\s+(help(?:\s|$)|permissions|capabilities|branches(?:\s|$)|files(?:\s|$)|read file\s+|issues(?:\s|$)|pulls(?:\s|$)|commits(?:\s|$)|create issue\s+|create branch\s+|confirm\s+)",
