@@ -274,6 +274,23 @@ def routes(stock_checkpoint: str | None = None) -> list[ModelRoute]:
         ModelRoute("compare","Compare both",False,None,"Requires two verified independent inference backends"),
     ]
 
+def direct_app_identity_answer(prompt: str) -> str:
+    """Answer direct questions about this application's assistant identity."""
+    text=str(prompt or "").strip()
+    if len(text)>100 or "\n" in text:
+        return ""
+    direct=re.fullmatch(
+        r"(?:(?:so|wait|ok)\s+)?(?:are you|you are|you're|is this)\s+"
+        r"(?:not\s+)?(?:chat\s*gpt|swyrlz|§wyrlz|swurlz)[?! .]*",
+        text,re.I,
+    )
+    if not direct:
+        return ""
+    if re.search(r"chat\s*gpt",text,re.I):
+        return "No, I'm §wyrlz, the assistant in this app. ChatGPT is a different AI product."
+    return "I'm §wyrlz, the assistant in this app—not ChatGPT."
+
+
 def dispatch(model_id: str, payload: dict[str,Any], r39_generate: Callable[[dict[str,Any]],Iterator[dict[str,Any]]], stock_generate=None,large_generate=None,coder_generate=None):
     history=payload.get("history") if isinstance(payload.get("history"),list) else []
     pins=payload.get("pinnedContext") if isinstance(payload.get("pinnedContext"),list) else []
@@ -281,6 +298,11 @@ def dispatch(model_id: str, payload: dict[str,Any], r39_generate: Callable[[dict
     payload=dict(payload)
     payload["programmingIntent"]=intent
     yield {"type":"PROGRAMMING_INTENT","intent":intent}
+    identity_answer=direct_app_identity_answer(str(payload.get("prompt") or ""))
+    if identity_answer:
+        yield {"type":"DELTA","text":identity_answer}
+        yield {"type":"COMPLETED","phase":"COMPLETE","fastPath":"app-identity"}
+        return
     # Source-owned recall is deliberately independent of generative reconstruction.
     # Station sets this only from a verified Google account's current thread snapshot;
     # no public prompt, browser data or untrusted repository prose can set it.
