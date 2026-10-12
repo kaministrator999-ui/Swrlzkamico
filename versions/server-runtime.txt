@@ -1,6 +1,6 @@
 ID=server-runtime
-VERSION=2.3.370
-REVISION=2.3.370-hf-v215-atomic-editor-starter-pack-github-tool
+VERSION=2.3.371
+REVISION=2.3.371-hf-v217-v218-engine-code-agent-source-grounded
 KIND=server-runtime
 SOURCE_BRANCH=runtime
 STATUS=active

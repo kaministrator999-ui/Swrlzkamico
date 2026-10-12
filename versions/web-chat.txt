@@ -1,6 +1,6 @@
 ID=web-chat
-VERSION=1.5.108
-REVISION=1.5.108-engine-starter-pack-guide-and-progress-v215
+VERSION=1.5.109
+REVISION=1.5.109-engine-coding-mission-progress-and-ci-evidence
 KIND=web-interface
 SOURCE_BRANCH=runtime
 STATUS=active
