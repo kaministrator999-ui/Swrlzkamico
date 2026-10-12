@@ -3,6 +3,7 @@ import base64
 import json
 import re
 import sys
+from urllib.parse import unquote
 from pathlib import Path
 from unittest import mock
 from fastapi import HTTPException
@@ -18,6 +19,7 @@ YAML = w._TEMPLATES["python-check"]
 
 
 def info(path):
+    path = unquote(path)
     if path == "/repos/" + REPO:
         return {"full_name":REPO,"private":False,"default_branch":"main",
                 "permissions":{"push":True,"admin":True,"triage":True}}
