@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=344d2e47a678c05e05c319ed716028a99b524604
-REQUEST_NONCE=2026-10-11-v214-forge-engine-editor-starter-agent-001
+SOURCE_REF=adb3a4d4a6bcbdc54062bc7af1324ebeaa07857e
+REQUEST_NONCE=2026-10-12-v215-atomic-engine-starter-pack-github-tools-001
