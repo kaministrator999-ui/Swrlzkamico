@@ -286,7 +286,7 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
     const cancelButton=await page.locator('#stCancelBuild').boundingBox();assert.ok(cancelButton);
     const overHUD=touch({x:cancelButton.x+cancelButton.width/2,y:cancelButton.y+cancelButton.height/2},0);
     await multiple('touchMove',[overHUD]);let invalid=await ui(page);assert.equal(invalid.touchPlacement.valid,false,'A finger over the HUD still has a valid placement target');
-    assert.equal(invalid.placementGrid?.visible,false,'Moving onto the HUD left an apparently placeable guide');
+    assert.equal(!!invalid.placementGrid?.visible,false,'Moving onto the HUD left an apparently placeable guide');
     await multiple('touchEnd',[]);assert.equal((await state(page)).buildings.length,cancelCount,'Releasing over the HUD built a structure');
     assert.equal((await ui(page)).touchPlacement.active,false,'HUD release left a finger active');assert.equal((await ui(page)).build,'st-farm','HUD release changed construction mode');}
   const mouseTarget=await point(page,cancelSite.x,cancelSite.z);await page.mouse.move(mouseTarget.x,mouseTarget.y);await frames(page,1);
