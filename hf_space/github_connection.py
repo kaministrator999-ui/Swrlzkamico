@@ -709,6 +709,7 @@ _MAX_MATCHES_SHOWN = 15
 def _filename_hint(value):
     target = str(value or "").strip().strip('`"\'').strip()
     target = re.sub(r"(?i)^(?:the|a|an)\s+", "", target)
+    target = re.sub(r"(?i)^file\s+", "", target)
     target = re.sub(r"(?i)\s+(?:source\s+)?(?:file|script)$", "", target)
     target = target.strip().rstrip("?.!").strip()
     if (not target or len(target) > 180 or target.startswith("/")
