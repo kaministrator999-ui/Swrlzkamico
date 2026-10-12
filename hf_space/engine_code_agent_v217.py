@@ -13,10 +13,12 @@ import engine_starter_pack_v215 as packs
 import github_workflows_v212 as approvals
 
 ROOT=engine.ROOT + "/"
-COMMAND=re.compile(r"^@github\s+engine\s+code\s+(?:help|inspect|plan|propose|task)(?:\s|$)", re.I)
+COMMAND=re.compile(r"^@github\s+engine\s+code\s+(?:help|inspect|context|verify|plan|propose|task)(?:\s|$)", re.I)
 TASK=re.compile(r"^engine code task (.{8,300}) on ((?:feature|fix|chore)/\S+)$",re.I|re.S)
 PROPOSE=re.compile(r"^engine code propose ([^\s]+) on (\S+) :: (.{8,300})$", re.I|re.S)
 INSPECT=re.compile(r"^engine code inspect (\S+)$", re.I)
+CONTEXT=re.compile(r"^engine code context (\S+) :: (.{5,300})$", re.I|re.S)
+VERIFY=re.compile(r"^engine code verify ((?:feature|fix|chore)/\S+)$", re.I)
 PLAN=re.compile(r"^engine code plan (.{8,300})$", re.I|re.S)
 SHA=re.compile(r"^[0-9a-f]{40}$")
 NAME=re.compile(r"^[a-zA-Z0-9][a-zA-Z0-9_.-]{0,100}$")
@@ -435,7 +437,9 @@ def events(gh,data,model=None):
                     "@GitHub engine code task Improve anime timeline scrubbing on feature/my-change\n"
                     "@GitHub engine code propose projects/swrlz-forge-moba/runtime/anime_timeline.js "
                     "on feature/my-change :: SPECIFIC TASK\n"
-                    "One or two explicit existing files, bounded local model edits, exact diff review, "
+                    "@GitHub engine code context projects/swrlz-forge-moba/runtime/anime_timeline.js :: Fix scrub state\n"
+                    "@GitHub engine code verify feature/my-change\n"
+                    "One or two explicit existing files, goal-focused source excerpts, exact diff review, "
                     "separate one-use @GitHub confirm CODE. No silent branch write, merge, "
                     "engine rebuild or deployment.")
             yield {"type":"DELTA","text":result}
@@ -444,6 +448,27 @@ def events(gh,data,model=None):
                    "reason":"Reading current engine source and immutable GitHub blob.",
                    "categories":["GITHUB","ENGINE","TOOL"]}
             yield {"type":"DELTA","text":_inspect(gh,rec,repo,match[1])}
+        elif (match:=CONTEXT.fullmatch(cmd)):
+            path,goal=match.groups()
+            yield {"type":"STATUS","phase":"ENGINE_CODE_CONTEXT",
+                   "reason":"Retrieving goal-relevant exact excerpts from verified editor source.",
+                   "categories":["GITHUB","ENGINE","TOOL"]}
+            engine._access(gh,rec,repo,"read")
+            p=_path(path)
+            main=approvals._branch_sha(gh,rec["token"],repo,"main")
+            body=_source(gh,rec,repo,p,main)
+            yield {"type":"DELTA","text":(
+                "## Goal-directed editor source context\nFile: "+p+
+                "\nMain: "+main+" · Blob: "+body["sha"]+
+                "\nGoal: "+goal+
+                "\n\n"+_code_context(body["body"],goal,9500)+
+                "\nThese are exact code excerpts, not all possible dependencies. "
+                "Unseen lines and runtime correctness remain unverified.")}
+        elif (match:=VERIFY.fullmatch(cmd)):
+            yield {"type":"STATUS","phase":"ENGINE_CODE_VERIFY",
+                   "reason":"Checking exact review branch diff and GitHub CI evidence without deploying.",
+                   "categories":["GITHUB","ENGINE","TOOL"]}
+            yield {"type":"DELTA","text":_verification(gh,rec,repo,match[1])}
         elif (match:=PLAN.fullmatch(cmd)):
             yield {"type":"STATUS","phase":"ENGINE_CODE_CONTEXT",
                    "reason":"Mapping editor/scene/runtime/manifest source from GitHub.",
