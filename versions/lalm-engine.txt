@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.193
-REVISION=2.1.193-github-engine-source-aware-mission-workflow-v214
+VERSION=2.1.194
+REVISION=2.1.194-github-atomic-engine-starter-pack-source-verification-v215
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active

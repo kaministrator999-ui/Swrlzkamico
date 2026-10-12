@@ -1,6 +1,6 @@
 ID=server-runtime
-VERSION=2.3.369
-REVISION=2.3.369-hf-v214-forge-engine-github-project-agent
+VERSION=2.3.370
+REVISION=2.3.370-hf-v215-atomic-editor-starter-pack-github-tool
 KIND=server-runtime
 SOURCE_BRANCH=runtime
 STATUS=active

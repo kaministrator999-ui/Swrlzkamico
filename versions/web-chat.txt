@@ -1,6 +1,6 @@
 ID=web-chat
-VERSION=1.5.107
-REVISION=1.5.107-github-forge-editor-starter-project-ui-v214
+VERSION=1.5.108
+REVISION=1.5.108-engine-starter-pack-guide-and-progress-v215
 KIND=web-interface
 SOURCE_BRANCH=runtime
 STATUS=active
