@@ -1,3 +1,13 @@
+## UPDATE STARTED — 2026-10-12 — v225 GitHub repository explorer folders-first sorting
+
+**Owner request:** Keep directories at the top of the Chat GitHub repository widget regardless of sorting selection. Preserve the selected sort order independently inside the folder group and file group, including Name A-Z, Name Z-A, Type, Size, File count and Last changed.
+
+**Current authority and source baseline:** Primary Focus Chat's authenticated Stage-1 GitHub repository explorer; source `fix/github-explorer-subfolders-v224@2873e1a161d0a79b0156e22fbbda3b02a4f2a451`; renderer `chat/§wyrlz/assets/github-explorer-v223.js`; existing pure parser regression `tests/test_github_directory_parser_v224.mjs`. Concurrent main head `d0442216bf82ee82fb9df0aaefc8aa345d3f36c0`. Registered runtime: Repository Work 1.0.165, Server Runtime 2.3.377, Web Chat 1.5.111, LALM Engine 2.1.196. Standing production release targets existing `kamiloki/Swyrlz` only and does not touch dedicated §E.
+
+**Reconciliation and plan:** Introduce one pure directories-first sort owner in the existing viewer; keep browsing, filtering, metadata fetching, GitHub account/read-only Stage-1 gate, context persistence, source SHA, and HTML safety unchanged. Continue from current published v224 SHA in isolated feature branch, with no concurrent branch overwrite. Add deterministic Node regression coverage for every existing sort mode, missing metadata, stable tie rules and input immutability; existing three exact-source CI gates execute regression. Run the guarded HF deploy request once after verification and observe terminal state before registered module/version readback and Roadmap FINISH. Real Google/GitHub signed-in Android behavior remains separately unverified without session acceptance.
+
+**Truth state:** STARTED / code, CI, release and activation not yet completed.
+
 ## UPDATE FINISHED — 2026-10-12 — v224 nested GitHub folder Chat explorer parser correction
 
 **Result:** Source-level interactive Chat nested-directory bug corrected, three exact-source CI gates **SUCCESS**, guarded same-Space Hugging Face release **COMPLETED/SUCCESS**, atomic registered module versions confirmed through readback. Real signed-in owner/Android browser behavior remains **UNVERIFIED**.
