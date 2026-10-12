@@ -33,6 +33,7 @@ on:
       - feature/engine-code-context-verification-v218
       - feature/github-staged-read-only-v221
       - feature/github-natural-file-read-v222
+      - feature/github-explorer-ui-v223
       - feature/version-literacy-content-layout-v199
   workflow_dispatch:
 
@@ -48,9 +49,10 @@ jobs:
         run: python -m pip install 'fastapi>=0.115,<1' 'starlette>=0.40' 'httpx>=0.27,<1' 'requests>=2.32,<3' 'cryptography>=43,<47'
       - name: Python syntax and account isolation tests
         run: |
-          python -m py_compile hf_space/github_connection.py hf_space/github_project_v213.py hf_space/test_github_project_v213.py hf_space/forge_project_tools_v213.py hf_space/test_forge_project_tools_v213.py hf_space/engine_starter_pack_v215.py hf_space/test_engine_starter_pack_v215.py hf_space/engine_code_agent_v217.py hf_space/test_engine_code_agent_v217.py hf_space/test_engine_context_verification_v218.py hf_space/test_github_staged_read_v221.py hf_space/github_workflows_v212.py hf_space/test_github_workflows_v212.py hf_space/station.py hf_space/test_github_connection_v1.py hf_space/test_github_capabilities_v210.py hf_space/test_github_model_progress_v211.py hf_space/project_thread_memory.py hf_space/test_project_thread_memory_v1.py hf_space/lfm2_700m_engine.py hf_space/qwen_coder_engine.py hf_space/original_engine.py hf_space/account_chat_store.py hf_space/test_account_chat_store_v1.py hf_space/social_checkin.py hf_space/test_social_checkin_v197.py hf_space/test_project_version_recall_v201.py hf_space/version_literacy.py hf_space/test_version_presentation_v199.py hf_space/chatgpt_archive.py hf_space/test_chatgpt_archive_import_v202.py hf_space/chatgpt_account_memory.py hf_space/test_chatgpt_account_memory_v205.py hf_space/personal_history_lookup.py hf_space/test_personal_history_lookup_v206.py hf_space/personal_history_query_v207.py hf_space/private_account_facts_v208.py hf_space/test_private_account_facts_v208.py hf_space/test_personal_history_toolkit_v207.py
+          python -m py_compile hf_space/github_connection.py hf_space/github_project_v213.py hf_space/test_github_project_v213.py hf_space/forge_project_tools_v213.py hf_space/test_forge_project_tools_v213.py hf_space/engine_starter_pack_v215.py hf_space/test_engine_starter_pack_v215.py hf_space/engine_code_agent_v217.py hf_space/test_engine_code_agent_v217.py hf_space/test_engine_context_verification_v218.py hf_space/test_github_staged_read_v221.py hf_space/github_explorer_v223.py hf_space/test_github_explorer_v223.py hf_space/github_workflows_v212.py hf_space/test_github_workflows_v212.py hf_space/station.py hf_space/test_github_connection_v1.py hf_space/test_github_capabilities_v210.py hf_space/test_github_model_progress_v211.py hf_space/project_thread_memory.py hf_space/test_project_thread_memory_v1.py hf_space/lfm2_700m_engine.py hf_space/qwen_coder_engine.py hf_space/original_engine.py hf_space/account_chat_store.py hf_space/test_account_chat_store_v1.py hf_space/social_checkin.py hf_space/test_social_checkin_v197.py hf_space/test_project_version_recall_v201.py hf_space/version_literacy.py hf_space/test_version_presentation_v199.py hf_space/chatgpt_archive.py hf_space/test_chatgpt_archive_import_v202.py hf_space/chatgpt_account_memory.py hf_space/test_chatgpt_account_memory_v205.py hf_space/personal_history_lookup.py hf_space/test_personal_history_lookup_v206.py hf_space/personal_history_query_v207.py hf_space/private_account_facts_v208.py hf_space/test_private_account_facts_v208.py hf_space/test_personal_history_toolkit_v207.py
           python hf_space/test_github_connection_v1.py
           python hf_space/test_github_staged_read_v221.py
+          python hf_space/test_github_explorer_v223.py
           python hf_space/test_github_capabilities_v210.py
           python hf_space/test_github_model_progress_v211.py
           python hf_space/test_github_workflows_v212.py
@@ -88,6 +90,7 @@ jobs:
       - name: Verify ChatGPT archive UI JavaScript
         run: |
           node --check 'chat/§wyrlz/assets/chatgpt-archive-import-v1.js'
+          node --check 'chat/§wyrlz/assets/github-explorer-v223.js'
           node --check 'chat/§wyrlz/assets/chatgpt-archive-sidebar-v204.js'
           node tests/test_chatgpt_archive_sidebar_v204.mjs
           node tests/test_native_chat_order_v211.mjs

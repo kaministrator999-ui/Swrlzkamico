@@ -15,7 +15,7 @@ HTML=(ROOT/"chat"/"§wyrlz"/"index.html").read_text(encoding="utf-8")
 
 class LyricMobileReaderV194(unittest.TestCase):
     def test_js_parses_in_same_environment_as_candidate(self):
-        scripts=re.findall(r"<script(?![^>]*\\bsrc=)[^>]*>([\\s\\S]*?)</script>", HTML, re.I)
+        scripts=re.findall(r"<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)</script>", HTML, re.I)
         self.assertEqual(len(scripts),1)
         r=subprocess.run(["node","--check","-"],input=scripts[0],text=True,capture_output=True)
         self.assertEqual(r.returncode,0,r.stderr)

@@ -190,6 +190,32 @@ def test_v222_incomplete_tree_never_auto_selects():
         assert "incomplete" in result and "full repository path" in result,result
 
 
+
+def test_v223_recursive_stats_are_source_pinned_and_fail_closed():
+    sha="b"*40
+    rows=[{"path":"src","type":"tree"},
+          {"path":"src/app.py","type":"blob","size":120},
+          {"path":"src/config.json","type":"blob","size":30},
+          {"path":"docs","type":"tree"},
+          {"path":"docs/README.md","type":"blob","size":60}]
+    def api(_token,path):
+        if path=="/repos/"+REPO+"/commits/main":return {"sha":sha}
+        if path=="/repos/"+REPO+"/git/trees/"+sha+"?recursive=1":
+            return {"tree":rows,"truncated":False}
+        raise AssertionError(path)
+    with mock.patch.object(gh,"_api",side_effect=api):
+        root=gh._github_repo_stats({"token":"test"},REPO,"main")
+        assert "Files: 3" in root and "Directories: 2" in root and "Git blob bytes: 210" in root,root
+        folder=gh._github_repo_stats({"token":"test"},REPO,"main","src")
+        assert "Files: 2" in folder and "Directories: 0" in folder and "Git blob bytes: 150" in folder,folder
+        assert "not found" in gh._github_repo_stats({"token":"test"},REPO,"main","missing")
+        assert gh._read_stage_command("@GitHub stats")
+        assert gh._read_stage_command("@GitHub stats src")
+        assert not gh._read_stage_command("@GitHub delete file src/app.py")
+    with mock.patch.object(gh,"_api",side_effect=lambda t,p: {"sha":sha} if "/commits/" in p else {"tree":rows,"truncated":True}):
+        assert "incomplete" in gh._github_repo_stats({"token":"test"},REPO,"main")
+
+
 if __name__=="__main__":
     test_stage_one_reading()
     test_locked_writes_even_with_oauth_grants()
@@ -197,4 +223,5 @@ if __name__=="__main__":
     test_model_and_commands_cannot_bypass_stage()
     test_v222_filename_resolution_and_ambiguous_paths()
     test_v222_incomplete_tree_never_auto_selects()
+    test_v223_recursive_stats_are_source_pinned_and_fail_closed()
     print("GitHub Stage 1 repository reading and locked mutation gates PASS")

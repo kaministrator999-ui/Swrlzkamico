@@ -22,6 +22,7 @@ import github_project_v213
 import forge_project_tools_v213
 import engine_starter_pack_v215
 import engine_code_agent_v217
+import github_explorer_v223 as explorer
 from cryptography.fernet import Fernet, InvalidToken
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import JSONResponse, RedirectResponse
@@ -46,8 +47,8 @@ def _read_stage_command(prompt):
     if not match:
         return False
     cmd = match[1].strip().lower()
-    return bool(cmd in ("help", "permissions", "capabilities", "files")
-                or re.fullmatch(r"files\s+[^\r\n]{1,200}", cmd)
+    return bool(cmd in ("help", "permissions", "capabilities", "files", "stats", "largest")
+                or re.fullmatch(r"(?:files|stats|largest|history|search|compare)\s+[^\r\n]{1,220}", cmd)
                 or re.fullmatch(r"(?:read|open|view)\s+[^\r\n]{1,220}", cmd))
 
 
@@ -641,6 +642,121 @@ def capabilities(request: Request, operation: str = "read"):
         raise
 
 
+
+# Stage 1 Explorer routes are reads over the verified Google account's
+# selected GitHub repository. No arbitrary repo argument or provider URL.
+def _explorer_owner(request):
+    if GITHUB_CAPABILITY_STAGE != "read-repository":
+        raise HTTPException(403, _READ_STAGE_DESCRIPTION)
+    owner, _cfg, record = _current_connection(request)
+    repo = _repo_name(record.get("repo"))
+    grant = _effective_access(record, repo, "read")
+    if not grant.get("allowed"):
+        raise HTTPException(403, "GitHub repository reading is not authorized")
+    return owner, record, repo, grant["defaultBranch"]
+
+
+def _explorer_failure(exc):
+    if isinstance(exc, explorer.ExplorerError):
+        raise HTTPException(422, str(exc)) from None
+    raise exc
+
+
+@router.get("/api/github/explorer/directory")
+def explorer_directory(request: Request, path: str = "", branch: str = ""):
+    _owner, record, repo, default = _explorer_owner(request)
+    try:
+        snapshot = explorer.pinned_tree(_api, record["token"], repo, branch or default)
+        return explorer.directory(snapshot, path)
+    except explorer.ExplorerError as exc:
+        _explorer_failure(exc)
+
+
+@router.get("/api/github/explorer/search")
+def explorer_search(request: Request, q: str, path: str = "", branch: str = ""):
+    _owner, record, repo, default = _explorer_owner(request)
+    try:
+        snapshot = explorer.pinned_tree(_api, record["token"], repo, branch or default)
+        return explorer.find_files(snapshot, q, path)
+    except explorer.ExplorerError as exc:
+        _explorer_failure(exc)
+
+
+@router.get("/api/github/explorer/file")
+def explorer_file(request: Request, path: str, branch: str = ""):
+    _owner, record, repo, default = _explorer_owner(request)
+    try:
+        snapshot = explorer.pinned_tree(_api, record["token"], repo, branch or default)
+        clean = explorer.safe_path(path, allow_root=False)
+        match = next((x for x in snapshot["items"] if x["path"] == clean and x["type"] == "file"), None)
+        if match is None:
+            raise explorer.ExplorerError("File was not found at the verified source revision")
+        if not isinstance(match.get("sizeBytes"), int) or match["sizeBytes"] > 120000:
+            return {"repository": repo, "branch": snapshot["branch"], "sourceSha": snapshot["sourceSha"],
+                    "path": clean, "sizeBytes": match.get("sizeBytes"), "readable": False,
+                    "message": "This file exceeds the bounded text preview or has unknown size."}
+        blob = _read_optional(record["token"], repo, clean, snapshot["sourceSha"], 120000)
+        if not blob:
+            return {"repository": repo, "branch": snapshot["branch"], "sourceSha": snapshot["sourceSha"],
+                    "path": clean, "sizeBytes": match["sizeBytes"], "readable": False,
+                    "message": "GitHub could not provide bounded UTF-8 source text."}
+        return {"repository": repo, "branch": snapshot["branch"], "sourceSha": snapshot["sourceSha"],
+                "path": clean, "sizeBytes": match["sizeBytes"],
+                "blobSha": blob.get("sha"), "readable": True,
+                "content": str(blob.get("body") or "")[:120000]}
+    except explorer.ExplorerError as exc:
+        _explorer_failure(exc)
+
+
+
+@router.get("/api/github/explorer/modified")
+def explorer_modified(request: Request, path: str, branch: str = ""):
+    _owner, record, repo, default = _explorer_owner(request)
+    try:
+        snapshot = explorer.pinned_tree(_api, record["token"], repo, branch or default)
+        clean = explorer.safe_path(path, allow_root=False)
+        if not any(x["path"] == clean for x in snapshot["items"]):
+            raise explorer.ExplorerError("Path not in verified repository tree")
+        route = ("/repos/" + repo + "/commits?sha=" + snapshot["sourceSha"] +
+                 "&path=" + quote(clean, safe="") + "&per_page=1&page=1")
+        chunk = _api(record["token"], route)
+        if not isinstance(chunk, list):
+            raise explorer.ExplorerError("Last-change commit lookup unavailable")
+        item = chunk[0] if chunk else {}
+        commit = item.get("commit") if isinstance(item, dict) else {}
+        person = (commit.get("committer") or commit.get("author") or {}) if isinstance(commit, dict) else {}
+        return {"repository": repo, "branch": snapshot["branch"], "sourceSha": snapshot["sourceSha"],
+                "path": clean, "lastChangedAt": str(person.get("date") or "")[:40],
+                "commitSha": str(item.get("sha") or "") if isinstance(item, dict) else "",
+                "dateType": "LAST_PATH_COMMIT_NOT_FILESYSTEM_MTIME"}
+    except explorer.ExplorerError as exc:
+        _explorer_failure(exc)
+
+
+@router.get("/api/github/explorer/history")
+def explorer_history(request: Request, path: str, branch: str = ""):
+    _owner, record, repo, default = _explorer_owner(request)
+    try:
+        snapshot = explorer.pinned_tree(_api, record["token"], repo, branch or default)
+        clean = explorer.safe_path(path, allow_root=False)
+        if not any(x["path"] == clean for x in snapshot["items"]):
+            raise explorer.ExplorerError("Requested path is not in verified Git tree")
+        result = explorer.history(_api, record["token"], repo, snapshot["sourceSha"], clean)
+        result["sourceSha"] = snapshot["sourceSha"]
+        return result
+    except explorer.ExplorerError as exc:
+        _explorer_failure(exc)
+
+
+@router.get("/api/github/explorer/compare")
+def explorer_compare(request: Request, base: str, head: str):
+    _owner, record, repo, _default = _explorer_owner(request)
+    try:
+        return explorer.comparison(_api, record["token"], repo, base, head)
+    except explorer.ExplorerError as exc:
+        _explorer_failure(exc)
+
+
 def _unverified_read_message(repo):
     """Never guess a missing scope when GitHub has not verified the repository."""
     return (
@@ -694,7 +810,7 @@ def is_github_command(prompt):
     if github_workflows_v212.is_command(prompt) or github_project_v213.is_command(prompt) or forge_project_tools_v213.is_command(prompt) or engine_starter_pack_v215.is_command(prompt) or engine_code_agent_v217.is_command(prompt):
         return True
     return bool(re.match(
-        r"^@github\s+(help(?:\s|$)|permissions|capabilities|branches(?:\s|$)|files(?:\s|$)|(?:read|open|view)\s+|issues(?:\s|$)|pulls(?:\s|$)|commits(?:\s|$)|create issue\s+|create branch\s+|confirm\s+)",
+        r"^@github\s+(help(?:\s|$)|permissions|capabilities|branches(?:\s|$)|(?:files|stats|largest|history|search|compare)(?:\s|$)|(?:read|open|view)\s+|issues(?:\s|$)|pulls(?:\s|$)|commits(?:\s|$)|create issue\s+|create branch\s+|confirm\s+)",
         str(prompt or "").strip(), re.I))
 
 
@@ -820,6 +936,39 @@ def _read_repository_by_name(record, repo, default_branch, hint):
             ("\n(Truncated to 12,000 characters.)" if len(obj["body"]) > 12000 else ""))
 
 
+
+def _github_repo_stats(record, repo, branch, scope=""):
+    """Recursive, source-pinned GitHub tree statistics; never guess totals."""
+    target = str(scope or "").strip("/")
+    if target and (len(target)>200 or any(x in ("", ".", "..") for x in target.split("/"))):
+        return "Invalid directory path."
+    commit = _api(record["token"], "/repos/"+repo+"/commits/"+quote(branch,safe=""))
+    sha = str(commit.get("sha") or "") if isinstance(commit,dict) else ""
+    if not _FILE_SHA.fullmatch(sha):
+        return "GitHub revision unverified; no counts reported."
+    tree = _api(record["token"], "/repos/"+repo+"/git/trees/"+sha+"?recursive=1")
+    if not isinstance(tree,dict) or not isinstance(tree.get("tree"),list):
+        return "GitHub tree unavailable; no counts reported."
+    rows = tree["tree"]
+    if tree.get("truncated") or len(rows)>_MAX_INDEX_ENTRIES:
+        return "GitHub tree incomplete; exact totals cannot be verified."
+    if target and not any(x.get("path")==target and x.get("type")=="tree" for x in rows if isinstance(x,dict)):
+        return "Directory not found in verified tree: "+target
+    prefix = target+"/" if target else ""
+    subset = [x for x in rows if isinstance(x,dict) and isinstance(x.get("path"),str)
+              and x["path"].startswith(prefix)]
+    blobs = [x for x in subset if x.get("type")=="blob"]
+    dirs = [x for x in subset if x.get("type")=="tree"]
+    total = sum(int(x.get("size") or 0) for x in blobs)
+    return ("## GitHub repository statistics\nRepository: "+repo+
+            "\nBranch: "+branch+"\nRevision: "+sha+
+            "\nScope: "+(target or "/")+" (recursive)"+
+            "\nFiles: "+str(len(blobs))+"\nDirectories: "+str(len(dirs))+
+            "\nGit blob bytes: "+str(total)+
+            "\nExcludes history, LFS payloads, and checkout overhead. "+
+            "Git does not store native creation/modification timestamps.")
+
+
 def _github_command(user, prompt):
     if not str(user or "").startswith("google:"):
         return "Sign in with your verified Google account before using connected GitHub tools."
@@ -898,7 +1047,9 @@ def _github_command(user, prompt):
         return _permission_message(check)
     if lower == "help" and GITHUB_CAPABILITY_STAGE == "read-repository":
         return (_READ_STAGE_DESCRIPTION + "\nCommands: @GitHub files, @GitHub files docs, "
-                "@GitHub read file config (extension optional), @GitHub permissions. "
+                "@GitHub read file config, @GitHub stats, @GitHub largest, "
+                "@GitHub search NAME, @GitHub history FILE, @GitHub compare BASE...HEAD, "
+                "@GitHub permissions. "
                 "If multiple matches exist, choose the displayed full path. The §§ startup "
                 "reader also remains available for source-grounded orientation.")
     if lower == "help":
@@ -982,6 +1133,69 @@ def _github_command(user, prompt):
                 fence + "text\n" + content + "\n" + fence +
                 ("\n(Truncated to 12,000 characters.)" if len(obj["body"]) > 12000 else ""))
 
+    if lower == "largest" or lower.startswith("largest "):
+        raw = cmd[8:].strip() if len(cmd) > 7 else ""
+        size_match = re.fullmatch(r"(\d{1,2})(?:\s+(.*))?",raw)
+        limit = max(1,min(30,int(size_match[1]))) if size_match else 15
+        scope = (size_match[2] or "").strip() if size_match else raw
+        try:
+            snapshot = explorer.pinned_tree(_api, rec["token"], repo, check["defaultBranch"])
+            target = explorer.safe_path(scope)
+            explorer.scope_stats(snapshot, target)
+            prefix = target + "/" if target else ""
+            candidates = sorted((x for x in snapshot["items"] if x["type"] == "file"
+                                 and x["path"].startswith(prefix) and isinstance(x.get("sizeBytes"), int)),
+                                key=lambda x: (-x["sizeBytes"], x["path"]))
+            return ("## GitHub largest files\nRepository: "+repo+
+                    "\nBranch: "+snapshot["branch"]+"\nRevision: "+snapshot["sourceSha"]+
+                    "\nScope: "+(target or "/")+"\n"+
+                    "\n".join("- "+str(x["sizeBytes"])+" bytes · "+x["path"] for x in candidates[:limit])+
+                    ("\n(Top 15 files by Git blob bytes.)" if len(candidates)>limit else ""))
+        except explorer.ExplorerError as exc:
+            return "Could not verify largest-file list: "+str(exc)
+    if lower.startswith("search "):
+        try:
+            snapshot = explorer.pinned_tree(_api, rec["token"], repo, check["defaultBranch"])
+            data = explorer.find_files(snapshot, cmd[7:].strip())
+            return ("## GitHub file matches\nRepository: "+repo+
+                    "\nBranch: "+data["branch"]+"\nRevision: "+data["sourceSha"]+
+                    "\nMatching files: "+str(data["total"])+"\n"+
+                    "\n".join("- "+item["path"] for item in data["matches"])+
+                    ("\n(More matching paths; narrow search.)" if data["truncatedResults"] else ""))
+        except explorer.ExplorerError as exc:
+            return "Could not complete filename search: "+str(exc)
+    if lower.startswith("history "):
+        try:
+            snapshot = explorer.pinned_tree(_api, rec["token"], repo, check["defaultBranch"])
+            target = explorer.safe_path(cmd[8:].strip(), allow_root=False)
+            if not any(x["path"]==target for x in snapshot["items"]):
+                return "Path not present in verified repository: "+target
+            data = explorer.history(_api, rec["token"], repo, snapshot["sourceSha"], target)
+            return ("## GitHub path history: "+target+"\nRepository: "+repo+
+                    "\nBranch: "+snapshot["branch"]+"\nRevision: "+snapshot["sourceSha"]+
+                    "\nLast recorded commit: "+str(data["lastCommit"] or "unavailable")+
+                    "\nFirst visible path commit: "+str(data["firstSeenPathCommit"] or "unverified")+
+                    "\nComplete history scan: "+str(data["firstSeenComplete"])+
+                    "\n"+data["caution"])
+        except explorer.ExplorerError as exc:
+            return "GitHub history unavailable: "+str(exc)
+    if lower.startswith("compare "):
+        match = re.fullmatch(r"compare ([A-Za-z0-9._/-]+)\.\.\.([A-Za-z0-9._/-]+)",cmd,re.I)
+        if not match:
+            return "Provide two safe GitHub refs: @GitHub compare main...feature/example"
+        try:
+            data = explorer.comparison(_api,rec["token"],repo,match[1],match[2])
+            return ("## GitHub comparison: "+match[1]+"..."+match[2]+
+                    "\nRepository: "+repo+"\nFiles returned: "+str(len(data["files"]))+
+                    "\n"+ "\n".join("- "+x["status"]+" "+x["path"]+" (+"+
+                    str(x["additions"])+"/-"+str(x["deletions"])+")" for x in data["files"])+
+                    "\n"+data["caution"])
+        except explorer.ExplorerError as exc:
+            return "GitHub comparison unavailable: "+str(exc)
+
+    if lower == "stats" or lower.startswith("stats "):
+        return _github_repo_stats(rec, repo, check["defaultBranch"], cmd[6:].strip() if len(cmd)>5 else "")
+
     if lower == "files" or lower.startswith("files "):
         path = cmd[6:].strip() if len(cmd) > 5 else ""
         if len(path) > 200 or path.startswith("/") or any(x in (".", "..") for x in path.split("/") if x):
@@ -1021,6 +1235,111 @@ def _github_command(user, prompt):
     return "Supported: @GitHub permissions, files, read file, issues, pulls, commits, create issue, create branch."
 
 
+
+# Thread-aware GitHub continuity is derived from verified read results,
+# never a model assertion or user-provided account identity.
+def _read_context_from_result(user, prompt, result):
+    body = str(result or "")
+    if not (body.startswith("## GitHub directory: ") or body.startswith("## GitHub file: ")
+            or body.startswith("## GitHub repository statistics") or body.startswith("## GitHub file matches")):
+        return None
+    try:
+        cfg = _config()
+        record = _load(cfg, user)
+        if not record:
+            return None
+        repo = _repo_name(record.get("repo"))
+        auth = _effective_access(record, repo, "read")
+        if not auth.get("allowed"):
+            return None
+        branch = auth["defaultBranch"]
+        commit = _api(record["token"], "/repos/" + repo + "/commits/" + quote(branch, safe=""))
+        sha = str(commit.get("sha") or "") if isinstance(commit, dict) else ""
+        if not _FILE_SHA.fullmatch(sha):
+            return None
+        directory = ""
+        file_path = ""
+        match = re.match(r"^## GitHub directory: (.*)", body)
+        if match:
+            directory = match[1].strip().strip("/")
+        match = re.match(r"^## GitHub file: ([^\n]+)", body)
+        if match:
+            file_path = match[1].strip()
+            directory = file_path.rpartition("/")[0]
+        match = re.search(r"^Scope: (.*?)(?: \(recursive\))?$", body, re.M)
+        if match:
+            directory = match[1].strip().strip("/")
+        try:
+            if directory:
+                explorer.safe_path(directory, allow_root=False)
+            if file_path:
+                explorer.safe_path(file_path, allow_root=False)
+        except explorer.ExplorerError:
+            return None
+        return {"repo": repo, "branch": branch, "sourceSha": sha,
+                "directory": directory, "lastFile": file_path,
+                "kind": "file" if file_path else "directory",
+                "capturedAt": int(time.time())}
+    except (HTTPException, ValueError, KeyError):
+        return None
+
+
+
+def normalize_thread_context(value):
+    """Only bounded provenance and path hints; no tokens, repository bodies."""
+    if not isinstance(value, dict):
+        return None
+    repo = str(value.get("repo") or "")
+    sha = str(value.get("sourceSha") or "")
+    try:
+        branch = explorer.safe_branch(value.get("branch"))
+        directory = explorer.safe_path(value.get("directory"))
+        last_file = explorer.safe_path(value.get("lastFile"), allow_root=True)
+    except explorer.ExplorerError:
+        return None
+    if not _REPO.fullmatch(repo) or not _FILE_SHA.fullmatch(sha):
+        return None
+    return {"repo": repo, "branch": branch, "sourceSha": sha,
+            "directory": directory, "lastFile": last_file,
+            "kind": "file" if last_file else "directory",
+            "capturedAt": int(time.time())}
+
+
+def _implicit_repo_command(prompt, context):
+    """Narrow thread-local follow-ups. Never guess global chat intent."""
+    if not isinstance(context, dict) or not _REPO.fullmatch(str(context.get("repo") or "")):
+        return None
+    q = re.sub(r"\s+", " ", str(prompt or "").strip()).lower().rstrip("?.!")
+    if len(q) > 180 or not q or q.startswith("@") or re.search(
+            r"\b(?:create|edit|delete|remove|push|commit|merge|deploy|modify|write|trigger|dispatch|run)\b", q):
+        return None
+    directory = str(context.get("directory") or "")
+    last_file = str(context.get("lastFile") or "")
+    scope = (" " + directory) if directory else ""
+    if re.fullmatch(r"(?:and )?(?:how many|what(?:'s| is) the number of)\s+(?:total )?(?:files?|folders?|directories|dirs?|items?)(?: (?:are )?(?:there|in (?:here|this (?:folder|directory|repo|repository))))?", q):
+        return "@GitHub stats" + scope
+    if re.fullmatch(r"(?:and )?(?:dirs?|directories|folders?|files?)", q):
+        return "@GitHub stats" + scope
+    if re.fullmatch(r"(?:list|show|browse|open)\s+(?:the )?(?:files|folders|directory|contents)(?: (?:here|in (?:here|this (?:directory|folder|repo|repository))))?",q):
+        return "@GitHub files" + scope
+    largest = re.fullmatch(r"(?:show|list|what are)\s+(?:the )?(?:largest|biggest)(?: (\d{1,2}))? (?:files|items)(?: (?:in|here).*)?", q)
+    if largest:
+        return "@GitHub largest " + str(max(1,min(30,int(largest[1] or 15)))) + scope
+    if re.fullmatch(r"(?:when was|when did|what is)\s+(?:that|the|this) (?:file|source)(?: (?:last )?(?:changed|modified|created|added))?",q) and last_file:
+        return "@GitHub history " + last_file
+    if re.fullmatch(r"(?:read|open|show)(?: me)? (?:that|this|the previous|the last) file",q) and last_file:
+        return "@GitHub read file " + last_file
+    filetype = re.fullmatch(r"(?:show|find|list|which|how many)\s+(?:the |all )?([a-z0-9+#.-]{2,24}) files(?: (?:here|in (?:this directory|the repo)))?",q)
+    if filetype:
+        suffix = filetype[1]
+        suffix = {"python":".py","javascript":".js","typescript":".ts","kotlin":".kt","markdown":".md","json":".json","html":".html","css":".css","java":".java","yaml":".yml"}.get(suffix,suffix)
+        return "@GitHub search " + (suffix if suffix.startswith(".") else "."+suffix)
+    term = re.fullmatch(r"(?:where (?:is|are)|find|which files? (?:handle|contain|implement))\s+(?:the )?([a-z0-9_. -]{2,60})(?: (?:files?|code|implementation))?",q)
+    if term:
+        return "@GitHub search " + term[1].strip().replace(" ", "-")
+    return None
+
+
 def command_events(data):
     yield {"type": "STATUS", "phase": "GITHUB_ACTION", "reason": "Verifying requested GitHub capability"}
     try:
@@ -1029,6 +1348,9 @@ def command_events(data):
         report = "GitHub action unavailable (" + str(exc.status_code) + "): " + str(exc.detail) + ". No write success assumed."
     except Exception:
         report = "GitHub action verification or execution failed. No write success assumed."
+    context = _read_context_from_result(str(data.get("userId") or ""), str(data.get("prompt") or ""), report)
+    if context:
+        yield {"type": "GITHUB_CONTEXT", "context": context}
     yield {"type": "DELTA", "text": report}
     yield {"type": "COMPLETED", "phase": "COMPLETE"}
 
@@ -1197,6 +1519,10 @@ def agent_events(data, model_generator=None):
     """Station-facing tool events: observed progress, no secret or raw reasoning."""
     user = str(data.get("userId") or "")
     prompt = str(data.get("prompt") or "").strip()
+    followup = _implicit_repo_command(prompt, data.get("githubContext")) if GITHUB_CAPABILITY_STAGE=="read-repository" else None
+    if followup:
+        prompt = followup
+        data = {**data, "prompt": prompt}
     exact = is_github_command(prompt)
     # The sole Stage-1 runtime entrypoint: no legacy read/workflow/engine agent
     # can execute by bypassing the explicit list/read allowlist below.

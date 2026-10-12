@@ -205,6 +205,7 @@
     .top-edge::after{content:"";position:absolute;left:50px;right:10px;bottom:0;height:1px;background:linear-gradient(90deg,rgba(56,232,255,.48),rgba(165,120,255,.16),transparent 82%);pointer-events:none}
     .top-brand{display:flex;align-items:center;gap:7px;min-width:0}.top-brand-mark{width:24px;height:24px;border-radius:7px;object-fit:cover;border:1px solid rgba(126,214,255,.34);box-shadow:0 0 16px rgba(56,232,255,.11)}.top-brand-name{font-size:12px;font-weight:800;letter-spacing:.08em;color:#e6fbff;white-space:nowrap}
     .top-thread{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:center;color:#cfe3ee;font-size:12px;font-weight:650;letter-spacing:.01em}
+    .top-thread .github-thread-subtitle{display:block;color:#90d9ff;font-size:9px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
     .top-status{display:flex;align-items:center;gap:6px;min-width:0;font-family:var(--font-telemetry);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:#9dbacb}.top-model{padding:4px 6px;border:1px solid rgba(165,120,255,.24);border-radius:7px;background:rgba(88,59,132,.15);color:#d8c7ff}.ready-dot{width:6px;height:6px;border-radius:50%;background:var(--success);box-shadow:0 0 9px rgba(104,244,207,.48)}.top-edge[data-state="busy"] .ready-dot{background:var(--cyan);box-shadow:0 0 10px rgba(56,232,255,.62);animation:swrlzSignal 2.4s ease-in-out infinite}.top-edge[data-state="error"] .ready-dot{background:var(--danger);box-shadow:0 0 10px rgba(255,107,122,.48)}
     @keyframes swrlzSignal{0%,100%{opacity:.56;transform:scale(.9)}50%{opacity:1;transform:scale(1.2)}}
     .menu-shade{background:rgba(0,8,18,.72);backdrop-filter:blur(3px)}
@@ -343,6 +344,20 @@
     body.motion-reduced .work-shade,body.motion-reduced .work-surface,body.motion-off .work-shade,body.motion-off .work-surface,body.motion-reduced .message-evidence summary::before,body.motion-off .message-evidence summary::before{transition:none!important}
     @media(prefers-reduced-motion:reduce){body:not(.motion-full) .work-shade,body:not(.motion-full) .work-surface,body:not(.motion-full) .message-evidence summary::before{transition:none!important}}
     @media(max-width:760px){.work-surface{width:100vw}.work-surface-button{padding:4px 6px}.work-surface-button .work-label{display:none}.top-model{display:none}.message-evidence{margin-left:38px}}
+
+
+    /* v223: bounded, responsive GitHub directory explorer; source remains text-only. */
+    .repo-explorer{border:1px solid rgba(126,214,255,.3);border-radius:14px;padding:12px;margin:8px 0;background:rgba(3,18,34,.85);min-width:0;max-width:100%;box-sizing:border-box}
+    .repo-explorer-header,.repo-explorer-controls{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+    .repo-explorer-title{font-weight:800;overflow-wrap:anywhere}.repo-explorer-meta{font-size:11px;color:#a4c5d7;margin:5px 0}
+    .repo-explorer button,.repo-explorer select{border:1px solid rgba(126,214,255,.3);border-radius:8px;background:#09253b;color:#e6f5ff;padding:7px;min-height:36px}
+    .repo-explorer-controls{justify-content:flex-start;margin:10px 0}.repo-explorer-controls select{min-width:120px;max-width:100%}
+    .repo-explorer-list{overflow:auto;max-height:220px;overscroll-behavior:contain}.repo-explorer.expanded .repo-explorer-list{max-height:min(68vh,750px)}
+    .repo-explorer.fullscreen{position:fixed;inset:10px;z-index:9999;overflow:auto;max-height:calc(100dvh - 20px);box-shadow:0 0 0 100vmax rgba(0,0,0,.75)}
+    .repo-explorer.fullscreen .repo-explorer-list{max-height:calc(100dvh - 185px)}
+    .repo-explorer-entry{display:flex;gap:8px;align-items:center;padding:9px 3px;border-bottom:1px solid rgba(126,214,255,.1);overflow-wrap:anywhere}
+    .repo-explorer-entry span{min-width:0;overflow-wrap:anywhere}.repo-explorer-entry button{margin-left:auto;flex-shrink:0}
+    .repo-explorer-empty{font-size:12px;color:#a4c5d7}
 
     /* User-scoped GitHub connector: no browser token storage and no repo writes. */
     .github-connect{margin:9px 7px 6px;padding:10px;border:1px solid rgba(126,214,255,.20);border-radius:11px;background:rgba(3,22,39,.62);display:flex;flex-direction:column;gap:7px}
@@ -525,6 +540,7 @@
     .side-menu .version-box{margin-top:12px;flex:0 0 auto}
   </style>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="/chat/§wyrlz/assets/github-explorer-v223.js"></script>
 </head>
 <body>
   <header class="top-edge" id="topEdge" data-component="top-edge" data-state="ready" aria-label="Chat status">
@@ -929,6 +945,13 @@
         const title=thread?.title || "New conversation";
         if(topThreadTitle.textContent!==title) topThreadTitle.textContent=title;
         topThreadTitle.title=title;
+        topThreadTitle.querySelector(".github-thread-subtitle")?.remove();
+        const repo=thread?.githubContext?.repo,branch=thread?.githubContext?.branch;
+        if(repo&&branch){
+          const sub=document.createElement("small");sub.className="github-thread-subtitle";
+          sub.textContent="GitHub · "+repo.split("/").pop()+" · "+branch;
+          sub.title=repo+" · "+branch+" (read-only)";topThreadTitle.appendChild(sub);
+        }
       };
       const companionStates=new Set(["idle","listen","accepted","thinking","acting","responding","approval","error"]);
       const setCompanionState=(next,source="ui")=>{
@@ -1356,8 +1379,23 @@
           }
           if(cursor<raw.length)appendInlineStyles(parent,raw.slice(cursor));
         };
+
+        // v223: treat only exact, bounded directory listings as explorer data.
+        // No HTML from GitHub or the model is interpreted as markup.
+        const appendRepositoryExplorer=value=>window.SwrlzGitHubExplorerV223?.render(container,value,{
+          messageId,
+          accountId:()=>chatAccountUser?.id||"",
+          threadId:()=>activeThreadId||"",
+          preparePrompt:text=>{
+            prompt.value=String(text||"");
+            prompt.dispatchEvent(new Event("input",{bubbles:true}));
+            prompt.focus();
+          },
+          contextUpdated:()=>scheduleStationSync()
+        })===true;
         const appendText=value=>{
           if(!value)return;
+          if(appendRepositoryExplorer(value))return;
           const root=document.createElement("div");root.className="message-text";
           const lines=String(value).replace(/\r\n?/g,"\n").split("\n");let list=null,listType="";
           const closeList=()=>{list=null;listType="";};
@@ -1564,7 +1602,7 @@
           String(a?.id||""),Number(a?.currentRevision||0),String(a?.title||""),
           (a?.files||[]).map(file=>[String(file?.path||""),String(file?.language||""),String(file?.content||"")])
         ]);
-        return JSON.stringify([String(thread.id||""),messages,artifactState]);
+        return JSON.stringify([String(thread.id||""),thread.githubContext||null,messages,artifactState]);
       };
       const renderConversation = (thread,force=false) => {
         const signature=conversationRenderSignature(thread);
@@ -2776,7 +2814,7 @@
         chatAccountUser = accountUser;
         accountProfile=profile&&typeof profile==="object"?profile:null;
         accountProfileDurable=!!accountUser&&!!durable&&Number(accountProfile?.version||0)>0;
-        if(priorUserId!==(accountUser?.id||"")){loreRecords=[];loreLoadedForUser="";closeLoreEditor();renderLoreRecords();rapportRecords=[];rapportControl=null;rapportLoadedKey="";closeRapportEditor();renderRapportRecords();proposalRecords=[];proposalLoadedForUser="";proposalAuditCache.clear();renderProposalRecords();}
+        if(priorUserId!==(accountUser?.id||"")){window.SwrlzGitHubExplorerV223?.reset();loreRecords=[];loreLoadedForUser="";closeLoreEditor();renderLoreRecords();rapportRecords=[];rapportControl=null;rapportLoadedKey="";closeRapportEditor();renderRapportRecords();proposalRecords=[];proposalLoadedForUser="";proposalAuditCache.clear();renderProposalRecords();}
         populateSettingsControls();
         refreshSettingsDurability();
         if(!draftThread)renderConversation(currentThread()); else renderConversation(null);
