@@ -1,3 +1,19 @@
+## UPDATE STARTED — 2026-10-12 — v224 nested GitHub folders remain interactive in Chat
+
+**User intent:** Continue and finish the §wyrlz mobile GitHub explorer while leaving its production Stage-1 repository access read-only. Inspect the released v223 source and fix any actually evidenced behavior gaps before claiming full acceptance.
+
+**Finding:** Published `chat/§wyrlz/assets/github-explorer-v223.js:parseListing` matched only headings beginning `## GitHub directory: /`, while `hf_space/github_connection.py:_github_command` emits `## GitHub directory: docs` and `## GitHub directory: hf_space` when browsing subdirectories. This caused the custom interactive container to reject nested listings and fall back to raw chat text. No additional permissions or tool providers are required.
+
+**Architecture and focus:** Keep the current browser-side read-only explorer as the sole renderer; maintain `hf_space/github_connection.py` as sole verified OAuth/repository evidence owner and `station.py` as thread-context authority. Extend parser only for root and validated repository-relative headings; reject traversal and unsafe headings. Maintain separate §E release lane. Current primary focus: GitHub mobile repository explorer acceptance and directory navigation. No changes to model weights, account storage, OAuth scopes, write gates, or game engine.
+
+**Source lineage:** Exact published v223 source `feature/github-explorer-ui-v223@45cbeb928f9064025907f84213ac43931242fd70`, review branch `fix/github-explorer-subfolders-v224@2873e1a161d0a79b0156e22fbbda3b02a4f2a451`, [draft PR #128](https://github.com/kaministrator999-ui/Swrlzkamico/pull/128). Paths: `chat/§wyrlz/assets/github-explorer-v223.js`, new `tests/test_github_directory_parser_v224.mjs`, three CI workflow definitions.
+
+**Exact checks:** [GitHub account run #38309058077](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38309058077), [HF Candidate Offline run #38309089420](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38309089420), [Mobile Integrity run #38309089352](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38309089352) all **COMPLETED/SUCCESS** at v224 source SHA. Existing v223 version authorities: Repository Work 1.0.164; Server Runtime 2.3.376; Web Chat 1.5.110. No new versions reserved until an actual guarded publication.
+
+**Acceptance:** Guarded same-Space release required; preserve previous Space snapshot and rollback; register only legitimately changed version authorities, then Roadmap FINISHED. Live signed-in Android/browser folder navigation and owner-scope checks remain independently unverified until tested with the real user session.
+
+**Status:** STARTED — exact source CI passed; guarded production publication and registry reconciliation pending.
+
 ## UPDATE FINISHED — 2026-10-12 — v223 Chat GitHub interactive explorer, verified metadata and thread continuity
 
 **Outcome:** Source implementation and regression tests completed, all three exact-source CI gates green, existing Hugging Face Chat Space guarded release **COMPLETED/SUCCESS**, runtime versions CAS-updated. Google/GitHub owner browser session **NOT YET LIVE VERIFIED**. This is an engineering release with `DEPLOYED_UNVERIFIED` receipt and `knownGood=false`, not a claim that every possible repository question is understood.
