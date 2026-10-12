@@ -1,6 +1,6 @@
 ID=server-runtime
-VERSION=2.3.377
-REVISION=2.3.377-hf-v224-github-nested-folder-parse
+VERSION=2.3.378
+REVISION=2.3.378-hf-v225-github-directories-first
 KIND=server-runtime
 SOURCE_BRANCH=runtime
 STATUS=active
