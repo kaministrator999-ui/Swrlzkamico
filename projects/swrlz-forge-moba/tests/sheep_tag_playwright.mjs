@@ -41,8 +41,8 @@ async function nativeButton(page,id){
   assert.equal(await page.locator('#'+id).isVisible(),true,'Native button is hidden: '+id);
   await tap(page,id);await frames(page,2);
 }
-async function worldTap(page,x,z){
-  const p=await page.evaluate(({x,z})=>window.SWYRL_ENGINE_SHEEP_TAG.pointScreen(x,z),{x,z});
+async function worldTap(page,x,z,y=0){
+  const p=await page.evaluate(({x,z,y})=>window.SWYRL_ENGINE_SHEEP_TAG.pointScreen(x,z,y),{x,z,y});
   assert.ok(p&&Number.isFinite(p.x)&&Number.isFinite(p.y),'World order did not project into the real canvas');
   const hit=await page.evaluate(({x,y})=>{
     const n=document.elementFromPoint(x,y);return !!n&&(n.tagName==='CANVAS'||n.id==='viewport');
@@ -139,8 +139,8 @@ try{
     await page.locator('#perfPreset').selectOption('medium',{force:true});
     await page.evaluate(()=>window.__sheepTestClock.freeze());await frames(page,2);
     const canonical=await saved(page);
-    assert.equal(canonical.version,10.1,'Wrong native project release');
-    assert.equal(await page.evaluate(()=>window.SWRLZ_FORGE_BUILD?.version),'v10.1','Wrong sealed engine release');
+    assert.equal(canonical.version,10.2,'Wrong native project release');
+    assert.equal(await page.evaluate(()=>window.SWRLZ_FORGE_BUILD?.version),'v10.2','Wrong sealed engine release');
     assert.equal(canonical.project.kind,'sheep-tag');
     assert.equal(canonical.project.sheepTag.duration,1200,'Classic starter survival timer changed');
     assert.equal(canonical.project.sheepTag.headstart,30,'Sheep need a real building head start');
@@ -212,7 +212,9 @@ try{
     const penReject=await command(page,'build',{kind:'st-income',x:0,z:0});
     assert.equal(penReject.ok,false,'Construction blocked the central wisp pen');
     assert.match(penReject.reason,/pen|entrance|clear/i);assert.equal((await state(page)).gold,rejectionBefore.gold,'Rejected pen construction spent gold');
-    await worldTap(page,site.x,site.z);assert.equal((await state(page)).selectedId,income.id,'Canvas did not select the owned farm');
+    await worldTap(page,site.x,site.z,1);
+    assert.equal((await state(page)).selectedId,(await state(page)).controlledId,'Single house tap should keep the sheep selected');
+    await worldTap(page,site.x,site.z,1);assert.equal((await state(page)).selectedId,income.id,'Canvas double tap did not select the owned farm');
     const beforeUpgrade=await state(page);await tap(page,'stUpgrade');s=await state(page);
     assert.equal(s.buildings.find(b=>b.id===income.id).level,2,'Visible upgrade did not improve the owned farm');
     close(beforeUpgrade.gold-s.gold,50,'Upgrade cost');
