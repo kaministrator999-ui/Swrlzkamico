@@ -46,8 +46,8 @@ def _read_stage_command(prompt):
     if not match:
         return False
     cmd = match[1].strip().lower()
-    return bool(cmd in ("help", "permissions", "capabilities", "files")
-                or re.fullmatch(r"files\s+[^\r\n]{1,200}", cmd)
+    return bool(cmd in ("help", "permissions", "capabilities", "files", "stats")
+                or re.fullmatch(r"(?:files|stats)\s+[^\r\n]{1,200}", cmd)
                 or re.fullmatch(r"(?:read|open|view)\s+[^\r\n]{1,220}", cmd))
 
 
