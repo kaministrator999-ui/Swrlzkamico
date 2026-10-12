@@ -35,6 +35,7 @@ def info(path):
                 "status":"completed","conclusion":"success"}
     if path == "/repos/" + REPO + "/actions/runs/9876":
         return {"id":9876,"name":"Unit tests","head_branch":"main",
+                "path":".github/workflows/check.yml","head_sha":SHA,
                 "status":"completed","conclusion":"failure"}
     if path == "/repos/" + REPO + "/actions/runs/1234/jobs?per_page=25":
         return {"jobs":[{"name":"test","status":"completed","conclusion":"success","steps":[]}]}
@@ -43,7 +44,7 @@ def info(path):
     if path.endswith("/contents/.github/workflows?ref=feature/test"):
         return [{"path":".github/workflows/check.yml","type":"file"}]
     if "/contents/.github/workflows/" in path:
-        if path.endswith("check.yml?ref=main"):
+        if path.endswith("check.yml?ref=main") or path.endswith("check.yml?ref="+SHA):
             return {"type":"file","size":len(YAML),"sha":"b"*40,
                     "content":base64.b64encode(YAML.encode()).decode(),"encoding":"base64"}
         if path.endswith("check.yml?ref=feature/test"):
