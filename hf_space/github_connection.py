@@ -659,7 +659,7 @@ def _github_command(user, prompt):
         if action.get("owner") != user or action.get("repo") != repo:
             return "GitHub proposal ownership mismatch; nothing written."
         kind = action.get("kind")
-        if kind in ("workflow-file", "workflow-dispatch"):
+        if kind in ("workflow-file", "workflow-dispatch", "workflow-pr", "workflow-retry"):
             return github_workflows_v212.confirm(sys.modules[__name__], c, rec, user, repo, action)
         preflight = _effective_access(rec, repo, "issue-write" if kind == "issue" else "branch-write")
         if not preflight["allowed"]:
@@ -697,7 +697,8 @@ def _github_command(user, prompt):
                 "@GitHub create branch feature/name from main, @GitHub workflow guide, "
                 "@GitHub workflows, @GitHub workflow runs, @GitHub workflow inspect name.yml, "
                 "@GitHub run status ID, @GitHub workflow create python-check as check.yml on feature/my-checks, "
-                "@GitHub workflow dispatch name.yml on main. "
+                "@GitHub workflow dispatch name.yml on main, @GitHub workflow pr feature/checks into main, "
+                "@GitHub run retry RUN_ID. "
                 "Workflow creation needs separate GitHub workflow OAuth scope; writes require a fresh preflight and explicit confirmation.")
     if lower in ("workflows", "workflow list", "workflow runs", "workflow guide") or lower.startswith(("workflow inspect ", "run status ")):
         return github_workflows_v212.execute(sys.modules[__name__], user, "@GitHub " + cmd)
@@ -934,7 +935,7 @@ def agent_events(data, model_generator=None):
                "categories": ["GITHUB", "TOOL", "PERMISSION"]}
         yield from command_events(data)
         return
-    if github_workflows_v212.is_command(prompt) and not re.match(r"^@github\\s+confirm\\s+", prompt, re.I):
+    if github_workflows_v212.is_command(prompt) and not re.match(r"^@github\s+confirm\s+", prompt, re.I):
         yield from github_workflows_v212.events(sys.modules[__name__], data)
         return
     if not (exact or is_github_conversation(prompt)):
