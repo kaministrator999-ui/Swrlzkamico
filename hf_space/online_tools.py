@@ -19,6 +19,7 @@ import urllib.request
 from pathlib import Path
 from typing import Any, Callable, Iterator
 from music_structure import structure_verified_music, compile_verified_music_presentation, music_structure_debug, creative_music_transform_request
+from social_checkin import is_simple_checkin
 from song_identity import song_identity, query_ladder, candidate_score, rank_candidates, diversify_candidates, source_family, resolve_unseparated_artist, supports_direct_lyric_text_fetch
 
 try:
@@ -1295,6 +1296,21 @@ def classify_online_request(
                 "timeScope": text[:120],
                 "programming": False,
             }
+    # Pure greetings are social conversation, not a live-data question.
+    # The explicit web, weather and time branches above retain their priority.
+    # In particular, "How are you today?" must not search just for "today".
+    if is_simple_checkin(text):
+        return {
+            "contract": ONLINE_CONTRACT,
+            "requested": False,
+            "kind": "none",
+            "reason": "social-checkin",
+            "query": "",
+            "locationText": "",
+            "clientLocation": None,
+            "locationRequired": False,
+            "programming": bool(programming.get("codingTask")),
+        }
     freshness = bool(_FRESHNESS.search(text))
     requested = explicit_web or freshness
     return {
