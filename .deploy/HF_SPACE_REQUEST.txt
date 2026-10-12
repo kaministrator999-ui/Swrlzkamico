@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=f81ffd43647a8796feb47ebd6c3c0ad80f5df545
-REQUEST_NONCE=2026-10-11-v2112-immediate-first-native-thread-on-send-ack-001
+SOURCE_REF=6c928770b16ae16fe4694f93d45d6af9a07f3fa5
+REQUEST_NONCE=2026-10-11-v2113-assistant-identity-source-guard-001
