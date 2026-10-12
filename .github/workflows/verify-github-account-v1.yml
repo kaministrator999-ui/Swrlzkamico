@@ -23,6 +23,7 @@ on:
       - feature/github-capabilities-v210-v2091-integrated
       - fix/native-chat-mobile-sidebar-access-v2111
       - fix/native-chat-first-send-ack-v2112
+      - fix/assistant-brand-identity-clarity-v2113
       - feature/github-model-guided-progress-v211
       - feature/version-literacy-content-layout-v199
   workflow_dispatch:
@@ -53,6 +54,7 @@ jobs:
           python hf_space/test_personal_history_lookup_v206.py
           python hf_space/test_personal_history_toolkit_v207.py
           python hf_space/test_private_account_facts_v208.py
+          python hf_space/test_assistant_app_identity_v2113.py
       - name: Verify canonical Chat inline JavaScript parses
         run: |
           node - <<'NODE'
