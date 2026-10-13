@@ -73,8 +73,8 @@ def test_stage_one_executes_only_read_command():
         captured.append(data["prompt"])
         yield {"type": "DELTA", "text": "Verified bounded read receipt"}
         yield {"type": "COMPLETED"}
-    with mock.patch.object(gh, "command_events", side_effect=fake_execute), \\
-         mock.patch.object(gh, "_post_github", side_effect=AssertionError("write forbidden")):
+    with (mock.patch.object(gh, "command_events", side_effect=fake_execute),
+          mock.patch.object(gh, "_post_github", side_effect=AssertionError("write forbidden"))):
         events = list(gh.agent_events({"userId": "google:owner", "prompt": prompt}))
     assert captured == ["@GitHub report deep src/main.py"], captured
     assert any(e.get("phase") == "GITHUB_READ_EVIDENCE" for e in events)
