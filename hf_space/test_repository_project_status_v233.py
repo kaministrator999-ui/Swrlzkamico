@@ -14,6 +14,7 @@ RUNTIME="b"*40
 ROUTER="""# §wyrlz §tart — READ THIS FIRST
 The main §wyrlz AI Chat/LALM application is hosted separately from Forge.
 - clean-room chat lives at /chat/§wyrlz and owns conversation UI.
+- programming LALM operating guide docs/engineering/SWRLZ_PROGRAMMING_LALM_RUNTIME_ARCHITECTURE.md
 Specialized Forge engine entrypoint §tart_§E.md:
 - projects/swrlz-forge-moba/ has its own release lane.
 New hypothetical scoped project: projects/saffron-simulator/
@@ -61,6 +62,7 @@ def test_dynamic_project_discovery():
     assert project.candidates(refs,"chat")[0][1]["path"]=="chat/§wyrlz"
     assert project.candidates(refs,"forge engine")[0][1]["path"]=="projects/swrlz-forge-moba"
     assert project.candidates(refs,"saffron simulator")[0][1]["path"]=="projects/saffron-simulator"
+    assert project.candidates(refs,"lalm")[0][1]["path"].endswith("PROGRAMMING_LALM_RUNTIME_ARCHITECTURE.md")
     assert not project.candidates(refs,"nonexistent")
 
 def test_cross_project_reports_use_source_not_chat_shortcut():
@@ -69,6 +71,8 @@ def test_cross_project_reports_use_source_not_chat_shortcut():
     forge=project.build_status(rec,"owner/repo","main","forge engine",api,read)
     alt=project.build_status(rec,"owner/repo","main","saffron simulator",api,read)
     all_projects=project.build_status(rec,"owner/repo","main","",api,read)
+    lalm=project.build_status(rec,"owner/repo","main","lalm",api,read)
+    vague=project.build_status(rec,"owner/repo","main","engine",api,read)
     assert "chat/§wyrlz" in chat and "1.5.119" in chat
     assert "Chat account UI refinement" in chat
     assert "projects/swrlz-forge-moba" in forge and "Frostveil Maul" in forge
@@ -77,6 +81,9 @@ def test_cross_project_reports_use_source_not_chat_shortcut():
     assert "projects/saffron-simulator" in alt
     assert "no matching entry" in alt
     assert "projects/saffron-simulator" in all_projects
+    assert "LALM_RUNTIME_ARCHITECTURE" in lalm and "2.1.196" in lalm
+    assert "Which engine" in vague
+    assert "Newest checked Roadmap entry" in all_projects
     assert "not proof of currently active work" in all_projects
     assert "release" not in alt or "Source records" in alt
 
@@ -93,6 +100,14 @@ def test_authenticated_repo_chat_followups_and_locked_writes():
     assert not gh._read_stage_command("@GitHub create branch feature/unsafe from main")
     assert gh.is_github_conversation("What's the status of the Forge engine in the repo?")
     assert not bp.programming_intent("Can you tell me where we are at with the chat in the repo?",[],[])["codingTask"]
+
+def test_real_verified_router_contract():
+    router=Path(__file__).resolve().parent.parent.joinpath("§wyrlz_§tart.md").read_text("utf-8")
+    paths=project.discover(router)
+    assert project.candidates(paths,"chat")[0][1]["path"]=="chat/§wyrlz"
+    assert project.candidates(paths,"forge")[0][1]["path"]=="projects/swrlz-forge-moba"
+    assert project.candidates(paths,"lalm"),"§tart should expose a LALM operating guide"
+
 
 def test_verified_blob_roadmap_large_fallback_and_failure():
     raw=ROAD.encode("utf8")
@@ -114,4 +129,5 @@ if __name__=="__main__":
     test_cross_project_reports_use_source_not_chat_shortcut()
     test_authenticated_repo_chat_followups_and_locked_writes()
     test_verified_blob_roadmap_large_fallback_and_failure()
+    test_real_verified_router_contract()
     print("v233 §tart-led project scope, source progress, privacy and immutable blob checks PASS")
