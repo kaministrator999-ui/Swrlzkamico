@@ -7,6 +7,7 @@ from brain_programming import programming_intent, CODE_TRUTH_POLICY, candidate_c
 from programming_telemetry import buffered_chat_completion, candidate_attempt_receipt, generation_summary
 from programming_repair_context import build_compact_repair_context, enforce_strategy_change, strategy_change_directive
 from response_cognition import classify_response_cognition, response_cognition_policy, response_cognition_camera
+from response_articulation_v230 import response_mode as _verified_fact_mode, style_hint as _verified_fact_hint
 from music_structure import music_model_policy, creative_music_request, creative_music_reference_projection, MUSIC_CREATIVE_REFERENCE_POLICY, original_rap_delivery, original_rap_violations
 from lyric_craft_school import lyric_craft_policy
 from lyric_output_contract import lyric_shape_request, verify_original_lyrics, clean_lyric_container, recoverable_continuous_lines, extend_continuous_lyrics, continuation_shape_receipt
@@ -322,6 +323,9 @@ def _response_mode(prompt, programming=None):
     user_identity=any(x in p for x in ("my name","who am i","do you know me","do you know my name"))
     assistant_identity=any(x in p for x in ("your name","call you","who are you","what are you"))
     identity=user_identity or assistant_identity
+    evidence_mode=_verified_fact_mode(prompt)
+    if evidence_mode and not structured_coding:
+        return evidence_mode
     if creative and not structured_coding:
         freestyle=("freestyle" in p)
         if freestyle:
@@ -558,6 +562,10 @@ def generate_events(payload):
         system+="\n"+str(payload["archiveEvidence"])[:2350]
     system+="\n"+_response_mode(prompt,programming)
     if not programming.get("codingTask"):
+        evidence_hint=_verified_fact_hint(prompt)
+        if evidence_hint:
+            system+="\n"+evidence_hint
+    if not programming.get("codingTask"):
         social_style=_social_checkin_style_hint(prompt)
         if social_style:
             system+="\n"+social_style
@@ -713,6 +721,8 @@ def generate_events(payload):
             response_tokens=min(192,available_output_tokens);temperature=0.35
         elif mode.startswith("RESPONSE MODE: CODE-"):
             response_tokens=min(1536 if repair_turn else 1024,available_output_tokens);temperature=0.25 if repair_turn else 0.30
+        elif mode.startswith("RESPONSE MODE: VERIFIED-FACT-EXPLANATION"):
+            response_tokens=min(1152,available_output_tokens);temperature=0.30
         elif mode.startswith("RESPONSE MODE: EXACT-NUMBERED-STEPS"):
             response_tokens=min(512,available_output_tokens);temperature=0.35
         elif strict_lyric_turn:
