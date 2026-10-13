@@ -45,7 +45,7 @@ def test_example_guidance_is_only_contextual():
 def test_700m_receives_lesson_as_instructions_not_fake_evidence():
     engine=ROOT.joinpath("lfm2_700m_engine.py").read_text()
     assert "from source_answer_articulation_v230 import articulation_lesson" in engine
-    assert 'lesson=articulation_lesson(prompt)' in engine
+    assert 'lesson=articulation_lesson(prompt,history)' in engine
     assert 'if not programming.get("codingTask"):' in engine
     assert 'system+="\\n"+lesson' in engine
 
@@ -150,6 +150,49 @@ def test_v231_imported_archive_date_is_calendar_span():
     assert "4db0b78" not in answer
 
 
+def test_v232_same_thread_source_report_followup_and_coding_boundary():
+    evidence=(
+      "Using only the verified GitHub source report below, explain what the selected "
+      "components appear to do.\n\n# GitHub source analysis · example/repo\n"
+      "Branch: main · commit " + "a"*40 + "\n"
+      "Scopes: docs/guide.md\nDepth: structure\n"
+      "Complete Git-tree inventory: 1 unique files\n"
+      "Content inspected: 1/1\nReviewed source files: docs/guide.md"
+    )
+    history=[
+      {"role":"user","text":evidence},
+      {"role":"assistant","text":"The inspected Markdown describes the project setup."},
+    ]
+    prompts=(
+      "What does that file do?",
+      "How do they relate?",
+      "Can you explain it further?",
+      "Which function handles the setup?",
+    )
+    engine=ROOT.joinpath("lfm2_700m_engine.py").read_text()
+    fn=next(x for x in ast.parse(engine).body
+            if isinstance(x,ast.FunctionDef) and x.name=="_response_mode")
+    scope={"re":re,"lesson_kind":teach.lesson_kind}
+    exec(compile(ast.Module(body=[fn],type_ignores=[]),"lfm2_700m_engine.py","exec"),scope)
+    mode=scope["_response_mode"]
+    prior={"intentContract":{"originalRequest":"Create a Python source code artifact"}}
+    for question in prompts:
+        assert teach.lesson_kind(question,history)=="source-report-followup",question
+        assert "SAME verified report" in teach.articulation_lesson(question,history)
+        intent=brain_programming.programming_intent(question,history,[],prior)
+        assert not intent["codingTask"],question
+        assert mode(question,intent,history).startswith("RESPONSE MODE: SOURCE-FACTS-FIRST")
+    assert teach.lesson_kind("What's the weather?",history)==""
+    assert teach.lesson_kind("Write Python code to modify that file",history)==""
+    assert brain_programming.programming_intent("Write Python code to modify that file",history,[],prior)["codingTask"]
+    assert mode("Write Python code to modify that file",{"codingTask":True},history).startswith("RESPONSE MODE: CODE-")
+    assert teach.lesson_kind("What does that file do?",[])==""
+    older=history+[{"role":"user","text":"Another question"},{"role":"assistant","text":"Answer"},
+                   {"role":"user","text":"One more"},{"role":"assistant","text":"Answer"},
+                   {"role":"user","text":"Third unrelated topic"}]
+    assert teach.lesson_kind("What does that file do?",older)==""
+
+
 if __name__=="__main__":
     test_example_guidance_is_only_contextual()
     test_700m_receives_lesson_as_instructions_not_fake_evidence()
@@ -158,4 +201,5 @@ if __name__=="__main__":
     test_real_user_export_does_not_become_example_facts()
     test_v231_actual_response_mode_is_source_explanation_not_code()
     test_v231_imported_archive_date_is_calendar_span()
-    print("v231 source-answer teaching, response mode and archive calendar-date contracts PASS")
+    test_v232_same_thread_source_report_followup_and_coding_boundary()
+    print("v232 source-report followup, noncoding response mode and archive calendar-date contracts PASS")

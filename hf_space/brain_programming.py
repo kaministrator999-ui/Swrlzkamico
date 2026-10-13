@@ -8,6 +8,7 @@ import hashlib
 import json
 from typing import Any
 import re
+from source_answer_articulation_v230 import lesson_kind
 
 _CODE_TERMS=("code","html","css","javascript","typescript","python","kotlin","java","cpp","c++","function","class","file","project","api","server","bug","compile","website","webpage","web page","frontend","ui","interface","dom","responsive","layout","component","debug","syntax")
 _NEW_PROJECT=("separate project","separately","new project","another project","different project","from scratch","unrelated project")
@@ -84,8 +85,10 @@ def _has_phrase(text: str, phrases: tuple[str, ...]) -> bool:
     return any(_phrase_present(text,phrase) for phrase in phrases)
 
 
-def _source_information_request(text: str) -> bool:
+def _source_information_request(text: str, history=None) -> bool:
     """Information-only prompts must not be forced to return source code."""
+    if lesson_kind(text,history)=="source-report-followup":
+        return True
     q=_norm(str(text or "").split("\n",1)[0])
     if q.startswith(("using only the verified github source report", "explain the verified github source report")):
         return True
@@ -1281,7 +1284,7 @@ def programming_intent(prompt: str, history: list[dict[str, Any]], pinned_contex
     original_request=_original_programming_request(history or []) if new_failure_evidence else ""
     continuation_reference=_programming_continuation_signal(text)
     inherited=continuation_reference and (bool(pins) or bool(prior_contract) or bool(last_artifact))
-    coding=not _source_information_request(text) and (_current_programming_signal(text) or inherited or bool(failure_evidence) or vague_failure)
+    coding=not _source_information_request(text,history) and (_current_programming_signal(text) or inherited or bool(failure_evidence) or vague_failure)
     if not coding:
         return {
             "schema":"swrlz-programming-intent-v1",

@@ -38,7 +38,7 @@ def test_model_policy_routing_and_preserved_conversation_paths():
         assert '_social_checkin_style_hint(prompt)' in code
         assert 'if not programming.get("codingTask"):' in code
         assert 'if social_style:' in code
-        assert '_response_mode(prompt,programming)' in code
+        assert '_response_mode(prompt,programming' in code  # 700M takes source-history; Qwen retains original args
         assert 'projectThreadEvidence' in code
         # Native generation remains in charge of its reply; no fixed text DELTA.
     stock=Path(__file__).with_name("original_engine.py").read_text()
