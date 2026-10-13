@@ -82,9 +82,9 @@ async function build(page,kind,map,cx,cz){if((await ui(page)).buildKind!==kind)a
   assert.equal(guide.cx,cx);assert.equal(guide.cz,cz);close(guide.world.x,world(map,cx,cz).x,'Grid preview X');close(guide.world.z,world(map,cx,cz).z,'Grid preview Z');
   const before=await state(page);await gridTap(page,map,cx,cz,true);const after=await state(page),tower=after.towers.find(t=>!before.towers.some(old=>old.id===t.id));
   assert.ok(tower,'Physical release did not create a native tower');assert.equal(tower.kind,kind);assert.equal(tower.cx,guide.cx);assert.equal(tower.cz,guide.cz);return tower;}
-async function selectTower(page,map,tower){if((await ui(page)).buildKind)await native(page,'maulCancel');await gridTap(page,map,tower.cx,tower.cz);
+async function selectTower(page,map,tower){if((await ui(page)).buildKind)await native(page,'maulCancel');const top=await canvasPoint(page,map,tower.cx,tower.cz,{y:1.9});await screenTap(page,top);
   if(touchPages.has(page)){assert.equal((await ui(page)).selectedTowerId,null,'A single phone tap selected a tower');
-    assert.equal((await ui(page)).lastTowerTap?.id,tower.id,'A phone tap did not identify the visible tower');await gridTap(page,map,tower.cx,tower.cz);}
+    assert.equal((await ui(page)).lastTowerTap?.id,tower.id,'A phone tap did not identify the visible tower');await screenTap(page,top);}
   assert.equal((await ui(page)).selectedTowerId,tower.id,'The native tower selection did not complete');}
 async function prototypes(page,canonical){const pieces=await page.evaluate(()=>{const result={};for(const kind of ['arrow','cannon','frost','storm','maze-wall']){
     const type='maul-'+kind,id=window.SWYRL_ENGINE_AGENT.spawn(type,{position:[-36,0,-36],name:'Acceptance '+type});window.SWYRL_ENGINE_AGENT.bake();
