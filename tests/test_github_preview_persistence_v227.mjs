@@ -96,6 +96,11 @@ const sourceCode=fs.readFileSync("chat/§wyrlz/assets/github-explorer-v223.js","
 vm.runInNewContext(sourceCode,sandbox,{timeout:5000});
 const explorer=window.SwrlzGitHubExplorerV223;
 assert.equal(explorer.version,"227");
+const chatHtml=fs.readFileSync("chat/§wyrlz/index.html","utf8");
+assert.ok(chatHtml.includes('<script src="/chat/§wyrlz/assets/github-explorer-v223.js?v=228"></script>'),
+  "Canonical Chat must load the latest GitHub explorer under a release-versioned URL");
+assert.ok(!chatHtml.includes('<script src="/chat/§wyrlz/assets/github-explorer-v223.js"></script>'),
+  "Never fall back to stale unversioned GitHub explorer bundle on mobile");
 const makeContainer=()=>{const n=new Element("assistant-body");n.rootConnected=true;return n;};
 const nodes=(root)=>[root,...root.children.flatMap(nodes)];
 const find=(root,matcher)=>nodes(root).find(matcher);

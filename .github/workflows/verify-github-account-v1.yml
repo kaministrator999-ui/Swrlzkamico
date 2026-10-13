@@ -38,6 +38,7 @@ on:
       - fix/github-explorer-directories-first-v225
       - feature/github-scope-reports-v226
       - fix/github-explorer-preview-rerender-v227
+      - fix/github-preview-cache-bust-v228
       - feature/version-literacy-content-layout-v199
   workflow_dispatch:
 
