@@ -48,7 +48,7 @@ def _read_stage_command(prompt):
     if not match:
         return False
     cmd = match[1].strip().lower()
-    return bool(cmd in ("help", "permissions", "capabilities", "files", "stats", "largest", "report")
+    return bool(cmd in ("help", "permissions", "capabilities", "files", "stats", "largest", "report", "chat status")
                 or re.fullmatch(r"(?:files|stats|largest|history|search|compare|report)\s+[^\r\n]{1,1200}", cmd)
                 or re.fullmatch(r"(?:read|open|view)\s+[^\r\n]{1,220}", cmd))
 
@@ -393,10 +393,19 @@ async def choose_repository(request: Request):
 
 
 def is_start_request(prompt):
+    # Intent belongs to the user's FIRST instruction, not appended GitHub
+    # report text. Prior loose substring matching hijacked "Discuss report
+    # in Chat" because the source body contained "§tart" and "read".
     s = str(prompt or "").strip().lower()
-    return s in ("§§", "@github §§", "§tart", "@github §tart") or (
-        ("§tart" in s or "start doc" in s or "startup doc" in s)
-        and ("read" in s or "follow" in s or "load" in s or "open the" in s))
+    if not s or "\n" in s or len(s) > 240:
+        return False
+    if s in ("§§", "@github §§", "§tart", "@github §tart"):
+        return True
+    return bool(re.fullmatch(
+        r"(?:(?:please|can you|could you|would you)\s+)?"
+        r"(?:read|open|load|follow|go through|check)\b.{0,145}"
+        r"(?:§tart|start doc(?:ument)?|startup doc(?:ument)?)"
+        r"(?:\b.{0,60})?[?.!]*", s, re.I))
 
 
 def _safe_fragment(value, limit=650):
@@ -823,7 +832,7 @@ def is_github_command(prompt):
     if github_workflows_v212.is_command(prompt) or github_project_v213.is_command(prompt) or forge_project_tools_v213.is_command(prompt) or engine_starter_pack_v215.is_command(prompt) or engine_code_agent_v217.is_command(prompt):
         return True
     return bool(re.match(
-        r"^@github\s+(help(?:\s|$)|permissions|capabilities|branches(?:\s|$)|(?:files|stats|largest|history|search|compare|report)(?:\s|$)|(?:read|open|view)\s+|issues(?:\s|$)|pulls(?:\s|$)|commits(?:\s|$)|create issue\s+|create branch\s+|confirm\s+)",
+        r"^@github\s+(help(?:\s|$)|permissions|capabilities|chat\s+status\s*$|how\s+many\s+(?:total\s+)?(?:files?|folders?|directories|dirs?)\b|branches(?:\s|$)|(?:files|stats|largest|history|search|compare|report)(?:\s|$)|(?:read|open|view)\s+|issues(?:\s|$)|pulls(?:\s|$)|commits(?:\s|$)|create issue\s+|create branch\s+|confirm\s+)",
         str(prompt or "").strip(), re.I))
 
 
@@ -982,6 +991,52 @@ def _github_repo_stats(record, repo, branch, scope=""):
             "Git does not store native creation/modification timestamps.")
 
 
+def _verified_chat_status(record, repo, branch):
+    """Account-authorized repo facts; never infer deployment or acceptance."""
+    token = record["token"]
+    head = _api(token, "/repos/" + repo + "/commits/" + quote(branch, safe=""))
+    sha = str(head.get("sha") or "")
+    if not _FILE_SHA.fullmatch(sha):
+        return "GitHub branch revision is unverified; no Chat progress was inferred."
+    lines = ["## Chat project in the selected GitHub repository",
+             "Repository: " + repo, "Branch: " + branch, "Source commit: " + sha,
+             "Scope: chat/§wyrlz (source and declared runtime versions; read-only)."]
+    for path in ("chat/§wyrlz/index.html", "chat/§wyrlz/assets/github-explorer-v223.js"):
+        obj = _read_optional(token, repo, path, sha, 320000)
+        if obj:
+            lines.append("Verified source file: " + path + " · Git blob " + str(obj.get("sha") or "unverified"))
+        else:
+            lines.append("Source file not verified/readable: " + path)
+    try:
+        revisions = _api(token, "/repos/" + repo + "/commits?sha=" + sha +
+                         "&path=" + quote("chat/§wyrlz", safe="") + "&per_page=5")
+    except HTTPException:
+        revisions = None
+    if isinstance(revisions, list):
+        lines.append("Recent Chat-path commits (at most five, not all project changes):")
+        for item in revisions[:5]:
+            digest = str(item.get("sha") or "")
+            message = str(((item.get("commit") or {}).get("message") or "")).splitlines()[0][:140]
+            if _FILE_SHA.fullmatch(digest):
+                lines.append("- " + digest[:12] + " · " + _safe_fragment(message, 140))
+    runtime_sha = ""
+    try:
+        runtime = _api(token, "/repos/" + repo + "/commits/runtime")
+        runtime_sha = str(runtime.get("sha") or "")
+    except HTTPException:
+        pass
+    if _FILE_SHA.fullmatch(runtime_sha):
+        lines.append("Runtime registry commit: " + runtime_sha)
+        for module in ("web-chat", "server-runtime", "repository-work"):
+            obj = _read_optional(token, repo, "versions/" + module + ".txt", runtime_sha, 4500)
+            if obj:
+                version = re.search(r"^VERSION=([^\r\n]{1,40})", str(obj.get("body") or ""), re.M)
+                if version:
+                    lines.append("Declared " + module + " version: " + version[1])
+    lines.append("These are verified source/registry facts, not proof of production deployment, live correctness or mobile acceptance. See the exact CI/deployment receipts and test the signed-in UI before promoting known-good.")
+    return "\n".join(lines)
+
+
 def _github_command(user, prompt):
     if not str(user or "").startswith("google:"):
         return "Sign in with your verified Google account before using connected GitHub tools."
@@ -1058,6 +1113,10 @@ def _github_command(user, prompt):
         raise
     if not check["allowed"]:
         return _permission_message(check)
+    if lower == "chat status":
+        return _verified_chat_status(rec, repo, check["defaultBranch"])
+    if re.fullmatch(r"how\s+many\s+(?:total\s+)?(?:files?|folders?|directories|dirs?)(?:\s+(?:(?:are\s+(?:there\s+)?)?in\s+(?:the\s+)?(?:repo|repository)|are\s+there))?[?.!]*", lower):
+        return _github_repo_stats(rec, repo, check["defaultBranch"], "")
     if lower == "help" and GITHUB_CAPABILITY_STAGE == "read-repository":
         return (_READ_STAGE_DESCRIPTION + "\nCommands: @GitHub files, @GitHub files docs, "
                 "@GitHub read file config, @GitHub stats, @GitHub largest, "
@@ -1334,6 +1393,20 @@ def normalize_thread_context(value):
             "capturedAt": int(time.time())}
 
 
+def is_repo_chat_status_request(prompt):
+    """Explicit repository Chat status, not native/imported conversation recall."""
+    s = re.sub(r"\s+", " ", str(prompt or "").strip().lower()).rstrip("?.!")
+    if len(s)>220 or not re.search(r"\b(?:repo|repository|github)\b",s):
+        return False
+    if not re.search(r"\bchat\b",s) or re.search(r"\b(?:previous|imported|conversation history|recall|remember|last time)\b",s):
+        return False
+    return bool(re.fullmatch(
+        r"(?:(?:can|could) you (?:tell|show) me )?"
+        r"(?:where (?:we (?:are|re|'re)|are we) (?:at|up to|on|with)(?: with| on)?|"
+        r"what(?:'s| is) (?:the )?(?:current )?(?:status|progress) (?:of|with|on)|"
+        r"how (?:far along|is progress) (?:with|on))"
+        r"(?: the| our)? chat (?:in|on|of|with) (?:the|our|my)? ?(?:github )?(?:repo|repository|github)",s))
+
 def _implicit_repo_command(prompt, context):
     """Narrow thread-local follow-ups. Never guess global chat intent."""
     if not isinstance(context, dict) or not _REPO.fullmatch(str(context.get("repo") or "")):
@@ -1342,10 +1415,12 @@ def _implicit_repo_command(prompt, context):
     if len(q) > 180 or not q or q.startswith("@") or re.search(
             r"\b(?:create|edit|delete|remove|push|commit|merge|deploy|modify|write|trigger|dispatch|run)\b", q):
         return None
+    if is_repo_chat_status_request(prompt):
+        return "@GitHub chat status"
     directory = str(context.get("directory") or "")
     last_file = str(context.get("lastFile") or "")
     scope = (" " + directory) if directory else ""
-    if re.fullmatch(r"(?:and )?(?:how many|what(?:'s| is) the number of)\s+(?:total )?(?:files?|folders?|directories|dirs?|items?)(?: (?:are )?(?:there|in (?:here|this (?:folder|directory|repo|repository))))?", q):
+    if re.fullmatch(r"(?:and )?(?:how many|what(?:'s| is) the number of)\s+(?:total )?(?:files?|folders?|directories|dirs?|items?)(?:\s+(?:are\s+there(?:\s+in)?|are\s+in|in)\s+(?:(?:the|this|our)\s+)?(?:folder|directory|repo|repository|here)|\s+are\s+there)?",q):
         return "@GitHub stats" + scope
     if re.fullmatch(r"(?:and )?(?:dirs?|directories|folders?|files?)", q):
         return "@GitHub stats" + scope
@@ -1390,6 +1465,8 @@ _AGENT_TOOLS = ("permissions", "files", "branches", "issues", "pulls", "commits"
 
 def is_github_conversation(prompt):
     q = str(prompt or "").strip()
+    if is_repo_chat_status_request(q):
+        return True
     if engine_code_agent_v217.is_coding_intent(q):
         return True
     if re.match(r"^@github\s+(?:ask|explore|analyze)\s+\S", q, re.I):
@@ -1549,6 +1626,9 @@ def agent_events(data, model_generator=None):
     user = str(data.get("userId") or "")
     prompt = str(data.get("prompt") or "").strip()
     followup = _implicit_repo_command(prompt, data.get("githubContext")) if GITHUB_CAPABILITY_STAGE=="read-repository" else None
+    if GITHUB_CAPABILITY_STAGE=="read-repository" and re.fullmatch(
+        r"(?i)@github\s+how\s+many\s+(?:total\s+)?(?:files?|folders?|directories|dirs?)(?:\s+(?:(?:are\s+(?:there\s+)?)?in\s+(?:the\s+)?(?:repo|repository)|are\s+there))?[?.!]*", prompt):
+        followup="@GitHub stats"
     if followup:
         prompt = followup
         data = {**data, "prompt": prompt}
