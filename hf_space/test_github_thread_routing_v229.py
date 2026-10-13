@@ -28,7 +28,7 @@ def test_repo_followup_is_not_memory_or_coding():
     ask="Can you tell me where we are at with the chat in the repo?"
     assert gh.is_repo_chat_status_request(ask)
     assert gh.is_github_conversation(ask)
-    assert gh._implicit_repo_command(ask,ctx)=="@GitHub chat status"
+    assert gh._implicit_repo_command(ask,ctx)=="@GitHub project status chat"
     assert gh._implicit_repo_command("How many files are there in the repo",ctx)=="@GitHub stats"
     assert gh._implicit_repo_command("How many files are in the repo",ctx)=="@GitHub stats"
     for prompt in (ask,"How many files are there in the repo",
