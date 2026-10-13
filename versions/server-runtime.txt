@@ -1,6 +1,6 @@
 ID=server-runtime
-VERSION=2.3.386
-REVISION=2.3.386-hf-v233-start-led-project-status
+VERSION=2.3.387
+REVISION=2.3.387-hf-v234-start-led-focus-portfolio
 KIND=server-runtime
 SOURCE_BRANCH=runtime
 STATUS=active
