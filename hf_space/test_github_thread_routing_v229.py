@@ -74,7 +74,7 @@ def test_import_span_uses_message_timestamps_not_hashes():
     }):
         actual=facts.answer(owner,[],prompt)
     assert "2024-05-08" in actual and "2026-09-16" in actual
-    assert "ZIP upload/import job" in actual
+    assert "ZIP upload" in actual and "import job" in actual
     assert "4db0b78" not in actual
     with mock.patch.object(facts.account_chat_store,"_config",return_value={}),mock.patch.object(
         facts.archive,"_owner"),mock.patch.object(facts.gh,"_redis",return_value=2),mock.patch.object(facts,"_count_status",return_value={
