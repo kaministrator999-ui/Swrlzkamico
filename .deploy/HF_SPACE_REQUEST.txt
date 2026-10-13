@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=c30315796475a2ce1be4ec0dc2ac67e44b7b8e06
-REQUEST_NONCE=2026-10-12-v228-github-preview-asset-freshness-001
+SOURCE_REF=843f5204a0ea5de9ae6c4f95d9fee07be75b6442
+REQUEST_NONCE=2026-10-12-v229-github-conversation-source-truth-001
