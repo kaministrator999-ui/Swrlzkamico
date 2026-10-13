@@ -137,16 +137,20 @@ def answer(owner,native_threads,prompt):
                         "timestamps; I cannot establish a date span.")
             first=datetime.fromtimestamp(counted["earliest"],timezone.utc)
             last=datetime.fromtimestamp(counted["latest"],timezone.utc)
-            return (f"Verified imported ChatGPT message dates (UTC): {first.date().isoformat()} "
-                    f"through {last.date().isoformat()} — {(last-first).days} elapsed whole days "
-                    f"({counted['stamped']:,} timestamped messages inspected across "
-                    f"{total:,} stored conversations). These are the earliest and latest "
-                    "valid message timestamps, not the ZIP upload/import job start and finish times.")
+            return (f"The conversations in your stored ChatGPT import contain messages dated "
+                    f"**{first.date().isoformat()}** through **{last.date().isoformat()}** (UTC), "
+                    f"a span of **{(last-first).days} elapsed whole days**. "
+                    f"I verified {counted['stamped']:,} timestamped messages across "
+                    f"{total:,} stored conversations.\n\n"
+                    "That's the date range covered by the imported conversations, not the "
+                    "time the ZIP upload/import job itself took. Messages without valid "
+                    "timestamps cannot extend this verified range.")
         if counted.get("state")=="error":
             return "The imported ChatGPT date-range scan failed; no dates can be verified right now."
-        return ("I'm checking the encrypted imported ChatGPT message timestamps for their "
-                "earliest and latest dates. Ask again after the index scan finishes; "
-                "I won't invent dates from repository commit or blob hashes.")
+        return ("I'm checking the actual timestamps in your stored ChatGPT import "
+                "to find its earliest and latest conversation dates. The scan is still "
+                "running; ask again shortly for the verified range. Git commit hashes "
+                "and source-file metadata cannot establish those dates.")
     if kind in ("imported-threads","native-threads","all-threads"):
         return base+" These are separate archives; their thread counts are not interchangeable."
     if kind=="native-messages":

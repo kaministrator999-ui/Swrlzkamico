@@ -56,9 +56,9 @@ def test_status_uses_account_pinned_repository_sources():
     rec={"token":"private-token"}
     with mock.patch.object(gh,"_api",side_effect=api), mock.patch.object(gh,"_read_optional",side_effect=read):
         result=gh._verified_chat_status(rec,"owner/repo","main")
-    assert SHA in result and "Verified source file" in result
-    assert "Declared web-chat version: 1.2.3" in result
-    assert "not proof of production deployment" in result
+    assert "verified source" in result and SHA[:12] in result
+    assert "**web-chat:** 1.2.3" in result
+    assert "do not, by themselves, confirm" in result
     assert any("chat%2F%C2%A7wyrlz" in x for x in paths)
     assert "private-token" not in result
 
@@ -81,7 +81,7 @@ def test_import_span_uses_message_timestamps_not_hashes():
         "state":"counting","total":2,"done":1
     }):
         waiting=facts.answer(owner,[],prompt)
-    assert "won't invent dates" in waiting
+    assert "Git commit hashes" in waiting
 
 def test_export_prompts_route_read_only():
     assert gh._read_stage_command("@GitHub stats")
