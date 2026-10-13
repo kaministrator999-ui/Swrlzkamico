@@ -117,6 +117,29 @@ def structure(path, body, depth):
     return result
 
 
+def internal_import_refs(file, full_index):
+    """Match declared imports to actual verified repository paths, not guesses."""
+    base = PurePosixPath(file["path"]).parent
+    links = []
+    for ref in file["imports"]:
+        targets = []
+        if ref.startswith("."):
+            joined = str(base / ref)
+            if ".." in joined.split("/"):
+                continue
+            targets.append(joined)
+        else:
+            targets.append(ref.replace(".", "/"))
+        for prefix in targets:
+            for target in (prefix, prefix + ".py", prefix + ".js", prefix + ".ts",
+                           prefix + ".mjs", prefix + "/__init__.py", prefix + "/index.js"):
+                if target in full_index and target != file["path"]:
+                    if not any(item["target"] == target for item in links):
+                        links.append({"importRef": ref, "target": target})
+                    break
+    return links[:20]
+
+
 def build_report(snapshot, requested, depth="structure", read_file=None):
     if depth not in LIMITS:
         raise ExplorerError("Report depth must be overview, structure or deep")
@@ -204,6 +227,8 @@ def build_report(snapshot, requested, depth="structure", read_file=None):
         inspected = structure(path, body, depth)
         scanned.append({"path": path, "blobSha": item["sha"], "sizeBytes": size,
                         "kind": file_kind(path), **inspected})
+    for file in scanned:
+        file["verifiedLocalImportMatches"] = internal_import_refs(file, index)
     scanned_paths = {x["path"] for x in scanned}
     return {"schema": "swrlz-github-scope-report-v1", "repository": snapshot["repository"],
             "branch": snapshot["branch"], "sourceSha": snapshot["sourceSha"],
@@ -247,6 +272,8 @@ def markdown_report(data, limit=15000):
                                                       for s in item["symbols"][:15]))
         if item["imports"]:
             out.append("  - Import references: " + ", ".join(item["imports"][:15]))
+        if item["verifiedLocalImportMatches"]:
+            out.append("  - Confirmed paths matching imports (static): " + ", ".join(x["target"] for x in item["verifiedLocalImportMatches"]))
         if item["todoMarkers"]:
             out.append("  - TODO/FIXME markers: " + str(item["todoMarkers"]))
     if cov["explicitFilesNotInspected"]:
