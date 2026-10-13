@@ -132,7 +132,7 @@ def classify_read(prompt, context=None):
     if re.search(r"\b(?:largest|biggest)\b", lower) and re.search(r"\bfiles?\b", lower):
         return "@GitHub largest 15" + (" " + scoped[0] if scoped else "")
     if re.search(r"\b(?:history|when|last modified|last changed|"
-                 r"first added|changes? to)\b",lower):
+                 r"first added|changed|modified|changes? (?:to|in))\b",lower):
         if scoped:
             return "@GitHub history " + scoped[0]
         return "@GitHub report structure /"
