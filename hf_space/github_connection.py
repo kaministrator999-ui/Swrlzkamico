@@ -24,6 +24,7 @@ import engine_starter_pack_v215
 import engine_code_agent_v217
 import github_explorer_v223 as explorer
 import github_report_v226 as scope_report
+import repository_project_status_v233 as project_status
 from cryptography.fernet import Fernet, InvalidToken
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import JSONResponse, RedirectResponse
@@ -48,7 +49,8 @@ def _read_stage_command(prompt):
     if not match:
         return False
     cmd = match[1].strip().lower()
-    return bool(cmd in ("help", "permissions", "capabilities", "files", "stats", "largest", "report", "chat status")
+    return bool(cmd in ("help", "permissions", "capabilities", "files", "stats", "largest", "report", "chat status", "project status")
+                or re.fullmatch(r"project status\s+[^\r\n]{1,90}",cmd)
                 or re.fullmatch(r"(?:files|stats|largest|history|search|compare|report)\s+[^\r\n]{1,1200}", cmd)
                 or re.fullmatch(r"(?:read|open|view)\s+[^\r\n]{1,220}", cmd))
 
@@ -832,7 +834,7 @@ def is_github_command(prompt):
     if github_workflows_v212.is_command(prompt) or github_project_v213.is_command(prompt) or forge_project_tools_v213.is_command(prompt) or engine_starter_pack_v215.is_command(prompt) or engine_code_agent_v217.is_command(prompt):
         return True
     return bool(re.match(
-        r"^@github\s+(help(?:\s|$)|permissions|capabilities|chat\s+status\s*$|how\s+many\s+(?:total\s+)?(?:files?|folders?|directories|dirs?)\b|branches(?:\s|$)|(?:files|stats|largest|history|search|compare|report)(?:\s|$)|(?:read|open|view)\s+|issues(?:\s|$)|pulls(?:\s|$)|commits(?:\s|$)|create issue\s+|create branch\s+|confirm\s+)",
+        r"^@github\s+(help(?:\s|$)|permissions|capabilities|(?:chat|project)\s+status(?:\s|$)|how\s+many\s+(?:total\s+)?(?:files?|folders?|directories|dirs?)\b|branches(?:\s|$)|(?:files|stats|largest|history|search|compare|report)(?:\s|$)|(?:read|open|view)\s+|issues(?:\s|$)|pulls(?:\s|$)|commits(?:\s|$)|create issue\s+|create branch\s+|confirm\s+)",
         str(prompt or "").strip(), re.I))
 
 
@@ -1124,8 +1126,11 @@ def _github_command(user, prompt):
         raise
     if not check["allowed"]:
         return _permission_message(check)
-    if lower == "chat status":
-        return _verified_chat_status(rec, repo, check["defaultBranch"])
+    if lower == "chat status" or lower == "project status" or lower.startswith("project status "):
+        subject=("chat" if lower=="chat status" else cmd[len("project status"):].strip())
+        if len(subject)>90 or any(ch in subject for ch in "\r\n\x00"):
+            return "Provide one short project name to inspect."
+        return project_status.build_status(rec,repo,check["defaultBranch"],subject,_api,_read_optional)
     if re.fullmatch(r"how\s+many\s+(?:total\s+)?(?:files?|folders?|directories|dirs?)(?:\s+(?:(?:are\s+(?:there\s+)?)?in\s+(?:the\s+)?(?:repo|repository)|are\s+there))?[?.!]*", lower):
         return _github_repo_stats(rec, repo, check["defaultBranch"], "")
     if lower == "help" and GITHUB_CAPABILITY_STAGE == "read-repository":
@@ -1133,6 +1138,7 @@ def _github_command(user, prompt):
                 "@GitHub read file config, @GitHub stats, @GitHub largest, "
                 "@GitHub search NAME, @GitHub history FILE, @GitHub compare BASE...HEAD, "
                 "@GitHub report overview /, @GitHub report deep docs | src/app.py, "
+                "@GitHub project status, @GitHub project status PROJECT, "
                 "@GitHub permissions. "
                 "If multiple matches exist, choose the displayed full path. The §§ startup "
                 "reader also remains available for source-grounded orientation.")
@@ -1426,8 +1432,9 @@ def _implicit_repo_command(prompt, context):
     if len(q) > 180 or not q or q.startswith("@") or re.search(
             r"\b(?:create|edit|delete|remove|push|commit|merge|deploy|modify|write|trigger|dispatch|run)\b", q):
         return None
-    if is_repo_chat_status_request(prompt):
-        return "@GitHub chat status"
+    subject=project_status.subject_of_status(prompt)
+    if subject is not None:
+        return "@GitHub project status"+(" "+subject if subject else "")
     directory = str(context.get("directory") or "")
     last_file = str(context.get("lastFile") or "")
     scope = (" " + directory) if directory else ""
@@ -1476,6 +1483,8 @@ _AGENT_TOOLS = ("permissions", "files", "branches", "issues", "pulls", "commits"
 
 def is_github_conversation(prompt):
     q = str(prompt or "").strip()
+    if project_status.subject_of_status(q) is not None and re.search(r"\b(?:repo|repository|github)\b",q,re.I):
+        return True
     if is_repo_chat_status_request(q):
         return True
     if engine_code_agent_v217.is_coding_intent(q):
