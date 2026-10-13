@@ -1,3 +1,11 @@
+## UPDATE STARTED — 2026-10-12 — v227 GitHub explorer file preview persists across chat rerenders
+
+**Reported bug:** Tapping "Open" in the signed-in GitHub repository widget displays a file below the list, but its panel disappears shortly afterward. Reproduced architectural cause from source: `openFile()` fills `state.opened/state.content`, then `context()` invokes `options.contextUpdated` calling `scheduleStationSync()`; persisted thread GitHub context participates in `conversationRenderSignature`, which triggers `renderConversation` to remove and rebuild `.rendered-message` nodes. The explorer rebuilds a new hidden `detail` node but fails to restore cached open file content.
+
+**Owner:** Web Chat UI, `chat/§wyrlz/assets/github-explorer-v223.js` and conversation renderer `chat/§wyrlz/index.html`. Avoid changing Station authenticated thread persistence or Stage-1 GitHub read locks. Canonical released source `feature/github-scope-reports-v226@402dcae12a25a7fe44b9933dc50026698d45cfe1`, main head at START `5db49bef369f0c118f877c1a7adfdf38fe016def` (independent §E work). Existing verified source cache already owns file content, so rehydrate from cache without extra GitHub access, recursive context writes or changing account/thread scope. Preserve close/hide, directory navigation and account isolation. Repair detail-pane view restoration for file, and check reports. Regression must simulate chat-render refresh, inspect cache behavior and avoid additional file requests.
+
+**Target:** isolated v227 source branch, three CI gates, guarded same-Space release only after exact-source CI, then atomic module version registry and FINISHED record; do not touch §E. Truth at START: not yet changed or tested.
+
 ## UPDATE FINISHED — 2026-10-12 — v226 source-grounded scoped GitHub repository reports
 
 **Outcome:** Full verified Git-tree repository inventory and source-grounded inspectable reports for selected **whole repo**, **current directory**, or **up to 12 explicitly selected directories/files**, with overview/structure/deep levels, no GitHub writes, three **COMPLETED/SUCCESS** exact-source CI gates, guarded release to existing Chat Space **COMPLETED/SUCCESS**, atomic registered versions **read back**. Signed-in Google/GitHub owner Android UI behavior remains **UNVERIFIED**.
