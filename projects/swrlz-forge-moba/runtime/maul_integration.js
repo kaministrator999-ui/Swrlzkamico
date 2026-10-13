@@ -156,7 +156,7 @@ function maulStartSession(simulate=false){
   maulSession=MAUL_CORE.createSession({rules:maulRules(),map:preflight.map,towers:preflight.towers});maulSession.speed=1;maulSession.selectedSector=maulSession.rules.selectedSector;maulRuntime=new THREE.Group();maulRuntime.name='Maul Play runtime';scene.add(maulRuntime);maulObjects.clear();maulRouteKey='';maulEventCursor=0;maulResultSealed=false;
   for(const actor of actors)if(MAUL_CORE.definitions[actor.userData.actorType?.slice(5)])actor.visible=false;
   maulSyncVisuals();maulShowHUD(true);maulFrameSector(maulSession.selectedSector||0);setSessionButtons();$('keepBtn').classList.add('hidden');$('viewLabel').textContent='Frostveil Maul · '+(simulate?'Simulate':'Play In Editor');
-  if(!simulate){stRunGuard(()=>stRunBegin(maulAuthorBaseline));if(stRunState.active?.mode==='maul'){const run=stRunState.active;run.initialSeed=maulSession.seed??maulSession.rules.seed;const start=run.events.find(e=>e.type==='match-start');if(start)Object.assign(start.details,{role:'builder',seed:run.initialSeed});}maulFlushEvents();}return true;
+  if(!simulate){stRunGuard(()=>stRunBegin(maulAuthorBaseline));if(stRunState.active?.mode==='maul'){const run=stRunState.active;run.initialSeed=maulSession.seed??maulSession.rules.seed;const start=run.events.find(e=>e.type==='match-start');if(start)Object.assign(start.details,{role:'builder',initialSeed:run.initialSeed});}maulFlushEvents();}return true;
 }
 const maulNativePlay=beginPlay,maulNativeSimulate=beginSimulate,maulNativeStop=stopSession;
 beginPlay=function(fromHere=null){return currentProject.kind==='maul'?maulStartSession(false):maulNativePlay(fromHere);};

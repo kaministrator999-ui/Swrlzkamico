@@ -223,9 +223,9 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
     assert.deepEqual((await runStatus(page)).runs.map(run=>run.id),completedBefore);assert.deepEqual(authored(await saved(page)),authored(empty));
     pass('native_simulate_never_creates_play_recording_and_stop_restores_authored_map');
 
-    await load(page,empty);await sector(page,0);map=(await state(page)).map;const recordedTower=await build(page,'arrow',map,4,3);await native(page,'maulCancel');
+    await load(page,empty);await sector(page,0);map=(await state(page)).map;const recordedTower=await build(page,'arrow',map,4,3);await gridTap(page,map,5,1,true);await native(page,'maulCancel');
     await gridTap(page,map,3,5);await frames(page,15);await native(page,'maulStartWave');await frames(page,20);const observed=await state(page),liveRun=await runData(page);
-    assert.equal(liveRun.mode,'maul');assert.equal(liveRun.initial.game.kind,'maul');assert.equal(liveRun.initial.game.role,'builder');assert.equal(liveRun.capture.incomplete,false);
+    assert.equal(liveRun.mode,'maul');const matchStart=liveRun.events.find(e=>e.type==='match-start');assert.equal(matchStart.details.role,'builder');assert.equal(matchStart.details.initialSeed,liveRun.initialSeed);assert.ok(Number.isInteger(liveRun.initialSeed));assert.ok(liveRun.events.some(e=>e.type==='maul-build-rejected'),'Rejected touch/mouse placement was omitted from the log');assert.equal(liveRun.initial.game.kind,'maul');assert.equal(liveRun.initial.game.role,'builder');assert.equal(liveRun.capture.incomplete,false);
     assert.ok(liveRun.events.some(event=>event.type==='maul-built'&&event.details.id===recordedTower.id));assert.ok(liveRun.events.some(event=>event.type==='maul-wave-started'));
     const snapshot=await runFrame(page,liveRun);assert.equal(snapshot.game.gold,observed.gold);assert.equal(snapshot.game.wave,observed.wave);assert.equal(snapshot.game.lives,observed.lives);
     for(const unit of observed.units.filter(u=>u.alive!==false)){const entity=snapshot.entities[unit.id];assert.ok(entity,'Recorder omits a visible native creep '+unit.id);
