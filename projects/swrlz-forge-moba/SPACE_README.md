@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v10.5
+title: §wyrl§ Engine v10.6
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -7,24 +7,30 @@ sdk: static
 app_file: index.html
 fullWidth: true
 header: mini
-short_description: Sheep Tag, paper theatre, Dragon Den and Starforge
+short_description: Maul, Sheep Tag, paper theatre, Dragon Den and Starforge
 ---
 
-# §wyrl§ Engine · Maker v10.5
+# §wyrl§ Engine · Maker v10.6
 
-## Current v10.5 candidate · Editor play-run recorder
+## Current v10.6 candidate · Frostveil Maul tower defense
 
-In any project or starter editor, open **Run recorder**, enable **Record Play run**, close the panel and use the native **Play** button. Recording starts off by default. When enabled, **Full · every simulation update** captures every observed native update; **10 snapshots / second** and **2 snapshots / second** offer smaller state logs while retaining timed commands and game events. Settings stay on this device and do not enter native project or Map Creator saves. The toggle applies across custom projects and every native starter: Default, MOBA Arena, Dragon Den, Starforge, Ghosts in Different Forms and Sheep Tag. Generic runs capture actor transforms, hierarchical part poses, live spawned units, camera, input and observed health/lifecycle changes; Sheep Tag adds its match-specific rules and events. **Simulate** does not create recordings.
+Choose **Frostveil Maul** in **Projects**, or open `?project=maul-frostveil`, then use the editor's native **Play** button. This separate starter follows the cooperative Warcraft III: The Frozen Throne Wintermaul pattern: nine linked building sectors, waves that travel through downstream defenders, player-built tower mazes and a shared exit with shared lives. One local controller can manage all nine builders; optional auto-defenders help in the other eight sectors. Network multiplayer is outside this starter.
 
-A run retains its starting map, rules and actual random seed, a catalog of authored objects, timed world-state changes, camera lens/orientation, body and limb poses, construction and economy, orders, traffic, captures, wisps, rescues and match results. Checkpoints support seeking through the state log. Written 3D observations describe X-east/Y-up/negative-Z-north positions, height differences, movement, nearby objects and each object's recorded state. Player visibility and camera-frustum membership remain separate observations; they do not assert unobstructed line of sight.
+Build **Arrow**, **Cannon**, **Frost** and **Storm** towers or inexpensive maze walls on the ground grid. Towers have three upgrade tiers and target priorities; gold from kills funds construction and upgrades, and selling refunds part of the investment. Ground enemies follow the remaining open maze, flying enemies bypass it, and boss rounds punctuate the thirty-wave progression. Building rejects a complete route closure and occupied footprints before charging gold. This anti-block rule is an explicit §E improvement: historical Maul variants handle full blocking differently.
 
-After **Stop**, reopen **Run recorder** to scrub the completed run, orbit a spectator schematic, follow a recorded object or use **Recorded player camera**. Review includes objects hidden from the player, so review and export stay unavailable during Play or Pause. The game retains its normal fog and controls. Stop seals the final runtime world before restoring the authored scene. Restart creates a separate run; a match result finalizes its run once. The latest **three finished runs** remain in this tab; export a run to keep it after closing the tab.
+The original frost-and-crystal map, tower pieces, builder and spawn/waypoint/exit actors remain native editor objects. **Maul rules**, native transforms, Undo/Redo and **Save Project / Load Project** retain authored changes. Play creates the runtime match; Pause freezes it, and Stop restores the authored scene. Desktop and phone placement show the complete grid footprint, with the touch preview lifted above the finger. Select a placed tower to inspect its range, upgrade, sell or change targeting.
 
-**Export JSON** downloads the complete structured `.swyrl-run.json` evidence. **Export text** downloads `.swyrl-run.txt` observations and events for later reading or analysis. **Export spectator HTML** downloads a standalone `.swyrl-run.html` viewer that works offline, with its own timeline, orbit/follow controls and written observations. **Open saved JSON** reviews a previously exported run without replacing the editor map. The viewer reconstructs captured states as a schematic; it does not rerun game logic, reproduce the original artwork or export a rendered video. Recorded data is not silently truncated; a capture failure marks the record incomplete. JSON viewer imports have an explicit 200 MB limit.
+The existing **Run recorder** toggle supports this seventh starter as well as every earlier starter and imported custom project. Enable it before Play; after Stop, export JSON, written spatial observations or a self-contained spectator HTML viewer. Maul recordings add wave, gold, lives, tower, enemy, route and command/result evidence to the shared camera/object observations. Recording remains off by default, and review/export remain unavailable during an active match.
 
-Publication appends `patches/v10_5_sheep_run_recorder.py`, `runtime/sheep_run_recorder.js` and `runtime/sheep_run_review.js`: **65 governed patches and 23 unchanged assets**, artifact `swyrl_engine_v10_5.html`, marker `SWYRL_ENGINE_DEPLOY_MARKER: V10_5_SHEEP_RUN_RECORDER`. All 64 earlier patches, earlier runtime modules, map/media assets and payloads remain byte-identical. Native Play/Pause/Stop, project Save/Load, touch placement, house snapping and physical traffic retain their existing behavior. Exact bytes and SHA-256 belong to the final sealed manifest and generated `SOURCE.json`.
+Publication appends `patches/v10_6_maul_tower_defense.py` and new Maul runtime modules, with **66 governed patches and 24 assets**, including `scenes/maul-frostveil.swyrl.json`. All 65 earlier patches, earlier runtime modules, the 23 published assets and payload chunks remain byte-identical. Artifact: `swyrl_engine_v10_6.html`; marker: `SWYRL_ENGINE_DEPLOY_MARKER: V10_6_MAUL_TOWER_DEFENSE`. Exact bytes and SHA-256 come from the sealed manifest and generated `SOURCE.json`.
 
-Acceptance requires all **six engine workflows**, **twelve desktop/phone browser suites**, including the new `sheep_run` suite, and the existing **13 sealed-source continuous-geometry CPU scenarios**. Recorder acceptance exercises native mouse/touch Play, settings, actual commands, events, exports, offline review and logging-on/off gameplay parity. Final source/deployment commits resolve through the last deliberate `DEPLOY_REQUEST.json`, its successful dedicated Actions run and hosted HTML/SOURCE/all-asset verification. These candidate notes do not assert publication before those receipts succeed.
+Acceptance requires all **six engine workflows**, **thirteen desktop/phone browser suites**, the existing **13 sealed-source Sheep Tag geometry scenarios**, and the new sealed-source Maul routing/wave CPU cases. Final source/deployment authority comes from the last deliberate dedicated `DEPLOY_REQUEST.json`, its successful Actions run and exact hosted HTML/SOURCE/all-asset verification. These candidate notes do not assert publication before those receipts succeed. Controls, research and scope: [MAUL_STARTER.md](https://github.com/kaministrator999-ui/Swrlzkamico/blob/main/projects/swrlz-forge-moba/MAUL_STARTER.md).
+
+## Historical verified v10.5 · Editor play-run recorder
+
+The v10.5 release is verified live: merged source `6da367913c0eecc89c67a4976c3db407d851da15`, final trigger `e3b252b6850dfd84824563d1209333930321b268`, [deployment 38344147035](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38344147035) and [hosted audit 38344188938](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38344188938). It seals **65 patches, 23 assets and 1,594,471 bytes**, SHA-256 `cd3b50f06d3a802c025b3e530e743446d284633961bff0dacd46a656eb7e8ace`. All six engine workflows, twelve desktop/phone browser suites and 13 geometry CPU scenarios passed, followed by native live recorder downloads on desktop and phone. Marker: `V10_5_SHEEP_RUN_RECORDER`; artifact: `swyrl_engine_v10_5.html`.
+
+The opt-in recorder introduced by v10.5 works across native starters and custom projects. Full capture records each observed Play update; 10 Hz and 2 Hz settings offer smaller state logs while retaining timed commands/events. It retains the starting map, actual seed, hierarchical object/limb poses, camera, input, health/lifecycle and game state. After Stop, the latest three runs can be scrubbed through a spectator schematic, object-follow view or recorded camera and exported as JSON, text or offline HTML. Simulate creates no recordings. Exports preserve a run beyond the current tab; the viewer reconstructs captured states rather than rerunning gameplay or exporting a rendered video.
 
 ## Historical verified v10.4 · House lanes and physical creature traffic
 
@@ -124,7 +130,7 @@ Marker: `SWYRL_ENGINE_DEPLOY_MARKER: V10_2_SHEEP_TOUCH_PLACEMENT`
 
 ### Release verification
 
-The verified v10.4 source and production receipts are recorded above. The current v10.5 candidate requires its own twelve-suite desktop/phone browser matrix, six engine CI workflows, all 13 geometry CPU scenarios, final dedicated deployment and exact hosted package audit.
+The verified v10.5 source and production receipts are recorded above. The current v10.6 candidate requires its own thirteen-suite desktop/phone browser matrix, six engine CI workflows, all 13 geometry CPU scenarios, final dedicated deployment and exact hosted package audit.
 
 The previous **v9.3 Connected Character Pieces** release is verified live: [deployment 37893678594](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37893678594) and [exact hosted audit 37893722231](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37893722231) passed. Source [`84d8966f4240`](https://github.com/kaministrator999-ui/Swrlzkamico/commit/84d8966f4240cef8ebe037dbc03baac43099c06e) seals 52 patches, **980,767 bytes**, SHA-256 `caba518b67524567899d93a74308bc894cf40413fd69b330b8f7f5f7b6c042be`, with all fourteen media assets. These receipts certify v9.3; v10.0 requires its own final deployment and hosted audit.
 

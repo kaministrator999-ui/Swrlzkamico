@@ -1,0 +1,5095 @@
+{
+  "engine": "§wyrl§ Engine · Maker v10.6",
+  "version": 10.6,
+  "project": {
+    "name": "Maul · Frostveil Bastion",
+    "template": "maul-frostveil",
+    "canonicalId": "maul-frostveil",
+    "kind": "maul",
+    "environment": "spatial-workspace",
+    "maul": {
+      "waves": 30,
+      "lives": 30,
+      "startGold": 900,
+      "preparation": 40,
+      "intermission": 12,
+      "difficulty": 1,
+      "spawnInterval": 0.5,
+      "autoWaves": true,
+      "soloSupport": true,
+      "selectedSector": 0,
+      "seed": 1317
+    },
+    "workspaces": {
+      "schema": "swyrl-workspaces-v1",
+      "stations": {}
+    },
+    "teleportZones": [],
+    "environmentSettings": {
+      "background": "#142832",
+      "fogNear": 350,
+      "fogFar": 1300,
+      "exposure": 1.08,
+      "showTerrain": false,
+      "showScenery": false
+    }
+  },
+  "editor": {
+    "transformSpace": "world",
+    "snapEnabled": true,
+    "terrainSnapEnabled": true,
+    "viewMode": "lit",
+    "cameraView": "perspective",
+    "revision": 0,
+    "layers": [
+      {
+        "id": "maul-layer-0",
+        "name": "Frostveil Ground",
+        "visible": true
+      },
+      {
+        "id": "maul-layer-1",
+        "name": "Cliffs and Boundaries",
+        "visible": true
+      },
+      {
+        "id": "maul-layer-2",
+        "name": "Routes and Spawns",
+        "visible": true
+      },
+      {
+        "id": "maul-layer-3",
+        "name": "Builders",
+        "visible": true
+      },
+      {
+        "id": "maul-layer-4",
+        "name": "Winter Scenery",
+        "visible": true
+      },
+      {
+        "id": "maul-layer-5",
+        "name": "Authored Towers",
+        "visible": true
+      }
+    ],
+    "activeLayerId": "maul-layer-0"
+  },
+  "scene": {
+    "background": "#142832",
+    "waveInterval": 7,
+    "paths": {},
+    "actors": [
+      {
+        "id": "a_x2le7kas",
+        "name": "Sector 1 · froststone tiles",
+        "type": "maul-sector",
+        "team": "neutral",
+        "baked": true,
+        "role": "sector",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-0"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -20,
+          0,
+          -26
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/sector",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_ienehgm6",
+        "name": "Entrance 1",
+        "type": "maul-spawn",
+        "team": "neutral",
+        "baked": true,
+        "role": "spawn",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -20,
+          0,
+          -35
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Gameplay",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/spawn",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {
+          "sector": 0
+        }
+      },
+      {
+        "id": "a_0oqhxmwn",
+        "name": "Waypoint 1",
+        "type": "maul-gate",
+        "team": "neutral",
+        "baked": true,
+        "role": "gate",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -20,
+          0,
+          -15
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Gameplay",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/gate",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {
+          "sector": 0
+        }
+      },
+      {
+        "id": "a_mw6ivxbb",
+        "name": "Builder 1",
+        "type": "maul-builder",
+        "team": "neutral",
+        "baked": true,
+        "role": "builder",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -26,
+          0,
+          -29
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Gameplay",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/builder",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {
+          "sector": 0
+        }
+      },
+      {
+        "id": "a_vzkdwvjg",
+        "name": "Sector 1 standard",
+        "type": "maul-banner",
+        "team": "neutral",
+        "baked": true,
+        "role": "banner",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-4"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -27.6,
+          0,
+          -33
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/banner",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_u00me43m",
+        "name": "Sector 2 · froststone tiles",
+        "type": "maul-sector",
+        "team": "neutral",
+        "baked": true,
+        "role": "sector",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-0"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          0,
+          -26
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/sector",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_u23gkop8",
+        "name": "Entrance 2",
+        "type": "maul-spawn",
+        "team": "neutral",
+        "baked": true,
+        "role": "spawn",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          0,
+          -35
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Gameplay",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/spawn",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {
+          "sector": 1
+        }
+      },
+      {
+        "id": "a_kou3pesf",
+        "name": "Waypoint 2",
+        "type": "maul-gate",
+        "team": "neutral",
+        "baked": true,
+        "role": "gate",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          0,
+          -15
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Gameplay",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/gate",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {
+          "sector": 1
+        }
+      },
+      {
+        "id": "a_a8s8e00w",
+        "name": "Builder 2",
+        "type": "maul-builder",
+        "team": "neutral",
+        "baked": true,
+        "role": "builder",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -6,
+          0,
+          -29
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Gameplay",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/builder",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {
+          "sector": 1
+        }
+      },
+      {
+        "id": "a_2zxzeaok",
+        "name": "Sector 2 standard",
+        "type": "maul-banner",
+        "team": "neutral",
+        "baked": true,
+        "role": "banner",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-4"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -7.600000000000001,
+          0,
+          -33
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/banner",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_h7226uev",
+        "name": "Sector 3 · froststone tiles",
+        "type": "maul-sector",
+        "team": "neutral",
+        "baked": true,
+        "role": "sector",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-0"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          20,
+          0,
+          -26
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/sector",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_dm2g3si3",
+        "name": "Entrance 3",
+        "type": "maul-spawn",
+        "team": "neutral",
+        "baked": true,
+        "role": "spawn",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          20,
+          0,
+          -35
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Gameplay",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/spawn",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {
+          "sector": 2
+        }
+      },
+      {
+        "id": "a_ipeqj66i",
+        "name": "Waypoint 3",
+        "type": "maul-gate",
+        "team": "neutral",
+        "baked": true,
+        "role": "gate",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          20,
+          0,
+          -15
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Gameplay",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/gate",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {
+          "sector": 2
+        }
+      },
+      {
+        "id": "a_9stt0lq8",
+        "name": "Builder 3",
+        "type": "maul-builder",
+        "team": "neutral",
+        "baked": true,
+        "role": "builder",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          14,
+          0,
+          -29
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Gameplay",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/builder",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {
+          "sector": 2
+        }
+      },
+      {
+        "id": "a_uc4rojjo",
+        "name": "Sector 3 standard",
+        "type": "maul-banner",
+        "team": "neutral",
+        "baked": true,
+        "role": "banner",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-4"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          12.399999999999999,
+          0,
+          -33
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/banner",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_166dxm5a",
+        "name": "Sector 4 · froststone tiles",
+        "type": "maul-sector",
+        "team": "neutral",
+        "baked": true,
+        "role": "sector",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-0"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -20,
+          0,
+          -4
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/sector",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_hd3tu26e",
+        "name": "Entrance 4",
+        "type": "maul-spawn",
+        "team": "neutral",
+        "baked": true,
+        "role": "spawn",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -20,
+          0,
+          -13
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Gameplay",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/spawn",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {
+          "sector": 3
+        }
+      },
+      {
+        "id": "a_pqnf9u2c",
+        "name": "Waypoint 4",
+        "type": "maul-gate",
+        "team": "neutral",
+        "baked": true,
+        "role": "gate",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -20,
+          0,
+          7
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Gameplay",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/gate",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {
+          "sector": 3
+        }
+      },
+      {
+        "id": "a_zdekzyix",
+        "name": "Builder 4",
+        "type": "maul-builder",
+        "team": "neutral",
+        "baked": true,
+        "role": "builder",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -26,
+          0,
+          -7
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Gameplay",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/builder",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {
+          "sector": 3
+        }
+      },
+      {
+        "id": "a_fw0ubjpk",
+        "name": "Sector 4 standard",
+        "type": "maul-banner",
+        "team": "neutral",
+        "baked": true,
+        "role": "banner",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-4"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -27.6,
+          0,
+          -11
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/banner",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_0ij0w58g",
+        "name": "Sector 5 · froststone tiles",
+        "type": "maul-sector",
+        "team": "neutral",
+        "baked": true,
+        "role": "sector",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-0"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          0,
+          -4
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/sector",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_yz89uegb",
+        "name": "Entrance 5",
+        "type": "maul-spawn",
+        "team": "neutral",
+        "baked": true,
+        "role": "spawn",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          0,
+          -13
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Gameplay",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/spawn",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {
+          "sector": 4
+        }
+      },
+      {
+        "id": "a_r1q9oq5c",
+        "name": "Waypoint 5",
+        "type": "maul-gate",
+        "team": "neutral",
+        "baked": true,
+        "role": "gate",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          0,
+          7
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Gameplay",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/gate",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {
+          "sector": 4
+        }
+      },
+      {
+        "id": "a_a1p6t1h8",
+        "name": "Builder 5",
+        "type": "maul-builder",
+        "team": "neutral",
+        "baked": true,
+        "role": "builder",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -6,
+          0,
+          -7
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Gameplay",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/builder",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {
+          "sector": 4
+        }
+      },
+      {
+        "id": "a_kliojsw2",
+        "name": "Sector 5 standard",
+        "type": "maul-banner",
+        "team": "neutral",
+        "baked": true,
+        "role": "banner",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-4"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -7.600000000000001,
+          0,
+          -11
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/banner",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_vitbtvkv",
+        "name": "Sector 6 · froststone tiles",
+        "type": "maul-sector",
+        "team": "neutral",
+        "baked": true,
+        "role": "sector",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-0"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          20,
+          0,
+          -4
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/sector",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_yndywfts",
+        "name": "Entrance 6",
+        "type": "maul-spawn",
+        "team": "neutral",
+        "baked": true,
+        "role": "spawn",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          20,
+          0,
+          -13
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Gameplay",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/spawn",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {
+          "sector": 5
+        }
+      },
+      {
+        "id": "a_oqlmdl3c",
+        "name": "Waypoint 6",
+        "type": "maul-gate",
+        "team": "neutral",
+        "baked": true,
+        "role": "gate",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          20,
+          0,
+          7
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Gameplay",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/gate",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {
+          "sector": 5
+        }
+      },
+      {
+        "id": "a_ul5y183n",
+        "name": "Builder 6",
+        "type": "maul-builder",
+        "team": "neutral",
+        "baked": true,
+        "role": "builder",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          14,
+          0,
+          -7
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Gameplay",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/builder",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {
+          "sector": 5
+        }
+      },
+      {
+        "id": "a_smwid3xx",
+        "name": "Sector 6 standard",
+        "type": "maul-banner",
+        "team": "neutral",
+        "baked": true,
+        "role": "banner",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-4"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          12.399999999999999,
+          0,
+          -11
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/banner",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_py09ylu5",
+        "name": "Sector 7 · froststone tiles",
+        "type": "maul-sector",
+        "team": "neutral",
+        "baked": true,
+        "role": "sector",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-0"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -20,
+          0,
+          18
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/sector",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_l2wybs1y",
+        "name": "Entrance 7",
+        "type": "maul-spawn",
+        "team": "neutral",
+        "baked": true,
+        "role": "spawn",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -20,
+          0,
+          9
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Gameplay",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/spawn",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {
+          "sector": 6
+        }
+      },
+      {
+        "id": "a_6m0di7ue",
+        "name": "Waypoint 7",
+        "type": "maul-gate",
+        "team": "neutral",
+        "baked": true,
+        "role": "gate",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -20,
+          0,
+          29
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Gameplay",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/gate",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {
+          "sector": 6
+        }
+      },
+      {
+        "id": "a_qqdqj0o7",
+        "name": "Builder 7",
+        "type": "maul-builder",
+        "team": "neutral",
+        "baked": true,
+        "role": "builder",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -26,
+          0,
+          15
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Gameplay",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/builder",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {
+          "sector": 6
+        }
+      },
+      {
+        "id": "a_oflpsn2j",
+        "name": "Sector 7 standard",
+        "type": "maul-banner",
+        "team": "neutral",
+        "baked": true,
+        "role": "banner",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-4"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -27.6,
+          0,
+          11
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/banner",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_516p5e3x",
+        "name": "Sector 8 · froststone tiles",
+        "type": "maul-sector",
+        "team": "neutral",
+        "baked": true,
+        "role": "sector",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-0"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          0,
+          18
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/sector",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_xaj0mn19",
+        "name": "Entrance 8",
+        "type": "maul-spawn",
+        "team": "neutral",
+        "baked": true,
+        "role": "spawn",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          0,
+          9
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Gameplay",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/spawn",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {
+          "sector": 7
+        }
+      },
+      {
+        "id": "a_uibrla4u",
+        "name": "Waypoint 8",
+        "type": "maul-gate",
+        "team": "neutral",
+        "baked": true,
+        "role": "gate",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          0,
+          29
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Gameplay",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/gate",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {
+          "sector": 7
+        }
+      },
+      {
+        "id": "a_i6gqmis3",
+        "name": "Builder 8",
+        "type": "maul-builder",
+        "team": "neutral",
+        "baked": true,
+        "role": "builder",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -6,
+          0,
+          15
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Gameplay",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/builder",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {
+          "sector": 7
+        }
+      },
+      {
+        "id": "a_q2k5h57c",
+        "name": "Sector 8 standard",
+        "type": "maul-banner",
+        "team": "neutral",
+        "baked": true,
+        "role": "banner",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-4"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -7.600000000000001,
+          0,
+          11
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/banner",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_lmybn54b",
+        "name": "Sector 9 · froststone tiles",
+        "type": "maul-sector",
+        "team": "neutral",
+        "baked": true,
+        "role": "sector",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-0"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          20,
+          0,
+          18
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/sector",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_4i2huyjh",
+        "name": "Entrance 9",
+        "type": "maul-spawn",
+        "team": "neutral",
+        "baked": true,
+        "role": "spawn",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          20,
+          0,
+          9
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Gameplay",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/spawn",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {
+          "sector": 8
+        }
+      },
+      {
+        "id": "a_isstbft4",
+        "name": "Waypoint 9",
+        "type": "maul-gate",
+        "team": "neutral",
+        "baked": true,
+        "role": "gate",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          20,
+          0,
+          29
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Gameplay",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/gate",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {
+          "sector": 8
+        }
+      },
+      {
+        "id": "a_z8wq4abc",
+        "name": "Builder 9",
+        "type": "maul-builder",
+        "team": "neutral",
+        "baked": true,
+        "role": "builder",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          14,
+          0,
+          15
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Gameplay",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/builder",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {
+          "sector": 8
+        }
+      },
+      {
+        "id": "a_drujik9w",
+        "name": "Sector 9 standard",
+        "type": "maul-banner",
+        "team": "neutral",
+        "baked": true,
+        "role": "banner",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-4"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          12.399999999999999,
+          0,
+          11
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/banner",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_tsl3hbdy",
+        "name": "Divider 0",
+        "type": "maul-cliff",
+        "team": "neutral",
+        "baked": true,
+        "role": "cliff",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-1"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -30,
+          0,
+          -4
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          34
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/cliff",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_6gmqaahj",
+        "name": "Divider 10",
+        "type": "maul-cliff",
+        "team": "neutral",
+        "baked": true,
+        "role": "cliff",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-1"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -10,
+          0,
+          -4
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          34
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/cliff",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_kc1q0uwr",
+        "name": "Divider 20",
+        "type": "maul-cliff",
+        "team": "neutral",
+        "baked": true,
+        "role": "cliff",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-1"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          10,
+          0,
+          -4
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          34
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/cliff",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_sv1f7o9j",
+        "name": "Divider 30",
+        "type": "maul-cliff",
+        "team": "neutral",
+        "baked": true,
+        "role": "cliff",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-1"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          30,
+          0,
+          -4
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          34
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/cliff",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_ns5kvw8j",
+        "name": "Northern ridge",
+        "type": "maul-cliff",
+        "team": "neutral",
+        "baked": true,
+        "role": "cliff",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-1"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          0,
+          -37
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          29,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/cliff",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_7u043d2x",
+        "name": "Ridge 11 / 2.5",
+        "type": "maul-cliff",
+        "team": "neutral",
+        "baked": true,
+        "role": "cliff",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-1"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -25,
+          0,
+          -15
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          4,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/cliff",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_az6lolhk",
+        "name": "Ridge 11 / 7.5",
+        "type": "maul-cliff",
+        "team": "neutral",
+        "baked": true,
+        "role": "cliff",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-1"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -15,
+          0,
+          -15
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          4,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/cliff",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_ifxbpeu7",
+        "name": "Ridge 11 / 12.5",
+        "type": "maul-cliff",
+        "team": "neutral",
+        "baked": true,
+        "role": "cliff",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-1"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -5,
+          0,
+          -15
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          4,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/cliff",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_6zeseuq5",
+        "name": "Ridge 11 / 17.5",
+        "type": "maul-cliff",
+        "team": "neutral",
+        "baked": true,
+        "role": "cliff",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-1"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          5,
+          0,
+          -15
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          4,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/cliff",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_zseweafl",
+        "name": "Ridge 11 / 22.5",
+        "type": "maul-cliff",
+        "team": "neutral",
+        "baked": true,
+        "role": "cliff",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-1"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          15,
+          0,
+          -15
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          4,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/cliff",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_plfrarxn",
+        "name": "Ridge 11 / 27.5",
+        "type": "maul-cliff",
+        "team": "neutral",
+        "baked": true,
+        "role": "cliff",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-1"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          25,
+          0,
+          -15
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          4,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/cliff",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_8k0m6snw",
+        "name": "Ridge 22 / 2.5",
+        "type": "maul-cliff",
+        "team": "neutral",
+        "baked": true,
+        "role": "cliff",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-1"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -25,
+          0,
+          7
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          4,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/cliff",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_61p6opr5",
+        "name": "Ridge 22 / 7.5",
+        "type": "maul-cliff",
+        "team": "neutral",
+        "baked": true,
+        "role": "cliff",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-1"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -15,
+          0,
+          7
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          4,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/cliff",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_qabokupe",
+        "name": "Ridge 22 / 12.5",
+        "type": "maul-cliff",
+        "team": "neutral",
+        "baked": true,
+        "role": "cliff",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-1"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -5,
+          0,
+          7
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          4,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/cliff",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_npczcg8p",
+        "name": "Ridge 22 / 17.5",
+        "type": "maul-cliff",
+        "team": "neutral",
+        "baked": true,
+        "role": "cliff",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-1"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          5,
+          0,
+          7
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          4,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/cliff",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_2j55dt1g",
+        "name": "Ridge 22 / 22.5",
+        "type": "maul-cliff",
+        "team": "neutral",
+        "baked": true,
+        "role": "cliff",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-1"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          15,
+          0,
+          7
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          4,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/cliff",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_fc0v8bq8",
+        "name": "Ridge 22 / 27.5",
+        "type": "maul-cliff",
+        "team": "neutral",
+        "baked": true,
+        "role": "cliff",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-1"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          25,
+          0,
+          7
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          4,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/cliff",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_chsej4mt",
+        "name": "Ridge 33 / 2.5",
+        "type": "maul-cliff",
+        "team": "neutral",
+        "baked": true,
+        "role": "cliff",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-1"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -25,
+          0,
+          29
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          4,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/cliff",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_e4ypj4dk",
+        "name": "Ridge 33 / 7.5",
+        "type": "maul-cliff",
+        "team": "neutral",
+        "baked": true,
+        "role": "cliff",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-1"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -15,
+          0,
+          29
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          4,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/cliff",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_ybsqzhbs",
+        "name": "Ridge 33 / 12.5",
+        "type": "maul-cliff",
+        "team": "neutral",
+        "baked": true,
+        "role": "cliff",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-1"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -5,
+          0,
+          29
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          4,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/cliff",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_q6x5xpb3",
+        "name": "Ridge 33 / 17.5",
+        "type": "maul-cliff",
+        "team": "neutral",
+        "baked": true,
+        "role": "cliff",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-1"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          5,
+          0,
+          29
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          4,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/cliff",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_oonbny39",
+        "name": "Ridge 33 / 22.5",
+        "type": "maul-cliff",
+        "team": "neutral",
+        "baked": true,
+        "role": "cliff",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-1"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          15,
+          0,
+          29
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          4,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/cliff",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_y1uq84xa",
+        "name": "Ridge 33 / 27.5",
+        "type": "maul-cliff",
+        "team": "neutral",
+        "baked": true,
+        "role": "cliff",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-1"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          25,
+          0,
+          29
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          4,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/cliff",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_e1r60zu9",
+        "name": "Southern ridge",
+        "type": "maul-cliff",
+        "team": "neutral",
+        "baked": true,
+        "role": "cliff",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-1"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          0,
+          37
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          31,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/cliff",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_qrl1vvrk",
+        "name": "Exit collector boundary 0",
+        "type": "maul-cliff",
+        "team": "neutral",
+        "baked": true,
+        "role": "cliff",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-1"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -30,
+          0,
+          33
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          3
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/cliff",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_0gegnzvg",
+        "name": "Exit collector boundary 30",
+        "type": "maul-cliff",
+        "team": "neutral",
+        "baked": true,
+        "role": "cliff",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-1"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          30,
+          0,
+          33
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          3
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/cliff",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_iazr72fj",
+        "name": "Last stand · shared exit approach",
+        "type": "maul-sector",
+        "team": "neutral",
+        "baked": true,
+        "role": "sector",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-0"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          0,
+          33
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          3.22,
+          1,
+          0.3
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/sector",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_d8fps5vq",
+        "name": "Heart of Frostveil · shared lives",
+        "type": "maul-exit",
+        "team": "neutral",
+        "baked": true,
+        "role": "exit",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          0,
+          35
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Gameplay",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/exit",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_r9ph9ow0",
+        "name": "Snow pine 1",
+        "type": "maul-pine",
+        "team": "neutral",
+        "baked": true,
+        "role": "pine",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-4"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          34,
+          0,
+          -31
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/pine",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_7fhq656s",
+        "name": "Snow pine 2",
+        "type": "maul-pine",
+        "team": "neutral",
+        "baked": true,
+        "role": "pine",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-4"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -34,
+          0,
+          -31
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/pine",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_eqyb2u15",
+        "name": "Snow pine 3",
+        "type": "maul-pine",
+        "team": "neutral",
+        "baked": true,
+        "role": "pine",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-4"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          34,
+          0,
+          -10
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/pine",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_kku00p7c",
+        "name": "Snow pine 4",
+        "type": "maul-pine",
+        "team": "neutral",
+        "baked": true,
+        "role": "pine",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-4"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -34,
+          0,
+          -10
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/pine",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_6eruocii",
+        "name": "Snow pine 5",
+        "type": "maul-pine",
+        "team": "neutral",
+        "baked": true,
+        "role": "pine",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-4"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          34,
+          0,
+          11
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/pine",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_ii2rquty",
+        "name": "Snow pine 6",
+        "type": "maul-pine",
+        "team": "neutral",
+        "baked": true,
+        "role": "pine",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-4"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -34,
+          0,
+          11
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/pine",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_25zis63e",
+        "name": "Snow pine 7",
+        "type": "maul-pine",
+        "team": "neutral",
+        "baked": true,
+        "role": "pine",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-4"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          34,
+          0,
+          32
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/pine",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_aoo435v0",
+        "name": "Snow pine 8",
+        "type": "maul-pine",
+        "team": "neutral",
+        "baked": true,
+        "role": "pine",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-4"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -34,
+          0,
+          32
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/pine",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_8326kyvq",
+        "name": "Example maze wall A",
+        "type": "maul-maze-wall",
+        "team": "neutral",
+        "baked": true,
+        "role": "maze-wall",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-5"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -26,
+          0,
+          -23
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Towers",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/maze-wall",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_jn934y9t",
+        "name": "Example maze wall B",
+        "type": "maul-maze-wall",
+        "team": "neutral",
+        "baked": true,
+        "role": "maze-wall",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-5"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -24,
+          0,
+          -23
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Towers",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/maze-wall",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      },
+      {
+        "id": "a_gzzf0qqf",
+        "name": "Example Arrow Spire",
+        "type": "maul-arrow",
+        "team": "neutral",
+        "baked": true,
+        "role": "arrow",
+        "tags": [
+          "maul",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "maul-layer-5"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -24,
+          0,
+          -25
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Maul/Towers",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "Maul/arrow",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {}
+      }
+    ]
+  }
+}

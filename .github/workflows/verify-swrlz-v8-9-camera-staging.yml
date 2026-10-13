@@ -1,4 +1,4 @@
-name: Validate §E v10.5 camera-safe storybook staging
+name: Validate §E v10.6 camera-safe storybook staging
 on:
   push:
     branches: [main]
@@ -13,6 +13,10 @@ on:
       - "projects/swrlz-forge-moba/scenes/sheep-tag-moonbell-archive.swyrl.json"
       - "projects/swrlz-forge-moba/tests/sheep_archive_playwright.mjs"
       - "projects/swrlz-forge-moba/patches/v10_5_sheep_run_recorder.py"
+      - "projects/swrlz-forge-moba/patches/v10_6_maul_tower_defense.py"
+      - "projects/swrlz-forge-moba/scenes/maul-frostveil.swyrl.json"
+      - "projects/swrlz-forge-moba/tests/maul_playwright.mjs"
+      - "projects/swrlz-forge-moba/tests/maul_cpu.mjs"
       - "projects/swrlz-forge-moba/runtime/sheep_touch_selection.js"
       - "projects/swrlz-forge-moba/runtime/sheep_placement_grid.js"
       - "projects/swrlz-forge-moba/runtime/sheep_touch_offset.js"
@@ -72,12 +76,12 @@ jobs:
           raw=gzip.decompress(base64.b64decode(''.join((root/p).read_text().strip() for p in manifest['chunks'])))
           assert len(raw)==manifest['baseBytes'] and hashlib.sha256(raw).hexdigest()==manifest['baseSha256']
           s=raw.decode('utf-8')
-          assert len(manifest['patches'])==65
-          assert manifest['patches'][-1]=='patches/v10_5_sheep_run_recorder.py'
+          assert len(manifest['patches'])==66
+          assert manifest['patches'][-1]=='patches/v10_6_maul_tower_defense.py'
           for path in manifest['patches']:s=mod['load_patch'](root/path)(s)
           assert len(s.encode())==manifest['finalBytes']
           assert hashlib.sha256(s.encode()).hexdigest()==manifest['finalSha256']
-          for feature in ('V10_5_SHEEP_RUN_RECORDER','SWYRL_ENGINE_SHEEP_TAG_RUNS','SWYRL_ENGINE_RUNS','stRunAfterTick','stRunInstallUI','stRunViewerMount','swyrl-editor-play-run-v1','stTouchPlacementScreen','stTouchPlacementGround','touchPlacement','SWYRL_ENGINE_SHEEP_TAG','sheep-tag-meadow','sheep-tag-moonbell-archive','swyrl-sheep-tag-map-v1','SWYRL_ENGINE_TRANSPORT','animeCineRewind','animeCineFastForward','SWYRL_ENGINE_STAFF','rigFullStaffStatus','painted-full-v1','assets/anime/kami-full-staff.png','SWYRL_ENGINE_RIG','SWYRL_ENGINE_SCENERY','SWYRL_ENGINE_SOCKETS','SWYRL_ENGINE_EMERGENCE','SWYRL_ENGINE_RELIEF',
+          for feature in ('V10_6_MAUL_TOWER_DEFENSE','SWYRL_ENGINE_MAUL','MAUL_CORE','maul-frostveil','SWYRL_ENGINE_SHEEP_TAG_RUNS','SWYRL_ENGINE_RUNS','stRunAfterTick','stRunInstallUI','stRunViewerMount','swyrl-editor-play-run-v1','stTouchPlacementScreen','stTouchPlacementGround','touchPlacement','SWYRL_ENGINE_SHEEP_TAG','sheep-tag-meadow','sheep-tag-moonbell-archive','swyrl-sheep-tag-map-v1','SWYRL_ENGINE_TRANSPORT','animeCineRewind','animeCineFastForward','SWYRL_ENGINE_STAFF','rigFullStaffStatus','painted-full-v1','assets/anime/kami-full-staff.png','SWYRL_ENGINE_RIG','SWYRL_ENGINE_SCENERY','SWYRL_ENGINE_SOCKETS','SWYRL_ENGINE_EMERGENCE','SWYRL_ENGINE_RELIEF',
                           'anime-rig-sockets-v1','anime-book-emergence-v1','anime-character-relief-v1','animeMakePaperBook','popLowStageTrim','animePopupStageSafety','popKamiArt',
                           'popSwyrlzArt','animePopSanitize','animeDirectorInstall',
                           'animePopUp','popupHinge','popUpStatus','animeUpdateCelLayers'):
@@ -100,6 +104,13 @@ jobs:
       - name: Run actual desktop and mobile director/cel/project export acceptance
         run: |
           python -m http.server 8765 --directory /tmp/storybook-package >/tmp/storybook-test-server.log 2>&1 &
+          SWYRL_TEST_SERVER_PID=$!
+          trap 'kill "$SWYRL_TEST_SERVER_PID" 2>/dev/null || true' EXIT
+          for attempt in {1..10}; do
+            if curl -fsS http://127.0.0.1:8765/SOURCE.json >/dev/null; then break; fi
+            sleep 1
+          done
+          curl -fsS http://127.0.0.1:8765/SOURCE.json >/dev/null
           SWYRL_ANIME_TEST_URL=http://127.0.0.1:8765 node projects/swrlz-forge-moba/tests/native_anime_playwright.mjs
       - uses: actions/upload-artifact@v4
         if: always()
