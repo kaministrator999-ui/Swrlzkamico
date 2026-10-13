@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=402dcae12a25a7fe44b9933dc50026698d45cfe1
-REQUEST_NONCE=2026-10-12-v226-scoped-github-report-source-001
+SOURCE_REF=e3aa55f16b9ffd072740d7a7e94a93a7692f104a
+REQUEST_NONCE=2026-10-12-v227-github-file-preview-redraw-001
