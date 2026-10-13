@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=88a025d93c911cce091773dd5b2535c432c06aec
-REQUEST_NONCE=2026-10-13-v234-start-led-project-focus-portfolio-001
+SOURCE_REF=1cadb5b21071dea41c4029c241a66ca0ff97ec6c
+REQUEST_NONCE=2026-10-13-v235-github-read-inference-001
