@@ -139,7 +139,7 @@ def answer(owner,native_threads,prompt):
             last=datetime.fromtimestamp(counted["latest"],timezone.utc)
             return (f"The conversations in your stored ChatGPT import contain messages dated "
                     f"**{first.date().isoformat()}** through **{last.date().isoformat()}** (UTC), "
-                    f"a span of **{(last-first).days} elapsed whole days**. "
+                    f"a span of **{(last.date()-first.date()).days} calendar days**. "
                     f"I verified {counted['stamped']:,} timestamped messages across "
                     f"{total:,} stored conversations.\n\n"
                     "That's the date range covered by the imported conversations, not the "
