@@ -120,15 +120,28 @@ function render(container,source,options={}){
   const identity=String(options.accountId?.()||"anonymous");
   const thread=String(options.threadId?.()||"");
   const key=identity+"|"+thread+"|"+String(options.messageId||"");
+  const sourceKey=String(source||"");
   let state=stateCache.get(key);
+  // Station sync re-renders the full message after GitHub context is saved.
+  // Reattach the original live explorer instead of creating an empty detail
+  // pane; preserving the DOM also retains its file/report view, controls,
+  // scroll position, selections and event handlers without new API requests.
+  if(state&&state.sourceKey!==sourceKey){
+    stateCache.delete(key);state=null; // Same message identity but new evidence.
+  }
+  if(state?.card){
+    container.appendChild(state.card);
+    return true;
+  }
   if(!state){
     state={path:listing.path,items:listing.entries,info:null,search:false,query:"",
            opened:"",content:null,history:null,compare:null,sort:"name",filter:"all",expanded:false,
-           fullscreen:false,dates:new Map(),selected:new Map(),reportScope:"current",reportDepth:"structure",sourcePath:listing.path,incomplete:listing.incomplete};
+           fullscreen:false,dates:new Map(),selected:new Map(),reportScope:"current",reportDepth:"structure",sourcePath:listing.path,incomplete:listing.incomplete,sourceKey};
     if(stateCache.size>=MAX_CACHE)stateCache.delete(stateCache.keys().next().value);
     stateCache.set(key,state);
   }
   const card=el("section","repo-explorer");
+  state.card=card;
   card.setAttribute("aria-label","GitHub repository explorer");
   if(state.expanded)card.classList.add("expanded");
   if(state.fullscreen)card.classList.add("fullscreen");
@@ -397,6 +410,10 @@ function render(container,source,options={}){
     detail.hidden=false;detail.replaceChildren(el("div","repo-explorer-meta","Loading bounded source…"));
     try{
       if(!state.info)await loadDir(state.path);
+      if(!state.info)throw Error("Directory metadata is unavailable; cannot verify this file.");
+      // loadDir intentionally closes old panels. Opening a file immediately
+      // after that first metadata fetch must reopen its own detail pane.
+      detail.hidden=false;
       const data=await request("file",{path:item.path,branch:currentBranch()});
       state.opened=item.path;state.content=data;
       detail.replaceChildren();
@@ -476,5 +493,5 @@ function render(container,source,options={}){
   if(state.info){breadcrumbs();stats();renderRows();}
   return true;
 }
-window.SwrlzGitHubExplorerV223={render,parseDirectoryResponse:parseListing,sortDirectoryEntries,version:"226",reset:()=>{historyCache.clear();stateCache.clear();}};
+window.SwrlzGitHubExplorerV223={render,parseDirectoryResponse:parseListing,sortDirectoryEntries,version:"227",reset:()=>{historyCache.clear();stateCache.clear();}};
 })();
