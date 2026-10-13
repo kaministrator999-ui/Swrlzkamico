@@ -96,6 +96,8 @@ def main():
                      "scenes/ghosts-in-different-forms-ep01-full-staff.swyrl.json"):
         if (ROOT / authored).exists():
             media_paths.append(authored)
+    if (ROOT / "scenes/maul-frostveil.swyrl.json").exists():
+        media_paths.append("scenes/maul-frostveil.swyrl.json")
     media_paths.extend(p.relative_to(ROOT).as_posix() for p in sorted((ROOT / "assets/anime").glob("*.png")))
     for rel in media_paths:
         source = ROOT / rel

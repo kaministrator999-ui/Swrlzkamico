@@ -130,15 +130,15 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
   await page.goto(base+'/index.html?'+query,{waitUntil:'domcontentloaded',timeout:60000});
   await page.waitForFunction(()=>window.SWYRL_ENGINE_SHEEP_TAG_RUNS&&window.SWYRL_ENGINE_AGENT.project().canonicalId==='sheep-tag-meadow',undefined,{timeout:60000});
   await page.locator('#perfPreset').selectOption('medium',{force:true});await page.evaluate(()=>window.__sheepRunClock.freeze());await frames(page,2);
-  assert.equal(await page.evaluate(()=>window.SWYRL_ENGINE_BUILD.version),'v10.5');const canonical=await saved(page);assert.equal(canonical.version,10.5);
+  assert.equal(await page.evaluate(()=>window.SWYRL_ENGINE_BUILD.version),'v10.6');const canonical=await saved(page);assert.equal(canonical.version,10.6);
   const sourceResponse=await context.request.get(base+'/SOURCE.json');assert.equal(sourceResponse.ok(),true);const source=await sourceResponse.json();
-  assert.match(source.sourceVersion,/v10\.5/);assert.equal(source.patches.length,65);assert.equal(source.patches.at(-1),'patches/v10_5_sheep_run_recorder.py');
-  assert.equal(Object.keys(source.assets).length,23,'Recording changed the bundled media asset set');
-  const htmlResponse=await context.request.get(base+'/index.html');assert.match(await htmlResponse.text(),/V10_5_SHEEP_RUN_RECORDER/);
+  assert.match(source.sourceVersion,/v10\.6/);assert.equal(source.patches.length,66);assert.equal(source.patches.at(-1),'patches/v10_6_maul_tower_defense.py');
+  assert.equal(Object.keys(source.assets).length,24,'Unexpected bundled starter/media asset set');
+  const htmlResponse=await context.request.get(base+'/index.html');assert.match(await htmlResponse.text(),/V10_6_MAUL_TOWER_DEFENSE/);
   assert.equal(canonical.scene.actors.length,92,'Archive map changed');const pieces=await prototypes(page,canonical),map=fixture(canonical,pieces);
   if(!process.env.SWYRL_RUN_GENERIC_ONLY){
   await openPanel(page);assert.equal(await page.locator('#stRunEnabled').isChecked(),false,'Logging must default off');
-  assert.equal((await runStatus(page)).settings.enabled,false);await native(page,'stRunClose');pass('v10_5_source_native_starter_and_default_off_checkbox');
+  assert.equal((await runStatus(page)).settings.enabled,false);await native(page,'stRunClose');pass('v10_6_source_native_starter_and_default_off_checkbox');
 
   await importFixture(page,map);await play(page);await focus(page,[-18,0,-10]);const beforeOff=await state(page);
   const originalRender=await page.evaluate(()=>window.SWYRL_ENGINE_SHEEP_TAG.renderStatus());await frames(page,25);await stop(page);
@@ -264,7 +264,7 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
   }
   // Every native project builder uses the same opt-in recorder, not a copied
   // Sheep Tag session. Include both a new empty project and every starter.
-  for(const template of ['default','moba','dragons-den','starforge-observatory','anime-ghosts-ep01','sheep-tag-meadow']){
+  for(const template of ['default','moba','dragons-den','starforge-observatory','anime-ghosts-ep01','sheep-tag-meadow','maul-frostveil']){
     console.log('SHEEP_RUN_STARTER_CHECK',mode.name,template);await page.evaluate(template=>window.SWYRL_ENGINE_AGENT.createProject(template),template);await frames(page,2);
     assert.equal(await page.locator('#stRunLauncher').isVisible(),true,'Recorder missing from '+template);
     await settings(page,false);const beforeDisabled=(await runStatus(page)).runs.map(r=>r.id);
@@ -283,7 +283,7 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
     assert.ok(ended.events.some(e=>e.type==='paused')&&ended.events.some(e=>e.type==='resumed'));
     await openPanel(page);assert.ok((await page.locator('#stRunNarrative').inputValue()).length>100);await native(page,'stRunClose');
   }
-  pass('all_six_native_project_builders_support_recording_toggle_pause_stop_and_review');
+  pass('all_seven_native_project_builders_support_recording_toggle_pause_stop_and_review');
   // A user-authored project works through the ordinary importer as well.
   const custom=structuredClone(await saved(page));custom.project={...custom.project,name:'Custom recording project',kind:'default',template:'custom',canonicalId:null};
   await page.evaluate(data=>window.SWYRL_ENGINE_AGENT.loadScene(data),custom);await frames(page,2);await settings(page,true);

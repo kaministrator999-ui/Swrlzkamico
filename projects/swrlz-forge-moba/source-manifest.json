@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v10.5",
+  "name": "§wyrl§ Engine v10.6",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v10_5.html",
+  "finalArtifact": "swyrl_engine_v10_6.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -79,8 +79,9 @@
     "patches/v10_2_sheep_touch_placement.py",
     "patches/v10_3_sheep_touch_offset.py",
     "patches/v10_4_sheep_lanes.py",
-    "patches/v10_5_sheep_run_recorder.py"
+    "patches/v10_5_sheep_run_recorder.py",
+    "patches/v10_6_maul_tower_defense.py"
   ],
-  "finalBytes": 1594471,
-  "finalSha256": "cd3b50f06d3a802c025b3e530e743446d284633961bff0dacd46a656eb7e8ace"
+  "finalBytes": 1747510,
+  "finalSha256": "f16b8a1c674ce5477bc63f8f2c3bb93e6bf6f4ff4d84b5dc3df462dbd1431d98"
 }

@@ -4,7 +4,7 @@ on:
     branches: [main]
   workflow_dispatch:
   workflow_run:
-    workflows: ["Deploy §wyrl§ Engine v10.5 to Hugging Face"]
+    workflows: ["Deploy §wyrl§ Engine v10.6 to Hugging Face"]
     types: [completed]
     branches: [main]
 permissions:
@@ -113,6 +113,8 @@ jobs:
               expected_assets.add('scenes/sheep-tag-meadow.swyrl.json')
           if 'scenes/sheep-tag-moonbell-archive.swyrl.json' in source_paths:
               expected_assets.add('scenes/sheep-tag-moonbell-archive.swyrl.json')
+          if 'scenes/maul-frostveil.swyrl.json' in source_paths:
+              expected_assets.add('scenes/maul-frostveil.swyrl.json')
           expected_assets.update(path for path in source_paths if path.startswith('assets/anime/') and path.endswith('.png'))
           assert set(receipt['assets'])==expected_assets,'Bundled asset set differs from committed source'
           for path,meta in receipt['assets'].items():
