@@ -6,6 +6,7 @@ for verified source evidence.
 """
 from __future__ import annotations
 import re
+from repository_project_status_v233 import subject_of_status
 
 def _recent_verified_source_report(history) -> bool:
     """Same-thread report evidence, limited to the last two subsequent user turns."""
@@ -56,9 +57,10 @@ def lesson_kind(prompt: str, history=None) -> str:
         r"\b(?:import|archive|conversations?)\b",first) and re.search(
         r"\b(?:date span|date range|start.+end date|earliest.+latest)\b",first):
         return "archive-span"
-    if re.search(r"\b(?:repo|repository|github)\b",first) and re.search(
-        r"\bchat\b",first) and re.search(
-        r"\b(?:where.+(?:we are|are we|we're).+(?:at|with)|status|progress)\b",first):
+    # Source-led project identification, not a hard-coded Chat status keyword.
+    # Same explanatory style works for any project actually documented in §tart.
+    if subject_of_status(first) is not None and re.search(
+        r"\b(?:repo|repository|github|forge|lalm|chat|projects?)\b",first):
         return "repo-status"
     if re.search(r"\b(?:repo|repository|github)\b",first) and re.search(
         r"\b(?:how many|number of|count)\b",first) and re.search(
@@ -89,12 +91,18 @@ _EXAMPLES = {
         "Bad answer: Python os.listdir('.') code, guessed counts, or refusal.\n"
     ),
     "repo-status": (
-        'Question: "Where are we at with the chat in the repo?"\n'
-        'Good answer: "The Chat implementation is under [verified path] in [verified repository]. '
-        'GitHub confirms [recent source changes/declared versions if fetched]. '
-        'The outstanding verification is [actual recorded gate, if present]. '
-        'This is source status, not proof that the signed-in app works on your phone."\n'
-        "Bad answer: private-history recall disabled, code output, unverified live release claims.\n"
+        'Question: "Where are we at with the project in the repo?"\n'
+        'Good answer: "The verified §tart router identifies [named project] and [its source scope]. '
+        'Its separately owned [project guide / Roadmap handoff] records [latest checked milestone or candidate], '
+        'while [relevant runtime registry] declares [version if actually attributable]. '
+        'The next recorded gate is [exact source-supported acceptance if present]. '
+        'This is verified repository evidence, not evidence the signed-in app already works on your phone."\n'
+        'Resolve project identity from §tart first. Do not blindly equate Chat, LALM and Forge; '
+        'ask if multiple independent project scopes match. Do not claim a project is active merely '
+        'because it is listed in the router. Follow the Roadmap for work chronology, and '
+        'the module-owned version authorities for versions.\n'
+        'Bad answer: private-history recall disabled, a code sample, a hard-coded Chat path, '
+        'source-only treated as deployed, or a milestone invented from a mentioned filename.\n'
     ),
     "archive-span": (
         'Question: "What is the date span of the ChatGPT import?"\n'
