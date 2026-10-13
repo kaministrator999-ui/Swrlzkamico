@@ -98,6 +98,8 @@ def main():
             media_paths.append(authored)
     if (ROOT / "scenes/maul-frostveil.swyrl.json").exists():
         media_paths.append("scenes/maul-frostveil.swyrl.json")
+    if (ROOT / "scenes/maul-frostveil-classic.swyrl.json").exists():
+        media_paths.append("scenes/maul-frostveil-classic.swyrl.json")
     media_paths.extend(p.relative_to(ROOT).as_posix() for p in sorted((ROOT / "assets/anime").glob("*.png")))
     for rel in media_paths:
         source = ROOT / rel

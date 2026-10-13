@@ -116,7 +116,10 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
     await page.goto(base+'/index.html?'+query,{waitUntil:'domcontentloaded',timeout:60000});
     await page.waitForFunction(()=>window.SWYRL_ENGINE_MAUL?.uiStatus&&window.SWYRL_ENGINE_AGENT.project().canonicalId==='maul-frostveil',undefined,{timeout:60000});
     await page.locator('#perfPreset').selectOption('medium',{force:true});await page.evaluate(()=>window.__maulClock.freeze());await frames(page,2);
-    assert.equal(await page.evaluate(()=>window.SWRLZ_FORGE_BUILD?.version),'v10.6','Wrong engine release');
+    assert.equal(await page.evaluate(()=>window.SWRLZ_FORGE_BUILD?.version),'v10.7','Wrong engine release');
+    // Retain the complete published v10.6 geometry as an ordinary stopped editor fixture.
+    const legacy=await page.evaluate(async()=>{const response=await fetch('scenes/maul-frostveil.swyrl.json');if(!response.ok)throw Error('Legacy Maul asset unavailable');return response.json();});
+    await importFixture(page,legacy);
     const canonical=await saved(page),mapCheck=await preflight(page);
     assert.equal(canonical.project.kind,'maul');assert.equal(canonical.editor.layers.length,6);
     assert.equal(canonical.scene.actors.filter(a=>a.type==='maul-spawn').length,9);assert.equal(canonical.scene.actors.filter(a=>a.type==='maul-gate').length,9);
@@ -127,7 +130,8 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
 
     await page.evaluate(()=>window.SWYRL_ENGINE_AGENT.openProjects());await frames(page,2);
     await press(page,'[data-project-template="maul-frostveil"]');await frames(page,2);
-    assert.equal((await saved(page)).project.canonicalId,'maul-frostveil');assert.deepEqual(authored(await saved(page)),authored(canonical));
+    assert.equal((await saved(page)).project.canonicalId,'maul-frostveil');assert.equal((await saved(page)).project.maulLayout,'classic-v2','Projects must open the revised classic map');
+    await importFixture(page,canonical);
     await play(page);let s=await state(page);assert.equal(s.wave,0);assert.equal(s.gold,canonical.project.maul.startGold);assert.ok(s.allyTowers>=16,'Solo support did not cover the other eight sectors');
     assert.ok((await page.evaluate(()=>window.SWYRL_ENGINE_MAUL.renderStatus())).meshes>=s.towers.length,'Native towers have no renderer objects');await stop(page);
     assert.deepEqual(authored(await saved(page)),authored(canonical));pass('project_hub_opens_playable_maul_with_optional_support_and_original_scene_restore');
@@ -244,7 +248,7 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
     pass('native_full_play_recorder_preserves_maul_events_world_entities_camera_pause_and_download');
 
     assert.deepEqual(errors,[],'Browser errors during Maul acceptance');assert.equal(cases.length,16,'Every required Maul case must execute');
-    receipts.push({mode:mode.name,viewport:mode.viewport,cases,canonicalId:canonical.project.canonicalId,version:'v10.6',nativeRun:run.id,
+    receipts.push({mode:mode.name,viewport:mode.viewport,cases,canonicalId:canonical.project.canonicalId,version:'v10.7',nativeRun:run.id,
       mapActors:canonical.scene.actors.length,grid:[map.cols,map.rows],victory:{kills:won.kills,gold:won.gold},defeat:{leaks:lost.leaks,lives:lost.lives}});
     await writeFile(resolve(output,mode.name+'-receipt.json'),JSON.stringify(receipts.at(-1),null,2));
     console.log(mode.name==='desktop'?'MAUL_DESKTOP_PASS':'MAUL_MOBILE_PASS');

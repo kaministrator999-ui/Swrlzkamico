@@ -1,4 +1,4 @@
-name: Verify §E v10.6 native cinematic candidate
+name: Verify §E v10.7 native cinematic candidate
 on:
   push:
     branches: [main]
@@ -83,12 +83,12 @@ jobs:
           output=source.encode("utf-8")
           print("CINEMATIC_BYTES="+str(len(output)))
           print("CINEMATIC_SHA256="+hashlib.sha256(output).hexdigest())
-          assert len(manifest["patches"])==66
-          assert manifest['patches'][-1]=='patches/v10_6_maul_tower_defense.py'
+          assert len(manifest["patches"])==67
+          assert manifest['patches'][-1]=='patches/v10_7_classic_maul_map.py'
           assert len(output)==manifest['finalBytes']
           assert hashlib.sha256(output).hexdigest()==manifest['finalSha256']
           for needle in (
-            'V10_6_MAUL_TOWER_DEFENSE','SWYRL_ENGINE_MAUL','MAUL_CORE','maul-frostveil','SWYRL_ENGINE_SHEEP_TAG_RUNS','SWYRL_ENGINE_RUNS','stRunAfterTick','stRunInstallUI','stRunViewerMount','swyrl-editor-play-run-v1','stTouchPlacementScreen','stTouchPlacementGround','touchPlacement','SWYRL_ENGINE_SHEEP_TAG','sheep-tag-meadow','sheep-tag-moonbell-archive','swyrl-sheep-tag-map-v1','SWYRL_ENGINE_TRANSPORT','animeCineRewind','animeCineFastForward','SWYRL_ENGINE_STAFF','rigFullStaffStatus','painted-full-v1','assets/anime/kami-full-staff.png','Maker v10.6','animeStartCinematic',
+            'V10_7_CLASSIC_MAUL_MAP','MAUL_LAYOUT_CORE','classic-v2','SWYRL_ENGINE_MAUL','MAUL_CORE','maul-frostveil','SWYRL_ENGINE_SHEEP_TAG_RUNS','SWYRL_ENGINE_RUNS','stRunAfterTick','stRunInstallUI','stRunViewerMount','swyrl-editor-play-run-v1','stTouchPlacementScreen','stTouchPlacementGround','touchPlacement','SWYRL_ENGINE_SHEEP_TAG','sheep-tag-meadow','sheep-tag-moonbell-archive','swyrl-sheep-tag-map-v1','SWYRL_ENGINE_TRANSPORT','animeCineRewind','animeCineFastForward','SWYRL_ENGINE_STAFF','rigFullStaffStatus','painted-full-v1','assets/anime/kami-full-staff.png','Maker v10.7','animeStartCinematic',
             'SWYRL_ENGINE_ANIMATION','SWYRL_ENGINE_STORYBOARD','SWYRL_ENGINE_RIG','SWYRL_ENGINE_SCENERY','SWYRL_ENGINE_SOCKETS','SWYRL_ENGINE_EMERGENCE','SWYRL_ENGINE_RELIEF',
                           'anime-rig-sockets-v1','anime-book-emergence-v1','anime-character-relief-v1','storyEditorInstall',
             'animeUpdateCinematic','animeEndCinematic','animeSpeakerCues',
@@ -107,3 +107,5 @@ jobs:
           node --check /tmp/cinematic-engine.mjs
           python -m py_compile projects/swrlz-forge-moba/patches/v8_6_native_anime_cinematic.py
           echo "CINEMATIC_NODE_AND_PYTHON_SYNTAX_OK"
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/cinematic-package
+          python projects/swrlz-forge-moba/tests/maul_layout_package.py --package /tmp/cinematic-package
