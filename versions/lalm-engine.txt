@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.197
-REVISION=2.1.197-evidence-articulation-v230
+VERSION=2.1.198
+REVISION=2.1.198-github-source-articulation-v235
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
