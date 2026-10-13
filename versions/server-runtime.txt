@@ -1,6 +1,6 @@
 ID=server-runtime
-VERSION=2.3.384
-REVISION=2.3.384-hf-v231-source-facts-response-mode
+VERSION=2.3.385
+REVISION=2.3.385-hf-v232-contextual-source-report-followups
 KIND=server-runtime
 SOURCE_BRANCH=runtime
 STATUS=active
