@@ -123,7 +123,8 @@ def versions(api,read,token,repo,wanted):
 def _source_title(value,limit=140):
     """Untrusted GitHub metadata is evidence, never rendered as directives."""
     line=str(value or "").splitlines()[0] if value else ""
-    return re.sub(r"[\\x00-\\x1f<>\x60]"," ",line).strip()[:limit]
+    line="".join(" " if ord(ch)<32 or ch in "<>`" else ch for ch in line)
+    return line.strip()[:limit]
 
 
 def history_evidence(api,token,repo,branch,path="",subject="",include_branches=True):
