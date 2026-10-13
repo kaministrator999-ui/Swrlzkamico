@@ -137,11 +137,12 @@ def answer(owner,native_threads,prompt):
                         "timestamps; I cannot establish a date span.")
             first=datetime.fromtimestamp(counted["earliest"],timezone.utc)
             last=datetime.fromtimestamp(counted["latest"],timezone.utc)
-            return (f"Verified imported ChatGPT message dates (UTC): {first.date().isoformat()} "
-                    f"through {last.date().isoformat()} — {(last-first).days} elapsed whole days "
-                    f"({counted['stamped']:,} timestamped messages inspected across "
-                    f"{total:,} stored conversations). These are the earliest and latest "
-                    "valid message timestamps, not the ZIP upload/import job start and finish times.")
+            calendar_days=(last.date()-first.date()).days
+            return (f"The imported ChatGPT conversations' messages span **{first.date().isoformat()}** "
+                    f"through **{last.date().isoformat()}** — a **{calendar_days:,}-day** "
+                    f"calendar-date span in UTC. I checked {counted['stamped']:,} valid message "
+                    f"timestamps across {total:,} stored conversations. These dates describe "
+                    "the messages in the archive, not how long the ZIP upload or import job ran.")
         if counted.get("state")=="error":
             return "The imported ChatGPT date-range scan failed; no dates can be verified right now."
         return ("I'm checking the encrypted imported ChatGPT message timestamps for their "
