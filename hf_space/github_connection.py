@@ -982,13 +982,18 @@ def _github_repo_stats(record, repo, branch, scope=""):
     blobs = [x for x in subset if x.get("type")=="blob"]
     dirs = [x for x in subset if x.get("type")=="tree"]
     total = sum(int(x.get("size") or 0) for x in blobs)
-    return ("## GitHub repository statistics\nRepository: "+repo+
-            "\nBranch: "+branch+"\nRevision: "+sha+
-            "\nScope: "+(target or "/")+" (recursive)"+
-            "\nFiles: "+str(len(blobs))+"\nDirectories: "+str(len(dirs))+
-            "\nGit blob bytes: "+str(total)+
-            "\nExcludes history, LFS payloads, and checkout overhead. "+
-            "Git does not store native creation/modification timestamps.")
+    scope_label = ("the entire repository" if not target else "the `"+target+"` directory")
+    return ("## GitHub repository statistics\n"
+            "I checked "+scope_label+" in **"+repo+"**. At the verified **"+branch+
+            "** commit `"+sha[:12]+"`, there are **"+str(len(blobs))+
+            " files** across **"+str(len(dirs))+" directories**, including nested folders.\n\n"+
+            "This is a complete recursive Git-tree count for that commit, not just the "
+            "root listing. The numbers can change as the repository changes.\n\n"+
+            "**Source snapshot** · Revision: `"+sha+"` · Scope: `"+(target or "/")+
+            "` · Git blob bytes: "+str(total)+"\n"+
+            "Files: "+str(len(blobs))+"\nDirectories: "+str(len(dirs))+
+            "\nGit excludes LFS payload content, history and checkout overhead; "
+            "native file creation/modification dates are not available from Git alone.")
 
 
 def _verified_chat_status(record, repo, branch):
@@ -998,22 +1003,25 @@ def _verified_chat_status(record, repo, branch):
     sha = str(head.get("sha") or "")
     if not _FILE_SHA.fullmatch(sha):
         return "GitHub branch revision is unverified; no Chat progress was inferred."
-    lines = ["## Chat project in the selected GitHub repository",
-             "Repository: " + repo, "Branch: " + branch, "Source commit: " + sha,
-             "Scope: chat/§wyrlz (source and declared runtime versions; read-only)."]
+    lines = ["## Where the Chat project stands",
+             "I checked the **Chat project** in `"+repo+"`. The source is organized under "
+             "`chat/§wyrlz/` on the verified `"+branch+"` branch. Here's what GitHub "
+             "actually establishes at commit `"+sha[:12]+"`:",
+             "",
+             "**Source present in this revision**"]
     for path in ("chat/§wyrlz/index.html", "chat/§wyrlz/assets/github-explorer-v223.js"):
         obj = _read_optional(token, repo, path, sha, 320000)
         if obj:
-            lines.append("Verified source file: " + path + " · Git blob " + str(obj.get("sha") or "unverified"))
+            lines.append("- `" + path + "` — verified source (blob `" + str(obj.get("sha") or "unverified")[:12] + "`).")
         else:
-            lines.append("Source file not verified/readable: " + path)
+            lines.append("- `" + path + "` — not verified/readable in this snapshot.")
     try:
         revisions = _api(token, "/repos/" + repo + "/commits?sha=" + sha +
                          "&path=" + quote("chat/§wyrlz", safe="") + "&per_page=5")
     except HTTPException:
         revisions = None
     if isinstance(revisions, list):
-        lines.append("Recent Chat-path commits (at most five, not all project changes):")
+        lines.extend(["", "**Recent Chat-path changes** (up to five commits on this branch)"])
         for item in revisions[:5]:
             digest = str(item.get("sha") or "")
             message = str(((item.get("commit") or {}).get("message") or "")).splitlines()[0][:140]
@@ -1026,14 +1034,17 @@ def _verified_chat_status(record, repo, branch):
     except HTTPException:
         pass
     if _FILE_SHA.fullmatch(runtime_sha):
-        lines.append("Runtime registry commit: " + runtime_sha)
+        lines.extend(["", "**Declared versions** (independently checked runtime branch at `" + runtime_sha[:12] + "`)"])
         for module in ("web-chat", "server-runtime", "repository-work"):
             obj = _read_optional(token, repo, "versions/" + module + ".txt", runtime_sha, 4500)
             if obj:
                 version = re.search(r"^VERSION=([^\r\n]{1,40})", str(obj.get("body") or ""), re.M)
                 if version:
-                    lines.append("Declared " + module + " version: " + version[1])
-    lines.append("These are verified source/registry facts, not proof of production deployment, live correctness or mobile acceptance. See the exact CI/deployment receipts and test the signed-in UI before promoting known-good.")
+                    lines.append("- **" + module + ":** " + version[1])
+    lines.extend(["", "**What that means:** The files, commit history and module versions above "
+                  "show where the Chat source stands. They do not, by themselves, confirm a "
+                  "successful production deployment or that the signed-in Chat works on your phone. "
+                  "Those require deployment receipts and live browser acceptance."])
     return "\n".join(lines)
 
 
