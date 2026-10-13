@@ -69,6 +69,7 @@ def test_dynamic_project_discovery():
     refs=project.discover(ROUTER)
     assert any(x["path"]=="chat/§wyrlz" for x in refs)
     assert any(x["path"]=="projects/swrlz-forge-moba" for x in refs)
+    assert any(x["path"]=="§tart_§E.md" for x in refs),"§tart's specialist engine entrypoint must be independently discoverable"
     assert project.candidates(refs,"chat")[0][1]["path"]=="chat/§wyrlz"
     assert project.candidates(refs,"forge engine")[0][1]["path"]=="projects/swrlz-forge-moba"
     assert project.candidates(refs,"saffron simulator")[0][1]["path"]=="projects/saffron-simulator"
@@ -91,6 +92,11 @@ def test_cross_project_reports_use_source_not_chat_shortcut():
     assert "projects/saffron-simulator" in alt
     assert "no matching entry" in alt
     assert "projects/saffron-simulator" in all_projects
+    assert "§tart_§E.md" in all_projects
+    assert "Latest checked Roadmap milestones" in all_projects
+    assert "not proof of live work" in all_projects
+    assert "Primary focus / focus group" in all_projects
+    assert "not automatically active" in all_projects
     assert "LALM_RUNTIME_ARCHITECTURE" in lalm and "2.1.196" in lalm
     assert "Which engine" in vague
     assert "Newest checked Roadmap entry" in all_projects
@@ -172,9 +178,34 @@ def test_verified_blob_roadmap_large_fallback_and_failure():
     assert project.source_file(lambda *a:None,lambda tok,url:{"type":"file","size":99999999,"sha":sha},
                                 "private-token","owner/repo","SWRLZ_SERVER_ROADMAP.md",SHA) is None
 
+def test_v234_focus_only_if_declared_and_uses_recent_milestones():
+    explicit="""## UPDATE FINISHED — 2026-10-13 — v304 Saffron simulated orchard
+**Primary Focus:** Saffron project botany environment
+**Focus Group:** Saffron + Scene Runtime
+
+## UPDATE FINISHED — 2026-10-12 — v303 unrelated Chat route
+**Outcome:** Chat UI changed.
+
+## UPDATE FINISHED — 2026-10-11 — v302 Forge editor
+"""
+    items=project.recent_work_evidence(explicit)
+    assert len(items)==3
+    assert "v304 Saffron" in items[0] and "v303 unrelated Chat" in items[1]
+    assert "Saffron project botany environment" in project.explicit_focus_evidence(explicit)
+    ambiguous="""## UPDATE FINISHED — 2026-10-13 — v305 repo governance
+**Outcome:** Updated registry only; Saffron may have been mentioned.
+
+## UPDATE FINISHED — 2026-10-12 — v304 Saffron simulated orchard
+**Primary Focus:** Saffron project botany environment
+"""
+    assert not project.explicit_focus_evidence(ambiguous),"Old focus cannot be laundered into current focus"
+    assert project.recent_work_evidence("broken content")==[]
+
+
 if __name__=="__main__":
     test_project_question_recognition()
     test_dynamic_project_discovery()
+    test_v234_focus_only_if_declared_and_uses_recent_milestones()
     test_cross_project_reports_use_source_not_chat_shortcut()
     test_authenticated_repo_chat_followups_and_locked_writes()
     test_verified_blob_roadmap_large_fallback_and_failure()
