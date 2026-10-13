@@ -11,6 +11,7 @@ from urllib.parse import quote
 SHA=re.compile(r"^[0-9a-f]{40}$")
 PATH=re.compile(r"(?<![\w/])/?(?:projects|chat|apps|packages|services|hf_space|web|native)/[\w§.+-]+(?:/[\w§.+-]+){0,2}")
 GUIDE=re.compile(r"(?<![\w/])docs/(?:[\w§.+-]+/){1,5}[\w§.+-]+\.md")
+PROJECT_ROUTER=re.compile(r"(?<![\w/])(?:§tart|START|start)_[\w§.+-]+\.md")
 HEADING=re.compile(r"(?m)^## UPDATE (FINISHED|COMPLETED|STARTED|CONTINUATION STARTED|ABORTED|SUPERSEDED) — (\d{4}-\d{2}-\d{2}) — ([^\r\n]+)")
 REGISTRY=re.compile(r"(?m)^([A-Z][A-Z0-9_]+)=versions/([a-z0-9-]+\.txt)$")
 STOP={"the","this","our","my","project","projects","repo","repository","github","current","progress","status","work","system","app","of","with","in","at","we","are","what","where","how","that"}
@@ -43,10 +44,10 @@ def discover(router):
     """No built-in project names. Extract owned paths and nearby prose from §tart."""
     lines=router.splitlines(); projects={}
     for i,line in enumerate(lines):
-        for m in list(PATH.finditer(line))+list(GUIDE.finditer(line)):
+        for m in list(PATH.finditer(line))+list(GUIDE.finditer(line))+list(PROJECT_ROUTER.finditer(line)):
             path=m[0].lstrip("/")
             if len(path)>150 or ".." in path.split("/"):continue
-            if not path.startswith("docs/") and path.endswith((".py",".md",".json",".yml",".yaml",".js",".html",".txt",".kt")):continue
+            if not (path.startswith("docs/") or PROJECT_ROUTER.fullmatch(path)) and path.endswith((".py",".md",".json",".yml",".yaml",".js",".html",".txt",".kt")):continue
             found=projects.setdefault(path,{"path":path,"lines":[],"context":""})
             found["lines"].append(i+1)
             found["context"]=(found["context"]+" "+" ".join(lines[max(0,i-3):i+3]))[:1800]
@@ -196,6 +197,35 @@ def history_evidence(api,token,repo,branch,path="",subject="",include_branches=T
     return lines
 
 
+def recent_work_evidence(roadmap):
+    """Chronological, not a claim of active or live work."""
+    hits=list(HEADING.finditer(str(roadmap or "")))
+    lines=[]
+    seen=set()
+    for m in hits[:40]:
+        if m[1] not in ("FINISHED","COMPLETED","STARTED"):continue
+        title=_source_title(m[3],125)
+        if not title or title.casefold() in seen:continue
+        seen.add(title.casefold())
+        state="finished" if m[1] in ("FINISHED","COMPLETED") else "started (may still be pending)"
+        lines.append("- "+m[2]+" · "+title+" · "+state)
+        if len(lines)>=3:break
+    return lines
+
+
+def explicit_focus_evidence(roadmap):
+    """Only a focus label from the newest checked Roadmap milestone qualifies."""
+    hits=list(HEADING.finditer(str(roadmap or "")))
+    if not hits:return ""
+    first=hits[0]
+    end=hits[1].start() if len(hits)>1 else len(roadmap)
+    detail=roadmap[first.end():min(end,first.end()+2000)]
+    for row in detail.splitlines()[:18]:
+        if re.match(r"(?i)^\*\*(?:primary focus|current project focus|focus group)\b",row):
+            return _source_title(row.replace("**",""),230)
+    return ""
+
+
 def build_status(record,repo,branch,subject,api,read):
     """No inferred permission, model weights, release verification or global account reuse."""
     token=record["token"]
@@ -206,13 +236,27 @@ def build_status(record,repo,branch,subject,api,read):
     if not start:return "I verified the repository, but its project-start router was not readable. I won't invent its project map."
     projects=discover(start["body"])
     if subject=="":
-        items=[x for x in projects if x["path"].startswith(("chat/","projects/"))][:8] or projects[:6]
-        if not items:return "The verified §tart did not expose distinct project directories."
+        # Specialized project-start documents are independent project entrypoints,
+        # not merely arbitrary Markdown links. Neither entrypoints nor directories
+        # establish that the project is currently active.
+        named=[x for x in projects if PROJECT_ROUTER.fullmatch(x["path"])]
+        roots=[x for x in projects if x["path"].startswith(("chat/","projects/","apps/","native/","services/"))]
+        items=list(dict((x["path"],x) for x in (named+roots)).values())[:12] or projects[:8]
+        if not items:return "The verified §tart did not expose distinct project directories or project routers."
         roadmap=source_file(read,api,token,repo,"SWRLZ_SERVER_ROADMAP.md",sha,MAX_ROADMAP)
-        lines=["## Projects and recent work documented in GitHub",
-               "§tart defines project boundaries; the Roadmap records work. A listed project is not automatically active."]
+        lines=["## Documented projects and verified engineering progress",
+               "§tart identifies project routes and specialized entrypoints; a referenced project is not automatically active."]
+        if roadmap:
+            recent=recent_work_evidence(roadmap["body"])
+            if recent:lines.extend(["","**Latest checked Roadmap milestones (not proof of live work)**",*recent])
+            focus=explicit_focus_evidence(roadmap["body"])
+            lines.append("**Primary focus / focus group:** "+(focus or "Not explicitly labeled in the newest checked milestone. §tart says the newest commit alone cannot establish the focus group."))
+        else:
+            lines.append("**Engineering focus:** Roadmap unavailable at this source revision; current project activity cannot be verified.")
+        lines.extend(["","**Sample of project paths and entrypoints named in §tart**"])
         for item in items:
-            line="- "+item["path"]+" (identified in §tart at line "+str(min(item["lines"]))+")"
+            label="specialized project router" if PROJECT_ROUTER.fullmatch(item["path"]) else "project/product path"
+            line="- "+item["path"]+" ("+label+"; cited in §tart at line "+str(min(item["lines"]))+")"
             if roadmap:
                 event=roadmap_event(roadmap["body"],item["path"].split("/")[-1],item["path"])
                 if event:line+="; last matching Roadmap record: "+event[1]+" — "+event[2][:110]
@@ -220,7 +264,7 @@ def build_status(record,repo,branch,subject,api,read):
         if roadmap:
             m=next((x for x in HEADING.finditer(roadmap["body"]) if x[1] in ("FINISHED","COMPLETED","STARTED")),None)
             if m:lines.append("Newest checked Roadmap entry: "+m[2]+" — "+m[3][:125]+" ("+m[1].lower()+").")
-        else:lines.append("Roadmap unavailable at this revision; cannot verify what has been worked on most recently.")
+
         history=history_evidence(api,token,repo,branch,include_branches=False)
         if history:lines.extend(["","**Repository activity evidence**",*history])
         lines.append("Source revision: "+sha[:12]+". Source records alone do not prove work is live or currently in progress.")
@@ -237,7 +281,7 @@ def build_status(record,repo,branch,subject,api,read):
     path=best[1]["path"]
     guide=None
     # Resolve a specialized router only if the original §tart itself named it.
-    if path.startswith("projects/") and "forge" in path.lower() and "§tart_§E.md" in start["body"]:
+    if ((path.startswith("projects/") and "forge" in path.lower()) or path=="§tart_§E.md") and "§tart_§E.md" in start["body"]:
         guide=read(token,repo,"§tart_§E.md",sha,150000)
     roadmap=source_file(read,api,token,repo,"SWRLZ_SERVER_ROADMAP.md",sha,MAX_ROADMAP)
     event=roadmap_event(roadmap["body"],subject,path) if roadmap else None
