@@ -1,3 +1,17 @@
+## UPDATE STARTED — 2026-10-13 — v235 GitHub repository read inference and evidence articulation
+
+**Owner request:** Improve the local §wyrlz model's inference about GitHub repository READ work across the user's authorized repository: files, directories, code purpose, relationships, history, scoped reports, counts, and contextual follow-ups. Do not train weights or claim that deterministic guidance is weight training. Keep current read-only GitHub Stage 1, verified Google account and repository scope, source SHA/read provenance, and separate §E deployment lane unchanged.
+
+**Canonical ownership:** Reuse `hf_space/github_connection.py` as the account-scoped, Stage-1 read entrypoint; add a bounded pure read-intent classifier `hf_space/github_read_inference_v235.py` for existing commands only; improve `hf_space/source_answer_articulation_v230.py` lessons and the `hf_space/brain_programming.py` information-vs-code guard. No new repository API privileges, token storage, or model weight changes.
+
+**Baseline:** Exact published v234 Chat source `88a025d93c911cce091773dd5b2535c432c06aec`; isolated task branch `feature/github-read-inference-v235`; [draft PR #145](https://github.com/kaministrator999-ui/Swrlzkamico/pull/145). Independent engine source on main and dedicated `kamiloki/swrlz-forge-moba` untouched. This is a runtime-affecting Chat/Brain change requiring the existing HF guarded release.
+
+**Verification checkpoint:** Exact v235 source `1cadb5b21071dea41c4029c241a66ca0ff97ec6c`. [GitHub Account CI #38486554958](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38486554958) and [HF Candidate Offline CI #38486559923](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38486559923) both COMPLETED/SUCCESS at the same source SHA. Earlier failed test candidates were repaired in lineage, not treated as successful. New regression verifies source-scoped read selection, last-file/folder follow-ups, model lesson, programming intent protection, and Stage-1 denied mutation; pre-existing owners/regressions also pass.
+
+**Remaining completion gate:** guarded single-target `main:.deploy/HF_SPACE_REQUEST.txt` release to existing `kamiloki/Swyrlz` at the exact tested source SHA, snapshot/rollback and terminal Actions evidence; then atomic `runtime:VERSION.txt` registered version reconciliation, FINISHED Roadmap receipt, and separately report signed-in mobile owner acceptance as pending until observed. No production claim at START.
+
+**Status:** SOURCE COMPLETE / STATIC CI VERIFIED / GUARDED DEPLOYMENT PENDING / LIVE USER ACCEPTANCE PENDING.
+
 ## UPDATE FINISHED — 2026-10-13 — v234 §tart project portfolio and focus synthesis refinement
 
 **Outcome:** Preserved and extended already-published v233 project discovery instead of rebuilding an obsolete Chat-only router. Generalized portfolio now displays **recent bounded Roadmap milestones first** (dated FINISHED/STARTED, labeled as documentation rather than current live activity) and only shows a Primary Focus / Focus Group when that label is expressly present in the **newest checked milestone**. The §tart document's distinct referenced project-start routers (e.g. `§tart_§E.md`) are now discovered and displayed separately from selected product/feature directories. §tart references do not by themselves prove a project is active. The listing remains an explicitly named sample, not a complete project census. Distinct Chat/LALM and independent Forge §E project status and separate release pathways remain intact.
