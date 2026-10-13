@@ -1,3 +1,13 @@
+## UPDATE STARTED — 2026-10-13 — v234 §tart project portfolio and focus synthesis refinement
+
+**Owner direction:** Continue making §wyrlz understand projects from the repository §tart doc rather than hard-coding Chat keyword. Already guarded-deployed v233 `fix/start-led-project-status-v233@8bf3e513422da61b7d0da4e4af8130367a5a51a4` implements authenticated source-led project status; do **not** duplicate or overwrite. Verified gap from code review: portfolio output selects first eight path strings in §tart, omits specialized per-project `§tart_§E.md` router as a distinct path, and does not clearly lead with the most recent Roadmap engineering milestone or respect the distinction between current work focus, observed commits and mere mentioned project directories.
+
+**Architecture:** Preserve `hf_space/repository_project_status_v233.py` single §tart-led helper, read-only GitHub OAuth and Stage-1 tool boundary, separate main §E engine, Roadmap chronological truth, runtime version registry truth and verified owner account. Add general discovery of specialized project-start routers (not just named Chat), bounded recent Roadmap focus/feature milestones, a clear project portfolio presentation that does not equate §tart entries with active work. Preserve per-project evidence, account guards, fallback for missing Roadmap. Add regression against sanitized router with arbitrary third project, Forge router, legacy vs clean-room path and newest feature event; no per-user profile facts in universal prompts.
+
+**Scope/source:** isolated Chat v234 branch based on published v233 exact source SHA above. Concurrent `main` owns independent §E work, never rebase/merge Chat source into main. Exact-source CI, guarded existing-Space release only after passes, atomic runtime registered module versions and Roadmap closeout. Known-good still requires owner signed-in mobile acceptance.
+
+**Status:** STARTED — source enhancement and verification pending.
+
 ## UPDATE FINISHED — 2026-10-13 — v233 §tart-led project discovery and generalized repo progress
 
 **Outcome:** Implemented and guarded-deployed source-led project-status discovery for the authenticated §wyrlz Chat GitHub connection. The user specifically requires §wyrlz to understand the *projects named in the repository §tart router*, follow their own documentation and evidence ownership, and articulate progress for Chat, LALM, Forge §E, or additional source-declared projects—not special-case the word "chat", confuse independently deployed products, invent active work from merely mentioned paths, or equate static docs with live mobile acceptance. This update applies that distinction without retraining model weights.
