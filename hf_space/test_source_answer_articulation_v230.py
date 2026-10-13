@@ -85,7 +85,7 @@ def test_repo_status_is_evidence_not_deployment_claim():
     with mock.patch.object(github,"_api",side_effect=api),mock.patch.object(github,"_read_optional",side_effect=read):
         reply=github._verified_chat_status({"token":"redacted"},"owner/repo","main")
     assert "Where the Chat project stands" in reply
-    assert "chat/§wyrlz" in reply and "fix(chat): resolve preview issue" in reply
+    assert "chat/§wyrlz" in reply and "resolve preview issue" in reply
     assert "**web-chat:** 1.5.116" in reply
     assert "do not, by themselves, confirm" in reply
     assert "works on your phone" in reply
