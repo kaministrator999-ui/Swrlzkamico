@@ -85,6 +85,12 @@ def classify_read(prompt, context=None):
     explicit = bool(_COMMAND.match(raw) or _REPO.search(raw))
     if not explicit and not (directory or last_file):
         return None
+    # Thread context is a scope hint, not permission to reinterpret unrelated dialogue.
+    if not explicit and not re.search(
+            r"\b(?:file|folder|directory|repo|repository|source|code|"
+            r"module|function|path|project|it|that|those|them|here)\b",
+            raw, re.I):
+        return None
     q = _PREFIX.sub("", raw) if _COMMAND.match(raw) else raw
     if not _READ.search(q):
         return None
@@ -93,12 +99,19 @@ def classify_read(prompt, context=None):
     # A directory named in a question is a literal scope, never a guessed
     # implementation owner. Do not pick random matching files by meaning.
     if not paths:
+        end_scope = re.search(
+            r"\b([A-Za-z0-9_§.-]{2,80})\s+(?:folder|directory)\b", q, re.I)
+        if end_scope:
+            candidate = _safe(end_scope[1])
+            if candidate not in ("the", "this", "that", "current", "our", "my"):
+                paths = [candidate]
+    if not paths:
         m = _BARE.search(q)
         if m and m[1].lower() not in (
             "repo", "repository", "github", "project", "source", "code",
             "file", "files", "folder", "directory", "this", "that", "our",
             "my", "the", "here", "which", "what", "how", "git", "history"):
-            if re.search(r"\b(?:folder|directory|under|inside|within)\b", q, re.I):
+            if re.search(r"\b(?:folder|directory|under|inside|within|files?\s+in|directories\s+in)\b", q, re.I):
                 paths = [_safe(m[1])]
     scoped = paths[:]
     if not scoped and re.search(r"\b(?:this|that|those|same|last|previous)\s+"
