@@ -78,6 +78,8 @@ def test_root_and_budget_and_modes():
     assert root["inspection"]["inspected"] <= 4
     assert root["inspection"]["notInspected"] >= 3
     assert root["inventory"]["languageCounts"]["Python"] == 2
+    assert any(x["path"].startswith("docs/") for x in root["files"])
+    assert any(x["path"].startswith("src/") for x in root["files"])
     assert not any(x["path"].endswith((".env", ".png")) for x in root["files"])
     small = report.build_report(snap(), "src/main.py", "deep", reader)
     assert small["inspection"]["complete"] and small["inspection"]["inspected"] == 1
