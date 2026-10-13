@@ -1,6 +1,6 @@
 ID=server-runtime
-VERSION=2.3.381
-REVISION=2.3.381-hf-v228-github-asset-freshness
+VERSION=2.3.382
+REVISION=2.3.382-hf-v229-repo-conversation-truth
 KIND=server-runtime
 SOURCE_BRANCH=runtime
 STATUS=active
