@@ -109,6 +109,45 @@ def test_real_verified_router_contract():
     assert project.candidates(paths,"lalm"),"§tart should expose a LALM operating guide"
 
 
+def test_branch_and_repo_history_are_scoped_and_non_authoritative():
+    urls=[]
+    def history(tok,suffix):
+        assert tok=="private-token"
+        assert suffix.startswith("/repos/owner/repo/")
+        urls.append(suffix)
+        if "commits?sha=main&path=chat%2F%C2%A7wyrlz" in suffix:
+            return [{"sha":"d"*40,"commit":{"message":"refactor(chat): source-grounded project UI","committer":{"date":"2026-10-12T02:40:00Z"}}}]
+        if "commits?sha=main&per_page=4" in suffix:
+            return [{"sha":"e"*40,"commit":{"message":"doc: record latest milestone"}}]
+        if "/branches?" in suffix:
+            return [{"name":"fix/chat-feature","commit":{"sha":"f"*40}},
+                    {"name":"feat/forge-world","commit":{"sha":"1"*40}},
+                    {"name":"runtime","commit":{"sha":"2"*40}}]
+        if "commits?sha="+"f"*40+"&path=chat%2F%C2%A7wyrlz" in suffix:
+            return [{"sha":"3"*40,"commit":{"message":"fix(chat): preview behavior"}}]
+        if "/pulls?" in suffix:
+            return [{"number":201,"title":"Chat source routing","draft":True,"head":{"ref":"fix/chat-routing"}},
+                    {"number":202,"title":"Forge tower mazes","draft":False,"head":{"ref":"feat/forge-world"}}]
+        raise AssertionError(suffix)
+    activity=project.history_evidence(history,"private-token","owner/repo","main","chat/§wyrlz","chat")
+    combined="\n".join(activity)
+    assert "refactor(chat): source-grounded" in combined
+    assert "2026-10-12" in combined
+    assert "fix/chat-feature" in combined and "fix(chat): preview behavior" in combined
+    assert "#201 [draft]" in combined
+    assert "forge tower" not in combined.lower()
+    assert "branch presence is not a release" in combined
+    assert "not merged or deployed" in combined
+    summary="\n".join(project.history_evidence(history,"private-token","owner/repo","main",include_branches=False))
+    assert "doc: record latest milestone" in summary
+    assert not any("/branches?" in x for x in urls[-1:])
+
+def test_history_failure_is_unverified_not_invented():
+    result=project.history_evidence(lambda *_: (_ for _ in ()).throw(ConnectionError("unavailable")),
+                                    "private-token","owner/repo","main","projects/demo","demo")
+    assert result==[]
+
+
 def test_verified_blob_roadmap_large_fallback_and_failure():
     raw=ROAD.encode("utf8")
     sha=hashlib.sha1(b"blob "+str(len(raw)).encode()+b"\0"+raw).hexdigest()
@@ -130,4 +169,6 @@ if __name__=="__main__":
     test_authenticated_repo_chat_followups_and_locked_writes()
     test_verified_blob_roadmap_large_fallback_and_failure()
     test_real_verified_router_contract()
+    test_branch_and_repo_history_are_scoped_and_non_authoritative()
+    test_history_failure_is_unverified_not_invented()
     print("v233 §tart-led project scope, source progress, privacy and immutable blob checks PASS")
