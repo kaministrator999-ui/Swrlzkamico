@@ -1,3 +1,11 @@
+## UPDATE FINISHED — 2026-10-13 — v232 contextual source-report followups and compact mobile evidence display
+
+**Outcome:** Followups about selected verified GitHub source reports now preserve their evidence scope and explanatory 700M response mode. Long report user bubbles can be expanded/collapsed without changing saved message, model prompt, export or account boundaries. No model weight training; no §E changes.
+
+**Receipts:** [PR #140](https://github.com/kaministrator999-ui/Swrlzkamico/pull/140), source `5a1dcc8691cfe95a85a13579bb80ac6da54e44ae`, GitHub CI #38431610004, HF CI #38431619617, Mobile CI #38431619416, Lyric CI #38431619880 all completed SUCCESS at same source SHA. [Guarded HF Deploy #38431996600](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38431996600) completed SUCCESS, Space `kamiloki/Swyrlz` revision `9175d5f9894b4e25741c726706b23e0b8670bb09`, rollback `908e610918a49c419bea1734aefb1b5684bd888c`.
+
+**Canonical versions:** `runtime@bc509eb8e092a1d6b5cfb0b9f422be6a3231914f`, Repository Work `1.0.173`, Server Runtime `2.3.385`, Web Chat `1.5.119`, read back after compare-and-swap. Verification remains `DEPLOYED_UNVERIFIED`, `knownGood=false` until authenticated owner Android acceptance. v232 STARTED entry below retains implementation/test requirements and scope.
+
 ## UPDATE STARTED — 2026-10-13 — v232 contextual source-report followups and compact mobile evidence display
 
 **User request:** "Also act like I asked you those questions ... aim at teaching the model how to articulate it" → "Keep finishing" → "Keep going"; user-provided exported chat / Android screenshots from earlier turn. Already completed/published v230 and v231 from source `fix/evidence-response-mode-v231@ec65dd593e6457c074085953e901e24b399a3936` contain four evidence-first exemplars and v231 700M `SOURCE-FACTS-FIRST` for *first* prompt, plus valid GitHub counts, repo status and archived date bounds. Do not duplicate or overwrite. `main@79ccfe9f3e3e50c6f237de94985a8d2259d56214` independently advances §E: keep Chat-only source branch isolated.
