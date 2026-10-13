@@ -84,7 +84,7 @@ def test_cross_project_reports_use_source_not_chat_shortcut():
     assert "LALM_RUNTIME_ARCHITECTURE" in lalm and "2.1.196" in lalm
     assert "Which engine" in vague
     assert "Newest checked Roadmap entry" in all_projects
-    assert "not proof of currently active work" in all_projects
+    assert "not automatically active" in all_projects
     assert "release" not in alt or "Source records" in alt
 
 def test_authenticated_repo_chat_followups_and_locked_writes():
