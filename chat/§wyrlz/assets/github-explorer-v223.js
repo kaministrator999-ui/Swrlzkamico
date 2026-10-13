@@ -410,6 +410,10 @@ function render(container,source,options={}){
     detail.hidden=false;detail.replaceChildren(el("div","repo-explorer-meta","Loading bounded source…"));
     try{
       if(!state.info)await loadDir(state.path);
+      if(!state.info)throw Error("Directory metadata is unavailable; cannot verify this file.");
+      // loadDir intentionally closes old panels. Opening a file immediately
+      // after that first metadata fetch must reopen its own detail pane.
+      detail.hidden=false;
       const data=await request("file",{path:item.path,branch:currentBranch()});
       state.opened=item.path;state.content=data;
       detail.replaceChildren();
