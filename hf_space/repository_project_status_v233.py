@@ -113,6 +113,75 @@ def versions(api,read,token,repo,wanted):
         if len(out)>=4:break
     return out,sha
 
+def history_evidence(api,token,repo,branch,path="",subject="",include_branches=True):
+    """Small, explicitly sampled Git history, never a proof of active/live state."""
+    lines=[]
+    def fetch(suffix):
+        try:
+            val=api(token,"/repos/"+repo+suffix)
+            return val if isinstance(val,list) else None
+        except Exception:
+            return None
+    scope=("&path="+quote(path,safe="") if path else "")
+    commits=fetch("/commits?sha="+quote(branch,safe="") + scope+"&per_page=4")
+    if commits is not None:
+        label=("selected path "+path if path else "repository")
+        lines.append("**Recent "+label+" history on "+branch+"** (up to four Git commits, not all work):")
+        for item in commits[:4]:
+            if not isinstance(item,dict):continue
+            sha=str(item.get("sha") or "")
+            info=item.get("commit") or {}
+            if not SHA.fullmatch(sha) or not isinstance(info,dict):continue
+            title=str(info.get("message") or "").splitlines()[0].replace("\n"," ")[:140]
+            date=str(((info.get("committer") or {}).get("date") or ""))[:10]
+            stamp=(" · "+date if re.fullmatch(r"\d{4}-\d{2}-\d{2}",date) else "")
+            lines.append("- "+sha[:12]+stamp+" · "+title)
+        if not any(x.startswith("- ") for x in lines):
+            lines.append("No commit evidence was returned in this bounded window.")
+    if not include_branches:return lines
+    branches=fetch("/branches?per_page=60")
+    pulls=fetch("/pulls?state=open&per_page=40")
+    wanted=terms(subject)|terms(path)
+    wanted.discard("§wyrlz")
+    if branches is not None and wanted:
+        sampled=[]
+        for item in branches[:60]:
+            if not isinstance(item,dict):continue
+            name=str(item.get("name") or "")
+            digest=str(((item.get("commit") or {}).get("sha") or ""))
+            if name==branch or not SHA.fullmatch(digest):continue
+            if len(terms(name)&wanted)<1:continue
+            sampled.append((name,digest))
+            if len(sampled)>=3:break
+        if sampled:
+            lines.append("**Matching development branches** (sample of first 60 branch names; branch presence is not a release):")
+            for name,digest in sampled:
+                lines.append("- "+name[:100]+" @ "+digest[:12])
+                if path:
+                    samples=fetch("/commits?sha="+quote(digest,safe="")+"&path="+quote(path,safe="")+"&per_page=1")
+                    if samples:
+                        change=samples[0] if isinstance(samples[0],dict) else {}
+                        val=str(change.get("sha") or "")
+                        if SHA.fullmatch(val):
+                            title=str(((change.get("commit") or {}).get("message") or "")).splitlines()[0][:110]
+                            lines.append("  - Last sampled scoped commit "+val[:12]+": "+title)
+    if pulls is not None and wanted:
+        matching=[]
+        for pr in pulls[:40]:
+            if not isinstance(pr,dict):continue
+            title=str(pr.get("title") or "")
+            head=str(((pr.get("head") or {}).get("ref") or ""))
+            if not terms(title+" "+head)&wanted:continue
+            num=pr.get("number")
+            if type(num)!=int or num<=0:continue
+            matching.append("#"+str(num)+(" [draft]" if pr.get("draft") else " [open]")+" "+title[:115])
+            if len(matching)>=4:break
+        if matching:
+            lines.append("**Related open pull requests** (bounded first 40; draft/open is not merged or deployed):")
+            lines.extend("- "+v for v in matching)
+    return lines
+
+
 def build_status(record,repo,branch,subject,api,read):
     """No inferred permission, model weights, release verification or global account reuse."""
     token=record["token"]
@@ -138,6 +207,8 @@ def build_status(record,repo,branch,subject,api,read):
             m=next((x for x in HEADING.finditer(roadmap["body"]) if x[1] in ("FINISHED","COMPLETED","STARTED")),None)
             if m:lines.append("Newest checked Roadmap entry: "+m[2]+" — "+m[3][:125]+" ("+m[1].lower()+").")
         else:lines.append("Roadmap unavailable at this revision; cannot verify what has been worked on most recently.")
+        history=history_evidence(api,token,repo,branch,include_branches=False)
+        if history:lines.extend(["","**Repository activity evidence**",*history])
         lines.append("Source revision: "+sha[:12]+". Source records alone do not prove work is live or currently in progress.")
         return "\n".join(lines)
     scored=candidates(projects,subject)
@@ -168,6 +239,8 @@ def build_status(record,repo,branch,subject,api,read):
     else:lines.append("Roadmap: "+("no matching entry was verified in its latest bounded activity" if roadmap else "unavailable at this source revision")+".")
     if modules:lines.append("Declared module versions: "+", ".join(k+" "+v for k,v in modules)+".")
     elif runtime_sha:lines.append("Runtime registry was checked; no module could be attributed to this project unambiguously.")
+    history=history_evidence(api,token,repo,branch,path,subject)
+    if history:lines.extend(["**Additional branch and commit evidence**",*history])
     lines.append("Evidence: §tart and "+("Roadmap" if roadmap else "no readable Roadmap")+" at "+sha[:12]+
                  (", separate runtime registry at "+runtime_sha[:12] if runtime_sha else "")+
                  ". Source records do not by themselves verify deployment or behavior on your device.")
