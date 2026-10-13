@@ -81,6 +81,6 @@
     "patches/v10_4_sheep_lanes.py",
     "patches/v10_5_sheep_run_recorder.py"
   ],
-  "finalBytes": 1594393,
-  "finalSha256": "183a2ea4e0fb0947c43f3031c11382d71727b7a4ea5c26fad1d9c7294659b00b"
+  "finalBytes": 1594471,
+  "finalSha256": "cd3b50f06d3a802c025b3e530e743446d284633961bff0dacd46a656eb7e8ace"
 }
