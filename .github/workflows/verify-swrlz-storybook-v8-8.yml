@@ -1,4 +1,4 @@
-name: Validate §E v10.6 native starter and animation studio
+name: Validate §E v10.7 native starter and animation studio
 
 on:
   push:
@@ -14,6 +14,11 @@ on:
       - "projects/swrlz-forge-moba/tests/sheep_archive_playwright.mjs"
       - "projects/swrlz-forge-moba/patches/v10_5_sheep_run_recorder.py"
       - "projects/swrlz-forge-moba/patches/v10_6_maul_tower_defense.py"
+      - "projects/swrlz-forge-moba/patches/v10_7_wintermaul_wars.py"
+      - "projects/swrlz-forge-moba/scenes/maul-wars-frostveil.swyrl.json"
+      - "projects/swrlz-forge-moba/tests/maul_wars_playwright.mjs"
+      - "projects/swrlz-forge-moba/tests/maul_wars_cpu.mjs"
+      - "projects/swrlz-forge-moba/tests/wintermaul_package.py"
       - "projects/swrlz-forge-moba/scenes/maul-frostveil.swyrl.json"
       - "projects/swrlz-forge-moba/tests/maul_playwright.mjs"
       - "projects/swrlz-forge-moba/tests/maul_cpu.mjs"
@@ -67,6 +72,7 @@ jobs:
           - sheep_touch
           - sheep_run
           - maul
+          - maul_wars
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -75,7 +81,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Independently reconstruct sealed v10.6 source
+      - name: Independently reconstruct sealed v10.7 source
         run: |
           python - <<'PY'
           import base64,gzip,hashlib,json,runpy
@@ -86,15 +92,15 @@ jobs:
           raw=gzip.decompress(base64.b64decode(''.join((root/p).read_text(encoding='utf-8').strip() for p in manifest['chunks'])))
           assert len(raw)==manifest['baseBytes']
           assert hashlib.sha256(raw).hexdigest()==manifest['baseSha256']
-          assert len(manifest['patches'])==66
-          assert manifest['patches'][-1]=='patches/v10_6_maul_tower_defense.py'
+          assert len(manifest['patches'])==67
+          assert manifest['patches'][-1]=='patches/v10_7_wintermaul_wars.py'
           source=raw.decode('utf-8')
           for patch in manifest['patches']:
               source=mod['load_patch'](root/patch)(source)
           output=source.encode('utf-8')
           assert len(output)==manifest['finalBytes']
           assert hashlib.sha256(output).hexdigest()==manifest['finalSha256']
-          for feature in ('V10_6_MAUL_TOWER_DEFENSE','SWYRL_ENGINE_MAUL','MAUL_CORE','maul-frostveil','SWYRL_ENGINE_SHEEP_TAG_RUNS','SWYRL_ENGINE_RUNS','stRunAfterTick','stRunInstallUI','stRunViewerMount','swyrl-editor-play-run-v1','stTouchPlacementScreen','stTouchPlacementGround','touchPlacement','SWYRL_ENGINE_SHEEP_TAG','sheep-tag-meadow','sheep-tag-moonbell-archive','swyrl-sheep-tag-map-v1','SWYRL_ENGINE_TRANSPORT','animeCineRewind','animeCineFastForward','SWYRL_ENGINE_STAFF','rigFullStaffStatus','painted-full-v1','assets/anime/kami-full-staff.png','Maker v10.6',
+          for feature in ('V10_7_WINTERMAUL_WARS','SWYRL_ENGINE_MAUL_WARS','MAUL_WARS_CORE','maul-wars-frostveil','SWYRL_ENGINE_MAUL','MAUL_CORE','maul-frostveil','SWYRL_ENGINE_SHEEP_TAG_RUNS','SWYRL_ENGINE_RUNS','stRunAfterTick','stRunInstallUI','stRunViewerMount','swyrl-editor-play-run-v1','stTouchPlacementScreen','stTouchPlacementGround','touchPlacement','SWYRL_ENGINE_SHEEP_TAG','sheep-tag-meadow','sheep-tag-moonbell-archive','swyrl-sheep-tag-map-v1','SWYRL_ENGINE_TRANSPORT','animeCineRewind','animeCineFastForward','SWYRL_ENGINE_STAFF','rigFullStaffStatus','painted-full-v1','assets/anime/kami-full-staff.png','Maker v10.7',
                           'CANONICAL_ANIME_EPISODE_PROJECT','SWYRL_ENGINE_CINEMATIC',
                           'SWYRL_ENGINE_ANIMATION','SWYRL_ENGINE_STORYBOARD','SWYRL_ENGINE_RIG','SWYRL_ENGINE_SCENERY','SWYRL_ENGINE_SOCKETS','SWYRL_ENGINE_EMERGENCE','SWYRL_ENGINE_RELIEF',
                           'anime-rig-sockets-v1','anime-book-emergence-v1','anime-character-relief-v1',
@@ -112,14 +118,15 @@ jobs:
           Path('/tmp/swyrl-anime-engine.mjs').write_text(source[begin:source.rindex('</script>')],encoding='utf-8')
           print('ENGINE_EXPECTED_BYTES='+str(len(output)))
           print('ENGINE_EXPECTED_SHA256='+hashlib.sha256(output).hexdigest())
-          print('CANDIDATE_66_PATCH_RECONSTRUCT_OK')
+          print('CANDIDATE_67_PATCH_RECONSTRUCT_OK')
           PY
           node --check /tmp/swyrl-anime-engine.mjs
           python -m compileall -q projects/swrlz-forge-moba/patches projects/swrlz-forge-moba/build_space.py
-      - name: Verify complete v10.6 package against source and manifest
+      - name: Verify complete v10.7 package against source and manifest
         run: |
           python projects/swrlz-forge-moba/build_space.py --output /tmp/storybook-test
           cmp /tmp/swyrl-anime-engine.html /tmp/storybook-test/index.html
+          python projects/swrlz-forge-moba/tests/wintermaul_package.py --package /tmp/storybook-test
           python - <<'PY'
           import hashlib,json
           from pathlib import Path
@@ -130,8 +137,8 @@ jobs:
           assert receipt['finalBytes']==manifest['finalBytes']
           assert receipt['finalSha256']==manifest['finalSha256']
           assert receipt['patches']==manifest['patches']
-          assert len(receipt['patches'])==66
-          assert receipt['patches'][-1]=='patches/v10_6_maul_tower_defense.py'
+          assert len(receipt['patches'])==67
+          assert receipt['patches'][-1]=='patches/v10_7_wintermaul_wars.py'
           expected={'episodes/ghosts-in-different-forms-ep01.html',
                     'scenes/ghosts-in-different-forms-ep01.swyrl.json',
                     'scenes/ghosts-in-different-forms-ep01-storybook.swyrl.json',
@@ -144,14 +151,15 @@ jobs:
                     'scenes/ghosts-in-different-forms-ep01-full-staff.swyrl.json',
                     'scenes/sheep-tag-meadow.swyrl.json',
                     'scenes/sheep-tag-moonbell-archive.swyrl.json',
-                    'scenes/maul-frostveil.swyrl.json'}
+                    'scenes/maul-frostveil.swyrl.json',
+                    'scenes/maul-wars-frostveil.swyrl.json'}
           expected.update('assets/anime/'+name+'.png' for name in (
               'kami','swyrlz','cathedral','workshop','foreground','kami-rig',
               'swyrlz-rig','scenery-parts','kami-grip-layers',
               'mage-faces-painted','kami-full-staff'))
           assert {p.relative_to(root).as_posix() for p in (root/'assets/anime').glob('*.png')}=={p for p in expected if p.endswith('.png')}
           assert set(receipt['assets'])==expected
-          assert len(receipt['assets'])==24
+          assert len(receipt['assets'])==25
           maul=json.loads((out/'scenes/maul-frostveil.swyrl.json').read_text())
           assert maul['project']['canonicalId']=='maul-frostveil'
           assert maul['project']['kind']=='maul'
@@ -230,7 +238,7 @@ jobs:
               assert (root/asset).read_bytes()==packed, asset
               assert len(packed)==data['bytes'], asset
               assert hashlib.sha256(packed).hexdigest()==data['sha256'], asset
-          print('PACKAGING_66_PATCHES_AND_ALL_ASSETS_VERIFIED')
+          print('PACKAGING_67_PATCHES_AND_ALL_ASSETS_VERIFIED')
           PY
       - name: Check browser acceptance suite syntax
         run: |
@@ -256,6 +264,12 @@ jobs:
           node --check projects/swrlz-forge-moba/runtime/maul_ui.js
           node --check projects/swrlz-forge-moba/tests/maul_playwright.mjs
           node --check projects/swrlz-forge-moba/tests/maul_cpu.mjs
+          node --check projects/swrlz-forge-moba/runtime/maul_wars_core.js
+          node --check projects/swrlz-forge-moba/runtime/maul_wars_ui.js
+          node --check projects/swrlz-forge-moba/runtime/maul_wars_visuals.js
+          node --check projects/swrlz-forge-moba/runtime/maul_wars_integration.js
+          node --check projects/swrlz-forge-moba/tests/maul_wars_playwright.mjs
+          node --check projects/swrlz-forge-moba/tests/maul_wars_cpu.mjs
       - name: Install Chromium and Playwright
         run: |
           npm install --no-save playwright@1.56.1
@@ -278,7 +292,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: v10-6-${{ matrix.suite }}-browser-views
+          name: v10-7-${{ matrix.suite }}-browser-views
           path: |
             native-anime-*.png
             storybook-acceptance/
@@ -293,4 +307,5 @@ jobs:
             sheep-touch-acceptance/
             sheep-run-acceptance/
             maul-acceptance/
+            maul-wars-acceptance/
           retention-days: 5

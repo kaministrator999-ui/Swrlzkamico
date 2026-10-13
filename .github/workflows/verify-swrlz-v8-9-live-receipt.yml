@@ -4,7 +4,7 @@ on:
     branches: [main]
   workflow_dispatch:
   workflow_run:
-    workflows: ["Deploy §wyrl§ Engine v10.6 to Hugging Face"]
+    workflows: ["Deploy §wyrl§ Engine v10.7 to Hugging Face"]
     types: [completed]
     branches: [main]
 permissions:
@@ -115,6 +115,8 @@ jobs:
               expected_assets.add('scenes/sheep-tag-moonbell-archive.swyrl.json')
           if 'scenes/maul-frostveil.swyrl.json' in source_paths:
               expected_assets.add('scenes/maul-frostveil.swyrl.json')
+          if 'scenes/maul-wars-frostveil.swyrl.json' in source_paths:
+              expected_assets.add('scenes/maul-wars-frostveil.swyrl.json')
           expected_assets.update(path for path in source_paths if path.startswith('assets/anime/') and path.endswith('.png'))
           assert set(receipt['assets'])==expected_assets,'Bundled asset set differs from committed source'
           for path,meta in receipt['assets'].items():
@@ -123,6 +125,9 @@ jobs:
               assert len(data)==meta['bytes'],path
               assert hashlib.sha256(data).hexdigest()==meta['sha256'],path
               assert data==committed(path),'Hosted asset differs from source: '+path
+              if path=='scenes/maul-wars-frostveil.swyrl.json':
+                  import runpy
+                  runpy.run_path(engine+'/tests/wintermaul_package.py')['validate_scene'](json.loads(data))
               print('LIVE_ASSET_OK='+path,flush=True)
           audit={'releaseVersion':request['releaseVersion'],'sourceCommit':source_commit,'deployTrigger':trigger,
                  'deployRun':final['html_url'],'appUrl':root,'sourceBytes':len(html),'sourceSha256':digest,

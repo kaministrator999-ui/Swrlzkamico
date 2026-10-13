@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v10.6
+title: §wyrl§ Engine v10.7
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -7,24 +7,30 @@ sdk: static
 app_file: index.html
 fullWidth: true
 header: mini
-short_description: Maul, Sheep Tag, paper theatre, Dragon Den and Starforge
+short_description: Wintermaul Wars, Sheep Tag, paper theatre and worlds
 ---
 
-# §wyrl§ Engine · Maker v10.6
+# §wyrl§ Engine · Maker v10.7
 
-## Current v10.6 candidate · Frostveil Maul tower defense
+## Current v10.7 candidate · Frostveil Wintermaul Wars
 
-Choose **Frostveil Maul** in **Projects**, or open `?project=maul-frostveil`, then use the editor's native **Play** button. This separate starter follows the cooperative Warcraft III: The Frozen Throne Wintermaul pattern: nine linked building sectors, waves that travel through downstream defenders, player-built tower mazes and a shared exit with shared lives. One local controller can manage all nine builders; optional auto-defenders help in the other eight sectors. Network multiplayer is outside this starter.
+Choose **Wintermaul Wars · Frostveil Divide** in **Projects**, or open `?project=maul-wars-frostveil`, then press the editor's native **Play** button. Two mirrored snowy team halves replace the cooperative nine-sector layout for this Wars starter. Three builder positions defend each team; ordered route beacons carry enemy sends around raised ice islands and outer turns toward a separate team ship. The classic **Frostveil Maul** campaign remains a separate project at `?project=maul-frostveil`.
 
-Build **Arrow**, **Cannon**, **Frost** and **Storm** towers or inexpensive maze walls on the ground grid. Towers have three upgrade tiers and target priorities; gold from kills funds construction and upgrades, and selling refunds part of the investment. Ground enemies follow the remaining open maze, flying enemies bypass it, and boss rounds punctuate the thirty-wave progression. Building rejects a complete route closure and occupied footprints before charging gold. This anti-block rule is an explicit §E improvement: historical Maul variants handle full blocking differently.
+Purchase ground, flying or stronger creeps to attack the opposing team. Each accepted send spends its sender's gold and permanently increases recurring income, paid every **25 seconds**. Towers defend the connected maze, kills reward their owner, and leaked creeps reduce the defending team's shared lives. Exhausting a team's lives ends the match. The local controller can switch between all three friendly builders and their separate wallets. Optional friendly auto-defenders assist the other two slots; three opposing AI players send and build. This is a local match with AI, without online player synchronization.
 
-The original frost-and-crystal map, tower pieces, builder and spawn/waypoint/exit actors remain native editor objects. **Maul rules**, native transforms, Undo/Redo and **Save Project / Load Project** retain authored changes. Play creates the runtime match; Pause freezes it, and Stop restores the authored scene. Desktop and phone placement show the complete grid footprint, with the touch preview lifted above the finger. Select a placed tower to inspect its range, upgrade, sell or change targeting.
+The 49 × 51-cell map uses original native snowfields, dark raised cliffs, a central divider, sender islands, six colored builders, ten ordered beacons and two ship exits. Build **Arrow**, **Cannon**, **Frost** and **Storm** towers or maze walls with the same visible grid footprints and above-finger touch preview. Ground sends navigate open mazes; flyers bypass maze geometry. Construction rejects occupied or protected footprints and a complete route closure before charging gold. This predictable anti-block rule is a deliberate §E choice; historical Wars variants differ.
 
-The existing **Run recorder** toggle supports this seventh starter as well as every earlier starter and imported custom project. Enable it before Play; after Stop, export JSON, written spatial observations or a self-contained spectator HTML viewer. Maul recordings add wave, gold, lives, tower, enemy, route and command/result evidence to the shared camera/object observations. Recording remains off by default, and review/export remain unavailable during an active match.
+Native editor layers, transforms, **Wars rules**, Undo/Redo and **Save Project / Load Project** retain authored map and settings changes. Play creates the match, Pause freezes it, and Stop restores the authored scene. The shared **Run recorder** supports this eighth starter and imported projects. Enable recording before Play; after Stop export JSON, written spatial observations or a self-contained spectator HTML viewer. Wars observations include each player's gold/income, team lives, sends, towers, creeps, route progression, shots and command results alongside actual object and camera state.
 
-Publication appends `patches/v10_6_maul_tower_defense.py` and new Maul runtime modules, with **66 governed patches and 24 assets**, including `scenes/maul-frostveil.swyrl.json`. All 65 earlier patches, earlier runtime modules, the 23 published assets and payload chunks remain byte-identical. Artifact: `swyrl_engine_v10_6.html`; marker: `SWYRL_ENGINE_DEPLOY_MARKER: V10_6_MAUL_TOWER_DEFENSE`. Exact bytes and SHA-256 come from the sealed manifest and generated `SOURCE.json`.
+Publication appends `patches/v10_7_wintermaul_wars.py` and new Wars runtime modules, with **67 governed patches and 25 assets**, including `scenes/maul-wars-frostveil.swyrl.json`. All 66 earlier patches, published runtime modules, 24 earlier assets and payload chunks remain byte-identical. Artifact: `swyrl_engine_v10_7.html`; marker: `SWYRL_ENGINE_DEPLOY_MARKER: V10_7_WINTERMAUL_WARS`. Exact bytes and SHA-256 belong to the sealed manifest and generated `SOURCE.json`.
 
-Acceptance requires all **six engine workflows**, **thirteen desktop/phone browser suites**, the existing **13 sealed-source Sheep Tag geometry scenarios**, and the new sealed-source Maul routing/wave CPU cases. Final source/deployment authority comes from the last deliberate dedicated `DEPLOY_REQUEST.json`, its successful Actions run and exact hosted HTML/SOURCE/all-asset verification. These candidate notes do not assert publication before those receipts succeed. Controls, research and scope: [MAUL_STARTER.md](https://github.com/kaministrator999-ui/Swrlzkamico/blob/main/projects/swrlz-forge-moba/MAUL_STARTER.md).
+Acceptance requires all **six engine workflows**, **fourteen desktop/phone browser suites**, **13 sealed-source Sheep Tag geometry scenarios**, **17 sealed-source classic Maul scenarios** and the new sealed-source Wars economy/routing CPU cases. Publication authority is the final dedicated `DEPLOY_REQUEST.json`, its terminal successful Actions deployment and exact hosted HTML/SOURCE/all-asset verification. Candidate notes do not assert publication before those receipts succeed. Controls, research and scope: [MAUL_WARS_STARTER.md](MAUL_WARS_STARTER.md).
+
+## Historical verified v10.6 · Frostveil Maul tower defense
+
+The v10.6 release is verified live: merged source `52862f6a2f8a869d21a03103888b4a094ad19969`, final trigger `6200148fcc7c4ba83bfe76883b4fd49c7d20c53f`, [deployment 38434348748](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38434348748) and [hosted audit 38434414319](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38434414319). It seals **66 patches, 24 assets and 1,748,442 bytes**, SHA-256 `01d7fff6e2a943a326e4582670640d60eec78475c75ab12e16d92c12ee2a9843`. All six engine workflows, thirteen desktop/phone browser suites, 17 Maul CPU cases and 13 Sheep Tag geometry CPU cases passed, followed by native live tower placement/selection, waves, Pause/Stop and actual recorder exports on desktop and phone. Marker: `V10_6_MAUL_TOWER_DEFENSE`; artifact: `swyrl_engine_v10_6.html`.
+
+The separate cooperative starter retains nine connected sectors, thirty waves, shared lives, tower mazes, upgrades, air/boss rounds, optional support and native rules authoring. Its original `scenes/maul-frostveil.swyrl.json` remains packaged unchanged. See [MAUL_STARTER.md](MAUL_STARTER.md) for that project's controls and research. These receipts certify v10.6; the Wars candidate requires its own deployment and exact hosted audit.
 
 ## Historical verified v10.5 · Editor play-run recorder
 
@@ -130,7 +136,7 @@ Marker: `SWYRL_ENGINE_DEPLOY_MARKER: V10_2_SHEEP_TOUCH_PLACEMENT`
 
 ### Release verification
 
-The verified v10.5 source and production receipts are recorded above. The current v10.6 candidate requires its own thirteen-suite desktop/phone browser matrix, six engine CI workflows, all 13 geometry CPU scenarios, final dedicated deployment and exact hosted package audit.
+The verified v10.6 source and production receipts are recorded above. The current v10.7 candidate requires its own fourteen-suite desktop/phone browser matrix, six engine CI workflows, all 13 geometry CPU scenarios, final dedicated deployment and exact hosted package audit.
 
 The previous **v9.3 Connected Character Pieces** release is verified live: [deployment 37893678594](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37893678594) and [exact hosted audit 37893722231](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37893722231) passed. Source [`84d8966f4240`](https://github.com/kaministrator999-ui/Swrlzkamico/commit/84d8966f4240cef8ebe037dbc03baac43099c06e) seals 52 patches, **980,767 bytes**, SHA-256 `caba518b67524567899d93a74308bc894cf40413fd69b330b8f7f5f7b6c042be`, with all fourteen media assets. These receipts certify v9.3; v10.0 requires its own final deployment and hosted audit.
 

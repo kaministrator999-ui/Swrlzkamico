@@ -4,7 +4,7 @@ Frostveil Maul is a separate native §E tower-defense project inspired by cooper
 
 Nine connected sectors form a three-by-three board. Enemies entering an upstream sector travel through successive defended sectors to a shared crystal exit. Each leak costs shared lives. Defeat all thirty waves with lives remaining to win; exhausting lives loses the match. Ground enemies follow open cells through player-built mazes. Flying rounds cross sectors without following tower mazes, and boss rounds demand concentrated damage.
 
-One local controller manages nine builders and can switch the active sector. Optional auto-defenders build in the eight other sectors. This is a local playable starter; online player synchronization, competitive Maul Wars creep sending and Warcraft's original racial tower roster are future extensions.
+One local controller manages nine builders and can switch the active sector. Optional auto-defenders build in the eight other sectors. This is a local playable cooperative starter. Competitive creep sending and opposing team mazes belong to the separate [Frostveil Wintermaul Wars](MAUL_WARS_STARTER.md) project. Online player synchronization and Warcraft's original racial tower roster are future extensions.
 
 ## Playing and building
 
@@ -40,6 +40,6 @@ Frostveil keeps the recognizable linked sectors, shared exit, tower mazes, econo
 
 ## Release and acceptance
 
-The v10.6 candidate appends the 66th governed patch, `patches/v10_6_maul_tower_defense.py`, and adds this map as the 24th packaged asset. All 65 earlier patches, earlier runtime files, 23 predecessor assets and payload chunks remain byte-identical. Artifact: `swyrl_engine_v10_6.html`; marker: `V10_6_MAUL_TOWER_DEFENSE`.
+The verified v10.6 release appended the 66th governed patch, `patches/v10_6_maul_tower_defense.py`, and added this map as the 24th packaged asset. All 65 earlier patches, earlier runtime files, 23 predecessor assets and payload chunks remained byte-identical. Artifact: `swyrl_engine_v10_6.html`; marker: `V10_6_MAUL_TOWER_DEFENSE`.
 
-Required acceptance includes thirteen desktop/phone native browser suites, the new sealed Maul CPU routing/wave suite, the existing thirteen Sheep Tag geometry scenarios and all six engine workflows. Publication authority is the dedicated final request, terminal successful deployment and exact hosted package audit; candidate documentation alone does not establish that the release is live.
+All thirteen desktop/phone native browser suites, seventeen sealed Maul CPU scenarios, thirteen Sheep Tag geometry scenarios and all six engine workflows passed. [Deployment 38434348748](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38434348748) and [hosted audit 38434414319](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38434414319) verified the exact package. The v10.7 Wars release preserves this classic starter and requires its own final deployment and hosted audit.

@@ -1,4 +1,4 @@
-name: Validate §E v10.6 camera-safe storybook staging
+name: Validate §E v10.7 camera-safe storybook staging
 on:
   push:
     branches: [main]
@@ -14,6 +14,11 @@ on:
       - "projects/swrlz-forge-moba/tests/sheep_archive_playwright.mjs"
       - "projects/swrlz-forge-moba/patches/v10_5_sheep_run_recorder.py"
       - "projects/swrlz-forge-moba/patches/v10_6_maul_tower_defense.py"
+      - "projects/swrlz-forge-moba/patches/v10_7_wintermaul_wars.py"
+      - "projects/swrlz-forge-moba/scenes/maul-wars-frostveil.swyrl.json"
+      - "projects/swrlz-forge-moba/tests/maul_wars_playwright.mjs"
+      - "projects/swrlz-forge-moba/tests/maul_wars_cpu.mjs"
+      - "projects/swrlz-forge-moba/tests/wintermaul_package.py"
       - "projects/swrlz-forge-moba/scenes/maul-frostveil.swyrl.json"
       - "projects/swrlz-forge-moba/tests/maul_playwright.mjs"
       - "projects/swrlz-forge-moba/tests/maul_cpu.mjs"
@@ -76,12 +81,12 @@ jobs:
           raw=gzip.decompress(base64.b64decode(''.join((root/p).read_text().strip() for p in manifest['chunks'])))
           assert len(raw)==manifest['baseBytes'] and hashlib.sha256(raw).hexdigest()==manifest['baseSha256']
           s=raw.decode('utf-8')
-          assert len(manifest['patches'])==66
-          assert manifest['patches'][-1]=='patches/v10_6_maul_tower_defense.py'
+          assert len(manifest['patches'])==67
+          assert manifest['patches'][-1]=='patches/v10_7_wintermaul_wars.py'
           for path in manifest['patches']:s=mod['load_patch'](root/path)(s)
           assert len(s.encode())==manifest['finalBytes']
           assert hashlib.sha256(s.encode()).hexdigest()==manifest['finalSha256']
-          for feature in ('V10_6_MAUL_TOWER_DEFENSE','SWYRL_ENGINE_MAUL','MAUL_CORE','maul-frostveil','SWYRL_ENGINE_SHEEP_TAG_RUNS','SWYRL_ENGINE_RUNS','stRunAfterTick','stRunInstallUI','stRunViewerMount','swyrl-editor-play-run-v1','stTouchPlacementScreen','stTouchPlacementGround','touchPlacement','SWYRL_ENGINE_SHEEP_TAG','sheep-tag-meadow','sheep-tag-moonbell-archive','swyrl-sheep-tag-map-v1','SWYRL_ENGINE_TRANSPORT','animeCineRewind','animeCineFastForward','SWYRL_ENGINE_STAFF','rigFullStaffStatus','painted-full-v1','assets/anime/kami-full-staff.png','SWYRL_ENGINE_RIG','SWYRL_ENGINE_SCENERY','SWYRL_ENGINE_SOCKETS','SWYRL_ENGINE_EMERGENCE','SWYRL_ENGINE_RELIEF',
+          for feature in ('V10_7_WINTERMAUL_WARS','SWYRL_ENGINE_MAUL_WARS','MAUL_WARS_CORE','maul-wars-frostveil','SWYRL_ENGINE_MAUL','MAUL_CORE','maul-frostveil','SWYRL_ENGINE_SHEEP_TAG_RUNS','SWYRL_ENGINE_RUNS','stRunAfterTick','stRunInstallUI','stRunViewerMount','swyrl-editor-play-run-v1','stTouchPlacementScreen','stTouchPlacementGround','touchPlacement','SWYRL_ENGINE_SHEEP_TAG','sheep-tag-meadow','sheep-tag-moonbell-archive','swyrl-sheep-tag-map-v1','SWYRL_ENGINE_TRANSPORT','animeCineRewind','animeCineFastForward','SWYRL_ENGINE_STAFF','rigFullStaffStatus','painted-full-v1','assets/anime/kami-full-staff.png','SWYRL_ENGINE_RIG','SWYRL_ENGINE_SCENERY','SWYRL_ENGINE_SOCKETS','SWYRL_ENGINE_EMERGENCE','SWYRL_ENGINE_RELIEF',
                           'anime-rig-sockets-v1','anime-book-emergence-v1','anime-character-relief-v1','animeMakePaperBook','popLowStageTrim','animePopupStageSafety','popKamiArt',
                           'popSwyrlzArt','animePopSanitize','animeDirectorInstall',
                           'animePopUp','popupHinge','popUpStatus','animeUpdateCelLayers'):
@@ -97,6 +102,7 @@ jobs:
           python -m py_compile projects/swrlz-forge-moba/patches/v8_9_cinematic_staging.py
           python projects/swrlz-forge-moba/build_space.py --output /tmp/storybook-package
           cmp /tmp/storybook-test/index.html /tmp/storybook-package/index.html
+          python projects/swrlz-forge-moba/tests/wintermaul_package.py --package /tmp/storybook-package
       - name: Install Chromium and Playwright
         run: |
           npm install --no-save playwright@1.56.1

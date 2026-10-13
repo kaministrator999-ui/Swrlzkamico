@@ -1,0 +1,3771 @@
+{
+  "engine": "§wyrl§ Engine · Maker v10.7",
+  "version": 10.7,
+  "project": {
+    "name": "Wintermaul Wars · Frostveil Divide",
+    "template": "maul-wars-frostveil",
+    "canonicalId": "maul-wars-frostveil",
+    "kind": "maul-wars",
+    "environment": "spatial-workspace",
+    "environmentSettings": {
+      "background": "#233b50",
+      "fogNear": 350,
+      "fogFar": 1300,
+      "exposure": 1.12,
+      "showTerrain": false,
+      "showScenery": false
+    },
+    "maulWars": {
+      "lives": 25,
+      "startGold": 450,
+      "startIncome": 25,
+      "preparation": 30,
+      "incomeInterval": 25,
+      "spawnInterval": 0.55,
+      "soloSupport": true,
+      "opponentAI": true,
+      "difficulty": 1,
+      "selectedSector": 0,
+      "seed": 1317
+    },
+    "workspaces": {
+      "schema": "swyrl-workspaces-v1",
+      "stations": {}
+    },
+    "teleportZones": []
+  },
+  "editor": {
+    "transformSpace": "world",
+    "snapEnabled": true,
+    "terrainSnapEnabled": true,
+    "viewMode": "lit",
+    "cameraView": "perspective",
+    "revision": 0,
+    "layers": [
+      {
+        "id": "wars-layer-0",
+        "name": "Wars Snowfields",
+        "visible": true
+      },
+      {
+        "id": "wars-layer-1",
+        "name": "Raised Ice and Borders",
+        "visible": true
+      },
+      {
+        "id": "wars-layer-2",
+        "name": "Routes and Ships",
+        "visible": true
+      },
+      {
+        "id": "wars-layer-3",
+        "name": "Builders",
+        "visible": true
+      },
+      {
+        "id": "wars-layer-4",
+        "name": "Sender Islands",
+        "visible": true
+      },
+      {
+        "id": "wars-layer-5",
+        "name": "Winter Scenery",
+        "visible": true
+      },
+      {
+        "id": "wars-layer-6",
+        "name": "Authored Towers",
+        "visible": true
+      }
+    ],
+    "activeLayerId": "wars-layer-0"
+  },
+  "scene": {
+    "background": "#233b50",
+    "waveInterval": 7,
+    "paths": {},
+    "actors": [
+      {
+        "id": "a_zybuy2mg",
+        "name": "North snowfield",
+        "type": "maul-wars-sector",
+        "team": "neutral",
+        "baked": true,
+        "role": "sector",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-0"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          0,
+          -25
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/sector",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {
+          "team": 0
+        }
+      },
+      {
+        "id": "a_xdda82cr",
+        "name": "North raised sender island",
+        "type": "maul-wars-cliff",
+        "team": "neutral",
+        "baked": true,
+        "role": "cliff",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-1"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          0,
+          -27
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          29,
+          1.4,
+          8
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/cliff",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {
+          "senderIsland": true
+        }
+      },
+      {
+        "id": "a_vj2u04kh",
+        "name": "North enemy arrival portal",
+        "type": "maul-wars-spawn",
+        "team": "neutral",
+        "baked": true,
+        "role": "spawn",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -42,
+          0,
+          -44
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Gameplay",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/spawn",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {
+          "team": 0
+        }
+      },
+      {
+        "id": "a_ura71c78",
+        "name": "North lightning waypoint 1",
+        "type": "maul-wars-gate",
+        "team": "neutral",
+        "baked": true,
+        "role": "gate",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          42,
+          0,
+          -44
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Gameplay",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/gate",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {
+          "team": 0,
+          "stage": 0
+        }
+      },
+      {
+        "id": "a_9lh7gft0",
+        "name": "North lightning waypoint 2",
+        "type": "maul-wars-gate",
+        "team": "neutral",
+        "baked": true,
+        "role": "gate",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          42,
+          0,
+          -10
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Gameplay",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/gate",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {
+          "team": 0,
+          "stage": 1
+        }
+      },
+      {
+        "id": "a_oglsyzxq",
+        "name": "North lightning waypoint 3",
+        "type": "maul-wars-gate",
+        "team": "neutral",
+        "baked": true,
+        "role": "gate",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          0,
+          -10
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Gameplay",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/gate",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {
+          "team": 0,
+          "stage": 2
+        }
+      },
+      {
+        "id": "a_axi8i6gr",
+        "name": "North lightning waypoint 4",
+        "type": "maul-wars-gate",
+        "team": "neutral",
+        "baked": true,
+        "role": "gate",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -42,
+          0,
+          -10
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Gameplay",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/gate",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {
+          "team": 0,
+          "stage": 3
+        }
+      },
+      {
+        "id": "a_xfu69hv3",
+        "name": "North lightning waypoint 5",
+        "type": "maul-wars-gate",
+        "team": "neutral",
+        "baked": true,
+        "role": "gate",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -42,
+          0,
+          -30
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Gameplay",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/gate",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {
+          "team": 0,
+          "stage": 4
+        }
+      },
+      {
+        "id": "a_j51xmtce",
+        "name": "North last ship · shared team lives",
+        "type": "maul-wars-exit",
+        "team": "neutral",
+        "baked": true,
+        "role": "exit",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -36,
+          0,
+          -30
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Gameplay",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/exit",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {
+          "team": 0
+        }
+      },
+      {
+        "id": "a_2d1fjvzt",
+        "name": "Red builder",
+        "type": "maul-wars-builder",
+        "team": "neutral",
+        "baked": true,
+        "role": "builder",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -22,
+          0,
+          -42
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Gameplay",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/builder",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {
+          "team": 0,
+          "sector": 0
+        }
+      },
+      {
+        "id": "a_3gl0pw4p",
+        "name": "Red team standard",
+        "type": "maul-wars-banner",
+        "team": "neutral",
+        "baked": true,
+        "role": "banner",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-5"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -22,
+          0,
+          -38
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/banner",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {
+          "team": 0,
+          "sector": 0
+        }
+      },
+      {
+        "id": "a_0u17d87p",
+        "name": "Ground send shrine · player 1",
+        "type": "maul-wars-shrine",
+        "team": "neutral",
+        "baked": true,
+        "role": "shrine",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-4"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -20,
+          1.8,
+          -30
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/shrine",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {
+          "team": 0,
+          "sector": 0
+        }
+      },
+      {
+        "id": "a_3zd4mdrk",
+        "name": "Air nest · player 1",
+        "type": "maul-wars-air-nest",
+        "team": "neutral",
+        "baked": true,
+        "role": "air-nest",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-4"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -20,
+          1.8,
+          -24
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/air-nest",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {
+          "team": 0,
+          "sector": 0
+        }
+      },
+      {
+        "id": "a_r58deer7",
+        "name": "Blue builder",
+        "type": "maul-wars-builder",
+        "team": "neutral",
+        "baked": true,
+        "role": "builder",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          22,
+          0,
+          -42
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Gameplay",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/builder",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {
+          "team": 0,
+          "sector": 1
+        }
+      },
+      {
+        "id": "a_1jqbmaec",
+        "name": "Blue team standard",
+        "type": "maul-wars-banner",
+        "team": "neutral",
+        "baked": true,
+        "role": "banner",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-5"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          22,
+          0,
+          -38
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/banner",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {
+          "team": 0,
+          "sector": 1
+        }
+      },
+      {
+        "id": "a_4ofz7934",
+        "name": "Ground send shrine · player 2",
+        "type": "maul-wars-shrine",
+        "team": "neutral",
+        "baked": true,
+        "role": "shrine",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-4"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          1.8,
+          -30
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/shrine",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {
+          "team": 0,
+          "sector": 1
+        }
+      },
+      {
+        "id": "a_u2api5ux",
+        "name": "Air nest · player 2",
+        "type": "maul-wars-air-nest",
+        "team": "neutral",
+        "baked": true,
+        "role": "air-nest",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-4"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          1.8,
+          -24
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/air-nest",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {
+          "team": 0,
+          "sector": 1
+        }
+      },
+      {
+        "id": "a_yum7di8i",
+        "name": "Teal builder",
+        "type": "maul-wars-builder",
+        "team": "neutral",
+        "baked": true,
+        "role": "builder",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          0,
+          -8
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Gameplay",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/builder",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {
+          "team": 0,
+          "sector": 2
+        }
+      },
+      {
+        "id": "a_ut78ao00",
+        "name": "Teal team standard",
+        "type": "maul-wars-banner",
+        "team": "neutral",
+        "baked": true,
+        "role": "banner",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-5"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          0,
+          -6
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/banner",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {
+          "team": 0,
+          "sector": 2
+        }
+      },
+      {
+        "id": "a_w6xqu0b6",
+        "name": "Ground send shrine · player 3",
+        "type": "maul-wars-shrine",
+        "team": "neutral",
+        "baked": true,
+        "role": "shrine",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-4"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          20,
+          1.8,
+          -30
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/shrine",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {
+          "team": 0,
+          "sector": 2
+        }
+      },
+      {
+        "id": "a_rtk5beid",
+        "name": "Air nest · player 3",
+        "type": "maul-wars-air-nest",
+        "team": "neutral",
+        "baked": true,
+        "role": "air-nest",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-4"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          20,
+          1.8,
+          -24
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/air-nest",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {
+          "team": 0,
+          "sector": 2
+        }
+      },
+      {
+        "id": "a_akgzz9u7",
+        "name": "Sender island snow pine",
+        "type": "maul-wars-pine",
+        "team": "neutral",
+        "baked": true,
+        "role": "pine",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-5"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -26,
+          1.8,
+          -20.4
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/pine",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {
+          "team": 0
+        }
+      },
+      {
+        "id": "a_i2zu4hsb",
+        "name": "Sender island snow pine",
+        "type": "maul-wars-pine",
+        "team": "neutral",
+        "baked": true,
+        "role": "pine",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-5"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -12,
+          1.8,
+          -20.4
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/pine",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {
+          "team": 0
+        }
+      },
+      {
+        "id": "a_lq66xq1u",
+        "name": "Sender island snow pine",
+        "type": "maul-wars-pine",
+        "team": "neutral",
+        "baked": true,
+        "role": "pine",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-5"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          2,
+          1.8,
+          -20.4
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/pine",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {
+          "team": 0
+        }
+      },
+      {
+        "id": "a_4zm7ejzz",
+        "name": "Sender island snow pine",
+        "type": "maul-wars-pine",
+        "team": "neutral",
+        "baked": true,
+        "role": "pine",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-5"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          16,
+          1.8,
+          -20.4
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/pine",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {
+          "team": 0
+        }
+      },
+      {
+        "id": "a_9wd9a58r",
+        "name": "Sender island snow pine",
+        "type": "maul-wars-pine",
+        "team": "neutral",
+        "baked": true,
+        "role": "pine",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-5"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          26,
+          1.8,
+          -20.4
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/pine",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {
+          "team": 0
+        }
+      },
+      {
+        "id": "a_t0f1wgw3",
+        "name": "South snowfield",
+        "type": "maul-wars-sector",
+        "team": "neutral",
+        "baked": true,
+        "role": "sector",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-0"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          0,
+          25
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/sector",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {
+          "team": 1
+        }
+      },
+      {
+        "id": "a_lq73x2f0",
+        "name": "South raised sender island",
+        "type": "maul-wars-cliff",
+        "team": "neutral",
+        "baked": true,
+        "role": "cliff",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-1"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          0,
+          27
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          29,
+          1.4,
+          8
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/cliff",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {
+          "senderIsland": true
+        }
+      },
+      {
+        "id": "a_hpgo21ew",
+        "name": "South enemy arrival portal",
+        "type": "maul-wars-spawn",
+        "team": "neutral",
+        "baked": true,
+        "role": "spawn",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -42,
+          0,
+          44
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Gameplay",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/spawn",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {
+          "team": 1
+        }
+      },
+      {
+        "id": "a_8q2ko3ov",
+        "name": "South lightning waypoint 1",
+        "type": "maul-wars-gate",
+        "team": "neutral",
+        "baked": true,
+        "role": "gate",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          42,
+          0,
+          44
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Gameplay",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/gate",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {
+          "team": 1,
+          "stage": 0
+        }
+      },
+      {
+        "id": "a_u9kskhmf",
+        "name": "South lightning waypoint 2",
+        "type": "maul-wars-gate",
+        "team": "neutral",
+        "baked": true,
+        "role": "gate",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          42,
+          0,
+          10
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Gameplay",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/gate",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {
+          "team": 1,
+          "stage": 1
+        }
+      },
+      {
+        "id": "a_ldfrdbmn",
+        "name": "South lightning waypoint 3",
+        "type": "maul-wars-gate",
+        "team": "neutral",
+        "baked": true,
+        "role": "gate",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          0,
+          10
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Gameplay",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/gate",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {
+          "team": 1,
+          "stage": 2
+        }
+      },
+      {
+        "id": "a_463k6s6q",
+        "name": "South lightning waypoint 4",
+        "type": "maul-wars-gate",
+        "team": "neutral",
+        "baked": true,
+        "role": "gate",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -42,
+          0,
+          10
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Gameplay",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/gate",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {
+          "team": 1,
+          "stage": 3
+        }
+      },
+      {
+        "id": "a_nbi9ggae",
+        "name": "South lightning waypoint 5",
+        "type": "maul-wars-gate",
+        "team": "neutral",
+        "baked": true,
+        "role": "gate",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -42,
+          0,
+          30
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Gameplay",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/gate",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {
+          "team": 1,
+          "stage": 4
+        }
+      },
+      {
+        "id": "a_xpxkd4f8",
+        "name": "South last ship · shared team lives",
+        "type": "maul-wars-exit",
+        "team": "neutral",
+        "baked": true,
+        "role": "exit",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-2"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -36,
+          0,
+          30
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Gameplay",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/exit",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {
+          "team": 1
+        }
+      },
+      {
+        "id": "a_fmkvmi5f",
+        "name": "Purple builder",
+        "type": "maul-wars-builder",
+        "team": "neutral",
+        "baked": true,
+        "role": "builder",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -22,
+          0,
+          42
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Gameplay",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/builder",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {
+          "team": 1,
+          "sector": 3
+        }
+      },
+      {
+        "id": "a_8z77ap3v",
+        "name": "Purple team standard",
+        "type": "maul-wars-banner",
+        "team": "neutral",
+        "baked": true,
+        "role": "banner",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-5"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -22,
+          0,
+          38
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/banner",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {
+          "team": 1,
+          "sector": 3
+        }
+      },
+      {
+        "id": "a_jhzjazhi",
+        "name": "Ground send shrine · player 4",
+        "type": "maul-wars-shrine",
+        "team": "neutral",
+        "baked": true,
+        "role": "shrine",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-4"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -20,
+          1.8,
+          30
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/shrine",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {
+          "team": 1,
+          "sector": 3
+        }
+      },
+      {
+        "id": "a_p05xkjw8",
+        "name": "Air nest · player 4",
+        "type": "maul-wars-air-nest",
+        "team": "neutral",
+        "baked": true,
+        "role": "air-nest",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-4"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -20,
+          1.8,
+          24
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/air-nest",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {
+          "team": 1,
+          "sector": 3
+        }
+      },
+      {
+        "id": "a_m5j4p1ei",
+        "name": "Yellow builder",
+        "type": "maul-wars-builder",
+        "team": "neutral",
+        "baked": true,
+        "role": "builder",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          22,
+          0,
+          42
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Gameplay",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/builder",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {
+          "team": 1,
+          "sector": 4
+        }
+      },
+      {
+        "id": "a_z6ug7a3j",
+        "name": "Yellow team standard",
+        "type": "maul-wars-banner",
+        "team": "neutral",
+        "baked": true,
+        "role": "banner",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-5"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          22,
+          0,
+          38
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/banner",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {
+          "team": 1,
+          "sector": 4
+        }
+      },
+      {
+        "id": "a_kfmyohne",
+        "name": "Ground send shrine · player 5",
+        "type": "maul-wars-shrine",
+        "team": "neutral",
+        "baked": true,
+        "role": "shrine",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-4"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          1.8,
+          30
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/shrine",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {
+          "team": 1,
+          "sector": 4
+        }
+      },
+      {
+        "id": "a_hp9rwi89",
+        "name": "Air nest · player 5",
+        "type": "maul-wars-air-nest",
+        "team": "neutral",
+        "baked": true,
+        "role": "air-nest",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-4"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          1.8,
+          24
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/air-nest",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {
+          "team": 1,
+          "sector": 4
+        }
+      },
+      {
+        "id": "a_a6tmkcaw",
+        "name": "Orange builder",
+        "type": "maul-wars-builder",
+        "team": "neutral",
+        "baked": true,
+        "role": "builder",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-3"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          0,
+          8
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Gameplay",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/builder",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {
+          "team": 1,
+          "sector": 5
+        }
+      },
+      {
+        "id": "a_iyflla8s",
+        "name": "Orange team standard",
+        "type": "maul-wars-banner",
+        "team": "neutral",
+        "baked": true,
+        "role": "banner",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-5"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          0,
+          6
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/banner",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {
+          "team": 1,
+          "sector": 5
+        }
+      },
+      {
+        "id": "a_7qcd29nf",
+        "name": "Ground send shrine · player 6",
+        "type": "maul-wars-shrine",
+        "team": "neutral",
+        "baked": true,
+        "role": "shrine",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-4"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          20,
+          1.8,
+          30
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/shrine",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {
+          "team": 1,
+          "sector": 5
+        }
+      },
+      {
+        "id": "a_1ghjh5nm",
+        "name": "Air nest · player 6",
+        "type": "maul-wars-air-nest",
+        "team": "neutral",
+        "baked": true,
+        "role": "air-nest",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-4"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          20,
+          1.8,
+          24
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/air-nest",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {
+          "team": 1,
+          "sector": 5
+        }
+      },
+      {
+        "id": "a_rejy3n9i",
+        "name": "Sender island snow pine",
+        "type": "maul-wars-pine",
+        "team": "neutral",
+        "baked": true,
+        "role": "pine",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-5"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -26,
+          1.8,
+          20.400000000000006
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/pine",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {
+          "team": 1
+        }
+      },
+      {
+        "id": "a_pa14k6m7",
+        "name": "Sender island snow pine",
+        "type": "maul-wars-pine",
+        "team": "neutral",
+        "baked": true,
+        "role": "pine",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-5"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -12,
+          1.8,
+          20.400000000000006
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/pine",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {
+          "team": 1
+        }
+      },
+      {
+        "id": "a_clfuxzfo",
+        "name": "Sender island snow pine",
+        "type": "maul-wars-pine",
+        "team": "neutral",
+        "baked": true,
+        "role": "pine",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-5"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          2,
+          1.8,
+          20.400000000000006
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/pine",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {
+          "team": 1
+        }
+      },
+      {
+        "id": "a_mcqq0pb4",
+        "name": "Sender island snow pine",
+        "type": "maul-wars-pine",
+        "team": "neutral",
+        "baked": true,
+        "role": "pine",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-5"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          16,
+          1.8,
+          20.400000000000006
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/pine",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {
+          "team": 1
+        }
+      },
+      {
+        "id": "a_pqjhgq64",
+        "name": "Sender island snow pine",
+        "type": "maul-wars-pine",
+        "team": "neutral",
+        "baked": true,
+        "role": "pine",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-5"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          26,
+          1.8,
+          20.400000000000006
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/pine",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {
+          "team": 1
+        }
+      },
+      {
+        "id": "a_f2ys1ipc",
+        "name": "Outer snow ridge",
+        "type": "maul-wars-cliff",
+        "team": "neutral",
+        "baked": true,
+        "role": "cliff",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-1"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          0,
+          -50
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          49,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/cliff",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {}
+      },
+      {
+        "id": "a_n7brm7it",
+        "name": "Central ice divide · no crossing",
+        "type": "maul-wars-cliff",
+        "team": "neutral",
+        "baked": true,
+        "role": "cliff",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-1"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          49,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/cliff",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {}
+      },
+      {
+        "id": "a_9pu5ftgz",
+        "name": "Outer snow ridge",
+        "type": "maul-wars-cliff",
+        "team": "neutral",
+        "baked": true,
+        "role": "cliff",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-1"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          0,
+          50
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          49,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/cliff",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {}
+      },
+      {
+        "id": "a_sryqlshz",
+        "name": "Outer return cliff",
+        "type": "maul-wars-cliff",
+        "team": "neutral",
+        "baked": true,
+        "role": "cliff",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-1"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -48,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          51
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/cliff",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {}
+      },
+      {
+        "id": "a_i2k5n9t7",
+        "name": "Outer return cliff",
+        "type": "maul-wars-cliff",
+        "team": "neutral",
+        "baked": true,
+        "role": "cliff",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-1"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          48,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          51
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Map",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/cliff",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {}
+      },
+      {
+        "id": "a_s0dtv2gk",
+        "name": "Red example Arrow Spire",
+        "type": "maul-wars-arrow",
+        "team": "neutral",
+        "baked": true,
+        "role": "arrow",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-6"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -28,
+          0,
+          -42
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Towers",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/arrow",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {
+          "level": 1,
+          "priority": "first"
+        }
+      },
+      {
+        "id": "a_8njl7q58",
+        "name": "Red example maze wall",
+        "type": "maul-wars-maze-wall",
+        "team": "neutral",
+        "baked": true,
+        "role": "maze-wall",
+        "tags": [
+          "maul-wars",
+          "frostveil"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "wars-layer-6"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -28,
+          0,
+          -40
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Wintermaul Wars/Towers",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "MaulWars/maze-wall",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true,
+        "maul": {},
+        "wars": {}
+      }
+    ]
+  }
+}
