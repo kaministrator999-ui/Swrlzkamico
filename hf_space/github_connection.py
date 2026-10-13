@@ -991,6 +991,52 @@ def _github_repo_stats(record, repo, branch, scope=""):
             "Git does not store native creation/modification timestamps.")
 
 
+def _verified_chat_status(record, repo, branch):
+    """Account-authorized repo facts; never infer deployment or acceptance."""
+    token = record["token"]
+    head = _api(token, "/repos/" + repo + "/commits/" + quote(branch, safe=""))
+    sha = str(head.get("sha") or "")
+    if not _FILE_SHA.fullmatch(sha):
+        return "GitHub branch revision is unverified; no Chat progress was inferred."
+    lines = ["## Chat project in the selected GitHub repository",
+             "Repository: " + repo, "Branch: " + branch, "Source commit: " + sha,
+             "Scope: chat/§wyrlz (source and declared runtime versions; read-only)."]
+    for path in ("chat/§wyrlz/index.html", "chat/§wyrlz/assets/github-explorer-v223.js"):
+        obj = _read_optional(token, repo, path, sha, 320000)
+        if obj:
+            lines.append("Verified source file: " + path + " · Git blob " + str(obj.get("sha") or "unverified"))
+        else:
+            lines.append("Source file not verified/readable: " + path)
+    try:
+        revisions = _api(token, "/repos/" + repo + "/commits?sha=" + sha +
+                         "&path=" + quote("chat/§wyrlz", safe="") + "&per_page=5")
+    except HTTPException:
+        revisions = None
+    if isinstance(revisions, list):
+        lines.append("Recent Chat-path commits (at most five, not all project changes):")
+        for item in revisions[:5]:
+            digest = str(item.get("sha") or "")
+            message = str(((item.get("commit") or {}).get("message") or "")).splitlines()[0][:140]
+            if _FILE_SHA.fullmatch(digest):
+                lines.append("- " + digest[:12] + " · " + _safe_fragment(message, 140))
+    runtime_sha = ""
+    try:
+        runtime = _api(token, "/repos/" + repo + "/commits/runtime")
+        runtime_sha = str(runtime.get("sha") or "")
+    except HTTPException:
+        pass
+    if _FILE_SHA.fullmatch(runtime_sha):
+        lines.append("Runtime registry commit: " + runtime_sha)
+        for module in ("web-chat", "server-runtime", "repository-work"):
+            obj = _read_optional(token, repo, "versions/" + module + ".txt", runtime_sha, 4500)
+            if obj:
+                version = re.search(r"^VERSION=([^\r\n]{1,40})", str(obj.get("body") or ""), re.M)
+                if version:
+                    lines.append("Declared " + module + " version: " + version[1])
+    lines.append("These are verified source/registry facts, not proof of production deployment, live correctness or mobile acceptance. See the exact CI/deployment receipts and test the signed-in UI before promoting known-good.")
+    return "\n".join(lines)
+
+
 def _github_command(user, prompt):
     if not str(user or "").startswith("google:"):
         return "Sign in with your verified Google account before using connected GitHub tools."
@@ -1070,7 +1116,7 @@ def _github_command(user, prompt):
     if lower == "chat status":
         return _verified_chat_status(rec, repo, check["defaultBranch"])
     if re.fullmatch(r"how\s+many\s+(?:total\s+)?(?:files?|folders?|directories|dirs?)(?:\s+(?:are\s+there\s+)?(?:in\s+(?:the\s+)?(?:repo|repository)|there))?[?.!]*", lower):
-        return _repo_statistics(rec, repo, check["defaultBranch"], "")
+        return _github_repo_stats(rec, repo, check["defaultBranch"], "")
     if lower == "help" and GITHUB_CAPABILITY_STAGE == "read-repository":
         return (_READ_STAGE_DESCRIPTION + "\nCommands: @GitHub files, @GitHub files docs, "
                 "@GitHub read file config, @GitHub stats, @GitHub largest, "
@@ -1356,7 +1402,7 @@ def is_repo_chat_status_request(prompt):
         return False
     return bool(re.fullmatch(
         r"(?:(?:can|could) you (?:tell|show) me )?"
-        r"(?:where (?:we (?:are|re|'re)|are we) (?:at|up to|on|with)|"
+        r"(?:where (?:we (?:are|re|'re)|are we) (?:at|up to|on|with)(?: with| on)?|"
         r"what(?:'s| is) (?:the )?(?:current )?(?:status|progress) (?:of|with|on)|"
         r"how (?:far along|is progress) (?:with|on))"
         r"(?: the| our)? chat (?:in|on|of|with) (?:the|our|my)? ?(?:github )?(?:repo|repository|github)",s))
