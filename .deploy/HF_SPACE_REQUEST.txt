@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=843f5204a0ea5de9ae6c4f95d9fee07be75b6442
-REQUEST_NONCE=2026-10-12-v229-github-conversation-source-truth-001
+SOURCE_REF=073b90d3effb9b6571250f108c91cf4c52c0f90d
+REQUEST_NONCE=2026-10-12-v230-answer-articulation-examples-001
