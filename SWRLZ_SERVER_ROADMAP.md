@@ -1,3 +1,11 @@
+## UPDATE STARTED — 2026-10-12 — v228 GitHub preview release asset freshness hardening
+
+**Continuation from user's 'Finish up' after v227 preview repair:** v227 source `fix/github-explorer-preview-rerender-v227@e3aa55f16b9ffd072740d7a7e94a93a7692f104a` has three exact-SHA green checks, guarded same Space release `42d044d130586a828846cd8575c80abbfb98f454`, and runtime module registry `7508d3ffb5916553e554cdd0ce5aa752471cc6dc`; owner's real signed-in Android browser acceptance cannot be performed by GitHub-only CI. Final source review found canonical Chat `chat/§wyrlz/index.html` loads `/chat/§wyrlz/assets/github-explorer-v223.js` without a release-versioned asset URL. Station serves Chat HTML with `Cache-Control: no-store` but mounts JS via standard `StaticFiles`, so stale browser asset reuse across releases remains possible.
+
+**Target:** keep single existing explorer and source, change only the existing HTML asset reference to an explicit v228 cache-busting URL and add CI assertion that the URL is release-versioned. Do not interfere with Google/GitHub session, no new auth/write power, no §E engine changes. Base v227 source and isolate on `fix/github-preview-cache-bust-v228`. Re-run exact GitHub/HF/mobile CI and guarded Chat same-Space release, promote versions atomically only on completed success. Maintain `DEPLOYED_UNVERIFIED` until real owner browser acceptance.
+
+**Status:** STARTED; no new feature claim.
+
 ## UPDATE FINISHED — 2026-10-12 — v227 GitHub explorer file preview persists across chat rerenders
 
 **Owner-observed defect:** User reports that pressing **Open** shows a repository file below the GitHub widget, then the preview disappears after about one second. Code inspection found two independent causes: (1) after `openFile` draws initial loading panel it first requests directory metadata via `loadDir` if `state.info` is missing, and `loadDir` hides `detail`; the subsequent file load never sets `detail.hidden=false` again. (2) `openFile` persists selected file to signed-in thread GitHub context; `contextUpdated` initiates `scheduleStationSync`, including new `githubContext` in `conversationRenderSignature`, which recreates message nodes; explorer re-render starts with `detail.hidden=true`, discarding old DOM despite previously cached `state.opened` and `state.content`.
