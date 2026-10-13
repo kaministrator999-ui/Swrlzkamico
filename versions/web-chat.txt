@@ -1,6 +1,6 @@
 ID=web-chat
-VERSION=1.5.116
-REVISION=1.5.116-github-repo-conversation-truth-v229
+VERSION=1.5.117
+REVISION=1.5.117-source-answer-articulation-v230
 KIND=web-interface
 SOURCE_BRANCH=runtime
 STATUS=active

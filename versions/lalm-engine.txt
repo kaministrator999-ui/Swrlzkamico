@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.196
-REVISION=2.1.196-private-history-vs-web-freshness-v220
+VERSION=2.1.197
+REVISION=2.1.197-evidence-articulation-v230
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
