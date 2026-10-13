@@ -1,4 +1,4 @@
-name: Verify §E v10.4 native cinematic candidate
+name: Verify §E v10.5 native cinematic candidate
 on:
   push:
     branches: [main]
@@ -12,11 +12,14 @@ on:
       - "projects/swrlz-forge-moba/patches/v10_1_sheep_tag_archive.py"
       - "projects/swrlz-forge-moba/scenes/sheep-tag-moonbell-archive.swyrl.json"
       - "projects/swrlz-forge-moba/tests/sheep_archive_playwright.mjs"
-      - "projects/swrlz-forge-moba/patches/v10_4_sheep_lanes.py"
+      - "projects/swrlz-forge-moba/patches/v10_5_sheep_run_recorder.py"
       - "projects/swrlz-forge-moba/runtime/sheep_touch_selection.js"
       - "projects/swrlz-forge-moba/runtime/sheep_placement_grid.js"
       - "projects/swrlz-forge-moba/runtime/sheep_touch_offset.js"
       - "projects/swrlz-forge-moba/runtime/sheep_lanes.js"
+      - "projects/swrlz-forge-moba/runtime/sheep_run_recorder.js"
+      - "projects/swrlz-forge-moba/runtime/sheep_run_review.js"
+      - "projects/swrlz-forge-moba/tests/sheep_run_playwright.mjs"
       - "projects/swrlz-forge-moba/tests/sheep_touch_playwright.mjs"
       - "projects/swrlz-forge-moba/patches/v8_9_cinematic_staging.py"
       - "projects/swrlz-forge-moba/patches/v8_8_popup_storybook.py"
@@ -76,12 +79,12 @@ jobs:
           output=source.encode("utf-8")
           print("CINEMATIC_BYTES="+str(len(output)))
           print("CINEMATIC_SHA256="+hashlib.sha256(output).hexdigest())
-          assert len(manifest["patches"])==64
-          assert manifest['patches'][-1]=='patches/v10_4_sheep_lanes.py'
+          assert len(manifest["patches"])==65
+          assert manifest['patches'][-1]=='patches/v10_5_sheep_run_recorder.py'
           assert len(output)==manifest['finalBytes']
           assert hashlib.sha256(output).hexdigest()==manifest['finalSha256']
           for needle in (
-            'V10_4_SHEEP_LANES','stTouchPlacementScreen','stTouchPlacementGround','touchPlacement','SWYRL_ENGINE_SHEEP_TAG','sheep-tag-meadow','sheep-tag-moonbell-archive','swyrl-sheep-tag-map-v1','SWYRL_ENGINE_TRANSPORT','animeCineRewind','animeCineFastForward','SWYRL_ENGINE_STAFF','rigFullStaffStatus','painted-full-v1','assets/anime/kami-full-staff.png','Maker v10.4','animeStartCinematic',
+            'V10_5_SHEEP_RUN_RECORDER','SWYRL_ENGINE_SHEEP_TAG_RUNS','SWYRL_ENGINE_RUNS','stRunAfterTick','stRunInstallUI','stRunViewerMount','swyrl-editor-play-run-v1','stTouchPlacementScreen','stTouchPlacementGround','touchPlacement','SWYRL_ENGINE_SHEEP_TAG','sheep-tag-meadow','sheep-tag-moonbell-archive','swyrl-sheep-tag-map-v1','SWYRL_ENGINE_TRANSPORT','animeCineRewind','animeCineFastForward','SWYRL_ENGINE_STAFF','rigFullStaffStatus','painted-full-v1','assets/anime/kami-full-staff.png','Maker v10.5','animeStartCinematic',
             'SWYRL_ENGINE_ANIMATION','SWYRL_ENGINE_STORYBOARD','SWYRL_ENGINE_RIG','SWYRL_ENGINE_SCENERY','SWYRL_ENGINE_SOCKETS','SWYRL_ENGINE_EMERGENCE','SWYRL_ENGINE_RELIEF',
                           'anime-rig-sockets-v1','anime-book-emergence-v1','anime-character-relief-v1','storyEditorInstall',
             'animeUpdateCinematic','animeEndCinematic','animeSpeakerCues',

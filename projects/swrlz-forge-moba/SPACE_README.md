@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v10.4
+title: §wyrl§ Engine v10.5
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -10,17 +10,27 @@ header: mini
 short_description: Sheep Tag, paper theatre, Dragon Den and Starforge
 ---
 
-# §wyrl§ Engine · Maker v10.4
+# §wyrl§ Engine · Maker v10.5
 
-## Current v10.4 candidate · House lanes and physical creature traffic
+## Current v10.5 candidate · Editor play-run recorder
 
-Sheep can build at their feet. Construction starts at the displayed footprint and moves the builder to the nearest clear side, keeping its tangent position when possible. A blocked side tries the next feasible exit; no clear exit rejects placement without moving the sheep or charging gold. Other sheep and wolves still block construction. Nearby house edges snap either flush together or with a **0.6-unit lane**. Houses remain **2.4 × 2.4**; the preview, grid and committed collision use the same snap. Arbitrary distant placement keeps the selected fine/coarse lattice, and deliberately sealed pockets remain a tactical risk.
+In any project or starter editor, open **Run recorder**, enable **Record Play run**, close the panel and use the native **Play** button. Recording starts off by default. When enabled, **Full · every simulation update** captures every observed native update; **10 snapshots / second** and **2 snapshots / second** offer smaller state logs while retaining timed commands and game events. Settings stay on this device and do not enter native project or Map Creator saves. The toggle applies across custom projects and every native starter: Default, MOBA Arena, Dragon Den, Starforge, Ghosts in Different Forms and Sheep Tag. Generic runs capture actor transforms, hierarchical part poses, live spawned units, camera, input and observed health/lifecycle changes; Sheep Tag adds its match-specific rules and events. **Simulate** does not create recordings.
 
-Wolves have a **0.78-unit default collision radius** and artwork enlarged by approximately 15%; sheep retain **0.27**. The old saved 0.68 wolf default migrates on load; custom radii remain tunable. Wolf bots check every visible sheep for a reachable approach before staying on or choosing a building. Hidden sheep remain hidden. Player-issued attack orders remain available. Continuous body collision stops sheep and wolves from walking through another physical creature on the same floor. Traffic replans around occupied lanes or backs out towards clear ground, preserving the original order. Raised-route traffic waits without overlapping; separate floors do not block each other. Wisps and magical decoys stay intangible. Rescue chooses an unoccupied landing, and native preflight rejects overlapping same-species starts.
+A run retains its starting map, rules and actual random seed, a catalog of authored objects, timed world-state changes, camera lens/orientation, body and limb poses, construction and economy, orders, traffic, captures, wisps, rescues and match results. Checkpoints support seeking through the state log. Written 3D observations describe X-east/Y-up/negative-Z-north positions, height differences, movement, nearby objects and each object's recorded state. Player visibility and camera-frustum membership remain separate observations; they do not assert unobstructed line of sight.
 
-The native editor's Play/Pause/Stop and Save/Load retain their lifecycle. Touch placement above the finger, double-tap house selection and the terrain grid remain active. Publication appends `patches/v10_4_sheep_lanes.py` and `runtime/sheep_lanes.js`: **64 governed patches and 23 unchanged assets**, artifact `swyrl_engine_v10_4.html`, marker `SWYRL_ENGINE_DEPLOY_MARKER: V10_4_SHEEP_LANES`. All 63 earlier patches, earlier runtime modules, map/media assets and payloads remain byte-identical. The final manifest and generated `SOURCE.json` provide the exact bytes and SHA-256.
+After **Stop**, reopen **Run recorder** to scrub the completed run, orbit a spectator schematic, follow a recorded object or use **Recorded player camera**. Review includes objects hidden from the player, so review and export stay unavailable during Play or Pause. The game retains its normal fog and controls. Stop seals the final runtime world before restoring the authored scene. Restart creates a separate run; a match result finalizes its run once. The latest **three finished runs** remain in this tab; export a run to keep it after closing the tab.
 
-Acceptance requires all **six engine workflows**, **eleven desktop/phone browser suites**, the new sealed-source continuous-geometry CPU scenarios, and actual native mouse/touch construction and traffic tests. Final source/deployment commits resolve through the last deliberate `DEPLOY_REQUEST.json`, its successful dedicated Actions run and hosted HTML/SOURCE/all-asset verification. These candidate notes do not assert publication before those receipts succeed.
+**Export JSON** downloads the complete structured `.swyrl-run.json` evidence. **Export text** downloads `.swyrl-run.txt` observations and events for later reading or analysis. **Export spectator HTML** downloads a standalone `.swyrl-run.html` viewer that works offline, with its own timeline, orbit/follow controls and written observations. **Open saved JSON** reviews a previously exported run without replacing the editor map. The viewer reconstructs captured states as a schematic; it does not rerun game logic, reproduce the original artwork or export a rendered video. Recorded data is not silently truncated; a capture failure marks the record incomplete. JSON viewer imports have an explicit 200 MB limit.
+
+Publication appends `patches/v10_5_sheep_run_recorder.py`, `runtime/sheep_run_recorder.js` and `runtime/sheep_run_review.js`: **65 governed patches and 23 unchanged assets**, artifact `swyrl_engine_v10_5.html`, marker `SWYRL_ENGINE_DEPLOY_MARKER: V10_5_SHEEP_RUN_RECORDER`. All 64 earlier patches, earlier runtime modules, map/media assets and payloads remain byte-identical. Native Play/Pause/Stop, project Save/Load, touch placement, house snapping and physical traffic retain their existing behavior. Exact bytes and SHA-256 belong to the final sealed manifest and generated `SOURCE.json`.
+
+Acceptance requires all **six engine workflows**, **twelve desktop/phone browser suites**, including the new `sheep_run` suite, and the existing **13 sealed-source continuous-geometry CPU scenarios**. Recorder acceptance exercises native mouse/touch Play, settings, actual commands, events, exports, offline review and logging-on/off gameplay parity. Final source/deployment commits resolve through the last deliberate `DEPLOY_REQUEST.json`, its successful dedicated Actions run and hosted HTML/SOURCE/all-asset verification. These candidate notes do not assert publication before those receipts succeed.
+
+## Historical verified v10.4 · House lanes and physical creature traffic
+
+The v10.4 release is verified live: merged source `6d04109c27dfcd7e732e2550f3184db82755e999`, final trigger `04ba3ef018d4715cd51fd56ff51b1f96d8530bc6`, [deployment 38317704872](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38317704872) and [hosted audit 38317774602](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38317774602). It seals **64 patches, 23 assets and 1,520,413 bytes**, SHA-256 `f2c2eeb2a28d91239b3cb7afd48c0d189373a260bd12a851e3aaa8fd92524a2d`. All six engine workflows, eleven desktop/phone browser suites and 13 continuous-geometry CPU scenarios passed, followed by 17 live controls cases per layout and exact hosted source/assets. Marker: `V10_4_SHEEP_LANES`; artifact: `swyrl_engine_v10_4.html`.
+
+Sheep can build at their feet, moving to the nearest clear side; blocked construction rejects without moving the builder or charging gold. Houses remain **2.4 × 2.4** and snap flush together or with a **0.6-unit lane**, with preview and collision using the same placement. Wolves retain **0.78-unit** default bodies and approximately 15% larger artwork; sheep retain **0.27**. Wolf bots prioritize reachable visible sheep over buildings. Physical creatures do not overlap on the same floor: blocked ground traffic replans or backs out; raised-route traffic waits. Wisps and decoys stay intangible, rescue chooses a free landing, and native preflight rejects overlapping same-species starts.
 
 ## Historical verified v10.3 · Placement above the finger
 
@@ -114,7 +124,7 @@ Marker: `SWYRL_ENGINE_DEPLOY_MARKER: V10_2_SHEEP_TOUCH_PLACEMENT`
 
 ### Release verification
 
-The verified v10.1 source and production receipts are recorded above. The current v10.3 candidate requires its own eleven-suite desktop/phone browser matrix, six engine CI workflows, final dedicated deployment and exact hosted package audit.
+The verified v10.4 source and production receipts are recorded above. The current v10.5 candidate requires its own twelve-suite desktop/phone browser matrix, six engine CI workflows, all 13 geometry CPU scenarios, final dedicated deployment and exact hosted package audit.
 
 The previous **v9.3 Connected Character Pieces** release is verified live: [deployment 37893678594](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37893678594) and [exact hosted audit 37893722231](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37893722231) passed. Source [`84d8966f4240`](https://github.com/kaministrator999-ui/Swrlzkamico/commit/84d8966f4240cef8ebe037dbc03baac43099c06e) seals 52 patches, **980,767 bytes**, SHA-256 `caba518b67524567899d93a74308bc894cf40413fd69b330b8f7f5f7b6c042be`, with all fourteen media assets. These receipts certify v9.3; v10.0 requires its own final deployment and hosted audit.
 
