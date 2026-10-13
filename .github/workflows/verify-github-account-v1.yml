@@ -42,6 +42,7 @@ on:
       - fix/github-thread-routing-v229
       - feature/github-answer-articulation-v230
       - fix/evidence-response-mode-v231
+      - fix/source-report-followups-mobile-v232
       - feature/version-literacy-content-layout-v199
   workflow_dispatch:
 
@@ -104,6 +105,7 @@ jobs:
           node --check 'chat/§wyrlz/assets/github-explorer-v223.js'
           node tests/test_github_directory_parser_v224.mjs
           node tests/test_github_preview_persistence_v227.mjs
+          node tests/test_github_source_report_mobile_v232.mjs
           node --check 'chat/§wyrlz/assets/chatgpt-archive-sidebar-v204.js'
           node tests/test_chatgpt_archive_sidebar_v204.mjs
           node tests/test_native_chat_order_v211.mjs
