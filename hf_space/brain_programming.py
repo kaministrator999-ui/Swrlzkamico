@@ -87,7 +87,7 @@ def _has_phrase(text: str, phrases: tuple[str, ...]) -> bool:
 
 def _source_information_request(text: str, history=None) -> bool:
     """Information-only prompts must not be forced to return source code."""
-    if lesson_kind(text,history)=="source-report-followup":
+    if lesson_kind(text,history) in ("source-report-followup", "repo-read", "repo-status", "repo-count"):
         return True
     q=_norm(str(text or "").split("\n",1)[0])
     if q.startswith(("using only the verified github source report", "explain the verified github source report")):
