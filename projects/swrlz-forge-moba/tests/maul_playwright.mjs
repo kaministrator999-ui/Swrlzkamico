@@ -48,7 +48,13 @@ async function press(page,selector){const node=page.locator(selector);assert.equ
     return element===hit||element.contains(hit);}),true,'A required control is obscured: '+selector);
   if(touchPages.has(page))await node.tap({force:true});else await node.click({force:true});}
 async function tap(page,id){await press(page,'#'+id);}
-async function native(page,id){await tap(page,id);await frames(page,2);}
+async function native(page,id){
+  if(touchPages.has(page)&&!(await page.locator('#'+id).isVisible())&&id==='simulateBtn'){
+    await tap(page,'mobileToolsBtn');await page.locator('#mobileToolsPanel.show').waitFor({state:'visible'});
+    await press(page,'#mobileToolsPanel [data-click="simulateBtn"]');
+  }else await tap(page,id);
+  await frames(page,2);
+}
 async function stop(page){if((await state(page)).active){await native(page,'maulStop');assert.equal((await state(page)).active,false);}}
 async function importFixture(page,data){await stop(page);await page.evaluate(data=>window.SWYRL_ENGINE_AGENT.loadScene(data),data);await frames(page,2);
   assert.deepEqual(authored(await saved(page)),authored(data),'Stopped native import changed the authored map');}
