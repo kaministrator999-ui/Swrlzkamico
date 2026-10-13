@@ -4,6 +4,8 @@ All response examples are non-private templates. Mocked metadata tests ensure
 only fetched GitHub facts appear as numeric/commit details in final replies.
 """
 from pathlib import Path
+from datetime import datetime, timezone
+import ast
 import re
 import sys
 from unittest import mock
@@ -12,6 +14,7 @@ sys.path.insert(0,str(Path(__file__).resolve().parent))
 import source_answer_articulation_v230 as teach
 import github_connection as github
 import brain_programming
+import private_account_facts_v208 as facts
 
 ROOT=Path(__file__).resolve().parent
 
@@ -100,10 +103,59 @@ def test_real_user_export_does_not_become_example_facts():
     assert "uninspected" in report.lower()
     assert teach.lesson_kind("What's the date span between the start and end date of the chatgpt import")=="archive-span"
 
+def test_v231_actual_response_mode_is_source_explanation_not_code():
+    # Extract only the actual 700M pure function, without importing GPU or
+    # heavyweight HF runtime dependencies into the source-validation CI.
+    engine=ROOT.joinpath("lfm2_700m_engine.py").read_text()
+    assert "import articulation_lesson, lesson_kind" in engine
+    ast_tree=ast.parse(engine)
+    fn=next(x for x in ast_tree.body if isinstance(x,ast.FunctionDef) and x.name=="_response_mode")
+    namespace={"re":re,"lesson_kind":teach.lesson_kind}
+    exec(compile(ast.Module(body=[fn],type_ignores=[]),"lfm2_700m_engine.py","exec"),namespace)
+    mode=namespace["_response_mode"]
+    prompts=(
+        "How many files are there in the repo?",
+        "Can you tell me where we are at with the chat in the repo?",
+        "What's the date span between the start and end date of the chatgpt import",
+        ("Using only the verified GitHub source report below, explain what the "
+         "selected file does.\\n\\n# §wyrlz §tart\\n"
+         "Kind: Documentation. 916 lines. Important functions."),
+    )
+    for prompt in prompts:
+        programming=brain_programming.programming_intent(prompt,[],[])
+        assert not programming["codingTask"],prompt
+        result=mode(prompt,programming)
+        assert result.startswith("RESPONSE MODE: SOURCE-FACTS-FIRST"),(prompt,result)
+        assert "never emit unsolicited code" in result
+    code=mode("Write a Python function to count files",{"codingTask":True})
+    assert code.startswith("RESPONSE MODE: CODE-")
+    assert 'mode.startswith("RESPONSE MODE: SOURCE-FACTS-FIRST")' in engine
+
+
+def test_v231_imported_archive_date_is_calendar_span():
+    first=datetime(2024,5,8,23,tzinfo=timezone.utc).timestamp()
+    last=datetime(2024,5,10,1,tzinfo=timezone.utc).timestamp()
+    prompt="What's the date span between the start and end date of the ChatGPT import?"
+    assert facts.classify(prompt)=="imported-date-span"
+    with mock.patch.object(facts.archive,"_owner"),mock.patch.object(
+        facts.account_chat_store,"_config",return_value={}),mock.patch.object(
+        facts.gh,"_redis",return_value=2),mock.patch.object(
+        facts,"_count_status",return_value={
+          "state":"ready","total":2,"stamped":70,"earliest":first,"latest":last
+        }):
+        answer=facts.answer("google:fixture",[],prompt)
+    assert "2024-05-08" in answer and "2024-05-10" in answer
+    assert "**2 calendar days**" in answer,answer
+    assert "ZIP upload/import job" in answer
+    assert "4db0b78" not in answer
+
+
 if __name__=="__main__":
     test_example_guidance_is_only_contextual()
     test_700m_receives_lesson_as_instructions_not_fake_evidence()
     test_natural_repo_counts_are_sha_pinned_and_have_machine_lines()
     test_repo_status_is_evidence_not_deployment_claim()
     test_real_user_export_does_not_become_example_facts()
-    print("v230 source-answer model lesson and grounded prose contracts PASS")
+    test_v231_actual_response_mode_is_source_explanation_not_code()
+    test_v231_imported_archive_date_is_calendar_span()
+    print("v231 source-answer teaching, response mode and archive calendar-date contracts PASS")
