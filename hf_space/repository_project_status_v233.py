@@ -10,6 +10,7 @@ from urllib.parse import quote
 
 SHA=re.compile(r"^[0-9a-f]{40}$")
 PATH=re.compile(r"(?<![\w/])/?(?:projects|chat|apps|packages|services|hf_space|web|native)/[\w§.+-]+(?:/[\w§.+-]+){0,2}")
+GUIDE=re.compile(r"(?<![\w/])docs/(?:[\w§.+-]+/){1,5}[\w§.+-]+\.md")
 HEADING=re.compile(r"(?m)^## UPDATE (FINISHED|COMPLETED|STARTED|CONTINUATION STARTED|ABORTED|SUPERSEDED) — (\d{4}-\d{2}-\d{2}) — ([^\r\n]+)")
 REGISTRY=re.compile(r"(?m)^([A-Z][A-Z0-9_]+)=versions/([a-z0-9-]+\.txt)$")
 STOP={"the","this","our","my","project","projects","repo","repository","github","current","progress","status","work","system","app","of","with","in","at","we","are","what","where","how","that"}
@@ -36,15 +37,16 @@ def subject_of_status(prompt):
     return None
 
 def terms(value):
-    return {w for w in re.findall(r"[\w§]{2,}",value.lower()) if w not in STOP}
+    return {w for w in re.findall(r"[\w§]{2,}",value.lower().replace("_"," ").replace("-"," ").replace("/"," ")) if w not in STOP}
 
 def discover(router):
     """No built-in project names. Extract owned paths and nearby prose from §tart."""
     lines=router.splitlines(); projects={}
     for i,line in enumerate(lines):
-        for m in PATH.finditer(line):
+        for m in list(PATH.finditer(line))+list(GUIDE.finditer(line)):
             path=m[0].lstrip("/")
-            if len(path)>150 or ".." in path.split("/") or path.endswith((".py",".md",".json",".yml",".yaml",".js",".html",".txt",".kt")):continue
+            if len(path)>150 or ".." in path.split("/"):continue
+            if not path.startswith("docs/") and path.endswith((".py",".md",".json",".yml",".yaml",".js",".html",".txt",".kt")):continue
             found=projects.setdefault(path,{"path":path,"lines":[],"context":""})
             found["lines"].append(i+1)
             found["context"]=(found["context"]+" "+" ".join(lines[max(0,i-3):i+3]))[:1800]
@@ -57,7 +59,9 @@ def candidates(projects,subject):
         path_terms=terms(item["path"].replace("-"," ").replace("/"," "))
         nearby=terms(item["context"])
         score=8*len(wanted&path_terms)+len(wanted&nearby)
-        if score:scored.append((score,item))
+        if score:
+            if item["path"].startswith("docs/"):score=max(1,score-2)
+            scored.append((score,item))
     return sorted(scored,key=lambda x:(-x[0],len(x[1]["path"])))
 
 def source_file(read,api,token,repo,path,ref,maxbytes=130000):
@@ -121,12 +125,25 @@ def build_status(record,repo,branch,subject,api,read):
     if subject=="":
         items=[x for x in projects if x["path"].startswith(("chat/","projects/"))][:8] or projects[:6]
         if not items:return "The verified §tart did not expose distinct project directories."
-        return ("\n".join(["## Project areas documented by §tart",
-              "These are source references, not proof of currently active work.",
-              *("- "+x["path"]+" (router line "+str(min(x["lines"]))+")" for x in items),
-              "Ask about one project to check its guide, Roadmap and versions.",
-              "Source revision: "+sha[:12]]))
+        roadmap=source_file(read,api,token,repo,"SWRLZ_SERVER_ROADMAP.md",sha,MAX_ROADMAP)
+        lines=["## Projects and recent work documented in GitHub",
+               "§tart defines project boundaries; the Roadmap records work. A listed project is not automatically active."]
+        for item in items:
+            line="- "+item["path"]+" (identified in §tart at line "+str(min(item["lines"]))+")"
+            if roadmap:
+                event=roadmap_event(roadmap["body"],item["path"].split("/")[-1],item["path"])
+                if event:line+="; last matching Roadmap record: "+event[1]+" — "+event[2][:110]
+            lines.append(line)
+        if roadmap:
+            m=next((x for x in HEADING.finditer(roadmap["body"]) if x[1] in ("FINISHED","COMPLETED","STARTED")),None)
+            if m:lines.append("Newest checked Roadmap entry: "+m[2]+" — "+m[3][:125]+" ("+m[1].lower()+").")
+        else:lines.append("Roadmap unavailable at this revision; cannot verify what has been worked on most recently.")
+        lines.append("Source revision: "+sha[:12]+". Source records alone do not prove work is live or currently in progress.")
+        return "\n".join(lines)
     scored=candidates(projects,subject)
+    if len(terms(subject))==1 and subject in ("engine","app","application","system","platform") and len([
+            p for p in projects if p["path"].startswith(("chat/","projects/"))])>=2:
+        return "§tart describes multiple separately governed project areas. Which engine or product did you mean? Please name its project or directory."
     if not scored:return "I read §tart, but couldn't resolve "+subject[:80]+" to a documented project path. Which project did you mean?"
     best=scored[0]
     if len(scored)>1 and scored[1][0]>=best[0] and scored[1][1]["path"].split("/")[0]!=best[1]["path"].split("/")[0]:
@@ -141,7 +158,7 @@ def build_status(record,repo,branch,subject,api,read):
     event=roadmap_event(roadmap["body"],subject,path) if roadmap else None
     modules,runtime_sha=versions(api,read,token,repo,terms(subject)|terms(path.replace("-"," ").replace("/"," ")))
     lines=["## "+subject.title()+" — project progress from verified GitHub",
-           "§tart identifies the project area as "+path+" (line "+str(min(best[1]["lines"]))+")."]
+           "§tart identifies "+("an operating guide" if path.startswith("docs/") else "the project area")+" as "+path+" (line "+str(min(best[1]["lines"]))+")."]
     if guide:
         current=next((l.lstrip("# ").strip() for l in guide["body"].splitlines()[:25] if l.startswith("## Current ")),None)
         if current:lines.append("Dedicated project guide: "+current+". This is a source-declared candidate, not automatically a live release.")
