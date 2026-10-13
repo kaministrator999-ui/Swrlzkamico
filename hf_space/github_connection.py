@@ -1115,7 +1115,7 @@ def _github_command(user, prompt):
         return _permission_message(check)
     if lower == "chat status":
         return _verified_chat_status(rec, repo, check["defaultBranch"])
-    if re.fullmatch(r"how\s+many\s+(?:total\s+)?(?:files?|folders?|directories|dirs?)(?:\s+(?:are\s+there\s+)?(?:in\s+(?:the\s+)?(?:repo|repository)|there))?[?.!]*", lower):
+    if re.fullmatch(r"how\s+many\s+(?:total\s+)?(?:files?|folders?|directories|dirs?)(?:\s+(?:(?:are\s+(?:there\s+)?)?in\s+(?:the\s+)?(?:repo|repository)|are\s+there))?[?.!]*", lower):
         return _github_repo_stats(rec, repo, check["defaultBranch"], "")
     if lower == "help" and GITHUB_CAPABILITY_STAGE == "read-repository":
         return (_READ_STAGE_DESCRIPTION + "\nCommands: @GitHub files, @GitHub files docs, "
@@ -1627,7 +1627,7 @@ def agent_events(data, model_generator=None):
     prompt = str(data.get("prompt") or "").strip()
     followup = _implicit_repo_command(prompt, data.get("githubContext")) if GITHUB_CAPABILITY_STAGE=="read-repository" else None
     if GITHUB_CAPABILITY_STAGE=="read-repository" and re.fullmatch(
-        r"(?i)@github\s+how\s+many\s+(?:total\s+)?(?:files?|folders?|directories|dirs?)(?:\s+(?:are\s+there\s+)?(?:in\s+(?:the\s+)?(?:repo|repository)|there))?[?.!]*", prompt):
+        r"(?i)@github\s+how\s+many\s+(?:total\s+)?(?:files?|folders?|directories|dirs?)(?:\s+(?:(?:are\s+(?:there\s+)?)?in\s+(?:the\s+)?(?:repo|repository)|are\s+there))?[?.!]*", prompt):
         followup="@GitHub stats"
     if followup:
         prompt = followup
