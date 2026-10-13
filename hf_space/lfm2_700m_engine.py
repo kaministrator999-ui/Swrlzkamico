@@ -314,7 +314,7 @@ def _direct_identity_answer(prompt,user_profile,history=None):
         return "I'm 𓆩𓆩⁽§⁾𓆪wyrlz𓆪 — Swurlz when spoken."
     return ""
 
-def _response_mode(prompt, programming=None):
+def _response_mode(prompt, programming=None, history=None):
     """Deterministic style hint; keeps tiny-model priors from overriding obvious task shape."""
     p=prompt.strip().lower()
     programming=programming if isinstance(programming,dict) else {}
@@ -326,7 +326,7 @@ def _response_mode(prompt, programming=None):
     # v231: the verified source-answer lesson and delivery MODE must agree.
     # The user's pasted report can contain "file"/"code"; these are data and
     # must not transform a non-coding explanation into source-code delivery.
-    if not structured_coding and lesson_kind(prompt):
+    if not structured_coding and lesson_kind(prompt,history):
         return (
             "RESPONSE MODE: SOURCE-FACTS-FIRST. Give a direct conversational "
             "answer using only actually verified evidence, explain relevant "
@@ -567,7 +567,7 @@ def generate_events(payload):
         system+="\n"+str(payload["projectThreadEvidence"])[:1650]
     if payload.get("archiveEvidence"):
         system+="\n"+str(payload["archiveEvidence"])[:2350]
-    system+="\n"+_response_mode(prompt,programming)
+    system+="\n"+_response_mode(prompt,programming,history)
     if not programming.get("codingTask"):
         social_style=_social_checkin_style_hint(prompt)
         if social_style:
@@ -577,7 +577,7 @@ def generate_events(payload):
         system+="\n"+version_lesson
     system+="\n"+response_cognition_policy(response_cognition)
     if not programming.get("codingTask"):
-        lesson=articulation_lesson(prompt)
+        lesson=articulation_lesson(prompt,history)
         if lesson:
             system+="\n"+lesson
     direct_creative_lyric_contract=None
@@ -691,7 +691,7 @@ def generate_events(payload):
         system,fitted_prompt,repair_context_telemetry=build_compact_repair_context(
             programming,
             prompt,
-            _response_mode(prompt,programming),
+            _response_mode(prompt,programming,history),
         )
         fitted=_fit_repair_messages(model,system,history,fitted_prompt)
         messages,dropped_history,input_tokens,available_output_tokens,fitted_prompt=fitted
@@ -723,7 +723,7 @@ def generate_events(payload):
     candidate_check=None
     candidate_attempts=[]
     with _lock:
-        mode=_response_mode(prompt,programming)
+        mode=_response_mode(prompt,programming,history)
         if mode.startswith("RESPONSE MODE: USER-IDENTITY-DIRECT") or mode.startswith("RESPONSE MODE: ASSISTANT-IDENTITY-DIRECT"):
             response_tokens=min(192,available_output_tokens);temperature=0.35
         elif mode.startswith("RESPONSE MODE: SOURCE-FACTS-FIRST"):
