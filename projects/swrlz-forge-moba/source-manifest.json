@@ -82,6 +82,6 @@
     "patches/v10_5_sheep_run_recorder.py",
     "patches/v10_6_maul_tower_defense.py"
   ],
-  "finalBytes": 1747517,
-  "finalSha256": "de3fc2bdc2753e98e2adc581166f7f6feb4ec918941a891e2dbc5fb7eb1dc9f8"
+  "finalBytes": 1748149,
+  "finalSha256": "db05e9a794b5ec60487cf80cd52336faa194c78f209523e09db8e8f31254b243"
 }
