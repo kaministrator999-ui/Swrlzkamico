@@ -20,7 +20,7 @@ Specialized Forge engine entrypoint §tart_§E.md:
 New hypothetical scoped project: projects/saffron-simulator/
 """
 ROAD="""## UPDATE FINISHED — 2026-10-13 — v233 Chat account UI refinement
-**Outcome:** Signed-in Chat source report follows existing authorized repo context; owner mobile acceptance remains pending.
+**Outcome:** Signed-in Chat source report follows existing authorized repo context; owner mobile acceptance remains pending. It references Forge engine, but does not touch its source.
 
 ## UPDATE FINISHED — 2026-10-12 — v10.5 Forge recorder
 **Outcome:** Forge published editor run recorder with verified independent source receipt.
@@ -39,6 +39,16 @@ def api(token,path):
     assert token=="private-token" and path.startswith("/repos/owner/repo/")
     if path.endswith("/commits/main"):return {"sha":SHA}
     if path.endswith("/commits/runtime"):return {"sha":RUNTIME}
+    if "SWRLZ_SERVER_ROADMAP.md" in path and "/contents/" in path:
+        raw=ROAD.encode("utf-8")
+        digest=hashlib.sha1(b"blob "+str(len(raw)).encode()+b"\x00"+raw).hexdigest()
+        return {"type":"file","sha":digest,"size":len(raw)}
+    if "/git/blobs/" in path:
+        raw=ROAD.encode("utf-8")
+        digest=hashlib.sha1(b"blob "+str(len(raw)).encode()+b"\x00"+raw).hexdigest()
+        return {"sha":digest,"encoding":"base64","content":base64.b64encode(raw).decode()}
+    if "/commits?" in path or "/branches?" in path or "/pulls?" in path:
+        return []
     raise AssertionError("Unexpected API "+path)
 
 def read(token,repo,path,ref,limit=0):
