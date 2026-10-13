@@ -14,7 +14,7 @@ _MUTATION = re.compile(
 _REPO = re.compile(r"\b(?:github|repo|repository)\b", re.I)
 _READ = re.compile(
     r"\b(?:analy[sz]e|architecture|compare|count|describe|directory|"
-    r"directories|explain|file|files|folder|folders|history|inspect|"
+    r"directories|explain|explore|file|files|folder|folders|history|inspect|"
     r"how|largest|list|locate|modified|overview|read|relate|related|relationship|report|"
     r"search|show|size|source|structure|summari[sz]e|tree|what|"
     r"where|which|how many|when)\b", re.I)
@@ -28,7 +28,7 @@ _BARE = re.compile(r"\b(?:folder|directory|under|inside|within|in)\s+"
                    r"([A-Za-z0-9_§.-]{2,80})(?=\s|$)", re.I)
 _BAD_PATH = re.compile(r"[\\\x00-\x1f?#%*{}\[\]<>|]")
 _COMMAND = re.compile(r"^@github\s+", re.I)
-_PREFIX = re.compile(r"^@github\s+(?:(?:ask|explore|analy[sz]e)\s+)?", re.I)
+_PREFIX = re.compile(r"^@github\s+(?:ask\s+)?", re.I)
 _EXPLICIT_COMMAND = re.compile(
     r"^(?:@github\s+)(?:files|stats|largest|report|read|open|view|"
     r"history|search|compare|project status|chat status|permissions|"
@@ -143,7 +143,7 @@ def classify_read(prompt, context=None):
         if scoped:
             return "@GitHub read file " + scoped[0]
         return None  # explicit target required for a source-file read
-    if re.search(r"\b(?:explain|describe|summari[sz]e|analy[sz]e|"
+    if re.search(r"\b(?:explain|explore|describe|summari[sz]e|analy[sz]e|"
                  r"inspect|how|what|which|where|architecture|"
                  r"dependencies|related|relationship|work|purpose|overview)\b", lower):
         if scoped:
