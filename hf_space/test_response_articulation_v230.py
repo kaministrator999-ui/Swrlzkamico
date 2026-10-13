@@ -8,13 +8,25 @@ import sys
 from pathlib import Path
 from datetime import datetime, timezone
 from unittest import mock
+import ast
+import re
 sys.path.insert(0,str(Path(__file__).resolve().parent))
 
 import brain_programming as bp
 import response_articulation_v230 as art
 import github_connection as gh
 import private_account_facts_v208 as facts
-from lfm2_700m_engine import _response_mode
+# The test runner deliberately avoids loading GPU/Hugging Face runtime dependencies.
+# Extract the actual lightweight response-mode function from the engine source,
+# so we still exercise its real body and verify its import wiring.
+engine_source=Path(__file__).with_name("lfm2_700m_engine.py").read_text()
+assert "from response_articulation_v230 import response_mode as _verified_fact_mode" in engine_source
+tree=ast.parse(engine_source)
+response_fn=next(node for node in tree.body
+                 if isinstance(node,ast.FunctionDef) and node.name=="_response_mode")
+namespace={"re":re,"_verified_fact_mode":art.response_mode}
+exec(compile(ast.Module(body=[response_fn],type_ignores=[]),"lfm2_700m_engine.py","exec"),namespace)
+_response_mode=namespace["_response_mode"]
 
 SHA="a"*40
 BLOB="b"*40
