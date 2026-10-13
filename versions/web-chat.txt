@@ -1,6 +1,6 @@
 ID=web-chat
-VERSION=1.5.117
-REVISION=1.5.117-source-answer-articulation-v230
+VERSION=1.5.118
+REVISION=1.5.118-source-facts-response-mode-v231
 KIND=web-interface
 SOURCE_BRANCH=runtime
 STATUS=active

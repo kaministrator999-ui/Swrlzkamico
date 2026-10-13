@@ -1,6 +1,6 @@
 ID=server-runtime
-VERSION=2.3.383
-REVISION=2.3.383-hf-v230-source-answer-articulation
+VERSION=2.3.384
+REVISION=2.3.384-hf-v231-source-facts-response-mode
 KIND=server-runtime
 SOURCE_BRANCH=runtime
 STATUS=active
