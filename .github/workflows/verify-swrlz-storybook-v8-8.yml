@@ -266,4 +266,5 @@ jobs:
             sheep-tag-acceptance/
             sheep-archive-acceptance/
             sheep-touch-acceptance/
+            sheep-run-acceptance/
           retention-days: 5
