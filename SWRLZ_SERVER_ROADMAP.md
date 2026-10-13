@@ -1,4 +1,12 @@
-## UPDATE STARTED — 2026-10-13 — v230 conversational articulation from owner GitHub transcript
+## UPDATE STARTED — 2026-10-13 — v231 source answer mode correctness on top of deployed v230
+
+**Reconciliation:** During owner-directed continued v230 answer teaching, discovered a separate, already **deployed and CI-verified** source-answer lesson `source_answer_articulation_v230.py` on source `073b90d3effb9b6571250f108c91cf4c52c0f90d` (PR #136, guarded HF run #38349001217; v230 registry web-chat 1.5.117, server-runtime 2.3.383, repository-work 1.0.171). Our concurrent draft PR #137 from old v229 base is **not** a safe replacement and must be superseded, not deployed. This STARTED v230 note was authored before discovering the overlapping already-verified release; reconciliation retains the deployed work and focuses only on gaps.
+
+**Verified remaining gap:** Despite v230's excellent read-only answer exemplars in the 700M system lesson, its independent `_response_mode` scans all prompt text for "file"/"code", so an actual GitHub selected-file report can still be incorrectly forced into CODE-COMPLETE delivery mode even though `brain_programming.programming_intent` correctly marks it informational. Also imported archive date answer reports *elapsed 24-hour blocks*, not the requested calendar-date span; these differ across time-of-day boundaries. Fix both narrowly from immutable published v230 without duplicating lesson, Chat status or GitHub statistics handlers; preserve Stage-1 Google account and GitHub read-only permissions, unrelated §E engine, and private archive. Add offline golden regression using sanitized owner question archetypes to verify actual `_response_mode`, lesson selection, count/status behavior and date answer. Two full CI gates and guarded exact-source release then atomic version registry/finish. Main current `e6907a1c873880c36cb9605c921f561ce13d7752` contains independent §E work; do not rebase onto it.
+
+**Status:** STARTED. No new model weight training and no signed-in browser acceptance asserted.
+
+## UPDATE SUPERSEDED — 2026-10-13 — v230 conversational articulation from owner GitHub transcript
 
 **User goal:** After owner-supplied signed-in Android screenshots and `swrlz-dragon-chat (47).json` exposed weak factual answers, user requested "act like I asked you those questions ... aim at teaching the model how to articulate it" and then "Keep finishing". This is a request for **better evidence-grounded final response quality**, not only more routing detection.
 
