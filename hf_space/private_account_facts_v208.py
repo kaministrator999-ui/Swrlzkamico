@@ -7,6 +7,7 @@ only integer per-thread counts are cached; no plaintext message text is copied.
 from __future__ import annotations
 
 import re
+from datetime import datetime, timezone
 import threading
 import time
 from fastapi import HTTPException
@@ -28,6 +29,9 @@ _MAX_WORKERS = 2
 
 def classify(prompt):
     q=str(prompt or "")[:400]
+    if (re.search(r"(?i)\b(?:chatgpt|import(?:ed|s)?|archive)\b",q) and
+        re.search(r"(?i)\b(?:date\s+span|date\s+range|start\s+(?:and|to|through)\s+end\s+date|earliest\s+(?:and|to)\s+latest\s+date)\b",q)):
+        return "imported-date-span"
     if not _COUNT.search(q) or not _TOPIC.search(q):
         return ""
     if re.search(r"(?i)\b(?:last|yesterday|ago|earlier|between|in \d{4})\b",q):
@@ -49,6 +53,9 @@ def invalidate(owner):
 def _worker(owner,epoch):
     counted=0
     messages=0
+    earliest=None
+    latest=None
+    stamped=0
     total=0
     try:
         c=account_chat_store._config()
@@ -67,12 +74,19 @@ def _worker(owner,epoch):
                 if rec:
                     messages+=len(rec.get("messages",[]))
                     counted+=1
+                    for msg in rec.get("messages",[]):
+                        ts=msg.get("createdAt") if isinstance(msg,dict) else None
+                        if type(ts) in (int,float) and 0 < ts < 32503680000:
+                            stamped+=1
+                            earliest=ts if earliest is None else min(earliest,ts)
+                            latest=ts if latest is None else max(latest,ts)
             with _LOCK:
                 if _EPOCH.get(owner,0)!=epoch:return
                 _CACHE[owner]={"state":"counting","total":total,"done":counted}
         with _LOCK:
             if _EPOCH.get(owner,0)==epoch:
-                _CACHE[owner]={"state":"ready","total":total,"done":counted,"messages":messages}
+                _CACHE[owner]={"state":"ready","total":total,"done":counted,"messages":messages,
+                               "earliest":earliest,"latest":latest,"stamped":stamped}
     except Exception:
         with _LOCK:
             if _EPOCH.get(owner,0)==epoch:
@@ -109,6 +123,30 @@ def answer(owner,native_threads,prompt):
                 "archive count is temporarily unavailable. I won't invent a number.")
     base=f"Authenticated account totals: {total:,} stored imported ChatGPT conversation threads; "
     base+=f"{native_count:,} native §wyrlz conversation threads."
+    if kind=="imported-date-span":
+        if not total:
+            return "There are no stored imported ChatGPT conversations to date-range."
+        with _LOCK:
+            cached=_CACHE.get(owner)
+            if cached and cached.get("state")=="ready" and "stamped" not in cached:
+                _CACHE.pop(owner,None)
+        counted=_count_status(owner)
+        if counted.get("state")=="ready" and counted.get("total")==total:
+            if not counted.get("stamped"):
+                return ("I checked the imported ChatGPT messages but found no valid source "
+                        "timestamps; I cannot establish a date span.")
+            first=datetime.fromtimestamp(counted["earliest"],timezone.utc)
+            last=datetime.fromtimestamp(counted["latest"],timezone.utc)
+            return (f"Verified imported ChatGPT message dates (UTC): {first.date().isoformat()} "
+                    f"through {last.date().isoformat()} — {(last-first).days} elapsed whole days "
+                    f"({counted['stamped']:,} timestamped messages inspected across "
+                    f"{total:,} stored conversations). These are the earliest and latest "
+                    "valid message timestamps, not the ZIP upload/import job start and finish times.")
+        if counted.get("state")=="error":
+            return "The imported ChatGPT date-range scan failed; no dates can be verified right now."
+        return ("I'm checking the encrypted imported ChatGPT message timestamps for their "
+                "earliest and latest dates. Ask again after the index scan finishes; "
+                "I won't invent dates from repository commit or blob hashes.")
     if kind in ("imported-threads","native-threads","all-threads"):
         return base+" These are separate archives; their thread counts are not interchangeable."
     if kind=="native-messages":
