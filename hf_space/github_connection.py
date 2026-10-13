@@ -982,7 +982,12 @@ def _github_repo_stats(record, repo, branch, scope=""):
     blobs = [x for x in subset if x.get("type")=="blob"]
     dirs = [x for x in subset if x.get("type")=="tree"]
     total = sum(int(x.get("size") or 0) for x in blobs)
-    return ("## GitHub repository statistics\nRepository: "+repo+
+    return ("## GitHub repository statistics\n"+
+            "\n**Answer:** There are **"+str(len(blobs))+" tracked files** and **"+
+            str(len(dirs))+" directories** in "+(target or "the whole selected repository")+
+            ", counting nested paths on `"+branch+"` at commit `"+sha[:12]+"`. "+
+            "This is the complete verified Git-tree scope, not a local directory listing.\n"+
+            "\nRepository: "+repo+
             "\nBranch: "+branch+"\nRevision: "+sha+
             "\nScope: "+(target or "/")+" (recursive)"+
             "\nFiles: "+str(len(blobs))+"\nDirectories: "+str(len(dirs))+
@@ -1033,6 +1038,20 @@ def _verified_chat_status(record, repo, branch):
                 version = re.search(r"^VERSION=([^\r\n]{1,40})", str(obj.get("body") or ""), re.M)
                 if version:
                     lines.append("Declared " + module + " version: " + version[1])
+    has_entry=any(line.startswith("Verified source file: chat/§wyrlz/index.html") for line in lines)
+    has_explorer=any(line.startswith("Verified source file: chat/§wyrlz/assets/github-explorer") for line in lines)
+    declared=next((line.split(": ",1)[1] for line in lines if line.startswith("Declared web-chat version: ")),None)
+    summary=("I checked the Chat project in your selected GitHub repository. "
+             +("Its main Chat page is present" if has_entry else "The main Chat page could not be verified")
+             +(", and its GitHub file explorer source is present" if has_explorer else
+              ", but the GitHub file explorer source could not be verified")
+             +(". "+("The declared Web Chat version is **"+declared+"**. " if declared else
+                     "A current Web Chat version could not be verified. ")
+             +"Below are the exact source and recent commit details supporting that snapshot.")
+    lines.insert(4,summary)
+    lines.insert(5,"**What remains to check:** Repository source alone cannot confirm that deployed Chat "
+                   "works in your signed-in Android session. Consult CI/deployment receipts and "
+                   "test the requested behavior before marking it verified.")
     lines.append("These are verified source/registry facts, not proof of production deployment, live correctness or mobile acceptance. See the exact CI/deployment receipts and test the signed-in UI before promoting known-good.")
     return "\n".join(lines)
 
