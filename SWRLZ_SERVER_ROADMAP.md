@@ -1,3 +1,11 @@
+## UPDATE STARTED — 2026-10-13 — v233 §tart-led project discovery and generalized repo progress
+
+**Owner clarification:** `@GitHub` context should identify *which project* the user means from the selected repository's **§tart source router**, rather than special-casing the word "chat". Questions like "where are we at with the Chat in the repo", "where are we with Forge", and "what projects are being worked on" must use §tart as project index, then follow its ownership pointers to the relevant source, Roadmap, and module version authorities. Distinguish AI Chat/LALM Space from independently published Forge §E engine. Where the project/revision cannot be verified, explicitly ask/qualify, not invent status. Teach concise natural factual articulation and preserve read-only Stage-1 GitHub/Google authorization.
+
+**Canonical source and concurrency:** latest verified v232 Chat source `fix/source-report-followups-mobile-v232@5a1dcc8691cfe95a85a13579bb80ac6da54e44ae` with existing deployed same Space checkpoint; `main@6200148fcc7c4ba83bfe76883b4fd49c7d20c53f` also holds independently advancing §E code; avoid merging or changing it. Project Start is a **router**; Roadmap is chronological activity and runtime module files own versions. Scope new source-fact discovery helper and routing/tests on isolated Chat branch v233, bounded source/large Roadmap reading, helpful evidence-only prose rather than false "model learned" claim. No new model weights trained. Validate exact-source CI, guarded same-Space deploy if green, atomic version authority and FINISHED receipt. Owner signed-in mobile remains independent acceptance.
+
+**Truth at START:** not yet implemented or tested.
+
 ## UPDATE FINISHED — 2026-10-13 — v232 contextual source-report followups and compact mobile evidence display
 
 **Outcome:** Followups about selected verified GitHub source reports now preserve their evidence scope and explanatory 700M response mode. Long report user bubbles can be expanded/collapsed without changing saved message, model prompt, export or account boundaries. No model weight training; no §E changes.
