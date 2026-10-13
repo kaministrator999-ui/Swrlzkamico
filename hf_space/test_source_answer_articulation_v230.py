@@ -45,7 +45,7 @@ def test_example_guidance_is_only_contextual():
 def test_700m_receives_lesson_as_instructions_not_fake_evidence():
     engine=ROOT.joinpath("lfm2_700m_engine.py").read_text()
     assert "from source_answer_articulation_v230 import articulation_lesson" in engine
-    assert 'lesson=articulation_lesson(prompt)' in engine
+    assert 'lesson=articulation_lesson(prompt,history)' in engine
     assert 'if not programming.get("codingTask"):' in engine
     assert 'system+="\\n"+lesson' in engine
 
