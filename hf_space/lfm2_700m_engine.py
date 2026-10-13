@@ -7,6 +7,7 @@ from brain_programming import programming_intent, CODE_TRUTH_POLICY, candidate_c
 from programming_telemetry import buffered_chat_completion, candidate_attempt_receipt, generation_summary
 from programming_repair_context import build_compact_repair_context, enforce_strategy_change, strategy_change_directive
 from response_cognition import classify_response_cognition, response_cognition_policy, response_cognition_camera
+from source_answer_articulation_v230 import articulation_lesson
 from music_structure import music_model_policy, creative_music_request, creative_music_reference_projection, MUSIC_CREATIVE_REFERENCE_POLICY, original_rap_delivery, original_rap_violations
 from lyric_craft_school import lyric_craft_policy
 from lyric_output_contract import lyric_shape_request, verify_original_lyrics, clean_lyric_container, recoverable_continuous_lines, extend_continuous_lyrics, continuation_shape_receipt
@@ -565,6 +566,10 @@ def generate_events(payload):
     if version_lesson:
         system+="\n"+version_lesson
     system+="\n"+response_cognition_policy(response_cognition)
+    if not programming.get("codingTask"):
+        lesson=articulation_lesson(prompt)
+        if lesson:
+            system+="\n"+lesson
     direct_creative_lyric_contract=None
     lyric_research_receipt={"status":"SKIPPED","sourceCount":0,"lessonCount":0,"cache":False}
     rap_focus="SKIPPED"
