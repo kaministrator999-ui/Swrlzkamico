@@ -80,10 +80,12 @@ def test_stage_one_executes_only_read_command():
     assert any(e.get("phase") == "GITHUB_READ_EVIDENCE" for e in events)
     assert any("Verified bounded" in e.get("text", "") for e in events)
     assert gh.GITHUB_CAPABILITY_STAGE == "read-repository"
-    for prompt in ("Delete src/main.py in our repo", "@GitHub create issue something"):
-        with mock.patch.object(gh, "command_events", side_effect=AssertionError("write attempted")):
-            events = list(gh.agent_events({"userId": "google:owner", "prompt": prompt}))
-        assert any(e.get("phase") == "GITHUB_STAGE_LOCKED" for e in events), events
+    with mock.patch.object(gh, "command_events", side_effect=AssertionError("write attempted")):
+        assert not list(gh.agent_events({"userId": "google:owner",
+                                         "prompt": "Delete src/main.py in our repo"}))
+        events = list(gh.agent_events({"userId": "google:owner",
+                                       "prompt": "@GitHub create issue something"}))
+    assert any(e.get("phase") == "GITHUB_STAGE_LOCKED" for e in events), events
 
 
 if __name__ == "__main__":
