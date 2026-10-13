@@ -39,7 +39,7 @@ assert.equal(parse("## GitHub directory: docs\n- nonsensical anything"),null);
 assert.equal(parse("Unrelated model text"),null);
 const sortEntries=sandbox.window.SwrlzGitHubExplorerV223?.sortDirectoryEntries;
 assert.equal(typeof sortEntries,"function","Pure directory-first sorter must be testable");
-assert.equal(sandbox.window.SwrlzGitHubExplorerV223.version,"225");
+assert.equal(sandbox.window.SwrlzGitHubExplorerV223.version,"226");
 const entries=[
   {type:"file",path:"docs/Z.py",name:"Z.py",sizeBytes:50},
   {type:"dir",path:"docs/Alpha",name:"Alpha",sizeBytes:20,fileCount:5},
@@ -78,5 +78,11 @@ for(const mode of Object.keys(expected)){
   assert.equal(sortEntries(missing,mode,new Map())[0].type,"dir",
     mode+" must keep unknown-metadata folder ahead of any file");
 }
+assert.ok(source.includes("Analyze / Report")&&source.includes("Selected files / folders")&&
+  source.includes("Whole repository")&&source.includes('request("report"'),
+  "v226 scope selector and source-pinned read-only report entrypoint must remain present");
+assert.ok(source.includes("data.sourceSha!==state.info.sourceSha"),
+  "Explorer must reject a stale report after repo source changes");
+console.log("v226 multi-scope GitHub report widget controls and source pinning PASS");
 console.log("v225 GitHub explorer folders-first sorting: all six modes, missing metadata, filters and immutability PASS");
 console.log("v224 GitHub directory response parsing: root, nested, Unicode, truncation and invalid paths PASS");
