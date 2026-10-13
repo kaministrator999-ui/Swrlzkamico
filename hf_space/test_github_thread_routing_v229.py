@@ -68,16 +68,16 @@ def test_import_span_uses_message_timestamps_not_hashes():
     owner="google:owner"
     first=datetime(2024,5,8,tzinfo=timezone.utc).timestamp()
     last=datetime(2026,9,16,tzinfo=timezone.utc).timestamp()
-    with mock.patch.object(facts.archive,"_owner"),mock.patch.object(
-        facts.gh,"_redis",return_value=2),mock.patch.object(facts,"_count_status",return_value={
+    with mock.patch.object(facts.account_chat_store,"_config",return_value={}),mock.patch.object(
+        facts.archive,"_owner"),mock.patch.object(facts.gh,"_redis",return_value=2),mock.patch.object(facts,"_count_status",return_value={
         "state":"ready","total":2,"stamped":200,"earliest":first,"latest":last
     }):
         actual=facts.answer(owner,[],prompt)
     assert "2024-05-08" in actual and "2026-09-16" in actual
     assert "ZIP upload/import job" in actual
     assert "4db0b78" not in actual
-    with mock.patch.object(facts.archive,"_owner"),mock.patch.object(
-        facts.gh,"_redis",return_value=2),mock.patch.object(facts,"_count_status",return_value={
+    with mock.patch.object(facts.account_chat_store,"_config",return_value={}),mock.patch.object(
+        facts.archive,"_owner"),mock.patch.object(facts.gh,"_redis",return_value=2),mock.patch.object(facts,"_count_status",return_value={
         "state":"counting","total":2,"done":1
     }):
         waiting=facts.answer(owner,[],prompt)
