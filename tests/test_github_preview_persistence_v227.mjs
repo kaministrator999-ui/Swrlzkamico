@@ -24,8 +24,8 @@ class Element {
     };
   }
   set textContent(value){
-    this._text=String(value??"");
     this.replaceChildren();
+    this._text=String(value??"");
   }
   get textContent(){
     return this._text+this.children.map(x=>x.textContent||"").join("");
