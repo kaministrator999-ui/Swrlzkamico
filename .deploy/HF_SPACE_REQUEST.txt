@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=8bf3e513422da61b7d0da4e4af8130367a5a51a4
-REQUEST_NONCE=2026-10-13-v233-start-led-branch-project-history-001
+SOURCE_REF=88a025d93c911cce091773dd5b2535c432c06aec
+REQUEST_NONCE=2026-10-13-v234-start-led-project-focus-portfolio-001
