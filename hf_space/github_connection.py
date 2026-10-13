@@ -1047,7 +1047,7 @@ def _verified_chat_status(record, repo, branch):
               ", but the GitHub file explorer source could not be verified")
              +(". "+("The declared Web Chat version is **"+declared+"**. " if declared else
                      "A current Web Chat version could not be verified. ")
-             +"Below are the exact source and recent commit details supporting that snapshot.")
+             +"Below are the exact source and recent commit details supporting that snapshot."))
     lines.insert(4,summary)
     lines.insert(5,"**What remains to check:** Repository source alone cannot confirm that deployed Chat "
                    "works in your signed-in Android session. Consult CI/deployment receipts and "
