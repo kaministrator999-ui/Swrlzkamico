@@ -65,7 +65,9 @@ def candidates(projects,subject):
     return sorted(scored,key=lambda x:(-x[0],len(x[1]["path"])))
 
 def source_file(read,api,token,repo,path,ref,maxbytes=130000):
-    direct=read(token,repo,path,ref,maxbytes)
+    # GitHub Contents API does not reliably inline base64 for files above 1 MiB.
+    # For large Roadmap, start with metadata and fetch the exact SHA-checked blob.
+    direct=(read(token,repo,path,ref,maxbytes) if path!="SWRLZ_SERVER_ROADMAP.md" else None)
     if direct and isinstance(direct.get("body"),str):return direct
     if path!="SWRLZ_SERVER_ROADMAP.md":return None
     meta=api(token,"/repos/"+repo+"/contents/"+quote(path,safe="/")+"?ref="+quote(ref,safe=""))
@@ -88,8 +90,13 @@ def roadmap_event(roadmap,subject,path):
         if m[1] not in ("FINISHED","COMPLETED","STARTED"):continue
         end=hits[i+1].start() if i+1<len(hits) else len(roadmap)
         body=roadmap[m.end():min(end,m.end()+1200)]
-        if (terms(m[3])&names or len(terms(body[:800])&names)>=2):
-            if re.search(r"(?i)\bno (?:§e|forge|chat|lalm) changes?\b",body[:220]) and not terms(m[3])&names:continue
+        # A mere *mention* of another project does not make this its work
+        # milestone. Title match or the actual owned path in event evidence is
+        # needed (otherwise a Chat handoff mentioning Forge becomes Forge progress).
+        title_match=bool(terms(m[3])&terms(subject))
+        path_match=bool(path and path.casefold() in body[:1200].casefold())
+        if title_match or path_match:
+            if re.search(r"(?i)\bno (?:§e|forge|chat|lalm) changes?\b",body[:220]) and not title_match:continue
             outcome=""
             for line in body.splitlines()[:12]:
                 if re.match(r"^\*\*(?:Outcome|Result|Status):",line,re.I):
