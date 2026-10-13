@@ -1,6 +1,6 @@
 ID=web-chat
-VERSION=1.5.119
-REVISION=1.5.119-source-report-mobile-collapse-v232
+VERSION=1.5.120
+REVISION=1.5.120-start-led-project-branch-history-v233
 KIND=web-interface
 SOURCE_BRANCH=runtime
 STATUS=active
