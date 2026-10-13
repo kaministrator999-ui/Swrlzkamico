@@ -538,6 +538,14 @@
     .side-menu .thread-panel{flex:0 0 auto;min-height:auto}
     .side-menu .thread-list{max-height:none;overflow:visible}
     .side-menu .version-box{margin-top:12px;flex:0 0 auto}
+    /* v232: only tool-originated long report prompts collapse; persisted content remains intact. */
+    .user-bubble.source-report-prompt{max-width:min(680px,100%);min-width:0}
+    .source-report-details{display:block;min-width:0}
+    .source-report-details>summary{cursor:pointer;list-style-position:inside;line-height:1.48;color:#e3f8ff;font-weight:750;overflow-wrap:anywhere}
+    .source-report-details>summary:focus-visible{outline:2px solid #91e6ff;outline-offset:4px;border-radius:5px}
+    .source-report-brief{margin:7px 0 2px;color:#b2d5e8;font-size:.88em;font-weight:450;line-height:1.5}
+    .source-report-full{white-space:pre-wrap;overflow-wrap:anywhere;word-break:normal;max-height:min(55dvh,540px);overflow:auto;margin:10px 0 2px;padding:10px;border:1px solid rgba(126,214,255,.2);border-radius:9px;background:rgba(3,19,31,.48);font:12px/1.5 var(--font-telemetry,monospace)}
+    .source-report-details:not([open]) .source-report-full{display:none}
   </style>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <script src="/chat/§wyrlz/assets/github-explorer-v223.js?v=228"></script>
@@ -1282,6 +1290,7 @@
       };
 
       const codeViewState=new Map();
+      const expandedSourceReports=new Set(); // account/thread/message scoped, view-only
       const lyricViewCollapsed=new Map();
       let renderedConversationSignature="";
       const codeArtifactState=new Map();
@@ -1604,6 +1613,19 @@
         ]);
         return JSON.stringify([String(thread.id||""),thread.githubContext||null,messages,artifactState]);
       };
+      // v232: compress only a recognisable GitHub report handoff. This affects
+      // presentation, never the original message stored/sent/exported by Station.
+      const isLongGitHubSourceReport = value => {
+        const body=String(value||"");
+        return body.length>1400 &&
+          body.startsWith("Using only the verified GitHub source report below,") &&
+          body.includes("\n# GitHub source analysis") &&
+          body.includes("Complete Git-tree inventory:");
+      };
+      const reportPromptScope = value => {
+        const scope=String(value||"").match(/^Scopes:\s*(.{1,150})$/m);
+        return scope ? scope[1].trim().slice(0,95) : "Selected files and folders";
+      };
       const renderConversation = (thread,force=false) => {
         const signature=conversationRenderSignature(thread);
         if(!force&&signature===renderedConversationSignature)return false;
@@ -1625,6 +1647,27 @@
               bubble.classList.add("user-container-message");
               const syntheticFence=(persistedTag==="container:lyrics"?"lyrics":"code")+"\n"+String(msg.text||"");
               renderAssistantContent(bubble,"```"+syntheticFence+"```",msg.id||"");
+            }else if(isLongGitHubSourceReport(msg.text)){
+              bubble.classList.add("source-report-prompt");
+              const details=document.createElement("details");details.className="source-report-details";
+              const key=String(thread.id||"")+"|"+String(msg.id||"");
+              details.open=expandedSourceReports.has(key);
+              const summary=document.createElement("summary");
+              summary.textContent="GitHub source analysis · "+reportPromptScope(msg.text);
+              const brief=document.createElement("div");brief.className="source-report-brief";
+              brief.textContent="Asked §wyrlz to explain selected components and evidence limits. Select to "+(details.open?"hide":"view")+" the full source report.";
+              const source=document.createElement("div");source.className="source-report-full";
+              source.textContent=String(msg.text||"");
+              details.append(summary,brief,source);
+              details.addEventListener("toggle",()=>{
+                if(details.open)expandedSourceReports.add(key);else expandedSourceReports.delete(key);
+                brief.textContent="Asked §wyrlz to explain selected components and evidence limits. Select to "+(details.open?"hide":"view")+" the full source report.";
+                if(expandedSourceReports.size>100){
+                  const oldest=expandedSourceReports.values().next().value;
+                  if(oldest!==key)expandedSourceReports.delete(oldest);
+                }
+              });
+              bubble.appendChild(details);
             }else bubble.textContent=msg.text||"";
             if(chatAccountUser?.picture){
               const avatar=document.createElement("img");avatar.className="user-avatar";avatar.src=chatAccountUser.picture;avatar.alt="";node.append(meta,bubble,avatar);
