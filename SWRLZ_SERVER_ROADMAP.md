@@ -1,3 +1,13 @@
+## UPDATE STARTED — 2026-10-12 — v226 source-grounded scoped GitHub repository reports
+
+**Owner intent:** Expand the current read-only GitHub Chat explorer from navigating repositories to user-selectable source-grounded reports for the full repository, one/multiple directories or one/multiple files, across overview, structural and deep inspection. Explain what files/modules appear to be, their code entrypoints/dependencies and verified coverage, with distinct summary vs complete-tree vs sampled-content truth states. Support selected scopes in the widget and direct explicit @GitHub report commands.
+
+**Source/owner baseline:** Primary Focus Web Chat repository explorer and authenticated source reader. Published Chat source `fix/github-explorer-directories-first-v225@c367946cd00c7630d397174a136c383dbcfb6c9c`; `runtime@ccc71cdf71f88fd6f7b6c4e795a5b1a0393075f7`: Repository Work 1.0.166, Server Runtime 2.3.378, Web Chat 1.5.112. Current main at `04ba3ef018d4715cd51fd56ff51b1f96d8530bc6` is independently advancing §E; avoid engine changes. Existing canonical read-only owners: `hf_space/github_explorer_v223.py`, `hf_space/github_connection.py`, `chat/§wyrlz/assets/github-explorer-v223.js`. Single existing HF Space `kamiloki/Swyrlz`; Stage 1 read-only authorization continues.
+
+**Architecture plan:** Add pure bounded report summarizer beside verified tree owner, reuse selected-Google-GitHub account and SHA-pinned source, expose one read-only endpoint plus explicit read-only command, add multi-path selection and report viewer to existing explorer (no new persistence or OAuth scopes). Enforce deterministic scope validation, source-blob verification, safe file classifications, sampling/size limits and incomplete-analysis disclosures. Test no writes, bad paths, unreadable/binary/oversize files, multi-scope dedup, entire-repo inventory vs sampled inspection and UI behavior. Run exact-source GitHub/HF/mobile CI, then existing guarded same-Space deploy on success, terminal observe, atomic version readback and Roadmap finish. Real Google/GitHub owner browser acceptance remains separate.
+
+**Truth:** STARTED. No source mutation, CI or activation claimed yet.
+
 ## UPDATE FINISHED — 2026-10-12 — v225 GitHub repository explorer folders-first sorting
 
 **User outcome:** Directories now always sort ahead of files in the read-only GitHub Chat repository widget, including Name A-Z, Name Z-A, Type, Size, File count and Last changed; chosen ordering remains active within the folder and file groups. Missing folder metadata does not drop a directory below a file. Files-only and Folders-only filters continue respecting their user-selected scope.
