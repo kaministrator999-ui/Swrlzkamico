@@ -39,7 +39,7 @@ assert.equal(parse("## GitHub directory: docs\n- nonsensical anything"),null);
 assert.equal(parse("Unrelated model text"),null);
 const sortEntries=sandbox.window.SwrlzGitHubExplorerV223?.sortDirectoryEntries;
 assert.equal(typeof sortEntries,"function","Pure directory-first sorter must be testable");
-assert.equal(sandbox.window.SwrlzGitHubExplorerV223.version,"226");
+assert.equal(sandbox.window.SwrlzGitHubExplorerV223.version,"227");
 const entries=[
   {type:"file",path:"docs/Z.py",name:"Z.py",sizeBytes:50},
   {type:"dir",path:"docs/Alpha",name:"Alpha",sizeBytes:20,fileCount:5},
