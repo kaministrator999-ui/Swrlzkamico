@@ -51,6 +51,7 @@ jobs:
           python hf_space/test_github_explorer_v223.py
           python hf_space/test_github_report_v226.py
           python hf_space/test_github_thread_routing_v229.py
+          python hf_space/test_repository_project_status_v233.py
           python hf_space/test_source_answer_articulation_v230.py
           python hf_space/test_chatgpt_archive_import_v202.py
           python hf_space/test_chatgpt_account_memory_v205.py
