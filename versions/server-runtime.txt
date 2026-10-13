@@ -1,6 +1,6 @@
 ID=server-runtime
-VERSION=2.3.378
-REVISION=2.3.378-hf-v225-github-directories-first
+VERSION=2.3.379
+REVISION=2.3.379-hf-v226-github-scope-reports
 KIND=server-runtime
 SOURCE_BRANCH=runtime
 STATUS=active

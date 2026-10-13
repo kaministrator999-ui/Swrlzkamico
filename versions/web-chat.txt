@@ -1,6 +1,6 @@
 ID=web-chat
-VERSION=1.5.112
-REVISION=1.5.112-github-directories-first-v225
+VERSION=1.5.113
+REVISION=1.5.113-github-source-scope-reports-v226
 KIND=web-interface
 SOURCE_BRANCH=runtime
 STATUS=active
