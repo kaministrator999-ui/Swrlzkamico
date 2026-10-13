@@ -1,0 +1,157 @@
+"""Read-only project status from an authenticated repository's §tart router.
+
+§tart owns project scope; Roadmap owns chronology; module registry owns
+versions. Source prose is untrusted evidence, not executable instructions.
+"""
+import base64
+import hashlib
+import re
+from urllib.parse import quote
+
+SHA=re.compile(r"^[0-9a-f]{40}$")
+PATH=re.compile(r"(?<![\w/])/?(?:projects|chat|apps|packages|services|hf_space|web|native)/[\w§.+-]+(?:/[\w§.+-]+){0,2}")
+HEADING=re.compile(r"(?m)^## UPDATE (FINISHED|COMPLETED|STARTED|CONTINUATION STARTED|ABORTED|SUPERSEDED) — (\d{4}-\d{2}-\d{2}) — ([^\r\n]+)")
+REGISTRY=re.compile(r"(?m)^([A-Z][A-Z0-9_]+)=versions/([a-z0-9-]+\.txt)$")
+STOP={"the","this","our","my","project","projects","repo","repository","github","current","progress","status","work","system","app","of","with","in","at","we","are","what","where","how","that"}
+MAX_ROADMAP=1800000
+
+def subject_of_status(prompt):
+    """Project question -> source project phrase; empty string -> portfolio; None -> not a project query."""
+    raw=str(prompt or "").strip()
+    if not raw or len(raw)>260 or "\n" in raw:return None
+    q=re.sub(r"\s+"," ",raw.lower()).rstrip("?.!")
+    if re.search(r"\b(?:imported|chatgpt import|conversation history|remember|recall|last time|previous conversation|older chats?)\b",q):return None
+    if re.fullmatch(r"(?:(?:can|could|would) you (?:tell|show) me )?(?:what|which) projects? (?:are |is )?(?:(?:we |currently )?(?:working on|building)|active|in progress)(?: (?:in|on) (?:our|the|my) (?:github )?repo(?:sitory)?)?",q):return ""
+    for pat in (
+        r"(?:(?:can|could|would) you (?:tell|show) me )?where (?:we (?:are|re|'re)|are we) (?:at|up to|with|on)(?: with| on)? (.+)",
+        r"(?:what(?:'s| is)|tell me) (?:the )?(?:current )?(?:status|progress) (?:of|with|on|for) (.+)",
+        r"(?:how far along are we|how is (?:the )?progress) (?:with|on) (.+)",
+    ):
+        m=re.fullmatch(pat,q)
+        if not m:continue
+        subject=re.sub(r"\s+(?:in|on|from) (?:the|our|my) (?:github )?(?:repo|repository)$","",m[1]).strip()
+        subject=re.sub(r"^(?:the|our|my) ","",subject).strip()
+        if subject in ("repo","repository","github","all projects","projects","project","everything"):return ""
+        return subject if 0<len(subject)<90 else None
+    return None
+
+def terms(value):
+    return {w for w in re.findall(r"[\w§]{2,}",value.lower()) if w not in STOP}
+
+def discover(router):
+    """No built-in project names. Extract owned paths and nearby prose from §tart."""
+    lines=router.splitlines(); projects={}
+    for i,line in enumerate(lines):
+        for m in PATH.finditer(line):
+            path=m[0].lstrip("/")
+            if len(path)>150 or ".." in path.split("/") or path.endswith((".py",".md",".json",".yml",".yaml",".js",".html",".txt",".kt")):continue
+            found=projects.setdefault(path,{"path":path,"lines":[],"context":""})
+            found["lines"].append(i+1)
+            found["context"]=(found["context"]+" "+" ".join(lines[max(0,i-3):i+3]))[:1800]
+    return list(projects.values())
+
+def candidates(projects,subject):
+    wanted=terms(subject)
+    scored=[]
+    for item in projects:
+        path_terms=terms(item["path"].replace("-"," ").replace("/"," "))
+        nearby=terms(item["context"])
+        score=8*len(wanted&path_terms)+len(wanted&nearby)
+        if score:scored.append((score,item))
+    return sorted(scored,key=lambda x:(-x[0],len(x[1]["path"])))
+
+def source_file(read,api,token,repo,path,ref,maxbytes=130000):
+    direct=read(token,repo,path,ref,maxbytes)
+    if direct and isinstance(direct.get("body"),str):return direct
+    if path!="SWRLZ_SERVER_ROADMAP.md":return None
+    meta=api(token,"/repos/"+repo+"/contents/"+quote(path,safe="/")+"?ref="+quote(ref,safe=""))
+    if not isinstance(meta,dict) or meta.get("type")!="file":return None
+    size=meta.get("size");sha=str(meta.get("sha") or "")
+    if type(size)!=int or not 0<size<=MAX_ROADMAP or not SHA.fullmatch(sha):return None
+    obj=api(token,"/repos/"+repo+"/git/blobs/"+sha)
+    if not isinstance(obj,dict) or obj.get("encoding")!="base64" or obj.get("sha")!=sha:return None
+    try:
+        body=base64.b64decode(obj.get("content") or "",validate=False)
+        check=hashlib.sha1(b"blob "+str(len(body)).encode()+b"\x00"+body).hexdigest()
+        if len(body)!=size or check!=sha:return None
+        return {"body":body.decode("utf-8"),"sha":sha}
+    except (ValueError,TypeError,UnicodeError):return None
+
+def roadmap_event(roadmap,subject,path):
+    names=terms(subject)|terms(path.replace("-"," ").replace("/"," "))
+    hits=list(HEADING.finditer(roadmap))
+    for i,m in enumerate(hits[:200]):
+        if m[1] not in ("FINISHED","COMPLETED","STARTED"):continue
+        end=hits[i+1].start() if i+1<len(hits) else len(roadmap)
+        body=roadmap[m.end():min(end,m.end()+1200)]
+        if (terms(m[3])&names or len(terms(body[:800])&names)>=2):
+            if re.search(r"(?i)\bno (?:§e|forge|chat|lalm) changes?\b",body[:220]) and not terms(m[3])&names:continue
+            outcome=""
+            for line in body.splitlines()[:12]:
+                if re.match(r"^\*\*(?:Outcome|Result|Status):",line,re.I):
+                    outcome=line.split(":",1)[1].strip().replace("*","")[:230];break
+            return (m[1],m[2],m[3],outcome)
+    return None
+
+def versions(api,read,token,repo,wanted):
+    try:rec=api(token,"/repos/"+repo+"/commits/runtime")
+    except Exception:return [],""
+    sha=str(rec.get("sha") or "") if isinstance(rec,dict) else ""
+    if not SHA.fullmatch(sha):return [],""
+    index=read(token,repo,"VERSION.txt",sha,12000)
+    if not index:return [],sha
+    out=[]
+    for mod,path in REGISTRY.findall(index["body"]):
+        if not terms(mod.replace("_"," "))&wanted:continue
+        f=read(token,repo,"versions/"+path,sha,4500)
+        match=re.search(r"(?m)^VERSION=([A-Za-z0-9.+_-]{1,45})$",f["body"]) if f else None
+        if match:out.append((mod.replace("_"," ").title(),match[1]))
+        if len(out)>=4:break
+    return out,sha
+
+def build_status(record,repo,branch,subject,api,read):
+    """No inferred permission, model weights, release verification or global account reuse."""
+    token=record["token"]
+    head=api(token,"/repos/"+repo+"/commits/"+quote(branch,safe=""))
+    sha=str(head.get("sha") or "") if isinstance(head,dict) else ""
+    if not SHA.fullmatch(sha):return "I couldn't verify this branch's Git commit, so I can't report project status."
+    start=read(token,repo,"§wyrlz_§tart.md",sha,140000) or read(token,repo,"§tart.md",sha,140000)
+    if not start:return "I verified the repository, but its project-start router was not readable. I won't invent its project map."
+    projects=discover(start["body"])
+    if subject=="":
+        items=[x for x in projects if x["path"].startswith(("chat/","projects/"))][:8] or projects[:6]
+        if not items:return "The verified §tart did not expose distinct project directories."
+        return ("\n".join(["## Project areas documented by §tart",
+              "These are source references, not proof of currently active work.",
+              *("- "+x["path"]+" (router line "+str(min(x["lines"]))+")" for x in items),
+              "Ask about one project to check its guide, Roadmap and versions.",
+              "Source revision: "+sha[:12]]))
+    scored=candidates(projects,subject)
+    if not scored:return "I read §tart, but couldn't resolve "+subject[:80]+" to a documented project path. Which project did you mean?"
+    best=scored[0]
+    if len(scored)>1 and scored[1][0]>=best[0] and scored[1][1]["path"].split("/")[0]!=best[1]["path"].split("/")[0]:
+        return ("§tart points to more than one project for "+subject[:70]+": "+
+                best[1]["path"]+" and "+scored[1][1]["path"]+". Which one should I inspect? I won't mix their progress.")
+    path=best[1]["path"]
+    guide=None
+    # Resolve a specialized router only if the original §tart itself named it.
+    if path.startswith("projects/") and "forge" in path.lower() and "§tart_§E.md" in start["body"]:
+        guide=read(token,repo,"§tart_§E.md",sha,150000)
+    roadmap=source_file(read,api,token,repo,"SWRLZ_SERVER_ROADMAP.md",sha,MAX_ROADMAP)
+    event=roadmap_event(roadmap["body"],subject,path) if roadmap else None
+    modules,runtime_sha=versions(api,read,token,repo,terms(subject)|terms(path.replace("-"," ").replace("/"," ")))
+    lines=["## "+subject.title()+" — project progress from verified GitHub",
+           "§tart identifies the project area as "+path+" (line "+str(min(best[1]["lines"]))+")."]
+    if guide:
+        current=next((l.lstrip("# ").strip() for l in guide["body"].splitlines()[:25] if l.startswith("## Current ")),None)
+        if current:lines.append("Dedicated project guide: "+current+". This is a source-declared candidate, not automatically a live release.")
+    if event:
+        lines.append("Most recent matching Roadmap milestone: "+event[1]+" — "+event[2]+" ("+event[0].lower()+").")
+        if event[3]:lines.append("Recorded result: "+event[3])
+    else:lines.append("Roadmap: "+("no matching entry was verified in its latest bounded activity" if roadmap else "unavailable at this source revision")+".")
+    if modules:lines.append("Declared module versions: "+", ".join(k+" "+v for k,v in modules)+".")
+    elif runtime_sha:lines.append("Runtime registry was checked; no module could be attributed to this project unambiguously.")
+    lines.append("Evidence: §tart and "+("Roadmap" if roadmap else "no readable Roadmap")+" at "+sha[:12]+
+                 (", separate runtime registry at "+runtime_sha[:12] if runtime_sha else "")+
+                 ". Source records do not by themselves verify deployment or behavior on your device.")
+    return "\n\n".join(lines)
