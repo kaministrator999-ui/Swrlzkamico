@@ -1,4 +1,4 @@
-name: Validate §E v10.4 native starter and animation studio
+name: Validate §E v10.5 native starter and animation studio
 
 on:
   push:
@@ -12,11 +12,14 @@ on:
       - "projects/swrlz-forge-moba/patches/v10_1_sheep_tag_archive.py"
       - "projects/swrlz-forge-moba/scenes/sheep-tag-moonbell-archive.swyrl.json"
       - "projects/swrlz-forge-moba/tests/sheep_archive_playwright.mjs"
-      - "projects/swrlz-forge-moba/patches/v10_4_sheep_lanes.py"
+      - "projects/swrlz-forge-moba/patches/v10_5_sheep_run_recorder.py"
       - "projects/swrlz-forge-moba/runtime/sheep_touch_selection.js"
       - "projects/swrlz-forge-moba/runtime/sheep_placement_grid.js"
       - "projects/swrlz-forge-moba/runtime/sheep_touch_offset.js"
       - "projects/swrlz-forge-moba/runtime/sheep_lanes.js"
+      - "projects/swrlz-forge-moba/runtime/sheep_run_recorder.js"
+      - "projects/swrlz-forge-moba/runtime/sheep_run_review.js"
+      - "projects/swrlz-forge-moba/tests/sheep_run_playwright.mjs"
       - "projects/swrlz-forge-moba/tests/sheep_touch_playwright.mjs"
       - "projects/swrlz-forge-moba/patches/**"
       - "projects/swrlz-forge-moba/runtime/**"
@@ -58,6 +61,7 @@ jobs:
           - sheep_tag
           - sheep_archive
           - sheep_touch
+          - sheep_run
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -66,7 +70,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Independently reconstruct sealed v10.4 source
+      - name: Independently reconstruct sealed v10.5 source
         run: |
           python - <<'PY'
           import base64,gzip,hashlib,json,runpy
@@ -77,15 +81,15 @@ jobs:
           raw=gzip.decompress(base64.b64decode(''.join((root/p).read_text(encoding='utf-8').strip() for p in manifest['chunks'])))
           assert len(raw)==manifest['baseBytes']
           assert hashlib.sha256(raw).hexdigest()==manifest['baseSha256']
-          assert len(manifest['patches'])==64
-          assert manifest['patches'][-1]=='patches/v10_4_sheep_lanes.py'
+          assert len(manifest['patches'])==65
+          assert manifest['patches'][-1]=='patches/v10_5_sheep_run_recorder.py'
           source=raw.decode('utf-8')
           for patch in manifest['patches']:
               source=mod['load_patch'](root/patch)(source)
           output=source.encode('utf-8')
           assert len(output)==manifest['finalBytes']
           assert hashlib.sha256(output).hexdigest()==manifest['finalSha256']
-          for feature in ('V10_4_SHEEP_LANES','stTouchPlacementScreen','stTouchPlacementGround','touchPlacement','SWYRL_ENGINE_SHEEP_TAG','sheep-tag-meadow','sheep-tag-moonbell-archive','swyrl-sheep-tag-map-v1','SWYRL_ENGINE_TRANSPORT','animeCineRewind','animeCineFastForward','SWYRL_ENGINE_STAFF','rigFullStaffStatus','painted-full-v1','assets/anime/kami-full-staff.png','Maker v10.4',
+          for feature in ('V10_5_SHEEP_RUN_RECORDER','SWYRL_ENGINE_SHEEP_TAG_RUNS','SWYRL_ENGINE_RUNS','stRunAfterTick','stRunInstallUI','stRunViewerMount','swyrl-editor-play-run-v1','stTouchPlacementScreen','stTouchPlacementGround','touchPlacement','SWYRL_ENGINE_SHEEP_TAG','sheep-tag-meadow','sheep-tag-moonbell-archive','swyrl-sheep-tag-map-v1','SWYRL_ENGINE_TRANSPORT','animeCineRewind','animeCineFastForward','SWYRL_ENGINE_STAFF','rigFullStaffStatus','painted-full-v1','assets/anime/kami-full-staff.png','Maker v10.5',
                           'CANONICAL_ANIME_EPISODE_PROJECT','SWYRL_ENGINE_CINEMATIC',
                           'SWYRL_ENGINE_ANIMATION','SWYRL_ENGINE_STORYBOARD','SWYRL_ENGINE_RIG','SWYRL_ENGINE_SCENERY','SWYRL_ENGINE_SOCKETS','SWYRL_ENGINE_EMERGENCE','SWYRL_ENGINE_RELIEF',
                           'anime-rig-sockets-v1','anime-book-emergence-v1','anime-character-relief-v1',
@@ -103,11 +107,11 @@ jobs:
           Path('/tmp/swyrl-anime-engine.mjs').write_text(source[begin:source.rindex('</script>')],encoding='utf-8')
           print('ENGINE_EXPECTED_BYTES='+str(len(output)))
           print('ENGINE_EXPECTED_SHA256='+hashlib.sha256(output).hexdigest())
-          print('CANDIDATE_64_PATCH_RECONSTRUCT_OK')
+          print('CANDIDATE_65_PATCH_RECONSTRUCT_OK')
           PY
           node --check /tmp/swyrl-anime-engine.mjs
           python -m compileall -q projects/swrlz-forge-moba/patches projects/swrlz-forge-moba/build_space.py
-      - name: Verify complete v10.4 package against source and manifest
+      - name: Verify complete v10.5 package against source and manifest
         run: |
           python projects/swrlz-forge-moba/build_space.py --output /tmp/storybook-test
           cmp /tmp/swyrl-anime-engine.html /tmp/storybook-test/index.html
@@ -121,8 +125,8 @@ jobs:
           assert receipt['finalBytes']==manifest['finalBytes']
           assert receipt['finalSha256']==manifest['finalSha256']
           assert receipt['patches']==manifest['patches']
-          assert len(receipt['patches'])==64
-          assert receipt['patches'][-1]=='patches/v10_4_sheep_lanes.py'
+          assert len(receipt['patches'])==65
+          assert receipt['patches'][-1]=='patches/v10_5_sheep_run_recorder.py'
           expected={'episodes/ghosts-in-different-forms-ep01.html',
                     'scenes/ghosts-in-different-forms-ep01.swyrl.json',
                     'scenes/ghosts-in-different-forms-ep01-storybook.swyrl.json',
@@ -205,7 +209,7 @@ jobs:
               assert (root/asset).read_bytes()==packed, asset
               assert len(packed)==data['bytes'], asset
               assert hashlib.sha256(packed).hexdigest()==data['sha256'], asset
-          print('PACKAGING_64_PATCHES_AND_ALL_ASSETS_VERIFIED')
+          print('PACKAGING_65_PATCHES_AND_ALL_ASSETS_VERIFIED')
           PY
       - name: Check browser acceptance suite syntax
         run: |
@@ -224,6 +228,9 @@ jobs:
           node --check projects/swrlz-forge-moba/runtime/sheep_placement_grid.js
           node --check projects/swrlz-forge-moba/runtime/sheep_touch_offset.js
           node --check projects/swrlz-forge-moba/runtime/sheep_lanes.js
+          node --check projects/swrlz-forge-moba/runtime/sheep_run_recorder.js
+          node --check projects/swrlz-forge-moba/runtime/sheep_run_review.js
+          node --check projects/swrlz-forge-moba/tests/sheep_run_playwright.mjs
       - name: Install Chromium and Playwright
         run: |
           npm install --no-save playwright@1.56.1
@@ -246,7 +253,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: v10-4-${{ matrix.suite }}-browser-views
+          name: v10-5-${{ matrix.suite }}-browser-views
           path: |
             native-anime-*.png
             storybook-acceptance/
