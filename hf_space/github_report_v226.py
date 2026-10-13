@@ -191,10 +191,37 @@ def build_report(snapshot, requested, depth="structure", read_file=None):
                 3 if "/docs/" in "/" + path + "/" else 4)
         return (rank, path.count("/"), path.casefold())
     sorted_candidates = sorted(selected, key=priority)
+    # Breadth first: for each directory scope, inspect representatives from
+    # distinct direct children before filling remaining source-read slots.
+    chosen = []
+    chosen_paths = set()
+    def add_candidate(item):
+        if item["path"] not in chosen_paths:
+            chosen.append(item)
+            chosen_paths.add(item["path"])
+    for item in sorted_candidates:
+        if item["path"] in explicit_files:
+            add_candidate(item)
+    for root in paths:
+        if root and index[root]["type"] == "file":
+            continue
+        prefix = root + "/" if root else ""
+        grouped = {}
+        for item in sorted_candidates:
+            path = item["path"]
+            if not path.startswith(prefix):
+                continue
+            remainder = path[len(prefix):]
+            group = remainder.split("/")[0] if "/" in remainder else "(direct files)"
+            grouped.setdefault(group, item)
+        for item in grouped.values():
+            add_candidate(item)
+    for item in sorted_candidates:
+        add_candidate(item)
     budget = TOTAL_TEXT[depth]
     scanned = []
     skipped = Counter()
-    for item in sorted_candidates:
+    for item in chosen:
         if len(scanned) >= LIMITS[depth]:
             break
         path = item["path"]
