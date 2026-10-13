@@ -84,11 +84,25 @@ def _has_phrase(text: str, phrases: tuple[str, ...]) -> bool:
     return any(_phrase_present(text,phrase) for phrase in phrases)
 
 
+def _source_information_request(text: str) -> bool:
+    """Information-only prompts must not be forced to return source code."""
+    q=_norm(str(text or "").split("\n",1)[0])
+    if q.startswith(("using only the verified github source report", "explain the verified github source report")):
+        return True
+    q=re.sub(r"^(?:(?:@github|can you|could you|would you|please|tell me)\s+)+","",q)
+    return bool(
+        re.fullmatch(r"(?:how many|what(?:'s| is) the number of)\s+(?:total\s+)?(?:files?|folders?|directories|dirs?)(?:\s+.*)?",q)
+        or re.fullmatch(r"(?:where (?:are we|we are|we're) (?:at|up to|on|with)|what(?:'s| is) (?:the )?(?:current )?(?:status|progress) (?:of|with|on))\s+.*\b(?:chat|repo|repository|github)\b.*",q)
+    )
+
+
 def _current_programming_signal(text: str) -> bool:
     raw=str(text or "")
     prose=_norm(_strip_fenced_code(raw))
     fence=chr(96)*3
     if not prose and fence not in raw:
+        return False
+    if _source_information_request(raw):
         return False
     if fence in raw or bool(_explicit_languages(raw)):
         return True
@@ -1267,7 +1281,7 @@ def programming_intent(prompt: str, history: list[dict[str, Any]], pinned_contex
     original_request=_original_programming_request(history or []) if new_failure_evidence else ""
     continuation_reference=_programming_continuation_signal(text)
     inherited=continuation_reference and (bool(pins) or bool(prior_contract) or bool(last_artifact))
-    coding=_current_programming_signal(text) or inherited or bool(failure_evidence) or vague_failure
+    coding=not _source_information_request(text) and (_current_programming_signal(text) or inherited or bool(failure_evidence) or vague_failure)
     if not coding:
         return {
             "schema":"swrlz-programming-intent-v1",
