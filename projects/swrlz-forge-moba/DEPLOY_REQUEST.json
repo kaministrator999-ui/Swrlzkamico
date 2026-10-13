@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v10.4",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V10_4_SHEEP_LANES",
-  "reason": "Deploy Sheep Tag house lanes and physical creature traffic from PR #130. Sheep construct at their own feet with a nearest-clear-side ejection. Nearby houses snap flush or with a .6-unit sheep-only lane. Larger wolves pursue reachable sheep before buildings; swept body collision, alternate routes and backing out keep creatures from overlapping. Touch placement and the native editor/map/rules remain available. All six engine workflows and eleven desktop/phone suites passed on 9a66f50d1e37295200c228a8c0653e35ef9bdf04. Matrix: https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38316190232. The sealed package contains 64 patches, 23 unchanged assets, 1,520,413 HTML bytes and SHA-256 f2c2eeb2a28d91239b3cb7afd48c0d189373a260bd12a851e3aaa8fd92524a2d. All 63 older patches/runtime modules/assets/payloads remain intact. This request is the final repository mutation; completion requires exact deployment and hosted verification.",
-  "sourceCommit": "6d04109c27dfcd7e732e2550f3184db82755e999",
-  "sourceIntegritySha256": "f2c2eeb2a28d91239b3cb7afd48c0d189373a260bd12a851e3aaa8fd92524a2d"
+  "releaseVersion": "v10.5",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V10_5_SHEEP_RUN_RECORDER",
+  "reason": "Deploy the editor native Play-run recorder and spectator review from PR #134. The enable/disable setting works for all six native starters and imported custom projects. Recording is off by default. Enabled full capture retains the starting authored map, rules, seed, every native game-update state, poses, camera and exact events; optional 10 Hz and 2 Hz sampling remain explicit. Stop seals the observed run before restoring the editor. JSON, written 3D observations and self-contained offline HTML exports provide whole-world scrubbing, orbit, recorded-camera and object-follow review only after Stop, while ordinary player fog, gameplay and project saves remain unchanged. All six engine workflows and twelve desktop/phone suites passed on c9ca34452f896d3aa7ae7f09a9b10996d0dfe385, including every committed recorder case on both viewports and all 13 geometry scenarios. Matrix: https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38342934000. The sealed package contains 65 patches, 23 unchanged assets, 1,594,471 HTML bytes and SHA-256 cd3b50f06d3a802c025b3e530e743446d284633961bff0dacd46a656eb7e8ace. All 64 older patches/runtime modules/assets/payloads remain intact. This request is the final repository mutation; completion requires exact deployment and hosted verification.",
+  "sourceCommit": "6da367913c0eecc89c67a4976c3db407d851da15",
+  "sourceIntegritySha256": "cd3b50f06d3a802c025b3e530e743446d284633961bff0dacd46a656eb7e8ace"
 }
