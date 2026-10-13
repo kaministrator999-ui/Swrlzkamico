@@ -15,7 +15,7 @@ _REPO = re.compile(r"\b(?:github|repo|repository)\b", re.I)
 _READ = re.compile(
     r"\b(?:analy[sz]e|architecture|compare|count|describe|directory|"
     r"directories|explain|file|files|folder|folders|history|inspect|"
-    r"largest|list|locate|modified|overview|read|relationship|report|"
+    r"how|largest|list|locate|modified|overview|read|relate|related|relationship|report|"
     r"search|show|size|source|structure|summari[sz]e|tree|what|"
     r"where|which|how many|when)\b", re.I)
 _PATH = re.compile(
