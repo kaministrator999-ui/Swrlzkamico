@@ -47,7 +47,7 @@ def test_instructions_are_relevant_and_not_hardcoded_user_facts():
     assert art.intent("How many files are in my repo?")=="repo-count"
     assert art.intent("@github how many files are in the repo")=="repo-count"
     assert not gh.is_start_request(PROMPTS["report-explanation"])
-    assert "only X of Y" in art.style_hint(PROMPTS["report-explanation"])
+    assert "Only X of Y" in art.style_hint(PROMPTS["report-explanation"])
 
 def test_counts_answer_directly_from_complete_tree_only():
     calls=[]
