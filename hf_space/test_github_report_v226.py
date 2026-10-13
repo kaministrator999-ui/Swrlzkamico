@@ -62,6 +62,7 @@ def test_selected_paths_and_exact_union():
     assert any(x["path"] == "src/main.py" and any(s["name"] == "main" for s in x["symbols"]) for x in r["files"])
     assert any(x["path"] == "src/main.py" and x["todoMarkers"] == 1 for x in r["files"])
     assert any(x["path"] == "src/main.py" and "src.helper" in x["imports"] for x in r["files"])
+    assert any(x["path"] == "src/main.py" and any(y["target"] == "src/helper.py" for y in x["verifiedLocalImportMatches"]) for x in r["files"])
     assert r["inspection"]["explicitFilesNotInspected"] == []
     assert r["inspection"]["notInspected"] == 2
     assert r["inspection"]["complete"] is False
