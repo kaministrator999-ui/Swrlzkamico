@@ -1,6 +1,6 @@
 ID=web-chat
-VERSION=1.5.114
-REVISION=1.5.114-github-preview-persistence-v227
+VERSION=1.5.115
+REVISION=1.5.115-github-asset-freshness-v228
 KIND=web-interface
 SOURCE_BRANCH=runtime
 STATUS=active
