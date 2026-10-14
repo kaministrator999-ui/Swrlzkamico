@@ -1,6 +1,6 @@
 ID=server-runtime
-VERSION=2.3.395
-REVISION=2.3.395-hf-v242-dragon-chat51-source-grounding
+VERSION=2.3.396
+REVISION=2.3.396-hf-v243-github-start-parallel
 KIND=server-runtime
 SOURCE_BRANCH=runtime
 STATUS=active
