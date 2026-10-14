@@ -113,11 +113,16 @@ maulOrder=function(command){const result=maulWalkNativeOrder(command);if(maulWal
 }return result;};
 const maulWalkNativeStop=stopSession;
 stopSession=function(...args){maulPendingBuilds.clear();if(maulSpawnOverlay){maulSpawnOverlay.removeFromParent();maulSpawnOverlay.traverse(n=>{n.geometry?.dispose?.();n.material?.dispose?.();});maulSpawnOverlay=null;}return maulWalkNativeStop(...args);};
-const wallButton=$('maulBuildWall');
-wallButton?.remove();const wallIndex=maulUIBuilds.findIndex(pair=>pair[1]==='maze-wall');
-if(wallIndex>=0)maulUIBuilds.splice(wallIndex,1);
-const help=$('maulHelpPanel');
-if(help)for(const p of help.querySelectorAll('p')){
-  p.textContent=p.textContent.replace('Cheap walls extend the maze. ','Towers themselves shape the maze. ').replace('maze walls','tower-built mazes').replace('tap the ground to move your builder','tap the ground to move your builder, or place a tower to send your builder to construct it');
-}
+const maulWalkNativeInstall=maulInstallUI;
+maulInstallUI=function(...args){
+  const result=maulWalkNativeInstall(...args);
+  $('maulBuildWall')?.remove();
+  const wallIndex=maulUIBuilds.findIndex(pair=>pair[1]==='maze-wall');
+  if(wallIndex>=0)maulUIBuilds.splice(wallIndex,1);
+  const help=$('maulHelpPanel');
+  if(help)for(const p of help.querySelectorAll('p')){
+    p.textContent=p.textContent.replace('Cheap walls extend the maze. ','Towers themselves shape the maze. ').replace('maze walls','tower-built mazes').replace('tap the ground to move your builder','tap the ground to move your builder, or place a tower to send your builder to construct it');
+  }
+  return result;
+};
 window.SWYRL_ENGINE_MAUL.walkBuildStatus=()=>({enabled:maulWalkBuildEnabled(),pending:[...maulPendingBuilds.values()].map(p=>({...p}))});
