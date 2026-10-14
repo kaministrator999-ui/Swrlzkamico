@@ -52,6 +52,7 @@ on:
       - fix/chat-topic-intent-v239
       - fix/general-intent-risk-v240
       - feature/chat-dual-model-readonly-work-awareness-v241
+      - fix/dragon-chat51-grounded-reads-v242
       - feature/version-literacy-content-layout-v199
   workflow_dispatch:
 
