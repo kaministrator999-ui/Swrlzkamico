@@ -102,8 +102,16 @@ def classify_read(prompt, context=None):
     paths = _paths(q)
     branch_match = re.search(r"\b(?:on|from)\s+branch\s+([A-Za-z0-9][A-Za-z0-9._/-]{0,100})\b", q, re.I)
     named_branch = branch_match[1] if branch_match else ""
-    if named_branch:
-        paths = [p for p in paths if p != named_branch]
+    if not named_branch and isinstance(context, dict):
+        candidate = str(context.get("branch") or "")
+        rev = str(context.get("sourceSha") or "")
+        if (candidate not in ("", "main", "master")
+                and re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._/-]{0,100}", candidate)
+                and re.fullmatch(r"[a-f0-9]{40}", rev)):
+            named_branch = candidate
+    if branch_match:
+        paths = [p for p in paths if p != branch_match[1]]
+    suffix = (" on branch " + named_branch) if named_branch else ""
     # A directory named in a question is a literal scope, never a guessed
     # implementation owner. Do not pick random matching files by meaning.
     if not paths:
@@ -138,23 +146,23 @@ def classify_read(prompt, context=None):
             return None
     if re.search(r"\b(?:how many|count|number of|total|size of)\b", lower) and re.search(
             r"\b(?:files?|folders?|directories|directory|bytes|size)\b", lower):
-        return "@GitHub stats" + (" " + scoped[0] if scoped else "")
+        return "@GitHub stats" + (" " + scoped[0] if scoped else "") + suffix
     if re.search(r"\b(?:largest|biggest)\b", lower) and re.search(r"\bfiles?\b", lower):
-        return "@GitHub largest 15" + (" " + scoped[0] if scoped else "")
+        return "@GitHub largest 15" + (" " + scoped[0] if scoped else "") + suffix
     if re.search(r"\b(?:history|when|last modified|last changed|"
                  r"first added|changed|modified|changes? (?:to|in))\b",lower):
         if scoped:
-            return "@GitHub history " + scoped[0]
-        return "@GitHub report structure /"
+            return "@GitHub history " + scoped[0] + suffix
+        return "@GitHub report structure /" + suffix
     if re.search(r"\b(?:list|show|browse|open)\b", lower) and re.search(
             r"\b(?:files?|folders?|directories|contents|tree)\b", lower):
         if re.search(r"\b(?:all|every|entire|complete|recursive|again)\b", lower) and re.search(
                 r"\b(?:files?|tree)\b", lower):
-            return "@GitHub files recursive" + (" " + scoped[0] if scoped else "")
-        return "@GitHub files" + (" " + scoped[0] if scoped else "")
+            return "@GitHub files recursive" + (" " + scoped[0] if scoped else "") + suffix
+        return "@GitHub files" + (" " + scoped[0] if scoped else "") + suffix
     if re.search(r"\b(?:read|open|show)\b", lower) and re.search(r"\bfile\b", lower):
         if scoped:
-            return "@GitHub read file " + scoped[0]
+            return "@GitHub read file " + scoped[0] + suffix
         return None  # explicit target required for a source-file read
     if re.search(r"\b(?:explain|explore|describe|summari[sz]e|analy[sz]e|"
                  r"inspect|how|what|which|where|architecture|"
