@@ -20,7 +20,7 @@ TTL_SECONDS = 90 * 60
 MAX_ITEMS = 36
 MAX_RETRIES = 4
 PATH = re.compile(r"(?<![\w/])(?:[\w§.-]+/){1,7}[\w§.-]+\.(?:py|js|mjs|ts|tsx|jsx|html|css|json|md|kt|java|go|rs)(?!\w)")
-START = re.compile(r"\b(?:implement|build|fix|repair|debug|refactor|develop|design|start(?:ed)? working on|work(?:ing)? on|continue working on|improve|review)\b", re.I)
+START = re.compile(r"\b(?:implement|build|fix|repair|debug|refactor|develop|design|start(?:ed)? working on|work(?:ing)? on|continue working on|improve)\b", re.I)
 SUBJECT = re.compile(r"\b(?:github|repository|repo|coding|code|inference|model|chat|workstation|project|module|source|file|architecture)\b", re.I)
 HYPOTHETICAL = re.compile(r"^\s*(?:should|would|could|what if|imagine|hypothetically)\b", re.I)
 CAS = ("local raw=redis.call('GET',KEYS[1]);"
@@ -86,9 +86,17 @@ def declared_goal(prompt):
     # Questions asking whether we should do something aren't declarations.
     if re.match(r"^(?:can|may|is it possible|do you think)\b", prompt, re.I):
         return None
-    clean = re.sub(r"\s+", " ", prompt)[:220]
-    return {"title": clean, "paths": _paths(prompt),
-            "keywords": sorted(_keywords(clean))[:16]}
+    # A different conversation receives a small subject label, NOT the
+    # original user prompt or any credentials that may appear within it.
+    lower = prompt.lower()
+    action = START.search(prompt).group(0).lower()
+    area = ("GitHub inference" if "github" in lower and "inference" in lower
+            else "GitHub source" if "github" in lower
+            else "Chat model" if "model" in lower
+            else "project architecture")
+    title = (action + " · " + area)[:90]
+    return {"title": title, "paths": _paths(prompt),
+            "keywords": sorted(_keywords(prompt[:450]))[:16]}
 
 
 def _current(items, now):
