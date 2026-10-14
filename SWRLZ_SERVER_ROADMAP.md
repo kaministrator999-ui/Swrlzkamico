@@ -1,3 +1,18 @@
+## UPDATE STARTED — 2026-10-14 — v239 Chat ambiguous-topic inference, strict write boundary and next-thread durable interaction contract
+
+**User-approved behavior:** A vague read-related noun (e.g. “Files”) may get a contextual question or a proven, cheap read-only statistical preview. Read interpretations are revisable; untrusted source must stay attributed. In contrast, unclear writes/permissions must not be guessed: clarify target, intended operation and authorization; preserve all existing Stage-1 GitHub write locks. Pinning and live steering are future Chat product directions, not user authorization to mutate repositories.
+
+**Scope/ownership:** Live Chat candidate isolated as `fix/chat-topic-intent-v239` based on exactly published v238 `3cfd48af92b7a5fc21c816087a13ec6913921f7c`; draft [PR #151](https://github.com/kaministrator999-ui/Swrlzkamico/pull/151). Server-side `hf_space/github_connection.py` checks bounded verified GitHub context for underspecified one-word file topics and produces a clarification without tool execution. `hf_space/station.py` routes that lightweight clarification. The existing `test_github_read_trace_v236.py` is updated and `test_chat_topic_intent_v239.py` added. Documentation policy lives in the existing **canonical Chat overview**, routed by `§wyrlz_§tart.md`, rather than creating a parallel policy owner.
+
+**Concurrent work safety:** Separate §E v10.8/10.9 development was observed in the same repository on different surfaces; no §E files or Space targets are in scope. Main/stable documents and runtime/module authorities require fresh SHA/branch checks. Only one canonical HF Chat deployment request may proceed for a validated runtime candidate; do not race unrelated producers.
+
+**Validation and truth:** GitHub Account CI #38619952860 PASS on v239 SHA `c1deb7be770af9a00ca690305a6c40f8c4934466`. HF offline candidate validation, guarded release and actual phone acceptance remain separate; consult exact current receipts before claiming each. This documentation/handoff update is itself deployment-inert. Live steering and pinned workspace are **not** implemented by this small fix.
+
+**Next-chat handoff:** A fresh engineering conversation follows `§wyrlz_§tart.md`, reads the current interaction contract in `docs/engineering/SWRLZ_CHAT_OVERVIEW.md`, inspects v239 candidate/CI, current version registry and any outstanding deployment acceptance, and independently confirms current GitHub heads. Avoid duplicate work against ongoing sessions.
+
+**Status:** STARTED — contract recorded, runtime candidate pending complete release and owner testing.
+
+
 ## UPDATE STARTED — 2026-10-13 — v238 Live, reviewable §wyrlz Chat progress
 
 **User request:** Show informal, visually neat, timestamped status as soon as a user sends a Chat request, revealing the concrete workflow path while the assistant is working and preserving a reviewable activity log with the final response. Never expose private model deliberation, invent intermediate activities or fabricate progress percentages. Keep finishing v237 release separately (now completed with guarded HF success and registry).

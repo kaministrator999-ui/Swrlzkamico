@@ -264,6 +264,7 @@ Rules:
 
 Read these when relevant:
 
+- `docs/engineering/SWRLZ_CHAT_OVERVIEW.md` — **mandatory for Chat conversational intent, low-risk read ambiguity vs strict write authorization, pinned/collapsible source focus, and generation steering design**. Read its current Chat interaction section; distinguish an approved product direction from source/CI/live implementation.
 - `docs/engineering/SWRLZ_RUNTIME_HOTLOADER_GUIDE.md` — **mandatory for runtime-hot page/asset/module integration**, including adding routes, using the runtime manifest, deciding between manifest-routed pages and hydrated hot sources, versioning activation, and verifying hotload state.
 - `docs/engineering/SWRLZ_LOCKDOWN_CAMERA_SYSTEM.md` — **mandatory when creating or materially changing any Server/page/module/component**. Define the component's camera contract at build time, keep camera activation runtime-switchable where supported, and verify functional parity with cameras OFF and ON.
 - `docs/runbooks/GOOGLE_OAUTH_CHAT_AUTH_RUNBOOK.md` — Google sign-in, OAuth, account/session, or related Chat-auth work.
@@ -394,7 +395,7 @@ Each rule family has one primary owner.
 | Durable progress/release history | `SWRLZ_SERVER_ROADMAP.md` |
 | Lockdown camera architecture / build-time integration | `docs/engineering/SWRLZ_LOCKDOWN_CAMERA_SYSTEM.md` |
 | Cameras/logs/diagnostic evidence | `SWRLZ_CHAT_CAMERA_LOGS.md` |
-| Chat stage/theater composition | `docs/engineering/SWRLZ_CHAT_OVERVIEW.md` |
+| Chat stage/theater composition, read/write intent, pinned focus, steering | `docs/engineering/SWRLZ_CHAT_OVERVIEW.md` |
 | Project-work response formatting/readability | `docs/engineering/SWRLZ_PROJECT_WORK_RESPONSE_STANDARD.md` |
 | Architecture teaching for user-owned projects | `docs/engineering/SWRLZ_ARCHITECTURE_COACHING_GUIDE.md` |
 | Programming LALM runtime target + implementation truth | `docs/engineering/SWRLZ_PROGRAMMING_LALM_RUNTIME_ARCHITECTURE.md` |

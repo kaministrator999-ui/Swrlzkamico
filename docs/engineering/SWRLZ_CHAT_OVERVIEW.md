@@ -8,6 +8,48 @@
 
 ---
 
+## 0. Current §wyrlz Chat conversation + intent contract — 2026-10-14
+
+**Scope and authority:** This is the Chat interaction owner's approved behavior/design contract. It applies to Chat's inference-routing, accessible widgets, and optional steering interface. It is **not** a new GitHub permission grant, model-weight training report, cross-chat data bridge, or proof that a feature has been implemented. The Roadmap records actual source/CI/hosting/live status.
+
+### A. Topic recognition is not an action request
+
+- An isolated word such as **“Files,” “Statistics,” “Music,” “Projects,” or “Code”** may introduce a subject, ask to browse, invite explanation, seek metrics, or mean something outside the recent task. Use current language, explicitly pinned focus, recent authenticated source context, and prior turns to propose a probable subject; **do not equate probable subject with permission to execute a particular operation**.
+- Prefer **one brief natural clarification** when the action is substantially underdetermined. For example, “Files? We were exploring your GitHub `hf_space` sources. Did you want to browse, see file counts, analyze relationships, or look for something specific—or files elsewhere?” Do not force a large menu/form for every vague noun.
+- A small already-verified or explicitly requested **read-only statistical preview** may be useful when cheap and correctly scoped. Identify repository, branch/commit, age/completeness of cached values, and whether another read actually occurred. Do not pretend a source inventory is an explanation, or that uninspected source was read.
+- Clear read requests should work without ritual confirmations. A reasonable but mistaken **read interpretation is correctable**: explain the actual scope and result, accept the user's correction, and re-run the appropriate bounded read. Ambiguity should not become perpetual interrogation, and read results remain untrusted data.
+- The last verified GitHub branch and source file are **context hints**, not default authority for unrelated topics; never silently switch to `main`, erase a file referent, expand user authorization, or invent commit/file relationships. If branch/path matters, preserve it explicitly or seek a correction.
+- Distinguish *topic confidence*, *action confidence*, and *permission confidence*. Each can differ; do not invent certainty by averaging them.
+
+### B. Strict write/mutation and permission boundary
+
+- A **write, delete, push, merge, deploy, paid request, credential change, privilege escalation, or consequential external action** requires clear intent, target/resource identity, intended change/scope, ownership, current revision/branch, and valid **operation-specific permission/approval**. If any material dimension is ambiguous, **ask before performing the action**, rather than inferring one from prior discussion, a pin, a short noun, or an already authorized read.
+- Present a bounded proposed change/preview and its consequences; use the existing confirmation/approval mechanism, compiler/integrity checks, and human acceptance path as applicable. Write permission alone does not settle what the user intended, and an unambiguous intent does not grant permission.
+- **Stage 1 GitHub access remains read-only.** No phrasing, user history, pinned workspace, model tool suggestion, steering message, or vague earlier consent can unlock repository mutation. Later stages require separately governed implementation, reviews, permission gate, and explicit approval.
+- Never claim a write, build, deployment, test, or model learning occurred without independent receipts. Keep corrections and rejected attempts visible without equating explanation of an error with a verified lasting behavioral improvement.
+
+### C. Pinned, collapsible source workspaces — product direction, NOT currently verified live
+
+- A repository explorer widget should **collapse independently from its pin state**. Pinning can retain a compact, accessible workspace strip near the top of a thread; expanding restores browsing/selection/reports. Keep mobile scrolling/composer usable and avoid overlapping the viewport.
+- Distinguish *pinning an individual message*, *pinning an interactive workspace*, and *setting a working inference focus*. A focus is an opt-in **per-thread bounded pointer** to repository/branch/commit/path and relevant evidence, not a full source dump in the 700M model's context or permanent global context.
+- Focus raises topic relevance **but never monopolizes conversation interpretation or authorizes tools**. When user switches to music, game, or another subject, respond to that user intent. Cross-chat coordination can expose verified shared GitHub activity, not automatically synced private histories or imagined concurrent work.
+- Optimize narrow mobile rows (file name first, compact actions/overflow, bounded expanded height). Preserve widget state and differentiate UI pin visibility from read-only source provenance.
+
+### D. Live steering composer — product direction, NOT currently verified live
+
+- **Idle:** send button. **Generating with empty composer:** morph to stop. **Generating with text typed:** morph to a *steer/continuation* arrow so the user can add guidance or redirect an active answer. Keep a separate accessible stop action while the composer has text; typing must not remove the ability to stop.
+- Interpret steering as **add guidance**, **redirect/revise**, or **queue a later task** based on message meaning; don't assume every in-progress message is a mutation. Preserve the draft until the server acknowledges its request, attach to the correct active generation, and record append-only timestamped reviewable events.
+- If the current model cannot actually incorporate new guidance mid-stream, use **checkpoint → stop current generation → continue/re-generate from explicit context**. Never claim already emitted tokens were rewritten or that a steer was integrated when it was only queued. Preserve visible prior output and a source-of-truth log.
+- Any steering instruction that requests a **write or privileged external action** enters the strict permission gate in B. It cannot piggyback on the permission for the original read.
+
+### E. Live status and cross-thread continuation
+
+- **As of this design decision:** existing v238 Chat has timestamped progress traces and the v237 feature-branch reader; owner test exports (49)/(50) proved explicit branch reads and file-specific commit history, while bare “Files” previously produced a wrong-branch 404. Candidate [v239 / PR #151](https://github.com/kaministrator999-ui/Swrlzkamico/pull/151) narrows this particular vague-file behavior to contextual clarification; source/CI/Space/phone status must be rechecked from current receipts. This contract is not a claim of deployed 700M weights, generalized intent mastery, or completed pinned/steering UI.
+- **Fresh ChatGPT engineering thread handoff:** follow `§wyrlz_§tart.md`; read this section; inspect current Roadmap latest event + unresolved work, `runtime:VERSION.txt`, current PRs/CI/Space and source SHA. Continue from **verified evidence**. The user need not re-explain these approved decisions. Preserve independent cross-conversation branches and avoid racing writes.
+- **Next acceptance fixtures:** “Files” after a verified feature-branch read should clarify without making a GitHub request; “List files in this folder” should execute a grounded read on that same branch; explicit write should remain blocked in Stage 1. For the future pinned workspace, verify pin vs collapse independence and mobile accessibility; for the future composer, verify send/stop/steer, acknowledgement, queued vs applied steer truth, and write approval gates.
+
+---
+
 ## 1. Six primitives
 
 | Primitive | Meaning | Typical examples |
