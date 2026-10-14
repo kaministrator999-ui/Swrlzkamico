@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.1
+title: §wyrl§ Engine v11.2
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -10,7 +10,17 @@ header: mini
 short_description: Maul, Sheep Tag, paper theatre, Dragon Den and Starforge
 ---
 
-# §wyrl§ Engine · Maker v11.1
+# §wyrl§ Engine · Maker v11.2
+
+## Candidate v11.2 · Hover construction and glacial battlefield polish (not yet released)
+
+New canonical Frostveil starter opts into `maulBuilderFlight: hover-v1` and `maulVisualStyle: glacial-v2`. Each sector's winged builder flies directly across terrain and existing towers at **15 world units/second**, hovers approximately **3.25 units above the ground**, and constructs the tower directly underneath its position after travel and the existing route/gold/footprint rechecks. Manual flight remains inside its assigned territory; build placement still forbids protected entrances, gates, exits and occupied ground. Moving cancels a pending build, pause suspends movement, and legacy walk-v1 imported projects keep their original ground pathing and side-cell construction.
+
+The native visual update adds bounded, cached, original procedural 256px snow/ice and harbor-water textures, layered cliff/ice accents, highlighted entrances, pine snow, and lightweight animated builder wings. These are visual-only: no Maul route/wave schema or project asset is overwritten. The baseline 30-wave co-op and earlier Sheep Tag/anime/Den releases remain intact.
+
+**Status:** draft [PR #159](https://github.com/kaministrator999-ui/Swrlzkamico/pull/159), ordered 72nd patch `patches/v11_2_maul_flight_glacial_art.py`. Hash resealing, six engine workflows, native desktop/phone acceptance, reviewer approval, dedicated terminal deployment, and hosted audit are **required before calling this live**. This source-only checkpoint does not advance the published v11.1 engine.
+
+**Next separate engineering slices:** physical creep spacing and congested-lane traffic; legal blocked-route response with tower aggression; distinct enemy fast/stealth/detection/typed immunity/teleport/heal/Hydra/Infernal archetypes with counters; adjustable wave mixes and recorder events; optional endless and two-team automatically synchronized Mirror Survival (no player-sent monsters); neutral-balanced thematic builder sets; and a native Maul-specific map/route/wave creator. None of these remaining systems is claimed implemented by v11.2.
 
 ## Previous v10.9 candidate · Story actions and an animated first episode
 
