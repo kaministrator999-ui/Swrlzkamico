@@ -34,7 +34,7 @@ function stRunInstallCompressedUI() {
   picker.setAttribute('accept','.json,.gz,.json.gz,application/json,application/gzip');
   picker.addEventListener('change',async event=>{
     const file=picker.files?.[0];
-    if(!file||!(/\\.gz$/i.test(file.name)||file.type==='application/gzip'))return;
+    if(!file||!(/\.gz$/i.test(file.name)||file.type==='application/gzip'))return;
     event.stopImmediatePropagation();
     try{
       if(typeof DecompressionStream!=='function')throw Error('This browser cannot decompress gzip recordings.');

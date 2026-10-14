@@ -1,5 +1,12 @@
 # Frostveil Maul starter
 
+## Current v11.0 candidate · Compressed recordings and clear Maul spectator
+
+Frostveil Maul Play-run review now renders recorded snowfields, water, cliffs, tower families, maze walls, builders, creeps and the exit as distinct visual layers, with camera framing adjusted to the actual Maul map dimensions. The original Sheep Tag recorder presentation and recording schema remain intact. A new **Export compressed (.json.gz)** control uses lossless browser-native gzip; the recorder also imports these gzip files with format validation and a bounded 256 MiB decompressed limit. Existing raw JSON, text, HTML spectator, camera, timelines, events and saved projects continue to work.
+
+The add-only release brings the engine to **70 governed patches** and keeps **27 packaged assets**. All 69 predecessor patches and their runtime files are unchanged. Candidate code requires package, browser, CPU and exact hosted release verification; these notes are not publication evidence.
+
+
 Frostveil Maul is a separate native §E tower-defense project inspired by cooperative Wintermaul custom maps for Warcraft III: The Frozen Throne. Open **Projects → Frostveil Maul**, or use [the direct starter link](https://kamiloki-swrlz-forge-moba.static.hf.space/index.html?project=maul-frostveil), then press the editor's **Play** button.
 
 The classic layout has three long upper building bays, a broad crossbar and a lower defense funnel leading to one shared ship. Raised cliff edges separate the snowy maze floors; colored builder positions, spawn arches, route beacons and shore water make the lanes readable. Each round releases three scattered groups at each entrance, with 2.5 seconds between releases. Members of each group arrive together on distinct clear cells in the entrance area. Occupied entrances defer a whole group until it can fit safely. Nine connected defender sectors share these spaces. Enemies entering an upstream sector travel through successive defended sectors to the ship. Each leak costs shared lives. Defeat all thirty waves with lives remaining to win; exhausting lives loses the match. Ground enemies follow open cells through player-built mazes. Flying rounds cross sectors without following tower mazes, and boss rounds demand concentrated damage.

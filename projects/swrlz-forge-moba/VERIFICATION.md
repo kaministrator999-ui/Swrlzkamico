@@ -1,3 +1,9 @@
+## Current v11.0 candidate · Compressed recordings and clear Maul spectator
+
+Frostveil Maul Play-run review now renders recorded snowfields, water, cliffs, tower families, maze walls, builders, creeps and the exit as distinct visual layers, with camera framing adjusted to the actual Maul map dimensions. The original Sheep Tag recorder presentation and recording schema remain intact. A new **Export compressed (.json.gz)** control uses lossless browser-native gzip; the recorder also imports these gzip files with format validation and a bounded 256 MiB decompressed limit. Existing raw JSON, text, HTML spectator, camera, timelines, events and saved projects continue to work.
+
+The add-only release brings the engine to **70 governed patches** and keeps **27 packaged assets**. All 69 predecessor patches and their runtime files are unchanged. Candidate code requires package, browser, CPU and exact hosted release verification; these notes are not publication evidence.
+
 # §wyrl§ Engine v10.9 candidate · Story action and effect acceptance
 
 ## Current v10.9 candidate · Story actions and an animated first episode

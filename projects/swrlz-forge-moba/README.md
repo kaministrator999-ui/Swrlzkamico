@@ -1,6 +1,13 @@
-# §wyrl§ Engine · Maker v10.9
+# §wyrl§ Engine · Maker v11.0
 
-## Current v10.9 candidate · Story actions and an animated first episode
+## Current v11.0 candidate · Compressed recordings and clear Maul spectator
+
+Frostveil Maul Play-run review now renders recorded snowfields, water, cliffs, tower families, maze walls, builders, creeps and the exit as distinct visual layers, with camera framing adjusted to the actual Maul map dimensions. The original Sheep Tag recorder presentation and recording schema remain intact. A new **Export compressed (.json.gz)** control uses lossless browser-native gzip; the recorder also imports these gzip files with format validation and a bounded 256 MiB decompressed limit. Existing raw JSON, text, HTML spectator, camera, timelines, events and saved projects continue to work.
+
+The add-only release brings the engine to **70 governed patches** and keeps **27 packaged assets**. All 69 predecessor patches and their runtime files are unchanged. Candidate code requires package, browser, CPU and exact hosted release verification; these notes are not publication evidence.
+
+
+## Previous v10.9 candidate · Story actions and an animated first episode
 
 Open **Projects → Ghosts in Different Forms**, or `?project=anime-ghosts-ep01`, then use **Play** or **Watch Episode 01**. Kami and §wyrlz now act through the story: greeting and reaching, recoiling and bracing, casting, writing, stepping, hovering and recovering. Their arm chains, attached full-length staff, heads and costume depth pieces move together. Short dialogue windows leave room for a character to listen and react between lines. Kami's first attempt to burn a doorway nearly erases the library and makes §wyrlz fade. They recover by joining Kami's light with §wyrlz's written names, build a doorway that remembers them and step toward a world that answers, ‘Welcome back.’
 

@@ -1,4 +1,4 @@
-name: Validate §E v10.9 camera-safe storybook staging
+name: Validate §E v11.0 camera-safe storybook staging
 on:
   push:
     branches: [main]
@@ -6,7 +6,7 @@ on:
       - ".github/workflows/verify-swrlz-v8-9-camera-staging.yml"
       - "projects/swrlz-forge-moba/patches/v8_9_cinematic_staging.py"
       - "projects/swrlz-forge-moba/source-manifest.json"
-      - "projects/swrlz-forge-moba/patches/v10_9_episode_story_actions.py"
+      - "projects/swrlz-forge-moba/patches/v11_0_run_replay_quality.py"
       - "projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-ep01-performance.swyrl.json"
       - "projects/swrlz-forge-moba/tests/episode_performance_playwright.mjs"
       - "projects/swrlz-forge-moba/tests/episode_performance_package.py"
@@ -80,12 +80,12 @@ jobs:
           raw=gzip.decompress(base64.b64decode(''.join((root/p).read_text().strip() for p in manifest['chunks'])))
           assert len(raw)==manifest['baseBytes'] and hashlib.sha256(raw).hexdigest()==manifest['baseSha256']
           s=raw.decode('utf-8')
-          assert len(manifest['patches'])==69
-          assert manifest['patches'][-1]=='patches/v10_9_episode_story_actions.py'
+          assert len(manifest['patches'])==70
+          assert manifest['patches'][-1]=='patches/v11_0_run_replay_quality.py'
           for path in manifest['patches']:s=mod['load_patch'](root/path)(s)
           assert len(s.encode())==manifest['finalBytes']
           assert hashlib.sha256(s.encode()).hexdigest()==manifest['finalSha256']
-          for feature in ('V10_9_EPISODE_STORY_ACTIONS','SWYRL_ENGINE_PERFORMANCE','anime-performance-v1','SWYRL_ENGINE_STORY_EFFECTS','anime-story-effects-v1','MAUL_BATCH_CORE','grouped-v1','MAUL_LAYOUT_CORE','classic-v2','SWYRL_ENGINE_MAUL','MAUL_CORE','maul-frostveil','SWYRL_ENGINE_SHEEP_TAG_RUNS','SWYRL_ENGINE_RUNS','stRunAfterTick','stRunInstallUI','stRunViewerMount','swyrl-editor-play-run-v1','stTouchPlacementScreen','stTouchPlacementGround','touchPlacement','SWYRL_ENGINE_SHEEP_TAG','sheep-tag-meadow','sheep-tag-moonbell-archive','swyrl-sheep-tag-map-v1','SWYRL_ENGINE_TRANSPORT','animeCineRewind','animeCineFastForward','SWYRL_ENGINE_STAFF','rigFullStaffStatus','painted-full-v1','assets/anime/kami-full-staff.png','SWYRL_ENGINE_RIG','SWYRL_ENGINE_SCENERY','SWYRL_ENGINE_SOCKETS','SWYRL_ENGINE_EMERGENCE','SWYRL_ENGINE_RELIEF',
+          for feature in ('V11_0_RUN_REPLAY_QUALITY','SWYRL_ENGINE_PERFORMANCE','anime-performance-v1','SWYRL_ENGINE_STORY_EFFECTS','anime-story-effects-v1','MAUL_BATCH_CORE','grouped-v1','MAUL_LAYOUT_CORE','classic-v2','SWYRL_ENGINE_MAUL','MAUL_CORE','maul-frostveil','SWYRL_ENGINE_SHEEP_TAG_RUNS','SWYRL_ENGINE_RUNS','stRunAfterTick','stRunInstallUI','stRunViewerMount','swyrl-editor-play-run-v1','stTouchPlacementScreen','stTouchPlacementGround','touchPlacement','SWYRL_ENGINE_SHEEP_TAG','sheep-tag-meadow','sheep-tag-moonbell-archive','swyrl-sheep-tag-map-v1','SWYRL_ENGINE_TRANSPORT','animeCineRewind','animeCineFastForward','SWYRL_ENGINE_STAFF','rigFullStaffStatus','painted-full-v1','assets/anime/kami-full-staff.png','SWYRL_ENGINE_RIG','SWYRL_ENGINE_SCENERY','SWYRL_ENGINE_SOCKETS','SWYRL_ENGINE_EMERGENCE','SWYRL_ENGINE_RELIEF',
                           'anime-rig-sockets-v1','anime-book-emergence-v1','anime-character-relief-v1','animeMakePaperBook','popLowStageTrim','animePopupStageSafety','popKamiArt',
                           'popSwyrlzArt','animePopSanitize','animeDirectorInstall',
                           'animePopUp','popupHinge','popUpStatus','animeUpdateCelLayers'):

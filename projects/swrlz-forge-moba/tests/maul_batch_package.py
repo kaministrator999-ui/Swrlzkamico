@@ -7,7 +7,7 @@ import math
 from pathlib import Path
 
 SCENE = 'scenes/maul-frostveil-groups.swyrl.json'
-PATCH = 'patches/v10_9_episode_story_actions.py'
+PATCH = 'patches/v11_0_run_replay_quality.py'
 LEGACY_SCENE = 'scenes/maul-frostveil-classic.swyrl.json'
 LEGACY_BYTES = 108598
 LEGACY_SHA256 = '858552d9d8a9bdad89f445e6747641b34d9ac7c69c2e207e294ce83dd94718a2'
@@ -51,8 +51,8 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--package',type=Path,required=True)
     args=parser.parse_args();receipt=json.loads((args.package/'SOURCE.json').read_text())
-    require(receipt['sourceVersion']=='§wyrl§ Engine v10.9', 'wrong source version')
-    require(len(receipt['patches'])==69 and receipt['patches'][-1]==PATCH, 'wrong governed patch chain')
+    require(receipt['sourceVersion']=='§wyrl§ Engine v11.0', 'wrong source version')
+    require(len(receipt['patches'])==70 and receipt['patches'][-1]==PATCH, 'wrong governed patch chain')
     require(len(receipt['assets'])==27 and SCENE in receipt['assets'] and LEGACY_SCENE in receipt['assets'], 'wrong asset set or missing preserved v10.7 scene')
     raw=(args.package/SCENE).read_bytes();meta=receipt['assets'][SCENE]
     require(len(raw)==meta['bytes'] and hashlib.sha256(raw).hexdigest()==meta['sha256'], 'native grouped scene differs from package receipt')
