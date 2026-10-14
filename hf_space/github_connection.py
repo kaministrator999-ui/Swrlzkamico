@@ -50,7 +50,7 @@ def _read_stage_command(prompt):
     if not match:
         return False
     cmd = match[1].strip().lower()
-    return bool(cmd in ("help", "permissions", "capabilities", "files", "stats", "largest", "report", "chat status", "project status", "project guide", "workflow guide")
+    return bool(cmd in ("help", "permissions", "capabilities", "files", "stats", "largest", "report", "chat status", "project status", "project guide", "workflow guide", "branches")
                 or re.fullmatch(r"project status\s+[^\r\n]{1,90}",cmd)
                 or re.fullmatch(r"(?:files|stats|largest|history|search|compare|report)\s+[^\r\n]{1,1200}", cmd)
                 or re.fullmatch(r"(?:read|open|view)\s+[^\r\n]{1,220}", cmd))
@@ -1263,7 +1263,11 @@ def _github_command(user, prompt):
                 lambda path, sha, max_bytes: _read_optional(rec["token"], repo, path, sha, max_bytes))
             return scope_report.markdown_report(report)
         except explorer.ExplorerError as exc:
-            return "GitHub report unavailable: " + str(exc)
+            return ("GitHub report unavailable on verified branch `" + source_branch +
+                    "`: " + str(exc) +
+                    ". No uninspected implementation was inferred. If this path exists "
+                    "on another branch, use @GitHub branches and add "
+                    "`on branch BRANCH_NAME` to your report request.")
 
     if lower == "largest" or lower.startswith("largest "):
         raw = cmd[8:].strip() if len(cmd) > 7 else ""
@@ -1297,18 +1301,31 @@ def _github_command(user, prompt):
         except explorer.ExplorerError as exc:
             return "Could not complete filename search: "+str(exc)
     if lower.startswith("history "):
+        raw_target = cmd[8:].strip()
+        source_branch = check["defaultBranch"]
+        explicit_branch = re.fullmatch(
+            r"(?s)(.*?)\\s+on\\s+branch\\s+([A-Za-z0-9][A-Za-z0-9._/-]{0,100})", raw_target)
+        if explicit_branch:
+            raw_target = explicit_branch[1].strip()
+            source_branch = explicit_branch[2]
         try:
-            snapshot = explorer.pinned_tree(_api, rec["token"], repo, check["defaultBranch"])
-            target = explorer.safe_path(cmd[8:].strip(), allow_root=False)
+            snapshot = explorer.pinned_tree(_api, rec["token"], repo, source_branch)
+            target = explorer.safe_path(raw_target, allow_root=False)
             if not any(x["path"]==target for x in snapshot["items"]):
                 return "Path not present in verified repository: "+target
             data = explorer.history(_api, rec["token"], repo, snapshot["sourceSha"], target)
-            return ("## GitHub path history: "+target+"\nRepository: "+repo+
-                    "\nBranch: "+snapshot["branch"]+"\nRevision: "+snapshot["sourceSha"]+
-                    "\nLast recorded commit: "+str(data["lastCommit"] or "unavailable")+
-                    "\nFirst visible path commit: "+str(data["firstSeenPathCommit"] or "unverified")+
-                    "\nComplete history scan: "+str(data["firstSeenComplete"])+
-                    "\n"+data["caution"])
+            latest = data["lastCommit"] if isinstance(data["lastCommit"], dict) else {}
+            earliest = data["firstSeenPathCommit"] if isinstance(data["firstSeenPathCommit"], dict) else {}
+            return ("## GitHub path history: " + target +
+                    "\\nRepository: " + repo +
+                    "\\nBranch: " + snapshot["branch"] +
+                    "\\nRevision: " + snapshot["sourceSha"] +
+                    "\\nLast path-changing commit: " + str(latest.get("sha") or "unverified") +
+                    "\\nCommit timestamp (UTC): " + str(latest.get("date") or "unverified") +
+                    "\\nCommit subject: " + _safe_fragment(latest.get("summary"), 180) +
+                    "\\nFirst visible path commit: " + str(earliest.get("sha") or "unverified") +
+                    "\\nComplete history scan: " + str(data["firstSeenComplete"]) +
+                    "\\n" + data["caution"])
         except explorer.ExplorerError as exc:
             return "GitHub history unavailable: "+str(exc)
     if lower.startswith("compare "):
