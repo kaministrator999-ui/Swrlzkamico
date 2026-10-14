@@ -5,6 +5,7 @@ GitHub blob, never OAuth credentials, tool access, or patch authorization.
 """
 from __future__ import annotations
 import re
+import hashlib
 from fastapi import HTTPException
 import github_explorer_v223 as explorer
 
@@ -112,6 +113,10 @@ def events(gh, data, coder_generator):
         if not source or source.get("sha") != blob or not isinstance(source.get("body"), str):
             raise HTTPException(503, "Source unavailable or blob identity mismatched")
         body = source["body"]
+        raw = body.encode("utf-8")
+        actual_blob = hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\0" + raw).hexdigest()
+        if actual_blob != blob:
+            raise HTTPException(503, "Source bytes failed Git blob integrity verification")
         excerpt = gh.engine_code_agent_v217._code_context(body, request["goal"], 5200)
         truncated = len(body) > 5200
         header = ("Verified source: " + repo + "/" + path + "\n"
@@ -150,20 +155,25 @@ def events(gh, data, coder_generator):
                          "programmingIntent": {"codingTask": False}}
         emitted = 0
         completed = False
-        for event in coder_generator(model_request):
-            if not isinstance(event, dict):
-                continue
-            if event.get("type") == "DELTA":
-                chunk = str(event.get("text") or "")
-                if emitted + len(chunk) > 11000:
+        try:
+            for event in coder_generator(model_request):
+                if not isinstance(event, dict):
+                    continue
+                if event.get("type") == "DELTA":
+                    chunk = str(event.get("text") or "")
+                    if emitted + len(chunk) > 11000:
+                        break
+                    emitted += len(chunk)
+                    yield {"type": "DELTA", "text": chunk}
+                elif event.get("type") in ("COMPLETE", "COMPLETED"):
+                    completed = True
                     break
-                emitted += len(chunk)
-                yield {"type": "DELTA", "text": chunk}
-            elif event.get("type") in ("COMPLETE", "COMPLETED"):
-                completed = True
-                break
-            elif event.get("type") == "FAILED":
-                break
+                elif event.get("type") == "FAILED":
+                    break
+        except Exception:
+            yield {"type": "STATUS", "phase": "CODER_MODEL_UNAVAILABLE",
+                   "reason": "Qwen inference failed; source verification does not imply semantic analysis.",
+                   "categories": ["CODER", "UNAVAILABLE", "READ_ONLY"]}
         if not completed:
             yield {"type": "DELTA", "text": "\n\nCoder analysis was incomplete; do not treat its partial response as verified."}
         yield {"type": "COMPLETED", "phase": "COMPLETE"}
