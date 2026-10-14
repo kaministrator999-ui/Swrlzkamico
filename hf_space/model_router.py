@@ -282,7 +282,15 @@ def dispatch(model_id: str, payload: dict[str,Any], r39_generate: Callable[[dict
     payload["programmingIntent"]=intent
     yield {"type":"PROGRAMMING_INTENT","intent":intent}
     requested_model_id=model_id
-    if intent.get("codingTask") and model_id in ("700m","stock","r39","coder"):
+    # Read-only programming analysis is not a code-generation task. Preserve the
+    # requested model unless the user actually asks to produce or change code.
+    # Explicit no-write instructions take precedence over incidental action words.
+    prompt_text=str(payload.get("prompt") or "").lower()
+    read_only=bool(re.search(r"\b(?:do not|don\x27t|without)\s+(?:modify|edit|commit|deploy|change|write)\b|\b(?:analysis|planning|review)\s+only\b",prompt_text))
+    analysis_request=bool(re.search(r"\b(?:explain|review|analy[sz]e|inspect|discuss|compare|what does|how does|check whether|tell me what overlap)\b",prompt_text))
+    mutation_request=bool(re.search(r"\b(?:write|create|implement|modify|edit|patch|fix|refactor|generate|build)\b",prompt_text))
+    should_use_coder=bool(intent.get("codingTask")) and not read_only and (mutation_request or not analysis_request)
+    if should_use_coder and model_id in ("700m","stock","r39","coder"):
         model_id="coder"
         if model_id!=requested_model_id:
             yield {"type":"ROUTE","phase":"CODER_AUTO_ROUTE","requestedModelId":requested_model_id,"selectedModelId":"coder","reason":"programming-intent"}
