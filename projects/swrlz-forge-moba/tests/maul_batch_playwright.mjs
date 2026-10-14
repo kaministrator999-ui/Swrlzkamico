@@ -245,7 +245,7 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
     assert.deepEqual(JSON.parse(await downloadRun(page,'stRunExportJson',jsonPath)),run);const transcript=await downloadRun(page,'stRunExportText',textPath);assert.match(transcript,/group/i);assert.match(transcript,/camera/i);
     const html=await downloadRun(page,'stRunExportHtml',htmlPath);assert.ok(html.includes('SWYRL_RUN_VIEWER'));assert.ok(html.includes('function stRunDrawMaul('));assert.ok(html.includes(profile));
     const zippedWait=page.waitForEvent('download',{timeout:15000});await tap(page,'stRunExportGzip');const zippedFile=await zippedWait;
-    assert.match(zippedFile.suggestedFilename(),/\\.swyrl-run\\.json\\.gz$/);const gzip=await readFile(await zippedFile.path());
+    assert.match(zippedFile.suggestedFilename(),/\.swyrl-run\.json\.gz$/);const gzip=await readFile(await zippedFile.path());
     assert.ok(gzip.length<Buffer.byteLength(JSON.stringify(run)),'Gzip must reduce native recording bytes');
     assert.deepEqual(JSON.parse(gunzipSync(gzip).toString('utf8')),run,'Compressed recording changed captured state/events');
     await page.locator('#stRunFile').setInputFiles({name:'acceptance.swyrl-run.json.gz',mimeType:'application/gzip',buffer:gzip});
