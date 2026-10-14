@@ -1117,6 +1117,14 @@ def _github_command(user, prompt):
             return ("GitHub confirmed branch creation: " + repo + "/" + action["branch"]) if result.get("ref") else "GitHub did not confirm branch creation."
         return "Unknown GitHub proposal; nothing written."
 
+    if GITHUB_CAPABILITY_STAGE == "read-repository" and lower == "project guide":
+        return project_start_report(user, repo)
+    if GITHUB_CAPABILITY_STAGE == "read-repository" and lower == "workflow guide":
+        return ("## GitHub workflow guide · source-only\\n"
+                "Browse verified workflow files with @GitHub files .github/workflows, "
+                "then inspect a named workflow with @GitHub read file .github/workflows/NAME.yml. "
+                "A workflow file is not a workflow-run receipt; executions and all "
+                "mutations remain locked in Stage 1.")
     if engine_code_agent_v217.is_command(prompt):
         return "This source edit needs the Station model stream. Use Chat, not the legacy read-only command processor."
     if github_project_v213.is_command(prompt):
