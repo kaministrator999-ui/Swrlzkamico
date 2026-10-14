@@ -1,3 +1,15 @@
+## UPDATE CHECKPOINT — 2026-10-14 — §E v11.1 exact-source integration accepted; dedicated Forge publication next
+
+**Concluded implementation and merge:** Reviewed PR #157 `integration/forge-v11-1-acceptance-20261014@425754080f19f132122f4155eceec7ef36cd7a9a` (PR #154 recorder/spectator and PR #156 walked builder/protected spawn cumulative) merged to `main@bbe56716867e046d3a4f887aa2f5829f25709cd1`. Merge includes no extra Forge source changes beyond reviewed PR; `main` manifest Git blob `4397b1954f01349b9bafe9bf8f3db7a341a6cb01` equals PR candidate. Engine v11.1: 71 patches, last `patches/v11_1_maul_walk_builder.py`, 27 assets, final HTML **2,027,727 bytes**, SHA-256 `c96e5fea45bd316750e2fcc60ff1cbd96feadd6a90a56a5667dddad0aaf21121`.
+
+**Exact-source independent CI verified:** Candidate `425754080f19f132122f4155eceec7ef36cd7a9a` all six workflows COMPLETED/SUCCESS: verify anime #38643766812, native cinematic #38643766881, camera/staging #38643766877, anime cels #38643766920, existing hosted release audit #38643766928 (checks prior published version, not v11.1), and full native/browser matrix #38643766910 (all sixteen desktop/phone jobs SUCCESS including Sheep Tag archive, sheep-run recorder, Maul batch gzip export/import, Maul gameplay, storybook and rigs). The separate failed Vercel commit status is retired infrastructure, not the Forge release authority. Initial #156 matrix had two test problems; integrated PR fixed 71-patch expectation and replaced frozen-clock RAF feedback wait, without changing engine runtime or art. No runtime user acceptance claimed.
+
+**Boundary and next action:** Main Forge source merged but **not yet deployed**. Use existing `projects/swrlz-forge-moba/DEPLOY_REQUEST.json` as the single independent Forge release trigger, target exactly `kamiloki/swrlz-forge-moba`, source commit `bbe56716867e046d3a4f887aa2f5829f25709cd1`, marker `V11_1_MAUL_WALK_BUILDER`, digest above. Watch terminal dedicated deployment and post-deploy audit of exact HTML, SOURCE and all 27 assets. Do not touch main Chat HF request or advance unrelated registered Chat/Server versions. Preserve merge and CI evidence if upload fails and diagnose self-caused failures inside existing scope.
+
+**State:** SOURCE MERGED + EXACT CANDIDATE STATIC/16-BROWSER ACCEPTANCE VERIFIED / DEDICATED §E PRODUCTION PUBLICATION NEXT / LIVE v11.1 PENDING.
+
+---
+
 ## UPDATE STARTED — 2026-10-14 — §E v11.1 recorder and walk-builder combined PR integration
 
 **Owner authorization and scope:** User directs integration of the useful open Forge PR work after exact-source gate verification, without touching separate Hugging Face Chat. Integrate v11.0 Maul spectator/lossless run recording fixes and v11.1 walk-to-build/protected-spawn changes as one cumulative §E release. PR #154 is predecessor; PR #156 holds the combined candidate. Avoid duplicate Chat merges: v238/v242 source is already published through v242.
