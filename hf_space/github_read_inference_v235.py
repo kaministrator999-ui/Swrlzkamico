@@ -8,7 +8,7 @@ from __future__ import annotations
 import re
 
 _MUTATION = re.compile(
-    r"\b(?:add|build|change|commit|create|delete|deploy|dispatch|edit|fix|"
+    r"\b(?:add|build|create|delete|deploy|dispatch|edit|fix|"
     r"implement|install|merge|modify|patch|push|refactor|remove|rename|"
     r"rerun|retry|rewrite|run|trigger|update|upload|write)\b", re.I)
 _REPO = re.compile(r"\b(?:github|repo|repository)\b", re.I)
@@ -74,9 +74,13 @@ def classify_read(prompt, context=None):
     raw = str(prompt or "").strip()
     if not raw or len(raw) > 600 or "\n" in raw or "\r" in raw:
         return None
+    if re.fullmatch(
+            r"(?i)(?:what (?:is|are)|how does) (?:github|(?:a|the) (?:git )?repo(?:sitory)?)"
+            r"(?: work)?[?.!]*", raw):
+        return None  # General GitHub education is not a connected-repository read.
     if _EXPLICIT_COMMAND.match(raw):
         return None  # existing command owners handle their own parameters
-    if _MUTATION.search(raw):
+    if _MUTATION.search(raw) or re.search(r"\bcommit\s+(?:my\s+|the\s+|these\s+)?(?:changes?|code|files?)\b", raw, re.I):
         return None
     if re.search(r"\b(?:remember|recall|previous chat|chat history|"
                  r"imported conversations?|chatgpt archive)\b", raw, re.I):
@@ -96,6 +100,10 @@ def classify_read(prompt, context=None):
         return None
     lower = q.casefold()
     paths = _paths(q)
+    branch_match = re.search(r"\b(?:on|from)\s+branch\s+([A-Za-z0-9][A-Za-z0-9._/-]{0,100})\b", q, re.I)
+    named_branch = branch_match[1] if branch_match else ""
+    if named_branch:
+        paths = [p for p in paths if p != named_branch]
     # A directory named in a question is a literal scope, never a guessed
     # implementation owner. Do not pick random matching files by meaning.
     if not paths:
@@ -114,8 +122,10 @@ def classify_read(prompt, context=None):
             if re.search(r"\b(?:folder|directory|under|inside|within|files?\s+in|directories\s+in)\b", q, re.I):
                 paths = [_safe(m[1])]
     scoped = paths[:]
-    if not scoped and re.search(r"\b(?:this|that|those|same|last|previous)\s+"
-                                r"(?:source\s+)?files?\b|\b(?:it|that file)\b",lower):
+    if last_file and paths and re.search(r"\b(?:that|this|the|original)\s+(?:original\s+)?file\b", lower):
+        scoped = [last_file] + [p for p in paths if p != last_file]
+    if not scoped and re.search(r"\b(?:this|that|those|same|last|previous|original|first)\s+"
+                                r"(?:(?:original|first|previous|source|earlier)\s+)*files?\b|\b(?:it|that file)\b",lower):
         if last_file:
             scoped = [last_file]
         elif not explicit:
@@ -138,6 +148,9 @@ def classify_read(prompt, context=None):
         return "@GitHub report structure /"
     if re.search(r"\b(?:list|show|browse|open)\b", lower) and re.search(
             r"\b(?:files?|folders?|directories|contents|tree)\b", lower):
+        if re.search(r"\b(?:all|every|entire|complete|recursive|again)\b", lower) and re.search(
+                r"\b(?:files?|tree)\b", lower):
+            return "@GitHub files recursive" + (" " + scoped[0] if scoped else "")
         return "@GitHub files" + (" " + scoped[0] if scoped else "")
     if re.search(r"\b(?:read|open|show)\b", lower) and re.search(r"\bfile\b", lower):
         if scoped:
@@ -147,6 +160,7 @@ def classify_read(prompt, context=None):
                  r"inspect|how|what|which|where|architecture|"
                  r"dependencies|related|relationship|work|purpose|overview)\b", lower):
         if scoped:
-            return "@GitHub report deep " + " | ".join(scoped)
-        return "@GitHub report structure /"
+            cmd = "@GitHub report deep " + " | ".join(scoped)
+            return cmd + (" on branch " + named_branch if named_branch else "")
+        return "@GitHub report structure /" + (" on branch " + named_branch if named_branch else "")
     return None
