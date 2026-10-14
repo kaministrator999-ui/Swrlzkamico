@@ -87,6 +87,6 @@
     "patches/v11_0_run_replay_quality.py",
     "patches/v11_1_maul_walk_builder.py"
   ],
-  "finalBytes": 2027326,
-  "finalSha256": "3a4ad6a461f3af2d73cf978e398011ea4ec46eac1aeb4ae01bf0a89f2ff1312e"
+  "finalBytes": 2027360,
+  "finalSha256": "349a34897083ec63698eb4c133a75ac489efd94c9e1a42fc29844cff0054bb97"
 }
