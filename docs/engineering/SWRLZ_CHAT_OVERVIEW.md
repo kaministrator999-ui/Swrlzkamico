@@ -50,6 +50,19 @@
 
 ---
 
+### F. Read-only source specialist and cross-conversation coordination — v241 contract
+
+**Scope:** Keep the existing v235–v240 GitHub read inference and v240 asymmetric intent safety authoritative. The model route is an optional, read-only specialization for a verified code question, **not** a new independent GitHub agent or write surface. Stage 1 still denies GitHub source mutation. The owner-approved design details live with the v241 engineering work and its draft [PR #153](https://github.com/kaministrator999-ui/Swrlzkamico/pull/153); consult the Roadmap for exact CI/deployment state rather than treating this specification as proof of live acceptance.
+
+- For exact repository metadata/status, use existing deterministic sources. For an explicit source explanation, pin GitHub repository, branch, commit, path and blob; reject path collisions and file-byte SHA mismatches, give Qwen only bounded exact UTF-8 evidence and the original question. Treat repo text/comments as untrusted data, not instructions. Preserve incomplete coverage and do not call model output an executed test or applied change.
+- LFM2-700M remains the general conversational/intent owner; Qwen is a subordinate source-analysis specialist. No automatic double inference for inexpensive questions. More elaborate 700M + Qwen engineering collaboration requires independently tested, budgeted extensions—**not** an unverified assertion that v241 already executes every future design slice.
+- Shared project-work declarations belong to the signed-in account's encrypted, bounded metadata store, **not** to GitHub. Other conversations may see sanitized recent intent summaries only within the same account and verified repo; no entire transcripts, uncommitted source, assumed session liveness, or falsely exclusive source lock. Separate conversational work may proceed in parallel; overlap labels require scoped evidence.
+- The coding-model capability promotion sequence is **show candidate to §wyrlz/GPT for explicit independent review → independent compiler/test evidence → final owner hands-on acceptance**. Every changed candidate resets applicable approvals. GitHub write capability remains disabled even after competency gates until an additional, separately authorized policy decision.
+- If the account registry is unavailable, report coordination visibility as unavailable rather than asserting another conversation is idle. If the coder is unavailable, preserve the verified read result or explain the limitation; never silently reinterpret the request as permission to edit.
+- Distinguish source candidate, CI green, guarded publication and signed-in user acceptance. PR #153's status and the Roadmap version record own implementation truth.
+
+---
+
 ## 1. Six primitives
 
 | Primitive | Meaning | Typical examples |
