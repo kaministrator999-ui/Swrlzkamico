@@ -1,3 +1,13 @@
+## UPDATE CHECKPOINT — 2026-10-14 — v242 exact-source tests passed; guarded Chat publication authorized
+
+**Source:** isolated task branch `fix/dragon-chat51-grounded-reads-v242@b05bf100a14fcda46c8a60da5c57490cf8c06584` ([draft PR #155](https://github.com/kaministrator999-ui/Swrlzkamico/pull/155)) based on exact released v241 source `34a72fa7d41eebec784433f16a33bec570f2bdbc`. Preserved Stage-1 write denial, user/account isolation, Forge isolation, immutable source/branch evidence and 700M deterministic read fallback. Five synthetic Dragon Chat (51) regressions plus correction for Station source size; no claim of real phone acceptance or trained weights. First GitHub account CI candidate #38635351174 failed v235 deterministic-report fallback, source defect repaired rather than suppressing old test.
+
+**Verification:** [GitHub Account/Stage 1 security #38635701468](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38635701468) **COMPLETED/SUCCESS**, [HF Candidate Offline #38635710139](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38635710139) **COMPLETED/SUCCESS**, both exact `b05bf100a14fcda46c8a60da5c57490cf8c06584`. Existing source/CI and prior v235–v241 regression gates preserved.
+
+**Deployment:** Owner explicitly authorizes one canonical guarded existing-Space HF request after exact successful CI. Pretrigger receipt: current request remained v241 at `e109ffe742a5e37c125d39fedcd43b4275be65e7`, no in-progress competing Chat HF deploy request observed. Terminal and signed-in behavior not yet verified. No next version reserved.
+
+**State:** SOURCE + EXACT GITHUB ACCOUNT CI + HF OFFLINE CI VERIFIED / GUARDED PUBLICATION NEXT / LIVE OWNER ACCEPTANCE PENDING.
+
 ## UPDATE STARTED — 2026-10-14 — v242 Dragon Chat (51) source-grounded read and coordination repair
 
 **Owner direction:** Repair five v241 signed-in test failures: negated read-only review routing, actual source branch/source-ref awareness, unsupported architecture claims, ambiguous Files after project startup, and evidence-based cross-conversation overlap lookup. Preserve Stage-1 GitHub mutation lock and user-account isolation. User authorizes implementation, CI validation and terminal canonical guarded Hugging Face deploy after validated source, with manual owner behavioral acceptance afterward.
