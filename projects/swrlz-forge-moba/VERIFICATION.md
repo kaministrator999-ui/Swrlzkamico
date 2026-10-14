@@ -1,3 +1,15 @@
+# v11.1 Maul walk-to-build acceptance
+
+- Default grouped Frostveil starter must show no wall construction option.
+- A tower command must queue the selected sector builder, move across actual traversable cells and complete only upon reaching an adjacent footprint.
+- Gold must not be deducted while the order is pending. Revalidate gold, occupancy and shared routes upon completion.
+- Fully reserved enemy entrance pads, every gate and the shared exit must reject construction.
+- Cancel/replace movement orders and Pause/Stop must not produce phantom towers.
+- Earlier Maul saved project variants, Sheep Tag, recording import/export and the other §E projects remain compatible.
+- Seal 71 patches, 27 unchanged assets, all six checks, desktop and phone gameplay, then exact hosted audit before claiming deployment.
+
+---
+
 ## Current v11.0 candidate · Compressed recordings and clear Maul spectator
 
 Frostveil Maul Play-run review now renders recorded snowfields, water, cliffs, tower families, maze walls, builders, creeps and the exit as distinct visual layers, with camera framing adjusted to the actual Maul map dimensions. The original Sheep Tag recorder presentation and recording schema remain intact. A new **Export compressed (.json.gz)** control uses lossless browser-native gzip; the recorder also imports these gzip files with format validation and a bounded 256 MiB decompressed limit. Existing raw JSON, text, HTML spectator, camera, timelines, events and saved projects continue to work.
