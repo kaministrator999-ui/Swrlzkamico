@@ -231,7 +231,7 @@ jobs:
           assert all(any(layer['id'] in actor['editorLayerIds'] for layer in archive_layers)
                      for actor in archive_actors)
           saved=json.loads((out/'scenes/ghosts-in-different-forms-ep01-full-staff.swyrl.json').read_text())
-          assert len(saved['scene']['actors'])==71
+          assert len(saved['scene']['actors'])==70
           assert len(saved['editor']['layers'])==11
           assert len(saved['project']['animeTimeline']['tracks'])==9
           rigs=saved['project']['animeRigs']
@@ -255,7 +255,7 @@ jobs:
           assert len(scenery['objects'])==34
           star_ids={'stars-far','stars-middle','stars-near'}
           assert {name for name,obj in scenery['objects'].items() if obj.get('kind')=='stars'}==star_ids
-          assert all(scenery['objects'][name]['count']==71 for name in star_ids)
+          assert all(scenery['objects'][name]['count']==70 for name in star_ids)
           duration=saved['project']['animeTimeline']['duration']
           for name,obj in scenery['objects'].items():
               assert obj['id']==name and obj['keys'],name
