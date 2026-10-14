@@ -1073,6 +1073,15 @@ def _github_command(user, prompt):
     if _stage_blocks(prompt):
         return _READ_STAGE_DESCRIPTION + " No GitHub mutation or confirmation attempted."
     cmd = re.sub(r"^@github\s+", "", str(prompt or "").strip(), flags=re.I)
+    read_branch = ""
+    branch_suffix = re.fullmatch(
+        r"(?is)(.*?)\s+on\s+branch\s+([A-Za-z0-9][A-Za-z0-9._/-]{0,100})", cmd)
+    if branch_suffix and re.match(r"(?i)^(?:read|open|view|files|stats|largest|history|search|report)\b", branch_suffix[1]):
+        try:
+            read_branch = explorer.safe_branch(branch_suffix[2])
+        except explorer.ExplorerError:
+            return "Invalid requested GitHub source branch; nothing read."
+        cmd = branch_suffix[1].strip()
     lower = cmd.lower()
     if lower.startswith("confirm "):
         code = cmd[8:].strip()
@@ -1146,6 +1155,7 @@ def _github_command(user, prompt):
         raise
     if not check["allowed"]:
         return _permission_message(check)
+    selected_read_ref = read_branch or check["defaultBranch"]
     if lower == "chat status" or lower == "project status" or lower.startswith("project status "):
         subject=("chat" if lower=="chat status" else cmd[len("project status"):].strip())
         if len(subject)>90 or any(ch in subject for ch in "\r\n\x00"):
@@ -1234,13 +1244,13 @@ def _github_command(user, prompt):
                 "\nTo approve within 10 minutes, send **@GitHub confirm " + code + "**. Otherwise nothing changes.")
 
     if GITHUB_CAPABILITY_STAGE == "read-repository" and _command_read_target(cmd) is not None:
-        return _read_repository_by_name(rec, repo, check["defaultBranch"], _command_read_target(cmd))
+        return _read_repository_by_name(rec, repo, selected_read_ref, _command_read_target(cmd))
 
     if lower.startswith("read file "):
         path = cmd[10:].strip()
         if not path or len(path) > 220 or path.startswith("/") or any(x in ("", ".", "..") for x in path.split("/")):
             return "Use a safe relative path, e.g. @GitHub read file README.md"
-        obj = _read_optional(rec["token"], repo, path, check["defaultBranch"], 18000)
+        obj = _read_optional(rec["token"], repo, path, selected_read_ref, 18000)
         if obj is None:
             return "No bounded UTF-8 text file was retrieved from that path."
         content = obj["body"][:12000].replace(chr(96)*3, "'''")
@@ -1257,7 +1267,7 @@ def _github_command(user, prompt):
             return "Usage: @GitHub report [overview|structure|deep] [folder/file | another path]; / is the entire repository."
         depth = (match[1] or "structure").lower()
         paths = (match[2] or "/").strip()
-        source_branch = check["defaultBranch"]
+        source_branch = selected_read_ref
         explicit_branch = re.fullmatch(
             r"(?s)(.*?)\s+on\s+branch\s+([A-Za-z0-9][A-Za-z0-9._/-]{0,100})", paths)
         if explicit_branch:
@@ -1283,7 +1293,7 @@ def _github_command(user, prompt):
         limit = max(1,min(30,int(size_match[1]))) if size_match else 15
         scope = (size_match[2] or "").strip() if size_match else raw
         try:
-            snapshot = explorer.pinned_tree(_api, rec["token"], repo, check["defaultBranch"])
+            snapshot = explorer.pinned_tree(_api, rec["token"], repo, selected_read_ref)
             target = explorer.safe_path(scope)
             explorer.scope_stats(snapshot, target)
             prefix = target + "/" if target else ""
@@ -1299,7 +1309,7 @@ def _github_command(user, prompt):
             return "Could not verify largest-file list: "+str(exc)
     if lower.startswith("search "):
         try:
-            snapshot = explorer.pinned_tree(_api, rec["token"], repo, check["defaultBranch"])
+            snapshot = explorer.pinned_tree(_api, rec["token"], repo, selected_read_ref)
             data = explorer.find_files(snapshot, cmd[7:].strip())
             return ("## GitHub file matches\nRepository: "+repo+
                     "\nBranch: "+data["branch"]+"\nRevision: "+data["sourceSha"]+
@@ -1310,7 +1320,7 @@ def _github_command(user, prompt):
             return "Could not complete filename search: "+str(exc)
     if lower.startswith("history "):
         raw_target = cmd[8:].strip()
-        source_branch = check["defaultBranch"]
+        source_branch = selected_read_ref
         explicit_branch = re.fullmatch(
             r"(?s)(.*?)\s+on\s+branch\s+([A-Za-z0-9][A-Za-z0-9._/-]{0,100})", raw_target)
         if explicit_branch:
@@ -1351,12 +1361,12 @@ def _github_command(user, prompt):
             return "GitHub comparison unavailable: "+str(exc)
 
     if lower == "stats" or lower.startswith("stats "):
-        return _github_repo_stats(rec, repo, check["defaultBranch"], cmd[6:].strip() if len(cmd)>5 else "")
+        return _github_repo_stats(rec, repo, selected_read_ref, cmd[6:].strip() if len(cmd)>5 else "")
 
     if lower == "files recursive" or lower.startswith("files recursive "):
         scope = cmd[len("files recursive"):].strip()
         try:
-            snap = explorer.pinned_tree(_api, rec["token"], repo, check["defaultBranch"])
+            snap = explorer.pinned_tree(_api, rec["token"], repo, selected_read_ref)
             target = explorer.safe_path(scope)
             explorer.scope_stats(snap, target)
             prefix = target + "/" if target else ""
@@ -1377,7 +1387,7 @@ def _github_command(user, prompt):
         if len(path) > 200 or path.startswith("/") or any(x in (".", "..") for x in path.split("/") if x):
             return "Invalid directory path."
         suffix = "/contents" + ("/" + "/".join(quote(x, safe="") for x in path.split("/")) if path else "")
-        data = _api(rec["token"], "/repos/" + repo + suffix + "?ref=" + quote(check["defaultBranch"], safe=""))
+        data = _api(rec["token"], "/repos/" + repo + suffix + "?ref=" + quote(selected_read_ref, safe=""))
         if not isinstance(data, list):
             return "This path is not a directory; use @GitHub read file <path>."
         return ("## GitHub directory: " + (path or "/") + "\n" + "\n".join(
