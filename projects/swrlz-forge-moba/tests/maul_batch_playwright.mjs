@@ -158,7 +158,7 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
     const sourceSha256=createHash('sha256').update(await response.body()).digest('hex');console.log('MAUL_BATCH_SOURCE_SHA256',mode.name,sourceSha256);
     await page.waitForFunction(()=>window.SWYRL_ENGINE_MAUL?.batchStatus&&window.SWYRL_ENGINE_AGENT.project().canonicalId==='maul-frostveil',undefined,{timeout:60000});
     await page.locator('#perfPreset').selectOption('medium',{force:true});await page.evaluate(()=>window.__maulClock.freeze());await frames(page,2);
-    assert.equal(await page.evaluate(()=>window.SWRLZ_FORGE_BUILD?.version),'v10.9','Wrong engine release');
+    assert.equal(await page.evaluate(()=>window.SWRLZ_FORGE_BUILD?.version),'v11.0','Wrong engine release');
     const canonical=await saved(page),check=await preflight(page);assert.equal(canonical.project.maulLayout,'classic-v2');assert.equal(canonical.project.maulSpawnStyle,profile);
     assert.equal(check.ok,true,'The default grouped starter failed preflight: '+check.errors.join(' '));assert.equal(check.map.spawnStyle,profile);
     assert.equal(canonical.scene.actors.length,78);assert.equal(canonical.editor.layers.length,6);
