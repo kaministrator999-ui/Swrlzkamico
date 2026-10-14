@@ -15,6 +15,10 @@ function stRunInstallCompressedUI() {
   const originalRefresh=stRunRefreshUI;
   stRunRefreshUI=function(...args){const result=originalRefresh(...args);button.disabled=!supported||exportPlain.disabled;return result;};
   button.disabled=!supported||exportPlain.disabled;
+  // The legacy recorder also enables export buttons directly in stRunOpenRecord.
+  // Observe that state so gzip becomes usable without requiring a HUD refresh.
+  new MutationObserver(()=>{if(button.textContent!=='Compressing recording…')button.disabled=!supported||exportPlain.disabled;})
+    .observe(exportPlain,{attributes:true,attributeFilter:['disabled']});
   button.addEventListener('click',async()=>{
     if(playing||simulating){feedback().textContent='Stop Play before exporting a recording.';return;}
     const run=stRunReviewState.record||stRunData();
