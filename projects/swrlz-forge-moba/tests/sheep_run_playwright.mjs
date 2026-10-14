@@ -134,7 +134,7 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
   const sourceResponse=await context.request.get(base+'/SOURCE.json');assert.equal(sourceResponse.ok(),true);const source=await sourceResponse.json();
   assert.match(source.sourceVersion,/v11\.1/);assert.equal(source.patches.length,70);assert.equal(source.patches.at(-1),'patches/v11_0_run_replay_quality.py');
   assert.equal(Object.keys(source.assets).length,27,'Unexpected bundled starter/media asset set');
-  const htmlResponse=await context.request.get(base+'/index.html');assert.match(await htmlResponse.text(),/V11_1_EPISODE_STORY_ACTIONS/);
+  const htmlResponse=await context.request.get(base+'/index.html');assert.match(await htmlResponse.text(),/V11_1_MAUL_WALK_BUILDER/);
   assert.equal(canonical.scene.actors.length,92,'Archive map changed');const pieces=await prototypes(page,canonical),map=fixture(canonical,pieces);
   if(!process.env.SWYRL_RUN_GENERIC_ONLY){
   await openPanel(page);assert.equal(await page.locator('#stRunEnabled').isChecked(),false,'Logging must default off');
