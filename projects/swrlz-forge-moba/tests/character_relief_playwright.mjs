@@ -59,7 +59,7 @@ async function start(page){
   await page.waitForFunction(()=>window.SWYRL_ENGINE_RELIEF?.renderStatus&&window.SWYRL_ENGINE_RIG?.renderStatus&&
     window.SWYRL_ENGINE_SOCKETS?.model&&window.SWYRL_ENGINE_ANIMATION&&window.SWYRL_ENGINE_STORYBOARD,
     undefined,{timeout:60000,polling:100});
-  assert.equal(await page.evaluate(()=>window.SWRLZ_FORGE_BUILD?.version),'v11.1','Staff acceptance loaded a different engine release');
+  assert.equal(await page.evaluate(()=>window.SWRLZ_FORGE_BUILD?.version),'v11.2','Staff acceptance loaded a different engine release');
   await page.waitForFunction(()=>{const state=window.SWYRL_ENGINE_STORYBOARD.stageStatus();
     return state.assetsReady||state.assetErrors?.length;},undefined,{timeout:45000,polling:100});
   await loadHistoricalEpisode(page);
