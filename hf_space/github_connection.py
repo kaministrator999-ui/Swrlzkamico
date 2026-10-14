@@ -1249,8 +1249,15 @@ def _github_command(user, prompt):
             return "Usage: @GitHub report [overview|structure|deep] [folder/file | another path]; / is the entire repository."
         depth = (match[1] or "structure").lower()
         paths = (match[2] or "/").strip()
+        source_branch = check["defaultBranch"]
+        explicit_branch = re.fullmatch(
+            r"(?s)(.*?)\\s+on\\s+branch\\s+([A-Za-z0-9][A-Za-z0-9._/-]{0,100})", paths)
+        if explicit_branch:
+            paths = explicit_branch[1].strip() or "/"
+            source_branch = explicit_branch[2]
         try:
-            snapshot = explorer.pinned_tree(_api, rec["token"], repo, check["defaultBranch"])
+            source_branch = explorer.safe_branch(source_branch)
+            snapshot = explorer.pinned_tree(_api, rec["token"], repo, source_branch)
             report = scope_report.build_report(
                 snapshot, paths, depth,
                 lambda path, sha, max_bytes: _read_optional(rec["token"], repo, path, sha, max_bytes))
@@ -1398,6 +1405,10 @@ def _read_context_from_result(user, prompt, result):
         if not auth.get("allowed"):
             return None
         branch = auth["defaultBranch"]
+        if body.startswith("## GitHub source report · "):
+            label = re.search(r"(?m)^Branch: ([A-Za-z0-9][A-Za-z0-9._/-]{0,100}) \\u00b7 commit [0-9a-f]{40}$", body)
+            if label:
+                branch = explorer.safe_branch(label[1])
         commit = _api(record["token"], "/repos/" + repo + "/commits/" + quote(branch, safe=""))
         sha = str(commit.get("sha") or "") if isinstance(commit, dict) else ""
         if not _FILE_SHA.fullmatch(sha):
@@ -1414,20 +1425,20 @@ def _read_context_from_result(user, prompt, result):
         match = re.search(r"^Scope: (.*?)(?: \(recursive\))?$", body, re.M)
         if match:
             directory = match[1].strip().strip("/")
-        history_match = re.match(r"^## GitHub path history: ([^\\n]+)", body)
+        history_match = re.match(r"^## GitHub path history: ([^\n]+)", body)
         if history_match:
             file_path = history_match[1].strip()
             directory = file_path.rpartition("/")[0]
-        report_match = re.search(r"^Scopes: ([^\\n]+)$", body, re.M)
+        report_match = re.search(r"^Scopes: ([^\n]+)$", body, re.M)
         if report_match and body.startswith("## GitHub source report · "):
             # Only an actually inspected path may become a durable referent.
             inspected = body.partition("### Inspected files")[2].split(
                 "Source inspection is static", 1)[0]
             candidate = report_match[1].split(",", 1)[0].strip()
-            if re.search(r"(?m)^- " + re.escape(candidate) + r" \\(", inspected):
+            if re.search(r"(?m)^- " + re.escape(candidate) + r" \(", inspected):
                 file_path = candidate
                 directory = candidate.rpartition("/")[0]
-        reported_sha = re.search(r"(?m)^Branch: [^\\n]*commit ([0-9a-f]{40})$", body)
+        reported_sha = re.search(r"(?m)^Branch: [^\n]*commit ([0-9a-f]{40})$", body)
         if reported_sha and reported_sha[1] != sha:
             return None
         try:
@@ -1485,8 +1496,8 @@ def _implicit_repo_command(prompt, context):
     if not isinstance(context, dict) or not _REPO.fullmatch(str(context.get("repo") or "")):
         return None
     q = re.sub(r"\s+", " ", str(prompt or "").strip()).lower().rstrip("?.!")
-    if len(q) > 180 or not q or q.startswith("@") or re.search(
-            r"\b(?:create|edit|delete|remove|push|commit|merge|deploy|modify|write|trigger|dispatch|run)\b", q):
+    if len(q) > 240 or not q or q.startswith("@") or re.search(
+            r"\b(?:create|edit|delete|remove|push|merge|deploy|modify|write|trigger|dispatch|run)\b", q):
         return None
     source_read = read_inference.classify_read(prompt, context)
     if source_read:
