@@ -93,7 +93,8 @@ def main():
                      "scenes/ghosts-in-different-forms-ep01-sockets.swyrl.json",
                      "scenes/ghosts-in-different-forms-ep01-staff-grip.swyrl.json",
                      "scenes/ghosts-in-different-forms-ep01-natural-grip.swyrl.json",
-                     "scenes/ghosts-in-different-forms-ep01-full-staff.swyrl.json"):
+                     "scenes/ghosts-in-different-forms-ep01-full-staff.swyrl.json",
+                     "scenes/ghosts-in-different-forms-ep01-performance.swyrl.json"):
         if (ROOT / authored).exists():
             media_paths.append(authored)
     if (ROOT / "scenes/maul-frostveil.swyrl.json").exists():

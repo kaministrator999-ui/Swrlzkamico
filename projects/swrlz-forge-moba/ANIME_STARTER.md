@@ -1,22 +1,30 @@
-# Anime Studio starter · Ghosts in Different Forms · v9.6 candidate
+# Anime Studio starter · Ghosts in Different Forms · v10.9 candidate
 
-## Current v9.6 candidate · Natural Staff and Painted Faces
+## Current v10.9 candidate · Story actions and an animated first episode
 
-The candidate replaces Kami’s stretched staff grip with a compact painted fist. Rear palm/cuff and front curled fingers/thumb sit on opposite sides of one continuous round shaft. The larger skull/flame crest sits above a visible upper shaft; its narrow join follows the saved **Staff → shaft** socket. The grip is part of the articulated hand, so the fingers, cuff and prop follow the same wrist movement. Kami’s fitted native forearm and wrist form a raised, bent casting pose while the existing timed joint keys retain their movement.
+Open **Projects → Ghosts in Different Forms**, or `?project=anime-ghosts-ep01`, then use **Play** or **Watch Episode 01**. Kami and §wyrlz now act through the story: greeting and reaching, recoiling and bracing, casting, writing, stepping, hovering and recovering. Their arm chains, attached full-length staff, heads and costume depth pieces move together. Short dialogue windows leave room for a character to listen and react between lines. Kami's first attempt to burn a doorway nearly erases the library and makes §wyrlz fade. They recover by joining Kami's light with §wyrlz's written names, build a doorway that remembers them and step toward a world that answers, ‘Welcome back.’
 
-The natural grip belongs to the v9.6 starter’s saved `gripStyle: "natural-v1"` profile. Older projects keep their original painted glove, saved body fit, wrist rotation and grip/staff sockets. Native Save/Load and Undo/Redo retain the selected profile; sharing the bundled body atlas does not opt an older project into the new hand layout.
+The native **Animation Studio** adds **Story Actions** and **Story effects**. Saved action clips control character, action, time, duration, strength and side; effect cues control page motion, bursts, ink and a portal. Preview Frame, editor Play and Watch sample the same saved story time, including reverse and fast playback. Disabling an overlay leaves the underlying limb, face and scenery keys available. Native Undo/Redo and Save/Load retain the clips and cues separately from those keys.
 
-Both mages use a shared original painted-feature atlas to improve facial readability and match the amber, sepia and bone tones of their robes, armor and skull. The existing expression, blink, mouth, gaze and saved-dialogue controls remain available. Kami’s larger amber irises sit inside shaped eyelids, and §wyrlz’s round skull sockets retain the painted bone shading around the eyes. The head’s raised paper surface carries the animated features through pose and relief changes. Native Preview Frame, Play and Watch share the character renderer.
+The current native export is `scenes/ghosts-in-different-forms-ep01-performance.swyrl.json`. It retains **70 actors, 11 layers, eight contiguous story beats, nine stage/camera tracks, 134 seconds**, the 12-second book opening and the fitted full staff/socket/relief settings. Its native save contains 175 stage/camera keys, 468 limb/face keys, 383 scenery keys, 36 action clips and 11 effect cues. `project.animePerformance` uses `anime-performance-v1`; `project.animeStoryEffects` uses `anime-story-effects-v1`. The previous full-staff scene and every earlier project/artwork asset remain packaged unchanged for import.
 
-Facial rendering uses the exact sampled expression, blink, mouth, smile, brow and gaze values when deciding whether to redraw the face texture. A nearby playback sample cannot keep a stale face after Undo, seeking or a fresh Load at the same story time. Face canvases request the same Canvas2D mode when created, keeping Undo/Load rebuilds consistent with heavily inspected previews.
+Publication appends `patches/v10_9_episode_story_actions.py`, for **69 governed patches and 27 assets**. All 68 published patches, previous runtime modules, 26 predecessor assets and payload chunks remain byte-identical. Artifact: `swyrl_engine_v10_9.html`; marker: `SWYRL_ENGINE_DEPLOY_MARKER: V10_9_EPISODE_STORY_ACTIONS`. The starter count remains **seven**.
 
-Small gold motes follow the painted staff head through wrist and staff motion. Their positions and brightness derive from story time, so scrubbing, Preview Frame, Play and Watch reproduce the same effect at the same time. The fixed particle pool stays close to the crest and follows the existing **Effects** layer’s visibility and opacity.
+Acceptance requires all **six engine workflows**, **sixteen desktop/phone browser suites**, thirteen sealed Sheep Tag geometry cases, seventeen preserved Maul CPU cases, twelve classic-layout CPU cases and fifteen grouped-spawn CPU cases. The new episode suite checks the saved action/effect data and actual native authoring, Preview/Play/Watch movement, playback controls and lifecycle on both layouts. Completion requires the final dedicated `DEPLOY_REQUEST.json`, terminal successful deployment and exact hosted HTML/SOURCE/all-asset audit. Candidate documentation does not assert publication before those checks pass.
 
-Every body piece retains independent **Depth Left**, **Depth Centre**, **Depth Right**, **Paper thickness** and **Costume Flex** settings in **Animation Studio → Character Rig → Character Piece Depth Sections**. Cloth and armor follow saved body movement while limb sockets stay connected. Native Undo/Redo and Save/Load preserve the piece settings, body fits, pose tracks and scenery separately.
+## Author story actions and effects
 
-The current native Save Project export is `scenes/ghosts-in-different-forms-ep01-natural-grip.swyrl.json`. The starter retains its 12-second book opening, 70 actors, 11 editor layers, eight story beats, nine stage/camera tracks, 425 limb/face keys and 341 scenery keys. The candidate has **56 governed patches and 19 media assets**: eight scene JSON exports, ten PNGs and the historical episode HTML. The new artwork is `assets/anime/kami-grip-layers.png` and `assets/anime/mage-faces-painted.png`; all eight earlier PNGs and seven earlier scene exports remain bundled. Marker: `SWYRL_ENGINE_DEPLOY_MARKER: V9_6_NATURAL_STAFF_PAINTED_FACES`; artifact: `swyrl_engine_v9_6.html`.
+Pause playback, open **Animation Studio** and expand **Story Actions**. Choose a **Saved action**, or use **New action at playhead**. Set **Character**, **Action**, **Leading hand**, **Start seconds**, **Action duration**, **Action strength** and **Action label**, then choose **Add action** or **Update action**. **Preview action** seeks into the movement; **Delete action** removes the selected clip. **Enable Story Actions**, **Limit dialogue mouth movement** and **Maximum dialogue seconds** are saved with **Save action settings**. The starter limits speaking motion to 4.5 seconds after a character's line, allowing a listening pause before the next line.
 
-Validation and hosted deployment are pending. Exact bytes and SHA-256 belong to the final sealed manifest and generated receipt. Production authority belongs to the final `DEPLOY_REQUEST.json`, its exact dedicated deployment run and the hosted audit of the normalized HTML, `SOURCE.json` and all nineteen assets.
+Expand **Story effects** and select an existing **Story cue**, or choose **New Story Effect**. The **Effect** menu offers Floating memory page, Broken spell ripple, Written names and runes, and Folded memory door. Set **Label / written names**, time, duration, strength, position, depth, width, height and turn, then choose **Apply Story Effect**. Selecting a saved cue previews its story time; **Remove Story Effect** removes it. The enabled setting and cues belong to this project. Preview Frame, Play and Watch all reproduce their state when seeking forwards or backwards.
+
+**Episode duration seconds → Resize episode timing** keeps the story beats, shots, poses, scenery, actions and effects together when changing the episode length. Native Undo/Redo restores these edits and **Save Project** retains both models. Older imported projects keep their original animation until actions or effects are deliberately enabled and saved.
+
+## Historical verified v10.8 · Grouped Maul rounds and visible phone placement
+
+The v10.8 release is verified live: merged source `d371df09a37d44d40d9b05425e01f977eabfa62a`, final trigger `507d11b93e7af81359614e6d56d98a35adbf0b6b`, [deployment 38567626510](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38567626510) and [hosted audit 38567696344](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38567696344). It seals **68 patches, 26 assets and 1,905,846 bytes**, SHA-256 `775d7dfab363da120c2c779b5d8d129d7c75ee6a9681911958bdb9cef3fa1e3e`. All six engine workflows, fifteen desktop/phone browser suites and the four sealed CPU suites passed, followed by native live desktop and phone gameplay and recorder exports. Marker: `V10_8_MAUL_BATCH_PLACEMENT`; artifact: `swyrl_engine_v10_8.html`.
+
+Each cooperative Maul round releases three scattered groups at 0, 2.5 and 5 seconds. The saved `classic-v2` map adds `maulSpawnStyle: "grouped-v1"`; its native `scenes/maul-frostveil-groups.swyrl.json` starts with no authored towers. Phone placement lifts the complete ghost and footprint 140 CSS pixels above the finger. These receipts certify v10.8; the story-action revision requires its own deployment and exact hosted audit.
 
 ## Historical verified v9.5 · Fitted Staff and Character Relief
 
@@ -56,13 +64,13 @@ To connect and pose a limb, select **Kami** or **§wyrlz** in Animation Studio a
 
 In **Animation Studio**, select **Kami** or **§wyrlz**, expand **Character Rig · limbs and face**, choose a body part, then use **Fit Body Piece**. **Joint X/Y** place its pivot; **Artwork X/Y** position its painted cutout; **Piece width/height** and **Rest angle (°)** fit the silhouette. Use **Apply Body Piece Fit**, preview the shared playhead, and use Play to inspect the attached chain through motion. **Reset Piece Fit** restores that piece’s default fit. Fitting is saved separately from timed rotation/depth keys; native Undo/Redo and Save/Load preserve it without changing the companion’s rig or scenery keys. Pause running playback before editing.
 
-The starter keeps **70 actors, 11 editor layers, eight story beats, nine stage/camera tracks, and 134 seconds**. The current native Save Project export is `scenes/ghosts-in-different-forms-ep01-natural-grip.swyrl.json`. Each character has 19 socket-bearing parts and 18 anatomical connections. Connections belong to `project.animeSockets` (`anime-rig-sockets-v1`) and the opening to `project.animeEmergence` (`anime-book-emergence-v1`). Existing per-character rest layouts, 425 limb/face keys and 341 scenery keys remain independent. The v9.5 staff-grip, v9.4 sockets, v9.3 positioned, v9.2 depth, v9.1 rigged, v9.0 storybook and original production exports remain bundled, together with all ten artwork PNGs and the historical episode HTML.
+The starter keeps **70 actors, 11 editor layers, eight story beats, nine stage/camera tracks, and 134 seconds**. The current native Save Project export is `scenes/ghosts-in-different-forms-ep01-performance.swyrl.json`; the natural-grip and full-staff exports remain preserved for import. Each character has 19 socket-bearing parts and 18 anatomical connections. Connections belong to `project.animeSockets` (`anime-rig-sockets-v1`) and the opening to `project.animeEmergence` (`anime-book-emergence-v1`). Saved per-character rest layouts, 468 limb/face keys, 383 scenery keys and the action/effect overlays remain independent. The v9.5 staff-grip, v9.4 sockets, v9.3 positioned, v9.2 depth, v9.1 rigged, v9.0 storybook and original production exports remain bundled, together with all eleven artwork PNGs and the historical episode HTML.
 
 ## Layered scenery and fitted faces
 
 The screenshot exposed misaligned facial features and a library rendered as broad flat plates. v9.2 fits Kami’s eyes, brows and mouth inside the painted face and keeps §wyrlz’s expressions aligned with the skull. Existing blink, mouth, gaze and expression keys remain editable. The background becomes a paper depth theatre: a distant sky and three star shells sit behind independent windows, arches, shelves, banners, lanterns and props. Each cutout has its own transform/opacity/visibility/unfold keys, so perspective-camera motion produces real parallax between the pieces.
 
-The episode keeps **70 actors, 11 editor layers, eight story beats, nine stage/camera tracks, and 134 seconds**. Independent scenery pieces live beneath the saved scenery actors; their keys belong to `project.animeScenery` (`anime-scenery-v1`), alongside the existing `project.animeRigs` and `project.animeTimeline`. The native Save Project export is `scenes/ghosts-in-different-forms-ep01-natural-grip.swyrl.json`; the v9.2 depth, v9.1 rigged, v9.0 storybook and original production scene exports remain bundled.
+The episode keeps **70 actors, 11 editor layers, eight story beats, nine stage/camera tracks, and 134 seconds**. Independent scenery pieces live beneath the saved scenery actors; their keys belong to `project.animeScenery` (`anime-scenery-v1`), alongside the existing `project.animeRigs` and `project.animeTimeline`. The current native Save Project export is `scenes/ghosts-in-different-forms-ep01-performance.swyrl.json`; the v9.2 depth, v9.1 rigged, v9.0 storybook and original production scene exports remain bundled.
 
 Open **Animation Studio**, select **Background**, **Midground**, **Atmosphere**, or **Effects**, then expand **Scenery Depth · individual cutouts**. Choose a **Scenery piece**, set its depth and pose at the shared playhead, and use **Add/Update Scenery Key**. **Layered scenery**, **Pop-out depth**, and **Apply Scenery Depth** control the depth assembly. Preview Frame, editor Play and the native Watch cinema use the same saved renderer; native Undo/Redo and Save/Load retain each piece’s edits. Pause running Play before authoring. Camera protection keeps the background behind the mages and the foreground/book below their face and body corridor.
 
@@ -76,7 +84,7 @@ Open **Animation Studio**, select **Kami** or **§wyrlz**, then expand **Charact
 
 These are jointed 2.5D paper characters with overlapping cutouts, silhouette side walls, and separated depth. Full sculpted/skinned 3D characters, audio-driven lip synchronization, audio authoring, and MP4 export remain future work. **Watch Episode 01** preserves the pop-up cinema experience and plays the same native authored 2.5D scene, with chapter buttons and transport controls. The original procedural episode HTML remains bundled for history.
 
-v9.6 is a source candidate. Desktop/phone acceptance must inspect the compact grip, continuous round shaft and crest proportions, larger painted facial features, expression motion, piece depth and connected sockets in native Play and Watch. All seven existing native cinematic, Studio, rig, scenery, body-fit, book-opening and relief suites, exact sealed reconstruction and six remote engine CI checks must pass before deployment. Production authority comes from the final `DEPLOY_REQUEST.json`, the exact dedicated deployment run, and the hosted audit of the current marker, normalized HTML, `SOURCE.json`, and all nineteen media assets.
+The current v10.9 candidate requires the new episode-performance browser suite plus all fifteen preserved desktop/phone suites, six remote engine workflows and all four sealed CPU suites before deployment. Production authority comes from the final `DEPLOY_REQUEST.json`, its exact dedicated deployment and the hosted audit of the current marker, normalized HTML, `SOURCE.json` and all 27 media assets.
 
 The previous **v9.3 Connected Character Pieces** release is verified live: [deployment 37893678594](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37893678594) and [exact hosted audit 37893722231](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37893722231) passed. Source [`84d8966f4240`](https://github.com/kaministrator999-ui/Swrlzkamico/commit/84d8966f4240cef8ebe037dbc03baac43099c06e) seals 52 patches, **980,767 bytes**, SHA-256 `caba518b67524567899d93a74308bc894cf40413fd69b330b8f7f5f7b6c042be`, with all fourteen media assets. These receipts certify v9.3; v9.6 requires its own final deployment and hosted audit.
 
@@ -86,7 +94,9 @@ The previous **v9.1 Articulated Paper Rigs** release is verified live: [deployme
 
 ## Source files
 
-- Current native Save Project export: `scenes/ghosts-in-different-forms-ep01-natural-grip.swyrl.json`
+- Current native Save Project export: `scenes/ghosts-in-different-forms-ep01-performance.swyrl.json`
+- Preserved full-staff export: `scenes/ghosts-in-different-forms-ep01-full-staff.swyrl.json`
+- Preserved natural-grip export: `scenes/ghosts-in-different-forms-ep01-natural-grip.swyrl.json`
 - Preserved v9.5 native export: `scenes/ghosts-in-different-forms-ep01-staff-grip.swyrl.json`
 - Preserved v9.4 native export: `scenes/ghosts-in-different-forms-ep01-sockets.swyrl.json`
 - Preserved v9.3 native export: `scenes/ghosts-in-different-forms-ep01-positioned.swyrl.json`
@@ -101,7 +111,9 @@ The previous **v9.1 Articulated Paper Rigs** release is verified live: [deployme
 - Saved character poses, cutout renderer, and rig UI: `runtime/anime_rig_model.js`, `runtime/anime_rig_renderer.js`, `runtime/anime_rig_editor.js`, and `runtime/anime_rig_editor.css`
 - Saved scenery model, layered renderer and object-key UI: `runtime/anime_scenery_model.js`, `runtime/anime_scenery_renderer.js`, `runtime/anime_scenery_editor.js`, and `runtime/anime_scenery_editor.css`
 - Saved per-piece section relief and costume motion: `runtime/anime_relief_model.js`, `runtime/anime_relief_renderer.js`, `runtime/anime_relief_editor.js` and `runtime/anime_relief_editor.css`
-- Current integration: `patches/v9_6_natural_staff_painted_faces.py`; the v9.5 staff mount and per-piece relief remain in `patches/v9_5_staff_grip_fit.py` and `patches/v9_5_character_depth_sections.py`; the v9.4 sockets/opening, v9.3 fitting, v9.2 scenery, v9.1 rigs, v9.0 Studio and historical starter integrations remain in the governed chain
+- Story action model/editor: `runtime/anime_performance_model.js`, `runtime/anime_performance_editor.js`, and its CSS
+- Story effect model/renderer/editor: `runtime/anime_story_effects.js`, `runtime/anime_story_effects_editor.js`, and its CSS
+- Current integration: `patches/v10_9_episode_story_actions.py`; the v9.5 staff mount and per-piece relief remain in `patches/v9_5_staff_grip_fit.py` and `patches/v9_5_character_depth_sections.py`; the v9.4 sockets/opening, v9.3 fitting, v9.2 scenery, v9.1 rigs, v9.0 Studio and historical starter integrations remain in the governed chain
 - Governed build packaging: `build_space.py`
 
 ## Acceptance tests
@@ -120,7 +132,7 @@ The previous **v9.1 Articulated Paper Rigs** release is verified live: [deployme
 
 ## Future capability probes
 
-- Reusable pose clips and full sculpted/skinned character rigs
+- Imported reusable motion libraries and full sculpted/skinned character rigs
 - Lip sync and audio recording/import
 - Exportable video capture and reproducible render settings
 

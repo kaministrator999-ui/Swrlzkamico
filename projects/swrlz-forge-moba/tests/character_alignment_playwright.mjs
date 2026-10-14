@@ -5,6 +5,24 @@ import {resolve} from 'node:path';
 
 // A body-piece fit must rebuild the painted WebGL puppet, preserve animation,
 // and survive native Save/Load. Attachment checks inspect actual alpha edges.
+// Preserve the published full-staff editor fixture for this compatibility suite.
+// The new starter has its own acceptance suite; all original authored-key,
+// geometry, facial, socket and transport assertions below remain unchanged.
+async function loadHistoricalEpisode(page){
+  assert.equal(await page.evaluate(()=>window.SWYRL_ENGINE_ANIMATION.status().playing),false,
+    'Historical episode must load into a stopped native editor');
+  const imported=await page.evaluate(async()=>{
+    const response=await fetch('scenes/ghosts-in-different-forms-ep01-full-staff.swyrl.json');
+    if(!response.ok)throw new Error('Preserved full-staff native scene is missing');
+    return window.SWYRL_ENGINE_STORYBOARD.importProject(await response.json());
+  });
+  assert.equal(imported,true,'Preserved full-staff native project import failed');
+  await page.waitForFunction(()=>{
+    const state=window.SWYRL_ENGINE_STORYBOARD.stageStatus();
+    return state.assetsReady||state.assetErrors?.length;
+  },undefined,{timeout:45000,polling:100});
+}
+
 const base=(process.env.SWYRL_ANIME_TEST_URL||'http://127.0.0.1:8773').replace(/\/$/,'');
 const output=resolve(process.env.SWYRL_ANIME_SCREENSHOTS_DIR||'character-alignment-acceptance');
 await mkdir(output,{recursive:true});
@@ -55,6 +73,7 @@ async function start(page){
     undefined,{timeout:60000,polling:100});
   await page.waitForFunction(()=>{const state=window.SWYRL_ENGINE_STORYBOARD.stageStatus();
     return state.assetsReady||state.assetErrors?.length;},undefined,{timeout:45000,polling:100});
+  await loadHistoricalEpisode(page);
   await frames(page);
 }
 async function input(page,selector,value){

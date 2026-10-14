@@ -2,6 +2,24 @@ import {chromium} from 'playwright';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 
+// Preserve the published full-staff editor fixture for this compatibility suite.
+// The new starter has its own acceptance suite; all original authored-key,
+// geometry, facial, socket and transport assertions below remain unchanged.
+async function loadHistoricalEpisode(page){
+  assert.equal(await page.evaluate(()=>window.SWYRL_ENGINE_ANIMATION.status().playing),false,
+    'Historical episode must load into a stopped native editor');
+  const imported=await page.evaluate(async()=>{
+    const response=await fetch('scenes/ghosts-in-different-forms-ep01-full-staff.swyrl.json');
+    if(!response.ok)throw new Error('Preserved full-staff native scene is missing');
+    return window.SWYRL_ENGINE_STORYBOARD.importProject(await response.json());
+  });
+  assert.equal(imported,true,'Preserved full-staff native project import failed');
+  await page.waitForFunction(()=>{
+    const state=window.SWYRL_ENGINE_STORYBOARD.stageStatus();
+    return state.assetsReady||state.assetErrors?.length;
+  },undefined,{timeout:45000,polling:100});
+}
+
 const base=process.env.SWYRL_ANIME_TEST_URL||'http://127.0.0.1:8765';
 const browser=await chromium.launch({
   ...(process.env.SWYRL_CHROMIUM_PATH?{executablePath:process.env.SWYRL_CHROMIUM_PATH}:{}),
@@ -19,8 +37,9 @@ try{
     page.on('pageerror',e=>errors.push(String(e)));
     page.on('console',m=>{if(m.type()==='error')console.log('[browser console]',m.text())});
     await page.goto(base+'/index.html?project=anime-ghosts-ep01',{waitUntil:'domcontentloaded',timeout:60000});
-    await page.waitForFunction(()=>!!window.SWYRL_ENGINE_CINEMATIC,{timeout:60000});
+    await page.waitForFunction(()=>window.SWYRL_ENGINE_CINEMATIC&&window.SWYRL_ENGINE_ANIMATION&&window.SWYRL_ENGINE_STORYBOARD,{timeout:60000});
     await page.waitForTimeout(1200);
+    await loadHistoricalEpisode(page);
     const project=await page.evaluate(()=>window.SWYRL_ENGINE_CINEMATIC.status().projectId);
     assert.equal(project,'ghosts-different-forms-ep01','Anime starter did not load');
     await page.evaluate(()=>document.getElementById('playBtn').click());
