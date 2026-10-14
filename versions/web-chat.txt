@@ -1,6 +1,6 @@
 ID=web-chat
-VERSION=1.5.124
-REVISION=1.5.124-github-branch-continuity-v237
+VERSION=1.5.125
+REVISION=1.5.125-chat-progress-timeline-v238
 KIND=web-interface
 SOURCE_BRANCH=runtime
 STATUS=active
