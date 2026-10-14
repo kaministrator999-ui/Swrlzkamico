@@ -1,6 +1,6 @@
 ID=web-chat
-VERSION=1.5.122
-REVISION=1.5.122-github-read-inference-v235
+VERSION=1.5.123
+REVISION=1.5.123-github-read-trace-v236
 KIND=web-interface
 SOURCE_BRANCH=runtime
 STATUS=active
