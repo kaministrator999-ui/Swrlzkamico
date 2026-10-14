@@ -51,6 +51,7 @@ on:
       - feature/chat-progress-timeline-v238
       - fix/chat-topic-intent-v239
       - fix/general-intent-risk-v240
+      - feature/chat-dual-model-readonly-work-awareness-v241
       - feature/version-literacy-content-layout-v199
   workflow_dispatch:
 
@@ -75,6 +76,8 @@ jobs:
           python hf_space/test_github_read_trace_v236.py
           python hf_space/test_chat_topic_intent_v239.py
           python hf_space/test_intent_risk_v240.py
+          python -m py_compile hf_space/github_source_specialist_v241.py hf_space/project_work_registry_v241.py hf_space/test_dual_model_work_v241.py
+          python hf_space/test_dual_model_work_v241.py
           python hf_space/test_progress_timeline_v238.py
           python hf_space/test_github_staged_read_v221.py
           python hf_space/test_github_explorer_v223.py
