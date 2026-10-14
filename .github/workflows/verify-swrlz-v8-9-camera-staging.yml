@@ -1,4 +1,4 @@
-name: Validate §E v10.7 camera-safe storybook staging
+name: Validate §E v10.8 camera-safe storybook staging
 on:
   push:
     branches: [main]
@@ -76,12 +76,12 @@ jobs:
           raw=gzip.decompress(base64.b64decode(''.join((root/p).read_text().strip() for p in manifest['chunks'])))
           assert len(raw)==manifest['baseBytes'] and hashlib.sha256(raw).hexdigest()==manifest['baseSha256']
           s=raw.decode('utf-8')
-          assert len(manifest['patches'])==67
-          assert manifest['patches'][-1]=='patches/v10_7_classic_maul_map.py'
+          assert len(manifest['patches'])==68
+          assert manifest['patches'][-1]=='patches/v10_8_maul_batch_placement.py'
           for path in manifest['patches']:s=mod['load_patch'](root/path)(s)
           assert len(s.encode())==manifest['finalBytes']
           assert hashlib.sha256(s.encode()).hexdigest()==manifest['finalSha256']
-          for feature in ('V10_7_CLASSIC_MAUL_MAP','MAUL_LAYOUT_CORE','classic-v2','SWYRL_ENGINE_MAUL','MAUL_CORE','maul-frostveil','SWYRL_ENGINE_SHEEP_TAG_RUNS','SWYRL_ENGINE_RUNS','stRunAfterTick','stRunInstallUI','stRunViewerMount','swyrl-editor-play-run-v1','stTouchPlacementScreen','stTouchPlacementGround','touchPlacement','SWYRL_ENGINE_SHEEP_TAG','sheep-tag-meadow','sheep-tag-moonbell-archive','swyrl-sheep-tag-map-v1','SWYRL_ENGINE_TRANSPORT','animeCineRewind','animeCineFastForward','SWYRL_ENGINE_STAFF','rigFullStaffStatus','painted-full-v1','assets/anime/kami-full-staff.png','SWYRL_ENGINE_RIG','SWYRL_ENGINE_SCENERY','SWYRL_ENGINE_SOCKETS','SWYRL_ENGINE_EMERGENCE','SWYRL_ENGINE_RELIEF',
+          for feature in ('V10_8_MAUL_BATCH_PLACEMENT','MAUL_BATCH_CORE','grouped-v1','MAUL_LAYOUT_CORE','classic-v2','SWYRL_ENGINE_MAUL','MAUL_CORE','maul-frostveil','SWYRL_ENGINE_SHEEP_TAG_RUNS','SWYRL_ENGINE_RUNS','stRunAfterTick','stRunInstallUI','stRunViewerMount','swyrl-editor-play-run-v1','stTouchPlacementScreen','stTouchPlacementGround','touchPlacement','SWYRL_ENGINE_SHEEP_TAG','sheep-tag-meadow','sheep-tag-moonbell-archive','swyrl-sheep-tag-map-v1','SWYRL_ENGINE_TRANSPORT','animeCineRewind','animeCineFastForward','SWYRL_ENGINE_STAFF','rigFullStaffStatus','painted-full-v1','assets/anime/kami-full-staff.png','SWYRL_ENGINE_RIG','SWYRL_ENGINE_SCENERY','SWYRL_ENGINE_SOCKETS','SWYRL_ENGINE_EMERGENCE','SWYRL_ENGINE_RELIEF',
                           'anime-rig-sockets-v1','anime-book-emergence-v1','anime-character-relief-v1','animeMakePaperBook','popLowStageTrim','animePopupStageSafety','popKamiArt',
                           'popSwyrlzArt','animePopSanitize','animeDirectorInstall',
                           'animePopUp','popupHinge','popUpStatus','animeUpdateCelLayers'):
@@ -98,6 +98,7 @@ jobs:
           python projects/swrlz-forge-moba/build_space.py --output /tmp/storybook-package
           cmp /tmp/storybook-test/index.html /tmp/storybook-package/index.html
           python projects/swrlz-forge-moba/tests/maul_layout_package.py --package /tmp/storybook-package
+          python projects/swrlz-forge-moba/tests/maul_batch_package.py --package /tmp/storybook-package
       - name: Install Chromium and Playwright
         run: |
           npm install --no-save playwright@1.56.1

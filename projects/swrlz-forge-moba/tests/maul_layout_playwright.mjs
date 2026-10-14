@@ -136,7 +136,10 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
     console.log('MAUL_LAYOUT_SOURCE_SHA256',mode.name,sourceSha256);
     await page.waitForFunction(()=>window.SWYRL_ENGINE_MAUL?.uiStatus&&window.SWYRL_ENGINE_AGENT.project().canonicalId==='maul-frostveil',undefined,{timeout:60000});
     await page.locator('#perfPreset').selectOption('medium',{force:true});await page.evaluate(()=>window.__maulClock.freeze());await frames(page,2);
-    assert.equal(await page.evaluate(()=>window.SWRLZ_FORGE_BUILD?.version),'v10.7','Wrong engine release');
+    assert.equal(await page.evaluate(()=>window.SWRLZ_FORGE_BUILD?.version),'v10.8','Wrong engine release');
+    const defaultCanonical=await saved(page);assert.equal(defaultCanonical.project.maulSpawnStyle,'grouped-v1','Hub/query must open current grouped starter');
+    const preservedClassic=await page.evaluate(async()=>{const response=await fetch('scenes/maul-frostveil-classic.swyrl.json');if(!response.ok)throw Error('Published classic map unavailable');return response.json();});
+    await importFixture(page,preservedClassic);
     const canonical=await saved(page),mapCheck=await preflight(page),canonicalMap=mapCheck.map;
     assert.equal(canonical.project.kind,'maul');assert.equal(canonical.project.maulLayout,'classic-v2');assert.equal(canonical.editor.layers.length,7);
     assert.equal(mapCheck.ok,true,'Authored classic routes failed: '+mapCheck.errors.join(' '));
@@ -159,8 +162,8 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
     pass('native_classic_map_has_long_front_bays_crossbar_lower_returns_shared_harbor_and_seven_layers');
 
     await page.evaluate(()=>window.SWYRL_ENGINE_AGENT.openProjects());await frames(page,2);await press(page,'[data-project-template="maul-frostveil"]');await frames(page,2);
-    assert.deepEqual(authored(await saved(page)),authored(canonical),'Projects hub must open the revised authored starter');
-    await play(page);let s=await state(page);assert.equal(s.map.layout,'classic-v2');assert.equal(s.gold,canonical.project.maul.startGold);assert.deepEqual([...new Set(s.towers.filter(t=>/^ally-[1-8]$/.test(t.owner)).map(t=>t.owner))].sort(),Array.from({length:8},(_,i)=>'ally-'+(i+1)),'Optional support must cover every other defender');
+    assert.deepEqual(authored(await saved(page)),authored(defaultCanonical),'Projects hub must open the current grouped starter');
+    await importFixture(page,canonical);await play(page);let s=await state(page);assert.equal(s.map.layout,'classic-v2');assert.equal(s.gold,canonical.project.maul.startGold);assert.deepEqual([...new Set(s.towers.filter(t=>/^ally-[1-8]$/.test(t.owner)).map(t=>t.owner))].sort(),Array.from({length:8},(_,i)=>'ally-'+(i+1)),'Optional support must cover every other defender');
     assert.ok((await page.evaluate(()=>window.SWYRL_ENGINE_MAUL.renderStatus())).meshes>=s.towers.length,'Native towers are not rendered');await stop(page);
     assert.deepEqual(authored(await saved(page)),authored(canonical));
     pass('native_projects_hub_opens_classic_default_and_play_stop_restores_all_authored_actors');
@@ -300,11 +303,11 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
     const legacyCheck=await preflight(page);assert.equal(legacyCheck.ok,true);assert.deepEqual([legacyCheck.map.cols,legacyCheck.map.rows],[31,38]);assert.notEqual(legacyCheck.map.layout,'classic-v2');assert.notEqual((await saved(page)).project.maulLayout,'classic-v2');
     const legacyExport=await exportMap(page,mode);assert.deepEqual(authored(legacyExport),authored(legacy));await importFixture(page,legacyExport);
     await play(page);assert.deepEqual([(await state(page)).map.cols,(await state(page)).map.rows],[31,38]);await stop(page);assert.deepEqual(authored(await saved(page)),authored(legacy));
-    await page.evaluate(()=>window.SWYRL_ENGINE_AGENT.openProjects());await frames(page,2);await press(page,'[data-project-template="maul-frostveil"]');await frames(page,2);assert.deepEqual(authored(await saved(page)),authored(canonical));
+    await page.evaluate(()=>window.SWYRL_ENGINE_AGENT.openProjects());await frames(page,2);await press(page,'[data-project-template="maul-frostveil"]');await frames(page,2);assert.deepEqual(authored(await saved(page)),authored(defaultCanonical));
     pass('published_legacy_maul_import_keeps_old_geometry_and_projects_switches_back_to_classic_default');
 
     assert.deepEqual(errors,[],'Browser errors during classic Maul acceptance');assert.equal(cases.length,16,'Every classic layout case must execute');
-    receipts.push({mode:mode.name,viewport:mode.viewport,cases,canonicalId:canonical.project.canonicalId,version:'v10.7',sourceSha256,layout:'classic-v2',nativeRun:run.id,mapActors:canonical.scene.actors.length,grid:[41,45],lowerReturn:{unit:tracking.id,stage:previousStage},victory:{waves:won.wave,kills:won.kills,lives:won.lives},defeat:{leaks:lost.leaks,lives:lost.lives}});
+    receipts.push({mode:mode.name,viewport:mode.viewport,cases,canonicalId:canonical.project.canonicalId,version:'v10.8',sourceSha256,layout:'classic-v2',nativeRun:run.id,mapActors:canonical.scene.actors.length,grid:[41,45],lowerReturn:{unit:tracking.id,stage:previousStage},victory:{waves:won.wave,kills:won.kills,lives:won.lives},defeat:{leaks:lost.leaks,lives:lost.lives}});
     await writeFile(resolve(output,mode.name+'-receipt.json'),JSON.stringify(receipts.at(-1),null,2));console.log(mode.name==='desktop'?'MAUL_LAYOUT_DESKTOP_PASS':'MAUL_LAYOUT_MOBILE_PASS');
   }catch(error){await page.screenshot({path:resolve(output,mode.name+'-failure.png')}).catch(()=>{});await writeFile(resolve(output,mode.name+'-failure.json'),JSON.stringify({message:String(error),cases,errors,state:await state(page).catch(()=>null),ui:await ui(page).catch(()=>null)},null,2));throw error;}
   finally{await context.close();}

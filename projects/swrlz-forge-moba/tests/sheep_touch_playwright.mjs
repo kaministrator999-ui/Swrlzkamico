@@ -128,7 +128,7 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
   await page.goto(base+'/index.html?'+query,{waitUntil:'domcontentloaded',timeout:60000});
   await page.waitForFunction(()=>window.SWYRL_ENGINE_SHEEP_TAG?.uiStatus&&window.SWYRL_ENGINE_AGENT.project().canonicalId==='sheep-tag-meadow',undefined,{timeout:60000});
   await page.locator('#perfPreset').selectOption('medium',{force:true});await page.evaluate(()=>window.__sheepTouchClock.freeze());await frames(page,2);
-  assert.equal(await page.evaluate(()=>window.SWRLZ_FORGE_BUILD?.version),'v10.7','Wrong engine release');
+  assert.equal(await page.evaluate(()=>window.SWRLZ_FORGE_BUILD?.version),'v10.8','Wrong engine release');
   const canonical=await saved(page),prototypes=await models(page,canonical),houses=fixture(canonical,prototypes);
 
   const self=fixture(canonical,prototypes,{sheep:[-18.85,0,-18],pieces:[]});
