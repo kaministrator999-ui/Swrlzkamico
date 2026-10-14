@@ -1,3 +1,13 @@
+## UPDATE STARTED — 2026-10-14 — v240 General conversational read/write intent asymmetry
+
+**User decision:** Interpret vague topics (e.g. `Files`) conversationally and allow bounded, revisable read-oriented initiative. A vague persistent/external write request must ask for target and scope rather than inventing intent; any actual mutation remains under owner-specific capability/consent controls. Extend prior v239 GitHub-only clarification to general Chat and both 700M/coder model behavior without changing separate §E engine or training weights.
+
+**Candidate:** `fix/general-intent-risk-v240` based on verified v239 source `c1deb7be770af9a00ca690305a6c40f8c4934466`, [draft PR #152](https://github.com/kaministrator999-ui/Swrlzkamico/pull/152). New `hf_space/intent_risk_v240.py` pure classifier; `model_router.py` early no-tool clarification fastpath for underspecified consequential requests in *all* model routes; `response_cognition.py` shared model policy in 700M and coder. Explicit reads and harmless creative drafts stay unaffected. Stage 1 GitHub writes remain disabled.
+
+**Verification:** v240 regression `hf_space/test_intent_risk_v240.py` and all canonical account, Chat and HF offline checks. GitHub CI #38623503303 COMPLETED/SUCCESS and HF Candidate Offline #38623510189 COMPLETED/SUCCESS, both exact candidate `54ce4bfe08310454352069b34c1b5ca6c14e583e`. Intermediate candidate #38623371784 failed the `Commit changes` edge test and was corrected in source and retested successfully. No runtime acceptance claimed.
+
+**Status:** STARTED — candidate source and CI verified; guarded release + atomic runtime registry + phone acceptance remain.
+
 ## UPDATE FINISHED — 2026-10-14 — v239 Chat ambiguity clarification, strict write boundary and next-thread handoff
 
 **User decision preserved:** Read-related ambiguity may be handled conversationally or through an inexpensive, clearly grounded preview; if misunderstood, correct the scope/results. In contrast, unclear write/mutation/permission requests must be clarified before execution, with operation-specific authorization. Pin/collapse repository workspace and send→stop→steer composer are documented future Chat product directions, not implemented by this change.
