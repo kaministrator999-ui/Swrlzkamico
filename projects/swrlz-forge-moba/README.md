@@ -1,19 +1,22 @@
 # §wyrl§ Engine · Maker v11.1
 
-## Current v11.1 candidate · Physical builders, tower mazes, protected entrances
+## Current verified v11.1 · Physical builders, tower mazes, protected entrances
 
 The current **Frostveil Maul** starter (not historical imported maps) now uses **walk-to-build**: tower placement queues the chosen sector builder to path to a clear adjacent cell; the tower only exists after the builder arrives, when the game rechecks the route, footprint and available gold. Pausing freezes the walk. Moving a builder deliberately cancels their pending construction; changing sectors does not. Building in an entrance pad, gate, or exit is forbidden, and the spawn pads are visibly outlined. Standalone maze walls are hidden from the current build menu; the four combat tower families still physically obstruct ground routes and form staggered, jagged mazes. Historical saved walls are not deleted, and old Maul imports preserve legacy rules.
 
 This is the **first playable delivery** against the larger Wintermaul specification, not a claim that every discussed feature exists. Remaining distinct design/engineering work includes physical crowding/no overlap, completely blocked-path creep aggression against towers, stealth/detection, speed and immunity variations, teleport, hydra/infernal splits, healing creeps, themed balanced builders, Mirror Survival (identical automatic waves for both teams; no player-sent waves), endless scaling/rewards and the dedicated in-editor Maul creator. Keep both player territory independence and team-shared survival. Extend in separate validated slices rather than silently enabling unimplemented mechanics. Older 30-wave rules, animated story projects, Sheep Tag and recorder formats are preserved.
 
-Release candidate: **71 governed patches**, **27 assets**; new patch `patches/v11_1_maul_walk_builder.py`. CI, browser/device acceptance, and exact live release audit must pass before production publication.
+Release: **71 governed patches**, **27 assets**; final patch `patches/v11_1_maul_walk_builder.py`. The exact source, CI, full desktop/phone native acceptance matrix, deployed revision, and independent hosted audit were verified.
 
 
-## Current v11.0 candidate · Compressed recordings and clear Maul spectator
+**Verified live v11.1 release (2026-10-14):** Merged source [`bbe56716867e`](https://github.com/kaministrator999-ui/Swrlzkamico/commit/bbe56716867e046d3a4f887aa2f5829f25709cd1) includes recorder PR #154 and walked-builder PR #156 through reviewed PR #157. The exact candidate passed [all six Forge workflows and 16 native desktop/phone browser suites](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38643766910). Dedicated [Forge deployment #38646048742](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38646048742) and independent [hosted artifact/asset audit #38646122359](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38646122359) both completed **SUCCESS** for the existing `kamiloki/swrlz-forge-moba` Space. Published v11.1 contains **71 patches, 27 assets, 2,027,727 HTML bytes**, SHA-256 `c96e5fea45bd316750e2fcc60ff1cbd96feadd6a90a56a5667dddad0aaf21121`; Space revision `70a5a943fa302668a2b46bf5c5765f7bfa5349cf`. Published source and all bundled assets were matched independently; future owner gameplay feedback remains separate from these CI/hosted receipts.
+
+
+## Included v11.0 contribution · Compressed recordings and clear Maul spectator
 
 Frostveil Maul Play-run review now renders recorded snowfields, water, cliffs, tower families, maze walls, builders, creeps and the exit as distinct visual layers, with camera framing adjusted to the actual Maul map dimensions. The original Sheep Tag recorder presentation and recording schema remain intact. A new **Export compressed (.json.gz)** control uses lossless browser-native gzip; the recorder also imports these gzip files with format validation and a bounded 256 MiB decompressed limit. Existing raw JSON, text, HTML spectator, camera, timelines, events and saved projects continue to work.
 
-The add-only release brings the engine to **70 governed patches** and keeps **27 packaged assets**. All 69 predecessor patches and their runtime files are unchanged. Candidate code requires package, browser, CPU and exact hosted release verification; these notes are not publication evidence.
+This v11.0 source contribution added the seventieth governed patch and retained **27 packaged assets**. It was integrated into the cumulative, verified v11.1 publication; v11.0 was not released separately.
 
 
 ## Previous v10.9 candidate · Story actions and an animated first episode
