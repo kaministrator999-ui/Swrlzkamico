@@ -39,7 +39,7 @@ def test_source_question_not_code_mutation():
 def test_verified_source_reaches_only_coder_with_correct_provenance():
     body = TEST_BODY
     def api(_token, path):
-        if path == "/repos/" + REPO + "/commits/feature/review":
+        if path == "/repos/" + REPO + "/commits/feature%2Freview":
             return {"sha": HEAD}
         if path == "/repos/" + REPO + "/git/trees/" + HEAD + "?recursive=1":
             return {"truncated": False,
