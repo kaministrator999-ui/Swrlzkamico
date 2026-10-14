@@ -4,7 +4,7 @@ on:
     branches: [main]
   workflow_dispatch:
   workflow_run:
-    workflows: ["Deploy §wyrl§ Engine v10.7 to Hugging Face"]
+    workflows: ["Deploy §wyrl§ Engine v10.8 to Hugging Face"]
     types: [completed]
     branches: [main]
 permissions:
@@ -117,6 +117,8 @@ jobs:
               expected_assets.add('scenes/maul-frostveil.swyrl.json')
           if 'scenes/maul-frostveil-classic.swyrl.json' in source_paths:
               expected_assets.add('scenes/maul-frostveil-classic.swyrl.json')
+          if 'scenes/maul-frostveil-groups.swyrl.json' in source_paths:
+              expected_assets.add('scenes/maul-frostveil-groups.swyrl.json')
           expected_assets.update(path for path in source_paths if path.startswith('assets/anime/') and path.endswith('.png'))
           assert set(receipt['assets'])==expected_assets,'Bundled asset set differs from committed source'
           for path,meta in receipt['assets'].items():
@@ -128,6 +130,9 @@ jobs:
               if path=='scenes/maul-frostveil-classic.swyrl.json':
                   import runpy
                   runpy.run_path(engine+'/tests/maul_layout_package.py')['validate_scene'](json.loads(data))
+              if path=='scenes/maul-frostveil-groups.swyrl.json':
+                  import runpy
+                  runpy.run_path(engine+'/tests/maul_batch_package.py')['validate_scene'](json.loads(data))
               print('LIVE_ASSET_OK='+path,flush=True)
           audit={'releaseVersion':request['releaseVersion'],'sourceCommit':source_commit,'deployTrigger':trigger,
                  'deployRun':final['html_url'],'appUrl':root,'sourceBytes':len(html),'sourceSha256':digest,
