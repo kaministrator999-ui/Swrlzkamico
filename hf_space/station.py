@@ -1763,7 +1763,7 @@ async def send(request:Request):
     elif github_connection.is_start_request(prompt):
         _, verified_account = _account_session(request)
         payload["githubStart"]={"userId":str((verified_account or {}).get("id") or "")}
-    elif github_connection.is_github_command(prompt) or github_connection.is_github_conversation(prompt) or github_connection.forge_project_tools_v213.is_conversation(prompt) or (active_github and github_connection._implicit_repo_command(prompt,active_github)):
+    elif github_connection.is_github_command(prompt) or github_connection.is_github_conversation(prompt) or github_connection.forge_project_tools_v213.is_conversation(prompt) or (active_github and (github_connection._implicit_repo_command(prompt,active_github) or github_connection.ambiguous_topic_reply(prompt,active_github))):
         _, verified_account = _account_session(request)
         payload["githubAction"]={"userId":str((verified_account or {}).get("id") or ""), "prompt":prompt,
                                  "githubContext":active_github}
