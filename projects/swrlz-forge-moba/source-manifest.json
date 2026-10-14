@@ -88,6 +88,6 @@
     "patches/v11_1_maul_walk_builder.py",
     "patches/v11_2_maul_flight_glacial_art.py"
   ],
-  "finalBytes": 2039578,
-  "finalSha256": "1a7f83924a421321ed6cde6e0970d3815a84fc80df6e6285c7128c6062203ace"
+  "finalBytes": 2039762,
+  "finalSha256": "1df529cdcc8ae706e74ec97248784815dd5e77c01090a88e50d260545432d542"
 }
