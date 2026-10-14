@@ -64,10 +64,23 @@ stRunCamera=function(){const data=maulLayoutNativeCamera();if(data&&maulLayoutAc
 const maulLayoutNativeWords=stRunWords;
 stRunWords=function(runOrId=null,time=null){const text=maulLayoutNativeWords(runOrId,time),run=stRunResolve(runOrId),frame=stRunFrame(run,time);if(run?.project?.project?.maulLayout==='classic-v2'&&frame?.camera?.view?.enabled){const v=frame.camera.view;return text+'\n\nRecorded lens window: '+v.width+' × '+v.height+' pixels; shift '+v.offsetX+', '+v.offsetY+' pixels within '+v.fullWidth+' × '+v.fullHeight+'. The saved projection matrix preserves this framing.';}return text;};
 window.SWYRL_ENGINE_RUNS.words=stRunWords;
-const maulLayoutNativeBuildKind=maulSetBuildKind,maulLayoutNativeSelectTower=maulSelectTower;
-function maulLayoutRefitHUD(){if(maulLayoutActive()&&maulSession&&innerWidth<=620&&maulLayoutLastFrame&&!maulUI.gesture)maulFrameAt(maulLayoutLastFrame.target,maulLayoutLastFrame.overview);}
+const maulLayoutNativeBuildKind=maulSetBuildKind,maulLayoutNativeSelectTower=maulSelectTower,maulLayoutNativeHandleTap=maulUIHandleTap;
+let maulLayoutHUDRefitDepth=0,maulLayoutHUDRefitPending=false;
+function maulLayoutRefitHUD(){
+  if(!maulLayoutActive()||!maulSession||innerWidth>620||!maulLayoutLastFrame||maulUI.gesture)return;
+  if(maulLayoutHUDRefitDepth){maulLayoutHUDRefitPending=true;return;}
+  maulFrameAt({x:orbit.target.x,z:orbit.target.z},maulLayoutLastFrame.overview);
+}
 maulSetBuildKind=function(...args){const result=maulLayoutNativeBuildKind(...args);maulLayoutRefitHUD();return result;};
 maulSelectTower=function(...args){const result=maulLayoutNativeSelectTower(...args);maulLayoutRefitHUD();return result;};
+maulUIHandleTap=function(...args){
+  if(!maulLayoutActive()||innerWidth>620)return maulLayoutNativeHandleTap(...args);
+  // Deselecting a tower changes HUD height. Keep the same lens until the
+  // original tap has raycast its screen coordinates and issued the order.
+  maulLayoutHUDRefitDepth++;
+  try{return maulLayoutNativeHandleTap(...args);}
+  finally{maulLayoutHUDRefitDepth--;if(!maulLayoutHUDRefitDepth&&maulLayoutHUDRefitPending){maulLayoutHUDRefitPending=false;maulLayoutRefitHUD();}}
+};
 
 let maulLayoutEditorProjection=null;
 const maulLayoutNativeStart=maulStartSession,maulLayoutNativeStop=stopSession;

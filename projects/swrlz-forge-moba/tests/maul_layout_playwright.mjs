@@ -252,7 +252,19 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
     pass('native_simulate_on_classic_map_excludes_recordings_and_stop_preserves_authored_state');
 
     await load(page,empty);await sector(page,0);map=(await state(page)).map;const recordedTower=await build(page,'arrow',map,6,5);await gridTap(page,map,7,3,true);await native(page,'maulCancel');
-    await gridTap(page,map,5,12);await frames(page,20);await native(page,'maulStartWave');await frames(page,40);const observed=await state(page),liveRun=await runData(page),snapshot=await runFrame(page,liveRun);
+    const builder=empty.scene.actors.find(a=>a.type==='maul-builder'&&a.maul.sector===0);
+    await selectTower(page,map,recordedTower);await gridTap(page,map,5,12);
+    const orderedSnapshot=await runFrame(page,await runData(page));
+    assert.deepEqual(orderedSnapshot.game.builderOrders[builder.id]?.path.at(-1),{x:5,z:12},'Clearing tower selection changed the ground-tap destination');
+    const beforePan=orderedSnapshot.camera.target,panStart=await canvasPoint(page,map,5,14),panEnd={x:panStart.x+32,y:panStart.y+22};
+    assert.equal(await page.evaluate(p=>{const hit=document.elementFromPoint(p.x,p.y);return hit?.tagName==='CANVAS'||hit?.id==='viewport';},panEnd),true,'Physical camera pan ends behind the HUD');
+    if(mode.hasTouch){await touchEvent(page,'touchStart',panStart);await frames(page,1);await touchEvent(page,'touchMove',panEnd);await frames(page,1);await touchEvent(page,'touchEnd');}
+    else{await page.mouse.move(panStart.x,panStart.y);await page.mouse.down();await page.mouse.move(panEnd.x,panEnd.y,{steps:3});await page.mouse.up();}
+    await frames(page,1);const pannedTarget=(await runFrame(page,await runData(page))).camera.target;
+    assert.ok(Math.hypot(pannedTarget[0]-beforePan[0],pannedTarget[2]-beforePan[2])>.25,'Native canvas drag did not pan the actual camera');
+    await native(page,'maulBuildArrow');const toolTarget=(await runFrame(page,await runData(page))).camera.target;
+    for(const axis of [0,1,2])close(toolTarget[axis],pannedTarget[axis],'Choosing a build tool preserves the panned camera target '+axis);
+    await native(page,'maulCancel');await sector(page,0);await frames(page,20);await native(page,'maulStartWave');await frames(page,40);const observed=await state(page),liveRun=await runData(page),snapshot=await runFrame(page,liveRun);
     assert.equal(liveRun.mode,'maul');assert.equal(liveRun.capture.incomplete,false);assert.equal(snapshot.game.map.layout,'classic-v2');assert.equal(snapshot.game.gold,observed.gold);assert.equal(snapshot.game.wave,observed.wave);assert.equal(snapshot.game.lives,observed.lives);
     assert.ok(liveRun.events.some(e=>e.type==='maul-built'&&e.details.id===recordedTower.id));assert.ok(liveRun.events.some(e=>e.type==='maul-build-rejected'));assert.ok(liveRun.events.some(e=>e.type==='maul-wave-started'));
     for(const unit of observed.units.filter(u=>u.alive!==false)){const entity=snapshot.entities[unit.id];assert.ok(entity,'Recorded world omits a native creep');close(entity.position[0],unit.x,'Recorded creep X');close(entity.position[2],unit.z,'Recorded creep Z');close(entity.hp,unit.hp,'Recorded creep health');assert.equal(entity.route.stage,unit.stage);assert.deepEqual(entity.route.waypoints,unit.path);}
@@ -265,7 +277,7 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
     const nativeProjection=await page.evaluate(p=>window.SWYRL_ENGINE_MAUL.pointScreen(p[0],p[2],p[1]),cameraPosition);assert.equal(nativeProjection.visible,true,'Observed frontline creep should be in the actual camera');
     close(independentlyProjected.x,nativeProjection.x,'Exported camera matrix reproduces native X',1);close(independentlyProjected.y,nativeProjection.y,'Exported camera matrix reproduces native Y',1);
 
-    const builder=empty.scene.actors.find(a=>a.type==='maul-builder'&&a.maul.sector===0),recordedBuilder=snapshot.entities[builder.id];assert.ok(recordedBuilder);assert.ok(Math.hypot(recordedBuilder.position[0]-builder.position[0],recordedBuilder.position[2]-builder.position[2])>.25);
+    const recordedBuilder=snapshot.entities[builder.id];assert.ok(recordedBuilder);assert.ok(Math.hypot(recordedBuilder.position[0]-builder.position[0],recordedBuilder.position[2]-builder.position[2])>.25);
     await native(page,'maulPause');const pausedRun=await runData(page);await frames(page,20);close((await runData(page)).duration,pausedRun.duration,'Paused recorder time');await native(page,'maulStop');
     const run=await runData(page,liveRun.id);assert.equal(run.complete,true);assert.equal(run.endReason,'stopped');assert.ok((await page.evaluate(run=>window.SWYRL_ENGINE_RUNS.validate(run),run)).ok);
     const independent=reconstruct(run),nativeFrame=await runFrame(page,run);assert.deepEqual(nativeFrame.entities,independent.entities);assert.deepEqual(nativeFrame.camera,independent.camera);assert.deepEqual(nativeFrame.game,independent.game);assert.deepEqual(authored(await saved(page)),authored(empty));
