@@ -40,7 +40,7 @@ GITHUB_SCOPE = "read:user"  # read-only repository stage, no write scope upgrade
 GITHUB_CAPABILITY_STAGE = "read-repository"
 _READ_STAGE_DESCRIPTION = ("GitHub Stage 1: repository reading only. Enabled: list directories, "
                            "read existing files and inspect startup documents. "
-                           "File creation, editing, deletion, branches, issues, PRs, "
+                           "File creation, editing, deletion, branch/issue/PR mutations, "
                            "workflow mutations and deployments are disabled.")
 
 
