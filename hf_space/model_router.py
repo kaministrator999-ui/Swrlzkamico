@@ -5,6 +5,7 @@ import json
 import re
 from typing import Callable, Iterator, Any
 from brain_programming import programming_intent
+from intent_risk_v240 import classify as classify_intent_risk, clarification as risk_clarification
 from online_tools import classify_online_request, stream_online_request, online_camera
 
 class ModelUnavailable(RuntimeError):
@@ -302,6 +303,17 @@ def dispatch(model_id: str, payload: dict[str,Any], r39_generate: Callable[[dict
     payload=dict(payload)
     payload["programmingIntent"]=intent
     yield {"type":"PROGRAMMING_INTENT","intent":intent}
+    risk_kind=classify_intent_risk(str(payload.get("prompt") or ""))
+    # This guard precedes coder/model selection and all retrieval/tool paths.
+    # It only asks for missing target information; it does not grant writes.
+    if risk_kind == "unclear-mutation":
+        message=risk_clarification(str(payload.get("prompt") or ""))
+        yield {"type":"STATUS","phase":"MUTATION_CLARIFICATION",
+               "reason":"Clarifying an underspecified external or persistent action.",
+               "categories":["INTENT","CLARIFICATION","NO_ACTION"]}
+        yield {"type":"DELTA","text":message}
+        yield {"type":"COMPLETED","phase":"COMPLETE","fastPath":"mutation-clarification"}
+        return
     identity_answer=direct_app_identity_answer(str(payload.get("prompt") or ""))
     if identity_answer:
         yield {"type":"DELTA","text":identity_answer}
