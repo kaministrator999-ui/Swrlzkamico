@@ -23,7 +23,7 @@ def parse(prompt, context=None):
     if not text or len(text) > 1000 or not REQUEST.search(text) or WRITES.search(text):
         return None
     # Only a clear GitHub/source context enters this route.
-    if not (re.search(r"\b(?:github|repo|repository|source|code|script|function|file)\b", text, re.I)
+    if not (re.search(r"\b(?:github|repo|repository|source|code|scripts?|functions?|files?)\b", text, re.I)
             or text.lower().startswith("@github ")):
         return None
     paths = PATH.findall(text)
