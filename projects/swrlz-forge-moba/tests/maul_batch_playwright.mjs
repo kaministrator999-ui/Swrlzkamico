@@ -244,7 +244,16 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
     const jsonPath=resolve(output,mode.name+'.grouped-maul.swyrl-run.json'),textPath=resolve(output,mode.name+'.grouped-maul.swyrl-run.txt'),htmlPath=resolve(output,mode.name+'.grouped-maul.swyrl-run.html');
     assert.deepEqual(JSON.parse(await downloadRun(page,'stRunExportJson',jsonPath)),run);const transcript=await downloadRun(page,'stRunExportText',textPath);assert.match(transcript,/group/i);assert.match(transcript,/camera/i);
     const html=await downloadRun(page,'stRunExportHtml',htmlPath);assert.ok(html.includes('SWYRL_RUN_VIEWER'));assert.ok(html.includes('function stRunDrawMaul('));assert.ok(html.includes(profile));
-    const zippedWait=page.waitForEvent('download',{timeout:15000});await tap(page,'stRunExportGzip');const zippedFile=await zippedWait;
+    const zippedWait=page.waitForEvent('download',{timeout:15000});await tap(page,'stRunExportGzip');
+    let zippedFile;try{zippedFile=await zippedWait;}catch(error){
+      console.log('MAUL_GZIP_EXPORT_DEBUG',JSON.stringify(await page.evaluate(()=>({
+        message:document.getElementById('stRunImportFeedback')?.textContent,
+        label:document.getElementById('stRunExportGzip')?.textContent,
+        disabled:document.getElementById('stRunExportGzip')?.disabled,
+        rawDisabled:document.getElementById('stRunExportJson')?.disabled,
+        supported:typeof CompressionStream,hasRecord:!!window.SWYRL_ENGINE_RUNS?.data?.(),
+      }))));throw error;
+    }
     assert.match(zippedFile.suggestedFilename(),/\.swyrl-run\.json\.gz$/);const gzip=await readFile(await zippedFile.path());
     assert.ok(gzip.length<Buffer.byteLength(JSON.stringify(run)),'Gzip must reduce native recording bytes');
     assert.deepEqual(JSON.parse(gunzipSync(gzip).toString('utf8')),run,'Compressed recording changed captured state/events');
