@@ -1,5 +1,7 @@
 # §tart §E — §wyrl§ Engine Build & Deploy Router
 
+**Frostveil implementation ledger:** [Wintermaul v11.1 shipped-versus-planned minion waves and gameplay](projects/swrlz-forge-moba/reports/WINTERMAUL_DESIGN_ARCHITECTURE.md#verified-v111-minion-wave-status-2026-10-14). Three grouped arrival batches, flying/boss rounds and walk-to-build are live; collision/congestion, stealth, immunity, teleport, split/Hydra/Infernal and healer archetypes, endless and Mirror Survival remain planned. The report's acceptance gates govern future claims of completion.
+
 ## Current verified v11.1 · Physical builders, tower mazes, protected entrances
 
 The current **Frostveil Maul** starter (not historical imported maps) now uses **walk-to-build**: tower placement queues the chosen sector builder to path to a clear adjacent cell; the tower only exists after the builder arrives, when the game rechecks the route, footprint and available gold. Pausing freezes the walk. Moving a builder deliberately cancels their pending construction; changing sectors does not. Building in an entrance pad, gate, or exit is forbidden, and the spawn pads are visibly outlined. Standalone maze walls are hidden from the current build menu; the four combat tower families still physically obstruct ground routes and form staggered, jagged mazes. Historical saved walls are not deleted, and old Maul imports preserve legacy rules.
