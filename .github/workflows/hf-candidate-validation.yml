@@ -70,5 +70,9 @@ jobs:
           python -m pip install 'requests>=2.32,<3' 'cryptography>=43,<47'
           python -m py_compile hf_space/github_connection.py hf_space/test_github_start_parallel_v243.py
           python hf_space/test_github_start_parallel_v243.py
+      - name: v244 Stage-1 help and pinned-startup-links regression
+        run: |
+          python -m py_compile hf_space/github_connection.py hf_space/test_github_info_help_v244.py
+          python hf_space/test_github_info_help_v244.py
       - name: Report scope
         run: echo "Offline checks only. Model reconstruction, inference, HF Space and Chat parity remain unverified."

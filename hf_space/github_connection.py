@@ -52,7 +52,7 @@ def _read_stage_command(prompt):
     if not match:
         return False
     cmd = match[1].strip().lower()
-    return bool(cmd in ("help", "permissions", "capabilities", "files", "stats", "largest", "report", "chat status", "project status", "project guide", "workflow guide", "branches")
+    return bool(cmd in ("help", "permissions", "capabilities", "files", "stats", "largest", "report", "chat status", "project status", "project guide", "workflow guide", "engine help", "engine pack help", "branches")
                 or re.fullmatch(r"project status\s+[^\r\n]{1,90}",cmd)
                 or re.fullmatch(r"(?:files|stats|largest|history|search|compare|report)\s+[^\r\n]{1,1200}", cmd)
                 or re.fullmatch(r"(?:read|open|view)\s+[^\r\n]{1,220}", cmd))
@@ -530,7 +530,7 @@ def project_start_report(user_id, repo_name="", include_context=False):
              quote(pinned_sha, safe="") + "/" + quote(found[0], safe="/") + ")",
              "", "**Startup document:** " + _safe_fragment(header, 160),
              "", "### Documents read"]
-    lines.extend("- [" + p + "](" + base + "/blob/" + quote(branch, safe="") +
+    lines.extend("- [" + p + "](" + base + "/blob/" + quote(pinned_sha, safe="") +
                  "/" + quote(p, safe="/") + ")" for p in found)
     if modules:
         lines += ["", "### Runtime version authorities",
@@ -1154,6 +1154,26 @@ def _github_command(user, prompt):
             return ("GitHub confirmed branch creation: " + repo + "/" + action["branch"]) if result.get("ref") else "GitHub did not confirm branch creation."
         return "Unknown GitHub proposal; nothing written."
 
+    if GITHUB_CAPABILITY_STAGE == "read-repository" and lower == "engine help":
+        return ("## §E engine guide · GitHub Stage 1 (read only)\n"
+                "Browse the real Forge source with @GitHub files projects/swrlz-forge-moba "
+                "and @GitHub read file §tart_§E.md. "
+                "The source defines editor scenes, native starter packs and guarded "
+                "Forge publishing as a separate lane from §wyrlz AI Chat.\n"
+                "Engine-specific status, starter listing, planning, cloning, reviewing, "
+                "committing and deploying commands are not enabled in this Stage 1. "
+                "You may inspect their source files using approved GitHub read commands; "
+                "this help request does not enable any write permission.")
+    if GITHUB_CAPABILITY_STAGE == "read-repository" and lower == "engine pack help":
+        return ("## §E atomic starter-pack guide · GitHub Stage 1 (read only)\n"
+                "The engine starter-pack architecture pairs an editor-native scene "
+                "with its provenance/recipe descriptor, checked together for source identity. "
+                "To examine an existing pack, browse "
+                "@GitHub files projects/swrlz-forge-moba/starter-packs "
+                "or read its named file via @GitHub read file PATH.\n"
+                "Engine-pack draft, verify-tool execution, review/PR, confirmation and "
+                "deployment commands are not enabled in this Stage 1. "
+                "This informational help does not create a pack, grant access or change GitHub.")
     if GITHUB_CAPABILITY_STAGE == "read-repository" and lower == "project guide":
         return project_start_report(user, repo)
     if GITHUB_CAPABILITY_STAGE == "read-repository" and lower == "workflow guide":
