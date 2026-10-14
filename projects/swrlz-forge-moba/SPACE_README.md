@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v10.9
+title: §wyrl§ Engine v11.1
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -10,9 +10,9 @@ header: mini
 short_description: Maul, Sheep Tag, paper theatre, Dragon Den and Starforge
 ---
 
-# §wyrl§ Engine · Maker v10.9
+# §wyrl§ Engine · Maker v11.1
 
-## Current v10.9 candidate · Story actions and an animated first episode
+## Previous v10.9 candidate · Story actions and an animated first episode
 
 Open **Projects → Ghosts in Different Forms**, or `?project=anime-ghosts-ep01`, then use **Play** or **Watch Episode 01**. Kami and §wyrlz now act through the story: greeting and reaching, recoiling and bracing, casting, writing, stepping, hovering and recovering. Their arm chains, attached full-length staff, heads and costume depth pieces move together. Short dialogue windows leave room for a character to listen and react between lines. Kami's first attempt to burn a doorway nearly erases the library and makes §wyrlz fade. They recover by joining Kami's light with §wyrlz's written names, build a doorway that remembers them and step toward a world that answers, ‘Welcome back.’
 
