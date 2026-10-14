@@ -23,7 +23,7 @@ _MUTATION = re.compile(
     r"(delete|erase|remove|overwrite|deploy|publish|push|merge|commit|"
     r"upload|send|post|transfer|rename|move|edit|update|replace|change|"
     r"save|share|submit|dispatch|trigger|run|execute)"
-    r"(?:\s+(?:(?:it|them|this|that|these|those)|"
+    r"(?:\s+(?:(?:it|them|this|that|these|those|changes|code|content)|"
     r"(?:the|my|our)\s+(?:file|files|repo|repository|project|"
     r"branch|document|draft|message|post|update|changes)))?"
     r"[.?!]*$", re.I,
