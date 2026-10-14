@@ -89,6 +89,8 @@ jobs:
           print("CINEMATIC_SHA256="+hashlib.sha256(output).hexdigest())
           assert len(manifest["patches"])==72
           assert manifest['patches'][-1]=='patches/v11_2_maul_flight_glacial_art.py'
+          print('UNSEALED_V11_2_CANDIDATE_BYTES='+str(len(output)),flush=True)
+          print('UNSEALED_V11_2_CANDIDATE_SHA256='+hashlib.sha256(output).hexdigest(),flush=True)
           assert len(output)==manifest['finalBytes']
           assert hashlib.sha256(output).hexdigest()==manifest['finalSha256']
           for needle in (
