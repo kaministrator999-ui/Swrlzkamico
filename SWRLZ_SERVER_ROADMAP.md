@@ -1,3 +1,19 @@
+## UPDATE STARTED — 2026-10-14 — v244 Chat GitHub read-only help accuracy and pinned document links
+
+**User feedback / owner request:** Audit owner-provided `swrlz-dragon-chat (55)(1).json` after v243 successful startup speed improvement; fix confirmed accuracy defects, maintain bounded Stage-1 GitHub read-only safety, reconcile versions and publish guarded manual Hugging Face release when required.
+
+**Source response observations:** §tart and @GitHub project guide gave correct pinned source identity `main@7b382499e5f79ffb2ad1a2dae9df4cc05385cf58`, 10 documents, all 16 current registered module versions (Repository Work 1.0.184, Server Runtime 2.3.396, Google Account 1.0.16); the document links used moving `/blob/main/` instead of pinning the verified SHA. Workflow guide accurately describes Stage-1 read-only limits but is terse. Contextual “Files” clarified the active repo correctly in 0.375 s. `@GitHub engine help` and `@GitHub engine pack help` returned a blanket Stage-1 write lock despite being informational; source has separate help descriptions. §E v11.1 STARTED remains under a distinct Forge workstream with a later checkpoint, and the tool's “potential” warning is not a verified Forge regression.
+
+**Architecture and ownership:** Stable HF account-scoped GitHub handler `hf_space/github_connection.py`; exact deployed v243 base `6cf3de3a360683a067cddb44e84c1f78c3e9fed3`; isolated branch `fix/github-stage1-informational-help-v244`, PR #160 stacked against v243 (not direct main; avoids concurrent Forge work). No mutation to `station.py`, LALM, model weights, Forge, OAuth scope or Stage 1 write capabilities.
+
+**Implementation candidate:** Add exactly two fixed informational allowlist commands for engine and engine-pack help, with explicit read-only descriptions; all status, pack verification, clone, edit, review, confirmation, and deployment commands remain locked. Pin the GitHub document URLs in the startup report to the immutable `sourceSha` used for their reads, avoiding drift after later commits. Regression tests and offline HF candidate CI cover both changes.
+
+**Version baseline / focus group:** `runtime:VERSION.txt` registry untouched; Repository Work 1.0.184, Server Runtime 2.3.396, Google Account 1.0.16. Primary Focus GitHub source/evidence accuracy; Focus Group Google Account authenticated GitHub boundary (changes), Server Runtime stable Space code (publication), Repository Work (release lineage); Web Chat/LALM/Forge unchanged.
+
+**Verification / deployment state:** PR #160 and offline candidate CI in progress. No v244 production deployment or live acceptance yet. Use only `main:.deploy/HF_SPACE_REQUEST.txt` with `SOURCE_REF` exact validated v244 head, fresh nonce and existing `kamiloki/Swyrlz` target, after green CI. Close event with actual terminal receipt and changed versions, or record genuine blocker. Preserve existing v243 release and rollback snapshot.
+
+---
+
 ## UPDATE FINISHED — 2026-10-14 — v243 GitHub §tart SHA-pinned parallel source reads, CI and guarded HF publish
 
 **Primary Focus / Focus Group:** Connected GitHub account startup reader; Google Account 1.0.15 → **1.0.16** (changed stable OAuth-connected GitHub read pipeline); Server Runtime 2.3.395 → **2.3.396** (real stable HF release); Repository Work 1.0.183 → **1.0.184** (completed governed engineering tier). Web Chat **1.5.129** and LALM Engine **2.1.201** intentionally unchanged. Runtime source authority remains `runtime:VERSION.txt` and the owning `versions/*.txt` records; all three changed authority records were advanced after confirming the terminal HF workflow.
