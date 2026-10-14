@@ -246,6 +246,19 @@ class Candidate(unittest.TestCase):
   self.assertEqual(events[0]["type"],"PROGRAMMING_INTENT")
   self.assertEqual(events[-1]["text"],"real route")
 
+ def test_v241_read_only_dual_model_and_work_registry(self):
+  # Executed by the existing HF candidate offline gate, not just a
+  # standalone test file that CI might never discover.
+  import test_dual_model_work_v241 as v241
+  for name in (
+   "test_source_question_not_code_mutation",
+   "test_verified_source_reaches_only_coder_with_correct_provenance",
+   "test_source_blob_mismatch_fails_closed",
+   "test_declared_work_vs_topic_and_safe_account_isolation",
+   "test_two_thread_work_claims_are_not_duplicate_owners",
+  ):
+   getattr(v241,name)()
+
  def test_source_contract(self):
   src=(ROOT/"hf_space/app.py").read_text(encoding="utf-8")
   ast.parse(src)

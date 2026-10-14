@@ -23,6 +23,7 @@ import forge_project_tools_v213
 import engine_starter_pack_v215
 import engine_code_agent_v217
 import github_explorer_v223 as explorer
+import github_source_specialist_v241 as source_specialist
 import github_report_v226 as scope_report
 import repository_project_status_v233 as project_status
 import github_read_inference_v235 as read_inference
@@ -1623,6 +1624,8 @@ _AGENT_TOOLS = ("permissions", "files", "branches", "issues", "pulls", "commits"
 
 def is_github_conversation(prompt):
     q = str(prompt or "").strip()
+    if source_specialist.parse(q) is not None:
+        return True
     if read_inference.classify_read(q) is not None:
         return True
     if project_status.subject_of_status(q) is not None and re.search(r"\b(?:repo|repository|github)\b",q,re.I):
@@ -1783,10 +1786,16 @@ def _agent_model_plan_events(prompt, generator):
     yield {"type": "PLAN_RESULT", "plan": result}
 
 
-def agent_events(data, model_generator=None):
+def agent_events(data, model_generator=None, coder_generator=None):
     """Station-facing tool events: observed progress, no secret or raw reasoning."""
     user = str(data.get("userId") or "")
     prompt = str(data.get("prompt") or "").strip()
+    source_request = source_specialist.parse(prompt, data.get("githubContext"))
+    if source_request is not None and coder_generator is not None:
+        # Source-specialist requests remain inside the Stage-1 authenticated
+        # read gate. This is NEVER a route to legacy write/proposal tools.
+        yield from source_specialist.events(sys.modules[__name__], data, coder_generator)
+        return
     clarification = ambiguous_topic_reply(prompt, data.get("githubContext"))
     if clarification:
         yield {"type": "STATUS", "phase": "GITHUB_CONTEXT_CLARIFICATION",
