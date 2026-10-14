@@ -50,7 +50,8 @@ def test_natural_router_and_contextual_pronouns():
     question = ("When was that original file last modified in our GitHub repository, "
                 "which commit changed it, and what evidence tells you that?")
     assert gh._implicit_repo_command(question, CTX) == "@GitHub history hf_space/github_connection.py"
-    assert gh._implicit_repo_command("Files", {**CTX, "directory": ""}) == "@GitHub files"
+    assert gh._implicit_repo_command("Files", {**CTX, "directory": ""}) is None
+    assert gh.ambiguous_topic_reply("Files", {**CTX, "directory": ""}) is not None
     assert understand.classify_read("Can you list all the files again from the repo") == "@GitHub files recursive"
     assert gh._implicit_repo_command("Delete that file", CTX) is None
     assert not gh.is_github_conversation("Write a fantasy story about a repository")

@@ -1532,9 +1532,38 @@ def is_repo_chat_status_request(prompt):
         r"how (?:far along|is progress) (?:with|on))"
         r"(?: the| our)? chat (?:in|on|of|with) (?:the|our|my)? ?(?:github )?(?:repo|repository|github)",s))
 
+
+def ambiguous_topic_reply(prompt, context):
+    """Handle underspecified topic introductions without guessing an action.
+
+    This is a bounded, thread-scoped clarification only. It does not retrieve
+    GitHub data, grant a tool capability, or modify stored source context.
+    """
+    if GITHUB_CAPABILITY_STAGE != "read-repository":
+        return None
+    term = re.sub(r"\s+", " ", str(prompt or "").strip().casefold()).rstrip("?.!")
+    if term not in ("file", "files", "folders", "directories", "statistics", "stats"):
+        return None
+    checked = normalize_thread_context(context)
+    if not checked:
+        return None
+    directory = checked["directory"]
+    branch = checked["branch"]
+    scope = ("the `" + directory + "` directory") if directory else "your GitHub repository"
+    label = "file information" if term in ("file", "files") else (
+        "directories" if term in ("folders", "directories") else "statistics")
+    return ("You mentioned " + label + ". We were looking at " + scope +
+            " on branch `" + branch + "`. Did you want to browse the files, "
+            "see counts and file types, analyze how particular files relate, "
+            "or find something specific? If you meant files elsewhere, that's fine too.")
+
+
+
 def _implicit_repo_command(prompt, context):
     """Narrow thread-local follow-ups. Never guess global chat intent."""
     if not isinstance(context, dict) or not _REPO.fullmatch(str(context.get("repo") or "")):
+        return None
+    if ambiguous_topic_reply(prompt, context):
         return None
     q = re.sub(r"\s+", " ", str(prompt or "").strip()).lower().rstrip("?.!")
     if len(q) > 240 or not q or q.startswith("@") or re.search(
@@ -1758,6 +1787,14 @@ def agent_events(data, model_generator=None):
     """Station-facing tool events: observed progress, no secret or raw reasoning."""
     user = str(data.get("userId") or "")
     prompt = str(data.get("prompt") or "").strip()
+    clarification = ambiguous_topic_reply(prompt, data.get("githubContext"))
+    if clarification:
+        yield {"type": "STATUS", "phase": "GITHUB_CONTEXT_CLARIFICATION",
+               "reason": "Confirming the requested file operation before selecting a repository read.",
+               "categories": ["GITHUB", "READ_ONLY", "CLARIFICATION"]}
+        yield {"type": "DELTA", "text": clarification}
+        yield {"type": "COMPLETED", "phase": "COMPLETE"}
+        return
     followup = _implicit_repo_command(prompt, data.get("githubContext")) if GITHUB_CAPABILITY_STAGE=="read-repository" else None
     if GITHUB_CAPABILITY_STAGE=="read-repository" and re.fullmatch(
         r"(?i)@github\s+how\s+many\s+(?:total\s+)?(?:files?|folders?|directories|dirs?)(?:\s+(?:(?:are\s+(?:there\s+)?)?in\s+(?:the\s+)?(?:repo|repository)|are\s+there))?[?.!]*", prompt):
