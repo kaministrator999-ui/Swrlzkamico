@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.0
+title: §wyrl§ Engine v11.1
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -10,7 +10,7 @@ header: mini
 short_description: Maul, Sheep Tag, paper theatre, Dragon Den and Starforge
 ---
 
-# §wyrl§ Engine · Maker v11.0
+# §wyrl§ Engine · Maker v11.1
 
 ## Previous v10.9 candidate · Story actions and an animated first episode
 
