@@ -113,12 +113,12 @@ maulOrder=function(command){const result=maulWalkNativeOrder(command);if(maulWal
 }return result;};
 const maulWalkNativeStop=stopSession;
 stopSession=function(...args){maulPendingBuilds.clear();if(maulSpawnOverlay){maulSpawnOverlay.removeFromParent();maulSpawnOverlay.traverse(n=>{n.geometry?.dispose?.();n.material?.dispose?.();});maulSpawnOverlay=null;}return maulWalkNativeStop(...args);};
+const maulWalkNativeHUD=maulRefreshHUD;
+maulRefreshHUD=function(...args){if($('maulBuildWall'))$('maulBuildWall').hidden=maulWalkBuildEnabled();return maulWalkNativeHUD(...args);};
 const maulWalkNativeInstall=maulInstallUI;
 maulInstallUI=function(...args){
   const result=maulWalkNativeInstall(...args);
-  $('maulBuildWall')?.remove();
-  const wallIndex=maulUIBuilds.findIndex(pair=>pair[1]==='maze-wall');
-  if(wallIndex>=0)maulUIBuilds.splice(wallIndex,1);
+  if($('maulBuildWall'))$('maulBuildWall').hidden=maulWalkBuildEnabled();
   const help=$('maulHelpPanel');
   if(help)for(const p of help.querySelectorAll('p')){
     p.textContent=p.textContent.replace('Cheap walls extend the maze. ','Towers themselves shape the maze. ').replace('maze walls','tower-built mazes').replace('tap the ground to move your builder','tap the ground to move your builder, or place a tower to send your builder to construct it');
