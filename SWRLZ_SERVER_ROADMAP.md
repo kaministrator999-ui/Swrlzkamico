@@ -1,3 +1,17 @@
+## UPDATE STARTED — 2026-10-14 — v241 Read-only dual-model GitHub source analysis and cross-conversation work awareness
+
+**Owner intent:** Implement the reviewed local §wyrlz Chat dual-model collaboration design v2 against latest deployed v240, preserving the strict Stage-1 GitHub read-only gate and the owner’s ordered code-competence approvals. Add bounded, source-verified coding-specialist review and per-account cross-conversation work awareness without showing private histories or enabling chat GitHub writes.
+
+**Concurrent work and authority:** New isolated branch `feature/chat-dual-model-readonly-work-awareness-v241` based on exact v240 published candidate `54ce4bfe08310454352069b34c1b5ca6c14e583e` (draft PR #152). Canonical affected source: `hf_space/github_connection.py`, `hf_space/station.py`, plus bounded read-only modules/tests as needed. Account-scoped metadata may use existing encrypted Redis; no new OAuth scopes, no repo data writes by deployed AI, no §E Forge source. The actual source is distinct from shared main roadmap and runtime module registries.
+
+**Initial authority/version baseline:** main `871bf7e838061a44663bfe1049b71011e1fd86d5`; v240 runtime registry Repository Work `1.0.181`, Server Runtime `2.3.393`, Web Chat `1.5.127`, LALM Engine `2.1.199`. Snapshot current GitHub state before every write; an unfinished v238 progress event is a separate existing workstream whose implementation must be preserved. Relevant already-deployed v235–v240 inference and ambiguity repairs are the compatibility baseline.
+
+**Verification/deployment plan:** Independent source-owned Stage-1 denial regressions; no cross-account visibility, prompt-injection or false verified-source claims; coder unavailability fallback; overlapping/stale task state; existing v235–v240 GitHub/Chat tests; two exact-source CI gates. A runtime candidate, if validated, proceeds only via canonical guarded Hugging Face publication and explicit signed-in owner acceptance; never describe source-only status as live.
+
+**State:** STARTED, implementation and exact-source verification pending.
+
+---
+
 ## UPDATE FINISHED — 2026-10-14 — v240 Risk-asymmetric §wyrlz Chat and model intent clarification
 
 **User behavior accepted:** A short subject word is not an implied tool action. When a read goal is unclear, §wyrlz can converse naturally or offer a minimal, verifiably grounded read-only preview and revise if corrected. For ambiguous write/delete/edit/send/publish/deploy/external operations, clarify the target, location/recipient and intended effect before any attempt. Explicit source-read requests remain efficient. Even explicit mutation intent does not supply write permission; all existing app account/tool permission checks remain independent. Harmless code and creative writing in chat is NOT treated as an external mutation.
