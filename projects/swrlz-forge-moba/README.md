@@ -1,4 +1,10 @@
-# §wyrl§ Engine · Maker v11.1
+# §wyrl§ Engine · Maker v11.2
+
+## Candidate v11.2 — hover builders and glacial visual style (not deployed)
+
+The new canonical Frostveil map opts into `maulBuilderFlight: hover-v1` and `maulVisualStyle: glacial-v2`. Builders fly directly to the tower cell across terrain and existing towers at 15 world units/s, hovering above the tower as it is constructed. Manual movement stays within the assigned territory; no-build entrances, gold/route checks, and historical `walk-v1` imported maps remain protected. Cached original 256px procedural ice/snow/water textures, icy cliff accents and animated winged builders improve appearance without changing saved gameplay geometry. This is an isolated v11.2 candidate in PR #159, NOT a live success claim.
+
+Pending work remains creep spacing and blocked-route attacks, speed/stealth/teleport/immunity/healing/split archetypes, editable waves, endless and synchronized Mirror Survival, themed balanced builders, and the native Maul-specific creator. See `reports/WINTERMAUL_DESIGN_ARCHITECTURE.md`.
 
 ## Current verified v11.1 · Physical builders, tower mazes, protected entrances
 
