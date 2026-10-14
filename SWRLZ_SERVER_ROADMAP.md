@@ -1,3 +1,13 @@
+## UPDATE STARTED — 2026-10-14 — v242 Dragon Chat (51) source-grounded read and coordination repair
+
+**Owner direction:** Repair five v241 signed-in test failures: negated read-only review routing, actual source branch/source-ref awareness, unsupported architecture claims, ambiguous Files after project startup, and evidence-based cross-conversation overlap lookup. Preserve Stage-1 GitHub mutation lock and user-account isolation. User authorizes implementation, CI validation and terminal canonical guarded Hugging Face deploy after validated source, with manual owner behavioral acceptance afterward.
+
+**Architecture and work ownership:** Use isolated Chat source branch `fix/dragon-chat51-grounded-reads-v242` from exact released v241 candidate `34a72fa7d41eebec784433f16a33bec570f2bdbc`; existing owners `hf_space/github_source_specialist_v241.py`, `hf_space/github_connection.py`, `hf_space/station.py`, `hf_space/project_work_registry_v241.py` and regression tests. Primary Focus clean-room Chat verified GitHub source questions. Focus Group LALM source routing, Qwen source read, account-scoped cross-thread work registry. No §E Forge changes, no new OAuth scopes, no model weight training. Version baseline: Repository Work 1.0.182, Server Runtime 2.3.394, Web Chat 1.5.128, LALM Engine 2.1.200; versions not reserved.
+
+**Verification plan:** Reproduce all five exported failures as deterministic cases; enforce precise source identity/coverage and no speculative architecture, same-user same-repository bounded registry access with explicit uncertainty, context-aware no-tool Files clarification, negation-safe read-only requests and explicit write locks. Run exact candidate account/security, HF offline and applicable browser regression gates. Only then use a single canonical `main:.deploy/HF_SPACE_REQUEST.txt` trigger to existing `kamiloki/Swyrlz`; observe terminal revision/rollback evidence and atomic runtime versions. Live mobile owner acceptance remains independent.
+
+**Status:** STARTED — no implementation or publication yet.
+
 ## UPDATE FINISHED — 2026-10-14 — v241 Read-only source-to-Qwen analysis and cross-conversation project intent awareness
 
 **Owner intent preserved:** Implement the existing dual-model design v2 into §wyrlz Chat after the v235–v240 GitHub inference work, with no GitHub write permission enabled in the deployed AI. The user's coding-model competency approval chain remains reviewer/GPT validation → independent compilers/tests → final hands-on owner testing. This is not model-weight training and does not grant programming agents repository mutation power.
