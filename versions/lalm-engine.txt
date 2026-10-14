@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.200
-REVISION=2.1.200-source-specialist-guidance-v241
+VERSION=2.1.201
+REVISION=2.1.201-readonly-source-specialist-v242
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
