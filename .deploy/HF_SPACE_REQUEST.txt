@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=54ce4bfe08310454352069b34c1b5ca6c14e583e
-REQUEST_NONCE=2026-10-14-v240-risk-asymmetric-chat-intent-001
+SOURCE_REF=34a72fa7d41eebec784433f16a33bec570f2bdbc
+REQUEST_NONCE=2026-10-14-v241-readonly-dual-model-work-awareness-001
