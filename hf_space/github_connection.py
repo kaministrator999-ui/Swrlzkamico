@@ -1120,7 +1120,7 @@ def _github_command(user, prompt):
     if GITHUB_CAPABILITY_STAGE == "read-repository" and lower == "project guide":
         return project_start_report(user, repo)
     if GITHUB_CAPABILITY_STAGE == "read-repository" and lower == "workflow guide":
-        return ("## GitHub workflow guide · source-only\\n"
+        return ("## GitHub workflow guide · source-only\n"
                 "Browse verified workflow files with @GitHub files .github/workflows, "
                 "then inspect a named workflow with @GitHub read file .github/workflows/NAME.yml. "
                 "A workflow file is not a workflow-run receipt; executions and all "
@@ -1156,7 +1156,7 @@ def _github_command(user, prompt):
     if lower == "project guide" and GITHUB_CAPABILITY_STAGE == "read-repository":
         return project_start_report(user, repo)
     if lower == "workflow guide" and GITHUB_CAPABILITY_STAGE == "read-repository":
-        return ("## GitHub workflow guide · read-only Stage 1\\n"
+        return ("## GitHub workflow guide · read-only Stage 1\n"
                 "Use @GitHub files .github/workflows to inspect actual workflow names, "
                 "then @GitHub read file .github/workflows/NAME.yml to inspect its source. "
                 "Any workflow dispatch, branch mutation, PR change or deployment remains locked. "
@@ -1259,7 +1259,7 @@ def _github_command(user, prompt):
         paths = (match[2] or "/").strip()
         source_branch = check["defaultBranch"]
         explicit_branch = re.fullmatch(
-            r"(?s)(.*?)\\s+on\\s+branch\\s+([A-Za-z0-9][A-Za-z0-9._/-]{0,100})", paths)
+            r"(?s)(.*?)\s+on\s+branch\s+([A-Za-z0-9][A-Za-z0-9._/-]{0,100})", paths)
         if explicit_branch:
             paths = explicit_branch[1].strip() or "/"
             source_branch = explicit_branch[2]
@@ -1312,7 +1312,7 @@ def _github_command(user, prompt):
         raw_target = cmd[8:].strip()
         source_branch = check["defaultBranch"]
         explicit_branch = re.fullmatch(
-            r"(?s)(.*?)\\s+on\\s+branch\\s+([A-Za-z0-9][A-Za-z0-9._/-]{0,100})", raw_target)
+            r"(?s)(.*?)\s+on\s+branch\s+([A-Za-z0-9][A-Za-z0-9._/-]{0,100})", raw_target)
         if explicit_branch:
             raw_target = explicit_branch[1].strip()
             source_branch = explicit_branch[2]
@@ -1325,15 +1325,15 @@ def _github_command(user, prompt):
             latest = data["lastCommit"] if isinstance(data["lastCommit"], dict) else {}
             earliest = data["firstSeenPathCommit"] if isinstance(data["firstSeenPathCommit"], dict) else {}
             return ("## GitHub path history: " + target +
-                    "\\nRepository: " + repo +
-                    "\\nBranch: " + snapshot["branch"] +
-                    "\\nRevision: " + snapshot["sourceSha"] +
-                    "\\nLast path-changing commit: " + str(latest.get("sha") or "unverified") +
-                    "\\nCommit timestamp (UTC): " + str(latest.get("date") or "unverified") +
-                    "\\nCommit subject: " + _safe_fragment(latest.get("summary"), 180) +
-                    "\\nFirst visible path commit: " + str(earliest.get("sha") or "unverified") +
-                    "\\nComplete history scan: " + str(data["firstSeenComplete"]) +
-                    "\\n" + data["caution"])
+                    "\nRepository: " + repo +
+                    "\nBranch: " + snapshot["branch"] +
+                    "\nRevision: " + snapshot["sourceSha"] +
+                    "\nLast path-changing commit: " + str(latest.get("sha") or "unverified") +
+                    "\nCommit timestamp (UTC): " + str(latest.get("date") or "unverified") +
+                    "\nCommit subject: " + _safe_fragment(latest.get("summary"), 180) +
+                    "\nFirst visible path commit: " + str(earliest.get("sha") or "unverified") +
+                    "\nComplete history scan: " + str(data["firstSeenComplete"]) +
+                    "\n" + data["caution"])
         except explorer.ExplorerError as exc:
             return "GitHub history unavailable: "+str(exc)
     if lower.startswith("compare "):
@@ -1363,13 +1363,13 @@ def _github_command(user, prompt):
             paths = sorted((x["path"] for x in snap["items"] if x["type"] == "file"
                             and x["path"].startswith(prefix)), key=str.casefold)
             limit = 700
-            return ("## GitHub recursive file inventory\\nRepository: " + repo +
-                    "\\nBranch: " + snap["branch"] + "\\nRevision: " + snap["sourceSha"] +
-                    "\\nScope: " + (target or "/") + " (recursive)" +
-                    "\\nComplete Git-tree file count: " + str(len(paths)) + "\\n" +
-                    "\\n".join("- " + x for x in paths[:limit]) +
-                    ("\\n(Only first 700 paths displayed; narrow scope to view more.)"
-                     if len(paths) > limit else "\\n(All paths displayed.)"))
+            return ("## GitHub recursive file inventory\nRepository: " + repo +
+                    "\nBranch: " + snap["branch"] + "\nRevision: " + snap["sourceSha"] +
+                    "\nScope: " + (target or "/") + " (recursive)" +
+                    "\nComplete Git-tree file count: " + str(len(paths)) + "\n" +
+                    "\n".join("- " + x for x in paths[:limit]) +
+                    ("\n(Only first 700 paths displayed; narrow scope to view more.)"
+                     if len(paths) > limit else "\n(All paths displayed.)"))
         except explorer.ExplorerError as exc:
             return "Could not verify recursive inventory: " + str(exc)
     if lower == "files" or lower.startswith("files "):
@@ -1431,7 +1431,7 @@ def _read_context_from_result(user, prompt, result):
             return None
         branch = auth["defaultBranch"]
         if body.startswith("## GitHub source report · "):
-            label = re.search(r"(?m)^Branch: ([A-Za-z0-9][A-Za-z0-9._/-]{0,100}) \\u00b7 commit [0-9a-f]{40}$", body)
+            label = re.search(r"(?m)^Branch: ([A-Za-z0-9][A-Za-z0-9._/-]{0,100}) \u00b7 commit [0-9a-f]{40}$", body)
             if label:
                 branch = explorer.safe_branch(label[1])
         commit = _api(record["token"], "/repos/" + repo + "/commits/" + quote(branch, safe=""))
