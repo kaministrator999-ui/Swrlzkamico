@@ -96,7 +96,7 @@ def test_source_blob_mismatch_fails_closed():
         result = list(gh.agent_events({
             "userId": USER,
             "prompt": "@GitHub explain file src/app.py"}, coder_generator=
-            lambda _p: (_ for _ in () if False))
+            lambda _p: (_ for _ in () if False)))
     assert any("mismatched" in e.get("text", "") for e in result)
     assert not any(e.get("phase") == "GITHUB_CODER_READ_ONLY" for e in result)
 
