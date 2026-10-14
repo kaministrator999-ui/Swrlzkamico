@@ -148,7 +148,7 @@ def events(gh, data, coder_generator):
         blob = str(item.get("sha") or "")
         if not SHA.fullmatch(blob):
             raise HTTPException(503, "Unverified file blob identity")
-        source = gh._read_optional(record["token"], repo, path, commit, 65000)
+        source = gh._read_optional(record["token"], repo, path, commit, 256000)
         if not source or source.get("sha") != blob or not isinstance(source.get("body"), str):
             raise HTTPException(503, "Source unavailable or blob identity mismatched")
         body = source["body"]
