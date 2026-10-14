@@ -1,4 +1,4 @@
-# v11.1 Maul walk-to-build acceptance
+# Verified v11.1 Maul walk-to-build acceptance
 
 - Default grouped Frostveil starter must show no wall construction option.
 - A tower command must queue the selected sector builder, move across actual traversable cells and complete only upon reaching an adjacent footprint.
@@ -7,6 +7,8 @@
 - Cancel/replace movement orders and Pause/Stop must not produce phantom towers.
 - Earlier Maul saved project variants, Sheep Tag, recording import/export and the other §E projects remain compatible.
 - Seal 71 patches, 27 unchanged assets, all six checks, desktop and phone gameplay, then exact hosted audit before claiming deployment.
+
+**Release acceptance received:** [six-workflow exact-source candidate validation](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38643766910) (all sixteen native desktop/phone browser suites SUCCESS); [dedicated Forge deployment #38646048742](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38646048742) and [independent live-source/all-27-asset audit #38646122359](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38646122359) both terminal SUCCESS. Integrated source `bbe56716867e046d3a4f887aa2f5829f25709cd1`, published `v11.1`, sealed HTML 2,027,727 bytes, SHA-256 `c96e5fea45bd316750e2fcc60ff1cbd96feadd6a90a56a5667dddad0aaf21121`. Historical imports and earlier starters passed automated regressions. Independent owner manual/gameplay acceptance remains unclaimed.
 
 ---
 
