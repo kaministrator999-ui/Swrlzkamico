@@ -13,6 +13,7 @@ import os
 import re
 import secrets
 import time
+from concurrent.futures import ThreadPoolExecutor
 from urllib.parse import quote, urlencode, urlparse
 
 import requests
@@ -430,6 +431,23 @@ def _safe_fragment(value, limit=650):
     return " ".join(clean.split())[:limit]
 
 
+def _startup_read_batch(token, repo, requests_to_read, ref):
+    """Read independent SHA-pinned documents concurrently in the supplied order.
+
+    Never share a requests.Session across workers, cache private OAuth content
+    across users, or conceal authentication/server failures. _read_optional owns
+    the existing 403/404 tolerance and raises on other unexpected failures.
+    """
+    if not requests_to_read:
+        return []
+    def fetch(item):
+        path, max_bytes = item
+        return _read_optional(token, repo, path, ref, max_bytes)
+    with ThreadPoolExecutor(max_workers=min(5, len(requests_to_read)),
+                            thread_name_prefix="github-start-read") as pool:
+        return list(pool.map(fetch, requests_to_read))
+
+
 def project_start_report(user_id, repo_name="", include_context=False):
     c = _config()
     record = _load(c, user_id)
@@ -443,13 +461,16 @@ def project_start_report(user_id, repo_name="", include_context=False):
     pinned_sha = str(head.get("sha") or "")
     if not re.fullmatch(r"[0-9a-f]{40}", pinned_sha):
         raise HTTPException(502, "GitHub did not return a pinned commit")
+    start_time = time.monotonic()
     found = []
     files = {}
-    for path in _ROOT_FILES:
-        obj = _read_optional(token, repo, path, pinned_sha, 1800000 if "ROADMAP" in path else 130000)
+    root_requests = [(path, 1800000 if "ROADMAP" in path else 130000) for path in _ROOT_FILES]
+    for (path, _), obj in zip(root_requests,
+                              _startup_read_batch(token, repo, root_requests, pinned_sha)):
         if obj:
             found.append(path)
             files[path] = obj
+    docs_read_ms = round((time.monotonic() - start_time) * 1000)
     if not files.get("§wyrlz_§tart.md"):
         # Support other users' repositories without pretending they use our contract.
         for fallback in ("§tart.md", "START.md", "README.md"):
@@ -474,8 +495,10 @@ def project_start_report(user_id, repo_name="", include_context=False):
     version_file = _read_optional(token, repo, "VERSION.txt", runtime_sha) if runtime_sha else None
     modules = []
     if version_file:
-        for module, authority in _VERSION.findall(version_file["body"])[:25]:
-            v = _read_optional(token, repo, "versions/" + authority, runtime_sha, 4500)
+        authorities = _VERSION.findall(version_file["body"])[:25]
+        version_requests = [("versions/" + authority, 4500) for _, authority in authorities]
+        for (module, _), v in zip(authorities,
+                                  _startup_read_batch(token, repo, version_requests, runtime_sha)):
             if v:
                 text = v["body"]
                 match = re.search(r"^VERSION=(.+)$", text, re.M)
@@ -560,6 +583,10 @@ def project_start_report(user_id, repo_name="", include_context=False):
         "latestCompleted":completed[2] if completed else "",
         "latestCompletedDate":completed[1] if completed else "",
         "possibleUnresolved":pending[2] if pending else "",
+        "startupTimingMs": {
+            "documentReads": docs_read_ms,
+            "total": round((time.monotonic() - start_time) * 1000),
+        },
     }
     return report,context
 
