@@ -1541,7 +1541,7 @@ def ambiguous_topic_reply(prompt, context):
     """
     if GITHUB_CAPABILITY_STAGE != "read-repository":
         return None
-    term = re.sub(r"\\s+", " ", str(prompt or "").strip().casefold()).rstrip("?.!")
+    term = re.sub(r"\s+", " ", str(prompt or "").strip().casefold()).rstrip("?.!")
     if term not in ("file", "files", "folders", "directories", "statistics", "stats"):
         return None
     checked = normalize_thread_context(context)
