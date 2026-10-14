@@ -180,7 +180,7 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
     await until(page,s=>s.playerTowers===1,'Builder walked to tower footprint then constructed',320);
     assert.equal((await page.evaluate(()=>window.SWYRL_ENGINE_MAUL.walkBuildStatus())).pending.length,0);
     assert.equal((await state(page)).gold,initialWalk.gold-20);
-    const rejectedSpawn=await page.evaluate(()=>window.MAUL_BUILDER_CORE?.protectedSpawn((window.SWYRL_ENGINE_MAUL.status()).map,{x:6,z:3}));
+    const rejectedSpawn=await page.evaluate(()=>window.SWYRL_ENGINE_MAUL.status().map.reserved.some(p=>p.x===6&&p.z===3));
     assert.equal(rejectedSpawn,true,'Enemy arrival region must reject building');
 
     await stop(page);assert.deepEqual(authored(await saved(page)),authored(canonical),'Stop adds buildings or changes authored starter');
