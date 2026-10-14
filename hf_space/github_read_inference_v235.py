@@ -74,6 +74,10 @@ def classify_read(prompt, context=None):
     raw = str(prompt or "").strip()
     if not raw or len(raw) > 600 or "\n" in raw or "\r" in raw:
         return None
+    if re.fullmatch(
+            r"(?i)(?:what (?:is|are)|how does) (?:github|(?:a|the) (?:git )?repo(?:sitory)?)"
+            r"(?: work)?[?.!]*", raw):
+        return None  # General GitHub education is not a connected-repository read.
     if _EXPLICIT_COMMAND.match(raw):
         return None  # existing command owners handle their own parameters
     if _MUTATION.search(raw) or re.search(r"\bcommit\s+(?:my\s+|the\s+|these\s+)?(?:changes?|code|files?)\b", raw, re.I):
