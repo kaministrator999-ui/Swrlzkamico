@@ -1536,7 +1536,7 @@ def _implicit_repo_command(prompt, context):
     if re.fullmatch(r"(?:and )?(?:how many|what(?:'s| is) the number of)\s+(?:total )?(?:files?|folders?|directories|dirs?|items?)(?:\s+(?:are\s+there(?:\s+in)?|are\s+in|in)\s+(?:(?:the|this|our)\s+)?(?:folder|directory|repo|repository|here)|\s+are\s+there)?",q):
         return "@GitHub stats" + scope
     if re.fullmatch(r"(?:and )?(?:dirs?|directories|folders?|files?)", q):
-        return "@GitHub files" + scope
+        return ("@GitHub files" if q in ("file", "files") else "@GitHub stats") + scope
     if re.fullmatch(r"(?:list|show|browse|open)\s+(?:the )?(?:files|folders|directory|contents)(?: (?:here|in (?:here|this (?:directory|folder|repo|repository))))?",q):
         return "@GitHub files" + scope
     largest = re.fullmatch(r"(?:show|list|what are)\s+(?:the )?(?:largest|biggest)(?: (\d{1,2}))? (?:files|items)(?: (?:in|here).*)?", q)
