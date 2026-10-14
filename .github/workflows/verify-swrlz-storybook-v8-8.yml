@@ -332,4 +332,5 @@ jobs:
             maul-acceptance/
             maul-layout-acceptance/
             maul-batch-acceptance/
+            episode-performance-acceptance/
           retention-days: 5
