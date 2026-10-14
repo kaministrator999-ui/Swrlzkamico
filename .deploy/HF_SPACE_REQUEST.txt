@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=34a72fa7d41eebec784433f16a33bec570f2bdbc
-REQUEST_NONCE=2026-10-14-v241-readonly-dual-model-work-awareness-001
+SOURCE_REF=b05bf100a14fcda46c8a60da5c57490cf8c06584
+REQUEST_NONCE=2026-10-14-v242-dragon-chat51-evidence-001
