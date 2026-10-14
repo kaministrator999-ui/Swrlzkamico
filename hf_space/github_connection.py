@@ -1524,12 +1524,12 @@ def _implicit_repo_command(prompt, context):
     if len(q) > 240 or not q or q.startswith("@") or re.search(
             r"\b(?:create|edit|delete|remove|push|merge|deploy|modify|write|trigger|dispatch|run)\b", q):
         return None
-    source_read = read_inference.classify_read(prompt, context)
-    if source_read:
-        return source_read
     subject=project_status.subject_of_status(prompt)
     if subject is not None:
         return "@GitHub project status"+(" "+subject if subject else "")
+    source_read = read_inference.classify_read(prompt, context)
+    if source_read:
+        return source_read
     directory = str(context.get("directory") or "")
     last_file = str(context.get("lastFile") or "")
     scope = (" " + directory) if directory else ""
