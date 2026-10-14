@@ -158,5 +158,5 @@ def classify_read(prompt, context=None):
         if scoped:
             cmd = "@GitHub report deep " + " | ".join(scoped)
             return cmd + (" on branch " + named_branch if named_branch else "")
-        return "@GitHub report structure /" + (" on branch " + named_branch if named_branch else "")"
+        return "@GitHub report structure /" + (" on branch " + named_branch if named_branch else "")
     return None
