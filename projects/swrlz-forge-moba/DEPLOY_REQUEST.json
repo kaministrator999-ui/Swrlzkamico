@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v10.9",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V10_9_EPISODE_STORY_ACTIONS",
-  "reason": "Deploy the animated Ghosts in Different Forms first episode from reviewed PR #150. Kami and §wyrlz act through a causal eight-beat story with 36 native saved action clips, 11 timed page/burst/ink/portal cues, coordinated socket-attached limbs, costume follow-through, camera movement and short dialogue windows with listening pauses. Native Story Actions and Story effects authoring preserves Preview/Play/Watch, Undo/Redo and Save/Load. The 134-second, 70-actor, 11-layer starter retains its full-length staff, book opening and depth fits. All seven starters remain. All six engine workflows and sixteen desktop/phone suites passed on c1fe9189e4bda31396f10765954ce317d1074b92, including every committed episode, batch, layout and preserved Maul browser/CPU case and all 13 Sheep Tag geometry scenarios. Matrix: https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38617314811. The sealed package contains 69 patches, 27 assets, 2,006,537 HTML bytes and SHA-256 4fe13c65a9c539e9c9be28c4702165445b50cf9088baa77ec42ecec638175fa6. All 68 published patches/runtime modules/payloads and 26 predecessor assets remain intact. This request is the final repository mutation; completion requires exact dedicated deployment and hosted verification.",
-  "sourceCommit": "29011439778d5f077a0c4e1432241b6cbefa4e8e",
-  "sourceIntegritySha256": "4fe13c65a9c539e9c9be28c4702165445b50cf9088baa77ec42ecec638175fa6"
+  "releaseVersion": "v11.1",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_1_MAUL_WALK_BUILDER",
+  "reason": "Owner-approved Forge v11.1 cumulative release: PR #157 merged; exact candidate passed six workflows including all sixteen native browser suites. Recorder gzip, Maul spectator, walked builders, protected spawns; preserve earlier starters and assets.",
+  "sourceCommit": "bbe56716867e046d3a4f887aa2f5829f25709cd1",
+  "sourceIntegritySha256": "c96e5fea45bd316750e2fcc60ff1cbd96feadd6a90a56a5667dddad0aaf21121"
 }
