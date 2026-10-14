@@ -91,4 +91,4 @@ maulInstallUI=function(...args){
   }
   return value;
 };
-window.SWYRL_ENGINE_MAUL.flightStatus=()=>({enabled:!!maulFlightEnabled(),speed:MAUL_FLIGHT_CORE.SPEED,height:MAUL_FLIGHT_CORE.HEIGHT,constructionAt:'builder-hover-cell',sectorBound:true});
+window.SWYRL_ENGINE_MAUL.flightStatus=()=>({enabled:!!maulFlightEnabled(),speed:MAUL_FLIGHT_CORE.SPEED,height:MAUL_FLIGHT_CORE.HEIGHT,constructionAt:'builder-hover-cell',sectorBound:true,builders:actors.filter(a=>a.userData.actorType==='maul-builder').map(a=>({sector:a.userData.maul?.sector,id:a.userData.id,position:a.getWorldPosition(new THREE.Vector3()).toArray()}))});
