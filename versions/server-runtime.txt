@@ -1,6 +1,6 @@
 ID=server-runtime
-VERSION=2.3.392
-REVISION=2.3.392-hf-v239-chat-topic-intent
+VERSION=2.3.393
+REVISION=2.3.393-hf-v240-conversation-intent-risk
 KIND=server-runtime
 SOURCE_BRANCH=runtime
 STATUS=active
