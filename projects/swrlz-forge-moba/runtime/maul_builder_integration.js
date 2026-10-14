@@ -5,6 +5,7 @@ MAUL_BATCH_CANONICAL_PROJECT.project.maulConstruction=MAUL_WALK_BUILD_PROFILE;
 MAUL_BATCH_CANONICAL_PROJECT.project.maulSpawnProtection='full-pad-v1';
 const maulWalkBuildEnabled=()=>currentProject?.kind==='maul'&&currentProject.maulConstruction===MAUL_WALK_BUILD_PROFILE;
 const maulPendingBuilds=new Map();
+let maulSpawnOverlay=null;
 function maulPlanWalkBuild(kind,cx,cz){
   if(!maulSession||paused||['won','lost'].includes(maulSession.phase))return {ok:false,reason:'Resume an active match to build.'};
   if(kind==='maze-wall')return {ok:false,reason:'Build a maze using towers; standalone walls are unavailable.'};
@@ -52,7 +53,8 @@ maulUpdate=function(dt){
       continue;
     }
     delete maulSession.builderOrders?.[id];maulPendingBuilds.delete(id);
-    const still=maulPlanWalkBuild(pending.kind,pending.cx,pending.cz);
+    const baseFit=MAUL_CORE.canBuild(maulSession,pending.kind,pending.cx,pending.cz);
+    const still=!baseFit.ok?baseFit:MAUL_BUILDER_CORE.protectedSpawn(maulSession.map,{x:pending.cx,z:pending.cz})?{ok:false,reason:'Enemy entrance pads are no-build zones.'}:{ok:true};
     if(!still.ok){
       maulUIFeedback('Build cancelled: '+still.reason,true);
       stRunGuard(()=>stRunNote('maul-build-cancelled',id,{reason:still.reason,...pending}));
@@ -100,14 +102,17 @@ maulStartSession=function(simulate=false){
       const border=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(w,.04,h)),new THREE.LineBasicMaterial({color:'#f08a88',transparent:true,opacity:.9,depthWrite:false}));
       border.position.set(cx,.065,cz);group.add(border);
     }
-    maulRuntime.add(group);maulObjects.set('spawn-protection',group);
-    // The ordinary visualization cleanup retains explicit runtime overlays.
-    const keep=maulSyncVisuals;maulSyncVisuals=function(...args){const r=keep(...args);if(group.parent===null&&maulRuntime)maulRuntime.add(group);return r;};
+    maulSpawnOverlay=group;maulRuntime.add(group);
   }
   return started;
 };
+const maulWalkNativeOrder=maulOrder;
+maulOrder=function(command){const result=maulWalkNativeOrder(command);if(maulWalkBuildEnabled()&&result.ok&&command.type==='move-builder'){
+  const builder=actors.find(a=>a.userData.actorType==='maul-builder'&&a.userData.maul?.sector===maulSession.selectedSector);
+  if(builder&&maulPendingBuilds.delete(builder.userData.id))stRunGuard(()=>stRunNote('maul-build-cancelled',builder.userData.id,{reason:'Builder received a move order'}));
+}return result;};
 const maulWalkNativeStop=stopSession;
-stopSession=function(...args){maulPendingBuilds.clear();return maulWalkNativeStop(...args);};
+stopSession=function(...args){maulPendingBuilds.clear();if(maulSpawnOverlay){maulSpawnOverlay.removeFromParent();maulSpawnOverlay.traverse(n=>{n.geometry?.dispose?.();n.material?.dispose?.();});maulSpawnOverlay=null;}return maulWalkNativeStop(...args);};
 const wallButton=$('maulBuildWall');
 wallButton?.remove();const wallIndex=maulUIBuilds.findIndex(pair=>pair[1]==='maze-wall');
 if(wallIndex>=0)maulUIBuilds.splice(wallIndex,1);
