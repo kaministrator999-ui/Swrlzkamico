@@ -3,6 +3,7 @@
 All GitHub/Redis/model interactions are deterministic mocks. No external writes.
 """
 import sys
+import hashlib
 from pathlib import Path
 from unittest import mock
 
@@ -14,7 +15,8 @@ import project_work_registry_v241 as registry
 USER = "google:owner123"
 REPO = "example/demo"
 HEAD = "a" * 40
-BLOB = "b" * 40
+TEST_BODY = "def answer(x):\n    return x + 1\n"
+BLOB = hashlib.sha1(b"blob " + str(len(TEST_BODY.encode())).encode() + b"\0" + TEST_BODY.encode()).hexdigest()
 
 
 def test_source_question_not_code_mutation():
@@ -35,7 +37,7 @@ def test_source_question_not_code_mutation():
 
 
 def test_verified_source_reaches_only_coder_with_correct_provenance():
-    body = "def answer(x):\n    return x + 1\n"
+    body = TEST_BODY
     def api(_token, path):
         if path == "/repos/" + REPO + "/commits/feature/review":
             return {"sha": HEAD}
