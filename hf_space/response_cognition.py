@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import re
 from typing import Any
+from intent_risk_v240 import MODEL_POLICY
 
 SCHEMA = "swrlz-response-cognition-v1"
 
@@ -224,6 +225,7 @@ def response_cognition_policy(state: dict[str, Any]) -> str:
         lines.append(f"Produce exactly {count} requested items unless safety or impossibility prevents it.")
     if preserve:
         lines.append("Treat keep/preserve/same/do-not-change language as a hard boundary around unaffected material.")
+    lines.append(MODEL_POLICY)
     lines.append("Prefer the smallest complete answer that satisfies the current operation. Do not end with a routine follow-up question when the request is already answerable.")
     return "\n".join(lines)
 
