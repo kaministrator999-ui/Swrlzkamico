@@ -1,6 +1,6 @@
 ID=server-runtime
-VERSION=2.3.393
-REVISION=2.3.393-hf-v240-conversation-intent-risk
+VERSION=2.3.394
+REVISION=2.3.394-hf-v241-readonly-model-source-work-registry
 KIND=server-runtime
 SOURCE_BRANCH=runtime
 STATUS=active

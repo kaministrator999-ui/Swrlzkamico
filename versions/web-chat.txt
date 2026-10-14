@@ -1,6 +1,6 @@
 ID=web-chat
-VERSION=1.5.127
-REVISION=1.5.127-chat-clarification-v240
+VERSION=1.5.128
+REVISION=1.5.128-source-coder-work-awareness-v241
 KIND=web-interface
 SOURCE_BRANCH=runtime
 STATUS=active
