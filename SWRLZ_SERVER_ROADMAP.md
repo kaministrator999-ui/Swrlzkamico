@@ -1,3 +1,15 @@
+## UPDATE FINISHED — 2026-10-13 — v237 Branch-pinned GitHub read continuity hotfix
+
+**Result:** Corrected the v236 follow-up gap where a previously source-verified feature branch could revert silently to `main` for subsequent natural-language source/history/count/files requests. The Chat/GitHub read router now carries the validated per-thread branch and actual source path; command executor re-validates branch syntax and uses it for SHA-pinned read operations and source context. This change does not add writes to the assistant or change any model weights.
+
+**Exact source:** `fix/github-branch-continuity-v237@c119e090f25bae1a80f84984ed0888eac3644692`; draft PR [#147](https://github.com/kaministrator999-ui/Swrlzkamico/pull/147). [GitHub Account CI #38512191496](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38512191496) COMPLETED/SUCCESS and [HF Candidate Offline CI #38512210253](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38512210253) COMPLETED/SUCCESS on exact matching source.
+
+**Guarded release:** `main:.deploy/HF_SPACE_REQUEST.txt` request commit `d1886b20543dbb2d9c048111e77ff42a4629907a` to existing `kamiloki/Swyrlz` Space; [HF release run #38512304713](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38512304713) COMPLETED/SUCCESS. Uploaded Space revision `dbd8300342dcbbe9feac4177b09e108af848d5a2` with rollback `5ef24efcf79695ab60e1c4defec95d747a20d809`. Receipt `DEPLOYED_UNVERIFIED`, `knownGood=false` until signed-in Android acceptance.
+
+**Atomic version registry:** `runtime@0bcf72b90b2a4865ec1709341160f5806cd8921d` based on `2fa99a71d6c409aecf9758e1ab3aac305be52f05` registers Repository Work **1.0.178**, Server Runtime **2.3.390**, Web Chat **1.5.124**. LALM Engine remains **2.1.198**. No unrelated module was advanced.
+
+**Status:** FINISHED — EXACT SOURCE, BOTH CI SUITES, GUARDED RELEASE and REGISTRY VERIFIED; **OWNER MOBILE ACCEPTANCE PENDING**.
+
 ## UPDATE STARTED — 2026-10-13 — v237 Preserve validated GitHub source branch across all read followups
 
 **Reason:** Final review of v236 revealed that a report first fetched from a named feature branch correctly recorded its source SHA/path, yet subsequent natural-language file/history/count/list followups could silently route to the default `main` branch. That invalidates source provenance and leaves one user-tested relationship/history bug unresolved. The prior v236 HF release and reversible source receipt are preserved; no unverified known-good declaration was made.
