@@ -169,6 +169,13 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
     assert.deepEqual(authored(await saved(page)),authored(canonical),'Hub default differs from native grouped starter');await play(page);
     assert.equal((await state(page)).playerTowers,0,'Player one must begin Play with no free starter buildings');assert.equal((await state(page)).towers.filter(t=>t.owner==='player').length,0);
     assert.equal(canonical.project.maulConstruction,'walk-v1','New canonical map must enable physical builder construction');
+    assert.equal(canonical.project.maulBuilderFlight,'hover-v1','Current Frostveil must opt into direct flying builders');
+    assert.equal(canonical.project.maulVisualStyle,'glacial-v2','Current Frostveil must use glacial visual materials');
+    const flight=await page.evaluate(()=>window.SWYRL_ENGINE_MAUL.flightStatus());
+    assert.equal(flight.enabled,true,'Flying builder profile inactive');
+    assert.equal(flight.speed,15,'Builder speed differs from v11.2 design');
+    assert.equal(flight.builders.length,9,'All nine builders must retain a hover actor');
+    for(const pilot of flight.builders)close(pilot.position[1],flight.height,'Builder is not flying at match start',.001);
     assert.equal(canonical.project.maulSpawnProtection,'full-pad-v1');
     assert.equal(await page.locator('#maulBuildWall').isVisible(),false,'Wall construction must not appear in the current map');
     const initialWalk=await state(page),walkMap=initialWalk.map;
@@ -177,6 +184,8 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
     assert.equal((await state(page)).playerTowers,0,'Construction must not complete instantly');
     assert.equal((await state(page)).gold,initialWalk.gold,'Queued construction must not charge gold early');
     assert.equal((await page.evaluate(()=>window.SWYRL_ENGINE_MAUL.walkBuildStatus())).pending.length,1,'Builder needs a pending travel order');
+    const hovering=(await page.evaluate(()=>window.SWYRL_ENGINE_MAUL.walkBuildStatus())).pending[0];
+    assert.deepEqual(hovering.destination,{x:5,z:12},'Flying builder must construct directly above the chosen tower cell');
     await until(page,s=>s.playerTowers===1,'Builder walked to tower footprint then constructed',320);
     assert.equal((await page.evaluate(()=>window.SWYRL_ENGINE_MAUL.walkBuildStatus())).pending.length,0);
     assert.equal((await state(page)).gold,initialWalk.gold-20);
