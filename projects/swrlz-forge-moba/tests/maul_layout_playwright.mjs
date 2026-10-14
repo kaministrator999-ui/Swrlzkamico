@@ -243,6 +243,9 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
     pass('native_rear_catcher_creep_reaches_one_shared_harbor_and_costs_a_life');
 
     const invalidTurn=structuredClone(empty);invalidTurn.scene.actors=invalidTurn.scene.actors.filter(a=>!(a.type==='maul-route-turn'&&a.maul.turnKey==='westReturn'));await importFixture(page,invalidTurn);assert.equal((await preflight(page)).ok,false,'Missing lower return marker must fail authored preflight');await native(page,'playBtn');assert.equal((await state(page)).active,false);assert.deepEqual(authored(await saved(page)),authored(invalidTurn));
+    for(const [axis,offset,label]of [[0,.5,'off-grid X'],[1,1,'raised Y']]){const misplacedTurn=structuredClone(empty),turn=misplacedTurn.scene.actors.find(a=>a.type==='maul-route-turn'&&a.maul.turnKey==='westReturn');turn.position[axis]+=offset;
+      await importFixture(page,misplacedTurn);const turnCheck=await preflight(page);assert.equal(turnCheck.ok,false,'Lower return marker '+label+' must fail authored preflight');assert.match(turnCheck.reason,/lower-lane turn.*ground grid/i);
+      await native(page,'playBtn');assert.equal((await state(page)).active,false,'Native Play accepted a lower return marker '+label);assert.equal(await page.locator('#maulHUD').isVisible(),false);assert.deepEqual(authored(await saved(page)),authored(misplacedTurn),'Rejected lower return marker '+label+' changed the authored scene');}
     const invalid=structuredClone(empty);invalid.scene.actors=invalid.scene.actors.filter(a=>!(a.type==='maul-gate'&&a.maul.sector===0));await importFixture(page,invalid);
     assert.equal((await preflight(page)).ok,false);await native(page,'playBtn');assert.equal((await state(page)).active,false);assert.equal(await page.locator('#maulHUD').isVisible(),false);assert.deepEqual(authored(await saved(page)),authored(invalid));
     pass('native_classic_preflight_rejects_missing_authored_waypoint_and_preserves_bad_project');
