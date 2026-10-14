@@ -262,7 +262,10 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
     else{await page.mouse.move(panStart.x,panStart.y);await page.mouse.down();await page.mouse.move(panEnd.x,panEnd.y,{steps:3});await page.mouse.up();}
     await frames(page,1);const pannedTarget=(await runFrame(page,await runData(page))).camera.target;
     assert.ok(Math.hypot(pannedTarget[0]-beforePan[0],pannedTarget[2]-beforePan[2])>.25,'Native canvas drag did not pan the actual camera');
-    await native(page,'maulBuildArrow');const toolTarget=(await runFrame(page,await runData(page))).camera.target;
+    // Chromium briefly suppresses compatibility clicks after the instant CDP
+    // drag. Let device input settle independently of the frozen engine clock.
+    if(mode.hasTouch)await page.waitForTimeout(300);
+    await native(page,'maulBuildArrow');assert.equal((await ui(page)).buildKind,'arrow','The physical tool tap must activate Arrow placement');const toolTarget=(await runFrame(page,await runData(page))).camera.target;
     for(const axis of [0,1,2])close(toolTarget[axis],pannedTarget[axis],'Choosing a build tool preserves the panned camera target '+axis);
     await native(page,'maulCancel');await sector(page,0);await frames(page,20);await native(page,'maulStartWave');await frames(page,40);const observed=await state(page),liveRun=await runData(page),snapshot=await runFrame(page,liveRun);
     assert.equal(liveRun.mode,'maul');assert.equal(liveRun.capture.incomplete,false);assert.equal(snapshot.game.map.layout,'classic-v2');assert.equal(snapshot.game.gold,observed.gold);assert.equal(snapshot.game.wave,observed.wave);assert.equal(snapshot.game.lives,observed.lives);
