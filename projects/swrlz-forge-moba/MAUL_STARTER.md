@@ -2,9 +2,9 @@
 
 Frostveil Maul is a separate native §E tower-defense project inspired by cooperative Wintermaul custom maps for Warcraft III: The Frozen Throne. Open **Projects → Frostveil Maul**, or use [the direct starter link](https://kamiloki-swrlz-forge-moba.static.hf.space/index.html?project=maul-frostveil), then press the editor's **Play** button.
 
-Nine connected sectors form a three-by-three board. Enemies entering an upstream sector travel through successive defended sectors to a shared crystal exit. Each leak costs shared lives. Defeat all thirty waves with lives remaining to win; exhausting lives loses the match. Ground enemies follow open cells through player-built mazes. Flying rounds cross sectors without following tower mazes, and boss rounds demand concentrated damage.
+The classic layout has three long upper building bays, a broad crossbar and a lower defense funnel leading to one shared ship. Raised cliff edges separate the snowy maze floors; colored builder positions, spawn arches, route beacons and shore water make the lanes readable. Nine connected defender sectors share these spaces. Enemies entering an upstream sector travel through successive defended sectors to the ship. Each leak costs shared lives. Defeat all thirty waves with lives remaining to win; exhausting lives loses the match. Ground enemies follow open cells through player-built mazes. Flying rounds cross sectors without following tower mazes, and boss rounds demand concentrated damage.
 
-One local controller manages nine builders and can switch the active sector. Optional auto-defenders build in the eight other sectors. This is a local playable starter; online player synchronization, competitive Maul Wars creep sending and Warcraft's original racial tower roster are future extensions.
+One local controller manages nine builders and can switch the active sector. Optional auto-defenders build in the eight other sectors. This is a local playable cooperative starter. Online player synchronization and Warcraft's original racial tower roster are outside this release.
 
 ## Playing and building
 
@@ -16,7 +16,7 @@ Use **Defense sector** to switch builders, **Map overview** to inspect all secto
 
 ## Authoring the map
 
-The shipped source is `scenes/maul-frostveil.swyrl.json`. Terrain, sector gates, builders, route waypoints, shared exit and tower actors are native editor objects in populated layers. Use native transforms, the **Maul rules** panel, Undo/Redo and **Save Project / Load Project** to make a separate variant. Settings control the wave campaign and local assistance; actual game rules are stored with the project rather than browser-only preferences. Spawn and route changes must pass preflight before Play.
+The default shipped source is `scenes/maul-frostveil-classic.swyrl.json`, marked `project.maulLayout: "classic-v2"`. The original v10.6 `scenes/maul-frostveil.swyrl.json` remains bundled for native import. The 81 baked native actors include snowfield, water, cliffs, nine sector gates, nine builders, nine spawns, six editable lower-funnel route turns, the ship exit and tower pieces in seven populated layers. Use native transforms, the **Maul rules** panel, Undo/Redo and **Save Project / Load Project** to make a separate variant. Settings control the wave campaign and local assistance; actual game rules are stored with the project rather than browser-only preferences. Spawn and route changes must pass preflight before Play. Keep lower-lane turns on the 2-unit grid at ground height (Y = 0); Play rejects misplaced turns and preserves the authored project.
 
 The starter uses original procedural frost, stone and crystal scenery and original tower models. It runs inside the existing editor and rendering engine, with a dedicated Maul runtime rather than an embedded external game.
 
@@ -24,22 +24,24 @@ The starter uses original procedural frost, stone and crystal scenery and origin
 
 Before Play, open **Run recorder** and enable **Record Play run**. Recording is off by default and its device preference applies to every starter and imported project. Full capture observes each native update; 10 Hz and 2 Hz capture reduce state sampling while retaining timed events. Maul adds wave, gold, lives, towers, enemies, route choices and accepted/rejected commands to the shared world-object and camera record.
 
-After Stop, export `.swyrl-run.json`, written `.swyrl-run.txt` spatial observations or the standalone `.swyrl-run.html` spectator schematic. The viewer can seek, orbit, follow an object or display the recorded player camera. Review/export stay unavailable during Play or Pause. Export before closing the tab to retain the run.
+After Stop, export `.swyrl-run.json`, written `.swyrl-run.txt` spatial observations or the standalone `.swyrl-run.html` spectator schematic. The viewer can seek, orbit, follow an object or display the recorded player camera. Classic Maul records the camera lens offset so this view matches the editor framing on phones. Review/export stay unavailable during Play or Pause. Export before closing the tab to retain the run.
 
 ## Research and deliberate differences
 
 | Source | Design evidence used |
 |---|---|
-| [Wintermaul X10 Final, Epic War](https://www.epicwar.com/maps/2824/) | The 2006 Frozen Throne listing describes nine-player cooperative play, nine spawns, thirty waves and seventy-two towers. This anchors the cooperative nine-sector campaign rather than competitive Maul Wars. |
+| [Wintermaul DV4, Epic War](https://www.epicwar.com/maps/1/) | The classic snowy Maul terrain and minimap anchor three upper bays, broad connecting defense space and the lower common exit funnel. |
+| [Warcraft Maul, Epic War](https://www.epicwar.com/maps/66/) | A second cooperative Maul example informs open maze-building spaces and a shared downstream defense. |
+| [Wintermaul X10 Final, Epic War](https://www.epicwar.com/maps/2824/) | The 2006 Frozen Throne listing describes nine-player cooperative play, nine spawns, thirty waves and seventy-two towers. This anchors the cooperative nine-sector campaign. |
 | [Wintermaul: The Remake, CurseForge](https://www.curseforge.com/sc2/maps/wintermaul-the-remake) | Its author describes race builders, towers used to make mazes and leaked enemies reducing lives at a shared ship exit. |
 | [Contemporary 2003 Warcraft III guide, GameFAQs](https://gamefaqs.gamespot.com/pc/256222-warcraft-iii-reign-of-chaos/faqs/23533) | Ordered waypoint travel, air rounds ignoring mazes, boss rounds at 10/20/30 and distinct tower families informed the wave and route design. |
 | [Maul making discussion, Hive Workshop](https://www.hiveworkshop.com/threads/maul-making.21468/) | Historical blocking behavior can make creeps attack towers. Full blocking has not had one universal rule across Maul variants. |
 | [Wintermaul Redux, Hive Workshop](https://www.hiveworkshop.com/threads/wintermaul-redux-1-08g.121401/) | Another variant discusses handling blocked paths by selling a tower. |
 
-Frostveil keeps the recognizable linked sectors, shared exit, tower mazes, economic upgrades, air waves and thirty-round defense. It uses four original tower families and three tiers to keep the starter approachable. Rejecting a complete route closure is an explicit §E design choice for predictable editor testing and touch building; it is not a claim that every Warcraft Maul used that rule.
+Frostveil now follows the recognizable classic Maul terrain silhouette, linked defenders, shared ship exit, tower mazes, economic upgrades, air waves and thirty-round defense. The map uses original procedural geometry rather than copied Warcraft assets. It uses four original tower families and three tiers to keep the starter approachable. Rejecting a complete route closure is an explicit §E design choice for predictable editor testing and touch building; it is not a claim that every Warcraft Maul used that rule.
 
 ## Release and acceptance
 
-The v10.6 candidate appends the 66th governed patch, `patches/v10_6_maul_tower_defense.py`, and adds this map as the 24th packaged asset. All 65 earlier patches, earlier runtime files, 23 predecessor assets and payload chunks remain byte-identical. Artifact: `swyrl_engine_v10_6.html`; marker: `V10_6_MAUL_TOWER_DEFENSE`.
+The v10.7 candidate appends the 67th governed patch, `patches/v10_7_classic_maul_map.py`, and adds the revised native map as the 25th packaged asset. All 66 earlier patches, published runtime files, 24 predecessor assets and payload chunks remain byte-identical. Artifact: `swyrl_engine_v10_7.html`; marker: `V10_7_CLASSIC_MAUL_MAP`.
 
-Required acceptance includes thirteen desktop/phone native browser suites, the new sealed Maul CPU routing/wave suite, the existing thirteen Sheep Tag geometry scenarios and all six engine workflows. Publication authority is the dedicated final request, terminal successful deployment and exact hosted package audit; candidate documentation alone does not establish that the release is live.
+Required acceptance includes fourteen desktop/phone browser suites, new sealed layout CPU scenarios, all seventeen preserved Maul CPU scenarios, all thirteen Sheep Tag geometry scenarios and all six engine workflows. The preserved v10.6 browser suite imports its unchanged scene, while the new layout suite checks the default map. Publication authority is the dedicated final request, terminal successful deployment and exact hosted package audit; candidate documentation alone does not establish that the release is live.
