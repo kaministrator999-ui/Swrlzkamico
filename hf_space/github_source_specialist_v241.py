@@ -47,9 +47,9 @@ def parse(prompt, context=None):
 
 
 def _resolve(snapshot, path):
-    entries = snapshot.get("files") or snapshot.get("tree") or []
+    entries = snapshot.get("items") or []
     paths = [(str(item.get("path") or ""), item) for item in entries
-             if isinstance(item, dict) and item.get("type") in ("blob", "file")]
+             if isinstance(item, dict) and item.get("type") == "file"]
     if "/" in path:
         matches = [item for name, item in paths if name == path]
     else:
