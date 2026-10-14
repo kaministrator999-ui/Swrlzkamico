@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=6cf3de3a360683a067cddb44e84c1f78c3e9fed3
-REQUEST_NONCE=2026-10-14-v243-parallel-start-001
+SOURCE_REF=552526004ffaaccce75035eafd9c0fd9cf32a8da
+REQUEST_NONCE=2026-10-14-v244-stage1-help-pinned-evidence-001
