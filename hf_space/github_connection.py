@@ -419,7 +419,7 @@ def is_start_request(prompt):
         r"(?:(?:please|can you|could you|would you)\s+)?"
         r"(?:read|open|load|follow|go through|check)\b.{0,145}"
         r"(?:§tart|start doc(?:ument)?|startup doc(?:ument)?)"
-        r"(?:\b.{0,60})?[?.!]*", s, re.I))
+        r"(?:\b.{0,135})?[?.!]*", s, re.I))
 
 
 def _safe_fragment(value, limit=650):
