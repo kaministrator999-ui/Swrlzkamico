@@ -21,6 +21,7 @@ from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 from model_router import dispatch, ModelUnavailable, routes
 import github_connection
+import github_report_explain_v236
 import project_thread_memory
 import account_chat_store
 import chatgpt_archive
@@ -959,14 +960,16 @@ def _run(key,request_id,model_id,payload,assistant_id):
         g["queueWaitMs"]=max(0,g["startedAtUnixMs"]-int(g.get("acceptedAtUnixMs") or g["startedAtUnixMs"]))
         g["status"].append({"phase":"GENERATING","reason":"Workstation admitted generation"})
     try:
-        if model_id=="r39" and _generate is None and not (payload.get("githubStart") or payload.get("githubAction") or payload.get("verifiedPrivateAnswer")):raise RuntimeError("R39 generator is not installed")
-        if model_id=="stock" and _stock_generate is None and not (payload.get("verifiedPrivateAnswer") or payload.get("githubStart") or payload.get("githubAction")):raise RuntimeError("Original HF generator is not installed")
+        if model_id=="r39" and _generate is None and not (payload.get("githubStart") or payload.get("githubAction") or payload.get("verifiedPrivateAnswer") or payload.get("suppliedGitHubReportExplanation")):raise RuntimeError("R39 generator is not installed")
+        if model_id=="stock" and _stock_generate is None and not (payload.get("verifiedPrivateAnswer") or payload.get("githubStart") or payload.get("githubAction") or payload.get("suppliedGitHubReportExplanation")):raise RuntimeError("Original HF generator is not installed")
         text=""; completed=False
         cancelled=False
         # Server-verified private counts/disabled-recall notices are deterministic:
         # never send these requests to public online search or ask the model to guess.
         if payload.get("verifiedPrivateAnswer"):
             event_source=iter(({"type":"DELTA","text":payload["verifiedPrivateAnswer"]},{"type":"COMPLETE"}))
+        elif payload.get("suppliedGitHubReportExplanation"):
+            event_source=iter(({"type":"DELTA","text":payload["suppliedGitHubReportExplanation"]},{"type":"COMPLETE"}))
         else:
             event_source=(github_connection.start_events(payload["githubStart"])
                           if isinstance(payload.get("githubStart"),dict)
@@ -1612,7 +1615,7 @@ async def send(request:Request):
     route=next((r for r in routes() if r.model_id==model_id),None)
     prompt=body.get("prompt");tid=body.get("threadId");rid=body.get("requestId")
     # GitHub startup is Station-owned evidence retrieval and does not consume a model.
-    if route is None or (not route.available and not (github_connection.is_start_request(prompt) or github_connection.is_github_command(prompt) or github_connection.is_github_conversation(prompt) or github_connection.forge_project_tools_v213.is_conversation(prompt))):
+    if route is None or (not route.available and not (github_connection.is_start_request(prompt) or github_connection.is_github_command(prompt) or github_connection.is_github_conversation(prompt) or github_connection.forge_project_tools_v213.is_conversation(prompt) or github_report_explain_v236.is_report_request(prompt))):
         raise HTTPException(422,"Selected model is not configured")
     profile=body.get("profile","")
     user_profile=body.get("userProfile","")
@@ -1716,7 +1719,7 @@ async def send(request:Request):
     # Treat private history like an evidence provider, not model training or
     # instructions. Explicit historical lookups span native account chat and
     # imported ChatGPT archives, and can constrain actual message timestamps.
-    if google_owner.startswith("google:") and not count_kind and not (github_connection.is_start_request(prompt) or github_connection.is_github_command(prompt) or github_connection.is_github_conversation(prompt) or github_connection.forge_project_tools_v213.is_conversation(prompt)):
+    if google_owner.startswith("google:") and not count_kind and not (github_connection.is_start_request(prompt) or github_connection.is_github_command(prompt) or github_connection.is_github_conversation(prompt) or github_connection.forge_project_tools_v213.is_conversation(prompt) or github_report_explain_v236.is_report_request(prompt)):
         historical=""
         try:
             if private_history_intent and not chatgpt_account_memory.enabled(google_owner):
@@ -1751,7 +1754,9 @@ async def send(request:Request):
         if recap:payload["projectVersionRecall"]=recap
     # Explicit §tart requests use server-side, read-only GitHub evidence, not a
     # fabricated model tool call or privileged instructions from repo content.
-    if github_connection.is_start_request(prompt):
+    if github_report_explain_v236.is_report_request(prompt):
+        payload["suppliedGitHubReportExplanation"]=github_report_explain_v236.explain_supplied_report(prompt)
+    elif github_connection.is_start_request(prompt):
         _, verified_account = _account_session(request)
         payload["githubStart"]={"userId":str((verified_account or {}).get("id") or "")}
     elif github_connection.is_github_command(prompt) or github_connection.is_github_conversation(prompt) or github_connection.forge_project_tools_v213.is_conversation(prompt) or (active_github and github_connection._implicit_repo_command(prompt,active_github)):
