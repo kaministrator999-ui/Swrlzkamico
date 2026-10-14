@@ -1,6 +1,6 @@
 ID=server-runtime
-VERSION=2.3.389
-REVISION=2.3.389-hf-v236-github-read-trace
+VERSION=2.3.390
+REVISION=2.3.390-hf-v237-github-branch-continuity
 KIND=server-runtime
 SOURCE_BRANCH=runtime
 STATUS=active
