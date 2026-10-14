@@ -1440,6 +1440,12 @@ def _read_context_from_result(user, prompt, result):
         if not auth.get("allowed"):
             return None
         branch = auth["defaultBranch"]
+        explicit = re.fullmatch(
+            r"(?is)@github\s+(?:read|open|view|files|stats|largest|history|search|report)\b"
+            r".*?\s+on\s+branch\s+([A-Za-z0-9][A-Za-z0-9._/-]{0,100})",
+            str(prompt or "").strip())
+        if explicit:
+            branch = explorer.safe_branch(explicit[1])
         if body.startswith("## GitHub source report · "):
             label = re.search(r"(?m)^Branch: ([A-Za-z0-9][A-Za-z0-9._/-]{0,100}) \u00b7 commit [0-9a-f]{40}$", body)
             if label:
