@@ -1,3 +1,19 @@
+## UPDATE STARTED — 2026-10-14 — v243 GitHub startup read latency reduction (source SHA pin preserved)
+
+**Governed event / ownership:** GitHub account connection startup reader under stable HF Station, not 700M inference, not Forge. Source owner `hf_space/github_connection.py` on isolated `feature/github-start-parallel-v243` from deployed v242 source `b05bf100a14fcda46c8a60da5c57490cf8c06584`; PR #158. AI Chat write permissions remain Stage 1 read-only. No account token material is recorded.
+
+**Observed starting evidence:** Dragon Chat (53) recorded source-bound startup ~5–8.6 s; the handler performed ten sequential canonical document reads followed by separate sequential reads of up to 25 runtime module-version authorities. v241/v242 `project_start_report` was unchanged; queue/model inference was not the §tart bottleneck. This record is an optimization of I/O, not a claim of live benchmark improvement.
+
+**Architecture reconciliation:** Keep `main` as governance/Roadmap authority, `runtime:VERSION.txt` as module registry, and the isolated HF candidate branch as stable Station/GitHub source. Only concurrent **independent, read-only, immutable-SHA-pinned** reads are eligible. Preserve exact document order, branch authority, account-scoped OAuth token handling, missing-file tolerance, and fail-closed error handling; do not add an unsafe cross-user cache. Existing user-authorized manual HF publication is the only production deployment route.
+
+**Implementation started:** v243 branch commits `7fe66f00` (5-worker deterministic batches + bounded timing metadata), `1ee0bb46` (offline source/order/failure regression), `6cf3de3a` (offline PR CI wiring). PR #158 targets v242 source so independent Forge/main work is not overwritten.
+
+**Version baseline at event entry:** Repository Work `1.0.183`; Server Runtime `2.3.395`; Google Account `1.0.15`; Web Chat `1.5.129` unchanged. The implementation changes the Google GitHub-authenticated startup operation and stable server package, not visual Chat UI or active 700M model. Re-read runtime version authority immediately before assignment. Server Runtime advances only on verified production release. Active focus group: GitHub startup, Google Account, Repository Work, Server Runtime.
+
+**Verification and deployment gate:** PR offline validation pending; do not call the fix deployed or behaviorally accepted. After CI succeeds, advance affected module lineage with Roadmap matching records, trigger once through `main:.deploy/HF_SPACE_REQUEST.txt` using a fresh nonce and exact candidate commit, and independently check terminal workflow / HF revision. If blocked, preserve this STARTED event and concrete reason instead of writing a fictional FINISHED record.
+
+---
+
 ## UPDATE CHECKPOINT — 2026-10-14 — §E v11.1 exact-source integration accepted; dedicated Forge publication next
 
 **Concluded implementation and merge:** Reviewed PR #157 `integration/forge-v11-1-acceptance-20261014@425754080f19f132122f4155eceec7ef36cd7a9a` (PR #154 recorder/spectator and PR #156 walked builder/protected spawn cumulative) merged to `main@bbe56716867e046d3a4f887aa2f5829f25709cd1`. Merge includes no extra Forge source changes beyond reviewed PR; `main` manifest Git blob `4397b1954f01349b9bafe9bf8f3db7a341a6cb01` equals PR candidate. Engine v11.1: 71 patches, last `patches/v11_1_maul_walk_builder.py`, 27 assets, final HTML **2,027,727 bytes**, SHA-256 `c96e5fea45bd316750e2fcc60ff1cbd96feadd6a90a56a5667dddad0aaf21121`.
