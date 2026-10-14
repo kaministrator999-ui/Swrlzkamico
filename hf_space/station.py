@@ -22,6 +22,7 @@ from pathlib import Path
 from model_router import dispatch, ModelUnavailable, routes
 import github_connection
 import github_report_explain_v236
+import progress_timeline_v238
 import project_thread_memory
 import account_chat_store
 import chatgpt_archive
@@ -641,7 +642,7 @@ async def stream_generation(request:Request, requestId:str):
             while sent_status<len(statuses):
                 item=statuses[sent_status] if isinstance(statuses[sent_status],dict) else {}
                 sent_status+=1
-                yield json.dumps({"type":"STATUS","phase":str(item.get("phase") or "STATUS"),"reason":str(item.get("reason") or ""),"categories":copy.deepcopy(item.get("categories") or []),"site":str(item.get("site") or "")[:180],"url":str(item.get("url") or "")[:1000],"provider":str(item.get("provider") or "")[:120],"httpStatus":item.get("httpStatus"),"resultCount":item.get("resultCount"),"seq":sent_status,"requestId":rid},ensure_ascii=False)+"\n"
+                yield json.dumps({"type":"STATUS","phase":str(item.get("phase") or "STATUS"),"reason":str(item.get("reason") or ""),"categories":copy.deepcopy(item.get("categories") or []),"site":str(item.get("site") or "")[:180],"url":str(item.get("url") or "")[:1000],"provider":str(item.get("provider") or "")[:120],"httpStatus":item.get("httpStatus"),"resultCount":item.get("resultCount"),"atUnixMs":item.get("atUnixMs"),"seq":sent_status,"requestId":rid},ensure_ascii=False)+"\n"
             widgets=g.get("widgets") if isinstance(g.get("widgets"),list) else []
             while sent_widgets<len(widgets):
                 widget=widgets[sent_widgets] if isinstance(widgets[sent_widgets],dict) else {}
@@ -958,7 +959,7 @@ def _run(key,request_id,model_id,payload,assistant_id):
         s=_sessions[key];g=s["activeGeneration"];g["phase"]="GENERATING"
         g["startedAtUnixMs"]=int(time.time()*1000)
         g["queueWaitMs"]=max(0,g["startedAtUnixMs"]-int(g.get("acceptedAtUnixMs") or g["startedAtUnixMs"]))
-        g["status"].append({"phase":"GENERATING","reason":"Workstation admitted generation"})
+        g["status"].append({"phase":"GENERATING","reason":"Workstation admitted generation","atUnixMs":g["startedAtUnixMs"]})
     try:
         if model_id=="r39" and _generate is None and not (payload.get("githubStart") or payload.get("githubAction") or payload.get("verifiedPrivateAnswer") or payload.get("suppliedGitHubReportExplanation")):raise RuntimeError("R39 generator is not installed")
         if model_id=="stock" and _stock_generate is None and not (payload.get("verifiedPrivateAnswer") or payload.get("githubStart") or payload.get("githubAction") or payload.get("suppliedGitHubReportExplanation")):raise RuntimeError("Original HF generator is not installed")
@@ -997,6 +998,7 @@ def _run(key,request_id,model_id,payload,assistant_id):
                 g=s["activeGeneration"]
                 if not g or g["requestId"]!=request_id:return
                 g["lastSeq"]+=1
+                prior_progress_count=len(g.get("status") or [])
                 if kind=="DELTA":
                     delta=str(event.get("text") or "");text+=delta;g["text"]=text
                 elif kind=="GITHUB_CONTEXT":
@@ -1142,6 +1144,7 @@ def _run(key,request_id,model_id,payload,assistant_id):
                     }
                     g["status"].append({"seq":g["lastSeq"],"phase":"COMPLETE","reason":""})
                 else:g["status"].append({"seq":g["lastSeq"],"phase":str(event.get("phase") or kind),"reason":str(event.get("reason") or "")[:200],"categories":[str(x)[:80] for x in (event.get("categories") or [])[:16]] if isinstance(event.get("categories"),list) else []})
+                progress_timeline_v238.mark_new(g["status"],prior_progress_count)
             if persist_event is not None:
                 persist_kind,persist_payload=persist_event
                 if persist_kind=="ONLINE_RESEARCH_TRACE":
@@ -1185,6 +1188,7 @@ def _run(key,request_id,model_id,payload,assistant_id):
             g=s["activeGeneration"]
             completed_ms=int(time.time()*1000)
             g.update(terminal=False,terminalType="COMPLETE",phase="PERSISTING",completedAtUnixMs=completed_ms)
+            g["status"].append({"phase":"PERSISTING","reason":"Saving the response to the chat","atUnixMs":completed_ms})
             started_ms=int(g.get("startedAtUnixMs") or completed_ms)
             accepted_ms=int(g.get("acceptedAtUnixMs") or started_ms)
             g["stationTiming"]={
@@ -1238,7 +1242,7 @@ def _run(key,request_id,model_id,payload,assistant_id):
                 "behaviorLedger":behavior_camera,
                 "structuredReceipt":copy.deepcopy(((intent.get("failureEvidence") or {}).get("receiptSemantics") or {}).get("structuredReceipt") or {}),
             } if intent.get("codingTask") else None
-            telemetry_meta={}
+            telemetry_meta={"progressTrace":progress_timeline_v238.project(g.get("status"),accepted_ms,request_id)}
             if gh_context: telemetry_meta["githubContext"]=copy.deepcopy(gh_context)
             if response_cognition: telemetry_meta["responseCognition"]=response_cognition
             online_research=copy.deepcopy(g.get("onlineResearch") or {})
@@ -1466,7 +1470,7 @@ def _run(key,request_id,model_id,payload,assistant_id):
             g=s["activeGeneration"]
             if g and g["requestId"]==request_id:
                 g.update(terminal=True,terminalType="FAILED",phase="FAILED")
-                g["status"].append({"phase":"FAILED","reason":str(exc)[:240]})
+                g["status"].append({"phase":"FAILED","reason":str(exc)[:240],"atUnixMs":int(time.time()*1000)})
                 if isinstance(g.get("onlineResearch"),dict) and g.get("onlineResearch"):
                     failed_online_outcome={
                         "schema":"swrlz-online-research-outcome-v1",
@@ -1482,7 +1486,7 @@ def _run(key,request_id,model_id,payload,assistant_id):
                     }
                 thread=next((t for t in s["threads"] if t["id"]==payload["threadId"]),None)
                 if thread:
-                    thread["messages"].append({"id":assistant_id,"role":"assistant","text":"Generation failed: "+str(exc)[:240],"createdAt":int(time.time()*1000),"meta":{"requestId":request_id,"modelId":model_id,"state":"FAILED","onlineResearch":copy.deepcopy(g.get("onlineResearch") or {}),"onlineTrace":copy.deepcopy((g.get("onlineTrace") or [])[-64:])}})
+                    thread["messages"].append({"id":assistant_id,"role":"assistant","text":"Generation failed: "+str(exc)[:240],"createdAt":int(time.time()*1000),"meta":{"requestId":request_id,"modelId":model_id,"state":"FAILED","onlineResearch":copy.deepcopy(g.get("onlineResearch") or {}),"onlineTrace":copy.deepcopy((g.get("onlineTrace") or [])[-64:]),"progressTrace":progress_timeline_v238.project(g.get("status"),g.get("acceptedAtUnixMs"),request_id)}})
                     _commit_revision(s)
         if failed_online_outcome is not None:
             threading.Thread(target=persist_runtime_diagnostic,args=(request_id,str(failed_online_outcome.get("selectedModelId") or model_id),"ONLINE_RESEARCH_OUTCOME",failed_online_outcome),daemon=True,name="online-failed-"+request_id[:8]).start()
@@ -1697,7 +1701,7 @@ async def send(request:Request):
             s["currentId"]=old_current
             if exc.status_code==409:_restore_chat_from_store(s)
             raise
-        s["activeGeneration"]={"requestId":rid,"threadId":tid,"modelId":model_id,"requestedModelId":model_id,"selectedModelId":model_id,"text":"","phase":"QUEUED","terminal":False,"lastSeq":0,"status":[{"phase":"QUEUED","reason":"Accepted by Workstation"}],"acceptedAtUnixMs":now_ms,"startedAtUnixMs":None,"completedAtUnixMs":None,"queueWaitMs":None,"stationTiming":None,"resourcePlan":None,"diagnosticTrace":None,"memoryCandidates":[],"responseCognition":None,"onlineResearch":None,"onlineTrace":[],"onlineLogPersistence":None,"sources":[],"widgets":[],"programmingIntent":None,"intentContract":None,"failureEvidence":None,"repairConstraints":None,"behaviorLedger":None,"behaviorRepairBase":None,"candidateValidation":None,"candidateAttempts":[],"generationTelemetry":None,"engineCompletionTelemetry":None,"repairDiagnostics":[],"artifactReceipt":None,"githubTelemetryPersistence":None}
+        s["activeGeneration"]={"requestId":rid,"threadId":tid,"modelId":model_id,"requestedModelId":model_id,"selectedModelId":model_id,"text":"","phase":"QUEUED","terminal":False,"lastSeq":0,"status":[{"phase":"QUEUED","reason":"Accepted by Workstation","atUnixMs":now_ms}],"acceptedAtUnixMs":now_ms,"startedAtUnixMs":None,"completedAtUnixMs":None,"queueWaitMs":None,"stationTiming":None,"resourcePlan":None,"diagnosticTrace":None,"memoryCandidates":[],"responseCognition":None,"onlineResearch":None,"onlineTrace":[],"onlineLogPersistence":None,"sources":[],"widgets":[],"programmingIntent":None,"intentContract":None,"failureEvidence":None,"repairConstraints":None,"behaviorLedger":None,"behaviorRepairBase":None,"candidateValidation":None,"candidateAttempts":[],"generationTelemetry":None,"engineCompletionTelemetry":None,"repairDiagnostics":[],"artifactReceipt":None,"githubTelemetryPersistence":None}
     payload={"requestId":rid,"threadId":tid,"prompt":prompt,"history":history,"pinnedContext":pinned_context,"profileId":"LALM","profile":profile,"userProfile":user_profile,"temporalContext":temporal_context,"clientLocation":client_location,"priorProgrammingState":copy.deepcopy(t.get("programmingState") or {})}
     # A user asking to recall conversation history is not requesting
     # public freshness research merely because the prompt says "today".
