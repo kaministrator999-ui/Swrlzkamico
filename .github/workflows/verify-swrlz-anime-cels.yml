@@ -1,4 +1,4 @@
-name: Validate §E v10.8 independent anime cel layers
+name: Validate §E v10.9 independent anime cel layers
 
 on:
   push:
@@ -6,6 +6,10 @@ on:
     paths: &anime_paths
       - ".github/workflows/verify-swrlz-anime-cels.yml"
       - "projects/swrlz-forge-moba/source-manifest.json"
+      - "projects/swrlz-forge-moba/patches/v10_9_episode_story_actions.py"
+      - "projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-ep01-performance.swyrl.json"
+      - "projects/swrlz-forge-moba/tests/episode_performance_playwright.mjs"
+      - "projects/swrlz-forge-moba/tests/episode_performance_package.py"
       - "projects/swrlz-forge-moba/patches/v10_0_sheep_tag.py"
       - "projects/swrlz-forge-moba/scenes/sheep-tag-meadow.swyrl.json"
       - "projects/swrlz-forge-moba/tests/sheep_tag_playwright.mjs"
@@ -67,7 +71,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Independently reconstruct sealed v10.8 source
+      - name: Independently reconstruct sealed v10.9 source
         run: |
           python - <<'PY'
           import base64,gzip,hashlib,json,runpy
@@ -78,15 +82,15 @@ jobs:
           raw=gzip.decompress(base64.b64decode(''.join((root/p).read_text(encoding='utf-8').strip() for p in manifest['chunks'])))
           assert len(raw)==manifest['baseBytes']
           assert hashlib.sha256(raw).hexdigest()==manifest['baseSha256']
-          assert len(manifest['patches'])==68
-          assert manifest['patches'][-1]=='patches/v10_8_maul_batch_placement.py'
+          assert len(manifest['patches'])==69
+          assert manifest['patches'][-1]=='patches/v10_9_episode_story_actions.py'
           source=raw.decode('utf-8')
           for patch in manifest['patches']:
               source=mod['load_patch'](root/patch)(source)
           output=source.encode('utf-8')
           assert len(output)==manifest['finalBytes']
           assert hashlib.sha256(output).hexdigest()==manifest['finalSha256']
-          for feature in ('V10_8_MAUL_BATCH_PLACEMENT','MAUL_BATCH_CORE','grouped-v1','MAUL_LAYOUT_CORE','classic-v2','SWYRL_ENGINE_MAUL','MAUL_CORE','maul-frostveil','SWYRL_ENGINE_SHEEP_TAG_RUNS','SWYRL_ENGINE_RUNS','stRunAfterTick','stRunInstallUI','stRunViewerMount','swyrl-editor-play-run-v1','stTouchPlacementScreen','stTouchPlacementGround','touchPlacement','SWYRL_ENGINE_SHEEP_TAG','sheep-tag-meadow','sheep-tag-moonbell-archive','swyrl-sheep-tag-map-v1','SWYRL_ENGINE_TRANSPORT','animeCineRewind','animeCineFastForward','SWYRL_ENGINE_STAFF','rigFullStaffStatus','painted-full-v1','assets/anime/kami-full-staff.png','Maker v10.8',
+          for feature in ('V10_9_EPISODE_STORY_ACTIONS','SWYRL_ENGINE_PERFORMANCE','anime-performance-v1','SWYRL_ENGINE_STORY_EFFECTS','anime-story-effects-v1','MAUL_BATCH_CORE','grouped-v1','MAUL_LAYOUT_CORE','classic-v2','SWYRL_ENGINE_MAUL','MAUL_CORE','maul-frostveil','SWYRL_ENGINE_SHEEP_TAG_RUNS','SWYRL_ENGINE_RUNS','stRunAfterTick','stRunInstallUI','stRunViewerMount','swyrl-editor-play-run-v1','stTouchPlacementScreen','stTouchPlacementGround','touchPlacement','SWYRL_ENGINE_SHEEP_TAG','sheep-tag-meadow','sheep-tag-moonbell-archive','swyrl-sheep-tag-map-v1','SWYRL_ENGINE_TRANSPORT','animeCineRewind','animeCineFastForward','SWYRL_ENGINE_STAFF','rigFullStaffStatus','painted-full-v1','assets/anime/kami-full-staff.png','Maker v10.9',
                           'CANONICAL_ANIME_EPISODE_PROJECT','SWYRL_ENGINE_CINEMATIC',
                           'SWYRL_ENGINE_ANIMATION','SWYRL_ENGINE_STORYBOARD','SWYRL_ENGINE_RIG','SWYRL_ENGINE_SCENERY','SWYRL_ENGINE_SOCKETS','SWYRL_ENGINE_EMERGENCE','SWYRL_ENGINE_RELIEF',
                           'anime-rig-sockets-v1','anime-book-emergence-v1','anime-character-relief-v1',
@@ -104,16 +108,17 @@ jobs:
           Path('/tmp/swyrl-anime-engine.mjs').write_text(source[begin:source.rindex('</script>')],encoding='utf-8')
           print('ENGINE_EXPECTED_BYTES='+str(len(output)))
           print('ENGINE_EXPECTED_SHA256='+hashlib.sha256(output).hexdigest())
-          print('CANDIDATE_68_PATCH_RECONSTRUCT_OK')
+          print('CANDIDATE_69_PATCH_RECONSTRUCT_OK')
           PY
           node --check /tmp/swyrl-anime-engine.mjs
           python -m compileall -q projects/swrlz-forge-moba/patches projects/swrlz-forge-moba/build_space.py
-      - name: Verify complete v10.8 package against source and manifest
+      - name: Verify complete v10.9 package against source and manifest
         run: |
           python projects/swrlz-forge-moba/build_space.py --output /tmp/swyrl-anime-cel-test
           cmp /tmp/swyrl-anime-engine.html /tmp/swyrl-anime-cel-test/index.html
           python projects/swrlz-forge-moba/tests/maul_layout_package.py --package /tmp/swyrl-anime-cel-test
           python projects/swrlz-forge-moba/tests/maul_batch_package.py --package /tmp/swyrl-anime-cel-test
+          python projects/swrlz-forge-moba/tests/episode_performance_package.py --package /tmp/swyrl-anime-cel-test
           python - <<'PY'
           import hashlib,json
           from pathlib import Path
@@ -124,8 +129,8 @@ jobs:
           assert receipt['finalBytes']==manifest['finalBytes']
           assert receipt['finalSha256']==manifest['finalSha256']
           assert receipt['patches']==manifest['patches']
-          assert len(receipt['patches'])==68
-          assert receipt['patches'][-1]=='patches/v10_8_maul_batch_placement.py'
+          assert len(receipt['patches'])==69
+          assert receipt['patches'][-1]=='patches/v10_9_episode_story_actions.py'
           expected={'episodes/ghosts-in-different-forms-ep01.html',
                     'scenes/ghosts-in-different-forms-ep01.swyrl.json',
                     'scenes/ghosts-in-different-forms-ep01-storybook.swyrl.json',
@@ -136,6 +141,7 @@ jobs:
                     'scenes/ghosts-in-different-forms-ep01-staff-grip.swyrl.json',
                     'scenes/ghosts-in-different-forms-ep01-natural-grip.swyrl.json',
                     'scenes/ghosts-in-different-forms-ep01-full-staff.swyrl.json',
+                    'scenes/ghosts-in-different-forms-ep01-performance.swyrl.json',
                     'scenes/sheep-tag-meadow.swyrl.json',
                     'scenes/sheep-tag-moonbell-archive.swyrl.json',
                     'scenes/maul-frostveil.swyrl.json',
@@ -147,7 +153,7 @@ jobs:
               'mage-faces-painted','kami-full-staff'))
           assert {p.relative_to(root).as_posix() for p in (root/'assets/anime').glob('*.png')}=={p for p in expected if p.endswith('.png')}
           assert set(receipt['assets'])==expected
-          assert len(receipt['assets'])==26
+          assert len(receipt['assets'])==27
           maul=json.loads((out/'scenes/maul-frostveil.swyrl.json').read_text())
           assert maul['project']['canonicalId']=='maul-frostveil'
           assert maul['project']['kind']=='maul'
@@ -226,7 +232,7 @@ jobs:
               assert (root/asset).read_bytes()==packed, asset
               assert len(packed)==data['bytes'], asset
               assert hashlib.sha256(packed).hexdigest()==data['sha256'], asset
-          print('PACKAGING_68_PATCHES_AND_ALL_ASSETS_VERIFIED')
+          print('PACKAGING_69_PATCHES_AND_ALL_ASSETS_VERIFIED')
           PY
       - name: Check browser acceptance suite syntax
         run: |

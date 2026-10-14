@@ -6,6 +6,24 @@ import {inflateSync} from 'node:zlib';
 
 // Verify the real indexed costume surfaces, their physical back faces and
 // movement driven by saved body poses, through native Play and Watch.
+// Preserve the published full-staff editor fixture for this compatibility suite.
+// The new starter has its own acceptance suite; all original authored-key,
+// geometry, facial, socket and transport assertions below remain unchanged.
+async function loadHistoricalEpisode(page){
+  assert.equal(await page.evaluate(()=>window.SWYRL_ENGINE_ANIMATION.status().playing),false,
+    'Historical episode must load into a stopped native editor');
+  const imported=await page.evaluate(async()=>{
+    const response=await fetch('scenes/ghosts-in-different-forms-ep01-full-staff.swyrl.json');
+    if(!response.ok)throw new Error('Preserved full-staff native scene is missing');
+    return window.SWYRL_ENGINE_STORYBOARD.importProject(await response.json());
+  });
+  assert.equal(imported,true,'Preserved full-staff native project import failed');
+  await page.waitForFunction(()=>{
+    const state=window.SWYRL_ENGINE_STORYBOARD.stageStatus();
+    return state.assetsReady||state.assetErrors?.length;
+  },undefined,{timeout:45000,polling:100});
+}
+
 const base=(process.env.SWYRL_ANIME_TEST_URL||'http://127.0.0.1:8775').replace(/\/$/,'');
 const output=resolve(process.env.SWYRL_ANIME_SCREENSHOTS_DIR||'character-relief-acceptance');
 await mkdir(output,{recursive:true});
@@ -41,9 +59,10 @@ async function start(page){
   await page.waitForFunction(()=>window.SWYRL_ENGINE_RELIEF?.renderStatus&&window.SWYRL_ENGINE_RIG?.renderStatus&&
     window.SWYRL_ENGINE_SOCKETS?.model&&window.SWYRL_ENGINE_ANIMATION&&window.SWYRL_ENGINE_STORYBOARD,
     undefined,{timeout:60000,polling:100});
-  assert.equal(await page.evaluate(()=>window.SWRLZ_FORGE_BUILD?.version),'v10.8','Staff acceptance loaded a different engine release');
+  assert.equal(await page.evaluate(()=>window.SWRLZ_FORGE_BUILD?.version),'v10.9','Staff acceptance loaded a different engine release');
   await page.waitForFunction(()=>{const state=window.SWYRL_ENGINE_STORYBOARD.stageStatus();
     return state.assetsReady||state.assetErrors?.length;},undefined,{timeout:45000,polling:100});
+  await loadHistoricalEpisode(page);
   await frames(page);
 }
 async function input(page,selector,value){

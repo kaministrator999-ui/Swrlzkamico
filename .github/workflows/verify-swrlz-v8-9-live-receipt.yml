@@ -4,7 +4,7 @@ on:
     branches: [main]
   workflow_dispatch:
   workflow_run:
-    workflows: ["Deploy §wyrl§ Engine v10.8 to Hugging Face"]
+    workflows: ["Deploy §wyrl§ Engine v10.9 to Hugging Face"]
     types: [completed]
     branches: [main]
 permissions:
@@ -107,7 +107,8 @@ jobs:
                            'scenes/ghosts-in-different-forms-ep01-sockets.swyrl.json',
                            'scenes/ghosts-in-different-forms-ep01-staff-grip.swyrl.json',
                            'scenes/ghosts-in-different-forms-ep01-natural-grip.swyrl.json',
-                           'scenes/ghosts-in-different-forms-ep01-full-staff.swyrl.json'):
+                           'scenes/ghosts-in-different-forms-ep01-full-staff.swyrl.json',
+                           'scenes/ghosts-in-different-forms-ep01-performance.swyrl.json'):
               if authored in source_paths:expected_assets.add(authored)
           if 'scenes/sheep-tag-meadow.swyrl.json' in source_paths:
               expected_assets.add('scenes/sheep-tag-meadow.swyrl.json')
@@ -133,6 +134,9 @@ jobs:
               if path=='scenes/maul-frostveil-groups.swyrl.json':
                   import runpy
                   runpy.run_path(engine+'/tests/maul_batch_package.py')['validate_scene'](json.loads(data))
+              if path=='scenes/ghosts-in-different-forms-ep01-performance.swyrl.json':
+                  import runpy
+                  runpy.run_path(engine+'/tests/episode_performance_package.py')['validate_scene'](json.loads(data))
               print('LIVE_ASSET_OK='+path,flush=True)
           audit={'releaseVersion':request['releaseVersion'],'sourceCommit':source_commit,'deployTrigger':trigger,
                  'deployRun':final['html_url'],'appUrl':root,'sourceBytes':len(html),'sourceSha256':digest,

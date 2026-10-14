@@ -1,0 +1,8 @@
+.story-effects-section{border-top:1px solid #b58d5859;border-bottom:1px solid #b58d5859;margin:12px 0;padding:8px 0 11px}
+.story-effects-section[hidden]{display:none!important}
+.story-effects-section>summary{font-weight:700;cursor:pointer;min-height:30px;color:#efc88c;list-style-position:inside}
+.story-effects-section>.story-label{margin:9px 0}
+.story-effects-section>.story-check{margin:9px 0;min-height:32px}
+#effectApply,#effectsApplyEnabled{background:#4b3a29;border-color:#c09a60;color:#ffedc9}
+.story-effects-section .story-key-list{margin:9px 0 6px}
+@media(max-width:650px){.story-effects-section .story-key-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.story-effects-section .story-key-actions{display:flex;flex-wrap:wrap}.story-effects-section .story-key-actions button{flex:1 1 130px;min-height:42px}}

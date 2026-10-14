@@ -7,6 +7,24 @@ import {createHash} from 'node:crypto';
 // Tap the native Watch controls and drive the actual engine RAF, Three.Clock,
 // timeline, geometry and renderer. Fixed 50 ms frames make signed-rate checks
 // independent of software WebGL frame times; no production functions are mocked.
+// Preserve the published full-staff editor fixture for this compatibility suite.
+// The new starter has its own acceptance suite; all original authored-key,
+// geometry, facial, socket and transport assertions below remain unchanged.
+async function loadHistoricalEpisode(page){
+  assert.equal(await page.evaluate(()=>window.SWYRL_ENGINE_ANIMATION.status().playing),false,
+    'Historical episode must load into a stopped native editor');
+  const imported=await page.evaluate(async()=>{
+    const response=await fetch('scenes/ghosts-in-different-forms-ep01-full-staff.swyrl.json');
+    if(!response.ok)throw new Error('Preserved full-staff native scene is missing');
+    return window.SWYRL_ENGINE_STORYBOARD.importProject(await response.json());
+  });
+  assert.equal(imported,true,'Preserved full-staff native project import failed');
+  await page.waitForFunction(()=>{
+    const state=window.SWYRL_ENGINE_STORYBOARD.stageStatus();
+    return state.assetsReady||state.assetErrors?.length;
+  },undefined,{timeout:45000,polling:100});
+}
+
 const base=(process.env.SWYRL_ANIME_TEST_URL||'http://127.0.0.1:8765').replace(/\/$/,'');
 const query=new URLSearchParams(process.env.SWYRL_ANIME_TEST_QUERY||'');
 query.set('project','anime-ghosts-ep01');
@@ -155,6 +173,7 @@ try{
     page.setDefaultTimeout(30000);
     await page.goto(base+'/index.html?'+query,{waitUntil:'domcontentloaded',timeout:60000});
     await page.waitForFunction(()=>window.SWYRL_ENGINE_TRANSPORT&&window.SWYRL_ENGINE_ANIMATION?.status().projectId==='ghosts-different-forms-ep01',undefined,{timeout:60000});
+    await loadHistoricalEpisode(page);
     // Compare story frames at the same native resolution. Auto graphics may
     // adapt the drawing buffer during the deliberately slow fixed test RAF.
     await page.locator('#perfPreset').selectOption('medium',{force:true});
