@@ -273,7 +273,19 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
     assert.ok(gzip.length<Buffer.byteLength(JSON.stringify(run)),'Gzip must reduce native recording bytes');
     assert.deepEqual(JSON.parse(gunzipSync(gzip).toString('utf8')),run,'Compressed recording changed captured state/events');
     await page.locator('#stRunFile').setInputFiles({name:'acceptance.swyrl-run.json.gz',mimeType:'application/gzip',buffer:gzip});
-    await page.waitForFunction(()=>document.getElementById('stRunImportFeedback')?.textContent.includes('Compressed recording opened successfully'));
+    try {
+      await page.waitForFunction(()=>document.getElementById('stRunImportFeedback')?.textContent.includes('Compressed recording opened successfully'));
+    } catch(error) {
+      console.log('MAUL_GZIP_IMPORT_DEBUG',JSON.stringify(await page.evaluate(()=>({
+        feedback:document.getElementById('stRunImportFeedback')?.textContent,
+        fileValue:document.getElementById('stRunFile')?.value,
+        panelVisible:!document.getElementById('stRunPanel')?.hidden,
+        rawEnabled:!document.getElementById('stRunExportJson')?.disabled,
+        gzipEnabled:!document.getElementById('stRunExportGzip')?.disabled,
+        decompressSupported:typeof DecompressionStream,
+      }))));
+      throw error;
+    }
     await native(page,'stRunClose');
     const spectator=await context.newPage(),spectatorErrors=[];spectator.on('pageerror',error=>spectatorErrors.push(String(error)));await spectator.route('**/*',route=>route.abort());await spectator.setContent(html,{waitUntil:'domcontentloaded'});
     await spectator.waitForFunction(()=>window.SWYRL_RUN_VIEWER?.state);await spectator.evaluate(duration=>window.SWYRL_RUN_VIEWER.seek(duration),run.duration);
