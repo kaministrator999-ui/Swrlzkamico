@@ -258,13 +258,12 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
     assert.deepEqual(orderedSnapshot.game.builderOrders[builder.id]?.path.at(-1),{x:5,z:12},'Clearing tower selection changed the ground-tap destination');
     const beforePan=orderedSnapshot.camera.target,panStart=await canvasPoint(page,map,5,14),panEnd={x:panStart.x+32,y:panStart.y+22};
     assert.equal(await page.evaluate(p=>{const hit=document.elementFromPoint(p.x,p.y);return hit?.tagName==='CANVAS'||hit?.id==='viewport';},panEnd),true,'Physical camera pan ends behind the HUD');
-    if(mode.hasTouch){await touchEvent(page,'touchStart',panStart);await frames(page,1);await touchEvent(page,'touchMove',panEnd);await frames(page,1);await touchEvent(page,'touchEnd');}
+    if(mode.hasTouch){await touchEvent(page,'touchStart',panStart);await frames(page,1);for(let step=1;step<=8;step++){await page.waitForTimeout(40);await touchEvent(page,'touchMove',{x:panStart.x+(panEnd.x-panStart.x)*step/8,y:panStart.y+(panEnd.y-panStart.y)*step/8});await frames(page,1);}await touchEvent(page,'touchEnd');}
     else{await page.mouse.move(panStart.x,panStart.y);await page.mouse.down();await page.mouse.move(panEnd.x,panEnd.y,{steps:3});await page.mouse.up();}
     await frames(page,1);const pannedTarget=(await runFrame(page,await runData(page))).camera.target;
     assert.ok(Math.hypot(pannedTarget[0]-beforePan[0],pannedTarget[2]-beforePan[2])>.25,'Native canvas drag did not pan the actual camera');
-    // Chromium briefly suppresses compatibility clicks after the instant CDP
-    // drag. Let device input settle independently of the frozen engine clock.
-    if(mode.hasTouch)await page.waitForTimeout(300);
+    // Device gestures need real time even while game updates use a frozen clock.
+    if(mode.hasTouch)await page.waitForTimeout(100);
     await native(page,'maulBuildArrow');assert.equal((await ui(page)).buildKind,'arrow','The physical tool tap must activate Arrow placement');const toolTarget=(await runFrame(page,await runData(page))).camera.target;
     for(const axis of [0,1,2])close(toolTarget[axis],pannedTarget[axis],'Choosing a build tool preserves the panned camera target '+axis);
     await native(page,'maulCancel');await sector(page,0);await frames(page,20);await native(page,'maulStartWave');await frames(page,40);const observed=await state(page),liveRun=await runData(page),snapshot=await runFrame(page,liveRun);
