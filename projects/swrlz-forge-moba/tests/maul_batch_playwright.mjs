@@ -94,7 +94,7 @@ async function prototypes(page,canonical){const pieces=await page.evaluate(()=>{
   for(const kind of kinds)assert.equal(pieces[kind]?.type,'maul-'+kind,'Missing native editable prefab '+kind);
   await page.evaluate(data=>window.SWYRL_ENGINE_AGENT.loadScene(data),canonical);await frames(page,2);return pieces;}
 function fixture(canonical,pieces,{rules={},towers=[]}={}){const data=structuredClone(canonical),map={cell:2,origin:{x:-40,z:-44}};
-  data.project.maul={...data.project.maul,autoWaves:false,soloSupport:false,preparation:120,intermission:0,startGold:900,waves:1,lives:30,difficulty:1,...rules};
+  delete data.project.maulConstruction;delete data.project.maulSpawnProtection;data.project.maul={...data.project.maul,autoWaves:false,soloSupport:false,preparation:120,intermission:0,startGold:900,waves:1,lives:30,difficulty:1,...rules};
   data.scene.actors=data.scene.actors.filter(actor=>!towerTypes.has(actor.type));
   for(const [index,t]of towers.entries()){const p=world(map,t.cx,t.cz);data.scene.actors.push({...structuredClone(pieces[t.kind]),id:'acceptance-tower-'+index,
     name:'Authored '+t.kind+' '+index,position:[p.x,0,p.z],rotation:[0,0,0],scale:[1,1,1],baked:true,visible:true,manualVisible:true,
@@ -158,7 +158,7 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
     const sourceSha256=createHash('sha256').update(await response.body()).digest('hex');console.log('MAUL_BATCH_SOURCE_SHA256',mode.name,sourceSha256);
     await page.waitForFunction(()=>window.SWYRL_ENGINE_MAUL?.batchStatus&&window.SWYRL_ENGINE_AGENT.project().canonicalId==='maul-frostveil',undefined,{timeout:60000});
     await page.locator('#perfPreset').selectOption('medium',{force:true});await page.evaluate(()=>window.__maulClock.freeze());await frames(page,2);
-    assert.equal(await page.evaluate(()=>window.SWRLZ_FORGE_BUILD?.version),'v11.0','Wrong engine release');
+    assert.equal(await page.evaluate(()=>window.SWRLZ_FORGE_BUILD?.version),'v11.1','Wrong engine release');
     const canonical=await saved(page),check=await preflight(page);assert.equal(canonical.project.maulLayout,'classic-v2');assert.equal(canonical.project.maulSpawnStyle,profile);
     assert.equal(check.ok,true,'The default grouped starter failed preflight: '+check.errors.join(' '));assert.equal(check.map.spawnStyle,profile);
     assert.equal(canonical.scene.actors.length,78);assert.equal(canonical.editor.layers.length,6);
@@ -168,6 +168,21 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
     await page.evaluate(()=>window.SWYRL_ENGINE_AGENT.openProjects());await frames(page,2);await press(page,'[data-project-template="maul-frostveil"]');await frames(page,2);
     assert.deepEqual(authored(await saved(page)),authored(canonical),'Hub default differs from native grouped starter');await play(page);
     assert.equal((await state(page)).playerTowers,0,'Player one must begin Play with no free starter buildings');assert.equal((await state(page)).towers.filter(t=>t.owner==='player').length,0);
+    assert.equal(canonical.project.maulConstruction,'walk-v1','New canonical map must enable physical builder construction');
+    assert.equal(canonical.project.maulSpawnProtection,'full-pad-v1');
+    assert.equal(await page.locator('#maulBuildWall').isVisible(),false,'Wall construction must not appear in the current map');
+    const initialWalk=await state(page),walkMap=initialWalk.map;
+    await sector(page,0);await native(page,'maulBuildArrow');
+    await gridTap(page,walkMap,5,12,true);
+    assert.equal((await state(page)).playerTowers,0,'Construction must not complete instantly');
+    assert.equal((await state(page)).gold,initialWalk.gold,'Queued construction must not charge gold early');
+    assert.equal((await page.evaluate(()=>window.SWYRL_ENGINE_MAUL.walkBuildStatus())).pending.length,1,'Builder needs a pending travel order');
+    await until(page,s=>s.playerTowers===1,'Builder walked to tower footprint then constructed',320);
+    assert.equal((await page.evaluate(()=>window.SWYRL_ENGINE_MAUL.walkBuildStatus())).pending.length,0);
+    assert.equal((await state(page)).gold,initialWalk.gold-20);
+    const rejectedSpawn=await page.evaluate(()=>window.MAUL_BUILDER_CORE?.protectedSpawn((window.SWYRL_ENGINE_MAUL.status()).map,{x:6,z:3}));
+    assert.equal(rejectedSpawn,true,'Enemy arrival region must reject building');
+
     await stop(page);assert.deepEqual(authored(await saved(page)),authored(canonical),'Stop adds buildings or changes authored starter');
     const pieces=await prototypes(page,canonical),empty=fixture(canonical,pieces);
     pass('native_default_hub_and_play_stop_have_nine_builders_and_no_player_one_start_buildings');
