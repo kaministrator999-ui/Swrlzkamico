@@ -42,6 +42,7 @@ def _read(_token,_repo,path,_ref,_limit):
     if path==".deploy/HF_SPACE_REQUEST.txt":
         return {"sha":"f"*40,"body":"TARGET=kamiloki/Swyrlz\nAPPROVED=1\nSOURCE_REF="+RELEASE+"\nREQUEST_NONCE=previous\n"}
     if path=="hf_space/station.py":
+        assert _limit>=120000, "must admit full Station source before SHA verification"
         return {"sha":BLOB,"body":BODY}
     raise AssertionError("Unplanned source read: "+path)
 
