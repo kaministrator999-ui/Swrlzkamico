@@ -96,6 +96,10 @@ def classify_read(prompt, context=None):
         return None
     lower = q.casefold()
     paths = _paths(q)
+    branch_match = re.search(r"\b(?:on|from)\s+branch\s+([A-Za-z0-9][A-Za-z0-9._/-]{0,100})\b", q, re.I)
+    named_branch = branch_match[1] if branch_match else ""
+    if named_branch:
+        paths = [p for p in paths if p != named_branch]
     # A directory named in a question is a literal scope, never a guessed
     # implementation owner. Do not pick random matching files by meaning.
     if not paths:
@@ -114,6 +118,8 @@ def classify_read(prompt, context=None):
             if re.search(r"\b(?:folder|directory|under|inside|within|files?\s+in|directories\s+in)\b", q, re.I):
                 paths = [_safe(m[1])]
     scoped = paths[:]
+    if last_file and paths and re.search(r"\b(?:that|this|the|original)\s+(?:original\s+)?file\b", lower):
+        scoped = [last_file] + [p for p in paths if p != last_file]
     if not scoped and re.search(r"\b(?:this|that|those|same|last|previous|original|first)\s+"
                                 r"(?:(?:original|first|previous|source|earlier)\s+)*files?\b|\b(?:it|that file)\b",lower):
         if last_file:
@@ -150,6 +156,7 @@ def classify_read(prompt, context=None):
                  r"inspect|how|what|which|where|architecture|"
                  r"dependencies|related|relationship|work|purpose|overview)\b", lower):
         if scoped:
-            return "@GitHub report deep " + " | ".join(scoped)
-        return "@GitHub report structure /"
+            cmd = "@GitHub report deep " + " | ".join(scoped)
+            return cmd + (" on branch " + named_branch if named_branch else "")
+        return "@GitHub report structure /" + (" on branch " + named_branch if named_branch else "")"
     return None
