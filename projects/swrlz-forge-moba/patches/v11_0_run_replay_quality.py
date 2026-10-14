@@ -26,7 +26,7 @@ def apply(html):
     html = once(html,
                 "stRunDownloadBlob(new Blob([html],{type:'text/html;charset=utf-8'}),name+'html');",
                 "const spectatorHtml=run.mode==='maul'?html.replace('<script>window.SWYRL_RUN_VIEWER=',"
-                "'<script>'+stRunDrawMaul.toString()+';window.SWYRL_RUN_VIEWER='):html;\\n"
+                "'<script>'+stRunDrawMaul.toString()+';window.SWYRL_RUN_VIEWER='):html;\n"
                 "    stRunDownloadBlob(new Blob([spectatorHtml],{type:'text/html;charset=utf-8'}),name+'html');")
     html = once(html, "stRunInstallUI();",
                 "stRunInstallUI();stRunInstallCompressedUI();")
