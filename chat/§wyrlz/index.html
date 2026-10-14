@@ -1621,6 +1621,128 @@
       };
       const formatMessageTime=value=>{const ms=Number(value||0);if(!Number.isFinite(ms)||ms<=0)return "";try{return new Intl.DateTimeFormat(undefined,{hour:"numeric",minute:"2-digit"}).format(new Date(ms));}catch(_){return new Date(ms).toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});}};
       const attachAssistantTime=(node,msg)=>{const value=formatMessageTime(msg?.createdAt);if(!value)return;const name=node.querySelector(".assistant-name");if(!name)return;const time=document.createElement("span");time.className="message-time";time.textContent=value;time.title=new Date(Number(msg.createdAt)).toLocaleString();name.after(time);};
+
+      // v238: human-readable, inspectable *observed* Station activity.
+      // Display milestones only; never suggest a private chain-of-thought log.
+      const expandedActivityTraces=new Set();
+      const activityLabelsV238={
+        CONNECTING:"Connecting to §wyrlz",QUEUED:"Queued for processing",GENERATING:"Preparing a response",
+        CONTEXT_BUDGETED:"Preparing conversation context",RESOURCE_ALLOCATED:"Allocating inference resources",
+        GITHUB_READ_EVIDENCE:"Matching the GitHub question",GITHUB_ACTION:"Checking GitHub request",
+        GITHUB_PERMISSION_CHECK:"Checking repository access",GITHUB_PERMISSION_VERIFIED:"Repository access verified",
+        GITHUB_TOOL_STARTED:"Reading GitHub evidence",GITHUB_TOOL_COMPLETE:"GitHub evidence retrieved",
+        GITHUB_EVIDENCE_COMPLETE:"Repository check complete",GITHUB_READ_STAGE:"Selecting a GitHub reader",
+        GITHUB_CONTEXT_READY:"Repository context recorded",ONLINE_RESEARCH:"Research results recorded",
+        RESEARCH_STARTED:"Starting research",SEARCH_STARTED:"Searching sources",
+        PAGE_FETCH_STARTED:"Reading a webpage",PAGE_FETCH_COMPLETE:"Webpage received",
+        PROGRAMMING_INTENT:"Classifying code request",CANDIDATE_ATTEMPT:"Checking response candidate",
+        CANDIDATE_REJECT:"Candidate rejected",COMPLETE:"Generation completed",
+        PERSISTING:"Saving response",FAILED:"Generation failed",CHAT_SAVE_FAILED:"Response could not be saved",
+        CANCELLED:"Stopped by user"
+      };
+      const activityNameV238=phase=>{
+        const key=String(phase||"").trim().toUpperCase();
+        return activityLabelsV238[key] || key.replaceAll("_"," ").toLowerCase().replace(/^./,letter=>letter.toUpperCase()) || "Getting ready";
+      };
+      const activityReasonV238=value=>String(value||"")
+        .replace(/(?:bearer\s+\S+|gh[opusr]_[\w-]{12,}|(?:api[_-]?key|password|secret|access[_-]?token)\s*[:=]\s*\S+|https?:\/\/\S+|-?\d{1,3}\.\d{5,}\s*,\s*-?\d{1,3}\.\d{5,})/gi,"[redacted]")
+        .replace(/[\u0000-\u001f\u007f<>]/g," ").replace(/\s+/g," ").trim().slice(0,130);
+      const activityTimeV238=value=>{
+        const number=Number(value||0);if(!Number.isFinite(number)||number<=0)return "—";
+        return new Date(number).toLocaleTimeString([],{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+      };
+      const activityDurationV238=(started,ended)=>{
+        const a=Number(started||0),b=Number(ended||Date.now());
+        if(!Number.isFinite(a)||a<=0||!Number.isFinite(b)||b<a)return "";
+        const seconds=Math.floor((b-a)/1000);
+        return String(Math.floor(seconds/60)).padStart(2,"0")+":"+String(seconds%60).padStart(2,"0");
+      };
+      const renderActivityTimelineV238=(messageNode,trace,options={})=>{
+        const raw=Array.isArray(trace?.events)?trace.events:(Array.isArray(trace)?trace:[]);
+        const skip=new Set(["RESPONSE_COGNITION","MEMORY_CANDIDATE","DIAGNOSTIC_READY","GENERATION_TELEMETRY"]);
+        const normalized=[];
+        for(const item of raw){
+          if(!item||typeof item!=="object")continue;
+          const phase=String(item.phase||item.type||"").trim().toUpperCase();
+          if(!/^[A-Z][A-Z0-9_]{1,79}$/.test(phase)||skip.has(phase))continue;
+          const reason=activityReasonV238(item.reason);
+          const atUnixMs=Number(item.atUnixMs||0);
+          if(normalized.length&&normalized.at(-1).phase===phase&&normalized.at(-1).reason===reason)continue;
+          normalized.push({phase,reason,atUnixMs:Number.isFinite(atUnixMs)&&atUnixMs>0?atUnixMs:0});
+        }
+        const omitted=Math.max(Number(trace?.omittedCount||0),Math.max(0,normalized.length-64));
+        const events=normalized.length>64?[normalized[0],...normalized.slice(-63)]:normalized;
+        const requestId=String(options.requestId||trace?.requestId||"").slice(0,160);
+        const acceptedAt=Number(trace?.acceptedAtUnixMs||options.acceptedAtUnixMs||0);
+        const active=!!options.active;
+        if(!events.length&&!active)return;
+        let wrapper=messageNode.querySelector(".station-activity");
+        if(!wrapper){
+          wrapper=document.createElement("section");
+          wrapper.className="station-activity";
+          wrapper.setAttribute("aria-label","Response activity timeline");
+          const header=document.createElement("div");header.className="station-activity-header";
+          const dot=document.createElement("span");dot.className="station-activity-indicator";dot.setAttribute("aria-hidden","true");
+          const title=document.createElement("span");title.className="station-activity-title";title.setAttribute("role","status");title.setAttribute("aria-live","polite");
+          const clock=document.createElement("span");clock.className="station-activity-elapsed";
+          const sub=document.createElement("div");sub.className="station-activity-sub";
+          header.append(dot,title,clock);
+          const details=document.createElement("details");details.className="station-activity-details";
+          details.open=expandedActivityTraces.has(requestId);
+          const summary=document.createElement("summary");
+          const caption=document.createElement("span");caption.className="station-activity-count";
+          const note=document.createElement("span");note.textContent="Observed steps · no private reasoning";
+          summary.append(caption,note);
+          const log=document.createElement("div");log.className="station-activity-list";
+          const copy=document.createElement("button");copy.className="station-activity-copy";
+          copy.type="button";copy.textContent="Copy activity log";
+          copy.addEventListener("click",async()=>{
+            const rows=Array.isArray(wrapper.__activityRows)?wrapper.__activityRows:[];
+            const text=["§wyrlz observed activity",requestId?"Request: "+requestId:"","Times are local device display of server event timestamps.",""]
+              .concat(rows.map(x=>(activityTimeV238(x.atUnixMs)+" · "+activityNameV238(x.phase)+(x.reason?" · "+x.reason:""))))
+              .join("\n");
+            try{await navigator.clipboard.writeText(text);copy.textContent="Copied ✓";}catch(_){copy.textContent="Copy unavailable";}
+          });
+          const policy=document.createElement("div");policy.className="station-activity-note";
+          policy.textContent="Shown from recorded workflow events, not hidden model deliberation.";
+          details.append(summary,log,copy,policy);
+          details.addEventListener("toggle",()=>{
+            if(!requestId)return;
+            if(details.open)expandedActivityTraces.add(requestId);else expandedActivityTraces.delete(requestId);
+            if(expandedActivityTraces.size>100)expandedActivityTraces.delete(expandedActivityTraces.values().next().value);
+          });
+          wrapper.append(header,sub,details);
+          messageNode.querySelector(".assistant-body")?.before(wrapper);
+        }
+        wrapper.dataset.active=String(active);
+        const latest=events.at(-1);
+        const state=options.terminalType||"";
+        const isFailure=!!state&&/FAIL|REJECT|ERROR/i.test(String(state));
+        const heading=isFailure?"Response needs attention":
+          active&&options.streaming?"Writing the response":
+          active?activityNameV238(latest?.phase||"CONNECTING"):"Response activity";
+        const title=wrapper.querySelector(".station-activity-title");
+        if(title.textContent!==heading)title.textContent=heading;
+        const elapsed=activityDurationV238(acceptedAt,active?Date.now():(events.at(-1)?.atUnixMs||Date.now()));
+        wrapper.querySelector(".station-activity-elapsed").textContent=elapsed?elapsed+" elapsed":"";
+        wrapper.querySelector(".station-activity-sub").textContent=(active?"Live Station activity":"Saved response activity")+" · "+events.length+" step"+(events.length===1?"":"s")+(omitted?" · "+omitted+" earlier omitted":"");
+        wrapper.querySelector(".station-activity-count").textContent="Activity log ("+events.length+")";
+        wrapper.__activityRows=events;
+        const signature=JSON.stringify(events);
+        if(wrapper.dataset.eventsSignature!==signature){
+          wrapper.dataset.eventsSignature=signature;
+          const list=wrapper.querySelector(".station-activity-list");list.replaceChildren();
+          for(const item of events){
+            const line=document.createElement("div");line.className="station-activity-row";
+            const time=document.createElement("span");time.className="station-activity-time";time.textContent=activityTimeV238(item.atUnixMs);
+            const description=document.createElement("div");
+            const stage=document.createElement("div");stage.className="station-activity-stage";stage.textContent=activityNameV238(item.phase);
+            description.append(stage);
+            if(item.reason){const reason=document.createElement("div");reason.className="station-activity-reason";reason.textContent=item.reason;description.append(reason);}
+            line.append(time,description);list.append(line);
+          }
+        }
+      };
       const conversationRenderSignature=thread=>{
         if(!thread)return "draft:"+String(draftThread);
         const pins=thread?.messagePins&&typeof thread.messagePins==="object"?thread.messagePins:{};
@@ -1660,7 +1782,7 @@
         for(const msg of (thread.messages||[])){
           if(msg.role==="user")mostRecentUserPrompt=String(msg.text||"");
           if(msg.role==="assistant"){
-            const node=assistantTemplate.cloneNode(true); node.removeAttribute("id"); node.dataset.messageId=msg.id||"";node.classList.add("visible","rendered-message"); node.removeAttribute("aria-hidden"); renderAssistantContent(node.querySelector(".assistant-body"),msg.text||"",msg.id||"",isOriginalSongwritingPrompt(mostRecentUserPrompt)?"lyrics":""); attachAssistantTime(node,msg); addCopyButton(node); addWidgetBlock(node,msg); addEvidenceBlock(node,msg);addMessagePinButton(node,thread,msg); messageList.appendChild(node);
+            const node=assistantTemplate.cloneNode(true); node.removeAttribute("id"); node.dataset.messageId=msg.id||"";node.classList.add("visible","rendered-message"); node.removeAttribute("aria-hidden"); renderAssistantContent(node.querySelector(".assistant-body"),msg.text||"",msg.id||"",isOriginalSongwritingPrompt(mostRecentUserPrompt)?"lyrics":""); attachAssistantTime(node,msg); addCopyButton(node); renderActivityTimelineV238(node,msg?.meta?.progressTrace,{active:false,requestId:msg?.meta?.requestId,terminalType:msg?.meta?.state}); addWidgetBlock(node,msg); addEvidenceBlock(node,msg);addMessagePinButton(node,thread,msg); messageList.appendChild(node);
           } else if(msg.role==="user"){
             const node=document.createElement("article");node.className="user-message rendered-message";node.dataset.messageId=msg.id||"";
             const meta=document.createElement("div");meta.className="user-meta";const who=document.createElement("span");who.textContent=chatAccountUser?.displayName||chatAccountUser?.email||"You";meta.appendChild(who);const timeText=formatMessageTime(msg.createdAt);if(timeText){const time=document.createElement("span");time.className="message-time";time.textContent=timeText;time.title=new Date(Number(msg.createdAt)).toLocaleString();meta.appendChild(time);}
@@ -1898,6 +2020,12 @@
         const seq=Number(g.lastSeq||0);
         const nextLabel="§wyrlz · "+label+(activityDetail?(" · "+activityDetail):"")+(activityReason&&(!activityDetail||!activityReason.toLowerCase().includes(activityDetail.toLowerCase()))?(" · "+activityReason):"");
         if(status.textContent!==nextLabel)status.textContent=nextLabel;
+        renderActivityTimelineV238(node,g.status||[],{
+          active:!g.terminal,requestId:g.requestId,
+          acceptedAtUnixMs:g.acceptedAtUnixMs||g.createdAt,
+          streaming:!!String(g.text||"").trim(),
+          terminalType:g.terminalType
+        });
         let onlineTrail=node.querySelector(".station-online-trail");
         const onlineEvents=(Array.isArray(g.status)?g.status:[]).filter(item=>{
           const phase=String(item?.phase||item?.type||"").toUpperCase();
@@ -1964,6 +2092,8 @@
             g.terminal && String(g.phase||"")==="CHAT_SAVE_FAILED"
           );
         }
+        // v238 timeline owns the visible progress surface; legacy status stays accessible in runtime telemetry.
+        if(node.querySelector(".station-activity")){if(status)status.hidden=true;if(onlineTrail)onlineTrail.hidden=true;}
         stopButton.hidden=!!g.terminal;sendButton.hidden=!g.terminal;
         renderWorkSurface();followLatestIfNeeded();
       };
@@ -2035,7 +2165,7 @@
             stationGeneration.lastSeq=Number(event.seq||stationGeneration.lastSeq||0);
             if(event.type==="DELTA")stationGeneration.text=(stationGeneration.text||"")+String(event.text||"");
             else if(event.type==="WIDGET"&&event.widget&&typeof event.widget==="object")stationGeneration.widgets=[...(stationGeneration.widgets||[]),event.widget].slice(0,8);
-            else stationGeneration.status=[...(stationGeneration.status||[]),{seq:event.seq,type:event.type,phase:event.phase||"",reason:event.reason||"",categories:Array.isArray(event.categories)?event.categories.slice(0,16):[],site:String(event.site||"").slice(0,180),url:String(event.url||"").slice(0,1000),provider:String(event.provider||"").slice(0,120),httpStatus:event.httpStatus??null,resultCount:event.resultCount??null,proposalReceipt:event.proposalReceipt&&typeof event.proposalReceipt==="object"?event.proposalReceipt:null}].slice(-256);
+            else stationGeneration.status=[...(stationGeneration.status||[]),{seq:event.seq,type:event.type,phase:event.phase||"",reason:event.reason||"",categories:Array.isArray(event.categories)?event.categories.slice(0,16):[],site:String(event.site||"").slice(0,180),url:String(event.url||"").slice(0,1000),provider:String(event.provider||"").slice(0,120),httpStatus:event.httpStatus??null,resultCount:event.resultCount??null,atUnixMs:Number(event.atUnixMs||0)||null,proposalReceipt:event.proposalReceipt&&typeof event.proposalReceipt==="object"?event.proposalReceipt:null}].slice(-256);
             if(event.terminal){stationGeneration.terminal=true;stationGeneration.terminalType=event.type||""}
             scheduleStationGenerationRender();
           }
@@ -2092,7 +2222,7 @@
             const t=currentThread(); if(t&&(!t.title||t.title==="New conversation"))await mutateChat([{type:"UPSERT_THREAD",threadId:t.id,title:titleFrom(text),pinned:!!t.pinned,createdAt:t.createdAt||Date.now()}]);
           }
           const requestId=uid("web"), userMessageId=uid("message"), assistantMessageId=uid("assistant");
-          stationGeneration={requestId,threadId:activeThreadId,text:"",status:[{type:"CONNECTING",phase:"CONNECTING"}],widgets:[],terminal:false,lastSeq:0,createdAt:Date.now()};
+          stationGeneration={requestId,threadId:activeThreadId,text:"",status:[{type:"CONNECTING",phase:"CONNECTING",atUnixMs:Date.now()}],widgets:[],terminal:false,lastSeq:0,createdAt:Date.now()};
           setCompanionState("accepted","send-start");
           stationAwaitingCommit=requestId;
           // Render the submitted user turn immediately; Station remains the durable authority.
@@ -2137,7 +2267,7 @@
           // Reconcile the authoritative messages in the background. Do not
           // block opening the thread or listening to streamed tokens on sync.
           void syncStation(true);
-          stationGeneration.status=[{type:"QUEUED",phase:"QUEUED"}];
+          stationGeneration.status=[{type:"QUEUED",phase:"QUEUED",atUnixMs:Date.now()}];
           setCompanionState("accepted","send-ack");
           renderStationGeneration();
           try{
