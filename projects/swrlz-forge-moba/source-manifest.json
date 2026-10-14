@@ -86,6 +86,6 @@
     "patches/v10_9_episode_story_actions.py",
     "patches/v11_0_run_replay_quality.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": "0000000000000000000000000000000000000000000000000000000000000000"
+  "finalBytes": 2016964,
+  "finalSha256": "55819190a4c57ce43cf0fcaade597addd8e97d9743bd8f513f0c3c899fcbd43b"
 }
