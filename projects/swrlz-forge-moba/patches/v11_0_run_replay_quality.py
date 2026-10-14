@@ -23,8 +23,8 @@ def apply(html):
     html = once(html, old_loop,
                 "if(run.mode==='maul'){stRunDrawMaul(ctx,entities,p=>project(p,width,height,centre),width,height,get('stRunObserver').value,state.game);return;}\n"
                 "    " + old_loop)
-    html = once(html, "stRunInstallUI();refreshAssetList();",
-                "stRunInstallUI();stRunInstallCompressedUI();refreshAssetList();")
+    html = once(html, "stRunInstallUI();",
+                "stRunInstallUI();stRunInstallCompressedUI();")
     html = once(html, "V10_9_EPISODE_STORY_ACTIONS", "V11_0_RUN_REPLAY_QUALITY")
     html = html.replace("Maker v10.9", "Maker v11.0").replace("MAKER v10.9", "MAKER v11.0")
     html = html.replace("version:'v10.9'", "version:'v11.0'").replace("version:10.9", "version:11.0")
