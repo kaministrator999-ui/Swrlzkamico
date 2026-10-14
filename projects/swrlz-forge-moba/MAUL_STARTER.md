@@ -1,5 +1,7 @@
 # Frostveil Maul starter
 
+**Shipped vs. planned gameplay:** See [Wintermaul Design Architecture — verified v11.1 minion-wave status](reports/WINTERMAUL_DESIGN_ARCHITECTURE.md#verified-v111-minion-wave-status-2026-10-14) for the exact feature matrix, including which special creeps, collision systems and game modes are **not implemented**. Do not interpret future design requirements as completed code.
+
 ## Current v11.1 candidate · Physical builders, tower mazes, protected entrances
 
 The current **Frostveil Maul** starter (not historical imported maps) now uses **walk-to-build**: tower placement queues the chosen sector builder to path to a clear adjacent cell; the tower only exists after the builder arrives, when the game rechecks the route, footprint and available gold. Pausing freezes the walk. Moving a builder deliberately cancels their pending construction; changing sectors does not. Building in an entrance pad, gate, or exit is forbidden, and the spawn pads are visibly outlined. Standalone maze walls are hidden from the current build menu; the four combat tower families still physically obstruct ground routes and form staggered, jagged mazes. Historical saved walls are not deleted, and old Maul imports preserve legacy rules.
