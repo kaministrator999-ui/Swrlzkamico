@@ -47,6 +47,7 @@ on:
       - fix/start-led-project-focus-v234
       - feature/github-read-inference-v235
       - fix/github-read-trace-v236
+      - fix/github-branch-continuity-v237
       - feature/version-literacy-content-layout-v199
   workflow_dispatch:
 

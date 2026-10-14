@@ -167,6 +167,36 @@ def test_verified_report_context_never_uses_wrong_branch_revision():
     assert saved["lastFile"] == "hf_space/github_connection.py"
 
 
+
+def test_v237_feature_branch_persists_through_natural_followups():
+    active = {**CTX, "branch": "feature/read"}
+    relation = ("How does that file relate to hf_space/repository_project_status_v233.py "
+                "and hf_space/github_report_v226.py?")
+    expected = ("@GitHub report deep hf_space/github_connection.py | "
+                "hf_space/repository_project_status_v233.py | "
+                "hf_space/github_report_v226.py on branch feature/read")
+    assert gh._implicit_repo_command(relation, active) == expected
+    history = ("When was that original file last modified in our GitHub repository, "
+               "which commit changed it, and what evidence tells you that?")
+    assert gh._implicit_repo_command(history, active) == (
+        "@GitHub history hf_space/github_connection.py on branch feature/read")
+    assert understand.classify_read("How many files in this folder?", active) == (
+        "@GitHub stats hf_space on branch feature/read")
+    assert understand.classify_read("List files in this folder", active) == (
+        "@GitHub files hf_space on branch feature/read")
+    captured = []
+    def fake_command(data):
+        captured.append(data["prompt"])
+        yield {"type": "DELTA", "text": "verified feature-branch read"}
+        yield {"type": "COMPLETED"}
+    with mock.patch.object(gh, "command_events", side_effect=fake_command):
+        list(gh.agent_events({"userId": "google:owner", "prompt": history,
+                              "githubContext": active}))
+    assert captured == ["@GitHub history hf_space/github_connection.py on branch feature/read"]
+    # General chat and mutation intent still cannot inherit GitHub operations.
+    assert gh._implicit_repo_command("Write changes to that file", active) is None
+
+
 if __name__ == "__main__":
     test_startup_and_safe_guides()
     test_natural_router_and_contextual_pronouns()
@@ -174,4 +204,5 @@ if __name__ == "__main__":
     test_oversized_roadmap_uses_sha_verified_blob()
     test_explicit_feature_branch_report_and_history_are_sha_pinned()
     test_verified_report_context_never_uses_wrong_branch_revision()
+    test_v237_feature_branch_persists_through_natural_followups()
     print("v236 real-user GitHub read trace regression PASS")
