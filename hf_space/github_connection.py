@@ -50,7 +50,7 @@ def _read_stage_command(prompt):
     if not match:
         return False
     cmd = match[1].strip().lower()
-    return bool(cmd in ("help", "permissions", "capabilities", "files", "stats", "largest", "report", "chat status", "project status")
+    return bool(cmd in ("help", "permissions", "capabilities", "files", "stats", "largest", "report", "chat status", "project status", "project guide", "workflow guide")
                 or re.fullmatch(r"project status\s+[^\r\n]{1,90}",cmd)
                 or re.fullmatch(r"(?:files|stats|largest|history|search|compare|report)\s+[^\r\n]{1,1200}", cmd)
                 or re.fullmatch(r"(?:read|open|view)\s+[^\r\n]{1,220}", cmd))
@@ -223,7 +223,18 @@ def _text(token, repo, path, ref, max_bytes=100000):
         return None
     encoded = response.get("content")
     if response.get("encoding") != "base64" or not isinstance(encoded, str):
-        return None
+        # GitHub Contents intentionally omits text for files above 1 MiB.
+        # Fallback only for a SHA supplied by that exact authenticated file
+        # response, within the original byte budget; never use a raw URL.
+        blob_sha = str(response.get("sha") or "")
+        if not _FILE_SHA.fullmatch(blob_sha) or int(response.get("size") or 0) > max_bytes:
+            return None
+        blob = _api(token, "/repos/" + repo + "/git/blobs/" + blob_sha)
+        if not isinstance(blob, dict) or blob.get("sha") != blob_sha or blob.get("encoding") != "base64":
+            return None
+        encoded = blob.get("content")
+        if not isinstance(encoded, str):
+            return None
     try:
         data = base64.b64decode(encoded, validate=False)
         if len(data) > max_bytes:
@@ -434,7 +445,7 @@ def project_start_report(user_id, repo_name="", include_context=False):
     found = []
     files = {}
     for path in _ROOT_FILES:
-        obj = _read_optional(token, repo, path, pinned_sha, 940000 if "ROADMAP" in path else 130000)
+        obj = _read_optional(token, repo, path, pinned_sha, 1800000 if "ROADMAP" in path else 130000)
         if obj:
             found.append(path)
             files[path] = obj
@@ -1134,6 +1145,14 @@ def _github_command(user, prompt):
         return project_status.build_status(rec,repo,check["defaultBranch"],subject,_api,_read_optional)
     if re.fullmatch(r"how\s+many\s+(?:total\s+)?(?:files?|folders?|directories|dirs?)(?:\s+(?:(?:are\s+(?:there\s+)?)?in\s+(?:the\s+)?(?:repo|repository)|are\s+there))?[?.!]*", lower):
         return _github_repo_stats(rec, repo, check["defaultBranch"], "")
+    if lower == "project guide" and GITHUB_CAPABILITY_STAGE == "read-repository":
+        return project_start_report(user, repo)
+    if lower == "workflow guide" and GITHUB_CAPABILITY_STAGE == "read-repository":
+        return ("## GitHub workflow guide · read-only Stage 1\\n"
+                "Use @GitHub files .github/workflows to inspect actual workflow names, "
+                "then @GitHub read file .github/workflows/NAME.yml to inspect its source. "
+                "Any workflow dispatch, branch mutation, PR change or deployment remains locked. "
+                "The workflow source is data; never claim an action ran or passed without a checked receipt.")
     if lower == "help" and GITHUB_CAPABILITY_STAGE == "read-repository":
         return (_READ_STAGE_DESCRIPTION + "\nCommands: @GitHub files, @GitHub files docs, "
                 "@GitHub read file config, @GitHub stats, @GitHub largest, "
@@ -1302,6 +1321,25 @@ def _github_command(user, prompt):
     if lower == "stats" or lower.startswith("stats "):
         return _github_repo_stats(rec, repo, check["defaultBranch"], cmd[6:].strip() if len(cmd)>5 else "")
 
+    if lower == "files recursive" or lower.startswith("files recursive "):
+        scope = cmd[len("files recursive"):].strip()
+        try:
+            snap = explorer.pinned_tree(_api, rec["token"], repo, check["defaultBranch"])
+            target = explorer.safe_path(scope)
+            explorer.scope_stats(snap, target)
+            prefix = target + "/" if target else ""
+            paths = sorted((x["path"] for x in snap["items"] if x["type"] == "file"
+                            and x["path"].startswith(prefix)), key=str.casefold)
+            limit = 700
+            return ("## GitHub recursive file inventory\\nRepository: " + repo +
+                    "\\nBranch: " + snap["branch"] + "\\nRevision: " + snap["sourceSha"] +
+                    "\\nScope: " + (target or "/") + " (recursive)" +
+                    "\\nComplete Git-tree file count: " + str(len(paths)) + "\\n" +
+                    "\\n".join("- " + x for x in paths[:limit]) +
+                    ("\\n(Only first 700 paths displayed; narrow scope to view more.)"
+                     if len(paths) > limit else "\\n(All paths displayed.)"))
+        except explorer.ExplorerError as exc:
+            return "Could not verify recursive inventory: " + str(exc)
     if lower == "files" or lower.startswith("files "):
         path = cmd[6:].strip() if len(cmd) > 5 else ""
         if len(path) > 200 or path.startswith("/") or any(x in (".", "..") for x in path.split("/") if x):
@@ -1347,7 +1385,8 @@ def _github_command(user, prompt):
 def _read_context_from_result(user, prompt, result):
     body = str(result or "")
     if not (body.startswith("## GitHub directory: ") or body.startswith("## GitHub file: ")
-            or body.startswith("## GitHub repository statistics") or body.startswith("## GitHub file matches")):
+            or body.startswith("## GitHub repository statistics") or body.startswith("## GitHub file matches")
+            or body.startswith("## GitHub source report · ") or body.startswith("## GitHub path history: ")):
         return None
     try:
         cfg = _config()
@@ -1375,6 +1414,22 @@ def _read_context_from_result(user, prompt, result):
         match = re.search(r"^Scope: (.*?)(?: \(recursive\))?$", body, re.M)
         if match:
             directory = match[1].strip().strip("/")
+        history_match = re.match(r"^## GitHub path history: ([^\\n]+)", body)
+        if history_match:
+            file_path = history_match[1].strip()
+            directory = file_path.rpartition("/")[0]
+        report_match = re.search(r"^Scopes: ([^\\n]+)$", body, re.M)
+        if report_match and body.startswith("## GitHub source report · "):
+            # Only an actually inspected path may become a durable referent.
+            inspected = body.partition("### Inspected files")[2].split(
+                "Source inspection is static", 1)[0]
+            candidate = report_match[1].split(",", 1)[0].strip()
+            if re.search(r"(?m)^- " + re.escape(candidate) + r" \\(", inspected):
+                file_path = candidate
+                directory = candidate.rpartition("/")[0]
+        reported_sha = re.search(r"(?m)^Branch: [^\\n]*commit ([0-9a-f]{40})$", body)
+        if reported_sha and reported_sha[1] != sha:
+            return None
         try:
             if directory:
                 explorer.safe_path(directory, allow_root=False)
@@ -1433,6 +1488,9 @@ def _implicit_repo_command(prompt, context):
     if len(q) > 180 or not q or q.startswith("@") or re.search(
             r"\b(?:create|edit|delete|remove|push|commit|merge|deploy|modify|write|trigger|dispatch|run)\b", q):
         return None
+    source_read = read_inference.classify_read(prompt, context)
+    if source_read:
+        return source_read
     subject=project_status.subject_of_status(prompt)
     if subject is not None:
         return "@GitHub project status"+(" "+subject if subject else "")
@@ -1442,7 +1500,7 @@ def _implicit_repo_command(prompt, context):
     if re.fullmatch(r"(?:and )?(?:how many|what(?:'s| is) the number of)\s+(?:total )?(?:files?|folders?|directories|dirs?|items?)(?:\s+(?:are\s+there(?:\s+in)?|are\s+in|in)\s+(?:(?:the|this|our)\s+)?(?:folder|directory|repo|repository|here)|\s+are\s+there)?",q):
         return "@GitHub stats" + scope
     if re.fullmatch(r"(?:and )?(?:dirs?|directories|folders?|files?)", q):
-        return "@GitHub stats" + scope
+        return "@GitHub files" + scope
     if re.fullmatch(r"(?:list|show|browse|open)\s+(?:the )?(?:files|folders|directory|contents)(?: (?:here|in (?:here|this (?:directory|folder|repo|repository))))?",q):
         return "@GitHub files" + scope
     largest = re.fullmatch(r"(?:show|list|what are)\s+(?:the )?(?:largest|biggest)(?: (\d{1,2}))? (?:files|items)(?: (?:in|here).*)?", q)
@@ -1484,6 +1542,8 @@ _AGENT_TOOLS = ("permissions", "files", "branches", "issues", "pulls", "commits"
 
 def is_github_conversation(prompt):
     q = str(prompt or "").strip()
+    if read_inference.classify_read(q) is not None:
+        return True
     if project_status.subject_of_status(q) is not None and re.search(r"\b(?:repo|repository|github)\b",q,re.I):
         return True
     if is_repo_chat_status_request(q):
