@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {mkdir,readFile,writeFile} from 'node:fs/promises';
 import {resolve} from 'node:path';
 import {createHash} from 'node:crypto';
+import {gunzipSync} from 'node:zlib';
 
 // Ordinary native editor fixtures are imported only while stopped. Real mouse
 // and phone touch drive Play, placement and tower orders. The controlled clock
@@ -242,11 +243,22 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
     await native(page,'stRunLauncher');await page.locator('#stRunPanel').waitFor({state:'visible'});
     const jsonPath=resolve(output,mode.name+'.grouped-maul.swyrl-run.json'),textPath=resolve(output,mode.name+'.grouped-maul.swyrl-run.txt'),htmlPath=resolve(output,mode.name+'.grouped-maul.swyrl-run.html');
     assert.deepEqual(JSON.parse(await downloadRun(page,'stRunExportJson',jsonPath)),run);const transcript=await downloadRun(page,'stRunExportText',textPath);assert.match(transcript,/group/i);assert.match(transcript,/camera/i);
-    const html=await downloadRun(page,'stRunExportHtml',htmlPath);assert.ok(html.includes('SWYRL_RUN_VIEWER'));assert.ok(html.includes(profile));await native(page,'stRunClose');
+    const html=await downloadRun(page,'stRunExportHtml',htmlPath);assert.ok(html.includes('SWYRL_RUN_VIEWER'));assert.ok(html.includes('function stRunDrawMaul('));assert.ok(html.includes(profile));
+    const zippedWait=page.waitForEvent('download',{timeout:15000});await tap(page,'stRunExportGzip');const zippedFile=await zippedWait;
+    assert.match(zippedFile.suggestedFilename(),/\\.swyrl-run\\.json\\.gz$/);const gzip=await readFile(await zippedFile.path());
+    assert.ok(gzip.length<Buffer.byteLength(JSON.stringify(run)),'Gzip must reduce native recording bytes');
+    assert.deepEqual(JSON.parse(gunzipSync(gzip).toString('utf8')),run,'Compressed recording changed captured state/events');
+    await page.locator('#stRunFile').setInputFiles({name:'acceptance.swyrl-run.json.gz',mimeType:'application/gzip',buffer:gzip});
+    await page.waitForFunction(()=>document.getElementById('stRunImportFeedback')?.textContent.includes('Compressed recording opened successfully'));
+    await native(page,'stRunClose');
     const spectator=await context.newPage(),spectatorErrors=[];spectator.on('pageerror',error=>spectatorErrors.push(String(error)));await spectator.route('**/*',route=>route.abort());await spectator.setContent(html,{waitUntil:'domcontentloaded'});
     await spectator.waitForFunction(()=>window.SWYRL_RUN_VIEWER?.state);await spectator.evaluate(duration=>window.SWYRL_RUN_VIEWER.seek(duration),run.duration);
     const offline=await spectator.evaluate(()=>window.SWYRL_RUN_VIEWER.state());assert.deepEqual(offline.entities,nativeFrame.entities);assert.deepEqual(offline.camera,nativeFrame.camera);assert.deepEqual(offline.game,nativeFrame.game);
-    assert.equal(await spectator.locator('#stRunReviewCanvas').isVisible(),true);await spectator.locator('#stRunViewMode').selectOption('camera');assert.deepEqual(spectatorErrors,[]);await spectator.close();
+    assert.equal(await spectator.locator('#stRunReviewCanvas').isVisible(),true);
+    const colors=await spectator.evaluate(()=>{const c=document.getElementById('stRunReviewCanvas'),d=c.getContext('2d').getImageData(0,0,c.width,c.height).data,found=new Set();
+      for(let i=0;i<d.length;i+=4){const s=[d[i],d[i+1],d[i+2]].map(x=>x.toString(16).padStart(2,'0')).join('');if(s==='d9eaf0'||s==='24495c')found.add(s);}
+      return [...found];});assert.ok(colors.includes('d9eaf0')&&colors.includes('24495c'),'Maul spectator must show snowfields and blue water, not beige blocks');
+    await spectator.locator('#stRunViewMode').selectOption('camera');assert.deepEqual(spectatorErrors,[]);await spectator.close();
     assert.deepEqual(authored(await saved(page)),authored(empty));
     pass('full_native_group_recording_exports_future_batches_birth_events_and_offline_spectator');
 
@@ -267,7 +279,7 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
     pass('published_v10_7_import_keeps_authored_buildings_and_sequential_spawns_then_hub_returns_grouped_default');
 
     assert.deepEqual(errors,[],'Browser errors during grouped Maul acceptance');assert.equal(cases.length,9,'Every focused batch regression must execute');
-    receipts.push({mode:mode.name,viewport:mode.viewport,cases,canonicalId:canonical.project.canonicalId,version:'v10.9',sourceSha256,layout:'classic-v2',spawnStyle:profile,nativeRun:run.id,mapActors:canonical.scene.actors.length,groups:batches.map(e=>({group:e.details.group,t:e.t,scheduledAt:e.details.at,count:e.details.count})),firstBatch:first.details});
+    receipts.push({mode:mode.name,viewport:mode.viewport,cases,canonicalId:canonical.project.canonicalId,version:'v11.0',sourceSha256,layout:'classic-v2',spawnStyle:profile,nativeRun:run.id,mapActors:canonical.scene.actors.length,groups:batches.map(e=>({group:e.details.group,t:e.t,scheduledAt:e.details.at,count:e.details.count})),firstBatch:first.details});
     await writeFile(resolve(output,mode.name+'-receipt.json'),JSON.stringify(receipts.at(-1),null,2));console.log(mode.name==='desktop'?'MAUL_BATCH_DESKTOP_PASS':'MAUL_BATCH_MOBILE_PASS');
   }catch(error){await page.screenshot({path:resolve(output,mode.name+'-failure.png')}).catch(()=>{});await writeFile(resolve(output,mode.name+'-failure.json'),JSON.stringify({message:String(error),cases,errors,state:await state(page).catch(()=>null),ui:await ui(page).catch(()=>null)},null,2));throw error;}
   finally{await context.close();}

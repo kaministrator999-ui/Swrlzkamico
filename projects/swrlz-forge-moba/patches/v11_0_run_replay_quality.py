@@ -23,6 +23,11 @@ def apply(html):
     html = once(html, old_loop,
                 "if(run.mode==='maul'){stRunDrawMaul(ctx,entities,p=>project(p,width,height,centre),width,height,get('stRunObserver').value,state.game);return;}\n"
                 "    " + old_loop)
+    html = once(html,
+                "stRunDownloadBlob(new Blob([html],{type:'text/html;charset=utf-8'}),name+'html');",
+                "const spectatorHtml=run.mode==='maul'?html.replace('<script>window.SWYRL_RUN_VIEWER=',"
+                "'<script>'+stRunDrawMaul.toString()+';window.SWYRL_RUN_VIEWER='):html;\\n"
+                "    stRunDownloadBlob(new Blob([spectatorHtml],{type:'text/html;charset=utf-8'}),name+'html');")
     html = once(html, "stRunInstallUI();",
                 "stRunInstallUI();stRunInstallCompressedUI();")
     html = once(html, "V10_9_EPISODE_STORY_ACTIONS", "V11_0_RUN_REPLAY_QUALITY")
