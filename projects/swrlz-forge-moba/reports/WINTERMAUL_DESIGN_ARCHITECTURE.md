@@ -1,5 +1,44 @@
 # Frostveil Maul · canonical requirements and expansion sequence
 
+## Verified v11.1 minion-wave status (2026-10-14)
+
+**This section describes what is in the merged, deployed v11.1 source—not a future promise.** The release manifest ends in `patches/v11_1_maul_walk_builder.py` (71 governed patches). Wave behavior is provided by `runtime/maul_core.js` and the grouped Frostveil override in `runtime/maul_batch_core.js`; source is the authority for these statuses. A feature being requested, discussed or listed later in this document does **not** mean it has shipped.
+
+| Feature | Status in deployed v11.1 | Actual behavior / boundary |
+|---|---|---|
+| Thirty-round cooperative campaign | **Implemented** | Shared lives, nine connected sectors and the final exit; win after wave 30 if lives remain |
+| Scattered grouped arrivals | **Implemented** | Three batches per wave at 0, 2.5 and 5 seconds, across each entrance's available arrival cells; wait if insufficient free arrival space |
+| Air waves | **Implemented** | Every fifth round except boss rounds: waves 5, 15 and 25; flying units do not use ground tower mazes |
+| Boss waves | **Implemented** | Every tenth round: 10, 20 and 30, with boss-tagged enemies and higher HP |
+| Basic wave difficulty scaling | **Implemented** | Enemy HP, some movement speed, rewards and armor scale according to current wave rules; this is **not** a roster of special ability archetypes |
+| Player builder movement | **Implemented for current Frostveil profile** | Builder travels to an adjacent cell before tower appears; completion revalidates affordability and routes; saved historical variants retain prior behavior |
+| Towers form physical maze obstacles | **Implemented** | Current Frostveil hides standalone wall construction; towers block ground routes; full route closure is rejected |
+| Enemy entrance construction protection | **Implemented** | Spawn pads and protected route cells cannot be built on; protected pads are outlined |
+| Recorder and Maul replay presentation | **Implemented** | Lossless `.json.gz` export/import, plus Maul-aware spectator rendering; pre-existing formats retained |
+| Creeps occupying space, queueing and causing traffic jams | **Not implemented** | Ground-creep movement has no general physical unit-unit collision/spacing resolver; grouped spawn occupancy checks alone do not supply full lane congestion |
+| Ground creeps attacking towers when a route is completely blocked | **Not implemented** | Current build validation prevents sealing the path; no alternate creep attack/repath system yet |
+| Distinct fast creep *archetypes* | **Not implemented** | Wave-speed scaling exists; special fast-unit definitions/abilities do not |
+| Invisible/stealthed creeps and detection towers | **Not implemented** | No implemented stealth/detection mechanic or its counters |
+| Resistance and immunity archetypes | **Not implemented** | Existing armor mitigates damage, but separate damage-class resistances/immunities do not exist |
+| Teleporting creeps | **Not implemented** | No creep-teleport ability or corresponding route/replay events |
+| Hydra-style child spawning on death | **Not implemented** | No enemy death-to-child-spawn mechanic |
+| Multi-stage Infernal Golem splitting | **Not implemented** | No tiered split/offspring mechanic |
+| Healing/support creeps | **Not implemented** | No enemy healer support ability |
+| Endless or randomized wave modes, scaling rewards and milestones | **Not implemented** | The current rules cap the match at 30 waves |
+| Mirror Survival between two teams | **Not implemented** | No two-team synchronized automatic-wave competition or post-defeat continuation |
+| Themed, independently balanced builder/tower rosters | **Not implemented** | Current starter has four tower families; new thematic choices and parity rules remain planned |
+| Dedicated native Maul creator tools | **Not implemented as a dedicated subsystem** | General §E scene editing and map Save/Load exist, but the tailored creator workflow is still planned |
+
+### Planned minion-wave implementation and release gates
+
+1. **Congestion/routing:** deterministic creep-to-creep spacing, physical traffic jams, controlled tower attack/repath on total blockage. Preserve flying exceptions, guaranteed simulation progress, reproducible recorded events, and per-device performance.
+2. **Data-driven creep archetypes:** distinctive speed classes, stealth/detection, armor vs typed resistance/immunity, teleport, healer/support effects, Hydra splitting and tiered Infernal offspring. Define balance values and counters explicitly rather than guessing them from discussions.
+3. **Wave orchestration:** editable per-wave mixes, escalation pacing, telegraphed traits, kill rewards, recording/replay fidelity and CPU-friendly scaling. Keep the original thirty waves playable while introducing versioned opt-in modes.
+4. **Modes and creator:** optional endless progression, fair synchronized automatic-wave Mirror Survival, balanced themed builders and integrated native authoring tools.
+5. **Acceptance before claiming implementation:** deterministic CPU tests (movement, collision, abilities, death/splits, rewards), multi-sector route tests, desktop and Android touch gameplay, Sheep Tag/legacy map regressions, recorder import/export, six engine workflows, and independent exact hosted release audit after an authorized deployment.
+
+**Release guard:** These pending features must stay labeled *planned* until their code, automated acceptance, and live artifact verification exist. Documentation changes alone do not modify the engine, enemy waves, or the deployed Space.
+
 **Status:** User-directed design requirements, **not proof of implementation**. Preserve historical map files and release receipts. Scope these new mechanics behind explicit versioned Maul profiles and independently validate them.
 
 ## Gameplay invariants
