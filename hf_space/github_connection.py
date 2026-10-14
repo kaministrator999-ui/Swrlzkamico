@@ -1791,7 +1791,12 @@ def agent_events(data, model_generator=None, coder_generator=None):
     user = str(data.get("userId") or "")
     prompt = str(data.get("prompt") or "").strip()
     source_request = source_specialist.parse(prompt, data.get("githubContext"))
-    if source_request is not None and coder_generator is not None:
+    # An ordinary natural source question retains the existing deterministic
+    # v235 report when no specialist generator is available. Explicit source
+    # specialist commands may still verify/read source without Qwen.
+    if source_request is not None and (
+            coder_generator is not None or
+            re.match(r"(?i)^@github\s+explain\s+file\b", prompt)):
         # Source-specialist requests remain inside the Stage-1 authenticated
         # read gate. This is NEVER a route to legacy write/proposal tools.
         yield from source_specialist.events(sys.modules[__name__], data, coder_generator)

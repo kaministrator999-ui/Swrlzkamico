@@ -118,6 +118,47 @@ def _relate(item, proposed):
     return None
 
 
+def is_overlap_question(prompt):
+    """An explicit question about work in other conversations."""
+    text = str(prompt or "").strip()
+    return (12 <= len(text) <= 3200
+            and bool(re.search(
+                r"\b(?:another|other|separate|different|parallel)\s+"
+                r"(?:\w+\s+){0,2}(?:conversations?|chats?|threads?)\b"
+                r"|\b(?:overlap|collisions?)\b", text, re.I))
+            and bool(re.search(
+                r"\b(?:github|repo|repository|file|source|subsystem|project|module|work)\b",
+                text, re.I)))
+
+
+def describe_overlap(owner, conversation_id, repository, prompt):
+    """Read-only same-account and same-repository work evidence."""
+    if not gh._REPO.fullmatch(str(repository or "")):
+        return "Coordination unavailable: GitHub repository not verified."
+    if not isinstance(conversation_id, str) or not conversation_id:
+        return "Coordination unavailable: conversation identity not verified."
+    _revision, records = _read(store._config(), owner)
+    recent = _current(records, int(time.time()))
+    other = [x for x in recent if x["repository"].casefold() == repository.casefold()
+             and x["conversationId"] != conversation_id]
+    proposed = {"paths": _paths(prompt), "keywords": sorted(_keywords(prompt))}
+    matched = [(item, _relate(item, proposed)) for item in other]
+    matched = [(item, relation) for item, relation in matched if relation]
+    message = ("Verified recent project-work declarations for " + repository +
+               " under this Google account (up to 90-minute registry window).\n")
+    if matched:
+        message += "\nRelated declarations (not proof of active work):\n"
+        for item, relation in matched[:4]:
+            message += ("- " + str(item.get("title") or "Project work")[:110] +
+                        " — " + relation + "; observed Unix time " +
+                        str(item.get("lastObservedAt") or "unknown") + ".\n")
+    else:
+        message += "\nNo matching recent work declaration was found.\n"
+    return (message + "\nThis is not proof another conversation is idle. "
+            "Unreported or expired activity, private drafts and uncommitted "
+            "GitHub changes are not visible. No GitHub files were changed.")
+
+
 def observe(owner, conversation_id, repository, prompt, source_sha=""):
     """Register only an explicit scoped work request; return safe other-thread hints.
 

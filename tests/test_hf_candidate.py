@@ -259,6 +259,13 @@ class Candidate(unittest.TestCase):
   ):
    getattr(v241,name)()
 
+ def test_v242_dragon_chat_51_review_and_coordination(self):
+  import test_dragon_chat51_v242 as v242
+  for case in ("test_negated_review","test_release_source_fallback",
+               "test_explicit_main_does_not_switch","test_overlap_verification",
+               "test_startup_context_and_stage_lock"):
+   getattr(v242,case)()
+
  def test_source_contract(self):
   src=(ROOT/"hf_space/app.py").read_text(encoding="utf-8")
   ast.parse(src)

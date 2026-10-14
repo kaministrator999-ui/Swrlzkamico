@@ -17,10 +17,21 @@ SECRET = re.compile(r"(^|/)(?:\.env(?:\..*)?|secrets?|tokens?|credentials?|keys?
 SHA = re.compile(r"^[a-f0-9]{40}$")
 
 
+def _mutation_intended(text):
+    """Negated write verbs are constraints, not requests to mutate."""
+    for match in WRITES.finditer(text):
+        clause = re.split(r"[.!?;\n]", text[:match.start()])[-1]
+        if re.search(r"\b(?:do not|don't|does not|never|without|not to)\b[^.!?;\n]{0,110}$",
+                     clause, re.I):
+            continue
+        return True
+    return False
+
+
 def parse(prompt, context=None):
     """Never confuse questions about code with authorization to edit it."""
     text = str(prompt or "").strip()
-    if not text or len(text) > 1000 or not REQUEST.search(text) or WRITES.search(text):
+    if not text or len(text) > 1000 or not REQUEST.search(text) or _mutation_intended(text):
         return None
     # Only a clear GitHub/source context enters this route.
     if not (re.search(r"\b(?:github|repo|repository|source|code|scripts?|functions?|files?)\b", text, re.I)
@@ -99,8 +110,36 @@ def events(gh, data, coder_generator):
         if not SHA.fullmatch(commit):
             raise HTTPException(503, "Unverified source revision")
         matches = _resolve(snapshot, request["path"])
+        source_selection = ""
+        # The repository's default main branch owns governance, whereas the
+        # active Chat files can live in the approved, immutable HF candidate.
+        # Never override an explicit branch; disclose any release-source choice.
+        if not matches and branch == access["defaultBranch"] and not REF.search(prompt):
+            request_file = gh._read_optional(
+                record["token"], repo, ".deploy/HF_SPACE_REQUEST.txt", "main", 3000)
+            request_body = request_file.get("body", "") if isinstance(request_file, dict) else ""
+            pairs = dict(line.split("=", 1) for line in request_body.splitlines()
+                         if "=" in line and len(line) < 300)
+            released_ref = pairs.get("SOURCE_REF", "").strip()
+            if (pairs.get("TARGET") == "kamiloki/Swyrlz"
+                    and pairs.get("APPROVED") == "1"
+                    and SHA.fullmatch(released_ref) and released_ref != commit):
+                release_tree = explorer.pinned_tree(
+                    gh._api, record["token"], repo, released_ref)
+                if release_tree.get("sourceSha") == released_ref:
+                    release_matches = _resolve(release_tree, request["path"])
+                    if len(release_matches) == 1:
+                        source_selection = (
+                            "File absent on default branch " + branch +
+                            "; using the approved immutable Chat release source " +
+                            released_ref + " (read-only).")
+                        branch, commit, snapshot, matches = (
+                            released_ref, released_ref, release_tree, release_matches)
         if len(matches) != 1:
-            detail = "Ambiguous source filename; select an exact path" if matches else "Source path not found at selected commit"
+            detail = ("Ambiguous source filename; select an exact path" if matches
+                      else "Source path not found on branch " + branch +
+                      " at commit " + commit +
+                      "; specify 'on branch BRANCH' or a verified commit SHA")
             raise HTTPException(422, detail)
         item = matches[0]
         path = str(item["path"])
@@ -109,7 +148,7 @@ def events(gh, data, coder_generator):
         blob = str(item.get("sha") or "")
         if not SHA.fullmatch(blob):
             raise HTTPException(503, "Unverified file blob identity")
-        source = gh._read_optional(record["token"], repo, path, commit, 65000)
+        source = gh._read_optional(record["token"], repo, path, commit, 256000)
         if not source or source.get("sha") != blob or not isinstance(source.get("body"), str):
             raise HTTPException(503, "Source unavailable or blob identity mismatched")
         body = source["body"]
@@ -119,7 +158,8 @@ def events(gh, data, coder_generator):
             raise HTTPException(503, "Source bytes failed Git blob integrity verification")
         excerpt = gh.engine_code_agent_v217._code_context(body, request["goal"], 5200)
         truncated = len(body) > 5200
-        header = ("Verified source: " + repo + "/" + path + "\n"
+        header = ((source_selection + "\n" if source_selection else "") +
+                  "Verified source: " + repo + "/" + path + "\n"
                   + "Branch: " + branch + " · commit " + commit + "\n"
                   + "Blob SHA: " + blob + "\n"
                   + ("Coverage: bounded exact excerpts; unshown lines not verified.\n" if truncated

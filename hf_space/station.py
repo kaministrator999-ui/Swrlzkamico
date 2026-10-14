@@ -969,7 +969,12 @@ def _run(key,request_id,model_id,payload,assistant_id):
         cancelled=False
         # Server-verified private counts/disabled-recall notices are deterministic:
         # never send these requests to public online search or ask the model to guess.
-        if payload.get("verifiedPrivateAnswer"):
+        if payload.get("verifiedWorkAnswer"):
+            event_source=iter(({"type":"STATUS","phase":"CROSS_CONVERSATION_REVIEW",
+                                "reason":"Checking account-scoped declarations, not live chat activity."},
+                               {"type":"DELTA","text":payload["verifiedWorkAnswer"]},
+                               {"type":"COMPLETE"}))
+        elif payload.get("verifiedPrivateAnswer"):
             event_source=iter(({"type":"DELTA","text":payload["verifiedPrivateAnswer"]},{"type":"COMPLETE"}))
         elif payload.get("suppliedGitHubReportExplanation"):
             event_source=iter(({"type":"DELTA","text":payload["suppliedGitHubReportExplanation"]},{"type":"COMPLETE"}))
@@ -1686,6 +1691,12 @@ async def send(request:Request):
                 if prior.get("role")=="assistant" and isinstance((prior.get("meta") or {}).get("githubContext"),dict):
                     active_github=github_connection.normalize_thread_context(prior["meta"]["githubContext"])
                     if active_github:break
+        # A verified Project Start is bounded repository context before any
+        # explorer file selection; its branch is a hint, not a write grant.
+        if not active_github and active_project.get("evidenceType") == "GITHUB_SOURCE_READ_ONLY":
+            active_github=github_connection.normalize_thread_context({
+                "repo":active_project.get("repo"),"branch":active_project.get("branch"),
+                "sourceSha":active_project.get("sourceSha"),"directory":"","lastFile":""})
         if active_github and google_owner.startswith("google:"):
             try:
                 linked=github_connection._load(github_connection._config(),google_owner)
@@ -1779,7 +1790,21 @@ async def send(request:Request):
         if recap:payload["projectVersionRecall"]=recap
     # Explicit §tart requests use server-side, read-only GitHub evidence, not a
     # fabricated model tool call or privileged instructions from repo content.
-    if github_report_explain_v236.is_report_request(prompt):
+    if project_work_registry.is_overlap_question(prompt):
+        if not google_owner.startswith("google:"):
+            payload["verifiedWorkAnswer"]="Sign in with Google to check recent same-account project-work declarations. No overlap was inferred."
+        else:
+            try:
+                linked_work=github_connection._load(github_connection._config(),google_owner)
+                verified_repo=str((linked_work or {}).get("repo") or "")
+                if verified_repo:
+                    payload["verifiedWorkAnswer"]=project_work_registry.describe_overlap(
+                        google_owner,tid,verified_repo,prompt)
+                else:
+                    payload["verifiedWorkAnswer"]="Coordination unavailable: no GitHub repository has been selected and verified."
+            except Exception:
+                payload["verifiedWorkAnswer"]="Project coordination unavailable. No conclusion about other conversations can be verified."
+    elif github_report_explain_v236.is_report_request(prompt):
         payload["suppliedGitHubReportExplanation"]=github_report_explain_v236.explain_supplied_report(prompt)
     elif github_connection.is_start_request(prompt):
         _, verified_account = _account_session(request)
@@ -1790,7 +1815,9 @@ async def send(request:Request):
                                  "githubContext":active_github, "requestedModelId":model_id}
 
     # Account-scoped work awareness is separate from Chat's conversation CAS.
-    if google_owner.startswith("google:") and project_work_registry.declared_goal(prompt):
+    if (google_owner.startswith("google:") and
+            not project_work_registry.is_overlap_question(prompt) and
+            project_work_registry.declared_goal(prompt)):
         verified_work_repo = str((active_github or {}).get("repo") or "")
         if not verified_work_repo and re.search(r"\b(?:github|repo|repository)\b", prompt, re.I):
             try:
