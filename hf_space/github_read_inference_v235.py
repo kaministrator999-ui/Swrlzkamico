@@ -8,7 +8,7 @@ from __future__ import annotations
 import re
 
 _MUTATION = re.compile(
-    r"\b(?:add|build|change|commit|create|delete|deploy|dispatch|edit|fix|"
+    r"\b(?:add|build|create|delete|deploy|dispatch|edit|fix|"
     r"implement|install|merge|modify|patch|push|refactor|remove|rename|"
     r"rerun|retry|rewrite|run|trigger|update|upload|write)\b", re.I)
 _REPO = re.compile(r"\b(?:github|repo|repository)\b", re.I)
@@ -76,7 +76,7 @@ def classify_read(prompt, context=None):
         return None
     if _EXPLICIT_COMMAND.match(raw):
         return None  # existing command owners handle their own parameters
-    if _MUTATION.search(raw):
+    if _MUTATION.search(raw) or re.search(r"\bcommit\s+(?:my\s+|the\s+|these\s+)?(?:changes?|code|files?)\b", raw, re.I):
         return None
     if re.search(r"\b(?:remember|recall|previous chat|chat history|"
                  r"imported conversations?|chatgpt archive)\b", raw, re.I):
@@ -114,8 +114,8 @@ def classify_read(prompt, context=None):
             if re.search(r"\b(?:folder|directory|under|inside|within|files?\s+in|directories\s+in)\b", q, re.I):
                 paths = [_safe(m[1])]
     scoped = paths[:]
-    if not scoped and re.search(r"\b(?:this|that|those|same|last|previous)\s+"
-                                r"(?:source\s+)?files?\b|\b(?:it|that file)\b",lower):
+    if not scoped and re.search(r"\b(?:this|that|those|same|last|previous|original|first)\s+"
+                                r"(?:(?:original|first|previous|source|earlier)\s+)*files?\b|\b(?:it|that file)\b",lower):
         if last_file:
             scoped = [last_file]
         elif not explicit:
@@ -138,6 +138,9 @@ def classify_read(prompt, context=None):
         return "@GitHub report structure /"
     if re.search(r"\b(?:list|show|browse|open)\b", lower) and re.search(
             r"\b(?:files?|folders?|directories|contents|tree)\b", lower):
+        if re.search(r"\b(?:all|every|entire|complete|recursive|again)\b", lower) and re.search(
+                r"\b(?:files?|tree)\b", lower):
+            return "@GitHub files recursive" + (" " + scoped[0] if scoped else "")
         return "@GitHub files" + (" " + scoped[0] if scoped else "")
     if re.search(r"\b(?:read|open|show)\b", lower) and re.search(r"\bfile\b", lower):
         if scoped:
