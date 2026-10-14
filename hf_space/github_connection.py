@@ -1155,22 +1155,22 @@ def _github_command(user, prompt):
         return "Unknown GitHub proposal; nothing written."
 
     if GITHUB_CAPABILITY_STAGE == "read-repository" and lower == "engine help":
-        return ("## §E engine guide · GitHub Stage 1 (read only)\\n"
+        return ("## §E engine guide · GitHub Stage 1 (read only)\n"
                 "Browse the real Forge source with @GitHub files projects/swrlz-forge-moba "
                 "and @GitHub read file §tart_§E.md. "
                 "The source defines editor scenes, native starter packs and guarded "
-                "Forge publishing as a separate lane from §wyrlz AI Chat.\\n"
+                "Forge publishing as a separate lane from §wyrlz AI Chat.\n"
                 "Engine-specific status, starter listing, planning, cloning, reviewing, "
                 "committing and deploying commands are not enabled in this Stage 1. "
                 "You may inspect their source files using approved GitHub read commands; "
                 "this help request does not enable any write permission.")
     if GITHUB_CAPABILITY_STAGE == "read-repository" and lower == "engine pack help":
-        return ("## §E atomic starter-pack guide · GitHub Stage 1 (read only)\\n"
+        return ("## §E atomic starter-pack guide · GitHub Stage 1 (read only)\n"
                 "The engine starter-pack architecture pairs an editor-native scene "
                 "with its provenance/recipe descriptor, checked together for source identity. "
                 "To examine an existing pack, browse "
                 "@GitHub files projects/swrlz-forge-moba/starter-packs "
-                "or read its named file via @GitHub read file PATH.\\n"
+                "or read its named file via @GitHub read file PATH.\n"
                 "Engine-pack draft, verify-tool execution, review/PR, confirmation and "
                 "deployment commands are not enabled in this Stage 1. "
                 "This informational help does not create a pack, grant access or change GitHub.")
