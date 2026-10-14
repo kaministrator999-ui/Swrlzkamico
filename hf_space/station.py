@@ -24,6 +24,8 @@ import github_connection
 import github_report_explain_v236
 import progress_timeline_v238
 import project_thread_memory
+import project_work_registry_v241 as project_work_registry
+from itertools import chain
 import account_chat_store
 import chatgpt_archive
 import chatgpt_upload_session
@@ -981,9 +983,28 @@ def _run(key,request_id,model_id,payload,assistant_id):
                                   "stock": _stock_generate,
                                   "700m": _large_generate,
                                   "coder": _coder_generate,
-                              }.get(model_id, _large_generate))
+                              }.get(model_id, _large_generate),
+                              coder_generator=_coder_generate)
                           if isinstance(payload.get("githubAction"),dict)
                           else dispatch(model_id,payload,_generate,_stock_generate,_large_generate,_coder_generate))
+        # Related work is account-scoped intent metadata, not a GitHub lock.
+        related = payload.get("relatedProjectWork") if isinstance(payload.get("relatedProjectWork"), list) else []
+        if related:
+            item = related[0]
+            note = ("Related project conversation: " + str(item.get("title") or "related work")[:110] +
+                    " (" + str(item.get("relationship") or "possible overlap") +
+                    "; last declared activity (Unix): " + str(item.get("lastObservedAt") or "unknown") +
+                    "). This is declared intent, not verified active execution. GitHub remains read-only.\n\n")
+            event_source = chain((
+                {"type": "STATUS", "phase": "CROSS_CONVERSATION_OVERLAP",
+                 "reason": "Found a related work declaration under this account.",
+                 "categories": ["PROJECT", "COORDINATION", "READ_ONLY"]},
+                {"type": "DELTA", "text": note}), event_source)
+        elif payload.get("coordinationUnavailable"):
+            event_source = chain((
+                {"type": "STATUS", "phase": "COORDINATION_VISIBILITY_UNAVAILABLE",
+                 "reason": "Shared work could not be checked; no no-overlap claim.",
+                 "categories": ["PROJECT", "COORDINATION", "UNVERIFIED"]},), event_source)
         for event in event_source:
             with _lock:
                 active=s.get("activeGeneration")
@@ -1766,8 +1787,26 @@ async def send(request:Request):
     elif github_connection.is_github_command(prompt) or github_connection.is_github_conversation(prompt) or github_connection.forge_project_tools_v213.is_conversation(prompt) or (active_github and (github_connection._implicit_repo_command(prompt,active_github) or github_connection.ambiguous_topic_reply(prompt,active_github))):
         _, verified_account = _account_session(request)
         payload["githubAction"]={"userId":str((verified_account or {}).get("id") or ""), "prompt":prompt,
-                                 "githubContext":active_github}
+                                 "githubContext":active_github, "requestedModelId":model_id}
 
+    # Account-scoped work awareness is separate from Chat's conversation CAS.
+    if google_owner.startswith("google:") and project_work_registry.declared_goal(prompt):
+        verified_work_repo = str((active_github or {}).get("repo") or "")
+        if not verified_work_repo and re.search(r"\b(?:github|repo|repository)\b", prompt, re.I):
+            try:
+                linked_work = github_connection._load(github_connection._config(), google_owner)
+                verified_work_repo = str((linked_work or {}).get("repo") or "")
+            except Exception:
+                pass
+        if verified_work_repo:
+            try:
+                summary = project_work_registry.observe(
+                    google_owner, tid, verified_work_repo, prompt,
+                    str((active_github or {}).get("sourceSha") or ""))
+                if summary.get("overlaps"):
+                    payload["relatedProjectWork"] = summary["overlaps"]
+            except Exception:
+                payload["coordinationUnavailable"] = True
     _pool.submit(_run,key,rid,model_id,payload,str(body.get("assistantMessageId") or uuid.uuid4().hex))
     response=JSONResponse({"ok":True,"contract":CONTRACT,"requestId":rid,"modelId":model_id},status_code=202)
     response.set_cookie("swrlz_hf_sid",key,httponly=True,samesite="lax",secure=request.url.scheme=="https",max_age=86400,path="/")
