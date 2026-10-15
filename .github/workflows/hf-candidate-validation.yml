@@ -78,5 +78,7 @@ jobs:
         run: |
           node --check 'chat/§wyrlz/assets/source-guides-v245.js'
           node tests/test_source_guide_cards_v245.mjs
+      - name: v246 Copy original source fidelity regression
+        run: node tests/test_source_copy_v246.mjs
       - name: Report scope
         run: echo "Offline checks only. Model reconstruction, inference, HF Space and Chat parity remain unverified."
