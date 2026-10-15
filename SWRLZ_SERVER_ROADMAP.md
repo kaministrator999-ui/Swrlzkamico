@@ -1,3 +1,15 @@
+## UPDATE STARTED — 2026-10-14 — v251 Dragon Chat (59) named Project Start document opinion/source analysis
+
+**Live evidence source:** Latest and only current-build thread in exported swrlz-dragon-chat (59).json: one-word `Files` now gives short clarification; repo-root file listing correctly fetches GitHub source (both v250 acceptance successes). Next `What do you think of the §tart doc in the repo §wyrlz?` incorrectly delivered `GitHub source report` on entire repo main, 632 files inventoried and only 12 unrelated files inspected, NOT the §tart doc. Immediate correction `Lol I asked what your opinion of our repo §tart doc is` repeated the identical report, proving semantic intent and feedback were not obeyed. Other threads are older independent histories, not current-build proof.
+
+**Ownership and root cause:** Existing GitHub read inference converts vague what/opinion + repo words into `@GitHub report structure /`; existing source-specialist parsing did not accept opinions or Markdown paths and did not resolve documented §tart entrypoint title. Read-only GitHub access succeeded; the wrong command was selected. In the approved Chat source branch from deployed v250 commit db009f479b4aa1ffd023e456c967bdcef82e86ab, v251 uses established SHA-pinned source specialist for named document opinions, retains verified Git blob integrity, bounded and explicitly disclosed source excerpts, selected-file focus, and isolated analytical model with no write authority. Keep Forge §E start document distinct; do not modify Forge source, provider/model weights, other users or OAuth scopes.
+
+**Source PR:** fix/chat-doc-opinion-v251 -> Chat v250 release branch, PR #168. Expanded the existing CI-run GitHub repo-file test suite to cover both newest-thread opinion requests, canonical §tart alias and separate §E alias, genuine named Markdown, source-grounded model input, no token leakage, and negative unrelated questions/mutation cases. Next: verify CI, integrate exact source with tree identity, guarded HF publication to existing kamiloki/Swyrlz, runtime version authority and final Roadmap receipt. Signed-in device acceptance separate.
+
+**Status:** STARTED — candidate PR created, offline CI pending; no release/activation claim.
+
+---
+
 ## UPDATE FINISHED — 2026-10-14 — v250 Dragon Chat (58) verified GitHub root followup and file-topic quality
 
 **Primary owner evidence (newest thread only):** Export `swrlz-dragon-chat (58).json` latest thread `web-mv8wta8a-1qjgo29` and corresponding signed-in mobile screenshots. Sequence: (1) bare `Files` with no thread provenance yielded speculative 700M paragraphs about phantom context; (2) `Can you show me the files in the repo` correctly returned `## GitHub directory: /` and persisted verified repo/main/root `githubContext` with SHA 63c908aeb4f40e7b1ac758eef102a75950465c76; (3) `Can you show me the files` immediately followed and bypassed GITHUB_READ_* phases, generating an unsupported generic repository structure (e.g. src/, models/, LICENSE, setup.cfg). No older exported threads were used to assert live current-build behavior.
