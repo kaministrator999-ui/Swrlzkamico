@@ -1,5 +1,7 @@
 # §wyrl§ Engine · Maker v11.2
 
+**v11.2 starter-pack entry point:** Projects → Frostveil Maul uses the new separate downloadable source `scenes/maul-frostveil-flight.swyrl.json`, preserving the prior grouped/classic native maps. This authored starter itself saves the flying-builder and glacial-visual settings; CI checks the bundled scene and actual project tile for matching profiles, nine builder IDs and preserved 30-wave geometry. It is a candidate, not the current live v11.1 release.
+
 ## Candidate v11.2 — hover builders and glacial visual style (not deployed)
 
 The new canonical Frostveil map opts into `maulBuilderFlight: hover-v1` and `maulVisualStyle: glacial-v2`. Builders fly directly to the tower cell across terrain and existing towers at 15 world units/s, hovering above the tower as it is constructed. Manual movement stays within the assigned territory; no-build entrances, gold/route checks, and historical `walk-v1` imported maps remain protected. Cached original 256px procedural ice/snow/water textures, icy cliff accents and animated winged builders improve appearance without changing saved gameplay geometry. This is an isolated v11.2 candidate in PR #159, NOT a live success claim.
