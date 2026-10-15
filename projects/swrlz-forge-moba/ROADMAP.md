@@ -1,5 +1,9 @@
 # §wyrl§ Engine · Roadmap
 
+## UPDATE STARTED — v11.9 original festival model and model-first touch viewport
+
+Owner's approved character sheet and original skin screenshots govern the proportions. Current work adds an independently authored 811-part native scene (without overwriting older scene assets), separate 36-tier editable paper-ferret bodies with narrow→bulky→tapered radius profiles, modeled scalp/hair grips, continuous neck/torso/limb form, eight editable draped fabric panels, detailed hands/boots, a native piñata pet, and a larger mobile 3D canvas with local inspector scrolling. Native cloth-panels remain actual editable loft splines, not painted image proxies. Source seal 2,335,886 bytes / SHA-256 `987f074e111420126715142da652d4907c7d1a0e493215ee9784e35da48966dd`; 79 patches / 35 bundled assets. Branch: `feature/engine-v119-figure-ferret-silhouette`, PR #187. This is a **candidate**, not deployed or owner visually accepted until full CI, merge, dedicated release and independent host audit complete. Hair companions are structurally separate but do not yet have skeletal rigs or animations.
+
 ## Current v11.8 candidate — procedural twisted piñata and continuous anime limbs (not deployed)
 
 The approved visual study is being revised with two editable rear-origin broken-S frustum sweeps; native twist/depth/smoothing/mirror/fringe editing; four continuous anatomical limb lofts replacing bead joints; and retained historical scenes. The owner still judges front/side/rear visual quality. A passing test matrix is not equivalent to rigging or textured sculpting, which remain future editor capabilities. Follow §tart_§E.md's gated deployment and independent audit.
