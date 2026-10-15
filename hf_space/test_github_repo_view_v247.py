@@ -139,7 +139,7 @@ def test_dragon59_named_document_opinion_uses_verified_source():
     calls=[]
     def fake_coder(payload):
         calls.append(payload)
-        yield {"type":"DELTA","text":"The document keeps routing modular; a tradeoff is its length."}
+        yield {"type":"DELTA","text":"The document defines a canonical project entrypoint and identifies separate owners for deployment contracts. This separation helps keep runtime responsibilities clear, although the document is long."}
         yield {"type":"COMPLETED","phase":"COMPLETE"}
     with mock.patch.object(github,"_config",return_value={}), \
          mock.patch.object(github,"_load",return_value={"token":"test-secret","repo":"owner/repo"}), \
@@ -154,9 +154,9 @@ def test_dragon59_named_document_opinion_uses_verified_source():
     assert any(e.get("phase")=="GITHUB_CODER_READ_ONLY" for e in events), events
     assert any(e.get("type")=="GITHUB_CONTEXT" and
                e["context"].get("lastFile")=="§wyrlz_§tart.md" for e in events), events
-    assert any("The document keeps routing modular" in e.get("text","") for e in events)
+    assert any("The document defines a canonical project entrypoint" in e.get("text","") for e in events)
     assert len(calls)==1
-    assert "VERIFIED SELECTED DOCUMENT" in calls[0]["prompt"]
+    assert "Give a direct opinion of the SELECTED DOCUMENT" in calls[0]["prompt"]
     assert "Canonical project entrypoint" in calls[0]["prompt"]
     assert "test-secret" not in calls[0]["prompt"]
     assert not any("Verified Git-tree inventory" in e.get("text","") for e in events)
@@ -189,7 +189,7 @@ def test_dragon60_named_doc_opinion_followup_is_verified():
     calls=[]
     def fake_coder(payload):
         calls.append(payload)
-        yield {"type":"DELTA","text":"The Forge-specific router is separate from Chat."}
+        yield {"type":"DELTA","text":"The Forge-specific router separates the engine build and deployment lane from Chat. Its title and introductory content describe a distinct Hugging Face engine target for engine work."}
         yield {"type":"COMPLETED","phase":"COMPLETE"}
     with mock.patch.object(github,"_config",return_value={}), \
          mock.patch.object(github,"_load",return_value={"token":"test-secret","repo":"owner/repo"}), \
@@ -203,12 +203,44 @@ def test_dragon60_named_doc_opinion_followup_is_verified():
     assert any(e.get("phase")=="GITHUB_CODER_READ_ONLY" for e in events), events
     assert any(e.get("type")=="GITHUB_CONTEXT" and
                e["context"].get("lastFile")=="§tart_§E.md" for e in events), events
-    assert any("Forge-specific router" in e.get("text","") for e in events), events
+    assert any("Forge-specific router separates" in e.get("text","") for e in events), events
     assert len(calls)==1
     assert "Give a direct opinion" in calls[0]["prompt"]
     assert "Forge has a separate Hugging Face deployment lane" in calls[0]["prompt"]
     assert "test-secret" not in calls[0]["prompt"]
     assert not any("SCWRLZ_§tart.md" in e.get("text","") for e in events)
+
+
+def test_dragon61_source_purpose_not_provenance_echo():
+    """Screenshots: model repeated SHA IDs and contradicted already verified source."""
+    from github_source_specialist_v241 import (
+        _source_answer_is_metadata_echo, _verified_document_outline)
+    broken=("The verified source for the user's original request is the GitHub "
+            "repository owner/repo with the commit " + "a"*40 +
+            " and blob " + "b"*40 + ". The source is not verified, "
+            "but it contains details about this file.")
+    assert _source_answer_is_metadata_echo(broken)
+    assert _source_answer_is_metadata_echo("The blob SHA is " + "a"*40)
+    assert _source_answer_is_metadata_echo("No information.")
+    meaningful=("This engine file serves as a build and deployment router. "
+                "Its Startup contract tells maintainers to read the manifest, "
+                "build script and patch modules, validate generated output, "
+                "then verify the actual hosted release marker.")
+    assert not _source_answer_is_metadata_echo(meaningful)
+
+    source=("# §tart §E — §wyrl§ Engine Build & Deploy Router\n\n"
+            "## Canonical lane\n\nThe Forge target is independent of Chat.\n\n"
+            "## Startup contract\n\n"
+            "- Read this router and the engine README.\n"
+            "- Validate final generated HTML and JavaScript before merge.\n"
+            "## Deployment truth contract\n\n"
+            "Upload is not live-host verification.\n")
+    outline=_verified_document_outline(source, "§tart_§E.md")
+    assert "Engine Build & Deploy Router" in outline
+    assert "Startup contract" in outline
+    assert "Read this router" in outline
+    assert "Validate final generated HTML" in outline
+    assert "not an independent full-document model assessment" in outline
 
 if __name__=="__main__":
     test_exported_prompt_selects_real_authenticated_read()
@@ -216,4 +248,5 @@ if __name__=="__main__":
     test_dragon58_root_context_followup_and_topic_fallback()
     test_dragon59_named_document_opinion_uses_verified_source()
     test_dragon60_named_doc_opinion_followup_is_verified()
+    test_dragon61_source_purpose_not_provenance_echo()
     print("v247: repo-files view routes authenticated GitHub read; coder/write guard PASSED")
