@@ -161,9 +161,59 @@ def test_dragon59_named_document_opinion_uses_verified_source():
     assert "test-secret" not in calls[0]["prompt"]
     assert not any("Verified Git-tree inventory" in e.get("text","") for e in events)
 
+
+def test_dragon60_named_doc_opinion_followup_is_verified():
+    """Latest Dragon Chat (60): do not invent a Forge Start document."""
+    import hashlib
+    specialist=github.source_specialist
+    ctx={"repo":"owner/repo","branch":"main","sourceSha":"a"*40,
+         "directory":"","lastFile":"§wyrlz_§tart.md","kind":"file"}
+    question="Now what about the §tart §E document"
+    req=specialist.parse(question,ctx)
+    assert req and req["path"]=="§tart_§E.md" and req.get("opinionFollowup"), req
+    assert specialist.parse("What about the §tart §E document",ctx)["path"]=="§tart_§E.md"
+    assert specialist.parse("Now what about docs/ENGINE.md document",ctx)["path"]=="docs/ENGINE.md"
+    assert specialist.parse(question,None) is None
+    assert specialist.parse(question,{**ctx,"sourceSha":"invalid"}) is None
+    assert specialist.parse(question,{**ctx,"lastFile":""}) is None
+    assert specialist.parse(question,{**ctx,"repo":"another user"}) is None
+    assert specialist.parse("Now what about a strange unrelated issue",ctx) is None
+    assert specialist.parse("Delete the §tart §E document",ctx) is None
+    # This natural follow-up is routed by the verified thread-scope Station gate.
+    assert specialist.parse(question,ctx) is not None
+    source="# §tart §E — §wyrl§ Engine Build & Deploy Router\n\nForge has a separate Hugging Face deployment lane.\n"
+    raw=source.encode("utf-8")
+    blob=hashlib.sha1(b"blob "+str(len(raw)).encode()+b"\0"+raw).hexdigest()
+    tree={"sourceSha":"a"*40,
+          "items":[{"path":"§tart_§E.md","type":"file","sha":blob}]}
+    calls=[]
+    def fake_coder(payload):
+        calls.append(payload)
+        yield {"type":"DELTA","text":"The Forge-specific router is separate from Chat."}
+        yield {"type":"COMPLETED","phase":"COMPLETE"}
+    with mock.patch.object(github,"_config",return_value={}), \
+         mock.patch.object(github,"_load",return_value={"token":"test-secret","repo":"owner/repo"}), \
+         mock.patch.object(github,"_effective_access",return_value={"allowed":True,"defaultBranch":"main"}), \
+         mock.patch.object(github.explorer,"pinned_tree",return_value=tree), \
+         mock.patch.object(github,"_read_optional",return_value={"sha":blob,"body":source}), \
+         mock.patch.object(github,"_post_github",side_effect=AssertionError("no writes")):
+        events=list(github.agent_events({"userId":"google:owner","prompt":question,
+            "requestedModelId":"700m","githubContext":ctx},coder_generator=fake_coder))
+    assert any(e.get("phase")=="CODER_SOURCE_READING" for e in events), events
+    assert any(e.get("phase")=="GITHUB_CODER_READ_ONLY" for e in events), events
+    assert any(e.get("type")=="GITHUB_CONTEXT" and
+               e["context"].get("lastFile")=="§tart_§E.md" for e in events), events
+    assert any("Forge-specific router" in e.get("text","") for e in events), events
+    assert len(calls)==1
+    assert "Give a direct opinion" in calls[0]["prompt"]
+    assert "Forge has a separate Hugging Face deployment lane" in calls[0]["prompt"]
+    assert "test-secret" not in calls[0]["prompt"]
+    assert not any("SCWRLZ_§tart.md" in e.get("text","") for e in events)
+
 if __name__=="__main__":
     test_exported_prompt_selects_real_authenticated_read()
     test_guard_preserves_real_programming_and_permission_limits()
     test_dragon58_root_context_followup_and_topic_fallback()
     test_dragon59_named_document_opinion_uses_verified_source()
+    test_dragon60_named_doc_opinion_followup_is_verified()
     print("v247: repo-files view routes authenticated GitHub read; coder/write guard PASSED")
