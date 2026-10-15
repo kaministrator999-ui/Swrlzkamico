@@ -116,7 +116,7 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
     await page.goto(base+'/index.html?'+query,{waitUntil:'domcontentloaded',timeout:60000});
     await page.waitForFunction(()=>window.SWYRL_ENGINE_MAUL?.uiStatus&&window.SWYRL_ENGINE_AGENT.project().canonicalId==='maul-frostveil',undefined,{timeout:60000});
     await page.locator('#perfPreset').selectOption('medium',{force:true});await page.evaluate(()=>window.__maulClock.freeze());await frames(page,2);
-    assert.equal(await page.evaluate(()=>window.SWRLZ_FORGE_BUILD?.version),'v11.2','Wrong engine release');
+    assert.equal(await page.evaluate(()=>window.SWRLZ_FORGE_BUILD?.version),'v11.3','Wrong engine release');
     // Retain the complete published v10.6 geometry as an ordinary stopped editor fixture.
     const legacy=await page.evaluate(async()=>{const response=await fetch('scenes/maul-frostveil.swyrl.json');if(!response.ok)throw Error('Legacy Maul asset unavailable');return response.json();});
     await importFixture(page,legacy);
