@@ -28,8 +28,11 @@ def apply(html):
           + ";\n"
           + (root / "runtime/model_atelier.js").read_text(encoding="utf-8"))
     css = (root / "runtime/model_atelier.css").read_text(encoding="utf-8")
-    html = once(html, '<script type="module">',
-                '<style id="modelAtelierStyles">' + css + '</style>\n<script type="module">')
+    # The module opener also occurs in preserved demo/template strings; insert
+    # the style before the first real module opener as the earlier patches do.
+    assert '<script type="module">' in html
+    html = html.replace('<script type="module">',
+                        '<style id="modelAtelierStyles">' + css + '</style>\n<script type="module">', 1)
     html = once(html, 'window.SWRLZ_FORGE_BUILD=',
                 '// MODEL_ATELIER_V11_3_BEGIN\n' + js + '\nwindow.SWRLZ_FORGE_BUILD=')
     card = ('<button class="project-card den" data-project-template="model-atelier">'
