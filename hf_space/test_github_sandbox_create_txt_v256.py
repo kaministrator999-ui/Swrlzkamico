@@ -1,5 +1,4 @@
 """Sandbox CREATE_FILE authorization and scope contract tests; network calls stubbed."""
-import os
 import sys
 from pathlib import Path
 import unittest
@@ -13,21 +12,20 @@ class SandboxTxtTest(unittest.TestCase):
     def setUp(self):
         s._pending.clear()
         self.user = {"id": "google:owner"}
-        self.environment = patch.dict(os.environ, {
-            "SWRLZ_SANDBOX_WRITE_ENABLED": "true",
-            "SWRLZ_SANDBOX_WRITE_GOOGLE_SUB": "owner",
-            "SWRLZ_SANDBOX_WRITE_GITHUB_TOKEN": "fake-test-token",
-        })
-        self.environment.start()
+        def fake_authorized(user):
+            if not user or user.get("id") != "google:owner":
+                raise s.WriteError("SANDBOX_OWNER_REQUIRED", 403)
+            return "existing-user-oauth-token"
+        self.authorization = patch.object(s, "_authorized", side_effect=fake_authorized)
+        self.authorization.start()
 
     def tearDown(self):
-        self.environment.stop()
+        self.authorization.stop()
         s._pending.clear()
 
     def test_no_permission_by_default_or_unrecognized_owner(self):
-        with patch.dict(os.environ, {"SWRLZ_SANDBOX_WRITE_ENABLED": "false"}):
-            with self.assertRaises(s.WriteError):
-                s.prepare(self.user, "ok.txt", "hello")
+        with self.assertRaises(s.WriteError):
+            s.prepare(None, "ok.txt", "hello")
         with self.assertRaises(s.WriteError):
             s.prepare({"id": "google:unapproved"}, "ok.txt", "hello")
 

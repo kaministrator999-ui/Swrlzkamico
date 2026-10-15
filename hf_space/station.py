@@ -272,6 +272,12 @@ def _account_session(request:Request):
     sid=request.cookies.get("swrlz_hf_account")
     return sid,_hf_accounts.get(sid) if sid else None
 
+# Preserve the existing Google-account -> encrypted GitHub OAuth record authority.
+# This installs read/link/status routes plus only the narrowly approved sandbox
+# TXT creation permission check; it does not confer general GitHub writes.
+import github_oauth_reuse_v257
+github_oauth_reuse_v257.install(app, _account_session)
+
 @app.get("/api/account/status")
 def account_status():
     return {"googleClientId":GOOGLE_CLIENT_ID if google_id_token is not None else "","durable":False,"authority":"hf-process-local-google"}

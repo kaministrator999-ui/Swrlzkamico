@@ -26,23 +26,46 @@
     const filename=el('input',{type:'text',maxlength:'68',autocomplete:'off',required:'true',placeholder:'test-one.txt'});
     const bodyLabel=el('label',{text:'Text file contents'});
     const content=el('textarea',{rows:'6',maxlength:'4096',required:'true'});
-    const status=el('p',{role:'status','aria-live':'polite',text:'This requires an enabled write sandbox and owner authorization.'});
+    const status=el('p',{role:'status','aria-live':'polite',text:'Checking your existing GitHub connection…'});
+    const oauth=el('a',{href:'/api/github/start?access=public-write',text:'Authorize GitHub sandbox write access'});
+    oauth.style.cssText='display:none;color:#8feaff;text-decoration:underline;margin-top:0.7rem';
     const preview=el('pre');
     preview.style.cssText='white-space:pre-wrap;max-height:13rem;overflow:auto';
     const prepare=el('button',{type:'button',text:'Prepare (no write)'});
     const confirm=el('button',{type:'button',text:'Confirm GitHub creation'});
     confirm.disabled=true;
+    prepare.disabled=true;
     const close=el('button',{type:'button',text:'Cancel / close'});
     const controls=el('div',{},prepare,confirm,close);
     controls.style.cssText='display:flex;flex-wrap:wrap;gap:0.6rem;margin-top:1rem';
     [nameLabel,filename,bodyLabel,content].forEach(x=>{x.style.display='block';x.style.width='100%';x.style.marginTop='0.5rem'});
-    dialog.append(heading,explanation,nameLabel,filename,bodyLabel,content,preview,status,controls);
+    dialog.append(heading,explanation,nameLabel,filename,bodyLabel,content,preview,status,oauth,controls);
     document.body.append(dialog);
     dialog.showModal();
     filename.focus();
     let approvalToken=null;
     const reset=()=>{approvalToken=null;confirm.disabled=true;preview.textContent=''};
     for(const inp of [filename,content])inp.addEventListener('input',reset);
+    // No extra PAT: inspect the OAuth grant already linked to this Google account.
+    fetch('/api/github/sandbox/write-status',{credentials:'same-origin'})
+      .then(async response=>{
+        const state=await response.json();
+        if(!response.ok)throw Error(state.detail||'GITHUB_CONNECTION_UNAVAILABLE');
+        if(state.allowed){
+          status.textContent='Existing GitHub authorization verified for Swrlzing-core.';
+          prepare.disabled=false;
+        }else if(state.reason==='GITHUB_WRITE_SCOPE_REQUIRED'){
+          status.textContent='GitHub is connected for reading. It has not granted repository writing. Approve the limited GitHub OAuth write scope once to enable this test.';
+          if(state.authorizeUrl==='/api/github/start?access=public-write')oauth.style.display='block';
+        }else if(state.reason==='SANDBOX_REPOSITORY_NOT_SELECTED'){
+          status.textContent='Select kaministrator999-ui/Swrlzing-core in the existing GitHub repository chooser, then reopen this test.';
+        }else{
+          status.textContent='Write permission unavailable: '+String(state.reason||'UNKNOWN');
+          if(state.reason==='GITHUB_NOT_CONNECTED'&&state.authorizeUrl==='/api/github/start?access=public-write')oauth.style.display='block';
+        }
+      })
+      .catch(error=>{status.textContent='Could not verify connected GitHub authorization: '+error.message});
+
     async function post(resource, body) {
       const response=await fetch(endpoint+resource,{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
       const result=await response.json();
