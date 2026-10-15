@@ -43,4 +43,14 @@ assert receipt['assets'][scene_path]['bytes']==(ROOT/scene_path).stat().st_size
 assert hashlib.sha256(source).hexdigest()==manifest['finalSha256']==receipt['finalSha256']
 assert len(source)==manifest['finalBytes']==receipt['finalBytes']
 print('MODEL_ATELIER_NATIVE_SCENE_MATCH '+str(len(parts))+' editable components')
+# The newly authored scene is independent and must ship alongside all older variants.
+new_scene='scenes/model-atelier-prism-jester-festival-v11-9.swyrl.json'
+new_raw=(ROOT/new_scene).read_bytes()
+assert new_scene in receipt['assets']
+assert receipt['assets'][new_scene]['sha256']==hashlib.sha256(new_raw).hexdigest()
+assert receipt['assets'][new_scene]['bytes']==len(new_raw)
+new_model=json.loads(new_raw)['project']['modelAtelier']['parts']
+assert len(new_model)==811 and len({p['id'] for p in new_model})==811
+assert sum(p.get('surfaceStyle')=='pinata-twisted' for p in new_model)==2
+assert sum(p.get('surfaceStyle')=='fabric-panel' for p in new_model)==8
 print('MODEL_ATELIER_PACKAGE_79_PATCHES_35_ASSETS_PASS')
