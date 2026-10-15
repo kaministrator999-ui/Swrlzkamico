@@ -41,7 +41,7 @@ class DialogueTurnIntegrity(unittest.TestCase):
 
     def test_initial_orphan_assistant_is_removed(self):
         history = [
-            {"role": "assistant", "content": "old orphan " * 26},
+            {"role": "assistant", "content": "old orphan " * 35},
             {"role": "user", "content": "the important task"},
             {"role": "assistant", "content": "important context"},
         ]
