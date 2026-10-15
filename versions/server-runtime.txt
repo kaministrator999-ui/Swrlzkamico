@@ -1,6 +1,6 @@
 ID=server-runtime
-VERSION=2.3.400
-REVISION=2.3.400-hf-v247-natural-repo-files-route
+VERSION=2.3.401
+REVISION=2.3.401-hf-v248-mobile-edge-clean-composer
 KIND=server-runtime
 SOURCE_BRANCH=runtime
 STATUS=active
