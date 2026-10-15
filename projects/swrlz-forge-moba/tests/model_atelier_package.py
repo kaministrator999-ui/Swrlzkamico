@@ -30,7 +30,7 @@ assert all(p['material'] in {'matte','silk','gloss','metal','emissive'} for p in
 assert all(len(p[field])==3 for p in parts for field in ('position','rotation','scale'))
 assert 'data-project-template="model-atelier"' in source.decode()
 for needle in (b'MODEL_ATELIER_V11_3_BEGIN',b'modelAtelierPanel',
-               b'modelAtelier-prism-jester',b'V11_3_MODEL_ATELIER_PRISM_JESTER',
+               b'model-atelier-prism-jester',b'V11_3_MODEL_ATELIER_PRISM_JESTER',
                b'SWYRL_ENGINE_MODEL_ATELIER',b'modelAtelierImportFile'):
     assert needle in source,needle
 assert receipt['patches']==manifest['patches']
