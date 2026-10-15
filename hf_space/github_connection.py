@@ -378,7 +378,7 @@ def callback(request: Request, code: str = "", state: str = "", error: str = "")
     granted = str(response_data.get("scope") or "")
     if pending.get("access") == "public-write":
         # A declined or partial consent must preserve the prior read connection.
-        scopes = set(re.split(r"[\\s,]+", granted.strip()))
+        scopes = set(re.split(r"[\s,]+", granted.strip()))
         if ("public_repo" not in scopes and "repo" not in scopes
                 or not prior or str(prior.get("repo") or "").casefold() != _SANDBOX_REPO.casefold()
                 or str(prior.get("login") or "").casefold() != _SANDBOX_OWNER.casefold()
@@ -2069,3 +2069,91 @@ def agent_events(data, model_generator=None, coder_generator=None):
            "reason": "All requested checks finished; no write or scope change attempted.",
            "categories": ["GITHUB", "INFERENCE", "TOOL"]}
     yield {"type": "COMPLETED", "phase": "COMPLETE"}
+
+
+# ---------------------------------------------------------------------------
+# Stage 1 sandbox exception v257: only a new .txt file under the named repo.
+# General GitHub writes, legacy commands, PRs, branches, deploys remain locked.
+# ---------------------------------------------------------------------------
+def _sandbox_oauth_permission(record):
+    if not _SANDBOX_TXT_CREATE_TIER or GITHUB_CAPABILITY_STAGE != "read-repository":
+        return {"allowed": False, "reason": "SANDBOX_TIER_LOCKED"}
+    if not record:
+        return {"allowed": False, "reason": "GITHUB_NOT_CONNECTED"}
+    if str(record.get("repo") or "").casefold() != _SANDBOX_REPO.casefold():
+        return {"allowed": False, "reason": "SANDBOX_REPOSITORY_NOT_SELECTED"}
+    if str(record.get("login") or "").casefold() != _SANDBOX_OWNER.casefold():
+        return {"allowed": False, "reason": "SANDBOX_OWNER_REQUIRED"}
+    grants = set(re.split(r"[\s,]+", str(record.get("scopes") or "").strip()))
+    if not ({"public_repo", "repo"} & grants):
+        return {
+            "allowed": False,
+            "reason": "GITHUB_WRITE_SCOPE_REQUIRED",
+            "authorizeUrl": "/api/github/start?access=public-write",
+        }
+    # This verifies live GitHub repo identity and role in addition to the OAuth
+    # grant. A successful read or owner login alone cannot enable a write.
+    info = _api(record["token"], "/repos/" + _SANDBOX_REPO)
+    if not isinstance(info, dict) or str(info.get("full_name") or "").casefold() != _SANDBOX_REPO.casefold() or info.get("private"):
+        return {"allowed": False, "reason": "SANDBOX_REPOSITORY_UNVERIFIED"}
+    roles = info.get("permissions") if isinstance(info.get("permissions"), dict) else {}
+    if not any(roles.get(key) is True for key in ("push", "maintain", "admin")):
+        return {"allowed": False, "reason": "GITHUB_REPOSITORY_WRITE_PERMISSION_REQUIRED"}
+    return {"allowed": True, "reason": "GITHUB_WRITE_PERMISSION_VERIFIED"}
+
+
+def _sandbox_authorize_user(user):
+    """Used only from trusted account-checked Station endpoints."""
+    if not isinstance(user, dict) or not str(user.get("id") or "").startswith("google:"):
+        raise HTTPException(401, "Sign in with Google to use GitHub")
+    cfg = _config()
+    record = _load(cfg, user["id"])
+    access = _sandbox_oauth_permission(record)
+    if not access["allowed"]:
+        raise HTTPException(403, access["reason"])
+    return record["token"]
+
+
+@router.get("/api/github/sandbox/write-status")
+def sandbox_write_status(request: Request):
+    user_id = _google(request)
+    record = _load(_config(), user_id)
+    access = _sandbox_oauth_permission(record)
+    return {
+        "linked": bool(record),
+        "repo": record.get("repo") if record else None,
+        "operation": "CREATE_FILE",
+        "target": _SANDBOX_REPO,
+        "pathPrefix": "write-action-tests/",
+        "allowed": access["allowed"],
+        "reason": access["reason"],
+        "authorizeUrl": access.get("authorizeUrl"),
+    }
+
+
+@router.post("/api/github/sandbox/prepare-create-txt")
+async def sandbox_prepare_create_txt(request: Request):
+    from github_sandbox_create_txt import prepare, WriteError
+    user_id = _google(request)
+    _origin_guard(request, _config())
+    try:
+        body = await request.json()
+        if not isinstance(body, dict):
+            raise WriteError("INVALID_REQUEST")
+        return prepare({"id": user_id}, body.get("filename"), body.get("content"))
+    except WriteError as exc:
+        return JSONResponse({"ok": False, "code": exc.code}, status_code=exc.status)
+
+
+@router.post("/api/github/sandbox/confirm-create-txt")
+async def sandbox_confirm_create_txt(request: Request):
+    from github_sandbox_create_txt import confirm, WriteError
+    user_id = _google(request)
+    _origin_guard(request, _config())
+    try:
+        body = await request.json()
+        if not isinstance(body, dict):
+            raise WriteError("INVALID_REQUEST")
+        return confirm({"id": user_id}, body.get("approvalToken"), body.get("approved"))
+    except WriteError as exc:
+        return JSONResponse({"ok": False, "code": exc.code}, status_code=exc.status)
