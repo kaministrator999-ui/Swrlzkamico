@@ -132,8 +132,9 @@ def _save(cfg, user_id, record):
 
 def _api(token, path):
     # No URL, host or path comes directly from the user.
-    assert path in ("/user", "/repos/" + TARGET,
-                    "/user/repos?sort=updated&per_page=60&affiliation=owner,collaborator,organization_member")
+    expected = ("/user", "/user/repos?sort=updated&per_page=60&affiliation=owner,collaborator,organization_member")
+    if path not in expected and not re.fullmatch(r"/repos/kaministrator999-ui/[A-Za-z0-9._-]{1,100}", path):
+        raise HTTPException(422, "Unsupported bounded GitHub API request")
     try:
         response = requests.get(
             GITHUB_API + path,
@@ -232,15 +233,15 @@ async def choose_repository(request: Request):
     if not record:
         raise HTTPException(409, "Connect GitHub first")
     body = await request.json()
-    if not isinstance(body, dict) or body.get("repository") != TARGET:
-        # This narrow adapter is only for the fixed sandbox write/read repository.
-        raise HTTPException(422, "Only the named GitHub sandbox repository is supported")
-    info = _api(record["token"], "/repos/" + TARGET)
-    if not isinstance(info, dict) or info.get("full_name") != TARGET:
-        raise HTTPException(404, "Sandbox GitHub repository not available")
-    record["repo"] = TARGET
+    name = body.get("repository") if isinstance(body, dict) else None
+    if name not in ("kaministrator999-ui/Swrlzkamico", TARGET):
+        raise HTTPException(422, "Select one of the two owner repositories")
+    info = _api(record["token"], "/repos/" + name)
+    if not isinstance(info, dict) or str(info.get("full_name") or "").casefold() != name.casefold():
+        raise HTTPException(404, "Selected GitHub repository not accessible")
+    record["repo"] = str(info["full_name"])
     _save(cfg, user["id"], record)
-    return {"ok": True, "repo": TARGET}
+    return {"ok": True, "repo": record["repo"]}
 
 
 def _origin_guard(request, cfg):
