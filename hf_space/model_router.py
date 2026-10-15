@@ -5,6 +5,7 @@ import json
 import re
 from typing import Callable, Iterator, Any
 from brain_programming import programming_intent
+from github_txt_intent_v256 import wants_github_text_file_creation
 from online_tools import classify_online_request, stream_online_request, online_camera
 
 class ModelUnavailable(RuntimeError):
@@ -280,7 +281,6 @@ def dispatch(model_id: str, payload: dict[str,Any], r39_generate: Callable[[dict
     intent=programming_intent(str(payload.get("prompt") or ""),history,pins,payload.get("priorProgrammingState") if isinstance(payload.get("priorProgrammingState"),dict) else {})
     payload=dict(payload)
     payload["programmingIntent"]=intent
-    yield {"type":"PROGRAMMING_INTENT","intent":intent}
     requested_model_id=model_id
     # Read-only programming analysis is not a code-generation task. Preserve the
     # requested model unless the user actually asks to produce or change code.
@@ -292,11 +292,7 @@ def dispatch(model_id: str, payload: dict[str,Any], r39_generate: Callable[[dict
     # GitHub repository operations are external tool intents, not code artifacts.
     # Keep this distinct from requests to WRITE CODE for a repository. The
     # backend action is separately permission-gated and is never inferred here.
-    repository_file_creation=bool(re.search(
-        r"\b(?:make|create|add|write|save)\b.{0,90}\b(?:txt|text)\s+file\b.{0,90}\b(?:repo|repository|github)\b|"
-        r"\b(?:repo|repository|github)\b.{0,90}\b(?:make|create|add|write|save)\b.{0,90}\b(?:txt|text)\s+file\b",
-        prompt_text,
-    ))
+    repository_file_creation=wants_github_text_file_creation(str(payload.get("prompt") or ""))
     if repository_file_creation:
         intent=dict(intent)
         intent["codingTask"]=False
@@ -309,6 +305,23 @@ def dispatch(model_id: str, payload: dict[str,Any], r39_generate: Callable[[dict
             yield {"type":"ROUTE","phase":"CODER_AUTO_ROUTE","requestedModelId":requested_model_id,"selectedModelId":"coder","reason":"programming-intent"}
     payload["requestedModelId"]=requested_model_id
     payload["selectedModelId"]=model_id
+    yield {"type":"PROGRAMMING_INTENT","intent":intent}
+    if repository_file_creation:
+        # A user's words request an ACTION proposal, not permission to execute it.
+        # Do not route to coder or generic GitHub startup. The explicit UI
+        # performs a separate authenticated prepare / preview / confirm.
+        yield {"type":"STATUS","phase":"GITHUB_CREATE_TXT_APPROVAL_REQUIRED",
+               "reason":"A repository text-file request needs a new filename, contents, and explicit owner approval.",
+               "categories":["GITHUB","WRITE","APPROVAL"]}
+        yield {"type":"DELTA","text":(
+            "I can prepare a new text file in the **Swrlzing-core** write-action sandbox. "
+            "Open **Test GitHub TXT creation**, enter a new .txt filename and the text to put in it, "
+            "then review the preview and explicitly confirm creation. "
+            "Only `kaministrator999-ui/Swrlzing-core/main/write-action-tests/` is writable "
+            "through this test. No file was created by this message."
+        )}
+        yield {"type":"COMPLETED","phase":"COMPLETE"}
+        return
     online_result=None
     online_plan=classify_online_request(str(payload.get("prompt") or ""),history,intent,payload.get("clientLocation"))
     if not online_plan.get("requested") and online_plan.get("reason")=="creative-music-transform":
