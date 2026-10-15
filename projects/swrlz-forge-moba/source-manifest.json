@@ -92,5 +92,7 @@
     "patches/v11_5_festival_loft_atelier.py",
     "patches/v11_6_multiview_mobile_atelier.py",
     "patches/v11_7_layered_pinata_sculpt.py"
-  ]
+  ],
+  "finalBytes": 2305358,
+  "finalSha256": "4d374f0b2aac6c5485ca2f35016eac76192bebd607a5da0962d5254e0db3fd7d"
 }
