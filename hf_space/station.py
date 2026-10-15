@@ -22,6 +22,7 @@ from pathlib import Path
 from model_router import dispatch, ModelUnavailable, routes
 import github_connection
 from github_txt_intent_v256 import wants_github_text_file_creation, wants_direct_github_test_txt
+from github_create_intent_v262 import wants_github_general_file_proposal
 import github_report_explain_v236
 import progress_timeline_v238
 import project_thread_memory
@@ -345,8 +346,8 @@ def _chat_document():
     """Serve the canonical Chat document plus the bounded HF presentation adapter."""
     source=(ROOT/"chat/§wyrlz/index.html").read_text(encoding="utf-8")
     marker='</body>'
-    adapter='<script src="/chat/§wyrlz/assets/widget-analysis-v128.js" defer></script><script src="/chat/§wyrlz/assets/chatgpt-archive-import-v1.js" defer></script><script src="/chat/§wyrlz/assets/chatgpt-archive-sidebar-v204.js" defer></script><script src="/chat/§wyrlz/assets/github-work-summary-v260.js" defer></script><script src="/chat/§wyrlz/assets/github-chat-create-txt-v258.js" defer></script>'
-    css='<link rel="stylesheet" href="/chat/§wyrlz/assets/github-work-summary-v260.css"><link rel="stylesheet" href="/chat/§wyrlz/assets/assistant-fullwidth-v261.css">'
+    adapter='<script src="/chat/§wyrlz/assets/widget-analysis-v128.js" defer></script><script src="/chat/§wyrlz/assets/chatgpt-archive-import-v1.js" defer></script><script src="/chat/§wyrlz/assets/chatgpt-archive-sidebar-v204.js" defer></script><script src="/chat/§wyrlz/assets/github-work-summary-v260.js" defer></script><script src="/chat/§wyrlz/assets/github-general-create-v262.js" defer></script><script src="/chat/§wyrlz/assets/github-chat-create-txt-v258.js" defer></script>'
+    css='<link rel="stylesheet" href="/chat/§wyrlz/assets/github-work-summary-v260.css"><link rel="stylesheet" href="/chat/§wyrlz/assets/assistant-fullwidth-v261.css"><link rel="stylesheet" href="/chat/§wyrlz/assets/github-general-create-v262.css">'
     source=source.replace('</head>',css+'</head>',1)
     return source.replace(marker,adapter+marker,1) if marker in source else source+adapter
 
@@ -966,8 +967,8 @@ def _run(key,request_id,model_id,payload,assistant_id):
         g["queueWaitMs"]=max(0,g["startedAtUnixMs"]-int(g.get("acceptedAtUnixMs") or g["startedAtUnixMs"]))
         g["status"].append({"phase":"GENERATING","reason":"Workstation admitted generation","atUnixMs":g["startedAtUnixMs"]})
     try:
-        if model_id=="r39" and _generate is None and not (payload.get("githubDirectTestTxt") or payload.get("githubCreateTxtProposal") or payload.get("githubStart") or payload.get("githubAction") or payload.get("verifiedPrivateAnswer") or payload.get("suppliedGitHubReportExplanation")):raise RuntimeError("R39 generator is not installed")
-        if model_id=="stock" and _stock_generate is None and not (payload.get("githubDirectTestTxt") or payload.get("verifiedPrivateAnswer") or payload.get("githubStart") or payload.get("githubAction") or payload.get("suppliedGitHubReportExplanation")):raise RuntimeError("Original HF generator is not installed")
+        if model_id=="r39" and _generate is None and not (payload.get("githubDirectTestTxt") or payload.get("githubGeneralFileProposal") or payload.get("githubCreateTxtProposal") or payload.get("githubStart") or payload.get("githubAction") or payload.get("verifiedPrivateAnswer") or payload.get("suppliedGitHubReportExplanation")):raise RuntimeError("R39 generator is not installed")
+        if model_id=="stock" and _stock_generate is None and not (payload.get("githubDirectTestTxt") or payload.get("githubGeneralFileProposal") or payload.get("verifiedPrivateAnswer") or payload.get("githubStart") or payload.get("githubAction") or payload.get("suppliedGitHubReportExplanation")):raise RuntimeError("Original HF generator is not installed")
         text=""; completed=False
         cancelled=False
         # Server-verified private counts/disabled-recall notices are deterministic:
@@ -1020,6 +1021,20 @@ def _run(key,request_id,model_id,payload,assistant_id):
                      reason + ". " + instruction},
                     {"type":"COMPLETED","phase":"COMPLETE"},
                 ))
+        elif payload.get("githubGeneralFileProposal"):
+            event_source=iter((
+                {"type":"STATUS","phase":"GITHUB_GENERAL_CREATE_FILE_APPROVAL_REQUIRED",
+                 "reason":"Review exact repository path and contents before the authorized GitHub CREATE_FILE."},
+                {"type":"DELTA","text":(
+                    "I can create a new file in your **selected GitHub repository**, "
+                    "including source, configuration, Markdown, images, or other binary files. "
+                    "Review the exact path and content in the GitHub file-creation panel, "
+                    "then explicitly confirm. This action cannot overwrite existing files, "
+                    "and files are limited to 1,000,000 bytes through this API. "
+                    "No file has been written by this response."
+                )},
+                {"type":"COMPLETED","phase":"COMPLETE"},
+            ))
         elif payload.get("githubCreateTxtProposal"):
             event_source=iter((
                 {"type":"STATUS","phase":"GITHUB_CREATE_TXT_APPROVAL_REQUIRED",
@@ -1862,8 +1877,12 @@ async def send(request:Request):
     elif wants_direct_github_test_txt(prompt):
         # The explicit accepted human turn authorizes one harmless test create.
         payload["githubDirectTestTxt"] = {"userId": google_owner, "prompt": prompt}
+    elif wants_github_general_file_proposal(prompt):
+        # General GitHub creation is a proposal. Model and repository content
+        # never authorize the actual file write.
+        payload["githubGeneralFileProposal"] = True
     elif wants_github_text_file_creation(prompt):
-        # Other writes retain preview and explicit confirmation.
+        # Historical bounded TXT proposal preserved for compatibility.
         payload["githubCreateTxtProposal"] = True
     elif github_connection.is_start_request(prompt):
         _, verified_account = _account_session(request)
