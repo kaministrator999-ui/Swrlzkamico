@@ -40,6 +40,12 @@ GITHUB_SCOPE = "read:user"  # read-only repository stage, no write scope upgrade
 # Source-controlled learning ladder. A later stage requires separately reviewed code
 # and tests; neither the model, chat command nor OAuth token can unlock a stage.
 GITHUB_CAPABILITY_STAGE = "read-repository"
+_SANDBOX_OWNER = "kaministrator999-ui"
+_SANDBOX_REPO = "kaministrator999-ui/Swrlzing-core"
+# Source-only tier exception: owner-confirmed CREATE_FILE under write-action-tests.
+# All existing Stage 1 GitHub commands and general mutations stay locked.
+_SANDBOX_TXT_CREATE_TIER = True
+
 _READ_STAGE_DESCRIPTION = ("GitHub Stage 1: repository reading only. Enabled: list directories, "
                            "read existing files and inspect startup documents. "
                            "File creation, editing, deletion, branch/issue/PR mutations, "
@@ -304,8 +310,17 @@ def start(request: Request, access: str = "read"):
     c = _config()
     if access not in _GITHUB_ACCESS:
         raise HTTPException(422, "Unsupported GitHub access request")
-    if GITHUB_CAPABILITY_STAGE != "legacy-test-only" and (GITHUB_CAPABILITY_STAGE != "read-repository" or access != "read"):
-        raise HTTPException(403, _READ_STAGE_DESCRIPTION + " No write OAuth request initiated.")
+    if GITHUB_CAPABILITY_STAGE != "legacy-test-only":
+        if GITHUB_CAPABILITY_STAGE != "read-repository":
+            raise HTTPException(403, _READ_STAGE_DESCRIPTION)
+        if access == "public-write":
+            # This is the ONLY escalation: the owner explicitly consents to
+            # the provider's public_repo scope for the fixed TXT sandbox.
+            previous = _load(c, user_id)
+            if not previous or str(previous.get("repo") or "").casefold() != _SANDBOX_REPO.casefold() or str(previous.get("login") or "").casefold() != _SANDBOX_OWNER.casefold():
+                raise HTTPException(403, "Select and connect the owner GitHub sandbox before requesting write scope")
+        elif access != "read":
+            raise HTTPException(403, _READ_STAGE_DESCRIPTION + " Other write operations remain locked.")
     state = secrets.token_urlsafe(32)
     verifier = secrets.token_urlsafe(48)
     challenge = base64.urlsafe_b64encode(hashlib.sha256(verifier.encode("ascii")).digest()).decode("ascii").rstrip("=")
@@ -337,8 +352,8 @@ def callback(request: Request, code: str = "", state: str = "", error: str = "")
         pending = None
     if not isinstance(pending, dict) or pending.get("owner") != user_id:
         raise HTTPException(403, "GitHub authorization expired or belongs to another account")
-    if GITHUB_CAPABILITY_STAGE != "legacy-test-only" and (GITHUB_CAPABILITY_STAGE != "read-repository" or pending.get("access") != "read"):
-        raise HTTPException(403, _READ_STAGE_DESCRIPTION + " Prior write authorization was not completed.")
+    if GITHUB_CAPABILITY_STAGE != "legacy-test-only" and (GITHUB_CAPABILITY_STAGE != "read-repository" or pending.get("access") not in ("read", "public-write")):
+        raise HTTPException(403, _READ_STAGE_DESCRIPTION + " Prior authorization was not completed.")
     if error or not code or len(code) > 512:
         raise HTTPException(400, "GitHub authorization declined or expired")
     try:
@@ -361,6 +376,15 @@ def callback(request: Request, code: str = "", state: str = "", error: str = "")
     default_repo = prior.get("repo", "") if prior and prior.get("githubId") == int(identity["id"]) else ""
     # OAuth token exchange supplies the *granted* scopes (never assume requested == granted).
     granted = str(response_data.get("scope") or "")
+    if pending.get("access") == "public-write":
+        # A declined or partial consent must preserve the prior read connection.
+        scopes = set(re.split(r"[\\s,]+", granted.strip()))
+        if ("public_repo" not in scopes and "repo" not in scopes
+                or not prior or str(prior.get("repo") or "").casefold() != _SANDBOX_REPO.casefold()
+                or str(prior.get("login") or "").casefold() != _SANDBOX_OWNER.casefold()
+                or int(prior.get("githubId") or 0) != int(identity["id"])
+                or str(identity.get("login") or "").casefold() != _SANDBOX_OWNER.casefold()):
+            raise HTTPException(403, "GitHub sandbox write authorization was not granted")
     _save(c, user_id, {"token": token, "githubId": identity["id"],
                        "login": identity["login"], "repo": default_repo, "scopes": granted})
     response = RedirectResponse("/chat/§wyrlz#github=connected", status_code=303)
