@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.6",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_6_MULTIVIEW_FESTIVAL_ATELIER",
-  "reason": "Owner-directed update: §tart §E mandatory fix/test/merge/deploy/live-audit workflow; v11.6 multi-view 653-mesh original festival starter with additional reverse geometry; compact touch-first mobile Model Atelier inspector. Governed seal 2,279,438 HTML bytes / SHA d5f8dce1cbaf221a9f03719f99d53a10b26c6a68fc980ccd38359c4cbbb3a6d0; 76 ordered patches, 32 assets. PR #176 merged at aaa796e; all 17 browser tests green on candidate run #38778338221. Verify exact host source and all assets with independent workflow.",
-  "sourceCommit": "aaa796e25007730dd43cf3daf3841af9ecece4fe",
-  "sourceIntegritySha256": "d5f8dce1cbaf221a9f03719f99d53a10b26c6a68fc980ccd38359c4cbbb3a6d0"
+  "releaseVersion": "v11.7",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_7_STACKED_PINATA_SCULPT",
+  "reason": "Owner-approved explicit §E release: actual faceted 36-layer piñata body construction rather than inflated smooth ribbons, 733 editable native parts with front/side/rear costume and ferret anatomy improvements, tuned camera/mobile UI and strengthened §tart §E immediate-execution/visual-acceptance contract. Governed release 77 patches / 33 assets. All seven candidate workflows green, 17/17 browser cases passed on #38784040955. PR #178 merged at 733a51b. Serve exact 2,305,358-byte HTML SHA 4d374f0b2aac6c5485ca2f35016eac76192bebd607a5da0962d5254e0db3fd7d; require independent hosted audit.",
+  "sourceCommit": "733a51b5ce3916654e1de5c0cd697b7ae1d3bfcf",
+  "sourceIntegritySha256": "4d374f0b2aac6c5485ca2f35016eac76192bebd607a5da0962d5254e0db3fd7d"
 }
