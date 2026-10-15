@@ -1,0 +1,13 @@
+# Keep private lyric corpora, model outputs and adapter weights out of Git.
+*.safetensors
+*.bin
+*.gguf
+*.pt
+*_first_pass.jsonl
+*first-pass-receipt*.jsonl
+*reviewed*.jsonl
+private/
+results/
+checkpoints/
+adapters/
+__pycache__/
