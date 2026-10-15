@@ -39,7 +39,7 @@ def _authorized(user):
 
 
 def _path(filename):
-    if not isinstance(filename, str) or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]{0,63}\\.txt", filename, re.ASCII):
+    if not isinstance(filename, str) or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]{0,63}\.txt", filename, re.ASCII):
         raise WriteError("INVALID_TXT_FILENAME")
     if filename.startswith(".") or ".." in filename:
         raise WriteError("INVALID_TXT_FILENAME")
@@ -112,7 +112,7 @@ def confirm(user, ticket, approved):
     if status != 200 or not isinstance(fetched, dict):
         raise WriteError("GITHUB_READBACK_FAILED", 502)
     try:
-        observed = base64.b64decode(fetched["content"].replace("\\n", ""), validate=False)
+        observed = base64.b64decode(fetched["content"].replace("\n", ""), validate=False)
     except (KeyError, TypeError, ValueError):
         raise WriteError("GITHUB_READBACK_FAILED", 502) from None
     verified = hashlib.sha256(observed).hexdigest() == item["digest"] and observed == content_bytes
