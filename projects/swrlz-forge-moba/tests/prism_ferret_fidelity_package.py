@@ -44,7 +44,7 @@ manifest=json.loads((ROOT/'source-manifest.json').read_text())
 assert receipt['sourceVersion']=='§wyrl§ Engine v11.5'
 assert len(receipt['patches'])==75 and receipt['patches']==manifest['patches']
 assert receipt['patches'][-1]=='patches/v11_5_festival_loft_atelier.py'
-assert len(receipt['assets'])==30 and p in receipt['assets'] and old in receipt['assets']
+assert len(receipt['assets'])==31 and p in receipt['assets'] and old in receipt['assets']
 for path in (p,old):
     content=(ROOT/path).read_bytes()
     assert receipt['assets'][path]['bytes']==len(content)
