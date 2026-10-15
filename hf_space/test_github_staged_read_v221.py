@@ -75,6 +75,7 @@ def test_locked_writes_even_with_oauth_grants():
 def test_oauth_write_and_prior_pending_code():
     with mock.patch.object(gh,"_google",return_value=USER), \
          mock.patch.object(gh,"_config",return_value={}), \
+         mock.patch.object(gh,"_load",return_value=REC), \
          mock.patch.object(gh,"_redis",side_effect=AssertionError("OAuth state created")):
         try: gh.start(object(),access="public-write")
         except HTTPException as exc: assert exc.status_code==403
