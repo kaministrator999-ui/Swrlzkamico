@@ -1,6 +1,6 @@
 ID=server-runtime
-VERSION=2.3.398
-REVISION=2.3.398-hf-v245-mobile-source-guide-cards
+VERSION=2.3.399
+REVISION=2.3.399-hf-v246-source-faithful-copy
 KIND=server-runtime
 SOURCE_BRANCH=runtime
 STATUS=active
