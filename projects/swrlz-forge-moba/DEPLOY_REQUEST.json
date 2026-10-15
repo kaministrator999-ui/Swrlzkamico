@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.2",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_2_MAUL_FLIGHT_GLACIAL_ART",
-  "reason": "Final governed v11.2 documentation/roadmap publication reconciliation. Existing terminal deployment 38668840620 and independent hosted audit 38668893410 verified the exact same sealed 72-patch 28-asset HTML (SHA 1fab5e61f2065c02a56658c6e8e8ef999eb525ac16c373b310826ca970e10e59). Re-deploy through the dedicated final button after doc-only v11.2 release-status corrections, preserving all binary/assets and ensuring fresh terminal hosted verification.",
-  "sourceCommit": "6890260ac4905ef32fd6427e1c1a61e274d46ea2",
-  "sourceIntegritySha256": "1fab5e61f2065c02a56658c6e8e8ef999eb525ac16c373b310826ca970e10e59"
+  "releaseVersion": "v11.3",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_3_MODEL_ATELIER_PRISM_JESTER",
+  "reason": "Final dedicated §E v11.3 deployment of merged PR #167 original Model Atelier native starter. All 17/17 desktop+mobile browser acceptance suites and five candidate workflows passed. Exactly 73 governed patches, 29 bundled assets, 2,175,921-byte HTML SHA-256 a2ec94f418f294ea5ebd50363833d37025a6e6cc804732116a7cb927d0b069db. Do not claim hosted success until the dedicated terminal deployment and independent hosted audit both pass.",
+  "sourceCommit": "de638d2f102ceaeb84b1b07c8315bda7b5df1244",
+  "sourceIntegritySha256": "a2ec94f418f294ea5ebd50363833d37025a6e6cc804732116a7cb927d0b069db"
 }
