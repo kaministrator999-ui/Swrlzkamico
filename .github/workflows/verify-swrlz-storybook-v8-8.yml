@@ -1,4 +1,4 @@
-name: Validate §E v11.1 native starter and animation studio
+name: Validate §E v11.2 native starter and animation studio
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
     paths: &anime_paths
       - ".github/workflows/verify-swrlz-storybook-v8-8.yml"
       - "projects/swrlz-forge-moba/source-manifest.json"
-      - "projects/swrlz-forge-moba/patches/v11_1_maul_walk_builder.py"
+      - "projects/swrlz-forge-moba/patches/v11_2_maul_flight_glacial_art.py"
       - "projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-ep01-performance.swyrl.json"
       - "projects/swrlz-forge-moba/tests/episode_performance_playwright.mjs"
       - "projects/swrlz-forge-moba/tests/episode_performance_package.py"
@@ -21,6 +21,7 @@ on:
       - "projects/swrlz-forge-moba/patches/v10_7_classic_maul_map.py"
       - "projects/swrlz-forge-moba/patches/v10_8_maul_batch_placement.py"
       - "projects/swrlz-forge-moba/scenes/maul-frostveil-groups.swyrl.json"
+      - "projects/swrlz-forge-moba/scenes/maul-frostveil-flight.swyrl.json"
       - "projects/swrlz-forge-moba/tests/maul_batch_playwright.mjs"
       - "projects/swrlz-forge-moba/tests/maul_batch_cpu.mjs"
       - "projects/swrlz-forge-moba/tests/maul_batch_package.py"
@@ -92,7 +93,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Independently reconstruct sealed v11.1 source
+      - name: Independently reconstruct sealed v11.2 source
         run: |
           python - <<'PY'
           import base64,gzip,hashlib,json,runpy
@@ -103,15 +104,15 @@ jobs:
           raw=gzip.decompress(base64.b64decode(''.join((root/p).read_text(encoding='utf-8').strip() for p in manifest['chunks'])))
           assert len(raw)==manifest['baseBytes']
           assert hashlib.sha256(raw).hexdigest()==manifest['baseSha256']
-          assert len(manifest['patches'])==71
-          assert manifest['patches'][-1]=='patches/v11_1_maul_walk_builder.py'
+          assert len(manifest['patches'])==72
+          assert manifest['patches'][-1]=='patches/v11_2_maul_flight_glacial_art.py'
           source=raw.decode('utf-8')
           for patch in manifest['patches']:
               source=mod['load_patch'](root/patch)(source)
           output=source.encode('utf-8')
           assert len(output)==manifest['finalBytes']
           assert hashlib.sha256(output).hexdigest()==manifest['finalSha256']
-          for feature in ('V11_1_MAUL_WALK_BUILDER','SWYRL_ENGINE_PERFORMANCE','anime-performance-v1','SWYRL_ENGINE_STORY_EFFECTS','anime-story-effects-v1','MAUL_BATCH_CORE','grouped-v1','MAUL_LAYOUT_CORE','classic-v2','SWYRL_ENGINE_MAUL','MAUL_CORE','maul-frostveil','SWYRL_ENGINE_SHEEP_TAG_RUNS','SWYRL_ENGINE_RUNS','stRunAfterTick','stRunInstallUI','stRunViewerMount','swyrl-editor-play-run-v1','stTouchPlacementScreen','stTouchPlacementGround','touchPlacement','SWYRL_ENGINE_SHEEP_TAG','sheep-tag-meadow','sheep-tag-moonbell-archive','swyrl-sheep-tag-map-v1','SWYRL_ENGINE_TRANSPORT','animeCineRewind','animeCineFastForward','SWYRL_ENGINE_STAFF','rigFullStaffStatus','painted-full-v1','assets/anime/kami-full-staff.png','Maker v11.1',
+          for feature in ('V11_2_MAUL_FLIGHT_GLACIAL_ART','SWYRL_ENGINE_PERFORMANCE','anime-performance-v1','SWYRL_ENGINE_STORY_EFFECTS','anime-story-effects-v1','MAUL_BATCH_CORE','grouped-v1','MAUL_LAYOUT_CORE','classic-v2','SWYRL_ENGINE_MAUL','MAUL_CORE','maul-frostveil','SWYRL_ENGINE_SHEEP_TAG_RUNS','SWYRL_ENGINE_RUNS','stRunAfterTick','stRunInstallUI','stRunViewerMount','swyrl-editor-play-run-v1','stTouchPlacementScreen','stTouchPlacementGround','touchPlacement','SWYRL_ENGINE_SHEEP_TAG','sheep-tag-meadow','sheep-tag-moonbell-archive','swyrl-sheep-tag-map-v1','SWYRL_ENGINE_TRANSPORT','animeCineRewind','animeCineFastForward','SWYRL_ENGINE_STAFF','rigFullStaffStatus','painted-full-v1','assets/anime/kami-full-staff.png','Maker v11.2',
                           'CANONICAL_ANIME_EPISODE_PROJECT','SWYRL_ENGINE_CINEMATIC',
                           'SWYRL_ENGINE_ANIMATION','SWYRL_ENGINE_STORYBOARD','SWYRL_ENGINE_RIG','SWYRL_ENGINE_SCENERY','SWYRL_ENGINE_SOCKETS','SWYRL_ENGINE_EMERGENCE','SWYRL_ENGINE_RELIEF',
                           'anime-rig-sockets-v1','anime-book-emergence-v1','anime-character-relief-v1',
@@ -129,11 +130,11 @@ jobs:
           Path('/tmp/swyrl-anime-engine.mjs').write_text(source[begin:source.rindex('</script>')],encoding='utf-8')
           print('ENGINE_EXPECTED_BYTES='+str(len(output)))
           print('ENGINE_EXPECTED_SHA256='+hashlib.sha256(output).hexdigest())
-          print('CANDIDATE_71_PATCH_RECONSTRUCT_OK')
+          print('CANDIDATE_72_PATCH_RECONSTRUCT_OK')
           PY
           node --check /tmp/swyrl-anime-engine.mjs
           python -m compileall -q projects/swrlz-forge-moba/patches projects/swrlz-forge-moba/build_space.py
-      - name: Verify complete v11.1 package against source and manifest
+      - name: Verify complete v11.2 package against source and manifest
         run: |
           python projects/swrlz-forge-moba/build_space.py --output /tmp/storybook-test
           cmp /tmp/swyrl-anime-engine.html /tmp/storybook-test/index.html
@@ -150,8 +151,8 @@ jobs:
           assert receipt['finalBytes']==manifest['finalBytes']
           assert receipt['finalSha256']==manifest['finalSha256']
           assert receipt['patches']==manifest['patches']
-          assert len(receipt['patches'])==71
-          assert receipt['patches'][-1]=='patches/v11_1_maul_walk_builder.py'
+          assert len(receipt['patches'])==72
+          assert receipt['patches'][-1]=='patches/v11_2_maul_flight_glacial_art.py'
           expected={'episodes/ghosts-in-different-forms-ep01.html',
                     'scenes/ghosts-in-different-forms-ep01.swyrl.json',
                     'scenes/ghosts-in-different-forms-ep01-storybook.swyrl.json',
@@ -167,14 +168,15 @@ jobs:
                     'scenes/sheep-tag-moonbell-archive.swyrl.json',
                     'scenes/maul-frostveil.swyrl.json',
                     'scenes/maul-frostveil-classic.swyrl.json',
-                    'scenes/maul-frostveil-groups.swyrl.json'}
+                    'scenes/maul-frostveil-groups.swyrl.json',
+                    'scenes/maul-frostveil-flight.swyrl.json'}
           expected.update('assets/anime/'+name+'.png' for name in (
               'kami','swyrlz','cathedral','workshop','foreground','kami-rig',
               'swyrlz-rig','scenery-parts','kami-grip-layers',
               'mage-faces-painted','kami-full-staff'))
           assert {p.relative_to(root).as_posix() for p in (root/'assets/anime').glob('*.png')}=={p for p in expected if p.endswith('.png')}
           assert set(receipt['assets'])==expected
-          assert len(receipt['assets'])==27
+          assert len(receipt['assets'])==28
           maul=json.loads((out/'scenes/maul-frostveil.swyrl.json').read_text())
           assert maul['project']['canonicalId']=='maul-frostveil'
           assert maul['project']['kind']=='maul'
@@ -253,7 +255,7 @@ jobs:
               assert (root/asset).read_bytes()==packed, asset
               assert len(packed)==data['bytes'], asset
               assert hashlib.sha256(packed).hexdigest()==data['sha256'], asset
-          print('PACKAGING_71_PATCHES_AND_ALL_ASSETS_VERIFIED')
+          print('PACKAGING_72_PATCHES_AND_ALL_ASSETS_VERIFIED')
           PY
       - name: Check browser acceptance suite syntax
         run: |

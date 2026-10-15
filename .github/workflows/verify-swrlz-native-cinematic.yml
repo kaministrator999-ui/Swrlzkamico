@@ -1,4 +1,4 @@
-name: Verify §E v11.1 native cinematic candidate
+name: Verify §E v11.2 native cinematic candidate
 on:
   push:
     branches: [main]
@@ -6,7 +6,7 @@ on:
       - ".github/workflows/verify-swrlz-native-cinematic.yml"
       - "projects/swrlz-forge-moba/patches/v8_6_native_anime_cinematic.py"
       - "projects/swrlz-forge-moba/source-manifest.json"
-      - "projects/swrlz-forge-moba/patches/v11_1_maul_walk_builder.py"
+      - "projects/swrlz-forge-moba/patches/v11_2_maul_flight_glacial_art.py"
       - "projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-ep01-performance.swyrl.json"
       - "projects/swrlz-forge-moba/tests/episode_performance_playwright.mjs"
       - "projects/swrlz-forge-moba/tests/episode_performance_package.py"
@@ -87,12 +87,14 @@ jobs:
           output=source.encode("utf-8")
           print("CINEMATIC_BYTES="+str(len(output)))
           print("CINEMATIC_SHA256="+hashlib.sha256(output).hexdigest())
-          assert len(manifest["patches"])==71
-          assert manifest['patches'][-1]=='patches/v11_1_maul_walk_builder.py'
+          assert len(manifest["patches"])==72
+          assert manifest['patches'][-1]=='patches/v11_2_maul_flight_glacial_art.py'
+          print('UNSEALED_V11_2_CANDIDATE_BYTES='+str(len(output)),flush=True)
+          print('UNSEALED_V11_2_CANDIDATE_SHA256='+hashlib.sha256(output).hexdigest(),flush=True)
           assert len(output)==manifest['finalBytes']
           assert hashlib.sha256(output).hexdigest()==manifest['finalSha256']
           for needle in (
-            'V11_1_MAUL_WALK_BUILDER','SWYRL_ENGINE_PERFORMANCE','anime-performance-v1','SWYRL_ENGINE_STORY_EFFECTS','anime-story-effects-v1','MAUL_BATCH_CORE','grouped-v1','MAUL_LAYOUT_CORE','classic-v2','SWYRL_ENGINE_MAUL','MAUL_CORE','maul-frostveil','SWYRL_ENGINE_SHEEP_TAG_RUNS','SWYRL_ENGINE_RUNS','stRunAfterTick','stRunInstallUI','stRunViewerMount','swyrl-editor-play-run-v1','stTouchPlacementScreen','stTouchPlacementGround','touchPlacement','SWYRL_ENGINE_SHEEP_TAG','sheep-tag-meadow','sheep-tag-moonbell-archive','swyrl-sheep-tag-map-v1','SWYRL_ENGINE_TRANSPORT','animeCineRewind','animeCineFastForward','SWYRL_ENGINE_STAFF','rigFullStaffStatus','painted-full-v1','assets/anime/kami-full-staff.png','Maker v11.1','animeStartCinematic',
+            'V11_2_MAUL_FLIGHT_GLACIAL_ART','SWYRL_ENGINE_PERFORMANCE','anime-performance-v1','SWYRL_ENGINE_STORY_EFFECTS','anime-story-effects-v1','MAUL_BATCH_CORE','grouped-v1','MAUL_LAYOUT_CORE','classic-v2','SWYRL_ENGINE_MAUL','MAUL_CORE','maul-frostveil','SWYRL_ENGINE_SHEEP_TAG_RUNS','SWYRL_ENGINE_RUNS','stRunAfterTick','stRunInstallUI','stRunViewerMount','swyrl-editor-play-run-v1','stTouchPlacementScreen','stTouchPlacementGround','touchPlacement','SWYRL_ENGINE_SHEEP_TAG','sheep-tag-meadow','sheep-tag-moonbell-archive','swyrl-sheep-tag-map-v1','SWYRL_ENGINE_TRANSPORT','animeCineRewind','animeCineFastForward','SWYRL_ENGINE_STAFF','rigFullStaffStatus','painted-full-v1','assets/anime/kami-full-staff.png','Maker v11.2','animeStartCinematic',
             'SWYRL_ENGINE_ANIMATION','SWYRL_ENGINE_STORYBOARD','SWYRL_ENGINE_RIG','SWYRL_ENGINE_SCENERY','SWYRL_ENGINE_SOCKETS','SWYRL_ENGINE_EMERGENCE','SWYRL_ENGINE_RELIEF',
                           'anime-rig-sockets-v1','anime-book-emergence-v1','anime-character-relief-v1','storyEditorInstall',
             'animeUpdateCinematic','animeEndCinematic','animeSpeakerCues',

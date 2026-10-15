@@ -130,11 +130,11 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
   await page.goto(base+'/index.html?'+query,{waitUntil:'domcontentloaded',timeout:60000});
   await page.waitForFunction(()=>window.SWYRL_ENGINE_SHEEP_TAG_RUNS&&window.SWYRL_ENGINE_AGENT.project().canonicalId==='sheep-tag-meadow',undefined,{timeout:60000});
   await page.locator('#perfPreset').selectOption('medium',{force:true});await page.evaluate(()=>window.__sheepRunClock.freeze());await frames(page,2);
-  assert.equal(await page.evaluate(()=>window.SWYRL_ENGINE_BUILD.version),'v11.1');const canonical=await saved(page);assert.equal(canonical.version,11.1);
+  assert.equal(await page.evaluate(()=>window.SWYRL_ENGINE_BUILD.version),'v11.2');const canonical=await saved(page);assert.equal(canonical.version,11.2);
   const sourceResponse=await context.request.get(base+'/SOURCE.json');assert.equal(sourceResponse.ok(),true);const source=await sourceResponse.json();
-  assert.match(source.sourceVersion,/v11\.1/);assert.equal(source.patches.length,71);assert.equal(source.patches.at(-1),'patches/v11_1_maul_walk_builder.py');
-  assert.equal(Object.keys(source.assets).length,27,'Unexpected bundled starter/media asset set');
-  const htmlResponse=await context.request.get(base+'/index.html');assert.match(await htmlResponse.text(),/V11_1_MAUL_WALK_BUILDER/);
+  assert.match(source.sourceVersion,/v11\.2/);assert.equal(source.patches.length,72);assert.equal(source.patches.at(-1),'patches/v11_2_maul_flight_glacial_art.py');
+  assert.equal(Object.keys(source.assets).length,28,'Unexpected bundled starter/media asset set');
+  const htmlResponse=await context.request.get(base+'/index.html');assert.match(await htmlResponse.text(),/V11_2_MAUL_FLIGHT_GLACIAL_ART/);
   assert.equal(canonical.scene.actors.length,92,'Archive map changed');const pieces=await prototypes(page,canonical),map=fixture(canonical,pieces);
   if(!process.env.SWYRL_RUN_GENERIC_ONLY){
   await openPanel(page);assert.equal(await page.locator('#stRunEnabled').isChecked(),false,'Logging must default off');

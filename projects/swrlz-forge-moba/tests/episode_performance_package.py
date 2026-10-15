@@ -8,7 +8,7 @@ from pathlib import Path
 
 SCENE = 'scenes/ghosts-in-different-forms-ep01-performance.swyrl.json'
 LEGACY_SCENE = 'scenes/ghosts-in-different-forms-ep01-full-staff.swyrl.json'
-PATCH = 'patches/v11_1_maul_walk_builder.py'
+PATCH = 'patches/v11_2_maul_flight_glacial_art.py'
 ACTIONS = {'greet', 'reach', 'brace', 'cast', 'write', 'step', 'hover', 'recover'}
 EFFECTS = {'page', 'burst', 'ink', 'portal'}
 PRESERVED_ASSETS = {'assets/anime/cathedral.png': {'bytes': 3237216,
@@ -163,9 +163,9 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--package', type=Path, required=True)
     args = parser.parse_args(); receipt = json.loads((args.package/'SOURCE.json').read_text())
-    require(receipt['sourceVersion'] == '§wyrl§ Engine v11.1', 'wrong source version')
-    require(len(receipt['patches']) == 71 and receipt['patches'][-1] == PATCH, 'wrong governed patch chain')
-    require(set(receipt['assets']) == set(PRESERVED_ASSETS) | {SCENE}, 'wrong asset set or missing preserved media')
+    require(receipt['sourceVersion'] == '§wyrl§ Engine v11.2', 'wrong source version')
+    require(len(receipt['patches']) == 72 and receipt['patches'][-1] == PATCH, 'wrong governed patch chain')
+    require(set(receipt['assets']) == set(PRESERVED_ASSETS) | {SCENE, 'scenes/maul-frostveil-flight.swyrl.json'}, 'wrong asset set or missing preserved media')
     for path, expected in PRESERVED_ASSETS.items():
         raw = (args.package/path).read_bytes(); meta = receipt['assets'][path]
         require(meta == expected and len(raw) == expected['bytes'] and hashlib.sha256(raw).hexdigest() == expected['sha256'], 'published v10.8 asset was rewritten: '+path)

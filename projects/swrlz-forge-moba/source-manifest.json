@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.1",
+  "name": "§wyrl§ Engine v11.2",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_1.html",
+  "finalArtifact": "swyrl_engine_v11_2.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -85,8 +85,9 @@
     "patches/v10_8_maul_batch_placement.py",
     "patches/v10_9_episode_story_actions.py",
     "patches/v11_0_run_replay_quality.py",
-    "patches/v11_1_maul_walk_builder.py"
+    "patches/v11_1_maul_walk_builder.py",
+    "patches/v11_2_maul_flight_glacial_art.py"
   ],
-  "finalBytes": 2027727,
-  "finalSha256": "c96e5fea45bd316750e2fcc60ff1cbd96feadd6a90a56a5667dddad0aaf21121"
+  "finalBytes": 2097069,
+  "finalSha256": "1fab5e61f2065c02a56658c6e8e8ef999eb525ac16c373b310826ca970e10e59"
 }

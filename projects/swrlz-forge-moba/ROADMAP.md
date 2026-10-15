@@ -1,6 +1,16 @@
 # §wyrl§ Engine · Roadmap
 
-## Current v10.9 candidate · Story actions and an animated first episode
+**Starter-pack integration correction:** A standalone v11.2 authored native map, `scenes/maul-frostveil-flight.swyrl.json`, is now the exact Projects → Frostveil Maul starting scene. It contains 78 native actors (nine builders, no free towers), keeps the 30-round co-op layout, stores `hover-v1` flight, `glacial-v2` textures, `walk-v1` gated construction and `full-pad-v1` protection in the file, and is included as the **28th published asset** without overwriting prior maps. The native browser test fetches this actual asset and asserts project settings and builder identity match the project launcher. Unverified candidate only; it is not a released v11.2 promise.
+
+## UPDATE STARTED — v11.2 Frostveil hover-builders and glacial map art (source candidate)
+
+**Scope/owner:** dedicated §E source on isolated branch `feature/forge-frostveil-flight-art-v11-2`, based on main `fc9d94da315af1c559fcbc6bfb16af343f194fe0`; PR [#159](https://github.com/kaministrator999-ui/Swrlzkamico/pull/159). The new current Frostveil profile gains direct airborne 15-unit/s movement over towers and cliffs, flight height 3.25, same-cell delayed construction, hover-wing visuals and cached original procedurally textured glacial map pieces. Previous v11.1 71-patch release and legacy imports are preserved.
+
+**Candidate manifest:** 72 governed patches; `patches/v11_2_maul_flight_glacial_art.py` appends `runtime/maul_flight_core.js`, `runtime/maul_flight_integration.js` and `runtime/maul_frostveil_art.js`. Pure deterministic flight CPU acceptance and all prior Maul/Sheep Tag/anime tests, original assets, package hash and desktop/mobile Play are release gates. This STARTED entry is neither FINISHED nor deployed. Keep the live version at **v11.1** until final manifest sealing, all engine CI suites, reviewed merge, dedicated final `DEPLOY_REQUEST.json` trigger and independent hosted audit. A failing CI gate belongs to the implementing agent to diagnose and repair.
+
+**Remaining Wintermaul scope (separate source slices):** no-overlap creep lane congestion, blocked route aggression, special fast/stealth/detection/immunity/teleport/Heal/Hydra/Infernal units, balanced wave roster/rewards, endless and two-team synchronized automatic-wave Mirror Survival, independent themed builders, and native Maul creator; none claimed implemented. Source-of-truth feature ledger: `reports/WINTERMAUL_DESIGN_ARCHITECTURE.md`.
+
+## Historical v10.9 candidate · Story actions and an animated first episode
 
 Open **Projects → Ghosts in Different Forms**, or `?project=anime-ghosts-ep01`, then use **Play** or **Watch Episode 01**. Kami and §wyrlz now act through the story: greeting and reaching, recoiling and bracing, casting, writing, stepping, hovering and recovering. Their arm chains, attached full-length staff, heads and costume depth pieces move together. Short dialogue windows leave room for a character to listen and react between lines. Kami's first attempt to burn a doorway nearly erases the library and makes §wyrlz fade. They recover by joining Kami's light with §wyrlz's written names, build a doorway that remembers them and step toward a world that answers, ‘Welcome back.’
 
@@ -91,7 +101,7 @@ The previous v9.4 Socket Puppets and Book Emergence release is verified live: [d
 
 Canonical lane: §E / §wyrl§ Engine
 History audited through: **2026-10-14**
-Current source candidate: **v10.8 — Grouped Maul Rounds and Phone Placement (68 governed patches)**. The sealed manifest and final `DEPLOY_REQUEST.json` remain authoritative. Historical releases remain preserved.
+Current candidate: **v11.2 flying builders + glacial art (72 patches, source-only)**; current independently audited **live release v11.1 (71 patches)**. The manifest, the final DEPLOY_REQUEST and served-source audit are separate authorities. Historical releases remain preserved.
 
 The previous **v9.1 Articulated Paper Rigs** release is verified live: [deployment 37838083241](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37838083241) and [exact hosted audit 37838137243](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/37838137243) passed. Source [`d3e7dc4d6a06`](https://github.com/kaministrator999-ui/Swrlzkamico/commit/d3e7dc4d6a0633995210a7217943753d4de28e29) seals 50 patches, **857,746 bytes**, SHA-256 `7b6f3806c666b991a07e0c6bf162286b09dd70862f7de9acc9bf0ea3d214473f`, with all eleven bundled media assets and 425 character pose/face keys. These receipts are historical authority for v9.1; they do not certify v9.2.
 
