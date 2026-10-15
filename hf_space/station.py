@@ -300,6 +300,47 @@ async def account_google(request:Request):
     response.set_cookie("swrlz_hf_account",sid,httponly=True,samesite="lax",secure=True,max_age=7*86400)
     return response
 
+# Bounded sandbox write API. Never infer approval from a model response or chat text.
+# Each write requires an authenticated allowlisted owner and a separate confirmation.
+from github_sandbox_create_txt import prepare as _sandbox_prepare, confirm as _sandbox_confirm, WriteError as _SandboxWriteError
+
+def _sandbox_origin_guard(request: Request):
+    origin = request.headers.get("origin", "")
+    host = request.headers.get("host", "")
+    if not origin or not host:
+        raise HTTPException(403, "ORIGIN_REQUIRED")
+    try:
+        from urllib.parse import urlsplit
+        parsed = urlsplit(origin)
+        if parsed.scheme != "https" or parsed.netloc != host:
+            raise ValueError("Cross-origin write request")
+    except ValueError:
+        raise HTTPException(403, "ORIGIN_DENIED")
+
+@app.post("/api/github/sandbox/prepare-create-txt")
+async def sandbox_prepare_create_txt(request: Request):
+    _sandbox_origin_guard(request)
+    _, user = _account_session(request)
+    try:
+        body = await request.json()
+        if not isinstance(body, dict):
+            raise _SandboxWriteError("INVALID_REQUEST")
+        return _sandbox_prepare(user, body.get("filename"), body.get("content"))
+    except _SandboxWriteError as exc:
+        return JSONResponse({"ok": False, "code": exc.code}, status_code=exc.status)
+
+@app.post("/api/github/sandbox/confirm-create-txt")
+async def sandbox_confirm_create_txt(request: Request):
+    _sandbox_origin_guard(request)
+    _, user = _account_session(request)
+    try:
+        body = await request.json()
+        if not isinstance(body, dict):
+            raise _SandboxWriteError("INVALID_REQUEST")
+        return _sandbox_confirm(user, body.get("approvalToken"), body.get("approved"))
+    except _SandboxWriteError as exc:
+        return JSONResponse({"ok": False, "code": exc.code}, status_code=exc.status)
+
 @app.post("/api/account/logout")
 def account_logout(request:Request):
     sid,_=_account_session(request)
