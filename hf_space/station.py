@@ -21,7 +21,7 @@ from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 from model_router import dispatch, ModelUnavailable, routes
 import github_connection
-from github_txt_intent_v256 import wants_github_text_file_creation
+from github_txt_intent_v256 import wants_github_text_file_creation, wants_direct_github_test_txt
 import github_report_explain_v236
 import progress_timeline_v238
 import project_thread_memory
@@ -964,8 +964,8 @@ def _run(key,request_id,model_id,payload,assistant_id):
         g["queueWaitMs"]=max(0,g["startedAtUnixMs"]-int(g.get("acceptedAtUnixMs") or g["startedAtUnixMs"]))
         g["status"].append({"phase":"GENERATING","reason":"Workstation admitted generation","atUnixMs":g["startedAtUnixMs"]})
     try:
-        if model_id=="r39" and _generate is None and not (payload.get("githubCreateTxtProposal") or payload.get("githubStart") or payload.get("githubAction") or payload.get("verifiedPrivateAnswer") or payload.get("suppliedGitHubReportExplanation")):raise RuntimeError("R39 generator is not installed")
-        if model_id=="stock" and _stock_generate is None and not (payload.get("verifiedPrivateAnswer") or payload.get("githubStart") or payload.get("githubAction") or payload.get("suppliedGitHubReportExplanation")):raise RuntimeError("Original HF generator is not installed")
+        if model_id=="r39" and _generate is None and not (payload.get("githubDirectTestTxt") or payload.get("githubCreateTxtProposal") or payload.get("githubStart") or payload.get("githubAction") or payload.get("verifiedPrivateAnswer") or payload.get("suppliedGitHubReportExplanation")):raise RuntimeError("R39 generator is not installed")
+        if model_id=="stock" and _stock_generate is None and not (payload.get("githubDirectTestTxt") or payload.get("verifiedPrivateAnswer") or payload.get("githubStart") or payload.get("githubAction") or payload.get("suppliedGitHubReportExplanation")):raise RuntimeError("Original HF generator is not installed")
         text=""; completed=False
         cancelled=False
         # Server-verified private counts/disabled-recall notices are deterministic:
@@ -979,6 +979,44 @@ def _run(key,request_id,model_id,payload,assistant_id):
             event_source=iter(({"type":"DELTA","text":payload["verifiedPrivateAnswer"]},{"type":"COMPLETE"}))
         elif payload.get("suppliedGitHubReportExplanation"):
             event_source=iter(({"type":"DELTA","text":payload["suppliedGitHubReportExplanation"]},{"type":"COMPLETE"}))
+
+        elif isinstance(payload.get("githubDirectTestTxt"), dict):
+            # Only a user's direct, explicit test-file instruction can enter
+            # this path. Remote files and model output do not authorize writes.
+            from github_sandbox_create_txt import create_requested_test_file, WriteError
+            requested = payload["githubDirectTestTxt"]
+            try:
+                receipt = create_requested_test_file(
+                    {"id": requested["userId"]}, request_id, requested["prompt"]
+                )
+                event_source=iter((
+                    {"type":"STATUS","phase":"GITHUB_TEST_TXT_CREATED",
+                     "reason":"Connected owner created and verified one sandbox text file."},
+                    {"type":"DELTA","text":(
+                        "I created the test file from your Chat request, no manual "
+                        "form required. **File:** [" + receipt["path"] + "](" +
+                        receipt["url"] + "). **Commit:** " + receipt["commitSha"] +
+                        ". I verified the exact bytes by reading the file back. "
+                        "Other GitHub writes remain permission gated."
+                    )},
+                    {"type":"COMPLETED","phase":"COMPLETE"},
+                ))
+            except WriteError as exc:
+                reason = str(exc.code)
+                instruction = (
+                    "Your existing GitHub connection needs a public-repository "
+                    "write-scope upgrade."
+                    if reason == "GITHUB_WRITE_SCOPE_REQUIRED" else
+                    "Check the GitHub connection and repository before retrying. "
+                    "A verification failure may occur even after a write."
+                )
+                event_source=iter((
+                    {"type":"STATUS","phase":"GITHUB_TEST_TXT_NOT_VERIFIED",
+                     "reason":reason},
+                    {"type":"DELTA","text":"Test file creation not confirmed: " +
+                     reason + ". " + instruction},
+                    {"type":"COMPLETED","phase":"COMPLETE"},
+                ))
         elif payload.get("githubCreateTxtProposal"):
             event_source=iter((
                 {"type":"STATUS","phase":"GITHUB_CREATE_TXT_APPROVAL_REQUIRED",
@@ -1818,8 +1856,11 @@ async def send(request:Request):
                 payload["verifiedWorkAnswer"]="Project coordination unavailable. No conclusion about other conversations can be verified."
     elif github_report_explain_v236.is_report_request(prompt):
         payload["suppliedGitHubReportExplanation"]=github_report_explain_v236.explain_supplied_report(prompt)
+    elif wants_direct_github_test_txt(prompt):
+        # The explicit accepted human turn authorizes one harmless test create.
+        payload["githubDirectTestTxt"] = {"userId": google_owner, "prompt": prompt}
     elif wants_github_text_file_creation(prompt):
-        # Never infer GitHub write approval from text; propose the review UI.
+        # Other writes retain preview and explicit confirmation.
         payload["githubCreateTxtProposal"] = True
     elif github_connection.is_start_request(prompt):
         _, verified_account = _account_session(request)
