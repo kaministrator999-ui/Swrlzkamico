@@ -79,3 +79,15 @@
  .atelier-inspector-actions button {min-height: 30px}
  .atelier-disclaimer {font-size: 10px!important}
 }
+
+/* v11.8 procedural sculpt tools: scroll locally, never block mobile viewport. */
+.atelier-sculpt-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}
+.atelier-sculpt-actions button{font-size:11px;min-width:0;white-space:normal}
+#modelAtelierSculptEditor{border:1px solid #49647d;border-radius:8px;padding:9px;display:flex;flex-direction:column;gap:7px;background:#152235}
+#modelAtelierSculptEditor[hidden]{display:none!important}
+#modelAtelierSculptEditor input{width:100%;max-width:100%;min-width:0}
+@media (max-width:900px),(pointer:coarse){
+ #modelAtelierSculptEditor{padding:7px;gap:5px}
+ #modelAtelierSculptEditor button{min-height:34px;font-size:11px}
+ .atelier-inspector{overscroll-behavior-y:contain}
+}

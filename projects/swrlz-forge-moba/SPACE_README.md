@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.7
+title: §wyrl§ Engine v11.8
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -10,6 +10,6 @@ header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
 
-# §wyrl§ Engine v11.7
+# §wyrl§ Engine v11.8
 
 This Space publishes the governed engine build. Project release details, historical verification evidence, and update notes are maintained in `projects/swrlz-forge-moba/README.md` and `§tart_§E.md` in the source repository. Historical Space documentation remains available in Git history.

@@ -1,5 +1,10 @@
 # §tart §E — §wyrl§ Engine Build & Deploy Router
 
+## Active v11.8 · approved model sheet → functional sculpt, not primitive inflation
+
+Owner-approved character correction for this release: giant paper ferrets originate behind the heroine's head, sweep back in 3D and twist forward along opposed broken-S paths; the girl becomes taller, with continuous loft-shaped arms/legs and no discrete bead knees/elbows. Native spline controls must edit twist, depth profile, smoothing, X-mirror and paper fringe, while smooth anatomical loft creation remains available. The implementation uses a procedural native loft tool; **rigged skinning, invisible armatures, bone weights, UV painting and volumetric sculpt brushes are still future tools** and must not be claimed as implemented. Meshes and material colors alone are not proof of quality: inspect actual front/side/back output against owner-approved concept sheet. Only merged, validated, deployed, independently audited artifacts may be called live.
+
+
 ## Current §E v11.7 model fidelity gate — owner corrective screenshots
 
 The live v11.6 reference study failed the visual acceptance gate. The owner identified smooth boomerang/sausage loop geometry, fake detail inflation, insufficient piñata construction, flat rear treatment, blockout facial/garment anatomy and inconsistent mobile presentation. **When this is reported, implement the authorized code changes immediately rather than responding with another plan or menu of options.**
