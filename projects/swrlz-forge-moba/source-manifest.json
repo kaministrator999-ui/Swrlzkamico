@@ -93,5 +93,7 @@
     "patches/v11_6_multiview_mobile_atelier.py",
     "patches/v11_7_layered_pinata_sculpt.py",
     "patches/v11_8_sculpt_studio.py"
-  ]
+  ],
+  "finalBytes": 2318719,
+  "finalSha256": "7bd4e7804e06eda4b111b768e2693a951c92e80c4a98f18842be4d15993fc4c0"
 }
