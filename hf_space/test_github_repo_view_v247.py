@@ -242,6 +242,28 @@ def test_dragon61_source_purpose_not_provenance_echo():
     assert "Validate final generated HTML" in outline
     assert "not an independent full-document model assessment" in outline
 
+    import hashlib
+    ctx={"repo":"owner/repo","branch":"main","sourceSha":"a"*40,
+         "directory":"","lastFile":"§wyrlz_§tart.md","kind":"file"}
+    raw=source.encode("utf-8")
+    blob=hashlib.sha1(b"blob "+str(len(raw)).encode()+b"\0"+raw).hexdigest()
+    tree={"sourceSha":"a"*40,"items":[{"path":"§tart_§E.md","sha":blob,"type":"file"}]}
+    def meta_echo(_):
+        yield {"type":"DELTA","text":broken}
+        yield {"type":"COMPLETED","phase":"COMPLETE"}
+    with mock.patch.object(github,"_config",return_value={}), \
+         mock.patch.object(github,"_load",return_value={"token":"secret","repo":"owner/repo"}), \
+         mock.patch.object(github,"_effective_access",return_value={"allowed":True,"defaultBranch":"main"}), \
+         mock.patch.object(github.explorer,"pinned_tree",return_value=tree), \
+         mock.patch.object(github,"_read_optional",return_value={"sha":blob,"body":source}):
+        events=list(github.agent_events({"userId":"google:owner",
+            "prompt":"Can you examine the §tart §E file and explain its purpose?",
+            "requestedModelId":"700m","githubContext":ctx},coder_generator=meta_echo))
+    assert any(e.get("phase")=="GITHUB_SOURCE_ANSWER_FALLBACK" for e in events), events
+    deltas=[e.get("text","") for e in events if e.get("type")=="DELTA"]
+    assert any("Engine Build & Deploy Router" in v for v in deltas), deltas
+    assert not any("source is not verified" in v for v in deltas), deltas
+
 if __name__=="__main__":
     test_exported_prompt_selects_real_authenticated_read()
     test_guard_preserves_real_programming_and_permission_limits()
