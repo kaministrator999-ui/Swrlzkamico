@@ -700,6 +700,27 @@ def _run(key,request_id,model_id,payload,assistant_id):
                     widget=event.get("widget") if isinstance(event.get("widget"),dict) else {}
                     if widget:g.setdefault("widgets",[]).append(copy.deepcopy(widget))
                     g["status"].append({"seq":g["lastSeq"],"phase":"WIDGET_READY","reason":str(widget.get("kind") or ""),"categories":["WIDGET"]})
+                elif kind=="TASK_EFFORT_PLAN":
+                    plan=event.get("plan") if isinstance(event.get("plan"),dict) else {}
+                    if plan.get("schema")=="swrlz-task-effort-plan-v1":
+                        # Metadata only; never store request content or turn this
+                        # advisory rating into semantic authority or tool approval.
+                        g["taskEffortPlan"]={
+                            "schema":"swrlz-task-effort-plan-v1",
+                            "tier":max(1,min(5,int(plan.get("tier") or 1))),
+                            "level":str(plan.get("level") or "")[:24],
+                            "reasonCodes":[str(x)[:64] for x in (plan.get("reasonCodes") or [])[:12]],
+                            "verification":str(plan.get("verification") or "")[:48],
+                            "priorityHint":str(plan.get("priorityHint") or "")[:24],
+                            "needsEvidence":bool(plan.get("needsEvidence")),
+                            "requiresAuthorization":bool(plan.get("requiresAuthorization")),
+                            "automaticToolPermission":False,
+                        }
+                        g["status"].append({
+                            "seq":g["lastSeq"],"phase":"TASK_EFFORT_PLANNED",
+                            "reason":"tier="+str(g["taskEffortPlan"]["tier"]),
+                            "categories":["EFFORT","ADVISORY"],
+                        })
                 elif kind=="PROGRAMMING_INTENT":
                     intent=event.get("intent")
                     if isinstance(intent,dict):
@@ -952,6 +973,7 @@ def _run(key,request_id,model_id,payload,assistant_id):
                     "widgetKinds":[str(item.get("kind") or "")[:80] for item in online_widgets if isinstance(item,dict)][:8],
                     "statusTrail":copy.deepcopy((g.get("status") or [])[-128:]),
                     "responseCognition":copy.deepcopy(g.get("responseCognition") or {}),
+                    "taskEffortPlan":copy.deepcopy(g.get("taskEffortPlan") or {}),
                     "programmingIntent":copy.deepcopy(g.get("programmingIntent") or {}),
                     "candidateValidation":copy.deepcopy(g.get("candidateValidation") or {}),
                     "candidateAttempts":copy.deepcopy((g.get("candidateAttempts") or [])[-16:]),
@@ -1181,7 +1203,7 @@ async def send(request:Request):
         pinned_context=[_artifact_context_item(t,m) for m in t["messages"] if pins.get(str(m.get("id") or "")) and m.get("role") in ("user","assistant")]
         t["messages"].append({"id":str(body.get("messageId") or uuid.uuid4().hex),"role":"user","text":prompt,"createdAt":now_ms,"meta":{"requestId":rid,"modelId":model_id,**({"contentTag":content_tag} if content_tag else {})}})
         s["currentId"]=tid;s["revision"]+=1
-        s["activeGeneration"]={"requestId":rid,"threadId":tid,"modelId":model_id,"requestedModelId":model_id,"selectedModelId":model_id,"text":"","phase":"QUEUED","terminal":False,"lastSeq":0,"status":[{"phase":"QUEUED","reason":"Accepted by Workstation"}],"acceptedAtUnixMs":now_ms,"startedAtUnixMs":None,"completedAtUnixMs":None,"queueWaitMs":None,"stationTiming":None,"resourcePlan":None,"diagnosticTrace":None,"memoryCandidates":[],"responseCognition":None,"onlineResearch":None,"onlineTrace":[],"onlineLogPersistence":None,"sources":[],"widgets":[],"programmingIntent":None,"intentContract":None,"failureEvidence":None,"repairConstraints":None,"behaviorLedger":None,"behaviorRepairBase":None,"candidateValidation":None,"candidateAttempts":[],"generationTelemetry":None,"engineCompletionTelemetry":None,"repairDiagnostics":[],"artifactReceipt":None,"githubTelemetryPersistence":None}
+        s["activeGeneration"]={"requestId":rid,"threadId":tid,"modelId":model_id,"requestedModelId":model_id,"selectedModelId":model_id,"text":"","phase":"QUEUED","terminal":False,"lastSeq":0,"status":[{"phase":"QUEUED","reason":"Accepted by Workstation"}],"acceptedAtUnixMs":now_ms,"startedAtUnixMs":None,"completedAtUnixMs":None,"queueWaitMs":None,"stationTiming":None,"resourcePlan":None,"diagnosticTrace":None,"memoryCandidates":[],"responseCognition":None,"onlineResearch":None,"onlineTrace":[],"onlineLogPersistence":None,"sources":[],"widgets":[],"taskEffortPlan":None,"programmingIntent":None,"intentContract":None,"failureEvidence":None,"repairConstraints":None,"behaviorLedger":None,"behaviorRepairBase":None,"candidateValidation":None,"candidateAttempts":[],"generationTelemetry":None,"engineCompletionTelemetry":None,"repairDiagnostics":[],"artifactReceipt":None,"githubTelemetryPersistence":None}
     payload={"requestId":rid,"threadId":tid,"prompt":prompt,"history":history,"pinnedContext":pinned_context,"profileId":"LALM","profile":profile,"userProfile":user_profile,"temporalContext":temporal_context,"clientLocation":client_location,"priorProgrammingState":copy.deepcopy(t.get("programmingState") or {})}
     _pool.submit(_run,key,rid,model_id,payload,str(body.get("assistantMessageId") or uuid.uuid4().hex))
     response=JSONResponse({"ok":True,"contract":CONTRACT,"requestId":rid,"modelId":model_id},status_code=202)
