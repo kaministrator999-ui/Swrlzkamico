@@ -1,0 +1,44 @@
+name: Verify §E v11.10 Geometry Profiler
+on:
+  push:
+    branches:
+      - feature/engine-v1110-measured-geometry-profiler
+  pull_request:
+    paths:
+      - 'projects/swrlz-forge-moba/**'
+jobs:
+  profile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Reconstruct governed source independently and print exact seal
+        run: |
+          python - <<'PY'
+          import base64,gzip,hashlib,json,sys
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba').resolve()
+          sys.path.insert(0,str(root))
+          import build_space
+          m=json.loads((root/'source-manifest.json').read_text())
+          data=gzip.decompress(base64.b64decode(''.join((root/s).read_text().strip() for s in m['chunks'])))
+          assert hashlib.sha256(data).hexdigest()==m['baseSha256']
+          html=data.decode('utf-8')
+          for item in m['patches']:
+              html=build_space.load_patch(root/item)(html)
+          raw=html.encode('utf-8')
+          print('PROFILE_FINAL_BYTES='+str(len(raw)),flush=True)
+          print('PROFILE_FINAL_SHA256='+hashlib.sha256(raw).hexdigest(),flush=True)
+          assert 'V11_10_MEASURED_GEOMETRY_PROFILER' in html
+          assert 'modelAtelierMetricsBody' in html
+          Path('/tmp/se-engine-v1110.mjs').write_text(html[html.index('<script type="module">')+len('<script type="module">'):html.rindex('</script>')])
+          PY
+          node --check /tmp/se-engine-v1110.mjs
+          node --check projects/swrlz-forge-moba/runtime/model_atelier_metrics_v11_10.js
+          node projects/swrlz-forge-moba/tests/model_geometry_profiler_cpu.mjs
+          python -m compileall -q projects/swrlz-forge-moba/patches projects/swrlz-forge-moba/build_space.py
