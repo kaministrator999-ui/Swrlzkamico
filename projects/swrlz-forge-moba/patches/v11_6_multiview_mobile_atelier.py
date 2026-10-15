@@ -8,8 +8,8 @@ def apply(html):
     parts=scene['project']['modelAtelier']['parts']
     assert len(parts)==653 and len({x['id'] for x in parts})==653
     assert sum(x['kind']=='loft' for x in parts)==2
-    pat=r'const MODEL_ATELIER_CANONICAL_PROJECT=.*?;\\n(?=// §wyrl§ Engine Model Atelier v11.3)'
-    repl='const MODEL_ATELIER_CANONICAL_PROJECT='+json.dumps(scene,ensure_ascii=False,separators=(',',':')).replace('</','<\\\\/')+';\\n'
+    pat=r'const MODEL_ATELIER_CANONICAL_PROJECT=.*?;\n(?=// §wyrl§ Engine Model Atelier v11.3)'
+    repl='const MODEL_ATELIER_CANONICAL_PROJECT='+json.dumps(scene,ensure_ascii=False,separators=(',',':')).replace('</','<\\/')+';\n'
     html,count=re.subn(pat,lambda _:repl,html,count=1,flags=re.DOTALL)
     assert count==1,'v11.6 canonical model anchor missing'
     assert html.count('V11_5_FESTIVAL_LOFT_ATELIER')==1
