@@ -116,7 +116,7 @@ jobs:
           raw=gzip.decompress(base64.b64decode(''.join((root/p).read_text(encoding='utf-8').strip() for p in manifest['chunks'])))
           assert len(raw)==manifest['baseBytes']
           assert hashlib.sha256(raw).hexdigest()==manifest['baseSha256']
-          assert len(manifest['patches'])==78
+          assert len(manifest['patches'])==79
           assert manifest['patches'][-1]=='patches/v11_9_ferret_figure_atelier.py'
           source=raw.decode('utf-8')
           for patch in manifest['patches']:
