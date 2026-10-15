@@ -1,16 +1,24 @@
 # §wyrlz Chat GitHub sandbox CREATE_FILE — v256 candidate
 
 ## Boundary
-The only supported mutation is **creating a new UTF-8 `.txt` file** under `kaministrator999-ui/Swrlzing-core:main/write-action-tests/`. Existing files are rejected. There is no edit, delete, branch, PR, merge or deployment action. The model cannot invoke this endpoint by generating text. The human uses the bounded Chat test panel.
+The only supported mutation is **creating a new UTF-8 `.txt` file** under `kaministrator999-ui/Swrlzing-core:main/write-action-tests/`. Existing files are rejected. There is no edit, delete, branch, PR, merge or deployment action. The model can propose the action and describe the approval UI, but cannot execute it by generating text. The human uses the bounded Chat test panel.
 
-## Operator prerequisites (not included in Git)
+## Account-scoped GitHub OAuth reuse (v257)
 
-Set in the protected server environment, NEVER in user messages, public source, browser JavaScript or diagnostics:
-- `SWRLZ_SANDBOX_WRITE_ENABLED=true` — defaults off.
-- `SWRLZ_SANDBOX_WRITE_GOOGLE_SUB=<Google OAuth subject of authorized repo owner>` — not an email or nickname.
-- `SWRLZ_SANDBOX_WRITE_GITHUB_TOKEN=<GitHub fine-grained token>` — grant only Contents **Read and write** for `Swrlzing-core`, with minimum needed permission and expiration; do not give access to `Swrlzkamico` or other repositories.
+The sandbox uses the *existing signed-in Google-account GitHub connection* encrypted in Upstash Redis, not a new GitHub personal-access token. It preserves the original `swrlz:github:account:<SHA-256(Google user ID)>` key format and Fernet-encrypted record (`owner`, `token`, `githubId`, `login`, `repo`, `scopes`, `connectedAt`). Tokens are never sent to the browser, inference model, client logs, or repository.
 
-The Google ID token is verified by the existing signed-in session endpoint. API requests require same-origin HTTPS. Never share or commit credentials.
+The original connection's hosting configuration is still required on the **server**: `SWRLZ_GITHUB_OAUTH_CLIENT_ID`, `SWRLZ_GITHUB_OAUTH_CLIENT_SECRET`, `SWRLZ_GITHUB_OAUTH_CALLBACK_URL`, `SWRLZ_GITHUB_ENCRYPTION_KEY`, `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`. These are existing connection settings, not a new sandbox token or separate owner allowlist. Server must preserve the original Google-account authority and encrypted records. Missing secrets/storage means the action fails closed.
+
+For the **public** `kaministrator999-ui/Swrlzing-core`, prepare checks all of:
+1. Verified Google account and its existing encrypted GitHub connection;
+2. Selected repository exactly `kaministrator999-ui/Swrlzing-core`;
+3. Verified stored GitHub login `kaministrator999-ui` from an earlier successful `/user` OAuth identity check;
+4. **Actual granted** `public_repo` or `repo` OAuth scope, not merely the requested scope or repo ownership;
+5. Live GitHub repository identity, public visibility, and `push` / `maintain` / `admin` role.
+
+If the stored token grants only `read:user`, the existing GitHub OAuth app offers an **explicit one-time** `public-write` upgrade (`read:user public_repo`) through GitHub's consent page. Current read login and chosen repo remain linked to the same Google account. No manual PAT paste is required. A denied, interrupted, stale, or insufficient upgrade does not authorize a write. The action scope is still only `CREATE_FILE` in `write-action-tests/*.txt`.
+
+Note: `public_repo` is a broad GitHub OAuth **provider grant** even though §wyrlz's application-level executor is narrowly confined to this sandbox. If that provider scope is considered too broad, use a separately bounded GitHub App installation credential in a later reviewed iteration instead of misrepresenting OAuth granularity.
 
 ## UI protocol
 1. Sign into §wyrlz Chat with the allowlisted account.
