@@ -41,9 +41,14 @@ class GeneralCreateTest(unittest.TestCase):
                 self.puts.append((path,raw))
                 return 201,{"commit":{"sha":"a"*40}}
             raise AssertionError(method)
+        def commit_stats(_token,_endpoint):
+            current = self.puts[-1][0] if self.puts else "unknown"
+            return {"sha":"a"*40,"files":[{"filename":current,"status":"added",
+                   "additions":1,"deletions":0,"changes":1}]}
         self.patches=[
             patch.object(f,"_authorize",side_effect=auth),
             patch.object(f,"_github",side_effect=fake_api),
+            patch.object(github,"_api",side_effect=commit_stats),
         ]
         for p in self.patches:p.start()
 
