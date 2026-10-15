@@ -91,5 +91,7 @@
     "patches/v11_4_prism_ferret_fidelity.py",
     "patches/v11_5_festival_loft_atelier.py",
     "patches/v11_6_multiview_mobile_atelier.py"
-  ]
+  ],
+  "finalBytes": 2279438,
+  "finalSha256": "d5f8dce1cbaf221a9f03719f99d53a10b26c6a68fc980ccd38359c4cbbb3a6d0"
 }
