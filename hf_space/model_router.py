@@ -289,6 +289,19 @@ def dispatch(model_id: str, payload: dict[str,Any], r39_generate: Callable[[dict
     read_only=bool(re.search(r"\b(?:do not|don\x27t|without)\s+(?:modify|edit|commit|deploy|change|write)\b|\b(?:analysis|planning|review)\s+only\b",prompt_text))
     analysis_request=bool(re.search(r"\b(?:explain|review|analy[sz]e|inspect|discuss|compare|what does|how does|check whether|tell me what overlap)\b",prompt_text))
     mutation_request=bool(re.search(r"\b(?:write|create|implement|modify|edit|patch|fix|refactor|generate|build)\b",prompt_text))
+    # GitHub repository operations are external tool intents, not code artifacts.
+    # Keep this distinct from requests to WRITE CODE for a repository. The
+    # backend action is separately permission-gated and is never inferred here.
+    repository_file_creation=bool(re.search(
+        r"\\b(?:make|create|add|write|save)\\b.{0,90}\\b(?:txt|text)\\s+file\\b.{0,90}\\b(?:repo|repository|github)\\b|"
+        r"\\b(?:repo|repository|github)\\b.{0,90}\\b(?:make|create|add|write|save)\\b.{0,90}\\b(?:txt|text)\\s+file\\b",
+        prompt_text,
+    ))
+    if repository_file_creation:
+        intent=dict(intent)
+        intent["codingTask"]=False
+        intent["externalActionRequest"]="github-create-text-file"
+        payload["programmingIntent"]=intent
     should_use_coder=bool(intent.get("codingTask")) and not read_only and (mutation_request or not analysis_request)
     if should_use_coder and model_id in ("700m","stock","r39","coder"):
         model_id="coder"
