@@ -1,6 +1,6 @@
 ID=web-chat
-VERSION=1.5.137
-REVISION=1.5.137-v253-source-context-readable-glass
+VERSION=1.5.138
+REVISION=1.5.138-v254-compact-provenance-source-explanation
 KIND=web-interface
 SOURCE_BRANCH=runtime
 STATUS=active
