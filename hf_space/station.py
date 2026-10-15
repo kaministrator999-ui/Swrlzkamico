@@ -346,7 +346,7 @@ def _chat_document():
     source=(ROOT/"chat/§wyrlz/index.html").read_text(encoding="utf-8")
     marker='</body>'
     adapter='<script src="/chat/§wyrlz/assets/widget-analysis-v128.js" defer></script><script src="/chat/§wyrlz/assets/chatgpt-archive-import-v1.js" defer></script><script src="/chat/§wyrlz/assets/chatgpt-archive-sidebar-v204.js" defer></script><script src="/chat/§wyrlz/assets/github-work-summary-v260.js" defer></script><script src="/chat/§wyrlz/assets/github-chat-create-txt-v258.js" defer></script>'
-    css='<link rel="stylesheet" href="/chat/§wyrlz/assets/github-work-summary-v260.css">'
+    css='<link rel="stylesheet" href="/chat/§wyrlz/assets/github-work-summary-v260.css"><link rel="stylesheet" href="/chat/§wyrlz/assets/assistant-fullwidth-v261.css">'
     source=source.replace('</head>',css+'</head>',1)
     return source.replace(marker,adapter+marker,1) if marker in source else source+adapter
 
