@@ -13,8 +13,12 @@ def apply(html):
     modules="\n".join((root/"runtime"/name).read_text(encoding="utf-8") for name in (
         "maul_flight_core.js","maul_flight_integration.js","maul_frostveil_art.js"
     ))
+    import json
+    starter=json.loads((root/"scenes/maul-frostveil-flight.swyrl.json").read_text(encoding="utf-8"))
+    assert starter["project"]["maulBuilderFlight"]=="hover-v1" and starter["project"]["maulVisualStyle"]=="glacial-v2"
+    canonical="const MAUL_FLIGHT_CANONICAL_PROJECT="+json.dumps(starter,ensure_ascii=False,separators=(",",":")).replace("</","<\\/")+";\n"
     html=once(html,"window.SWRLZ_FORGE_BUILD=",
-        "// MAUL_FLIGHT_ART_V11_2_BEGIN\n"+modules+"\nwindow.SWRLZ_FORGE_BUILD=")
+        "// MAUL_FLIGHT_ART_V11_2_BEGIN\n"+canonical+modules+"\nwindow.SWRLZ_FORGE_BUILD=")
     html=once(html,"V11_1_MAUL_WALK_BUILDER","V11_2_MAUL_FLIGHT_GLACIAL_ART")
     html=html.replace("Maker v11.1","Maker v11.2").replace("MAKER v11.1","MAKER v11.2")
     html=html.replace("version:'v11.1'","version:'v11.2'").replace("version:11.1","version:11.2")
