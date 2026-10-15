@@ -291,7 +291,9 @@ class Candidate(unittest.TestCase):
  def test_canonical_source(self):
   for rel in ("accepted_runtime/lalm/r39_engine.py","swyrlz/r39_inference.py","swyrlz/backend.py"):
    self.assertEqual((ROOT/rel).read_bytes(),(ROOT/"hf_space"/rel).read_bytes())
-  self.assertIn('id="hfModel"',(ROOT/"hf_space/chat/§wyrlz/index.html").read_text(encoding="utf-8"))
+  self.assertEqual((ROOT/"chat/§wyrlz/index.html").read_bytes(),(ROOT/"hf_space/chat/§wyrlz/index.html").read_bytes(), "HF Chat must match canonical source byte-for-byte")
+  self.assertNotIn('id="hfModel"',(ROOT/"hf_space/chat/§wyrlz/index.html").read_text(encoding="utf-8"))
+  self.assertIn('href="/api/lalm_station/export"',(ROOT/"hf_space/chat/§wyrlz/index.html").read_text(encoding="utf-8"))
   self.assertTrue((ROOT/"api/lalm_station.py").is_file(), "Canonical account-backed Chat bridge must remain available as migration reference")
 
  def test_no_secret_or_billing_code(self):
