@@ -22,7 +22,7 @@ assert.equal(forbidden.ok,false);assert.match(forbidden.reason,/no-build/i);
 const other=evalIn('MAUL_BUILDER_CORE.plan('+JSON.stringify(map)+',[],'+JSON.stringify(start)+',{x:16,z:6},0)');
 assert.equal(other.ok,false);
 const sealed=readFileSync(process.env.SWYRL_MAUL_WALK_HTML||'dist/swrlz-forge-moba/index.html','utf8');
-for(const name of ['V11_8_TWISTED_SCULPT_STUDIO','MAUL_BUILDER_CORE','maulBuildAt=function','maulPendingBuilds','maul-build-queued','maul-build-completed','maul-build-cancelled','maulWalkBuildEnabled']){
+for(const name of ['V11_9_FERRET_FIGURE_ATELIER','MAUL_BUILDER_CORE','maulBuildAt=function','maulPendingBuilds','maul-build-queued','maul-build-completed','maul-build-cancelled','maulWalkBuildEnabled']){
  assert.ok(sealed.includes(name),'Missing engine integration '+name);
 }
 assert.ok(sealed.includes('maulSpawnProtection'),'New map must declare full spawn protection');
