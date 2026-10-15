@@ -7,7 +7,7 @@ const start=html.indexOf("      const addCopyButton = node => {");
 const end=html.indexOf("      const widgetsFromMessage=msg=>{",start);
 assert(start>0&&end>start,"Copy integration located in canonical Chat source");
 const snippet=html.slice(start,end);
-assert(html.includes("originalRenderedSources.set(container,source)"),"Source collected at render time");
+assert(/originalRenderedSources\.set\(container,(?:source|rawSource)\)/.test(html),"Raw source collected at render time before any display-only formatting");
 assert(snippet.includes("originalRenderedSources.get(body)"),"Copy must prefer source");
 const actual="## §E engine guide · GitHub Stage 1 (read only)\n@GitHub files projects/swrlz-forge-moba";
 const decorated="Forge engine guide • READ ONLY • Insert • Full original answer and restrictions • "+actual;

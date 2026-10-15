@@ -96,7 +96,7 @@ def _source_information_request(text: str, history=None) -> bool:
     # Exact sentence shape avoids suppressing "write code to list files".
     if re.fullmatch(
         r"(?:(?:can|could|may)\s+(?:i|you)\s+|please\s+)?"
-        r"(?:see|show|list|browse|view)\s+(?:me\s+)?(?:all\s+)?(?:the\s+)?"
+        r"(?:see|show|list|browse|view|display)\s+(?:me\s+)?(?:all\s+)?(?:the\s+)?"
         r"(?:files?|folders?|directories)\s+(?:in|of|from)\s+"
         r"(?:my|our|the)\s+(?:github\s+)?(?:repo|repository)[?.!]*",
         q,
