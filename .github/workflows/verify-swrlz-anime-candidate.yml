@@ -166,6 +166,8 @@ jobs:
               'swyrlz-rig','scenery-parts','kami-grip-layers',
               'mage-faces-painted','kami-full-staff'))
           assert {p.relative_to(root).as_posix() for p in (root/'assets/anime').glob('*.png')}=={p for p in expected if p.endswith('.png')}
+          print('ASSET_DIFF_MISSING='+repr(sorted(expected-set(receipt['assets']))),flush=True)
+          print('ASSET_DIFF_EXTRA='+repr(sorted(set(receipt['assets'])-expected)),flush=True)
           assert set(receipt['assets'])==expected
           assert len(receipt['assets'])==31
           maul=json.loads((out/'scenes/maul-frostveil.swyrl.json').read_text())
