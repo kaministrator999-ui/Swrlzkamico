@@ -18,6 +18,10 @@ READS = (
     "Could you show me the files in our GitHub repository?",
     "Please show the files in my repo",
     "Can you browse the files in the repo",
+    "Can you display the files in the repo",  # Dragon Chat (57): bad coder route
+    "Can you show me the files in the repo",  # Dragon Chat (57): false file lookup
+    "Can you show me the files in the github",
+    "Can you view the files in our repository",
 )
 NEGATIVE = (
     "Write Python code to list repo files",
@@ -57,6 +61,12 @@ def test_guard_preserves_real_programming_and_permission_limits():
         assert reads.classify_read(prompt) is None, prompt
     assert brain.programming_intent("Write Python code to list repo files",[],[])["codingTask"]
     assert brain.programming_intent("Create a program to enumerate files in the repo",[],[])["codingTask"]
+    # Generic collection names are not concrete source filenames.
+    assert github._natural_repo_read_target("Can you show me the files in the repo") is None
+    assert github._natural_repo_read_target("Can you show me the files in the github") is None
+    assert github._natural_repo_read_target("Can you show me README.md in the repo") == "README.md"
+    assert reads.classify_read("Can you display the files?") is None
+    assert not github.is_github_conversation("Can you display the files?")
     assert reads.classify_read("Can I see the files?") is None, "No implicit repo access without explicit scope"
     assert not github.is_github_conversation("Can I see the files?")
     assert github.GITHUB_CAPABILITY_STAGE=="read-repository"
