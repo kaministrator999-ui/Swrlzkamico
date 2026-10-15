@@ -197,10 +197,14 @@ def confirm(user_id, approval_token, approved):
         raise CreateFileError("GITHUB_READBACK_NOT_AVAILABLE", 502) from None
     if result != item["content"] or hashlib.sha256(result).hexdigest() != item["digest"]:
         raise CreateFileError("GITHUB_CONTENT_MISMATCH", 502)
-    return {
+    receipt = {
         "ok": True, "verified": True, "operation": "CREATE_FILE",
         "repo": auth["repo"], "branch": auth["branch"], "path": item["path"],
         "bytesWritten": len(result), "sha256": item["digest"],
         "mediaType": item["mediaType"], "commitSha": commit,
         "url": "https://github.com/" + auth["repo"] + "/blob/" + quote(auth["branch"], safe="/") + "/" + quote(item["path"], safe="/"),
     }
+    from github_connection import _api
+    from github_work_summary_v260 import make_general_work_widget
+    receipt["widget"] = make_general_work_widget(receipt, result, auth["token"], github_get=_api)
+    return receipt
