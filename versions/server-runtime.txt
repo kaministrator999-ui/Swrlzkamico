@@ -1,6 +1,6 @@
 ID=server-runtime
-VERSION=2.3.404
-REVISION=2.3.404-hf-v251-named-doc-opinion
+VERSION=2.3.405
+REVISION=2.3.405-hf-v252-forge-doc-followup
 KIND=server-runtime
 SOURCE_BRANCH=runtime
 STATUS=active
