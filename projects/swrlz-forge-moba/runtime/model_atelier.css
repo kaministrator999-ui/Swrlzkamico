@@ -37,7 +37,7 @@
 .atelier-disclaimer{font-size:11px!important;line-height:1.45}
 .atelier-status{padding:8px 16px;min-height:37px;background:#111c2e;color:#b8ebd4;font-size:12px;border-top:1px solid #354963}
 .atelier-status.error{color:#ffb7b7}
-.model-atelier-open{position:fixed;bottom:17px;right:18px;z-index:77;padding:10px 16px;border:1px solid #70dce0;border-radius:11px;color:#f4ffff;background:#155d69;font-weight:700;box-shadow:0 6px 23px #0008}
+.model-atelier-open{position:fixed;bottom:17px;right:18px;z-index:1999;padding:10px 16px;border:1px solid #70dce0;border-radius:11px;color:#f4ffff;background:#155d69;font-weight:700;box-shadow:0 6px 23px #0008}
 @media(max-width:750px){
  .model-atelier-head{padding:7px 9px;min-height:50px}
  .model-atelier-head strong{font-size:14px}
