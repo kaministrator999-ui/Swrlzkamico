@@ -130,11 +130,11 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
   await page.goto(base+'/index.html?'+query,{waitUntil:'domcontentloaded',timeout:60000});
   await page.waitForFunction(()=>window.SWYRL_ENGINE_SHEEP_TAG_RUNS&&window.SWYRL_ENGINE_AGENT.project().canonicalId==='sheep-tag-meadow',undefined,{timeout:60000});
   await page.locator('#perfPreset').selectOption('medium',{force:true});await page.evaluate(()=>window.__sheepRunClock.freeze());await frames(page,2);
-  assert.equal(await page.evaluate(()=>window.SWYRL_ENGINE_BUILD.version),'v11.8');const canonical=await saved(page);assert.equal(canonical.version,11.8);
+  assert.equal(await page.evaluate(()=>window.SWYRL_ENGINE_BUILD.version),'v11.9');const canonical=await saved(page);assert.equal(canonical.version,11.8);
   const sourceResponse=await context.request.get(base+'/SOURCE.json');assert.equal(sourceResponse.ok(),true);const source=await sourceResponse.json();
-  assert.match(source.sourceVersion,/v11\.8/);assert.equal(source.patches.length,78);assert.equal(source.patches.at(-1),'patches/v11_8_sculpt_studio.py');
+  assert.match(source.sourceVersion,/v11\.8/);assert.equal(source.patches.length,78);assert.equal(source.patches.at(-1),'patches/v11_9_ferret_figure_atelier.py');
   assert.equal(Object.keys(source.assets).length,34,'Unexpected bundled starter/media asset set');
-  const htmlResponse=await context.request.get(base+'/index.html');assert.match(await htmlResponse.text(),/V11_8_TWISTED_SCULPT_STUDIO/);
+  const htmlResponse=await context.request.get(base+'/index.html');assert.match(await htmlResponse.text(),/V11_9_FERRET_FIGURE_ATELIER/);
   assert.equal(canonical.scene.actors.length,92,'Archive map changed');const pieces=await prototypes(page,canonical),map=fixture(canonical,pieces);
   if(!process.env.SWYRL_RUN_GENERIC_ONLY){
   await openPanel(page);assert.equal(await page.locator('#stRunEnabled').isChecked(),false,'Logging must default off');
