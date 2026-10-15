@@ -33,7 +33,11 @@ for(const [kind,original] of inputs){
   assert.equal(buttons.length,2);
   await buttons[0].handlers.click();
   assert.equal(inserted,parsed.commands[0].value,"Read command only fills composer");
-  assert.equal(buttons[1].textContent,"Copy","Unresolved PATH/NAME never automatically inserted");
+  assert.equal(buttons[1].textContent,parsed.commands[1].ready?"Insert":"Copy","Placeholders are copied, ready commands only inserted");
+  if(parsed.commands[1].ready){
+    await buttons[1].handlers.click();
+    assert.equal(inserted,parsed.commands[1].value,"Ready second command only fills composer");
+  }
   const raw=walk(card,node=>node.tagName==="pre")[0];
   assert.equal(raw.textContent,original,"Original raw answer kept verbatim");
   assert.equal(walk(card,node=>node.tagName==="details").length,1,"Full answer remains discoverable");
