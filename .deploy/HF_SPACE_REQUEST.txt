@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=029f23d2912e880492e5e7618bf3a1ee22fbc511
-REQUEST_NONCE=2026-10-14-v247-natural-repo-file-view-001
+SOURCE_REF=08fea3cf0ca2ddc8f9288db09e278b42f9667ecc
+REQUEST_NONCE=2026-10-14-v248-mobile-edge-clean-composer-001
