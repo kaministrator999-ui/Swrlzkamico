@@ -80,7 +80,9 @@ class AtomicRename(unittest.TestCase):
         self.mock_auth=patch.object(ren,"_authorize",side_effect=authorize)
         self.mock_api=patch.object(ren,"_api",side_effect=api)
         self.mock_perm=patch.object(ren,"_permission_for_workflows")
-        for p in (self.mock_auth,self.mock_api,self.mock_perm):p.start()
+        self.mock_auth.start()
+        self.mock_api.start()
+        self.permission_mock=self.mock_perm.start()
 
     def tearDown(self):
         for p in (self.mock_perm,self.mock_api,self.mock_auth):p.stop()
@@ -173,7 +175,7 @@ class AtomicRename(unittest.TestCase):
             with self.subTest(path=path),self.assertRaises(ren.CreateFileError):
                 ren.prepare(self.user,"src/old.py",path)
         ren.prepare(self.user,"src/old.py",".github/workflows/ci.yaml")
-        self.mock_perm.side_effect=ren.CreateFileError("GITHUB_WORKFLOW_SCOPE_REQUIRED",403)
+        self.permission_mock.side_effect=ren.CreateFileError("GITHUB_WORKFLOW_SCOPE_REQUIRED",403)
         with self.assertRaises(ren.CreateFileError):
             ren.prepare(self.user,"src/old.py",".github/workflows/ci.yaml")
 
