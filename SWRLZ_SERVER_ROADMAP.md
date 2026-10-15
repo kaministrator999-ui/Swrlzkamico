@@ -1,3 +1,17 @@
+## UPDATE STARTED — 2026-10-15 — v254 Live GitHub document explanation quality and compact mobile source UI
+
+**Primary owner screenshot evidence:** Three live signed-in Android screenshots at ~06:46 show v253 readable navy glass and authenticated card deployed, but an explanation request `Can you examine the §tart §E file and explain it's purpose` produced a source header followed by Qwen text parroting the repository path, full commit SHA and blob SHA and saying 'The source is not verified' despite independently verified GitHub pinned source. Expanded source technical disclosure consumes excessive mobile height with 40-digit wrapped SHAs; outside activity trail is faint against dragon art. Current main §tart_§E.md itself is titled '§wyrl§ Engine Build & Deploy Router', with Canonical lane, Startup contract, Deployment truth contract and explicit separate Forge deployment, not a metadata recital.
+
+**Source/baseline:** Start from exact v253 Chat HF published source 373bcc7232738a4e530bdd9aaef3f76223fdca58. Isolated branch fix/chat-source-answer-compact-v254, PR #172. Target existing read-only authenticated github_source_specialist_v241.py answer construction, canonical chat/§wyrlz/index.html source presentation, and existing regression tests. No Forge runtime or separate deployment changes.
+
+**Implementation candidate:** Do not copy SHA metadata/repository identifiers into model explanation prompt when they are already authenticated and displayed separately; ground Coder in verified document heading, relevant sections and bounded exact source excerpts, explicitly request purpose/operational explanation. Hold answer text until successful completion; reject metadata recitals, full hash echoes, and source-verification contradictions; if needed, show a clearly labeled deterministic limited outline comprised solely of authenticated original heading, actual section titles and short source-exact checklist items. Keep full original provenance header, SHA integrity and Stage-1 write restrictions. On mobile, abbreviate visibly displayed full hashes while keeping full-value copy, condense repeated coverage, and make the online read-stage rail legible over the wallpaper.
+
+**Acceptance plan:** CI checks must replay screen's negative response and verify fallback from pinned real source, non-echo substantive source answer, compact provenance/copy and JS syntax. Confirm exact candidate vs integrated Git tree, full guarded Hugging Face deploy to existing kamiloki/Swyrlz, version registry/terminal Roadmap. Do not equate CI/source deployment with user-visible Android acceptance; do not build/delete/modify Forge.
+
+**State:** STARTED — source and PR candidate created, CI pending.
+
+---
+
 ## UPDATE FINISHED — 2026-10-14 — v253 Mobile verified-source context card and readable dark glass
 
 **Owner-visible problem:** Android screenshots of live §wyrlz Chat at ~10:48 PM show `Verified source: owner/repo/path`, branch + full commit SHA, blob SHA, coverage/access lines all flowing into ordinary model answer in tall transparent blue response blocks over the detailed ice-dragon wallpaper. Owner explicitly wanted actual repository patch and deployment, not presentation advice. Newest current screenshots prioritized over older exported threads.
