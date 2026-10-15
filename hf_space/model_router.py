@@ -293,8 +293,8 @@ def dispatch(model_id: str, payload: dict[str,Any], r39_generate: Callable[[dict
     # Keep this distinct from requests to WRITE CODE for a repository. The
     # backend action is separately permission-gated and is never inferred here.
     repository_file_creation=bool(re.search(
-        r"\\b(?:make|create|add|write|save)\\b.{0,90}\\b(?:txt|text)\\s+file\\b.{0,90}\\b(?:repo|repository|github)\\b|"
-        r"\\b(?:repo|repository|github)\\b.{0,90}\\b(?:make|create|add|write|save)\\b.{0,90}\\b(?:txt|text)\\s+file\\b",
+        r"\b(?:make|create|add|write|save)\b.{0,90}\b(?:txt|text)\s+file\b.{0,90}\b(?:repo|repository|github)\b|"
+        r"\b(?:repo|repository|github)\b.{0,90}\b(?:make|create|add|write|save)\b.{0,90}\b(?:txt|text)\s+file\b",
         prompt_text,
     ))
     if repository_file_creation:
