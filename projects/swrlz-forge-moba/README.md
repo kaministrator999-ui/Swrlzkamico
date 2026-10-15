@@ -1,5 +1,10 @@
 # §wyrl§ Engine · Maker v11.4
 
+## v11.5 candidate · Festival Model Atelier — release pending
+
+The new 539-part original festival character variant keeps historical 253- and 303-part editable native scenes intact. The 75th governed patch adds editable loft path/radius control, raises the Model Atelier capacity to 1,200 parts and JSON import allowance to 8 MB; the new native variant is packaged independently. The exact candidate rebuilt in GitHub Actions [#38747495949](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38747495949) at 2,253,004 HTML bytes, SHA-256 `325f286e0dd3166e34bff57b1e721a6e244089a02cc01d33f8bc3025bace324a`, marker `V11_5_FESTIVAL_LOFT_ATELIER`. **This is source candidate evidence, not a hosted v11.5 deployment confirmation.** Full legacy browser CI, integration review, final §E manual trigger, independent hosted audit and owner visual acceptance are distinct gates. Previous v11.4 production receipts below remain historical evidence.
+
+
 ## Current verified live v11.4 · Prism Jester ferret-piñata fidelity
 
 **Owner direction:** stay on the original cyan/coral **carnival mage** concept. The apparent oversized pigtails are **two living ferret-like paper piñatas biting/holding the real pigtails**—separate muzzle, ears, eyes, paws, and gracefully arched paper bodies—not just curved hair tubes. Other skins are material/render references only.

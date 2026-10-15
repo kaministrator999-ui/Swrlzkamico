@@ -1,5 +1,10 @@
 # §E v11.4 Prism Jester ferret fidelity · verified production (2026-10-15 CDT)
 
+## v11.5 candidate · Festival Model Atelier — release pending
+
+The new 539-part original festival character variant keeps historical 253- and 303-part editable native scenes intact. The 75th governed patch adds editable loft path/radius control, raises the Model Atelier capacity to 1,200 parts and JSON import allowance to 8 MB; the new native variant is packaged independently. The exact candidate rebuilt in GitHub Actions [#38747495949](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38747495949) at 2,253,004 HTML bytes, SHA-256 `325f286e0dd3166e34bff57b1e721a6e244089a02cc01d33f8bc3025bace324a`, marker `V11_5_FESTIVAL_LOFT_ATELIER`. **This is source candidate evidence, not a hosted v11.5 deployment confirmation.** Full legacy browser CI, integration review, final §E manual trigger, independent hosted audit and owner visual acceptance are distinct gates. Previous v11.4 production receipts below remain historical evidence.
+
+
 - [x] [PR #171 merged](https://github.com/kaministrator999-ui/Swrlzkamico/pull/171) at `0540cfbfc29129548941881f659f26a767038ed3`.
 - [x] [17/17 native desktop/phone browser tests passed](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38680364328), including 303 editable objects, 2 organic loft bodies, two ferret heads, save/load and original Maul/Sheep/anime regressions.
 - [x] All five source workflows passed: [authored anime](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38680364335), [native cinematic](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38680364400), [cel layers](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38680364349), [story staging](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38680364326), and browser matrix above.
