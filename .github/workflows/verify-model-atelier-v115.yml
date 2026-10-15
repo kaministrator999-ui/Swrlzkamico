@@ -31,8 +31,8 @@ jobs:
           for patch in manifest['patches']:
               html=build_space.load_patch(root/patch)(html)
           raw=html.encode('utf-8')
-          print('V117_FINAL_BYTES='+str(len(raw)),flush=True)
-          print('V117_FINAL_SHA256='+hashlib.sha256(raw).hexdigest(),flush=True)
+          print('V118_FINAL_BYTES='+str(len(raw)),flush=True)
+          print('V118_FINAL_SHA256='+hashlib.sha256(raw).hexdigest(),flush=True)
           assert 'V11_8_TWISTED_SCULPT_STUDIO' in html
           assert 'modelAtelierLoftEditor' in html
           assert 'MODEL_ATELIER_LIMIT=1200' in html

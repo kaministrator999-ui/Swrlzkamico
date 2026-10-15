@@ -1,5 +1,10 @@
 # §wyrl§ Engine · Roadmap
 
+## Current v11.8 candidate — procedural twisted piñata and continuous anime limbs (not deployed)
+
+The approved visual study is being revised with two editable rear-origin broken-S frustum sweeps; native twist/depth/smoothing/mirror/fringe editing; four continuous anatomical limb lofts replacing bead joints; and retained historical scenes. The owner still judges front/side/rear visual quality. A passing test matrix is not equivalent to rigging or textured sculpting, which remain future editor capabilities. Follow §tart_§E.md's gated deployment and independent audit.
+
+
 > **v11.7 sculpt candidate:** 36 discretely capped faceted piñata slices per creature; 733 native-editable parts; face/hair/clothes/rear structural details; historic variants preserved. Not published until full CI and independent hosted audit; art-direction judgment requires new front/side/back screenshots.
 
 ## UPDATE STARTED — v11.5 original festival model detail and spline authoring (2026-10-15 CDT)
