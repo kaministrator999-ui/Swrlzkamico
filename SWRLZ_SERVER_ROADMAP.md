@@ -1,3 +1,15 @@
+## UPDATE STARTED — 2026-10-14 — v249 Dragon Chat (57) natural GitHub file-listing regression
+
+**User evidence:** Authenticated 700M export (57) shows "Can you display the files in the repo" misrouted into Python code generation (CODER_AUTO_ROUTE, semantically invalid CANDIDATE_PASS); "Can you show me the files in the repo" used GITHUB_FILE_RESOLVE and searched for a literal file named files, while explicit GitHub wording and a separate "Can I see" request correctly returned a verified root directory. The standalone noun "Files" produced verbose generic explanation without verified thread context and is a separate conversational quality issue, not authorization for a repository read.
+
+**Source/ownership baseline:** Existing v248 published Chat candidate fix/chat-mobile-edge-composer-clean-v248@08fea3cf0ca2ddc8f9288db09e278b42f9667ecc; isolated v249 branch fix/chat-repo-file-phrasing-v249. Owners: Stage-1 read inference (hf_space/github_read_inference_v235.py), GitHub dispatcher (hf_space/github_connection.py), coding intent (hf_space/brain_programming.py), existing in-process regression test. Forge §E v11.2 is a separate source/deployment lane; no Forge mutations.
+
+**Planned correction:** Treat display/view as listing verbs; route verified broad read requests before individual-file lookup; reject generic plural nouns as natural filename targets; suppress unrelated code generation for clear repo file viewing. Preserve explicit code requests, Stage-1 write lock, source/OAuth verification and unrelated Chat behavior. Validate exact sanitized failure phrases, run protected HF CI, publish through canonical existing-Space guarded request after static acceptance; independently reconcile runtime/module versions and live acceptance.
+
+**State:** STARTED — evidence reconciled; source implementation, CI, governed publication and user-facing acceptance pending.
+
+---
+
 ## UPDATE FINISHED — 2026-10-14 — v248 Mobile full-width replies and clean HF composer
 
 **User-observed problem and scope:** Signed-in Android Chrome screenshot after v247 showed a verified GitHub explorer root listing but a roughly 34 CSS-pixel assistant-response indentation at mobile widths; an oversized HF-injected composer contained Inference Laboratory, Original Test Bench v2.1, duplicate inference model selector, and two AI/user test profile fields above the actual message input. Owner explicitly requested removal of those items and left-side gap correction; signed-in rendering after this revision remains to be visually checked.
