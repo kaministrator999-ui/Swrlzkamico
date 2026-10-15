@@ -1,6 +1,6 @@
 ID=server-runtime
-VERSION=2.3.405
-REVISION=2.3.405-hf-v252-forge-doc-followup
+VERSION=2.3.406
+REVISION=2.3.406-hf-v253-mobile-source-context-glass
 KIND=server-runtime
 SOURCE_BRANCH=runtime
 STATUS=active
