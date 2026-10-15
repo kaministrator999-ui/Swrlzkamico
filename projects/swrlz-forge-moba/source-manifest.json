@@ -89,6 +89,6 @@
     "patches/v11_2_maul_flight_glacial_art.py",
     "patches/v11_3_model_atelier.py"
   ],
-  "finalBytes": 2175703,
-  "finalSha256": "350f3d0979a5293563f62fb088be394dfe68ab3e91ee4c4ae6d34e98687a2619"
+  "finalBytes": 2175919,
+  "finalSha256": "5115c588574caebe3b6ad8a56c01ca427d3167a680b3a16e3a7d2e0dad4aaa49"
 }
