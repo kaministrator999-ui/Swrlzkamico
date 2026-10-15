@@ -50,6 +50,30 @@ try{
     assert.equal(altered.depthScale,1.25,'Depth editor did not persist to project');
     await page.locator('#modelAtelierSculptSmooth').click();
     assert.equal((await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.status())).count,749);
+    // Exercise each newly exposed sculpt tool through the actual desktop/touch inspector.
+    const beforeMirror=await page.evaluate(()=>window.SWYRL_ENGINE_AGENT.inspectScene().project.modelAtelier.parts.find(p=>p.surfaceStyle==='pinata-twisted'));
+    await page.locator('#modelAtelierSculptMirror').click();
+    assert.equal((await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.status())).count,750,'Mirror did not add a native editable loft');
+    const mirrored=await page.evaluate(()=>window.SWYRL_ENGINE_AGENT.inspectScene().project.modelAtelier.parts.at(-1));
+    assert.equal(mirrored.kind,'loft');
+    assert.deepEqual(mirrored.path,beforeMirror.path.map(([x,y,z])=>[-x,y,z]),'Mirror failed to invert control-point X coordinates');
+    assert.equal(mirrored.twistDegrees,-beforeMirror.twistDegrees,'Mirror failed to invert axial twist');
+    await page.locator('#modelAtelierUndo').click();
+    assert.equal((await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.status())).count,749);
+
+    await page.locator('#modelAtelierParts').selectOption({index:curveIndex});
+    await page.locator('#modelAtelierSculptFringe').click();
+    assert.equal((await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.status())).count,763,'Paper fringe was not generated');
+    assert.equal(await page.evaluate(()=>window.SWYRL_ENGINE_AGENT.inspectScene().project.modelAtelier.parts.filter(p=>p.name.startsWith('Generated paper fringe ')).length),14);
+    await page.locator('#modelAtelierUndo').click();
+    assert.equal((await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.status())).count,749);
+
+    await page.locator('#modelAtelierParts').selectOption({index:curveIndex});
+    await page.locator('#modelAtelierSculptLimb').click();
+    assert.equal((await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.status())).count,750,'Smooth anatomical loft action failed');
+    assert.equal(await page.evaluate(()=>window.SWYRL_ENGINE_AGENT.inspectScene().project.modelAtelier.parts.at(-1).surfaceStyle),'anatomy-smooth');
+    await page.locator('#modelAtelierUndo').click();
+    assert.equal((await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.status())).count,749);
     await page.locator('#modelAtelierParts').selectOption({index:5});
     await page.locator('#modelAtelierColor').fill('#6dd5ff');
     await page.locator('#modelAtelierColor').dispatchEvent('change');
