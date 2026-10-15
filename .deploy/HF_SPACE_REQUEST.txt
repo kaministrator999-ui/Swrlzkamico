@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=552526004ffaaccce75035eafd9c0fd9cf32a8da
-REQUEST_NONCE=2026-10-14-v244-stage1-help-pinned-evidence-001
+SOURCE_REF=d89983db6ae227e4c42f3ffb06139f4743e9c190
+REQUEST_NONCE=2026-10-14-v245-mobile-source-guide-cards-001
