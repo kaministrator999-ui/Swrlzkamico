@@ -171,12 +171,13 @@ jobs:
                     'scenes/sheep-tag-moonbell-archive.swyrl.json',
                     'scenes/maul-frostveil.swyrl.json',
                     'scenes/maul-frostveil-classic.swyrl.json',
-                    'scenes/maul-frostveil-groups.swyrl.json'}
+                    'scenes/maul-frostveil-groups.swyrl.json',
+                    'scenes/maul-frostveil-flight.swyrl.json'}
           expected.update('assets/anime/'+name+'.png' for name in (
               'kami','swyrlz','cathedral','workshop','foreground','kami-rig',
               'swyrlz-rig','scenery-parts','kami-grip-layers',
               'mage-faces-painted','kami-full-staff'))
-          assert len(official['assets'])==27
+          assert len(official['assets'])==28
           assert set(official['assets'])==expected
           # Fetch every bundled media asset, including the authored scene and
           # transparent PNG layers, then verify the complete source receipt.
