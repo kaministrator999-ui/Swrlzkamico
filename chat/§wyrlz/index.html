@@ -569,9 +569,50 @@
     .source-report-brief{margin:7px 0 2px;color:#b2d5e8;font-size:.88em;font-weight:450;line-height:1.5}
     .source-report-full{white-space:pre-wrap;overflow-wrap:anywhere;word-break:normal;max-height:min(55dvh,540px);overflow:auto;margin:10px 0 2px;padding:10px;border:1px solid rgba(126,214,255,.2);border-radius:9px;background:rgba(3,19,31,.48);font:12px/1.5 var(--font-telemetry,monospace)}
     .source-report-details:not([open]) .source-report-full{display:none}
+
+    /* v245: source-grounded GitHub guide cards — independent of Dragon wallpaper. */
+    .assistant-body .source-guide{box-sizing:border-box;width:100%;min-width:0;padding:14px;border:1px solid rgba(126,214,255,.22);border-radius:15px;background:linear-gradient(145deg,rgba(5,29,48,.96),rgba(15,28,52,.95));box-shadow:0 8px 20px rgba(0,0,0,.18);color:#e6f6ff;text-shadow:none}
+    .source-guide-head{display:flex;gap:9px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+    .source-guide-kicker{color:#87c5df;font:700 10px/1.3 var(--font-telemetry,monospace);letter-spacing:.08em}
+    .source-guide-badge{border:1px solid rgba(104,244,207,.31);border-radius:999px;background:rgba(23,72,64,.29);color:#bdf4e2;padding:4px 8px;font:700 10px/1.2 var(--font-telemetry,monospace);white-space:nowrap}
+    .assistant-body .source-guide-title{font-size:18px;line-height:1.3;margin:10px 0 5px;color:#f1fbff}
+    .source-guide-description{font-size:13px;line-height:1.45;color:#b4d4e3;margin:0 0 12px}
+    .source-guide-commands{display:flex;flex-direction:column;gap:8px}
+    .source-guide-command{display:flex;gap:9px;align-items:center;padding:10px 11px;border:1px solid rgba(126,214,255,.17);border-radius:11px;background:rgba(1,14,27,.65);min-width:0}
+    .source-guide-command-body{min-width:0;flex:1}
+    .source-guide-command-title{font-size:13px;color:#edf9ff;font-weight:760;line-height:1.3}
+    .source-guide-command-code{display:block;margin:5px 0 4px;color:#9befff;font:11px/1.5 var(--font-telemetry,monospace)!important;overflow-wrap:anywhere;white-space:normal;word-break:break-word}
+    .source-guide-command-caption{font-size:11px;line-height:1.42;color:#98b9ca}
+    .source-guide-command-button{flex:0 0 auto;min-width:64px;min-height:37px;border:1px solid rgba(82,209,240,.45);border-radius:9px;background:rgba(12,57,78,.84);color:#e4faff;font-size:12px;font-weight:760;cursor:pointer}
+    .source-guide-command-button:hover{background:rgba(19,87,111,.85)}
+    .source-guide-command-button:focus-visible,.source-guide-original summary:focus-visible{outline:2px solid #c2f6ff;outline-offset:3px}
+    .source-guide-boundary{margin:12px 0 10px;padding:9px 10px;border-left:3px solid rgba(112,210,230,.67);border-radius:5px;background:rgba(56,100,113,.16);color:#c9e1eb;font-size:12px;line-height:1.45}
+    .source-guide-original{border-top:1px solid rgba(126,214,255,.12);padding-top:8px}
+    .source-guide-original>summary{cursor:pointer;color:#9acada;font-size:12px;line-height:1.5}
+    .source-guide-raw{box-sizing:border-box;white-space:pre-wrap;overflow-wrap:anywhere;max-height:min(42dvh,320px);overflow:auto;padding:10px;margin:9px 0 0;border:1px solid rgba(126,214,255,.15);border-radius:8px;background:rgba(1,12,22,.83);font:11px/1.5 var(--font-telemetry,monospace);color:#c6e3ef}
+    /* Keep recorded activity accessible without repeating a full panel per reply. */
+    .station-activity[data-active="false"]{display:flex;align-items:center;flex-wrap:wrap;gap:7px;margin:0 0 6px 38px;padding:6px 9px;border-color:rgba(126,214,255,.13);border-radius:9px;background:rgba(2,20,34,.66);font-size:10px;line-height:1.3}
+    .station-activity[data-active="false"] .station-activity-header{flex:1;min-width:90px;min-height:22px}
+    .station-activity[data-active="false"] .station-activity-title{font-size:10px}
+    .station-activity[data-active="false"] .station-activity-elapsed,.station-activity[data-active="false"] .station-activity-sub{display:none}
+    .station-activity[data-active="false"] .station-activity-details{flex:0 0 auto;margin:0;padding:0;border:0}
+    .station-activity[data-active="false"] .station-activity-details>summary{font-size:10px;gap:4px}
+    .station-activity[data-active="false"] .station-activity-details>summary span:last-child{display:none}
+    .station-activity[data-active="false"] .station-activity-details[open]{flex-basis:100%}
+    .station-activity[data-active="false"] .station-activity-indicator{width:6px;height:6px;flex-basis:6px}
+    body.a11y-high-contrast .source-guide,body.a11y-high-contrast .source-guide-command{background:#031523;border-color:rgba(220,245,255,.6)}
+    body.a11y-reduced-transparency .source-guide{background:#071a2d}
+    @media(max-width:480px){
+      .assistant-body .source-guide{padding:11px}
+      .source-guide-command{padding:9px;gap:7px}
+      .source-guide-command-button{min-width:57px;padding:6px}
+      .source-guide-command-code{font-size:10.5px!important}
+      .station-activity[data-active="false"]{margin-left:38px}
+    }
   </style>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <script src="/chat/§wyrlz/assets/github-explorer-v223.js?v=228"></script>
+  <script src="/chat/§wyrlz/assets/source-guides-v245.js?v=245"></script>
 </head>
 <body>
   <header class="top-edge" id="topEdge" data-component="top-edge" data-state="ready" aria-label="Chat status">
@@ -1425,9 +1466,16 @@
           },
           contextUpdated:()=>scheduleStationSync()
         })===true;
+        const appendSourceGuide=value=>window.SwrlzSourceGuidesV245?.render(container,value,{
+          preparePrompt:command=>{
+            prompt.value=String(command||"");
+            prompt.dispatchEvent(new Event("input",{bubbles:true}));
+            prompt.focus();
+          }
+        })===true;
         const appendText=value=>{
           if(!value)return;
-          if(appendRepositoryExplorer(value))return;
+          if(appendRepositoryExplorer(value)||appendSourceGuide(value))return;
           const root=document.createElement("div");root.className="message-text";
           const lines=String(value).replace(/\r\n?/g,"\n").split("\n");let list=null,listType="";
           const closeList=()=>{list=null;listType="";};
@@ -1720,7 +1768,7 @@
         const isFailure=!!state&&/FAIL|REJECT|ERROR/i.test(String(state));
         const heading=isFailure?"Response needs attention":
           active&&options.streaming?"Writing the response":
-          active?activityNameV238(latest?.phase||"CONNECTING"):"Response activity";
+          active?activityNameV238(latest?.phase||"CONNECTING"):"Activity recorded";
         const title=wrapper.querySelector(".station-activity-title");
         if(title.textContent!==heading)title.textContent=heading;
         const elapsed=activityDurationV238(acceptedAt,active?Date.now():(events.at(-1)?.atUnixMs||Date.now()));
