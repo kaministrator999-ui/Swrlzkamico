@@ -990,6 +990,7 @@ def _run(key,request_id,model_id,payload,assistant_id):
                     {"id": requested["userId"]}, request_id, requested["prompt"]
                 )
                 event_source=iter((
+                    {"type":"WIDGET","widget":receipt["widget"]},
                     {"type":"STATUS","phase":"GITHUB_TEST_TXT_CREATED",
                      "reason":"Connected owner created and verified one sandbox text file."},
                     {"type":"DELTA","text":(
