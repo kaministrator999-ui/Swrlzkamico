@@ -4,7 +4,7 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.2",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_2_MAUL_FLIGHT_GLACIAL_ART",
-  "reason": "Owner-requested fully completed v11.2 Frostveil Maul starter deployment. PR #159 merged as b3ef6130f0d9685018debb06fcdd4ef2912d9f6e; all six Forge workflows and all sixteen native desktop/mobile browser suites passed at 716a2bc81b01c79b65ed7771eb3dc794248ce55b. Independent authored Maul flight starter, same-cell flying builders, glacial art, protected entrances and historical preserved assets. Final guarded manual deployment trigger.",
-  "sourceCommit": "7504c9bf563511ae0ae8c7e3aae7c63eb6a42875",
+  "reason": "Final governed v11.2 Maul flying-builder production verification rerun. Original manual deploy 38668615711 succeeded with exact 28 hosted assets, but secondary hosted audit 38668682992 failed on an outdated expected asset set; fixed the independent audit to include and validate the flying starter in 4ff55dd2 and documented in 7759c690. Same SHA-sealed 72-patch v11.2 engine. Six Forge workflows + all 16 browser suites passed. Deploy then require BOTH dedicated deployment and independent hosted asset audit terminal success.",
+  "sourceCommit": "7759c69074f363529591448e1e301f2a21f3f35e",
   "sourceIntegritySha256": "1fab5e61f2065c02a56658c6e8e8ef999eb525ac16c373b310826ca970e10e59"
 }
