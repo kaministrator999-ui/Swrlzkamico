@@ -1,10 +1,11 @@
-# §E v11.4 Prism Jester ferret fidelity · source verified, release pending (2026-10-15 CDT)
+# §E v11.4 Prism Jester ferret fidelity · verified production (2026-10-15 CDT)
 
 - [x] [PR #171 merged](https://github.com/kaministrator999-ui/Swrlzkamico/pull/171) at `0540cfbfc29129548941881f659f26a767038ed3`.
 - [x] [17/17 native desktop/phone browser tests passed](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38680364328), including 303 editable objects, 2 organic loft bodies, two ferret heads, save/load and original Maul/Sheep/anime regressions.
 - [x] All five source workflows passed: [authored anime](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38680364335), [native cinematic](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38680364400), [cel layers](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38680364349), [story staging](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38680364326), and browser matrix above.
 - [x] Sealed `V11_4_PRISM_FERRET_FIDELITY`, 74 patches, 30 packaged assets (including original 253-part v11.3 scene), **2,197,108 HTML bytes**, SHA-256 `40d1e985bd3754b7a2996e6be14056be9c22164995d83b84ad253b4ae7a24658`.
-- [ ] Guarded dedicated v11.4 deployment and independently verified hosted asset receipt. Until these are terminal, **do not claim v11.4 is live**.
+- [x] [Dedicated guarded deployment #38729222214](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38729222214) **SUCCESS** on source trigger `2dba7e6da30fef16c8bb1f4a35f979bcfbffb9b4`, Space revision `f88b57b39893f556e380cef7c279d93860800a95`.
+- [x] [Independent hosted audit #38729291039](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38729291039) **SUCCESS** (`HOSTED_AUDIT_SCOPE=current-requested-release`, `PUBLISHED_VERSION=v11.4`, `LIVE_SOURCE_AND_ALL_ASSETS_VERIFIED`) proving the exact 2,197,108-byte HTML and all 30 packaged assets.
 - [ ] Human owner visual acceptance and advanced sculpt/UV/rig/animation remain outstanding.
 
 ---
