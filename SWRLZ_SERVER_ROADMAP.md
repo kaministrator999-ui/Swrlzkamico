@@ -1,3 +1,15 @@
+## UPDATE STARTED — 2026-10-14 — v246 Preserve raw Copy response with rendered source-guide widgets
+
+**Self-detected post-publication integration issue:** v245 guide card renderer intentionally preserves raw verified source within a disclosure while showing a custom DOM widget. Existing `addCopyButton` copies `.assistant-body.textContent` rather than message source, now duplicating widget labels and hidden original content. This is a real client-side copy/provenance fidelity defect even though candidate CI and HF publication of v245 succeeded; previously completed v245 release record remains truthful and intact.
+
+**Architecture and scope:** Isolate corrective source work on the exact v245 deployed candidate `d89983db6ae227e4c42f3ffb06139f4743e9c190`, change `chat/§wyrlz/index.html` copy boundary to use exact original message source already present in the renderer (without reinterpreting or losing user-written/assistant content). Preserve present rich guide widgets, original disclosure, all copy/download/code handling, live rendering, UTF-8 and accessibility. No backend/GitHub OAuth/writes, station, model or Forge change. Extend offline static regression and CI as needed.
+
+**Version baseline / focus:** `runtime` Repository Work 1.0.186, Server Runtime 2.3.398, Web Chat 1.5.130; other authorities unchanged. Advance only actually affected modules after guarded publication. Existing main Roadmap and Forge work may continue independently; write only scoped artifact/version files with SHA preconditions.
+
+**Release/acceptance:** Stage exact candidate, pass offline CI, guarded manually approved `main:.deploy/HF_SPACE_REQUEST.txt` release to existing `kamiloki/Swyrlz`, capture rollback checkpoint and HF revision, reconcile versions and write UPDATE FINISHED. Signed-in visual/Copy tests remain a separate owner acceptance.
+
+---
+
 ## UPDATE FINISHED — 2026-10-14 — v245 Mobile source-guide widgets, saved activity density and guarded Chat release
 
 **Primary Focus / Focus Group:** Web Chat (1.5.129 → **1.5.130**, changed presentation), Server Runtime (2.3.397 → **2.3.398**, verified stable HF publication), Repository Work (1.0.185 → **1.0.186**, governed tier). Google Account remains **1.0.17**, LALM Engine **2.1.201**; Forge v11.2 separate and untouched.
