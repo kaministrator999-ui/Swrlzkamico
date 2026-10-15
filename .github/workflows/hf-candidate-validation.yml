@@ -28,6 +28,7 @@ jobs:
         run: |
           python -m py_compile hf_space/github_sandbox_create_txt.py hf_space/test_github_sandbox_create_txt_v256.py hf_space/station.py
           python -m unittest discover -s hf_space -p test_github_sandbox_create_txt_v256.py -v
+          python -m unittest discover -s hf_space -p test_github_txt_intent_v256.py -v
       - name: Check syntax and contracts
         run: |
           python -m py_compile hf_space/app.py hf_space/station.py hf_space/model_router.py hf_space/brain_programming.py hf_space/accepted_runtime/lalm/r39_engine.py hf_space/swyrlz/backend.py hf_space/swyrlz/r39_inference.py
