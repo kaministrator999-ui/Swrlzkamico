@@ -92,6 +92,16 @@ def _source_information_request(text: str, history=None) -> bool:
     q=_norm(str(text or "").split("\n",1)[0])
     if q.startswith(("using only the verified github source report", "explain the verified github source report")):
         return True
+    # v247: viewing repository files is information retrieval, not code creation.
+    # Exact sentence shape avoids suppressing "write code to list files".
+    if re.fullmatch(
+        r"(?:(?:can|could|may)\s+(?:i|you)\s+|please\s+)?"
+        r"(?:see|show|list|browse|view)\s+(?:me\s+)?(?:all\s+)?(?:the\s+)?"
+        r"(?:files?|folders?|directories)\s+(?:in|of|from)\s+"
+        r"(?:my|our|the)\s+(?:github\s+)?(?:repo|repository)[?.!]*",
+        q,
+    ):
+        return True
     q=re.sub(r"^(?:(?:@github|can you|could you|would you|please|tell me)\s+)+","",q)
     return bool(
         re.fullmatch(r"(?:how many|what(?:'s| is) the number of)\s+(?:total\s+)?(?:files?|folders?|directories|dirs?)(?:\s+.*)?",q)
