@@ -34,6 +34,9 @@ class HTTPGeneralFiles(unittest.TestCase):
             patch.object(gh,"_config",return_value={"callback":"https://testserver/api/github/callback"}),
             patch.object(f,"_authorize",side_effect=auth),
             patch.object(f,"_github",side_effect=github),
+            patch.object(gh,"_api",return_value={"sha":"a"*40,
+                "files":[{"filename":"src/app.py","status":"added",
+                          "additions":1,"deletions":0,"changes":1}]}),
         ]
         for p in self.patchers:p.start()
         self.client=TestClient(station.app)
