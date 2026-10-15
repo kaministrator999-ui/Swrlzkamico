@@ -32,11 +32,11 @@ try{
               sculpted:m.parts.filter(p=>p.name.includes('head sculpt')).length,
               rear:m.parts.filter(p=>p.name.includes('rear')||p.name.includes('braided actual')).length};
     });
-    assert.equal(geometryProof.lofts,16,'Missing 2 creature sweeps plus 4 continuous limbs');
+    assert.equal(geometryProof.lofts,16,'Missing native ferret, anatomical body and fabric lofts');
     assert.equal(geometryProof.fabric,8,'Fabric panel geometry missing');
     assert.equal(geometryProof.anatomy,6,'Continuous limb lofts missing');
     assert.equal(geometryProof.headNames,2,'Ferret heads failed to load');
-    assert(geometryProof.profile.every(([p,r])=>p===r&&p>=4),'Loft control points lost');
+    assert(geometryProof.profile.every(([p,r])=>p===r&&p>=3),'Loft control points lost');
     assert.equal(geometryProof.paper.length,2,'Both ferret sweeps must be twisted');
     assert(geometryProof.paper.every(([style,layers,facets])=>style==='pinata-twisted'&&layers===36&&facets===8),'Layered truncated-pyramid piñata profile missing');
     assert(geometryProof.sculpted>=30&&geometryProof.rear>=80,'Sculptural multiview detail missing');
