@@ -275,21 +275,32 @@ const ModelAtelier=(()=>{
   }
   return Object.freeze({open,close,install,syncProject,status:()=>({active:!!model(),open:!!panel&&!panel.hidden,count:model()?.parts?.length||0,selected:selection})});
 })();
-function loadModelAtelierStarter(){
+function loadModelAtelierStarter(force=false){
+  if(dirty&&!force&&!confirm('Open Model Atelier and discard unsaved scene changes?'))return false;
   ModelAtelier.close();
   loadProject(structuredClone(MODEL_ATELIER_CANONICAL_PROJECT),{workspaceLocal:true});
   initializeHistory('Opened original 3D Model Atelier starter');markSaved();
+  document.getElementById('projectHub')?.classList.remove('show');
   ModelAtelier.syncProject();ModelAtelier.open();
   toast('Model Atelier · Prism Jester · original 3D modeling study');
   return true;
 }
 const modelAtelierPreviousTemplate=createProjectFromTemplate;
 createProjectFromTemplate=function(template,force=false){
-  if(template==='model-atelier')return loadModelAtelierStarter();
+  if(template==='model-atelier')return loadModelAtelierStarter(force);
   return modelAtelierPreviousTemplate(template,force);
 };
 const modelAtelierPreviousLoad=loadProject;
-loadProject=function(...args){const result=modelAtelierPreviousLoad(...args);ModelAtelier.syncProject();return result;};
+loadProject=function(...args){
+  const result=modelAtelierPreviousLoad(...args);
+  // Legacy applyProjectMeta copies only four standard fields. Restore the
+  // model's native project extension, including edits from imported saves.
+  const meta=args[0]?.project;
+  if(meta?.kind==='model-atelier'&&meta.modelAtelier?.schema==='swyrl-model-atelier-v1')
+    currentProject={...currentProject,...structuredClone(meta)};
+  ModelAtelier.syncProject();
+  return result;
+};
 ModelAtelier.install();
 window.SWYRL_ENGINE_MODEL_ATELIER=Object.freeze({open:()=>ModelAtelier.open(),loadStarter:()=>loadModelAtelierStarter(),status:()=>ModelAtelier.status()});
 if(new URLSearchParams(location.search).get('project')==='model-atelier')
