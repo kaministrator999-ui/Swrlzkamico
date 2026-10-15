@@ -32,7 +32,8 @@ def apply(html):
     html=html.replace("version:'v11.6'","version:'v11.7'").replace('version:11.6','version:11.7')
     # Front-on and less overhead. Zoom is set based on screen aspect only on initial open,
     # retaining user orbit/zoom interaction instead of aggressively re-framing each edit.
-    html=replace_once(html,'orbit={yaw:.3,pitch:.19,distance:9}', 'orbit={yaw:0,pitch:.08,distance:8.2}')
+    assert html.count('orbit={yaw:.3,pitch:.19,distance:9}')==2,'Expected initial orbit and reset-view orbit defaults'
+    html=html.replace('orbit={yaw:.3,pitch:.19,distance:9}', 'orbit={yaw:0,pitch:.08,distance:8.2}')
     html=replace_once(html,"camera=new THREE.PerspectiveCamera(44,1,.1,100);cameraUpdate();",
         "camera=new THREE.PerspectiveCamera(44,1,.1,100);orbit.distance=window.innerWidth<=700?10.2:8.2;cameraUpdate();")
     return html
