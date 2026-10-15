@@ -59,10 +59,7 @@ class SandboxTxtTest(unittest.TestCase):
             prepared = s.prepare(self.user, "ok.txt", data.decode())
             with self.assertRaises(s.WriteError):
                 s.confirm({"id": "google:someone-else"}, prepared["approvalToken"], True)
-            # Mismatched account consumes ticket rather than letting it be replayed.
-            with self.assertRaises(s.WriteError):
-                s.confirm(self.user, prepared["approvalToken"], True)
-            prepared = s.prepare(self.user, "ok.txt", "hello")
+            # Non-owner has no authority and must not consume the owner's ticket.
             answer = s.confirm(self.user, prepared["approvalToken"], True)
             self.assertTrue(answer["verified"])
             self.assertEqual(answer["commitSha"], "abc")
