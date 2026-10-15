@@ -314,6 +314,14 @@ def dispatch(model_id: str, payload: dict[str,Any], r39_generate: Callable[[dict
         yield {"type":"DELTA","text":message}
         yield {"type":"COMPLETED","phase":"COMPLETE","fastPath":"mutation-clarification"}
         return
+    # A bare file topic is not a request to invent a directory tree.
+    if risk_kind == "topic" and str(payload.get("prompt") or "").strip().casefold().rstrip("?.!") in ("file", "files", "folder", "folders", "directory", "directories"):
+        yield {"type":"STATUS","phase":"TOPIC_CLARIFICATION",
+               "reason":"File topic has no specified action or destination.",
+               "categories":["INTENT","CLARIFICATION","NO_ACTION"]}
+        yield {"type":"DELTA","text":"Would you like to browse files in your connected GitHub repository, look for an uploaded file, or discuss file management?"}
+        yield {"type":"COMPLETED","phase":"COMPLETE","fastPath":"file-topic-clarification"}
+        return
     identity_answer=direct_app_identity_answer(str(payload.get("prompt") or ""))
     if identity_answer:
         yield {"type":"DELTA","text":identity_answer}
