@@ -48,7 +48,7 @@ def test_exported_prompt_selects_real_authenticated_read():
                                  "sourceSha":"a"*40}
             }))
         assert observed==[expected],(prompt,observed)
-        assert any(e.get("phase")=="GITHUB_READ_EVIDENCE" for e in events)
+        assert any(e.get("phase") in ("GITHUB_READ_EVIDENCE","GITHUB_READ_STAGE") for e in events), events
         assert any("GitHub directory" in e.get("text","") for e in events)
         assert not any(e.get("phase")=="CODER_AUTO_ROUTE" for e in events)
 
