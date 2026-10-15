@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.1",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_1_MAUL_WALK_BUILDER",
-  "reason": "Owner-approved Forge v11.1 cumulative release: PR #157 merged; exact candidate passed six workflows including all sixteen native browser suites. Recorder gzip, Maul spectator, walked builders, protected spawns; preserve earlier starters and assets.",
-  "sourceCommit": "bbe56716867e046d3a4f887aa2f5829f25709cd1",
-  "sourceIntegritySha256": "c96e5fea45bd316750e2fcc60ff1cbd96feadd6a90a56a5667dddad0aaf21121"
+  "releaseVersion": "v11.2",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_2_MAUL_FLIGHT_GLACIAL_ART",
+  "reason": "Owner-requested fully completed v11.2 Frostveil Maul starter deployment. PR #159 merged as b3ef6130f0d9685018debb06fcdd4ef2912d9f6e; all six Forge workflows and all sixteen native desktop/mobile browser suites passed at 716a2bc81b01c79b65ed7771eb3dc794248ce55b. Independent authored Maul flight starter, same-cell flying builders, glacial art, protected entrances and historical preserved assets. Final guarded manual deployment trigger.",
+  "sourceCommit": "7504c9bf563511ae0ae8c7e3aae7c63eb6a42875",
+  "sourceIntegritySha256": "1fab5e61f2065c02a56658c6e8e8ef999eb525ac16c373b310826ca970e10e59"
 }
