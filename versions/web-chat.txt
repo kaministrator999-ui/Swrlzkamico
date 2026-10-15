@@ -1,6 +1,6 @@
 ID=web-chat
-VERSION=1.5.132
-REVISION=1.5.132-mobile-edge-clean-composer-v248
+VERSION=1.5.133
+REVISION=1.5.133-dragon-chat57-repo-file-routing-v249
 KIND=web-interface
 SOURCE_BRANCH=runtime
 STATUS=active
