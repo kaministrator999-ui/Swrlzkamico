@@ -54,7 +54,7 @@ def main():
     args=parser.parse_args();receipt=json.loads((args.package/'SOURCE.json').read_text())
     require(receipt['sourceVersion']=='§wyrl§ Engine v11.5', 'wrong source version')
     require(len(receipt['patches'])==75 and receipt['patches'][-1]==PATCH, 'wrong governed patch chain')
-    require(len(receipt['assets'])==30 and FLIGHT_SCENE in receipt['assets'] and SCENE in receipt['assets'] and LEGACY_SCENE in receipt['assets'], 'wrong asset set or missing preserved v10.7 scene')
+    require(len(receipt['assets'])==31 and FLIGHT_SCENE in receipt['assets'] and SCENE in receipt['assets'] and LEGACY_SCENE in receipt['assets'], 'wrong asset set or missing preserved v10.7 scene')
     raw=(args.package/SCENE).read_bytes();meta=receipt['assets'][SCENE]
     require(len(raw)==meta['bytes'] and hashlib.sha256(raw).hexdigest()==meta['sha256'], 'native grouped scene differs from package receipt')
     legacy=(args.package/LEGACY_SCENE).read_bytes()
