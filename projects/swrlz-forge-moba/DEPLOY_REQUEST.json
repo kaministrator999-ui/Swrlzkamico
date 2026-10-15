@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.7",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_7_STACKED_PINATA_SCULPT",
-  "reason": "Retry owner-approved v11.7 deployed model after fixing actual Hugging Face YAML metadata validation failure via PR #180, merged at e37fce3. Engine sculpt and governed artifact unchanged: 733 native editable parts, 77 patches, 33 assets, 2,305,358 bytes SHA 4d374f0b2aac6c5485ca2f35016eac76192bebd607a5da0962d5254e0db3fd7d. 17/17 candidate browser cases passed previously (#38784040955). Require terminal production upload and independent hosted hash/assets audit.",
-  "sourceCommit": "e37fce334b6cc3f981fd940383e493d3172aaae9",
-  "sourceIntegritySha256": "4d374f0b2aac6c5485ca2f35016eac76192bebd607a5da0962d5254e0db3fd7d"
+  "releaseVersion": "v11.8",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_8_TWISTED_SCULPT_STUDIO",
+  "reason": "Owner-approved §E v11.8 Model Atelier and original editable 749-part character starter, rear-origin 36-slice twisted ferret surfaces, continuous anatomical lofts and functioning mirror/fringe/limb/spline controls; historical assets preserved. PR #183 merged as 9353a4a, exact candidate v11.8 fully validated in 23/23 CI checks (including desktop/mobile functional regression). Governed source: 78 patches, 34 native assets, 2,318,719 HTML bytes SHA256 600e34f09d6a29ce8484a4f84bd5c25b79a707cd43a1320a1a5c6c6d0417ffbf. Require successful protected production deploy and independent hosted digest/assets audit. Owner visual acceptance remains separate.",
+  "sourceCommit": "9353a4acb1527f28f6f6ef6d3f099afef4a5cf48",
+  "sourceIntegritySha256": "600e34f09d6a29ce8484a4f84bd5c25b79a707cd43a1320a1a5c6c6d0417ffbf"
 }
