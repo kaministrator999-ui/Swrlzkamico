@@ -24,8 +24,13 @@ const ModelAtelier=(()=>{
   }
   function modelSnapshot(){return JSON.stringify(model().parts);}
   function checkpoint(){if(!model())return;undo.push(modelSnapshot());if(undo.length>50)undo.shift();redo=[];}
-  function signalEdited(){if(currentProject&&typeof currentProject==='object'){currentProject.modelAtelier.editedAt='local';}
-    renderParts();refreshList();refreshInspector();status('Editable native project · '+model().parts.length+' parts. Save Project or export JSON to keep changes.');
+  function signalEdited(){
+    if(currentProject&&typeof currentProject==='object')currentProject.modelAtelier.editedAt='local';
+    // The workbench has its own part history; the parent project must still
+    // register dirty state so Projects/Load won't silently discard model edits.
+    if(typeof markDirty==='function')markDirty();
+    renderParts();refreshList();refreshInspector();
+    status('Editable native project · '+model().parts.length+' parts. Save Project or export JSON to keep changes.');
   }
   function historyStep(backward){
     if(!model())return;
