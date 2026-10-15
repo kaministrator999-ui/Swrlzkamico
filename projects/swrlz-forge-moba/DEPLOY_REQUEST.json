@@ -4,7 +4,7 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.6",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_6_MULTIVIEW_FESTIVAL_ATELIER",
-  "reason": "Owner-authorized mobile Model Atelier and multiview festival model improvement; PR #176 merged with full 17/17 browser suites and independently sealed 76-patch, 32-asset 2,279,438-byte HTML. Require terminal deploy and independent exact hosted audit.",
+  "reason": "Owner-directed update: §tart §E mandatory fix/test/merge/deploy/live-audit workflow; v11.6 multi-view 653-mesh original festival starter with additional reverse geometry; compact touch-first mobile Model Atelier inspector. Governed seal 2,279,438 HTML bytes / SHA d5f8dce1cbaf221a9f03719f99d53a10b26c6a68fc980ccd38359c4cbbb3a6d0; 76 ordered patches, 32 assets. PR #176 merged at aaa796e; all 17 browser tests green on candidate run #38778338221. Verify exact host source and all assets with independent workflow.",
   "sourceCommit": "aaa796e25007730dd43cf3daf3841af9ecece4fe",
   "sourceIntegritySha256": "d5f8dce1cbaf221a9f03719f99d53a10b26c6a68fc980ccd38359c4cbbb3a6d0"
 }
