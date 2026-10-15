@@ -126,6 +126,8 @@ jobs:
               expected_assets.add('scenes/model-atelier-prism-jester.swyrl.json')
           if 'scenes/model-atelier-prism-jester-ferret-v11-4.swyrl.json' in source_paths:
               expected_assets.add('scenes/model-atelier-prism-jester-ferret-v11-4.swyrl.json')
+          if 'scenes/model-atelier-prism-jester-festival-v11-5.swyrl.json' in source_paths:
+              expected_assets.add('scenes/model-atelier-prism-jester-festival-v11-5.swyrl.json')
           expected_assets.update(path for path in source_paths if path.startswith('assets/anime/') and path.endswith('.png'))
           assert set(receipt['assets'])==expected_assets,'Bundled asset set differs from committed source'
           for path,meta in receipt['assets'].items():
