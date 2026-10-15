@@ -1,5 +1,14 @@
 # §wyrl§ Engine · Roadmap
 
+## UPDATE STARTED — v11.5 original festival model detail and spline authoring (2026-10-15 CDT)
+
+**Owner input:** supplied current 253/303-mesh screenshots and multi-angle carnival mage reference. Asked for real starter/model improvements and any necessary engine modeling capabilities, not a written brief. The requested primary target is an original expressive cyan/coral two-ferret-piñata carnival mage study; alternate character skins are visual-quality references only.
+
+**Isolated candidate:** `feature/forge-model-atelier-spline-fidelity-v11-5` adds distinct `scenes/model-atelier-prism-jester-festival-v11-5.swyrl.json` (539 independently selectable meshes versus v11.4's 303), with extra layered paper tissue vanes, hanging fringe, face framing and costume trims. The historical 253- and 303-part authored starter assets remain unmodified. Append-only `patches/v11_5_festival_loft_atelier.py` replaces only the canonical default on rebuild and adds native inspector control-point/radii JSON editing for the existing loft mesh type, with validation, edit history, import, and existing OBJ export behavior retained. Native part ceiling rises from 400 to 1,200; JSON import file bound rises from 2 to 8 MB.
+
+**Release status: CANDIDATE ONLY — NOT DEPLOYED.** The updated manifest intentionally omits finalBytes/finalSha256 until the *actual generated candidate* can be built and sealed. Do not merge, press `DEPLOY_REQUEST.json`, or claim production success until the new complete build has been reconstructed, JS/HTML syntax and source integrity checked, native desktop/phone editor/loft/save/OBJ tests and preserved Maul/Sheep/anime suites passed, manifest digest sealed, README/Space version/verification surfaces synchronized, PR reviewed, and dedicated final deploy and independent hosted audit completed. This change has no authorization to mutate the separate AI Chat Space.
+
+
 ## UPDATE FINISHED — v11.4 ferret-piñata refinement published (2026-10-15 CDT)
 
 **Production complete:** [PR #171](https://github.com/kaministrator999-ui/Swrlzkamico/pull/171) merged at `0540cfbfc29129548941881f659f26a767038ed3`; 17/17 desktop/phone acceptance suites passed [browser run #38680364328](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38680364328) plus five candidate source workflows. [Dedicated deployed release #38729222214](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38729222214) SUCCESS on `2dba7e6da30fef16c8bb1f4a35f979bcfbffb9b4`; [independent hosted audit #38729291039](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38729291039) SUCCESS with `HOSTED_AUDIT_SCOPE=current-requested-release`, `PUBLISHED_VERSION=v11.4`, and `LIVE_SOURCE_AND_ALL_ASSETS_VERIFIED`. Hosted HF revision `f88b57b39893f556e380cef7c279d93860800a95`.
