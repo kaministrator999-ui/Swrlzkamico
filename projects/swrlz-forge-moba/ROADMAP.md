@@ -1,5 +1,7 @@
 # §wyrl§ Engine · Roadmap
 
+**Starter-pack integration correction:** A standalone v11.2 authored native map, `scenes/maul-frostveil-flight.swyrl.json`, is now the exact Projects → Frostveil Maul starting scene. It contains 78 native actors (nine builders, no free towers), keeps the 30-round co-op layout, stores `hover-v1` flight, `glacial-v2` textures, `walk-v1` gated construction and `full-pad-v1` protection in the file, and is included as the **28th published asset** without overwriting prior maps. The native browser test fetches this actual asset and asserts project settings and builder identity match the project launcher. Unverified candidate only; it is not a released v11.2 promise.
+
 ## UPDATE STARTED — v11.2 Frostveil hover-builders and glacial map art (source candidate)
 
 **Scope/owner:** dedicated §E source on isolated branch `feature/forge-frostveil-flight-art-v11-2`, based on main `fc9d94da315af1c559fcbc6bfb16af343f194fe0`; PR [#159](https://github.com/kaministrator999-ui/Swrlzkamico/pull/159). The new current Frostveil profile gains direct airborne 15-unit/s movement over towers and cliffs, flight height 3.25, same-cell delayed construction, hover-wing visuals and cached original procedurally textured glacial map pieces. Previous v11.1 71-patch release and legacy imports are preserved.
