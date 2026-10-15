@@ -1,6 +1,6 @@
 ID=server-runtime
-VERSION=2.3.409
-REVISION=2.3.409-hf-v258-chat-text-approval
+VERSION=2.3.410
+REVISION=2.3.410-hf-v259-direct-test-txt
 KIND=server-runtime
 SOURCE_BRANCH=runtime
 STATUS=active
