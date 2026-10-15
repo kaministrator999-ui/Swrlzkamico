@@ -48,6 +48,8 @@ def apply(html):
     html=once(html,"metalness:part.material==='metal'?.68:.05,side:THREE.DoubleSide",
         "metalness:part.material==='metal'?.68:.05,vertexColors:part.kind==='loft',side:THREE.DoubleSide")
     html=once(html,"<option>cylinder</option></select>","<option>cylinder</option><option>loft</option></select>")
+    html=once(html,"    if(index!==null)p[key][index]=next;else p[key]=next;",
+        "    if(key==='kind'&&next==='loft'&&(!Array.isArray(p.path)||p.path.length<2)){p.path=[[0,-.3,0],[0,.3,0]];p.radii=[.16,.12];}\n    if(index!==null)p[key][index]=next;else p[key]=next;")
     html=once(html,"V11_3_MODEL_ATELIER_PRISM_JESTER","V11_4_PRISM_FERRET_FIDELITY")
     html=html.replace("Maker v11.3","Maker v11.4").replace("MAKER v11.3","MAKER v11.4")
     html=html.replace("version:'v11.3'","version:'v11.4'").replace("version:11.3","version:11.4")
