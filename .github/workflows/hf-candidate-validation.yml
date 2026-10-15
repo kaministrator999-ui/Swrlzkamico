@@ -29,6 +29,7 @@ jobs:
           python -m py_compile hf_space/github_sandbox_create_txt.py hf_space/test_github_sandbox_create_txt_v256.py hf_space/station.py
           python -m py_compile hf_space/github_oauth_reuse_v257.py
           python -m unittest discover -s hf_space -p test_github_oauth_reuse_v257.py -v
+          python -m unittest discover -s hf_space -p test_github_sandbox_http_v257.py -v
           python -m unittest discover -s hf_space -p test_github_sandbox_create_txt_v256.py -v
           python -m unittest discover -s hf_space -p test_github_txt_intent_v256.py -v
       - name: Check syntax and contracts
