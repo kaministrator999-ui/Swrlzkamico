@@ -19,7 +19,7 @@ try{
     let state=await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.status());
     assert.equal(state.active,true);assert.equal(state.open,true);assert.equal(state.count,303);
     assert.equal(await page.locator('[data-project-template="model-atelier"]').count(),1,'Starter card missing');
-    assert.equal(await page.locator('#modelAtelierParts option').count(),253,'Not individually editable meshes');
+    assert.equal(await page.locator('#modelAtelierParts option').count(),303,'Not individually editable meshes');
     assert.equal(await page.locator('#modelAtelierPanel canvas').isVisible(),true,'3D viewport hidden');
     assert.equal(await page.locator('#modelAtelierPartCount').isVisible(),true);
     const geometryProof=await page.evaluate(()=>{
