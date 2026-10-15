@@ -8,11 +8,29 @@
     return node;
   };
   const integer = x => Number.isSafeInteger(x) && x >= 0 ? x : null;
-  const fileLink = value => typeof value === 'string'
-    && /^https:\/\/github\.com\/kaministrator999-ui\/Swrlzing-core\/blob\/main\/write-action-tests\/[A-Za-z0-9][A-Za-z0-9._-]{0,63}\.txt$/.test(value)
-    && !value.includes('..') ? value : null;
-  const commitLink = value => typeof value === 'string'
-    && /^https:\/\/github\.com\/kaministrator999-ui\/Swrlzing-core\/commit\/[a-fA-F0-9]{40}$/.test(value) ? value : null;
+  const allowedRepo = name => /^kaministrator999-ui\/(?:Swrlzing-core|Swrlzkamico)$/.test(name);
+  const validPath = path => typeof path === 'string' && path.length > 0
+    && path.length <= 512 && !path.startsWith('/') && !path.endsWith('/')
+    && !path.includes('\\') && !path.includes('//')
+    && path.split('/').every(p=>p && p!=='.' && p!=='..' && p.toLowerCase()!=='.git'
+         && !/[\u0000-\u001f\u007f]/.test(p));
+  const encoded = name => encodeURIComponent(name).replace(/[!'()*]/g,
+    c=>'%'+c.charCodeAt(0).toString(16).toUpperCase());
+  const fileLink = d => {
+    if (!allowedRepo(d.repo) || !validPath(d.path) ||
+        typeof d.branch!=='string' || !/^[A-Za-z0-9][A-Za-z0-9._/-]{0,99}$/.test(d.branch)
+        || d.branch.split('/').some(p=>!p||p==='.'||p==='..')) return null;
+    const built='https://github.com/'+d.repo+'/blob/'+
+      d.branch.split('/').map(encoded).join('/')+'/'+
+      d.path.split('/').map(encoded).join('/');
+    return d.fileUrl===built ? built : null;
+  };
+  const commitLink = d => {
+    if (!allowedRepo(d.repo) || typeof d.commitSha!=='string' ||
+        !/^[a-fA-F0-9]{40}$/.test(d.commitSha)) return null;
+    const built='https://github.com/'+d.repo+'/commit/'+d.commitSha;
+    return d.commitUrl===built ? built : null;
+  };
   const addMetric = (grid,label,value,variant) => {
     if (value === null || value === undefined) return;
     const cell=make('div','github-work-metric'+(variant?' '+variant:''));
@@ -23,11 +41,10 @@
   function render(host,widget) {
     if (!host || !widget || widget.contract !== 'swrlz-widget-v1' || widget.kind !== 'github-work') return false;
     const d=widget.data || {};
-    if (d.operation !== 'CREATE_FILE' || d.repo !== 'kaministrator999-ui/Swrlzing-core'
-        || d.branch !== 'main' || d.verification !== 'EXACT_BYTES_MATCHED') return false;
+    if (d.operation !== 'CREATE_FILE' || d.verification !== 'EXACT_BYTES_MATCHED') return false;
     const path = String(d.path || '');
-    if (!/^write-action-tests\/[A-Za-z0-9][A-Za-z0-9._-]{0,63}\.txt$/.test(path) || path.includes('..')) return false;
-    const file = fileLink(d.fileUrl);
+    if (!validPath(path)) return false;
+    const file = fileLink(d);
     if (!file) return false;
     const card = make('div','github-work-dashboard');
     card.setAttribute('aria-label','Verified GitHub work summary');
@@ -37,7 +54,7 @@
                    make('strong','github-work-title','File created'));
     summary.append(heading,make('span','github-work-verified','✓ Exact bytes verified'));
     card.append(summary);
-    const repoLine = make('div','github-work-repo','kaministrator999-ui / Swrlzing-core · main');
+    const repoLine = make('div','github-work-repo',d.repo.replace('/',' / ')+' · '+d.branch);
     const fileRow = make('a','github-work-file',path);
     fileRow.href=file;fileRow.target='_blank';fileRow.rel='noopener noreferrer';
     card.append(repoLine,fileRow);
@@ -54,7 +71,7 @@
     }
     card.append(grid);
     const footer=make('div','github-work-footer');
-    const commit=commitLink(d.commitUrl);
+    const commit=commitLink(d);
     if (commit) {
       const anchor=make('a','github-work-commit','Commit '+String(d.commitSha||'').slice(0,7));
       anchor.href=commit;anchor.target='_blank';anchor.rel='noopener noreferrer';footer.append(anchor);
