@@ -4,7 +4,7 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.2",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_2_MAUL_FLIGHT_GLACIAL_ART",
-  "reason": "Final governed v11.2 Maul flying-builder production verification rerun. Original manual deploy 38668615711 succeeded with exact 28 hosted assets, but secondary hosted audit 38668682992 failed on an outdated expected asset set; fixed the independent audit to include and validate the flying starter in 4ff55dd2 and documented in 7759c690. Same SHA-sealed 72-patch v11.2 engine. Six Forge workflows + all 16 browser suites passed. Deploy then require BOTH dedicated deployment and independent hosted asset audit terminal success.",
-  "sourceCommit": "7759c69074f363529591448e1e301f2a21f3f35e",
+  "reason": "Final governed v11.2 documentation/roadmap publication reconciliation. Existing terminal deployment 38668840620 and independent hosted audit 38668893410 verified the exact same sealed 72-patch 28-asset HTML (SHA 1fab5e61f2065c02a56658c6e8e8ef999eb525ac16c373b310826ca970e10e59). Re-deploy through the dedicated final button after doc-only v11.2 release-status corrections, preserving all binary/assets and ensuring fresh terminal hosted verification.",
+  "sourceCommit": "6890260ac4905ef32fd6427e1c1a61e274d46ea2",
   "sourceIntegritySha256": "1fab5e61f2065c02a56658c6e8e8ef999eb525ac16c373b310826ca970e10e59"
 }
