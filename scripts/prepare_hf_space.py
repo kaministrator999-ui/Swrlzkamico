@@ -24,9 +24,8 @@ def main():
             target.parent.mkdir(parents=True,exist_ok=True)
             shutil.copy2(source,target)
         else:
-            # Chat is transformed below with HF-lab controls; compare all other canonical sources byte-for-byte.
-            if rel!="chat/§wyrlz/index.html":
-                assert target.is_file() and hashlib.sha256(target.read_bytes()).digest()==hashlib.sha256(source.read_bytes()).digest(), f"Staged source drift: {rel}"
+            # Stage all canonical sources exactly, including Chat; no hidden HF composer injection.
+            assert target.is_file() and hashlib.sha256(target.read_bytes()).digest()==hashlib.sha256(source.read_bytes()).digest(), f"Staged source drift: {rel}"
     prepared_research=OUT/"swrzl_prepared_runtime/research/online_research_reasoner.py"
     research_source=ROOT/"accepted_runtime/research/online_research_reasoner.py"
     if args.check:
@@ -38,21 +37,13 @@ def main():
     path=OUT/"MODEL_PROVENANCE.json"
     if args.check: assert json.loads(path.read_text(encoding="utf-8"))==provenance, "Provenance drift"
     else: path.write_text(json.dumps(provenance,indent=2)+"\n",encoding="utf-8")
+    # The canonical account-backed Chat already owns model/profile settings and transport.
+    # Keep /probe and /legacy mounted separately; never add their developer/test controls
+    # into the user conversation composer. Chat export belongs in the side menu.
     ui=OUT/"chat/§wyrlz/index.html"
-    html=(ROOT/"chat/§wyrlz/index.html").read_text(encoding="utf-8")
-    marker='<div class="composer-box">'
-    assert html.count(marker)==1, "Canonical composer insertion point changed"
-    html=html.replace(marker, '<a class="hf-lab-link" href="/probe" target="_blank" rel="noopener">Inference Laboratory ↗</a><a class="hf-lab-link" href="/legacy" target="_blank" rel="noopener">Original Test Bench v2.1 ↗</a><a class="hf-lab-link" href="/api/lalm_station/export" download="swrlz-dragon-chat.json">Download dragon Chat JSON ↓</a><label class="hf-model-picker" for="hfModel"><span>Model</span><select id="hfModel" aria-label="Inference model"><option value="stock">Original HF · LFM2-350M</option><option value="r39">§wyrlz R39 — fixed</option><option value="700m" selected>LFM2-700M Q4_K_M</option><option value="compare" disabled>Compare both — not configured</option></select></label><details class="hf-profile-panel"><summary>Optional §wyrlz customization · Mirror Muse core stays active</summary><textarea id="hfProfile" maxlength="2000" rows="5" aria-label="Optional §wyrlz customization" placeholder="Add optional §wyrlz behavior/style preferences for this test…"></textarea></details><details class="hf-profile-panel"><summary>Test user profile · Kami</summary><textarea id="hfUserProfile" maxlength="2000" rows="4" aria-label="Editable current user test profile">Name: Kami. Collaborative technical/creative partner testing §wyrlz. Uses casual humor, callbacks, analogies and direct corrections. Prefers simple correct answers before needless abstraction, evidence over assumptions, and precise iterative debugging.</textarea></details>'+marker,1)
-    html=html.replace('const sendButton = document.getElementById("sendButton");','const sendButton = document.getElementById("sendButton");\n      const hfModel = document.getElementById("hfModel");\n      const hfProfile = document.getElementById("hfProfile");\n      const hfUserProfile = document.getElementById("hfUserProfile");',1)
-    # Clean-room Chat owns model/profileId now. Add only HF-lab test fields.
-    transport_marker='ingress:"SWRLZ_LALM_STATION"'
-    assert html.count(transport_marker)>=1, "Chat transport ingress marker changed"
-    html=html.replace(transport_marker,'profile:hfProfile.value,userProfile:hfUserProfile.value,'+transport_marker,1)
-    html=html.replace("</style>", '.hf-lab-link{font-size:12px;color:#b5dfff;padding:4px 8px}.hf-model-picker{display:flex;align-items:center;gap:8px;color:#c2d4e5;font-size:12px;padding:4px 8px}.hf-model-picker select{min-width:0;background:#092038;color:#e6f7ff;border:1px solid #37617a;border-radius:8px;padding:5px}.hf-profile-panel{font-size:12px;color:#c2d4e5;padding:4px 8px}.hf-profile-panel textarea{display:block;width:100%;margin-top:6px;padding:8px;border-radius:8px;border:1px solid #37617a;background:#092038;color:#e6f7ff;font:inherit;resize:vertical}</style>',1)
-    assert 'modelId:String(settingsState.model.defaultModel||"700m")' in html and 'profileId:String(settingsState.general.personalityProfile||"default")' in html and 'profile:hfProfile.value' in html and 'userProfile:hfUserProfile.value' in html and 'id="hfUserProfile"' in html, "Chat transport model/profile injection failed"
-    if args.check:
-        assert ui.read_text(encoding="utf-8")==html, "Staged Chat transformation drift"
-    else:
-        ui.write_text(html,encoding="utf-8")
+    canonical=ROOT/"chat/§wyrlz/index.html"
+    assert ui.is_file() and ui.read_bytes()==canonical.read_bytes(), "Canonical Chat staging mismatch"
+    assert b'href="/api/lalm_station/export"' in ui.read_bytes(), "Side-menu export link missing"
+    assert b'id="hfProfile"' not in ui.read_bytes() and b'id="hfUserProfile"' not in ui.read_bytes() and b'id="hfModel"' not in ui.read_bytes(), "HF-only test controls leaked into Chat"
     print("HF candidate source staging verified:",revision,"chunks:",len(manifest["chunks"]))
 if __name__=="__main__": main()
