@@ -1,10 +1,11 @@
-# §E v11.3 Model Atelier · verified source, deployment pending (2026-10-14 CDT)
+# §E v11.3 Model Atelier · verified production (2026-10-14 CDT)
 
 - [x] [PR #167](https://github.com/kaministrator999-ui/Swrlzkamico/pull/167) merged at `abfe8a495b3a7c166f2bebe9151887b2cef6b807`.
 - [x] [17 of 17 real browser suites passed](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38674608237), each using native desktop and phone layouts, including Model Atelier viewport, edits, save/load, OBJ/JSON export, re-open touch hit-target, and all historical scene regressions.
 - [x] Five additional candidate workflows passed: [authored source](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38674608236), [cinematic source](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38674608235), [camera staging](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38674608243), [cel layers](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38674608277), and browser matrix above.
 - [x] Sealed 73-patch / 29-asset artifact, 2,175,921 bytes, SHA-256 `a2ec94f418f294ea5ebd50363833d37025a6e6cc804732116a7cb927d0b069db`. Native 253-part original Prism Jester model remains authorable; no extracted game files or claims of exact likeness.
-- [ ] Terminal guarded deployment and independent audit for this exact v11.3 source. Until completed, source acceptance **does not establish live release**.
+- [x] [Guarded production deployment #38677061503](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38677061503) **SUCCESS** on final request SHA `44a594f534c92c723079adcb33d8a80962bc7e0f`.
+- [x] [Independent hosted audit #38677099743](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38677099743) **SUCCESS**: source SHA-256 `a2ec94f418f294ea5ebd50363833d37025a6e6cc804732116a7cb927d0b069db` and all 29 asset bytes independently matched, `HOSTED_AUDIT_SCOPE=current-requested-release`, `LIVE_SOURCE_AND_ALL_ASSETS_VERIFIED`.
 - [ ] Optional future advanced sculpting, UV texture painting, rigging, and animations are not implemented.
 
 ---
