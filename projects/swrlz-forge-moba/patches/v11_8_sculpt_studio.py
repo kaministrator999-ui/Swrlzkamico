@@ -39,7 +39,7 @@ def apply(html):
     </div>
     <button id="modelAtelierSculptLimb" type="button">Add smooth anatomical loft</button>
     </section>'''
-    html=once(html,'<label class="atelier-import">',''.join(editor.splitlines())+'<label class="atelier-import">')
+    html=once(html,"'<div id=\"modelAtelierInspectorControls\" hidden>","'"+''.join(editor.splitlines())+'<div id="modelAtelierInspectorControls" hidden>')
     html=once(html,"    const loft=$m('LoftEditor');", """    const sculpt=$m('SculptEditor');
     if(sculpt){sculpt.hidden=!p||p.kind!=='loft';if(p&&p.kind==='loft'){
       $m('SculptTwist').value=String(p.twistDegrees||0);
