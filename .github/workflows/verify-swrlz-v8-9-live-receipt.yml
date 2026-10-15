@@ -4,7 +4,7 @@ on:
     branches: [main]
   workflow_dispatch:
   workflow_run:
-    workflows: ["Deploy §wyrl§ Engine v11.3 to Hugging Face"]
+    workflows: ["Deploy §wyrl§ Engine v11.4 to Hugging Face"]
     types: [completed]
     branches: [main]
 permissions:
@@ -124,6 +124,8 @@ jobs:
               expected_assets.add('scenes/maul-frostveil-flight.swyrl.json')
           if 'scenes/model-atelier-prism-jester.swyrl.json' in source_paths:
               expected_assets.add('scenes/model-atelier-prism-jester.swyrl.json')
+          if 'scenes/model-atelier-prism-jester-ferret-v11-4.swyrl.json' in source_paths:
+              expected_assets.add('scenes/model-atelier-prism-jester-ferret-v11-4.swyrl.json')
           expected_assets.update(path for path in source_paths if path.startswith('assets/anime/') and path.endswith('.png'))
           assert set(receipt['assets'])==expected_assets,'Bundled asset set differs from committed source'
           for path,meta in receipt['assets'].items():
@@ -138,6 +140,11 @@ jobs:
               if path=='scenes/maul-frostveil-groups.swyrl.json':
                   import runpy
                   runpy.run_path(engine+'/tests/maul_batch_package.py')['validate_scene'](json.loads(data))
+              if path=='scenes/model-atelier-prism-jester-ferret-v11-4.swyrl.json':
+                  model=json.loads(data)['project']
+                  assert model['kind']=='model-atelier' and model['canonicalId']=='model-atelier-prism-jester','Wrong ferret starter identity'
+                  parts=model['modelAtelier']['parts']
+                  assert len(parts)==303 and sum(p['kind']=='loft' for p in parts)==2,'Wrong ferret geometry'
               if path=='scenes/model-atelier-prism-jester.swyrl.json':
                   model=json.loads(data)['project']
                   assert model['kind']=='model-atelier' and model['canonicalId']=='model-atelier-prism-jester','Wrong model starter identity'

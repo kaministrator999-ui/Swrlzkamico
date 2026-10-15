@@ -1,5 +1,15 @@
 # §wyrl§ Engine · Roadmap
 
+## UPDATE STARTED — v11.4 Prism Jester ferret-piñata fidelity (2026-10-14 CDT)
+
+**Observed owner feedback:** the published v11.3 screenshot is recognizable but too primitive/round, and the apparent large pigtails are **two ferret-like piñata creatures physically gripping the pigtails**, not rigid hair tubes. The owner provided additional screenshots but explicitly kept the original cyan/coral carnival skin as the main target; other skins serve only as material/face-quality examples.
+
+**Source baseline:** v11.3 verified release at main `c8836ea681821ebb303024372c4803aa67b6f8a0`, 73 patches, 29 assets, live hosted audit verified. All previous shipped original scene assets and patch files are immutable for this slice.
+
+**v11.4 implemented on isolated branch:** `feature/forge-prism-jester-ferret-v11-4`. Additive 74th patch `patches/v11_4_prism_ferret_fidelity.py`, a distinct `scenes/model-atelier-prism-jester-ferret-v11-4.swyrl.json` containing 303 editable parts, 2 organically tapered lofts, preserved legacy project identity, paper fringe, facial refinement, pigtail attachment points, dark ferret muzzles/eyes/ears/paws, safe bounded loft validation and existing JSON/OBJ authoring compatibility. New engine patch modifies the generated latest code only, preserving published v11.3 source files. Art direction and grounded modeling references: `reports/PRISM_JESTER_FERRET_ART_DIRECTION.md`.
+
+**Acceptance required before delivery:** build and seal exact 74-patch / 30-asset HTML; source and JS syntax; model anatomy schema/native package regression; updated desktop/mobile browser matrix including model edit/save/reopen and original authored project; previous Maul/Sheep Tag/anime cases; five source workflows; reviewed PR; explicit final dedicated `DEPLOY_REQUEST.json` after merge; terminal successful deployment and independent hosted full-asset audit. No claims of pixel-exact hero likeness, vertex-sculpt tools, glTF import, UV editor, skinning, or animation in this slice.
+
 ## UPDATE FINISHED — v11.3 Model Atelier merged, deployed and independently audited (2026-10-14 CDT)
 
 **Production result:** [PR #167](https://github.com/kaministrator999-ui/Swrlzkamico/pull/167) merged at `abfe8a495b3a7c166f2bebe9151887b2cef6b807`, after [all 17 of 17 desktop/mobile browser suites passed](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38674608237) and every §E candidate source workflow. [Dedicated Engine deploy #38677061503](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38677061503) ended SUCCESS from explicit request commit `44a594f534c92c723079adcb33d8a80962bc7e0f` and [independent hosted audit #38677099743](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38677099743) ended SUCCESS for the exact same release authority. Hosted audit reported `HOSTED_AUDIT_SCOPE=current-requested-release`, `PUBLISHED_VERSION=v11.3`, and `LIVE_SOURCE_AND_ALL_ASSETS_VERIFIED`.
