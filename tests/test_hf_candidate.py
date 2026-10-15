@@ -100,6 +100,13 @@ class Candidate(unittest.TestCase):
    artifact=thread["codeArtifacts"][0]
    artifact_id=artifact["id"]
    self.assertEqual(artifact["currentRevision"],1)
+   # Pinning is an explicit Chat state action, not an automatic side effect of code.
+   pin={"contract":"swrlz-chat-account-mutation-v1",
+        "expectedRevision":snap["revision"],
+        "operations":[{"type":"SET_MESSAGE_PINNED","threadId":"artifact-thread","messageId":"assistant-r1","pinned":True}]}
+   self.assertEqual(client.post("/api/chat_state",json=pin).status_code,200)
+   snap=client.get("/api/lalm_station/sync").json()
+   thread=snap["threads"][0]
    self.assertTrue(thread["messagePins"]["assistant-r1"])
    original_text=next(m["text"] for m in thread["messages"] if m["id"]=="assistant-r1")
    second={"requestId":"artifact-r2","threadId":"artifact-thread","messageId":"user-r2","assistantMessageId":"assistant-r2","prompt":"fix that code and add error handling","modelId":"stock"}
