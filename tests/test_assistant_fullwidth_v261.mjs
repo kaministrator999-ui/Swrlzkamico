@@ -8,11 +8,13 @@ const station=fs.readFileSync(path.join(root,"hf_space/station.py"),"utf8");
 const css=fs.readFileSync(path.join(root,"hf_space/chat/§wyrlz/assets/assistant-fullwidth-v261.css"),"utf8");
 const dashboard=fs.readFileSync(path.join(root,"hf_space/chat/§wyrlz/assets/github-work-summary-v260.css"),"utf8");
 function expectRule(selector,checks){
-  const start=css.indexOf(selector+"{");
+  const start=css.indexOf(selector);
   assert(start>=0, "Missing full-width layout rule "+selector);
-  const end=css.indexOf("}",start);
-  assert(end>start,"Unclosed CSS selector "+selector);
-  const text=css.slice(start,end);
+  const open=css.indexOf("{",start);
+  assert(open>start && open-start<900,"No bounded CSS declaration for "+selector);
+  const end=css.indexOf("}",open);
+  assert(end>open,"Unclosed CSS selector "+selector);
+  const text=css.slice(open,end);
   for(const check of checks) assert(text.includes(check),selector+" missing "+check);
 }
 assert(html.includes(".message-list{width:min(var(--conversation-width),100%)"),
