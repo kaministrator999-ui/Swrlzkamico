@@ -345,7 +345,9 @@ def _chat_document():
     """Serve the canonical Chat document plus the bounded HF presentation adapter."""
     source=(ROOT/"chat/§wyrlz/index.html").read_text(encoding="utf-8")
     marker='</body>'
-    adapter='<script src="/chat/§wyrlz/assets/widget-analysis-v128.js" defer></script><script src="/chat/§wyrlz/assets/chatgpt-archive-import-v1.js" defer></script><script src="/chat/§wyrlz/assets/chatgpt-archive-sidebar-v204.js" defer></script><script src="/chat/§wyrlz/assets/github-chat-create-txt-v258.js" defer></script>'
+    adapter='<script src="/chat/§wyrlz/assets/widget-analysis-v128.js" defer></script><script src="/chat/§wyrlz/assets/chatgpt-archive-import-v1.js" defer></script><script src="/chat/§wyrlz/assets/chatgpt-archive-sidebar-v204.js" defer></script><script src="/chat/§wyrlz/assets/github-work-summary-v260.js" defer></script><script src="/chat/§wyrlz/assets/github-chat-create-txt-v258.js" defer></script>'
+    css='<link rel="stylesheet" href="/chat/§wyrlz/assets/github-work-summary-v260.css">'
+    source=source.replace('</head>',css+'</head>',1)
     return source.replace(marker,adapter+marker,1) if marker in source else source+adapter
 
 @app.get("/")
@@ -990,6 +992,7 @@ def _run(key,request_id,model_id,payload,assistant_id):
                     {"id": requested["userId"]}, request_id, requested["prompt"]
                 )
                 event_source=iter((
+                    {"type":"WIDGET","widget":receipt["widget"]},
                     {"type":"STATUS","phase":"GITHUB_TEST_TXT_CREATED",
                      "reason":"Connected owner created and verified one sandbox text file."},
                     {"type":"DELTA","text":(

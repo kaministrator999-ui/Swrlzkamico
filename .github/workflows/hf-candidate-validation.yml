@@ -72,6 +72,13 @@ jobs:
           python -m pip install 'requests>=2.32,<3' 'cryptography>=43,<47'
           python -m py_compile hf_space/github_connection.py hf_space/test_github_start_parallel_v243.py
           python hf_space/test_github_start_parallel_v243.py
+      - name: v260 GitHub verified work receipt and statistics visualization
+        run: |
+          python -m py_compile hf_space/github_work_summary_v260.py hf_space/github_sandbox_create_txt.py hf_space/station.py
+          python hf_space/test_github_work_summary_v260.py
+          node --check 'hf_space/chat/§wyrlz/assets/github-work-summary-v260.js'
+          node tests/test_github_work_summary_v260.mjs
+
       - name: v259 Direct user-authorized harmless test-file Chat action
         run: |
           python -m py_compile hf_space/github_txt_intent_v256.py hf_space/github_sandbox_create_txt.py hf_space/station.py

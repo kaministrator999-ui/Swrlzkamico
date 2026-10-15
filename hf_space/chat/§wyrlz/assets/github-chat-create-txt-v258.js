@@ -103,6 +103,11 @@
         const result=await post('confirm-create-txt',{approvalToken:ticket,approved:true});
         status.textContent=result.ok&&result.verified?'Created and verified. Commit: '+result.commitSha:'Not verified; inspect GitHub before retry.';
         if(result.ok&&result.verified)status.append(el('a',{href:result.url,target:'_blank',rel:'noopener noreferrer',text:' Open verified file'}));
+        if(result.ok&&result.verified&&result.widget&&window.SwrlzGithubWorkView?.render){
+          const visual=el('div');
+          visual.style.marginTop='0.8rem';
+          if(window.SwrlzGithubWorkView.render(visual,result.widget))dialog.insertBefore(visual,controls);
+        }
       }catch(error){status.textContent='Creation not confirmed: '+error.message+'; check repository before retrying.'}
       finally{prepare.disabled=false}
     });

@@ -1314,7 +1314,14 @@
           const provider=document.createElement("div");provider.className="widget-provider";provider.textContent=String(widget.provider||"online");
           head.append(title,provider);card.appendChild(head);
           const data=widget.data&&typeof widget.data==="object"?widget.data:{};
-          if(widget.kind==="weather"){
+          if(widget.kind==="github-work"){
+            if(!window.SwrlzGithubWorkView?.render(card,widget)){
+              const unavailable=document.createElement("div");
+              unavailable.className="widget-footer";
+              unavailable.textContent="GitHub work summary unavailable — check the verified file link in the response.";
+              card.appendChild(unavailable);
+            }
+          }else if(widget.kind==="weather"){
             const current=data.current&&typeof data.current==="object"?data.current:{};
             const units=data.units&&typeof data.units==="object"?data.units:{};
             const hero=document.createElement("div");hero.className="weather-hero";
