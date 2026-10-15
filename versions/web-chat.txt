@@ -1,6 +1,6 @@
 ID=web-chat
-VERSION=1.5.143
-REVISION=1.5.143-v261-assistant-fullwidth
+VERSION=1.5.144
+REVISION=1.5.144-v262-general-github-files
 KIND=web-interface
 SOURCE_BRANCH=runtime
 STATUS=active
