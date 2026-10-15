@@ -2227,6 +2227,18 @@
         }
         body.hidden=!nextText;
         const liveWidgets=Array.isArray(g.widgets)?g.widgets:[];
+        // The Station alone owns action-intent classification. Repository
+        // contents and the model's generated prose cannot trigger this UI.
+        const approvedProposalSignal=Array.isArray(g.status)&&g.status.some(item=>
+          String(item?.phase||'')==='GITHUB_CREATE_TXT_APPROVAL_REQUIRED');
+        if(approvedProposalSignal){
+          const proposalThread=chatThreads.find(t=>t.id===String(g.threadId||''))||currentThread();
+          const proposalUser=[...(proposalThread?.messages||[])].reverse().find(m=>m.role==='user');
+          window.dispatchEvent(new CustomEvent('swrlz:github-txt-proposal',{
+            detail:{requestId:String(g.requestId||''),threadId:String(g.threadId||''),
+                    prompt:String(proposalUser?.text||'').slice(0,10000)}
+          }));
+        }
         renderWidgetStack(node,liveWidgets);
         // Once structured evidence has produced a widget, the retrieval phase is
         // visibly complete. Keep the widget on screen and make the next stage
