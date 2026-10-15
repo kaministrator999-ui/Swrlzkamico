@@ -1,8 +1,8 @@
-name: Verify v11.6 §E source seal
+name: Verify v11.7 §E source seal
 on:
   push:
     branches:
-      - feature/engine-v116-mobile-and-festival-shape
+      - feature/engine-v117-segmented-pinata-sculpt
   workflow_dispatch:
 jobs:
   seal:
@@ -15,7 +15,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Reconstruct and print exact v11.6 SHA
+      - name: Reconstruct and print exact v11.7 SHA
         shell: bash
         run: |
           python - <<'PY'
@@ -31,12 +31,12 @@ jobs:
           for patch in manifest['patches']:
               html=build_space.load_patch(root/patch)(html)
           raw=html.encode('utf-8')
-          print('V115_FINAL_BYTES='+str(len(raw)),flush=True)
-          print('V115_FINAL_SHA256='+hashlib.sha256(raw).hexdigest(),flush=True)
-          assert 'V11_6_MULTIVIEW_FESTIVAL_ATELIER' in html
+          print('V117_FINAL_BYTES='+str(len(raw)),flush=True)
+          print('V117_FINAL_SHA256='+hashlib.sha256(raw).hexdigest(),flush=True)
+          assert 'V11_7_STACKED_PINATA_SCULPT' in html
           assert 'modelAtelierLoftEditor' in html
           assert 'MODEL_ATELIER_LIMIT=1200' in html
-          assert 'v116-0540' in html
+          assert 'atelier-v117-0554' in html
           from pathlib import Path
           Path('/tmp/swyrl-v115-source.mjs').write_text(html[html.index('<script type="module">')+len('<script type="module">'):html.rindex('</script>')])
           PY

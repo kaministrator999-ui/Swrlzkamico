@@ -1,5 +1,16 @@
 # §tart §E — §wyrl§ Engine Build & Deploy Router
 
+## Current §E v11.7 model fidelity gate — owner corrective screenshots
+
+The live v11.6 reference study failed the visual acceptance gate. The owner identified smooth boomerang/sausage loop geometry, fake detail inflation, insufficient piñata construction, flat rear treatment, blockout facial/garment anatomy and inconsistent mobile presentation. **When this is reported, implement the authorized code changes immediately rather than responding with another plan or menu of options.**
+
+**Current construction contract:** The two ferret bodies must be distinct, visibly stepped chains of **36 capped truncated-pyramid disk slices each**, with angular flat-shaded faces, interlayer recesses, torn paper edges and colored overlaps on the front, sides, underside and rear. There must be actual gripped dyed hair braids, prominent elongated ferret muzzles, jaw/brow/eyes/ears, and sculpted front/rear apparel, hair and footwear. This is structural geometry, not tiny box inflation. Loft control paths and radii must remain editable, and each historical scene must remain loadable.
+
+**Proof, not assertion:** Native 3D object data, shader/geometry flags, model counts, front/side/back screenshots, mobile and desktop interaction, import/export and full regression must be tested. Passing a source seal or adding hundreds of objects does not establish visual quality. Record unsatisfied art-direction differences and keep iterating on observed defects. Group fixes and test expectation updates into atomic commits to avoid needless CI churn. Gate merging and the dedicated last-main-mutation deployment trigger on independently returned CI results, then confirm production served digest and owner visual response.
+
+**Release candidate:** v11.7 — faceted tiered piñata spine surfaces, 733 editable pieces (474 old wafer decorations retired; 554 structurally placed additions), 77 governed patches and 33 native assets, pending measured artifact seal, complete browser tests and hosted audit. Production remains v11.6 until independently verified.
+
+
 ## Active owner workflow contract — §E (2026-10-15)
 
 **Entry rule:** When owner reports a defect, supplies screenshots, or approves work, do the authorized scoped change in this session where tools permit. Do not stop after a plan, handoff, diagnosis, or recommendation. Read this router and the governed source manifest; identify actual code/artifact and live deployment state. Repeat tool calls as needed within available limits, and report genuine connector limits rather than pretending a build deployed.

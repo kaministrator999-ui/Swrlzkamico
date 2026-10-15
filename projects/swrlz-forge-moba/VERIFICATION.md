@@ -1,5 +1,7 @@
 # §E v11.4 Prism Jester ferret fidelity · verified production (2026-10-15 CDT)
 
+> **v11.7 candidate (not yet live):** Replaces unconvincing continuous piñata tubes with 36 capped, faceted layered discs per ferret, direct grip onto the heroine's dyed braids, more explicit facial/garment/rear volumes. Full CI, deployment receipt and owner front/side/back evidence required. Prior v11.6 receipts below are historical.
+
 ## v11.5 candidate · Festival Model Atelier — release pending
 
 The new 539-part original festival character variant keeps historical 253- and 303-part editable native scenes intact. The 75th governed patch adds editable loft path/radius control, raises the Model Atelier capacity to 1,200 parts and JSON import allowance to 8 MB; the new native variant is packaged independently. The exact candidate rebuilt in GitHub Actions [#38747495949](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38747495949) at 2,253,004 HTML bytes, SHA-256 `325f286e0dd3166e34bff57b1e721a6e244089a02cc01d33f8bc3025bace324a`, marker `V11_5_FESTIVAL_LOFT_ATELIER`. **This is source candidate evidence, not a hosted v11.5 deployment confirmation.** Full legacy browser CI, integration review, final §E manual trigger, independent hosted audit and owner visual acceptance are distinct gates. Previous v11.4 production receipts below remain historical evidence.

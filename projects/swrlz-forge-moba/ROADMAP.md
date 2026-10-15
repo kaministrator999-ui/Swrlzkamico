@@ -1,5 +1,7 @@
 # §wyrl§ Engine · Roadmap
 
+> **v11.7 sculpt candidate:** 36 discretely capped faceted piñata slices per creature; 733 native-editable parts; face/hair/clothes/rear structural details; historic variants preserved. Not published until full CI and independent hosted audit; art-direction judgment requires new front/side/back screenshots.
+
 ## UPDATE STARTED — v11.5 original festival model detail and spline authoring (2026-10-15 CDT)
 
 **Owner input:** supplied current 253/303-mesh screenshots and multi-angle carnival mage reference. Asked for real starter/model improvements and any necessary engine modeling capabilities, not a written brief. The requested primary target is an original expressive cyan/coral two-ferret-piñata carnival mage study; alternate character skins are visual-quality references only.
