@@ -84,11 +84,9 @@ class Candidate(unittest.TestCase):
  def test_brain_routes_pinned_code_edit_to_same_artifact_revision(self):
   def stock(payload):
    if "fix" in str(payload.get("prompt") or "").lower():
-    return iter([{"type":"DELTA","text":"```python file=demo.py\ntry:
-    print('v2')\nexcept Exception as exc:
-    print(exc)\n```\nAdded guarded error handling."},{"type":"COMPLETED"}])
+    return iter([{"type":"DELTA","text":"```python file=demo.py\ntry:\n    print('v2')\nexcept Exception as exc:\n    print(exc)\n```\nAdded guarded error handling."},{"type":"COMPLETED"}])
    return iter([{"type":"DELTA","text":"```python file=demo.py\nprint('v1')\n```\nInitial demo."},{"type":"COMPLETED"}])
-  # Programming requests delegate to coder: inject the same mock there.
+  # Real programming route delegates to coder; use the same deterministic fake.
   set_generator(lambda payload:iter([{"type":"DELTA","text":"unused"},{"type":"COMPLETE"}]),stock,None,stock)
   with TestClient(station_app) as client:
    first={"requestId":"artifact-r1","threadId":"artifact-thread","messageId":"user-r1","assistantMessageId":"assistant-r1","prompt":"make python code for a demo","modelId":"stock"}
