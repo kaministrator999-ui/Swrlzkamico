@@ -90,6 +90,6 @@
     "patches/v11_3_model_atelier.py",
     "patches/v11_4_prism_ferret_fidelity.py"
   ],
-  "finalBytes": 2197062,
-  "finalSha256": "80071a110cd1fb067a05e0cbd28a4277391ba7786299117223018002def28161"
+  "finalBytes": 2197108,
+  "finalSha256": "40d1e985bd3754b7a2996e6be14056be9c22164995d83b84ad253b4ae7a24658"
 }
