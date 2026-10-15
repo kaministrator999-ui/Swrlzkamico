@@ -96,6 +96,6 @@
     "patches/v11_9_ferret_figure_atelier.py",
     "patches/v11_10_model_geometry_profiler.py"
   ],
-  "finalBytes": 2335886,
-  "finalSha256": "987f074e111420126715142da652d4907c7d1a0e493215ee9784e35da48966dd"
+  "finalBytes": 2339787,
+  "finalSha256": "e8b2ca7b4e12d9981475a861d40eabf513f5d26a40c8f6627d393b93d03dddf6"
 }
