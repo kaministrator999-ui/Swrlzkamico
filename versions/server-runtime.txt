@@ -1,6 +1,6 @@
 ID=server-runtime
-VERSION=2.3.411
-REVISION=2.3.411-hf-v260-github-work-summary
+VERSION=2.3.412
+REVISION=2.3.412-hf-v261-assistant-fullwidth
 KIND=server-runtime
 SOURCE_BRANCH=runtime
 STATUS=active
