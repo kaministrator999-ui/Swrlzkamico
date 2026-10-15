@@ -21,6 +21,7 @@ from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 from model_router import dispatch, ModelUnavailable, routes
 import github_connection
+from github_txt_intent_v256 import wants_github_text_file_creation
 import github_report_explain_v236
 import progress_timeline_v238
 import project_thread_memory
@@ -344,7 +345,7 @@ def _chat_document():
     """Serve the canonical Chat document plus the bounded HF presentation adapter."""
     source=(ROOT/"chat/§wyrlz/index.html").read_text(encoding="utf-8")
     marker='</body>'
-    adapter='<script src="/chat/§wyrlz/assets/widget-analysis-v128.js" defer></script><script src="/chat/§wyrlz/assets/chatgpt-archive-import-v1.js" defer></script><script src="/chat/§wyrlz/assets/chatgpt-archive-sidebar-v204.js" defer></script>'
+    adapter='<script src="/chat/§wyrlz/assets/widget-analysis-v128.js" defer></script><script src="/chat/§wyrlz/assets/chatgpt-archive-import-v1.js" defer></script><script src="/chat/§wyrlz/assets/chatgpt-archive-sidebar-v204.js" defer></script><script src="/chat/§wyrlz/assets/github-sandbox-create-txt-v257.js" defer></script>'
     return source.replace(marker,adapter+marker,1) if marker in source else source+adapter
 
 @app.get("/")
@@ -963,7 +964,7 @@ def _run(key,request_id,model_id,payload,assistant_id):
         g["queueWaitMs"]=max(0,g["startedAtUnixMs"]-int(g.get("acceptedAtUnixMs") or g["startedAtUnixMs"]))
         g["status"].append({"phase":"GENERATING","reason":"Workstation admitted generation","atUnixMs":g["startedAtUnixMs"]})
     try:
-        if model_id=="r39" and _generate is None and not (payload.get("githubStart") or payload.get("githubAction") or payload.get("verifiedPrivateAnswer") or payload.get("suppliedGitHubReportExplanation")):raise RuntimeError("R39 generator is not installed")
+        if model_id=="r39" and _generate is None and not (payload.get("githubCreateTxtProposal") or payload.get("githubStart") or payload.get("githubAction") or payload.get("verifiedPrivateAnswer") or payload.get("suppliedGitHubReportExplanation")):raise RuntimeError("R39 generator is not installed")
         if model_id=="stock" and _stock_generate is None and not (payload.get("verifiedPrivateAnswer") or payload.get("githubStart") or payload.get("githubAction") or payload.get("suppliedGitHubReportExplanation")):raise RuntimeError("Original HF generator is not installed")
         text=""; completed=False
         cancelled=False
@@ -978,6 +979,17 @@ def _run(key,request_id,model_id,payload,assistant_id):
             event_source=iter(({"type":"DELTA","text":payload["verifiedPrivateAnswer"]},{"type":"COMPLETE"}))
         elif payload.get("suppliedGitHubReportExplanation"):
             event_source=iter(({"type":"DELTA","text":payload["suppliedGitHubReportExplanation"]},{"type":"COMPLETE"}))
+        elif payload.get("githubCreateTxtProposal"):
+            event_source=iter((
+                {"type":"STATUS","phase":"GITHUB_CREATE_TXT_APPROVAL_REQUIRED",
+                 "reason":"Creating a GitHub file requires exact content and explicit owner confirmation."},
+                {"type":"DELTA","text":"I can prepare a new .txt file in **Swrlzing-core**. "
+                 "Open **Test GitHub TXT creation**, enter the filename and exact text, "
+                 "review the preview, and explicitly confirm the GitHub action. "
+                 "Only new files under write-action-tests/ are supported. "
+                 "No file has been created by this message."},
+                {"type":"COMPLETED","phase":"COMPLETE"},
+            ))
         else:
             event_source=(github_connection.start_events(payload["githubStart"])
                           if isinstance(payload.get("githubStart"),dict)
@@ -1645,7 +1657,7 @@ async def send(request:Request):
     route=next((r for r in routes() if r.model_id==model_id),None)
     prompt=body.get("prompt");tid=body.get("threadId");rid=body.get("requestId")
     # GitHub startup is Station-owned evidence retrieval and does not consume a model.
-    if route is None or (not route.available and not (github_connection.is_start_request(prompt) or github_connection.is_github_command(prompt) or github_connection.is_github_conversation(prompt) or github_connection.forge_project_tools_v213.is_conversation(prompt) or github_report_explain_v236.is_report_request(prompt))):
+    if route is None or (not route.available and not (wants_github_text_file_creation(prompt) or github_connection.is_start_request(prompt) or github_connection.is_github_command(prompt) or github_connection.is_github_conversation(prompt) or github_connection.forge_project_tools_v213.is_conversation(prompt) or github_report_explain_v236.is_report_request(prompt))):
         raise HTTPException(422,"Selected model is not configured")
     profile=body.get("profile","")
     user_profile=body.get("userProfile","")
@@ -1806,6 +1818,9 @@ async def send(request:Request):
                 payload["verifiedWorkAnswer"]="Project coordination unavailable. No conclusion about other conversations can be verified."
     elif github_report_explain_v236.is_report_request(prompt):
         payload["suppliedGitHubReportExplanation"]=github_report_explain_v236.explain_supplied_report(prompt)
+    elif wants_github_text_file_creation(prompt):
+        # Never infer GitHub write approval from text; propose the review UI.
+        payload["githubCreateTxtProposal"] = True
     elif github_connection.is_start_request(prompt):
         _, verified_account = _account_session(request)
         payload["githubStart"]={"userId":str((verified_account or {}).get("id") or "")}
