@@ -18,6 +18,8 @@ on:
       - 'tests/test_github_directory_parser_v224.mjs'
       - 'tests/test_github_preview_persistence_v227.mjs'
       - 'tests/test_github_source_report_mobile_v232.mjs'
+      - 'tests/test_chat_source_context_glass_v253.mjs'
+      - 'chat/§wyrlz/index.html'
       - 'tests/test_hf_candidate.py'
       - 'tests/test_archive_grounded_lyric_craft_v182.py'
       - 'training/lyrics/**'
@@ -88,5 +90,7 @@ jobs:
         run: |
           python -m py_compile scripts/prepare_hf_space.py tests/test_chat_mobile_shell_v248.py
           python tests/test_chat_mobile_shell_v248.py
+      - name: v253 verified-source context card and darker glass presentation
+        run: node tests/test_chat_source_context_glass_v253.mjs
       - name: Report scope
         run: echo "Offline checks only. Model reconstruction, inference, HF Space and Chat parity remain unverified."
