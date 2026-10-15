@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.4",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_4_PRISM_FERRET_FIDELITY",
-  "reason": "Final documentation-closure rerun for verified v11.4 ferret-piñata source. First deploy #38729222214 and independent audit #38729291039 both SUCCESS for 74-patch, 30-asset, 2,197,108-byte HTML SHA 40d1e985bd3754b7a2996e6be14056be9c22164995d83b84ad253b4ae7a24658. Router, Engine README, Space README, verification register and Roadmap now mark current hosted release live; unchanged binary/assets. Require fresh terminal deployment and independently audited exact host status.",
-  "sourceCommit": "2fd50379c86f4abbf415ed40dd0a8a467753999c",
-  "sourceIntegritySha256": "40d1e985bd3754b7a2996e6be14056be9c22164995d83b84ad253b4ae7a24658"
+  "releaseVersion": "v11.5",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_5_FESTIVAL_LOFT_ATELIER",
+  "reason": "Owner-authorized guarded §E v11.5 release after PR #175 merge and full 17-suite browser validation success #38769981797; 75 patches, 31 assets, 539-part canonical atelier and spline editor. Require exact hosted artifact and independent audit.",
+  "sourceCommit": "9b216b85b1a8cfd0b406e39117679e51bef777ca",
+  "sourceIntegritySha256": "325f286e0dd3166e34bff57b1e721a6e244089a02cc01d33f8bc3025bace324a"
 }
