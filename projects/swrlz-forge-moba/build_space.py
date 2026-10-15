@@ -105,6 +105,8 @@ def main():
         media_paths.append("scenes/maul-frostveil-groups.swyrl.json")
     if (ROOT / "scenes/maul-frostveil-flight.swyrl.json").exists():
         media_paths.append("scenes/maul-frostveil-flight.swyrl.json")
+    if (ROOT / "scenes/model-atelier-prism-jester.swyrl.json").exists():
+        media_paths.append("scenes/model-atelier-prism-jester.swyrl.json")
     media_paths.extend(p.relative_to(ROOT).as_posix() for p in sorted((ROOT / "assets/anime").glob("*.png")))
     for rel in media_paths:
         source = ROOT / rel

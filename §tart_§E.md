@@ -1,5 +1,13 @@
 # §tart §E — §wyrl§ Engine Build & Deploy Router
 
+## Candidate v11.3 · Native 3D Model Atelier and Prism Jester (source-only)
+
+The new **Projects → Model Atelier · Prism Jester** starter is a separate, editable native `scenes/model-atelier-prism-jester.swyrl.json`, not an overwrite of the 30-wave Frostveil or existing Animation Studio. Its original scene contains **253 individually editable meshes**: layered hat/hair, face details, costume, limbs, and two sweeping segmented coral/cyan forms, inspired by owner-provided reference screenshots. It is an original approximation, **not extracted proprietary game geometry or a pixel-exact replica**.
+
+Model Atelier adds a dedicated responsive WebGL viewport, orbit/touch camera, raycast part selection, XYZ position/rotation/scale editing, shape/color/material controls, adding/duplicating/removing meshes, bounded local undo/redo, validated JSON import/export, and triangulated OBJ export. Its data is stored under `project.modelAtelier` in the standard §E native save envelope. The Scene/project launcher and historical native assets remain preserved. Advanced vertex sculpting, texture painting/UV mapping, bone-rigging, mesh deformation and animation have not been implemented.
+
+**Release status:** [draft PR #167](https://github.com/kaministrator999-ui/Swrlzkamico/pull/167), 73rd additive ordered patch `patches/v11_3_model_atelier.py`, plus one new original scene asset for 29 packaged assets. This is **a candidate only**; require full exact-source CI including new 17th desktop/phone suite, reviewed integration, explicit final `DEPLOY_REQUEST.json` update, terminal dedicated HF deployment and independent hosted SHA/asset audit before calling v11.3 live. The verified current production release remains v11.2 pending that outcome.
+
 **Starter-pack source of truth (verified live v11.2):** The default **Projects → Frostveil Maul** tile now opens the independently authored `scenes/maul-frostveil-flight.swyrl.json` (78 actors, nine builders, 30 rounds) directly, instead of relying on hidden mutations to the older grouped starter. It saves `maulConstruction: walk-v1`, `maulSpawnProtection: full-pad-v1`, `maulBuilderFlight: hover-v1`, and `maulVisualStyle: glacial-v2` inside the native project. Its own package asset is shipped beside the older `scenes/maul-frostveil-groups.swyrl.json` and classic Maul files, never overwriting the earlier scenes. Browser CI must verify that the editor’s default starter is identical in critical profile and builder identity to the downloadable native pack. The v11.2 release passed candidate CI, dedicated deployment, and independent hosted audit.
 
 ## Current verified v11.2 · Hover construction and glacial battlefield polish
