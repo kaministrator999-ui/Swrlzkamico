@@ -67,6 +67,10 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+# Supersede obsolete validation for the same branch or PR without cancelling release deployment.
+concurrency:
+  group: swyrl-engine-browser-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 jobs:
   browser:
     name: browser (${{ matrix.suite }})
