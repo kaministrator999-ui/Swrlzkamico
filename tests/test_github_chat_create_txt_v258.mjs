@@ -1,8 +1,10 @@
 'use strict';
-const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const vm = require('node:vm');
-const path = require('node:path');
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import vm from 'node:vm';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+const __dirname=path.dirname(fileURLToPath(import.meta.url));
 
 const file = path.join(__dirname,'../hf_space/chat/§wyrlz/assets/github-chat-create-txt-v258.js');
 const source = fs.readFileSync(file,'utf8');
