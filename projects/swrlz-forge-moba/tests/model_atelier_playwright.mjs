@@ -15,34 +15,44 @@ try{
     page.on('pageerror',e=>faults.push(String(e)));
     await page.goto(base+'/?project=model-atelier',{waitUntil:'domcontentloaded',timeout:60000});
     await page.locator('#modelAtelierPanel:not([hidden]) canvas').waitFor({timeout:30000});
-    await page.waitForFunction(()=>window.SWYRL_ENGINE_MODEL_ATELIER?.status().count===253,{timeout:20000});
+    await page.waitForFunction(()=>window.SWYRL_ENGINE_MODEL_ATELIER?.status().count===303,{timeout:20000});
     let state=await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.status());
-    assert.equal(state.active,true);assert.equal(state.open,true);assert.equal(state.count,253);
+    assert.equal(state.active,true);assert.equal(state.open,true);assert.equal(state.count,303);
     assert.equal(await page.locator('[data-project-template="model-atelier"]').count(),1,'Starter card missing');
     assert.equal(await page.locator('#modelAtelierParts option').count(),253,'Not individually editable meshes');
     assert.equal(await page.locator('#modelAtelierPanel canvas').isVisible(),true,'3D viewport hidden');
     assert.equal(await page.locator('#modelAtelierPartCount').isVisible(),true);
+    const geometryProof=await page.evaluate(()=>{
+      const m=window.SWYRL_ENGINE_AGENT.inspectScene().project.modelAtelier;
+      return {lofts:m.parts.filter(p=>p.kind==='loft').length,
+              headNames:m.parts.filter(p=>p.name.includes('ferret · velvet head')).length,
+              profile:m.parts.filter(p=>p.kind==='loft').map(p=>[p.path.length,p.radii.length])};
+    });
+    assert.equal(geometryProof.lofts,2,'Missing curved creature bodies');
+    assert.equal(geometryProof.headNames,2,'Ferret heads failed to load');
+    assert(geometryProof.profile.every(([p,r])=>p===r&&p>=8),'Loft control points lost');
+
     await page.locator('#modelAtelierParts').selectOption({index:5});
     await page.locator('#modelAtelierColor').fill('#6dd5ff');
     await page.locator('#modelAtelierColor').dispatchEvent('change');
     await page.locator('#modelAtelierposition0').fill('1.4');
     await page.locator('#modelAtelierposition0').dispatchEvent('change');
     await page.locator('#modelAtelierDuplicate').click();
-    assert.equal((await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.status())).count,254);
+    assert.equal((await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.status())).count,304);
     await page.locator('#modelAtelierUndo').click();
-    assert.equal((await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.status())).count,253);
+    assert.equal((await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.status())).count,303);
     await page.locator('#modelAtelierRedo').click();
-    assert.equal((await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.status())).count,254);
+    assert.equal((await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.status())).count,304);
     const nativeSave=await page.evaluate(()=>window.SWYRL_ENGINE_AGENT.inspectScene());
     assert.equal(nativeSave.project.kind,'model-atelier','Native project identity lost');
-    assert.equal(nativeSave.project.modelAtelier.parts.length,254,'Native save lost edited meshes');
+    assert.equal(nativeSave.project.modelAtelier.parts.length,304,'Native save lost edited meshes');
     await page.locator('#modelAtelierClose').click();
     await page.evaluate(data=>window.SWYRL_ENGINE_AGENT.loadScene(data),nativeSave);
     await page.locator('#modelAtelierReopen').click();
-    assert.equal((await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.status())).count,254,'Native load lost edited meshes');
-    await page.locator('#modelAtelierParts').selectOption({index:253});
+    assert.equal((await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.status())).count,304,'Native load lost edited meshes');
+    await page.locator('#modelAtelierParts').selectOption({index:303});
     await page.locator('#modelAtelierDelete').click();
-    assert.equal((await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.status())).count,253);
+    assert.equal((await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.status())).count,303);
     await page.locator('#modelAtelierOBJ').click();
     await page.locator('#modelAtelierExport').click();
     await page.locator('#modelAtelierResetCamera').click();
@@ -53,7 +63,7 @@ try{
     assert.equal((await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.status())).open,true);
     assert.equal(faults.length,0,'JavaScript runtime errors: '+JSON.stringify(faults));
     console.log('MODEL_ATELIER_CASE_PASS '+mode.name+' registered-native-starter');
-    console.log('MODEL_ATELIER_CASE_PASS '+mode.name+' 3d-viewport-and-253-meshes');
+    console.log('MODEL_ATELIER_CASE_PASS '+mode.name+' 3d-viewport-and-303-meshes');
     console.log('MODEL_ATELIER_CASE_PASS '+mode.name+' color-position-duplicate-history-delete');
     console.log('MODEL_ATELIER_CASE_PASS '+mode.name+' export-reopen');
     await context.close();
