@@ -125,6 +125,13 @@
        const receipt=await post("confirm-create",{approvalToken,approved:true});
        if(!receipt.ok||!receipt.verified)throw Error("Write not verified.");
        status.textContent="Created and verified: "+receipt.path+" · Commit: "+receipt.commitSha;
+       if(receipt.widget&&window.SwrlzGithubWorkView?.render){
+         const visual=node("div");
+         visual.className="github-general-work-receipt";
+         if(window.SwrlzGithubWorkView.render(visual,receipt.widget)){
+           form.insertBefore(visual,buttons);
+         }
+       }
        if(typeof receipt.url==="string"&&/^https:\/\/github\.com\/kaministrator999-ui\//.test(receipt.url)){
          status.append(node("a",{href:receipt.url,target:"_blank",rel:"noopener noreferrer",text:" View file"}));
        }
