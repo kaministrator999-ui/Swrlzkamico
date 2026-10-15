@@ -94,7 +94,7 @@ jobs:
           output=source.encode("utf-8")
           print("CINEMATIC_BYTES="+str(len(output)))
           print("CINEMATIC_SHA256="+hashlib.sha256(output).hexdigest())
-          assert len(manifest["patches"])==76
+          assert len(manifest["patches"])==77
           assert manifest['patches'][-1]=='patches/v11_7_layered_pinata_sculpt.py'
           print('UNSEALED_V11_4_CANDIDATE_BYTES='+str(len(output)),flush=True)
           print('UNSEALED_V11_4_CANDIDATE_SHA256='+hashlib.sha256(output).hexdigest(),flush=True)
