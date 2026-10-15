@@ -1,6 +1,6 @@
 ID=server-runtime
-VERSION=2.3.410
-REVISION=2.3.410-hf-v259-direct-test-txt
+VERSION=2.3.411
+REVISION=2.3.411-hf-v260-github-work-summary
 KIND=server-runtime
 SOURCE_BRANCH=runtime
 STATUS=active
