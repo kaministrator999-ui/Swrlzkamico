@@ -1,0 +1,115 @@
+/* v261 · AI workspace, not a left-indented person-to-person messenger.
+   Applies to assistant output surfaces only. User input bubbles remain distinct.
+   Keep a small safe edge inset; do not sacrifice readable interior padding. */
+:root{--swrlz-response-edge:clamp(6px,1.1vw,16px)}
+.chat-viewport{
+  padding-left:max(var(--swrlz-response-edge),env(safe-area-inset-left,0px))!important;
+  padding-right:max(var(--swrlz-response-edge),env(safe-area-inset-right,0px))!important;
+}
+.chat-viewport .message-list{
+  width:100%!important;
+  max-width:none!important;
+  min-width:0;
+  margin-inline:0!important;
+  padding-inline:0!important;
+  box-sizing:border-box;
+}
+.message-list>.assistant-message,
+.message-list>.station-live-message{
+  width:100%!important;
+  max-width:none!important;
+  min-width:0;
+  margin-inline:0!important;
+  align-self:stretch;
+  box-sizing:border-box;
+}
+.assistant-message .assistant-head,
+.station-live-message .assistant-head{
+  max-width:100%;
+  box-sizing:border-box;
+}
+.assistant-message .assistant-body,
+.station-live-message .assistant-body{
+  display:block;
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0;
+  margin-left:0!important;
+  margin-right:0!important;
+  box-sizing:border-box!important;
+  border-radius:12px!important; /* neutral AI output panel, no speech-bubble tail */
+  overflow-wrap:anywhere;
+}
+.assistant-message .message-widget-stack,
+.station-live-message .message-widget-stack{
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0;
+  margin:8px 0 4px!important;
+  box-sizing:border-box;
+}
+.assistant-message .swrlz-widget,
+.station-live-message .swrlz-widget{
+  width:100%;
+  max-width:100%;
+  min-width:0;
+  box-sizing:border-box;
+}
+.assistant-message .message-evidence,
+.station-live-message .message-evidence,
+.assistant-message .station-activity,
+.station-live-message .station-activity,
+.assistant-message .station-progress,
+.station-live-message .station-progress,
+.assistant-message .station-online-trail,
+.station-live-message .station-online-trail,
+.assistant-message .assistant-actions,
+.station-live-message .assistant-actions{
+  margin-left:0!important;
+  margin-right:0!important;
+  max-width:100%!important;
+  box-sizing:border-box;
+}
+.assistant-message .github-work-dashboard,
+.station-live-message .github-work-dashboard,
+.assistant-message .github-source-card,
+.station-live-message .github-source-card{
+  width:100%;
+  max-width:100%;
+  min-width:0;
+  box-sizing:border-box;
+}
+/* The work receipt already includes its own heading, verification and frame.
+   Avoid duplicating the generic widget heading and two nested frames. */
+.swrlz-widget.github-work{
+  border:0;
+  border-radius:0;
+  background:transparent;
+  box-shadow:none;
+  overflow:visible;
+}
+.swrlz-widget.github-work>.widget-head{display:none}
+.swrlz-widget.github-work .github-work-dashboard{margin:0}
+/* Source/code/markdown retain their own semantics and vertical rhythm.
+   Only prevent their long contents from pushing the whole viewport sideways. */
+.assistant-message .assistant-body .message-text,
+.assistant-message .assistant-body .prose-container,
+.assistant-message .assistant-body .code-artifact,
+.assistant-message .assistant-body .code-block,
+.assistant-message .assistant-body .md-table-scroll{
+  min-width:0;
+  max-width:100%;
+  box-sizing:border-box;
+}
+@media(max-width:600px){
+  .assistant-message .assistant-body,
+  .station-live-message .assistant-body{
+    padding:10px 11px!important;
+  }
+  .assistant-message .message-widget-stack,
+  .station-live-message .message-widget-stack{margin-top:7px!important}
+}
+@media(min-width:1200px){
+  .assistant-message .assistant-body,
+  .station-live-message .assistant-body{padding:16px 20px!important}
+}
