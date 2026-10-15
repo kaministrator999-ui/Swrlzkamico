@@ -33,6 +33,13 @@ try{
     assert.equal((await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.status())).count,253);
     await page.locator('#modelAtelierRedo').click();
     assert.equal((await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.status())).count,254);
+    const nativeSave=await page.evaluate(()=>window.SWYRL_ENGINE_AGENT.inspectScene());
+    assert.equal(nativeSave.project.kind,'model-atelier','Native project identity lost');
+    assert.equal(nativeSave.project.modelAtelier.parts.length,254,'Native save lost edited meshes');
+    await page.locator('#modelAtelierClose').click();
+    await page.evaluate(data=>window.SWYRL_ENGINE_AGENT.loadScene(data),nativeSave);
+    await page.locator('#modelAtelierReopen').click();
+    assert.equal((await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.status())).count,254,'Native load lost edited meshes');
     await page.locator('#modelAtelierDelete').click();
     assert.equal((await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.status())).count,253);
     await page.locator('#modelAtelierOBJ').click();
