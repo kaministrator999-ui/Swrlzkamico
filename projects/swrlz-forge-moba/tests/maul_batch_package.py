@@ -64,6 +64,7 @@ def main():
     flight_meta=receipt['assets'][FLIGHT_SCENE]
     require(len(flight_raw)==flight_meta['bytes'] and hashlib.sha256(flight_raw).hexdigest()==flight_meta['sha256'], 'flight starter source differs from packaged bytes')
     flight=json.loads(flight_raw)
+    require(flight['engine']=='§wyrl§ Engine · Maker v11.2' and flight['version']==11.2, 'flying native starter file carries a stale engine version')
     require(flight['project']['maulBuilderFlight']=='hover-v1' and flight['project']['maulVisualStyle']=='glacial-v2', 'flying starter profile missing from native scene')
     require(flight['project']['maulConstruction']=='walk-v1' and flight['project']['maulSpawnProtection']=='full-pad-v1', 'flying starter lost construction safety')
     require(flight['scene']==old_scene['scene'] and flight['editor']==old_scene['editor'], 'flight pack changed 78 authored map actors or editor layers')
