@@ -1,5 +1,13 @@
 # §wyrl§ Engine · Roadmap
 
+## UPDATE CONTINUATION STARTED — v11.4 production deployment and audit (2026-10-15 CDT)
+
+**Source and acceptance closure:** [PR #171](https://github.com/kaministrator999-ui/Swrlzkamico/pull/171) merged at `0540cfbfc29129548941881f659f26a767038ed3` on latest main, preserving earlier patch and native model assets. [Full 17/17 browser matrix](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38680364328) and all five source/cinematic/cel/staging candidate validations completed SUCCESS against exact sealed candidate `b6d43100279232ea4c660df8c1cf0e6781a1437d`.
+
+**Identity/integrity:** `§wyrl§ Engine v11.4`, `V11_4_PRISM_FERRET_FIDELITY`, 74 ordered patches, 30 bundled assets, 2,197,108 bytes, SHA-256 `40d1e985bd3754b7a2996e6be14056be9c22164995d83b84ad253b4ae7a24658`. The default Model Atelier native sample now opens 303 selectable parts and two tapered ferret-piñata bodies with separated heads, while the previous 253-part version remains packaged. Not a pixel-perfect game asset nor advanced sculpt/UV/rigging/animation claim.
+
+**Final release boundary:** docs `§tart_§E.md`, Engine README, Space README, verification ledger, and this roadmap synchronized to **source merged / deployment pending**. Change only the dedicated `DEPLOY_REQUEST.json` last on main, await terminal dedicated deploy SUCCESS and separately triggered independent hosted verification SUCCESS before calling new v11.4 live. After publication, reconcile source/host receipts and if required use the final dedicated documentation-close deploy button again. Preserve all historical game starters and do not trigger Chat Space deployment.
+
 ## UPDATE STARTED — v11.4 Prism Jester ferret-piñata fidelity (2026-10-14 CDT)
 
 **Observed owner feedback:** the published v11.3 screenshot is recognizable but too primitive/round, and the apparent large pigtails are **two ferret-like piñata creatures physically gripping the pigtails**, not rigid hair tubes. The owner provided additional screenshots but explicitly kept the original cyan/coral carnival skin as the main target; other skins serve only as material/face-quality examples.
