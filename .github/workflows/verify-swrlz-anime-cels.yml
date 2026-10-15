@@ -137,8 +137,8 @@ jobs:
           assert receipt['finalBytes']==manifest['finalBytes']
           assert receipt['finalSha256']==manifest['finalSha256']
           assert receipt['patches']==manifest['patches']
-          assert len(receipt['patches'])==74
-          assert receipt['patches'][-1]=='patches/v11_4_prism_ferret_fidelity.py'
+          assert len(receipt['patches'])==75
+          assert receipt['patches'][-1]=='patches/v11_5_festival_loft_atelier.py'
           expected={'episodes/ghosts-in-different-forms-ep01.html',
                     'scenes/ghosts-in-different-forms-ep01.swyrl.json',
                     'scenes/ghosts-in-different-forms-ep01-storybook.swyrl.json',
@@ -163,7 +163,7 @@ jobs:
               'mage-faces-painted','kami-full-staff'))
           assert {p.relative_to(root).as_posix() for p in (root/'assets/anime').glob('*.png')}=={p for p in expected if p.endswith('.png')}
           assert set(receipt['assets'])==expected
-          assert len(receipt['assets'])==30
+          assert len(receipt['assets'])==31
           maul=json.loads((out/'scenes/maul-frostveil.swyrl.json').read_text())
           assert maul['project']['canonicalId']=='maul-frostveil'
           assert maul['project']['kind']=='maul'
