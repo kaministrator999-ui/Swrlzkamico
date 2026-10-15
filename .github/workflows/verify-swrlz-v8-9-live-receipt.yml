@@ -120,6 +120,8 @@ jobs:
               expected_assets.add('scenes/maul-frostveil-classic.swyrl.json')
           if 'scenes/maul-frostveil-groups.swyrl.json' in source_paths:
               expected_assets.add('scenes/maul-frostveil-groups.swyrl.json')
+          if 'scenes/maul-frostveil-flight.swyrl.json' in source_paths:
+              expected_assets.add('scenes/maul-frostveil-flight.swyrl.json')
           expected_assets.update(path for path in source_paths if path.startswith('assets/anime/') and path.endswith('.png'))
           assert set(receipt['assets'])==expected_assets,'Bundled asset set differs from committed source'
           for path,meta in receipt['assets'].items():
@@ -134,6 +136,14 @@ jobs:
               if path=='scenes/maul-frostveil-groups.swyrl.json':
                   import runpy
                   runpy.run_path(engine+'/tests/maul_batch_package.py')['validate_scene'](json.loads(data))
+              if path=='scenes/maul-frostveil-flight.swyrl.json':
+                  scene=json.loads(data)
+                  assert scene['engine']=='§wyrl§ Engine · Maker v11.2' and scene['version']==11.2,'Wrong live native Maul starter engine'
+                  project=scene['project']
+                  assert project['maulBuilderFlight']=='hover-v1' and project['maulVisualStyle']=='glacial-v2','Live Maul starter lacks flying/glacial profiles'
+                  assert project['maulSpawnProtection']=='full-pad-v1' and project['maulConstruction']=='walk-v1','Live Maul starter construction safety changed'
+                  import runpy
+                  runpy.run_path(engine+'/tests/maul_batch_package.py')['validate_scene'](scene)
               if path=='scenes/ghosts-in-different-forms-ep01-performance.swyrl.json':
                   import runpy
                   runpy.run_path(engine+'/tests/episode_performance_package.py')['validate_scene'](json.loads(data))
