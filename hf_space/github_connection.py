@@ -2230,3 +2230,62 @@ async def confirm_general_file(request: Request):
         return JSONResponse({"ok": False, "code": "INVALID_CONFIRMATION"}, status_code=422)
     except CreateFileError as exc:
         return JSONResponse({"ok": False, "code": exc.code}, status_code=exc.status)
+
+
+
+# v263 · GitHub atomic file rename/move, never an implicit edit/delete grant.
+@router.get("/api/github/files/rename-status")
+def rename_file_status(request: Request):
+    from github_general_create_v262 import _authorize, CreateFileError, ALLOWED_REPOS
+    user_id = _google(request)
+    try:
+        access = _authorize(user_id)
+        return {"linked": True, "allowed": True, "repo": access["repo"],
+                "branch": access["branch"], "operation": "RENAME_FILE",
+                "atomic": True, "overwrite": False,
+                "authorization": "per-file-confirmation"}
+    except CreateFileError as exc:
+        record = _load(_config(), user_id)
+        return {"linked": bool(record), "allowed": False,
+                "repo": record.get("repo") if record else None,
+                "operation": "RENAME_FILE", "atomic": True, "overwrite": False,
+                "reason": exc.code,
+                "authorizeUrl": ("/api/github/start?access=public-write"
+                    if exc.code == "GITHUB_WRITE_SCOPE_REQUIRED"
+                    and record and record.get("repo") in ALLOWED_REPOS else None)}
+
+
+@router.post("/api/github/files/prepare-rename")
+async def prepare_file_rename(request: Request):
+    from github_rename_v263 import prepare, CreateFileError
+    user_id = _google(request)
+    _origin_guard(request, _config())
+    try:
+        body = await request.json()
+        if not isinstance(body, dict):
+            raise CreateFileError("INVALID_RENAME_PROPOSAL", 422)
+        return prepare(user_id, body.get("sourcePath"), body.get("destinationPath"))
+    except (ValueError, TypeError):
+        return JSONResponse({"ok": False, "code": "INVALID_RENAME_PROPOSAL"}, status_code=422)
+    except CreateFileError as exc:
+        return JSONResponse({"ok": False, "code": exc.code}, status_code=exc.status)
+
+
+@router.post("/api/github/files/confirm-rename")
+async def confirm_file_rename(request: Request):
+    from github_rename_v263 import confirm, CreateFileError
+    user_id = _google(request)
+    _origin_guard(request, _config())
+    try:
+        body = await request.json()
+        if not isinstance(body, dict):
+            raise CreateFileError("INVALID_RENAME_CONFIRMATION", 422)
+        receipt = confirm(user_id, body.get("approvalToken"), body.get("approved"))
+        if receipt.get("verified"):
+            from github_rename_receipt_v263 import make_rename_widget
+            receipt["widget"] = make_rename_widget(receipt)
+        return receipt
+    except (ValueError, TypeError):
+        return JSONResponse({"ok": False, "code": "INVALID_RENAME_CONFIRMATION"}, status_code=422)
+    except CreateFileError as exc:
+        return JSONResponse({"ok": False, "code": exc.code}, status_code=exc.status)
