@@ -80,5 +80,9 @@ jobs:
           node tests/test_source_guide_cards_v245.mjs
       - name: v246 Copy original source fidelity regression
         run: node tests/test_source_copy_v246.mjs
+      - name: v247 GitHub natural-language file-view routing regression
+        run: |
+          python -m py_compile hf_space/brain_programming.py hf_space/github_read_inference_v235.py hf_space/test_github_repo_view_v247.py
+          python hf_space/test_github_repo_view_v247.py
       - name: Report scope
         run: echo "Offline checks only. Model reconstruction, inference, HF Space and Chat parity remain unverified."
