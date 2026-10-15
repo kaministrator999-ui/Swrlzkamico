@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.8",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_8_TWISTED_SCULPT_STUDIO",
-  "reason": "Owner-approved §E v11.8 Model Atelier and original editable 749-part character starter, rear-origin 36-slice twisted ferret surfaces, continuous anatomical lofts and functioning mirror/fringe/limb/spline controls; historical assets preserved. PR #183 merged as 9353a4a, exact candidate v11.8 fully validated in 23/23 CI checks (including desktop/mobile functional regression). Governed source: 78 patches, 34 native assets, 2,318,719 HTML bytes SHA256 600e34f09d6a29ce8484a4f84bd5c25b79a707cd43a1320a1a5c6c6d0417ffbf. Require successful protected production deploy and independent hosted digest/assets audit. Owner visual acceptance remains separate.",
-  "sourceCommit": "9353a4acb1527f28f6f6ef6d3f099afef4a5cf48",
-  "sourceIntegritySha256": "600e34f09d6a29ce8484a4f84bd5c25b79a707cd43a1320a1a5c6c6d0417ffbf"
+  "releaseVersion": "v11.9",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_9_FERRET_FIGURE_ATELIER",
+  "reason": "Owner-directed v11.9 Model Atelier refinement from approved cyan/coral carnival mage reference: 811 individually editable native parts; two separate ferret piñata creatures with 36-tier paper geometry, tapered S-arc bodies and distinct gripping heads; continuous torso, neck and long anatomical limbs; eight editable fabric drapes, hands, shoes and festival bunny; mobile viewport improvements. Historic starter scenes preserved. PR #187 merged as a7e169333b1cacb4f95f47f487d31ad8e66bdddc. All 23/23 PR checks passed, including desktop/mobile model authoring and historical regressions. Governed source 79 patches, 35 native assets, 2,335,886 HTML bytes, SHA-256 987f074e111420126715142da652d4907c7d1a0e493215ee9784e35da48966dd. Production success and exact hosted source/assets audit must be independently verified; owner visual acceptance remains separate. No rigged bones, animation, UV paint or extracted game asset claimed.",
+  "sourceCommit": "a7e169333b1cacb4f95f47f487d31ad8e66bdddc",
+  "sourceIntegritySha256": "987f074e111420126715142da652d4907c7d1a0e493215ee9784e35da48966dd"
 }
