@@ -1,8 +1,8 @@
-name: Verify v11.7 §E source seal
+name: Verify v11.8 §E source seal
 on:
   push:
     branches:
-      - feature/engine-v117-segmented-pinata-sculpt
+      - feature/engine-v118-sculpt-path-and-atelier-tools
   workflow_dispatch:
 jobs:
   seal:
@@ -15,7 +15,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Reconstruct and print exact v11.7 SHA
+      - name: Reconstruct and print exact v11.8 SHA
         shell: bash
         run: |
           python - <<'PY'
@@ -33,7 +33,7 @@ jobs:
           raw=html.encode('utf-8')
           print('V117_FINAL_BYTES='+str(len(raw)),flush=True)
           print('V117_FINAL_SHA256='+hashlib.sha256(raw).hexdigest(),flush=True)
-          assert 'V11_7_STACKED_PINATA_SCULPT' in html
+          assert 'V11_8_TWISTED_SCULPT_STUDIO' in html
           assert 'modelAtelierLoftEditor' in html
           assert 'MODEL_ATELIER_LIMIT=1200' in html
           assert 'atelier-v117-0554' in html
