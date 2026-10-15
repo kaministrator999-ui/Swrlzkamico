@@ -1,6 +1,6 @@
 ID=server-runtime
-VERSION=2.3.402
-REVISION=2.3.402-hf-v249-dragon-chat57-file-read
+VERSION=2.3.403
+REVISION=2.3.403-hf-v250-root-followup-topic-clarity
 KIND=server-runtime
 SOURCE_BRANCH=runtime
 STATUS=active
