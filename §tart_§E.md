@@ -15,7 +15,11 @@
 **Truth and release status:** distinguish requested, source edited, tests pass, merged, deploy triggered, deploy succeeded, independently audited live, and visually accepted. If a blocker remains, name the failing gate and continue working when tools allow; do not claim finished early.
 
 
-## v11.5 candidate · Festival Model Atelier — release pending
+## Current project: §wyrl§ Engine v11.6 — visual/mobile candidate (not deployed)
+
+Owner screenshots of **live v11.5** established the correct 539-mesh release but exposed flat piñata reverse surfaces, thin angular loft silhouette, underdeveloped face/back detail, tiny default model framing and excessive empty mobile workspace. The **separate v11.6 candidate** includes native 653-editable-part festival scene and a compact mobile viewport/inspector stylesheet. Its measured source seal is **2,279,438 bytes / SHA-256 `d5f8dce1cbaf221a9f03719f99d53a10b26c6a68fc980ccd38359c4cbbb3a6d0`** with 76 governed patches and 32 native assets. Test and screenshot review are required; do not call v11.6 live until dedicated deploy succeeds and independently hosted audit confirms exact source. Historical v11.5 source verification notes below must not override this current release state.
+
+## Historical v11.5 candidate · now deployed successfully 2026-10-15
 
 The new 539-part original festival character variant keeps historical 253- and 303-part editable native scenes intact. The 75th governed patch adds editable loft path/radius control, raises the Model Atelier capacity to 1,200 parts and JSON import allowance to 8 MB; the new native variant is packaged independently. The exact candidate rebuilt in GitHub Actions [#38747495949](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38747495949) at 2,253,004 HTML bytes, SHA-256 `325f286e0dd3166e34bff57b1e721a6e244089a02cc01d33f8bc3025bace324a`, marker `V11_5_FESTIVAL_LOFT_ATELIER`. **This is source candidate evidence, not a hosted v11.5 deployment confirmation.** Full legacy browser CI, integration review, final §E manual trigger, independent hosted audit and owner visual acceptance are distinct gates. Previous v11.4 production receipts below remain historical evidence.
 
