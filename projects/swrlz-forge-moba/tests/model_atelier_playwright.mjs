@@ -45,7 +45,7 @@ try{
     assert.equal((await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.status())).count,540);
     const nativeSave=await page.evaluate(()=>window.SWYRL_ENGINE_AGENT.inspectScene());
     assert.equal(nativeSave.project.kind,'model-atelier','Native project identity lost');
-    assert.equal(nativeSave.project.modelAtelier.parts.length,304,'Native save lost edited meshes');
+    assert.equal(nativeSave.project.modelAtelier.parts.length,540,'Native save lost edited meshes');
     await page.locator('#modelAtelierClose').click();
     await page.evaluate(data=>window.SWYRL_ENGINE_AGENT.loadScene(data),nativeSave);
     await page.locator('#modelAtelierReopen').click();
