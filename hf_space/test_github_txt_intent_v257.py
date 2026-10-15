@@ -5,7 +5,6 @@ import unittest
 
 sys.path.insert(0,str(Path(__file__).resolve().parent))
 from github_txt_intent_v256 import wants_github_text_file_creation
-from github_txt_intent_v256 import wants_github_text_file_creation
 
 
 class ExternalCreateRoutingTest(unittest.TestCase):
