@@ -132,8 +132,8 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
   await page.locator('#perfPreset').selectOption('medium',{force:true});await page.evaluate(()=>window.__sheepRunClock.freeze());await frames(page,2);
   assert.equal(await page.evaluate(()=>window.SWYRL_ENGINE_BUILD.version),'v11.3');const canonical=await saved(page);assert.equal(canonical.version,11.3);
   const sourceResponse=await context.request.get(base+'/SOURCE.json');assert.equal(sourceResponse.ok(),true);const source=await sourceResponse.json();
-  assert.match(source.sourceVersion,/v11\.2/);assert.equal(source.patches.length,72);assert.equal(source.patches.at(-1),'patches/v11_2_maul_flight_glacial_art.py');
-  assert.equal(Object.keys(source.assets).length,28,'Unexpected bundled starter/media asset set');
+  assert.match(source.sourceVersion,/v11\.3/);assert.equal(source.patches.length,73);assert.equal(source.patches.at(-1),'patches/v11_3_model_atelier.py');
+  assert.equal(Object.keys(source.assets).length,29,'Unexpected bundled starter/media asset set');
   const htmlResponse=await context.request.get(base+'/index.html');assert.match(await htmlResponse.text(),/V11_3_MODEL_ATELIER_PRISM_JESTER/);
   assert.equal(canonical.scene.actors.length,92,'Archive map changed');const pieces=await prototypes(page,canonical),map=fixture(canonical,pieces);
   if(!process.env.SWYRL_RUN_GENERIC_ONLY){
