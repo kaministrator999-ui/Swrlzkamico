@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.3
+title: §wyrl§ Engine v11.4
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -10,13 +10,13 @@ header: mini
 short_description: Maul, Sheep Tag, paper theatre, Dragon Den and Starforge
 ---
 
-## v11.4 source candidate · Prism Jester ferret-piñata fidelity (not deployed)
+## v11.4 source verified · Prism Jester ferret-piñata fidelity (release pending)
 
 **Owner direction:** stay on the original cyan/coral **carnival mage** concept. The apparent oversized pigtails are **two living ferret-like paper piñatas biting/holding the real pigtails**—separate muzzle, ears, eyes, paws, and gracefully arched paper bodies—not just curved hair tubes. Other skins are material/render references only.
 
 A separate native **303-part** model variant at `scenes/model-atelier-prism-jester-ferret-v11-4.swyrl.json` replaces only the default Model Atelier sample at Projects; the original 253-part v11.3 scene remains packaged for historical import. Append-only `patches/v11_4_prism_ferret_fidelity.py` adds two smooth variable-radius editable `loft` meshes with paper fringe, improved facial layers and costume detail; engine runtime defaults and existing Maul/Sheep/anime starter saves remain preserved. `reports/PRISM_JESTER_FERRET_ART_DIRECTION.md` contains the comparison criteria, implementation notes, official Blender/Three.js learning references and limitations.
 
-**Status:** source-only draft [PR #171](https://github.com/kaministrator999-ui/Swrlzkamico/pull/171), not yet merged or published. Exact source hash, 74 ordered patches, 30 assets, desktop/phone tests, older starter regressions, review, dedicated final deploy and independent hosted audit are required before any production success claim. This is a fidelity study, **not** an exact extracted hero mesh or a completed sculpt/UV/rig/animation suite.
+**Source verified; deployment pending:** [PR #171](https://github.com/kaministrator999-ui/Swrlzkamico/pull/171) merged at `0540cfbfc29129548941881f659f26a767038ed3` after [17/17 desktop and phone browser suites passed](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38680364328) and all five candidate workflows passed ([authored source](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38680364335), [cinematic](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38680364400), [cels](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38680364349), [staging](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38680364326), plus browser matrix). Sealed `V11_4_PRISM_FERRET_FIDELITY`: 74 patches, 30 assets, 2,197,108 bytes, SHA-256 `40d1e985bd3754b7a2996e6be14056be9c22164995d83b84ad253b4ae7a24658`. Production is still v11.3 until dedicated deployment and independent hosted audit succeed. This remains a procedural fidelity study, **not** an exact extracted game mesh or completed sculpt/UV/rig/animation suite.
 
 # §wyrl§ Engine · Maker v11.3
 
