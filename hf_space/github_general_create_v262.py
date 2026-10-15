@@ -164,9 +164,11 @@ def confirm(user_id, approval_token, approved):
     if not isinstance(approval_token, str) or not approval_token:
         raise CreateFileError("INVALID_APPROVAL_TOKEN", 422)
     with _lock:
-        item = _pending.pop(approval_token, None)  # Consume before any network call.
-    if not item or item["expires"] < time.monotonic() or item["userId"] != user_id:
-        raise CreateFileError("APPROVAL_EXPIRED_OR_WRONG_ACCOUNT", 403)
+        item = _pending.get(approval_token)
+        if not item or item["expires"] < time.monotonic() or item["userId"] != user_id:
+            raise CreateFileError("APPROVAL_EXPIRED_OR_WRONG_ACCOUNT", 403)
+        # Wrong accounts cannot consume a different user's pending approval.
+        _pending.pop(approval_token, None)  # Consume before any network call.
     if approved is not True:
         return {"ok": False, "code": "USER_DECLINED"}
     auth = _authorize(user_id, item["repo"])
