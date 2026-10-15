@@ -1,8 +1,8 @@
-name: Verify v11.5 §E source seal
+name: Verify v11.6 §E source seal
 on:
   push:
     branches:
-      - feature/forge-model-atelier-spline-fidelity-v11-5
+      - feature/engine-v116-mobile-and-festival-shape
   workflow_dispatch:
 jobs:
   seal:
@@ -15,7 +15,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Reconstruct and print exact v11.5 SHA
+      - name: Reconstruct and print exact v11.6 SHA
         shell: bash
         run: |
           python - <<'PY'
@@ -33,10 +33,10 @@ jobs:
           raw=html.encode('utf-8')
           print('V115_FINAL_BYTES='+str(len(raw)),flush=True)
           print('V115_FINAL_SHA256='+hashlib.sha256(raw).hexdigest(),flush=True)
-          assert 'V11_5_FESTIVAL_LOFT_ATELIER' in html
+          assert 'V11_6_MULTIVIEW_FESTIVAL_ATELIER' in html
           assert 'modelAtelierLoftEditor' in html
           assert 'MODEL_ATELIER_LIMIT=1200' in html
-          assert 'atelier-v115-0236' in html
+          assert 'v116-0540' in html
           from pathlib import Path
           Path('/tmp/swyrl-v115-source.mjs').write_text(html[html.index('<script type="module">')+len('<script type="module">'):html.rindex('</script>')])
           PY
