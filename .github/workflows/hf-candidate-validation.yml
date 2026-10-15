@@ -74,5 +74,9 @@ jobs:
         run: |
           python -m py_compile hf_space/github_connection.py hf_space/test_github_info_help_v244.py
           python hf_space/test_github_info_help_v244.py
+      - name: v245 mobile guide presentation and source-fidelity regression
+        run: |
+          node --check 'chat/§wyrlz/assets/source-guides-v245.js'
+          node tests/test_source_guide_cards_v245.mjs
       - name: Report scope
         run: echo "Offline checks only. Model reconstruction, inference, HF Space and Chat parity remain unverified."
