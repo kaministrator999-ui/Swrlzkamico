@@ -1,6 +1,25 @@
 # §tart §E — §wyrl§ Engine Build & Deploy Router
 
-## v11.5 candidate · Festival Model Atelier — release pending
+## Active owner workflow contract — §E (2026-10-15)
+
+**Entry rule:** When owner reports a defect, supplies screenshots, or approves work, do the authorized scoped change in this session where tools permit. Do not stop after a plan, handoff, diagnosis, or recommendation. Read this router and the governed source manifest; identify actual code/artifact and live deployment state. Repeat tool calls as needed within available limits, and report genuine connector limits rather than pretending a build deployed.
+
+**Completion loop:** observe → isolate → modify narrowly → test targeted code and visual behavior → run necessary regression suite → merge validated work → edit only the dedicated `projects/swrlz-forge-moba/DEPLOY_REQUEST.json` as the **last main mutation** → wait for terminal deploy result → independently audit exact served HTML hash, native asset list, and production behavior → review owner's front/side/back screenshots and continue corrections if acceptance fails. A green workflow, branch commit, merged PR, or mesh count alone is *never* equivalent to visual or live acceptance.
+
+**Release efficiency:** batch logically related changes; avoid a new PR or tiny CI-triggering commit for every discovery. Centralize version/patch/asset expectations. Use branch-level concurrency cancellation for superseded *validation* only; never cancel a production release. Run cheap syntax, scene schema and editor checks before expensive browser matrix. Reuse built artifacts and cached browser dependencies where safely feasible. Keep full release regression coverage before deployment; do not delete or weaken tests to manufacture green checks.
+
+**Model acceptance:** assess silhouette, depth, readable head and muzzle anatomy, actual hair gripped by two separately modeled living piñata-ferrets, paper fringe on front *and back*, face/garment proportions, and front/side/rear evidence. Added parts must produce noticeable improvements, not merely a higher counter. Preserve historical native scenes and provenance; do not extract commercial models.
+
+**Mobile acceptance:** prioritize practical viewport height, sensible camera framing, touch controls, compact accessible inspector, independently scrollable object list, and no giant unused screen space; check both actual mobile browser viewport and desktop-site mobile mode. The owner's screenshots are first-class regression evidence.
+
+**Truth and release status:** distinguish requested, source edited, tests pass, merged, deploy triggered, deploy succeeded, independently audited live, and visually accepted. If a blocker remains, name the failing gate and continue working when tools allow; do not claim finished early.
+
+
+## Current project: §wyrl§ Engine v11.6 — visual/mobile candidate (not deployed)
+
+Owner screenshots of **live v11.5** established the correct 539-mesh release but exposed flat piñata reverse surfaces, thin angular loft silhouette, underdeveloped face/back detail, tiny default model framing and excessive empty mobile workspace. The **separate v11.6 candidate** includes native 653-editable-part festival scene and a compact mobile viewport/inspector stylesheet. Its measured source seal is **2,279,438 bytes / SHA-256 `d5f8dce1cbaf221a9f03719f99d53a10b26c6a68fc980ccd38359c4cbbb3a6d0`** with 76 governed patches and 32 native assets. Test and screenshot review are required; do not call v11.6 live until dedicated deploy succeeds and independently hosted audit confirms exact source. Historical v11.5 source verification notes below must not override this current release state.
+
+## Historical v11.5 candidate · now deployed successfully 2026-10-15
 
 The new 539-part original festival character variant keeps historical 253- and 303-part editable native scenes intact. The 75th governed patch adds editable loft path/radius control, raises the Model Atelier capacity to 1,200 parts and JSON import allowance to 8 MB; the new native variant is packaged independently. The exact candidate rebuilt in GitHub Actions [#38747495949](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38747495949) at 2,253,004 HTML bytes, SHA-256 `325f286e0dd3166e34bff57b1e721a6e244089a02cc01d33f8bc3025bace324a`, marker `V11_5_FESTIVAL_LOFT_ATELIER`. **This is source candidate evidence, not a hosted v11.5 deployment confirmation.** Full legacy browser CI, integration review, final §E manual trigger, independent hosted audit and owner visual acceptance are distinct gates. Previous v11.4 production receipts below remain historical evidence.
 
