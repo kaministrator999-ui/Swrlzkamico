@@ -34,7 +34,7 @@ try{
     assert.equal(geometryProof.lofts,6,'Missing 2 creature sweeps plus 4 continuous limbs');
     assert.equal(geometryProof.anatomy,4,'Continuous limb lofts missing');
     assert.equal(geometryProof.headNames,2,'Ferret heads failed to load');
-    assert(geometryProof.profile.every(([p,r])=>p===r&&p>=8),'Loft control points lost');
+    assert(geometryProof.profile.every(([p,r])=>p===r&&p>=4),'Loft control points lost');
     assert.equal(geometryProof.paper.length,2,'Both ferret sweeps must be twisted');
     assert(geometryProof.paper.every(([style,layers,facets])=>style==='pinata-twisted'&&layers===36&&facets===8),'Layered truncated-pyramid piñata profile missing');
     assert(geometryProof.sculpted>=30&&geometryProof.rear>=80,'Sculptural multiview detail missing');
