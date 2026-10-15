@@ -238,7 +238,12 @@ def _fit_messages(model,system,history,prompt):
     messages=[{"role":"system","content":system}]+kept+[{"role":"user","content":prompt}]
     target_input=INPUT_BUDGET_TOKENS
     while kept and _token_count(model,messages)>target_input:
+        # Trim complete dialogue turns, not isolated messages. Dropping only a
+        # user's instruction can strand an assistant answer in context and
+        # make a later "not that one" correction refer to the wrong task.
         kept.pop(0)
+        while kept and kept[0].get("role")=="assistant":
+            kept.pop(0)
         messages=[{"role":"system","content":system}]+kept+[{"role":"user","content":prompt}]
     input_tokens=_token_count(model,messages)
     if input_tokens>target_input:
