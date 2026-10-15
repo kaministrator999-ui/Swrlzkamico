@@ -85,7 +85,7 @@ class Candidate(unittest.TestCase):
   def stock(payload):
    if "fix" in str(payload.get("prompt") or "").lower():
     return iter([{"type":"DELTA","text":"```python file=demo.py\ntry:\n    print('v2')\nexcept Exception as exc:\n    print(exc)\n```\nAdded guarded error handling."},{"type":"COMPLETED"}])
-   return iter([{"type":"DELTA","text":"```python file=demo.py\nprint('v1')\n```\nInitial demo."},{"type":"COMPLETED"}])
+   return iter([{"type":"DELTA","text":"```python file=demo.py\nprint('v1')\n```\nInitial demo. This documented demonstration keeps the Python snippet as a complete, intentionally small, self-contained source artifact for subsequent edits and revisions."},{"type":"COMPLETED"}])
   # Real programming route delegates to coder; use the same deterministic fake.
   set_generator(lambda payload:iter([{"type":"DELTA","text":"unused"},{"type":"COMPLETE"}]),stock,None,stock)
   with TestClient(station_app) as client:
