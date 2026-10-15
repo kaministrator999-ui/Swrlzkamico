@@ -1631,6 +1631,16 @@ def _implicit_repo_command(prompt, context):
     directory = str(context.get("directory") or "")
     last_file = str(context.get("lastFile") or "")
     scope = (" " + directory) if directory else ""
+    # The verified repository root has an empty directory path. Retain that
+    # source scope for a narrow file-listing follow-up without repo wording.
+    checked = normalize_thread_context(context)
+    if checked and re.fullmatch(
+            r"(?:(?:can|could|would) (?:you|i)(?: please)? |please )?"
+            r"(?:show|see|list|browse|display|view)(?: me)? (?:all )?(?:the )?"
+            r"(?:files|folders|directories|contents)(?: again| here)?", q):
+        branch = checked["branch"]
+        suffix = " on branch " + branch if branch not in ("main", "master") else ""
+        return "@GitHub files" + scope + suffix
     if re.fullmatch(r"(?:and )?(?:how many|what(?:'s| is) the number of)\s+(?:total )?(?:files?|folders?|directories|dirs?|items?)(?:\s+(?:are\s+there(?:\s+in)?|are\s+in|in)\s+(?:(?:the|this|our)\s+)?(?:folder|directory|repo|repository|here)|\s+are\s+there)?",q):
         return "@GitHub stats" + scope
     if re.fullmatch(r"(?:and )?(?:dirs?|directories|folders?|files?)", q):

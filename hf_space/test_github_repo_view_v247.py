@@ -71,7 +71,47 @@ def test_guard_preserves_real_programming_and_permission_limits():
     assert not github.is_github_conversation("Can I see the files?")
     assert github.GITHUB_CAPABILITY_STAGE=="read-repository"
 
+
+def test_dragon58_root_context_followup_and_topic_fallback():
+    """Latest thread in export (58): root listing succeeded, next scoped read failed."""
+    from model_router import dispatch
+    ctx = {"repo":"owner/repo","branch":"main","sourceSha":"a"*40,
+           "directory":"","lastFile":"","kind":"directory"}
+    shorter = "Can you show me the files"
+    assert reads.classify_read(shorter) is None
+    assert not github.is_github_conversation(shorter)
+    assert github._implicit_repo_command(shorter, ctx) == "@GitHub files"
+    assert github._implicit_repo_command("Can you display the files", ctx) == "@GitHub files"
+    assert github._implicit_repo_command("Can you list files", ctx) == "@GitHub files"
+    assert github._implicit_repo_command(shorter, None) is None
+    assert github._implicit_repo_command(shorter, {**ctx, "sourceSha":"invalid"}) is None
+    assert github._implicit_repo_command("Write code to show the files", ctx) is None
+    assert github._implicit_repo_command("Delete these files", ctx) is None
+    assert github._implicit_repo_command("Tell me about file permissions", ctx) is None
+    feature = {**ctx, "branch":"feature/read"}
+    assert github._implicit_repo_command(shorter, feature) == "@GitHub files on branch feature/read"
+    observed = []
+    def fake_read(data):
+        observed.append(data["prompt"])
+        yield {"type":"DELTA","text":"## GitHub directory: /\n- file README.md"}
+        yield {"type":"COMPLETED","phase":"COMPLETE"}
+    with mock.patch.object(github,"command_events",side_effect=fake_read), \
+         mock.patch.object(github,"_post_github",side_effect=AssertionError("write forbidden")):
+        events=list(github.agent_events({"userId":"google:test","prompt":shorter,"githubContext":ctx}))
+    assert observed == ["@GitHub files"], observed
+    assert any(e.get("phase") == "GITHUB_READ_STAGE" for e in events), events
+    assert any("GitHub directory" in e.get("text","") for e in events), events
+    def no_model(*args, **kwargs):
+        raise AssertionError("A bare file topic is not an inference task")
+    for model in ("700m","stock","coder","r39"):
+        events=list(dispatch(model,{"prompt":"Files","history":[],"pinnedContext":[]},
+                             no_model,no_model,no_model,no_model))
+        assert any(e.get("phase")=="TOPIC_CLARIFICATION" for e in events), model
+        assert any("GitHub repository" in e.get("text","") for e in events), model
+        assert not any(e.get("phase")=="CODER_AUTO_ROUTE" for e in events), model
+
 if __name__=="__main__":
     test_exported_prompt_selects_real_authenticated_read()
     test_guard_preserves_real_programming_and_permission_limits()
+    test_dragon58_root_context_followup_and_topic_fallback()
     print("v247: repo-files view routes authenticated GitHub read; coder/write guard PASSED")
