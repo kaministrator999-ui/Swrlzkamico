@@ -152,7 +152,7 @@ try{
     await page.locator('#perfPreset').selectOption('medium',{force:true});
     await page.evaluate(()=>window.__sheepTestClock.freeze());await frames(page,2);
     const canonical=await saved(page);
-    assert.equal(canonical.version,11.5,'Wrong native project release');
+    assert.equal(canonical.version,11.6,'Wrong native project release');
     assert.equal(await page.evaluate(()=>window.SWRLZ_FORGE_BUILD?.version),'v11.6','Wrong sealed engine release');
     assert.equal(canonical.project.kind,'sheep-tag');
     assert.equal(canonical.project.sheepTag.duration,1200,'Classic starter survival timer changed');
