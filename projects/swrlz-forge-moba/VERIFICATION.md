@@ -1,3 +1,14 @@
+# §E v11.3 Model Atelier · verified source, deployment pending (2026-10-14 CDT)
+
+- [x] [PR #167](https://github.com/kaministrator999-ui/Swrlzkamico/pull/167) merged at `abfe8a495b3a7c166f2bebe9151887b2cef6b807`.
+- [x] [17 of 17 real browser suites passed](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38674608237), each using native desktop and phone layouts, including Model Atelier viewport, edits, save/load, OBJ/JSON export, re-open touch hit-target, and all historical scene regressions.
+- [x] Five additional candidate workflows passed: [authored source](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38674608236), [cinematic source](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38674608235), [camera staging](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38674608243), [cel layers](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38674608277), and browser matrix above.
+- [x] Sealed 73-patch / 29-asset artifact, 2,175,921 bytes, SHA-256 `a2ec94f418f294ea5ebd50363833d37025a6e6cc804732116a7cb927d0b069db`. Native 253-part original Prism Jester model remains authorable; no extracted game files or claims of exact likeness.
+- [ ] Terminal guarded deployment and independent audit for this exact v11.3 source. Until completed, source acceptance **does not establish live release**.
+- [ ] Optional future advanced sculpting, UV texture painting, rigging, and animations are not implemented.
+
+---
+
 # Verified v11.2 Frostveil flying-builder release
 
 **Verified live v11.2 (2026-10-14 CDT):** [PR #159](https://github.com/kaministrator999-ui/Swrlzkamico/pull/159) merged as `b3ef6130f0d9685018debb06fcdd4ef2912d9f6e`. Six candidate Forge workflows and all 16 native desktop/phone suites succeeded on `716a2bc81b01c79b65ed7771eb3dc794248ce55b`. [Dedicated deploy #38668840620](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38668840620) and [independent hosted audit #38668893410](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38668893410) both completed SUCCESS on trigger `e47c027816fa5029f0c27ac273e040ae62fd1a5f`. Space revision: `ef8f325b2d8d45cf67da2c54bc4f8e3455df263e`. Published binary: **72 patches, 28 assets, 2,097,069 HTML bytes**, SHA-256 `1fab5e61f2065c02a56658c6e8e8ef999eb525ac16c373b310826ca970e10e59`, marker `V11_2_MAUL_FLIGHT_GLACIAL_ART`. Exact served HTML, SOURCE receipt, and all 28 assets matched. Owner gameplay acceptance remains separate.
