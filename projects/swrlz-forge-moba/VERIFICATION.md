@@ -1,4 +1,15 @@
-# Verified v11.1 Maul walk-to-build acceptance
+# Verified v11.2 Frostveil flying-builder release
+
+**Verified live v11.2 (2026-10-14 CDT):** [PR #159](https://github.com/kaministrator999-ui/Swrlzkamico/pull/159) merged as `b3ef6130f0d9685018debb06fcdd4ef2912d9f6e`. Six candidate Forge workflows and all 16 native desktop/phone suites succeeded on `716a2bc81b01c79b65ed7771eb3dc794248ce55b`. [Dedicated deploy #38668840620](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38668840620) and [independent hosted audit #38668893410](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38668893410) both completed SUCCESS on trigger `e47c027816fa5029f0c27ac273e040ae62fd1a5f`. Space revision: `ef8f325b2d8d45cf67da2c54bc4f8e3455df263e`. Published binary: **72 patches, 28 assets, 2,097,069 HTML bytes**, SHA-256 `1fab5e61f2065c02a56658c6e8e8ef999eb525ac16c373b310826ca970e10e59`, marker `V11_2_MAUL_FLIGHT_GLACIAL_ART`. Exact served HTML, SOURCE receipt, and all 28 assets matched. Owner gameplay acceptance remains separate.
+
+- Projects → Frostveil Maul selects independent native `scenes/maul-frostveil-flight.swyrl.json` with nine builders and preserved 30-wave layout; scene launch and downloadable pack are checked for matching profile and builder identities.
+- Flight movement uses 15 world units/s, 3.25 hover altitude, crosses terrain/towers, then builds underneath after legal footprint, route, territory and gold rechecks; legacy walk-v1 imports remain unchanged.
+- Glacial procedural art is non-destructive; preserve earlier native games, recorder and scene packages. Physical congested creeps, special units, endless mode, Mirror Survival, themed builders, and native Maul creator remain unimplemented backlog.
+- Separate signed-in human gameplay acceptance is not claimed by the automated release evidence.
+
+---
+
+# Historical verified v11.1 Maul walk-to-build acceptance
 
 - Default grouped Frostveil starter must show no wall construction option.
 - A tower command must queue the selected sector builder, move across actual traversable cells and complete only upon reaching an adjacent footprint.
