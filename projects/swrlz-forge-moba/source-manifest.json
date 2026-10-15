@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.8",
+  "name": "§wyrl§ Engine v11.9",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_8.html",
+  "finalArtifact": "swyrl_engine_v11_9.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -92,8 +92,9 @@
     "patches/v11_5_festival_loft_atelier.py",
     "patches/v11_6_multiview_mobile_atelier.py",
     "patches/v11_7_layered_pinata_sculpt.py",
-    "patches/v11_8_sculpt_studio.py"
+    "patches/v11_8_sculpt_studio.py",
+    "patches/v11_9_ferret_figure_atelier.py"
   ],
-  "finalBytes": 2318719,
-  "finalSha256": "600e34f09d6a29ce8484a4f84bd5c25b79a707cd43a1320a1a5c6c6d0417ffbf"
+  "finalBytes": 2335886,
+  "finalSha256": "987f074e111420126715142da652d4907c7d1a0e493215ee9784e35da48966dd"
 }

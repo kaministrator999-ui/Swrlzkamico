@@ -117,6 +117,8 @@ def main():
         media_paths.append("scenes/model-atelier-prism-jester-festival-v11-7.swyrl.json")
     if (ROOT / "scenes/model-atelier-prism-jester-festival-v11-8.swyrl.json").exists():
         media_paths.append("scenes/model-atelier-prism-jester-festival-v11-8.swyrl.json")
+    if (ROOT / "scenes/model-atelier-prism-jester-festival-v11-9.swyrl.json").exists():
+        media_paths.append("scenes/model-atelier-prism-jester-festival-v11-9.swyrl.json")
     media_paths.extend(p.relative_to(ROOT).as_posix() for p in sorted((ROOT / "assets/anime").glob("*.png")))
     for rel in media_paths:
         source = ROOT / rel
