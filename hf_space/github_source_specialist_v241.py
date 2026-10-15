@@ -294,7 +294,7 @@ def events(gh, data, coder_generator):
                    "reason": "Qwen inference failed; source verification does not imply semantic analysis.",
                    "categories": ["CODER", "UNAVAILABLE", "READ_ONLY"]}
         candidate = "".join(chunks).strip()
-        if not completed or _source_answer_is_metadata_echo(candidate):
+        if path.lower().endswith((".md", ".txt")) and (not completed or _source_answer_is_metadata_echo(candidate)):
             yield {"type": "STATUS", "phase": "GITHUB_SOURCE_ANSWER_FALLBACK",
                    "reason": "Generated answer lacked grounded document purpose; presenting a bounded exact-source outline.",
                    "categories": ["GITHUB", "READ_ONLY", "EVIDENCE"]}
