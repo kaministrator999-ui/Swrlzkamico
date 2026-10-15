@@ -1,6 +1,15 @@
 // Frostveil v11.2 opt-in flight controls. v11.1 walk-v1 imports remain untouched.
 const MAUL_FLIGHT_PROFILE='hover-v1';
 MAUL_BATCH_CANONICAL_PROJECT.project.maulBuilderFlight=MAUL_FLIGHT_PROFILE;
+// The launchable Projects tile loads the independently saved v11.2 starter scene.
+// The earlier grouped scene stays available for historical imports/replays.
+const maulFlightPriorStarter=maulLoadStarter;
+maulLoadStarter=function(){
+  if(!MAUL_FLIGHT_CANONICAL_PROJECT?.scene?.actors?.length)return maulFlightPriorStarter();
+  loadProject(structuredClone(MAUL_FLIGHT_CANONICAL_PROJECT),{workspaceLocal:true});
+  maulFrameMap();initializeHistory('Opened Frostveil Maul · flying builders');
+  markSaved();toast('Frostveil Maul · flying builders and glacial map');return true;
+};
 const maulFlightEnabled=()=>maulWalkBuildEnabled()&&currentProject?.maulBuilderFlight===MAUL_FLIGHT_PROFILE;
 let maulFlightSuppressGroundMove=false;
 const maulFlightNativePosition=maulSetActorWorldPosition;
