@@ -120,3 +120,35 @@ def confirm(user, ticket, approved):
     if not verified:
         raise WriteError("GITHUB_READBACK_MISMATCH", 502)
     return {"ok": True, "operation": "CREATE_FILE", "repo": OWNER + "/" + REPO, "branch": BRANCH, "path": item["path"], "commitSha": commit, "verified": True, "url": "https://github.com/" + OWNER + "/" + REPO + "/blob/" + BRANCH + "/" + item["path"]}
+
+
+
+def create_requested_test_file(user, request_id, prompt):
+    """Exactly one CREATE_FILE for a direct, owner-authorized Chat test request.
+
+    No generated/model/retrieved text enters this path. The filename is stable
+    for the accepted request ID to avoid duplicate files on retries. This is
+    the narrow exception to the separate preview/confirm panel; unrelated
+    writes still require that panel, and the GitHub scope check is unchanged.
+    """
+    from github_txt_intent_v256 import wants_direct_github_test_txt
+    if not wants_direct_github_test_txt(prompt):
+        raise WriteError("DIRECT_TEST_FILE_REQUEST_REQUIRED", 403)
+    if not isinstance(user, dict) or not isinstance(user.get("id"), str) or not user["id"].startswith("google:"):
+        raise WriteError("SANDBOX_WRITE_OWNER_REQUIRED", 403)
+    if not isinstance(request_id, str) or not 0 < len(request_id) <= 160:
+        raise WriteError("INVALID_REQUEST_ID", 400)
+    # The caller is the trusted Station: the prompt was submitted directly by
+    # this account as its user turn, not ingested from GitHub or model output.
+    suffix = hashlib.sha256((user["id"] + "\0" + request_id).encode("utf-8")).hexdigest()[:16]
+    filename = "chat-test-" + suffix + ".txt"
+    contents = (
+        "Hello from §wyrlz Chat!\n"
+        "This is a harmless GitHub text-file creation test, requested directly "
+        "in Chat by the connected repository owner.\n"
+        "Target: Swrlzing-core / main / write-action-tests/\n"
+    )
+    # Preserve existing owner Google OAuth, scoped GitHub permissions, no
+    # overwrites, create-only PUT and exact-byte remote readback checks.
+    preview = prepare(user, filename, contents)
+    return confirm(user, preview["approvalToken"], True)
