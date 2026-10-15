@@ -164,6 +164,7 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
     const starterResponse=await context.request.get(base+'/scenes/maul-frostveil-flight.swyrl.json');
     assert.equal(starterResponse.ok(),true,'Dedicated v11.2 Maul starter must ship as a downloadable native scene');
     const starterScene=await starterResponse.json();
+    assert.equal(starterScene.version,11.2,'Packaged Maul starter must identify the v11.2 native engine');
     for(const setting of ['maulLayout','maulSpawnStyle','maulConstruction','maulSpawnProtection','maulBuilderFlight','maulVisualStyle'])
       assert.equal(canonical.project[setting],starterScene.project[setting],'Projects starter diverged from packaged scene: '+setting);
     assert.equal(canonical.project.name,starterScene.project.name,'Projects tile did not open the named v11.2 flying builder scene');
