@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.3",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_3_MODEL_ATELIER_PRISM_JESTER",
-  "reason": "Documentation-close v11.3 redeploy with unchanged independently audited exact source artifact. First deploy #38677061503 and independent audit #38677099743 both SUCCESS. Router, Space README, project README, verification register and ROADMAP now mark the release live. Preserve same 73 patches / 29 assets / 2,175,921 bytes / SHA a2ec94f418f294ea5ebd50363833d37025a6e6cc804732116a7cb927d0b069db, and independently re-audit final hosted revision.",
-  "sourceCommit": "45af8d23903761a21c3b07f12d403adf881a69de",
-  "sourceIntegritySha256": "a2ec94f418f294ea5ebd50363833d37025a6e6cc804732116a7cb927d0b069db"
+  "releaseVersion": "v11.4",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_4_PRISM_FERRET_FIDELITY",
+  "reason": "Publish final source-verified §E v11.4 Prism Jester ferret piñata fidelity from merged PR #171. All 17 desktop/mobile browser suites and five source workflows are SUCCESS. 74 ordered patches, 30 native assets, 2,197,108 bytes, SHA-256 40d1e985bd3754b7a2996e6be14056be9c22164995d83b84ad253b4ae7a24658. Preserve v11.3 scene and all game starters. Wait for terminal dedicated Engine deployment and independent hosted audit before declaring live.",
+  "sourceCommit": "63d35b5dac7b92efb9b053c2de7e211077c95b3b",
+  "sourceIntegritySha256": "40d1e985bd3754b7a2996e6be14056be9c22164995d83b84ad253b4ae7a24658"
 }
