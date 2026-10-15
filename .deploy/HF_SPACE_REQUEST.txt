@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=fc993799bc073e76ccd72fb857bdfa7332bda2cd
-REQUEST_NONCE=2026-10-15-v261-assistant-fullwidth-workspace-001
+SOURCE_REF=2f6dea82951aab7c283a09b17aa0ab4bb2cd8062
+REQUEST_NONCE=2026-10-15-v262-general-github-files-001
