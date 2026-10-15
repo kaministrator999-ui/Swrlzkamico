@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.5",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_5_FESTIVAL_LOFT_ATELIER",
-  "reason": "Owner-authorized guarded §E v11.5 release after PR #175 merge and full 17-suite browser validation success #38769981797; 75 patches, 31 assets, 539-part canonical atelier and spline editor. Require exact hosted artifact and independent audit.",
-  "sourceCommit": "9b216b85b1a8cfd0b406e39117679e51bef777ca",
-  "sourceIntegritySha256": "325f286e0dd3166e34bff57b1e721a6e244089a02cc01d33f8bc3025bace324a"
+  "releaseVersion": "v11.6",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_6_MULTIVIEW_FESTIVAL_ATELIER",
+  "reason": "Owner-authorized mobile Model Atelier and multiview festival model improvement; PR #176 merged with full 17/17 browser suites and independently sealed 76-patch, 32-asset 2,279,438-byte HTML. Require terminal deploy and independent exact hosted audit.",
+  "sourceCommit": "aaa796e25007730dd43cf3daf3841af9ecece4fe",
+  "sourceIntegritySha256": "d5f8dce1cbaf221a9f03719f99d53a10b26c6a68fc980ccd38359c4cbbb3a6d0"
 }
