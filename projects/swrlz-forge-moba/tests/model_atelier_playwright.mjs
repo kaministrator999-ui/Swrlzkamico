@@ -41,6 +41,15 @@ try{
     assert(geometryProof.paper.every(([style,layers,facets])=>style==='pinata-twisted'&&layers===36&&facets===8),'Layered truncated-pyramid piñata profile missing');
     assert(geometryProof.sculpted>=30&&geometryProof.rear>=80,'Sculptural multiview detail missing');
 
+    // v11.10: actual BufferGeometry metrics, not static part-count proxies.
+    assert.equal(await page.locator('#modelAtelierMetrics summary').count(),1,'Geometry profiler missing');
+    const stats=page.locator('#modelAtelierMetricsBody .atelier-metric-row');
+    const number=async index=>Number((await stats.nth(index).locator('strong').innerText()).replaceAll(',','').replace(/[^0-9]/g,''));
+    const originalTris=await number(1);
+    assert.equal(await number(0),811,'Profiler did not count the native meshes');
+    assert(originalTris>811,'Triangle counter should inspect generated geometry');
+    assert((await page.locator('#modelAtelierMetricsBody').innerText()).includes('Azure frost'),'Ferret group breakdown missing');
+    assert((await page.locator('#modelAtelierMetricsBody').innerText()).includes('Coral flare'),'Second ferret group missing');
     const curveIndex=await page.evaluate(()=>window.SWYRL_ENGINE_AGENT.inspectScene().project.modelAtelier.parts.findIndex(p=>p.surfaceStyle==='pinata-twisted'));
     await page.locator('#modelAtelierParts').selectOption({index:curveIndex});
     assert.equal(await page.locator('#modelAtelierSculptEditor').isVisible(),true,'Sculpt tools hidden for loft');
@@ -58,6 +67,7 @@ try{
     assert.equal((await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.status())).count,812,'Mirror did not add a native editable loft');
     const mirrored=await page.evaluate(()=>window.SWYRL_ENGINE_AGENT.inspectScene().project.modelAtelier.parts.at(-1));
     assert.equal(mirrored.kind,'loft');
+    assert(await number(1)>originalTris,'Mirrored loft did not update actual triangle count');
     assert.deepEqual(mirrored.path,beforeMirror.path.map(([x,y,z])=>[-x,y,z]),'Mirror failed to invert control-point X coordinates');
     assert.equal(mirrored.twistDegrees,-beforeMirror.twistDegrees,'Mirror failed to invert axial twist');
     await page.locator('#modelAtelierUndo').click();
