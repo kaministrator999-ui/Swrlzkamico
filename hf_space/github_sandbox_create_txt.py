@@ -29,14 +29,18 @@ class WriteError(Exception):
 
 
 def _authorized(user):
-    allowed = os.environ.get("SWRLZ_SANDBOX_WRITE_GOOGLE_SUB", "").strip()
-    token = os.environ.get("SWRLZ_SANDBOX_WRITE_GITHUB_TOKEN", "").strip()
-    if not (allowed and token and os.environ.get("SWRLZ_SANDBOX_WRITE_ENABLED") == "true"):
-        raise WriteError("SANDBOX_WRITE_DISABLED", 503)
-    if not user or user.get("id") != "google:" + allowed:
-        raise WriteError("SANDBOX_WRITE_OWNER_REQUIRED", 403)
-    return token
-
+    # Reuse the same encrypted Google-account-bound GitHub OAuth connection
+    # already used for repository reading. A repository selection is NOT a
+    # write grant: verify the *granted* OAuth scope and GitHub push role here.
+    from github_oauth_reuse_v257 import authorize_sandbox_write
+    try:
+        return authorize_sandbox_write(user)
+    except Exception as exc:
+        from fastapi import HTTPException
+        if isinstance(exc, HTTPException):
+            safe = str(exc.detail) if isinstance(exc.detail, str) else "GITHUB_AUTHORIZATION_UNAVAILABLE"
+            raise WriteError(safe, exc.status_code) from None
+        raise
 
 def _path(filename):
     if not isinstance(filename, str) or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]{0,63}\.txt", filename, re.ASCII):
