@@ -1,4 +1,6 @@
 ---
+
+> **v11.7 candidate (not yet live):** Replaces unconvincing continuous piñata tubes with 36 capped, faceted layered discs per ferret, direct grip onto the heroine's dyed braids, more explicit facial/garment/rear volumes. Full CI, deployment receipt and owner front/side/back evidence required. Prior v11.6 receipts below are historical.
 title: §wyrl§ Engine v11.5
 emoji: 🐉
 colorFrom: purple

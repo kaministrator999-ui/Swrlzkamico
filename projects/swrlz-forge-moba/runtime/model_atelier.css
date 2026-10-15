@@ -70,3 +70,12 @@
  .atelier-status{flex:0 0 auto;padding:5px 8px;min-height:26px;max-height:44px;overflow:auto}
  #modelAtelierLoftEditor textarea{width:100%;max-width:100%;font:12px/1.3 monospace;background:#17233a;color:#e2f3ff;border:1px solid #6983a1;border-radius:5px}
 }
+
+/* v11.7 narrow-screen sculpt mode: make geometry dominate while keeping editing reachable. */
+@media (max-width: 900px), (pointer: coarse) {
+ .atelier-scene {min-height: 51dvh; background: radial-gradient(circle at 50% 41%, #2a3b58, #111525 73%)}
+ .atelier-inspector {height: 26dvh;max-height: 29dvh;min-height: 150px;overflow-y:auto;}
+ .model-atelier-head small {color:#b4ebed}
+ .atelier-inspector-actions button {min-height: 30px}
+ .atelier-disclaimer {font-size: 10px!important}
+}

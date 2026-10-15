@@ -30,17 +30,17 @@ assert all(p['material'] in {'matte','silk','gloss','metal','emissive'} for p in
 assert all(len(p[field])==3 for p in parts for field in ('position','rotation','scale'))
 assert 'data-project-template="model-atelier"' in source.decode()
 for needle in (b'MODEL_ATELIER_V11_3_BEGIN',b'modelAtelierPanel',
-               b'model-atelier-prism-jester',b'V11_6_MULTIVIEW_FESTIVAL_ATELIER',
+               b'model-atelier-prism-jester',b'V11_7_STACKED_PINATA_SCULPT',
                b'SWYRL_ENGINE_MODEL_ATELIER',b'modelAtelierImportFile'):
     assert needle in source,needle
 assert receipt['patches']==manifest['patches']
-assert len(receipt['patches'])==76
-assert receipt['patches'][-1]=='patches/v11_6_multiview_mobile_atelier.py'
+assert len(receipt['patches'])==77
+assert receipt['patches'][-1]=='patches/v11_7_layered_pinata_sculpt.py'
 assert scene_path in receipt['assets']
-assert len(receipt['assets'])==32
+assert len(receipt['assets'])==33
 assert receipt['assets'][scene_path]['sha256']==hashlib.sha256((ROOT/scene_path).read_bytes()).hexdigest()
 assert receipt['assets'][scene_path]['bytes']==(ROOT/scene_path).stat().st_size
 assert hashlib.sha256(source).hexdigest()==manifest['finalSha256']==receipt['finalSha256']
 assert len(source)==manifest['finalBytes']==receipt['finalBytes']
 print('MODEL_ATELIER_NATIVE_SCENE_MATCH '+str(len(parts))+' editable components')
-print('MODEL_ATELIER_PACKAGE_76_PATCHES_32_ASSETS_PASS')
+print('MODEL_ATELIER_PACKAGE_77_PATCHES_33_ASSETS_PASS')

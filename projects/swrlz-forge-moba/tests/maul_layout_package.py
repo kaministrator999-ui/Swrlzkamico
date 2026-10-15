@@ -7,7 +7,7 @@ import math
 from pathlib import Path
 
 SCENE = 'scenes/maul-frostveil-classic.swyrl.json'
-PATCH = 'patches/v11_6_multiview_mobile_atelier.py'
+PATCH = 'patches/v11_7_layered_pinata_sculpt.py'
 
 
 def require(condition, message):
@@ -50,9 +50,9 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--package',type=Path,required=True)
     args=parser.parse_args();receipt=json.loads((args.package/'SOURCE.json').read_text())
-    require(receipt['sourceVersion']=='§wyrl§ Engine v11.6', 'wrong source version')
-    require(len(receipt['patches'])==76 and receipt['patches'][-1]==PATCH, 'wrong governed patch chain')
-    require(len(receipt['assets'])==32 and SCENE in receipt['assets'] and 'scenes/maul-frostveil.swyrl.json' in receipt['assets'], 'wrong asset set or missing preserved v10.6 map')
+    require(receipt['sourceVersion']=='§wyrl§ Engine v11.7', 'wrong source version')
+    require(len(receipt['patches'])==77 and receipt['patches'][-1]==PATCH, 'wrong governed patch chain')
+    require(len(receipt['assets'])==33 and SCENE in receipt['assets'] and 'scenes/maul-frostveil.swyrl.json' in receipt['assets'], 'wrong asset set or missing preserved v10.6 map')
     raw=(args.package/SCENE).read_bytes();meta=receipt['assets'][SCENE]
     require(len(raw)==meta['bytes'] and hashlib.sha256(raw).hexdigest()==meta['sha256'], 'authored scene differs from package receipt')
     proof=validate_scene(json.loads(raw))
