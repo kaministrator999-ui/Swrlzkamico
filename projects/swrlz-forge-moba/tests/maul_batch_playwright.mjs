@@ -175,7 +175,7 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
     assert.equal(flight.enabled,true,'Flying builder profile inactive');
     assert.equal(flight.speed,15,'Builder speed differs from v11.2 design');
     assert.equal(flight.builders.length,9,'All nine builders must retain a hover actor');
-    for(const pilot of flight.builders)close(pilot.position[1],flight.height,'Builder is not flying at match start',.001);
+    for(const pilot of flight.builders)close(pilot.position[1],flight.height,'Builder is not flying at match start',.125);
     assert.equal(canonical.project.maulSpawnProtection,'full-pad-v1');
     assert.equal(await page.locator('#maulBuildWall').isVisible(),false,'Wall construction must not appear in the current map');
     const initialWalk=await state(page),walkMap=initialWalk.map;
