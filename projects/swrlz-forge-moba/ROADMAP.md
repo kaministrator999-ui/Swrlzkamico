@@ -1,5 +1,13 @@
 # §wyrl§ Engine · Roadmap
 
+## UPDATE FINISHED — v11.4 ferret-piñata refinement published (2026-10-15 CDT)
+
+**Production complete:** [PR #171](https://github.com/kaministrator999-ui/Swrlzkamico/pull/171) merged at `0540cfbfc29129548941881f659f26a767038ed3`; 17/17 desktop/phone acceptance suites passed [browser run #38680364328](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38680364328) plus five candidate source workflows. [Dedicated deployed release #38729222214](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38729222214) SUCCESS on `2dba7e6da30fef16c8bb1f4a35f979bcfbffb9b4`; [independent hosted audit #38729291039](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38729291039) SUCCESS with `HOSTED_AUDIT_SCOPE=current-requested-release`, `PUBLISHED_VERSION=v11.4`, and `LIVE_SOURCE_AND_ALL_ASSETS_VERIFIED`. Hosted HF revision `f88b57b39893f556e380cef7c279d93860800a95`.
+
+**Exact published sealed artifact:** `V11_4_PRISM_FERRET_FIDELITY`, 74 patches, 30 assets, 2,197,108 HTML bytes, SHA-256 `40d1e985bd3754b7a2996e6be14056be9c22164995d83b84ad253b4ae7a24658`. The Model Atelier Projects tile now opens the newer 303-part original model variant including two tapered organic lofts and ferret heads, eyes, ears, muzzles, paws, paper fringe and facial detail; the 253-part v11.3 scene remains packaged for import. Full editor save/transform/OBJ/mobile acceptance is browser-verified, and other game starter assets remain preserved. **No human-owner visual acceptance or claim of exact skin/model likeness, sculpting, UV editing, rigging or animation.**
+
+**Governance:** synchronized `§tart_§E.md`, project README, Space README, and `VERIFICATION.md` to verified v11.4 hosted status after first successful audit. Their commits are documentation-only; source manifest and authored scenes remain unchanged. The final dedicated `DEPLOY_REQUEST.json` write must be last, followed by a new terminal deploy and independent audit to close this documentation-only continuation. Retain preceding UPDATE STARTED and CONTINUATION STARTED entries unmodified as provenance.
+
 ## UPDATE CONTINUATION STARTED — v11.4 production deployment and audit (2026-10-15 CDT)
 
 **Source and acceptance closure:** [PR #171](https://github.com/kaministrator999-ui/Swrlzkamico/pull/171) merged at `0540cfbfc29129548941881f659f26a767038ed3` on latest main, preserving earlier patch and native model assets. [Full 17/17 browser matrix](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38680364328) and all five source/cinematic/cel/staging candidate validations completed SUCCESS against exact sealed candidate `b6d43100279232ea4c660df8c1cf0e6781a1437d`.
