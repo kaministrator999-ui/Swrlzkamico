@@ -1230,11 +1230,12 @@
         }else uiCamera("work-surface-close",{});
       };
 
+      const originalRenderedSources=new WeakMap();
       const addCopyButton = node => {
         const body=node.querySelector(".assistant-body"); if(!body)return;
         const actions=document.createElement("div");actions.className="assistant-actions";
         const copy=document.createElement("button");copy.type="button";copy.className="copy-response";copy.textContent="Copy";
-        copy.onclick=async()=>{try{await navigator.clipboard.writeText(body.textContent||"");copy.textContent="Copied";setTimeout(()=>copy.textContent="Copy",1200);}catch(_){copy.textContent="Copy failed";setTimeout(()=>copy.textContent="Copy",1200);}};
+        copy.onclick=async()=>{try{const source=originalRenderedSources.get(body);await navigator.clipboard.writeText(source!==undefined?source:(body.textContent||""));copy.textContent="Copied";setTimeout(()=>copy.textContent="Copy",1200);}catch(_){copy.textContent="Copy failed";setTimeout(()=>copy.textContent="Copy",1200);}};
         actions.appendChild(copy);node.appendChild(actions);
       };
 
@@ -1411,6 +1412,7 @@
       const renderAssistantContent=(container,text,messageId="",presentationHint="")=>{
         container.innerHTML="";
         const source=String(text||"");
+        originalRenderedSources.set(container,source);
         const fence=/\`\`\`([^\n\`]*)\n?([\s\S]*?)\`\`\`/g;
         let cursor=0,match,codeIndex=0;
         const appendInlineStyles=(parent,value)=>{
