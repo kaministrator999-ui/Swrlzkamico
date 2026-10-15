@@ -12,13 +12,13 @@ short_description: Maul, Sheep Tag, paper theatre, Dragon Den and Starforge
 
 # §wyrl§ Engine · Maker v11.3
 
-## Candidate v11.3 · Native 3D Model Atelier and Prism Jester (source-only)
+## Source-verified v11.3 · Native 3D Model Atelier and Prism Jester (deployment pending)
 
 The new **Projects → Model Atelier · Prism Jester** starter is a separate, editable native `scenes/model-atelier-prism-jester.swyrl.json`, not an overwrite of the 30-wave Frostveil or existing Animation Studio. Its original scene contains **253 individually editable meshes**: layered hat/hair, face details, costume, limbs, and two sweeping segmented coral/cyan forms, inspired by owner-provided reference screenshots. It is an original approximation, **not extracted proprietary game geometry or a pixel-exact replica**.
 
 Model Atelier adds a dedicated responsive WebGL viewport, orbit/touch camera, raycast part selection, XYZ position/rotation/scale editing, shape/color/material controls, adding/duplicating/removing meshes, bounded local undo/redo, validated JSON import/export, and triangulated OBJ export. Its data is stored under `project.modelAtelier` in the standard §E native save envelope. The Scene/project launcher and historical native assets remain preserved. Advanced vertex sculpting, texture painting/UV mapping, bone-rigging, mesh deformation and animation have not been implemented.
 
-**Release status:** [draft PR #167](https://github.com/kaministrator999-ui/Swrlzkamico/pull/167), 73rd additive ordered patch `patches/v11_3_model_atelier.py`, plus one new original scene asset for 29 packaged assets. This is **a candidate only**; require full exact-source CI including new 17th desktop/phone suite, reviewed integration, explicit final `DEPLOY_REQUEST.json` update, terminal dedicated HF deployment and independent hosted SHA/asset audit before calling v11.3 live. The verified current production release remains v11.2 pending that outcome.
+**Source verified / deployment pending (2026-10-14 CDT):** [PR #167](https://github.com/kaministrator999-ui/Swrlzkamico/pull/167) merged at `abfe8a495b3a7c166f2bebe9151887b2cef6b807` after [all 17 desktop/phone browser suites passed](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38674608237) and the five §E candidate workflows passed ([source](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38674608236), [cinematic](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38674608235), [camera](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38674608243), [cels](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38674608277), plus [browser matrix](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38674608237)). Sealed candidate `V11_3_MODEL_ATELIER_PRISM_JESTER`: 73 patches, 29 assets, 2,175,921 bytes, SHA-256 `a2ec94f418f294ea5ebd50363833d37025a6e6cc804732116a7cb927d0b069db`. Production rollout awaits dedicated deploy request and independent hosted audit; do not infer actual owner hands-on approval.
 
 ## Current verified v11.2 · Hover construction and glacial battlefield polish
 
