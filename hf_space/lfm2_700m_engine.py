@@ -8,6 +8,7 @@ from programming_telemetry import buffered_chat_completion, candidate_attempt_re
 from programming_repair_context import build_compact_repair_context, enforce_strategy_change, strategy_change_directive
 from response_cognition import classify_response_cognition, response_cognition_policy, response_cognition_camera
 from music_structure import music_model_policy, creative_music_request, creative_music_reference_projection, MUSIC_CREATIVE_REFERENCE_POLICY, original_rap_delivery, original_rap_violations
+from lyric_craft_school import lyric_craft_policy
 
 MODEL_REPO="LiquidAI/LFM2-700M-GGUF"
 MODEL_FILE="LFM2-700M-Q4_K_M.gguf"
@@ -553,6 +554,9 @@ def generate_events(payload):
         music_policy=music_model_policy("write a new rap song")
     if music_policy and not programming.get("codingTask"):
         music_request=creative_music_request("write a complete original rap song" if reference_structure else prompt)
+        craft_policy=lyric_craft_policy(prompt, structural_reference=bool(reference_structure))
+        if craft_policy:
+            system+="\n"+craft_policy
         system+=("\n"+music_policy+"\nMUSIC REQUEST SHAPE: "+json.dumps(music_request,ensure_ascii=False,separators=(",",":")))
         if reference_structure:
             system+="\n"+MUSIC_CREATIVE_REFERENCE_POLICY+"\nSTRUCTURE-ONLY REFERENCE (source and earlier draft words removed): "+json.dumps(reference_structure,ensure_ascii=False,separators=(",",":"))

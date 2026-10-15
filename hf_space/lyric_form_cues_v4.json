@@ -1,0 +1,91 @@
+{
+  "schema": "swrlz-lyric-ocean-form-cue-v4",
+  "status": "BOUNDED_ABSTRACT_SOURCE_ONLY",
+  "source": "derived from newly authored cross-form curriculum, no lyrics or private archive fragments",
+  "count": 8,
+  "cards": [
+    {
+      "id": "rnb",
+      "triggers": [
+        "r&b",
+        "rnb",
+        "soul",
+        "slow jam",
+        "two-step"
+      ],
+      "cue": "R&B: let understated everyday actions carry intimacy. Use singable vowel-led hook contours, relaxed syncopated phrases and an earned hook variation; do not force technical density."
+    },
+    {
+      "id": "percussion-cypher",
+      "triggers": [
+        "cypher",
+        "call and response",
+        "percussion",
+        "ensemble rap"
+      ],
+      "cue": "Cypher: preserve distinguishable performers, hand off rhyme pockets as answers and allow rest-space between parts. A shared refrain is optional; don't erase performer identities."
+    },
+    {
+      "id": "lullaby",
+      "triggers": [
+        "lullaby",
+        "sleep song",
+        "waltz",
+        "6/8"
+      ],
+      "cue": "Lullaby: choose gentle repeatable imagery, shorter singable sentences and steady soothing movement. Do not manufacture complex internal rhymes or claim exact 6/8 timing without audio."
+    },
+    {
+      "id": "uneven-meter",
+      "triggers": [
+        "5/4",
+        "7/8",
+        "asymmetric",
+        "odd meter",
+        "art rock"
+      ],
+      "cue": "Uneven meter: plan stress and rest around a counted motif, then vary it consciously. Text is only an intended phrasing map, never proof of BPM or actual bar alignment."
+    },
+    {
+      "id": "spoken-word",
+      "triggers": [
+        "spoken word",
+        "free verse",
+        "slam poem",
+        "unrhymed"
+      ],
+      "cue": "Spoken word: let breath, meaning and purposeful silence determine line breaks. End rhyme and pop chorus labels are not mandatory; make a concrete perspective shift."
+    },
+    {
+      "id": "funk",
+      "triggers": [
+        "funk",
+        "disco",
+        "dance track",
+        "groove"
+      ],
+      "cue": "Funk: write compact rhythm-first calls and short replies, with room for bass and drum fills. Give recurrence a communal function rather than filling verses with repeated slogans."
+    },
+    {
+      "id": "chopper",
+      "triggers": [
+        "chopper",
+        "double time",
+        "double-time",
+        "rapid fire",
+        "fast rap"
+      ],
+      "cue": "High-speed rap: pack distinct internal assonance pockets into intelligible verbs and events; pivot sound families and punctuate with short stress-gate lines. Avoid syllable salads."
+    },
+    {
+      "id": "folk",
+      "triggers": [
+        "folk",
+        "acoustic story",
+        "story ballad",
+        "bluegrass"
+      ],
+      "cue": "Folk ballad: privilege a clear narrative voice, physical details and consequential turns. Use a recurring couplet only when its meaning can evolve; do not equate folk with generic rural imagery."
+    }
+  ]
+}

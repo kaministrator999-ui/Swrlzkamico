@@ -1,0 +1,515 @@
+{
+  "schema": "swrlz-lyric-ocean-original-examples-v2",
+  "version": 2,
+  "rights": "New synthetic original lines authored solely for the lyric-craft training seed; no archive quotes",
+  "status": "INSTRUCTOR_DEMOS_UNGRADED_NOT_FINETUNED",
+  "count": 24,
+  "genres": [
+    "technical-rap",
+    "comic-rap",
+    "narrative-rap",
+    "melodic-song",
+    "battle-cypher",
+    "story-song",
+    "boom-bap",
+    "introspective-rap",
+    "surreal-freestyle",
+    "blues-story",
+    "absurdist-rap",
+    "emotional-folk",
+    "synth-pop",
+    "cinematic-rap",
+    "punk-comedy",
+    "hope-rap",
+    "cinematic-ballad",
+    "soft-rap",
+    "alt-rock",
+    "spoken-word",
+    "experimental",
+    "urgent-chopper",
+    "metaphoric-rap",
+    "duet"
+  ],
+  "examples": [
+    {
+      "id": "DEMO-001",
+      "label": "night-train-chopper",
+      "genre": "technical-rap",
+      "technique": "alternating fast and short accents",
+      "originalLines": [
+        "Quarter past midnight, the platform is vacant,",
+        "A timetable trembling, the ink almost faded.",
+        "The rail hums a warning through puddles and pavement,",
+        "I fold up the map but I can't fold the waiting.",
+        "Tickets in pockets, the clock doesn't listen,",
+        "Conductor says, \"Board,\" with a spark in his vision.",
+        "A fast little rhythm of wheels in the distance—",
+        "Then silence. One foot on the step. One decision."
+      ],
+      "lineCount": 8,
+      "reviewStatus": "SYNTHETIC_UNGRADED_CRAFT_EXAMPLE",
+      "usage": "Study cause/effect, cadence and structural choices only; do not memorize/repeat words, hooks or themes.",
+      "independentEvaluation": "NOT_RUN"
+    },
+    {
+      "id": "DEMO-002",
+      "label": "sundial-courtroom",
+      "genre": "comic-rap",
+      "technique": "premise reversal",
+      "originalLines": [
+        "The sundial sued the moon for overtime pay,",
+        "Said, \"I work till dusk, then you steal my display.\"",
+        "The moon brought receipts from a cloudy July,",
+        "Said, \"Your honor, that shadow was mostly the sky.\"",
+        "The clock in the gallery ticked with delight;",
+        "The jury of candles stayed up through the night.",
+        "They settled at dawn with a handshake and sigh—",
+        "The sun missed the hearing. No reason why."
+      ],
+      "lineCount": 8,
+      "reviewStatus": "SYNTHETIC_UNGRADED_CRAFT_EXAMPLE",
+      "usage": "Study cause/effect, cadence and structural choices only; do not memorize/repeat words, hooks or themes.",
+      "independentEvaluation": "NOT_RUN"
+    },
+    {
+      "id": "DEMO-003",
+      "label": "river-ferry",
+      "genre": "narrative-rap",
+      "technique": "specific stakes and quiet turn",
+      "originalLines": [
+        "My hands kept the ferry aligned with the shore,",
+        "Just one thin white line where the ropes scraped the floor.",
+        "A passenger asked why I never looked back;",
+        "I pointed ahead where the sunlight went black.",
+        "We crossed in a drizzle; the engine ran low,",
+        "A child held a paper boat steady below.",
+        "I finally turned when the harbor bell rang—",
+        "The shore hadn't moved, but the silence had changed."
+      ],
+      "lineCount": 8,
+      "reviewStatus": "SYNTHETIC_UNGRADED_CRAFT_EXAMPLE",
+      "usage": "Study cause/effect, cadence and structural choices only; do not memorize/repeat words, hooks or themes.",
+      "independentEvaluation": "NOT_RUN"
+    },
+    {
+      "id": "DEMO-004",
+      "label": "greenhouse-melody",
+      "genre": "melodic-song",
+      "technique": "open vowels and selective refrain",
+      "originalLines": [
+        "Under the glass where the winter winds go,",
+        "One little green stem is learning to grow.",
+        "Hold on, small light, hold on through the cold,",
+        "The night cannot measure the warmth you can hold.",
+        "I carry the water in jars from the hall,",
+        "Catch every bright drop before it can fall.",
+        "Hold on, small light, the morning is near,",
+        "Your leaves are the answer I needed to hear."
+      ],
+      "lineCount": 8,
+      "reviewStatus": "SYNTHETIC_UNGRADED_CRAFT_EXAMPLE",
+      "usage": "Study cause/effect, cadence and structural choices only; do not memorize/repeat words, hooks or themes.",
+      "independentEvaluation": "NOT_RUN"
+    },
+    {
+      "id": "DEMO-005",
+      "label": "street-violin-duel",
+      "genre": "battle-cypher",
+      "technique": "distinct voices and musical replies",
+      "originalLines": [
+        "VIOLIN: I carry a storm in a whisper of string,",
+        "DRUMMER: I give it a road; hear the pavement ring.",
+        "VIOLIN: You rattle the windows, but can you be still?",
+        "DRUMMER: I can. One tap. Now follow the hill.",
+        "VIOLIN: I'll bend that last note till it circles your feet,",
+        "DRUMMER: I'll leave you a pocket right under the beat.",
+        "TOGETHER: No winner was needed; the crowd understood—",
+        "A challenge gets sharper when both players are good."
+      ],
+      "lineCount": 8,
+      "reviewStatus": "SYNTHETIC_UNGRADED_CRAFT_EXAMPLE",
+      "usage": "Study cause/effect, cadence and structural choices only; do not memorize/repeat words, hooks or themes.",
+      "independentEvaluation": "NOT_RUN"
+    },
+    {
+      "id": "DEMO-006",
+      "label": "lantern-maker",
+      "genre": "story-song",
+      "technique": "object-driven plot",
+      "originalLines": [
+        "The lantern maker hid a compass in the frame,",
+        "Wrote a crooked little arrow, never signed a name.",
+        "The apprentice held it up against the evening rain,",
+        "Saw a road through the market in the pattern of the grain.",
+        "At the bridge, a stranger asked him what the light was for;",
+        "He said, \"A door I haven't found, or maybe just a shore.\"",
+        "Then the lantern caught the wind, and every wall turned gold—",
+        "The map was not a secret. It was courage being told."
+      ],
+      "lineCount": 8,
+      "reviewStatus": "SYNTHETIC_UNGRADED_CRAFT_EXAMPLE",
+      "usage": "Study cause/effect, cadence and structural choices only; do not memorize/repeat words, hooks or themes.",
+      "independentEvaluation": "NOT_RUN"
+    },
+    {
+      "id": "DEMO-007",
+      "label": "chess-club",
+      "genre": "boom-bap",
+      "technique": "argument and rhythmic pivot",
+      "originalLines": [
+        "I walked into the chess club, quiet as a check,",
+        "They judged me by the pawns that I hadn't moved yet.",
+        "Old man tapped the timer like he knew the whole play,",
+        "I said, \"A clock is not a compass; it can't choose my way.\"",
+        "Two bishops drew a hallway, his knight came round the bend,",
+        "I put my rook in danger just to change what he defended.",
+        "No crown on the table, no speech to impress—",
+        "I lost that first board and learned something from the mess."
+      ],
+      "lineCount": 8,
+      "reviewStatus": "SYNTHETIC_UNGRADED_CRAFT_EXAMPLE",
+      "usage": "Study cause/effect, cadence and structural choices only; do not memorize/repeat words, hooks or themes.",
+      "independentEvaluation": "NOT_RUN"
+    },
+    {
+      "id": "DEMO-008",
+      "label": "bus-stop",
+      "genre": "introspective-rap",
+      "technique": "detail before emotion",
+      "originalLines": [
+        "The bus-stop roof was leaking through a rusted silver seam,",
+        "I watched the water sketch a crooked little stream.",
+        "A stranger held a book with the corners turned to gray,",
+        "Said, \"Some pages look more honest once the ink has washed away.\"",
+        "We talked about the weather till the buses stopped arriving,",
+        "The streetlights blinked in pairs like the city was deciding.",
+        "I went home with no answers and a ticket in my coat,",
+        "But one kind conversation kept my tired feet afloat."
+      ],
+      "lineCount": 8,
+      "reviewStatus": "SYNTHETIC_UNGRADED_CRAFT_EXAMPLE",
+      "usage": "Study cause/effect, cadence and structural choices only; do not memorize/repeat words, hooks or themes.",
+      "independentEvaluation": "NOT_RUN"
+    },
+    {
+      "id": "DEMO-009",
+      "label": "library-elevator",
+      "genre": "surreal-freestyle",
+      "technique": "one coherent surreal rule",
+      "originalLines": [
+        "The lift says, \"Floor of Doubt,\" and I'm holding down three,",
+        "A bookshelf wearing slippers asks what I'd like to be.",
+        "Next stop: Second Chances, where the mirrors are delayed;",
+        "They show the moves I almost made, the calls I almost made.",
+        "I press the button marked \"Enough,\" it flickers into blue,",
+        "The elevator opens on a room I walked straight through.",
+        "No prophecy, no portal, just the library at ten—",
+        "I borrow one small paperback and ride the lift again."
+      ],
+      "lineCount": 8,
+      "reviewStatus": "SYNTHETIC_UNGRADED_CRAFT_EXAMPLE",
+      "usage": "Study cause/effect, cadence and structural choices only; do not memorize/repeat words, hooks or themes.",
+      "independentEvaluation": "NOT_RUN"
+    },
+    {
+      "id": "DEMO-010",
+      "label": "projector-blues",
+      "genre": "blues-story",
+      "technique": "short rhythmic repeat with payoff",
+      "originalLines": [
+        "Projector cough, projector cough, the pictures lost their place,",
+        "A cowboy took the spaceship and the alien won the race.",
+        "Projector cough, projector cough, I tried to slow the reel,",
+        "But the villain met a baker and forgot the way to steal.",
+        "The audience was laughing, so I let the stories roam,",
+        "A dragon bought a train ticket and finally went home.",
+        "The manager said, \"Fix it,\" when the credits faded out—",
+        "I told him folks had paid to see what accidents were about."
+      ],
+      "lineCount": 8,
+      "reviewStatus": "SYNTHETIC_UNGRADED_CRAFT_EXAMPLE",
+      "usage": "Study cause/effect, cadence and structural choices only; do not memorize/repeat words, hooks or themes.",
+      "independentEvaluation": "NOT_RUN"
+    },
+    {
+      "id": "DEMO-011",
+      "label": "space-socks",
+      "genre": "absurdist-rap",
+      "technique": "escalating absurdity",
+      "originalLines": [
+        "Somebody lost a sock in the orbital machine,",
+        "Now the oxygen is humming and the filters all are green.",
+        "The captain called a meeting, everybody brought a chart,",
+        "One engineer suggested we should launch a laundry cart.",
+        "The station AI whispered, \"I have solved the mystery\":",
+        "The missing sock was hanging by the emergency key.",
+        "We cheered and cut the power to the blinking red alarm,",
+        "Then somebody asked the question, \"Where'd the other sock go, Marv?\""
+      ],
+      "lineCount": 8,
+      "reviewStatus": "SYNTHETIC_UNGRADED_CRAFT_EXAMPLE",
+      "usage": "Study cause/effect, cadence and structural choices only; do not memorize/repeat words, hooks or themes.",
+      "independentEvaluation": "NOT_RUN"
+    },
+    {
+      "id": "DEMO-012",
+      "label": "old-mailbox",
+      "genre": "emotional-folk",
+      "technique": "small act and earned closure",
+      "originalLines": [
+        "The mailbox on the corner had no house behind its name,",
+        "Just a crooked little post where the lilacs still remained.",
+        "A letter came in winter with a stamp I'd never seen,",
+        "I kept it in my pocket till the first day turning green.",
+        "I found the old street register and traced the address down,",
+        "Delivered it to someone who had moved across the town.",
+        "She read it at the doorway and then asked me in for tea—",
+        "Not every lost thing needs a map to find where it should be."
+      ],
+      "lineCount": 8,
+      "reviewStatus": "SYNTHETIC_UNGRADED_CRAFT_EXAMPLE",
+      "usage": "Study cause/effect, cadence and structural choices only; do not memorize/repeat words, hooks or themes.",
+      "independentEvaluation": "NOT_RUN"
+    },
+    {
+      "id": "DEMO-013",
+      "label": "weather-radio",
+      "genre": "synth-pop",
+      "technique": "refrain evolves meaning",
+      "originalLines": [
+        "Static on the rooftop, thunder in the wire,",
+        "Every little signal climbs a little higher.",
+        "Send me a frequency; send me a sign,",
+        "The clouds have their language, but I'm learning mine.",
+        "Night becomes a spectrum, blue beyond the glass,",
+        "Every warning changes when the hardest hours pass.",
+        "Send me a frequency; let the morning shine,",
+        "The clouds keep their language; I can still speak mine."
+      ],
+      "lineCount": 8,
+      "reviewStatus": "SYNTHETIC_UNGRADED_CRAFT_EXAMPLE",
+      "usage": "Study cause/effect, cadence and structural choices only; do not memorize/repeat words, hooks or themes.",
+      "independentEvaluation": "NOT_RUN"
+    },
+    {
+      "id": "DEMO-014",
+      "label": "ice-sculptor",
+      "genre": "cinematic-rap",
+      "technique": "escalating event and cadence rest",
+      "originalLines": [
+        "Chisel in a hurry, the thermometer climbs,",
+        "A gallery of winter in the heat of summertime.",
+        "The statue's little fingers start to soften at the tips,",
+        "I catch a falling crystal as the afternoon light slips.",
+        "The judges crowd the doorway; the fans begin to groan.",
+        "I carve a river through the ice and let the water flow.",
+        "They ask me why it's melting. I tell them, \"That's the art.\"",
+        "The sculpture lasts a minute. The river leaves a mark."
+      ],
+      "lineCount": 8,
+      "reviewStatus": "SYNTHETIC_UNGRADED_CRAFT_EXAMPLE",
+      "usage": "Study cause/effect, cadence and structural choices only; do not memorize/repeat words, hooks or themes.",
+      "independentEvaluation": "NOT_RUN"
+    },
+    {
+      "id": "DEMO-015",
+      "label": "printer-office",
+      "genre": "punk-comedy",
+      "technique": "voice and punchline",
+      "originalLines": [
+        "The printer left a notice in the corporate break-room:",
+        "\"Effective now, I'm quitting all the paper and perfume!\"",
+        "The stapler called a meeting, the scanner took the chair,",
+        "The copier made a hundred signs and posted them everywhere.",
+        "The manager demanded that the contracts all be signed,",
+        "The printer said, \"I'm sorry, but I'm out of dotted lines.\"",
+        "They settled on a weekend and a better coffee rate—",
+        "Now every page says, \"Paid vacation.\" That's a pretty good rebate."
+      ],
+      "lineCount": 8,
+      "reviewStatus": "SYNTHETIC_UNGRADED_CRAFT_EXAMPLE",
+      "usage": "Study cause/effect, cadence and structural choices only; do not memorize/repeat words, hooks or themes.",
+      "independentEvaluation": "NOT_RUN"
+    },
+    {
+      "id": "DEMO-016",
+      "label": "moon-garden",
+      "genre": "hope-rap",
+      "technique": "concrete external action",
+      "originalLines": [
+        "The dome was full of hairline cracks; the heater lost its tune,",
+        "A gardener checked the seedlings in a greenhouse on the moon.",
+        "She patched it with a silver strip and shared the final cup",
+        "Of water with a stubborn root that wouldn't give it up.",
+        "The radio kept asking for a status and a plan;",
+        "She said, \"The leaves are standing. Do the best you can.\"",
+        "At dawn a little flower opened brighter than the screen—",
+        "No speech about forever. Just a petal, small and green."
+      ],
+      "lineCount": 8,
+      "reviewStatus": "SYNTHETIC_UNGRADED_CRAFT_EXAMPLE",
+      "usage": "Study cause/effect, cadence and structural choices only; do not memorize/repeat words, hooks or themes.",
+      "independentEvaluation": "NOT_RUN"
+    },
+    {
+      "id": "DEMO-017",
+      "label": "coastal-lighthouse",
+      "genre": "cinematic-ballad",
+      "technique": "long melodic contours",
+      "originalLines": [
+        "Across the black horizon there's a sail beyond the foam,",
+        "The lighthouse glass is broken and the keeper stands alone.",
+        "He holds a shard of silver where the moon can find the sea,",
+        "And turns it toward the vessel like a hand upon a key.",
+        "Go slowly through the water, go slowly through the night,",
+        "A single broken mirror may be strong enough for light.",
+        "When morning finds the harbor and the sailors step ashore,",
+        "He sets that shard beside the lamp and sweeps the wooden floor."
+      ],
+      "lineCount": 8,
+      "reviewStatus": "SYNTHETIC_UNGRADED_CRAFT_EXAMPLE",
+      "usage": "Study cause/effect, cadence and structural choices only; do not memorize/repeat words, hooks or themes.",
+      "independentEvaluation": "NOT_RUN"
+    },
+    {
+      "id": "DEMO-018",
+      "label": "flea-market-robot",
+      "genre": "soft-rap",
+      "technique": "emotion through subtext",
+      "originalLines": [
+        "The robot held a pocket watch, the vendor named a price,",
+        "It searched a faded memory of a garden full of ice.",
+        "\"I only have a button and a song I cannot play,\"",
+        "The merchant looked at both of them and nodded anyway.",
+        "A child wound the watch and heard it tick against the rain,",
+        "The robot stood beside the stall, remembering a name.",
+        "No grand reunion followed, and the market closed at four,",
+        "But it came back on Saturdays to help them sweep the floor."
+      ],
+      "lineCount": 8,
+      "reviewStatus": "SYNTHETIC_UNGRADED_CRAFT_EXAMPLE",
+      "usage": "Study cause/effect, cadence and structural choices only; do not memorize/repeat words, hooks or themes.",
+      "independentEvaluation": "NOT_RUN"
+    },
+    {
+      "id": "DEMO-019",
+      "label": "theater-stagehand",
+      "genre": "alt-rock",
+      "technique": "cause and payoff",
+      "originalLines": [
+        "The curtain rope was tangled, all the painted forests fell,",
+        "The stagehand watched the scenery collapse like a shell.",
+        "She turned the broken branches into ladders for the cast,",
+        "Made the missing mountains from the shadows that they cast.",
+        "The actors crossed the stage and saw the audience lean in,",
+        "A second set of footsteps struck a rhythm from the wings.",
+        "The critic called it fearless; she just carried home the glue—",
+        "Sometimes the show keeps moving when you make the failure new."
+      ],
+      "lineCount": 8,
+      "reviewStatus": "SYNTHETIC_UNGRADED_CRAFT_EXAMPLE",
+      "usage": "Study cause/effect, cadence and structural choices only; do not memorize/repeat words, hooks or themes.",
+      "independentEvaluation": "NOT_RUN"
+    },
+    {
+      "id": "DEMO-020",
+      "label": "firefly-messenger",
+      "genre": "spoken-word",
+      "technique": "restraint and atmospheric rhythm",
+      "originalLines": [
+        "The meadow spoke in intervals, not syllables or signs,",
+        "A thousand little lanterns drew their questions in the pines.",
+        "I counted until counting felt like missing what was there,",
+        "And put the notebook down to let the cool air find my hair.",
+        "The brightest one went dark, then flashed beside a stream,",
+        "As though it had been trying not to wake a deeper dream.",
+        "I walked back through the grasses, with a question I could keep:",
+        "How many kinds of silence are awake while we are asleep?"
+      ],
+      "lineCount": 8,
+      "reviewStatus": "SYNTHETIC_UNGRADED_CRAFT_EXAMPLE",
+      "usage": "Study cause/effect, cadence and structural choices only; do not memorize/repeat words, hooks or themes.",
+      "independentEvaluation": "NOT_RUN"
+    },
+    {
+      "id": "DEMO-021",
+      "label": "clockwork-parade",
+      "genre": "experimental",
+      "technique": "consistent unusual form",
+      "originalLines": [
+        "Tick—one bird opens paper wings.",
+        "Tock—one brass dog forgets its spring.",
+        "Tick—one street folds under the band.",
+        "Tock—a child lifts the conductor's hand.",
+        "Tick—the wheels keep time without a guide.",
+        "Tock—the crowd starts marching side by side.",
+        "Tick—the clock is wrong, but no one minds.",
+        "Tock—the parade has learned to keep its time."
+      ],
+      "lineCount": 8,
+      "reviewStatus": "SYNTHETIC_UNGRADED_CRAFT_EXAMPLE",
+      "usage": "Study cause/effect, cadence and structural choices only; do not memorize/repeat words, hooks or themes.",
+      "independentEvaluation": "NOT_RUN"
+    },
+    {
+      "id": "DEMO-022",
+      "label": "mountain-rescue",
+      "genre": "urgent-chopper",
+      "technique": "density into plain punch",
+      "originalLines": [
+        "Climbing through granite with sleet on the harness,",
+        "Radio cracking; the weather goes hardest.",
+        "Boots on a ledge where the gravel keeps sliding,",
+        "Marking the footholds, not guessing the timing.",
+        "One rope. Two knots. Check the line.",
+        "Three voices answering, right on time.",
+        "We pull through the darkness, the ridge turning blue—",
+        "No medals. Just four of us making it through."
+      ],
+      "lineCount": 8,
+      "reviewStatus": "SYNTHETIC_UNGRADED_CRAFT_EXAMPLE",
+      "usage": "Study cause/effect, cadence and structural choices only; do not memorize/repeat words, hooks or themes.",
+      "independentEvaluation": "NOT_RUN"
+    },
+    {
+      "id": "DEMO-023",
+      "label": "pocket-atlas",
+      "genre": "metaphoric-rap",
+      "technique": "map metaphor stays grounded",
+      "originalLines": [
+        "My pocket atlas opens to a road that isn't there,",
+        "The ink has moved the crossings like somebody moved the air.",
+        "I ask the oldest taxi where the bridge went overnight;",
+        "He draws a line in pencil and says, \"Try that one at light.\"",
+        "I follow every arrow till the river comes in view,",
+        "The streets are all unfamiliar but the morning still feels true.",
+        "I fold the map beside me; it's as useful as before—",
+        "A map can show the turning. It can't walk you through the door."
+      ],
+      "lineCount": 8,
+      "reviewStatus": "SYNTHETIC_UNGRADED_CRAFT_EXAMPLE",
+      "usage": "Study cause/effect, cadence and structural choices only; do not memorize/repeat words, hooks or themes.",
+      "independentEvaluation": "NOT_RUN"
+    },
+    {
+      "id": "DEMO-024",
+      "label": "kitchen-duet",
+      "genre": "duet",
+      "technique": "distinct needs and response",
+      "originalLines": [
+        "BAKER: The dough needs another hour; the crowd is at the gate.",
+        "RIVAL: You can rush the rising, but you cannot rush the taste.",
+        "BAKER: Your flour's on my counter, your sugar's in my bowl.",
+        "RIVAL: Then maybe both our recipes were never ours alone.",
+        "BAKER: Put the oven up to temperature; I'll shape a final round.",
+        "RIVAL: I'll clear a little table, let the hungry people crowd.",
+        "TOGETHER: The sun is on the window and the first loaf's finally done—",
+        "A rivalry tastes sweeter when the neighbors get some."
+      ],
+      "lineCount": 8,
+      "reviewStatus": "SYNTHETIC_UNGRADED_CRAFT_EXAMPLE",
+      "usage": "Study cause/effect, cadence and structural choices only; do not memorize/repeat words, hooks or themes.",
+      "independentEvaluation": "NOT_RUN"
+    }
+  ]
+}

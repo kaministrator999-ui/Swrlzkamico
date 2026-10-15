@@ -1,0 +1,598 @@
+{
+  "schema": "swrlz-lyric-ocean-crossform-complete-v4",
+  "status": "DRAFT_EXPOSURE_NO_MODEL_FINETUNE",
+  "review": "Requires a second, independent writer/editor and performance review before success labels",
+  "sectionTruth": "Section labels are explicit author intent; line counts are not proof of musical bars",
+  "songs": [
+    {
+      "id": "V4-01",
+      "title": "The Spare Key on the Fridge",
+      "form": "intimate_rnb",
+      "intendedFeel": "slow two-step pulse; relaxed syncopation; sustained open vowels",
+      "techniques": [
+        "small gestures as emotional actions",
+        "two-hook semantic variation",
+        "romantic restraint"
+      ],
+      "sections": [
+        {
+          "kind": "verse",
+          "lines": [
+            "You left a spare key where the magnets make a line,",
+            "Between the grocery list and a faded paper sign.",
+            "We never made a ceremony out of coming through the door,",
+            "We learned the sound of footsteps on the old upstairs floor.",
+            "One night the hallway filled with boxes stacked in rows,",
+            "You held the smallest lamp and asked which way the sofa goes.",
+            "I didn't know the answer, and you laughed without a sound,",
+            "Then set the lamp beside the chair and knelt to clear the ground."
+          ]
+        },
+        {
+          "kind": "pre_hook",
+          "lines": [
+            "The windows don't fit perfectly, the cupboard doesn't close,",
+            "But you know which loose floorboard creaks before the kettle goes."
+          ]
+        },
+        {
+          "kind": "hook",
+          "lines": [
+            "Leave the light where we can find it,",
+            "Leave a little room beside it.",
+            "If the day gets loud and long,",
+            "There's a quiet place where we belong."
+          ]
+        },
+        {
+          "kind": "verse",
+          "lines": [
+            "In April we were arguing about a coat left in the rain,",
+            "You went outside to get it while I counted every stain.",
+            "You came back with a photograph you'd found below the stair,",
+            "Two strangers in this kitchen from a year we weren't here.",
+            "They'd written on the border, \"Keep the table if you can,\"",
+            "So we sanded down the scratches with a borrowed little fan.",
+            "You signed beneath the picture in your unambitious hand,",
+            "And called the narrow kitchen something close to what we'd planned."
+          ]
+        },
+        {
+          "kind": "hook_variation",
+          "lines": [
+            "Keep the light where we can find it,",
+            "Set a bigger table by it.",
+            "When the day gets loud and long,",
+            "There's more than room for us to belong."
+          ]
+        },
+        {
+          "kind": "outro",
+          "lines": [
+            "The spare key on the fridge door hardly shines against the white,",
+            "But I turn it in the lock and know that someone left a light.",
+            "Not a promise that the weather or the years will all be kind—",
+            "Just a place to put our burdens and a door we chose to find."
+          ]
+        }
+      ],
+      "lineCount": 30,
+      "editorialStatus": "DRAFT_UNREVIEWED",
+      "rightsState": "ORIGINAL_SYNTHETIC_NO_ARCHIVE_QUOTES",
+      "trainingStatus": "NOT_WEIGHT_TRAINABLE",
+      "performedMeterVerified": false
+    },
+    {
+      "id": "V4-02",
+      "title": "The Platform Is a Drum",
+      "form": "percussion_cypher",
+      "intendedFeel": "alternating call-response, percussion-first pocket, group refrain",
+      "techniques": [
+        "distinct performer registers",
+        "non-identical answers",
+        "scene-driven syncopation"
+      ],
+      "sections": [
+        {
+          "kind": "caller",
+          "lines": [
+            "LEAD: A bucket and a bench—who brought the beat?",
+            "GROUP: The baker from the corner with the flour on his feet.",
+            "LEAD: Who found the backbeat hiding under station four?",
+            "GROUP: The guard who shuts the shutters when he closes up the door."
+          ]
+        },
+        {
+          "kind": "verse_a",
+          "lines": [
+            "DANCER: I mark the stones in patterns while the evening buses stall.",
+            "My left foot keeps the high notes; my right can catch the fall.",
+            "You tell me I should stand still when the traffic lights turn red—",
+            "But a pause is just a doorway for the next beat in my head."
+          ]
+        },
+        {
+          "kind": "verse_b",
+          "lines": [
+            "DRUMMER: My brother taught me rhythm with a pencil and a tin.",
+            "I learned to hear the spaces where the quieter drums begin.",
+            "Don't need a wall of thunder if the pocket has a place;",
+            "I let the final snare hit twice, then leave the room some space."
+          ]
+        },
+        {
+          "kind": "group_refrain",
+          "lines": [
+            "GROUP: Tap the rail, answer back.",
+            "GROUP: Hear the wheel upon the track.",
+            "LEAD: One small sound can start the floor.",
+            "GROUP: Leave some room for one beat more."
+          ]
+        },
+        {
+          "kind": "verse_c",
+          "lines": [
+            "VIOLINIST: The strings can float above it with a note that bends and leans.",
+            "I start outside the downbeat, then pull across their feet.",
+            "The drummer drops to silence; now my bow can barely sing—",
+            "He catches my last whisper with a soft tap on the rim."
+          ]
+        },
+        {
+          "kind": "turn",
+          "lines": [
+            "GUARD: The final bus is pulling up. The driver shakes his head.",
+            "He says the neighbors need their sleep; the hour's past the end.",
+            "LEAD: We nod and pack the instruments, then move toward the square;",
+            "The rhythm takes the staircase, but the platform keeps the air."
+          ]
+        },
+        {
+          "kind": "outro",
+          "lines": [
+            "GROUP: Tap the rail, then let it rest.",
+            "LEAD: The quiet part is not a test.",
+            "ALL: Tomorrow has another track.",
+            "ALL: And every echo carries back."
+          ]
+        }
+      ],
+      "lineCount": 28,
+      "editorialStatus": "DRAFT_UNREVIEWED",
+      "rightsState": "ORIGINAL_SYNTHETIC_NO_ARCHIVE_QUOTES",
+      "trainingStatus": "NOT_WEIGHT_TRAINABLE",
+      "performedMeterVerified": false
+    },
+    {
+      "id": "V4-03",
+      "title": "The Little Window Upstairs",
+      "form": "waltz_lullaby",
+      "intendedFeel": "gentle three-pulse or 6/8 sway; lyric doesn't assert performed meter",
+      "techniques": [
+        "short soothing vowel phrases",
+        "stable images",
+        "no excessive cleverness"
+      ],
+      "sections": [
+        {
+          "kind": "verse",
+          "lines": [
+            "A little window upstairs,",
+            "A ribbon caught in the breeze,",
+            "The city folds away its noise",
+            "Among the sleeping trees.",
+            "Your blanket holds the moonlight",
+            "In squares upon the wall,",
+            "And somewhere in the courtyard",
+            "The latest raindrops fall."
+          ]
+        },
+        {
+          "kind": "refrain",
+          "lines": [
+            "Rest, little wanderer, rest,",
+            "The street can find its way.",
+            "The trains will take their journeys;",
+            "You can save yours for the day."
+          ]
+        },
+        {
+          "kind": "verse",
+          "lines": [
+            "The neighbor turns a page,",
+            "A kettle settles down,",
+            "The washing lines are holding",
+            "The softest shirts in town.",
+            "No one needs an answer,",
+            "No race must yet be run;",
+            "A dream can take the long way",
+            "And still arrive with sun."
+          ]
+        },
+        {
+          "kind": "refrain_variation",
+          "lines": [
+            "Sleep, little wanderer, sleep,",
+            "The windows know the rain.",
+            "The trains can keep their journeys;",
+            "You'll have your own again."
+          ]
+        },
+        {
+          "kind": "coda",
+          "lines": [
+            "One lamp beneath the curtain,",
+            "One hand beside your hand,",
+            "A quiet little harbor",
+            "No map has ever planned."
+          ]
+        }
+      ],
+      "lineCount": 28,
+      "editorialStatus": "DRAFT_UNREVIEWED",
+      "rightsState": "ORIGINAL_SYNTHETIC_NO_ARCHIVE_QUOTES",
+      "trainingStatus": "NOT_WEIGHT_TRAINABLE",
+      "performedMeterVerified": false
+    },
+    {
+      "id": "V4-04",
+      "title": "Room for the Fifth Beat",
+      "form": "asymmetric_art_rock",
+      "intendedFeel": "intended five-count phrasing on selected hook lines, variable resets; not audio-confirmed",
+      "techniques": [
+        "uneven count with stable anchor",
+        "nonliteral rhythmic progression",
+        "avoiding fake BPM claims"
+      ],
+      "sections": [
+        {
+          "kind": "verse",
+          "lines": [
+            "Every room in the warehouse is marked with chalk,",
+            "Every footstep echoes when the night crew walks.",
+            "One light flickers twice, then it waits for a third,",
+            "And the concrete keeps the shape of an unfinished word.",
+            "I count the steps from loading bay to painted door,",
+            "There used to be four; now the workers count one more.",
+            "The clock still tells us when to close the steel outside,",
+            "But nothing here explains why the echo will not hide."
+          ]
+        },
+        {
+          "kind": "hook",
+          "lines": [
+            "One, two—hold it—three, four, five.",
+            "Leave the quiet part alive.",
+            "One, two—turn it—three, four, five.",
+            "That's the sound of getting by."
+          ]
+        },
+        {
+          "kind": "verse",
+          "lines": [
+            "The oldest night watch walks the corridor alone,",
+            "Picks up an empty cup beside the telephone.",
+            "He taps the steel handrail where the ceiling lights go dark,",
+            "And hears a second answer from beyond the loading park.",
+            "He finds a loose board banging on the outer gate,",
+            "And tightens two old screws before it gets too late.",
+            "When the machinery returns to its ordinary chime,",
+            "The missing little silence feels as strange as missing time."
+          ]
+        },
+        {
+          "kind": "breakdown",
+          "lines": [
+            "Count less.",
+            "Listen more.",
+            "Hear the hinges",
+            "On the door.",
+            "Breathe once.",
+            "Wait and see—",
+            "No floor can hold a rhythm",
+            "If it leaves no room for me."
+          ]
+        },
+        {
+          "kind": "hook_variation",
+          "lines": [
+            "One, two—let go—three, four, five.",
+            "Leave the quiet part alive.",
+            "One, two—slow down—three, four, five.",
+            "Now the whole room feels alive."
+          ]
+        }
+      ],
+      "lineCount": 32,
+      "editorialStatus": "DRAFT_UNREVIEWED",
+      "rightsState": "ORIGINAL_SYNTHETIC_NO_ARCHIVE_QUOTES",
+      "trainingStatus": "NOT_WEIGHT_TRAINABLE",
+      "performedMeterVerified": false
+    },
+    {
+      "id": "V4-05",
+      "title": "Inventory of Things Not Said",
+      "form": "free_verse_spoken_word",
+      "intendedFeel": "asymmetric speech rhythm, sparse internal sound recurrence, silence as a choice",
+      "techniques": [
+        "no forced end-rhyme",
+        "object list that becomes an argument",
+        "perspective turn without a repeated hook"
+      ],
+      "sections": [
+        {
+          "kind": "inventory",
+          "lines": [
+            "There is a receipt",
+            "in the drawer beside the sink.",
+            "It says we bought six cups.",
+            "Only five remain.",
+            "There is an umbrella",
+            "that has forgotten its owner,",
+            "a calendar turned to March",
+            "though the hallway is already warm."
+          ]
+        },
+        {
+          "kind": "turn",
+          "lines": [
+            "I used to think the things we didn't say",
+            "had no weight.",
+            "Then I tried to carry a cardboard box",
+            "full of folded letters",
+            "up three flights of stairs,",
+            "and the bottom opened",
+            "halfway to the landing."
+          ]
+        },
+        {
+          "kind": "response",
+          "lines": [
+            "Nothing spectacular happened.",
+            "I knelt.",
+            "I gathered the papers.",
+            "A neighbor held the door",
+            "without asking who had written them.",
+            "There is a kind of mercy",
+            "in a question",
+            "that never needs to be spoken."
+          ]
+        },
+        {
+          "kind": "ending",
+          "lines": [
+            "The receipt is still in the drawer.",
+            "I bring the remaining cups",
+            "down to the kitchen table,",
+            "and make room for one more."
+          ]
+        }
+      ],
+      "lineCount": 27,
+      "editorialStatus": "DRAFT_UNREVIEWED",
+      "rightsState": "ORIGINAL_SYNTHETIC_NO_ARCHIVE_QUOTES",
+      "trainingStatus": "NOT_WEIGHT_TRAINABLE",
+      "performedMeterVerified": false
+    },
+    {
+      "id": "V4-06",
+      "title": "Paint on the Dance Floor",
+      "form": "syncopated_funk_song",
+      "intendedFeel": "short hook, clipped accent lines, propulsive dance groove, call-and-response",
+      "techniques": [
+        "rhythmic recurrence with variation",
+        "instrument-oriented consonant accents",
+        "danceable light comedy"
+      ],
+      "sections": [
+        {
+          "kind": "verse",
+          "lines": [
+            "The old hall's got a scuff on the boards,",
+            "A line of blue tape and a stack of awards.",
+            "Somebody brought a bass in a box from the train,",
+            "Somebody brought a towel for the windows in the rain.",
+            "The caretaker points at a patch by the wall,",
+            "Says, \"That's where the paint won't come off at all.\"",
+            "We step around the patch till the drummer hits two,",
+            "Then all of the shoes leave the tape for the blue."
+          ]
+        },
+        {
+          "kind": "hook",
+          "lines": [
+            "Step left—hold tight.",
+            "Hands up—feet light.",
+            "Don't paint the room.",
+            "Let the room paint the night."
+          ]
+        },
+        {
+          "kind": "verse",
+          "lines": [
+            "The sax finds a note in the corner by the fan,",
+            "The keys drop a chord when the cymbal says it can.",
+            "One shoe keeps the one beat, the other finds three,",
+            "The whole little floor learns a new geometry.",
+            "The caretaker smiles, though he swore he wouldn't dance,",
+            "His mop has a handle like a partner at the chance.",
+            "He spins it through the doorway as the bass comes around,",
+            "And a blue-tape border turns to part of the sound."
+          ]
+        },
+        {
+          "kind": "break",
+          "lines": [
+            "No trophies.",
+            "No parade.",
+            "Just the small new",
+            "Steps we made.",
+            "One bass note—",
+            "Take your place.",
+            "Catch the corner,",
+            "Turn your face."
+          ]
+        },
+        {
+          "kind": "hook_variation",
+          "lines": [
+            "Step left—let go.",
+            "Hands up—move slow.",
+            "We didn't paint the room.",
+            "The room gave us somewhere to go."
+          ]
+        }
+      ],
+      "lineCount": 32,
+      "editorialStatus": "DRAFT_UNREVIEWED",
+      "rightsState": "ORIGINAL_SYNTHETIC_NO_ARCHIVE_QUOTES",
+      "trainingStatus": "NOT_WEIGHT_TRAINABLE",
+      "performedMeterVerified": false
+    },
+    {
+      "id": "V4-07",
+      "title": "The Parcel Route",
+      "form": "technical_chopper_freestyle",
+      "intendedFeel": "bursts of internal assonance punctuated by short end-stop lines; no exact BPM claims",
+      "techniques": [
+        "multi-syllable internal pockets",
+        "meaningful sound-family pivots",
+        "one long unlabelled flow"
+      ],
+      "sections": [
+        {
+          "kind": "continuous",
+          "lines": [
+            "Stacking the packets and tracking the addresses,",
+            "Back through the passages, checking the messages.",
+            "Every new label is faded or crooked,",
+            "One little barcode was smudged when they took it.",
+            "Flip it. Read twice. Mark the lane.",
+            "There's a late-route van in the hammering rain.",
+            "Clocking the loading, unloading the corners,",
+            "Sorting the parcels for sleepy shop owners.",
+            "A box with a violin hums when it moves,",
+            "Another holds seedlings in paper-wrapped tubes.",
+            "Fragile—not because the sticker says so,",
+            "But because somebody cares where its contents will go.",
+            "Across the canal where the tall buildings narrow,",
+            "A woman chalks arrows on boards by a barrow.",
+            "Follow the footbridge, then circle the station,",
+            "Don't take the service gate under construction.",
+            "I pivot, I listen, I shift my attention,",
+            "A sign on the fence has an old contradiction:",
+            "ONE WAY points east, but the bridge runs to west,",
+            "So I stop at the corner and put it to test.",
+            "Ten steps. Check the curb. Find the stairs.",
+            "There's a green-painted doorway with three folding chairs.",
+            "The violin's owner is waiting in silence,",
+            "She opens the case and checks each string's winding.",
+            "She plays one short note; in the hallway it lingers,",
+            "Then draws out the next with a tremor of fingers.",
+            "Back to the depot, the wheels start their clatter,",
+            "Loose little pebbles are hitting the ladder.",
+            "A driver is arguing, \"Nothing is moving!\"",
+            "I say, \"Check the map,\" and show him what we're losing:",
+            "Every wrong arrow steals time from a neighbor,",
+            "Every sharp turn asks for patience and labor.",
+            "Not fame. Not glory. Just doing the route.",
+            "Find the right address. Bring the right parcel out.",
+            "A child brings the seedlings onto a balcony ledge,",
+            "And a little green leaf turns beside the concrete edge.",
+            "I leave the last package with a note on its string,",
+            "Then the warehouse alarm starts its late-evening ring.",
+            "Hurry can help when it's honest and measured;",
+            "Speed without purpose is noise without treasure."
+          ]
+        }
+      ],
+      "lineCount": 40,
+      "editorialStatus": "DRAFT_UNREVIEWED",
+      "rightsState": "ORIGINAL_SYNTHETIC_NO_ARCHIVE_QUOTES",
+      "trainingStatus": "NOT_WEIGHT_TRAINABLE",
+      "performedMeterVerified": false
+    },
+    {
+      "id": "V4-08",
+      "title": "The Woven Sail",
+      "form": "folk_story_ballad",
+      "intendedFeel": "acoustic storyteller, understated recurring couplet, broad 6/8 feel not verified",
+      "techniques": [
+        "long narrative causality",
+        "refrain meaning change",
+        "community voice without forced moral"
+      ],
+      "sections": [
+        {
+          "kind": "verse",
+          "lines": [
+            "An old sailmaker lived above the market by the pier,",
+            "She kept a box of sea-worn thread and every sailor's year.",
+            "Her fingers knew the shape of storms before the clouds could show,",
+            "She'd stitch a narrow seam and tell the young ones where to go.",
+            "One morning came a fishing boat with canvas split in three,",
+            "The captain said the season's end was coming with the sea.",
+            "She took the torn white cloth and laid it over by the door,",
+            "Then swept away the sand from all the sails upon the floor."
+          ]
+        },
+        {
+          "kind": "refrain",
+          "lines": [
+            "Hold the thread, keep the line.",
+            "Give the weather room and time.",
+            "One good seam can hold till dawn;",
+            "One new hand can carry on."
+          ]
+        },
+        {
+          "kind": "verse",
+          "lines": [
+            "A girl who swept the workshop asked to hold the needle straight,",
+            "The sailmaker said, \"You can learn, but you will have to wait.\"",
+            "She showed her how the fabric pulls against a sudden gale,",
+            "And why a patch that looks too neat can make a weaker sail.",
+            "They worked until the evening, when the harbor lamps came on,",
+            "Then carried out the canvas with the shape of night upon.",
+            "The captain took the repaired sail and pointed toward the bay,",
+            "The girl said she was frightened it would split another day."
+          ]
+        },
+        {
+          "kind": "refrain_variation",
+          "lines": [
+            "Hold the thread, trust the line.",
+            "Give your hands another time.",
+            "One good seam may hold till dawn;",
+            "One new hand can carry on."
+          ]
+        },
+        {
+          "kind": "bridge",
+          "lines": [
+            "The first cold squall arrived before the little fleet reached land,",
+            "A signal rose above the boats, then turned to wave and sand.",
+            "The sailmaker stood waiting where the lighthouse faced the shore,",
+            "And saw the stitched white canvas find its shape against the roar."
+          ]
+        },
+        {
+          "kind": "outro",
+          "lines": [
+            "By morning every fishing boat had found its mooring place,",
+            "She saw her stitching holding where the canvas met the brace.",
+            "They hung the weathered sail to dry and drank their cups of tea,",
+            "The old hands gave the needle to the girl beside the sea."
+          ]
+        }
+      ],
+      "lineCount": 32,
+      "editorialStatus": "DRAFT_UNREVIEWED",
+      "rightsState": "ORIGINAL_SYNTHETIC_NO_ARCHIVE_QUOTES",
+      "trainingStatus": "NOT_WEIGHT_TRAINABLE",
+      "performedMeterVerified": false
+    }
+  ],
+  "songCount": 8,
+  "totalLyricLines": 249
+}
