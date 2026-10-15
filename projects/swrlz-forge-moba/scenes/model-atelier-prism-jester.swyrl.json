@@ -1,0 +1,5920 @@
+{
+  "engine": "§wyrl§ Engine · Maker v11.3",
+  "version": 11.3,
+  "project": {
+    "name": "Model Atelier · Prism Jester",
+    "canonicalId": "model-atelier-prism-jester",
+    "template": "model-atelier",
+    "kind": "model-atelier",
+    "environment": "spatial-workspace",
+    "environmentSettings": {
+      "background": "#11172c",
+      "fogNear": 80,
+      "fogFar": 140,
+      "exposure": 1.15,
+      "showTerrain": false,
+      "showScenery": false
+    },
+    "modelAtelier": {
+      "schema": "swyrl-model-atelier-v1",
+      "name": "Prism Jester · Original Reference Study",
+      "reference": "Original interpretation of user-supplied Scorchette screenshots; not extracted game geometry or textures",
+      "parts": [
+        {
+          "id": "model-0001",
+          "name": "Face / porcelain complexion",
+          "kind": "sphere",
+          "position": [
+            0,
+            3.28,
+            0.02
+          ],
+          "scale": [
+            0.38,
+            0.47,
+            0.31
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#ffd2ba",
+          "material": "matte",
+          "group": "Character"
+        },
+        {
+          "id": "model-0002",
+          "name": "Neck",
+          "kind": "cylinder",
+          "position": [
+            0,
+            2.87,
+            0
+          ],
+          "scale": [
+            0.14,
+            0.25,
+            0.14
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#ffcfb0",
+          "material": "matte",
+          "group": "Character"
+        },
+        {
+          "id": "model-0003",
+          "name": "Torso / midnight bodice",
+          "kind": "sphere",
+          "position": [
+            0,
+            2.52,
+            0
+          ],
+          "scale": [
+            0.38,
+            0.59,
+            0.24
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#1d293a",
+          "material": "matte",
+          "group": "Character"
+        },
+        {
+          "id": "model-0004",
+          "name": "Waist / ribbon belt",
+          "kind": "cylinder",
+          "position": [
+            0,
+            2.23,
+            0
+          ],
+          "scale": [
+            0.44,
+            0.16,
+            0.34
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#e7a32f",
+          "material": "metal",
+          "group": "Character"
+        },
+        {
+          "id": "model-0005",
+          "name": "Dress / teal skirt",
+          "kind": "cone",
+          "position": [
+            0,
+            1.77,
+            0
+          ],
+          "scale": [
+            0.73,
+            1.05,
+            0.73
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#008d9e",
+          "material": "matte",
+          "group": "Character"
+        },
+        {
+          "id": "model-0006",
+          "name": "Skirt / cream flare",
+          "kind": "cone",
+          "position": [
+            0.18,
+            1.86,
+            0.18
+          ],
+          "scale": [
+            0.65,
+            0.81,
+            0.47
+          ],
+          "rotation": [
+            0,
+            0,
+            -0.16
+          ],
+          "color": "#fff1cf",
+          "material": "matte",
+          "group": "Character"
+        },
+        {
+          "id": "model-0007",
+          "name": "Skirt / golden tip",
+          "kind": "cone",
+          "position": [
+            0.52,
+            1.61,
+            0.25
+          ],
+          "scale": [
+            0.28,
+            0.86,
+            0.42
+          ],
+          "rotation": [
+            0,
+            0,
+            -0.34
+          ],
+          "color": "#f5d340",
+          "material": "metal",
+          "group": "Character"
+        },
+        {
+          "id": "model-0008",
+          "name": "Teal waist sash",
+          "kind": "box",
+          "position": [
+            -0.27,
+            2.22,
+            0.21
+          ],
+          "scale": [
+            0.31,
+            0.13,
+            0.24
+          ],
+          "rotation": [
+            0,
+            0,
+            -0.2
+          ],
+          "color": "#3adfd5",
+          "material": "silk",
+          "group": "Character"
+        },
+        {
+          "id": "model-0009",
+          "name": "Hat base / split jester cap",
+          "kind": "sphere",
+          "position": [
+            0,
+            3.66,
+            0.04
+          ],
+          "scale": [
+            0.49,
+            0.19,
+            0.38
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#202238",
+          "material": "matte",
+          "group": "Character"
+        },
+        {
+          "id": "model-0010",
+          "name": "Hat crown coral",
+          "kind": "cone",
+          "position": [
+            0.24,
+            3.86,
+            0.03
+          ],
+          "scale": [
+            0.23,
+            0.42,
+            0.25
+          ],
+          "rotation": [
+            0,
+            0,
+            -0.35
+          ],
+          "color": "#fa693f",
+          "material": "silk",
+          "group": "Character"
+        },
+        {
+          "id": "model-0011",
+          "name": "Hat crown teal",
+          "kind": "cone",
+          "position": [
+            -0.21,
+            3.87,
+            0.03
+          ],
+          "scale": [
+            0.21,
+            0.39,
+            0.24
+          ],
+          "rotation": [
+            0,
+            0,
+            0.38
+          ],
+          "color": "#17c6cb",
+          "material": "silk",
+          "group": "Character"
+        },
+        {
+          "id": "model-0012",
+          "name": "Left shoulder",
+          "kind": "sphere",
+          "position": [
+            -0.41,
+            2.68,
+            0
+          ],
+          "scale": [
+            0.22,
+            0.23,
+            0.25
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#14293d",
+          "material": "matte",
+          "group": "Character"
+        },
+        {
+          "id": "model-0013",
+          "name": "Left upper arm",
+          "kind": "cylinder",
+          "position": [
+            -0.63,
+            2.37,
+            0.08
+          ],
+          "scale": [
+            0.13,
+            0.62,
+            0.13
+          ],
+          "rotation": [
+            0,
+            0,
+            -0.32
+          ],
+          "color": "#22263a",
+          "material": "matte",
+          "group": "Character"
+        },
+        {
+          "id": "model-0014",
+          "name": "Left elbow",
+          "kind": "sphere",
+          "position": [
+            -0.72,
+            2.06,
+            0.09
+          ],
+          "scale": [
+            0.15,
+            0.16,
+            0.15
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#facab0",
+          "material": "matte",
+          "group": "Character"
+        },
+        {
+          "id": "model-0015",
+          "name": "Left forearm",
+          "kind": "cylinder",
+          "position": [
+            -0.67,
+            2.36,
+            0.29
+          ],
+          "scale": [
+            0.11,
+            0.42,
+            0.12
+          ],
+          "rotation": [
+            0.55,
+            0,
+            0.25
+          ],
+          "color": "#1c2834",
+          "material": "matte",
+          "group": "Character"
+        },
+        {
+          "id": "model-0016",
+          "name": "Left glove",
+          "kind": "sphere",
+          "position": [
+            -0.59,
+            2.58,
+            0.48
+          ],
+          "scale": [
+            0.16,
+            0.14,
+            0.14
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#1d2436",
+          "material": "matte",
+          "group": "Character"
+        },
+        {
+          "id": "model-0017",
+          "name": "Left thigh",
+          "kind": "cylinder",
+          "position": [
+            -0.23,
+            1.23,
+            0
+          ],
+          "scale": [
+            0.2,
+            0.89,
+            0.21
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#fbd0b9",
+          "material": "matte",
+          "group": "Character"
+        },
+        {
+          "id": "model-0018",
+          "name": "Left kneecap",
+          "kind": "sphere",
+          "position": [
+            -0.25,
+            0.86,
+            0.02
+          ],
+          "scale": [
+            0.2,
+            0.19,
+            0.2
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#e9b8aa",
+          "material": "matte",
+          "group": "Character"
+        },
+        {
+          "id": "model-0019",
+          "name": "Left shin",
+          "kind": "cylinder",
+          "position": [
+            -0.27,
+            0.47,
+            0.04
+          ],
+          "scale": [
+            0.15,
+            0.65,
+            0.17
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#fbd0ba",
+          "material": "matte",
+          "group": "Character"
+        },
+        {
+          "id": "model-0020",
+          "name": "Left white sock",
+          "kind": "cylinder",
+          "position": [
+            -0.27,
+            0.3,
+            0.06
+          ],
+          "scale": [
+            0.16,
+            0.35,
+            0.16
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#f0f1f2",
+          "material": "matte",
+          "group": "Character"
+        },
+        {
+          "id": "model-0021",
+          "name": "Left shoe",
+          "kind": "sphere",
+          "position": [
+            -0.28,
+            0.14,
+            0.24
+          ],
+          "scale": [
+            0.27,
+            0.17,
+            0.39
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#145b5d",
+          "material": "gloss",
+          "group": "Character"
+        },
+        {
+          "id": "model-0022",
+          "name": "Left shoe strap",
+          "kind": "box",
+          "position": [
+            -0.28,
+            0.26,
+            0.43
+          ],
+          "scale": [
+            0.32,
+            0.08,
+            0.2
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#e6c444",
+          "material": "metal",
+          "group": "Character"
+        },
+        {
+          "id": "model-0023",
+          "name": "Left hat tip curl",
+          "kind": "cone",
+          "position": [
+            -0.43,
+            3.75,
+            0.12
+          ],
+          "scale": [
+            0.17,
+            0.34,
+            0.17
+          ],
+          "rotation": [
+            0,
+            0,
+            0.8
+          ],
+          "color": "#2bbfce",
+          "material": "silk",
+          "group": "Character"
+        },
+        {
+          "id": "model-0024",
+          "name": "Left horn",
+          "kind": "cone",
+          "position": [
+            -0.43,
+            3.95,
+            -0.08
+          ],
+          "scale": [
+            0.12,
+            0.53,
+            0.12
+          ],
+          "rotation": [
+            0,
+            0,
+            -0.36
+          ],
+          "color": "#20202c",
+          "material": "gloss",
+          "group": "Character"
+        },
+        {
+          "id": "model-0025",
+          "name": "Left eye white",
+          "kind": "sphere",
+          "position": [
+            -0.16,
+            3.36,
+            0.287
+          ],
+          "scale": [
+            0.14,
+            0.105,
+            0.055
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#ffffff",
+          "material": "gloss",
+          "group": "Character"
+        },
+        {
+          "id": "model-0026",
+          "name": "Left iris",
+          "kind": "sphere",
+          "position": [
+            -0.16,
+            3.36,
+            0.335
+          ],
+          "scale": [
+            0.073,
+            0.082,
+            0.032
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#21a7d4",
+          "material": "gloss",
+          "group": "Character"
+        },
+        {
+          "id": "model-0027",
+          "name": "Left pupil",
+          "kind": "sphere",
+          "position": [
+            -0.16,
+            3.36,
+            0.359
+          ],
+          "scale": [
+            0.038,
+            0.056,
+            0.015
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#071422",
+          "material": "gloss",
+          "group": "Character"
+        },
+        {
+          "id": "model-0028",
+          "name": "Left cheek paint",
+          "kind": "sphere",
+          "position": [
+            -0.26,
+            3.18,
+            0.286
+          ],
+          "scale": [
+            0.095,
+            0.053,
+            0.017
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#fa7d7a",
+          "material": "silk",
+          "group": "Character"
+        },
+        {
+          "id": "model-0029",
+          "name": "Right shoulder",
+          "kind": "sphere",
+          "position": [
+            0.41,
+            2.68,
+            0
+          ],
+          "scale": [
+            0.22,
+            0.23,
+            0.25
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#fe804b",
+          "material": "matte",
+          "group": "Character"
+        },
+        {
+          "id": "model-0030",
+          "name": "Right upper arm",
+          "kind": "cylinder",
+          "position": [
+            0.63,
+            2.37,
+            0.08
+          ],
+          "scale": [
+            0.13,
+            0.62,
+            0.13
+          ],
+          "rotation": [
+            0,
+            0,
+            0.32
+          ],
+          "color": "#22263a",
+          "material": "matte",
+          "group": "Character"
+        },
+        {
+          "id": "model-0031",
+          "name": "Right elbow",
+          "kind": "sphere",
+          "position": [
+            0.72,
+            2.06,
+            0.09
+          ],
+          "scale": [
+            0.15,
+            0.16,
+            0.15
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#facab0",
+          "material": "matte",
+          "group": "Character"
+        },
+        {
+          "id": "model-0032",
+          "name": "Right forearm",
+          "kind": "cylinder",
+          "position": [
+            0.67,
+            2.36,
+            0.29
+          ],
+          "scale": [
+            0.11,
+            0.42,
+            0.12
+          ],
+          "rotation": [
+            0.55,
+            0,
+            -0.25
+          ],
+          "color": "#ff744f",
+          "material": "matte",
+          "group": "Character"
+        },
+        {
+          "id": "model-0033",
+          "name": "Right glove",
+          "kind": "sphere",
+          "position": [
+            0.59,
+            2.58,
+            0.48
+          ],
+          "scale": [
+            0.16,
+            0.14,
+            0.14
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#1d2436",
+          "material": "matte",
+          "group": "Character"
+        },
+        {
+          "id": "model-0034",
+          "name": "Right thigh",
+          "kind": "cylinder",
+          "position": [
+            0.23,
+            1.23,
+            0
+          ],
+          "scale": [
+            0.2,
+            0.89,
+            0.21
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#fbd0b9",
+          "material": "matte",
+          "group": "Character"
+        },
+        {
+          "id": "model-0035",
+          "name": "Right kneecap",
+          "kind": "sphere",
+          "position": [
+            0.25,
+            0.86,
+            0.02
+          ],
+          "scale": [
+            0.2,
+            0.19,
+            0.2
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#e9b8aa",
+          "material": "matte",
+          "group": "Character"
+        },
+        {
+          "id": "model-0036",
+          "name": "Right shin",
+          "kind": "cylinder",
+          "position": [
+            0.27,
+            0.47,
+            0.04
+          ],
+          "scale": [
+            0.15,
+            0.65,
+            0.17
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#fbd0ba",
+          "material": "matte",
+          "group": "Character"
+        },
+        {
+          "id": "model-0037",
+          "name": "Right white sock",
+          "kind": "cylinder",
+          "position": [
+            0.27,
+            0.3,
+            0.06
+          ],
+          "scale": [
+            0.16,
+            0.35,
+            0.16
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#f0f1f2",
+          "material": "matte",
+          "group": "Character"
+        },
+        {
+          "id": "model-0038",
+          "name": "Right shoe",
+          "kind": "sphere",
+          "position": [
+            0.28,
+            0.14,
+            0.24
+          ],
+          "scale": [
+            0.27,
+            0.17,
+            0.39
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#122735",
+          "material": "gloss",
+          "group": "Character"
+        },
+        {
+          "id": "model-0039",
+          "name": "Right shoe strap",
+          "kind": "box",
+          "position": [
+            0.28,
+            0.26,
+            0.43
+          ],
+          "scale": [
+            0.32,
+            0.08,
+            0.2
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#e6c444",
+          "material": "metal",
+          "group": "Character"
+        },
+        {
+          "id": "model-0040",
+          "name": "Right hat tip curl",
+          "kind": "cone",
+          "position": [
+            0.43,
+            3.75,
+            0.12
+          ],
+          "scale": [
+            0.17,
+            0.34,
+            0.17
+          ],
+          "rotation": [
+            0,
+            0,
+            -0.8
+          ],
+          "color": "#ff7143",
+          "material": "silk",
+          "group": "Character"
+        },
+        {
+          "id": "model-0041",
+          "name": "Right horn",
+          "kind": "cone",
+          "position": [
+            0.43,
+            3.95,
+            -0.08
+          ],
+          "scale": [
+            0.12,
+            0.53,
+            0.12
+          ],
+          "rotation": [
+            0,
+            0,
+            0.36
+          ],
+          "color": "#20202c",
+          "material": "gloss",
+          "group": "Character"
+        },
+        {
+          "id": "model-0042",
+          "name": "Right eye white",
+          "kind": "sphere",
+          "position": [
+            0.16,
+            3.36,
+            0.287
+          ],
+          "scale": [
+            0.14,
+            0.105,
+            0.055
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#ffffff",
+          "material": "gloss",
+          "group": "Character"
+        },
+        {
+          "id": "model-0043",
+          "name": "Right iris",
+          "kind": "sphere",
+          "position": [
+            0.16,
+            3.36,
+            0.335
+          ],
+          "scale": [
+            0.073,
+            0.082,
+            0.032
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#21a7d4",
+          "material": "gloss",
+          "group": "Character"
+        },
+        {
+          "id": "model-0044",
+          "name": "Right pupil",
+          "kind": "sphere",
+          "position": [
+            0.16,
+            3.36,
+            0.359
+          ],
+          "scale": [
+            0.038,
+            0.056,
+            0.015
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#071422",
+          "material": "gloss",
+          "group": "Character"
+        },
+        {
+          "id": "model-0045",
+          "name": "Right cheek paint",
+          "kind": "sphere",
+          "position": [
+            0.26,
+            3.18,
+            0.286
+          ],
+          "scale": [
+            0.095,
+            0.053,
+            0.017
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#f58f66",
+          "material": "silk",
+          "group": "Character"
+        },
+        {
+          "id": "model-0046",
+          "name": "Smile",
+          "kind": "box",
+          "position": [
+            0,
+            3.14,
+            0.304
+          ],
+          "scale": [
+            0.16,
+            0.02,
+            0.018
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#a73b59",
+          "material": "gloss",
+          "group": "Character"
+        },
+        {
+          "id": "model-0047",
+          "name": "Nose",
+          "kind": "sphere",
+          "position": [
+            0,
+            3.25,
+            0.32
+          ],
+          "scale": [
+            0.055,
+            0.06,
+            0.043
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#ffc1a5",
+          "material": "matte",
+          "group": "Character"
+        },
+        {
+          "id": "model-0048",
+          "name": "Hair swept turquoise fringe",
+          "kind": "cone",
+          "position": [
+            -0.2,
+            3.67,
+            0.32
+          ],
+          "scale": [
+            0.32,
+            0.4,
+            0.2
+          ],
+          "rotation": [
+            0.32,
+            0,
+            -0.35
+          ],
+          "color": "#00b7cb",
+          "material": "silk",
+          "group": "Character"
+        },
+        {
+          "id": "model-0049",
+          "name": "Hair coral side sweep",
+          "kind": "cone",
+          "position": [
+            0.19,
+            3.68,
+            0.33
+          ],
+          "scale": [
+            0.28,
+            0.41,
+            0.17
+          ],
+          "rotation": [
+            0.31,
+            0,
+            0.42
+          ],
+          "color": "#fb674f",
+          "material": "silk",
+          "group": "Character"
+        },
+        {
+          "id": "model-0050",
+          "name": "Tiered dress edging 0",
+          "kind": "box",
+          "position": [
+            -0.18,
+            1.42,
+            0.43
+          ],
+          "scale": [
+            0.36,
+            0.065,
+            0.085
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#2acccd",
+          "material": "silk",
+          "group": "Character"
+        },
+        {
+          "id": "model-0051",
+          "name": "Tiered dress edging 1",
+          "kind": "box",
+          "position": [
+            -0.05,
+            1.56,
+            0.43
+          ],
+          "scale": [
+            0.36,
+            0.065,
+            0.085
+          ],
+          "rotation": [
+            0,
+            0,
+            -0.12
+          ],
+          "color": "#f0d63a",
+          "material": "silk",
+          "group": "Character"
+        },
+        {
+          "id": "model-0052",
+          "name": "Tiered dress edging 2",
+          "kind": "box",
+          "position": [
+            0.08,
+            1.7,
+            0.43
+          ],
+          "scale": [
+            0.36,
+            0.065,
+            0.085
+          ],
+          "rotation": [
+            0,
+            0,
+            -0.24
+          ],
+          "color": "#2acccd",
+          "material": "silk",
+          "group": "Character"
+        },
+        {
+          "id": "model-0053",
+          "name": "Tiered dress edging 3",
+          "kind": "box",
+          "position": [
+            0.21,
+            1.84,
+            0.43
+          ],
+          "scale": [
+            0.36,
+            0.065,
+            0.085
+          ],
+          "rotation": [
+            0,
+            0,
+            -0.36
+          ],
+          "color": "#f0d63a",
+          "material": "silk",
+          "group": "Character"
+        },
+        {
+          "id": "model-0054",
+          "name": "Tiered dress edging 4",
+          "kind": "box",
+          "position": [
+            0.34,
+            1.98,
+            0.43
+          ],
+          "scale": [
+            0.36,
+            0.065,
+            0.085
+          ],
+          "rotation": [
+            0,
+            0,
+            -0.48
+          ],
+          "color": "#2acccd",
+          "material": "silk",
+          "group": "Character"
+        },
+        {
+          "id": "model-0055",
+          "name": "Azure frost spine 1",
+          "kind": "cylinder",
+          "position": [
+            -0.673,
+            3.754,
+            -0.292
+          ],
+          "scale": [
+            0.202,
+            0.378,
+            0.186
+          ],
+          "rotation": [
+            0,
+            0,
+            1.352
+          ],
+          "color": "#00bfc9",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0056",
+          "name": "Azure frost feather 1.0",
+          "kind": "box",
+          "position": [
+            -0.736,
+            3.768,
+            -0.202
+          ],
+          "scale": [
+            0.172,
+            0.289,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            1.242
+          ],
+          "color": "#2bdaec",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0057",
+          "name": "Azure frost feather 1.1",
+          "kind": "box",
+          "position": [
+            -0.673,
+            3.768,
+            -0.112
+          ],
+          "scale": [
+            0.172,
+            0.353,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            1.352
+          ],
+          "color": "#4ce3e2",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0058",
+          "name": "Azure frost feather 1.2",
+          "kind": "box",
+          "position": [
+            -0.611,
+            3.768,
+            -0.022
+          ],
+          "scale": [
+            0.172,
+            0.417,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            1.462
+          ],
+          "color": "#007f9b",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0059",
+          "name": "Azure frost spine 2",
+          "kind": "cylinder",
+          "position": [
+            -0.977,
+            3.821,
+            -0.35
+          ],
+          "scale": [
+            0.245,
+            0.369,
+            0.225
+          ],
+          "rotation": [
+            0,
+            0,
+            1.356
+          ],
+          "color": "#2bdaec",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0060",
+          "name": "Azure frost feather 2.0",
+          "kind": "box",
+          "position": [
+            -1.053,
+            3.838,
+            -0.26
+          ],
+          "scale": [
+            0.208,
+            0.282,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            1.246
+          ],
+          "color": "#4ce3e2",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0061",
+          "name": "Azure frost feather 2.1",
+          "kind": "box",
+          "position": [
+            -0.977,
+            3.838,
+            -0.17
+          ],
+          "scale": [
+            0.208,
+            0.344,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            1.356
+          ],
+          "color": "#007f9b",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0062",
+          "name": "Azure frost feather 2.2",
+          "kind": "box",
+          "position": [
+            -0.901,
+            3.838,
+            -0.08
+          ],
+          "scale": [
+            0.208,
+            0.407,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            1.466
+          ],
+          "color": "#00bfc9",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0063",
+          "name": "Azure frost spine 3",
+          "kind": "cylinder",
+          "position": [
+            -1.273,
+            3.884,
+            -0.394
+          ],
+          "scale": [
+            0.287,
+            0.352,
+            0.264
+          ],
+          "rotation": [
+            0,
+            0,
+            1.366
+          ],
+          "color": "#4ce3e2",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0064",
+          "name": "Azure frost feather 3.0",
+          "kind": "box",
+          "position": [
+            -1.362,
+            3.904,
+            -0.304
+          ],
+          "scale": [
+            0.244,
+            0.269,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            1.256
+          ],
+          "color": "#007f9b",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0065",
+          "name": "Azure frost feather 3.1",
+          "kind": "box",
+          "position": [
+            -1.273,
+            3.904,
+            -0.214
+          ],
+          "scale": [
+            0.244,
+            0.328,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            1.366
+          ],
+          "color": "#00bfc9",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0066",
+          "name": "Azure frost feather 3.2",
+          "kind": "box",
+          "position": [
+            -1.184,
+            3.904,
+            -0.124
+          ],
+          "scale": [
+            0.244,
+            0.388,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            1.476
+          ],
+          "color": "#2bdaec",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0067",
+          "name": "Azure frost spine 4",
+          "kind": "cylinder",
+          "position": [
+            -1.556,
+            3.94,
+            -0.415
+          ],
+          "scale": [
+            0.327,
+            0.33,
+            0.301
+          ],
+          "rotation": [
+            0,
+            0,
+            1.382
+          ],
+          "color": "#007f9b",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0068",
+          "name": "Azure frost feather 4.0",
+          "kind": "box",
+          "position": [
+            -1.657,
+            3.963,
+            -0.325
+          ],
+          "scale": [
+            0.278,
+            0.252,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            1.272
+          ],
+          "color": "#00bfc9",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0069",
+          "name": "Azure frost feather 4.1",
+          "kind": "box",
+          "position": [
+            -1.556,
+            3.963,
+            -0.235
+          ],
+          "scale": [
+            0.278,
+            0.308,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            1.382
+          ],
+          "color": "#2bdaec",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0070",
+          "name": "Azure frost feather 4.2",
+          "kind": "box",
+          "position": [
+            -1.454,
+            3.963,
+            -0.145
+          ],
+          "scale": [
+            0.278,
+            0.363,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            1.492
+          ],
+          "color": "#4ce3e2",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0071",
+          "name": "Azure frost spine 5",
+          "kind": "cylinder",
+          "position": [
+            -1.82,
+            3.987,
+            -0.411
+          ],
+          "scale": [
+            0.365,
+            0.304,
+            0.335
+          ],
+          "rotation": [
+            0,
+            0,
+            1.406
+          ],
+          "color": "#00bfc9",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0072",
+          "name": "Azure frost feather 5.0",
+          "kind": "box",
+          "position": [
+            -1.933,
+            4.013,
+            -0.321
+          ],
+          "scale": [
+            0.31,
+            0.232,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            1.296
+          ],
+          "color": "#2bdaec",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0073",
+          "name": "Azure frost feather 5.1",
+          "kind": "box",
+          "position": [
+            -1.82,
+            4.013,
+            -0.231
+          ],
+          "scale": [
+            0.31,
+            0.283,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            1.406
+          ],
+          "color": "#4ce3e2",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0074",
+          "name": "Azure frost feather 5.2",
+          "kind": "box",
+          "position": [
+            -1.707,
+            4.013,
+            -0.141
+          ],
+          "scale": [
+            0.31,
+            0.335,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            1.516
+          ],
+          "color": "#007f9b",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0075",
+          "name": "Azure frost spine 6",
+          "kind": "cylinder",
+          "position": [
+            -2.061,
+            4.023,
+            -0.382
+          ],
+          "scale": [
+            0.398,
+            0.276,
+            0.367
+          ],
+          "rotation": [
+            0,
+            0,
+            1.442
+          ],
+          "color": "#2bdaec",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0076",
+          "name": "Azure frost feather 6.0",
+          "kind": "box",
+          "position": [
+            -2.184,
+            4.051,
+            -0.292
+          ],
+          "scale": [
+            0.339,
+            0.211,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            1.332
+          ],
+          "color": "#4ce3e2",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0077",
+          "name": "Azure frost feather 6.1",
+          "kind": "box",
+          "position": [
+            -2.061,
+            4.051,
+            -0.202
+          ],
+          "scale": [
+            0.339,
+            0.257,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            1.442
+          ],
+          "color": "#007f9b",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0078",
+          "name": "Azure frost feather 6.2",
+          "kind": "box",
+          "position": [
+            -1.937,
+            4.051,
+            -0.112
+          ],
+          "scale": [
+            0.339,
+            0.304,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            1.552
+          ],
+          "color": "#00bfc9",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0079",
+          "name": "Azure frost spine 7",
+          "kind": "cylinder",
+          "position": [
+            -2.274,
+            4.046,
+            -0.332
+          ],
+          "scale": [
+            0.428,
+            0.245,
+            0.394
+          ],
+          "rotation": [
+            0,
+            0,
+            1.495
+          ],
+          "color": "#4ce3e2",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0080",
+          "name": "Azure frost feather 7.0",
+          "kind": "box",
+          "position": [
+            -2.407,
+            4.076,
+            -0.242
+          ],
+          "scale": [
+            0.364,
+            0.187,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            1.385
+          ],
+          "color": "#007f9b",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0081",
+          "name": "Azure frost feather 7.1",
+          "kind": "box",
+          "position": [
+            -2.274,
+            4.076,
+            -0.152
+          ],
+          "scale": [
+            0.364,
+            0.229,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            1.495
+          ],
+          "color": "#00bfc9",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0082",
+          "name": "Azure frost feather 7.2",
+          "kind": "box",
+          "position": [
+            -2.142,
+            4.076,
+            -0.062
+          ],
+          "scale": [
+            0.364,
+            0.27,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            1.605
+          ],
+          "color": "#2bdaec",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0083",
+          "name": "Azure frost spine 8",
+          "kind": "cylinder",
+          "position": [
+            -2.457,
+            4.053,
+            -0.271
+          ],
+          "scale": [
+            0.453,
+            0.211,
+            0.417
+          ],
+          "rotation": [
+            0,
+            0,
+            1.576
+          ],
+          "color": "#007f9b",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0084",
+          "name": "Azure frost feather 8.0",
+          "kind": "box",
+          "position": [
+            -2.598,
+            4.085,
+            -0.181
+          ],
+          "scale": [
+            0.385,
+            0.161,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            1.466
+          ],
+          "color": "#00bfc9",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0085",
+          "name": "Azure frost feather 8.1",
+          "kind": "box",
+          "position": [
+            -2.457,
+            4.085,
+            -0.091
+          ],
+          "scale": [
+            0.385,
+            0.196,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            1.576
+          ],
+          "color": "#2bdaec",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0086",
+          "name": "Azure frost feather 8.2",
+          "kind": "box",
+          "position": [
+            -2.317,
+            4.085,
+            -0.001
+          ],
+          "scale": [
+            0.385,
+            0.232,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            1.686
+          ],
+          "color": "#4ce3e2",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0087",
+          "name": "Azure frost spine 9",
+          "kind": "cylinder",
+          "position": [
+            -2.606,
+            4.043,
+            -0.208
+          ],
+          "scale": [
+            0.474,
+            0.172,
+            0.436
+          ],
+          "rotation": [
+            0,
+            0,
+            1.711
+          ],
+          "color": "#00bfc9",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0088",
+          "name": "Azure frost feather 9.0",
+          "kind": "box",
+          "position": [
+            -2.752,
+            4.076,
+            -0.118
+          ],
+          "scale": [
+            0.402,
+            0.131,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            1.601
+          ],
+          "color": "#2bdaec",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0089",
+          "name": "Azure frost feather 9.1",
+          "kind": "box",
+          "position": [
+            -2.606,
+            4.076,
+            -0.028
+          ],
+          "scale": [
+            0.402,
+            0.16,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            1.711
+          ],
+          "color": "#4ce3e2",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0090",
+          "name": "Azure frost feather 9.2",
+          "kind": "box",
+          "position": [
+            -2.459,
+            4.076,
+            0.062
+          ],
+          "scale": [
+            0.402,
+            0.189,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            1.821
+          ],
+          "color": "#007f9b",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0091",
+          "name": "Azure frost spine 10",
+          "kind": "cylinder",
+          "position": [
+            -2.718,
+            4.015,
+            -0.153
+          ],
+          "scale": [
+            0.488,
+            0.131,
+            0.449
+          ],
+          "rotation": [
+            0,
+            0,
+            1.95
+          ],
+          "color": "#2bdaec",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0092",
+          "name": "Azure frost feather 10.0",
+          "kind": "box",
+          "position": [
+            -2.869,
+            4.05,
+            -0.063
+          ],
+          "scale": [
+            0.415,
+            0.1,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            1.84
+          ],
+          "color": "#4ce3e2",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0093",
+          "name": "Azure frost feather 10.1",
+          "kind": "box",
+          "position": [
+            -2.718,
+            4.05,
+            0.027
+          ],
+          "scale": [
+            0.415,
+            0.122,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            1.95
+          ],
+          "color": "#007f9b",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0094",
+          "name": "Azure frost feather 10.2",
+          "kind": "box",
+          "position": [
+            -2.566,
+            4.05,
+            0.117
+          ],
+          "scale": [
+            0.415,
+            0.144,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            2.06
+          ],
+          "color": "#00bfc9",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0095",
+          "name": "Azure frost spine 11",
+          "kind": "cylinder",
+          "position": [
+            -2.791,
+            3.969,
+            -0.116
+          ],
+          "scale": [
+            0.497,
+            0.097,
+            0.457
+          ],
+          "rotation": [
+            0,
+            0,
+            2.379
+          ],
+          "color": "#4ce3e2",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0096",
+          "name": "Azure frost feather 11.0",
+          "kind": "box",
+          "position": [
+            -2.945,
+            4.004,
+            -0.026
+          ],
+          "scale": [
+            0.422,
+            0.074,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            2.269
+          ],
+          "color": "#007f9b",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0097",
+          "name": "Azure frost feather 11.1",
+          "kind": "box",
+          "position": [
+            -2.791,
+            4.004,
+            0.064
+          ],
+          "scale": [
+            0.422,
+            0.09,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            2.379
+          ],
+          "color": "#00bfc9",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0098",
+          "name": "Azure frost feather 11.2",
+          "kind": "box",
+          "position": [
+            -2.637,
+            4.004,
+            0.154
+          ],
+          "scale": [
+            0.422,
+            0.107,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            2.489
+          ],
+          "color": "#2bdaec",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0099",
+          "name": "Azure frost spine 12",
+          "kind": "cylinder",
+          "position": [
+            -2.825,
+            3.903,
+            -0.103
+          ],
+          "scale": [
+            0.5,
+            0.091,
+            0.46
+          ],
+          "rotation": [
+            0,
+            0,
+            2.961
+          ],
+          "color": "#007f9b",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0100",
+          "name": "Azure frost feather 12.0",
+          "kind": "box",
+          "position": [
+            -2.98,
+            3.938,
+            -0.013
+          ],
+          "scale": [
+            0.425,
+            0.07,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            2.851
+          ],
+          "color": "#00bfc9",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0101",
+          "name": "Azure frost feather 12.1",
+          "kind": "box",
+          "position": [
+            -2.825,
+            3.938,
+            0.077
+          ],
+          "scale": [
+            0.425,
+            0.085,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            2.961
+          ],
+          "color": "#2bdaec",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0102",
+          "name": "Azure frost feather 12.2",
+          "kind": "box",
+          "position": [
+            -2.67,
+            3.938,
+            0.167
+          ],
+          "scale": [
+            0.425,
+            0.101,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            3.071
+          ],
+          "color": "#4ce3e2",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0103",
+          "name": "Azure frost spine 13",
+          "kind": "cylinder",
+          "position": [
+            -2.819,
+            3.817,
+            -0.116
+          ],
+          "scale": [
+            0.497,
+            0.121,
+            0.457
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.876
+          ],
+          "color": "#00bfc9",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0104",
+          "name": "Azure frost feather 13.0",
+          "kind": "box",
+          "position": [
+            -2.973,
+            3.851,
+            -0.026
+          ],
+          "scale": [
+            0.422,
+            0.092,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.986
+          ],
+          "color": "#2bdaec",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0105",
+          "name": "Azure frost feather 13.1",
+          "kind": "box",
+          "position": [
+            -2.819,
+            3.851,
+            0.064
+          ],
+          "scale": [
+            0.422,
+            0.113,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.876
+          ],
+          "color": "#4ce3e2",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0106",
+          "name": "Azure frost feather 13.2",
+          "kind": "box",
+          "position": [
+            -2.665,
+            3.851,
+            0.154
+          ],
+          "scale": [
+            0.422,
+            0.133,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.766
+          ],
+          "color": "#007f9b",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0107",
+          "name": "Azure frost spine 14",
+          "kind": "cylinder",
+          "position": [
+            -2.773,
+            3.711,
+            -0.153
+          ],
+          "scale": [
+            0.488,
+            0.166,
+            0.449
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.626
+          ],
+          "color": "#2bdaec",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0108",
+          "name": "Azure frost feather 14.0",
+          "kind": "box",
+          "position": [
+            -2.925,
+            3.745,
+            -0.063
+          ],
+          "scale": [
+            0.415,
+            0.127,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.736
+          ],
+          "color": "#4ce3e2",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0109",
+          "name": "Azure frost feather 14.1",
+          "kind": "box",
+          "position": [
+            -2.773,
+            3.745,
+            0.027
+          ],
+          "scale": [
+            0.415,
+            0.155,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.626
+          ],
+          "color": "#007f9b",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0110",
+          "name": "Azure frost feather 14.2",
+          "kind": "box",
+          "position": [
+            -2.622,
+            3.745,
+            0.117
+          ],
+          "scale": [
+            0.415,
+            0.183,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.516
+          ],
+          "color": "#00bfc9",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0111",
+          "name": "Azure frost spine 15",
+          "kind": "cylinder",
+          "position": [
+            -2.689,
+            3.587,
+            -0.208
+          ],
+          "scale": [
+            0.474,
+            0.212,
+            0.436
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.485
+          ],
+          "color": "#4ce3e2",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0112",
+          "name": "Azure frost feather 15.0",
+          "kind": "box",
+          "position": [
+            -2.836,
+            3.62,
+            -0.118
+          ],
+          "scale": [
+            0.402,
+            0.162,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.595
+          ],
+          "color": "#007f9b",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0113",
+          "name": "Azure frost feather 15.1",
+          "kind": "box",
+          "position": [
+            -2.689,
+            3.62,
+            -0.028
+          ],
+          "scale": [
+            0.402,
+            0.198,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.485
+          ],
+          "color": "#00bfc9",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0114",
+          "name": "Azure frost feather 15.2",
+          "kind": "box",
+          "position": [
+            -2.542,
+            3.62,
+            0.062
+          ],
+          "scale": [
+            0.402,
+            0.233,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.375
+          ],
+          "color": "#2bdaec",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0115",
+          "name": "Azure frost spine 16",
+          "kind": "cylinder",
+          "position": [
+            -2.568,
+            3.444,
+            -0.271
+          ],
+          "scale": [
+            0.453,
+            0.254,
+            0.417
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.4
+          ],
+          "color": "#007f9b",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0116",
+          "name": "Azure frost feather 16.0",
+          "kind": "box",
+          "position": [
+            -2.709,
+            3.476,
+            -0.181
+          ],
+          "scale": [
+            0.385,
+            0.194,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.51
+          ],
+          "color": "#00bfc9",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0117",
+          "name": "Azure frost feather 16.1",
+          "kind": "box",
+          "position": [
+            -2.568,
+            3.476,
+            -0.091
+          ],
+          "scale": [
+            0.385,
+            0.237,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.4
+          ],
+          "color": "#2bdaec",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0118",
+          "name": "Azure frost feather 16.2",
+          "kind": "box",
+          "position": [
+            -2.428,
+            3.476,
+            -0.001
+          ],
+          "scale": [
+            0.385,
+            0.28,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.29
+          ],
+          "color": "#4ce3e2",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0119",
+          "name": "Azure frost spine 17",
+          "kind": "cylinder",
+          "position": [
+            -2.413,
+            3.285,
+            -0.332
+          ],
+          "scale": [
+            0.428,
+            0.291,
+            0.394
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.345
+          ],
+          "color": "#00bfc9",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0120",
+          "name": "Azure frost feather 17.0",
+          "kind": "box",
+          "position": [
+            -2.546,
+            3.315,
+            -0.242
+          ],
+          "scale": [
+            0.364,
+            0.222,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.455
+          ],
+          "color": "#2bdaec",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0121",
+          "name": "Azure frost feather 17.1",
+          "kind": "box",
+          "position": [
+            -2.413,
+            3.315,
+            -0.152
+          ],
+          "scale": [
+            0.364,
+            0.271,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.345
+          ],
+          "color": "#4ce3e2",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0122",
+          "name": "Azure frost feather 17.2",
+          "kind": "box",
+          "position": [
+            -2.281,
+            3.315,
+            -0.062
+          ],
+          "scale": [
+            0.364,
+            0.32,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.235
+          ],
+          "color": "#007f9b",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0123",
+          "name": "Azure frost spine 18",
+          "kind": "cylinder",
+          "position": [
+            -2.228,
+            3.11,
+            -0.382
+          ],
+          "scale": [
+            0.398,
+            0.323,
+            0.367
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.307
+          ],
+          "color": "#2bdaec",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0124",
+          "name": "Azure frost feather 18.0",
+          "kind": "box",
+          "position": [
+            -2.351,
+            3.138,
+            -0.292
+          ],
+          "scale": [
+            0.339,
+            0.246,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.417
+          ],
+          "color": "#4ce3e2",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0125",
+          "name": "Azure frost feather 18.1",
+          "kind": "box",
+          "position": [
+            -2.228,
+            3.138,
+            -0.202
+          ],
+          "scale": [
+            0.339,
+            0.301,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.307
+          ],
+          "color": "#007f9b",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0126",
+          "name": "Azure frost feather 18.2",
+          "kind": "box",
+          "position": [
+            -2.104,
+            3.138,
+            -0.112
+          ],
+          "scale": [
+            0.339,
+            0.356,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.197
+          ],
+          "color": "#00bfc9",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0127",
+          "name": "Azure frost spine 19",
+          "kind": "cylinder",
+          "position": [
+            -2.014,
+            2.922,
+            -0.411
+          ],
+          "scale": [
+            0.365,
+            0.352,
+            0.335
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.281
+          ],
+          "color": "#4ce3e2",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0128",
+          "name": "Azure frost feather 19.0",
+          "kind": "box",
+          "position": [
+            -2.127,
+            2.948,
+            -0.321
+          ],
+          "scale": [
+            0.31,
+            0.269,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.391
+          ],
+          "color": "#007f9b",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0129",
+          "name": "Azure frost feather 19.1",
+          "kind": "box",
+          "position": [
+            -2.014,
+            2.948,
+            -0.231
+          ],
+          "scale": [
+            0.31,
+            0.328,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.281
+          ],
+          "color": "#00bfc9",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0130",
+          "name": "Azure frost feather 19.2",
+          "kind": "box",
+          "position": [
+            -1.901,
+            2.948,
+            -0.141
+          ],
+          "scale": [
+            0.31,
+            0.388,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.171
+          ],
+          "color": "#2bdaec",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0131",
+          "name": "Azure frost spine 20",
+          "kind": "cylinder",
+          "position": [
+            -1.778,
+            2.723,
+            -0.415
+          ],
+          "scale": [
+            0.327,
+            0.378,
+            0.301
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.263
+          ],
+          "color": "#007f9b",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0132",
+          "name": "Azure frost feather 20.0",
+          "kind": "box",
+          "position": [
+            -1.88,
+            2.746,
+            -0.325
+          ],
+          "scale": [
+            0.278,
+            0.288,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.373
+          ],
+          "color": "#00bfc9",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0133",
+          "name": "Azure frost feather 20.1",
+          "kind": "box",
+          "position": [
+            -1.778,
+            2.746,
+            -0.235
+          ],
+          "scale": [
+            0.278,
+            0.353,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.263
+          ],
+          "color": "#2bdaec",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0134",
+          "name": "Azure frost feather 20.2",
+          "kind": "box",
+          "position": [
+            -1.677,
+            2.746,
+            -0.145
+          ],
+          "scale": [
+            0.278,
+            0.417,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.153
+          ],
+          "color": "#4ce3e2",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0135",
+          "name": "Azure frost spine 21",
+          "kind": "cylinder",
+          "position": [
+            -1.524,
+            2.514,
+            -0.394
+          ],
+          "scale": [
+            0.287,
+            0.401,
+            0.264
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.251
+          ],
+          "color": "#00bfc9",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0136",
+          "name": "Azure frost feather 21.0",
+          "kind": "box",
+          "position": [
+            -1.613,
+            2.534,
+            -0.304
+          ],
+          "scale": [
+            0.244,
+            0.305,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.361
+          ],
+          "color": "#2bdaec",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0137",
+          "name": "Azure frost feather 21.1",
+          "kind": "box",
+          "position": [
+            -1.524,
+            2.534,
+            -0.214
+          ],
+          "scale": [
+            0.244,
+            0.373,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.251
+          ],
+          "color": "#4ce3e2",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0138",
+          "name": "Azure frost feather 21.2",
+          "kind": "box",
+          "position": [
+            -1.435,
+            2.534,
+            -0.124
+          ],
+          "scale": [
+            0.244,
+            0.441,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.141
+          ],
+          "color": "#007f9b",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0139",
+          "name": "Azure frost spine 22",
+          "kind": "cylinder",
+          "position": [
+            -1.256,
+            2.299,
+            -0.35
+          ],
+          "scale": [
+            0.245,
+            0.417,
+            0.225
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.243
+          ],
+          "color": "#2bdaec",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0140",
+          "name": "Azure frost feather 22.0",
+          "kind": "box",
+          "position": [
+            -1.332,
+            2.316,
+            -0.26
+          ],
+          "scale": [
+            0.208,
+            0.318,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.353
+          ],
+          "color": "#4ce3e2",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0141",
+          "name": "Azure frost feather 22.1",
+          "kind": "box",
+          "position": [
+            -1.256,
+            2.316,
+            -0.17
+          ],
+          "scale": [
+            0.208,
+            0.389,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.243
+          ],
+          "color": "#007f9b",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0142",
+          "name": "Azure frost feather 22.2",
+          "kind": "box",
+          "position": [
+            -1.18,
+            2.316,
+            -0.08
+          ],
+          "scale": [
+            0.208,
+            0.46,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.133
+          ],
+          "color": "#00bfc9",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0143",
+          "name": "Azure frost spine 23",
+          "kind": "cylinder",
+          "position": [
+            -0.979,
+            2.08,
+            -0.292
+          ],
+          "scale": [
+            0.202,
+            0.426,
+            0.186
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.24
+          ],
+          "color": "#4ce3e2",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0144",
+          "name": "Azure frost feather 23.0",
+          "kind": "box",
+          "position": [
+            -1.042,
+            2.094,
+            -0.202
+          ],
+          "scale": [
+            0.172,
+            0.325,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.35
+          ],
+          "color": "#007f9b",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0145",
+          "name": "Azure frost feather 23.1",
+          "kind": "box",
+          "position": [
+            -0.979,
+            2.094,
+            -0.112
+          ],
+          "scale": [
+            0.172,
+            0.397,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.24
+          ],
+          "color": "#00bfc9",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0146",
+          "name": "Azure frost feather 23.2",
+          "kind": "box",
+          "position": [
+            -0.917,
+            2.094,
+            -0.022
+          ],
+          "scale": [
+            0.172,
+            0.469,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.13
+          ],
+          "color": "#2bdaec",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "model-0147",
+          "name": "Coral flare spine 1",
+          "kind": "cylinder",
+          "position": [
+            0.673,
+            3.754,
+            -0.292
+          ],
+          "scale": [
+            0.202,
+            0.378,
+            0.186
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.352
+          ],
+          "color": "#f75249",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0148",
+          "name": "Coral flare feather 1.0",
+          "kind": "box",
+          "position": [
+            0.611,
+            3.768,
+            -0.202
+          ],
+          "scale": [
+            0.172,
+            0.289,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.462
+          ],
+          "color": "#ff713d",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0149",
+          "name": "Coral flare feather 1.1",
+          "kind": "box",
+          "position": [
+            0.673,
+            3.768,
+            -0.112
+          ],
+          "scale": [
+            0.172,
+            0.353,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.352
+          ],
+          "color": "#ff963e",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0150",
+          "name": "Coral flare feather 1.2",
+          "kind": "box",
+          "position": [
+            0.736,
+            3.768,
+            -0.022
+          ],
+          "scale": [
+            0.172,
+            0.417,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.242
+          ],
+          "color": "#d32a36",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0151",
+          "name": "Coral flare spine 2",
+          "kind": "cylinder",
+          "position": [
+            0.977,
+            3.821,
+            -0.35
+          ],
+          "scale": [
+            0.245,
+            0.369,
+            0.225
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.356
+          ],
+          "color": "#ff713d",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0152",
+          "name": "Coral flare feather 2.0",
+          "kind": "box",
+          "position": [
+            0.901,
+            3.838,
+            -0.26
+          ],
+          "scale": [
+            0.208,
+            0.282,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.466
+          ],
+          "color": "#ff963e",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0153",
+          "name": "Coral flare feather 2.1",
+          "kind": "box",
+          "position": [
+            0.977,
+            3.838,
+            -0.17
+          ],
+          "scale": [
+            0.208,
+            0.344,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.356
+          ],
+          "color": "#d32a36",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0154",
+          "name": "Coral flare feather 2.2",
+          "kind": "box",
+          "position": [
+            1.053,
+            3.838,
+            -0.08
+          ],
+          "scale": [
+            0.208,
+            0.407,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.246
+          ],
+          "color": "#f75249",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0155",
+          "name": "Coral flare spine 3",
+          "kind": "cylinder",
+          "position": [
+            1.273,
+            3.884,
+            -0.394
+          ],
+          "scale": [
+            0.287,
+            0.352,
+            0.264
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.366
+          ],
+          "color": "#ff963e",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0156",
+          "name": "Coral flare feather 3.0",
+          "kind": "box",
+          "position": [
+            1.184,
+            3.904,
+            -0.304
+          ],
+          "scale": [
+            0.244,
+            0.269,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.476
+          ],
+          "color": "#d32a36",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0157",
+          "name": "Coral flare feather 3.1",
+          "kind": "box",
+          "position": [
+            1.273,
+            3.904,
+            -0.214
+          ],
+          "scale": [
+            0.244,
+            0.328,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.366
+          ],
+          "color": "#f75249",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0158",
+          "name": "Coral flare feather 3.2",
+          "kind": "box",
+          "position": [
+            1.362,
+            3.904,
+            -0.124
+          ],
+          "scale": [
+            0.244,
+            0.388,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.256
+          ],
+          "color": "#ff713d",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0159",
+          "name": "Coral flare spine 4",
+          "kind": "cylinder",
+          "position": [
+            1.556,
+            3.94,
+            -0.415
+          ],
+          "scale": [
+            0.327,
+            0.33,
+            0.301
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.382
+          ],
+          "color": "#d32a36",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0160",
+          "name": "Coral flare feather 4.0",
+          "kind": "box",
+          "position": [
+            1.454,
+            3.963,
+            -0.325
+          ],
+          "scale": [
+            0.278,
+            0.252,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.492
+          ],
+          "color": "#f75249",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0161",
+          "name": "Coral flare feather 4.1",
+          "kind": "box",
+          "position": [
+            1.556,
+            3.963,
+            -0.235
+          ],
+          "scale": [
+            0.278,
+            0.308,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.382
+          ],
+          "color": "#ff713d",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0162",
+          "name": "Coral flare feather 4.2",
+          "kind": "box",
+          "position": [
+            1.657,
+            3.963,
+            -0.145
+          ],
+          "scale": [
+            0.278,
+            0.363,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.272
+          ],
+          "color": "#ff963e",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0163",
+          "name": "Coral flare spine 5",
+          "kind": "cylinder",
+          "position": [
+            1.82,
+            3.987,
+            -0.411
+          ],
+          "scale": [
+            0.365,
+            0.304,
+            0.335
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.406
+          ],
+          "color": "#f75249",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0164",
+          "name": "Coral flare feather 5.0",
+          "kind": "box",
+          "position": [
+            1.707,
+            4.013,
+            -0.321
+          ],
+          "scale": [
+            0.31,
+            0.232,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.516
+          ],
+          "color": "#ff713d",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0165",
+          "name": "Coral flare feather 5.1",
+          "kind": "box",
+          "position": [
+            1.82,
+            4.013,
+            -0.231
+          ],
+          "scale": [
+            0.31,
+            0.283,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.406
+          ],
+          "color": "#ff963e",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0166",
+          "name": "Coral flare feather 5.2",
+          "kind": "box",
+          "position": [
+            1.933,
+            4.013,
+            -0.141
+          ],
+          "scale": [
+            0.31,
+            0.335,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.296
+          ],
+          "color": "#d32a36",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0167",
+          "name": "Coral flare spine 6",
+          "kind": "cylinder",
+          "position": [
+            2.061,
+            4.023,
+            -0.382
+          ],
+          "scale": [
+            0.398,
+            0.276,
+            0.367
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.442
+          ],
+          "color": "#ff713d",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0168",
+          "name": "Coral flare feather 6.0",
+          "kind": "box",
+          "position": [
+            1.937,
+            4.051,
+            -0.292
+          ],
+          "scale": [
+            0.339,
+            0.211,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.552
+          ],
+          "color": "#ff963e",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0169",
+          "name": "Coral flare feather 6.1",
+          "kind": "box",
+          "position": [
+            2.061,
+            4.051,
+            -0.202
+          ],
+          "scale": [
+            0.339,
+            0.257,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.442
+          ],
+          "color": "#d32a36",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0170",
+          "name": "Coral flare feather 6.2",
+          "kind": "box",
+          "position": [
+            2.184,
+            4.051,
+            -0.112
+          ],
+          "scale": [
+            0.339,
+            0.304,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.332
+          ],
+          "color": "#f75249",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0171",
+          "name": "Coral flare spine 7",
+          "kind": "cylinder",
+          "position": [
+            2.274,
+            4.046,
+            -0.332
+          ],
+          "scale": [
+            0.428,
+            0.245,
+            0.394
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.495
+          ],
+          "color": "#ff963e",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0172",
+          "name": "Coral flare feather 7.0",
+          "kind": "box",
+          "position": [
+            2.142,
+            4.076,
+            -0.242
+          ],
+          "scale": [
+            0.364,
+            0.187,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.605
+          ],
+          "color": "#d32a36",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0173",
+          "name": "Coral flare feather 7.1",
+          "kind": "box",
+          "position": [
+            2.274,
+            4.076,
+            -0.152
+          ],
+          "scale": [
+            0.364,
+            0.229,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.495
+          ],
+          "color": "#f75249",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0174",
+          "name": "Coral flare feather 7.2",
+          "kind": "box",
+          "position": [
+            2.407,
+            4.076,
+            -0.062
+          ],
+          "scale": [
+            0.364,
+            0.27,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.385
+          ],
+          "color": "#ff713d",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0175",
+          "name": "Coral flare spine 8",
+          "kind": "cylinder",
+          "position": [
+            2.457,
+            4.053,
+            -0.271
+          ],
+          "scale": [
+            0.453,
+            0.211,
+            0.417
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.576
+          ],
+          "color": "#d32a36",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0176",
+          "name": "Coral flare feather 8.0",
+          "kind": "box",
+          "position": [
+            2.317,
+            4.085,
+            -0.181
+          ],
+          "scale": [
+            0.385,
+            0.161,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.686
+          ],
+          "color": "#f75249",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0177",
+          "name": "Coral flare feather 8.1",
+          "kind": "box",
+          "position": [
+            2.457,
+            4.085,
+            -0.091
+          ],
+          "scale": [
+            0.385,
+            0.196,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.576
+          ],
+          "color": "#ff713d",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0178",
+          "name": "Coral flare feather 8.2",
+          "kind": "box",
+          "position": [
+            2.598,
+            4.085,
+            -0.001
+          ],
+          "scale": [
+            0.385,
+            0.232,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.466
+          ],
+          "color": "#ff963e",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0179",
+          "name": "Coral flare spine 9",
+          "kind": "cylinder",
+          "position": [
+            2.606,
+            4.043,
+            -0.208
+          ],
+          "scale": [
+            0.474,
+            0.172,
+            0.436
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.711
+          ],
+          "color": "#f75249",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0180",
+          "name": "Coral flare feather 9.0",
+          "kind": "box",
+          "position": [
+            2.459,
+            4.076,
+            -0.118
+          ],
+          "scale": [
+            0.402,
+            0.131,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.821
+          ],
+          "color": "#ff713d",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0181",
+          "name": "Coral flare feather 9.1",
+          "kind": "box",
+          "position": [
+            2.606,
+            4.076,
+            -0.028
+          ],
+          "scale": [
+            0.402,
+            0.16,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.711
+          ],
+          "color": "#ff963e",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0182",
+          "name": "Coral flare feather 9.2",
+          "kind": "box",
+          "position": [
+            2.752,
+            4.076,
+            0.062
+          ],
+          "scale": [
+            0.402,
+            0.189,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.601
+          ],
+          "color": "#d32a36",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0183",
+          "name": "Coral flare spine 10",
+          "kind": "cylinder",
+          "position": [
+            2.718,
+            4.015,
+            -0.153
+          ],
+          "scale": [
+            0.488,
+            0.131,
+            0.449
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.95
+          ],
+          "color": "#ff713d",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0184",
+          "name": "Coral flare feather 10.0",
+          "kind": "box",
+          "position": [
+            2.566,
+            4.05,
+            -0.063
+          ],
+          "scale": [
+            0.415,
+            0.1,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.06
+          ],
+          "color": "#ff963e",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0185",
+          "name": "Coral flare feather 10.1",
+          "kind": "box",
+          "position": [
+            2.718,
+            4.05,
+            0.027
+          ],
+          "scale": [
+            0.415,
+            0.122,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.95
+          ],
+          "color": "#d32a36",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0186",
+          "name": "Coral flare feather 10.2",
+          "kind": "box",
+          "position": [
+            2.869,
+            4.05,
+            0.117
+          ],
+          "scale": [
+            0.415,
+            0.144,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.84
+          ],
+          "color": "#f75249",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0187",
+          "name": "Coral flare spine 11",
+          "kind": "cylinder",
+          "position": [
+            2.791,
+            3.969,
+            -0.116
+          ],
+          "scale": [
+            0.497,
+            0.097,
+            0.457
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.379
+          ],
+          "color": "#ff963e",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0188",
+          "name": "Coral flare feather 11.0",
+          "kind": "box",
+          "position": [
+            2.637,
+            4.004,
+            -0.026
+          ],
+          "scale": [
+            0.422,
+            0.074,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.489
+          ],
+          "color": "#d32a36",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0189",
+          "name": "Coral flare feather 11.1",
+          "kind": "box",
+          "position": [
+            2.791,
+            4.004,
+            0.064
+          ],
+          "scale": [
+            0.422,
+            0.09,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.379
+          ],
+          "color": "#f75249",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0190",
+          "name": "Coral flare feather 11.2",
+          "kind": "box",
+          "position": [
+            2.945,
+            4.004,
+            0.154
+          ],
+          "scale": [
+            0.422,
+            0.107,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.269
+          ],
+          "color": "#ff713d",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0191",
+          "name": "Coral flare spine 12",
+          "kind": "cylinder",
+          "position": [
+            2.825,
+            3.903,
+            -0.103
+          ],
+          "scale": [
+            0.5,
+            0.091,
+            0.46
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.961
+          ],
+          "color": "#d32a36",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0192",
+          "name": "Coral flare feather 12.0",
+          "kind": "box",
+          "position": [
+            2.67,
+            3.938,
+            -0.013
+          ],
+          "scale": [
+            0.425,
+            0.07,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -3.071
+          ],
+          "color": "#f75249",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0193",
+          "name": "Coral flare feather 12.1",
+          "kind": "box",
+          "position": [
+            2.825,
+            3.938,
+            0.077
+          ],
+          "scale": [
+            0.425,
+            0.085,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.961
+          ],
+          "color": "#ff713d",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0194",
+          "name": "Coral flare feather 12.2",
+          "kind": "box",
+          "position": [
+            2.98,
+            3.938,
+            0.167
+          ],
+          "scale": [
+            0.425,
+            0.101,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.851
+          ],
+          "color": "#ff963e",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0195",
+          "name": "Coral flare spine 13",
+          "kind": "cylinder",
+          "position": [
+            2.819,
+            3.817,
+            -0.116
+          ],
+          "scale": [
+            0.497,
+            0.121,
+            0.457
+          ],
+          "rotation": [
+            0,
+            0,
+            2.876
+          ],
+          "color": "#f75249",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0196",
+          "name": "Coral flare feather 13.0",
+          "kind": "box",
+          "position": [
+            2.665,
+            3.851,
+            -0.026
+          ],
+          "scale": [
+            0.422,
+            0.092,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            2.766
+          ],
+          "color": "#ff713d",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0197",
+          "name": "Coral flare feather 13.1",
+          "kind": "box",
+          "position": [
+            2.819,
+            3.851,
+            0.064
+          ],
+          "scale": [
+            0.422,
+            0.113,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            2.876
+          ],
+          "color": "#ff963e",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0198",
+          "name": "Coral flare feather 13.2",
+          "kind": "box",
+          "position": [
+            2.973,
+            3.851,
+            0.154
+          ],
+          "scale": [
+            0.422,
+            0.133,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            2.986
+          ],
+          "color": "#d32a36",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0199",
+          "name": "Coral flare spine 14",
+          "kind": "cylinder",
+          "position": [
+            2.773,
+            3.711,
+            -0.153
+          ],
+          "scale": [
+            0.488,
+            0.166,
+            0.449
+          ],
+          "rotation": [
+            0,
+            0,
+            2.626
+          ],
+          "color": "#ff713d",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0200",
+          "name": "Coral flare feather 14.0",
+          "kind": "box",
+          "position": [
+            2.622,
+            3.745,
+            -0.063
+          ],
+          "scale": [
+            0.415,
+            0.127,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            2.516
+          ],
+          "color": "#ff963e",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0201",
+          "name": "Coral flare feather 14.1",
+          "kind": "box",
+          "position": [
+            2.773,
+            3.745,
+            0.027
+          ],
+          "scale": [
+            0.415,
+            0.155,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            2.626
+          ],
+          "color": "#d32a36",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0202",
+          "name": "Coral flare feather 14.2",
+          "kind": "box",
+          "position": [
+            2.925,
+            3.745,
+            0.117
+          ],
+          "scale": [
+            0.415,
+            0.183,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            2.736
+          ],
+          "color": "#f75249",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0203",
+          "name": "Coral flare spine 15",
+          "kind": "cylinder",
+          "position": [
+            2.689,
+            3.587,
+            -0.208
+          ],
+          "scale": [
+            0.474,
+            0.212,
+            0.436
+          ],
+          "rotation": [
+            0,
+            0,
+            2.485
+          ],
+          "color": "#ff963e",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0204",
+          "name": "Coral flare feather 15.0",
+          "kind": "box",
+          "position": [
+            2.542,
+            3.62,
+            -0.118
+          ],
+          "scale": [
+            0.402,
+            0.162,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            2.375
+          ],
+          "color": "#d32a36",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0205",
+          "name": "Coral flare feather 15.1",
+          "kind": "box",
+          "position": [
+            2.689,
+            3.62,
+            -0.028
+          ],
+          "scale": [
+            0.402,
+            0.198,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            2.485
+          ],
+          "color": "#f75249",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0206",
+          "name": "Coral flare feather 15.2",
+          "kind": "box",
+          "position": [
+            2.836,
+            3.62,
+            0.062
+          ],
+          "scale": [
+            0.402,
+            0.233,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            2.595
+          ],
+          "color": "#ff713d",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0207",
+          "name": "Coral flare spine 16",
+          "kind": "cylinder",
+          "position": [
+            2.568,
+            3.444,
+            -0.271
+          ],
+          "scale": [
+            0.453,
+            0.254,
+            0.417
+          ],
+          "rotation": [
+            0,
+            0,
+            2.4
+          ],
+          "color": "#d32a36",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0208",
+          "name": "Coral flare feather 16.0",
+          "kind": "box",
+          "position": [
+            2.428,
+            3.476,
+            -0.181
+          ],
+          "scale": [
+            0.385,
+            0.194,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            2.29
+          ],
+          "color": "#f75249",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0209",
+          "name": "Coral flare feather 16.1",
+          "kind": "box",
+          "position": [
+            2.568,
+            3.476,
+            -0.091
+          ],
+          "scale": [
+            0.385,
+            0.237,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            2.4
+          ],
+          "color": "#ff713d",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0210",
+          "name": "Coral flare feather 16.2",
+          "kind": "box",
+          "position": [
+            2.709,
+            3.476,
+            -0.001
+          ],
+          "scale": [
+            0.385,
+            0.28,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            2.51
+          ],
+          "color": "#ff963e",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0211",
+          "name": "Coral flare spine 17",
+          "kind": "cylinder",
+          "position": [
+            2.413,
+            3.285,
+            -0.332
+          ],
+          "scale": [
+            0.428,
+            0.291,
+            0.394
+          ],
+          "rotation": [
+            0,
+            0,
+            2.345
+          ],
+          "color": "#f75249",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0212",
+          "name": "Coral flare feather 17.0",
+          "kind": "box",
+          "position": [
+            2.281,
+            3.315,
+            -0.242
+          ],
+          "scale": [
+            0.364,
+            0.222,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            2.235
+          ],
+          "color": "#ff713d",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0213",
+          "name": "Coral flare feather 17.1",
+          "kind": "box",
+          "position": [
+            2.413,
+            3.315,
+            -0.152
+          ],
+          "scale": [
+            0.364,
+            0.271,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            2.345
+          ],
+          "color": "#ff963e",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0214",
+          "name": "Coral flare feather 17.2",
+          "kind": "box",
+          "position": [
+            2.546,
+            3.315,
+            -0.062
+          ],
+          "scale": [
+            0.364,
+            0.32,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            2.455
+          ],
+          "color": "#d32a36",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0215",
+          "name": "Coral flare spine 18",
+          "kind": "cylinder",
+          "position": [
+            2.228,
+            3.11,
+            -0.382
+          ],
+          "scale": [
+            0.398,
+            0.323,
+            0.367
+          ],
+          "rotation": [
+            0,
+            0,
+            2.307
+          ],
+          "color": "#ff713d",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0216",
+          "name": "Coral flare feather 18.0",
+          "kind": "box",
+          "position": [
+            2.104,
+            3.138,
+            -0.292
+          ],
+          "scale": [
+            0.339,
+            0.246,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            2.197
+          ],
+          "color": "#ff963e",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0217",
+          "name": "Coral flare feather 18.1",
+          "kind": "box",
+          "position": [
+            2.228,
+            3.138,
+            -0.202
+          ],
+          "scale": [
+            0.339,
+            0.301,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            2.307
+          ],
+          "color": "#d32a36",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0218",
+          "name": "Coral flare feather 18.2",
+          "kind": "box",
+          "position": [
+            2.351,
+            3.138,
+            -0.112
+          ],
+          "scale": [
+            0.339,
+            0.356,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            2.417
+          ],
+          "color": "#f75249",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0219",
+          "name": "Coral flare spine 19",
+          "kind": "cylinder",
+          "position": [
+            2.014,
+            2.922,
+            -0.411
+          ],
+          "scale": [
+            0.365,
+            0.352,
+            0.335
+          ],
+          "rotation": [
+            0,
+            0,
+            2.281
+          ],
+          "color": "#ff963e",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0220",
+          "name": "Coral flare feather 19.0",
+          "kind": "box",
+          "position": [
+            1.901,
+            2.948,
+            -0.321
+          ],
+          "scale": [
+            0.31,
+            0.269,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            2.171
+          ],
+          "color": "#d32a36",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0221",
+          "name": "Coral flare feather 19.1",
+          "kind": "box",
+          "position": [
+            2.014,
+            2.948,
+            -0.231
+          ],
+          "scale": [
+            0.31,
+            0.328,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            2.281
+          ],
+          "color": "#f75249",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0222",
+          "name": "Coral flare feather 19.2",
+          "kind": "box",
+          "position": [
+            2.127,
+            2.948,
+            -0.141
+          ],
+          "scale": [
+            0.31,
+            0.388,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            2.391
+          ],
+          "color": "#ff713d",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0223",
+          "name": "Coral flare spine 20",
+          "kind": "cylinder",
+          "position": [
+            1.778,
+            2.723,
+            -0.415
+          ],
+          "scale": [
+            0.327,
+            0.378,
+            0.301
+          ],
+          "rotation": [
+            0,
+            0,
+            2.263
+          ],
+          "color": "#d32a36",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0224",
+          "name": "Coral flare feather 20.0",
+          "kind": "box",
+          "position": [
+            1.677,
+            2.746,
+            -0.325
+          ],
+          "scale": [
+            0.278,
+            0.288,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            2.153
+          ],
+          "color": "#f75249",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0225",
+          "name": "Coral flare feather 20.1",
+          "kind": "box",
+          "position": [
+            1.778,
+            2.746,
+            -0.235
+          ],
+          "scale": [
+            0.278,
+            0.353,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            2.263
+          ],
+          "color": "#ff713d",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0226",
+          "name": "Coral flare feather 20.2",
+          "kind": "box",
+          "position": [
+            1.88,
+            2.746,
+            -0.145
+          ],
+          "scale": [
+            0.278,
+            0.417,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            2.373
+          ],
+          "color": "#ff963e",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0227",
+          "name": "Coral flare spine 21",
+          "kind": "cylinder",
+          "position": [
+            1.524,
+            2.514,
+            -0.394
+          ],
+          "scale": [
+            0.287,
+            0.401,
+            0.264
+          ],
+          "rotation": [
+            0,
+            0,
+            2.251
+          ],
+          "color": "#f75249",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0228",
+          "name": "Coral flare feather 21.0",
+          "kind": "box",
+          "position": [
+            1.435,
+            2.534,
+            -0.304
+          ],
+          "scale": [
+            0.244,
+            0.305,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            2.141
+          ],
+          "color": "#ff713d",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0229",
+          "name": "Coral flare feather 21.1",
+          "kind": "box",
+          "position": [
+            1.524,
+            2.534,
+            -0.214
+          ],
+          "scale": [
+            0.244,
+            0.373,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            2.251
+          ],
+          "color": "#ff963e",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0230",
+          "name": "Coral flare feather 21.2",
+          "kind": "box",
+          "position": [
+            1.613,
+            2.534,
+            -0.124
+          ],
+          "scale": [
+            0.244,
+            0.441,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            2.361
+          ],
+          "color": "#d32a36",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0231",
+          "name": "Coral flare spine 22",
+          "kind": "cylinder",
+          "position": [
+            1.256,
+            2.299,
+            -0.35
+          ],
+          "scale": [
+            0.245,
+            0.417,
+            0.225
+          ],
+          "rotation": [
+            0,
+            0,
+            2.243
+          ],
+          "color": "#ff713d",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0232",
+          "name": "Coral flare feather 22.0",
+          "kind": "box",
+          "position": [
+            1.18,
+            2.316,
+            -0.26
+          ],
+          "scale": [
+            0.208,
+            0.318,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            2.133
+          ],
+          "color": "#ff963e",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0233",
+          "name": "Coral flare feather 22.1",
+          "kind": "box",
+          "position": [
+            1.256,
+            2.316,
+            -0.17
+          ],
+          "scale": [
+            0.208,
+            0.389,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            2.243
+          ],
+          "color": "#d32a36",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0234",
+          "name": "Coral flare feather 22.2",
+          "kind": "box",
+          "position": [
+            1.332,
+            2.316,
+            -0.08
+          ],
+          "scale": [
+            0.208,
+            0.46,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            2.353
+          ],
+          "color": "#f75249",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0235",
+          "name": "Coral flare spine 23",
+          "kind": "cylinder",
+          "position": [
+            0.979,
+            2.08,
+            -0.292
+          ],
+          "scale": [
+            0.202,
+            0.426,
+            0.186
+          ],
+          "rotation": [
+            0,
+            0,
+            2.24
+          ],
+          "color": "#ff963e",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0236",
+          "name": "Coral flare feather 23.0",
+          "kind": "box",
+          "position": [
+            0.917,
+            2.094,
+            -0.202
+          ],
+          "scale": [
+            0.172,
+            0.325,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            2.13
+          ],
+          "color": "#d32a36",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0237",
+          "name": "Coral flare feather 23.1",
+          "kind": "box",
+          "position": [
+            0.979,
+            2.094,
+            -0.112
+          ],
+          "scale": [
+            0.172,
+            0.397,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            2.24
+          ],
+          "color": "#f75249",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0238",
+          "name": "Coral flare feather 23.2",
+          "kind": "box",
+          "position": [
+            1.042,
+            2.094,
+            -0.022
+          ],
+          "scale": [
+            0.172,
+            0.469,
+            0.045
+          ],
+          "rotation": [
+            0,
+            0,
+            2.35
+          ],
+          "color": "#ff713d",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "model-0239",
+          "name": "Costume star light 1",
+          "kind": "sphere",
+          "position": [
+            0,
+            1.55,
+            0.363
+          ],
+          "scale": [
+            0.043,
+            0.043,
+            0.043
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#65ffe0",
+          "material": "emissive",
+          "group": "Character"
+        },
+        {
+          "id": "model-0240",
+          "name": "Costume star light 2",
+          "kind": "sphere",
+          "position": [
+            0.307,
+            1.79,
+            0.198
+          ],
+          "scale": [
+            0.043,
+            0.043,
+            0.043
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#ffde4b",
+          "material": "emissive",
+          "group": "Character"
+        },
+        {
+          "id": "model-0241",
+          "name": "Costume star light 3",
+          "kind": "sphere",
+          "position": [
+            -0.453,
+            2.03,
+            0.362
+          ],
+          "scale": [
+            0.043,
+            0.043,
+            0.043
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#65ffe0",
+          "material": "emissive",
+          "group": "Character"
+        },
+        {
+          "id": "model-0242",
+          "name": "Costume star light 4",
+          "kind": "sphere",
+          "position": [
+            0.361,
+            2.27,
+            0.199
+          ],
+          "scale": [
+            0.043,
+            0.043,
+            0.043
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#ffde4b",
+          "material": "emissive",
+          "group": "Character"
+        },
+        {
+          "id": "model-0243",
+          "name": "Costume star light 5",
+          "kind": "sphere",
+          "position": [
+            -0.079,
+            2.51,
+            0.36
+          ],
+          "scale": [
+            0.043,
+            0.043,
+            0.043
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#65ffe0",
+          "material": "emissive",
+          "group": "Character"
+        },
+        {
+          "id": "model-0244",
+          "name": "Costume star light 6",
+          "kind": "sphere",
+          "position": [
+            -0.244,
+            1.55,
+            0.201
+          ],
+          "scale": [
+            0.043,
+            0.043,
+            0.043
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#ffde4b",
+          "material": "emissive",
+          "group": "Character"
+        },
+        {
+          "id": "model-0245",
+          "name": "Costume star light 7",
+          "kind": "sphere",
+          "position": [
+            0.439,
+            1.79,
+            0.357
+          ],
+          "scale": [
+            0.043,
+            0.043,
+            0.043
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#65ffe0",
+          "material": "emissive",
+          "group": "Character"
+        },
+        {
+          "id": "model-0246",
+          "name": "Costume star light 8",
+          "kind": "sphere",
+          "position": [
+            -0.404,
+            2.03,
+            0.204
+          ],
+          "scale": [
+            0.043,
+            0.043,
+            0.043
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#ffde4b",
+          "material": "emissive",
+          "group": "Character"
+        },
+        {
+          "id": "model-0247",
+          "name": "Costume star light 9",
+          "kind": "sphere",
+          "position": [
+            0.156,
+            2.27,
+            0.354
+          ],
+          "scale": [
+            0.043,
+            0.043,
+            0.043
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#65ffe0",
+          "material": "emissive",
+          "group": "Character"
+        },
+        {
+          "id": "model-0248",
+          "name": "Costume star light 10",
+          "kind": "sphere",
+          "position": [
+            0.173,
+            2.51,
+            0.209
+          ],
+          "scale": [
+            0.043,
+            0.043,
+            0.043
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#ffde4b",
+          "material": "emissive",
+          "group": "Character"
+        },
+        {
+          "id": "model-0249",
+          "name": "Costume star light 11",
+          "kind": "sphere",
+          "position": [
+            -0.412,
+            1.55,
+            0.349
+          ],
+          "scale": [
+            0.043,
+            0.043,
+            0.043
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#65ffe0",
+          "material": "emissive",
+          "group": "Character"
+        },
+        {
+          "id": "model-0250",
+          "name": "Costume star light 12",
+          "kind": "sphere",
+          "position": [
+            0.434,
+            1.79,
+            0.214
+          ],
+          "scale": [
+            0.043,
+            0.043,
+            0.043
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#ffde4b",
+          "material": "emissive",
+          "group": "Character"
+        },
+        {
+          "id": "model-0251",
+          "name": "Costume star light 13",
+          "kind": "sphere",
+          "position": [
+            -0.228,
+            2.03,
+            0.343
+          ],
+          "scale": [
+            0.043,
+            0.043,
+            0.043
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#65ffe0",
+          "material": "emissive",
+          "group": "Character"
+        },
+        {
+          "id": "model-0252",
+          "name": "Costume star light 14",
+          "kind": "sphere",
+          "position": [
+            -0.097,
+            2.27,
+            0.22
+          ],
+          "scale": [
+            0.043,
+            0.043,
+            0.043
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#ffde4b",
+          "material": "emissive",
+          "group": "Character"
+        },
+        {
+          "id": "model-0253",
+          "name": "Costume star light 15",
+          "kind": "sphere",
+          "position": [
+            0.372,
+            2.51,
+            0.336
+          ],
+          "scale": [
+            0.043,
+            0.043,
+            0.043
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#65ffe0",
+          "material": "emissive",
+          "group": "Character"
+        }
+      ]
+    }
+  },
+  "editor": {
+    "transformSpace": "world",
+    "snapEnabled": false,
+    "terrainSnapEnabled": false,
+    "viewMode": "edit",
+    "cameraView": "perspective",
+    "revision": 0,
+    "layers": [
+      {
+        "id": "atelier-scene",
+        "name": "Model Atelier Base",
+        "visible": true
+      }
+    ],
+    "activeLayerId": "atelier-scene"
+  },
+  "scene": {
+    "actors": [
+      {
+        "id": "atelier-ground",
+        "name": "Model Atelier neutral ground",
+        "type": "ground",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "model-atelier"
+        ],
+        "visualColor": "#252a43",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "atelier-scene"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Model Atelier/Studio",
+        "components": [
+          "Transform"
+        ],
+        "blueprintClass": "",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      }
+    ]
+  }
+}
