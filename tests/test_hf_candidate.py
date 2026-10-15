@@ -84,9 +84,12 @@ class Candidate(unittest.TestCase):
  def test_brain_routes_pinned_code_edit_to_same_artifact_revision(self):
   def stock(payload):
    if "fix" in str(payload.get("prompt") or "").lower():
-    return iter([{"type":"DELTA","text":"```python file=demo.py\ntry:\n    print('v2')\nexcept Exception as exc:\n    print(exc)\n```\nAdded guarded error handling."},{"type":"COMPLETED"}])
+    return iter([{"type":"DELTA","text":"```python file=demo.py\ntry:
+    print('v2')\nexcept Exception as exc:
+    print(exc)\n```\nAdded guarded error handling."},{"type":"COMPLETED"}])
    return iter([{"type":"DELTA","text":"```python file=demo.py\nprint('v1')\n```\nInitial demo."},{"type":"COMPLETED"}])
-  # Programming requests delegate to coder: inject the same mock there.\n  set_generator(lambda payload:iter([{"type":"DELTA","text":"unused"},{"type":"COMPLETE"}]),stock,None,stock)
+  # Programming requests delegate to coder: inject the same mock there.
+  set_generator(lambda payload:iter([{"type":"DELTA","text":"unused"},{"type":"COMPLETE"}]),stock,None,stock)
   with TestClient(station_app) as client:
    first={"requestId":"artifact-r1","threadId":"artifact-thread","messageId":"user-r1","assistantMessageId":"assistant-r1","prompt":"make python code for a demo","modelId":"stock"}
    self.assertEqual(client.post("/api/lalm_station/send",json=first).status_code,202)
@@ -130,7 +133,8 @@ class Candidate(unittest.TestCase):
   self.assertEqual([r.model_id for r in routes()],["r39","stock","700m","coder","compare"])
   self.assertTrue(routes()[1].available)
   self.assertTrue(routes()[2].available)
-  self.assertTrue(routes()[3].available)\n  self.assertFalse(routes()[4].available)
+  self.assertTrue(routes()[3].available)
+  self.assertFalse(routes()[4].available)
   with self.assertRaises(ModelUnavailable): list(dispatch("stock",{},lambda p:iter([{"type":"DELTA","text":"wrong model"}])))
   with self.assertRaises(ModelUnavailable): list(dispatch("compare",{},lambda p:iter([])))
   events=list(dispatch("r39",{"prompt":"hello"},lambda p:iter([{"type":"DELTA","text":"real route"}])))
