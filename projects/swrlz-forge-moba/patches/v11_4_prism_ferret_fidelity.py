@@ -45,6 +45,10 @@ def apply(html):
     html=once(html,"case 'cone':return new THREE.ConeGeometry(1,1,9,1);","case 'cone':return new THREE.ConeGeometry(1,1,14,1);")
     html=once(html,"case 'cylinder':return new THREE.CylinderGeometry(1,1,1,10,1);","case 'cylinder':return new THREE.CylinderGeometry(1,1,1,16,1);")
     html=once(html,"default:return new THREE.SphereGeometry(1,16,12);","default:return new THREE.SphereGeometry(1,30,22);")
+    # Loft vertices already carry sRGB-correct THREE.Color values; white base
+    # avoids multiplying cyan/coral twice and darkening the actual piñata bodies.
+    html=once(html,"new THREE.MeshStandardMaterial({color:col,roughness:",
+        "new THREE.MeshStandardMaterial({color:part.kind==='loft'?new THREE.Color('#ffffff'):col,roughness:")
     html=once(html,"metalness:part.material==='metal'?.68:.05,side:THREE.DoubleSide",
         "metalness:part.material==='metal'?.68:.05,vertexColors:part.kind==='loft',side:THREE.DoubleSide")
     html=once(html,"<option>cylinder</option></select>","<option>cylinder</option><option>loft</option></select>")
