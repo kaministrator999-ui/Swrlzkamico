@@ -10,6 +10,19 @@ This document does not own architecture placement, versioning, deployment, or co
 
 ---
 
+## Multi-thread Chat export evidence priority — 2026-10-14
+
+When the project owner supplies a Chat JSON export containing several conversation threads, treat the **latest relevant conversation** as primary evidence for the reported current defect. Determine chronology using each thread/message timestamp and actual user-provided scope, not the mere presence of older threads in the same export.
+
+- **Thread separation:** Earlier threads are independent historical observations, not continued turns of the newest thread. Do not merge their history, routing hints, or model state into the latest thread.
+- **Release chronology:** Other threads may have used different source revisions or intervening deployments. Do not treat an older thread's success/failure as proof of the current build; reconcile explicit timestamps with source, guarded release and observed activation receipts before comparing.
+- **Independent reproduction:** Diagnose each error from the newest thread's own prompts, response metadata, camera phases, and actual tool outcome. Older threads may be used as explicitly labelled historical comparisons only when that comparison adds value.
+- **Test/acceptance:** Regression fixtures should come first from the newest failing turns; preserve real permissions, verified context and genuine user intent. A model's candidate PASS means technical validation at most, never proof that the user's source-read intent was fulfilled.
+
+This rule applies to human review of exported evidence and to future engineering diagnosis; it does not create a cross-conversation runtime memory bridge or change user account permissions.
+
+---
+
 ## 1. Automatic issue-diagnostic rule
 
 Whenever project work is primarily **fixing, debugging, investigating, or verifying a defect**, the engineering agent MUST automatically perform the diagnostic loop below without waiting for the user to separately ask for logs.
