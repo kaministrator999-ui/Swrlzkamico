@@ -919,7 +919,12 @@ def _natural_repo_read_target(prompt):
         r"[?.!\s]*", raw)
     if not match:
         return None
-    return _filename_hint(re.sub(r"(?i)^file\s+", "", match[1]))
+    hint = _filename_hint(re.sub(r"(?i)^file\s+", "", match[1]))
+    # Collection nouns mean a directory listing, not an exact file target.
+    if hint and hint.casefold() in ("file", "files", "folder", "folders",
+                                    "directory", "directories", "contents", "tree"):
+        return None
+    return hint
 
 
 def _resolve_repository_file(token, repo, default_branch, hint):
@@ -1874,16 +1879,17 @@ def agent_events(data, model_generator=None, coder_generator=None):
     read_command = (read_inference.classify_read(prompt, data.get("githubContext"))
                     if GITHUB_CAPABILITY_STAGE == "read-repository" else None)
     if GITHUB_CAPABILITY_STAGE == "read-repository" and (exact or is_github_conversation(prompt) or natural_file or read_command):
-        if natural_file is not None:
-            yield {"type":"STATUS","phase":"GITHUB_FILE_RESOLVE",
-                   "reason":"Checking repository paths for a unique matching file.",
-                   "categories":["GITHUB","READ_ONLY","SOURCE"]}
-            yield from command_events({**data,"prompt":"@GitHub read file " + natural_file})
-        elif read_command:
+        if read_command:
+            # A verified directory listing outranks generic filename resolution.
             yield {"type":"STATUS","phase":"GITHUB_READ_EVIDENCE",
                    "reason":"Matching the reading question to existing, bounded repository evidence.",
                    "categories":["GITHUB","READ_ONLY","SOURCE"]}
             yield from command_events({**data,"prompt":read_command})
+        elif natural_file is not None:
+            yield {"type":"STATUS","phase":"GITHUB_FILE_RESOLVE",
+                   "reason":"Checking repository paths for a unique matching file.",
+                   "categories":["GITHUB","READ_ONLY","SOURCE"]}
+            yield from command_events({**data,"prompt":"@GitHub read file " + natural_file})
         elif _read_stage_command(prompt):
             yield {"type":"STATUS","phase":"GITHUB_READ_STAGE",
                    "reason":"Read-only GitHub repository capability; all writes locked.",
