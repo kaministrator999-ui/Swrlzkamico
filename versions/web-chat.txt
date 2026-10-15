@@ -1,6 +1,6 @@
 ID=web-chat
-VERSION=1.5.130
-REVISION=1.5.130-mobile-source-guide-cards-v245
+VERSION=1.5.131
+REVISION=1.5.131-source-faithful-copy-v246
 KIND=web-interface
 SOURCE_BRANCH=runtime
 STATUS=active
