@@ -1,3 +1,15 @@
+## UPDATE STARTED — 2026-10-14 — v247 Natural-language repository file listing misrouted to coder
+
+**User-observed failure evidence:** Uploaded `swrlz-dragon-chat (56).json` exported 2026-10-15 00:28 UTC. In the newest native thread, after correct contextual clarification of the prompt `Files` (0.422 s), the explicit follow-up `Can I see the files in the repo` entered `CODER_AUTO_ROUTE`, `selectedModelId=coder`, `programmingIntent.codingTask=true`, `changeClass=create` and started hallucinating many duplicate `.github/ISSUE_TEMPLATE.md` entries instead of authenticated GitHub directory evidence. The user cancelled; no final assistant answer or repository mutation is present for that request. Earlier §tart latency remains ~2.7–3.2 s, informational engine help ~0.3 s.
+
+**Diagnosis / ownership:** `hf_space/github_read_inference_v235.py` recognizes read-only root listing verbs list/show/browse/open but not conversational `see`. Thus `github_connection.is_github_conversation()` returns false, Station does not create a `githubAction`, and `brain_programming.py` interprets bare `repo` as a coding task (coder auto-route). Fix the connected GitHub read classifier **and** programming-information-only exclusion, avoiding broad changes to other conversations. Existing Stage 1 account authorization, GitHub read allowlist, source pinning, model pipeline and write locks remain intact.
+
+**Source isolation:** Exact prior guarded HF production source `1aa8c68e661040767c15ea6b0aae2870248ed480` (v246), branch `fix/chat-natural-repo-files-route-v247`. Avoid merges over concurrently edited main/Forge work and older open read-inference PRs. Target client and server behavior should yield a real bounded directory listing / existing GitHub explorer, never speculative file names.
+
+**Affected module baseline and release gate:** Repository Work `1.0.187`, Server Runtime `2.3.399`, Web Chat `1.5.131` and Google Account `1.0.17`. Server Runtime + Repository Work likely change on successful source-pinned HF release; Web Chat and Google Account need no revision if their source remains untouched. Add positive/negative deterministic routing tests; use existing HF candidate CI and guarded `main:.deploy/HF_SPACE_REQUEST.txt` manual publication only with the passing exact SHA, rollback snapshot, and final Roadmap/version reconciliation. Production user-facing verification remains pending until a live signed-in read demonstrates the actual directory.
+
+---
+
 ## UPDATE FINISHED — 2026-10-14 — v246 Original-source Copy preserved with custom source-guide cards
 
 **Primary Focus / actual owner:** Web Chat response presentation/copy behavior. Source-only client correction `chat/§wyrlz/index.html` on isolated branch `fix/chat-copy-original-source-v246` from exact deployed v245 commit `d89983db6ae227e4c42f3ffb06139f4743e9c190`. Draft review PR #162: `https://github.com/kaministrator999-ui/Swrlzkamico/pull/162`. No Station handler, model, GitHub OAuth permission, Forge engine or user-message/export mutation.
