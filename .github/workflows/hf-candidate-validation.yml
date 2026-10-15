@@ -72,6 +72,15 @@ jobs:
           python -m pip install 'requests>=2.32,<3' 'cryptography>=43,<47'
           python -m py_compile hf_space/github_connection.py hf_space/test_github_start_parallel_v243.py
           python hf_space/test_github_start_parallel_v243.py
+      - name: v262 General GitHub file creation (source and binary), no-overwrite and approvals
+        run: |
+          python -m py_compile hf_space/github_general_create_v262.py hf_space/github_create_intent_v262.py hf_space/github_connection.py hf_space/station.py
+          python hf_space/test_github_general_create_v262.py
+          python hf_space/test_github_general_http_v262.py
+          python hf_space/test_github_general_work_summary_v262.py
+          node --check 'hf_space/chat/§wyrlz/assets/github-general-create-v262.js'
+          node tests/test_github_general_create_v262.mjs
+
       - name: v261 AI full-width responsive workspace and widget layout
         run: |
           node tests/test_assistant_fullwidth_v261.mjs

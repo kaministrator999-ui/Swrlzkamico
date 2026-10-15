@@ -111,7 +111,12 @@ class LiveOAuthSandboxTest(unittest.TestCase):
             response=self.client.get("/api/github/start?access=public-write",follow_redirects=False)
         self.assertEqual(response.status_code,303,response.text)
         self.assertIn("public_repo",response.headers["location"])
+        # General CREATE_FILE now supports this second selected owner repo.
         self.record["repo"]="kaministrator999-ui/Swrlzkamico"
+        with patch.object(gh,"_redis",return_value="OK"):
+            other=self.client.get("/api/github/start?access=public-write",follow_redirects=False)
+        self.assertEqual(other.status_code,303)
+        self.record["repo"]="other-owner/unapproved"
         with patch.object(gh,"_redis",side_effect=AssertionError("OAuth state should not be created")):
             denied=self.client.get("/api/github/start?access=public-write",follow_redirects=False)
         self.assertEqual(denied.status_code,403)

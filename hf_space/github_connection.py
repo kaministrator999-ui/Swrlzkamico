@@ -314,11 +314,14 @@ def start(request: Request, access: str = "read"):
         if GITHUB_CAPABILITY_STAGE != "read-repository":
             raise HTTPException(403, _READ_STAGE_DESCRIPTION)
         if access == "public-write":
-            # This is the ONLY escalation: the owner explicitly consents to
-            # the provider's public_repo scope for the fixed TXT sandbox.
+            # Owner consent for a single-file CREATE_FILE action in a selected
+            # public owner repo. This is NOT a general GitHub mutation grant.
+            from github_general_create_v262 import ALLOWED_REPOS
             previous = _load(c, user_id)
-            if not previous or str(previous.get("repo") or "").casefold() != _SANDBOX_REPO.casefold() or str(previous.get("login") or "").casefold() != _SANDBOX_OWNER.casefold():
-                raise HTTPException(403, "Select and connect the owner GitHub sandbox before requesting write scope")
+            if (not previous
+                    or str(previous.get("repo") or "") not in ALLOWED_REPOS
+                    or str(previous.get("login") or "").casefold() != _SANDBOX_OWNER.casefold()):
+                raise HTTPException(403, "Select and connect an authorized owner GitHub repository before requesting write scope")
         elif access != "read":
             raise HTTPException(403, _READ_STAGE_DESCRIPTION + " Other write operations remain locked.")
     state = secrets.token_urlsafe(32)
@@ -377,10 +380,11 @@ def callback(request: Request, code: str = "", state: str = "", error: str = "")
     # OAuth token exchange supplies the *granted* scopes (never assume requested == granted).
     granted = str(response_data.get("scope") or "")
     if pending.get("access") == "public-write":
+        from github_general_create_v262 import ALLOWED_REPOS
         # A declined or partial consent must preserve the prior read connection.
         scopes = set(re.split(r"[\s,]+", granted.strip()))
         if ("public_repo" not in scopes and "repo" not in scopes
-                or not prior or str(prior.get("repo") or "").casefold() != _SANDBOX_REPO.casefold()
+                or not prior or str(prior.get("repo") or "") not in ALLOWED_REPOS
                 or str(prior.get("login") or "").casefold() != _SANDBOX_OWNER.casefold()
                 or int(prior.get("githubId") or 0) != int(identity["id"])
                 or str(identity.get("login") or "").casefold() != _SANDBOX_OWNER.casefold()):
@@ -2156,4 +2160,73 @@ async def sandbox_confirm_create_txt(request: Request):
             raise WriteError("INVALID_REQUEST")
         return confirm({"id": user_id}, body.get("approvalToken"), body.get("approved"))
     except WriteError as exc:
+        return JSONResponse({"ok": False, "code": exc.code}, status_code=exc.status)
+
+
+# ---------------------------------------------------------------------------
+# v262 general CREATE_FILE action: explicit owner-reviewed one-file writes,
+# not unlocked command/mutation agents and not a TXT sandbox replacement.
+# ---------------------------------------------------------------------------
+@router.get("/api/github/files/create-status")
+def create_file_status(request: Request):
+    from github_general_create_v262 import _authorize, CreateFileError, MAX_FILE_BYTES, ALLOWED_REPOS
+    user_id = _google(request)
+    try:
+        access = _authorize(user_id)
+        return {"linked": True, "allowed": True, "repo": access["repo"],
+                "branch": access["branch"], "operation": "CREATE_FILE",
+                "maxFileBytes": MAX_FILE_BYTES, "fileTypes": "any",
+                "overwrite": False, "authorization": "per-file-confirmation"}
+    except CreateFileError as exc:
+        c = _config()
+        record = _load(c, user_id)
+        return {"linked": bool(record), "allowed": False,
+                "repo": record.get("repo") if record else None,
+                "operation": "CREATE_FILE", "maxFileBytes": MAX_FILE_BYTES,
+                "fileTypes": "any", "overwrite": False,
+                "reason": exc.code,
+                "authorizeUrl": ("/api/github/start?access=public-write"
+                     if exc.code == "GITHUB_WRITE_SCOPE_REQUIRED"
+                     and record and record.get("repo") in ALLOWED_REPOS else None)}
+
+
+@router.post("/api/github/files/prepare-create")
+async def prepare_general_file(request: Request):
+    from github_general_create_v262 import prepare, CreateFileError
+    user_id = _google(request)
+    _origin_guard(request, _config())
+    if request.headers.get("content-length"):
+        try:
+            if int(request.headers["content-length"]) > 1_450_000:
+                return JSONResponse({"ok": False, "code": "REQUEST_TOO_LARGE"}, status_code=413)
+        except ValueError:
+            raise HTTPException(422, "Invalid Content-Length") from None
+    try:
+        body = await request.body()
+        if len(body) > 1_450_000:
+            raise CreateFileError("REQUEST_TOO_LARGE", 413)
+        data = json.loads(body)
+        if not isinstance(data, dict):
+            raise CreateFileError("INVALID_FILE_PROPOSAL", 422)
+        return prepare(user_id, data.get("path"), data.get("contentBase64"),
+                       data.get("mediaType", "application/octet-stream"))
+    except (ValueError, TypeError):
+        return JSONResponse({"ok": False, "code": "INVALID_FILE_PROPOSAL"}, status_code=422)
+    except CreateFileError as exc:
+        return JSONResponse({"ok": False, "code": exc.code}, status_code=exc.status)
+
+
+@router.post("/api/github/files/confirm-create")
+async def confirm_general_file(request: Request):
+    from github_general_create_v262 import confirm, CreateFileError
+    user_id = _google(request)
+    _origin_guard(request, _config())
+    try:
+        data = await request.json()
+        if not isinstance(data, dict):
+            raise CreateFileError("INVALID_CONFIRMATION", 422)
+        return confirm(user_id, data.get("approvalToken"), data.get("approved"))
+    except (ValueError, TypeError):
+        return JSONResponse({"ok": False, "code": "INVALID_CONFIRMATION"}, status_code=422)
+    except CreateFileError as exc:
         return JSONResponse({"ok": False, "code": exc.code}, status_code=exc.status)

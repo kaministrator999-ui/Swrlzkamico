@@ -1,0 +1,17 @@
+.github-general-dialog{width:min(94vw,640px);max-height:86dvh;overflow:auto;box-sizing:border-box;padding:16px;border:1px solid rgba(117,221,255,.55);border-radius:16px;background:#061a2b;color:#e8f9ff;box-shadow:0 16px 72px #000b}
+.github-general-dialog::backdrop{background:rgba(0,10,20,.76)}
+.github-general-dialog h2{margin:0 0 8px;font-size:19px}
+.github-general-dialog p{line-height:1.5;font-size:13px}
+.github-general-dialog label{display:block;margin:10px 0 5px;font-size:12px;color:#bce9f6;font-weight:700}
+.github-general-dialog input[type=text],.github-general-dialog textarea,.github-general-dialog select{width:100%;box-sizing:border-box;padding:10px;border-radius:9px;border:1px solid #45738c;background:#07121f;color:#f0fcff;font:14px/1.4 system-ui}
+.github-general-dialog textarea{resize:vertical;min-height:140px}
+.github-general-dialog input[type=file]{width:100%;margin:9px 0;max-width:100%;font-size:12px}
+.github-general-preview{overflow-wrap:anywhere;white-space:pre-wrap;padding:10px 12px;border:1px solid #285c77;border-radius:10px;background:#03121e;color:#c7f6ed;font:11px/1.6 ui-monospace,monospace;max-height:240px;overflow-y:auto}
+.github-general-status{color:#b6e8f6}
+.github-general-buttons{display:flex;flex-wrap:wrap;gap:9px;margin-top:14px}
+.github-general-buttons button{border-radius:9px;border:1px solid #3d859e;background:#12344a;color:#e9fcff;padding:10px 13px;font-weight:700;cursor:pointer}
+.github-general-buttons button:disabled{opacity:.4;cursor:default}
+.github-general-dialog a{color:#8fe4ff}
+.github-general-note{font-size:11px!important;color:#b4cbd6}
+.github-general-repo{padding:10px;border:1px solid #295d76;border-radius:9px;color:#aaddf0;font-size:12px;overflow-wrap:anywhere}
+@media(max-width:500px){.github-general-dialog{padding:12px}.github-general-buttons button{flex:1 1 auto}}
