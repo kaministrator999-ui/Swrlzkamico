@@ -248,7 +248,7 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
     pass('native_full_play_recorder_preserves_maul_events_world_entities_camera_pause_and_download');
 
     assert.deepEqual(errors,[],'Browser errors during Maul acceptance');assert.equal(cases.length,16,'Every required Maul case must execute');
-    receipts.push({mode:mode.name,viewport:mode.viewport,cases,canonicalId:canonical.project.canonicalId,version:'v11.2',nativeRun:run.id,
+    receipts.push({mode:mode.name,viewport:mode.viewport,cases,canonicalId:canonical.project.canonicalId,version:'v11.3',nativeRun:run.id,
       mapActors:canonical.scene.actors.length,grid:[map.cols,map.rows],victory:{kills:won.kills,gold:won.gold},defeat:{leaks:lost.leaks,lives:lost.lives}});
     await writeFile(resolve(output,mode.name+'-receipt.json'),JSON.stringify(receipts.at(-1),null,2));
     console.log(mode.name==='desktop'?'MAUL_DESKTOP_PASS':'MAUL_MOBILE_PASS');
