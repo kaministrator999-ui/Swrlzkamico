@@ -110,8 +110,60 @@ def test_dragon58_root_context_followup_and_topic_fallback():
         assert any("GitHub repository" in e.get("text","") for e in events), model
         assert not any(e.get("phase")=="CODER_AUTO_ROUTE" for e in events), model
 
+
+def test_dragon59_named_document_opinion_uses_verified_source():
+    """Only the newest Dragon Chat (59) thread is current release evidence."""
+    import hashlib
+    specialist=github.source_specialist
+    ctx={"repo":"owner/repo","branch":"main","sourceSha":"a"*40,
+         "directory":"","lastFile":"","kind":"directory"}
+    requests=(
+        "What do you think of the §tart doc in the repo §wyrlz?",
+        "Lol I asked what your opinion of our repo §tart doc is",
+    )
+    for question in requests:
+        req=specialist.parse(question, ctx)
+        assert req and req["path"]=="§wyrlz_§tart.md", (question,req)
+        assert github.is_github_conversation(question), question
+    assert specialist.parse("What do you think of README.md in the repo",ctx)["path"]=="README.md"
+    assert specialist.parse("Your opinion of the §tart §E doc in the repo",ctx)["path"]=="§tart_§E.md"
+    assert specialist.parse("What do you think of the repo?",ctx) is None
+    assert specialist.parse("What do you think of my music?",ctx) is None
+    assert specialist.parse("Edit the §tart doc in the repo",ctx) is None
+
+    content="# §wyrlz §tart\n\nCanonical project entrypoint. Other contracts own deployment.\n"
+    raw=content.encode("utf-8")
+    sha=hashlib.sha1(b"blob "+str(len(raw)).encode()+b"\0"+raw).hexdigest()
+    snapshot={"sourceSha":"a"*40,
+              "items":[{"path":"§wyrlz_§tart.md","type":"file","sha":sha}]}
+    calls=[]
+    def fake_coder(payload):
+        calls.append(payload)
+        yield {"type":"DELTA","text":"The document keeps routing modular; a tradeoff is its length."}
+        yield {"type":"COMPLETED","phase":"COMPLETE"}
+    with mock.patch.object(github,"_config",return_value={}), \
+         mock.patch.object(github,"_load",return_value={"token":"test-secret","repo":"owner/repo"}), \
+         mock.patch.object(github,"_effective_access",return_value={"allowed":True,"defaultBranch":"main"}), \
+         mock.patch.object(github.explorer,"pinned_tree",return_value=snapshot), \
+         mock.patch.object(github,"_read_optional",return_value={"sha":sha,"body":content}), \
+         mock.patch.object(github,"_post_github",side_effect=AssertionError("write not allowed")):
+        events=list(github.agent_events({"userId":"google:owner",
+            "prompt":requests[0],"requestedModelId":"700m","githubContext":ctx},
+            coder_generator=fake_coder))
+    assert any(e.get("phase")=="CODER_SOURCE_READING" for e in events), events
+    assert any(e.get("phase")=="GITHUB_CODER_READ_ONLY" for e in events), events
+    assert any(e.get("type")=="GITHUB_CONTEXT" and
+               e["context"].get("lastFile")=="§wyrlz_§tart.md" for e in events), events
+    assert any("The document keeps routing modular" in e.get("text","") for e in events)
+    assert len(calls)==1
+    assert "VERIFIED SELECTED DOCUMENT" in calls[0]["prompt"]
+    assert "Canonical project entrypoint" in calls[0]["prompt"]
+    assert "test-secret" not in calls[0]["prompt"]
+    assert not any("Verified Git-tree inventory" in e.get("text","") for e in events)
+
 if __name__=="__main__":
     test_exported_prompt_selects_real_authenticated_read()
     test_guard_preserves_real_programming_and_permission_limits()
     test_dragon58_root_context_followup_and_topic_fallback()
+    test_dragon59_named_document_opinion_uses_verified_source()
     print("v247: repo-files view routes authenticated GitHub read; coder/write guard PASSED")
