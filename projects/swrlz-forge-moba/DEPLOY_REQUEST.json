@@ -4,7 +4,7 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.3",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_3_MODEL_ATELIER_PRISM_JESTER",
-  "reason": "Final dedicated §E v11.3 deployment of merged PR #167 original Model Atelier native starter. All 17/17 desktop+mobile browser acceptance suites and five candidate workflows passed. Exactly 73 governed patches, 29 bundled assets, 2,175,921-byte HTML SHA-256 a2ec94f418f294ea5ebd50363833d37025a6e6cc804732116a7cb927d0b069db. Do not claim hosted success until the dedicated terminal deployment and independent hosted audit both pass.",
-  "sourceCommit": "de638d2f102ceaeb84b1b07c8315bda7b5df1244",
+  "reason": "Documentation-close v11.3 redeploy with unchanged independently audited exact source artifact. First deploy #38677061503 and independent audit #38677099743 both SUCCESS. Router, Space README, project README, verification register and ROADMAP now mark the release live. Preserve same 73 patches / 29 assets / 2,175,921 bytes / SHA a2ec94f418f294ea5ebd50363833d37025a6e6cc804732116a7cb927d0b069db, and independently re-audit final hosted revision.",
+  "sourceCommit": "45af8d23903761a21c3b07f12d403adf881a69de",
   "sourceIntegritySha256": "a2ec94f418f294ea5ebd50363833d37025a6e6cc804732116a7cb927d0b069db"
 }
