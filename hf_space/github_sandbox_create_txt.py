@@ -119,7 +119,13 @@ def confirm(user, ticket, approved):
     verified = hashlib.sha256(observed).hexdigest() == item["digest"] and observed == content_bytes
     if not verified:
         raise WriteError("GITHUB_READBACK_MISMATCH", 502)
-    return {"ok": True, "operation": "CREATE_FILE", "repo": OWNER + "/" + REPO, "branch": BRANCH, "path": item["path"], "commitSha": commit, "verified": True, "url": "https://github.com/" + OWNER + "/" + REPO + "/blob/" + BRANCH + "/" + item["path"]}
+    receipt = {"ok": True, "operation": "CREATE_FILE", "repo": OWNER + "/" + REPO, "branch": BRANCH, "path": item["path"], "commitSha": commit, "verified": True, "url": "https://github.com/" + OWNER + "/" + REPO + "/blob/" + BRANCH + "/" + item["path"]}
+    # Visual data is derived only from confirmed bytes and the exact commit.
+    # Optional GitHub diff statistics are fetched separately and never invented.
+    from github_connection import _api
+    from github_work_summary_v260 import make_work_widget
+    receipt["widget"] = make_work_widget(receipt, item["content"], token, github_get=_api)
+    return receipt
 
 
 
