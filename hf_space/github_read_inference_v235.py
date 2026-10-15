@@ -14,7 +14,7 @@ _MUTATION = re.compile(
 _REPO = re.compile(r"\b(?:github|repo|repository)\b", re.I)
 _READ = re.compile(
     r"\b(?:analy[sz]e|architecture|compare|count|describe|directory|"
-    r"directories|explain|explore|file|files|folder|folders|history|inspect|"
+    r"directories|display|browse|view|explain|explore|file|files|folder|folders|history|inspect|"
     r"how|largest|list|locate|modified|overview|read|relate|related|relationship|report|"
     r"search|see|show|size|source|structure|summari[sz]e|tree|what|"
     r"where|which|how many|when)\b", re.I)
@@ -154,7 +154,7 @@ def classify_read(prompt, context=None):
         if scoped:
             return "@GitHub history " + scoped[0] + suffix
         return "@GitHub report structure /" + suffix
-    if re.search(r"\b(?:list|show|see|browse|open)\b", lower) and re.search(
+    if re.search(r"\b(?:list|show|see|browse|open|display|view)\b", lower) and re.search(
             r"\b(?:files?|folders?|directories|contents|tree)\b", lower):
         if re.search(r"\b(?:all|every|entire|complete|recursive|again)\b", lower) and re.search(
                 r"\b(?:files?|tree)\b", lower):
