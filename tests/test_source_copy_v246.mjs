@@ -22,7 +22,7 @@ vm.runInNewContext(
   context
 );
 const body={textContent:decorated};
-const node={querySelector:selector=>selector===".assistant-body"?body:null,children:[],append(element){this.children.push(element);}};
+const node={querySelector:selector=>selector===".assistant-body"?body:null,children:[],appendChild(element){this.children.push(element);},append(element){this.children.push(element);}};
 context.attach(node,body,actual);
 assert.equal(node.children.length,1);
 const button=node.children[0].children[0];
@@ -30,7 +30,7 @@ await button.onclick();
 assert.equal(copied,actual);
 assert.equal(button.textContent,"Copied");
 const oldBody={textContent:"Legacy response text"};
-const oldNode={querySelector:()=>oldBody,children:[],append(x){this.children.push(x);}};
+const oldNode={querySelector:()=>oldBody,children:[],appendChild(x){this.children.push(x);},append(x){this.children.push(x);}};
 context.attach(oldNode,oldBody,undefined);
 await oldNode.children[0].children[0].onclick();
 assert.equal(copied,"Legacy response text","Legacy copy fallback remains available");
