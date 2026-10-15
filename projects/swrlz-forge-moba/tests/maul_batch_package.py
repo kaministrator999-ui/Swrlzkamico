@@ -7,6 +7,7 @@ import math
 from pathlib import Path
 
 SCENE = 'scenes/maul-frostveil-groups.swyrl.json'
+FLIGHT_SCENE = 'scenes/maul-frostveil-flight.swyrl.json'
 PATCH = 'patches/v11_2_maul_flight_glacial_art.py'
 LEGACY_SCENE = 'scenes/maul-frostveil-classic.swyrl.json'
 LEGACY_BYTES = 108598
@@ -53,12 +54,22 @@ def main():
     args=parser.parse_args();receipt=json.loads((args.package/'SOURCE.json').read_text())
     require(receipt['sourceVersion']=='§wyrl§ Engine v11.2', 'wrong source version')
     require(len(receipt['patches'])==72 and receipt['patches'][-1]==PATCH, 'wrong governed patch chain')
-    require(len(receipt['assets'])==27 and SCENE in receipt['assets'] and LEGACY_SCENE in receipt['assets'], 'wrong asset set or missing preserved v10.7 scene')
+    require(len(receipt['assets'])==28 and FLIGHT_SCENE in receipt['assets'] and SCENE in receipt['assets'] and LEGACY_SCENE in receipt['assets'], 'wrong asset set or missing preserved v10.7 scene')
     raw=(args.package/SCENE).read_bytes();meta=receipt['assets'][SCENE]
     require(len(raw)==meta['bytes'] and hashlib.sha256(raw).hexdigest()==meta['sha256'], 'native grouped scene differs from package receipt')
     legacy=(args.package/LEGACY_SCENE).read_bytes()
     require(len(legacy)==LEGACY_BYTES and hashlib.sha256(legacy).hexdigest()==LEGACY_SHA256, 'the published v10.7 scene was rewritten')
-    proof=validate_scene(json.loads(raw))
+    old_scene=json.loads(raw)
+    flight_raw=(args.package/FLIGHT_SCENE).read_bytes()
+    flight_meta=receipt['assets'][FLIGHT_SCENE]
+    require(len(flight_raw)==flight_meta['bytes'] and hashlib.sha256(flight_raw).hexdigest()==flight_meta['sha256'], 'flight starter source differs from packaged bytes')
+    flight=json.loads(flight_raw)
+    require(flight['project']['maulBuilderFlight']=='hover-v1' and flight['project']['maulVisualStyle']=='glacial-v2', 'flying starter profile missing from native scene')
+    require(flight['project']['maulConstruction']=='walk-v1' and flight['project']['maulSpawnProtection']=='full-pad-v1', 'flying starter lost construction safety')
+    require(flight['scene']==old_scene['scene'] and flight['editor']==old_scene['editor'], 'flight pack changed 78 authored map actors or editor layers')
+    require(validate_scene(flight)['actors']==78, 'flying starter must have nine sector builders and no authored towers')
+    proof=validate_scene(old_scene)
+    print('MAUL_FLIGHT_NATIVE_STARTER_PACKAGE_VERIFIED '+json.dumps({'source':FLIGHT_SCENE,'actors':78,'profiles':[flight['project']['maulBuilderFlight'],flight['project']['maulVisualStyle']]},sort_keys=True))
     print('MAUL_BATCH_NATIVE_PACKAGE_VERIFIED '+json.dumps(proof,sort_keys=True))
 
 
