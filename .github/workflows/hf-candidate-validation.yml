@@ -72,6 +72,10 @@ jobs:
           python -m pip install 'requests>=2.32,<3' 'cryptography>=43,<47'
           python -m py_compile hf_space/github_connection.py hf_space/test_github_start_parallel_v243.py
           python hf_space/test_github_start_parallel_v243.py
+      - name: v259 Direct user-authorized harmless test-file Chat action
+        run: |
+          python -m py_compile hf_space/github_txt_intent_v256.py hf_space/github_sandbox_create_txt.py hf_space/station.py
+          python hf_space/test_direct_github_test_txt_v259.py
       - name: v258 Natural GitHub TXT proposal UI and no-write-before-confirm acceptance
         run: |
           node --check 'hf_space/chat/§wyrlz/assets/github-chat-create-txt-v258.js'
