@@ -156,7 +156,7 @@ jobs:
                     'scenes/maul-frostveil-classic.swyrl.json',
                     'scenes/maul-frostveil-groups.swyrl.json',
                     'scenes/maul-frostveil-flight.swyrl.json',
-                    'scenes/model-atelier-prism-jester.swyrl.json','scenes/model-atelier-prism-jester-ferret-v11-4.swyrl.json','scenes/model-atelier-prism-jester-festival-v11-5.swyrl.json','scenes/model-atelier-prism-jester-festival-v11-6.swyrl.json'}
+                    'scenes/model-atelier-prism-jester.swyrl.json','scenes/model-atelier-prism-jester-ferret-v11-4.swyrl.json','scenes/model-atelier-prism-jester-festival-v11-5.swyrl.json','scenes/model-atelier-prism-jester-festival-v11-6.swyrl.json','scenes/model-atelier-prism-jester-festival-v11-7.swyrl.json'}
           expected.update('assets/anime/'+name+'.png' for name in (
               'kami','swyrlz','cathedral','workshop','foreground','kami-rig',
               'swyrlz-rig','scenery-parts','kami-grip-layers',
