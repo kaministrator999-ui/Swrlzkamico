@@ -72,6 +72,14 @@ jobs:
           python -m pip install 'requests>=2.32,<3' 'cryptography>=43,<47'
           python -m py_compile hf_space/github_connection.py hf_space/test_github_start_parallel_v243.py
           python hf_space/test_github_start_parallel_v243.py
+      - name: v257 GitHub existing-OAuth sandbox permission and HTTP acceptance
+        run: |
+          python -m py_compile hf_space/github_connection.py hf_space/github_sandbox_create_txt.py hf_space/github_txt_intent_v256.py hf_space/station.py
+          python hf_space/test_github_staged_read_v221.py
+          python hf_space/test_github_sandbox_create_txt_v257.py
+          python hf_space/test_github_txt_intent_v257.py
+          python hf_space/test_github_sandbox_live_v257.py
+          node --check 'hf_space/chat/§wyrlz/assets/github-sandbox-create-txt-v257.js'
       - name: v244 Stage-1 help and pinned-startup-links regression
         run: |
           python -m py_compile hf_space/github_connection.py hf_space/test_github_info_help_v244.py
