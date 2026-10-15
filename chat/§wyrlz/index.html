@@ -637,12 +637,18 @@
     .github-source-card .github-source-repo{color:#a4c9db;font-size:11px;line-height:1.4;overflow-wrap:anywhere}
     .github-source-card .github-source-facts{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
     .github-source-card .github-source-fact{display:inline-block;padding:4px 8px;border:1px solid rgba(120,203,241,.22);border-radius:7px;background:rgba(15,50,73,.68);font:650 10px/1.3 var(--font-telemetry);color:#d4effb;overflow-wrap:anywhere}
-    .github-source-card .github-source-details{margin-top:10px;border-top:1px solid rgba(150,220,250,.14);padding-top:7px}
+    .github-source-card .github-source-details{margin-top:8px;border-top:1px solid rgba(150,220,250,.14);padding-top:6px}
     .github-source-card .github-source-details>summary{color:#b7dcf0;cursor:pointer;font:650 11px/1.5 var(--font-ui);list-style-position:inside}
     .github-source-card .github-source-details>summary:focus-visible,.github-source-card button:focus-visible{outline:2px solid #a5edff;outline-offset:3px}
-    .github-source-card .github-source-row{display:grid;grid-template-columns:65px minmax(0,1fr);gap:8px;align-items:start;margin:9px 0 0}
+    .github-source-card .github-source-row{display:grid;grid-template-columns:65px minmax(0,1fr);gap:8px;align-items:start;margin:6px 0 0}
     .github-source-card .github-source-key{color:#97bcd0;font:650 10px/1.5 var(--font-telemetry)}
     .github-source-card .github-source-value{min-width:0;color:#d9effa;font:11px/1.5 var(--font-telemetry);overflow-wrap:anywhere;word-break:break-word}
+    /* v254: live tool milestones need their own readable backdrop too. */
+    .station-online-trail{padding:7px 9px;border:1px solid rgba(128,207,238,.18);border-radius:9px;background:rgba(2,16,29,.91);max-width:100%;box-sizing:border-box}
+    .station-online-event{font-size:10px;line-height:1.45;color:#c2e4f0;gap:7px}
+    .station-online-phase{color:#e0f7ff}
+    .station-online-detail{color:#b3d1df}
+    .github-source-card .github-source-row .github-source-value>span{overflow-wrap:anywhere}
     .github-source-card .github-source-value button{border:1px solid rgba(126,214,255,.22);background:rgba(13,47,67,.80);border-radius:6px;color:#dbf8ff;font:inherit;padding:3px 6px;margin-left:6px;cursor:pointer}
     body.a11y-high-contrast .assistant-body{background:#020d1a!important}
     body.a11y-reduced-transparency .assistant-body{background:#041627!important}
@@ -1476,7 +1482,7 @@
         const file=document.createElement("div");file.className="github-source-filename";file.textContent=info.file;
         const repo=document.createElement("div");repo.className="github-source-repo";repo.textContent=info.repo;
         const facts=document.createElement("div");facts.className="github-source-facts";
-        for(const label of ["Branch · "+info.branch,info.coverage.replace(/[.;]$/,"")]){
+        for(const label of ["Branch · "+info.branch,info.coverage.startsWith("bounded")?"Excerpts · partial":"Selected file · complete"]){
           const fact=document.createElement("span");fact.className="github-source-fact";fact.textContent=label;facts.appendChild(fact);
         }
         const details=document.createElement("details");details.className="github-source-details";
@@ -1485,7 +1491,10 @@
           const row=document.createElement("div");row.className="github-source-row";
           const key=document.createElement("span");key.className="github-source-key";key.textContent=label;
           const val=document.createElement("span");val.className="github-source-value";
-          const content=document.createElement("span");content.textContent=value;val.appendChild(content);
+          const content=document.createElement("span");
+          // Keep full hashes for copy/accessibility, but not as wrapped 40-character paragraphs.
+          content.textContent=(label==="Commit"||label==="Blob")&&value.length===40?value.slice(0,12)+"…"+value.slice(-6):(label==="Source"?info.file:value);
+          content.title=value;val.appendChild(content);
           if(copyable){
             const btn=document.createElement("button");btn.type="button";btn.textContent="Copy";
             btn.setAttribute("aria-label","Copy "+label.toLowerCase());
