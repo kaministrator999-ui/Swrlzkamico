@@ -1,6 +1,6 @@
 ID=server-runtime
-VERSION=2.3.397
-REVISION=2.3.397-hf-v244-stage1-help-pinned-evidence
+VERSION=2.3.398
+REVISION=2.3.398-hf-v245-mobile-source-guide-cards
 KIND=server-runtime
 SOURCE_BRANCH=runtime
 STATUS=active
