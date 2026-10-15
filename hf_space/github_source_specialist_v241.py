@@ -31,11 +31,28 @@ def _mutation_intended(text):
 def parse(prompt, context=None):
     """Never confuse questions about code with authorization to edit it."""
     text = str(prompt or "").strip()
-    if not text or len(text) > 1000 or not REQUEST.search(text) or _mutation_intended(text):
+    if not text or len(text) > 1000 or _mutation_intended(text):
         return None
-    # Only a clear GitHub/source context enters this route.
+    context = context if isinstance(context, dict) else {}
+    # A named-document follow-up can carry the prior opinion into another
+    # source file, but ONLY inside an established, file-scoped GitHub thread.
+    # This is a topic anchor, not permission to access GitHub.
+    doc_followup = bool(
+        re.match(r"(?i)^(?:(?:now|and)\s+)?what about\b", text)
+        and (re.search(r"§tart", text, re.I) or PATH.search(text))
+        and re.search(r"\b(?:doc|document|file|readme)\b", text, re.I)
+        and re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+",
+                         str(context.get("repo") or ""))
+        and SHA.fullmatch(str(context.get("sourceSha") or ""))
+        and re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._/-]{0,100}",
+                         str(context.get("branch") or ""))
+        and str(context.get("kind") or "") == "file"
+        and str(context.get("lastFile") or "").endswith((".md", ".txt")))
+    if not (REQUEST.search(text) or doc_followup):
+        return None
+    # Keep standalone or unrelated conversations out of the GitHub route.
     if not (re.search(r"\b(?:github|repo|repository|source|code|scripts?|functions?|files?)\b", text, re.I)
-            or text.lower().startswith("@github ")):
+            or text.lower().startswith("@github ") or doc_followup):
         return None
     paths = PATH.findall(text)
     path = paths[0] if len(paths) == 1 else ""
@@ -46,7 +63,6 @@ def parse(prompt, context=None):
         path = "§tart_§E.md" if re.search(r"§tart\s*§e\b|§e\s+§tart\b", text, re.I) else "§wyrlz_§tart.md"
     if len(paths) > 1:
         return {"ambiguous": True}
-    context = context if isinstance(context, dict) else {}
     if not path and re.search(r"\b(?:this|that|current|selected)\s+(?:file|code|script)\b", text, re.I):
         path = str(context.get("lastFile") or "")
     if not path:
@@ -60,7 +76,10 @@ def parse(prompt, context=None):
             explorer.safe_branch(context["branch"]) if context.get("branch") else "")
     except (explorer.ExplorerError, KeyError):
         return {"invalid": True}
-    return {"path": path, "branch": branch, "goal": text[:600]}
+    answer = {"path": path, "branch": branch, "goal": text[:600]}
+    if doc_followup:
+        answer["opinionFollowup"] = True
+    return answer
 
 
 def _resolve(snapshot, path):
@@ -181,7 +200,7 @@ def events(gh, data, coder_generator):
             yield {"type": "DELTA", "text": "Qwen Coder is unavailable. Verified source identity above; semantic analysis not performed."}
             yield {"type": "COMPLETED", "phase": "COMPLETE"}
             return
-        opinion = bool(re.search(r"\b(?:opinion|thoughts|think|assess|evaluate|critique)\b", request["goal"], re.I))
+        opinion = bool(request.get("opinionFollowup") or re.search(r"\b(?:opinion|thoughts|think|assess|evaluate|critique)\b", request["goal"], re.I))
         task = (("Give a direct opinion of the VERIFIED SELECTED DOCUMENT with specific strengths, tradeoffs, and grounded improvements. " if opinion else "Explain the verified source for the user's ORIGINAL request. ") +
                 "Never substitute a repository-wide inventory for the named document. "
                 "Return an explanation, not source code or a patch. Ground claims only in supplied exact source. "
