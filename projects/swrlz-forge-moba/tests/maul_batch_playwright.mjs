@@ -160,6 +160,18 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
     await page.locator('#perfPreset').selectOption('medium',{force:true});await page.evaluate(()=>window.__maulClock.freeze());await frames(page,2);
     assert.equal(await page.evaluate(()=>window.SWRLZ_FORGE_BUILD?.version),'v11.2','Wrong engine release');
     const canonical=await saved(page),check=await preflight(page);assert.equal(canonical.project.maulLayout,'classic-v2');assert.equal(canonical.project.maulSpawnStyle,profile);
+    // A launchable, separately packaged v11.2 starter must be the source for the actual Projects tile.
+    const starterResponse=await context.request.get(base+'/scenes/maul-frostveil-flight.swyrl.json');
+    assert.equal(starterResponse.ok(),true,'Dedicated v11.2 Maul starter must ship as a downloadable native scene');
+    const starterScene=await starterResponse.json();
+    for(const setting of ['maulLayout','maulSpawnStyle','maulConstruction','maulSpawnProtection','maulBuilderFlight','maulVisualStyle'])
+      assert.equal(canonical.project[setting],starterScene.project[setting],'Projects starter diverged from packaged scene: '+setting);
+    assert.equal(canonical.project.name,starterScene.project.name,'Projects tile did not open the named v11.2 flying builder scene');
+    assert.deepEqual(canonical.scene.actors.filter(a=>a.type==='maul-builder').map(a=>a.id).sort(),
+      starterScene.scene.actors.filter(a=>a.type==='maul-builder').map(a=>a.id).sort(),
+      'Default starter did not load the nine builders from packaged native scene');
+    assert.equal((await page.evaluate(()=>window.SWYRL_ENGINE_MAUL.artStatus())).enabled,true,'Glacial art not enabled for packaged Maul starter');
+
     assert.equal(check.ok,true,'The default grouped starter failed preflight: '+check.errors.join(' '));assert.equal(check.map.spawnStyle,profile);
     assert.equal(canonical.scene.actors.length,78);assert.equal(canonical.editor.layers.length,6);
     for(const layer of canonical.editor.layers)assert.ok(canonical.scene.actors.some(a=>a.editorLayerIds?.includes(layer.id)),'Empty native layer '+layer.name);
