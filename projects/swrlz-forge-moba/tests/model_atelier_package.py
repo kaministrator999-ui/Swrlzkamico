@@ -37,7 +37,7 @@ assert receipt['patches']==manifest['patches']
 assert len(receipt['patches'])==75
 assert receipt['patches'][-1]=='patches/v11_5_festival_loft_atelier.py'
 assert scene_path in receipt['assets']
-assert len(receipt['assets'])==30
+assert len(receipt['assets'])==31
 assert receipt['assets'][scene_path]['sha256']==hashlib.sha256((ROOT/scene_path).read_bytes()).hexdigest()
 assert receipt['assets'][scene_path]['bytes']==(ROOT/scene_path).stat().st_size
 assert hashlib.sha256(source).hexdigest()==manifest['finalSha256']==receipt['finalSha256']
