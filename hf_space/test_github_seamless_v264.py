@@ -56,6 +56,55 @@ class Seamless(unittest.TestCase):
     def act(self,prompt,user=None,thread=None):
         return c.handle(user or self.user,thread or self.thread,prompt)
 
+    def test_export64_pronoun_asks_destination_before_any_proposal(self):
+        context={"repo":AUTH["repo"],"branch":"main","sourceSha":"a"*40,
+                 "directory":"write-action-tests","lastFile":"write-action-tests/Testing.txt",
+                 "kind":"file"}
+        history=[{"role":"user","text":"Can you see if there is a testing.txt file in the repo"},
+                 {"role":"assistant","text":"## GitHub file: write-action-tests/Testing.txt"}]
+        prompt="Can you rename that file for me"
+        self.assertFalse(c.is_file_action(prompt))
+        self.assertTrue(c.is_file_action(prompt,context,history))
+        ask=c.handle(self.user,self.thread,prompt,context,history)
+        self.assertIn("What new filename",ask["text"])
+        self.assertEqual(c.pending_kind(self.user,self.thread),"need-destination")
+        self.assertEqual(self.calls,[])
+        proposal=self.act("testing.txt")
+        self.assertIn("Ready to rename",proposal["text"])
+        self.assertEqual(self.calls[-1][0],"rename.prepare")
+        self.assertEqual(self.calls[-1][2:4],
+                         ("write-action-tests/Testing.txt","write-action-tests/testing.txt"))
+        self.assertTrue(c.has_pending(self.user,self.thread))
+        cancel=self.act("no")
+        self.assertIn("Cancelled",cancel["text"])
+        self.assertFalse(self.calls[-1][-1])
+
+    def test_export64_too_typo_is_direct_github_proposal_not_code(self):
+        context={"repo":AUTH["repo"],"branch":"main","sourceSha":"a"*40,
+                 "directory":"write-action-tests","lastFile":"write-action-tests/Testing.txt",
+                 "kind":"file"}
+        history=[{"role":"user","text":"Can you see if there is a testing.txt file in the repo"}]
+        prompt="Can you rename it too testing.txt"
+        self.assertTrue(c.is_file_action(prompt,context,history))
+        proposal=c.handle(self.user,self.thread,prompt,context,history)
+        self.assertIn("Ready to rename",proposal["text"])
+        self.assertEqual(self.calls[-1][2:4],
+                         ("write-action-tests/Testing.txt","write-action-tests/testing.txt"))
+        self.assertFalse(any(call[0].endswith(".confirm") for call in self.calls))
+
+    def test_export64_missing_destination_fails_closed_after_context_change(self):
+        context={"repo":AUTH["repo"],"branch":"main","sourceSha":"a"*40,
+                 "directory":"write-action-tests","lastFile":"write-action-tests/Testing.txt",
+                 "kind":"file"}
+        self.act("Can you rename that file for me",)  # No scope: no proposal.
+        ask=c.handle(self.user,self.thread,"Can you rename that file for me",context,[])
+        self.assertIn("What new filename",ask["text"])
+        with patch.object(c,"_read_tree",return_value=({**AUTH,"branch":"other"},ENTRIES,"f"*40)):
+            response=self.act("testing.txt")
+        self.assertIn("repository or branch changed",response["text"])
+        self.assertFalse(self.calls)
+        self.assertFalse(c.has_pending(self.user,self.thread))
+
     def test_latest_export_pronoun_rename_is_verified_and_requires_yes(self):
         context={"repo":AUTH["repo"],"branch":"main","sourceSha":"a"*40,
                  "directory":"write-action-tests","lastFile":""}
