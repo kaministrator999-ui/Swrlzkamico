@@ -13,6 +13,7 @@ ENTRIES={
     "src/older.py":{"type":"blob","sha":"b"*40,"mode":"100644"},
     "src/readme.py":{"type":"blob","sha":"c"*40,"mode":"100644"},
     "assets/bird.png":{"type":"blob","sha":"d"*40,"mode":"100644"},
+    "write-action-tests/Testing.txt":{"type":"blob","sha":"d"*40,"mode":"100644"},
     "src":{"type":"tree","sha":"e"*40,"mode":"040000"},
 }
 class Seamless(unittest.TestCase):
@@ -54,6 +55,50 @@ class Seamless(unittest.TestCase):
                           "data":{"source":"verified-provider"}}}
     def act(self,prompt,user=None,thread=None):
         return c.handle(user or self.user,thread or self.thread,prompt)
+
+    def test_latest_export_pronoun_rename_is_verified_and_requires_yes(self):
+        context={"repo":AUTH["repo"],"branch":"main","sourceSha":"a"*40,
+                 "directory":"write-action-tests","lastFile":""}
+        history=[
+            {"role":"user","text":"Can you see the files in the GitHub repo"},
+            {"role":"assistant","text":"Directory listing shown"},
+            {"role":"user","text":"Can you see the testing.txt file"},
+            {"role":"assistant","text":"GitHub action unavailable (404)"},
+            {"role":"user","text":"Can you see the testing.txt file"},
+            {"role":"assistant","text":"GitHub action unavailable (404)"},
+        ]
+        prompt="And you rename that file for me to testing1.txt"
+        self.assertFalse(c.is_file_action(prompt))  # Never infer without scope.
+        self.assertTrue(c.is_file_action(prompt,context,history))
+        proposal=c.handle(self.user,self.thread,prompt,context,history)
+        self.assertIn("write-action-tests/Testing.txt",proposal["text"])
+        self.assertIn("write-action-tests/testing1.txt",proposal["text"])
+        self.assertIn("Nothing changed yet",proposal["text"])
+        self.assertEqual(self.calls[0][0],"rename.prepare")
+        self.assertEqual(self.calls[0][2:4],("write-action-tests/Testing.txt",
+                                            "write-action-tests/testing1.txt"))
+        self.assertTrue(c.has_pending(self.user,self.thread))
+        approved=self.act("yes")
+        self.assertIn("Renamed",approved["text"])
+        self.assertEqual(self.calls[-1][0],"rename.confirm")
+
+    def test_contextual_rename_fails_closed_on_repo_change_or_ambiguous_name(self):
+        prompt="And you rename that file for me to testing1.txt"
+        history=[{"role":"user","text":"Can you see the testing.txt file"}]
+        scope={"repo":AUTH["repo"],"branch":"main","sourceSha":"a"*40,
+               "directory":"write-action-tests"}
+        switched={**scope,"repo":"unrelated/other"}
+        r=c.handle(self.user,self.thread,prompt,switched,history)
+        self.assertIn("repository or branch changed",r["text"])
+        self.assertEqual(self.calls,[])
+        # A root-scope mention with two same-named files cannot select one.
+        scope["directory"]=""
+        with patch.object(c,"_read_tree",return_value=(AUTH,{
+            "a/Testing.txt":{"type":"blob"},"b/testing.txt":{"type":"blob"}},"f"*40)):
+            r=c.handle(self.user,self.thread,prompt,scope,history)
+        self.assertIn("can't identify one verified file",r["text"])
+        self.assertFalse(c.has_pending(self.user,self.thread))
+        self.assertEqual(self.calls,[])
 
     def test_missing_exact_file_suggests_verified_near_matches_no_write(self):
         r=self.act("Rename src/old.py to src/new.py in my GitHub repo")
