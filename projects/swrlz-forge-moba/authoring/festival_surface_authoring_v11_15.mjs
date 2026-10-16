@@ -24,11 +24,13 @@ try{
  const snap=()=>page.evaluate(()=>window.SWYRL_ENGINE_AGENT.inspectScene());
  const authored=await snap();assert.equal(authored.project.modelAtelier.parts.length,301);
  const wait=page.waitForEvent('download');await hit('Export');const download=await wait;await download.saveAs(out+'/authored.model.json');
- const saved=JSON.parse(await fs.readFile(out+'/authored.model.json','utf8'));assert.deepEqual(saved.model,authored.project.modelAtelier);
+ let saved=JSON.parse(await fs.readFile(out+'/authored.model.json','utf8'));assert.deepEqual(saved.model,authored.project.modelAtelier);
  for(const e of edits){const p=saved.model.parts.find(p=>p.id===e.id);for(const [k,v] of Object.entries(e)){if(k==='id')continue;if(k==='surface'){for(const [key,value] of Object.entries(v))assert.equal(p[key==='preset'?'surfaceStyle':key],value);}else assert.deepEqual(p[k],v);}}
  // Native import and whole-model undo must retain the new surface parameters.
  await page.locator('#modelAtelierImportFile').setInputFiles(out+'/authored.model.json');await page.waitForFunction(()=>document.getElementById('modelAtelierStatus').textContent.startsWith('Validated model,'));
- assert.deepEqual((await snap()).project.modelAtelier,saved.model);
+ const normalized=(await snap()).project.modelAtelier;
+ assert.deepEqual(normalized,{...saved.model,poseFrames:saved.model.poseFrames??[],poseNeutral:saved.model.poseNeutral??null});
+ const again=page.waitForEvent('download');await hit('Export');await (await again).saveAs(out+'/authored.model.json');saved=JSON.parse(await fs.readFile(out+'/authored.model.json','utf8'));assert.deepEqual(saved.model,normalized);
  for(const v of ['front','three','right','back']){await page.evaluate(v=>window.SWYRL_ENGINE_MODEL_ATELIER.view(v),v);await shot('desktop-'+v);}
  for(const id of ['model-0001','azure-skull','skirt-panel-0']){await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.view('front'));await page.locator('#modelAtelierParts').selectOption(id);await hit('FrameSelected');await shot('detail-'+id);}
  await page.setViewportSize({width:412,height:915});await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.view('front'));await shot('phone-front');
