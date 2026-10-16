@@ -16,6 +16,7 @@ const ctx={model,partById,checkpoint,historyStep,structuredClone,
     atelierTransformSnapshot:()=>current.parts.map(p=>({id:p.id,position:p.position.slice(),rotation:p.rotation.slice(),
       scale:p.scale.slice(),...(p.kind==='loft'?{path:p.path.map(q=>q.slice())}:{})})),
     atelierValidPoseFrame:()=>true,
+    atelierPoseCamera:()=>({yaw:orbit.yaw,pitch:orbit.pitch,distance:orbit.distance}),
     atelierApplyStoredTransforms:f=>{const m=new Map(f.poses.map(x=>[x.id,x]));for(const p of current.parts){const s=m.get(p.id);if(!s)continue;p.position=s.position.slice();p.rotation=s.rotation.slice();p.scale=s.scale.slice();if(p.kind==='loft'&&s.path)p.path=s.path.map(x=>x.slice())}},
     signalEdited:()=>edits++,atelierSetPoseCamera:x=>view=x,status:()=>{},selection:null};
 vm.createContext(ctx);
