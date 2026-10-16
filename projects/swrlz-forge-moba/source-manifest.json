@@ -97,6 +97,6 @@
     "patches/v11_10_model_geometry_profiler.py",
     "patches/v11_11_face_pose_frame_studio.py"
   ],
-  "finalBytes": 2339787,
-  "finalSha256": "e8b2ca7b4e12d9981475a861d40eabf513f5d26a40c8f6627d393b93d03dddf6"
+  "finalBytes": 2350741,
+  "finalSha256": "e89ea40f0b7609d0b5cf376666aaba4a58971a3a294c3225ad303ce9f6ef4792"
 }

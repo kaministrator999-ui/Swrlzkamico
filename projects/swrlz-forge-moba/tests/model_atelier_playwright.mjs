@@ -53,6 +53,44 @@ try{
     assert((await page.locator('#modelAtelierMetricsBody').innerText()).includes('Azure frost'),'Ferret group breakdown missing');
     assert((await page.locator('#modelAtelierMetricsBody').innerText()).includes('Coral flare'),'Second ferret group missing');
     await page.locator('#modelAtelierMetrics summary').click();
+    // v11.11: real native poses and camera frames are part of the editor,
+    // not screenshots or a separate project shell.
+    const neutralLeg=await page.evaluate(()=>{
+      const p=window.SWYRL_ENGINE_AGENT.inspectScene().project.modelAtelier.parts;
+      const byId=id=>p.find(x=>x.id===id);
+      return {path:structuredClone(byId('atelier-v118-right-leg').path),
+        mouthTilt:byId('model-0046').rotation[2],iris:byId('model-0026').scale[0]};
+    });
+    assert(neutralLeg.mouthTilt>.09&&neutralLeg.iris>.069,'Native face refinement did not load');
+    await page.locator('#modelAtelierPoseDeck summary').click();
+    await page.locator('#modelAtelierPoseSelect').selectOption('idle');
+    await page.locator('#modelAtelierPoseApply').click();
+    const idleLeg=await page.evaluate(()=>window.SWYRL_ENGINE_AGENT.inspectScene().project.modelAtelier.parts
+      .find(x=>x.id==='atelier-v118-right-leg').path);
+    assert(idleLeg[3][2]>neutralLeg.path[3][2]+.09,'Idle did not bend the actual knee spline');
+    await page.locator('#modelAtelierPoseView').selectOption('back');
+    await page.locator('#modelAtelierPoseViewApply').click();
+    await page.locator('#modelAtelierPoseName').fill('Showcase back');
+    await page.locator('#modelAtelierPoseSave').click();
+    let frames=await page.evaluate(()=>window.SWYRL_ENGINE_AGENT.inspectScene().project.modelAtelier.poseFrames);
+    assert.equal(frames.length,1,'Native pose frame did not persist in source project');
+    assert(frames[0].camera.yaw>3,'Saved frame did not keep back camera view');
+    await page.locator('#modelAtelierPoseSelect').selectOption('victory');
+    await page.locator('#modelAtelierPoseApply').click();
+    const victoryLeg=await page.evaluate(()=>window.SWYRL_ENGINE_AGENT.inspectScene().project.modelAtelier.parts
+      .find(x=>x.id==='atelier-v118-right-leg').path);
+    assert(victoryLeg[3][2]>idleLeg[3][2]+.18,'Victory did not deepen the actual knee pose');
+    await page.locator('#modelAtelierPoseSelect').selectOption('saved:Showcase back');
+    await page.locator('#modelAtelierPoseApply').click();
+    const restoredLeg=await page.evaluate(()=>window.SWYRL_ENGINE_AGENT.inspectScene().project.modelAtelier.parts
+      .find(x=>x.id==='atelier-v118-right-leg').path);
+    assert.deepEqual(restoredLeg,idleLeg,'Saved frame did not restore editable native spline');
+    await page.locator('#modelAtelierPoseSelect').selectOption('neutral');
+    await page.locator('#modelAtelierPoseApply').click();
+    const afterNeutral=await page.evaluate(()=>window.SWYRL_ENGINE_AGENT.inspectScene().project.modelAtelier.parts
+      .find(x=>x.id==='atelier-v118-right-leg').path);
+    assert.deepEqual(afterNeutral,neutralLeg.path,'Neutral preset did not restore original knee topology');
+    await page.locator('#modelAtelierPoseDeck summary').click();
     const curveIndex=await page.evaluate(()=>window.SWYRL_ENGINE_AGENT.inspectScene().project.modelAtelier.parts.findIndex(p=>p.surfaceStyle==='pinata-twisted'));
     await page.locator('#modelAtelierParts').selectOption({index:curveIndex});
     assert.equal(await page.locator('#modelAtelierSculptEditor').isVisible(),true,'Sculpt tools hidden for loft');
@@ -107,6 +145,7 @@ try{
     await page.evaluate(data=>window.SWYRL_ENGINE_AGENT.loadScene(data),nativeSave);
     await page.locator('#modelAtelierReopen').click();
     assert.equal((await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.status())).count,812,'Native load lost edited meshes');
+    assert.equal(await page.locator('#modelAtelierPoseSelect option[value="saved:Showcase back"]').count(),1,'Saved pose frame lost after native project load');
     await page.locator('#modelAtelierParts').selectOption({index:811});
     await page.locator('#modelAtelierDelete').click();
     assert.equal((await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.status())).count,811);
