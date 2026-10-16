@@ -24,6 +24,7 @@ import github_connection
 from github_txt_intent_v256 import wants_github_text_file_creation, wants_direct_github_test_txt
 from github_create_intent_v262 import wants_github_general_file_proposal
 from github_rename_intent_v263 import wants_github_rename_proposal
+import github_conversation_actions_v264 as github_chat_files
 import github_report_explain_v236
 import progress_timeline_v238
 import project_thread_memory
@@ -347,8 +348,8 @@ def _chat_document():
     """Serve the canonical Chat document plus the bounded HF presentation adapter."""
     source=(ROOT/"chat/§wyrlz/index.html").read_text(encoding="utf-8")
     marker='</body>'
-    adapter='<script src="/chat/§wyrlz/assets/widget-analysis-v128.js" defer></script><script src="/chat/§wyrlz/assets/chatgpt-archive-import-v1.js" defer></script><script src="/chat/§wyrlz/assets/chatgpt-archive-sidebar-v204.js" defer></script><script src="/chat/§wyrlz/assets/github-work-summary-v260.js" defer></script><script src="/chat/§wyrlz/assets/github-general-create-v262.js" defer></script><script src="/chat/§wyrlz/assets/github-rename-receipt-v263.js" defer></script><script src="/chat/§wyrlz/assets/github-rename-v263.js" defer></script><script src="/chat/§wyrlz/assets/github-chat-create-txt-v258.js" defer></script>'
-    css='<link rel="stylesheet" href="/chat/§wyrlz/assets/github-work-summary-v260.css"><link rel="stylesheet" href="/chat/§wyrlz/assets/assistant-fullwidth-v261.css"><link rel="stylesheet" href="/chat/§wyrlz/assets/github-general-create-v262.css">'
+    adapter='<script src="/chat/§wyrlz/assets/widget-analysis-v128.js" defer></script><script src="/chat/§wyrlz/assets/chatgpt-archive-import-v1.js" defer></script><script src="/chat/§wyrlz/assets/chatgpt-archive-sidebar-v204.js" defer></script><script src="/chat/§wyrlz/assets/github-work-summary-v260.js" defer></script><script src="/chat/§wyrlz/assets/github-rename-receipt-v263.js" defer></script>'
+    css='<link rel="stylesheet" href="/chat/§wyrlz/assets/github-work-summary-v260.css"><link rel="stylesheet" href="/chat/§wyrlz/assets/assistant-fullwidth-v261.css">'
     source=source.replace('</head>',css+'</head>',1)
     return source.replace(marker,adapter+marker,1) if marker in source else source+adapter
 
@@ -968,8 +969,8 @@ def _run(key,request_id,model_id,payload,assistant_id):
         g["queueWaitMs"]=max(0,g["startedAtUnixMs"]-int(g.get("acceptedAtUnixMs") or g["startedAtUnixMs"]))
         g["status"].append({"phase":"GENERATING","reason":"Workstation admitted generation","atUnixMs":g["startedAtUnixMs"]})
     try:
-        if model_id=="r39" and _generate is None and not (payload.get("githubDirectTestTxt") or payload.get("githubRenameProposal") or payload.get("githubGeneralFileProposal") or payload.get("githubCreateTxtProposal") or payload.get("githubStart") or payload.get("githubAction") or payload.get("verifiedPrivateAnswer") or payload.get("suppliedGitHubReportExplanation")):raise RuntimeError("R39 generator is not installed")
-        if model_id=="stock" and _stock_generate is None and not (payload.get("githubDirectTestTxt") or payload.get("githubRenameProposal") or payload.get("githubGeneralFileProposal") or payload.get("verifiedPrivateAnswer") or payload.get("githubStart") or payload.get("githubAction") or payload.get("suppliedGitHubReportExplanation")):raise RuntimeError("Original HF generator is not installed")
+        if model_id=="r39" and _generate is None and not (payload.get("githubDirectTestTxt") or payload.get("githubChatFileAction") or payload.get("githubCreateTxtProposal") or payload.get("githubStart") or payload.get("githubAction") or payload.get("verifiedPrivateAnswer") or payload.get("suppliedGitHubReportExplanation")):raise RuntimeError("R39 generator is not installed")
+        if model_id=="stock" and _stock_generate is None and not (payload.get("githubDirectTestTxt") or payload.get("githubChatFileAction") or payload.get("verifiedPrivateAnswer") or payload.get("githubStart") or payload.get("githubAction") or payload.get("suppliedGitHubReportExplanation")):raise RuntimeError("Original HF generator is not installed")
         text=""; completed=False
         cancelled=False
         # Server-verified private counts/disabled-recall notices are deterministic:
@@ -1022,45 +1023,19 @@ def _run(key,request_id,model_id,payload,assistant_id):
                      reason + ". " + instruction},
                     {"type":"COMPLETED","phase":"COMPLETE"},
                 ))
-        elif payload.get("githubRenameProposal"):
-            event_source=iter((
-                {"type":"STATUS","phase":"GITHUB_RENAME_FILE_APPROVAL_REQUIRED",
-                 "reason":"Exact source, destination, branch and Git blob must be reviewed and confirmed."},
-                {"type":"DELTA","text":(
-                    "I can rename or move an existing file in your **selected GitHub repository** "
-                    "without modifying its contents. Review the source and new destination "
-                    "paths in the GitHub rename panel and confirm the exact change. "
-                    "The action preserves the same Git blob and mode using one atomic "
-                    "commit; it refuses overwrites and stale branch revisions. "
-                    "Nothing has been renamed by this response."
-                )},
-                {"type":"COMPLETED","phase":"COMPLETE"},
-            ))
-        elif payload.get("githubGeneralFileProposal"):
-            event_source=iter((
-                {"type":"STATUS","phase":"GITHUB_GENERAL_CREATE_FILE_APPROVAL_REQUIRED",
-                 "reason":"Review exact repository path and contents before the authorized GitHub CREATE_FILE."},
-                {"type":"DELTA","text":(
-                    "I can create a new file in your **selected GitHub repository**, "
-                    "including source, configuration, Markdown, images, or other binary files. "
-                    "Review the exact path and content in the GitHub file-creation panel, "
-                    "then explicitly confirm. This action cannot overwrite existing files, "
-                    "and files are limited to 1,000,000 bytes through this API. "
-                    "No file has been written by this response."
-                )},
-                {"type":"COMPLETED","phase":"COMPLETE"},
-            ))
-        elif payload.get("githubCreateTxtProposal"):
-            event_source=iter((
-                {"type":"STATUS","phase":"GITHUB_CREATE_TXT_APPROVAL_REQUIRED",
-                 "reason":"Creating a GitHub file requires exact content and explicit owner confirmation."},
-                {"type":"DELTA","text":"I can prepare a new .txt file in **Swrlzing-core**. "
-                 "Open **Test GitHub TXT creation**, enter the filename and exact text, "
-                 "review the preview, and explicitly confirm the GitHub action. "
-                 "Only new files under write-action-tests/ are supported. "
-                 "No file has been created by this message."},
-                {"type":"COMPLETED","phase":"COMPLETE"},
-            ))
+        elif isinstance(payload.get("githubChatFileAction"),dict):
+            # Interpret only the verified user's accepted Chat turn. The server
+            # checks repository evidence before preparing a file action; the
+            # human approves with a fresh, same-thread yes/no reply.
+            action=payload["githubChatFileAction"]
+            result=github_chat_files.handle(action["userId"],action["threadId"],action["prompt"])
+            widget=result.get("widget")
+            response=[{"type":"STATUS","phase":"GITHUB_CHAT_FILE_CHECK",
+                       "reason":"Verified repository evidence and conversational authorization."}]
+            if isinstance(widget,dict): response.append({"type":"WIDGET","widget":widget})
+            response.extend(({"type":"DELTA","text":result["text"]},
+                             {"type":"COMPLETED","phase":"COMPLETE"}))
+            event_source=iter(response)
         else:
             event_source=(github_connection.start_events(payload["githubStart"])
                           if isinstance(payload.get("githubStart"),dict)
@@ -1818,6 +1793,13 @@ async def send(request:Request):
             raise
         s["activeGeneration"]={"requestId":rid,"threadId":tid,"modelId":model_id,"requestedModelId":model_id,"selectedModelId":model_id,"text":"","phase":"QUEUED","terminal":False,"lastSeq":0,"status":[{"phase":"QUEUED","reason":"Accepted by Workstation","atUnixMs":now_ms}],"acceptedAtUnixMs":now_ms,"startedAtUnixMs":None,"completedAtUnixMs":None,"queueWaitMs":None,"stationTiming":None,"resourcePlan":None,"diagnosticTrace":None,"memoryCandidates":[],"responseCognition":None,"onlineResearch":None,"onlineTrace":[],"onlineLogPersistence":None,"sources":[],"widgets":[],"programmingIntent":None,"intentContract":None,"failureEvidence":None,"repairConstraints":None,"behaviorLedger":None,"behaviorRepairBase":None,"candidateValidation":None,"candidateAttempts":[],"generationTelemetry":None,"engineCompletionTelemetry":None,"repairDiagnostics":[],"artifactReceipt":None,"githubTelemetryPersistence":None}
     payload={"requestId":rid,"threadId":tid,"prompt":prompt,"history":history,"pinnedContext":pinned_context,"profileId":"LALM","profile":profile,"userProfile":user_profile,"temporalContext":temporal_context,"clientLocation":client_location,"priorProgrammingState":copy.deepcopy(t.get("programmingState") or {})}
+    # A changed topic invalidates a previously prepared write. No later casual
+    # "yes" can authorize a stale rename/create from this conversation.
+    if (github_chat_files.has_pending(google_owner,tid)
+            and github_chat_files.pending_kind(google_owner,tid)!="need-content"
+            and not github_chat_files.is_reply(prompt)
+            and not github_chat_files.is_file_action(prompt)):
+        github_chat_files.expire_interrupted(google_owner,tid)
     # A user asking to recall conversation history is not requesting
     # public freshness research merely because the prompt says "today".
     # This flag is derived at the Station owner boundary, not by the model.
@@ -1892,16 +1874,18 @@ async def send(request:Request):
     elif wants_direct_github_test_txt(prompt):
         # The explicit accepted human turn authorizes one harmless test create.
         payload["githubDirectTestTxt"] = {"userId": google_owner, "prompt": prompt}
-    elif wants_github_rename_proposal(prompt):
-        # Current human request is an intent to propose, not permission to move.
-        payload["githubRenameProposal"] = True
-    elif wants_github_general_file_proposal(prompt):
-        # General GitHub creation is a proposal. Model and repository content
-        # never authorize the actual file write.
-        payload["githubGeneralFileProposal"] = True
+    elif github_chat_files.is_file_action(prompt) or (
+        github_chat_files.has_pending(google_owner,tid) and (
+            github_chat_files.is_reply(prompt) or
+            github_chat_files.pending_kind(google_owner,tid)=="need-content"
+        )
+    ):
+        payload["githubChatFileAction"]={"userId":google_owner,
+                                         "threadId":tid,"prompt":prompt}
     elif wants_github_text_file_creation(prompt):
-        # Historical bounded TXT proposal preserved for compatibility.
-        payload["githubCreateTxtProposal"] = True
+        # Legacy TXT requests use the same seamless conversational path.
+        payload["githubChatFileAction"]={"userId":google_owner,
+                                         "threadId":tid,"prompt":prompt}
     elif github_connection.is_start_request(prompt):
         _, verified_account = _account_session(request)
         payload["githubStart"]={"userId":str((verified_account or {}).get("id") or "")}

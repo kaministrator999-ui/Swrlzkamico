@@ -72,6 +72,12 @@ jobs:
           python -m pip install 'requests>=2.32,<3' 'cryptography>=43,<47'
           python -m py_compile hf_space/github_connection.py hf_space/test_github_start_parallel_v243.py
           python hf_space/test_github_start_parallel_v243.py
+      - name: v264 Seamless GitHub Chat file preflight and consent regressions
+        run: |
+          python -m py_compile hf_space/github_conversation_actions_v264.py hf_space/station.py
+          python hf_space/test_github_seamless_v264.py
+          node tests/test_github_seamless_chat_v264.mjs
+
       - name: v263 Atomic GitHub file rename, identity, consent and conflict tests
         run: |
           python -m py_compile hf_space/github_rename_v263.py hf_space/github_rename_intent_v263.py hf_space/github_rename_receipt_v263.py hf_space/github_connection.py hf_space/station.py
