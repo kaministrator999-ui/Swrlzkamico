@@ -1,6 +1,6 @@
 ID=web-chat
-VERSION=1.5.147
-REVISION=1.5.147-v265-verified-file-referents
+VERSION=1.5.148
+REVISION=1.5.148-v266-file-card-wrap-rename
 KIND=web-interface
 SOURCE_BRANCH=runtime
 STATUS=active
