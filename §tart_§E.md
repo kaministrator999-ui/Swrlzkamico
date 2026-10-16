@@ -1,12 +1,12 @@
 # §tart §E — §wyrl§ Engine Build & Deploy Router
 
-## v11.11 facial + native pose/frame studio — candidate pending full gates (2026-10-15)
+## v11.11 facial + native pose/frame studio — validated and merged; deployment gate pending (2026-10-15)
 
 The owner's mobile front/rear/side screenshots of live v11.10 showed a too-stiff straight-legged standing pose and overly flat face. A new append-only `patches/v11_11_face_pose_frame_studio.py` changes **only the generated canonical starter** to subtly soften the jaw, eyes, brow, cheeks, nose and smile while preserving the original v11.9 811-part scene asset. The new in-viewport collapsible Pose & camera frames panel supports **Neutral, Relaxed idle, Victory, Victory B** and front/back/left/right/three-quarter camera choices. Leg poses are actual edits to existing native smooth loft knee spline knots (not animation bones), remain undoable, and preserve all 811 editable parts. Eight named custom pose+camera frames can be saved, restored, renamed through save-overwrite, deleted and carried in validated native project JSON / Save Project. Original ferret bodies remain distinct; no commercial game asset is extracted.
 
 **Technical boundary:** No skeletal skinning, pose interpolation, animation timeline, imported animation libraries or guaranteed facial likeness in this release. Do not claim visual approval without comparing new front, rear and profile screenshots to the provided references.
 
-**Sealed candidate:** 81 ordered patches, 35 unchanged historical packaged native assets; independently reconstructed **2,350,741 bytes**, SHA-256 `e89ea40f0b7609d0b5cf376666aaba4a58971a3a294c3225ad303ce9f6ef4792`. Source syntax + controlled knee spline CPU acceptance passed. Full package/browser CI, merge, dedicated deploy request as last `main` source mutation, successful Hugging Face delivery and independent hosted SHA/assets audit are required before calling v11.11 live.
+**Validated PR:** [#193](https://github.com/kaministrator999-ui/Swrlzkamico/pull/193), head `ccca615f79960f7cb0ec65a76daa466d6b178b3e`, squash merge `16faf1b8a7b42f15e9e01b56da010b100ac6dc6b`. All 17 desktop/mobile browser acceptance jobs passed and all eight related §E source/audit workflows reached terminal success. This is validated merged source, **not** hosted release or owner visual approval.\n\n**Sealed candidate:** 81 ordered patches, 35 unchanged historical packaged native assets; independently reconstructed **2,350,741 bytes**, SHA-256 `e89ea40f0b7609d0b5cf376666aaba4a58971a3a294c3225ad303ce9f6ef4792`. Source syntax + controlled knee spline CPU acceptance passed. Full package/browser CI, merge, dedicated deploy request as last `main` source mutation, successful Hugging Face delivery and independent hosted SHA/assets audit are required before calling v11.11 live.
 
 
 ## v11.10 measured model statistics — merged source, release gate pending (2026-10-15)
