@@ -4,7 +4,8 @@ on:
     branches: [main]
   workflow_dispatch:
   workflow_run:
-    workflows: ["Deploy §wyrl§ Engine v11.9 to Hugging Face"]
+    # Keep this exact workflow name aligned with deploy-swrlz-forge-moba.yml.
+    workflows: ["Deploy §wyrl§ Engine to Hugging Face"]
     types: [completed]
     branches: [main]
 permissions:
