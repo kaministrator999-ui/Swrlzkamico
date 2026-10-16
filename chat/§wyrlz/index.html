@@ -2234,40 +2234,8 @@
         }
         body.hidden=!nextText;
         const liveWidgets=Array.isArray(g.widgets)?g.widgets:[];
-        // The Station alone owns action-intent classification. Repository
-        // contents and the model's generated prose cannot trigger this UI.
-        // Only a server-owned status for this accepted user turn may open
-        // an actual per-file rename proposal (never repo/model-generated text).
-        const renameProposal=Array.isArray(g.status)&&g.status.some(item=>
-          String(item?.phase||'')==='GITHUB_RENAME_FILE_APPROVAL_REQUIRED');
-        if(renameProposal){
-          const thread=chatThreads.find(t=>t.id===String(g.threadId||''))||currentThread();
-          const author=[...(thread?.messages||[])].reverse().find(m=>m.role==='user');
-          window.dispatchEvent(new CustomEvent('swrlz:github-rename-proposal',{
-            detail:{requestId:String(g.requestId||''),threadId:String(g.threadId||''),
-                    prompt:String(author?.text||'').slice(0,10000)}
-          }));
-        }
-        const generalFileProposal=Array.isArray(g.status)&&g.status.some(item=>
-          String(item?.phase||'')==='GITHUB_GENERAL_CREATE_FILE_APPROVAL_REQUIRED');
-        if(generalFileProposal){
-          const thread=chatThreads.find(t=>t.id===String(g.threadId||''))||currentThread();
-          const author=[...(thread?.messages||[])].reverse().find(m=>m.role==='user');
-          window.dispatchEvent(new CustomEvent('swrlz:github-general-create-proposal',{
-            detail:{requestId:String(g.requestId||''),threadId:String(g.threadId||''),
-                    prompt:String(author?.text||'').slice(0,10000)}
-          }));
-        }
-        const approvedProposalSignal=Array.isArray(g.status)&&g.status.some(item=>
-          String(item?.phase||'')==='GITHUB_CREATE_TXT_APPROVAL_REQUIRED');
-        if(approvedProposalSignal){
-          const proposalThread=chatThreads.find(t=>t.id===String(g.threadId||''))||currentThread();
-          const proposalUser=[...(proposalThread?.messages||[])].reverse().find(m=>m.role==='user');
-          window.dispatchEvent(new CustomEvent('swrlz:github-txt-proposal',{
-            detail:{requestId:String(g.requestId||''),threadId:String(g.threadId||''),
-                    prompt:String(proposalUser?.text||'').slice(0,10000)}
-          }));
-        }
+        // GitHub file actions are resolved inside Station and answered in
+        // this chat. No per-tool popup dialogs or event dispatches.
         renderWidgetStack(node,liveWidgets);
         // Once structured evidence has produced a widget, the retrieval phase is
         // visibly complete. Keep the widget on screen and make the next stage
