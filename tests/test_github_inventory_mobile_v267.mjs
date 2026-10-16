@@ -60,8 +60,8 @@ assert(html.includes("inventory.raw"),"Expanded report must remain available");
 assert(html.includes("rel=\"noopener noreferrer\""),"External GitHub links require isolation");
 assert(html.includes(".github-inventory-item a{"),"Mobile file links need wrap-safe layout");
 assert(html.includes("overflow-wrap:anywhere"),"Long file names must wrap");
-const adapt=vm.runInNewContext("(()=>{\\n"+helper("inventoryDirectoryForExplorer")+
-  "\\nreturn inventoryDirectoryForExplorer;})()");
+const adapt=vm.runInNewContext("(()=>{\n"+helper("inventoryDirectoryForExplorer")+
+  "\nreturn inventoryDirectoryForExplorer;})()");
 const explorerScript=fs.readFileSync("chat/§wyrlz/assets/github-explorer-v223.js","utf8");
 const browser={window:{},document:{createElement(){return {textContent:"",className:""};},
   head:{appendChild(){}}},console};
@@ -78,14 +78,14 @@ assert.equal(native.incomplete,false);
 assert.equal(adapt(parse(report,ctx)),null,"Source analysis is not a folder listing");
 assert.equal(adapt(parse(recursive,null)),null,"Unverified content must not convert");
 const nestedCtx={...ctx,directory:"write-action-tests"};
-const nested="## GitHub recursive file inventory\\nRepository: example/project\\n"+
-  "Branch: main\\nRevision: "+sha+"\\nScope: write-action-tests (recursive)\\n"+
-  "Complete Git-tree file count: 2\\n- write-action-tests/Testing.txt\\n"+
-  "- write-action-tests/nested/more.txt\\n(All paths displayed.)";
+const nested="## GitHub recursive file inventory\nRepository: example/project\n"+
+  "Branch: main\nRevision: "+sha+"\nScope: write-action-tests (recursive)\n"+
+  "Complete Git-tree file count: 2\n- write-action-tests/Testing.txt\n"+
+  "- write-action-tests/nested/more.txt\n(All paths displayed.)";
 const nestedDir=parseNative(adapt(parse(nested,nestedCtx)));
 assert.equal(nestedDir.path,"write-action-tests");
 assert.deepEqual(Array.from(nestedDir.entries,x=>[x.type,x.path]),[
-  ["file","write-action-tests/Testing.txt"],["dir","write-action-tests/nested"]]);
+  ["dir","write-action-tests/nested"],["file","write-action-tests/Testing.txt"]]);
 const outside=nested.replace("write-action-tests/Testing.txt","private/Testing.txt");
 assert.equal(adapt(parse(outside,nestedCtx)),null,
   "A path outside the source-pinned scope must never be adapted as a local folder");
