@@ -1894,7 +1894,7 @@ def agent_events(data, model_generator=None, coder_generator=None):
     # These are existing read-only GitHub commands, still checked by the
     # connected owner's Stage-1 authorization and pinned Git evidence.
     literal_read = read_inference.classify_read(prompt, data.get("githubContext"))
-    if (literal_read and re.match(r"^@GitHub (?:files(?:\\s|$)|read file\\s|search\\s)", literal_read)
+    if (literal_read and re.match(r"^@GitHub (?:files(?:\s|$)|read file\s|search\s)", literal_read)
             and not prompt.lower().startswith("@github ")):
         yield {"type":"STATUS","phase":"GITHUB_READ_EVIDENCE",
                "reason":"Resolving a file or directory read from verified GitHub context.",
