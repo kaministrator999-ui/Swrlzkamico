@@ -1,0 +1,53 @@
+name: Author §E native character surface study
+on:
+  push:
+    branches: [feature/model-native-surface-study]
+    paths:
+      - '.github/workflows/model-surface-study.yml'
+      - 'projects/swrlz-forge-moba/authoring/**'
+      - 'projects/swrlz-forge-moba/patches/v11_15_native_surface_study.py'
+      - 'projects/swrlz-forge-moba/runtime/model_atelier_surface_v11_15.js'
+permissions:
+  contents: read
+jobs:
+  author:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Reconstruct baseline and apply isolated editor study
+        run: |
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/surface-study
+          python - <<'PY'
+          import runpy
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          manifest=__import__('json').loads((root/'source-manifest.json').read_text())
+          html=Path('/tmp/surface-study/index.html')
+          if 'patches/v11_15_native_surface_study.py' not in manifest['patches']:
+              html.write_text(runpy.run_path(str(root/'patches/v11_15_native_surface_study.py'))['apply'](html.read_text()))
+          Path('/tmp/surface-module.mjs').write_text(html.read_text().split('<script type="module">',1)[1].rsplit('</script>',1)[0])
+          PY
+          node --check /tmp/surface-module.mjs
+      - name: Install browser
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Operate native inspector and save authored model
+        run: |
+          python -m http.server 8781 --directory /tmp/surface-study >/tmp/surface-http.log 2>&1 &
+          SWYRL_SURFACE_SERVER_PID=$!
+          trap 'kill "$SWYRL_SURFACE_SERVER_PID" 2>/dev/null || true' EXIT
+          node projects/swrlz-forge-moba/authoring/festival_surface_authoring_v11_15.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-character-surface-study
+          path: surface-study/
+          retention-days: 5

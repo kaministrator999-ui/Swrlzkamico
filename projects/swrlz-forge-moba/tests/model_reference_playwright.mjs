@@ -25,6 +25,21 @@ try{for(const mode of modes){const ctx=await browser.newContext({...mode,acceptD
  for(const view of ['front','three','back','right']){await page.evaluate(v=>window.SWYRL_ENGINE_MODEL_ATELIER.view(v),view);await page.screenshot({path:out+'/'+mode.name+'-'+view+'.png'});}
  if(mode.hasTouch){await page.setViewportSize({width:980,height:1700});await page.waitForTimeout(150);await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.view('front'));const fit=(await state()).cameraFit;assert.ok(fit.left>=-1&&fit.right<=1&&fit.bottom>=-1&&fit.top<=1,JSON.stringify(fit));await page.screenshot({path:out+'/'+mode.name+'-desktop-site.png'});await page.setViewportSize(mode.viewport);await page.waitForTimeout(150);await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.view('front'));}
  pass('front_three_quarter_rear_profile_and_practical_phone_viewport');
+ const canonicalModel=structuredClone((await snap()).project.modelAtelier);
+ await page.locator('#modelAtelierParts').selectOption('model-0001');
+ const originalObj=await fs.readFile(await download('OBJ','original-surface.obj'),'utf8');
+ await page.locator('#modelAtelierJawTaper').fill('.4');await hit('SurfaceApply');
+ assert.equal((await snap()).project.modelAtelier.parts.find(p=>p.id==='model-0001').jawTaper,.4);
+ const changedObj=await fs.readFile(await download('OBJ','changed-jaw.obj'),'utf8');assert.notEqual(changedObj,originalObj,'Jaw control did not alter rendered export geometry');
+ await hit('Undo');assert.deepEqual((await snap()).project.modelAtelier.parts,canonicalModel.parts);
+ await page.locator('#modelAtelierParts').selectOption('model-0001');await page.locator('#modelAtelierJawTaper').fill('.8');await hit('SurfaceApply');
+ assert.deepEqual((await snap()).project.modelAtelier.parts,canonicalModel.parts);assert.ok((await page.locator('#modelAtelierStatus').innerText()).startsWith('Surface rejected:'));
+ await page.locator('#modelAtelierParts').selectOption('skirt-panel-0');await page.locator('#modelAtelierPanelCamber').fill('.16');await page.locator('#modelAtelierPanelPleat').fill('.02');await hit('SurfaceApply');
+ assert.equal((await snap()).project.modelAtelier.parts.find(p=>p.id==='skirt-panel-0').panelCamber,.16);await hit('Undo');
+ assert.deepEqual((await snap()).project.modelAtelier.parts,canonicalModel.parts);
+ pass('native_surface_controls_change_rendered_geometry_reject_invalid_values_and_undo');
+ for(const id of ['model-0001','azure-skull','skirt-panel-0']){await page.locator('#modelAtelierParts').selectOption(id);await hit('FrameSelected');const detail=(await state()).cameraFit;assert.ok(detail.left < -1 || detail.right > 1 || detail.top > 1,'Selected part did not fill the view');await page.screenshot({path:out+'/'+mode.name+'-detail-'+id+'.png'});await hit('ZoomIn');assert.ok((await state()).cameraFit.top>1);await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.view('front'));}
+ assert.deepEqual((await snap()).project.modelAtelier.parts,canonicalModel.parts);pass('selected_part_framing_and_whole_model_view_restore_without_data_mutation');
  await page.locator('#modelAtelierAssemblyDeck summary').first().click();
  const rest=await scrub(4),early=await scrub(0),middle=await scrub(1.8);assert.ok(early.components[0].scale<.7);near(middle.components[0].scale,.81);assert.notDeepEqual(rest.components[0].bounds,middle.components[0].bounds);assert.notDeepEqual(rest.components[1].bounds,early.components[1].bounds);
  await scrub(4);const rest2=await state();near(rest2.components[0].bounds.min,rest.components[0].bounds.min);near(rest2.components[0].bounds.max,rest.components[0].bounds.max);pass('reversible_smooth_transform_changes_actual_generated_world_bounds');
@@ -49,6 +64,7 @@ try{for(const mode of modes){const ctx=await browser.newContext({...mode,acceptD
  assert.deepEqual((await snap()).project.modelAtelier.assemblies,exported.model.assemblies);await scrub(1.5);near((await state()).components[0].offset,[-.2,0,0]);pass('actual_saved_model_motion_keys_import_and_interpolate_independently');
  const bad=structuredClone(exported);bad.model.assemblies.components[0].socketId='absent';await page.locator('#modelAtelierImportFile').setInputFiles({name:'bad.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(bad))});await page.waitForFunction(()=>document.getElementById('modelAtelierStatus').textContent.startsWith('Import rejected:'));
  assert.deepEqual((await snap()).project.modelAtelier.assemblies,exported.model.assemblies);pass('invalid_attachment_rejected_atomically_without_project_mutation');
+ const badSurface=structuredClone(exported);badSurface.model.parts.find(p=>p.id==='skirt-panel-0').panelCamber='invalid';await page.locator('#modelAtelierImportFile').setInputFiles({name:'bad-surface.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(badSurface))});await page.waitForFunction(()=>document.getElementById('modelAtelierStatus').textContent.startsWith('Import rejected:'));assert.deepEqual((await snap()).project.modelAtelier.parts,exported.model.parts);pass('invalid_surface_import_preserves_authored_geometry_atomically');
  await hit('AssemblyClearKeys');await scrub(4);await page.locator('#modelAtelierAssemblyComponent').selectOption('coral');const componentFile=await download('AssemblyExport','coral.independent.json'),comp=JSON.parse(await fs.readFile(componentFile,'utf8'));
  assert.equal(comp.schema,'swyrl-independent-model-v1');assert.equal(comp.component.id,'coral');assert.ok(comp.parts.length>20&&comp.parts.every(p=>p.group==='Coral flare'));
  const objPath=await download('OBJ','reference.obj'),obj=await fs.readFile(objPath,'utf8');assert.equal(obj.split('\n').filter(l=>l.startsWith('f ')).length,stats.triangles);assert.ok(!/NaN|Infinity/.test(obj));pass('independent_model_and_actual_triangulated_obj_export');
