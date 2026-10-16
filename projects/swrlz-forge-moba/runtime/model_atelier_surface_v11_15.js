@@ -5,7 +5,7 @@ function atelierSurfaceRefresh(){
  const portrait=p?.surfaceStyle==='portrait-head',cloth=p?.surfaceStyle==='tailored-panel';
  deck.hidden=!portrait&&!cloth;$m('SurfacePortrait').hidden=!portrait;$m('SurfaceCloth').hidden=!cloth;
  if(portrait)$m('JawTaper').value=String(p.jawTaper??.31);
- if(cloth){$m('PanelCamber').value=String(p.panelCamber??.085);$m('PanelPleat').value=String(p.panelPleat??.012);}
+ if(cloth){$m('PanelCamber').value=String(p.panelCamber??(p.panelAxis==='depth'?.055:.085));$m('PanelPleat').value=String(p.panelPleat??.012);}
 }
 function atelierSurfaceInstall(){
  $m('SurfaceApply').addEventListener('click',()=>{
