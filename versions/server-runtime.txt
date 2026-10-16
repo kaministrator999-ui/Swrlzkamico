@@ -1,6 +1,6 @@
 ID=server-runtime
-VERSION=2.3.416
-REVISION=2.3.416-hf-v265-verified-file-referents
+VERSION=2.3.417
+REVISION=2.3.417-hf-v266-mobile-github-file
 KIND=server-runtime
 SOURCE_BRANCH=runtime
 STATUS=active
