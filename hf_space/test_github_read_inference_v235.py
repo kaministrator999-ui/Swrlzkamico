@@ -170,6 +170,50 @@ def test_export67_natural_selection_from_verified_inventory():
     assert missing["status"] == "not-found", missing
 
 
+
+def test_export68_conversational_filename_followup_is_not_generated_directory():
+    # Newest conversation only in owner export (68), using Swrlzing-core as
+    # test *target*, not the application source repo. First response was an
+    # authenticated GitHub root listing; the reply "Ok so the testing.txt
+    # file" incorrectly ran PROGRAMMING_INTENT and invented source paths.
+    root = {"repo": "kaministrator999-ui/Swrlzing-core", "branch": "main",
+            "sourceSha": "a03a600eab16fc653a3c8b8184e803feccf9b66a",
+            "directory": "", "lastFile": "", "kind": "directory"}
+    cases = {
+        "Ok so the testing.txt file": "@GitHub read file testing.txt",
+        "Okay, so the Testing.txt file": "@GitHub read file Testing.txt",
+        "So the testing one": "@GitHub read file testing",
+        "Ok, the testing.txt": "@GitHub read file testing.txt",
+        "The testing.txt file": "@GitHub read file testing.txt",
+    }
+    for phrase, command in cases.items():
+        assert read.classify_read(phrase, root) == command, phrase
+        captured = []
+        def fake_command(payload):
+            captured.append(payload["prompt"])
+            yield {"type": "DELTA", "text": "## GitHub file: write-action-tests/Testing.txt"}
+            yield {"type": "COMPLETED", "phase": "COMPLETE"}
+        with (mock.patch.object(gh, "command_events", side_effect=fake_command),
+              mock.patch.object(gh, "_post_github", side_effect=AssertionError("writes forbidden"))):
+            events = list(gh.agent_events({"userId": "google:owner", "prompt": phrase,
+                                           "githubContext": root},
+                                          model_generator=lambda *a, **k: iter(()),
+                                          coder_generator=lambda *a, **k: iter(())))
+        assert captured == [command], (phrase, captured)
+        assert any(e.get("phase") == "GITHUB_READ_EVIDENCE" for e in events), events
+    for phrase in ("Ok so the testing.txt file", "Okay, so the Testing.txt file"):
+        assert read.classify_read(phrase) is None
+        assert read.classify_read(phrase, {**root, "sourceSha": ""}) is None
+    for phrase in ("Ok so the testing.txt file is great",
+                   "Ok so create the testing.txt file",
+                   "Ok so delete the testing.txt file",
+                   "Ok so the first one",
+                   "Ok so the other one",
+                   "Ok so the testing.txt file is under a secret folder"):
+        assert read.classify_read(phrase, root) is None, phrase
+    # The GitHub provider alone owns actual file presence/contents; no test
+    # code writes or substitutes arbitrary paths into the six-file test repo.
+
 def test_model_education_is_inference_not_unverified_facts():
     for question in ("Explain what hf_space/brain_programming.py does in our repo",
                      "Which files handle source reports in GitHub?",
@@ -211,6 +255,7 @@ if __name__ == "__main__":
     test_verified_thread_scope_and_general_chatter()
     test_latest_export_named_file_is_a_verified_read_not_a_404_command()
     test_export66_verified_root_listing_and_named_file_followups()
+    test_export68_conversational_filename_followup_is_not_generated_directory()
     test_model_education_is_inference_not_unverified_facts()
     test_stage_one_executes_only_read_command()
     print("v235 scoped GitHub source inference and Stage-1 lock tests PASS")
