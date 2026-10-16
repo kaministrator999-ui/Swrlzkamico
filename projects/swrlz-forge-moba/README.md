@@ -2,7 +2,7 @@
 
 ## v11.13 · native reference sculpt and independent living piñatas
 
-Measured candidate seal: **2,467,370 HTML bytes**, SHA-256 `5961d8445bfa6fbad86f8f044203e63345f9fae74b21bdce4677665777c9a0ae`; 83 ordered patches and 36 assets. Native model-save authoring, twenty focused desktop/phone cases and twelve phone/desktop-site/multiview framing checks passed; full independent release CI remains required.
+Measured candidate seal: **2,467,619 HTML bytes**, SHA-256 `25b33e64c5211d47dde7bb8cb77e0f58d1917d5c55971938bf732c2d1371b9d8`; 83 ordered patches and 36 assets. Native model-save authoring, twenty focused desktop/phone cases and twelve phone/desktop-site/multiview framing checks passed; full independent release CI remains required.
 
 The owner-provided festival turnaround now drives a new 275-part native starter: sculpted facial planes and almond eyes, swept dyed hair, asymmetric layered outfit, bare anatomical legs and socks, two three-dimensional tissue-paper ferrets attached to actual hair sockets, and a separate paper bunny. The living-model inspector provides reversible attach/detach, per-model flex, saved transform keys, a six-second transformation preview, independent model JSON exports and actual rendered OBJ export. Whole model history, native save/load and the measured geometry profiler remain available. Default generated geometry is approximately 82,396 triangles, measured from the buffers rather than guessed from mesh count.
 

@@ -34,7 +34,7 @@ def apply(html):
  html=once(html,'default:return new THREE.SphereGeometry(1,30,22);',"default:return new THREE.SphereGeometry(1,model()?.assemblies?16:30,model()?.assemblies?10:22);")
  html=once(html,'    const current=partById(selection);','    atelierBindAssemblyMeshes();\n    const current=partById(selection);')
  html=once(html,'    renderer.render(world,camera);raf=requestAnimationFrame(loop);','    atelierAssemblyTick(performance.now());\n    renderer.render(world,camera);raf=requestAnimationFrame(loop);')
- html=once(html,'    panel.hidden=true;cancelAnimationFrame(raf);','    atelierAssemblyPlaying=false;atelierAssemblyMeshes.clear();\n    panel.hidden=true;cancelAnimationFrame(raf);')
+ html=once(html,'    panel.hidden=true;cancelAnimationFrame(raf);','    atelierAssemblyPlaying=false;atelierAssemblyRestart=true;atelierAssemblyMeshes.clear();\n    panel.hidden=true;cancelAnimationFrame(raf);')
  html=once(html,'function modelSnapshot(){return JSON.stringify(model().parts);}','function modelSnapshot(){return JSON.stringify(model());}')
  html=once(html,'dst.push(modelSnapshot());model().parts=JSON.parse(src.pop());selection=null;signalEdited();','dst.push(modelSnapshot());currentProject.modelAtelier=JSON.parse(src.pop());selection=null;signalEdited();atelierAssemblyRefresh();')
  html=once(html,'    atelierPoseDeckInstall();','    atelierPoseDeckInstall();atelierAssemblyInstall();')

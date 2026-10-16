@@ -1,5 +1,5 @@
 // V11_13_REFERENCE_ASSEMBLIES: original editable surfaces and independent living attachments.
-let atelierAssemblyPlaying=false,atelierAssemblyLast=0,atelierAssemblyTime=4;
+let atelierAssemblyPlaying=false,atelierAssemblyLast=0,atelierAssemblyTime=4,atelierAssemblyRestart=true;
 const atelierAssemblyMeshes=new Map();
 function atelierReferenceGeometry(part){
   if(part.kind==='sphere'&&part.surfaceStyle==='portrait-head'){
@@ -128,7 +128,7 @@ function atelierApplyAssemblyTime(time){
 function atelierAssemblyTick(now){
   if(!atelierAssemblyPlaying||!atelierAssemblyData())return;const dt=Math.min(.08,Math.max(0,(now-atelierAssemblyLast)/1000));atelierAssemblyLast=now;
   atelierApplyAssemblyTime(atelierAssemblyTime+dt);
-  if(atelierAssemblyTime>=atelierAssemblyData().duration){atelierAssemblyPlaying=false;$m('AssemblyPlay').textContent='▶ Play transform';}
+  if(atelierAssemblyTime>=atelierAssemblyData().duration){atelierAssemblyPlaying=false;atelierAssemblyRestart=true;$m('AssemblyPlay').textContent='▶ Play transform';}
 }
 function atelierAssemblyChoose(){return atelierAssemblyData()?.components.find(c=>c.id===$m('AssemblyComponent')?.value);}
 function atelierAssemblyRefresh(){
@@ -164,9 +164,9 @@ function atelierAssemblyInstall(){
  $m('AssemblySaveKey')?.addEventListener('click',atelierAssemblySaveKey);
  $m('AssemblyClearKeys')?.addEventListener('click',()=>{const c=atelierAssemblyChoose();if(!c||!c.keys?.length)return;checkpoint();delete c.keys;signalEdited();atelierAssemblyRefresh();});
   $m('AssemblyComponent')?.addEventListener('change',atelierAssemblyRefresh);
-  $m('AssemblyPlay')?.addEventListener('click',()=>{if(!atelierAssemblyData())return;atelierAssemblyPlaying=!atelierAssemblyPlaying;if(atelierAssemblyPlaying){atelierAssemblyTime=0;atelierAssemblyLast=performance.now();} $m('AssemblyPlay').textContent=atelierAssemblyPlaying?'Ⅱ Pause':'▶ Play transform';});
-  $m('AssemblyStop')?.addEventListener('click',()=>{atelierAssemblyPlaying=false;atelierApplyAssemblyTime(atelierAssemblyData()?.time??4);$m('AssemblyPlay').textContent='▶ Play transform';});
-  $m('AssemblyTime')?.addEventListener('input',e=>{atelierAssemblyPlaying=false;atelierApplyAssemblyTime(Number(e.target.value));atelierAssemblyFields();});
+  $m('AssemblyPlay')?.addEventListener('click',()=>{if(!atelierAssemblyData())return;atelierAssemblyPlaying=!atelierAssemblyPlaying;if(atelierAssemblyPlaying){if(atelierAssemblyRestart||atelierAssemblyTime>=atelierAssemblyData().duration)atelierAssemblyTime=0;atelierAssemblyRestart=false;atelierAssemblyLast=performance.now();} $m('AssemblyPlay').textContent=atelierAssemblyPlaying?'Ⅱ Pause':'▶ Play transform';});
+  $m('AssemblyStop')?.addEventListener('click',()=>{atelierAssemblyPlaying=false;atelierAssemblyRestart=true;atelierApplyAssemblyTime(atelierAssemblyData()?.time??4);$m('AssemblyPlay').textContent='▶ Play transform';});
+  $m('AssemblyTime')?.addEventListener('input',e=>{atelierAssemblyPlaying=false;atelierAssemblyRestart=false;atelierApplyAssemblyTime(Number(e.target.value));atelierAssemblyFields();});
   $m('AssemblyAttach')?.addEventListener('click',()=>atelierAssemblyAttach(true));$m('AssemblyDetach')?.addEventListener('click',()=>atelierAssemblyAttach(false));
   $m('AssemblyMotionApply')?.addEventListener('click',()=>{const c=atelierAssemblyChoose(),amplitude=Number($m('AssemblyAmplitude').value),speed=Number($m('AssemblySpeed').value);if(!c||!Number.isFinite(amplitude)||amplitude<0||amplitude>.3||!Number.isFinite(speed)||speed<.1||speed>4){status('Flex must be 0–0.3 and speed 0.1–4.',true);return;}checkpoint();c.amplitude=amplitude;c.speed=speed;signalEdited();});
   $m('AssemblyExport')?.addEventListener('click',()=>{const c=atelierAssemblyChoose();if(!c)return;download(c.id+'.independent-model.json',JSON.stringify({schema:'swyrl-independent-model-v1',component:structuredClone(c),socket:structuredClone(atelierAssemblyData().sockets.find(s=>s.id===c.socketId)||null),parts:structuredClone(model().parts.filter(p=>p.group===c.group))},null,2),'application/json');});
