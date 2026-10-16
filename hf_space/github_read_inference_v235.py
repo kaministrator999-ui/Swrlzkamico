@@ -93,22 +93,26 @@ def classify_read(prompt, context=None):
         and re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._/-]{0,100}", str(context.get("branch") or ""))
         and context.get("kind") in ("directory", "file"))
     explicit = bool(_COMMAND.match(raw) or _REPO.search(raw))
-    # A short answer to a verified directory/file-list turn can identify one
-    # filename already shown in the repository. Let the EXISTING GitHub resolver
-    # prove a unique name/stem match; never manufacture or trust a model path.
-    # This is read-only selection, not a general invitation to reinterpret chat.
+    # A short answer to a verified directory/file-list turn can identify a
+    # filename already shown in the repository. Discursive openers ("ok so")
+    # do not change the operation: the EXISTING authenticated GitHub resolver
+    # must prove a unique name/stem match. Never trust or invent a model path.
     selection = None
     if verified_root and context.get("kind") == "directory":
+        selection_prompt = re.sub(
+            r"(?i)^(?:(?:ok(?:ay)?|alright)[,!\s]+)?(?:so[,!\s]+)?",
+            "", raw).strip()
         candidate = re.fullmatch(
-            r"(?:the|that|this)\s+([A-Za-z0-9_§.+-]{2,100})(?:\s+one)?[?.!\s]*",
-            raw, re.I)
+            r"(?:the|that|this)\s+([A-Za-z0-9_§.+-]{2,100})"
+            r"(?:\s+(?:one|file))?[?.!\s]*",
+            selection_prompt, re.I)
         if candidate:
             name = candidate[1]
-            if (("." in name or re.search(r"\bone\b", raw, re.I))
+            if (("." in name or re.search(r"\b(?:one|file)\b", selection_prompt, re.I))
                     and name.casefold() not in (
                         "first", "second", "third", "last", "next",
                         "other", "same", "right", "left", "good", "bad",
-                        "nice", "new", "old", "correct")):
+                        "nice", "new", "old", "correct", "file")):
                 selection = _safe(name)
     if not explicit and not (directory or last_file or verified_root):
         return None

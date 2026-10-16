@@ -1694,9 +1694,15 @@
         container.innerHTML="";
         const rawSource=String(text||"");
         originalRenderedSources.set(container,rawSource);
-        // Original v223 GitHub explorer owns directory/file-list presentation.
-        // Keep its state-cache, authenticated navigation and source viewer.
-        const appendRepositoryExplorer=value=>window.SwrlzGitHubExplorerV223?.render(container,value,{
+        // Rendering a repository browser requires Station-verified same-message
+        // GitHub evidence. The model may output "## GitHub directory: /" as prose:
+        // that alone must NEVER become a verified interactive file browser.
+        const verifiedDirectory=verifiedContext?.kind==="directory"&&
+          /^[a-f0-9]{40}$/.test(String(verifiedContext?.sourceSha||""))&&
+          /^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(String(verifiedContext?.repo||""));
+        // Preserve the original v223 explorer for actual authenticated listings.
+        const appendRepositoryExplorer=value=>verifiedDirectory&&
+          window.SwrlzGitHubExplorerV223?.render(container,value,{
           messageId,
           accountId:()=>chatAccountUser?.id||"",
           threadId:()=>activeThreadId||"",
