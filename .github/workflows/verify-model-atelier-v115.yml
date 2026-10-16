@@ -1,8 +1,12 @@
-name: Verify v11.14 §E source seal
+name: Verify v11.15 §E source seal
 on:
   push:
     branches:
       - feature/engine-v119-figure-ferret-silhouette
+  pull_request:
+    paths:
+      - 'projects/swrlz-forge-moba/**'
+      - '.github/workflows/verify-model-atelier-v115.yml'
   workflow_dispatch:
 jobs:
   seal:
@@ -15,7 +19,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Reconstruct and print exact v11.14 SHA
+      - name: Reconstruct and print exact v11.15 SHA
         shell: bash
         run: |
           python - <<'PY'
@@ -33,7 +37,7 @@ jobs:
           raw=html.encode('utf-8')
           print('V119_FINAL_BYTES='+str(len(raw)),flush=True)
           print('V119_FINAL_SHA256='+hashlib.sha256(raw).hexdigest(),flush=True)
-          assert 'V11_14_REFERENCE_REFINEMENT' in html
+          assert 'V11_15_NATIVE_SURFACE_STUDY' in html
           assert 'modelAtelierLoftEditor' in html
           assert 'MODEL_ATELIER_LIMIT=1200' in html
           assert 'atelier-v117-0554' in html

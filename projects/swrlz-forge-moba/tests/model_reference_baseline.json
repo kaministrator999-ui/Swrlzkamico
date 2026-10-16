@@ -145,6 +145,10 @@
     "scenes/model-atelier-festival-reference-v11-13.swyrl.json": {
       "bytes": 231117,
       "sha256": "9ee3dd12c5c00e27a57d265fa01b8dcb23515b1ac29123a56110ccfcc42978cc"
+    },
+    "scenes/model-atelier-festival-refined-v11-14.swyrl.json": {
+      "sha256": "33b8f9ca316978e23246de308dbdf92c1ab7e9966b2befaeeb67e9f0c5039230",
+      "bytes": 261540
     }
   },
   "sources": {
@@ -314,6 +318,8 @@
     "runtime/maul_frostveil_art.js": "751044a3c19a75b1dad23f3c57338e3075382d3ddd210ff8aea94ee88ab6c041",
     "patches/v11_13_reference_assemblies.py": "c5ac1e80cf3248e2dc2ec9321bf042f742dd9647a3719ee7c2f4bb0fb48b106f",
     "runtime/model_atelier_reference_v11_13.js": "2a5f384867ce1de7a263e4afe8459bccdc7f0d698f9da426afc0c8092237a5a8",
-    "runtime/model_atelier_reference_v11_13.css": "a0d43b01143a9af8d0c7e74ede7cab203289f9691e9592cef67c3c0e205358ec"
+    "runtime/model_atelier_reference_v11_13.css": "a0d43b01143a9af8d0c7e74ede7cab203289f9691e9592cef67c3c0e205358ec",
+    "patches/v11_14_reference_refinement.py": "a3f3b230b9057d8c4598d5eee3d0b9584f00484c9ccfded851a6f46023be5691",
+    "runtime/model_atelier_refinement_v11_14.js": "6075a4ca44f411b1119e8ea6b29ee62bb0b28848a310dc0c42ba2647b1c9229b"
   }
 }
