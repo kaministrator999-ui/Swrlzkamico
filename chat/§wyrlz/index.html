@@ -677,6 +677,27 @@
       outline:2px solid #a5edff;outline-offset:2px;
     }
     .github-source-card.github-file-card{max-width:100%;overflow:hidden}
+    /* v267: compact, navigable verified repository inventories. Only the
+       optional expanded original report may become tall on Android. */
+    .assistant-body .github-inventory-card{
+      max-width:100%;min-width:0;padding:13px;margin:0 0 12px;
+      border:1px solid rgba(126,214,255,.29);border-radius:13px;
+      background:rgba(3,20,35,.95);color:#ecf8ff;text-shadow:none;
+    }
+    .github-inventory-top{display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;align-items:center}
+    .github-inventory-top strong{font-size:15px}
+    .github-inventory-top span{font:700 10px/1.4 var(--font-telemetry);color:#b9f2df}
+    .github-inventory-repo{font:12px/1.55 var(--font-ui);color:#b7d7e9;overflow-wrap:anywhere;margin:3px 0}
+    .github-inventory-fact{font:700 11px/1.5 var(--font-ui);color:#c4effc;margin:4px 0 9px}
+    .github-inventory-list{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:5px}
+    .github-inventory-item{min-width:0;padding:7px 9px;border:1px solid rgba(126,214,255,.14);border-radius:8px;background:rgba(11,42,62,.70)}
+    .github-inventory-item a{color:#e8faff;text-decoration:none;display:block;font-size:12px;line-height:1.5;overflow-wrap:anywhere}
+    .github-inventory-item a:hover,.github-inventory-item a:focus-visible{color:#86edff;text-decoration:underline}
+    .github-inventory-item-meta{display:block;font:10px/1.5 var(--font-ui);color:#9fbfce;overflow-wrap:anywhere}
+    .github-inventory-caution{margin:9px 0 0;color:#9fbccd;font:11px/1.5 var(--font-ui)}
+    .github-inventory-card .github-source-details{margin-top:10px;border-top:1px solid rgba(126,214,255,.16);padding-top:8px}
+    .github-inventory-card .github-source-details summary{cursor:pointer;font-size:12px;color:#c8e4f4}
+    .github-inventory-raw{white-space:pre-wrap!important;overflow-wrap:anywhere;word-break:normal;overflow:auto;max-height:45vh;font:11px/1.5 var(--font-telemetry);padding:8px}
   </style>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <script src="/chat/§wyrlz/assets/github-explorer-v223.js?v=228"></script>
@@ -1517,6 +1538,92 @@
           commit:sha,blob:match[3],coverage:"Full file preview",access:"Read-only",
           fileUrl:url,body:raw.slice(match[0].length)};
       };
+      // v267: show GitHub listings as an actual navigable inventory rather than
+      // 40-line source prose. The original message is kept for Copy/export.
+      const splitVerifiedGitHubInventory=(value,verifiedContext)=>{
+        const ctx=verifiedContext&&typeof verifiedContext==="object"?verifiedContext:null;
+        if(!ctx||ctx.kind!=="directory"
+            ||!/^[a-f0-9]{40}$/.test(String(ctx.sourceSha||""))
+            ||!/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(String(ctx.repo||"")))return null;
+        const raw=String(value||"").replace(/\r\n?/g,"\n");
+        let kind="",count=0,inspected=null,lines=[];
+        const report=raw.match(/^## GitHub source report · ([^\n]+)\nBranch: ([^\n]+) · commit ([a-f0-9]{40})\nDepth: structure\nScopes: ([^\n]+)\nVerified Git-tree inventory: (\d+) unique files\nSource contents inspected: (\d+)\/(\d+)\n/);
+        const recursive=raw.match(/^## GitHub recursive file inventory\nRepository: ([^\n]+)\nBranch: ([^\n]+)\nRevision: ([a-f0-9]{40})\nScope: ([^\n]+) \(recursive\)\nComplete Git-tree file count: (\d+)\n/);
+        const directory=raw.match(/^## GitHub directory: ([^\n]+)\n/);
+        if(report){
+          if(report[1]!==ctx.repo||report[2]!==ctx.branch||report[3]!==ctx.sourceSha
+              ||report[4].trim().replace(/^\/|\/$/g,"")!==String(ctx.directory||""))return null;
+          kind="analysis";count=Number(report[5]);inspected=Number(report[6]);
+          const part=raw.split("### Inspected files\n")[1]||"";
+          const inspectedBlock=part.split("\nSource inspection is static",1)[0];
+          lines=[...inspectedBlock.matchAll(/^- ([^\n()]{1,220}) \(([^)\n]{1,250})\)/gm)]
+                .map(m=>({path:m[1].trim(),detail:m[2],type:"file"}));
+        }else if(recursive){
+          if(recursive[1]!==ctx.repo||recursive[2]!==ctx.branch
+              ||recursive[3]!==ctx.sourceSha||recursive[4].trim().replace(/^\/|\/$/g,"")!==String(ctx.directory||""))return null;
+          kind="recursive";count=Number(recursive[5]);
+          lines=raw.slice(recursive[0].length).split("\n").filter(line=>line.startsWith("- "))
+                .map(line=>({path:line.slice(2).trim(),detail:"",type:"file"}));
+        }else if(directory){
+          if(directory[1].trim().replace(/^\/|\/$/g,"")!==String(ctx.directory||""))return null;
+          kind="directory";
+          lines=raw.slice(directory[0].length).split("\n")
+                .filter(line=>/^- (?:file|dir) /.test(line))
+                .map(line=>({path:line.replace(/^- (?:file|dir) /,"").trim(),
+                             detail:"",type:line.startsWith("- dir ")?"dir":"file"}));
+          count=lines.length;
+        }else return null;
+        if(!Number.isSafeInteger(count)||count<0||count>500000
+            ||(inspected!==null&&(!Number.isSafeInteger(inspected)||inspected>count)))return null;
+        const isSafePath=path=>typeof path==="string"&&path.length>0&&path.length<=220
+            &&path.split("/").every(p=>p!==""&&p!=="."&&p!==".."
+                                      &&/^[A-Za-z0-9_§.+-]+$/.test(p));
+        if(!lines.length||lines.length>700||lines.some(item=>!isSafePath(item.path)))return null;
+        return {kind,repo:ctx.repo,branch:ctx.branch,revision:ctx.sourceSha,
+          count,inspected,lines,raw};
+      };
+      const appendGitHubInventoryCard=(container,inventory)=>{
+        const section=document.createElement("section");section.className="github-inventory-card";
+        section.setAttribute("aria-label","Verified GitHub file inventory");
+        const top=document.createElement("div");top.className="github-inventory-top";
+        const name=document.createElement("strong");name.textContent="GitHub files";
+        const status=document.createElement("span");status.textContent="● Verified read";
+        top.append(name,status);
+        const repository=document.createElement("div");repository.className="github-inventory-repo";
+        repository.textContent=inventory.repo+" · "+inventory.branch;
+        const fact=document.createElement("div");fact.className="github-inventory-fact";
+        fact.textContent=inventory.kind==="analysis"
+          ?inventory.count+" total files · "+inventory.inspected+" inspected"
+          :inventory.count+" "+(inventory.kind==="directory"?"visible entries":"files in scope");
+        const list=document.createElement("ul");list.className="github-inventory-list";
+        for(const item of inventory.lines){
+          const li=document.createElement("li");li.className="github-inventory-item";
+          const link=document.createElement("a");
+          const path=item.path.split("/").map(encodeURIComponent).join("/");
+          link.href="https://github.com/"+inventory.repo+"/"+(item.type==="dir"?"tree":"blob")+
+                    "/"+inventory.revision+"/"+path;
+          link.target="_blank";link.rel="noopener noreferrer";
+          link.textContent=(item.type==="dir"?"📁 ":"📄 ")+item.path;
+          li.appendChild(link);
+          // File descriptors are optional and visually secondary.
+          if(item.detail){
+            const meta=document.createElement("span");meta.className="github-inventory-item-meta";
+            meta.textContent=item.detail;li.appendChild(meta);
+          }
+          list.appendChild(li);
+        }
+        const detail=document.createElement("details");detail.className="github-source-details";
+        const summary=document.createElement("summary");summary.textContent="Full source report & revision";
+        const raw=document.createElement("pre");raw.className="github-inventory-raw";raw.textContent=inventory.raw;
+        detail.append(summary,raw);
+        const caution=document.createElement("p");caution.className="github-inventory-caution";
+        caution.textContent=inventory.kind==="analysis"
+          ?"Static source inspection; file purposes and security behavior were not validated."
+          :(inventory.lines.length<inventory.count
+            ?"Only the displayed paths are listed. See full source report for coverage.":"GitHub paths verified at this repository revision.");
+        section.append(top,repository,fact,list,caution,detail);
+        container.appendChild(section);
+      };
       const appendGitHubSourceCard=(container,info)=>{
         const card=document.createElement("section");card.className="github-source-card"+(info.fileUrl?" github-file-card":"");
         card.setAttribute("aria-label","GitHub source context");
@@ -1563,6 +1670,8 @@
         container.innerHTML="";
         const rawSource=String(text||"");
         originalRenderedSources.set(container,rawSource);
+        const inventory=splitVerifiedGitHubInventory(rawSource,verifiedContext);
+        if(inventory){appendGitHubInventoryCard(container,inventory);return;}
         const sourceContext=splitGitHubSourcePreamble(rawSource)
           ||splitVerifiedGitHubFilePreamble(rawSource,verifiedContext);
         const source=sourceContext?sourceContext.body:rawSource;
