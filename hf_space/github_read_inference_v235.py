@@ -86,8 +86,14 @@ def classify_read(prompt, context=None):
                  r"imported conversations?|chatgpt archive)\b", raw, re.I):
         return None
     directory, last_file = _scope_context(context)
+    # A verified root is still a repository scope, even with directory="".
+    verified_root = bool(isinstance(context, dict)
+        and re.fullmatch(r"[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+", str(context.get("repo") or ""))
+        and re.fullmatch(r"[a-f0-9]{40}", str(context.get("sourceSha") or ""))
+        and re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._/-]{0,100}", str(context.get("branch") or ""))
+        and context.get("kind") in ("directory", "file"))
     explicit = bool(_COMMAND.match(raw) or _REPO.search(raw))
-    if not explicit and not (directory or last_file):
+    if not explicit and not (directory or last_file or verified_root):
         return None
     # Thread context is a scope hint, not permission to reinterpret unrelated dialogue.
     if not explicit and not re.search(
@@ -112,6 +118,25 @@ def classify_read(prompt, context=None):
     if branch_match:
         paths = [p for p in paths if p != branch_match[1]]
     suffix = (" on branch " + named_branch) if named_branch else ""
+    # Simple file-list questions need an inventory, not a source-analysis report.
+    # Recursive listing includes files below the root, not just top-level items.
+    if re.fullmatch(r"(?:what(?: are)?|which)(?: the)? files(?: are)? (?:in|of) (?:my|our|the) (?:github )?(?:repo|repository)[?.!\s]*", lower):
+        return "@GitHub files recursive" + suffix
+    # Bare filename answers to a previous file-location exchange are read-only
+    # source requests, not instructions to generate a new program.
+    nominal = re.fullmatch(
+        r"(?:the|this|that)\s+([A-Za-z0-9_§.+/-]+\.(?:py|js|mjs|ts|tsx|jsx|html|css|json|md|txt|yaml|yml|kt|java|go|rs|sh|xml|sql))\s+file[?.!\s]*",
+        q, re.I)
+    if nominal and verified_root:
+        named = _safe(nominal[1])
+        if named:
+            return "@GitHub read file " + named + suffix
+    # Locate a descriptive test file by matching the *repository path*, not
+    # by inventing a file or replaying the previous whole-source report.
+    if re.fullmatch(
+        r"(?:can|could|would) you (?:please )?locate (?:the|a) test file (?:in|from) (?:the|my|our) (?:github )?(?:repo|repository)[?.!\s]*",
+        lower):
+        return "@GitHub search test" + suffix
     # A directory named in a question is a literal scope, never a guessed
     # implementation owner. Do not pick random matching files by meaning.
     if not paths:

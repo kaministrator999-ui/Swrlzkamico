@@ -1509,7 +1509,8 @@ def _read_context_from_result(user, prompt, result):
     body = str(result or "")
     if not (body.startswith("## GitHub directory: ") or body.startswith("## GitHub file: ")
             or body.startswith("## GitHub repository statistics") or body.startswith("## GitHub file matches")
-            or body.startswith("## GitHub source report · ") or body.startswith("## GitHub path history: ")):
+            or body.startswith("## GitHub source report · ") or body.startswith("## GitHub path history: ")
+            or body.startswith("## GitHub recursive file inventory")):
         return None
     try:
         cfg = _config()
@@ -1563,6 +1564,15 @@ def _read_context_from_result(user, prompt, result):
         reported_sha = re.search(r"(?m)^Branch: [^\n]*commit ([0-9a-f]{40})$", body)
         if reported_sha and reported_sha[1] != sha:
             return None
+        if body.startswith("## GitHub recursive file inventory"):
+            # Never attach authenticated provenance to a stale or mismatched
+            # raw inventory. Root listings need verified thread scope too.
+            repo_line = re.search(r"(?m)^Repository: ([^\n]+)$",body)
+            branch_line = re.search(r"(?m)^Branch: ([^\n]+)$",body)
+            revision_line = re.search(r"(?m)^Revision: ([0-9a-f]{40})$",body)
+            if (not repo_line or repo_line[1]!=repo or not branch_line
+                    or branch_line[1]!=branch or not revision_line or revision_line[1]!=sha):
+                return None
         try:
             if directory:
                 explorer.safe_path(directory, allow_root=False)
@@ -1880,6 +1890,17 @@ def agent_events(data, model_generator=None, coder_generator=None):
     """Station-facing tool events: observed progress, no secret or raw reasoning."""
     user = str(data.get("userId") or "")
     prompt = str(data.get("prompt") or "").strip()
+    # v267: concrete file requests outrank source-specialist exposition.
+    # These are existing read-only GitHub commands, still checked by the
+    # connected owner's Stage-1 authorization and pinned Git evidence.
+    literal_read = read_inference.classify_read(prompt, data.get("githubContext"))
+    if (literal_read and re.match(r"^@GitHub (?:files(?:\s|$)|read file\s|search\s)", literal_read)
+            and not prompt.lower().startswith("@github ")):
+        yield {"type":"STATUS","phase":"GITHUB_READ_EVIDENCE",
+               "reason":"Resolving a file or directory read from verified GitHub context.",
+               "categories":["GITHUB","READ_ONLY","SOURCE"]}
+        yield from command_events({**data,"prompt":literal_read})
+        return
     source_request = source_specialist.parse(prompt, data.get("githubContext"))
     # An ordinary natural source question retains the existing deterministic
     # v235 report when no specialist generator is available. Explicit source
