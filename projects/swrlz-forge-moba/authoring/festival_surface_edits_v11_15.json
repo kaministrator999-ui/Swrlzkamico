@@ -1652,5 +1652,21 @@
       0.009,
       0.002
     ]
+  },
+  {
+    "id": "hair-cap",
+    "surface": {
+      "preset": "split-dye-cap",
+      "dyeAccent": "#f65f60"
+    },
+    "color": "#27c6d5"
+  },
+  {
+    "id": "back-shoulder-panel",
+    "position": [
+      0,
+      0,
+      -0.045
+    ]
   }
 ]
