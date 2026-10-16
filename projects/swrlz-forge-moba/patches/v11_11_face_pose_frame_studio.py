@@ -75,7 +75,7 @@ def apply(html):
 @media (max-width:600px){.atelier-pose-deck{width:min(235px,68%);max-height:60%}}
 """
     html=once(html,'/* v11.8 procedural sculpt tools:',css+'/* v11.8 procedural sculpt tools:')
-    html=once(html,'V11_10_MEASURED_GEOMETRY_PROFILER','V11_11_FACE_POSE_FRAMES')
+    html=once(html,'SWYRL_ENGINE_DEPLOY_MARKER: V11_10_MEASURED_GEOMETRY_PROFILER',\n      'SWYRL_ENGINE_DEPLOY_MARKER: V11_11_FACE_POSE_FRAMES')
     html=html.replace('Maker v11.10','Maker v11.11').replace('MAKER v11.10','MAKER v11.11')
     html=html.replace("version:'v11.10'","version:'v11.11'").replace('version:11.10','version:11.11')
     html=once(html,'v11.10 · measured geometry and figure atelier','v11.11 · expressive face and pose frame studio')
