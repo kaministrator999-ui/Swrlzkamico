@@ -133,7 +133,7 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
   assert.equal(await page.evaluate(()=>window.SWYRL_ENGINE_BUILD.version),'v11.15');const canonical=await saved(page);assert.equal(canonical.version,11.9);
   const sourceResponse=await context.request.get(base+'/SOURCE.json');assert.equal(sourceResponse.ok(),true);const source=await sourceResponse.json();
   assert.match(source.sourceVersion,/v11\.15/);assert.equal(source.patches.length,85);assert.equal(source.patches.at(-1),'patches/v11_15_native_surface_study.py');
-  assert.equal(Object.keys(source.assets).length,37,'Unexpected bundled starter/media asset set');
+  assert.equal(Object.keys(source.assets).length,38,'Unexpected bundled starter/media asset set');
   const htmlResponse=await context.request.get(base+'/index.html');assert.match(await htmlResponse.text(),/V11_15_NATIVE_SURFACE_STUDY/);
   assert.equal(canonical.scene.actors.length,92,'Archive map changed');const pieces=await prototypes(page,canonical),map=fixture(canonical,pieces);
   if(!process.env.SWYRL_RUN_GENERIC_ONLY){

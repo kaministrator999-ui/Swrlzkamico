@@ -41,4 +41,5 @@ jobs:
           node --check /tmp/se-v1111.mjs
           node --check projects/swrlz-forge-moba/runtime/model_atelier_pose_frames_v11_11.js
           node projects/swrlz-forge-moba/tests/model_atelier_pose_cpu.mjs
+          node projects/swrlz-forge-moba/tests/model_surface_import_cpu.mjs /tmp/se-v1111.mjs
           python -m compileall -q projects/swrlz-forge-moba/patches projects/swrlz-forge-moba/build_space.py

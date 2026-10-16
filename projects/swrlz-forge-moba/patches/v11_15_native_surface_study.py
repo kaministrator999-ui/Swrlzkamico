@@ -17,6 +17,7 @@ def apply(html):
     html=once(html,"color:part.kind==='loft'?new THREE.Color('#ffffff'):col","color:part.kind==='loft'||part.surfaceStyle==='split-dye-cap'?new THREE.Color('#ffffff'):col")
     html=once(html,"vertexColors:part.kind==='loft',side:THREE.DoubleSide","vertexColors:part.kind==='loft'||part.surfaceStyle==='split-dye-cap',side:THREE.DoubleSide")
     html=once(html,'  function refreshList(){',(r/'runtime/model_atelier_surface_v11_15.js').read_text()+'\n  function refreshList(){')
+    html=once(html,"neutral!==undefined&&!atelierValidPoseFrame(neutral)","neutral!=null&&!atelierValidPoseFrame(neutral)")
     html=once(html,'  function checkPart(p){', '''  function checkPart(p){
     if(p&&p.dyeAccent!==undefined&&!/^#[0-9a-fA-F]{6}$/.test(p.dyeAccent))return false;
     for(const [key,limit] of [['jawTaper',.5],['panelCamber',.25],['panelPleat',.06]])

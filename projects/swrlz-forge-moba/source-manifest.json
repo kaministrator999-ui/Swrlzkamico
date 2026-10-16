@@ -101,6 +101,6 @@
     "patches/v11_14_reference_refinement.py",
     "patches/v11_15_native_surface_study.py"
   ],
-  "finalBytes": 2487718,
-  "finalSha256": "ec9466c819dc041fc2287ceca119703eb7fb5c1ffbeaf0a5fa217cbf50d5d85f"
+  "finalBytes": 2487712,
+  "finalSha256": "c4c7356c35827eeaea2f24ca943c0dd431c65f5898dbcd325440f0821fc10a3a"
 }
