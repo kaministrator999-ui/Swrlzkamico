@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.9",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_9_FERRET_FIGURE_ATELIER",
-  "reason": "Owner-directed v11.9 Model Atelier refinement from approved cyan/coral carnival mage reference: 811 individually editable native parts; two separate ferret piñata creatures with 36-tier paper geometry, tapered S-arc bodies and distinct gripping heads; continuous torso, neck and long anatomical limbs; eight editable fabric drapes, hands, shoes and festival bunny; mobile viewport improvements. Historic starter scenes preserved. PR #187 merged as a7e169333b1cacb4f95f47f487d31ad8e66bdddc. All 23/23 PR checks passed, including desktop/mobile model authoring and historical regressions. Governed source 79 patches, 35 native assets, 2,335,886 HTML bytes, SHA-256 987f074e111420126715142da652d4907c7d1a0e493215ee9784e35da48966dd. Production success and exact hosted source/assets audit must be independently verified; owner visual acceptance remains separate. No rigged bones, animation, UV paint or extracted game asset claimed.",
-  "sourceCommit": "a7e169333b1cacb4f95f47f487d31ad8e66bdddc",
-  "sourceIntegritySha256": "987f074e111420126715142da652d4907c7d1a0e493215ee9784e35da48966dd"
+  "releaseVersion": "v11.10",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_10_MEASURED_GEOMETRY_PROFILER",
+  "reason": "Owner-directed first implementation slice of §E Modeling Engineering Brief: real generated mesh triangle/vertex counts, CPU geometry buffers, group breakdown and statistics JSON export in existing native Model Atelier. All 811 v11.9 model parts and 35 historical native assets preserved; 80 ordered patches; 2,339,787 HTML bytes; SHA-256 e8b2ca7b4e12d9981475a861d40eabf513f5d26a40c8f6627d393b93d03dddf6. PR #190 squash merged as 7e38e623ed24801becd6afd738519652d79d9909. Full seven §E source workflows and all 17 browser matrix jobs passed on exact final candidate head 4e89457c990e654e96e80bec8138148b25637dcf. Dedicated guarded deploy and independent live digest/assets validation required; owner visual acceptance separate. Skeletons, UV painting, skins, independent attachment animation and VFX remain planned, not claimed.",
+  "sourceCommit": "7e38e623ed24801becd6afd738519652d79d9909",
+  "sourceIntegritySha256": "e8b2ca7b4e12d9981475a861d40eabf513f5d26a40c8f6627d393b93d03dddf6"
 }
