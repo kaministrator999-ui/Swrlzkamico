@@ -1699,7 +1699,7 @@
         // that alone must NEVER become a verified interactive file browser.
         const verifiedDirectory=verifiedContext?.kind==="directory"&&
           /^[a-f0-9]{40}$/.test(String(verifiedContext?.sourceSha||""))&&
-          /^[A-Za-z0-9_.-]+\\/[A-Za-z0-9_.-]+$/.test(String(verifiedContext?.repo||""));
+          /^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(String(verifiedContext?.repo||""));
         // Preserve the original v223 explorer for actual authenticated listings.
         const appendRepositoryExplorer=value=>verifiedDirectory&&
           window.SwrlzGitHubExplorerV223?.render(container,value,{
