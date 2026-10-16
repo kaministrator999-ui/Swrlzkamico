@@ -1,0 +1,44 @@
+name: Verify §E v11.11 face and native pose frames
+on:
+  push:
+    branches: [feature/engine-v1111-face-pose-frame-studio]
+  pull_request:
+    paths:
+      - 'projects/swrlz-forge-moba/**'
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Rebuild independent source, print seal and check pose runtime
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import base64,gzip,hashlib,json,sys
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba').resolve()
+          sys.path.insert(0,str(root))
+          import build_space
+          m=json.loads((root/'source-manifest.json').read_text())
+          raw=gzip.decompress(base64.b64decode(''.join((root/p).read_text().strip() for p in m['chunks'])))
+          assert hashlib.sha256(raw).hexdigest()==m['baseSha256']
+          html=raw.decode('utf8')
+          for item in m['patches']:
+              html=build_space.load_patch(root/item)(html)
+          payload=html.encode('utf8')
+          print('POSE_FINAL_BYTES='+str(len(payload)),flush=True)
+          print('POSE_FINAL_SHA256='+hashlib.sha256(payload).hexdigest(),flush=True)
+          assert 'V11_11_FACE_POSE_FRAMES' in html
+          assert 'modelAtelierPoseDeck' in html
+          Path('/tmp/se-v1111.mjs').write_text(html[html.index('<script type="module">')+len('<script type="module">'):html.rindex('</script>')])
+          PY
+          node --check /tmp/se-v1111.mjs
+          node --check projects/swrlz-forge-moba/runtime/model_atelier_pose_frames_v11_11.js
+          node projects/swrlz-forge-moba/tests/model_atelier_pose_cpu.mjs
+          python -m compileall -q projects/swrlz-forge-moba/patches projects/swrlz-forge-moba/build_space.py
