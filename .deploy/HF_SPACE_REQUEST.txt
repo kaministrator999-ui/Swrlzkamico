@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=47bd7a7483981c086c7df4706231b0ee375a63fa
-REQUEST_NONCE=2026-10-16-v269-native-explorer-reuse-001
+SOURCE_REF=4deb8265bddfbfbacdda9eb3ba267ce249c1ba61
+REQUEST_NONCE=2026-10-16-v270-export68-file-followup-001
