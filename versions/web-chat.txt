@@ -1,6 +1,6 @@
 ID=web-chat
-VERSION=1.5.146
-REVISION=1.5.146-v264-inference-first
+VERSION=1.5.147
+REVISION=1.5.147-v265-verified-file-referents
 KIND=web-interface
 SOURCE_BRANCH=runtime
 STATUS=active
