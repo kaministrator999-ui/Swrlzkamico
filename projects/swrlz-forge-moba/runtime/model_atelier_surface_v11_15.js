@@ -10,7 +10,7 @@ function atelierSurfaceRefresh(){
 function atelierSurfaceInstall(){
  $m('SurfaceApply').addEventListener('click',()=>{
   const p=partById(selection);if(!p)return;let values;
-  if(p.kind==='sphere'){const preset=$m('SurfacePreset').value;values={surfaceStyle:preset==='rounded'?undefined:preset};if(preset==='portrait-head')values.jawTaper=p.surfaceStyle==='portrait-head'?Number($m('JawTaper').value):.31;}
+  if(p.kind==='sphere'){const preset=$m('SurfacePreset').value;values={surfaceStyle:preset==='rounded'?undefined:preset};if(preset==='portrait-head')values.jawTaper=p.surfaceStyle==='portrait-head'?Number($m('JawTaper').value):(p.jawTaper??.31);}
   else if(p.surfaceStyle==='tailored-panel')values={panelCamber:Number($m('PanelCamber').value),panelPleat:Number($m('PanelPleat').value)};
   else return;
   if(!checkPart({...p,...values})){status('Surface rejected: jaw 0–0.5, cloth curvature 0–0.25, folds 0–0.06.',true);return;}
