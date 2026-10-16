@@ -1,0 +1,42 @@
+name: Verify §E v11.12 grounded anatomy
+on:
+  push:
+    branches: [fix/engine-v1112-grounded-stance-poses]
+  pull_request:
+    paths: ['projects/swrlz-forge-moba/**']
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Reconstruct source, assert governed marker and test planted feet
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import base64,gzip,hashlib,json,sys
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba').resolve()
+          sys.path.insert(0,str(root))
+          import build_space
+          m=json.loads((root/'source-manifest.json').read_text())
+          base=gzip.decompress(base64.b64decode(''.join((root/p).read_text().strip() for p in m['chunks'])))
+          assert hashlib.sha256(base).hexdigest()==m['baseSha256']
+          html=base.decode('utf8')
+          for patch in m['patches']:html=build_space.load_patch(root/patch)(html)
+          raw=html.encode('utf8')
+          print('GROUNDED_FINAL_BYTES='+str(len(raw)),flush=True)
+          print('GROUNDED_FINAL_SHA256='+hashlib.sha256(raw).hexdigest(),flush=True)
+          assert 'V11_12_GROUNDED_STANCE_POSES' in html
+          assert 'v11.12 · grounded anatomical pose studio' in html
+          Path('/tmp/se-grounded.mjs').write_text(html[html.index('<script type="module">')+len('<script type="module">'):html.rindex('</script>')])
+          PY
+          node --check /tmp/se-grounded.mjs
+          node --check projects/swrlz-forge-moba/runtime/model_atelier_grounded_poses_v11_12.js
+          node projects/swrlz-forge-moba/tests/model_atelier_grounded_pose_cpu.mjs
+          python -m compileall -q projects/swrlz-forge-moba/patches projects/swrlz-forge-moba/build_space.py
