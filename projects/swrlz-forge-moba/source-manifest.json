@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.15",
+  "name": "§wyrl§ Engine v11.16",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_15.html",
+  "finalArtifact": "swyrl_engine_v11_16.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -99,8 +99,9 @@
     "patches/v11_12_grounded_stance_poses.py",
     "patches/v11_13_reference_assemblies.py",
     "patches/v11_14_reference_refinement.py",
-    "patches/v11_15_native_surface_study.py"
+    "patches/v11_15_native_surface_study.py",
+    "patches/v11_16_character_detail_budget.py"
   ],
-  "finalBytes": 2487712,
-  "finalSha256": "c4c7356c35827eeaea2f24ca943c0dd431c65f5898dbcd325440f0821fc10a3a"
+  "finalBytes": 2501987,
+  "finalSha256": "fd9deed8f22f5b111eadcb59501d47b00061bd4bd219bae6e8e894c82138c97a"
 }

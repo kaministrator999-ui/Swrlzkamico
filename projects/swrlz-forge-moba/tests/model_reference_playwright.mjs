@@ -20,13 +20,29 @@ try{for(const mode of modes){const ctx=await browser.newContext({...mode,acceptD
  const canonical=await snap(),m=canonical.project.modelAtelier,stats=(await state()).metrics;
  assert.equal(m.assemblies.components.length,3);assert.equal(m.assemblies.sockets.length,2);assert.equal(new Set(m.parts.map(p=>p.id)).size,301);
  assert.equal(m.parts.filter(p=>p.surfaceStyle==='paper-plume').length,2);assert.equal(m.parts.filter(p=>p.surfaceStyle==='portrait-head').length,1);
- assert.equal(stats.meshObjects,301);assert.ok(stats.triangles>50000&&stats.triangles<110000);assert.equal(Object.values(stats.groups).reduce((n,g)=>n+g.triangles,0),stats.triangles);
+ assert.equal(stats.meshObjects,301);assert.equal(stats.triangles,124140);assert.equal(stats.groups.Character.triangles,92028);assert.equal(Object.values(stats.groups).reduce((n,g)=>n+g.triangles,0),stats.triangles);
  const viewport=await page.locator('#modelAtelierViewport').boundingBox();assert.ok(viewport.height>mode.viewport.height*.45);assert.ok(viewport.width>mode.viewport.width*.65);pass('native_sculpt_separate_creatures_and_measured_generated_geometry');
  for(const view of ['front','three','back','right']){await page.evaluate(v=>window.SWYRL_ENGINE_MODEL_ATELIER.view(v),view);await page.screenshot({path:out+'/'+mode.name+'-'+view+'.png'});}
  if(mode.hasTouch){await page.setViewportSize({width:980,height:1700});await page.waitForTimeout(150);await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.view('front'));const fit=(await state()).cameraFit;assert.ok(fit.left>=-1&&fit.right<=1&&fit.bottom>=-1&&fit.top<=1,JSON.stringify(fit));await page.screenshot({path:out+'/'+mode.name+'-desktop-site.png'});await page.setViewportSize(mode.viewport);await page.waitForTimeout(150);await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.view('front'));}
  pass('front_three_quarter_rear_profile_and_practical_phone_viewport');
  const canonicalModel=structuredClone((await snap()).project.modelAtelier);
  await page.locator('#modelAtelierParts').selectOption('model-0001');
+ const density=()=>page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.density());
+ assert.equal((await density()).byPart['model-0001'].triangles,12096);
+ const nativeHighObj=await fs.readFile(await download('OBJ','high-detail.obj'),'utf8');
+ await page.locator('#modelAtelierDensityU').fill('64');await page.locator('#modelAtelierDensityV').fill('48');await hit('DensityApply');
+ assert.equal((await density()).byPart['model-0001'].triangles,6016);await hit('Undo');assert.deepEqual((await snap()).project.modelAtelier.parts,canonicalModel.parts);
+ await page.locator('#modelAtelierParts').selectOption('model-0001');await page.locator('#modelAtelierFaceNose').fill('.19');await hit('DensityApply');
+ const sculptedObj=await fs.readFile(await download('OBJ','sculpted-contours.obj'),'utf8');assert.notEqual(sculptedObj,nativeHighObj);assert.equal((await density()).totalTriangles,124140);await hit('Undo');
+ await page.locator('#modelAtelierParts').selectOption('model-0001');await page.locator('#modelAtelierDensityU').fill('97');await hit('DensityApply');assert.deepEqual((await snap()).project.modelAtelier.parts,canonicalModel.parts);assert.ok((await page.locator('#modelAtelierStatus').innerText()).startsWith('Mesh detail rejected:'));
+ await page.locator('#modelAtelierDetailBudget summary').click();await page.locator('#modelAtelierDensityPreset').selectOption('mobile');await hit('DensityPresetApply');
+ assert.equal((await density()).heroTriangles,26908);assert.equal((await density()).byPart['model-0001'].triangles,6016);
+ assert.deepEqual((await snap()).project.modelAtelier.parts.filter(p=>p.group!=='Character'),canonicalModel.parts.filter(p=>p.group!=='Character'));
+ await hit('Undo');assert.deepEqual((await snap()).project.modelAtelier.parts,canonicalModel.parts);
+ await page.locator('#modelAtelierParts').selectOption('model-0001');const wireBefore=await snap();await page.locator('#modelAtelierTopologyView').check();assert.equal((await density()).topologyView,true);assert.deepEqual(await snap(),wireBefore);await page.screenshot({path:out+'/'+mode.name+'-face-topology.png'});await page.locator('#modelAtelierTopologyView').uncheck();
+ const invalidDetail={schema:'swyrl-model-atelier-v1',model:structuredClone(canonicalModel)};invalidDetail.model.parts[0].meshDensity.u=1000;
+ await page.locator('#modelAtelierImportFile').setInputFiles({name:'invalid-detail.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(invalidDetail))});await page.waitForFunction(()=>document.getElementById('modelAtelierStatus').textContent.startsWith('Import rejected:'));assert.deepEqual((await snap()).project.modelAtelier.parts,canonicalModel.parts);
+ pass('higher_density_face_contours_mobile_budget_topology_view_and_atomic_round_trips');
  const originalObj=await fs.readFile(await download('OBJ','original-surface.obj'),'utf8');
  await page.locator('#modelAtelierJawTaper').fill('.4');await hit('SurfaceApply');
  assert.equal((await snap()).project.modelAtelier.parts.find(p=>p.id==='model-0001').jawTaper,.4);

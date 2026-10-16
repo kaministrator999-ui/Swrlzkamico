@@ -1,3 +1,15 @@
+## v11.16 · facial contours and adjustable native mesh detail (2026-10-16)
+
+Owner requested a much more detailed face and asked to verify the proposed 20k mobile triangle budget against UE4 guidance. The current heroine uses **92,028 triangles**, including **12,096 in the continuous head surface** (previously 77,444 and 1,944 respectively). Native nose bridge, eye socket and cheek controls shape the actual head vertices. Smooth jaw transitions remove the hard chin/cheek sampling discontinuity exposed by denser topology. Spline body surfaces, eyes, hair and garment panels have saved sampling controls, with a triangle-edge preview and exact selected/heroine/whole-set counts.
+
+The optional mobile preset is **26,908 heroine triangles**, including **6,016 in the head**. The two independent paper ferrets and bunny retain **32,112 triangles** across both presets, so the complete sets are **124,140 close-up / 59,020 mobile**. The high detail preset is the saved starter. This is selectable native authoring detail; it is not automatic distance LOD or a measured physical-device FPS guarantee. Mesh sampling and continuous facial forms are independently editable, undoable and retained by native JSON/OBJ export.
+
+Epic's [UE4.27 mobile performance guide](https://dev.epicgames.com/documentation/en-us/unreal-engine/performance-guidelines-for-mobile-devices?application_version=4.27) discusses about 500k triangles for the entire view on older iPad targets, rather than a 20k per-character rule. Its [optimization guide](https://dev.epicgames.com/documentation/en-us/unreal-engine/optimization-and-development-best-practices-for-mobile?application_version=4.27) emphasizes profiling target hardware and material/draw-call costs. Preset budgets here are project choices, not Epic character limits.
+
+Native asset: `scenes/model-atelier-festival-detail-v11-16.swyrl.json`, saved and reimported through real Model Atelier controls; **301 editable meshes**, with all 85 prior patches/runtime sources and 38 historical assets preserved. The independent audit's asset list now includes the v11.15 and v11.16 native scenes. Seal: **2,501,987 HTML bytes**, SHA-256 `fd9deed8f22f5b111eadcb59501d47b00061bd4bd219bae6e8e894c82138c97a`, **86 patches and 39 assets**. Native desktop/phone, full compatibility CI, validated merge, the final dedicated deployment and exact hosted verification remain separate gates; owner visual acceptance remains separate.
+
+Recipe and evidence details: [Native detail workflow](reports/CHARACTER_DETAIL_V11_16.md).
+
 ## v11.15 · native portrait, cloth and ferret surface study (2026-10-16)
 
 The owner requested continued native-editor work against the supplied Honor of Kings Scorchet turnaround. The new starter is the actual model saved and reimported through Model Atelier after **80 native inspector operations**: shorter facial proportions and smiling lip contours, subtler brows/blush, a continuous cyan/coral crown, clearer tapered ferret muzzles and exposed ears/masks, paper bodies swept behind the face in profile, flatter fitted skirt panels with matching borders, a broader coral wrap and corrected rear shoulder layering.

@@ -1,0 +1,45 @@
+name: Verify §E native character detail
+on:
+  pull_request:
+    paths:
+      - 'projects/swrlz-forge-moba/**'
+      - '.github/workflows/verify-character-detail.yml'
+  push:
+    branches: [feature/character-detail-budget]
+    paths:
+      - 'projects/swrlz-forge-moba/**'
+      - '.github/workflows/verify-character-detail.yml'
+permissions:
+  contents: read
+jobs:
+  author:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build sealed release and validate preserved native assets
+        run: |
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/character-detail
+          python projects/swrlz-forge-moba/tests/model_reference_package.py --package /tmp/character-detail
+      - name: Install native browser
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Operate detail controls and export the native model
+        run: |
+          python -m http.server 8781 --directory /tmp/character-detail >/tmp/detail-http.log 2>&1 &
+          SWYRL_DETAIL_SERVER_PID=$!
+          trap 'kill "$SWYRL_DETAIL_SERVER_PID" 2>/dev/null || true' EXIT
+          node projects/swrlz-forge-moba/authoring/festival_detail_authoring_v11_16.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-character-detail-evidence
+          path: character-detail-evidence/
+          retention-days: 5
