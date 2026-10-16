@@ -1,6 +1,6 @@
 ID=web-chat
-VERSION=1.5.149
-REVISION=1.5.149-v267-compact-inventory
+VERSION=1.5.150
+REVISION=1.5.150-v268-contextual-file-selection
 KIND=web-interface
 SOURCE_BRANCH=runtime
 STATUS=active
