@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.11",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_11_FACE_POSE_FRAMES",
-  "reason": "Owner requested implementation directly inside §E Model Atelier after front/rear/side screenshots: refined face and actual bendable knee spline editing in Relaxed Idle, Victory A/B, Neutral; saved native custom pose/camera frames and front/back/side/3-4 presentation views. Original 811-part scene and 35 native historical assets preserved. PR #193 validated head ccca615f79960f7cb0ec65a76daa466d6b178b3e (all 17 independent browser suites and eight §E source workflows green), merged into main 16faf1b8a7b42f15e9e01b56da010b100ac6dc6b. Governed chain 81 patches; exact HTML 2,350,741 bytes / SHA-256 e89ea40f0b7609d0b5cf376666aaba4a58971a3a294c3225ad303ce9f6ef4792. Guarded publish and independent live audit required. True skinning and animation timeline not claimed; owner visual acceptance remains outstanding.",
-  "sourceCommit": "16faf1b8a7b42f15e9e01b56da010b100ac6dc6b",
-  "sourceIntegritySha256": "e89ea40f0b7609d0b5cf376666aaba4a58971a3a294c3225ad303ce9f6ef4792"
+  "releaseVersion": "v11.12",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_12_GROUNDED_STANCE_POSES",
+  "reason": "Owner screenshot rejection: v11.11 rubber/banana-shaped bent legs looked painful. Fixed inside §E Model Atelier with near-straight hip→knee→ankle native loft sections, grounded stable support leg and coherent shoe/sock/sole offsets for relaxed idle/victory A/B; neutral restores safely; 811 original parts, 35 native assets unchanged. PR #194 merged f2fa861fe65742f7a3dce1b60db358a6e6472368 after 17/17 browser jobs and nine independent GitHub workflows passed on head 6ab1a126ffcc73b904436d6603a51c1428bc59aa. 82 governed patches. Source seal 2,352,463 bytes / SHA-256 76051c90fda3b9f32fef582977fb8af872edc14de44781e253f90ed3f0f9bc6f. Dedicated guarded publish and independent live hash+assets audit required; owner multi-angle visual acceptance separate; no skeletal animation claim.",
+  "sourceCommit": "f2fa861fe65742f7a3dce1b60db358a6e6472368",
+  "sourceIntegritySha256": "76051c90fda3b9f32fef582977fb8af872edc14de44781e253f90ed3f0f9bc6f"
 }
