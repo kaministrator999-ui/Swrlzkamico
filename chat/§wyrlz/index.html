@@ -1587,7 +1587,7 @@
       // paths are direct children: reconstruct only evidenced parent folders.
       const inventoryDirectoryForExplorer=inventory=>{
         if(!inventory||inventory.kind!=="recursive")return null;
-        const scope=String(inventory.scope||"").replace(/^\\/|\\/$/g,"");
+        const scope=String(inventory.scope||"").replace(/^\/|\/$/g,"");
         const prefix=scope?scope+"/":"";
         const entries=new Map();
         for(const item of inventory.lines){
@@ -1602,9 +1602,9 @@
         }
         if(!entries.size)return null;
         const rows=[...entries].sort((a,b)=>a[0].localeCompare(b[0]));
-        return "## GitHub directory: "+(scope||"/")+"\\n"+
-          rows.map(([path,type])=>"- "+type+" "+path).join("\\n")+
-          (inventory.lines.length<inventory.count?"\\n(First "+rows.length+" entries.)":"");
+        return "## GitHub directory: "+(scope||"/")+"\n"+
+          rows.map(([path,type])=>"- "+type+" "+path).join("\n")+
+          (inventory.lines.length<inventory.count?"\n(First "+rows.length+" entries.)":"");
       };
       const appendGitHubInventoryCard=(container,inventory)=>{
         const section=document.createElement("section");section.className="github-inventory-card";
