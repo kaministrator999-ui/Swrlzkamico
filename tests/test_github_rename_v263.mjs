@@ -9,7 +9,7 @@ const widget=fs.readFileSync(path.join(root,"hf_space/chat/§wyrlz/assets/github
 const station=fs.readFileSync(path.join(root,"hf_space/station.py"),"utf8");
 const chat=fs.readFileSync(path.join(root,"chat/§wyrlz/index.html"),"utf8");
 assert(station.includes("githubChatFileAction"));
-assert(chat.includes("swrlz:github-rename-proposal"));
+assert(!chat.includes("swrlz:github-rename-proposal"),"Chat no longer emits legacy popup triggers");
 assert(!station.includes("github-rename-v263.js"),"Legacy rename popup must not load in Chat");
 assert(station.includes("github-rename-receipt-v263.js"));
 const made=[],callbacks={},network=[];
