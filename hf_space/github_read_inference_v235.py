@@ -140,7 +140,7 @@ def classify_read(prompt, context=None):
     # Simple file-list questions need an inventory, not a source-analysis report.
     # Recursive listing includes files below the root, not just top-level items.
     if re.fullmatch(r"(?:what(?: are)?|which)(?: the)? files(?: are)? (?:in|of) (?:my|our|the) (?:github )?(?:repo|repository)[?.!\s]*", lower):
-        return "@GitHub files recursive" + suffix
+        return "@GitHub files" + suffix  # Reuse v223 interactive directory explorer.
     # Bare filename answers to a previous file-location exchange are read-only
     # source requests, not instructions to generate a new program.
     nominal = re.fullmatch(
