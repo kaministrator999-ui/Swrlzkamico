@@ -1880,6 +1880,17 @@ def agent_events(data, model_generator=None, coder_generator=None):
     """Station-facing tool events: observed progress, no secret or raw reasoning."""
     user = str(data.get("userId") or "")
     prompt = str(data.get("prompt") or "").strip()
+    # v267: concrete file requests outrank source-specialist exposition.
+    # These are existing read-only GitHub commands, still checked by the
+    # connected owner's Stage-1 authorization and pinned Git evidence.
+    literal_read = read_inference.classify_read(prompt, data.get("githubContext"))
+    if (literal_read and re.match(r"^@GitHub (?:files(?:\\s|$)|read file\\s|search\\s)", literal_read)
+            and not prompt.lower().startswith("@github ")):
+        yield {"type":"STATUS","phase":"GITHUB_READ_EVIDENCE",
+               "reason":"Resolving a file or directory read from verified GitHub context.",
+               "categories":["GITHUB","READ_ONLY","SOURCE"]}
+        yield from command_events({**data,"prompt":literal_read})
+        return
     source_request = source_specialist.parse(prompt, data.get("githubContext"))
     # An ordinary natural source question retains the existing deterministic
     # v235 report when no specialist generator is available. Explicit source
