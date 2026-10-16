@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.12",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_12_GROUNDED_STANCE_POSES",
-  "reason": "Owner screenshot rejection: v11.11 rubber/banana-shaped bent legs looked painful. Fixed inside §E Model Atelier with near-straight hip→knee→ankle native loft sections, grounded stable support leg and coherent shoe/sock/sole offsets for relaxed idle/victory A/B; neutral restores safely; 811 original parts, 35 native assets unchanged. PR #194 merged f2fa861fe65742f7a3dce1b60db358a6e6472368 after 17/17 browser jobs and nine independent GitHub workflows passed on head 6ab1a126ffcc73b904436d6603a51c1428bc59aa. 82 governed patches. Source seal 2,352,463 bytes / SHA-256 76051c90fda3b9f32fef582977fb8af872edc14de44781e253f90ed3f0f9bc6f. Dedicated guarded publish and independent live hash+assets audit required; owner multi-angle visual acceptance separate; no skeletal animation claim.",
-  "sourceCommit": "f2fa861fe65742f7a3dce1b60db358a6e6472368",
-  "sourceIntegritySha256": "76051c90fda3b9f32fef582977fb8af872edc14de44781e253f90ed3f0f9bc6f"
+  "releaseVersion": "v11.13",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_13_REFERENCE_ASSEMBLIES",
+  "reason": "Deploy the native festival character reference sculpt and living piñata tools from PR #196. The 275-part, 82,396-triangle model has refined face/hair/outfit, separate paper ferrets on real pigtail sockets and an independent bunny. Per-model motion keys, reversible transformation, play/pause/resume/stop, full affine detach, native JSON/OBJ/component exports and phone/desktop-site framing passed. All nine source/acceptance workflows and eighteen desktop/phone browser suites passed on 82ed7f796d07bf3462f602074de4fe391cb4b74a; the exact actual job logs were decoded, including twenty new native model cases and preserved CPU geometry/game checks. Matrix: https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38849416387. All 82 prior patches/runtime modules and 35 historical assets are preserved. Sealed: 83 patches, 36 assets, 2,467,619 HTML bytes, SHA-256 25b33e64c5211d47dde7bb8cb77e0f58d1917d5c55971938bf732c2d1371b9d8. This dedicated request is the final repository mutation; terminal deployment and exact hosted audit remain required. Original geometric reference study; no skeletal-skinning or pixel-exact likeness claim.",
+  "sourceCommit": "f849258dbec5e0aea79c3d954b3f6f77b88b2c23",
+  "sourceIntegritySha256": "25b33e64c5211d47dde7bb8cb77e0f58d1917d5c55971938bf732c2d1371b9d8"
 }
