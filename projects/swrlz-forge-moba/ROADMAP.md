@@ -1,3 +1,7 @@
+## v11.15 native character surface study — authoring candidate (2026-10-16)
+
+Owner supplied the Honor of Kings Scorchet festival turnaround and requested native editor modeling. The exact v11.14 source seal and successful production deployment/audit were reconstructed. This branch adds bounded native jaw and cloth controls, selected-part framing and portrait fill lighting. A dedicated non-deploying CI browser authoring job operates the actual native inspector, saves/reimports model JSON and captures all four views plus closeups. The authored scene must be reviewed and sealed before full release CI, merge and the final dedicated deploy request. Current production remains v11.14; no visual acceptance is claimed. Existing game modes, model assets and Chat/LALM deployment stay independent.
+
 # §wyrl§ Engine · Roadmap
 
 ## v11.13 · native reference sculpt and independent living piñatas
