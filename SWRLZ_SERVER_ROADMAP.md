@@ -1,3 +1,13 @@
+## UPDATE STARTED — 2026-10-16 — v266 Chat export (64) mobile GitHub file preview and rename continuity
+
+**Evidence:** Three mobile screenshots and the newest exported conversation only. Verified file read succeeds, but raw URL/SHA metadata and horizontally scrolling plain text are poor on Android; two rename followups enter code generation and return rejected content. No GitHub rename performed.
+
+**Scoped code:** Existing verified source card now handles authenticated GitHub file read metadata with collapsed hashes, safe provider link and untouched content bytes. Only plain-text previews wrap. The owner-bound Chat rename flow uses verified same-thread file context, asks for a missing filename and supports colloquial 'too', but never writes before explicit confirmation. Files changed: `chat/§wyrlz/index.html`, `hf_space/github_conversation_actions_v264.py`, `hf_space/station.py`, related regression tests. No §E/model/other changes.
+
+**Receipts:** [PR #198](https://github.com/kaministrator999-ui/Swrlzkamico/pull/198), merged `510362e50fd9db9f8f325855d72e3d8eb5f1011a`, tested Git tree `0951c7a309b48fc19729c51f1dbc36696a335d3c`; [HF candidate CI #38949111598](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38949111598) SUCCESS and [mobile lyric CI #38949111580](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38949111580) SUCCESS. Report: `reports/V266_CHAT_FILE_PREVIEW_RENAME_2026-10-16.md`.
+
+**Gate:** Existing Space guarded deployment requested next. Baseline runtime versions Repository Work `1.0.204`, Server `2.3.416`, Web Chat `1.5.147`. Do not advance until terminal publication receipt; Android owner acceptance remains separately unverified.
+
 # §E v11.14 reference refinement checkpoint
 
 ## v11.14 · portrait, silhouette and cloth refinement
