@@ -24,3 +24,11 @@ Date: 2026-10-16. Owner evidence: six mobile screenshots and **only the most rec
 - [PR #199](https://github.com/kaministrator999-ui/Swrlzkamico/pull/199) merged at `8222c5976b87b61d70b19d4c655b5c0819479065`. This merge has the **exact** CI candidate tree `15bd0257e40cfdad6847dffe3ea28fb205fb50ba` of `974dd776c23ed11774046527199ea5ed359dd25a`.
 - [HF Candidate Offline Validation #38952006721](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38952006721): SUCCESS, including the new v267 tests. [Mobile Lyric Integrity #38952006690](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38952006690): SUCCESS.
 - A guarded existing-Space release and signed-in Android acceptance must be separately checked. No production change is presumed solely from source/CI.
+
+## Terminal guarded release
+- Existing `kamiloki/Swyrlz` Space [guarded workflow #38952283104](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38952283104): **COMPLETED/SUCCESS**.
+- Approved source `8222c5976b87b61d70b19d4c655b5c0819479065`; merged/validated Git tree `15bd0257e40cfdad6847dffe3ea28fb205fb50ba`.
+- Previous Space revision `281e412110f766f50904c1400056651b95262f21` retained in predeploy reference artifact `12068479516` and rollback checkpoint `12068719344`.
+- Published Space revision `e85674b2ba536abc75c9a52d3c7050cc6c6dcf6a`; immutable release checkpoint `12069252636`.
+- Runtime registry reconciled to Repository Work `1.0.206`; Server Runtime `2.3.418`; Web Chat `1.5.149`; no unrelated versions changed.
+- **Truth:** SOURCE + scoped offline CI + guarded publication verified. **DEPLOYED_UNVERIFIED** for signed-in Android file listing and filename conversation behavior. A real on-device visual test remains needed; no GitHub write was performed.
