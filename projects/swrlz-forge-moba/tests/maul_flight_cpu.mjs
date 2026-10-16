@@ -30,7 +30,7 @@ assert.equal(blockedGround,null,'Flight must not accidentally replace ground pat
 const html=process.env.SWYRL_MAUL_FLIGHT_HTML;
 if(html){
   const source=readFileSync(html,'utf8');
-  for(const name of ['V11_11_FACE_POSE_FRAMES','MAUL_FLIGHT_CORE_END','maulFlightEnabled','MaulBuilderWing',
+  for(const name of ['V11_12_GROUNDED_STANCE_POSES','MAUL_FLIGHT_CORE_END','maulFlightEnabled','MaulBuilderWing',
     'maulArtOldTexture','SWYRL_ENGINE_MAUL.flightStatus','SWYRL_ENGINE_MAUL.artStatus']){
     assert.ok(source.includes(name),'Missing sealed v11.2 integration '+name);
   }

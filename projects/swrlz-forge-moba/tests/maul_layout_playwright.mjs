@@ -136,7 +136,7 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
     console.log('MAUL_LAYOUT_SOURCE_SHA256',mode.name,sourceSha256);
     await page.waitForFunction(()=>window.SWYRL_ENGINE_MAUL?.uiStatus&&window.SWYRL_ENGINE_AGENT.project().canonicalId==='maul-frostveil',undefined,{timeout:60000});
     await page.locator('#perfPreset').selectOption('medium',{force:true});await page.evaluate(()=>window.__maulClock.freeze());await frames(page,2);
-    assert.equal(await page.evaluate(()=>window.SWRLZ_FORGE_BUILD?.version),'v11.11','Wrong engine release');
+    assert.equal(await page.evaluate(()=>window.SWRLZ_FORGE_BUILD?.version),'v11.12','Wrong engine release');
     const defaultCanonical=await saved(page);assert.equal(defaultCanonical.project.maulSpawnStyle,'grouped-v1','Hub/query must open current grouped starter');
     const preservedClassic=await page.evaluate(async()=>{const response=await fetch('scenes/maul-frostveil-classic.swyrl.json');if(!response.ok)throw Error('Published classic map unavailable');return response.json();});
     await importFixture(page,preservedClassic);
@@ -307,7 +307,7 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
     pass('published_legacy_maul_import_keeps_old_geometry_and_projects_switches_back_to_classic_default');
 
     assert.deepEqual(errors,[],'Browser errors during classic Maul acceptance');assert.equal(cases.length,16,'Every classic layout case must execute');
-    receipts.push({mode:mode.name,viewport:mode.viewport,cases,canonicalId:canonical.project.canonicalId,version:'v11.11',sourceSha256,layout:'classic-v2',nativeRun:run.id,mapActors:canonical.scene.actors.length,grid:[41,45],lowerReturn:{unit:tracking.id,stage:previousStage},victory:{waves:won.wave,kills:won.kills,lives:won.lives},defeat:{leaks:lost.leaks,lives:lost.lives}});
+    receipts.push({mode:mode.name,viewport:mode.viewport,cases,canonicalId:canonical.project.canonicalId,version:'v11.12',sourceSha256,layout:'classic-v2',nativeRun:run.id,mapActors:canonical.scene.actors.length,grid:[41,45],lowerReturn:{unit:tracking.id,stage:previousStage},victory:{waves:won.wave,kills:won.kills,lives:won.lives},defeat:{leaks:lost.leaks,lives:lost.lives}});
     await writeFile(resolve(output,mode.name+'-receipt.json'),JSON.stringify(receipts.at(-1),null,2));console.log(mode.name==='desktop'?'MAUL_LAYOUT_DESKTOP_PASS':'MAUL_LAYOUT_MOBILE_PASS');
   }catch(error){await page.screenshot({path:resolve(output,mode.name+'-failure.png')}).catch(()=>{});await writeFile(resolve(output,mode.name+'-failure.json'),JSON.stringify({message:String(error),cases,errors,state:await state(page).catch(()=>null),ui:await ui(page).catch(()=>null)},null,2));throw error;}
   finally{await context.close();}

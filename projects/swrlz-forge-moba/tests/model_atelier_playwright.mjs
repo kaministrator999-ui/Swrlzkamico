@@ -67,7 +67,18 @@ try{
     await page.locator('#modelAtelierPoseApply').click();
     const idleLeg=await page.evaluate(()=>window.SWYRL_ENGINE_AGENT.inspectScene().project.modelAtelier.parts
       .find(x=>x.id==='atelier-v118-right-leg').path);
-    assert(idleLeg[3][2]>neutralLeg.path[3][2]+.09,'Idle did not bend the actual knee spline');
+    // Screenshot rejection regression: support shin remains nearly straight while
+    // relaxed foot moves sideways with its shoe assembly, soles never levitate.
+    const idleGround=await page.evaluate(()=>{
+      const p=window.SWYRL_ENGINE_AGENT.inspectScene().project.modelAtelier.parts;
+      const get=id=>p.find(q=>q.id===id);
+      return {left:get('atelier-v118-left-leg').path,right:get('atelier-v118-right-leg').path,
+        soleL:get('v119-left-sole').position,soleR:get('v119-right-sole').position};
+    });
+    assert(Math.abs(idleLeg[3][2]-neutralLeg.path[3][2])<.04,'Idle support leg should NOT banana-bend');
+    assert.equal(idleGround.soleL[1],.07,'Idle left foot left the floor');
+    assert.equal(idleGround.soleR[1],.07,'Idle right foot left the floor');
+    assert(idleGround.soleL[0]<-.315,'Relaxed foot should shift slightly outward');
     await page.locator('#modelAtelierPoseView').selectOption('back');
     await page.locator('#modelAtelierPoseViewApply').click();
     await page.locator('#modelAtelierPoseName').fill('Showcase back');
@@ -79,7 +90,15 @@ try{
     await page.locator('#modelAtelierPoseApply').click();
     const victoryLeg=await page.evaluate(()=>window.SWYRL_ENGINE_AGENT.inspectScene().project.modelAtelier.parts
       .find(x=>x.id==='atelier-v118-right-leg').path);
-    assert(victoryLeg[3][2]>idleLeg[3][2]+.18,'Victory did not deepen the actual knee pose');
+    assert(victoryLeg[3][2]>idleLeg[3][2]+.04,'Victory knee did not form a restrained anatomical bend');
+    const victoryGround=await page.evaluate(()=>{
+      const p=window.SWYRL_ENGINE_AGENT.inspectScene().project.modelAtelier.parts;
+      const get=id=>p.find(q=>q.id===id);
+      return {rightSole:get('v119-right-sole').position,leftSole:get('v119-left-sole').position};
+    });
+    assert(victoryGround.rightSole[0]>.38,'Victory stance should shift right foot');
+    assert.equal(victoryGround.rightSole[1],.07,'Victory foot lifted off the ground');
+    assert.equal(victoryGround.leftSole[0],-.28,'Victory support foot wandered');
     await page.locator('#modelAtelierPoseSelect').selectOption('saved:Showcase back');
     await page.locator('#modelAtelierPoseApply').click();
     const restoredLeg=await page.evaluate(()=>window.SWYRL_ENGINE_AGENT.inspectScene().project.modelAtelier.parts
