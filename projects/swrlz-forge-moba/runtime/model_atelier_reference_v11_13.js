@@ -2,7 +2,7 @@
 let atelierAssemblyPlaying=false,atelierAssemblyLast=0,atelierAssemblyTime=4;
 const atelierAssemblyMeshes=new Map();
 function atelierReferenceGeometry(part){
-  if(part.surfaceStyle==='portrait-head'){
+  if(part.kind==='sphere'&&part.surfaceStyle==='portrait-head'){
     const g=new THREE.SphereGeometry(1,36,28),a=g.attributes.position;
     for(let i=0;i<a.count;i++){let x=a.getX(i),y=a.getY(i),z=a.getZ(i);
       // A rounded cranium, cheek shelf and tapered jaw. Positive Z is the face.
@@ -12,6 +12,7 @@ function atelierReferenceGeometry(part){
       a.setXYZ(i,x,y,z);
     }g.computeVertexNormals();g.computeBoundingSphere();return g;
   }
+  if(part.kind!=='loft')return null;
   if(part.surfaceStyle==='hair-lock'||part.surfaceStyle==='anatomy-smooth'&&model()?.assemblies){const g=atelierOrganicLoft(part),idx=g.index;for(let i=0;i<idx.count;i+=3){const b=idx.getX(i+1);idx.setX(i+1,idx.getX(i+2));idx.setX(i+2,b);}g.computeVertexNormals();return g;}
   if(part.surfaceStyle==='paper-leaf')return atelierReferenceLeaf(part);
   if(part.surfaceStyle!=='paper-plume')return null;
@@ -63,14 +64,21 @@ function atelierValidateAssemblies(data,parts){
   if(data.schema!=='swyrl-assemblies-v1'||!Array.isArray(data.sockets)||data.sockets.length>32||!Array.isArray(data.components)||data.components.length>16)throw Error('Invalid assembly schema or limits.');
   if(!Number.isFinite(data.time)||data.time<0||data.time>30||!Number.isFinite(data.duration)||data.duration<1||data.duration>30)throw Error('Invalid assembly duration.');
   const ids=new Set(),sockets=new Set(),groups=new Set();
-  for(const s of data.sockets){if(typeof s.id!=='string'||s.id.length>60||sockets.has(s.id)||s.owner!=='hero'||!vec(s.position)||typeof s.name!=='string'||s.name.length>80||s.partId!==undefined&&(!parts.some(p=>p.id===s.partId)||!vec(s.local)))throw Error('Invalid named socket.');sockets.add(s.id);}
-  for(const c of data.components){if(typeof c.id!=='string'||c.id.length>60||ids.has(c.id)||typeof c.group!=='string'||groups.has(c.group)||!parts.some(p=>p.group===c.group)||typeof c.name!=='string'||c.name.length>80||!['attached','free'].includes(c.state)||!vec(c.pivot)||!vec(c.offset)||!vec(c.rotation)||c.socketId!=null&&!sockets.has(c.socketId)||c.state==='attached'&&!sockets.has(c.socketId)||!Number.isFinite(c.amplitude)||c.amplitude<0||c.amplitude>.3||!Number.isFinite(c.speed)||c.speed<.1||c.speed>4||c.scale!==undefined&&(!Number.isFinite(c.scale)||c.scale<.1||c.scale>3))throw Error('Invalid independent model or socket.');if(c.keys!==undefined&&(!Array.isArray(c.keys)||c.keys.length>24||c.keys.some((k,i)=>!Number.isFinite(k.time)||k.time<0||k.time>data.duration||i>0&&k.time<=c.keys[i-1].time||!vec(k.offset)||!vec(k.rotation)||!Number.isFinite(k.scale)||k.scale<.1||k.scale>3)))throw Error('Invalid model motion keys.');ids.add(c.id);groups.add(c.group);}
+  for(const s of data.sockets){if(typeof s.id!=='string'||s.id.length>60||sockets.has(s.id)||s.owner!=='hero'||!vec(s.position)||typeof s.name!=='string'||s.name.length>80||s.partId!==undefined&&(!parts.some(p=>p.id===s.partId)||!vec(s.local)||!s.bind||!vec(s.bind.position)||!vec(s.bind.rotation)||!vec(s.bind.scale)||s.bind.scale.some(v=>v<=.005)))throw Error('Invalid named socket.');sockets.add(s.id);}
+  for(const c of data.components){if(typeof c.id!=='string'||c.id.length>60||ids.has(c.id)||typeof c.group!=='string'||groups.has(c.group)||!parts.some(p=>p.group===c.group)||typeof c.name!=='string'||c.name.length>80||!['attached','free'].includes(c.state)||!vec(c.pivot)||!vec(c.offset)||!vec(c.rotation)||c.socketId!=null&&!sockets.has(c.socketId)||c.state==='attached'&&!sockets.has(c.socketId)||!Number.isFinite(c.amplitude)||c.amplitude<0||c.amplitude>.3||!Number.isFinite(c.speed)||c.speed<.1||c.speed>4||c.scale!==undefined&&(!Number.isFinite(c.scale)||c.scale<.1||c.scale>3))throw Error('Invalid independent model or socket.');if(c.freeMatrix!==undefined&&(!Array.isArray(c.freeMatrix)||c.freeMatrix.length!==16||!c.freeMatrix.every(n=>Number.isFinite(n)&&Math.abs(n)<=100)||[3,7,11].some(i=>Math.abs(c.freeMatrix[i])>1e-8)||Math.abs(c.freeMatrix[15]-1)>1e-8||Math.abs(new THREE.Matrix4().fromArray(c.freeMatrix).determinant())<1e-8))throw Error('Invalid detached world matrix.');if(c.keys!==undefined&&(!Array.isArray(c.keys)||c.keys.length>24||c.keys.some((k,i)=>!Number.isFinite(k.time)||k.time<0||k.time>data.duration||i>0&&k.time<=c.keys[i-1].time||!vec(k.offset)||!vec(k.rotation)||!Number.isFinite(k.scale)||k.scale<.1||k.scale>3)))throw Error('Invalid model motion keys.');ids.add(c.id);groups.add(c.group);}
   return structuredClone(data);
 }
 function atelierAssemblyData(){return model()?.assemblies||null;}
 function atelierAssemblySample(c,time){
-  const data=atelierAssemblyData(),socket=data?.sockets.find(s=>s.id===c.socketId);let pivot=socket?.position||c.pivot;
-  if(socket?.partId){const p=partById(socket.partId);if(p){const matrix=new THREE.Matrix4().compose(new THREE.Vector3(...p.position),new THREE.Quaternion().setFromEuler(new THREE.Euler(...p.rotation)),new THREE.Vector3(...p.scale));pivot=new THREE.Vector3(...socket.local).applyMatrix4(matrix).toArray();}}
+  const data=atelierAssemblyData(),socket=data?.sockets.find(s=>s.id===c.socketId),restPivot=new THREE.Vector3(...c.pivot);
+  const parentDelta=new THREE.Matrix4();let pivot=c.pivot.slice();
+  const poseMatrix=p=>new THREE.Matrix4().compose(new THREE.Vector3(...p.position),new THREE.Quaternion().setFromEuler(new THREE.Euler(...p.rotation)),new THREE.Vector3(...p.scale));
+  if(c.state==='attached'&&socket?.partId){
+    const part=partById(socket.partId);if(part&&socket.bind){
+      const current=poseMatrix(part),rest=poseMatrix(socket.bind);parentDelta.copy(current).multiply(rest.invert());
+      pivot=new THREE.Vector3(...socket.local).applyMatrix4(current).toArray();
+    }
+  }else if(c.state==='attached'&&socket){parentDelta.makeTranslation(...socket.position.map((v,i)=>v-c.pivot[i]));pivot=socket.position.slice();}
   let offset=c.offset.slice(),rot=c.rotation.slice(),scale=c.scale||1;
   if(c.state==='attached'){
     const t=Math.min(1,Math.max(0,time/3.6)),ease=t*t*t*(t*(t*6-15)+10),sign=c.pivot[0]<0?-1:1;
@@ -83,7 +91,14 @@ function atelierAssemblySample(c,time){
     offset=a.offset.map((v,i)=>THREE.MathUtils.lerp(v,b.offset[i],u));
     const qa=new THREE.Quaternion().setFromEuler(new THREE.Euler(...a.rotation)),qb=new THREE.Quaternion().setFromEuler(new THREE.Euler(...b.rotation));qa.slerp(qb,u);rot=new THREE.Euler().setFromQuaternion(qa).toArray().slice(0,3);scale=THREE.MathUtils.lerp(a.scale,b.scale,u);
   }
-  return {pivot,offset,rotation:rot,scale};
+  const matrix=new THREE.Matrix4();
+  if(c.state==='free'&&c.freeMatrix&&!c.keys?.length){
+    matrix.fromArray(c.freeMatrix);const p=new THREE.Vector3(),q=new THREE.Quaternion(),s=new THREE.Vector3();matrix.decompose(p,q,s);rot=new THREE.Euler().setFromQuaternion(q).toArray().slice(0,3);scale=Math.cbrt(Math.abs(s.x*s.y*s.z));offset=restPivot.clone().applyMatrix4(matrix).sub(restPivot).toArray();
+  }else{
+    const q=new THREE.Quaternion().setFromEuler(new THREE.Euler(...rot));
+    matrix.compose(restPivot.clone().add(new THREE.Vector3(...offset)),q,new THREE.Vector3(scale,scale,scale));matrix.multiply(new THREE.Matrix4().makeTranslation(...c.pivot.map(v=>-v)));matrix.premultiply(parentDelta);
+  }
+  return {pivot,offset,rotation:rot,scale,matrix:matrix.toArray()};
 }
 function atelierBindAssemblyMeshes(){
   atelierAssemblyMeshes.clear();const data=atelierAssemblyData();if(!data)return;
@@ -96,15 +111,16 @@ function atelierBindAssemblyMeshes(){
 function atelierApplyAssemblyTime(time){
   const data=atelierAssemblyData();if(!data||!modelRoot)return;
   atelierAssemblyTime=Math.max(0,Math.min(data.duration,time));
-  for(const c of data.components){const s=atelierAssemblySample(c,atelierAssemblyTime),pivot=new THREE.Vector3(...s.pivot),q=new THREE.Quaternion().setFromEuler(new THREE.Euler(...s.rotation));
+  for(const c of data.components){const sample=atelierAssemblySample(c,atelierAssemblyTime),matrix=new THREE.Matrix4().fromArray(sample.matrix);
+    if(c.id==='bunny')matrix.premultiply(new THREE.Matrix4().makeTranslation(0,Math.max(0,Math.sin(atelierAssemblyTime*c.speed*3))*c.amplitude,0));
     for(const mesh of atelierAssemblyMeshes.get(c.id)||[]){const base=mesh.userData.assemblyBase;if(!base)continue;
-      mesh.position.copy(base.position).sub(new THREE.Vector3(...c.pivot)).multiplyScalar(s.scale).applyQuaternion(q).add(pivot).add(new THREE.Vector3(...s.offset));mesh.quaternion.copy(q).multiply(base.quaternion);mesh.scale.copy(base.scale).multiplyScalar(s.scale);
+      mesh.matrixAutoUpdate=false;mesh.matrix.copy(matrix).multiply(new THREE.Matrix4().compose(base.position,base.quaternion,base.scale));
       const rest=mesh.userData.paperRest;if(rest){const a=mesh.geometry.attributes.position;
         for(let i=0;i<a.count;i++){const x=rest[i*3],y=rest[i*3+1],z=rest[i*3+2],w=Math.min(1,Math.hypot(x-c.pivot[0],y-c.pivot[1],z-c.pivot[2])/2.8);
           const wave=c.amplitude*w*w*Math.sin(atelierAssemblyTime*c.speed*2.3-w*3.5);
           a.setXYZ(i,x+wave,y+wave*.28,z+wave*1.7);}
         a.needsUpdate=true;mesh.geometry.computeVertexNormals();mesh.geometry.computeBoundingSphere();mesh.geometry.computeBoundingBox();}
-      if(c.id==='bunny')mesh.position.y+=Math.max(0,Math.sin(atelierAssemblyTime*c.speed*3))*c.amplitude;
+
     }}
   modelRoot.updateMatrixWorld(true);
   const scrub=$m('AssemblyTime');if(scrub)scrub.value=String(atelierAssemblyTime);const label=$m('AssemblyTimeLabel');if(label)label.textContent=atelierAssemblyTime.toFixed(2)+' s';
@@ -125,8 +141,8 @@ function atelierAssemblyRefresh(){
 function atelierAssemblyAttach(attached){
   const c=atelierAssemblyChoose();if(!c)return;if(attached&&!c.socketId){status('This standalone companion has no hair socket.');return;}
   const pose=atelierAssemblySample(c,atelierAssemblyTime);checkpoint();model().assemblies.time=atelierAssemblyTime;
-  if(!attached){c.offset=pose.offset.slice();c.rotation=pose.rotation.slice();c.scale=pose.scale;c.state='free';delete c.keys;}
-  else {c.state='attached';delete c.keys;c.offset=[0,0,0];c.rotation=[0,0,0];c.scale=1;atelierAssemblyTime=4;model().assemblies.time=4;}
+  if(!attached){c.offset=pose.offset.slice();c.rotation=pose.rotation.slice();c.scale=pose.scale;c.freeMatrix=pose.matrix.slice();c.state='free';delete c.keys;}
+  else {c.state='attached';delete c.keys;delete c.freeMatrix;c.offset=[0,0,0];c.rotation=[0,0,0];c.scale=1;atelierAssemblyTime=4;model().assemblies.time=4;}
   atelierAssemblyPlaying=false;signalEdited();atelierAssemblyRefresh();status(attached?'Snapped independent model to its real pigtail socket.':'Detached model, conserving its current world transform. Undo restores attachment.');
 }
 function atelierAssemblyFields(){
@@ -142,20 +158,25 @@ function atelierAssemblySaveKey(){
  const time=+atelierAssemblyTime.toFixed(3),keys=structuredClone(c.keys||[]),at=keys.findIndex(k=>Math.abs(k.time-time)<.001);
  if(keys.length>=24&&at<0){status('Maximum 24 motion keys per model.',true);return;}
  const key={time,offset,rotation,scale};if(at<0)keys.push(key);else keys[at]=key;keys.sort((a,b)=>a.time-b.time);
- checkpoint();c.keys=keys;data.time=time;atelierAssemblyPlaying=false;signalEdited();atelierAssemblyRefresh();status('Saved independent model key at '+time.toFixed(2)+' s. Preview, undo and JSON retain its motion.');
+ checkpoint();c.keys=keys;delete c.freeMatrix;data.time=time;atelierAssemblyPlaying=false;signalEdited();atelierAssemblyRefresh();status('Saved independent model key at '+time.toFixed(2)+' s. Preview, undo and JSON retain its motion.');
 }
 function atelierAssemblyInstall(){
  $m('AssemblySaveKey')?.addEventListener('click',atelierAssemblySaveKey);
  $m('AssemblyClearKeys')?.addEventListener('click',()=>{const c=atelierAssemblyChoose();if(!c||!c.keys?.length)return;checkpoint();delete c.keys;signalEdited();atelierAssemblyRefresh();});
   $m('AssemblyComponent')?.addEventListener('change',atelierAssemblyRefresh);
   $m('AssemblyPlay')?.addEventListener('click',()=>{if(!atelierAssemblyData())return;atelierAssemblyPlaying=!atelierAssemblyPlaying;if(atelierAssemblyPlaying){atelierAssemblyTime=0;atelierAssemblyLast=performance.now();} $m('AssemblyPlay').textContent=atelierAssemblyPlaying?'Ⅱ Pause':'▶ Play transform';});
-  $m('AssemblyStop')?.addEventListener('click',()=>{atelierAssemblyPlaying=false;atelierApplyAssemblyTime(atelierAssemblyData()?.time||4);$m('AssemblyPlay').textContent='▶ Play transform';});
+  $m('AssemblyStop')?.addEventListener('click',()=>{atelierAssemblyPlaying=false;atelierApplyAssemblyTime(atelierAssemblyData()?.time??4);$m('AssemblyPlay').textContent='▶ Play transform';});
   $m('AssemblyTime')?.addEventListener('input',e=>{atelierAssemblyPlaying=false;atelierApplyAssemblyTime(Number(e.target.value));atelierAssemblyFields();});
   $m('AssemblyAttach')?.addEventListener('click',()=>atelierAssemblyAttach(true));$m('AssemblyDetach')?.addEventListener('click',()=>atelierAssemblyAttach(false));
   $m('AssemblyMotionApply')?.addEventListener('click',()=>{const c=atelierAssemblyChoose(),amplitude=Number($m('AssemblyAmplitude').value),speed=Number($m('AssemblySpeed').value);if(!c||!Number.isFinite(amplitude)||amplitude<0||amplitude>.3||!Number.isFinite(speed)||speed<.1||speed>4){status('Flex must be 0–0.3 and speed 0.1–4.',true);return;}checkpoint();c.amplitude=amplitude;c.speed=speed;signalEdited();});
   $m('AssemblyExport')?.addEventListener('click',()=>{const c=atelierAssemblyChoose();if(!c)return;download(c.id+'.independent-model.json',JSON.stringify({schema:'swyrl-independent-model-v1',component:structuredClone(c),socket:structuredClone(atelierAssemblyData().sockets.find(s=>s.id===c.socketId)||null),parts:structuredClone(model().parts.filter(p=>p.group===c.group))},null,2),'application/json');});
   atelierAssemblyRefresh();
 }
+function atelierReferenceCameraFit(){
+ if(!modelRoot||!camera)return null;camera.updateMatrixWorld(true);const box=new THREE.Box3().setFromObject(modelRoot),points=[];
+ for(const x of [box.min.x,box.max.x])for(const y of [box.min.y,box.max.y])for(const z of [box.min.z,box.max.z])points.push(new THREE.Vector3(x,y,z).project(camera));
+ return {left:Math.min(...points.map(p=>p.x)),right:Math.max(...points.map(p=>p.x)),bottom:Math.min(...points.map(p=>p.y)),top:Math.max(...points.map(p=>p.y)),aspect:camera.aspect};
+}
 function atelierAssemblyStatus(){
-  const d=atelierAssemblyData();return {enabled:!!d,time:atelierAssemblyTime,playing:atelierAssemblyPlaying,components:(d?.components||[]).map(c=>({id:c.id,state:c.state,socketId:c.socketId,...atelierAssemblySample(c,atelierAssemblyTime),parts:(atelierAssemblyMeshes.get(c.id)||[]).length,bounds:(()=>{const b=new THREE.Box3();for(const m of atelierAssemblyMeshes.get(c.id)||[])b.expandByObject(m);return {min:b.min.toArray(),max:b.max.toArray()};})()})),metrics:atelierGeometryStats()};
+  const d=atelierAssemblyData();return {enabled:!!d,time:atelierAssemblyTime,playing:atelierAssemblyPlaying,cameraFit:atelierReferenceCameraFit(),components:(d?.components||[]).map(c=>({id:c.id,state:c.state,socketId:c.socketId,...atelierAssemblySample(c,atelierAssemblyTime),parts:(atelierAssemblyMeshes.get(c.id)||[]).length,bounds:(()=>{const b=new THREE.Box3();for(const m of atelierAssemblyMeshes.get(c.id)||[])b.expandByObject(m);if(b.isEmpty())return null;return {min:b.min.toArray(),max:b.max.toArray()};})()})),metrics:atelierGeometryStats()};
 }

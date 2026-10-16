@@ -99,6 +99,6 @@
     "patches/v11_12_grounded_stance_poses.py",
     "patches/v11_13_reference_assemblies.py"
   ],
-  "finalBytes": 2464667,
-  "finalSha256": "d53fd7990d85ad0444d245016ae6d61c91e2894a3adb8982756bc24f3903aaf5"
+  "finalBytes": 2467370,
+  "finalSha256": "5961d8445bfa6fbad86f8f044203e63345f9fae74b21bdce4677665777c9a0ae"
 }
