@@ -15,6 +15,8 @@ try{
     page.on('pageerror',e=>faults.push(String(e)));
     await page.goto(base+'/?project=model-atelier',{waitUntil:'domcontentloaded',timeout:60000});
     await page.locator('#modelAtelierPanel:not([hidden]) canvas').waitFor({timeout:30000});
+    // Preserve the full v11.12 editor regression on its exact legacy native fixture.
+    await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.loadLegacy());
     await page.waitForFunction(()=>window.SWYRL_ENGINE_MODEL_ATELIER?.status().count===811,{timeout:20000});
     let state=await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.status());
     assert.equal(state.active,true);assert.equal(state.open,true);assert.equal(state.count,811);

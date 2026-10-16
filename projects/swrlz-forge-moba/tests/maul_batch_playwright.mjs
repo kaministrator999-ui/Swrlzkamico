@@ -158,7 +158,7 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
     const sourceSha256=createHash('sha256').update(await response.body()).digest('hex');console.log('MAUL_BATCH_SOURCE_SHA256',mode.name,sourceSha256);
     await page.waitForFunction(()=>window.SWYRL_ENGINE_MAUL?.batchStatus&&window.SWYRL_ENGINE_AGENT.project().canonicalId==='maul-frostveil',undefined,{timeout:60000});
     await page.locator('#perfPreset').selectOption('medium',{force:true});await page.evaluate(()=>window.__maulClock.freeze());await frames(page,2);
-    assert.equal(await page.evaluate(()=>window.SWRLZ_FORGE_BUILD?.version),'v11.12','Wrong engine release');
+    assert.equal(await page.evaluate(()=>window.SWRLZ_FORGE_BUILD?.version),'v11.13','Wrong engine release');
     const canonical=await saved(page),check=await preflight(page);assert.equal(canonical.project.maulLayout,'classic-v2');assert.equal(canonical.project.maulSpawnStyle,profile);
     // A launchable, separately packaged v11.2 starter must be the source for the actual Projects tile.
     const starterResponse=await context.request.get(base+'/scenes/maul-frostveil-flight.swyrl.json');
@@ -335,7 +335,7 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
     pass('published_v10_7_import_keeps_authored_buildings_and_sequential_spawns_then_hub_returns_grouped_default');
 
     assert.deepEqual(errors,[],'Browser errors during grouped Maul acceptance');assert.equal(cases.length,9,'Every focused batch regression must execute');
-    receipts.push({mode:mode.name,viewport:mode.viewport,cases,canonicalId:canonical.project.canonicalId,version:'v11.12',sourceSha256,layout:'classic-v2',spawnStyle:profile,nativeRun:run.id,mapActors:canonical.scene.actors.length,groups:batches.map(e=>({group:e.details.group,t:e.t,scheduledAt:e.details.at,count:e.details.count})),firstBatch:first.details});
+    receipts.push({mode:mode.name,viewport:mode.viewport,cases,canonicalId:canonical.project.canonicalId,version:'v11.13',sourceSha256,layout:'classic-v2',spawnStyle:profile,nativeRun:run.id,mapActors:canonical.scene.actors.length,groups:batches.map(e=>({group:e.details.group,t:e.t,scheduledAt:e.details.at,count:e.details.count})),firstBatch:first.details});
     await writeFile(resolve(output,mode.name+'-receipt.json'),JSON.stringify(receipts.at(-1),null,2));console.log(mode.name==='desktop'?'MAUL_BATCH_DESKTOP_PASS':'MAUL_BATCH_MOBILE_PASS');
   }catch(error){await page.screenshot({path:resolve(output,mode.name+'-failure.png')}).catch(()=>{});await writeFile(resolve(output,mode.name+'-failure.json'),JSON.stringify({message:String(error),cases,errors,state:await state(page).catch(()=>null),ui:await ui(page).catch(()=>null)},null,2));throw error;}
   finally{await context.close();}

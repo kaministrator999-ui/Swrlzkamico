@@ -52,8 +52,8 @@ jobs:
           SWYRL_MAUL_WALK_HTML=dist/swrlz-forge-moba/index.html node projects/swrlz-forge-moba/tests/maul_walk_builder_cpu.mjs
           test -s dist/swrlz-forge-moba/index.html
           test -s dist/swrlz-forge-moba/README.md
-          grep -q "SWYRL_ENGINE_DEPLOY_MARKER: V11_12_GROUNDED_STANCE_POSES" dist/swrlz-forge-moba/index.html
-          grep -q "<title>§wyrl§ Engine · Maker v11.12</title>" dist/swrlz-forge-moba/index.html
+          grep -q "SWYRL_ENGINE_DEPLOY_MARKER: V11_13_REFERENCE_ASSEMBLIES" dist/swrlz-forge-moba/index.html
+          grep -q "<title>§wyrl§ Engine · Maker v11.13</title>" dist/swrlz-forge-moba/index.html
           grep -q "sdk: static" dist/swrlz-forge-moba/README.md
           grep -q "app_file: index.html" dist/swrlz-forge-moba/README.md
 
@@ -128,7 +128,7 @@ jobs:
               "sourceRepository": "kaministrator999-ui/Swrlzkamico",
               "sourceCommit": source_sha,
               "sourcePath": "projects/swrlz-forge-moba",
-              "sourceVersion": "v11.12",
+              "sourceVersion": "v11.13",
               "engineName": "§wyrl§ Engine",
               "sourceSha256": source["finalSha256"],
               "sourceBytes": source["finalBytes"],
@@ -151,7 +151,7 @@ jobs:
           print(json.dumps(receipt, indent=2))
           PY
 
-      - name: Verify live Space serves the complete §wyrl§ Engine v11.12 package
+      - name: Verify live Space serves the complete §wyrl§ Engine v11.13 package
         env:
           SOURCE_SHA: ${{ github.sha }}
           APP_URL: ${{ steps.deploy_space.outputs.app_url }}
@@ -165,8 +165,8 @@ jobs:
           import json
           from pathlib import Path
           official=json.loads(Path('dist/swrlz-forge-moba/SOURCE.json').read_text())
-          assert len(official['patches'])==82
-          assert official['patches'][-1]=='patches/v11_12_grounded_stance_poses.py'
+          assert len(official['patches'])==83
+          assert official['patches'][-1]=='patches/v11_13_reference_assemblies.py'
           expected={'episodes/ghosts-in-different-forms-ep01.html',
                     'scenes/ghosts-in-different-forms-ep01.swyrl.json',
                     'scenes/ghosts-in-different-forms-ep01-storybook.swyrl.json',
@@ -184,12 +184,12 @@ jobs:
                     'scenes/maul-frostveil-classic.swyrl.json',
                     'scenes/maul-frostveil-groups.swyrl.json',
                     'scenes/maul-frostveil-flight.swyrl.json',
-                    'scenes/model-atelier-prism-jester.swyrl.json','scenes/model-atelier-prism-jester-ferret-v11-4.swyrl.json','scenes/model-atelier-prism-jester-festival-v11-5.swyrl.json','scenes/model-atelier-prism-jester-festival-v11-6.swyrl.json','scenes/model-atelier-prism-jester-festival-v11-7.swyrl.json','scenes/model-atelier-prism-jester-festival-v11-8.swyrl.json','scenes/model-atelier-prism-jester-festival-v11-9.swyrl.json'}
+                    'scenes/model-atelier-prism-jester.swyrl.json','scenes/model-atelier-prism-jester-ferret-v11-4.swyrl.json','scenes/model-atelier-prism-jester-festival-v11-5.swyrl.json','scenes/model-atelier-prism-jester-festival-v11-6.swyrl.json','scenes/model-atelier-prism-jester-festival-v11-7.swyrl.json','scenes/model-atelier-prism-jester-festival-v11-8.swyrl.json','scenes/model-atelier-prism-jester-festival-v11-9.swyrl.json','scenes/model-atelier-festival-reference-v11-13.swyrl.json'}
           expected.update('assets/anime/'+name+'.png' for name in (
               'kami','swyrlz','cathedral','workshop','foreground','kami-rig',
               'swyrlz-rig','scenery-parts','kami-grip-layers',
               'mage-faces-painted','kami-full-staff'))
-          assert len(official['assets'])==35
+          assert len(official['assets'])==36
           assert set(official['assets'])==expected
           # Fetch every bundled media asset, including the authored scene and
           # transparent PNG layers, then verify the complete source receipt.
@@ -210,7 +210,7 @@ jobs:
           PYCODE
               LIVE_HTML_SHA="$(sha256sum /tmp/forge-live-source.html | cut -d ' ' -f1)"
               LIVE_HTML_BYTES="$(wc -c < /tmp/forge-live-source.html)"
-              if grep -q "SWYRL_ENGINE_DEPLOY_MARKER: V11_12_GROUNDED_STANCE_POSES" /tmp/forge-live.html && [ "$LIVE_HTML_SHA" = "$EXPECTED_HTML_SHA" ] && [ "$LIVE_HTML_BYTES" -eq "$EXPECTED_HTML_BYTES" ]; then
+              if grep -q "SWYRL_ENGINE_DEPLOY_MARKER: V11_13_REFERENCE_ASSEMBLIES" /tmp/forge-live.html && [ "$LIVE_HTML_SHA" = "$EXPECTED_HTML_SHA" ] && [ "$LIVE_HTML_BYTES" -eq "$EXPECTED_HTML_BYTES" ]; then
                 ASSET_OK=1
                 while IFS= read -r asset; do
                   mkdir -p "/tmp/forge-assets/$(dirname "$asset")"
@@ -248,17 +248,17 @@ jobs:
           print('LIVE_V10_9_ARTWORK_SCENES_SCREENING_AND_SOURCE_RECEIPT_MATCH')
           PYCODE
                   then
-                    echo "Verified: exact §wyrl§ Engine v11.12, all bundled artwork/scenes/screening, and SOURCE receipt."
+                    echo "Verified: exact §wyrl§ Engine v11.13, all bundled artwork/scenes/screening, and SOURCE receipt."
                     exit 0
                   fi
                 fi
                 echo "Editor HTML arrived but bundled anime assets or SOURCE receipt did not match yet."
               fi
-              echo "Live page responded, but the exact v11.12 artifact was not present yet."
+              echo "Live page responded, but the exact v11.13 artifact was not present yet."
             fi
             sleep 10
           done
-          echo "::error::Hugging Face upload completed, but the live Space did not serve the complete v11.12 package within the verification window."
+          echo "::error::Hugging Face upload completed, but the live Space did not serve the complete v11.13 package within the verification window."
           exit 1
 
       - name: Preserve deploy receipt

@@ -1,4 +1,4 @@
-name: Validate §E v11.12 camera-safe storybook staging
+name: Validate §E v11.13 camera-safe storybook staging
 on:
   push:
     branches: [main]
@@ -87,12 +87,12 @@ jobs:
           raw=gzip.decompress(base64.b64decode(''.join((root/p).read_text().strip() for p in manifest['chunks'])))
           assert len(raw)==manifest['baseBytes'] and hashlib.sha256(raw).hexdigest()==manifest['baseSha256']
           s=raw.decode('utf-8')
-          assert len(manifest['patches'])==82
-          assert manifest['patches'][-1]=='patches/v11_12_grounded_stance_poses.py'
+          assert len(manifest['patches'])==83
+          assert manifest['patches'][-1]=='patches/v11_13_reference_assemblies.py'
           for path in manifest['patches']:s=mod['load_patch'](root/path)(s)
           assert len(s.encode())==manifest['finalBytes']
           assert hashlib.sha256(s.encode()).hexdigest()==manifest['finalSha256']
-          for feature in ('MODEL_ATELIER_V11_3_BEGIN','SWYRL_ENGINE_MODEL_ATELIER','V11_12_GROUNDED_STANCE_POSES','SWYRL_ENGINE_PERFORMANCE','anime-performance-v1','SWYRL_ENGINE_STORY_EFFECTS','anime-story-effects-v1','MAUL_BATCH_CORE','grouped-v1','MAUL_LAYOUT_CORE','classic-v2','SWYRL_ENGINE_MAUL','MAUL_CORE','maul-frostveil','SWYRL_ENGINE_SHEEP_TAG_RUNS','SWYRL_ENGINE_RUNS','stRunAfterTick','stRunInstallUI','stRunViewerMount','swyrl-editor-play-run-v1','stTouchPlacementScreen','stTouchPlacementGround','touchPlacement','SWYRL_ENGINE_SHEEP_TAG','sheep-tag-meadow','sheep-tag-moonbell-archive','swyrl-sheep-tag-map-v1','SWYRL_ENGINE_TRANSPORT','animeCineRewind','animeCineFastForward','SWYRL_ENGINE_STAFF','rigFullStaffStatus','painted-full-v1','assets/anime/kami-full-staff.png','SWYRL_ENGINE_RIG','SWYRL_ENGINE_SCENERY','SWYRL_ENGINE_SOCKETS','SWYRL_ENGINE_EMERGENCE','SWYRL_ENGINE_RELIEF',
+          for feature in ('MODEL_ATELIER_V11_3_BEGIN','SWYRL_ENGINE_MODEL_ATELIER','V11_13_REFERENCE_ASSEMBLIES','SWYRL_ENGINE_PERFORMANCE','anime-performance-v1','SWYRL_ENGINE_STORY_EFFECTS','anime-story-effects-v1','MAUL_BATCH_CORE','grouped-v1','MAUL_LAYOUT_CORE','classic-v2','SWYRL_ENGINE_MAUL','MAUL_CORE','maul-frostveil','SWYRL_ENGINE_SHEEP_TAG_RUNS','SWYRL_ENGINE_RUNS','stRunAfterTick','stRunInstallUI','stRunViewerMount','swyrl-editor-play-run-v1','stTouchPlacementScreen','stTouchPlacementGround','touchPlacement','SWYRL_ENGINE_SHEEP_TAG','sheep-tag-meadow','sheep-tag-moonbell-archive','swyrl-sheep-tag-map-v1','SWYRL_ENGINE_TRANSPORT','animeCineRewind','animeCineFastForward','SWYRL_ENGINE_STAFF','rigFullStaffStatus','painted-full-v1','assets/anime/kami-full-staff.png','SWYRL_ENGINE_RIG','SWYRL_ENGINE_SCENERY','SWYRL_ENGINE_SOCKETS','SWYRL_ENGINE_EMERGENCE','SWYRL_ENGINE_RELIEF',
                           'anime-rig-sockets-v1','anime-book-emergence-v1','anime-character-relief-v1','animeMakePaperBook','popLowStageTrim','animePopupStageSafety','popKamiArt',
                           'popSwyrlzArt','animePopSanitize','animeDirectorInstall',
                           'animePopUp','popupHinge','popUpStatus','animeUpdateCelLayers'):
