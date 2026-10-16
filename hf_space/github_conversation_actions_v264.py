@@ -26,6 +26,7 @@ _CREATE = re.compile(r"\b(?:create|make|add|upload|save|write)\s+(?:a\s+|the\s+|
 _EXPLAIN = re.compile(r"\b(?:how\s+(?:do|can|to|would)|explain|tutorial|show\s+me\s+how|"
                       r"implement|add\s+(?:a\s+)?(?:feature|capability|support)|"
                       r"(?:needs?|should)\s+(?:to\s+)?be\s+able)\b", re.I)
+_CODE_REQUEST = re.compile(r"\b(?:write|create|generate)\s+(?:\w+\s+){0,4}(?:code|script|function|program)\s+to\s+(?:rename|move|create)\b",re.I)
 _NEGATE = re.compile(r"\b(?:do\s+not|don't|dont|never)\s+(?:\w+\s+){0,3}(?:rename|move|create|make|add|upload|save|write)\b", re.I)
 _PATH = r"(?:" + r"\x60([^\x60\n]+)\x60" + r"|[\"“]([^\"”\n]+)[\"”]|([^\s\x60\"“”<>?*|]+))"
 _RENAME_PATHS = re.compile(r"\b(?:rename|move)\s+(?:the\s+|my\s+|a\s+)?(?:file\s+)?"+_PATH+
@@ -55,7 +56,7 @@ def _out(text, widget=None):
 
 
 def is_file_action(prompt):
-    if not isinstance(prompt, str) or len(prompt) > 10000 or _EXPLAIN.search(prompt) or _NEGATE.search(prompt):
+    if not isinstance(prompt, str) or len(prompt) > 10000 or _EXPLAIN.search(prompt) or _NEGATE.search(prompt) or _CODE_REQUEST.search(prompt):
         return False
     lower=prompt.lower()
     if _RENAME.search(prompt):
