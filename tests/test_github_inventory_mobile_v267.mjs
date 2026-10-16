@@ -94,6 +94,25 @@ const truncated=recursive.replace("Complete Git-tree file count: 2",
   "(Only first 700 paths displayed; narrow scope to view more.)");
 native=parseNative(adapt(parse(truncated,ctx)));
 assert.equal(native.incomplete,true,"Truncated source evidence must remain marked partial");
+// Export (68): a model-generated "## GitHub directory: /" must remain prose.
+const guardStart=html.indexOf("const verifiedDirectory=");
+assert(guardStart>=0,"Missing same-message GitHub evidence guard");
+const expressionStart=guardStart+"const verifiedDirectory=".length;
+const expressionEnd=html.indexOf(";",expressionStart);
+assert(expressionEnd>expressionStart,"Source guard must have bounded expression");
+const guardExpression=html.slice(expressionStart,expressionEnd);
+const verifiedDirectory=vm.runInNewContext("((verifiedContext)=>("+guardExpression+"))");
+assert.equal(Boolean(verifiedDirectory(ctx)),true,"Authenticated directory response may open native browser");
+assert.equal(Boolean(verifiedDirectory(null)),false,"Model output has no source receipt");
+assert.equal(Boolean(verifiedDirectory({...ctx,kind:"file"})),false,"File previews are not directory listings");
+assert.equal(Boolean(verifiedDirectory({...ctx,sourceSha:""})),false,"Missing source SHA cannot create explorer");
+assert.equal(Boolean(verifiedDirectory({...ctx,repo:"not a repo"})),false,"Reject malformed repo owner");
+assert(html.includes("const appendRepositoryExplorer=value=>verifiedDirectory&&"),
+  "Both saved and streaming render paths must be gated by verified source context");
+assert(html.includes("msg?.meta?.githubContext"),
+  "Use the current assistant message's provenance, not unrelated thread scope");
+console.log("v270 export 68: unverified model directory text cannot become an explorer PASS");
+
 console.log("v269 native v223 explorer reuse, nested parents, source scope and partial evidence PASS");
 
 console.log("v267 compact verified repository inventory, revision and mobile presentation PASS");
