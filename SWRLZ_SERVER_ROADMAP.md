@@ -1,3 +1,15 @@
+## UPDATE FINISHED — 2026-10-16 — v266 latest Chat export (64) GitHub file preview and contextual rename
+
+**Scope:** Only newest thread from export (64) plus owner mobile screenshots. Existing GitHub file read correctly retrieved `write-action-tests/Testing.txt`; UI has been refined to show verified repository metadata in a compact card with collapsed provenance and safe GitHub link, with mobile wrapping for plain-text code containers only. Full source remains intact for Copy and Download; programming-code scrolling and lyrics untouched. Natural “rename that file” asks a destination; “rename it too testing.txt” reaches verified owner-scoped rename preflight and still requires one-time confirmation. No test-file rename was executed.
+
+**Source/CI:** [PR #198](https://github.com/kaministrator999-ui/Swrlzkamico/pull/198) merged `510362e50fd9db9f8f325855d72e3d8eb5f1011a` (same Git tree `0951c7a309b48fc19729c51f1dbc36696a335d3c` as candidate `06f37fde912e6f37c60ce1091c8a74bba8c7790a`). [HF Candidate Offline Validation #38949111598](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38949111598) SUCCESS; [Mobile Lyric Integrity #38949111580](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38949111580) SUCCESS. Old static-test failure and correction retained in Git history.
+
+**Guarded existing-Space publication:** Approved source `510362e50fd9db9f8f325855d72e3d8eb5f1011a` via [workflow #38949394588](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38949394588), COMPLETED/SUCCESS. Prior `kamiloki/Swyrlz` Space revision `e4eddf9b1cd4c39ce05ad74ba87e9b1ef491a5c7` preserved in predeploy snapshot artifact `12068885007` and rollback checkpoint `12067209962`; new Space revision `281e412110f766f50904c1400056651b95262f21` verified by release checkpoint artifact `12068350557`.
+
+**Registry:** runtime Repository Work `1.0.205`, Server Runtime `2.3.417`, Web Chat `1.5.148`; all other modules unchanged. Detailed report: `reports/V266_CHAT_FILE_PREVIEW_RENAME_2026-10-16.md`.
+
+**Truth:** Source, CI, and production publication confirmed. **DEPLOYED_UNVERIFIED** for signed-in Android hands-on behavior; obtain owner acceptance of the file card, wrapped preview, missing rename destination and exact GitHub proposal/decline before calling those live flows user-verified.
+
 ## UPDATE STARTED — 2026-10-16 — v266 Chat export (64) mobile GitHub file preview and rename continuity
 
 **Evidence:** Three mobile screenshots and the newest exported conversation only. Verified file read succeeds, but raw URL/SHA metadata and horizontally scrolling plain text are poor on Android; two rename followups enter code generation and return rejected content. No GitHub rename performed.
