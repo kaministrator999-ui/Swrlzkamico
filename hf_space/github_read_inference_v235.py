@@ -154,7 +154,12 @@ def classify_read(prompt, context=None):
         if scoped:
             return "@GitHub history " + scoped[0] + suffix
         return "@GitHub report structure /" + suffix
-    # A named singular file is a deterministic repository read, including\n    # conversational "can you see <name> file" phrasing. Do not send it\n    # through the generic GitHub command parser or programming inference.\n    if scoped and re.search(r"\b(?:see|find|show|read|open|view)\b", lower) and re.search(r"\bfile\b", lower):\n        return "@GitHub read file " + scoped[0] + suffix\n    if re.search(r"\b(?:list|show|see|browse|open|display|view)\b", lower) and re.search(
+    # A named singular file is a deterministic repository read, including
+    # conversational "can you see <name> file" phrasing. Do not send it
+    # through the generic GitHub command parser or programming inference.
+    if scoped and re.search(r"\b(?:see|find|show|read|open|view)\b", lower) and re.search(r"\bfile\b", lower):
+        return "@GitHub read file " + scoped[0] + suffix
+    if re.search(r"\b(?:list|show|see|browse|open|display|view)\b", lower) and re.search(
             r"\b(?:files?|folders?|directories|contents|tree)\b", lower):
         if re.search(r"\b(?:all|every|entire|complete|recursive|again)\b", lower) and re.search(
                 r"\b(?:files?|tree)\b", lower):
