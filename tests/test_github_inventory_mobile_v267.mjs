@@ -44,12 +44,56 @@ assert.equal(result.lines.length,2);
 assert.equal(parse(recursive.replace("Revision: "+sha,"Revision: "+"b".repeat(40)),ctx),null);
 assert.equal(parse(recursive.replace("README.md","../../token"),ctx),null,"Never form links to unsafe paths");
 assert(html.includes('const inventory=splitVerifiedGitHubInventory(rawSource,verifiedContext);'),
-  "Renderer must prefer verified compact inventory, not repeat a full source report");
-assert(html.includes('if(inventory){appendGitHubInventoryCard(container,inventory);return;}'));
+  "Renderer must preserve verified inventory provenance");
+assert(html.includes('if(listing&&appendRepositoryExplorer(listing))return;'),
+  "Native explorer must have first priority for GitHub directory and recursive lists");
+assert(html.includes('appendGitHubInventoryCard(container,inventory);return;'),
+  "Static source reports and missing explorer should retain bounded evidence");
+assert(html.indexOf("const appendRepositoryExplorer=value") <
+  html.indexOf("const inventory=splitVerifiedGitHubInventory(rawSource,verifiedContext);"),
+  "Existing v223 explorer must be initialized before list rendering");
+assert.equal(html.split("const appendRepositoryExplorer=value").length,2,
+  "Do not instantiate competing explorer interfaces");
 assert(html.includes("originalRenderedSources.set(container,rawSource)"),
   "Copy/export must retain original raw response");
 assert(html.includes("inventory.raw"),"Expanded report must remain available");
 assert(html.includes("rel=\"noopener noreferrer\""),"External GitHub links require isolation");
 assert(html.includes(".github-inventory-item a{"),"Mobile file links need wrap-safe layout");
 assert(html.includes("overflow-wrap:anywhere"),"Long file names must wrap");
+const adapt=vm.runInNewContext("(()=>{\\n"+helper("inventoryDirectoryForExplorer")+
+  "\\nreturn inventoryDirectoryForExplorer;})()");
+const explorerScript=fs.readFileSync("chat/§wyrlz/assets/github-explorer-v223.js","utf8");
+const browser={window:{},document:{createElement(){return {textContent:"",className:""};},
+  head:{appendChild(){}}},console};
+vm.runInNewContext(explorerScript,browser,{timeout:3000});
+const parseNative=browser.window.SwrlzGitHubExplorerV223.parseDirectoryResponse;
+const mapped=adapt(result);
+assert.equal(mapped===null,false,"Verified recursive inventory should map to directory entries");
+let native=parseNative(mapped);
+assert.ok(native,"Actual original explorer must accept adapted inventory");
+assert.equal(native.path,"");
+assert.deepEqual(Array.from(native.entries,x=>[x.type,x.path]),[
+  ["file","README.md"],["dir","write-action-tests"]]);
+assert.equal(native.incomplete,false);
+assert.equal(adapt(parse(report,ctx)),null,"Source analysis is not a folder listing");
+assert.equal(adapt(parse(recursive,null)),null,"Unverified content must not convert");
+const nestedCtx={...ctx,directory:"write-action-tests"};
+const nested="## GitHub recursive file inventory\\nRepository: example/project\\n"+
+  "Branch: main\\nRevision: "+sha+"\\nScope: write-action-tests (recursive)\\n"+
+  "Complete Git-tree file count: 2\\n- write-action-tests/Testing.txt\\n"+
+  "- write-action-tests/nested/more.txt\\n(All paths displayed.)";
+const nestedDir=parseNative(adapt(parse(nested,nestedCtx)));
+assert.equal(nestedDir.path,"write-action-tests");
+assert.deepEqual(Array.from(nestedDir.entries,x=>[x.type,x.path]),[
+  ["file","write-action-tests/Testing.txt"],["dir","write-action-tests/nested"]]);
+const outside=nested.replace("write-action-tests/Testing.txt","private/Testing.txt");
+assert.equal(adapt(parse(outside,nestedCtx)),null,
+  "A path outside the source-pinned scope must never be adapted as a local folder");
+const truncated=recursive.replace("Complete Git-tree file count: 2",
+  "Complete Git-tree file count: 701").replace("(All paths displayed.)",
+  "(Only first 700 paths displayed; narrow scope to view more.)");
+native=parseNative(adapt(parse(truncated,ctx)));
+assert.equal(native.incomplete,true,"Truncated source evidence must remain marked partial");
+console.log("v269 native v223 explorer reuse, nested parents, source scope and partial evidence PASS");
+
 console.log("v267 compact verified repository inventory, revision and mobile presentation PASS");
