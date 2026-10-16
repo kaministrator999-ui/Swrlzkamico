@@ -112,7 +112,7 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
   const pass=name=>{assert.equal(cases.includes(name),false,'Duplicate acceptance case');cases.push(name);console.log('EPISODE_PERFORMANCE_CASE_PASSED',mode.name,name);};
   try{const response=await page.request.get(base+'/index.html?'+query);assert.equal(response.status(),200);const sourceSha256=createHash('sha256').update(await response.body()).digest('hex');
     console.log('EPISODE_PERFORMANCE_SOURCE_SHA256',mode.name,sourceSha256);await start(page);
-    assert.equal(await page.evaluate(()=>window.SWRLZ_FORGE_BUILD.version),'v11.11');
+    assert.equal(await page.evaluate(()=>window.SWRLZ_FORGE_BUILD.version),'v11.12');
     await page.evaluate(()=>window.SWYRL_ENGINE_AGENT.openProjects());await frames(page,1);await press(page,'[data-project-template="anime-ghosts-ep01"]');await frames(page,2);
     const canonical=await saved(page),timeline=canonical.project.animeTimeline,performance=await performanceModel(page),effects=await effectsModel(page);
     assert.equal(canonical.scene.actors.length,70);assert.equal(canonical.editor.layers.length,11);assert.equal(timeline.duration,134);assert.equal(timeline.beats.length,8);
@@ -248,7 +248,7 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
     pass('published_episode_import_keeps_opt_out_profiles_and_other_starters_dispose_performance_geometry');
 
     assert.deepEqual(errors,[],'Unhandled native browser errors');assert.equal(cases.length,10,'All focused performance proofs must execute');
-    const receipt={mode:mode.name,viewport:mode.viewport,version:'v11.11',sourceSha256,cases,nativeProject:canonical.project.canonicalId,actors:70,layers:11,duration:134,chapters:timeline.beats.map(b=>b.title),actions:performance.clips.length,effectCues:effects.cues.length,samples};
+    const receipt={mode:mode.name,viewport:mode.viewport,version:'v11.12',sourceSha256,cases,nativeProject:canonical.project.canonicalId,actors:70,layers:11,duration:134,chapters:timeline.beats.map(b=>b.title),actions:performance.clips.length,effectCues:effects.cues.length,samples};
     receipts.push(receipt);await writeFile(resolve(output,mode.name+'-receipt.json'),JSON.stringify(receipt,null,2));console.log(mode.name==='desktop'?'EPISODE_PERFORMANCE_DESKTOP_PASS':'EPISODE_PERFORMANCE_MOBILE_PASS');
   }catch(error){await page.screenshot({path:resolve(output,mode.name+'-failure.png')}).catch(()=>{});await writeFile(resolve(output,mode.name+'-failure.json'),JSON.stringify({message:String(error),cases,errors,state:await state(page).catch(()=>null),observation:await observation(page).catch(()=>null)},null,2));throw error;}
   finally{await context.close();}}

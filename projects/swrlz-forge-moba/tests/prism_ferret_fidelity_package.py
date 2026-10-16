@@ -41,18 +41,18 @@ for v in parts:
     assert all(math.isfinite(x) for key in ('position','rotation','scale') for x in v[key])
 receipt=json.loads((dest/'SOURCE.json').read_text())
 manifest=json.loads((ROOT/'source-manifest.json').read_text())
-assert receipt['sourceVersion']=='§wyrl§ Engine v11.11'
-assert len(receipt['patches'])==81 and receipt['patches']==manifest['patches']
-assert receipt['patches'][-1]=='patches/v11_11_face_pose_frame_studio.py'
+assert receipt['sourceVersion']=='§wyrl§ Engine v11.12'
+assert len(receipt['patches'])==82 and receipt['patches']==manifest['patches']
+assert receipt['patches'][-1]=='patches/v11_12_grounded_stance_poses.py'
 assert len(receipt['assets'])==35 and p in receipt['assets'] and old in receipt['assets']
 for path in (p,old):
     content=(ROOT/path).read_bytes()
     assert receipt['assets'][path]['bytes']==len(content)
     assert receipt['assets'][path]['sha256']==hashlib.sha256(content).hexdigest()
 html=(dest/'index.html').read_bytes()
-for marker in (b'V11_11_FACE_POSE_FRAMES',b'atelierOrganicLoft',b'MODEL_ATELIER_V11_4_FERRET_FIDELITY',b'loft',b'Maker v11.11'):
+for marker in (b'V11_12_GROUNDED_STANCE_POSES',b'atelierOrganicLoft',b'MODEL_ATELIER_V11_4_FERRET_FIDELITY',b'loft',b'Maker v11.12'):
     assert marker in html, marker
 assert len(html)==receipt['finalBytes']==manifest['finalBytes']
 assert hashlib.sha256(html).hexdigest()==receipt['finalSha256']==manifest['finalSha256']
 print('FERRET_FIDELITY_303_COMPONENTS_2_ORGANIC_LOFTS_PASS')
-print('FERRET_FIDELITY_81_PATCHES_35_ASSETS_AND_LEGACY_SCENE_PASS')
+print('FERRET_FIDELITY_82_PATCHES_35_ASSETS_AND_LEGACY_SCENE_PASS')

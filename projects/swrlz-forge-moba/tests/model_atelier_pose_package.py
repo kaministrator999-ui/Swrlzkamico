@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""v11.11 source + default facial composition and native frame controls."""
+"""v11.12 source + default facial composition and native frame controls."""
 import argparse,hashlib,json,re
 from pathlib import Path
 ROOT=Path(__file__).resolve().parent.parent
@@ -8,13 +8,13 @@ dist=Path(a.package)
 m=json.loads((ROOT/'source-manifest.json').read_text())
 receipt=json.loads((dist/'SOURCE.json').read_text())
 source=(dist/'index.html').read_bytes()
-assert len(m['patches'])==81 and m['patches'][-1]=='patches/v11_11_face_pose_frame_studio.py'
+assert len(m['patches'])==82 and m['patches'][-1]=='patches/v11_12_grounded_stance_poses.py'
 assert len(receipt['assets'])==35 and receipt['patches']==m['patches']
 assert len(source)==m['finalBytes']==receipt['finalBytes']
 assert hashlib.sha256(source).hexdigest()==m['finalSha256']==receipt['finalSha256']
 html=source.decode('utf8')
-for needle in ('SWYRL_ENGINE_DEPLOY_MARKER: V11_11_FACE_POSE_FRAMES',
-               'Maker v11.11','modelAtelierPoseDeck','modelAtelierPoseSelect',
+for needle in ('SWYRL_ENGINE_DEPLOY_MARKER: V11_12_GROUNDED_STANCE_POSES',
+               'Maker v11.12','modelAtelierPoseDeck','modelAtelierPoseSelect',
                'atelierApplyBuiltInPose','atelierApplySavedPose','atelierValidatedFrameStore',
                'modelAtelierPoseViewApply','modelAtelierMetricsBody'):
     assert needle in html,needle
@@ -28,4 +28,4 @@ assert byid['model-0047']['scale'][0]<.05,'Nose not softened'
 assert [x for x in parts if x['id'].startswith('atelier-v118-') and x['id'].endswith('-leg')]
 old=ROOT/'scenes/model-atelier-prism-jester-festival-v11-9.swyrl.json'
 assert (dist/'scenes/model-atelier-prism-jester-festival-v11-9.swyrl.json').read_bytes()==old.read_bytes()
-print('NATIVE_FACE_POSE_811_PARTS_81_PATCHES_35_ASSETS_PASS')
+print('NATIVE_FACE_POSE_811_PARTS_82_PATCHES_35_ASSETS_PASS')

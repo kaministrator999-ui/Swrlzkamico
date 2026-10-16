@@ -8,7 +8,7 @@ from pathlib import Path
 
 SCENE = 'scenes/ghosts-in-different-forms-ep01-performance.swyrl.json'
 LEGACY_SCENE = 'scenes/ghosts-in-different-forms-ep01-full-staff.swyrl.json'
-PATCH = 'patches/v11_11_face_pose_frame_studio.py'
+PATCH = 'patches/v11_12_grounded_stance_poses.py'
 ACTIONS = {'greet', 'reach', 'brace', 'cast', 'write', 'step', 'hover', 'recover'}
 EFFECTS = {'page', 'burst', 'ink', 'portal'}
 PRESERVED_ASSETS = {'assets/anime/cathedral.png': {'bytes': 3237216,
@@ -163,8 +163,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--package', type=Path, required=True)
     args = parser.parse_args(); receipt = json.loads((args.package/'SOURCE.json').read_text())
-    require(receipt['sourceVersion'] == '§wyrl§ Engine v11.11', 'wrong source version')
-    require(len(receipt['patches'])==81 and receipt['patches'][-1] == PATCH, 'wrong governed patch chain')
+    require(receipt['sourceVersion'] == '§wyrl§ Engine v11.12', 'wrong source version')
+    require(len(receipt['patches'])==82 and receipt['patches'][-1] == PATCH, 'wrong governed patch chain')
     require(set(receipt['assets']) == set(PRESERVED_ASSETS) | {SCENE, 'scenes/maul-frostveil-flight.swyrl.json', 'scenes/model-atelier-prism-jester.swyrl.json', 'scenes/model-atelier-prism-jester-ferret-v11-4.swyrl.json', 'scenes/model-atelier-prism-jester-festival-v11-5.swyrl.json','scenes/model-atelier-prism-jester-festival-v11-6.swyrl.json','scenes/model-atelier-prism-jester-festival-v11-7.swyrl.json','scenes/model-atelier-prism-jester-festival-v11-8.swyrl.json','scenes/model-atelier-prism-jester-festival-v11-9.swyrl.json'}, 'wrong asset set or missing preserved media')
     for path, expected in PRESERVED_ASSETS.items():
         raw = (args.package/path).read_bytes(); meta = receipt['assets'][path]

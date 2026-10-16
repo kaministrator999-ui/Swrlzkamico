@@ -98,6 +98,6 @@
     "patches/v11_11_face_pose_frame_studio.py",
     "patches/v11_12_grounded_stance_poses.py"
   ],
-  "finalBytes": 2350741,
-  "finalSha256": "e89ea40f0b7609d0b5cf376666aaba4a58971a3a294c3225ad303ce9f6ef4792"
+  "finalBytes": 2352463,
+  "finalSha256": "76051c90fda3b9f32fef582977fb8af872edc14de44781e253f90ed3f0f9bc6f"
 }
