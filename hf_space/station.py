@@ -1028,7 +1028,8 @@ def _run(key,request_id,model_id,payload,assistant_id):
             # checks repository evidence before preparing a file action; the
             # human approves with a fresh, same-thread yes/no reply.
             action=payload["githubChatFileAction"]
-            result=github_chat_files.handle(action["userId"],action["threadId"],action["prompt"])
+            result=github_chat_files.handle(action["userId"],action["threadId"],action["prompt"],
+                                            action.get("githubContext"),action.get("history"))
             widget=result.get("widget")
             response=[{"type":"STATUS","phase":"GITHUB_CHAT_FILE_CHECK",
                        "reason":"Verified repository evidence and conversational authorization."}]
@@ -1798,7 +1799,7 @@ async def send(request:Request):
     if (github_chat_files.has_pending(google_owner,tid)
             and github_chat_files.pending_kind(google_owner,tid)!="need-content"
             and not github_chat_files.is_reply(prompt)
-            and not github_chat_files.is_file_action(prompt)):
+            and not github_chat_files.is_file_action(prompt,active_github,history)):
         github_chat_files.expire_interrupted(google_owner,tid)
     # A user asking to recall conversation history is not requesting
     # public freshness research merely because the prompt says "today".
@@ -1874,18 +1875,20 @@ async def send(request:Request):
     elif wants_direct_github_test_txt(prompt):
         # The explicit accepted human turn authorizes one harmless test create.
         payload["githubDirectTestTxt"] = {"userId": google_owner, "prompt": prompt}
-    elif github_chat_files.is_file_action(prompt) or (
+    elif github_chat_files.is_file_action(prompt,active_github,history) or (
         github_chat_files.has_pending(google_owner,tid) and (
             github_chat_files.is_reply(prompt) or
             github_chat_files.pending_kind(google_owner,tid)=="need-content"
         )
     ):
         payload["githubChatFileAction"]={"userId":google_owner,
-                                         "threadId":tid,"prompt":prompt}
+                                         "threadId":tid,"prompt":prompt,
+                                         "githubContext":active_github,"history":history[-10:]}
     elif wants_github_text_file_creation(prompt):
         # Legacy TXT requests use the same seamless conversational path.
         payload["githubChatFileAction"]={"userId":google_owner,
-                                         "threadId":tid,"prompt":prompt}
+                                         "threadId":tid,"prompt":prompt,
+                                         "githubContext":active_github,"history":history[-10:]}
     elif github_connection.is_start_request(prompt):
         _, verified_account = _account_session(request)
         payload["githubStart"]={"userId":str((verified_account or {}).get("id") or "")}

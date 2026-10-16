@@ -31,6 +31,8 @@ _NEGATE = re.compile(r"\b(?:do\s+not|don't|dont|never)\s+(?:\w+\s+){0,3}(?:renam
 _PATH = r"(?:" + r"\x60([^\x60\n]+)\x60" + r"|[\"“]([^\"”\n]+)[\"”]|([^\s\x60\"“”<>?*|]+))"
 _RENAME_PATHS = re.compile(r"\b(?:rename|move)\s+(?:the\s+|my\s+|a\s+)?(?:file\s+)?"+_PATH+
                            r"\s+(?:to|as|into)\s+"+_PATH,re.I)
+_FOLLOWUP_RENAME = re.compile(r"\brename\s+(?:(?:that|this|the|same)\s+file|it)"
+                              r"(?:\s+for\s+me)?\s+(?:to|as|into)\s+"+_PATH,re.I)
 _FILE_NAME = re.compile(r"\b(?:named|called|filename|path)\s*[:=]?\s*"+_PATH,re.I)
 _SIMPLE_FILE = re.compile(r"(?<![\w/])((?:[\w.\-]+/)*[\w.\-]+\.[A-Za-z0-9_-]{1,16})(?![\w])")
 _TEXT_FIELD = re.compile(r"(?:^|\n)\s*(?:file\s+)?contents?\s*:\s*([\s\S]+)$",re.I)
@@ -55,12 +57,13 @@ def _out(text, widget=None):
     return {"handled": True, "text": text, "widget": widget}
 
 
-def is_file_action(prompt):
+def is_file_action(prompt, context=None, history=None):
     if not isinstance(prompt, str) or len(prompt) > 10000 or _EXPLAIN.search(prompt) or _NEGATE.search(prompt) or _CODE_REQUEST.search(prompt):
         return False
     lower=prompt.lower()
     if _RENAME.search(prompt):
-        return bool(_RENAME_PATHS.search(prompt) or re.search(r"\b(?:github|repo|repository)\b",prompt,re.I))
+        return bool(_RENAME_PATHS.search(prompt) or re.search(r"\b(?:github|repo|repository)\b",prompt,re.I)
+                    or _contextual_rename(prompt,context,history))
     if _CREATE.search(prompt):
         return bool(re.search(r"\b(?:github|repo|repository)\b",prompt,re.I)
                     and (re.search(r"\b(?:file|script|document|upload)\b",prompt,re.I) or _SIMPLE_FILE.search(prompt)))
@@ -143,10 +146,37 @@ def _closest(entries,requested):
     return [p for _,p in rank[:3]]
 
 
-def _rename_paths(prompt):
-    m = _RENAME_PATHS.search(prompt)
+def _contextual_rename(prompt,context,history):
+    """Use a recent user-named file only when there is a verified same-thread scope.
+
+    Prior user text is an intent hint, never authorization for a GitHub write.
+    A case-sensitive Git blob lookup and fresh approval are mandatory.
+    """
+    if not isinstance(context,dict) or not isinstance(history,list):
+        return None
+    if not (context.get("repo") and context.get("branch")
+            and re.fullmatch(r"[0-9a-f]{40}",str(context.get("sourceSha") or ""))):
+        return None
+    m=_FOLLOWUP_RENAME.search(str(prompt or ""))
     if not m:return None
-    return _trim_path(_path_part(m,1)), _trim_path(_path_part(m,4))
+    destination=_trim_path(_path_part(m))
+    if not destination:return None
+    for msg in reversed(history[-10:]):
+        if not isinstance(msg,dict) or msg.get("role")!="user":continue
+        prior=str(msg.get("text") or "")
+        if not re.search(r"\b(?:file|see|read|find|open|check)\b",prior,re.I):continue
+        names=_SIMPLE_FILE.findall(prior)
+        if len(names)==1:
+            return names[0],destination
+        if names:return None
+    return None
+
+
+def _rename_paths(prompt,context=None,history=None):
+    m = _RENAME_PATHS.search(prompt)
+    if m:return _trim_path(_path_part(m,1)), _trim_path(_path_part(m,4)), False
+    prior=_contextual_rename(prompt,context,history)
+    return (*prior,True) if prior else None
 
 
 def _create_parts(prompt):
@@ -222,16 +252,33 @@ def _confirmation(user_id,thread_id,prompt):
         return _out(_user_friendly_failure(exc))
 
 
-def _prepare_rename(user_id,thread_id,prompt):
-    pair=_rename_paths(prompt)
+def _prepare_rename(user_id,thread_id,prompt,context=None,history=None):
+    pair=_rename_paths(prompt,context,history)
     if not pair:
         return _out("Which existing file should I rename, and what should its new name or path be?")
-    src,dst=pair
+    src,dst,contextual=pair
     try:
         src=safe_path(src);dst=safe_path(dst)
         auth,entries,_=_read_tree(user_id)
     except CreateFileError as exc:
         return _out(_user_friendly_failure(exc))
+    if contextual:
+        if (str(context.get("repo") or "").casefold()!=auth["repo"].casefold()
+                or context.get("branch")!=auth["branch"]):
+            return _out("The selected GitHub repository or branch changed. Specify the file again; nothing changed.")
+        directory=str(context.get("directory") or "").strip("/")
+        intended=(directory+"/"+src) if directory else src
+        candidates=[p for p,item in entries.items()
+                    if item.get("type")=="blob" and
+                    (p.casefold()==intended.casefold() if directory
+                     else p.rsplit("/",1)[-1].casefold()==src.casefold())]
+        if len(candidates)!=1:
+            options=(", ".join(_clean_label(p) for p in candidates[:3])
+                     if candidates else "No exact filename match")
+            return _out("I can't identify one verified file from that reference. "+
+                        options+". Give its full path; nothing changed.")
+        # Present actual case-sensitive GitHub path before the user approves.
+        src=candidates[0]
     if src not in entries:
         # An explicitly requested path never silently resolves to a fuzzy match.
         similar=_closest(entries,src)
@@ -277,7 +324,7 @@ def _prepare_create(user_id,thread_id,path,content):
                 "**Yes** to confirm or **no** to cancel (expires in 5 minutes). Nothing changed yet.")
 
 
-def handle(user_id,thread_id,prompt):
+def handle(user_id,thread_id,prompt,context=None,history=None):
     """Return a user-facing, evidence-bound message and optional verified widget."""
     if not isinstance(prompt,str):
         return _out("I couldn't read the file request. Nothing changed.")
@@ -287,7 +334,7 @@ def handle(user_id,thread_id,prompt):
         # Any other reply leaves prior ticket unapproved and consumed; it can
         # never turn a later casual "yes" into an unintended write.
     if _RENAME.search(prompt):
-        return _prepare_rename(user_id,thread_id,prompt)
+        return _prepare_rename(user_id,thread_id,prompt,context,history)
     if _CREATE.search(prompt):
         path,content=_create_parts(prompt)
         if not path:return _out("What filename or repository path should I use?")
