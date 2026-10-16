@@ -8,9 +8,9 @@ const source=fs.readFileSync(path.join(root,"hf_space/chat/§wyrlz/assets/github
 const widget=fs.readFileSync(path.join(root,"hf_space/chat/§wyrlz/assets/github-rename-receipt-v263.js"),"utf8");
 const station=fs.readFileSync(path.join(root,"hf_space/station.py"),"utf8");
 const chat=fs.readFileSync(path.join(root,"chat/§wyrlz/index.html"),"utf8");
-assert(station.includes("GITHUB_RENAME_FILE_APPROVAL_REQUIRED"));
+assert(station.includes("githubChatFileAction"));
 assert(chat.includes("swrlz:github-rename-proposal"));
-assert(station.includes("github-rename-v263.js"));
+assert(!station.includes("github-rename-v263.js"),"Legacy rename popup must not load in Chat");
 assert(station.includes("github-rename-receipt-v263.js"));
 const made=[],callbacks={},network=[];
 class Element {
