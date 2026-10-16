@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.10",
+  "name": "§wyrl§ Engine v11.11",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_10.html",
+  "finalArtifact": "swyrl_engine_v11_11.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -94,7 +94,8 @@
     "patches/v11_7_layered_pinata_sculpt.py",
     "patches/v11_8_sculpt_studio.py",
     "patches/v11_9_ferret_figure_atelier.py",
-    "patches/v11_10_model_geometry_profiler.py"
+    "patches/v11_10_model_geometry_profiler.py",
+    "patches/v11_11_face_pose_frame_studio.py"
   ],
   "finalBytes": 2339787,
   "finalSha256": "e8b2ca7b4e12d9981475a861d40eabf513f5d26a40c8f6627d393b93d03dddf6"
