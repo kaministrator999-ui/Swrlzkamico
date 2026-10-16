@@ -106,8 +106,9 @@ def classify_read(prompt, context=None):
             name = candidate[1]
             if (("." in name or re.search(r"\bone\b", raw, re.I))
                     and name.casefold() not in (
-                        "first", "last", "next", "other", "same", "right",
-                        "left", "good", "bad", "new", "old", "correct")):
+                        "first", "second", "third", "last", "next",
+                        "other", "same", "right", "left", "good", "bad",
+                        "nice", "new", "old", "correct")):
                 selection = _safe(name)
     if not explicit and not (directory or last_file or verified_root):
         return None
