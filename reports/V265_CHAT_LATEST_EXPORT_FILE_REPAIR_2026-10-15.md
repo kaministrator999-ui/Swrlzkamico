@@ -20,7 +20,7 @@ Runtime: existing Hugging Face Space `kamiloki/Swyrlz`.
 - Exact merged candidate source: `617b6445fa93c7e41f393b745aff5bfe579d5b46`.
 - The initial candidate CI uncovered an invalid multiline insertion; a second attempt identified a stale static-test signature; a third attempt identified whitespace sensitivity in that test. Each was corrected with a new commit; no failed attempts were erased.
 - Final head offline HF CI [#38847988939](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38847988939) reported SUCCESS.
-- Verify merged source tree and guarded HF release separately before considering this feature active.
+- Merged source Git tree `33d51bad3c864fa009b2873ca928319fc27d4e27` matches CI-passed candidate tree exactly.
 - No production rename was executed on the owner's test file and no signed-in live rename acceptance was established by source/CI.
 
 ## Post-release signed-in acceptance
@@ -28,3 +28,12 @@ Runtime: existing Hugging Face Space `kamiloki/Swyrlz`.
 2. Ask “And you rename that file for me to testing1.txt”; expected: verified existing `Testing.txt` to new destination preview, with explicit yes/no and no mutation before confirmation.
 3. Test denial, mismatched context, ambiguous same-named paths, branch movement and expired confirmation.
 4. Compare the committed rename blob/mode against the original after approval only. Owner hands-on acceptance remains distinct from workflow publication.
+
+## Terminal guarded release receipt
+- Existing-Space guarded Hugging Face workflow [#38848224243](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38848224243): **COMPLETED/SUCCESS**.
+- Approved source: `617b6445fa93c7e41f393b745aff5bfe579d5b46`.
+- Previous Space revision: `035999d223aac86ad5490f3670b56ca8138a1c26` (rollback checkpoint artifact `12024765257`).
+- Published Space revision: `e4eddf9b1cd4c39ce05ad74ba87e9b1ef491a5c7`.
+- Runtime registry reconciled: Repository Work `1.0.204`; Server Runtime `2.3.416`; Web Chat `1.5.147`. Other modules unchanged.
+- Roadmap closed on main as `UPDATE FINISHED — v265`.
+- Truth state: **DEPLOYED_UNVERIFIED**. Workflow publication was independently verified; a signed-in owner's phone test of conversational read, preview, yes/no and the actual GitHub rename has not occurred in this engineering turn.
