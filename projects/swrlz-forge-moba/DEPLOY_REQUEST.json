@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.10",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_10_MEASURED_GEOMETRY_PROFILER",
-  "reason": "Owner-directed first implementation slice of §E Modeling Engineering Brief: real generated mesh triangle/vertex counts, CPU geometry buffers, group breakdown and statistics JSON export in existing native Model Atelier. All 811 v11.9 model parts and 35 historical native assets preserved; 80 ordered patches; 2,339,787 HTML bytes; SHA-256 e8b2ca7b4e12d9981475a861d40eabf513f5d26a40c8f6627d393b93d03dddf6. PR #190 squash merged as 7e38e623ed24801becd6afd738519652d79d9909. Full seven §E source workflows and all 17 browser matrix jobs passed on exact final candidate head 4e89457c990e654e96e80bec8138148b25637dcf. Dedicated guarded deploy and independent live digest/assets validation required; owner visual acceptance separate. Skeletons, UV painting, skins, independent attachment animation and VFX remain planned, not claimed.",
-  "sourceCommit": "7e38e623ed24801becd6afd738519652d79d9909",
-  "sourceIntegritySha256": "e8b2ca7b4e12d9981475a861d40eabf513f5d26a40c8f6627d393b93d03dddf6"
+  "releaseVersion": "v11.11",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_11_FACE_POSE_FRAMES",
+  "reason": "Owner requested implementation directly inside §E Model Atelier after front/rear/side screenshots: refined face and actual bendable knee spline editing in Relaxed Idle, Victory A/B, Neutral; saved native custom pose/camera frames and front/back/side/3-4 presentation views. Original 811-part scene and 35 native historical assets preserved. PR #193 validated head ccca615f79960f7cb0ec65a76daa466d6b178b3e (all 17 independent browser suites and eight §E source workflows green), merged into main 16faf1b8a7b42f15e9e01b56da010b100ac6dc6b. Governed chain 81 patches; exact HTML 2,350,741 bytes / SHA-256 e89ea40f0b7609d0b5cf376666aaba4a58971a3a294c3225ad303ce9f6ef4792. Guarded publish and independent live audit required. True skinning and animation timeline not claimed; owner visual acceptance remains outstanding.",
+  "sourceCommit": "16faf1b8a7b42f15e9e01b56da010b100ac6dc6b",
+  "sourceIntegritySha256": "e89ea40f0b7609d0b5cf376666aaba4a58971a3a294c3225ad303ce9f6ef4792"
 }
