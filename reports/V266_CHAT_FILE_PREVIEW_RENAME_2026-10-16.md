@@ -24,3 +24,10 @@ Scope: §wyrlz AI Chat only. Owner supplied mobile screenshots and most recent c
 
 ## Deployment / acceptance
 A guarded release of the existing `kamiloki/Swyrlz` Space should be issued only for the validated merged source; the trigger is not success until the workflow terminates and captures the new Space revision and rollback. Signed-in Android behavior should then be tested separately: file card, mobile wrapping, missing rename destination, destination follow-up, confirm/decline and case-only rename. No production rename has been performed during engineering.
+## Terminal guarded release receipt
+- Guarded existing-Space workflow [#38949394588](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38949394588): **COMPLETED / SUCCESS**.
+- Approved immutable source: `510362e50fd9db9f8f325855d72e3d8eb5f1011a`. Tree: `0951c7a309b48fc19729c51f1dbc36696a335d3c`.
+- Prior Space revision: `e4eddf9b1cd4c39ce05ad74ba87e9b1ef491a5c7`, preserved in predeploy reference artifact `12068885007` and rollback checkpoint artifact `12067209962`.
+- Published Space revision: `281e412110f766f50904c1400056651b95262f21`; release checkpoint artifact `12068350557`.
+- Runtime registry updated: Repository Work `1.0.205`, Server Runtime `2.3.417`, Web Chat `1.5.148`; other modules unchanged.
+- Evidence state: SOURCE + OFFLINE CI + GUARDED PUBLICATION verified. **DEPLOYED_UNVERIFIED** for signed-in Android acceptance. The owner has not yet verified wrapping, compact card, rename prompt, consent or a real atomic rename on the updated Space.
