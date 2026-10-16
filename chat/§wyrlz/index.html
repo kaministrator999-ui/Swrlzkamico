@@ -1580,7 +1580,31 @@
                                       &&/^[A-Za-z0-9_§.+-]+$/.test(p));
         if(!lines.length||lines.length>700||lines.some(item=>!isSafePath(item.path)))return null;
         return {kind,repo:ctx.repo,branch:ctx.branch,revision:ctx.sourceSha,
-          count,inspected,lines,raw};
+          scope:String(ctx.directory||""),count,inspected,lines,raw};
+      };
+      // v269: adapt a source-pinned recursive file list to a DIRECTORY SNAPSHOT
+      // for the already-existing v223 explorer. Never pretend that its flat file
+      // paths are direct children: reconstruct only evidenced parent folders.
+      const inventoryDirectoryForExplorer=inventory=>{
+        if(!inventory||inventory.kind!=="recursive")return null;
+        const scope=String(inventory.scope||"").replace(/^\/|\/$/g,"");
+        const prefix=scope?scope+"/":"";
+        const entries=new Map();
+        for(const item of inventory.lines){
+          if(prefix&&!item.path.startsWith(prefix))return null;
+          const rest=item.path.slice(prefix.length);
+          const sections=rest.split("/");
+          if(!rest||sections.some(p=>!p))return null;
+          const child=prefix+sections[0];
+          const type=sections.length>1?"dir":"file";
+          if(entries.has(child)&&entries.get(child)!==type)return null;
+          entries.set(child,type);
+        }
+        if(!entries.size)return null;
+        const rows=[...entries].sort((a,b)=>a[0].localeCompare(b[0]));
+        return "## GitHub directory: "+(scope||"/")+"\n"+
+          rows.map(([path,type])=>"- "+type+" "+path).join("\n")+
+          (inventory.lines.length<inventory.count?"\n(First "+rows.length+" entries.)":"");
       };
       const appendGitHubInventoryCard=(container,inventory)=>{
         const section=document.createElement("section");section.className="github-inventory-card";
@@ -1670,8 +1694,28 @@
         container.innerHTML="";
         const rawSource=String(text||"");
         originalRenderedSources.set(container,rawSource);
+        // Original v223 GitHub explorer owns directory/file-list presentation.
+        // Keep its state-cache, authenticated navigation and source viewer.
+        const appendRepositoryExplorer=value=>window.SwrlzGitHubExplorerV223?.render(container,value,{
+          messageId,
+          accountId:()=>chatAccountUser?.id||"",
+          threadId:()=>activeThreadId||"",
+          preparePrompt:text=>{
+            prompt.value=String(text||"");
+            prompt.dispatchEvent(new Event("input",{bubbles:true}));
+            prompt.focus();
+          },
+          contextUpdated:()=>scheduleStationSync()
+        })===true;
         const inventory=splitVerifiedGitHubInventory(rawSource,verifiedContext);
-        if(inventory){appendGitHubInventoryCard(container,inventory);return;}
+        if(inventory){
+          const listing=inventory.kind==="directory"?rawSource:
+            inventoryDirectoryForExplorer(inventory);
+          if(listing&&appendRepositoryExplorer(listing))return;
+          // Analysis reports and unavailable explorer runtimes retain their
+          // compact verified source evidence rather than losing the message.
+          appendGitHubInventoryCard(container,inventory);return;
+        }
         const sourceContext=splitGitHubSourcePreamble(rawSource)
           ||splitVerifiedGitHubFilePreamble(rawSource,verifiedContext);
         const source=sourceContext?sourceContext.body:rawSource;
@@ -1720,17 +1764,7 @@
 
         // v223: treat only exact, bounded directory listings as explorer data.
         // No HTML from GitHub or the model is interpreted as markup.
-        const appendRepositoryExplorer=value=>window.SwrlzGitHubExplorerV223?.render(container,value,{
-          messageId,
-          accountId:()=>chatAccountUser?.id||"",
-          threadId:()=>activeThreadId||"",
-          preparePrompt:text=>{
-            prompt.value=String(text||"");
-            prompt.dispatchEvent(new Event("input",{bubbles:true}));
-            prompt.focus();
-          },
-          contextUpdated:()=>scheduleStationSync()
-        })===true;
+
         const appendSourceGuide=value=>window.SwrlzSourceGuidesV245?.render(container,value,{
           preparePrompt:command=>{
             prompt.value=String(command||"");

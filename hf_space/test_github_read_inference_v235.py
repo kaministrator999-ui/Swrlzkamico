@@ -75,8 +75,9 @@ def test_export66_verified_root_listing_and_named_file_followups():
     root={"repo":"kaministrator999-ui/Swrlzing-core","branch":"main",
           "sourceSha":"a"*40,"directory":"","lastFile":"","kind":"directory"}
     cases={
-        "What files are in the GitHub repo":"@GitHub files recursive",
-        "What are the files in the repo":"@GitHub files recursive",
+        "What files are in the GitHub repo":"@GitHub files",
+        "What are the files in the repo":"@GitHub files",
+        "What files are in the Github repo?":"@GitHub files",
         "Can you locate the test file in the repo":"@GitHub search test",
         "The test.txt file":"@GitHub read file test.txt",
         "The testing.txt file":"@GitHub read file testing.txt",
