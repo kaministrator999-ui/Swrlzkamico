@@ -149,6 +149,10 @@
     "scenes/model-atelier-festival-refined-v11-14.swyrl.json": {
       "sha256": "33b8f9ca316978e23246de308dbdf92c1ab7e9966b2befaeeb67e9f0c5039230",
       "bytes": 261540
+    },
+    "scenes/model-atelier-festival-surface-v11-15.swyrl.json": {
+      "sha256": "d7c02620375e41dcafa8a0cfc422db652d97336ed8917b9316fd26d0a1400d8a",
+      "bytes": 261385
     }
   },
   "sources": {
@@ -320,6 +324,8 @@
     "runtime/model_atelier_reference_v11_13.js": "2a5f384867ce1de7a263e4afe8459bccdc7f0d698f9da426afc0c8092237a5a8",
     "runtime/model_atelier_reference_v11_13.css": "a0d43b01143a9af8d0c7e74ede7cab203289f9691e9592cef67c3c0e205358ec",
     "patches/v11_14_reference_refinement.py": "a3f3b230b9057d8c4598d5eee3d0b9584f00484c9ccfded851a6f46023be5691",
-    "runtime/model_atelier_refinement_v11_14.js": "6075a4ca44f411b1119e8ea6b29ee62bb0b28848a310dc0c42ba2647b1c9229b"
+    "runtime/model_atelier_refinement_v11_14.js": "6075a4ca44f411b1119e8ea6b29ee62bb0b28848a310dc0c42ba2647b1c9229b",
+    "patches/v11_15_native_surface_study.py": "87bf3f0824f6f7c333888188e97222a97c0f81a502c9fb6f48f1d2b2b6daf3cf",
+    "runtime/model_atelier_surface_v11_15.js": "30ea0f0cc54e91360354ba4ec1f06edde1e97fb7ba9dbdb70f896c02d6db40dc"
   }
 }
