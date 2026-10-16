@@ -12,8 +12,8 @@ const chat=fs.readFileSync(path.join(base,"chat/§wyrlz/index.html"),"utf8");
 assert(station.includes("githubChatFileAction"));
 assert(!station.includes("github-general-create-v262.js"),"Legacy popup must not load in Chat");
 assert(!station.includes("github-general-create-v262.css"),"Legacy popup styles must not load in Chat");
-assert(chat.includes("GITHUB_GENERAL_CREATE_FILE_APPROVAL_REQUIRED"));
-assert(chat.includes("swrlz:github-general-create-proposal"));
+assert(!chat.includes("GITHUB_GENERAL_CREATE_FILE_APPROVAL_REQUIRED"),"Chat no longer signals legacy popup states");
+assert(!chat.includes("swrlz:github-general-create-proposal"),"Chat no longer dispatches legacy popups");
 assert(css.includes("github-general-dialog"));
 
 const created=[], events={}, requests=[];
