@@ -1,3 +1,17 @@
+## UPDATE FINISHED — 2026-10-16 — v267 GitHub root file inventory and contextual filename reads
+
+**Owner evidence:** Only the most recent of 44 threads from export (66), plus six Android screenshots. File-list requests returned oversized source-analysis reports; locate/filename followups entered CODER_AUTO_ROUTE and repeated the report. Authenticated Git evidence: six files, five inspected on `Swrlzing-core` branch `main`. No repository write requested or executed.
+
+**Fix:** Simple root file questions now select recursive source-pinned file inventory, vague `locate the test file` selects filename search, and `The test.txt file` / `The testing.txt file` trigger distinct literal file reads with GitHub verification (no invented match). Verified root context survives recursive inventory. Direct read-only commands win before generic source-specialist and coder. A compact mobile inventory with safe file links, accurate 5-of-6 inspection caveat and expandable complete provenance replaces bulky source-report prose. Full raw text remains for Copy/export. Files: `hf_space/github_read_inference_v235.py`, `hf_space/github_connection.py`, `hf_space/station.py`, `chat/§wyrlz/index.html`, scoped tests and test-workflow step. §E, model weights, and unrelated modules untouched.
+
+**Source/CI:** [PR #199](https://github.com/kaministrator999-ui/Swrlzkamico/pull/199) merged source `8222c5976b87b61d70b19d4c655b5c0819479065` with exact tested tree `15bd0257e40cfdad6847dffe3ea28fb205fb50ba`. Initial green CI lacked new v267 assertions; after explicitly adding them, they found an overescaped dispatch matcher, which was corrected with preserved red-run history. [HF Candidate CI #38952006721](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38952006721) COMPLETED/SUCCESS including the new v267 tests, and [mobile lyric CI #38952006690](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38952006690) COMPLETED/SUCCESS.
+
+**Guarded publication:** Existing `kamiloki/Swyrlz` Space [workflow #38952283104](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/38952283104) COMPLETED/SUCCESS for exact source above. Space rollback reference `281e412110f766f50904c1400056651b95262f21`, checkpoint `12068719344`; new published revision `e85674b2ba536abc75c9a52d3c7050cc6c6dcf6a`, checkpoint `12069252636`.
+
+**Canonical registry:** Repository Work `1.0.206`, Server Runtime `2.3.418`, Web Chat `1.5.149`; other modules unchanged. Full event report `reports/V267_CHAT_EXPORT66_GITHUB_INVENTORY_2026-10-16.md`.
+
+**Acceptance:** Source/CI/publication confirmed. **DEPLOYED_UNVERIFIED** for owner signed-in Android interaction; next phone test must independently verify inventory card, source-report expansion, exact file read and nonmatching `test.txt` behavior. Do not claim user-visible acceptance or mutations from workflow publication.
+
 ## UPDATE STARTED — 2026-10-16 — v267 GitHub file-intent and compact mobile inventory
 
 **Evidence:** The newest conversation of owner export (66) and six Android screenshots. GitHub verified six total files, five inspected, yet simple list/file-lookup requests returned a verbose static source report. Bare filename clarifications entered `CODER_AUTO_ROUTE`. Source file contents and authorization were not the defect.
