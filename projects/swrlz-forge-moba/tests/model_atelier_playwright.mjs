@@ -46,7 +46,7 @@ try{
     await page.locator('#modelAtelierMetrics summary').click();
     assert.equal(await page.locator('#modelAtelierMetricsBody').isVisible(),true,'Expanded profiler is hidden');
     const stats=page.locator('#modelAtelierMetricsBody .atelier-metric-row');
-    const number=async index=>Number((await stats.nth(index).locator('strong').innerText()).replaceAll(',','').replace(/[^0-9]/g,''));
+    const number=async index=>Number(((await stats.nth(index).locator('strong').textContent())||'').replaceAll(',','').replace(/[^0-9]/g,''));
     const originalTris=await number(1);
     assert.equal(await number(0),811,'Profiler did not count the native meshes');
     assert(originalTris>811,'Triangle counter should inspect generated geometry');
