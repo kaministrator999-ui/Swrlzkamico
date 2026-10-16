@@ -1,5 +1,6 @@
-name: Deploy §wyrl§ Engine v11.10 to Hugging Face
+name: Deploy §wyrl§ Engine to Hugging Face
 
+# Version-neutral workflow name: the independent hosted audit listens to it via workflow_run.
 # Production deploys only when the dedicated release-button file is deliberately changed.
 # Ordinary §E source/docs/manifest edits MUST NOT trigger production.
 on:
