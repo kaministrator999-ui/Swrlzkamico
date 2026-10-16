@@ -16,16 +16,16 @@ try{
  for(const e of edits){
   await page.locator('#modelAtelierParts').selectOption(e.id);
   if(e.path){await page.locator('#modelAtelierLoftPath').fill(JSON.stringify(e.path));await page.locator('#modelAtelierLoftRadii').fill(JSON.stringify(e.radii));await hit('ApplyLoft');}
-  if(e.surface){for(const [key,value] of Object.entries(e.surface))await page.locator('#modelAtelier'+key[0].toUpperCase()+key.slice(1)).fill(String(value));await hit('SurfaceApply');}
+  if(e.surface){for(const [key,value] of Object.entries(e.surface))key==='preset'?await page.locator('#modelAtelierSurfacePreset').selectOption(value):await page.locator('#modelAtelier'+key[0].toUpperCase()+key.slice(1)).fill(String(value));await hit('SurfaceApply');}
   if(e.color)await set('Color',e.color);
-  for(const key of ['position','scale'])if(e[key])for(let i=0;i<3;i++)await set(key+i,e[key][i]);
+  for(const key of ['position','rotation','scale'])if(e[key])for(let i=0;i<3;i++)await set(key+i,e[key][i]);
   completed.push(e.id);
  }
  const snap=()=>page.evaluate(()=>window.SWYRL_ENGINE_AGENT.inspectScene());
  const authored=await snap();assert.equal(authored.project.modelAtelier.parts.length,301);
  const wait=page.waitForEvent('download');await hit('Export');const download=await wait;await download.saveAs(out+'/authored.model.json');
  const saved=JSON.parse(await fs.readFile(out+'/authored.model.json','utf8'));assert.deepEqual(saved.model,authored.project.modelAtelier);
- for(const e of edits){const p=saved.model.parts.find(p=>p.id===e.id);for(const [k,v] of Object.entries(e)){if(k==='id')continue;if(k==='surface'){for(const [key,value] of Object.entries(v))assert.equal(p[key],value);}else assert.deepEqual(p[k],v);}}
+ for(const e of edits){const p=saved.model.parts.find(p=>p.id===e.id);for(const [k,v] of Object.entries(e)){if(k==='id')continue;if(k==='surface'){for(const [key,value] of Object.entries(v))assert.equal(p[key==='preset'?'surfaceStyle':key],value);}else assert.deepEqual(p[k],v);}}
  // Native import and whole-model undo must retain the new surface parameters.
  await page.locator('#modelAtelierImportFile').setInputFiles(out+'/authored.model.json');await page.waitForFunction(()=>document.getElementById('modelAtelierStatus').textContent.startsWith('Validated model,'));
  assert.deepEqual((await snap()).project.modelAtelier,saved.model);

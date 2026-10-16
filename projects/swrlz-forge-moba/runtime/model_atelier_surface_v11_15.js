@@ -2,15 +2,15 @@
 let atelierDetailTarget=null;
 function atelierSurfaceRefresh(){
  const p=partById(selection),deck=$m('SurfaceEditor');if(!deck)return;
- const portrait=p?.surfaceStyle==='portrait-head',cloth=p?.surfaceStyle==='tailored-panel';
- deck.hidden=!portrait&&!cloth;$m('SurfacePortrait').hidden=!portrait;$m('SurfaceCloth').hidden=!cloth;
+ const portrait=p?.surfaceStyle==='portrait-head',cloth=p?.surfaceStyle==='tailored-panel',sphere=p?.kind==='sphere';
+ deck.hidden=!sphere&&!cloth;$m('SurfaceSphere').hidden=!sphere;if(sphere)$m('SurfacePreset').value=['portrait-head','tapered-muzzle'].includes(p.surfaceStyle)?p.surfaceStyle:'rounded';$m('SurfacePortrait').hidden=!portrait;$m('SurfaceCloth').hidden=!cloth;
  if(portrait)$m('JawTaper').value=String(p.jawTaper??.31);
  if(cloth){$m('PanelCamber').value=String(p.panelCamber??(p.panelAxis==='depth'?.055:.085));$m('PanelPleat').value=String(p.panelPleat??.012);}
 }
 function atelierSurfaceInstall(){
  $m('SurfaceApply').addEventListener('click',()=>{
   const p=partById(selection);if(!p)return;let values;
-  if(p.surfaceStyle==='portrait-head')values={jawTaper:Number($m('JawTaper').value)};
+  if(p.kind==='sphere'){const preset=$m('SurfacePreset').value;values={surfaceStyle:preset==='rounded'?undefined:preset};if(preset==='portrait-head')values.jawTaper=p.surfaceStyle==='portrait-head'?Number($m('JawTaper').value):.31;}
   else if(p.surfaceStyle==='tailored-panel')values={panelCamber:Number($m('PanelCamber').value),panelPleat:Number($m('PanelPleat').value)};
   else return;
   if(!checkPart({...p,...values})){status('Surface rejected: jaw 0–0.5, cloth curvature 0–0.25, folds 0–0.06.',true);return;}
@@ -21,4 +21,11 @@ function atelierSurfaceInstall(){
   const box=new THREE.Box3().setFromObject(mesh),size=box.getSize(new THREE.Vector3());atelierDetailTarget=box.getCenter(new THREE.Vector3());
   orbit.distance=Math.max(.7,Math.max(size.y,size.x/camera.aspect,size.z)*.78/Math.tan(camera.fov*Math.PI/360));cameraUpdate();
  });
+}
+
+// The positive local X end tapers to a real narrow snout; rotate it with native transforms.
+function atelierTaperedMuzzle(){
+ const g=new THREE.SphereGeometry(1,24,16),a=g.attributes.position;
+ for(let i=0;i<a.count;i++){const x=a.getX(i),t=(x+1)*.5,taper=1-.68*t*t;a.setXYZ(i,x,a.getY(i)*taper,a.getZ(i)*taper);}
+ g.computeVertexNormals();g.computeBoundingSphere();return g;
 }

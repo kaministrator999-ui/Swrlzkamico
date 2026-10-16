@@ -1036,6 +1036,14 @@
       0.185,
       0.095,
       0.155
+    ],
+    "surface": {
+      "preset": "tapered-muzzle"
+    },
+    "rotation": [
+      0,
+      0,
+      -0.5
     ]
   },
   {
@@ -1130,6 +1138,14 @@
       0.185,
       0.095,
       0.155
+    ],
+    "surface": {
+      "preset": "tapered-muzzle"
+    },
+    "rotation": [
+      0,
+      0,
+      3.642
     ]
   },
   {
@@ -1208,6 +1224,150 @@
       0.008,
       0.011,
       0.006
+    ]
+  },
+  {
+    "id": "azure-ear--1",
+    "position": [
+      0,
+      0,
+      0.26
+    ]
+  },
+  {
+    "id": "azure-ear-inner--1",
+    "position": [
+      0,
+      0,
+      0.18
+    ]
+  },
+  {
+    "id": "azure-eyebrow--1",
+    "position": [
+      0,
+      0,
+      0.065
+    ]
+  },
+  {
+    "id": "azure-mask--1",
+    "position": [
+      0,
+      0,
+      0.07
+    ]
+  },
+  {
+    "id": "azure-ear-1",
+    "position": [
+      0,
+      0,
+      0.26
+    ]
+  },
+  {
+    "id": "azure-ear-inner-1",
+    "position": [
+      0,
+      0,
+      0.18
+    ]
+  },
+  {
+    "id": "azure-eyebrow-1",
+    "position": [
+      0,
+      0,
+      0.065
+    ]
+  },
+  {
+    "id": "azure-mask-1",
+    "position": [
+      0,
+      0,
+      0.07
+    ]
+  },
+  {
+    "id": "azure-brow",
+    "position": [
+      0,
+      0,
+      0.09
+    ]
+  },
+  {
+    "id": "coral-ear--1",
+    "position": [
+      0,
+      0,
+      0.26
+    ]
+  },
+  {
+    "id": "coral-ear-inner--1",
+    "position": [
+      0,
+      0,
+      0.18
+    ]
+  },
+  {
+    "id": "coral-eyebrow--1",
+    "position": [
+      0,
+      0,
+      0.065
+    ]
+  },
+  {
+    "id": "coral-mask--1",
+    "position": [
+      0,
+      0,
+      0.07
+    ]
+  },
+  {
+    "id": "coral-ear-1",
+    "position": [
+      0,
+      0,
+      0.26
+    ]
+  },
+  {
+    "id": "coral-ear-inner-1",
+    "position": [
+      0,
+      0,
+      0.18
+    ]
+  },
+  {
+    "id": "coral-eyebrow-1",
+    "position": [
+      0,
+      0,
+      0.065
+    ]
+  },
+  {
+    "id": "coral-mask-1",
+    "position": [
+      0,
+      0,
+      0.07
+    ]
+  },
+  {
+    "id": "coral-brow",
+    "position": [
+      0,
+      0,
+      0.09
     ]
   }
 ]

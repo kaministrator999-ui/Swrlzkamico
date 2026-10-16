@@ -17,13 +17,14 @@ def apply(html):
     html=once(html,'  function checkPart(p){', '''  function checkPart(p){
     for(const [key,limit] of [['jawTaper',.5],['panelCamber',.25],['panelPleat',.06]])
       if(p&&p[key]!==undefined&&(!Number.isFinite(p[key])||p[key]<0||p[key]>limit))return false;''')
+    html=once(html,'function atelierReferenceGeometry(part){',"function atelierReferenceGeometry(part){\n  if(part.kind==='sphere'&&part.surfaceStyle==='tapered-muzzle')return atelierTaperedMuzzle();")
     html=once(html,'1-.31*Math.pow((-y-.12)/.88,.65)','1-(part.jawTaper??.31)*Math.pow((-y-.12)/.88,.65)')
     html=once(html,'fold=Math.cos(u*Math.PI*3)*.012*Math.sin(t*Math.PI)','fold=Math.cos(u*Math.PI*3)*(part.panelPleat??.012)*Math.sin(t*Math.PI)')
     html=once(html,'fold-.055*u*u','fold-(part.panelCamber??.055)*u*u')
     html=once(html,'fold-.085*u*u','fold-(part.panelCamber??.085)*u*u')
     html=once(html,'    const sculpt=$m(\'SculptEditor\');','    atelierSurfaceRefresh();\n    const sculpt=$m(\'SculptEditor\');')
     html=once(html,'atelierPoseDeckInstall();atelierAssemblyInstall();','atelierPoseDeckInstall();atelierAssemblyInstall();atelierSurfaceInstall();')
-    deck='''<section id="modelAtelierSurfaceEditor" hidden aria-label="Surface shaping"><h3>Surface shaping</h3><div id="modelAtelierSurfacePortrait"><label>Jaw taper<input id="modelAtelierJawTaper" type="number" min="0" max=".5" step=".01"></label></div><div id="modelAtelierSurfaceCloth"><label>Cloth curvature<input id="modelAtelierPanelCamber" type="number" min="0" max=".25" step=".005"></label><label>Fold depth<input id="modelAtelierPanelPleat" type="number" min="0" max=".06" step=".002"></label></div><button id="modelAtelierSurfaceApply">Apply surface shape</button></section>'''
+    deck='''<section id="modelAtelierSurfaceEditor" hidden aria-label="Surface shaping"><h3>Surface shaping</h3><div id="modelAtelierSurfaceSphere"><label>Sculpted surface<select id="modelAtelierSurfacePreset"><option value="rounded">Rounded</option><option value="portrait-head">Portrait head</option><option value="tapered-muzzle">Tapered muzzle</option></select></label></div><div id="modelAtelierSurfacePortrait"><label>Jaw taper<input id="modelAtelierJawTaper" type="number" min="0" max=".5" step=".01"></label></div><div id="modelAtelierSurfaceCloth"><label>Cloth curvature<input id="modelAtelierPanelCamber" type="number" min="0" max=".25" step=".005"></label><label>Fold depth<input id="modelAtelierPanelPleat" type="number" min="0" max=".06" step=".002"></label></div><button id="modelAtelierSurfaceApply">Apply surface shape</button></section>'''
     html=once(html,'<section id="modelAtelierLoftEditor"',deck+'<section id="modelAtelierLoftEditor"')
     html=once(html,'<button id="modelAtelierResetCamera">Reset view</button>','<button id="modelAtelierResetCamera">Reset view</button><button id="modelAtelierFrameSelected">Frame selected</button>')
     html=once(html,'function atelierSetPoseCamera(view){','function atelierSetPoseCamera(view){\n  atelierDetailTarget=null;')
