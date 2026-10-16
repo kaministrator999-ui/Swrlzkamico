@@ -70,6 +70,45 @@ def test_latest_export_named_file_is_a_verified_read_not_a_404_command():
     assert not any("unavailable (404)" in str(e.get("text","")) for e in events)
 
 
+
+def test_export66_verified_root_listing_and_named_file_followups():
+    root={"repo":"kaministrator999-ui/Swrlzing-core","branch":"main",
+          "sourceSha":"a"*40,"directory":"","lastFile":"","kind":"directory"}
+    cases={
+        "What files are in the GitHub repo":"@GitHub files recursive",
+        "What are the files in the repo":"@GitHub files recursive",
+        "Can you locate the test file in the repo":"@GitHub search test",
+        "The test.txt file":"@GitHub read file test.txt",
+        "The testing.txt file":"@GitHub read file testing.txt",
+    }
+    for prompt,command in cases.items():
+        assert read.classify_read(prompt,root)==command,(prompt,read.classify_read(prompt,root))
+        captured=[]
+        def fake_command(payload):
+            captured.append(payload["prompt"])
+            yield {"type":"DELTA","text":"Verified GitHub read"}
+            yield {"type":"COMPLETED","phase":"COMPLETE"}
+        # Include the model specialist to prove the read intent wins dispatch.
+        with (mock.patch.object(gh,"command_events",side_effect=fake_command),
+              mock.patch.object(gh,"_post_github",side_effect=AssertionError("write attempted"))):
+            events=list(gh.agent_events({"userId":"google:owner",
+                "prompt":prompt,"githubContext":root},
+                model_generator=lambda *a,**k: iter(()),
+                coder_generator=lambda *a,**k: iter(())))
+        assert captured==[command],(prompt,captured)
+        assert any(e.get("phase")=="GITHUB_READ_EVIDENCE" for e in events)
+    # An unscoped nominal response is not a connected GitHub instruction.
+    assert read.classify_read("The testing.txt file") is None
+    assert read.classify_read("The testing.txt file",{"repo":root["repo"],
+                                 "directory":"","lastFile":"","sourceSha":""}) is None
+    for prompt in ("Write code for a GitHub inventory","Rename that file",
+                   "Delete testing.txt in the repo","Explain Python paths"):
+        assert read.classify_read(prompt,root) is None,prompt
+    # Preserve meaningful source-explanation intent, not every query a listing.
+    assert read.classify_read("Summarize GitHub repository architecture",root).startswith("@GitHub report")
+
+
+
 def test_model_education_is_inference_not_unverified_facts():
     for question in ("Explain what hf_space/brain_programming.py does in our repo",
                      "Which files handle source reports in GitHub?",
@@ -110,6 +149,7 @@ if __name__ == "__main__":
     test_natural_read_tool_selection()
     test_verified_thread_scope_and_general_chatter()
     test_latest_export_named_file_is_a_verified_read_not_a_404_command()
+    test_export66_verified_root_listing_and_named_file_followups()
     test_model_education_is_inference_not_unverified_facts()
     test_stage_one_executes_only_read_command()
     print("v235 scoped GitHub source inference and Stage-1 lock tests PASS")
