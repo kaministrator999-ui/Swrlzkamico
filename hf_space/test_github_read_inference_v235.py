@@ -52,6 +52,24 @@ def test_verified_thread_scope_and_general_chatter():
     assert read.classify_read("@GitHub read file README.md") is None
 
 
+def test_latest_export_named_file_is_a_verified_read_not_a_404_command():
+    scoped={"repo":"kaministrator999-ui/Swrlzing-core","branch":"main",
+            "sourceSha":"a"*40,"directory":"write-action-tests","lastFile":""}
+    prompt="Can you see the testing.txt file"
+    assert read.classify_read(prompt,scoped)=="@GitHub read file testing.txt"
+    captured=[]
+    def fake_command(data):
+        captured.append(data["prompt"])
+        yield {"type":"DELTA","text":"## GitHub file: write-action-tests/Testing.txt"}
+        yield {"type":"COMPLETED","phase":"COMPLETE"}
+    with mock.patch.object(gh,"command_events",side_effect=fake_command):
+        events=list(gh.agent_events({"userId":"google:owner","prompt":prompt,
+                                     "githubContext":scoped}))
+    assert captured==["@GitHub read file testing.txt"],captured
+    assert any(e.get("phase")=="GITHUB_READ_EVIDENCE" for e in events)
+    assert not any("unavailable (404)" in str(e.get("text","")) for e in events)
+
+
 def test_model_education_is_inference_not_unverified_facts():
     for question in ("Explain what hf_space/brain_programming.py does in our repo",
                      "Which files handle source reports in GitHub?",
@@ -91,6 +109,7 @@ def test_stage_one_executes_only_read_command():
 if __name__ == "__main__":
     test_natural_read_tool_selection()
     test_verified_thread_scope_and_general_chatter()
+    test_latest_export_named_file_is_a_verified_read_not_a_404_command()
     test_model_education_is_inference_not_unverified_facts()
     test_stage_one_executes_only_read_command()
     print("v235 scoped GitHub source inference and Stage-1 lock tests PASS")
