@@ -1,3 +1,15 @@
+# §wyrl§ Engine · current v11.13 reference sculpt update
+
+## v11.13 · native reference sculpt and independent living piñatas
+
+Measured candidate seal: **2,464,667 HTML bytes**, SHA-256 `d53fd7990d85ad0444d245016ae6d61c91e2894a3adb8982756bc24f3903aaf5`; 83 ordered patches and 36 assets. Native model-save authoring and twenty focused desktop/phone cases passed; full independent release CI remains required.
+
+The owner-provided festival turnaround now drives a new 275-part native starter: sculpted facial planes and almond eyes, swept dyed hair, asymmetric layered outfit, bare anatomical legs and socks, two three-dimensional tissue-paper ferrets attached to actual hair sockets, and a separate paper bunny. The living-model inspector provides reversible attach/detach, per-model flex, saved transform keys, a six-second transformation preview, independent model JSON exports and actual rendered OBJ export. Whole model history, native save/load and the measured geometry profiler remain available. Default generated geometry is approximately 82,396 triangles, measured from the buffers rather than guessed from mesh count.
+
+Candidate branch `feature/model-reference-sockets`; source and hosted baseline `43dd6db` / v11.12, 2,352,463 bytes, SHA-256 `76051c90fda3b9f32fef582977fb8af872edc14de44781e253f90ed3f0f9bc6f`. The new release appends patch 83 and native asset 36. All 82 predecessor patches/runtime modules and 35 packaged assets are preserved. The exact earlier v11.12 default remains independently loadable for its full regression.
+
+Research, native format, controls and limitations: [Festival reference workflow](projects/swrlz-forge-moba/reports/FESTIVAL_REFERENCE_WORKFLOW.md). This is an original editable geometric study; production retopology, UV painting and skeletal skin weights are not implemented. Full desktop/phone compatibility, final dedicated deploy, exact hosted audit and the owner's visual response are separate gates. This candidate section does not claim publication before those checks pass.
+
 # §tart §E — §wyrl§ Engine Build & Deploy Router
 
 ## v11.12 grounded pose correction — validated and merged; deploy pending (2026-10-15)

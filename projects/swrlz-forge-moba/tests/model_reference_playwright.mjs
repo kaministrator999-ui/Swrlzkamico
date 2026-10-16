@@ -1,0 +1,54 @@
+import {chromium} from 'playwright';
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import {createHash} from 'node:crypto';
+const base=(process.env.SWYRL_ANIME_TEST_URL||'http://127.0.0.1:8781').replace(/\/$/,''),out=process.env.SWYRL_MODEL_REFERENCE_OUT||'model-reference-acceptance';
+await fs.mkdir(out,{recursive:true});
+const browser=await chromium.launch({headless:true,...(process.env.SWYRL_CHROMIUM_PATH?{executablePath:process.env.SWYRL_CHROMIUM_PATH}:{}),args:['--no-sandbox','--disable-dev-shm-usage','--enable-webgl','--enable-unsafe-swiftshader','--use-gl=angle','--use-angle=swiftshader']});
+const modes=[{name:'desktop',viewport:{width:1440,height:1000}},{name:'mobile',viewport:{width:412,height:915},isMobile:true,hasTouch:true}],receipts=[];
+const near=(a,b,eps=1e-6)=>{if(Array.isArray(a)){assert.equal(a.length,b.length);a.forEach((v,i)=>near(v,b[i],eps));}else assert.ok(Math.abs(a-b)<eps,`${a} != ${b}`);};
+try{for(const mode of modes){const ctx=await browser.newContext({...mode,acceptDownloads:true}),page=await ctx.newPage(),errors=[],cases=[];page.on('pageerror',e=>errors.push(String(e)));page.setDefaultTimeout(30000);
+ const pass=name=>{cases.push(name);console.log('MODEL_REFERENCE_CASE_PASS',mode.name,name);};
+ const snap=()=>page.evaluate(()=>window.SWYRL_ENGINE_AGENT.inspectScene());
+ const state=()=>page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.assemblies());
+ const hit=async id=>{const n=page.locator('#modelAtelier'+id);await n.scrollIntoViewIfNeeded();if(mode.hasTouch)await n.tap();else await n.click();};
+ const scrub=async time=>{await page.locator('#modelAtelierAssemblyTime').evaluate((el,t)=>{el.value=String(t);el.dispatchEvent(new Event('input',{bubbles:true}));},time);return state();};
+ const download=async(id,suffix)=>{const wait=page.waitForEvent('download');await hit(id);const file=await wait,path=out+'/'+mode.name+'-'+suffix;await file.saveAs(path);return path;};
+ try{
+ await page.goto(base+'/?project=model-atelier',{waitUntil:'domcontentloaded',timeout:60000});await page.locator('#modelAtelierPanel canvas').waitFor();await page.waitForFunction(()=>window.SWYRL_ENGINE_MODEL_ATELIER.status().count===275);
+ await fs.rm(out+'/'+mode.name+'-failure.json',{force:true});
+ const canonical=await snap(),m=canonical.project.modelAtelier,stats=(await state()).metrics;
+ assert.equal(m.assemblies.components.length,3);assert.equal(m.assemblies.sockets.length,2);assert.equal(new Set(m.parts.map(p=>p.id)).size,275);
+ assert.equal(m.parts.filter(p=>p.surfaceStyle==='paper-plume').length,2);assert.equal(m.parts.filter(p=>p.surfaceStyle==='portrait-head').length,1);
+ assert.equal(stats.meshObjects,275);assert.ok(stats.triangles>50000&&stats.triangles<100000);assert.equal(Object.values(stats.groups).reduce((n,g)=>n+g.triangles,0),stats.triangles);
+ const viewport=await page.locator('#modelAtelierViewport').boundingBox();assert.ok(viewport.height>mode.viewport.height*.45);assert.ok(viewport.width>mode.viewport.width*.65);pass('native_sculpt_separate_creatures_and_measured_generated_geometry');
+ for(const view of ['front','three','back','right']){await page.evaluate(v=>window.SWYRL_ENGINE_MODEL_ATELIER.view(v),view);await page.screenshot({path:out+'/'+mode.name+'-'+view+'.png'});}
+ pass('front_three_quarter_rear_profile_and_practical_phone_viewport');
+ await page.locator('#modelAtelierAssemblyDeck summary').first().click();
+ const rest=await scrub(4),early=await scrub(0),middle=await scrub(1.8);assert.ok(early.components[0].scale<.7);near(middle.components[0].scale,.81);assert.notDeepEqual(rest.components[0].bounds,middle.components[0].bounds);assert.notDeepEqual(rest.components[1].bounds,early.components[1].bounds);
+ await scrub(4);const rest2=await state();near(rest2.components[0].bounds.min,rest.components[0].bounds.min);near(rest2.components[0].bounds.max,rest.components[0].bounds.max);pass('reversible_smooth_transform_changes_actual_generated_world_bounds');
+ await page.locator('#modelAtelierAssemblyComponent').selectOption('azure');await hit('AssemblyDetach');const detached=await state();assert.equal(detached.components[0].state,'free');near(detached.components[0].bounds.min,rest.components[0].bounds.min);near(detached.components[0].bounds.max,rest.components[0].bounds.max);await hit('Undo');assert.equal((await state()).components[0].state,'attached');
+ await hit('AssemblyDetach');await hit('AssemblyAttach');near((await state()).components[0].bounds.min,rest.components[0].bounds.min);await scrub(1.8);const midBefore=await state();await hit('AssemblyDetach');const midDetached=await state();near(midDetached.components[0].bounds.min,midBefore.components[0].bounds.min);near(midDetached.components[0].bounds.max,midBefore.components[0].bounds.max);await hit('AssemblyAttach');await scrub(4);
+ await page.locator('#modelAtelierParts').selectOption('hair-bun--1');await page.locator('#modelAtelierposition0').fill('-.44');await page.locator('#modelAtelierposition0').dispatchEvent('change');const movedSocket=await state();near(movedSocket.components[0].pivot[0],rest.components[0].pivot[0]-.1);near(movedSocket.components[0].bounds.min[0],rest.components[0].bounds.min[0]-.1);near(movedSocket.components[1].bounds.min,rest.components[1].bounds.min);await hit('Undo');
+ pass('snap_detach_preserve_world_transform_and_full_model_undo');
+ await page.locator('#modelAtelierAssemblyAmplitude').fill('.08');await page.locator('#modelAtelierAssemblySpeed').fill('1.4');await hit('AssemblyMotionApply');const changed=(await snap()).project.modelAtelier;
+ assert.equal(changed.assemblies.components[0].amplitude,.08);assert.deepEqual(changed.assemblies.components[1],m.assemblies.components[1]);await hit('Undo');assert.equal((await snap()).project.modelAtelier.assemblies.components[0].amplitude,m.assemblies.components[0].amplitude);pass('independent_flex_settings_change_one_model_and_restore');
+ await page.locator('#modelAtelierAssemblyDeck details summary').click();
+ await scrub(0);for(const key of ['offset','rotation'])for(let i=0;i<3;i++)await page.locator('#modelAtelierAssembly'+key+i).fill('0');await page.locator('#modelAtelierAssemblyScale').fill('1');await hit('AssemblySaveKey');
+ await scrub(3);await page.locator('#modelAtelierAssemblyoffset0').fill('-.4');await page.locator('#modelAtelierAssemblyScale').fill('1');await hit('AssemblySaveKey');
+ const keyed=await scrub(1.5);near(keyed.components[0].offset,[-.2,0,0]);const u=1.5/3.6,ease=u*u*u*(u*(u*6-15)+10);near(keyed.components[1].offset,[1.1*(1-ease),-.8*(1-ease),.32*(1-ease)]);
+ const before=await snap(),jsonFile=await download('Export','keyed.model.json'),exported=JSON.parse(await fs.readFile(jsonFile,'utf8'));assert.deepEqual(exported.model,before.project.modelAtelier);
+ assert.equal(exported.model.assemblies.components[0].keys.length,2);
+ await page.locator('#modelAtelierImportFile').setInputFiles(jsonFile);await page.waitForFunction(()=>document.getElementById('modelAtelierStatus').textContent.startsWith('Validated model,'));
+ assert.deepEqual((await snap()).project.modelAtelier.assemblies,exported.model.assemblies);await scrub(1.5);near((await state()).components[0].offset,[-.2,0,0]);pass('actual_saved_model_motion_keys_import_and_interpolate_independently');
+ const bad=structuredClone(exported);bad.model.assemblies.components[0].socketId='absent';await page.locator('#modelAtelierImportFile').setInputFiles({name:'bad.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(bad))});await page.waitForFunction(()=>document.getElementById('modelAtelierStatus').textContent.startsWith('Import rejected:'));
+ assert.deepEqual((await snap()).project.modelAtelier.assemblies,exported.model.assemblies);pass('invalid_attachment_rejected_atomically_without_project_mutation');
+ await hit('AssemblyClearKeys');await scrub(4);await page.locator('#modelAtelierAssemblyComponent').selectOption('coral');const componentFile=await download('AssemblyExport','coral.independent.json'),comp=JSON.parse(await fs.readFile(componentFile,'utf8'));
+ assert.equal(comp.schema,'swyrl-independent-model-v1');assert.equal(comp.component.id,'coral');assert.ok(comp.parts.length>20&&comp.parts.every(p=>p.group==='Coral flare'));
+ const objPath=await download('OBJ','reference.obj'),obj=await fs.readFile(objPath,'utf8');assert.equal(obj.split('\n').filter(l=>l.startsWith('f ')).length,stats.triangles);assert.ok(!/NaN|Infinity/.test(obj));pass('independent_model_and_actual_triangulated_obj_export');
+ await hit('AssemblyPlay');await page.waitForFunction(()=>window.SWYRL_ENGINE_MODEL_ATELIER.assemblies().time>.15);await hit('AssemblyPlay');const paused=(await state()).time;await page.waitForTimeout(120);near((await state()).time,paused);await hit('AssemblyStop');assert.equal((await state()).playing,false);await hit('AssemblyPlay');await page.waitForFunction(()=>window.SWYRL_ENGINE_MODEL_ATELIER.assemblies().time>=6,null,{timeout:45000});assert.equal((await state()).playing,false);await hit('AssemblyStop');pass('native_play_pause_stop_runs_real_raf_and_restores_saved_time');
+ await page.locator('#modelAtelierPoseDeck summary').click();await page.locator('#modelAtelierPoseView').selectOption('back');await hit('PoseViewApply');await page.locator('#modelAtelierPoseName').fill('Reference rear');await hit('PoseSave');assert.equal((await snap()).project.modelAtelier.poseFrames.at(-1).name,'Reference rear');await hit('Close');await page.evaluate(d=>window.SWYRL_ENGINE_AGENT.loadScene(d),canonical);await hit('Reopen');assert.equal((await state()).components.length,3);assert.deepEqual(errors,[]);pass('native_project_load_reopen_and_saved_multiview_frames');
+ const html=await page.request.get(base+'/SOURCE.json');const source=await html.json();const receipt={mode:mode.name,cases,sourceSha256:source.finalSha256,version:source.sourceVersion,parts:275,triangles:stats.triangles,viewport,errors};receipts.push(receipt);await fs.writeFile(out+'/'+mode.name+'-receipt.json',JSON.stringify(receipt,null,2));
+ }catch(error){await page.screenshot({path:out+'/'+mode.name+'-failure.png'}).catch(()=>{});await fs.writeFile(out+'/'+mode.name+'-failure.json',JSON.stringify({error:String(error),stack:error.stack,cases,errors},null,2));throw error;}finally{await ctx.close();}
+ }}finally{await browser.close();}
+await fs.writeFile(out+'/receipt.json',JSON.stringify(receipts,null,2));console.log('MODEL_REFERENCE_ALL_VIEWPORTS_PASS');
