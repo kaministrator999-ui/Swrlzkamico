@@ -47,7 +47,7 @@ def _trim_path(s):
 def _clean_label(s):
     # Paths may contain uncommon Unicode or markup punctuation. Escape Markdown
     # rather than allowing arbitrary user filenames to create links or HTML.
-    return "\`" + str(s).replace("\\", "\\\\").replace("\`", "\\\`").replace("\n", " ")[:512] + "\`"
+    return chr(96) + str(s).replace("\\", "\\\\").replace(chr(96), "\\"+chr(96)).replace("\n", " ")[:512] + chr(96)
 
 
 def _out(text, widget=None):
@@ -62,8 +62,23 @@ def is_file_action(prompt):
         return bool(_RENAME_PATHS.search(prompt) or re.search(r"\b(?:github|repo|repository)\b",prompt,re.I))
     if _CREATE.search(prompt):
         return bool(re.search(r"\b(?:github|repo|repository)\b",prompt,re.I)
-                    and re.search(r"\b(?:file|script|document|\.txt\b|\.py\b|\.md\b|\.json\b|upload)\b",prompt,re.I))
+                    and (re.search(r"\b(?:file|script|document|upload)\b",prompt,re.I) or _SIMPLE_FILE.search(prompt)))
     return False
+
+
+def pending_kind(user_id,thread_id):
+    with _lock:
+        p=_pending.get((user_id,thread_id))
+        return p["kind"] if p and p["expiry"]>time.monotonic() else None
+
+
+def is_reply(prompt):
+    return bool(isinstance(prompt,str) and (_YES.fullmatch(prompt) or _NO.fullmatch(prompt)))
+
+
+def expire_interrupted(user_id,thread_id):
+    """User changed topics: an older conversational yes cannot approve a write."""
+    _consume(user_id,thread_id)
 
 
 def has_pending(user_id, thread_id):
