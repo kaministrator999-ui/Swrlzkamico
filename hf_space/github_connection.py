@@ -1509,7 +1509,8 @@ def _read_context_from_result(user, prompt, result):
     body = str(result or "")
     if not (body.startswith("## GitHub directory: ") or body.startswith("## GitHub file: ")
             or body.startswith("## GitHub repository statistics") or body.startswith("## GitHub file matches")
-            or body.startswith("## GitHub source report · ") or body.startswith("## GitHub path history: ")):
+            or body.startswith("## GitHub source report · ") or body.startswith("## GitHub path history: ")
+            or body.startswith("## GitHub recursive file inventory")):
         return None
     try:
         cfg = _config()
@@ -1563,6 +1564,15 @@ def _read_context_from_result(user, prompt, result):
         reported_sha = re.search(r"(?m)^Branch: [^\n]*commit ([0-9a-f]{40})$", body)
         if reported_sha and reported_sha[1] != sha:
             return None
+        if body.startswith("## GitHub recursive file inventory"):
+            # Never attach authenticated provenance to a stale or mismatched
+            # raw inventory. Root listings need verified thread scope too.
+            repo_line = re.search(r"(?m)^Repository: ([^\n]+)$",body)
+            branch_line = re.search(r"(?m)^Branch: ([^\n]+)$",body)
+            revision_line = re.search(r"(?m)^Revision: ([0-9a-f]{40})$",body)
+            if (not repo_line or repo_line[1]!=repo or not branch_line
+                    or branch_line[1]!=branch or not revision_line or revision_line[1]!=sha):
+                return None
         try:
             if directory:
                 explorer.safe_path(directory, allow_root=False)
