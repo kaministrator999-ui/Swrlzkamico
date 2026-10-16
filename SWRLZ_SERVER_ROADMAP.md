@@ -1,3 +1,13 @@
+# §E v11.14 reference refinement checkpoint
+
+## v11.14 · portrait, silhouette and cloth refinement
+
+The owner requested a closer match to the festival turnaround after reviewing v11.13. This pass refines swept cyan/coral hair into closed elliptical ribbon locks, narrows the round sclera, improves ferret muzzle/eye/ear readability, varies paper edges and color, opens the relaxed A stance, reshapes sock folds and shoes, adds inset garment stitching, and gives the skirt real curved side panels with an opaque fitted underlayer. The separate bunny is moved clear of the wider shoe stance. Front, three-quarter, back and profile views are required; a front-only screenshot cannot reveal missing side cloth.
+
+New native asset: `scenes/model-atelier-festival-refined-v11-14.swyrl.json`; **301 editable parts and 108,260 measured triangles**. Native editor Save model JSON retains the authored result. All three creatures keep independent motion, sockets, detach/reattach, transform keys and exports. The new geometry uses deterministic variation so save/load and OBJ exports reproduce the same surfaces.
+
+Candidate seal: **2,482,877 bytes**, SHA-256 `1154b86d8a8c027fc3b94a39254ff77d5d136a0fcc8283061ef1d0b6d6fe1803`, 84 patches and 37 assets. All 83 predecessor patches/runtime sources and 36 assets remain preserved. Baseline v11.13 was verified live at `25b33e64c5211d47dde7bb8cb77e0f58d1917d5c55971938bf732c2d1371b9d8` before this work. Branch `feature/model-reference-refinement`. Full compatibility CI, the final dedicated deploy request, hosted digest/asset audit and live native controls are release gates; owner visual acceptance remains separate. This is an editable original geometric study, with UV painting and skeletal weight painting still outside the implemented tools.
+
 ## UPDATE FINISHED — 2026-10-15 — v265 latest Chat file read and conversational referential rename
 
 **Result:** Repaired the newest (63) Chat-export failure path without processing prior independent threads. A named singular `testing.txt` read now routes through the verified GitHub file resolver, and “rename that file ... to testing1.txt” stays in the owner-authorized file-action handler with a verified same-thread filename/branch/repo, case-preserving Git blob check and explicit yes/no approval before an atomic rename. The actual source `write-action-tests/Testing.txt` remained untouched during engineering diagnosis and release. No §E work, model weights, or unrelated modules changed.

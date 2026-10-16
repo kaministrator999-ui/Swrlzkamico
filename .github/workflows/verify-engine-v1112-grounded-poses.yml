@@ -1,4 +1,4 @@
-name: Verify §E v11.13 grounded anatomy
+name: Verify §E v11.14 grounded anatomy
 on:
   push:
     branches: [fix/engine-v1112-grounded-stance-poses]
@@ -32,8 +32,8 @@ jobs:
           raw=html.encode('utf8')
           print('GROUNDED_FINAL_BYTES='+str(len(raw)),flush=True)
           print('GROUNDED_FINAL_SHA256='+hashlib.sha256(raw).hexdigest(),flush=True)
-          assert 'V11_13_REFERENCE_ASSEMBLIES' in html
-          assert 'v11.13 · reference sculpt & living piñatas' in html
+          assert 'V11_14_REFERENCE_REFINEMENT' in html
+          assert 'v11.14 · sculpted hair & silhouette refinement' in html
           Path('/tmp/se-grounded.mjs').write_text(html[html.index('<script type="module">')+len('<script type="module">'):html.rindex('</script>')])
           PY
           node --check /tmp/se-grounded.mjs
