@@ -1,6 +1,6 @@
 ID=web-chat
-VERSION=1.5.144
-REVISION=1.5.144-v262-general-github-files
+VERSION=1.5.145
+REVISION=1.5.145-v263-github-rename
 KIND=web-interface
 SOURCE_BRANCH=runtime
 STATUS=active
