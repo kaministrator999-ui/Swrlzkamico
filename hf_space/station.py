@@ -1036,17 +1036,6 @@ def _run(key,request_id,model_id,payload,assistant_id):
             response.extend(({"type":"DELTA","text":result["text"]},
                              {"type":"COMPLETED","phase":"COMPLETE"}))
             event_source=iter(response)
-        elif payload.get("githubCreateTxtProposal"):
-            event_source=iter((
-                {"type":"STATUS","phase":"GITHUB_CREATE_TXT_APPROVAL_REQUIRED",
-                 "reason":"Creating a GitHub file requires exact content and explicit owner confirmation."},
-                {"type":"DELTA","text":"I can prepare a new .txt file in **Swrlzing-core**. "
-                 "Open **Test GitHub TXT creation**, enter the filename and exact text, "
-                 "review the preview, and explicitly confirm the GitHub action. "
-                 "Only new files under write-action-tests/ are supported. "
-                 "No file has been created by this message."},
-                {"type":"COMPLETED","phase":"COMPLETE"},
-            ))
         else:
             event_source=(github_connection.start_events(payload["githubStart"])
                           if isinstance(payload.get("githubStart"),dict)
