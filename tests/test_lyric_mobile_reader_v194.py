@@ -42,7 +42,7 @@ assert(isOriginalSongwritingPrompt("Write a Kotlin script to make lyrics"),false
         self.assertIn('presentationHint==="lyrics"',HTML)
         self.assertIn('language==="code"&&!info.file&&!info.project',HTML)
         self.assertIn('lyricLanguages.has(language)||inferredLyric',HTML)
-        self.assertIn('renderAssistantContent(node.querySelector(".assistant-body"),msg.text||"",msg.id||"",isOriginalSongwritingPrompt(mostRecentUserPrompt)?"lyrics":"")',HTML)
+        self.assertIn('renderAssistantContent(node.querySelector(".assistant-body"),msg.text||"",msg.id||"",isOriginalSongwritingPrompt(mostRecentUserPrompt)?"lyrics":"",msg?.meta?.githubContext)',HTML)
         self.assertIn('renderAssistantContent(body,nextText,renderKey,isOriginalSongwritingPrompt(responsePrompt)?"lyrics":"")',HTML)
         self.assertIn('theme==="lyrics"?"Lyrics":language',HTML)
         self.assertIn('code.textContent=raw',HTML)

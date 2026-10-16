@@ -1797,7 +1797,7 @@ async def send(request:Request):
     # A changed topic invalidates a previously prepared write. No later casual
     # "yes" can authorize a stale rename/create from this conversation.
     if (github_chat_files.has_pending(google_owner,tid)
-            and github_chat_files.pending_kind(google_owner,tid)!="need-content"
+            and github_chat_files.pending_kind(google_owner,tid) not in ("need-content","need-destination")
             and not github_chat_files.is_reply(prompt)
             and not github_chat_files.is_file_action(prompt,active_github,history)):
         github_chat_files.expire_interrupted(google_owner,tid)
@@ -1878,7 +1878,7 @@ async def send(request:Request):
     elif github_chat_files.is_file_action(prompt,active_github,history) or (
         github_chat_files.has_pending(google_owner,tid) and (
             github_chat_files.is_reply(prompt) or
-            github_chat_files.pending_kind(google_owner,tid)=="need-content"
+            github_chat_files.pending_kind(google_owner,tid) in ("need-content","need-destination")
         )
     ):
         payload["githubChatFileAction"]={"userId":google_owner,

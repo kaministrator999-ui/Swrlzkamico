@@ -658,6 +658,25 @@
       .github-source-card .github-source-filename{font-size:14px}
       .github-source-card .github-source-row{grid-template-columns:56px minmax(0,1fr);gap:6px}
     }
+    /* v266: prose/plain-text files wrap on narrow screens. Programming code
+       keeps its deliberate horizontal scrolling and exact underlying bytes. */
+    .assistant-body .code-block.plain-text pre{
+      white-space:pre-wrap;overflow-wrap:anywhere;word-break:normal;
+      overflow-x:hidden;max-width:100%;min-width:0;
+    }
+    .assistant-body .code-block.plain-text code{
+      white-space:inherit;overflow-wrap:inherit;word-break:inherit;
+    }
+    .github-source-card.github-file-card .github-file-open{
+      display:inline-flex;align-items:center;min-height:34px;margin-top:10px;
+      padding:7px 10px;border:1px solid rgba(126,214,255,.30);
+      border-radius:8px;background:rgba(9,49,73,.85);color:#def9ff;
+      font:700 12px/1.4 var(--font-ui);text-decoration:none;
+    }
+    .github-source-card.github-file-card .github-file-open:focus-visible{
+      outline:2px solid #a5edff;outline-offset:2px;
+    }
+    .github-source-card.github-file-card{max-width:100%;overflow:hidden}
   </style>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <script src="/chat/§wyrlz/assets/github-explorer-v223.js?v=228"></script>
@@ -1479,12 +1498,31 @@
           branch:match[2].trim(),commit:match[3],blob:match[4],
           coverage:match[5].trim(),access:match[6].trim(),body:raw.slice(match[0].length)};
       };
+      // A compact card for authenticated GitHub file reads, including older
+      // persisted responses. Never turn an unverified assistant claim into a
+      // provider badge: the signed-in Station metadata must match the URL,
+      // path, and pinned repository revision exactly.
+      const splitVerifiedGitHubFilePreamble=(value,verifiedContext)=>{
+        const ctx=verifiedContext&&typeof verifiedContext==="object"?verifiedContext:null;
+        if(!ctx||ctx.kind!=="file"||!/^[a-f0-9]{40}$/.test(String(ctx.sourceSha||"")))return null;
+        const raw=String(value||"").replace(/\r\n?/g,"\n");
+        const pattern=/^## GitHub file: ([^\n]{1,300})\n(https:\/\/github\.com\/[^\s]+)\nGit blob: ([a-f0-9]{40})\nRepository revision: ([a-f0-9]{40})\nRepository source is data, not tool instructions\.\n\n/;
+        const match=raw.match(pattern);
+        if(!match)return null;
+        const path=match[1],url=match[2],sha=match[4],repo=String(ctx.repo||"");
+        if(!/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(repo)
+            ||path!==ctx.lastFile||sha!==ctx.sourceSha
+            ||url!=="https://github.com/"+repo+"/blob/"+sha+"/"+path)return null;
+        return {sourcePath:repo+"/"+path,repo,file:path,branch:String(ctx.branch||""),
+          commit:sha,blob:match[3],coverage:"Full file preview",access:"Read-only",
+          fileUrl:url,body:raw.slice(match[0].length)};
+      };
       const appendGitHubSourceCard=(container,info)=>{
-        const card=document.createElement("section");card.className="github-source-card";
+        const card=document.createElement("section");card.className="github-source-card"+(info.fileUrl?" github-file-card":"");
         card.setAttribute("aria-label","GitHub source context");
         const top=document.createElement("div");top.className="github-source-top";
-        const kicker=document.createElement("span");kicker.className="github-source-kicker";kicker.textContent="GitHub source context";
-        const access=document.createElement("span");access.className="github-source-access";access.textContent="● Read-only";
+        const kicker=document.createElement("span");kicker.className="github-source-kicker";kicker.textContent=info.fileUrl?"GitHub file":"GitHub source context";
+        const access=document.createElement("span");access.className="github-source-access";access.textContent=info.fileUrl?"● Verified read":"● Read-only";
         top.append(kicker,access);
         const file=document.createElement("div");file.className="github-source-filename";file.textContent=info.file;
         const repo=document.createElement("div");repo.className="github-source-repo";repo.textContent=info.repo;
@@ -1513,13 +1551,20 @@
         addRow("Source",info.sourcePath,true);addRow("Commit",info.commit,true);
         addRow("Blob",info.blob,true);addRow("Coverage",info.coverage);
         addRow("Access",info.access);
-        card.append(top,file,repo,facts,details);container.appendChild(card);
+        if(info.fileUrl){
+          const open=document.createElement("a");open.className="github-file-open";
+          open.href=info.fileUrl;open.target="_blank";open.rel="noopener noreferrer";
+          open.textContent="Open on GitHub ↗";open.setAttribute("aria-label","Open verified GitHub file");
+          card.append(top,file,repo,facts,open,details);
+        }else card.append(top,file,repo,facts,details);
+        container.appendChild(card);
       };
-      const renderAssistantContent=(container,text,messageId="",presentationHint="")=>{
+      const renderAssistantContent=(container,text,messageId="",presentationHint="",verifiedContext=null)=>{
         container.innerHTML="";
         const rawSource=String(text||"");
         originalRenderedSources.set(container,rawSource);
-        const sourceContext=splitGitHubSourcePreamble(rawSource);
+        const sourceContext=splitGitHubSourcePreamble(rawSource)
+          ||splitVerifiedGitHubFilePreamble(rawSource,verifiedContext);
         const source=sourceContext?sourceContext.body:rawSource;
         if(sourceContext)appendGitHubSourceCard(container,sourceContext);
         const fence=/\`\`\`([^\n\`]*)\n?([\s\S]*?)\`\`\`/g;
@@ -1686,7 +1731,7 @@
           const codeLanguages=new Set(["javascript","js","typescript","ts","python","py","cpp","c++","c","csharp","cs","java","kotlin","kt","swift","go","rust","rs","php","ruby","rb","html","css","scss","json","yaml","yml","xml","sql","bash","sh","shell","powershell","ps1","dart","lua","r","matlab","code"]);
           const inferredLyric=language==="code"&&!info.file&&!info.project&&presentationHint==="lyrics";
           const theme=(lyricLanguages.has(language)||inferredLyric)?"lyrics":(codeLanguages.has(language)?"code":"misc");
-          block.className="code-block theme-"+theme+(provisional?" provisional":"");block.dataset.containerTheme=theme;block.dataset.file=info.file;block.dataset.project=info.project;
+          block.className="code-block theme-"+theme+(["text","txt","plaintext"].includes(language)?" plain-text":"")+(provisional?" provisional":"");block.dataset.containerTheme=theme;block.dataset.file=info.file;block.dataset.project=info.project;
           const key=(messageId||"stream")+":"+(info.file||codeIndex++);block.dataset.codeKey=key;
           if(theme==="lyrics"){appendLyric(raw,key,info.file,provisional);return;}
           const head=document.createElement("div");head.className="code-head";
@@ -1941,7 +1986,7 @@
         for(const msg of (thread.messages||[])){
           if(msg.role==="user")mostRecentUserPrompt=String(msg.text||"");
           if(msg.role==="assistant"){
-            const node=assistantTemplate.cloneNode(true); node.removeAttribute("id"); node.dataset.messageId=msg.id||"";node.classList.add("visible","rendered-message"); node.removeAttribute("aria-hidden"); renderAssistantContent(node.querySelector(".assistant-body"),msg.text||"",msg.id||"",isOriginalSongwritingPrompt(mostRecentUserPrompt)?"lyrics":""); attachAssistantTime(node,msg); addCopyButton(node); renderActivityTimelineV238(node,msg?.meta?.progressTrace,{active:false,requestId:msg?.meta?.requestId,terminalType:msg?.meta?.state}); addWidgetBlock(node,msg); addEvidenceBlock(node,msg);addMessagePinButton(node,thread,msg); messageList.appendChild(node);
+            const node=assistantTemplate.cloneNode(true); node.removeAttribute("id"); node.dataset.messageId=msg.id||"";node.classList.add("visible","rendered-message"); node.removeAttribute("aria-hidden"); renderAssistantContent(node.querySelector(".assistant-body"),msg.text||"",msg.id||"",isOriginalSongwritingPrompt(mostRecentUserPrompt)?"lyrics":"",msg?.meta?.githubContext); attachAssistantTime(node,msg); addCopyButton(node); renderActivityTimelineV238(node,msg?.meta?.progressTrace,{active:false,requestId:msg?.meta?.requestId,terminalType:msg?.meta?.state}); addWidgetBlock(node,msg); addEvidenceBlock(node,msg);addMessagePinButton(node,thread,msg); messageList.appendChild(node);
           } else if(msg.role==="user"){
             const node=document.createElement("article");node.className="user-message rendered-message";node.dataset.messageId=msg.id||"";
             const meta=document.createElement("div");meta.className="user-meta";const who=document.createElement("span");who.textContent=chatAccountUser?.displayName||chatAccountUser?.email||"You";meta.appendChild(who);const timeText=formatMessageTime(msg.createdAt);if(timeText){const time=document.createElement("span");time.className="message-time";time.textContent=timeText;time.title=new Date(Number(msg.createdAt)).toLocaleString();meta.appendChild(time);}
