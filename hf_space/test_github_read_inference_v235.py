@@ -109,6 +109,66 @@ def test_export66_verified_root_listing_and_named_file_followups():
 
 
 
+
+def test_export67_natural_selection_from_verified_inventory():
+    # Most recent Chat export (67): a verified six-file list is already on
+    # screen. "The testing one" must read a unique GitHub path, not ask the
+    # coder to invent testing directories or create an artifact.
+    root = {"repo": "kaministrator999-ui/Swrlzing-core", "branch": "main",
+            "sourceSha": "a" * 40, "directory": "", "lastFile": "",
+            "kind": "directory"}
+    selected = {
+        "The testing one": "@GitHub read file testing",
+        "The testing.txt": "@GitHub read file testing.txt",
+        "The Testing.txt": "@GitHub read file Testing.txt",
+        "The test one": "@GitHub read file test",
+    }
+    for prompt, expected in selected.items():
+        assert read.classify_read(prompt, root) == expected, prompt
+        commands = []
+        def fake_command(data):
+            commands.append(data["prompt"])
+            yield {"type": "DELTA", "text": "Verified read result"}
+            yield {"type": "COMPLETED", "phase": "COMPLETE"}
+        with (mock.patch.object(gh, "command_events", side_effect=fake_command),
+              mock.patch.object(gh, "_post_github", side_effect=AssertionError("write attempted"))):
+            result = list(gh.agent_events({"userId": "google:owner", "prompt": prompt,
+                                           "githubContext": root},
+                                          model_generator=lambda *a, **k: iter(()),
+                                          coder_generator=lambda *a, **k: iter(())))
+        assert commands == [expected], (prompt, commands)
+        assert any(e.get("phase") == "GITHUB_READ_EVIDENCE" for e in result), prompt
+
+    # Explicit connected context is necessary. General conversation and
+    # ambiguous ordinals are not invented as GitHub reads.
+    for prompt in ("The testing one", "The testing.txt"):
+        assert read.classify_read(prompt) is None
+    for prompt in ("The first one", "The other one", "The nice one",
+                   "The next one", "The testing one is great",
+                   "Rename the testing one", "Delete the testing one"):
+        assert read.classify_read(prompt, root) is None, prompt
+    file_context = {**root, "kind": "file", "lastFile": "README.md"}
+    assert read.classify_read("The testing one", file_context) is None
+
+    # The old source-verified unique filename resolver owns actual selection.
+    # An extensionless stem may map to Testing.txt but never to test.txt.
+    tree = [{"path": "README.md", "type": "blob", "mode": "100644"},
+            {"path": "write-action-tests/Testing.txt", "type": "blob", "mode": "100644"},
+            {"path": "write-action-tests/hello-swyrlz.txt", "type": "blob", "mode": "100644"}]
+    def fake_api(token, path):
+        if "/commits/" in path:
+            return {"sha": "a" * 40}
+        if "/git/trees/" in path:
+            return {"tree": tree, "truncated": False}
+        raise AssertionError(path)
+    with mock.patch.object(gh, "_api", side_effect=fake_api):
+        existing = gh._resolve_repository_file("test-token", root["repo"], "main", "testing")
+        missing = gh._resolve_repository_file("test-token", root["repo"], "main", "test")
+    assert existing["status"] == "unique", existing
+    assert existing["paths"] == ["write-action-tests/Testing.txt"], existing
+    assert missing["status"] == "not-found", missing
+
+
 def test_model_education_is_inference_not_unverified_facts():
     for question in ("Explain what hf_space/brain_programming.py does in our repo",
                      "Which files handle source reports in GitHub?",

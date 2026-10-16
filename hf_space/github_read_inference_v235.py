@@ -93,16 +93,33 @@ def classify_read(prompt, context=None):
         and re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._/-]{0,100}", str(context.get("branch") or ""))
         and context.get("kind") in ("directory", "file"))
     explicit = bool(_COMMAND.match(raw) or _REPO.search(raw))
+    # A short answer to a verified directory/file-list turn can identify one
+    # filename already shown in the repository. Let the EXISTING GitHub resolver
+    # prove a unique name/stem match; never manufacture or trust a model path.
+    # This is read-only selection, not a general invitation to reinterpret chat.
+    selection = None
+    if verified_root and context.get("kind") == "directory":
+        candidate = re.fullmatch(
+            r"(?:the|that|this)\s+([A-Za-z0-9_§.+-]{2,100})(?:\s+one)?[?.!\s]*",
+            raw, re.I)
+        if candidate:
+            name = candidate[1]
+            if (("." in name or re.search(r"\bone\b", raw, re.I))
+                    and name.casefold() not in (
+                        "first", "second", "third", "last", "next",
+                        "other", "same", "right", "left", "good", "bad",
+                        "nice", "new", "old", "correct")):
+                selection = _safe(name)
     if not explicit and not (directory or last_file or verified_root):
         return None
     # Thread context is a scope hint, not permission to reinterpret unrelated dialogue.
-    if not explicit and not re.search(
+    if not explicit and not selection and not re.search(
             r"\b(?:file|folder|directory|repo|repository|source|code|"
             r"module|function|path|project|it|that|those|them|here)\b",
             raw, re.I):
         return None
     q = _PREFIX.sub("", raw) if _COMMAND.match(raw) else raw
-    if not _READ.search(q):
+    if not _READ.search(q) and not selection:
         return None
     lower = q.casefold()
     paths = _paths(q)
@@ -118,6 +135,8 @@ def classify_read(prompt, context=None):
     if branch_match:
         paths = [p for p in paths if p != branch_match[1]]
     suffix = (" on branch " + named_branch) if named_branch else ""
+    if selection:
+        return "@GitHub read file " + selection + suffix
     # Simple file-list questions need an inventory, not a source-analysis report.
     # Recursive listing includes files below the root, not just top-level items.
     if re.fullmatch(r"(?:what(?: are)?|which)(?: the)? files(?: are)? (?:in|of) (?:my|our|the) (?:github )?(?:repo|repository)[?.!\s]*", lower):
