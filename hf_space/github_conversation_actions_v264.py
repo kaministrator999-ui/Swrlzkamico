@@ -110,7 +110,13 @@ def _read_tree(user_id):
     repo = record.get("repo")
     if repo not in ALLOWED_REPOS:
         raise CreateFileError("SELECTED_REPOSITORY_CHANGED_OR_UNSUPPORTED",403)
-    permission = _effective_access(record,repo,"read")
+    try:
+        permission = _effective_access(record,repo,"read")
+    except Exception as exc:
+        from fastapi import HTTPException
+        if isinstance(exc,HTTPException):
+            raise CreateFileError("GITHUB_READ_ACCESS_REQUIRED",exc.status_code) from None
+        raise
     if not permission.get("allowed"):
         raise CreateFileError("GITHUB_READ_ACCESS_REQUIRED",403)
     branch = permission.get("defaultBranch")
