@@ -131,11 +131,27 @@ def _programming_continuation_signal(text: str) -> bool:
     return _has_phrase(prose,_CONTINUATION)
 
 
+def _provider_read_display(item: dict[str, Any]) -> bool:
+    """A GitHub file read may contain fences, but is not authored code."""
+    if not isinstance(item,dict):
+        return False
+    meta=item.get("meta") if isinstance(item.get("meta"),dict) else item
+    if meta.get("codeArtifactId") or item.get("artifactId"):
+        return False  # Explicit authoring provenance wins over generic source scope.
+    context=meta.get("githubContext")
+    if not isinstance(context,dict) or context.get("kind")!="file":
+        return False
+    body=str(item.get("content") or item.get("text") or "").lstrip()
+    return body.startswith(("## GitHub file:", "Verified source:"))
+
+
 def _code_pins(pinned_context: list[dict[str, Any]]) -> list[dict[str, Any]]:
     result=[]
     for item in pinned_context:
         if not isinstance(item,dict):
             continue
+        if _provider_read_display(item):
+            continue  # Pinned provider data must not create code continuation.
         text=str(item.get("text") or "")
         if item.get("artifactType")=="code" or item.get("artifactId") or "```" in text:
             result.append(item)
@@ -450,6 +466,8 @@ def _vague_failure_report(text: str) -> bool:
 def _last_assistant_artifact(history: list[dict[str, Any]]) -> dict[str, Any]:
     for item in reversed(history or []):
         if not isinstance(item,dict) or str(item.get("role") or "")!="assistant":
+            continue
+        if _provider_read_display(item):
             continue
         meta=item.get("meta") if isinstance(item.get("meta"),dict) else {}
         text=str(item.get("content") or item.get("text") or "")
@@ -920,6 +938,8 @@ def _user_failure_evidence(prompt: str, history: list[dict[str, Any]]) -> dict[s
     for item in assistants:
         meta=item.get("meta") if isinstance(item.get("meta"),dict) else {}
         item_text=str(item.get("content") or item.get("text") or "")
+        if _provider_read_display(item):
+            continue
         fenced_source=_inline_source_from_prompt(item_text)
         if meta.get("codeArtifactId") or fenced_source:
             code_assistants.append(item)
@@ -1270,6 +1290,11 @@ def programming_intent(prompt: str, history: list[dict[str, Any]], pinned_contex
     prior_contract=prior_state.get("intentContract") if isinstance(prior_state.get("intentContract"),dict) else {}
     prior_failure_evidence=prior_state.get("failureEvidence") if isinstance(prior_state.get("failureEvidence"),dict) else {}
     last_artifact=_last_assistant_artifact(history or [])
+    # A prior false-positive coding contract is not authority by itself.
+    # Keep legitimate explicit programming requests and authored artifacts.
+    if (prior_contract and not (pins or last_artifact or
+            _current_programming_signal(str(prior_contract.get("originalRequest") or "")))):
+        prior_contract={}
     new_failure_evidence=_user_failure_evidence(text,history or [])
     failure_evidence=new_failure_evidence
     vague_failure=_vague_failure_report(text) and bool(prior_contract or last_artifact or pins)
