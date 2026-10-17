@@ -329,8 +329,11 @@ def _response_mode(prompt, programming=None, history=None):
     subject=("user" if re.fullmatch(r"(?:who am i|what(?:'s| is) my name|do you know my name)",subject_text)
              else "assistant" if re.fullmatch(r"(?:who are you|what(?:'s| is) your name|what are you)",subject_text)
              else "")
-    user_identity=subject=="user" or (not subject and any(x in p for x in ("my name","who am i","do you know me","do you know my name")))
-    assistant_identity=subject=="assistant" or (not subject and any(x in p for x in ("your name","who are you","what are you")))
+    # Short-answer identity mode requires a direct grammatical identity query.
+    # Mentions, quotations and reflective "Who am I really?" must not inherit
+    # a name-check response format merely by containing matching words.
+    user_identity=subject=="user"
+    assistant_identity=subject=="assistant"
     identity=user_identity or assistant_identity
     # v231: the verified source-answer lesson and delivery MODE must agree.
     # The user's pasted report can contain "file"/"code"; these are data and
