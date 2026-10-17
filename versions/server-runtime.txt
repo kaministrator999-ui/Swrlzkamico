@@ -1,6 +1,6 @@
 ID=server-runtime
-VERSION=2.3.426
-REVISION=2.3.426-hf-v275-chat-capability-foundation
+VERSION=2.3.427
+REVISION=2.3.427-hf-v276-provider-source-not-code
 KIND=server-runtime
 SOURCE_BRANCH=runtime
 STATUS=active
