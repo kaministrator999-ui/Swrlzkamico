@@ -277,6 +277,12 @@ class Candidate(unittest.TestCase):
   self.assertEqual(events[0]["type"],"PROGRAMMING_INTENT")
   self.assertEqual(events[-1]["text"],"real route")
 
+ def test_v275_cross_domain_chat_output_and_evidence_contract(self):
+  # Execute the shared 700M/Qwen cognition fixtures in the existing
+  # offline candidate gate; this is not a live model pass assertion.
+  import runpy
+  runpy.run_path(str(ROOT/"hf_space/test_chat_capability_foundation_v275.py"))
+
  def test_v241_read_only_dual_model_and_work_registry(self):
   # Executed by the existing HF candidate offline gate, not just a
   # standalone test file that CI might never discover.
