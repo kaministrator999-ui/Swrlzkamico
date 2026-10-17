@@ -288,6 +288,36 @@ def _fit_repair_messages(model,system,history,prompt):
     response_tokens=min(OUTPUT_TOKENS,desired_output)
     return messages,len(history)-len(recent),input_tokens,response_tokens,fitted_prompt
 
+def _identity_response_faults(text, response_mode, require_canonical=False):
+    """Conservative surface contract; semantic understanding remains unproven.
+
+    Diagnose clear role/name/form mistakes in a completed model candidate.
+    Does not answer the question, save identity, judge jokes or infer nicknames.
+    """
+    response=str(text or "").strip()
+    normalized=re.sub(r"\\s+"," ",response).casefold()
+    faults=[]
+    if not response:
+        return ["empty-identity-answer"]
+    if len(response.split())>75 or len(response)>650:
+        faults.append("identity-answer-oversized")
+    if re.search(r"(?im)^\\s*(?:#{1,5}\\s+|\\*\\*(?:core identity|operational modality|primary affiliation|sectionwalker|identity):)",response):
+        faults.append("profile-heading-echo")
+    if re.search(r"\\bhow can i (?:help|assist) you\\b",normalized):
+        faults.append("generic-customer-service-ending")
+    if str(response_mode).startswith("RESPONSE MODE: ASSISTANT-IDENTITY-DIRECT"):
+        if re.match(r"^(?:\\*\\*)?(?:you|your)\\b",normalized):
+            faults.append("assistant-described-in-second-person")
+        if re.search(r"\\byou(?:'re| are) (?:an? )?(?:conversational )?(?:ai|artificial intelligence|language model)",normalized):
+            faults.append("assistant-user-role-inversion")
+        if require_canonical and not re.search(r"(?:§wyrlz|swyrlz|swurlz)",normalized):
+            faults.append("canonical-assistant-name-missing")
+    elif str(response_mode).startswith("RESPONSE MODE: USER-IDENTITY-DIRECT"):
+        if re.match(r"^(?:\\*\\*)?(?:i'm|i am|my name is) (?:an? )?(?:ai|assistant|language model)",normalized):
+            faults.append("user-described-as-assistant")
+    return list(dict.fromkeys(faults))
+
+
 def _identity_context_profile(response_mode):
     """Compact behavioral context, never a hardcoded reply or identity mutation.
 
@@ -1103,6 +1133,63 @@ def generate_events(payload):
             candidate_check["storySpineFailureCode"]=story_receipt.get("failureCode")
             candidate_check["storyFallbackCraftUsed"]=bool(story_directive and not story_beats)
             candidate_check["storySpineLatencyMs"]=story_receipt.get("durationMs",0)
+            first_delta=round((time.perf_counter()-started)*1000,3)
+            yield {"type":"DELTA","text":candidate_text}
+        elif concise_identity_turn:
+            # v282: short identity turns must be model-generated AND checked
+            # before being streamed to the user. A pre-model canned answer
+            # would hide the same weakness that user testing exposed.
+            canonical_required=(
+                mode.startswith("RESPONSE MODE: ASSISTANT-IDENTITY-DIRECT")
+                and not history and not custom_assistant_profile
+                and not re.search(r"(?:assistant|companion)\\s+(?:nickname|alias|preferred name)",user_profile,re.I)
+            )
+            candidate_text,timing=buffered_chat_completion(model,messages,response_tokens,temperature)
+            faults=_identity_response_faults(candidate_text,mode,canonical_required)
+            candidate_check={"status":"REJECT" if faults else "PASS","reasons":faults}
+            prior_fp=_candidate_fingerprint(candidate_text)
+            attempt=candidate_attempt_receipt(
+                1,"identity-model-candidate",timing,candidate_check,prior_fp)
+            candidate_attempts.append(attempt)
+            yield {"type":"CANDIDATE_ATTEMPT","attempt":attempt}
+            if faults:
+                regeneration_attempted=True
+                regeneration_reason="identity-speaker-name-or-presentation"
+                retry_instruction=(
+                    "IDENTITY CANDIDATE REPAIR: The previous MODEL response failed "
+                    "these checks: "+", ".join(faults)+". This is a user message. "
+                    "Answer with your own first-person assistant perspective for "
+                    "a question about YOU, and with second-person user perspective "
+                    "for a question about the USER. You are §wyrlz (spoken Swurlz), "
+                    "distinct from the user. Use the current user's actual "
+                    "authorized profile/alias if provided. For fresh chats with no "
+                    "assistant alias, identify yourself by your real canonical name. "
+                    "Do not copy this instruction, invent a ceremonial title, "
+                    "rewrite history, pretend a nickname is saved or produce a "
+                    "generic customer-service response. Write a brief fresh answer."
+                )
+                repaired,timing2=buffered_chat_completion(
+                    model,list(messages)+[{"role":"system","content":retry_instruction}],
+                    response_tokens,min(0.45,temperature+0.05))
+                retry_faults=_identity_response_faults(repaired,mode,canonical_required)
+                retry_check={"status":"REJECT" if retry_faults else "PASS",
+                             "reasons":retry_faults}
+                candidate_attempts.append(candidate_attempt_receipt(
+                    2,"identity-model-retry",timing2,retry_check,
+                    _candidate_fingerprint(repaired),
+                    previous_attempt_fingerprint=prior_fp))
+                yield {"type":"CANDIDATE_ATTEMPT","attempt":candidate_attempts[-1]}
+                candidate_check=retry_check
+                if not retry_faults:
+                    candidate_text=repaired
+            if candidate_check["status"]!="PASS":
+                # Never release a known role-inverted or nameless self-identity
+                # as a successful reply; keep a truthful failure receipt.
+                candidate_text=(
+                    "I couldn't generate a reliable response to that identity "
+                    "question yet. The response was rejected rather than "
+                    "misidentifying either of us."
+                )
             first_delta=round((time.perf_counter()-started)*1000,3)
             yield {"type":"DELTA","text":candidate_text}
         elif file_dialogue:
