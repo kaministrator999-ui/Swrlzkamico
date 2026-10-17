@@ -17,12 +17,12 @@
     },
     "modelAtelier": {
       "schema": "swyrl-model-atelier-v1",
-      "name": "Festival reference · multi-view fitted face and neck",
+      "name": "Festival reference · heart silhouette and sculpted profile v11.20",
       "reference": "Original native geometric interpretation of owner-provided front/back/side reference; no extracted asset.",
       "parts": [
         {
           "id": "model-0001",
-          "name": "Reference-fitted portrait · front silhouette and side depth",
+          "name": "Reference-sculpted heart silhouette · jaw, profile and skull depth",
           "kind": "sphere",
           "position": [
             0,
@@ -64,116 +64,128 @@
             "warmth": 0.7
           },
           "anatomyStudy": {
-            "jaw": 0.6,
-            "malar": 0.62,
-            "orbit": 0.57,
-            "nose": 0.8,
+            "jaw": 0.67,
+            "malar": 0.69,
+            "orbit": 0.58,
+            "nose": 0.73,
             "chin": 0.55,
-            "temple": 0.5
+            "temple": 0.55
           },
           "referenceFit": {
-            "strength": 0.88,
+            "strength": 1,
             "front": [
               [
                 -1,
-                0.06
+                0.035
               ],
               [
                 -0.9,
-                0.28
+                0.19
               ],
               [
-                -0.78,
-                0.44
+                -0.79,
+                0.34
               ],
               [
-                -0.64,
-                0.56
+                -0.67,
+                0.46
               ],
               [
-                -0.48,
-                0.67
+                -0.55,
+                0.57
               ],
               [
-                -0.28,
-                0.8
+                -0.4,
+                0.7
               ],
               [
-                -0.08,
+                -0.23,
+                0.83
+              ],
+              [
+                -0.05,
                 0.94
               ],
               [
                 0.16,
-                0.98
+                0.99
               ],
               [
-                0.4,
-                0.91
+                0.36,
+                0.96
               ],
               [
-                0.65,
-                0.76
+                0.54,
+                0.84
               ],
               [
-                0.84,
-                0.55
+                0.73,
+                0.64
+              ],
+              [
+                0.87,
+                0.42
               ],
               [
                 1,
-                0.05
+                0.035
               ]
             ],
             "profile": [
               [
                 -1,
-                0.3
+                0.29
               ],
               [
                 -0.84,
+                0.52
+              ],
+              [
+                -0.68,
                 0.64
               ],
               [
-                -0.62,
-                0.83
+                -0.51,
+                0.79
               ],
               [
-                -0.43,
-                0.93
+                -0.39,
+                0.99
               ],
               [
-                -0.32,
-                1.15
+                -0.31,
+                1.23
               ],
               [
-                -0.23,
-                1.12
+                -0.21,
+                1.2
               ],
               [
-                -0.08,
+                -0.05,
+                1.065
+              ],
+              [
+                0.16,
                 1.025
               ],
               [
-                0.14,
-                0.995
-              ],
-              [
                 0.36,
-                0.93
+                0.94
               ],
               [
                 0.67,
-                0.77
+                0.78
               ],
               [
                 1,
-                0.15
+                0.14
               ]
             ]
           }
         },
         {
           "id": "model-0002",
-          "name": "Tapered neck · fitted jaw to clavicle transition",
+          "name": "Fitted nape and sternocleidomastoid-to-clavicle transition",
           "kind": "loft",
           "position": [
             0,
@@ -197,48 +209,48 @@
           "path": [
             [
               0,
-              3.765,
-              0.048
+              3.767,
+              0.038
             ],
             [
               0,
-              3.705,
-              0.044
+              3.715,
+              0.036
             ],
             [
               0,
-              3.62,
-              0.029
+              3.655,
+              0.028
             ],
             [
               0,
-              3.54,
+              3.59,
+              0.018
+            ],
+            [
+              0,
+              3.515,
+              0.008
+            ],
+            [
+              0,
+              3.435,
               0.01
             ],
             [
               0,
-              3.465,
-              0
-            ],
-            [
-              0,
-              3.405,
-              0.007
-            ],
-            [
-              0,
-              3.38,
-              0.013
+              3.385,
+              0.012
             ]
           ],
           "radii": [
-            0.102,
-            0.108,
-            0.119,
-            0.148,
-            0.196,
-            0.256,
-            0.286
+            0.103,
+            0.114,
+            0.14,
+            0.177,
+            0.224,
+            0.278,
+            0.302
           ],
           "segments": 36,
           "radialSegments": 16,
@@ -951,22 +963,22 @@
         },
         {
           "id": "left-ear",
-          "name": "left sculpted helix and concha",
+          "name": "left reduced seated helix and concha",
           "kind": "sphere",
           "position": [
-            -0.287,
-            4.002,
-            0.027
+            -0.275,
+            4.012,
+            0.029
           ],
           "scale": [
-            0.048,
-            0.079,
-            0.038
+            0.035,
+            0.06,
+            0.029
           ],
           "rotation": [
             0,
-            -1.15,
-            -0.06
+            1.35,
+            -0.035
           ],
           "color": "#f5cabd",
           "material": "silk",
@@ -990,14 +1002,14 @@
           "name": "left small star earring",
           "kind": "sphere",
           "position": [
-            -0.309,
-            3.921,
-            0.062
+            -0.286,
+            3.944,
+            0.06
           ],
           "scale": [
-            0.018,
-            0.026,
-            0.015
+            0.013,
+            0.02,
+            0.012
           ],
           "rotation": [
             0,
@@ -1644,22 +1656,22 @@
         },
         {
           "id": "right-ear",
-          "name": "right sculpted helix and concha",
+          "name": "right reduced seated helix and concha",
           "kind": "sphere",
           "position": [
-            0.287,
-            4.002,
-            0.027
+            0.275,
+            4.012,
+            0.029
           ],
           "scale": [
-            0.048,
-            0.079,
-            0.038
+            0.035,
+            0.06,
+            0.029
           ],
           "rotation": [
             0,
-            1.15,
-            0.06
+            -1.35,
+            0.035
           ],
           "color": "#f5cabd",
           "material": "silk",
@@ -1683,14 +1695,14 @@
           "name": "right small star earring",
           "kind": "sphere",
           "position": [
-            0.309,
-            3.921,
-            0.062
+            0.286,
+            3.944,
+            0.06
           ],
           "scale": [
-            0.018,
-            0.026,
-            0.015
+            0.013,
+            0.02,
+            0.012
           ],
           "rotation": [
             0,
@@ -19981,7 +19993,7 @@
         "time": 4,
         "autoplay": false
       },
-      "artDirection": "Sculpted almond eyes; split swept hair; ivory, coral, turquoise asymmetric pointed dress; bare legs and white socks; two separate layered-paper ferrets gripping dyed pigtails; independent tissue bunny. Refined relaxed A-stance, sculptural hair ribbons, readable long-muzzled ferrets, irregular layered paper and stitched cloth. Sculpt-preserving anatomical candidate: v11.19 cranial vault, cheek and nose planes are retained; subtle saved morph deltas refine jaw, orbital contour, nose projection and sculpted non-oval ear helix/concha. Preserve independent paper creatures, costume and all historical native scenes. Owner-supplied cyan/coral front, profile and three-quarter reference constrains the visible cheek/jaw outline and nose projection via saved normalized front/profile pairs. Measured positions are hand-estimated, not a depth scan. The distinct orange-haired game portrait informs eyelid shading only. The original 283-mesh character remains editable.",
+      "artDirection": "Sculpted almond eyes; split swept hair; ivory, coral, turquoise asymmetric pointed dress; bare legs and white socks; two separate layered-paper ferrets gripping dyed pigtails; independent tissue bunny. Refined relaxed A-stance, sculptural hair ribbons, readable long-muzzled ferrets, irregular layered paper and stitched cloth. Sculpt-preserving anatomical candidate: v11.19 cranial vault, cheek and nose planes are retained; subtle saved morph deltas refine jaw, orbital contour, nose projection and sculpted non-oval ear helix/concha. Preserve independent paper creatures, costume and all historical native scenes. Owner-supplied cyan/coral front, profile and three-quarter reference constrains the visible cheek/jaw outline and nose projection via saved normalized front/profile pairs. Measured positions are hand-estimated, not a depth scan. The distinct orange-haired game portrait informs eyelid shading only. The original 283-mesh character remains editable. v11.20 silhouette correction: substantial cheek-to-chin remapping, reduced occipital projection, continuous bridge/nasal tip, smaller partly seated auricles and blended neck base. Screenshot-based sculpt targets; no claims of exact calibrated RGB-D recovery.",
       "editedAt": "candidate-v11.20-anatomical-study",
       "poseFrames": [],
       "poseNeutral": null
