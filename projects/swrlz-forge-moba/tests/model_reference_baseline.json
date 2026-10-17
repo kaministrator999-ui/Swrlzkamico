@@ -1,6 +1,6 @@
 {
-  "version": "v11.12",
-  "source": "43dd6db",
+  "version": "v11.17",
+  "source": "31e43bb65ea6adb76cca263b8cfc68865f60c190",
   "assets": {
     "episodes/ghosts-in-different-forms-ep01.html": {
       "sha256": "5bd4b1a2a9f28450e31a66c0959b238879c361b3536819e8993784d7a195e8a5",
@@ -98,6 +98,26 @@
       "sha256": "ab92e69b42aeebb0f008e2a7320ec9f1617d7078abad8361e9f3362dc1ae69d9",
       "bytes": 193106
     },
+    "scenes/model-atelier-festival-reference-v11-13.swyrl.json": {
+      "sha256": "9ee3dd12c5c00e27a57d265fa01b8dcb23515b1ac29123a56110ccfcc42978cc",
+      "bytes": 231117
+    },
+    "scenes/model-atelier-festival-refined-v11-14.swyrl.json": {
+      "sha256": "33b8f9ca316978e23246de308dbdf92c1ab7e9966b2befaeeb67e9f0c5039230",
+      "bytes": 261540
+    },
+    "scenes/model-atelier-festival-surface-v11-15.swyrl.json": {
+      "sha256": "d7c02620375e41dcafa8a0cfc422db652d97336ed8917b9316fd26d0a1400d8a",
+      "bytes": 261385
+    },
+    "scenes/model-atelier-festival-detail-v11-16.swyrl.json": {
+      "sha256": "1d58a7ad8bfa48d6b94887974536fa5ccd071a59dc770142de26113d2c9cedae",
+      "bytes": 275534
+    },
+    "scenes/model-atelier-festival-hd-v11-17.swyrl.json": {
+      "sha256": "e10cbc37f5826406e0e0c4c1f167029f275003376527e0e64e0195669aef5967",
+      "bytes": 402090
+    },
     "assets/anime/cathedral.png": {
       "sha256": "69a155ac1cbf004e6550c173e322e8fcaa59aac8c7f5487cb0dcd85d545ac88d",
       "bytes": 3237216
@@ -141,22 +161,6 @@
     "assets/anime/workshop.png": {
       "sha256": "08b1b037eeb3fa9cfd7f9e51a9e06545b7bf74688f70dff5629994fe06668198",
       "bytes": 863104
-    },
-    "scenes/model-atelier-festival-reference-v11-13.swyrl.json": {
-      "bytes": 231117,
-      "sha256": "9ee3dd12c5c00e27a57d265fa01b8dcb23515b1ac29123a56110ccfcc42978cc"
-    },
-    "scenes/model-atelier-festival-refined-v11-14.swyrl.json": {
-      "sha256": "33b8f9ca316978e23246de308dbdf92c1ab7e9966b2befaeeb67e9f0c5039230",
-      "bytes": 261540
-    },
-    "scenes/model-atelier-festival-surface-v11-15.swyrl.json": {
-      "sha256": "d7c02620375e41dcafa8a0cfc422db652d97336ed8917b9316fd26d0a1400d8a",
-      "bytes": 261385
-    },
-    "scenes/model-atelier-festival-detail-v11-16.swyrl.json": {
-      "sha256": "1d58a7ad8bfa48d6b94887974536fa5ccd071a59dc770142de26113d2c9cedae",
-      "bytes": 275534
     }
   },
   "sources": {
@@ -332,6 +336,8 @@
     "patches/v11_15_native_surface_study.py": "87bf3f0824f6f7c333888188e97222a97c0f81a502c9fb6f48f1d2b2b6daf3cf",
     "runtime/model_atelier_surface_v11_15.js": "30ea0f0cc54e91360354ba4ec1f06edde1e97fb7ba9dbdb70f896c02d6db40dc",
     "patches/v11_16_character_detail_budget.py": "011a9885dbbc4aa64403ca0cc7e6991704068cec46df2094dcfadf9efa5fc710",
-    "runtime/model_atelier_density_v11_16.js": "9a4e6f9e28d85ab5d4bac06be2cdad6f14010fa280eadb6e6d0fed10d84a4e74"
+    "runtime/model_atelier_density_v11_16.js": "9a4e6f9e28d85ab5d4bac06be2cdad6f14010fa280eadb6e6d0fed10d84a4e74",
+    "patches/v11_17_hd_character_sculpt.py": "99d65028436a36ef86c95a4642bce3e2dad62df868eb43b7223ec06b6c4ad544",
+    "runtime/model_atelier_hd_v11_17.js": "3df9bfd0dc9c72a9b7b6019d42fe2f028d2e7d98cbf5e0f20c12e70d9ac2e4a8"
   }
 }

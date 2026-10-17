@@ -1,4 +1,4 @@
-name: Verify v11.17 §E source seal
+name: Verify v11.18 §E source seal
 on:
   push:
     branches:
@@ -22,7 +22,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Reconstruct and print exact v11.17 SHA
+      - name: Reconstruct and print exact v11.18 SHA
         shell: bash
         run: |
           python - <<'PY'
@@ -40,7 +40,7 @@ jobs:
           raw=html.encode('utf-8')
           print('V119_FINAL_BYTES='+str(len(raw)),flush=True)
           print('V119_FINAL_SHA256='+hashlib.sha256(raw).hexdigest(),flush=True)
-          assert 'V11_17_HD_CHARACTER_SCULPT' in html
+          assert 'V11_18_LEG_REFERENCE_CORRECTION' in html
           assert 'modelAtelierLoftEditor' in html
           assert 'MODEL_ATELIER_LIMIT=1200' in html
           assert 'atelier-v117-0554' in html

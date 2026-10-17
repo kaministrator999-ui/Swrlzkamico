@@ -141,7 +141,7 @@ jobs:
               expected_assets.add('scenes/model-atelier-festival-reference-v11-13.swyrl.json')
           if 'scenes/model-atelier-festival-refined-v11-14.swyrl.json' in source_paths:
               expected_assets.add('scenes/model-atelier-festival-refined-v11-14.swyrl.json')
-          for authored in ('scenes/model-atelier-festival-surface-v11-15.swyrl.json','scenes/model-atelier-festival-detail-v11-16.swyrl.json','scenes/model-atelier-festival-hd-v11-17.swyrl.json'):
+          for authored in ('scenes/model-atelier-festival-surface-v11-15.swyrl.json','scenes/model-atelier-festival-detail-v11-16.swyrl.json','scenes/model-atelier-festival-hd-v11-17.swyrl.json','scenes/model-atelier-festival-reference-v11-18.swyrl.json'):
               if authored in source_paths:expected_assets.add(authored)
           expected_assets.update(path for path in source_paths if path.startswith('assets/anime/') and path.endswith('.png'))
           assert set(receipt['assets'])==expected_assets,'Bundled asset set differs from committed source'

@@ -1,3 +1,9 @@
+## 2026-10-17 · v11.18 knee and reference close-up correction
+
+Reshaped both leg centerlines after the supplied profile exposed a knee depth reversal; ankle endpoints and foot placements remain anchored. Added saved native posterior calf fullness and front shin taper, with staggered calf heads and an Achilles taper. Refined portrait/eyes/lashes/fringe, added editable grooved crown and knotted wrap finishes, saved iris pigments, fitted collar/neckline and forearm bands. Native authoring saves/reimports the new starter; regression checks cover actual leg curves, grounded poses, topology, pigments and import/undo. All 175 earlier sources and 40 assets are preserved. 88 patches/41 assets; marker `V11_18_LEG_REFERENCE_CORRECTION`. [Details](reports/LEG_REFERENCE_CORRECTION_V11_18.md).
+
+Staged source is not publication authority: source/deploy commits and final live status are recorded by the final `DEPLOY_REQUEST.json`, exact dedicated run, independent hosted all-assets receipt and desktop/phone native checks. The deploy request remains the last repository mutation after full validation and merge.
+
 CI efficiency (2026-10-17): split the four slowest browser suites by desktop/phone while preserving all18suites and36viewport runs; remove duplicate native UI scroll waits, supersede obsolete validation, install only the headless browser, and keep final exports while omitting redundant intermediate OBJ upload copies. Measured timing baseline and validation: [Engine CI timing](reports/ENGINE_CI_SPEED_2026_10_17.md). Engine artifact/model data are unchanged.
 
 ## v11.17 · HD character sculpt and native studio finish (2026-10-16)

@@ -80,7 +80,7 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
   await page.goto(base+'/index.html?'+query,{waitUntil:'domcontentloaded',timeout:60000});
   await page.waitForFunction(()=>window.SWYRL_ENGINE_SHEEP_TAG_CREATOR&&window.SWYRL_ENGINE_SHEEP_TAG?.viewStatus&&window.SWYRL_ENGINE_AGENT.project().canonicalId==='sheep-tag-meadow',undefined,{timeout:60000});
   await page.locator('#perfPreset').selectOption('medium',{force:true});await page.evaluate(()=>window.__archiveClock.freeze());await frames(page,2);
-  const canonical=await saved(page);assert.equal(await page.evaluate(()=>window.SWRLZ_FORGE_BUILD?.version),'v11.17');
+  const canonical=await saved(page);assert.equal(await page.evaluate(()=>window.SWRLZ_FORGE_BUILD?.version),'v11.18');
   assert.equal(canonical.scene.actors.filter(a=>a.type==='st-sheep').length,8);assert.equal(canonical.scene.actors.filter(a=>a.type==='st-wolf').length,3);
   assert.equal(canonical.scene.actors.length,92,'Wrong native Archive map package');assert.equal(canonical.editor.layers.length,6,'Archive starter needs its six native map layers');
   assert.equal(canonical.project.sheepTag.preset,'archive');assert.equal(canonical.project.sheepTag.events,false,'Default starter forces experimental events');
