@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=b18bd4f714feca0de2a76728a11a825aa5b699c3
-REQUEST_NONCE=2026-10-17-v274-export73-conversational-file-reaction-001
+SOURCE_REF=cf83f2eee6e3c402989945c9de3660a7c3c12c2c
+REQUEST_NONCE=2026-10-17-chat-capability-foundation-v275-001
