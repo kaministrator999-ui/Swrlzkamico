@@ -1807,6 +1807,16 @@ async def send(request:Request):
             raise
         s["activeGeneration"]={"requestId":rid,"threadId":tid,"modelId":model_id,"requestedModelId":model_id,"selectedModelId":model_id,"text":"","phase":"QUEUED","terminal":False,"lastSeq":0,"status":[{"phase":"QUEUED","reason":"Accepted by Workstation","atUnixMs":now_ms}],"acceptedAtUnixMs":now_ms,"startedAtUnixMs":None,"completedAtUnixMs":None,"queueWaitMs":None,"stationTiming":None,"resourcePlan":None,"diagnosticTrace":None,"memoryCandidates":[],"responseCognition":None,"onlineResearch":None,"onlineTrace":[],"onlineLogPersistence":None,"sources":[],"widgets":[],"programmingIntent":None,"intentContract":None,"failureEvidence":None,"repairConstraints":None,"behaviorLedger":None,"behaviorRepairBase":None,"candidateValidation":None,"candidateAttempts":[],"generationTelemetry":None,"engineCompletionTelemetry":None,"repairDiagnostics":[],"artifactReceipt":None,"githubTelemetryPersistence":None}
     payload={"requestId":rid,"threadId":tid,"prompt":prompt,"history":history,"pinnedContext":pinned_context,"profileId":"LALM","profile":profile,"userProfile":user_profile,"temporalContext":temporal_context,"clientLocation":client_location,"priorProgrammingState":copy.deepcopy(t.get("programmingState") or {})}
+    # Use only the Google session independently verified by Station; never
+    # trust a browser-supplied user name as account authentication. This
+    # display label is NOT proof of a legal or preferred name and never writes
+    # memory, rapport, or the companion's identity.
+    if google_owner.startswith("google:"):
+        label=str((verified_user or {}).get("displayName") or "").strip()[:120]
+        # Login may fall back to the email address; do not inject that as a
+        # personal name or surface it in an identity answer.
+        if label and "@" not in label and label.casefold()!="google user":
+            payload["verifiedAccountDisplayName"]=label
     # A changed topic invalidates a previously prepared write. No later casual
     # "yes" can authorize a stale rename/create from this conversation.
     if (github_chat_files.has_pending(google_owner,tid)
