@@ -1,0 +1,245 @@
+{
+  "schema": "swrlz-github-online-research-trace-v1",
+  "requestId": "web-mvc6sqh9-2617240437-4008617797",
+  "modelId": "700m",
+  "eventType": "ONLINE_RESEARCH_TRACE",
+  "sourceRef": "4e9dee6faa5efdf76e6b5e0068e33faa4caf7536",
+  "persistedAtUnixMs": 1792228878847,
+  "diagnostic": {
+    "schema": "swrlz-online-research-log-v1",
+    "research": {
+      "contract": "swrlz-online-camera-v1",
+      "observabilityRevision": "v181-song-metadata-clean-form-integrity",
+      "kind": "search",
+      "status": "OK",
+      "reason": "explicit-web-intent",
+      "provider": "bounded-web-search-chain-v1",
+      "resultCount": 1,
+      "widgetKinds": [
+        "search-results"
+      ],
+      "sourceCount": 1,
+      "locationRequired": false,
+      "usedExplicitClientLocation": false,
+      "elapsedMs": 1527,
+      "lyricsSourceAttemptCount": 0,
+      "lyricsFetchDebug": [],
+      "blockedLyricsSourceFamilies": [],
+      "musicStructureDebug": null,
+      "candidateAdmissionDebug": [
+        {
+          "query": "some top rap freestyles online and use them to craft a better freestyle",
+          "title": "freestylebeats.online - Freestyle Rap Practice Tool",
+          "url": "https://freestylebeats.online/",
+          "source": "freestylebeats.online",
+          "rank": 1,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "Freestyle over beats, get word prompts, and export your bars. The ultimate rap practice tool online ."
+        },
+        {
+          "query": "some top rap freestyles online and use them to craft a better freestyle",
+          "title": "Freestyle - RapPad",
+          "url": "https://www.rappad.co/freestyle",
+          "source": "www.rappad.co",
+          "rank": 2,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "Freestyle Rap Coach The freestyle coach will generate a word or topic for your to rap about as well as continuously play an instrumental. This is the ultimate tool to learn how to freestyle or practice your freestyle rap skills. Unlike other tools, the Freestyle Coach can also he"
+        },
+        {
+          "query": "some top rap freestyles online and use them to craft a better freestyle",
+          "title": "Top 50 - Best Freestyles (2025) - YouTube",
+          "url": "https://www.youtube.com/watch?v=8wMEYiMPYn8",
+          "source": "www.youtube.com",
+          "rank": 3,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "Freestyle rap , also simply known as Freestyle , is a style of hip hop music where an artist normally improvises an unwritten verse from the head, with or with..."
+        },
+        {
+          "query": "some top rap freestyles online and use them to craft a better freestyle",
+          "title": "Freestyle Rap Lyrics for Practice - Extra Chill",
+          "url": "https://extrachill.com/easy-freestyle-rap-lyrics-for-practice/",
+          "source": "extrachill.com",
+          "rank": 4,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "Discover easy freestyle rap lyrics for practice and hone your skills with creative and engaging phrases to enhance your rhythm and flow."
+        },
+        {
+          "query": "some top rap freestyles online and use them to craft a better freestyle",
+          "title": "Free Freestyle Word Generator & Rap Practice | RapDrill",
+          "url": "https://www.rapdrill.com/",
+          "source": "www.rapdrill.com",
+          "rank": 5,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "The Free Freestyle Word Generator for Rappers RapDrill is a free freestyle word generator and rap practice game that gives you words, rhyme hints and beats for your next verse."
+        },
+        {
+          "query": "some top rap freestyles online and use them to craft a better freestyle",
+          "title": "The 10 BEST Freestyle Raps of 2024 | Chris Turner's Freestyle Raps",
+          "url": "https://www.youtube.com/watch?v=L4TJFAWKtkM",
+          "source": "www.youtube.com",
+          "rank": 6,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "From exposing sordid affairs, roasting drunk hecklers, and incurring the wrath of some Russians, these ten spectacular freestyles will have you cracking up for a whole 90 minutes!"
+        },
+        {
+          "query": "some top rap freestyles online and use them to craft a better freestyle",
+          "title": "AI Freestyle Generator - Create Rap Lyrics & Flows | TwoShot",
+          "url": "https://twoshot.app/ai-freestyle-generator/",
+          "source": "twoshot.app",
+          "rank": 7,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "AI Freestyle Generator Create freestyle rap lyrics with AI. Get rhymes, flows, and verses on any topic - perfect for practice, inspiration, or when you need bars fast."
+        },
+        {
+          "query": "some top rap freestyles online and use them to craft a better freestyle",
+          "title": "BEST FREESTYLES OF ALL TIME - YouTube Music",
+          "url": "https://music.youtube.com/playlist?list=PLSPhWjLGnLpyiyhy2zQT958RLOTMmVq-L",
+          "source": "music.youtube.com",
+          "rank": 8,
+          "allowed": true,
+          "reason": "NON_LYRICS_PASS",
+          "neededHits": 0,
+          "matchedTerms": [],
+          "coreTerms": [],
+          "snippetPreview": "Tory Lanez Rips his 4-minute Freestyle on Sway in the Morning | Sway's Universe SWAY'S UNIVERSE 5:33 Rap City - Five Eminem Freestyles FreestyleUploads 4:15 Lowkey - Fire In The Booth (part 2)"
+        }
+      ],
+      "songIdentity": {},
+      "songDiscoveryPlan": [],
+      "lyricsRescueSearchDebug": [],
+      "lyricsMaxPageAttempts": 0,
+      "lyricsFallbackExhausted": false,
+      "rawPromptStored": false
+    },
+    "trace": [
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1792228877320,
+        "phase": "RESEARCH_STARTED",
+        "activity": "Online research started",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": ""
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1792228877327,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1792228877458,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1792228877459,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1792228878406,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1792228878406,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using duckduckgo-lite",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1792228878408,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "freestylebeats.online",
+        "url": "https://freestylebeats.online/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1792228878845,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "activity": "Page fetched",
+        "provider": "web-page",
+        "site": "freestylebeats.online",
+        "url": "https://freestylebeats.online/",
+        "httpStatus": 200,
+        "responseBytes": 11489
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1792228878846,
+        "phase": "RESEARCH_COMPLETE",
+        "activity": "Online research complete",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "resultCount": 1
+      }
+    ],
+    "sourceSites": [
+      "freestylebeats.online"
+    ],
+    "widgetKinds": [
+      "search-results"
+    ],
+    "requestedModelId": "700m",
+    "selectedModelId": "700m",
+    "rawPromptStored": false,
+    "historyStored": false,
+    "preciseLocationStored": false
+  }
+}
