@@ -108,12 +108,20 @@ def apply(html):
 </style></head>""",1)
     # Treat imported references as portable native model state, using the
     # exact same Undo/Redo transaction snapshots as mesh parts.
-    html=once(html,"  function modelSnapshot(){return JSON.stringify(model().parts);}",
-       "  function modelSnapshot(){return JSON.stringify({parts:model().parts,references:model().references||[],referenceLayout:model().referenceLayout||null});}")
-    html=once(html,"dst.push(modelSnapshot());model().parts=JSON.parse(src.pop());selection=null;signalEdited();",
-       "dst.push(modelSnapshot());const last=JSON.parse(src.pop());if(Array.isArray(last)){model().parts=last;}else{model().parts=last.parts;model().references=last.references||[];model().referenceLayout=last.referenceLayout||{x:12,y:12,open:false,collapsed:false,active:null};}selection=null;signalEdited();atelierRefPaint();")
-    html=once(html,"checkpoint();model().parts=structuredClone(source.parts);selection=null;signalEdited();status('Validated model imported. You can undo this import.');",
-       "const importedRefs=atelierRefReadImport(source);checkpoint();model().parts=structuredClone(source.parts);model().references=importedRefs.references;model().referenceLayout=importedRefs.referenceLayout;selection=null;atelierRefTransient.clear();signalEdited();atelierRefPaint();status('Validated model and portable references imported. You can undo this import.');")
+    # v11.13 already saves the entire native model (including assemblies and
+    # pose frames) on Undo/Redo. Preserve that established implementation and
+    # only refresh the reference overlay after a restored snapshot.
+    html=once(html,
+       "dst.push(modelSnapshot());currentProject.modelAtelier=JSON.parse(src.pop());selection=null;signalEdited();atelierAssemblyRefresh();",
+       "dst.push(modelSnapshot());currentProject.modelAtelier=JSON.parse(src.pop());selection=null;signalEdited();atelierAssemblyRefresh();atelierRefTransient.clear();atelierRefPaint();")
+    # v11.11 + v11.13 import already validates and restores poses and
+    # attachments. Add reference validation BEFORE checkpoint/mutation, then
+    # restore the reference set without clobbering any existing payloads.
+    html=once(html,"      const assemblies=atelierValidateAssemblies(source.assemblies,source.parts);",
+       "      const importedRefs=atelierRefReadImport(source);\n      const assemblies=atelierValidateAssemblies(source.assemblies,source.parts);")
+    html=once(html,
+       "selection=null;signalEdited();atelierRefreshPoseChoices();atelierAssemblyRefresh();status('Validated model, poses and independent attachments imported. Undo restores all model data.');",
+       "model().references=importedRefs.references;model().referenceLayout=importedRefs.referenceLayout;atelierRefTransient.clear();selection=null;signalEdited();atelierRefreshPoseChoices();atelierAssemblyRefresh();atelierRefPaint();status('Validated model, poses, attachments and portable reference images imported. Undo restores all model data.');")
     # Reference studio dock is an overlay inside the interactive viewport,
     # not a replacement for the user's existing wireframe/pan toolbar.
     studio = ('<div id="modelAtelierReferenceDock" class="atelier-ref-dock" hidden role="region" aria-label="Floating image references">'
