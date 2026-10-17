@@ -279,6 +279,51 @@ jobs:
               'status':'PASS',
           }))
           PY
+      - name: v282 Real 700M user/assistant identity acceptance before publication
+        if: ${{ inputs.mode == 'deploy' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          PYTHONPATH=hf_space python - <<'PY'
+          import json
+          from lfm2_700m_engine import (
+              generate_events, _identity_response_faults, _response_mode,
+          )
+
+          cases=[
+              {'name':'assistant-fresh', 'prompt':'Who are you',
+               'userProfile':'', 'expected':'§wyrlz',
+               'assistant':True},
+              {'name':'user-with-owned-profile','prompt':'Who am I?',
+               'userProfile':'Name: Avery',
+               'expected':'Avery','assistant':False},
+          ]
+          for case in cases:
+              events=list(generate_events({
+                  'prompt':case['prompt'], 'history':[], 'profile':'',
+                  'userProfile':case['userProfile'],
+                  'programmingIntent':{'codingTask':False},
+              }))
+              answer=''.join(str(e.get('text') or '') for e in events if e.get('type')=='DELTA').strip()
+              attempts=[e.get('attempt') for e in events if e.get('type')=='CANDIDATE_ATTEMPT']
+              mode=_response_mode(case['prompt'],{'codingTask':False})
+              faults=_identity_response_faults(answer,mode,case['assistant'])
+              accepted=bool(attempts and attempts[-1].get('accepted'))
+              expected=case['expected'].casefold()
+              named=expected in answer.casefold()
+              diagnostic={
+                  'case':case['name'],
+                  'accepted':accepted,
+                  'attemptCount':len(attempts),
+                  'lastValidationReasons':attempts[-1].get('validationReasons') if attempts else None,
+                  'answerChars':len(answer),
+                  'expectedIdentityPresent':named,
+                  'remainingSurfaceFaults':faults,
+                  'status':'PASS' if accepted and named and not faults else 'REJECT',
+              }
+              print(json.dumps(diagnostic,ensure_ascii=False))
+              assert diagnostic['status']=='PASS', 'Real 700M identity acceptance failed; production upload blocked'
+          PY
       - name: Protect existing fast HF inference and Chat integration
         if: ${{ inputs.mode == 'deploy' }}
         run: |
