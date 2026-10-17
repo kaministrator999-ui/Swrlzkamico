@@ -53,13 +53,7 @@ function atelierViewModeApply(mesh,part){
 }
 function atelierViewRebuild(){
  if(!modelRoot)return;
- // The overlay shares parent geometry; only its *material* needs separate
- // disposal. Existing root-mesh geometry disposal remains the owner's code.
- for(const mesh of modelRoot.children){
-   if(!mesh.isMesh)continue;
-   for(const child of mesh.children)if(child.isMesh&&child.userData.atelierHelper)
-     child.material?.dispose();
- }
+ // Existing wipeModel now disposes wire-overlay child materials.
  renderParts();
 }
 function atelierViewApplyChoice(){
