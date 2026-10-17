@@ -125,7 +125,7 @@ def apply(html):
     # Reference studio dock is an overlay inside the interactive viewport,
     # not a replacement for the user's existing wireframe/pan toolbar.
     studio = ('<div id="modelAtelierReferenceDock" class="atelier-ref-dock" hidden role="region" aria-label="Floating image references">'
-      '<div id="modelAtelierReferenceHandle" class="atelier-ref-handle"><strong>🖼 Reference views</strong>'
+      '<div id="modelAtelierReferenceHandle" class="atelier-ref-handle"><strong>🖼 Reference views</strong><img id="modelAtelierReferenceThumbnail" alt="Tap to expand image reference" hidden>'
       '<div><button id="modelAtelierReferenceCollapse" type="button">Minimize</button>'
       '<button id="modelAtelierReferenceClose" type="button" aria-label="Close reference studio">×</button></div></div>'
       '<div id="modelAtelierReferenceBody" class="atelier-ref-body">'
@@ -161,6 +161,8 @@ def apply(html):
 .model-atelier .atelier-ref-dock[hidden]{display:none!important}
 .model-atelier .atelier-ref-handle{padding:8px;display:flex;align-items:center;justify-content:space-between;gap:6px;background:#264161;cursor:move;touch-action:none;user-select:none}
 .model-atelier .atelier-ref-handle div{display:flex;gap:3px}
+.model-atelier .atelier-ref-handle img{width:36px;height:30px;border:1px solid #83b9d1;border-radius:5px;object-fit:cover;cursor:pointer}
+.model-atelier .atelier-ref-collapsed .atelier-ref-handle strong{display:none}
 .model-atelier .atelier-ref-handle button{padding:3px 6px;min-height:27px;font-size:11px;border:1px solid #6f93b6;border-radius:6px;background:#334b6b;color:#fff}
 .model-atelier .atelier-ref-body{padding:8px;display:grid;gap:6px;font-size:11px}
 .model-atelier .atelier-ref-body label{font-size:11px;display:flex;flex-direction:column;gap:3px}
