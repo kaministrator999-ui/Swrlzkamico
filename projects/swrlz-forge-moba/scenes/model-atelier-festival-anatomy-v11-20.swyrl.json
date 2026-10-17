@@ -22,7 +22,7 @@
       "parts": [
         {
           "id": "model-0001",
-          "name": "Anatomical head · cranial vault, cheekbones and mandible",
+          "name": "Sculpted portrait · anatomical face preservation",
           "kind": "sphere",
           "position": [
             0,
@@ -67,9 +67,9 @@
             "jaw": 0.6,
             "malar": 0.62,
             "orbit": 0.57,
-            "nose": 0.67,
-            "chin": 0.52,
-            "temple": 0.45
+            "nose": 0.8,
+            "chin": 0.55,
+            "temple": 0.5
           }
         },
         {
@@ -19870,7 +19870,7 @@
         "time": 4,
         "autoplay": false
       },
-      "artDirection": "Sculpted almond eyes; split swept hair; ivory, coral, turquoise asymmetric pointed dress; bare legs and white socks; two separate layered-paper ferrets gripping dyed pigtails; independent tissue bunny. Refined relaxed A-stance, sculptural hair ribbons, readable long-muzzled ferrets, irregular layered paper and stitched cloth. Anatomical geometry candidate: broad stylized cranium, real malar ridge, orbital recess, nose bridge and tip, softened mandibular body; non-oval ear helix and concha. Preserve independent paper creatures, costume and all historical native scenes.",
+      "artDirection": "Sculpted almond eyes; split swept hair; ivory, coral, turquoise asymmetric pointed dress; bare legs and white socks; two separate layered-paper ferrets gripping dyed pigtails; independent tissue bunny. Refined relaxed A-stance, sculptural hair ribbons, readable long-muzzled ferrets, irregular layered paper and stitched cloth. Sculpt-preserving anatomical candidate: v11.19 cranial vault, cheek and nose planes are retained; subtle saved morph deltas refine jaw, orbital contour, nose projection and sculpted non-oval ear helix/concha. Preserve independent paper creatures, costume and all historical native scenes.",
       "editedAt": "candidate-v11.20-anatomical-study",
       "poseFrames": [],
       "poseNeutral": null
