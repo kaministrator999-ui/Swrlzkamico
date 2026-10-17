@@ -54,5 +54,5 @@ jobs:
           python -m http.server 8787 --directory /tmp/vertex-sculpt-editor >/tmp/v1121-sculpt-http.log 2>&1 &
           HTTP_PID=$!
           trap 'kill "$HTTP_PID" 2>/dev/null || true' EXIT
-          SWYRL_SCULPT_TEST_URL=http://127.0.0.1:8787 node projects/swrlz-forge-moba/tests/model_sculpt_brush_playwright_v11_21.mjs
           SWYRL_SCULPT_TEST_URL=http://127.0.0.1:8787 node projects/swrlz-forge-moba/tests/model_atelier_viewport_v11_21.mjs
+          SWYRL_SCULPT_TEST_URL=http://127.0.0.1:8787 node projects/swrlz-forge-moba/tests/model_sculpt_brush_playwright_v11_21.mjs
