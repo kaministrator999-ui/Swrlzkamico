@@ -53,8 +53,12 @@ def _clean_label(s):
     return chr(96) + str(s).replace("\\", "\\\\").replace(chr(96), "\\"+chr(96)).replace("\n", " ")[:512] + chr(96)
 
 
-def _out(text, widget=None):
-    return {"handled": True, "text": text, "widget": widget}
+def _out(text, widget=None, github_context=None):
+    result={"handled": True, "text": text, "widget": widget}
+    # Context is supplied only by a verified provider receipt from an action,
+    # never by a natural-language filename or an unapproved proposal.
+    if github_context is not None:result["githubContext"]=github_context
+    return result
 
 
 def is_file_action(prompt, context=None, history=None):
@@ -257,10 +261,19 @@ def _confirmation(user_id,thread_id,prompt):
             receipt=rename.confirm(user_id,pending["ticket"],True)
             from github_rename_receipt_v263 import make_rename_widget
             widget=make_rename_widget(receipt)
+            # The verified post-commit receipt, not the stale pre-rename
+            # file selection, now defines this conversation's source context.
+            destination=receipt["destinationPath"]
+            context={
+                "repo":receipt["repo"],"branch":receipt["branch"],
+                "sourceSha":receipt["commitSha"],
+                "directory":destination.rsplit("/",1)[0] if "/" in destination else "",
+                "lastFile":destination,"kind":"file",
+            }
             return _out("Renamed "+_clean_label(receipt["sourcePath"])+" → "+
-                        _clean_label(receipt["destinationPath"])+
+                        _clean_label(destination)+
                         " in "+_clean_label(receipt["repo"])+". Verified the original Git blob and mode at the new path. "+
-                        "[View commit]("+receipt["commitUrl"]+").",widget)
+                        "[View commit]("+receipt["commitUrl"]+").",widget,github_context=context)
         receipt=create.confirm(user_id,pending["ticket"],True)
         return _out("Created "+_clean_label(receipt["path"])+" in "+
                     _clean_label(receipt["repo"])+". Verified the exact file bytes. "+
