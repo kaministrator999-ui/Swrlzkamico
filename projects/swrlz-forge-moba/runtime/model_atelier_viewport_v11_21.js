@@ -6,7 +6,7 @@ const atelierViewModes=['shaded','wireframe','overlay','xray'];
 let atelierViewGlobal='shaded',atelierViewOverrides=new Map();
 let atelierViewColors=true,atelierViewTextures=true;
 const atelierViewMaterialOverrides=new Map();
-let atelierViewWireContrast=true,atelierViewWireTint='#152b42';
+let atelierViewWireContrast=true,atelierViewWireTint='#d9f5ff';
 const atelierCameraPan=new THREE.Vector3(),atelierCameraTouches=new Map();
 const atelierCameraConsumedTouches=new Set();
 let atelierCameraGesture=null,atelierCameraMousePan=null;
