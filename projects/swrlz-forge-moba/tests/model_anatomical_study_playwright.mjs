@@ -46,10 +46,15 @@ try{
   await page.locator('#modelAtelierExport').click();
   const download=await downloaded,file=await download.path();
   const saved=JSON.parse(await readFile(file,'utf8'));
-  assert.equal(saved.project.modelAtelier.parts.find(p=>p.id==='model-0001').anatomyStudy.jaw,.74);
-  assert.equal(saved.project.modelAtelier.parts.find(p=>p.id==='left-ear').earStudy.concha,.8);
+  assert.equal(saved.model.parts.find(p=>p.id==='model-0001').anatomyStudy.jaw,.74);
+  assert.equal(saved.model.parts.find(p=>p.id==='left-ear').earStudy.concha,.8);
+  assert.equal(saved.schema,'swyrl-model-atelier-v1');
+  await page.locator('#modelAtelierImportFile').setInputFiles(file);
+  await page.waitForFunction(()=>document.getElementById('modelAtelierStatus')?.textContent.includes('Validated model imported'),{timeout:30000});
+  assert.equal((await get()).find(p=>p.id==='model-0001').anatomyStudy.jaw,.74,'Native JSON round-trip changed anatomical head');
+  assert.equal((await get()).find(p=>p.id==='left-ear').earStudy.concha,.8,'Native JSON round-trip changed the ear');
   assert.equal(errors.length,0,'Browser runtime errors: '+errors.join(' | '));
-  console.log('ANATOMICAL_STUDY_NATIVE_EDITOR_PASS',name,saved.project.modelAtelier.parts.length);
+  console.log('ANATOMICAL_STUDY_NATIVE_EDITOR_PASS',name,saved.model.parts.length);
   await ctx.close();
  }
 }finally{await browser.close();}
