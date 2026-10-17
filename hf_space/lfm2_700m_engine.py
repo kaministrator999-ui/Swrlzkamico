@@ -290,7 +290,7 @@ def _fit_repair_messages(model,system,history,prompt):
 
 def _identity_subject(prompt):
     """Recognize the grammatical owner of a clear identity question, not its answer."""
-    p=re.sub(r"\\s+"," ",str(prompt or "").casefold().strip())
+    p=re.sub(r"\s+"," ",str(prompt or "").casefold().strip())
     p=re.sub(r"[?.!]+$","",p).strip()
     if re.fullmatch(r"(?:who am i|what(?:'s| is) my name|do you know my name)",p):
         return "user"
@@ -492,7 +492,7 @@ def generate_events(payload):
     user_profile=str(payload.get("userProfile") or "").strip()[:2000]
     account_label=str(payload.get("verifiedAccountDisplayName") or "").strip()[:120]
     if account_label:
-        user_profile=(user_profile+"\\n" if user_profile else "")+"Account display label (signed-in account, not necessarily preferred name): "+account_label
+        user_profile=(user_profile+"\n" if user_profile else "")+"Account display label (signed-in account, not necessarily preferred name): "+account_label
     yield {"type":"DIAGNOSTIC","trace":_diagnostic_trace(history,user_profile,custom_assistant_profile)}
     # v280: a role or nickname question is conversational inference, not a
     # fixed response or a persisted identity update. The model receives the
