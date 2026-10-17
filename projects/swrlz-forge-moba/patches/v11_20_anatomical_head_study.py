@@ -25,7 +25,7 @@ def apply(html):
         " if(p.earStudy)return atelierAnatomicalEar(p);\n if(!p.hdFinish)return null;")
     html = once(html, "  function checkPart(p){", "  function checkPart(p){\n    if(!atelierAnatomyValid(p)||!atelierSculptValid(p))return false;")
     html = once(html, "if(key==='kind'){delete p.portraitFinish;",
-        "if(key==='kind'){delete p.sculptBrushes;delete p.anatomyStudy;delete p.earStudy;delete p.portraitFinish;")
+        "if(key==='kind'){delete p.sculptBrushes;delete p.sculptVertexEdits;delete p.anatomyStudy;delete p.earStudy;delete p.portraitFinish;")
     html = once(html, "if(p.kind==='sphere'&&values.surfaceStyle!=='portrait-head')values.portraitFinish=undefined;",
         "if(p.kind==='sphere'&&values.surfaceStyle!=='portrait-head'){values.portraitFinish=undefined;values.anatomyStudy=undefined;}")
     html = once(html, "atelierReferenceLegRefresh();atelierPortraitRefresh();",
@@ -54,6 +54,9 @@ def apply(html):
              '<option value="soft">Soft Gaussian</option></select></label></div>'
              '<div class="atelier-pair"><label>Radius · local units<input id="modelAtelierSculptBrushRadius" type="number" min=".03" max="2.5" step=".05" value=".4"></label>'
              '<label>Depth · local units<input id="modelAtelierSculptBrushAmount" type="number" min="0" max=".5" step=".025" value=".12"></label></div>'
+             '<div class="atelier-pair"><label>Full-strength inner radius<input id="modelAtelierSculptBrushPlateau" type="number" min="0" max="1" step=".1" value=".25"></label>'
+             '<label>Edge taper strength<input id="modelAtelierSculptBrushTaper" type="number" min="0" max="1" step=".1" value=".5"></label></div>'
+             '<label><input id="modelAtelierSculptBrushLevel" type="checkbox"> Level to brush plane (off keeps uneven relief)</label>'
              '<label><input id="modelAtelierSculptBrushHalf" type="checkbox"> Rotatable half-sphere (vertex group on one side)</label>'
              '<div class="atelier-pair"><label>Yaw · degrees<input id="modelAtelierSculptBrushYaw" type="number" min="-180" max="180" step="5" value="0"></label>'
              '<label>Pitch · degrees<input id="modelAtelierSculptBrushPitch" type="number" min="-180" max="180" step="5" value="0"></label></div>'
@@ -71,9 +74,34 @@ def apply(html):
              '<div class="atelier-inspector-actions"><button id="modelAtelierSculptBrushPick">Pick center on mesh</button>'
              '<button id="modelAtelierSculptBrushApply">Apply brush</button>'
              '<button id="modelAtelierSculptBrushUndoStroke">Remove last stroke</button></div>'
+             '<section aria-label="Vertex mapping and drag gizmo"><h4>Vertex matrix · point and group edits</h4>'
+             '<p>Choose grid U/V, show source vertices, tap a point, then drag the yellow gizmo. Use multi-selection to move groups.</p>'
+             '<div class="atelier-pair"><label>Vertex map U<input id="modelAtelierSculptBrushGridU" type="number" min="16" max="256" step="8" value="192"></label>'
+             '<label>Vertex map V<input id="modelAtelierSculptBrushGridV" type="number" min="12" max="192" step="8" value="128"></label></div>'
+             '<button id="modelAtelierSculptBrushGridApply">Re-sample vertex grid</button>'
+             '<div class="atelier-inspector-actions"><button id="modelAtelierSculptBrushVertexToggle">Show vertex map</button>'
+             '<button id="modelAtelierSculptBrushVertexClear">Clear selected vertices</button>'
+             '<button id="modelAtelierSculptBrushVertexUndo">Remove last vertex move</button></div>'
+             '<label><input id="modelAtelierSculptBrushMulti" type="checkbox"> Select multiple points</label>'
+             '<label>Gizmo drag axis<select id="modelAtelierSculptBrushVertexAxis"><option value="free">Free camera plane</option>'
+             '<option value="x">Local X</option><option value="y">Local Y</option><option value="z">Local Z</option></select></label>'
+             '<p id="modelAtelierSculptBrushVertexInfo"></p></section>'
              '<p id="modelAtelierSculptBrushInfo"></p>'
              '<p>Strokes affect nearby vertices with a smooth center-to-edge falloff; Undo and native JSON/OBJ export retain geometry.</p></section>')
     html = once(html, '<section id="modelAtelierPortraitFinish"', deck + brush + '<section id="modelAtelierPortraitFinish"')
+    html = once(html, "  function pointerDown(e){if(e.button!==0)return;",
+        "  function pointerDown(e){if(atelierSculptOnPointerDown(e))return;if(e.button!==0)return;")
+    html = once(html, "  function pointerMove(e){\n    if(!pressed)return;",
+        "  function pointerMove(e){\n    if(atelierSculptOnPointerMove(e))return;\n    if(!pressed)return;")
+    html = once(html, "  function pointerUp(e){\n    if(!pressed)return;",
+        "  function pointerUp(e){\n    if(atelierSculptOnPointerUp(e))return;\n    if(!pressed)return;")
+    html = once(html, "const hits=raycaster.intersectObjects(meshes,false);if(atelierSculptPick(hits[0]))return;",
+        "if(atelierSculptVertexPick(e))return;const hits=raycaster.intersectObjects(meshes,false);if(atelierSculptPick(hits[0]))return;")
+    html = once(html, "  function close(){\n    if(!panel||panel.hidden)return;",
+        "  function close(){\n    if(!panel||panel.hidden)return;atelierSculptOverlayClear();")
+    assert "renderParts();refreshList();refreshInspector();" in html
+    html = html.replace("renderParts();refreshList();refreshInspector();",
+        "renderParts();atelierSculptOverlayRefresh();refreshList();refreshInspector();")
     html = once(html, "const mesh=new THREE.Mesh(geometry(p),material(p));",
         "const mesh=new THREE.Mesh(atelierSculptApply(geometry(p),p),material(p));")
     html = once(html, "const hits=raycaster.intersectObjects(meshes,false);select(hits[0]?.object?.userData?.atelierId||null);",
