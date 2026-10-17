@@ -17,10 +17,14 @@ function atelierAnatomicalHead(part){
   // The section curves, not the part count, determine the anatomy.
   for(let iy=0;iy<=v;iy++){
     const t=iy/v,phi=t*Math.PI;
-    const y0=Math.cos(phi),rad=Math.sin(phi);
+    const y0=Math.cos(phi);
+    // Fuller mandibular base with a rounded submental turn, not a pointy
+    // UV-sphere cone. The crown keeps its historical attachment height.
+    const chinRound=y0<-.72?.69*Math.pow(1-atelierAnatomySmooth(.72,1,-y0),.28):0;
+    const rad=Math.max(Math.sin(phi),chinRound);
     const mandibular=atelierAnatomySmooth(.02,.92,-y0);
     const cheekY=atelierAnatomyBell(0,y0+.18,1,.28);
-    const jawWidth=1-.26*(part.jawTaper??.32)/.32*mandibular
+    const jawWidth=1-.16*(part.jawTaper??.32)/.32*mandibular
       +.085*f.malar*cheekY-.036*f.temple*atelierAnatomyBell(0,y0-.68,1,.25);
     const depthRatio=1-.12*mandibular+.045*atelierAnatomyBell(0,y0-.48,1,.32);
     for(let ix=0;ix<=u;ix++){
