@@ -1,3 +1,9 @@
+## v11.18 correction release gates
+
+Rebuild the exact 88-patch/41-asset package, verify preservation of 175 predecessor patch/runtime files and 40 assets, then run `model_hd_geometry_cpu.mjs` and `model_reference_correction_cpu.mjs` against the built HTML. The latter checks the reported knee reversal, real finite crown/wrap geometry, open wrap centers, sampling and saved iris colors with historical defaults. Repeat the native v11.18 recipe and require exact saved-model equality plus real save/reimport and desktop/phone multiview evidence.
+
+The full 18-suite compatibility matrix retains36 suite/viewport pairs in 22 jobs. Native character checks include pigment Apply/Undo/rejected import and idle-to-neutral grounded-leg restoration. After merge, the final dedicated deploy request must reach terminal success; audit the exact served HTML/SOURCE and all 41 assets, then require both hosted desktop and phone native jobs to pass. [Workflow](reports/LEG_REFERENCE_CORRECTION_V11_18.md).
+
 Workflow timing and retained coverage: [Engine CI timing](reports/ENGINE_CI_SPEED_2026_10_17.md). The long suites and hosted editor checks run desktop/phone independently; all viewport cases and final exports remain required.
 
 HD motion clock correction: dense frames now advance by actual elapsed seconds, preserving pause/resume and the six-second end time. The earlier 80 ms-per-frame clamp stretched playback on software rendering and failed the animation completion gate; the HD clock now has a deterministic long-frame regression check as well as the unchanged native playback test. Historical unannotated scenes keep their existing clock behavior.

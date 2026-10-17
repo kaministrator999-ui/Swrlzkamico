@@ -1,3 +1,11 @@
+# Current v11.18 · corrected legs and reference portrait
+
+The supplied side-view screenshot identified a knee depth reversal. Both native leg splines now use a gradual hip–knee–ankle profile while preserving ankle endpoints and all foot placements. The new close-up guides warmer amber eyes, finer lids/lashes/lips, swept fringe, a grooved crown, open knotted hair wraps, a fitted collar and refined coral/ivory neckline. All changes remain individually editable and save through native Model Atelier JSON.
+
+New native crown/wrap finishes and saved iris pigment controls include undo and validated import. The saved starter is `scenes/model-atelier-festival-reference-v11-18.swyrl.json`. All 175 predecessor patch/runtime sources and 40 assets are preserved; the new package has 88 patches and 41 assets. Version/marker: **v11.18 / V11_18_LEG_REFERENCE_CORRECTION**. Sealed HTML: **2,591,487 bytes**, SHA-256 `24db501a991f48304a14ed9af8e8854f4d842a55c8f2845beeeae1e118f057d2`. Exact source integrity is recorded by the manifest; source/deploy commits and publication authority resolve through the final dedicated deployment request and terminal hosted receipts.
+
+[Correction workflow and evidence](projects/swrlz-forge-moba/reports/LEG_REFERENCE_CORRECTION_V11_18.md). Full native replay, all 18 desktop/phone compatibility suites, merge, dedicated deployment and exact hosted checks are separate gates. Owner visual review remains separate.
+
 ## v11.17 · HD character sculpt and native studio finish (2026-10-16)
 
 The owner requested unrestricted high-definition quality. The new native starter refines the continuous portrait surface, integrated iris/pupil fibers and corneal highlights, thin eyelids and smiling lips, transported hair sweeps with a harmonious split-dye fringe, black woven pigtail wraps, embroidered curved garment panels, ribbed draped socks, welted leather shoes and pinched satin bows. Each ferret plume now has a continuous core beneath genuinely creased, overlapping paper leaves with cut edge thickness. Floating cheek/nose decorations and stacked sock-fold primitives were replaced with continuous surfaces.

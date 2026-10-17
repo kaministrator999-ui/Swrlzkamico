@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""§E v11.17 profiler source-integration contract; run after built package."""
+"""§E v11.18 profiler source-integration contract; run after built package."""
 import argparse,hashlib,json
 from pathlib import Path
 p=argparse.ArgumentParser();p.add_argument('--package',required=True);args=p.parse_args()
@@ -8,8 +8,8 @@ dist=Path(args.package)
 html=(dist/'index.html').read_text('utf-8')
 source=(root/'runtime/model_atelier_metrics_v11_10.js').read_text('utf-8')
 m=json.loads((root/'source-manifest.json').read_text('utf-8'))
-assert m['patches'][-1]=='patches/v11_17_hd_character_sculpt.py'
-for key in ('V11_17_HD_CHARACTER_SCULPT','modelAtelierMetricsBody','modelAtelierMetricsExport',
+assert m['patches'][-1]=='patches/v11_18_leg_reference_correction.py'
+for key in ('V11_18_LEG_REFERENCE_CORRECTION','modelAtelierMetricsBody','modelAtelierMetricsExport',
             'function atelierGeometryStats(){','refreshModelMetrics();'):
     assert key in html,key
 assert 'CPU buffers only' in html

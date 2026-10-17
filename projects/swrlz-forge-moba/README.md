@@ -1,3 +1,7 @@
+## v11.18 · leg and portrait reference correction
+
+Corrected the knee profile reported in the phone screenshot, preserving grounded feet. Native portrait, warm iris colors, swept crown/fringe, knotted wraps and fitted neckline/collar refinements follow the supplied close-up. The starter remains 283 independently editable meshes. [Native correction workflow](reports/LEG_REFERENCE_CORRECTION_V11_18.md). Marker: `V11_18_LEG_REFERENCE_CORRECTION`; 88 patches,41 assets. Exact source authority is in the manifest and final dedicated deploy request.
+
 ## v11.17 · HD character sculpt and native studio finish (2026-10-16)
 
 The owner requested unrestricted high-definition quality. The new native starter refines the continuous portrait surface, integrated iris/pupil fibers and corneal highlights, thin eyelids and smiling lips, transported hair sweeps with a harmonious split-dye fringe, black woven pigtail wraps, embroidered curved garment panels, ribbed draped socks, welted leather shoes and pinched satin bows. Each ferret plume now has a continuous core beneath genuinely creased, overlapping paper leaves with cut edge thickness. Floating cheek/nose decorations and stacked sock-fold primitives were replaced with continuous surfaces.

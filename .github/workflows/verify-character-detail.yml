@@ -1,4 +1,4 @@
-name: Verify §E HD character sculpt
+name: Verify §E corrected legs and reference portrait
 on:
   pull_request:
     paths:
@@ -30,13 +30,15 @@ jobs:
           npm install --no-save playwright@1.56.1 three@0.169.0
           npx playwright install --with-deps --only-shell chromium
       - name: Verify real HD geometry
-        run: node projects/swrlz-forge-moba/tests/model_hd_geometry_cpu.mjs
+        run: |
+          node projects/swrlz-forge-moba/tests/model_hd_geometry_cpu.mjs
+          SWYRL_REFERENCE_HTML=/tmp/character-detail/index.html node projects/swrlz-forge-moba/tests/model_reference_correction_cpu.mjs
       - name: Operate HD sculpt controls and export the native model
         run: |
           python -m http.server 8781 --directory /tmp/character-detail >/tmp/detail-http.log 2>&1 &
           SWYRL_DETAIL_SERVER_PID=$!
           trap 'kill "$SWYRL_DETAIL_SERVER_PID" 2>/dev/null || true' EXIT
-          node projects/swrlz-forge-moba/authoring/festival_hd_authoring_v11_17.mjs
+          SWYRL_ANIME_TEST_URL=http://127.0.0.1:8781 SWYRL_REFERENCE_OUT=hd-character-evidence node projects/swrlz-forge-moba/authoring/festival_reference_authoring_v11_18.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
