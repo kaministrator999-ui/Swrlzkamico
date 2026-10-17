@@ -121,10 +121,10 @@ def classify_read(prompt, context=None):
     # source-read requests. Require a concrete resource or an actual read /
     # explanation verb; "Explain how it works" still refers to a verified file.
     if not explicit and not selection and not re.search(
-            r"\b(?:files?|folders?|director(?:y|ies)|repo|repository|"
-            r"source|code|modules?|functions?|paths?|projects?|"
-            r"read|open|view|show|list|search|find|locate|inspect|"
-            r"browse|analy[sz]e|explain|describe|summari[sz]e|report)\b",
+            r"\b(?:file|folder|directory|repo|repository|source|code|"
+            r"module|function|path|project|read|open|show|list|"
+            r"search|find|locate|inspect|browse|analy[sz]e|"
+            r"explain|describe|summari[sz]e|report)\b",
             raw, re.I):
         return None
     q = _PREFIX.sub("", raw) if _COMMAND.match(raw) else raw
