@@ -79,6 +79,8 @@ def apply(html):
              '<div class="atelier-pair"><label>Vertex map U<input id="modelAtelierSculptBrushGridU" type="number" min="16" max="256" step="8" value="192"></label>'
              '<label>Vertex map V<input id="modelAtelierSculptBrushGridV" type="number" min="12" max="192" step="8" value="128"></label></div>'
              '<button id="modelAtelierSculptBrushGridApply">Re-sample vertex grid</button>'
+             '<label>Pick vertex indices (comma-separated)<input id="modelAtelierSculptBrushIndices" type="text" value="" placeholder="0, 55, 106"></label>'
+             '<button id="modelAtelierSculptBrushIndicesApply">Select these vertices</button>'
              '<div class="atelier-inspector-actions"><button id="modelAtelierSculptBrushVertexToggle">Show vertex map</button>'
              '<button id="modelAtelierSculptBrushVertexClear">Clear selected vertices</button>'
              '<button id="modelAtelierSculptBrushVertexUndo">Remove last vertex move</button></div>'
