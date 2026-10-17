@@ -862,6 +862,9 @@ def _create_code_artifact(thread,message,request_id,text):
     return artifact
 
 def _promote_pinned_code_artifact(thread,message):
+    # A quoted GitHub source file is not an authored programming artifact,
+    # even when the user pins its message for reference.
+    if isinstance((message.get("meta") or {}).get("githubContext"),dict):return None
     if message.get("role")!="assistant" or "```" not in str(message.get("text") or ""):return None
     existing=_artifact_for_message(thread,message.get("id"))
     if existing:return existing
@@ -1034,6 +1037,9 @@ def _run(key,request_id,model_id,payload,assistant_id):
             response=[{"type":"STATUS","phase":"GITHUB_CHAT_FILE_CHECK",
                        "reason":"Verified repository evidence and conversational authorization."}]
             if isinstance(widget,dict): response.append({"type":"WIDGET","widget":widget})
+            # Only the server-confirmed post-commit receipt can advance context.
+            if isinstance(result.get("githubContext"),dict):
+                response.append({"type":"GITHUB_CONTEXT","context":result["githubContext"]})
             response.extend(({"type":"DELTA","text":result["text"]},
                              {"type":"COMPLETED","phase":"COMPLETE"}))
             event_source=iter(response)
@@ -1088,7 +1094,8 @@ def _run(key,request_id,model_id,payload,assistant_id):
                     delta=str(event.get("text") or "");text+=delta;g["text"]=text
                 elif kind=="GITHUB_CONTEXT":
                     candidate=github_connection.normalize_thread_context(event.get("context"))
-                    if candidate and isinstance(payload.get("githubAction"),dict):
+                    if candidate and (isinstance(payload.get("githubAction"),dict) or
+                                      isinstance(payload.get("githubChatFileAction"),dict)):
                         g["githubContext"]=candidate
                         g["status"].append({"seq":g["lastSeq"],"phase":"GITHUB_CONTEXT_READY","reason":"Verified repository context available to this thread"})
                 elif kind=="PROJECT_CONTEXT":
@@ -1291,7 +1298,9 @@ def _run(key,request_id,model_id,payload,assistant_id):
                 if context and user_id.startswith("google:"):
                     thread["projectContext"]=context
                     project_memory_receipt=(user_id,str(thread["id"]),context)
-            gh_context=github_connection.normalize_thread_context(g.get("githubContext")) if isinstance(payload.get("githubAction"),dict) else None
+            gh_context=(github_connection.normalize_thread_context(g.get("githubContext"))
+                        if (isinstance(payload.get("githubAction"),dict) or
+                            isinstance(payload.get("githubChatFileAction"),dict)) else None)
             if gh_context:
                 previous=github_connection.normalize_thread_context(thread.get("githubContext"))
                 if previous and previous["repo"]==gh_context["repo"] and previous["directory"]==gh_context["directory"] and not gh_context["lastFile"]:
@@ -1404,7 +1413,11 @@ def _run(key,request_id,model_id,payload,assistant_id):
                 if rejected:
                     g["artifactReceipt"]={"action":"CANDIDATE_REJECTED","reasons":copy.deepcopy(validation.get("reasons") or [])}
                 else:
-                    artifact=_create_code_artifact(thread,message,request_id,text)
+                    # Provider-verified GitHub reads are source evidence, not
+                    # newly generated editable code artifacts. Preserve fenced
+                    # source formatting and Copy/export without duplicating it.
+                    artifact=(_create_code_artifact(thread,message,request_id,text)
+                              if not gh_context else None)
                     if artifact is not None:
                         g["artifactReceipt"]={"action":"ARTIFACT_CREATED","artifactId":artifact["id"],"revision":1,"sourceHash":artifact.get("currentSourceHash")}
             if online_research:
