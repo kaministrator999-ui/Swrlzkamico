@@ -1,6 +1,6 @@
 ID=server-runtime
-VERSION=2.3.431
-REVISION=2.3.431-hf-v281-compact-identity-conversation
+VERSION=2.3.432
+REVISION=2.3.432-hf-v282-model-identity-acceptance
 KIND=server-runtime
 SOURCE_BRANCH=runtime
 STATUS=active
