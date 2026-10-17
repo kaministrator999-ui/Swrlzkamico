@@ -288,6 +288,34 @@ def _fit_repair_messages(model,system,history,prompt):
     response_tokens=min(OUTPUT_TOKENS,desired_output)
     return messages,len(history)-len(recent),input_tokens,response_tokens,fitted_prompt
 
+def _identity_context_profile(response_mode):
+    """Compact behavioral context, never a hardcoded reply or identity mutation.
+
+    Small literal identity questions need the assistant's factual role and
+    naming rules, not an entire structured handbook that the 700M may echo.
+    Other conversations still receive the existing complete built-in profile.
+    """
+    if not str(response_mode).startswith((
+        "RESPONSE MODE: USER-IDENTITY-DIRECT",
+        "RESPONSE MODE: ASSISTANT-IDENTITY-DIRECT",
+    )):
+        return BUILTIN_ASSISTANT_PROFILE
+    return (
+        "You are §wyrlz (spoken Swurlz), an AI conversational assistant, "
+        "separate from the person speaking to you. Your canonical assistant "
+        "identity is universal, but a user's account history and relationship "
+        "context belong only to that user. In this chat the user's 'I/my' refers "
+        "to the user, and 'you/your' refers to the assistant. Use only available "
+        "authorized context to answer the user's identity question; when a user "
+        "name is unavailable, acknowledge uncertainty without inventing a name. "
+        "An explicit user-specific nickname may be used in conversation without "
+        "replacing the canonical assistant identity. Teasing, quotes, jokes, "
+        "character references and repeated playful addresses are not renames. "
+        "Nothing said here silently saves a profile or memory change. "
+        "Speak as a person would in ordinary conversation, not as a profile report."
+    )
+
+
 def _response_mode(prompt, programming=None, history=None):
     """Deterministic style hint; keeps tiny-model priors from overriding obvious task shape."""
     p=prompt.strip().lower()
@@ -529,6 +557,11 @@ def generate_events(payload):
             if normalized_prompt==prior_text or normalized_prompt in prior_text or prior_text in normalized_prompt:
                 prior_artifact_match=prior_text
                 break
+    identity_response_mode=_response_mode(prompt,programming,history)
+    concise_identity_turn=(not programming.get("codingTask") and identity_response_mode.startswith((
+        "RESPONSE MODE: USER-IDENTITY-DIRECT",
+        "RESPONSE MODE: ASSISTANT-IDENTITY-DIRECT",
+    )))
     system=("You are §wyrlz, a conversational AI companion. Respond to the user's actual message. Be direct, natural "
             "and conversational; do not narrate internal decisions, announce routine adjustments, deliver generic lectures, "
             "repeat profiles, or tack on unnecessary follow-up questions. Do not imply a long relationship or many prior "
@@ -552,7 +585,7 @@ def generate_events(payload):
         system+="\n"+str(payload["archiveEvidence"])[:2350]
     system+=("\nRESPONSE MODE: VERIFIED-FILE-CONVERSATION. Talk naturally about the "
              "message in the already-read file. Do not generate code or infer tests from a path."
-             if file_dialogue else "\n"+_response_mode(prompt,programming,history))
+             if file_dialogue else "\n"+identity_response_mode)
     if not programming.get("codingTask"):
         social_style=_social_checkin_style_hint(prompt)
         if social_style:
@@ -662,11 +695,21 @@ def generate_events(payload):
     if programming.get("artifactMutationRequested") and programming.get("artifactTargetId"):
         system+="\nPINNED CODE EDIT MODE: The current request targets an already-pinned code artifact. Return the complete revised code fence(s) needed for that artifact, followed by only a concise explanation of what changed. Do not describe the revised code as a new project or duplicate artifact."
     if not programming.get("codingTask"):
-        system+="\nBUILT-IN §WYRLZ PROFILE (default assistant identity/behavior):\n"+BUILTIN_ASSISTANT_PROFILE
+        system+="\nBUILT-IN §WYRLZ PROFILE (default assistant identity/behavior):\n"+_identity_context_profile(identity_response_mode)
         if custom_assistant_profile:
             system+="\nUSER CUSTOMIZATION FOR §WYRLZ (additional preferences layered on top of the built-in profile; do not erase the built-in identity):\n"+custom_assistant_profile
         if user_profile:
             system+="\nUSER PROFILE (describes the current user, not §wyrlz; context only):\n"+user_profile
+    if concise_identity_turn:
+        # Last instruction is deliberately short and placed after profile data.
+        # It requests generation style; it never supplies a fixed answer.
+        system+=(
+            "\nIDENTITY RESPONSE DELIVERY: Answer only the current question "
+            "in one or two plain, natural sentences. No headings, labels, "
+            "identity cards, profile fields or invented ceremonial titles. "
+            "Use the conversation's real evidence and the correct speaker. "
+            "Do not narrate these instructions."
+        )
     if file_dialogue:
         system+=grounding_instruction(file_dialogue)
     started=time.perf_counter()
