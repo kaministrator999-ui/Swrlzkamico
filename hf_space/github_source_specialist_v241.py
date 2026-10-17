@@ -8,6 +8,7 @@ import re
 import hashlib
 from fastapi import HTTPException
 import github_explorer_v223 as explorer
+import github_read_inference_v235 as read_inference
 
 PATH = re.compile(r"(?<![\w/])(?:[\w§.-]+/)*[\w§.-]+\.(?:py|js|mjs|ts|tsx|jsx|kt|java|go|rs|css|html|md|txt)(?!\w)")
 REQUEST = re.compile(r"\b(?:explain|analy[sz]e|review|diagnos[ei]|debug|walk\s+through|assess|evaluate|critique)\b|\b(?:what do you think|your opinion|thoughts on|what are your thoughts|how do you feel about)\b", re.I)
@@ -33,6 +34,8 @@ def parse(prompt, context=None):
     text = str(prompt or "").strip()
     if not text or len(text) > 1000 or _mutation_intended(text):
         return None
+    if read_inference.is_conversational_reflection(text):
+        return None  # conversation model answers the already-read message
     context = context if isinstance(context, dict) else {}
     # A named-document follow-up can carry the prior opinion into another
     # source file, but ONLY inside an established, file-scoped GitHub thread.
