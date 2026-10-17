@@ -188,6 +188,33 @@ class Seamless(unittest.TestCase):
         self.assertFalse(c.is_file_action("yes"))
         self.assertFalse(c.has_pending(self.user,self.thread))
 
+    def test_export69_confirmed_rename_advances_only_verified_context(self):
+        # The latest owner Chat export (69) confirmed a real file rename. A
+        # following "that file" must refer to the destination, not the stale
+        # Testing.txt path from the previous provider read.
+        old={"repo":AUTH["repo"],"branch":"main","sourceSha":"a"*40,
+             "directory":"src","lastFile":"src/older.py","kind":"file"}
+        propose=c.handle(self.user,self.thread,
+                         "Can you rename that file to new.py",old,[])
+        self.assertIn("Ready to rename",propose["text"])
+        self.assertNotIn("githubContext",propose)
+        receipt=c.handle(self.user,self.thread,"Yes",old,[])
+        self.assertEqual(receipt["widget"]["kind"],"github-rename")
+        updated=receipt["githubContext"]
+        self.assertEqual(updated,{
+            "repo":AUTH["repo"],"branch":"main","sourceSha":"c"*40,
+            "directory":"src","lastFile":"src/new.py","kind":"file"})
+        import github_connection as gh
+        self.assertEqual(gh.normalize_thread_context(updated)["lastFile"],"src/new.py")
+        self.assertFalse(c.has_pending(self.user,self.thread))
+        self.assertIsNone(c.handle(self.user,self.thread,"Yes").get("githubContext"))
+
+        # A fresh refusal has no source-context side effects.
+        c.handle(self.user,self.thread,"Rename src/older.py to new.py in repo")
+        declined=c.handle(self.user,self.thread,"no")
+        self.assertNotIn("githubContext",declined)
+        self.assertEqual(declined["text"],"Cancelled. Nothing changed.")
+
     def test_decline_consumes_ticket_without_mutation(self):
         self.act("Rename src/older.py to new.py in repo")
         result=self.act("no")
