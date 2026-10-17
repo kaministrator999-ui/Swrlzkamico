@@ -57,7 +57,7 @@ _FILE_TARGET = re.compile(
     r"source package|file package)\b", re.I,
 )
 _TEXT_TARGET = re.compile(
-    r"\b(?:lyrics|poem|rap verses?|email|message|letter|"
+    r"\b(?:lyrics|poem|rap(?: verses?)?|email|message|letter|"
     r"essay|outline|proposal|story|description|plan)\b", re.I,
 )
 _PROJECT_SOURCE = re.compile(
@@ -79,7 +79,7 @@ def _requested_deliverable(text: str) -> str:
     if not _DELIVERABLE_REQUEST.search(text):
         return "none"
     if _TEXT_TARGET.search(text) and re.search(
-        r"\b(?:write|draft|lyrics|poem|rap verses?|letter|email|story)\b",
+        r"\b(?:write|draft|lyrics|poem|rap(?: verses?)?|letter|email|story)\b",
         text, re.I,
     ):
         return "text"
