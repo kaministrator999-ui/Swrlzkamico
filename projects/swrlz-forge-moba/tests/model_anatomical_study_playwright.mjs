@@ -65,7 +65,7 @@ try{
     head:window.SWYRL_ENGINE_AGENT.inspectScene()?.project?.modelAtelier?.parts?.find(p=>p.id==='model-0001')?.anatomyStudy?.jaw
   }));
   console.log('ANATOMICAL_IMPORT_DIAGNOSTIC',JSON.stringify(diagnostic),'PAGE_ERRORS',JSON.stringify(errors));
-  assert.match(diagnostic.status,/Validated model imported/,'Round-trip import result: '+JSON.stringify(diagnostic));
+  assert.match(diagnostic.status,/^Validated model, poses and independent attachments imported\./,'Round-trip import result: '+JSON.stringify(diagnostic));
   assert.equal((await get()).find(p=>p.id==='model-0001').anatomyStudy.jaw,.74,'Native JSON round-trip changed anatomical head');
   assert.equal((await get()).find(p=>p.id==='left-ear').earStudy.concha,.8,'Native JSON round-trip changed the ear');
   assert.equal(errors.length,0,'Browser runtime errors: '+errors.join(' | '));
