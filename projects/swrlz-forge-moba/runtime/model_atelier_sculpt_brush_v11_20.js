@@ -376,7 +376,7 @@ function atelierSculptVertexInstall(){
    const mesh=modelRoot?.children.find(o=>o.isMesh&&o.userData.atelierId===selection);
    if(!mesh){status('Select a mesh before choosing vertex indices.',true);return;}
    const raw=String($m('SculptBrushIndices').value).trim();
-   if(!/^\\d+(?:\\s*,\\s*\\d+)*$/.test(raw)){status('Enter 1–128 comma-separated vertex indices.',true);return;}
+   if(!/^\d+(?:\s*,\s*\d+)*$/.test(raw)){status('Enter 1–128 comma-separated vertex indices.',true);return;}
    const ids=[...new Set(raw.split(',').map(x=>Number(x.trim())))];
    if(ids.length<1||ids.length>128||ids.some(i=>i<0||i>=mesh.geometry.attributes.position.count)){
      status('Vertex indices must exist in the currently sampled mesh (up to 128).',true);return;
