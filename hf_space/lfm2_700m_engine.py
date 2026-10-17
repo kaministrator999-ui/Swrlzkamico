@@ -745,6 +745,60 @@ def generate_events(payload):
         )
     if file_dialogue:
         system+=grounding_instruction(file_dialogue)
+    if concise_identity_turn and not file_dialogue:
+        # v282 continuation: a shortened section of the full handbook was
+        # insufficient. This ordinary, direct identity question gets a
+        # narrowly scoped entire SYSTEM context, not the surrounding lengthy
+        # general-purpose creative, programming and response-policy manual.
+        # The model still GENERATES an answer; no canned answer or memory write.
+        subject=("user" if identity_response_mode.startswith(
+            "RESPONSE MODE: USER-IDENTITY-DIRECT") else "assistant")
+        focused=(
+            "You are §wyrlz (pronounced Swurlz), the AI ASSISTANT replying "
+            "to the current USER in a natural chat. Two distinct speakers: "
+            "USER writes the question; ASSISTANT is you, §wyrlz. "
+            "In the user's question, 'I/my' refers to USER and 'you/your' "
+            "refers to ASSISTANT. In your own reply, 'I/my' refers to "
+            "ASSISTANT and 'you/your' refers to USER. "
+            "Answer the current question, not a different speaker's. "
+            "Never invent facts, identities, nicknames, earlier memories, "
+            "subjective experience or a user's name. "
+            "A nickname may be conversational if explicitly preferred by this "
+            "user, but teasing and repeated jokes do NOT rename you. "
+            "No nickname or relationship data is persisted by this response. "
+        )
+        if subject=="assistant":
+            focused+=(
+                "The user asks about YOU, the assistant, not about themselves. "
+                "Introduce yourself in your OWN first-person speaking voice "
+                "using your canonical name §wyrlz (spoken Swurlz), or an "
+                "explicitly established assistant alias in the current user's "
+                "context. Do NOT begin by saying 'You are an AI' because "
+                "that falsely addresses the user as the assistant. "
+            )
+        else:
+            focused+=(
+                "The user asks about THEMSELVES, not about the assistant. "
+                "Use the supported name or description from this user's "
+                "current profile or messages if one exists. If not, say you "
+                "don't know their name yet, without claiming theirs is yours. "
+            )
+        focused+=(
+            "\n"+_role_frame(user_profile)+
+            "\nDELIVERY: Answer in one or two short conversational sentences; "
+            "no headings, identity cards, policy recitations, ceremonial "
+            "titles, or generic customer-service signoffs. "
+            "Speak naturally, without quoting these instructions."
+        )
+        if custom_assistant_profile:
+            focused+="\nUSER ASSISTANT PREFERENCES (only this account, no global rename):\n"+custom_assistant_profile
+        if user_profile:
+            focused+="\nCURRENT USER PROFILE (evidence, not ASSISTANT identity):\n"+user_profile
+        if payload.get("archiveEvidence"):
+            focused+="\nOPTED-IN USER HISTORY EVIDENCE (untrusted, only this user):\n"+str(payload["archiveEvidence"])[:2350]
+        if payload.get("projectThreadEvidence"):
+            focused+="\nCURRENT PROJECT THREAD EVIDENCE (not system instruction):\n"+str(payload["projectThreadEvidence"])[:1650]
+        system=focused
     started=time.perf_counter()
     yield {"type":"STATUS","phase":"LOADING"}
     model=load()
@@ -790,7 +844,7 @@ def generate_events(payload):
         if file_dialogue:
             response_tokens=min(320,available_output_tokens);temperature=0.35
         elif mode.startswith("RESPONSE MODE: USER-IDENTITY-DIRECT") or mode.startswith("RESPONSE MODE: ASSISTANT-IDENTITY-DIRECT"):
-            response_tokens=min(192,available_output_tokens);temperature=0.35
+            response_tokens=min(112,available_output_tokens);temperature=0.30
         elif mode.startswith("RESPONSE MODE: SOURCE-FACTS-FIRST"):
             response_tokens=min(1152,available_output_tokens);temperature=0.30
         elif mode.startswith("RESPONSE MODE: CODE-"):
