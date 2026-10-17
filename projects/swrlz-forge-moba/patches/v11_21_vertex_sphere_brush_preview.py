@@ -83,7 +83,7 @@ def apply(html):
            '<label class="atelier-display-switch"><input id="modelAtelierViewportColors" aria-label="Show original mesh colors" type="checkbox" checked> Colors</label>'
            '<label class="atelier-display-switch"><input id="modelAtelierViewportTextures" aria-label="Show original mesh textures" type="checkbox" checked> Textures</label>'
            '<label class="atelier-display-switch"><input id="modelAtelierViewportWireContrast" aria-label="Use high contrast wireframe" type="checkbox" checked> Contrast wire</label>'
-           '<label>Wire tint<input id="modelAtelierViewportWireTint" aria-label="Wireframe and overlay line color" type="color" value="#152b42"></label>'
+           '<label>Wire tint<input id="modelAtelierViewportWireTint" aria-label="Wireframe and overlay line color" type="color" value="#d9f5ff"></label>'
            '<div class="atelier-view-presets" aria-label="Camera view directions">'
            '<button type="button" data-at-view="front">Front</button><button type="button" data-at-view="right">Right</button>'
            '<button type="button" data-at-view="left">Left</button><button type="button" data-at-view="back">Back</button>'
