@@ -89,13 +89,13 @@ def apply(html):
            '</div><p id="modelAtelierViewportNavHint" class="atelier-view-hint">1 finger orbit · 2 fingers pinch to zoom or slide to pan · Shift-drag pan</p>')
     html=once(html,'<div class="atelier-viewport-controls"><button id="modelAtelierZoomIn"',nav+'<div class="atelier-viewport-controls"><button id="modelAtelierZoomIn"')
     html=html.replace('</head>',"""<style>
-.model-atelier .atelier-viewbar{display:flex;flex-wrap:wrap;gap:6px;align-items:end;padding:8px;background:#131c30;border:1px solid #37435d;border-radius:10px;margin:5px 0}
+.model-atelier .atelier-viewbar{position:relative;z-index:80;pointer-events:auto;display:flex;flex-wrap:wrap;gap:6px;align-items:end;padding:8px;background:#131c30;border:1px solid #37435d;border-radius:10px;margin:5px 0}
 .model-atelier .atelier-viewbar label{display:flex;flex-direction:column;gap:3px;font-size:11px;color:#cbdaeb}
 .model-atelier .atelier-viewbar select{background:#202c42;color:#f3f7ff;border:1px solid #7283a0;border-radius:6px;padding:6px;font-size:12px;max-width:168px}
 .model-atelier .atelier-view-presets{display:flex;gap:4px;flex-wrap:wrap}
 .model-atelier .atelier-viewbar button{border-radius:6px;padding:6px 9px;min-height:32px;background:#293b56;color:#fff;border:1px solid #5b7494;font-size:12px}
 .model-atelier .atelier-viewbar button:focus-visible,.model-atelier .atelier-viewbar select:focus-visible{outline:2px solid #5ce2ef}
-.model-atelier .atelier-view-hint{font-size:11px;color:#cad7ed;padding:2px 5px;margin:0 0 5px}
+.model-atelier .atelier-view-hint{position:relative;z-index:70;pointer-events:none;font-size:11px;color:#cad7ed;padding:2px 5px;margin:0 0 5px}
 @media(max-width:600px){.model-atelier .atelier-viewbar{gap:4px;padding:5px}.model-atelier .atelier-view-presets{max-width:100%;overflow-x:auto;flex-wrap:nowrap}.model-atelier .atelier-viewbar button{white-space:nowrap}}
 </style></head>""",1)
     html=once(html,"  function pointerDown(e){if(e.button!==0)return;",
