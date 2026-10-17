@@ -18,18 +18,20 @@ const finish=async(id,style,relief)=>{await pick(id);await page.locator('#modelA
 const cloth=async(id,camber,pleat)=>{await pick(id);await page.locator('#modelAtelierPanelCamber').fill(String(camber));await page.locator('#modelAtelierPanelPleat').fill(String(pleat));await hit('SurfaceApply');assert.equal((await part(id)).panelCamber,camber);record({id,panelCamber:camber,panelPleat:pleat});};
 const fit=async(id,u,radius)=>{await pick(id);const d=page.locator('#modelAtelierHDEditor details');if(!await d.evaluate(e=>e.open))await d.locator('summary').click();await page.locator('#modelAtelierHDTrimPanel').selectOption('v119-wrap');await page.locator('#modelAtelierHDTrimU').fill(String(u));await page.locator('#modelAtelierHDTrimStart').fill('.12');await page.locator('#modelAtelierHDTrimRadius').fill(String(radius));await hit('HDFitTrim');assert.equal((await part(id)).path.length,33);record({id,fitTo:'v119-wrap',u,start:.12,radius});};
 const tailor=async()=>{await cloth('chest-coral',.004,.0016);await finish('chest-coral','cloth',.2);await shape('v119-wrap',[[-.22,3.39,.16],[-.11,3.27,.232],[.07,3.12,.20],[.18,2.97,.13]],[.065,.17,.18,.065]);await cloth('v119-wrap',.008,.002);await finish('chest-gold','skin',.25);await fit('chest-gold',.6,.0025);await fit('bodice-stitch-0',-.6,.0014);};
+const calves=async()=>{for(const side of ['left','right']){const id='atelier-v118-'+side+'-leg';await pick(id);await page.locator('#modelAtelierCalfFullness').fill('.065');await page.locator('#modelAtelierShinTaper').fill('.012');await hit('LegApply');assert.deepEqual((await part(id)).legAnatomy,{calfFullness:.065,shinTaper:.012});record({id,legAnatomy:{calfFullness:.065,shinTaper:.012}});}};
 const colorInput=(id,value)=>page.locator('#modelAtelier'+id).evaluate((e,v)=>{e.value=v;e.dispatchEvent(new Event('input',{bubbles:true}));e.dispatchEvent(new Event('change',{bubbles:true}));},value);
 const capture=async(name,view,selected)=>{const editing=page.viewportSize();if(editing.width>750)await page.setViewportSize({width:1440,height:1100});await page.evaluate(v=>window.SWYRL_ENGINE_MODEL_ATELIER.view(v),view);if(selected){await pick(selected);await hit('FrameSelected');}else await page.locator('#modelAtelierViewport canvas').click({position:{x:10,y:10}});await page.screenshot({path:out+'/'+name+'.png'});if(editing.width>750)await page.setViewportSize(editing);};
 try{
  await page.goto(base+'/?project=model-atelier',{waitUntil:'domcontentloaded',timeout:90000});await page.locator('#modelAtelierPanel canvas').waitFor();
  if(process.env.SWYRL_REFERENCE_INPUT){await page.locator('#modelAtelierImportFile').setInputFiles(process.env.SWYRL_REFERENCE_INPUT);await page.waitForFunction(()=>document.getElementById('modelAtelierStatus').textContent.startsWith('Validated model,'));}
  const seed=(await snap()).project.modelAtelier;
- if(!['review','fabric'].includes(stage)){
+ if(!['review','fabric','calves'].includes(stage)){
  await capture('before-profile','right');
  for(const [side,sign]of [['left',-1],['right',1]]){
   const xs=[.245,.31,.414,.45,.555,.64],ys=[2.53,2.17,1.66,1.49,.95,.49],zs=[0,.012,.035,.038,.027,.035];
   await shape('atelier-v118-'+side+'-leg',xs.map((x,i)=>[sign*x,ys[i],zs[i]]),[.164,.151,.106,.105,.100,.066]);
  }
+ await calves();
  await capture('corrected-profile','right');await capture('corrected-opposite-profile','left');
  if(stage!=='legs'){
   await transform('model-0001',{scale:[.292,.346,.26]});await pick('model-0001');await page.locator('#modelAtelierJawTaper').fill('.36');await hit('SurfaceApply');
@@ -70,6 +72,7 @@ try{
  }
  if(stage==='review'){await shape('bodice-stitch-2',[[0,3.68,.020],[0,3.61,.015]],[.114,.118]);await transform('bodice-stitch-2',{name:'Black fitted neck collar',color:'#20232e',scale:[1,1,.84]});}
  if(stage==='fabric')await tailor();
+ if(stage==='calves')await calves();
  const waiting=page.waitForEvent('download');await hit('Export');await(await waiting).saveAs(out+'/authored.model.json');
  const saved=JSON.parse(await fs.readFile(out+'/authored.model.json','utf8'));assert.deepEqual(saved.model,(await snap()).project.modelAtelier);
  if(stage==='full'&&seed.parts.find(p=>p.id==='hair-cap').hdFinish?.style==='crown')assert.deepEqual(saved.model,seed,'The native recipe must exactly reproduce the saved starter');

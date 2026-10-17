@@ -104,6 +104,6 @@
     "patches/v11_17_hd_character_sculpt.py",
     "patches/v11_18_leg_reference_correction.py"
   ],
-  "finalBytes": 2591487,
-  "finalSha256": "24db501a991f48304a14ed9af8e8854f4d842a55c8f2845beeeae1e118f057d2"
+  "finalBytes": 2594314,
+  "finalSha256": "82f833c7a7771d167e582f381b655e01b5a63e5f6d50a3abb5e2f604467b234b"
 }

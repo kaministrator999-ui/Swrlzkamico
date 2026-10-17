@@ -55,4 +55,5 @@ print('HD_NATIVE_SURFACE_PARAMETERS_AND_REMOVED_FLOATING_FACIAL_PARTS_PASS')
 assert by_id['hair-cap']['hdFinish']['style']=='crown'
 assert all(by_id['hair-bun-'+s]['hdFinish']['style']=='knot' for s in ['-1','1'])
 assert all(by_id[side+'-iris']['irisPigments']=={'upper':'#6d3439','lower':'#d9a34f'} for side in ['left','right'])
-print('REFERENCE_CORRECTED_KNEES_CROWN_KNOTS_AND_IRIS_PIGMENTS_PASS')
+assert all(by_id['atelier-v118-'+side+'-leg']['legAnatomy']=={'calfFullness':.065,'shinTaper':.012} for side in ['left','right'])
+print('REFERENCE_CORRECTED_KNEES_POSTERIOR_CALVES_CROWN_KNOTS_AND_IRIS_PIGMENTS_PASS')

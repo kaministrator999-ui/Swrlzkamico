@@ -20,17 +20,21 @@ def apply(html):
     html=once(html,'  function checkPart(p){', '''  function checkPart(p){
     if(p?.irisPigments!==undefined){const c=p.irisPigments;if(p.kind!=='sphere'||!c||typeof c!=='object'||Array.isArray(c)||Object.keys(c).length!==2||!['upper','lower'].every(k=>/^#[0-9a-fA-F]{6}$/.test(c[k])))return false;}
     if(p?.hdFinish?.style==='crown'&&p.surfaceStyle!=='split-dye-cap')return false;''')
-    html=once(html,"if(key==='kind'){delete p.hdFinish;", "if(key==='kind'){delete p.irisPigments;delete p.hdFinish;")
+    html=once(html,'    if(p?.irisPigments!==undefined)', '''    if(p?.legAnatomy!==undefined){const a=p.legAnatomy;if(p.kind!=='loft'||p.surfaceStyle!=='anatomy-smooth'||p.path?.length!==6||p.hdFinish?.style!=='skin'||!a||typeof a!=='object'||Array.isArray(a)||Object.keys(a).length!==2||!Number.isFinite(a.calfFullness)||a.calfFullness<0||a.calfFullness>.12||!Number.isFinite(a.shinTaper)||a.shinTaper<0||a.shinTaper>.04)return false;}
+    if(p?.irisPigments!==undefined)''')
+    html=once(html,'positions.push(v.x,v.y,v.z);uv.push(j/rings,t);', 'if(style===\'skin\'&&p.legAnatomy)v.add(atelierReferenceLegContour(p,center,f,s,c));positions.push(v.x,v.y,v.z);uv.push(j/rings,t);')
+    html=once(html,"if(key==='kind'){delete p.hdFinish;", "if(key==='kind'){delete p.legAnatomy;delete p.irisPigments;delete p.hdFinish;")
     html=once(html,"  if(!checkPart({...p,...values}))", "  if(p.kind==='sphere'&&p.hdFinish?.style==='crown'&&values.surfaceStyle!=='split-dye-cap')values.hdFinish=undefined;\n  if(!checkPart({...p,...values}))")
     html=once(html,'checkpoint();Object.assign(p,values);signalEdited();select(p.id);',"checkpoint();Object.assign(p,values);for(const key of Object.keys(values))if(values[key]===undefined)delete p[key];signalEdited();select(p.id);")
     html=once(html,"cloth=p?.surfaceStyle==='tailored-panel'", "cloth=['tailored-panel','fabric-panel'].includes(p?.surfaceStyle)")
     html=once(html,"else if(p.surfaceStyle==='tailored-panel')values=", "else if(['tailored-panel','fabric-panel'].includes(p.surfaceStyle))values=")
     html=once(html,"p.panelCamber??(p.panelAxis==='depth'?.055:.085)","p.panelCamber??(p.surfaceStyle==='fabric-panel'?.035:p.panelAxis==='depth'?.055:.085)")
     html=once(html,'p.panelPleat??.012','p.panelPleat??(p.surfaceStyle===\'fabric-panel\'?.008:.012)')
-    html=once(html,'atelierHDRefresh();','atelierHDRefresh();atelierReferenceFinishRefresh();')
-    html=once(html,'atelierHDInstall();','atelierHDInstall();atelierReferenceFinishInstall();')
+    html=once(html,'atelierHDRefresh();','atelierHDRefresh();atelierReferenceFinishRefresh();atelierReferenceLegRefresh();')
+    html=once(html,'atelierHDInstall();','atelierHDInstall();atelierReferenceFinishInstall();atelierReferenceLegInstall();')
     html=once(html,'<option value="wrap">Braided fabric wrap</option>','<option value="wrap">Braided fabric wrap</option><option value="knot">Knotted hair wrap</option><option value="crown">Swept split-dye crown</option>')
-    deck='<section id="modelAtelierIrisPigments" hidden><h3>Iris pigments</h3><label>Upper iris<input id="modelAtelierIrisUpper" type="color" value="#ad4c6b"></label><label>Lower iris<input id="modelAtelierIrisLower" type="color" value="#f4b956"></label><button id="modelAtelierIrisApply">Apply iris pigments</button></section>'
+    leg_deck='<section id="modelAtelierLegAnatomy" hidden><h3>Leg anatomy</h3><label>Posterior calf fullness<input id="modelAtelierCalfFullness" type="number" min="0" max="0.12" step="0.005" value="0"></label><label>Front shin taper<input id="modelAtelierShinTaper" type="number" min="0" max="0.04" step="0.002" value="0"></label><button id="modelAtelierLegApply">Apply leg contours</button></section>'
+    deck=leg_deck+'<section id="modelAtelierIrisPigments" hidden><h3>Iris pigments</h3><label>Upper iris<input id="modelAtelierIrisUpper" type="color" value="#ad4c6b"></label><label>Lower iris<input id="modelAtelierIrisLower" type="color" value="#f4b956"></label><button id="modelAtelierIrisApply">Apply iris pigments</button></section>'
     html=once(html,'<section id="modelAtelierDensityEditor"',deck+'<section id="modelAtelierDensityEditor"')
     html=once(html,'v11.17 · HD character sculpt & studio','v11.18 · corrected legs & reference portrait')
     html=html.replace('Maker v11.17','Maker v11.18').replace('MAKER v11.17','MAKER v11.18').replace("version:'v11.17'","version:'v11.18'").replace('version:11.17','version:11.18')

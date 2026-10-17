@@ -40,3 +40,30 @@ function atelierReferenceFinishInstall(){
   checkpoint();Object.assign(p,next);signalEdited();select(p.id);status('Iris colors saved. Undo and model JSON retain the pigments.');
  });
 }
+
+// Anatomical lower-leg contour: the front is +depth and the calf is -depth.
+// Compact support leaves the thigh, knee ring and ankle attachment untouched.
+function atelierReferenceLegContour(p,center,frame,s,c){
+ const a=p.legAnatomy;if(!a)return new THREE.Vector3();
+ const ankle=p.path[5][1],knee=(p.path[2][1]+p.path[3][1])/2,u=(center.y-ankle)/(knee-ankle);
+ if(!Number.isFinite(u)||u<=0||u>=1)return new THREE.Vector3();
+ const bell=v=>v<=0||v>=1?0:729/16*v**4*(1-v)**2;
+ const bulk=bell(u),medial=-Math.sign(p.path[0][0])*c;
+ // The medial head descends slightly lower than the lateral head.
+ const heads=bell(u+medial*.055)*THREE.MathUtils.smoothstep(u,0,.15)*THREE.MathUtils.smoothstep(1-u,0,.15),back=Math.max(0,-s),front=Math.max(0,s);
+ return frame.depth.clone().multiplyScalar(-a.calfFullness*heads*back**2-a.shinTaper*bulk*front**2)
+  .addScaledVector(frame.right,c*a.calfFullness*.30*heads);
+}
+function atelierReferenceLegRefresh(){
+ const p=partById(selection),deck=$m('LegAnatomy');if(!deck)return;
+ deck.hidden=!(p?.kind==='loft'&&p.surfaceStyle==='anatomy-smooth'&&p.path?.length===6&&p.hdFinish?.style==='skin');
+ if(!deck.hidden){$m('CalfFullness').value=p.legAnatomy?.calfFullness??0;$m('ShinTaper').value=p.legAnatomy?.shinTaper??0;}
+}
+function atelierReferenceLegInstall(){
+ $m('LegApply').addEventListener('click',()=>{
+  const p=partById(selection);if(!p)return;
+  const next={...p,legAnatomy:{calfFullness:Number($m('CalfFullness').value),shinTaper:Number($m('ShinTaper').value)}};
+  if(!checkPart(next)){status('Leg contour rejected: select a six-knot skin leg and use valid calf and shin values.',true);return;}
+  checkpoint();Object.assign(p,next);signalEdited();select(p.id);status('Calf and shin contours saved. Undo and model JSON retain the anatomy.');
+ });
+}

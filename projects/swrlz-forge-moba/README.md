@@ -1,6 +1,6 @@
 ## v11.18 · leg and portrait reference correction
 
-Corrected the knee profile reported in the phone screenshot, preserving grounded feet. Native portrait, warm iris colors, swept crown/fringe, knotted wraps and fitted neckline/collar refinements follow the supplied close-up. The starter remains 283 independently editable meshes. [Native correction workflow](reports/LEG_REFERENCE_CORRECTION_V11_18.md). Marker: `V11_18_LEG_REFERENCE_CORRECTION`; 88 patches,41 assets. Exact source authority is in the manifest and final dedicated deploy request.
+Corrected the knee profile reported in the phone screenshot, preserving grounded feet. Added genuine posterior calf volume, a restrained anterior shin and an Achilles taper through saved Leg anatomy controls. Native portrait, warm iris colors, swept crown/fringe, knotted wraps and fitted neckline/collar refinements follow the supplied close-up. The starter remains 283 independently editable meshes. [Native correction workflow](reports/LEG_REFERENCE_CORRECTION_V11_18.md). Marker: `V11_18_LEG_REFERENCE_CORRECTION`; 88 patches,41 assets. Exact source authority is in the manifest and final dedicated deploy request.
 
 ## v11.17 · HD character sculpt and native studio finish (2026-10-16)
 

@@ -17,7 +17,24 @@ for(const side of ['left','right']){
  assert.ok(maxKink(p)<.10,'Neutral knee must not reverse abruptly');
  const curve=new THREE.CatmullRomCurve3(p.path.map(q=>new THREE.Vector3(...q)),false,'centripetal');
  let last=Infinity;for(let i=0;i<=256;i++){const q=curve.getPoint(i/256);assert.ok(q.y<last||i===0,'Leg folds back upward');last=q.y;}
- for(const v of a.array)assert.ok(Number.isFinite(v));
+ for(const key of ['position','normal'])for(const v of g.attributes[key].array)assert.ok(Number.isFinite(v));
+ const plain=ctx.atelierHDGeometry({...p,legAnatomy:undefined}).attributes.position;
+ assert.equal(a.count,plain.count,'Anatomy must retain sampling controls');
+ const n=p.meshDensity.u,rings=p.meshDensity.v,posterior=[],anterior=[];
+ for(let i=0;i<=n;i++){
+  const back=i*(rings+1)+Math.round(rings*.75),front=i*(rings+1)+Math.round(rings*.25);
+  posterior.push({y:plain.getY(back),extra:plain.getZ(back)-a.getZ(back)});
+  anterior.push({y:plain.getY(front),inset:plain.getZ(front)-a.getZ(front)});
+  if(curve.getPoint(i/n).y>=(p.path[2][1]+p.path[3][1])/2||i===n)for(let j=0;j<=rings;j++){
+   const k=i*(rings+1)+j;assert.ok(new THREE.Vector3().fromBufferAttribute(a,k).distanceTo(new THREE.Vector3().fromBufferAttribute(plain,k))<1e-6,JSON.stringify({id,i,j,n,rings,center:curve.getPoint(i/n).toArray(),a:[a.getX(k),a.getY(k),a.getZ(k)],plain:[plain.getX(k),plain.getY(k),plain.getZ(k)]}));
+  }
+ }
+ const peak=posterior.reduce((a,b)=>b.extra>a.extra?b:a),shin=anterior.reduce((a,b)=>b.inset>a.inset?b:a);
+ assert.ok(peak.y>1.08&&peak.y<1.36&&peak.extra>.055,'Posterior calf must peak below the knee, above mid-shin');
+ assert.ok(shin.inset>.008&&shin.inset<.02,'Front shin must stay restrained rather than inherit the calf bulge');
+ assert.ok(posterior.filter(q=>q.y<.7).every(q=>q.extra<.006),'Calf must taper into the Achilles and fixed ankle');
+ assert.ok(posterior.filter(q=>q.y>1.5).every(q=>q.extra<.008),'Calf must blend smoothly beneath the knee');
+ console.log('REFERENCE_POSTERIOR_CALF_SHIN_AND_ACHILLES_PASS',side,peak,shin);
  for(const prefix of ['sock','shoe','heel','sole'])assert.deepEqual(byId(prefix+'-'+side),oldId(prefix+'-'+side),'Foot assembly moved during knee correction');
  assert.deepEqual(p.path[5],oldId(id).path[5],'Ankle must remain attached to its sock');
  console.log('REFERENCE_LEG_PROFILE_PASS',side,maxKink(oldId(id)),maxKink(p),a.count);
