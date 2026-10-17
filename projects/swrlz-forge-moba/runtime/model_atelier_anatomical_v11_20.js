@@ -62,7 +62,7 @@ function atelierAnatomicalHead(part){
       colors.push(color.r,color.g,color.b);
       if(iy<v&&ix<u){
         const k=iy*(u+1)+ix,b=k+u+1;
-        indices.push(k,b,k+1,k+1,b,b+1);
+        indices.push(k,k+1,b,k+1,b+1,b);
       }
     }
   }
