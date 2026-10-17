@@ -9,16 +9,16 @@ def once(html, before, after):
 def apply(html):
     root=Path(__file__).resolve().parent.parent
     assert "SWYRL_ENGINE_DEPLOY_MARKER: V11_20_ANATOMICAL_HEAD" in html
-    module=(root/"runtime/model_atelier_sculpt_brush_v11_21.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_viewport_v11_21.js").read_text(encoding="utf-8")
+    module=(root/"runtime/model_atelier_sculpt_brush_v11_21.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_viewport_v11_21.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_reference_studio_v11_22.js").read_text(encoding="utf-8")
     html=once(html, "  function refreshList(){", module+"\n  function refreshList(){")
     html=once(html,"  function checkPart(p){",
          "  function checkPart(p){\n    if(!atelierSculptValid(p))return false;")
     html=once(html,"if(key==='kind'){delete p.headAnatomy;delete p.portraitFinish;",
          "if(key==='kind'){delete p.sculptBrushes;delete p.sculptVertexEdits;delete p.headAnatomy;delete p.portraitFinish;")
     html=once(html,"atelierHeadAnatomyRefresh();",
-         "atelierHeadAnatomyRefresh();atelierSculptRefresh();atelierViewportControlsRefresh();")
+         "atelierHeadAnatomyRefresh();atelierSculptRefresh();atelierViewportControlsRefresh();atelierRefPaint();")
     html=once(html,"atelierHeadAnatomyInstall();",
-         "atelierHeadAnatomyInstall();atelierSculptInstall();atelierViewportInstall();")
+         "atelierHeadAnatomyInstall();atelierSculptInstall();atelierViewportInstall();atelierRefInstall();")
     brush = ('<section id="modelAtelierSculptBrush" hidden><h3>Vertex sphere brush · editable mesh</h3>'
              '<p>Choose mesh. Arm <b>Pick center</b> and tap its surface. Drag normally to orbit.</p>'
              '<div class="atelier-pair"><label>Action<select id="modelAtelierSculptBrushMode"><option value="extrude">Extrude outward</option>'
@@ -105,6 +105,72 @@ def apply(html):
 .model-atelier .atelier-viewbar button:focus-visible,.model-atelier .atelier-viewbar select:focus-visible{outline:2px solid #5ce2ef}
 .model-atelier .atelier-view-hint{position:relative;z-index:70;pointer-events:none;font-size:11px;color:#cad7ed;padding:2px 5px;margin:0 0 5px}
 @media(max-width:600px){.model-atelier .atelier-viewbar{gap:4px;padding:5px}.model-atelier .atelier-view-presets{max-width:100%;overflow-x:auto;flex-wrap:nowrap}.model-atelier .atelier-viewbar button{white-space:nowrap}}
+</style></head>""",1)
+    # Treat imported references as portable native model state, using the
+    # exact same Undo/Redo transaction snapshots as mesh parts.
+    html=once(html,"  function modelSnapshot(){return JSON.stringify(model().parts);}",
+       "  function modelSnapshot(){return JSON.stringify({parts:model().parts,references:model().references||[],referenceLayout:model().referenceLayout||null});}")
+    html=once(html,"dst.push(modelSnapshot());model().parts=JSON.parse(src.pop());selection=null;signalEdited();",
+       "dst.push(modelSnapshot());const last=JSON.parse(src.pop());if(Array.isArray(last)){model().parts=last;}else{model().parts=last.parts;model().references=last.references||[];model().referenceLayout=last.referenceLayout||{x:12,y:12,open:false,collapsed:false,active:null};}selection=null;signalEdited();atelierRefPaint();")
+    html=once(html,"checkpoint();model().parts=structuredClone(source.parts);selection=null;signalEdited();status('Validated model imported. You can undo this import.');",
+       "const importedRefs=atelierRefReadImport(source);checkpoint();model().parts=structuredClone(source.parts);model().references=importedRefs.references;model().referenceLayout=importedRefs.referenceLayout;selection=null;atelierRefTransient.clear();signalEdited();atelierRefPaint();status('Validated model and portable references imported. You can undo this import.');")
+    # Reference studio dock is an overlay inside the interactive viewport,
+    # not a replacement for the user's existing wireframe/pan toolbar.
+    studio = ('<div id="modelAtelierReferenceDock" class="atelier-ref-dock" hidden role="region" aria-label="Floating image references">'
+      '<div id="modelAtelierReferenceHandle" class="atelier-ref-handle"><strong>🖼 Reference views</strong>'
+      '<div><button id="modelAtelierReferenceCollapse" type="button">Minimize</button>'
+      '<button id="modelAtelierReferenceClose" type="button" aria-label="Close reference studio">×</button></div></div>'
+      '<div id="modelAtelierReferenceBody" class="atelier-ref-body">'
+      '<label class="atelier-ref-import">Add front/side images<input id="modelAtelierReferenceFile" type="file" multiple accept="image/jpeg,image/png,image/webp"></label>'
+      '<div class="atelier-ref-tabs" id="modelAtelierReferenceTabs"></div>'
+      '<p id="modelAtelierReferenceEmpty" class="atelier-ref-empty">Add up to 4 local JPEG, PNG or WebP references. Images save with your model JSON.</p>'
+      '<div id="modelAtelierReferenceDetail">'
+      '<div id="modelAtelierReferenceImageFrame" class="atelier-ref-imageframe" title="Drag inside image to pan">'
+      '<img id="modelAtelierReferenceImage" alt="Image reference" draggable="false"></div>'
+      '<p id="modelAtelierReferenceName" class="atelier-ref-name"></p>'
+      '<div class="atelier-ref-controls"><label>Angle<select id="modelAtelierReferenceAngle">'
+      '<option value="front">Front</option><option value="right">Right profile</option><option value="left">Left profile</option>'
+      '<option value="three">Three-quarter</option><option value="back">Back</option><option value="top">Top</option>'
+      '<option value="free">Other</option></select></label>'
+      '<button id="modelAtelierReferenceCamera" type="button">Match camera</button></div>'
+      '<label>Image zoom<input id="modelAtelierReferenceZoom" type="range" min=".25" max="5" step=".05" value="1"></label>'
+      '<label>Opacity<input id="modelAtelierReferenceOpacity" type="range" min=".15" max="1" step=".05" value=".85"></label>'
+      '<div class="atelier-ref-buttons"><button id="modelAtelierReferenceRotateLeft" type="button">↶ 90°</button>'
+      '<button id="modelAtelierReferenceRotateRight" type="button">↷ 90°</button>'
+      '<button id="modelAtelierReferenceFlip" type="button">Mirror</button>'
+      '<button id="modelAtelierReferenceReset" type="button">Reset</button></div>'
+      '<div class="atelier-ref-buttons"><label><input id="modelAtelierReferenceShow" type="checkbox" checked> Visible</label>'
+      '<button id="modelAtelierReferenceDelete" type="button">Remove image</button></div></div>'
+      '<small id="modelAtelierReferenceCount">0/4 images</small></div></div>')
+    html=once(html,'<div id="modelAtelierViewport" class="atelier-viewport" aria-label="Interactive 3D model viewport"></div>',
+       '<div id="modelAtelierViewport" class="atelier-viewport" aria-label="Interactive 3D model viewport">'+studio+'</div>')
+    html=once(html,'<button type="button" id="modelAtelierViewportPanReset">Center pan</button>',
+       '<button type="button" id="modelAtelierViewportPanReset">Center pan</button>'
+       '<button type="button" id="modelAtelierReferenceToggle" aria-expanded="false">🖼 References</button>')
+    html=html.replace('</head>',"""<style>
+#modelAtelierViewport{position:relative}
+.model-atelier .atelier-ref-dock{position:absolute;z-index:150;top:12px;left:12px;width:min(255px,calc(100% - 15px));max-height:calc(100% - 12px);overflow:auto;background:#17233cee;color:#e5f0ff;border:1px solid #70a0c3;border-radius:11px;box-shadow:0 5px 18px #0009;touch-action:pan-y}
+.model-atelier .atelier-ref-dock[hidden]{display:none!important}
+.model-atelier .atelier-ref-handle{padding:8px;display:flex;align-items:center;justify-content:space-between;gap:6px;background:#264161;cursor:move;touch-action:none;user-select:none}
+.model-atelier .atelier-ref-handle div{display:flex;gap:3px}
+.model-atelier .atelier-ref-handle button{padding:3px 6px;min-height:27px;font-size:11px;border:1px solid #6f93b6;border-radius:6px;background:#334b6b;color:#fff}
+.model-atelier .atelier-ref-body{padding:8px;display:grid;gap:6px;font-size:11px}
+.model-atelier .atelier-ref-body label{font-size:11px;display:flex;flex-direction:column;gap:3px}
+.model-atelier .atelier-ref-import{padding:5px;background:#283d59;border-radius:6px}
+.model-atelier .atelier-ref-import input{max-width:100%;font-size:11px;color:#fff}
+.model-atelier .atelier-ref-tabs{display:flex;gap:4px;overflow-x:auto}
+.model-atelier .atelier-ref-tabs button{font-size:10px;white-space:nowrap;flex:0 0 auto;padding:4px}
+.model-atelier .atelier-ref-tabs .atelier-ref-active{background:#31698d;border-color:#6be4f4}
+.model-atelier .atelier-ref-body button{background:#2c4564;color:#fff;border:1px solid #6084a4;border-radius:5px;padding:5px 6px}
+.model-atelier .atelier-ref-imageframe{height:175px;position:relative;display:grid;place-items:center;overflow:hidden;background:repeating-conic-gradient(#34415a 0 25%,#202b40 0 50%) 50%/18px 18px;touch-action:none;cursor:grab}
+.model-atelier .atelier-ref-imageframe img{width:100%;height:100%;object-fit:contain;pointer-events:none;user-select:none;transform-origin:center}
+.model-atelier .atelier-ref-buttons,.model-atelier .atelier-ref-controls{display:flex;gap:4px;flex-wrap:wrap;align-items:center}
+.model-atelier .atelier-ref-controls select{width:110px;background:#263a55;color:#fff;border-radius:6px}
+.model-atelier .atelier-ref-body input[type=range]{width:100%;accent-color:#58cee4}
+.model-atelier .atelier-ref-name{margin:0;color:#cad6e9;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.model-atelier .atelier-ref-collapsed{width:145px;max-height:50px;overflow:hidden}
+.model-atelier .atelier-ref-collapsed .atelier-ref-body{display:none}
+@media(max-width:600px){.model-atelier .atelier-ref-dock{width:min(230px,calc(100% - 14px))}.model-atelier .atelier-ref-imageframe{height:128px}.model-atelier .atelier-ref-collapsed{width:145px}}
 </style></head>""",1)
     html=once(html,"  function pointerDown(e){if(e.button!==0)return;",
          "  function pointerDown(e){if(atelierSculptOnPointerDown(e))return;if(e.button!==0)return;")
