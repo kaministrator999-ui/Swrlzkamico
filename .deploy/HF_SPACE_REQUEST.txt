@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=4deb8265bddfbfbacdda9eb3ba267ce249c1ba61
-REQUEST_NONCE=2026-10-16-v270-export68-file-followup-001
+SOURCE_REF=5209707839c3f848c9e09f3bc300d028e6e8d409
+REQUEST_NONCE=2026-10-16-v271-chat-rename-context-artifact-001
