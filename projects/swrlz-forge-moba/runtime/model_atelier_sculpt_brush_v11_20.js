@@ -64,7 +64,7 @@ function atelierSculptApply(geometry,part){
  const a=geometry.attributes.position;
  // Position samples in a UV sphere are duplicated at the seam. Use the SAME
  // position-dependent influence for identical vertices so the seam stays shut.
- for(const s of part.sculptBrushes){
+ for(const s of part.sculptBrushes||[]){
    if(!atelierSculptValid({sculptBrushes:[s]}))continue;
    const origin=new THREE.Vector3(...s.center);
    const axis=new THREE.Vector3(...s.axis).applyEuler(new THREE.Euler(s.pitch,s.yaw,0,'YXZ')).normalize();
