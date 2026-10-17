@@ -83,6 +83,11 @@ jobs:
           python -m py_compile hf_space/lfm2_700m_engine.py hf_space/test_user_identity_perspective_v278.py
           python hf_space/test_user_identity_perspective_v278.py
 
+      - name: v279 Independent online research storage and compact 700M evidence regression
+        run: |
+          python -m py_compile hf_space/model_router.py hf_space/test_online_inference_budget_v279.py
+          python hf_space/test_online_inference_budget_v279.py
+
       - name: v277 Verified GitHub file conversation grounding and source-claim regression
         run: |
           python -m py_compile hf_space/verified_file_dialogue_v277.py hf_space/lfm2_700m_engine.py hf_space/test_verified_file_dialogue_v277.py
