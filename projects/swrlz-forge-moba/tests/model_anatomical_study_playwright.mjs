@@ -51,10 +51,21 @@ try{
   assert.equal(saved.model.parts.find(p=>p.id==='model-0001').anatomyStudy.jaw,.74);
   assert.equal(saved.model.parts.find(p=>p.id==='left-ear').earStudy.concha,.8);
   assert.equal(saved.schema,'swyrl-model-atelier-v1');
+  await page.evaluate(()=>{
+    window.__anatomyImportChangeObserved=false;
+    document.getElementById('modelAtelierImportFile').addEventListener('change',()=>{window.__anatomyImportChangeObserved=true;},{once:true});
+  });
   await page.locator('#modelAtelierImportFile').setInputFiles(file);
-  await page.waitForFunction(()=>/Validated model imported|Import rejected/.test(document.getElementById('modelAtelierStatus')?.textContent||''),null,{timeout:15000});
-  const importStatus=await page.locator('#modelAtelierStatus').textContent();
-  assert.match(importStatus,/Validated model imported/,'Round-trip import result: '+importStatus);
+  await page.waitForFunction(()=>window.__anatomyImportChangeObserved,null,{timeout:8000});
+  await page.waitForTimeout(3500);
+  const diagnostic=await page.evaluate(()=>({
+    status:document.getElementById('modelAtelierStatus')?.textContent||'',
+    fileCount:document.getElementById('modelAtelierImportFile')?.files?.length??-1,
+    parts:window.SWYRL_ENGINE_AGENT.inspectScene()?.project?.modelAtelier?.parts?.length??-1,
+    head:window.SWYRL_ENGINE_AGENT.inspectScene()?.project?.modelAtelier?.parts?.find(p=>p.id==='model-0001')?.anatomyStudy?.jaw
+  }));
+  console.log('ANATOMICAL_IMPORT_DIAGNOSTIC',JSON.stringify(diagnostic),'PAGE_ERRORS',JSON.stringify(errors));
+  assert.match(diagnostic.status,/Validated model imported/,'Round-trip import result: '+JSON.stringify(diagnostic));
   assert.equal((await get()).find(p=>p.id==='model-0001').anatomyStudy.jaw,.74,'Native JSON round-trip changed anatomical head');
   assert.equal((await get()).find(p=>p.id==='left-ear').earStudy.concha,.8,'Native JSON round-trip changed the ear');
   assert.equal(errors.length,0,'Browser runtime errors: '+errors.join(' | '));
