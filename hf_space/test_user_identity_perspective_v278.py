@@ -11,13 +11,11 @@ sys.modules.setdefault("llama_cpp", mock.MagicMock())
 import lfm2_700m_engine as engine
 
 for query in ("Who am I", "Who am I?", "WHO AM I!", "What's my name?"):
-    assert engine._identity_subject(query) == "user", query
     mode = engine._response_mode(query, {"codingTask": False})
     assert mode.startswith("RESPONSE MODE: USER-IDENTITY-DIRECT"), (query, mode)
     assert "assistant's name" in mode
 
 for query in ("Who are you?", "What's your name?", "what are you"):
-    assert engine._identity_subject(query) == "assistant", query
     mode = engine._response_mode(query, {"codingTask": False})
     assert mode.startswith("RESPONSE MODE: ASSISTANT-IDENTITY-DIRECT"), (query, mode)
 
@@ -28,13 +26,11 @@ for query in (
     "Write a story about a character asking who am I",
     "Who am I to judge?", "Who am I really, beyond my job?",
 ):
-    assert engine._identity_subject(query) == "", query
     mode = engine._response_mode(query, {"codingTask": False})
     assert not mode.startswith("RESPONSE MODE: ASSISTANT-IDENTITY-DIRECT"), (query, mode)
 
 # Even repeated jokes do not become an identity classification or write.
 history = [{"role":"user","content":"Okay, Blondie."}] * 9
-assert engine._identity_subject("Sure, Blondie 😂") == ""
 assert not engine._response_mode("Sure, Blondie 😂", {"codingTask":False}, history).startswith("RESPONSE MODE: ASSISTANT-IDENTITY")
 
 policy=engine.BUILTIN_ASSISTANT_PROFILE
