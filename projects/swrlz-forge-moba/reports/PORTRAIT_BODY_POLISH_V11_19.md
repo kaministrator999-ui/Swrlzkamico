@@ -1,0 +1,13 @@
+# v11.19 · native portrait and upper-body polish
+
+The new references show a softer lower face, a small defined nose, warm cheeks and lips, expressive almond eyes, sloping shoulders and a fitted asymmetric bodice. The native pass shortens the chin without moving the crown attachment, shapes and colors the nose tip on the actual continuous head surface, refines eye/lash/catchlight contours, and embeds the fine lip and brow splines in that generated head surface. Body work smooths the neck/shoulder base, upper-arm fullness, elbow/wrist taper and garment transition.
+
+**Portrait finish** saves chin lift, nose definition and skin warmth. Unannotated historical heads retain their exact old geometry/colors. **Fit facial contour** raycasts against the actual generated head in component rest space and saves a 33-knot editable spline. Invalid/outside-head fits reject atomically. Both tools participate in native Apply, Undo and validated model import. Existing native calf anatomy is preserved.
+
+Authoring: `authoring/festival_portrait_authoring_v11_19.mjs`, using real inspector fields/buttons, native model JSON Save/reimport, scene export and 2K PNG render. Replaying on the completed starter must reproduce the same model exactly. Multiview review includes front, profile, three-quarter, rear, portrait details and phone views. Measurements and native receipt are recorded after final review.
+
+All 177 predecessor patch/runtime files and 41 packaged assets are byte-preserved. New package: 89 ordered patches, 42 assets. All 18 browser suites remain required on desktop/phone. Exact source bytes/SHA are in the manifest. Publication requires validated merge, the final DEPLOY_REQUEST-only trigger, terminal production success, independent hosted all-assets audit and hosted native desktop/phone checks. This is an original editable geometric reference study; owner visual acceptance remains separate.
+
+Final native model: **283 editable meshes; 1,623,252 triangles in the complete set; 1,339,364 in the heroine; 48,768 in the head**. Four native review phases record **66 edit groups**, each with exact model JSON save/reimport. The smile glint is reduced, flattened and fitted behind the upper lip; upper-arm roots are embedded in the shoulder to hide the open loft boundary.
+
+Sealed HTML: **2,614,804 bytes**, SHA-256 `d3f8ddb34a964a3955bc1546b7b83db74d29da86ea92f45beb0dbcb998317e72`. [Native evidence](PORTRAIT_BODY_NATIVE_EVIDENCE_V11_19.json). Local geometry, package, syntax and focused phone checks pass; independent full replay, all release workflows and hosted checks remain publication gates.

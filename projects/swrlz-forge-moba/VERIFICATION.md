@@ -1,3 +1,7 @@
+## v11.19 portrait/body gates
+
+Reconstruct the exact 89-patch/42-asset source. Run both historical HD and corrected-calf CPU checks plus `model_portrait_polish_cpu.mjs` against the built HTML. Verify actual chin/nose geometry, warmth colors, historical defaults, fitted facial contour contact, invalid-fit rejection, neck contact, anchored wrists and unchanged calf/foot/creature data. Native UI acceptance includes portrait Apply/Undo, invalid imports and actual facial-curve fit/Undo/rejection. The full native recipe must reproduce the saved starter exactly. All 18 browser suites on both viewports remain required; the final dedicated deploy request follows validated merge, then exact hosted audit and native desktop/phone acceptance.
+
 ## v11.18 correction release gates
 
 Rebuild the exact 88-patch/41-asset package, verify preservation of 175 predecessor patch/runtime files and 40 assets, then run `model_hd_geometry_cpu.mjs` and `model_reference_correction_cpu.mjs` against the built HTML. The latter checks the reported knee reversal, posterior calf placement, anterior shin restraint, Achilles taper, unchanged knee/ankle rings, real finite crown/wrap geometry, open wrap centers, sampling and saved iris colors with historical defaults. Repeat the native v11.18 recipe and require exact saved-model equality plus real save/reimport and desktop/phone multiview evidence.
