@@ -271,8 +271,18 @@ function atelierSculptOverlayRefresh(){
    gizmo.position.copy(pivot);root.add(gizmo);atelierSculptGizmo=gizmo;
  }
  const hint=$m('SculptBrushVertexInfo');
- if(hint)hint.textContent=count+' source vertices, '+sourceIDs.length+
-   ' displayed; '+selected.length+' points selected. Tap dots to select; drag yellow gizmo to move.';
+ if(hint){
+   hint.textContent=count+' source vertices, '+sourceIDs.length+
+     ' displayed; '+selected.length+' points selected. Tap dots to select; drag yellow gizmo to move.';
+   if(atelierSculptGizmo){
+     const projected=atelierSculptGizmo.position.clone().project(camera);
+     const rect=renderer.domElement.getBoundingClientRect();
+     hint.dataset.gizmoX=String(rect.left+(projected.x+1)*rect.width/2);
+     hint.dataset.gizmoY=String(rect.top+(1-projected.y)*rect.height/2);
+   }else{
+     delete hint.dataset.gizmoX;delete hint.dataset.gizmoY;
+   }
+ }
 }
 function atelierSculptVertexPick(e){
  if(!atelierSculptVertexMode||!atelierSculptOverlay?.userData.vertexPoints)return false;
