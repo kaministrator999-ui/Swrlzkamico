@@ -116,10 +116,15 @@ def classify_read(prompt, context=None):
                 selection = _safe(name)
     if not explicit and not (directory or last_file or verified_root):
         return None
-    # Thread context is a scope hint, not permission to reinterpret unrelated dialogue.
+    # Verified GitHub context chooses a scope, not the user's intent. Bare
+    # pronouns ("it", "that", "them") and generic questions ("what") are not
+    # source-read requests. Require a concrete resource or an actual read /
+    # explanation verb; "Explain how it works" still refers to a verified file.
     if not explicit and not selection and not re.search(
-            r"\b(?:file|folder|directory|repo|repository|source|code|"
-            r"module|function|path|project|it|that|those|them|here)\b",
+            r"\b(?:files?|folders?|director(?:y|ies)|repo|repository|"
+            r"source|code|modules?|functions?|paths?|projects?|"
+            r"read|open|view|show|list|search|find|locate|inspect|"
+            r"browse|analy[sz]e|explain|describe|summari[sz]e|report)\b",
             raw, re.I):
         return None
     q = _PREFIX.sub("", raw) if _COMMAND.match(raw) else raw
