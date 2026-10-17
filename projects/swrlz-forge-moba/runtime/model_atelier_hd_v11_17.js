@@ -106,10 +106,19 @@ function material(part){
  m.userData.atelierHDMaterial=true;atelierHDMaterials.set(key,m);return m;
 }
 function atelierHDRefresh(){
- const p=partById(selection),deck=$m('HDEditor');if(!deck)return;deck.hidden=!p||!['sphere','loft'].includes(p.kind);
+ const p=partById(selection),deck=$m('HDEditor');if(!deck)return;
+ const panelPick=$m('HDTrimPanel');if(panelPick){const old=panelPick.value;panelPick.replaceChildren();for(const q of model()?.parts||[])if(q.hdFinish?.style==='cloth'){const op=document.createElement('option');op.value=q.id;op.textContent=q.name;panelPick.append(op);}if([...panelPick.options].some(o=>o.value===old))panelPick.value=old;}deck.hidden=!p||!['sphere','loft'].includes(p.kind);
  if(p){$m('HDStyle').value=p.hdFinish?.style||'none';$m('HDRelief').value=String(p.hdFinish?.relief??.7);}
  const hd=!!model()?.parts.some(p=>p.hdFinish);atelierHDEnabled=hd;atelierHDDirty=true;if(renderer){renderer.toneMapping=hd?THREE.ACESFilmicToneMapping:THREE.NoToneMapping;renderer.toneMappingExposure=1.05;}
  for(const o of world?.children||[]){if(o.isHemisphereLight)o.intensity=hd?1.1:2.1;if(o.isDirectionalLight&&o.position.x===-7)o.intensity=hd?1.7:2.3;if(o.isDirectionalLight&&o.position.x===-1)o.intensity=hd?1.2:1.45;}
+}
+// Fit an editable spline to sampled cloth vertices in the same component's rest space.
+function atelierHDFitTrim(part,panel,u,start,radius){
+ if(!part||part.kind!=='loft'||!panel||panel.hdFinish?.style!=='cloth'||part.id===panel.id||part.group!==panel.group||![u,start,radius].every(Number.isFinite)||Math.abs(u)>1||start<0||start>.4||radius<.0005||radius>.02)return null;
+ const g=atelierHDCloth(panel),pos=g.attributes.position,norm=g.attributes.normal,n=panel.meshDensity?.u||96,cols=panel.meshDensity?.v||40,column=Math.round((u+1)*cols/2),first=Math.round(start*n),segments=Math.min(32,n-first);
+ const matrix=p=>new THREE.Matrix4().compose(new THREE.Vector3(...p.position),new THREE.Quaternion().setFromEuler(new THREE.Euler(...p.rotation)),new THREE.Vector3(...p.scale)),relative=matrix(part).invert().multiply(matrix(panel)),normalMatrix=new THREE.Matrix3().getNormalMatrix(relative),path=[];
+ for(let i=0;i<=segments;i++){const row=first+Math.round((n-first)*i/segments),at=row*(cols+1)+column,q=new THREE.Vector3().fromBufferAttribute(pos,at),out=panel.panelAxis==='depth'?new THREE.Vector3(Math.sign(q.x)||1,0,0):new THREE.Vector3(0,0,Math.sign(q.z)||1),normal=new THREE.Vector3().fromBufferAttribute(norm,at);if(normal.dot(out)<0)normal.negate();q.applyMatrix4(relative);normal.applyMatrix3(normalMatrix).normalize();q.addScaledVector(normal,radius*.45);path.push(q.toArray());}
+ g.dispose();return {...part,path,radii:path.map(()=>radius)};
 }
 function atelierHDInstall(){
  const apply=matching=>{const p=partById(selection);if(!p)return;if(matching&&p.kind!=='loft'){status('Matching-surface application is available for spline meshes.');return;}
@@ -119,6 +128,7 @@ function atelierHDInstall(){
   if(changes.some(q=>!checkPart(q))){status('Surface finish rejected: select a compatible mesh and relief from 0 to 1.',true);return;}
   checkpoint();parts.forEach((q,i)=>Object.assign(q,changes[i]));signalEdited();select(p.id);status('HD surface applied to '+parts.length+' editable meshes.');
  };
+ $m('HDFitTrim').addEventListener('click',()=>{const p=partById(selection),next=atelierHDFitTrim(p,partById($m('HDTrimPanel').value),Number($m('HDTrimU').value),Number($m('HDTrimStart').value),Number($m('HDTrimRadius').value));if(!next||!checkPart(next)){status('Trim fit rejected: choose a separate cloth panel in the same group and valid edge, start and radius values.',true);return;}checkpoint();Object.assign(p,next);signalEdited();select(p.id);status('Trim fitted to the actual cloth surface. The saved spline remains independently editable.');});
  $m('HDApply').addEventListener('click',()=>apply(false));$m('HDMatch').addEventListener('click',()=>apply(true));
  $m('RenderPNG').addEventListener('click',()=>{if(!renderer||!camera)return;const size=renderer.getSize(new THREE.Vector2()),ratio=renderer.getPixelRatio(),scale=2048/Math.max(size.x,size.y),helpers=[];
   world.traverse(o=>{if(o.userData?.atelierHelper||o.type==='GridHelper'){helpers.push([o,o.visible]);o.visible=false;}});

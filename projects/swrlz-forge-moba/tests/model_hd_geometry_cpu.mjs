@@ -28,3 +28,11 @@ assert.equal(context.atelierHDFrameDelta(1500,1000),.5,'HD playback must advance
 assert.equal(context.atelierHDFrameDelta(500,1000),0);
 let elapsed=0;for(let i=1;i<=12;i++)elapsed+=context.atelierHDFrameDelta(i*500,(i-1)*500);assert.equal(elapsed,6,'Slow rendered frames must still complete a six-second transformation');
 console.log('HD_REAL_TIME_CLOCK_AFTER_LONG_FRAMES_PASS');
+
+const panel=structuredClone(canonical.parts.find(p=>p.id==='skirt-panel-0'));panel.hdFinish={style:'cloth',relief:.8};panel.meshDensity={u:96,v:40};
+const pipe=structuredClone(canonical.parts.find(p=>p.id==='skirt-piping-0-1')),fit=context.atelierHDFitTrim(pipe,panel,1,.12,.0035),cloth=context.atelierHDCloth(panel);
+assert.equal(fit.path.length,33);assert.equal(fit.radii.length,33);
+for(let i=0;i<fit.path.length;i++){const row=12+Math.round(84*i/32),source=new THREE.Vector3().fromBufferAttribute(cloth.attributes.position,row*41+40),target=new THREE.Vector3(...fit.path[i]);assert.ok(Math.abs(source.distanceTo(target)-.0035*.45)<1e-6,'Trim must touch the actual sampled cloth surface');}
+assert.equal(context.atelierHDFitTrim({...pipe,group:'Other'},panel,1,.12,.0035),null);
+assert.equal(context.atelierHDFitTrim(pipe,panel,2,.12,.0035),null);
+console.log('HD_FITTED_TRIM_CONTACT_FINITE_AND_COMPONENT_VALIDATION_PASS');

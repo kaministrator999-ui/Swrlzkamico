@@ -103,6 +103,6 @@
     "patches/v11_16_character_detail_budget.py",
     "patches/v11_17_hd_character_sculpt.py"
   ],
-  "finalBytes": 2528361,
-  "finalSha256": "73dfc13823a7d7b3668f6eb0ae973c4e5c6ebe64fcbbe7c24011ac288f8e36af"
+  "finalBytes": 2582080,
+  "finalSha256": "623283cc9589fa166ea00f985350f55092606818ab6be4188302f256a0fdb854"
 }

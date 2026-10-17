@@ -19,7 +19,7 @@ try{
  await page.goto(base+'/?project=model-atelier',{waitUntil:'domcontentloaded',timeout:90000});await page.locator('#modelAtelierPanel canvas').waitFor();
  if(process.env.SWYRL_HD_INPUT){await page.locator('#modelAtelierImportFile').setInputFiles(process.env.SWYRL_HD_INPUT);await page.waitForFunction(()=>document.getElementById('modelAtelierStatus').textContent.startsWith('Validated model,'));}
  const bakedSeed=(await snap()).project.modelAtelier;
- if(!['finish','review','polish','hair','sampling'].includes(stage)){
+ if(!['finish','review','polish','hair','sampling','trim'].includes(stage)){
   console.log('HD_FACE_BEGIN');
   for(const side of ['left','right'])for(const suffix of ['iris-ring','iris-gold','pupil','cheek','ear-inner'])await remove(side+'-'+suffix);
   await remove('nose');await remove('nose-tip');
@@ -42,7 +42,7 @@ try{
   console.log('HD_FACE_COMPLETE',JSON.stringify(await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.density())).length);
   await capture('face-front','front','model-0001');await capture('face-three','three','model-0001');await capture('face-profile','right','model-0001');
  }
- if(!['face','review','polish','hair','sampling'].includes(stage)){
+ if(!['face','review','polish','hair','sampling','trim'].includes(stage)){
   console.log('HD_BODY_BEGIN');
   await finish('model-0002','skin',.55,true);await finish('hair-front--1-0','hair',.8,true);await finish('hair-nape-0','hair',.75,true);await finish('portrait-curl--1','hair',.8,true);
   for(const sign of [-1,1]){await finish('hair-bun-'+sign,'wrap',.85);await transform('hair-bun-'+sign,{color:'#292532'});}
@@ -78,8 +78,13 @@ try{
    await shape(id,path,[.019,.038,.034,.021,.001]);await transform(id,{color:palettes[side][j]});await finish(id,'hair',.8);
   }
  }
+ if(['full','trim'].includes(stage)){
+  const rows=(await parts()).filter(p=>/^skirt-(piping|inset)-/.test(p.id));
+  await pick(rows[0].id);await page.locator('#modelAtelierHDEditor details summary').click();
+  for(const p of rows){const match=p.id.match(/^skirt-(piping|inset)-(\d+)-(-?1)$/),inset=match[1]==='inset';await pick(p.id);await page.locator('#modelAtelierHDTrimPanel').selectOption('skirt-panel-'+match[2]);await page.locator('#modelAtelierHDTrimU').fill(String(Number(match[3])*(inset?.8:1)));await page.locator('#modelAtelierHDTrimStart').fill('.12');await page.locator('#modelAtelierHDTrimRadius').fill(inset?'.0018':'.0035');await hit('HDFitTrim');assert.ok(!(await page.locator('#modelAtelierStatus').innerText()).startsWith('Trim fit rejected:'));assert.ok((await parts()).find(q=>q.id===p.id).path.length>20);operations.push({id:p.id,fitTo:'skirt-panel-'+match[2],u:Number(match[3])*(inset?.8:1),start:.12,radius:inset?.0018:.0035});}
+ }
  if(stage!=='face'){await page.locator('#modelAtelierDetailBudget summary').click();await page.locator('#modelAtelierDensityPreset').selectOption('hd');await hit('DensityPresetApply');operations.push({preset:'Authored HD sampling'});}
- const waiting=page.waitForEvent('download');await hit('Export');await(await waiting).saveAs(out+'/authored.model.json');const saved=JSON.parse(await fs.readFile(out+'/authored.model.json','utf8'));assert.deepEqual(saved.model,(await snap()).project.modelAtelier);if(stage==='full'&&bakedSeed.parts.some(p=>p.hdFinish?.style==='portrait'))assert.deepEqual(saved.model,bakedSeed,'Repeated native authoring must exactly reproduce the saved HD starter');
+ const waiting=page.waitForEvent('download');await hit('Export');await(await waiting).saveAs(out+'/authored.model.json');const saved=JSON.parse(await fs.readFile(out+'/authored.model.json','utf8'));assert.deepEqual(saved.model,(await snap()).project.modelAtelier);if(stage==='full'&&bakedSeed.parts.find(p=>p.id==='skirt-piping-0-1').path.length>20)assert.deepEqual(saved.model,bakedSeed,'Repeated native authoring must exactly reproduce the saved HD starter');
  await page.locator('#modelAtelierImportFile').setInputFiles(out+'/authored.model.json');await page.waitForFunction(()=>document.getElementById('modelAtelierStatus').textContent.startsWith('Validated model,'));assert.deepEqual(saved.model,(await snap()).project.modelAtelier);
  await fs.writeFile(out+'/authored.swyrl.json',JSON.stringify(await snap(),null,2)+'\n');
  const density=await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.density());await fs.writeFile(out+'/receipt.json',JSON.stringify({operations,parts:saved.model.parts.length,density,nativeRoundTrip:true,errors},null,2)+'\n');
