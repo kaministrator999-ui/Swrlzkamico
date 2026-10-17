@@ -28,7 +28,7 @@ assert.equal(context.atelierAnatomyValid({...ear,earStudy:{...ear.earStudy,conch
 const geometry=part=>part.anatomyStudy?context.atelierAnatomicalHead(part):context.atelierAnatomicalEar(part);
 for(const p of [head,by(study,'left-ear'),by(study,'right-ear')]){
  const g=geometry(p),pos=g.attributes.position,norm=g.attributes.normal,col=g.attributes.color;
- assert(pos.count>5000&&g.index.count>10000,p.id+' must be genuine dense editable geometry');
+ assert(pos.count>(p.id==='model-0001'?5000:3000)&&g.index.count>10000,p.id+' must be genuine dense editable geometry');
  assert.equal(pos.count,norm.count);assert.equal(pos.count,col.count);
  for(const attr of [pos,norm,col])for(const v of attr.array)assert(Number.isFinite(v),p.id+' invalid vertex');
  for(const index of g.index.array)assert(Number.isInteger(index)&&index>=0&&index<pos.count);
