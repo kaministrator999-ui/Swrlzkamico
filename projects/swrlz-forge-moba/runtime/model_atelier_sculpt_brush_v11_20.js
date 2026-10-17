@@ -60,7 +60,7 @@ function atelierSculptFalloff(normalizedDistance,mode,plateau=0,taper=.5){
  return Math.pow(1-x*x,expo);
 }
 function atelierSculptApply(geometry,part){
- if(!geometry?.attributes?.position||!part?.sculptBrushes?.length)return geometry;
+ if(!geometry?.attributes?.position||(!part?.sculptBrushes?.length&&!part?.sculptVertexEdits?.length))return geometry;
  const a=geometry.attributes.position;
  // Position samples in a UV sphere are duplicated at the seam. Use the SAME
  // position-dependent influence for identical vertices so the seam stays shut.
@@ -111,6 +111,7 @@ function atelierSculptRefresh(){
  deck.hidden=!p;
  if(atelierSculptHit?.partId!==selection)atelierSculptHit=null;
  if(!p)atelierSculptArmed=false;
+ if(p){const d=atelierSculptResolution(p);$m('SculptBrushGridU').value=d[0]||64;$m('SculptBrushGridV').value=d[1]||48;}
  const hint=$m('SculptBrushInfo');
  if(hint)hint.textContent=(atelierSculptHit?'Picked surface on '+p.name+'. ':'')
    +(p?.sculptBrushes?.length||0)+' saved strokes. '
@@ -184,9 +185,204 @@ function atelierSculptInstall(){
    signalEdited();select(id);
    status('Saved '+(s.strength<0?'intrusion':'extrusion')+' as a local vertex falloff stroke. Save JSON to keep it.');
  });
+ atelierSculptVertexInstall();
  $m('SculptBrushUndoStroke').addEventListener('click',()=>{
    const p=partById(selection);if(!p?.sculptBrushes?.length)return;
    checkpoint();p.sculptBrushes=p.sculptBrushes.slice(0,-1);
    signalEdited();select(p.id);status('Last sculpt stroke removed; full-model Undo can restore it.');
+ });
+}
+
+// Vertex map and pickable, locally edited point groups. These are *editor
+// overlays* and never become part of the source mesh, OBJ or exported model.
+let atelierSculptVertexMode=false,atelierSculptVertexIDs=[],atelierSculptOverlay=null,
+  atelierSculptGizmo=null,atelierSculptDrag=null,atelierSculptOverlayMesh=null;
+function atelierSculptOverlayClear(){
+ if(atelierSculptOverlay){
+   atelierSculptOverlay.parent?.remove(atelierSculptOverlay);
+   atelierSculptOverlay.traverse(o=>{o.geometry?.dispose();o.material?.dispose();});
+ }
+ atelierSculptOverlay=null;atelierSculptGizmo=null;atelierSculptOverlayMesh=null;
+}
+function atelierSculptExpandedIndices(geometry,ids){
+ const a=geometry.attributes.position;
+ const keys=new Set(ids.filter(i=>i>=0&&i<a.count).map(i=>
+   [a.getX(i),a.getY(i),a.getZ(i)].map(n=>Math.round(n*100000)).join(',')));
+ const out=[];
+ for(let i=0;i<a.count;i++){
+   const k=[a.getX(i),a.getY(i),a.getZ(i)].map(n=>Math.round(n*100000)).join(',');
+   if(keys.has(k))out.push(i);
+ }
+ return out;
+}
+function atelierSculptCentroid(mesh,ids){
+ const pos=mesh.geometry.attributes.position,v=new THREE.Vector3();
+ for(const i of ids)v.add(new THREE.Vector3().fromBufferAttribute(pos,i));
+ v.multiplyScalar(1/ids.length);
+ return mesh.localToWorld(v);
+}
+function atelierSculptOverlayRefresh(){
+ atelierSculptOverlayClear();
+ if(!atelierSculptVertexMode||!modelRoot||!world)return;
+ const mesh=modelRoot.children.find(o=>o.isMesh&&o.userData.atelierId===selection);
+ if(!mesh)return;
+ mesh.updateMatrixWorld(true);
+ atelierSculptOverlayMesh=mesh;
+ const src=mesh.geometry.attributes.position,count=src.count,root=new THREE.Group();
+ root.name='Sculpt vertex map overlay';
+ atelierSculptOverlay=root;world.add(root);
+ const stride=Math.max(1,Math.ceil(count/5000));
+ const verts=[],sourceIDs=[];
+ for(let i=0;i<count;i+=stride){
+   const worldPos=mesh.localToWorld(new THREE.Vector3().fromBufferAttribute(src,i));
+   verts.push(worldPos.x,worldPos.y,worldPos.z);sourceIDs.push(i);
+ }
+ const g=new THREE.BufferGeometry();
+ g.setAttribute('position',new THREE.Float32BufferAttribute(verts,3));
+ const points=new THREE.Points(g,new THREE.PointsMaterial({
+   color:0x5ff2fa,size:4,sizeAttenuation:false,depthTest:false,transparent:true,opacity:.68
+ }));
+ points.renderOrder=20;points.userData.sculptVertexIDs=sourceIDs;root.add(points);
+ atelierSculptOverlay.userData.vertexPoints=points;
+ const selected=atelierSculptVertexIDs.filter(i=>i>=0&&i<count).slice(0,128);
+ if(selected.length){
+   const expanded=atelierSculptExpandedIndices(mesh.geometry,selected);
+   const marked=[];
+   for(const i of expanded){
+     const q=mesh.localToWorld(new THREE.Vector3().fromBufferAttribute(src,i));
+     marked.push(q.x,q.y,q.z);
+   }
+   const mg=new THREE.BufferGeometry();
+   mg.setAttribute('position',new THREE.Float32BufferAttribute(marked,3));
+   const dots=new THREE.Points(mg,new THREE.PointsMaterial({
+     color:0xffd14a,size:8,sizeAttenuation:false,depthTest:false
+   }));
+   dots.renderOrder=25;root.add(dots);
+   const pivot=atelierSculptCentroid(mesh,expanded);
+   const gizmo=new THREE.Group();
+   gizmo.name='Sculpt drag gizmo';
+   const axes=new THREE.AxesHelper(.16);gizmo.add(axes);
+   const handle=new THREE.Mesh(new THREE.SphereGeometry(.026,12,8),
+     new THREE.MeshBasicMaterial({color:0xffd14a,depthTest:false}));
+   handle.renderOrder=30;gizmo.add(handle);
+   gizmo.position.copy(pivot);root.add(gizmo);atelierSculptGizmo=gizmo;
+ }
+ const hint=$m('SculptBrushVertexInfo');
+ if(hint)hint.textContent=count+' source vertices, '+sourceIDs.length+
+   ' displayed; '+selected.length+' points selected. Tap dots to select; drag yellow gizmo to move.';
+}
+function atelierSculptVertexPick(e){
+ if(!atelierSculptVertexMode||!atelierSculptOverlay?.userData.vertexPoints)return false;
+ const q=point(e);mouse.set(q.x,q.y);raycaster.setFromCamera(mouse,camera);
+ raycaster.params.Points.threshold=.034;
+ const hits=raycaster.intersectObject(atelierSculptOverlay.userData.vertexPoints,false);
+ const id=hits[0]?.object?.userData?.sculptVertexIDs?.[hits[0].index];
+ if(id===undefined){status('Tap one of the cyan mapped vertex points.',true);return true;}
+ if(!$m('SculptBrushMulti').checked)atelierSculptVertexIDs=[id];
+ else if(atelierSculptVertexIDs.includes(id))atelierSculptVertexIDs=atelierSculptVertexIDs.filter(x=>x!==id);
+ else if(atelierSculptVertexIDs.length<128)atelierSculptVertexIDs.push(id);
+ else {status('Select a maximum of 128 control points per group.',true);return true;}
+ atelierSculptOverlayRefresh();
+ atelierSculptRefresh();
+ return true;
+}
+function atelierSculptOnPointerDown(e){
+ if(!atelierSculptVertexMode||!atelierSculptGizmo||!atelierSculptOverlayMesh||e.button!==0)return false;
+ const pos=point(e),projected=atelierSculptGizmo.position.clone().project(camera);
+ const r=renderer.domElement.getBoundingClientRect();
+ const px=(projected.x-pos.x)*r.width/2,py=(projected.y-pos.y)*r.height/2;
+ if(Math.hypot(px,py)>25)return false;
+ const mesh=atelierSculptOverlayMesh;
+ const indices=atelierSculptExpandedIndices(mesh.geometry,atelierSculptVertexIDs);
+ if(!indices.length)return false;
+ const plane=new THREE.Plane().setFromNormalAndCoplanarPoint(
+   camera.getWorldDirection(new THREE.Vector3()),atelierSculptGizmo.position);
+ const startRay=raycaster;mouse.set(pos.x,pos.y);startRay.setFromCamera(mouse,camera);
+ const hit=startRay.ray.intersectPlane(plane,new THREE.Vector3());
+ if(!hit)return false;
+ const p=mesh.geometry.attributes.position,base=indices.map(i=>[p.getX(i),p.getY(i),p.getZ(i)]);
+ atelierSculptDrag={mesh,indices,base,plane,hit,origin:atelierSculptGizmo.position.clone(),
+   delta:[0,0,0],partId:selection};
+ renderer.domElement.setPointerCapture?.(e.pointerId);
+ return true;
+}
+function atelierSculptOnPointerMove(e){
+ const drag=atelierSculptDrag;if(!drag)return false;
+ const q=point(e);mouse.set(q.x,q.y);raycaster.setFromCamera(mouse,camera);
+ const to=raycaster.ray.intersectPlane(drag.plane,new THREE.Vector3());
+ if(!to)return true;
+ const worldDelta=to.sub(drag.hit),inverse=drag.mesh.matrixWorld.clone().invert();
+ const zero=new THREE.Vector3(0,0,0).applyMatrix4(inverse);
+ const local=worldDelta.clone().applyMatrix4(inverse).sub(zero);
+ const axis=$m('SculptBrushVertexAxis').value;
+ if(axis!=='free'){
+   const n=axis==='x'?0:axis==='y'?1:2;
+   for(let i=0;i<3;i++)if(i!==n)local.setComponent(i,0);
+ }
+ const snap=Number($m('SculptBrushSnap').value);
+ const delta=[0,1,2].map(i=>atelierSculptClamp(snap>0?
+    Math.round(local.getComponent(i)/snap)*snap:local.getComponent(i),-.5,.5));
+ drag.delta=delta;
+ const pos=drag.mesh.geometry.attributes.position;
+ for(let i=0;i<drag.indices.length;i++){
+   const b=drag.base[i];
+   pos.setXYZ(drag.indices[i],b[0]+delta[0],b[1]+delta[1],b[2]+delta[2]);
+ }
+ pos.needsUpdate=true;drag.mesh.geometry.computeVertexNormals();
+ drag.mesh.geometry.computeBoundingSphere();
+ drag.mesh.geometry.computeBoundingBox();
+ const pivotLocal=drag.mesh.worldToLocal(drag.origin.clone()).add(new THREE.Vector3(...delta));
+ atelierSculptGizmo.position.copy(drag.mesh.localToWorld(pivotLocal));
+ return true;
+}
+function atelierSculptOnPointerUp(){
+ const drag=atelierSculptDrag;if(!drag)return false;
+ atelierSculptDrag=null;
+ const p=partById(drag.partId),delta=drag.delta;
+ if(!p||!delta.some(x=>Math.abs(x)>1e-7)){
+   renderParts();return true;
+ }
+ if((p.sculptVertexEdits?.length||0)>=atelierSculptMaxVertexEdits){
+   status('Vertex edit history full; remove edits or export JSON.',true);
+   renderParts();return true;
+ }
+ const edit={indices:drag.indices,delta,resolution:atelierSculptResolution(p)};
+ const next={...p,sculptVertexEdits:[...(p.sculptVertexEdits||[]),edit]};
+ if(!checkPart(next)){status('Vertex move rejected.',true);renderParts();return true;}
+ checkpoint();p.sculptVertexEdits=next.sculptVertexEdits;
+ const id=p.id;signalEdited();select(id);
+ status('Saved '+drag.indices.length+' moved vertices. Gizmo edit retained in native JSON and OBJ export.');
+ return true;
+}
+function atelierSculptVertexResolutionApply(){
+ const p=partById(selection);
+ if(!p||!['sphere','loft'].includes(p.kind)){status('Sampling grid supported on sphere and loft meshes.',true);return;}
+ const u=Number($m('SculptBrushGridU').value),v=Number($m('SculptBrushGridV').value);
+ if(!Number.isInteger(u)||!Number.isInteger(v)||u<16||u>256||v<12||v>192||u*v>42000){
+   status('Grid count requires U 16–256, V 12–192, and ≤42,000 samples.',true);return;
+ }
+ const next={...p,meshDensity:{u,v},sculptVertexEdits:undefined};
+ if(!checkPart(next)){status('Sampling grid rejected by native mesh validation.',true);return;}
+ checkpoint();p.meshDensity={u,v};
+ delete p.sculptVertexEdits;
+ atelierSculptVertexIDs=[];const id=p.id;signalEdited();select(id);
+ status('Vertex map re-sampled to '+u+' × '+v+'. Old indexed vertex edits were cleared; radial brush strokes remain.');
+}
+function atelierSculptVertexInstall(){
+ $m('SculptBrushVertexToggle').addEventListener('click',()=>{
+   atelierSculptVertexMode=!atelierSculptVertexMode;
+   atelierSculptVertexIDs=[];
+   $m('SculptBrushVertexToggle').textContent=atelierSculptVertexMode?'Hide vertex map':'Show vertex map';
+   atelierSculptOverlayRefresh();atelierSculptRefresh();
+ });
+ $m('SculptBrushVertexClear').addEventListener('click',()=>{
+   atelierSculptVertexIDs=[];atelierSculptOverlayRefresh();atelierSculptRefresh();
+ });
+ $m('SculptBrushGridApply').addEventListener('click',atelierSculptVertexResolutionApply);
+ $m('SculptBrushVertexUndo').addEventListener('click',()=>{
+   const p=partById(selection);if(!p?.sculptVertexEdits?.length)return;
+   checkpoint();p.sculptVertexEdits=p.sculptVertexEdits.slice(0,-1);
+   const id=p.id;signalEdited();select(id);
+   status('Last vertex-group move removed. Undo can restore it.');
  });
 }
