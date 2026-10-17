@@ -1,0 +1,15 @@
+# Anatomical head reconstruction · v11.20
+
+The owner identified the central problem in v11.19: the head still read as a round primitive with features attached. Extra sampling and small deformations did not fix its structure.
+
+The new native head is constructed from eleven ordered horizontal sections. These define cranial depth, inset temples, maximum zygomatic width, mandibular angles, chin width and underside independently. A flattened facial mask rolls onto the side planes; integrated socket, nasal bridge, tip, muzzle and labiomental forms establish the profile. This generator does not take positions from a sphere. The historical primitive identifier is retained for serialization and sampling compatibility, while the inspector labels the selected surface Anatomical head.
+
+**Anatomical head sections** exposes the actual saved section array, facial plane and nose projection. Apply is undoable; invalid ordering, open poles, nonfinite values and excessive dimensions reject atomically, including during JSON import. Portrait nose and chin controls remain fine adjustments; legacy heads without the new annotation reproduce their old geometry.
+
+The canonical scene is the exact native Save/reimport result of `authoring/festival_anatomy_authoring_v11_20.mjs`. That recipe applies the head sections through real editor controls, resets and fits all six facial contours onto the new surface, and extends the upper neck into the jaw underside. The torso, arms, corrected calves, clothing, feet and independent creatures retain their v11.19 data. Front, profile, three-quarter and phone captures are reviewed before publication. Repeat authoring must reproduce the canonical model exactly.
+
+New asset: `scenes/model-atelier-festival-anatomy-v11-20.swyrl.json`. Marker: `V11_20_ANATOMICAL_HEAD`. Package: 90 patches / 43 assets. All 179 predecessor patch/runtime sources and 42 historical assets remain byte-preserved. Head sampling remains 48,768 triangles; the silhouette and planes, rather than triangle count, are the purpose of this change.
+
+Geometry checks cover actual section widths, temple/cheek/jaw proportions, nasal projection, facial flatness, finite buffers, embedded eyes, fitted contour contact, invalid sections and unrelated-part preservation. Historical HD, calf and v11.19 portrait regressions remain required. Native desktop/phone checks include Apply/Undo and invalid import, clean 2k render, topology and exported mesh changes. Full compatibility CI, validated merge, the final dedicated deployment request, exact hosted HTML/SOURCE/all-assets audit and terminal desktop/phone native acceptance are distinct gates. Publication receipts resolve through `DEPLOY_REQUEST.json`; source notes do not claim owner visual approval.
+
+Sealed HTML: **2,621,375 bytes**, SHA-256 `d0db24152221ea1dfd4ecc284f65686af71f74c770d4c7c15134979d98b77494`. Local native authoring completed 14 recorded edit groups, exact Save/reimport and eight review views. The 283-part set retains 1,623,252 measured triangles (heroine 1,339,364; head 48,768). The focused phone Apply/Undo, invalid-section/import and surface-cleanup/Undo checks passed.

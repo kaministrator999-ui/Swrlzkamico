@@ -3,10 +3,10 @@ import argparse,hashlib,json,re
 from pathlib import Path
 ap=argparse.ArgumentParser();ap.add_argument('--package',required=True);a=ap.parse_args()
 r=Path(__file__).resolve().parent.parent;out=Path(a.package);m=json.loads((r/'source-manifest.json').read_text());receipt=json.loads((out/'SOURCE.json').read_text());raw=(out/'index.html').read_bytes()
-assert len(m['patches'])==89 and m['patches'][-1]=='patches/v11_19_portrait_body_polish.py'
-assert len(receipt['assets'])==42 and receipt['patches']==m['patches']
+assert len(m['patches'])==90 and m['patches'][-1]=='patches/v11_20_anatomical_head.py'
+assert len(receipt['assets'])==43 and receipt['patches']==m['patches']
 assert len(raw)==m['finalBytes']==receipt['finalBytes'];assert hashlib.sha256(raw).hexdigest()==m['finalSha256']==receipt['finalSha256']
-source=r/'scenes/model-atelier-festival-polish-v11-19.swyrl.json';d=json.loads(source.read_text());model=d['project']['modelAtelier'];parts=model['parts'];rig=model['assemblies']
+source=r/'scenes/model-atelier-festival-anatomy-v11-20.swyrl.json';d=json.loads(source.read_text());model=d['project']['modelAtelier'];parts=model['parts'];rig=model['assemblies']
 assert len(parts)==283 and len({p['id'] for p in parts})==283
 assert sum(p.get('surfaceStyle')=='portrait-head' for p in parts)==1
 assert sum(p.get('surfaceStyle')=='paper-plume' for p in parts)==2
@@ -18,12 +18,12 @@ assert rig['components'][0]['state']==rig['components'][1]['state']=='attached'
 assert rig['components'][2]['state']=='free'
 assert (out/source.relative_to(r)).read_bytes()==source.read_bytes()
 html=raw.decode();found=re.search(r'const MODEL_ATELIER_CANONICAL_PROJECT=(.*?);\n(?=// §wyrl§ Engine Model Atelier v11.3)',html,re.S);assert found and json.loads(found.group(1))==d
-for key in ['atelierSilkenLock','atelierTailoredPanel','V11_19_PORTRAIT_BODY_POLISH','modelAtelierAssemblyDeck','atelierAssemblySample','atelierAssemblySaveKey','atelierValidateAssemblies','MODEL_ATELIER_LEGACY_V1112']:
+for key in ['atelierSilkenLock','atelierTailoredPanel','V11_20_ANATOMICAL_HEAD','modelAtelierAssemblyDeck','atelierAssemblySample','atelierAssemblySaveKey','atelierValidateAssemblies','MODEL_ATELIER_LEGACY_V1112']:
  assert key in html,key
 baseline=json.loads((r/'tests/model_reference_baseline.json').read_text())
 for path,sha in baseline['sources'].items():assert hashlib.sha256((r/path).read_bytes()).hexdigest()==sha,path
 for path,meta in baseline['assets'].items():assert receipt['assets'][path]==meta,path
-print('MODEL_REFERENCE_SOURCE_89_PATCHES_42_ASSETS_283_PARTS_PRESERVED_BASELINE_PASS')
+print('MODEL_REFERENCE_SOURCE_90_PATCHES_43_ASSETS_283_PARTS_PRESERVED_BASELINE_PASS')
 
 by_id={p['id']:p for p in parts}
 assert len([p for p in parts if p.get('surfaceStyle')=='silken-lock'])==26
@@ -61,3 +61,8 @@ print('REFERENCE_CORRECTED_KNEES_POSTERIOR_CALVES_CROWN_KNOTS_AND_IRIS_PIGMENTS_
 assert by_id['model-0001']['portraitFinish']=={'chinLift':.16,'noseDefinition':.65,'warmth':.7}
 assert all(len(by_id[n]['path'])==33 for n in ['smile','lower-lip','left-brow','right-brow'])
 print('PORTRAIT_BODY_POLISH_SAVED_CONTOURS_AND_CONTINUOUS_FITTED_LIPS_PASS')
+
+assert len(by_id['model-0001']['headAnatomy']['sections'])==11
+assert by_id['model-0002']['path'][0][1]==3.94
+assert 'atelierAnatomicalHead' in html and 'modelAtelierHeadAnatomyApply' in html
+print('ANATOMICAL_HEAD_SECTION_AUTHORING_AND_JAW_NECK_ATTACHMENT_PASS')

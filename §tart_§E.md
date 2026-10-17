@@ -1,3 +1,9 @@
+## v11.20 · anatomical head reconstruction
+
+The owner rejected the round head foundation. A new native surface builds the skull, temples, cheekbones, jaw angles and chin from eleven editable sections, with a flatter facial mask, eye sockets and an integrated nasal profile. Facial contours are refitted and the neck extends into the jaw underside; the corrected legs and remaining body retain their prior data. Saved Apply/Undo and bounded JSON import support the new anatomy controls.
+
+The native starter is `scenes/model-atelier-festival-anatomy-v11-20.swyrl.json`; 90 patches / 43 assets, marker `V11_20_ANATOMICAL_HEAD`. All 179 predecessor patch/runtime sources and 42 assets remain byte-preserved. Exact integrity is recorded in the manifest. Source/deploy commit and live status resolve through the final dedicated deploy request and terminal deployment/audit/native receipts. [Workflow and geometry evidence](reports/ANATOMICAL_HEAD_V11_20.md).
+
 ## v11.19 · portrait and body polish
 
 The supplied portrait/body references guide a shorter, softer chin, integrated nose-tip relief and skin warmth, finer eyes/lashes, surface-fitted lips and brows, a smoother neck/shoulder transition and shaped upper arms. Saved native **Portrait finish** and **Fit facial contour** tools support Apply, Undo and validated imports. The existing calf, ankle, foot and independent creature data remain unchanged.
@@ -910,3 +916,5 @@ After pressing the deploy button:
 **Mental model:** BUILD/EDIT → VERSION → ROADMAP → VALIDATE → FINAL NORMAL COMMIT → update `DEPLOY_REQUEST.json` (PRESS DEPLOY) → WORKFLOW → VERIFY LIVE → COMPLETE.
 
 Never substitute `workflow_dispatch`, an arbitrary watched source file, or an intermediate commit for this repo's dedicated final deploy-button mechanism.
+
+Sealed HTML: **2,621,375 bytes**, SHA-256 `d0db24152221ea1dfd4ecc284f65686af71f74c770d4c7c15134979d98b77494`. Local native authoring completed 14 recorded edit groups, exact Save/reimport and eight review views. The 283-part set retains 1,623,252 measured triangles (heroine 1,339,364; head 48,768). The focused phone Apply/Undo, invalid-section/import and surface-cleanup/Undo checks passed.

@@ -41,18 +41,18 @@ for v in parts:
     assert all(math.isfinite(x) for key in ('position','rotation','scale') for x in v[key])
 receipt=json.loads((dest/'SOURCE.json').read_text())
 manifest=json.loads((ROOT/'source-manifest.json').read_text())
-assert receipt['sourceVersion']=='§wyrl§ Engine v11.19'
-assert len(receipt['patches'])==89 and receipt['patches']==manifest['patches']
-assert receipt['patches'][-1]=='patches/v11_19_portrait_body_polish.py'
-assert len(receipt['assets'])==42 and p in receipt['assets'] and old in receipt['assets']
+assert receipt['sourceVersion']=='§wyrl§ Engine v11.20'
+assert len(receipt['patches'])==90 and receipt['patches']==manifest['patches']
+assert receipt['patches'][-1]=='patches/v11_20_anatomical_head.py'
+assert len(receipt['assets'])==43 and p in receipt['assets'] and old in receipt['assets']
 for path in (p,old):
     content=(ROOT/path).read_bytes()
     assert receipt['assets'][path]['bytes']==len(content)
     assert receipt['assets'][path]['sha256']==hashlib.sha256(content).hexdigest()
 html=(dest/'index.html').read_bytes()
-for marker in (b'V11_19_PORTRAIT_BODY_POLISH',b'atelierOrganicLoft',b'MODEL_ATELIER_V11_4_FERRET_FIDELITY',b'loft',b'Maker v11.19'):
+for marker in (b'V11_20_ANATOMICAL_HEAD',b'atelierOrganicLoft',b'MODEL_ATELIER_V11_4_FERRET_FIDELITY',b'loft',b'Maker v11.20'):
     assert marker in html, marker
 assert len(html)==receipt['finalBytes']==manifest['finalBytes']
 assert hashlib.sha256(html).hexdigest()==receipt['finalSha256']==manifest['finalSha256']
 print('FERRET_FIDELITY_303_COMPONENTS_2_ORGANIC_LOFTS_PASS')
-print('FERRET_FIDELITY_89_PATCHES_42_ASSETS_AND_LEGACY_SCENE_PASS')
+print('FERRET_FIDELITY_90_PATCHES_43_ASSETS_AND_LEGACY_SCENE_PASS')

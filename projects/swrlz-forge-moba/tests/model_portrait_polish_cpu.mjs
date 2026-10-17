@@ -4,7 +4,7 @@ import vm from 'node:vm';
 import * as THREE from 'three';
 const root=new URL('../',import.meta.url),read=p=>fs.readFileSync(new URL(p,root),'utf8');
 const html=fs.readFileSync(process.env.SWYRL_PORTRAIT_HTML||'dist/swrlz-forge-moba/index.html','utf8');
-const model=JSON.parse(html.match(/const MODEL_ATELIER_CANONICAL_PROJECT=(.*?);\n\/\/ §wyrl§ Engine Model Atelier v11.3/s)[1]).project.modelAtelier;
+const model=JSON.parse(read('scenes/model-atelier-festival-polish-v11-19.swyrl.json')).project.modelAtelier;
 const previous=JSON.parse(read('scenes/model-atelier-festival-reference-v11-18.swyrl.json')).project.modelAtelier;
 const reference=read('runtime/model_atelier_reference_v11_13.js'),leaf=reference.slice(reference.indexOf('function atelierReferenceLeaf('),reference.indexOf('function atelierValidateAssemblies('));
 const ctx=vm.createContext({THREE,console,model:()=>model});

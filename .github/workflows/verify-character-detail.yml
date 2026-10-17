@@ -1,4 +1,4 @@
-name: Verify §E portrait and body polish
+name: Verify §E anatomical head studio
 on:
   pull_request:
     paths:
@@ -34,12 +34,13 @@ jobs:
           node projects/swrlz-forge-moba/tests/model_hd_geometry_cpu.mjs
           SWYRL_REFERENCE_HTML=/tmp/character-detail/index.html node projects/swrlz-forge-moba/tests/model_reference_correction_cpu.mjs
           SWYRL_PORTRAIT_HTML=/tmp/character-detail/index.html node projects/swrlz-forge-moba/tests/model_portrait_polish_cpu.mjs
+          SWYRL_ANATOMY_HTML=/tmp/character-detail/index.html node projects/swrlz-forge-moba/tests/model_head_anatomy_cpu.mjs
       - name: Operate HD sculpt controls and export the native model
         run: |
           python -m http.server 8781 --directory /tmp/character-detail >/tmp/detail-http.log 2>&1 &
           SWYRL_DETAIL_SERVER_PID=$!
           trap 'kill "$SWYRL_DETAIL_SERVER_PID" 2>/dev/null || true' EXIT
-          SWYRL_ANIME_TEST_URL=http://127.0.0.1:8781 SWYRL_PORTRAIT_OUT=hd-character-evidence node projects/swrlz-forge-moba/authoring/festival_portrait_authoring_v11_19.mjs
+          SWYRL_ANIME_TEST_URL=http://127.0.0.1:8781 SWYRL_ANATOMY_OUT=hd-character-evidence node projects/swrlz-forge-moba/authoring/festival_anatomy_authoring_v11_20.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
