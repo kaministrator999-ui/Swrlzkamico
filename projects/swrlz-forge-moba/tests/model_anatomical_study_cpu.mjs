@@ -42,6 +42,12 @@ assert.notDeepEqual(Array.from(candidate.attributes.position.array),Array.from(o
  'The study may not render the unchanged original sphere');
 assert.notDeepEqual(Array.from(candidate.attributes.position.array),Array.from(tame.attributes.position.array),
  'The saved anatomical controls must edit actual vertices');
+const normals=candidate.attributes.normal,verts=candidate.attributes.position;
+let litFront=0;
+for(let i=0;i<verts.count;i++)if(verts.getZ(i)>.75&&Math.abs(verts.getX(i))<.30&&Math.abs(verts.getY(i))<.30){
+ assert(normals.getZ(i)>.2,'Skull normals must face OUTWARD under studio light');litFront++;
+}
+assert(litFront>30,'Missing front facial surface samples');
 candidate.computeBoundingBox();
 assert(candidate.boundingBox.min.y>-.92,'Shortened chin must preserve neck clearance');
 const oldLeft=context.atelierHDSphere(by(historic,'left-ear'));
