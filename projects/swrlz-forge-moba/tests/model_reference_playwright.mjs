@@ -115,7 +115,7 @@ try{for(const mode of modes){const ctx=await browser.newContext({...mode,acceptD
  assert.deepEqual((await snap()).project.modelAtelier.parts,canonicalModel.parts);await hit('LegApply');
  assert.deepEqual((await snap()).project.modelAtelier.parts.find(p=>p.id==='atelier-v118-right-leg').legAnatomy,{calfFullness:.08,shinTaper:.018});
  await hit('Undo');assert.deepEqual((await snap()).project.modelAtelier.parts,canonicalModel.parts);
- await page.locator('#modelAtelierCalfFullness').fill('.3');await hit('LegApply');assert.ok((await page.locator('#modelAtelierStatus').innerText()).startsWith('Leg contour rejected:'));assert.deepEqual((await snap()).project.modelAtelier.parts,canonicalModel.parts);
+ await page.locator('#modelAtelierParts').selectOption('atelier-v118-right-leg');await page.locator('#modelAtelierCalfFullness').fill('.3');await hit('LegApply');assert.ok((await page.locator('#modelAtelierStatus').innerText()).startsWith('Leg contour rejected:'));assert.deepEqual((await snap()).project.modelAtelier.parts,canonicalModel.parts);
  const badCalf={schema:'swyrl-model-atelier-v1',model:structuredClone(canonicalModel)};badCalf.model.parts.find(p=>p.id==='atelier-v118-right-leg').legAnatomy.shinTaper=-1;
  await page.locator('#modelAtelierImportFile').setInputFiles({name:'invalid-calf.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(badCalf))});await page.waitForFunction(()=>document.getElementById('modelAtelierStatus').textContent.startsWith('Import rejected:'));assert.deepEqual((await snap()).project.modelAtelier.parts,canonicalModel.parts);
  await page.locator('#modelAtelierPoseDeck summary').click();await page.locator('#modelAtelierPoseSelect').selectOption('idle');await hit('PoseApply');
