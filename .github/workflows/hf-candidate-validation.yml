@@ -88,6 +88,11 @@ jobs:
           python -m py_compile hf_space/lfm2_700m_engine.py hf_space/test_identity_conversation_v281.py
           python hf_space/test_identity_conversation_v281.py
 
+      - name: v282 Model-generated identity role/name candidate guard
+        run: |
+          python -m py_compile hf_space/lfm2_700m_engine.py hf_space/test_identity_response_v282.py
+          python hf_space/test_identity_response_v282.py
+
       - name: v279 Independent online research storage and compact 700M evidence regression
         run: |
           python -m py_compile hf_space/model_router.py hf_space/test_online_inference_budget_v279.py
