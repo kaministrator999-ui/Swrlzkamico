@@ -30,14 +30,14 @@ assert all(p['material'] in {'matte','silk','gloss','metal','emissive'} for p in
 assert all(len(p[field])==3 for p in parts for field in ('position','rotation','scale'))
 assert 'data-project-template="model-atelier"' in source.decode()
 for needle in (b'MODEL_ATELIER_V11_3_BEGIN',b'modelAtelierPanel',
-               b'model-atelier-prism-jester',b'V11_19_PORTRAIT_BODY_POLISH',
+               b'model-atelier-prism-jester',b'V11_20_ANATOMICAL_HEAD',
                b'SWYRL_ENGINE_MODEL_ATELIER',b'modelAtelierImportFile'):
     assert needle in source,needle
 assert receipt['patches']==manifest['patches']
-assert len(receipt['patches'])==89
-assert receipt['patches'][-1]=='patches/v11_19_portrait_body_polish.py'
+assert len(receipt['patches'])==90
+assert receipt['patches'][-1]=='patches/v11_20_anatomical_head.py'
 assert scene_path in receipt['assets']
-assert len(receipt['assets'])==42
+assert len(receipt['assets'])==43
 assert receipt['assets'][scene_path]['sha256']==hashlib.sha256((ROOT/scene_path).read_bytes()).hexdigest()
 assert receipt['assets'][scene_path]['bytes']==(ROOT/scene_path).stat().st_size
 assert hashlib.sha256(source).hexdigest()==manifest['finalSha256']==receipt['finalSha256']
@@ -53,4 +53,4 @@ new_model=json.loads(new_raw)['project']['modelAtelier']['parts']
 assert len(new_model)==811 and len({p['id'] for p in new_model})==811
 assert sum(p.get('surfaceStyle')=='pinata-twisted' for p in new_model)==2
 assert sum(p.get('surfaceStyle')=='fabric-panel' for p in new_model)==8
-print('MODEL_ATELIER_PACKAGE_89_PATCHES_42_ASSETS_PASS')
+print('MODEL_ATELIER_PACKAGE_90_PATCHES_43_ASSETS_PASS')

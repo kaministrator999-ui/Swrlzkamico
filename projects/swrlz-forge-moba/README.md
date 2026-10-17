@@ -1,3 +1,9 @@
+## v11.20 · anatomical head reconstruction
+
+The owner rejected the round head foundation. A new native surface builds the skull, temples, cheekbones, jaw angles and chin from eleven editable sections, with a flatter facial mask, eye sockets and an integrated nasal profile. Facial contours are refitted and the neck extends into the jaw underside; the corrected legs and remaining body retain their prior data. Saved Apply/Undo and bounded JSON import support the new anatomy controls.
+
+The native starter is `scenes/model-atelier-festival-anatomy-v11-20.swyrl.json`; 90 patches / 43 assets, marker `V11_20_ANATOMICAL_HEAD`. All 179 predecessor patch/runtime sources and 42 assets remain byte-preserved. Exact integrity is recorded in the manifest. Source/deploy commit and live status resolve through the final dedicated deploy request and terminal deployment/audit/native receipts. [Workflow and geometry evidence](reports/ANATOMICAL_HEAD_V11_20.md).
+
 ## v11.19 · portrait and body polish
 
 The supplied portrait/body references guide a shorter, softer chin, integrated nose-tip relief and skin warmth, finer eyes/lashes, surface-fitted lips and brows, a smoother neck/shoulder transition and shaped upper arms. Saved native **Portrait finish** and **Fit facial contour** tools support Apply, Undo and validated imports. The existing calf, ankle, foot and independent creature data remain unchanged.

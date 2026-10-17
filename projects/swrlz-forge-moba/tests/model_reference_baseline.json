@@ -1,6 +1,6 @@
 {
-  "version": "v11.18",
-  "source": "4f01bb54b6d0c0f25ce652fb763a3d1ab2112d9f",
+  "version": "v11.19",
+  "source": "a119357ca8eb51d0848b731abdac5df855c1be7c",
   "assets": {
     "episodes/ghosts-in-different-forms-ep01.html": {
       "sha256": "5bd4b1a2a9f28450e31a66c0959b238879c361b3536819e8993784d7a195e8a5",
@@ -165,6 +165,10 @@
     "assets/anime/workshop.png": {
       "sha256": "08b1b037eeb3fa9cfd7f9e51a9e06545b7bf74688f70dff5629994fe06668198",
       "bytes": 863104
+    },
+    "scenes/model-atelier-festival-polish-v11-19.swyrl.json": {
+      "sha256": "599b756969cd600c41ab72943e5b5d4764fd440f8ea2580777480363996d0d5f",
+      "bytes": 444712
     }
   },
   "sources": {
@@ -344,6 +348,8 @@
     "patches/v11_17_hd_character_sculpt.py": "99d65028436a36ef86c95a4642bce3e2dad62df868eb43b7223ec06b6c4ad544",
     "runtime/model_atelier_hd_v11_17.js": "3df9bfd0dc9c72a9b7b6019d42fe2f028d2e7d98cbf5e0f20c12e70d9ac2e4a8",
     "patches/v11_18_leg_reference_correction.py": "7ce2c6ee181f81a54d9ba97c08c27c1551962ac89b3680621e2e76dd056655f1",
-    "runtime/model_atelier_reference_v11_18.js": "b711b8b0b8f96bbad3bb82beabcc677fd1d48e2410df39a7748472bbe1fd9601"
+    "runtime/model_atelier_reference_v11_18.js": "b711b8b0b8f96bbad3bb82beabcc677fd1d48e2410df39a7748472bbe1fd9601",
+    "patches/v11_19_portrait_body_polish.py": "1bb3e50f550344e61e74ce07dc7bd4dd44e3a40c0b5c3c0d74d0843c1dc451e5",
+    "runtime/model_atelier_portrait_v11_19.js": "229c366638a0695a9b7fca81cb08bfb8b71dc4a1acdb9b37d5717b9f9d23f8ef"
   }
 }
