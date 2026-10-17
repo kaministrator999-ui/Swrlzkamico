@@ -5,6 +5,8 @@ on:
     paths:
       - 'projects/swrlz-forge-moba/runtime/model_atelier_sculpt_brush_v11_21.js'
       - 'projects/swrlz-forge-moba/runtime/model_atelier_viewport_v11_21.js'
+      - 'projects/swrlz-forge-moba/runtime/model_atelier_reference_studio_v11_22.js'
+      - 'projects/swrlz-forge-moba/tests/model_atelier_reference_studio_v11_22.mjs'
       - 'projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py'
       - 'projects/swrlz-forge-moba/tests/model_sculpt_brush_*v11_21.mjs'
       - 'projects/swrlz-forge-moba/tests/model_atelier_viewport_v11_21.mjs'
@@ -55,4 +57,5 @@ jobs:
           HTTP_PID=$!
           trap 'kill "$HTTP_PID" 2>/dev/null || true' EXIT
           SWYRL_SCULPT_TEST_URL=http://127.0.0.1:8787 node projects/swrlz-forge-moba/tests/model_atelier_viewport_v11_21.mjs
+          SWYRL_SCULPT_TEST_URL=http://127.0.0.1:8787 node projects/swrlz-forge-moba/tests/model_atelier_reference_studio_v11_22.mjs
           SWYRL_SCULPT_TEST_URL=http://127.0.0.1:8787 node projects/swrlz-forge-moba/tests/model_sculpt_brush_playwright_v11_21.mjs
