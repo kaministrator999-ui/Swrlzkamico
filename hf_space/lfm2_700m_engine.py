@@ -288,24 +288,19 @@ def _fit_repair_messages(model,system,history,prompt):
     response_tokens=min(OUTPUT_TOKENS,desired_output)
     return messages,len(history)-len(recent),input_tokens,response_tokens,fitted_prompt
 
-def _identity_subject(prompt):
-    """Recognize the grammatical owner of a clear identity question, not its answer."""
-    p=re.sub(r"\s+"," ",str(prompt or "").casefold().strip())
-    p=re.sub(r"[?.!]+$","",p).strip()
-    if re.fullmatch(r"(?:who am i|what(?:'s| is) my name|do you know my name)",p):
-        return "user"
-    if re.fullmatch(r"(?:who are you|what(?:'s| is) your name|what are you)",p):
-        return "assistant"
-    return ""
-
-
 def _response_mode(prompt, programming=None, history=None):
     """Deterministic style hint; keeps tiny-model priors from overriding obvious task shape."""
     p=prompt.strip().lower()
     programming=programming if isinstance(programming,dict) else {}
     structured_coding=bool(programming.get("codingTask"))
     creative=bool(re.search(r"\b(?:song|rap|poem|lyrics|verse|freestyle|story|dialogue|screenplay)\b",p)) or bool(re.search(r"\bwrite\s+(?:me\s+)?(?:a|an)\s+(?:song|rap|poem|story|dialogue)\b",p))
-    subject=_identity_subject(prompt)
+    # Keep grammatical identity routing self-contained: older source-answer
+    # regression harnesses evaluate _response_mode as a standalone function.
+    subject_text=re.sub(r"\s+"," ",str(prompt or "").casefold().strip())
+    subject_text=re.sub(r"[?.!]+$","",subject_text).strip()
+    subject=("user" if re.fullmatch(r"(?:who am i|what(?:'s| is) my name|do you know my name)",subject_text)
+             else "assistant" if re.fullmatch(r"(?:who are you|what(?:'s| is) your name|what are you)",subject_text)
+             else "")
     user_identity=subject=="user" or (not subject and any(x in p for x in ("my name","who am i","do you know me","do you know my name")))
     assistant_identity=subject=="assistant" or (not subject and any(x in p for x in ("your name","who are you","what are you")))
     identity=user_identity or assistant_identity
