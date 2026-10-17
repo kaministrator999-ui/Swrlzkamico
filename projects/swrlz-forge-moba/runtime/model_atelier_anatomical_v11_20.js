@@ -11,12 +11,27 @@ const atelierAnatomySmooth=(a,b,v)=>THREE.MathUtils.smoothstep(v,a,b);
 // Ratios are hand-estimated from the owner-provided cyan/coral turnaround
 // (not a calibrated depth scan). Multiple views constrain one shared mesh.
 function atelierReferenceSample(points,y){
+  // Piecewise monotone Hermite interpolation. The previous smoothstep used
+  // a ZERO slope at *every* reference measurement, so the mandible produced
+  // visible horizontal stripes/banding at each section boundary. Cubic
+  // Hermite shares nonzero tangent directions across adjacent segments.
+  const n=points.length;
   if(y<=points[0][0])return points[0][1];
-  for(let i=1;i<points.length;i++)if(y<=points[i][0]){
-    const a=points[i-1],b=points[i],t=(y-a[0])/(b[0]-a[0]);
-    return THREE.MathUtils.lerp(a[1],b[1],t*t*(3-2*t));
+  if(y>=points[n-1][0])return points[n-1][1];
+  const tangent=i=>{
+    if(i<=0)return (points[1][1]-points[0][1])/(points[1][0]-points[0][0]);
+    if(i>=n-1)return (points[n-1][1]-points[n-2][1])/(points[n-1][0]-points[n-2][0]);
+    const dl=(points[i][1]-points[i-1][1])/(points[i][0]-points[i-1][0]);
+    const dr=(points[i+1][1]-points[i][1])/(points[i+1][0]-points[i][0]);
+    if(dl*dr<=0)return 0;
+    return 2*dl*dr/(dl+dr); // harmonic mean: no wild overshoot
+  };
+  for(let i=1;i<n;i++)if(y<=points[i][0]){
+    const a=points[i-1],b=points[i],h=b[0]-a[0],t=(y-a[0])/h,t2=t*t,t3=t2*t;
+    return (2*t3-3*t2+1)*a[1]+(t3-2*t2+t)*h*tangent(i-1)
+      +(-2*t3+3*t2)*b[1]+(t3-t2)*h*tangent(i);
   }
-  return points[points.length-1][1];
+  return points[n-1][1];
 }
 function atelierReferenceFitValid(f){
   if(f===undefined)return true;
