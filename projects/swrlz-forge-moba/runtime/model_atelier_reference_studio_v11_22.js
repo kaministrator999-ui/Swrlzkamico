@@ -60,6 +60,7 @@ function atelierRefCurrent(){
 function atelierRefMark(message){
  const m=atelierRefEnsure();if(!m)return;
  m.editedAt='local';if(typeof markDirty==='function')markDirty();
+ refreshList(); // sync Undo/Redo button availability with native checkpoint()
  if(message)status(message);
 }
 function atelierRefSetData(ref,next){
@@ -102,6 +103,11 @@ function atelierRefPaint(){
    }
    const display=$m('ReferenceImage'),empty=$m('ReferenceEmpty');
    const detail=$m('ReferenceDetail');
+   const thumb=$m('ReferenceThumbnail');
+   thumb.hidden=!layout.collapsed||!r;
+   if(r&&thumb.getAttribute('data-ref-id')!==r.id){
+     thumb.src=r.data;thumb.setAttribute('data-ref-id',r.id);
+   }
    detail.hidden=!r;
    if(r){
      empty.hidden=true;display.hidden=!r.visible;
@@ -187,7 +193,7 @@ function atelierRefDockPointerDown(e){
  const m=atelierRefEnsure();if(!m)return;
  // Avoid interfering with normal header buttons, model gestures and the
  // image-pan area. Touch target is the header's free space only.
- if(e.target.closest('button,input,select'))return;
+ if(e.target.closest('button,input,select,img'))return;
  atelierRefDrag={pointerId:e.pointerId,startX:e.clientX,startY:e.clientY,
     x:m.referenceLayout.x,y:m.referenceLayout.y,moved:false};
  e.currentTarget.setPointerCapture?.(e.pointerId);
@@ -237,6 +243,7 @@ function atelierRefInstall(){
  $m('ReferenceClose').addEventListener('click',()=>{
    atelierRefSnapshotBefore(m=>{m.referenceLayout.open=false;});
  });
+ $m('ReferenceThumbnail').addEventListener('click',()=>{$m('ReferenceCollapse').click();});
  $m('ReferenceCollapse').addEventListener('click',()=>{
    atelierRefSnapshotBefore(m=>{m.referenceLayout.collapsed=!m.referenceLayout.collapsed;});
  });
