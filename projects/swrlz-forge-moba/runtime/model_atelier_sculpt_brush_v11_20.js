@@ -30,7 +30,7 @@ function atelierSculptValid(p){
  if(!Array.isArray(strokes)||strokes.length>atelierSculptMaxStrokes)return false;
  return strokes.every(s=>{
    if(!s||typeof s!=='object'||Array.isArray(s)
-     ||Object.keys(s).sort().join('|')!=='axis|center|falloff|half|pitch|plateau|radius|snap|strength|taper|yaw|level')return false;
+     ||Object.keys(s).sort().join('|')!=='axis|center|falloff|half|level|pitch|plateau|radius|snap|strength|taper|yaw')return false;
    const vec=v=>Array.isArray(v)&&v.length===3&&v.every(x=>Number.isFinite(x)&&Math.abs(x)<=4);
    if(!vec(s.center)||!vec(s.axis))return false;
    const n=Math.hypot(...s.axis);
@@ -77,7 +77,7 @@ function atelierSculptApply(geometry,part){
      let weight=atelierSculptFalloff(distance/r,s.falloff,s.plateau,s.taper);
      // Rotatable HALF-sphere restricts the influenced group to the chosen
      // side of the brush. Fade through the plane instead of a hard seam.
-     if(s.half)weight*=THREE.MathUtils.smoothstep(delta.dot(axis),0,r*.22);
+     if(s.half)weight*=THREE.MathUtils.smoothstep(delta.dot(axis),-r*.18,0);
      // Preserve topology/relief or level affected vertices toward one
      // shared brush-aligned plane at center + signed desired depth.
      const signed=delta.dot(axis);
