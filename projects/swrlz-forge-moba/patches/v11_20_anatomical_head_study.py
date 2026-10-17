@@ -95,8 +95,6 @@ def apply(html):
         "  function pointerMove(e){\n    if(atelierSculptOnPointerMove(e))return;\n    if(!pressed)return;")
     html = once(html, "  function pointerUp(e){\n    if(!pressed)return;",
         "  function pointerUp(e){\n    if(atelierSculptOnPointerUp(e))return;\n    if(!pressed)return;")
-    html = once(html, "const hits=raycaster.intersectObjects(meshes,false);if(atelierSculptPick(hits[0]))return;",
-        "if(atelierSculptVertexPick(e))return;const hits=raycaster.intersectObjects(meshes,false);if(atelierSculptPick(hits[0]))return;")
     html = once(html, "  function close(){\n    if(!panel||panel.hidden)return;",
         "  function close(){\n    if(!panel||panel.hidden)return;atelierSculptOverlayClear();")
     assert "renderParts();refreshList();refreshInspector();" in html
@@ -105,7 +103,7 @@ def apply(html):
     html = once(html, "const mesh=new THREE.Mesh(geometry(p),material(p));",
         "const mesh=new THREE.Mesh(atelierSculptApply(geometry(p),p),material(p));")
     html = once(html, "const hits=raycaster.intersectObjects(meshes,false);select(hits[0]?.object?.userData?.atelierId||null);",
-        "const hits=raycaster.intersectObjects(meshes,false);if(atelierSculptPick(hits[0]))return;select(hits[0]?.object?.userData?.atelierId||null);")
+        "if(atelierSculptVertexPick(e))return;const hits=raycaster.intersectObjects(meshes,false);if(atelierSculptPick(hits[0]))return;select(hits[0]?.object?.userData?.atelierId||null);")
     # When surface-fitting lips/brows to an edited head, use the actual sculpt
     # rather than the unmodified procedural cranial surface.
     html = once(html, "const g=atelierHDGeometry(head),material=",
