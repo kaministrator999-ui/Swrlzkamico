@@ -41,7 +41,7 @@ try{
   await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.view('right'));
   await page.locator('#modelAtelierFrameSelected').click();
   await page.screenshot({path:'anatomical-study-evidence/'+name+'-profile.png'});
-  await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.view('three-quarter'));
+  await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.view('three'));
   await page.locator('#modelAtelierFrameSelected').click();
   await page.screenshot({path:'anatomical-study-evidence/'+name+'-three-quarter.png'});
   const downloaded=page.waitForEvent('download');
