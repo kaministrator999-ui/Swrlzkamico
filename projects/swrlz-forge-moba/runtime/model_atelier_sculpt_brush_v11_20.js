@@ -195,7 +195,7 @@ function atelierSculptInstall(){
 
 // Vertex map and pickable, locally edited point groups. These are *editor
 // overlays* and never become part of the source mesh, OBJ or exported model.
-let atelierSculptVertexMode=false,atelierSculptVertexIDs=[],atelierSculptOverlay=null,
+let atelierSculptVertexMode=false,atelierSculptVertexIDs=[],atelierSculptLastVertexPart=null,atelierSculptOverlay=null,
   atelierSculptGizmo=null,atelierSculptDrag=null,atelierSculptOverlayMesh=null;
 function atelierSculptOverlayClear(){
  if(atelierSculptOverlay){
@@ -223,6 +223,9 @@ function atelierSculptCentroid(mesh,ids){
 }
 function atelierSculptOverlayRefresh(){
  atelierSculptOverlayClear();
+ if(atelierSculptLastVertexPart!==selection){
+   atelierSculptVertexIDs=[];atelierSculptLastVertexPart=selection;
+ }
  if(!atelierSculptVertexMode||!modelRoot||!world)return;
  const mesh=modelRoot.children.find(o=>o.isMesh&&o.userData.atelierId===selection);
  if(!mesh)return;
@@ -240,7 +243,7 @@ function atelierSculptOverlayRefresh(){
  const g=new THREE.BufferGeometry();
  g.setAttribute('position',new THREE.Float32BufferAttribute(verts,3));
  const points=new THREE.Points(g,new THREE.PointsMaterial({
-   color:0x5ff2fa,size:4,sizeAttenuation:false,depthTest:false,transparent:true,opacity:.68
+   color:0x5ff2fa,size:4,sizeAttenuation:false,depthTest:true,transparent:true,opacity:.68
  }));
  points.renderOrder=20;points.userData.sculptVertexIDs=sourceIDs;root.add(points);
  atelierSculptOverlay.userData.vertexPoints=points;
@@ -369,6 +372,22 @@ function atelierSculptVertexResolutionApply(){
  status('Vertex map re-sampled to '+u+' × '+v+'. Old indexed vertex edits were cleared; radial brush strokes remain.');
 }
 function atelierSculptVertexInstall(){
+ $m('SculptBrushIndicesApply').addEventListener('click',()=>{
+   const mesh=modelRoot?.children.find(o=>o.isMesh&&o.userData.atelierId===selection);
+   if(!mesh){status('Select a mesh before choosing vertex indices.',true);return;}
+   const raw=String($m('SculptBrushIndices').value).trim();
+   if(!/^\\d+(?:\\s*,\\s*\\d+)*$/.test(raw)){status('Enter 1–128 comma-separated vertex indices.',true);return;}
+   const ids=[...new Set(raw.split(',').map(x=>Number(x.trim())))];
+   if(ids.length<1||ids.length>128||ids.some(i=>i<0||i>=mesh.geometry.attributes.position.count)){
+     status('Vertex indices must exist in the currently sampled mesh (up to 128).',true);return;
+   }
+   atelierSculptVertexMode=true;
+   atelierSculptVertexIDs=ids;
+   atelierSculptLastVertexPart=selection;
+   $m('SculptBrushVertexToggle').textContent='Hide vertex map';
+   atelierSculptOverlayRefresh();atelierSculptRefresh();
+   status('Mapped and selected '+ids.length+' control points. Drag the yellow gizmo in the viewport.');
+ });
  $m('SculptBrushVertexToggle').addEventListener('click',()=>{
    atelierSculptVertexMode=!atelierSculptVertexMode;
    atelierSculptVertexIDs=[];
