@@ -1812,7 +1812,11 @@ async def send(request:Request):
     # display label is NOT proof of a legal or preferred name and never writes
     # memory, rapport, or the companion's identity.
     if google_owner.startswith("google:"):
-        payload["verifiedAccountDisplayName"]=str((verified_user or {}).get("displayName") or "").strip()[:120]
+        label=str((verified_user or {}).get("displayName") or "").strip()[:120]
+        # Login may fall back to the email address; do not inject that as a
+        # personal name or surface it in an identity answer.
+        if label and "@" not in label and label.casefold()!="google user":
+            payload["verifiedAccountDisplayName"]=label
     # A changed topic invalidates a previously prepared write. No later casual
     # "yes" can authorize a stale rename/create from this conversation.
     if (github_chat_files.has_pending(google_owner,tid)
