@@ -15,10 +15,13 @@ The goal is **not** a higher polygon count. Each major form should read as a del
 ## Required review before this becomes a release
 1. Deterministic patch and full generated JS syntax. Save/undo/import/export on desktop and phone.
 2. Front, right profile and three-quarter closeups compared to reference. Reject any sharp pointed jaw, boxy skull, recessed/hidden nose, floating lashes/lips, oval stick-on ears, neck seams or self-intersecting hair.
-3. Mouth/lid/brow surface-fit to new geometry, with raycast contact constraints and no z-fighting.
+3. Mouth/lid/brow surface-fit to the refined geometry, with raycast contact constraints and no z-fighting; independent continuity and import/export checks.
 4. Historical project preservation and full 18-suite desktop/phone regression.
 5. On acceptance, package the separate scene in `build_space.py`, append the patch to the source manifest, re-seal SHA/bytes, synchronize README/Space README/router/roadmap, merge reviewed changes to main, press only the final `DEPLOY_REQUEST.json` trigger, and independently verify served HTML, receipt and every asset.
 6. Owner's artistic/likeness acceptance **remains separate** from the technical checks.
 
 ### Boundary
 This candidate does not implement weighted skinning, UV paint, retopology, animation, or a fully non-primitive **body**. It is one genuine native modeling slice and must not be advertised as a finished game-ready character until multiview geometry and visual acceptance are independently established.
+
+## October 17 sculpt-preservation correction
+The first trial replaced the prior face with a ring-generated cranium and visually regressed the owner's preferred head sculpt. A corrective commit now retains the **actual earlier portrait geometry** and adds opt-in, small anatomical displacements. A CI regression test asserts neutral morphs are vertex-for-vertex identical to the historically authored head, caps overall displacement and verifies nose projection. This is a **candidate** until the face is approved against the multi-view references. The camera test now uses native `three` for a real three-quarter image; the unsupported `three-quarter` key previously duplicated the side.
