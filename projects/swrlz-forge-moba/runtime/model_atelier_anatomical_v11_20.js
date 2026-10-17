@@ -58,7 +58,7 @@ function atelierAnatomicalHead(part){
       const originalWidth=Math.sqrt(Math.max(.000001,1-y*y))
         *(1-(part.jawTaper??.32)*smooth(.12,1,-y));
       const targetWidth=atelierReferenceSample(fit.front,y);
-      const ratio=atelierAnatomyClamp(targetWidth/Math.max(.028,originalWidth),.48,1.14);
+      const ratio=atelierAnatomyClamp(targetWidth/Math.max(.028,originalWidth),.65,1.11);
       const poleFade=smooth(-.997,-.83,y)*(1-smooth(.83,.997,y));
       const malarBand=bell(Math.abs(x)-.70,y+.15,.27,.22);
       // Full circumferential taper: a shaped jaw/sides/back, never just
@@ -71,33 +71,33 @@ function atelierAnatomicalHead(part){
         // Fade at z=0 to preserve front/back seam and ear attachment.
         const back=smooth(.04,.70,-z);
         const vault=bell(0,y-.05,1,.68);
-        z*=1-fit.strength*back*(.27+.125*vault);
+        z*=1-fit.strength*back*(.255+.10*vault);
       }else{
         const frontal=smooth(.08,.74,z),absX=Math.abs(x);
         // The cheek, eye socket, nose and mouth must form connected surface
         // planes. Side-depth samples constrain the centerline projection,
         // while neighboring zones transition smoothly across the cranium.
         const profileTarget=atelierReferenceSample(fit.profile,y);
-        const desired=atelierAnatomyClamp(profileTarget-z,-.045,.235);
-        const midline=bell(x,y+.22,.235,.43);
+        const desired=atelierAnatomyClamp(profileTarget-z,-.018,.13);
+        const midline=bell(x,y+.25,.245,.31);
         z+=fit.strength*frontal*midline*desired;
         const cheek=bell(absX-.49,y+.18,.22,.24);
         const orbit=bell(absX-.43,y-.045,.235,.155);
         const cheekToJaw=bell(absX-.60,y+.53,.27,.22);
         // Soft zygomatic prominence with actual orbital recession.
-        z+=fit.strength*frontal*(.048*cheek-.056*orbit-.030*cheekToJaw);
+        z+=fit.strength*frontal*(.039*cheek-.035*orbit-.015*cheekToJaw);
         // Stylized continuous nasal anatomy and lip/chin plane. A broad
         // glabellar root blends to a narrow bridge, distinct rounded tip,
         // subtle two-sided alae, philtrum and soft labiomental indentation.
         z+=fit.strength*frontal*(
-          .022*bell(x,y-.065,.17,.18)
-          +.027*bell(x,y+.135,.102,.25)
-          +.054*bell(x,y+.318,.098,.078)
-          +.018*bell(absX-.145,y+.35,.076,.062)
-          -.009*bell(absX-.086,y+.400,.043,.029)
-          +.023*bell(x,y+.465,.20,.068)
-          -.031*bell(x,y+.655,.28,.095)
-          +.032*bell(x,y+.815,.265,.12)
+          .010*bell(x,y-.065,.19,.19)
+          +.014*bell(x,y+.135,.125,.25)
+          +.027*bell(x,y+.318,.12,.098)
+          +.009*bell(absX-.145,y+.35,.077,.076)
+          -.004*bell(absX-.086,y+.400,.055,.045)
+          +.012*bell(x,y+.465,.22,.09)
+          -.007*bell(x,y+.655,.31,.145)
+          +.009*bell(x,y+.815,.28,.17)
         );
       }
     }
