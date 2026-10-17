@@ -1,43 +1,64 @@
-"""Owner export (77) regression: user identity must not become assistant identity.
+"""v280: Identity subjects go through model context; playful address is not a rename.
 
-No runtime weights, external accounts or model calls are needed for these tests.
+Offline contract/route checks only. A mock never proves actual 700M social
+understanding or learned weights. All identities here are synthetic.
 """
 import sys
 from unittest import mock
-sys.modules.setdefault("huggingface_hub",mock.MagicMock())
-sys.modules.setdefault("llama_cpp",mock.MagicMock())
+
+sys.modules.setdefault("huggingface_hub", mock.MagicMock())
+sys.modules.setdefault("llama_cpp", mock.MagicMock())
 import lfm2_700m_engine as engine
 
-def answer(prompt, profile="", history=None):
-    return engine._direct_identity_answer(prompt,profile,list(history or []))
+for query in ("Who am I", "Who am I?", "WHO AM I!", "What's my name?"):
+    assert engine._identity_subject(query) == "user", query
+    mode = engine._response_mode(query, {"codingTask": False})
+    assert mode.startswith("RESPONSE MODE: USER-IDENTITY-DIRECT"), (query, mode)
+    assert "assistant's name" in mode
 
-def assert_user_not_assistant(text):
-    assert text and "AI assistant designed" not in text
-    assert not text.startswith(("I'm §wyrlz","I'm 𓆩","I am §wyrlz"))
+for query in ("Who are you?", "What's your name?", "what are you"):
+    assert engine._identity_subject(query) == "assistant", query
+    mode = engine._response_mode(query, {"codingTask": False})
+    assert mode.startswith("RESPONSE MODE: ASSISTANT-IDENTITY-DIRECT"), (query, mode)
 
-for prompt in ("Who am i","Who am I?","who AM I!"):
-    result=answer(prompt)
-    assert_user_not_assistant(result)
-    assert "don't have a verified name" in result,(prompt,result)
-    assert "person I'm talking with" in result
-    result=answer(prompt,"Name: Example User")
-    assert result=="You're Example User.",(prompt,result)
-    history=[{"role":"user","content":"My name is River."}]
-    assert answer(prompt,"",history)=="You're River."
+for query in (
+    "Okay, Blondie 😂", "Listen here, Morty!", "Sure, Captain.",
+    "I was just joking about calling you Blondie.",
+    "I will call you Starlight.", "Please call me River.",
+    "Write a story about a character asking who am I",
+    "Who am I to judge?", "Who am I really, beyond my job?",
+):
+    assert engine._identity_subject(query) == "", query
+    mode = engine._response_mode(query, {"codingTask": False})
+    assert not mode.startswith("RESPONSE MODE: ASSISTANT-IDENTITY-DIRECT"), (query, mode)
 
-assert "wyrlz" in answer("Who are you?")
-assert "wyrlz" in answer("What's your name?")
-assert answer("Who am I really, beyond my job?")==""  # reflective, not name lookup
-assert answer("Write a story about a character asking who am I")==""  # quoted subject
-assert answer("Who am I to judge?")==""  # idiomatic expression
+# Even repeated jokes do not become an identity classification or write.
+history = [{"role":"user","content":"Okay, Blondie."}] * 9
+assert engine._identity_subject("Sure, Blondie 😂") == ""
+assert not engine._response_mode("Sure, Blondie 😂", {"codingTask":False}, history).startswith("RESPONSE MODE: ASSISTANT-IDENTITY")
 
-# A short user-identity query is answered before even attempting to load 700m.
-with mock.patch.object(engine,"load",side_effect=AssertionError("unexpected model load")):
-    events=list(engine.generate_events({
-        "prompt":"Who am i","history":[],"userProfile":"",
-        "profile":"","programmingIntent":{"codingTask":False}
-    }))
-assert "".join(e.get("text","") for e in events if e.get("type")=="DELTA")==answer("Who am i")
-assert events[-1].get("fastPath")=="identity-profile"
-assert all(e.get("type") not in ("CANDIDATE_ATTEMPT","CANDIDATE_VALIDATION") for e in events)
-print("v278 user identity perspective regression PASS")
+policy=engine.BUILTIN_ASSISTANT_PROFILE
+for phrase in ("Repetition alone does not prove naming intent",
+               "NOT an assignment or durable change",
+               "each user's", "authorized save/proposal path"):
+    assert phrase.lower() in policy.lower(), phrase
+assert "Kamilion" not in policy
+assert "Primary Affiliation: Each current user" in policy
+
+# The old 'identity-profile' fast path must not answer before the model loads.
+# No model execution is attempted here; this is only a routing regression.
+for query in ("Who am I?", "Who are you?"):
+    with mock.patch.object(engine, "load", side_effect=RuntimeError("MODEL_ROUTE_REACHED")) as load:
+        try:
+            list(engine.generate_events({
+                "prompt":query, "history":[], "userProfile":"Name: Example User",
+                "verifiedAccountDisplayName":"Example Login",
+                "profile":"", "programmingIntent":{"codingTask":False}
+            }))
+        except RuntimeError as exc:
+            assert str(exc)=="MODEL_ROUTE_REACHED", exc
+        else:
+            raise AssertionError("Identity query returned without model routing")
+        load.assert_called_once()
+
+print("v280 contextual naming/role routing offline regression PASS (model semantics unverified)")
