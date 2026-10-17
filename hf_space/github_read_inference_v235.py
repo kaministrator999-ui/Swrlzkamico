@@ -84,7 +84,8 @@ _EXPLICIT_READ_REQUEST = re.compile(
 _TECHNICAL_REVIEW = re.compile(
     r"\b(?:source|code|function|module|architecture|implementation|"
     r"logic|security|test coverage|structure|design|bugs?|"
-    r"performance|technical|analy[sz]e|review|debug|audit|"
+    r"performance|technical|§tart|github|repo|repository|"
+    r"analy[sz]e|review|debug|audit|"
     r"inspect|explain)\b", re.I)
 
 
