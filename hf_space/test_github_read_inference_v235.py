@@ -307,6 +307,52 @@ def test_export71_new_thread_nested_path_is_a_verified_read():
     assert "Sign in" in gh._github_command(
         "", "@GitHub read file write-action-tests/test.txt")
 
+def test_export73_verified_file_opinion_and_clarification_stay_in_chat():
+    # Latest signed-in owner export (73). The first read legitimately
+    # establishes file context. The next two turns are social conversation:
+    # no repeated GitHub read, repo inventory, or Qwen code-specialist review.
+    import github_source_specialist_v241 as specialist
+    source = {"repo": "kaministrator999-ui/Swrlzing-core", "branch": "main",
+              "sourceSha": "3903cc3fb219b5b8fd2b2141c14f2678772ed9fc",
+              "directory": "write-action-tests",
+              "lastFile": "write-action-tests/test.txt", "kind": "file"}
+    examples = (
+        "What do you think of what's in that file 😁",
+        "Yeah technically it was for you to make which you did and for my gpt AI "
+        "to find in the file but just wanted to see what you would say about it "
+        "from your perspective lol",
+        "Did you like that message?",
+        "I just wanted to see what you would say about it",
+        "What do you think about that file haha",
+    )
+    for prompt in examples:
+        assert read.is_conversational_reflection(prompt), prompt
+        assert read.classify_read(prompt, source) is None, prompt
+        assert specialist.parse(prompt, source) is None, prompt
+        assert not gh.is_github_conversation(prompt), prompt
+        with (mock.patch.object(gh, "command_events",
+                                side_effect=AssertionError("unexpected GitHub read")),
+              mock.patch.object(specialist, "events",
+                                side_effect=AssertionError("unexpected coder specialist"))):
+            events = list(gh.agent_events({
+                "userId": "google:owner", "prompt": prompt, "githubContext": source
+            }, coder_generator=lambda *a, **kw: iter(())))
+        assert not any(e.get("phase", "").startswith(("GITHUB_", "CODER_SOURCE"))
+                       for e in events), (prompt, events)
+    # Explicit reads and technical reviews must continue to work.
+    positive_reads = {
+        "Read write-action-tests/test.txt": "@GitHub read file write-action-tests/test.txt",
+        "What does that file do?": "@GitHub report deep write-action-tests/test.txt",
+        "Show me that file": "@GitHub read file write-action-tests/test.txt",
+    }
+    for prompt, expected in positive_reads.items():
+        assert not read.is_conversational_reflection(prompt), prompt
+        assert read.classify_read(prompt, source) == expected, prompt
+    technical = "What do you think of that file's architecture?"
+    assert not read.is_conversational_reflection(technical)
+    assert specialist.parse(technical, source)["path"] == source["lastFile"]
+
+
 def test_model_education_is_inference_not_unverified_facts():
     for question in ("Explain what hf_space/brain_programming.py does in our repo",
                      "Which files handle source reports in GitHub?",
@@ -350,6 +396,7 @@ if __name__ == "__main__":
     test_export66_verified_root_listing_and_named_file_followups()
     test_export68_conversational_filename_followup_is_not_generated_directory()
     test_export70_conversational_referent_never_replays_git_inventory()
+    test_export73_verified_file_opinion_and_clarification_stay_in_chat()
     test_export71_new_thread_nested_path_is_a_verified_read()
     test_model_education_is_inference_not_unverified_facts()
     test_stage_one_executes_only_read_command()

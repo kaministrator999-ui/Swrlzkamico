@@ -73,6 +73,38 @@ def _paths(question):
     return found
 
 
+_CONVERSATIONAL_REFLECTION = re.compile(
+    r"\b(?:what do you think|what(?:'s| is) your (?:opinion|take)|"
+    r"(?:do|did) you (?:like|notice)|what (?:would|do) you say|"
+    r"what you would say|from your perspective|"
+    r"just wanted to (?:see|hear|know)|wanted to see what)\b", re.I)
+_EXPLICIT_READ_REQUEST = re.compile(
+    r"^(?:(?:please\s+)|(?:(?:can|could|would)\s+you\s+(?:please\s+)?))?"
+    r"(?:read|open|view|show|list|inspect|review|analy[sz]e|search|find)\b", re.I)
+_TECHNICAL_REVIEW = re.compile(
+    r"\b(?:source|code|function|module|architecture|implementation|"
+    r"logic|security|test coverage|structure|design|bugs?|"
+    r"performance|technical|§tart|github|repo|repository|"
+    r"analy[sz]e|review|debug|audit|"
+    r"inspect|explain)\b", re.I)
+
+
+def is_conversational_reflection(prompt):
+    """An opinion or social follow-up, not an implicit GitHub read/review.
+
+    Intent is evaluated independently of existing verified repository scope:
+    a file mention is context, not a request to fetch that file again.
+    Explicit read/analysis actions and technical questions remain tool-eligible.
+    """
+    raw = str(prompt or "").strip()
+    return bool(
+        raw and _CONVERSATIONAL_REFLECTION.search(raw)
+        and not _COMMAND.match(raw)
+        and not _EXPLICIT_READ_REQUEST.match(raw)
+        and not _TECHNICAL_REVIEW.search(raw)
+    )
+
+
 def classify_read(prompt, context=None):
     """Return one *existing* Stage-1 @GitHub read command, or None.
 
@@ -89,6 +121,8 @@ def classify_read(prompt, context=None):
         return None  # General GitHub education is not a connected-repository read.
     if _EXPLICIT_COMMAND.match(raw):
         return None  # existing command owners handle their own parameters
+    if is_conversational_reflection(raw):
+        return None  # social response owns this turn; retained GitHub scope is data
     # Match the entire read-only command BEFORE verb scans. Folder segments
     # such as "write-action-tests" are path data, not instructions to write.
     # No thread context is synthesized: the connected account's repository
