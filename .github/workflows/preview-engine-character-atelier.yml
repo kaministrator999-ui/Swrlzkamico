@@ -4,6 +4,7 @@ on:
     branches: [feature/atelier-anatomical-silhouette-study]
     paths:
       - 'projects/swrlz-forge-moba/runtime/model_atelier_anatomical_v11_20.js'
+      - 'projects/swrlz-forge-moba/runtime/model_atelier_sculpt_brush_v11_20.js'
       - 'projects/swrlz-forge-moba/scenes/model-atelier-festival-anatomy-v11-20.swyrl.json'
       - 'projects/swrlz-forge-moba/patches/v11_20_anatomical_head_study.py'
       - '.github/workflows/preview-engine-character-atelier.yml'
@@ -36,6 +37,8 @@ jobs:
           changed=patch((src/'index.html').read_text(encoding='utf-8'))
           assert 'V11_20_ANATOMICAL_FACE_STUDY' in changed
           assert '"referenceFit"' in changed
+          assert 'modelAtelierSculptBrushVertexToggle' in changed
+          assert 'atelierSculptApply' in changed
           data=changed.encode('utf-8')
           (dst/'index.html').write_bytes(data)
           base=Path('projects/swrlz-forge-moba/scenes/model-atelier-festival-anatomy-v11-20.swyrl.json')
@@ -53,6 +56,15 @@ jobs:
           print('ATELIER_PREVIEW_BYTES',len(data),'SHA256',original['finalSha256'],
              'PATCHES',len(original['patches']),'ASSETS',len(original['assets']))
           PY
+      - name: Syntax check the generated WebGL module
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          html=Path('dist/atelier-preview/index.html').read_text()
+          script=html.split('<script type="module">',1)[1].rsplit('</script>',1)[0]
+          Path('/tmp/swyrl-sculpt-preview.mjs').write_text(script)
+          PY
+          node --check /tmp/swyrl-sculpt-preview.mjs
       - name: Publish preview to subdirectory without modifying live root
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
