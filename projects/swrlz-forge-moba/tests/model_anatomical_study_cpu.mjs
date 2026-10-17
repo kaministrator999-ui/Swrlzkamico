@@ -15,12 +15,20 @@ const by=(m,id)=>m.parts.find(p=>p.id===id);
 assert.equal(study.parts.length,historic.parts.length);
 for(const previous of historic.parts){
  const now=by(study,previous.id);assert(now,'Lost part '+previous.id);
- if(!['model-0001','left-ear','right-ear'].includes(previous.id))
+ if(!['model-0001','model-0002','left-ear','right-ear'].includes(previous.id))
    assert.deepEqual(now,previous,'Unrelated source part changed: '+previous.id);
 }
 assert.equal(study.parts.filter(p=>p.anatomyStudy).length,1);
 assert.equal(study.parts.filter(p=>p.earStudy).length,2);
 const head=by(study,'model-0001'),ear=by(study,'left-ear');
+assert.equal(head.referenceFit.front.length,12);
+assert.equal(head.referenceFit.profile.length,11);
+assert.equal(context.atelierReferenceFitValid(head.referenceFit),true);
+assert.equal(context.atelierReferenceFitValid({...head.referenceFit,profile:[...head.referenceFit.profile].reverse()}),false);
+assert.equal(context.atelierReferenceFitValid({...head.referenceFit,strength:Infinity}),false);
+const neck=by(study,'model-0002');
+assert(neck.path.length>=7&&neck.radii.length===neck.path.length);
+assert(neck.radii.at(-1)>2.5*neck.radii[0],'Neck must broaden smoothly into shoulders');
 assert.equal(context.atelierAnatomyValid(head),true);
 assert.equal(context.atelierAnatomyValid({...head,anatomyStudy:{...head.anatomyStudy,jaw:1.1}}),false);
 assert.equal(context.atelierAnatomyValid({...head,anatomyStudy:{jaw:0}}),false);
@@ -38,7 +46,7 @@ for(const p of [head,by(study,'left-ear'),by(study,'right-ear')]){
 }
 const original=context.atelierPortraitFinish(by(historic,'model-0001'));
 
-const neutral=context.atelierAnatomicalHead({...head,anatomyStudy:{jaw:.5,malar:.5,orbit:.5,nose:.5,chin:.5,temple:.5}});
+const neutral=context.atelierAnatomicalHead({...head,anatomyStudy:{jaw:.5,malar:.5,orbit:.5,nose:.5,chin:.5,temple:.5},referenceFit:undefined});
 assert.deepEqual(Array.from(neutral.attributes.position.array),Array.from(original.attributes.position.array),
  'Neutral anatomy sliders MUST reproduce the complete v11.19 portrait, not replace the head topology');
 assert.deepEqual(Array.from(neutral.attributes.color.array),Array.from(original.attributes.color.array),
@@ -54,9 +62,19 @@ for(let i=0;i<p0.count;i++){
  if(Math.abs(p0.getX(i))<.13&&p0.getY(i)<-.20&&p0.getY(i)>-.39&&p0.getZ(i)>.65)
    frontNose=Math.max(frontNose,dz);
 }
-assert(maxDisplacement<.08,'Anatomy pass destroyed historical facial silhouette');
+assert(maxDisplacement<.135,'Multi-view fit distorted the historical face beyond local editing bounds');
 assert(frontNose>.002,'Saved sculpted bridge/tip must project beyond the approved portrait');
-console.log('PRESERVED_PORTRAIT_NEUTRAL_GEOMETRY_AND_RESTRAINED_NOSE_MORPHS_PASS',frontNose,maxDisplacement);
+const noFit=context.atelierAnatomicalHead({...head,referenceFit:undefined});
+let widthChanged=false,sideProfileChanged=false;
+const vp=candidate.attributes.position,vn=noFit.attributes.position;
+for(let i=0;i<vp.count;i++){
+ const x=vp.getX(i),y=vp.getY(i),z=vp.getZ(i),x0=vn.getX(i),z0=vn.getZ(i);
+ if(y>-.65&&y<-.45&&Math.abs(x0)>.48&&Math.abs(x-x0)>.005)widthChanged=true;
+ if(y>-.37&&y<-.24&&Math.abs(x)<.12&&z>.85&&z-z0>.012)sideProfileChanged=true;
+}
+assert(widthChanged,'Front reference must genuinely reshape the cheek/jaw silhouette');
+assert(sideProfileChanged,'Side reference must genuinely increase nose depth');
+console.log('REFERENCE_FITTED_FRONT_AND_SIDE_MESH_PASS',frontNose,maxDisplacement);
 
 assert.notDeepEqual(Array.from(candidate.attributes.position.array),Array.from(original.attributes.position.array),
  'The study may not render the unchanged original sphere');
