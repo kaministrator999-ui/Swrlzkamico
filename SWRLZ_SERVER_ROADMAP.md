@@ -1,3 +1,13 @@
+## UPDATE STARTED — 2026-10-17 — v282 grounded identity behavioral acceptance
+
+**Trigger (owner test export 82):** Latest signed-in `Who are you` was handled by real 700M (LOADING, CONTEXT_BUDGETED, candidate attempt, COMPLETE) in ~4.2 sec but responded `**You** are a conversational AI assistant...` with no §wyrlz name. v281 removed profile-report artifacts but left user-vs-assistant speaker drift and generic identity. Earlier v280 output invented `SECTIONWALKER`. No v281 `Who am I` / nickname sequence appears in this export. Don't misreport those as tested.
+
+**Source issue:** existing guarded Hugging Face deploy smoke only asks `How's things going 😊` and checks nonempty response/context budget, so neither CI nor deploy enforces real identity semantics. Source currently streams direct identity outputs before they can be inspected; synthetic v281 prompt-only regressions can't detect actual model mistakes.
+
+**Scope:** Add a bounded *model-generated* direct-identity candidate inspection/retry (not pre-model hardcoded response), with explicit speaker-role and canonical-assistant-name checks only where no user-specific alias is established; preserve authorized user profile, opt-in archive, jokes-as-nonrenames, no persistence writes. Add pure validator tests and an actual model semantic acceptance smoke in the existing guarded HF prepublication workflow. No separate Space, no model-weight change, no §E/Forge, no Tier C authority alteration. Keep source exact and independent CI, stop publication on failed real-model acceptance. Base Chat integration `b3d9dcd98697ac4ec24fc51b5cc68421b6cc7501`.
+
+**Status:** STARTED. Only publication with both code and *actual* 700M output acceptance can close this behavior; a passing compile alone is not success.
+
 ## UPDATE FINISHED — 2026-10-17 — v281 compact contextual identity delivery
 
 **Observed failure / owner evidence:** Signed-in user export (81) shows that the newly generated v280 `Who are you?` response was no longer the hardcoded identity but instead opened with fabricated profile-heading language `SECTIONWALKER IDENTITY: SECTIONWYRLZ-A-∞ Mirror Muse`. Timing `~11.9s`, 700M LOADING and model attempt 1 confirm inference actually ran. A single fresh thread only asked `Who are you?`; the new `Who am I?` and joking nickname cases were *not* present in this post-v280 export. Do not recast this observed failure into a false model-memory or nickname-generalization test.
