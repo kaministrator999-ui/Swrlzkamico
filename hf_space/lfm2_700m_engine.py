@@ -7,6 +7,8 @@ from brain_programming import programming_intent, CODE_TRUTH_POLICY, candidate_c
 from programming_telemetry import buffered_chat_completion, candidate_attempt_receipt, generation_summary
 from programming_repair_context import build_compact_repair_context, enforce_strategy_change, strategy_change_directive
 from response_cognition import classify_response_cognition, response_cognition_policy, response_cognition_camera
+from verified_file_dialogue_v277 import (verified_file_dialogue, grounding_instruction,
+    unsupported_test_inventory, conservative_grounded_reply)
 from source_answer_articulation_v230 import articulation_lesson, lesson_kind
 from music_structure import music_model_policy, creative_music_request, creative_music_reference_projection, MUSIC_CREATIVE_REFERENCE_POLICY, original_rap_delivery, original_rap_violations
 from lyric_craft_school import lyric_craft_policy
@@ -518,6 +520,8 @@ def generate_events(payload):
         yield {"type":"CONVERGENCE_CANDIDATE","candidate":convergence}
     programming=payload.get("programmingIntent") if isinstance(payload.get("programmingIntent"),dict) else programming_intent(prompt,history,payload.get("pinnedContext") if isinstance(payload.get("pinnedContext"),list) else [],payload.get("priorProgrammingState") if isinstance(payload.get("priorProgrammingState"),dict) else {})
     response_cognition=classify_response_cognition(prompt,history,programming)
+    file_dialogue=(verified_file_dialogue(prompt,payload.get("history") or [])
+                   if not programming.get("codingTask") else None)
     yield {"type":"RESPONSE_COGNITION","state":response_cognition_camera(response_cognition)}
     if programming.get("needsFailureEvidence"):
         yield {"type":"PROGRAMMING_INTENT","intent":programming}
@@ -567,7 +571,9 @@ def generate_events(payload):
         system+="\n"+str(payload["projectThreadEvidence"])[:1650]
     if payload.get("archiveEvidence"):
         system+="\n"+str(payload["archiveEvidence"])[:2350]
-    system+="\n"+_response_mode(prompt,programming,history)
+    system+=("\nRESPONSE MODE: VERIFIED-FILE-CONVERSATION. Talk naturally about the "
+             "message in the already-read file. Do not generate code or infer tests from a path."
+             if file_dialogue else "\n"+_response_mode(prompt,programming,history))
     if not programming.get("codingTask"):
         social_style=_social_checkin_style_hint(prompt)
         if social_style:
@@ -682,6 +688,8 @@ def generate_events(payload):
             system+="\nUSER CUSTOMIZATION FOR §WYRLZ (additional preferences layered on top of the built-in profile; do not erase the built-in identity):\n"+custom_assistant_profile
         if user_profile:
             system+="\nUSER PROFILE (describes the current user, not §wyrlz; context only):\n"+user_profile
+    if file_dialogue:
+        system+=grounding_instruction(file_dialogue)
     started=time.perf_counter()
     yield {"type":"STATUS","phase":"LOADING"}
     model=load()
@@ -724,7 +732,9 @@ def generate_events(payload):
     candidate_attempts=[]
     with _lock:
         mode=_response_mode(prompt,programming,history)
-        if mode.startswith("RESPONSE MODE: USER-IDENTITY-DIRECT") or mode.startswith("RESPONSE MODE: ASSISTANT-IDENTITY-DIRECT"):
+        if file_dialogue:
+            response_tokens=min(320,available_output_tokens);temperature=0.35
+        elif mode.startswith("RESPONSE MODE: USER-IDENTITY-DIRECT") or mode.startswith("RESPONSE MODE: ASSISTANT-IDENTITY-DIRECT"):
             response_tokens=min(192,available_output_tokens);temperature=0.35
         elif mode.startswith("RESPONSE MODE: SOURCE-FACTS-FIRST"):
             response_tokens=min(1152,available_output_tokens);temperature=0.30
@@ -1068,6 +1078,47 @@ def generate_events(payload):
             candidate_check["storySpineFailureCode"]=story_receipt.get("failureCode")
             candidate_check["storyFallbackCraftUsed"]=bool(story_directive and not story_beats)
             candidate_check["storySpineLatencyMs"]=story_receipt.get("durationMs",0)
+            first_delta=round((time.perf_counter()-started)*1000,3)
+            yield {"type":"DELTA","text":candidate_text}
+        elif file_dialogue:
+            # Buffer only these short, evidence-bound conversational turns:
+            # streamed hallucinated claims cannot be retracted from the UI.
+            candidate_text,timing=buffered_chat_completion(
+                model,messages,response_tokens,temperature)
+            check={"status":"REJECT" if unsupported_test_inventory(candidate_text,file_dialogue)
+                   else "PASS",
+                   "reasons":["unsupported-file-test-inventory"]
+                   if unsupported_test_inventory(candidate_text,file_dialogue) else []}
+            first_fp=_candidate_fingerprint(candidate_text)
+            candidate_attempts.append(candidate_attempt_receipt(
+                1,"verified-file-conversation",timing,check,first_fp))
+            if check["status"]=="REJECT":
+                yield {"type":"CANDIDATE_ATTEMPT","attempt":candidate_attempts[-1]}
+                regeneration_attempted=True
+                regeneration_reason="unsupported-file-test-inventory"
+                retry_messages=list(messages)+[{"role":"system","content":
+                    "Your previous answer invented a test suite absent from the verified text. "
+                    "Use ONLY the quoted file contents. This is a casual message to you about "
+                    "finding the file and improving inference. Respond to what the author actually "
+                    "said, briefly and without technical test cases or a file inventory."}]
+                repaired,timing2=buffered_chat_completion(
+                    model,retry_messages,response_tokens,0.28)
+                retry_check={"status":"REJECT" if unsupported_test_inventory(repaired,file_dialogue)
+                             else "PASS",
+                             "reasons":["unsupported-file-test-inventory"]
+                             if unsupported_test_inventory(repaired,file_dialogue) else []}
+                candidate_attempts.append(candidate_attempt_receipt(
+                    2,"grounded-file-retry",timing2,retry_check,
+                    _candidate_fingerprint(repaired),
+                    previous_attempt_fingerprint=first_fp))
+                candidate_text=repaired
+                check=retry_check
+                if check["status"]=="REJECT":
+                    candidate_text=conservative_grounded_reply(file_dialogue)
+                    check={"status":"PASS","reasons":[],
+                           "fallbackUsed":True,"fallbackReason":"unsupported-file-test-inventory"}
+            candidate_check=check
+            yield {"type":"CANDIDATE_ATTEMPT","attempt":candidate_attempts[-1]}
             first_delta=round((time.perf_counter()-started)*1000,3)
             yield {"type":"DELTA","text":candidate_text}
         else:
