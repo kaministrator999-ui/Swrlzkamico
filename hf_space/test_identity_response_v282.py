@@ -44,6 +44,10 @@ assert src.index("elif concise_identity_turn:") < src.index("elif file_dialogue:
 assert "identity-model-retry" in src
 assert "candidate_attempt_receipt" in src
 assert "model.create_chat_completion" in src
+assert "if concise_identity_turn and not file_dialogue:" in src
+assert "system=focused" in src
+assert "OPTED-IN USER HISTORY EVIDENCE" in src
+assert "No nickname or relationship data is persisted" in src
 assert "_identity_response_faults(candidate_text" in src
 assert "_identity_response_faults(repaired" in src
 print("v282 identity role/name candidate gate synthetic regression PASS; live 700M acceptance separate")
