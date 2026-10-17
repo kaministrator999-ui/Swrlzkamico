@@ -6,79 +6,57 @@ const atelierEarDefaults={helix:.64,concha:.58,lobe:.43};
 const atelierAnatomyBell=(x,y,sx,sy)=>Math.exp(-((x/sx)**2+(y/sy)**2));
 const atelierAnatomyClamp=(v,a=0,b=1)=>Math.max(a,Math.min(b,v));
 const atelierAnatomySmooth=(a,b,v)=>THREE.MathUtils.smoothstep(v,a,b);
+// Keep the historically approved v11.19 sculpt and its vertex ordering.
+// Anatomical sliders add restrained, local *deltas* to that surface rather
+// than replacing the actual skull with a new ellipsoid. Neutral sliders have
+// exactly the same geometry, colors and contact planes as the original portrait.
 function atelierAnatomicalHead(part){
   const f={...atelierAnatomyDefaults,...part.anatomyStudy};
-  const u=part.meshDensity?.u??192,v=part.meshDensity?.v??128;
-  const positions=[],colors=[],indices=[],uv=[],skin=new THREE.Color(part.color);
-  const pink=new THREE.Color('#df8f93'),warm=new THREE.Color('#d39b90');
-  const finish=part.portraitFinish||{chinLift:0,noseDefinition:0,warmth:0};
-  // A continuous section-by-section skull: broad cranial vault, zygomatic
-  // arches, narrowing mandibular body and non-pointed sculpted chin.
-  // The section curves, not the part count, determine the anatomy.
-  for(let iy=0;iy<=v;iy++){
-    const t=iy/v,phi=t*Math.PI;
-    const y0=Math.cos(phi);
-    // A smoothly changing ring exponent broadens the lower mandible without
-    // a sharp shelf or doubled chin. The cranial crown remains unchanged.
-    const chinBlend=atelierAnatomySmooth(.30,.72,-y0);
-    const rad=Math.pow(Math.max(0,1-y0*y0),.5-.14*chinBlend);
-    const mandibular=atelierAnatomySmooth(.02,.92,-y0);
-    const cheekY=atelierAnatomyBell(0,y0+.18,1,.28);
-    const jawWidth=1-.16*(part.jawTaper??.32)/.32*mandibular
-      +.085*f.malar*cheekY-.036*f.temple*atelierAnatomyBell(0,y0-.68,1,.25);
-    const depthRatio=1-.12*mandibular+.045*atelierAnatomyBell(0,y0-.48,1,.32);
-    for(let ix=0;ix<=u;ix++){
-      const a=ix/u*Math.PI*2;
-      const cx=Math.cos(a),cz=Math.sin(a);
-      let x=rad*cx*jawWidth;
-      let y=y0+(finish.chinLift??0)*atelierAnatomySmooth(.18,1,-y0);
-      let z=rad*cz*depthRatio;
-      const face=atelierAnatomySmooth(.05,.8,cz);
-      let blush=0,nostril=0;
-      if(cz>0){
-        const absX=Math.abs(x);
-        const cheek=atelierAnatomyBell(absX-.48,y0+.17,.24,.22);
-        const orbit=atelierAnatomyBell(absX-.44,y0-.03,.27,.23);
-        const temple=atelierAnatomyBell(absX-.78,y0-.30,.23,.32);
-        const bridge=atelierAnatomyBell(x,y0+.04,.12,.32);
-        const nasalTip=atelierAnatomyBell(x,y0+.31,.12,.115);
-        const alae=atelierAnatomyBell(absX-.15,y0+.34,.08,.068);
-        const philtrum=atelierAnatomyBell(x,y0+.48,.07,.075);
-        const mouth=atelierAnatomyBell(x,y0+.53,.30,.09);
-        const chinPad=atelierAnatomyBell(x,y0+.74,.29,.13);
-        const jawCorner=atelierAnatomyBell(absX-.52,y0+.56,.20,.26);
-        z+=face*(.075*f.malar*cheek-.072*f.orbit*orbit
-           -.014*f.temple*temple
-           +(.032+.032*(finish.noseDefinition??0))*f.nose*bridge
-           +(.085+.024*(finish.noseDefinition??0))*f.nose*nasalTip
-           +.025*f.nose*alae
-           -.016*philtrum+.015*mouth+.026*f.chin*chinPad
-           +.014*f.jaw*jawCorner);
-        // Preserve eyelid/eyebrow plane; color is stored per vertex and is
-        // deterministic across native JSON export/import.
-        blush=cheek*face*(.09+.16*(finish.warmth??0));
-        nostril=face*f.nose*atelierAnatomyBell(absX-.095,y0+.37,.035,.026);
-      }
-      positions.push(x,y,z);
-      uv.push(ix/u,1-t);
-      const color=skin.clone().lerp(pink,atelierAnatomyClamp(blush))
-        .lerp(warm,atelierAnatomyClamp(nostril*.35));
-      colors.push(color.r,color.g,color.b);
-      if(iy<v&&ix<u){
-        const k=iy*(u+1)+ix,b=k+u+1;
-        indices.push(k,k+1,b,k+1,b+1,b);
-      }
+  const original=atelierPortraitFinish({...part,anatomyStudy:undefined});
+  const pos=original.attributes.position,col=original.attributes.color;
+  const base={jaw:.50,malar:.50,orbit:.50,nose:.50,chin:.50,temple:.50};
+  const bell=atelierAnatomyBell,smooth=atelierAnatomySmooth;
+  const blush=new THREE.Color('#df8f93'),tone=new THREE.Color();
+  const [jaw,malar,orbit,nose,chin,temple]=Object.keys(base)
+    .map(k=>(f[k]-base[k])*2);
+  for(let i=0;i<pos.count;i++){
+    let x=pos.getX(i),y=pos.getY(i),z=pos.getZ(i);
+    // Preserve the sculpted forehead, broad malar arc, tapered mandible and
+    // side-view nasal bridge authored in v11.19; adjust only local planes.
+    const low=smooth(.16,.89,-y),mandible=bell(Math.abs(x)-.55,y+.56,.30,.23);
+    x*=1-.045*jaw*low+.026*malar*bell(Math.abs(x)-.54,y+.12,.28,.24);
+    if(z>0){
+      const front=smooth(.12,.72,z),ax=Math.abs(x);
+      const cheeks=bell(ax-.47,y+.17,.24,.23);
+      const sockets=bell(ax-.43,y-.095,.23,.18);
+      const bridge=bell(x,y+.105,.105,.27);
+      const tip=bell(x,y+.31,.112,.09);
+      const wings=bell(ax-.14,y+.32,.068,.055);
+      const chinPlane=bell(x,y+.74,.31,.15);
+      const jawPlane=bell(ax-.53,y+.56,.23,.23);
+      const temporal=bell(ax-.78,y-.26,.20,.25);
+      z+=front*(.027*malar*cheeks-.025*orbit*sockets
+        +nose*(.020*bridge+.041*tip+.010*wings)
+        +.014*chin*chinPlane+.013*jaw*jawPlane
+        -.010*temple*temporal);
+      const color=tone.setRGB(col.getX(i),col.getY(i),col.getZ(i));
+      color.lerp(blush,atelierAnatomyClamp(.07*Math.max(0,malar)*cheeks*front));
+      col.setXYZ(i,color.r,color.g,color.b);
     }
+    pos.setXYZ(i,x,y,z);
   }
-  const g=atelierHDMesh(positions,colors,indices,uv);
-  const normals=g.attributes.normal;
-  for(let iy=0;iy<=v;iy++){
-    const i=iy*(u+1),j=i+u;
-    const n=new THREE.Vector3().fromBufferAttribute(normals,i)
-      .add(new THREE.Vector3().fromBufferAttribute(normals,j)).normalize();
-    normals.setXYZ(i,n.x,n.y,n.z);normals.setXYZ(j,n.x,n.y,n.z);
+  original.computeVertexNormals();original.computeBoundingSphere();
+  // UV SphereGeometry duplicates two longitudinal seam vertices. Merge
+  // normals only, retaining UVs, vertex indices and export topology.
+  const normals=original.attributes.normal,u=part.meshDensity?.u??192,v=part.meshDensity?.v??128;
+  if(pos.count===(u+1)*(v+1))for(let row=0;row<=v;row++){
+    const a=row*(u+1),b=a+u;
+    const normal=new THREE.Vector3().fromBufferAttribute(normals,a)
+      .add(new THREE.Vector3().fromBufferAttribute(normals,b)).normalize();
+    normals.setXYZ(a,normal.x,normal.y,normal.z);
+    normals.setXYZ(b,normal.x,normal.y,normal.z);
   }
-  return g;
+  return original;
 }
 function atelierAnatomicalEar(part){
   const f={...atelierEarDefaults,...part.earStudy};
