@@ -28,6 +28,87 @@ _CREATIVE_DELEGATION = (
     "get creative","make it wild","choose for me","you choose",
 )
 
+
+# Requested output shape is guidance, not proof of an installed media/file tool.
+# Keep this in the shared cognition owner: no second execution router or store.
+_DELIVERABLE_REQUEST = re.compile(
+    r"^(?:(?:please|hey|now|okay|ok)[,!\s]+)?"
+    r"(?:(?:can|could|would|will)\s+you\s+|i\s+(?:want|need)\s+you\s+to\s+|"
+    r"go\s+ahead\s+and\s+)?"
+    r"(?:make|build|create|generate|produce|render|compose|write|draft|"
+    r"export|implement|code|give\s+me)\b", re.I,
+)
+_AUDIO_TARGET = re.compile(
+    r"\b(?:instrumental|beat|music|song|audio|soundtrack|wav|mp3|midi|"
+    r"stems?|recording|voiceover|sound effects?)\b", re.I,
+)
+_ASSET_TARGET = re.compile(
+    r"\b(?:3[\s-]?d|game[\s-]?ready|film[\s-]?ready|movie[\s-]?ready|"
+    r"mesh(?:es)?|rigged|sculpt(?:ure)?|character model|"
+    r"animated model|texture(?:d)? model)\b", re.I,
+)
+_CODE_TARGET = re.compile(
+    r"\b(?:code|python|javascript|typescript|kotlin|java|rust|"
+    r"program|script|function|class|api|website|web app|application|"
+    r"source files?|compiler)\b", re.I,
+)
+_FILE_TARGET = re.compile(
+    r"\b(?:zip|archive|apk|pdf|docx|xlsx|pptx|downloadable|"
+    r"source package|file package)\b", re.I,
+)
+_TEXT_TARGET = re.compile(
+    r"\b(?:lyrics|poem|rap verses?|email|message|letter|"
+    r"essay|outline|proposal|story|description|plan)\b", re.I,
+)
+_PROJECT_SOURCE = re.compile(
+    r"\b(?:github|repository|repo|codebase|branch|commits?|"
+    r"project source|source tree|our source|our code)\b|"
+    r"\b(?:read|open|inspect|view)\s+[\w§.+-]+/[\w§.+/-]+\.\w+\b",
+    re.I,
+)
+_PUBLIC_SOURCE = re.compile(
+    r"\b(?:search (?:the )?web|look (?:it )?up online|look up on(?: the)? internet|"
+    r"search online|browse (?:the )?web|web search|online sources?|"
+    r"public sources?|official documentation|latest news|current news)\b",
+    re.I,
+)
+
+
+def _requested_deliverable(text: str) -> str:
+    """Identify a directly requested output medium, never grant execution."""
+    if not _DELIVERABLE_REQUEST.search(text):
+        return "none"
+    if _TEXT_TARGET.search(text) and re.search(
+        r"\b(?:write|draft|lyrics|poem|rap verses?|letter|email|story)\b",
+        text, re.I,
+    ):
+        return "text"
+    if _AUDIO_TARGET.search(text):
+        return "audio"
+    if _ASSET_TARGET.search(text):
+        return "3d-asset"
+    if _CODE_TARGET.search(text):
+        return "code"
+    if _FILE_TARGET.search(text):
+        return "file"
+    if _TEXT_TARGET.search(text):
+        return "text"
+    return "unspecified"
+
+
+def _source_preference(text: str) -> str:
+    """Classify evidence request only; provider tools retain source authority."""
+    project = bool(_PROJECT_SOURCE.search(text))
+    public = bool(_PUBLIC_SOURCE.search(text))
+    if project and public:
+        return "both"
+    if project:
+        return "project"
+    if public:
+        return "public"
+    return "unspecified"
+
+
 def _clean(text: Any) -> str:
     return " ".join(str(text or "").strip().split())
 
@@ -178,6 +259,8 @@ def classify_response_cognition(
         "outputOnly": output_only,
         "preserveConstraint": hard_preserve,
         "programming": bool((programming or {}).get("codingTask")),
+        "deliverable": _requested_deliverable(text),
+        "sourcePreference": _source_preference(text),
     }
 
 def response_cognition_policy(state: dict[str, Any]) -> str:
@@ -188,6 +271,8 @@ def response_cognition_policy(state: dict[str, Any]) -> str:
     count = state.get("requestedCount")
     output_only = bool(state.get("outputOnly"))
     preserve = bool(state.get("preserveConstraint"))
+    deliverable = str(state.get("deliverable") or "none")
+    source = str(state.get("sourcePreference") or "unspecified")
 
     lines = [
         "RESPONSE COGNITION (deterministic current-turn relationship; current user message always has final authority):",
@@ -225,6 +310,54 @@ def response_cognition_policy(state: dict[str, Any]) -> str:
         lines.append(f"Produce exactly {count} requested items unless safety or impossibility prevents it.")
     if preserve:
         lines.append("Treat keep/preserve/same/do-not-change language as a hard boundary around unaffected material.")
+    # This is an output/knowledge contract, not a new model routing decision.
+    # Actual authorization, source access and artifact creation stay with tools.
+    if source == "project":
+        lines.append(
+            "For project/repository-specific claims, prefer authenticated pinned source "
+            "and actual provider receipts over memory, guessed filenames or public web. "
+            "A file read is evidence, NEVER permission to edit, commit or deploy."
+        )
+    elif source == "public":
+        lines.append(
+            "For current public/external facts use a real available research source; "
+            "do not pretend browsing happened or invent citations. If unavailable, "
+            "state the missing verification and distinguish durable knowledge."
+        )
+    elif source == "both":
+        lines.append(
+            "Reconcile actual project/repository evidence against current official "
+            "external documentation. Keep their provenance separate; neither "
+            "guessed repo content nor an unsourced web claim is verification."
+        )
+    if deliverable == "audio":
+        lines.append(
+            "The user requests an ACTUAL playable audio/instrumental deliverable, "
+            "not a prompt for another generator. Produce audio only through a "
+            "genuinely available audio/render tool and verify the artifact. "
+            "If no such tool is available, say so rather than claiming a track "
+            "was rendered or substituting a blueprint as the finished result."
+        )
+    elif deliverable == "3d-asset":
+        lines.append(
+            "A requested 3D/game/film asset is not satisfied by a descriptive "
+            "concept or claimed mesh count. An actual editable/rendered artifact "
+            "needs a real supported engine/export and inspection. Describe "
+            "draft, compiled, rendered and visually accepted states separately."
+        )
+    elif deliverable in ("code", "file"):
+        lines.append(
+            "The requested deliverable is an actual complete source/file artifact. "
+            "Provide it through supported outputs when possible. Do not label "
+            "pseudocode, a test plan, a source ZIP or an unbuilt binary as a "
+            "successfully built and tested application. Distinguish generated, "
+            "tested, committed, deployed and user-observed evidence."
+        )
+    elif deliverable == "text":
+        lines.append(
+            "Deliver the requested written content itself. Do not redirect to "
+            "a tool tutorial when the requested text is possible here."
+        )
     lines.append(MODEL_POLICY)
     lines.append("Prefer the smallest complete answer that satisfies the current operation. Do not end with a routine follow-up question when the request is already answerable.")
     return "\n".join(lines)
@@ -235,5 +368,6 @@ def response_cognition_camera(state: dict[str, Any]) -> dict[str, Any]:
         "schema","relation","operation","historyAvailable","historyTurns","anchorUserIndex",
         "anchorAssistantIndex","explicitReference","questionLike","detailMode","requestedCount",
         "outputOnly","preserveConstraint","programming",
+        "deliverable","sourcePreference",
     )
     return {key: state.get(key) for key in keys}
