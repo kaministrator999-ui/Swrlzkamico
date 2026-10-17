@@ -51,40 +51,54 @@ function atelierAnatomicalHead(part){
   for(let i=0;i<pos.count;i++){
     let x=pos.getX(i),y=pos.getY(i),z=pos.getZ(i);
     if(fit&&fit.strength>0){
-      // True silhouette remapping rather than a capped 8% tweak. Every ring
-      // is matched against the turnaround's FRONT outline, including the
-      // cheek-to-mandible break. The polar fade keeps the top/bottom closed.
+      // The owner's OBJ is a layered Blender character: distinct front
+      // facial surfaces and rear volumes, rather than one uniformly round
+      // skull. Reconstruct that *principle*, not the unrelated OBJ likeness.
+      // The cyan/coral turnaround determines these FRONT outline sections.
       const originalWidth=Math.sqrt(Math.max(.000001,1-y*y))
         *(1-(part.jawTaper??.32)*smooth(.12,1,-y));
       const targetWidth=atelierReferenceSample(fit.front,y);
-      const ratio=atelierAnatomyClamp(targetWidth/Math.max(.035,originalWidth),.54,1.13);
-      const poleFade=smooth(-.995,-.84,y)*(1-smooth(.84,.995,y));
+      const ratio=atelierAnatomyClamp(targetWidth/Math.max(.028,originalWidth),.48,1.14);
+      const poleFade=smooth(-.997,-.83,y)*(1-smooth(.83,.997,y));
+      const malarBand=bell(Math.abs(x)-.70,y+.15,.27,.22);
+      // Full circumferential taper: a shaped jaw/sides/back, never just
+      // squeezing the visible front vertices into a pasted-on face.
       x*=1+(ratio-1)*fit.strength*poleFade;
-      // SIDE reference: deliberately remove excess occipital mass from
-      // the back hemisphere, not just push nose vertices forward. Preserve
-      // the side seam and ear root with a gradual midline blend.
+      x*=1+.018*fit.strength*malarBand;
       if(z<0){
-        const back=smooth(.035,.62,-z);
-        const vault=bell(0,y-.02,1,.72);
-        z*=1-fit.strength*back*(.135+.085*vault);
+        // Compress the occiput across the rear hemisphere. This targets the
+        // round ball silhouette seen in the owner's mobile side screenshots.
+        // Fade at z=0 to preserve front/back seam and ear attachment.
+        const back=smooth(.04,.70,-z);
+        const vault=bell(0,y-.05,1,.68);
+        z*=1-fit.strength*back*(.27+.125*vault);
       }else{
-        const frontal=smooth(.10,.78,z),absX=Math.abs(x);
-        // Sample the forward profile envelope at each latitude. Projection
-        // is concentrated down the central facial strip; cheeks/eye sockets
-        // remain naturally continuous with the original portrait mesh.
+        const frontal=smooth(.08,.74,z),absX=Math.abs(x);
+        // The cheek, eye socket, nose and mouth must form connected surface
+        // planes. Side-depth samples constrain the centerline projection,
+        // while neighboring zones transition smoothly across the cranium.
         const profileTarget=atelierReferenceSample(fit.profile,y);
-        const desired=atelierAnatomyClamp(profileTarget-z,-.030,.255);
-        const center=bell(x,y+.23,.24,.42);
-        z+=fit.strength*frontal*center*desired;
-        // Delineate the lower facial plane. A subtle labiomental break
-        // brings the jaw beneath the mouth instead of continuing as a ball.
-        z+=fit.strength*frontal*(-.065*bell(x,y+.66,.30,.155)
-          +.022*bell(x,y+.84,.23,.105));
-        // Project a unified bridge, tip and alae; no attached sphere nose.
-        z+=fit.strength*frontal*(.031*bell(x,y+.11,.097,.25)
-          +.070*bell(x,y+.315,.106,.082)
-          +.013*bell(absX-.14,y+.33,.076,.066)
-          -.009*bell(absX-.087,y+.405,.045,.033));
+        const desired=atelierAnatomyClamp(profileTarget-z,-.045,.235);
+        const midline=bell(x,y+.22,.235,.43);
+        z+=fit.strength*frontal*midline*desired;
+        const cheek=bell(absX-.49,y+.18,.22,.24);
+        const orbit=bell(absX-.43,y-.045,.235,.155);
+        const cheekToJaw=bell(absX-.60,y+.53,.27,.22);
+        // Soft zygomatic prominence with actual orbital recession.
+        z+=fit.strength*frontal*(.048*cheek-.056*orbit-.030*cheekToJaw);
+        // Stylized continuous nasal anatomy and lip/chin plane. A broad
+        // glabellar root blends to a narrow bridge, distinct rounded tip,
+        // subtle two-sided alae, philtrum and soft labiomental indentation.
+        z+=fit.strength*frontal*(
+          .022*bell(x,y-.065,.17,.18)
+          +.027*bell(x,y+.135,.102,.25)
+          +.054*bell(x,y+.318,.098,.078)
+          +.018*bell(absX-.145,y+.35,.076,.062)
+          -.009*bell(absX-.086,y+.400,.043,.029)
+          +.023*bell(x,y+.465,.20,.068)
+          -.031*bell(x,y+.655,.28,.095)
+          +.032*bell(x,y+.815,.265,.12)
+        );
       }
     }
     const low=smooth(.16,.89,-y);
