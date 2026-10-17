@@ -1,6 +1,6 @@
 {
-  "version": "v11.17",
-  "source": "31e43bb65ea6adb76cca263b8cfc68865f60c190",
+  "version": "v11.18",
+  "source": "4f01bb54b6d0c0f25ce652fb763a3d1ab2112d9f",
   "assets": {
     "episodes/ghosts-in-different-forms-ep01.html": {
       "sha256": "5bd4b1a2a9f28450e31a66c0959b238879c361b3536819e8993784d7a195e8a5",
@@ -117,6 +117,10 @@
     "scenes/model-atelier-festival-hd-v11-17.swyrl.json": {
       "sha256": "e10cbc37f5826406e0e0c4c1f167029f275003376527e0e64e0195669aef5967",
       "bytes": 402090
+    },
+    "scenes/model-atelier-festival-reference-v11-18.swyrl.json": {
+      "sha256": "493125a32b2209d80af59d40dfb48391c1cc26d071403709f43aee4c16283ce3",
+      "bytes": 414379
     },
     "assets/anime/cathedral.png": {
       "sha256": "69a155ac1cbf004e6550c173e322e8fcaa59aac8c7f5487cb0dcd85d545ac88d",
@@ -338,6 +342,8 @@
     "patches/v11_16_character_detail_budget.py": "011a9885dbbc4aa64403ca0cc7e6991704068cec46df2094dcfadf9efa5fc710",
     "runtime/model_atelier_density_v11_16.js": "9a4e6f9e28d85ab5d4bac06be2cdad6f14010fa280eadb6e6d0fed10d84a4e74",
     "patches/v11_17_hd_character_sculpt.py": "99d65028436a36ef86c95a4642bce3e2dad62df868eb43b7223ec06b6c4ad544",
-    "runtime/model_atelier_hd_v11_17.js": "3df9bfd0dc9c72a9b7b6019d42fe2f028d2e7d98cbf5e0f20c12e70d9ac2e4a8"
+    "runtime/model_atelier_hd_v11_17.js": "3df9bfd0dc9c72a9b7b6019d42fe2f028d2e7d98cbf5e0f20c12e70d9ac2e4a8",
+    "patches/v11_18_leg_reference_correction.py": "7ce2c6ee181f81a54d9ba97c08c27c1551962ac89b3680621e2e76dd056655f1",
+    "runtime/model_atelier_reference_v11_18.js": "b711b8b0b8f96bbad3bb82beabcc677fd1d48e2410df39a7748472bbe1fd9601"
   }
 }

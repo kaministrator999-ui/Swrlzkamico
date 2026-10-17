@@ -1,3 +1,11 @@
+## v11.19 · portrait and body polish
+
+The supplied portrait/body references guide a shorter, softer chin, integrated nose-tip relief and skin warmth, finer eyes/lashes, surface-fitted lips and brows, a smoother neck/shoulder transition and shaped upper arms. Saved native **Portrait finish** and **Fit facial contour** tools support Apply, Undo and validated imports. The existing calf, ankle, foot and independent creature data remain unchanged.
+
+The new starter is `scenes/model-atelier-festival-polish-v11-19.swyrl.json`. The release appends one patch/runtime and one asset, preserving all 177 predecessor patch/runtime files and 41 assets. Package: 89 patches/42 assets. Marker: `V11_19_PORTRAIT_BODY_POLISH`. Exact source integrity is in `source-manifest.json`; publication authority resolves through the final dedicated `DEPLOY_REQUEST.json`, terminal deployment, hosted all-assets audit and desktop/phone native checks. Owner visual acceptance remains separate.
+
+[Native portrait/body workflow](reports/PORTRAIT_BODY_POLISH_V11_19.md).
+
 ## 2026-10-17 · v11.18 knee and reference close-up correction
 
 Reshaped both leg centerlines after the supplied profile exposed a knee depth reversal; ankle endpoints and foot placements remain anchored. Added saved native posterior calf fullness and front shin taper, with staggered calf heads and an Achilles taper. Refined portrait/eyes/lashes/fringe, added editable grooved crown and knotted wrap finishes, saved iris pigments, fitted collar/neckline and forearm bands. Native authoring saves/reimports the new starter; regression checks cover actual leg curves, grounded poses, topology, pigments and import/undo. All 175 earlier sources and 40 assets are preserved. 88 patches/41 assets; marker `V11_18_LEG_REFERENCE_CORRECTION`. [Details](reports/LEG_REFERENCE_CORRECTION_V11_18.md).
