@@ -52,7 +52,9 @@ try{
   assert.equal(saved.model.parts.find(p=>p.id==='left-ear').earStudy.concha,.8);
   assert.equal(saved.schema,'swyrl-model-atelier-v1');
   await page.locator('#modelAtelierImportFile').setInputFiles(file);
-  await page.waitForFunction(()=>document.getElementById('modelAtelierStatus')?.textContent.includes('Validated model imported'),{timeout:30000});
+  await page.waitForFunction(()=>/Validated model imported|Import rejected/.test(document.getElementById('modelAtelierStatus')?.textContent||''),null,{timeout:15000});
+  const importStatus=await page.locator('#modelAtelierStatus').textContent();
+  assert.match(importStatus,/Validated model imported/,'Round-trip import result: '+importStatus);
   assert.equal((await get()).find(p=>p.id==='model-0001').anatomyStudy.jaw,.74,'Native JSON round-trip changed anatomical head');
   assert.equal((await get()).find(p=>p.id==='left-ear').earStudy.concha,.8,'Native JSON round-trip changed the ear');
   assert.equal(errors.length,0,'Browser runtime errors: '+errors.join(' | '));
