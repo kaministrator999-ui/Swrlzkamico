@@ -18,10 +18,10 @@ function atelierAnatomicalHead(part){
   for(let iy=0;iy<=v;iy++){
     const t=iy/v,phi=t*Math.PI;
     const y0=Math.cos(phi);
-    // Fuller mandibular base with a rounded submental turn, not a pointy
-    // UV-sphere cone. The crown keeps its historical attachment height.
-    const chinRound=y0<-.72?.69*Math.pow(1-atelierAnatomySmooth(.72,1,-y0),.28):0;
-    const rad=Math.max(Math.sin(phi),chinRound);
+    // A smoothly changing ring exponent broadens the lower mandible without
+    // a sharp shelf or doubled chin. The cranial crown remains unchanged.
+    const chinBlend=atelierAnatomySmooth(.30,.72,-y0);
+    const rad=Math.pow(Math.max(0,1-y0*y0),.5-.14*chinBlend);
     const mandibular=atelierAnatomySmooth(.02,.92,-y0);
     const cheekY=atelierAnatomyBell(0,y0+.18,1,.28);
     const jawWidth=1-.16*(part.jawTaper??.32)/.32*mandibular
