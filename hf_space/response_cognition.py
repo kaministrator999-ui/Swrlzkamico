@@ -151,6 +151,8 @@ def _operation(text: str, relation: str) -> str:
         return "summarize"
     if re.search(r"\b(?:compare|versus|vs\.?|difference between|pros and cons)\b", p):
         return "compare"
+    if re.search(r"\b(?:what\x27s|whats)\s+an?\b", p):
+        return "explain"  # Natural contracted explanatory question, including after a topic reset.
     if re.search(r"\b(?:explain|teach|how does|how do|what does|what is|why does|why is|meaning of)\b", p):
         return "explain"
     if re.search(r"\b(?:analy[sz]e|review|evaluate|inspect|diagnose)\b", p):
