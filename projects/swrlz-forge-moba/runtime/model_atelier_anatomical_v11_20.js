@@ -36,10 +36,10 @@ function atelierReferenceFitValid(f){
   }
   return true;
 }
-// Preserve the existing editorial v11.19 sculpt, topology, colors, facial
-// contact and UVs. Fit normalized measured front widths plus front-facing
-// nose/forehead profile to its actual 3D vertices. The other anatomy sliders
-// remain additive, editable and undoable. The reference data is in native JSON.
+// Use v11.19 sculpt as a vertex/topology starting surface, NOT as a shape
+// constraint: each latitude's front width is truly remapped, rear vault depth
+// is compressed and the forward face follows the side view projection target.
+// Existing editability, per-vertex colors, UVs and live morph controls remain.
 function atelierAnatomicalHead(part){
   const f={...atelierAnatomyDefaults,...part.anatomyStudy},fit=part.referenceFit;
   const original=atelierPortraitFinish({...part,anatomyStudy:undefined,referenceFit:undefined});
@@ -50,24 +50,42 @@ function atelierAnatomicalHead(part){
   const [jaw,malar,orbit,nose,chin,temple]=Object.keys(base).map(k=>(f[k]-base[k])*2);
   for(let i=0;i<pos.count;i++){
     let x=pos.getX(i),y=pos.getY(i),z=pos.getZ(i);
-    const face=smooth(.12,.72,z),ax=Math.abs(x);
     if(fit&&fit.strength>0){
-      // The front view supplies a continuous jaw and cheek silhouette.
+      // True silhouette remapping rather than a capped 8% tweak. Every ring
+      // is matched against the turnaround's FRONT outline, including the
+      // cheek-to-mandible break. The polar fade keeps the top/bottom closed.
       const originalWidth=Math.sqrt(Math.max(.000001,1-y*y))
         *(1-(part.jawTaper??.32)*smooth(.12,1,-y));
-      const desiredWidth=atelierReferenceSample(fit.front,y);
-      const ratio=atelierAnatomyClamp(desiredWidth/originalWidth,.92,1.06);
-      x*=1+(ratio-1)*fit.strength;
-      // The lateral depth contour is constrained by the character's side
-      // view, but applied only to the middle of the *front* face. This does
-      // not turn the skull or cheeks into a flattened cross-section.
-      const ridge=bell(x,y+.17,.165,.26),target=atelierReferenceSample(fit.profile,y);
-      const shift=atelierAnatomyClamp(target-z,-.018,.085);
-      z+=fit.strength*face*ridge*shift;
-      // Intrinsic nose: soft paired alae and tucked underside, not a
-      // sphere stuck onto the face. Narrow enough for the original eyes.
-      z+=fit.strength*face*(.008*bell(Math.abs(x)-.15,y+.31,.076,.055)
-                           -.007*bell(Math.abs(x)-.095,y+.395,.042,.033));
+      const targetWidth=atelierReferenceSample(fit.front,y);
+      const ratio=atelierAnatomyClamp(targetWidth/Math.max(.035,originalWidth),.54,1.13);
+      const poleFade=smooth(-.995,-.84,y)*(1-smooth(.84,.995,y));
+      x*=1+(ratio-1)*fit.strength*poleFade;
+      // SIDE reference: deliberately remove excess occipital mass from
+      // the back hemisphere, not just push nose vertices forward. Preserve
+      // the side seam and ear root with a gradual midline blend.
+      if(z<0){
+        const back=smooth(.035,.62,-z);
+        const vault=bell(0,y-.02,1,.72);
+        z*=1-fit.strength*back*(.135+.085*vault);
+      }else{
+        const frontal=smooth(.10,.78,z),absX=Math.abs(x);
+        // Sample the forward profile envelope at each latitude. Projection
+        // is concentrated down the central facial strip; cheeks/eye sockets
+        // remain naturally continuous with the original portrait mesh.
+        const profileTarget=atelierReferenceSample(fit.profile,y);
+        const desired=atelierAnatomyClamp(profileTarget-z,-.030,.255);
+        const center=bell(x,y+.23,.24,.42);
+        z+=fit.strength*frontal*center*desired;
+        // Delineate the lower facial plane. A subtle labiomental break
+        // brings the jaw beneath the mouth instead of continuing as a ball.
+        z+=fit.strength*frontal*(-.065*bell(x,y+.66,.30,.155)
+          +.022*bell(x,y+.84,.23,.105));
+        // Project a unified bridge, tip and alae; no attached sphere nose.
+        z+=fit.strength*frontal*(.031*bell(x,y+.11,.097,.25)
+          +.070*bell(x,y+.315,.106,.082)
+          +.013*bell(absX-.14,y+.33,.076,.066)
+          -.009*bell(absX-.087,y+.405,.045,.033));
+      }
     }
     const low=smooth(.16,.89,-y);
     x*=1-.045*jaw*low+.026*malar*bell(Math.abs(x)-.54,y+.12,.28,.24);
