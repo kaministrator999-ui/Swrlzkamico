@@ -1,0 +1,73 @@
+name: Verify §E anatomical face study
+on:
+  push:
+    branches: [feature/atelier-anatomical-silhouette-study]
+    paths:
+      - 'projects/swrlz-forge-moba/runtime/model_atelier_anatomical_v11_20.js'
+      - 'projects/swrlz-forge-moba/patches/v11_20_anatomical_head_study.py'
+      - 'projects/swrlz-forge-moba/scenes/model-atelier-festival-anatomy-v11-20.swyrl.json'
+      - 'projects/swrlz-forge-moba/tests/model_anatomical_study_*'
+      - '.github/workflows/verify-engine-anatomical-study.yml'
+  pull_request:
+    paths:
+      - 'projects/swrlz-forge-moba/**'
+      - '.github/workflows/verify-engine-anatomical-study.yml'
+permissions:
+  contents: read
+concurrency:
+  group: anatomy-study-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  author:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate isolated patch and rebuild unchanged sealed v11.19 baseline
+        run: |
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_20_anatomical_head_study.py
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/anatomical-study
+          python - <<'PY'
+          import runpy,hashlib,json
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          output=Path('/tmp/anatomical-study/index.html')
+          base=output.read_text(encoding='utf-8')
+          assert 'V11_19_PORTRAIT_BODY_POLISH' in base
+          patched=runpy.run_path(str(root/'patches/v11_20_anatomical_head_study.py'))['apply'](base)
+          assert 'V11_20_ANATOMICAL_FACE_STUDY' in patched
+          assert 'atelierAnatomicalHead' in patched and 'atelierAnatomicalEar' in patched
+          assert 'modelAtelierAnatomyHeadApply' in patched
+          output.write_text(patched,encoding='utf-8')
+          script=patched.split('<script type="module">',1)[1].rsplit('</script>',1)[0]
+          Path('/tmp/anatomical-study-source.mjs').write_text(script,encoding='utf-8')
+          print('ANATOMICAL_CANDIDATE_BYTES='+str(len(patched.encode('utf-8'))),flush=True)
+          print('ANATOMICAL_CANDIDATE_SHA256='+hashlib.sha256(patched.encode('utf-8')).hexdigest(),flush=True)
+          print('BASELINE_SOURCE_AND_NATIVE_EXTENSION_SEPARATE_PASS')
+          PY
+          node --check /tmp/anatomical-study-source.mjs
+      - name: Install Three.js and native test browser
+        run: |
+          npm install --no-save playwright@1.56.1 three@0.169.0
+          npx playwright install --with-deps --only-shell chromium
+      - name: Verify genuine geometry, bounds and preserved historical scenes
+        run: node projects/swrlz-forge-moba/tests/model_anatomical_study_cpu.mjs
+      - name: Test live native editor, Undo, JSON save and phone/desktop views
+        run: |
+          python -m http.server 8787 --directory /tmp/anatomical-study >/tmp/anatomical-study-http.log 2>&1 &
+          TEST_SERVER_PID=$!
+          trap 'kill "$TEST_SERVER_PID" 2>/dev/null || true' EXIT
+          SWYRL_ANATOMY_TEST_URL=http://127.0.0.1:8787 node projects/swrlz-forge-moba/tests/model_anatomical_study_playwright.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: anatomical-study-desktop-mobile
+          path: anatomical-study-evidence/
+          compression-level: 1
+          retention-days: 7
