@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=b3d9dcd98697ac4ec24fc51b5cc68421b6cc7501
-REQUEST_NONCE=2026-10-17-v281-concise-identity-001
+SOURCE_REF=d5133af7724118401eb5a641bf534cadd1db69cc
+REQUEST_NONCE=2026-10-17-v282-model-identity-behavior-gate-001
