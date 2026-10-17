@@ -4,6 +4,9 @@
 // Shift+left drag or middle-button drag pans on desktop.
 const atelierViewModes=['shaded','wireframe','overlay','xray'];
 let atelierViewGlobal='shaded',atelierViewOverrides=new Map();
+let atelierViewColors=true,atelierViewTextures=true;
+const atelierViewMaterialOverrides=new Map();
+let atelierViewWireContrast=true,atelierViewWireTint='#152b42';
 const atelierCameraPan=new THREE.Vector3(),atelierCameraTouches=new Map();
 const atelierCameraConsumedTouches=new Set();
 let atelierCameraGesture=null,atelierCameraMousePan=null;
@@ -22,34 +25,66 @@ function atelierViewportCameraInfoUpdate(){
     +' · Pan '+atelierCameraPan.length().toFixed(2)
     +' · 1 finger orbit · 2 fingers pinch/pan · Shift-drag pan';
 }
-function atelierViewModeFor(p){
- return atelierViewOverrides.get(p.id)||atelierViewGlobal;
+function atelierViewModeFor(p){return atelierViewOverrides.get(p.id)||atelierViewGlobal;}
+function atelierViewFlagsFor(p){
+ return atelierViewMaterialOverrides.get(p.id)||{colors:atelierViewColors,textures:atelierViewTextures};
+}
+function atelierViewDisabledMaps(mat){
+ // Keep alpha maps for silhouette/cutout safety. Disable cosmetic maps,
+ // including procedural vertex dye, without destroying saved originals.
+ for(const key of ['map','normalMap','bumpMap','roughnessMap','metalnessMap',
+  'emissiveMap','aoMap','lightMap','specularMap','clearcoatMap',
+  'clearcoatNormalMap','clearcoatRoughnessMap','iridescenceMap',
+  'iridescenceThicknessMap','sheenColorMap','sheenRoughnessMap',
+  'anisotropyMap','displacementMap']){
+   if(key in mat)mat[key]=null;
+ }
 }
 function atelierViewModeApply(mesh,part){
- const mode=atelierViewModeFor(part);
- if(mode==='wireframe'||mode==='xray'){
-   // §E shares cached high-definition source materials between meshes. A
-   // per-mesh view mode MUST clone the material, or selecting one character
-   // part silently changes every part that shares its material.
+ const mode=atelierViewModeFor(part),flags=atelierViewFlagsFor(part);
+ const isContrastingWire=mode==='wireframe'&&atelierViewWireContrast;
+ if(isContrastingWire){
+   // Basic wire shader is lighting-independent. In particular, dark hair and
+   // other highly saturated vertex colors can no longer conceal topology.
+   mesh.material=new THREE.MeshBasicMaterial({
+     color:atelierViewWireTint,wireframe:true,side:THREE.DoubleSide,
+     depthTest:true,depthWrite:true
+   });
+   mesh.material.userData.atelierViewportClone=true;
+ }else if(mode!=='shaded'||!flags.colors||!flags.textures){
+   // v11.20 HD materials are shared/cached; never mutate originals.
    const original=mesh.material;
    mesh.material=original.clone();
    mesh.material.userData={...original.userData,atelierHDMaterial:false,atelierViewportClone:true};
+   if(!flags.colors){
+     if(mesh.material.color)mesh.material.color.set('#cad3de');
+     if(mesh.material.emissive)mesh.material.emissive.set('#000000');
+     if('vertexColors' in mesh.material)mesh.material.vertexColors=false;
+   }
+   if(!flags.textures)atelierViewDisabledMaps(mesh.material);
+   if(mode==='wireframe'){
+     mesh.material.wireframe=true;
+     mesh.material.side=THREE.DoubleSide;
+   }else if(mode==='xray'){
+     mesh.material.transparent=true;
+     mesh.material.opacity=.27;
+     mesh.material.depthWrite=false;
+     mesh.material.side=THREE.DoubleSide;
+   }else if(mode==='overlay'){
+     // Offset the shaded triangles *backward* just enough so the independent
+     // high-contrast wire overlay is not hidden by its coplanar face.
+     mesh.material.polygonOffset=true;
+     mesh.material.polygonOffsetFactor=2;
+     mesh.material.polygonOffsetUnits=2;
+   }
+   mesh.material.needsUpdate=true;
  }
- if(mode==='wireframe'){
-   mesh.material.wireframe=true;
-   mesh.material.side=THREE.DoubleSide;
- }else if(mode==='xray'){
-   mesh.material.transparent=true;
-   mesh.material.opacity=.27;
-   mesh.material.depthWrite=false;
-   mesh.material.side=THREE.DoubleSide;
- }else if(mode==='overlay'){
-   // Shaded surface + a thin wire overlay for exactly the same indexed
-   // geometry. The overlay is a CHILD, so raycasts / OBJ export only operate
-   // on real root meshes; the renderer and source geometry remain unchanged.
+ if(mode==='overlay'){
    const material=new THREE.MeshBasicMaterial({
-     wireframe:true,color:0x39ddf7,transparent:true,opacity:.43,
-     depthWrite:false,depthTest:true,polygonOffset:true,polygonOffsetFactor:-1
+     wireframe:true,color:atelierViewWireTint,
+     transparent:true,opacity:.95,side:THREE.DoubleSide,
+     depthTest:true,depthWrite:false,
+     polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-2
    });
    const overlay=new THREE.Mesh(mesh.geometry,material);
    overlay.name='Viewport wireframe overlay';
@@ -59,17 +94,24 @@ function atelierViewModeApply(mesh,part){
  }
  return mesh;
 }
-function atelierViewRebuild(){
- if(!modelRoot)return;
- // Existing wipeModel now disposes wire-overlay child materials.
- renderParts();
+function atelierViewRebuild(){if(modelRoot)renderParts();}
+function atelierViewportControlsRefresh(){
+ const mode=$m('ViewportMode'),scope=$m('ViewportScope');
+ if(!mode||!scope)return;
+ const p=partById(selection),selected=scope.value==='selected'&&p;
+ const flags=selected?atelierViewFlagsFor(p):{colors:atelierViewColors,textures:atelierViewTextures};
+ mode.value=selected?atelierViewModeFor(p):atelierViewGlobal;
+ $m('ViewportColors').checked=flags.colors;
+ $m('ViewportTextures').checked=flags.textures;
+ $m('ViewportWireContrast').checked=atelierViewWireContrast;
+ $m('ViewportWireTint').value=atelierViewWireTint;
 }
 function atelierViewApplyChoice(){
  const mode=$m('ViewportMode').value,scope=$m('ViewportScope').value;
  if(!atelierViewModes.includes(mode))return;
  if(scope==='selected'){
    const p=partById(selection);
-   if(!p){status('Choose a mesh before setting a selected-only view.',true);return;}
+   if(!p){status('Choose a mesh before setting a selected-only view.',true);atelierViewportControlsRefresh();return;}
    atelierViewOverrides.set(p.id,mode);
    status('Viewport: '+mode+' on selected mesh '+p.name+'. Geometry unchanged.');
  }else{
@@ -79,14 +121,41 @@ function atelierViewApplyChoice(){
  }
  atelierViewRebuild();
 }
+function atelierViewAppearanceApply(){
+ const p=partById(selection),scope=$m('ViewportScope').value;
+ const flags={colors:$m('ViewportColors').checked,textures:$m('ViewportTextures').checked};
+ if(scope==='selected'){
+   if(!p){status('Select a mesh before changing its appearance.',true);atelierViewportControlsRefresh();return;}
+   atelierViewMaterialOverrides.set(p.id,flags);
+ }else{
+   atelierViewColors=flags.colors;atelierViewTextures=flags.textures;
+   atelierViewMaterialOverrides.clear();
+ }
+ atelierViewRebuild();
+ status('Viewport: '+(flags.colors?'colors on':'neutral color')
+   +' / '+(flags.textures?'textures on':'textures hidden')+' for '
+   +(scope==='selected'?'the selected mesh':'all meshes')
+   +'. Saved model materials unchanged.');
+}
 function atelierViewStatus(){
  const objs=modelRoot?.children.filter(x=>x.isMesh)||[];
+ const material=objs.find(x=>x.userData.atelierId===selection)?.material;
  return {
    global:atelierViewGlobal,overrides:atelierViewOverrides.size,
    shaded:objs.length-objs.filter(o=>o.material.wireframe||o.material.transparent).length,
    wireframe:objs.filter(o=>o.material.wireframe).length,
    overlay:objs.filter(o=>o.children.some(c=>c.isMesh&&c.userData.atelierHelper)).length,
    xray:objs.filter(o=>o.material.transparent).length,
+   originalColors:objs.filter(o=>atelierViewFlagsFor(partById(o.userData.atelierId)).colors).length,
+   originalTextures:objs.filter(o=>atelierViewFlagsFor(partById(o.userData.atelierId)).textures).length,
+   contrastWire:atelierViewWireContrast,wireTint:atelierViewWireTint,
+   selectedMaterial:material?{
+     color:material.color?.getHexString()||null,
+     vertexColors:!!material.vertexColors,
+     hasMap:!!material.map,
+     basic:material.isMeshBasicMaterial===true,
+     wireframe:!!material.wireframe
+   }:null,
    distance:orbit.distance,pan:atelierCameraPan.toArray(),
    yaw:orbit.yaw,pitch:orbit.pitch,activeTouchCount:atelierCameraTouches.size
  };
@@ -172,10 +241,21 @@ function atelierViewportInstall(){
  const mode=$m('ViewportMode'),scope=$m('ViewportScope');
  if(!mode||!scope)return;
  mode.addEventListener('change',atelierViewApplyChoice);
- scope.addEventListener('change',()=>{
-   const p=partById(selection);
-   mode.value=scope.value==='selected'&&p?atelierViewModeFor(p):atelierViewGlobal;
+ scope.addEventListener('change',atelierViewportControlsRefresh);
+ $m('ViewportColors').addEventListener('change',atelierViewAppearanceApply);
+ $m('ViewportTextures').addEventListener('change',atelierViewAppearanceApply);
+ $m('ViewportWireContrast').addEventListener('change',()=>{
+   atelierViewWireContrast=$m('ViewportWireContrast').checked;
+   atelierViewRebuild();
+   status(atelierViewWireContrast?'High contrast wireframe active.':'Original mesh colored wireframe active.');
  });
+ $m('ViewportWireTint').addEventListener('input',()=>{
+   const color=$m('ViewportWireTint').value;
+   if(!/^#[0-9a-fA-F]{6}$/.test(color))return;
+   atelierViewWireTint=color;
+   atelierViewRebuild();
+ });
+ atelierViewportControlsRefresh();
  for(const btn of $m('ViewportModes').querySelectorAll('[data-at-view]'))
    btn.addEventListener('click',()=>{
      const preset=btn.getAttribute('data-at-view');
