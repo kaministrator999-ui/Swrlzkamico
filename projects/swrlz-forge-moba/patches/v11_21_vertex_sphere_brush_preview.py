@@ -112,8 +112,8 @@ def apply(html):
          "  function pointerUp(e){\n    if(atelierCameraPointerUp(e))return;\n    if(atelierSculptOnPointerUp(e))return;")
     html=once(html,"renderer.domElement.addEventListener('pointercancel',()=>pressed=null);",
          "renderer.domElement.addEventListener('pointercancel',e=>{atelierCameraPointerCancel(e);if(atelierSculptDrag){atelierSculptDrag=null;renderParts();}pressed=null;});")
-    html=once(html, "for(const mesh of [...modelRoot.children]){modelRoot.remove(mesh);mesh.geometry?.dispose();mesh.material?.dispose();}",
-         "for(const mesh of [...modelRoot.children]){modelRoot.remove(mesh);for(const child of mesh.children)if(child.isMesh&&child.userData.atelierHelper)child.material?.dispose();mesh.geometry?.dispose();mesh.material?.dispose();}")
+    html=once(html, "mesh.geometry?.dispose();if(!mesh.material?.userData?.atelierHDMaterial)mesh.material?.dispose();",
+         "for(const child of mesh.children)if(child.isMesh&&child.userData.atelierHelper)child.material?.dispose();mesh.geometry?.dispose();if(!mesh.material?.userData?.atelierHDMaterial)mesh.material?.dispose();")
     html=once(html,"function onWheel(e){e.preventDefault();orbit.distance=Math.min(22,Math.max(atelierDetailTarget?.4:3.7,",
          "function onWheel(e){e.preventDefault();orbit.distance=Math.min(24,Math.max(atelierDetailTarget?.4:1.2,")
     html=once(html,"action('ZoomIn',()=>{orbit.distance=Math.max(atelierDetailTarget?.4:3.7,",
