@@ -27,6 +27,14 @@ function atelierViewModeFor(p){
 }
 function atelierViewModeApply(mesh,part){
  const mode=atelierViewModeFor(part);
+ if(mode==='wireframe'||mode==='xray'){
+   // §E shares cached high-definition source materials between meshes. A
+   // per-mesh view mode MUST clone the material, or selecting one character
+   // part silently changes every part that shares its material.
+   const original=mesh.material;
+   mesh.material=original.clone();
+   mesh.material.userData={...original.userData,atelierHDMaterial:false,atelierViewportClone:true};
+ }
  if(mode==='wireframe'){
    mesh.material.wireframe=true;
    mesh.material.side=THREE.DoubleSide;
