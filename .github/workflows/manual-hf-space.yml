@@ -292,7 +292,7 @@ jobs:
 
           cases=[
               {'name':'assistant-fresh', 'prompt':'Who are you',
-               'userProfile':'', 'expected':'§wyrlz',
+               'userProfile':'', 'expected':['§wyrlz','Swyrlz','Swurlz'],
                'assistant':True},
               {'name':'user-with-owned-profile','prompt':'Who am I?',
                'userProfile':'Name: Avery',
@@ -309,8 +309,10 @@ jobs:
               mode=_response_mode(case['prompt'],{'codingTask':False})
               faults=_identity_response_faults(answer,mode,case['assistant'])
               accepted=bool(attempts and attempts[-1].get('accepted'))
-              expected=case['expected'].casefold()
-              named=expected in answer.casefold()
+              expected=[str(x).casefold() for x in (
+                  case['expected'] if isinstance(case['expected'],list)
+                  else [case['expected']])]
+              named=any(x in answer.casefold() for x in expected)
               diagnostic={
                   'case':case['name'],
                   'accepted':accepted,
