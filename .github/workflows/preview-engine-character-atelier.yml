@@ -1,0 +1,98 @@
+name: Preview §E character atelier on Hugging Face
+on:
+  push:
+    branches: [feature/atelier-anatomical-silhouette-study]
+    paths:
+      - 'projects/swrlz-forge-moba/runtime/model_atelier_anatomical_v11_20.js'
+      - 'projects/swrlz-forge-moba/scenes/model-atelier-festival-anatomy-v11-20.swyrl.json'
+      - 'projects/swrlz-forge-moba/patches/v11_20_anatomical_head_study.py'
+      - '.github/workflows/preview-engine-character-atelier.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: forge-character-preview
+  cancel-in-progress: true
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Construct §E starter from sealed release plus isolated head patch
+        run: |
+          set -euo pipefail
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/atelier-v1119
+          python - <<'PY'
+          import hashlib,json,runpy,shutil
+          from pathlib import Path
+          src=Path('/tmp/atelier-v1119')
+          dst=Path('dist/atelier-preview')
+          shutil.copytree(src,dst,dirs_exist_ok=True)
+          patch=runpy.run_path('projects/swrlz-forge-moba/patches/v11_20_anatomical_head_study.py')['apply']
+          changed=patch((src/'index.html').read_text(encoding='utf-8'))
+          assert 'V11_20_ANATOMICAL_FACE_STUDY' in changed
+          assert '"referenceFit"' in changed
+          data=changed.encode('utf-8')
+          (dst/'index.html').write_bytes(data)
+          base=Path('projects/swrlz-forge-moba/scenes/model-atelier-festival-anatomy-v11-20.swyrl.json')
+          scene=dst/'scenes'/base.name
+          scene.parent.mkdir(parents=True,exist_ok=True)
+          shutil.copyfile(base,scene)
+          original=json.loads((src/'SOURCE.json').read_text())
+          original.update(sourceVersion='v11.20-anatomical-preview',
+             previewOnly=True,baseRelease='v11.19',finalSha256=hashlib.sha256(data).hexdigest(),
+             finalBytes=len(data),sourceBranch='feature/atelier-anatomical-silhouette-study')
+          original['patches'].append('patches/v11_20_anatomical_head_study.py')
+          original['assets']['scenes/'+base.name]=dict(
+             bytes=scene.stat().st_size,sha256=hashlib.sha256(scene.read_bytes()).hexdigest())
+          (dst/'SOURCE.json').write_text(json.dumps(original,indent=2)+'\n')
+          print('ATELIER_PREVIEW_BYTES',len(data),'SHA256',original['finalSha256'],
+             'PATCHES',len(original['patches']),'ASSETS',len(original['assets']))
+          PY
+      - name: Publish preview to subdirectory without modifying live root
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          set -euo pipefail
+          test -n "$HF_TOKEN" || { echo "::error::HF_TOKEN missing. Root version unchanged."; exit 1; }
+          python -m pip -q install "huggingface_hub>=0.34,<2"
+          python - <<'PY'
+          import os
+          from huggingface_hub import HfApi
+          api=HfApi(token=os.environ['HF_TOKEN'])
+          commit=api.upload_folder(
+             folder_path='dist/atelier-preview',
+             path_in_repo='atelier-preview',
+             repo_id='kamiloki/swrlz-forge-moba',
+             repo_type='space',
+             commit_message='Preview §E character face from GitHub '+os.environ.get('GITHUB_SHA','')[:12])
+          print('PREVIEW_UPLOAD_COMMIT',getattr(commit,'oid',None))
+          PY
+      - name: Verify new preview content is live
+        env:
+          REF_SHA: ${{ github.sha }}
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,urllib.request,time,os,re
+          url='https://kamiloki-swrlz-forge-moba.static.hf.space/atelier-preview/index.html'
+          expected=hashlib.sha256(Path('dist/atelier-preview/index.html').read_bytes()).hexdigest()
+          for attempt in range(12):
+            try:
+              with urllib.request.urlopen(url+'?build='+os.environ['REF_SHA']+'&attempt='+str(attempt),timeout=25) as f:
+                served=f.read()
+              if b'V11_20_ANATOMICAL_FACE_STUDY' in served and b'referenceFit' in served:
+                clean=re.sub(rb'(?<=<head>)<script>window\.huggingface=\{variables:\{.*?\}\};</script>',b'',served,count=1)
+                if hashlib.sha256(clean).hexdigest()==expected:
+                  print('CHARACTER_PREVIEW_PUBLISHED_AND_VERIFIED',url+'?project=model-atelier')
+                  break
+            except Exception as e:
+              print('preview retry',attempt,str(e)[:150])
+            time.sleep(5)
+          else:
+            raise SystemExit('Preview not verifiably visible; root unchanged')
+          PY
