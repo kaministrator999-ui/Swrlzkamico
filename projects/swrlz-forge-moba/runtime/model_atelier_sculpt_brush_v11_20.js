@@ -4,14 +4,33 @@
 // recorded in its part and deterministically replayed after procedural rebuild.
 const atelierSculptMaxStrokes=32;
 const atelierSculptModes=['smooth','soft'];
+const atelierSculptMaxVertexEdits=64;
+function atelierSculptVertexValid(p){
+ const edits=p.sculptVertexEdits;
+ if(edits===undefined)return true;
+ if(!Array.isArray(edits)||edits.length>atelierSculptMaxVertexEdits)return false;
+ return edits.every(e=>e&&typeof e==='object'&&!Array.isArray(e)
+   &&Object.keys(e).sort().join('|')==='delta|indices|resolution'
+   &&Array.isArray(e.indices)&&e.indices.length>0&&e.indices.length<=256
+   &&new Set(e.indices).size===e.indices.length
+   &&e.indices.every(i=>Number.isInteger(i)&&i>=0&&i<=300000)
+   &&Array.isArray(e.delta)&&e.delta.length===3&&e.delta.every(v=>Number.isFinite(v)&&Math.abs(v)<=.5)
+   &&Array.isArray(e.resolution)&&e.resolution.length===2
+   &&e.resolution.every(v=>Number.isInteger(v)&&v>=0&&v<=512));
+}
+function atelierSculptResolution(p){
+ const d=p.meshDensity;return d?[d.u,d.v]:[0,0];
+}
+
 const atelierSculptClamp=(v,low,high)=>Math.min(high,Math.max(low,v));
 function atelierSculptValid(p){
  const strokes=p.sculptBrushes;
+ if(!atelierSculptVertexValid(p))return false;
  if(strokes===undefined)return true;
  if(!Array.isArray(strokes)||strokes.length>atelierSculptMaxStrokes)return false;
  return strokes.every(s=>{
    if(!s||typeof s!=='object'||Array.isArray(s)
-     ||Object.keys(s).sort().join('|')!=='axis|center|falloff|half|pitch|radius|snap|strength|yaw')return false;
+     ||Object.keys(s).sort().join('|')!=='axis|center|falloff|half|pitch|plateau|radius|snap|strength|taper|yaw|level')return false;
    const vec=v=>Array.isArray(v)&&v.length===3&&v.every(x=>Number.isFinite(x)&&Math.abs(x)<=4);
    if(!vec(s.center)||!vec(s.axis))return false;
    const n=Math.hypot(...s.axis);
@@ -22,15 +41,23 @@ function atelierSculptValid(p){
       &&atelierSculptModes.includes(s.falloff)
       &&Number.isFinite(s.yaw)&&Math.abs(s.yaw)<=Math.PI
       &&Number.isFinite(s.pitch)&&Math.abs(s.pitch)<=Math.PI
-      &&Number.isFinite(s.snap)&&s.snap>=0&&s.snap<=.1;
+      &&Number.isFinite(s.snap)&&s.snap>=0&&s.snap<=.1
+      &&Number.isFinite(s.plateau)&&s.plateau>=0&&s.plateau<=1
+      &&Number.isFinite(s.taper)&&s.taper>=0&&s.taper<=1
+      &&typeof s.level==='boolean';
  });
 }
-function atelierSculptFalloff(normalizedDistance,mode){
+function atelierSculptFalloff(normalizedDistance,mode,plateau=0,taper=.5){
+ if(normalizedDistance<=plateau)return 1;
  if(normalizedDistance>=1)return 0;
- if(normalizedDistance<=0)return 1;
- if(mode==='soft')return (Math.exp(-4*normalizedDistance*normalizedDistance)-Math.exp(-4))/(1-Math.exp(-4));
- const t=1-normalizedDistance*normalizedDistance;
- return t*t; // compact quartic falloff; no seam/crease at outer rim
+ const x=(normalizedDistance-plateau)/(1-plateau);
+ const expo=.55+4.8*taper; // smaller -> broad fade, larger -> concentrated edge drop
+ if(mode==='soft'){
+   const k=1.5+6*taper;
+   const g=(Math.exp(-k*x*x)-Math.exp(-k))/(1-Math.exp(-k));
+   return Math.pow(Math.max(0,g),.55+2*taper);
+ }
+ return Math.pow(1-x*x,expo);
 }
 function atelierSculptApply(geometry,part){
  if(!geometry?.attributes?.position||!part?.sculptBrushes?.length)return geometry;
@@ -47,14 +74,28 @@ function atelierSculptApply(geometry,part){
      delta.set(x-origin.x,y-origin.y,z-origin.z);
      const distance=delta.length();
      if(distance>=r)continue;
-     let weight=atelierSculptFalloff(distance/r,s.falloff);
+     let weight=atelierSculptFalloff(distance/r,s.falloff,s.plateau,s.taper);
      // Rotatable HALF-sphere restricts the influenced group to the chosen
      // side of the brush. Fade through the plane instead of a hard seam.
      if(s.half)weight*=THREE.MathUtils.smoothstep(delta.dot(axis),0,r*.22);
-     let amount=weight*s.strength;
+     // Preserve topology/relief or level affected vertices toward one
+     // shared brush-aligned plane at center + signed desired depth.
+     const signed=delta.dot(axis);
+     let amount=weight*(s.level?s.strength-signed:s.strength);
      if(s.snap>0)amount=Math.round(amount/s.snap)*s.snap; // snap the MOVE, not base mesh
      move.copy(axis).multiplyScalar(amount);
      a.setXYZ(i,x+move.x,y+move.y,z+move.z);
+   }
+ }
+ // Explicit index edits are stored in native project data, not transient GPU
+ // buffers. They are resolution-bound: changing sampling never silently
+ // reassigns an edit to an unrelated face vertex.
+ for(const edit of part.sculptVertexEdits||[]){
+   const res=atelierSculptResolution(part);
+   if(edit.resolution[0]!==res[0]||edit.resolution[1]!==res[1])continue;
+   for(const i of edit.indices){
+     if(i>=a.count)continue;
+     a.setXYZ(i,a.getX(i)+edit.delta[0],a.getY(i)+edit.delta[1],a.getZ(i)+edit.delta[2]);
    }
  }
  a.needsUpdate=true;
@@ -115,6 +156,9 @@ function atelierSculptForm(){
   strength:($m('SculptBrushMode').value==='intrude'?-1:1)*amount,
   half:$m('SculptBrushHalf').checked,
   falloff:$m('SculptBrushFalloff').value,
+  plateau:Number($m('SculptBrushPlateau').value),
+  taper:Number($m('SculptBrushTaper').value),
+  level:$m('SculptBrushLevel').checked,
   yaw:Number($m('SculptBrushYaw').value)*Math.PI/180,
   pitch:Number($m('SculptBrushPitch').value)*Math.PI/180,
   snap:Number($m('SculptBrushSnap').value)
