@@ -9,6 +9,11 @@ permissions:
 jobs:
   native-editor:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    name: native-editor (${{ matrix.mode }})
+    strategy:
+      fail-fast: false
+      matrix:
+        mode: [desktop, mobile]
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
@@ -37,14 +42,16 @@ jobs:
       - name: Install native browser
         run: |
           npm install --no-save playwright@1.56.1
-          npx playwright install --with-deps chromium
+          npx playwright install --with-deps --only-shell chromium
       - name: Verify hosted desktop and phone controls, exports and save/load
         env:
           SWYRL_ANIME_TEST_URL: https://kamiloki-swrlz-forge-moba.static.hf.space
+          SWYRL_ANIME_TEST_MODE: ${{ matrix.mode }}
         run: node projects/swrlz-forge-moba/tests/model_reference_playwright.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: live-character-editor-evidence
+          name: live-character-editor-${{ matrix.mode }}-evidence
           path: model-reference-acceptance/
+          compression-level: 1
           retention-days: 5

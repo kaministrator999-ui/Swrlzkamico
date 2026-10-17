@@ -123,6 +123,7 @@ def main():
     media_paths.append("scenes/model-atelier-festival-refined-v11-14.swyrl.json")
     media_paths.append("scenes/model-atelier-festival-surface-v11-15.swyrl.json")
     media_paths.append("scenes/model-atelier-festival-detail-v11-16.swyrl.json")
+    media_paths.append("scenes/model-atelier-festival-hd-v11-17.swyrl.json")
     media_paths.extend(p.relative_to(ROOT).as_posix() for p in sorted((ROOT / "assets/anime").glob("*.png")))
     for rel in media_paths:
         source = ROOT / rel

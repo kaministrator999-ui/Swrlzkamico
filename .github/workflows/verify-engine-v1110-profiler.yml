@@ -6,6 +6,9 @@ on:
   pull_request:
     paths:
       - 'projects/swrlz-forge-moba/**'
+concurrency:
+  group: engine-ci-verify-engine-v1110-profiler-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 jobs:
   profile:
     runs-on: ubuntu-latest

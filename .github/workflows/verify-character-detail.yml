@@ -1,20 +1,18 @@
-name: Verify §E native character detail
+name: Verify §E HD character sculpt
 on:
   pull_request:
     paths:
       - 'projects/swrlz-forge-moba/**'
       - '.github/workflows/verify-character-detail.yml'
-  push:
-    branches: [feature/character-detail-budget]
-    paths:
-      - 'projects/swrlz-forge-moba/**'
-      - '.github/workflows/verify-character-detail.yml'
 permissions:
   contents: read
+concurrency:
+  group: engine-ci-verify-character-detail-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 jobs:
   author:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -29,17 +27,20 @@ jobs:
           python projects/swrlz-forge-moba/tests/model_reference_package.py --package /tmp/character-detail
       - name: Install native browser
         run: |
-          npm install --no-save playwright@1.56.1
-          npx playwright install --with-deps chromium
-      - name: Operate detail controls and export the native model
+          npm install --no-save playwright@1.56.1 three@0.169.0
+          npx playwright install --with-deps --only-shell chromium
+      - name: Verify real HD geometry
+        run: node projects/swrlz-forge-moba/tests/model_hd_geometry_cpu.mjs
+      - name: Operate HD sculpt controls and export the native model
         run: |
           python -m http.server 8781 --directory /tmp/character-detail >/tmp/detail-http.log 2>&1 &
           SWYRL_DETAIL_SERVER_PID=$!
           trap 'kill "$SWYRL_DETAIL_SERVER_PID" 2>/dev/null || true' EXIT
-          node projects/swrlz-forge-moba/authoring/festival_detail_authoring_v11_16.mjs
+          node projects/swrlz-forge-moba/authoring/festival_hd_authoring_v11_17.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: native-character-detail-evidence
-          path: character-detail-evidence/
+          name: native-hd-character-evidence
+          path: hd-character-evidence/
+          compression-level: 1
           retention-days: 5

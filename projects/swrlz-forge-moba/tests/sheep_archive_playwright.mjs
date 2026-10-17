@@ -80,7 +80,7 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
   await page.goto(base+'/index.html?'+query,{waitUntil:'domcontentloaded',timeout:60000});
   await page.waitForFunction(()=>window.SWYRL_ENGINE_SHEEP_TAG_CREATOR&&window.SWYRL_ENGINE_SHEEP_TAG?.viewStatus&&window.SWYRL_ENGINE_AGENT.project().canonicalId==='sheep-tag-meadow',undefined,{timeout:60000});
   await page.locator('#perfPreset').selectOption('medium',{force:true});await page.evaluate(()=>window.__archiveClock.freeze());await frames(page,2);
-  const canonical=await saved(page);assert.equal(await page.evaluate(()=>window.SWRLZ_FORGE_BUILD?.version),'v11.16');
+  const canonical=await saved(page);assert.equal(await page.evaluate(()=>window.SWRLZ_FORGE_BUILD?.version),'v11.17');
   assert.equal(canonical.scene.actors.filter(a=>a.type==='st-sheep').length,8);assert.equal(canonical.scene.actors.filter(a=>a.type==='st-wolf').length,3);
   assert.equal(canonical.scene.actors.length,92,'Wrong native Archive map package');assert.equal(canonical.editor.layers.length,6,'Archive starter needs its six native map layers');
   assert.equal(canonical.project.sheepTag.preset,'archive');assert.equal(canonical.project.sheepTag.events,false,'Default starter forces experimental events');
@@ -421,5 +421,5 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
   receipts.push({mode:mode.name,mapActors:canonical.scene.actors.length,layers:canonical.editor.layers.length,cases,controls,pass:true});
   console.log('SHEEP_ARCHIVE_'+mode.name.toUpperCase()+'_ALL_'+cases.length+'_CASES_PASS');await context.close();
 }
-await writeFile(resolve(output,'receipt.json'),JSON.stringify({pass:true,viewports:receipts},null,2));console.log('SHEEP_ARCHIVE_ALL_VIEWPORTS_PASSED');
+await writeFile(resolve(output,'receipt.json'),JSON.stringify({pass:true,viewports:receipts},null,2));console.log(modes.length===2?'SHEEP_ARCHIVE_ALL_VIEWPORTS_PASSED':'SHEEP_ARCHIVE_SELECTED_VIEWPORT_PASSED');
 }finally{await browser.close();}

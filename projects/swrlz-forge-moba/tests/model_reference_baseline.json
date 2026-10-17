@@ -153,6 +153,10 @@
     "scenes/model-atelier-festival-surface-v11-15.swyrl.json": {
       "sha256": "d7c02620375e41dcafa8a0cfc422db652d97336ed8917b9316fd26d0a1400d8a",
       "bytes": 261385
+    },
+    "scenes/model-atelier-festival-detail-v11-16.swyrl.json": {
+      "sha256": "1d58a7ad8bfa48d6b94887974536fa5ccd071a59dc770142de26113d2c9cedae",
+      "bytes": 275534
     }
   },
   "sources": {
@@ -326,6 +330,8 @@
     "patches/v11_14_reference_refinement.py": "a3f3b230b9057d8c4598d5eee3d0b9584f00484c9ccfded851a6f46023be5691",
     "runtime/model_atelier_refinement_v11_14.js": "6075a4ca44f411b1119e8ea6b29ee62bb0b28848a310dc0c42ba2647b1c9229b",
     "patches/v11_15_native_surface_study.py": "87bf3f0824f6f7c333888188e97222a97c0f81a502c9fb6f48f1d2b2b6daf3cf",
-    "runtime/model_atelier_surface_v11_15.js": "30ea0f0cc54e91360354ba4ec1f06edde1e97fb7ba9dbdb70f896c02d6db40dc"
+    "runtime/model_atelier_surface_v11_15.js": "30ea0f0cc54e91360354ba4ec1f06edde1e97fb7ba9dbdb70f896c02d6db40dc",
+    "patches/v11_16_character_detail_budget.py": "011a9885dbbc4aa64403ca0cc7e6991704068cec46df2094dcfadf9efa5fc710",
+    "runtime/model_atelier_density_v11_16.js": "9a4e6f9e28d85ab5d4bac06be2cdad6f14010fa280eadb6e6d0fed10d84a4e74"
   }
 }
