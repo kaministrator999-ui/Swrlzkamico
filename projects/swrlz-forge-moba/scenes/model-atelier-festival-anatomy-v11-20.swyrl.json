@@ -17,12 +17,12 @@
     },
     "modelAtelier": {
       "schema": "swyrl-model-atelier-v1",
-      "name": "Festival reference · native anatomical face study",
+      "name": "Festival reference · multi-view fitted face and neck",
       "reference": "Original native geometric interpretation of owner-provided front/back/side reference; no extracted asset.",
       "parts": [
         {
           "id": "model-0001",
-          "name": "Sculpted portrait · anatomical face preservation",
+          "name": "Reference-fitted portrait · front silhouette and side depth",
           "kind": "sphere",
           "position": [
             0,
@@ -70,11 +70,110 @@
             "nose": 0.8,
             "chin": 0.55,
             "temple": 0.5
+          },
+          "referenceFit": {
+            "strength": 0.88,
+            "front": [
+              [
+                -1,
+                0.06
+              ],
+              [
+                -0.9,
+                0.28
+              ],
+              [
+                -0.78,
+                0.44
+              ],
+              [
+                -0.64,
+                0.56
+              ],
+              [
+                -0.48,
+                0.67
+              ],
+              [
+                -0.28,
+                0.8
+              ],
+              [
+                -0.08,
+                0.94
+              ],
+              [
+                0.16,
+                0.98
+              ],
+              [
+                0.4,
+                0.91
+              ],
+              [
+                0.65,
+                0.76
+              ],
+              [
+                0.84,
+                0.55
+              ],
+              [
+                1,
+                0.05
+              ]
+            ],
+            "profile": [
+              [
+                -1,
+                0.3
+              ],
+              [
+                -0.84,
+                0.64
+              ],
+              [
+                -0.62,
+                0.83
+              ],
+              [
+                -0.43,
+                0.93
+              ],
+              [
+                -0.32,
+                1.15
+              ],
+              [
+                -0.23,
+                1.12
+              ],
+              [
+                -0.08,
+                1.025
+              ],
+              [
+                0.14,
+                0.995
+              ],
+              [
+                0.36,
+                0.93
+              ],
+              [
+                0.67,
+                0.77
+              ],
+              [
+                1,
+                0.15
+              ]
+            ]
           }
         },
         {
           "id": "model-0002",
-          "name": "Neck and clavicle transition",
+          "name": "Tapered neck · fitted jaw to clavicle transition",
           "kind": "loft",
           "position": [
             0,
@@ -98,36 +197,48 @@
           "path": [
             [
               0,
-              3.77,
-              0.025
+              3.765,
+              0.048
             ],
             [
               0,
-              3.6,
+              3.705,
+              0.044
+            ],
+            [
+              0,
+              3.62,
+              0.029
+            ],
+            [
+              0,
+              3.54,
               0.01
             ],
             [
               0,
-              3.5,
+              3.465,
               0
             ],
             [
               0,
-              3.43,
-              0
+              3.405,
+              0.007
             ],
             [
               0,
               3.38,
-              0
+              0.013
             ]
           ],
           "radii": [
-            0.105,
-            0.112,
-            0.158,
-            0.25,
-            0.28
+            0.102,
+            0.108,
+            0.119,
+            0.148,
+            0.196,
+            0.256,
+            0.286
           ],
           "segments": 36,
           "radialSegments": 16,
@@ -843,9 +954,9 @@
           "name": "left sculpted helix and concha",
           "kind": "sphere",
           "position": [
-            -0.294,
-            3.999,
-            0.019
+            -0.287,
+            4.002,
+            0.027
           ],
           "scale": [
             0.048,
@@ -1536,9 +1647,9 @@
           "name": "right sculpted helix and concha",
           "kind": "sphere",
           "position": [
-            0.294,
-            3.999,
-            0.019
+            0.287,
+            4.002,
+            0.027
           ],
           "scale": [
             0.048,
@@ -19870,7 +19981,7 @@
         "time": 4,
         "autoplay": false
       },
-      "artDirection": "Sculpted almond eyes; split swept hair; ivory, coral, turquoise asymmetric pointed dress; bare legs and white socks; two separate layered-paper ferrets gripping dyed pigtails; independent tissue bunny. Refined relaxed A-stance, sculptural hair ribbons, readable long-muzzled ferrets, irregular layered paper and stitched cloth. Sculpt-preserving anatomical candidate: v11.19 cranial vault, cheek and nose planes are retained; subtle saved morph deltas refine jaw, orbital contour, nose projection and sculpted non-oval ear helix/concha. Preserve independent paper creatures, costume and all historical native scenes.",
+      "artDirection": "Sculpted almond eyes; split swept hair; ivory, coral, turquoise asymmetric pointed dress; bare legs and white socks; two separate layered-paper ferrets gripping dyed pigtails; independent tissue bunny. Refined relaxed A-stance, sculptural hair ribbons, readable long-muzzled ferrets, irregular layered paper and stitched cloth. Sculpt-preserving anatomical candidate: v11.19 cranial vault, cheek and nose planes are retained; subtle saved morph deltas refine jaw, orbital contour, nose projection and sculpted non-oval ear helix/concha. Preserve independent paper creatures, costume and all historical native scenes. Owner-supplied cyan/coral front, profile and three-quarter reference constrains the visible cheek/jaw outline and nose projection via saved normalized front/profile pairs. Measured positions are hand-estimated, not a depth scan. The distinct orange-haired game portrait informs eyelid shading only. The original 283-mesh character remains editable.",
       "editedAt": "candidate-v11.20-anatomical-study",
       "poseFrames": [],
       "poseNeutral": null
