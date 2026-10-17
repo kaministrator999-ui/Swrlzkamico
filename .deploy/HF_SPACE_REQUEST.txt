@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=4e9dee6faa5efdf76e6b5e0068e33faa4caf7536
-REQUEST_NONCE=2026-10-17-v276-export74-provider-source-is-not-code-001
+SOURCE_REF=f58c4f4f331c228a2543c6cbeb95b6bafbdd57b8
+REQUEST_NONCE=2026-10-17-v277-export75-verified-file-grounding-001
