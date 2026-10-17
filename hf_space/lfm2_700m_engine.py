@@ -308,6 +308,16 @@ def _thread_user_name(history,user_profile):
 
 def _direct_identity_answer(prompt,user_profile,history=None):
     p=str(prompt or "").strip().lower()
+    # Owner export (77): the bare USER identity question must not fall through
+    # to a small model's first-person assistant identity completion when no
+    # verified user name is present. Broader reflective questions still
+    # belong to conversation rather than a canned identity handler.
+    if re.fullmatch(r"(?:who am i|what(?:'s| is) my name)[?.!\\s]*",p):
+        name=_thread_user_name(history or [],user_profile)
+        if name:
+            return f"You're {name}."
+        return ("You're the person I'm talking with, not §wyrlz. "
+                "I don't have a verified name for you in this chat yet.")
     if any(x in p for x in ("my name","who am i","do you know me","do you know my name")):
         name=_thread_user_name(history or [],user_profile)
         if name:
