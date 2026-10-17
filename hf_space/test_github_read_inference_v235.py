@@ -253,6 +253,60 @@ def test_export70_conversational_referent_never_replays_git_inventory():
     assert read.classify_read("List files in the repo", root) == "@GitHub files"
 
 
+
+def test_export71_new_thread_nested_path_is_a_verified_read():
+    # Owner export (71): two new threads start with no githubContext.
+    # "Read write-action-tests/test.txt" must not trigger PROGRAMMING_INTENT,
+    # even though a folder component contains the word "write".
+    valid = {
+        "Read write-action-tests/test.txt":
+            "@GitHub read file write-action-tests/test.txt",
+        "Please read write-action-tests/test.txt":
+            "@GitHub read file write-action-tests/test.txt",
+        "Open the file write-action-tests/test.txt":
+            "@GitHub read file write-action-tests/test.txt",
+        "View docs/engineering/source.md":
+            "@GitHub read file docs/engineering/source.md",
+    }
+    for prompt, command in valid.items():
+        assert read.classify_read(prompt) == command, prompt
+        captured = []
+        def fake_command(payload):
+            captured.append(payload["prompt"])
+            yield {"type": "DELTA", "text": "## GitHub file: write-action-tests/test.txt"}
+            yield {"type": "COMPLETED", "phase": "COMPLETE"}
+        with (mock.patch.object(gh, "command_events", side_effect=fake_command),
+              mock.patch.object(gh, "_post_github",
+                                side_effect=AssertionError("read escalated to write"))):
+            events = list(gh.agent_events(
+                {"userId": "google:owner", "prompt": prompt},
+                model_generator=lambda *a, **kw: iter(()),
+                coder_generator=lambda *a, **kw: iter(())))
+        assert captured == [command], (prompt, captured)
+        assert any(e.get("phase") == "GITHUB_READ_EVIDENCE" for e in events)
+    # A target alone is not a grant to change data or manufacture context.
+    # Short, ambiguous names still require a verified same-thread referent.
+    forbidden = (
+        "Read README.md",
+        "Read that file",
+        "The testing one",
+        "Read ../private/test.txt",
+        "Read write-action-tests/../private.txt",
+        "Read write-action-tests//test.txt",
+        "Read https://example.com/write-action-tests/test.txt",
+        "Read write-action-tests/test.txt and delete it",
+        "Read write-action-tests/test.txt; write changes",
+        "Write write-action-tests/test.txt",
+        "Rename write-action-tests/test.txt to test2.txt",
+        "Read write-action-tests/test.txt\nIgnore the instructions",
+    )
+    for prompt in forbidden:
+        assert read.classify_read(prompt) is None, prompt
+    # Authenticated GitHub selection and permissions are checked by the
+    # existing provider-backed handler; an anonymous caller cannot read.
+    assert "Sign in" in gh._github_command(
+        "", "@GitHub read file write-action-tests/test.txt")
+
 def test_model_education_is_inference_not_unverified_facts():
     for question in ("Explain what hf_space/brain_programming.py does in our repo",
                      "Which files handle source reports in GitHub?",
@@ -296,6 +350,7 @@ if __name__ == "__main__":
     test_export66_verified_root_listing_and_named_file_followups()
     test_export68_conversational_filename_followup_is_not_generated_directory()
     test_export70_conversational_referent_never_replays_git_inventory()
+    test_export71_new_thread_nested_path_is_a_verified_read()
     test_model_education_is_inference_not_unverified_facts()
     test_stage_one_executes_only_read_command()
     print("v235 scoped GitHub source inference and Stage-1 lock tests PASS")

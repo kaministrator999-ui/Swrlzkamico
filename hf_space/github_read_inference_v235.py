@@ -34,6 +34,15 @@ _EXPLICIT_COMMAND = re.compile(
     r"history|search|compare|project status|chat status|permissions|"
     r"capabilities|help)(?:\s|$)", re.I)
 
+_DIRECT_PATH_READ = re.compile(
+    # Exact, explicit, multi-component file reads can use the signed-in
+    # account's selected repo even in a new thread. The authorized GitHub
+    # command handler re-verifies access and the path before returning data.
+    r"^(?:please\s+)?(?:read|open|view)\s+(?:the\s+)?(?:file\s+)?"
+    r"((?:[A-Za-z0-9_§.+-]+/){1,6}[A-Za-z0-9_§.+-]+\."
+    r"(?:py|js|mjs|ts|tsx|jsx|html|css|json|md|txt|yaml|yml|toml|"
+    r"kt|java|go|rs|sh|xml|sql))[?.!\s]*$", re.I)
+
 
 def _safe(path):
     path = str(path or "").strip().strip("`\"'").rstrip(".,!?").strip("/")
@@ -80,6 +89,15 @@ def classify_read(prompt, context=None):
         return None  # General GitHub education is not a connected-repository read.
     if _EXPLICIT_COMMAND.match(raw):
         return None  # existing command owners handle their own parameters
+    # Match the entire read-only command BEFORE verb scans. Folder segments
+    # such as "write-action-tests" are path data, not instructions to write.
+    # No thread context is synthesized: the connected account's repository
+    # and current Git revision are resolved inside the existing Stage-1 gate.
+    direct = _DIRECT_PATH_READ.fullmatch(raw)
+    if direct:
+        path = _safe(direct[1])
+        if path:
+            return "@GitHub read file " + path
     if _MUTATION.search(raw) or re.search(r"\bcommit\s+(?:my\s+|the\s+|these\s+)?(?:changes?|code|files?)\b", raw, re.I):
         return None
     if re.search(r"\b(?:remember|recall|previous chat|chat history|"
