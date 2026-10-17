@@ -4,6 +4,8 @@ on:
     branches: [feature/atelier-anatomical-silhouette-study]
     paths:
       - 'projects/swrlz-forge-moba/runtime/model_atelier_anatomical_v11_20.js'
+      - 'projects/swrlz-forge-moba/runtime/model_atelier_sculpt_brush_v11_20.js'
+      - 'projects/swrlz-forge-moba/tests/model_sculpt_brush_cpu.mjs'
       - 'projects/swrlz-forge-moba/patches/v11_20_anatomical_head_study.py'
       - 'projects/swrlz-forge-moba/scenes/model-atelier-festival-anatomy-v11-20.swyrl.json'
       - 'projects/swrlz-forge-moba/tests/model_anatomical_study_*'
@@ -44,6 +46,8 @@ jobs:
           assert 'V11_20_ANATOMICAL_FACE_STUDY' in patched
           assert 'atelierAnatomicalHead' in patched and 'atelierAnatomicalEar' in patched
           assert 'modelAtelierAnatomyHeadApply' in patched
+          assert 'modelAtelierSculptBrushVertexToggle' in patched
+          assert 'atelierSculptApply' in patched
           output.write_text(patched,encoding='utf-8')
           script=patched.split('<script type="module">',1)[1].rsplit('</script>',1)[0]
           Path('/tmp/anatomical-study-source.mjs').write_text(script,encoding='utf-8')
@@ -57,7 +61,9 @@ jobs:
           npm install --no-save playwright@1.56.1 three@0.169.0
           npx playwright install --with-deps --only-shell chromium
       - name: Verify genuine geometry, bounds and preserved historical scenes
-        run: node projects/swrlz-forge-moba/tests/model_anatomical_study_cpu.mjs
+        run: |
+          node projects/swrlz-forge-moba/tests/model_anatomical_study_cpu.mjs
+          node projects/swrlz-forge-moba/tests/model_sculpt_brush_cpu.mjs
       - name: Test live native editor, Undo, JSON save and phone/desktop views
         run: |
           python -m http.server 8787 --directory /tmp/anatomical-study >/tmp/anatomical-study-http.log 2>&1 &
