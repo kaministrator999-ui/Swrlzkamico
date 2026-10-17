@@ -1,6 +1,6 @@
 ID=server-runtime
-VERSION=2.3.424
-REVISION=2.3.424-hf-v273-fresh-thread-direct-path-read
+VERSION=2.3.425
+REVISION=2.3.425-hf-v274-conversational-file-feedback
 KIND=server-runtime
 SOURCE_BRANCH=runtime
 STATUS=active
