@@ -20,6 +20,7 @@ def apply(html):
     html=once(html,'renderer.render(world,camera);raf=requestAnimationFrame(loop);', 'if(!atelierHDEnabled||atelierHDDirty||atelierAssemblyPlaying){renderer.render(world,camera);atelierHDDirty=false;}raf=requestAnimationFrame(loop);')
     html=once(html,'    camera.lookAt(target);\n  }\n  function point','    camera.lookAt(target);atelierHDDirty=true;\n  }\n  function point')
     html=once(html,'camera.aspect=w/h;camera.updateProjectionMatrix();','camera.aspect=w/h;camera.updateProjectionMatrix();atelierHDDirty=true;')
+    html=once(html,'Math.min(.08,Math.max(0,(now-atelierAssemblyLast)/1000))','atelierHDFrameDelta(now,atelierAssemblyLast)')
     html=once(html,'function atelierApplyAssemblyTime(time){','function atelierApplyAssemblyTime(time){\n  atelierHDDirty=true;')
     html=once(html,'function atelierDensityRefresh(){','function atelierDensityRefresh(){\n atelierHDDirty=true;')
     html=once(html,'  function checkPart(p){', '''  function checkPart(p){

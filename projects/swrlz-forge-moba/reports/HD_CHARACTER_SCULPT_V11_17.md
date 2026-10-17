@@ -1,3 +1,5 @@
+HD motion clock correction: dense frames now advance by actual elapsed seconds, preserving pause/resume and the six-second end time. The earlier 80 ms-per-frame clamp stretched playback on software rendering and failed the animation completion gate; the HD clock now has a deterministic long-frame regression check as well as the unchanged native playback test. Historical unannotated scenes keep their existing clock behavior.
+
 # HD character sculpt · v11.17
 
 The owner asked to push quality without a mobile triangle ceiling against the supplied cyan/coral festival turnaround. This pass concentrates detail in the face, hair, clothing, footwear and paper construction, while preserving native editability and independent creatures.
@@ -20,6 +22,6 @@ A new CPU test builds all fourteen native surface styles with the actual Three.j
 
 Final native buffers: 1,619,108 total triangles; heroine 1,335,220; continuous head 48,768; 283 editable meshes. Sampling describes generated vertices and triangles, not welded production retopology or actual GPU draw calls. The full HD preset is restored through a native control and saved; optional lighter previews are manual authoring presets rather than automatic distance LOD.
 
-Sealed HTML: **2,528,155 bytes**, SHA-256 `ff1606c24ea56cdefa13ca8002dd877257f8ca307ea722b82566182fbad8fde7`. The source manifest is the exact HTML byte/hash authority. Publication follows successful independent CI, a validated merge and the dedicated `DEPLOY_REQUEST.json` as the final repository mutation. The deploy run must reach terminal success, followed by the independent exact hosted source/all-asset audit and native hosted desktop/phone checks. This source report does not pre-assert those results.
+Sealed HTML: **2,528,361 bytes**, SHA-256 `73dfc13823a7d7b3668f6eb0ae973c4e5c6ebe64fcbbe7c24011ac288f8e36af`. The source manifest is the exact HTML byte/hash authority. Publication follows successful independent CI, a validated merge and the dedicated `DEPLOY_REQUEST.json` as the final repository mutation. The deploy run must reach terminal success, followed by the independent exact hosted source/all-asset audit and native hosted desktop/phone checks. This source report does not pre-assert those results.
 
 Art review shows more continuous facial shading, readable iris fibers, a restrained fringe palette, physical cloth and leather highlights, relief garment decoration, and dense three-dimensional paper layering in multiple views. The supplied reference still has more authored face expression, hand anatomy, hair-tip breakup and painted surface nuance. Human visual acceptance, UV texture painting, production retopology and skeletal skin weights remain separate work. Physical-device frame rates have not been measured.

@@ -21,3 +21,10 @@ const shoe=geometry('shoe-left','leather');shoe.computeBoundingBox();assert.ok(M
 const paper=geometry('azure-body','paper');assert.ok(paper.index.count/3>25000,'Paper finish must contain the core and genuinely subdivided creased leaves');
 assert.equal(context.atelierHDGeometry({...canonical.parts[0],hdFinish:undefined}),null);
 console.log('HD_GEOMETRY_FINITE_FACES_STRAND_NORMALS_RELIEF_IRIS_AND_PAPER_PASS');
+
+assert.equal(context.atelierHDFrameDelta(1500,1000),.08,'Historical scenes retain their original bounded step');
+vm.runInContext('atelierHDEnabled=true',context);
+assert.equal(context.atelierHDFrameDelta(1500,1000),.5,'HD playback must advance by actual elapsed seconds');
+assert.equal(context.atelierHDFrameDelta(500,1000),0);
+let elapsed=0;for(let i=1;i<=12;i++)elapsed+=context.atelierHDFrameDelta(i*500,(i-1)*500);assert.equal(elapsed,6,'Slow rendered frames must still complete a six-second transformation');
+console.log('HD_REAL_TIME_CLOCK_AFTER_LONG_FRAMES_PASS');

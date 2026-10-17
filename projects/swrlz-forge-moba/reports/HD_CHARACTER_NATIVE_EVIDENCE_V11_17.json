@@ -7653,7 +7653,7 @@
   ],
   "nativeOperations": 177,
   "finalSceneSha256": "c410bae9623440baa99f9a4bbb6a57e61c32b240a44d2544b9dfee85ef1a11e8",
-  "sourceSha256": "ff1606c24ea56cdefa13ca8002dd877257f8ca307ea722b82566182fbad8fde7",
+  "sourceSha256": "73dfc13823a7d7b3668f6eb0ae973c4e5c6ebe64fcbbe7c24011ac288f8e36af",
   "ciRecipe": "authoring/festival_hd_authoring_v11_17.mjs",
   "visualAcceptance": "Owner review remains separate from native and compatibility validation."
 }

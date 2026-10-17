@@ -3,6 +3,8 @@ const atelierHDStyles={portrait:['sphere'],eye:['sphere'],iris:['sphere'],ear:['
 const atelierHDSampling={portrait:[192,128],iris:[192,64],hair:[128,64],cloth:[96,40],paper:[64,32],sock:[96,64],lip:[64,24],eye:[96,64],ear:[64,48],wrap:[128,96],leather:[96,64],bow:[64,48],skin:[64,32],leaf:[24,8]};
 let atelierHDDirty=true,atelierHDEnabled=false;
 const atelierHDMaterials=new Map();
+// Advance HD motion in seconds even when a dense frame takes longer than 80 ms.
+function atelierHDFrameDelta(now,last){const elapsed=Math.max(0,(now-last)/1000);return atelierHDEnabled?elapsed:Math.min(.08,elapsed);}
 function atelierHDRestoreSampling(){for(const p of model()?.parts||[]){if(['paper-plume','paper-leaf','fabric-panel'].includes(p.surfaceStyle))continue;const s=atelierHDSampling[p.hdFinish?.style];if(s)p.meshDensity={u:s[0],v:s[1]};else if(p.group==='Character'){const d=atelierDensityPreset(p,true);if(d)p.meshDensity=d;}}}
 function atelierHDColorGeometry(g,colors){g.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));g.computeVertexNormals();g.computeBoundingSphere();return g;}
 function atelierHDMesh(positions,colors,indices,uv){const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));if(indices)g.setIndex(indices);if(uv)g.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));return atelierHDColorGeometry(g,colors);}
