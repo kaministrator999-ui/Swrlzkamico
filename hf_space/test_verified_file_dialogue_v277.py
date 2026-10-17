@@ -1,5 +1,8 @@
 """Mock-only regression of owner export 75, preserving earlier source routes."""
 from unittest import mock
+import sys
+sys.modules.setdefault('huggingface_hub',mock.MagicMock())
+sys.modules.setdefault('llama_cpp',mock.MagicMock())
 from verified_file_dialogue_v277 import (
     verified_file_dialogue, grounding_instruction, unsupported_test_inventory,
     conservative_grounded_reply,
