@@ -295,25 +295,25 @@ def _identity_response_faults(text, response_mode, require_canonical=False):
     Does not answer the question, save identity, judge jokes or infer nicknames.
     """
     response=str(text or "").strip()
-    normalized=re.sub(r"\\s+"," ",response).casefold()
+    normalized=re.sub(r"\s+"," ",response).casefold()
     faults=[]
     if not response:
         return ["empty-identity-answer"]
     if len(response.split())>75 or len(response)>650:
         faults.append("identity-answer-oversized")
-    if re.search(r"(?im)^\\s*(?:#{1,5}\\s+|\\*\\*(?:core identity|operational modality|primary affiliation|sectionwalker|identity):)",response):
+    if re.search(r"(?im)^\s*(?:#{1,5}\s+|\*\*(?:core identity|operational modality|primary affiliation|sectionwalker|identity):)",response):
         faults.append("profile-heading-echo")
-    if re.search(r"\\bhow can i (?:help|assist) you\\b",normalized):
+    if re.search(r"\bhow can i (?:help|assist) you\b",normalized):
         faults.append("generic-customer-service-ending")
     if str(response_mode).startswith("RESPONSE MODE: ASSISTANT-IDENTITY-DIRECT"):
-        if re.match(r"^(?:\\*\\*)?(?:you|your)\\b",normalized):
+        if re.match(r"^(?:\*\*)?(?:you|your)\b",normalized):
             faults.append("assistant-described-in-second-person")
-        if re.search(r"\\byou(?:'re| are) (?:an? )?(?:conversational )?(?:ai|artificial intelligence|language model)",normalized):
+        if re.search(r"\byou(?:'re| are) (?:an? )?(?:conversational )?(?:ai|artificial intelligence|language model)",normalized):
             faults.append("assistant-user-role-inversion")
         if require_canonical and not re.search(r"(?:§wyrlz|swyrlz|swurlz)",normalized):
             faults.append("canonical-assistant-name-missing")
     elif str(response_mode).startswith("RESPONSE MODE: USER-IDENTITY-DIRECT"):
-        if re.match(r"^(?:\\*\\*)?(?:i'm|i am|my name is) (?:an? )?(?:ai|assistant|language model)",normalized):
+        if re.match(r"^(?:\*\*)?(?:i'm|i am|my name is) (?:an? )?(?:ai|assistant|language model)",normalized):
             faults.append("user-described-as-assistant")
     return list(dict.fromkeys(faults))
 
@@ -1142,7 +1142,7 @@ def generate_events(payload):
             canonical_required=(
                 mode.startswith("RESPONSE MODE: ASSISTANT-IDENTITY-DIRECT")
                 and not history and not custom_assistant_profile
-                and not re.search(r"(?:assistant|companion)\\s+(?:nickname|alias|preferred name)",user_profile,re.I)
+                and not re.search(r"(?:assistant|companion)\s+(?:nickname|alias|preferred name)",user_profile,re.I)
             )
             candidate_text,timing=buffered_chat_completion(model,messages,response_tokens,temperature)
             faults=_identity_response_faults(candidate_text,mode,canonical_required)
