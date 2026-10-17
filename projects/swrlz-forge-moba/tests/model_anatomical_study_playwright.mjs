@@ -43,7 +43,7 @@ try{
   await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.view('three-quarter'));
   await page.screenshot({path:'anatomical-study-evidence/'+name+'-three-quarter.png'});
   const downloaded=page.waitForEvent('download');
-  await page.locator('#modelAtelierSaveJSON').click();
+  await page.locator('#modelAtelierExport').click();
   const download=await downloaded,file=await download.path();
   const saved=JSON.parse(await readFile(file,'utf8'));
   assert.equal(saved.project.modelAtelier.parts.find(p=>p.id==='model-0001').anatomyStudy.jaw,.74);
