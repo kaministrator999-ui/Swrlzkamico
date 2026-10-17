@@ -74,20 +74,6 @@ def apply(html):
          "atelierCameraPan.set(0,0,0);atelierDetailTarget=box.getCenter(new THREE.Vector3());")
     html=once(html, "action('ResetCamera',()=>{atelierDetailTarget=null;orbit=",
          "action('ResetCamera',()=>{atelierDetailTarget=null;atelierCameraPan.set(0,0,0);orbit=")
-    html=once(html, "  function pointerDown(e){if(atelierSculptOnPointerDown(e))return;",
-         "  function pointerDown(e){if(atelierCameraPointerDown(e))return;if(atelierSculptOnPointerDown(e))return;")
-    html=once(html, "  function pointerMove(e){\n    if(atelierSculptOnPointerMove(e))return;",
-         "  function pointerMove(e){\n    if(atelierCameraPointerMove(e))return;\n    if(atelierSculptOnPointerMove(e))return;")
-    html=once(html, "  function pointerUp(e){\n    if(atelierSculptOnPointerUp(e))return;",
-         "  function pointerUp(e){\n    if(atelierCameraPointerUp(e))return;\n    if(atelierSculptOnPointerUp(e))return;")
-    html=once(html,"renderer.domElement.addEventListener('pointercancel',()=>pressed=null);",
-         "renderer.domElement.addEventListener('pointercancel',e=>{atelierCameraPointerCancel(e);if(atelierSculptDrag){atelierSculptDrag=null;renderParts();}pressed=null;});")
-    html=once(html, "for(const mesh of [...modelRoot.children]){modelRoot.remove(mesh);mesh.geometry?.dispose();mesh.material?.dispose();}",
-         "for(const mesh of [...modelRoot.children]){modelRoot.remove(mesh);for(const child of mesh.children)if(child.isMesh&&child.userData.atelierHelper)child.material?.dispose();mesh.geometry?.dispose();mesh.material?.dispose();}")
-    html=once(html,"function onWheel(e){e.preventDefault();orbit.distance=Math.min(22,Math.max(atelierDetailTarget?.4:3.7,",
-         "function onWheel(e){e.preventDefault();orbit.distance=Math.min(24,Math.max(atelierDetailTarget?.4:1.2,")
-    html=once(html,"action('ZoomIn',()=>{orbit.distance=Math.max(atelierDetailTarget?.4:3.7,",
-         "action('ZoomIn',()=>{orbit.distance=Math.max(atelierDetailTarget?.4:1.2,")
     nav = ('<div id="modelAtelierViewportModes" class="atelier-viewbar" role="toolbar" aria-label="3D viewport display and camera controls">'
            '<label>Render mode<select id="modelAtelierViewportMode" aria-label="Mesh display mode">'
            '<option value="shaded">Shaded</option><option value="overlay">Shaded + wireframe</option>'
@@ -118,6 +104,20 @@ def apply(html):
          "  function pointerMove(e){\n    if(atelierSculptOnPointerMove(e))return;\n    if(!pressed)return;")
     html=once(html,"  function pointerUp(e){\n    if(!pressed)return;",
          "  function pointerUp(e){\n    if(atelierSculptOnPointerUp(e))return;\n    if(!pressed)return;")
+    html=once(html, "  function pointerDown(e){if(atelierSculptOnPointerDown(e))return;",
+         "  function pointerDown(e){if(atelierCameraPointerDown(e))return;if(atelierSculptOnPointerDown(e))return;")
+    html=once(html, "  function pointerMove(e){\n    if(atelierSculptOnPointerMove(e))return;",
+         "  function pointerMove(e){\n    if(atelierCameraPointerMove(e))return;\n    if(atelierSculptOnPointerMove(e))return;")
+    html=once(html, "  function pointerUp(e){\n    if(atelierSculptOnPointerUp(e))return;",
+         "  function pointerUp(e){\n    if(atelierCameraPointerUp(e))return;\n    if(atelierSculptOnPointerUp(e))return;")
+    html=once(html,"renderer.domElement.addEventListener('pointercancel',()=>pressed=null);",
+         "renderer.domElement.addEventListener('pointercancel',e=>{atelierCameraPointerCancel(e);if(atelierSculptDrag){atelierSculptDrag=null;renderParts();}pressed=null;});")
+    html=once(html, "for(const mesh of [...modelRoot.children]){modelRoot.remove(mesh);mesh.geometry?.dispose();mesh.material?.dispose();}",
+         "for(const mesh of [...modelRoot.children]){modelRoot.remove(mesh);for(const child of mesh.children)if(child.isMesh&&child.userData.atelierHelper)child.material?.dispose();mesh.geometry?.dispose();mesh.material?.dispose();}")
+    html=once(html,"function onWheel(e){e.preventDefault();orbit.distance=Math.min(22,Math.max(atelierDetailTarget?.4:3.7,",
+         "function onWheel(e){e.preventDefault();orbit.distance=Math.min(24,Math.max(atelierDetailTarget?.4:1.2,")
+    html=once(html,"action('ZoomIn',()=>{orbit.distance=Math.max(atelierDetailTarget?.4:3.7,",
+         "action('ZoomIn',()=>{orbit.distance=Math.max(atelierDetailTarget?.4:1.2,")
     html=once(html,
          "const hits=raycaster.intersectObjects(meshes,false);select(hits[0]?.object?.userData?.atelierId||null);",
          "if(atelierSculptVertexPick(e))return;const hits=raycaster.intersectObjects(meshes,false);if(atelierSculptPick(hits[0]))return;select(hits[0]?.object?.userData?.atelierId||null);")
