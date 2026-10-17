@@ -1,6 +1,6 @@
 ID=server-runtime
-VERSION=2.3.430
-REVISION=2.3.430-hf-v280-contextual-nickname-identity
+VERSION=2.3.431
+REVISION=2.3.431-hf-v281-compact-identity-conversation
 KIND=server-runtime
 SOURCE_BRANCH=runtime
 STATUS=active
