@@ -79,7 +79,8 @@ try{
   // transforms, and neither action edits the modeled character.
   await page.locator('#modelAtelierReferenceCollapse').click();
   assert((await page.locator('#modelAtelierReferenceDock').getAttribute('class')).includes('collapsed'));
-  await page.locator('#modelAtelierReferenceCollapse').click();
+  assert(await page.locator('#modelAtelierReferenceThumbnail').isVisible(),'Collapsed overlay must display a clickable image thumbnail');
+  await page.locator('#modelAtelierReferenceThumbnail').click();
   assert(await page.locator('#modelAtelierReferenceImageFrame').isVisible());
   // Remove and Undo using actual native model history with references included.
   await page.locator('#modelAtelierReferenceDelete').click();
