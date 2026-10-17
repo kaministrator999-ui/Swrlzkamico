@@ -16,7 +16,7 @@ def apply(html):
     html=once(html,"if(key==='kind'){delete p.headAnatomy;delete p.portraitFinish;",
          "if(key==='kind'){delete p.sculptBrushes;delete p.sculptVertexEdits;delete p.headAnatomy;delete p.portraitFinish;")
     html=once(html,"atelierHeadAnatomyRefresh();",
-         "atelierHeadAnatomyRefresh();atelierSculptRefresh();")
+         "atelierHeadAnatomyRefresh();atelierSculptRefresh();atelierViewportControlsRefresh();")
     html=once(html,"atelierHeadAnatomyInstall();",
          "atelierHeadAnatomyInstall();atelierSculptInstall();atelierViewportInstall();")
     brush = ('<section id="modelAtelierSculptBrush" hidden><h3>Vertex sphere brush · editable mesh</h3>'
@@ -80,6 +80,10 @@ def apply(html):
            '<option value="wireframe">Wireframe</option><option value="xray">X-Ray</option></select></label>'
            '<label>Target<select id="modelAtelierViewportScope" aria-label="Display mode target">'
            '<option value="all">All meshes</option><option value="selected">Selected mesh</option></select></label>'
+           '<label class="atelier-display-switch"><input id="modelAtelierViewportColors" aria-label="Show original mesh colors" type="checkbox" checked> Colors</label>'
+           '<label class="atelier-display-switch"><input id="modelAtelierViewportTextures" aria-label="Show original mesh textures" type="checkbox" checked> Textures</label>'
+           '<label class="atelier-display-switch"><input id="modelAtelierViewportWireContrast" aria-label="Use high contrast wireframe" type="checkbox" checked> Contrast wire</label>'
+           '<label>Wire tint<input id="modelAtelierViewportWireTint" aria-label="Wireframe and overlay line color" type="color" value="#152b42"></label>'
            '<div class="atelier-view-presets" aria-label="Camera view directions">'
            '<button type="button" data-at-view="front">Front</button><button type="button" data-at-view="right">Right</button>'
            '<button type="button" data-at-view="left">Left</button><button type="button" data-at-view="back">Back</button>'
@@ -93,6 +97,10 @@ def apply(html):
 .model-atelier .atelier-viewbar label{display:flex;flex-direction:column;gap:3px;font-size:11px;color:#cbdaeb}
 .model-atelier .atelier-viewbar select{background:#202c42;color:#f3f7ff;border:1px solid #7283a0;border-radius:6px;padding:6px;font-size:12px;max-width:168px}
 .model-atelier .atelier-view-presets{display:flex;gap:4px;flex-wrap:wrap}
+.model-atelier .atelier-display-switch{display:flex;flex-direction:row;align-items:center;gap:4px;padding:6px 2px;font-size:12px;min-height:32px;white-space:nowrap}
+.model-atelier .atelier-display-switch input{width:15px;height:15px;accent-color:#46d0e4;flex:0 0 auto}
+.model-atelier .atelier-viewbar input[type=color]{width:38px;height:30px;padding:1px;border-radius:5px;border:1px solid #7283a0;background:#202c42}
+
 .model-atelier .atelier-viewbar button{border-radius:6px;padding:6px 9px;min-height:32px;background:#293b56;color:#fff;border:1px solid #5b7494;font-size:12px}
 .model-atelier .atelier-viewbar button:focus-visible,.model-atelier .atelier-viewbar select:focus-visible{outline:2px solid #5ce2ef}
 .model-atelier .atelier-view-hint{position:relative;z-index:70;pointer-events:none;font-size:11px;color:#cad7ed;padding:2px 5px;margin:0 0 5px}
