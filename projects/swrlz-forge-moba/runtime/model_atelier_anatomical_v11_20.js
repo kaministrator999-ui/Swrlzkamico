@@ -18,7 +18,7 @@ function atelierAnatomicalHead(part){
   for(let iy=0;iy<=v;iy++){
     const t=iy/v,phi=t*Math.PI;
     const y0=Math.cos(phi),rad=Math.sin(phi);
-    const mandibular=atelierAnatomySmooth(-.02,-.92,-y0);
+    const mandibular=atelierAnatomySmooth(.02,.92,-y0);
     const cheekY=atelierAnatomyBell(0,y0+.18,1,.28);
     const jawWidth=1-.26*(part.jawTaper??.32)/.32*mandibular
       +.085*f.malar*cheekY-.036*f.temple*atelierAnatomyBell(0,y0-.68,1,.25);
