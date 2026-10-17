@@ -214,6 +214,45 @@ def test_export68_conversational_filename_followup_is_not_generated_directory():
     # The GitHub provider alone owns actual file presence/contents; no test
     # code writes or substitutes arbitrary paths into the six-file test repo.
 
+def test_export70_conversational_referent_never_replays_git_inventory():
+    # Newest owner test export (70), not earlier independent threads.
+    # The prior verified operation renamed Testing.txt -> test.txt, then the
+    # user asked what §wyrlz noticed about the contents of that same text.
+    # The current question has its own request ID: a fresh GitHub report is
+    # not a delayed earlier result and does not answer this conversation.
+    root = {"repo": "kaministrator999-ui/Swrlzing-core", "branch": "main",
+            "sourceSha": "3903cc3fb219b5b8fd2b2141c14f2678772ed9fc",
+            "directory": "", "lastFile": "", "kind": "directory"}
+    file_context = {**root, "lastFile": "write-action-tests/test.txt", "kind": "file"}
+    natural_conversation = (
+        "Now what you noticed inside that text do you like what I put in there haha",
+        "What did you notice about that text?",
+        "Haha did you like what I wrote there?",
+        "What do you think about that?",
+        "Did you see what I said there?",
+    )
+    for context in (root, file_context):
+        for prompt in natural_conversation:
+            assert read.classify_read(prompt, context) is None, (prompt, context)
+            assert not gh.is_github_conversation(prompt), prompt
+            with mock.patch.object(gh, "command_events",
+                                   side_effect=AssertionError("unexpected GitHub action")):
+                events = list(gh.agent_events({
+                    "userId": "google:owner", "prompt": prompt,
+                    "githubContext": context
+                }))
+            assert not any(e.get("phase") in ("GITHUB_READ_STAGE", "GITHUB_ACTION",
+                        "GITHUB_READ_EVIDENCE") for e in events), (prompt, events)
+    # Preserve real read intent (including ordinary context-rich followups).
+    assert read.classify_read("What does that file do?", file_context) == (
+        "@GitHub report deep write-action-tests/test.txt")
+    assert read.classify_read("Explain how it works", file_context) == (
+        "@GitHub report deep write-action-tests/test.txt")
+    assert read.classify_read("The testing.txt file", root) == (
+        "@GitHub read file testing.txt")
+    assert read.classify_read("List files in the repo", root) == "@GitHub files"
+
+
 def test_model_education_is_inference_not_unverified_facts():
     for question in ("Explain what hf_space/brain_programming.py does in our repo",
                      "Which files handle source reports in GitHub?",
@@ -256,6 +295,7 @@ if __name__ == "__main__":
     test_latest_export_named_file_is_a_verified_read_not_a_404_command()
     test_export66_verified_root_listing_and_named_file_followups()
     test_export68_conversational_filename_followup_is_not_generated_directory()
+    test_export70_conversational_referent_never_replays_git_inventory()
     test_model_education_is_inference_not_unverified_facts()
     test_stage_one_executes_only_read_command()
     print("v235 scoped GitHub source inference and Stage-1 lock tests PASS")
