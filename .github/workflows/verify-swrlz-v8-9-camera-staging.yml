@@ -63,6 +63,9 @@ on:
     branches: [main]
 permissions:
   contents: read
+concurrency:
+  group: engine-ci-verify-swrlz-v8-9-camera-staging-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 jobs:
   browser:
     runs-on: ubuntu-latest
@@ -114,7 +117,7 @@ jobs:
       - name: Install Chromium and Playwright
         run: |
           npm install --no-save playwright@1.56.1
-          npx playwright install --with-deps chromium
+          npx playwright install --with-deps --only-shell chromium
       - name: Run actual desktop and mobile director/cel/project export acceptance
         run: |
           python -m http.server 8765 --directory /tmp/storybook-package >/tmp/storybook-test-server.log 2>&1 &
@@ -131,4 +134,5 @@ jobs:
         with:
           name: anime-popup-book-browser-debug
           path: native-anime-*.png
+          compression-level: 1
           retention-days: 5

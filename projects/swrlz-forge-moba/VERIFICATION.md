@@ -1,3 +1,5 @@
+Workflow timing and retained coverage: [Engine CI timing](reports/ENGINE_CI_SPEED_2026_10_17.md). The long suites and hosted editor checks run desktop/phone independently; all viewport cases and final exports remain required.
+
 HD motion clock correction: dense frames now advance by actual elapsed seconds, preserving pause/resume and the six-second end time. The earlier 80 ms-per-frame clamp stretched playback on software rendering and failed the animation completion gate; the HD clock now has a deterministic long-frame regression check as well as the unchanged native playback test. Historical unannotated scenes keep their existing clock behavior.
 
 ## v11.17 · HD character sculpt and native studio finish (2026-10-16)

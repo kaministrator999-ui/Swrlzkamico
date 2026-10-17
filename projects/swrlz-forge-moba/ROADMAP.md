@@ -1,3 +1,5 @@
+CI efficiency (2026-10-17): split the four slowest browser suites by desktop/phone while preserving all18suites and36viewport runs; remove duplicate native UI scroll waits, supersede obsolete validation, install only the headless browser, and keep final exports while omitting redundant intermediate OBJ upload copies. Measured timing baseline and validation: [Engine CI timing](reports/ENGINE_CI_SPEED_2026_10_17.md). Engine artifact/model data are unchanged.
+
 ## v11.17 · HD character sculpt and native studio finish (2026-10-16)
 
 The owner requested unrestricted high-definition quality. The new native starter refines the continuous portrait surface, integrated iris/pupil fibers and corneal highlights, thin eyelids and smiling lips, transported hair sweeps with a harmonious split-dye fringe, black woven pigtail wraps, embroidered curved garment panels, ribbed draped socks, welted leather shoes and pinched satin bows. Each ferret plume now has a continuous core beneath genuinely creased, overlapping paper leaves with cut edge thickness. Floating cheek/nose decorations and stacked sock-fold primitives were replaced with continuous surfaces.

@@ -6,6 +6,9 @@ on:
       - '.github/workflows/verify-character-detail.yml'
 permissions:
   contents: read
+concurrency:
+  group: engine-ci-verify-character-detail-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 jobs:
   author:
     runs-on: ubuntu-latest
@@ -25,7 +28,7 @@ jobs:
       - name: Install native browser
         run: |
           npm install --no-save playwright@1.56.1 three@0.169.0
-          npx playwright install --with-deps chromium
+          npx playwright install --with-deps --only-shell chromium
       - name: Verify real HD geometry
         run: node projects/swrlz-forge-moba/tests/model_hd_geometry_cpu.mjs
       - name: Operate HD sculpt controls and export the native model
@@ -39,4 +42,5 @@ jobs:
         with:
           name: native-hd-character-evidence
           path: hd-character-evidence/
+          compression-level: 1
           retention-days: 5

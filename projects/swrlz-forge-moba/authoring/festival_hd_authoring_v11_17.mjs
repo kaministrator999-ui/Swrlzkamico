@@ -6,7 +6,7 @@ const browser=await chromium.launch({headless:true,...(process.env.SWYRL_CHROMIU
 const page=await browser.newPage({viewport:{width:1600,height:1200},acceptDownloads:true}),errors=[],operations=[];page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error'&&/THREE.WebGLProgram|VALIDATE_STATUS|shader error/i.test(m.text()))errors.push(m.text());});page.setDefaultTimeout(90000);
 operations.push=(...items)=>{for(const item of items)console.log('NATIVE_EDIT',JSON.stringify(item));return Array.prototype.push.apply(operations,items);};
 const snap=()=>page.evaluate(()=>window.SWYRL_ENGINE_AGENT.inspectScene()),parts=async()=>(await snap()).project.modelAtelier.parts;
-const hit=async id=>{const n=page.locator('#modelAtelier'+id);await n.scrollIntoViewIfNeeded();await n.click();};
+const hit=async id=>{const n=page.locator('#modelAtelier'+id);await n.click();};
 const pick=async id=>{await page.locator('#modelAtelierParts').selectOption(id);};
 const val=async(id,value)=>{const n=page.locator('#modelAtelier'+id);await n.fill(String(value));await n.dispatchEvent('change');};
 const transform=async(id,values)=>{await pick(id);for(const [key,value]of Object.entries(values)){if(Array.isArray(value)){for(let i=0;i<3;i++)await val(key+i,value[i]);}else await val(key==='name'?'Name':key==='color'?'Color':key,value);}operations.push({id,transform:values});};

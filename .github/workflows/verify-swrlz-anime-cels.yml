@@ -67,6 +67,9 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: engine-ci-verify-swrlz-anime-cels-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 jobs:
   validate:
     runs-on: ubuntu-latest
@@ -251,7 +254,7 @@ jobs:
       - name: Install Chromium and Playwright
         run: |
           npm install --no-save playwright@1.56.1
-          npx playwright install --with-deps chromium
+          npx playwright install --with-deps --only-shell chromium
       - name: Test native cinematic, independent cels, Director and project export
         run: |
           python -m http.server 8765 --directory /tmp/swyrl-anime-cel-test >/tmp/validate-storybook-http.log 2>&1 &
@@ -270,4 +273,5 @@ jobs:
           path: |
             native-anime-*.png
             storybook-acceptance/
+          compression-level: 1
           retention-days: 5

@@ -73,31 +73,57 @@ concurrency:
   cancel-in-progress: true
 jobs:
   browser:
-    name: browser (${{ matrix.suite }})
+    name: browser (${{ matrix.suite }}, ${{ matrix.mode || 'both' }})
     runs-on: ubuntu-latest
     timeout-minutes: 50
     strategy:
       fail-fast: false
       matrix:
-        suite:
-          - native_anime
-          - storybook_authoring
-          - character_rig
-          - depth_theatre
-          - character_alignment
-          - socket_emergence
-          - character_relief
-          - episode_transport
-          - sheep_tag
-          - sheep_archive
-          - sheep_touch
-          - sheep_run
-          - maul
-          - maul_layout
-          - maul_batch
-          - episode_performance
-          - model_atelier
-          - model_reference
+        include:
+          - suite: sheep_archive
+            mode: 'desktop'
+          - suite: sheep_archive
+            mode: 'mobile'
+          - suite: model_reference
+            mode: 'desktop'
+          - suite: model_reference
+            mode: 'mobile'
+          - suite: character_relief
+            mode: 'desktop'
+          - suite: character_relief
+            mode: 'mobile'
+          - suite: character_rig
+            mode: 'desktop'
+          - suite: character_rig
+            mode: 'mobile'
+          - suite: native_anime
+            mode: ''
+          - suite: storybook_authoring
+            mode: ''
+          - suite: depth_theatre
+            mode: ''
+          - suite: character_alignment
+            mode: ''
+          - suite: socket_emergence
+            mode: ''
+          - suite: episode_transport
+            mode: ''
+          - suite: sheep_tag
+            mode: ''
+          - suite: sheep_touch
+            mode: ''
+          - suite: sheep_run
+            mode: ''
+          - suite: maul
+            mode: ''
+          - suite: maul_layout
+            mode: ''
+          - suite: maul_batch
+            mode: ''
+          - suite: episode_performance
+            mode: ''
+          - suite: model_atelier
+            mode: ''
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -318,11 +344,12 @@ jobs:
       - name: Install Chromium and Playwright
         run: |
           npm install --no-save playwright@1.56.1
-          npx playwright install --with-deps chromium
+          npx playwright install --with-deps --only-shell chromium
       - name: Test ${{ matrix.suite }} acceptance in desktop and phone layouts
         env:
           SWYRL_ANIME_TEST_URL: http://127.0.0.1:8765
           SWYRL_ANIME_SUITE: ${{ matrix.suite }}
+          SWYRL_ANIME_TEST_MODE: ${{ matrix.mode }}
         run: |
           set -euo pipefail
           python -m http.server 8765 --directory /tmp/storybook-test >/tmp/browser-storybook-http.log 2>&1 &
@@ -337,7 +364,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: v10-8-${{ matrix.suite }}-browser-views
+          name: v11-17-${{ matrix.suite }}-${{ matrix.mode || 'both' }}-browser-views
           path: |
             native-anime-*.png
             storybook-acceptance/
@@ -357,4 +384,9 @@ jobs:
             episode-performance-acceptance/
             model-atelier-acceptance/
             model-reference-acceptance/
+            !model-reference-acceptance/*-high-detail.obj
+            !model-reference-acceptance/*-sculpted-contours.obj
+            !model-reference-acceptance/*-original-surface.obj
+            !model-reference-acceptance/*-changed-jaw.obj
+          compression-level: 1
           retention-days: 5

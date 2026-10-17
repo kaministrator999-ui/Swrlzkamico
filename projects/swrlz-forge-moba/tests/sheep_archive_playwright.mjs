@@ -421,5 +421,5 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
   receipts.push({mode:mode.name,mapActors:canonical.scene.actors.length,layers:canonical.editor.layers.length,cases,controls,pass:true});
   console.log('SHEEP_ARCHIVE_'+mode.name.toUpperCase()+'_ALL_'+cases.length+'_CASES_PASS');await context.close();
 }
-await writeFile(resolve(output,'receipt.json'),JSON.stringify({pass:true,viewports:receipts},null,2));console.log('SHEEP_ARCHIVE_ALL_VIEWPORTS_PASSED');
+await writeFile(resolve(output,'receipt.json'),JSON.stringify({pass:true,viewports:receipts},null,2));console.log(modes.length===2?'SHEEP_ARCHIVE_ALL_VIEWPORTS_PASSED':'SHEEP_ARCHIVE_SELECTED_VIEWPORT_PASSED');
 }finally{await browser.close();}

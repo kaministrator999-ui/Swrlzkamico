@@ -8,6 +8,9 @@ on:
       - 'projects/swrlz-forge-moba/**'
       - '.github/workflows/verify-model-atelier-v115.yml'
   workflow_dispatch:
+concurrency:
+  group: engine-ci-verify-model-atelier-v115-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 jobs:
   seal:
     runs-on: ubuntu-latest

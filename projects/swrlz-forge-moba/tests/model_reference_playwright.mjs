@@ -8,13 +8,14 @@ const base=(process.env.SWYRL_ANIME_TEST_URL||'http://127.0.0.1:8781').replace(/
 await fs.mkdir(out,{recursive:true});
 const fileHash=async path=>{const h=createHash('sha256');for await(const chunk of createReadStream(path))h.update(chunk);return h.digest('hex');};
 const browser=await chromium.launch({headless:true,...(process.env.SWYRL_CHROMIUM_PATH?{executablePath:process.env.SWYRL_CHROMIUM_PATH}:{}),args:['--no-sandbox','--disable-dev-shm-usage','--enable-webgl','--enable-unsafe-swiftshader','--use-gl=angle','--use-angle=swiftshader']});
-const modes=[{name:'desktop',viewport:{width:1440,height:1000}},{name:'mobile',viewport:{width:412,height:915},isMobile:true,hasTouch:true}],receipts=[];
+const modes=[{name:'desktop',viewport:{width:1440,height:1000}},{name:'mobile',viewport:{width:412,height:915},isMobile:true,hasTouch:true}].filter(mode=>!process.env.SWYRL_ANIME_TEST_MODE||process.env.SWYRL_ANIME_TEST_MODE===mode.name),receipts=[];
+assert.ok(modes.length,'SWYRL_ANIME_TEST_MODE must be desktop or mobile');
 const near=(a,b,eps=1e-6)=>{if(Array.isArray(a)){assert.equal(a.length,b.length);a.forEach((v,i)=>near(v,b[i],eps));}else assert.ok(Math.abs(a-b)<eps,`${a} != ${b}`);};
 try{for(const mode of modes){const ctx=await browser.newContext({...mode,acceptDownloads:true}),page=await ctx.newPage(),errors=[],cases=[];page.on('pageerror',e=>errors.push(String(e)));page.setDefaultTimeout(120000);
  const pass=name=>{cases.push(name);console.log('MODEL_REFERENCE_CASE_PASS',mode.name,name);};
  const snap=()=>page.evaluate(()=>window.SWYRL_ENGINE_AGENT.inspectScene());
  const state=()=>page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.assemblies());
- const hit=async id=>{const n=page.locator('#modelAtelier'+id);await n.scrollIntoViewIfNeeded();if(mode.hasTouch)await n.tap();else await n.click();};
+ const hit=async id=>{const n=page.locator('#modelAtelier'+id);if(mode.hasTouch)await n.tap();else await n.click();};
  const scrub=async time=>{await page.locator('#modelAtelierAssemblyTime').evaluate((el,t)=>{el.value=String(t);el.dispatchEvent(new Event('input',{bubbles:true}));},time);return state();};
  const download=async(id,suffix)=>{const wait=page.waitForEvent('download');await hit(id);const file=await wait,path=out+'/'+mode.name+'-'+suffix;await file.saveAs(path);return path;};
  try{
@@ -104,4 +105,4 @@ try{for(const mode of modes){const ctx=await browser.newContext({...mode,acceptD
  const html=await page.request.get(base+'/SOURCE.json');const source=await html.json();const receipt={mode:mode.name,cases,sourceSha256:source.finalSha256,version:source.sourceVersion,parts:283,triangles:stats.triangles,viewport,errors};receipts.push(receipt);await fs.writeFile(out+'/'+mode.name+'-receipt.json',JSON.stringify(receipt,null,2));
  }catch(error){await page.screenshot({path:out+'/'+mode.name+'-failure.png'}).catch(()=>{});await fs.writeFile(out+'/'+mode.name+'-failure.json',JSON.stringify({error:String(error),stack:error.stack,cases,errors},null,2));throw error;}finally{await ctx.close();}
  }}finally{await browser.close();}
-await fs.writeFile(out+'/receipt.json',JSON.stringify(receipts,null,2));console.log('MODEL_REFERENCE_ALL_VIEWPORTS_PASS');
+await fs.writeFile(out+'/receipt.json',JSON.stringify(receipts,null,2));console.log(modes.length===2?'MODEL_REFERENCE_ALL_VIEWPORTS_PASS':'MODEL_REFERENCE_SELECTED_VIEWPORT_PASS');

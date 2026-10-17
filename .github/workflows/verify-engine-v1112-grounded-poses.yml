@@ -4,6 +4,9 @@ on:
     branches: [fix/engine-v1112-grounded-stance-poses]
   pull_request:
     paths: ['projects/swrlz-forge-moba/**']
+concurrency:
+  group: engine-ci-verify-engine-v1112-grounded-poses-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 jobs:
   source:
     runs-on: ubuntu-latest
