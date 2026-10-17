@@ -4,6 +4,7 @@ on:
     branches: [feature/atelier-vertex-sphere-brush-v11-21]
     paths:
       - 'projects/swrlz-forge-moba/runtime/model_atelier_sculpt_brush_v11_21.js'
+      - 'projects/swrlz-forge-moba/runtime/model_atelier_viewport_v11_21.js'
       - 'projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py'
       - 'projects/swrlz-forge-moba/tests/model_sculpt_brush_cpu_v11_21.mjs'
       - '.github/workflows/preview-engine-vertex-brush-v11-21.yml'
@@ -42,6 +43,8 @@ jobs:
           assert 'V11_21_VERTEX_SPHERE_BRUSH_PREVIEW' in html
           assert 'modelAtelierSculptBrushVertexToggle' in html
           assert 'atelierSculptApply' in html
+          assert 'modelAtelierViewportMode' in html
+          assert 'atelierCameraPointerMove' in html
           data=html.encode('utf-8')
           (dst/'index.html').write_bytes(data)
           receipt=json.loads((src/'SOURCE.json').read_text())
