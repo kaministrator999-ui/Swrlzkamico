@@ -29,8 +29,8 @@ try{
  for(const [side,s]of [['left',-1],['right',1]]){
   await transform(side+'-sclera',{position:[s*.120,4.067,.295],scale:[.085,.047,.023]});
   await transform(side+'-iris',{position:[s*.120,4.066,.321],scale:[.030,.035,.016]});
-  await transform(side+'-eye-catch',{position:[s*.130,4.081,.334],scale:[.0065,.0075,.0048]});
-  await transform(side+'-eye-catch2',{position:[s*.110,4.050,.334],scale:[.003,.0035,.0035]});
+  await transform(side+'-eye-catch',{position:[s*.130,4.081,.334],scale:[.006,.007,.006]});
+  await transform(side+'-eye-catch2',{position:[s*.110,4.050,.334],scale:[.006,.006,.006]});
   await shape(side+'-upper-lid',[[s*.034,4.065,.308],[s*.078,4.103,.315],[s*.14,4.108,.302],[s*.201,4.084,.281],[s*.219,4.096,.265]],[.0006,.0028,.0033,.0025,.0004]);
   await shape(side+'-lower-lid',[[s*.04,4.059,.310],[s*.12,4.030,.315],[s*.20,4.061,.282]],[.0005,.0018,.0005]);
   await transform(side+'-upper-lid',{color:'#352832'});await transform(side+'-lower-lid',{color:'#c78686'});
