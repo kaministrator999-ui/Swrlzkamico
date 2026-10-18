@@ -9,12 +9,12 @@ def once(html, before, after):
 def apply(html):
     root=Path(__file__).resolve().parent.parent
     assert "SWYRL_ENGINE_DEPLOY_MARKER: V11_20_ANATOMICAL_HEAD" in html
-    module=(root/"runtime/model_atelier_sculpt_brush_v11_21.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_viewport_v11_21.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_reference_studio_v11_22.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_surface_targeting_v11_22.js").read_text(encoding="utf-8")
+    module=(root/"runtime/model_atelier_sculpt_brush_v11_21.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_viewport_v11_21.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_reference_studio_v11_22.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_surface_targeting_v11_22.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_surface_lasso_v11_22.js").read_text(encoding="utf-8")
     html=once(html, "  function refreshList(){", module+"\n  function refreshList(){")
     html=once(html,"  function checkPart(p){",
          "  function checkPart(p){\n    if(!atelierSculptValid(p))return false;")
     html=once(html,"if(key==='kind'){delete p.headAnatomy;delete p.portraitFinish;",
-         "if(key==='kind'){delete p.sculptBrushes;delete p.sculptVertexEdits;delete p.headAnatomy;delete p.portraitFinish;")
+         "if(key==='kind'){delete p.sculptBrushes;delete p.sculptVertexEdits;delete p.sculptLassos;delete p.headAnatomy;delete p.portraitFinish;")
     html=once(html,"atelierHeadAnatomyRefresh();",
          "atelierHeadAnatomyRefresh();atelierSculptRefresh();atelierViewportControlsRefresh();atelierRefPaint();")
     html=once(html,"atelierHeadAnatomyInstall();",
@@ -58,6 +58,24 @@ def apply(html):
              '<div class="atelier-inspector-actions"><button id="modelAtelierSculptBrushPick">Pick center on mesh</button>'
              '<button id="modelAtelierSculptBrushApply">Apply brush</button>'
              '<button id="modelAtelierSculptBrushUndoStroke">Remove last stroke</button></div>'
+             '<fieldset id="modelAtelierLassoTools" aria-label="Editable surface lasso and boundary pins">'
+             '<legend>Surface lasso · 📌 editable boundary pins</legend>'
+             '<p>Draw a polygon by tapping selected mesh surface points. Large pins control only the region boundary; use the separate smaller 📍 mesh vertex pins to move geometry.</p>'
+             '<label>Region name<input id="modelAtelierLassoName" type="text" maxlength="90" value="Face detail"></label>'
+             '<div class="atelier-inspector-actions"><button type="button" id="modelAtelierLassoStart">Start polygon lasso</button>'
+             '<button type="button" id="modelAtelierLassoFinish">Finish polygon</button>'
+             '<button type="button" id="modelAtelierLassoCancel">Cancel draft</button></div>'
+             '<label>Selected region<select id="modelAtelierLassoRegion" aria-label="Saved editable lasso regions"></select></label>'
+             '<label>Boundary pin<select id="modelAtelierLassoPinIndex" aria-label="Selected boundary pin"></select></label>'
+             '<div class="atelier-inspector-actions"><button type="button" id="modelAtelierLassoInsertPin">Add 📌 pin after selected</button>'
+             '<button type="button" id="modelAtelierLassoDeletePin">Remove selected 📌 pin</button></div>'
+             '<div class="atelier-pair"><label>Normal displacement<input id="modelAtelierLassoMorph" type="number" step=".01" min="-.35" max=".35" value="0"></label>'
+             '<label>Feather border<input id="modelAtelierLassoFeather" type="number" step=".01" min="0" max=".3" value=".04"></label></div>'
+             '<div class="atelier-inspector-actions"><button type="button" id="modelAtelierLassoApplyMorph">Apply region morph</button>'
+             '<button type="button" id="modelAtelierLassoToggle">Enable / disable region</button>'
+             '<button type="button" id="modelAtelierLassoDeleteRegion">Delete region</button></div>'
+             '<p id="modelAtelierLassoInfo" role="status"></p>'
+             '<p>Region pin edits are undoable, but triangle density remains unchanged until a separate refinement tool is implemented.</p></fieldset>'
              '<section aria-label="Vertex mapping and drag gizmo"><h4>Vertex matrix · point and group edits</h4>'
              '<p>Choose grid U/V, show source vertices, tap a point, then drag the yellow gizmo. Use multi-selection to move groups.</p>'
              '<div class="atelier-pair"><label>Vertex map U<input id="modelAtelierSculptBrushGridU" type="number" min="16" max="256" step="8" value="192"></label>'
@@ -202,11 +220,11 @@ def apply(html):
     html=once(html,"  function pointerUp(e){\n    if(!pressed)return;",
          "  function pointerUp(e){\n    if(atelierSculptOnPointerUp(e))return;\n    if(!pressed)return;")
     html=once(html, "  function pointerDown(e){if(atelierSculptOnPointerDown(e))return;",
-         "  function pointerDown(e){if(atelierCameraPointerDown(e))return;if(atelierSculptOnPointerDown(e))return;")
+         "  function pointerDown(e){if(atelierCameraPointerDown(e))return;if(atelierLassoPointerDown(e))return;if(atelierSculptOnPointerDown(e))return;")
     html=once(html, "  function pointerMove(e){\n    if(atelierSculptOnPointerMove(e))return;",
-         "  function pointerMove(e){\n    if(atelierCameraPointerMove(e))return;\n    if(atelierSculptOnPointerMove(e))return;")
+         "  function pointerMove(e){\n    if(atelierCameraPointerMove(e))return;\n    if(atelierLassoPointerMove(e))return;\n    if(atelierSculptOnPointerMove(e))return;")
     html=once(html, "  function pointerUp(e){\n    if(atelierSculptOnPointerUp(e))return;",
-         "  function pointerUp(e){\n    if(atelierCameraPointerUp(e))return;\n    if(atelierSculptOnPointerUp(e))return;")
+         "  function pointerUp(e){\n    if(atelierCameraPointerUp(e))return;\n    if(atelierLassoPointerUp(e))return;\n    if(atelierSculptOnPointerUp(e))return;")
     html=once(html,"renderer.domElement.addEventListener('pointercancel',()=>pressed=null);",
          "renderer.domElement.addEventListener('pointercancel',e=>{atelierCameraPointerCancel(e);if(atelierSculptDrag){atelierSculptDrag=null;renderParts();}pressed=null;});")
     html=once(html, "mesh.geometry?.dispose();if(!mesh.material?.userData?.atelierHDMaterial)mesh.material?.dispose();",
@@ -217,12 +235,12 @@ def apply(html):
          "action('ZoomIn',()=>{orbit.distance=Math.max(atelierDetailTarget?.4:1.2,")
     html=once(html,
          "const hits=raycaster.intersectObjects(meshes,false);select(hits[0]?.object?.userData?.atelierId||null);",
-         "if(atelierSculptVertexPick(e))return;const hits=raycaster.intersectObjects(meshes,false);if(atelierSculptPick(hits[0]))return;select(hits[0]?.object?.userData?.atelierId||null);")
+         "if(atelierSculptVertexPick(e))return;const hits=raycaster.intersectObjects(meshes,false);if(atelierLassoPick(hits[0]))return;if(atelierSculptPick(hits[0]))return;select(hits[0]?.object?.userData?.atelierId||null);")
     html=once(html,"  function close(){\n    if(!panel||panel.hidden)return;",
-         "  function close(){\n    atelierSurfacePreviewClear();if(!panel||panel.hidden)return;atelierSculptOverlayClear();")
+         "  function close(){\n    atelierSurfacePreviewClear();atelierLassoOverlayClear();if(!panel||panel.hidden)return;atelierSculptOverlayClear();")
     key="renderParts();refreshList();refreshInspector();"
     assert key in html
-    html=html.replace(key,"renderParts();atelierSculptOverlayRefresh();refreshList();refreshInspector();")
+    html=html.replace(key,"renderParts();atelierSculptOverlayRefresh();atelierLassoOverlayRefresh();refreshList();refreshInspector();")
     html=once(html,"const g=atelierHDGeometry(head),material=",
          "const g=atelierSculptApply(atelierHDGeometry(head),head),material=")
     html=once(html,"SWYRL_ENGINE_DEPLOY_MARKER: V11_20_ANATOMICAL_HEAD",
