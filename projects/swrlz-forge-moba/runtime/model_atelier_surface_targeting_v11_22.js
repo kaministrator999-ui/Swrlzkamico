@@ -2,7 +2,7 @@
 // backward-compatible: older strokes lacking surfaceMode use through-volume.
 // New strokes default to FRONT-facing and connected-surface selection.
 // All computation uses part-LOCAL vertices and never alters source topology.
-const atelierSurfaceModes=['front','connected','through'];
+const atelierSurfaceModes=['front','connected','inside','through'];
 function atelierSurfaceTangent(axis) {
  const n=new THREE.Vector3(...axis).normalize();
  const helper=Math.abs(n.y)<.84?new THREE.Vector3(0,1,0):new THREE.Vector3(1,0,0);
@@ -30,8 +30,12 @@ function atelierSurfaceWeights(geometry,stroke) {
    // A front-facing shell is not a mere spatial sphere. Reject surfaces
    // whose normals face away from the picked visible face. Never displace
    // far-side vertices on a thin double-sided object by accident.
+   const oriented=normal?
+     normal.getX(i)*axis.x+normal.getY(i)*axis.y+normal.getZ(i)*axis.z:1;
+   // Deliberate interior mode selects the inward-facing opposite-normal
+   // shell. The usual front/connected modes retain their legacy behavior.
    const faceOk=mode==='through'||!normal||
-     normal.getX(i)*axis.x+normal.getY(i)*axis.y+normal.getZ(i)*axis.z>-.08;
+     (mode==='inside'?oriented<-.12:oriented>-.08);
    if(!faceOk||d>radius+1e-5)continue;
    valid[i]=1;
    if(d<nearestDist){nearest=i;nearestDist=d;}
