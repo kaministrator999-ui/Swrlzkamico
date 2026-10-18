@@ -23,9 +23,16 @@ const plane=new THREE.PlaneGeometry(1,1,12,12);
 plane.setAttribute('color',new THREE.Float32BufferAttribute(
  Array.from({length:plane.attributes.position.count},(_,i)=>
  [i/plane.attributes.position.count,.5,1]).flat(),3));
+const preview=vmc.atelierRefineCandidate({geometry:plane},region,1);
+assert(preview.ok&&preview.after>preview.before&&preview.delta>0);
+assert.equal(preview.before,vmc.atelierRefineCount(plane));
+assert.equal(vmc.atelierRefineCount(plane),288,'Preview must not alter the original plane');
+assert.equal(vmc.atelierRefineCandidate({geometry:plane},region,7).ok,false);
 const result=vmc.atelierRefineApply(plane.clone(),part);
 const before=vmc.atelierRefineCount(plane),after=vmc.atelierRefineCount(result);
 assert(after>before&&after<before*4,'Only the local region should densify, not the whole mesh');
+assert.equal(preview.after,after,'Preview must exactly match actual local refinement');
+assert.equal(preview.vertices,result.attributes.position.count);
 assert(result.attributes.uv&&result.attributes.color,'UV mapping and vertex dye must survive');
 for(const q of result.attributes.uv.array)assert(q>=-.00001&&q<=1.00001);
 for(const q of result.attributes.position.array)assert(Number.isFinite(q));
