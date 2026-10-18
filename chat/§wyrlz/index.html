@@ -1354,7 +1354,9 @@
           const provider=document.createElement("div");provider.className="widget-provider";provider.textContent=String(widget.provider||"online");
           head.append(title,provider);card.appendChild(head);
           const data=widget.data&&typeof widget.data==="object"?widget.data:{};
-          if(widget.kind==="github-work"){
+          if(["comparison","math-graph","model-3d"].includes(widget.kind)){
+            if(!window.SwrlzRichWidgetsV284?.render(card,widget))card.appendChild(Object.assign(document.createElement("div"),{className:"widget-footer",textContent:"Rich widget unavailable — its structured data was not displayable."}));
+          }else if(widget.kind==="github-work"){
             if(!window.SwrlzGithubWorkView?.render(card,widget)){
               const unavailable=document.createElement("div");
               unavailable.className="widget-footer";
