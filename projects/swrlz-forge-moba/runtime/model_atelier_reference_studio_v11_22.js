@@ -74,10 +74,18 @@ function atelierRefClampLayout(){
  if(!m||!atelierRefDock||!stage)return;
  const l=m.referenceLayout;
  const w=atelierRefDock.offsetWidth||250,h=atelierRefDock.offsetHeight||240;
+ // The view-mode toolbar is a sibling over the 3D canvas. Dock images
+ // BELOW its actual rendered height: on narrow phones the toolbar wraps,
+ // and the reference window previously covered Wireframe/X-Ray controls.
+ const sceneRect=stage.getBoundingClientRect();
+ const toolbar=$m('ViewportModes');
+ const toolbarBottom=toolbar?.getBoundingClientRect().bottom||sceneRect.top;
+ const minY=Math.max(12,Math.ceil(toolbarBottom-sceneRect.top+8));
  l.x=Math.max(0,Math.min(l.x,Math.max(0,stage.clientWidth-w)));
- l.y=Math.max(0,Math.min(l.y,Math.max(0,stage.clientHeight-h)));
+ l.y=Math.max(minY,Math.min(l.y,Math.max(minY,stage.clientHeight-Math.min(h,stage.clientHeight-minY))));
  atelierRefDock.style.left=l.x+'px';
  atelierRefDock.style.top=l.y+'px';
+ atelierRefDock.style.maxHeight='calc(100% - '+l.y+'px - 8px)';
 }
 function atelierRefPaint(){
  const m=atelierRefEnsure(),dock=atelierRefDock;
