@@ -4,6 +4,14 @@
 const atelierLassoMaxRegions=8,atelierLassoMaxPins=32;
 let atelierLassoArm=null,atelierLassoPending=[],atelierLassoActive=null;
 let atelierLassoOverlay=null,atelierLassoDrag=null,atelierLassoTempPin=null,atelierLassoSelectedPin=0;
+let atelierLassoFreehand=null; // transient, never persisted
+function atelierLassoTraceAdd(pin){
+ if(!pin||!Array.isArray(pin.point)||pin.point.length!==3)return false;
+ const last=atelierLassoPending[atelierLassoPending.length-1];
+ if(last&&Math.hypot(...pin.point.map((v,i)=>v-last.point[i]))<.017)return false;
+ if(atelierLassoPending.length>=atelierLassoMaxPins)return false;
+ atelierLassoPending.push(pin);return true;
+}
 function atelierLassoValid(part){
  const regions=part.sculptLassos;
  if(regions===undefined)return true;
@@ -204,7 +212,8 @@ function atelierLassoRefresh(){
  $m('LassoMorph').value=String(r?.morph??0);
  $m('LassoInfo').textContent=regions.length+' saved lasso regions · '
    +(atelierLassoPending.length?'Draft: '+atelierLassoPending.length+' pins · ':'')
-   +(atelierLassoArm?'Tap mesh to '+(atelierLassoArm==='draft'?'add draft boundary pins':'insert boundary pin')+'.':
+   +(atelierLassoArm==='freehand'?'Drag over the selected mesh to trace up to 32 boundary pins.':
+    atelierLassoArm?'Tap mesh to '+(atelierLassoArm==='draft'?'add draft boundary pins':'insert boundary pin')+'.':
    'Boundary pins are yellow; move them by dragging on the source mesh.');
  atelierLassoOverlayRefresh();
 }
@@ -235,7 +244,18 @@ function atelierLassoPointFromEvent(e,mesh){
  return atelierLassoPinFromHit(h);
 }
 function atelierLassoPointerDown(e){
- if(e.button!==0||!atelierLassoOverlay||!atelierLassoActive||atelierLassoArm)return false;
+ if(e.button!==0)return false;
+ if(atelierLassoArm==='freehand'){
+   const mesh=modelRoot?.children.find(o=>o.isMesh&&o.userData.atelierId===selection);
+   if(!mesh)return false;
+   const pin=atelierLassoPointFromEvent(e,mesh);
+   if(!pin){status('Begin tracing on the selected mesh surface.',true);return true;}
+   atelierLassoPending=[pin];
+   atelierLassoFreehand={id:e.pointerId,mesh,lastX:e.clientX,lastY:e.clientY};
+   renderer.domElement.setPointerCapture?.(e.pointerId);
+   pressed=null;atelierLassoOverlayRefresh();return true;
+ }
+ if(!atelierLassoOverlay||!atelierLassoActive||atelierLassoArm)return false;
  const r=atelierLassoRegion();if(!r)return false;
  const box=renderer.domElement.getBoundingClientRect();
  const pos=new THREE.Vector2((e.clientX-box.left)/box.width*2-1,-((e.clientY-box.top)/box.height*2-1));
@@ -251,6 +271,14 @@ function atelierLassoPointerDown(e){
  pressed=null;return true;
 }
 function atelierLassoPointerMove(e){
+ if(atelierLassoFreehand?.id===e.pointerId){
+   const trace=atelierLassoFreehand;
+   if(Math.hypot(e.clientX-trace.lastX,e.clientY-trace.lastY)<7)return true;
+   trace.lastX=e.clientX;trace.lastY=e.clientY;
+   const pin=atelierLassoPointFromEvent(e,trace.mesh);
+   if(atelierLassoTraceAdd(pin))atelierLassoOverlayRefresh();
+   return true;
+ }
  if(!atelierLassoDrag||atelierLassoDrag.id!==e.pointerId)return false;
  const pin=atelierLassoPointFromEvent(e,atelierLassoDrag.mesh);
  if(pin){
@@ -261,6 +289,16 @@ function atelierLassoPointerMove(e){
  return true;
 }
 function atelierLassoPointerUp(e){
+ if(atelierLassoFreehand?.id===e.pointerId){
+   atelierLassoTraceAdd(atelierLassoPointFromEvent(e,atelierLassoFreehand.mesh));
+   atelierLassoFreehand=null;atelierLassoArm=null;
+   const count=atelierLassoPending.length;
+   atelierLassoRefresh();
+   status(count>=3?
+     'Freehand trace captured '+count+' surface pins. Review, then Finish polygon (or Cancel).':
+     'Only '+count+' points captured; trace a longer loop or Cancel.',count<3);
+   return true;
+ }
  const drag=atelierLassoDrag;if(!drag||drag.id!==e.pointerId)return false;
  atelierLassoDrag=null;atelierLassoTempPin=null;
  const r=atelierLassoRegion();
@@ -272,6 +310,12 @@ function atelierLassoPointerUp(e){
    }else status('Invalid or crossing pin drag: region left unchanged.',true);
  }
  atelierLassoRefresh();return true;
+}
+function atelierLassoPointerCancel(e){
+ if(atelierLassoFreehand?.id!==e.pointerId)return false;
+ atelierLassoFreehand=null;atelierLassoArm=null;atelierLassoPending=[];
+ atelierLassoRefresh();status('Freehand trace cancelled without changing mesh.');
+ return true;
 }
 function atelierLassoInstall(){
  const id=n=>$m('Lasso'+n);
@@ -307,8 +351,14 @@ function atelierLassoInstall(){
  });
  id('Start').addEventListener('click',()=>{
    if(!atelierLassoPart()){status('Select a mesh before drawing a lasso.',true);return;}
-   atelierLassoPending=[];atelierLassoArm='draft';atelierLassoRefresh();
+   atelierLassoFreehand=null;atelierLassoPending=[];atelierLassoArm='draft';atelierLassoRefresh();
    status('Tap at least 3 surface positions, then press Finish polygon.');
+ });
+ id('StartFreehand').addEventListener('click',()=>{
+   if(!atelierLassoPart()){status('Select a mesh before tracing a lasso.',true);return;}
+   atelierLassoFreehand=null;atelierLassoPending=[];atelierLassoArm='freehand';
+   atelierLassoRefresh();
+   status('Drag one finger or mouse over the mesh. Release, inspect boundary pins, then Finish polygon.');
  });
  id('Finish').addEventListener('click',()=>{
    const p=atelierLassoPart(),pins=atelierLassoPending;
@@ -332,7 +382,7 @@ function atelierLassoInstall(){
    status('Created a non-destructive surface lasso with '+region.pins.length+' editable boundary pins.');
  });
  id('Cancel').addEventListener('click',()=>{
-   atelierLassoPending=[];atelierLassoArm=null;atelierLassoRefresh();
+   atelierLassoFreehand=null;atelierLassoPending=[];atelierLassoArm=null;atelierLassoRefresh();
  });
  id('Region').addEventListener('change',e=>{atelierLassoActive=e.target.value;atelierLassoRefresh();});
  id('InsertPin').addEventListener('click',()=>{
