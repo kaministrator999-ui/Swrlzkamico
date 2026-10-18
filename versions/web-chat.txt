@@ -1,6 +1,6 @@
 ID=web-chat
-VERSION=1.5.152
-REVISION=1.5.152-v270-verified-explorer-provenance
+VERSION=1.5.153
+REVISION=1.5.153-v284-v285-rich-widgets
 KIND=web-interface
 SOURCE_BRANCH=runtime
 STATUS=active
