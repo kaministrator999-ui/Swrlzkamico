@@ -12,7 +12,7 @@ function atelierLassoValid(part){
  return regions.every(r=>{
    if(!r||typeof r!=='object'||Array.isArray(r)||
      !['id','name','pins','axis','feather','morph','enabled','resolution'].every(k=>Object.hasOwn(r,k))
-     ||Object.keys(r).length!==7||typeof r.id!=='string'||r.id.length>48||ids.has(r.id)
+     ||Object.keys(r).length!==8||typeof r.id!=='string'||r.id.length>48||ids.has(r.id)
      ||typeof r.name!=='string'||r.name.length>90||!Array.isArray(r.pins)
      ||r.pins.length<3||r.pins.length>atelierLassoMaxPins)return false;
    ids.add(r.id);
