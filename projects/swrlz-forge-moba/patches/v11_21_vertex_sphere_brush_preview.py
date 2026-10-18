@@ -9,7 +9,7 @@ def once(html, before, after):
 def apply(html):
     root=Path(__file__).resolve().parent.parent
     assert "SWYRL_ENGINE_DEPLOY_MARKER: V11_20_ANATOMICAL_HEAD" in html
-    module=(root/"runtime/model_atelier_sculpt_brush_v11_21.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_viewport_v11_21.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_reference_studio_v11_22.js").read_text(encoding="utf-8")
+    module=(root/"runtime/model_atelier_sculpt_brush_v11_21.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_viewport_v11_21.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_reference_studio_v11_22.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_surface_targeting_v11_22.js").read_text(encoding="utf-8")
     html=once(html, "  function refreshList(){", module+"\n  function refreshList(){")
     html=once(html,"  function checkPart(p){",
          "  function checkPart(p){\n    if(!atelierSculptValid(p))return false;")
@@ -27,6 +27,17 @@ def apply(html):
              '<option value="soft">Soft Gaussian</option></select></label></div>'
              '<div class="atelier-pair"><label>Radius · local units<input id="modelAtelierSculptBrushRadius" type="number" min=".03" max="2.5" step=".05" value=".4"></label>'
              '<label>Depth · local units<input id="modelAtelierSculptBrushAmount" type="number" min="0" max=".5" step=".025" value=".12"></label></div>'
+             '<fieldset aria-label="Surface-aware brush selection"><legend>Surface targeting · avoid opposite head shell</legend>'
+             '<label>Selection mode<select id="modelAtelierSculptBrushSurfaceMode">'
+             '<option value="front">Front-facing surface (default)</option>'
+             '<option value="connected">Connected surface · geodesic</option>'
+             '<option value="through">Through-volume · both sides intentionally</option></select></label>'
+             '<div class="atelier-pair"><label>Selection radius<input id="modelAtelierSculptBrushSelectRadius" type="number" min=".03" max="2.5" step=".05" value=".4"></label>'
+             '<label>Falloff-center offset U<input id="modelAtelierSculptBrushOffsetU" type="number" min="-.5" max=".5" step=".025" value="0"></label>'
+             '<label>Falloff-center offset V<input id="modelAtelierSculptBrushOffsetV" type="number" min="-.5" max=".5" step=".025" value="0"></label></div>'
+             '<div class="atelier-inspector-actions"><button type="button" id="modelAtelierSculptBrushPreview">Preview selected surface</button>'
+             '<button type="button" id="modelAtelierSculptBrushPreviewClear">Hide preview</button></div>'
+             '<p id="modelAtelierSurfaceSelectionInfo" role="status">Pick a surface point for the highlighted footprint.</p></fieldset>'
              '<div class="atelier-pair"><label>Full-strength inner radius<input id="modelAtelierSculptBrushPlateau" type="number" min="0" max="1" step=".1" value=".25"></label>'
              '<label>Edge taper strength<input id="modelAtelierSculptBrushTaper" type="number" min="0" max="1" step=".1" value=".5"></label></div>'
              '<label><input id="modelAtelierSculptBrushLevel" type="checkbox"> Level to brush plane (off keeps uneven relief)</label>'
@@ -103,6 +114,9 @@ def apply(html):
 
 .model-atelier .atelier-viewbar button{border-radius:6px;padding:6px 9px;min-height:32px;background:#293b56;color:#fff;border:1px solid #5b7494;font-size:12px}
 .model-atelier .atelier-viewbar button:focus-visible,.model-atelier .atelier-viewbar select:focus-visible{outline:2px solid #5ce2ef}
+.model-atelier #modelAtelierSculptBrush fieldset{border:1px solid #496f8b;border-radius:8px;margin:6px 0;padding:7px}
+.model-atelier #modelAtelierSculptBrush fieldset legend{font-size:12px;color:#9ce9f3}
+.model-atelier #modelAtelierSculptBrush fieldset label{display:block;padding:4px}
 .model-atelier .atelier-view-hint{position:relative;z-index:70;pointer-events:none;font-size:11px;color:#cad7ed;padding:2px 5px;margin:0 0 5px}
 @media(max-width:600px){.model-atelier .atelier-viewbar{gap:4px;padding:5px}.model-atelier .atelier-view-presets{max-width:100%;overflow-x:auto;flex-wrap:nowrap}.model-atelier .atelier-viewbar button{white-space:nowrap}}
 </style></head>""",1)
@@ -205,6 +219,9 @@ def apply(html):
          "const hits=raycaster.intersectObjects(meshes,false);select(hits[0]?.object?.userData?.atelierId||null);",
          "if(atelierSculptVertexPick(e))return;const hits=raycaster.intersectObjects(meshes,false);if(atelierSculptPick(hits[0]))return;select(hits[0]?.object?.userData?.atelierId||null);")
     html=once(html,"  function close(){\n    if(!panel||panel.hidden)return;",
+         "  function close(){\n    atelierSurfacePreviewClear();if(!panel||panel.hidden)return;") 
+    # old close remains otherwise unchanged
+    
          "  function close(){\n    if(!panel||panel.hidden)return;atelierSculptOverlayClear();")
     key="renderParts();refreshList();refreshInspector();"
     assert key in html
