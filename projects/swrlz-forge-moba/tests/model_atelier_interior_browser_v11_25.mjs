@@ -24,6 +24,7 @@ try{
   await page.locator('#modelAtelierViewportClipApply').click();
   status=await page.evaluate(()=>window.SWYRL_ENGINE_VIEW.status());
   assert.equal(status.near,.03,'Invalid near plane must reject without camera mutation');
+  const originalCamera=await page.evaluate(()=>window.SWYRL_ENGINE_VIEW.status());
   await page.locator('#modelAtelierViewportInsideEnter').click();
   status=await page.evaluate(()=>window.SWYRL_ENGINE_VIEW.status());
   assert.equal(status.interior,true);assert(status.distance<.4);assert.equal(status.near,.01);
@@ -39,7 +40,12 @@ try{
   await page.locator('#modelAtelierParts').selectOption('model-0001');
   await page.locator('#modelAtelierViewportInsideExit').click();
   status=await page.evaluate(()=>window.SWYRL_ENGINE_VIEW.status());
-  assert.equal(status.interior,false);assert.equal(status.distance,8.1);
+  assert.equal(status.interior,false);
+  assert.equal(status.distance,originalCamera.distance,'Exit must restore actual prior camera distance');
+  assert.equal(status.yaw,originalCamera.yaw);
+  assert.equal(status.pitch,originalCamera.pitch);
+  assert.equal(status.near,originalCamera.near);
+  assert.equal(status.far,originalCamera.far);
   const after=await parts();
   assert.deepEqual(after,before,'Camera-only state must never mutate original native model');
   assert.equal(errors.length,0,errors.join(' | '));
