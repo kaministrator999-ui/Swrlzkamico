@@ -8,12 +8,13 @@ function atelierFaceSheetValid(part){
  if(part.kind!=='faceSheet')return part.faceSheet===undefined;
  const v=part.faceSheet;
  if(!v||typeof v!=='object'||Array.isArray(v)
-   ||Object.keys(v).sort().join('|')!=='crop|gridU|gridV|refId|shape'
+   ||!['crop|gridU|gridV|refId|shape','crop|gridU|gridV|headDepth|refId|shape'].includes(Object.keys(v).sort().join('|'))
    ||typeof v.refId!=='string'||v.refId.length>72
    ||!['oval','rectangle'].includes(v.shape)
    ||!Number.isInteger(v.gridU)||v.gridU<8||v.gridU>128
    ||!Number.isInteger(v.gridV)||v.gridV<4||v.gridV>128
    ||v.gridU*v.gridV>atelierFaceSheetMaxCells
+   ||(v.headDepth!==undefined&&(!Number.isFinite(v.headDepth)||v.headDepth<0||v.headDepth>2||v.shape!=='oval'&&v.headDepth>0))
    ||!Array.isArray(v.crop)||v.crop.length!==4||!v.crop.every(Number.isFinite))return false;
  const [x,y,w,h]=v.crop;
  return x>=0&&y>=0&&w>.03&&h>.03&&x+w<=1.0000001&&y+h<=1.0000001;
@@ -38,10 +39,10 @@ function atelierFaceSheetGeometry(p){
      xyz.push(sx,sy,0);
      uvs.push(cx+cw*(sx+.5),cy+ch*(sy+.5));
    }
-   for(let i=0;i<seg;i++)indices.push(0,1+i,1+(i+1)%seg);
+   for(let i=0;i<seg;i++)indices.push(0,1+(i+1)%seg,1+i);
    for(let r=1;r<rings;r++)for(let j=0;j<seg;j++){
      const q=(j+1)%seg,lo=1+(r-1)*seg,hi=1+r*seg;
-     indices.push(lo+j,hi+j,hi+q,lo+j,hi+q,lo+q);
+     indices.push(lo+j,hi+q,hi+j,lo+j,lo+q,hi+q);
    }
    g=new THREE.BufferGeometry();
    g.setAttribute('position',new THREE.Float32BufferAttribute(xyz,3));
@@ -49,6 +50,7 @@ function atelierFaceSheetGeometry(p){
    g.setIndex(indices);
    g.computeVertexNormals();
  }
+ if(v.headDepth>0)g=atelierFaceVolumeClose(g,p);
  g.computeBoundingSphere();g.computeBoundingBox();
  return g;
 }
@@ -88,6 +90,7 @@ function atelierFaceSheetRefresh(){
  $m('FaceSheetInfo').textContent=(ref?'Source image: '+ref.name:'Source image missing! Restore reference image.')
    +' · grid '+v.gridU+' × '+v.gridV
    +' · UVs track the image as the surface is sculpted.';
+ atelierFaceVolumeRefresh();
 }
 function atelierFaceSheetCreate(){
  const m=model(),ref=atelierRefCurrent();
@@ -98,7 +101,7 @@ function atelierFaceSheetCreate(){
    name:'Editable image face sheet · '+ref.name.slice(0,40),
    group:'Reference modeling',
    kind:'faceSheet',faceSheet:{
-     refId:ref.id,shape:'oval',gridU:48,gridV:20,crop:[0,0,1,1]
+     refId:ref.id,shape:'oval',gridU:48,gridV:20,crop:[0,0,1,1],headDepth:0
    },
    material:'matte',color:'#ffffff',
    position:[0,2.85,1.25],rotation:[0,0,0],scale:[.56,.72,.56]
@@ -108,6 +111,7 @@ function atelierFaceSheetCreate(){
  status('Created a triangulated, UV-mapped face sheet from the selected reference. Use brush/lasso and side camera to extrude; original head and source image preserved.');
 }
 function atelierFaceSheetInstall(){
+ atelierFaceVolumeInstall();
  $m('FaceSheetCreate').addEventListener('click',atelierFaceSheetCreate);
  const kind=$m('Kind');
  if(kind&&!kind.querySelector('option[value="faceSheet"]')){
@@ -121,7 +125,8 @@ function atelierFaceSheetInstall(){
    const shape=$m('FaceSheetShape').value;
    const gridU=Number($m('FaceSheetGridU').value),gridV=Number($m('FaceSheetGridV').value);
    const crop=['X','Y','W','H'].map(k=>Number($m('FaceSheetCrop'+k).value));
-   const candidate={...p,faceSheet:{...p.faceSheet,shape,gridU,gridV,crop}};
+   const headDepth=Number($m('FaceSheetHeadDepth').value);
+   const candidate={...p,faceSheet:{...p.faceSheet,shape,gridU,gridV,crop,headDepth}};
    if(!atelierFaceSheetValid(candidate)||!checkPart(candidate)){
      status('Face image settings invalid: cells ≤12k; crop must remain within 0–1.',true);return;
    }
