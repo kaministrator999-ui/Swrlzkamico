@@ -80,9 +80,10 @@ def apply(html):
              '<button id="modelAtelierSculptBrushUndoStroke">Remove last stroke</button></div>'
              '<fieldset id="modelAtelierLassoTools" aria-label="Editable surface lasso and boundary pins">'
              '<legend>Surface lasso · 📌 editable boundary pins</legend>'
-             '<p>Draw a polygon by tapping selected mesh surface points. Large pins control only the region boundary; use the separate smaller 📍 mesh vertex pins to move geometry.</p>'
+             '<p>Tap polygon points or trace freehand on the selected mesh; both create editable surface-attached 📌 boundary pins. The smaller 📍 pins move mesh vertices separately.</p>'
              '<label>Region name<input id="modelAtelierLassoName" type="text" maxlength="90" value="Face detail"></label>'
              '<div class="atelier-inspector-actions"><button type="button" id="modelAtelierLassoStart">Start polygon lasso</button>'
+             '<button type="button" id="modelAtelierLassoStartFreehand">Trace freehand</button>'
              '<button type="button" id="modelAtelierLassoFinish">Finish polygon</button>'
              '<button type="button" id="modelAtelierLassoCancel">Cancel draft</button></div>'
              '<label>Selected region<select id="modelAtelierLassoRegion" aria-label="Saved editable lasso regions"></select></label>'
@@ -279,7 +280,7 @@ def apply(html):
     html=once(html, "  function pointerUp(e){\n    if(atelierSculptOnPointerUp(e))return;",
          "  function pointerUp(e){\n    if(atelierCameraPointerUp(e))return;\n    if(atelierLassoPointerUp(e))return;\n    if(atelierSculptOnPointerUp(e))return;")
     html=once(html,"renderer.domElement.addEventListener('pointercancel',()=>pressed=null);",
-         "renderer.domElement.addEventListener('pointercancel',e=>{atelierCameraPointerCancel(e);if(atelierSculptDrag){atelierSculptDrag=null;renderParts();}pressed=null;});")
+         "renderer.domElement.addEventListener('pointercancel',e=>{atelierLassoPointerCancel(e);atelierCameraPointerCancel(e);if(atelierSculptDrag){atelierSculptDrag=null;renderParts();}pressed=null;});")
     html=once(html, "mesh.geometry?.dispose();if(!mesh.material?.userData?.atelierHDMaterial)mesh.material?.dispose();",
          "for(const child of mesh.children)if(child.isMesh&&child.userData.atelierHelper)child.material?.dispose();mesh.geometry?.dispose();if(!mesh.material?.userData?.atelierHDMaterial)mesh.material?.dispose();")
     html=once(html,"function onWheel(e){e.preventDefault();orbit.distance=Math.min(22,Math.max(atelierDetailTarget?.4:3.7,",
