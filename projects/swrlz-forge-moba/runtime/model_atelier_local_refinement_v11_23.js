@@ -1,0 +1,181 @@
+// §E v11.23 local topology refinement. Deterministically rebuilds crack-free
+// triangle edges from a saved named lasso. Original mesh topology is immutable;
+// disabling/removing a layer restores the original on the next render.
+const atelierRefineMaxLayers=3,atelierRefineMaxTriangles=180000;
+function atelierRefineValid(p){
+ const layers=p.refinementLayers;
+ if(layers===undefined)return true;
+ if(!Array.isArray(layers)||layers.length>atelierRefineMaxLayers)return false;
+ const ids=new Set();
+ return layers.every(layer=>{
+   if(!layer||typeof layer!=='object'||Array.isArray(layer)||
+      Object.keys(layer).sort().join('|')!=='enabled|id|level|regionId'
+      ||typeof layer.id!=='string'||layer.id.length>60||ids.has(layer.id)
+      ||typeof layer.regionId!=='string'||layer.regionId.length>60
+      ||!Number.isInteger(layer.level)||layer.level<1||layer.level>2
+      ||typeof layer.enabled!=='boolean')return false;
+   ids.add(layer.id);
+   return (p.sculptLassos||[]).some(r=>r.id===layer.regionId);
+ });
+}
+function atelierRefineCount(g){
+ return Math.floor((g.index?.count||g.attributes.position.count)/3);
+}
+function atelierRefineEstimate(g,part,layers=part.refinementLayers||[]){
+ let triangles=atelierRefineCount(g);
+ // Conservative bound; target area usually much smaller. Never blindly
+ // execute a full-scene 4x subdivision if an object is near mobile limits.
+ for(const l of layers)if(l.enabled)triangles*=4**l.level;
+ return {original:atelierRefineCount(g),upperBound:Math.floor(triangles),
+   withinCap:triangles<=atelierRefineMaxTriangles};
+}
+function atelierRefineOne(g,region){
+ if(g.morphAttributes?.position?.length||g.groups.length>1)return null;
+ const a=g.attributes.position,idx=g.index,triangles=atelierRefineCount(g);
+ if(!triangles||triangles>atelierRefineMaxTriangles)return null;
+ const uv=g.attributes.uv,normal=g.attributes.normal,color=g.attributes.color;
+ const fields={position:3};
+ if(uv)fields.uv=uv.itemSize;
+ if(normal)fields.normal=normal.itemSize;
+ if(color)fields.color=color.itemSize;
+ const point=(vertex,attribute,n)=>Array.from({length:n},(_,k)=>attribute.getComponent(vertex,k));
+ const triIDs=new Uint32Array(triangles*3);
+ for(let i=0;i<triIDs.length;i++)triIDs[i]=idx?idx.getX(i):i;
+ const positions=Array.from({length:a.count},(_,i)=>point(i,a,3));
+ const coords=atelierLassoProjection(region),axis=new THREE.Vector3(...region.axis);
+ const testVertex=i=>{
+   const p=new THREE.Vector3(...positions[i]).sub(coords.origin);
+   return [p.dot(coords.u),p.dot(coords.v)];
+ };
+ // Weld opposite UV seams by rounded POSITION when deciding shared edges.
+ // Attribute midpoints remain per-face to preserve distinct UVs/material.
+ const keys=positions.map(p=>p.map(v=>Math.round(v*1e5)).join(','));
+ const edge=(i,j)=>keys[i]<keys[j]?keys[i]+'|'+keys[j]:keys[j]+'|'+keys[i];
+ const faceSelected=new Uint8Array(triangles),splitEdges=new Set();
+ let selected=0;
+ for(let t=0;t<triangles;t++){
+   const [a,b,c]=triIDs.slice(t*3,t*3+3);
+   const p=[testVertex(a),testVertex(b),testVertex(c)];
+   const center=[(p[0][0]+p[1][0]+p[2][0])/3,
+     (p[0][1]+p[1][1]+p[2][1])/3];
+   const N=g.attributes.normal;
+   if(N){
+     const norm=new THREE.Vector3(
+       (N.getX(a)+N.getX(b)+N.getX(c))/3,
+       (N.getY(a)+N.getY(b)+N.getY(c))/3,
+       (N.getZ(a)+N.getZ(b)+N.getZ(c))/3);
+     if(norm.dot(axis)<-.12)continue;
+   }
+   if(!atelierLassoInside(center,coords.poly))continue;
+   faceSelected[t]=1;selected++;
+   splitEdges.add(edge(a,b));splitEdges.add(edge(b,c));splitEdges.add(edge(c,a));
+ }
+ if(!selected)return null;
+ const out=Object.fromEntries(Object.keys(fields).map(k=>[k,[]]));
+ const getAttribute=(k)=>g.attributes[k];
+ const origin=i=>Object.fromEntries(Object.keys(fields).map(k=>[k,point(i,getAttribute(k),fields[k])]));
+ const midpoint=(i,j)=>Object.fromEntries(Object.keys(fields).map(k=>{
+   const attr=getAttribute(k),n=fields[k];
+   return [k,Array.from({length:n},(_,a)=>(attr.getComponent(i,a)+attr.getComponent(j,a))*.5)];
+ }));
+ const emit=(a,b,c)=>{for(const v of [a,b,c])for(const k of Object.keys(fields))out[k].push(...v[k]);};
+ // Conforming fan triangulation: selected faces split all three edges and
+ // produce four triangles; their neighbors split only the shared edges.
+ // Every edge midpoint matches on both sides, so no T-junctions/cracks.
+ for(let t=0;t<triangles;t++){
+   const a=triIDs[t*3],b=triIDs[t*3+1],c=triIDs[t*3+2];
+   const A=origin(a),B=origin(b),C=origin(c);
+   const ab=splitEdges.has(edge(a,b)),bc=splitEdges.has(edge(b,c)),ca=splitEdges.has(edge(c,a));
+   if(!ab&&!bc&&!ca){emit(A,B,C);continue;}
+   const AB=ab?midpoint(a,b):null,BC=bc?midpoint(b,c):null,CA=ca?midpoint(c,a):null;
+   if(ab&&bc&&ca){
+     emit(A,AB,CA);emit(AB,B,BC);emit(CA,BC,C);emit(AB,BC,CA);
+   }else{
+     const polygon=[A,...(ab?[AB]:[]),B,...(bc?[BC]:[]),C,...(ca?[CA]:[])];
+     for(let i=1;i<polygon.length-1;i++)emit(polygon[0],polygon[i],polygon[i+1]);
+   }
+   if(out.position.length/9>atelierRefineMaxTriangles)return null;
+ }
+ if(out.position.length/9>atelierRefineMaxTriangles)return null;
+ const result=new THREE.BufferGeometry();
+ for(const [name,values]of Object.entries(out))result.setAttribute(name,new THREE.Float32BufferAttribute(values,fields[name]));
+ result.userData.refinedTriangles=out.position.length/9;
+ result.userData.selectedOriginalTriangles=selected;
+ // Existing normals are interpolated, retaining smooth shading across new
+ // edges instead of generating faceted normals on nonindexed geometry.
+ return result;
+}
+function atelierRefineApply(g,part){
+ const layers=part.refinementLayers||[];
+ if(!layers.some(l=>l.enabled))return g;
+ let current=g;
+ for(const layer of layers){
+   if(!layer.enabled)continue;
+   const r=part.sculptLassos?.find(r=>r.id===layer.regionId);
+   if(!r||!atelierLassoPolygonValid(r))continue;
+   for(let i=0;i<layer.level;i++){
+     const next=atelierRefineOne(current,r);
+     if(!next)break;
+     if(current!==g)current.dispose();
+     current=next;
+   }
+ }
+ if(current!==g)g.dispose();
+ return current;
+}
+function atelierRefineRefresh(){
+ const p=partById(selection),panel=$m('RefineTools');
+ if(!panel)return;
+ panel.hidden=!p;
+ const r=atelierLassoRegion();
+ const source=modelRoot?.children.find(o=>o.isMesh&&o.userData.atelierId===p?.id);
+ const all=p?.refinementLayers||[];
+ const options=$m('RefineLayer');options.replaceChildren();
+ for(let i=0;i<all.length;i++){
+   const el=document.createElement('option');
+   el.value=String(i);el.textContent=(i+1)+': '+(all[i].enabled?'● ':'○ ')+all[i].regionId+' ×'+(4**all[i].level);
+   options.append(el);
+ }
+ const original=source?atelierRefineCount(source.geometry):0;
+ $m('RefineStats').textContent='Current visible mesh: '+original.toLocaleString()+' triangles · '+
+   all.length+' saved refinement layers · Region: '+(r?.name||'none')+
+   '. The editor caps topology at '+atelierRefineMaxTriangles.toLocaleString()+' triangles per mesh.';
+}
+function atelierRefineInstall(){
+ const id=s=>$m('Refine'+s);
+ id('Add').addEventListener('click',()=>{
+   const p=partById(selection),r=atelierLassoRegion();
+   if(!p||!r){status('Create/select a surface lasso region before refining.',true);return;}
+   if((p.refinementLayers?.length||0)>=atelierRefineMaxLayers){status('Maximum three refinement layers per object.',true);return;}
+   const level=Number(id('Level').value);
+   const mesh=modelRoot.children.find(o=>o.isMesh&&o.userData.atelierId===selection);
+   if(!mesh||!Number.isInteger(level)||level<1||level>2)return;
+   const estimate=atelierRefineEstimate(mesh.geometry,p,[{level,enabled:true}]);
+   if(!estimate.withinCap){
+     status('Refinement could exceed '+atelierRefineMaxTriangles+' triangles. Lower density or choose a smaller mesh.',true);return;
+   }
+   const layer={id:'detail-'+Date.now().toString(36),regionId:r.id,level,enabled:true};
+   const next={...p,refinementLayers:[...(p.refinementLayers||[]),layer]};
+   if(!checkPart(next)){status('Refinement rejected by native validation.',true);return;}
+   checkpoint();p.refinementLayers=next.refinementLayers;
+   signalEdited();select(p.id);
+   status('Added reversible local triangle refinement. Source mesh preserved; OBJ exports evaluated triangles.');
+ });
+ id('Remove').addEventListener('click',()=>{
+   const p=partById(selection),i=Number(id('Layer').value);
+   if(!p?.refinementLayers?.[i])return;
+   checkpoint();p.refinementLayers.splice(i,1);signalEdited();select(p.id);
+ });
+ id('Toggle').addEventListener('click',()=>{
+   const p=partById(selection),i=Number(id('Layer').value);
+   if(!p?.refinementLayers?.[i])return;
+   checkpoint();p.refinementLayers[i].enabled=!p.refinementLayers[i].enabled;
+   signalEdited();select(p.id);
+ });
+ id('Up').addEventListener('click',()=>{
+   const p=partById(selection),i=Number(id('Layer').value);
+   if(!p?.refinementLayers?.[i]||i===0)return;
+   checkpoint();[p.refinementLayers[i-1],p.refinementLayers[i]]=[p.refinementLayers[i],p.refinementLayers[i-1]];
+   signalEdited();select(p.id);id('Layer').value=String(i-1);
+ });
+}
