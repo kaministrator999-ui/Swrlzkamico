@@ -80,6 +80,9 @@ function atelierSculptApply(geometry,part){
  // position-dependent influence for identical vertices so the seam stays shut.
  for(const s of part.sculptBrushes||[]){
    if(!atelierSculptValid({sculptBrushes:[s]}))continue;
+   if((s.operation&&s.operation!=='push')||s.mirrorX){
+     atelierSculptApplyOperator(geometry,s);continue;
+   }
    const origin=new THREE.Vector3(...s.center);
    const axis=new THREE.Vector3(...s.axis).applyEuler(new THREE.Euler(s.pitch,s.yaw,0,'YXZ')).normalize();
    const delta=new THREE.Vector3(),move=new THREE.Vector3(),r=s.radius;
