@@ -30,6 +30,21 @@ assert not engine._identity_response_faults("I'm Swurlz, your creative and techn
 assert "canonical-assistant-name-missing" in engine._identity_response_faults("I'm Starlight.",assist,True)
 assert not engine._identity_response_faults("I'm Starlight.",assist,False)  # approved account alias context
 assert "user-described-as-assistant" in engine._identity_response_faults("I'm an AI assistant.",user)
+# Actual v282 phone export: incorrect USER identity accepted on first attempt.
+for invalid in (
+    "You are ASSISTANT.",
+    "You're the assistant.",
+    "Your name is §wyrlz.",
+    "**Your Name:** §wyrlz",
+    "You are an AI assistant.",
+    "You are the system.",
+):
+    assert engine._identity_response_faults(invalid,user), invalid
+    if "system" not in invalid:
+        assert "user-assigned-assistant-identity" in engine._identity_response_faults(invalid,user), invalid
+assert not engine._identity_response_faults("You're the person asking, and I don't have your preferred name yet.",user)
+assert not engine._identity_response_faults("You're Avery, according to your profile.",user)
+
 assert not engine._identity_response_faults("You're Avery, based on the name in your profile.",user)
 assert not engine._identity_response_faults("I don't have a supported name for you yet.",user)
 assert engine._identity_response_faults("",user)==["empty-identity-answer"]
