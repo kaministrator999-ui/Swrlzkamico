@@ -1,3 +1,13 @@
+## UPDATE STARTED — 2026-10-18 — v283 identity attribution and correction continuity
+
+**Owner evidence:** Attached signed-in Android screenshots and `swrlz-dragon-chat (84).json` document a fresh `Who are you` rejection (two model attempts, final `generic-customer-service-ending`), then `Who am i` incorrectly returning `You are ASSISTANT.` marked `CANDIDATE_PASS`. Subsequent questioning generated an unsupported company/fictional-series story; explicit correction of assistant-name spelling `§wyrlz` was mistaken for a new renaming and the assistant then assigned its name to the user. The model and validator both failed in different ways; a green prepublish synthetic first-turn `Avery` scenario did not cover a nameless user or correction history. The original export is owner-private evidence, not a source artifact to commit.
+
+**Authority:** Chat integration baseline `85c7cad903f52a50c95c857ae1b9c719d1580017`, live v282 Space revision `34d9ec06f27d22c989f12eef77c18ce036357b05`; runtime Repository Work `1.0.220`, Server Runtime `2.3.432`. This is Chat only, separate from §E/Forge and unrelated GitHub OAuth patches.
+
+**Scoped repair:** Distinguish conversational referent and verified profile authority before assessing model answers; correct false-positive user/assistant identity validation; remove uppercase role labels from short identity prompting to reduce echo; distinguish spelling clarification from nickname/rename intent; make corrective follow-ups challenge demonstrably false prior assistant claims, without inventing user data or assistant origin stories. Preserve universal canonical assistant identity versus user-specific forms of address and account-scoped profile/history. No automatic persistent memory writes. Add held-out synthetic tests for nameless-user two-turn identity, correction, quote/joke boundaries, and invented provenance. Real model semantic acceptance MUST pass before any existing-Space publication, keep failed candidate receipts and rollback lineage.
+
+**Status:** STARTED. Independent source CI, precise candidate branch and guarded prepublication multi-turn GGUF checks are prerequisites; do not claim learning or success until demonstrated.
+
 ## UPDATE FINISHED — 2026-10-17 — v282 generated identity candidate checks and real 700M prepublish acceptance
 
 **Owner evidence:** Signed-in Chat export (82) newest fresh 700M `Who are you` response began `**You** are a conversational AI assistant...`, did not introduce §wyrlz and generated in ~4.2 s (LOADING, CONTEXT_BUDGETED, candidate attempt, COMPLETE). v281 profile-recital failure was replaced by generic perspective inversion; the export contains no v281 `Who am I` or joke/alias sequence, so these were not claimed as tested.
