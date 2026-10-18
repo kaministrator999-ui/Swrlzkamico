@@ -29,6 +29,8 @@ assert.equal(go('atelierViewportInsideExit()'),undefined);
 assert.equal(go('atelierCameraInterior'),false);
 assert.equal(go('atelierViewOverrides.has("test-mesh")'),false);
 assert.equal(go('orbit.distance'),8.1);
+assert.equal(camera.near,.03,'Camera near plane must be restored');
+assert.equal(camera.far,30,'Camera far plane must be restored');
 assert.equal(go('atelierViewportClipApply(-.1,30)'),false);
 assert.equal(go('atelierViewportClipApply(.1,10000)'),false);
 console.log('V1125_INSIDE_CAMERA_CLIPPING_NONDESTRUCTIVE_ENTER_EXIT_PASS');
