@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';import vm from 'node:vm';
 const src=fs.readFileSync(new URL('../runtime/model_atelier_reference_studio_v11_22.js',import.meta.url),'utf8');
-const c=vm.createContext({console});vm.runInContext(src,c);
+const c=vm.createContext({console,structuredClone});vm.runInContext(src,c);
 const old={x:12,y:25,open:true,collapsed:false,active:null};
 const ok=v=>c.atelierRefLayoutValid(v);
 assert(ok(old),'Original portable reference layouts must remain valid');
