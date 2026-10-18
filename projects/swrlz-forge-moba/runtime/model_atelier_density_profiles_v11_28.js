@@ -27,15 +27,15 @@ function atelierDensityPlan(part,u,v){
  }
 }
 function atelierDensityRefresh(){
- const p=partById(selection),pane=$m('DensityTools');
+ const p=partById(selection),pane=$m('SculptDensityTools');
  if(!pane)return;
  pane.hidden=!atelierDensityEligible(p);
  if(!atelierDensityEligible(p))return;
- $m('DensityPreset').value='custom';
- $m('DensityBudget').textContent='Preview selected-object U/V sampling before pressing Re-sample vertex grid. This is editable density, not runtime LOD.';
+ $m('SculptDensityPreset').value='custom';
+ $m('SculptDensityBudget').textContent='Preview selected-object U/V sampling before pressing Re-sample vertex grid. This is editable density, not runtime LOD.';
 }
 function atelierDensityInstall(){
- const id=s=>$m('Density'+s);
+ const id=s=>$m('SculptDensity'+s);
  const preset=id('Preset');
  preset.addEventListener('change',()=>{
    const p=partById(selection),factor=atelierDensityPresets[preset.value];
