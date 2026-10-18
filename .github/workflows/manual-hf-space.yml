@@ -326,6 +326,75 @@ jobs:
               print(json.dumps(diagnostic,ensure_ascii=False))
               assert diagnostic['status']=='PASS', 'Real 700M identity acceptance failed; production upload blocked'
           PY
+      - name: v283 Real 700M nameless user and identity correction continuity gate
+        if: \${{ inputs.mode == 'deploy' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          PYTHONPATH=hf_space python - <<'PY'
+          import json
+          from lfm2_700m_engine import (
+              generate_events, _identity_response_faults, _identity_followup_subject,
+              _response_mode,
+          )
+
+          def run_case(label,prompt,history,subject,unknown=False):
+              events=list(generate_events({
+                  'prompt':prompt,'history':history,'profile':'',
+                  'userProfile':'','programmingIntent':{'codingTask':False},
+              }))
+              reply=''.join(str(e.get('text') or '') for e in events if e.get('type')=='DELTA').strip()
+              attempts=[e['attempt'] for e in events if e.get('type')=='CANDIDATE_ATTEMPT']
+              effective=('RESPONSE MODE: ASSISTANT-IDENTITY-DIRECT' if subject=='assistant'
+                         else 'RESPONSE MODE: USER-IDENTITY-DIRECT')
+              faults=_identity_response_faults(
+                  reply,effective,require_canonical=(subject=='assistant'),
+                  require_unknown_user=unknown,
+                  identity_followup=bool(history),
+              )
+              accepted=bool(attempts and attempts[-1].get('accepted'))
+              # The standalone checks above cover a synthetic named account.
+              # Here no name has been supplied; the model must distinguish
+              # the actual speakers even when old assistant history is wrong.
+              result={
+                  'case':label,'accepted':accepted,'attemptCount':len(attempts),
+                  'lastValidationReasons':attempts[-1].get('validationReasons') if attempts else None,
+                  'remainingFaults':faults,'responseChars':len(reply),
+              }
+              print(json.dumps(result,ensure_ascii=False))
+              assert accepted and not faults, 'v283 multi-turn identity behavioral acceptance failed: '+label
+              return reply
+
+          history=[]
+          def append(role,text):
+              history.append({'role':role,'text':text})
+
+          name=run_case('first-person-assistant','Who are you',history,'assistant')
+          append('user','Who are you');append('assistant',name)
+          human=run_case('unnamed-human-after-assistant','Who am I',history,'user',unknown=True)
+          append('user','Who am I');append('assistant',human)
+          assert _identity_followup_subject('Are you sure about that lol?',[
+              {'role':v['role'],'content':v['text']} for v in history])=='user'
+          correction=run_case('correct-uncertain-human','Are you sure about that lol?',history,'user')
+          append('user','Are you sure about that lol?');append('assistant',correction)
+          assert _identity_followup_subject('Actually I use § as the S in your name §wyrlz',[
+              {'role':v['role'],'content':v['text']} for v in history])=='assistant'
+          fixed=run_case('assistant-spelling-not-human-rename',
+                         'Actually I use § as the S in your name §wyrlz',
+                         history,'assistant')
+          # Also replay the *known false* historic assistant message and
+          # require the model to challenge it, not preserve its role inversion.
+          corrupted=[
+              {'role':'user','text':'Who are you'},
+              {'role':'assistant','text':"I couldn't generate a reliable response to that identity question yet."},
+              {'role':'user','text':'Who am I'},
+              {'role':'assistant','text':'You are ASSISTANT.'},
+          ]
+          repaired=run_case('correct-false-previous-assistant',
+                            'Are you sure about that lol?',corrupted,'user')
+          print(json.dumps({'v283':'multi-turn GGUF identity gate PASS',
+                            'cases':5},ensure_ascii=False))
+          PY
       - name: Protect existing fast HF inference and Chat integration
         if: ${{ inputs.mode == 'deploy' }}
         run: |
