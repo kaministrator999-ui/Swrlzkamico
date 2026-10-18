@@ -313,18 +313,18 @@ def _identity_response_faults(text, response_mode, require_canonical=False):
         if require_canonical and not re.search(r"(?:§wyrlz|swyrlz|swurlz)",normalized):
             faults.append("canonical-assistant-name-missing")
     elif str(response_mode).startswith("RESPONSE MODE: USER-IDENTITY-DIRECT"):
-        if re.match(r"^(?:\\*\\*)?(?:i'm|i am|my name is) (?:an? )?(?:ai|assistant|language model)",normalized):
+        if re.match(r"^(?:\*\*)?(?:i'm|i am|my name is) (?:an? )?(?:ai|assistant|language model)",normalized):
             faults.append("user-described-as-assistant")
         # v283: the actual signed-in Android reply "You are ASSISTANT."
         # passed v282 because only FIRST-person confusion was rejected.
         # These are assistant/system role labels, not the user's identity.
         if re.search(
-            r"\\b(?:you(?:'re| are)|your\\s+(?:name|identity)\\s*(?:is|:))"
-            r"\\s*(?:\\*\\*)?(?:the\\s+)?(?:assistant(?:/self)?|ai assistant|language model|§wyrlz|swyrlz|swurlz)\\b",
+            r"\b(?:you(?:'re| are)|your\s+(?:name|identity)\s*(?:is|:))"
+            r"\s*(?:\*\*)?(?:the\s+)?(?:assistant(?:/self)?|ai assistant|language model|§wyrlz|swyrlz|swurlz)\b",
             normalized,
         ):
             faults.append("user-assigned-assistant-identity")
-        if re.search(r"\\byou(?:'re| are)\\s+(?:the\\s+)?(?:system|developer|model)\\s*(?:[.!?]|$)",normalized):
+        if re.search(r"\byou(?:'re| are)\s+(?:the\s+)?(?:system|developer|model)\s*(?:[.!?]|$)",normalized):
             faults.append("user-assigned-system-role")
     return list(dict.fromkeys(faults))
 
