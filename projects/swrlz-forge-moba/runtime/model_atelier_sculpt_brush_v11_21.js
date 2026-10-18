@@ -313,6 +313,27 @@ function atelierSculptOverlayRefresh(){
    }
  }
 }
+// Keep selected vertex gizmos outside the floating render toolbar on mobile.
+function atelierSculptAutoFrameGizmo(){
+ if(!atelierSculptGizmo||!camera||!renderer)return false;
+ const bar=$m('ViewportModes');
+ if(!bar)return false;
+ const canvas=renderer.domElement.getBoundingClientRect();
+ const bounds=bar.getBoundingClientRect();
+ const projected=atelierSculptGizmo.position.clone().project(camera);
+ const x=canvas.left+(projected.x+1)*canvas.width/2;
+ const y=canvas.top+(1-projected.y)*canvas.height/2;
+ const minimum=Math.max(canvas.top+35,bounds.bottom+42);
+ if(!Number.isFinite(x)||!Number.isFinite(y)||y>=minimum||minimum>canvas.bottom-90)return false;
+ atelierCameraPanByPixels(0,Math.min(180,minimum-y+6));
+ return true;
+}
+function atelierSculptEnsureGizmoTouchable(){
+ for(let attempt=0;attempt<4;attempt++){
+   if(!atelierSculptAutoFrameGizmo())break;
+   atelierSculptOverlayRefresh();
+ }
+}
 function atelierSculptVertexPick(e){
  if(!atelierSculptVertexMode||!atelierSculptOverlay?.userData.vertexPoints)return false;
  const q=point(e);mouse.set(q.x,q.y);raycaster.setFromCamera(mouse,camera);
@@ -325,6 +346,7 @@ function atelierSculptVertexPick(e){
  else if(atelierSculptVertexIDs.length<128)atelierSculptVertexIDs.push(id);
  else {status('Select a maximum of 128 control points per group.',true);return true;}
  atelierSculptOverlayRefresh();
+ atelierSculptEnsureGizmoTouchable();
  atelierSculptRefresh();
  return true;
 }
@@ -424,8 +446,10 @@ function atelierSculptVertexInstall(){
    atelierSculptVertexIDs=ids;
    atelierSculptLastVertexPart=selection;
    $m('SculptBrushVertexToggle').textContent='Hide vertex map';
-   atelierSculptOverlayRefresh();atelierSculptRefresh();
-   status('Mapped and selected '+ids.length+' control points. Drag the yellow gizmo in the viewport.');
+   atelierSculptOverlayRefresh();
+   atelierSculptEnsureGizmoTouchable();
+   atelierSculptRefresh();
+   status('Mapped and selected '+ids.length+' control points. The gizmo is framed below the camera toolbar for touch/drag.');
  });
  $m('SculptBrushVertexToggle').addEventListener('click',()=>{
    atelierSculptVertexMode=!atelierSculptVertexMode;
