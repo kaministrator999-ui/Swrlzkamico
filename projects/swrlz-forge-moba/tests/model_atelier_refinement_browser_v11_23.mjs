@@ -45,6 +45,9 @@ try{
   await page.locator('#modelAtelierImportFile').setInputFiles(path);
   await page.waitForFunction(()=>window.SWYRL_ENGINE_AGENT.inspectScene().project.modelAtelier
     .parts.find(x=>x.id==='model-0001')?.refinementLayers?.length===1);
+  // A valid import deliberately clears the current mesh selection. Re-select
+  // the restored head before reading inspector-scoped visible triangle counts.
+  await page.locator('#modelAtelierParts').selectOption('model-0001');
   assert.equal(await count(),after,'Native JSON reload must reproduce refined mesh');
   assert.equal(errors.length,0,errors.join(' | '));
   console.log('V1123_LOCAL_DETAIL_BROWSER_DENSITY_UNDO_SAVE_RELOAD_PASS',device,before,after);
