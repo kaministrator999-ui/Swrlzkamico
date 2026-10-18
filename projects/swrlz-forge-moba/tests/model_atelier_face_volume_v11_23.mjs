@@ -21,8 +21,8 @@ for(let i=0;i<positions.count;i++){
  assert(uv.getX(i)>=.1-1e-5&&uv.getX(i)<=.9+1e-5);
  assert(uv.getY(i)>=.15-1e-5&&uv.getY(i)<=.85+1e-5);
 }
-assert(rear>100);
-assert(Math.abs(closed.boundingBox?.min.z??-.65+.65)<2);
+assert(rear>=60,'Manual closure adds three 20-point rear rings plus a pole');
+
 closed.computeBoundingBox();assert(Math.abs(closed.boundingBox.min.z+.65)<1e-5);
 const edgeCounts=new Map(),indices=closed.index.array;
 for(let t=0;t<indices.length;t+=3)for(const [a,b]of[
