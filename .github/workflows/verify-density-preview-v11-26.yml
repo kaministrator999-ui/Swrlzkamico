@@ -1,0 +1,49 @@
+name: Verify §E v11.26 measured density preview
+on:
+  push:
+    branches: [feature/atelier-density-preview-v11-26]
+    paths:
+      - 'projects/swrlz-forge-moba/runtime/model_atelier_local_refinement_v11_23.js'
+      - 'projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py'
+      - 'projects/swrlz-forge-moba/tests/model_atelier_local_refine_v11_23.mjs'
+      - 'projects/swrlz-forge-moba/tests/model_atelier_refinement_browser_v11_23.mjs'
+      - '.github/workflows/verify-density-preview-v11-26.yml'
+permissions:
+  contents: read
+concurrency:
+  group: verify-density-preview-v1126
+  cancel-in-progress: true
+jobs:
+  exact-budget:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Parse code and build original sealed editor plus candidate
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/model_atelier_local_refinement_v11_23.js
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/atelier-budget
+          python - <<'PY'
+          import runpy
+          from pathlib import Path
+          p=Path('/tmp/atelier-budget/index.html')
+          p.write_text(runpy.run_path('projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py')['apply'](p.read_text()))
+          PY
+      - name: Verify exact triangulation, manifold, native schema and preview nonmutation
+        run: |
+          npm install --no-save playwright@1.56.1 three@0.169.0
+          node projects/swrlz-forge-moba/tests/model_atelier_local_refine_v11_23.mjs
+          node projects/swrlz-forge-moba/tests/model_atelier_surface_targeting_v11_22.mjs
+          node projects/swrlz-forge-moba/tests/model_atelier_interior_camera_v11_25.mjs
+      - name: Real Android-touch and desktop density preview and Save Undo Reload
+        run: |
+          npx playwright install --with-deps --only-shell chromium
+          python -m http.server 8787 --directory /tmp/atelier-budget >/tmp/atelier-budget-server.log 2>&1 &
+          PID=$!
+          trap 'kill "$PID" 2>/dev/null || true' EXIT
+          SWYRL_SCULPT_TEST_URL=http://127.0.0.1:8787 node projects/swrlz-forge-moba/tests/model_atelier_refinement_browser_v11_23.mjs
