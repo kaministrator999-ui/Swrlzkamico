@@ -1,0 +1,39 @@
+name: Rich Chat Widgets v284 - isolated acceptance
+on:
+  push:
+    branches:
+      - feature/chat-rich-widgets-v284
+    paths:
+      - 'hf_space/chat/§wyrlz/assets/rich-widgets-v284.js'
+      - 'hf_space/chat/§wyrlz/assets/rich-widgets-v284.css'
+      - 'hf_space/chat/§wyrlz/assets/widget-atelier-v284.html'
+      - 'chat/§wyrlz/index.html'
+      - 'hf_space/station.py'
+      - 'tests/test_rich_widgets_v284.cjs'
+      - '.github/workflows/rich-widgets-v284.yml'
+  pull_request:
+    paths:
+      - 'hf_space/chat/§wyrlz/assets/rich-widgets-v284.js'
+      - 'hf_space/chat/§wyrlz/assets/rich-widgets-v284.css'
+      - 'hf_space/chat/§wyrlz/assets/widget-atelier-v284.html'
+      - 'chat/§wyrlz/index.html'
+      - 'hf_space/station.py'
+      - 'tests/test_rich_widgets_v284.cjs'
+      - '.github/workflows/rich-widgets-v284.yml'
+permissions:
+  contents: read
+jobs:
+  rich-widget-static:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check renderer JavaScript
+        run: node --check 'hf_space/chat/§wyrlz/assets/rich-widgets-v284.js'
+      - name: Exercise normalization, plotting, 3D and DOM safety contracts
+        run: node --test tests/test_rich_widgets_v284.cjs
+      - name: Check Station source syntax
+        run: python -m py_compile hf_space/station.py
