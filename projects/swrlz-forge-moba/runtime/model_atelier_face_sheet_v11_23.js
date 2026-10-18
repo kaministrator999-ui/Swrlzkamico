@@ -42,19 +42,30 @@ function atelierFaceLandmarkSculpt(g,part){
  a.needsUpdate=true;g.computeVertexNormals();
  return g;
 }
+function atelierFaceContourValid(v){
+ if(v.contour===undefined)return true;
+ return v.shape==='oval'&&Array.isArray(v.contour)&&v.contour.length===12&&
+   v.contour.every(x=>typeof x==='number'&&Number.isFinite(x)&&x>=.35&&x<=1);
+}
+function atelierFaceContourRadius(v,theta){
+ if(!v.contour)return 1;
+ const step=2*Math.PI/12,cycle=((theta%(2*Math.PI))+(2*Math.PI))%(2*Math.PI),
+   i=Math.floor(cycle/step)%12,t=cycle/step-i;
+ return v.contour[i]*(1-t)+v.contour[(i+1)%12]*t;
+}
 function atelierFaceSheetValid(part){
  if(part.kind!=='faceSheet')return part.faceSheet===undefined;
  const v=part.faceSheet;
  if(!v||typeof v!=='object'||Array.isArray(v)
-   ||!['crop|gridU|gridV|refId|shape','crop|gridU|gridV|headDepth|refId|shape',
-     'crop|gridU|gridV|landmarks|refId|shape',
-     'crop|gridU|gridV|headDepth|landmarks|refId|shape'].includes(Object.keys(v).sort().join('|'))
+   ||!['crop','gridU','gridV','refId','shape'].every(key=>Object.hasOwn(v,key))
+   ||Object.keys(v).some(key=>!['crop','gridU','gridV','refId','shape',
+      'headDepth','landmarks','contour'].includes(key))
    ||typeof v.refId!=='string'||v.refId.length>72
    ||!['oval','rectangle'].includes(v.shape)
    ||!Number.isInteger(v.gridU)||v.gridU<8||v.gridU>128
    ||!Number.isInteger(v.gridV)||v.gridV<4||v.gridV>128
    ||v.gridU*v.gridV>atelierFaceSheetMaxCells
-   ||!atelierFaceLandmarksValid(v)
+   ||!atelierFaceLandmarksValid(v)||!atelierFaceContourValid(v)
    ||(v.headDepth!==undefined&&(!Number.isFinite(v.headDepth)||v.headDepth<0||v.headDepth>2||v.shape!=='oval'&&v.headDepth>0))
    ||!Array.isArray(v.crop)||v.crop.length!==4||!v.crop.every(Number.isFinite))return false;
  const [x,y,w,h]=v.crop;
@@ -75,7 +86,7 @@ function atelierFaceSheetGeometry(p){
    // segments and a center fan, no jagged clipped grid boundary.
    const seg=v.gridU,rings=v.gridV,xyz=[0,0,0],uvs=[cx+cw*.5,cy+ch*.5],indices=[];
    for(let ring=1;ring<=rings;ring++)for(let j=0;j<seg;j++){
-     const theta=2*Math.PI*j/seg,r=ring/rings;
+     const theta=2*Math.PI*j/seg,r=ring/rings*atelierFaceContourRadius(v,theta);
      const sx=Math.sin(theta)*.5*r,sy=Math.cos(theta)*.5*r;
      xyz.push(sx,sy,0);
      uvs.push(cx+cw*(sx+.5),cy+ch*(sy+.5));
@@ -134,6 +145,34 @@ function atelierFaceSheetRefresh(){
    +' · UVs track the image as the surface is sculpted.';
  atelierFaceVolumeRefresh();
  atelierFaceLandmarkRefresh();
+ if($m('FaceContourValues'))$m('FaceContourValues').value=
+   (v.contour||Array(12).fill(1)).map(x=>x.toFixed(2)).join(', ');
+}
+function atelierFaceContourInstall(){
+ const apply=$m('FaceContourApply');if(!apply)return;
+ apply.addEventListener('click',()=>{
+   const p=partById(selection);
+   if(p?.kind!=='faceSheet'||p.faceSheet.shape!=='oval'){
+     status('Contour applies to an oval-derived image face sheet only.',true);return;
+   }
+   const raw=$m('FaceContourValues').value.split(',').map(x=>x.trim());
+   // Reject blank and nonnumeric entries rather than treating empty as zero.
+   const contour=raw.map(x=>x===''?NaN:Number(x));
+   const candidate={...p,faceSheet:{...p.faceSheet,contour}};
+   if(!atelierFaceSheetValid(candidate)||!checkPart(candidate)){
+     status('Custom contour rejected: exactly 12 numeric radii, each 0.35–1.00.',true);
+     return;
+   }
+   if(JSON.stringify(p.faceSheet.contour||Array(12).fill(1))===JSON.stringify(contour))return;
+   checkpoint();p.faceSheet=candidate.faceSheet;delete p.sculptVertexEdits;
+   signalEdited();select(p.id);
+   status('Saved 12-point image silhouette. UVs follow the resized boundary; original photo is preserved.');
+ });
+ $m('FaceContourReset').addEventListener('click',()=>{
+   const p=partById(selection);if(p?.kind!=='faceSheet'||!p.faceSheet.contour)return;
+   checkpoint();delete p.faceSheet.contour;delete p.sculptVertexEdits;
+   signalEdited();select(p.id);status('Restored original oval contour.');
+ });
 }
 function atelierFaceLandmarkRefresh(){
  const p=partById(selection);
@@ -205,7 +244,7 @@ function atelierFaceSheetCreate(){
 }
 function atelierFaceSheetInstall(){
  atelierFaceVolumeInstall();
- atelierFaceLandmarkInstall();
+ atelierFaceLandmarkInstall();atelierFaceContourInstall();
  $m('FaceSheetCreate').addEventListener('click',atelierFaceSheetCreate);
  const kind=$m('Kind');
  if(kind&&!kind.querySelector('option[value="faceSheet"]')){
