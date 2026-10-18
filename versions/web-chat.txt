@@ -1,6 +1,6 @@
 ID=web-chat
-VERSION=1.5.153
-REVISION=1.5.153-v284-v285-rich-widgets
+VERSION=1.5.154
+REVISION=1.5.154-v287-android-scroll-history-reuse
 KIND=web-interface
 SOURCE_BRANCH=runtime
 STATUS=active
