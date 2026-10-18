@@ -1,0 +1,43 @@
+name: Conversational Chat Widgets v285 — offline guard
+on:
+  push:
+    branches: [feature/chat-widget-intent-v285]
+    paths:
+      - 'hf_space/rich_widget_intent_v285.py'
+      - 'hf_space/test_rich_widget_intent_v285.py'
+      - 'hf_space/model_router.py'
+      - 'hf_space/lfm2_700m_engine.py'
+      - 'hf_space/chat/§wyrlz/assets/rich-widgets-v284.js'
+      - 'chat/§wyrlz/index.html'
+      - '.github/workflows/rich-widget-intent-v285.yml'
+  pull_request:
+    paths:
+      - 'hf_space/rich_widget_intent_v285.py'
+      - 'hf_space/test_rich_widget_intent_v285.py'
+      - 'hf_space/model_router.py'
+      - 'hf_space/lfm2_700m_engine.py'
+      - 'hf_space/chat/§wyrlz/assets/rich-widgets-v284.js'
+      - 'chat/§wyrlz/index.html'
+      - '.github/workflows/rich-widget-intent-v285.yml'
+permissions:
+  contents: read
+jobs:
+  conversational-widget-guard:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Source syntax — router, inference, compiler and Station
+        run: |
+          python -m py_compile hf_space/rich_widget_intent_v285.py hf_space/model_router.py hf_space/lfm2_700m_engine.py hf_space/station.py
+          node --check 'hf_space/chat/§wyrlz/assets/rich-widgets-v284.js'
+      - name: Existing widget renderer invariants
+        run: node --test tests/test_rich_widgets_v284.cjs
+      - name: Natural visual intent, negatives, and ordinary inference routing
+        run: PYTHONPATH=hf_space python hf_space/test_rich_widget_intent_v285.py
