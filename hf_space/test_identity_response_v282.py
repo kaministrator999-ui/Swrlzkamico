@@ -39,8 +39,8 @@ for joking in ("Okay, Blondie!", "Morty, listen!", "Call me Blondie", "Who am I 
     assert not mode.startswith(("RESPONSE MODE: USER-IDENTITY","RESPONSE MODE: ASSISTANT-IDENTITY")),joking
 
 src=inspect.getsource(engine.generate_events)
-assert "elif concise_identity_turn:" in src
-assert src.index("elif concise_identity_turn:") < src.index("elif file_dialogue:",src.index("elif concise_identity_turn:"))
+assert "elif concise_identity_turn or identity_followup:" in src
+assert src.index("elif concise_identity_turn or identity_followup:") < src.index("elif file_dialogue:",src.index("elif concise_identity_turn or identity_followup:"))
 assert "identity-model-retry" in src
 assert "candidate_attempt_receipt" in src
 assert "model.create_chat_completion" in src
