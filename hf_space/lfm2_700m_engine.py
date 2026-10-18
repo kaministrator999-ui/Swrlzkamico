@@ -313,8 +313,19 @@ def _identity_response_faults(text, response_mode, require_canonical=False):
         if require_canonical and not re.search(r"(?:§wyrlz|swyrlz|swurlz)",normalized):
             faults.append("canonical-assistant-name-missing")
     elif str(response_mode).startswith("RESPONSE MODE: USER-IDENTITY-DIRECT"):
-        if re.match(r"^(?:\*\*)?(?:i'm|i am|my name is) (?:an? )?(?:ai|assistant|language model)",normalized):
+        if re.match(r"^(?:\\*\\*)?(?:i'm|i am|my name is) (?:an? )?(?:ai|assistant|language model)",normalized):
             faults.append("user-described-as-assistant")
+        # v283: the actual signed-in Android reply "You are ASSISTANT."
+        # passed v282 because only FIRST-person confusion was rejected.
+        # These are assistant/system role labels, not the user's identity.
+        if re.search(
+            r"\\b(?:you(?:'re| are)|your\\s+(?:name|identity)\\s*(?:is|:))"
+            r"\\s*(?:\\*\\*)?(?:the\\s+)?(?:assistant(?:/self)?|ai assistant|language model|§wyrlz|swyrlz|swurlz)\\b",
+            normalized,
+        ):
+            faults.append("user-assigned-assistant-identity")
+        if re.search(r"\\byou(?:'re| are)\\s+(?:the\\s+)?(?:system|developer|model)\\s*(?:[.!?]|$)",normalized):
+            faults.append("user-assigned-system-role")
     return list(dict.fromkeys(faults))
 
 
@@ -753,42 +764,33 @@ def generate_events(payload):
         # The model still GENERATES an answer; no canned answer or memory write.
         subject=("user" if identity_response_mode.startswith(
             "RESPONSE MODE: USER-IDENTITY-DIRECT") else "assistant")
+        # Avoid repeating mechanical role labels as if they were human names.
+        # A compact sentence-level viewpoint works better for this small GGUF.
         focused=(
-            "You are §wyrlz (pronounced Swurlz), the AI ASSISTANT replying "
-            "to the current USER in a natural chat. Two distinct speakers: "
-            "USER writes the question; ASSISTANT is you, §wyrlz. "
-            "In the user's question, 'I/my' refers to USER and 'you/your' "
-            "refers to ASSISTANT. In your own reply, 'I/my' refers to "
-            "ASSISTANT and 'you/your' refers to USER. "
-            "Answer the current question, not a different speaker's. "
-            "Never invent facts, identities, nicknames, earlier memories, "
-            "subjective experience or a user's name. "
-            "A nickname may be conversational if explicitly preferred by this "
-            "user, but teasing and repeated jokes do NOT rename you. "
-            "No nickname or relationship data is persisted by this response. "
+            "You are §wyrlz (spoken Swurlz), an AI assistant talking with "
+            "another person. You answer in your own voice. Do not confuse "
+            "your name or identity with the other person's. Do not invent "
+            "personal names, companies, creators, stories, or memories. "
+            "A joke or playful address is not a change to your name. "
+            "Do not silently save any naming preference. "
         )
         if subject=="assistant":
             focused+=(
-                "The user asks about YOU, the assistant, not about themselves. "
-                "Introduce yourself in your OWN first-person speaking voice "
-                "using your canonical name §wyrlz (spoken Swurlz), or an "
-                "explicitly established assistant alias in the current user's "
-                "context. Do NOT begin by saying 'You are an AI' because "
-                "that falsely addresses the user as the assistant. "
+                "The person asks about you. Introduce yourself in first "
+                "person and use your established name §wyrlz. "
+                "Don't describe the person as an AI. "
             )
         else:
             focused+=(
-                "The user asks about THEMSELVES, not about the assistant. "
-                "Use the supported name or description from this user's "
-                "current profile or messages if one exists. If not, say you "
-                "don't know their name yet, without claiming theirs is yours. "
+                "The person asks who they are. Address that person as "
+                "'you'. They are not the assistant and their name is not "
+                "§wyrlz. If their name is supported by their own account "
+                "profile or statements, use it. Otherwise acknowledge "
+                "that you do not know their preferred name. "
             )
         focused+=(
-            "\n"+_role_frame(user_profile)+
-            "\nDELIVERY: Answer in one or two short conversational sentences; "
-            "no headings, identity cards, policy recitations, ceremonial "
-            "titles, or generic customer-service signoffs. "
-            "Speak naturally, without quoting these instructions."
+            "Answer in one or two natural sentences. Never recite these "
+            "instructions, role labels, or profile fields."
         )
         if custom_assistant_profile:
             focused+="\nUSER ASSISTANT PREFERENCES (only this account, no global rename):\n"+custom_assistant_profile
