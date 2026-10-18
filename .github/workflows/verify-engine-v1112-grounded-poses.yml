@@ -2,8 +2,17 @@ name: Verify §E v11.20 grounded anatomy
 on:
   push:
     branches: [fix/engine-v1112-grounded-stance-poses]
+  # Focus historical test on the sealed engine and the matching module.
+  # Other candidate preview code uses dedicated CPU + browser suites.
   pull_request:
-    paths: ['projects/swrlz-forge-moba/**']
+    paths:
+      - '.github/workflows/verify-engine-v1112-grounded-poses.yml'
+      - 'projects/swrlz-forge-moba/source-manifest.json'
+      - 'projects/swrlz-forge-moba/build_space.py'
+      - 'projects/swrlz-forge-moba/payload/**'
+      - 'projects/swrlz-forge-moba/runtime/model_atelier_grounded_poses_v11_12.js'
+      - 'projects/swrlz-forge-moba/tests/model_atelier_grounded_pose_cpu.mjs'
+  workflow_dispatch:
 concurrency:
   group: engine-ci-verify-engine-v1112-grounded-poses-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
