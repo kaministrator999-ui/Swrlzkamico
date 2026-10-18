@@ -9,7 +9,7 @@ def once(html, before, after):
 def apply(html):
     root=Path(__file__).resolve().parent.parent
     assert "SWYRL_ENGINE_DEPLOY_MARKER: V11_20_ANATOMICAL_HEAD" in html
-    module=(root/"runtime/model_atelier_sculpt_brush_v11_21.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_viewport_v11_21.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_reference_studio_v11_22.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_surface_targeting_v11_22.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_surface_lasso_v11_22.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_local_refinement_v11_23.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_face_sheet_v11_23.js").read_text(encoding="utf-8")
+    module=(root/"runtime/model_atelier_sculpt_brush_v11_21.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_viewport_v11_21.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_reference_studio_v11_22.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_surface_targeting_v11_22.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_surface_lasso_v11_22.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_local_refinement_v11_23.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_face_sheet_v11_23.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_numeric_gizmos_v11_23.js").read_text(encoding="utf-8")
     html=once(html, "  function refreshList(){", module+"\n  function refreshList(){")
     html=once(html,"  function geometry(part){",
          "  function geometry(part){\n    if(part.kind==='faceSheet')return atelierFaceSheetGeometry(part);")
@@ -125,6 +125,19 @@ def apply(html):
              '<label><input id="modelAtelierSculptBrushMulti" type="checkbox"> Select multiple points</label>'
              '<label>Gizmo drag axis<select id="modelAtelierSculptBrushVertexAxis"><option value="free">Free camera plane</option>'
              '<option value="x">Local X</option><option value="y">Local Y</option><option value="z">Local Z</option></select></label>'
+             '<fieldset id="modelAtelierGroupTools" aria-label="Precise numeric mesh vertex transforms">'
+             '<legend>📍 Vertex group transforms · Codex controls</legend>'
+             '<label>Operation<select id="modelAtelierGroupMode"><option value="translate">Translate</option>'
+             '<option value="rotate">Rotate</option><option value="scale">Scale</option></select></label>'
+             '<label>Space<select id="modelAtelierGroupSpace"><option value="object">Object-local</option>'
+             '<option value="world">World</option><option value="surface">Average surface-normal</option></select></label>'
+             '<div class="atelier-transform"><input id="modelAtelierGroupValue0" type="number" aria-label="Vertex group X transform" step=".01" value="0">'
+             '<input id="modelAtelierGroupValue1" type="number" aria-label="Vertex group Y transform" step=".01" value="0">'
+             '<input id="modelAtelierGroupValue2" type="number" aria-label="Vertex group Z transform" step=".01" value="0"></div>'
+             '<p id="modelAtelierGroupHelp">Translation XYZ in local or world units (±0.5)</p>'
+             '<button type="button" id="modelAtelierGroupApply">Apply numeric group transform</button>'
+             '<small>Works on selected source vertices; refined overlay layers must be disabled to protect source indices.</small>'
+             '</fieldset>'
              '<p id="modelAtelierSculptBrushVertexInfo"></p></section>'
              '<p id="modelAtelierSculptBrushInfo"></p>'
              '<p>Strokes affect nearby vertices with a smooth center-to-edge falloff; Undo and native JSON/OBJ export retain geometry.</p></section>')
