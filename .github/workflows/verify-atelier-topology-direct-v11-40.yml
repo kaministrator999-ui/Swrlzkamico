@@ -1,12 +1,12 @@
 name: Verify §E v11.40 direct indexed topology editing
 on:
   push:
-    branches: [feature/atelier-topology-lod-v11-40]
+    branches: [feature/atelier-topology-direct-edit-v11-40]
     paths:
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_topology_lod_v11_40.js'
+      - 'projects/swrlz-forge-moba/runtime/model_atelier_topology_lod_v11_38.js'
       - 'projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py'
       - 'projects/swrlz-forge-moba/tests/model_atelier_topology_direct*.mjs'
-      - '.github/workflows/verify-atelier-topology-lod-v11-40.yml'
+      - '.github/workflows/verify-atelier-topology-direct-v11-40.yml'
   workflow_dispatch:
 permissions:
   contents: read
@@ -25,7 +25,7 @@ jobs:
         with: {node-version: '22'}
       - name: Verify JS Python and isolated editor source
         run: |
-          node --check projects/swrlz-forge-moba/runtime/model_atelier_topology_lod_v11_40.js
+          node --check projects/swrlz-forge-moba/runtime/model_atelier_topology_lod_v11_38.js
           python -m py_compile projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py
           python projects/swrlz-forge-moba/scripts/build_atelier_precision_preview_v11_37.py --output /tmp/atelier-lod
           node --check /tmp/atelier-lod-module.mjs
