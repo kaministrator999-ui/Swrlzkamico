@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="swrlz-chat-version" content="1.1.15">
+  <meta name="swrlz-chat-version" content="1.1.16">
   <meta name="theme-color" content="#010812">
   <title>Chat</title>
   <style>
@@ -308,7 +308,7 @@
 
 
     /* Glitch Dragon Chat — Tier F companion presentation state machine. */
-    .top-brand{position:relative}.top-brand-mark,.assistant-head .kompanion-icon,.side-brand .kompanion-icon{will-change:transform,box-shadow,filter;transform-origin:center;transition:box-shadow .24s ease,filter .24s ease,border-color .24s ease}
+    .top-brand{position:relative}.top-brand-mark,.station-live-message .assistant-head .kompanion-icon{will-change:transform;transform-origin:center;transition:box-shadow .24s ease,filter .24s ease,border-color .24s ease}.assistant-head .kompanion-icon,.side-brand .kompanion-icon{transform-origin:center;transition:border-color .24s ease}
     .companion-state-chip{display:inline-flex;align-items:center;min-width:0;padding:3px 6px;border:1px solid rgba(126,214,255,.16);border-radius:7px;background:rgba(5,24,40,.52);color:#a7c4d1;font-family:var(--font-telemetry);font-size:8px;letter-spacing:.07em;text-transform:uppercase;white-space:nowrap;transition:border-color .18s ease,color .18s ease,background .18s ease,box-shadow .18s ease}
     body[data-companion-state="idle"] .companion-state-chip{color:#9eb9c7}
     body[data-companion-state="listen"] .companion-state-chip{color:#bff8ff;border-color:rgba(56,232,255,.38);background:rgba(8,55,67,.36)}
@@ -318,14 +318,14 @@
     body[data-companion-state="responding"] .companion-state-chip{color:#c5fbff;border-color:rgba(56,232,255,.44);background:rgba(10,62,76,.34)}
     body[data-companion-state="approval"] .companion-state-chip{color:#ffe3ab;border-color:rgba(255,201,105,.46);background:rgba(88,59,17,.34);box-shadow:0 0 12px rgba(255,201,105,.08)}
     body[data-companion-state="error"] .companion-state-chip{color:#ffd2d8;border-color:rgba(255,107,122,.48);background:rgba(93,29,41,.34)}
-    body[data-companion-state="idle"] .top-brand-mark,body[data-companion-state="idle"] .assistant-head .kompanion-icon{animation:dragonIdle 5.6s ease-in-out infinite}
-    body[data-companion-state="listen"] .top-brand-mark,body[data-companion-state="listen"] .assistant-head .kompanion-icon{animation:dragonListen 1.9s ease-in-out infinite;border-color:rgba(56,232,255,.56);box-shadow:0 0 18px rgba(56,232,255,.20)}
-    body[data-companion-state="accepted"] .top-brand-mark,body[data-companion-state="accepted"] .assistant-head .kompanion-icon{animation:dragonAccepted .72s cubic-bezier(.2,.9,.25,1) 1;border-color:rgba(104,244,207,.56);box-shadow:0 0 18px rgba(104,244,207,.20)}
-    body[data-companion-state="thinking"] .top-brand-mark,body[data-companion-state="thinking"] .assistant-head .kompanion-icon{animation:dragonThink 2.25s ease-in-out infinite;border-color:rgba(165,120,255,.52);box-shadow:0 0 20px rgba(165,120,255,.18)}
-    body[data-companion-state="acting"] .top-brand-mark,body[data-companion-state="acting"] .assistant-head .kompanion-icon{animation:dragonAct 1.15s steps(1,end) infinite;border-color:rgba(79,140,255,.58);box-shadow:0 0 20px rgba(79,140,255,.22)}
-    body[data-companion-state="responding"] .top-brand-mark,body[data-companion-state="responding"] .assistant-head .kompanion-icon{animation:dragonRespond 1.65s ease-in-out infinite;border-color:rgba(56,232,255,.58);box-shadow:0 0 20px rgba(56,232,255,.22)}
-    body[data-companion-state="approval"] .top-brand-mark,body[data-companion-state="approval"] .assistant-head .kompanion-icon{animation:dragonApproval 1.55s ease-in-out infinite;border-color:rgba(255,201,105,.62);box-shadow:0 0 22px rgba(255,201,105,.24)}
-    body[data-companion-state="error"] .top-brand-mark,body[data-companion-state="error"] .assistant-head .kompanion-icon{animation:dragonError .44s ease-out 1;border-color:rgba(255,107,122,.70);box-shadow:0 0 20px rgba(255,107,122,.24)}
+    body[data-companion-state="idle"] .top-brand-mark,body[data-companion-state="idle"] .station-live-message .assistant-head .kompanion-icon{animation:dragonIdle 5.6s ease-in-out infinite}
+    body[data-companion-state="listen"] .top-brand-mark,body[data-companion-state="listen"] .station-live-message .assistant-head .kompanion-icon{animation:dragonListen 1.9s ease-in-out infinite;border-color:rgba(56,232,255,.56);box-shadow:0 0 18px rgba(56,232,255,.20)}
+    body[data-companion-state="accepted"] .top-brand-mark,body[data-companion-state="accepted"] .station-live-message .assistant-head .kompanion-icon{animation:dragonAccepted .72s cubic-bezier(.2,.9,.25,1) 1;border-color:rgba(104,244,207,.56);box-shadow:0 0 18px rgba(104,244,207,.20)}
+    body[data-companion-state="thinking"] .top-brand-mark,body[data-companion-state="thinking"] .station-live-message .assistant-head .kompanion-icon{animation:dragonThink 2.25s ease-in-out infinite;border-color:rgba(165,120,255,.52);box-shadow:0 0 20px rgba(165,120,255,.18)}
+    body[data-companion-state="acting"] .top-brand-mark,body[data-companion-state="acting"] .station-live-message .assistant-head .kompanion-icon{animation:dragonAct 1.15s steps(1,end) infinite;border-color:rgba(79,140,255,.58);box-shadow:0 0 20px rgba(79,140,255,.22)}
+    body[data-companion-state="responding"] .top-brand-mark,body[data-companion-state="responding"] .station-live-message .assistant-head .kompanion-icon{animation:dragonRespond 1.65s ease-in-out infinite;border-color:rgba(56,232,255,.58);box-shadow:0 0 20px rgba(56,232,255,.22)}
+    body[data-companion-state="approval"] .top-brand-mark,body[data-companion-state="approval"] .station-live-message .assistant-head .kompanion-icon{animation:dragonApproval 1.55s ease-in-out infinite;border-color:rgba(255,201,105,.62);box-shadow:0 0 22px rgba(255,201,105,.24)}
+    body[data-companion-state="error"] .top-brand-mark,body[data-companion-state="error"] .station-live-message .assistant-head .kompanion-icon{animation:dragonError .44s ease-out 1;border-color:rgba(255,107,122,.70);box-shadow:0 0 20px rgba(255,107,122,.24)}
     body[data-companion-state="listen"] .ready-dot{background:var(--cyan);box-shadow:0 0 9px rgba(56,232,255,.48)}
     body[data-companion-state="accepted"] .ready-dot{background:var(--success);box-shadow:0 0 9px rgba(104,244,207,.48)}
     body[data-companion-state="thinking"] .ready-dot{background:var(--violet);box-shadow:0 0 10px rgba(165,120,255,.52)}
@@ -698,6 +698,14 @@
     .github-inventory-card .github-source-details{margin-top:10px;border-top:1px solid rgba(126,214,255,.16);padding-top:8px}
     .github-inventory-card .github-source-details summary{cursor:pointer;font-size:12px;color:#c8e4f4}
     .github-inventory-raw{white-space:pre-wrap!important;overflow-wrap:anywhere;word-break:normal;overflow:auto;max-height:45vh;font:11px/1.5 var(--font-telemetry);padding:8px}
+    /* v287: avoid compositing expensive backdrop blur behind every historical
+       user bubble while flinging a long Android conversation. Preserve color,
+       gradient, silhouette and the static dragon wallpaper. */
+    @media(max-width:600px){
+      .rendered-message.user-message .user-bubble{
+        backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+      }
+    }
   </style>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <script src="/chat/§wyrlz/assets/github-explorer-v223.js?v=228"></script>
@@ -1054,7 +1062,7 @@
       const workArtifactList = document.getElementById("workArtifactList");
       const workEvidenceCount = document.getElementById("workEvidenceCount");
       const workEvidenceList = document.getElementById("workEvidenceList");
-      const SWRLZ_CHAT_VERSION = "1.1.14";
+      const SWRLZ_CHAT_VERSION = "1.1.16";
       const navTraceId = "chat-ui-" + Date.now().toString(36) + "-" + crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
       let lastUiStatusCamera = "";
       let companionState="idle";
@@ -1457,6 +1465,9 @@
       const expandedSourceReports=new Set(); // account/thread/message scoped, view-only
       const lyricViewCollapsed=new Map();
       let renderedConversationSignature="";
+      let renderedConversationThreadId="";
+      let renderedMessageSignatures=new Map();
+      let renderedPinRailSignature="";
       const codeArtifactState=new Map();
       const pinItemCollapsed=new Set();
       let pinRailCollapsed=true;
@@ -2126,18 +2137,57 @@
         const scope=String(value||"").match(/^Scopes:\s*(.{1,150})$/m);
         return scope ? scope[1].trim().slice(0,95) : "Selected files and folders";
       };
+      // v287: retain unchanged historical message DOM between account syncs.
+      // In particular, do not throw away canvas rotations, copied code scroll
+      // positions, expanded activity logs or browser-composited message tiles.
+      const historyNodeSignature=(msg,thread,precedingPrompt)=>JSON.stringify([
+        msg?.role,msg?.id,msg?.text,msg?.pinned,
+        msg?.createdAt,msg?.meta?.state,msg?.state,msg?.meta?.requestId,
+        msg?.meta?.contentTag,msg?.meta?.artifactRevision,
+        msg?.meta?.widgets,msg?.meta?.progressTrace,msg?.meta?.githubContext,
+        msg?.meta?.evidence, msg?.codeArtifact, thread?.messagePins?.[msg?.id],
+        msg?.role==="assistant"?precedingPrompt:"",
+        chatAccountUser?.displayName,chatAccountUser?.email,chatAccountUser?.picture
+      ]);
       const renderConversation = (thread,force=false) => {
         const signature=conversationRenderSignature(thread);
         if(!force&&signature===renderedConversationSignature)return false;
         captureCodeViewState();syncTopEdge(thread);
-        [...messageList.querySelectorAll(".rendered-message")].forEach(n=>n.remove());
-        messageList.querySelector(".pin-rail")?.remove();
-        if(!thread){renderedConversationSignature=signature;renderFirstRunWelcome();renderWorkSurface();return true;}
+        const threadId=String(thread?.id||"");
+        const reuse=!!thread&&!force&&threadId===renderedConversationThreadId;
+        const previous=reuse?new Map(
+          [...messageList.querySelectorAll(".rendered-message:not(.station-live-message)")]
+            .filter(n=>n.dataset.historyKey)
+            .map(n=>[n.dataset.historyKey,n])
+        ):new Map();
+        if(!reuse){
+          [...messageList.querySelectorAll(".rendered-message")].forEach(n=>n.remove());
+          messageList.querySelector(".pin-rail")?.remove();
+          renderedMessageSignatures=new Map();
+          renderedPinRailSignature="";
+        }
+        renderedConversationThreadId=threadId;
+        if(!thread){
+          renderedConversationSignature=signature;
+          renderedMessageSignatures.clear();
+          renderFirstRunWelcome();renderWorkSurface();return true;
+        }
         let mostRecentUserPrompt="";
-        for(const msg of (thread.messages||[])){
+        const desired=[];
+        const nextSignatures=new Map();
+        for(const [index,msg] of (thread.messages||[]).entries()){
           if(msg.role==="user")mostRecentUserPrompt=String(msg.text||"");
+          if(msg.role!=="assistant"&&msg.role!=="user")continue;
+          const key=(msg?.id?"id:"+String(msg.id):"index:"+index)+":"+String(msg.role);
+          const entrySignature=historyNodeSignature(msg,thread,mostRecentUserPrompt);
+          nextSignatures.set(key,entrySignature);
+          const prior=previous.get(key);
+          if(prior&&renderedMessageSignatures.get(key)===entrySignature){
+            desired.push(prior);
+            continue;
+          }
           if(msg.role==="assistant"){
-            const node=assistantTemplate.cloneNode(true); node.removeAttribute("id"); node.dataset.messageId=msg.id||"";node.classList.add("visible","rendered-message"); node.removeAttribute("aria-hidden"); renderAssistantContent(node.querySelector(".assistant-body"),msg.text||"",msg.id||"",isOriginalSongwritingPrompt(mostRecentUserPrompt)?"lyrics":"",msg?.meta?.githubContext); attachAssistantTime(node,msg); addCopyButton(node); renderActivityTimelineV238(node,msg?.meta?.progressTrace,{active:false,requestId:msg?.meta?.requestId,terminalType:msg?.meta?.state}); addWidgetBlock(node,msg); addEvidenceBlock(node,msg);addMessagePinButton(node,thread,msg); messageList.appendChild(node);
+            const node=assistantTemplate.cloneNode(true); node.removeAttribute("id"); node.dataset.messageId=msg.id||"";node.classList.add("visible","rendered-message"); node.removeAttribute("aria-hidden"); renderAssistantContent(node.querySelector(".assistant-body"),msg.text||"",msg.id||"",isOriginalSongwritingPrompt(mostRecentUserPrompt)?"lyrics":"",msg?.meta?.githubContext); attachAssistantTime(node,msg); addCopyButton(node); renderActivityTimelineV238(node,msg?.meta?.progressTrace,{active:false,requestId:msg?.meta?.requestId,terminalType:msg?.meta?.state}); addWidgetBlock(node,msg); addEvidenceBlock(node,msg);addMessagePinButton(node,thread,msg);node.dataset.historyKey=key;desired.push(node);
           } else if(msg.role==="user"){
             const node=document.createElement("article");node.className="user-message rendered-message";node.dataset.messageId=msg.id||"";
             const meta=document.createElement("div");meta.className="user-meta";const who=document.createElement("span");who.textContent=chatAccountUser?.displayName||chatAccountUser?.email||"You";meta.appendChild(who);const timeText=formatMessageTime(msg.createdAt);if(timeText){const time=document.createElement("span");time.className="message-time";time.textContent=timeText;time.title=new Date(Number(msg.createdAt)).toLocaleString();meta.appendChild(time);}
@@ -2174,10 +2224,35 @@
             }else{
               const avatar=document.createElement("div");avatar.className="user-avatar-fallback";avatar.textContent=(who.textContent||"Y").trim().charAt(0).toUpperCase();node.append(meta,bubble,avatar);
             }
-            addMessagePinButton(node,thread,msg);messageList.appendChild(node);
+            addMessagePinButton(node,thread,msg);node.dataset.historyKey=key;desired.push(node);
           }
         }
-        renderPinRail(thread);restoreCodeViewState();renderWorkSurface();renderedConversationSignature=signature;followLatestIfNeeded();return true;
+        // Reorder/mount only genuinely changed nodes. In the common Station
+        // snapshot case, all historical nodes stay connected and retain layout.
+        let insertionPoint=assistantTemplate;
+        const desiredSet=new Set(desired);
+        for(const node of desired){
+          if(insertionPoint.nextElementSibling!==node)
+            messageList.insertBefore(node,insertionPoint.nextElementSibling);
+          insertionPoint=node;
+        }
+        for(const node of [...messageList.querySelectorAll(".rendered-message:not(.station-live-message)")]){
+          if(!desiredSet.has(node))node.remove();
+        }
+        const pinSignature=JSON.stringify((thread.messages||[]).filter(msg=>msg.pinned).map(msg=>[
+          msg.id,msg.text,msg.meta?.artifactRevision,msg.codeArtifact,
+          pinItemCollapsed.has(msg.id)
+        ]))+"|"+pinRailCollapsed;
+        if(!reuse||force||pinSignature!==renderedPinRailSignature){
+          messageList.querySelector(".pin-rail")?.remove();
+          renderPinRail(thread);
+        }
+        renderedPinRailSignature=pinSignature;
+        renderedMessageSignatures=nextSignatures;
+        restoreCodeViewState();renderWorkSurface();
+        renderedConversationSignature=signature;
+        followLatestIfNeeded();
+        return true;
       };
       const closeThreadPopups = except => document.querySelectorAll(".thread-popup").forEach(p=>{if(p!==except)p.hidden=true;});
       // Native Station stores threads in insertion order. Keep the durable
@@ -2274,9 +2349,20 @@
         if(stationRenderFrame)return;
         stationRenderFrame=requestAnimationFrame(()=>{stationRenderFrame=0;renderStationGeneration();});
       };
+      // v287: coalesce fling-scroll position reads to a single paint frame.
+      // Reading scrollHeight for every touch/scroll event can force repeated
+      // layout work while old message cards are being composited on Android.
+      let scrollAffordanceFrame=0;
+      let trustedScrollPending=false;
       chatViewport.addEventListener("scroll",event=>{
-        if(event.isTrusted&&responseStartAnchorActive()&&distanceFromLatest()<72)responseStartAnchorRequestId="";
-        syncLatestAffordance();
+        trustedScrollPending=trustedScrollPending||event.isTrusted;
+        if(scrollAffordanceFrame)return;
+        scrollAffordanceFrame=requestAnimationFrame(()=>{
+          scrollAffordanceFrame=0;
+          const wasTrusted=trustedScrollPending;trustedScrollPending=false;
+          if(wasTrusted&&responseStartAnchorActive()&&distanceFromLatest()<72)responseStartAnchorRequestId="";
+          syncLatestAffordance();
+        });
       },{passive:true});
       jumpLatest.addEventListener("click",()=>scrollToLatest("smooth"));
       const applyChatState = data => {
