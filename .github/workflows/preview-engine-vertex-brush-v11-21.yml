@@ -4,6 +4,8 @@ on:
     branches: [feature/atelier-vertex-sphere-brush-v11-21]
     paths:
       - 'projects/swrlz-forge-moba/runtime/model_atelier_sculpt_brush_v11_21.js'
+      - 'projects/swrlz-forge-moba/runtime/model_atelier_surface_targeting_v11_22.js'
+      - 'projects/swrlz-forge-moba/tests/model_atelier_surface_targeting_v11_22.mjs'
       - 'projects/swrlz-forge-moba/runtime/model_atelier_viewport_v11_21.js'
       - 'projects/swrlz-forge-moba/runtime/model_atelier_reference_studio_v11_22.js'
       - 'projects/swrlz-forge-moba/tests/model_atelier_reference_studio_v11_22.mjs'
@@ -45,6 +47,8 @@ jobs:
           assert 'V11_21_VERTEX_SPHERE_BRUSH_PREVIEW' in html
           assert 'modelAtelierSculptBrushVertexToggle' in html
           assert 'atelierSculptApply' in html
+          assert 'modelAtelierSculptBrushSurfaceMode' in html
+          assert 'atelierSurfaceWeights' in html
           assert 'modelAtelierViewportMode' in html
           assert 'modelAtelierReferenceToggle' in html
           assert 'atelierRefReadImport' in html
