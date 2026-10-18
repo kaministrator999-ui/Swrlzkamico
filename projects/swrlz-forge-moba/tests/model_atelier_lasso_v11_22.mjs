@@ -7,7 +7,7 @@ const c=vm.createContext({THREE,console});
 vm.runInContext(
  read('runtime/model_atelier_surface_targeting_v11_22.js')+'\n'+
  read('runtime/model_atelier_sculpt_brush_v11_21.js')+'\n'+
- read('runtime/model_atelier_surface_lasso_v11_22.js'),c);
+ read('runtime/model_atelier_surface_lasso_v11_22.js')+'\n'+read('runtime/model_atelier_local_refinement_v11_23.js'),c);
 const pt=(x,y)=>({point:[x,y,0],tri:0,bary:[1,0,0]});
 const region=(other={})=>({
  id:'lasso-test',name:'Nose target',pins:[pt(-.12,-.12),pt(.12,-.12),pt(.12,.12),pt(-.12,.12)],
