@@ -66,7 +66,7 @@ assert e._identity_profile_user_name("Account display label: Example Person")=="
 import inspect
 src=inspect.getsource(e.generate_events)
 for name in ("identity_followup", "effective_mode", "unknown_name_required", "faults=identity_faults",
-             "retry_faults=identity_faults", "system=focused", "No nickname or relationship data is persisted"):
+             "retry_faults=identity_faults", "system=focused", "Do not claim you saved names"):
     assert name in src,name
 assert "ASSISTANT/SELF:" not in src[src.index("if (concise_identity_turn or identity_followup)"):src.index("system=focused")]
 
