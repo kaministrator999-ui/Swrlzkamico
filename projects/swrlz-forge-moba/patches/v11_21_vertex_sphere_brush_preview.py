@@ -9,20 +9,20 @@ def once(html, before, after):
 def apply(html):
     root=Path(__file__).resolve().parent.parent
     assert "SWYRL_ENGINE_DEPLOY_MARKER: V11_20_ANATOMICAL_HEAD" in html
-    module=(root/"runtime/model_atelier_sculpt_brush_v11_21.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_brush_ops_v11_27.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_density_profiles_v11_28.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_viewport_v11_21.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_reference_studio_v11_22.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_surface_targeting_v11_22.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_surface_lasso_v11_22.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_local_refinement_v11_23.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_face_sheet_v11_23.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_numeric_gizmos_v11_23.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_face_volume_v11_23.js").read_text(encoding="utf-8")
+    module=(root/"runtime/model_atelier_sculpt_brush_v11_21.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_brush_ops_v11_27.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_density_profiles_v11_28.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_viewport_v11_21.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_reference_studio_v11_22.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_surface_targeting_v11_22.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_surface_lasso_v11_22.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_local_refinement_v11_23.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_face_sheet_v11_23.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_numeric_gizmos_v11_23.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_face_volume_v11_23.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_topology_lod_v11_38.js").read_text(encoding="utf-8")
     html=once(html, "  function refreshList(){", module+"\n  function refreshList(){")
     html=once(html,"  function geometry(part){",
-         "  function geometry(part){\n    if(part.kind==='faceSheet')return atelierFaceSheetGeometry(part);")
+         "  function geometry(part){\n    if(part.kind==='topologyMesh')return atelierTopologyGeometry(part);\n    if(part.kind==='faceSheet')return atelierFaceSheetGeometry(part);")
     html=once(html,"function material(part){\n if(!part.hdFinish)",
          "function material(part){\n if(part.kind==='faceSheet')return atelierFaceSheetMaterial(part);\n if(!part.hdFinish)")
     html=once(html,"  function checkPart(p){",
-         "  function checkPart(p){\n    if(!atelierSculptValid(p)||!atelierFaceSheetValid(p))return false;")
+         "  function checkPart(p){\n    if(!atelierSculptValid(p)||!atelierFaceSheetValid(p)||!atelierTopologyValid(p))return false;")
     html=once(html,"if(key==='kind'){delete p.headAnatomy;delete p.portraitFinish;",
-         "if(key==='kind'){delete p.sculptBrushes;delete p.sculptVertexEdits;delete p.sculptLassos;delete p.refinementLayers;delete p.faceSheet;delete p.headAnatomy;delete p.portraitFinish;")
+         "if(key==='kind'){delete p.sculptBrushes;delete p.sculptVertexEdits;delete p.sculptLassos;delete p.refinementLayers;delete p.faceSheet;delete p.topologyMesh;delete p.headAnatomy;delete p.portraitFinish;")
     html=once(html,"atelierHeadAnatomyRefresh();",
-         "atelierHeadAnatomyRefresh();atelierSculptRefresh();atelierViewportControlsRefresh();atelierRefPaint();atelierFaceSheetRefresh();")
+         "atelierHeadAnatomyRefresh();atelierSculptRefresh();atelierViewportControlsRefresh();atelierRefPaint();atelierFaceSheetRefresh();atelierLODRefresh();")
     html=once(html,"atelierHeadAnatomyInstall();",
-         "atelierHeadAnatomyInstall();atelierSculptInstall();atelierViewportInstall();atelierRefInstall();atelierFaceSheetInstall();")
+         "atelierHeadAnatomyInstall();atelierSculptInstall();atelierViewportInstall();atelierRefInstall();atelierFaceSheetInstall();atelierLODInstall();")
     brush = ('<fieldset id="modelAtelierFaceSheetControls" hidden aria-label="Editable UV image face sheet">'
              '<legend>Triangulated image face sheet · UV preserved</legend>'
              '<p>This is an opt-in editable surface created from a reference. It does NOT replace the original head or automatically build a complete skull.</p>'
@@ -39,6 +39,13 @@ def apply(html):
              '<label><input id="modelAtelierFaceSheetUVHeatmap" type="checkbox"> Show UV distortion heatmap (shaded viewport)</label>'
              '<p id="modelAtelierFaceSheetUVStats" role="status"></p>'
              '<p id="modelAtelierFaceSheetInfo" role="status"></p></fieldset>'
+             '<fieldset id="modelAtelierLODTools" hidden aria-label="Mesh topology and LOD authoring">'
+             '<legend>Actual reduced topology · selected mesh</legend>'
+             '<label>Desired triangle ratio <input id="modelAtelierLODRatio" type="number" step=".05" min=".05" max=".9" value=".35"></label>'
+             '<div class="atelier-inspector-actions"><button id="modelAtelierLODPreview" type="button">Measure reduced mesh</button>'
+             '<button id="modelAtelierLODBake" type="button">Bake separate native topology copy</button>'
+             '<button id="modelAtelierLODOBJ" type="button">Export reduced UV OBJ</button></div>'
+             '<p id="modelAtelierLODStats" role="status">Select mesh then measure.</p></fieldset>'
              '<section id="modelAtelierSculptBrush" hidden><h3>Vertex sphere brush · editable mesh</h3>'
              '<p>Choose mesh. Arm <b>Pick center</b> and tap its surface. Drag normally to orbit.</p>'
              '<div class="atelier-pair"><label>Action<select id="modelAtelierSculptBrushMode"><option value="extrude">Extrude outward</option>'
