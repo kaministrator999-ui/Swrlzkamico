@@ -3,9 +3,17 @@ on:
   push:
     branches:
       - feature/engine-v1110-measured-geometry-profiler
+  # Focus historical test on the sealed engine and the matching module.
+  # Other candidate preview code uses dedicated CPU + browser suites.
   pull_request:
     paths:
-      - 'projects/swrlz-forge-moba/**'
+      - '.github/workflows/verify-engine-v1110-profiler.yml'
+      - 'projects/swrlz-forge-moba/source-manifest.json'
+      - 'projects/swrlz-forge-moba/build_space.py'
+      - 'projects/swrlz-forge-moba/payload/**'
+      - 'projects/swrlz-forge-moba/runtime/model_atelier_metrics_v11_10.js'
+      - 'projects/swrlz-forge-moba/tests/model_geometry_profiler_cpu.mjs'
+  workflow_dispatch:
 concurrency:
   group: engine-ci-verify-engine-v1110-profiler-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
