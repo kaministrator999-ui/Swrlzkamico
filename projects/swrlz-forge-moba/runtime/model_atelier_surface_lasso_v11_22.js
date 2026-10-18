@@ -3,7 +3,7 @@
 // This is NOT local topology refinement; no new triangles are created here.
 const atelierLassoMaxRegions=8,atelierLassoMaxPins=32;
 let atelierLassoArm=null,atelierLassoPending=[],atelierLassoActive=null;
-let atelierLassoOverlay=null,atelierLassoDrag=null,atelierLassoTempPin=null;
+let atelierLassoOverlay=null,atelierLassoDrag=null,atelierLassoTempPin=null,atelierLassoSelectedPin=0;
 function atelierLassoValid(part){
  const regions=part.sculptLassos;
  if(regions===undefined)return true;
@@ -114,6 +114,27 @@ function atelierLassoPinFromHit(hit){
  if(!Number.isFinite(bary.x))return null;
  return {point:local.toArray(),tri,bary:[bary.x,bary.y,bary.z]};
 }
+// Numeric pin controls are projected onto the selected mesh triangles;
+// entering an XYZ coordinate never creates a disconnected floating region.
+function atelierLassoProjectXYZ(mesh,coordinates){
+ const src=new THREE.Vector3(...coordinates),g=mesh?.geometry;
+ if(!g||coordinates.some(v=>!Number.isFinite(v)||Math.abs(v)>4))return null;
+ const a=g.attributes.position,index=g.index,n=(index?index.count:a.count)/3;
+ const triangle=new THREE.Triangle(),u=new THREE.Vector3(),v=new THREE.Vector3(),w=new THREE.Vector3();
+ const closest=new THREE.Vector3(),bary=new THREE.Vector3();
+ let min=Infinity,out=null;
+ for(let k=0;k<n;k++){
+   const vi=i=>index?index.getX(3*k+i):3*k+i;
+   u.fromBufferAttribute(a,vi(0));v.fromBufferAttribute(a,vi(1));w.fromBufferAttribute(a,vi(2));
+   triangle.set(u,v,w).closestPointToPoint(src,closest);
+   const d=src.distanceToSquared(closest);
+   if(d>=min)continue;
+   THREE.Triangle.getBarycoord(closest,u,v,w,bary);
+   if(!Number.isFinite(bary.x))continue;
+   min=d;out={point:closest.toArray(),tri:k,bary:[bary.x,bary.y,bary.z]};
+ }
+ return min<=.45*.45?out:null;
+}
 function atelierLassoOverlayClear(){
  const g=atelierLassoOverlay;if(!g)return;
  g.parent?.remove(g);
@@ -174,6 +195,11 @@ function atelierLassoRefresh(){
    const o=document.createElement('option');o.value=String(i);o.textContent='📌 Boundary pin '+(i+1);
    pins.append(o);
  }
+ if(r?.pins.length){
+   atelierLassoSelectedPin=Math.min(atelierLassoSelectedPin,r.pins.length-1);
+   pins.value=String(atelierLassoSelectedPin);
+   for(let i=0;i<3;i++)$m('LassoPinXYZ'+i).value=r.pins[atelierLassoSelectedPin].point[i].toFixed(4);
+ }
  $m('LassoFeather').value=String(r?.feather??.04);
  $m('LassoMorph').value=String(r?.morph??0);
  $m('LassoInfo').textContent=regions.length+' saved lasso regions · '
@@ -219,6 +245,7 @@ function atelierLassoPointerDown(e){
  if(!hit)return false;
  const mesh=modelRoot.children.find(o=>o.isMesh&&o.userData.atelierId===selection);
  if(!mesh)return false;
+ atelierLassoSelectedPin=hit.index;
  atelierLassoDrag={id:e.pointerId,regionId:r.id,index:hit.index,mesh,last:null};
  renderer.domElement.setPointerCapture?.(e.pointerId);
  pressed=null;return true;
@@ -248,6 +275,36 @@ function atelierLassoPointerUp(e){
 }
 function atelierLassoInstall(){
  const id=n=>$m('Lasso'+n);
+ id('PinIndex').addEventListener('change',e=>{
+   atelierLassoSelectedPin=Number(e.target.value);
+   const p=atelierLassoRegion()?.pins[atelierLassoSelectedPin];
+   if(p)for(let i=0;i<3;i++)id('PinXYZ'+i).value=p.point[i].toFixed(4);
+ });
+ const numericPin=()=>{
+   const mesh=modelRoot?.children.find(o=>o.isMesh&&o.userData.atelierId===selection);
+   return atelierLassoProjectXYZ(mesh,[0,1,2].map(i=>Number(id('PinXYZ'+i).value)));
+ };
+ id('AddXYZ').addEventListener('click',()=>{
+   const pin=numericPin();
+   if(!pin){status('XYZ must be near the selected mesh surface.',true);return;}
+   if(atelierLassoArm==='draft'){
+     if(atelierLassoPending.length>=atelierLassoMaxPins)return;
+     atelierLassoPending.push(pin);atelierLassoRefresh();return;
+   }
+   const r=atelierLassoRegion();if(!r||r.pins.length>=atelierLassoMaxPins){
+     status('Start a draft lasso or choose an existing region.',true);return;
+   }
+   const next={...r,pins:r.pins.slice()};next.pins.splice(atelierLassoSelectedPin+1,0,pin);
+   if(!atelierLassoPolygonValid(next)){status('Adding this pin would cross the boundary.',true);return;}
+   checkpoint();r.pins=next.pins;atelierLassoSelectedPin++;
+   signalEdited();atelierLassoRefresh();
+ });
+ id('MoveXYZ').addEventListener('click',()=>{
+   const r=atelierLassoRegion(),pin=numericPin();if(!r||!pin)return;
+   const next={...r,pins:r.pins.slice()};next.pins[atelierLassoSelectedPin]=pin;
+   if(!atelierLassoPolygonValid(next)){status('Pin move would collapse/cross the boundary.',true);return;}
+   checkpoint();r.pins=next.pins;signalEdited();atelierLassoRefresh();
+ });
  id('Start').addEventListener('click',()=>{
    if(!atelierLassoPart()){status('Select a mesh before drawing a lasso.',true);return;}
    atelierLassoPending=[];atelierLassoArm='draft';atelierLassoRefresh();
