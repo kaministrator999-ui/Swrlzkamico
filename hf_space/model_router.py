@@ -8,6 +8,7 @@ from brain_programming import programming_intent
 from intent_risk_v240 import classify as classify_intent_risk, clarification as risk_clarification
 from online_tools import classify_online_request, stream_online_request, online_camera
 from rich_widget_intent_v285 import plan_conversation_widget
+from widget_companion_guard_v286 import guard_widget_companion
 
 class ModelUnavailable(RuntimeError):
     def __init__(self, model_id: str, reason: str):
@@ -524,7 +525,11 @@ def dispatch(model_id: str, payload: dict[str,Any], r39_generate: Callable[[dict
     else:
         events=None
     if events is not None:
-        if online_result and str(online_result.get("status") or "").upper()=="OK" and not intent.get("codingTask"):
+        # The WIDGET was already emitted from typed user input. Hold only its
+        # companion DELTAs until source-aware semantic review, not other routes.
+        if widget_plan:
+            yield from guard_widget_companion(events,widget_plan["widget"])
+        elif online_result and str(online_result.get("status") or "").upper()=="OK" and not intent.get("codingTask"):
             yield from _guard_successful_online_answer(events,online_result)
         else:
             yield from events
