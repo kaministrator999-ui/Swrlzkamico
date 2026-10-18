@@ -1,0 +1,47 @@
+name: Quick verify §E v11.22 mobile render modes vs References
+on:
+  push:
+    branches: [feature/atelier-vertex-sphere-brush-v11-21]
+    paths:
+      - 'projects/swrlz-forge-moba/runtime/model_atelier_reference_studio_v11_22.js'
+      - 'projects/swrlz-forge-moba/tests/model_atelier_reference_studio_v11_22.mjs'
+      - 'projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py'
+      - '.github/workflows/verify-reference-layout-v11-22.yml'
+permissions:
+  contents: read
+concurrency:
+  group: verify-reference-layout-v1122
+  cancel-in-progress: true
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build main and inject sculpt + reference preview
+        run: |
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/ref-layout-preview
+          python - <<'PY'
+          from pathlib import Path
+          import runpy
+          p=Path('/tmp/ref-layout-preview/index.html')
+          original=p.read_text()
+          updated=runpy.run_path('projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py')['apply'](original)
+          p.write_text(updated)
+          Path('/tmp/ref-layout-script.mjs').write_text(updated.split('<script type="module">',1)[1].rsplit('</script>',1)[0])
+          PY
+          node --check /tmp/ref-layout-script.mjs
+      - name: Install browser and verify mode/reference overlay geometry
+        run: |
+          npm install --no-save playwright@1.56.1 three@0.169.0
+          npx playwright install --with-deps --only-shell chromium
+          python -m http.server 8787 --directory /tmp/ref-layout-preview >/tmp/ref-layout-http.log 2>&1 &
+          PID=$!
+          trap 'kill "$PID" 2>/dev/null || true' EXIT
+          SWYRL_SCULPT_TEST_URL=http://127.0.0.1:8787 node projects/swrlz-forge-moba/tests/model_atelier_reference_studio_v11_22.mjs
