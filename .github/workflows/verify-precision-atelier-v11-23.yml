@@ -1,0 +1,57 @@
+name: Verify §E v11.23 local density + UV face sheet
+on:
+  push:
+    branches: [feature/atelier-vertex-sphere-brush-v11-21]
+    paths:
+      - 'projects/swrlz-forge-moba/runtime/model_atelier_local_refinement_v11_23.js'
+      - 'projects/swrlz-forge-moba/runtime/model_atelier_face_sheet_v11_23.js'
+      - 'projects/swrlz-forge-moba/tests/model_atelier_local_refine_v11_23.mjs'
+      - 'projects/swrlz-forge-moba/tests/model_atelier_face_sheet_v11_23.mjs'
+      - 'projects/swrlz-forge-moba/tests/model_atelier_refinement_browser_v11_23.mjs'
+      - 'projects/swrlz-forge-moba/tests/model_atelier_face_sheet_browser_v11_23.mjs'
+      - 'projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py'
+      - '.github/workflows/verify-precision-atelier-v11-23.yml'
+permissions:
+  contents: read
+concurrency:
+  group: verify-precision-atelier-v1123
+  cancel-in-progress: true
+jobs:
+  density-and-image:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build and inject isolated precision editor
+        run: |
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/precision-editor
+          python - <<'PY'
+          from pathlib import Path
+          import runpy
+          p=Path('/tmp/precision-editor/index.html')
+          h=runpy.run_path('projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py')['apply'](p.read_text())
+          assert 'modelAtelierRefineAdd' in h
+          assert 'modelAtelierFaceSheetCreate' in h
+          p.write_text(h)
+          Path('/tmp/precision-editor-script.mjs').write_text(h.split('<script type="module">',1)[1].rsplit('</script>',1)[0])
+          PY
+          node --check /tmp/precision-editor-script.mjs
+      - name: Verify actual conforming triangles and UV face geometry
+        run: |
+          npm install --no-save playwright@1.56.1 three@0.169.0
+          node projects/swrlz-forge-moba/tests/model_atelier_local_refine_v11_23.mjs
+          node projects/swrlz-forge-moba/tests/model_atelier_face_sheet_v11_23.mjs
+      - name: Exercise new editor controls in real desktop and mobile browsers
+        run: |
+          npx playwright install --with-deps --only-shell chromium
+          python -m http.server 8787 --directory /tmp/precision-editor >/tmp/precision-http.log 2>&1 &
+          PID=$!
+          trap 'kill "$PID" 2>/dev/null || true' EXIT
+          SWYRL_SCULPT_TEST_URL=http://127.0.0.1:8787 node projects/swrlz-forge-moba/tests/model_atelier_refinement_browser_v11_23.mjs
+          SWYRL_SCULPT_TEST_URL=http://127.0.0.1:8787 node projects/swrlz-forge-moba/tests/model_atelier_face_sheet_browser_v11_23.mjs
