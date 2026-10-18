@@ -10,6 +10,47 @@ let atelierViewWireContrast=true,atelierViewWireTint='#d9f5ff';
 const atelierCameraPan=new THREE.Vector3(),atelierCameraTouches=new Map();
 const atelierCameraConsumedTouches=new Set();
 let atelierCameraGesture=null,atelierCameraMousePan=null;
+let atelierCameraInterior=false,atelierInteriorPreviousMode=null,atelierInteriorPartId=null;
+const atelierCameraMinDistance=()=>atelierCameraInterior?.08:(atelierDetailTarget?.4:1.2);
+// These are transient viewport controls. Camera and shading changes never
+// become native geometry, do not alter normals and do not touch model Undo.
+function atelierViewportClipApply(near,far){
+ if(!Number.isFinite(near)||!Number.isFinite(far)||
+    near<.005||near>.5||far<4||far>300||near>=far)return false;
+ camera.near=near;camera.far=far;camera.updateProjectionMatrix();
+ atelierViewportCameraInfoUpdate();
+ return true;
+}
+function atelierViewportInsideExit(){
+ if(!atelierCameraInterior)return;
+ if(atelierInteriorPartId){
+   if(atelierInteriorPreviousMode===null)atelierViewOverrides.delete(atelierInteriorPartId);
+   else atelierViewOverrides.set(atelierInteriorPartId,atelierInteriorPreviousMode);
+ }
+ atelierCameraInterior=false;atelierInteriorPartId=null;atelierInteriorPreviousMode=null;
+ atelierDetailTarget=null;atelierCameraPan.set(0,0,0);
+ orbit.distance=8.1;cameraUpdate();atelierViewRebuild();
+ atelierViewportControlsRefresh();
+}
+function atelierViewportInsideEnter(){
+ const p=partById(selection),mesh=modelRoot?.children.find(o=>o.isMesh&&o.userData.atelierId===p?.id);
+ if(!p||!mesh){status('Select a closed or hollow mesh to inspect inside.',true);return false;}
+ if(atelierCameraInterior)atelierViewportInsideExit();
+ const bounds=new THREE.Box3().setFromObject(mesh);
+ if(bounds.isEmpty()){status('The selected mesh has no inspectable bounds.',true);return false;}
+ atelierInteriorPreviousMode=atelierViewOverrides.has(p.id)?atelierViewOverrides.get(p.id):null;
+ atelierInteriorPartId=p.id;atelierCameraInterior=true;
+ atelierViewOverrides.set(p.id,'xray');
+ atelierCameraPan.set(0,0,0);
+ atelierDetailTarget=bounds.getCenter(new THREE.Vector3());
+ // A small camera distance inside the chosen mesh is intentional.
+ // Other object positions and all geometry remain exactly unchanged.
+ orbit.distance=.16;
+ atelierViewportClipApply(.01,Math.max(30,camera.far));
+ cameraUpdate();atelierViewRebuild();atelierViewportControlsRefresh();
+ status('Interior inspection on '+p.name+'. X-Ray applied to selected mesh only; choose Inside shell for opposite-normal brush, or Exit interior.');
+ return true;
+}
 function atelierViewportBounds(){
  return renderer?.domElement?.getBoundingClientRect()||{width:1,height:1};
 }
@@ -108,6 +149,8 @@ function atelierViewportControlsRefresh(){
  $m('ViewportTextures').checked=flags.textures;
  $m('ViewportWireContrast').checked=atelierViewWireContrast;
  $m('ViewportWireTint').value=atelierViewWireTint;
+ if(camera){$m('ViewportClipNear').value=String(camera.near);$m('ViewportClipFar').value=String(camera.far);}
+ $m('ViewportInsideExit').disabled=!atelierCameraInterior;
 }
 function atelierViewApplyChoice(){
  const mode=$m('ViewportMode').value,scope=$m('ViewportScope').value;
@@ -159,7 +202,7 @@ function atelierViewStatus(){
      basic:material.isMeshBasicMaterial===true,
      wireframe:!!material.wireframe
    }:null,
-   distance:orbit.distance,pan:atelierCameraPan.toArray(),
+   distance:orbit.distance,near:camera?.near,far:camera?.far,interior:atelierCameraInterior,pan:atelierCameraPan.toArray(),
    yaw:orbit.yaw,pitch:orbit.pitch,activeTouchCount:atelierCameraTouches.size
  };
 }
@@ -217,7 +260,7 @@ function atelierCameraPointerMove(e){
    const now=atelierCameraTouchMetrics(),old=atelierCameraGesture;
    if(old&&now){
      const ratio=old.separation/now.separation;
-     orbit.distance=THREE.MathUtils.clamp(orbit.distance*ratio,.45,24);
+     orbit.distance=THREE.MathUtils.clamp(orbit.distance*ratio,atelierCameraMinDistance(),24);
      cameraUpdate();
      atelierCameraPanByPixels(now.x-old.x,now.y-old.y);
    }
@@ -245,6 +288,18 @@ function atelierCameraPointerCancel(e){
 function atelierViewportInstall(){
  const mode=$m('ViewportMode'),scope=$m('ViewportScope');
  if(!mode||!scope)return;
+ $m('ViewportClipApply').addEventListener('click',()=>{
+   const near=Number($m('ViewportClipNear').value),far=Number($m('ViewportClipFar').value);
+   if(!atelierViewportClipApply(near,far)){
+     status('Camera clipping rejected. Near must be 0.005–0.5, far 4–300, and near < far.',true);
+     atelierViewportControlsRefresh();return;
+   }
+   status('Camera clipping changed without modifying model geometry.');
+ });
+ $m('ViewportInsideEnter').addEventListener('click',atelierViewportInsideEnter);
+ $m('ViewportInsideExit').addEventListener('click',()=>{
+   atelierViewportInsideExit();status('Exited interior inspection. Meshes and original view modes preserved.');
+ });
  mode.addEventListener('change',atelierViewApplyChoice);
  scope.addEventListener('change',atelierViewportControlsRefresh);
  $m('ViewportColors').addEventListener('change',atelierViewAppearanceApply);
