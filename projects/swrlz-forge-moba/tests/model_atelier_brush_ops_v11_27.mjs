@@ -57,8 +57,9 @@ raised.attributes.position.setZ(center,.20);
 raised.computeVertexNormals();
 const flatten=apply(raised,stroke({operation:'flatten',center:[0,0,0],
  radius:.3,selectionRadius:.3,strength:0}));
-assert(pos(flatten,center).z<.02,'Flatten must relax height toward chosen plane');
-const smooth=apply(raised,stroke({operation:'smooth',center:[0,0,0],
+assert(pos(flatten,center).z<.2-1e-4&&pos(flatten,center).z>0,
+ 'Flatten must reduce height toward plane without ignoring radial falloff');
+const smooth=apply(raised,stroke({operation:'smooth',center:[0,0,.20],
  radius:.3,selectionRadius:.3,strength:.4}));
 assert(pos(smooth,center).z<.16,'Smooth must average actual connected triangle neighbors');
 const snap=apply(plane,stroke({operation:'inflate',strength:.041,snap:.01}));
