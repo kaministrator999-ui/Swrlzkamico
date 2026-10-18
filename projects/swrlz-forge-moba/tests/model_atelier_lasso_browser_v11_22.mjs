@@ -29,6 +29,31 @@ try{
   assert.equal(p.sculptLassos?.length,1,'Completing a polygon should save a native lasso');
   assert.equal(p.sculptLassos[0].pins.length,3);
   assert(p.sculptLassos[0].pins.every(x=>Number.isInteger(x.tri)&&x.bary.length===3));
+  const initialPins=JSON.stringify(p.sculptLassos[0].pins);
+  await page.locator('#modelAtelierLassoGroupPins').fill('1,2');
+  await page.locator('#modelAtelierLassoGroupDelta1').fill('.02');
+  await page.locator('#modelAtelierLassoGroupMove').click();
+  p=(await parts()).find(x=>x.id==='model-0001');
+  assert.notEqual(JSON.stringify(p.sculptLassos[0].pins),initialPins,
+    'Grouped boundary edit must reproject selected pins');
+  assert.equal(p.sculptLassos[0].pins.length,3);
+  const movedPins=JSON.stringify(p.sculptLassos[0].pins);
+  await page.locator('#modelAtelierUndo').click();
+  p=(await parts()).find(x=>x.id==='model-0001');
+  assert.equal(JSON.stringify(p.sculptLassos[0].pins),initialPins,
+    'One group edit must be one Undo transaction');
+  await page.locator('#modelAtelierParts').selectOption('model-0001');
+  await page.locator('#modelAtelierLassoGroupPins').fill('1,2');
+  await page.locator('#modelAtelierLassoGroupDelta1').fill('.02');
+  await page.locator('#modelAtelierLassoGroupMove').click();
+  p=(await parts()).find(x=>x.id==='model-0001');
+  assert.equal(JSON.stringify(p.sculptLassos[0].pins),movedPins,
+    'Native surface reprojection must be deterministic');
+  await page.locator('#modelAtelierLassoGroupPins').fill('99');
+  await page.locator('#modelAtelierLassoGroupMove').click();
+  p=(await parts()).find(x=>x.id==='model-0001');
+  assert.equal(JSON.stringify(p.sculptLassos[0].pins),movedPins,
+    'Invalid group selection must not mutate a saved boundary');
   await page.locator('#modelAtelierLassoMorph').fill('.025');
   await page.locator('#modelAtelierLassoFeather').fill('.03');
   await page.locator('#modelAtelierLassoApplyMorph').click();
