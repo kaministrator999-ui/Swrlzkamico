@@ -246,7 +246,7 @@ function atelierRefineInstall(){
    const p=partById(selection),i=Number(id('Layer').value);
    if(!p?.refinementLayers?.[i])return;
    checkpoint();p.refinementLayers[i].enabled=!p.refinementLayers[i].enabled;
-   signalEdited();select(p.id);
+   signalEdited();select(p.id);id('Layer').value=String(i);
  });
  id('Up').addEventListener('click',()=>{
    const p=partById(selection),i=Number(id('Layer').value);
