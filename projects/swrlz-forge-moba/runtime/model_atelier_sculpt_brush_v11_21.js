@@ -50,7 +50,7 @@ function atelierSculptValid(p){
       &&Number.isFinite(s.plateau)&&s.plateau>=0&&s.plateau<=1
       &&Number.isFinite(s.taper)&&s.taper>=0&&s.taper<=1
       &&typeof s.level==='boolean'
-      &&(s.surfaceMode===undefined||['front','connected','through'].includes(s.surfaceMode))
+      &&(s.surfaceMode===undefined||atelierSurfaceModes.includes(s.surfaceMode))
       &&(s.selectionRadius===undefined||(Number.isFinite(s.selectionRadius)&&s.selectionRadius>=.03&&s.selectionRadius<=2.5))
       &&[s.offsetU??0,s.offsetV??0].every(v=>Number.isFinite(v)&&Math.abs(v)<=.5);
  });
