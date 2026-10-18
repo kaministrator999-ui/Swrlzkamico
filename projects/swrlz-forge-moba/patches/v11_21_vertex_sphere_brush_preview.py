@@ -9,17 +9,34 @@ def once(html, before, after):
 def apply(html):
     root=Path(__file__).resolve().parent.parent
     assert "SWYRL_ENGINE_DEPLOY_MARKER: V11_20_ANATOMICAL_HEAD" in html
-    module=(root/"runtime/model_atelier_sculpt_brush_v11_21.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_viewport_v11_21.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_reference_studio_v11_22.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_surface_targeting_v11_22.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_surface_lasso_v11_22.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_local_refinement_v11_23.js").read_text(encoding="utf-8")
+    module=(root/"runtime/model_atelier_sculpt_brush_v11_21.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_viewport_v11_21.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_reference_studio_v11_22.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_surface_targeting_v11_22.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_surface_lasso_v11_22.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_local_refinement_v11_23.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_face_sheet_v11_23.js").read_text(encoding="utf-8")
     html=once(html, "  function refreshList(){", module+"\n  function refreshList(){")
+    html=once(html,"  function geometry(part){",
+         "  function geometry(part){\n    if(part.kind==='faceSheet')return atelierFaceSheetGeometry(part);")
+    html=once(html,"  function material(part){",
+         "  function material(part){\n    if(part.kind==='faceSheet')return atelierFaceSheetMaterial(part);")
     html=once(html,"  function checkPart(p){",
-         "  function checkPart(p){\n    if(!atelierSculptValid(p))return false;")
+         "  function checkPart(p){\n    if(!atelierSculptValid(p)||!atelierFaceSheetValid(p))return false;")
     html=once(html,"if(key==='kind'){delete p.headAnatomy;delete p.portraitFinish;",
          "if(key==='kind'){delete p.sculptBrushes;delete p.sculptVertexEdits;delete p.sculptLassos;delete p.headAnatomy;delete p.portraitFinish;")
     html=once(html,"atelierHeadAnatomyRefresh();",
-         "atelierHeadAnatomyRefresh();atelierSculptRefresh();atelierViewportControlsRefresh();atelierRefPaint();")
+         "atelierHeadAnatomyRefresh();atelierSculptRefresh();atelierViewportControlsRefresh();atelierRefPaint();atelierFaceSheetRefresh();")
     html=once(html,"atelierHeadAnatomyInstall();",
-         "atelierHeadAnatomyInstall();atelierSculptInstall();atelierViewportInstall();atelierRefInstall();")
-    brush = ('<section id="modelAtelierSculptBrush" hidden><h3>Vertex sphere brush · editable mesh</h3>'
+         "atelierHeadAnatomyInstall();atelierSculptInstall();atelierViewportInstall();atelierRefInstall();atelierFaceSheetInstall();")
+    brush = ('<fieldset id="modelAtelierFaceSheetControls" hidden aria-label="Editable UV image face sheet">'
+             '<legend>Triangulated image face sheet · UV preserved</legend>'
+             '<p>This is an opt-in editable surface created from a reference. It does NOT replace the original head or automatically build a complete skull.</p>'
+             '<label>Silhouette<select id="modelAtelierFaceSheetShape"><option value="oval">Oval face outline</option>'
+             '<option value="rectangle">Rectangular image crop</option></select></label>'
+             '<div class="atelier-pair"><label>Segments / grid U<input id="modelAtelierFaceSheetGridU" type="number" min="8" max="128" step="1" value="48"></label>'
+             '<label>Rings / grid V<input id="modelAtelierFaceSheetGridV" type="number" min="4" max="128" step="1" value="20"></label></div>'
+             '<div class="atelier-pair"><label>Crop X (0–1)<input id="modelAtelierFaceSheetCropX" type="number" min="0" max="1" step=".01" value="0"></label>'
+             '<label>Crop Y (0–1)<input id="modelAtelierFaceSheetCropY" type="number" min="0" max="1" step=".01" value="0"></label>'
+             '<label>Crop W (0–1)<input id="modelAtelierFaceSheetCropW" type="number" min=".03" max="1" step=".01" value="1"></label>'
+             '<label>Crop H (0–1)<input id="modelAtelierFaceSheetCropH" type="number" min=".03" max="1" step=".01" value="1"></label></div>'
+             '<button type="button" id="modelAtelierFaceSheetApply">Update UV mesh / crop</button>'
+             '<p id="modelAtelierFaceSheetInfo" role="status"></p></fieldset>'
+             '<section id="modelAtelierSculptBrush" hidden><h3>Vertex sphere brush · editable mesh</h3>'
              '<p>Choose mesh. Arm <b>Pick center</b> and tap its surface. Drag normally to orbit.</p>'
              '<div class="atelier-pair"><label>Action<select id="modelAtelierSculptBrushMode"><option value="extrude">Extrude outward</option>'
              '<option value="intrude">Intrude inward</option></select></label>'
@@ -182,6 +199,7 @@ def apply(html):
       '<div id="modelAtelierReferenceBody" class="atelier-ref-body">'
       '<label class="atelier-ref-import">Add front/side images<input id="modelAtelierReferenceFile" type="file" multiple accept="image/jpeg,image/png,image/webp"></label>'
       '<div class="atelier-ref-tabs" id="modelAtelierReferenceTabs"></div>'
+      '<button id="modelAtelierFaceSheetCreate" type="button">Create sculptable UV face sheet</button>'
       '<p id="modelAtelierReferenceEmpty" class="atelier-ref-empty">Add up to 4 local JPEG, PNG or WebP references. Images save with your model JSON.</p>'
       '<div id="modelAtelierReferenceDetail">'
       '<div id="modelAtelierReferenceImageFrame" class="atelier-ref-imageframe" title="Drag inside image to pan">'
