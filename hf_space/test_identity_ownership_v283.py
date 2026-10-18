@@ -65,6 +65,9 @@ assert e._identity_profile_user_name("Name: Avery\nFavorite food: chili")=="Aver
 assert e._identity_profile_user_name("Account display label: Example Person")==""
 import inspect
 src=inspect.getsource(e.generate_events)
+assert "The human's name is UNKNOWN in the current request." in src
+assert 'if "missing-unknown-user-name-calibration" in faults:' in src
+assert "No user name was supplied for this human" in src
 for name in ("identity_followup", "effective_mode", "unknown_name_required", "faults=identity_faults",
              "retry_faults=identity_faults", "system=focused", "Do not claim you saved names"):
     assert name in src,name
