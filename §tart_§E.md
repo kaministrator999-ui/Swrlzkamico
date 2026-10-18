@@ -1,3 +1,13 @@
+## Draft v11.23 precision Model Atelier — Codex operator entry (preview only)
+
+The owner requested **Codex to operate the actual §E Model Atelier controls** for reference-matched character sculpting, not to instruct the owner to manually edit the mesh. The stable release is still **v11.20**; do not merge this draft, overwrite production, or replace the original eleven-section anatomical head/283-part scene.
+
+**Interactive preview:** https://kamiloki-swrlz-forge-moba.static.hf.space/atelier-sculpt-preview/index.html?project=model-atelier
+
+**Read before editing:** [Precision Editor Codex Readiness & Operating Contract](projects/swrlz-forge-moba/reports/PRECISION_ATELIER_CODEX_READINESS_V11_22.md). It enumerates the actual inspector control IDs and bounded workflow for native surface brushes (front/connected/through), vertex matrix and numeric group transforms, lasso boundary pins, conforming local-refinement layers, floating references, UV face-sheet/explicit oval head closure, distortion visualization, Undo and Save/Reload. The original references and sculpt must remain separate assets.
+
+**Acceptance:** the new modules are reviewed by dedicated CPU and desktop/mobile browser tests; exact hosted-preview digest is checked. Test green ≠ artistic likeness approved or a completed Codex modeling session. The advanced freehand cutout, arbitrary decimation/LOD, fully generalized layer stack and automatic reconstruction are not represented as finished.
+
 ## v11.20 · anatomical head reconstruction
 
 The owner rejected the round head foundation. A new native surface builds the skull, temples, cheekbones, jaw angles and chin from eleven editable sections, with a flatter facial mask, eye sockets and an integrated nasal profile. Facial contours are refitted and the neck extends into the jaw underside; the corrected legs and remaining body retain their prior data. Saved Apply/Undo and bounded JSON import support the new anatomy controls.
