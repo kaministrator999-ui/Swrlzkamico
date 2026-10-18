@@ -3,7 +3,8 @@
 // A picked center/normal drives a finite-radius vertex group. Each stroke is
 // recorded in its part and deterministically replayed after procedural rebuild.
 const atelierSculptMaxStrokes=32;
-const atelierSculptModes=['smooth','soft'];
+const atelierSculptModes=['smooth','soft','flat','sharp'];
+const atelierSculptOperations=['push','smooth','flatten','inflate','pinch','translate'];
 const atelierSculptMaxVertexEdits=64;
 function atelierSculptVertexValid(p){
  const edits=p.sculptVertexEdits;
@@ -33,7 +34,7 @@ function atelierSculptValid(p){
  return strokes.every(s=>{
    if(!s||typeof s!=='object'||Array.isArray(s)
      ||Object.keys(s).some(k=>!['axis','center','falloff','half','level','pitch','plateau','radius','snap','strength','taper','yaw',
-       'surfaceMode','selectionRadius','offsetU','offsetV'].includes(k))
+       'surfaceMode','selectionRadius','offsetU','offsetV','operation','mirrorX'].includes(k))
      ||!['axis','center','falloff','half','level','pitch','plateau','radius','snap','strength','taper','yaw']
        .every(k=>Object.prototype.hasOwnProperty.call(s,k)))return false;
    const vec=v=>Array.isArray(v)&&v.length===3&&v.every(x=>Number.isFinite(x)&&Math.abs(x)<=4);
@@ -50,6 +51,8 @@ function atelierSculptValid(p){
       &&Number.isFinite(s.plateau)&&s.plateau>=0&&s.plateau<=1
       &&Number.isFinite(s.taper)&&s.taper>=0&&s.taper<=1
       &&typeof s.level==='boolean'
+      &&(s.operation===undefined||atelierSculptOperations.includes(s.operation))
+      &&(s.mirrorX===undefined||typeof s.mirrorX==='boolean')
       &&(s.surfaceMode===undefined||atelierSurfaceModes.includes(s.surfaceMode))
       &&(s.selectionRadius===undefined||(Number.isFinite(s.selectionRadius)&&s.selectionRadius>=.03&&s.selectionRadius<=2.5))
       &&[s.offsetU??0,s.offsetV??0].every(v=>Number.isFinite(v)&&Math.abs(v)<=.5);
@@ -59,6 +62,8 @@ function atelierSculptFalloff(normalizedDistance,mode,plateau=0,taper=.5){
  if(normalizedDistance<=plateau)return 1;
  if(normalizedDistance>=1)return 0;
  const x=(normalizedDistance-plateau)/(1-plateau);
+ if(mode==='flat')return x<.92?1:Math.max(0,(1-x)/.08);
+ if(mode==='sharp')return Math.pow(1-x,2+8*taper);
  const expo=.55+4.8*taper; // smaller -> broad fade, larger -> concentrated edge drop
  if(mode==='soft'){
    const k=1.5+6*taper;
@@ -171,10 +176,13 @@ function atelierSculptForm(){
  const center=xyz('Center'),axis=xyz('Axis');
  const len=Math.hypot(...axis);
  const amount=Number($m('SculptBrushAmount').value);
+ const action=$m('SculptBrushMode').value;
+ const operation=['extrude','intrude'].includes(action)?'push':action;
  const s={
   center,axis:axis.map(v=>v/len),
   radius:Number($m('SculptBrushRadius').value),
-  strength:($m('SculptBrushMode').value==='intrude'?-1:1)*amount,
+  strength:(action==='intrude'?-1:1)*amount,
+  operation,mirrorX:$m('SculptBrushMirrorX').checked,
   half:$m('SculptBrushHalf').checked,
   falloff:$m('SculptBrushFalloff').value,
   plateau:Number($m('SculptBrushPlateau').value),
@@ -208,7 +216,9 @@ function atelierSculptInstall(){
    checkpoint();p.sculptBrushes=next.sculptBrushes;const id=p.id;
    signalEdited();select(id);
    atelierSurfacePreviewClear();
-   status('Saved '+(s.strength<0?'intrusion':'extrusion')+' as a local vertex falloff stroke. Save JSON to keep it.');
+   status('Saved '+(s.operation==='push'?(s.strength<0?'intrusion':'extrusion'):
+     s.operation)+(s.mirrorX?' with mirrored X editing':'')+
+     ' as a local, undoable vertex stroke. Save JSON to keep it.');
  });
  atelierSculptVertexInstall();
  atelierSurfaceInstall();
