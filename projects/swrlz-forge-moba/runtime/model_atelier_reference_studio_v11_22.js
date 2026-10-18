@@ -29,6 +29,9 @@ function atelierRefLayoutValid(v){
  return !!v&&typeof v==='object'&&!Array.isArray(v)
    &&[v.x,v.y].every(n=>Number.isFinite(n)&&n>=0&&n<=6000)
    &&typeof v.open==='boolean'&&typeof v.collapsed==='boolean'
+   &&(v.width===undefined||(Number.isInteger(v.width)&&v.width>=200&&v.width<=680))
+   &&(v.height===undefined||(Number.isInteger(v.height)&&v.height>=220&&v.height<=680))
+   &&(v.pinned===undefined||typeof v.pinned==='boolean')
    &&(v.active===null||(typeof v.active==='string'&&v.active.length<=72));
 }
 function atelierRefReadImport(source){
@@ -73,6 +76,11 @@ function atelierRefClampLayout(){
  const m=atelierRefEnsure();
  if(!m||!atelierRefDock||!stage)return;
  const l=m.referenceLayout;
+ // Layout sizes remain authored dimensions; narrow phone viewports apply
+ // a responsive CSS cap without destroying a desktop-sized saved layout.
+ atelierRefDock.style.width=l.width===undefined?'':l.width+'px';
+ atelierRefDock.style.height=l.collapsed||l.height===undefined?'':l.height+'px';
+ atelierRefDock.style.maxWidth='calc(100% - 8px)';
  const w=atelierRefDock.offsetWidth||250,h=atelierRefDock.offsetHeight||240;
  // The view-mode toolbar is a sibling over the 3D canvas. Dock images
  // BELOW its actual rendered height: on narrow phones the toolbar wraps,
@@ -93,6 +101,7 @@ function atelierRefPaint(){
  const layout=m.referenceLayout,r=atelierRefCurrent();
  dock.hidden=!layout.open;
  dock.classList.toggle('atelier-ref-collapsed',layout.collapsed);
+ dock.classList.toggle('atelier-ref-pinned',layout.pinned===true);
  $m('ReferenceToggle').setAttribute('aria-expanded',String(layout.open));
  if(layout.open){
    atelierRefClampLayout();
@@ -139,6 +148,10 @@ function atelierRefPaint(){
    }
    $m('ReferenceCount').textContent=m.references.length+'/'+atelierRefMaxImages+' images';
    $m('ReferenceCollapse').textContent=layout.collapsed?'Expand':'Minimize';
+   $m('ReferencePin').textContent=layout.pinned?'Unpin':'Pin';
+   $m('ReferencePin').setAttribute('aria-pressed',String(layout.pinned===true));
+   $m('ReferenceWidth').value=String(layout.width??255);
+   $m('ReferenceHeight').value=String(layout.height??380);
  }
 }
 function atelierRefSnapshotBefore(action){
@@ -202,6 +215,10 @@ function atelierRefDockPointerDown(e){
  // Avoid interfering with normal header buttons, model gestures and the
  // image-pan area. Touch target is the header's free space only.
  if(e.target.closest('button,input,select,img'))return;
+ if(m.referenceLayout.pinned===true){
+   status('Reference position is pinned. Unpin before dragging the dock.');
+   return;
+ }
  atelierRefDrag={pointerId:e.pointerId,startX:e.clientX,startY:e.clientY,
     x:m.referenceLayout.x,y:m.referenceLayout.y,moved:false};
  e.currentTarget.setPointerCapture?.(e.pointerId);
@@ -250,6 +267,30 @@ function atelierRefInstall(){
  });
  $m('ReferenceClose').addEventListener('click',()=>{
    atelierRefSnapshotBefore(m=>{m.referenceLayout.open=false;});
+ });
+ $m('ReferencePin').addEventListener('click',()=>{
+   atelierRefSnapshotBefore(m=>{
+     m.referenceLayout.pinned=!m.referenceLayout.pinned;
+   });
+   status(atelierRefEnsure()?.referenceLayout?.pinned?
+     'Reference dock position pinned. Image pan and transforms remain available.':
+     'Reference dock unpinned and draggable.');
+ });
+ $m('ReferenceApplySize').addEventListener('click',()=>{
+   const m=atelierRefEnsure();if(!m)return;
+   const width=Number($m('ReferenceWidth').value);
+   const height=Number($m('ReferenceHeight').value);
+   const next={...m.referenceLayout,width,height};
+   if(!atelierRefLayoutValid(next)){
+     status('Reference dimensions require integer width 200–680px and height 220–680px.',true);
+     atelierRefPaint();return;
+   }
+   if(m.referenceLayout.width===width&&m.referenceLayout.height===height)return;
+   atelierRefSnapshotBefore(state=>{
+     state.referenceLayout.width=width;
+     state.referenceLayout.height=height;
+   });
+   status('Reference panel size saved. Small screens cap the visible frame; the authored dimensions remain portable.');
  });
  $m('ReferenceThumbnail').addEventListener('click',()=>{$m('ReferenceCollapse').click();});
  $m('ReferenceCollapse').addEventListener('click',()=>{
@@ -326,6 +367,11 @@ function atelierRefInstall(){
    active:model()?.referenceLayout?.active||null,
    open:!!model()?.referenceLayout?.open,
    collapsed:!!model()?.referenceLayout?.collapsed,
+   pinned:!!model()?.referenceLayout?.pinned,
+   width:model()?.referenceLayout?.width??null,
+   height:model()?.referenceLayout?.height??null,
+   x:model()?.referenceLayout?.x??null,
+   y:model()?.referenceLayout?.y??null,
    imageDataBytes:model()?.references?.map(r=>r.data.length)||[],
    cameraAngle:atelierRefCurrent()?.angle||null
  })});
