@@ -68,7 +68,16 @@ try{
   assert.equal(JSON.stringify(m.parts),partsBefore,'Loading references must not change character geometry');
   assert(await page.locator('#modelAtelierReferenceImage').isVisible(),'First reference should render inside overlay');
   const tabs=page.locator('#modelAtelierReferenceTabs button');assert.equal(await tabs.count(),2);
-  await tabs.nth(1).click();
+  const mobileRects=await page.evaluate(()=>{
+    const names=['modelAtelierViewport','modelAtelierViewportModes','modelAtelierReferenceDock','modelAtelierReferenceHandle','modelAtelierReferenceBody','modelAtelierReferenceTabs'];
+    return Object.fromEntries(names.map(id=>{const e=document.getElementById(id),r=e.getBoundingClientRect();
+      return [id,{x:r.x,y:r.y,bottom:r.bottom,height:r.height,scrollTop:e.scrollTop,scrollHeight:e.scrollHeight,
+        clientHeight:e.clientHeight,top:e.style.top,z:window.getComputedStyle(e).zIndex}]}));
+  });
+  console.log('REFERENCE_LAYOUT_AFTER_IMPORT',name,JSON.stringify(mobileRects));
+  assert(mobileRects.modelAtelierReferenceDock.y>=mobileRects.modelAtelierViewportModes.bottom+3,
+    'After import the reference panel must still be below render modes.');
+  await tabs.nth(1).click({timeout:12000});
   assert.equal(await page.locator('#modelAtelierReferenceAngle').inputValue(),'right');
   await page.locator('#modelAtelierReferenceCamera').click();
   const yaw=Number(await page.locator('#modelAtelierViewport').getAttribute('data-camera-yaw'));
