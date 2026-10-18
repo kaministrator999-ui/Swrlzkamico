@@ -1,0 +1,70 @@
+name: Chat Scroll DOM Reuse v287 — Android browser
+on:
+  push:
+    branches: [fix/chat-scroll-reuse-v287]
+    paths:
+      - 'chat/§wyrlz/index.html'
+      - 'chat/§wyrlz/VERSION.txt'
+      - 'tests/test_chat_scroll_reuse_v287.cjs'
+      - '.github/workflows/chat-scroll-reuse-v287.yml'
+  pull_request:
+    paths:
+      - 'chat/§wyrlz/index.html'
+      - 'chat/§wyrlz/VERSION.txt'
+      - 'tests/test_chat_scroll_reuse_v287.cjs'
+      - '.github/workflows/chat-scroll-reuse-v287.yml'
+permissions:
+  contents: read
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Check Chat inline JS and local page version
+        run: |
+          python - <<'PY'
+          import re,subprocess
+          from pathlib import Path
+          text=Path('chat/§wyrlz/index.html').read_text()
+          assert Path('chat/§wyrlz/VERSION.txt').read_text().strip()=='1.1.16'
+          assert 'content="1.1.16"' in text
+          assert 'content-visibility:auto' not in text and 'requestIdleCallback' not in text
+          match=re.search(r'<script>\s*(\(\(\) => \{[\s\S]+?\}\)\(\);)\s*</script>',text)
+          assert match,'Chat main script was not found'
+          Path('/tmp/swrlz-scroll-inline.js').write_text(match.group(1))
+          subprocess.run(['node','--check','/tmp/swrlz-scroll-inline.js'],check=True)
+          PY
+      - name: Install ephemeral headless Chromium
+        run: |
+          npm install --no-save --no-audit --no-fund playwright
+          npx playwright install --with-deps chromium
+      - name: Stage actual Chat document for deterministic browser session
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from shutil import copy2
+          dest=Path('/tmp/swrlz-v287-test/chat/§wyrlz')
+          assets=dest/'assets'
+          assets.mkdir(parents=True,exist_ok=True)
+          src=Path('chat/§wyrlz/index.html').read_text()
+          injection='<link rel="stylesheet" href="/chat/§wyrlz/assets/rich-widgets-v284.css">\n<script src="/chat/§wyrlz/assets/rich-widgets-v284.js" defer></script>'
+          assert '</head>' in src
+          (dest/'index.html').write_text(src.replace('</head>',injection+'\n</head>',1))
+          for name in ('rich-widgets-v284.js','rich-widgets-v284.css'):
+              copy2(Path('hf_space/chat/§wyrlz/assets')/name,assets/name)
+          PY
+      - name: Verify historical DOM, graph Canvas and scroll position survive repeated Station hydration
+        run: |
+          python -m http.server 8765 --bind 127.0.0.1 --directory /tmp/swrlz-v287-test > /tmp/swrlz-v287-http.log 2>&1 &
+          for i in $(seq 1 30); do
+            if curl -fsS "http://127.0.0.1:8765/chat/%C2%A7wyrlz/index.html" >/dev/null; then break; fi
+            sleep 1
+          done
+          node tests/test_chat_scroll_reuse_v287.cjs
