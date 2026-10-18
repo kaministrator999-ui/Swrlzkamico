@@ -1,0 +1,34 @@
+name: Verify §E v11.24 freehand lasso draft
+on:
+  push:
+    branches: [feature/atelier-freehand-lasso-v11-24]
+    paths:
+      - 'projects/swrlz-forge-moba/runtime/model_atelier_surface_lasso_v11_22.js'
+      - 'projects/swrlz-forge-moba/runtime/model_atelier_viewport_v11_21.js'
+      - 'projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py'
+      - 'projects/swrlz-forge-moba/tests/model_atelier_freehand_lasso_v11_24.mjs'
+      - '.github/workflows/verify-freehand-lasso-v11-24.yml'
+permissions:
+  contents: read
+concurrency:
+  group: verify-atelier-freehand-v1124
+  cancel-in-progress: true
+jobs:
+  freehand-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Parse editor sources and integration patch
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/model_atelier_surface_lasso_v11_22.js
+          node --check projects/swrlz-forge-moba/runtime/model_atelier_viewport_v11_21.js
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py
+      - name: Verify real source freehand pointer flow and safety guards
+        run: node projects/swrlz-forge-moba/tests/model_atelier_freehand_lasso_v11_24.mjs
