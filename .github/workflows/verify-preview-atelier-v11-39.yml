@@ -3,17 +3,16 @@ on:
   push:
     branches: [feature/atelier-face-landmarks-v11-39]
     paths:
-      - 'projects/swrlz-forge-moba/scripts/build_atelier_precision_preview_v11_37.py'
+      - 'projects/swrlz-forge-moba/scripts/build_atelier_precision_preview_v11_39.py'
       - 'projects/swrlz-forge-moba/runtime/model_atelier_*.js'
-      - 'projects/swrlz-forge-moba/tests/model_atelier_*.mjs'
       - 'projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py'
       - 'projects/swrlz-forge-moba/tests/model_atelier_*.mjs'
-      - '.github/workflows/verify-preview-atelier-v11-37.yml'
+      - '.github/workflows/verify-preview-atelier-v11-39.yml'
   workflow_dispatch:
 permissions:
   contents: read
 concurrency:
-  group: precision-preview-v1137
+  group: precision-preview-v1139
   cancel-in-progress: true
 jobs:
   geometry-and-native-schema:
@@ -29,8 +28,8 @@ jobs:
           python-version: '3.11'
       - name: Build sealed original model and overlay ALL saved precision tools
         run: |
-          python projects/swrlz-forge-moba/scripts/build_atelier_precision_preview_v11_37.py --output dist/atelier-precision-v11-37
-          node --check dist/atelier-precision-v11-37-module.mjs
+          python projects/swrlz-forge-moba/scripts/build_atelier_precision_preview_v11_39.py --output dist/atelier-precision-v11-39
+          node --check dist/atelier-precision-v11-39-module.mjs
           python -m py_compile projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py
       - name: All precision-tool geometry, serialization and safety contracts
         run: |
@@ -79,15 +78,15 @@ jobs:
           python-version: '3.11'
       - name: Verify sealed original and prepare same cumulative candidate
         run: |
-          python projects/swrlz-forge-moba/scripts/build_atelier_precision_preview_v11_37.py --output /tmp/atelier-precision-v11-37
-          node --check /tmp/atelier-precision-v11-37-module.mjs
+          python projects/swrlz-forge-moba/scripts/build_atelier_precision_preview_v11_39.py --output /tmp/atelier-precision-v11-39
+          node --check /tmp/atelier-precision-v11-39-module.mjs
       - name: Install one browser per validation shard
         run: |
           npm install --no-save playwright@1.56.1 three@0.169.0
           npx playwright install --with-deps --only-shell chromium
       - name: Run all selected tests through original editor on desktop and Android
         run: |
-          python -m http.server 8787 --directory /tmp/atelier-precision-v11-37 >/tmp/atelier-preview-server.log 2>&1 &
+          python -m http.server 8787 --directory /tmp/atelier-precision-v11-39 >/tmp/atelier-preview-server.log 2>&1 &
           PID=$!
           trap 'kill "$PID" 2>/dev/null || true' EXIT
           for i in $(seq 1 45); do
@@ -128,8 +127,8 @@ jobs:
           python-version: '3.11'
       - name: Build exact validated preview, leaving production root untouched
         run: |
-          python projects/swrlz-forge-moba/scripts/build_atelier_precision_preview_v11_37.py --output dist/atelier-precision-v11-37
-          test -f dist/atelier-precision-v11-37/SOURCE.json
+          python projects/swrlz-forge-moba/scripts/build_atelier_precision_preview_v11_39.py --output dist/atelier-precision-v11-39
+          test -f dist/atelier-precision-v11-39/SOURCE.json
       - name: Upload in independent preview subdirectory only
         run: |
           test -n "$HF_TOKEN" || { echo "::error::Missing authorized HF_TOKEN"; exit 1; }
@@ -139,8 +138,8 @@ jobs:
           from huggingface_hub import HfApi
           api=HfApi(token=os.environ['HF_TOKEN'])
           commit=api.upload_folder(
-             folder_path='dist/atelier-precision-v11-37',
-             path_in_repo='atelier-precision-v11-37',
+             folder_path='dist/atelier-precision-v11-39',
+             path_in_repo='atelier-precision-v11-39',
              repo_id='kamiloki/swrlz-forge-moba',repo_type='space',
              commit_message='§E v11.39 precision editor isolated preview '+os.environ['GITHUB_SHA'][:12])
           print('V1139_ISOLATED_PREVIEW_UPLOADED',getattr(commit,'oid',None))
@@ -150,8 +149,8 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           import hashlib,json,re,time,urllib.request,os
-          root=Path('dist/atelier-precision-v11-37')
-          base='https://kamiloki-swrlz-forge-moba.static.hf.space/atelier-precision-v11-37/'
+          root=Path('dist/atelier-precision-v11-39')
+          base='https://kamiloki-swrlz-forge-moba.static.hf.space/atelier-precision-v11-39/'
           local={f: (root/f).read_bytes() for f in ['index.html','SOURCE.json',
              'scenes/model-atelier-festival-anatomy-v11-20.swyrl.json']}
           expected=json.loads(local['SOURCE.json'])
@@ -178,5 +177,5 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: atelier-precision-v11-37-receipt
-          path: dist/atelier-precision-v11-37/SOURCE.json
+          name: atelier-precision-v11-39-receipt
+          path: dist/atelier-precision-v11-39/SOURCE.json
