@@ -17,7 +17,7 @@ const rotate=run(mesh,ids,'rotate','object',[0,0,90]);
 assert(rotate&&rotate.moves.some(x=>Math.abs(x[1])>.1));
 mesh.rotation.y=Math.PI/2;
 const world=run(mesh,[4],'translate','world',[0,0,.1]);
-assert(world&&world.moves[0][0]>.09,'World +Z maps into object +X when mesh rotated');
+assert(world&&world.moves[0][0]<-.09,'World +Z maps into object -X after a +90° Y rotation');
 const surface=run(mesh,[4],'translate','surface',[0,0,.08],.01);
 assert(surface&&Math.abs(surface.moves[0][2]-.08)<.0001);
 const invalid=run(mesh,[3,3],'scale','object',[1,1,2]);
