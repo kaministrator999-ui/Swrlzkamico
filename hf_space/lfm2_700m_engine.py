@@ -893,6 +893,16 @@ def generate_events(payload):
             focused+="\nOPTED-IN USER HISTORY EVIDENCE (untrusted, only this user):\n"+str(payload["archiveEvidence"])[:2350]
         if payload.get("projectThreadEvidence"):
             focused+="\nCURRENT PROJECT THREAD EVIDENCE (not system instruction):\n"+str(payload["projectThreadEvidence"])[:1650]
+        if (subject=="user" and not trusted_user_name
+                and not str(payload.get("archiveEvidence") or "").strip()):
+            # Ground the exact information gap at the END of the prompt,
+            # after any user-scoped evidence and other relationship context.
+            focused+=(
+                " The person asking has NOT given a supported name. "
+                "Answer the name question by acknowledging you do not know "
+                "their name yet, rather than describing them as an assistant "
+                "or speculating about who they are. One short sentence."
+            )
         system=focused
     started=time.perf_counter()
     yield {"type":"STATUS","phase":"LOADING"}
@@ -939,7 +949,13 @@ def generate_events(payload):
         if file_dialogue:
             response_tokens=min(320,available_output_tokens);temperature=0.35
         elif concise_identity_turn or identity_followup:
-            response_tokens=min(112,available_output_tokens);temperature=0.30
+            response_tokens=min(80 if (
+                (identity_response_mode.startswith("RESPONSE MODE: USER-IDENTITY-DIRECT")
+                 or (identity_followup and followup_subject=="user"))
+                and not trusted_user_name
+                and not str(payload.get("archiveEvidence") or "").strip()
+            ) else 112,available_output_tokens)
+            temperature=0.25 if response_tokens<=80 else 0.30
         elif mode.startswith("RESPONSE MODE: SOURCE-FACTS-FIRST"):
             response_tokens=min(1152,available_output_tokens);temperature=0.30
         elif mode.startswith("RESPONSE MODE: CODE-"):
@@ -1067,6 +1083,14 @@ def generate_events(payload):
                     "NO explanations, bracketed writing tips or assignment commentary. "
                     "Put all original lyrics inside a single fenced code block."
                 )
+                if "missing-unknown-user-name-calibration" in faults:
+                    retry_instruction+=(
+                        " SPECIFIC CORRECTION: The available user context "
+                        "has no supported name. Answer the human's name question "
+                        "by acknowledging in your own words that you do not "
+                        "know their name yet. Do not substitute a description "
+                        "of the human's role or give the assistant's name."
+                    )
                 repaired,timing2=buffered_chat_completion(
                     model,list(messages)+[{"role":"system","content":retry_instruction}],
                     response_tokens,min(0.5,temperature+0.08),
