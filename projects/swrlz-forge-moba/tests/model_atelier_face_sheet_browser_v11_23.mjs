@@ -46,7 +46,17 @@ try{
   await page.locator('#modelAtelierFaceSheetGridV').fill('26');
   await page.locator('#modelAtelierFaceSheetCropX').fill('.1');
   await page.locator('#modelAtelierFaceSheetCropW').fill('.8');
+  await page.locator('#modelAtelierFaceSheetHeadDepth').fill('.65');
   await page.locator('#modelAtelierFaceSheetApply').click();
+  assert.equal((await project()).parts.at(-1).faceSheet.headDepth,.65);
+  await page.locator('#modelAtelierFaceSheetUVHeatmap').check();
+  let render=await page.evaluate(()=>window.SWYRL_ENGINE_VIEW.status().selectedMaterial);
+  assert.equal(render.vertexColors,true,'UV stretch view must use explicit per-vertex diagnostic color');
+  assert.equal(render.basic,true);
+  await page.locator('#modelAtelierFaceSheetUVHeatmap').uncheck();
+  render=await page.evaluate(()=>window.SWYRL_ENGINE_VIEW.status().selectedMaterial);
+  assert.equal(render.vertexColors,false,'Restoring shaded view must remove diagnostic colors');
+  assert.match(await page.locator('#modelAtelierFaceSheetUVStats').textContent(),/UV stretch/);
   let updated=(await project()).parts.at(-1);
   assert.equal(updated.faceSheet.gridU,60);
   assert.equal(updated.faceSheet.gridV,26);
@@ -66,12 +76,14 @@ try{
   const path=await(await dl).path(),saved=JSON.parse(await readFile(path,'utf8'));
   assert.equal(saved.model.parts.length,284);
   assert.equal(saved.model.parts.at(-1).faceSheet.gridU,60);
+  assert.equal(saved.model.parts.at(-1).faceSheet.headDepth,.65);
   assert.equal(saved.model.references.length,1,'Image must be portable in same model JSON');
   await page.locator('#modelAtelierUndo').click();
   assert(!(await project()).parts.at(-1).sculptBrushes?.length);
   await page.locator('#modelAtelierImportFile').setInputFiles(path);
   await page.waitForFunction(()=>window.SWYRL_ENGINE_AGENT.inspectScene().project.modelAtelier
     .parts.at(-1)?.sculptBrushes?.length===1);
+  assert.equal((await project()).parts.at(-1).faceSheet.headDepth,.65);
   assert.equal(JSON.stringify((await project()).parts.slice(0,283)),partsBefore);
   assert.equal(errors.length,0,errors.join(' | '));
   console.log('V1123_FACE_IMAGE_SHEET_BROWSER_NATIVE_MESH_UV_SCULPT_UNDO_JSON_PASS',device);
