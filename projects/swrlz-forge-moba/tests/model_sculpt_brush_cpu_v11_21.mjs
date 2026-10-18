@@ -4,7 +4,7 @@ import vm from 'node:vm';
 import * as THREE from 'three';
 const read=p=>fs.readFileSync(new URL('../'+p,import.meta.url),'utf8');
 const c=vm.createContext({THREE,console});
-vm.runInContext(read('runtime/model_atelier_sculpt_brush_v11_21.js'),c);
+vm.runInContext(read('runtime/model_atelier_sculpt_brush_v11_21.js')+'\n'+read('runtime/model_atelier_surface_lasso_v11_22.js'),c);
 const mode=(extra={})=>({
  center:[0,0,1],axis:[0,0,1],radius:.65,strength:.2,
  falloff:'smooth',half:false,yaw:0,pitch:0,snap:0,plateau:0,taper:.5,level:false,...extra
