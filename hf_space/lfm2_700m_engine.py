@@ -1083,14 +1083,6 @@ def generate_events(payload):
                     "NO explanations, bracketed writing tips or assignment commentary. "
                     "Put all original lyrics inside a single fenced code block."
                 )
-                if "missing-unknown-user-name-calibration" in faults:
-                    retry_instruction+=(
-                        " SPECIFIC CORRECTION: The available user context "
-                        "has no supported name. Answer the human's name question "
-                        "by acknowledging in your own words that you do not "
-                        "know their name yet. Do not substitute a description "
-                        "of the human's role or give the assistant's name."
-                    )
                 repaired,timing2=buffered_chat_completion(
                     model,list(messages)+[{"role":"system","content":retry_instruction}],
                     response_tokens,min(0.5,temperature+0.08),
@@ -1364,6 +1356,14 @@ def generate_events(payload):
                     "rewrite history, pretend a nickname is saved or produce a "
                     "generic customer-service response. Write a brief fresh answer."
                 )
+                if "missing-unknown-user-name-calibration" in faults:
+                    retry_instruction+=(
+                        " SPECIFIC CORRECTION: The available user context "
+                        "has no supported name. Answer the human's name question "
+                        "by acknowledging in your own words that you do not "
+                        "know their name yet. Do not substitute a description "
+                        "of the human's role or give the assistant's name."
+                    )
                 repaired,timing2=buffered_chat_completion(
                     model,list(messages)+[{"role":"system","content":retry_instruction}],
                     response_tokens,min(0.45,temperature+0.05))
