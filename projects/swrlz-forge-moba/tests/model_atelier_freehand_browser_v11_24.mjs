@@ -20,12 +20,36 @@ try{
    const canvas=page.locator('#modelAtelierViewport canvas');
    await canvas.scrollIntoViewIfNeeded();
    const box=await canvas.boundingBox();assert(box&&box.width>100&&box.height>100);
-   const cx=box.x+box.width/2,cy=box.y+box.height/2;
-   const rad=Math.min(box.width,box.height)*.085;
-   const samples=Array.from({length:25},(_,i)=>({
-     x:cx+Math.cos(i/24*Math.PI*2)*rad,
-     y:cy+Math.sin(i/24*Math.PI*2)*rad
+   // Discover a truly raycastable point through the actual canvas events;
+   // the camera target need not project to the CSS canvas midpoint.
+   let found=null,attempts=0,lastProbe='';
+   const xs=[.5,.42,.58,.33,.67,.25,.75];
+   const ys=[.5,.42,.58,.33,.67,.25,.75];
+   for(const fy of ys){
+     if(found)break;
+     for(const fx of xs){
+       attempts++;
+       await page.locator('#modelAtelierLassoStartFreehand').click();
+       await canvas.scrollIntoViewIfNeeded();
+       const r=await canvas.boundingBox();
+       const x=r.x+r.width*fx,y=r.y+r.height*fy;
+       await page.mouse.click(x,y);
+       lastProbe=await page.locator('#modelAtelierLassoInfo').textContent();
+       if(/Draft: 1 pins/.test(lastProbe)){found={fx,fy};break;}
+     }
+   }
+   assert(found,'Unable to acquire any actual selected-head raycast in '+attempts+
+     ' canvas probes; last status: '+lastProbe);
+   await page.locator('#modelAtelierLassoStartFreehand').click();
+   await canvas.scrollIntoViewIfNeeded();
+   const actual=await canvas.boundingBox();
+   const cx=actual.x+actual.width*found.fx,cy=actual.y+actual.height*found.fy;
+   const rad=Math.min(actual.width,actual.height)*.037;
+   const samples=Array.from({length:17},(_,i)=>({
+     x:cx+Math.cos(i/16*Math.PI*2)*rad,
+     y:cy+Math.sin(i/16*Math.PI*2)*rad
    }));
+   console.log('FREEHAND_SURFACE_TARGET',device,found,attempts,actual);
    if(mobile){
      const session=await context.newCDPSession(page);
      await session.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{...samples[0],id:7}]});
