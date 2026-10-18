@@ -49,6 +49,7 @@ def apply(html):
              '<fieldset id="modelAtelierFaceLandmarkTools" hidden aria-label="Reference-mapped sculptable facial landmarks">'
              '<legend>Facial landmarks · manual front/profile modeling</legend>'
              '<p>Place image-UV feature centers and raise or recess actual head-sheet vertices. Use Front/Side image references to check depth; no automatic photo reconstruction.</p>'
+             '<label><input type="checkbox" id="modelAtelierFaceLandmarkPick"> Tap active image to place the selected landmark (reset image transforms first)</label>'
              '<label>Facial feature<select id="modelAtelierFaceLandmarkPreset">'
              '<option value="noseTip">Nose tip</option><option value="noseBridge">Nose bridge</option>'
              '<option value="eyeLeft">Left eye socket</option><option value="eyeRight">Right eye socket</option>'
