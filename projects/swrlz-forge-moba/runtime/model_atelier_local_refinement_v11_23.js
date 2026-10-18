@@ -59,7 +59,7 @@ function atelierRefineEstimate(g,part,layers=part.refinementLayers||[]){
  return {original:atelierRefineCount(g),upperBound:Math.floor(triangles),
    withinCap:triangles<=atelierRefineMaxTriangles};
 }
-function atelierRefineOne(g,region){
+function atelierRefineOne(g,region,part){
  if(g.morphAttributes?.position?.length||g.groups.length>1)return null;
  const a=g.attributes.position,idx=g.index,triangles=atelierRefineCount(g);
  if(!triangles||triangles>atelierRefineMaxTriangles)return null;
@@ -72,11 +72,7 @@ function atelierRefineOne(g,region){
  const triIDs=new Uint32Array(triangles*3);
  for(let i=0;i<triIDs.length;i++)triIDs[i]=idx?idx.getX(i):i;
  const positions=Array.from({length:a.count},(_,i)=>point(i,a,3));
- const coords=atelierLassoProjection(region),axis=new THREE.Vector3(...region.axis);
- const testVertex=i=>{
-   const p=new THREE.Vector3(...positions[i]).sub(coords.origin);
-   return [p.dot(coords.u),p.dot(coords.v)];
- };
+ const mask=atelierLassoCompiledRegionMask(part,region),axis=new THREE.Vector3(...region.axis);
  // Weld opposite UV seams by rounded POSITION when deciding shared edges.
  // Attribute midpoints remain per-face to preserve distinct UVs/material.
  const keys=positions.map(p=>p.map(v=>Math.round(v*1e5)).join(','));
@@ -85,9 +81,7 @@ function atelierRefineOne(g,region){
  let selected=0;
  for(let t=0;t<triangles;t++){
    const [a,b,c]=triIDs.slice(t*3,t*3+3);
-   const p=[testVertex(a),testVertex(b),testVertex(c)];
-   const center=[(p[0][0]+p[1][0]+p[2][0])/3,
-     (p[0][1]+p[1][1]+p[2][1])/3];
+   const center=[0,1,2].map(k=>(positions[a][k]+positions[b][k]+positions[c][k])/3);
    const N=g.attributes.normal;
    if(N){
      const norm=new THREE.Vector3(
@@ -96,7 +90,7 @@ function atelierRefineOne(g,region){
        (N.getZ(a)+N.getZ(b)+N.getZ(c))/3);
      if(norm.dot(axis)<-.12)continue;
    }
-   if(!atelierLassoInside(center,coords.poly))continue;
+   if(!mask.contains(center))continue;
    faceSelected[t]=1;selected++;
    splitEdges.add(edge(a,b));splitEdges.add(edge(b,c));splitEdges.add(edge(c,a));
  }
@@ -144,7 +138,7 @@ function atelierRefineApply(g,part){
    const r=part.sculptLassos?.find(r=>r.id===layer.regionId);
    if(!r||!atelierLassoPolygonValid(r))continue;
    for(let i=0;i<layer.level;i++){
-     const next=atelierRefineOne(current,r);
+     const next=atelierRefineOne(current,r,part);
      if(!next)break;
      if(current!==g)current.dispose();
      current=next;
@@ -156,15 +150,16 @@ function atelierRefineApply(g,part){
 // A read-only preview uses the EXACT local triangulation routine used by
 // Apply. Count generated BufferGeometry vertex slots separately from welded
 // source points; never present them as unique mesh vertices.
-function atelierRefineCandidate(mesh,region,level){
+function atelierRefineCandidate(mesh,region,level,part){
  if(!mesh?.geometry||!region||!atelierLassoPolygonValid(region)||
+    (region.selectionOp&&!part)||
     !Number.isInteger(level)||level<1||level>2)return {ok:false,reason:'Invalid mesh, boundary or density level'};
  const base=mesh.geometry,before=atelierRefineCount(base);
  if(before>atelierRefineMaxTriangles)return {ok:false,reason:'Base exceeds local mobile triangle cap'};
  let current=base.clone(),grown=false,affected=0;
  try{
    for(let i=0;i<level;i++){
-     const next=atelierRefineOne(current,region);
+     const next=atelierRefineOne(current,region,part);
      if(!next)break;
      current.dispose();current=next;grown=true;
      affected+=next.userData.selectedOriginalTriangles||0;
@@ -202,7 +197,7 @@ function atelierRefineInstall(){
  id('Preview').addEventListener('click',()=>{
    const p=partById(selection),r=atelierLassoRegion(),level=Number(id('Level').value);
    const mesh=modelRoot?.children.find(o=>o.isMesh&&o.userData.atelierId===p?.id);
-   const result=atelierRefineCandidate(mesh,r,level),output=id('Budget');
+   const result=atelierRefineCandidate(mesh,r,level,p),output=id('Budget');
    if(!result.ok){
      output.textContent='Cannot preview or safely refine: '+(result.reason||
        'no affected triangles or per-object cap exceeded')+'. Original untouched.';
@@ -222,7 +217,7 @@ function atelierRefineInstall(){
    if(!mesh||!Number.isInteger(level)||level<1||level>2)return;
    // Use the same measured local geometry result for Preview and Apply;
    // a pessimistic whole-head 4x estimate would reject valid tiny regions.
-   const projected=atelierRefineCandidate(mesh,r,level);
+   const projected=atelierRefineCandidate(mesh,r,level,p);
    if(!projected.ok){
      status('No local triangles could be safely refined inside this region. Reduce level, region size or base density.',true);return;
    }
