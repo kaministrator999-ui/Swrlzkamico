@@ -1,9 +1,24 @@
 name: Verify §E anatomical head studio
 on:
+  # This suite reconstructs the SEALED v11.20 manifest and runs the
+  # original anatomical-head authoring browser. Candidate editor previews,
+  # docs and test reports DO NOT feed this sealed build; their own targeted
+  # browser suites validate them. The full historical suite remains callable.
   pull_request:
     paths:
-      - 'projects/swrlz-forge-moba/**'
       - '.github/workflows/verify-character-detail.yml'
+      - 'projects/swrlz-forge-moba/source-manifest.json'
+      - 'projects/swrlz-forge-moba/build_space.py'
+      - 'projects/swrlz-forge-moba/payload/**'
+      - 'projects/swrlz-forge-moba/scenes/**'
+      - 'projects/swrlz-forge-moba/assets/**'
+      - 'projects/swrlz-forge-moba/authoring/festival_anatomy_authoring_v11_20.mjs'
+      - 'projects/swrlz-forge-moba/tests/model_hd_geometry_cpu.mjs'
+      - 'projects/swrlz-forge-moba/tests/model_reference_correction_cpu.mjs'
+      - 'projects/swrlz-forge-moba/tests/model_portrait_polish_cpu.mjs'
+      - 'projects/swrlz-forge-moba/tests/model_head_anatomy_cpu.mjs'
+      - 'projects/swrlz-forge-moba/tests/model_reference_package.py'
+  workflow_dispatch:
 permissions:
   contents: read
 concurrency:
