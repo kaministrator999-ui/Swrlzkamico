@@ -150,9 +150,18 @@ function atelierRefineInstall(){
    const level=Number(id('Level').value);
    const mesh=modelRoot.children.find(o=>o.isMesh&&o.userData.atelierId===selection);
    if(!mesh||!Number.isInteger(level)||level<1||level>2)return;
-   const estimate=atelierRefineEstimate(mesh.geometry,p,[{level,enabled:true}]);
-   if(!estimate.withinCap){
-     status('Refinement could exceed '+atelierRefineMaxTriangles+' triangles. Lower density or choose a smaller mesh.',true);return;
+   // Measure actual affected region. A whole-object 4× upper bound would
+   // incorrectly reject the 48k-triangle head even when refining 80 triangles.
+   let preview=mesh.geometry.clone(),grown=false;
+   for(let i=0;i<level;i++){
+     const next=atelierRefineOne(preview,r);
+     if(!next)break;
+     preview.dispose();preview=next;grown=true;
+   }
+   const count=atelierRefineCount(preview);
+   preview.dispose();
+   if(!grown||count>atelierRefineMaxTriangles){
+     status('No local triangles could be safely refined inside this region. Reduce level, region size or base density.',true);return;
    }
    const layer={id:'detail-'+Date.now().toString(36),regionId:r.id,level,enabled:true};
    const next={...p,refinementLayers:[...(p.refinementLayers||[]),layer]};
