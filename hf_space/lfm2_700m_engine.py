@@ -864,6 +864,17 @@ def generate_events(payload):
                 "or direct statements. If none is available, say you do not "
                 "know their name yet. Do not call them an assistant."
             )
+            if not trusted_user_name and not str(payload.get("archiveEvidence") or "").strip():
+                # This is an explicit absence-of-evidence statement, not a
+                # canned answer. The model must still author the reply.
+                focused+=(
+                    " IMPORTANT FACT: No supported personal name for this "
+                    "human was supplied by their own statements or account "
+                    "profile. The correct conversational response must "
+                    "acknowledge not knowing their name. Do not merely say "
+                    "they are a person, a user, or the assistant. "
+                    "A previous assistant's guess is not reliable evidence."
+                )
         if identity_followup:
             focused+=(
                 " This is a follow-up to an identity exchange. Reevaluate any "
@@ -989,6 +1000,15 @@ def generate_events(payload):
                     +"stories, fictional series or claiming a new rename. "
                     +"One brief natural reply, no role table or signoff."
                 )
+                if "missing-unknown-user-name-calibration" in faults:
+                    retry_instruction+=(
+                        " No user name exists in the authorized input. "
+                        "Your previous answer failed because it did not "
+                        "acknowledge this uncertainty. Directly state that "
+                        "you don't know the human's name yet, in your own "
+                        "natural words; do not simply identify them as a "
+                        "human, a user, or an assistant."
+                    )
                 repaired,timing2=buffered_chat_completion(
                     model,list(messages)+[{"role":"system","content":retry_instruction}],
                     response_tokens,min(0.5,temperature+0.08),
