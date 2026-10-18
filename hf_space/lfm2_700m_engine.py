@@ -989,26 +989,84 @@ def generate_events(payload):
                     retry_instruction=strategy_change_directive(programming,candidate_check,2)
                 else:
                     retry_instruction=(
-                    "Your previous draft had an identity attribution error: "
-                    +", ".join(faults)+". "
-                    +"Answer the human's actual question again in plain language. "
-                    +"You are §wyrlz, the AI replying to a human; the human is "
-                    +"not the assistant. If asked about the human, use only "
-                    +"supported account or human-supplied facts; otherwise "
-                    +"acknowledge the missing name. If correcting your own "
-                    +"previous mistake, correct it without invented origin "
-                    +"stories, fictional series or claiming a new rename. "
-                    +"One brief natural reply, no role table or signoff."
-                )
-                if "missing-unknown-user-name-calibration" in faults:
-                    retry_instruction+=(
-                        " No user name exists in the authorized input. "
-                        "Your previous answer failed because it did not "
-                        "acknowledge this uncertainty. Directly state that "
-                        "you don't know the human's name yet, in your own "
-                        "natural words; do not simply identify them as a "
-                        "human, a user, or an assistant."
+                        "LANGUAGE/INTENT RETRY GATE: the first candidate violated the deterministic programming contract. "
+                        "Return one COMPLETE candidate in the explicitly requested language/artifact form. Do not substitute another programming language or framework. "
+                        "Requested language contract: "+json.dumps(language_contract,ensure_ascii=False,separators=(",",":"))
                     )
+                retry_messages=list(messages)+[{"role":"system","content":retry_instruction}]
+                retry_text,retry_timing=buffered_chat_completion(model,retry_messages,response_tokens,min(0.45,temperature+0.10))
+                if retry_text.strip():
+                    candidate_text=retry_text
+                candidate_check,retry_fp=validate_attempt(candidate_text,candidate_fp)
+                attempt=candidate_attempt_receipt(
+                    2,"retry:"+regeneration_reason,retry_timing,candidate_check,retry_fp,
+                    previous_attempt_fingerprint=candidate_fp,
+                    repair_target_fingerprint=repair_target_fp,
+                )
+                candidate_attempts.append(attempt)
+                yield {"type":"CANDIDATE_ATTEMPT","attempt":attempt}
+                candidate_fp=retry_fp
+
+                if candidate_check.get("status")=="REJECT":
+                    retry_stalled="repair-stalled-no-executable-change" in (candidate_check.get("reasons") or [])
+                    regeneration_reason+=";second-attempt-"+("unchanged" if retry_stalled else "rejected")
+                    final_instruction=(
+                        strategy_change_directive(programming,candidate_check,3)
+                        if repair_turn else
+                        "FINAL PROGRAMMING CONTRACT GATE: two proposals failed deterministic acceptance. Return one complete candidate that obeys the explicit language/artifact contract exactly; no alternate-language substitute, fake execution claim, TODO, or placeholder."
+                    )
+                    final_messages=list(retry_messages)+[{"role":"system","content":final_instruction}]
+                    third_text,third_timing=buffered_chat_completion(model,final_messages,response_tokens,min(0.50,temperature+0.15))
+                    if third_text.strip():
+                        candidate_text=third_text
+                    candidate_check,third_fp=validate_attempt(candidate_text,candidate_fp)
+                    attempt=candidate_attempt_receipt(
+                        3,"final-strategy-gate",third_timing,candidate_check,third_fp,
+                        previous_attempt_fingerprint=candidate_fp,
+                        repair_target_fingerprint=repair_target_fp,
+                    )
+                    candidate_attempts.append(attempt)
+                    yield {"type":"CANDIDATE_ATTEMPT","attempt":attempt}
+
+            if candidate_check.get("status")=="PASS":
+                if candidate_text:
+                    first_delta=round((time.perf_counter()-started)*1000,3)
+                    yield {"type":"DELTA","text":candidate_text}
+            else:
+                safe_text="I couldn't produce a candidate that satisfies the programming contract, so I did not return the rejected code."
+                if strict_language:
+                    safe_text+=" The requested language/artifact constraint remains authoritative."
+                if repair_turn:
+                    safe_text+=" The failure evidence remains attached to the repair lineage."
+                first_delta=round((time.perf_counter()-started)*1000,3)
+                yield {"type":"DELTA","text":safe_text}
+        elif reference_structure and not programming.get("codingTask"):
+            # A streamed phrase cannot be recalled once source-word borrowing
+            # occurs. Validate the CPU model's complete original song BEFORE
+            # emitting it, then deliver just one clean, copyable lyric block.
+            candidate_raw,timing=buffered_chat_completion(model,messages,response_tokens,temperature)
+            candidate_text=original_rap_delivery(candidate_raw)
+            faults=original_rap_violations(candidate_raw,candidate_text,history,reference_structure)
+            first_fp=_candidate_fingerprint(candidate_text)
+            first_check={"status":"REJECT" if faults else "PASS","reasons":faults}
+            candidate_attempts.append(candidate_attempt_receipt(
+                1,"original-music-form-gate",timing,first_check,first_fp,
+            ))
+            if faults:
+                regeneration_attempted=True
+                regeneration_reason="original-music-form-or-borrowing"
+                retry_instruction=(
+                    "ORIGINAL SONG CORRECTION: The prior candidate failed private "
+                    "source-separation and/or lyric-form checks: "+", ".join(faults)+". "
+                    "Write an entirely NEW coherent rap with only ORIGINAL words, "
+                    "independent title, concrete story premise and rhyme imagery. "
+                    "Aim for "+str(reference_structure.get("approxTotalLyricLines") or "the full reference's")+
+                    " concise lyric lines, with recurring lines at the reference's ABSTRACT "
+                    "repetition positions. Do not imitate or mention the study source. "
+                    "Start with TITLE and then only song lyrics and section labels; "
+                    "NO explanations, bracketed writing tips or assignment commentary. "
+                    "Put all original lyrics inside a single fenced code block."
+                )
                 repaired,timing2=buffered_chat_completion(
                     model,list(messages)+[{"role":"system","content":retry_instruction}],
                     response_tokens,min(0.5,temperature+0.08),
