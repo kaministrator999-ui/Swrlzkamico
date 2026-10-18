@@ -1,0 +1,37 @@
+name: Chat Widget Companion Grounding v286
+on:
+  push:
+    branches: [fix/chat-widget-companion-grounding-v286]
+    paths:
+      - 'hf_space/widget_companion_guard_v286.py'
+      - 'hf_space/test_widget_companion_grounding_v286.py'
+      - 'hf_space/model_router.py'
+      - '.github/workflows/widget-companion-grounding-v286.yml'
+  pull_request:
+    paths:
+      - 'hf_space/widget_companion_guard_v286.py'
+      - 'hf_space/test_widget_companion_grounding_v286.py'
+      - 'hf_space/model_router.py'
+      - '.github/workflows/widget-companion-grounding-v286.yml'
+permissions:
+  contents: read
+jobs:
+  widget-companion-offline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Parse router and guard
+        run: python -m py_compile hf_space/widget_companion_guard_v286.py hf_space/model_router.py hf_space/station.py hf_space/lfm2_700m_engine.py
+      - name: Grounding and regression acceptance
+        run: PYTHONPATH=hf_space python hf_space/test_widget_companion_grounding_v286.py
+      - name: Existing visual routing acceptance
+        run: PYTHONPATH=hf_space python hf_space/test_rich_widget_intent_v285.py
+      - name: Existing mobile widget renderer
+        run: node --test tests/test_rich_widgets_v284.cjs
