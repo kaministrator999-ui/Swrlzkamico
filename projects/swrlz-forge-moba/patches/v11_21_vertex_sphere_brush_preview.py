@@ -258,9 +258,15 @@ def apply(html):
     # not a replacement for the user's existing wireframe/pan toolbar.
     studio = ('<div id="modelAtelierReferenceDock" class="atelier-ref-dock" hidden role="region" aria-label="Floating image references">'
       '<div id="modelAtelierReferenceHandle" class="atelier-ref-handle"><strong>🖼 Reference views</strong><img id="modelAtelierReferenceThumbnail" alt="Tap to expand image reference" hidden>'
-      '<div><button id="modelAtelierReferenceCollapse" type="button">Minimize</button>'
+      '<div><button id="modelAtelierReferencePin" type="button" aria-label="Pin reference dock position" aria-pressed="false">Pin</button>'
+      '<button id="modelAtelierReferenceCollapse" type="button">Minimize</button>'
       '<button id="modelAtelierReferenceClose" type="button" aria-label="Close reference studio">×</button></div></div>'
       '<div id="modelAtelierReferenceBody" class="atelier-ref-body">'
+      '<fieldset class="atelier-ref-dimensions" aria-label="Reference window size">'
+      '<legend>Panel size · saved across devices</legend>'
+      '<label>Width (px)<input id="modelAtelierReferenceWidth" type="number" min="200" max="680" step="1" value="255"></label>'
+      '<label>Height (px)<input id="modelAtelierReferenceHeight" type="number" min="220" max="680" step="1" value="380"></label>'
+      '<button id="modelAtelierReferenceApplySize" type="button">Apply size</button></fieldset>'
       '<label class="atelier-ref-import">Add front/side images<input id="modelAtelierReferenceFile" type="file" multiple accept="image/jpeg,image/png,image/webp"></label>'
       '<div class="atelier-ref-tabs" id="modelAtelierReferenceTabs"></div>'
       '<button id="modelAtelierFaceSheetCreate" type="button">Create sculptable UV face sheet</button>'
@@ -291,7 +297,11 @@ def apply(html):
     html=html.replace('</head>',"""<style>
 .model-atelier .atelier-ref-dock{position:absolute;z-index:150;top:12px;left:12px;width:min(255px,calc(100% - 15px));max-height:calc(100% - 12px);overflow:auto;background:#17233cee;color:#e5f0ff;border:1px solid #70a0c3;border-radius:11px;box-shadow:0 5px 18px #0009;touch-action:pan-y}
 .model-atelier .atelier-ref-dock[hidden]{display:none!important}
-.model-atelier .atelier-ref-handle{padding:8px;display:flex;align-items:center;justify-content:space-between;gap:6px;background:#264161;cursor:move;touch-action:none;user-select:none}
+.model-atelier .atelier-ref-handle{padding:8px;display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap;background:#264161;cursor:move;touch-action:none;user-select:none}
+.model-atelier .atelier-ref-pinned .atelier-ref-handle{cursor:default}
+.model-atelier .atelier-ref-dimensions{display:flex;align-items:flex-end;gap:5px;flex-wrap:wrap;border:1px solid #6b849d;border-radius:6px;padding:5px;margin:0}
+.model-atelier .atelier-ref-dimensions legend{font-size:10px;color:#ddedfc}
+.model-atelier .atelier-ref-dimensions input{width:70px;max-width:100%;background:#243d5a;color:#e5f0ff;border:1px solid #7293b6;border-radius:4px;padding:3px}
 .model-atelier .atelier-ref-handle div{display:flex;gap:3px}
 .model-atelier .atelier-ref-handle img{width:36px;height:30px;border:1px solid #83b9d1;border-radius:5px;object-fit:cover;cursor:pointer}
 .model-atelier .atelier-ref-collapsed .atelier-ref-handle strong{display:none}
