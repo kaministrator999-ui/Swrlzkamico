@@ -103,6 +103,7 @@
     canvas.width=720;canvas.height=375;canvas.tabIndex=0;
     canvas.setAttribute("role","img");canvas.setAttribute("aria-label",aria);
     wrap.appendChild(canvas);card.appendChild(wrap);
+    if(!canvas.getContext||!canvas.getContext("2d"))card.appendChild(make("p","rich-widget-note","Interactive drawing is unavailable in this browser. Try another browser or refer to the displayed values."));
     return canvas;
   }
   function comparison(card,w){
