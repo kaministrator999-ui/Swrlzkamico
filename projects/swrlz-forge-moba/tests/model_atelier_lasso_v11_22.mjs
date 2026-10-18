@@ -21,7 +21,7 @@ const a=g.attributes.position,b=changed.attributes.position;
 let inside=0,outside=0;
 for(let i=0;i<a.count;i++){
  const x=a.getX(i),y=a.getY(i),dz=b.getZ(i)-a.getZ(i);
- if(Math.abs(x)<.04&&Math.abs(y)<.04){assert(dz>.075,'Interior vertices should be extruded');inside++;}
+ if(Math.abs(x)<.09&&Math.abs(y)<.09){assert(dz>.02,'Interior vertices should be extruded with edge feathering');inside++;}
  if(Math.abs(x)>.2||Math.abs(y)>.2){assert(Math.abs(dz)<1e-6,'Unselected vertices must not move');outside++;}
 }
 assert(inside>3&&outside>30);
