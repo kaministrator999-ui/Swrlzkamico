@@ -1,0 +1,56 @@
+name: Verify §E v11.27 advanced sculpting
+on:
+  push:
+    branches: [feature/atelier-brush-operators-v11-27]
+    paths:
+      - 'projects/swrlz-forge-moba/runtime/model_atelier_brush_ops_v11_27.js'
+      - 'projects/swrlz-forge-moba/runtime/model_atelier_sculpt_brush_v11_21.js'
+      - 'projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py'
+      - 'projects/swrlz-forge-moba/tests/model_atelier_brush_ops_v11_27.mjs'
+      - 'projects/swrlz-forge-moba/tests/model_atelier_brush_ops_browser_v11_27.mjs'
+      - '.github/workflows/verify-atelier-brush-ops-v11-27.yml'
+permissions:
+  contents: read
+concurrency:
+  group: verify-atelier-brush-v1127
+  cancel-in-progress: true
+jobs:
+  operators-and-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Syntax and sealed editor candidate
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/model_atelier_brush_ops_v11_27.js
+          node --check projects/swrlz-forge-moba/runtime/model_atelier_sculpt_brush_v11_21.js
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/atelier-ops
+          python - <<'PY'
+          import runpy
+          from pathlib import Path
+          p=Path('/tmp/atelier-ops/index.html')
+          p.write_text(runpy.run_path('projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py')['apply'](p.read_text()))
+          PY
+      - name: Test precise sculpt math and original selection and topology
+        run: |
+          npm install --no-save playwright@1.56.1 three@0.169.0
+          node projects/swrlz-forge-moba/tests/model_atelier_brush_ops_v11_27.mjs
+          node projects/swrlz-forge-moba/tests/model_atelier_surface_targeting_v11_22.mjs
+          node projects/swrlz-forge-moba/tests/model_atelier_local_refine_v11_23.mjs
+      - name: Real desktop and Android browser, native Save Undo Reload
+        run: |
+          npx playwright install --with-deps --only-shell chromium
+          python -m http.server 8787 --directory /tmp/atelier-ops >/tmp/atelier-ops-server.log 2>&1 &
+          PID=$!
+          trap 'kill "$PID" 2>/dev/null || true' EXIT
+          for i in $(seq 1 40); do
+            if curl -fsS http://127.0.0.1:8787/ >/dev/null; then break; fi
+            sleep 0.3
+          done
+          curl -fsS http://127.0.0.1:8787/ >/dev/null
+          SWYRL_SCULPT_TEST_URL=http://127.0.0.1:8787 node projects/swrlz-forge-moba/tests/model_atelier_brush_ops_browser_v11_27.mjs
