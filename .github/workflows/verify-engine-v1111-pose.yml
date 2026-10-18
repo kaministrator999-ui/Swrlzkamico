@@ -2,9 +2,18 @@ name: Verify §E v11.11 face and native pose frames
 on:
   push:
     branches: [feature/engine-v1111-face-pose-frame-studio]
+  # Focus historical test on the sealed engine and the matching module.
+  # Other candidate preview code uses dedicated CPU + browser suites.
   pull_request:
     paths:
-      - 'projects/swrlz-forge-moba/**'
+      - '.github/workflows/verify-engine-v1111-pose.yml'
+      - 'projects/swrlz-forge-moba/source-manifest.json'
+      - 'projects/swrlz-forge-moba/build_space.py'
+      - 'projects/swrlz-forge-moba/payload/**'
+      - 'projects/swrlz-forge-moba/runtime/model_atelier_pose_frames_v11_11.js'
+      - 'projects/swrlz-forge-moba/tests/model_atelier_pose_cpu.mjs'
+      - 'projects/swrlz-forge-moba/tests/model_surface_import_cpu.mjs'
+  workflow_dispatch:
 concurrency:
   group: engine-ci-verify-engine-v1111-pose-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
