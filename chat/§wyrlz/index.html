@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="swrlz-chat-version" content="1.1.08">
+  <meta name="swrlz-chat-version" content="1.1.15">
   <meta name="theme-color" content="#010812">
   <title>Chat</title>
   <style>
@@ -1348,13 +1348,15 @@
         if(!normalized.length)return;
         stack=document.createElement("div");stack.className="message-widget-stack";stack.dataset.widgetSignature=signature;
         for(const widget of normalized){
-          const card=document.createElement("section");card.className="swrlz-widget "+String(widget.kind||"").replace(/[^a-z0-9_-]/gi,"-");card.setAttribute("aria-label",String(widget.title||widget.kind||"Result"));
+          const card=document.createElement("section");card.className="swrlz-widget "+String(widget.kind||"").replace(/[^a-z0-9_-]/gi,"-");card.dataset.widgetKind=String(widget.kind||"").slice(0,50);card.setAttribute("aria-label",String(widget.title||widget.kind||"Result"));
           const head=document.createElement("div");head.className="widget-head";
           const title=document.createElement("div");title.className="widget-title";title.textContent=String(widget.title||"Result");
           const provider=document.createElement("div");provider.className="widget-provider";provider.textContent=String(widget.provider||"online");
           head.append(title,provider);card.appendChild(head);
           const data=widget.data&&typeof widget.data==="object"?widget.data:{};
-          if(widget.kind==="github-work"){
+          if(["comparison","math-graph","model-3d"].includes(widget.kind)){
+            if(!window.SwrlzRichWidgetsV284?.render(card,widget))card.appendChild(Object.assign(document.createElement("div"),{className:"widget-footer",textContent:"Rich widget unavailable — its structured data was not displayable."}));
+          }else if(widget.kind==="github-work"){
             if(!window.SwrlzGithubWorkView?.render(card,widget)){
               const unavailable=document.createElement("div");
               unavailable.className="widget-footer";

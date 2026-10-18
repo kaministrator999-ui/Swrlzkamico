@@ -7,6 +7,7 @@ from typing import Callable, Iterator, Any
 from brain_programming import programming_intent
 from intent_risk_v240 import classify as classify_intent_risk, clarification as risk_clarification
 from online_tools import classify_online_request, stream_online_request, online_camera
+from rich_widget_intent_v285 import plan_conversation_widget
 
 class ModelUnavailable(RuntimeError):
     def __init__(self, model_id: str, reason: str):
@@ -340,6 +341,8 @@ def dispatch(model_id: str, payload: dict[str,Any], r39_generate: Callable[[dict
     pins=payload.get("pinnedContext") if isinstance(payload.get("pinnedContext"),list) else []
     intent=programming_intent(str(payload.get("prompt") or ""),history,pins,payload.get("priorProgrammingState") if isinstance(payload.get("priorProgrammingState"),dict) else {})
     payload=dict(payload)
+    # Caller-supplied pseudo-widgets carry no authority; only local compiler creates this hint.
+    payload.pop("widgetPresentation",None)
     payload["programmingIntent"]=intent
     yield {"type":"PROGRAMMING_INTENT","intent":intent}
     risk_kind=classify_intent_risk(str(payload.get("prompt") or ""))
@@ -404,6 +407,16 @@ def dispatch(model_id: str, payload: dict[str,Any], r39_generate: Callable[[dict
         online_plan=dict(online_plan)
         online_plan["requested"]=False
         online_plan["reason"]="coder-non-programming-search-disabled"
+    # Brain-side bounded expression/measurement compiler; emits the existing
+    # Station-owned structured WIDGET event and never treats model prose as UI code.
+    widget_plan=plan_conversation_widget(
+        str(payload.get("prompt") or ""),history,intent,bool(online_plan.get("requested")))
+    if widget_plan:
+        payload["widgetPresentation"]=widget_plan["presentationHint"]
+        yield {"type":"STATUS","phase":"VISUAL_WIDGET_PREPARED",
+               "reason":"Preparing an interactive display from supplied input.",
+               "categories":["WIDGET","PRESENTATION",str(widget_plan["kind"]).upper()]}
+        yield {"type":"WIDGET","widget":widget_plan["widget"]}
     if online_plan.get("requested"):
         phase="WEATHER_FETCH_STARTED" if online_plan.get("kind")=="weather" else "SEARCH_STARTED"
         search_target=str(online_plan.get("query") or payload.get("prompt") or "that").strip()
@@ -486,6 +499,12 @@ def dispatch(model_id: str, payload: dict[str,Any], r39_generate: Callable[[dict
     payload=_apply_personality(payload)
     if model_id=="r39":
         r39_payload=_r39_online_payload(payload)
+        if widget_plan:
+            r39_payload=dict(r39_payload)
+            r39_payload["prompt"]=(str(r39_payload.get("prompt") or "")+
+                "\n\n[LOCAL STRUCTURED WIDGET ALREADY PREPARED]\n"+
+                widget_plan["presentationHint"]+
+                "\n[/LOCAL STRUCTURED WIDGET ALREADY PREPARED]")
         # The hot R39 engine does not expose the new separate evidence field.
         # Pass old quotes under an explicit data-only delimiter, retaining the
         # current user request and the original intent-classification result.
