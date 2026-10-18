@@ -17,10 +17,15 @@ function atelierLassoValid(part){
  if(regions===undefined)return true;
  if(!Array.isArray(regions)||regions.length>atelierLassoMaxRegions)return false;
  const ids=new Set();
- return regions.every(r=>{
+
+ const basic=regions.every(r=>{
    if(!r||typeof r!=='object'||Array.isArray(r)||
      !['id','name','pins','axis','feather','morph','enabled','resolution'].every(k=>Object.hasOwn(r,k))
-     ||Object.keys(r).length!==8||typeof r.id!=='string'||r.id.length>48||ids.has(r.id)
+     ||Object.keys(r).some(k=>!['id','name','pins','axis','feather','morph','enabled','resolution',
+        'selectionOp','operandRegionId'].includes(k))
+     ||((r.selectionOp===undefined)!==(r.operandRegionId===undefined))
+     ||(r.selectionOp!==undefined&&!['add','subtract','intersect'].includes(r.selectionOp))
+     ||typeof r.id!=='string'||r.id.length>48||ids.has(r.id)
      ||typeof r.name!=='string'||r.name.length>90||!Array.isArray(r.pins)
      ||r.pins.length<3||r.pins.length>atelierLassoMaxPins)return false;
    ids.add(r.id);
@@ -37,6 +42,18 @@ function atelierLassoValid(part){
       &&Array.isArray(pin.bary)&&pin.bary.length===3&&pin.bary.every(v=>Number.isFinite(v)&&v>=-.0001&&v<=1.0001)
       &&Math.abs(pin.bary.reduce((a,b)=>a+b,0)-1)<.005;
    });
+ });
+ if(!basic)return false;
+ const byId=new Map(regions.map(r=>[r.id,r]));
+ // Deliberately single-level composition: no dependency cycles or implicit
+ // forward references. Layers remain native-editable polygons themselves.
+ return regions.every(r=>{
+   if(!r.selectionOp)return true;
+   const rhs=byId.get(r.operandRegionId);
+   if(!rhs||rhs===r||rhs.selectionOp||rhs.id===r.id)return false;
+   if(r.resolution.some((v,i)=>v!==rhs.resolution[i]))return false;
+   const a=new THREE.Vector3(...r.axis),b=new THREE.Vector3(...rhs.axis);
+   return a.dot(b)>.75;
  });
 }
 function atelierLassoProjection(r){
@@ -72,6 +89,31 @@ function atelierLassoInside(pt,poly){
  }
  return inside;
 }
+// Boolean selection operates on current mesh sample points. No fake
+// cutout polygon is generated; each named boundary keeps its own attachment
+// triangles, pins, resolution and edit history.
+function atelierLassoCompiledRegionMask(part,region){
+ const lhs=atelierLassoProjection(region),operation=region.selectionOp;
+ const operand=operation?part?.sculptLassos?.find(r=>r.id===region.operandRegionId):null;
+ if(operation&&(!operand||operand.selectionOp))return {contains:()=>false,distance:()=>Infinity};
+ const rhs=operand?atelierLassoProjection(operand):null;
+ const project=(v,frame)=>{
+   const point=new THREE.Vector3(...v).sub(frame.origin);
+   return [point.dot(frame.u),point.dot(frame.v)];
+ };
+ return {
+   contains(v){
+     const a=atelierLassoInside(project(v,lhs),lhs.poly);
+     if(!rhs)return a;
+     const b=atelierLassoInside(project(v,rhs),rhs.poly);
+     return operation==='add'?(a||b):operation==='subtract'?(a&&!b):(a&&b);
+   },
+   distance(v){
+     const a=atelierLassoEdgeDistance(project(v,lhs),lhs.poly);
+     return rhs?Math.min(a,atelierLassoEdgeDistance(project(v,rhs),rhs.poly)):a;
+   }
+ };
+}
 function atelierLassoEdgeDistance(pt,poly){
  let best=Infinity;
  for(let i=0;i<poly.length;i++){
@@ -89,13 +131,12 @@ function atelierLassoApply(geometry,part){
    if(!r.enabled||!r.morph||!atelierLassoPolygonValid(r))continue;
    const res=atelierSculptResolution(part);
    if(res[0]!==r.resolution[0]||res[1]!==r.resolution[1])continue;
-   const {origin,u,v,poly}=atelierLassoProjection(r),axis=new THREE.Vector3(...r.axis);
+   const mask=atelierLassoCompiledRegionMask(part,r),axis=new THREE.Vector3(...r.axis);
    for(let i=0;i<a.count;i++){
      if(n&&new THREE.Vector3(n.getX(i),n.getY(i),n.getZ(i)).dot(axis)<-.12)continue;
-     const point=new THREE.Vector3(a.getX(i),a.getY(i),a.getZ(i)).sub(origin);
-     const p=[point.dot(u),point.dot(v)];
-     if(!atelierLassoInside(p,poly))continue;
-     const d=atelierLassoEdgeDistance(p,poly);
+     const point=[a.getX(i),a.getY(i),a.getZ(i)];
+     if(!mask.contains(point))continue;
+     const d=mask.distance(point);
      const t=r.feather?THREE.MathUtils.smoothstep(d,0,r.feather):1;
      a.setXYZ(i,a.getX(i)+axis.x*r.morph*t,
        a.getY(i)+axis.y*r.morph*t,a.getZ(i)+axis.z*r.morph*t);
@@ -210,6 +251,17 @@ function atelierLassoRefresh(){
  }
  $m('LassoFeather').value=String(r?.feather??.04);
  $m('LassoMorph').value=String(r?.morph??0);
+ const booleanWith=$m('LassoBooleanWith'),validOperand=regions.filter(x=>x.id!==r?.id&&!x.selectionOp);
+ if(booleanWith){
+   booleanWith.replaceChildren();
+   for(const item of validOperand){
+     const o=document.createElement('option');o.value=item.id;
+     o.textContent=item.name;booleanWith.append(o);
+   }
+   if(r?.operandRegionId&&validOperand.some(x=>x.id===r.operandRegionId))
+     booleanWith.value=r.operandRegionId;
+ }
+ if($m('LassoBooleanOp'))$m('LassoBooleanOp').value=r?.selectionOp||'none';
  $m('LassoInfo').textContent=regions.length+' saved lasso regions · '
    +(atelierLassoPending.length?'Draft: '+atelierLassoPending.length+' pins · ':'')
    +(atelierLassoArm==='freehand'?'Drag over the selected mesh to trace up to 32 boundary pins.':
@@ -417,6 +469,26 @@ function atelierLassoInstall(){
    atelierLassoFreehand=null;atelierLassoPending=[];atelierLassoArm=null;atelierLassoRefresh();
  });
  id('Region').addEventListener('change',e=>{atelierLassoActive=e.target.value;atelierLassoRefresh();});
+ id('BooleanApply').addEventListener('click',()=>{
+   const p=atelierLassoPart(),r=atelierLassoRegion();if(!p||!r)return;
+   const op=id('BooleanOp').value,operand=id('BooleanWith').value;
+   if(!['none','add','subtract','intersect'].includes(op)){
+     status('Unsupported Boolean lasso operation.',true);return;
+   }
+   const next={...r};delete next.selectionOp;delete next.operandRegionId;
+   if(op!=='none'){next.selectionOp=op;next.operandRegionId=operand;}
+   const regions=p.sculptLassos.map(x=>x.id===r.id?next:x);
+   if(!atelierLassoValid({...p,sculptLassos:regions})||
+       !checkPart({...p,sculptLassos:regions})){
+     status('Boolean selection rejected: use another independent region with compatible orientation and source resolution.',true);
+     atelierLassoRefresh();return;
+   }
+   checkpoint();p.sculptLassos=regions;
+   const key=p.id;signalEdited();select(key);atelierLassoActive=r.id;
+   atelierLassoRefresh();
+   status(op==='none'?'Region restored to its original boundary selection.':
+     'Saved '+op+' Boolean region mask. Sculpt and local refinement both evaluate it; pins and original mesh remain editable.');
+ });
  id('InsertPin').addEventListener('click',()=>{
    if(!atelierLassoRegion()){status('Choose or draw a region first.',true);return;}
    atelierLassoArm='insert';atelierLassoRefresh();
@@ -429,6 +501,9 @@ function atelierLassoInstall(){
  });
  id('DeleteRegion').addEventListener('click',()=>{
    const p=atelierLassoPart(),r=atelierLassoRegion();if(!p||!r)return;
+   if(p.sculptLassos.some(x=>x.operandRegionId===r.id)){
+     status('This region is referenced by a Boolean selection. Clear dependent operation before deletion.',true);return;
+   }
    checkpoint();p.sculptLassos=p.sculptLassos.filter(v=>v.id!==r.id);
    atelierLassoActive=null;signalEdited();atelierLassoRefresh();
  });
