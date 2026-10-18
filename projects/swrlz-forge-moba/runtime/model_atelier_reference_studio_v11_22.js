@@ -259,6 +259,7 @@ function atelierRefImagePointerUp(e){
  if(atelierRefImageDrag?.pointerId!==e.pointerId)return;
  const d=atelierRefImageDrag;atelierRefImageDrag=null;
  if(d.moved)atelierRefMark('Reference image panned. Saved with project.');
+ else if(typeof atelierFacePickAtReference==='function')atelierFacePickAtReference(e);
 }
 function atelierRefInstall(){
  atelierRefDock=$m('ReferenceDock');
