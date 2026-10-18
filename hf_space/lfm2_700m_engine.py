@@ -288,11 +288,58 @@ def _fit_repair_messages(model,system,history,prompt):
     response_tokens=min(OUTPUT_TOKENS,desired_output)
     return messages,len(history)-len(recent),input_tokens,response_tokens,fitted_prompt
 
-def _identity_response_faults(text, response_mode, require_canonical=False):
-    """Conservative surface contract; semantic understanding remains unproven.
+def _identity_followup_subject(prompt, history):
+    """Only inspect a recent identity thread. Teasing alone is not a rename."""
+    p=re.sub(r"\s+", " ", str(prompt or "").casefold().strip())
+    recent=list(history or [])[-12:]
+    if not p or not recent:
+        return ""
+    # Hypotheticals and quoted name examples are not live identity changes.
+    if re.search(r"\b(?:what if|imagine|suppose|pretend|hypothetically|in a story)\b",p):
+        return ""
+    # The most recent direct identity question (not a model reply) anchors role.
+    anchor=""
+    for item in reversed(recent):
+        if item.get("role")!="user":
+            continue
+        q=re.sub(r"\s+", " ", str(item.get("content") or "").casefold().strip())
+        q=re.sub(r"[?.!]+$", "", q).strip()
+        if re.fullmatch(r"(?:who am i|what(?:'s| is) my name|do you know my name)", q):
+            anchor="user"
+            break
+        if re.fullmatch(r"(?:who are you|what(?:'s| is) your name|what are you)", q):
+            anchor="assistant"
+            break
+    if not anchor:
+        return ""
+    if re.search(r"\b(?:your name|you(?:'re| are) called|call you|you call yourself)\b", p):
+        return "assistant"
+    if re.search(r"\b(?:my name|call me|you called me)\b", p):
+        return "user"
+    if re.search(r"(?:§wyrlz|swyrlz|swurlz)",p) and (
+            re.search(r"\b(?:name|spelling|spell|confused|correct|actually|use the)\b",p)):
+        return "assistant"
+    if re.search(r"(?:are you sure|sure about that|you(?:'re| are) wrong|mistaken|you got .*wrong|you were confused|you where confused)",p):
+        return anchor
+    return ""
 
-    Diagnose clear role/name/form mistakes in a completed model candidate.
-    Does not answer the question, save identity, judge jokes or infer nicknames.
+
+def _identity_profile_user_name(user_profile):
+    """A user profile assertion, never a historical assistant claim."""
+    for line in str(user_profile or "").splitlines():
+        if line.casefold().startswith("name:"):
+            name=line.split(":",1)[1].strip()
+            return name[:80] if name else ""
+    return ""
+
+
+def _identity_response_faults(text, response_mode, require_canonical=False,
+                              expected_user_name="", require_unknown_user=False,
+                              identity_followup=False):
+    """Reject obvious incorrect speaker attribution; never generate an answer.
+
+    This is a narrow text validator, NOT proof of broader model comprehension.
+    The reply is model-authored or rejected; no durable identity writes occur.
     """
     response=str(text or "").strip()
     normalized=re.sub(r"\s+"," ",response).casefold()
@@ -305,16 +352,38 @@ def _identity_response_faults(text, response_mode, require_canonical=False):
         faults.append("profile-heading-echo")
     if re.search(r"\bhow can i (?:help|assist) you\b",normalized):
         faults.append("generic-customer-service-ending")
-    if str(response_mode).startswith("RESPONSE MODE: ASSISTANT-IDENTITY-DIRECT"):
+    if re.search(
+        r"\b(?:created|made|built|developed) by\b|\b(?:character|fictional character) (?:in|from)\b.*\bseries\b",
+        normalized):
+        faults.append("unsupported-assistant-origin-claim")
+    assistant_question=str(response_mode).startswith("RESPONSE MODE: ASSISTANT-IDENTITY-DIRECT")
+    user_question=str(response_mode).startswith("RESPONSE MODE: USER-IDENTITY-DIRECT")
+    if assistant_question:
         if re.match(r"^(?:\*\*)?(?:you|your)\b",normalized):
             faults.append("assistant-described-in-second-person")
         if re.search(r"\byou(?:'re| are) (?:an? )?(?:conversational )?(?:ai|artificial intelligence|language model)",normalized):
             faults.append("assistant-user-role-inversion")
         if require_canonical and not re.search(r"(?:§wyrlz|swyrlz|swurlz)",normalized):
             faults.append("canonical-assistant-name-missing")
-    elif str(response_mode).startswith("RESPONSE MODE: USER-IDENTITY-DIRECT"):
+        if re.search(r"(?im)^\s*\*{0,2}\s*your name\s*\*{0,2}\s*[:=-]\s*\*{0,2}\s*(?:§wyrlz|swyrlz|swurlz)\b",response):
+            faults.append("assistant-name-assigned-to-user")
+    elif user_question:
+        if re.search(r"(?i)^\s*(?:(?:\*\*)?you(?:\*\*)?\s+(?:are|'re)|(?:\*\*)?your name(?:\*\*)?\s*(?::|is))\s*(?:(?:an?|the)\s+)?(?:assistant|ai assistant|ai|§wyrlz|swyrlz|swurlz)\b",response):
+            faults.append("user-assigned-assistant-identity")
+        if re.search(r"(?i)\*{0,2}your name\s*\*{0,2}\s*:\s*\*{0,2}\s*(?:§wyrlz|swyrlz|swurlz)\b",response):
+            faults.append("assistant-name-assigned-to-user")
         if re.match(r"^(?:\*\*)?(?:i'm|i am|my name is) (?:an? )?(?:ai|assistant|language model)",normalized):
             faults.append("user-described-as-assistant")
+        if expected_user_name:
+            escaped=re.escape(expected_user_name.casefold())
+            if not re.search(r"(?<!\w)"+escaped+r"(?!\w)",normalized):
+                faults.append("known-user-name-not-grounded")
+        if require_unknown_user and not re.search(
+            r"(?:don't|do not|can't|cannot|haven't|have not|not (?:been )?told|"
+            r"no (?:verified|confirmed|preferred|supported) (?:name|identity)|"
+            r"(?:name|identity) (?:isn't|is not) (?:known|available|provided)|"
+            r"you haven't (?:shared|told)|you have not (?:shared|told))",normalized):
+            faults.append("missing-unknown-user-name-calibration")
     return list(dict.fromkeys(faults))
 
 
@@ -547,6 +616,18 @@ def generate_events(payload):
     custom_assistant_profile=str(payload.get("profile") or "").strip()[:2000]
     user_profile=str(payload.get("userProfile") or "").strip()[:2000]
     account_label=str(payload.get("verifiedAccountDisplayName") or "").strip()[:120]
+    trusted_user_name=_identity_profile_user_name(user_profile)
+    if not trusted_user_name:
+        # User-authored in-thread naming, not prior assistant claims.
+        for entry in reversed(history[-16:]):
+            if entry.get("role")!="user":
+                continue
+            match=re.fullmatch(
+                r"(?:my name is|call me)\s+([A-Za-z][\w .'-]{0,70})[.!]?",
+                str(entry.get("content") or "").strip(),re.I)
+            if match:
+                trusted_user_name=match.group(1).strip()
+                break
     if account_label:
         user_profile=(user_profile+"\n" if user_profile else "")+"Account display label (signed-in account, not necessarily preferred name): "+account_label
     yield {"type":"DIAGNOSTIC","trace":_diagnostic_trace(history,user_profile,custom_assistant_profile)}
@@ -560,6 +641,8 @@ def generate_events(payload):
         yield {"type":"CONVERGENCE_CANDIDATE","candidate":convergence}
     programming=payload.get("programmingIntent") if isinstance(payload.get("programmingIntent"),dict) else programming_intent(prompt,history,payload.get("pinnedContext") if isinstance(payload.get("pinnedContext"),list) else [],payload.get("priorProgrammingState") if isinstance(payload.get("priorProgrammingState"),dict) else {})
     response_cognition=classify_response_cognition(prompt,history,programming)
+    followup_subject=_identity_followup_subject(prompt,history)
+    identity_followup=bool(followup_subject) and not bool(programming.get("codingTask"))
     file_dialogue=(verified_file_dialogue(prompt,payload.get("history") or [])
                    if not programming.get("codingTask") else None)
     yield {"type":"RESPONSE_COGNITION","state":response_cognition_camera(response_cognition)}
@@ -745,50 +828,51 @@ def generate_events(payload):
         )
     if file_dialogue:
         system+=grounding_instruction(file_dialogue)
-    if concise_identity_turn and not file_dialogue:
+    if (concise_identity_turn or identity_followup) and not file_dialogue:
         # v282 continuation: a shortened section of the full handbook was
         # insufficient. This ordinary, direct identity question gets a
         # narrowly scoped entire SYSTEM context, not the surrounding lengthy
         # general-purpose creative, programming and response-policy manual.
         # The model still GENERATES an answer; no canned answer or memory write.
-        subject=("user" if identity_response_mode.startswith(
+        subject=(followup_subject if identity_followup else
+                 "user" if identity_response_mode.startswith(
             "RESPONSE MODE: USER-IDENTITY-DIRECT") else "assistant")
+        # Do not feed the small model role-table tokens like "USER:" or
+        # "ASSISTANT/SELF:"; the real Android failure copied those labels.
         focused=(
-            "You are §wyrlz (pronounced Swurlz), the AI ASSISTANT replying "
-            "to the current USER in a natural chat. Two distinct speakers: "
-            "USER writes the question; ASSISTANT is you, §wyrlz. "
-            "In the user's question, 'I/my' refers to USER and 'you/your' "
-            "refers to ASSISTANT. In your own reply, 'I/my' refers to "
-            "ASSISTANT and 'you/your' refers to USER. "
-            "Answer the current question, not a different speaker's. "
-            "Never invent facts, identities, nicknames, earlier memories, "
-            "subjective experience or a user's name. "
-            "A nickname may be conversational if explicitly preferred by this "
-            "user, but teasing and repeated jokes do NOT rename you. "
-            "No nickname or relationship data is persisted by this response. "
+            "You are §wyrlz, pronounced Swurlz, answering a human in a chat. "
+            "The human writes the incoming message. You write the reply. "
+            "Speak in your own first person; refer to the human as 'you'. "
+            "Never assign your assistant identity to the human. "
+            "Respect the user's own supported name; do not invent one. "
+            "Past assistant replies may contain errors and are not evidence "
+            "of personal names, your creator, a fictional series or lasting memory. "
+            "A joke or teasing address is not a rename. A correction to the "
+            "spelling of §wyrlz is not a new identity assignment. "
+            "Do not claim you saved names or retrained yourself."
         )
         if subject=="assistant":
             focused+=(
-                "The user asks about YOU, the assistant, not about themselves. "
-                "Introduce yourself in your OWN first-person speaking voice "
-                "using your canonical name §wyrlz (spoken Swurlz), or an "
-                "explicitly established assistant alias in the current user's "
-                "context. Do NOT begin by saying 'You are an AI' because "
-                "that falsely addresses the user as the assistant. "
+                " The question or correction is about your name, §wyrlz. "
+                "Acknowledge any correction without inventing origin stories. "
+                "When introducing yourself, speak as 'I'm §wyrlz', not 'You are assistant'."
             )
         else:
             focused+=(
-                "The user asks about THEMSELVES, not about the assistant. "
-                "Use the supported name or description from this user's "
-                "current profile or messages if one exists. If not, say you "
-                "don't know their name yet, without claiming theirs is yours. "
+                " The human is asking about their own identity, not yours. "
+                "Only use a supported name supplied by this human's account "
+                "or direct statements. If none is available, say you do not "
+                "know their name yet. Do not call them an assistant."
+            )
+        if identity_followup:
+            focused+=(
+                " This is a follow-up to an identity exchange. Reevaluate any "
+                "wrong earlier assistant reply rather than defending it. "
+                "A spelling explanation is just a spelling explanation."
             )
         focused+=(
-            "\n"+_role_frame(user_profile)+
-            "\nDELIVERY: Answer in one or two short conversational sentences; "
-            "no headings, identity cards, policy recitations, ceremonial "
-            "titles, or generic customer-service signoffs. "
-            "Speak naturally, without quoting these instructions."
+            " Answer briefly and naturally, without role labels, profile "
+            "headings, customer-service taglines or fabricated backstories."
         )
         if custom_assistant_profile:
             focused+="\nUSER ASSISTANT PREFERENCES (only this account, no global rename):\n"+custom_assistant_profile
@@ -843,7 +927,7 @@ def generate_events(payload):
         mode=_response_mode(prompt,programming,history)
         if file_dialogue:
             response_tokens=min(320,available_output_tokens);temperature=0.35
-        elif mode.startswith("RESPONSE MODE: USER-IDENTITY-DIRECT") or mode.startswith("RESPONSE MODE: ASSISTANT-IDENTITY-DIRECT"):
+        elif concise_identity_turn or identity_followup:
             response_tokens=min(112,available_output_tokens);temperature=0.30
         elif mode.startswith("RESPONSE MODE: SOURCE-FACTS-FIRST"):
             response_tokens=min(1152,available_output_tokens);temperature=0.30
@@ -894,83 +978,16 @@ def generate_events(payload):
                     retry_instruction=strategy_change_directive(programming,candidate_check,2)
                 else:
                     retry_instruction=(
-                        "LANGUAGE/INTENT RETRY GATE: the first candidate violated the deterministic programming contract. "
-                        "Return one COMPLETE candidate in the explicitly requested language/artifact form. Do not substitute another programming language or framework. "
-                        "Requested language contract: "+json.dumps(language_contract,ensure_ascii=False,separators=(",",":"))
-                    )
-                retry_messages=list(messages)+[{"role":"system","content":retry_instruction}]
-                retry_text,retry_timing=buffered_chat_completion(model,retry_messages,response_tokens,min(0.45,temperature+0.10))
-                if retry_text.strip():
-                    candidate_text=retry_text
-                candidate_check,retry_fp=validate_attempt(candidate_text,candidate_fp)
-                attempt=candidate_attempt_receipt(
-                    2,"retry:"+regeneration_reason,retry_timing,candidate_check,retry_fp,
-                    previous_attempt_fingerprint=candidate_fp,
-                    repair_target_fingerprint=repair_target_fp,
-                )
-                candidate_attempts.append(attempt)
-                yield {"type":"CANDIDATE_ATTEMPT","attempt":attempt}
-                candidate_fp=retry_fp
-
-                if candidate_check.get("status")=="REJECT":
-                    retry_stalled="repair-stalled-no-executable-change" in (candidate_check.get("reasons") or [])
-                    regeneration_reason+=";second-attempt-"+("unchanged" if retry_stalled else "rejected")
-                    final_instruction=(
-                        strategy_change_directive(programming,candidate_check,3)
-                        if repair_turn else
-                        "FINAL PROGRAMMING CONTRACT GATE: two proposals failed deterministic acceptance. Return one complete candidate that obeys the explicit language/artifact contract exactly; no alternate-language substitute, fake execution claim, TODO, or placeholder."
-                    )
-                    final_messages=list(retry_messages)+[{"role":"system","content":final_instruction}]
-                    third_text,third_timing=buffered_chat_completion(model,final_messages,response_tokens,min(0.50,temperature+0.15))
-                    if third_text.strip():
-                        candidate_text=third_text
-                    candidate_check,third_fp=validate_attempt(candidate_text,candidate_fp)
-                    attempt=candidate_attempt_receipt(
-                        3,"final-strategy-gate",third_timing,candidate_check,third_fp,
-                        previous_attempt_fingerprint=candidate_fp,
-                        repair_target_fingerprint=repair_target_fp,
-                    )
-                    candidate_attempts.append(attempt)
-                    yield {"type":"CANDIDATE_ATTEMPT","attempt":attempt}
-
-            if candidate_check.get("status")=="PASS":
-                if candidate_text:
-                    first_delta=round((time.perf_counter()-started)*1000,3)
-                    yield {"type":"DELTA","text":candidate_text}
-            else:
-                safe_text="I couldn't produce a candidate that satisfies the programming contract, so I did not return the rejected code."
-                if strict_language:
-                    safe_text+=" The requested language/artifact constraint remains authoritative."
-                if repair_turn:
-                    safe_text+=" The failure evidence remains attached to the repair lineage."
-                first_delta=round((time.perf_counter()-started)*1000,3)
-                yield {"type":"DELTA","text":safe_text}
-        elif reference_structure and not programming.get("codingTask"):
-            # A streamed phrase cannot be recalled once source-word borrowing
-            # occurs. Validate the CPU model's complete original song BEFORE
-            # emitting it, then deliver just one clean, copyable lyric block.
-            candidate_raw,timing=buffered_chat_completion(model,messages,response_tokens,temperature)
-            candidate_text=original_rap_delivery(candidate_raw)
-            faults=original_rap_violations(candidate_raw,candidate_text,history,reference_structure)
-            first_fp=_candidate_fingerprint(candidate_text)
-            first_check={"status":"REJECT" if faults else "PASS","reasons":faults}
-            candidate_attempts.append(candidate_attempt_receipt(
-                1,"original-music-form-gate",timing,first_check,first_fp,
-            ))
-            if faults:
-                regeneration_attempted=True
-                regeneration_reason="original-music-form-or-borrowing"
-                retry_instruction=(
-                    "ORIGINAL SONG CORRECTION: The prior candidate failed private "
-                    "source-separation and/or lyric-form checks: "+", ".join(faults)+". "
-                    "Write an entirely NEW coherent rap with only ORIGINAL words, "
-                    "independent title, concrete story premise and rhyme imagery. "
-                    "Aim for "+str(reference_structure.get("approxTotalLyricLines") or "the full reference's")+
-                    " concise lyric lines, with recurring lines at the reference's ABSTRACT "
-                    "repetition positions. Do not imitate or mention the study source. "
-                    "Start with TITLE and then only song lyrics and section labels; "
-                    "NO explanations, bracketed writing tips or assignment commentary. "
-                    "Put all original lyrics inside a single fenced code block."
+                    "Your previous draft had an identity attribution error: "
+                    +", ".join(faults)+". "
+                    +"Answer the human's actual question again in plain language. "
+                    +"You are §wyrlz, the AI replying to a human; the human is "
+                    +"not the assistant. If asked about the human, use only "
+                    +"supported account or human-supplied facts; otherwise "
+                    +"acknowledge the missing name. If correcting your own "
+                    +"previous mistake, correct it without invented origin "
+                    +"stories, fictional series or claiming a new rename. "
+                    +"One brief natural reply, no role table or signoff."
                 )
                 repaired,timing2=buffered_chat_completion(
                     model,list(messages)+[{"role":"system","content":retry_instruction}],
@@ -1189,17 +1206,40 @@ def generate_events(payload):
             candidate_check["storySpineLatencyMs"]=story_receipt.get("durationMs",0)
             first_delta=round((time.perf_counter()-started)*1000,3)
             yield {"type":"DELTA","text":candidate_text}
-        elif concise_identity_turn:
+        elif concise_identity_turn or identity_followup:
             # v282: short identity turns must be model-generated AND checked
             # before being streamed to the user. A pre-model canned answer
             # would hide the same weakness that user testing exposed.
-            canonical_required=(
-                mode.startswith("RESPONSE MODE: ASSISTANT-IDENTITY-DIRECT")
-                and not history and not custom_assistant_profile
-                and not re.search(r"(?:assistant|companion)\s+(?:nickname|alias|preferred name)",user_profile,re.I)
+            effective_mode=(
+                "RESPONSE MODE: USER-IDENTITY-DIRECT" if identity_followup and followup_subject=="user"
+                else "RESPONSE MODE: ASSISTANT-IDENTITY-DIRECT" if identity_followup and followup_subject=="assistant"
+                else mode
             )
+            # Canonical name remains authoritative unless a real account
+            # preference says otherwise. Repeated teasing never establishes it.
+            alias_established=bool(re.search(
+                r"(?:assistant|companion)\s+(?:nickname|alias|preferred name)\s*[:=]",
+                user_profile+"\n"+custom_assistant_profile,re.I))
+            canonical_required=(
+                effective_mode.startswith("RESPONSE MODE: ASSISTANT-IDENTITY-DIRECT")
+                and not alias_established
+            )
+            unknown_name_required=(
+                effective_mode.startswith("RESPONSE MODE: USER-IDENTITY-DIRECT")
+                and not identity_followup
+                and not trusted_user_name
+                and not str(payload.get("archiveEvidence") or "").strip()
+            )
+            def identity_faults(text_value):
+                return _identity_response_faults(
+                    text_value,effective_mode,canonical_required,
+                    expected_user_name=(trusted_user_name if not identity_followup and effective_mode.startswith(
+                        "RESPONSE MODE: USER-IDENTITY-DIRECT") else ""),
+                    require_unknown_user=unknown_name_required,
+                    identity_followup=identity_followup,
+                )
             candidate_text,timing=buffered_chat_completion(model,messages,response_tokens,temperature)
-            faults=_identity_response_faults(candidate_text,mode,canonical_required)
+            faults=identity_faults(candidate_text)
             candidate_check={"status":"REJECT" if faults else "PASS","reasons":faults}
             prior_fp=_candidate_fingerprint(candidate_text)
             attempt=candidate_attempt_receipt(
@@ -1225,7 +1265,7 @@ def generate_events(payload):
                 repaired,timing2=buffered_chat_completion(
                     model,list(messages)+[{"role":"system","content":retry_instruction}],
                     response_tokens,min(0.45,temperature+0.05))
-                retry_faults=_identity_response_faults(repaired,mode,canonical_required)
+                retry_faults=identity_faults(repaired)
                 retry_check={"status":"REJECT" if retry_faults else "PASS",
                              "reasons":retry_faults}
                 candidate_attempts.append(candidate_attempt_receipt(

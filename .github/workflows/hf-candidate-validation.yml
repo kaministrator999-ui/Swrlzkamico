@@ -88,6 +88,11 @@ jobs:
           python -m py_compile hf_space/lfm2_700m_engine.py hf_space/test_identity_conversation_v281.py
           python hf_space/test_identity_conversation_v281.py
 
+      - name: v283 User versus assistant ownership and correction replay
+        run: |
+          python -m py_compile hf_space/lfm2_700m_engine.py hf_space/test_identity_ownership_v283.py
+          python hf_space/test_identity_ownership_v283.py
+
       - name: v282 Model-generated identity role/name candidate guard
         run: |
           python -m py_compile hf_space/lfm2_700m_engine.py hf_space/test_identity_response_v282.py
