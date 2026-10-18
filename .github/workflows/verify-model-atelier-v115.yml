@@ -3,10 +3,14 @@ on:
   push:
     branches:
       - feature/engine-v119-figure-ferret-silhouette
+  # Focus historical test on the sealed engine and the matching module.
+  # Other candidate preview code uses dedicated CPU + browser suites.
   pull_request:
     paths:
-      - 'projects/swrlz-forge-moba/**'
       - '.github/workflows/verify-model-atelier-v115.yml'
+      - 'projects/swrlz-forge-moba/source-manifest.json'
+      - 'projects/swrlz-forge-moba/build_space.py'
+      - 'projects/swrlz-forge-moba/payload/**'
   workflow_dispatch:
 concurrency:
   group: engine-ci-verify-model-atelier-v115-${{ github.event.pull_request.number || github.ref }}
