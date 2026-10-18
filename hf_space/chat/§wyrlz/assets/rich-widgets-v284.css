@@ -1,0 +1,24 @@
+/* §wyrlz v284 rich-widget presentation — scoped to existing widget cards. */
+.swrlz-widget.comparison,.swrlz-widget.math-graph,.swrlz-widget.model-3d{min-width:0}
+.rich-compare-region{max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain;border-top:1px solid rgba(126,214,255,.14)}
+.rich-compare-table{border-collapse:collapse;min-width:340px;width:100%;color:#eafaff;font-size:11px;font-variant-numeric:tabular-nums}
+.rich-compare-table th,.rich-compare-table td{text-align:left;padding:10px 9px;border-bottom:1px solid rgba(126,214,255,.11);vertical-align:top;overflow-wrap:anywhere}
+.rich-compare-table thead th{position:sticky;top:0;background:#13283f;color:#f0fbff;font-weight:790}
+.rich-compare-table tbody th{color:#bbdfeb;font-weight:710;min-width:92px}
+.rich-compare-value{min-width:74px}
+.rich-compare-leading{color:#aafad1;font-weight:800}
+.rich-compare-bar{margin-top:5px;height:5px;border-radius:8px;background:rgba(145,178,202,.15);overflow:hidden}
+.rich-compare-bar-fill{height:100%;border-radius:8px;background:linear-gradient(90deg,#38bcde,#9c79ed)}
+.rich-equation-list{display:flex;flex-wrap:wrap;gap:6px;padding:9px 10px;border-top:1px solid rgba(126,214,255,.14)}
+.rich-equation{min-width:0;max-width:100%;border-left:3px solid #54dafa;background:rgba(3,18,34,.65);border-radius:5px;padding:7px 10px;font-size:12px;line-height:1.4;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;color:#edfaff;overflow-wrap:anywhere}
+.rich-widget-viewport{background:#071a2b;border-top:1px solid rgba(126,214,255,.12);overflow:hidden}
+.rich-widget-canvas{display:block;width:100%;height:auto;aspect-ratio:720/375;max-height:300px;touch-action:none;cursor:grab}
+.rich-widget-canvas:active{cursor:grabbing}
+.rich-widget-canvas:focus-visible,.rich-widget-btn:focus-visible{outline:2px solid #8ef1ff;outline-offset:-2px}
+.rich-widget-controls{display:flex;align-items:center;gap:6px;padding:8px 10px;flex-wrap:wrap;border-top:1px solid rgba(126,214,255,.12)}
+.rich-widget-btn{padding:7px 11px;min-width:40px;min-height:34px;border:1px solid rgba(126,214,255,.29);border-radius:8px;background:rgba(13,47,69,.74);color:#e6f9ff;font-size:12px;font-weight:760;cursor:pointer}
+.rich-widget-btn:hover{background:rgba(35,86,112,.77)}
+.rich-widget-readout{margin-left:auto;font:9px ui-monospace,SFMono-Regular,Consolas,monospace;color:#9fc2d0;min-width:0}
+.rich-widget-note{color:#a9c4d0;font-size:10px;line-height:1.55;margin:0;padding:8px 10px;border-top:1px solid rgba(126,214,255,.11)}
+@media(max-width:520px){.rich-widget-controls{gap:5px}.rich-widget-btn{min-height:38px}.rich-widget-readout{flex-basis:100%;margin-left:0;font-size:9px}.rich-compare-table{font-size:10px}}
+@media(prefers-reduced-motion:reduce){.rich-widget-btn,.rich-widget-canvas{transition:none!important}}
