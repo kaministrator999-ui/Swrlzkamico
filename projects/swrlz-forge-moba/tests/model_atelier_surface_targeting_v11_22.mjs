@@ -65,5 +65,13 @@ for(let i=0;i<positive.g.attributes.position.count;i++)
  delta+=Math.abs(offset.attributes.position.getZ(i)-nearFront.attributes.position.getZ(i));
 assert(delta>.01,'Offset falloff center must move the editable footprint');
 const modeList=vm.runInContext('atelierSurfaceModes.join(",")',c);
-assert.equal(modeList,'front,connected,through');
+assert.equal(modeList,'front,connected,inside,through');
+const inside=stroke({surfaceMode:'inside'});
+assert(c.atelierSculptValid({sculptBrushes:[inside]}));
+const insideResult=c.atelierSculptApply(facing.g.clone(),{sculptBrushes:[inside]});
+assert(insideResult.attributes.position.getZ(centerRear)>backBefore+.04,
+ 'Inside mode must sculpt the opposite-normal shell');
+assert(Math.abs(insideResult.attributes.position.getZ(centerPositive)-
+ facing.g.attributes.position.getZ(centerPositive))<1e-6,
+ 'Inside mode must leave the exterior/front shell unchanged');
 console.log('V1122_SURFACE_BRUSH_FRONT_CONNECTED_THROUGH_RADIUS_OFFSET_SAVE_VALIDATION_PASS');
