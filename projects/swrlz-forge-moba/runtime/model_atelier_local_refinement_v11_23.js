@@ -123,6 +123,28 @@ function atelierRefineApply(g,part){
  if(current!==g)g.dispose();
  return current;
 }
+// A read-only preview uses the EXACT local triangulation routine used by
+// Apply. Count generated BufferGeometry vertex slots separately from welded
+// source points; never present them as unique mesh vertices.
+function atelierRefineCandidate(mesh,region,level){
+ if(!mesh?.geometry||!region||!atelierLassoPolygonValid(region)||
+    !Number.isInteger(level)||level<1||level>2)return {ok:false,reason:'Invalid mesh, boundary or density level'};
+ const base=mesh.geometry,before=atelierRefineCount(base);
+ if(before>atelierRefineMaxTriangles)return {ok:false,reason:'Base exceeds local mobile triangle cap'};
+ let current=base.clone(),grown=false,affected=0;
+ try{
+   for(let i=0;i<level;i++){
+     const next=atelierRefineOne(current,region);
+     if(!next)break;
+     current.dispose();current=next;grown=true;
+     affected+=next.userData.selectedOriginalTriangles||0;
+   }
+   const after=atelierRefineCount(current);
+   return {ok:grown&&after>before&&after<=atelierRefineMaxTriangles,
+     before,after,delta:after-before,vertices:current.attributes.position.count,
+     affected,cap:atelierRefineMaxTriangles};
+ }finally{current.dispose();}
+}
 function atelierRefineRefresh(){
  const p=partById(selection),panel=$m('RefineTools');
  if(!panel)return;
@@ -140,9 +162,25 @@ function atelierRefineRefresh(){
  $m('RefineStats').textContent='Current visible mesh: '+original.toLocaleString()+' triangles · '+
    all.length+' saved refinement layers · Region: '+(r?.name||'none')+
    '. The editor caps topology at '+atelierRefineMaxTriangles.toLocaleString()+' triangles per mesh.';
+ const budget=$m('RefineBudget');
+ if(budget)budget.textContent='Preview next local density before applying; no geometry is changed by preview.';
 }
 function atelierRefineInstall(){
  const id=s=>$m('Refine'+s);
+ id('Preview').addEventListener('click',()=>{
+   const p=partById(selection),r=atelierLassoRegion(),level=Number(id('Level').value);
+   const mesh=modelRoot?.children.find(o=>o.isMesh&&o.userData.atelierId===p?.id);
+   const result=atelierRefineCandidate(mesh,r,level),output=id('Budget');
+   if(!result.ok){
+     output.textContent='Cannot preview or safely refine: '+(result.reason||
+       'no affected triangles or per-object cap exceeded')+'. Original untouched.';
+     return;
+   }
+   output.textContent='Measured local preview · '+result.before.toLocaleString()+' → '+
+     result.after.toLocaleString()+' triangles (+'+result.delta.toLocaleString()+
+     '); '+result.vertices.toLocaleString()+' evaluated vertex slots; '+
+     result.cap.toLocaleString()+' triangle cap. No model change.';
+ });
  id('Add').addEventListener('click',()=>{
    const p=partById(selection),r=atelierLassoRegion();
    if(!p||!r){status('Create/select a surface lasso region before refining.',true);return;}
@@ -150,17 +188,10 @@ function atelierRefineInstall(){
    const level=Number(id('Level').value);
    const mesh=modelRoot.children.find(o=>o.isMesh&&o.userData.atelierId===selection);
    if(!mesh||!Number.isInteger(level)||level<1||level>2)return;
-   // Measure actual affected region. A whole-object 4× upper bound would
-   // incorrectly reject the 48k-triangle head even when refining 80 triangles.
-   let preview=mesh.geometry.clone(),grown=false;
-   for(let i=0;i<level;i++){
-     const next=atelierRefineOne(preview,r);
-     if(!next)break;
-     preview.dispose();preview=next;grown=true;
-   }
-   const count=atelierRefineCount(preview);
-   preview.dispose();
-   if(!grown||count>atelierRefineMaxTriangles){
+   // Use the same measured local geometry result for Preview and Apply;
+   // a pessimistic whole-head 4x estimate would reject valid tiny regions.
+   const projected=atelierRefineCandidate(mesh,r,level);
+   if(!projected.ok){
      status('No local triangles could be safely refined inside this region. Reduce level, region size or base density.',true);return;
    }
    const layer={id:'detail-'+Date.now().toString(36),regionId:r.id,level,enabled:true};
@@ -168,7 +199,8 @@ function atelierRefineInstall(){
    if(!checkPart(next)){status('Refinement rejected by native validation.',true);return;}
    checkpoint();p.refinementLayers=next.refinementLayers;
    signalEdited();select(p.id);
-   status('Added reversible local triangle refinement. Source mesh preserved; OBJ exports evaluated triangles.');
+   status('Added reversible local refinement: '+projected.before.toLocaleString()+' → '+
+     projected.after.toLocaleString()+' evaluated triangles. Source mesh preserved; Undo/JSON/OBJ supported.');
  });
  id('Remove').addEventListener('click',()=>{
    const p=partById(selection),i=Number(id('Layer').value);
