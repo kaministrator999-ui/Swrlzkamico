@@ -864,6 +864,13 @@ def generate_events(payload):
                 "or direct statements. If none is available, say you do not "
                 "know their name yet. Do not call them an assistant."
             )
+        if subject=="user" and not trusted_user_name and not user_profile.strip() and not str(payload.get("archiveEvidence") or "").strip():
+            focused+=(
+                " The human's name is UNKNOWN in the current request. No "
+                "supported name was supplied for this human. Explicitly "
+                "say you don't know their name yet; never invent one or "
+                "describe them as the assistant."
+            )
         if identity_followup:
             focused+=(
                 " This is a follow-up to an identity exchange. Reevaluate any "
@@ -1262,6 +1269,12 @@ def generate_events(payload):
                     "rewrite history, pretend a nickname is saved or produce a "
                     "generic customer-service response. Write a brief fresh answer."
                 )
+                if "missing-unknown-user-name-calibration" in faults:
+                    retry_instruction+=(
+                        " No user name was supplied for this human; say you "
+                        "don't know their name yet. Do not guess and do not "
+                        "identify the human as the assistant."
+                    )
                 repaired,timing2=buffered_chat_completion(
                     model,list(messages)+[{"role":"system","content":retry_instruction}],
                     response_tokens,min(0.45,temperature+0.05))
