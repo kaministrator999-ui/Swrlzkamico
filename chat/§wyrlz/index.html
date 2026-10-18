@@ -2349,9 +2349,20 @@
         if(stationRenderFrame)return;
         stationRenderFrame=requestAnimationFrame(()=>{stationRenderFrame=0;renderStationGeneration();});
       };
+      // v287: coalesce fling-scroll position reads to a single paint frame.
+      // Reading scrollHeight for every touch/scroll event can force repeated
+      // layout work while old message cards are being composited on Android.
+      let scrollAffordanceFrame=0;
+      let trustedScrollPending=false;
       chatViewport.addEventListener("scroll",event=>{
-        if(event.isTrusted&&responseStartAnchorActive()&&distanceFromLatest()<72)responseStartAnchorRequestId="";
-        syncLatestAffordance();
+        trustedScrollPending=trustedScrollPending||event.isTrusted;
+        if(scrollAffordanceFrame)return;
+        scrollAffordanceFrame=requestAnimationFrame(()=>{
+          scrollAffordanceFrame=0;
+          const wasTrusted=trustedScrollPending;trustedScrollPending=false;
+          if(wasTrusted&&responseStartAnchorActive()&&distanceFromLatest()<72)responseStartAnchorRequestId="";
+          syncLatestAffordance();
+        });
       },{passive:true});
       jumpLatest.addEventListener("click",()=>scrollToLatest("smooth"));
       const applyChatState = data => {
