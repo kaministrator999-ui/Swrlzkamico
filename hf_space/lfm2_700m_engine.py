@@ -333,6 +333,23 @@ def _identity_profile_user_name(user_profile):
     return ""
 
 
+def _user_name_evidence_history(history):
+    """Use user statements, never assistant guesses, for a direct user-name question.
+
+    This is an inference-only projection; it never alters saved conversation.
+    """
+    scoped=[]
+    for item in list(history or []):
+        if item.get("role")!="user":
+            continue
+        content=str(item.get("content") or "").strip()
+        if not re.fullmatch(
+            r"(?:who are you|what(?:'s| is) your name|what are you)[?!. ]*",
+            content,re.I):
+            scoped.append(item)
+    return scoped
+
+
 def _identity_response_faults(text, response_mode, require_canonical=False,
                               expected_user_name="", require_unknown_user=False,
                               identity_followup=False):
@@ -674,6 +691,11 @@ def generate_events(payload):
                 prior_artifact_match=prior_text
                 break
     identity_response_mode=_response_mode(prompt,programming,history)
+    # Keep user-authored identity facts, not assistant self-introductions.
+    # Stored history and all non-identity turns remain unchanged.
+    if (identity_response_mode.startswith("RESPONSE MODE: USER-IDENTITY-DIRECT")
+            and not trusted_user_name and not programming.get("codingTask")):
+        model_history=_user_name_evidence_history(model_history)
     concise_identity_turn=(not programming.get("codingTask") and identity_response_mode.startswith((
         "RESPONSE MODE: USER-IDENTITY-DIRECT",
         "RESPONSE MODE: ASSISTANT-IDENTITY-DIRECT",
@@ -861,8 +883,11 @@ def generate_events(payload):
             focused+=(
                 " The human is asking about their own identity, not yours. "
                 "Only use a supported name supplied by this human's account "
-                "or direct statements. If none is available, say you do not "
-                "know their name yet. Do not call them an assistant."
+                "or their own direct statements. Without a supported human name, "
+                "you do not know their name. State that uncertainty clearly "
+                "in your own first person: you do not know the human's name yet. "
+                "The prior assistant introduction is NOT the human's identity. "
+                "Do not call the human an assistant, §wyrlz, or a guessed name."
             )
         if identity_followup:
             focused+=(
