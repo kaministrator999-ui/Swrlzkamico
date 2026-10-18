@@ -31,7 +31,7 @@ try{
   await page.locator('#modelAtelierRefinePreview').click();
   const preview=(await page.locator('#modelAtelierRefineBudget').textContent());
   assert.match(preview,/Measured local preview/);
-  const predicted=Number(preview.match(/→ ([\\d,]+) triangles/)?.[1].replaceAll(',',''));
+  const predicted=Number(preview.match(/→ ([\d,]+) triangles/)?.[1].replaceAll(',',''));
   assert(Number.isFinite(predicted)&&predicted>before);
   assert.equal((await get()).find(x=>x.id==='model-0001').refinementLayers,undefined,
    'Preview must not create a persistent refinement layer');
