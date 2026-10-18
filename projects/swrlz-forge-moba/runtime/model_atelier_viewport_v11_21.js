@@ -193,6 +193,7 @@ function atelierCameraPointerDown(e){
    // a gesture must NEVER click a part or commit an unintended vertex edit.
    pressed=null;
    if(atelierSculptDrag){atelierSculptDrag=null;renderParts();}
+   if(atelierLassoDrag){atelierLassoDrag=null;atelierLassoTempPin=null;atelierLassoOverlayRefresh();}
    for(const id of atelierCameraTouches.keys())atelierCameraConsumedTouches.add(id);
    atelierCameraGesture=atelierCameraTouchMetrics();
    return true;
