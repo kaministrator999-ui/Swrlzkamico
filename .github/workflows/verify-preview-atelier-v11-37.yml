@@ -38,7 +38,6 @@ jobs:
             model_sculpt_brush_cpu_v11_21.mjs \
             model_atelier_surface_targeting_v11_22.mjs \
             model_atelier_lasso_v11_22.mjs \
-            model_atelier_reference_studio_v11_22.mjs \
             model_atelier_face_sheet_v11_23.mjs \
             model_atelier_face_volume_v11_23.mjs \
             model_atelier_numeric_groups_v11_23.mjs \
