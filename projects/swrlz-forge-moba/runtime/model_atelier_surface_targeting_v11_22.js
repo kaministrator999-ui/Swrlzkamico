@@ -2,7 +2,7 @@
 // backward-compatible: older strokes lacking surfaceMode use through-volume.
 // New strokes default to FRONT-facing and connected-surface selection.
 // All computation uses part-LOCAL vertices and never alters source topology.
-const atelierSurfaceModes=['front','connected','inside','through'];
+const atelierSurfaceModes=['front','connected','inside','through','nearest'];
 function atelierSurfaceTangent(axis) {
  const n=new THREE.Vector3(...axis).normalize();
  const helper=Math.abs(n.y)<.84?new THREE.Vector3(0,1,0):new THREE.Vector3(1,0,0);
@@ -40,6 +40,32 @@ function atelierSurfaceWeights(geometry,stroke) {
    valid[i]=1;
    if(d<nearestDist){nearest=i;nearestDist=d;}
    if(mode!=='connected')dist[i]=d;
+ }
+ // Conservative nearest-facing shell for stacked same-normal geometry.
+ // This is a projected depth filter relative to the picked brush axis, NOT
+ // full camera pixel-accurate occlusion or an artistically inferred surface.
+ // Existing front/inside/through/connected behavior remains unchanged.
+ if(mode==='nearest'){
+   const [u,v]=atelierSurfaceTangent(stroke.axis);
+   const cell=Math.max(.004,radius/32),limit=Math.max(.008,cell*1.25);
+   const binKeys=new Array(count),heights=new Float32Array(count),depth=new Map();
+   for(let i=0;i<count;i++){
+     if(!valid[i])continue;
+     const k=i*3,dx=xyz[k]-origin.x,dy=xyz[k+1]-origin.y,dz=xyz[k+2]-origin.z;
+     const ucoord=(dx*u.x+dy*u.y+dz*u.z)/cell;
+     const vcoord=(dx*v.x+dy*v.y+dz*v.z)/cell;
+     const key=Math.floor(ucoord)+','+Math.floor(vcoord);
+     const d=dx*axis.x+dy*axis.y+dz*axis.z;
+     binKeys[i]=key;heights[i]=d;
+     if(!depth.has(key)||d>depth.get(key))depth.set(key,d);
+   }
+   for(let i=0;i<count;i++){
+     if(!valid[i])continue;
+     if(heights[i]+limit<depth.get(binKeys[i])){
+       valid[i]=0;dist[i]=Infinity;
+     }
+   }
+   return {dist,origin,valid,radius};
  }
  if(mode!=='connected'||nearest<0)return {dist,origin,valid,radius};
  // Geodesic traversal is restricted to actual connected triangles. UV seam
