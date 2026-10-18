@@ -365,12 +365,12 @@ def _identity_response_faults(text, response_mode, require_canonical=False,
             faults.append("assistant-user-role-inversion")
         if require_canonical and not re.search(r"(?:§wyrlz|swyrlz|swurlz)",normalized):
             faults.append("canonical-assistant-name-missing")
-        if re.search(r"(?im)^\s*(?:\*\*)?\s*your name\s*(?:\*\*)?\s*[:=-]\s*(?:§wyrlz|swyrlz|swurlz)\b",response):
+        if re.search(r"(?im)^\s*\*{0,2}\s*your name\s*\*{0,2}\s*[:=-]\s*\*{0,2}\s*(?:§wyrlz|swyrlz|swurlz)\b",response):
             faults.append("assistant-name-assigned-to-user")
     elif user_question:
         if re.search(r"(?i)^\s*(?:(?:\*\*)?you(?:\*\*)?\s+(?:are|'re)|(?:\*\*)?your name(?:\*\*)?\s*(?::|is))\s*(?:(?:an?|the)\s+)?(?:assistant|ai assistant|ai|§wyrlz|swyrlz|swurlz)\b",response):
             faults.append("user-assigned-assistant-identity")
-        if re.search(r"(?i)(?:\*\*)?your name(?:\*\*)?\s*:\s*(?:§wyrlz|swyrlz|swurlz)\b",response):
+        if re.search(r"(?i)\*{0,2}your name\s*\*{0,2}\s*:\s*\*{0,2}\s*(?:§wyrlz|swyrlz|swurlz)\b",response):
             faults.append("assistant-name-assigned-to-user")
         if re.match(r"^(?:\*\*)?(?:i'm|i am|my name is) (?:an? )?(?:ai|assistant|language model)",normalized):
             faults.append("user-described-as-assistant")
