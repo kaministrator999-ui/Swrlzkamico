@@ -308,7 +308,7 @@
 
 
     /* Glitch Dragon Chat — Tier F companion presentation state machine. */
-    .top-brand{position:relative}.top-brand-mark,.assistant-head .kompanion-icon,.side-brand .kompanion-icon{will-change:transform,box-shadow,filter;transform-origin:center;transition:box-shadow .24s ease,filter .24s ease,border-color .24s ease}
+    .top-brand{position:relative}.top-brand-mark,.station-live-message .assistant-head .kompanion-icon{will-change:transform;transform-origin:center;transition:box-shadow .24s ease,filter .24s ease,border-color .24s ease}.assistant-head .kompanion-icon,.side-brand .kompanion-icon{transform-origin:center;transition:border-color .24s ease}
     .companion-state-chip{display:inline-flex;align-items:center;min-width:0;padding:3px 6px;border:1px solid rgba(126,214,255,.16);border-radius:7px;background:rgba(5,24,40,.52);color:#a7c4d1;font-family:var(--font-telemetry);font-size:8px;letter-spacing:.07em;text-transform:uppercase;white-space:nowrap;transition:border-color .18s ease,color .18s ease,background .18s ease,box-shadow .18s ease}
     body[data-companion-state="idle"] .companion-state-chip{color:#9eb9c7}
     body[data-companion-state="listen"] .companion-state-chip{color:#bff8ff;border-color:rgba(56,232,255,.38);background:rgba(8,55,67,.36)}
@@ -318,14 +318,14 @@
     body[data-companion-state="responding"] .companion-state-chip{color:#c5fbff;border-color:rgba(56,232,255,.44);background:rgba(10,62,76,.34)}
     body[data-companion-state="approval"] .companion-state-chip{color:#ffe3ab;border-color:rgba(255,201,105,.46);background:rgba(88,59,17,.34);box-shadow:0 0 12px rgba(255,201,105,.08)}
     body[data-companion-state="error"] .companion-state-chip{color:#ffd2d8;border-color:rgba(255,107,122,.48);background:rgba(93,29,41,.34)}
-    body[data-companion-state="idle"] .top-brand-mark,body[data-companion-state="idle"] .assistant-head .kompanion-icon{animation:dragonIdle 5.6s ease-in-out infinite}
-    body[data-companion-state="listen"] .top-brand-mark,body[data-companion-state="listen"] .assistant-head .kompanion-icon{animation:dragonListen 1.9s ease-in-out infinite;border-color:rgba(56,232,255,.56);box-shadow:0 0 18px rgba(56,232,255,.20)}
-    body[data-companion-state="accepted"] .top-brand-mark,body[data-companion-state="accepted"] .assistant-head .kompanion-icon{animation:dragonAccepted .72s cubic-bezier(.2,.9,.25,1) 1;border-color:rgba(104,244,207,.56);box-shadow:0 0 18px rgba(104,244,207,.20)}
-    body[data-companion-state="thinking"] .top-brand-mark,body[data-companion-state="thinking"] .assistant-head .kompanion-icon{animation:dragonThink 2.25s ease-in-out infinite;border-color:rgba(165,120,255,.52);box-shadow:0 0 20px rgba(165,120,255,.18)}
-    body[data-companion-state="acting"] .top-brand-mark,body[data-companion-state="acting"] .assistant-head .kompanion-icon{animation:dragonAct 1.15s steps(1,end) infinite;border-color:rgba(79,140,255,.58);box-shadow:0 0 20px rgba(79,140,255,.22)}
-    body[data-companion-state="responding"] .top-brand-mark,body[data-companion-state="responding"] .assistant-head .kompanion-icon{animation:dragonRespond 1.65s ease-in-out infinite;border-color:rgba(56,232,255,.58);box-shadow:0 0 20px rgba(56,232,255,.22)}
-    body[data-companion-state="approval"] .top-brand-mark,body[data-companion-state="approval"] .assistant-head .kompanion-icon{animation:dragonApproval 1.55s ease-in-out infinite;border-color:rgba(255,201,105,.62);box-shadow:0 0 22px rgba(255,201,105,.24)}
-    body[data-companion-state="error"] .top-brand-mark,body[data-companion-state="error"] .assistant-head .kompanion-icon{animation:dragonError .44s ease-out 1;border-color:rgba(255,107,122,.70);box-shadow:0 0 20px rgba(255,107,122,.24)}
+    body[data-companion-state="idle"] .top-brand-mark,body[data-companion-state="idle"] .station-live-message .assistant-head .kompanion-icon{animation:dragonIdle 5.6s ease-in-out infinite}
+    body[data-companion-state="listen"] .top-brand-mark,body[data-companion-state="listen"] .station-live-message .assistant-head .kompanion-icon{animation:dragonListen 1.9s ease-in-out infinite;border-color:rgba(56,232,255,.56);box-shadow:0 0 18px rgba(56,232,255,.20)}
+    body[data-companion-state="accepted"] .top-brand-mark,body[data-companion-state="accepted"] .station-live-message .assistant-head .kompanion-icon{animation:dragonAccepted .72s cubic-bezier(.2,.9,.25,1) 1;border-color:rgba(104,244,207,.56);box-shadow:0 0 18px rgba(104,244,207,.20)}
+    body[data-companion-state="thinking"] .top-brand-mark,body[data-companion-state="thinking"] .station-live-message .assistant-head .kompanion-icon{animation:dragonThink 2.25s ease-in-out infinite;border-color:rgba(165,120,255,.52);box-shadow:0 0 20px rgba(165,120,255,.18)}
+    body[data-companion-state="acting"] .top-brand-mark,body[data-companion-state="acting"] .station-live-message .assistant-head .kompanion-icon{animation:dragonAct 1.15s steps(1,end) infinite;border-color:rgba(79,140,255,.58);box-shadow:0 0 20px rgba(79,140,255,.22)}
+    body[data-companion-state="responding"] .top-brand-mark,body[data-companion-state="responding"] .station-live-message .assistant-head .kompanion-icon{animation:dragonRespond 1.65s ease-in-out infinite;border-color:rgba(56,232,255,.58);box-shadow:0 0 20px rgba(56,232,255,.22)}
+    body[data-companion-state="approval"] .top-brand-mark,body[data-companion-state="approval"] .station-live-message .assistant-head .kompanion-icon{animation:dragonApproval 1.55s ease-in-out infinite;border-color:rgba(255,201,105,.62);box-shadow:0 0 22px rgba(255,201,105,.24)}
+    body[data-companion-state="error"] .top-brand-mark,body[data-companion-state="error"] .station-live-message .assistant-head .kompanion-icon{animation:dragonError .44s ease-out 1;border-color:rgba(255,107,122,.70);box-shadow:0 0 20px rgba(255,107,122,.24)}
     body[data-companion-state="listen"] .ready-dot{background:var(--cyan);box-shadow:0 0 9px rgba(56,232,255,.48)}
     body[data-companion-state="accepted"] .ready-dot{background:var(--success);box-shadow:0 0 9px rgba(104,244,207,.48)}
     body[data-companion-state="thinking"] .ready-dot{background:var(--violet);box-shadow:0 0 10px rgba(165,120,255,.52)}
@@ -698,6 +698,14 @@
     .github-inventory-card .github-source-details{margin-top:10px;border-top:1px solid rgba(126,214,255,.16);padding-top:8px}
     .github-inventory-card .github-source-details summary{cursor:pointer;font-size:12px;color:#c8e4f4}
     .github-inventory-raw{white-space:pre-wrap!important;overflow-wrap:anywhere;word-break:normal;overflow:auto;max-height:45vh;font:11px/1.5 var(--font-telemetry);padding:8px}
+    /* v287: avoid compositing expensive backdrop blur behind every historical
+       user bubble while flinging a long Android conversation. Preserve color,
+       gradient, silhouette and the static dragon wallpaper. */
+    @media(max-width:600px){
+      .rendered-message.user-message .user-bubble{
+        backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+      }
+    }
   </style>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <script src="/chat/§wyrlz/assets/github-explorer-v223.js?v=228"></script>
