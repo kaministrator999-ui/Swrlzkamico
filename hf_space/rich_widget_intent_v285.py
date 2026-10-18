@@ -11,8 +11,13 @@ import re
 from typing import Any
 
 CONTRACT = "swrlz-widget-v1"
-_GRAPH = re.compile(r"\b(?:graph|plot|visuali[sz]e)\b", re.I)
-_3D = re.compile(r"\b(?:show|display|preview|render|visuali[sz]e|rotate)\b", re.I)
+_GRAPH = re.compile(
+    r"^(?:(?:can|could|would|will)\s+you\s+)?(?:please\s+)?"
+    r"(?:(?:show\s+(?:me\s+)?(?:a\s+|the\s+)?)|(?:display\s+(?:a\s+|the\s+)?))?"
+    r"(?:graph|plot|visuali[sz]e)\b|^let['’]s\s+(?:graph|plot)\b", re.I)
+_3D = re.compile(
+    r"^(?:(?:can|could|would|will)\s+you\s+)?(?:please\s+)?"
+    r"(?:show|display|preview|render|visuali[sz]e|rotate)\b", re.I)
 _SHAPE = re.compile(r"\b(cube|sphere|torus|pyramid)\b", re.I)
 _3D_SPEC = re.compile(r"\b(?:3[\s-]*d|three[\s-]*dimensional|wireframe)\b", re.I)
 _ASSET = re.compile(r"\b(?:export|download|obj|glb|gltf|stl|fbx|rigged|game.ready|editable.mesh|blender.file|mesh.file)\b", re.I)
@@ -104,6 +109,11 @@ def _sine(expression: str) -> dict[str, Any] | None:
 
 
 def _equation(expression: str) -> dict[str, Any] | None:
+    # Strip only a small fixed set of polite suffixes/trailing sentence punctuation.
+    # Unrecognized material still rejects the graph instead of partial parsing.
+    expression = str(expression or "").strip()
+    expression = re.sub(r"\s+(?:please|for me)\s*[!?.]*$", "", expression, flags=re.I)
+    expression = expression.rstrip("!?").strip()
     return _sine(expression) or _poly(expression)
 
 
