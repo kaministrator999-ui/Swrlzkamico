@@ -9,7 +9,9 @@ function atelierRefineValid(p){
  const ids=new Set();
  return layers.every(layer=>{
    if(!layer||typeof layer!=='object'||Array.isArray(layer)||
-      Object.keys(layer).sort().join('|')!=='enabled|id|level|regionId'
+      Object.keys(layer).some(k=>!['enabled','id','level','regionId','locked'].includes(k))
+      ||!['enabled','id','level','regionId'].every(k=>Object.prototype.hasOwnProperty.call(layer,k))
+      ||(layer.locked!==undefined&&typeof layer.locked!=='boolean')
       ||typeof layer.id!=='string'||layer.id.length>60||ids.has(layer.id)
       ||typeof layer.regionId!=='string'||layer.regionId.length>60
       ||!Number.isInteger(layer.level)||layer.level<1||layer.level>2
@@ -17,6 +19,34 @@ function atelierRefineValid(p){
    ids.add(layer.id);
    return (p.sculptLassos||[]).some(r=>r.id===layer.regionId);
  });
+}
+// Structural lock blocks deletion/reordering of this layer, independently
+// from user-controlled show/hide. Its referenced surface lasso is a separate
+// editable object: locking detail does NOT implicitly lock that lasso.
+function atelierRefineLayerLocked(layer){return layer?.locked===true;}
+function atelierRefineCanMove(layers,index,target){
+ return Array.isArray(layers)&&Number.isInteger(index)&&
+   Number.isInteger(target)&&index>=0&&target>=0&&
+   index<layers.length&&target<layers.length&&Math.abs(target-index)===1&&
+   !atelierRefineLayerLocked(layers[index])&&!atelierRefineLayerLocked(layers[target]);
+}
+// Duplicate is a copy of saved density instructions, NOT an extra live
+// subdivision operation until the owner enables it. Distinct ID and original
+// layer stay untouched. Caller commits only if native part validation passes.
+function atelierRefineDuplicateCandidate(p,index,newId){
+ const all=p?.refinementLayers;
+ if(!Array.isArray(all)||!Number.isInteger(index)||index<0||index>=all.length||
+    all.length>=atelierRefineMaxLayers||typeof newId!=='string'||
+    newId.length<1||newId.length>60||all.some(l=>l.id===newId))
+   return {ok:false,reason:'Invalid layer, duplicate ID or three-layer limit'};
+ const selected=all[index];
+ const duplicated={id:newId,regionId:selected.regionId,
+   level:selected.level,enabled:false,locked:false};
+ const layers=all.slice();
+ layers.splice(index+1,0,duplicated);
+ return atelierRefineValid({...p,refinementLayers:layers})?
+   {ok:true,layers,index:index+1}:
+   {ok:false,reason:'Duplicate fails native refinement schema validation'};
 }
 function atelierRefineCount(g){
  return Math.floor((g.index?.count||g.attributes.position.count)/3);
@@ -155,12 +185,14 @@ function atelierRefineRefresh(){
  const options=$m('RefineLayer');options.replaceChildren();
  for(let i=0;i<all.length;i++){
    const el=document.createElement('option');
-   el.value=String(i);el.textContent=(i+1)+': '+(all[i].enabled?'● ':'○ ')+all[i].regionId+' ×'+(4**all[i].level);
+   el.value=String(i);el.textContent=(i+1)+': '+(all[i].enabled?'● ':'○ ')+
+     (atelierRefineLayerLocked(all[i])?'🔒 ':'')+all[i].regionId+' ×'+(4**all[i].level);
    options.append(el);
  }
  const original=source?atelierRefineCount(source.geometry):0;
  $m('RefineStats').textContent='Current visible mesh: '+original.toLocaleString()+' triangles · '+
-   all.length+' saved refinement layers · Region: '+(r?.name||'none')+
+   all.length+' saved refinement layers · '+all.filter(atelierRefineLayerLocked).length+
+   ' structurally locked · Region: '+(r?.name||'none')+
    '. The editor caps topology at '+atelierRefineMaxTriangles.toLocaleString()+' triangles per mesh.';
  const budget=$m('RefineBudget');
  if(budget)budget.textContent='Preview next local density before applying; no geometry is changed by preview.';
@@ -194,7 +226,7 @@ function atelierRefineInstall(){
    if(!projected.ok){
      status('No local triangles could be safely refined inside this region. Reduce level, region size or base density.',true);return;
    }
-   const layer={id:'detail-'+Date.now().toString(36),regionId:r.id,level,enabled:true};
+   const layer={id:'detail-'+Date.now().toString(36),regionId:r.id,level,enabled:true,locked:false};
    const next={...p,refinementLayers:[...(p.refinementLayers||[]),layer]};
    if(!checkPart(next)){status('Refinement rejected by native validation.',true);return;}
    checkpoint();p.refinementLayers=next.refinementLayers;
@@ -205,18 +237,54 @@ function atelierRefineInstall(){
  id('Remove').addEventListener('click',()=>{
    const p=partById(selection),i=Number(id('Layer').value);
    if(!p?.refinementLayers?.[i])return;
+   if(atelierRefineLayerLocked(p.refinementLayers[i])){
+     status('Unlock this detail layer before removing it.',true);return;
+   }
    checkpoint();p.refinementLayers.splice(i,1);signalEdited();select(p.id);
  });
  id('Toggle').addEventListener('click',()=>{
    const p=partById(selection),i=Number(id('Layer').value);
    if(!p?.refinementLayers?.[i])return;
    checkpoint();p.refinementLayers[i].enabled=!p.refinementLayers[i].enabled;
-   signalEdited();select(p.id);
+   signalEdited();select(p.id);id('Layer').value=String(i);
  });
  id('Up').addEventListener('click',()=>{
    const p=partById(selection),i=Number(id('Layer').value);
    if(!p?.refinementLayers?.[i]||i===0)return;
+   if(!atelierRefineCanMove(p.refinementLayers,i,i-1)){
+     status('Unlock both detail layers before changing their order.',true);return;
+   }
    checkpoint();[p.refinementLayers[i-1],p.refinementLayers[i]]=[p.refinementLayers[i],p.refinementLayers[i-1]];
    signalEdited();select(p.id);id('Layer').value=String(i-1);
+ });
+ id('Down').addEventListener('click',()=>{
+   const p=partById(selection),i=Number(id('Layer').value);
+   if(!p?.refinementLayers?.[i]||i>=p.refinementLayers.length-1)return;
+   if(!atelierRefineCanMove(p.refinementLayers,i,i+1)){
+     status('Unlock both detail layers before changing their order.',true);return;
+   }
+   checkpoint();[p.refinementLayers[i],p.refinementLayers[i+1]]=[p.refinementLayers[i+1],p.refinementLayers[i]];
+   signalEdited();select(p.id);id('Layer').value=String(i+1);
+ });
+ id('Lock').addEventListener('click',()=>{
+   const p=partById(selection),i=Number(id('Layer').value),layer=p?.refinementLayers?.[i];
+   if(!layer)return;
+   checkpoint();layer.locked=!atelierRefineLayerLocked(layer);
+   const wasLocked=layer.locked;
+   signalEdited();select(p.id);id('Layer').value=String(i);
+   status(wasLocked?'Detail layer structurally locked; visibility remains independent.':
+     'Detail layer unlocked for reordering and removal.');
+ });
+ id('Duplicate').addEventListener('click',()=>{
+   const p=partById(selection),i=Number(id('Layer').value);
+   const newId='detail-copy-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,7);
+   const candidate=atelierRefineDuplicateCandidate(p,i,newId);
+   if(!candidate.ok){status('Cannot duplicate layer: '+candidate.reason,true);return;}
+   if(!checkPart({...p,refinementLayers:candidate.layers})){
+     status('Duplicate rejected by native part validation.',true);return;
+   }
+   checkpoint();p.refinementLayers=candidate.layers;
+   signalEdited();select(p.id);id('Layer').value=String(candidate.index);
+   status('Created a disabled, unlocked detail duplicate. Enable only after checking the triangle budget.');
  });
 }
