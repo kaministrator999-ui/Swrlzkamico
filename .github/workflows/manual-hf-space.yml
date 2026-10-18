@@ -327,7 +327,7 @@ jobs:
               assert diagnostic['status']=='PASS', 'Real 700M identity acceptance failed; production upload blocked'
           PY
       - name: v283 Real 700M nameless user and identity correction continuity gate
-        if: \${{ inputs.mode == 'deploy' }}
+        if: ${{ inputs.mode == 'deploy' }}
         shell: bash
         run: |
           set -euo pipefail
