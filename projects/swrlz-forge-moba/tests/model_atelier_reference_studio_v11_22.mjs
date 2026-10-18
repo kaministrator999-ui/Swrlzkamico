@@ -44,6 +44,17 @@ try{
   assert(await toggle.isVisible(),'Floating reference launcher should be in viewport toolbar');
   await toggle.click();
   assert(await page.locator('#modelAtelierReferenceDock').isVisible());
+  // A floating image must NEVER hide the scene-wide render-mode controls.
+  // This especially matters on phones where the toolbar wraps to extra rows.
+  const toolbarBox=await page.locator('#modelAtelierViewportModes').boundingBox();
+  const refBox=await page.locator('#modelAtelierReferenceDock').boundingBox();
+  assert(toolbarBox&&refBox&&refBox.y>=toolbarBox.y+toolbarBox.height+3,
+    'Floating reference studio must stay below the render modes on '+name);
+  const display=page.locator('#modelAtelierViewportMode');
+  await display.selectOption('wireframe');
+  const view=await page.evaluate(()=>window.SWYRL_ENGINE_VIEW.status());
+  assert.equal(view.wireframe,283,'Wireframe must work while References is open');
+  await display.selectOption('shaded');
   await page.locator('#modelAtelierReferenceFile').setInputFiles([
     {name:'front-reference.png',mimeType:'image/png',buffer:pngSolid(255,70,65)},
     {name:'right-reference.png',mimeType:'image/png',buffer:pngSolid(52,220,240)}
