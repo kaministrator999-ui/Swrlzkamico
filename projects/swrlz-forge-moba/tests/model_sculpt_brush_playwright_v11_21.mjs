@@ -44,14 +44,30 @@ try{
   await page.locator('#modelAtelierFrameSelected').click();
   await page.locator('#modelAtelierSculptBrushIndices').fill('12400');
   await page.locator('#modelAtelierSculptBrushIndicesApply').click();
-  const marker=await page.locator('#modelAtelierSculptBrushVertexInfo').evaluate(el=>({
+  const canvas=page.locator('#modelAtelierViewport canvas');
+  const beforeBox=await canvas.boundingBox();
+  let marker=await page.locator('#modelAtelierSculptBrushVertexInfo').evaluate(el=>({
    x:Number(el.dataset.gizmoX),y:Number(el.dataset.gizmoY),label:el.textContent
   }));
+  // The mobile inspector click scrolls the *page* to the bottom. Return the
+  // canvas to the interactive viewport and translate cached gizmo coordinates
+  // into the new client frame before dispatching actual touch.
+  await canvas.scrollIntoViewIfNeeded();
+  const afterBox=await canvas.boundingBox();
+  if(beforeBox&&afterBox){
+    marker.x+=afterBox.x-beforeBox.x;
+    marker.y+=afterBox.y-beforeBox.y;
+  }
   assert(Number.isFinite(marker.x)&&Number.isFinite(marker.y));
   assert.match(marker.label,/1 points selected/);
   const bbox=await page.locator('#modelAtelierViewport canvas').boundingBox();
   assert(bbox&&marker.x>=bbox.x&&marker.x<=bbox.x+bbox.width
     &&marker.y>=bbox.y&&marker.y<=bbox.y+bbox.height,'Gizmo must be visible');
+  const obscurer=await page.evaluate(({x,y})=>{
+     const el=document.elementFromPoint(x,y);
+     return {tag:el?.tagName,id:el?.id,parent:el?.parentElement?.id};
+  },marker);
+  console.log('VERTEX_GIZMO_TOUCH_TARGET',device,marker.x,marker.y,obscurer);
   if(mobile){
    // Real Android-style touch drag; mouse events in a touch-emulated context
    // can be swallowed/replaced by the browser's synthetic gestures.
