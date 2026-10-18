@@ -1226,13 +1226,14 @@ def generate_events(payload):
             )
             unknown_name_required=(
                 effective_mode.startswith("RESPONSE MODE: USER-IDENTITY-DIRECT")
+                and not identity_followup
                 and not trusted_user_name
                 and not str(payload.get("archiveEvidence") or "").strip()
             )
             def identity_faults(text_value):
                 return _identity_response_faults(
                     text_value,effective_mode,canonical_required,
-                    expected_user_name=(trusted_user_name if effective_mode.startswith(
+                    expected_user_name=(trusted_user_name if not identity_followup and effective_mode.startswith(
                         "RESPONSE MODE: USER-IDENTITY-DIRECT") else ""),
                     require_unknown_user=unknown_name_required,
                     identity_followup=identity_followup,
