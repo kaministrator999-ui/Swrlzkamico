@@ -294,6 +294,9 @@ def _identity_followup_subject(prompt, history):
     recent=list(history or [])[-12:]
     if not p or not recent:
         return ""
+    # Hypotheticals and quoted name examples are not live identity changes.
+    if re.search(r"\b(?:what if|imagine|suppose|pretend|hypothetically|in a story)\b",p):
+        return ""
     # The most recent direct identity question (not a model reply) anchors role.
     anchor=""
     for item in reversed(recent):
@@ -349,7 +352,7 @@ def _identity_response_faults(text, response_mode, require_canonical=False,
         faults.append("profile-heading-echo")
     if re.search(r"\bhow can i (?:help|assist) you\b",normalized):
         faults.append("generic-customer-service-ending")
-    if identity_followup and re.search(
+    if re.search(
         r"\b(?:created|made|built|developed) by\b|\b(?:character|fictional character) (?:in|from)\b.*\bseries\b",
         normalized):
         faults.append("unsupported-assistant-origin-claim")
@@ -365,7 +368,7 @@ def _identity_response_faults(text, response_mode, require_canonical=False,
         if re.search(r"(?im)^\s*(?:\*\*)?\s*your name\s*(?:\*\*)?\s*[:=-]\s*(?:§wyrlz|swyrlz|swurlz)\b",response):
             faults.append("assistant-name-assigned-to-user")
     elif user_question:
-        if re.search(r"(?i)^\s*(?:(?:\*\*)?you(?:\*\*)?\s+(?:are|'re)|(?:\*\*)?your name(?:\*\*)?\s*(?::|is))\s*(?:the\s+)?(?:assistant|ai assistant|ai|§wyrlz|swyrlz|swurlz)\b",response):
+        if re.search(r"(?i)^\s*(?:(?:\*\*)?you(?:\*\*)?\s+(?:are|'re)|(?:\*\*)?your name(?:\*\*)?\s*(?::|is))\s*(?:(?:an?|the)\s+)?(?:assistant|ai assistant|ai|§wyrlz|swyrlz|swurlz)\b",response):
             faults.append("user-assigned-assistant-identity")
         if re.search(r"(?i)(?:\*\*)?your name(?:\*\*)?\s*:\s*(?:§wyrlz|swyrlz|swurlz)\b",response):
             faults.append("assistant-name-assigned-to-user")
