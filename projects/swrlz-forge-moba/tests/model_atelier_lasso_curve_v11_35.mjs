@@ -26,10 +26,10 @@ const srcCount=32,poly=Array.from({length:srcCount},(_,i)=>
  [Math.cos(i*Math.PI*2/srcCount),Math.sin(i*Math.PI*2/srcCount)]);
 assert.equal(vmc.atelierLassoCurvePoints(poly,1).length,128,
  'Max 32 pins must cap interpolated contour to 128 evaluated coordinates');
-assert.equal(vmc.atelierLassoInside([.28,.28],straight),true);
-assert.equal(vmc.atelierLassoInside([.28,.28],curve),false,
+assert.equal(vmc.atelierLassoInside([.58,.58],straight),true);
+assert.equal(vmc.atelierLassoInside([.58,.58],curve),false,
  'Rounded boundaries must trim the actual polygon corner region');
-assert.equal(vmc.atelierLassoInside([0,0],curve),true);
+assert.equal(vmc.atelierLassoInside([.3,.3],curve),true);
 assert.equal(JSON.stringify(base),raw,'Sampling curve cannot rewrite pinned region');
 const geometry=new THREE.PlaneGeometry(1,1,40,40);
 const original=Float32Array.from(geometry.attributes.position.array);
