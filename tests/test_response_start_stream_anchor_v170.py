@@ -8,7 +8,18 @@ assert 'responseStartAnchorRequestId' in html
 assert 'const scrollResponseStart=(node,requestId)=>' in html
 assert 'uiCamera("response-start-anchor"' in html
 assert 'responseStartAnchorActive()' in html
-assert 'if(event.isTrusted&&responseStartAnchorActive()&&distanceFromLatest()<72)responseStartAnchorRequestId=""' in html
+# v287 retains the trusted-scroll response-start anchor check but coalesces
+# synchronous scrollHeight reads into one animation frame on Android.
+old_anchor='if(event.isTrusted&&responseStartAnchorActive()&&distanceFromLatest()<72)responseStartAnchorRequestId=""'
+coalesced_anchor=all(fragment in html for fragment in (
+    'trustedScrollPending=trustedScrollPending||event.isTrusted',
+    'scrollAffordanceFrame=requestAnimationFrame(()=>{',
+    'const wasTrusted=trustedScrollPending;trustedScrollPending=false',
+    'if(wasTrusted&&responseStartAnchorActive()&&distanceFromLatest()<72)responseStartAnchorRequestId=""',
+    'syncLatestAffordance();',
+))
+assert old_anchor in html or coalesced_anchor, 'Response-start scroll anchor must remain effective'
+assert html.count('const scrollResponseStart=(node,requestId)=>')==1
 assert 'jumpLatest.addEventListener("click",()=>scrollToLatest("smooth"))' in html
 
 # New live responses must anchor to the response start instead of immediately
