@@ -46,7 +46,7 @@ function atelierViewportInsideEnter(){
  // A small camera distance inside the chosen mesh is intentional.
  // Other object positions and all geometry remain exactly unchanged.
  orbit.distance=.16;
- atelierViewportClipApply(.01,Math.max(30,camera.far));
+ atelierViewportClipApply(.01,Math.min(300,Math.max(30,camera.far)));
  cameraUpdate();atelierViewRebuild();atelierViewportControlsRefresh();
  status('Interior inspection on '+p.name+'. X-Ray applied to selected mesh only; choose Inside shell for opposite-normal brush, or Exit interior.');
  return true;
