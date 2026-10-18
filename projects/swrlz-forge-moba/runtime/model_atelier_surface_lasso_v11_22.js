@@ -426,6 +426,31 @@ function atelierLassoGroupCandidate(region,mesh,raw,delta){
    return {ok:false,reason:'The grouped motion would cross or collapse the boundary'};
  return {ok:true,pins,indices};
 }
+// Push just one chosen boundary edge, not the entire selection area.
+// Positive values follow polygon winding's outward tangent-plane normal;
+// negative values pull only that edge inward. Endpoint reattachment is atomic.
+function atelierLassoSegmentCandidate(region,mesh,index,amount){
+ if(!region||!mesh||!Number.isInteger(index)||index<0||
+    index>=region.pins.length||!Number.isFinite(amount)||
+    Math.abs(amount)>.15||Math.abs(amount)<.0001)
+   return {ok:false,reason:'Choose an existing segment and a signed amount of 0.0001–0.15'};
+ const basis=atelierLassoProjection({...region,boundaryCurve:0}),poly=basis.poly,n=poly.length;
+ const a=poly[index],b=poly[(index+1)%n];
+ const dx=b[0]-a[0],dy=b[1]-a[1],length=Math.hypot(dx,dy);
+ if(length<1e-5)return {ok:false,reason:'Selected segment is degenerate'};
+ let area=0;
+ for(let i=0;i<n;i++){
+   const p=poly[i],q=poly[(i+1)%n];area+=p[0]*q[1]-q[0]*p[1];
+ }
+ if(Math.abs(area)<.00004)return {ok:false,reason:'Boundary has no stable winding'};
+ const sign=Math.sign(area),normalU=sign*dy/length,normalV=-sign*dx/length;
+ const motion=basis.u.clone().multiplyScalar(normalU*amount)
+   .addScaledVector(basis.v,normalV*amount);
+ const next=(index+1)%n;
+ const result=atelierLassoGroupCandidate(region,mesh,
+   String(index+1)+','+String(next+1),motion.toArray());
+ return result.ok?{...result,segment:index,outward:amount>0}:result;
+}
 function atelierLassoInstall(){
  const id=n=>$m('Lasso'+n);
  id('PinIndex').addEventListener('change',e=>{
@@ -457,6 +482,19 @@ function atelierLassoInstall(){
    const next={...r,pins:r.pins.slice()};next.pins[atelierLassoSelectedPin]=pin;
    if(!atelierLassoPolygonValid(next)){status('Pin move would collapse/cross the boundary.',true);return;}
    checkpoint();r.pins=next.pins;signalEdited();atelierLassoRefresh();
+ });
+ id('SegmentMove').addEventListener('click',()=>{
+   const r=atelierLassoRegion(),p=atelierLassoPart();
+   const mesh=modelRoot?.children.find(o=>o.isMesh&&o.userData.atelierId===selection);
+   const index=Number(id('PinIndex').value),amount=Number(id('SegmentAmount').value);
+   const candidate=atelierLassoSegmentCandidate(r,mesh,index,amount);
+   if(!candidate.ok){
+     status('Segment adjustment rejected: '+candidate.reason,true);return;
+   }
+   checkpoint();r.pins=candidate.pins;
+   const key=p.id;signalEdited();select(key);
+   status('Surface-reprojected boundary segment '+(index+1)+' moved '+
+     (candidate.outward?'outward':'inward')+' in one native Undo transaction. Other controls unchanged.');
  });
  id('GroupMove').addEventListener('click',()=>{
    const r=atelierLassoRegion(),mesh=modelRoot?.children.find(o=>o.isMesh&&o.userData.atelierId===selection);
