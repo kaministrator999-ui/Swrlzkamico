@@ -710,6 +710,14 @@ def generate_events(payload):
     if version_lesson:
         system+="\n"+version_lesson
     system+="\n"+response_cognition_policy(response_cognition)
+    # The router has already emitted a source-grounded widget through Station.
+    # This optional context is presentation guidance, not another model/tool pass.
+    widget_presentation=str(payload.get("widgetPresentation") or "")[:420]
+    if widget_presentation and not programming.get("codingTask"):
+        system+=("\nSTRUCTURED WIDGET ALREADY PREPARED: "+widget_presentation+
+                 " Give a brief natural companion explanation when helpful. "
+                 "Do not claim a live search, independent verification or an exported 3D asset. "
+                 "Do not turn unrelated ordinary replies into visual dashboards.")
     if not programming.get("codingTask"):
         lesson=articulation_lesson(prompt,history)
         if lesson:
