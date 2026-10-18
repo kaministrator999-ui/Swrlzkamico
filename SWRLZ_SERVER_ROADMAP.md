@@ -1,3 +1,21 @@
+## UPDATE STARTED — 2026-10-18 — v284/v285 Chat rich comparison, equation and 3D widgets
+
+**User direction:** Begin useful custom comparison widgets, mathematical graph/equation widgets and 3D preview widgets; continue through conversational activation. The isolated candidate source was implemented and tested before this START record (journal write here is intentionally not backdated).
+
+**Observed source baseline:** accepted v283 integrated Chat source `736120579cc250a82319b157cfd661b61e6a06b1`; v284 widget renderer branch, v285 natural-intent extension PR [#236](https://github.com/kaministrator999-ui/Swrlzkamico/pull/236), merged into cumulative `feature/chat-rich-widgets-v284` as `6ccf48b7a56d35735067faa077646f5dfe263eaf`. On entry runtime versions Repository Work `1.0.221`, Server Runtime `2.3.433`, Web Chat `1.5.152`, LALM Engine `2.1.201`. No HF publication or module version change yet.
+
+**Architecture decision:** extend existing trusted `swrlz-widget-v1` envelope, Brain-side request interpretation, `model_router` existing event producer, Station `WIDGET` persistence, and single Chat Mask renderer. No assistant-prose-to-script pathway, no substitute model/Forge geometry editor, no second state owner, no account/private-history leakage, no uncontrolled online lookups or invented measurements. Candidate supports bounded typed polynomial/sine plotting, explicit 2–4 item numerical comparisons, primitive 3D wireframe rotation and accessible mobile controls. Ordinary conversation invokes no extra generation pass; natural model commentary sees small bounded presentation context.
+
+**Verification so far:** initial v284 failed invalid-axis test then was repaired; v284 CI [#39145420971](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/39145420971) SUCCESS; v285 intent/renderer CI [#39148171472](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/39148171472) SUCCESS; PR-wide HF Candidate Offline [#39148318946](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/39148318946) SUCCESS; lyric corpus [#39148318974](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/39148318974) SUCCESS; Chromium mobile interactive smoke [#39148421673](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/39148421673) SUCCESS (4 cards, 3 canvases, working zoom/rotation, 390px no overflow). Initial v285 model-routing test lacked its expected Coder mock; corrected without altering production Coder semantics.
+
+**Roadmap repair lineage:** a large-file connector read returned empty text with valid blob metadata; a journal attempt at `af6f15436cbc49d1cd0b2409a09c7150de5a798d` temporarily replaced this file with incomplete text. Explicit restorative Git tree commit `ceb404ced30a9bcd735db36c7042d6ad585c911a` restored exact pre-write Roadmap blob `ea70002bc63e6bbf80462468fc9a9e795518ba78`, verified against full original content. New journal writes use a complete read with minimum-length guard, Git blob and lease-pinned tree mutation; this failure path is preserved.
+
+**Next gate:** validate cumulative exact source and complete current HF prepublication safeguards; reconcile version authority without publishing an unverified module as active; use only existing `main:.deploy/HF_SPACE_REQUEST.txt` to publish exact pinned source to existing `kamiloki/Swyrlz` with snapshot, rollback, terminal workflow observation. User signed-in Android acceptance remains independently pending until observed.
+
+**State:** STARTED, candidate source merged and CI/browser-preview verified; **not yet published or known-good on signed-in Android**.
+
+---
+
 ## UPDATE FINISHED — 2026-10-18 — v283 identity ownership, corrective continuity and real 700M acceptance
 
 **Observed owner case:** Signed-in Android screenshots and private Chat export (84) establish the v282 model initially rejected `Who are you` but incorrectly marked `Who am i → You are ASSISTANT.` as CANDIDATE_PASS. Later assistant generations invented ungrounded creator/series lore, treated an explicit §wyrlz spelling explanation as a new rename, and assigned the assistant's own name to the human. Source evidence stays private, not committed as fixtures. v282's synthetic user-name case with `Avery` did not establish multi-turn nameless-user correctness.
