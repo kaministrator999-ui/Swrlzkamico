@@ -65,7 +65,15 @@ for(let i=0;i<positive.g.attributes.position.count;i++)
  delta+=Math.abs(offset.attributes.position.getZ(i)-nearFront.attributes.position.getZ(i));
 assert(delta>.01,'Offset falloff center must move the editable footprint');
 const modeList=vm.runInContext('atelierSurfaceModes.join(",")',c);
-assert.equal(modeList,'front,connected,inside,through');
+assert.equal(modeList,'front,connected,inside,through,nearest');
+const nearShell=c.atelierSculptApply(positive.g.clone(),{sculptBrushes:[
+ stroke({surfaceMode:'nearest',center:[0,0,.05]})]});
+assert(Math.abs(nearShell.attributes.position.getZ(centerPositive)-
+ positive.g.attributes.position.getZ(centerPositive))<1e-6,
+ 'Nearest projected shell must reject deeper parallel front-facing layer');
+assert(nearShell.attributes.position.getZ(centerRear)>
+ positive.g.attributes.position.getZ(centerRear)+.08,
+ 'Nearest projected shell must preserve picked outer surface');
 const inside=stroke({surfaceMode:'inside'});
 assert(c.atelierSculptValid({sculptBrushes:[inside]}));
 const insideResult=c.atelierSculptApply(facing.g.clone(),{sculptBrushes:[inside]});

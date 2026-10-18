@@ -1,3 +1,9 @@
+## Current §E precision-sculpt handoff — v11.29 stacked DRAFT ONLY (2026-10-18)
+
+**Continue from** [v11.29 implementation and acceptance ledger](projects/swrlz-forge-moba/reports/PRECISION_ATELIER_ACCEPTANCE_LEDGER_V11_29.md) and current development PR [#234](https://github.com/kaministrator999-ui/Swrlzkamico/pull/234), stacked on #233 → #232 → #231 → #230 → #229 → #219. The v11.20 original 283-part, eleven-section anatomical scene and sealed source manifest remain production truth. This is **not** a finished spec, merged release, deployed preview or completed character sculpt.
+
+Verified tested candidate additions since v11.23: freehand surface 📌 lasso; interior camera and deliberate opposite-normal sculpt; measured local triangle preview; smooth/flatten/inflate/pinch/translate and mirrored-X brush (base asymmetry remains); parametric sphere/loft sampling presets with true-generator vertex/triangle previews (not exported LODs); opt-in nearest-facing projected-depth safeguard (not accurate camera visibility). See the ledger for exact terminal CI receipts, corrected failures and remaining design requirements. Continue with source-of-truth-first small slices and real device/geometry tests. Do not merge/deploy this draft or press `DEPLOY_REQUEST.json` until full release gates, owner visual review and original v11.20 character protection are satisfied.
+
 ## Draft v11.23 precision Model Atelier — Codex operator entry (preview only)
 
 The owner requested **Codex to operate the actual §E Model Atelier controls** for reference-matched character sculpting, not to instruct the owner to manually edit the mesh. The stable release is still **v11.20**; do not merge this draft, overwrite production, or replace the original eleven-section anatomical head/283-part scene.
