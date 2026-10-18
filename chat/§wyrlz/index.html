@@ -1348,7 +1348,7 @@
         if(!normalized.length)return;
         stack=document.createElement("div");stack.className="message-widget-stack";stack.dataset.widgetSignature=signature;
         for(const widget of normalized){
-          const card=document.createElement("section");card.className="swrlz-widget "+String(widget.kind||"").replace(/[^a-z0-9_-]/gi,"-");card.setAttribute("aria-label",String(widget.title||widget.kind||"Result"));
+          const card=document.createElement("section");card.className="swrlz-widget "+String(widget.kind||"").replace(/[^a-z0-9_-]/gi,"-");card.dataset.widgetKind=String(widget.kind||"").slice(0,50);card.setAttribute("aria-label",String(widget.title||widget.kind||"Result"));
           const head=document.createElement("div");head.className="widget-head";
           const title=document.createElement("div");title.className="widget-title";title.textContent=String(widget.title||"Result");
           const provider=document.createElement("div");provider.className="widget-provider";provider.textContent=String(widget.provider||"online");
