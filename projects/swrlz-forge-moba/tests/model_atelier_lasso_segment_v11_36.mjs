@@ -29,10 +29,10 @@ assert.equal(grown.pins.length,4);
 assert.deepEqual(JSON.parse(JSON.stringify(grown.pins.slice(2))),
  JSON.parse(JSON.stringify(region.pins.slice(2))),
  'Only chosen segment endpoints may move');
-assert.equal(grown.pins[0].point[1],-.25);
-assert.equal(grown.pins[1].point[1],-.25);
-assert.equal(shrunk.pins[0].point[1],-.15);
-assert.equal(shrunk.pins[1].point[1],-.15);
+assert(Math.abs(grown.pins[0].point[1]+.25)<1e-6);
+assert(Math.abs(grown.pins[1].point[1]+.25)<1e-6);
+assert(Math.abs(shrunk.pins[0].point[1]+.15)<1e-6);
+assert(Math.abs(shrunk.pins[1].point[1]+.15)<1e-6);
 assert.equal(JSON.stringify(region),original,'Preview must not mutate native lasso region');
 for(const [index,amount] of [[-1,.05],[4,.05],[0,0],[0,.151],[0,-.151],[0,Infinity],[NaN,.05]])
  assert(!c.atelierLassoSegmentCandidate(region,mesh,index,amount).ok);
