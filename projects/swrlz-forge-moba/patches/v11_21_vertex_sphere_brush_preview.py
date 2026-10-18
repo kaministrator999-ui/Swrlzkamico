@@ -9,7 +9,7 @@ def once(html, before, after):
 def apply(html):
     root=Path(__file__).resolve().parent.parent
     assert "SWYRL_ENGINE_DEPLOY_MARKER: V11_20_ANATOMICAL_HEAD" in html
-    module=(root/"runtime/model_atelier_sculpt_brush_v11_21.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_viewport_v11_21.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_reference_studio_v11_22.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_surface_targeting_v11_22.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_surface_lasso_v11_22.js").read_text(encoding="utf-8")
+    module=(root/"runtime/model_atelier_sculpt_brush_v11_21.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_viewport_v11_21.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_reference_studio_v11_22.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_surface_targeting_v11_22.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_surface_lasso_v11_22.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_local_refinement_v11_23.js").read_text(encoding="utf-8")
     html=once(html, "  function refreshList(){", module+"\n  function refreshList(){")
     html=once(html,"  function checkPart(p){",
          "  function checkPart(p){\n    if(!atelierSculptValid(p))return false;")
@@ -81,7 +81,20 @@ def apply(html):
              '<button type="button" id="modelAtelierLassoToggle">Enable / disable region</button>'
              '<button type="button" id="modelAtelierLassoDeleteRegion">Delete region</button></div>'
              '<p id="modelAtelierLassoInfo" role="status"></p>'
-             '<p>Region pin edits are undoable, but triangle density remains unchanged until a separate refinement tool is implemented.</p></fieldset>'
+             '<p>📌 Region pins change selection boundaries without moving mesh vertices until an explicit morph or refinement action.</p></fieldset>'
+             '<fieldset id="modelAtelierRefineTools" aria-label="Local mesh refinement layers">'
+             '<legend>Local detail density · conforming triangles</legend>'
+             '<p>Add actual triangles inside the selected surface lasso. Neighbor edges split automatically so adjoining polygons have no T-junctions.</p>'
+             '<label>Local density<select id="modelAtelierRefineLevel">'
+             '<option value="1">1 level · approximately 4× selected triangles</option>'
+             '<option value="2">2 levels · approximately 16× selected triangles</option></select></label>'
+             '<div class="atelier-inspector-actions"><button type="button" id="modelAtelierRefineAdd">Apply local refinement</button></div>'
+             '<label>Saved detail layer<select id="modelAtelierRefineLayer"></select></label>'
+             '<div class="atelier-inspector-actions"><button type="button" id="modelAtelierRefineToggle">Show / hide detail</button>'
+             '<button type="button" id="modelAtelierRefineUp">Move detail earlier</button>'
+             '<button type="button" id="modelAtelierRefineRemove">Remove layer</button></div>'
+             '<p id="modelAtelierRefineStats" role="status"></p>'
+             '<p>New topology is evaluated from the unchanged native base and saved with the project; Undo can restore the previous detail stack. UVs and vertex colors are interpolated.</p></fieldset>'
              '<section aria-label="Vertex mapping and drag gizmo"><h4>Vertex matrix · point and group edits</h4>'
              '<p>Choose grid U/V, show source vertices, tap a point, then drag the yellow gizmo. Use multi-selection to move groups.</p>'
              '<div class="atelier-pair"><label>Vertex map U<input id="modelAtelierSculptBrushGridU" type="number" min="16" max="256" step="8" value="192"></label>'
