@@ -145,6 +145,7 @@ function atelierSculptRefresh(){
  if(arm)arm.textContent=atelierSculptArmed?'Cancel picking':'Pick center on mesh';
  atelierLassoRefresh();
  atelierRefineRefresh();
+ atelierDensityRefresh();
  const remove=$m('SculptBrushUndoStroke');
  if(remove)remove.disabled=!(p?.sculptBrushes?.length);
 }
@@ -224,6 +225,7 @@ function atelierSculptInstall(){
      ' as a local, undoable vertex stroke. Save JSON to keep it.');
  });
  atelierSculptVertexInstall();
+ atelierDensityInstall();
  atelierSurfaceInstall();
  atelierLassoInstall();
  atelierGroupInstall();
