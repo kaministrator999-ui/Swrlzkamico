@@ -321,7 +321,7 @@ function atelierLassoPointerCancel(e){
 // vertices or triangles. It reprojects every proposed pin before committing
 // a single atomic native Undo transaction.
 function atelierLassoGroupCandidate(region,mesh,raw,delta){
- if(!region||!mesh||typeof raw!=='string'||!/^\\d+(?:\\s*,\\s*\\d+)*$/.test(raw.trim())||
+ if(!region||!mesh||typeof raw!=='string'||!/^\d+(?:\s*,\s*\d+)*$/.test(raw.trim())||
     !Array.isArray(delta)||delta.length!==3||!delta.every(v=>Number.isFinite(v)&&Math.abs(v)<=.15))
    return {ok:false,reason:'Use 1–8 one-based pin indices and finite XYZ delta ≤0.15'};
  const indices=[...new Set(raw.split(',').map(v=>Number(v.trim())-1))];
