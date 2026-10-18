@@ -156,7 +156,6 @@ def apply(html):
        '<button type="button" id="modelAtelierViewportPanReset">Center pan</button>'
        '<button type="button" id="modelAtelierReferenceToggle" aria-expanded="false">🖼 References</button>')
     html=html.replace('</head>',"""<style>
-#modelAtelierViewport{position:relative}
 .model-atelier .atelier-ref-dock{position:absolute;z-index:150;top:12px;left:12px;width:min(255px,calc(100% - 15px));max-height:calc(100% - 12px);overflow:auto;background:#17233cee;color:#e5f0ff;border:1px solid #70a0c3;border-radius:11px;box-shadow:0 5px 18px #0009;touch-action:pan-y}
 .model-atelier .atelier-ref-dock[hidden]{display:none!important}
 .model-atelier .atelier-ref-handle{padding:8px;display:flex;align-items:center;justify-content:space-between;gap:6px;background:#264161;cursor:move;touch-action:none;user-select:none}
