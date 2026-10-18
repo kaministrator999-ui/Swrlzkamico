@@ -119,7 +119,8 @@ assert "Here's the interactive display." in "".join(str(e.get("text") or "") for
 assert all(e.get("type")!="WIDGET" for e in router.dispatch(
     "700m",{"prompt":"Hi, how's it going?","history":[]},lambda payload:iter([]),large_generate=answer))
 assert all(e.get("type")!="WIDGET" for e in router.dispatch(
-    "700m",{"prompt":"Write Python code that graphs y=x^2","history":[]},lambda payload:iter([]),large_generate=answer))
+    "700m",{"prompt":"Write Python code that graphs y=x^2","history":[]},
+    lambda payload:iter([]),large_generate=answer,coder_generate=answer))
 assert all(e.get("type")!="WIDGET" for e in router.dispatch(
     "700m",{"prompt":"Compare Galaxy vs Pixel","history":[]},lambda payload:iter([]),large_generate=answer))
 events=list(router.dispatch(
