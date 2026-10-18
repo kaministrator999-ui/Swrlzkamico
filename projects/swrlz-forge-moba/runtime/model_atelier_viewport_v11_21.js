@@ -11,6 +11,7 @@ const atelierCameraPan=new THREE.Vector3(),atelierCameraTouches=new Map();
 const atelierCameraConsumedTouches=new Set();
 let atelierCameraGesture=null,atelierCameraMousePan=null;
 let atelierCameraInterior=false,atelierInteriorPreviousMode=null,atelierInteriorPartId=null;
+let atelierInteriorPreviousCamera=null;
 const atelierCameraMinDistance=()=>atelierCameraInterior?.08:(atelierDetailTarget?.4:1.2);
 // These are transient viewport controls. Camera and shading changes never
 // become native geometry, do not alter normals and do not touch model Undo.
@@ -28,8 +29,15 @@ function atelierViewportInsideExit(){
    else atelierViewOverrides.set(atelierInteriorPartId,atelierInteriorPreviousMode);
  }
  atelierCameraInterior=false;atelierInteriorPartId=null;atelierInteriorPreviousMode=null;
- atelierDetailTarget=null;atelierCameraPan.set(0,0,0);
- orbit.distance=8.1;cameraUpdate();atelierViewRebuild();
+ const before=atelierInteriorPreviousCamera;
+ atelierInteriorPreviousCamera=null;
+ if(before){
+   atelierDetailTarget=before.target?.clone()||null;
+   atelierCameraPan.copy(before.pan);orbit.distance=before.distance;
+   orbit.yaw=before.yaw;orbit.pitch=before.pitch;
+   camera.near=before.near;camera.far=before.far;camera.updateProjectionMatrix();
+ }
+ cameraUpdate();atelierViewRebuild();
  atelierViewportControlsRefresh();
 }
 function atelierViewportInsideEnter(){
@@ -39,6 +47,12 @@ function atelierViewportInsideEnter(){
  const bounds=new THREE.Box3().setFromObject(mesh);
  if(bounds.isEmpty()){status('The selected mesh has no inspectable bounds.',true);return false;}
  atelierInteriorPreviousMode=atelierViewOverrides.has(p.id)?atelierViewOverrides.get(p.id):null;
+ atelierInteriorPreviousCamera={
+   target:atelierDetailTarget?.clone()||null,
+   pan:atelierCameraPan.clone(),
+   distance:orbit.distance,yaw:orbit.yaw,pitch:orbit.pitch,
+   near:camera.near,far:camera.far
+ };
  atelierInteriorPartId=p.id;atelierCameraInterior=true;
  atelierViewOverrides.set(p.id,'xray');
  atelierCameraPan.set(0,0,0);
