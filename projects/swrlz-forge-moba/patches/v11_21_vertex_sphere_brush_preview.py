@@ -9,7 +9,7 @@ def once(html, before, after):
 def apply(html):
     root=Path(__file__).resolve().parent.parent
     assert "SWYRL_ENGINE_DEPLOY_MARKER: V11_20_ANATOMICAL_HEAD" in html
-    module=(root/"runtime/model_atelier_sculpt_brush_v11_21.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_viewport_v11_21.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_reference_studio_v11_22.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_surface_targeting_v11_22.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_surface_lasso_v11_22.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_local_refinement_v11_23.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_face_sheet_v11_23.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_numeric_gizmos_v11_23.js").read_text(encoding="utf-8")
+    module=(root/"runtime/model_atelier_sculpt_brush_v11_21.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_viewport_v11_21.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_reference_studio_v11_22.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_surface_targeting_v11_22.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_surface_lasso_v11_22.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_local_refinement_v11_23.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_face_sheet_v11_23.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_numeric_gizmos_v11_23.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_face_volume_v11_23.js").read_text(encoding="utf-8")
     html=once(html, "  function refreshList(){", module+"\n  function refreshList(){")
     html=once(html,"  function geometry(part){",
          "  function geometry(part){\n    if(part.kind==='faceSheet')return atelierFaceSheetGeometry(part);")
@@ -35,6 +35,9 @@ def apply(html):
              '<label>Crop W (0–1)<input id="modelAtelierFaceSheetCropW" type="number" min=".03" max="1" step=".01" value="1"></label>'
              '<label>Crop H (0–1)<input id="modelAtelierFaceSheetCropH" type="number" min=".03" max="1" step=".01" value="1"></label></div>'
              '<button type="button" id="modelAtelierFaceSheetApply">Update UV mesh / crop</button>'
+             '<label>Closed head depth (0 = open sheet, oval only)<input id="modelAtelierFaceSheetHeadDepth" type="number" step=".05" min="0" max="2" value="0"></label>'
+             '<label><input id="modelAtelierFaceSheetUVHeatmap" type="checkbox"> Show UV distortion heatmap (shaded viewport)</label>'
+             '<p id="modelAtelierFaceSheetUVStats" role="status"></p>'
              '<p id="modelAtelierFaceSheetInfo" role="status"></p></fieldset>'
              '<section id="modelAtelierSculptBrush" hidden><h3>Vertex sphere brush · editable mesh</h3>'
              '<p>Choose mesh. Arm <b>Pick center</b> and tap its surface. Drag normally to orbit.</p>'
