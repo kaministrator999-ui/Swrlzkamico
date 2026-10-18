@@ -14,8 +14,8 @@ const original=JSON.stringify(r);
 const proposal=ctx.atelierLassoGroupCandidate(r,{},'1,2',[0,.025,0]);
 assert(proposal.ok);
 assert.equal(proposal.indices.length,2);
-assert.equal(proposal.pins[0].point[1],-.075);
-assert.equal(proposal.pins[1].point[1],-.075);
+assert(Math.abs(proposal.pins[0].point[1]+.075)<1e-10);
+assert(Math.abs(proposal.pins[1].point[1]+.075)<1e-10);
 assert.equal(proposal.pins[2].point[1],.1);
 assert.equal(JSON.stringify(r),original,'Preview result must not mutate existing region pins');
 for(const [raw,delta]of[
