@@ -192,6 +192,40 @@ function atelierFaceLandmarkRefresh(){
    ' saved features. UV 0–1 maps directly onto the source image; positive depth raises the face, negative recesses it. '+
    'Choose Front/Side in References to compare actual profile manually.';
 }
+// Tap-to-place maps an untransformed object-fit:contain image's actual
+// displayed pixel rect to native bottom-up UV coordinates. Never silently
+// interpret panned/rotated/mirrored image pixels as source image positions.
+function atelierFacePickAtReference(e){
+ const toggle=$m('FaceLandmarkPick');
+ if(!toggle?.checked)return false;
+ const p=partById(selection),r=atelierRefCurrent();
+ if(p?.kind!=='faceSheet'||!r||p.faceSheet.refId!==r.id){
+   status('Select the image face sheet matching the active reference.',true);return true;
+ }
+ if(r.zoom!==1||r.offsetX!==0||r.offsetY!==0||r.rotation!==0||r.mirror){
+   status('Reset reference zoom/pan/rotation/mirroring before tapping to place UV landmarks.',true);
+   return true;
+ }
+ const img=$m('ReferenceImage'),frame=$m('ReferenceImageFrame');
+ if(!img?.naturalWidth||!img?.naturalHeight||!frame){
+   status('Reference image has not finished loading.',true);return true;
+ }
+ const rect=frame.getBoundingClientRect(),natural=img.naturalWidth/img.naturalHeight;
+ const width=Math.min(rect.width,rect.height*natural),
+   height=Math.min(rect.height,rect.width/natural);
+ const left=rect.left+(rect.width-width)/2,top=rect.top+(rect.height-height)/2;
+ const u=(e.clientX-left)/width,v=1-(e.clientY-top)/height;
+ if(u<0||u>1||v<0||v>1){
+   status('Tap inside the actual image, not its letterbox margin.',true);return true;
+ }
+ $m('FaceLandmarkU').value=u.toFixed(5);
+ $m('FaceLandmarkV').value=v.toFixed(5);
+ // Reuse exactly the same native validation + checkpoint as numerical Apply.
+ $m('FaceLandmarkApply').click();
+ status('Placed '+$m('FaceLandmarkPreset').value+' at source-image UV ('+
+   u.toFixed(3)+', '+v.toFixed(3)+') and rebuilt actual face geometry.');
+ return true;
+}
 function atelierFaceLandmarkInstall(){
  const id=k=>$m('FaceLandmark'+k);
  id('Preset').addEventListener('change',atelierFaceLandmarkRefresh);
