@@ -30,7 +30,10 @@ function atelierSculptValid(p){
  if(!Array.isArray(strokes)||strokes.length>atelierSculptMaxStrokes)return false;
  return strokes.every(s=>{
    if(!s||typeof s!=='object'||Array.isArray(s)
-     ||Object.keys(s).sort().join('|')!=='axis|center|falloff|half|level|pitch|plateau|radius|snap|strength|taper|yaw')return false;
+     ||Object.keys(s).some(k=>!['axis','center','falloff','half','level','pitch','plateau','radius','snap','strength','taper','yaw',
+       'surfaceMode','selectionRadius','offsetU','offsetV'].includes(k))
+     ||!['axis','center','falloff','half','level','pitch','plateau','radius','snap','strength','taper','yaw']
+       .every(k=>Object.prototype.hasOwnProperty.call(s,k)))return false;
    const vec=v=>Array.isArray(v)&&v.length===3&&v.every(x=>Number.isFinite(x)&&Math.abs(x)<=4);
    if(!vec(s.center)||!vec(s.axis))return false;
    const n=Math.hypot(...s.axis);
@@ -44,7 +47,10 @@ function atelierSculptValid(p){
       &&Number.isFinite(s.snap)&&s.snap>=0&&s.snap<=.1
       &&Number.isFinite(s.plateau)&&s.plateau>=0&&s.plateau<=1
       &&Number.isFinite(s.taper)&&s.taper>=0&&s.taper<=1
-      &&typeof s.level==='boolean';
+      &&typeof s.level==='boolean'
+      &&(s.surfaceMode===undefined||['front','connected','through'].includes(s.surfaceMode))
+      &&(s.selectionRadius===undefined||(Number.isFinite(s.selectionRadius)&&s.selectionRadius>=.03&&s.selectionRadius<=2.5))
+      &&[s.offsetU??0,s.offsetV??0].every(v=>Number.isFinite(v)&&Math.abs(v)<=.5);
  });
 }
 function atelierSculptFalloff(normalizedDistance,mode,plateau=0,taper=.5){
@@ -69,11 +75,14 @@ function atelierSculptApply(geometry,part){
    const origin=new THREE.Vector3(...s.center);
    const axis=new THREE.Vector3(...s.axis).applyEuler(new THREE.Euler(s.pitch,s.yaw,0,'YXZ')).normalize();
    const delta=new THREE.Vector3(),move=new THREE.Vector3(),r=s.radius;
+   const selected=s.surfaceMode?atelierSurfaceWeights(geometry,s):null;
+   const originPoint=selected?.origin||origin;
    for(let i=0;i<a.count;i++){
      const x=a.getX(i),y=a.getY(i),z=a.getZ(i);
-     delta.set(x-origin.x,y-origin.y,z-origin.z);
-     const distance=delta.length();
-     if(distance>=r)continue;
+     delta.set(x-originPoint.x,y-originPoint.y,z-originPoint.z);
+     const radial=delta.length();
+     const distance=s.surfaceMode==='connected'?selected.dist[i]:radial;
+     if(distance>=r||(selected&&selected.dist[i]>selected.radius))continue;
      let weight=atelierSculptFalloff(distance/r,s.falloff,s.plateau,s.taper);
      // Rotatable HALF-sphere restricts the influenced group to the chosen
      // side of the brush. Fade through the plane instead of a hard seam.
@@ -141,7 +150,8 @@ function atelierSculptPick(hit){
  }
  atelierSculptArmed=false;
  atelierSculptRefresh();
- status('Brush center and outward normal sampled from the selected mesh. Adjust radius, strength and Apply.');
+ atelierSurfacePreviewRefresh();
+ status('Surface brush point selected. Adjust front/connected/through targeting and preview the vertex footprint before Apply.');
  return true;
 }
 function atelierSculptForm(){
@@ -162,7 +172,11 @@ function atelierSculptForm(){
   level:$m('SculptBrushLevel').checked,
   yaw:Number($m('SculptBrushYaw').value)*Math.PI/180,
   pitch:Number($m('SculptBrushPitch').value)*Math.PI/180,
-  snap:Number($m('SculptBrushSnap').value)
+  snap:Number($m('SculptBrushSnap').value),
+  surfaceMode:$m('SculptBrushSurfaceMode').value,
+  selectionRadius:Number($m('SculptBrushSelectRadius').value),
+  offsetU:Number($m('SculptBrushOffsetU').value),
+  offsetV:Number($m('SculptBrushOffsetV').value)
  };
  if(!Number.isFinite(len)||len<1e-5||!atelierSculptValid({sculptBrushes:[s]}))return null;
  return s;
@@ -183,9 +197,11 @@ function atelierSculptInstall(){
    if(!checkPart(next)){status('Sculpt geometry data rejected by native validation.',true);return;}
    checkpoint();p.sculptBrushes=next.sculptBrushes;const id=p.id;
    signalEdited();select(id);
+   atelierSurfacePreviewClear();
    status('Saved '+(s.strength<0?'intrusion':'extrusion')+' as a local vertex falloff stroke. Save JSON to keep it.');
  });
  atelierSculptVertexInstall();
+ atelierSurfaceInstall();
  $m('SculptBrushUndoStroke').addEventListener('click',()=>{
    const p=partById(selection);if(!p?.sculptBrushes?.length)return;
    checkpoint();p.sculptBrushes=p.sculptBrushes.slice(0,-1);
