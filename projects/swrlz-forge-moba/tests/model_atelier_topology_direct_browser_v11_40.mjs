@@ -90,7 +90,7 @@ try{
   ps=await parts();assert.equal(ps.length,283);
   await page.locator('#modelAtelierImportFile').setInputFiles(path);
   await page.waitForFunction(()=>window.SWYRL_ENGINE_AGENT.inspectScene().project.modelAtelier.parts.length===284);
-  ps=await parts();assert.equal(ps.find(x=>x.kind==='topologyMesh')?.topologyMesh.indices.length/3,after+1);
+  ps=await parts();assert.equal(ps.find(x=>x.kind==='topologyMesh')?.topologyMesh.indices.length/3,after+selected.incident);
   assert.equal(ps.find(x=>x.id==='model-0001')?.headAnatomy!==undefined,true);
   assert.equal(errors.length,0,errors.join(' | '));
   console.log('V1140_REAL_HEAD_EDGE_VERTEX_FACE_EDIT_UNDO_REDO_NATIVE_RELOAD_PASS',device,before,after);
