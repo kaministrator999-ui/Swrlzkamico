@@ -52,10 +52,22 @@ try{
   const bbox=await page.locator('#modelAtelierViewport canvas').boundingBox();
   assert(bbox&&marker.x>=bbox.x&&marker.x<=bbox.x+bbox.width
     &&marker.y>=bbox.y&&marker.y<=bbox.y+bbox.height,'Gizmo must be visible');
-  await page.mouse.move(marker.x,marker.y);
-  await page.mouse.down();
-  await page.mouse.move(marker.x+30,marker.y-9,{steps:5});
-  await page.mouse.up();
+  if(mobile){
+   // Real Android-style touch drag; mouse events in a touch-emulated context
+   // can be swallowed/replaced by the browser's synthetic gestures.
+   const session=await context.newCDPSession(page);
+   const one=(x,y)=>[{x,y,id:7}];
+   await session.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:one(marker.x,marker.y)});
+   for(let i=1;i<=8;i++)await session.send('Input.dispatchTouchEvent',{
+      type:'touchMove',touchPoints:one(marker.x+i*5,marker.y-i*1.5)
+   });
+   await session.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+  }else{
+   await page.mouse.move(marker.x,marker.y);
+   await page.mouse.down();
+   await page.mouse.move(marker.x+40,marker.y-12,{steps:8});
+   await page.mouse.up();
+  }
   changed=(await parts()).find(p=>p.id==='model-0001');
   assert.equal(changed.sculptVertexEdits?.length,1,'Point gizmo drag must persist');
   assert(changed.sculptVertexEdits[0].indices.includes(12400));
