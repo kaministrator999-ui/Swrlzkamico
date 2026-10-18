@@ -1,0 +1,54 @@
+name: Verify §E v11.24 freehand lasso draft
+on:
+  push:
+    branches: [feature/atelier-freehand-lasso-v11-24]
+    paths:
+      - 'projects/swrlz-forge-moba/runtime/model_atelier_surface_lasso_v11_22.js'
+      - 'projects/swrlz-forge-moba/runtime/model_atelier_viewport_v11_21.js'
+      - 'projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py'
+      - 'projects/swrlz-forge-moba/tests/model_atelier_freehand_lasso_v11_24.mjs'
+      - 'projects/swrlz-forge-moba/tests/model_atelier_freehand_browser_v11_24.mjs'
+      - '.github/workflows/verify-freehand-lasso-v11-24.yml'
+permissions:
+  contents: read
+concurrency:
+  group: verify-atelier-freehand-v1124
+  cancel-in-progress: true
+jobs:
+  freehand-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Parse editor sources and integration patch
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/model_atelier_surface_lasso_v11_22.js
+          node --check projects/swrlz-forge-moba/runtime/model_atelier_viewport_v11_21.js
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py
+      - name: Verify real source freehand pointer flow and safety guards
+        run: node projects/swrlz-forge-moba/tests/model_atelier_freehand_lasso_v11_24.mjs
+      - name: Build isolated §E editor from sealed v11.20 and candidate patch
+        run: |
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/freehand-editor
+          python - <<'PY'
+          import runpy
+          from pathlib import Path
+          p=Path('/tmp/freehand-editor/index.html')
+          patch=runpy.run_path('projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py')
+          p.write_text(patch['apply'](p.read_text()))
+          PY
+      - name: Real desktop + Android-touch native editor tests
+        run: |
+          npm install --no-save playwright@1.56.1 three@0.169.0
+          npx playwright install --with-deps --only-shell chromium
+          python -m http.server 8787 --directory /tmp/freehand-editor >/tmp/freehand-server.log 2>&1 &
+          PID=$!
+          trap 'kill "$PID" 2>/dev/null || true' EXIT
+          SWYRL_SCULPT_TEST_URL=http://127.0.0.1:8787 node projects/swrlz-forge-moba/tests/model_atelier_freehand_browser_v11_24.mjs
+          SWYRL_SCULPT_TEST_URL=http://127.0.0.1:8787 node projects/swrlz-forge-moba/tests/model_atelier_lasso_browser_v11_22.mjs

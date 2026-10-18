@@ -197,6 +197,7 @@ function atelierCameraPointerDown(e){
    pressed=null;
    if(atelierSculptDrag){atelierSculptDrag=null;renderParts();}
    if(atelierLassoDrag){atelierLassoDrag=null;atelierLassoTempPin=null;atelierLassoOverlayRefresh();}
+   if(atelierLassoFreehand){atelierLassoFreehand=null;atelierLassoPending=[];atelierLassoArm=null;atelierLassoRefresh();}
    for(const id of atelierCameraTouches.keys())atelierCameraConsumedTouches.add(id);
    atelierCameraGesture=atelierCameraTouchMetrics();
    return true;
