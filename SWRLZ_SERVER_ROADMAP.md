@@ -1,3 +1,17 @@
+## UPDATE STARTED — 2026-10-18 — v286 Live widget/prose consistency repair
+
+**Owner evidence:** Android screenshots and private export `swrlz-dragon-chat (86).json` show accepted interactive model-3d, math-graph and comparison widgets, while 700M companion prose contradicts them. 3D torus text falsely says Chat cannot display it and returns invalid unsolicited Python/Blender instructions; graph text falsely says `y=x²−4` touches the x-axis at vertex (actual intercepts ±2); comparison incorrectly says Dragon B is faster and A is more weight-efficient (42>33 km/h; 9<13 kg). The private export is evidence for tests, not material to copy into public GitHub.
+
+**Baseline:** published Space `1f1a5b90307b09639ddbc688061ee20caa57d188`, source `5c562957a1832780b82745a96a12269c171ebd32`; prior rollback `37fbbc57063a3d78c0f6904bdeaea053f2d3f522`. Runtime Repository Work `1.0.222`, Server `2.3.434`, Web Chat `1.5.153`, LALM Engine `2.1.201`. Main journal SHA at entry `cf19f7df9bfe534365ec3dcddb82c35245e6b6e8`, main HEAD `7b410dd6c1bd8e2d8b0a39660c5f4e3ba14ce3b9`, runtime HEAD `dde794192fc85d79a380f87d8319cceb7b363e68`.
+
+**Architecture decision:** preserve Brain-to-WIDGET compiler, Station widget metadata and Chat Mask renderer. Add a bounded model-router response-consistency gate only when a locally compiled presentation widget exists; it evaluates completed model prose against source-grounded typed widget data before streaming visible DELTAs, prefers model output if safe and otherwise supplies a concise deterministic source-grounded companion with explicit correction receipt. Avoid a second inference pass, code artifact creation from unrelated model examples, private export persistence, special casing names of user objects, and changes to the successful renderer.
+
+**Camera/verification:** existing STATUS/CANDIDATE_VALIDATION and Station WIDGET event; add only safe typed kind/rejection codes, no raw private prompt in logs. Test source-equivalent three failed replies, successful model reply pass-through, ordinary chat stream, coder/online unchanged; run offline candidate/browser regression and guarded HF release only after exact-source validation. Observe final Space revision, rollback and signed-in Android acceptance separately.
+
+**State:** STARTED; no v286 code edits or publication claimed yet.
+
+---
+
 ## UPDATE FINISHED — 2026-10-18 — v284/v285 Chat rich widgets with conversational visual selection
 
 **Outcome:** Implemented, tested, merged and published bounded comparison, graph/equation and primitive 3D wireframe widgets through one existing `swrlz-widget-v1` event/Station/Chat pipeline. Natural explicit user graph/model/comparison requests now compile a safe structured widget in Brain/routing; a normal model-written explanation still uses the existing LALM inference flow. The renderer is responsive and interactive on an Android-sized browser viewport. User signed-in Android end-to-end acceptance remains OPEN, and the HF release is `DEPLOYED_UNVERIFIED`, not known-good.
