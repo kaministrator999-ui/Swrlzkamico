@@ -5,7 +5,7 @@ import * as THREE from 'three';
 const read=p=>fs.readFileSync(new URL('../'+p,import.meta.url),'utf8');
 const c=vm.createContext({THREE,console});
 vm.runInContext(read('runtime/model_atelier_surface_targeting_v11_22.js')+'\n'+
- read('runtime/model_atelier_sculpt_brush_v11_21.js')+'\n'+read('runtime/model_atelier_surface_lasso_v11_22.js'),c);
+ read('runtime/model_atelier_sculpt_brush_v11_21.js')+'\n'+read('runtime/model_atelier_surface_lasso_v11_22.js')+'\n'+read('runtime/model_atelier_local_refinement_v11_23.js'),c);
 const stroke=(overrides={})=>({
  center:[0,0,0],axis:[0,0,1],radius:.28,selectionRadius:.28,strength:.15,
  surfaceMode:'front',falloff:'smooth',half:false,level:false,
