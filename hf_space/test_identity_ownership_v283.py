@@ -72,4 +72,24 @@ focus_start=src.index("focused=(",src.index("if (concise_identity_turn or identi
 focus_end=src.index("if custom_assistant_profile:",focus_start)
 assert "ASSISTANT/SELF:" not in src[focus_start:focus_end]
 
+# Identity ownership filters out generated self-descriptions, but retains
+# relevant user-authored evidence, including a later explicit name.
+sample=[
+    {"role":"user","content":"Who are you?"},
+    {"role":"assistant","content":"I'm §wyrlz, the assistant."},
+    {"role":"user","content":"I work in a cafe."},
+    {"role":"assistant","content":"You work at a cafe."},
+    {"role":"user","content":"My name is Avery."},
+]
+projection=e._user_name_evidence_history(sample)
+assert [x["content"] for x in projection]==[
+    "I work in a cafe.", "My name is Avery."
+]
+assert not e._user_name_evidence_history([
+    {"role":"user","content":"Who are you"},
+    {"role":"assistant","content":"I'm §wyrlz"}
+])
+assert "model_history=_user_name_evidence_history(model_history)" in src
+assert "Without a supported human name" in src
+
 print("v283 ownership, unknown-name, corrections and jokes regressions PASS")
