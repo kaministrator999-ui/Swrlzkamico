@@ -1,0 +1,43 @@
+name: Rich Widget Browser Smoke v285
+on:
+  push:
+    branches: [feature/chat-widget-intent-v285]
+    paths:
+      - 'tests/test_widget_atelier_browser_v285.cjs'
+      - 'hf_space/chat/§wyrlz/assets/rich-widgets-v284.js'
+      - 'hf_space/chat/§wyrlz/assets/rich-widgets-v284.css'
+      - 'hf_space/chat/§wyrlz/assets/widget-atelier-v284.html'
+      - '.github/workflows/rich-widget-browser-v285.yml'
+  pull_request:
+    paths:
+      - 'tests/test_widget_atelier_browser_v285.cjs'
+      - 'hf_space/chat/§wyrlz/assets/rich-widgets-v284.js'
+      - 'hf_space/chat/§wyrlz/assets/rich-widgets-v284.css'
+      - 'hf_space/chat/§wyrlz/assets/widget-atelier-v284.html'
+      - '.github/workflows/rich-widget-browser-v285.yml'
+permissions:
+  contents: read
+jobs:
+  playwright-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install ephemeral browser testing only
+        run: |
+          npm install --no-save --no-audit --no-fund playwright
+          npx playwright install --with-deps chromium
+      - name: Serve exact candidate static assets and test real canvas
+        run: |
+          python -m http.server 8765 --bind 127.0.0.1 --directory hf_space >/tmp/swrlz-widget-preview.log 2>&1 &
+          for i in $(seq 1 30); do
+            if curl -fsS 'http://127.0.0.1:8765/chat/%C2%A7wyrlz/assets/widget-atelier-v284.html' >/dev/null; then break; fi
+            sleep 1
+          done
+          node tests/test_widget_atelier_browser_v285.cjs
