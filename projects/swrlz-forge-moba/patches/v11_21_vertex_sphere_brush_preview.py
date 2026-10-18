@@ -219,10 +219,7 @@ def apply(html):
          "const hits=raycaster.intersectObjects(meshes,false);select(hits[0]?.object?.userData?.atelierId||null);",
          "if(atelierSculptVertexPick(e))return;const hits=raycaster.intersectObjects(meshes,false);if(atelierSculptPick(hits[0]))return;select(hits[0]?.object?.userData?.atelierId||null);")
     html=once(html,"  function close(){\n    if(!panel||panel.hidden)return;",
-         "  function close(){\n    atelierSurfacePreviewClear();if(!panel||panel.hidden)return;") 
-    # old close remains otherwise unchanged
-    
-         "  function close(){\n    if(!panel||panel.hidden)return;atelierSculptOverlayClear();")
+         "  function close(){\n    atelierSurfacePreviewClear();if(!panel||panel.hidden)return;atelierSculptOverlayClear();")
     key="renderParts();refreshList();refreshInspector();"
     assert key in html
     html=html.replace(key,"renderParts();atelierSculptOverlayRefresh();refreshList();refreshInspector();")
