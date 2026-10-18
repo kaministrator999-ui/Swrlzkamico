@@ -4,16 +4,57 @@
 MODEL_ATELIER_KINDS.push('faceSheet');
 const atelierFaceSheetTextures=new Map();
 const atelierFaceSheetMaxCells=12000;
+const atelierFaceLandmarkNames=['browLeft','browRight','eyeLeft','eyeRight',
+ 'noseBridge','noseTip','cheekLeft','cheekRight','mouthLeft','mouthRight','chin','jaw'];
+function atelierFaceLandmarksValid(v){
+ if(v.landmarks===undefined)return true;
+ if(!Array.isArray(v.landmarks)||v.landmarks.length>atelierFaceLandmarkNames.length)return false;
+ const names=new Set();
+ return v.landmarks.every(l=>{
+   if(!l||typeof l!=='object'||Array.isArray(l)||
+     Object.keys(l).sort().join('|')!=='depth|name|radius|uv'||
+     !atelierFaceLandmarkNames.includes(l.name)||names.has(l.name)||
+     !Array.isArray(l.uv)||l.uv.length!==2||
+     !l.uv.every(a=>Number.isFinite(a)&&a>=0&&a<=1)||
+     !Number.isFinite(l.depth)||Math.abs(l.depth)>.4||
+     !Number.isFinite(l.radius)||l.radius<.02||l.radius>.4)return false;
+   names.add(l.name);return true;
+ });
+}
+// Opt-in manual control-point displacement using original reference UVs.
+// Radius is in normalized image-UV coordinates, not screen pixels. Original
+// image and UV mapping are preserved, and a zero/empty list is legacy-identical.
+function atelierFaceLandmarkSculpt(g,part){
+ const landmarks=part.faceSheet.landmarks;
+ if(!landmarks?.length)return g;
+ const a=g.attributes.position,uv=g.attributes.uv;
+ for(let i=0;i<a.count;i++){
+   const u=uv.getX(i),v=uv.getY(i);
+   let z=a.getZ(i);
+   for(const l of landmarks){
+     const d=Math.hypot(u-l.uv[0],v-l.uv[1])/l.radius;
+     if(d>=1)continue;
+     const w=(1-d*d)**2;
+     z+=l.depth*w;
+   }
+   a.setZ(i,Math.max(-.6,Math.min(.6,z)));
+ }
+ a.needsUpdate=true;g.computeVertexNormals();
+ return g;
+}
 function atelierFaceSheetValid(part){
  if(part.kind!=='faceSheet')return part.faceSheet===undefined;
  const v=part.faceSheet;
  if(!v||typeof v!=='object'||Array.isArray(v)
-   ||!['crop|gridU|gridV|refId|shape','crop|gridU|gridV|headDepth|refId|shape'].includes(Object.keys(v).sort().join('|'))
+   ||!['crop|gridU|gridV|refId|shape','crop|gridU|gridV|headDepth|refId|shape',
+     'crop|gridU|gridV|landmarks|refId|shape',
+     'crop|gridU|gridV|headDepth|landmarks|refId|shape'].includes(Object.keys(v).sort().join('|'))
    ||typeof v.refId!=='string'||v.refId.length>72
    ||!['oval','rectangle'].includes(v.shape)
    ||!Number.isInteger(v.gridU)||v.gridU<8||v.gridU>128
    ||!Number.isInteger(v.gridV)||v.gridV<4||v.gridV>128
    ||v.gridU*v.gridV>atelierFaceSheetMaxCells
+   ||!atelierFaceLandmarksValid(v)
    ||(v.headDepth!==undefined&&(!Number.isFinite(v.headDepth)||v.headDepth<0||v.headDepth>2||v.shape!=='oval'&&v.headDepth>0))
    ||!Array.isArray(v.crop)||v.crop.length!==4||!v.crop.every(Number.isFinite))return false;
  const [x,y,w,h]=v.crop;
@@ -50,6 +91,7 @@ function atelierFaceSheetGeometry(p){
    g.setIndex(indices);
    g.computeVertexNormals();
  }
+ atelierFaceLandmarkSculpt(g,p);
  if(v.headDepth>0)g=atelierFaceVolumeClose(g,p);
  g.computeBoundingSphere();g.computeBoundingBox();
  return g;
@@ -91,6 +133,57 @@ function atelierFaceSheetRefresh(){
    +' · grid '+v.gridU+' × '+v.gridV
    +' · UVs track the image as the surface is sculpted.';
  atelierFaceVolumeRefresh();
+ atelierFaceLandmarkRefresh();
+}
+function atelierFaceLandmarkRefresh(){
+ const p=partById(selection);
+ const panel=$m('FaceLandmarkTools');
+ if(!panel)return;
+ panel.hidden=p?.kind!=='faceSheet';
+ if(!p||p.kind!=='faceSheet')return;
+ const key=$m('FaceLandmarkPreset').value;
+ const item=p.faceSheet.landmarks?.find(x=>x.name===key);
+ if(item){
+   $m('FaceLandmarkU').value=String(item.uv[0]);
+   $m('FaceLandmarkV').value=String(item.uv[1]);
+   $m('FaceLandmarkRadius').value=String(item.radius);
+   $m('FaceLandmarkDepth').value=String(item.depth);
+ }
+ $m('FaceLandmarkStatus').textContent=(p.faceSheet.landmarks?.length||0)+
+   ' saved features. UV 0–1 maps directly onto the source image; positive depth raises the face, negative recesses it. '+
+   'Choose Front/Side in References to compare actual profile manually.';
+}
+function atelierFaceLandmarkInstall(){
+ const id=k=>$m('FaceLandmark'+k);
+ id('Preset').addEventListener('change',atelierFaceLandmarkRefresh);
+ id('Apply').addEventListener('click',()=>{
+   const p=partById(selection);if(p?.kind!=='faceSheet')return;
+   const name=id('Preset').value,
+     uv=[Number(id('U').value),Number(id('V').value)],
+     radius=Number(id('Radius').value),depth=Number(id('Depth').value);
+   const item={name,uv,radius,depth};
+   const landmarks=(p.faceSheet.landmarks||[]).filter(x=>x.name!==name);
+   landmarks.push(item);
+   const candidate={...p,faceSheet:{...p.faceSheet,landmarks}};
+   if(!atelierFaceSheetValid(candidate)||!checkPart(candidate)){
+     status('Face landmark rejected: UV 0–1, radius .02–.4, depth ±.4, finite values only.',true);return;
+   }
+   checkpoint();p.faceSheet=candidate.faceSheet;
+   signalEdited();select(p.id);
+   id('Preset').value=name;atelierFaceLandmarkRefresh();
+   status('Saved manual '+name+' landmark; recomputed actual UV face mesh. Undo/Redo and native JSON remain available.');
+ });
+ id('Remove').addEventListener('click',()=>{
+   const p=partById(selection);if(p?.kind!=='faceSheet')return;
+   const name=id('Preset').value;
+   if(!p.faceSheet.landmarks?.some(x=>x.name===name))return;
+   const landmarks=p.faceSheet.landmarks.filter(x=>x.name!==name);
+   const candidate={...p,faceSheet:{...p.faceSheet,landmarks}};
+   if(!checkPart(candidate))return;
+   checkpoint();p.faceSheet=candidate.faceSheet;signalEdited();select(p.id);
+   id('Preset').value=name;atelierFaceLandmarkRefresh();
+   status('Removed feature deformation. Original UV image and mesh source preserved.');
+ });
 }
 function atelierFaceSheetCreate(){
  const m=model(),ref=atelierRefCurrent();
@@ -112,6 +205,7 @@ function atelierFaceSheetCreate(){
 }
 function atelierFaceSheetInstall(){
  atelierFaceVolumeInstall();
+ atelierFaceLandmarkInstall();
  $m('FaceSheetCreate').addEventListener('click',atelierFaceSheetCreate);
  const kind=$m('Kind');
  if(kind&&!kind.querySelector('option[value="faceSheet"]')){

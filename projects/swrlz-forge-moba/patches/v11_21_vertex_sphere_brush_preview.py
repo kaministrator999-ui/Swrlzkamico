@@ -20,7 +20,7 @@ def apply(html):
     html=once(html,"if(key==='kind'){delete p.headAnatomy;delete p.portraitFinish;",
          "if(key==='kind'){delete p.sculptBrushes;delete p.sculptVertexEdits;delete p.sculptLassos;delete p.refinementLayers;delete p.faceSheet;delete p.topologyMesh;delete p.headAnatomy;delete p.portraitFinish;")
     html=once(html,"atelierHeadAnatomyRefresh();",
-         "atelierHeadAnatomyRefresh();atelierSculptRefresh();atelierViewportControlsRefresh();atelierRefPaint();atelierFaceSheetRefresh();atelierLODRefresh();")
+         "atelierHeadAnatomyRefresh();atelierSculptRefresh();atelierViewportControlsRefresh();atelierRefPaint();atelierFaceSheetRefresh();atelierFaceLandmarkRefresh();atelierLODRefresh();")
     html=once(html,"atelierHeadAnatomyInstall();",
          "atelierHeadAnatomyInstall();atelierSculptInstall();atelierViewportInstall();atelierRefInstall();atelierFaceSheetInstall();atelierLODInstall();")
     brush = ('<fieldset id="modelAtelierFaceSheetControls" hidden aria-label="Editable UV image face sheet">'
@@ -39,6 +39,25 @@ def apply(html):
              '<label><input id="modelAtelierFaceSheetUVHeatmap" type="checkbox"> Show UV distortion heatmap (shaded viewport)</label>'
              '<p id="modelAtelierFaceSheetUVStats" role="status"></p>'
              '<p id="modelAtelierFaceSheetInfo" role="status"></p></fieldset>'
+             '<fieldset id="modelAtelierFaceLandmarkTools" hidden aria-label="Reference-mapped sculptable facial landmarks">'
+             '<legend>Facial landmarks · manual front/profile modeling</legend>'
+             '<p>Place image-UV feature centers and raise or recess actual head-sheet vertices. Use Front/Side image references to check depth; no automatic photo reconstruction.</p>'
+             '<label>Facial feature<select id="modelAtelierFaceLandmarkPreset">'
+             '<option value="noseTip">Nose tip</option><option value="noseBridge">Nose bridge</option>'
+             '<option value="eyeLeft">Left eye socket</option><option value="eyeRight">Right eye socket</option>'
+             '<option value="browLeft">Left brow</option><option value="browRight">Right brow</option>'
+             '<option value="cheekLeft">Left cheek</option><option value="cheekRight">Right cheek</option>'
+             '<option value="mouthLeft">Left mouth corner</option><option value="mouthRight">Right mouth corner</option>'
+             '<option value="chin">Chin</option><option value="jaw">Jaw contour</option></select></label>'
+             '<div class="atelier-pair">'
+             '<label>Image U (0–1)<input id="modelAtelierFaceLandmarkU" type="number" min="0" max="1" step=".02" value=".5"></label>'
+             '<label>Image V (0–1)<input id="modelAtelierFaceLandmarkV" type="number" min="0" max="1" step=".02" value=".55"></label>'
+             '<label>Brush radius in UV units<input id="modelAtelierFaceLandmarkRadius" type="number" min=".02" max=".4" step=".01" value=".13"></label>'
+             '<label>Depth: positive outward, negative inward<input id="modelAtelierFaceLandmarkDepth" type="number" min="-.4" max=".4" step=".02" value=".12"></label></div>'
+             '<div class="atelier-inspector-actions">'
+             '<button id="modelAtelierFaceLandmarkApply" type="button">Sculpt / update feature</button>'
+             '<button id="modelAtelierFaceLandmarkRemove" type="button">Remove feature</button></div>'
+             '<p id="modelAtelierFaceLandmarkStatus" role="status"></p></fieldset>'
              '<fieldset id="modelAtelierLODTools" hidden aria-label="Mesh topology and LOD authoring">'
              '<legend>Actual reduced topology · selected mesh</legend>'
              '<label>Desired triangle ratio <input id="modelAtelierLODRatio" type="number" step=".05" min=".05" max=".9" value=".35"></label>'

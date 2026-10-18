@@ -1,0 +1,50 @@
+name: Verify §E v11.39 manual photographic face landmarks
+on:
+  push:
+    branches: [feature/atelier-face-landmarks-v11-39]
+    paths:
+      - 'projects/swrlz-forge-moba/runtime/model_atelier_face_sheet_v11_23.js'
+      - 'projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py'
+      - 'projects/swrlz-forge-moba/tests/model_atelier_face_landmarks*.mjs'
+      - '.github/workflows/verify-atelier-face-landmarks-v11-39.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: atelier-face-landmarks-v1139
+  cancel-in-progress: true
+jobs:
+  uv-depth-and-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Build v11.20-preserving candidate and syntax checks
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/model_atelier_face_sheet_v11_23.js
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py
+          python projects/swrlz-forge-moba/scripts/build_atelier_precision_preview_v11_37.py --output /tmp/atelier-landmarks
+          node --check /tmp/atelier-landmarks-module.mjs
+      - name: Actual vertex/UV feature displacement geometry and prior topology tools
+        run: |
+          npm install --no-save playwright@1.56.1 three@0.169.0
+          node projects/swrlz-forge-moba/tests/model_atelier_face_landmarks_v11_39.mjs
+          node projects/swrlz-forge-moba/tests/model_atelier_topology_lod_v11_38.mjs
+          node projects/swrlz-forge-moba/tests/model_atelier_face_sheet_v11_23.mjs
+          node projects/swrlz-forge-moba/tests/model_atelier_face_volume_v11_23.mjs
+      - name: Original character and native face workflow on desktop Android
+        run: |
+          npx playwright install --with-deps --only-shell chromium
+          python -m http.server 8787 --directory /tmp/atelier-landmarks >/tmp/atelier-landmarks.log 2>&1 &
+          PID=$!
+          trap 'kill "$PID" 2>/dev/null || true' EXIT
+          for i in $(seq 1 50); do
+            if curl -fsS http://127.0.0.1:8787/ >/dev/null; then break; fi
+            sleep .3
+          done
+          curl -fsS http://127.0.0.1:8787/ >/dev/null
+          SWYRL_SCULPT_TEST_URL=http://127.0.0.1:8787 node projects/swrlz-forge-moba/tests/model_atelier_face_landmarks_browser_v11_39.mjs
