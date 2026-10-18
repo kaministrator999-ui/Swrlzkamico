@@ -20,8 +20,8 @@
 
 | Category | Operator controls / code | Status |
 | --- | --- | --- |
-| Local true subdivision | RefineTools: 1 or 2 detail levels from selected surface lasso; conforming shared-edge splits, reversible per-object layers, caps and UV/color interpolation | Core implementation; isolated no-T-junction/UV/color test passed; whole-head mobile Save/Reload regression gate required |
-| Face reference → editable mesh | References → Create sculptable UV face sheet; oval/rectangle triangulation, normalized crop and U/V density, independent textured part, native UV-preserving brush/lasso deformations | Core implementation; requires full phone/desktop end-to-end verification; not automatic full-head reconstruction |
+| Local true subdivision | RefineTools: 1 or 2 detail levels from selected surface lasso; conforming shared-edge splits, reversible per-object layers, caps and UV/color interpolation | Passed geometric no-T-junction/UV/color tests AND desktop/mobile original-head Save/Undo/Reload (48,768 → 50,454 triangles); isolated draft preview |
+| Face reference → editable mesh | References → Create sculptable UV face sheet; oval/rectangle triangulation, normalized crop and U/V density, independent textured part, native UV-preserving brush/lasso deformations | Passed desktop/mobile creation, UV geometry, crop/density editing, sculpt, Undo and JSON reimport; not automatic full-head reconstruction |
 
 ## Codex editor operation contract (narrow scope)
 
@@ -50,8 +50,10 @@
 5. Before/after save: inspect front/profile/three-quarter beside the imported reference, use native Undo, save JSON, reload and check equivalent geometry.
 6. Production and protected source manifests remain unchanged until gates pass. Do not merge draft PR automatically.
 
+**Verified v11.23 acceptance:** [real browser and CPU results](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/39126576476) · [exact published preview](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/39126576523). The original 283 parts stay unchanged unless a user deliberately adds a separate face sheet.
+
 ## Acceptance gates from the design
 
-A — references: core implemented; B — vertex pins: core implemented; C — surface brush: core implemented and targeted tests; D — editable polygon lasso: core preview only; E — conforming local subdivision/reversible layers: implemented core pending browser acceptance; F — UV face-sheet starter: implemented core pending browser acceptance, complete head closure pending.
+A — references: core implemented; B — vertex pins: core implemented; C — surface brush: core implemented and targeted tests; D — editable polygon lasso: core preview only; E — conforming local subdivision/reversible layers: core verified desktop/mobile; F — UV face-sheet starter: core verified desktop/mobile, complete head closure pending.
 
 **The complete advanced authoring specification is not yet implemented. Codex can use the controlled, tested editor tools, but should not assume freehand UV reconstruction, arbitrary inside-out topology editing, decimation or automatic skull closure exists.**
