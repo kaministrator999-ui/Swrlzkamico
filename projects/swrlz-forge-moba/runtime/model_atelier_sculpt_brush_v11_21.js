@@ -10,11 +10,13 @@ function atelierSculptVertexValid(p){
  if(edits===undefined)return true;
  if(!Array.isArray(edits)||edits.length>atelierSculptMaxVertexEdits)return false;
  return edits.every(e=>e&&typeof e==='object'&&!Array.isArray(e)
-   &&Object.keys(e).sort().join('|')==='delta|indices|resolution'
+   &&(['delta|indices|resolution','indices|moves|resolution'].includes(Object.keys(e).sort().join('|')))
    &&Array.isArray(e.indices)&&e.indices.length>0&&e.indices.length<=256
    &&new Set(e.indices).size===e.indices.length
    &&e.indices.every(i=>Number.isInteger(i)&&i>=0&&i<=300000)
-   &&Array.isArray(e.delta)&&e.delta.length===3&&e.delta.every(v=>Number.isFinite(v)&&Math.abs(v)<=.5)
+   &&((Array.isArray(e.delta)&&e.delta.length===3&&e.delta.every(v=>Number.isFinite(v)&&Math.abs(v)<=.5))||
+      (Array.isArray(e.moves)&&e.moves.length===e.indices.length&&e.moves.every(a=>
+        Array.isArray(a)&&a.length===3&&a.every(v=>Number.isFinite(v)&&Math.abs(v)<=.5))))
    &&Array.isArray(e.resolution)&&e.resolution.length===2
    &&e.resolution.every(v=>Number.isInteger(v)&&v>=0&&v<=512));
 }
@@ -103,10 +105,11 @@ function atelierSculptApply(geometry,part){
  for(const edit of part.sculptVertexEdits||[]){
    const res=atelierSculptResolution(part);
    if(edit.resolution[0]!==res[0]||edit.resolution[1]!==res[1])continue;
-   for(const i of edit.indices){
-     if(i>=a.count)continue;
-     a.setXYZ(i,a.getX(i)+edit.delta[0],a.getY(i)+edit.delta[1],a.getZ(i)+edit.delta[2]);
-   }
+   edit.indices.forEach((i,k)=>{
+     if(i>=a.count)return;
+     const delta=edit.moves?.[k]||edit.delta;
+     a.setXYZ(i,a.getX(i)+delta[0],a.getY(i)+delta[1],a.getZ(i)+delta[2]);
+   });
  }
  a.needsUpdate=true;
  geometry=atelierRefineApply(geometry,part);
@@ -210,6 +213,7 @@ function atelierSculptInstall(){
  atelierSculptVertexInstall();
  atelierSurfaceInstall();
  atelierLassoInstall();
+ atelierGroupInstall();
  atelierRefineInstall();
  $m('SculptBrushUndoStroke').addEventListener('click',()=>{
    const p=partById(selection);if(!p?.sculptBrushes?.length)return;
