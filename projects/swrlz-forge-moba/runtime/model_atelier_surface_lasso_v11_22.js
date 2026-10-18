@@ -22,7 +22,9 @@ function atelierLassoValid(part){
    if(!r||typeof r!=='object'||Array.isArray(r)||
      !['id','name','pins','axis','feather','morph','enabled','resolution'].every(k=>Object.hasOwn(r,k))
      ||Object.keys(r).some(k=>!['id','name','pins','axis','feather','morph','enabled','resolution',
-        'selectionOp','operandRegionId'].includes(k))
+        'selectionOp','operandRegionId','boundaryCurve'].includes(k))
+     ||(r.boundaryCurve!==undefined&&(!Number.isFinite(r.boundaryCurve)||
+       r.boundaryCurve<0||r.boundaryCurve>1))
      ||((r.selectionOp===undefined)!==(r.operandRegionId===undefined))
      ||(r.selectionOp!==undefined&&!['add','subtract','intersect'].includes(r.selectionOp))
      ||typeof r.id!=='string'||r.id.length>48||ids.has(r.id)
@@ -56,6 +58,24 @@ function atelierLassoValid(part){
    return a.dot(b)>.75;
  });
 }
+// Chaikin-style bounded corner interpolation keeps the 3–32 original
+// surface-attached control pins untouched; extra points are evaluated-only
+// footprint samples, never new native mesh vertices or editable 📌 pins.
+function atelierLassoCurvePoints(poly,amount=0){
+ if(!Number.isFinite(amount)||amount<=0)return poly;
+ const t=Math.min(1,Math.max(0,amount))*.25;
+ let result=poly;
+ for(let pass=0;pass<2;pass++){
+   const next=[];
+   for(let i=0;i<result.length;i++){
+     const a=result[i],b=result[(i+1)%result.length];
+     next.push([(1-t)*a[0]+t*b[0],(1-t)*a[1]+t*b[1]]);
+     next.push([t*a[0]+(1-t)*b[0],t*a[1]+(1-t)*b[1]]);
+   }
+   result=next;
+ }
+ return result;
+}
 function atelierLassoProjection(r){
  const [u,v]=atelierSurfaceTangent(r.axis);
  const origin=new THREE.Vector3(...r.pins[0].point);
@@ -63,9 +83,10 @@ function atelierLassoProjection(r){
    const delta=new THREE.Vector3(...p.point).sub(origin);
    return [delta.dot(u),delta.dot(v)];
  });
- return {origin,u,v,poly};
+ return {origin,u,v,poly:atelierLassoCurvePoints(poly,r.boundaryCurve||0)};
 }
 function atelierLassoPolygonValid(r){
+ if(r.boundaryCurve&&!atelierLassoPolygonValid({...r,boundaryCurve:0}))return false;
  const {poly}=atelierLassoProjection(r),n=poly.length;
  let area=0;for(let i=0;i<n;i++){const p=poly[i],q=poly[(i+1)%n];area+=p[0]*q[1]-q[0]*p[1];}
  if(Math.abs(area)<.00004)return false;
@@ -209,8 +230,21 @@ function atelierLassoOverlayRefresh(){
      vertices.push(v.x,v.y,v.z);
    }
    if(vertices.length>=6){
+     // Smooth evaluated boundary follows the SAME tangent-plane footprint
+     // as sculpt/refinement selection. Source control glyphs stay pinned to
+     // real triangles; no interpolated point is promoted into native topology.
+     let wire=vertices;
+     if(region.id===active?.id&&active.boundaryCurve){
+       const basis=atelierLassoProjection(active);
+       wire=[];
+       for(const xy of basis.poly){
+         const p=mesh.localToWorld(basis.origin.clone().addScaledVector(basis.u,xy[0])
+           .addScaledVector(basis.v,xy[1]));
+         wire.push(p.x,p.y,p.z);
+       }
+     }
      const lineGeo=new THREE.BufferGeometry();
-     lineGeo.setAttribute('position',new THREE.Float32BufferAttribute(vertices,3));
+     lineGeo.setAttribute('position',new THREE.Float32BufferAttribute(wire,3));
      const line=new THREE.LineLoop(lineGeo,new THREE.LineBasicMaterial({
        color:region.color,depthTest:false,linewidth:2
      }));
@@ -251,6 +285,7 @@ function atelierLassoRefresh(){
  }
  $m('LassoFeather').value=String(r?.feather??.04);
  $m('LassoMorph').value=String(r?.morph??0);
+ if($m('LassoCurve'))$m('LassoCurve').value=String(r?.boundaryCurve||0);
  const booleanWith=$m('LassoBooleanWith'),validOperand=regions.filter(x=>x.id!==r?.id&&!x.selectionOp);
  if(booleanWith){
    booleanWith.replaceChildren();
@@ -469,6 +504,27 @@ function atelierLassoInstall(){
    atelierLassoFreehand=null;atelierLassoPending=[];atelierLassoArm=null;atelierLassoRefresh();
  });
  id('Region').addEventListener('change',e=>{atelierLassoActive=e.target.value;atelierLassoRefresh();});
+ id('CurveApply').addEventListener('click',()=>{
+   const p=atelierLassoPart(),r=atelierLassoRegion();
+   if(!p||!r)return;
+   const amount=Number(id('Curve').value);
+   if(!Number.isFinite(amount)||amount<0||amount>1){
+     status('Curve interpolation must be between 0 (corners) and 1 (rounded).',true);return;
+   }
+   const updated={...r};
+   if(amount===0)delete updated.boundaryCurve;
+   else updated.boundaryCurve=amount;
+   const next=p.sculptLassos.map(x=>x.id===r.id?updated:x);
+   if(!atelierLassoValid({...p,sculptLassos:next})||
+       !atelierLassoPolygonValid(updated)||!checkPart({...p,sculptLassos:next})){
+     status('Smoothed boundary would self-intersect or fail native validation. No changes made.',true);return;
+   }
+   if((r.boundaryCurve||0)===amount)return;
+   checkpoint();p.sculptLassos=next;
+   signalEdited();select(p.id);atelierLassoActive=r.id;atelierLassoRefresh();
+   status(amount?'Saved curve strength '+amount.toFixed(2)+'. Original surface pins stay unchanged.':
+     'Restored exact straight-edge polygon boundary.');
+ });
  id('BooleanApply').addEventListener('click',()=>{
    const p=atelierLassoPart(),r=atelierLassoRegion();if(!p||!r)return;
    const op=id('BooleanOp').value,operand=id('BooleanWith').value;
@@ -501,6 +557,9 @@ function atelierLassoInstall(){
  });
  id('DeleteRegion').addEventListener('click',()=>{
    const p=atelierLassoPart(),r=atelierLassoRegion();if(!p||!r)return;
+   if(p.refinementLayers?.some(layer=>layer.regionId===r.id)){
+     status('Remove saved refinement layers using this region before deleting its boundary.',true);return;
+   }
    if(p.sculptLassos.some(x=>x.operandRegionId===r.id)){
      status('This region is referenced by a Boolean selection. Clear dependent operation before deletion.',true);return;
    }
