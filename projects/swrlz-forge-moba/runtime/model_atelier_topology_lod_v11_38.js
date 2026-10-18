@@ -113,6 +113,7 @@ function atelierLODPlan(g,ratio){
    best.after<=atelierLODSavedTriangles};
 }
 function atelierLODRefresh(){
+ atelierTopologyRefresh();
  const p=partById(selection),el=$m('LODTools');if(!el)return;
  el.hidden=!p;
  if($m('LODStats'))$m('LODStats').textContent=
@@ -121,6 +122,7 @@ function atelierLODRefresh(){
    'or automatically switch LOD by camera distance.';
 }
 function atelierLODInstall(){
+ atelierTopologyInstall();
  const id=s=>$m('LOD'+s);
  id('Preview').addEventListener('click',()=>{
    const part=partById(selection),mesh=modelRoot?.children.find(x=>x.isMesh&&
@@ -176,4 +178,110 @@ function atelierLODInstall(){
      lines.join('\n')+'\n','text/plain');
    status('Exported actual reduced triangle mesh OBJ with UV coordinates. LOD switching is not automatic.');
  });
+}
+
+// §E v11.40. Explicit topological operations ONLY on separately baked
+// topologyMesh instances. All inputs are validated before a single checkpoint.
+// No source procedural mesh, UV reference, detail layer or sibling is mutated.
+function atelierTopologyEditCandidate(part,command,faceIndex=0,edgeSlot=0,vertexIndex=0,delta=[0,0,0]){
+ if(part?.kind!=='topologyMesh'||!atelierTopologyValid(part))
+   return {ok:false,reason:'Select a separately baked indexed topology mesh'};
+ const src=part.topologyMesh,faces=src.indices.length/3,vertices=src.positions.length/3;
+ const validFace=Number.isInteger(faceIndex)&&faceIndex>=0&&faceIndex<faces;
+ const validVertex=Number.isInteger(vertexIndex)&&vertexIndex>=0&&vertexIndex<vertices;
+ const data={positions:src.positions.slice(),uvs:src.uvs.slice(),indices:src.indices.slice()};
+ if(command==='split-edge'){
+   if(!validFace||!Number.isInteger(edgeSlot)||edgeSlot<0||edgeSlot>2)
+     return {ok:false,reason:'Select existing face and edge slot (0–2)'};
+   const tri=src.indices.slice(faceIndex*3,faceIndex*3+3),
+     a=tri[edgeSlot],b=tri[(edgeSlot+1)%3],incident=[];
+   for(let f=0;f<faces;f++){
+     const t=src.indices.slice(f*3,f*3+3);
+     const idx=t.findIndex((v,i)=>v===a&&t[(i+1)%3]===b||
+       v===b&&t[(i+1)%3]===a);
+     if(idx>=0)incident.push(f);
+   }
+   if(incident.length===0||incident.length>2)
+     return {ok:false,reason:'Nonmanifold or missing selected edge; edit rejected'};
+   if(vertices>=atelierLODSavedVertices||faces+incident.length>atelierLODSavedTriangles)
+     return {ok:false,reason:'Portable vertex/triangle limits reached'};
+   const m=vertices;data.positions.push(
+     (src.positions[a*3]+src.positions[b*3])/2,
+     (src.positions[a*3+1]+src.positions[b*3+1])/2,
+     (src.positions[a*3+2]+src.positions[b*3+2])/2);
+   data.uvs.push((src.uvs[a*2]+src.uvs[b*2])/2,
+     (src.uvs[a*2+1]+src.uvs[b*2+1])/2);
+   data.indices=[];
+   for(let f=0;f<faces;f++){
+     const t=src.indices.slice(f*3,f*3+3);
+     if(!incident.includes(f)){data.indices.push(...t);continue;}
+     const i=t.findIndex((v,k)=>v===a&&t[(k+1)%3]===b||
+       v===b&&t[(k+1)%3]===a);
+     const A=t[i],B=t[(i+1)%3],C=t[(i+2)%3];
+     data.indices.push(A,m,C,m,B,C);
+   }
+ }else if(command==='move-vertex'){
+   if(!validVertex||!Array.isArray(delta)||delta.length!==3||
+      !delta.every(v=>Number.isFinite(v)&&Math.abs(v)<=.4)||
+      delta.every(v=>v===0))
+     return {ok:false,reason:'Select valid vertex and nonzero signed XYZ offsets ≤0.4'};
+   for(let axis=0;axis<3;axis++)data.positions[vertexIndex*3+axis]+=delta[axis];
+ }else if(command==='remove-face'){
+   if(!validFace||faces<=1)return {ok:false,reason:'Choose a removable face'};
+   data.indices.splice(faceIndex*3,3);
+   // Strip unused vertices rather than leaving hidden stale control IDs.
+   const keep=new Map(),pos=[],uv=[],next=[];
+   for(const id of data.indices){
+     if(!keep.has(id)){
+       keep.set(id,keep.size);
+       pos.push(...data.positions.slice(id*3,id*3+3));
+       uv.push(...data.uvs.slice(id*2,id*2+2));
+     }
+     next.push(keep.get(id));
+   }
+   data.positions=pos;data.uvs=uv;data.indices=next;
+ }else return {ok:false,reason:'Unknown topology command'};
+ if(!atelierTopologyValid({...part,topologyMesh:data}))
+   return {ok:false,reason:'Proposed topology does not meet native bounds'};
+ // Refuse collapsed faces introduced by movement or malformed inputs.
+ for(let i=0;i<data.indices.length;i+=3){
+   const ids=data.indices.slice(i,i+3);
+   const [a,b,c]=ids.map(id=>data.positions.slice(id*3,id*3+3));
+   const ab=[b[0]-a[0],b[1]-a[1],b[2]-a[2]],
+     ac=[c[0]-a[0],c[1]-a[1],c[2]-a[2]];
+   const cross=[ab[1]*ac[2]-ab[2]*ac[1],
+     ab[2]*ac[0]-ab[0]*ac[2],ab[0]*ac[1]-ab[1]*ac[0]];
+   if(cross.reduce((sum,x)=>sum+x*x,0)<1e-18)
+     return {ok:false,reason:'Operation would collapse a face'};
+ }
+ return {ok:true,data,beforeFaces:faces,afterFaces:data.indices.length/3,
+   beforeVertices:vertices,afterVertices:data.positions.length/3};
+}
+function atelierTopologyRefresh(){
+ const p=partById(selection),pane=$m('TopologyTools');if(!pane)return;
+ pane.hidden=p?.kind!=='topologyMesh';
+ if(p?.kind==='topologyMesh'){
+   $m('TopologyStats').textContent='Indexed topology: '+
+     p.topologyMesh.positions.length/3+' vertices, '+
+     p.topologyMesh.indices.length/3+' triangles. Editing is explicit and undoable.';
+ }
+}
+function atelierTopologyInstall(){
+ const id=k=>$m('Topology'+k);
+ for(const [button,command]of [['Split','split-edge'],['Move','move-vertex'],['Remove','remove-face']]){
+   id(button).addEventListener('click',()=>{
+     const part=partById(selection),face=Number(id('Face').value),
+       edge=Number(id('Edge').value),vertex=Number(id('Vertex').value),
+       delta=[0,1,2].map(axis=>Number(id('Delta'+axis).value));
+     const result=atelierTopologyEditCandidate(part,command,face,edge,vertex,delta);
+     if(!result.ok){status('Topology edit rejected: '+result.reason,true);return;}
+     const candidate={...part,topologyMesh:result.data};
+     if(!checkPart(candidate)){status('Native project validation rejected edit.',true);return;}
+     checkpoint();part.topologyMesh=result.data;
+     signalEdited();select(part.id);
+     status(command+' applied: '+result.beforeFaces+'→'+result.afterFaces+
+       ' real triangles, '+result.beforeVertices+'→'+result.afterVertices+
+       ' vertices. Original procedural mesh untouched; Undo/Redo available.');
+   });
+ }
 }
