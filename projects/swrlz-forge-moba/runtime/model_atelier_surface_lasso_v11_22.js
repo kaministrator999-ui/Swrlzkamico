@@ -317,6 +317,28 @@ function atelierLassoPointerCancel(e){
  atelierLassoRefresh();status('Freehand trace cancelled without changing mesh.');
  return true;
 }
+// A group boundary edit changes only region-control pins, never source
+// vertices or triangles. It reprojects every proposed pin before committing
+// a single atomic native Undo transaction.
+function atelierLassoGroupCandidate(region,mesh,raw,delta){
+ if(!region||!mesh||typeof raw!=='string'||!/^\\d+(?:\\s*,\\s*\\d+)*$/.test(raw.trim())||
+    !Array.isArray(delta)||delta.length!==3||!delta.every(v=>Number.isFinite(v)&&Math.abs(v)<=.15))
+   return {ok:false,reason:'Use 1–8 one-based pin indices and finite XYZ delta ≤0.15'};
+ const indices=[...new Set(raw.split(',').map(v=>Number(v.trim())-1))];
+ if(!indices.length||indices.length>8||indices.some(i=>!Number.isInteger(i)||i<0||i>=region.pins.length))
+   return {ok:false,reason:'One-based pin numbers must exist, with at most eight unique pins'};
+ const pins=region.pins.slice();
+ for(const i of indices){
+   const source=region.pins[i].point,xyz=source.map((v,j)=>v+delta[j]);
+   const projected=atelierLassoProjectXYZ(mesh,xyz);
+   if(!projected)return {ok:false,reason:'One or more moved pins could not reattach to the original mesh'};
+   pins[i]=projected;
+ }
+ const updated={...region,pins};
+ if(!atelierLassoValid({sculptLassos:[updated]})||!atelierLassoPolygonValid(updated))
+   return {ok:false,reason:'The grouped motion would cross or collapse the boundary'};
+ return {ok:true,pins,indices};
+}
 function atelierLassoInstall(){
  const id=n=>$m('Lasso'+n);
  id('PinIndex').addEventListener('change',e=>{
@@ -348,6 +370,16 @@ function atelierLassoInstall(){
    const next={...r,pins:r.pins.slice()};next.pins[atelierLassoSelectedPin]=pin;
    if(!atelierLassoPolygonValid(next)){status('Pin move would collapse/cross the boundary.',true);return;}
    checkpoint();r.pins=next.pins;signalEdited();atelierLassoRefresh();
+ });
+ id('GroupMove').addEventListener('click',()=>{
+   const r=atelierLassoRegion(),mesh=modelRoot?.children.find(o=>o.isMesh&&o.userData.atelierId===selection);
+   const raw=id('GroupPins').value;
+   const delta=[0,1,2].map(k=>Number(id('GroupDelta'+k).value));
+   const result=atelierLassoGroupCandidate(r,mesh,raw,delta);
+   if(!result.ok){status('Pin group rejected: '+result.reason,true);return;}
+   checkpoint();r.pins=result.pins;
+   const key=selection;signalEdited();select(key);
+   status('Moved '+result.indices.length+' boundary pins on their mesh surface in one undoable transaction; source topology unchanged.');
  });
  id('Start').addEventListener('click',()=>{
    if(!atelierLassoPart()){status('Select a mesh before drawing a lasso.',true);return;}
