@@ -112,7 +112,7 @@ function atelierFaceSheetInstall(){
  const kind=$m('Kind');
  if(kind&&!kind.querySelector('option[value="faceSheet"]')){
    const opt=document.createElement('option');
-   opt.value='faceSheet';opt.textContent='Face image sheet (UV)';
+   opt.value='faceSheet';opt.textContent='Face image sheet (UV)';opt.disabled=true;
    kind.append(opt);
  }
  $m('FaceSheetApply').addEventListener('click',()=>{
