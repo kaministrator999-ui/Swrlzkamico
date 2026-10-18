@@ -18,7 +18,7 @@ def apply(html):
     html=once(html,"  function checkPart(p){",
          "  function checkPart(p){\n    if(!atelierSculptValid(p)||!atelierFaceSheetValid(p))return false;")
     html=once(html,"if(key==='kind'){delete p.headAnatomy;delete p.portraitFinish;",
-         "if(key==='kind'){delete p.sculptBrushes;delete p.sculptVertexEdits;delete p.sculptLassos;delete p.headAnatomy;delete p.portraitFinish;")
+         "if(key==='kind'){delete p.sculptBrushes;delete p.sculptVertexEdits;delete p.sculptLassos;delete p.refinementLayers;delete p.faceSheet;delete p.headAnatomy;delete p.portraitFinish;")
     html=once(html,"atelierHeadAnatomyRefresh();",
          "atelierHeadAnatomyRefresh();atelierSculptRefresh();atelierViewportControlsRefresh();atelierRefPaint();atelierFaceSheetRefresh();")
     html=once(html,"atelierHeadAnatomyInstall();",
