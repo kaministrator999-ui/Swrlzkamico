@@ -75,4 +75,14 @@ assert "IMPORTANT FACT: No supported personal name" in src
 assert '"missing-unknown-user-name-calibration" in faults' in src
 assert "A previous assistant's guess is not reliable evidence" in src
 
+# Regression: a v283 edit mistakenly replaced the unrelated programming-repair
+# retry contract with identity wording. Preserve existing programming semantics.
+guarded_start=src.index("if guarded_turn:")
+guarded_end=src.index("elif strict_lyric_turn:",guarded_start)
+guarded_src=src[guarded_start:guarded_end]
+assert "LANGUAGE/INTENT RETRY GATE:" in guarded_src
+assert "strategy_change_directive(programming,candidate_check,2)" in guarded_src
+assert "identity attribution error" not in guarded_src
+assert "if \"missing-unknown-user-name-calibration\" in faults" not in guarded_src
+assert "elif concise_identity_turn or identity_followup:" in src
 print("v283 ownership, unknown-name, corrections and jokes regressions PASS")
