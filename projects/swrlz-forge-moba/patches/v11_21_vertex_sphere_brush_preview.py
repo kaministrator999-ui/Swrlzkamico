@@ -13,8 +13,8 @@ def apply(html):
     html=once(html, "  function refreshList(){", module+"\n  function refreshList(){")
     html=once(html,"  function geometry(part){",
          "  function geometry(part){\n    if(part.kind==='faceSheet')return atelierFaceSheetGeometry(part);")
-    html=once(html,"  function material(part){",
-         "  function material(part){\n    if(part.kind==='faceSheet')return atelierFaceSheetMaterial(part);")
+    html=once(html,"function material(part){\n if(!part.hdFinish)",
+         "function material(part){\n if(part.kind==='faceSheet')return atelierFaceSheetMaterial(part);\n if(!part.hdFinish)")
     html=once(html,"  function checkPart(p){",
          "  function checkPart(p){\n    if(!atelierSculptValid(p)||!atelierFaceSheetValid(p))return false;")
     html=once(html,"if(key==='kind'){delete p.headAnatomy;delete p.portraitFinish;",
