@@ -71,5 +71,8 @@ for name in ("identity_followup", "effective_mode", "unknown_name_required", "fa
 focus_start=src.index("focused=(",src.index("if (concise_identity_turn or identity_followup)"))
 focus_end=src.index("if custom_assistant_profile:",focus_start)
 assert "ASSISTANT/SELF:" not in src[focus_start:focus_end]
+assert "IMPORTANT FACT: No supported personal name" in src
+assert '"missing-unknown-user-name-calibration" in faults' in src
+assert "A previous assistant's guess is not reliable evidence" in src
 
 print("v283 ownership, unknown-name, corrections and jokes regressions PASS")
