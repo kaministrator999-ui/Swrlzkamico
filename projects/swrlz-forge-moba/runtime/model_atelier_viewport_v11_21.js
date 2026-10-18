@@ -42,6 +42,9 @@ function atelierViewDisabledMaps(mat){
 }
 function atelierViewModeApply(mesh,part){
  const mode=atelierViewModeFor(part),flags=atelierViewFlagsFor(part);
+ if(part.kind==='faceSheet'&&atelierFaceHeatmap&&mode==='shaded'){
+   atelierFaceVolumeHeatmap(mesh,part);return mesh;
+ }
  const isContrastingWire=mode==='wireframe'&&atelierViewWireContrast;
  if(isContrastingWire){
    // Basic wire shader is lighting-independent. In particular, dark hair and
