@@ -5,6 +5,8 @@ on:
     paths:
       - 'projects/swrlz-forge-moba/runtime/model_atelier_sculpt_brush_v11_21.js'
       - 'projects/swrlz-forge-moba/runtime/model_atelier_surface_targeting_v11_22.js'
+      - 'projects/swrlz-forge-moba/runtime/model_atelier_surface_lasso_v11_22.js'
+      - 'projects/swrlz-forge-moba/tests/model_atelier_lasso_v11_22.mjs'
       - 'projects/swrlz-forge-moba/tests/model_atelier_surface_targeting_v11_22.mjs'
       - 'projects/swrlz-forge-moba/runtime/model_atelier_viewport_v11_21.js'
       - 'projects/swrlz-forge-moba/runtime/model_atelier_reference_studio_v11_22.js'
@@ -56,6 +58,7 @@ jobs:
           set -euo pipefail
           node projects/swrlz-forge-moba/tests/model_sculpt_brush_cpu_v11_21.mjs
           node projects/swrlz-forge-moba/tests/model_atelier_surface_targeting_v11_22.mjs
+          node projects/swrlz-forge-moba/tests/model_atelier_lasso_v11_22.mjs
           python -m http.server 8787 --directory /tmp/vertex-sculpt-editor >/tmp/v1121-sculpt-http.log 2>&1 &
           HTTP_PID=$!
           trap 'kill "$HTTP_PID" 2>/dev/null || true' EXIT
