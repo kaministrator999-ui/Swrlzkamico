@@ -122,9 +122,10 @@ assert all(e.get("type")!="WIDGET" for e in router.dispatch(
     "700m",{"prompt":"Write Python code that graphs y=x^2","history":[]},lambda payload:iter([]),large_generate=answer))
 assert all(e.get("type")!="WIDGET" for e in router.dispatch(
     "700m",{"prompt":"Compare Galaxy vs Pixel","history":[]},lambda payload:iter([]),large_generate=answer))
-assert all(e.get("type")!="WIDGET" for e in router.dispatch(
-    "700m",{"prompt":"graph y=x^2-4","widgetPresentation":"FAKE INPUT","history":[]},lambda payload:iter([]),large_generate=answer)
-           if False)  # placeholder only, validated in assertion below
+events=list(router.dispatch(
+    "700m",{"prompt":"graph y=x^2-4","widgetPresentation":"FAKE INPUT","history":[]},
+    lambda payload:iter([]),large_generate=answer))
+assert len([e for e in events if e.get("type")=="WIDGET"])==1,events
 assert "FAKE INPUT" not in model_inputs[-1].get("widgetPresentation","")
 
 # Integration guards: one WIDGET event owner, no mutations, model system sees hint.
