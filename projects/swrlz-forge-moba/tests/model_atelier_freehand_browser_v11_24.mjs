@@ -44,11 +44,13 @@ try{
    await canvas.scrollIntoViewIfNeeded();
    const actual=await canvas.boundingBox();
    const cx=actual.x+actual.width*found.fx,cy=actual.y+actual.height*found.fy;
-   const rad=Math.min(actual.width,actual.height)*.037;
-   const samples=Array.from({length:17},(_,i)=>({
-     x:cx+Math.cos(i/16*Math.PI*2)*rad,
-     y:cy+Math.sin(i/16*Math.PI*2)*rad
-   }));
+   // Always begin ON the confirmed raycast hit. The selected head occupies
+   // a small fraction of the whole viewport on some desktop layouts.
+   const rad=12;
+   const samples=[{x:cx,y:cy},...Array.from({length:9},(_,i)=>({
+     x:cx+Math.cos(i/8*Math.PI*2)*rad,
+     y:cy+Math.sin(i/8*Math.PI*2)*rad
+   }))];
    console.log('FREEHAND_SURFACE_TARGET',device,found,attempts,actual);
    if(mobile){
      const session=await context.newCDPSession(page);
