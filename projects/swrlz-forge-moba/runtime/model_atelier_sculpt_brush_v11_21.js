@@ -25,7 +25,7 @@ function atelierSculptResolution(p){
 const atelierSculptClamp=(v,low,high)=>Math.min(high,Math.max(low,v));
 function atelierSculptValid(p){
  const strokes=p.sculptBrushes;
- if(!atelierSculptVertexValid(p))return false;
+ if(!atelierSculptVertexValid(p)||!atelierLassoValid(p))return false;
  if(strokes===undefined)return true;
  if(!Array.isArray(strokes)||strokes.length>atelierSculptMaxStrokes)return false;
  return strokes.every(s=>{
@@ -66,8 +66,9 @@ function atelierSculptFalloff(normalizedDistance,mode,plateau=0,taper=.5){
  return Math.pow(1-x*x,expo);
 }
 function atelierSculptApply(geometry,part){
- if(!geometry?.attributes?.position||(!part?.sculptBrushes?.length&&!part?.sculptVertexEdits?.length))return geometry;
+ if(!geometry?.attributes?.position||(!part?.sculptBrushes?.length&&!part?.sculptVertexEdits?.length&&!part?.sculptLassos?.some(r=>r.enabled&&r.morph)))return geometry;
  const a=geometry.attributes.position;
+ atelierLassoApply(geometry,part);
  // Position samples in a UV sphere are duplicated at the seam. Use the SAME
  // position-dependent influence for identical vertices so the seam stays shut.
  for(const s of part.sculptBrushes||[]){
@@ -127,6 +128,7 @@ function atelierSculptRefresh(){
    +(atelierSculptArmed?'Tap the mesh to select the brush center.':'Orbit freely; arm to pick a point.');
  const arm=$m('SculptBrushPick');
  if(arm)arm.textContent=atelierSculptArmed?'Cancel picking':'Pick center on mesh';
+ atelierLassoRefresh();
  const remove=$m('SculptBrushUndoStroke');
  if(remove)remove.disabled=!(p?.sculptBrushes?.length);
 }
@@ -202,6 +204,7 @@ function atelierSculptInstall(){
  });
  atelierSculptVertexInstall();
  atelierSurfaceInstall();
+ atelierLassoInstall();
  $m('SculptBrushUndoStroke').addEventListener('click',()=>{
    const p=partById(selection);if(!p?.sculptBrushes?.length)return;
    checkpoint();p.sculptBrushes=p.sculptBrushes.slice(0,-1);
