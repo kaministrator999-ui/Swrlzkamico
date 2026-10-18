@@ -50,7 +50,11 @@ assert plan("plot y=x^-1") is None
 assert plan("graph y=__import__('os').system('echo hacked')") is None
 assert plan("graph y=x^9") is None
 assert plan("graph y=x/(x-1)") is None
-assert plan("graph y=x^2 please") is None  # no partial parse of ambiguous suffix
+assert plan("graph y=x^2 please") is not None
+assert plan("Could you plot y=x² -4?")["kind"]=="math-graph"
+assert plan("Can you show me a graph of y=sin(x)?")["kind"]=="math-graph"
+assert plan("Should I graph y=x^2?") is None
+assert plan("I might graph y=x^2 sometime") is None
 assert _equation("x^2-4") is not None
 
 # Followup equation can only come from recent user-origin evidence.
