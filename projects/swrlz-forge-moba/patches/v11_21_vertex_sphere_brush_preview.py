@@ -51,6 +51,7 @@ def apply(html):
              '<label>Selection mode<select id="modelAtelierSculptBrushSurfaceMode">'
              '<option value="front">Front-facing surface (default)</option>'
              '<option value="connected">Connected surface · geodesic</option>'
+             '<option value="inside">Inside shell · opposite-facing normals</option>'
              '<option value="through">Through-volume · both sides intentionally</option></select></label>'
              '<div class="atelier-pair"><label>Selection radius<input id="modelAtelierSculptBrushSelectRadius" type="number" min=".03" max="2.5" step=".05" value=".4"></label>'
              '<label>Falloff-center offset U<input id="modelAtelierSculptBrushOffsetU" type="number" min="-.5" max=".5" step=".025" value="0"></label>'
@@ -172,11 +173,22 @@ def apply(html):
            '<button type="button" data-at-view="top">Top</button><button type="button" data-at-view="bottom">Bottom</button>'
            '<button type="button" data-at-view="three">3/4</button></div>'
            '<button type="button" id="modelAtelierViewportPanReset">Center pan</button>'
+           '<fieldset class="atelier-clip-tools" aria-label="Camera clipping and interior inspection">'
+           '<legend>Interior / clipping</legend>'
+           '<label>Near plane<input id="modelAtelierViewportClipNear" type="number" step=".005" min=".005" max=".5" value=".1"></label>'
+           '<label>Far plane<input id="modelAtelierViewportClipFar" type="number" step="1" min="4" max="300" value="100"></label>'
+           '<button type="button" id="modelAtelierViewportClipApply">Apply clip planes</button>'
+           '<button type="button" id="modelAtelierViewportInsideEnter">Inspect inside selected</button>'
+           '<button type="button" id="modelAtelierViewportInsideExit" disabled>Exit interior</button>'
+           '</fieldset>'
            '</div><p id="modelAtelierViewportNavHint" class="atelier-view-hint">1 finger orbit · 2 fingers pinch to zoom or slide to pan · Shift-drag pan</p>')
     html=once(html,'<div class="atelier-viewport-controls"><button id="modelAtelierZoomIn"',nav+'<div class="atelier-viewport-controls"><button id="modelAtelierZoomIn"')
     html=html.replace('</head>',"""<style>
 .model-atelier .atelier-viewbar{position:relative;z-index:180;pointer-events:auto;display:flex;flex-wrap:wrap;gap:6px;align-items:end;padding:8px;background:#131c30;border:1px solid #37435d;border-radius:10px;margin:5px 0}
 .model-atelier .atelier-viewbar label{display:flex;flex-direction:column;gap:3px;font-size:11px;color:#cbdaeb}
+.model-atelier .atelier-clip-tools{display:flex;gap:4px;align-items:flex-end;flex-wrap:wrap;border:1px solid #516580;border-radius:8px;padding:5px;margin:0;max-width:100%}
+.model-atelier .atelier-clip-tools legend{font-size:10px;color:#ddedfc}
+.model-atelier .atelier-clip-tools input{width:65px;background:#202c42;color:#f3f7ff;border:1px solid #7283a0;border-radius:6px;padding:5px;font-size:12px}
 .model-atelier .atelier-viewbar select{background:#202c42;color:#f3f7ff;border:1px solid #7283a0;border-radius:6px;padding:6px;font-size:12px;max-width:168px}
 .model-atelier .atelier-view-presets{display:flex;gap:4px;flex-wrap:wrap}
 .model-atelier .atelier-display-switch{display:flex;flex-direction:row;align-items:center;gap:4px;padding:6px 2px;font-size:12px;min-height:32px;white-space:nowrap}
@@ -284,9 +296,9 @@ def apply(html):
     html=once(html, "mesh.geometry?.dispose();if(!mesh.material?.userData?.atelierHDMaterial)mesh.material?.dispose();",
          "for(const child of mesh.children)if(child.isMesh&&child.userData.atelierHelper)child.material?.dispose();mesh.geometry?.dispose();if(!mesh.material?.userData?.atelierHDMaterial)mesh.material?.dispose();")
     html=once(html,"function onWheel(e){e.preventDefault();orbit.distance=Math.min(22,Math.max(atelierDetailTarget?.4:3.7,",
-         "function onWheel(e){e.preventDefault();orbit.distance=Math.min(24,Math.max(atelierDetailTarget?.4:1.2,")
+         "function onWheel(e){e.preventDefault();orbit.distance=Math.min(24,Math.max(atelierCameraMinDistance(),")
     html=once(html,"action('ZoomIn',()=>{orbit.distance=Math.max(atelierDetailTarget?.4:3.7,",
-         "action('ZoomIn',()=>{orbit.distance=Math.max(atelierDetailTarget?.4:1.2,")
+         "action('ZoomIn',()=>{orbit.distance=Math.max(atelierCameraMinDistance(),")
     html=once(html,
          "const hits=raycaster.intersectObjects(meshes,false);select(hits[0]?.object?.userData?.atelierId||null);",
          "if(atelierSculptVertexPick(e))return;const hits=raycaster.intersectObjects(meshes,false);if(atelierLassoPick(hits[0]))return;if(atelierSculptPick(hits[0]))return;select(hits[0]?.object?.userData?.atelierId||null);")
