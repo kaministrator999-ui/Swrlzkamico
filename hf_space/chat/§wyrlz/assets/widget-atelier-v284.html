@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>§wyrlz Widget Atelier — v284 prototype</title>
+<link rel="stylesheet" href="/chat/§wyrlz/assets/rich-widgets-v284.css">
+<style>
+:root{font-family:system-ui,-apple-system,sans-serif;color:#edfaff;background:#06111f}
+*{box-sizing:border-box}
+body{max-width:940px;margin:0 auto;padding:16px}
+header{padding:18px 4px 22px}
+h1{font-size:clamp(24px,5vw,38px);line-height:1.15;margin:7px 0}
+p{line-height:1.5;color:#a9c4d3}
+.kicker{font:700 11px ui-monospace,Consolas,monospace;letter-spacing:.12em;color:#6be3ff;text-transform:uppercase}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,365px),1fr));gap:14px}
+.swrlz-widget{background:linear-gradient(140deg,#0d2236,#121c36);overflow:hidden;border:1px solid rgba(126,214,255,.24);border-radius:14px;box-shadow:0 8px 25px rgba(0,0,0,.25)}
+.widget-head{display:flex;gap:6px;justify-content:space-between;padding:12px}
+.widget-title{font-weight:800;font-size:14px;color:#fff}
+.widget-provider{font:10px ui-monospace,monospace;color:#a4c5d4}
+.muted{font-size:12px}
+footer{margin:22px 4px}
+</style>
+</head>
+<body>
+<header>
+<div class="kicker">§wyrlz · Widget Atelier / Prototype 284</div>
+<h1>Numbers, equations, and 3D that you can actually interact with.</h1>
+<p>This is a local rendering demonstration using <strong>invented sample data</strong>, not factual benchmarks, measured results, or AI-generated answers. Drag to pan the graph; drag to rotate the 3D shape. Zoom and reset controls are keyboard accessible.</p>
+</header>
+<main id="lab" class="grid" aria-label="Prototype widget demonstrations"></main>
+<footer><p class="muted">These sample components use the existing <code>swrlz-widget-v1</code> contract. Integrating a verified data producer and final live acceptance are separate release gates.</p></footer>
+<script src="/chat/§wyrlz/assets/rich-widgets-v284.js"></script>
+<script>
+"use strict";
+const widgets=[
+ {contract:"swrlz-widget-v1",kind:"comparison",version:1,title:"Compare fictional prototypes",provider:"sample data",data:{
+ metrics:[{key:"speed",label:"Speed",unit:"units",higherIsBetter:true},{key:"weight",label:"Weight",unit:"kg",higherIsBetter:false},{key:"durability",label:"Durability",unit:"%",higherIsBetter:true}],
+ items:[{name:"Dragon A",values:{speed:42,weight:13,durability:85}},{name:"Dragon B",values:{speed:33,weight:9,durability:91}},{name:"Dragon C",values:{speed:47,weight:16,durability:74}}],
+ note:"Every figure here is synthetic. Green highlights use only the explicitly defined metric preference."
+ }},
+ {contract:"swrlz-widget-v1",kind:"math-graph",version:1,title:"Equation explorer",provider:"local math",data:{
+ domain:[-8,8],range:[-8,18],series:[{type:"polynomial",coefficients:[-4,0,1]},{type:"sine",amplitude:3,frequency:1,phase:0,offset:1}],
+ note:"Bounded polynomial and sinusoidal functions; no arbitrary formula execution."
+ }},
+ {contract:"swrlz-widget-v1",kind:"model-3d",version:1,title:"Interactive torus wireframe",provider:"local geometry",data:{
+ shape:"torus",yaw:.45,pitch:.35,caption:"Pointer drag or arrow keys rotate this projected 3D geometry. No remote assets or WebGL dependency."
+ }},
+ {contract:"swrlz-widget-v1",kind:"model-3d",version:1,title:"Pyramid geometry",provider:"local geometry",data:{
+ shape:"pyramid",yaw:.2,pitch:.25,caption:"Primitive geometry is rendered as a bounded edge mesh."
+ }}
+];
+for(const w of widgets){
+ const card=document.createElement("section");card.className="swrlz-widget "+w.kind;card.setAttribute("aria-label",w.title);
+ const head=document.createElement("div");head.className="widget-head";
+ const title=document.createElement("div");title.className="widget-title";title.textContent=w.title;
+ const origin=document.createElement("div");origin.className="widget-provider";origin.textContent=w.provider;
+ head.append(title,origin);card.appendChild(head);
+ window.SwrlzRichWidgetsV284.render(card,w);
+ document.getElementById("lab").appendChild(card);
+}
+</script>
+</body>
+</html>
