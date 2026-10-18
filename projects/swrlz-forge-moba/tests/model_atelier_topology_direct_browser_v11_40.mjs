@@ -1,0 +1,76 @@
+import assert from 'node:assert/strict';import {chromium} from 'playwright';import {readFile} from 'node:fs/promises';
+const base=(process.env.SWYRL_SCULPT_TEST_URL||'http://127.0.0.1:8787').replace(/\/$/,'');
+const browser=await chromium.launch({headless:true,args:['--no-sandbox','--disable-dev-shm-usage',
+ '--enable-webgl','--enable-unsafe-swiftshader','--use-gl=angle','--use-angle=swiftshader']});
+try{
+ for(const [device,viewport,mobile] of [['desktop',{width:1280,height:900},false],
+  ['android-touch',{width:412,height:915},true]]){
+  const context=await browser.newContext({viewport,isMobile:mobile,hasTouch:mobile,acceptDownloads:true});
+  const page=await context.newPage();page.setDefaultTimeout(65000);
+  const errors=[];page.on('pageerror',e=>errors.push(e.message));
+  await page.goto(base+'/?project=model-atelier',{waitUntil:'domcontentloaded',timeout:90000});
+  await page.locator('#modelAtelierPanel:not([hidden]) canvas').waitFor();
+  const parts=()=>page.evaluate(()=>window.SWYRL_ENGINE_AGENT.inspectScene().project.modelAtelier.parts);
+  assert.equal((await parts()).length,283);
+  await page.locator('#modelAtelierParts').selectOption('model-0001');
+  await page.locator('#modelAtelierLODRatio').fill('0.15');
+  await page.locator('#modelAtelierLODPreview').click();
+  const desc=await page.locator('#modelAtelierLODStats').textContent();
+  assert.match(desc,/actual triangles/);
+  const before=Number(desc.match(/^([\d,]+) →/)?.[1].replaceAll(',',''));
+  const after=Number(desc.match(/→ ([\d,]+) actual triangles/)?.[1].replaceAll(',',''));
+  assert(after<before&&after>1);
+  const objD=page.waitForEvent('download');await page.locator('#modelAtelierLODOBJ').click();
+  const obj=await objD;const objText=await readFile(await obj.path(),'utf8');
+  assert.equal(objText.match(/^f /mg).length,after);
+  assert.equal(objText.match(/^vt /mg).length,Number(desc.match(/· ([\d,]+) actual mesh vertices/)?.[1].replaceAll(',','')));
+  await page.locator('#modelAtelierLODBake').click();
+  let ps=await parts();assert.equal(ps.length,284);
+  const copy=ps.find(x=>x.kind==='topologyMesh');assert(copy);
+  assert.equal(copy.topologyMesh.indices.length/3,after);
+  assert(ps.find(x=>x.id==='model-0001')?.headAnatomy,'Original head must remain unchanged');
+  assert(await page.locator('#modelAtelierTopologyTools').isVisible());
+  const originalCopy=JSON.stringify(copy.topologyMesh);
+  await page.locator('#modelAtelierTopologyFace').fill('0');
+  await page.locator('#modelAtelierTopologyEdge').selectOption('0');
+  await page.locator('#modelAtelierTopologySplit').click();
+  const split=(await parts()).find(x=>x.id===copy.id);
+  assert.equal(split.topologyMesh.indices.length,copy.topologyMesh.indices.length+3);
+  assert.equal(split.topologyMesh.positions.length,copy.topologyMesh.positions.length+3);
+  await page.locator('#modelAtelierTopologyVertex').fill('0');
+  await page.locator('#modelAtelierTopologyDelta0').fill('0');
+  await page.locator('#modelAtelierTopologyDelta1').fill('0');
+  await page.locator('#modelAtelierTopologyDelta2').fill('.03');
+  await page.locator('#modelAtelierTopologyMove').click();
+  const moved=(await parts()).find(x=>x.id===copy.id);
+  assert(Math.abs(moved.topologyMesh.positions[2]-split.topologyMesh.positions[2]-.03)<1e-5);
+  await page.locator('#modelAtelierTopologyRemove').click();
+  const removed=(await parts()).find(x=>x.id===copy.id);
+  assert.equal(removed.topologyMesh.indices.length,moved.topologyMesh.indices.length-3);
+  await page.locator('#modelAtelierTopologyFace').fill('100000');
+  await page.locator('#modelAtelierTopologyRemove').click();
+  assert.deepEqual((await parts()).find(x=>x.id===copy.id).topologyMesh,removed.topologyMesh);
+  await page.locator('#modelAtelierUndo').click();
+  assert.deepEqual((await parts()).find(x=>x.id===copy.id).topologyMesh,moved.topologyMesh);
+  await page.locator('#modelAtelierUndo').click();
+  assert.deepEqual((await parts()).find(x=>x.id===copy.id).topologyMesh,split.topologyMesh);
+  await page.locator('#modelAtelierUndo').click();
+  assert.equal(JSON.stringify((await parts()).find(x=>x.id===copy.id).topologyMesh),originalCopy);
+  await page.locator('#modelAtelierRedo').click();
+  assert.deepEqual((await parts()).find(x=>x.id===copy.id).topologyMesh,split.topologyMesh);
+  const dl=page.waitForEvent('download');await page.locator('#modelAtelierExport').click();
+  const path=await(await dl).path(),json=JSON.parse(await readFile(path,'utf8'));
+  assert.equal(json.model.parts.find(x=>x.id===copy.id)?.topologyMesh.indices.length/3,after+1);
+  await page.locator('#modelAtelierUndo').click();
+  ps=await parts();assert.equal(ps.length,284);
+  await page.locator('#modelAtelierUndo').click();
+  ps=await parts();assert.equal(ps.length,283);
+  await page.locator('#modelAtelierImportFile').setInputFiles(path);
+  await page.waitForFunction(()=>window.SWYRL_ENGINE_AGENT.inspectScene().project.modelAtelier.parts.length===284);
+  ps=await parts();assert.equal(ps.find(x=>x.kind==='topologyMesh')?.topologyMesh.indices.length/3,after+1);
+  assert.equal(ps.find(x=>x.id==='model-0001')?.headAnatomy!==undefined,true);
+  assert.equal(errors.length,0,errors.join(' | '));
+  console.log('V1140_REAL_HEAD_EDGE_VERTEX_FACE_EDIT_UNDO_REDO_NATIVE_RELOAD_PASS',device,before,after);
+  await context.close();
+ }
+}finally{await browser.close();}
