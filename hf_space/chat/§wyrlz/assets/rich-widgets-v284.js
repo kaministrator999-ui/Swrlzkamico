@@ -40,6 +40,16 @@
         return null;
       }).filter(Boolean);
       if(!series.length)return null;
+      // Explicit malformed axes must fail closed, not silently change the user's graph.
+      for(const axis of ["domain","range"]){
+        if(Object.prototype.hasOwnProperty.call(data,axis)){
+          const bounds=data[axis];
+          if(!Array.isArray(bounds)||bounds.length!==2||!bounds.every(numeric)||
+             bounds[1]<=bounds[0]||bounds[0]< -1e4&&axis==="domain"||
+             bounds[1]>1e4&&axis==="domain"||bounds[0]< -1e6&&axis==="range"||
+             bounds[1]>1e6&&axis==="range")return null;
+        }
+      }
       const domain=Array.isArray(data.domain)&&data.domain.length===2&&data.domain.every(numeric)&&data.domain[1]>data.domain[0]
         ?[limit(data.domain[0],-1e4,1e4),limit(data.domain[1],-1e4,1e4)]:[-10,10];
       if(domain[1]-domain[0]<0.001) return null;
