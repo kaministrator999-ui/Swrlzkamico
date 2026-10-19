@@ -1,0 +1,49 @@
+name: Diagnose v11.59 hosted static release
+on:
+  push:
+    branches:
+      - diagnostics/v11-59-hosted-20261019
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Fetch actual public served assets and report source bytes
+        run: |
+          python - <<'PY'
+          import urllib.request,urllib.error,hashlib,json,re,datetime
+          base='https://kamiloki-swrlz-forge-moba.static.hf.space/'
+          expected='f8aa7858b2fc44abc5b957566f4b82eb03a87d1002610653301aa8edbbb3c32f'
+          print('UTC',datetime.datetime.now(datetime.timezone.utc).isoformat(),flush=True)
+          uris=[
+            base+'SOURCE.json?diag=853d57-v11-59',
+            base+'index.html?diag=853d57-v11-59',
+            base+'?diag=853d57-v11-59',
+            'https://huggingface.co/spaces/kamiloki/swrlz-forge-moba/resolve/main/SOURCE.json',
+          ]
+          for url in uris:
+            print('URL',url,flush=True)
+            try:
+              req=urllib.request.Request(url,headers={'User-Agent':'swrlz-release-diag/1.0','Cache-Control':'no-cache'})
+              with urllib.request.urlopen(req,timeout=25) as resp:
+                body=resp.read()
+                print('HTTP',resp.status,'URLFINAL',resp.geturl(),'BYTES',len(body),'ETAG',resp.headers.get('ETag'),'CACHE',resp.headers.get('Cache-Control'),flush=True)
+              if 'SOURCE.json' in url:
+                data=json.loads(body)
+                print('SOURCE',json.dumps({key:data.get(key) for key in ('sourceVersion','finalSha256','finalBytes')},ensure_ascii=False),'PATCHES',len(data.get('patches',[])),'ASSETS',len(data.get('assets',{})),flush=True)
+              else:
+                normalized,count=re.subn(rb'(?<=<head>)<script>window\.huggingface=\{variables:\{.*?\}\};</script>',b'',body,count=1)
+                title=re.search(rb'<title[^>]*>(.*?)</title>',body,re.I|re.S)
+                print('RAW_SHA',hashlib.sha256(body).hexdigest(),'NORMALIZED_SHA',hashlib.sha256(normalized).hexdigest(),
+                  'NORMALIZED_BYTES',len(normalized),'STRIPPED',count,
+                  'EXPECTED_MATCH',hashlib.sha256(normalized).hexdigest()==expected,
+                  'NEW_MARKER',b'V11_59_PRECISION_MODEL_ATELIER' in body,
+                  'OLD_MARKER',b'V11_20_ANATOMICAL_HEAD' in body,
+                  'HAS_HF_INJECTION',b'window.huggingface' in body,
+                  'TITLE',title.group(1).decode('utf-8','replace')[:120] if title else 'missing',flush=True)
+            except Exception as e:
+              print('PROBE_ERROR',type(e).__name__,str(e)[:400],flush=True)
+          PY
