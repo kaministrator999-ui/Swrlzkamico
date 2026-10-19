@@ -66,7 +66,10 @@ function atelierFaceSheetValid(part){
    ||!Number.isInteger(v.gridU)||v.gridU<8||v.gridU>128
    ||!Number.isInteger(v.gridV)||v.gridV<4||v.gridV>128
    ||v.gridU*v.gridV>atelierFaceSheetMaxCells
-   ||!atelierFaceLandmarksValid(v)||!atelierFaceContourValid(v)||!atelierFaceProfileValid(part)
+   ||!atelierFaceLandmarksValid(v)||!atelierFaceContourValid(v)
+   ||!(typeof atelierFaceProfileValid==='function'?
+      atelierFaceProfileValid(part):
+      v.profileGuide===undefined&&!(v.landmarks||[]).some(l=>l.profileU!==undefined))
    ||(v.headDepth!==undefined&&(!Number.isFinite(v.headDepth)||v.headDepth<0||v.headDepth>2||v.shape!=='oval'&&v.headDepth>0))
    ||!Array.isArray(v.crop)||v.crop.length!==4||!v.crop.every(Number.isFinite))return false;
  const [x,y,w,h]=v.crop;
