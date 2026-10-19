@@ -7,7 +7,7 @@ const html=fs.readFileSync(process.env.SWYRL_ANATOMY_HTML||'dist/swrlz-forge-mob
 const model=JSON.parse(html.match(/const MODEL_ATELIER_CANONICAL_PROJECT=(.*?);\n\/\/ §wyrl§ Engine Model Atelier v11.3/s)[1]).project.modelAtelier;
 const previous=JSON.parse(read('scenes/model-atelier-festival-polish-v11-19.swyrl.json')).project.modelAtelier;
 const reference=read('runtime/model_atelier_reference_v11_13.js'),leaf=reference.slice(reference.indexOf('function atelierReferenceLeaf('),reference.indexOf('function atelierValidateAssemblies('));
-const ctx=vm.createContext({THREE,console,model:()=>model});vm.runInContext(read('runtime/model_atelier_density_v11_16.js')+'\n'+leaf+'\n'+html.slice(html.indexOf('// Native HD finishes:'),html.indexOf('  function refreshList(){',html.indexOf('// Native HD finishes:'))),ctx);
+const ctx=vm.createContext({THREE,console,model:()=>model});vm.runInContext(read('runtime/model_atelier_density_v11_16.js')+'\n'+leaf+'\n'+html.slice(html.indexOf('// Native HD finishes:'),html.indexOf('// §E v11.52: camera-plane-exact pixel brush sizing',html.indexOf('// Native HD finishes:'))),ctx);
 const head=model.parts.find(p=>p.id==='model-0001'),g=ctx.atelierHDGeometry(head),a=g.attributes.position,cols=head.meshDensity.u,rows=head.meshDensity.v;
 assert.ok(ctx.atelierHeadAnatomyValid(head));assert.equal(g.index.count/3,2*cols*(rows-1));
 for(const key of ['position','normal','color'])for(const n of g.attributes[key].array)assert.ok(Number.isFinite(n));
