@@ -19,6 +19,12 @@ try{
   const parts=()=>page.evaluate(()=>window.SWYRL_ENGINE_AGENT.inspectScene().project.modelAtelier.parts);
   const initial=await parts();assert.equal(initial.length,283);
   await page.locator('#modelAtelierParts').selectOption('model-0001');
+  // Unlike local-unit strokes, pixel sizing needs its center inside the
+  // camera projection. Frame the actual selected anatomical head first.
+  await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.view('front'));
+  await page.locator('#modelAtelierFrameSelected').click();
+  for(const [id,v] of [['Center0','0'],['Center1','0'],['Center2','0']])
+   await page.locator('#modelAtelierSculptBrush'+id).fill(v);
   await page.locator('#modelAtelierSculptBrushRadiusUnits').selectOption('screen');
   const local=page.locator('#modelAtelierSculptBrushRadius');
   assert(!(await local.isVisible()),'world input must hide when using pixel sizing');
