@@ -18,7 +18,7 @@
 - Two image references remain separate. Creator selects a true left/right profile image; calibrates normalized profile front-plane origin, normalized-image-unit → world depth scale and nose direction. Link existing *named front-image* feature marks (nose/eye/brows/cheeks/mouth/chin) to numeric side-image U positions.
 - Native landmark `profileU` is optional. `faceSheet.profileGuide` is strict; derived depth must be finite, ≤.4 world units and exactly consistent with image calibration. Recalibrating adjusts only linked landmarks, retaining original front-face photo/UVs and independent unrelated landmark depths. Clear/unlink actions preserve current sculpted depth, with native Undo.
 - This is explicit guided 3D sculpting, **not** automatic computer-vision, perspective calibration or a guaranteed head likeness.
-- [Targeted CI workflow](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/39186011336) and [full cumulative release-gated preview](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/39186091212): mark PASS only after terminal completion with exact source-commit and hosted digests.
+- **PASS** [targeted native geometry and desktop/Android browser workflow 39186011336](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/39186011336), including two image references, native nose/eye depth links, re-calibrated depth, invalid input rejection and Save/Undo/Reload. **PASS** [full cumulative six-browser-shard+CPU integration and hosted publication 39186091212](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/39186091212) at tested code SHA `d27cc62a73c1cedd911753b3f5654a5da95d36c3`. Isolated [v11.47 preview](https://kamiloki-swrlz-forge-moba.static.hf.space/atelier-precision-v11-47/index.html?project=model-atelier) HTML 2,852,736 bytes, SHA256 `5a49c4886db81403a516d18fdf69dbed0ebba6ad8e6355fd9d0db606b9ef76f7`; exact hosted HTML, SOURCE receipt and original v11.20 anatomical model scene matched; 91 patch steps (90 original + additive overlay) and 43 original packaged assets.
 
 ## Exact remaining feature ownership (not validated complete)
 
@@ -34,6 +34,10 @@
 | §9–12 Complete workflow | Owner-guided actual front and profile asset→silhouette→edited face region→front/profile relief→closed head→topology/UV test→editable saved layers→runtime LOD/export→Undo/Reload; verify deterministic regression, all 283 parts, 1.6M-triangle mobile GPU/memory/frame-time caps, manual artistic signoff, then formal governed production promotion |
 
 **Acceptance protocol:** Every remaining row stays OPEN until executable unit + desktop/Android browser + dense-mesh performance + real user visual evidence match the original specification. Independent desktop/mobile target tests of slices are not evidence of full design completion. New preview publication must verify hosted index HTML, SOURCE receipt and original anatomical scene digests and never mutate main/root or `DEPLOY_REQUEST.json` prematurely.
+
+## Stage result: published isolated preview, original design still incomplete
+
+**[v11.47 hosted review preview](https://kamiloki-swrlz-forge-moba.static.hf.space/atelier-precision-v11-47/index.html?project=model-atelier) VERIFIED**. Both feature PRs remain draft and unmerged into the sealed production branch. Art and native model workflow still require owner visual validation. Do not announce all requirements or production as finished.
 
 ## Stage handoff
 - [Draft #256 local adaptive indexed subdivision](https://github.com/kaministrator999-ui/Swrlzkamico/pull/256).
