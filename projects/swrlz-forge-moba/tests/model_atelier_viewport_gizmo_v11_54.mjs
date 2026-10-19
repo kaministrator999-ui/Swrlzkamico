@@ -16,6 +16,12 @@ assert.equal(delta('rotate','bad',[0,0],[20,0],[20,15],5),null);
 assert.equal(delta('rotate','z',[0,0],[0,0],[20,20],5),null);
 assert.equal(delta('rotate','z',[0,0],[20,0],[20,20],90),null);
 assert.equal(delta('scale','x',[0,0],[20,0],[NaN,0],5),null);
+// A second finger cannot move or commit another finger's transform.
+vm.runInContext('atelierViewportGizmoDrag={pointerId:7}',context);
+assert.equal(vm.runInContext('atelierViewportGizmoPointerMove({pointerId:8})',context),false);
+assert.equal(vm.runInContext('atelierViewportGizmoPointerUp({pointerId:8})',context),false);
+assert.equal(vm.runInContext('atelierViewportGizmoDrag.pointerId',context),7);
+vm.runInContext('atelierViewportGizmoDrag=null',context);
 const obj=new THREE.Mesh(new THREE.PlaneGeometry(.5,.5,4,4),new THREE.MeshBasicMaterial());
 assert(obj.geometry.attributes.position.count>8);
 console.log('V1154_VIEWPORT_GIZMO_ROTATE_SCALE_AXIS_SNAP_INVALID_GEOMETRY_PASS');

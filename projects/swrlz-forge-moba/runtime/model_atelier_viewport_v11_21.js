@@ -252,6 +252,8 @@ function atelierCameraPointerDown(e){
    // A second finger cancels a possible one-finger tap, orbit or vertex drag;
    // a gesture must NEVER click a part or commit an unintended vertex edit.
    pressed=null;
+   // Multitouch navigation cancels the prior rotation/scale editing gesture.
+   if(typeof atelierViewportGizmoCancel==='function')atelierViewportGizmoCancel();
    if(atelierSculptDrag){atelierSculptDrag=null;renderParts();}
    if(atelierLassoDrag){atelierLassoDrag=null;atelierLassoTempPin=null;atelierLassoOverlayRefresh();}
    if(atelierLassoFreehand){atelierLassoFreehand=null;atelierLassoPending=[];atelierLassoArm=null;atelierLassoRefresh();}

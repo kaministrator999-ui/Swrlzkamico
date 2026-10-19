@@ -57,14 +57,14 @@ function atelierViewportGizmoPointerDown(e){
  const g=mesh.geometry.attributes.position;
  atelierViewportGizmoDrag={
   mode,axis:$m('GroupViewportAxis').value,space:$m('GroupSpace').value,
-  partId:selection,mesh,indices,pivot,start,moves:null,
+  partId:selection,mesh,indices,pivot,start,pointerId:e.pointerId,moves:null,
   original:indices.map(i=>[g.getX(i),g.getY(i),g.getZ(i)])
  };
  renderer.domElement.setPointerCapture?.(e.pointerId);
  return true;
 }
 function atelierViewportGizmoPointerMove(e){
- const d=atelierViewportGizmoDrag;if(!d)return false;
+ const d=atelierViewportGizmoDrag;if(!d||e.pointerId!==d.pointerId)return false;
  const pos=d.mesh.geometry.attributes.position;
  // Prevent incremental drift: restore base before evaluating each frame.
  for(let i=0;i<d.indices.length;i++)pos.setXYZ(d.indices[i],...d.original[i]);
@@ -81,8 +81,8 @@ function atelierViewportGizmoPointerMove(e){
  d.mesh.geometry.computeBoundingSphere();d.mesh.geometry.computeBoundingBox();
  return true;
 }
-function atelierViewportGizmoPointerUp(){
- const d=atelierViewportGizmoDrag;if(!d)return false;
+function atelierViewportGizmoPointerUp(e){
+ const d=atelierViewportGizmoDrag;if(!d||e?.pointerId!==d.pointerId)return false;
  atelierViewportGizmoDrag=null;
  const p=partById(d.partId);
  if(!p||!d.moves||d.moves.every(m=>m.every(v=>Math.abs(v)<1e-7))){

@@ -449,8 +449,8 @@ function atelierSculptOnPointerMove(e){
  atelierSculptGizmo.position.copy(drag.mesh.localToWorld(pivotLocal));
  return true;
 }
-function atelierSculptOnPointerUp(){
- if(typeof atelierViewportGizmoPointerUp==='function'&&atelierViewportGizmoPointerUp())return true;
+function atelierSculptOnPointerUp(e){
+ if(typeof atelierViewportGizmoPointerUp==='function'&&atelierViewportGizmoPointerUp(e))return true;
  const drag=atelierSculptDrag;if(!drag)return false;
  atelierSculptDrag=null;
  const p=partById(drag.partId),delta=drag.delta;

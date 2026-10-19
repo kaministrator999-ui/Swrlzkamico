@@ -2,6 +2,8 @@ import assert from 'node:assert/strict';
 import * as THREE from 'three';import vm from 'node:vm';import fs from 'node:fs';
 const s=fs.readFileSync(new URL('../runtime/model_atelier_topology_lod_v11_38.js',import.meta.url),'utf8');
 const c=vm.createContext({THREE,MODEL_ATELIER_KINDS:['sphere']});vm.runInContext(s,c);
+assert.match(s,/delete candidate\.runtimeLOD/,'High-mesh preview must drop stale low LOD');
+assert.match(s,/delete part\.runtimeLOD/,'Committed topology edit must invalidate stale low LOD');
 const g=new THREE.PlaneGeometry(1,1,1,1);
 const p={kind:'topologyMesh',topologyMesh:{positions:Array.from(g.attributes.position.array),
  uvs:Array.from(g.attributes.uv.array),indices:Array.from(g.index.array)}};

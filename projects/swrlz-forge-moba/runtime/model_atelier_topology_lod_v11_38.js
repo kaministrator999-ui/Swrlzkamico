@@ -294,8 +294,10 @@ function atelierTopologyInstall(){
      const result=atelierTopologyEditCandidate(part,command,face,edge,vertex,delta);
      if(!result.ok){status('Topology edit rejected: '+result.reason,true);return;}
      const candidate={...part,topologyMesh:result.data};
+     // Changing high topology makes its previous low LOD obsolete.
+     delete candidate.runtimeLOD;
      if(!checkPart(candidate)){status('Native project validation rejected edit.',true);return;}
-     checkpoint();part.topologyMesh=result.data;
+     checkpoint();part.topologyMesh=result.data;delete part.runtimeLOD;
      signalEdited();select(part.id);
      status(command+' applied: '+result.beforeFaces+'→'+result.afterFaces+
        ' real triangles, '+result.beforeVertices+'→'+result.afterVertices+
