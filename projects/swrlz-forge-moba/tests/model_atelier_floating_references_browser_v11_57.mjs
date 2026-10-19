@@ -56,6 +56,7 @@ try{
   const bounds=await header.boundingBox();assert(bounds&&bounds.width>100);
   const sx=bounds.x+28,sy=bounds.y+17;
   const orig=refs[0].floatWindow;
+  const otherOriginal=JSON.parse(JSON.stringify(refs[1].floatWindow));
   if(mobile){
    const session=await ctx.newCDPSession(page);
    await session.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:sx,y:sy,id:6}]});
@@ -87,7 +88,7 @@ try{
   }
   assert(refs[0].floatWindow.x!==orig.x||refs[0].floatWindow.y!==orig.y,
     'dragging own header saves native per-image position');
-  assert.equal(refs[1].floatWindow.x,(await data()).references[1].floatWindow.x,
+  assert.deepEqual(refs[1].floatWindow,otherOriginal,
     'other window must remain independently placed');
   const snapshot=JSON.parse(JSON.stringify(refs.map(r=>r.floatWindow)));
   const dl=page.waitForEvent('download');
@@ -97,8 +98,14 @@ try{
   await page.locator('#modelAtelierUndo').click();
   assert.notDeepEqual((await data()).references.map(r=>r.floatWindow),snapshot);
   await page.locator('#modelAtelierImportFile').setInputFiles(path);
-  await page.waitForFunction(()=>window.SWYRL_ENGINE_AGENT.inspectScene().project.modelAtelier
-    .references?.filter(r=>r.floatWindow?.open).length===2);
+  // Both windows were already open *before* importing. Wait for the
+  // specifically restored coordinates, not merely a pre-existing count.
+  await page.waitForFunction(({id,x,y})=>{
+   const refs=window.SWYRL_ENGINE_AGENT.inspectScene().project.modelAtelier.references||[];
+   const chosen=refs.find(r=>r.id===id);
+   return refs.filter(r=>r.floatWindow?.open).length===2&&
+     chosen?.floatWindow?.x===x&&chosen?.floatWindow?.y===y;
+  },{id:refIds[0],x:snapshot[0].x,y:snapshot[0].y});
   const restored=await data();
   assert.deepEqual(restored.references.map(r=>r.floatWindow),snapshot);
   assert.deepEqual(restored.references.map(r=>r.id),refIds);
