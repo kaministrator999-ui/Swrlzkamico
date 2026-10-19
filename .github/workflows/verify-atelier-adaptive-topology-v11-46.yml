@@ -32,7 +32,7 @@ jobs:
           node --check projects/swrlz-forge-moba/runtime/model_atelier_runtime_lod_v11_43.js
           node --check projects/swrlz-forge-moba/runtime/model_atelier_adaptive_topology_v11_46.js
           python -m py_compile projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py
-          python projects/swrlz-forge-moba/scripts/build_atelier_precision_preview_v11_37.py --output /tmp/atelier-lod
+          python projects/swrlz-forge-moba/scripts/build_atelier_precision_preview_v11_45.py --output /tmp/atelier-lod
           node --check /tmp/atelier-lod-module.mjs
       - name: Verified real topology reductions on sampled mesh
         run: |
