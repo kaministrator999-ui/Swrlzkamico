@@ -1,0 +1,203 @@
+name: Verify & preview §E v11.53 integrated precision tools
+on:
+  push:
+    branches: [feature/atelier-painted-region-masks-v11-53]
+    paths:
+      - 'projects/swrlz-forge-moba/scripts/build_atelier_precision_preview_v11_53.py'
+      - 'projects/swrlz-forge-moba/runtime/model_atelier_*.js'
+      - 'projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py'
+      - 'projects/swrlz-forge-moba/tests/model_atelier_*.mjs'
+      - '.github/workflows/verify-preview-atelier-v11-53.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: precision-preview-v1153
+  cancel-in-progress: true
+jobs:
+  geometry-and-native-schema:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Build sealed original model and overlay ALL saved precision tools
+        run: |
+          python projects/swrlz-forge-moba/scripts/build_atelier_precision_preview_v11_53.py --output dist/atelier-precision-v11-53
+          node --check projects/swrlz-forge-moba/runtime/model_atelier_occluded_brush_v11_51.js
+          node --check projects/swrlz-forge-moba/runtime/model_atelier_screen_brush_v11_52.js
+          node --check projects/swrlz-forge-moba/runtime/model_atelier_painted_regions_v11_53.js
+          node --check dist/atelier-precision-v11-53-module.mjs
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py
+      - name: All precision-tool geometry, serialization and safety contracts
+        run: |
+          npm install --no-save three@0.169.0 playwright@1.56.1
+          for file in \
+            model_sculpt_brush_cpu_v11_21.mjs \
+            model_atelier_surface_targeting_v11_22.mjs \
+            model_atelier_lasso_v11_22.mjs \
+            model_atelier_face_sheet_v11_23.mjs \
+            model_atelier_face_volume_v11_23.mjs \
+            model_atelier_numeric_groups_v11_23.mjs \
+            model_atelier_local_refine_v11_23.mjs \
+            model_atelier_freehand_lasso_v11_24.mjs \
+            model_atelier_interior_camera_v11_25.mjs \
+            model_atelier_brush_ops_v11_27.mjs \
+            model_atelier_density_profiles_v11_28.mjs \
+            model_atelier_lasso_group_v11_30.mjs \
+            model_atelier_refine_layers_v11_31.mjs \
+            model_atelier_ref_dock_v11_32.mjs \
+            model_atelier_region_boolean_v11_34.mjs \
+            model_atelier_lasso_curve_v11_35.mjs \
+            model_atelier_lasso_segment_v11_36.mjs \
+            model_atelier_topology_lod_v11_38.mjs \
+            model_atelier_face_landmarks_v11_39.mjs \
+            model_atelier_topology_direct_v11_40.mjs \
+            model_atelier_face_contour_v11_41.mjs \
+            model_atelier_runtime_lod_v11_43.mjs \
+            model_atelier_topology_audit_v11_44.mjs \
+            model_atelier_reference_compare_v11_45.mjs \
+            model_atelier_adaptive_topology_v11_46.mjs \
+            model_atelier_face_profile_v11_47.mjs \
+            model_atelier_boundary_cap_v11_48.mjs \
+            model_atelier_uv_reprojection_v11_49.mjs \
+            model_atelier_face_extrude_v11_50.mjs \
+            model_atelier_occluded_brush_v11_51.mjs \
+            model_atelier_screen_brush_v11_52.mjs \
+            model_atelier_painted_regions_v11_53.mjs; do
+              echo "Checking $file"
+              node "projects/swrlz-forge-moba/tests/$file"
+          done
+          python projects/swrlz-forge-moba/tests/verify_atelier_ci_routing_v11_33.py
+  actual-browser-cross-tool:
+    runs-on: ubuntu-latest
+    timeout-minutes: 27
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [surface, sculpt, references-core, references-face, topology-regions, topology-mesh]
+    env:
+      SHARD: ${{ matrix.shard }}
+      SWYRL_SCULPT_TEST_URL: http://127.0.0.1:8787
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify sealed original and prepare same cumulative candidate
+        run: |
+          python projects/swrlz-forge-moba/scripts/build_atelier_precision_preview_v11_53.py --output /tmp/atelier-precision-v11-53
+          node --check /tmp/atelier-precision-v11-53-module.mjs
+      - name: Install one browser per validation shard
+        run: |
+          npm install --no-save playwright@1.56.1 three@0.169.0
+          npx playwright install --with-deps --only-shell chromium
+      - name: Run all selected tests through original editor on desktop and Android
+        run: |
+          python -m http.server 8787 --directory /tmp/atelier-precision-v11-53 >/tmp/atelier-preview-server.log 2>&1 &
+          PID=$!
+          trap 'kill "$PID" 2>/dev/null || true' EXIT
+          for i in $(seq 1 45); do
+            if curl -fsS http://127.0.0.1:8787/ >/dev/null; then break; fi
+            sleep .3
+          done
+          curl -fsS http://127.0.0.1:8787/ >/dev/null
+          case "$SHARD" in
+            surface)
+              files="model_sculpt_brush_playwright_v11_21.mjs model_atelier_surface_brush_browser_v11_22.mjs model_atelier_freehand_browser_v11_24.mjs model_atelier_interior_browser_v11_25.mjs model_atelier_occluded_brush_browser_v11_51.mjs model_atelier_screen_brush_browser_v11_52.mjs"
+              ;;
+            sculpt)
+              files="model_atelier_brush_ops_browser_v11_27.mjs model_atelier_density_profiles_browser_v11_28.mjs model_atelier_nearest_shell_browser_v11_29.mjs model_atelier_refine_layers_browser_v11_31.mjs"
+              ;;
+            references-core)
+              files="model_atelier_reference_studio_v11_22.mjs model_atelier_face_sheet_browser_v11_23.mjs model_atelier_numeric_groups_browser_v11_23.mjs model_atelier_ref_dock_browser_v11_32.mjs"
+              ;;
+            references-face)
+              files="model_atelier_face_landmarks_browser_v11_39.mjs model_atelier_face_contour_browser_v11_41.mjs model_atelier_face_tap_browser_v11_42.mjs model_atelier_reference_compare_browser_v11_45.mjs model_atelier_face_profile_browser_v11_47.mjs"
+              ;;
+            topology-regions)
+              files="model_atelier_lasso_browser_v11_22.mjs model_atelier_refinement_browser_v11_23.mjs model_atelier_region_boolean_browser_v11_34.mjs model_atelier_lasso_curve_browser_v11_35.mjs model_atelier_lasso_segment_browser_v11_36.mjs model_atelier_painted_regions_browser_v11_53.mjs"
+              ;;
+            topology-mesh)
+              files="model_atelier_topology_lod_browser_v11_38.mjs model_atelier_topology_direct_browser_v11_40.mjs model_atelier_runtime_lod_browser_v11_43.mjs model_atelier_topology_audit_browser_v11_44.mjs model_atelier_adaptive_topology_browser_v11_46.mjs model_atelier_boundary_cap_browser_v11_48.mjs model_atelier_uv_reprojection_browser_v11_49.mjs model_atelier_face_extrude_browser_v11_50.mjs"
+              ;;
+            *) exit 1 ;;
+          esac
+          for file in $files; do
+            echo "INTEGRATION TEST $SHARD $file"
+            node "projects/swrlz-forge-moba/tests/$file"
+          done
+  publish-isolated-preview:
+    needs: [geometry-and-native-schema, actual-browser-cross-tool]
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      HF_TOKEN: ${{ secrets.HF_TOKEN }}
+      GITHUB_SHA: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Build exact validated preview, leaving production root untouched
+        run: |
+          python projects/swrlz-forge-moba/scripts/build_atelier_precision_preview_v11_53.py --output dist/atelier-precision-v11-53
+          test -f dist/atelier-precision-v11-53/SOURCE.json
+      - name: Upload in independent preview subdirectory only
+        run: |
+          test -n "$HF_TOKEN" || { echo "::error::Missing authorized HF_TOKEN"; exit 1; }
+          python -m pip -q install 'huggingface_hub>=0.34,<2'
+          python - <<'PY'
+          import os
+          from huggingface_hub import HfApi
+          api=HfApi(token=os.environ['HF_TOKEN'])
+          commit=api.upload_folder(
+             folder_path='dist/atelier-precision-v11-53',
+             path_in_repo='atelier-precision-v11-53',
+             repo_id='kamiloki/swrlz-forge-moba',repo_type='space',
+             commit_message='§E v11.53 precision editor isolated preview '+os.environ['GITHUB_SHA'][:12])
+          print('V1153_ISOLATED_PREVIEW_UPLOADED',getattr(commit,'oid',None))
+          PY
+      - name: Verify exact served HTML and receipt, including unchanged packaged model scenes
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json,re,time,urllib.request,os
+          root=Path('dist/atelier-precision-v11-53')
+          base='https://kamiloki-swrlz-forge-moba.static.hf.space/atelier-precision-v11-53/'
+          local={f: (root/f).read_bytes() for f in ['index.html','SOURCE.json',
+             'scenes/model-atelier-festival-anatomy-v11-20.swyrl.json']}
+          expected=json.loads(local['SOURCE.json'])
+          assert expected['previewOnly'] is True and expected['baseRelease']=='v11.20'
+          assert len(expected['patches'])==91 and len(expected['assets'])==43
+          def normalize(b):
+             return re.sub(rb'(?<=<head>)<script>window\.huggingface=\{variables:\{.*?\}\};</script>',
+                b'',b,count=1)
+          for attempt in range(18):
+             try:
+                 for name,payload in local.items():
+                     url=base+name+'?source='+os.environ['GITHUB_SHA']+'&attempt='+str(attempt)
+                     with urllib.request.urlopen(url,timeout=30) as resp:
+                         remote=resp.read()
+                     if name.endswith('.html'):remote=normalize(remote)
+                     assert hashlib.sha256(remote).hexdigest()==hashlib.sha256(payload).hexdigest(),name
+                 print('V1153_LIVE_PREVIEW_ALL_ASSETS_EXACT_MATCH',base+'index.html?project=model-atelier',expected['finalSha256'])
+                 break
+             except Exception as exc:
+                 print('Retry',attempt,str(exc)[:170]);time.sleep(5)
+          else:raise SystemExit('New precision preview failed hosted exact receipt/HTML/model integrity')
+          PY
+      - name: Preserve published preview audit artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: atelier-precision-v11-53-receipt
+          path: dist/atelier-precision-v11-53/SOURCE.json
