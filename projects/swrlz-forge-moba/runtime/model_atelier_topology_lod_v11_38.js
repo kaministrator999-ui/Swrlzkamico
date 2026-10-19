@@ -44,7 +44,7 @@ function atelierTopologyGeometry(part){
  out.computeVertexNormals();out.computeBoundingSphere();out.computeBoundingBox();
  return out;
 }
-function atelierLODOne(g,grid){
+function atelierLODOne(g,grid,strictUV=false){
  const positions=g.getAttribute('position'),uvs=g.getAttribute('uv'),idx=g.getIndex();
  const points=positions.count,triangles=Math.floor((idx?.count||points)/3);
  const box=new THREE.Box3().setFromBufferAttribute(positions);
@@ -59,7 +59,12 @@ function atelierLODOne(g,grid){
    const u=uvs?.getX(i)||0,v=uvs?.getY(i)||0;
    // Isolate UV boundary duplicates while clustering in 3D object space.
    const key=[Math.floor((x-box.min.x)/cell),Math.floor((y-box.min.y)/cell),
-     Math.floor((z-box.min.z)/cell),uvs?seam(u):'',uvs?seam(v):''].join(':');
+     Math.floor((z-box.min.z)/cell),uvs?seam(u):'',uvs?seam(v):'',
+     // Strict chart guard stops inside-UV seams from merging across distant
+     // atlas coordinates inside one spatial cluster. It is opt-in, bounded,
+     // and never rewrites the original source geometry.
+     strictUV&&uvs?Math.floor(u*32+1e-9):'',
+     strictUV&&uvs?Math.floor(v*32+1e-9):''].join(':');
    let group=groups.get(key);
    if(!group){group={id:groups.size,sx:0,sy:0,sz:0,su:0,sv:0,n:0};
      groups.set(key,group);}
@@ -96,8 +101,9 @@ function atelierLODOne(g,grid){
  }
  return {positions:positionsOut,uvs:uvOut,indices};
 }
-function atelierLODPlan(g,ratio){
- if(!g?.attributes?.position||!Number.isFinite(ratio)||ratio<.05||ratio>.9||
+function atelierLODPlan(g,ratio,strictUV=false){
+ if(!g?.attributes?.position||typeof strictUV!=='boolean'||
+    (strictUV&&!g.attributes.uv)||!Number.isFinite(ratio)||ratio<.05||ratio>.9||
    g.groups?.length>1||g.morphAttributes?.position?.length)
    return {ok:false,reason:'Single-material geometry and a ratio of 5–90% required'};
  const source=Math.floor((g.index?.count||g.attributes.position.count)/3);
@@ -108,12 +114,12 @@ function atelierLODPlan(g,ratio){
  // Binary search a 3D cell-grid resolution; report ACTUAL result rather
  // than promising exactly desired triangles.
  for(let iteration=0;iteration<10&&low<=high;iteration++){
-   const grid=Math.floor((low+high)/2),data=atelierLODOne(g,grid);
+   const grid=Math.floor((low+high)/2),data=atelierLODOne(g,grid,strictUV);
    if(!data){low=grid+1;continue;}
    const count=data.indices.length/3;
    if(count<source&&(!best||Math.abs(count-desired)<Math.abs(best.after-desired)))
      best={ok:true,data,before:source,after:count,vertices:data.positions.length/3,
-       requested:desired,grid};
+       requested:desired,grid,strictUV};
    if(count<desired)low=grid+1;else high=grid-1;
  }
  if(!best||best.after>=source)
@@ -138,13 +144,15 @@ function atelierLODInstall(){
      x.userData.atelierId===selection);
    const ratio=Number(id('Ratio').value);
    atelierLODCandidate=null;
-   const planned=atelierLODPlan(mesh?.geometry,ratio);
+   const strictUV=!!$m('LODProtectUV')?.checked;
+    const planned=atelierLODPlan(mesh?.geometry,ratio,strictUV);
    if(!part||!planned.ok){status(planned.reason||'Select a mesh to plan LOD.',true);return;}
    atelierLODCandidate={...planned,id:part.id,ratio};
    id('Stats').textContent=planned.before.toLocaleString()+' → '+
      planned.after.toLocaleString()+' actual triangles · '+
      planned.vertices.toLocaleString()+' actual mesh vertices · '+
-     (planned.canBake?'Native topology copy available':'OBJ export only: copy exceeds portable native cap');
+     (planned.canBake?'Native topology copy available':'OBJ export only: copy exceeds portable native cap')+
+      (strictUV?' · strict 32-bin UV-island separation':' · legacy seam-boundary mode');
    status('Measured LOD reduction ready. Review before baking or exporting.');
  });
  id('Bake').addEventListener('click',()=>{
@@ -172,6 +180,7 @@ function atelierLODInstall(){
    mesh.updateMatrixWorld(true);
    const t=plan.data,lines=['# §E explicit LOD authoring: one selected reduced mesh',
      '# source triangles '+plan.before+', generated triangles '+plan.after,
+      '# strict UV-island guard '+(plan.strictUV?'enabled':'off (legacy mode)'),
      'o atelier_LOD_'+Math.round(plan.ratio*100)];
    for(let i=0;i<t.positions.length;i+=3){
      const p=new THREE.Vector3(t.positions[i],t.positions[i+1],t.positions[i+2])

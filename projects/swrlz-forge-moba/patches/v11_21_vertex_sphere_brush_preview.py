@@ -167,6 +167,8 @@ def apply(html):
              '<fieldset id="modelAtelierLODTools" hidden aria-label="Mesh topology and LOD authoring">'
              '<legend>Actual reduced topology · selected mesh</legend>'
              '<label>Desired triangle ratio <input id="modelAtelierLODRatio" type="number" step=".05" min=".05" max=".9" value=".35"></label>'
+             '<label><input type="checkbox" id="modelAtelierLODProtectUV"> Strict preserve UV islands (atlas cluster guard)</label>'
+             '<small>When enabled, spatial vertices from distant image UV coordinates remain separate even inside the same cluster. Keeps more triangles when needed; this is conservative UV-aware clustering, not full QEM retopology.</small>'
              '<div class="atelier-inspector-actions"><button id="modelAtelierLODPreview" type="button">Measure reduced mesh</button>'
              '<button id="modelAtelierLODBake" type="button">Bake separate native topology copy</button>'
              '<button id="modelAtelierLODOBJ" type="button">Export reduced UV OBJ</button></div>'
