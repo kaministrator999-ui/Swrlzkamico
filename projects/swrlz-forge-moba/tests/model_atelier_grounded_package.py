@@ -9,12 +9,12 @@ m=json.loads((root/'source-manifest.json').read_text('utf8'))
 dist=Path(a.package)
 receipt=json.loads((dist/'SOURCE.json').read_text('utf8'))
 raw=(dist/'index.html').read_bytes()
-assert len(m['patches'])==90 and m['patches'][-1]=='patches/v11_20_anatomical_head.py'
+assert len(m['patches'])==91 and m['patches'][-1]=='patches/v11_59_precision_model_atelier.py'
 assert len(receipt['assets'])==43 and m['patches']==receipt['patches']
 assert len(raw)==receipt['finalBytes']==m['finalBytes']
 assert hashlib.sha256(raw).hexdigest()==m['finalSha256']==receipt['finalSha256']
 html=raw.decode('utf8')
-for x in ('V11_20_ANATOMICAL_HEAD','modelAtelierPoseDeck',
+for x in ('V11_59_PRECISION_MODEL_ATELIER','modelAtelierPoseDeck',
           'function atelierGroundedLeg(','function atelierGroundedFoot(',
           'atelierGroundedStances','atelierFootParts','v11.20 · anatomical head studio'):
     assert x in html,x
