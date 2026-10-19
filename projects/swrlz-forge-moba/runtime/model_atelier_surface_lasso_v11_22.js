@@ -341,7 +341,7 @@ function atelierLassoPointFromEvent(e,mesh){
 }
 function atelierLassoPointerDown(e){
  if(e.button!==0)return false;
- if(atelierPaintArmed)return atelierPaintStart(e);
+ if(typeof atelierPaintArmed!=='undefined'&&atelierPaintArmed)return atelierPaintStart(e);
  if(atelierLassoArm==='freehand'){
    const mesh=modelRoot?.children.find(o=>o.isMesh&&o.userData.atelierId===selection);
    if(!mesh)return false;
@@ -368,7 +368,7 @@ function atelierLassoPointerDown(e){
  pressed=null;return true;
 }
 function atelierLassoPointerMove(e){
- if(atelierPaintMove(e))return true;
+ if(typeof atelierPaintMove==='function'&&atelierPaintMove(e))return true;
  if(atelierLassoFreehand?.id===e.pointerId){
    const trace=atelierLassoFreehand;
    if(Math.hypot(e.clientX-trace.lastX,e.clientY-trace.lastY)<7)return true;
@@ -387,7 +387,7 @@ function atelierLassoPointerMove(e){
  return true;
 }
 function atelierLassoPointerUp(e){
- if(atelierPaintFinish(e))return true;
+ if(typeof atelierPaintFinish==='function'&&atelierPaintFinish(e))return true;
  if(atelierLassoFreehand?.id===e.pointerId){
    atelierLassoTraceAdd(atelierLassoPointFromEvent(e,atelierLassoFreehand.mesh));
    atelierLassoFreehand=null;atelierLassoArm=null;
@@ -411,7 +411,7 @@ function atelierLassoPointerUp(e){
  atelierLassoRefresh();return true;
 }
 function atelierLassoPointerCancel(e){
- if(atelierPaintFinish(e,true))return true;
+ if(typeof atelierPaintFinish==='function'&&atelierPaintFinish(e,true))return true;
  if(atelierLassoFreehand?.id!==e.pointerId)return false;
  atelierLassoFreehand=null;atelierLassoArm=null;atelierLassoPending=[];
  atelierLassoRefresh();status('Freehand trace cancelled without changing mesh.');
@@ -465,7 +465,7 @@ function atelierLassoSegmentCandidate(region,mesh,index,amount){
  return result.ok?{...result,segment:index,outward:amount>0}:result;
 }
 function atelierLassoInstall(){
- atelierPaintInstall();
+ if(typeof atelierPaintInstall==='function')atelierPaintInstall();
  const id=n=>$m('Lasso'+n);
  id('PinIndex').addEventListener('change',e=>{
    atelierLassoSelectedPin=Number(e.target.value);
