@@ -403,7 +403,8 @@ def apply(html):
            '</div><p id="modelAtelierViewportNavHint" class="atelier-view-hint">1 finger orbit · 2 fingers pinch to zoom or slide to pan · Shift-drag pan</p>')
     html=once(html,'<div class="atelier-viewport-controls"><button id="modelAtelierZoomIn"',nav+'<div class="atelier-viewport-controls"><button id="modelAtelierZoomIn"')
     html=html.replace('</head>',"""<style>
-.model-atelier .atelier-viewbar{position:relative;z-index:180;pointer-events:auto;display:flex;flex-wrap:wrap;gap:6px;align-items:end;padding:8px;background:#131c30;border:1px solid #37435d;border-radius:10px;margin:5px 0}
+.model-atelier .atelier-viewbar{position:relative;z-index:180;pointer-events:none;display:flex;flex-wrap:wrap;gap:6px;align-items:end;padding:8px;background:#131c30;border:1px solid #37435d;border-radius:10px;margin:5px 0}
+.model-atelier .atelier-viewbar :is(button,select,input,label){pointer-events:auto}
 .model-atelier .atelier-viewbar label{display:flex;flex-direction:column;gap:3px;font-size:11px;color:#cbdaeb}
 .model-atelier .atelier-clip-tools{display:flex;gap:4px;align-items:flex-end;flex-wrap:wrap;border:1px solid #516580;border-radius:8px;padding:5px;margin:0;max-width:100%}
 .model-atelier .atelier-clip-tools legend{font-size:10px;color:#ddedfc}
