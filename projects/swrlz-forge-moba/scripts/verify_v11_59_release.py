@@ -11,8 +11,8 @@ manifest=json.loads((root/"source-manifest.json").read_text())
 assert manifest["name"]=="§wyrl§ Engine v11.59"
 assert len(manifest["patches"])==91
 assert manifest["patches"][-1]=="patches/v11_59_precision_model_atelier.py"
-assert manifest["finalBytes"]==2926762
-assert manifest["finalSha256"]=="dd9df586ab032c0c100905a2b398569e66dc433aab4d4e470c8eebee0bf141bd"
+assert manifest["finalBytes"]==2926858
+assert manifest["finalSha256"]=="50d5d4325e35716ef95f7f6a0041c557f87e09e6f3199c791cd89b4a781651c0"
 subprocess.run(["python",str(root/"build_space.py"),"--output",str(out)],check=True)
 payload=(out/"index.html").read_bytes()
 assert len(payload)==manifest["finalBytes"]

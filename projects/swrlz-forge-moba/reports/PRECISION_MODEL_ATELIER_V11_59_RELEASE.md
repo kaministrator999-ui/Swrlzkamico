@@ -12,7 +12,7 @@ Included tooling: brush/vertex topology, actual camera-ray occlusion, screen-pix
 
 ## Release source SHA
 
-Authoritative `source-manifest.json`: **2,926,762** HTML bytes, SHA-256 **dd9df586ab032c0c100905a2b398569e66dc433aab4d4e470c8eebee0bf141bd**.
+Authoritative `source-manifest.json`: **2,926,858** HTML bytes, SHA-256 **50d5d4325e35716ef95f7f6a0041c557f87e09e6f3199c791cd89b4a781651c0**.
 
 Version and marker: `§wyrl§ Engine v11.59`, `SWYRL_ENGINE_DEPLOY_MARKER: V11_59_PRECISION_MODEL_ATELIER`. Actual production `SOURCE.json` must reproduce exactly 91 patches, 43 original assets, this byte length and this digest. Measurement was independently reconstructed on GitHub Actions with exact sealed v11.20 source before changing the manifest. Production `build_space.py` remains authoritative.
 
@@ -32,3 +32,9 @@ Preserve historical source and evidence; if any production gate fails do not cla
 ## Source integrity reconciliation (2026-10-19)
 
 Code-review repairs for stale runtime LOD after mesh-shape/topology mutation and cross-pointer gizmo gesture ownership changed the generated source. GitHub Actions independent measurement `39282819839` on `1327077fb1089e950d483379e59682d58652b9e0` reproduced the canonical ordered 91-patch build as **2,926,762 bytes / SHA-256 `dd9df586ab032c0c100905a2b398569e66dc433aab4d4e470c8eebee0bf141bd`**. Updated this release seal and the strict verifier from the observed build, not by bypassing checksum assertions. Prior v11.59 seal is retained in Git history. The next release CI and hosted desktop/mobile checks remain mandatory; a changed source checksum is not a deployment receipt.
+
+## Release continuity repair · verified build on 2026-10-19
+
+A legacy mesh-density editor refresh was shadowed by the new per-object precision density refresh, leaving the original density controls hidden on desktop and Android. Distinct function names now preserve both editors. The viewport toolbar container now passes non-control pointer events through to inspector controls, retaining native button/select/input interaction. Native screenshot capture targets unoccupied canvas outside the mobile zoom toolbar. The Sheep Run regression expects the v11.59 release receipt (91 ordered patches and matching marker) while preserving the historical `SWYRL_ENGINE_BUILD` compatibility version. Earlier failures were retained in GitHub Actions lineage.
+
+After these changes the governed 91-patch source was independently rebuilt on GitHub Actions run `39289210927`: **2,926,858 HTML bytes**, SHA-256 **`50d5d4325e35716ef95f7f6a0041c557f87e09e6f3199c791cd89b4a781651c0`**. The prior release seal and intermediate digest are retained in Git history and above reconciliation notes. Actual desktop/phone workflow gates, merge, deployment and hosted audit are distinct and cannot be inferred from source sealing alone.
