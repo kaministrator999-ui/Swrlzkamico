@@ -259,7 +259,10 @@ function atelierTopologyEditCandidate(part,command,faceIndex=0,edgeSlot=0,vertex
    }
    data.positions=pos;data.uvs=uv;data.indices=next;
  }else return {ok:false,reason:'Unknown topology command'};
- if(!atelierTopologyValid({...part,topologyMesh:data}))
+ // Validate the edited high mesh without a low LOD that is being invalidated.
+ const candidate={...part,topologyMesh:data};
+ delete candidate.runtimeLOD;
+ if(!atelierTopologyValid(candidate))
    return {ok:false,reason:'Proposed topology does not meet native bounds'};
  // Refuse collapsed faces introduced by movement or malformed inputs.
  for(let i=0;i<data.indices.length;i+=3){

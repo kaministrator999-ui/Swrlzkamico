@@ -40,6 +40,13 @@ assert(!c.atelierTopologyEditCandidate(p,'split-edge',0,4).ok);
 assert(!c.atelierTopologyEditCandidate(p,'move-vertex',0,0,20,[0,0,.1]).ok);
 assert(!c.atelierTopologyEditCandidate(p,'move-vertex',0,0,0,[0,0,.8]).ok);
 assert(!c.atelierTopologyEditCandidate(p,'remove-face',10).ok);
+// Removing a face must not reject a legal high mesh because an old low LOD
+// now has the same triangle count. The prior low mesh will be discarded.
+const low={positions:p.topologyMesh.positions.slice(),uvs:p.topologyMesh.uvs.slice(),indices:ids.slice(0,3)};
+const withLOD={...p,runtimeLOD:{enabled:true,switchDistance:4,low}};
+assert(c.atelierTopologyValid(withLOD));
+const lodRemove=c.atelierTopologyEditCandidate(withLOD,'remove-face',0);
+assert(lodRemove.ok,lodRemove.reason);
 const rt=JSON.parse(JSON.stringify(removed.data));
 assert(c.atelierTopologyValid({kind:'topologyMesh',topologyMesh:rt}));
 assert.equal(JSON.stringify(rt),JSON.stringify(removed.data));
