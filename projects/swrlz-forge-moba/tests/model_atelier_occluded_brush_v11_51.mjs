@@ -34,7 +34,7 @@ function doubled(){
 }
 const {g,front,back}=doubled();
 const before=g.attributes.position;
-assert.equal(before.getZ(front),.05, 'outer sheet is in front');
+assert(Math.abs(before.getZ(front)-.05)<1e-6, 'outer sheet is in front');
 assert(context.atelierSculptValid({sculptBrushes:[s()]}));
 for(const wrong of [{cameraLocal:[NaN,0,1]},{cameraLocal:[0,0]},{cameraLocal:undefined},{cameraLocal:[601,0,0]}]){
  assert(!context.atelierSculptValid({sculptBrushes:[s(wrong)]}),'reject invalid stored eye');
