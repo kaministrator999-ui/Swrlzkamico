@@ -2,7 +2,7 @@
 // backward-compatible: older strokes lacking surfaceMode use through-volume.
 // New strokes default to FRONT-facing and connected-surface selection.
 // All computation uses part-LOCAL vertices and never alters source topology.
-const atelierSurfaceModes=['front','connected','inside','through','nearest'];
+const atelierSurfaceModes=['front','connected','inside','through','nearest','occluded'];
 function atelierSurfaceTangent(axis) {
  const n=new THREE.Vector3(...axis).normalize();
  const helper=Math.abs(n.y)<.84?new THREE.Vector3(0,1,0):new THREE.Vector3(1,0,0);
@@ -34,7 +34,7 @@ function atelierSurfaceWeights(geometry,stroke) {
      normal.getX(i)*axis.x+normal.getY(i)*axis.y+normal.getZ(i)*axis.z:1;
    // Deliberate interior mode selects the inward-facing opposite-normal
    // shell. The usual front/connected modes retain their legacy behavior.
-   const faceOk=mode==='through'||!normal||
+   const faceOk=mode==='through'||mode==='occluded'||!normal||
      (mode==='inside'?oriented<-.12:oriented>-.08);
    if(!faceOk||d>radius+1e-5)continue;
    valid[i]=1;
@@ -66,6 +66,17 @@ function atelierSurfaceWeights(geometry,stroke) {
      }
    }
    return {dist,origin,valid,radius};
+ }
+ if(mode==='occluded'){
+  // Camera-eye rays are tested against actual frontmost triangles, not
+  // sampled normals or projected depth bins. Missing/oversize data fails shut.
+  const visible=atelierBrushOcclusionMask(geometry,stroke.cameraLocal,valid,radius);
+  if(!visible){dist.fill(Infinity);valid.fill(0);
+    return {dist,origin,valid,radius,error:'Occlusion mesh/eye exceeds safe bounds'};}
+  for(let i=0;i<count;i++)if(valid[i]&&!visible[i]){
+    valid[i]=0;dist[i]=Infinity;
+  }
+  return {dist,origin,valid,radius};
  }
  if(mode!=='connected'||nearest<0)return {dist,origin,valid,radius};
  // Geodesic traversal is restricted to actual connected triangles. UV seam
