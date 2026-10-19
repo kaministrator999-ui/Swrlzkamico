@@ -12,7 +12,7 @@ assert manifest["name"]=="§wyrl§ Engine v11.59"
 assert len(manifest["patches"])==91
 assert manifest["patches"][-1]=="patches/v11_59_precision_model_atelier.py"
 assert manifest["finalBytes"]==2926239
-assert manifest["finalSha256"]=="515478b91b41356f2f74c6ad13318be1e24144da04e0de8bc6875c9608a7e23b"
+assert manifest["finalSha256"]=="3a23b53ce48ba1b25aa19346a4d640aebee8a81ba0f2a161ca66621f31a5f0e1"
 subprocess.run(["python",str(root/"build_space.py"),"--output",str(out)],check=True)
 payload=(out/"index.html").read_bytes()
 assert len(payload)==manifest["finalBytes"]
