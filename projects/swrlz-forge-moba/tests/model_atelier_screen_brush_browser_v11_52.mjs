@@ -35,6 +35,17 @@ try{
   await page.locator('#modelAtelierSculptBrushAmount').fill('.04');
   await page.locator('#modelAtelierSculptBrushApply').click();
   const changed=(await parts()).find(p=>p.id==='model-0001');
+  if(!changed.sculptBrushes?.length){
+   const info=await page.evaluate(()=>({
+    statuses:[...document.querySelectorAll('#modelAtelierPanel [role="status"], #modelAtelierPanel output')]
+     .map(e=>({id:e.id,text:e.textContent?.slice(0,350)})),
+    sizing:[...document.querySelectorAll('#modelAtelierSculptBrush input')]
+     .filter(e=>/Radius|Center|Axis/i.test(e.id)).map(e=>[e.id,e.value]),
+    canvas:(()=>{const e=document.querySelector('#modelAtelierViewport canvas'),r=e?.getBoundingClientRect();
+     return r&&{width:r.width,height:r.height,top:r.top,left:r.left};})()
+   }));
+   console.error('V1152_PIXEL_BRUSH_DIAGNOSTIC',device,JSON.stringify(info));
+  }
   assert.equal(changed.sculptBrushes?.length,1,
    'screen-space button must commit one native stroke at visible picked center');
   const saved=changed.sculptBrushes[0];
