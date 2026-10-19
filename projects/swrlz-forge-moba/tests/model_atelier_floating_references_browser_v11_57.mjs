@@ -68,6 +68,23 @@ try{
    await page.mouse.move(sx+24,sy+16,{steps:9});await page.mouse.up();
   }
   refs=(await data()).references;
+  if(refs[0].floatWindow.x===orig.x&&refs[0].floatWindow.y===orig.y){
+   const dbg=await page.evaluate(({x,y})=>{
+    const el=document.elementFromPoint(x,y);
+    const host=document.querySelector('#modelAtelierFloatingReferences');
+    const panel=host?.querySelector('.atelier-float-reference');
+    const hdr=panel?.querySelector('.atelier-float-reference-handle');
+    return {
+     atPointer:{tag:el?.tagName,id:el?.id,classes:el?.className,parent:el?.parentElement?.className},
+     host:!!host,panelCount:host?.children.length,headDataset:{...hdr?.dataset},
+     headBounds:hdr?.getBoundingClientRect().toJSON(),panelStyle:panel?.getAttribute('style'),
+     status:document.querySelector('#modelAtelierStatus')?.textContent
+    };
+   },{x:sx,y:sy});
+   console.error('V1157_DRAG_DIAGNOSTIC',device,JSON.stringify({
+    start:{x:sx,y:sy},orig,after:refs[0].floatWindow,errors,...dbg
+   }));
+  }
   assert(refs[0].floatWindow.x!==orig.x||refs[0].floatWindow.y!==orig.y,
     'dragging own header saves native per-image position');
   assert.equal(refs[1].floatWindow.x,(await data()).references[1].floatWindow.x,
