@@ -66,6 +66,12 @@ try{
   assert.equal(json.model.parts.find(x=>x.kind==='topologyMesh')?.topologyMesh.indices.length/3,after);
   assert.equal(json.model.parts.find(x=>x.kind==='topologyMesh').runtimeLOD.low.indices.length/3,lowCount);
   await page.locator('#modelAtelierUndo').click();
+  ps=await parts();assert.equal(ps.find(x=>x.id===copy.id).runtimeLOD.switchDistance,120);
+  await page.locator('#modelAtelierUndo').click();
+  ps=await parts();assert.equal(ps.find(x=>x.id===copy.id).runtimeLOD.switchDistance,4);
+  await page.locator('#modelAtelierUndo').click();
+  ps=await parts();assert.equal(ps.find(x=>x.id===copy.id).runtimeLOD,undefined);
+  await page.locator('#modelAtelierUndo').click();
   ps=await parts();assert.equal(ps.length,283);
   await page.locator('#modelAtelierImportFile').setInputFiles(path);
   await page.waitForFunction(()=>window.SWYRL_ENGINE_AGENT.inspectScene().project.modelAtelier.parts.length===284);
