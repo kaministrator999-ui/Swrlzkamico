@@ -98,7 +98,7 @@ def main():
  receipt=json.loads((source/"SOURCE.json").read_text(encoding="utf-8"))
  assert len(receipt["patches"])==90
  receipt.update(sourceVersion="v11.51-precision-preview",baseRelease="v11.20",
-     previewOnly=True,sourceBranch="feature/atelier-face-extrusion-v11-51",
+     previewOnly=True,sourceBranch="feature/atelier-ray-occlusion-v11-51",
      sourceCommit=os.environ.get("GITHUB_SHA","candidate"),
      finalSha256=hashlib.sha256(payload).hexdigest(),finalBytes=len(payload))
  receipt["patches"].append("patches/v11_21_vertex_sphere_brush_preview.py")
