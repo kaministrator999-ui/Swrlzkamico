@@ -28,10 +28,13 @@ function atelierBrushLocalRadiusFromPixels(mesh,view,element,localCenter,pixels)
  const localY=mesh.worldToLocal(vertical).distanceTo(localCenter);
  if(!Number.isFinite(localX)||!Number.isFinite(localY)||
    localX<=0||localY<=0)return null;
- // A circular CSS-pixel footprint is not a local-space sphere on a heavily
- // nonuniformly scaled object. Refuse rather than silently exaggerate radius.
- if(Math.max(localX,localY)/Math.min(localX,localY)>1.12)return null;
- const radius=(localX+localY)*.5;
+ // A local-space sphere projects elliptically when the object transform is
+ // nonuniform (the v11.20 anatomical head itself is mildly nonuniform).
+ // Use the geometric mean at the tangent plane as a bounded approximation;
+ // extreme anisotropy cannot be represented by the current scalar brush.
+ const distortion=Math.max(localX,localY)/Math.min(localX,localY);
+ if(distortion>2.5)return null;
+ const radius=Math.sqrt(localX*localY);
  return radius>=.03&&radius<=2.5?radius:null;
 }
 function atelierBrushSizingRefresh(){
@@ -44,6 +47,6 @@ function atelierBrushSizingRefresh(){
  }
  const note=$m('SculptBrushSizingNote');
  if(note)note.textContent=screen?
-  'Pixels measured in the camera plane at the picked center; baked as local radii when applied. Nonuniform mesh scale is rejected.':
+  'Pixels measured in the camera plane at the picked center; baked as local radii when applied. Mildly unequal object scale is approximated; extreme anisotropy is rejected.':
   'Local radii are fixed model units, independent of screen size.';
 }
