@@ -52,6 +52,7 @@ try{
   await page.locator('#modelAtelierRedo').click();
   refined=(await parts()).find(x=>x.id===item.id).topologyMesh;
   assert.equal(JSON.stringify(refined),post);
+  await page.locator('#modelAtelierParts').selectOption(item.id);
   assert(await page.locator('#modelAtelierTopologyAuditTools').isVisible());
   await page.locator('#modelAtelierTopologyAuditCheck').click();
   assert.match(await page.locator('#modelAtelierTopologyAuditStats').textContent(),
