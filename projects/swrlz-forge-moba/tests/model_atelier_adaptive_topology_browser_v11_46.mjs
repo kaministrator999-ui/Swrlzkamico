@@ -22,7 +22,7 @@ try{
     kind:'topologyMesh',material:'matte',color:'#88bbdd',
     position:[0,3,1],rotation:[0,0,0],scale:[.5,.5,.5],
     topologyMesh:{positions:[0,0,0,1,0,0,1,1,0,0,1,0],
-      uvs:[0,0,1,0,1,1,0,1],indices:[0,1,2,0,3,2]}
+      uvs:[0,0,1,0,1,1,0,1],indices:[0,1,2,0,2,3]}
   };
   exported.model.parts.push(item);
   await page.locator('#modelAtelierImportFile').setInputFiles({
