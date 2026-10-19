@@ -29,7 +29,9 @@ function atelierLassoValid(part){
      ||(r.selectionOp!==undefined&&!['add','subtract','intersect'].includes(r.selectionOp))
      ||typeof r.id!=='string'||r.id.length>48||ids.has(r.id)
      ||typeof r.name!=='string'||r.name.length>90||!Array.isArray(r.pins)
-     ||r.pins.length<3||r.pins.length>atelierLassoMaxPins||!atelierPaintDabsValid(r.paintDabs))return false;
+     ||r.pins.length<3||r.pins.length>atelierLassoMaxPins||
+      (r.paintDabs!==undefined&&
+       (typeof atelierPaintDabsValid!=='function'||!atelierPaintDabsValid(r.paintDabs))))return false;
    ids.add(r.id);
    if(!Array.isArray(r.axis)||r.axis.length!==3||!r.axis.every(Number.isFinite)
       ||Math.abs(Math.hypot(...r.axis)-1)>.02)return false;
@@ -124,13 +126,16 @@ function atelierLassoCompiledRegionMask(part,region){
  };
  return {
    contains(v){
-     const a=atelierPaintMaskContains(v,atelierLassoInside(project(v,lhs),lhs.poly),region.paintDabs);
+     const rawA=atelierLassoInside(project(v,lhs),lhs.poly);
+     const a=typeof atelierPaintMaskContains==='function'?atelierPaintMaskContains(v,rawA,region.paintDabs):rawA;
      if(!rhs)return a;
-     const b=atelierPaintMaskContains(v,atelierLassoInside(project(v,rhs),rhs.poly),operand.paintDabs);
+     const rawB=atelierLassoInside(project(v,rhs),rhs.poly);
+     const b=typeof atelierPaintMaskContains==='function'?atelierPaintMaskContains(v,rawB,operand.paintDabs):rawB;
      return operation==='add'?(a||b):operation==='subtract'?(a&&!b):(a&&b);
    },
    distance(v){
      const a=atelierLassoEdgeDistance(project(v,lhs),lhs.poly);
+     if(typeof atelierPaintMaskEdgeDistance!=='function')return rhs?Math.min(a,atelierLassoEdgeDistance(project(v,rhs),rhs.poly)):a;
      return Math.min(a,atelierPaintMaskEdgeDistance(v,region.paintDabs||[]),
       rhs?Math.min(atelierLassoEdgeDistance(project(v,rhs),rhs.poly),atelierPaintMaskEdgeDistance(v,operand.paintDabs||[])):Infinity);
    }
