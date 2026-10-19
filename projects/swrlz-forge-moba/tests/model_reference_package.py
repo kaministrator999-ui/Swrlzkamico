@@ -3,7 +3,7 @@ import argparse,hashlib,json,re
 from pathlib import Path
 ap=argparse.ArgumentParser();ap.add_argument('--package',required=True);a=ap.parse_args()
 r=Path(__file__).resolve().parent.parent;out=Path(a.package);m=json.loads((r/'source-manifest.json').read_text());receipt=json.loads((out/'SOURCE.json').read_text());raw=(out/'index.html').read_bytes()
-assert len(m['patches'])==90 and m['patches'][-1]=='patches/v11_20_anatomical_head.py'
+assert len(m['patches'])==91 and m['patches'][-1]=='patches/v11_59_precision_model_atelier.py'
 assert len(receipt['assets'])==43 and receipt['patches']==m['patches']
 assert len(raw)==m['finalBytes']==receipt['finalBytes'];assert hashlib.sha256(raw).hexdigest()==m['finalSha256']==receipt['finalSha256']
 source=r/'scenes/model-atelier-festival-anatomy-v11-20.swyrl.json';d=json.loads(source.read_text());model=d['project']['modelAtelier'];parts=model['parts'];rig=model['assemblies']
@@ -18,7 +18,7 @@ assert rig['components'][0]['state']==rig['components'][1]['state']=='attached'
 assert rig['components'][2]['state']=='free'
 assert (out/source.relative_to(r)).read_bytes()==source.read_bytes()
 html=raw.decode();found=re.search(r'const MODEL_ATELIER_CANONICAL_PROJECT=(.*?);\n(?=// §wyrl§ Engine Model Atelier v11.3)',html,re.S);assert found and json.loads(found.group(1))==d
-for key in ['atelierSilkenLock','atelierTailoredPanel','V11_20_ANATOMICAL_HEAD','modelAtelierAssemblyDeck','atelierAssemblySample','atelierAssemblySaveKey','atelierValidateAssemblies','MODEL_ATELIER_LEGACY_V1112']:
+for key in ['atelierSilkenLock','atelierTailoredPanel','V11_59_PRECISION_MODEL_ATELIER','modelAtelierAssemblyDeck','atelierAssemblySample','atelierAssemblySaveKey','atelierValidateAssemblies','MODEL_ATELIER_LEGACY_V1112']:
  assert key in html,key
 baseline=json.loads((r/'tests/model_reference_baseline.json').read_text())
 for path,sha in baseline['sources'].items():assert hashlib.sha256((r/path).read_bytes()).hexdigest()==sha,path
