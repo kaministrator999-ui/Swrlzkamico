@@ -70,7 +70,7 @@ try{
   assert.equal(pair.referenceLayout.active,front.id);
   assert.equal(pair.referenceLayout.compareId,side.id);
   assert.equal(await second.getAttribute('data-ref-id'),side.id);
-  assert.equal(await second.evaluate(el=>el.style.opacity),'.45');
+  assert.equal(Number(await second.evaluate(el=>el.style.opacity)),.45);
   const dl=page.waitForEvent('download');
   await page.locator('#modelAtelierExport').click();
   const file=await(await dl).path(),saved=JSON.parse(await readFile(file,'utf8'));
