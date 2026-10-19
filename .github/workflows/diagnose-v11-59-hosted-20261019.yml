@@ -73,3 +73,25 @@ jobs:
                 'extra_script_tags',re.findall(rb'<script[^>]*>',extra)[:5],
                 'extra_meta_tags',re.findall(rb'<meta[^>]*>',extra)[:5],flush=True)
           PY
+
+      - name: Locate second provider transformation in normalized HTML
+        run: |
+          python - <<'PY'
+          import urllib.request,re,hashlib
+          def get(url):
+            req=urllib.request.Request(url,headers={'User-Agent':'swyrlz-provider-normalization-debug/1.0'})
+            with urllib.request.urlopen(req,timeout=30) as resp:return resp.read()
+          source=get('https://huggingface.co/spaces/kamiloki/swrlz-forge-moba/resolve/main/index.html')
+          live=get('https://kamiloki-swrlz-forge-moba.static.hf.space/index.html?source-normalize-probe=2')
+          norm,count=re.subn(rb'(?<=<head>)<script>window\.huggingface=\{variables:\{.*?\}\};</script>',b'',live,count=1)
+          pre=0
+          while pre<min(len(source),len(norm)) and source[pre]==norm[pre]:pre+=1
+          suffix=0
+          while suffix<min(len(source),len(norm))-pre and source[-suffix-1]==norm[-suffix-1]:suffix+=1
+          print('SOURCE_SIZE',len(source),'NORMALIZED_SIZE',len(norm),'NORMALIZED_HASH',hashlib.sha256(norm).hexdigest(),'provider_removed',count,flush=True)
+          print('COMMON_PREFIX',pre,'COMMON_SUFFIX',suffix,'SOURCE_DIFF_LEN',len(source)-pre-suffix,'LIVE_DIFF_LEN',len(norm)-pre-suffix,flush=True)
+          candidate=norm[pre:len(norm)-suffix] if suffix else norm[pre:]
+          print('CANDIDATE_LEN',len(candidate),'SCRIPT_TAGS',re.findall(rb'<script[^>]*>',candidate)[:5],
+            'META_TAGS',re.findall(rb'<meta[^>]*>',candidate)[:5],
+            'START_REPR',repr(candidate[:360]),'END_REPR',repr(candidate[-160:]),flush=True)
+          PY
