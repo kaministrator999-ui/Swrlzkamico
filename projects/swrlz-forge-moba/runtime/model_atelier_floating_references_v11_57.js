@@ -13,8 +13,11 @@ function atelierFloatingLayoutValid(v){
   Number.isInteger(v.height)&&v.height>=180&&v.height<=600;
 }
 function atelierFloatingDefault(index=0){
- return {open:true,pinned:false,x:25+index*32,y:95+index*36,
-  width:280,height:280};
+ const w=typeof stage!=='undefined'&&stage?.clientWidth||800;
+ const h=typeof stage!=='undefined'&&stage?.clientHeight||620;
+ // Leave the upper-left reference tab controls reachable even on phones.
+ return {open:true,pinned:false,x:Math.max(0,Math.round(w-300-index*25)),
+  y:Math.max(140,Math.round(h-300-index*32)),width:280,height:280};
 }
 function atelierFloatingPlace(el,layout){
  const w=stage?.clientWidth||320,h=stage?.clientHeight||400;
