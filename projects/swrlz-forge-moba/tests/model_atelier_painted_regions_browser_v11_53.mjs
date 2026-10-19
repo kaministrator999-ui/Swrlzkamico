@@ -53,6 +53,8 @@ try{
    .modelAtelier.parts.find(p=>p.id==='model-0001')?.sculptLassos?.[0]?.paintDabs?.length===2);
   head=(await parts()).find(p=>p.id==='model-0001');
   assert.deepEqual(head.sculptLassos[0].paintDabs,snap);
+  // Native import intentionally clears selection; reveal the model inspector again.
+  await page.locator('#modelAtelierParts').selectOption('model-0001');
   await page.locator('#modelAtelierLassoPaintClear').click();
   assert.equal((await parts()).find(p=>p.id==='model-0001').sculptLassos[0].paintDabs.length,0);
   assert.equal(errors.length,0,errors.join(' | '));
