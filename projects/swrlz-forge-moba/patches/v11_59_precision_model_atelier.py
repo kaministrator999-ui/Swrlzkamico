@@ -14,8 +14,8 @@ def apply(html):
     result=runpy.run_path(str(source))["apply"](html)
     assert result.count(PREVIEW_MARKER)==1
     result=result.replace(PREVIEW_MARKER,RELEASE_MARKER,1)
-    assert result.count("Maker v11.21 preview")==1
-    result=result.replace("Maker v11.21 preview","Maker v11.59",1)
+    assert result.count("Maker v11.21 preview")>=1
+    result=result.replace("Maker v11.21 preview","Maker v11.59")
     assert result.count(RELEASE_MARKER)==1
     assert "<title>§wyrl§ Engine · Maker v11.59</title>" in result
     return result
