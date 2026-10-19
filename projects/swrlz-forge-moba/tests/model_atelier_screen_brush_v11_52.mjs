@@ -24,6 +24,11 @@ assert(Math.abs(orthoA-radius(mesh,ortho,surface,center,20))<1e-7,
  'orthographic viewport radius must not depend on camera distance');
 assert.equal(radius(mesh,view,surface,center,201),null,'reject excessive screen radius');
 assert.equal(radius(mesh,view,surface,center,-1),null,'reject negative radius');
+const headScale=new THREE.Mesh(new THREE.SphereGeometry(.5,8,8),new THREE.MeshBasicMaterial());
+headScale.scale.set(.285,.346,.26);
+const actualHeadRadius=radius(headScale,view,surface,center,40);
+assert(actualHeadRadius>.03&&actualHeadRadius<=2.5,
+ 'native original 283-part head with realistic nonuniform XYZ scale must remain editable');
 const nonuniform=new THREE.Mesh(new THREE.SphereGeometry(.5,8,8),new THREE.MeshBasicMaterial());
 nonuniform.scale.set(4,1,1);
 assert.equal(radius(nonuniform,view,surface,center,40),null,'reject misleading anisotropic local sphere');
