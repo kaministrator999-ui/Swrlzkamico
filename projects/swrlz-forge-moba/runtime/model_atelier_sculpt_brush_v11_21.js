@@ -34,7 +34,7 @@ function atelierSculptValid(p){
  return strokes.every(s=>{
    if(!s||typeof s!=='object'||Array.isArray(s)
      ||Object.keys(s).some(k=>!['axis','center','falloff','half','level','pitch','plateau','radius','snap','strength','taper','yaw',
-       'surfaceMode','selectionRadius','offsetU','offsetV','operation','mirrorX','cameraLocal'].includes(k))
+       'surfaceMode','selectionRadius','offsetU','offsetV','operation','mirrorX','cameraLocal','falloffCurve'].includes(k))
      ||!['axis','center','falloff','half','level','pitch','plateau','radius','snap','strength','taper','yaw']
        .every(k=>Object.prototype.hasOwnProperty.call(s,k)))return false;
    const vec=v=>Array.isArray(v)&&v.length===3&&v.every(x=>Number.isFinite(x)&&Math.abs(x)<=4);
@@ -45,6 +45,7 @@ function atelierSculptValid(p){
       &&Number.isFinite(s.strength)&&Math.abs(s.strength)<=.5
       &&typeof s.half==='boolean'
       &&atelierSculptModes.includes(s.falloff)
+       &&(s.falloffCurve===undefined||(typeof atelierSculptCurveValid==='function'&&atelierSculptCurveValid(s.falloffCurve)))
       &&Number.isFinite(s.yaw)&&Math.abs(s.yaw)<=Math.PI
       &&Number.isFinite(s.pitch)&&Math.abs(s.pitch)<=Math.PI
       &&Number.isFinite(s.snap)&&s.snap>=0&&s.snap<=.1
@@ -95,7 +96,9 @@ function atelierSculptApply(geometry,part){
      const radial=delta.length();
      const distance=s.surfaceMode==='connected'?selected.dist[i]:radial;
      if(distance>=r||(selected&&selected.dist[i]>selected.radius))continue;
-     let weight=atelierSculptFalloff(distance/r,s.falloff,s.plateau,s.taper);
+     let weight=(typeof atelierSculptCurveWeight==='function')?
+       atelierSculptCurveWeight(distance/r,s):
+       atelierSculptFalloff(distance/r,s.falloff,s.plateau,s.taper);
      // Rotatable HALF-sphere restricts the influenced group to the chosen
      // side of the brush. Fade through the plane instead of a hard seam.
      if(s.half)weight*=THREE.MathUtils.smoothstep(delta.dot(axis),-r*.18,0);
@@ -201,6 +204,10 @@ function atelierSculptForm(){
   offsetU:Number($m('SculptBrushOffsetU').value),
   offsetV:Number($m('SculptBrushOffsetV').value)
  };
+ if($m('SculptBrushCurveEnabled')?.checked){
+  const knots=atelierSculptCurveInput();if(!knots)return null;
+  s.falloffCurve=knots;
+ }
  if($m('SculptBrushRadiusUnits')?.value==='screen'){
   const mesh=modelRoot?.children.find(o=>o.isMesh&&o.userData.atelierId===selection);
   if(!mesh||!renderer?.domElement)return null;
@@ -250,6 +257,7 @@ function atelierSculptInstall(){
  atelierDensityInstall();
  atelierSurfaceInstall();
  atelierBrushSizingRefresh();
+ if(typeof atelierSculptCurveInstall==='function')atelierSculptCurveInstall();
  atelierLassoInstall();
  atelierGroupInstall();
  if(typeof atelierViewportGizmoInstall==='function')atelierViewportGizmoInstall();

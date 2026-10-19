@@ -47,7 +47,9 @@ function atelierSculptApplyOperator(geometry,s){
    delta.subVectors(pos,center);
    const dist=s.surfaceMode==='connected'?selection.dist[i]:delta.length();
    if(!Number.isFinite(dist)||dist>=s.radius||selection.dist[i]>selection.radius)return null;
-   let weight=atelierSculptFalloff(dist/s.radius,s.falloff,s.plateau,s.taper);
+   let weight=typeof atelierSculptCurveWeight==='function'?
+    atelierSculptCurveWeight(dist/s.radius,s):
+    atelierSculptFalloff(dist/s.radius,s.falloff,s.plateau,s.taper);
    if(s.half)weight*=THREE.MathUtils.smoothstep(delta.dot(axis),-s.radius*.18,0);
    if(weight<=0)return null;
    move.set(0,0,0);
