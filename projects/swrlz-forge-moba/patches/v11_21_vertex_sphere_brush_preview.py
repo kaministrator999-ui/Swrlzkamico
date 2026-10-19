@@ -15,8 +15,8 @@ def apply(html):
          "  function renderParts(){")
     html=once(html,"mesh.name=p.name;mesh.userData.atelierId=p.id;",
          "mesh.name=p.name;mesh.userData.atelierId=p.id;if(p.kind==='topologyMesh'&&p.runtimeLOD?.enabled)mesh.userData.atelierRuntimeLODPart=p;")
-    html=once(html,"    renderer.render(world,camera);raf=requestAnimationFrame(loop);",
-         "    atelierRuntimeLODUpdate();renderer.render(world,camera);raf=requestAnimationFrame(loop);")
+    html=once(html,"renderer.render(world,camera);",
+         "atelierRuntimeLODUpdate();renderer.render(world,camera);")
     html=once(html,"  function geometry(part){",
          "  function geometry(part){\n    if(part.kind==='topologyMesh')return atelierTopologyGeometry(part);\n    if(part.kind==='faceSheet')return atelierFaceSheetGeometry(part);")
     html=once(html,"function material(part){\n if(!part.hdFinish)",
