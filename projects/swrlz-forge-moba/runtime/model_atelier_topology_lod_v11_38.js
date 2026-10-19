@@ -6,7 +6,7 @@ const atelierLODMaxSourceTriangles=180000,atelierLODSavedVertices=9000,
   atelierLODSavedTriangles=16000;
 let atelierLODCandidate=null;
 function atelierTopologyValid(part){
- if(part.kind!=='topologyMesh')return part.topologyMesh===undefined;
+ if(part.kind!=='topologyMesh')return part.topologyMesh===undefined&&part.runtimeLOD===undefined;
  const t=part.topologyMesh;
  if(!t||typeof t!=='object'||Array.isArray(t)||
    Object.keys(t).sort().join('|')!=='indices|positions|uvs')return false;
@@ -23,6 +23,15 @@ function atelierTopologyValid(part){
  for(let i=0;i<indices.length;i+=3){
    const a=indices[i],b=indices[i+1],c=indices[i+2];
    if(a===b||b===c||c===a)return false;
+ }
+ if(part.runtimeLOD!==undefined){
+   const lod=part.runtimeLOD;
+   if(!lod||typeof lod!=='object'||Array.isArray(lod)||
+      Object.keys(lod).sort().join('|')!=='enabled|low|switchDistance'||
+      typeof lod.enabled!=='boolean'||!Number.isFinite(lod.switchDistance)||
+      lod.switchDistance<.5||lod.switchDistance>120||
+      !atelierTopologyValid({kind:'topologyMesh',topologyMesh:lod.low})||
+      lod.low.indices.length>=indices.length)return false;
  }
  return true;
 }
