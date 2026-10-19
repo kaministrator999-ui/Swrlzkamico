@@ -30,12 +30,12 @@ assert all(p['material'] in {'matte','silk','gloss','metal','emissive'} for p in
 assert all(len(p[field])==3 for p in parts for field in ('position','rotation','scale'))
 assert 'data-project-template="model-atelier"' in source.decode()
 for needle in (b'MODEL_ATELIER_V11_3_BEGIN',b'modelAtelierPanel',
-               b'model-atelier-prism-jester',b'V11_20_ANATOMICAL_HEAD',
+               b'model-atelier-prism-jester',b'V11_59_PRECISION_MODEL_ATELIER',
                b'SWYRL_ENGINE_MODEL_ATELIER',b'modelAtelierImportFile'):
     assert needle in source,needle
 assert receipt['patches']==manifest['patches']
-assert len(receipt['patches'])==90
-assert receipt['patches'][-1]=='patches/v11_20_anatomical_head.py'
+assert len(receipt['patches'])==91
+assert receipt['patches'][-1]=='patches/v11_59_precision_model_atelier.py'
 assert scene_path in receipt['assets']
 assert len(receipt['assets'])==43
 assert receipt['assets'][scene_path]['sha256']==hashlib.sha256((ROOT/scene_path).read_bytes()).hexdigest()
