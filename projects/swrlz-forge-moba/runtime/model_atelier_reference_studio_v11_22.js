@@ -21,7 +21,9 @@ function atelierRefValid(refs){
    if(![r.zoom,r.offsetX,r.offsetY,r.rotation,r.opacity].every(Number.isFinite))return false;
    if(r.zoom<.25||r.zoom>5||Math.abs(r.offsetX)>750||Math.abs(r.offsetY)>750||
      Math.abs(r.rotation)>360||r.opacity<.15||r.opacity>1||typeof r.mirror!=='boolean')return false;
-   return typeof r.visible==='boolean';
+   return typeof r.visible==='boolean'&&
+      (r.floatWindow===undefined||(typeof atelierFloatingLayoutValid==='function'&&
+       atelierFloatingLayoutValid(r.floatWindow)));
  });
 }
 function atelierRefLayoutValid(v){
@@ -105,6 +107,7 @@ function atelierRefPaint(){
  const m=atelierRefEnsure(),dock=atelierRefDock;
  if(!m||!dock)return;
  const layout=m.referenceLayout,r=atelierRefCurrent();
+ if(typeof atelierFloatingRefresh==='function')atelierFloatingRefresh();
  dock.hidden=!layout.open;
  dock.classList.toggle('atelier-ref-collapsed',layout.collapsed);
  dock.classList.toggle('atelier-ref-pinned',layout.pinned===true);
@@ -302,6 +305,7 @@ function atelierRefImagePointerUp(e){
 }
 function atelierRefInstall(){
  atelierRefDock=$m('ReferenceDock');
+ if(typeof atelierFloatingInstall==='function')atelierFloatingInstall();
  $m('ReferenceToggle').addEventListener('click',()=>{
    atelierRefSnapshotBefore(m=>{m.referenceLayout.open=!m.referenceLayout.open;});
  });
