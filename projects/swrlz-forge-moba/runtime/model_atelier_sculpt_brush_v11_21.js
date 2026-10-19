@@ -255,7 +255,7 @@ function atelierSculptInstall(){
  });
  atelierSculptVertexInstall();
  atelierSculptDensityInstall();
- atelierSurfaceInstall();
+ atelierSculptSurfaceInstall();
  atelierBrushSizingRefresh();
  if(typeof atelierSculptCurveInstall==='function')atelierSculptCurveInstall();
  atelierLassoInstall();

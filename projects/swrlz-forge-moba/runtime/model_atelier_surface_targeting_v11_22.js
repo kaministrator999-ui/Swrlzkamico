@@ -177,7 +177,7 @@ function atelierSurfacePreviewRefresh(){
   (stroke.surfaceMode||'through')+' · selection radius '+selection.radius.toFixed(2)+
   ' · influence radius '+stroke.radius.toFixed(2);
 }
-function atelierSurfaceInstall(){
+function atelierSculptSurfaceInstall(){
  for(const id of ['SculptBrushRadiusUnits','SculptBrushRadiusScreen','SculptBrushSelectRadiusScreen']){
   $m(id)?.addEventListener('input',()=>{
    atelierBrushSizingRefresh();atelierSurfacePreviewRefresh();
