@@ -1,6 +1,6 @@
 name: Verify §E anatomical head studio
 on:
-  # This suite reconstructs the SEALED v11.20 manifest and runs the
+  # This suite reconstructs the SEALED v11.59 manifest and runs the
   # original anatomical-head authoring browser. Candidate editor previews,
   # docs and test reports DO NOT feed this sealed build; their own targeted
   # browser suites validate them. The full historical suite remains callable.
@@ -110,6 +110,7 @@ on:
       - 'projects/swrlz-forge-moba/patches/v11_18_leg_reference_correction.py'
       - 'projects/swrlz-forge-moba/patches/v11_19_portrait_body_polish.py'
       - 'projects/swrlz-forge-moba/patches/v11_20_anatomical_head.py'
+      - 'projects/swrlz-forge-moba/patches/v11_59_precision_model_atelier.py'
   workflow_dispatch:
 permissions:
   contents: read
