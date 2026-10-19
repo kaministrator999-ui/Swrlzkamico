@@ -138,7 +138,7 @@ jobs:
           print('GROUNDED_FINAL_BYTES='+str(len(raw)),flush=True)
           print('GROUNDED_FINAL_SHA256='+hashlib.sha256(raw).hexdigest(),flush=True)
           assert 'V11_59_PRECISION_MODEL_ATELIER' in html
-          assert 'v11.20 · anatomical head studio' in html
+          assert 'v11.59 · precision Model Atelier' in html
           Path('/tmp/se-grounded.mjs').write_text(html[html.index('<script type="module">')+len('<script type="module">'):html.rindex('</script>')])
           PY
           node --check /tmp/se-grounded.mjs

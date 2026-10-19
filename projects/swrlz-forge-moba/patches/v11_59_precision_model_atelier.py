@@ -33,6 +33,20 @@ def apply(html):
     result=result.replace(changed,original,1)
     authoritative,restored_model=_canonical_source(result)
     assert authoritative==original and restored_model==original_model
+
+    # Only the live UI/build badge changes. The embedded canonical scene's
+    # engine/version remain byte-for-byte historical for old save compatibility.
+    for old, new in (
+        ("ENGINE · MAKER v11.20", "ENGINE · MAKER v11.59"),
+        ("v11.20 · anatomical head studio", "v11.59 · precision Model Atelier"),
+        ("window.SWRLZ_FORGE_BUILD={version:'v11.20'",
+         "window.SWRLZ_FORGE_BUILD={version:'v11.59'"),
+    ):
+        assert result.count(old) == 1, "Expected one old live editor label: " + old
+        result = result.replace(old, new, 1)
+        assert result.count(new) == 1, "New release label missing or duplicated: " + new
+    final_canonical, final_model = _canonical_source(result)
+    assert final_canonical == original and final_model == original_model
     assert result.count(RELEASE_MARKER)==1
     assert "<title>§wyrl§ Engine · Maker v11.59</title>" in result
     return result
