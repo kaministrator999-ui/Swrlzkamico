@@ -9,7 +9,7 @@ def once(html, before, after):
 def apply(html):
     root=Path(__file__).resolve().parent.parent
     assert "SWYRL_ENGINE_DEPLOY_MARKER: V11_20_ANATOMICAL_HEAD" in html
-    module=(root/"runtime/model_atelier_sculpt_brush_v11_21.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_brush_ops_v11_27.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_density_profiles_v11_28.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_viewport_v11_21.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_reference_studio_v11_22.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_surface_targeting_v11_22.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_surface_lasso_v11_22.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_local_refinement_v11_23.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_face_sheet_v11_23.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_numeric_gizmos_v11_23.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_face_volume_v11_23.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_topology_lod_v11_38.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_runtime_lod_v11_43.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_topology_audit_v11_44.js").read_text(encoding="utf-8")
+    module=(root/"runtime/model_atelier_sculpt_brush_v11_21.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_brush_ops_v11_27.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_density_profiles_v11_28.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_viewport_v11_21.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_reference_studio_v11_22.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_surface_targeting_v11_22.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_surface_lasso_v11_22.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_local_refinement_v11_23.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_face_sheet_v11_23.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_numeric_gizmos_v11_23.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_face_volume_v11_23.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_topology_lod_v11_38.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_runtime_lod_v11_43.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_topology_audit_v11_44.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_adaptive_topology_v11_46.js").read_text(encoding="utf-8")
     html=once(html, "  function refreshList(){", module+"\n  function refreshList(){")
     html=once(html,"mesh.name=p.name;mesh.userData.atelierId=p.id;",
          "mesh.name=p.name;mesh.userData.atelierId=p.id;if(p.kind==='topologyMesh'&&p.runtimeLOD?.enabled)mesh.userData.atelierRuntimeLODPart=p;")
@@ -24,9 +24,9 @@ def apply(html):
     html=once(html,"if(key==='kind'){delete p.headAnatomy;delete p.portraitFinish;",
          "if(key==='kind'){delete p.sculptBrushes;delete p.sculptVertexEdits;delete p.sculptLassos;delete p.refinementLayers;delete p.faceSheet;delete p.topologyMesh;delete p.headAnatomy;delete p.portraitFinish;")
     html=once(html,"atelierHeadAnatomyRefresh();",
-         "atelierHeadAnatomyRefresh();atelierSculptRefresh();atelierViewportControlsRefresh();atelierRefPaint();atelierFaceSheetRefresh();atelierFaceLandmarkRefresh();atelierLODRefresh();atelierRuntimeLODRefresh();atelierTopologyAuditRefresh();")
+         "atelierHeadAnatomyRefresh();atelierSculptRefresh();atelierViewportControlsRefresh();atelierRefPaint();atelierFaceSheetRefresh();atelierFaceLandmarkRefresh();atelierLODRefresh();atelierRuntimeLODRefresh();atelierTopologyAuditRefresh();atelierAdaptiveRefresh();")
     html=once(html,"atelierHeadAnatomyInstall();",
-         "atelierHeadAnatomyInstall();atelierSculptInstall();atelierViewportInstall();atelierRefInstall();atelierFaceSheetInstall();atelierLODInstall();atelierRuntimeLODInstall();atelierTopologyAuditInstall();")
+         "atelierHeadAnatomyInstall();atelierSculptInstall();atelierViewportInstall();atelierRefInstall();atelierFaceSheetInstall();atelierLODInstall();atelierRuntimeLODInstall();atelierTopologyAuditInstall();atelierAdaptiveInstall();")
     brush = ('<fieldset id="modelAtelierFaceSheetControls" hidden aria-label="Editable UV image face sheet">'
              '<legend>Triangulated image face sheet · UV preserved</legend>'
              '<p>This is an opt-in editable surface created from a reference. It does NOT replace the original head or automatically build a complete skull.</p>'
@@ -83,6 +83,17 @@ def apply(html):
              '<button id="modelAtelierTopologyMove" type="button">Move indexed vertex</button>'
              '<button id="modelAtelierTopologyRemove" type="button">Remove face (opens hole)</button></div>'
              '<p id="modelAtelierTopologyStats" role="status"></p></fieldset>'
+             '<fieldset id="modelAtelierAdaptiveTopologyTools" hidden aria-label="Adaptive local topology subdivision">'
+             '<legend>Adaptive local subdivision · stitched indexed triangles</legend>'
+             '<p>Refine long triangle edges only inside a bounded 3D area, stitching adjacent faces and keeping UV coordinates. Preview the real vertex/triangle budget before committing. Undo restores the saved indexed mesh.</p>'
+             '<div class="atelier-pair"><label>Center X<input id="modelAtelierAdaptiveTopologyCenter0" type="number" step=".1" value="0"></label>'
+             '<label>Center Y<input id="modelAtelierAdaptiveTopologyCenter1" type="number" step=".1" value="0"></label>'
+             '<label>Center Z<input id="modelAtelierAdaptiveTopologyCenter2" type="number" step=".1" value="0"></label>'
+             '<label>Selection radius<input id="modelAtelierAdaptiveTopologyRadius" type="number" min=".05" max="4" step=".05" value=".6"></label>'
+             '<label>Max edge length<input id="modelAtelierAdaptiveTopologyEdge" type="number" min=".025" max="4" step=".05" value=".18"></label></div>'
+             '<div class="atelier-inspector-actions"><button type="button" id="modelAtelierAdaptiveTopologyPreview">Preview actual triangle budget</button>'
+             '<button type="button" id="modelAtelierAdaptiveTopologyApply">Commit stitched local refinement</button></div>'
+             '<p role="status" id="modelAtelierAdaptiveTopologyStatus"></p></fieldset>'
              '<fieldset id="modelAtelierTopologyAuditTools" hidden aria-label="Indexed mesh integrity diagnostics">'
              '<legend>Indexed mesh integrity · explicit winding repair</legend>'
              '<p>Inspect true open boundary, nonmanifold and inconsistent-winding edges; conservative repair only reorients connected triangles and never automatically fills holes.</p>'
