@@ -45,7 +45,9 @@ function atelierFloatingEnsureHost(){
  atelierFloatingHost=document.createElement('div');
  atelierFloatingHost.id='modelAtelierFloatingReferences';
  Object.assign(atelierFloatingHost.style,{position:'absolute',inset:'0',
-  pointerEvents:'none',overflow:'hidden',zIndex:'60'});
+  pointerEvents:'none',overflow:'hidden',zIndex:'220'});
+ // Existing viewport controls have z-index 180; floating reference handles
+ // must remain hit-testable above them on narrow phones. Empty host is click-through.
  stage.appendChild(atelierFloatingHost);
  return atelierFloatingHost;
 }
