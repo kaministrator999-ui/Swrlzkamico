@@ -34,7 +34,7 @@ function atelierSculptValid(p){
  return strokes.every(s=>{
    if(!s||typeof s!=='object'||Array.isArray(s)
      ||Object.keys(s).some(k=>!['axis','center','falloff','half','level','pitch','plateau','radius','snap','strength','taper','yaw',
-       'surfaceMode','selectionRadius','offsetU','offsetV','operation','mirrorX'].includes(k))
+       'surfaceMode','selectionRadius','offsetU','offsetV','operation','mirrorX','cameraLocal'].includes(k))
      ||!['axis','center','falloff','half','level','pitch','plateau','radius','snap','strength','taper','yaw']
        .every(k=>Object.prototype.hasOwnProperty.call(s,k)))return false;
    const vec=v=>Array.isArray(v)&&v.length===3&&v.every(x=>Number.isFinite(x)&&Math.abs(x)<=4);
@@ -54,6 +54,7 @@ function atelierSculptValid(p){
       &&(s.operation===undefined||atelierSculptOperations.includes(s.operation))
       &&(s.mirrorX===undefined||typeof s.mirrorX==='boolean')
       &&(s.surfaceMode===undefined||atelierSurfaceModes.includes(s.surfaceMode))
+      &&(s.surfaceMode==='occluded'?(Array.isArray(s.cameraLocal)&&s.cameraLocal.length===3&&s.cameraLocal.every(x=>Number.isFinite(x)&&Math.abs(x)<=600)):s.cameraLocal===undefined)
       &&(s.selectionRadius===undefined||(Number.isFinite(s.selectionRadius)&&s.selectionRadius>=.03&&s.selectionRadius<=2.5))
       &&[s.offsetU??0,s.offsetV??0].every(v=>Number.isFinite(v)&&Math.abs(v)<=.5);
  });
@@ -200,6 +201,16 @@ function atelierSculptForm(){
   offsetU:Number($m('SculptBrushOffsetU').value),
   offsetV:Number($m('SculptBrushOffsetV').value)
  };
+ if(s.surfaceMode==='occluded'){
+  const mesh=modelRoot?.children.find(o=>o.isMesh&&o.userData.atelierId===selection);
+  if(!mesh)return null;
+  const g=mesh.geometry;
+  if(Math.floor((g.index?.count||g.attributes.position.count)/3)>atelierOcclusionMaxTriangles||
+     g.attributes.position.count>atelierOcclusionMaxVertices)return null;
+  // Store the eye in object-local space so Undo and JSON restore replay
+  // the exact same selection after the viewport changes.
+  s.cameraLocal=mesh.worldToLocal(camera.position.clone()).toArray();
+ }
  if(!Number.isFinite(len)||len<1e-5||!atelierSculptValid({sculptBrushes:[s]}))return null;
  return s;
 }
@@ -211,7 +222,7 @@ function atelierSculptInstall(){
  });
  $m('SculptBrushApply').addEventListener('click',()=>{
    const p=partById(selection),s=atelierSculptForm();if(!p)return;
-   if(!s){status('Invalid brush data. Radius .03–2.5, amount 0–.5, finite center/direction.',true);return;}
+   if(!s){status('Invalid brush data, missing mesh/camera, or ray-occlusion budget exceeded. Radius .03–2.5, amount 0–.5.',true);return;}
    if((p.sculptBrushes?.length??0)>=atelierSculptMaxStrokes){
      status('Maximum '+atelierSculptMaxStrokes+' strokes for one mesh. Use Undo or remove strokes.',true);return;
    }
