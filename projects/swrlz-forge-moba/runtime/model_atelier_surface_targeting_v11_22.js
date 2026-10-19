@@ -167,6 +167,14 @@ function atelierSurfacePreviewRefresh(){
   ' · influence radius '+stroke.radius.toFixed(2);
 }
 function atelierSurfaceInstall(){
+ for(const id of ['SculptBrushRadiusUnits','SculptBrushRadiusScreen','SculptBrushSelectRadiusScreen']){
+  $m(id)?.addEventListener('input',()=>{
+   atelierBrushSizingRefresh();atelierSurfacePreviewRefresh();
+  });
+  $m(id)?.addEventListener('change',()=>{
+   atelierBrushSizingRefresh();atelierSurfacePreviewRefresh();
+  });
+ }
  for(const id of ['SculptBrushSelectRadius','SculptBrushSurfaceMode','SculptBrushOffsetU',
     'SculptBrushOffsetV','SculptBrushRadius']){
    $m(id)?.addEventListener('input',atelierSurfacePreviewRefresh);
