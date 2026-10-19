@@ -37,6 +37,7 @@ jobs:
         run: |
           set -euo pipefail
           python projects/swrlz-forge-moba/build_space.py --output dist/swrlz-forge-moba
+          python projects/swrlz-forge-moba/tests/normalize_hf_static_html_cpu.py
           python projects/swrlz-forge-moba/tests/maul_layout_package.py --package dist/swrlz-forge-moba
           python projects/swrlz-forge-moba/tests/maul_batch_package.py --package dist/swrlz-forge-moba
           python projects/swrlz-forge-moba/tests/episode_performance_package.py --package dist/swrlz-forge-moba
@@ -202,10 +203,11 @@ jobs:
               # Static Spaces inject only their creator metadata script after <head>.
               # Strip that recognized provider wrapper before comparing source bytes.
               python - <<'PYCODE'
-          import re
+          import runpy
           from pathlib import Path
           served = Path("/tmp/forge-live.html").read_bytes()
-          source = re.sub(rb'(?<=<head>)<script>window\.huggingface=\{variables:\{.*?\}\};</script>', b'', served, count=1)
+          normalizer = runpy.run_path('projects/swrlz-forge-moba/scripts/normalize_hf_static_html.py')['normalize_served_html']
+          source = normalizer(served)
           Path("/tmp/forge-live-source.html").write_bytes(source)
           PYCODE
               LIVE_HTML_SHA="$(sha256sum /tmp/forge-live-source.html | cut -d ' ' -f1)"
@@ -221,7 +223,7 @@ jobs:
                 done < /tmp/forge-asset-paths.txt
                 if [ "$ASSET_OK" -eq 1 ]; then
                   if python - <<'PYCODE'
-          import hashlib,json,re
+          import hashlib,json,runpy
           from pathlib import Path
           expected=Path('dist/swrlz-forge-moba/SOURCE.json')
           live_receipt=Path('/tmp/forge-assets/SOURCE.json').read_bytes()
@@ -232,13 +234,13 @@ jobs:
           assert source['finalBytes']==official['finalBytes']
           assert source['patches']==official['patches']
           assert source['assets']==official['assets']
+          normalizer = runpy.run_path('projects/swrlz-forge-moba/scripts/normalize_hf_static_html.py')['normalize_served_html']
           for asset,meta in official['assets'].items():
               live=Path('/tmp/forge-assets')/asset
               served=live.read_bytes()
               # Static HF Space injects creator metadata into every served HTML
               # file, not only index.html. Remove only this known wrapper.
-              data=(re.sub(rb'(?<=<head>)<script>window\.huggingface=\{variables:\{.*?\}\};</script>',
-                   b'',served,count=1) if asset.endswith('.html') else served)
+              data=(normalizer(served) if asset.endswith('.html') else served)
               print('SERVING_ASSET='+asset+' LIVE_BYTES='+str(len(served))+
                     ' NORMALIZED_BYTES='+str(len(data))+
                     ' EXPECTED_BYTES='+str(meta['bytes']))

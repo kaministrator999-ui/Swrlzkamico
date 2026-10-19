@@ -1,0 +1,21 @@
+name: Verify static Space HTML normalization
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'projects/swrlz-forge-moba/scripts/normalize_hf_static_html.py'
+      - 'projects/swrlz-forge-moba/tests/normalize_hf_static_html_cpu.py'
+      - '.github/workflows/deploy-swrlz-forge-moba.yml'
+      - '.github/workflows/verify-swrlz-v8-9-live-receipt.yml'
+      - '.github/workflows/verify-hf-provider-normalization.yml'
+permissions:
+  contents: read
+jobs:
+  normalization:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check provider-only HTML normalization leaves owner source intact
+        run: |
+          python projects/swrlz-forge-moba/tests/normalize_hf_static_html_cpu.py
+          python -m py_compile projects/swrlz-forge-moba/scripts/normalize_hf_static_html.py
