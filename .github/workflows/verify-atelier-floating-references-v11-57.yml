@@ -1,0 +1,45 @@
+name: Verify §E v11.57 scoped independent photo windows
+on:
+  push:
+    branches: [feature/atelier-floating-reference-windows-v11-57]
+    paths:
+      - 'projects/swrlz-forge-moba/runtime/model_atelier_floating_references_v11_57.js'
+      - 'projects/swrlz-forge-moba/runtime/model_atelier_reference_studio_v11_22.js'
+      - 'projects/swrlz-forge-moba/tests/model_atelier_floating_references*.mjs'
+      - 'projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py'
+      - 'projects/swrlz-forge-moba/scripts/build_atelier_precision_preview_v11_57.py'
+      - '.github/workflows/verify-atelier-floating-references-v11-57.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: atelier-scoped-refs-v1157
+  cancel-in-progress: true
+jobs:
+  native-independent-image-panels:
+    runs-on: ubuntu-latest
+    timeout-minutes: 13
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Build exact sealed baseline and cumulative candidate
+        run: |
+          python projects/swrlz-forge-moba/scripts/build_atelier_precision_preview_v11_57.py --output /tmp/atelier-float
+          node --check /tmp/atelier-float-module.mjs
+          node --check projects/swrlz-forge-moba/runtime/model_atelier_floating_references_v11_57.js
+      - name: Test independent windows and native desktop / Android gestures
+        run: |
+          npm install --no-save playwright@1.56.1 three@0.169.0
+          node projects/swrlz-forge-moba/tests/model_atelier_floating_references_v11_57.mjs
+          npx playwright install --with-deps --only-shell chromium
+          python -m http.server 8787 --directory /tmp/atelier-float >/tmp/atelier-float.log 2>&1 &
+          PID=$!
+          trap 'kill "$PID" 2>/dev/null || true' EXIT
+          for i in $(seq 1 45); do
+            if curl -fsS http://127.0.0.1:8787/ >/dev/null; then break; fi
+            sleep .3
+          done
+          SWYRL_SCULPT_TEST_URL=http://127.0.0.1:8787 node projects/swrlz-forge-moba/tests/model_atelier_floating_references_browser_v11_57.mjs
