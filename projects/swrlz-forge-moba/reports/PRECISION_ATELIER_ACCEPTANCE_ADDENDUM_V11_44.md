@@ -25,7 +25,7 @@
 
 ## Full cumulative acceptance
 
-[Full v11.44 cumulative CI and gated isolated preview](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/39183191247): real desktop+Android sculpt, surface, reference/face and topology shards plus all historical precision geometry tests, original 90 sealed source patches. Publish only after those complete and hosted HTML, SOURCE receipt and original v11.20 anatomy scene match byte-for-byte. **Do not claim hosted v11.44 success until terminal upload/digest logs confirm it.**
+[Full v11.44 cumulative CI and gated isolated preview](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/39183191247): real desktop+Android sculpt, surface, reference/face and topology shards plus all historical precision geometry tests, original 90 sealed source patches. Publish only after those complete and hosted HTML, SOURCE receipt and original v11.20 anatomy scene match byte-for-byte. **PUBLISHED AND VERIFIED:** [Cumulative CI run 39183191247 SUCCESS](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/39183191247) at tested code SHA `b521365209942dc8266c0414b31c3ea09c98f5b4`; all four browser shards and native geometry checks passed. Live [v11.44 precision preview](https://kamiloki-swrlz-forge-moba.static.hf.space/atelier-precision-v11-44/index.html?project=model-atelier) exact HTML/SOURCE/original anatomical scene digests matched: HTML 2,832,990 bytes, SHA-256 `01ff0224068c8d6454d3b46d96a9d0eb6c07ce77b2b11c26b40168038444fc2f`, 91 cumulative patch steps (90 original plus additive overlay), 43 preserved original packaged assets. No main merge or root production deployment.
 
 ## Still-open items in the full owner specification
 
