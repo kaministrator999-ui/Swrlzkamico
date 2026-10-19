@@ -37,8 +37,20 @@ function atelierFloatingCommit(id,layout){
  atelierRefSnapshotBefore(()=>{ref.floatWindow={...layout};});
  return true;
 }
+function atelierFloatingEnsureHost(){
+ if(atelierFloatingHost)return atelierFloatingHost;
+ // RefInstall occurs before the 3D stage finishes initializing in v11.20.
+ // Mount lazily on first paint/interaction instead of abandoning UI listeners.
+ if(!stage)return null;
+ atelierFloatingHost=document.createElement('div');
+ atelierFloatingHost.id='modelAtelierFloatingReferences';
+ Object.assign(atelierFloatingHost.style,{position:'absolute',inset:'0',
+  pointerEvents:'none',overflow:'hidden',zIndex:'60'});
+ stage.appendChild(atelierFloatingHost);
+ return atelierFloatingHost;
+}
 function atelierFloatingRefresh(){
- if(!atelierFloatingHost)return;
+ if(!atelierFloatingEnsureHost())return;
  const m=atelierRefEnsure();
  atelierFloatingHost.replaceChildren();
  if(!m)return;
@@ -106,12 +118,7 @@ function atelierFloatingRefresh(){
   ' independent image windows · saved individually with project JSON.';
 }
 function atelierFloatingInstall(){
- if(!stage)return;
- atelierFloatingHost=document.createElement('div');
- atelierFloatingHost.id='modelAtelierFloatingReferences';
- Object.assign(atelierFloatingHost.style,{position:'absolute',inset:'0',
-  pointerEvents:'none',overflow:'hidden',zIndex:'60'});
- stage.appendChild(atelierFloatingHost);
+ atelierFloatingEnsureHost();
  $m('ReferenceFloatOpen')?.addEventListener('click',()=>{
   const m=atelierRefEnsure(),ref=atelierRefCurrent();if(!m||!ref)return;
   const i=m.references.indexOf(ref);
