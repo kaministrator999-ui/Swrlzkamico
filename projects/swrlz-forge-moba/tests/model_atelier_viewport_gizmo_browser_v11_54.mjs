@@ -36,6 +36,11 @@ try{
   assert(box&&marker.x>=box.x&&marker.x<=box.x+box.width);
   assert(marker.y>box.y+20&&marker.y<box.y+box.height-20);
   const sx=marker.x+20,sy=marker.y;
+  const target=await page.evaluate(({x,y})=>{
+   const el=document.elementFromPoint(x,y);
+   return {tag:el?.tagName,id:el?.id,parent:el?.parentElement?.id};
+  },{x:sx,y:sy});
+  console.log('V1154_HANDLE_START_TARGET',device,{sx,sy,marker,target});
   if(mobile){
    const session=await ctx.newCDPSession(page);
    await session.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:sx,y:sy,id:7}]});
@@ -48,6 +53,15 @@ try{
    await page.mouse.move(sx,sy-30,{steps:9});await page.mouse.up();
   }
   const part=(await parts()).find(x=>x.id==='model-0001');
+  if(!part.sculptVertexEdits?.length){
+   const dbg=await page.evaluate(()=>({
+    status:document.querySelector('#modelAtelierStatus')?.textContent,
+    selected:document.querySelector('#modelAtelierSculptBrushVertexInfo')?.textContent,
+    mode:document.querySelector('#modelAtelierGroupViewportMode')?.value,
+    axis:document.querySelector('#modelAtelierGroupViewportAxis')?.value
+   }));
+   console.error('V1154_HANDLE_REJECTED',device,JSON.stringify(dbg));
+  }
   assert.equal(part.sculptVertexEdits?.length,1,'viewport rotate must save native vertex edit');
   const edit=part.sculptVertexEdits[0];
   assert(edit.moves?.some(m=>m.some(n=>Math.abs(n)>.00001)),'rotation must move real vertices');
