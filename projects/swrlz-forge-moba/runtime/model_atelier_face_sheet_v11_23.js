@@ -60,13 +60,14 @@ function atelierFaceSheetValid(part){
  if(!v||typeof v!=='object'||Array.isArray(v)
    ||!['crop','gridU','gridV','refId','shape'].every(key=>Object.hasOwn(v,key))
    ||Object.keys(v).some(key=>!['crop','gridU','gridV','refId','shape',
-      'headDepth','landmarks','contour','profileGuide'].includes(key))
+      'headDepth','landmarks','contour','profileGuide','cutout'].includes(key))
    ||typeof v.refId!=='string'||v.refId.length>72
    ||!['oval','rectangle'].includes(v.shape)
    ||!Number.isInteger(v.gridU)||v.gridU<8||v.gridU>128
    ||!Number.isInteger(v.gridV)||v.gridV<4||v.gridV>128
    ||v.gridU*v.gridV>atelierFaceSheetMaxCells
    ||!atelierFaceLandmarksValid(v)||!atelierFaceContourValid(v)
+   ||(v.cutout!==undefined&&(typeof atelierCutoutValid!=='function'||!atelierCutoutValid(v.cutout)))
    ||!(typeof atelierFaceProfileValid==='function'?
       atelierFaceProfileValid(part):
       v.profileGuide===undefined&&!(v.landmarks||[]).some(l=>l.profileU!==undefined))
@@ -128,7 +129,9 @@ function atelierFaceSheetMaterial(p){
    atelierFaceSheetTextures.set(ref.id,cached);
  }
  return new THREE.MeshBasicMaterial({
-   map:cached.texture,transparent:true,side:THREE.DoubleSide,
+   map:cached.texture,
+   alphaMap:typeof atelierCutoutTexture==='function'?atelierCutoutTexture(p):null,
+   transparent:true,side:THREE.DoubleSide,
    depthWrite:true,alphaTest:.03,color:0xffffff
  });
 }
@@ -149,6 +152,7 @@ function atelierFaceSheetRefresh(){
    +' · UVs track the image as the surface is sculpted.';
  atelierFaceVolumeRefresh();
  atelierFaceLandmarkRefresh();
+ if(typeof atelierCutoutRefresh==='function')atelierCutoutRefresh();
  if($m('FaceContourValues'))$m('FaceContourValues').value=
    (v.contour||Array(12).fill(1)).map(x=>x.toFixed(2)).join(', ');
 }
@@ -282,6 +286,7 @@ function atelierFaceSheetCreate(){
 }
 function atelierFaceSheetInstall(){
  atelierFaceVolumeInstall();
+ if(typeof atelierCutoutInstall==='function')atelierCutoutInstall();
  atelierFaceLandmarkInstall();atelierFaceContourInstall();
  $m('FaceSheetCreate').addEventListener('click',atelierFaceSheetCreate);
  const kind=$m('Kind');
