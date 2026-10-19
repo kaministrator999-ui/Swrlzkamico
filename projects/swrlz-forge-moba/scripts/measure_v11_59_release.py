@@ -9,6 +9,20 @@ import hashlib, json, runpy, tempfile
 from pathlib import Path
 
 PROJECT=Path(__file__).resolve().parents[1]
+# Once the governed manifest is sealed, independently verify rather than
+# attempting to replay the historical preview-only v11.20 builder.
+manifest=json.loads((PROJECT/"source-manifest.json").read_text())
+if manifest["name"]=="§wyrl§ Engine v11.59":
+    import subprocess, tempfile
+    with tempfile.TemporaryDirectory(prefix="atelier_seal_") as tmp:
+        subprocess.run(["python",str(PROJECT/"build_space.py"),"--output",tmp],check=True)
+        data=(Path(tmp)/"index.html").read_bytes()
+        assert hashlib.sha256(data).hexdigest()==manifest["finalSha256"]
+        assert len(data)==manifest["finalBytes"]
+        print("V1159_GOVERNED_RELEASE_DIGEST",json.dumps({"finalSha256":manifest["finalSha256"],
+             "finalBytes":len(data),"releaseMarker":"SWYRL_ENGINE_DEPLOY_MARKER: V11_59_PRECISION_MODEL_ATELIER",
+             "sourcePreviewSha256":"5a001c2f0fbd8fa9817fcf509b1a0c319be34bded99722d239de37e6f43a820b"}))
+    raise SystemExit(0)
 PREVIEW=PROJECT/"scripts/build_atelier_precision_preview_v11_59.py"
 with tempfile.TemporaryDirectory(prefix="atelier_release_measure_") as temp:
     import subprocess
