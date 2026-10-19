@@ -1,0 +1,20 @@
+name: Measure updated §E live version labels
+on:
+  push:
+    branches:
+      - fix/v11-59-live-editor-version-labels
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Measure exact new HTML and inspect old-version expectations
+        run: |
+          python projects/swrlz-forge-moba/scripts/measure_v11_59_release.py
+          echo "=== Old version expectations in tests ==="
+          grep -RIn --include='*.mjs' --include='*.py' "v11.20" projects/swrlz-forge-moba/tests | head -40 || true
