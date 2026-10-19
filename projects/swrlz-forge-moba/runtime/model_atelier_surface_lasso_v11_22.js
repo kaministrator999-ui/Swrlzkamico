@@ -22,14 +22,16 @@ function atelierLassoValid(part){
    if(!r||typeof r!=='object'||Array.isArray(r)||
      !['id','name','pins','axis','feather','morph','enabled','resolution'].every(k=>Object.hasOwn(r,k))
      ||Object.keys(r).some(k=>!['id','name','pins','axis','feather','morph','enabled','resolution',
-        'selectionOp','operandRegionId','boundaryCurve'].includes(k))
+        'selectionOp','operandRegionId','boundaryCurve','paintDabs'].includes(k))
      ||(r.boundaryCurve!==undefined&&(!Number.isFinite(r.boundaryCurve)||
        r.boundaryCurve<0||r.boundaryCurve>1))
      ||((r.selectionOp===undefined)!==(r.operandRegionId===undefined))
      ||(r.selectionOp!==undefined&&!['add','subtract','intersect'].includes(r.selectionOp))
      ||typeof r.id!=='string'||r.id.length>48||ids.has(r.id)
      ||typeof r.name!=='string'||r.name.length>90||!Array.isArray(r.pins)
-     ||r.pins.length<3||r.pins.length>atelierLassoMaxPins)return false;
+     ||r.pins.length<3||r.pins.length>atelierLassoMaxPins||
+      (r.paintDabs!==undefined&&
+       (typeof atelierPaintDabsValid!=='function'||!atelierPaintDabsValid(r.paintDabs))))return false;
    ids.add(r.id);
    if(!Array.isArray(r.axis)||r.axis.length!==3||!r.axis.every(Number.isFinite)
       ||Math.abs(Math.hypot(...r.axis)-1)>.02)return false;
@@ -124,14 +126,18 @@ function atelierLassoCompiledRegionMask(part,region){
  };
  return {
    contains(v){
-     const a=atelierLassoInside(project(v,lhs),lhs.poly);
+     const rawA=atelierLassoInside(project(v,lhs),lhs.poly);
+     const a=typeof atelierPaintMaskContains==='function'?atelierPaintMaskContains(v,rawA,region.paintDabs):rawA;
      if(!rhs)return a;
-     const b=atelierLassoInside(project(v,rhs),rhs.poly);
+     const rawB=atelierLassoInside(project(v,rhs),rhs.poly);
+     const b=typeof atelierPaintMaskContains==='function'?atelierPaintMaskContains(v,rawB,operand.paintDabs):rawB;
      return operation==='add'?(a||b):operation==='subtract'?(a&&!b):(a&&b);
    },
    distance(v){
      const a=atelierLassoEdgeDistance(project(v,lhs),lhs.poly);
-     return rhs?Math.min(a,atelierLassoEdgeDistance(project(v,rhs),rhs.poly)):a;
+     if(typeof atelierPaintMaskEdgeDistance!=='function')return rhs?Math.min(a,atelierLassoEdgeDistance(project(v,rhs),rhs.poly)):a;
+     return Math.min(a,atelierPaintMaskEdgeDistance(v,region.paintDabs||[]),
+      rhs?Math.min(atelierLassoEdgeDistance(project(v,rhs),rhs.poly),atelierPaintMaskEdgeDistance(v,operand.paintDabs||[])):Infinity);
    }
  };
 }
@@ -297,6 +303,9 @@ function atelierLassoRefresh(){
      booleanWith.value=r.operandRegionId;
  }
  if($m('LassoBooleanOp'))$m('LassoBooleanOp').value=r?.selectionOp||'none';
+ const paintStatus=$m('LassoPaintInfo');
+ if(paintStatus)paintStatus.textContent=(r?.paintDabs?.length||0)+' saved additive/subtractive surface selection dabs.';
+ if($m('LassoPaintArm'))$m('LassoPaintArm').textContent=(typeof atelierPaintArmed!=='undefined'&&atelierPaintArmed)?'Cancel paint mode':'Paint selected region by dragging';
  $m('LassoInfo').textContent=regions.length+' saved lasso regions · '
    +(atelierLassoPending.length?'Draft: '+atelierLassoPending.length+' pins · ':'')
    +(atelierLassoArm==='freehand'?'Drag over the selected mesh to trace up to 32 boundary pins.':
@@ -332,6 +341,7 @@ function atelierLassoPointFromEvent(e,mesh){
 }
 function atelierLassoPointerDown(e){
  if(e.button!==0)return false;
+ if(typeof atelierPaintArmed!=='undefined'&&atelierPaintArmed)return atelierPaintStart(e);
  if(atelierLassoArm==='freehand'){
    const mesh=modelRoot?.children.find(o=>o.isMesh&&o.userData.atelierId===selection);
    if(!mesh)return false;
@@ -358,6 +368,7 @@ function atelierLassoPointerDown(e){
  pressed=null;return true;
 }
 function atelierLassoPointerMove(e){
+ if(typeof atelierPaintMove==='function'&&atelierPaintMove(e))return true;
  if(atelierLassoFreehand?.id===e.pointerId){
    const trace=atelierLassoFreehand;
    if(Math.hypot(e.clientX-trace.lastX,e.clientY-trace.lastY)<7)return true;
@@ -376,6 +387,7 @@ function atelierLassoPointerMove(e){
  return true;
 }
 function atelierLassoPointerUp(e){
+ if(typeof atelierPaintFinish==='function'&&atelierPaintFinish(e))return true;
  if(atelierLassoFreehand?.id===e.pointerId){
    atelierLassoTraceAdd(atelierLassoPointFromEvent(e,atelierLassoFreehand.mesh));
    atelierLassoFreehand=null;atelierLassoArm=null;
@@ -399,6 +411,7 @@ function atelierLassoPointerUp(e){
  atelierLassoRefresh();return true;
 }
 function atelierLassoPointerCancel(e){
+ if(typeof atelierPaintFinish==='function'&&atelierPaintFinish(e,true))return true;
  if(atelierLassoFreehand?.id!==e.pointerId)return false;
  atelierLassoFreehand=null;atelierLassoArm=null;atelierLassoPending=[];
  atelierLassoRefresh();status('Freehand trace cancelled without changing mesh.');
@@ -452,6 +465,7 @@ function atelierLassoSegmentCandidate(region,mesh,index,amount){
  return result.ok?{...result,segment:index,outward:amount>0}:result;
 }
 function atelierLassoInstall(){
+ if(typeof atelierPaintInstall==='function')atelierPaintInstall();
  const id=n=>$m('Lasso'+n);
  id('PinIndex').addEventListener('change',e=>{
    atelierLassoSelectedPin=Number(e.target.value);
