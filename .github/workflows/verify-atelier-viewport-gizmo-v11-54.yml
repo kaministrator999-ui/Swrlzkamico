@@ -1,0 +1,45 @@
+name: Verify §E v11.54 scoped viewport gizmo interaction
+on:
+  push:
+    branches: [feature/atelier-viewport-transform-v11-54]
+    paths:
+      - 'projects/swrlz-forge-moba/runtime/model_atelier_viewport_gizmo_v11_54.js'
+      - 'projects/swrlz-forge-moba/runtime/model_atelier_sculpt_brush_v11_21.js'
+      - 'projects/swrlz-forge-moba/tests/model_atelier_viewport_gizmo*.mjs'
+      - 'projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py'
+      - 'projects/swrlz-forge-moba/scripts/build_atelier_precision_preview_v11_54.py'
+      - '.github/workflows/verify-atelier-viewport-gizmo-v11-54.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: atelier-scoped-gizmo-v1154
+  cancel-in-progress: true
+jobs:
+  native-viewport-handle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 13
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Build exact sealed original plus cumulative native candidate
+        run: |
+          python projects/swrlz-forge-moba/scripts/build_atelier_precision_preview_v11_54.py --output /tmp/atelier-gizmo
+          node --check /tmp/atelier-gizmo-module.mjs
+          node --check projects/swrlz-forge-moba/runtime/model_atelier_viewport_gizmo_v11_54.js
+      - name: Check real geometry and desktop / Android saved editor gesture
+        run: |
+          npm install --no-save playwright@1.56.1 three@0.169.0
+          node projects/swrlz-forge-moba/tests/model_atelier_viewport_gizmo_v11_54.mjs
+          npx playwright install --with-deps --only-shell chromium
+          python -m http.server 8787 --directory /tmp/atelier-gizmo >/tmp/atelier-gizmo.log 2>&1 &
+          PID=$!
+          trap 'kill "$PID" 2>/dev/null || true' EXIT
+          for i in $(seq 1 45); do
+            if curl -fsS http://127.0.0.1:8787/ >/dev/null; then break; fi
+            sleep .3
+          done
+          SWYRL_SCULPT_TEST_URL=http://127.0.0.1:8787 node projects/swrlz-forge-moba/tests/model_atelier_viewport_gizmo_browser_v11_54.mjs
