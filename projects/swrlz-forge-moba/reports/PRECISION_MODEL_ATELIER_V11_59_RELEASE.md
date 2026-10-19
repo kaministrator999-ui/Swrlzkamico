@@ -12,7 +12,7 @@ Included tooling: brush/vertex topology, actual camera-ray occlusion, screen-pix
 
 ## Release source SHA
 
-Authoritative `source-manifest.json`: **2,926,858** HTML bytes, SHA-256 **50d5d4325e35716ef95f7f6a0041c557f87e09e6f3199c791cd89b4a781651c0**.
+Authoritative `source-manifest.json`: **2,927,027** HTML bytes, SHA-256 **8e5cbfa1289669e3936cc1e86ad888f188ec0c7c5e2908d26df98b32be591f43**.
 
 Version and marker: `§wyrl§ Engine v11.59`, `SWYRL_ENGINE_DEPLOY_MARKER: V11_59_PRECISION_MODEL_ATELIER`. Actual production `SOURCE.json` must reproduce exactly 91 patches, 43 original assets, this byte length and this digest. Measurement was independently reconstructed on GitHub Actions with exact sealed v11.20 source before changing the manifest. Production `build_space.py` remains authoritative.
 
