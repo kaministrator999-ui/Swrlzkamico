@@ -64,7 +64,9 @@ function atelierFloatingRefresh(){
   Object.assign(panel.style,{position:'absolute',display:'flex',flexDirection:'column',
    background:'#151b28',border:'1px solid #779bb4',borderRadius:'8px',
    overflow:'hidden',boxShadow:'0 10px 28px #0008',pointerEvents:'auto',
-   zIndex:String(110+index),touchAction:'none'});
+   // Earlier panels stay above later overlapping photo content so their
+   // headers remain touchable in a cascade on desktop and mobile.
+   zIndex:String(110+m.references.length-index),touchAction:'none'});
   const fitted=atelierFloatingPlace(panel,v);
   const header=document.createElement('div');header.className='atelier-float-reference-handle';
   Object.assign(header.style,{height:'34px',display:'flex',alignItems:'center',justifyContent:'space-between',
