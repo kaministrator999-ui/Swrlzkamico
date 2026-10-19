@@ -27,7 +27,7 @@ jobs:
           DEPLOY_EVENT_CONCLUSION: ${{ github.event.workflow_run.conclusion }}
         run: |
           python - <<'PY'
-          import hashlib,json,os,re,subprocess,time,urllib.request
+          import hashlib,json,os,re,runpy,subprocess,time,urllib.request
           from pathlib import Path
           engine='projects/swrlz-forge-moba'
           request=json.loads(Path(engine+'/DEPLOY_REQUEST.json').read_text())
@@ -88,8 +88,7 @@ jobs:
           print('HOSTED_AUDIT_SCOPE='+audit_scope+' PUBLISHED_VERSION='+request['releaseVersion']+
                 ' PUBLISHED_SOURCE_COMMIT='+source_commit,flush=True)
           root='https://kamiloki-swrlz-forge-moba.static.hf.space/'
-          def normalized(payload):
-              return re.sub(rb'(?<=<head>)<script>window\.huggingface=\{variables:\{.*?\}\};</script>',b'',payload,count=1)
+          normalized=runpy.run_path(engine+'/scripts/normalize_hf_static_html.py')['normalize_served_html']
           html=normalized(load(root+'index.html?receipt='+trigger))
           digest=hashlib.sha256(html).hexdigest()
           assert digest==expected
