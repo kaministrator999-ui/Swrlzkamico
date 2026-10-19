@@ -31,6 +31,19 @@ try{
   await page.waitForFunction(()=>window.SWYRL_ENGINE_REFERENCE.status().count===2);
   const refIds=(await data()).references.map(x=>x.id);
   await page.locator('#modelAtelierReferenceFloatOpen').click();
+  if(await page.locator('.atelier-float-reference').count()!==1){
+   const diag=await page.evaluate(()=>({
+    host:!!document.querySelector('#modelAtelierFloatingReferences'),
+    hostHtml:document.querySelector('#modelAtelierFloatingReferences')?.innerHTML?.slice(0,300),
+    viewport:document.querySelector('#modelAtelierViewport')?.getBoundingClientRect().toJSON(),
+    statuses:[...document.querySelectorAll('[role="status"]')]
+      .filter(x=>/Reference|Status/.test(x.id)).map(x=>[x.id,x.textContent?.slice(0,250)])
+   }));
+   console.error('V1157_FLOAT_OPEN_DIAGNOSTIC',device,JSON.stringify({
+    nativeRefs:(await data()).references.map(r=>({name:r.name,floatWindow:r.floatWindow})),
+    pageErrors:errors,...diag
+   }));
+  }
   assert.equal(await page.locator('.atelier-float-reference').count(),1);
   await page.locator('#modelAtelierReferenceTabs button').nth(1).click();
   await page.locator('#modelAtelierReferenceFloatOpen').click();
