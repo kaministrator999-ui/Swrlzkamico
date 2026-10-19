@@ -252,6 +252,7 @@ function atelierSculptInstall(){
  atelierBrushSizingRefresh();
  atelierLassoInstall();
  atelierGroupInstall();
+ if(typeof atelierViewportGizmoInstall==='function')atelierViewportGizmoInstall();
  atelierRefineInstall();
  $m('SculptBrushUndoStroke').addEventListener('click',()=>{
    const p=partById(selection);if(!p?.sculptBrushes?.length)return;
@@ -335,7 +336,7 @@ function atelierSculptOverlayRefresh(){
    const handle=new THREE.Mesh(new THREE.SphereGeometry(.026,12,8),
      new THREE.MeshBasicMaterial({color:0xffd14a,depthTest:false}));
    handle.renderOrder=30;gizmo.add(handle);
-   gizmo.position.copy(pivot);root.add(gizmo);atelierSculptGizmo=gizmo;
+   gizmo.position.copy(pivot);if(typeof atelierViewportGizmoDecorate==='function')atelierViewportGizmoDecorate(gizmo);root.add(gizmo);atelierSculptGizmo=gizmo;
  }
  const hint=$m('SculptBrushVertexInfo');
  if(hint){
@@ -389,6 +390,8 @@ function atelierSculptVertexPick(e){
  return true;
 }
 function atelierSculptOnPointerDown(e){
+ if(typeof atelierViewportGizmoPointerDown==='function'&&atelierViewportGizmoPointerDown(e))return true;
+ if(typeof atelierViewportGizmoMode==='function'&&atelierViewportGizmoMode()!=='translate')return false;
  if(!atelierSculptVertexMode||!atelierSculptGizmo||!atelierSculptOverlayMesh||e.button!==0)return false;
  const pos=point(e),projected=atelierSculptGizmo.position.clone().project(camera);
  const r=renderer.domElement.getBoundingClientRect();
@@ -409,6 +412,7 @@ function atelierSculptOnPointerDown(e){
  return true;
 }
 function atelierSculptOnPointerMove(e){
+ if(typeof atelierViewportGizmoPointerMove==='function'&&atelierViewportGizmoPointerMove(e))return true;
  const drag=atelierSculptDrag;if(!drag)return false;
  const q=point(e);mouse.set(q.x,q.y);raycaster.setFromCamera(mouse,camera);
  const to=raycaster.ray.intersectPlane(drag.plane,new THREE.Vector3());
@@ -438,6 +442,7 @@ function atelierSculptOnPointerMove(e){
  return true;
 }
 function atelierSculptOnPointerUp(){
+ if(typeof atelierViewportGizmoPointerUp==='function'&&atelierViewportGizmoPointerUp())return true;
  const drag=atelierSculptDrag;if(!drag)return false;
  atelierSculptDrag=null;
  const p=partById(drag.partId),delta=drag.delta;
