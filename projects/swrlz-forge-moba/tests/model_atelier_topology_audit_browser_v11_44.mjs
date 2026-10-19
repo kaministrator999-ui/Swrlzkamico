@@ -53,7 +53,9 @@ try{
   const json=await(await saved).path();
   await page.locator('#modelAtelierUndo').click();
   await page.locator('#modelAtelierImportFile').setInputFiles(json);
-  await page.waitForFunction(()=>window.SWYRL_ENGINE_AGENT.inspectScene().project.modelAtelier.parts.length===284);
+  await page.waitForFunction(expected=>JSON.stringify(
+    window.SWYRL_ENGINE_AGENT.inspectScene().project.modelAtelier.parts
+    .find(p=>p.id==='test-winding-square')?.topologyMesh)===expected,valid);
   const restored=await parts();
   assert.equal(JSON.stringify(restored.find(x=>x.id===item.id).topologyMesh),valid);
   assert.deepEqual(restored.slice(0,283),original);
