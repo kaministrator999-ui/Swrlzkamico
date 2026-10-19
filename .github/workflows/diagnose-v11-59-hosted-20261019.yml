@@ -110,3 +110,33 @@ jobs:
               part=src[max(0,match.start()-190):min(len(src),match.end()+190)]
               print("CONTEXT",repr(term),repr(part).replace("\\n"," ")[:580],flush=True)
           PY
+
+      - name: Assert actual public UI reports v11.59 on all visible surfaces
+        run: |
+          python - <<'PY'
+          import urllib.request,json,hashlib
+          base="https://kamiloki-swrlz-forge-moba.static.hf.space/"
+          req=urllib.request.Request(base+"index.html?visible-release-check=38ebf58",headers={"Cache-Control":"no-cache"})
+          with urllib.request.urlopen(req,timeout=30) as h: text=h.read().decode("utf-8")
+          for needle in (
+              "ENGINE · MAKER v11.59",
+              "v11.59 · precision Model Atelier",
+              "window.SWRLZ_FORGE_BUILD={version:'v11.59'",
+              "SWYRL_ENGINE_DEPLOY_MARKER: V11_59_PRECISION_MODEL_ATELIER",
+          ):
+              assert needle in text, ("MISSING_NEW_LIVE_UI_LABEL",needle)
+          for stale in (
+              "ENGINE · MAKER v11.20",
+              "v11.20 · anatomical head studio",
+              "window.SWRLZ_FORGE_BUILD={version:'v11.20'",
+          ):
+              assert stale not in text, ("STILL_OLD_LIVE_UI_LABEL",stale)
+          with urllib.request.urlopen(base+"SOURCE.json?visible-release-check=38ebf58",timeout=25) as source:
+              receipt=json.load(source)
+          expected="f4d72c72a5fc4ee90c921198d7086b5898b89941de3efadd7f52c063d3dab0b3"
+          assert receipt["finalSha256"]==expected
+          assert receipt["finalBytes"]==2927005
+          assert len(receipt["patches"])==91 and len(receipt["assets"])==43
+          print("PUBLIC_VISIBLE_VERSION_ALL_THREE_LABELS_V11_59_PASS",flush=True)
+          print("SOURCE_SHA",expected,"PATCHES",len(receipt["patches"]),"ASSETS",len(receipt["assets"]),flush=True)
+          PY
