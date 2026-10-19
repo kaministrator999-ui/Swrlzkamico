@@ -391,6 +391,7 @@ function atelierSculptVertexPick(e){
 }
 function atelierSculptOnPointerDown(e){
  if(typeof atelierViewportGizmoPointerDown==='function'&&atelierViewportGizmoPointerDown(e))return true;
+ if(typeof atelierViewportGizmoMode==='function'&&atelierViewportGizmoMode()!=='translate')return false;
  if(!atelierSculptVertexMode||!atelierSculptGizmo||!atelierSculptOverlayMesh||e.button!==0)return false;
  const pos=point(e),projected=atelierSculptGizmo.position.clone().project(camera);
  const r=renderer.domElement.getBoundingClientRect();
