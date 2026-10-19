@@ -24,7 +24,7 @@ assert.equal(x.after.oppositeWindingErrors,0);
 assert.equal(x.after.zeroAreaFaces,0);
 assert.equal(x.data.positions.length,base.positions.length);
 assert.equal(x.data.uvs.length,base.uvs.length);
-assert.deepEqual(x.data.indices.slice(0,base.indices.length),base.indices);
+assert.equal(JSON.stringify(x.data.indices.slice(0,base.indices.length)),JSON.stringify(base.indices));
 assert.equal(x.data.indices.length/3,6);
 assert.equal(JSON.stringify(part),before,'preview must not mutate source mesh');
 assert(c.atelierTopologyValid({...part,topologyMesh:x.data}));
