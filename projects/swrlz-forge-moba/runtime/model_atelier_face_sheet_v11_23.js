@@ -12,11 +12,12 @@ function atelierFaceLandmarksValid(v){
  const names=new Set();
  return v.landmarks.every(l=>{
    if(!l||typeof l!=='object'||Array.isArray(l)||
-     Object.keys(l).sort().join('|')!=='depth|name|radius|uv'||
+     !['depth|name|radius|uv','depth|name|profileU|radius|uv'].includes(Object.keys(l).sort().join('|'))||
      !atelierFaceLandmarkNames.includes(l.name)||names.has(l.name)||
      !Array.isArray(l.uv)||l.uv.length!==2||
      !l.uv.every(a=>Number.isFinite(a)&&a>=0&&a<=1)||
      !Number.isFinite(l.depth)||Math.abs(l.depth)>.4||
+     (l.profileU!==undefined&&(!Number.isFinite(l.profileU)||l.profileU<0||l.profileU>1))||
      !Number.isFinite(l.radius)||l.radius<.02||l.radius>.4)return false;
    names.add(l.name);return true;
  });
@@ -59,13 +60,16 @@ function atelierFaceSheetValid(part){
  if(!v||typeof v!=='object'||Array.isArray(v)
    ||!['crop','gridU','gridV','refId','shape'].every(key=>Object.hasOwn(v,key))
    ||Object.keys(v).some(key=>!['crop','gridU','gridV','refId','shape',
-      'headDepth','landmarks','contour'].includes(key))
+      'headDepth','landmarks','contour','profileGuide'].includes(key))
    ||typeof v.refId!=='string'||v.refId.length>72
    ||!['oval','rectangle'].includes(v.shape)
    ||!Number.isInteger(v.gridU)||v.gridU<8||v.gridU>128
    ||!Number.isInteger(v.gridV)||v.gridV<4||v.gridV>128
    ||v.gridU*v.gridV>atelierFaceSheetMaxCells
    ||!atelierFaceLandmarksValid(v)||!atelierFaceContourValid(v)
+   ||!(typeof atelierFaceProfileValid==='function'?
+      atelierFaceProfileValid(part):
+      v.profileGuide===undefined&&!(v.landmarks||[]).some(l=>l.profileU!==undefined))
    ||(v.headDepth!==undefined&&(!Number.isFinite(v.headDepth)||v.headDepth<0||v.headDepth>2||v.shape!=='oval'&&v.headDepth>0))
    ||!Array.isArray(v.crop)||v.crop.length!==4||!v.crop.every(Number.isFinite))return false;
  const [x,y,w,h]=v.crop;

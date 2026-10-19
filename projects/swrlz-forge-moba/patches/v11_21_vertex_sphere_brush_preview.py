@@ -9,7 +9,7 @@ def once(html, before, after):
 def apply(html):
     root=Path(__file__).resolve().parent.parent
     assert "SWYRL_ENGINE_DEPLOY_MARKER: V11_20_ANATOMICAL_HEAD" in html
-    module=(root/"runtime/model_atelier_sculpt_brush_v11_21.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_brush_ops_v11_27.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_density_profiles_v11_28.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_viewport_v11_21.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_reference_studio_v11_22.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_surface_targeting_v11_22.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_surface_lasso_v11_22.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_local_refinement_v11_23.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_face_sheet_v11_23.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_numeric_gizmos_v11_23.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_face_volume_v11_23.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_topology_lod_v11_38.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_runtime_lod_v11_43.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_topology_audit_v11_44.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_adaptive_topology_v11_46.js").read_text(encoding="utf-8")
+    module=(root/"runtime/model_atelier_sculpt_brush_v11_21.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_brush_ops_v11_27.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_density_profiles_v11_28.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_viewport_v11_21.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_reference_studio_v11_22.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_surface_targeting_v11_22.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_surface_lasso_v11_22.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_local_refinement_v11_23.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_face_sheet_v11_23.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_face_profile_v11_47.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_numeric_gizmos_v11_23.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_face_volume_v11_23.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_topology_lod_v11_38.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_runtime_lod_v11_43.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_topology_audit_v11_44.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_adaptive_topology_v11_46.js").read_text(encoding="utf-8")
     html=once(html, "  function refreshList(){", module+"\n  function refreshList(){")
     html=once(html,"mesh.name=p.name;mesh.userData.atelierId=p.id;",
          "mesh.name=p.name;mesh.userData.atelierId=p.id;if(p.kind==='topologyMesh'&&p.runtimeLOD?.enabled)mesh.userData.atelierRuntimeLODPart=p;")
@@ -24,9 +24,9 @@ def apply(html):
     html=once(html,"if(key==='kind'){delete p.headAnatomy;delete p.portraitFinish;",
          "if(key==='kind'){delete p.sculptBrushes;delete p.sculptVertexEdits;delete p.sculptLassos;delete p.refinementLayers;delete p.faceSheet;delete p.topologyMesh;delete p.headAnatomy;delete p.portraitFinish;")
     html=once(html,"atelierHeadAnatomyRefresh();",
-         "atelierHeadAnatomyRefresh();atelierSculptRefresh();atelierViewportControlsRefresh();atelierRefPaint();atelierFaceSheetRefresh();atelierFaceLandmarkRefresh();atelierLODRefresh();atelierRuntimeLODRefresh();atelierTopologyAuditRefresh();atelierAdaptiveRefresh();")
+         "atelierHeadAnatomyRefresh();atelierSculptRefresh();atelierViewportControlsRefresh();atelierRefPaint();atelierFaceSheetRefresh();atelierFaceLandmarkRefresh();atelierFaceProfileRefresh();atelierLODRefresh();atelierRuntimeLODRefresh();atelierTopologyAuditRefresh();atelierAdaptiveRefresh();")
     html=once(html,"atelierHeadAnatomyInstall();",
-         "atelierHeadAnatomyInstall();atelierSculptInstall();atelierViewportInstall();atelierRefInstall();atelierFaceSheetInstall();atelierLODInstall();atelierRuntimeLODInstall();atelierTopologyAuditInstall();atelierAdaptiveInstall();")
+         "atelierHeadAnatomyInstall();atelierSculptInstall();atelierViewportInstall();atelierRefInstall();atelierFaceSheetInstall();atelierFaceProfileInstall();atelierLODInstall();atelierRuntimeLODInstall();atelierTopologyAuditInstall();atelierAdaptiveInstall();")
     brush = ('<fieldset id="modelAtelierFaceSheetControls" hidden aria-label="Editable UV image face sheet">'
              '<legend>Triangulated image face sheet · UV preserved</legend>'
              '<p>This is an opt-in editable surface created from a reference. It does NOT replace the original head or automatically build a complete skull.</p>'
@@ -50,6 +50,21 @@ def apply(html):
              '<div class="atelier-inspector-actions"><button type="button" id="modelAtelierFaceContourApply">Shape face outline</button>'
              '<button type="button" id="modelAtelierFaceContourReset">Restore oval outline</button></div>'
              '</fieldset></fieldset>'
+             '<fieldset id="modelAtelierFaceProfileTools" hidden aria-label="Manually calibrated side image depth matching">'
+             '<legend>Front + side photo depth · manual calibration</legend>'
+             '<p>Match a front-face landmark to its measured side-image horizontal position. Calibrate the front plane U (zero depth), world units per image width, and nose direction. Photo perspective is unknown: adjust manually against both references.</p>'
+             '<label>Existing profile source<select id="modelAtelierFaceProfileReference"></select></label>'
+             '<div class="atelier-pair">'
+             '<label>Profile zero-depth U<input id="modelAtelierFaceProfileOrigin" type="number" min="0" max="1" step=".01" value=".50"></label>'
+             '<label>World units / image width<input id="modelAtelierFaceProfileScale" type="number" min=".05" max="2" step=".05" value="1"></label>'
+             '<label>Face direction<select id="modelAtelierFaceProfileDirection"><option value="1">Nose toward right (+Z)</option><option value="-1">Nose toward left (+Z)</option></select></label></div>'
+             '<button type="button" id="modelAtelierFaceProfileCalibrate">Save/recalibrate side reference</button>'
+             '<label>Selected front landmark’s profile U<input id="modelAtelierFaceProfilePoint" type="number" min="0" max="1" step=".01" value=".60"></label>'
+             '<div class="atelier-inspector-actions">'
+             '<button type="button" id="modelAtelierFaceProfileLink">Apply feature profile depth</button>'
+             '<button type="button" id="modelAtelierFaceProfileUnlink">Unlink feature</button>'
+             '<button type="button" id="modelAtelierFaceProfileClear">Clear depth calibration</button></div>'
+             '<p id="modelAtelierFaceProfileStatus" role="status"></p></fieldset>'
              '<fieldset id="modelAtelierFaceLandmarkTools" hidden aria-label="Reference-mapped sculptable facial landmarks">'
              '<legend>Facial landmarks · manual front/profile modeling</legend>'
              '<p>Place image-UV feature centers and raise or recess actual head-sheet vertices. Use Front/Side image references to check depth; no automatic photo reconstruction.</p>'
