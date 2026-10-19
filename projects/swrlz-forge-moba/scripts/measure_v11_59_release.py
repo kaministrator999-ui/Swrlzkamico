@@ -18,8 +18,8 @@ with tempfile.TemporaryDirectory(prefix="atelier_release_measure_") as temp:
     prev="SWYRL_ENGINE_DEPLOY_MARKER: V11_21_VERTEX_SPHERE_BRUSH_PREVIEW"
     current="SWYRL_ENGINE_DEPLOY_MARKER: V11_59_PRECISION_MODEL_ATELIER"
     assert source.count(prev)==1
-    assert source.count("Maker v11.21 preview")==1
-    candidate=source.replace(prev,current,1).replace("Maker v11.21 preview","Maker v11.59",1)
+    assert source.count("Maker v11.21 preview")>=1
+    candidate=source.replace(prev,current,1).replace("Maker v11.21 preview","Maker v11.59")
     assert "<title>§wyrl§ Engine · Maker v11.59</title>" in candidate
     data=candidate.encode("utf-8")
     print("V1159_GOVERNED_RELEASE_DIGEST",json.dumps({"finalSha256":hashlib.sha256(data).hexdigest(),
