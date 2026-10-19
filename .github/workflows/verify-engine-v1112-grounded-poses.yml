@@ -1,4 +1,4 @@
-name: Verify §E v11.20 grounded anatomy
+name: Verify §E v11.59 grounded anatomy (v11.20 history retained)
 on:
   push:
     branches: [fix/engine-v1112-grounded-stance-poses]
@@ -136,7 +136,7 @@ jobs:
           raw=html.encode('utf8')
           print('GROUNDED_FINAL_BYTES='+str(len(raw)),flush=True)
           print('GROUNDED_FINAL_SHA256='+hashlib.sha256(raw).hexdigest(),flush=True)
-          assert 'V11_20_ANATOMICAL_HEAD' in html
+          assert 'V11_59_PRECISION_MODEL_ATELIER' in html
           assert 'v11.20 · anatomical head studio' in html
           Path('/tmp/se-grounded.mjs').write_text(html[html.index('<script type="module">')+len('<script type="module">'):html.rindex('</script>')])
           PY
