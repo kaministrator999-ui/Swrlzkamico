@@ -11,12 +11,10 @@ def apply(html):
     assert "SWYRL_ENGINE_DEPLOY_MARKER: V11_20_ANATOMICAL_HEAD" in html
     module=(root/"runtime/model_atelier_sculpt_brush_v11_21.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_brush_ops_v11_27.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_density_profiles_v11_28.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_viewport_v11_21.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_reference_studio_v11_22.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_surface_targeting_v11_22.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_surface_lasso_v11_22.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_local_refinement_v11_23.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_face_sheet_v11_23.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_numeric_gizmos_v11_23.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_face_volume_v11_23.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_topology_lod_v11_38.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_runtime_lod_v11_43.js").read_text(encoding="utf-8")
     html=once(html, "  function refreshList(){", module+"\n  function refreshList(){")
-    html=once(html,"  function renderParts(){", 
-         "  function renderParts(){")
     html=once(html,"mesh.name=p.name;mesh.userData.atelierId=p.id;",
          "mesh.name=p.name;mesh.userData.atelierId=p.id;if(p.kind==='topologyMesh'&&p.runtimeLOD?.enabled)mesh.userData.atelierRuntimeLODPart=p;")
-    html=once(html,"renderer.render(world,camera);",
-         "atelierRuntimeLODUpdate();renderer.render(world,camera);")
+    html=once(html,"  function renderParts(){",
+         "  function renderParts(){atelierRuntimeLODStart();")
     html=once(html,"  function geometry(part){",
          "  function geometry(part){\n    if(part.kind==='topologyMesh')return atelierTopologyGeometry(part);\n    if(part.kind==='faceSheet')return atelierFaceSheetGeometry(part);")
     html=once(html,"function material(part){\n if(!part.hdFinish)",
