@@ -65,7 +65,7 @@ for(let i=0;i<positive.g.attributes.position.count;i++)
  delta+=Math.abs(offset.attributes.position.getZ(i)-nearFront.attributes.position.getZ(i));
 assert(delta>.01,'Offset falloff center must move the editable footprint');
 const modeList=vm.runInContext('atelierSurfaceModes.join(",")',c);
-assert.equal(modeList,'front,connected,inside,through,nearest,occluded');
+assert.equal(modeList,'front,connected,inside,through,nearest,occluded,visible-geodesic');
 const nearShell=c.atelierSculptApply(positive.g.clone(),{sculptBrushes:[
  stroke({surfaceMode:'nearest',center:[0,0,.05]})]});
 assert(Math.abs(nearShell.attributes.position.getZ(centerPositive)-
