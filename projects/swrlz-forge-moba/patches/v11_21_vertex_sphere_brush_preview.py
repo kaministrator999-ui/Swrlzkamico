@@ -206,6 +206,7 @@ def apply(html):
              '<option value="inside">Inside shell · opposite-facing normals</option>'
              '<option value="nearest">Nearest shell · projected depth safeguard</option>'
              '<option value="occluded">Camera-visible triangle rays · true occlusion</option>'
+             '<option value="visible-geodesic">Camera-visible connected shell · geodesic + ray occlusion</option>'
              '<option value="through">Through-volume · both sides intentionally</option></select></label>'
              '<div class="atelier-pair"><label>Selection radius<input id="modelAtelierSculptBrushSelectRadius" type="number" min=".03" max="2.5" step=".05" value=".4"></label>'
              '<label>Falloff-center offset U<input id="modelAtelierSculptBrushOffsetU" type="number" min="-.5" max=".5" step=".025" value="0"></label>'
