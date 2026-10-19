@@ -1,0 +1,54 @@
+name: Verify §E v11.46 stitched local adaptive indexed refinement
+on:
+  push:
+    branches: [feature/atelier-adaptive-topology-v11-46]
+    paths:
+      - 'projects/swrlz-forge-moba/runtime/model_atelier_topology_lod_v11_38.js'
+      - 'projects/swrlz-forge-moba/runtime/model_atelier_runtime_lod_v11_43.js'
+      - 'projects/swrlz-forge-moba/runtime/model_atelier_topology_audit_v11_44.js'
+      - 'projects/swrlz-forge-moba/runtime/model_atelier_adaptive_topology_v11_46.js'
+      - 'projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py'
+      - 'projects/swrlz-forge-moba/tests/model_atelier_adaptive_topology*.mjs'
+      - '.github/workflows/verify-atelier-adaptive-topology-v11-46.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: atelier-adaptive-topology-v1146
+  cancel-in-progress: true
+jobs:
+  native-indexed-mesh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Verify JS Python and isolated editor source
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/model_atelier_topology_lod_v11_38.js
+          node --check projects/swrlz-forge-moba/runtime/model_atelier_runtime_lod_v11_43.js
+          node --check projects/swrlz-forge-moba/runtime/model_atelier_adaptive_topology_v11_46.js
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py
+          python projects/swrlz-forge-moba/scripts/build_atelier_precision_preview_v11_37.py --output /tmp/atelier-lod
+          node --check /tmp/atelier-lod-module.mjs
+      - name: Verified real topology reductions on sampled mesh
+        run: |
+          npm install --no-save playwright@1.56.1 three@0.169.0
+          node projects/swrlz-forge-moba/tests/model_atelier_adaptive_topology_v11_46.mjs
+          node projects/swrlz-forge-moba/tests/model_atelier_topology_lod_v11_38.mjs
+          node projects/swrlz-forge-moba/tests/model_atelier_density_profiles_v11_28.mjs
+      - name: Desktop and Android mesh topology Bake Undo OBJ and native import
+        run: |
+          npx playwright install --with-deps --only-shell chromium
+          python -m http.server 8787 --directory /tmp/atelier-lod >/tmp/atelier-lod-server.log 2>&1 &
+          PID=$!
+          trap 'kill "$PID" 2>/dev/null || true' EXIT
+          for i in $(seq 1 50); do
+            if curl -fsS http://127.0.0.1:8787/ >/dev/null; then break; fi
+            sleep .3
+          done
+          curl -fsS http://127.0.0.1:8787/ >/dev/null
+          SWYRL_SCULPT_TEST_URL=http://127.0.0.1:8787 node projects/swrlz-forge-moba/tests/model_atelier_adaptive_topology_browser_v11_46.mjs
