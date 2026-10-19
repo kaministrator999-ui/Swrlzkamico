@@ -30,8 +30,8 @@ try{
   assert(!(await local.isVisible()),'world input must hide when using pixel sizing');
   const screen=page.locator('#modelAtelierSculptBrushRadiusScreen');
   assert(await screen.isVisible(),'mobile pixel input must be usable');
-  await screen.fill('60');
-  await page.locator('#modelAtelierSculptBrushSelectRadiusScreen').fill('75');
+  await screen.fill('18');
+  await page.locator('#modelAtelierSculptBrushSelectRadiusScreen').fill('22');
   await page.locator('#modelAtelierSculptBrushAmount').fill('.04');
   await page.locator('#modelAtelierSculptBrushApply').click();
   const changed=(await parts()).find(p=>p.id==='model-0001');
