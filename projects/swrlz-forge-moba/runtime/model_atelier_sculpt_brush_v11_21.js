@@ -55,7 +55,7 @@ function atelierSculptValid(p){
       &&(s.operation===undefined||atelierSculptOperations.includes(s.operation))
       &&(s.mirrorX===undefined||typeof s.mirrorX==='boolean')
       &&(s.surfaceMode===undefined||atelierSurfaceModes.includes(s.surfaceMode))
-      &&(s.surfaceMode==='occluded'?(Array.isArray(s.cameraLocal)&&s.cameraLocal.length===3&&s.cameraLocal.every(x=>Number.isFinite(x)&&Math.abs(x)<=600)):s.cameraLocal===undefined)
+      &&((s.surfaceMode==='occluded'||s.surfaceMode==='visible-geodesic')?(Array.isArray(s.cameraLocal)&&s.cameraLocal.length===3&&s.cameraLocal.every(x=>Number.isFinite(x)&&Math.abs(x)<=600)):s.cameraLocal===undefined)
       &&(s.selectionRadius===undefined||(Number.isFinite(s.selectionRadius)&&s.selectionRadius>=.03&&s.selectionRadius<=2.5))
       &&[s.offsetU??0,s.offsetV??0].every(v=>Number.isFinite(v)&&Math.abs(v)<=.5);
  });
@@ -94,7 +94,7 @@ function atelierSculptApply(geometry,part){
      const x=a.getX(i),y=a.getY(i),z=a.getZ(i);
      delta.set(x-originPoint.x,y-originPoint.y,z-originPoint.z);
      const radial=delta.length();
-     const distance=s.surfaceMode==='connected'?selected.dist[i]:radial;
+     const distance=(s.surfaceMode==='connected'||s.surfaceMode==='visible-geodesic')?selected.dist[i]:radial;
      if(distance>=r||(selected&&selected.dist[i]>selected.radius))continue;
      let weight=(typeof atelierSculptCurveWeight==='function')?
        atelierSculptCurveWeight(distance/r,s):
@@ -219,7 +219,7 @@ function atelierSculptForm(){
   if(influence===null||selectRadius===null)return null;
   s.radius=influence;s.selectionRadius=selectRadius;
  }
- if(s.surfaceMode==='occluded'){
+ if(s.surfaceMode==='occluded'||s.surfaceMode==='visible-geodesic'){
   const mesh=modelRoot?.children.find(o=>o.isMesh&&o.userData.atelierId===selection);
   if(!mesh)return null;
   const g=mesh.geometry;
