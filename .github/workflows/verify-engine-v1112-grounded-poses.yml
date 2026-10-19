@@ -5,7 +5,7 @@ on:
   # Focus historical test on the sealed engine and the matching module.
   # Other candidate preview code uses dedicated CPU + browser suites.
   pull_request:
-    # Match precisely the 90 file paths present in the sealed manifest.
+    # Match precisely the 91 ordered patch dependencies in the sealed production manifest.
     # An unlisted opt-in preview patch must not restart the legacy CI suite.
     paths:
       - '.github/workflows/verify-engine-v1112-grounded-poses.yml'
@@ -104,6 +104,7 @@ on:
       - 'projects/swrlz-forge-moba/patches/v11_18_leg_reference_correction.py'
       - 'projects/swrlz-forge-moba/patches/v11_19_portrait_body_polish.py'
       - 'projects/swrlz-forge-moba/patches/v11_20_anatomical_head.py'
+      - 'projects/swrlz-forge-moba/patches/v11_59_precision_model_atelier.py'
   workflow_dispatch:
 concurrency:
   group: engine-ci-verify-engine-v1112-grounded-poses-${{ github.event.pull_request.number || github.ref }}
