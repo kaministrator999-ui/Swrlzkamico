@@ -254,7 +254,7 @@ function atelierSculptInstall(){
      ' as a local, undoable vertex stroke. Save JSON to keep it.');
  });
  atelierSculptVertexInstall();
- atelierDensityInstall();
+ atelierSculptDensityInstall();
  atelierSurfaceInstall();
  atelierBrushSizingRefresh();
  if(typeof atelierSculptCurveInstall==='function')atelierSculptCurveInstall();

@@ -34,7 +34,7 @@ function atelierSculptDensityRefresh(){
  $m('SculptDensityPreset').value='custom';
  $m('SculptDensityBudget').textContent='Preview selected-object U/V sampling before pressing Re-sample vertex grid. This is editable density, not runtime LOD.';
 }
-function atelierDensityInstall(){
+function atelierSculptDensityInstall(){
  const id=s=>$m('SculptDensity'+s);
  const preset=id('Preset');
  preset.addEventListener('change',()=>{

@@ -9,6 +9,8 @@ const c=vm.createContext({THREE,console,
 vm.runInContext(code,c);
 assert.equal(vm.runInContext('typeof atelierSculptDensityRefresh',c),'function');
 assert.doesNotMatch(code,/function\s+atelierDensityRefresh\s*\(/);
+assert.equal(vm.runInContext('typeof atelierSculptDensityInstall',c),'function');
+assert.doesNotMatch(code,/function\s+atelierDensityInstall\s*\(/);
 const source={kind:'sphere',meshDensity:{u:64,v:48},
  sculptVertexEdits:[{indices:[1],delta:[.1,0,0],resolution:[64,48]}],
  sculptBrushes:[{strength:.1}]};
