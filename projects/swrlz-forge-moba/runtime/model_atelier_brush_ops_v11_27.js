@@ -34,7 +34,7 @@ function atelierSculptApplyOperator(geometry,s){
  const primary=atelierSurfaceWeights(geometry,s);
  const mirrored=!!s.mirrorX;
  const reflectedStroke=mirrored?{...s,center:[-originalCenter.x,originalCenter.y,originalCenter.z],
-   axis:[-s.axis[0],s.axis[1],s.axis[2]],offsetU:0,offsetV:0}:null;
+   axis:[-s.axis[0],s.axis[1],s.axis[2]],cameraLocal:s.cameraLocal?[-s.cameraLocal[0],s.cameraLocal[1],s.cameraLocal[2]]:undefined,offsetU:0,offsetV:0}:null;
  const secondary=reflectedStroke?atelierSurfaceWeights(geometry,reflectedStroke):null;
  const secondaryCenter=new THREE.Vector3(-originalCenter.x,originalCenter.y,originalCenter.z);
  const secondaryAxis=normalAxis.clone();secondaryAxis.x*=-1;
