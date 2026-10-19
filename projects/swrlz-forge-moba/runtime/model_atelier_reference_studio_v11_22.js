@@ -32,6 +32,8 @@ function atelierRefLayoutValid(v){
    &&(v.width===undefined||(Number.isInteger(v.width)&&v.width>=200&&v.width<=680))
    &&(v.height===undefined||(Number.isInteger(v.height)&&v.height>=220&&v.height<=680))
    &&(v.pinned===undefined||typeof v.pinned==='boolean')
+   &&(v.compareId===undefined||v.compareId===null||
+      typeof v.compareId==='string'&&v.compareId.length<=72)
    &&(v.active===null||(typeof v.active==='string'&&v.active.length<=72));
 }
 function atelierRefReadImport(source){
@@ -41,6 +43,10 @@ function atelierRefReadImport(source){
    throw new Error('Reference panel layout is invalid.');
  if(source.referenceLayout?.active&&!source.references?.some(r=>r.id===source.referenceLayout.active))
    throw new Error('Reference panel points to a missing image.');
+ if(source.referenceLayout?.compareId&&
+    (!source.references?.some(r=>r.id===source.referenceLayout.compareId)||
+      source.referenceLayout.compareId===source.referenceLayout.active))
+   throw new Error('Reference comparison must target a second existing image.');
  return {
    references:structuredClone(source.references||[]),
    referenceLayout:structuredClone(source.referenceLayout||{
@@ -113,7 +119,10 @@ function atelierRefPaint(){
      btn.setAttribute('aria-pressed',String(ref.id===r?.id));
      btn.addEventListener('click',()=>{
        if(m.referenceLayout.active===ref.id)return;
-       checkpoint();m.referenceLayout.active=ref.id;
+       checkpoint();
+       const previous=m.referenceLayout.active;
+       m.referenceLayout.active=ref.id;
+       if(m.referenceLayout.compareId===ref.id)m.referenceLayout.compareId=previous;
        atelierRefMark();atelierRefPaint();
      });
      tabs.append(btn);
@@ -145,6 +154,36 @@ function atelierRefPaint(){
    }else{
      empty.hidden=false;display.hidden=true;
      display.removeAttribute('src');display.removeAttribute('data-ref-id');
+   }
+   const compareSelect=$m('ReferenceCompare'),secondary=$m('ReferenceComparePane'),
+      secondImage=$m('ReferenceCompareImage'),secondName=$m('ReferenceCompareName');
+   if(compareSelect&&secondary&&secondImage&&secondName){
+     compareSelect.replaceChildren();
+     const none=document.createElement('option');none.value='';
+     none.textContent='Off / single image';compareSelect.append(none);
+     for(const item of m.references.filter(item=>item.id!==r?.id)){
+       const option=document.createElement('option');option.value=item.id;
+       option.textContent=item.name.slice(0,42)+' ('+item.angle+')';
+       compareSelect.append(option);
+     }
+     const second=m.references.find(item=>item.id===layout.compareId&&item.id!==r?.id);
+     compareSelect.value=second?.id||'';
+     compareSelect.disabled=m.references.length<2;
+     secondary.hidden=!second;
+     if(second){
+       if(secondImage.getAttribute('data-ref-id')!==second.id){
+         secondImage.src=second.data;
+         secondImage.setAttribute('data-ref-id',second.id);
+       }
+       secondImage.hidden=!second.visible;
+       secondImage.alt='Second angle: '+second.name;
+       secondImage.style.opacity=String(second.opacity);
+       secondImage.style.transform='translate('+second.offsetX+'px,'+second.offsetY+
+         'px) rotate('+second.rotation+'deg) scaleX('+(second.mirror?-1:1)+
+         ') scale('+second.zoom+')';
+       secondName.textContent=second.name+' · '+second.angle+
+         ' — select its tab to edit independently';
+     }
    }
    $m('ReferenceCount').textContent=m.references.length+'/'+atelierRefMaxImages+' images';
    $m('ReferenceCollapse').textContent=layout.collapsed?'Expand':'Minimize';
@@ -298,6 +337,16 @@ function atelierRefInstall(){
    atelierRefSnapshotBefore(m=>{m.referenceLayout.collapsed=!m.referenceLayout.collapsed;});
  });
  $m('ReferenceFile').addEventListener('change',e=>atelierRefUpload(e.target.files));
+ $m('ReferenceCompare').addEventListener('change',e=>{
+   const m=atelierRefEnsure();if(!m)return;
+   const next=e.target.value||null;
+   if(next&&(!m.references.some(r=>r.id===next)||next===m.referenceLayout.active)){
+      status('Choose a different existing reference for comparison.',true);
+      atelierRefPaint();return;
+   }
+   if((m.referenceLayout.compareId||null)===next)return;
+   atelierRefSnapshotBefore(state=>{state.referenceLayout.compareId=next;});
+ });
  $m('ReferenceAngle').addEventListener('change',e=>{
    const r=atelierRefCurrent();if(r)atelierRefSnapshotBefore(()=>{r.angle=e.target.value;});
  });
@@ -328,6 +377,9 @@ function atelierRefInstall(){
    atelierRefSnapshotBefore(m=>{
       m.references=m.references.filter(v=>v.id!==r.id);
       m.referenceLayout.active=m.references[0]?.id||null;
+      if(m.referenceLayout.compareId===r.id||
+         m.referenceLayout.compareId===m.referenceLayout.active)
+        m.referenceLayout.compareId=null;
       atelierRefTransient.delete(r.id);
    });
  });
