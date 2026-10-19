@@ -1,0 +1,50 @@
+import assert from 'node:assert/strict';
+import {chromium} from 'playwright';import {readFile} from 'node:fs/promises';
+const browser=await chromium.launch({headless:true,args:['--no-sandbox','--disable-dev-shm-usage','--enable-webgl','--enable-unsafe-swiftshader','--use-gl=angle','--use-angle=swiftshader']});
+const root=(process.env.SWYRL_SCULPT_TEST_URL||'http://127.0.0.1:8787').replace(/\/$/,'');
+try{
+ for(const [device,viewport,isMobile]of[['desktop',{width:1300,height:860},false],['mobile',{width:412,height:915},true]]){
+  const ctx=await browser.newContext({viewport,isMobile,hasTouch:isMobile,acceptDownloads:true});
+  const page=await ctx.newPage();page.setDefaultTimeout(60000);
+  const errors=[];page.on('pageerror',e=>errors.push(e.message));
+  await page.goto(root+'/?project=model-atelier',{waitUntil:'domcontentloaded',timeout:90000});
+  await page.locator('#modelAtelierPanel:not([hidden]) canvas').waitFor();
+  const get=()=>page.evaluate(()=>window.SWYRL_ENGINE_AGENT.inspectScene().project.modelAtelier.parts);
+  const base=await get(),head=base.find(p=>p.id==='model-0001');
+  assert.equal(base.length,283);assert(head.headAnatomy);
+  await page.locator('#modelAtelierParts').selectOption('model-0001');
+  await page.locator('#modelAtelierSculptBrushIndices').fill('12400,12401');
+  await page.locator('#modelAtelierSculptBrushIndicesApply').click();
+  assert(await page.locator('#modelAtelierGroupTools').isVisible());
+  await page.locator('#modelAtelierGroupMode').selectOption('translate');
+  await page.locator('#modelAtelierGroupSpace').selectOption('object');
+  await page.locator('#modelAtelierGroupValue0').fill('0');
+  await page.locator('#modelAtelierGroupValue1').fill('0');
+  await page.locator('#modelAtelierGroupValue2').fill('0.03');
+  await page.locator('#modelAtelierGroupApply').click();
+  let data=(await get()).find(p=>p.id==='model-0001');
+  assert.equal(data.sculptVertexEdits?.length,1);
+  assert(data.sculptVertexEdits[0].moves.length>=2);
+  assert(data.sculptVertexEdits[0].moves.every(v=>Math.abs(v[2]-.03)<.0001));
+  assert.deepEqual(data.headAnatomy,head.headAnatomy);
+  await page.locator('#modelAtelierGroupMode').selectOption('scale');
+  await page.locator('#modelAtelierGroupValue0').fill('1.25');
+  await page.locator('#modelAtelierGroupValue1').fill('1');
+  await page.locator('#modelAtelierGroupValue2').fill('1');
+  await page.locator('#modelAtelierGroupApply').click();
+  data=(await get()).find(p=>p.id==='model-0001');
+  assert.equal(data.sculptVertexEdits.length,2);
+  const download=page.waitForEvent('download');
+  await page.locator('#modelAtelierExport').click();
+  const fp=await(await download).path();
+  const saved=JSON.parse(await readFile(fp,'utf8'));
+  assert.equal(saved.model.parts.find(p=>p.id==='model-0001').sculptVertexEdits.length,2);
+  await page.locator('#modelAtelierUndo').click();
+  assert.equal((await get()).find(p=>p.id==='model-0001').sculptVertexEdits.length,1);
+  await page.locator('#modelAtelierImportFile').setInputFiles(fp);
+  await page.waitForFunction(()=>window.SWYRL_ENGINE_AGENT.inspectScene().project.modelAtelier.parts.find(p=>p.id==='model-0001')?.sculptVertexEdits?.length===2);
+  assert.equal(errors.length,0,errors.join(' | '));
+  console.log('V1123_NUMERIC_GROUP_BROWSER_SAVE_UNDO_ROTATE_SCALE_READY',device);
+  await ctx.close();
+ }
+}finally{await browser.close();}

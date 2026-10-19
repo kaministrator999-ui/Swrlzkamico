@@ -1,0 +1,132 @@
+name: Preview §E v11.21 vertex sculpt brush on official v11.20 head
+on:
+  push:
+    branches: [feature/atelier-vertex-sphere-brush-v11-21]
+    paths:
+      - 'projects/swrlz-forge-moba/runtime/model_atelier_sculpt_brush_v11_21.js'
+      - 'projects/swrlz-forge-moba/runtime/model_atelier_surface_targeting_v11_22.js'
+      - 'projects/swrlz-forge-moba/runtime/model_atelier_surface_lasso_v11_22.js'
+      - 'projects/swrlz-forge-moba/runtime/model_atelier_local_refinement_v11_23.js'
+      - 'projects/swrlz-forge-moba/runtime/model_atelier_face_sheet_v11_23.js'
+      - 'projects/swrlz-forge-moba/runtime/model_atelier_numeric_gizmos_v11_23.js'
+      - 'projects/swrlz-forge-moba/runtime/model_atelier_face_volume_v11_23.js'
+      - 'projects/swrlz-forge-moba/tests/model_atelier_numeric_groups_v11_23.mjs'
+      - 'projects/swrlz-forge-moba/tests/model_atelier_numeric_groups_browser_v11_23.mjs'
+      - 'projects/swrlz-forge-moba/tests/model_atelier_face_volume_v11_23.mjs'
+      - 'projects/swrlz-forge-moba/tests/model_atelier_face_sheet_v11_23.mjs'
+      - 'projects/swrlz-forge-moba/tests/model_atelier_face_sheet_browser_v11_23.mjs'
+      - 'projects/swrlz-forge-moba/tests/model_atelier_refinement_browser_v11_23.mjs'
+      - 'projects/swrlz-forge-moba/tests/model_atelier_local_refine_v11_23.mjs'
+      - 'projects/swrlz-forge-moba/tests/model_atelier_lasso_v11_22.mjs'
+      - 'projects/swrlz-forge-moba/tests/model_atelier_surface_targeting_v11_22.mjs'
+      - 'projects/swrlz-forge-moba/runtime/model_atelier_viewport_v11_21.js'
+      - 'projects/swrlz-forge-moba/runtime/model_atelier_reference_studio_v11_22.js'
+      - 'projects/swrlz-forge-moba/tests/model_atelier_reference_studio_v11_22.mjs'
+      - 'projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py'
+      - 'projects/swrlz-forge-moba/tests/model_sculpt_brush_cpu_v11_21.mjs'
+      - '.github/workflows/preview-engine-vertex-brush-v11-21.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: forge-vertex-brush-preview
+  cancel-in-progress: true
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify original v11.20 source and build isolated v11.21 sculpt preview
+        run: |
+          set -euo pipefail
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/atelier-v1120
+          python - <<'PY'
+          import json,runpy,shutil,hashlib
+          from pathlib import Path
+          src=Path('/tmp/atelier-v1120')
+          original=(src/'index.html').read_text(encoding='utf-8')
+          assert 'SWYRL_ENGINE_DEPLOY_MARKER: V11_20_ANATOMICAL_HEAD' in original
+          dst=Path('dist/atelier-sculpt-preview')
+          shutil.copytree(src,dst,dirs_exist_ok=True)
+          p=Path('projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py')
+          html=runpy.run_path(str(p))['apply'](original)
+          assert 'V11_21_VERTEX_SPHERE_BRUSH_PREVIEW' in html
+          assert 'modelAtelierSculptBrushVertexToggle' in html
+          assert 'atelierSculptApply' in html
+          assert 'modelAtelierLassoStart' in html
+          assert 'modelAtelierRefineAdd' in html
+          assert 'modelAtelierFaceSheetCreate' in html
+          assert 'modelAtelierGroupApply' in html
+          assert 'modelAtelierFaceSheetUVHeatmap' in html
+          assert 'atelierFaceVolumeClose' in html
+          assert 'modelAtelierSculptBrushSurfaceMode' in html
+          assert 'atelierSurfaceWeights' in html
+          assert 'modelAtelierViewportMode' in html
+          assert 'modelAtelierReferenceToggle' in html
+          assert 'atelierRefReadImport' in html
+          assert 'atelierCameraPointerMove' in html
+          data=html.encode('utf-8')
+          (dst/'index.html').write_bytes(data)
+          receipt=json.loads((src/'SOURCE.json').read_text())
+          assert len(receipt['patches'])==90
+          receipt.update(sourceVersion='v11.21-sculpt-preview',baseRelease='v11.20',
+            previewOnly=True,finalBytes=len(data),finalSha256=hashlib.sha256(data).hexdigest(),
+            sourceBranch='feature/atelier-vertex-sphere-brush-v11-21')
+          receipt['patches'].append('patches/v11_21_vertex_sphere_brush_preview.py')
+          (dst/'SOURCE.json').write_text(json.dumps(receipt,indent=2)+'\n')
+          script=html.split('<script type="module">',1)[1].rsplit('</script>',1)[0]
+          Path('/tmp/atelier-sculpt-v1121.mjs').write_text(script)
+          print('SCULPT_V1121_PREVIEW_BUILT',receipt['finalSha256'],len(data),len(receipt['patches']))
+          PY
+          node --check /tmp/atelier-sculpt-v1121.mjs
+      - name: Verify real brush math on fresh sampled geometry
+        run: |
+          npm install --no-save three@0.169.0
+          node projects/swrlz-forge-moba/tests/model_sculpt_brush_cpu_v11_21.mjs
+      - name: Upload isolated preview to Hugging Face (do not overwrite production)
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          set -euo pipefail
+          test -n "$HF_TOKEN" || { echo "::error::Missing HF_TOKEN, cannot publish preview."; exit 1; }
+          python -m pip -q install "huggingface_hub>=0.34,<2"
+          python - <<'PY'
+          import os
+          from huggingface_hub import HfApi
+          api=HfApi(token=os.environ['HF_TOKEN'])
+          r=api.upload_folder(folder_path='dist/atelier-sculpt-preview',
+            path_in_repo='atelier-sculpt-preview',
+            repo_id='kamiloki/swrlz-forge-moba',repo_type='space',
+            commit_message='§E v11.21 sculpt tool preview over official v11.20 '+os.environ.get('GITHUB_SHA','')[:12])
+          print('SCULPT_PREVIEW_UPLOADED',getattr(r,'oid',None))
+          PY
+      - name: Verify exact hosted candidate without touching stable root
+        env:
+          REF_SHA: ${{ github.sha }}
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import os,hashlib,re,time,urllib.request
+          url='https://kamiloki-swrlz-forge-moba.static.hf.space/atelier-sculpt-preview/index.html'
+          want=hashlib.sha256(Path('dist/atelier-sculpt-preview/index.html').read_bytes()).hexdigest()
+          for i in range(15):
+            try:
+              with urllib.request.urlopen(url+'?build='+os.environ['REF_SHA']+'&check='+str(i),timeout=25) as r:
+                body=r.read()
+              clean=re.sub(rb'(?<=<head>)<script>window\.huggingface=\{variables:\{.*?\}\};</script>',b'',body,count=1)
+              if hashlib.sha256(clean).hexdigest()==want:
+                assert b'V11_21_VERTEX_SPHERE_BRUSH_PREVIEW' in clean
+                assert b'modelAtelierSculptBrushVertexToggle' in clean
+                print('SCULPT_PREVIEW_HOST_EXACT_MATCH',url+'?project=model-atelier')
+                break
+            except Exception as e:print('Preview retry',i,str(e)[:150])
+            time.sleep(5)
+          else:raise SystemExit('Hosted sculpt preview did not match its generated HTML SHA')
+          PY

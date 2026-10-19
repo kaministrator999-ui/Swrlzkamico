@@ -1,0 +1,55 @@
+name: Verify §E v11.35 curved lasso boundaries
+on:
+  push:
+    branches: [feature/atelier-curve-lasso-v11-35]
+    paths:
+      - 'projects/swrlz-forge-moba/runtime/model_atelier_surface_lasso_v11_22.js'
+      - 'projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py'
+      - 'projects/swrlz-forge-moba/tests/model_atelier_lasso_curve_v11_35.mjs'
+      - 'projects/swrlz-forge-moba/tests/model_atelier_lasso_curve_browser_v11_35.mjs'
+      - '.github/workflows/verify-atelier-curve-lasso-v11-35.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: verify-atelier-curve-v1135
+  cancel-in-progress: true
+jobs:
+  contour-and-pins:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Build sealed original editor with new interpolated boundary controls
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/model_atelier_surface_lasso_v11_22.js
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/atelier-curves
+          python - <<'PY'
+          import runpy
+          from pathlib import Path
+          p=Path('/tmp/atelier-curves/index.html')
+          p.write_text(runpy.run_path('projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py')['apply'](p.read_text()))
+          PY
+      - name: Corner/curve morph, selected topology, source pin and Boolean regressions
+        run: |
+          npm install --no-save playwright@1.56.1 three@0.169.0
+          node projects/swrlz-forge-moba/tests/model_atelier_lasso_curve_v11_35.mjs
+          node projects/swrlz-forge-moba/tests/model_atelier_region_boolean_v11_34.mjs
+          node projects/swrlz-forge-moba/tests/model_atelier_local_refine_v11_23.mjs
+      - name: Desktop Android native head curve pins measured refinement Undo Save Reload
+        run: |
+          npx playwright install --with-deps --only-shell chromium
+          python -m http.server 8787 --directory /tmp/atelier-curves >/tmp/atelier-curves.log 2>&1 &
+          PID=$!
+          trap 'kill "$PID" 2>/dev/null || true' EXIT
+          for i in $(seq 1 40); do
+            if curl -fsS http://127.0.0.1:8787/ >/dev/null; then break; fi
+            sleep 0.3
+          done
+          curl -fsS http://127.0.0.1:8787/ >/dev/null
+          SWYRL_SCULPT_TEST_URL=http://127.0.0.1:8787 node projects/swrlz-forge-moba/tests/model_atelier_lasso_curve_browser_v11_35.mjs

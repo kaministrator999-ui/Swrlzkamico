@@ -1,0 +1,73 @@
+name: Quick verify §E surface brush selection modes
+on:
+  push:
+    branches: [feature/atelier-vertex-sphere-brush-v11-21]
+    paths:
+      - 'projects/swrlz-forge-moba/runtime/model_atelier_sculpt_brush_v11_21.js'
+      - 'projects/swrlz-forge-moba/runtime/model_atelier_surface_targeting_v11_22.js'
+      - 'projects/swrlz-forge-moba/runtime/model_atelier_surface_lasso_v11_22.js'
+      - 'projects/swrlz-forge-moba/runtime/model_atelier_local_refinement_v11_23.js'
+      - 'projects/swrlz-forge-moba/runtime/model_atelier_face_sheet_v11_23.js'
+      - 'projects/swrlz-forge-moba/runtime/model_atelier_numeric_gizmos_v11_23.js'
+      - 'projects/swrlz-forge-moba/runtime/model_atelier_face_volume_v11_23.js'
+      - 'projects/swrlz-forge-moba/tests/model_atelier_numeric_groups_v11_23.mjs'
+      - 'projects/swrlz-forge-moba/tests/model_atelier_numeric_groups_browser_v11_23.mjs'
+      - 'projects/swrlz-forge-moba/tests/model_atelier_face_volume_v11_23.mjs'
+      - 'projects/swrlz-forge-moba/tests/model_atelier_face_sheet_v11_23.mjs'
+      - 'projects/swrlz-forge-moba/tests/model_atelier_face_sheet_browser_v11_23.mjs'
+      - 'projects/swrlz-forge-moba/tests/model_atelier_refinement_browser_v11_23.mjs'
+      - 'projects/swrlz-forge-moba/tests/model_atelier_local_refine_v11_23.mjs'
+      - 'projects/swrlz-forge-moba/tests/model_atelier_lasso_v11_22.mjs'
+      - 'projects/swrlz-forge-moba/tests/model_atelier_lasso_browser_v11_22.mjs'
+      - 'projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py'
+      - 'projects/swrlz-forge-moba/tests/model_atelier_surface_*v11_22.mjs'
+      - '.github/workflows/verify-surface-brush-v11-22.yml'
+permissions:
+  contents: read
+concurrency:
+  group: quick-surface-sculpt-v1122
+  cancel-in-progress: true
+jobs:
+  brush:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build official v11.20 and native preview overlay
+        run: |
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/surface-brush-preview
+          python - <<'PY'
+          from pathlib import Path
+          import runpy
+          p=Path('/tmp/surface-brush-preview/index.html')
+          h=runpy.run_path('projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py')['apply'](p.read_text())
+          assert 'modelAtelierSculptBrushSurfaceMode' in h
+          assert 'atelierSurfaceWeights' in h
+          p.write_text(h)
+          Path('/tmp/surface-brush-script.mjs').write_text(h.split('<script type="module">',1)[1].rsplit('</script>',1)[0])
+          PY
+          node --check /tmp/surface-brush-script.mjs
+      - name: Check topology-aware brush geometry and real desktop/mobile UI
+        run: |
+          npm install --no-save playwright@1.56.1 three@0.169.0
+          node projects/swrlz-forge-moba/tests/model_atelier_surface_targeting_v11_22.mjs
+          node projects/swrlz-forge-moba/tests/model_atelier_lasso_v11_22.mjs
+          node projects/swrlz-forge-moba/tests/model_atelier_local_refine_v11_23.mjs
+          node projects/swrlz-forge-moba/tests/model_atelier_face_sheet_v11_23.mjs
+          node projects/swrlz-forge-moba/tests/model_atelier_numeric_groups_v11_23.mjs
+          node projects/swrlz-forge-moba/tests/model_atelier_face_volume_v11_23.mjs
+          npx playwright install --with-deps --only-shell chromium
+          python -m http.server 8787 --directory /tmp/surface-brush-preview >/tmp/surface-brush-server.log 2>&1 &
+          PID=$!
+          trap 'kill "$PID" 2>/dev/null || true' EXIT
+          SWYRL_SCULPT_TEST_URL=http://127.0.0.1:8787 node projects/swrlz-forge-moba/tests/model_atelier_surface_brush_browser_v11_22.mjs
+          SWYRL_SCULPT_TEST_URL=http://127.0.0.1:8787 node projects/swrlz-forge-moba/tests/model_atelier_lasso_browser_v11_22.mjs
+          SWYRL_SCULPT_TEST_URL=http://127.0.0.1:8787 node projects/swrlz-forge-moba/tests/model_atelier_refinement_browser_v11_23.mjs
+          SWYRL_SCULPT_TEST_URL=http://127.0.0.1:8787 node projects/swrlz-forge-moba/tests/model_atelier_face_sheet_browser_v11_23.mjs
+          SWYRL_SCULPT_TEST_URL=http://127.0.0.1:8787 node projects/swrlz-forge-moba/tests/model_atelier_numeric_groups_browser_v11_23.mjs

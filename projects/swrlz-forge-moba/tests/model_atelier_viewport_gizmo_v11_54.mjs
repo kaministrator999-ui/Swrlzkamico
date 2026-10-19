@@ -1,0 +1,27 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import vm from 'node:vm';
+import * as THREE from 'three';
+const src=fs.readFileSync(new URL('../runtime/model_atelier_viewport_gizmo_v11_54.js',import.meta.url),'utf8');
+const context=vm.createContext({THREE,console});
+vm.runInContext(src,context);
+const delta=(...args)=>context.atelierViewportGizmoDelta(...args);
+assert.equal(JSON.stringify(delta('rotate','z',[0,0],[20,0],[0,20],5)),JSON.stringify([0,0,90]));
+assert.equal(JSON.stringify(delta('rotate','x',[0,0],[20,0],[0,-20],15)),JSON.stringify([-90,0,0]));
+assert.equal(JSON.stringify(delta('rotate','y',[0,0],[20,0],[0,20],0)),JSON.stringify([0,90,0]));
+assert.equal(JSON.stringify(delta('scale','x',[0,0],[20,0],[30,0],0)),JSON.stringify([1.5,1,1]));
+assert.equal(JSON.stringify(delta('scale','z',[0,0],[20,0],[10,0],0)),JSON.stringify([1,1,.5]));
+assert.equal(JSON.stringify(delta('scale','y',[0,0],[20,0],[200,0],0)),JSON.stringify([1,3,1]));
+assert.equal(delta('rotate','bad',[0,0],[20,0],[20,15],5),null);
+assert.equal(delta('rotate','z',[0,0],[0,0],[20,20],5),null);
+assert.equal(delta('rotate','z',[0,0],[20,0],[20,20],90),null);
+assert.equal(delta('scale','x',[0,0],[20,0],[NaN,0],5),null);
+// A second finger cannot move or commit another finger's transform.
+vm.runInContext('atelierViewportGizmoDrag={pointerId:7}',context);
+assert.equal(vm.runInContext('atelierViewportGizmoPointerMove({pointerId:8})',context),false);
+assert.equal(vm.runInContext('atelierViewportGizmoPointerUp({pointerId:8})',context),false);
+assert.equal(vm.runInContext('atelierViewportGizmoDrag.pointerId',context),7);
+vm.runInContext('atelierViewportGizmoDrag=null',context);
+const obj=new THREE.Mesh(new THREE.PlaneGeometry(.5,.5,4,4),new THREE.MeshBasicMaterial());
+assert(obj.geometry.attributes.position.count>8);
+console.log('V1154_VIEWPORT_GIZMO_ROTATE_SCALE_AXIS_SNAP_INVALID_GEOMETRY_PASS');
