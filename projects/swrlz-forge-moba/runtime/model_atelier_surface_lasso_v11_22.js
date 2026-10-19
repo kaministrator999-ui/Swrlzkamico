@@ -305,7 +305,7 @@ function atelierLassoRefresh(){
  if($m('LassoBooleanOp'))$m('LassoBooleanOp').value=r?.selectionOp||'none';
  const paintStatus=$m('LassoPaintInfo');
  if(paintStatus)paintStatus.textContent=(r?.paintDabs?.length||0)+' saved additive/subtractive surface selection dabs.';
- if($m('LassoPaintArm'))$m('LassoPaintArm').textContent=atelierPaintArmed?'Cancel paint mode':'Paint selected region by dragging';
+ if($m('LassoPaintArm'))$m('LassoPaintArm').textContent=(typeof atelierPaintArmed!=='undefined'&&atelierPaintArmed)?'Cancel paint mode':'Paint selected region by dragging';
  $m('LassoInfo').textContent=regions.length+' saved lasso regions · '
    +(atelierLassoPending.length?'Draft: '+atelierLassoPending.length+' pins · ':'')
    +(atelierLassoArm==='freehand'?'Drag over the selected mesh to trace up to 32 boundary pins.':
