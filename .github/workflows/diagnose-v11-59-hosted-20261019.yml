@@ -95,3 +95,18 @@ jobs:
             'META_TAGS',re.findall(rb'<meta[^>]*>',candidate)[:5],
             'START_REPR',repr(candidate[:360]),'END_REPR',repr(candidate[-160:]),flush=True)
           PY
+
+      - name: Inspect actual live label and engine build-version origins
+        run: |
+          python - <<'PY'
+          import urllib.request,re,html
+          url="https://huggingface.co/spaces/kamiloki/swrlz-forge-moba/resolve/main/index.html"
+          with urllib.request.urlopen(urllib.request.Request(url,headers={"User-Agent":"SWRLZ-version-diagnostic"}),timeout=45) as response:
+            src=response.read().decode("utf-8")
+          for term in ['v11.20','v11.59',"version:'v11.20'","version:11.20","SWYRL_ENGINE_BUILD","SWRLZ_FORGE_BUILD","§E v11.20 Tools","v11.20 · anatomical head studio","Maker v11.59"]:
+            matches=list(re.finditer(re.escape(term),src))
+            print("VERSION_TERM",repr(term),"COUNT",len(matches),flush=True)
+            for match in matches[:12]:
+              part=src[max(0,match.start()-190):min(len(src),match.end()+190)]
+              print("CONTEXT",repr(term),repr(part).replace("\\n"," ")[:580],flush=True)
+          PY
