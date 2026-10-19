@@ -26,7 +26,7 @@ function atelierDensityPlan(part,u,v){
    original?.dispose();test?.dispose();
  }
 }
-function atelierDensityRefresh(){
+function atelierSculptDensityRefresh(){
  const p=partById(selection),pane=$m('SculptDensityTools');
  if(!pane)return;
  pane.hidden=!atelierDensityEligible(p);

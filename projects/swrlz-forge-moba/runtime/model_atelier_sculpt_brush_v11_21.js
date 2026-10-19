@@ -149,7 +149,7 @@ function atelierSculptRefresh(){
  if(arm)arm.textContent=atelierSculptArmed?'Cancel picking':'Pick center on mesh';
  atelierLassoRefresh();
  atelierRefineRefresh();
- atelierDensityRefresh();
+ atelierSculptDensityRefresh();
  const remove=$m('SculptBrushUndoStroke');
  if(remove)remove.disabled=!(p?.sculptBrushes?.length);
 }
