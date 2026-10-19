@@ -17,7 +17,8 @@ try{
   await page.locator('#modelAtelierParts').selectOption('model-0001');
   await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.view('front'));
   await page.locator('#modelAtelierFrameSelected').click();
-  await page.locator('#modelAtelierSculptBrushIndices').fill('12400,12500');
+  // Nearby head vertices keep a 55° group rotation within the native ±0.5 delta cap.
+  await page.locator('#modelAtelierSculptBrushIndices').fill('12400,12410');
   await page.locator('#modelAtelierSculptBrushIndicesApply').click();
   await page.locator('#modelAtelierGroupViewportMode').selectOption('rotate');
   await page.locator('#modelAtelierGroupViewportAxis').selectOption('z');
