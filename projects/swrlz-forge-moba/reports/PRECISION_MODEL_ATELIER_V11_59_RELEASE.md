@@ -12,7 +12,7 @@ Included tooling: brush/vertex topology, actual camera-ray occlusion, screen-pix
 
 ## Release source SHA
 
-Authoritative `source-manifest.json`: **2,926,239** HTML bytes, SHA-256 **3a23b53ce48ba1b25aa19346a4d640aebee8a81ba0f2a161ca66621f31a5f0e1**.
+Authoritative `source-manifest.json`: **2,926,762** HTML bytes, SHA-256 **dd9df586ab032c0c100905a2b398569e66dc433aab4d4e470c8eebee0bf141bd**.
 
 Version and marker: `§wyrl§ Engine v11.59`, `SWYRL_ENGINE_DEPLOY_MARKER: V11_59_PRECISION_MODEL_ATELIER`. Actual production `SOURCE.json` must reproduce exactly 91 patches, 43 original assets, this byte length and this digest. Measurement was independently reconstructed on GitHub Actions with exact sealed v11.20 source before changing the manifest. Production `build_space.py` remains authoritative.
 
@@ -28,3 +28,7 @@ Version and marker: `§wyrl§ Engine v11.59`, `SWYRL_ENGINE_DEPLOY_MARKER: V11_5
 This release does **not** implement automatic photo-to-complete-head reconstruction, calibrated lens photogrammetry, general QEM/UV-material-sensitive retopology, full independent XYZ manipulators for both mesh and lasso pin types or benchmarked GPU performance on physical Android devices. Owner visual likeness/signoff remains separate; production promotion of tools does not assert reconstructed photographic likeness or full original design-spec completion.
 
 Preserve historical source and evidence; if any production gate fails do not claim a successful live version.
+
+## Source integrity reconciliation (2026-10-19)
+
+Code-review repairs for stale runtime LOD after mesh-shape/topology mutation and cross-pointer gizmo gesture ownership changed the generated source. GitHub Actions independent measurement `39282819839` on `1327077fb1089e950d483379e59682d58652b9e0` reproduced the canonical ordered 91-patch build as **2,926,762 bytes / SHA-256 `dd9df586ab032c0c100905a2b398569e66dc433aab4d4e470c8eebee0bf141bd`**. Updated this release seal and the strict verifier from the observed build, not by bypassing checksum assertions. Prior v11.59 seal is retained in Git history. The next release CI and hosted desktop/mobile checks remain mandatory; a changed source checksum is not a deployment receipt.
