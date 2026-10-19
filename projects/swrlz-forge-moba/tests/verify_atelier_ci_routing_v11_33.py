@@ -9,7 +9,7 @@ root=Path(__file__).resolve().parents[1]
 manifest=json.loads((root/'source-manifest.json').read_text())
 prefix='projects/swrlz-forge-moba/'
 patches={prefix+p for p in manifest['patches']}
-assert len(patches)==90, 'Revisit routing when the sealed manifest changes'
+assert len(patches)==91 and 'projects/swrlz-forge-moba/patches/v11_59_precision_model_atelier.py' in patches, 'Every governed production patch must remain covered'
 
 workflows={
  'verify-character-detail.yml': [
@@ -48,4 +48,4 @@ for name,features in workflows.items():
  for item in features:
   assert triggered(prefix+item,globs),(name,'missing relevant suite input',item)
  print('ROUTING_PASS',name,'protected_inputs',len(globs))
-print('V1133_CI_90_SEALED_PATCH_ROUTES_NO_PREVIEW_OR_DOCS_REDUCED_REBUILDS_PASS')
+print('V1159_CI_91_GOVERNED_PATCH_ROUTES_NO_PREVIEW_OR_DOCS_REDUCED_REBUILDS_PASS')
