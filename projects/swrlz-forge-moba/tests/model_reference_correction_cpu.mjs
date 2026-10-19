@@ -8,7 +8,7 @@ const model=JSON.parse(html.match(/const MODEL_ATELIER_CANONICAL_PROJECT=(.*?);\
 const previous=JSON.parse(read('scenes/model-atelier-festival-hd-v11-17.swyrl.json')).project.modelAtelier;
 const reference=read('runtime/model_atelier_reference_v11_13.js'),leaf=reference.slice(reference.indexOf('function atelierReferenceLeaf('),reference.indexOf('function atelierValidateAssemblies('));
 const from=html.indexOf('// Native HD finishes:'),to=html.indexOf('// §E v11.52: camera-plane-exact pixel brush sizing',from);
-assert.ok(from>0&&to>from);const ctx=vm.createContext({THREE,console,model:()=>model});
+assert.ok(from>0&&to>from);const ctx=vm.createContext({THREE,console,model:()=>model,atelierSculptApply:(geometry,part)=>{assert.ok(!part?.sculptBrushes?.length&&!part?.sculptVertexEdits?.length,'Historical anatomy fixture must have no native sculpt edits');return geometry;}});
 vm.runInContext(read('runtime/model_atelier_density_v11_16.js')+'\n'+leaf+'\n'+html.slice(from,to),ctx);
 const byId=id=>model.parts.find(p=>p.id===id),oldId=id=>previous.parts.find(p=>p.id===id);
 const maxKink=p=>Math.max(...p.path.slice(1,-1).map((v,i)=>{const a=new THREE.Vector3(...v).sub(new THREE.Vector3(...p.path[i])).normalize(),b=new THREE.Vector3(...p.path[i+2]).sub(new THREE.Vector3(...v)).normalize();return a.angleTo(b);}));
