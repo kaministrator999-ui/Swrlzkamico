@@ -233,7 +233,7 @@ function atelierSculptInstall(){
  });
  $m('SculptBrushApply').addEventListener('click',()=>{
    const p=partById(selection),s=atelierSculptForm();if(!p)return;
-   if(!s){status('Invalid brush center/radii, unprojectable pixel footprint, unequal object scaling or ray-occlusion budget exceeded.',true);return;}
+   if(!s){const reason=typeof atelierBrushPixelLastReason==='string'?atelierBrushPixelLastReason:'';status('Brush rejected: '+(reason||'invalid radius, occlusion budget, center or mesh'),true);return;}
    if((p.sculptBrushes?.length??0)>=atelierSculptMaxStrokes){
      status('Maximum '+atelierSculptMaxStrokes+' strokes for one mesh. Use Undo or remove strokes.',true);return;
    }
