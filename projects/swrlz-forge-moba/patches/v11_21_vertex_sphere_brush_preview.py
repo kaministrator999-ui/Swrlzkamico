@@ -9,8 +9,12 @@ def once(html, before, after):
 def apply(html):
     root=Path(__file__).resolve().parent.parent
     assert "SWYRL_ENGINE_DEPLOY_MARKER: V11_20_ANATOMICAL_HEAD" in html
-    module=(root/"runtime/model_atelier_sculpt_brush_v11_21.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_brush_ops_v11_27.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_density_profiles_v11_28.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_viewport_v11_21.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_reference_studio_v11_22.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_surface_targeting_v11_22.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_surface_lasso_v11_22.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_local_refinement_v11_23.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_face_sheet_v11_23.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_numeric_gizmos_v11_23.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_face_volume_v11_23.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_topology_lod_v11_38.js").read_text(encoding="utf-8")
+    module=(root/"runtime/model_atelier_sculpt_brush_v11_21.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_brush_ops_v11_27.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_density_profiles_v11_28.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_viewport_v11_21.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_reference_studio_v11_22.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_surface_targeting_v11_22.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_surface_lasso_v11_22.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_local_refinement_v11_23.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_face_sheet_v11_23.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_numeric_gizmos_v11_23.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_face_volume_v11_23.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_topology_lod_v11_38.js").read_text(encoding="utf-8")+"\n"+(root/"runtime/model_atelier_runtime_lod_v11_43.js").read_text(encoding="utf-8")
     html=once(html, "  function refreshList(){", module+"\n  function refreshList(){")
+    html=once(html,"mesh.name=p.name;mesh.userData.atelierId=p.id;",
+         "mesh.name=p.name;mesh.userData.atelierId=p.id;if(p.kind==='topologyMesh'&&p.runtimeLOD?.enabled)mesh.userData.atelierRuntimeLODPart=p;")
+    html=once(html,"  function renderParts(){",
+         "  function renderParts(){atelierRuntimeLODStart();")
     html=once(html,"  function geometry(part){",
          "  function geometry(part){\n    if(part.kind==='topologyMesh')return atelierTopologyGeometry(part);\n    if(part.kind==='faceSheet')return atelierFaceSheetGeometry(part);")
     html=once(html,"function material(part){\n if(!part.hdFinish)",
@@ -20,9 +24,9 @@ def apply(html):
     html=once(html,"if(key==='kind'){delete p.headAnatomy;delete p.portraitFinish;",
          "if(key==='kind'){delete p.sculptBrushes;delete p.sculptVertexEdits;delete p.sculptLassos;delete p.refinementLayers;delete p.faceSheet;delete p.topologyMesh;delete p.headAnatomy;delete p.portraitFinish;")
     html=once(html,"atelierHeadAnatomyRefresh();",
-         "atelierHeadAnatomyRefresh();atelierSculptRefresh();atelierViewportControlsRefresh();atelierRefPaint();atelierFaceSheetRefresh();atelierFaceLandmarkRefresh();atelierLODRefresh();")
+         "atelierHeadAnatomyRefresh();atelierSculptRefresh();atelierViewportControlsRefresh();atelierRefPaint();atelierFaceSheetRefresh();atelierFaceLandmarkRefresh();atelierLODRefresh();atelierRuntimeLODRefresh();")
     html=once(html,"atelierHeadAnatomyInstall();",
-         "atelierHeadAnatomyInstall();atelierSculptInstall();atelierViewportInstall();atelierRefInstall();atelierFaceSheetInstall();atelierLODInstall();")
+         "atelierHeadAnatomyInstall();atelierSculptInstall();atelierViewportInstall();atelierRefInstall();atelierFaceSheetInstall();atelierLODInstall();atelierRuntimeLODInstall();")
     brush = ('<fieldset id="modelAtelierFaceSheetControls" hidden aria-label="Editable UV image face sheet">'
              '<legend>Triangulated image face sheet · UV preserved</legend>'
              '<p>This is an opt-in editable surface created from a reference. It does NOT replace the original head or automatically build a complete skull.</p>'
@@ -79,6 +83,15 @@ def apply(html):
              '<button id="modelAtelierTopologyMove" type="button">Move indexed vertex</button>'
              '<button id="modelAtelierTopologyRemove" type="button">Remove face (opens hole)</button></div>'
              '<p id="modelAtelierTopologyStats" role="status"></p></fieldset>'
+             '<fieldset id="modelAtelierRuntimeLODTools" hidden aria-label="Distance based indexed geometry LOD">'
+             '<legend>Saved game LOD · actual camera distance</legend>'
+             '<p>Create two distinct stored indexed meshes. Unselected objects use low triangles beyond the switch distance; selecting them restores high detail for editing. JSON retains both meshes.</p>'
+             '<div class="atelier-pair"><label>Low-detail fraction <input id="modelAtelierRuntimeLODRatio" type="number" min=".05" max=".9" step=".05" value=".35"></label>'
+             '<label>Switch after world units <input id="modelAtelierRuntimeLODDistance" type="number" min=".5" max="120" step=".5" value="6"></label></div>'
+             '<div class="atelier-inspector-actions"><button type="button" id="modelAtelierRuntimeLODGenerate">Generate and save two LOD levels</button>'
+             '<button type="button" id="modelAtelierRuntimeLODClear">Remove low LOD</button></div>'
+             '<label><input type="checkbox" id="modelAtelierRuntimeLODEnabled"> Enable automatic camera-distance switching</label>'
+             '<p id="modelAtelierRuntimeLODStats" role="status">Select indexed topology copy to configure.</p></fieldset>'
              '<fieldset id="modelAtelierLODTools" hidden aria-label="Mesh topology and LOD authoring">'
              '<legend>Actual reduced topology · selected mesh</legend>'
              '<label>Desired triangle ratio <input id="modelAtelierLODRatio" type="number" step=".05" min=".05" max=".9" value=".35"></label>'
@@ -405,7 +418,7 @@ def apply(html):
     html=once(html,"renderer.domElement.addEventListener('pointercancel',()=>pressed=null);",
          "renderer.domElement.addEventListener('pointercancel',e=>{atelierLassoPointerCancel(e);atelierCameraPointerCancel(e);if(atelierSculptDrag){atelierSculptDrag=null;renderParts();}pressed=null;});")
     html=once(html, "mesh.geometry?.dispose();if(!mesh.material?.userData?.atelierHDMaterial)mesh.material?.dispose();",
-         "for(const child of mesh.children)if(child.isMesh&&child.userData.atelierHelper)child.material?.dispose();mesh.geometry?.dispose();if(!mesh.material?.userData?.atelierHDMaterial)mesh.material?.dispose();")
+         "atelierRuntimeLODDispose(mesh);for(const child of mesh.children)if(child.isMesh&&child.userData.atelierHelper)child.material?.dispose();mesh.geometry?.dispose();if(!mesh.material?.userData?.atelierHDMaterial)mesh.material?.dispose();")
     html=once(html,"function onWheel(e){e.preventDefault();orbit.distance=Math.min(22,Math.max(atelierDetailTarget?.4:3.7,",
          "function onWheel(e){e.preventDefault();orbit.distance=Math.min(24,Math.max(atelierCameraMinDistance(),")
     html=once(html,"action('ZoomIn',()=>{orbit.distance=Math.max(atelierDetailTarget?.4:3.7,",
