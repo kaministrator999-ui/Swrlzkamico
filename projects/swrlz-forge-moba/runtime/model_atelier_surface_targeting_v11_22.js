@@ -2,7 +2,7 @@
 // backward-compatible: older strokes lacking surfaceMode use through-volume.
 // New strokes default to FRONT-facing and connected-surface selection.
 // All computation uses part-LOCAL vertices and never alters source topology.
-const atelierSurfaceModes=['front','connected','inside','through','nearest','occluded'];
+const atelierSurfaceModes=['front','connected','inside','through','nearest','occluded','visible-geodesic'];
 function atelierSurfaceTangent(axis) {
  const n=new THREE.Vector3(...axis).normalize();
  const helper=Math.abs(n.y)<.84?new THREE.Vector3(0,1,0):new THREE.Vector3(1,0,0);
@@ -34,12 +34,12 @@ function atelierSurfaceWeights(geometry,stroke) {
      normal.getX(i)*axis.x+normal.getY(i)*axis.y+normal.getZ(i)*axis.z:1;
    // Deliberate interior mode selects the inward-facing opposite-normal
    // shell. The usual front/connected modes retain their legacy behavior.
-   const faceOk=mode==='through'||mode==='occluded'||!normal||
+   const faceOk=mode==='through'||mode==='occluded'||mode==='visible-geodesic'||!normal||
      (mode==='inside'?oriented<-.12:oriented>-.08);
    if(!faceOk||d>radius+1e-5)continue;
    valid[i]=1;
    if(d<nearestDist){nearest=i;nearestDist=d;}
-   if(mode!=='connected')dist[i]=d;
+   if(mode!=='connected'&&mode!=='visible-geodesic')dist[i]=d;
  }
  // Conservative nearest-facing shell for stacked same-normal geometry.
  // This is a projected depth filter relative to the picked brush axis, NOT
@@ -67,7 +67,7 @@ function atelierSurfaceWeights(geometry,stroke) {
    }
    return {dist,origin,valid,radius};
  }
- if(mode==='occluded'){
+ if(mode==='occluded'||mode==='visible-geodesic'){
   // Camera-eye rays are tested against actual frontmost triangles, not
   // sampled normals or projected depth bins. Missing/oversize data fails shut.
   const visible=atelierBrushOcclusionMask(geometry,stroke.cameraLocal,valid,radius);
@@ -76,10 +76,21 @@ function atelierSurfaceWeights(geometry,stroke) {
   for(let i=0;i<count;i++)if(valid[i]&&!visible[i]){
     valid[i]=0;dist[i]=Infinity;
   }
-  return {dist,origin,valid,radius};
+  if(mode==='occluded')return {dist,origin,valid,radius};
+  // The initial nearest vertex might itself have been occluded.
+  // Pick the closest *camera-visible* seed before doing geodesic traversal.
+  nearest=-1;nearestDist=Infinity;
+  for(let i=0;i<count;i++)if(valid[i]){
+   const k=i*3,d=Math.hypot(xyz[k]-origin.x,xyz[k+1]-origin.y,xyz[k+2]-origin.z);
+   if(d<nearestDist){nearestDist=d;nearest=i;}
+  }
+  if(nearest<0)return {dist,origin,valid,radius};
  }
- if(mode!=='connected'||nearest<0)return {dist,origin,valid,radius};
- // Geodesic traversal is restricted to actual connected triangles. UV seam
+ if((mode!=='connected'&&mode!=='visible-geodesic')||nearest<0)
+   return {dist,origin,valid,radius};
+ // Geodesic traversal is restricted to actual connected triangles. Camera-
+ // visible mode has already removed all ray-occluded vertex candidates.
+ // UV seam
  // duplicates with coincident coordinates are welded virtually for selection
  // only; underlying UVs and vertex indices are not modified.
  const welded=new Map(),groups=[],keys=new Int32Array(count);
