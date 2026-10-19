@@ -18,6 +18,20 @@ function atelierRuntimeLODDispose(mesh){
    state[key]=null;
  }
 }
+let atelierRuntimeLODFrame=0;
+function atelierRuntimeLODStart(){
+ if(atelierRuntimeLODFrame||!modelRoot||!renderer||!panel||panel.hidden)return;
+ const tick=()=>{
+   // Separate opt-in candidate loop; it stops by itself when the editor
+   // closes, without modifying the source engine's other scene renderers.
+   if(!modelRoot||!renderer||!panel||panel.hidden){
+     atelierRuntimeLODFrame=0;return;
+   }
+   atelierRuntimeLODUpdate();
+   atelierRuntimeLODFrame=requestAnimationFrame(tick);
+ };
+ atelierRuntimeLODFrame=requestAnimationFrame(tick);
+}
 function atelierRuntimeLODUpdate(){
  if(!modelRoot||!camera)return;
  for(const mesh of modelRoot.children){
