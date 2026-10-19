@@ -7,7 +7,7 @@ const html=fs.readFileSync(process.env.SWYRL_REFERENCE_HTML||'dist/swrlz-forge-m
 const model=JSON.parse(html.match(/const MODEL_ATELIER_CANONICAL_PROJECT=(.*?);\n\/\/ §wyrl§ Engine Model Atelier v11.3/s)[1]).project.modelAtelier;
 const previous=JSON.parse(read('scenes/model-atelier-festival-hd-v11-17.swyrl.json')).project.modelAtelier;
 const reference=read('runtime/model_atelier_reference_v11_13.js'),leaf=reference.slice(reference.indexOf('function atelierReferenceLeaf('),reference.indexOf('function atelierValidateAssemblies('));
-const from=html.indexOf('// Native HD finishes:'),to=html.indexOf('  function refreshList(){',from);
+const from=html.indexOf('// Native HD finishes:'),to=html.indexOf('// §E v11.52: camera-plane-exact pixel brush sizing',from);
 assert.ok(from>0&&to>from);const ctx=vm.createContext({THREE,console,model:()=>model});
 vm.runInContext(read('runtime/model_atelier_density_v11_16.js')+'\n'+leaf+'\n'+html.slice(from,to),ctx);
 const byId=id=>model.parts.find(p=>p.id===id),oldId=id=>previous.parts.find(p=>p.id===id);
