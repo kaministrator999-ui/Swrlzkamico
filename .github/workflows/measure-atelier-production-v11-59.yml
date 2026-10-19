@@ -1,0 +1,23 @@
+name: Measure §E v11.59 governed production digest
+on:
+  push:
+    branches: [release/atelier-v11-59-production]
+    paths:
+      - 'projects/swrlz-forge-moba/patches/v11_59_precision_model_atelier.py'
+      - 'projects/swrlz-forge-moba/scripts/measure_v11_59_release.py'
+      - '.github/workflows/measure-atelier-production-v11-59.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-integrity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Reconstruct sealed baseline and calculate production source digest
+        run: |
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_59_precision_model_atelier.py
+          python projects/swrlz-forge-moba/scripts/measure_v11_59_release.py
