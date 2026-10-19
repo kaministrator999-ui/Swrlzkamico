@@ -12,7 +12,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: precision-preview-v1139
+  group: precision-preview-v1142
   cancel-in-progress: true
 jobs:
   geometry-and-native-schema:
