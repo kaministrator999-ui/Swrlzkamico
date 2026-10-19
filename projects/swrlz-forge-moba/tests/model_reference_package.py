@@ -17,13 +17,16 @@ for c in rig['components']:assert sum(p['group']==c['group'] for p in parts)>=24
 assert rig['components'][0]['state']==rig['components'][1]['state']=='attached'
 assert rig['components'][2]['state']=='free'
 assert (out/source.relative_to(r)).read_bytes()==source.read_bytes()
-html=raw.decode();found=re.search(r'const MODEL_ATELIER_CANONICAL_PROJECT=(.*?);\n(?=// §wyrl§ Engine Model Atelier v11.3)',html,re.S);assert found and json.loads(found.group(1))==d
+html=raw.decode();needle='const MODEL_ATELIER_CANONICAL_PROJECT=';assert html.count(needle)==1
+payload=html.split(needle,1)[1].lstrip()
+data,_=json.JSONDecoder().raw_decode(payload)
+assert data==d,'Production must preserve exact original 283-part anatomical project'
 for key in ['atelierSilkenLock','atelierTailoredPanel','V11_59_PRECISION_MODEL_ATELIER','modelAtelierAssemblyDeck','atelierAssemblySample','atelierAssemblySaveKey','atelierValidateAssemblies','MODEL_ATELIER_LEGACY_V1112']:
  assert key in html,key
 baseline=json.loads((r/'tests/model_reference_baseline.json').read_text())
 for path,sha in baseline['sources'].items():assert hashlib.sha256((r/path).read_bytes()).hexdigest()==sha,path
 for path,meta in baseline['assets'].items():assert receipt['assets'][path]==meta,path
-print('MODEL_REFERENCE_SOURCE_90_PATCHES_43_ASSETS_283_PARTS_PRESERVED_BASELINE_PASS')
+print('MODEL_REFERENCE_SOURCE_91_PATCHES_43_ASSETS_283_PARTS_PRESERVED_BASELINE_PASS')
 
 by_id={p['id']:p for p in parts}
 assert len([p for p in parts if p.get('surfaceStyle')=='silken-lock'])==26
