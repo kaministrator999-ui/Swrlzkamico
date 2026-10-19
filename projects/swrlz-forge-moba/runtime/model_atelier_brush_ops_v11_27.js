@@ -45,7 +45,7 @@ function atelierSculptApplyOperator(geometry,s){
  const evaluate=(i,center,selection,axis)=>{
    pos.set(a.getX(i),a.getY(i),a.getZ(i));
    delta.subVectors(pos,center);
-   const dist=s.surfaceMode==='connected'?selection.dist[i]:delta.length();
+   const dist=(s.surfaceMode==='connected'||s.surfaceMode==='visible-geodesic')?selection.dist[i]:delta.length();
    if(!Number.isFinite(dist)||dist>=s.radius||selection.dist[i]>selection.radius)return null;
    let weight=typeof atelierSculptCurveWeight==='function'?
     atelierSculptCurveWeight(dist/s.radius,s):
