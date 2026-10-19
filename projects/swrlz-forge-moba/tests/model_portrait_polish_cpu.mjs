@@ -8,7 +8,7 @@ const model=JSON.parse(read('scenes/model-atelier-festival-polish-v11-19.swyrl.j
 const previous=JSON.parse(read('scenes/model-atelier-festival-reference-v11-18.swyrl.json')).project.modelAtelier;
 const reference=read('runtime/model_atelier_reference_v11_13.js'),leaf=reference.slice(reference.indexOf('function atelierReferenceLeaf('),reference.indexOf('function atelierValidateAssemblies('));
 const ctx=vm.createContext({THREE,console,model:()=>model});
-vm.runInContext(read('runtime/model_atelier_density_v11_16.js')+'\n'+leaf+'\n'+html.slice(html.indexOf('// Native HD finishes:'),html.indexOf('  function refreshList(){',html.indexOf('// Native HD finishes:'))),ctx);
+vm.runInContext(read('runtime/model_atelier_density_v11_16.js')+'\n'+leaf+'\n'+html.slice(html.indexOf('// Native HD finishes:'),html.indexOf('// §E v11.52: camera-plane-exact pixel brush sizing',html.indexOf('// Native HD finishes:'))),ctx);
 const byId=id=>model.parts.find(p=>p.id===id),head=byId('model-0001'),g=ctx.atelierHDGeometry(head),base=ctx.atelierHDGeometry({...head,portraitFinish:undefined});
 for(const key of ['position','normal','color'])for(const v of g.attributes[key].array)assert.ok(Number.isFinite(v),'Non-finite portrait '+key);
 g.computeBoundingBox();base.computeBoundingBox();
