@@ -107,6 +107,6 @@
     "patches/v11_20_anatomical_head.py",
     "patches/v11_59_precision_model_atelier.py"
   ],
-  "finalBytes": 2927027,
-  "finalSha256": "8e5cbfa1289669e3936cc1e86ad888f188ec0c7c5e2908d26df98b32be591f43"
+  "finalBytes": 2927004,
+  "finalSha256": "f8aa7858b2fc44abc5b957566f4b82eb03a87d1002610653301aa8edbbb3c32f"
 }
