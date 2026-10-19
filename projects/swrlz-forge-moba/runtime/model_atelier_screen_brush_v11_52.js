@@ -37,10 +37,10 @@ function atelierBrushLocalRadiusFromPixels(mesh,view,element,localCenter,pixels)
 function atelierBrushSizingRefresh(){
  const screen=$m('SculptBrushRadiusUnits')?.value==='screen';
  for(const id of ['SculptBrushRadiusScreen','SculptBrushSelectRadiusScreen']){
-  const input=$m(id);if(input)input.parentElement.hidden=!screen;
+  const input=$m(id);if(input){input.parentElement.hidden=!screen;input.parentElement.style.display=screen?'':'none';}
  }
  for(const id of ['SculptBrushRadius','SculptBrushSelectRadius']){
-  const input=$m(id);if(input)input.parentElement.hidden=screen;
+  const input=$m(id);if(input){input.parentElement.hidden=screen;input.parentElement.style.display=screen?'none':'';}
  }
  const note=$m('SculptBrushSizingNote');
  if(note)note.textContent=screen?
