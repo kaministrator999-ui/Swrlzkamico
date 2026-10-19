@@ -201,6 +201,17 @@ function atelierSculptForm(){
   offsetU:Number($m('SculptBrushOffsetU').value),
   offsetV:Number($m('SculptBrushOffsetV').value)
  };
+ if($m('SculptBrushRadiusUnits')?.value==='screen'){
+  const mesh=modelRoot?.children.find(o=>o.isMesh&&o.userData.atelierId===selection);
+  if(!mesh||!renderer?.domElement)return null;
+  const at=new THREE.Vector3(...s.center);
+  const influence=atelierBrushLocalRadiusFromPixels(mesh,camera,renderer.domElement,
+     at,Number($m('SculptBrushRadiusScreen').value));
+  const selectRadius=atelierBrushLocalRadiusFromPixels(mesh,camera,renderer.domElement,
+     at,Number($m('SculptBrushSelectRadiusScreen').value));
+  if(influence===null||selectRadius===null)return null;
+  s.radius=influence;s.selectionRadius=selectRadius;
+ }
  if(s.surfaceMode==='occluded'){
   const mesh=modelRoot?.children.find(o=>o.isMesh&&o.userData.atelierId===selection);
   if(!mesh)return null;
@@ -222,7 +233,7 @@ function atelierSculptInstall(){
  });
  $m('SculptBrushApply').addEventListener('click',()=>{
    const p=partById(selection),s=atelierSculptForm();if(!p)return;
-   if(!s){status('Invalid brush data, missing mesh/camera, or ray-occlusion budget exceeded. Radius .03–2.5, amount 0–.5.',true);return;}
+   if(!s){const reason=typeof atelierBrushPixelLastReason==='string'?atelierBrushPixelLastReason:'';status('Brush rejected: '+(reason||'invalid radius, occlusion budget, center or mesh'),true);return;}
    if((p.sculptBrushes?.length??0)>=atelierSculptMaxStrokes){
      status('Maximum '+atelierSculptMaxStrokes+' strokes for one mesh. Use Undo or remove strokes.',true);return;
    }
@@ -238,6 +249,7 @@ function atelierSculptInstall(){
  atelierSculptVertexInstall();
  atelierDensityInstall();
  atelierSurfaceInstall();
+ atelierBrushSizingRefresh();
  atelierLassoInstall();
  atelierGroupInstall();
  atelierRefineInstall();
