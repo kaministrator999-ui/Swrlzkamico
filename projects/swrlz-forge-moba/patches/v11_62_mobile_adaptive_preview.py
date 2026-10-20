@@ -11,7 +11,7 @@ def apply(html):
         ("const ModelAtelier=(()=>{", JS + "\n" + "const ModelAtelier=(()=>{"),
         ("    atelierAdaptiveInstall(panel);\n", "    atelierAdaptiveInstall(panel);\n    atelierMobileLayoutInstall(panel);\n"),
         ("panel.classList.toggle('atelier-context-active',open);", "panel.classList.toggle('atelier-context-active',open);\n  panel.classList.toggle('atelier-mobile-context-mode',open);"),
-        ("if(allGroupNames.includes(label)&&open)pickGroup(label);", "if(label==='More'&&open){setOpen(false);return;}\n  if(allGroupNames.includes(label)){\n   if(matchMedia('(max-width:700px), (max-height:600px) and (pointer:coarse)').matches&&!open)setOpen(true);\n   if(open)pickGroup(label);\n  }"),
+        ("if(allGroupNames.includes(label)&&open)pickGroup(label);", "if(label==='More'){\n   if(open)setOpen(false);\n   // v11.60 toggles its last selected native category off on a repeat tap.\n   // A More request must leave the native inspector accessible on phones.\n   if(matchMedia('(max-width:700px), (max-height:600px) and (pointer:coarse)').matches&&panel.classList.contains('atelier-tools-closed'))b.click();\n   return;\n  }\n  if(allGroupNames.includes(label)){\n   if(matchMedia('(max-width:700px), (max-height:600px) and (pointer:coarse)').matches&&!open)setOpen(true);\n   if(open)pickGroup(label);\n  }"),
         ("</head>", '<style id="atelierMobileAdaptiveV1162">' + CSS + "</style>\n</head>"),
     )
     # The native v11.61 registry still owns operation resolution and action authority.
