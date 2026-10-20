@@ -34,7 +34,7 @@ jobs:
           changed=module['apply'](original)
           assert changed!=original
           assert changed.count('id="modelAtelierFloatingDockPreview"')==1
-          assert changed.count('atelierToolDockInstall(panel)')==1
+          assert changed.count('    atelierToolDockInstall(panel);\n')==1
           assert original.count('SWYRL_ENGINE_DEPLOY_MARKER: V11_59_PRECISION_MODEL_ATELIER')==1
           assert changed.count('SWYRL_ENGINE_DEPLOY_MARKER: V11_59_PRECISION_MODEL_ATELIER')==1
           assert 'const MODEL_ATELIER_CANONICAL_PROJECT=' in changed
