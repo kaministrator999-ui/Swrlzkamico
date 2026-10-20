@@ -364,10 +364,113 @@ def _prepare_create(user_id,thread_id,path,content):
                 "**Yes** to confirm or **no** to cancel (expires in 5 minutes). Nothing changed yet.")
 
 
+
+# A conflict leaves a *create intent* unfinished, not a GitHub rename request.
+# Recover only from the current account's server-authored Chat history. The
+# history is a planning hint, never a write grant: prepare() rechecks OAuth,
+# selected owner repo, branch, path existence and permissions before approval.
+_RETARGET_CREATE = re.compile(
+    r"^\s*(?:please\s+)?(?:(?:name|call)\s+(?:it|the\s+(?:new\s+)?file)\s+(?:(?:to|as)\s+)?|"
+    r"(?:use|try)\s+)(?P<name>[^\"“”\x60\s]+|\x60[^`\n]+\x60|[\"“][^\"”\n]+[\"”])"
+    r"(?:\s+(?:instead|then))?\s*[.!]?\s*$", re.I)
+_STILL_CREATE = re.compile(
+    r"^\s*(?:(?:please\s+)?(?:still\s+)?(?:create|make)\s+(?:the\s+)?new\s+file|"
+    r"(?:still\s+)?(?:create|make)\s+it)\s*[.!]?\s*$", re.I)
+
+
+def _trusted_failed_create(history):
+    """Return original unfulfilled (path, content), never an approval token."""
+    if not isinstance(history, list):
+        return None
+    events = history[-16:]
+    for i in range(len(events) - 1, 0, -1):
+        message = events[i]
+        if not isinstance(message, dict) or message.get("role") != "assistant":
+            continue
+        if "FILE_ALREADY_EXISTS" not in str(message.get("text") or ""):
+            continue
+        meta = message.get("meta") or {}
+        trace = meta.get("progressTrace") or {}
+        phases = [str(e.get("phase") or "") for e in trace.get("events", [])
+                  if isinstance(e, dict)]
+        if "GITHUB_CHAT_FILE_CHECK" not in phases:
+            continue
+        prior = events[i - 1]
+        if not isinstance(prior, dict) or prior.get("role") != "user":
+            continue
+        text = str(prior.get("text") or "")
+        if not _CREATE.search(text) or not re.search(r"\b(?:github|repo|repository)\b", text, re.I):
+            continue
+        path, content = _create_parts(text)
+        if not path or content is None:
+            continue
+        # A later verified create receipt completes the original task. Ordinary
+        # model statements, even "the file was created", are never receipts.
+        later = events[i + 1:]
+        if any(
+            isinstance(m, dict) and m.get("role") == "assistant"
+            and any(
+                isinstance(w, dict) and w.get("kind") == "github-work"
+                and (w.get("data") or {}).get("operation") == "CREATE_FILE"
+                for w in ((m.get("meta") or {}).get("widgets") or [])
+            )
+            for m in later
+        ):
+            return None
+        if any(
+            isinstance(m, dict) and m.get("role") == "user"
+            and re.search(r"\b(?:cancel|forget|abandon)\s+(?:the\s+)?(?:new\s+)?file\b",
+                          str(m.get("text") or ""), re.I)
+            for m in later
+        ):
+            return None
+        return path, content
+    return None
+
+
+def _retarget_file_name(prompt):
+    if not isinstance(prompt, str) or len(prompt) > 1000:
+        return None
+    m = _RETARGET_CREATE.fullmatch(prompt)
+    if not m:
+        return None
+    name = _trim_path(m.group("name").strip("\x60\"“”"))
+    return name if name else None
+
+
+def _new_create_path(original, new_name):
+    old_dir = original.rpartition("/")[0]
+    old_basename = original.rsplit("/", 1)[-1]
+    old_ext = "." + old_basename.rsplit(".", 1)[-1] if "." in old_basename else ""
+    # "Name it swyrlz1" keeps folder and .txt; a complete explicit path wins.
+    result = new_name if "/" in new_name else (old_dir + "/" + new_name if old_dir else new_name)
+    if old_ext and "." not in result.rsplit("/", 1)[-1]:
+        result += old_ext
+    return safe_path(result)
+
+
+def is_create_continuation(prompt, history):
+    if not _trusted_failed_create(history):
+        return False
+    return bool(_retarget_file_name(prompt) or _STILL_CREATE.fullmatch(str(prompt or "")))
+
+
 def handle(user_id,thread_id,prompt,context=None,history=None):
     """Return a user-facing, evidence-bound message and optional verified widget."""
     if not isinstance(prompt,str):
         return _out("I couldn't read the file request. Nothing changed.")
+    # A failed CREATE_FILE is an unfinished task. A short "name it X" changes
+    # only its target filename, not the operation or the original file.
+    previous_create = _trusted_failed_create(history)
+    if previous_create and _retarget_file_name(prompt):
+        original_path, original_content = previous_create
+        try:
+            new_path = _new_create_path(original_path, _retarget_file_name(prompt))
+        except CreateFileError as exc:
+            return _out(_user_friendly_failure(exc))
+        return _prepare_create(user_id, thread_id, new_path, original_content)
+    if previous_create and _STILL_CREATE.fullmatch(prompt):
+        return _out("The original filename already exists. What name should I give the new file? Its original contents are preserved; nothing changed.")
     if has_pending(user_id,thread_id):
         decision=_confirmation(user_id,thread_id,prompt)
         if decision is not None:return decision
