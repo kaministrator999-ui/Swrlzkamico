@@ -42,6 +42,8 @@ CSS = r"""
   width:min(390px,calc(100vw - 69px));height:min(48dvh,460px);
   max-height:calc(100dvh - 104px)!important}
  .model-atelier.atelier-tools-docked .atelier-scene{min-height:0!important}
+ /* Keep native reference photo controls separately scrollable above the lower mobile tool popup. */
+ .model-atelier.atelier-tools-docked:not(.atelier-tools-closed) #modelAtelierReferenceDock:not([hidden]){max-height:min(36dvh,340px)!important}
 }
 @media(max-height:520px){
  .model-atelier .atelier-tool-rail{top:80px;max-height:calc(100dvh - 125px)}
