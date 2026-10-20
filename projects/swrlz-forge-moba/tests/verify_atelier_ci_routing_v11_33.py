@@ -9,7 +9,7 @@ root=Path(__file__).resolve().parents[1]
 manifest=json.loads((root/'source-manifest.json').read_text())
 prefix='projects/swrlz-forge-moba/'
 patches={prefix+p for p in manifest['patches']}
-assert len(patches)==93 and 'projects/swrlz-forge-moba/patches/v11_61_context_workbench.py' in patches, 'Every governed production patch must remain covered'
+assert len(patches)==94 and 'projects/swrlz-forge-moba/patches/v11_62_mobile_tool_layout.py' in patches, 'Every governed production patch must remain covered'
 
 workflows={
  'verify-character-detail.yml': [
@@ -48,4 +48,4 @@ for name,features in workflows.items():
  for item in features:
   assert triggered(prefix+item,globs),(name,'missing relevant suite input',item)
  print('ROUTING_PASS',name,'protected_inputs',len(globs))
-print('V1161_CI_93_GOVERNED_PATCH_ROUTES_NO_PREVIEW_OR_DOCS_REDUCED_REBUILDS_PASS')
+print('V1162_CI_94_GOVERNED_PATCH_ROUTES_NO_PREVIEW_OR_DOCS_REDUCED_REBUILDS_PASS')

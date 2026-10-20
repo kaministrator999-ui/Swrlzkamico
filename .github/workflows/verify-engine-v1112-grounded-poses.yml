@@ -1,4 +1,4 @@
-name: Verify §E v11.61 grounded anatomy (v11.20 history retained)
+name: Verify §E v11.62 grounded anatomy (v11.20 history retained)
 on:
   push:
     branches: [fix/engine-v1112-grounded-stance-poses]
@@ -107,6 +107,7 @@ on:
       - 'projects/swrlz-forge-moba/patches/v11_59_precision_model_atelier.py'
       - 'projects/swrlz-forge-moba/patches/v11_60_floating_tool_dock.py'
       - 'projects/swrlz-forge-moba/patches/v11_61_context_workbench.py'
+      - 'projects/swrlz-forge-moba/patches/v11_62_mobile_tool_layout.py'
   workflow_dispatch:
 concurrency:
   group: engine-ci-verify-engine-v1112-grounded-poses-${{ github.event.pull_request.number || github.ref }}
@@ -139,8 +140,8 @@ jobs:
           raw=html.encode('utf8')
           print('GROUNDED_FINAL_BYTES='+str(len(raw)),flush=True)
           print('GROUNDED_FINAL_SHA256='+hashlib.sha256(raw).hexdigest(),flush=True)
-          assert 'V11_61_ADAPTIVE_CONTEXT_TOOL_WORKBENCH' in html
-          assert 'v11.61 · adaptive Model Atelier tools' in html
+          assert 'V11_62_MOBILE_ADAPTIVE_TOOL_LAYOUT' in html
+          assert 'v11.62 · mobile adaptive Model Atelier tools' in html
           Path('/tmp/se-grounded.mjs').write_text(html[html.index('<script type="module">')+len('<script type="module">'):html.rindex('</script>')])
           PY
           node --check /tmp/se-grounded.mjs

@@ -1,15 +1,18 @@
-name: Verify §E v11.61 adaptive contextual tool workbench production release
+name: Verify §E v11.62 adaptive contextual tool workbench production release
 on:
   push:
     branches: [release/atelier-v11-59-production]
     paths:
-      - 'projects/swrlz-forge-moba/scripts/verify_v11_61_release.py'
+      - 'projects/swrlz-forge-moba/scripts/verify_v11_62_release.py'
       - 'projects/swrlz-forge-moba/source-manifest.json'
       - 'projects/swrlz-forge-moba/patches/v11_59_precision_model_atelier.py'
       - 'projects/swrlz-forge-moba/patches/v11_60_floating_tool_dock.py'
       - 'projects/swrlz-forge-moba/patches/v11_60_floating_tool_dock_preview.py'
       - 'projects/swrlz-forge-moba/patches/v11_61_context_workbench.py'
       - 'projects/swrlz-forge-moba/patches/v11_61_context_workbench_preview.py'
+      - 'projects/swrlz-forge-moba/patches/v11_62_mobile_tool_layout.py'
+      - 'projects/swrlz-forge-moba/patches/v11_62_mobile_tool_layout_preview.py'
+      - 'projects/swrlz-forge-moba/tests/model_atelier_mobile_layout_browser_v11_62.mjs'
       - 'projects/swrlz-forge-moba/runtime/model_atelier_*.js'
       - 'projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py'
       - 'projects/swrlz-forge-moba/tests/model_atelier_*.mjs'
@@ -22,7 +25,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: precision-context-v1161
+  group: precision-context-v1162
   cancel-in-progress: true
 jobs:
   geometry-and-native-schema:
@@ -38,7 +41,7 @@ jobs:
           python-version: '3.11'
       - name: Build sealed original model and overlay ALL saved precision tools
         run: |
-          python projects/swrlz-forge-moba/scripts/verify_v11_61_release.py --output dist/atelier-precision-v11-61
+          python projects/swrlz-forge-moba/scripts/verify_v11_62_release.py --output dist/atelier-precision-v11-61
           node --check projects/swrlz-forge-moba/runtime/model_atelier_occluded_brush_v11_51.js
           node --check projects/swrlz-forge-moba/runtime/model_atelier_screen_brush_v11_52.js
           node --check projects/swrlz-forge-moba/runtime/model_atelier_painted_regions_v11_53.js
@@ -114,9 +117,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Verify v11.61 release then reconstruct exact historical v11.59 tool fixture
+      - name: Verify v11.62 release then reconstruct exact historical v11.59 tool fixture
         run: |
-          python projects/swrlz-forge-moba/scripts/verify_v11_61_release.py --output /tmp/atelier-precision-v11-61
+          python projects/swrlz-forge-moba/scripts/verify_v11_62_release.py --output /tmp/atelier-precision-v11-61
           node --check /tmp/atelier-precision-v11-61-module.mjs
           python projects/swrlz-forge-moba/scripts/prepare_v11_59_regression_fixture.py /tmp/atelier-precision-v11-61
       - name: Install one browser per validation shard

@@ -1,0 +1,40 @@
+name: Verify §E v11.62 mobile adaptive tool production release
+on:
+  pull_request:
+    paths:
+      - 'projects/swrlz-forge-moba/patches/v11_62_mobile_tool_layout_preview.py'
+      - 'projects/swrlz-forge-moba/patches/v11_62_mobile_tool_layout.py'
+      - 'projects/swrlz-forge-moba/source-manifest.json'
+      - 'projects/swrlz-forge-moba/scripts/verify_v11_62_release.py'
+      - 'projects/swrlz-forge-moba/tests/model_atelier_mobile_layout_browser_v11_62.mjs'
+      - '.github/workflows/preview-atelier-mobile-v11-62.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  viewport-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Rebuild sealed v11.62 and parse live original scene with additive drawer
+        run: |
+          set -euo pipefail
+          python projects/swrlz-forge-moba/scripts/verify_v11_62_release.py --output /tmp/atelier-mobile-v1162
+          node --check /tmp/atelier-mobile-v1162-module.mjs
+      - name: Install desktop/phone test browser
+        run: |
+          npm install --no-save playwright@1.56.1 three@0.169.0
+          npx playwright install --with-deps --only-shell chromium
+      - name: Test tiny phone, normal phone, landscape and desktop
+        env: {SWYRL_SCULPT_TEST_URL: 'http://127.0.0.1:8787'}
+        run: |
+          python -m http.server 8787 --directory /tmp/atelier-mobile-v1162 >/tmp/mobile-layout-server.log 2>&1 &
+          PID=$!
+          trap 'kill "$PID" 2>/dev/null || true' EXIT
+          for i in $(seq 1 40); do curl -fsS http://127.0.0.1:8787/ >/dev/null && break; sleep .3; done
+          node projects/swrlz-forge-moba/tests/model_atelier_mobile_layout_browser_v11_62.mjs
