@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.60",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_60_FLOATING_MODEL_ATELIER_DOCK",
-  "reason": "Owner requested moving hard-to-find bottom-half phone modeling controls into a draggable floating inspector with a persistent vertical category rail. PR #273 merged after all 14 v11.60 release workflows passed, including actual desktop and Android dock interactions, the exact 92-patch source seal, preserved 283-part original character, all 43 bundled source assets, full historical precision suites against the sealed v11.59 fixture, and 22 native starter browser suites. Production source merge commit 67f835019f850788cc4b4eddf9ca57729e1c11ac; rebuilt v11.60 HTML measures 2,933,954 bytes with SHA-256 fe11e3e748184db1797ef66bc327f7867a25f91d431823a4c8794f157117d97f. This DEPLOY_REQUEST.json update is the sole final intended main mutation for this release. Do not declare deployed until the terminal Hugging Face upload, exact live normalized HTML and SOURCE/43 assets audit, and hosted editor banner/rail/version checks succeed.",
-  "sourceCommit": "67f835019f850788cc4b4eddf9ca57729e1c11ac",
-  "sourceIntegritySha256": "fe11e3e748184db1797ef66bc327f7867a25f91d431823a4c8794f157117d97f"
+  "releaseVersion": "v11.61",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_61_ADAPTIVE_CONTEXT_TOOL_WORKBENCH",
+  "reason": "Owner requested a secondary floating, contextual tool workbench for all compatible Model Atelier operations: selected tool family → related operations → live native parameters and actions, with explicit browser-local per-tool presets. Production §E v11.61 was merged from PR #276 at d17aaf3fdad799956c8e6224f5a7e0e6b3de2b82 after all 15 of 15 required release workflows passed, including the 22-case native starter browser matrix, seven geometry/precision and multi-device cross-tool jobs, desktop+simulated Android contextual operation tests and independent sealed source verification. Preserve original 283-part scene, all 43 bundled assets, saved projects, and full 93-patch lineage. Source binary must be exactly 2,958,383 bytes with SHA-256 cd33b05e3e27304fe9d3e753e488d46fcb844841fd06e19b8058a81516e7d01e. This DEPLOY_REQUEST update is the sole final intended main mutation. Do not call v11.61 LIVE unless the terminal Hugging Face upload, normalized HTML/source receipt/43-assets audit and hosted editor UI verification succeed. Other non-Model-Atelier §E workspaces remain outside this release.",
+  "sourceCommit": "d17aaf3fdad799956c8e6224f5a7e0e6b3de2b82",
+  "sourceIntegritySha256": "cd33b05e3e27304fe9d3e753e488d46fcb844841fd06e19b8058a81516e7d01e"
 }
