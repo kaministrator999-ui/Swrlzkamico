@@ -1,0 +1,54 @@
+name: Verify §E v11.62 mobile adaptive tool preview
+on:
+  pull_request:
+    paths:
+      - 'projects/swrlz-forge-moba/patches/v11_62_mobile_tool_layout_preview.py'
+      - 'projects/swrlz-forge-moba/tests/model_atelier_mobile_layout_browser_v11_62.mjs'
+      - '.github/workflows/preview-atelier-mobile-v11-62.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  viewport-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Rebuild sealed v11.61 and add preview without touching production source
+        run: |
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/atelier-mobile-v1162
+          python - <<'PY'
+          import hashlib,json,runpy
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          m=json.loads((root/'source-manifest.json').read_text())
+          p=Path('/tmp/atelier-mobile-v1162/index.html')
+          old=p.read_text(encoding='utf-8')
+          assert len(old.encode())==m['finalBytes']
+          assert hashlib.sha256(old.encode()).hexdigest()==m['finalSha256']
+          data=old.split('const MODEL_ATELIER_CANONICAL_PROJECT=',1)[1].split(';',1)[0]
+          next=runpy.run_path(str(root/'patches/v11_62_mobile_tool_layout_preview.py'))['apply'](old)
+          assert data==next.split('const MODEL_ATELIER_CANONICAL_PROJECT=',1)[1].split(';',1)[0]
+          assert next.count('SWYRL_ENGINE_DEPLOY_MARKER: V11_61_ADAPTIVE_CONTEXT_TOOL_WORKBENCH')==1
+          p.write_text(next,encoding='utf-8')
+          mod=next.split('<script type="module">',1)[1].rsplit('</script>',1)[0]
+          Path('/tmp/atelier-mobile-module.mjs').write_text(mod,encoding='utf-8')
+          print('V1162_MOBILE_PREVIEW_SOURCE_PRESERVED')
+          PY
+          node --check /tmp/atelier-mobile-module.mjs
+      - name: Install desktop/phone test browser
+        run: |
+          npm install --no-save playwright@1.56.1 three@0.169.0
+          npx playwright install --with-deps --only-shell chromium
+      - name: Test tiny phone, normal phone, landscape and desktop
+        env: {SWYRL_SCULPT_TEST_URL: 'http://127.0.0.1:8787'}
+        run: |
+          python -m http.server 8787 --directory /tmp/atelier-mobile-v1162 >/tmp/mobile-layout-server.log 2>&1 &
+          PID=$!
+          trap 'kill "$PID" 2>/dev/null || true' EXIT
+          for i in $(seq 1 40); do curl -fsS http://127.0.0.1:8787/ >/dev/null && break; sleep .3; done
+          node projects/swrlz-forge-moba/tests/model_atelier_mobile_layout_browser_v11_62.mjs
