@@ -105,7 +105,7 @@ on:
       - 'projects/swrlz-forge-moba/patches/v11_19_portrait_body_polish.py'
       - 'projects/swrlz-forge-moba/patches/v11_20_anatomical_head.py'
       - 'projects/swrlz-forge-moba/patches/v11_59_precision_model_atelier.py'
-      - 'projects/swrlz-forge-moba/patches/v11_60_floating_tool_dock.py'
+      - 'projects/swrlz-forge-moba/patches/v11_61_context_workbench.py'
       - 'projects/swrlz-forge-moba/patches/v11_61_context_workbench.py'
   workflow_dispatch:
 concurrency:
@@ -140,7 +140,7 @@ jobs:
           print('GROUNDED_FINAL_BYTES='+str(len(raw)),flush=True)
           print('GROUNDED_FINAL_SHA256='+hashlib.sha256(raw).hexdigest(),flush=True)
           assert 'V11_61_ADAPTIVE_CONTEXT_TOOL_WORKBENCH' in html
-          assert 'v11.61 · floating Model Atelier tools' in html
+          assert 'v11.61 · adaptive Model Atelier tools' in html
           Path('/tmp/se-grounded.mjs').write_text(html[html.index('<script type="module">')+len('<script type="module">'):html.rindex('</script>')])
           PY
           node --check /tmp/se-grounded.mjs
