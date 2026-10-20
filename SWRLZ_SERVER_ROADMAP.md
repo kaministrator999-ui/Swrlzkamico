@@ -1,3 +1,11 @@
+## UPDATE STARTED — 2026-10-20 — v290 Live reply activity shimmer and tail
+
+**User intent:** While a §wyrlz Chat assistant response is actively generating, show an elegant end-of-reply animated "..." signal and restrained card shimmer. Stop visual animation promptly on actual Station terminal/completion, cancel, failure or persisted history; no fake progress estimates. Preserve station activity timeline, mobile performance/scroll, reduced motion, high contrast and user motion/transparency preferences.
+
+**Source owner/base:** Canonical clean-room Chat `chat/§wyrlz/index.html` and `chat/§wyrlz/VERSION.txt` at exactly deployed v289 source `cd4e5f43f67a82118c8873d5cc9bed418f9a4da3`, isolated `feature/chat-live-reply-cue-v290` → `integration/chat-live-reply-cue-v290`. No §E Forge, GitHub user testbed, model weights, OAuth or server protocol changes. Server's real `stationGeneration.terminal` and committed-message swap own activity truth, not elapsed time or fake streaming. User's exported Chat trace confirms distinct `GENERATING`/`COMPLETE`/`PERSISTING` stages.
+
+**Acceptance:** Increment Chat source version only in its canonical version file and head meta; deterministic browser test active/partial/terminal and historical hydration, reduced motion and mobile overflow; Node inline JS syntax, established v170 anchor and v287 scroll regressions; HF Candidate validation, reviewed exact candidate PR, terminal guarded HF deploy and source/Space receipts. Status `STARTED` not live.
+
 ## UPDATE FINISHED — 2026-10-20 — v289 Repository Readiness + Connected GitHub Testbed
 
 **User goal:** Use the separate `kaministrator999-ui/Swrlzing-core` selected GitHub repository as a **real, synthetic code/context read/write testbed** for §wyrlz Chat, and automatically recognize empty, sparse and populated repository maturity without inventing files or granting new write operations. This repository is distinct from `Swrlzkamico`, the Chat implementation source.
