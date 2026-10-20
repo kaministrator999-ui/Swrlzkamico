@@ -46,7 +46,7 @@ If integrity reports a source/overlay mismatch, STOP publication, repair registr
 
 ## 3. Hugging Face candidate-preparation gate
 
-The active source package is built from the explicitly selected deployment source (normally `feature/hf-space-manual-deploy`) through the existing preparation/deployment scripts and workflows.
+The active source package is built from the **explicitly selected, exactly validated** deployment source through the existing preparation/deployment scripts and workflows. The historical/default integration branch `feature/hf-space-manual-deploy` may be stale or divergent; prefer an immutable tested integration SHA when that is the accepted release source. Never publish a branch tip just because its name was previously canonical.
 
 Before publishing:
 
@@ -68,7 +68,7 @@ Current deployment is source-controlled through:
 main:.deploy/HF_SPACE_REQUEST.txt
   → main:.github/workflows/hf-space-request.yml
   → main:.github/workflows/manual-hf-space.yml
-  → SOURCE_REF=feature/hf-space-manual-deploy
+  → SOURCE_REF=<exact validated commit SHA or verified branch>
   → kamiloki/Swyrlz
 ```
 
