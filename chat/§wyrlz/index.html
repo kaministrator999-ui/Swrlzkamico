@@ -2448,7 +2448,11 @@
         // sync may hydrate thread data, but it must never navigate an unsent new
         // chat back to the server's previously-current thread.
         if(!draftThread && !stationAwaitingCommit && !chatThreads.some(t=>t.id===activeThreadId)) activeThreadId=stationCurrent||data?.state?.currentId||activeThreadId;
-        // Keep the local accepted generation until Station reports that same request, so a stale/background snapshot cannot replace the in-flight turn.\n        const syncedGeneration=data?.activeGeneration||null;\n        if(syncedGeneration && (!stationGeneration || syncedGeneration.requestId===stationGeneration.requestId || stationGeneration.terminal)) stationGeneration=syncedGeneration;
+        // Keep a locally accepted send until Station confirms its matching
+        // request. A fresh page with no local generation MUST rehydrate the
+        // real in-flight Station response from the signed-in account snapshot.
+        const syncedGeneration=data?.activeGeneration||null;
+        if(syncedGeneration && (!stationGeneration || syncedGeneration.requestId===stationGeneration.requestId || stationGeneration.terminal)) stationGeneration=syncedGeneration;
         renderThreads(); if(!draftThread)renderConversation(currentThread());
         renderStationGeneration();renderWorkSurface();
         if(stationAwaitingCommit){
