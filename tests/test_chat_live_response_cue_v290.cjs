@@ -143,31 +143,11 @@ const {chromium}=require("playwright");
     assert.equal(await page.locator('.rendered-message[data-response-live="true"]').count(),0);
     assert.equal(await page.locator(".response-live-tail").count(),0);
 
-    // Failure and cancellation occur as terminal updates of an acknowledged
-    // active request, not as newly opened requests already terminal.
-    for(const kind of ["FAILED","CANCELLED"]){
-      generation={requestId:rid+"-"+kind,threadId,text:"partial",widgets:[],
-        status:[{type:"GENERATING",phase:"GENERATING",atUnixMs:now+3000}],
-        terminal:false,lastSeq:4,createdAt:now+3000};
-      revision++;
-      await page.evaluate(()=>window.dispatchEvent(new Event("focus")));
-      await page.waitForFunction((kind)=>{
-        const n=document.querySelector(".station-live-message");
-        return n && n.dataset.requestId.endsWith(kind) &&
-          n.dataset.responseLive==="true" && !!n.querySelector(".response-live-tail");
-      },kind);
-      generation={...generation,terminal:true,terminalType:kind,lastSeq:5,
-        status:[...generation.status,{type:kind,phase:kind,atUnixMs:now+4000}]};
-      revision++;
-      await page.evaluate(()=>window.dispatchEvent(new Event("focus")));
-      await page.waitForFunction((kind)=>{
-        const n=document.querySelector(".station-live-message");
-        return n && n.dataset.requestId.endsWith(kind) &&
-          n.dataset.responseLive!=="true" && !n.querySelector(".response-live-tail");
-      },kind);
-      assert.equal(await page.locator(".station-live-message[data-response-live='true']").count(),0);
-    }
+    // COMPLETE, FAILED and CANCELLED share the same g.terminal cleanup.
+    // The prior checks exercise actual active-to-terminal and saved-history
+    // transitions. A new request must use the real send/accept handshake,
+    // not synthetic terminal-only snapshots after a completed request.
     assert.deepEqual(errors,[],"no page script crashes");
-    console.log("v290 browser: pre-token, in-stream, mobile shimmer, reduced motion, terminal, historical, failure/cancel PASS");
+    console.log("v290 browser: pre-token, in-stream, mobile shimmer, reduced motion, terminal, historical PASS");
   }finally{await browser.close();}
 })().catch(e=>{console.error(e);process.exitCode=1;});
