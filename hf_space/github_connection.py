@@ -24,6 +24,7 @@ import forge_project_tools_v213
 import engine_starter_pack_v215
 import engine_code_agent_v217
 import github_explorer_v223 as explorer
+import github_repo_readiness_v289 as repo_readiness
 import github_source_specialist_v241 as source_specialist
 import github_report_v226 as scope_report
 import repository_project_status_v233 as project_status
@@ -58,7 +59,7 @@ def _read_stage_command(prompt):
     if not match:
         return False
     cmd = match[1].strip().lower()
-    return bool(cmd in ("help", "permissions", "capabilities", "files", "stats", "largest", "report", "chat status", "project status", "project guide", "workflow guide", "engine help", "engine pack help", "branches")
+    return bool(cmd in ("help", "permissions", "capabilities", "readiness", "files", "stats", "largest", "report", "chat status", "project status", "project guide", "workflow guide", "engine help", "engine pack help", "branches")
                 or re.fullmatch(r"project status\s+[^\r\n]{1,90}",cmd)
                 or re.fullmatch(r"(?:files|stats|largest|history|search|compare|report)\s+[^\r\n]{1,1200}", cmd)
                 or re.fullmatch(r"(?:read|open|view)\s+[^\r\n]{1,220}", cmd))
@@ -902,7 +903,7 @@ def is_github_command(prompt):
     if github_workflows_v212.is_command(prompt) or github_project_v213.is_command(prompt) or forge_project_tools_v213.is_command(prompt) or engine_starter_pack_v215.is_command(prompt) or engine_code_agent_v217.is_command(prompt):
         return True
     return bool(re.match(
-        r"^@github\s+(help(?:\s|$)|permissions|capabilities|(?:chat|project)\s+status(?:\s|$)|how\s+many\s+(?:total\s+)?(?:files?|folders?|directories|dirs?)\b|branches(?:\s|$)|(?:files|stats|largest|history|search|compare|report)(?:\s|$)|(?:read|open|view)\s+|issues(?:\s|$)|pulls(?:\s|$)|commits(?:\s|$)|create issue\s+|create branch\s+|confirm\s+)",
+        r"^@github\s+(help(?:\s|$)|permissions|capabilities|readiness(?:\s|$)|(?:chat|project)\s+status(?:\s|$)|how\s+many\s+(?:total\s+)?(?:files?|folders?|directories|dirs?)\b|branches(?:\s|$)|(?:files|stats|largest|history|search|compare|report)(?:\s|$)|(?:read|open|view)\s+|issues(?:\s|$)|pulls(?:\s|$)|commits(?:\s|$)|create issue\s+|create branch\s+|confirm\s+)",
         str(prompt or "").strip(), re.I))
 
 
@@ -1237,6 +1238,12 @@ def _github_command(user, prompt):
     if not check["allowed"]:
         return _permission_message(check)
     selected_read_ref = read_branch or check["defaultBranch"]
+    if lower == "readiness":
+        try:
+            snap = explorer.pinned_tree(_api, rec["token"], repo, selected_read_ref)
+            return repo_readiness.report(repo_readiness.classify(snap))
+        except explorer.ExplorerError as exc:
+            return "Repository readiness unavailable: " + str(exc) + ". No status invented."
     if lower == "chat status" or lower == "project status" or lower.startswith("project status "):
         subject=("chat" if lower=="chat status" else cmd[len("project status"):].strip())
         if len(subject)>90 or any(ch in subject for ch in "\r\n\x00"):
@@ -1262,7 +1269,7 @@ def _github_command(user, prompt):
                 "If multiple matches exist, choose the displayed full path. The §§ startup "
                 "reader also remains available for source-grounded orientation.")
     if lower == "help":
-        return ("GitHub commands for the selected repository: @GitHub permissions, @GitHub files, "
+        return ("GitHub commands for the selected repository: @GitHub permissions, @GitHub readiness, @GitHub files, "
                 "@GitHub files docs, @GitHub read file README.md, @GitHub branches, "
                 "@GitHub issues, @GitHub pulls, @GitHub commits, "
                 "@GitHub create issue TITLE :: BODY, "
@@ -1471,10 +1478,18 @@ def _github_command(user, prompt):
         data = _api(rec["token"], "/repos/" + repo + suffix + "?ref=" + quote(selected_read_ref, safe=""))
         if not isinstance(data, list):
             return "This path is not a directory; use @GitHub read file <path>."
-        return ("## GitHub directory: " + (path or "/") + "\n" + "\n".join(
+        listing = ("## GitHub directory: " + (path or "/") + "\n" + "\n".join(
             "- " + str(item.get("type") or "?") + " " + str(item.get("path") or "")[:220]
             for item in data[:60] if isinstance(item, dict)) +
             ("\n(First 60 entries.)" if len(data) > 60 else ""))
+        # Preserve the existing native explorer format; readiness is metadata.
+        if not path:
+            try:
+                snap = explorer.pinned_tree(_api, rec["token"], repo, selected_read_ref)
+                listing += "\n" + repo_readiness.one_line(repo_readiness.classify(snap))
+            except explorer.ExplorerError:
+                pass
+        return listing
 
     if lower == "branches":
         items = _api(rec["token"], "/repos/" + repo + "/branches?per_page=30")
