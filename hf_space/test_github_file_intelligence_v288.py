@@ -122,6 +122,10 @@ def test_source_specialist_real_event_route():
         GITHUB_CAPABILITY_STAGE = "read-repository"
 
         @staticmethod
+        def _api(*args, **kwargs):
+            raise AssertionError("pinned_tree is mocked: no network requests allowed")
+
+        @staticmethod
         def _config():
             return {}
 
