@@ -1,0 +1,68 @@
+name: Verify §E adaptive contextual tool workbench v11.61
+on:
+  pull_request:
+    paths:
+      - 'projects/swrlz-forge-moba/patches/v11_61_context_workbench_preview.py'
+      - 'projects/swrlz-forge-moba/tests/model_atelier_context_workbench_browser_v11_61.mjs'
+      - '.github/workflows/verify-atelier-context-v11-61.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: se-context-workbench-v1161
+  cancel-in-progress: true
+jobs:
+  desktop-and-android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Rebuild exact sealed v11.60 and apply opt-in contextual overlay
+        run: |
+          set -euo pipefail
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/atelier-context-v11-61
+          python - <<'PY'
+          from pathlib import Path
+          import runpy,re,json,hashlib
+          root=Path('projects/swrlz-forge-moba')
+          p=Path('/tmp/atelier-context-v11-61/index.html')
+          old=p.read_text(encoding='utf-8')
+          manifest=json.loads((root/'source-manifest.json').read_text())
+          assert len(old.encode())==manifest['finalBytes']
+          assert hashlib.sha256(old.encode()).hexdigest()==manifest['finalSha256']
+          before=old.split('const MODEL_ATELIER_CANONICAL_PROJECT=',1)[1].split(';',1)[0]
+          patch=runpy.run_path(str(root/'patches/v11_61_context_workbench_preview.py'))
+          new=patch['apply'](old)
+          after=new.split('const MODEL_ATELIER_CANONICAL_PROJECT=',1)[1].split(';',1)[0]
+          assert before==after,'Owner canonical model data changed'
+          assert new.count('atelierAdaptiveInstall(panel);')==1
+          assert new.count('SWYRL_ENGINE_DEPLOY_MARKER: V11_60_FLOATING_MODEL_ATELIER_DOCK')==1
+          p.write_text(new,encoding='utf-8')
+          start=new.index('<script type="module">')+len('<script type="module">')
+          end=new.rindex('</script>')
+          Path('/tmp/atelier-context-v11-61-module.mjs').write_text(new[start:end],encoding='utf-8')
+          print('CONTEXT_PREVIEW_BUILT',len(new.encode()),hashlib.sha256(new.encode()).hexdigest())
+          PY
+          node --check /tmp/atelier-context-v11-61-module.mjs
+          node --check projects/swrlz-forge-moba/tests/model_atelier_context_workbench_browser_v11_61.mjs
+      - name: Install test browser
+        run: |
+          npm install --no-save playwright@1.56.1 three@0.169.0
+          npx playwright install --with-deps --only-shell chromium
+      - name: Run original editor and dynamic-context operations on desktop and Android
+        env:
+          SWYRL_SCULPT_TEST_URL: http://127.0.0.1:8787
+        run: |
+          python -m http.server 8787 --directory /tmp/atelier-context-v11-61 >/tmp/se-context-server.log 2>&1 &
+          PID=$!
+          trap 'kill "$PID" 2>/dev/null || true' EXIT
+          for i in $(seq 1 50); do
+            if curl -fsS http://127.0.0.1:8787/ >/dev/null; then break; fi
+            sleep .3
+          done
+          node projects/swrlz-forge-moba/tests/model_atelier_context_workbench_browser_v11_61.mjs
+          node projects/swrlz-forge-moba/tests/model_atelier_tool_dock_browser_v11_60.mjs
