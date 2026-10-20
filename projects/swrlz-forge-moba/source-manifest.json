@@ -108,6 +108,6 @@
     "patches/v11_59_precision_model_atelier.py",
     "patches/v11_60_floating_tool_dock.py"
   ],
-  "finalBytes": 2933309,
-  "finalSha256": "6daab103db058cf9cf3178983d640db07d5d5d72bc349ffeb2e121ea2b80c05a"
+  "finalBytes": 2933491,
+  "finalSha256": "17732ec57e840bd3a8efb92cafc08f77b8f5f4b0e61b8f13123b5401a049b46f"
 }
