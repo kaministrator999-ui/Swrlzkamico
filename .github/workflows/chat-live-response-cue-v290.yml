@@ -40,6 +40,7 @@ jobs:
           assert html.count('const syncResponseLiveCueV290=(node,g)=>')==1
           assert html.count('syncResponseLiveCueV290(node,g);')==1
           assert 'g.terminal' in html and 'node.dataset.responseLive' in html
+          assert re.search(r'(?m)^\\s*const syncedGeneration=data\\?\\.activeGeneration\\|\\|null;',html), 'Active Station generation must hydrate as executable JS, not commented out'
           assert 'prefers-reduced-motion:reduce' in html
           match=re.search(r'<script>\s*(\(\(\) => \{[\s\S]+?\}\)\(\);)\s*</script>',html)
           assert match,'Chat main JS not found'
