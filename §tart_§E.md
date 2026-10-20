@@ -1,3 +1,16 @@
+## 2026-10-20 · v11.60 LIVE PRODUCTION CLOSEOUT (post-release)
+
+**Current release: §wyrl§ Engine v11.60 is live.** This verified post-release receipt supersedes the historical *release candidate / not live until* status below; those original checkpoints remain intact.
+
+- Source commit: [`67f835019f850788cc4b4eddf9ca57729e1c11ac`](https://github.com/kaministrator999-ui/Swrlzkamico/commit/67f835019f850788cc4b4eddf9ca57729e1c11ac), containing 92 ordered patches, preserved original 283-part character and 43 bundled assets.
+- Final dedicated `DEPLOY_REQUEST.json` trigger: [`e8cad46238e735135012a4c87319f5fe692d4639`](https://github.com/kaministrator999-ui/Swrlzkamico/commit/e8cad46238e735135012a4c87319f5fe692d4639). [Production deployment 39369014929](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/39369014929): **SUCCESS**.
+- [Independent hosted source/all-43-assets audit 39369120445](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/39369120445): **SUCCESS**, matched `SOURCE.json` and exact served normalized HTML **2,933,954 bytes**, SHA-256 `fe11e3e748184db1797ef66bc327f7867a25f91d431823a4c8794f157117d97f`, marker `SWYRL_ENGINE_DEPLOY_MARKER: V11_60_FLOATING_MODEL_ATELIER_DOCK`.
+- [Live desktop and Android-browser character editor verification 39369120456](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/39369120456): **SUCCESS**. Automated browser evidence is not owner signoff on a physical phone.
+- [Open §wyrl§ Engine](https://kamiloki-swrlz-forge-moba.static.hf.space/) → **Model Atelier**. The persistent **right-side vertical category rail** offers **Meshes / Sculpt / Lasso / Face / Topology / More**. Tap a category to show the floating inspector; drag its **⠿ Move tools** handle to reposition; use **✕ Hide** and a rail button to close/reopen. Original Model Atelier edit handlers and saved model state remain preserved.
+- Scope: shipped floating dock, not automatic photograph-to-head reconstruction, high-end QEM retopology, physical-device GPU profiling, or subjective likeness approval. Those are separate, unfinished acceptances.
+
+**This closeout is documentation-only; no engine binary, source-manifest, 283-part scene, release version, hosted content or deploy-trigger mutation is requested.**
+
 ## v11.60 · draggable vertical Model Atelier tool dock — governed release candidate (2026-10-19)
 
 Owner requested the precision tools leave the bottom mobile viewport and become immediately discoverable. The v11.60 candidate adds a persistent slim vertical category rail and draggable, collapsible scrollable inspector overlay, **without changing** original 283-part model or all 43 asset files. The cumulative editor includes all v11.59 precision tools; `patches/v11_60_floating_tool_dock.py` is the additive 92nd patch. Exact source seal: **2,933,954 bytes**, SHA-256 `fe11e3e748184db1797ef66bc327f7867a25f91d431823a4c8794f157117d97f`, marker `V11_60_FLOATING_MODEL_ATELIER_DOCK`. The separate [v11.60 acceptance report](projects/swrlz-forge-moba/reports/FLOATING_TOOL_DOCK_V11_60_RELEASE.md) retains CI and release lineage. **Not live until merge, final dedicated deploy request, successful terminal deployment, exact hosted 43-asset receipt and desktop/mobile UI acceptance.** Older v11.59 source and preview records are retained as history.
