@@ -1,6 +1,6 @@
 ID=server-runtime
-VERSION=2.3.435
-REVISION=2.3.435-hf-v286-widget-companion-guard
+VERSION=2.3.436
+REVISION=2.3.436-chat-v288-file-intelligence-readonly
 KIND=server-runtime
 SOURCE_BRANCH=runtime
 STATUS=active
