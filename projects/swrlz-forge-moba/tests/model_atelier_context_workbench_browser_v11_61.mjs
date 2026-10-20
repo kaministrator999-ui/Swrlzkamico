@@ -15,6 +15,9 @@ try{
   assert(!(await context.isVisible()),'native v11.60 default remains unchanged');
   assert(await page.locator('#modelAtelierParts').isVisible());
   await page.locator('#modelAtelierParts').selectOption('model-0001');
+  const boot=await page.evaluate(()=>({panel:!!document.getElementById('modelAtelierPanel'),rail:!!document.getElementById('modelAtelierToolRail'),handle:!!document.querySelector('.atelier-tool-handle'),toggle:!!document.getElementById('atelierContextToggle'),workbench:!!document.getElementById('atelierContextWorkbench'),init:typeof atelierAdaptiveInstall,call:document.querySelector('script[type="module"]')?.textContent?.includes('atelierAdaptiveInstall(panel);')}));
+  console.log('CONTEXT_BOOT_DIAG',mode,JSON.stringify(boot),'PAGE_ERRORS',JSON.stringify(errors));
+  assert(boot.toggle,'Context bootstrap must wire to native dock');
   await page.locator('#atelierContextToggle').click();
   assert(await context.isVisible(),'workbench opt-in must open');
   const groups=await page.evaluate(()=>window.SWYRL_E_CONTEXT.groups());
