@@ -76,6 +76,7 @@ jobs:
         run: |
           python -m py_compile hf_space/github_conversation_actions_v264.py hf_space/station.py
           python hf_space/test_github_seamless_v264.py
+          python hf_space/test_github_create_continuity_v291.py
           node tests/test_github_seamless_chat_v264.mjs
 
       - name: v278 User-identity perspective and no-model fallback regression
