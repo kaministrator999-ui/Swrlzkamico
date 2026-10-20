@@ -1,0 +1,44 @@
+name: Chat v288 File Intelligence
+on:
+  push:
+    branches:
+      - feature/chat-file-intelligence-v288
+    paths:
+      - 'hf_space/github_file_intelligence_v288.py'
+      - 'hf_space/github_source_specialist_v241.py'
+      - 'hf_space/test_github_file_intelligence_v288.py'
+      - '.github/workflows/chat-file-intelligence-v288.yml'
+  pull_request:
+    paths:
+      - 'hf_space/github_file_intelligence_v288.py'
+      - 'hf_space/github_source_specialist_v241.py'
+      - 'hf_space/test_github_file_intelligence_v288.py'
+      - '.github/workflows/chat-file-intelligence-v288.yml'
+permissions:
+  contents: read
+jobs:
+  verified-read-only-analysis:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Compile both file intelligence modules
+        run: python -m py_compile hf_space/github_file_intelligence_v288.py hf_space/github_source_specialist_v241.py
+      - name: Verify scenario, AST, graph, SHA and secret boundaries
+        run: python hf_space/test_github_file_intelligence_v288.py
+      - name: Verify source specialist integration is read-only
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          c=Path('hf_space/github_source_specialist_v241.py').read_text(encoding='utf-8')
+          assert 'file_intelligence.inspect(' in c
+          assert 'file_intelligence.markdown_report(analysis)' in c
+          assert 'GITHUB_FILE_INTELLIGENCE' in c
+          assert 'GITHUB_CODER_READ_ONLY' in c
+          source=Path('hf_space/github_connection.py').read_text(encoding='utf-8')
+          assert 'GITHUB_CAPABILITY_STAGE = "read-repository"' in source
+          print('v288 specialist integration and Stage 1 read boundary PASS')
+          PY
