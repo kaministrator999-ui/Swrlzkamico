@@ -76,6 +76,11 @@ try{
    await more.click();
    assert(!(await sheet.isVisible()),'More must close contextual tools');
    assert(await page.locator('.atelier-inspector').isVisible(),'More must restore native tools even when already selected');
+   // Outside the contextual sheet, More still toggles the legacy inspector.
+   await more.click();
+   assert(!(await page.locator('.atelier-inspector').isVisible()),'More must still hide the native-only inspector');
+   await more.click();
+   assert(await page.locator('.atelier-inspector').isVisible(),'More must reopen the native-only inspector');
   }else{
    assert(await page.locator('.atelier-inspector').isVisible(),'desktop keeps the v11.61 inspector');
    assert(await page.locator('#atelierContextWorkbench').isVisible());
