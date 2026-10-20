@@ -1,0 +1,27 @@
+name: Measure §E v11.62 release candidate independently
+on:
+  pull_request:
+    paths:
+      - 'projects/swrlz-forge-moba/patches/v11_62_mobile_adaptive.py'
+      - 'projects/swrlz-forge-moba/patches/v11_62_mobile_adaptive_preview.py'
+      - 'projects/swrlz-forge-moba/scripts/measure_v11_62_release.py'
+      - 'projects/swrlz-forge-moba/source-manifest.json'
+      - '.github/workflows/measure-atelier-v11-62.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  measure-and-parse:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Measure sealed v11.61 to cumulative v11.62 and parse generated JS
+        run: |
+          set -euo pipefail
+          python projects/swrlz-forge-moba/scripts/measure_v11_62_release.py --output /tmp/se-v11-62-measure
+          node --check /tmp/se-v11-62-measure/module.mjs
