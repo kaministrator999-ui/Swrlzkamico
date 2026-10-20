@@ -1,3 +1,13 @@
+## 2026-10-20 · §E v11.62 mobile adaptive workbench — governed production release candidate
+
+**Production source candidate; not yet hosted LIVE until terminal deployment and audit.** Mobile Model Atelier now presents a **single contextual bottom drawer**, replacing simultaneous native and contextual editing panes on phones. The original inspector and editing handlers remain mounted as source-of-truth, not duplicated.
+
+**Where to find it:** §E → **Model Atelier** → right-side rail → **☷ Tools** or tap **Lasso, Sculpt, Face, Topology, Meshes, References, Motion, Appearance**. Related tool cases appear as horizontally scrollable operation chips; selecting one exposes genuine native inputs and actions in a readable vertical column. Header controls: **▁ Collapse**, **◧ Half**, **⛶ Expand**. Phone landscape uses smaller drawer limits; input controls have 44px minimum touch targets. Desktop still uses existing v11.61 inspector and contextual float.
+
+**Evidence:** Candidate 94-patch generated release source must equal 2,967,661 bytes / SHA-256 `3e2009a6a2fbb4204904d4899628a18f726735baca00f4a6a1a339bdcc76fe9c`. Browser preview tested 360×740, 412×915, 700×400 landscape and desktop 1280×850, with original 283-part canonical model and 43 packaged assets unchanged. [Preview browser evidence](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/39469609173); [governed source measurement](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/39493245259); [field guide](https://github.com/kaministrator999-ui/Swrlzkamico/blob/feature/se-mobile-tool-layout-v11-62/projects/swrlz-forge-moba/reports/MOBILE_ADAPTIVE_LAYOUT_V11_62_PREVIEW.md).
+
+**Release boundary:** Full legacy project and Model Atelier suites, source parity/asset checks, a standalone final deployment request on main, terminal Hugging Face deploy and separately successful served v11.62 receipt audit are required. Other §E workspaces (anime and game builders) retain their own specialized layouts and are not claimed as modified.
+
 ## 2026-10-20 · §E v11.61 contextual native tool workbench — GOVERNED RELEASE CANDIDATE
 
 **Not production live until final verified deploy.** Source adds an optional second split floating tool window. To find it: **Model Atelier → ⠿ Move tools → ◫ Context**. Pick a family in the right rail, a relevant operation on the left, and its native inputs/actions on the right. **Save my values / Apply saved values** are explicit per-operation presets. All original controls and projects remain accessible, with unchanged 283-part canonical model and 43 media assets.
