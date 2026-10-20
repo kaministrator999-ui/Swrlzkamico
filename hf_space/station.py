@@ -1899,6 +1899,9 @@ async def send(request:Request):
         # The explicit accepted human turn authorizes one harmless test create.
         payload["githubDirectTestTxt"] = {"userId": google_owner, "prompt": prompt}
     elif github_chat_files.is_file_action(prompt,active_github,history) or (
+        google_owner.startswith("google:") and
+        github_chat_files.is_create_continuation(prompt,history)
+    ) or (
         github_chat_files.has_pending(google_owner,tid) and (
             github_chat_files.is_reply(prompt) or
             github_chat_files.pending_kind(google_owner,tid) in ("need-content","need-destination")
