@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.59",
+  "name": "§wyrl§ Engine v11.60",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_59.html",
+  "finalArtifact": "swyrl_engine_v11_60.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -105,8 +105,9 @@
     "patches/v11_18_leg_reference_correction.py",
     "patches/v11_19_portrait_body_polish.py",
     "patches/v11_20_anatomical_head.py",
-    "patches/v11_59_precision_model_atelier.py"
+    "patches/v11_59_precision_model_atelier.py",
+    "patches/v11_60_floating_tool_dock.py"
   ],
-  "finalBytes": 2927005,
-  "finalSha256": "f4d72c72a5fc4ee90c921198d7086b5898b89941de3efadd7f52c063d3dab0b3"
+  "finalBytes": 2933954,
+  "finalSha256": "fe11e3e748184db1797ef66bc327f7867a25f91d431823a4c8794f157117d97f"
 }

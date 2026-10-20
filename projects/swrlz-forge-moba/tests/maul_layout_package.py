@@ -7,7 +7,7 @@ import math
 from pathlib import Path
 
 SCENE = 'scenes/maul-frostveil-classic.swyrl.json'
-PATCH = 'patches/v11_59_precision_model_atelier.py'
+PATCH = 'patches/v11_60_floating_tool_dock.py'
 
 
 def require(condition, message):
@@ -50,8 +50,8 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--package',type=Path,required=True)
     args=parser.parse_args();receipt=json.loads((args.package/'SOURCE.json').read_text())
-    require(receipt['sourceVersion']=='§wyrl§ Engine v11.59', 'wrong source version')
-    require(len(receipt['patches'])==91 and receipt['patches'][-1]==PATCH, 'wrong governed patch chain')
+    require(receipt['sourceVersion']=='§wyrl§ Engine v11.60', 'wrong source version')
+    require(len(receipt['patches'])==92 and receipt['patches'][-1]==PATCH, 'wrong governed patch chain')
     require(len(receipt['assets'])==43 and SCENE in receipt['assets'] and 'scenes/maul-frostveil.swyrl.json' in receipt['assets'], 'wrong asset set or missing preserved v10.6 map')
     raw=(args.package/SCENE).read_bytes();meta=receipt['assets'][SCENE]
     require(len(raw)==meta['bytes'] and hashlib.sha256(raw).hexdigest()==meta['sha256'], 'authored scene differs from package receipt')

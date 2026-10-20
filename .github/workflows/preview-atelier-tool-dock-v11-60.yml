@@ -1,0 +1,45 @@
+name: Preview §E draggable Model Atelier dock v11.60
+on:
+  pull_request:
+    paths:
+      - 'projects/swrlz-forge-moba/patches/v11_60_floating_tool_dock_preview.py'
+      - 'projects/swrlz-forge-moba/tests/model_atelier_tool_dock_browser_v11_60.mjs'
+      - '.github/workflows/preview-atelier-tool-dock-v11-60.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: atelier-tool-dock-v1160
+  cancel-in-progress: true
+jobs:
+  mobile-and-desktop-preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Validate governed v11.60 binary and floating dock
+        run: |
+          python projects/swrlz-forge-moba/scripts/measure_v11_60_release.py
+          python projects/swrlz-forge-moba/scripts/verify_v11_60_release.py --output /tmp/atelier-tool-dock-preview
+          node --check /tmp/atelier-tool-dock-preview-module.mjs
+          node --check projects/swrlz-forge-moba/tests/model_atelier_tool_dock_browser_v11_60.mjs
+      - name: Install browser
+        run: |
+          npm install --no-save playwright@1.56.1 three@0.169.0
+          npx playwright install --with-deps --only-shell chromium
+      - name: Exercise desktop and Android dock without changing model data
+        env:
+          SWYRL_SCULPT_TEST_URL: http://127.0.0.1:8787
+        run: |
+          python -m http.server 8787 --directory /tmp/atelier-tool-dock-preview >/tmp/atelier-dock.log 2>&1 &
+          PID=$!
+          trap 'kill "$PID" 2>/dev/null || true' EXIT
+          for i in $(seq 1 45); do
+            if curl -fsS http://127.0.0.1:8787/ >/dev/null; then break; fi
+            sleep .3
+          done
+          node projects/swrlz-forge-moba/tests/model_atelier_tool_dock_browser_v11_60.mjs

@@ -1,11 +1,13 @@
-name: Verify §E v11.59 production release candidate
+name: Verify §E v11.60 floating tool dock production release
 on:
   push:
     branches: [release/atelier-v11-59-production]
     paths:
-      - 'projects/swrlz-forge-moba/scripts/verify_v11_59_release.py'
+      - 'projects/swrlz-forge-moba/scripts/verify_v11_60_release.py'
       - 'projects/swrlz-forge-moba/source-manifest.json'
       - 'projects/swrlz-forge-moba/patches/v11_59_precision_model_atelier.py'
+      - 'projects/swrlz-forge-moba/patches/v11_60_floating_tool_dock.py'
+      - 'projects/swrlz-forge-moba/patches/v11_60_floating_tool_dock_preview.py'
       - 'projects/swrlz-forge-moba/runtime/model_atelier_*.js'
       - 'projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py'
       - 'projects/swrlz-forge-moba/tests/model_atelier_*.mjs'
@@ -34,7 +36,7 @@ jobs:
           python-version: '3.11'
       - name: Build sealed original model and overlay ALL saved precision tools
         run: |
-          python projects/swrlz-forge-moba/scripts/verify_v11_59_release.py --output dist/atelier-precision-v11-59
+          python projects/swrlz-forge-moba/scripts/verify_v11_60_release.py --output dist/atelier-precision-v11-60
           node --check projects/swrlz-forge-moba/runtime/model_atelier_occluded_brush_v11_51.js
           node --check projects/swrlz-forge-moba/runtime/model_atelier_screen_brush_v11_52.js
           node --check projects/swrlz-forge-moba/runtime/model_atelier_painted_regions_v11_53.js
@@ -44,7 +46,7 @@ jobs:
           node --check projects/swrlz-forge-moba/runtime/model_atelier_floating_references_v11_57.js
           node --check projects/swrlz-forge-moba/runtime/model_atelier_topology_lod_v11_38.js
           node --check projects/swrlz-forge-moba/runtime/model_atelier_surface_targeting_v11_22.js
-          node --check dist/atelier-precision-v11-59-module.mjs
+          node --check dist/atelier-precision-v11-60-module.mjs
           python -m py_compile projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py
       - name: All precision-tool geometry, serialization and safety contracts
         run: |
@@ -110,17 +112,18 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Verify sealed original and prepare same cumulative candidate
+      - name: Verify v11.60 release then reconstruct exact historical v11.59 tool fixture
         run: |
-          python projects/swrlz-forge-moba/scripts/verify_v11_59_release.py --output /tmp/atelier-precision-v11-59
-          node --check /tmp/atelier-precision-v11-59-module.mjs
+          python projects/swrlz-forge-moba/scripts/verify_v11_60_release.py --output /tmp/atelier-precision-v11-60
+          node --check /tmp/atelier-precision-v11-60-module.mjs
+          python projects/swrlz-forge-moba/scripts/prepare_v11_59_regression_fixture.py /tmp/atelier-precision-v11-60
       - name: Install one browser per validation shard
         run: |
           npm install --no-save playwright@1.56.1 three@0.169.0
           npx playwright install --with-deps --only-shell chromium
       - name: Run all selected tests through original editor on desktop and Android
         run: |
-          python -m http.server 8787 --directory /tmp/atelier-precision-v11-59 >/tmp/atelier-preview-server.log 2>&1 &
+          python -m http.server 8787 --directory /tmp/atelier-precision-v11-60 >/tmp/atelier-preview-server.log 2>&1 &
           PID=$!
           trap 'kill "$PID" 2>/dev/null || true' EXIT
           for i in $(seq 1 45); do
