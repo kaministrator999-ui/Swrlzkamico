@@ -8,6 +8,9 @@ CSS = r"""
 /* §E v11.60 presentation-only preview. */
 .model-atelier.atelier-tools-docked .atelier-body{display:flex!important;flex:1 1 auto;min-height:0;overflow:hidden;position:relative}
 .model-atelier.atelier-tools-docked .atelier-scene{flex:1 1 auto;min-height:0!important;width:100%;height:100%;max-height:none!important}
+/* Native camera/viewport controls remain above the floating inspector, so Frame Selected and zoom stay tappable. */
+.model-atelier.atelier-tools-docked .atelier-viewport-controls{z-index:220}
+
 .model-atelier.atelier-tools-docked .atelier-inspector{
  position:fixed!important;z-index:90;top:64px;right:61px;left:auto;
  width:min(400px,calc(100vw - 82px));height:min(72dvh,730px);
