@@ -8,8 +8,8 @@ dist=Path(args.package)
 html=(dist/'index.html').read_text('utf-8')
 source=(root/'runtime/model_atelier_metrics_v11_10.js').read_text('utf-8')
 m=json.loads((root/'source-manifest.json').read_text('utf-8'))
-assert m['patches'][-1]=='patches/v11_60_floating_tool_dock.py'
-for key in ('V11_60_FLOATING_MODEL_ATELIER_DOCK','modelAtelierMetricsBody','modelAtelierMetricsExport',
+assert m['patches'][-1]=='patches/v11_61_context_workbench.py'
+for key in ('V11_61_ADAPTIVE_CONTEXT_TOOL_WORKBENCH','modelAtelierMetricsBody','modelAtelierMetricsExport',
             'function atelierGeometryStats(){','refreshModelMetrics();'):
     assert key in html,key
 assert 'CPU buffers only' in html
