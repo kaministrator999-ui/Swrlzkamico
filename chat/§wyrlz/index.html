@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="swrlz-chat-version" content="1.1.16">
+  <meta name="swrlz-chat-version" content="1.1.17">
   <meta name="theme-color" content="#010812">
   <title>Chat</title>
   <style>
@@ -706,6 +706,57 @@
         backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
       }
     }
+
+    /* v290: active-response cues only; historic and terminal messages never shimmer. */
+    .station-live-message[data-response-live="true"] .assistant-body:not([hidden]){
+      border-color:rgba(110,217,255,.38)!important;
+      box-shadow:0 7px 20px rgba(0,0,0,.14),0 0 0 1px rgba(76,205,255,.09),
+        0 0 20px rgba(107,164,255,.075)!important;
+    }
+    .station-live-message[data-response-live="true"] .assistant-body:not([hidden])::after{
+      left:0;right:0;top:0;bottom:0;height:auto;border-radius:inherit;
+      background:linear-gradient(112deg,transparent 25%,rgba(122,225,255,.055) 46%,
+        rgba(184,151,255,.062) 52%,transparent 72%);
+      background-size:230% 100%;background-position:100% 50%;
+      animation:swrlzReplySheenV290 3.6s ease-in-out infinite;
+      pointer-events:none;
+    }
+    .response-live-tail{
+      display:flex;align-items:center;gap:9px;min-height:22px;max-width:100%;
+      margin:7px 0 0 52px;padding:0 3px;
+      font:600 10px/1.3 var(--font-telemetry,monospace);
+      letter-spacing:.065em;color:#96d8ec;
+    }
+    .response-live-tail::before{
+      content:"";display:block;width:29px;height:2px;flex:0 0 29px;border-radius:5px;
+      background:linear-gradient(90deg,rgba(95,224,249,.12),#76daef,#bd9dff);
+      background-size:200% 100%;
+      animation:swrlzReplyBarV290 1.9s ease-in-out infinite;
+    }
+    .response-live-label{white-space:nowrap}
+    .response-live-dots{display:inline-flex;align-items:center;gap:3px;height:12px}
+    .response-live-dots span{width:4px;height:4px;border-radius:50%;background:#91e5f7;opacity:.38;
+      animation:swrlzReplyDotV290 1.2s ease-in-out infinite}
+    .response-live-dots span:nth-child(2){animation-delay:.16s}
+    .response-live-dots span:nth-child(3){animation-delay:.32s}
+    @keyframes swrlzReplySheenV290{0%{background-position:100% 50%}100%{background-position:-110% 50%}}
+    @keyframes swrlzReplyBarV290{0%,100%{background-position:100% 50%;opacity:.66}50%{background-position:0 50%;opacity:1}}
+    @keyframes swrlzReplyDotV290{0%,75%,100%{opacity:.38;transform:translateY(0)}37%{opacity:1;transform:translateY(-2px)}}
+    @media(max-width:600px){.response-live-tail{margin-left:0;padding:0 3px;font-size:10px}}
+    body.a11y-high-contrast .response-live-tail{color:#e6faff}
+    body.a11y-high-contrast .station-live-message[data-response-live="true"] .assistant-body:not([hidden]){
+      border-color:rgba(215,245,255,.62)!important}
+    body.motion-off .response-live-tail *,body.motion-reduced .response-live-tail *,
+    body.motion-off .response-live-tail::before,body.motion-reduced .response-live-tail::before,
+    body.motion-off .station-live-message[data-response-live="true"] .assistant-body::after,
+    body.motion-reduced .station-live-message[data-response-live="true"] .assistant-body::after{
+      animation:none!important;transform:none!important}
+    @media(prefers-reduced-motion:reduce){
+      body:not(.motion-full) .response-live-tail *,body:not(.motion-full) .response-live-tail::before,
+      body:not(.motion-full) .station-live-message[data-response-live="true"] .assistant-body::after{
+        animation:none!important;transform:none!important}
+    }
+
   </style>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <script src="/chat/§wyrlz/assets/github-explorer-v223.js?v=228"></script>
@@ -1062,7 +1113,7 @@
       const workArtifactList = document.getElementById("workArtifactList");
       const workEvidenceCount = document.getElementById("workEvidenceCount");
       const workEvidenceList = document.getElementById("workEvidenceList");
-      const SWRLZ_CHAT_VERSION = "1.1.16";
+      const SWRLZ_CHAT_VERSION = "1.1.17";
       const navTraceId = "chat-ui-" + Date.now().toString(36) + "-" + crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
       let lastUiStatusCamera = "";
       let companionState="idle";
@@ -2397,7 +2448,11 @@
         // sync may hydrate thread data, but it must never navigate an unsent new
         // chat back to the server's previously-current thread.
         if(!draftThread && !stationAwaitingCommit && !chatThreads.some(t=>t.id===activeThreadId)) activeThreadId=stationCurrent||data?.state?.currentId||activeThreadId;
-        // Keep the local accepted generation until Station reports that same request, so a stale/background snapshot cannot replace the in-flight turn.\n        const syncedGeneration=data?.activeGeneration||null;\n        if(syncedGeneration && (!stationGeneration || syncedGeneration.requestId===stationGeneration.requestId || stationGeneration.terminal)) stationGeneration=syncedGeneration;
+        // Keep a locally accepted send until Station confirms its matching
+        // request. A fresh page with no local generation MUST rehydrate the
+        // real in-flight Station response from the signed-in account snapshot.
+        const syncedGeneration=data?.activeGeneration||null;
+        if(syncedGeneration && (!stationGeneration || syncedGeneration.requestId===stationGeneration.requestId || stationGeneration.terminal)) stationGeneration=syncedGeneration;
         renderThreads(); if(!draftThread)renderConversation(currentThread());
         renderStationGeneration();renderWorkSurface();
         if(stationAwaitingCommit){
@@ -2408,6 +2463,32 @@
             scheduleStationSync();
           }
         }
+      };
+      // v290: cue only the currently acknowledged Station generation.
+      // The server's terminal flag, not a client timer or token gaps, owns truth.
+      const syncResponseLiveCueV290=(node,g)=>{
+        const live=!!g&&!g.terminal;
+        if(live)node.dataset.responseLive="true";
+        else delete node.dataset.responseLive;
+        let tail=node.querySelector(".response-live-tail");
+        if(!live){if(tail)tail.remove();return;}
+        if(!tail){
+          tail=document.createElement("div");
+          tail.className="response-live-tail";
+          tail.setAttribute("role","status");
+          tail.setAttribute("aria-live","polite");
+          const label=document.createElement("span");
+          label.className="response-live-label";
+          const dots=document.createElement("span");
+          dots.className="response-live-dots";
+          dots.setAttribute("aria-hidden","true");
+          for(let i=0;i<3;i++)dots.appendChild(document.createElement("span"));
+          tail.append(label,dots);
+          node.appendChild(tail);
+        }
+        const message=String(g.text||"").trim()?"Still responding":"Preparing response";
+        const label=tail.querySelector(".response-live-label");
+        if(label&&label.textContent!==message)label.textContent=message;
       };
       const renderStationGeneration=()=>{
         const g=stationGeneration;
@@ -2535,6 +2616,7 @@
             g.terminal && String(g.phase||"")==="CHAT_SAVE_FAILED"
           );
         }
+        syncResponseLiveCueV290(node,g);
         // v238 timeline owns the visible progress surface; legacy status stays accessible in runtime telemetry.
         if(node.querySelector(".station-activity")){if(status)status.hidden=true;if(onlineTrail)onlineTrail.hidden=true;}
         stopButton.hidden=!!g.terminal;sendButton.hidden=!g.terminal;

@@ -1,0 +1,78 @@
+name: Chat v290 Live Response Cue — Android browser
+on:
+  push:
+    branches: [feature/chat-live-reply-cue-v290]
+    paths:
+      - 'chat/§wyrlz/index.html'
+      - 'chat/§wyrlz/VERSION.txt'
+      - 'tests/test_chat_live_response_cue_v290.cjs'
+      - '.github/workflows/chat-live-response-cue-v290.yml'
+  pull_request:
+    paths:
+      - 'chat/§wyrlz/index.html'
+      - 'chat/§wyrlz/VERSION.txt'
+      - 'tests/test_chat_live_response_cue_v290.cjs'
+      - '.github/workflows/chat-live-response-cue-v290.yml'
+permissions:
+  contents: read
+jobs:
+  live-response-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Validate version, canonical inline JS, and existing start anchor
+        run: |
+          python tests/test_response_start_stream_anchor_v170.py
+          python - <<'PY'
+          import re,subprocess
+          from pathlib import Path
+          html=Path('chat/§wyrlz/index.html').read_text(encoding='utf-8')
+          assert Path('chat/§wyrlz/VERSION.txt').read_text().strip()=='1.1.17'
+          assert '<meta name="swrlz-chat-version" content="1.1.17">' in html
+          assert 'const SWRLZ_CHAT_VERSION = "1.1.17"' in html
+          assert html.count('const syncResponseLiveCueV290=(node,g)=>')==1
+          assert html.count('syncResponseLiveCueV290(node,g);')==1
+          assert 'g.terminal' in html and 'node.dataset.responseLive' in html
+          assert re.search(r'(?m)^\\s*const syncedGeneration=data\\?\\.activeGeneration\\|\\|null;',html), 'Active Station generation must hydrate as executable JS, not commented out'
+          assert 'prefers-reduced-motion:reduce' in html
+          match=re.search(r'<script>\s*(\(\(\) => \{[\s\S]+?\}\)\(\);)\s*</script>',html)
+          assert match,'Chat main JS not found'
+          Path('/tmp/swrlz-live-v290.js').write_text(match.group(1))
+          subprocess.run(['node','--check','/tmp/swrlz-live-v290.js'],check=True)
+          PY
+      - name: Prepare headless Chromium for real mobile Chat
+        run: |
+          npm install --no-save --no-audit --no-fund playwright
+          npx playwright install --with-deps chromium
+      - name: Stage exact Chat document and trusted local widget assets
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          from shutil import copy2
+          dest=Path('/tmp/swrlz-v290-test/chat/§wyrlz')
+          assets=dest/'assets'
+          assets.mkdir(parents=True,exist_ok=True)
+          src=Path('chat/§wyrlz/index.html').read_text(encoding='utf-8')
+          injection='<link rel="stylesheet" href="/chat/§wyrlz/assets/rich-widgets-v284.css">\n<script src="/chat/§wyrlz/assets/rich-widgets-v284.js" defer></script>'
+          assert '</head>' in src
+          (dest/'index.html').write_text(src.replace('</head>',injection+'\n</head>',1),encoding='utf-8')
+          for name in ('rich-widgets-v284.js','rich-widgets-v284.css'):
+              copy2(Path('hf_space/chat/§wyrlz/assets')/name,assets/name)
+          PY
+      - name: Run real browser generation-to-terminal acceptance
+        run: |
+          python -m http.server 8765 --bind 127.0.0.1 --directory /tmp/swrlz-v290-test > /tmp/swrlz-v290-http.log 2>&1 &
+          for i in $(seq 1 30); do
+            if curl -fsS "http://127.0.0.1:8765/chat/%C2%A7wyrlz/index.html" > /dev/null; then break; fi
+            sleep 1
+          done
+          node tests/test_chat_live_response_cue_v290.cjs
+      - name: Keep original v287 Android scroll reuse acceptance
+        run: node tests/test_chat_scroll_reuse_v287.cjs
