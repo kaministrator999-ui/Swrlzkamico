@@ -23,6 +23,7 @@ jobs:
         with: {node-version: '22'}
       - name: Validate governed v11.60 binary and floating dock
         run: |
+          python projects/swrlz-forge-moba/scripts/measure_v11_60_release.py
           python projects/swrlz-forge-moba/scripts/verify_v11_60_release.py --output /tmp/atelier-tool-dock-preview
           node --check /tmp/atelier-tool-dock-preview-module.mjs
           node --check projects/swrlz-forge-moba/tests/model_atelier_tool_dock_browser_v11_60.mjs
