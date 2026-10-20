@@ -24,6 +24,7 @@ try{
    await rail.getByRole('button',{name:'Open Lasso editing tools'}).click();
   }else await page.locator('#atelierContextToggle').click();
   assert(await sheet.isVisible());
+  await page.waitForFunction(()=>document.querySelector('#modelAtelierPanel')?.dataset.mobileAdaptiveInstalled==='1');
   if(mobile){
    assert(!(await page.locator('.atelier-inspector').isVisible()),'native inspector must not overlap the active sheet');
    const rects=await page.evaluate(()=>{
