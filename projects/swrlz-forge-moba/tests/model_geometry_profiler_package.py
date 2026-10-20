@@ -9,7 +9,7 @@ html=(dist/'index.html').read_text('utf-8')
 source=(root/'runtime/model_atelier_metrics_v11_10.js').read_text('utf-8')
 m=json.loads((root/'source-manifest.json').read_text('utf-8'))
 assert m['patches'][-1]=='patches/v11_59_precision_model_atelier.py'
-for key in ('V11_59_PRECISION_MODEL_ATELIER','modelAtelierMetricsBody','modelAtelierMetricsExport',
+for key in ('V11_60_FLOATING_MODEL_ATELIER_DOCK','modelAtelierMetricsBody','modelAtelierMetricsExport',
             'function atelierGeometryStats(){','refreshModelMetrics();'):
     assert key in html,key
 assert 'CPU buffers only' in html
