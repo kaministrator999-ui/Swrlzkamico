@@ -121,6 +121,14 @@ def classify_read(prompt, context=None):
         return None  # General GitHub education is not a connected-repository read.
     if _EXPLICIT_COMMAND.match(raw):
         return None  # existing command owners handle their own parameters
+    # v289: explicit repo-maturity questions select a pinned read-only
+    # classification, never a guessed implementation or write capability.
+    if re.fullmatch(
+        r"(?i)(?:(?:is|was)\s+(?:our|my|the)\s+(?:github\s+)?(?:repo|repository)\s+"
+        r"(?:empty|populated|ready\s+for\s+testing)|"
+        r"how\s+ready\s+is\s+(?:our|my|the)\s+(?:github\s+)?(?:repo|repository))"
+        r"[?.!]*", raw):
+        return "@GitHub readiness"
     if is_conversational_reflection(raw):
         return None  # social response owns this turn; retained GitHub scope is data
     # Match the entire read-only command BEFORE verb scans. Folder segments
