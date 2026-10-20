@@ -113,7 +113,7 @@ JS=r"""
   panel.classList.toggle('atelier-mobile-tools',isMobile());
   if(!isMobile()){
     panel.classList.remove('atelier-mobile-collapsed','atelier-mobile-expanded');
-    const inspector=nativeOpen();if(inspector)inspector.style.removeProperty('display');
+    // Preserve v11.61 desktop native inline display state; only mobile CSS hides it.
   }else{
     // Tool families on the main rail should reveal native operation proxies.
     // Keep native inspector mounted and editable for event/state authority.
