@@ -34,5 +34,5 @@ assert len(receipt["patches"])==93 and len(receipt["assets"])==43
 assert receipt["finalSha256"]==manifest["finalSha256"]
 module=s.split('<script type="module">',1)[1].rsplit('</script>',1)[0]
 Path(str(out)+"-module.mjs").write_text(module,encoding="utf-8")
-print("V1160_PRODUCTION_RELEASE_SOURCE_VERIFIED",len(payload),hashlib.sha256(payload).hexdigest(),
+print("V1161_PRODUCTION_RELEASE_SOURCE_VERIFIED",len(payload),hashlib.sha256(payload).hexdigest(),
       len(receipt["patches"]),len(receipt["assets"]))
