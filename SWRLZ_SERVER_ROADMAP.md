@@ -1,3 +1,17 @@
+## UPDATE FINISHED — 2026-10-20 — v238 and Hugging Face source-ref reconciliation (governance only)
+
+**Outcome:** Resolved the orphaned v238 October 13 STARTED entry via the explicit retrospective FINISHED marker near the original entry; preserved its unaltered history. Confirmed original v238 implementation/test Git blob identities in v287 guarded published source, and closed obsolete [PR #148](https://github.com/kaministrator999-ui/Swrlzkamico/pull/148) as *unmerged, superseded* with source-history comment while preserving its branch, its dependent v239 draft PR #151 and independent Forge work.
+
+**Branch/source authority:** Last guarded v287 main request still pins `SOURCE_REF=8087d511fd609e93cfad5d74932c952969405b90`, the tested accepted commit; workflow [#39163488634](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/39163488634) completed SUCCESS and published `kamiloki/Swyrlz` revision `820182dbde84220d0afeb78455c6bc6d32edc7e7`. Historical/default `feature/hf-space-manual-deploy` branch `c0340c4224f3171514476d2c7df7cc7dc5e2fc32` remains divergent with 2 unique commits/789 behind the accepted source; intentionally NOT force-reset, rebased, merged or deployed. Reconcile any future branch candidate against the accepted source before release. This is a preserved development divergence, no longer an ambiguous release instruction.
+
+**Canonical contract changes:** `main:§wyrlz_§tart.md`, `SWRLZ_HOTFIX_RULES.md`, `docs/engineering/SWRLZ_CLEAN_PRODUCTION_RELEASE_INTEGRITY.md` and `README.md` now state that guarded HF `SOURCE_REF` is the exact validated commit SHA or proven coherent candidate branch, not blindly the historical default branch. Existing release gates, rollback and Space target retained; no Vercel or alternative Space work.
+
+**Version/result:** Runtime Repository Work **1.0.224 → 1.0.225** (only changed registered authority; commit `c2cd92f6810325ae584632ef7aa1abd8fa119c9c`). Web Chat **1.5.154**, Server Runtime **2.3.435**, LALM Engine **2.1.201**, Runtime Manifest **152**, Stream Contract **V2** and Deployment Control **1.0.41** unchanged. No runtime-affecting source mutation, no model updates and **no new production deployment**. Static verification consists of source/contract readbacks, exact blob checks, PR state, registry and guarded release receipt; owner Android behavioral acceptance remains OPEN.
+
+**Status:** FINISHED for the governance/lineage correction; no live Chat behavior claimed newly tested or fixed.
+
+---
+
 ## UPDATE STARTED — 2026-10-20 — v238 retrospective closure and HF release-source reconciliation
 
 **Owner request:** Reconcile the orphaned October 13 v238 Chat progress activity journal, stale draft PR evidence, and the divergence between the legacy Hugging Face candidate branch and the v287 production release source. Preserve the current Chat product, all historic Forge changes, original failure/release receipts and both branches.
@@ -1100,6 +1114,18 @@ Candidate seal: **2,482,877 bytes**, SHA-256 `1154b86d8a8c027fc3b94a39254ff77d5d
 
 **Status:** STARTED — contract recorded, runtime candidate pending complete release and owner testing.
 
+
+## UPDATE FINISHED — 2026-10-20 — v238 retrospective integration closure (original 2026-10-13 event)
+
+**Disposition and evidence:** Original v238 STARTED journal record immediately below is preserved verbatim. The `v238` activity timeline did not disappear: PR #148 original source `3cfd48af92b7a5fc21c816087a13ec6913921f7c` and v287 protected published source `8087d511fd609e93cfad5d74932c952969405b90` carry identical Git blobs for `hf_space/progress_timeline_v238.py` (`f5a14fbaf50e4296a83dff4ff9632a529086dc8b`) and its regression `hf_space/test_progress_timeline_v238.py` (`f2a2e2b7f34005418f79b11b9ffc387fd770c264`). Published `hf_space/station.py` uses `progress_timeline_v238`/timestamp projection and `meta.progressTrace`; published clean-room Chat projects `progressTrace` into its renderer. The later v239/v240 governed release records explicitly build on/publish the v238 feature chain; v287's protected HF release #39163488634 completed successfully and records Space revision `820182dbde84220d0afeb78455c6bc6d32edc7e7`.
+
+**Review-source status:** Draft [PR #148](https://github.com/kaministrator999-ui/Swrlzkamico/pull/148) was closed **unmerged** on 2026-10-20 with a comment explaining its later published supersession. Its branch remains preserved because [stacked PR #151](https://github.com/kaministrator999-ui/Swrlzkamico/pull/151) still names it as the base; no history, review or downstream source was rewritten. PR state is not itself evidence of whether feature code was published.
+
+**Truth / acceptance:** v238 retrospective source, CI, carried-forward publication and journal close are FINISHED. Signed-in Android activity behavior (immediate visible activity, actual timing/order, persisted activity log and copy across a reopened conversation) remains **LIVE USER ACCEPTANCE OPEN**; a successful GitHub CI/deploy is not proof of that interaction.
+
+**Versions / deployment:** This historic closure does not retroactively invent a separate v238 version or redeploy. As of reconciliation, registered Repository Work is **1.0.225** (governance-only tier), Server Runtime **2.3.435**, Web Chat **1.5.154**, LALM Engine **2.1.201**; latter three unchanged. No Hugging Face trigger or runtime source mutation in this retrospective closure.
+
+---
 
 ## UPDATE STARTED — 2026-10-13 — v238 Live, reviewable §wyrlz Chat progress
 
