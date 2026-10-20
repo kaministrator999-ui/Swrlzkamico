@@ -39,8 +39,8 @@ jobs:
           patch=runpy.run_path(str(root/'patches/v11_62_mobile_adaptive_preview.py'))
           updated=patch['apply'](original)
           assert canonical(updated)==old and len(old.get('parts',[]))==283
-          print('MOBILE_HOOK_MATCHES',updated.count('atelierMobileLayoutInstall(panel);'),updated.count('    atelierMobileLayoutInstall(panel);\\n'),flush=True)
-          assert updated.count('    atelierMobileLayoutInstall(panel);\\n')==1
+          print('MOBILE_HOOK_MATCHES',updated.count('atelierMobileLayoutInstall(panel);'),updated.count('    atelierMobileLayoutInstall(panel);'),flush=True)
+          assert updated.count('    atelierMobileLayoutInstall(panel);')==1
           assert original!=updated
           p.write_text(updated)
           module=updated.split('<script type="module">',1)[1].rsplit('</script>',1)[0]
