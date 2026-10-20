@@ -7,10 +7,11 @@ const browser=await chromium.launch({headless:true,args:[
  '--enable-unsafe-swiftshader','--use-gl=angle','--use-angle=swiftshader'
 ]});
 try{
- for(const [label,viewport,isMobile] of [
-   ['desktop',{width:1280,height:850},false],
-   ['android',{width:412,height:915},true]
- ]){
+ const layouts=[
+ ['desktop',{width:1280,height:850},false],
+ ['android',{width:412,height:915},true]
+];
+for(const [label,viewport,isMobile] of (process.env.SWYRL_DOCK_DESKTOP_ONLY==='1'?layouts.slice(0,1):layouts)){
   const context=await browser.newContext({viewport,isMobile,hasTouch:isMobile,acceptDownloads:true});
   const page=await context.newPage();
   const errors=[];page.on('pageerror',e=>errors.push(e.message));
