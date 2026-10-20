@@ -7,7 +7,7 @@ try{
  for(const [name,width,height,landscape] of sizes){
   const mobile=name!=='desktop',ctx=await browser.newContext({viewport:{width,height},isMobile:mobile,hasTouch:mobile});
   const page=await ctx.newPage();page.setDefaultTimeout(40000);
-  const errors=[];page.on('pageerror',err=>errors.push(err.message));
+  const errors=[];page.on('pageerror',err=>{errors.push(err.stack||err.message);console.log('MOBILE_PAGE_ERROR',name,err.stack||err.message)});
   await page.goto(url+'/?project=model-atelier',{waitUntil:'domcontentloaded',timeout:90000});
   await page.locator('#modelAtelierPanel:not([hidden]) canvas').waitFor();
   await page.locator('#modelAtelierParts').selectOption('model-0001');
