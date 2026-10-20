@@ -13,7 +13,23 @@ const field=async(id,v)=>{const e=page.locator('#modelAtelier'+id);await e.fill(
 const transform=async(id,values)=>{await pick(id);for(const [k,v]of Object.entries(values))if(Array.isArray(v)){for(let i=0;i<3;i++)await field(k+i,v[i]);}else await field(k==='color'?'Color':k,v);record({id,transform:values});};
 const shape=async(id,path,radii)=>{await pick(id);await page.locator('#modelAtelierLoftPath').fill(JSON.stringify(path));await page.locator('#modelAtelierLoftRadii').fill(JSON.stringify(radii));await hit('ApplyLoft');assert.deepEqual((await part(id)).path,path);record({id,path,radii});};
 const fitFace=async(id,offset)=>{await pick(id);await page.locator('#modelAtelierFaceFitOffset').fill(String(offset));await hit('FaceFit');assert.equal((await part(id)).path.length,33);record({id,fitTo:'model-0001',offset});};
-const capture=async(name,view,selected)=>{const old=page.viewportSize();if(old.width>750)await page.setViewportSize({width:1440,height:1100});await page.evaluate(v=>window.SWYRL_ENGINE_MODEL_ATELIER.view(v),view);if(selected){await pick(selected);await hit('FrameSelected');}else await page.locator('#modelAtelierViewport canvas').click({position:{x:Math.max(35,Math.floor((await page.locator('#modelAtelierViewport canvas').boundingBox()).width)-18),y:Math.max(60,Math.floor((await page.locator('#modelAtelierViewport canvas').boundingBox()).height)-18)}});await page.screenshot({path:out+'/'+name+'.png'});if(old.width>750)await page.setViewportSize(old);};
+// A floating dock/mobile rail can cover the old hard-coded bottom-right click.
+// Select a *visible* canvas location so the historical authoring test exercises
+// genuine pointer input without bypassing the overlay or forcing the click.
+const clearByVisibleCanvas=async()=>{
+ const canvas=page.locator('#modelAtelierViewport canvas');
+ const position=await canvas.evaluate(el=>{
+  const r=el.getBoundingClientRect();
+  for(const [fx,fy] of [[.12,.30],[.77,.22],[.18,.56],[.72,.55],[.50,.45],[.40,.75]]){
+   const x=Math.round(r.width*fx),y=Math.round(r.height*fy);
+   if(el.ownerDocument.elementFromPoint(r.left+x,r.top+y)===el)return{x,y};
+  }
+  return null;
+ });
+ assert.ok(position,'Viewport canvas must have an unobstructed point for native pointer capture');
+ await canvas.click({position});
+};
+const capture=async(name,view,selected)=>{const old=page.viewportSize();if(old.width>750)await page.setViewportSize({width:1440,height:1100});await page.evaluate(v=>window.SWYRL_ENGINE_MODEL_ATELIER.view(v),view);if(selected){await pick(selected);await hit('FrameSelected');}else await clearByVisibleCanvas();await page.screenshot({path:out+'/'+name+'.png'});if(old.width>750)await page.setViewportSize(old);};
 try{
  await page.goto(base+'/?project=model-atelier',{waitUntil:'domcontentloaded',timeout:90000});await page.locator('#modelAtelierPanel canvas').waitFor();
  const seed=(await snap()).project.modelAtelier;
