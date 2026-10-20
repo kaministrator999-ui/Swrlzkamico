@@ -1,0 +1,68 @@
+name: Preview §E draggable Model Atelier dock v11.60
+on:
+  pull_request:
+    paths:
+      - 'projects/swrlz-forge-moba/patches/v11_60_floating_tool_dock_preview.py'
+      - 'projects/swrlz-forge-moba/tests/model_atelier_tool_dock_browser_v11_60.mjs'
+      - '.github/workflows/preview-atelier-tool-dock-v11-60.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: atelier-tool-dock-v1160
+  cancel-in-progress: true
+jobs:
+  mobile-and-desktop-preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Verify sealed v11.59 and build opt-in UI-only candidate
+        run: |
+          python projects/swrlz-forge-moba/scripts/verify_v11_59_release.py --output /tmp/atelier-tool-dock-preview
+          python - <<'PY'
+          import json,hashlib,runpy
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          module=runpy.run_path(str(root/'patches/v11_60_floating_tool_dock_preview.py'))
+          out=Path('/tmp/atelier-tool-dock-preview')
+          original=(out/'index.html').read_text(encoding='utf-8')
+          changed=module['apply'](original)
+          assert changed!=original
+          assert changed.count('id="modelAtelierFloatingDockPreview"')==1
+          assert changed.count('atelierToolDockInstall(panel)')==1
+          assert original.count('SWYRL_ENGINE_DEPLOY_MARKER: V11_59_PRECISION_MODEL_ATELIER')==1
+          assert changed.count('SWYRL_ENGINE_DEPLOY_MARKER: V11_59_PRECISION_MODEL_ATELIER')==1
+          assert 'const MODEL_ATELIER_CANONICAL_PROJECT=' in changed
+          (out/'index.html').write_text(changed,encoding='utf-8')
+          receipt=json.loads((out/'SOURCE.json').read_text())
+          receipt.update(previewOnly=True,previewFeature='floating-tool-dock-v11-60',
+                         finalBytes=len(changed.encode('utf-8')),
+                         finalSha256=hashlib.sha256(changed.encode('utf-8')).hexdigest())
+          (out/'SOURCE.json').write_text(json.dumps(receipt,indent=2)+'\n')
+          js=changed.split('<script type="module">',1)[1].rsplit('</script>',1)[0]
+          Path('/tmp/atelier-tool-dock-preview-module.mjs').write_text(js)
+          print('V1160_UI_ONLY_PREVIEW_REBUILT',receipt['finalBytes'],receipt['finalSha256'])
+          PY
+          node --check /tmp/atelier-tool-dock-preview-module.mjs
+          node --check projects/swrlz-forge-moba/tests/model_atelier_tool_dock_browser_v11_60.mjs
+      - name: Install browser
+        run: |
+          npm install --no-save playwright@1.56.1 three@0.169.0
+          npx playwright install --with-deps --only-shell chromium
+      - name: Exercise desktop and Android dock without changing model data
+        env:
+          SWYRL_SCULPT_TEST_URL: http://127.0.0.1:8787
+        run: |
+          python -m http.server 8787 --directory /tmp/atelier-tool-dock-preview >/tmp/atelier-dock.log 2>&1 &
+          PID=$!
+          trap 'kill "$PID" 2>/dev/null || true' EXIT
+          for i in $(seq 1 45); do
+            if curl -fsS http://127.0.0.1:8787/ >/dev/null; then break; fi
+            sleep .3
+          done
+          node projects/swrlz-forge-moba/tests/model_atelier_tool_dock_browser_v11_60.mjs
