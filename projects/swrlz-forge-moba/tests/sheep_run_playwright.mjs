@@ -132,7 +132,7 @@ try{for(const mode of modes){const context=await browser.newContext({viewport:mo
   await page.locator('#perfPreset').selectOption('medium',{force:true});await page.evaluate(()=>window.__sheepRunClock.freeze());await frames(page,2);
   assert.equal(await page.evaluate(()=>window.SWYRL_ENGINE_BUILD.version),'v11.60');const canonical=await saved(page);assert.equal(canonical.version,11.9);
   const sourceResponse=await context.request.get(base+'/SOURCE.json');assert.equal(sourceResponse.ok(),true);const source=await sourceResponse.json();
-  assert.match(source.sourceVersion,/v11\.59/);assert.equal(source.patches.length,91);assert.equal(source.patches.at(-1),'patches/v11_59_precision_model_atelier.py');
+  assert.match(source.sourceVersion,/v11\.60/);assert.equal(source.patches.length,92);assert.equal(source.patches.at(-1),'patches/v11_60_floating_tool_dock.py');
   assert.equal(Object.keys(source.assets).length,43,'Unexpected bundled starter/media asset set');
   const htmlResponse=await context.request.get(base+'/index.html');assert.match(await htmlResponse.text(),/V11_60_FLOATING_MODEL_ATELIER_DOCK/);
   assert.equal(canonical.scene.actors.length,92,'Archive map changed');const pieces=await prototypes(page,canonical),map=fixture(canonical,pieces);
