@@ -23,6 +23,12 @@ def apply(html):
     browser_ui = "\n  const browserKey='swyrlz-atelier-tool-browser-v1';\n  function browserPrefs(){try{const value=JSON.parse(localStorage.getItem(browserKey)||'{}');return value&&typeof value==='object'?value:{}}catch(_){return {}}}\n  const browserState=browserPrefs();\n  const favorites=new Set(Array.isArray(browserState.favorites)?browserState.favorites:[]);\n  let recent=Array.isArray(browserState.recent)?browserState.recent:[];\n  let viewMode=['all','quick','recent'].includes(browserState.mode)?browserState.mode:'all';\n  const saveBrowser=()=>{try{localStorage.setItem(browserKey,JSON.stringify({favorites:[...favorites],recent:recent.slice(0,15),mode:viewMode}))}catch(_){}};\n  const browseModes=document.createElement('div');browseModes.className='atelier-mobile-browse';\n  browseModes.id='atelierMobileBrowseModes';browseModes.setAttribute('role','group');browseModes.setAttribute('aria-label','Operation list display');\n  for(const name of ['All','Quick','Recent']){\n    const button=document.createElement('button');button.type='button';\n    button.textContent=name;button.dataset.mode=name.toLowerCase();browseModes.append(button);\n  }\n  opNav.before(browseModes);\n  browseModes.addEventListener('click',e=>{\n    const b=e.target.closest('button[data-mode]');if(!b)return;\n    viewMode=b.dataset.mode;saveBrowser();showOps();\n  });\n"
     assert html.count(registry_anchor) == 1
     html = html.replace(registry_anchor,registry_anchor + '\n' + browser_ui,1)
+    render_head = " function renderFields(){\n"
+    guarded_head = " let refreshingFields=false,scheduledFields=false;\n function renderFields(){\n  if(refreshingFields){scheduledFields=true;return;}\n  refreshingFields=true;\n  try{\n"
+    render_tail = "  $('atelierContextApplyPreset').disabled=!saved;\n }\n function showOps(){"
+    guarded_tail = "  $('atelierContextApplyPreset').disabled=!saved;\n  }finally{\n   refreshingFields=false;\n   if(scheduledFields){scheduledFields=false;queueMicrotask(renderFields);}\n  }\n }\n function showOps(){"
+    assert html.count(render_head)==1 and html.count(render_tail)==1,'Native contextual form structure changed'
+    html = html.replace(render_head,guarded_head,1).replace(render_tail,guarded_tail,1)
     for before,after in replacements:
         assert html.count(before)>=(1 if before=='</head>' else 1) and (before=='</head>' or html.count(before)==1),('Missing or ambiguous source anchor',before,html.count(before))
         html=html.replace(before,after,1)
