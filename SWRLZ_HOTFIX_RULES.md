@@ -52,15 +52,11 @@ The current application hosting/deployment authority is the existing Hugging Fac
 
 **Vercel is deprecated for current §wyrlz application deployment.** Vercel-era workflows/configuration may remain in the repository as historical provenance, rollback/reference material, or migration evidence, but they are not a current production deployment path and must not be selected for new application releases.
 
-### Canonical HF deployment branch + workflow
+### Canonical HF source selection + workflow
 
-For the current HF candidate/release path, the deployment source branch is:
+The historical/default HF candidate integration branch is `feature/hf-space-manual-deploy`, but its name alone does **not** prove it contains the current accepted release. Before any release, compare that branch to the latest published/accepted source and preserve divergent work. When the branch is stale or divergent, do not silently reset, force-push, or deploy it; select the exact already validated integration commit SHA (or a newly validated coherent branch) as `SOURCE_REF`.
 
-```text
-feature/hf-space-manual-deploy
-```
-
-The canonical publish workflow on that branch is:
+The canonical publish workflow is:
 
 ```text
 .github/workflows/manual-hf-space.yml
@@ -80,11 +76,11 @@ The canonical source-controlled production trigger is:
 main:.deploy/HF_SPACE_REQUEST.txt
   -> main:.github/workflows/hf-space-request.yml
   -> main:.github/workflows/manual-hf-space.yml
-  -> SOURCE_REF=feature/hf-space-manual-deploy
+  -> SOURCE_REF=<exact prevalidated commit SHA or coherent verified branch>
   -> existing Space kamiloki/Swyrlz
 ```
 
-An approved request uses `TARGET=kamiloki/Swyrlz`, `APPROVED=1`, the exact `SOURCE_REF`, and a fresh `REQUEST_NONCE`. The guarded workflow validates the package, preserves the predeploy Space revision/rollback lineage, uploads only after the gates pass, and captures the deployed revision.
+An approved request uses `TARGET=kamiloki/Swyrlz`, `APPROVED=1`, the exact validated `SOURCE_REF` (immutable commit SHA preferred for divergent branches), and a fresh `REQUEST_NONCE`. The current request file is a historical release receipt, not an instruction to rotate its nonce for documentation-only reconciliation. The guarded workflow validates the package, preserves the predeploy Space revision/rollback lineage, uploads only after the gates pass, and captures the deployed revision.
 
 Validate/inspect/benchmark work does not publish the Space.
 
