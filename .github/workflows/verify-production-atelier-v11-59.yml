@@ -1,4 +1,4 @@
-name: Verify §E v11.61 adaptive contextual tool workbench production release
+name: Verify §E v11.62 adaptive contextual tool workbench production release
 on:
   push:
     branches: [release/atelier-v11-59-production]
@@ -22,7 +22,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: precision-context-v1161
+  group: precision-context-v1162
   cancel-in-progress: true
 jobs:
   geometry-and-native-schema:
@@ -114,7 +114,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Verify v11.61 release then reconstruct exact historical v11.59 tool fixture
+      - name: Verify v11.62 release then reconstruct exact historical v11.59 tool fixture
         run: |
           python projects/swrlz-forge-moba/scripts/verify_v11_61_release.py --output /tmp/atelier-precision-v11-61
           node --check /tmp/atelier-precision-v11-61-module.mjs
