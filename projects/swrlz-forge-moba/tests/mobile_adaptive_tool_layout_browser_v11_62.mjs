@@ -10,6 +10,7 @@ try{
   const errors=[];page.on('pageerror',err=>errors.push(err.message));
   await page.goto(url+'/?project=model-atelier',{waitUntil:'domcontentloaded',timeout:90000});
   await page.locator('#modelAtelierPanel:not([hidden]) canvas').waitFor();
+  await page.locator('#modelAtelierParts').selectOption('model-0001');
   const sheet=page.locator('#atelierContextWorkbench'),rail=page.locator('#modelAtelierToolRail');
   assert(await rail.isVisible(),'The original category rail must exist');
   assert(!(await sheet.isVisible()),'Context starts closed');
