@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=cd4e5f43f67a82118c8873d5cc9bed418f9a4da3
-REQUEST_NONCE=2026-10-20-chat-v289-repo-readiness-cd4e5f
+SOURCE_REF=bd63d5c564ec72485436fddf8b4497b0cb188bfb
+REQUEST_NONCE=2026-10-20-chat-v290-live-reply-cue-bd63d5c
