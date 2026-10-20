@@ -6,7 +6,7 @@
 
 - Canonical Space: `kamiloki/Swyrlz`
 - Canonical Chat source: `chat/§wyrlz/index.html`
-- HF deployment integration branch: `feature/hf-space-manual-deploy`
+- Historical/default HF integration branch: `feature/hf-space-manual-deploy` (not assumed current; guarded deployments pin the exact validated source ref or commit SHA)
 - Vercel: **DISCONTINUED / historical only**
 
 Do not plan, trigger, repair, or require Vercel deployments for current §wyrlz work. Existing Vercel source, contracts, changelogs, and release receipts remain in repository history for provenance and migration reference only; they are not current deployment authority.
