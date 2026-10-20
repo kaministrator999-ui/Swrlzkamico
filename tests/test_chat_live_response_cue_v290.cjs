@@ -41,6 +41,9 @@ const {chromium}=require("playwright");
       .some(n=>n.textContent==="Live animation lab"));
     await page.evaluate(()=>[...document.querySelectorAll(".thread-row .thread-main")]
       .find(n=>n.textContent.includes("Live animation lab")).click());
+    // Selecting an existing thread is presentation-only. The next Station
+    // hydration is what associates its acknowledged active generation.
+    await page.evaluate(()=>window.dispatchEvent(new Event("focus")));
     await page.waitForSelector('.station-live-message[data-response-live="true"] .response-live-tail');
     let state=await page.evaluate(()=>{
       const live=document.querySelector('.station-live-message');
