@@ -170,10 +170,7 @@ JS=r"""
     setHeight('half');
     // v11.61 already routes this category via its rail listener when open.
     // When it was closed, its first click happens after the old listener.
-    if(ui&&!ui.hidden){
-      const op=window.SWYRL_E_CONTEXT?.current?.();
-      if(op?.group!==selected)queueMicrotask(()=>b.click());
-    }
+    if(ui&&!ui.hidden)window.SWYRL_E_CONTEXT?.select?.(selected);
   });
   mq.addEventListener?.('change',sync);
   window.addEventListener('resize',()=>{if(!isMobile())return;sync()},{passive:true});
@@ -196,6 +193,10 @@ def apply(html):
     assert "function atelierMobileLayoutInstall" not in html
     assert html.count('</head>')>=1
     assert html.count("const ModelAtelier=(()=>{")==1
-    # Only source/CSS add-on; model and all existing handlers remain untouched.
+    # Extend navigation-only public registry (not model state authority).
+    old='window.SWYRL_E_CONTEXT=Object.freeze({groups:'
+    new='window.SWYRL_E_CONTEXT=Object.freeze({select:(name)=>{if(allGroupNames.includes(name)){if(!open)setOpen(true);pickGroup(name)}},groups:'
+    assert html.count(old)==1
+    html=html.replace(old,new,1)
     html=html.replace("const ModelAtelier=(()=>{",JS+"\nconst ModelAtelier=(()=>{",1)
     return html.replace('</head>','<style id="atelierMobileToolLayoutPreview">'+CSS+'</style>\n</head>',1)
