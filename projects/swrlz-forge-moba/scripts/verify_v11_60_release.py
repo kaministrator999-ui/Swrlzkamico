@@ -11,8 +11,8 @@ manifest=json.loads((root/"source-manifest.json").read_text())
 assert manifest["name"]=="§wyrl§ Engine v11.60"
 assert len(manifest["patches"])==92
 assert manifest["patches"][-1]=="patches/v11_60_floating_tool_dock.py"
-assert manifest["finalBytes"]==2933515
-assert manifest["finalSha256"]=="f31f20d11702d90ccfb7d4592afeb154e1dc3abaa6c12e08209621548c870b74"
+assert manifest["finalBytes"]==2933954
+assert manifest["finalSha256"]=="fe11e3e748184db1797ef66bc327f7867a25f91d431823a4c8794f157117d97f"
 subprocess.run(["python",str(root/"build_space.py"),"--output",str(out)],check=True)
 payload=(out/"index.html").read_bytes()
 assert len(payload)==manifest["finalBytes"]
