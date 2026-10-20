@@ -19,6 +19,10 @@ try{
   console.log('CONTEXT_BOOT_DIAG',mode,JSON.stringify(boot),'PAGE_ERRORS',JSON.stringify(errors));
   const spans=await page.evaluate(()=>{const s=document.querySelector('script[type="module"]')?.textContent||'';return ['function atelierAdaptiveInstall(panel)','atelierAdaptiveInstall(panel);','atelierToolDockInstall(panel);'].map(q=>{const p=s.indexOf(q);return {token:q,count:s.split(q).length-1,at:p,surround:p>=0?s.slice(Math.max(0,p-160),p+150):''}})});
   console.log('CONTEXT_SOURCE_SPANS',JSON.stringify(spans));
+  const scriptMap=await page.evaluate(()=>[...document.scripts].map((script,i)=>({i,type:script.type,src:script.src||'',length:script.textContent?.length||0,dock:script.textContent?.includes('atelierToolDockInstall(panel);'),context:script.textContent?.includes('atelierAdaptiveInstall(panel);')})));
+  console.log('CONTEXT_SCRIPT_MAP',JSON.stringify(scriptMap));
+  const ownership=await page.evaluate(()=>{const p=document.getElementById('modelAtelierPanel'),r=document.getElementById('modelAtelierToolRail');return {railInPanel:p?.contains(r),handleInPanel:p?.contains(document.querySelector('.atelier-tool-handle')),build:window.SWRLZ_FORGE_BUILD?.version}});
+  console.log('CONTEXT_OWNERSHIP',JSON.stringify(ownership));
 
   assert(boot.toggle,'Context bootstrap must wire to native dock');
   await page.locator('#atelierContextToggle').click();
