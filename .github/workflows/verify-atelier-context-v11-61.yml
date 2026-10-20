@@ -39,7 +39,7 @@ jobs:
           new=patch['apply'](old)
           after=new.split('const MODEL_ATELIER_CANONICAL_PROJECT=',1)[1].split(';',1)[0]
           assert before==after,'Owner canonical model data changed'
-          assert new.count('atelierAdaptiveInstall(panel);')==1
+          assert new.count('atelierAdaptiveInstall(panel);')==2  # direct hook + one-time lazy attachment
           assert new.count('SWYRL_ENGINE_DEPLOY_MARKER: V11_60_FLOATING_MODEL_ATELIER_DOCK')==1
           p.write_text(new,encoding='utf-8')
           start=new.index('<script type="module">')+len('<script type="module">')
