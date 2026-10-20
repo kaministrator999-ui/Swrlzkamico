@@ -36,12 +36,12 @@ Current application publication uses the existing source-controlled request chai
 main:.deploy/HF_SPACE_REQUEST.txt
   -> main:.github/workflows/hf-space-request.yml
   -> main:.github/workflows/manual-hf-space.yml
-  -> checkout SOURCE_REF=feature/hf-space-manual-deploy
+  -> checkout SOURCE_REF=<exact validated commit SHA or verified candidate ref>
   -> validate + snapshot + guarded publish
   -> existing Hugging Face Space kamiloki/Swyrlz
 ```
 
-For an explicitly user-approved deployment, update `main:.deploy/HF_SPACE_REQUEST.txt` with `TARGET=kamiloki/Swyrlz`, `APPROVED=1`, `SOURCE_REF=feature/hf-space-manual-deploy`, and a fresh unique `REQUEST_NONCE`. The push to that request file is the deployment trigger. The request workflow must call the guarded manual HF workflow; preserve its validation, snapshot, rollback, target, and approval gates.
+For an explicitly user-approved deployment, update `main:.deploy/HF_SPACE_REQUEST.txt` with `TARGET=kamiloki/Swyrlz`, `APPROVED=1`, the **exact validated** `SOURCE_REF` (prefer the immutable tested commit SHA if an integration branch is stale/divergent), and a fresh unique `REQUEST_NONCE`. The push to that request file is the deployment trigger. The request workflow must call the guarded manual HF workflow; preserve its validation, snapshot, rollback, target, and approval gates.
 
 Do not require the user to manually press **Run workflow** when the current request already explicitly authorizes deployment and the request-file trigger is available.
 
@@ -360,7 +360,7 @@ Current deployment-control rules:
 - ordinary source commits remain deployment-inert;
 - source work may continue on its architecturally correct branch without implying deployment approval;
 - the canonical HF package/publish workflow is `.github/workflows/manual-hf-space.yml`;
-- Chat/HF candidate work currently deploys from the explicitly selected `SOURCE_REF` (normally `feature/hf-space-manual-deploy` while that branch remains the accepted candidate authority);
+- Chat/HF candidate work deploys from the explicitly selected and validated `SOURCE_REF`; `feature/hf-space-manual-deploy` is a historical/default integration candidate, **not** proof of the latest accepted source. Compare its head with the published release before use; if stale or divergent, preserve both lineages and pin the exact accepted/tested source SHA instead of silently merging, resetting, or publishing the old branch;
 - after the user explicitly approves deployment, an engineering agent with GitHub write access may start it by changing **only** `.deploy/HF_SPACE_REQUEST.txt` on `main` to a fresh approved request;
 - the request must target `kamiloki/Swyrlz`, set `APPROVED=1`, name the exact `SOURCE_REF`, and use a fresh `REQUEST_NONCE`;
 - `.github/workflows/hf-space-request.yml` validates that request and calls the canonical HF workflow;
