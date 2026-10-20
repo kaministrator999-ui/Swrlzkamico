@@ -8,25 +8,11 @@ def apply(html):
     assert html.count('function atelierAdaptiveInstall(panel)') == 1
     assert 'function atelierMobileLayoutInstall(panel)' not in html
     replacements = (
-        ("const ModelAtelier=(()=>{", JS + "
-const ModelAtelier=(()=>{"),
-        ("    atelierAdaptiveInstall(panel);
-", "    atelierAdaptiveInstall(panel);
-    atelierMobileLayoutInstall(panel);
-"),
-        ("panel.classList.toggle('atelier-context-active',open);",
-         "panel.classList.toggle('atelier-context-active',open);
-  panel.classList.toggle('atelier-mobile-context-mode',open);"),
-        ("if(allGroupNames.includes(label)&&open)pickGroup(label);",
-         "if(label==='More'&&open){setOpen(false);return;}
-  if(allGroupNames.includes(label)){
-   if(matchMedia('(max-width:700px), (max-height:600px) and (pointer:coarse)').matches&&!open)setOpen(true);
-   if(open)pickGroup(label);
-  }"),
-        ("$('atelierContextNative').addEventListener('click',()=>{setOpen(false);handle.scrollIntoView({block:'nearest'});});",
-         "$('atelierContextNative').addEventListener('click',()=>{setOpen(false);handle.scrollIntoView({block:'nearest'});});"),
-        ("</head>", '<style id="atelierMobileAdaptiveV1162">' + CSS + '</style>
-</head>')
+        ("const ModelAtelier=(()=>{", JS + "\n" + "const ModelAtelier=(()=>{"),
+        ("    atelierAdaptiveInstall(panel);\n", "    atelierAdaptiveInstall(panel);\n    atelierMobileLayoutInstall(panel);\n"),
+        ("panel.classList.toggle('atelier-context-active',open);", "panel.classList.toggle('atelier-context-active',open);\n  panel.classList.toggle('atelier-mobile-context-mode',open);"),
+        ("if(allGroupNames.includes(label)&&open)pickGroup(label);", "if(label==='More'&&open){setOpen(false);return;}\n  if(allGroupNames.includes(label)){\n   if(matchMedia('(max-width:700px), (max-height:600px) and (pointer:coarse)').matches&&!open)setOpen(true);\n   if(open)pickGroup(label);\n  }"),
+        ("</head>", '<style id="atelierMobileAdaptiveV1162">' + CSS + "</style>\n</head>"),
     )
     # The native v11.61 registry still owns operation resolution and action authority.
     old_show = " function showOps(){\n  opNav.replaceChildren();\n  const q=$('atelierContextFind').value.toLowerCase().trim();\n  const ops=operations().filter(o=>o.name.toLowerCase().includes(q)||o.ids.some(id=>titleFromId('modelAtelier'+id).toLowerCase().includes(q)));\n  if(!ops.some(o=>o.name===selectedName))selectedName=ops[0]?.name||'';\n  for(const op of ops){\n   const b=document.createElement('button');b.type='button';b.textContent=op.name;\n   b.className='atelier-context-op';b.setAttribute('aria-pressed',String(op.name===selectedName));\n   b.addEventListener('click',()=>{selectedName=op.name;showOps();});\n   opNav.append(b);\n  }\n  renderFields();\n }"
