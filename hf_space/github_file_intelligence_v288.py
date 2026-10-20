@@ -22,7 +22,7 @@ MAX_RELATED_BYTES = 32000
 TOTAL_RELATED_BYTES = 96000
 
 SCENARIOS = (
-    ("security", r"\b(?:security|vulnerab|injection|permission|auth|secret|unsafe|exploit)\b",
+    ("security", r"\b(?:security|vulnerab|injection|permissions?|auth|secret|unsafe|exploit)\b",
      ("inspect-boundaries", "trace-imports", "identify-unverified-risks")),
     ("regression", r"\b(?:regression|broke|stopped working|since the update|before.?after)\b",
      ("trace-imports", "identify-related-code", "request-commit-diff")),
