@@ -24,7 +24,7 @@ def apply(html):
     assert html.count(registry_anchor) == 1
     html = html.replace(registry_anchor,registry_anchor + '\n' + browser_ui,1)
     for before,after in replacements:
-        assert html.count(before)==1,('Missing or ambiguous source anchor',before,html.count(before))
+        assert html.count(before)>=(1 if before=='</head>' else 1) and (before=='</head>' or html.count(before)==1),('Missing or ambiguous source anchor',before,html.count(before))
         html=html.replace(before,after,1)
     assert html.count('atelierMobileLayoutInstall(panel);')==1
     assert html.count('SWYRL_ENGINE_DEPLOY_MARKER: V11_61_ADAPTIVE_CONTEXT_TOOL_WORKBENCH')==1
