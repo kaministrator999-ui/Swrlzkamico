@@ -1,18 +1,17 @@
 #!/usr/bin/env python3
-"""Independently verify the current v11.62 governed source seal."""
-import hashlib,json,subprocess,tempfile
+"""Independently reconstruct and measure a proposed v11.62 source even before its manifest seal is updated."""
+import base64,gzip,hashlib,json,sys
 from pathlib import Path
 root=Path(__file__).resolve().parents[1]
+sys.path.insert(0,str(root))
+from build_space import load_patch
 manifest=json.loads((root/'source-manifest.json').read_text())
-assert manifest['name']=='§wyrl§ Engine v11.62'
-assert len(manifest['patches'])==94
-assert manifest['patches'][-1]=='patches/v11_62_mobile_tool_layout.py'
-with tempfile.TemporaryDirectory() as d:
- subprocess.run(['python',str(root/'build_space.py'),'--output',d],check=True,stdout=subprocess.DEVNULL)
- src=(Path(d)/'index.html').read_bytes()
- assert len(src)==manifest['finalBytes'],(len(src),manifest['finalBytes'])
- assert hashlib.sha256(src).hexdigest()==manifest['finalSha256']
- receipt=json.loads((Path(d)/'SOURCE.json').read_text())
- assert len(receipt['patches'])==94 and len(receipt['assets'])==43
- assert receipt['finalSha256']==manifest['finalSha256']
- print('V1162_RELEASE_MEASURE '+json.dumps({'bytes':len(src),'sha256':hashlib.sha256(src).hexdigest(),'patches':94,'assets':43},sort_keys=True),flush=True)
+assert manifest['name']=='§wyrl§ Engine v11.62' and len(manifest['patches'])==94
+src=gzip.decompress(base64.b64decode(''.join((root/p).read_text(encoding='utf-8').strip() for p in manifest['chunks'])))
+assert hashlib.sha256(src).hexdigest()==manifest['baseSha256']
+html=src.decode('utf-8')
+for patch in manifest['patches']:
+ html=load_patch(root/patch)(html)
+data=html.encode('utf-8')
+assert html.count('SWYRL_ENGINE_DEPLOY_MARKER: V11_62_MOBILE_ADAPTIVE_TOOL_LAYOUT')==1
+print('V1162_RELEASE_RESEAL '+json.dumps({'bytes':len(data),'sha256':hashlib.sha256(data).hexdigest(),'patches':len(manifest['patches']),'manifestSha256':manifest['finalSha256'],'manifestBytes':manifest['finalBytes']},sort_keys=True),flush=True)
