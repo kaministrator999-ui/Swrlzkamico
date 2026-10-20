@@ -44,7 +44,22 @@ const {chromium}=require("playwright");
     // Selecting an existing thread is presentation-only. The next Station
     // hydration is what associates its acknowledged active generation.
     await page.evaluate(()=>window.dispatchEvent(new Event("focus")));
-    await page.waitForSelector('.station-live-message[data-response-live="true"] .response-live-tail');
+    try {
+      await page.waitForSelector('.station-live-message[data-response-live="true"] .response-live-tail',{timeout:12000});
+    }catch(err){
+      const diagnosis=await page.evaluate(()=>({
+        threadList:[...document.querySelectorAll(".thread-row .thread-title")].map(n=>n.textContent),
+        activeThreadTitle:document.getElementById("topThreadTitle")?.textContent,
+        liveNodes:[...document.querySelectorAll(".station-live-message")].map(n=>({
+          live:n.dataset.responseLive,request:n.dataset.requestId,html:n.outerHTML.slice(0,900)})),
+        responseTails:document.querySelectorAll(".response-live-tail").length,
+        renderedMessages:document.querySelectorAll(".rendered-message").length,
+        topState:document.getElementById("topEdge")?.dataset.state,
+        notice:document.body.innerText.slice(-350)
+      }));
+      console.error("v290 DIAG FIRST-LIVE",JSON.stringify({diagnosis,errors}));
+      throw err;
+    }
     let state=await page.evaluate(()=>{
       const live=document.querySelector('.station-live-message');
       const tail=live?.querySelector(".response-live-tail");
