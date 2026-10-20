@@ -67,6 +67,15 @@ try{
    await sheet.getByRole('button',{name:'Original inspector',exact:true}).click();
    assert(!(await sheet.isVisible()),'original inspector command closes the secondary sheet');
    assert(await page.locator('.atelier-inspector').isVisible(),'original native controls must be recoverable');
+   // v11.60 remembers More as the last native choice; after the v11.61
+   // contextual References sheet, selecting More again must not hide both.
+   const more=rail.getByRole('button',{name:'Open More editing tools'});
+   await more.click();
+   await rail.getByRole('button',{name:'Open References editing tools'}).click();
+   assert(await sheet.isVisible(),'References must open contextual tools');
+   await more.click();
+   assert(!(await sheet.isVisible()),'More must close contextual tools');
+   assert(await page.locator('.atelier-inspector').isVisible(),'More must restore native tools even when already selected');
   }else{
    assert(await page.locator('.atelier-inspector').isVisible(),'desktop keeps the v11.61 inspector');
    assert(await page.locator('#atelierContextWorkbench').isVisible());
