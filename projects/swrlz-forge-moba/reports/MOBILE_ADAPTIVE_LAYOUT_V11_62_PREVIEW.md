@@ -1,3 +1,7 @@
+## 2026-10-20 · Repeated native More repair (stacked candidate)
+
+After selecting **More**, opening **References** in the contextual sheet, and selecting **More** again, v11.60's last-choice click-to-hide behavior could conceal the native inspector at the same time v11.61 closed the secondary sheet. The additive v11.62 repair restores the native inspector when its own rail click has just closed it, on phone presentation only. A new repeat-selection assertion runs at each phone viewport in the six-viewport mobile test. This is a source/test candidate and is **not shipped**; its final verification must be read from the stacked PR's CI. Desktop and original 283-part/43-asset states must remain unchanged.
+
 # §E v11.62 mobile tool layout — preview user guide
 
 **Status:** Development branch / pull request #278. This is NOT shipped in production. Production §E remains v11.61 until a full release passes all gates.
