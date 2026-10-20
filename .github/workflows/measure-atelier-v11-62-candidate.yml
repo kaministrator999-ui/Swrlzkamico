@@ -1,10 +1,11 @@
-name: Measure §E v11.62 mobile production candidate
+name: Measure §E v11.62 governed source seal
 on:
   pull_request:
     paths:
       - 'projects/swrlz-forge-moba/patches/v11_62_mobile_tool_layout.py'
       - 'projects/swrlz-forge-moba/patches/v11_62_mobile_tool_layout_preview.py'
       - 'projects/swrlz-forge-moba/scripts/measure_v11_62_candidate.py'
+      - 'projects/swrlz-forge-moba/source-manifest.json'
       - '.github/workflows/measure-atelier-v11-62-candidate.yml'
   workflow_dispatch:
 permissions:
@@ -17,5 +18,5 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with: {python-version: '3.11'}
-      - name: Measure exact governed candidate without manifest edits
+      - name: Measure exact source candidate against governed manifest
         run: python projects/swrlz-forge-moba/scripts/measure_v11_62_candidate.py
