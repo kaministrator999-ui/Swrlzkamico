@@ -1,11 +1,11 @@
-name: Verify §E v11.59 grounded anatomy (v11.20 history retained)
+name: Verify §E v11.60 grounded anatomy (v11.20 history retained)
 on:
   push:
     branches: [fix/engine-v1112-grounded-stance-poses]
   # Focus historical test on the sealed engine and the matching module.
   # Other candidate preview code uses dedicated CPU + browser suites.
   pull_request:
-    # Match precisely the 91 ordered patch dependencies in the sealed production manifest.
+    # Match precisely the 92 ordered patch dependencies in the sealed production manifest.
     # An unlisted opt-in preview patch must not restart the legacy CI suite.
     paths:
       - '.github/workflows/verify-engine-v1112-grounded-poses.yml'
@@ -137,8 +137,8 @@ jobs:
           raw=html.encode('utf8')
           print('GROUNDED_FINAL_BYTES='+str(len(raw)),flush=True)
           print('GROUNDED_FINAL_SHA256='+hashlib.sha256(raw).hexdigest(),flush=True)
-          assert 'V11_59_PRECISION_MODEL_ATELIER' in html
-          assert 'v11.59 · precision Model Atelier' in html
+          assert 'V11_60_FLOATING_MODEL_ATELIER_DOCK' in html
+          assert 'v11.60 · floating Model Atelier tools' in html
           Path('/tmp/se-grounded.mjs').write_text(html[html.index('<script type="module">')+len('<script type="module">'):html.rindex('</script>')])
           PY
           node --check /tmp/se-grounded.mjs
