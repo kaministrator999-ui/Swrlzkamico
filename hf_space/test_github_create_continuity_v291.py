@@ -134,6 +134,29 @@ class FailedCreateContinuity(unittest.TestCase):
                                           "path": "write-lab/swyrlz1.txt"}}]}})
         self.assertFalse(c.is_create_continuation("Name it swyrlz2 then", history))
 
+    def test_export_question_checks_actual_github_instead_of_repeating_model_claim(self):
+        history = failed_create_history()
+        history += [{"role": "user", "text": "Name it swyrlz1 then"},
+                    {"role": "assistant", "text": "The new file was created.",
+                     "meta": {"state": "CANDIDATE_REJECTED"}}]
+        question = "Was that the new file or the one that was named swyrlz that was already there"
+        self.assertTrue(c.is_create_continuation(question, history))
+        answer = c.handle(USER, THREAD, question, history=history)
+        self.assertIn("write-lab/swyrlz1.txt", answer["text"])
+        self.assertIn("does not exist", answer["text"])
+        self.assertEqual(self.calls, [])
+
+    def test_status_check_cannot_attribute_preexisting_file_without_receipt(self):
+        history = failed_create_history()
+        history += [{"role": "user", "text": "Name it swyrlz1 then"}]
+        with patch.object(c, "_read_tree", return_value=(
+            {"repo": REPO, "branch": "main"},
+            {"write-lab/swyrlz1.txt": {"type": "blob"}}, "f"*40
+        )):
+            answer = c.handle(USER, THREAD, "Was the new file created?", history=history)
+        self.assertIn("no verified CREATE_FILE receipt", answer["text"])
+        self.assertEqual(self.calls, [])
+
     def test_explicit_cancel_ends_unfinished_intent(self):
         history = failed_create_history() + [{"role": "user", "text": "Forget the new file"}]
         self.assertFalse(c.is_create_continuation("Name it swyrlz2 then", history))
