@@ -25,13 +25,13 @@ try{
   const scene=await canvas.boundingBox();
   assert(scene&&scene.height>viewport.height*.57,'scene must have substantial room');
   assert.equal(await inspector.isVisible(),!isMobile,'mobile starts collapsed, desktop starts open');
-  await rail.getByRole('button',{name:'Open Meshes editing tools'}).click();
+  if(!(await inspector.isVisible()))await rail.getByRole('button',{name:'Open Meshes editing tools'}).click();
   assert(await inspector.isVisible());
   await page.locator('#modelAtelierParts').selectOption('model-0001');
   assert(await page.locator('#modelAtelierSculptBrush').isVisible(),'native sculpt controls must remain available');
   await rail.getByRole('button',{name:'Open Sculpt editing tools'}).click();
   assert(await page.locator('#modelAtelierSculptBrush').isVisible());
-  const selected=await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.status().selected);
+  const selected=await page.locator('#modelAtelierParts').inputValue();
   assert.equal(selected,'model-0001');
   const dragHandle=page.locator('.atelier-tool-handle');
   const before=await inspector.boundingBox();
