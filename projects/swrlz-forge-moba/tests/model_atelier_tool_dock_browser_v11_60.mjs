@@ -24,7 +24,7 @@ try{
   assert(await rail.isVisible(),'vertical tool shortcuts must always be discoverable');
   const scene=await canvas.boundingBox();
   assert(scene&&scene.height>viewport.height*.57,'scene must have substantial room');
-  assert.equal(await inspector.isVisible(),!isMobile,'mobile starts collapsed, desktop starts open');
+  assert.equal(await inspector.isVisible(),true,'floating tools are initially discoverable and remain dismissible');
   if(!(await inspector.isVisible()))await rail.getByRole('button',{name:'Open Meshes editing tools'}).click();
   assert(await inspector.isVisible());
   await page.locator('#modelAtelierParts').selectOption('model-0001');
