@@ -15,10 +15,10 @@ try{
     page.on('pageerror',e=>faults.push(String(e)));
     await page.goto(base+'/?project=model-atelier',{waitUntil:'domcontentloaded',timeout:60000});
     await page.locator('#modelAtelierPanel:not([hidden]) canvas').waitFor({timeout:30000});
-    assert.match(await page.locator('.brand').innerText(),/ENGINE · MAKER v11\.59/,'Main editor brand must show live v11.59');
-    assert.equal(await page.title(),'§wyrl§ Engine · Maker v11.59','Browser document title must identify the current release');
+    assert.match(await page.locator('.brand').innerText(),/ENGINE · MAKER v11\.59/,'Main editor brand must show live v11.60');
+    assert.equal(await page.title(),'§wyrl§ Engine · Maker v11.60','Browser document title must identify the current release');
     assert.match(await page.locator('#modelAtelierPanel .atelier-head strong').innerText(),/v11\.59 · precision Model Atelier/,'Model Atelier panel must show live version');
-    assert.equal(await page.evaluate(()=>window.SWYRL_ENGINE_BUILD.version),'v11.59','Runtime build version must match the live editor');
+    assert.equal(await page.evaluate(()=>window.SWYRL_ENGINE_BUILD.version),'v11.60','Runtime build version must match the live editor');
     // Preserve the full v11.12 editor regression on its exact legacy native fixture.
     await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.loadLegacy());
     await page.waitForFunction(()=>window.SWYRL_ENGINE_MODEL_ATELIER?.status().count===811,{timeout:20000});
