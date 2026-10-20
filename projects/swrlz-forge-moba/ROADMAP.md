@@ -1,3 +1,7 @@
+## 2026-10-20 · §E v11.61 adaptive context workbench — PREVIEW DRAFT ONLY
+
+Owner requested a secondary, movable split tool window: choose Lasso (or another primary tool), see its related operations, and set dynamic per-operation native inputs alongside them. New [PR #276](https://github.com/kaministrator999-ui/Swrlzkamico/pull/276) adds an opt-in **◫ Context** overlay to v11.60, user-triggered saved-value presets, and native input/action reuse with source-driven discovery for eight supported Model Atelier families. This is not yet an engine-wide replacement for Anime, game builders or timeline editors, which need separately tested adapters. Protected 283-part model, 43 packaged assets, v11.60 live seal/manifest and final deploy trigger remain unchanged. [Feature location, use, scope and release gates](reports/CONTEXT_WORKBENCH_V11_61_PREVIEW.md). Do not merge/deploy candidate as production without terminal preview and full governed release checks.
+
 ## 2026-10-20 · v11.60 LIVE PRODUCTION CLOSEOUT (post-release)
 
 **Current release: §wyrl§ Engine v11.60 is live.** This verified post-release receipt supersedes the historical *release candidate / not live until* status below; those original checkpoints remain intact.
