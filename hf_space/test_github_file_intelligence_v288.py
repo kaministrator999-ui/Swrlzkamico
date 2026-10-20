@@ -72,7 +72,7 @@ def test_language_parsing():
     assert [s["name"] for s in x["symbols"]] == ["Title", "Usage"]
     x = fi.parse_structure("config.json", '{"key": 1, "other": 2}')
     assert len(x["symbols"]) == 2
-    assert fi.candidates("src/a.ts", "../outside") == []
+    assert fi.candidates("src/a.ts", "../../outside") == []
     assert fi.candidates("src/main.py", ".helper") == ["src/helper.py", "src/helper/__init__.py"]
 
 
