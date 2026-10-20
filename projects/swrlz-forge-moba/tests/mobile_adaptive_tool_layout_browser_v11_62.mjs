@@ -14,7 +14,15 @@ try{
   assert(await rail.isVisible(),'The original category rail must exist');
   assert(!(await sheet.isVisible()),'Context starts closed');
   assert((await page.locator('#modelAtelierPartCount').innerText()).includes('283'),'canonical original mesh must be preserved');
-  await page.locator('#atelierContextToggle').click();
+  if(mobile){
+   const chrome=await page.evaluate(()=>{
+    const element=document.getElementById('atelierContextToggle');const r=element.getBoundingClientRect();
+    const top=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2);
+    return {toggle:{x:r.x,y:r.y,width:r.width,height:r.height},hit:top?.tagName+'#'+(top?.id||'')+'.'+(top?.className||''),inspectorZ:getComputedStyle(document.querySelector('.atelier-inspector')).zIndex,inspectorDisplay:getComputedStyle(document.querySelector('.atelier-inspector')).display};
+   });
+   console.log('MOBILE_CHROME_HIT',name,JSON.stringify(chrome));
+   await rail.getByRole('button',{name:'Open Lasso editing tools'}).click();
+  }else await page.locator('#atelierContextToggle').click();
   assert(await sheet.isVisible());
   if(mobile){
    assert(!(await page.locator('.atelier-inspector').isVisible()),'native inspector must not overlap the active sheet');
