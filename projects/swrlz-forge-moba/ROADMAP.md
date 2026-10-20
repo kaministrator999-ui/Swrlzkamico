@@ -1,3 +1,15 @@
+## 2026-10-20 · §E v11.61 contextual native tool workbench — GOVERNED RELEASE CANDIDATE
+
+**Not production live until final verified deploy.** Source adds an optional second split floating tool window. To find it: **Model Atelier → ⠿ Move tools → ◫ Context**. Pick a family in the right rail, a relevant operation on the left, and its native inputs/actions on the right. **Save my values / Apply saved values** are explicit per-operation presets. All original controls and projects remain accessible, with unchanged 283-part canonical model and 43 media assets.
+
+Eight native Model Atelier category families: Meshes, Sculpt, Lasso, Face, Topology, References, Motion, Appearance; only existing compatible controls are exposed. No other §E editor (Anime, timeline, game builders) adapter is yet implemented. 93 patches, v11.61 marker `V11_61_ADAPTIVE_CONTEXT_TOOL_WORKBENCH`, exact generated **2,958,383 bytes / SHA-256 `cd33b05e3e27304fe9d3e753e488d46fcb844841fd06e19b8058a81516e7d01e`**. [Desktop & Android browser preview PASS](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/39435151694) and [independent seal measurement PASS](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/39435615603). [Feature controls and location guide](https://github.com/kaministrator999-ui/Swrlzkamico/blob/feature/se-adaptive-context-workbench-v11-61/projects/swrlz-forge-moba/reports/CONTEXT_WORKBENCH_V11_61_PREVIEW.md).
+
+Release gates remaining: full production CI/regressions, merge, sole final `DEPLOY_REQUEST.json` trigger, terminal hosted deploy, 43-asset live audit, hosted desktop/Android tests. Historical v11.60 receipts below remain valid for that previous version.
+
+## 2026-10-20 · §E v11.61 adaptive context workbench — PREVIEW DRAFT ONLY
+
+Owner requested a secondary, movable split tool window: choose Lasso (or another primary tool), see its related operations, and set dynamic per-operation native inputs alongside them. New [PR #276](https://github.com/kaministrator999-ui/Swrlzkamico/pull/276) adds an opt-in **◫ Context** overlay to v11.60, user-triggered saved-value presets, and native input/action reuse with source-driven discovery for eight supported Model Atelier families. This is not yet an engine-wide replacement for Anime, game builders or timeline editors, which need separately tested adapters. Protected 283-part model, 43 packaged assets, v11.60 live seal/manifest and final deploy trigger remain unchanged. [Feature location, use, scope and release gates](reports/CONTEXT_WORKBENCH_V11_61_PREVIEW.md). Do not merge/deploy candidate as production without terminal preview and full governed release checks.
+
 ## 2026-10-20 · v11.60 LIVE PRODUCTION CLOSEOUT (post-release)
 
 **Current release: §wyrl§ Engine v11.60 is live.** This verified post-release receipt supersedes the historical *release candidate / not live until* status below; those original checkpoints remain intact.

@@ -8,13 +8,13 @@ dist=Path(a.package)
 m=json.loads((ROOT/'source-manifest.json').read_text())
 receipt=json.loads((dist/'SOURCE.json').read_text())
 source=(dist/'index.html').read_bytes()
-assert len(m['patches'])==92 and m['patches'][-1]=='patches/v11_60_floating_tool_dock.py'
+assert len(m['patches'])==93 and m['patches'][-1]=='patches/v11_61_context_workbench.py'
 assert len(receipt['assets'])==43 and receipt['patches']==m['patches']
 assert len(source)==m['finalBytes']==receipt['finalBytes']
 assert hashlib.sha256(source).hexdigest()==m['finalSha256']==receipt['finalSha256']
 html=source.decode('utf8')
-for needle in ('SWYRL_ENGINE_DEPLOY_MARKER: V11_60_FLOATING_MODEL_ATELIER_DOCK',
-               'Maker v11.60','modelAtelierPoseDeck','modelAtelierPoseSelect',
+for needle in ('SWYRL_ENGINE_DEPLOY_MARKER: V11_61_ADAPTIVE_CONTEXT_TOOL_WORKBENCH',
+               'Maker v11.61','modelAtelierPoseDeck','modelAtelierPoseSelect',
                'atelierApplyBuiltInPose','atelierApplySavedPose','atelierValidatedFrameStore',
                'modelAtelierPoseViewApply','modelAtelierMetricsBody'):
     assert needle in html,needle

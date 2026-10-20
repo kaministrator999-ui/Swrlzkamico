@@ -1,0 +1,48 @@
+name: Verify §E adaptive contextual tool workbench v11.61
+on:
+  pull_request:
+    paths:
+      - 'projects/swrlz-forge-moba/patches/v11_61_context_workbench_preview.py'
+      - 'projects/swrlz-forge-moba/patches/v11_61_context_workbench.py'
+      - 'projects/swrlz-forge-moba/source-manifest.json'
+      - 'projects/swrlz-forge-moba/tests/model_atelier_context_workbench_browser_v11_61.mjs'
+      - '.github/workflows/verify-atelier-context-v11-61.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: se-context-workbench-v1161
+  cancel-in-progress: true
+jobs:
+  desktop-and-android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Verify exact v11.61 production source and original model identity
+        run: |
+          set -euo pipefail
+          python projects/swrlz-forge-moba/scripts/verify_v11_61_release.py --output /tmp/atelier-context-v11-61
+          node --check /tmp/atelier-context-v11-61-module.mjs
+          node --check projects/swrlz-forge-moba/tests/model_atelier_context_workbench_browser_v11_61.mjs
+      - name: Install test browser
+        run: |
+          npm install --no-save playwright@1.56.1 three@0.169.0
+          npx playwright install --with-deps --only-shell chromium
+      - name: Run original editor and dynamic-context operations on desktop and Android
+        env:
+          SWYRL_SCULPT_TEST_URL: http://127.0.0.1:8787
+        run: |
+          python -m http.server 8787 --directory /tmp/atelier-context-v11-61 >/tmp/se-context-server.log 2>&1 &
+          PID=$!
+          trap 'kill "$PID" 2>/dev/null || true' EXIT
+          for i in $(seq 1 50); do
+            if curl -fsS http://127.0.0.1:8787/ >/dev/null; then break; fi
+            sleep .3
+          done
+          node projects/swrlz-forge-moba/tests/model_atelier_context_workbench_browser_v11_61.mjs
+          node projects/swrlz-forge-moba/tests/model_atelier_tool_dock_browser_v11_60.mjs

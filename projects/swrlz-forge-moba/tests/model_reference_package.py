@@ -3,7 +3,7 @@ import argparse,hashlib,json,re
 from pathlib import Path
 ap=argparse.ArgumentParser();ap.add_argument('--package',required=True);a=ap.parse_args()
 r=Path(__file__).resolve().parent.parent;out=Path(a.package);m=json.loads((r/'source-manifest.json').read_text());receipt=json.loads((out/'SOURCE.json').read_text());raw=(out/'index.html').read_bytes()
-assert len(m['patches'])==92 and m['patches'][-1]=='patches/v11_60_floating_tool_dock.py'
+assert len(m['patches'])==93 and m['patches'][-1]=='patches/v11_61_context_workbench.py'
 assert len(receipt['assets'])==43 and receipt['patches']==m['patches']
 assert len(raw)==m['finalBytes']==receipt['finalBytes'];assert hashlib.sha256(raw).hexdigest()==m['finalSha256']==receipt['finalSha256']
 source=r/'scenes/model-atelier-festival-anatomy-v11-20.swyrl.json';d=json.loads(source.read_text());model=d['project']['modelAtelier'];parts=model['parts'];rig=model['assemblies']
@@ -21,7 +21,7 @@ html=raw.decode();needle='const MODEL_ATELIER_CANONICAL_PROJECT=';assert html.co
 payload=html.split(needle,1)[1].lstrip()
 data,_=json.JSONDecoder().raw_decode(payload)
 assert data==d,'Production must preserve exact original 283-part anatomical project'
-for key in ['atelierSilkenLock','atelierTailoredPanel','V11_60_FLOATING_MODEL_ATELIER_DOCK','modelAtelierAssemblyDeck','atelierAssemblySample','atelierAssemblySaveKey','atelierValidateAssemblies','MODEL_ATELIER_LEGACY_V1112']:
+for key in ['atelierSilkenLock','atelierTailoredPanel','V11_61_ADAPTIVE_CONTEXT_TOOL_WORKBENCH','modelAtelierAssemblyDeck','atelierAssemblySample','atelierAssemblySaveKey','atelierValidateAssemblies','MODEL_ATELIER_LEGACY_V1112']:
  assert key in html,key
 baseline=json.loads((r/'tests/model_reference_baseline.json').read_text())
 for path,sha in baseline['sources'].items():assert hashlib.sha256((r/path).read_bytes()).hexdigest()==sha,path

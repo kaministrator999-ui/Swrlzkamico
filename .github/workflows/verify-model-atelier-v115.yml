@@ -1,4 +1,4 @@
-name: Verify v11.60 §E source seal
+name: Verify v11.61 §E source seal
 on:
   push:
     branches:
@@ -6,7 +6,7 @@ on:
   # Focus historical test on the sealed engine and the matching module.
   # Other candidate preview code uses dedicated CPU + browser suites.
   pull_request:
-    # Match precisely the 92 ordered patch dependencies in the sealed production manifest.
+    # Match precisely the 93 ordered patch dependencies in the sealed production manifest.
     # An unlisted opt-in preview patch must not restart the legacy CI suite.
     paths:
       - '.github/workflows/verify-model-atelier-v115.yml'
@@ -105,6 +105,7 @@ on:
       - 'projects/swrlz-forge-moba/patches/v11_20_anatomical_head.py'
       - 'projects/swrlz-forge-moba/patches/v11_59_precision_model_atelier.py'
       - 'projects/swrlz-forge-moba/patches/v11_60_floating_tool_dock.py'
+      - 'projects/swrlz-forge-moba/patches/v11_61_context_workbench.py'
   workflow_dispatch:
 concurrency:
   group: engine-ci-verify-model-atelier-v115-${{ github.event.pull_request.number || github.ref }}
@@ -120,7 +121,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Reconstruct and print exact v11.60 SHA
+      - name: Reconstruct and print exact v11.61 SHA
         shell: bash
         run: |
           python - <<'PY'
@@ -138,7 +139,7 @@ jobs:
           raw=html.encode('utf-8')
           print('V119_FINAL_BYTES='+str(len(raw)),flush=True)
           print('V119_FINAL_SHA256='+hashlib.sha256(raw).hexdigest(),flush=True)
-          assert 'V11_60_FLOATING_MODEL_ATELIER_DOCK' in html
+          assert 'V11_61_ADAPTIVE_CONTEXT_TOOL_WORKBENCH' in html
           assert 'modelAtelierLoftEditor' in html
           assert 'MODEL_ATELIER_LIMIT=1200' in html
           assert 'atelier-v117-0554' in html
