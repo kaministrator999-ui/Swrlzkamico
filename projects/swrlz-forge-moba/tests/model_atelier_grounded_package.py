@@ -9,14 +9,14 @@ m=json.loads((root/'source-manifest.json').read_text('utf8'))
 dist=Path(a.package)
 receipt=json.loads((dist/'SOURCE.json').read_text('utf8'))
 raw=(dist/'index.html').read_bytes()
-assert len(m['patches'])==91 and m['patches'][-1]=='patches/v11_59_precision_model_atelier.py'
+assert len(m['patches'])==92 and m['patches'][-1]=='patches/v11_60_floating_tool_dock.py'
 assert len(receipt['assets'])==43 and m['patches']==receipt['patches']
 assert len(raw)==receipt['finalBytes']==m['finalBytes']
 assert hashlib.sha256(raw).hexdigest()==m['finalSha256']==receipt['finalSha256']
 html=raw.decode('utf8')
-for x in ('V11_59_PRECISION_MODEL_ATELIER','modelAtelierPoseDeck',
+for x in ('V11_60_FLOATING_MODEL_ATELIER_DOCK','modelAtelierPoseDeck',
           'function atelierGroundedLeg(','function atelierGroundedFoot(',
-          'atelierGroundedStances','atelierFootParts','v11.59 · precision Model Atelier'):
+          'atelierGroundedStances','atelierFootParts','v11.60 · floating Model Atelier tools'):
     assert x in html,x
 assert 'function atelierBendNativeLeg(' not in html, 'Old rubber-knee logic survived'
 found=re.search(r'const MODEL_ATELIER_LEGACY_V1112=(.*?);\n(?=const MODEL_ATELIER_CANONICAL_PROJECT=)',html,re.S)
