@@ -14,9 +14,11 @@ CSS = r"""
  min-height:0!important;max-height:calc(100dvh - 110px)!important;
  display:flex;flex-direction:column;overflow-y:auto;overscroll-behavior:contain;
  border:1px solid #75a8c7;border-radius:12px;box-shadow:0 14px 36px #000a;
- background:#182640f2;padding:8px;gap:8px;flex:0 0 auto!important
+ background:#182640f2;padding:8px;gap:8px;flex:0 0 auto!important;
+ pointer-events:none
 }
 .model-atelier.atelier-tools-docked.atelier-tools-closed .atelier-inspector{display:none!important}
+.model-atelier.atelier-tools-docked .atelier-inspector :is(button,input,select,textarea,label,.atelier-tool-handle){pointer-events:auto}
 .model-atelier .atelier-tool-handle{position:sticky;z-index:8;top:-8px;margin:-8px -8px 2px;
  padding:7px 8px;background:#263d5e;display:flex;justify-content:space-between;
  align-items:center;gap:5px;touch-action:none;cursor:grab;user-select:none;
@@ -33,8 +35,8 @@ CSS = r"""
 .model-atelier .atelier-tool-rail button[aria-pressed="true"]{border-color:#65e9e4;background:#1d6475}
 .model-atelier .atelier-tool-rail button:focus-visible,.model-atelier .atelier-tool-handle button:focus-visible{outline:2px solid #7dffeb;outline-offset:1px}
 @media(max-width:900px),(pointer:coarse){
- .model-atelier.atelier-tools-docked .atelier-inspector{top:52px;right:58px;
-  width:min(390px,calc(100vw - 69px));height:min(75dvh,680px);
+ .model-atelier.atelier-tools-docked .atelier-inspector{top:auto;bottom:54px;right:58px;
+  width:min(390px,calc(100vw - 69px));height:min(48dvh,460px);
   max-height:calc(100dvh - 104px)!important}
  .model-atelier.atelier-tools-docked .atelier-scene{min-height:0!important}
 }
@@ -65,7 +67,7 @@ function atelierToolDockInstall(panel){
   ['Topology','#modelAtelierTopologyTools'],
   ['More','#modelAtelierInspectorControls']
  ];
- let open=!window.matchMedia('(max-width:900px), (pointer:coarse)').matches;
+ let open=true; // discoverable on first launch; one tap hides without shrinking canvas
  let lastChoice='Meshes';
  const buttons=[];
  function setOpen(value){
