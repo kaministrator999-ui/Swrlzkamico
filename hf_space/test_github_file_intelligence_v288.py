@@ -111,10 +111,66 @@ def test_collision_is_not_a_false_dependency():
     assert r["related"] == []
 
 
+
+
+def test_source_specialist_real_event_route():
+    """Test actual specialist events with an authorized but networkless provider."""
+    import github_source_specialist_v241 as specialist
+    from unittest.mock import patch
+
+    class Provider:
+        GITHUB_CAPABILITY_STAGE = "read-repository"
+
+        @staticmethod
+        def _config():
+            return {}
+
+        @staticmethod
+        def _load(_config, _user):
+            return {"token": "test-only", "repo": "example/demo"}
+
+        @staticmethod
+        def _repo_name(repo):
+            return repo
+
+        @staticmethod
+        def _effective_access(_record, _repo, operation):
+            assert operation == "read"
+            return {"allowed": True, "defaultBranch": "main"}
+
+        @staticmethod
+        def normalize_thread_context(_):
+            return None
+
+        @staticmethod
+        def _read_optional(_token, repo, path, sha, max_bytes):
+            assert repo == "example/demo" and sha == SHA
+            assert path not in (SECRET,)
+            assert path in SRC and len(SRC[path].encode()) <= max_bytes
+            return {"sha": fi.blob_sha(SRC[path]), "body": SRC[path]}
+
+    def coder(payload):
+        assert payload["githubPlanning"] is True
+        assert "PINNED STATIC GRAPH" in payload["prompt"]
+        assert "pkg/helper.py" in payload["prompt"]
+        yield {"type": "DELTA", "text": "The exact helper import resolves to the local file."}
+        yield {"type": "COMPLETED"}
+
+    request = {"prompt": "Analyze the GitHub source file pkg/main.py and its dependencies",
+               "userId": "google:owner", "githubContext": None}
+    with patch.object(specialist.explorer, "pinned_tree", return_value=TREE):
+        events = list(specialist.events(Provider, request, coder))
+    assert any(e.get("phase") == "GITHUB_FILE_INTELLIGENCE" for e in events), events
+    assert any("Exact tree dependencies" in e.get("text", "") for e in events)
+    assert any(e.get("phase") == "GITHUB_CODER_READ_ONLY" for e in events)
+    assert events[-1].get("phase") == "COMPLETE"
+
+
 if __name__ == "__main__":
     test_ast_dependency_and_plan()
     test_language_parsing()
     test_preflight_and_uncertainty()
     test_other_blob_is_not_read()
     test_collision_is_not_a_false_dependency()
+    test_source_specialist_real_event_route()
     print("v288 file intelligence: static parsing, SHA, scenarios, boundaries PASS")
