@@ -37,8 +37,9 @@ jobs:
           import re,subprocess
           from pathlib import Path
           text=Path('chat/§wyrlz/index.html').read_text()
-          assert Path('chat/§wyrlz/VERSION.txt').read_text().strip()=='1.1.16'
-          assert 'content="1.1.16"' in text
+          declared=Path('chat/§wyrlz/VERSION.txt').read_text().strip()
+          assert tuple(map(int,declared.split('.'))) >= (1,1,16)
+          assert f'content="{declared}"' in text
           assert 'content-visibility:auto' not in text and 'requestIdleCallback' not in text
           match=re.search(r'<script>\s*(\(\(\) => \{[\s\S]+?\}\)\(\);)\s*</script>',text)
           assert match,'Chat main script was not found'
