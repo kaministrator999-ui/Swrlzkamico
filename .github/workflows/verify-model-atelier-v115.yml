@@ -1,4 +1,4 @@
-name: Verify v11.61 §E source seal
+name: Verify v11.62 §E source seal
 on:
   push:
     branches:
@@ -121,7 +121,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Reconstruct and print exact v11.61 SHA
+      - name: Reconstruct and print exact v11.62 SHA
         shell: bash
         run: |
           python - <<'PY'
@@ -139,7 +139,8 @@ jobs:
           raw=html.encode('utf-8')
           print('V119_FINAL_BYTES='+str(len(raw)),flush=True)
           print('V119_FINAL_SHA256='+hashlib.sha256(raw).hexdigest(),flush=True)
-          assert 'V11_61_ADAPTIVE_CONTEXT_TOOL_WORKBENCH' in html
+          assert hashlib.sha256(raw).hexdigest()==manifest['finalSha256'] and len(raw)==manifest['finalBytes']
+          assert 'V11_62_MOBILE_ADAPTIVE_TOOL_SHEET' in html
           assert 'modelAtelierLoftEditor' in html
           assert 'MODEL_ATELIER_LIMIT=1200' in html
           assert 'atelier-v117-0554' in html
