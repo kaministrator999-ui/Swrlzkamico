@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.59",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_59_PRECISION_MODEL_ATELIER",
-  "reason": "Owner reports the live editor STILL visibly shows v11.20 after v11.59 source deployment. Independent hosted binary inspection located THREE genuinely stale production UI entries: ENGINE · MAKER v11.20 root banner, v11.20 · anatomical head studio Model Atelier subtitle, and SWRLZ_FORGE_BUILD.version='v11.20' runtime. PR #272 fixed those three labels to v11.59, preserving serialized original 283-part canonical project and 43 historical assets. All 39 checks on the exact PR head completed successfully, including both desktop/mobile native Model Atelier and historical games and precision tool matrix. Merged source main commit ab3d779cca8cb837464d93bae7d796f7b15cb806. The independently measured HTML has 2,927,005 bytes, SHA-256 f4d72c72a5fc4ee90c921198d7086b5898b89941de3efadd7f52c063d3dab0b3, using 91 ordered patches, and the Hugging Face static normalization verifier from PR #271 remains present. This DEPLOY_REQUEST.json update is the only and LAST intended main mutation to publish corrected live labels. Require terminal deployment and independent audited exact SHA/SOURCE.json/all-assets success, hosted desktop/mobile acceptance, and live banner/panel/runtime label confirmation. Owner appearance acceptance remains separate.",
-  "sourceCommit": "ab3d779cca8cb837464d93bae7d796f7b15cb806",
-  "sourceIntegritySha256": "f4d72c72a5fc4ee90c921198d7086b5898b89941de3efadd7f52c063d3dab0b3"
+  "releaseVersion": "v11.60",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_60_FLOATING_MODEL_ATELIER_DOCK",
+  "reason": "Owner requested moving hard-to-find bottom-half phone modeling controls into a draggable floating inspector with a persistent vertical category rail. PR #273 merged after all 14 v11.60 release workflows passed, including actual desktop and Android dock interactions, the exact 92-patch source seal, preserved 283-part original character, all 43 bundled source assets, full historical precision suites against the sealed v11.59 fixture, and 22 native starter browser suites. Production source merge commit 67f835019f850788cc4b4eddf9ca57729e1c11ac; rebuilt v11.60 HTML measures 2,933,954 bytes with SHA-256 fe11e3e748184db1797ef66bc327f7867a25f91d431823a4c8794f157117d97f. This DEPLOY_REQUEST.json update is the sole final intended main mutation for this release. Do not declare deployed until the terminal Hugging Face upload, exact live normalized HTML and SOURCE/43 assets audit, and hosted editor banner/rail/version checks succeed.",
+  "sourceCommit": "67f835019f850788cc4b4eddf9ca57729e1c11ac",
+  "sourceIntegritySha256": "fe11e3e748184db1797ef66bc327f7867a25f91d431823a4c8794f157117d97f"
 }
