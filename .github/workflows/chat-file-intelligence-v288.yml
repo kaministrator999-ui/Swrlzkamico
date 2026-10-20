@@ -27,6 +27,8 @@ jobs:
           python-version: '3.11'
       - name: Compile both file intelligence modules
         run: python -m py_compile hf_space/github_file_intelligence_v288.py hf_space/github_source_specialist_v241.py
+      - name: Install lightweight specialist dependencies
+        run: python -m pip install 'fastapi>=0.110,<1'
       - name: Verify scenario, AST, graph, SHA and secret boundaries
         run: python hf_space/test_github_file_intelligence_v288.py
       - name: Verify source specialist integration is read-only
