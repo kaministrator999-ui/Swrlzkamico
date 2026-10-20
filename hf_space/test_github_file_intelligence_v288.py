@@ -118,8 +118,14 @@ def test_source_specialist_real_event_route():
     import github_source_specialist_v241 as specialist
     from unittest.mock import patch
 
+    class MockCodeContext:
+        @staticmethod
+        def _code_context(body, goal, limit):
+            return body[:limit]
+
     class Provider:
         GITHUB_CAPABILITY_STAGE = "read-repository"
+        engine_code_agent_v217 = MockCodeContext
 
         @staticmethod
         def _api(*args, **kwargs):
