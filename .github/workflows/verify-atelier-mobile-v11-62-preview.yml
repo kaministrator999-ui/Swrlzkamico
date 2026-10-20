@@ -58,6 +58,7 @@ jobs:
         env:
           SWYRL_MOBILE_TEST_URL: http://127.0.0.1:8794
           SWYRL_SCULPT_TEST_URL: http://127.0.0.1:8794
+          SWYRL_DOCK_DESKTOP_ONLY: '1'
         run: |
           python -m http.server 8794 --directory /tmp/se-mobile-preview >/tmp/se-mobile-server.log 2>&1 &
           PID=$!
