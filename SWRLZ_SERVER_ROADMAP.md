@@ -1,3 +1,17 @@
+## UPDATE STARTED — 2026-10-20 — v238 retrospective closure and HF release-source reconciliation
+
+**Owner request:** Reconcile the orphaned October 13 v238 Chat progress activity journal, stale draft PR evidence, and the divergence between the legacy Hugging Face candidate branch and the v287 production release source. Preserve the current Chat product, all historic Forge changes, original failure/release receipts and both branches.
+
+**Current authority:** `main:SWRLZ_SERVER_ROADMAP.md` blob `9c6953010114ee4ba2c4d5821fda49b455076521`; `runtime:versions/repository-work.txt` 1.0.224; Web Chat 1.5.154, Server Runtime 2.3.435, LALM Engine 2.1.201. Canonical main deployment request SOURCE_REF=`8087d511fd609e93cfad5d74932c952969405b90`; successful guarded HF request run 39163488634 published revision `820182dbde84220d0afeb78455c6bc6d32edc7e7`, but signed-in Android behavioral acceptance remains open.
+
+**Evidence:** v238 [draft PR #148](https://github.com/kaministrator999-ui/Swrlzkamico/pull/148) is still open, yet `hf_space/progress_timeline_v238.py` and `hf_space/test_progress_timeline_v238.py` have exactly matching Git blobs in its source `3cfd48af92b7a5fc21c816087a13ec6913921f7c` and v287 published Git source `8087d511fd609e93cfad5d74932c952969405b90`; that production source's Station timestamps/progressTrace projection and clean-room Chat progressTrace renderer are present. Later v239/v240 release records are production evidence that the feature chain advanced beyond v238; historical PR closure/merge state is not production activation authority. The legacy `feature/hf-space-manual-deploy` head `c0340c4224f3171514476d2c7df7cc7dc5e2fc32` diverges from the v287 pinned source (comparison: 2 unique branch commits, 789 commits behind); no branch reset, force-push or merge is justified.
+
+**Plan:** Add a retrospective v238 terminal journal marker without rewriting its original STARTED record; align the canonical deployment-guide source-ref wording with actual SHA-pinned guarded release practice; advance Repository Work by one documentation/governance tier only after fresh concurrency checks; preserve all Chat/Server/LALM/manifest versions, v287 deploy gate, both feature branches and independent Forge lane. No deployment or active runtime change.
+
+**Status:** STARTED / documentation-only / no production mutation.
+
+---
+
 ## UPDATE FINISHED — 2026-10-18 — v287 Android Chat scroll DOM reuse and paint stabilization
 
 **Observed owner problem:** During fast up/down scrolling of signed-in Android Chrome §wyrlz Chat history, all previous responses seemed to render in visible chunks and somewhat slowly; owner screenshot shows the y=x²−4 graph mid-viewport over the large dragon wallpaper. This is valid owner-reported performance evidence, not isolated proof of the Android GPU tile-paint cause.
