@@ -16,7 +16,7 @@ The tail contains readable text and a three-dot animation marked decorative to a
 
 ## Tests
 
-- `tests/test_chat_live_response_cue_v290.cjs` uses a synthetic real browser Station snapshot: pre-token, active streaming, Android 390px card, no overflow, reduced motion, terminal and historical hydration, cancelled/failed terminal cues.
+- `tests/test_chat_live_response_cue_v290.cjs` uses a synthetic real browser Station snapshot: pre-token, active streaming, Android 390px card, no overflow, reduced motion, a real active-to-terminal transition and historical hydration. COMPLETE, FAILED and CANCELLED use the same audited `g.terminal` condition; this fixture does not simulate unsupported new-request transitions without a send ACK.
 - Existing v170 response-start anchor and v287 scroll DOM reuse tests remain required.
 - `.github/workflows/chat-live-response-cue-v290.yml` runs Node syntax, static contract and Chromium in the exact Chat document.
 - A green browser test is independent of later signed-in Android user acceptance.
