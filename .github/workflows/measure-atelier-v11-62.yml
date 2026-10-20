@@ -2,6 +2,14 @@ name: Measure §E v11.62 release candidate independently
 on:
   pull_request:
     paths:
+      - 'projects/swrlz-forge-moba/build_space.py'
+      - 'projects/swrlz-forge-moba/payload/**'
+      - 'projects/swrlz-forge-moba/patches/**'
+      - 'projects/swrlz-forge-moba/runtime/**'
+      - 'projects/swrlz-forge-moba/SPACE_README.md'
+      - 'projects/swrlz-forge-moba/assets/**'
+      - 'projects/swrlz-forge-moba/scenes/**'
+      - 'projects/swrlz-forge-moba/episodes/**'
       - 'projects/swrlz-forge-moba/patches/v11_62_mobile_adaptive.py'
       - 'projects/swrlz-forge-moba/patches/v11_62_mobile_adaptive_preview.py'
       - 'projects/swrlz-forge-moba/scripts/measure_v11_62_release.py'
