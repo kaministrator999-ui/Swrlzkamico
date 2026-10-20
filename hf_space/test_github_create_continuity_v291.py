@@ -75,7 +75,9 @@ class FailedCreateContinuity(unittest.TestCase):
 
     def rename_confirm(self, user, token, approved):
         self.calls.append(("confirm-rename", user, token, approved))
-        return {"sourcePath": "src/old.py", "destinationPath": "src/new.py",
+        return {"ok": True, "verified": True, "atomic": True, "overwrite": False,
+                "operation": "RENAME_FILE", "mode": "100644", "blobSha": "a"*40,
+                "sourcePath": "src/old.py", "destinationPath": "src/new.py",
                 "repo": REPO, "branch": "main", "commitSha": "c"*40,
                 "commitUrl": "https://github.com/" + REPO + "/commit/" + "c"*40}
 
@@ -115,7 +117,7 @@ class FailedCreateContinuity(unittest.TestCase):
     def test_continue_explicitly_does_not_claim_existing_file_was_created(self):
         response = c.handle(USER, THREAD, "Still create the new file", history=failed_create_history())
         self.assertIn("What name", response["text"])
-        self.assertIn("Nothing changed", response["text"])
+        self.assertIn("nothing changed", response["text"])
         self.assertEqual(self.calls, [])
 
     def test_conflict_does_not_count_as_verified_receipt(self):
