@@ -449,10 +449,47 @@ def _new_create_path(original, new_name):
     return safe_path(result)
 
 
+
+# Questions about the supposedly created file must consult GitHub evidence.
+_CREATE_STATUS_CHECK = re.compile(r"^\s*(?:was|is|has|did)\b", re.I)
+
+
+def _is_create_status_check(prompt):
+    return (isinstance(prompt, str)
+            and bool(_CREATE_STATUS_CHECK.search(prompt))
+            and bool(re.search(r"\b(?:file|created|creation)\b", prompt, re.I)))
+
+
+def _last_create_target(history, original):
+    for message in reversed((history or [])[-12:]):
+        if isinstance(message, dict) and message.get("role") == "user":
+            target = _retarget_file_name(message.get("text"))
+            if target:
+                return _new_create_path(original, target)
+    return original
+
+
+def _verify_create_status(user_id, history, original):
+    try:
+        target = _last_create_target(history, original)
+        auth, entries, _ = _read_tree(user_id)
+        if target in entries and entries[target].get("type") == "blob":
+            return _out("GitHub currently contains " + _clean_label(target) +
+                        ", but this conversation has no verified CREATE_FILE receipt proving "
+                        "the earlier attempt created it. I will not claim that write succeeded.")
+        return _out("Checked " + _clean_label(auth["repo"]) + " (" +
+                    _clean_label(auth["branch"]) + "): " + _clean_label(target) +
+                    " does not exist. The earlier creation was not confirmed. " +
+                    "The original conflicting file was not renamed or overwritten.")
+    except CreateFileError as exc:
+        return _out(_user_friendly_failure(exc))
+
+
 def is_create_continuation(prompt, history):
     if not _trusted_failed_create(history):
         return False
-    return bool(_retarget_file_name(prompt) or _STILL_CREATE.fullmatch(str(prompt or "")))
+    return bool(_retarget_file_name(prompt) or _STILL_CREATE.fullmatch(str(prompt or ""))
+                or _is_create_status_check(prompt))
 
 
 def handle(user_id,thread_id,prompt,context=None,history=None):
@@ -462,6 +499,8 @@ def handle(user_id,thread_id,prompt,context=None,history=None):
     # A failed CREATE_FILE is an unfinished task. A short "name it X" changes
     # only its target filename, not the operation or the original file.
     previous_create = _trusted_failed_create(history)
+    if previous_create and _is_create_status_check(prompt):
+        return _verify_create_status(user_id, history, previous_create[0])
     if previous_create and _retarget_file_name(prompt):
         original_path, original_content = previous_create
         try:
