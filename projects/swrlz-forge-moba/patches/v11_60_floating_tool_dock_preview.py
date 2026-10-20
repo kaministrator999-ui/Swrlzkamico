@@ -18,7 +18,7 @@ CSS = r"""
  pointer-events:none
 }
 .model-atelier.atelier-tools-docked.atelier-tools-closed .atelier-inspector{display:none!important}
-.model-atelier.atelier-tools-docked .atelier-inspector :is(button,input,select,textarea,label,.atelier-tool-handle){pointer-events:auto}
+.model-atelier.atelier-tools-docked .atelier-inspector :is(button,input,select,textarea,label,summary,a,[role="button"],.atelier-tool-handle){pointer-events:auto}
 .model-atelier .atelier-tool-handle{position:sticky;z-index:8;top:-8px;margin:-8px -8px 2px;
  padding:7px 8px;background:#263d5e;display:flex;justify-content:space-between;
  align-items:center;gap:5px;touch-action:none;cursor:grab;user-select:none;
