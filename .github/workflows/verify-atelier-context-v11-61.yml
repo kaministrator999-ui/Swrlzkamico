@@ -3,6 +3,8 @@ on:
   pull_request:
     paths:
       - 'projects/swrlz-forge-moba/patches/v11_61_context_workbench_preview.py'
+      - 'projects/swrlz-forge-moba/patches/v11_61_context_workbench.py'
+      - 'projects/swrlz-forge-moba/source-manifest.json'
       - 'projects/swrlz-forge-moba/tests/model_atelier_context_workbench_browser_v11_61.mjs'
       - '.github/workflows/verify-atelier-context-v11-61.yml'
   workflow_dispatch:
@@ -21,32 +23,10 @@ jobs:
         with: {python-version: '3.11'}
       - uses: actions/setup-node@v4
         with: {node-version: '22'}
-      - name: Rebuild exact sealed v11.60 and apply opt-in contextual overlay
+      - name: Verify exact v11.61 production source and original model identity
         run: |
           set -euo pipefail
-          python projects/swrlz-forge-moba/build_space.py --output /tmp/atelier-context-v11-61
-          python - <<'PY'
-          from pathlib import Path
-          import runpy,re,json,hashlib
-          root=Path('projects/swrlz-forge-moba')
-          p=Path('/tmp/atelier-context-v11-61/index.html')
-          old=p.read_text(encoding='utf-8')
-          manifest=json.loads((root/'source-manifest.json').read_text())
-          assert len(old.encode())==manifest['finalBytes']
-          assert hashlib.sha256(old.encode()).hexdigest()==manifest['finalSha256']
-          before=old.split('const MODEL_ATELIER_CANONICAL_PROJECT=',1)[1].split(';',1)[0]
-          patch=runpy.run_path(str(root/'patches/v11_61_context_workbench_preview.py'))
-          new=patch['apply'](old)
-          after=new.split('const MODEL_ATELIER_CANONICAL_PROJECT=',1)[1].split(';',1)[0]
-          assert before==after,'Owner canonical model data changed'
-          assert new.count('atelierAdaptiveInstall(panel);')==2  # direct hook + one-time lazy attachment
-          assert new.count('SWYRL_ENGINE_DEPLOY_MARKER: V11_60_FLOATING_MODEL_ATELIER_DOCK')==1
-          p.write_text(new,encoding='utf-8')
-          start=new.index('<script type="module">')+len('<script type="module">')
-          end=new.rindex('</script>')
-          Path('/tmp/atelier-context-v11-61-module.mjs').write_text(new[start:end],encoding='utf-8')
-          print('CONTEXT_PREVIEW_BUILT',len(new.encode()),hashlib.sha256(new.encode()).hexdigest())
-          PY
+          python projects/swrlz-forge-moba/scripts/verify_v11_61_release.py --output /tmp/atelier-context-v11-61
           node --check /tmp/atelier-context-v11-61-module.mjs
           node --check projects/swrlz-forge-moba/tests/model_atelier_context_workbench_browser_v11_61.mjs
       - name: Install test browser
