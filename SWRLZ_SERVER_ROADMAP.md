@@ -1,3 +1,11 @@
+## UPDATE STARTED — 2026-10-20 — v288 File Intelligence Engine v1 (read-only GitHub analysis)
+
+**User intent:** Add automatic structural file analysis, bounded cross-file dependency tracing and goal/scenario selection to existing §wyrlz AI Chat, without bespoke scenario training or GitHub write-scope expansion.
+
+**Scope/owner:** Chat/HF source at published immutable v287 source `8087d511fd609e93cfad5d74932c952969405b90`; isolated `feature/chat-file-intelligence-v288`. Keep §E/Forge, alternate test repository `Swrlzing-core`, model weights and OAuth permission policy untouched. Preserve single-file specialist existing behavior while adding verified, bounded dependency evidence. Primary code and tests: `hf_space/github_file_intelligence_v288.py`, `hf_space/github_source_specialist_v241.py`, `hf_space/test_github_file_intelligence_v288.py` and scoped CI.
+
+**Acceptance gates:** Verify source and related Git blobs by content SHA against a complete pinned Git tree; bound related reads and token budget; reject secrets/traversal/unsupported files; distinguish resolved imports from unknown imports; select analysis plans deterministically from user intent; retain old specialist routing and fallback; run static and regression checks and controlled CI before release. An accepted source PR is not proof of live Android behavior. No production deploy or version bump from this STARTED checkpoint.
+
 ## UPDATE FINISHED — 2026-10-20 — v238 and Hugging Face source-ref reconciliation (governance only)
 
 **Outcome:** Resolved the orphaned v238 October 13 STARTED entry via the explicit retrospective FINISHED marker near the original entry; preserved its unaltered history. Confirmed original v238 implementation/test Git blob identities in v287 guarded published source, and closed obsolete [PR #148](https://github.com/kaministrator999-ui/Swrlzkamico/pull/148) as *unmerged, superseded* with source-history comment while preserving its branch, its dependent v239 draft PR #151 and independent Forge work.
