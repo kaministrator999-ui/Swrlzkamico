@@ -1,0 +1,113 @@
+name: Test §E v11.75 components once
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/patches/v11_75_component_edit.py"
+      - "projects/swrlz-forge-moba/scripts/test_v11_75_components.mjs"
+permissions:
+  contents: read
+jobs:
+  component-editor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Assemble v11.75 candidate preserving native source
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import base64,gzip,hashlib,importlib.util,json
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          mf=json.loads((root/'source-manifest.json').read_text())
+          raw=gzip.decompress(base64.b64decode(''.join((root/p).read_text().strip() for p in mf['chunks'])))
+          assert hashlib.sha256(raw).hexdigest()==mf['baseSha256']
+          html=raw.decode()
+          for i,path in enumerate(mf['patches']+['patches/v11_75_component_edit.py']):
+              spec=importlib.util.spec_from_file_location('patch'+str(i),root/path)
+              mod=importlib.util.module_from_spec(spec);spec.loader.exec_module(mod);html=mod.apply(html)
+          data=html.encode()
+          print('SWRLZ_V1175_FINAL_BYTES='+str(len(data)),flush=True)
+          print('SWRLZ_V1175_FINAL_SHA256='+hashlib.sha256(data).hexdigest(),flush=True)
+          print('SWRLZ_V1175_PATCH_COUNT='+str(len(mf['patches'])+1),flush=True)
+          assert html.count('SWYRL_ENGINE_DEPLOY_MARKER: V11_75_COMPONENT_EDIT_FOUNDATIONS')==1
+          Path('/tmp/v1175.mjs').write_text(html.split('<script type="module">',1)[1].rsplit('</script>',1)[0])
+          Path('/tmp/v1175.html').write_text(html)
+          PY
+          node --check /tmp/v1175.mjs
+          echo SWRLZ_V1175_SOURCE_SYNTAX_PASS
+      - name: Install Chromium driver
+        run: npm install --no-save --prefix /tmp/swyrl-browser-test playwright@1.56.0
+      - name: Test vertex edge face transforms and history
+        run: |
+          set -euo pipefail
+          CHROME_BIN="$(command -v google-chrome-stable || command -v google-chrome || command -v chromium || true)"
+          if [ -z "$CHROME_BIN" ]; then
+            /tmp/swyrl-browser-test/node_modules/.bin/playwright install chromium
+            CHROME_BIN="$(find "$HOME/.cache/ms-playwright" -type f -name chrome -path '*chrome-linux*' | head -1)"
+          fi
+          test -x "$CHROME_BIN"
+          export CHROME_BIN
+          python - <<'PY'
+          from pathlib import Path
+          html=Path('/tmp/v1175.html').read_text()
+          instrument="""window.__componentTest={
+           ready:()=>!!(renderer&&modelRoot&&model()?.parts?.length&&
+              document.querySelector('[data-component-controls]')),
+           scene:()=>({parts:model().parts.length,
+              meshes:modelRoot?.children.filter(m=>m.isMesh).length,
+              controls:!!document.querySelector('[data-component-controls]')}),
+           pick:()=>{const p=model().parts.find(p=>/anatomical head/i.test(p.name))||
+              model().parts.find(p=>/bodice/i.test(p.name))||model().parts[0];
+              select(p.id);return p.name;},
+           topology:()=>{const v=atelierComponentTopologyForActive();
+              return {vertices:v.topology.vertices.length,edges:v.topology.edges.length,
+               faces:v.topology.tri.length,overlay:!!atelierComponentOverlay};},
+           choose:i=>atelierComponentChoose(i),
+           state:()=>{
+              const top=atelierComponentTopologyForActive()?.topology;
+              return {mode:atelierComponentMode,selected:[...atelierComponentIds],
+                 expanded:top?atelierComponentIndices(top).length:0,
+                 hasGizmo:!!atelierMeshGizmo,
+                 multi:atelierComponentMulti};
+           },
+           affected:()=>{
+             const v=atelierComponentTopologyForActive();
+             const ids=atelierComponentIndices(v.topology);
+             const a=v.mesh.geometry.attributes.position;
+             return {ids,positions:ids.map(i=>[a.getX(i),a.getY(i),a.getZ(i)])};
+           },
+           modelEdits:()=>({count:(partById(selection)?.sculptVertexEdits||[]).length}),
+           save:()=>structuredClone(model()),
+           undo:()=>historyStep(true),
+           redo:()=>historyStep(false),
+           region:()=>{
+             const v=atelierComponentTopologyForActive();
+             const p=atelierComponentScreen(v.mesh,v.topology.vertices[0]);
+             const box=[{x:p.x-20,y:p.y-20},{x:p.x+20,y:p.y+20}];
+             const lasso=[{x:p.x-20,y:p.y-20},{x:p.x+20,y:p.y-20},
+               {x:p.x+20,y:p.y+20},{x:p.x-20,y:p.y+20}];
+             return {box:atelierComponentRegionPick(box,'box').length,
+               lasso:atelierComponentRegionPick(lasso,'lasso').length};
+           },
+           mobile:()=>{
+             const root=document.querySelector('[data-component-controls]');
+             const buttons=[...root.querySelectorAll('[data-component-mode]')];
+             return {modeButtons:buttons.length,
+               minHeight:Math.min(...buttons.map(x=>x.getBoundingClientRect().height)),
+               visible:root.getBoundingClientRect().width>0};
+           }
+          };"""
+          anchor='function atelierMeshGizmoDown(e){'
+          assert html.count(anchor)==1
+          html=html.replace(anchor,instrument+'\n'+anchor,1)
+          directory=Path('/tmp/component-v1175');directory.mkdir(exist_ok=True)
+          (directory/'index.html').write_text(html)
+          PY
+          python -m http.server 8765 --bind 127.0.0.1 --directory /tmp/component-v1175 >/tmp/v1175-http.log 2>&1 &
+          sleep 2
+          node projects/swrlz-forge-moba/scripts/test_v11_75_components.mjs
