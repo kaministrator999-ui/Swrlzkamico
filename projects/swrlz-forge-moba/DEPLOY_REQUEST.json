@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.75",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_75_COMPONENT_EDIT_FOUNDATIONS",
-  "reason": "§§§ owner-requested §E v11.75 component geometry editing on mobile. Adds Mesh/Vertex/Edge/Face selection with tapped components, Multi/Box/Lasso and overlays. Native Move/Rotate/Scale plus precision nudges deform real selected indexed vertices, persisted to existing sculptVertexEdits and Undo/Redo / JSON/OBJ paths; bounding-safe live preview avoids pre-release snapping and skips per-pointer full-mesh normal recompute. Touch raycast chooses visible triangle and adjacent components instead of scanning all edges, preserving 283 source parts, v11.74 non-destructive groups, materials and 43 assets. Real Chromium native head regression pass https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/39664122664 including saved vertex/nudge/drag, Undo/Redo, edge/face selection, Multi/Box/Lasso, phone-size controls. Source 107 patches, final HTML 3,083,471 bytes, SHA-256 910e4565727243256154adb8707bf0eaff9021338860b5b34146d04cc02474d1. Verify exact hosted build and every asset; owner Android acceptance pending.",
-  "sourceCommit": "eb94ddc34740afe71243d2af48cebe41a4ef3cdf",
-  "sourceIntegritySha256": "910e4565727243256154adb8707bf0eaff9021338860b5b34146d04cc02474d1"
+  "releaseVersion": "v11.76",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_76_DESKTOP_MODELING_REPAIR",
+  "reason": "§§§ owner-requested §E v11.76 responsive PC Model Atelier fixes after full-screen photographic inspection: desktop mouse gizmo pointer-lock accumulates unbounded relative movement while respecting native transform limits, removing fixed per-drag 3× scale ceiling; scale commits trigger one full procedural redraw so piñata/hair meshes visibly scale immediately, rather than only after Undo; high-density whole-model wireframe draws dim unrelated wires and bright selected mesh with optional real sampled vertex dots (1,677 on tested lock), wire controls stay accessible above mesh dialog; wheel, zoom buttons and pinch support closer camera 0.16 near 0.018. Original 283 source meshes, existing project history and 43 bundled assets preserved. Real Chromium source run https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/39674744767 verified selected Rear dyed lock scale candidate 9×, immediate scale update, Undo/Redo, selectable wire overlays, vertex controls, closer camera. Seal 108 ordered patches, final HTML 3,091,496 bytes SHA-256 ae0764bcdaef131a8d404b43ca20b4a3b6ed9bad66897709919b6f3f1bccf1ef. Owner PC mouse and piñata-specific manual acceptance still pending. Verify live hosted exact HTML SOURCE.json and all 43 assets.",
+  "sourceCommit": "dfe93245376637295474ae91143f3014df3842ab",
+  "sourceIntegritySha256": "ae0764bcdaef131a8d404b43ca20b4a3b6ed9bad66897709919b6f3f1bccf1ef"
 }
