@@ -1,13 +1,6 @@
 name: Audit exact §E hosted release
 on:
-  pull_request:
-    branches: [main]
   workflow_dispatch:
-  workflow_run:
-    # Keep this exact workflow name aligned with deploy-swrlz-forge-moba.yml.
-    workflows: ["Deploy §wyrl§ Engine to Hugging Face"]
-    types: [completed]
-    branches: [main]
 permissions:
   contents: read
   actions: read

@@ -16,7 +16,7 @@ This agreement supersedes older §E notes that treated 18+ automatic regression 
 - **Normal source pushes and PR updates:** Do **not** auto-launch the historical Model Atelier, Sheep Tag, Maul, Anime, or 22-case starter browser suites.
 - **Optional deeper tests:** Existing `verify-*`, `preview-*` and `measure-*` engine workflows retain **`workflow_dispatch`** for manual, situation-specific investigations and substantial/high-risk changes. They must not block ordinary owner-directed deployment by default.
 - **Deployment:** The dedicated deploy workflow alone is triggered by changes to `DEPLOY_REQUEST.json`; it still performs minimal packaging/source integrity and exact served-artifact checks, not a pre-deployment marathon of unrelated project starters.
-- **After deployment:** Existing read-only hosted audits that follow an engine deployment may continue; they are release-integrity checks, not permission gates preventing user testing.
+- **After deployment:** Do not automatically start hosted browser or full-asset verification workflows. The deployment workflow itself verifies exact served source and assets; extended hosted tests are available by manually dispatching `verify-engine-character-live.yml` or `verify-swrlz-v8-9-live-receipt.yml`. The owner performs hands-on UX acceptance.
 - **Failures:** If a build/deploy check fails, fix that concrete issue and retry. Never bypass source-integrity checks or silently rewrite the owner's project.
 - **No background promises:** Run the requested workflow in the active session, report actual GitHub/HF state, and distinguish committed, deployed and owner-tested.
 
