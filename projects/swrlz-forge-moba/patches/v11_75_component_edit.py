@@ -55,11 +55,9 @@ def apply(html):
     html=once(html,' atelierGroupsInstall(panel);',
       ' atelierGroupsInstall(panel);\n atelierComponentInstall();')
     # Release resources and stale state when the editor closes.
-    html=once(html,
-      '  function close(){\n    atelierMeshGizmoCancel();',
-      '  function close(){\n    atelierComponentCancel();atelierComponentOverlayClear();\n'
-      "    atelierComponentMode='mesh';atelierComponentIds=[];atelierComponentPartId=null;\n"
-      '    atelierMeshGizmoCancel();')
+    html=once(html,'  function close(){',
+      "  function close(){\\n    atelierComponentCancel();atelierComponentOverlayClear();\\n"
+      "    atelierComponentMode='mesh';atelierComponentIds=[];atelierComponentPartId=null;\\n")
     assert '</head>' in html
     html=html.replace('</head>','<style id="atelierComponentsV1175">'+css+'</style>\n</head>',1)
     for old,new in (

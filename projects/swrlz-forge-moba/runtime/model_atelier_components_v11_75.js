@@ -290,6 +290,7 @@ function atelierComponentRegionPick(points,tool){
 }
 function atelierComponentPointerDown(e){
  if(atelierComponentMode==='mesh'||e.button!==0)return false;
+ if(atelierComponentGizmoDown(e))return true;
  atelierComponentGesture={pointerId:e.pointerId,startX:e.clientX,startY:e.clientY,
   points:[{x:e.clientX,y:e.clientY}],moved:false};
  try{renderer.domElement.setPointerCapture(e.pointerId)}catch(_){}
@@ -297,6 +298,7 @@ function atelierComponentPointerDown(e){
  return true;
 }
 function atelierComponentPointerMove(e){
+ if(atelierComponentDrag)return atelierComponentGizmoMove(e);
  const d=atelierComponentGesture;
  if(!d||d.pointerId!==e.pointerId)return false;
  if(Math.hypot(e.clientX-d.startX,e.clientY-d.startY)>5)d.moved=true;
@@ -308,6 +310,7 @@ function atelierComponentPointerMove(e){
  return true;
 }
 function atelierComponentPointerUp(e){
+ if(atelierComponentDrag)return atelierComponentGizmoUp(e);
  const d=atelierComponentGesture;
  if(!d||d.pointerId!==e.pointerId)return false;
  atelierComponentGesture=null;
