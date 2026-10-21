@@ -1,0 +1,105 @@
+name: Test §E v11.74 reversible mesh assemblies once
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/patches/v11_74_mesh_groups.py"
+permissions:
+  contents: read
+jobs:
+  groups-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Assemble existing source with new groups patch
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import base64,gzip,hashlib,importlib.util,json
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          mf=json.loads((root/'source-manifest.json').read_text())
+          raw=gzip.decompress(base64.b64decode(''.join((root/p).read_text().strip() for p in mf['chunks'])))
+          assert hashlib.sha256(raw).hexdigest()==mf['baseSha256']
+          html=raw.decode()
+          for i,rel in enumerate(mf['patches']+['patches/v11_74_mesh_groups.py']):
+              spec=importlib.util.spec_from_file_location('patch'+str(i),root/rel)
+              patch=importlib.util.module_from_spec(spec)
+              spec.loader.exec_module(patch)
+              html=patch.apply(html)
+          data=html.encode()
+          print('SWRLZ_V1174_FINAL_BYTES='+str(len(data)),flush=True)
+          print('SWRLZ_V1174_FINAL_SHA256='+hashlib.sha256(data).hexdigest(),flush=True)
+          print('SWRLZ_V1174_PATCH_COUNT='+str(len(mf['patches'])+1),flush=True)
+          assert html.count('SWYRL_ENGINE_DEPLOY_MARKER: V11_74_NONDESTRUCTIVE_MESH_GROUPS')==1
+          assert 'model().meshGroups=structuredClone(importedGroups)' in html
+          assert 'function atelierGroupCreate()' in html
+          assert 'function atelierGroupsHistoryApply(entry)' in html
+          Path('/tmp/v1174.mjs').write_text(html.split('<script type="module">',1)[1].rsplit('</script>',1)[0])
+          Path('/tmp/v1174.html').write_text(html)
+          PY
+          node --check /tmp/v1174.mjs
+          echo SWRLZ_V1174_SOURCE_SYNTAX_PASS
+      - name: Install browser driver
+        run: npm install --no-save --prefix /tmp/swyrl-browser-test playwright@1.56.0
+      - name: Test group selection, editing, history and native JSON
+        run: |
+          set -euo pipefail
+          CHROME_BIN="$(command -v google-chrome-stable || command -v google-chrome || command -v chromium || true)"
+          if [ -z "$CHROME_BIN" ]; then
+            /tmp/swyrl-browser-test/node_modules/.bin/playwright install chromium
+            CHROME_BIN="$(find "$HOME/.cache/ms-playwright" -type f -name chrome -path '*chrome-linux*' | head -1)"
+          fi
+          test -x "$CHROME_BIN"
+          export CHROME_BIN
+          python - <<'PY'
+          from pathlib import Path
+          html=Path('/tmp/v1174.html').read_text()
+          instrumentation="""window.__groupTest={
+           ready:()=>!!(renderer&&modelRoot&&model()?.parts?.length&&
+             document.querySelector('[data-group-multi]')),
+           tap:id=>select(id),
+           moveX:value=>{
+             const snap=atelierMeshSnapshots(),pivot=atelierMeshCenter(atelierMeshSelectedMeshes());
+             return atelierMeshCommit(snap,pivot,'move','x',value);
+           },
+           undo:()=>historyStep(true),redo:()=>historyStep(false),
+           exportModel:()=>structuredClone(model()),
+           partTransforms:ids=>ids.map(id=>{
+             const p=partById(id);
+             return {position:[...p.position],rotation:[...p.rotation],
+               scale:[...p.scale],material:p.material,color:p.color};
+           }),
+           mobile:()=>{
+             const el=document.querySelector('[data-group-multi]');
+             const r=el.getBoundingClientRect();
+             return {toggleWidth:r.width,toggleHeight:r.height,
+               multiple:document.querySelector('#modelAtelierParts').multiple};
+           },
+           state:()=>{
+             const m=model(),parts=m?.parts||[];
+             return {count:parts.length,ids:parts.slice(0,3).map(p=>p.id),
+               selected:[...atelierMeshIds],active:selection,scope:atelierGroupScope,
+               multi:atelierMeshAdding,groups:structuredClone(atelierGroups()),
+               outlines:modelRoot?.children.filter(o=>o instanceof THREE.BoxHelper).length||0,
+               controls:!!document.querySelector('[data-atelier-groups]'),
+               partsFingerprint:parts.slice(0,3).map(p=>({id:p.id,kind:p.kind,
+                 material:p.material,color:p.color,
+                 position:p.position,rotation:p.rotation,scale:p.scale}))
+             };
+           }
+          };"""
+          anchor='function atelierMeshGizmoDown(e){'
+          assert html.count(anchor)==1
+          html=html.replace(anchor,instrumentation+'\n'+anchor,1)
+          directory=Path('/tmp/swyrl1174')
+          directory.mkdir(exist_ok=True)
+          (directory/'index.html').write_text(html)
+          PY
+          python -m http.server 8765 --bind 127.0.0.1 --directory /tmp/swyrl1174 >/tmp/atelier1174-http.log 2>&1 &
+          sleep 2
+          node projects/swrlz-forge-moba/scripts/test_v11_74_mesh_groups.mjs
