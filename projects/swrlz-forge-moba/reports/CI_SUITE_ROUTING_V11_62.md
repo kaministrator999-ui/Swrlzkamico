@@ -17,14 +17,15 @@ The source of truth is `scripts/route_ci_suites.py`. Every ordinary PR or `main`
 | `patches/v10_6`–`v10_8`, Maul runtime, tests and scenes | Maul, Layout and Batch |
 | Anime/cinematic patches, scenes, runtime and tests | Anime, storybook, character, episode suites |
 | Shared runtime/build/payload/asset with cross-cutting risk | All 22 browser cases |
-| Source manifest/receipt and documentation alone | No unrelated browser suites; source-seal workflows remain authoritative |
+| Documentation or receipt notes alone | No unrelated browser suites; source-seal workflows remain authoritative |
+| Manifest-only patch-order/build-recipe edit | Full suite (ambiguous runtime impact) |
 | Deployment request / explicit `workflow_dispatch` | All 22 browser suites |
 
 The `verify-swrlz-storybook-v8-8.yml` workflow's fast **Select affected §E starter suites** job performs `route_ci_suites.py --self-test` and emits a dynamic matrix. An empty selection skips the heavy browser job entirely. Historical anime, cel, cinematic and storybook camera workflows likewise use a cheap selection job and skip when the latest commit does not touch their domain. Their event path filters no longer use the manifest or every `v11_*` modeling patch as a reason to run.
 
 ### Safety, not silent omissions
 
-- Unknown engine files, shared core, patch families outside the known domains, missing history and malformed change lists **fail open** to the full integration suite.
+- Unknown engine files, shared core, patch families outside the known domains, manifest edits without matching patch changes, missing history and malformed change lists **fail open** to the full integration suite.
 - Packaging integrity, marker/asset preservation, HTML hash and the original canonical model remain in focused **source-seal** CI and are not relaxed.
 - `workflow_dispatch` runs all 22 browser cases regardless of changed paths. A release candidate needs one explicit all-suites run at the final SHA **before promotion**; an update to `DEPLOY_REQUEST.json` also selects full integration.
 - In a PR, diffing `HEAD^ HEAD` intentionally chooses *the latest revision*, not the cumulative PR file list, which otherwise restarts all components on every small correction. This is fast feedback, **not a substitute for the full final-SHA release sweep**.
@@ -40,7 +41,7 @@ python projects/swrlz-forge-moba/scripts/route_ci_suites.py \
   --files-json '["projects/swrlz-forge-moba/runtime/shared_renderer.js"]'
 ```
 
-The first synthetic example chooses **three modeling suites**. The second chooses **all 22** because an unfamiliar shared renderer may affect every project.
+The first synthetic example chooses **three modeling suites**. The second chooses **all 22** because an unfamiliar shared renderer may affect every project. A manifest edit accompanied by an identifiable modeling patch still selects the modeling suites; a manifest-only build-recipe edit selects all 22.
 
 ## Explicit release gate
 
