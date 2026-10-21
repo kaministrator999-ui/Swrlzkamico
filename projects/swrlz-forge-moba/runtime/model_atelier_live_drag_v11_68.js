@@ -15,3 +15,26 @@ function atelierMeshLiveDragPreview(records){
   }
  }
 }
+
+function atelierMeshSelectFast(){
+ if(!modelRoot)return;
+ const chosen=modelRoot.children.find(m=>m.isMesh&&m.userData.atelierId===selection);
+ const old=modelRoot.children.filter(m=>m instanceof THREE.BoxHelper);
+ let outline=old.shift()||null;
+ for(const extra of old){
+  modelRoot.remove(extra);
+  extra.geometry?.dispose();extra.material?.dispose();
+ }
+ if(!chosen){
+  if(outline){modelRoot.remove(outline);outline.geometry?.dispose();outline.material?.dispose();}
+  return;
+ }
+ if(!outline){
+  outline=new THREE.BoxHelper(chosen,0xe8f56f);
+  outline.userData.atelierHelper=true;
+  modelRoot.add(outline);
+ }else{
+  outline.setFromObject(chosen);
+ }
+ outline.update();
+}

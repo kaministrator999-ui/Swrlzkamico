@@ -34,6 +34,16 @@ function atelierMeshGizmoUp(e){'''
 }
 function atelierMeshGizmoUp(e){'''
     html=once(html,original,updated)
+    # Selection changes should only change the existing native BoxHelper,
+    # not recreate all 283 render meshes before the outline becomes visible.
+    begin='  function select(id){'
+    assert html.count(begin)==1
+    start=html.index(begin)
+    end=html.find('\n  function ',start+len(begin))
+    assert end>start
+    select_body=html[start:end]
+    assert select_body.count('renderParts();')==1,select_body[:500]
+    html=html[:start]+select_body.replace('renderParts();','atelierMeshSelectFast();',1)+html[end:]
     # Recenter the gizmo after zero-movement or canceled gestures, without
     # regenerating any source geometry.
     html=once(html,
@@ -54,5 +64,6 @@ function atelierMeshGizmoUp(e){'''
     ):html=once(html,old,new)
     assert scene(html)==before_scene
     assert html.count('function atelierMeshLiveDragPreview(records)')==1
+    assert html.count('function atelierMeshSelectFast()')==1
     assert html.count(NEW)==1
     return html

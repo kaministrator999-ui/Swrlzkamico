@@ -38,6 +38,9 @@ jobs:
           assert 'atelierMeshRestoreLiveTransforms(records)' in html
           assert 'atelierMeshGizmo.position.copy(center)' in html
           assert 'if(!atelierMeshDrag)atelierMeshGizmoBuild();' in html
+          select=html.split('  function select(id){',1)[1].split('\n  function ',1)[0]
+          assert 'atelierMeshSelectFast();' in select and 'renderParts();' not in select
+          assert 'function atelierMeshSelectFast()' in html
           assert "SWYRL_ENGINE_DEPLOY_MARKER: V11_68_LIVE_MESH_GIZMO_FEEDBACK" in html
           Path('/tmp/v1168.mjs').write_text(html.split('<script type="module">',1)[1].rsplit('</script>',1)[0],encoding='utf-8')
           PY
