@@ -6,8 +6,10 @@ import fs from "node:fs";
 import vm from "node:vm";
 
 const page=fs.readFileSync("chat/§wyrlz/index.html","utf8");
-assert.ok(page.includes('<meta name="swrlz-chat-version" content="1.1.18">'));
-assert.equal(fs.readFileSync("chat/§wyrlz/VERSION.txt","utf8").trim(),"1.1.18");
+const currentVersion=fs.readFileSync("chat/§wyrlz/VERSION.txt","utf8").trim();
+assert.match(currentVersion,/^\d+\.\d+\.\d+$/);
+assert.ok(page.includes('<meta name="swrlz-chat-version" content="'+currentVersion+'">'));
+assert.ok(page.includes('const SWRLZ_CHAT_VERSION = "'+currentVersion+'";'));
 
 const composerMatch=page.match(/prompt\.addEventListener\("keydown",(e=>\{[\s\S]*?\n      \})\);/);
 assert.ok(composerMatch,"Canonical composer keydown listener exists");
