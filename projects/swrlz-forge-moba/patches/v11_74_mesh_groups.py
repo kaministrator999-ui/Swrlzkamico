@@ -10,6 +10,10 @@ CANONICAL='const MODEL_ATELIER_CANONICAL_PROJECT='
 
 def once(html, before, after):
     n=html.count(before)
+    if n!=1:
+        for word in ['function modelSnapshot','function historyStep','function select(id)','function renderParts','function importJSON','function signalEdited']:
+            at=html.find(word)
+            print('V1174_DEBUG',word,repr(html[max(0,at-80):at+600]) if at>=0 else 'NOT FOUND',flush=True)
     assert n==1,(before[:150],n)
     return html.replace(before,after,1)
 
