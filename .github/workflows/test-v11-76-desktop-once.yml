@@ -5,6 +5,7 @@ on:
     paths:
       - "projects/swrlz-forge-moba/patches/v11_76_desktop_modeling.py"
       - "projects/swrlz-forge-moba/runtime/model_atelier_desktop_edit_v11_76.js"
+      - "projects/swrlz-forge-moba/runtime/model_atelier_desktop_edit_v11_76.css"
       - "projects/swrlz-forge-moba/scripts/test_v11_76_desktop.mjs"
 permissions:
   contents: read
