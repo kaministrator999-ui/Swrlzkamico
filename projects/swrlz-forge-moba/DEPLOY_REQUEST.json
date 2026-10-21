@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.66",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_66_MESH_SELECTION_UX_REPAIR",
-  "reason": "§§§ owner-directed v11.66 Android Model Atelier usability fixes: eliminate duplicated remote selection bounding box, safely cap move gestures, add prominent Undo/Redo/Frame mesh, allow dragging the mesh controls dialog with saved on-device position, and apply scoped cybernetic cyan/indigo visual polish to Model Atelier windows. 98 patches, original 283-part canonical character unchanged, same 43 bundled assets. Targeted build/JS syntax passed run 39531500631. Exact assembled HTML 3,008,188 bytes; SHA-256 ab960990d91641c0a03c453181710ae2a6739c247a632e238e4aa1745e16e35f. After deploy verify hosted source/all assets; owner validates Android UX.",
-  "sourceCommit": "abafe7f1ae25dfc8531d0e170b2c819ff060eb82",
-  "sourceIntegritySha256": "ab960990d91641c0a03c453181710ae2a6739c247a632e238e4aa1745e16e35f"
+  "releaseVersion": "v11.67",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_67_MESH_TRANSFORM_PERFORMANCE",
+  "reason": "§§§ owner-authorized v11.67 Model Atelier performance deploy. Native Move/Rotate/Scale commits use existing mesh transforms rather than rebuilding the 283-part scene; canceled and zero-motion drags also avoid full rebuilds. No changes to Undo/Redo semantics, geometry authoring, model identity, or bundled assets. Source manifest: 99 ordered patches, HTML 3,009,500 bytes, SHA-256 a2122de3a296da3319de5d861875f7c3efd4663d714b31820d4e27acf5ca8017. Targeted source assembly and Node syntax succeeded in GitHub Actions run 39532595474. Verify exact hosted HTML, SOURCE receipt and all 43 assets; owner validates responsiveness on Android.",
+  "sourceCommit": "125afc475696bda14b3228b27413135b326fcbbe",
+  "sourceIntegritySha256": "a2122de3a296da3319de5d861875f7c3efd4663d714b31820d4e27acf5ca8017"
 }
