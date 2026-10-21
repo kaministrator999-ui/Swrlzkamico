@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=bd63d5c564ec72485436fddf8b4497b0cb188bfb
-REQUEST_NONCE=2026-10-20-chat-v290-live-reply-cue-bd63d5c
+SOURCE_REF=7d85571bba231e2a9dc2d4a240ee4bf09ca69c88
+REQUEST_NONCE=2026-10-20-chat-v291-create-name-continuity-7d85571
