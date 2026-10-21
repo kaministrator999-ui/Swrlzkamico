@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.67
+title: §wyrl§ Engine v11.68
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -10,7 +10,7 @@ header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
 
-# §wyrl§ Engine v11.67
+# §wyrl§ Engine v11.68
 
 This Space publishes the governed engine build. Project release details, historical verification evidence, and update notes are maintained in `projects/swrlz-forge-moba/README.md` and `§tart_§E.md` in the source repository. Historical Space documentation remains available in Git history.
 
@@ -38,3 +38,5 @@ Native anatomical head sections define skull, temples, cheekbones, jaw and chin 
 §E v11.66 repairs Model Atelier mesh transform usability: removes doubled selection BoxHelper, bounds camera-scaled axis dragging to ≤0.45 world units per gesture, adds Undo/Redo/Frame mesh in the selection strip, persists a draggable popup position per-device, and coordinates a cybernetic cyan/indigo visual treatment across existing tool panels. Current mesh functionality, original 283-part scene and the 43 historical assets remain unchanged. Marker: `V11_66_MESH_SELECTION_UX_REPAIR`; 98 ordered patches. Physical-device usability remains owner-tested.
 
 §E v11.67 is a focused Model Atelier performance update: whole-mesh Move/Rotate/Scale commits now update only their existing Three.js mesh transforms and inspector/history state, avoiding the v11.66 full 283-part geometry rebuild on release. Canceled/no-op drags also avoid the rebuild. Undo/Redo/JSON/OBJ remain available. 99 ordered patches; unchanged original 283-part character and 43 packaged assets. Marker `V11_67_MESH_TRANSFORM_PERFORMANCE`; mobile responsiveness awaits owner testing.
+
+§E v11.68 improves touch editing of native Model Atelier parts: while dragging the X/Y/Z gizmo, selected meshes, bounding outlines and transform handles all follow live without rebuilding their geometry or resetting a captured handle. Tapping a different object updates its existing selection BoxHelper immediately instead of rebuilding all 283 character parts. Transform release still uses the v11.67 fast commit path and native Undo/Redo. The canonical 283-part project and 43 original assets remain preserved. Version marker `V11_68_LIVE_MESH_GIZMO_FEEDBACK`, 100 patches. Touch smoothness remains subject to the owner's live Android test.
