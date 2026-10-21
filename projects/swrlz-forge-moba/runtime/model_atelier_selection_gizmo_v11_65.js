@@ -2,7 +2,7 @@
 // All edits use native part transforms and checkpoint(); vertex points reuse native overlay.
 let atelierMeshIds=[],atelierMeshAdding=false,atelierMeshMode='move',atelierMeshAxis='x';
 let atelierMeshStrip=null,atelierMeshPivot=null,atelierMeshGizmo=null,atelierMeshDrag=null;
-let atelierMeshDensityOpen=false,atelierMeshHidden=false;
+let atelierMeshDensityOpen=false,atelierMeshHidden=false,atelierMeshDensityShownPart=null;
 const atelierMeshAxes={x:[1,0,0],y:[0,1,0],z:[0,0,1]};
 const atelierMeshClamp=(n,lo,hi)=>Math.max(lo,Math.min(hi,n));
 const atelierMeshFinite=a=>a.every(Number.isFinite);
@@ -112,8 +112,11 @@ function atelierMeshToolbarRefresh(){
    const u=density.querySelector('[data-mesh-u]'),v=density.querySelector('[data-mesh-v]');
    const fallback=part.kind==='faceSheet'?[part.faceSheet?.gridU||48,part.faceSheet?.gridV||20]:
      ['box','cone','cylinder'].includes(part.kind)?[16,12]:[64,48];
-   if(document.activeElement!==u)u.value=String(part.meshDensity?.u||fallback[0]);
-   if(document.activeElement!==v)v.value=String(part.meshDensity?.v||fallback[1]);
+   if(atelierMeshDensityShownPart!==selection){
+    u.value=String(part.meshDensity?.u||fallback[0]);
+    v.value=String(part.meshDensity?.v||fallback[1]);
+    atelierMeshDensityShownPart=selection;
+   }
    density.querySelector('[data-mesh-density-note]').textContent=eligible?
      'U/V change actual mesh points. Applying clears indexed vertex edits. Undo available.':
      'Custom topology: use native Topology refinement; uniform U/V resampling is unavailable.';
