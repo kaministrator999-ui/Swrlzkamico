@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.66
+title: §wyrl§ Engine v11.67
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -10,7 +10,7 @@ header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
 
-# §wyrl§ Engine v11.66
+# §wyrl§ Engine v11.67
 
 This Space publishes the governed engine build. Project release details, historical verification evidence, and update notes are maintained in `projects/swrlz-forge-moba/README.md` and `§tart_§E.md` in the source repository. Historical Space documentation remains available in Git history.
 
@@ -36,3 +36,5 @@ Native anatomical head sections define skull, temples, cheekbones, jaw and chin 
 §E v11.65 adds a contextual selection-based mesh transform strip next to the picked model part. Move/Rotate/Scale gizmo axes and plus/minus nudges, multi-mesh grouping and baked Join are native/Undo-enabled. Show vertices opens the existing real vertex-point overlay. U/V steppers make procedural density discoverable for sphere/loft/box/cone/cylinder and face-sheet meshes within bounded geometry budgets; nonparametric topology uses the existing refinement tools. Joined topology mesh material uses the first selected mesh. Original 283-part starter and 43 historical assets are preserved. Marker: `V11_65_SELECTION_MESH_GIZMOS`; 97 ordered patches. Hosted status requires the final verified release receipt.
 
 §E v11.66 repairs Model Atelier mesh transform usability: removes doubled selection BoxHelper, bounds camera-scaled axis dragging to ≤0.45 world units per gesture, adds Undo/Redo/Frame mesh in the selection strip, persists a draggable popup position per-device, and coordinates a cybernetic cyan/indigo visual treatment across existing tool panels. Current mesh functionality, original 283-part scene and the 43 historical assets remain unchanged. Marker: `V11_66_MESH_SELECTION_UX_REPAIR`; 98 ordered patches. Physical-device usability remains owner-tested.
+
+§E v11.67 is a focused Model Atelier performance update: whole-mesh Move/Rotate/Scale commits now update only their existing Three.js mesh transforms and inspector/history state, avoiding the v11.66 full 283-part geometry rebuild on release. Canceled/no-op drags also avoid the rebuild. Undo/Redo/JSON/OBJ remain available. 99 ordered patches; unchanged original 283-part character and 43 packaged assets. Marker `V11_67_MESH_TRANSFORM_PERFORMANCE`; mobile responsiveness awaits owner testing.
