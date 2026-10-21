@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.69",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_69_DRAG_PREVIEW_RENDER",
-  "reason": "§§§ owner-requested Model Atelier drag-feedback fix v11.69. Existing transform preview now updates native mesh positions and gizmo handles directly per pointer movement, avoids recalculating whole-mesh bounds on each drag event, and explicitly paints a WebGL frame before release. Real Chromium interaction test (run 39594806708) confirmed 9 pointer updates and 9 rendered frames BEFORE pointerup, both mesh and gizmo moved 0.45 world units and transform persisted afterward. Keep fast validated commits, Undo/Redo and quick selection from earlier versions. Source v11.69 has 101 patches, 3,012,114 bytes, SHA-256 6ed5ae18211945d86d2a73db45aadb173b377d656c57eeab6714105c26d8e471; original 283-part reference model and all 43 assets preserved. Deploy and verify exact hosted HTML, SOURCE receipt and all assets; owner checks Android touch behavior.",
-  "sourceCommit": "f2fe33c2099b3330326c9fd7d1ebe5c67dc8f5a5",
-  "sourceIntegritySha256": "6ed5ae18211945d86d2a73db45aadb173b377d656c57eeab6714105c26d8e471"
+  "releaseVersion": "v11.70",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_70_PRECISION_GIZMO_TOOLBAR",
+  "reason": "§§§ owner-authorized §E v11.70 precision and mobile viewport usability release. Model Atelier selected-mesh popup: persistent per-mode Fine↔Fast sensitivity (1/8x–4x) for Move/Rotate/Scale pointer drags and plus/minus nudges, without changing vertex counts (native Grid U/V remains). Mobile viewport header reorganized into render/target group, horizontally scrollable camera presets and collapsible advanced display/clip controls, preserving existing native event handlers and all options. Real Chromium browser test run 39602536277 passed with 0.1799 world unit normal vs 0.0225 unit fine for identical drag, live rendered preview and 390px viewport toolbar checks. Original 283-part canonical model + 43 packaged assets intact; 102 patches; HTML 3,019,798 bytes; SHA-256 67a36e4efc75bf0a585463643b1e48ce70437add1b65087d9d1967df97204ca3. Verify exact published artifact, SOURCE receipt and all assets; owner validates Android.",
+  "sourceCommit": "a902d528b0c9aaccf1551e48ef2bc0d4a6b82547",
+  "sourceIntegritySha256": "67a36e4efc75bf0a585463643b1e48ce70437add1b65087d9d1967df97204ca3"
 }
