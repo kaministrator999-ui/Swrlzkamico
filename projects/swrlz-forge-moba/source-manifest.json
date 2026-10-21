@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.75",
+  "name": "§wyrl§ Engine v11.76",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_75.html",
+  "finalArtifact": "swyrl_engine_v11_76.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -121,8 +121,9 @@
     "patches/v11_72_arc_alignment.py",
     "patches/v11_73_gizmo_touch.py",
     "patches/v11_74_mesh_groups.py",
-    "patches/v11_75_component_edit.py"
+    "patches/v11_75_component_edit.py",
+    "patches/v11_76_desktop_modeling.py"
   ],
-  "finalBytes": 3083471,
-  "finalSha256": "910e4565727243256154adb8707bf0eaff9021338860b5b34146d04cc02474d1"
+  "finalBytes": 3091496,
+  "finalSha256": "ae0764bcdaef131a8d404b43ca20b4a3b6ed9bad66897709919b6f3f1bccf1ef"
 }
