@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.71",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_71_ARC_ROTATION_RULER",
-  "reason": "§§§ owner-directed Model Atelier v11.71 curved rotation gizmo based on screenshot reference. Rotate mode displays red X, green Y and blue Z world-space arc rulers with ticks and touch-draggable beads; popup shows live angle and optional off/5°/15° snapping. Native per-mode Fine/Fast sensitivity, live WebGL drag, fast commit, Undo/Redo, Move/Scale and all source geometry preserved. Real Chromium pointer test run 39605565651 passed with mesh and bead moving together while held, 12 live frames and 39.4° z-rotation before release. Source HTML 3,029,622 bytes and SHA-256 44ae1de39f81874ccf2a06cfae8e067b06633053656283562523579850034c6b, 103 patches, original 283-part reference model and 43 packaged assets. Verify exact hosted HTML, SOURCE receipt and assets; owner validates Android gestures.",
-  "sourceCommit": "8b3bc360b222f19e805e4a89372b15753fe8f650",
-  "sourceIntegritySha256": "44ae1de39f81874ccf2a06cfae8e067b06633053656283562523579850034c6b"
+  "releaseVersion": "v11.72",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_72_ROTATION_ARC_ALIGNMENT",
+  "reason": "§§§ owner-directed §E v11.72 rotation calibration after Android screenshots. Correct selected-mesh ring sizing (anatomical head ~0.573 world radius instead of zoom-based 0.952), world-axis 3D ray/plane angle tracking with edge-on tangent fallback, readable X/Y/Z color emphasis, small phone-friendly screen-space handle hit regions, and explicit live Δ / Last Δ labeling. Prior live rotation, Move/Scale, 283-part original character, Undo/Redo, Fine/Fast sensitivity and 43 assets preserved. Targeted real Chromium test 39609712872 passed all three axes with live preview and commit; 104 patches, HTML 3,036,186 bytes and SHA-256 9b0d791a66bce68a28f21911d2de4bad703d9d676edd2076622c9b4060e0cae8. Verify exact hosted HTML, SOURCE receipt and every asset; Android UX remains owner-tested.",
+  "sourceCommit": "c308c5d0c3d52b89a51f39cc405509aff85977d4",
+  "sourceIntegritySha256": "9b0d791a66bce68a28f21911d2de4bad703d9d676edd2076622c9b4060e0cae8"
 }
