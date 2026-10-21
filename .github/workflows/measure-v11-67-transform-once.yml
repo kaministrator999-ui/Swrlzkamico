@@ -1,0 +1,45 @@
+name: Measure §E v11.67 transform performance once
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/patches/v11_67_mesh_transform_perf.py"
+permissions:
+  contents: read
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build and measure exact mesh transform release
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import base64,gzip,hashlib,importlib.util,json
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          mf=json.loads((root/'source-manifest.json').read_text())
+          raw=gzip.decompress(base64.b64decode(''.join((root/p).read_text().strip() for p in mf['chunks'])))
+          assert hashlib.sha256(raw).hexdigest()==mf['baseSha256']
+          html=raw.decode()
+          for i,path in enumerate(mf['patches']+['patches/v11_67_mesh_transform_perf.py']):
+              spec=importlib.util.spec_from_file_location('p'+str(i),root/path)
+              module=importlib.util.module_from_spec(spec)
+              spec.loader.exec_module(module)
+              html=module.apply(html)
+          data=html.encode()
+          print('SWRLZ_V1167_FINAL_BYTES='+str(len(data)),flush=True)
+          print('SWRLZ_V1167_FINAL_SHA256='+hashlib.sha256(data).hexdigest(),flush=True)
+          print('SWRLZ_V1167_PATCH_COUNT='+str(len(mf['patches'])+1),flush=True)
+          fn=html.split('function atelierMeshCommit(snap,pivot,mode,axis,amount){',1)[1].split('function atelierMeshNudge(direction)',1)[0]
+          assert 'atelierMeshTransformOnlyCommit(next)' in fn
+          assert 'signalEdited()' not in fn and 'renderParts()' not in fn
+          assert 'function atelierMeshRestoreLiveTransforms(records)' in html
+          assert 'SWYRL_ENGINE_DEPLOY_MARKER: V11_67_MESH_TRANSFORM_PERFORMANCE' in html
+          Path('/tmp/swyrl-v1167.mjs').write_text(html.split('<script type="module">',1)[1].rsplit('</script>',1)[0])
+          PY
+          node --check /tmp/swyrl-v1167.mjs
+          echo SWRLZ_V1167_FASTPATH_SYNTAX_PASS
