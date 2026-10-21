@@ -42,6 +42,36 @@ jobs:
           grep -q "SWYRL_ENGINE_DEPLOY_MARKER: V11_62_MOBILE_ADAPTIVE_TOOL_SHEET" dist/swrlz-forge-moba/index.html
           grep -q "sdk: static" dist/swrlz-forge-moba/README.md
           node --check dist/swrlz-forge-moba-module.mjs
+          # Ensure runtime labels, source seal and requested deployment agree.
+          python - <<'PY'
+          import hashlib, json, re
+          from pathlib import Path
+          root = Path("projects/swrlz-forge-moba")
+          out = Path("dist/swrlz-forge-moba")
+          manifest = json.loads((root/"source-manifest.json").read_text())
+          request = json.loads((root/"DEPLOY_REQUEST.json").read_text())
+          receipt = json.loads((out/"SOURCE.json").read_text())
+          version = request["releaseVersion"]
+          assert re.fullmatch(r"v[0-9]+[.][0-9]+(?:[.][0-9]+)?", version), version
+          assert manifest["name"] == "§wyrl§ Engine " + version
+          assert manifest["finalArtifact"] == "swyrl_engine_" + version.replace(".", "_") + ".html"
+          assert request["target"] == "kamiloki/swrlz-forge-moba"
+          assert receipt["sourceVersion"] == manifest["name"]
+          assert receipt["patches"] == manifest["patches"]
+          assert len(receipt["patches"]) == len(manifest["patches"])
+          assert receipt["assets"] and len(receipt["assets"]) == 43
+          raw = (out/"index.html").read_bytes()
+          digest = hashlib.sha256(raw).hexdigest()
+          assert manifest["finalSha256"] == receipt["finalSha256"] == request["sourceIntegritySha256"] == digest
+          assert manifest["finalBytes"] == receipt["finalBytes"] == len(raw)
+          html = raw.decode("utf-8")
+          assert html.count(request["deployMarker"]) == 1
+          assert "<title>§wyrl§ Engine · Maker " + version + "</title>" in html
+          assert "window.SWRLZ_FORGE_BUILD={version:'" + version + "'" in html
+          source_commit = request.get("sourceCommit")
+          assert source_commit and re.fullmatch(r"[0-9a-f]{40}", source_commit), source_commit
+          print("SE_VERSION_METADATA_ALIGNED", version, digest, len(raw), len(manifest["patches"]))
+          PY
 
       - name: Install Hugging Face Hub client
         run: python -m pip install "huggingface_hub>=0.34,<2"

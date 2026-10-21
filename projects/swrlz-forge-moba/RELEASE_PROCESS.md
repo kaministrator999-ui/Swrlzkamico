@@ -12,6 +12,19 @@ This agreement supersedes older §E notes that treated 18+ automatic regression 
 4. **Confirm the live result:** Check that the deploy workflow succeeded and that the hosted build and assets match the intended version; report the live link and what's new. Never claim a release is live before confirmation.
 5. **Owner tests:** The owner uses the live Hugging Face editor on their device and reports what works or needs refinement. Iterate with a targeted change and another explicit deploy request.
 
+### Version metadata is part of every feature release
+
+Before any engine code release, update the **new version and its provenance together**. Do not change only the visible title or only the patch file.
+
+1. **Source-of-truth manifest:** `source-manifest.json` must carry the correct `name`, `finalArtifact`, ordered `patches` list, rebuilt `finalBytes` and actual `finalSha256`. Add the new patch at the correct position without deleting or rewriting historical lineage.
+2. **Runtime identity:** Update the generated editor's visible version/title, runtime build/version constant (`window.SWRLZ_FORGE_BUILD` or current equivalent), and `SWYRL_ENGINE_DEPLOY_MARKER` so the UI identifies the release that is actually running.
+3. **Release scripts and checks:** Update version-pinned expectations in the relevant `scripts/verify_v*_release.py` verifier, the dedicated HF deployment workflow's build command / marker references, and any current-version tests. Do not alter historical version snapshots merely to make a new build appear green.
+4. **Docs and packaged metadata:** Update relevant version references in `SPACE_README.md`, the engine README, `ROADMAP.md`, and `§tart_§E.md` as appropriate; ensure the generated `SOURCE.json` receipt matches the new version, patch count, exact HTML bytes/hash and bundled assets.
+5. **Final deployment request:** Once the new source is on `main`, update `DEPLOY_REQUEST.json` as its own last commit: `releaseVersion`, `deployMarker`, `sourceCommit`, `sourceIntegritySha256`, and reason/changelog must refer to the **same** exact source.
+6. **Verify and report:** Confirm generated files, manifest, runtime identifier, request, and hosted `SOURCE.json` agree. State the exact version and deploy result; do not label anything "live" based on code commits alone.
+
+**Release-vs-documentation boundary:** Don't bump the engine's runtime version for process/docs-only changes (including this guidance) that leave the deployable HTML identical. Fixes that change the shipped artifact must update its integrity receipt even if the versioning policy reuses a compatible patch/build label. If a field is generated, regenerate it from source rather than hand-editing it.
+
 ### What GitHub Actions should and should not do
 - **Normal source pushes and PR updates:** Do **not** auto-launch the historical Model Atelier, Sheep Tag, Maul, Anime, or 22-case starter browser suites.
 - **Optional deeper tests:** Existing `verify-*`, `preview-*` and `measure-*` engine workflows retain **`workflow_dispatch`** for manual, situation-specific investigations and substantial/high-risk changes. They must not block ordinary owner-directed deployment by default.
