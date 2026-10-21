@@ -35,7 +35,7 @@ jobs:
           from pathlib import Path
           html=Path('chat/§wyrlz/index.html').read_text(encoding='utf-8')
           version=Path('chat/§wyrlz/VERSION.txt').read_text().strip()
-          assert re.fullmatch(r'\\d+\\.\\d+\\.\\d+',version), 'Invalid Chat version format'
+          assert re.fullmatch(r'\d+\.\d+\.\d+',version), 'Invalid Chat version format'
           assert f'<meta name="swrlz-chat-version" content="{version}">' in html
           assert f'const SWRLZ_CHAT_VERSION = "{version}"' in html
           assert html.count('const syncResponseLiveCueV290=(node,g)=>')==1
