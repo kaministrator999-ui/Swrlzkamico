@@ -117,6 +117,76 @@ def test_station_and_chat_wiring_static():
     assert "GITHUB_PLAN_READY" in chat
 
 
+
+def test_stage1_issue_pr_read_plan_and_single_terminal_event():
+    """Two model-selected reads must both complete while all writes stay locked."""
+    def model(_payload):
+        yield {"type":"DELTA","text":'{"tools":["issues","pulls"]}'}
+        yield {"type":"COMPLETED"}
+    with mock.patch.object(gh,"GITHUB_CAPABILITY_STAGE","read-repository"), \
+         mock.patch.object(gh,"_config",return_value={}), \
+         mock.patch.object(gh,"_load",return_value=RECORD), \
+         mock.patch.object(gh,"_api",side_effect=_api), \
+         mock.patch.object(gh,"_post_github",side_effect=AssertionError("Write forbidden")):
+        events=list(gh.agent_events({"userId":OWNER,
+            "prompt":"Show my repo issues and pull requests"},model))
+    answer="".join(e.get("text","") for e in events if e.get("type")=="DELTA")
+    assert "Known issue" in answer and "Known PR" in answer, answer
+    assert len([e for e in events if e.get("type")=="COMPLETED"])==1
+    assert any(e.get("phase")=="GITHUB_READ_PLAN_READY" for e in events)
+    assert "validated model selection" in str(events)
+    assert "secret-server-only" not in answer
+
+def test_stage1_explicit_and_fallback_reads_without_planner():
+    """An unambiguous read must not require model inference or new privileges."""
+    def bad_model(_payload):
+        raise AssertionError("Simple read should not launch a model")
+    with mock.patch.object(gh,"GITHUB_CAPABILITY_STAGE","read-repository"), \
+         mock.patch.object(gh,"_config",return_value={}), \
+         mock.patch.object(gh,"_load",return_value=RECORD), \
+         mock.patch.object(gh,"_api",side_effect=_api), \
+         mock.patch.object(gh,"_post_github",side_effect=AssertionError("Write forbidden")):
+        exact=list(gh.agent_events({"userId":OWNER,"prompt":"@GitHub issues"},bad_model))
+        natural=list(gh.agent_events({"userId":OWNER,"prompt":"Show my repo issues"},bad_model))
+    assert "Known issue" in str(exact)
+    assert "Known issue" in str(natural)
+    assert not any(e.get("phase")=="GITHUB_MODEL_PLAN_STARTED" for e in natural)
+
+def test_stage1_model_cannot_select_mutation_or_unapproved_source():
+    """Unsupported model output falls back only to the user's requested checks."""
+    def malicious(_payload):
+        yield {"type":"DELTA","text":'{"tools":["delete-repo","issues"]}'}
+        yield {"type":"COMPLETED"}
+    with mock.patch.object(gh,"GITHUB_CAPABILITY_STAGE","read-repository"), \
+         mock.patch.object(gh,"_config",return_value={}), \
+         mock.patch.object(gh,"_load",return_value=RECORD), \
+         mock.patch.object(gh,"_api",side_effect=_api), \
+         mock.patch.object(gh,"_post_github",side_effect=AssertionError("Write forbidden")):
+        e=list(gh.agent_events({"userId":OWNER,
+            "prompt":"Show my repo issues and pull requests"},malicious))
+    assert "Known issue" in str(e) and "Known PR" in str(e)
+    assert not any("delete-repo" in str(event) for event in e)
+    assert "deterministic read fallback" in str(e)
+
+def test_stage1_write_intent_never_reaches_read_model():
+    def no_model(_payload):
+        raise AssertionError("Model must not plan a write")
+    with mock.patch.object(gh,"GITHUB_CAPABILITY_STAGE","read-repository"), \
+         mock.patch.object(gh,"_post_github",side_effect=AssertionError("Write forbidden")):
+        e=list(gh.agent_events({"userId":OWNER,
+            "prompt":"@GitHub ask create an issue in our repo"},no_model))
+    assert any(event.get("phase")=="GITHUB_STAGE_LOCKED" for event in e) or \
+           any(event.get("phase")=="GITHUB_APPROVAL_REQUIRED" for event in e)
+    assert "No write attempted" in str(e)
+
+def test_model_selected_numeric_ids_are_exact_not_substrings():
+    assert gh._agent_allowed_tool("pr review 17","Please review PR #17")=="pr review 17"
+    assert gh._agent_allowed_tool("pr review 7","Please review PR #17") is None
+    assert gh._agent_allowed_tool("issue inspect 17","Inspect issue 17")=="issue inspect 17"
+    assert gh._agent_allowed_tool("issue inspect 7","Inspect issue 17") is None
+    assert gh._agent_allowed_tool("issue inspect 17","Inspect issue 170") is None
+    assert gh._agent_allowed_tool("pr review 17","Inspect issue 17") is None
+
 if __name__=="__main__":
     test_natural_routing_and_no_false_github_actions()
     test_real_model_plan_with_live_inference_tool_progress_and_no_mutation()
@@ -124,4 +194,9 @@ if __name__=="__main__":
     test_write_request_does_not_run_model_or_mutation()
     test_unknown_access_stops_without_inventing_permission_denial()
     test_station_and_chat_wiring_static()
+    test_stage1_issue_pr_read_plan_and_single_terminal_event()
+    test_stage1_explicit_and_fallback_reads_without_planner()
+    test_stage1_model_cannot_select_mutation_or_unapproved_source()
+    test_stage1_write_intent_never_reaches_read_model()
+    test_model_selected_numeric_ids_are_exact_not_substrings()
     print("v211 GitHub model-guided progress regressions passed")

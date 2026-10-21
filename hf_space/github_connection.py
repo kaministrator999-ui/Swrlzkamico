@@ -47,10 +47,10 @@ _SANDBOX_REPO = "kaministrator999-ui/Swrlzing-core"
 # All existing Stage 1 GitHub commands and general mutations stay locked.
 _SANDBOX_TXT_CREATE_TIER = True
 
-_READ_STAGE_DESCRIPTION = ("GitHub Stage 1: repository reading only. Enabled: list directories, "
-                           "read existing files and inspect startup documents. "
-                           "File creation, editing, deletion, branch/issue/PR mutations, "
-                           "workflow mutations and deployments are disabled.")
+_READ_STAGE_DESCRIPTION = ("GitHub Stage 1: authenticated repository reading only. Enabled: "
+                           "directories, source files, branches, issues, pull requests, "
+                           "commits, and workflow/run status. All changes to files, "
+                           "issues, PRs, branches, workflows or deployments remain disabled.")
 
 
 def _read_stage_command(prompt):
@@ -59,7 +59,7 @@ def _read_stage_command(prompt):
     if not match:
         return False
     cmd = match[1].strip().lower()
-    return bool(cmd in ("help", "permissions", "capabilities", "readiness", "files", "stats", "largest", "report", "chat status", "project status", "project guide", "workflow guide", "engine help", "engine pack help", "branches")
+    return bool(cmd in ("help", "permissions", "capabilities", "readiness", "files", "stats", "largest", "report", "chat status", "project status", "project guide", "workflow guide", "engine help", "engine pack help", "branches", "issues", "pulls", "commits", "workflows", "workflow list", "workflow runs")
                 or re.fullmatch(r"project status\s+[^\r\n]{1,90}",cmd)
                 or re.fullmatch(r"(?:files|stats|largest|history|search|compare|report)\s+[^\r\n]{1,1200}", cmd)
                 or re.fullmatch(r"(?:read|open|view)\s+[^\r\n]{1,220}", cmd))
@@ -1770,10 +1770,12 @@ def _agent_allowed_tool(value, prompt):
     # refs, and paths explicitly present in the current user's request.
     request = str(prompt or "")
     match = re.fullmatch(r"(pr review|issue inspect) ([1-9][0-9]{0,9})", name)
-    if match and match[2] in request and re.search(
-        r"\b(?:pr|pull request)\b" if match[1] == "pr review"
-        else r"\bissue\b", request, re.I):
-        return name
+    if match:
+        # Require an intact requested issue/PR ID: #7 must not match #17.
+        noun = r"(?:pr|pull\s+request)" if match[1] == "pr review" else r"issue"
+        if re.search(r"\b" + noun + r"\s*#?\s*" + re.escape(match[2]) + r"\b",
+                     request, re.I):
+            return name
     match = re.fullmatch(r"checks ([a-f0-9]{40})", name)
     if match and match[1] in request and re.search(r"\b(?:check|ci|status|workflow)\b", request, re.I):
         return name
@@ -1831,7 +1833,38 @@ def _agent_fallback_plan(prompt):
     return result[:3] or ["permissions"]
 
 
-def _agent_model_plan_events(prompt, generator):
+# v293: a model chooses READ candidates only. The Station gate owns what may run.
+# Mapping is deliberately narrower than the legacy-test-only planner inventory.
+_STAGE1_PLAN_COMMANDS = {
+    "permissions": "permissions",
+    "files": "files",
+    "branches": "branches",
+    "issues": "issues",
+    "pulls": "pulls",
+    "commits": "commits",
+    "workflows": "workflows",
+    "workflow runs": "workflow runs",
+    "workflow guide": "workflow guide",
+    "overview": "report structure /",
+    "tree": "files recursive",
+    "project guide": "project guide",
+    "project readiness": "readiness",
+}
+
+def _stage1_inspection_intent(prompt):
+    """Do not turn a proposed mutation or a passing GitHub mention into tool use."""
+    q = str(prompt or "").strip()
+    if re.search(r"\b(?:create|delete|remove|merge|push|deploy|publish|edit|update|"
+                 r"overwrite|rename|transfer|send|commit\s+changes?|trigger|dispatch|"
+                 r"retry|rerun|execute)\b", q, re.I):
+        return False
+    return bool(re.search(r"\b(?:github|repositor(?:y|ies)|repos?|issues?|"
+                          r"pull\s+requests?|prs?|commits?|workflows?|actions|branches)\b", q, re.I)
+                and re.search(r"\b(?:show|list|read|look|inspect|review|"
+                              r"check|analy[sz]e|summari[sz]e|find|why|what|"
+                              r"which|how|status|latest|open|failed|failures?)\b", q, re.I))
+
+def _agent_model_plan_events(prompt, generator, stage1=False):
     """Yield only bounded public status and one validated plan, never raw model tokens."""
     if generator is None:
         yield {"type": "PLAN_RESULT", "plan": []}
@@ -1839,8 +1872,10 @@ def _agent_model_plan_events(prompt, generator):
     instruction = (
         "Choose 1 to 3 read-only GitHub checks relevant to this request. "
         "Return ONLY JSON, e.g. {\"tools\":[\"permissions\",\"pulls\"]}. "
-        "Valid tools: permissions, files, branches, issues, pulls, commits, workflows, workflow runs, workflow guide, overview, tree, project guide, project brief, dependencies, triage, project readiness, branch policy, releases, engine status, engine starters. Specific read-only PR/issue IDs, checks SHAs, code search terms, file-history paths, or compare refs are allowed ONLY when the user explicitly named those identifiers. "
-        "Specific files PATH or read file PATH permitted only when PATH is in the user request. "
+        + ("Stage-1 permitted categories: " + ", ".join(_STAGE1_PLAN_COMMANDS) + ". "
+         if stage1 else
+         "Valid tools: permissions, files, branches, issues, pulls, commits, workflows, workflow runs, workflow guide, overview, tree, project guide, project brief, dependencies, triage, project readiness, branch policy, releases, engine status, engine starters. Specific read-only PR/issue IDs, checks SHAs, code search terms, file-history paths, or compare refs are allowed ONLY when the user explicitly named those identifiers. ")
+        + "Specific files PATH or read file PATH permitted only when PATH is in the user request. "
         "Do not propose writes, URL fetches, authorization changes or other commands. "
         "No chain-of-thought. User request: " + str(prompt)[:900]
     )
@@ -1969,6 +2004,54 @@ def agent_events(data, model_generator=None, coder_generator=None):
                    "reason":"Read-only GitHub repository capability; all writes locked.",
                    "categories":["GITHUB","READ_ONLY","PERMISSION"]}
             yield from command_events(data)
+        elif not exact and _stage1_inspection_intent(prompt):
+            # v293: Stage 1 may consult the existing bounded model planner for
+            # *read-only* investigations instead of falsely reporting them locked.
+            # Cheap unambiguous reads are deterministic; multi-part requests may
+            # use local inference, whose output is checked again here.
+            fallback = [x for x in _agent_fallback_plan(prompt)
+                        if x in _STAGE1_PLAN_COMMANDS]
+            # The generic "repo" term must not turn a simple issue/PR read
+            # into a costly multi-check inference request.
+            if len(fallback) > 1 and "overview" in fallback:
+                fallback.remove("overview")
+            plan = []
+            if model_generator is not None and len(fallback) != 1:
+                yield {"type": "STATUS", "phase": "GITHUB_MODEL_PLAN_STARTED",
+                       "reason": "Choosing bounded read-only GitHub checks.",
+                       "categories": ["GITHUB", "INFERENCE", "READ_ONLY"]}
+                for item in _agent_model_plan_events(prompt, model_generator, stage1=True):
+                    if item.get("type") == "PLAN_RESULT":
+                        plan = [x for x in (item.get("plan") or [])
+                                if x in _STAGE1_PLAN_COMMANDS]
+                    else:
+                        yield item
+            source = "validated model selection" if plan else "deterministic read fallback"
+            if not plan:
+                plan = fallback
+            if not plan:
+                yield {"type": "DELTA", "text":
+                       "I can inspect verified GitHub files, issues, pull requests, "
+                       "commits and workflow status. Which should I check?"}
+            else:
+                yield {"type": "STATUS", "phase": "GITHUB_READ_PLAN_READY",
+                       "reason": "Read-only checks: " + ", ".join(plan[:3]) +
+                                 " (" + source + ").",
+                       "categories": ["GITHUB", "READ_ONLY", "INFERENCE"]}
+                for tool in plan[:3]:
+                    command = "@GitHub " + _STAGE1_PLAN_COMMANDS[tool]
+                    # Independent, authenticated owner gate is applied to EACH
+                    # command, not inherited from the model planning step.
+                    yield {"type": "STATUS", "phase": "GITHUB_READ_EVIDENCE",
+                           "reason": "Checking authenticated " + tool + " evidence.",
+                           "categories": ["GITHUB", "READ_ONLY", "TOOL"]}
+                    yield {"type": "DELTA", "text": "### " + tool + "\n"}
+                    for event in command_events({**data, "prompt": command}):
+                        # A multi-check response has one terminal event, not an
+                        # erroneous first-tool completion that hides later reads.
+                        if event.get("type") != "COMPLETED":
+                            yield event
+            yield {"type": "COMPLETED", "phase": "COMPLETE"}
         elif not exact and re.search(r"\b(?:read|list|show|inspect|browse|files?|folders?|directories|repository|repo)\b",prompt,re.I) and not re.search(r"\b(?:create|edit|update|delete|remove|write|push|commit|merge|deploy|workflow|issue|pull request|branch)\b",prompt,re.I):
             yield {"type":"STATUS","phase":"GITHUB_READ_STAGE",
                    "reason":"Mapping repository inspection request to a bounded root file listing.",
