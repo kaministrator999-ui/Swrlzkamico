@@ -21,32 +21,40 @@ jobs:
         with: {python-version: '3.11'}
       - uses: actions/setup-node@v4
         with: {node-version: '22'}
-      - name: Build exact sealed v11.61 and additive mobile preview
+      - name: Verify v11.62 tool sheet against the actual candidate or v11.61 preview
         run: |
           set -euo pipefail
-          python projects/swrlz-forge-moba/scripts/verify_v11_61_release.py --output /tmp/se-mobile-preview
           python - <<'PY'
-          import hashlib,runpy,json
+          import hashlib,json,runpy,subprocess
           from pathlib import Path
           root=Path('projects/swrlz-forge-moba')
-          p=Path('/tmp/se-mobile-preview/index.html')
-          original=p.read_text()
-          assert 'SWYRL_ENGINE_DEPLOY_MARKER: V11_61_ADAPTIVE_CONTEXT_TOOL_WORKBENCH' in original
-          decoder=json.JSONDecoder()
+          manifest=json.loads((root/'source-manifest.json').read_text())
+          out=Path('/tmp/se-mobile-preview')
           marker='const MODEL_ATELIER_CANONICAL_PROJECT='
-          def canonical(s): return decoder.raw_decode(s.split(marker,1)[1])[0]
-          old=canonical(original)
-          patch=runpy.run_path(str(root/'patches/v11_62_mobile_adaptive_preview.py'))
-          updated=patch['apply'](original)
-          assert canonical(updated)==old,'Canonical original scene must be byte-identical as JSON'
-          assert '283' in updated,'Original 283-part source marker must remain present'
-          print('MOBILE_HOOK_MATCHES',updated.count('atelierMobileLayoutInstall(panel);'),updated.count('    atelierMobileLayoutInstall(panel);'),flush=True)
-          assert updated.count('    atelierMobileLayoutInstall(panel);')==1
-          assert original!=updated
-          p.write_text(updated)
-          module=updated.split('<script type="module">',1)[1].rsplit('</script>',1)[0]
+          def original_model(html):
+              return json.JSONDecoder().raw_decode(html.split(marker,1)[1])[0]
+          if manifest['name']=='§wyrl§ Engine v11.62':
+              assert len(manifest['patches'])==94 and manifest['patches'][-1]=='patches/v11_62_mobile_adaptive.py'
+              subprocess.run(['python',str(root/'scripts/verify_v11_62_release.py'),'--output',str(out)],check=True)
+              current=(out/'index.html').read_text()
+              assert current.count('SWYRL_ENGINE_DEPLOY_MARKER: V11_62_MOBILE_ADAPTIVE_TOOL_SHEET')==1
+              assert 'function atelierMobileLayoutInstall(panel)' in current
+          elif manifest['name']=='§wyrl§ Engine v11.61':
+              subprocess.run(['python',str(root/'scripts/verify_v11_61_release.py'),'--output',str(out)],check=True)
+              old=(out/'index.html').read_text()
+              assert old.count('SWYRL_ENGINE_DEPLOY_MARKER: V11_61_ADAPTIVE_CONTEXT_TOOL_WORKBENCH')==1
+              patch=runpy.run_path(str(root/'patches/v11_62_mobile_adaptive_preview.py'))
+              current=patch['apply'](old)
+              assert original_model(current)==original_model(old)
+              assert old!=current
+              (out/'index.html').write_text(current)
+          else:
+              raise AssertionError('Unsupported mobile preview baseline '+manifest['name'])
+          assert current.count('    atelierMobileLayoutInstall(panel);')==1
+          assert '283' in current
+          module=current.split('<script type="module">',1)[1].rsplit('</script>',1)[0]
           Path('/tmp/se-mobile-preview-module.mjs').write_text(module)
-          print('V1162_MOBILE_PREVIEW_PATCH_PASS',len(updated.encode()),hashlib.sha256(updated.encode()).hexdigest())
+          print('V1162_MOBILE_LAYOUT_CURRENT_OR_PREVIEW_VERIFIED',len(current.encode()),hashlib.sha256(current.encode()).hexdigest())
           PY
           node --check /tmp/se-mobile-preview-module.mjs
           node --check projects/swrlz-forge-moba/tests/mobile_adaptive_tool_layout_browser_v11_62.mjs

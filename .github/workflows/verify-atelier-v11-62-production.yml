@@ -1,0 +1,73 @@
+name: Verify §E v11.62 sealed production candidate
+on:
+  pull_request:
+    paths:
+      - 'projects/swrlz-forge-moba/build_space.py'
+      - 'projects/swrlz-forge-moba/payload/**'
+      - 'projects/swrlz-forge-moba/patches/**'
+      - 'projects/swrlz-forge-moba/runtime/**'
+      - 'projects/swrlz-forge-moba/SPACE_README.md'
+      - 'projects/swrlz-forge-moba/assets/**'
+      - 'projects/swrlz-forge-moba/scenes/**'
+      - 'projects/swrlz-forge-moba/episodes/**'
+      - 'projects/swrlz-forge-moba/patches/v11_62_mobile_adaptive.py'
+      - 'projects/swrlz-forge-moba/patches/v11_62_mobile_adaptive_preview.py'
+      - 'projects/swrlz-forge-moba/source-manifest.json'
+      - 'projects/swrlz-forge-moba/scripts/verify_v11_62_release.py'
+      - 'projects/swrlz-forge-moba/scripts/measure_v11_62_release.py'
+      - 'projects/swrlz-forge-moba/tests/mobile_adaptive_tool_layout_browser_v11_62.mjs'
+      - '.github/workflows/verify-atelier-v11-62-production.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  byte-seal-and-native-preservation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Verify 94-patch manifest, 43 assets and original sealed scene
+        run: |
+          set -euo pipefail
+          python projects/swrlz-forge-moba/scripts/verify_v11_62_release.py --output /tmp/se-v1162-release
+          python projects/swrlz-forge-moba/scripts/measure_v11_62_release.py --output /tmp/se-v1162-independent
+          cmp /tmp/se-v1162-release/index.html /tmp/se-v1162-independent/index.html
+          node --check /tmp/se-v1162-release-module.mjs
+          node --check projects/swrlz-forge-moba/tests/mobile_adaptive_tool_layout_browser_v11_62.mjs
+  desktop-mobile-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 38
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Reconstruct signed v11.62 candidate
+        run: |
+          python projects/swrlz-forge-moba/scripts/verify_v11_62_release.py --output /tmp/se-v1162-release
+      - name: Install browser and dependencies
+        run: |
+          npm install --no-save playwright@1.56.1 three@0.169.0
+          npx playwright install --with-deps --only-shell chromium
+      - name: Native tool access, interaction and legacy compatibility
+        env:
+          SWYRL_MOBILE_TEST_URL: http://127.0.0.1:8794
+          SWYRL_SCULPT_TEST_URL: http://127.0.0.1:8794
+          SWYRL_DOCK_DESKTOP_ONLY: '1'
+        run: |
+          set -euo pipefail
+          python -m http.server 8794 --directory /tmp/se-v1162-release >/tmp/se-v1162-server.log 2>&1 &
+          PID=$!
+          trap 'kill "$PID" 2>/dev/null || true' EXIT
+          for i in $(seq 1 50); do
+            if curl -fsS http://127.0.0.1:8794/ >/dev/null; then break; fi
+            sleep .3
+          done
+          node projects/swrlz-forge-moba/tests/mobile_adaptive_tool_layout_browser_v11_62.mjs
+          node projects/swrlz-forge-moba/tests/model_atelier_context_workbench_browser_v11_61.mjs
+          node projects/swrlz-forge-moba/tests/model_atelier_tool_dock_browser_v11_60.mjs

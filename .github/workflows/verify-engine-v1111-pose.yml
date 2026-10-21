@@ -108,6 +108,7 @@ on:
       - 'projects/swrlz-forge-moba/patches/v11_59_precision_model_atelier.py'
       - 'projects/swrlz-forge-moba/patches/v11_60_floating_tool_dock.py'
       - 'projects/swrlz-forge-moba/patches/v11_61_context_workbench.py'
+      - 'projects/swrlz-forge-moba/patches/v11_62_mobile_adaptive.py'
   workflow_dispatch:
 concurrency:
   group: engine-ci-verify-engine-v1111-pose-${{ github.event.pull_request.number || github.ref }}
