@@ -1,0 +1,38 @@
+name: Prepare §E v11.63 version-only source digest
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/measure-v11-63-smoke-once.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Measure one candidate before sealing manifest
+        run: |
+          set -euo pipefail
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/se-v1162-for-smoke
+          python - <<'PY'
+          import hashlib, runpy
+          from pathlib import Path
+          root = Path('projects/swrlz-forge-moba')
+          old = (Path('/tmp/se-v1162-for-smoke')/'index.html').read_text(encoding='utf-8')
+          patch = runpy.run_path(str(root/'patches/v11_63_version_smoke.py'))
+          next_html = patch['apply'](old).encode('utf-8')
+          assert len(next_html) > 2900000
+          digest = hashlib.sha256(next_html).hexdigest()
+          print('SE_V1163_FINAL_BYTES='+str(len(next_html)),flush=True)
+          print('SE_V1163_FINAL_SHA256='+digest,flush=True)
+          print('SE_V1163_PATCHES=95',flush=True)
+          Path('/tmp/se-v1163-module.mjs').write_text(next_html.decode('utf-8').split('<script type="module">',1)[1].rsplit('</script>',1)[0])
+          PY
+          node --check /tmp/se-v1163-module.mjs
+          echo SE_V1163_DIGEST_MEASURED_OK
