@@ -10,3 +10,7 @@
 }
 .atelier-desktop-wire-options input{width:16px;height:16px;accent-color:#51deda}
 .atelier-desktop-wire-options small{font-size:10px;color:#95abbc}
+
+/* Advanced display menu must sit above movable mesh gizmo dialog on desktop. */
+.model-atelier #modelAtelierViewportModes{position:relative;z-index:2205!important}
+.model-atelier .atelier-top-advanced[open]{position:relative;z-index:2206}
