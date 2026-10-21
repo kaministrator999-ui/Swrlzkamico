@@ -1822,6 +1822,7 @@ async def send(request:Request):
     if (github_chat_files.has_pending(google_owner,tid)
             and github_chat_files.pending_kind(google_owner,tid) not in ("need-content","need-destination")
             and not github_chat_files.is_reply(prompt)
+            and not (github_chat_files.pending_kind(google_owner,tid)=="need-new-name" and github_chat_files.is_new_name_reply(prompt))
             and not github_chat_files.is_file_action(prompt,active_github,history)):
         github_chat_files.expire_interrupted(google_owner,tid)
     # A user asking to recall conversation history is not requesting
@@ -1901,6 +1902,7 @@ async def send(request:Request):
     elif github_chat_files.is_file_action(prompt,active_github,history) or (
         github_chat_files.has_pending(google_owner,tid) and (
             github_chat_files.is_reply(prompt) or
+            (github_chat_files.pending_kind(google_owner,tid) == "need-new-name" and github_chat_files.is_new_name_reply(prompt)) or
             github_chat_files.pending_kind(google_owner,tid) in ("need-content","need-destination")
         )
     ):
