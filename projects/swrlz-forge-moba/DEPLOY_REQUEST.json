@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.61",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_61_ADAPTIVE_CONTEXT_TOOL_WORKBENCH",
-  "reason": "Owner requested a secondary floating, contextual tool workbench for all compatible Model Atelier operations: selected tool family → related operations → live native parameters and actions, with explicit browser-local per-tool presets. Production §E v11.61 was merged from PR #276 at d17aaf3fdad799956c8e6224f5a7e0e6b3de2b82 after all 15 of 15 required release workflows passed, including the 22-case native starter browser matrix, seven geometry/precision and multi-device cross-tool jobs, desktop+simulated Android contextual operation tests and independent sealed source verification. Preserve original 283-part scene, all 43 bundled assets, saved projects, and full 93-patch lineage. Source binary must be exactly 2,958,383 bytes with SHA-256 cd33b05e3e27304fe9d3e753e488d46fcb844841fd06e19b8058a81516e7d01e. This DEPLOY_REQUEST update is the sole final intended main mutation. Do not call v11.61 LIVE unless the terminal Hugging Face upload, normalized HTML/source receipt/43-assets audit and hosted editor UI verification succeed. Other non-Model-Atelier §E workspaces remain outside this release.",
-  "sourceCommit": "d17aaf3fdad799956c8e6224f5a7e0e6b3de2b82",
-  "sourceIntegritySha256": "cd33b05e3e27304fe9d3e753e488d46fcb844841fd06e19b8058a81516e7d01e"
+  "releaseVersion": "v11.62",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_62_MOBILE_ADAPTIVE_TOOL_SHEET",
+  "reason": "Owner-directed manual release: merge the §E v11.62 mobile-first Model Atelier tools and related fixes into main, deploy immediately using the established DEPLOY_REQUEST GitHub→Hugging Face workflow, then let the owner perform hands-on testing. Package 94 governed patches with exact 2,976,576-byte HTML SHA-256 215240cd453031834f76e90efd4d125466b6ecb1467dfe9941f3d69b8e08b931, preserve the canonical 283-part model and all 43 historical assets. HF deployment still verifies uploaded content integrity; user performs UX acceptance after the app is live.",
+  "sourceCommit": "d28916b04e2153fac5a887226104eb385a5612d3",
+  "sourceIntegritySha256": "215240cd453031834f76e90efd4d125466b6ecb1467dfe9941f3d69b8e08b931"
 }
