@@ -1,6 +1,6 @@
 ID=web-chat
-VERSION=1.5.155
-REVISION=1.5.155-v290-live-response-shimmer-tail
+VERSION=1.5.156
+REVISION=1.5.156-v292-ime-safe-enter-escape-drawer
 KIND=web-interface
 SOURCE_BRANCH=runtime
 STATUS=active
