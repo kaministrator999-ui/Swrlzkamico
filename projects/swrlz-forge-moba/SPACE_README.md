@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.64
+title: §wyrl§ Engine v11.65
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -10,7 +10,7 @@ header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
 
-# §wyrl§ Engine v11.64
+# §wyrl§ Engine v11.65
 
 This Space publishes the governed engine build. Project release details, historical verification evidence, and update notes are maintained in `projects/swrlz-forge-moba/README.md` and `§tart_§E.md` in the source repository. Historical Space documentation remains available in Git history.
 
@@ -32,3 +32,5 @@ Native anatomical head sections define skull, temples, cheekbones, jaw and chin 
 §E v11.63 is a version-only deployment smoke test. No modeling, gaming or animation behavior changes; 95 ordered patches, original 283-part canonical model, and 43 historical assets. Marker: `V11_63_VERSION_SMOKE_TEST`. The verified live deploy receipt determines whether v11.63 is actually hosted.
 
 §E v11.64 is a version-only §§§ release speed test. No modeling, gaming, or animation behavior changes; 96 ordered patches, original 283-part canonical model, and the same 43 historical assets. Marker: `V11_64_VERSION_SMOKE_TEST`. Hosted status requires a successful deployment receipt.
+
+§E v11.65 adds a contextual selection-based mesh transform strip next to the picked model part. Move/Rotate/Scale gizmo axes and plus/minus nudges, multi-mesh grouping and baked Join are native/Undo-enabled. Show vertices opens the existing real vertex-point overlay. U/V steppers make procedural density discoverable for sphere/loft/box/cone/cylinder and face-sheet meshes within bounded geometry budgets; nonparametric topology uses the existing refinement tools. Joined topology mesh material uses the first selected mesh. Original 283-part starter and 43 historical assets are preserved. Marker: `V11_65_SELECTION_MESH_GIZMOS`; 97 ordered patches. Hosted status requires the final verified release receipt.
