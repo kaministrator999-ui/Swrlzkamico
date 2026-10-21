@@ -46,7 +46,8 @@ def apply(html):
         "renderer.domElement.addEventListener('pointercancel',e=>{atelierMeshGizmoCancel();atelierLassoPointerCancel(e);")
     html=once(html,"  function close(){\n    atelierSurfacePreviewClear();",
         "  function close(){\n    atelierMeshGizmoCancel();atelierMeshGizmoClear();atelierMeshHidden=false;atelierMeshIds=[];\n    atelierSurfacePreviewClear();")
-    html=once(html,'</head>','<style id="atelierMeshGizmoV1165">'+css+'</style>\n</head>')
+    assert '</head>' in html
+    html=html.replace('</head>','<style id="atelierMeshGizmoV1165">'+css+'</style>\n</head>',1)
     for before,after in (
         (OLD,NEW),
         ('ENGINE · MAKER v11.64','ENGINE · MAKER v11.65'),
