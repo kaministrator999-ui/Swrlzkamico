@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.68",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_68_LIVE_MESH_GIZMO_FEEDBACK",
-  "reason": "§§§ owner-approved Model Atelier v11.68: gizmo axis drag previews the selected mesh, selection BoxHelper and handles continuously; pointer capture retains active gizmo identity; tapping a different object retargets its outline using existing scene objects rather than a 283-part rebuild. Preserve the v11.67 fast transform commit, native Undo/Redo, 283-part original scene, and 43 packaged assets. 100 ordered patches; exact HTML 3,010,876 bytes; SHA-256 ddd1e5e5c7e09dc6635b6c32c2170c4c5f3d08e19f816530348667abc602ba93. Targeted build and JS syntax passed run 39542983666. Deploy and verify hosted artifact, SOURCE receipt and all bundled assets; owner will test Android visual/touch response.",
-  "sourceCommit": "08428c7f05721caa560d3f7eb0da0ab722f50959",
-  "sourceIntegritySha256": "ddd1e5e5c7e09dc6635b6c32c2170c4c5f3d08e19f816530348667abc602ba93"
+  "releaseVersion": "v11.69",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_69_DRAG_PREVIEW_RENDER",
+  "reason": "§§§ owner-requested Model Atelier drag-feedback fix v11.69. Existing transform preview now updates native mesh positions and gizmo handles directly per pointer movement, avoids recalculating whole-mesh bounds on each drag event, and explicitly paints a WebGL frame before release. Real Chromium interaction test (run 39594806708) confirmed 9 pointer updates and 9 rendered frames BEFORE pointerup, both mesh and gizmo moved 0.45 world units and transform persisted afterward. Keep fast validated commits, Undo/Redo and quick selection from earlier versions. Source v11.69 has 101 patches, 3,012,114 bytes, SHA-256 6ed5ae18211945d86d2a73db45aadb173b377d656c57eeab6714105c26d8e471; original 283-part reference model and all 43 assets preserved. Deploy and verify exact hosted HTML, SOURCE receipt and all assets; owner checks Android touch behavior.",
+  "sourceCommit": "f2fe33c2099b3330326c9fd7d1ebe5c67dc8f5a5",
+  "sourceIntegritySha256": "6ed5ae18211945d86d2a73db45aadb173b377d656c57eeab6714105c26d8e471"
 }
