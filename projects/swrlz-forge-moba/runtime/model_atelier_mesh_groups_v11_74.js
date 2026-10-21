@@ -67,7 +67,8 @@ function atelierGroupsSelect(id){
   atelierMeshIds=group?atelierGroupMembers(group):(p?[id]:[]);
   atelierGroupCurrent=group?.id||null;
  }
- atelierGroupsOutline();refreshList();refreshInspector();
+ atelierGroupsOutline();atelierSculptOverlayRefresh();atelierLassoOverlayRefresh();
+ refreshList();refreshInspector();
  atelierMeshToolbarRefresh();atelierMeshPaintModeImmediately();
  atelierGroupsUIRefresh();
 }

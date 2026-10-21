@@ -38,10 +38,14 @@ def apply(html):
     css=(root/'runtime/model_atelier_mesh_groups_v11_74.css').read_text(encoding='utf-8')
     html=once(html,'function atelierMeshGizmoBuild(){',js+'\nfunction atelierMeshGizmoBuild(){')
     # Save exact group membership together with parts in the SAME Undo step.
-    html=once(html,'  function modelSnapshot(){return JSON.stringify(model().parts);}',
-      '  function modelSnapshot(){return atelierGroupsSnapshot();}')
-    html=once(html,'dst.push(modelSnapshot());model().parts=JSON.parse(src.pop());selection=null;signalEdited();',
-      'dst.push(modelSnapshot());atelierGroupsHistoryApply(src.pop());signalEdited();')
+    # Native modelSnapshot() already serializes the complete model envelope:
+    # preserve poseFrames, existing animation assemblies and all extensions.
+    assert 'function modelSnapshot(){return JSON.stringify(model());}' in html
+    html=once(html,
+      'dst.push(modelSnapshot());currentProject.modelAtelier=JSON.parse(src.pop());selection=null;signalEdited();',
+      'dst.push(modelSnapshot());currentProject.modelAtelier=JSON.parse(src.pop());selection=null;\n'
+      '    atelierMeshIds=[];atelierMeshAdding=false;atelierGroupCurrent=null;\n'
+      '    signalEdited();')
     # Keep all data flow in modelAtelier; edits that destroy parts prune stale links.
     html=once(html,'  function signalEdited(){',
       '  function signalEdited(){\n    atelierGroupsPrune();\n    queueMicrotask(atelierGroupsUIRefresh);')
@@ -60,13 +64,15 @@ def apply(html):
     # Group-sensitive imports reject invalid memberships and preserve all
     # existing materials, mesh data, transforms, names and source coordinates.
     html=once(html,
-      "       checkpoint();model().parts=structuredClone(source.parts);selection=null;signalEdited();status('Validated model imported. You can undo this import.');",
-      "       const importedGroups=source.meshGroups??[];\n"
-      "       if(!atelierGroupsValid(importedGroups,source.parts))throw Error('Invalid mesh group memberships.');\n"
-      "       checkpoint();model().parts=structuredClone(source.parts);\n"
-      "       model().meshGroups=structuredClone(importedGroups);\n"
-      "       selection=null;atelierMeshIds=[];atelierGroupCurrent=null;\n"
-      "       signalEdited();status('Validated model and mesh groups imported. Undo available.');")
+      '      const assemblies=atelierValidateAssemblies(source.assemblies,source.parts);',
+      "      const importedGroups=source.meshGroups??[];\n"
+      "      if(!atelierGroupsValid(importedGroups,source.parts))throw Error('Invalid mesh group memberships.');\n"
+      "      const assemblies=atelierValidateAssemblies(source.assemblies,source.parts);")
+    html=once(html,
+      'checkpoint();model().parts=structuredClone(source.parts);',
+      'checkpoint();model().parts=structuredClone(source.parts);\n'
+      '      model().meshGroups=structuredClone(importedGroups);\n'
+      '      atelierMeshIds=[];atelierGroupCurrent=null;')
     # Existing desktop list multiple selection remains usable, but avoids
     # rebuilding the 283-part model simply to show selection outlines.
     html=once(html,
