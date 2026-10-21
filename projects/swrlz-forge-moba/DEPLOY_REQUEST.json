@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.67",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_67_MESH_TRANSFORM_PERFORMANCE",
-  "reason": "§§§ owner-authorized v11.67 Model Atelier performance deploy. Native Move/Rotate/Scale commits use existing mesh transforms rather than rebuilding the 283-part scene; canceled and zero-motion drags also avoid full rebuilds. No changes to Undo/Redo semantics, geometry authoring, model identity, or bundled assets. Source manifest: 99 ordered patches, HTML 3,009,500 bytes, SHA-256 a2122de3a296da3319de5d861875f7c3efd4663d714b31820d4e27acf5ca8017. Targeted source assembly and Node syntax succeeded in GitHub Actions run 39532595474. Verify exact hosted HTML, SOURCE receipt and all 43 assets; owner validates responsiveness on Android.",
-  "sourceCommit": "125afc475696bda14b3228b27413135b326fcbbe",
-  "sourceIntegritySha256": "a2122de3a296da3319de5d861875f7c3efd4663d714b31820d4e27acf5ca8017"
+  "releaseVersion": "v11.68",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_68_LIVE_MESH_GIZMO_FEEDBACK",
+  "reason": "§§§ owner-approved Model Atelier v11.68: gizmo axis drag previews the selected mesh, selection BoxHelper and handles continuously; pointer capture retains active gizmo identity; tapping a different object retargets its outline using existing scene objects rather than a 283-part rebuild. Preserve the v11.67 fast transform commit, native Undo/Redo, 283-part original scene, and 43 packaged assets. 100 ordered patches; exact HTML 3,010,876 bytes; SHA-256 ddd1e5e5c7e09dc6635b6c32c2170c4c5f3d08e19f816530348667abc602ba93. Targeted build and JS syntax passed run 39542983666. Deploy and verify hosted artifact, SOURCE receipt and all bundled assets; owner will test Android visual/touch response.",
+  "sourceCommit": "08428c7f05721caa560d3f7eb0da0ab722f50959",
+  "sourceIntegritySha256": "ddd1e5e5c7e09dc6635b6c32c2170c4c5f3d08e19f816530348667abc602ba93"
 }
