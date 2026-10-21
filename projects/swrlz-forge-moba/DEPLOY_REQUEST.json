@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.64",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_64_VERSION_SMOKE_TEST",
-  "reason": "§§§ owner-requested delivery speed test: version-only §E v11.64 release with no changes to Model Atelier, game, or animation behavior. 96 ordered patches, the original 283-part canonical character model and all 43 historical assets remain intact. Targeted SHA measurement passed (GitHub Actions run 39527720786). Deploy the exact main source, confirm the live HTML and assets, then owner tests on device. Sealed HTML: 2,976,568 bytes, SHA-256 bd818ae35f08f5648c0a38ffce4d5bae620a46df8e56291dadba0b7cc53f6282.",
-  "sourceCommit": "708f11d01f78321954c1104871e962015d3b991d",
-  "sourceIntegritySha256": "bd818ae35f08f5648c0a38ffce4d5bae620a46df8e56291dadba0b7cc53f6282"
+  "releaseVersion": "v11.65",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_65_SELECTION_MESH_GIZMOS",
+  "reason": "§§§ owner-directed §E v11.65 modeling update: selection-adjacent Move/Rotate/Scale gizmos with axis handles and nudges; multi-mesh transform groups and bounded native Join; discoverable source vertex-point map; bounded U/V vertex grid for procedural meshes. Preserve 283-part canonical starter and 43 original assets; 97 patches. One focused source build/Node syntax check passed, GitHub Actions run 39529266779. Source HTML 3,000,400 bytes and SHA-256 a7e1514e34261d115472e6e6db68b88da8277d4e73e4e31cc19f9f99a138f38f. After exact live deployment and asset verification owner performs physical device UX testing.",
+  "sourceCommit": "ba950af5a777525bb5017600594720c581bb9b0c",
+  "sourceIntegritySha256": "a7e1514e34261d115472e6e6db68b88da8277d4e73e4e31cc19f9f99a138f38f"
 }
