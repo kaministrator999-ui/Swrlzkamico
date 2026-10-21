@@ -33,44 +33,15 @@ jobs:
         with:
           node-version: "22"
 
-      - name: Rebuild and integrity-check the exact Forge HTML
+      - name: Package the verified v11.62 source for deployment
         run: |
           set -euo pipefail
-          python projects/swrlz-forge-moba/build_space.py --output dist/swrlz-forge-moba
-          python projects/swrlz-forge-moba/tests/normalize_hf_static_html_cpu.py
-          python projects/swrlz-forge-moba/tests/maul_layout_package.py --package dist/swrlz-forge-moba
-          python projects/swrlz-forge-moba/tests/maul_batch_package.py --package dist/swrlz-forge-moba
-          python projects/swrlz-forge-moba/tests/episode_performance_package.py --package dist/swrlz-forge-moba
-          python projects/swrlz-forge-moba/tests/model_atelier_package.py --package dist/swrlz-forge-moba
-          python projects/swrlz-forge-moba/tests/model_geometry_profiler_package.py --package dist/swrlz-forge-moba
-          python projects/swrlz-forge-moba/tests/model_atelier_pose_package.py --package dist/swrlz-forge-moba
-          python projects/swrlz-forge-moba/tests/model_atelier_grounded_package.py --package dist/swrlz-forge-moba
-          node projects/swrlz-forge-moba/tests/model_atelier_grounded_pose_cpu.mjs
-          node projects/swrlz-forge-moba/tests/model_atelier_pose_cpu.mjs
-          node projects/swrlz-forge-moba/tests/model_geometry_profiler_cpu.mjs
-          python projects/swrlz-forge-moba/tests/prism_ferret_fidelity_package.py --package dist/swrlz-forge-moba
-          SWYRL_REPLAY_HTML=dist/swrlz-forge-moba/index.html node projects/swrlz-forge-moba/tests/run_replay_quality_cpu.mjs
-          SWYRL_MAUL_WALK_HTML=dist/swrlz-forge-moba/index.html node projects/swrlz-forge-moba/tests/maul_walk_builder_cpu.mjs
+          python projects/swrlz-forge-moba/scripts/verify_v11_62_release.py --output dist/swrlz-forge-moba
           test -s dist/swrlz-forge-moba/index.html
           test -s dist/swrlz-forge-moba/README.md
           grep -q "SWYRL_ENGINE_DEPLOY_MARKER: V11_62_MOBILE_ADAPTIVE_TOOL_SHEET" dist/swrlz-forge-moba/index.html
-          grep -q "<title>§wyrl§ Engine · Maker v11.62</title>" dist/swrlz-forge-moba/index.html
           grep -q "sdk: static" dist/swrlz-forge-moba/README.md
-          grep -q "app_file: index.html" dist/swrlz-forge-moba/README.md
-
-      - name: Syntax-check generated §wyrl§ Engine module
-        run: |
-          set -euo pipefail
-          python - <<'PY'
-          from pathlib import Path
-          s=Path("dist/swrlz-forge-moba/index.html").read_text(encoding="utf-8")
-          start=s.index('<script type="module">')+len('<script type="module">')
-          end=s.rindex('</script>')
-          Path("/tmp/swyrl-engine.mjs").write_text(s[start:end],encoding="utf-8")
-          PY
-          node --check /tmp/swyrl-engine.mjs
-          node --check projects/swrlz-forge-moba/runtime/model_atelier.js
-          node --check projects/swrlz-forge-moba/runtime/model_atelier_organic_v11_4.js
+          node --check dist/swrlz-forge-moba-module.mjs
 
       - name: Install Hugging Face Hub client
         run: python -m pip install "huggingface_hub>=0.34,<2"
@@ -166,8 +137,8 @@ jobs:
           import json
           from pathlib import Path
           official=json.loads(Path('dist/swrlz-forge-moba/SOURCE.json').read_text())
-          assert len(official['patches'])==93
-          assert official['patches'][-1]=='patches/v11_61_context_workbench.py'
+          assert len(official['patches'])==94
+          assert official['patches'][-1]=='patches/v11_62_mobile_adaptive.py'
           expected={'episodes/ghosts-in-different-forms-ep01.html',
                     'scenes/ghosts-in-different-forms-ep01.swyrl.json',
                     'scenes/ghosts-in-different-forms-ep01-storybook.swyrl.json',
