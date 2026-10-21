@@ -1,0 +1,85 @@
+name: Test §E v11.70 precision and mobile toolbar once
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/patches/v11_70_precision_ui.py"
+permissions:
+  contents: read
+jobs:
+  precision-ui:
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Assemble v11.70 and syntax-check
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import base64,gzip,hashlib,importlib.util,json
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          manifest=json.loads((root/'source-manifest.json').read_text())
+          raw=gzip.decompress(base64.b64decode(''.join((root/p).read_text().strip() for p in manifest['chunks'])))
+          assert hashlib.sha256(raw).hexdigest()==manifest['baseSha256']
+          html=raw.decode()
+          for i,rel in enumerate(manifest['patches']+['patches/v11_70_precision_ui.py']):
+              spec=importlib.util.spec_from_file_location('p'+str(i),root/rel)
+              p=importlib.util.module_from_spec(spec);spec.loader.exec_module(p);html=p.apply(html)
+          data=html.encode()
+          print('SWRLZ_V1170_FINAL_BYTES='+str(len(data)),flush=True)
+          print('SWRLZ_V1170_FINAL_SHA256='+hashlib.sha256(data).hexdigest(),flush=True)
+          print('SWRLZ_V1170_PATCH_COUNT='+str(len(manifest['patches'])+1),flush=True)
+          assert html.count('SWYRL_ENGINE_DEPLOY_MARKER: V11_70_PRECISION_GIZMO_TOOLBAR')==1
+          assert 'atelierMeshSensitivity(d.mode)' in html
+          assert 'atelierViewportTopArrange(panel);' in html
+          assert 'atelierMeshPrecisionInstall(strip);' in html
+          Path('/tmp/swyrl-v1170.mjs').write_text(html.split('<script type="module">',1)[1].rsplit('</script>',1)[0])
+          Path('/tmp/swyrl-v1170.html').write_text(html)
+          PY
+          node --check /tmp/swyrl-v1170.mjs
+      - name: Install browser test driver
+        run: npm install --no-save --prefix /tmp/swyrl-browser-test playwright@1.56.0
+      - name: Test precision response and mobile toolbar in Chromium
+        run: |
+          set -euo pipefail
+          CHROME_BIN="$(command -v google-chrome-stable || command -v google-chrome || command -v chromium || true)"
+          if [ -z "$CHROME_BIN" ]; then
+            /tmp/swyrl-browser-test/node_modules/.bin/playwright install chromium
+            CHROME_BIN="$(find "$HOME/.cache/ms-playwright" -type f -name chrome -path '*chrome-linux*' | head -1)"
+          fi
+          test -x "$CHROME_BIN"
+          export CHROME_BIN
+          python - <<'PY'
+          from pathlib import Path
+          html=Path('/tmp/swyrl-v1170.html').read_text()
+          instrument="""window.__engineGizmoTest={
+           ready:()=>!!(renderer&&modelRoot&&model()?.parts?.length),
+           pick:()=>{const p=model().parts.find(p=>/bodice|torso/i.test(p.name))||model().parts[0];select(p.id);return p.name;},
+           handle:axis=>{
+             const m=atelierMeshGizmo?.children.find(m=>m.userData.meshGizmoAxis===axis);
+             if(!m)return null;
+             m.updateMatrixWorld(true);
+             const v=m.getWorldPosition(new THREE.Vector3()).project(camera);
+             const box=renderer.domElement.getBoundingClientRect();
+             return {x:box.left+(v.x+1)*box.width/2,y:box.top+(1-v.y)*box.height/2};
+           },
+           state:()=>{
+             const mesh=atelierMeshSelectedMeshes()[0],d=window.SWYRL_ENGINE_MESH_DRAG_DIAGNOSTICS?.status();
+             return {position:mesh?.position.toArray()||[],gizmo:atelierMeshGizmo?.position.toArray()||[],
+               dragging:!!atelierMeshDrag,updates:d?.pointerUpdates||0,renders:d?.drawnFrames||0};
+           }
+          };"""
+          anchor='function atelierMeshGizmoDown(e){'
+          assert html.count(anchor)==1
+          html=html.replace(anchor,instrument+'\n'+anchor,1)
+          directory=Path('/tmp/swyrl-precision-test')
+          directory.mkdir(exist_ok=True)
+          (directory/'index.html').write_text(html)
+          PY
+          python -m http.server 8765 --bind 127.0.0.1 --directory /tmp/swyrl-precision-test >/tmp/precision-http.log 2>&1 &
+          sleep 2
+          node projects/swrlz-forge-moba/scripts/test_v11_70_precision_ui.mjs
