@@ -37,3 +37,14 @@ The guarded Chat Space request **completed successfully**: [GitHub Actions run #
 The canonical [Server Roadmap](../../../SWRLZ_SERVER_ROADMAP.md) now records the full v293 governance and deployment event. `runtime` Repository Work was advanced `1.0.231 → 1.0.232` (`9a8c2fbbcf2c0a592b6723a1c546b59d2845379c`), and deployed Server Runtime `2.3.438 → 2.3.439` (`4a0b2d7daf5c5b5634949dc92d921b15174f869d`). Web Chat remains `1.5.156`, LALM Engine remains `2.1.201`, and model weights were not changed.
 
 The first candidate's syntax failure and then deterministic-read routing failure remain documented in the roadmap as genuine implementation/validation failures repaired before the successful source release. No new permissions, alternate host, or engine deployment were authorized or used.
+
+
+## Independent hosted acceptance — continuation 2026-10-21
+
+[PR #287](https://github.com/kaministrator999-ui/Swrlzkamico/pull/287) adds a reusable read-only public live probe at `scripts/verify_chat_github_v293_live.py` and `.github/workflows/chat-github-v293-live.yml`. [Actions run #39657026690](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/39657026690) COMPLETED/SUCCESS on exact tested head `48a2b343ef1b5d19203efe0b6d1ee0601e927d4b`. The script uses Python stdlib to make unauthenticated GET requests; no user cookies, GitHub token, inference-generation call, write call, or secret material is used.
+
+**Actual hosted HTTP checks:** Hugging Face public Space metadata revision exactly `2b9475e46675932d2651d2c899ea6efdee629779` (matching the v293 release checkpoint); hosted Chat HTML HTTP 200 with canonical Chat `1.1.18`; `/api/hf/models` HTTP 200 with five model entries. Anonymous `/api/account/me`, `/api/github/status`, and `/api/github/start?access=public-write` each returned HTTP 401. No anonymous GitHub account access was observed. These are external runtime observations, not merely source-level or mocked checks.
+
+**Integration and governed version:** [PR #287](https://github.com/kaministrator999-ui/Swrlzkamico/pull/287) merged by squash into `main` at `18d5f7db45d0f57cef1e69cccb9c24b966a7340f` after successful live CI. This is reusable testing/instrumentation only; it does not modify the deployed Chat application or authorize another HF publication. Canonical `runtime:versions/repository-work.txt` advances `1.0.232 → 1.0.233` at `a2debcd1d0a74e3d34a7e4d986e47f3f8b285727`. Deployed Server Runtime stays `2.3.439`; Web Chat stays `1.5.156`; LALM Engine stays `2.1.201`; §E unchanged.
+
+**Still unverified:** an actual **authenticated** Google → GitHub signed-in live read/tool-selection session, any mobile/physical-device UX, and semantic quality of model-selected investigations under live connected user context. Anonymous 401 enforcement is not proof of full OAuth behavior. Do not claim that user acceptance or authenticated GitHub tool calls passed on the basis of this public probe.
