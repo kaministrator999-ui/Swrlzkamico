@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - "projects/swrlz-forge-moba/patches/v11_75_component_edit.py"
+      - "projects/swrlz-forge-moba/runtime/model_atelier_components_v11_75.js"
       - "projects/swrlz-forge-moba/scripts/test_v11_75_components.mjs"
 permissions:
   contents: read

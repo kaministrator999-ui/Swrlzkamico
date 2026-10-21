@@ -87,7 +87,7 @@ function atelierComponentOverlayBuild(){
  const selected=new Set(atelierComponentIds);
  const colors={vertex:0x56e9e7,edge:0x69bbff,face:0xe3b6ff};
  if(atelierComponentMode==='vertex'){
-  const make=ids,color,size)=>{
+  const make=(ids,color,size)=>{
    if(!ids.length)return;
    const positions=[];
    for(const i of ids){
