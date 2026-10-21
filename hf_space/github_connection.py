@@ -1872,10 +1872,10 @@ def _agent_model_plan_events(prompt, generator, stage1=False):
     instruction = (
         "Choose 1 to 3 read-only GitHub checks relevant to this request. "
         "Return ONLY JSON, e.g. {\"tools\":[\"permissions\",\"pulls\"]}. "
-        ("Stage-1 permitted categories: " + ", ".join(_STAGE1_PLAN_COMMANDS) + ". "
+        + ("Stage-1 permitted categories: " + ", ".join(_STAGE1_PLAN_COMMANDS) + ". "
          if stage1 else
          "Valid tools: permissions, files, branches, issues, pulls, commits, workflows, workflow runs, workflow guide, overview, tree, project guide, project brief, dependencies, triage, project readiness, branch policy, releases, engine status, engine starters. Specific read-only PR/issue IDs, checks SHAs, code search terms, file-history paths, or compare refs are allowed ONLY when the user explicitly named those identifiers. ")
-        "Specific files PATH or read file PATH permitted only when PATH is in the user request. "
+        + "Specific files PATH or read file PATH permitted only when PATH is in the user request. "
         "Do not propose writes, URL fetches, authorization changes or other commands. "
         "No chain-of-thought. User request: " + str(prompt)[:900]
     )
