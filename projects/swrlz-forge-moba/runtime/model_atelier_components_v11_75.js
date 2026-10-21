@@ -381,12 +381,26 @@ function atelierComponentCandidate(d,amount){
  return result;
 }
 function atelierComponentPreview(d,amount){
+ const neutral=d.mode==='scale'?1:0;
+ const within=rows=>rows.every((v,k)=>v.every((x,i)=>
+  Number.isFinite(x)&&Math.abs(x-d.base[k][i])<=.499));
+ let next=atelierComponentCandidate(d,amount);
+ if(!within(next)){
+  let lo=0,hi=1;
+  for(let i=0;i<11;i++){
+   const fraction=(lo+hi)*.5;
+   const candidate=neutral+(amount-neutral)*fraction;
+   if(within(atelierComponentCandidate(d,candidate)))lo=fraction;else hi=fraction;
+  }
+  amount=neutral+(amount-neutral)*lo;
+  next=atelierComponentCandidate(d,amount);
+ }
  d.amount=amount;
- const next=atelierComponentCandidate(d,amount),a=d.mesh.geometry.attributes.position;
+ const a=d.mesh.geometry.attributes.position;
  for(let k=0;k<d.ids.length;k++)a.setXYZ(d.ids[k],...next[k]);
- a.needsUpdate=true;d.mesh.geometry.computeVertexNormals();
- d.mesh.geometry.computeBoundingSphere();d.mesh.geometry.computeBoundingBox();
- // The same native gizmo follows the component selection without rebuilding.
+ a.needsUpdate=true;
+ // Do not recompute whole-mesh normals and bounds on EVERY Android pointer
+ // event. The final native geometry rebuild computes the correct values once.
  if(atelierMeshGizmo){
   if(d.mode==='move'){
    const axis=atelierMeshAxes[d.axis];
