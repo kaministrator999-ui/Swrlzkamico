@@ -71,7 +71,27 @@ concurrency:
   group: engine-ci-verify-swrlz-anime-candidate-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 jobs:
+  route:
+    name: Select affected anime/cinematic subsystem
+    runs-on: ubuntu-latest
+    outputs:
+      run: ${{ steps.select.outputs.run }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 2
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - id: select
+        name: Skip unrelated Model Atelier / Sheep / Maul edits
+        run: |
+          python projects/swrlz-forge-moba/scripts/route_ci_suites.py \
+            --component anime --event '${{ github.event_name }}' \
+            --base HEAD^ --head HEAD --output "$GITHUB_OUTPUT"
   verify:
+    needs: route
+    if: needs.route.outputs.run == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
