@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.63",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_63_VERSION_SMOKE_TEST",
-  "reason": "§§§ owner-requested speed test: publish a version-only §E v11.63 release without changing Model Atelier, game, or animation behavior. 95 patches, canonical 283-part character model and 43 original assets intact. Use direct main commit, one dedicated DEPLOY_REQUEST trigger, verify live artifact, then hand off device testing to owner. Sealed HTML: 2,976,568 bytes, SHA-256 6adbda8d53e0b11fe6e98ae59605176362e0fc2b159c558e52087e96ed1274ec.",
-  "sourceCommit": "819f9ba8fe8bcaa1c3410b7a1674d4c5007d5ca5",
-  "sourceIntegritySha256": "6adbda8d53e0b11fe6e98ae59605176362e0fc2b159c558e52087e96ed1274ec"
+  "releaseVersion": "v11.64",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_64_VERSION_SMOKE_TEST",
+  "reason": "§§§ owner-requested delivery speed test: version-only §E v11.64 release with no changes to Model Atelier, game, or animation behavior. 96 ordered patches, the original 283-part canonical character model and all 43 historical assets remain intact. Targeted SHA measurement passed (GitHub Actions run 39527720786). Deploy the exact main source, confirm the live HTML and assets, then owner tests on device. Sealed HTML: 2,976,568 bytes, SHA-256 bd818ae35f08f5648c0a38ffce4d5bae620a46df8e56291dadba0b7cc53f6282.",
+  "sourceCommit": "708f11d01f78321954c1104871e962015d3b991d",
+  "sourceIntegritySha256": "bd818ae35f08f5648c0a38ffce4d5bae620a46df8e56291dadba0b7cc53f6282"
 }
