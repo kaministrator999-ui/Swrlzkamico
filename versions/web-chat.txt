@@ -1,6 +1,6 @@
 ID=web-chat
-VERSION=1.5.156
-REVISION=1.5.156-v292-ime-safe-enter-escape-drawer
+VERSION=1.5.157
+REVISION=1.5.157-v294-desktop-welcome-glass-card
 KIND=web-interface
 SOURCE_BRANCH=runtime
 STATUS=active
