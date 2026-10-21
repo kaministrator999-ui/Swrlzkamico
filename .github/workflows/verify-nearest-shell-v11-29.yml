@@ -1,13 +1,6 @@
 name: Verify §E v11.29 nearest-shell safety
 on:
-  push:
-    branches: [feature/atelier-nearest-shell-v11-29]
-    paths:
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_surface_targeting_v11_22.js'
-      - 'projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py'
-      - 'projects/swrlz-forge-moba/tests/model_atelier_surface_targeting_v11_22.mjs'
-      - 'projects/swrlz-forge-moba/tests/model_atelier_nearest_shell_browser_v11_29.mjs'
-      - '.github/workflows/verify-nearest-shell-v11-29.yml'
+  workflow_dispatch:
 permissions:
   contents: read
 concurrency:

@@ -1,10 +1,5 @@
 name: Preview §E draggable Model Atelier dock v11.60
 on:
-  pull_request:
-    paths:
-      - 'projects/swrlz-forge-moba/patches/v11_60_floating_tool_dock_preview.py'
-      - 'projects/swrlz-forge-moba/tests/model_atelier_tool_dock_browser_v11_60.mjs'
-      - '.github/workflows/preview-atelier-tool-dock-v11-60.yml'
   workflow_dispatch:
 permissions:
   contents: read

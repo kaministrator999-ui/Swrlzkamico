@@ -1,13 +1,6 @@
 name: Verify §E v11.31 refinement layer management
 on:
-  push:
-    branches: [feature/atelier-refinement-layer-management-v11-31]
-    paths:
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_local_refinement_v11_23.js'
-      - 'projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py'
-      - 'projects/swrlz-forge-moba/tests/model_atelier_refine_layers_v11_31.mjs'
-      - 'projects/swrlz-forge-moba/tests/model_atelier_refine_layers_browser_v11_31.mjs'
-      - '.github/workflows/verify-refine-layers-v11-31.yml'
+  workflow_dispatch:
 permissions:
   contents: read
 concurrency:

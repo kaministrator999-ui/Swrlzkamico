@@ -1,12 +1,5 @@
 name: Verify §E v11.40 direct indexed topology editing
 on:
-  push:
-    branches: [feature/atelier-topology-direct-edit-v11-40]
-    paths:
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_topology_lod_v11_38.js'
-      - 'projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py'
-      - 'projects/swrlz-forge-moba/tests/model_atelier_topology_direct*.mjs'
-      - '.github/workflows/verify-atelier-topology-direct-v11-40.yml'
   workflow_dispatch:
 permissions:
   contents: read

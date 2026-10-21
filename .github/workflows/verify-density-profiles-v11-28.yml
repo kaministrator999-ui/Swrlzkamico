@@ -1,14 +1,6 @@
 name: Verify §E v11.28 parametric density profile preview
 on:
-  push:
-    branches: [feature/atelier-density-profiles-v11-28]
-    paths:
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_density_profiles_v11_28.js'
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_sculpt_brush_v11_21.js'
-      - 'projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py'
-      - 'projects/swrlz-forge-moba/tests/model_atelier_density_profiles_v11_28.mjs'
-      - 'projects/swrlz-forge-moba/tests/model_atelier_density_profiles_browser_v11_28.mjs'
-      - '.github/workflows/verify-density-profiles-v11-28.yml'
+  workflow_dispatch:
 permissions:
   contents: read
 concurrency:

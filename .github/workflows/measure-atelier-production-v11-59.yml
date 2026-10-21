@@ -1,13 +1,5 @@
 name: Measure §E v11.59 governed production digest
 on:
-  push:
-    branches: [release/atelier-v11-59-production]
-    paths:
-      - 'projects/swrlz-forge-moba/patches/v11_59_precision_model_atelier.py'
-      - 'projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py'
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_*.js'
-      - 'projects/swrlz-forge-moba/scripts/measure_v11_59_release.py'
-      - '.github/workflows/measure-atelier-production-v11-59.yml'
   workflow_dispatch:
 permissions:
   contents: read

@@ -1,13 +1,5 @@
 name: Verify §E v11.35 curved lasso boundaries
 on:
-  push:
-    branches: [feature/atelier-curve-lasso-v11-35]
-    paths:
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_surface_lasso_v11_22.js'
-      - 'projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py'
-      - 'projects/swrlz-forge-moba/tests/model_atelier_lasso_curve_v11_35.mjs'
-      - 'projects/swrlz-forge-moba/tests/model_atelier_lasso_curve_browser_v11_35.mjs'
-      - '.github/workflows/verify-atelier-curve-lasso-v11-35.yml'
   workflow_dispatch:
 permissions:
   contents: read

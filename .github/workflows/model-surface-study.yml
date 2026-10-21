@@ -1,12 +1,6 @@
 name: Author §E native character surface study
 on:
-  push:
-    branches: [feature/model-native-surface-study]
-    paths:
-      - '.github/workflows/model-surface-study.yml'
-      - 'projects/swrlz-forge-moba/authoring/**'
-      - 'projects/swrlz-forge-moba/patches/v11_15_native_surface_study.py'
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_surface_v11_15.js'
+  workflow_dispatch:
 permissions:
   contents: read
 jobs:

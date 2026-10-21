@@ -1,12 +1,6 @@
 name: Quick verify §E v11.22 mobile render modes vs References
 on:
-  push:
-    branches: [feature/atelier-vertex-sphere-brush-v11-21]
-    paths:
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_reference_studio_v11_22.js'
-      - 'projects/swrlz-forge-moba/tests/model_atelier_reference_studio_v11_22.mjs'
-      - 'projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py'
-      - '.github/workflows/verify-reference-layout-v11-22.yml'
+  workflow_dispatch:
 permissions:
   contents: read
 concurrency:

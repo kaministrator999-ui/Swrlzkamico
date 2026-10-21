@@ -1,22 +1,5 @@
 name: Verify §E v11.62 sealed production candidate
 on:
-  pull_request:
-    paths:
-      - 'projects/swrlz-forge-moba/build_space.py'
-      - 'projects/swrlz-forge-moba/payload/**'
-      - 'projects/swrlz-forge-moba/patches/**'
-      - 'projects/swrlz-forge-moba/runtime/**'
-      - 'projects/swrlz-forge-moba/SPACE_README.md'
-      - 'projects/swrlz-forge-moba/assets/**'
-      - 'projects/swrlz-forge-moba/scenes/**'
-      - 'projects/swrlz-forge-moba/episodes/**'
-      - 'projects/swrlz-forge-moba/patches/v11_62_mobile_adaptive.py'
-      - 'projects/swrlz-forge-moba/patches/v11_62_mobile_adaptive_preview.py'
-      - 'projects/swrlz-forge-moba/source-manifest.json'
-      - 'projects/swrlz-forge-moba/scripts/verify_v11_62_release.py'
-      - 'projects/swrlz-forge-moba/scripts/measure_v11_62_release.py'
-      - 'projects/swrlz-forge-moba/tests/mobile_adaptive_tool_layout_browser_v11_62.mjs'
-      - '.github/workflows/verify-atelier-v11-62-production.yml'
   workflow_dispatch:
 permissions:
   contents: read

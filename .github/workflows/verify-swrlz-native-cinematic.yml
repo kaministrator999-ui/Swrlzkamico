@@ -1,30 +1,5 @@
 name: Verify §E v11.62 native cinematic candidate
 on:
-  push:
-    branches: [main]
-    paths: &anime_paths
-      - '.github/workflows/verify-swrlz-native-cinematic.yml'
-      - 'projects/swrlz-forge-moba/patches/v8_6*'
-      - 'projects/swrlz-forge-moba/patches/v8_7*'
-      - 'projects/swrlz-forge-moba/patches/v8_8*'
-      - 'projects/swrlz-forge-moba/patches/v8_9*'
-      - 'projects/swrlz-forge-moba/patches/v9_*'
-      - 'projects/swrlz-forge-moba/assets/anime/**'
-      - 'projects/swrlz-forge-moba/episodes/**'
-      - 'projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-*'
-      - 'projects/swrlz-forge-moba/runtime/anime_*'
-      - 'projects/swrlz-forge-moba/runtime/character_*'
-      - 'projects/swrlz-forge-moba/tests/anime_*'
-      - 'projects/swrlz-forge-moba/tests/native_anime*'
-      - 'projects/swrlz-forge-moba/tests/storybook_*'
-      - 'projects/swrlz-forge-moba/tests/episode_*'
-      - 'projects/swrlz-forge-moba/tests/character_*'
-      - 'projects/swrlz-forge-moba/tests/depth_theatre*'
-      - 'projects/swrlz-forge-moba/tests/socket_*'
-      - 'projects/swrlz-forge-moba/build_space.py'
-  pull_request:
-    branches: [main]
-    paths: *anime_paths
   workflow_dispatch:
 permissions:
   contents: read

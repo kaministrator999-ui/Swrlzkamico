@@ -1,13 +1,5 @@
 name: Verify §E v11.47 explicitly calibrated front and side facial-depth landmarks
 on:
-  push:
-    branches: [feature/atelier-manual-profile-depth-v11-47]
-    paths:
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_face_sheet_v11_23.js'
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_face_profile_v11_47.js'
-      - 'projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py'
-      - 'projects/swrlz-forge-moba/tests/model_atelier_face_profile*.mjs'
-      - '.github/workflows/verify-atelier-face-profile-v11-47.yml'
   workflow_dispatch:
 permissions:
   contents: read

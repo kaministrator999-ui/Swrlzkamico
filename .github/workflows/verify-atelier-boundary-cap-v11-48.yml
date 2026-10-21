@@ -1,16 +1,5 @@
 name: Verify §E v11.48 conservative indexed planar boundary hole fill
 on:
-  push:
-    branches: [feature/atelier-boundary-cap-v11-48]
-    paths:
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_topology_lod_v11_38.js'
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_runtime_lod_v11_43.js'
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_topology_audit_v11_44.js'
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_adaptive_topology_v11_46.js'
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_boundary_cap_v11_48.js'
-      - 'projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py'
-      - 'projects/swrlz-forge-moba/tests/model_atelier_boundary_cap*.mjs'
-      - '.github/workflows/verify-atelier-adaptive-topology-v11-48.yml'
   workflow_dispatch:
 permissions:
   contents: read

@@ -1,13 +1,5 @@
 name: Verify §E v11.58 scoped strict UV-island LOD
 on:
-  push:
-    branches: [feature/atelier-uv-island-lod-v11-58]
-    paths:
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_topology_lod_v11_38.js'
-      - 'projects/swrlz-forge-moba/tests/model_atelier_uv_island_lod*.mjs'
-      - 'projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py'
-      - 'projects/swrlz-forge-moba/scripts/build_atelier_precision_preview_v11_58.py'
-      - '.github/workflows/verify-atelier-uv-island-lod-v11-58.yml'
   workflow_dispatch:
 permissions:
   contents: read

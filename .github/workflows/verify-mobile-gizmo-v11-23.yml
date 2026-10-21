@@ -1,13 +1,6 @@
 name: Quick verify §E mobile vertex gizmo
 on:
-  push:
-    branches: [feature/atelier-vertex-sphere-brush-v11-21]
-    paths:
-      - 'projects/swrlz-forge-moba/tests/model_sculpt_brush_playwright_v11_21.mjs'
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_viewport_v11_21.js'
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_sculpt_brush_v11_21.js'
-      - 'projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py'
-      - '.github/workflows/verify-mobile-gizmo-v11-23.yml'
+  workflow_dispatch:
 permissions:
   contents: read
 concurrency:

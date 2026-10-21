@@ -1,13 +1,6 @@
 name: Verify §E v11.26 measured density preview
 on:
-  push:
-    branches: [feature/atelier-density-preview-v11-26]
-    paths:
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_local_refinement_v11_23.js'
-      - 'projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py'
-      - 'projects/swrlz-forge-moba/tests/model_atelier_local_refine_v11_23.mjs'
-      - 'projects/swrlz-forge-moba/tests/model_atelier_refinement_browser_v11_23.mjs'
-      - '.github/workflows/verify-density-preview-v11-26.yml'
+  workflow_dispatch:
 permissions:
   contents: read
 concurrency:

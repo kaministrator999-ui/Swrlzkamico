@@ -1,14 +1,6 @@
 name: Verify §E v11.27 advanced sculpting
 on:
-  push:
-    branches: [feature/atelier-brush-operators-v11-27]
-    paths:
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_brush_ops_v11_27.js'
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_sculpt_brush_v11_21.js'
-      - 'projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py'
-      - 'projects/swrlz-forge-moba/tests/model_atelier_brush_ops_v11_27.mjs'
-      - 'projects/swrlz-forge-moba/tests/model_atelier_brush_ops_browser_v11_27.mjs'
-      - '.github/workflows/verify-atelier-brush-ops-v11-27.yml'
+  workflow_dispatch:
 permissions:
   contents: read
 concurrency:

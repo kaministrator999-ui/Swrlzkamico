@@ -1,23 +1,5 @@
 name: Verify §E v11.62 adaptive contextual tool workbench production release
 on:
-  push:
-    branches: [release/atelier-v11-59-production]
-    paths:
-      - 'projects/swrlz-forge-moba/scripts/verify_v11_62_release.py'
-      - 'projects/swrlz-forge-moba/source-manifest.json'
-      - 'projects/swrlz-forge-moba/patches/v11_59_precision_model_atelier.py'
-      - 'projects/swrlz-forge-moba/patches/v11_60_floating_tool_dock.py'
-      - 'projects/swrlz-forge-moba/patches/v11_60_floating_tool_dock_preview.py'
-      - 'projects/swrlz-forge-moba/patches/v11_61_context_workbench.py'
-      - 'projects/swrlz-forge-moba/patches/v11_61_context_workbench_preview.py'
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_*.js'
-      - 'projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py'
-      - 'projects/swrlz-forge-moba/tests/model_atelier_*.mjs'
-      - '.github/workflows/verify-production-atelier-v11-59.yml'
-  pull_request:
-    paths:
-      - 'projects/swrlz-forge-moba/**'
-      - '.github/workflows/verify-production-atelier-v11-59.yml'
   workflow_dispatch:
 permissions:
   contents: read

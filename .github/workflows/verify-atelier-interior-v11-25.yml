@@ -1,16 +1,6 @@
 name: Verify §E v11.25 interior modeling candidate
 on:
-  push:
-    branches: [feature/atelier-interior-surface-v11-25]
-    paths:
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_surface_targeting_v11_22.js'
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_sculpt_brush_v11_21.js'
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_viewport_v11_21.js'
-      - 'projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py'
-      - 'projects/swrlz-forge-moba/tests/model_atelier_interior_camera_v11_25.mjs'
-      - 'projects/swrlz-forge-moba/tests/model_atelier_interior_browser_v11_25.mjs'
-      - 'projects/swrlz-forge-moba/tests/model_atelier_surface_targeting_v11_22.mjs'
-      - '.github/workflows/verify-atelier-interior-v11-25.yml'
+  workflow_dispatch:
 permissions:
   contents: read
 concurrency:

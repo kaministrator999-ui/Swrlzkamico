@@ -1,10 +1,5 @@
 name: Verify §E v11.62 mobile adaptive tool sheet preview
 on:
-  pull_request:
-    paths:
-      - 'projects/swrlz-forge-moba/patches/v11_62_mobile_adaptive_preview.py'
-      - 'projects/swrlz-forge-moba/tests/mobile_adaptive_tool_layout_browser_v11_62.mjs'
-      - '.github/workflows/verify-atelier-mobile-v11-62-preview.yml'
   workflow_dispatch:
 permissions:
   contents: read

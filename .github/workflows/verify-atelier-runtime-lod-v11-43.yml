@@ -1,13 +1,5 @@
 name: Verify §E v11.43 real camera distance native runtime LOD
 on:
-  push:
-    branches: [feature/atelier-runtime-lod-v11-43]
-    paths:
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_topology_lod_v11_38.js'
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_runtime_lod_v11_43.js'
-      - 'projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py'
-      - 'projects/swrlz-forge-moba/tests/model_atelier_runtime_lod*.mjs'
-      - '.github/workflows/verify-atelier-runtime-lod-v11-43.yml'
   workflow_dispatch:
 permissions:
   contents: read

@@ -1,24 +1,6 @@
 name: Validate §E v11.62 native starter and animation studio
 
 on:
-  push:
-    branches: [main]
-    paths: &engine_suite_inputs
-      - '.github/workflows/verify-swrlz-storybook-v8-8.yml'
-      - 'projects/swrlz-forge-moba/patches/**'
-      - 'projects/swrlz-forge-moba/runtime/**'
-      - 'projects/swrlz-forge-moba/scenes/**'
-      - 'projects/swrlz-forge-moba/tests/**'
-      - 'projects/swrlz-forge-moba/authoring/**'
-      - 'projects/swrlz-forge-moba/episodes/**'
-      - 'projects/swrlz-forge-moba/assets/**'
-      - 'projects/swrlz-forge-moba/payload/**'
-      - 'projects/swrlz-forge-moba/build_space.py'
-      - 'projects/swrlz-forge-moba/DEPLOY_REQUEST.json'
-      - 'projects/swrlz-forge-moba/scripts/route_ci_suites.py'
-  pull_request:
-    branches: [main]
-    paths: *engine_suite_inputs
   workflow_dispatch:
 permissions:
   contents: read

@@ -1,13 +1,5 @@
 name: Verify §E v11.42 mobile tap source image to saved 3D landmark
 on:
-  push:
-    branches: [feature/atelier-touch-face-markers-v11-42]
-    paths:
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_face_sheet_v11_23.js'
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_reference_studio_v11_22.js'
-      - 'projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py'
-      - 'projects/swrlz-forge-moba/tests/model_atelier_face_tap*.mjs'
-      - '.github/workflows/verify-atelier-face-tap-v11-42.yml'
   workflow_dispatch:
 permissions:
   contents: read

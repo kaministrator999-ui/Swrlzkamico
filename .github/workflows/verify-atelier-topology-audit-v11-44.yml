@@ -1,14 +1,5 @@
 name: Verify §E v11.44 indexed mesh integrity audit and repair
 on:
-  push:
-    branches: [feature/atelier-topology-audit-v11-44]
-    paths:
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_topology_lod_v11_38.js'
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_runtime_lod_v11_43.js'
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_topology_audit_v11_44.js'
-      - 'projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py'
-      - 'projects/swrlz-forge-moba/tests/model_atelier_topology_audit*.mjs'
-      - '.github/workflows/verify-atelier-topology-audit-v11-44.yml'
   workflow_dispatch:
 permissions:
   contents: read

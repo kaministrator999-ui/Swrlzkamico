@@ -1,13 +1,5 @@
 name: Verify & preview §E v11.53 integrated precision tools
 on:
-  push:
-    branches: [feature/atelier-painted-region-masks-v11-53]
-    paths:
-      - 'projects/swrlz-forge-moba/scripts/build_atelier_precision_preview_v11_53.py'
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_*.js'
-      - 'projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py'
-      - 'projects/swrlz-forge-moba/tests/model_atelier_*.mjs'
-      - '.github/workflows/verify-preview-atelier-v11-53.yml'
   workflow_dispatch:
 permissions:
   contents: read

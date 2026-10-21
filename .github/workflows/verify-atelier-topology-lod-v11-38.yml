@@ -1,12 +1,5 @@
 name: Verify §E v11.38 native topology and explicit LOD
 on:
-  push:
-    branches: [feature/atelier-topology-lod-v11-38]
-    paths:
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_topology_lod_v11_38.js'
-      - 'projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py'
-      - 'projects/swrlz-forge-moba/tests/model_atelier_topology_lod*.mjs'
-      - '.github/workflows/verify-atelier-topology-lod-v11-38.yml'
   workflow_dispatch:
 permissions:
   contents: read

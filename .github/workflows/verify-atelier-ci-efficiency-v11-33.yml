@@ -1,15 +1,5 @@
 name: Verify §E v11.33 fast CI routing
 on:
-  push:
-    branches: [feature/atelier-ci-efficiency-v11-33]
-    paths:
-      - '.github/workflows/verify-character-detail.yml'
-      - '.github/workflows/verify-model-atelier-v115.yml'
-      - '.github/workflows/verify-engine-v1110-profiler.yml'
-      - '.github/workflows/verify-engine-v1111-pose.yml'
-      - '.github/workflows/verify-engine-v1112-grounded-poses.yml'
-      - 'projects/swrlz-forge-moba/tests/verify_atelier_ci_routing_v11_33.py'
-      - '.github/workflows/verify-atelier-ci-efficiency-v11-33.yml'
   workflow_dispatch:
 permissions:
   contents: read

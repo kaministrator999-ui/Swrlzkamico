@@ -1,18 +1,5 @@
 name: Verify §E v11.50 actual triangle face extrusion/intrusion and stitched topology
 on:
-  push:
-    branches: [feature/atelier-face-extrusion-v11-50]
-    paths:
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_topology_lod_v11_38.js'
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_runtime_lod_v11_43.js'
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_topology_audit_v11_44.js'
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_adaptive_topology_v11_46.js'
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_boundary_cap_v11_48.js'
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_uv_reprojection_v11_49.js'
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_face_extrude_v11_50.js'
-      - 'projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py'
-      - 'projects/swrlz-forge-moba/tests/model_atelier_face_extrude*.mjs'
-      - '.github/workflows/verify-atelier-adaptive-topology-v11-50.yml'
   workflow_dispatch:
 permissions:
   contents: read

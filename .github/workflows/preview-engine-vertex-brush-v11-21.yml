@@ -1,30 +1,5 @@
 name: Preview §E v11.21 vertex sculpt brush on official v11.20 head
 on:
-  push:
-    branches: [feature/atelier-vertex-sphere-brush-v11-21]
-    paths:
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_sculpt_brush_v11_21.js'
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_surface_targeting_v11_22.js'
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_surface_lasso_v11_22.js'
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_local_refinement_v11_23.js'
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_face_sheet_v11_23.js'
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_numeric_gizmos_v11_23.js'
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_face_volume_v11_23.js'
-      - 'projects/swrlz-forge-moba/tests/model_atelier_numeric_groups_v11_23.mjs'
-      - 'projects/swrlz-forge-moba/tests/model_atelier_numeric_groups_browser_v11_23.mjs'
-      - 'projects/swrlz-forge-moba/tests/model_atelier_face_volume_v11_23.mjs'
-      - 'projects/swrlz-forge-moba/tests/model_atelier_face_sheet_v11_23.mjs'
-      - 'projects/swrlz-forge-moba/tests/model_atelier_face_sheet_browser_v11_23.mjs'
-      - 'projects/swrlz-forge-moba/tests/model_atelier_refinement_browser_v11_23.mjs'
-      - 'projects/swrlz-forge-moba/tests/model_atelier_local_refine_v11_23.mjs'
-      - 'projects/swrlz-forge-moba/tests/model_atelier_lasso_v11_22.mjs'
-      - 'projects/swrlz-forge-moba/tests/model_atelier_surface_targeting_v11_22.mjs'
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_viewport_v11_21.js'
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_reference_studio_v11_22.js'
-      - 'projects/swrlz-forge-moba/tests/model_atelier_reference_studio_v11_22.mjs'
-      - 'projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py'
-      - 'projects/swrlz-forge-moba/tests/model_sculpt_brush_cpu_v11_21.mjs'
-      - '.github/workflows/preview-engine-vertex-brush-v11-21.yml'
   workflow_dispatch:
 permissions:
   contents: read

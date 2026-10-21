@@ -1,12 +1,5 @@
 name: Verify §E v11.41 manually shaped photo silhouette
 on:
-  push:
-    branches: [feature/atelier-silhouette-contour-v11-41]
-    paths:
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_face_sheet_v11_23.js'
-      - 'projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py'
-      - 'projects/swrlz-forge-moba/tests/model_atelier_face_contour*.mjs'
-      - '.github/workflows/verify-atelier-face-contour-v11-41.yml'
   workflow_dispatch:
 permissions:
   contents: read

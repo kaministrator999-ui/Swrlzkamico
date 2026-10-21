@@ -1,12 +1,5 @@
 name: Verify §E v11.62 inherited contextual tool workbench
 on:
-  pull_request:
-    paths:
-      - 'projects/swrlz-forge-moba/patches/v11_61_context_workbench_preview.py'
-      - 'projects/swrlz-forge-moba/patches/v11_61_context_workbench.py'
-      - 'projects/swrlz-forge-moba/source-manifest.json'
-      - 'projects/swrlz-forge-moba/tests/model_atelier_context_workbench_browser_v11_61.mjs'
-      - '.github/workflows/verify-atelier-context-v11-61.yml'
   workflow_dispatch:
 permissions:
   contents: read

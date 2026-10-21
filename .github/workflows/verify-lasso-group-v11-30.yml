@@ -1,13 +1,6 @@
 name: Verify §E v11.30 atomic grouped boundary pins
 on:
-  push:
-    branches: [feature/atelier-lasso-group-pins-v11-30]
-    paths:
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_surface_lasso_v11_22.js'
-      - 'projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py'
-      - 'projects/swrlz-forge-moba/tests/model_atelier_lasso_group_v11_30.mjs'
-      - 'projects/swrlz-forge-moba/tests/model_atelier_lasso_browser_v11_22.mjs'
-      - '.github/workflows/verify-lasso-group-v11-30.yml'
+  workflow_dispatch:
 permissions:
   contents: read
 concurrency:

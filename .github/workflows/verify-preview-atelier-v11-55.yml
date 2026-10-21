@@ -1,13 +1,5 @@
 name: Verify & preview §E v11.55 integrated precision tools
 on:
-  push:
-    branches: [feature/atelier-photo-alpha-cutout-v11-55]
-    paths:
-      - 'projects/swrlz-forge-moba/scripts/build_atelier_precision_preview_v11_55.py'
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_*.js'
-      - 'projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py'
-      - 'projects/swrlz-forge-moba/tests/model_atelier_*.mjs'
-      - '.github/workflows/verify-preview-atelier-v11-55.yml'
   workflow_dispatch:
 permissions:
   contents: read

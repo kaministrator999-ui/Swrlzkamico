@@ -1,16 +1,6 @@
 name: Verify §E v11.23 local density + UV face sheet
 on:
-  push:
-    branches: [feature/atelier-vertex-sphere-brush-v11-21]
-    paths:
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_local_refinement_v11_23.js'
-      - 'projects/swrlz-forge-moba/runtime/model_atelier_face_sheet_v11_23.js'
-      - 'projects/swrlz-forge-moba/tests/model_atelier_local_refine_v11_23.mjs'
-      - 'projects/swrlz-forge-moba/tests/model_atelier_face_sheet_v11_23.mjs'
-      - 'projects/swrlz-forge-moba/tests/model_atelier_refinement_browser_v11_23.mjs'
-      - 'projects/swrlz-forge-moba/tests/model_atelier_face_sheet_browser_v11_23.mjs'
-      - 'projects/swrlz-forge-moba/patches/v11_21_vertex_sphere_brush_preview.py'
-      - '.github/workflows/verify-precision-atelier-v11-23.yml'
+  workflow_dispatch:
 permissions:
   contents: read
 concurrency:

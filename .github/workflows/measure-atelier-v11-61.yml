@@ -1,11 +1,5 @@
 name: Measure §E v11.61 governed source seal
 on:
-  pull_request:
-    paths:
-      - 'projects/swrlz-forge-moba/patches/v11_61_context_workbench.py'
-      - 'projects/swrlz-forge-moba/patches/v11_61_context_workbench_preview.py'
-      - 'projects/swrlz-forge-moba/scripts/measure_v11_61_release.py'
-      - '.github/workflows/measure-atelier-v11-61.yml'
   workflow_dispatch:
 permissions:
   contents: read
