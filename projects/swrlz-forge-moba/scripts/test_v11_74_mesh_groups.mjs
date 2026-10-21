@@ -39,18 +39,18 @@ try{
  assert.equal(grouped.multi,false);
  assert.equal(grouped.scope,'group');
  assert.equal(grouped.outlines,2);
- const beforeGroupTransforms=await page.evaluate(()=>window.__groupTest.partTransforms([a,b]));
+ const beforeGroupTransforms=await page.evaluate(ids=>window.__groupTest.partTransforms(ids),[a,b]);
  await page.evaluate(id=>window.__groupTest.tap(id),b);
  assert.equal((await get()).selected.length,2,'Selecting child in group mode picks entire assembly');
  const changed=await page.evaluate(()=>window.__groupTest.moveX(.12));
  assert.equal(changed,true,'Native group gizmo commit succeeds');
- const moved=await page.evaluate(()=>window.__groupTest.partTransforms([a,b]));
+ const moved=await page.evaluate(ids=>window.__groupTest.partTransforms(ids),[a,b]);
  assert.ok(moved.every((p,i)=>Math.abs(p.position[0]-beforeGroupTransforms[i].position[0]-.12)<.001),
   'Both group children move together');
  assert.deepEqual(moved.map(p=>p.material),beforeGroupTransforms.map(p=>p.material),
   'Individual materials retained');
  await page.evaluate(()=>window.__groupTest.undo());
- assert.deepEqual((await page.evaluate(()=>window.__groupTest.partTransforms([a,b]))),beforeGroupTransforms,
+ assert.deepEqual((await page.evaluate(ids=>window.__groupTest.partTransforms(ids),[a,b])),beforeGroupTransforms,
   'Undo restores both child transforms');
  assert.equal((await get()).groups.length,1,'Undo keeps group metadata');
  await page.evaluate(()=>window.__groupTest.undo());

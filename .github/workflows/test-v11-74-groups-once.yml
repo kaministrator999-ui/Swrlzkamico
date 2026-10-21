@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - "projects/swrlz-forge-moba/patches/v11_74_mesh_groups.py"
+      - "projects/swrlz-forge-moba/scripts/test_v11_74_mesh_groups.mjs"
 permissions:
   contents: read
 jobs:
