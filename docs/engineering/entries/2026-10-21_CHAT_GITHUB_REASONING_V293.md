@@ -30,6 +30,10 @@
 - Chat UI/frontend, Forge Engine/§e, engine Space and engine versions unchanged.
 - Concurrent source/feature branches are not merged by name and cannot silently override an immutable validated source SHA.
 
-## Remaining release truth
+## Verified release, version lineage and remaining acceptance
 
-The guarded Chat Space request was submitted after the exact source-tree/CI check. A final GitHub request/workflow result, Hugging Face revision, live behavior and owner handset acceptance must be observed before saying **deployed/live verified**. Repository Work advancement can record this completed source/governance tier; Server Runtime changes require a confirmed actual deployed Server release. No model weights should be bumped.
+The guarded Chat Space request **completed successfully**: [GitHub Actions run #39629570218](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/39629570218) on trigger commit `b17c5322fca16dca502d85687250d38cbc911261`, with exact selected source `e90b2f395589da8cbfb0315a5c1db9f70e2afcb4`. The published existing `kamiloki/Swyrlz` Space revision is `2b9475e46675932d2651d2c899ea6efdee629779`; rollback snapshot preserves `215b0bb8234eb9234ffe9687cedf3a5e5934df22`. Publication and source provenance were observed in successful deployment-job logs and release artifacts; direct served-page functionality and owner handset behavior remain **not independently verified**.
+
+The canonical [Server Roadmap](../../../SWRLZ_SERVER_ROADMAP.md) now records the full v293 governance and deployment event. `runtime` Repository Work was advanced `1.0.231 → 1.0.232` (`9a8c2fbbcf2c0a592b6723a1c546b59d2845379c`), and deployed Server Runtime `2.3.438 → 2.3.439` (`4a0b2d7daf5c5b5634949dc92d921b15174f869d`). Web Chat remains `1.5.156`, LALM Engine remains `2.1.201`, and model weights were not changed.
+
+The first candidate's syntax failure and then deterministic-read routing failure remain documented in the roadmap as genuine implementation/validation failures repaired before the successful source release. No new permissions, alternate host, or engine deployment were authorized or used.
