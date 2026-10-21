@@ -8,10 +8,6 @@ NEW='SWYRL_ENGINE_DEPLOY_MARKER: V11_76_DESKTOP_MODELING_REPAIR'
 CANONICAL='const MODEL_ATELIER_CANONICAL_PROJECT='
 def once(html,a,b):
     n=html.count(a)
-    if n!=1:
-        for key in ('function onWheel(', "action('ZoomIn'", "action('ZoomOut'", 'function cameraUpdate(){', 'function atelierMeshGizmoMove(e){'):
-            p=html.find(key)
-            print('V1176_DIAGNOSTIC',key,repr(html[p:p+720]) if p>=0 else 'NOT FOUND',flush=True)
     assert n==1,(a[:150],n)
     return html.replace(a,b,1)
 def canonical(html):
@@ -46,9 +42,9 @@ def apply(html):
       "  atelierMeshPaintModeImmediately();\n }")
     # Wheel/+ buttons/pinch all agree on close-range access, while front/top
     # preset camera distances remain unchanged.
-    html=once(html,"Math.max(3.7,orbit.distance+Math.sign(e.deltaY)*.6)",
+    html=once(html,"Math.max(atelierCameraMinDistance(),orbit.distance+Math.sign(e.deltaY)*.6)",
       "Math.max(.16,orbit.distance+Math.sign(e.deltaY)*Math.max(.045,orbit.distance*.085))")
-    html=once(html,"Math.max(3.7,orbit.distance-.9)",
+    html=once(html,"Math.max(atelierCameraMinDistance(),orbit.distance-.9)",
       "Math.max(.16,orbit.distance-Math.max(.045,orbit.distance*.12))")
     html=once(html,
       "const atelierCameraMinDistance=()=>atelierCameraInterior?.08:(atelierDetailTarget?.4:1.2);",
