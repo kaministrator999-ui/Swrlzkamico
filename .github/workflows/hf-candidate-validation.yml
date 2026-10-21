@@ -114,6 +114,11 @@ jobs:
           python hf_space/test_github_read_inference_v235.py
           node tests/test_github_inventory_mobile_v267.mjs
 
+      - name: v293 GitHub read-tool planning and model reasoning permission regressions
+        run: |
+          python -m py_compile hf_space/github_connection.py hf_space/test_github_model_progress_v211.py
+          python hf_space/test_github_model_progress_v211.py
+
       - name: v263 Atomic GitHub file rename, identity, consent and conflict tests
         run: |
           python -m py_compile hf_space/github_rename_v263.py hf_space/github_rename_intent_v263.py hf_space/github_rename_receipt_v263.py hf_space/github_connection.py hf_space/station.py
