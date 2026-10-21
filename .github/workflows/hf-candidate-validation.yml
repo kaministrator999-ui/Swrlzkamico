@@ -187,6 +187,8 @@ jobs:
           python tests/test_chat_mobile_shell_v248.py
       - name: v292 IME-safe mobile composer and keyboard drawer regression
         run: node tests/test_chat_keyboard_ime_v292.mjs
+      - name: v294 Desktop Dragon Den first-conversation card and mobile-safe width
+        run: node tests/test_chat_desktop_welcome_v294.mjs
       - name: v253 verified-source context card and darker glass presentation
         run: node tests/test_chat_source_context_glass_v253.mjs
       - name: Report scope
