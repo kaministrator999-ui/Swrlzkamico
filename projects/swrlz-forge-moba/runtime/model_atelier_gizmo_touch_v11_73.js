@@ -48,7 +48,7 @@ function atelierArcPickOnScreen(e){
    const y=rect.top+(1-projected.y)*rect.height/2;
    const distance=Math.hypot(e.clientX-x,e.clientY-y);
    if(distance>threshold)continue;
-   const priority=axis===atelierMeshAxis?4:0;
+   const priority=axis===atelierMeshAxis?12:0;
    const score=distance-priority;
    if(!candidate||score<candidate.score)
     candidate={axis,item,score,offset};

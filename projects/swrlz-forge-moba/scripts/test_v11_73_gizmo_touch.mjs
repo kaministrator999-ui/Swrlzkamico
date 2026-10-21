@@ -27,6 +27,8 @@ try{
  assert.ok(thickness.radius<.75,'No regression to oversized ring');
  assert.ok(thickness.thickness>=.025,'The arc must be visibly thicker');
  assert.ok(thickness.beadRadius>=.09,'The slider bead should be large enough to see');
+ // Explicit axis choice resolves unavoidable screen overlap between 3D rings.
+ await page.locator('#modelAtelierMeshQuickStrip [data-axis="z"]').click();
  const target=await page.evaluate(()=>window.__gizmoTouchTest.arcPoint('z',.6));
  console.log('GIZMO_TOUCH_GRAB',JSON.stringify(target));
  assert.equal(target.selectedAxis,'z','Curved ruler is selectable away from bead');

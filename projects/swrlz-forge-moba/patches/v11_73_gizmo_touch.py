@@ -1,4 +1,7 @@
-"""§E v11.73: immediate gizmo switching and visible/tappable rotation rulers."""
+"""§E v11.73: immediate gizmo switching and visible/tappable rotation rulers.
+
+Overlapping axes honor the deliberately selected axis before nearest-ring ties.
+"""
 from pathlib import Path
 import json
 
