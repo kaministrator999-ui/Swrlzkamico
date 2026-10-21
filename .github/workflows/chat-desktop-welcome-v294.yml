@@ -1,0 +1,34 @@
+name: Chat v294 desktop welcome responsive acceptance
+
+on:
+  pull_request:
+    paths:
+      - 'chat/§wyrlz/index.html'
+      - 'chat/§wyrlz/VERSION.txt'
+      - 'tests/test_chat_desktop_welcome_v294.mjs'
+      - 'tests/test_chat_desktop_welcome_browser_v294.cjs'
+      - '.github/workflows/chat-desktop-welcome-v294.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  browser-layout:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check desktop CSS, welcome lifecycle and mobile preservation
+        run: |
+          node tests/test_chat_desktop_welcome_v294.mjs
+          node tests/test_chat_keyboard_ime_v292.mjs
+      - name: Prepare Chromium browser
+        run: |
+          npm install --no-save --no-audit --no-fund playwright
+          npx playwright install --with-deps chromium
+      - name: Measure actual Chat CSS on desktop and mobile
+        run: node tests/test_chat_desktop_welcome_browser_v294.cjs
