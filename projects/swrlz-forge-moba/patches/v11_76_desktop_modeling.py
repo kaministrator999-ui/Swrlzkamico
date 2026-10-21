@@ -8,6 +8,10 @@ NEW='SWYRL_ENGINE_DEPLOY_MARKER: V11_76_DESKTOP_MODELING_REPAIR'
 CANONICAL='const MODEL_ATELIER_CANONICAL_PROJECT='
 def once(html,a,b):
     n=html.count(a)
+    if n!=1:
+        for key in ('function onWheel(', "action('ZoomIn'", "action('ZoomOut'", 'function cameraUpdate(){', 'function atelierMeshGizmoMove(e){'):
+            p=html.find(key)
+            print('V1176_DIAGNOSTIC',key,repr(html[p:p+720]) if p>=0 else 'NOT FOUND',flush=True)
     assert n==1,(a[:150],n)
     return html.replace(a,b,1)
 def canonical(html):
