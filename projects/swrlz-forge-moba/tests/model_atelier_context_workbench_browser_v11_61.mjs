@@ -34,14 +34,14 @@ try{
   assert(groups.Topology.includes('LOD planning'));
   assert(groups.Face.includes('Facial landmarks'));
   await rail.getByRole('button',{name:'Open Lasso editing tools'}).click();
-  await context.getByRole('button',{name:'Paint mask'}).click();
+  await context.getByRole('button',{name:'Paint mask',exact:true}).click();
   const lasso=page.locator('#atelierContextProxy_modelAtelierLassoPaintRadius');
   assert(await lasso.count(),'lasso paint radius comes from native registry');
   await lasso.fill('.18');await lasso.dispatchEvent('change');
   assert.equal(await page.locator('#modelAtelierLassoPaintRadius').inputValue(),'.18');
   const brushRail=rail.getByRole('button',{name:'Open Sculpt editing tools'});
   await brushRail.click();
-  await context.getByRole('button',{name:'Brush & falloff'}).click();
+  await context.getByRole('button',{name:'Brush & falloff',exact:true}).click();
   const brush=page.locator('#atelierContextProxy_modelAtelierSculptBrushRadius');
   assert(await brush.isVisible());
   await brush.fill('.45');await brush.dispatchEvent('change');
@@ -55,7 +55,7 @@ try{
   await rail.getByRole('button',{name:'Open Sculpt editing tools'}).click();
   assert.equal(await page.locator('#modelAtelierSculptBrushRadius').inputValue(),'.45');
   await rail.getByRole('button',{name:'Open Topology editing tools'}).click();
-  await context.getByRole('button',{name:'LOD planning'}).click();
+  await context.getByRole('button',{name:'LOD planning',exact:true}).click();
   assert(await page.locator('#atelierContextProxy_modelAtelierLODRatio').count());
   await context.getByRole('button',{name:'Close contextual tools'}).click();
   assert(!(await context.isVisible()));

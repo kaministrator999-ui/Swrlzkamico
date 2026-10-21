@@ -1,0 +1,80 @@
+name: Verify §E v11.62 mobile adaptive tool sheet preview
+on:
+  pull_request:
+    paths:
+      - 'projects/swrlz-forge-moba/patches/v11_62_mobile_adaptive_preview.py'
+      - 'projects/swrlz-forge-moba/tests/mobile_adaptive_tool_layout_browser_v11_62.mjs'
+      - '.github/workflows/verify-atelier-mobile-v11-62-preview.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: se-v11-62-mobile-preview
+  cancel-in-progress: true
+jobs:
+  phone-landscape-desktop:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Verify v11.62 tool sheet against the actual candidate or v11.61 preview
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import hashlib,json,runpy,subprocess
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          manifest=json.loads((root/'source-manifest.json').read_text())
+          out=Path('/tmp/se-mobile-preview')
+          marker='const MODEL_ATELIER_CANONICAL_PROJECT='
+          def original_model(html):
+              return json.JSONDecoder().raw_decode(html.split(marker,1)[1])[0]
+          if manifest['name']=='§wyrl§ Engine v11.62':
+              assert len(manifest['patches'])==94 and manifest['patches'][-1]=='patches/v11_62_mobile_adaptive.py'
+              subprocess.run(['python',str(root/'scripts/verify_v11_62_release.py'),'--output',str(out)],check=True)
+              current=(out/'index.html').read_text()
+              assert current.count('SWYRL_ENGINE_DEPLOY_MARKER: V11_62_MOBILE_ADAPTIVE_TOOL_SHEET')==1
+              assert 'function atelierMobileLayoutInstall(panel)' in current
+          elif manifest['name']=='§wyrl§ Engine v11.61':
+              subprocess.run(['python',str(root/'scripts/verify_v11_61_release.py'),'--output',str(out)],check=True)
+              old=(out/'index.html').read_text()
+              assert old.count('SWYRL_ENGINE_DEPLOY_MARKER: V11_61_ADAPTIVE_CONTEXT_TOOL_WORKBENCH')==1
+              patch=runpy.run_path(str(root/'patches/v11_62_mobile_adaptive_preview.py'))
+              current=patch['apply'](old)
+              assert original_model(current)==original_model(old)
+              assert old!=current
+              (out/'index.html').write_text(current)
+          else:
+              raise AssertionError('Unsupported mobile preview baseline '+manifest['name'])
+          assert current.count('    atelierMobileLayoutInstall(panel);')==1
+          assert '283' in current
+          module=current.split('<script type="module">',1)[1].rsplit('</script>',1)[0]
+          Path('/tmp/se-mobile-preview-module.mjs').write_text(module)
+          print('V1162_MOBILE_LAYOUT_CURRENT_OR_PREVIEW_VERIFIED',len(current.encode()),hashlib.sha256(current.encode()).hexdigest())
+          PY
+          node --check /tmp/se-mobile-preview-module.mjs
+          node --check projects/swrlz-forge-moba/tests/mobile_adaptive_tool_layout_browser_v11_62.mjs
+      - name: Install Chromium and Playwright
+        run: |
+          npm install --no-save playwright@1.56.1 three@0.169.0
+          npx playwright install --with-deps --only-shell chromium
+      - name: Check all portrait, landscape and desktop layout/behavior
+        env:
+          SWYRL_MOBILE_TEST_URL: http://127.0.0.1:8794
+          SWYRL_SCULPT_TEST_URL: http://127.0.0.1:8794
+          SWYRL_DOCK_DESKTOP_ONLY: '1'
+        run: |
+          python -m http.server 8794 --directory /tmp/se-mobile-preview >/tmp/se-mobile-server.log 2>&1 &
+          PID=$!
+          trap 'kill "$PID" 2>/dev/null || true' EXIT
+          for i in $(seq 1 50); do
+            if curl -fsS http://127.0.0.1:8794/ >/dev/null; then break; fi
+            sleep .3
+          done
+          node projects/swrlz-forge-moba/tests/mobile_adaptive_tool_layout_browser_v11_62.mjs
+          node projects/swrlz-forge-moba/tests/model_atelier_context_workbench_browser_v11_61.mjs
+          node projects/swrlz-forge-moba/tests/model_atelier_tool_dock_browser_v11_60.mjs

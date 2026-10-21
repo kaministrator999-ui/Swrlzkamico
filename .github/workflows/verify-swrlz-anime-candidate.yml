@@ -1,66 +1,28 @@
-name: Verify §wyrl§ v11.61 authored anime candidate
+name: Verify §wyrl§ v11.62 authored anime candidate
 
 on:
   push:
     branches: [main]
     paths: &anime_paths
-      - ".github/workflows/verify-swrlz-anime-candidate.yml"
-      - "projects/swrlz-forge-moba/source-manifest.json"
-      - "projects/swrlz-forge-moba/tests/model_atelier_playwright.mjs"
-      - "projects/swrlz-forge-moba/tests/model_atelier_package.py"
-      - "projects/swrlz-forge-moba/scenes/model-atelier-prism-jester.swyrl.json"
-      - "projects/swrlz-forge-moba/patches/v11_3_model_atelier.py"
-      - "projects/swrlz-forge-moba/patches/v11_4_prism_ferret_fidelity.py"
-      - "projects/swrlz-forge-moba/runtime/model_atelier_organic_v11_4.js"
-      - "projects/swrlz-forge-moba/scenes/model-atelier-prism-jester-ferret-v11-4.swyrl.json"
-      - "projects/swrlz-forge-moba/tests/prism_ferret_fidelity_package.py"
-      - "projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-ep01-performance.swyrl.json"
-      - "projects/swrlz-forge-moba/tests/episode_performance_playwright.mjs"
-      - "projects/swrlz-forge-moba/tests/episode_performance_package.py"
-      - "projects/swrlz-forge-moba/patches/v10_0_sheep_tag.py"
-      - "projects/swrlz-forge-moba/scenes/sheep-tag-meadow.swyrl.json"
-      - "projects/swrlz-forge-moba/tests/sheep_tag_playwright.mjs"
-      - "projects/swrlz-forge-moba/patches/v10_1_sheep_tag_archive.py"
-      - "projects/swrlz-forge-moba/scenes/sheep-tag-moonbell-archive.swyrl.json"
-      - "projects/swrlz-forge-moba/tests/sheep_archive_playwright.mjs"
-      - "projects/swrlz-forge-moba/patches/v10_5_sheep_run_recorder.py"
-      - "projects/swrlz-forge-moba/patches/v10_6_maul_tower_defense.py"
-      - "projects/swrlz-forge-moba/patches/v10_7_classic_maul_map.py"
-      - "projects/swrlz-forge-moba/patches/v10_8_maul_batch_placement.py"
-      - "projects/swrlz-forge-moba/scenes/maul-frostveil-groups.swyrl.json"
-      - "projects/swrlz-forge-moba/scenes/maul-frostveil-flight.swyrl.json"
-      - "projects/swrlz-forge-moba/tests/maul_batch_playwright.mjs"
-      - "projects/swrlz-forge-moba/tests/maul_batch_cpu.mjs"
-      - "projects/swrlz-forge-moba/tests/maul_batch_package.py"
-      - "projects/swrlz-forge-moba/scenes/maul-frostveil-classic.swyrl.json"
-      - "projects/swrlz-forge-moba/tests/maul_layout_playwright.mjs"
-      - "projects/swrlz-forge-moba/tests/maul_layout_cpu.mjs"
-      - "projects/swrlz-forge-moba/tests/maul_layout_package.py"
-      - "projects/swrlz-forge-moba/scenes/maul-frostveil.swyrl.json"
-      - "projects/swrlz-forge-moba/tests/maul_playwright.mjs"
-      - "projects/swrlz-forge-moba/tests/maul_cpu.mjs"
-      - "projects/swrlz-forge-moba/runtime/sheep_touch_selection.js"
-      - "projects/swrlz-forge-moba/runtime/sheep_placement_grid.js"
-      - "projects/swrlz-forge-moba/runtime/sheep_touch_offset.js"
-      - "projects/swrlz-forge-moba/runtime/sheep_lanes.js"
-      - "projects/swrlz-forge-moba/runtime/sheep_run_recorder.js"
-      - "projects/swrlz-forge-moba/runtime/sheep_run_review.js"
-      - "projects/swrlz-forge-moba/tests/sheep_run_playwright.mjs"
-      - "projects/swrlz-forge-moba/tests/sheep_touch_playwright.mjs"
-      - "projects/swrlz-forge-moba/patches/**"
-      - "projects/swrlz-forge-moba/runtime/**"
-      - "projects/swrlz-forge-moba/tests/episode_transport_playwright.mjs"
-      - "projects/swrlz-forge-moba/assets/anime/**"
-      - "projects/swrlz-forge-moba/build_space.py"
-      - "projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-ep01*.swyrl.json"
-      - "projects/swrlz-forge-moba/episodes/ghosts-in-different-forms-ep01.html"
-      - "projects/swrlz-forge-moba/tests/*anime*.mjs"
-      - "projects/swrlz-forge-moba/tests/storybook_authoring_playwright.mjs"
-      - "projects/swrlz-forge-moba/tests/character_rig_playwright.mjs"
-      - "projects/swrlz-forge-moba/tests/depth_theatre_playwright.mjs"
-      - "projects/swrlz-forge-moba/tests/character_alignment_playwright.mjs"
-      - "projects/swrlz-forge-moba/tests/socket_emergence_playwright.mjs"
-      - "projects/swrlz-forge-moba/tests/character_relief_playwright.mjs"
+      - '.github/workflows/verify-swrlz-anime-candidate.yml'
+      - 'projects/swrlz-forge-moba/patches/v8_6*'
+      - 'projects/swrlz-forge-moba/patches/v8_7*'
+      - 'projects/swrlz-forge-moba/patches/v8_8*'
+      - 'projects/swrlz-forge-moba/patches/v8_9*'
+      - 'projects/swrlz-forge-moba/patches/v9_*'
+      - 'projects/swrlz-forge-moba/assets/anime/**'
+      - 'projects/swrlz-forge-moba/episodes/**'
+      - 'projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-*'
+      - 'projects/swrlz-forge-moba/runtime/anime_*'
+      - 'projects/swrlz-forge-moba/runtime/character_*'
+      - 'projects/swrlz-forge-moba/tests/anime_*'
+      - 'projects/swrlz-forge-moba/tests/native_anime*'
+      - 'projects/swrlz-forge-moba/tests/storybook_*'
+      - 'projects/swrlz-forge-moba/tests/episode_*'
+      - 'projects/swrlz-forge-moba/tests/character_*'
+      - 'projects/swrlz-forge-moba/tests/depth_theatre*'
+      - 'projects/swrlz-forge-moba/tests/socket_*'
+      - 'projects/swrlz-forge-moba/build_space.py'
   pull_request:
     branches: [main]
     paths: *anime_paths
@@ -71,7 +33,27 @@ concurrency:
   group: engine-ci-verify-swrlz-anime-candidate-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 jobs:
+  route:
+    name: Select affected anime/cinematic subsystem
+    runs-on: ubuntu-latest
+    outputs:
+      run: ${{ steps.select.outputs.run }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 2
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - id: select
+        name: Skip unrelated Model Atelier / Sheep / Maul edits
+        run: |
+          python projects/swrlz-forge-moba/scripts/route_ci_suites.py \
+            --component anime --event '${{ github.event_name }}' \
+            --base HEAD^ --head HEAD --output "$GITHUB_OUTPUT"
   verify:
+    needs: route
+    if: needs.route.outputs.run == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -81,7 +63,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Independently reconstruct sealed v11.61 source
+      - name: Independently reconstruct sealed v11.62 source
         run: |
           python - <<'PY'
           import base64,gzip,hashlib,json,runpy
@@ -92,8 +74,8 @@ jobs:
           raw=gzip.decompress(base64.b64decode(''.join((root/p).read_text(encoding='utf-8').strip() for p in manifest['chunks'])))
           assert len(raw)==manifest['baseBytes']
           assert hashlib.sha256(raw).hexdigest()==manifest['baseSha256']
-          assert len(manifest['patches'])==93
-          assert manifest['patches'][-1]=='patches/v11_61_context_workbench.py'
+          assert len(manifest['patches'])==94
+          assert manifest['patches'][-1]=='patches/v11_62_mobile_adaptive.py'
           source=raw.decode('utf-8')
           for patch in manifest['patches']:
               source=mod['load_patch'](root/patch)(source)
@@ -102,7 +84,7 @@ jobs:
           print('REPLAY_V11_CANDIDATE_SHA256='+hashlib.sha256(output).hexdigest())
           assert len(output)==manifest['finalBytes']
           assert hashlib.sha256(output).hexdigest()==manifest['finalSha256']
-          for feature in ('MODEL_ATELIER_V11_3_BEGIN','SWYRL_ENGINE_MODEL_ATELIER','V11_61_ADAPTIVE_CONTEXT_TOOL_WORKBENCH','SWYRL_ENGINE_PERFORMANCE','anime-performance-v1','SWYRL_ENGINE_STORY_EFFECTS','anime-story-effects-v1','MAUL_BATCH_CORE','grouped-v1','MAUL_LAYOUT_CORE','classic-v2','SWYRL_ENGINE_MAUL','MAUL_CORE','maul-frostveil','SWYRL_ENGINE_SHEEP_TAG_RUNS','SWYRL_ENGINE_RUNS','stRunAfterTick','stRunInstallUI','stRunViewerMount','swyrl-editor-play-run-v1','stTouchPlacementScreen','stTouchPlacementGround','touchPlacement','SWYRL_ENGINE_SHEEP_TAG','sheep-tag-meadow','sheep-tag-moonbell-archive','swyrl-sheep-tag-map-v1','SWYRL_ENGINE_TRANSPORT','animeCineRewind','animeCineFastForward','SWYRL_ENGINE_STAFF','rigFullStaffStatus','painted-full-v1','assets/anime/kami-full-staff.png','Maker v11.61',
+          for feature in ('MODEL_ATELIER_V11_3_BEGIN','SWYRL_ENGINE_MODEL_ATELIER','V11_62_MOBILE_ADAPTIVE_TOOL_SHEET','SWYRL_ENGINE_PERFORMANCE','anime-performance-v1','SWYRL_ENGINE_STORY_EFFECTS','anime-story-effects-v1','MAUL_BATCH_CORE','grouped-v1','MAUL_LAYOUT_CORE','classic-v2','SWYRL_ENGINE_MAUL','MAUL_CORE','maul-frostveil','SWYRL_ENGINE_SHEEP_TAG_RUNS','SWYRL_ENGINE_RUNS','stRunAfterTick','stRunInstallUI','stRunViewerMount','swyrl-editor-play-run-v1','stTouchPlacementScreen','stTouchPlacementGround','touchPlacement','SWYRL_ENGINE_SHEEP_TAG','sheep-tag-meadow','sheep-tag-moonbell-archive','swyrl-sheep-tag-map-v1','SWYRL_ENGINE_TRANSPORT','animeCineRewind','animeCineFastForward','SWYRL_ENGINE_STAFF','rigFullStaffStatus','painted-full-v1','assets/anime/kami-full-staff.png','Maker v11.62',
                           'CANONICAL_ANIME_EPISODE_PROJECT','SWYRL_ENGINE_CINEMATIC',
                           'SWYRL_ENGINE_ANIMATION','SWYRL_ENGINE_STORYBOARD','SWYRL_ENGINE_RIG','SWYRL_ENGINE_SCENERY','SWYRL_ENGINE_SOCKETS','SWYRL_ENGINE_EMERGENCE','SWYRL_ENGINE_RELIEF',
                           'anime-rig-sockets-v1','anime-book-emergence-v1','anime-character-relief-v1',
@@ -127,7 +109,7 @@ jobs:
           SWYRL_MAUL_FLIGHT_HTML=/tmp/swyrl-anime-engine.html node projects/swrlz-forge-moba/tests/maul_flight_cpu.mjs
           SWYRL_REPLAY_HTML=/tmp/swyrl-anime-engine.html node projects/swrlz-forge-moba/tests/run_replay_quality_cpu.mjs
           python -m compileall -q projects/swrlz-forge-moba/patches projects/swrlz-forge-moba/build_space.py
-      - name: Verify complete v11.61 package against source and manifest
+      - name: Verify complete v11.62 package against source and manifest
         run: |
           python projects/swrlz-forge-moba/build_space.py --output dist/swrlz-forge-moba
           cmp /tmp/swyrl-anime-engine.html dist/swrlz-forge-moba/index.html
@@ -150,8 +132,8 @@ jobs:
           assert receipt['finalBytes']==manifest['finalBytes']
           assert receipt['finalSha256']==manifest['finalSha256']
           assert receipt['patches']==manifest['patches']
-          assert len(receipt['patches'])==93
-          assert receipt['patches'][-1]=='patches/v11_61_context_workbench.py'
+          assert len(receipt['patches'])==94
+          assert receipt['patches'][-1]=='patches/v11_62_mobile_adaptive.py'
           expected={'episodes/ghosts-in-different-forms-ep01.html',
                     'scenes/ghosts-in-different-forms-ep01.swyrl.json',
                     'scenes/ghosts-in-different-forms-ep01-storybook.swyrl.json',

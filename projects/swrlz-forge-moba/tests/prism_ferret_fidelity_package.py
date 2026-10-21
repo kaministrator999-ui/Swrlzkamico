@@ -41,16 +41,16 @@ for v in parts:
     assert all(math.isfinite(x) for key in ('position','rotation','scale') for x in v[key])
 receipt=json.loads((dest/'SOURCE.json').read_text())
 manifest=json.loads((ROOT/'source-manifest.json').read_text())
-assert receipt['sourceVersion']=='§wyrl§ Engine v11.61'
-assert len(receipt['patches'])==93 and receipt['patches']==manifest['patches']
-assert receipt['patches'][-1]=='patches/v11_61_context_workbench.py'
+assert receipt['sourceVersion']=='§wyrl§ Engine v11.62'
+assert len(receipt['patches'])==94 and receipt['patches']==manifest['patches']
+assert receipt['patches'][-1]=='patches/v11_62_mobile_adaptive.py'
 assert len(receipt['assets'])==43 and p in receipt['assets'] and old in receipt['assets']
 for path in (p,old):
     content=(ROOT/path).read_bytes()
     assert receipt['assets'][path]['bytes']==len(content)
     assert receipt['assets'][path]['sha256']==hashlib.sha256(content).hexdigest()
 html=(dest/'index.html').read_bytes()
-for marker in (b'V11_61_ADAPTIVE_CONTEXT_TOOL_WORKBENCH',b'atelierOrganicLoft',b'MODEL_ATELIER_V11_4_FERRET_FIDELITY',b'loft',b'Maker v11.61'):
+for marker in (b'V11_62_MOBILE_ADAPTIVE_TOOL_SHEET',b'atelierOrganicLoft',b'MODEL_ATELIER_V11_4_FERRET_FIDELITY',b'loft',b'Maker v11.62'):
     assert marker in html, marker
 assert len(html)==receipt['finalBytes']==manifest['finalBytes']
 assert hashlib.sha256(html).hexdigest()==receipt['finalSha256']==manifest['finalSha256']
