@@ -39,7 +39,7 @@ jobs:
           python projects/swrlz-forge-moba/scripts/verify_v11_65_release.py --output dist/swrlz-forge-moba
           test -s dist/swrlz-forge-moba/index.html
           test -s dist/swrlz-forge-moba/README.md
-          grep -q "SWYRL_ENGINE_DEPLOY_MARKER: V11_65_VERSION_SMOKE_TEST" dist/swrlz-forge-moba/index.html
+          grep -q "SWYRL_ENGINE_DEPLOY_MARKER: V11_65_SELECTION_MESH_GIZMOS" dist/swrlz-forge-moba/index.html
           grep -q "sdk: static" dist/swrlz-forge-moba/README.md
           node --check dist/swrlz-forge-moba-module.mjs
           # Ensure runtime labels, source seal and requested deployment agree.
@@ -213,7 +213,7 @@ jobs:
           PYCODE
               LIVE_HTML_SHA="$(sha256sum /tmp/forge-live-source.html | cut -d ' ' -f1)"
               LIVE_HTML_BYTES="$(wc -c < /tmp/forge-live-source.html)"
-              if grep -q "SWYRL_ENGINE_DEPLOY_MARKER: V11_65_VERSION_SMOKE_TEST" /tmp/forge-live.html && [ "$LIVE_HTML_SHA" = "$EXPECTED_HTML_SHA" ] && [ "$LIVE_HTML_BYTES" -eq "$EXPECTED_HTML_BYTES" ]; then
+              if grep -q "SWYRL_ENGINE_DEPLOY_MARKER: V11_65_SELECTION_MESH_GIZMOS" /tmp/forge-live.html && [ "$LIVE_HTML_SHA" = "$EXPECTED_HTML_SHA" ] && [ "$LIVE_HTML_BYTES" -eq "$EXPECTED_HTML_BYTES" ]; then
                 ASSET_OK=1
                 while IFS= read -r asset; do
                   mkdir -p "/tmp/forge-assets/$(dirname "$asset")"

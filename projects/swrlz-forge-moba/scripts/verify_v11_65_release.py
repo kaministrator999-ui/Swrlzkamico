@@ -19,7 +19,7 @@ subprocess.run(['python',str(root/'build_space.py'),'--output',str(out)],check=T
 data=(out/'index.html').read_bytes()
 assert len(data)==3000400 and hashlib.sha256(data).hexdigest()==sha
 html=data.decode('utf-8')
-assert html.count('SWYRL_ENGINE_DEPLOY_MARKER: V11_65_VERSION_SMOKE_TEST')==1
+assert html.count('SWYRL_ENGINE_DEPLOY_MARKER: V11_65_SELECTION_MESH_GIZMOS')==1
 assert '<title>§wyrl§ Engine · Maker v11.65</title>' in html
 assert 'ENGINE · MAKER v11.65' in html
 assert 'v11.65 · selection mesh gizmos' in html
