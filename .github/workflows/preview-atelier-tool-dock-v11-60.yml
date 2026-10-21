@@ -21,10 +21,40 @@ jobs:
         with: {python-version: '3.11'}
       - uses: actions/setup-node@v4
         with: {node-version: '22'}
-      - name: Validate governed v11.60 binary and floating dock
+      - name: Independently reconstruct exact historical v11.60 dock from current patch lineage
         run: |
-          python projects/swrlz-forge-moba/scripts/measure_v11_60_release.py
-          python projects/swrlz-forge-moba/scripts/verify_v11_60_release.py --output /tmp/atelier-tool-dock-preview
+          set -euo pipefail
+          # Package the current release assets, then substitute a byte-sealed
+          # v11.60-only source fixture for this historical desktop/phone test.
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/atelier-tool-dock-preview
+          python - <<'PY'
+          import base64,gzip,hashlib,json,sys
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba').resolve()
+          sys.path.insert(0,str(root))
+          from build_space import load_patch
+          m=json.loads((root/'source-manifest.json').read_text())
+          prefix=m['patches'][:92]
+          assert len(prefix)==92 and prefix[-1]=='patches/v11_60_floating_tool_dock.py'
+          base=gzip.decompress(base64.b64decode(''.join((root/p).read_text().strip() for p in m['chunks'])))
+          assert len(base)==m['baseBytes'] and hashlib.sha256(base).hexdigest()==m['baseSha256']
+          source=base.decode('utf-8')
+          for rel in prefix: source=load_patch(root/rel)(source)
+          data=source.encode('utf-8')
+          digest=hashlib.sha256(data).hexdigest()
+          assert len(data)==2933954
+          assert digest=='fe11e3e748184db1797ef66bc327f7867a25f91d431823a4c8794f157117d97f'
+          assert source.count('SWYRL_ENGINE_DEPLOY_MARKER: V11_60_FLOATING_MODEL_ATELIER_DOCK')==1
+          out=Path('/tmp/atelier-tool-dock-preview')
+          (out/'index.html').write_bytes(data)
+          receipt=json.loads((out/'SOURCE.json').read_text())
+          assert len(receipt['assets'])==43
+          receipt.update(sourceVersion='§wyrl§ Engine v11.60',patches=prefix,finalBytes=len(data),finalSha256=digest)
+          (out/'SOURCE.json').write_text(json.dumps(receipt,indent=2)+'\n')
+          module=source.split('<script type="module">',1)[1].rsplit('</script>',1)[0]
+          Path('/tmp/atelier-tool-dock-preview-module.mjs').write_text(module)
+          print('HISTORICAL_V1160_DOCK_SEAL_AND_43_ASSETS_VERIFIED',len(data),digest)
+          PY
           node --check /tmp/atelier-tool-dock-preview-module.mjs
           node --check projects/swrlz-forge-moba/tests/model_atelier_tool_dock_browser_v11_60.mjs
       - name: Install browser
