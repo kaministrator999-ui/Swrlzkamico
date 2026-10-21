@@ -10,10 +10,6 @@ CANONICAL='const MODEL_ATELIER_CANONICAL_PROJECT='
 
 def once(html, before, after):
     n=html.count(before)
-    if n!=1:
-        for word in ['function modelSnapshot','function historyStep','function select(id)','function renderParts','function importJSON','function signalEdited']:
-            at=html.find(word)
-            print('V1174_DEBUG',word,repr(html[max(0,at-80):at+600]) if at>=0 else 'NOT FOUND',flush=True)
     assert n==1,(before[:150],n)
     return html.replace(before,after,1)
 
@@ -88,7 +84,8 @@ def apply(html):
     html=once(html,
       ' if(!atelierMeshDrag)atelierMeshGizmoBuild();\n atelierMeshToolbarPosition();',
       ' if(!atelierMeshDrag)atelierMeshGizmoBuild();\n atelierMeshToolbarPosition();')
-    html=once(html,'</head>','<style id="atelierMeshGroupsV1174">'+css+'</style>\n</head>')
+    assert '</head>' in html
+    html=html.replace('</head>','<style id="atelierMeshGroupsV1174">'+css+'</style>\n</head>',1)
     for before,after in (
        (OLD,NEW),
        ('ENGINE · MAKER v11.73','ENGINE · MAKER v11.74'),
