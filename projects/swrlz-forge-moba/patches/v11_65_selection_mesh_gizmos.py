@@ -22,8 +22,8 @@ def apply(html):
     js=(Path(__file__).resolve().parents[1]/'runtime/model_atelier_selection_gizmo_v11_65.js').read_text()
     css=(Path(__file__).resolve().parents[1]/'runtime/model_atelier_selection_gizmo_v11_65.css').read_text()
     html=once(html,'  function refreshList(){',js+'\n  function refreshList(){')
-    html=once(html,'  function select(id){selection=partById(id)?id:null;renderParts();refreshList();refreshInspector();}',
-        '  function select(id){selection=partById(id)?id:null;atelierMeshSelected(selection);renderParts();refreshList();refreshInspector();atelierMeshToolbarRefresh();}')
+    html=once(html,'  function select(id){',
+        '  function select(id){queueMicrotask(()=>{atelierMeshSelected(selection);refreshList();atelierMeshToolbarRefresh();});')
     html=once(html,"list.append(group);list.value=selection||'';",
         "list.append(group);list.value=selection||'';atelierMeshListSync(list);")
     html=once(html,"  function geometry(part){",
