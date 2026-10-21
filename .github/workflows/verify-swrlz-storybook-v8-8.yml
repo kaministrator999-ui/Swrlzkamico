@@ -72,58 +72,36 @@ concurrency:
   group: swyrl-engine-browser-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 jobs:
+  route:
+    name: Select affected §E starter suites
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.select.outputs.matrix }}
+      any: ${{ steps.select.outputs.any }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 2
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Validate suite routing cases
+        run: python projects/swrlz-forge-moba/scripts/route_ci_suites.py --self-test
+      - id: select
+        name: Route just the touched modules; fail open on uncertainty
+        run: |
+          python projects/swrlz-forge-moba/scripts/route_ci_suites.py \
+            --event '${{ github.event_name }}' \
+            --base 'HEAD^' --head 'HEAD' --output "$GITHUB_OUTPUT"
   browser:
+    needs: route
+    if: needs.route.outputs.any == 'true'
     name: browser (${{ matrix.suite }}, ${{ matrix.mode || 'both' }})
     runs-on: ubuntu-latest
     timeout-minutes: 50
     strategy:
       fail-fast: false
-      matrix:
-        include:
-          - suite: sheep_archive
-            mode: 'desktop'
-          - suite: sheep_archive
-            mode: 'mobile'
-          - suite: model_reference
-            mode: 'desktop'
-          - suite: model_reference
-            mode: 'mobile'
-          - suite: character_relief
-            mode: 'desktop'
-          - suite: character_relief
-            mode: 'mobile'
-          - suite: character_rig
-            mode: 'desktop'
-          - suite: character_rig
-            mode: 'mobile'
-          - suite: native_anime
-            mode: ''
-          - suite: storybook_authoring
-            mode: ''
-          - suite: depth_theatre
-            mode: ''
-          - suite: character_alignment
-            mode: ''
-          - suite: socket_emergence
-            mode: ''
-          - suite: episode_transport
-            mode: ''
-          - suite: sheep_tag
-            mode: ''
-          - suite: sheep_touch
-            mode: ''
-          - suite: sheep_run
-            mode: ''
-          - suite: maul
-            mode: ''
-          - suite: maul_layout
-            mode: ''
-          - suite: maul_batch
-            mode: ''
-          - suite: episode_performance
-            mode: ''
-          - suite: model_atelier
-            mode: ''
+      matrix: ${{ fromJSON(needs.route.outputs.matrix) }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
