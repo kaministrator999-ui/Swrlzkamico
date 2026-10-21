@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.73",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_73_INSTANT_GIZMO_ROTATION_TOUCH",
-  "reason": "§§§ owner-requested §E v11.73 Android Model Atelier gizmo usability. Changing Move/Rotate/Scale or X/Y/Z now paints WebGL immediately, not after camera movement. Rotation arcs receive thicker visible tube geometry and larger beads, plus 37px touch-friendly screen-distance selection anywhere along the curve (not bead-only). When multiple axis curves overlap, explicit selected axis is preferred. Native live rotation, Undo/Redo, 283-part canonical model, 43 original assets, Fine/Fast precision and snap features remain intact. Real Chromium test run 39617462205 passed instant switch repaint, no camera movement, off-bead curve drag and mobile-width hit target. Sealed release 105 patches, 3,040,330 bytes, SHA-256 57998cfe4d71530e4f82fc0b0f0ec18c4bc858bc5f8f35d2d3ee5cdca7c56fe8. Verify exact live package, SOURCE receipt and all 43 packaged assets before owner phone testing.",
-  "sourceCommit": "6da652781537deacae6650c0c5411679d7babe1e",
-  "sourceIntegritySha256": "57998cfe4d71530e4f82fc0b0f0ec18c4bc858bc5f8f35d2d3ee5cdca7c56fe8"
+  "releaseVersion": "v11.74",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_74_NONDESTRUCTIVE_MESH_GROUPS",
+  "reason": "§§§ owner-approved §E v11.74 native non-destructive Model Atelier mesh groups and mobile one-tap Multi-Select. Persistent viewport toggle with count, Clear, Done, Select first 32; tap again removes a mesh, tap empty doesn't reset multi-selection. Editable assemblies retain all individual part geometry/material/transform identities while linked Move/Rotate/Scale changes all members; Edit group / Edit child, group picker, Update members, Remove child, Ungroup, existing destructive Join kept separate. Project/model JSON persists modelAtelier.meshGroups, validates membership on import and preserves existing full native Undo including old animation/socket assemblies and other pose data. Real Chromium full-workflow regression passed run 39631075995: group creation/linked transform, child editing, membership changes, Undo/Redo, JSON import/export, ungroup/Undo, 390px mobile toggle, exact original 283 part and material baseline. Source: 106 ordered patches, final HTML 3,056,562 bytes, SHA-256 25ca54b95366258f3bc76912f90299aca42667c8f1938ea37a0a789da4399cc6, all 43 original bundled assets preserved. Verify live HTML, SOURCE receipt, and assets. Owner physical Android usability review remains pending.",
+  "sourceCommit": "3f014d4660467681892c6ca308812199059bfb30",
+  "sourceIntegritySha256": "25ca54b95366258f3bc76912f90299aca42667c8f1938ea37a0a789da4399cc6"
 }
