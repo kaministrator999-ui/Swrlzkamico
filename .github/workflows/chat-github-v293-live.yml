@@ -1,0 +1,29 @@
+name: Chat v293 hosted read-only acceptance
+
+on:
+  pull_request:
+    paths:
+      - 'scripts/verify_chat_github_v293_live.py'
+      - '.github/workflows/chat-github-v293-live.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: chat-github-v293-public-live
+  cancel-in-progress: false
+
+jobs:
+  public-live:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Syntax and no credential dependencies
+        run: python -m py_compile scripts/verify_chat_github_v293_live.py
+      - name: Verify exact Space release and anonymous isolation without running a model
+        run: python scripts/verify_chat_github_v293_live.py
