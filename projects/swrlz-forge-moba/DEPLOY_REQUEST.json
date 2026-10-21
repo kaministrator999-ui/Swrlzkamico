@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.74",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_74_NONDESTRUCTIVE_MESH_GROUPS",
-  "reason": "§§§ owner-approved §E v11.74 native non-destructive Model Atelier mesh groups and mobile one-tap Multi-Select. Persistent viewport toggle with count, Clear, Done, Select first 32; tap again removes a mesh, tap empty doesn't reset multi-selection. Editable assemblies retain all individual part geometry/material/transform identities while linked Move/Rotate/Scale changes all members; Edit group / Edit child, group picker, Update members, Remove child, Ungroup, existing destructive Join kept separate. Project/model JSON persists modelAtelier.meshGroups, validates membership on import and preserves existing full native Undo including old animation/socket assemblies and other pose data. Real Chromium full-workflow regression passed run 39631075995: group creation/linked transform, child editing, membership changes, Undo/Redo, JSON import/export, ungroup/Undo, 390px mobile toggle, exact original 283 part and material baseline. Source: 106 ordered patches, final HTML 3,056,562 bytes, SHA-256 25ca54b95366258f3bc76912f90299aca42667c8f1938ea37a0a789da4399cc6, all 43 original bundled assets preserved. Verify live HTML, SOURCE receipt, and assets. Owner physical Android usability review remains pending.",
-  "sourceCommit": "3f014d4660467681892c6ca308812199059bfb30",
-  "sourceIntegritySha256": "25ca54b95366258f3bc76912f90299aca42667c8f1938ea37a0a789da4399cc6"
+  "releaseVersion": "v11.75",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_75_COMPONENT_EDIT_FOUNDATIONS",
+  "reason": "§§§ owner-requested §E v11.75 component geometry editing on mobile. Adds Mesh/Vertex/Edge/Face selection with tapped components, Multi/Box/Lasso and overlays. Native Move/Rotate/Scale plus precision nudges deform real selected indexed vertices, persisted to existing sculptVertexEdits and Undo/Redo / JSON/OBJ paths; bounding-safe live preview avoids pre-release snapping and skips per-pointer full-mesh normal recompute. Touch raycast chooses visible triangle and adjacent components instead of scanning all edges, preserving 283 source parts, v11.74 non-destructive groups, materials and 43 assets. Real Chromium native head regression pass https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/39664122664 including saved vertex/nudge/drag, Undo/Redo, edge/face selection, Multi/Box/Lasso, phone-size controls. Source 107 patches, final HTML 3,083,471 bytes, SHA-256 910e4565727243256154adb8707bf0eaff9021338860b5b34146d04cc02474d1. Verify exact hosted build and every asset; owner Android acceptance pending.",
+  "sourceCommit": "eb94ddc34740afe71243d2af48cebe41a4ef3cdf",
+  "sourceIntegritySha256": "910e4565727243256154adb8707bf0eaff9021338860b5b34146d04cc02474d1"
 }
