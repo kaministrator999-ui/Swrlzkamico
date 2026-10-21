@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.65",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_65_SELECTION_MESH_GIZMOS",
-  "reason": "§§§ owner-directed §E v11.65 modeling update: selection-adjacent Move/Rotate/Scale gizmos with axis handles and nudges; multi-mesh transform groups and bounded native Join; discoverable source vertex-point map; bounded U/V vertex grid for procedural meshes. Preserve 283-part canonical starter and 43 original assets; 97 patches. One focused source build/Node syntax check passed, GitHub Actions run 39529266779. Source HTML 3,000,400 bytes and SHA-256 a7e1514e34261d115472e6e6db68b88da8277d4e73e4e31cc19f9f99a138f38f. After exact live deployment and asset verification owner performs physical device UX testing.",
-  "sourceCommit": "ba950af5a777525bb5017600594720c581bb9b0c",
-  "sourceIntegritySha256": "a7e1514e34261d115472e6e6db68b88da8277d4e73e4e31cc19f9f99a138f38f"
+  "releaseVersion": "v11.66",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_66_MESH_SELECTION_UX_REPAIR",
+  "reason": "§§§ owner-directed v11.66 Android Model Atelier usability fixes: eliminate duplicated remote selection bounding box, safely cap move gestures, add prominent Undo/Redo/Frame mesh, allow dragging the mesh controls dialog with saved on-device position, and apply scoped cybernetic cyan/indigo visual polish to Model Atelier windows. 98 patches, original 283-part canonical character unchanged, same 43 bundled assets. Targeted build/JS syntax passed run 39531500631. Exact assembled HTML 3,008,188 bytes; SHA-256 ab960990d91641c0a03c453181710ae2a6739c247a632e238e4aa1745e16e35f. After deploy verify hosted source/all assets; owner validates Android UX.",
+  "sourceCommit": "abafe7f1ae25dfc8531d0e170b2c819ff060eb82",
+  "sourceIntegritySha256": "ab960990d91641c0a03c453181710ae2a6739c247a632e238e4aa1745e16e35f"
 }
