@@ -40,6 +40,7 @@ try{
  assert.ok(wire.othersOpacity<=.34);
  assert.ok(wire.dots>0&&wire.dots<=2000,'Selected mesh has visible sampled actual vertices');
  assert.ok(wire.oldWireColor!==wire.otherWireColor,'Active mesh stands out from other wire');
+ await page.locator('.atelier-top-advanced summary').click();
  await page.locator('[data-desktop-wire-dots]').uncheck();
  assert.equal((await page.evaluate(()=>window.__desktopTest.wireState())).dots,0,'Dots independently switch off');
  await page.locator('[data-desktop-wire-dots]').check();
