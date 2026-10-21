@@ -2011,6 +2011,10 @@ def agent_events(data, model_generator=None, coder_generator=None):
             # use local inference, whose output is checked again here.
             fallback = [x for x in _agent_fallback_plan(prompt)
                         if x in _STAGE1_PLAN_COMMANDS]
+            # The generic "repo" term must not turn a simple issue/PR read
+            # into a costly multi-check inference request.
+            if len(fallback) > 1 and "overview" in fallback:
+                fallback.remove("overview")
             plan = []
             if model_generator is not None and len(fallback) != 1:
                 yield {"type": "STATUS", "phase": "GITHUB_MODEL_PLAN_STARTED",
