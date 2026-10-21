@@ -34,9 +34,10 @@ jobs:
           import re,subprocess
           from pathlib import Path
           html=Path('chat/§wyrlz/index.html').read_text(encoding='utf-8')
-          assert Path('chat/§wyrlz/VERSION.txt').read_text().strip()=='1.1.17'
-          assert '<meta name="swrlz-chat-version" content="1.1.17">' in html
-          assert 'const SWRLZ_CHAT_VERSION = "1.1.17"' in html
+          version=Path('chat/§wyrlz/VERSION.txt').read_text().strip()
+          assert re.fullmatch(r'\\d+\\.\\d+\\.\\d+',version), 'Invalid Chat version format'
+          assert f'<meta name="swrlz-chat-version" content="{version}">' in html
+          assert f'const SWRLZ_CHAT_VERSION = "{version}"' in html
           assert html.count('const syncResponseLiveCueV290=(node,g)=>')==1
           assert html.count('syncResponseLiveCueV290(node,g);')==1
           assert 'g.terminal' in html and 'node.dataset.responseLive' in html
