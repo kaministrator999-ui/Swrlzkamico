@@ -82,6 +82,23 @@ jobs:
              const a=v.mesh.geometry.attributes.position;
              return {ids,positions:ids.map(i=>[a.getX(i),a.getY(i),a.getZ(i)])};
            },
+           handle:axis=>{
+             const mesh=atelierMeshGizmo?.children.find(m=>m.userData.meshGizmoAxis===axis);
+             if(!mesh)return null;
+             mesh.updateMatrixWorld(true);
+             const p=mesh.getWorldPosition(new THREE.Vector3()).project(camera);
+             const r=renderer.domElement.getBoundingClientRect();
+             return {x:r.left+(p.x+1)*r.width/2,y:r.top+(1-p.y)*r.height/2};
+           },
+           dragState:()=>{
+             const d=atelierComponentDrag;if(!d)return {active:false,modified:false};
+             const a=d.mesh.geometry.attributes.position;
+             return {active:true,modified:d.ids.some((index,k)=>
+               Math.abs(a.getX(index)-d.base[k][0])>1e-5||
+               Math.abs(a.getY(index)-d.base[k][1])>1e-5||
+               Math.abs(a.getZ(index)-d.base[k][2])>1e-5),
+               selected:d.ids.length};
+           },
            modelEdits:()=>({count:(partById(selection)?.sculptVertexEdits||[]).length}),
            save:()=>structuredClone(model()),
            undo:()=>historyStep(true),

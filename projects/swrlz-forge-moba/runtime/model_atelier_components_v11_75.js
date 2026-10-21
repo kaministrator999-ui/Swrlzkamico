@@ -5,6 +5,7 @@ let atelierComponentMode='mesh',atelierComponentTool='tap',atelierComponentMulti
 let atelierComponentIds=[],atelierComponentPartId=null,atelierComponentOverlay=null;
 let atelierComponentGesture=null,atelierComponentDrag=null,atelierComponentPivot=null;
 const atelierComponentMax=192,atelierComponentMaxSlots=2048;
+const atelierComponentTopologyCache=new WeakMap();
 function atelierComponentMesh(){
  return modelRoot?.children.find(m=>m.isMesh&&m.userData.atelierId===selection)||null;
 }
@@ -24,13 +25,15 @@ function atelierComponentTriangles(g){
  return triangles;
 }
 function atelierComponentTopology(mesh){
- const g=mesh.geometry,p=g.attributes.position,tri=atelierComponentTriangles(g);
+ const g=mesh.geometry;
+ const cached=atelierComponentTopologyCache.get(g);if(cached)return cached;
+ const p=g.attributes.position,tri=atelierComponentTriangles(g);
  const keys=[],groups=new Map();
  for(let i=0;i<p.count;i++){
   const key=[p.getX(i),p.getY(i),p.getZ(i)].map(v=>Math.round(v*100000)).join(',');
   keys[i]=key;if(!groups.has(key))groups.set(key,[]);groups.get(key).push(i);
  }
- const representative=new Map(),vertices=[],edges=[],edgeSeen=new Set();
+ const representative=new Map(),vertices=[],edges=[],edgeSeen=new Set(),edgeLookup=new Map();
  for(let i=0;i<keys.length;i++)if(!representative.has(keys[i])){
   representative.set(keys[i],i);vertices.push(i);
  }
@@ -38,9 +41,11 @@ function atelierComponentTopology(mesh){
   const a=representative.get(keys[t[k]]),b=representative.get(keys[t[(k+1)%3]]);
   if(a===b)continue;
   const key=[Math.min(a,b),Math.max(a,b)].join(':');
-  if(!edgeSeen.has(key)){edges.push([a,b]);edgeSeen.add(key);}
+  if(!edgeSeen.has(key)){edgeLookup.set(key,edges.length);edges.push([a,b]);edgeSeen.add(key);}
  }
- return {vertices,edges,tri,groups,keys,representative};
+ const result={vertices,edges,edgeLookup,tri,groups,keys,representative};
+ atelierComponentTopologyCache.set(g,result);
+ return result;
 }
 function atelierComponentTopologyForActive(){
  const mesh=atelierComponentMesh();if(!mesh)return null;
@@ -231,31 +236,36 @@ function atelierComponentChoose(id){
 function atelierComponentHit(e){
  const view=atelierComponentTopologyForActive();if(!view)return null;
  const {mesh,topology:top}=view;
- const rect=renderer.domElement.getBoundingClientRect();
- const tolerance=e.pointerType==='touch'?29:19;
- if(atelierComponentMode==='face'){
-  mouse.set(point(e).x,point(e).y);raycaster.setFromCamera(mouse,camera);
-  const hit=raycaster.intersectObject(mesh,false)[0];
-  return hit?.faceIndex??null;
- }
- const ids=atelierComponentMode==='vertex'?top.vertices:top.edges;
- let best=null;mesh.updateMatrixWorld(true);
- // 2D screen-distance instead of unreliable world-sized raycaster tolerances.
- for(let k=0;k<ids.length;k++){
-  if(atelierComponentMode==='vertex'){
-   const p=atelierComponentScreen(mesh,ids[k]);
-   if(p.z<-1||p.z>1)continue;
-   const dist=Math.hypot(e.clientX-p.x,e.clientY-p.y);
-   if(dist<=tolerance&&(!best||dist<best.dist))best={index:k,dist};
-  }else{
-   const edge=ids[k],a=atelierComponentScreen(mesh,edge[0]),
-    b=atelierComponentScreen(mesh,edge[1]);
-   if(a.z>1&&b.z>1)continue;
-   const vx=b.x-a.x,vy=b.y-a.y,length=vx*vx+vy*vy||1;
-   const t=atelierMeshClamp(((e.clientX-a.x)*vx+(e.clientY-a.y)*vy)/length,0,1);
-   const dist=Math.hypot(e.clientX-a.x-t*vx,e.clientY-a.y-t*vy);
-   if(dist<=tolerance&&(!best||dist<best.dist))best={index:k,dist};
+ mouse.set(point(e).x,point(e).y);raycaster.setFromCamera(mouse,camera);
+ // Raycast against the selected native part first. Searching all 73k edges
+ // of the head on every phone tap would freeze the editor.
+ const hit=raycaster.intersectObject(mesh,false)[0],triangle=top.tri[hit?.faceIndex];
+ if(!triangle)return null;
+ if(atelierComponentMode==='face')return hit.faceIndex;
+ const tol=e.pointerType==='touch'?31:22;
+ if(atelierComponentMode==='vertex'){
+  let best=null;
+  for(const id of triangle){
+   const key=top.keys[id],representative=top.representative.get(key);
+   const point=atelierComponentScreen(mesh,representative);
+   const dist=Math.hypot(e.clientX-point.x,e.clientY-point.y);
+   const index=top.vertices.indexOf(representative);
+   if(index>=0&&dist<=tol&&(!best||dist<best.dist))best={index,dist};
   }
+  return best?.index??null;
+ }
+ let best=null;
+ for(let i=0;i<3;i++){
+  const j=triangle[(i+1)%3],k=triangle[i];
+  const repA=top.representative.get(top.keys[k]),repB=top.representative.get(top.keys[j]);
+  if(repA===repB)continue;
+  const key=[Math.min(repA,repB),Math.max(repA,repB)].join(':');
+  const index=top.edgeLookup.get(key);if(index===undefined)continue;
+  const from=atelierComponentScreen(mesh,repA),to=atelierComponentScreen(mesh,repB);
+  const vx=to.x-from.x,vy=to.y-from.y,length=vx*vx+vy*vy||1;
+  const t=atelierMeshClamp(((e.clientX-from.x)*vx+(e.clientY-from.y)*vy)/length,0,1);
+  const dist=Math.hypot(e.clientX-from.x-t*vx,e.clientY-from.y-t*vy);
+  if(dist<=tol&&(!best||dist<best.dist))best={index,dist};
  }
  return best?.index??null;
 }
@@ -276,9 +286,9 @@ function atelierComponentRegionPick(points,tool){
  const candidate=atelierComponentMode==='vertex'?top.vertices:
   atelierComponentMode==='edge'?top.edges:top.tri;
  const selected=[];
- const max=Math.min(candidate.length,20000);
+ const stride=Math.max(1,Math.ceil(candidate.length/16000));
  mesh.updateMatrixWorld(true);
- for(let i=0;i<max;i++){
+ for(let i=0;i<candidate.length;i+=stride){
   const item=candidate[i],vertices=typeof item==='number'?[item]:item;
   const samples=vertices.map(id=>atelierComponentScreen(mesh,id));
   const center={x:samples.reduce((a,p)=>a+p.x,0)/samples.length,

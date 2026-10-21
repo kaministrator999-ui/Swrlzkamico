@@ -29,7 +29,7 @@ try{
  await page.locator('[data-component-nudge="1"]').click();
  const after=await page.evaluate(()=>window.__componentTest.affected());
  const modelAfter=await page.evaluate(()=>window.__componentTest.modelEdits());
- console.log('COMPONENT_VERTEX_EDIT',JSON.stringify({before,after,modelBefore,modelAfter}));
+ console.log('COMPONENT_VERTEX_EDIT',JSON.stringify({beforeSlots:before.ids.length,afterSlots:after.ids.length,firstBefore:before.positions[0],firstAfter:after.positions[0],modelBefore,modelAfter}));
  assert.ok(modelAfter.count>modelBefore.count,'Native indexed vertex edit persists');
  assert.notDeepEqual(after.positions,before.positions,'Moving component changes real geometry');
  assert.equal((await page.evaluate(()=>window.__componentTest.scene())).parts,283,'No geometry parts lost');
@@ -58,7 +58,24 @@ try{
  assert.ok(face.expanded>=3&&face.mode==='face');
  await page.locator('[data-component-nudge="-1"]').click();
  assert.ok((await page.evaluate(()=>window.__componentTest.modelEdits())).count>modelAfter.count);
+ // Exercise actual pointer capture on the component transform gizmo (before release).
  await page.locator('[data-component-mode="vertex"]').click();
+ await page.evaluate(()=>window.__componentTest.choose(2));
+ const h=await page.evaluate(()=>window.__componentTest.handle('x'));
+ assert.ok(h&&Number.isFinite(h.x)&&Number.isFinite(h.y),'Component gizmo has a screen-space handle');
+ const editsBeforeDrag=await page.evaluate(()=>window.__componentTest.modelEdits());
+ await page.mouse.move(h.x,h.y);
+ await page.mouse.down();
+ await page.mouse.move(h.x+43,h.y,{steps:9});
+ await page.waitForTimeout(100);
+ const duringDrag=await page.evaluate(()=>window.__componentTest.dragState());
+ console.log('COMPONENT_DRAG_DURING',JSON.stringify(duringDrag));
+ assert.ok(duringDrag.active,'Live gizmo captures pointer before release');
+ assert.ok(duringDrag.modified,'Actual component geometry moves while pointer is held');
+ await page.mouse.up();
+ await page.waitForTimeout(100);
+ const editsAfterDrag=await page.evaluate(()=>window.__componentTest.modelEdits());
+ assert.ok(editsAfterDrag.count>editsBeforeDrag.count,'Gizmo drag commits native vertex offsets');
  await page.evaluate(()=>window.__componentTest.choose(0));
  await page.locator('[data-component-multi]').click();
  await page.evaluate(()=>window.__componentTest.choose(2));
