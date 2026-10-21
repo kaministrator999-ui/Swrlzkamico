@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.62
+title: §wyrl§ Engine v11.63
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -10,7 +10,7 @@ header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
 
-# §wyrl§ Engine v11.62
+# §wyrl§ Engine v11.63
 
 This Space publishes the governed engine build. Project release details, historical verification evidence, and update notes are maintained in `projects/swrlz-forge-moba/README.md` and `§tart_§E.md` in the source repository. Historical Space documentation remains available in Git history.
 
@@ -27,4 +27,6 @@ Native anatomical head sections define skull, temples, cheekbones, jaw and chin 
 §E v11.61 adds the optional ◫ Context secondary split floating tool workbench in Model Atelier: select an operation and adjust actual native properties in the adjacent panel. Supports Meshes, Sculpt, Lasso, Face, Topology, References, Motion and Appearance where actual controls exist, explicit saved presets and original inspector access. This does not add unrelated anime/game editor adapters. Marker: V11_61_ADAPTIVE_CONTEXT_TOOL_WORKBENCH; 93 patches, 43 original assets.
 
 
-§E v11.62 source candidate introduces the mobile-first unified Model Atelier tool sheet above the bottom category rail with Compact/Half/Expanded sizes, operation search and All/Quick/Recent, per-operation favorites, handedness and a return to the original native inspector. Desktop retains its movable workbench. All 283 original model parts and 43 assets persist. Marker: V11_62_MOBILE_ADAPTIVE_TOOL_SHEET; 94 patches. This Space description is authored in the candidate source and does **not** by itself establish deployed/live v11.62 status.
+§E v11.62 introduced the mobile-first unified Model Atelier tool sheet above the bottom category rail with Compact/Half/Expanded sizes, operation search and All/Quick/Recent, per-operation favorites, handedness and a return to the original native inspector. Desktop retains its movable workbench. All 283 original model parts and 43 assets persist. Marker: V11_62_MOBILE_ADAPTIVE_TOOL_SHEET; 94 patches. This previous feature release is retained for historical context.
+
+§E v11.63 is a version-only deployment smoke test. No modeling, gaming or animation behavior changes; 95 ordered patches, original 283-part canonical model, and 43 historical assets. Marker: `V11_63_VERSION_SMOKE_TEST`. The verified live deploy receipt determines whether v11.63 is actually hosted.

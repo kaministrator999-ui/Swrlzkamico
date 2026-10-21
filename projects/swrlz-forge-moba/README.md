@@ -1,3 +1,7 @@
+## 2026-10-20 · §E v11.63 — §§§ minimal version/deploy smoke test
+
+This release changes **version metadata only** (v11.62 → v11.63), with no new modeling tools or changed game/animation behavior. `patches/v11_63_version_smoke.py` preserves the 283-part canonical model. `source-manifest.json` now seals **95 ordered patches**, **2,976,568 bytes**, SHA-256 `6adbda8d53e0b11fe6e98ae59605176362e0fc2b159c558e52087e96ed1274ec`, marker `V11_63_VERSION_SMOKE_TEST`, and the same 43 assets. This small release exercises the §§§ flow: build/version/manifest → commit to `main` → separate `DEPLOY_REQUEST.json` trigger → GitHub-to-Hugging-Face deploy → owner tests. Only the deployment's successful live receipt establishes hosted status. The v11.62 candidate paragraphs below are historical and superseded by this version.
+
 ## 2026-10-20 · §E v11.62 mobile adaptive tool sheet — SEALED SOURCE CANDIDATE (NOT LIVE)
 
 This is a **source candidate only**; the publicly hosted §wyrl§ Engine remains verified v11.61 until the v11.62 release and hosted checks complete. The 94-patch candidate is byte-sealed at **2,976,576 bytes**, SHA-256 `215240cd453031834f76e90efd4d125466b6ecb1467dfe9941f3d69b8e08b931`, marker `V11_62_MOBILE_ADAPTIVE_TOOL_SHEET`. [Independent 94-patch measurement and source-preservation proof](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/39511087814). The original 283-part anatomical model and 43 bundled historical assets are preserved.
