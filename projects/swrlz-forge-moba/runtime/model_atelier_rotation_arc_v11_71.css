@@ -1,0 +1,22 @@
+/* §E v11.71 — angle ruler state, scoped to Model Atelier. */
+.model-atelier .atelier-mesh-quickstrip .amq-arc-ruler[hidden]{display:none!important}
+.model-atelier .atelier-mesh-quickstrip .amq-arc-ruler{
+ display:grid;grid-template-columns:minmax(0,1fr) auto auto;
+ align-items:center;gap:7px;padding:6px 7px;margin:5px 0;
+ border:1px solid #487f9e;border-radius:8px;
+ background:linear-gradient(115deg,#172e48,#29284c);
+ color:#d8faff;font-size:11px;
+}
+.model-atelier .amq-arc-ruler b{color:#ffdb9a;font-variant-numeric:tabular-nums}
+.model-atelier .amq-arc-ruler output{
+ padding:3px 5px;color:#94ffe0;font-weight:700;letter-spacing:.02em;
+ font-variant-numeric:tabular-nums;background:#173c50;border-radius:5px;white-space:nowrap;
+}
+.model-atelier .amq-arc-ruler button{
+ padding:4px!important;min-height:30px!important;min-width:63px!important;
+ flex:none!important;font-size:10px!important;
+}
+@media(max-width:480px){
+ .model-atelier .atelier-mesh-quickstrip .amq-arc-ruler{gap:4px}
+ .model-atelier .amq-arc-ruler button{min-width:56px!important}
+}
