@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.72",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_72_ROTATION_ARC_ALIGNMENT",
-  "reason": "§§§ owner-directed §E v11.72 rotation calibration after Android screenshots. Correct selected-mesh ring sizing (anatomical head ~0.573 world radius instead of zoom-based 0.952), world-axis 3D ray/plane angle tracking with edge-on tangent fallback, readable X/Y/Z color emphasis, small phone-friendly screen-space handle hit regions, and explicit live Δ / Last Δ labeling. Prior live rotation, Move/Scale, 283-part original character, Undo/Redo, Fine/Fast sensitivity and 43 assets preserved. Targeted real Chromium test 39609712872 passed all three axes with live preview and commit; 104 patches, HTML 3,036,186 bytes and SHA-256 9b0d791a66bce68a28f21911d2de4bad703d9d676edd2076622c9b4060e0cae8. Verify exact hosted HTML, SOURCE receipt and every asset; Android UX remains owner-tested.",
-  "sourceCommit": "c308c5d0c3d52b89a51f39cc405509aff85977d4",
-  "sourceIntegritySha256": "9b0d791a66bce68a28f21911d2de4bad703d9d676edd2076622c9b4060e0cae8"
+  "releaseVersion": "v11.73",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_73_INSTANT_GIZMO_ROTATION_TOUCH",
+  "reason": "§§§ owner-requested §E v11.73 Android Model Atelier gizmo usability. Changing Move/Rotate/Scale or X/Y/Z now paints WebGL immediately, not after camera movement. Rotation arcs receive thicker visible tube geometry and larger beads, plus 37px touch-friendly screen-distance selection anywhere along the curve (not bead-only). When multiple axis curves overlap, explicit selected axis is preferred. Native live rotation, Undo/Redo, 283-part canonical model, 43 original assets, Fine/Fast precision and snap features remain intact. Real Chromium test run 39617462205 passed instant switch repaint, no camera movement, off-bead curve drag and mobile-width hit target. Sealed release 105 patches, 3,040,330 bytes, SHA-256 57998cfe4d71530e4f82fc0b0f0ec18c4bc858bc5f8f35d2d3ee5cdca7c56fe8. Verify exact live package, SOURCE receipt and all 43 packaged assets before owner phone testing.",
+  "sourceCommit": "6da652781537deacae6650c0c5411679d7babe1e",
+  "sourceIntegritySha256": "57998cfe4d71530e4f82fc0b0f0ec18c4bc858bc5f8f35d2d3ee5cdca7c56fe8"
 }
