@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.73
+title: §wyrl§ Engine v11.74
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -10,7 +10,7 @@ header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
 
-# §wyrl§ Engine v11.73
+# §wyrl§ Engine v11.74
 
 This Space publishes the governed engine build. Project release details, historical verification evidence, and update notes are maintained in `projects/swrlz-forge-moba/README.md` and `§tart_§E.md` in the source repository. Historical Space documentation remains available in Git history.
 
@@ -50,3 +50,5 @@ Native anatomical head sections define skull, temples, cheekbones, jaw and chin 
 §E v11.72 calibrates the rotation arc gizmos to each selected mesh instead of camera zoom; a selected anatomical head now receives a radius of about 0.573 model units rather than 0.952 in the earlier zoom-only implementation. Pointer angles are derived from a 3D ray/rotation-plane intersection (with stable screen tangent fallback for edge-on arcs), while colored axis focus separates overlapping rings and a screen-pixel hit radius prevents accidental selection of distant ring handles. The popup explicitly labels each **rotation delta**, not absolute Euler orientation. X, Y and Z were separately tested in Chromium against the selected head before pointer release, with visible mesh transforms and persisted Undo-able changes; owner Android acceptance remains pending. The original 283-part canonical model, all 43 bundled assets, snapping, Fine/Fast sensitivity, Move/Scale and history remain intact. Marker `V11_72_ROTATION_ARC_ALIGNMENT`; 104 ordered patches.
 
 §E v11.73 fixes Model Atelier gizmo mode switching and arc hit testing on Android. Move/Rotate/Scale and X/Y/Z button presses synchronously paint the rebuilt gizmo without waiting for an orbit or pan gesture. The existing selected-mesh-relative rotation rulers now use thicker 3D tube geometry and larger visible beads, with camera-projected screen-space hit testing across *any point on a curved arc* rather than only tiny endpoint grips. Where colored arcs overlap, the actively selected axis in the floating popup takes priority. Existing per-mode Fine/Fast sensitivity, live object rotation, rotation snap, native Undo/Redo, original 283-part character and all 43 assets remain unchanged. Chromium interaction verified immediate mode switching, live rotation by grabbing a curve away from its bead, and phone-width touch hit areas. Marker `V11_73_INSTANT_GIZMO_ROTATION_TOUCH`; 105 patches.
+
+§E v11.74 adds non-destructive editable flat mesh groups and persistent mobile Multi-Select to Model Atelier. Tap Multi-Select to toggle selected parts, Clear/Done, Select first 32, then Group selected; switch between Edit group (shared Move/Rotate/Scale with world-space pivot) and Edit child (individual member controls), Update members, Remove child and Ungroup without destroying geometry or per-part materials. The existing **Join selected** remains intentionally destructive and separate. Group membership is saved in modelAtelier.meshGroups and validated on model JSON import. The native full-model Undo/Redo snapshots preserve original animation/socket assemblies and revert group creation, group transforms, edits and ungrouping. The original 283-part starter and 43 assets remain untouched. Chromium regression verified group/ungroup, live selection toggling, group transform, Undo/Redo, exported/imported group identities, 390px responsive multi-select and preservation of every original part/material. Release marker `V11_74_NONDESTRUCTIVE_MESH_GROUPS`, 106 patches. Owner physical touchscreen test remains pending.
