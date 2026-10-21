@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.72",
+  "name": "§wyrl§ Engine v11.73",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_72.html",
+  "finalArtifact": "swyrl_engine_v11_73.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -118,8 +118,9 @@
     "patches/v11_69_live_touch_preview.py",
     "patches/v11_70_precision_ui.py",
     "patches/v11_71_rotation_ruler.py",
-    "patches/v11_72_arc_alignment.py"
+    "patches/v11_72_arc_alignment.py",
+    "patches/v11_73_gizmo_touch.py"
   ],
-  "finalBytes": 3036186,
-  "finalSha256": "9b0d791a66bce68a28f21911d2de4bad703d9d676edd2076622c9b4060e0cae8"
+  "finalBytes": 3040330,
+  "finalSha256": "57998cfe4d71530e4f82fc0b0f0ec18c4bc858bc5f8f35d2d3ee5cdca7c56fe8"
 }
