@@ -11,7 +11,7 @@ This file deliberately does **not** duplicate every architecture, versioning, di
 
 ### Specialized Forge engine entrypoint — `§tart §E`
 
-When the user's complete project invocation is `§tart §E` or `@GitHub §tart §E`, **route to `§tart_§E.md` instead of running the normal AI Chat/LALM startup chain**.
+When the user's complete project invocation is `§§§`, `@GitHub §§§`, `§tart §E`, or `@GitHub §tart §E`, **route to `§tart_§E.md` instead of running the normal AI Chat/LALM startup chain**.
 
 That specialized router owns SWRLZ Forge/browser-engine work and its independent deployment lane:
 
@@ -26,8 +26,14 @@ GitHub: kaministrator999-ui/Swrlzkamico
 The Forge engine is intentionally separate from the main §wyrlz AI Chat/LALM Space `kamiloki/Swyrlz`. Do not mix the two deployment paths unless the user explicitly requests an integration change.
 
 
----
 
+### Specialized Chat + AI entrypoint — `§§§§`
+
+When the user's complete project invocation is `§§§§` or `@GitHub §§§§`, **read [`§§§§.md`](§§§§.md)** and execute its dedicated **Chat + AI** startup/handoff contract. This routes the ordinary `§wyrlz_§tart.md` ten-document chain into the Chat/LALM focus group rather than into the independent Forge engine. The four-sigil file is a scoped entrypoint and **not a replacement** for this canonical project router, module version authorities, approval policy, or project-wide rules. It cannot authorize writes/deployments beyond current user intent and project permissions.
+
+`§§` remains the project-wide bootstrap; `§§§` means Forge Engine; `§§§§` means Chat + AI. A scoped invocation never changes the other product's release lane.
+
+---
 ## Current Hugging Face deployment method — mandatory
 
 Current application publication uses the existing source-controlled request chain; do not invent a second deployment trigger and do not use Vercel:

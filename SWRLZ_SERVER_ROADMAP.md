@@ -1,3 +1,17 @@
+## UPDATE FINISHED — 2026-10-21 — §§§§ dedicated Chat + AI startup router (documentation-only)
+
+**Result / focus:** Added root `§§§§.md` as the Chat/LALM-specific full-follow-through entrypoint and registered distinct `§§§` (engine) versus `§§§§` (Chat + AI) aliases in `§wyrlz_§tart.md`. Project-wide `§§` bootstrap remains unchanged. **Primary Focus remains clean-room Chat + related LALM/stream owners**, not Forge. This update is governance/documentation-only; it does not claim Chat feature implementation, model retraining, HF publication, or Android acceptance.
+
+**Architecture reconciliation:** `§wyrlz_§tart.md` remains the single project-wide authority/router; `§tart_§E.md` remains the independent Forge entrypoint; new `§§§§.md` is a scoped Chat starter delegating to canonical ten-document chain and current registered module owners. It explicitly preserves production `kamiloki/Swyrlz` versus engine `kamiloki/swrlz-forge-moba` release separation, canonical source/stream/message ownership, correct authority/approval gates, and version-truth tiers. No new runtime owner or parallel deploy trigger introduced.
+
+**Version and deployment:** Governed Repository Work tier advances from observed runtime authority `1.0.230` to `1.0.231`; no Server Runtime, Web Chat, LALM Engine, UI local-version or engine release version changes. No deployment request modification; documentation-only release remains deployment-inert.
+
+**Verification/limits:** Read source `§tart_§E.md`, `§wyrlz_§tart.md`, Chat Overview, Hotfix Rules, registered runtime version authorities and head of Roadmap. Router invocation and scope text are source-reviewable; no live runtime test is claimed. Source commit and registry authority update must be confirmed independently.
+
+## UPDATE STARTED — 2026-10-21 — §§§§ dedicated Chat + AI startup router
+
+**Owner intent:** Use §§§ Engine start-router pattern for a new four-sigil Chat/AI start document with the same evidence, ownership, validation, lifecycle and truthful delivery discipline but no engine/Chat cross-deployment. Target repo `kaministrator999-ui/Swrlzkamico`, starting main at `f29d9860e8bd626d922fc2fbce3e0d8aaf3e0d66`; runtime Repository Work `1.0.230`. Documentation-only scope: specialized root start document, canonical router alias, durable Roadmap and governed Repository Work authority.
+
 ## UPDATE FINISHED — 2026-10-21 — v292 Chat keyboard interaction and drawer access
 
 **Result / focus:** COMPLETE for source integration, deterministic CI and guarded production publication; live physical Android/IME/hardware-keyboard owner acceptance remains pending (DEPLOYED_UNVERIFIED at behavioral level). Primary Focus: clean-room `/chat/§wyrlz` Mask/UI. Focus Group: Web Chat (changed), Station/Server Runtime (serving unchanged backend, deployment-coupled); LALM Engine, authentication, Google account/persistence, GitHub write authority, Forge engine, and model weights unchanged.
