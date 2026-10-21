@@ -1,0 +1,108 @@
+name: Test §E v11.72 calibrated rotation once
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/patches/v11_72_arc_alignment.py"
+permissions:
+  contents: read
+jobs:
+  all-axis-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build v11.72, validate exact character baseline and JS syntax
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import base64,gzip,hashlib,importlib.util,json
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          m=json.loads((root/'source-manifest.json').read_text())
+          raw=gzip.decompress(base64.b64decode(''.join((root/p).read_text().strip() for p in m['chunks'])))
+          assert hashlib.sha256(raw).hexdigest()==m['baseSha256']
+          html=raw.decode()
+          for i,rel in enumerate(m['patches']+['patches/v11_72_arc_alignment.py']):
+              spec=importlib.util.spec_from_file_location('p'+str(i),root/rel)
+              module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+              html=module.apply(html)
+          out=html.encode()
+          print('SWRLZ_V1172_FINAL_BYTES='+str(len(out)),flush=True)
+          print('SWRLZ_V1172_FINAL_SHA256='+hashlib.sha256(out).hexdigest(),flush=True)
+          print('SWRLZ_V1172_PATCH_COUNT='+str(len(m['patches'])+1),flush=True)
+          assert html.count('SWYRL_ENGINE_DEPLOY_MARKER: V11_72_ROTATION_ARC_ALIGNMENT')==1
+          assert 'function atelierArcCalibratedBuild(root)' in html
+          assert 'function atelierArcCalibratedPointerAngle(d,e)' in html
+          assert 'function atelierArcCalibratedDown(e)' in html
+          assert 'function atelierArcVisualFocus(axis)' in html
+          Path('/tmp/v1172.mjs').write_text(html.split('<script type="module">',1)[1].rsplit('</script>',1)[0])
+          Path('/tmp/v1172.html').write_text(html)
+          PY
+          node --check /tmp/v1172.mjs
+      - name: Install real browser driver
+        run: npm install --no-save --prefix /tmp/swyrl-browser-test playwright@1.56.0
+      - name: Test X/Y/Z touch geometry and actual mesh rotation before pointerup
+        run: |
+          set -euo pipefail
+          CHROME_BIN="$(command -v google-chrome-stable || command -v google-chrome || command -v chromium || true)"
+          if [ -z "$CHROME_BIN" ]; then
+            /tmp/swyrl-browser-test/node_modules/.bin/playwright install chromium
+            CHROME_BIN="$(find "$HOME/.cache/ms-playwright" -type f -name chrome -path '*chrome-linux*' | head -1)"
+          fi
+          test -x "$CHROME_BIN"
+          export CHROME_BIN
+          python - <<'PY'
+          from pathlib import Path
+          html=Path('/tmp/v1172.html').read_text()
+          instrument="""window.__atelierArcTest={
+           ready:()=>!!(renderer&&modelRoot&&model()?.parts?.length),
+           pick:()=>{const p=model().parts.find(p=>/anatomical head/i.test(p.name))||model().parts.find(p=>/bodice/i.test(p.name))||model().parts[0];select(p.id);return p.name;},
+           rings:()=>[...atelierArcRings.keys()],
+           geometry:()=>{
+             const box=new THREE.Box3();
+             for(const m of atelierMeshSelectedMeshes())box.expandByObject(m);
+             const sphere=new THREE.Sphere();box.getBoundingSphere(sphere);
+             const pivot=atelierMeshGizmo.position.clone();
+             return {radius:atelierArcRings.get('x')?.radius||0,
+               oldZoomRadius:atelierMeshClamp(orbit.distance*.085,.68,1.35),
+               centerDelta:sphere.center.distanceTo(pivot),
+               meshRadius:sphere.radius,cameraDistance:camera.position.distanceTo(pivot)};
+           },
+           handle:axis=>{
+             const a=atelierArcRings.get(axis);if(!a)return null;
+             const screen=v=>{
+               const projected=v.clone().project(camera);
+               const rect=renderer.domElement.getBoundingClientRect();
+               return {x:rect.left+(projected.x+1)*rect.width/2,
+                 y:rect.top+(1-projected.y)*rect.height/2};
+             };
+             const current=screen(a.hit.getWorldPosition(new THREE.Vector3()));
+             const next=screen(a.ring.localToWorld(atelierArcPoint(a.radius,a.phase+.15)));
+             const dx=next.x-current.x,dy=next.y-current.y,dist=Math.hypot(dx,dy)||1;
+             return {axis,x:current.x,y:current.y,tx:dx/dist,ty:dy/dist};
+           },
+           state:()=>{
+             const mesh=atelierMeshSelectedMeshes()[0];
+             const a=atelierArcRings.get(atelierMeshDrag?.axis||atelierMeshAxis);
+             const diag=window.SWYRL_ENGINE_MESH_DRAG_DIAGNOSTICS?.status();
+             return {rotation:mesh?.rotation.toArray().slice(0,3)||[],
+               dragging:!!atelierMeshDrag,axis:atelierMeshDrag?.axis,amount:atelierMeshDrag?.amount||0,
+               thumbAngle:a?Math.atan2(a.hit.position.y,a.hit.position.x)-a.phase:0,
+               opacity:Object.fromEntries([...atelierArcRings].map(([id,r])=>[id,r.curve.material.opacity])),
+               readout:document.querySelector('[data-arc-degrees]')?.textContent||'',
+               updates:diag?.pointerUpdates||0,renders:diag?.drawnFrames||0};
+           }
+          };"""
+          anchor='function atelierMeshGizmoDown(e){'
+          assert html.count(anchor)==1
+          html=html.replace(anchor,instrument+'\n'+anchor,1)
+          d=Path('/tmp/atelier-1172-browser');d.mkdir(exist_ok=True)
+          (d/'index.html').write_text(html)
+          PY
+          python -m http.server 8765 --bind 127.0.0.1 --directory /tmp/atelier-1172-browser >/tmp/arc-browser-http.log 2>&1 &
+          sleep 2
+          node projects/swrlz-forge-moba/scripts/test_v11_72_arc_alignment.mjs
