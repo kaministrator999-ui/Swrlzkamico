@@ -37,6 +37,13 @@ _FILE_NAME = re.compile(r"\b(?:named|called|filename|path)\s*[:=]?\s*"+_PATH,re.
 _SIMPLE_FILE = re.compile(r"(?<![\w/])((?:[\w.\-]+/)*[\w.\-]+\.[A-Za-z0-9_-]{1,16})(?![\w])")
 _TEXT_FIELD = re.compile(r"(?:^|\n)\s*(?:file\s+)?contents?\s*:\s*([\s\S]+)$",re.I)
 _QUOTED_TEXT = re.compile(r"\b(?:containing|saying|with\s+the\s+text)\s+[\"“]([^\"”]+)[\"”]\s*[.!]?\s*$",re.I)
+# A user choosing a fresh name after CREATE_FILE collision is not requesting
+# a rename of the existing Git blob, nor asking the coder for a text artifact.
+_RENAME_FAILED_CREATE = re.compile(
+    r"^\s*(?:(?:name|call)\s+(?:it|the\s+(?:new\s+)?file|that\s+file)\s+(?:as\s+)?"
+    r"|(?:use|try)\s+(?:the\s+)?(?:name|filename)\s+|make\s+it\s+)"
+    r"(`?[\w./-]{1,200}`?)\s*(?:then|instead|please)?[.!]?\s*$", re.I)
+_BARE_NEW_NAME = re.compile(r"^[\w./-]{1,200}\.[A-Za-z0-9_-]{1,16}$")
 
 
 def _path_part(match, offset=1):
@@ -82,6 +89,22 @@ def pending_kind(user_id,thread_id):
 
 def is_reply(prompt):
     return bool(isinstance(prompt,str) and (_YES.fullmatch(prompt) or _NO.fullmatch(prompt)))
+
+
+def is_new_name_reply(prompt):
+    """Only a bounded filename selection, never general conversation, can follow collision."""
+    if not isinstance(prompt,str) or len(prompt)>260 or _EXPLAIN.search(prompt):
+        return False
+    value=prompt.strip()
+    return bool(_RENAME_FAILED_CREATE.fullmatch(value) or _BARE_NEW_NAME.fullmatch(value))
+
+
+def _choose_name(prompt):
+    text=str(prompt or "").strip()
+    match=_RENAME_FAILED_CREATE.fullmatch(text)
+    if match:return _trim_path(match.group(1).strip(chr(96)))
+    if _BARE_NEW_NAME.fullmatch(text):return _trim_path(text)
+    return ""
 
 
 def expire_interrupted(user_id,thread_id):
@@ -254,6 +277,37 @@ def _confirmation(user_id,thread_id,prompt):
         if len(prompt.encode("utf-8"))>create.MAX_FILE_BYTES:
             return _out("That content exceeds the 1,000,000-byte file limit. Nothing changed.")
         return _prepare_create(user_id,thread_id,pending["path"],prompt)
+    if pending["kind"]=="need-new-name":
+        # A collision never authorizes renaming, overwriting or changing the
+        # *existing* file. The user's new name starts a fresh CREATE proposal.
+        if _YES.fullmatch(prompt):
+            _remember(user_id,thread_id,pending)
+            return _out("The original path already exists. Give a different filename first; no write is authorized.")
+        requested=_choose_name(prompt)
+        if not requested:
+            return _out("I couldn't identify one new filename. Nothing changed.")
+        try:
+            auth,entries,_=_read_tree(user_id)
+            if auth["repo"]!=pending["repo"] or auth["branch"]!=pending["branch"]:
+                return _out("The selected repository or default branch changed. No new file was prepared; give the complete request again.")
+            original=pending["path"]
+            if original not in entries or entries[original].get("type")!="blob":
+                return _out("The original collision is no longer verified. Request the new file explicitly; nothing changed.")
+            suffix=original.rsplit("/",1)[-1]
+            extension=("."+suffix.rsplit(".",1)[-1] if "." in suffix and not suffix.endswith(".") else "")
+            # Relative new names inherit the original directory, and missing
+            # extensions retain the original type: swyrlz1 -> swyrlz1.txt.
+            if "/" not in requested:
+                if extension and "." not in requested:requested+=extension
+                directory=original.rsplit("/",1)[0] if "/" in original else ""
+                if directory:requested=directory+"/"+requested
+            requested=safe_path(requested)
+            if requested==original:
+                _remember(user_id,thread_id,pending)
+                return _out("That's the name of the existing file. Please choose a different name; nothing changed.")
+            return _prepare_create(user_id,thread_id,requested,pending["content"])
+        except CreateFileError as exc:
+            return _out(_user_friendly_failure(exc))
     if not _YES.fullmatch(prompt):
         return None
     try:
@@ -356,6 +410,22 @@ def _prepare_create(user_id,thread_id,path,content):
         encoded=base64.b64encode(content.encode("utf-8")).decode("ascii")
         proposal=create.prepare(user_id,path,encoded,"text/plain; charset=utf-8")
     except CreateFileError as exc:
+        if exc.code=="FILE_ALREADY_EXISTS" and content is not None:
+            # Preserve the *requested new file*, not the existing blob. The
+            # next explicit name reply cannot write without a new approval.
+            try:
+                auth,entries,_=_read_tree(user_id)
+                if entries.get(path,{}).get("type")=="blob":
+                    _remember(user_id,thread_id,{
+                        "kind":"need-new-name","path":path,"content":content,
+                        "repo":auth["repo"],"branch":auth["branch"]})
+                    return _out("That GitHub file already exists: "+_clean_label(path)+
+                                " in "+_clean_label(auth["repo"])+". I won't overwrite or rename it. "+
+                                "I kept the exact text you requested for a NEW file. "+
+                                "Choose another filename (for example, **Name it swyrlz1 then**) "+
+                                "and I'll prepare a fresh Yes/No confirmation. Nothing changed.")
+            except CreateFileError:
+                pass
         return _out(_user_friendly_failure(exc))
     _remember(user_id,thread_id,{"kind":"create","ticket":proposal["approvalToken"]})
     return _out("Ready to create "+_clean_label(path)+" in "+_clean_label(proposal["repo"])+
