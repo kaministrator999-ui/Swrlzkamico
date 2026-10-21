@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.70",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_70_PRECISION_GIZMO_TOOLBAR",
-  "reason": "§§§ owner-authorized §E v11.70 precision and mobile viewport usability release. Model Atelier selected-mesh popup: persistent per-mode Fine↔Fast sensitivity (1/8x–4x) for Move/Rotate/Scale pointer drags and plus/minus nudges, without changing vertex counts (native Grid U/V remains). Mobile viewport header reorganized into render/target group, horizontally scrollable camera presets and collapsible advanced display/clip controls, preserving existing native event handlers and all options. Real Chromium browser test run 39602536277 passed with 0.1799 world unit normal vs 0.0225 unit fine for identical drag, live rendered preview and 390px viewport toolbar checks. Original 283-part canonical model + 43 packaged assets intact; 102 patches; HTML 3,019,798 bytes; SHA-256 67a36e4efc75bf0a585463643b1e48ce70437add1b65087d9d1967df97204ca3. Verify exact published artifact, SOURCE receipt and all assets; owner validates Android.",
-  "sourceCommit": "a902d528b0c9aaccf1551e48ef2bc0d4a6b82547",
-  "sourceIntegritySha256": "67a36e4efc75bf0a585463643b1e48ce70437add1b65087d9d1967df97204ca3"
+  "releaseVersion": "v11.71",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_71_ARC_ROTATION_RULER",
+  "reason": "§§§ owner-directed Model Atelier v11.71 curved rotation gizmo based on screenshot reference. Rotate mode displays red X, green Y and blue Z world-space arc rulers with ticks and touch-draggable beads; popup shows live angle and optional off/5°/15° snapping. Native per-mode Fine/Fast sensitivity, live WebGL drag, fast commit, Undo/Redo, Move/Scale and all source geometry preserved. Real Chromium pointer test run 39605565651 passed with mesh and bead moving together while held, 12 live frames and 39.4° z-rotation before release. Source HTML 3,029,622 bytes and SHA-256 44ae1de39f81874ccf2a06cfae8e067b06633053656283562523579850034c6b, 103 patches, original 283-part reference model and 43 packaged assets. Verify exact hosted HTML, SOURCE receipt and assets; owner validates Android gestures.",
+  "sourceCommit": "8b3bc360b222f19e805e4a89372b15753fe8f650",
+  "sourceIntegritySha256": "44ae1de39f81874ccf2a06cfae8e067b06633053656283562523579850034c6b"
 }
