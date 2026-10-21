@@ -2,67 +2,29 @@ name: Verify §E v11.62 native cinematic candidate
 on:
   push:
     branches: [main]
-    paths:
-      - ".github/workflows/verify-swrlz-native-cinematic.yml"
-      - "projects/swrlz-forge-moba/patches/v8_6_native_anime_cinematic.py"
-      - "projects/swrlz-forge-moba/source-manifest.json"
-      - "projects/swrlz-forge-moba/tests/model_atelier_playwright.mjs"
-      - "projects/swrlz-forge-moba/tests/model_atelier_package.py"
-      - "projects/swrlz-forge-moba/scenes/model-atelier-prism-jester.swyrl.json"
-      - "projects/swrlz-forge-moba/patches/v11_3_model_atelier.py"
-      - "projects/swrlz-forge-moba/patches/v11_4_prism_ferret_fidelity.py"
-      - "projects/swrlz-forge-moba/runtime/model_atelier_organic_v11_4.js"
-      - "projects/swrlz-forge-moba/scenes/model-atelier-prism-jester-ferret-v11-4.swyrl.json"
-      - "projects/swrlz-forge-moba/tests/prism_ferret_fidelity_package.py"
-      - "projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-ep01-performance.swyrl.json"
-      - "projects/swrlz-forge-moba/tests/episode_performance_playwright.mjs"
-      - "projects/swrlz-forge-moba/tests/episode_performance_package.py"
-      - "projects/swrlz-forge-moba/patches/v10_0_sheep_tag.py"
-      - "projects/swrlz-forge-moba/scenes/sheep-tag-meadow.swyrl.json"
-      - "projects/swrlz-forge-moba/tests/sheep_tag_playwright.mjs"
-      - "projects/swrlz-forge-moba/patches/v10_1_sheep_tag_archive.py"
-      - "projects/swrlz-forge-moba/scenes/sheep-tag-moonbell-archive.swyrl.json"
-      - "projects/swrlz-forge-moba/tests/sheep_archive_playwright.mjs"
-      - "projects/swrlz-forge-moba/patches/v10_5_sheep_run_recorder.py"
-      - "projects/swrlz-forge-moba/patches/v10_6_maul_tower_defense.py"
-      - "projects/swrlz-forge-moba/scenes/maul-frostveil.swyrl.json"
-      - "projects/swrlz-forge-moba/tests/maul_playwright.mjs"
-      - "projects/swrlz-forge-moba/tests/maul_cpu.mjs"
-      - "projects/swrlz-forge-moba/runtime/sheep_touch_selection.js"
-      - "projects/swrlz-forge-moba/runtime/sheep_placement_grid.js"
-      - "projects/swrlz-forge-moba/runtime/sheep_touch_offset.js"
-      - "projects/swrlz-forge-moba/runtime/sheep_lanes.js"
-      - "projects/swrlz-forge-moba/runtime/sheep_run_recorder.js"
-      - "projects/swrlz-forge-moba/runtime/sheep_run_review.js"
-      - "projects/swrlz-forge-moba/tests/sheep_run_playwright.mjs"
-      - "projects/swrlz-forge-moba/tests/sheep_touch_playwright.mjs"
-      - "projects/swrlz-forge-moba/patches/v8_9_cinematic_staging.py"
-      - "projects/swrlz-forge-moba/patches/v8_8_popup_storybook.py"
-      - "projects/swrlz-forge-moba/patches/v8_7_anime_cel_layers.py"
-      - "projects/swrlz-forge-moba/patches/v9_0_animation_studio.py"
-      - "projects/swrlz-forge-moba/patches/v9_1_character_rigs.py"
-      - "projects/swrlz-forge-moba/patches/v9_2_depth_theatre.py"
-      - "projects/swrlz-forge-moba/patches/v9_3_character_alignment.py"
-      - "projects/swrlz-forge-moba/patches/v9_4_socket_book_emergence.py"
-      - "projects/swrlz-forge-moba/patches/v9_5_staff_grip_fit.py"
-      - "projects/swrlz-forge-moba/patches/v9_5_character_depth_sections.py"
-      - "projects/swrlz-forge-moba/patches/v9_6_natural_staff_painted_faces.py"
-      - "projects/swrlz-forge-moba/patches/v9_7_ornate_staff.py"
-      - "projects/swrlz-forge-moba/patches/v9_8_full_length_staff.py"
-      - "projects/swrlz-forge-moba/patches/v9_9_episode_shuttle.py"
-      - "projects/swrlz-forge-moba/runtime/**"
-      - "projects/swrlz-forge-moba/tests/episode_transport_playwright.mjs"
-      - "projects/swrlz-forge-moba/assets/anime/**"
-      - "projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-ep01-storybook.swyrl.json"
-      - "projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-ep01-rigged.swyrl.json"
-      - "projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-ep01-depth.swyrl.json"
-      - "projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-ep01-positioned.swyrl.json"
-      - "projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-ep01-sockets.swyrl.json"
-      - "projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-ep01-staff-grip.swyrl.json"
-      - "projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-ep01-natural-grip.swyrl.json"
-      - "projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-ep01-full-staff.swyrl.json"
+    paths: &anime_paths
+      - '.github/workflows/verify-swrlz-native-cinematic.yml'
+      - 'projects/swrlz-forge-moba/patches/v8_6*'
+      - 'projects/swrlz-forge-moba/patches/v8_7*'
+      - 'projects/swrlz-forge-moba/patches/v8_8*'
+      - 'projects/swrlz-forge-moba/patches/v8_9*'
+      - 'projects/swrlz-forge-moba/patches/v9_*'
+      - 'projects/swrlz-forge-moba/assets/anime/**'
+      - 'projects/swrlz-forge-moba/episodes/**'
+      - 'projects/swrlz-forge-moba/scenes/ghosts-in-different-forms-*'
+      - 'projects/swrlz-forge-moba/runtime/anime_*'
+      - 'projects/swrlz-forge-moba/runtime/character_*'
+      - 'projects/swrlz-forge-moba/tests/anime_*'
+      - 'projects/swrlz-forge-moba/tests/native_anime*'
+      - 'projects/swrlz-forge-moba/tests/storybook_*'
+      - 'projects/swrlz-forge-moba/tests/episode_*'
+      - 'projects/swrlz-forge-moba/tests/character_*'
+      - 'projects/swrlz-forge-moba/tests/depth_theatre*'
+      - 'projects/swrlz-forge-moba/tests/socket_*'
+      - 'projects/swrlz-forge-moba/build_space.py'
   pull_request:
     branches: [main]
+    paths: *anime_paths
   workflow_dispatch:
 permissions:
   contents: read
