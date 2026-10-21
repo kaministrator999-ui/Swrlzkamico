@@ -1,0 +1,37 @@
+name: Measure §E v11.64 version smoke once
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/patches/v11_64_version_smoke.py"
+permissions:
+  contents: read
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Measure exact assembled engine before resealing source manifest
+        run: |
+          python - <<'PY'
+          import base64, gzip, hashlib, importlib.util, json
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          manifest=json.loads((root/'source-manifest.json').read_text())
+          encoded=''.join((root/p).read_text().strip() for p in manifest['chunks'])
+          original=gzip.decompress(base64.b64decode(encoded))
+          assert hashlib.sha256(original).hexdigest()==manifest['baseSha256']
+          html=original.decode('utf-8')
+          patch_list=manifest['patches']+['patches/v11_64_version_smoke.py']
+          for index,relative in enumerate(patch_list):
+              path=root/relative
+              spec=importlib.util.spec_from_file_location('p'+str(index),path)
+              module=importlib.util.module_from_spec(spec)
+              spec.loader.exec_module(module)
+              html=module.apply(html)
+          data=html.encode('utf-8')
+          print('SWRLZ_V1164_FINAL_BYTES='+str(len(data)),flush=True)
+          print('SWRLZ_V1164_FINAL_SHA256='+hashlib.sha256(data).hexdigest(),flush=True)
+          print('SWRLZ_V1164_PATCH_COUNT='+str(len(patch_list)),flush=True)
+          assert html.count('SWYRL_ENGINE_DEPLOY_MARKER: V11_64_VERSION_SMOKE_TEST')==1
+          PY
