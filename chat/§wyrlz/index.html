@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="swrlz-chat-version" content="1.1.18">
+  <meta name="swrlz-chat-version" content="1.1.19">
   <meta name="theme-color" content="#010812">
   <title>Chat</title>
   <style>
@@ -42,6 +42,45 @@
     .first-run-title{margin:7px 0 8px;color:#f2fbff;font-size:20px;line-height:1.25}
     .first-run-copy{margin:0;color:#cce7f1;font-size:14px;line-height:1.55}
     .first-run-hint{margin-top:11px;color:#89a9b8;font-size:11px;line-height:1.45}
+    /* v294: the first-conversation greeting is a card, not a full-width chat bubble.
+       Keep mobile proportions untouched; center a readable glass panel on desktop. */
+    @media (min-width:761px){
+      .first-run-welcome{
+        align-self:center;
+        flex:0 0 auto;
+        width:min(100%,560px);
+        min-width:0;
+        margin:auto;
+        padding:26px 28px 23px;
+        border:1px solid rgba(143,234,255,.36);
+        border-radius:20px;
+        background:linear-gradient(145deg,rgba(5,26,47,.88),rgba(19,38,73,.79));
+        box-shadow:0 24px 64px rgba(0,7,19,.47),inset 0 1px 0 rgba(229,249,255,.10);
+        -webkit-backdrop-filter:blur(20px) saturate(125%);
+        backdrop-filter:blur(20px) saturate(125%);
+        overflow-wrap:anywhere;
+      }
+      .first-run-kicker{font-size:10px;font-weight:750;letter-spacing:.15em}
+      .first-run-title{margin:10px 0 10px;font-size:23px;line-height:1.28;letter-spacing:-.015em}
+      .first-run-copy{font-size:14px;line-height:1.65}
+      .first-run-hint{
+        margin-top:17px;
+        padding-top:12px;
+        border-top:1px solid rgba(160,221,248,.24);
+        color:#a8c3d2;
+        font-size:11px;
+        line-height:1.55;
+      }
+    }
+    body.a11y-reduced-transparency .first-run-welcome{
+      -webkit-backdrop-filter:none!important;
+      backdrop-filter:none!important;
+      background:#0a2035!important;
+    }
+    body.a11y-high-contrast .first-run-welcome{
+      border-color:rgba(226,249,255,.76)!important;
+      background-color:rgba(1,13,29,.95)!important;
+    }
     .message.visible{display:block}.assistant-message{max-width:100%}.assistant-head{gap:8px!important;margin-bottom:5px!important}.assistant-head .kompanion-icon{width:30px!important;height:30px!important;flex-basis:30px!important;border-radius:9px}.assistant-name{font-size:15px!important;letter-spacing:.025em!important;color:#dff8ff!important;text-shadow:0 0 7px rgba(95,220,255,.42)!important}
     .station-progress{margin:0 0 5px 38px!important;color:#8fd8ed!important;font-size:10px!important;letter-spacing:.055em;text-transform:uppercase}.station-live-message{scroll-margin-top:72px;min-height:calc(100dvh - var(--composer-visible-height,70px) - 86px)}.station-online-trail{margin:0 0 8px 38px;display:flex;flex-direction:column;gap:3px;max-width:min(760px,88vw)}.station-online-event{display:flex;align-items:center;gap:6px;min-width:0;color:#89afbf;font:8px var(--font-telemetry);line-height:1.35}.station-online-event::before{content:"↳";color:#56def4;flex:0 0 auto}.station-online-phase{color:#bcecf8;font-weight:760;flex:0 0 auto}.station-online-site{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#79dff4}.station-online-site[href]{text-decoration:none}.station-online-site[href]:hover{text-decoration:underline;color:#c7f6ff}.station-online-detail{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#6f909f}.message-time{margin-left:7px;color:#789caf;font:9px var(--font-telemetry);font-weight:500;letter-spacing:.02em;text-shadow:none}.user-meta .message-time{margin-left:5px;color:#84aabd}
     .assistant-body{margin-left:38px!important;padding:10px 12px!important;color:#f4f9fd!important;font-size:15px;line-height:1.5}
@@ -1113,7 +1152,7 @@
       const workArtifactList = document.getElementById("workArtifactList");
       const workEvidenceCount = document.getElementById("workEvidenceCount");
       const workEvidenceList = document.getElementById("workEvidenceList");
-      const SWRLZ_CHAT_VERSION = "1.1.18";
+      const SWRLZ_CHAT_VERSION = "1.1.19";
       const navTraceId = "chat-ui-" + Date.now().toString(36) + "-" + crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
       let lastUiStatusCamera = "";
       let companionState="idle";
