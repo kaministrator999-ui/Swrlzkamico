@@ -1,4 +1,7 @@
-"""§E v11.70: per-mode precision slider and reorganized mobile viewport tools."""
+"""§E v11.70: per-mode precision slider and reorganized mobile viewport tools.
+
+The camera toolbar remains accessible while its advanced options are collapsed.
+"""
 import json
 from pathlib import Path
 

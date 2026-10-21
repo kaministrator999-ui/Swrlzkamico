@@ -27,15 +27,20 @@ try{
  await bar.locator('.atelier-top-advanced summary').click();
  assert.equal(await bar.locator('.atelier-top-advanced').evaluate(e=>e.open),true);
  assert.equal(await slider.inputValue(),'4','standard 1x sensitivity default');
+ await bar.locator('.atelier-top-advanced summary').click();
+ assert.equal(await bar.locator('.atelier-top-advanced').evaluate(e=>e.open),false);
  const handle=async()=>page.evaluate(()=>window.__engineGizmoTest.handle('x'));
  const move=async(px)=>{
   const p=await handle();assert.ok(p);
   const start=await state();
+  const hit=await page.evaluate(p=>{const e=document.elementFromPoint(p.x,p.y);return e?.outerHTML?.slice(0,220)||'';},p);
+  console.log('PRECISION_HANDLE_HIT',JSON.stringify({handle:p,start,hit}));
   await page.mouse.move(p.x,p.y);
   await page.mouse.down();
   await page.mouse.move(p.x+px,p.y-1,{steps:7});
   await page.waitForTimeout(100);
   const during=await state();
+  console.log('PRECISION_DURING',JSON.stringify(during));
   assert.ok(during.dragging&&during.updates>0&&during.renders>0,'live previews drawn before pointer up');
   await page.mouse.up();
   await page.waitForTimeout(90);
