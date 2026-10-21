@@ -107,6 +107,11 @@ def route(paths, event="pull_request", full=False):
         groups = set()
         for path in paths:
             groups.update(classify(path))
+        # The manifest is also an executable patch-order/build recipe. If it
+        # changes without a corresponding patch edit, scope is unknowable.
+        if ROOT + "source-manifest.json" in paths and not any(
+                p.startswith(ROOT + "patches/") for p in paths):
+            groups.update(COMPONENTS)
     selected = [{"suite": suite, "mode": mode} for suite, mode, group in SUITES if group in groups]
     return {"groups": sorted(groups), "matrix": {"include": selected}, "any": bool(selected),
             "full": groups == set(COMPONENTS)}
@@ -127,7 +132,7 @@ def self_test():
         (["projects/swrlz-forge-moba/patches/v10_0_sheep_tag.py"], {"sheep"}),
         (["projects/swrlz-forge-moba/runtime/maul_core.js"], {"maul"}),
         (["projects/swrlz-forge-moba/patches/v9_2_depth_theatre.py"], {"anime"}),
-        ([ROOT + "source-manifest.json"], set()),
+        ([ROOT + "source-manifest.json"], set(COMPONENTS)),
         ([ROOT + "runtime/unknown_shared_engine.js"], set(COMPONENTS)),
         ([ROOT + "DEPLOY_REQUEST.json"], set(COMPONENTS)),
         ([CI_ROUTER], set()),
