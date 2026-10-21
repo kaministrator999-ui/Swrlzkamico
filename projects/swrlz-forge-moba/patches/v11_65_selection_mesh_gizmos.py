@@ -1,4 +1,7 @@
-"""§E v11.65 selection-first native mesh tools, preserving original model data."""
+"""§E v11.65 selection-first native mesh tools, preserving original model data.
+
+The floating U/V stepper retains pending values until explicitly applied.
+"""
 import json
 from pathlib import Path
 
