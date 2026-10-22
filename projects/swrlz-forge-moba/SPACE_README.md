@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.80
+title: §wyrl§ Engine v11.81
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,15 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.81 · Building clearance, protected sanctuary and hidden hunters (2026-10-22)
+
+House foundations and outlines now reach the real blocking footprint. Nearby face-to-face gaps show their measured width and a colored label: **red BLOCKED**, **cyan SHEEP ONLY**, or **gold BOTH**. Classification uses the native swept collision checks, surrounding visible structures and actual species radii. Exact lane entry points let sheep use fitting narrow passages even between navigation-grid lines. Default sheep need **0.54 m** and wolves **1.80 m**. The gold sanctuary boundary marks a **22 m no-build radius** on the default 256 m map; the whole structure must fit outside it. Both player placement and AI construction use this rule. Bots choose reachable outward bases instead of falling back to their central spawn.
+
+Wolves are hidden and nonphysical during the countdown, with no perception, target memory, minimap markers or pre-release scent information. A waiting wolf role has no sheep/building vision. After release, bot hunting requires actual sightings; lost sheep leave only their last observed position. Default sheep speed rises from **5.4 to 6 m/s** and Astra hunters are **15.4% larger**, with collision radius increasing from **0.78 to 0.90 m**. The 106-mesh/274,980-triangle hunter and original 4K atlases remain. Captured-wisp crawl/leash/rescue behavior is retained.
+
+Release **113 patches / 49 assets**, HTML **3,258,318 bytes**, SHA-256 `9fb46459d3ca870f766ff7c90c18a1649ffbfc68352da25c493bc5ffe284186c`, marker `V11_81_SHEEP_CLEARANCE`. All **257** previous patch/runtime sources and **49** assets preserve exact bytes. Details and targeted validation are in [the release report](reports/SHEEP_CLARITY_V11_81.md). Delivery follows [RELEASE_PROCESS.md](RELEASE_PROCESS.md): cohesive source commit, separate final deploy request, terminal production success and exact hosted-source/asset confirmation.
+
 
 ## §E v11.80 · Vast Wildwood, central starts and captive wisps (2026-10-22)
 
