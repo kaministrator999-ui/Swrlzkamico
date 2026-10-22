@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.79
+title: §wyrl§ Engine v11.80
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,14 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.80 · Vast Wildwood, central starts and captive wisps (2026-10-22)
+
+The default map is now **256 × 256 m**, **4× the previous playable area**. All eight sheep start **9.5 m from the central respawn sanctuary**, rather than around the outer map. The existing four-region roads/ground/minimap and 4K Astra hunters remain. Fine **0.15 m** pathfinding now uses direct clear trips and cached local windows for most obstructed routes in large maps, with an unrestricted fallback for longer detours.
+
+Captured wisps crawl at **0.35 m/s**. They may drift **2.5 m beyond each side of the pen**; crossing that leash teleports the still-captured wisp to its own capture spot and clears its movement/rescue progress. Reaching the leash never revives a sheep. The existing other-living-sheep rescue/hold/protection behavior remains the only revival path. Native move controls and help text describe this behavior.
+
+Release **112 patches / 49 assets**, HTML **3,243,526 bytes**, SHA-256 `a4b58b9da3991fdd10fee42c4fd18648c65a79932b0af69ceea1a117ce5f151d`, marker `V11_80_VAST_WILDWOOD_WISPS`. The new native scene has 196 editable actors, eight central sheep, three Astra hunters and nine map layers. All 255 preceding patch/runtime sources and 48 previous assets retain exact bytes. Targeted CPU/browser checks and publication evidence are recorded in [the release report](reports/VAST_WISPS_V11_80.md). Source/deploy status resolves through the final separate `DEPLOY_REQUEST.json` and terminal production run under current [RELEASE_PROCESS.md](RELEASE_PROCESS.md).
 
 ## §E v11.79 · Moonbell Wildwood — larger Sheep Tag map (2026-10-22)
 

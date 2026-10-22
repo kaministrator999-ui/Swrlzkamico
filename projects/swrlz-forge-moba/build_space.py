@@ -131,6 +131,7 @@ def main():
     media_paths.append("scenes/model-atelier-comet-courier-v11-77.swyrl.json")
     media_paths.extend(p.relative_to(ROOT).as_posix() for p in sorted((ROOT / "assets/models/comet-courier").glob("*")) if p.is_file())
     media_paths.extend(["scenes/sheep-tag-wildwood-v11-79.swyrl.json", "assets/sheep-tag/moonbell-wildwood-ground-4k.jpg"])
+    media_paths.append("scenes/sheep-tag-vast-wildwood-v11-80.swyrl.json")
     for rel in media_paths:
         source = ROOT / rel
         data = source.read_bytes()
