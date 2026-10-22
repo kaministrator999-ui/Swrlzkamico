@@ -792,3 +792,8 @@ Historical v7.8 deployment trigger: `9a529d945f2e35e2427ebef18c6de6b31810eed6` ย
 Every ยงE GitHub mutation is a governed update. Each versioned engine update must synchronize applicable version surfaces, update this roadmap, validate/reconstruct the exact artifact, and use the dedicated `DEPLOY_REQUEST.json` final deploy-button mechanism. The resulting Actions run must be followed to terminal state and the live Hugging Face marker verified before the release is reported complete.
 
 Documentation-only historical/audit corrections do **not** create a new engine binary version. They must not silently rewrite historical artifact authority; corrections should identify their audit date and preserve the release SHAs they were recovered from.
+
+
+### v11.77 publishing guard correction
+
+The first v11.77 deployment packaged and uploaded the correct sealed model build, then its hosted verification stopped at an inherited 108-patch expectation. The publishing guard now requires the actual **109** ordered patches. This starts a new delivery cycle with the same v11.77 HTML, scene, 4K image assets and integrity digest; no model or runtime artifact changes. A new final dedicated request identifies the corrected workflow source commit and must reach terminal success before completion.

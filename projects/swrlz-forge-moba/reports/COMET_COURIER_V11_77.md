@@ -13,3 +13,8 @@ Native authoring: `authoring/comet_courier_authoring_v11_77.mjs`, design control
 Release: §E v11.77 / `V11_77_COMET_COURIER_MODEL_PROJECT`, 109 ordered patches / 46 assets. Publication follows the current §§§ targeted-test/direct-main/separate-final-deploy workflow in `RELEASE_PROCESS.md`; no unrelated legacy game CI is launched.
 
 Final native build: **106 meshes, six assemblies, 274,980 measured triangles**. Both original 4096px maps are embedded in the validated **16,965,768-byte GLB**. Sealed HTML: **3,149,026 bytes**, SHA-256 `fc67c2bd03d6c90933c40b117e810675cbbacc29b05b2cfb96f6fe57f2088323`. The original canonical scene and 248 prior patch/runtime source files plus all 43 assets retain their exact bytes. The project opens in Studio view; **Edit model** restores the complete editor.
+
+
+### v11.77 publishing guard correction
+
+The first v11.77 deployment packaged and uploaded the correct sealed model build, then its hosted verification stopped at an inherited 108-patch expectation. The publishing guard now requires the actual **109** ordered patches. This starts a new delivery cycle with the same v11.77 HTML, scene, 4K image assets and integrity digest; no model or runtime artifact changes. A new final dedicated request identifies the corrected workflow source commit and must reach terminal success before completion.
