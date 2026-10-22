@@ -134,9 +134,15 @@ def main():
     media_paths.append("scenes/sheep-tag-vast-wildwood-v11-80.swyrl.json")
     media_paths.append('scenes/sheep-tag-wide-walkways-v11-84.swyrl.json')
     media_paths.append('scenes/sheep-tag-seven-minute-v11-85.swyrl.json')
+    media_paths.extend(['scenes/model-atelier-organic-sheep-v11-87.swyrl.json','scenes/model-atelier-organic-wolf-v11-87.swyrl.json'])
+    media_paths.extend(p.relative_to(ROOT).as_posix() for p in sorted((ROOT / 'assets/models/wildwood-animals').glob('*')) if p.is_file())
     for rel in media_paths:
         source = ROOT / rel
-        data = source.read_bytes()
+        if rel.startswith('scenes/model-atelier-organic-'):
+            species='sheep' if '-sheep-' in rel else 'wolf'
+            data=gzip.decompress((ROOT / 'payload/organic-animals' / (species+'.swyrl.json.gz')).read_bytes())
+        else:
+            data = source.read_bytes()
         target = out / rel
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes(data)

@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.86
+title: §wyrl§ Engine v11.87
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -10,6 +10,14 @@ header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
 
+
+## §E v11.87 · Organic sheep and wolf model starters (2026-10-22)
+
+**Clover · Meadow Sheep** is a new independent Model Atelier starter. **Fen · Wildwood Wolf** replaces the wolf model starter entry and the earlier `comet-courier` shortcut. The wolf is a natural quadruped with a fused ribcage/shoulder/neck/skull/muzzle surface, a tucked waist, bent hocks, four-toed paws, short alert ears and a low brush tail. The sheep has continuous fleece over shoulders/barrel/haunches, a tapered bare muzzle, folded pinnae, horizontal pupils, lower-leg tendons and split hooves. Visible parts are editable indexed organic meshes; there are no sphere, box, cylinder or cone model parts.
+
+The native organic volume tool blends anatomy fields into a connected, welded surface. Model Atelier exposes `loadAnimal(species, {force, rebuild})` to rebuild with that tool, alongside the standard component, sculpt, group, undo, material and export controls. Both starters use a shared **4096×4096 color atlas and matching 4096×4096 normal map**. Native model import supports 64 MB detailed saves and meshes up to 65,536 vertices / 120,000 triangles per part; high detail remains authored data. Textured GLB export embeds the proper atlas, including mixed original/animal materials. Studio view opens with a clear silhouette and an Edit model button. Saved project payloads are compressed losslessly in `payload/organic-animals`; packaging emits the portable native JSON scenes.
+
+Release **119 patches / 55 assets**, HTML **3,359,239 bytes**, SHA-256 `c2dda3de1cb7bf262e347a47c9dfde2f9c4af267ed1124fee068a804fb6cda40`, marker `V11_87_ORGANIC_ANIMAL_STARTERS`. All **277** previous runtime/patch sources and **51** assets preserve exact bytes. Sheep Tag retains v11.86 nearest-side house steering, 7-minute matches, large controls and the 320×320 m map. These model projects are independent authoring starters. See [targeted validation](reports/ORGANIC_ANIMALS_V11_87.md). Delivery follows [RELEASE_PROCESS.md](RELEASE_PROCESS.md).
 
 ## §E v11.86 · Sheep steer around houses (2026-10-22)
 
