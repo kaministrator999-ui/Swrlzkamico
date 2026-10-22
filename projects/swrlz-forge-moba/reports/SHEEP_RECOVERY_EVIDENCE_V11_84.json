@@ -1,0 +1,346 @@
+{
+  "version": "v11.84",
+  "htmlBytes": 3333468,
+  "htmlSha256": "82ae2d5fdac77f9a63cb4375aae2d93939c8cdf3338395f7120995f62d2bc411",
+  "patches": 116,
+  "assets": 50,
+  "historicalRuntimePatchFilesPreserved": 264,
+  "historicalAssetsPreserved": 49,
+  "interactionBrowser": [
+    {
+      "mode": "portrait",
+      "mapWidth": 320,
+      "groundSize": [
+        320,
+        320
+      ],
+      "paid49Rejected": true,
+      "freeHouseAfterRejectionConstructed": true,
+      "occupiedDropClearsTool": true,
+      "cancelRecovery": true,
+      "secondHouseConstructed": true,
+      "ringBoxes": [
+        {
+          "id": "stBuildFarm",
+          "x": 319,
+          "y": 831,
+          "width": 76,
+          "height": 76
+        },
+        {
+          "id": "stBuildIncome",
+          "x": 233,
+          "y": 773,
+          "width": 64,
+          "height": 64
+        },
+        {
+          "id": "stBuildFort",
+          "x": 203,
+          "y": 678,
+          "width": 64,
+          "height": 64
+        },
+        {
+          "id": "stBuildWall",
+          "x": 233,
+          "y": 583,
+          "width": 64,
+          "height": 64
+        },
+        {
+          "id": "stBuildRamp",
+          "x": 325,
+          "y": 519,
+          "width": 64,
+          "height": 64
+        },
+        {
+          "id": "stSplit",
+          "x": 312,
+          "y": 726,
+          "width": 54,
+          "height": 54
+        },
+        {
+          "id": "stTotem",
+          "x": 312,
+          "y": 640,
+          "width": 54,
+          "height": 54
+        },
+        {
+          "id": "stMoveStick",
+          "x": 14,
+          "y": 735,
+          "width": 156,
+          "height": 156
+        }
+      ],
+      "lift": 180,
+      "hiddenRouteToggle": true,
+      "errors": []
+    },
+    {
+      "mode": "landscape",
+      "mapWidth": 320,
+      "groundSize": [
+        320,
+        320
+      ],
+      "paid49Rejected": true,
+      "freeHouseAfterRejectionConstructed": true,
+      "occupiedDropClearsTool": true,
+      "cancelRecovery": true,
+      "secondHouseConstructed": true,
+      "ringBoxes": [
+        {
+          "id": "stBuildFarm",
+          "x": 855,
+          "y": 352,
+          "width": 56,
+          "height": 56
+        },
+        {
+          "id": "stBuildIncome",
+          "x": 796,
+          "y": 318,
+          "width": 50,
+          "height": 50
+        },
+        {
+          "id": "stBuildFort",
+          "x": 738,
+          "y": 263,
+          "width": 50,
+          "height": 50
+        },
+        {
+          "id": "stBuildWall",
+          "x": 796,
+          "y": 208,
+          "width": 50,
+          "height": 50
+        },
+        {
+          "id": "stBuildRamp",
+          "x": 858,
+          "y": 171,
+          "width": 50,
+          "height": 50
+        },
+        {
+          "id": "stSplit",
+          "x": 855,
+          "y": 300,
+          "width": 44,
+          "height": 44
+        },
+        {
+          "id": "stTotem",
+          "x": 855,
+          "y": 232,
+          "width": 44,
+          "height": 44
+        },
+        {
+          "id": "stMoveStick",
+          "x": 14,
+          "y": 232,
+          "width": 156,
+          "height": 156
+        }
+      ],
+      "lift": 128,
+      "hiddenRouteToggle": true,
+      "errors": []
+    },
+    {
+      "mode": "desktop",
+      "mapWidth": 320,
+      "groundSize": [
+        320,
+        320
+      ],
+      "paid49Rejected": true,
+      "freeHouseAfterRejectionConstructed": true,
+      "occupiedDropClearsTool": true,
+      "cancelRecovery": true,
+      "secondHouseConstructed": true,
+      "ringBoxes": [
+        {
+          "id": "stBuildFarm",
+          "x": 1380,
+          "y": 940,
+          "width": 56,
+          "height": 56
+        },
+        {
+          "id": "stBuildIncome",
+          "x": 1321,
+          "y": 906,
+          "width": 50,
+          "height": 50
+        },
+        {
+          "id": "stBuildFort",
+          "x": 1263,
+          "y": 851,
+          "width": 50,
+          "height": 50
+        },
+        {
+          "id": "stBuildWall",
+          "x": 1321,
+          "y": 796,
+          "width": 50,
+          "height": 50
+        },
+        {
+          "id": "stBuildRamp",
+          "x": 1383,
+          "y": 759,
+          "width": 50,
+          "height": 50
+        },
+        {
+          "id": "stSplit",
+          "x": 1380,
+          "y": 888,
+          "width": 44,
+          "height": 44
+        },
+        {
+          "id": "stTotem",
+          "x": 1380,
+          "y": 820,
+          "width": 44,
+          "height": 44
+        },
+        {
+          "id": "stMoveStick",
+          "x": 14,
+          "y": 820,
+          "width": 156,
+          "height": 156
+        }
+      ],
+      "lift": 180,
+      "hiddenRouteToggle": true,
+      "errors": []
+    }
+  ],
+  "interactionHtmlSha256": "315c58cb7f4fe42594a96ae70b541a05fd1ae05e2f77651dada18b7492b7e8c5",
+  "testedAndFinalModuleSha256": "386bfb6c095ef9d802a1dfb24e299f7cf830cc1e385c8d71a3667605bdd518f7",
+  "finalHtmlDiffersOnlyByCompactScoreCss": true,
+  "finalArtifactLayout": [
+    {
+      "layouts": [
+        {
+          "size": {
+            "width": 412,
+            "height": 915
+          },
+          "scoreContained": true,
+          "controlsSeparated": true,
+          "targetsAtLeast44px": true
+        },
+        {
+          "size": {
+            "width": 360,
+            "height": 915
+          },
+          "scoreContained": true,
+          "controlsSeparated": true,
+          "targetsAtLeast44px": true
+        },
+        {
+          "size": {
+            "width": 320,
+            "height": 915
+          },
+          "scoreContained": true,
+          "controlsSeparated": true,
+          "targetsAtLeast44px": true
+        },
+        {
+          "size": {
+            "width": 915,
+            "height": 412
+          },
+          "scoreContained": true,
+          "controlsSeparated": true,
+          "targetsAtLeast44px": true
+        },
+        {
+          "size": {
+            "width": 568,
+            "height": 320
+          },
+          "scoreContained": true,
+          "controlsSeparated": true,
+          "targetsAtLeast44px": true
+        },
+        {
+          "size": {
+            "width": 1440,
+            "height": 1000
+          },
+          "scoreContained": true,
+          "controlsSeparated": true,
+          "targetsAtLeast44px": true
+        }
+      ],
+      "errors": []
+    }
+  ],
+  "actualTouchRampBrowser": [
+    {
+      "actualJoystickAscent": [
+        40,
+        3.3,
+        -6.099999999999992
+      ],
+      "actualSideTurnAndExit": [
+        53.68000000000052,
+        0,
+        -6.099999999999956
+      ],
+      "releaseStops": true,
+      "noRouteToggle": true,
+      "errors": []
+    }
+  ],
+  "targetedLogs": {
+    "native": [
+      "[{\"gap\":0.3,\"label\":\"BLOCKED\",\"lengths\":[12.387883264926197,13.250966799187822]},{\"gap\":0.6,\"label\":\"SHEEP ONLY\",\"lengths\":[10,13.550966799187819]},{\"gap\":2.1,\"label\":\"BOTH\",\"lengths\":[10,10]}]",
+      "OFFSET_MOVEMENT 10.289652473703933 [41,0,5]",
+      "SHEEP_CLARITY_CPU_PASS {\"defaults\":{\"speed\":6,\"radius\":0.9},\"pre\":{\"wolfVisible\":false,\"perceives\":false,\"memory\":0,\"physical\":false,\"view\":[\"sheep\"]},\"far\":{\"memory\":0,\"perceives\":false,\"seen\":false},\"seen\":{\"memory\":1,\"perceives\":true,\"seen\":true},\"lost\":{\"memory\":[5,0,0],\"perceives\":false},\"sanctuary\":[false,false,false,false,false],\"base\":[34.949999999999996,0,0],\"gaps\":[{\"gap\":0.3,\"label\":\"BLOCKED\",\"lengths\":[12.387883264926197,13.250966799187822]},{\"gap\":0.6,\"label\":\"SHEEP ONLY\",\"lengths\":[10,13.550966799187819]},{\"gap\":2.1,\"label\":\"BOTH\",\"lengths\":[10,10]}],\"actualGapMove\":[41,0,5]}",
+      "COMPACT_CUSTOM_MAP_BASE_PASS [12,0,0]",
+      "REVERSE_AND_INSIDE_LANE_REPATH_PASS",
+      "NATIVE_JOYSTICK_ANALOG_COLLISION_RELEASE_WISP_LEASH_AND_WOLF_WAIT_PASS {\"fullStep\":0.30000000000001137,\"halfStep\":0.15000000000000568,\"wallStop\":[40.69000000000001,0,0],\"wispStep\":0.01750000000000007}"
+    ],
+    "walkways": [
+      "WALKWAY_NATIVE_ASCENT_SIDE_TURN_EXIT_EDGE_SNAP_GRAPH_AND_UPPER_BUILD_PASS {\"ascended\":{\"pos\":[40,3.3,-6.099999999999992],\"upper\":true},\"wolfRamp\":{\"pos\":[40,3.3,-6.099999999999992],\"upper\":true},\"descended\":{\"pos\":[53.68000000000052,0,-5.9999999999999645],\"upper\":false},\"edge\":[40,3.3,-8.699999999999992],\"side\":{\"x\":44.2,\"z\":-6,\"rotation\":1.5707963267948966,\"score\":0.09999999999999432,\"join\":{\"sourceId\":\"st-runtime-building-2\",\"normal\":[1,0],\"anchor\":[41.2,-6],\"side\":true}},\"exit\":{\"x\":50.2,\"z\":-6,\"rotation\":1.5707963267948966,\"score\":0.09999999999999432,\"join\":{\"sourceId\":\"st-runtime-building-3\",\"normal\":[1,6.123233995736766e-17],\"anchor\":[47.2,-6],\"side\":false}}}"
+    ],
+    "notes": [
+      "RELEASE_NOTES_ACTUAL_ARTIFACT_HISTORY_REOPEN_PER_VERSION_CHECKBOX_NEXT_UPDATE_AND_MOBILE_DIALOG_PASS 107"
+    ],
+    "futureNotes": [
+      "AUTOMATIC_FUTURE_MANIFEST_VERSION_AND_PATCH_HISTORY_PASS"
+    ]
+  },
+  "workflow": {
+    "yaml": true,
+    "embeddedPythonBlocks": 5,
+    "actual116Patch50AssetGuard": true
+  },
+  "notes": [
+    "Final compact-score CSS changed after interaction tests; exact compiled JavaScript is identical, and six final-artifact layouts were tested separately",
+    "Real touch/mouse input completed two houses per layout after unaffordable, occupied and cancelled attempts",
+    "Actual joystick ascends, turns across joined surfaces and descends; native CPU also checks wolf footprint, edge safety and paid construction from an upper deck",
+    "Release popup has all previous patch summaries grouped into 107 versions; checked dismissal is version-scoped and future source versions derive fresh notes automatically",
+    "New 320 m scene is the only added asset; all preceding 49 assets retain exact bytes",
+    "Owner device acceptance follows confirmed publication under RELEASE_PROCESS.md"
+  ]
+}

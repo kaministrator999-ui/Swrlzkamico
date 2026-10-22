@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.83",
+  "name": "§wyrl§ Engine v11.84",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_83.html",
+  "finalArtifact": "swyrl_engine_v11_84.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -129,8 +129,9 @@
     "patches/v11_80_vast_wisps.py",
     "patches/v11_81_sheep_clarity.py",
     "patches/v11_82_sheep_touch_controls.py",
-    "patches/v11_83_sheep_drag_fog.py"
+    "patches/v11_83_sheep_drag_fog.py",
+    "patches/v11_84_sheep_build_routes.py"
   ],
-  "finalBytes": 3288058,
-  "finalSha256": "41b34b31203777afffc242d42a83b32157e61442760fa9549960600ed27d7962"
+  "finalBytes": 3333468,
+  "finalSha256": "82ae2d5fdac77f9a63cb4375aae2d93939c8cdf3338395f7120995f62d2bc411"
 }

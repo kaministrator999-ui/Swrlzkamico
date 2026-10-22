@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.83
+title: §wyrl§ Engine v11.84
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -10,6 +10,17 @@ header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
 
+
+## §E v11.84 · Reliable building, connected walkways and update history (2026-10-22)
+
+- **Building recovery:** one placement pointer owner handles icon and meadow drags. Rejected/cancelled drops release capture, remove the ghost and clear the selected tool. Unaffordable buttons show a cost message without entering placement, so the free house remains available.
+- **Automatic ramps:** joystick steering ascends and descends completed ramps directly, follows connected decks and stops at unsupported edges. The ground/upper-route and descent toggles are hidden. Species radii, traffic, wolf ramp permissions, capture and hunt-release restrictions remain native.
+- **Connected extensions:** walkways and exit ramps snap to existing deck/ramp high edges and rotate toward the selected side. Straight extensions and side turns share physical seams and the native route graph. Sheep already on a connected deck can construct a nearby extension; normal costs, occupancy, sanctuary and completion rules still apply. Player-built side connections open a gap in the parent rail when complete.
+- **Touch controls:** abilities occupy an inner arc beside the outer building arc. A larger joystick and separated compact layouts keep targets at least 44 px. Touch aim rises **128–180 px** above the finger, with top-readout clamping.
+- **Larger map:** the new starter is **320 × 320 m**, 25% wider and 56.25% more area than the preceding 256 m meadow. Authored scenery, roads and the 4K ground scale with the layout; previous scene files remain unchanged.
+- **Editor updates:** an automatic latest-update panel includes **107 previous versions**, grouping every previous patch. Its checkbox hides only this exact version; the next release appears again. The editor footer’s **Updates** button reopens it, and unchecking restores the popup. Future source versions derive notes and history automatically from the manifest and new patch summaries.
+
+Release **116 patches / 50 assets**, HTML **3,333,468 bytes**, SHA-256 `82ae2d5fdac77f9a63cb4375aae2d93939c8cdf3338395f7120995f62d2bc411`, marker `V11_84_BUILD_RECOVERY_WALKWAYS`. All **264** preceding runtime/patch files and **49** prior assets preserve exact bytes. The additional asset is the larger native scene. See [targeted implementation and evidence](reports/SHEEP_RECOVERY_WALKWAYS_V11_84.md). Delivery follows [RELEASE_PROCESS.md](RELEASE_PROCESS.md).
 
 ## §E v11.83 · Drag houses to build, joystick movement and smooth fog (2026-10-22)
 

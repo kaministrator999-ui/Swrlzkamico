@@ -1,0 +1,667 @@
+{
+  "version": "v11.84",
+  "date": "2026-10-22",
+  "title": "Reliable building and connected walkways",
+  "changes": [
+    "Building drops recover immediately after blocked or cancelled placement. Unaffordable buildings show their cost; the free house remains available.",
+    "Run up and down ramps with the joystick. The ground/upper-route toggle is removed.",
+    "Walkways snap to ramp and deck edges. Side additions rotate automatically for turns, straight extensions and exit ramps.",
+    "Sheep abilities now sit on an inner arc beside the outer building arc, with space between the buttons.",
+    "The movement joystick is larger, and touch building previews rise 128–180 pixels above the finger.",
+    "Moonbell Wildwood expands to 320 × 320 metres, with its central respawn area and 4K ground artwork.",
+    "This update panel includes the full previous patch history. Hide it for this version with the checkbox below; a new version appears again."
+  ],
+  "history": [
+    {
+      "version": "v11.83",
+      "changes": [
+        "Direct build drags, joystick movement and smooth cosmetic fog."
+      ]
+    },
+    {
+      "version": "v11.82",
+      "changes": [
+        "MOBA-style mobile building skills, native joystick and lifted touch aim."
+      ]
+    },
+    {
+      "version": "v11.81",
+      "changes": [
+        "Truthful building clearances, sanctuary protection and release-gated hunters."
+      ]
+    },
+    {
+      "version": "v11.80",
+      "changes": [
+        "256 m Sheep Tag world, central sheep starts, slow tethered captured wisps."
+      ]
+    },
+    {
+      "version": "v11.79",
+      "changes": [
+        "Larger native Sheep Tag map, four woodland regions and original 4K ground."
+      ]
+    },
+    {
+      "version": "v11.78",
+      "changes": [
+        "Use Astra's complete textured native model for every Sheep Tag wolf."
+      ]
+    },
+    {
+      "version": "v11.77",
+      "changes": [
+        "New independent model projects, 4K native materials and portable textured GLB."
+      ]
+    },
+    {
+      "version": "v11.76",
+      "changes": [
+        "§E v11.76 — resolve desktop gizmo travel, scale/Undo redraw, wireframe visibility, and close-inspection camera limits without data changes."
+      ]
+    },
+    {
+      "version": "v11.75",
+      "changes": [
+        "§E v11.75 — Vertex/Edge/Face component edit via native indexed sculpt history. Extends v11.74 without modifying the canonical 283-part project."
+      ]
+    },
+    {
+      "version": "v11.74",
+      "changes": [
+        "§E v11.74: native reversible mesh assemblies and phone multi-select. Append-only patch. Preserve canonical model, model parts, materials and history."
+      ]
+    },
+    {
+      "version": "v11.73",
+      "changes": [
+        "§E v11.73: immediate gizmo switching and visible/tappable rotation rulers. Overlapping axes honor the deliberately selected axis before nearest-ring ties."
+      ]
+    },
+    {
+      "version": "v11.72",
+      "changes": [
+        "§E v11.72: mesh-sized axis arcs and calibrated rotation touch geometry."
+      ]
+    },
+    {
+      "version": "v11.71",
+      "changes": [
+        "§E v11.71: native 3-axis curved rotation ruler and draggable angle beads."
+      ]
+    },
+    {
+      "version": "v11.70",
+      "changes": [
+        "§E v11.70: per-mode precision slider and reorganized mobile viewport tools. The camera toolbar remains accessible while its advanced options are collapsed."
+      ]
+    },
+    {
+      "version": "v11.69",
+      "changes": [
+        "§E v11.69 — event-driven live drag paint with real lightweight updates."
+      ]
+    },
+    {
+      "version": "v11.68",
+      "changes": [
+        "§E v11.68: live-preview gizmo and selected mesh on touch/drag."
+      ]
+    },
+    {
+      "version": "v11.67",
+      "changes": [
+        "§E v11.67: optimize mesh transform commits without rebuilding geometry."
+      ]
+    },
+    {
+      "version": "v11.66",
+      "changes": [
+        "§E v11.66 usability repair: selection outline, safe drags, Undo, movable UI."
+      ]
+    },
+    {
+      "version": "v11.65",
+      "changes": [
+        "§E v11.65 selection-first native mesh tools, preserving original model data. The floating U/V stepper retains pending values until explicitly applied."
+      ]
+    },
+    {
+      "version": "v11.64",
+      "changes": [
+        "§E v11.64 version-only smoke release atop the sealed v11.63 engine. No modeling, game, or animation behavior changes. Preserve the original 283-part canonical model and all 43 packaged assets unchanged."
+      ]
+    },
+    {
+      "version": "v11.63",
+      "changes": [
+        "§E v11.63 version-only smoke release atop the sealed v11.62 engine. Keep every modeling/game/animation feature, the 283-part canonical scene, and all 43 historical packaged assets unchanged."
+      ]
+    },
+    {
+      "version": "v11.62",
+      "changes": [
+        "§E v11.62 governed mobile Model Atelier presentation atop sealed v11.61. Preserve the 283-part original scene, all existing mesh/native actions, and the 43 bundled assets. The tool UI uses the tested v11.62 preview patch."
+      ]
+    },
+    {
+      "version": "v11.61",
+      "changes": [
+        "Governed §E v11.61 context tool workbench atop byte-sealed v11.60. Preserves native 283-part scene and previous 43 packaged assets."
+      ]
+    },
+    {
+      "version": "v11.60",
+      "changes": [
+        "§E v11.60 governed floating Model Atelier dock release. Additive on the sealed v11.59, keeping the exact existing serialized 283-part character, original references and other project assets untouched."
+      ]
+    },
+    {
+      "version": "v11.59",
+      "changes": [
+        "Governed §E v11.59 precision Model Atelier production release. The verified cumulative preview's historical title substitution was broad. Restore the exact original serialized canonical scene, not just JSON equality, before sealing the v11.59 binary; the user's model data must remain identical."
+      ]
+    },
+    {
+      "version": "v11.20",
+      "changes": [
+        "Append section-built anatomical heads and native section authoring."
+      ]
+    },
+    {
+      "version": "v11.19",
+      "changes": [
+        "Append the owner-requested portrait and upper-body polish without changing history."
+      ]
+    },
+    {
+      "version": "v11.18",
+      "changes": [
+        "Correct the native leg profile and refine the supplied portrait/hair-wrap reference."
+      ]
+    },
+    {
+      "version": "v11.17",
+      "changes": [
+        "Native HD surface construction, physical finish and clean 2k render export."
+      ]
+    },
+    {
+      "version": "v11.16",
+      "changes": [
+        "Saved native mesh density, continuous facial contours and separately measured heroine budget."
+      ]
+    },
+    {
+      "version": "v11.15",
+      "changes": [
+        "Native portrait and cloth controls; retained historical source and separate authored starter."
+      ]
+    },
+    {
+      "version": "v11.14",
+      "changes": [
+        "Append-only visual refinement; preserve older authored models and attachment behavior."
+      ]
+    },
+    {
+      "version": "v11.13",
+      "changes": [
+        "Native reference sculpt and reversible independently animated piñata assemblies."
+      ]
+    },
+    {
+      "version": "v11.12",
+      "changes": [
+        "§E v11.12: replace rubber-leg preset logic after owner multi-angle screenshot rejection."
+      ]
+    },
+    {
+      "version": "v11.11",
+      "changes": [
+        "§E v11.11: facial tuning and native bendable pose/camera frame editor."
+      ]
+    },
+    {
+      "version": "v11.10",
+      "changes": [
+        "§E v11.10 additive measured-geometry inspection; preserve every older native scene."
+      ]
+    },
+    {
+      "version": "v11.9",
+      "changes": [
+        "§E v11.9 original model refinement: append-only native scene and editable panel geometry."
+      ]
+    },
+    {
+      "version": "v11.8",
+      "changes": [
+        "§E v11.8: governed model and functional curve authoring, preserving historic scenes."
+      ]
+    },
+    {
+      "version": "v11.7",
+      "changes": [
+        "§E v11.7 governed layered-piñata model sculpt, preserving native histories."
+      ]
+    },
+    {
+      "version": "v11.6",
+      "changes": [
+        "§E v11.6 additive improvement to native multi-view character and mobile editor surface."
+      ]
+    },
+    {
+      "version": "v11.5",
+      "changes": [
+        "§E v11.5 additive native starter detail and bounded loft profile authoring. The original v11.3 and v11.4 scenes and their patches remain immutable."
+      ]
+    },
+    {
+      "version": "v11.4",
+      "changes": [
+        "§E v11.4 append-only geometry and canonical-model refinement. Preserve original v11.3 runtime and reference scene unchanged. Upgrade only the generated editor with curved tapered geometry and route Projects to a distinct v11.4 original authored variant; historical v11.3 native assets remain."
+      ]
+    },
+    {
+      "version": "v11.3",
+      "changes": [
+        "§wyrl§ Engine v11.3 — scoped native 3D Model Atelier and authored test model. Append-only after sealed v11.2. Models are original editable data, not proprietary extracted assets or a change to existing game starter identities."
+      ]
+    },
+    {
+      "version": "v11.2",
+      "changes": [
+        "v11.2: independent Frostveil flying builders and original glacial art. Additive after sealed v11.1. Historical map profiles and earlier patches remain unchanged."
+      ]
+    },
+    {
+      "version": "v11.1",
+      "changes": [
+        "§E v11.1: scoped, walked builder construction on the current Frostveil map. Append-only after v11.0. Published maps, rules, art, and earlier patches remain intact."
+      ]
+    },
+    {
+      "version": "v11.0",
+      "changes": [
+        "Improve recorded Maul spectator quality and add native lossless gzip handoff. This is append-only: all earlier release patches and runtime sources stay immutable."
+      ]
+    },
+    {
+      "version": "v10.9",
+      "changes": [
+        "Editable character actions and a causally staged paper-book episode."
+      ]
+    },
+    {
+      "version": "v10.8",
+      "changes": [
+        "Grouped minion arrivals, empty builder starts and visible touch placement."
+      ]
+    },
+    {
+      "version": "v10.7",
+      "changes": [
+        "Reshape the cooperative Maul starter; preserve earlier authored boards."
+      ]
+    },
+    {
+      "version": "v10.6",
+      "changes": [
+        "Separate native Frostveil Maul starter, original models and maze gameplay."
+      ]
+    },
+    {
+      "version": "v10.5",
+      "changes": [
+        "Record native editor Play runs and export a portable spectator review."
+      ]
+    },
+    {
+      "version": "v10.4",
+      "changes": [
+        "Add connected house placement, construction ejection and physical unit traffic."
+      ]
+    },
+    {
+      "version": "v10.3",
+      "changes": [
+        "Lift touch construction previews above the finger while preserving screen-space placement."
+      ]
+    },
+    {
+      "version": "v10.2",
+      "changes": [
+        "Sheep building double-tap selection and a true ground placement footprint."
+      ]
+    },
+    {
+      "version": "v10.1",
+      "changes": [
+        "Native Sheep Tag archive: precise mazes, tactical pursuit and optional magic."
+      ]
+    },
+    {
+      "version": "v10.0",
+      "changes": [
+        "Native editor-authored Sheep Tag starter and reusable RTS gameplay tools."
+      ]
+    },
+    {
+      "version": "v9.9",
+      "changes": [
+        "Add signed 2x/4x/8x shuttle controls to the native episode transport."
+      ]
+    },
+    {
+      "version": "v9.8",
+      "changes": [
+        "Replace the wand-shaped prop with an editable, connected full staff."
+      ]
+    },
+    {
+      "version": "v9.7",
+      "changes": [
+        "Refine the natural-grip mage staff with socket-attached ornamentation."
+      ]
+    },
+    {
+      "version": "v9.6",
+      "changes": [
+        "Natural socketed staff grip and independently animated painted faces."
+      ]
+    },
+    {
+      "version": "v9.5",
+      "changes": [
+        "Fit the staff's painted shaft mount and the viewer-right gripping hand.",
+        "Saved three-section costume relief on the socket-connected character rig."
+      ]
+    },
+    {
+      "version": "v9.4",
+      "changes": [
+        "Saved limb sockets, visible staff grip and page-anchored book opening."
+      ]
+    },
+    {
+      "version": "v9.3",
+      "changes": [
+        "Character-specific fitted body pieces and native rest-layout authoring."
+      ]
+    },
+    {
+      "version": "v9.2",
+      "changes": [
+        "Aligned anime faces and independently authored 2.5D scenery cutouts."
+      ]
+    },
+    {
+      "version": "v9.1",
+      "changes": [
+        "Articulated paper characters, portable poses and native facial controls."
+      ]
+    },
+    {
+      "version": "v9.0",
+      "changes": [
+        "Reusable saved animation authoring and native illustrated paper-stage actors."
+      ]
+    },
+    {
+      "version": "v8.9",
+      "changes": [
+        "v8.9: Keep pop-up book/scenery below and behind the character action. The v8.8 phone screenshots exposed opaque foreground-book/desk cutouts blocking the wizards and huge pages folding across the cinematic camera. The edit must be in the governed engine source, not just a storyboard image."
+      ]
+    },
+    {
+      "version": "v8.8",
+      "changes": [
+        "v8.8: Anime Studio 3D pop-up storybook, individually authorable wizard cels. Continues the existing project; does not overwrite other starter projects. Configurations are kept under project.animePopUp so Save/Load exports them. All art is drawn as native CanvasTextures. No remote images or paid runtimes."
+      ]
+    },
+    {
+      "version": "v8.7",
+      "changes": [
+        "2.5D anime cel compositor, depth/parallax layer controls and screen-safe dialogue. Editor source scene is unchanged. Runtime-only 2D animated sprites and layered scenery are rendered through the existing perspective Three.js camera."
+      ]
+    },
+    {
+      "version": "v8.6",
+      "changes": [
+        "Native in-engine cinematic playback for the Anime Studio starter. A minimal project-scoped camera/dialogue/actor-motion timeline built on the existing Three.js renderer and Play lifecycle. Other starter modes unchanged."
+      ]
+    },
+    {
+      "version": "v8.5",
+      "changes": [
+        "Episode 01 as a real selectable native editor starter with an in-editor screening room. The canonical stage set stays independent from Embervault/Starforge. The separate original canvas animation is a media asset, not a promise that the §E runtime has a native character-keyframe animation pipeline."
+      ]
+    },
+    {
+      "version": "v8.4",
+      "changes": [
+        "Transient editor previews and world-space camera framing for travel zones.",
+        "Promote the native sightline refinements alongside shared destination tools."
+      ]
+    },
+    {
+      "version": "v8.3",
+      "changes": [
+        "Project-owned, support-validated teleport zones and native authoring UI. No canonical project or release version is embedded here. Zones travel with project metadata; movement is runtime-only and native Stop restores the pawn.",
+        "Reliable native prefab results and immediate Outliner/Details updates.",
+        "Reusable floating-workspace assets and serialized environment settings. Scene placement remains native editor/project data. No starter layout is built by this patch; it equips the editor to author an open celestial workspace.",
+        "Promote both native editor saves; shared capabilities remain in the engine."
+      ]
+    },
+    {
+      "version": "v8.2",
+      "changes": [
+        "§wyrl§ Engine v8.2 — repair v8.1 performance bootstrap ordering."
+      ]
+    },
+    {
+      "version": "v8.1",
+      "changes": [
+        "§wyrl§ Engine v8.1 — graphics scalability, FPS telemetry, and frame-time diagnostics."
+      ]
+    },
+    {
+      "version": "v8.0",
+      "changes": [
+        "Reusable vault architecture and dependable desktop editor framing.",
+        "Keep editor layers, authored visibility and runtime shells independent.",
+        "Reusable project-owned workstations, file notebooks, and native world signs. Applies to the v7.9 engine without changing its version or canonical scene.",
+        "Native gallery assets and height-aware walking on project-owned surfaces. Apply after the v8.0 primitive, layer integrity, and workspace patches. This module changes engine capabilities only; projects choose their own geometry.",
+        "Ship the editor-authored, three-tier Embervault project without engine-owned layout."
+      ]
+    },
+    {
+      "version": "v7.9",
+      "changes": [
+        "§wyrl§ Engine v7.9: promote the editor-authored Sanctuary & Makers Grotto as the canonical Dragon Den."
+      ]
+    },
+    {
+      "version": "v7.8",
+      "changes": [
+        "§wyrl§ Engine v7.8: desktop docks + independent editor layers."
+      ]
+    },
+    {
+      "version": "v7.7",
+      "changes": [
+        "§wyrl§ Engine v7.7: promote the authored revision-142 Dragon Glitch Den project to the sole starter."
+      ]
+    },
+    {
+      "version": "v7.6",
+      "changes": [
+        "§wyrl§ Engine v7.6: desktop editor chrome polish."
+      ]
+    },
+    {
+      "version": "v7.5",
+      "changes": [
+        "§wyrl§ Engine v7.5: mobile editor chrome consolidation."
+      ]
+    },
+    {
+      "version": "v7.4",
+      "changes": [
+        "§wyrl§ Engine v7.4: professional editor menu + workspace shell."
+      ]
+    },
+    {
+      "version": "v7.3",
+      "changes": [
+        "§wyrl§ Engine v7.3: unified flight controller + runtime diagnostics."
+      ]
+    },
+    {
+      "version": "v7.2",
+      "changes": [
+        "§wyrl§ Engine v7.2: restore Wisp horizontal locomotion with safe slide fallback."
+      ]
+    },
+    {
+      "version": "v7.1",
+      "changes": [
+        "§wyrl§ Engine v7.1: mobile breathing room + expanded Fracture Forge composition."
+      ]
+    },
+    {
+      "version": "v7.0",
+      "changes": [
+        "§wyrl§ Engine v7.0: Forge Command Deck + Fracture Forge landmark production pass."
+      ]
+    },
+    {
+      "version": "v6.8",
+      "changes": [
+        "§wyrl§ Engine v6.8: hard-snap Fracture Forge dragons to support surfaces."
+      ]
+    },
+    {
+      "version": "v6.7",
+      "changes": [
+        "§wyrl§ Engine v6.7: restore Wisp translation, root-plant dragons, organize Tools."
+      ]
+    },
+    {
+      "version": "v6.6",
+      "changes": [
+        "§wyrl§ Engine v6.6: Wisp hover collision + planted animated dragon rig."
+      ]
+    },
+    {
+      "version": "v6.5",
+      "changes": [
+        "§wyrl§ Engine v6.5: Fracture Forge runtime parity + default project."
+      ]
+    },
+    {
+      "version": "v6.4",
+      "changes": [
+        "§wyrl§ Engine v6.4: one researched Glitch Den + dragon anatomy v3."
+      ]
+    },
+    {
+      "version": "v6.3",
+      "changes": [
+        "§wyrl§ Engine v6.3: second Glitch Dragon Den — Apex Nexus."
+      ]
+    },
+    {
+      "version": "v6.2",
+      "changes": [
+        "§wyrl§ Engine v6.2: Glitch Den is an exact structural clone of the regular Dragon Den."
+      ]
+    },
+    {
+      "version": "v6.1",
+      "changes": [
+        "§wyrl§ Engine v6.1: expose Glitch Dragon Den starter and clarify project version label."
+      ]
+    },
+    {
+      "version": "v6.0",
+      "changes": [
+        "§wyrl§ Engine v6.0: researched Glitch Dragon Den variant + dragon presentation pass."
+      ]
+    },
+    {
+      "version": "v5.9",
+      "changes": [
+        "§wyrl§ Engine v5.9: softer Wisp particles, stable dragon contact, visible Undo/Redo."
+      ]
+    },
+    {
+      "version": "v5.8",
+      "changes": [
+        "§wyrl§ Engine v5.8: clean Wisp sprite alpha + support-aware dragon paw placement."
+      ]
+    },
+    {
+      "version": "v5.7",
+      "changes": [
+        "§wyrl§ Engine v5.7: precision multi-sample foot planting, corrected dragon teeth, camera speed slider."
+      ]
+    },
+    {
+      "version": "v5.6",
+      "changes": [
+        "§wyrl§ Engine v5.6: detailed dragon wings + reusable foot contact grounding."
+      ]
+    },
+    {
+      "version": "v5.5",
+      "changes": [
+        "§wyrl§ Engine v5.5: natural look controls + Dragon anatomy/model pass."
+      ]
+    },
+    {
+      "version": "v5.4",
+      "changes": [
+        "§wyrl§ Engine v5.4: Dragon's Den default Wisp avatar inspired by classic Warcraft III/Sheep Tag readability."
+      ]
+    },
+    {
+      "version": "v5.3",
+      "changes": [
+        "§wyrl§ Engine v5.3: object grouping + improved immersive Dragon's Den."
+      ]
+    },
+    {
+      "version": "v5.2",
+      "changes": [
+        "§wyrl§ Engine v5.2: first-person PIE with mobile twin-stick move/look controls."
+      ]
+    },
+    {
+      "version": "v5.1",
+      "changes": [
+        "§wyrl§ Engine v5.1: rename the engine maker and make Dragon's Den Seed Chamber the default starter world."
+      ]
+    },
+    {
+      "version": "v5.0",
+      "changes": [
+        "Forge v5 project-system patch: decouple MOBA, add project templates, add Dragon's Den."
+      ]
+    },
+    {
+      "version": "v4.1",
+      "changes": [
+        "Deterministic v4 -> v4.1 source patch for SWRLZ Forge."
+      ]
+    }
+  ],
+  "base": {
+    "version": "v4.0",
+    "changes": [
+      "Original source foundation: swrlz_forge_v4.html."
+    ]
+  }
+}
