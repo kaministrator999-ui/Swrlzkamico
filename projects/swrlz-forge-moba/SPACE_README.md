@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.81
+title: §wyrl§ Engine v11.82
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,15 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+
+## §E v11.82 · Mobile building skills, joystick and clear touch placement (2026-10-22)
+
+Sheep Tag now uses **round illustrated building skill buttons at the bottom right** on phones/tablets: house, income house, fortified house, wall and ramp. The existing native buttons retain their costs, availability, active state and build commands. A **left movement joystick** steers the actual sheep/wolf through native swept collisions and traffic, supports proportional speed, and stops on release/cancel/pause/blur. Captured wisps keep their slow crawl/leash; wolves remain immobile before release. The minimap moves to the top left. A compact **••• unit-actions drawer** keeps camera, upgrades, selling and archive controls accessible, while the editor footer returns after Stop. Desktop controls retain their original layout.
+
+Touch building aim is **72–112 screen pixels above the finger**, with a dotted guide to the exact snapped footprint. Preview and release use the same native build target. Separate pointer owners let one thumb steer while another aims; two simultaneous placement fingers still cancel safely. Portrait, landscape and compact screen layouts keep touch controls at least 44 px. Camera following and normal frame updates keep the ghost aligned; resizing cancels held gestures.
+
+Release **114 patches / 49 assets**, HTML **3,279,865 bytes**, SHA-256 `e0bfe63ddae1f5430cf0f80f7f17bd9745a5d0147d68fb96afbb441353d9b6c2`, marker `V11_82_TOUCH_BUILD_SKILLS`. All **259** preceding runtime/patch sources and all **49** bundled assets retain exact bytes, including the Astra and ground 4K textures. See [implementation and targeted evidence](reports/SHEEP_TOUCH_V11_82.md). Publication follows [RELEASE_PROCESS.md](RELEASE_PROCESS.md): cohesive source, separate final deployment request and exact hosted-package confirmation.
 
 ## §E v11.81 · Building clearance, protected sanctuary and hidden hunters (2026-10-22)
 
