@@ -1,0 +1,78 @@
+{
+  "sourceVersion": "\u00a7wyrl\u00a7 Engine v11.78",
+  "finalBytes": 3152424,
+  "finalSha256": "234ddf6065f89438a3cabbcd9e3521d82fb08245830525131e3976d4f86b9ad4",
+  "patches": 110,
+  "assets": 46,
+  "preservedRuntimeAndPatchSources": 250,
+  "browserResults": [
+    {
+      "mode": "desktop",
+      "hunters": 3,
+      "meshes": 106,
+      "triangles": 274980,
+      "textures": [
+        {
+          "channel": "map",
+          "width": 4096,
+          "height": 4096,
+          "source": "005df22f-9c70-404b-b232-a79b6975df79"
+        },
+        {
+          "channel": "normalMap",
+          "width": 4096,
+          "height": 4096,
+          "source": "ad22fa2a-482d-44e7-a703-d11365101261"
+        }
+      ],
+      "checks": [
+        "4K images",
+        "shared resources",
+        "native spawn/save/reload",
+        "four-leg diagonal gait",
+        "movement",
+        "building damage/head attack",
+        "sheep capture",
+        "Stop/restart",
+        "independent model project"
+      ],
+      "errors": []
+    },
+    {
+      "mode": "phone",
+      "hunters": 3,
+      "meshes": 106,
+      "triangles": 274980,
+      "textures": [
+        {
+          "channel": "map",
+          "width": 4096,
+          "height": 4096,
+          "source": "7879b6e9-01d7-407b-81e5-f6dd184344e1"
+        },
+        {
+          "channel": "normalMap",
+          "width": 4096,
+          "height": 4096,
+          "source": "75b1afed-e644-4a05-8711-da64561b4a31"
+        }
+      ],
+      "checks": [
+        "4K images",
+        "shared resources",
+        "native spawn/save/reload",
+        "four-leg diagonal gait",
+        "movement",
+        "building damage/head attack",
+        "sheep capture",
+        "Stop/restart",
+        "independent model project"
+      ],
+      "errors": []
+    }
+  ],
+  "buildVerification": "PASS",
+  "generatedModuleSyntax": "PASS",
+  "deployYamlEmbeddedPythonAndExpectedAssetsGuard": "PASS",
+  "physicalDeviceAcceptance": "owner after publication"
+}
