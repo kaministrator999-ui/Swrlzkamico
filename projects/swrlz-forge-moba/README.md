@@ -1,3 +1,9 @@
+## §E v11.77 · Astra, Comet Courier model project (2026-10-22)
+
+New independent **Astra · Comet Courier** project and **New Model Project** starter. A celestial fox with sculpted ears/muzzle, four articulated legs, a flowing comet tail, travelling mantle, satchel and lantern is authored through native tools. Eight material regions use original 4096 × 4096 base-color and normal atlases. Saved atlas bindings support Undo; a textured GLB embeds real mesh/UV/material data and both 4K images. Six editable assemblies organise the model.
+
+The existing 283-part festival model, all previous runtime/patch sources and 43 original assets are preserved. Release has 109 patches / 46 assets, marker `V11_77_COMET_COURIER_MODEL_PROJECT`. Exact bytes/SHA resolve through `source-manifest.json`; source/deploy commit and live status resolve through the final separate `DEPLOY_REQUEST.json` commit and terminal production receipt. Current delivery authority is `RELEASE_PROCESS.md` (§§§); targeted model checks precede direct-main source publication and the final dedicated deployment trigger. [Design and authoring](reports/COMET_COURIER_V11_77.md).
+
 ## 2026-10-21 · §E v11.76 — desktop modeling drag, scale, wire vertices and zoom
 
 Owner PC gaming-monitor photos revealed four specific problems: gizmo drag would stop before available mouse/screen travel was exhausted, large piñata-related scaling appeared only after Undo triggered a procedural rebuild, dense whole-character wireframe washed out into nearly solid white rather than exposing vertex points, and scroll zoom had a hard minimum too far from the character. The v11.76 repair keeps §E's original **283 native Model Atelier parts, 43 original assets, existing object/assembly/component editors, geometry, history and full source lineage**.
@@ -420,3 +426,5 @@ Scene data belongs to `scenes/embervault-atelier.swyrl.json` and `scenes/starfor
 - Production workflow: `.github/workflows/deploy-swrlz-forge-moba.yml`.
 
 The manifest defines the governed 65-patch chain, preserving Animation Studio, character rigs, layered scenery, sockets/book emergence, full-length staff artwork and episode shuttle playback. Sheep Tag retains archive rules/creator, double-tap selection, ground placement guides, touch aim above the finger, house lanes and physical traffic; v10.5 adds the opt-in native Play recorder and completed-run review/export. [ROADMAP.md](ROADMAP.md) preserves historical releases and receipts. Every §E update synchronizes version surfaces, updates the roadmap, reconstructs and syntax-checks the artifact, then changes `DEPLOY_REQUEST.json` as the final repository mutation. Production authority is recorded in the final `DEPLOY_REQUEST.json`, the dedicated deployment receipt, and the exact hosted-release audit. Completion requires the exact Actions run to succeed and the served host to verify the current marker and artifact integrity; root `§tart_§E.md` defines that contract.
+
+Open the new model directly with `?project=comet-courier`; choose **Edit model** for the full toolset. `?project=blank-model` starts a separate clean modeling workspace.

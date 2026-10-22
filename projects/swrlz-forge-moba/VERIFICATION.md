@@ -1,3 +1,9 @@
+## §E v11.77 · Astra, Comet Courier model project (2026-10-22)
+
+New independent **Astra · Comet Courier** project and **New Model Project** starter. A celestial fox with sculpted ears/muzzle, four articulated legs, a flowing comet tail, travelling mantle, satchel and lantern is authored through native tools. Eight material regions use original 4096 × 4096 base-color and normal atlases. Saved atlas bindings support Undo; a textured GLB embeds real mesh/UV/material data and both 4K images. Six editable assemblies organise the model.
+
+The existing 283-part festival model, all previous runtime/patch sources and 43 original assets are preserved. Release has 109 patches / 46 assets, marker `V11_77_COMET_COURIER_MODEL_PROJECT`. Exact bytes/SHA resolve through `source-manifest.json`; source/deploy commit and live status resolve through the final separate `DEPLOY_REQUEST.json` commit and terminal production receipt. Current delivery authority is `RELEASE_PROCESS.md` (§§§); targeted model checks precede direct-main source publication and the final dedicated deployment trigger. [Design and authoring](reports/COMET_COURIER_V11_77.md).
+
 ## v11.20 · anatomical head reconstruction
 
 The owner rejected the round head foundation. A new native surface builds the skull, temples, cheekbones, jaw angles and chin from eleven editable sections, with a flatter facial mask, eye sockets and an integrated nasal profile. Facial contours are refitted and the neck extends into the jaw underside; the corrected legs and remaining body retain their prior data. Saved Apply/Undo and bounded JSON import support the new anatomy controls.
