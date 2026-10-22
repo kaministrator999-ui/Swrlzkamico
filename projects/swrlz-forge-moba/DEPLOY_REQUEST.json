@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.85",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_85_LARGE_CONTROLS_SEVEN_MINUTES",
-  "reason": "Owner requested a much larger joystick shifted diagonally up/right, slightly bigger right-side icons, and seven-minute games. Portrait joystick grows from 156 to 224 px, with larger knob/direction mark; compact portrait uses 192 px or short-portrait 184 px, landscape 208 px or short-landscape 176 px. Each responsive center moves up and right. Building and ability icons grow while retaining separated arcs, readable wrapped labels and native actions. Landscape score and utility positions adapt to fit the larger controls. The native archive default and new portable starter use 420 seconds; saved projects with the old 1200-second default migrate to 420, while other tuned durations remain editable. Native head start, clock, win conditions, movement, ramp and placement handlers remain shared. Final Chromium checks passed seven viewport sizes, circular target/map separation, score containment, actual diagonal stick movement/release, a build using the larger house button, current-version notes, 7:00 HUD, saved-default migration and custom-duration preservation. The native update ends the match exactly at 420 seconds. All 272 preceding runtime/patch sources and 50 preceding assets, including 4K textures, retain exact bytes. The added seven-minute scene makes 51 assets. Seal: 117 patches, 3,338,122 HTML bytes, SHA-256 76ea088b19a441ed0e846ffdd4a02197eb131b45a3ea55255eeb032f7c5d13f4. This separate final DEPLOY_REQUEST-only commit follows §§§. Confirm exact-trigger terminal production success and exact hosted HTML/SOURCE/all 51 assets; owner device acceptance follows publication.",
-  "sourceCommit": "9eeda1a52d59a8b5bc98f46a3a5487b993598b08",
-  "sourceIntegritySha256": "76ea088b19a441ed0e846ffdd4a02197eb131b45a3ea55255eeb032f7c5d13f4"
+  "releaseVersion": "v11.86",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_86_SHEEP_HOUSE_SLIDE",
+  "reason": "Sheep joystick approaches steer toward the nearest clear house side and continue past its corner. Alternative clear side when obstructed; both sides blocked stop safely. Native swept collision, analog speed, rotated footprints, creature traffic and narrow sheep gaps retained. Targeted native movement and actual Chromium touch tests pass, including release-to-stop and reversal. All 275 preceding runtime/patch sources and 51 assets preserved. Exact 118-patch HTML/SOURCE sealed. Separate final DEPLOY_REQUEST-only commit under §§§; verify terminal production success and exact hosted artifacts.",
+  "sourceCommit": "4b03b6c157ba46f84c50a79e8d7278a2e2cbf3cf",
+  "sourceIntegritySha256": "01b695c06bc5636b762d87914d76e2511224345add0e80c93ce6a1e6f04eba0b"
 }
