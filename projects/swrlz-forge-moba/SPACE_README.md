@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.82
+title: §wyrl§ Engine v11.83
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -10,6 +10,14 @@ header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
 
+
+## §E v11.83 · Drag houses to build, joystick movement and smooth fog (2026-10-22)
+
+Manual movement now uses the **left joystick**, including the desktop pointer layout; ground clicks/taps no longer issue move orders. Drag a building skill icon onto the meadow, aim with the house **above your finger**, and release on a green footprint to order construction. A tap can also arm the building tool for a subsequent ground drag. Visible house/unit selection, wolf attack, rescue, camera pan and minimap camera navigation remain available. Construction retains its native approach, collision, footprint, cost and completion rules. Accepting a build releases held joystick ownership so the next frame cannot overwrite the construction order. Steering again deliberately replaces that order. Blocked/cancelled drops do not charge gold or build. The preview rechecks affordability and occupancy while held still, avoiding a stale red “Need gold” message after income arrives.
+
+Fog uses **soft circular vision edges**, linear sampling and a 4× display mask (512×512 on the 256 m meadow), updated at most ten times per game second. The minimap shares that smooth display. Logical visibility, explored cells, enemy filtering, bot knowledge and pre-hunt restrictions remain native. All **262** preceding runtime/patch files and **49** assets retain exact bytes, including the 4K artwork.
+
+Release: **115 patches / 49 assets**, HTML **3,288,058 bytes**, SHA-256 `41b34b31203777afffc242d42a83b32157e61442760fa9549960600ed27d7962`, marker `V11_83_DRAG_BUILD_SOFT_FOG`. See [targeted implementation and validation](reports/SHEEP_DRAG_V11_83.md). Delivery follows [RELEASE_PROCESS.md](RELEASE_PROCESS.md).
 
 ## §E v11.82 · Mobile building skills, joystick and clear touch placement (2026-10-22)
 

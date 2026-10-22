@@ -1,0 +1,110 @@
+{
+  "version": "v11.83",
+  "htmlBytes": 3288058,
+  "htmlSha256": "41b34b31203777afffc242d42a83b32157e61442760fa9549960600ed27d7962",
+  "patches": 115,
+  "assets": 49,
+  "historicalRuntimePatchFilesPreserved": 262,
+  "historicalAssetsPreserved": 49,
+  "finalArtifactBrowser": [
+    {
+      "mode": "portrait",
+      "groundTapDoesNotMove": true,
+      "joystickMovesAndStops": true,
+      "directIconDrag": true,
+      "actualPaidHouseConstructed": true,
+      "exact60GoldAccepted": true,
+      "heldStickDoesNotCancelBuild": true,
+      "liftedPreviewExactCommit": true,
+      "blockedAndCancelledDropsDoNotBuild": true,
+      "houseSelection": true,
+      "fog": {
+        "resolution": 512,
+        "logicalWidth": 128,
+        "feather": 1.5,
+        "linear": true
+      },
+      "fogPixels": {
+        "levels": 63,
+        "unseen": 165,
+        "center": 0,
+        "outside": 165
+      },
+      "stationaryAffordability": true,
+      "errors": []
+    },
+    {
+      "mode": "landscape",
+      "groundTapDoesNotMove": true,
+      "joystickMovesAndStops": true,
+      "directIconDrag": true,
+      "actualPaidHouseConstructed": true,
+      "exact60GoldAccepted": true,
+      "heldStickDoesNotCancelBuild": true,
+      "liftedPreviewExactCommit": true,
+      "blockedAndCancelledDropsDoNotBuild": true,
+      "houseSelection": true,
+      "fog": {
+        "resolution": 512,
+        "logicalWidth": 128,
+        "feather": 1.5,
+        "linear": true
+      },
+      "fogPixels": {
+        "levels": 63,
+        "unseen": 165,
+        "center": 0,
+        "outside": 165
+      },
+      "stationaryAffordability": false,
+      "errors": []
+    },
+    {
+      "mode": "desktop",
+      "groundTapDoesNotMove": true,
+      "joystickMovesAndStops": true,
+      "directIconDrag": true,
+      "actualPaidHouseConstructed": true,
+      "exact60GoldAccepted": true,
+      "heldStickDoesNotCancelBuild": true,
+      "liftedPreviewExactCommit": true,
+      "blockedAndCancelledDropsDoNotBuild": true,
+      "houseSelection": true,
+      "fog": {
+        "resolution": 512,
+        "logicalWidth": 128,
+        "feather": 1.5,
+        "linear": true
+      },
+      "fogPixels": {
+        "levels": 63,
+        "unseen": 165,
+        "center": 0,
+        "outside": 165
+      },
+      "stationaryAffordability": false,
+      "errors": []
+    }
+  ],
+  "nativeCpuLog": [
+    "[{\"gap\":0.3,\"label\":\"BLOCKED\",\"lengths\":[12.387883264926197,13.250966799187822]},{\"gap\":0.6,\"label\":\"SHEEP ONLY\",\"lengths\":[10,13.550966799187819]},{\"gap\":2.1,\"label\":\"BOTH\",\"lengths\":[10,10]}]",
+    "OFFSET_MOVEMENT 10.289652473703933 [41,0,5]",
+    "SHEEP_CLARITY_CPU_PASS {\"defaults\":{\"speed\":6,\"radius\":0.9},\"pre\":{\"wolfVisible\":false,\"perceives\":false,\"memory\":0,\"physical\":false,\"view\":[\"sheep\"]},\"far\":{\"memory\":0,\"perceives\":false,\"seen\":false},\"seen\":{\"memory\":1,\"perceives\":true,\"seen\":true},\"lost\":{\"memory\":[5,0,0],\"perceives\":false},\"sanctuary\":[false,false,false,false,false],\"base\":[34.949999999999996,0,0],\"gaps\":[{\"gap\":0.3,\"label\":\"BLOCKED\",\"lengths\":[12.387883264926197,13.250966799187822]},{\"gap\":0.6,\"label\":\"SHEEP ONLY\",\"lengths\":[10,13.550966799187819]},{\"gap\":2.1,\"label\":\"BOTH\",\"lengths\":[10,10]}],\"actualGapMove\":[41,0,5]}",
+    "COMPACT_CUSTOM_MAP_BASE_PASS [12,0,0]",
+    "REVERSE_AND_INSIDE_LANE_REPATH_PASS",
+    "NATIVE_JOYSTICK_ANALOG_COLLISION_RELEASE_WISP_LEASH_AND_WOLF_WAIT_PASS {\"fullStep\":0.30000000000001137,\"halfStep\":0.15000000000000568,\"wallStop\":[40.69000000000001,0,0],\"wispStep\":0.01750000000000007}"
+  ],
+  "workflow": {
+    "yaml": true,
+    "embeddedPythonBlocks": 5,
+    "actual115Patch49AssetGuard": true
+  },
+  "notes": [
+    "Actual native house construction and gold deduction checked after pointer release, not only command receipt",
+    "Real Chromium touch and mouse events, lifted preview and native clock",
+    "Static insufficient-gold preview turns valid after income without another placement gesture",
+    "Fog mask has 63 sampled alpha levels; untouched outside-vision alpha remains165; hidden wolves remain filtered",
+    "One native render/game clock, no new assets or saved helper actors",
+    "Owner device acceptance follows confirmed publication"
+  ]
+}
