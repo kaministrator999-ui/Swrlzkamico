@@ -1,0 +1,27 @@
+{
+  "version": "v11.86",
+  "htmlBytes": 3340927,
+  "htmlSha256": "01b695c06bc5636b762d87914d76e2511224345add0e80c93ce6a1e6f04eba0b",
+  "patches": 118,
+  "assets": 51,
+  "historicalSourcesPreserved": 275,
+  "historicalAssetsPreserved": 51,
+  "browser": [
+    {
+      "nearestSide": [
+        43.900000000000105,
+        0,
+        1.515
+      ],
+      "continuedPastHouse": [
+        48.100000000000264,
+        0,
+        1.515
+      ],
+      "releaseStops": true,
+      "errors": []
+    }
+  ],
+  "nativeMovement": "{\n  \"nearest-0.65\": {\n    \"early\": [\n      43.900000000000105,\n      0,\n      -1.515\n    ],\n    \"end\": [\n      57.40000000000062,\n      0,\n      -1.515\n    ]\n  },\n  \"nearest0.65\": {\n    \"early\": [\n      43.900000000000105,\n      0,\n      1.515\n    ],\n    \"end\": [\n      57.40000000000062,\n      0,\n      1.515\n    ]\n  },\n  \"nearest0\": {\n    \"early\": [\n      43.30000000000008,\n      0,\n      -1.5000000000000002\n    ],\n    \"end\": [\n      56.800000000000594,\n      0,\n      -1.5000000000000002\n    ]\n  },\n  \"releaseStops\": true,\n  \"reverse\": [\n    40.89999999999999,\n    0,\n    1.515\n  ],\n  \"rotated\": [\n    14.39999999999976,\n    1.5149999999999189\n  ],\n  \"blockedNearest\": [\n    42.40000000000005,\n    0,\n    -1.515\n  ],\n  \"bothBlocked\": [\n    41.5,\n    0,\n    0\n  ],\n  \"traffic\": [\n    42.40000000000005,\n    0,\n    -1.515\n  ],\n  \"gap\": [\n    52.000000000000455,\n    0,\n    0\n  ],\n  \"wolf\": [\n    40.9,\n    0,\n    0.65\n  ]\n}\nSHEEP_NEAREST_SIDE_CORNERS_ROTATION_BLOCKED_SIDES_TRAFFIC_GAPS_RELEASE_AND_REVERSE_PASS\n",
+  "workflowPythonBlocks": 5
+}

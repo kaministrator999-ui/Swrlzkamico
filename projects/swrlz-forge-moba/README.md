@@ -1,3 +1,9 @@
+## §E v11.86 · Sheep steer around houses (2026-10-22)
+
+Holding the joystick into a house now steers a living sheep toward the **nearest clear side/corner**, then continues in the held direction. A blocked side falls back to the other clear side. Fully blocked exits stop safely. This uses the native swept movement and analog speed; it never relocates a sheep through a structure. Rotated houses, other creatures, narrow sheep-only gaps, joystick reversal and release are checked. Wolves, wisps and automatic ramp/deck movement keep their existing controls.
+
+Release **118 patches / 51 assets**, HTML **3,340,927 bytes**, SHA-256 `01b695c06bc5636b762d87914d76e2511224345add0e80c93ce6a1e6f04eba0b`, marker `V11_86_SHEEP_HOUSE_SLIDE`. All **275** previous runtime/patch sources and **51** assets preserve exact bytes. The 320×320 m map, 4K textures, enlarged controls, 7-minute timer and versioned update history remain available. See [targeted validation](reports/SHEEP_HOUSE_SLIDE_V11_86.md). Delivery follows [RELEASE_PROCESS.md](RELEASE_PROCESS.md).
+
 ## §E v11.85 · Bigger controls and seven-minute matches (2026-10-22)
 
 The portrait joystick grows from **156 to 224 px** and moves diagonally **up and right**. Compact portrait uses 192 px; landscape uses 208 px, or 176 px on a short phone. The knob and direction mark grow with it. Right-side buildings and abilities grow by roughly 12–23% in the main layouts, with adaptive compact sizes and the two separated arcs retained. Larger labels wrap within their circles. Landscape score, utility buttons and feedback shift to keep the enlarged controls accessible.
