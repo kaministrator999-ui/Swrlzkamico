@@ -1,0 +1,34 @@
+/* Portrait: a much larger stick, shifted diagonally up and right. */
+body.st-touch-controls{--st-build-size:72px;--st-home-size:86px;--st-ability-size:62px}
+body.st-touch-controls #stMoveStick{left:36px;bottom:338px;width:224px;height:224px}
+body.st-touch-controls #stMoveKnob{width:92px;height:92px}body.st-touch-controls #stMoveKnob:after{line-height:92px;font-size:38px}
+body.st-touch-controls #sheepTagHUD .st-builds .st-skill-icon{width:39px;height:39px}body.st-touch-controls #sheepTagHUD #stBuildFarm .st-skill-icon{width:48px;height:48px}
+body.st-touch-controls #sheepTagHUD #stAbilityRing .st-skill-icon{width:35px;height:35px}
+body.st-touch-controls #sheepTagHUD .st-builds button[data-st-skill] b,body.st-touch-controls #stAbilityRing button b{font-size:9px;white-space:normal;max-width:100%;line-height:1.05}
+@media(max-width:360px){
+ body.st-touch-controls{--st-ring-mid:190px;--st-build-size:60px;--st-home-size:72px;--st-ability-size:54px;--st-outer-x:148px;--st-outer-diag-x:116px;--st-outer-end-x:30px;--st-inner-x:50px;--st-inner-y:42px}
+ body.st-touch-controls #stMoveStick{left:24px;bottom:314px;width:192px;height:192px}
+ body.st-touch-controls #stMoveKnob{width:84px;height:84px}body.st-touch-controls #stMoveKnob:after{line-height:84px;font-size:34px}
+ body.st-touch-controls #sheepTagHUD .st-builds .st-skill-icon{width:32px;height:32px}body.st-touch-controls #sheepTagHUD #stBuildFarm .st-skill-icon{width:40px;height:40px}body.st-touch-controls #sheepTagHUD #stAbilityRing .st-skill-icon{width:31px;height:31px}
+}
+@media(orientation:portrait) and (max-height:740px){body.st-touch-controls #stMoveStick{left:24px;bottom:310px;width:184px;height:184px}}
+@media(orientation:portrait) and (max-height:660px){body.st-touch-controls #stClearanceLegend{display:none}}
+@media(orientation:landscape){
+ body.st-touch-controls{--st-ring-mid:140px;--st-build-size:60px;--st-home-size:68px;--st-ability-size:54px;--st-outer-x:168px;--st-outer-diag-x:100px;--st-outer-diag-y:64px;--st-outer-end-x:28px;--st-outer-end-y:100px;--st-inner-x:28px;--st-inner-y:32px}
+ body.st-touch-controls #stMoveStick{left:110px;bottom:40px;width:208px;height:208px}
+ body.st-touch-controls #sheepTagHUD .st-score{right:226px!important}
+ body.st-touch-controls #sheepTagHUD #stTouchOptions{left:16px;bottom:88px}
+ body.st-touch-controls #sheepTagHUD #stCancelBuild{left:16px!important;bottom:32px!important}
+ body.st-touch-controls #sheepTagHUD #stFeedback,body.st-touch-controls #sheepTagHUD #stPlacement{left:340px;right:228px}
+ body.st-touch-controls #sheepTagHUD .st-builds .st-skill-icon{width:33px;height:33px}body.st-touch-controls #sheepTagHUD #stBuildFarm .st-skill-icon{width:39px;height:39px}body.st-touch-controls #sheepTagHUD #stAbilityRing .st-skill-icon{width:31px;height:31px}
+}
+@media(orientation:landscape) and (max-height:360px){
+ body.st-touch-controls{--st-ring-mid:126px;--st-build-size:54px;--st-home-size:62px;--st-ability-size:48px;--st-outer-x:146px;--st-outer-diag-x:88px;--st-outer-diag-y:58px;--st-outer-end-x:24px;--st-outer-end-y:92px;--st-inner-x:26px;--st-inner-y:30px}
+ body.st-touch-controls #stMoveStick{left:88px;bottom:4px;width:176px;height:176px}
+ body.st-touch-controls #stMoveKnob{width:80px;height:80px}body.st-touch-controls #stMoveKnob:after{line-height:80px;font-size:32px}
+ body.st-touch-controls #sheepTagHUD #stTouchOptions{left:12px;bottom:64px}
+ body.st-touch-controls #sheepTagHUD #stCancelBuild{left:8px!important;bottom:8px!important}
+ body.st-touch-controls #sheepTagHUD .st-builds button[data-st-skill] b{font-size:8px}body.st-touch-controls #sheepTagHUD .st-readout b{font-size:12px}body.st-touch-controls #sheepTagHUD .st-readout strong{font-size:10px}
+ body.st-touch-controls #sheepTagHUD #stFeedback,body.st-touch-controls #sheepTagHUD #stPlacement{left:278px;right:198px;font-size:10px}
+ body.st-touch-controls #sheepTagHUD .st-builds .st-skill-icon{width:30px;height:30px}body.st-touch-controls #sheepTagHUD #stBuildFarm .st-skill-icon{width:35px;height:35px}body.st-touch-controls #sheepTagHUD #stAbilityRing .st-skill-icon{width:28px;height:28px}
+}

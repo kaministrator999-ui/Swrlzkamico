@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.84
+title: §wyrl§ Engine v11.85
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -10,6 +10,14 @@ header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
 
+
+## §E v11.85 · Bigger controls and seven-minute matches (2026-10-22)
+
+The portrait joystick grows from **156 to 224 px** and moves diagonally **up and right**. Compact portrait uses 192 px; landscape uses 208 px, or 176 px on a short phone. The knob and direction mark grow with it. Right-side buildings and abilities grow by roughly 12–23% in the main layouts, with adaptive compact sizes and the two separated arcs retained. Larger labels wrap within their circles. Landscape score, utility buttons and feedback shift to keep the enlarged controls accessible.
+
+The default match lasts **7 minutes (420 seconds)**. The portable starter carries that duration, and saved maps using the previous 20-minute default migrate to seven minutes. Other explicitly tuned durations remain editable. The native countdown, head start, win conditions, movement, ramps and placement use their existing game clock and rules. The editor’s versioned update panel automatically lists this release.
+
+Release **117 patches / 51 assets**, HTML **3,338,122 bytes**, SHA-256 `76ea088b19a441ed0e846ffdd4a02197eb131b45a3ea55255eeb032f7c5d13f4`, marker `V11_85_LARGE_CONTROLS_SEVEN_MINUTES`. All **272** earlier runtime/patch sources and **50** preceding assets preserve exact bytes; the additional asset is the seven-minute starter scene. See [targeted validation](reports/SHEEP_LARGE_CONTROLS_V11_85.md). Delivery follows [RELEASE_PROCESS.md](RELEASE_PROCESS.md).
 
 ## §E v11.84 · Reliable building, connected walkways and update history (2026-10-22)
 
