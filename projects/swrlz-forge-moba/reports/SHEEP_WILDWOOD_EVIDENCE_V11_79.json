@@ -1,0 +1,447 @@
+{
+  "sourceVersion": "\u00a7wyrl\u00a7 Engine v11.79",
+  "finalBytes": 3222398,
+  "finalSha256": "f2d2c22aa4620f76407494767e27a4227c3d178af3f8a52f7fc736c6eb28e9ec",
+  "patches": 111,
+  "assets": 48,
+  "oldSourceFilesPreserved": 253,
+  "oldAssetsPreserved": 46,
+  "areaMultiplier": 2.56,
+  "browserResults": [
+    {
+      "mode": "desktop",
+      "map": {
+        "sourceScene": "scenes/sheep-tag-wildwood-v11-79.swyrl.json",
+        "bounds": 64,
+        "width": 128,
+        "depth": 128,
+        "groundSize": [
+          128,
+          128
+        ],
+        "textureSize": [
+          4096,
+          4096
+        ],
+        "actorCount": 176,
+        "regions": [
+          "Pinewatch",
+          "Moonflower",
+          "Amberglade",
+          "Willowmere"
+        ],
+        "layerCount": 9
+      },
+      "routes": [
+        {
+          "from": [
+            -34,
+            0,
+            34
+          ],
+          "reachable": true,
+          "length": 48.083261120685236
+        },
+        {
+          "from": [
+            34,
+            0,
+            34
+          ],
+          "reachable": true,
+          "length": 48.083261120685236
+        },
+        {
+          "from": [
+            -34,
+            0,
+            -34
+          ],
+          "reachable": true,
+          "length": 48.083261120685236
+        },
+        {
+          "from": [
+            34,
+            0,
+            -34
+          ],
+          "reachable": true,
+          "length": 48.083261120685236
+        },
+        {
+          "from": [
+            -48,
+            0,
+            0
+          ],
+          "reachable": true,
+          "length": 48
+        },
+        {
+          "from": [
+            48,
+            0,
+            0
+          ],
+          "reachable": true,
+          "length": 48
+        },
+        {
+          "from": [
+            0,
+            0,
+            48
+          ],
+          "reachable": true,
+          "length": 48
+        },
+        {
+          "from": [
+            0,
+            0,
+            -48
+          ],
+          "reachable": true,
+          "length": 48
+        },
+        {
+          "from": [
+            0,
+            0,
+            -60
+          ],
+          "reachable": true,
+          "length": 60
+        },
+        {
+          "from": [
+            0,
+            0,
+            60
+          ],
+          "reachable": true,
+          "length": 60
+        },
+        {
+          "from": [
+            -60,
+            0,
+            0
+          ],
+          "reachable": true,
+          "length": 60
+        },
+        {
+          "from": [
+            60,
+            0,
+            0
+          ],
+          "reachable": true,
+          "length": 60
+        }
+      ],
+      "passages": [
+        {
+          "center": [
+            -21,
+            -35
+          ],
+          "paths": [
+            {
+              "reachable": true,
+              "length": 10
+            },
+            {
+              "reachable": true,
+              "length": 15.43687928157141
+            }
+          ]
+        },
+        {
+          "center": [
+            35,
+            -21
+          ],
+          "paths": [
+            {
+              "reachable": true,
+              "length": 10
+            },
+            {
+              "reachable": true,
+              "length": 15.54802307403553
+            }
+          ]
+        },
+        {
+          "center": [
+            21,
+            35
+          ],
+          "paths": [
+            {
+              "reachable": true,
+              "length": 10
+            },
+            {
+              "reachable": true,
+              "length": 15.518733752154164
+            }
+          ]
+        },
+        {
+          "center": [
+            -35,
+            21
+          ],
+          "paths": [
+            {
+              "reachable": true,
+              "length": 10
+            },
+            {
+              "reachable": true,
+              "length": 15.548023074035529
+            }
+          ]
+        }
+      ],
+      "checks": [
+        "all spawns valid",
+        "map corners framed",
+        "all glades and outer roads connected",
+        "four sheep-only shortcuts",
+        "native save/reload",
+        "portable export/import",
+        "floor regeneration",
+        "real movement/building beyond old bounds",
+        "Astra hunters",
+        "terrain minimap",
+        "Stop restoration",
+        "old map compatibility"
+      ],
+      "errors": []
+    },
+    {
+      "mode": "phone",
+      "map": {
+        "sourceScene": "scenes/sheep-tag-wildwood-v11-79.swyrl.json",
+        "bounds": 64,
+        "width": 128,
+        "depth": 128,
+        "groundSize": [
+          128,
+          128
+        ],
+        "textureSize": [
+          4096,
+          4096
+        ],
+        "actorCount": 176,
+        "regions": [
+          "Pinewatch",
+          "Moonflower",
+          "Amberglade",
+          "Willowmere"
+        ],
+        "layerCount": 9
+      },
+      "routes": [
+        {
+          "from": [
+            -34,
+            0,
+            34
+          ],
+          "reachable": true,
+          "length": 48.083261120685236
+        },
+        {
+          "from": [
+            34,
+            0,
+            34
+          ],
+          "reachable": true,
+          "length": 48.083261120685236
+        },
+        {
+          "from": [
+            -34,
+            0,
+            -34
+          ],
+          "reachable": true,
+          "length": 48.083261120685236
+        },
+        {
+          "from": [
+            34,
+            0,
+            -34
+          ],
+          "reachable": true,
+          "length": 48.083261120685236
+        },
+        {
+          "from": [
+            -48,
+            0,
+            0
+          ],
+          "reachable": true,
+          "length": 48
+        },
+        {
+          "from": [
+            48,
+            0,
+            0
+          ],
+          "reachable": true,
+          "length": 48
+        },
+        {
+          "from": [
+            0,
+            0,
+            48
+          ],
+          "reachable": true,
+          "length": 48
+        },
+        {
+          "from": [
+            0,
+            0,
+            -48
+          ],
+          "reachable": true,
+          "length": 48
+        },
+        {
+          "from": [
+            0,
+            0,
+            -60
+          ],
+          "reachable": true,
+          "length": 60
+        },
+        {
+          "from": [
+            0,
+            0,
+            60
+          ],
+          "reachable": true,
+          "length": 60
+        },
+        {
+          "from": [
+            -60,
+            0,
+            0
+          ],
+          "reachable": true,
+          "length": 60
+        },
+        {
+          "from": [
+            60,
+            0,
+            0
+          ],
+          "reachable": true,
+          "length": 60
+        }
+      ],
+      "passages": [
+        {
+          "center": [
+            -21,
+            -35
+          ],
+          "paths": [
+            {
+              "reachable": true,
+              "length": 10
+            },
+            {
+              "reachable": true,
+              "length": 15.43687928157141
+            }
+          ]
+        },
+        {
+          "center": [
+            35,
+            -21
+          ],
+          "paths": [
+            {
+              "reachable": true,
+              "length": 10
+            },
+            {
+              "reachable": true,
+              "length": 15.54802307403553
+            }
+          ]
+        },
+        {
+          "center": [
+            21,
+            35
+          ],
+          "paths": [
+            {
+              "reachable": true,
+              "length": 10
+            },
+            {
+              "reachable": true,
+              "length": 15.518733752154164
+            }
+          ]
+        },
+        {
+          "center": [
+            -35,
+            21
+          ],
+          "paths": [
+            {
+              "reachable": true,
+              "length": 10
+            },
+            {
+              "reachable": true,
+              "length": 15.548023074035529
+            }
+          ]
+        }
+      ],
+      "checks": [
+        "all spawns valid",
+        "map corners framed",
+        "all glades and outer roads connected",
+        "four sheep-only shortcuts",
+        "native save/reload",
+        "portable export/import",
+        "floor regeneration",
+        "real movement/building beyond old bounds",
+        "Astra hunters",
+        "terrain minimap",
+        "Stop restoration",
+        "old map compatibility"
+      ],
+      "errors": []
+    }
+  ],
+  "buildAndGeneratedModuleSyntax": "PASS",
+  "deployYamlEmbeddedPythonAndActualAssetGuard": "PASS",
+  "physicalDeviceAcceptance": "owner after publication"
+}
