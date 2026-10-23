@@ -137,9 +137,13 @@ def main():
     media_paths.extend(['scenes/model-atelier-organic-sheep-v11-87.swyrl.json','scenes/model-atelier-organic-wolf-v11-87.swyrl.json'])
     media_paths.extend(p.relative_to(ROOT).as_posix() for p in sorted((ROOT / 'assets/models/wildwood-animals').glob('*')) if p.is_file())
     media_paths.append('scenes/model-atelier-original-wolf-organic-v11-88.swyrl.json')
+    media_paths.extend(['scenes/model-atelier-living-astra-v11-89.swyrl.json','scenes/sheep-tag-clover-model-v11-89.swyrl.json'])
     for rel in media_paths:
         source = ROOT / rel
-        if rel=='scenes/model-atelier-original-wolf-organic-v11-88.swyrl.json':
+        if rel in ['scenes/model-atelier-living-astra-v11-89.swyrl.json','scenes/sheep-tag-clover-model-v11-89.swyrl.json']:
+            payload='living-astra-v11-89' if 'living-astra' in rel else 'clover-game-v11-89'
+            data=gzip.decompress((ROOT / 'payload' / (payload+'.swyrl.json.gz')).read_bytes())
+        elif rel=='scenes/model-atelier-original-wolf-organic-v11-88.swyrl.json':
             data=gzip.decompress((ROOT / 'payload/courier-organic-v11-88.swyrl.json.gz').read_bytes())
         elif rel.startswith('scenes/model-atelier-organic-'):
             species='sheep' if '-sheep-' in rel else 'wolf'
