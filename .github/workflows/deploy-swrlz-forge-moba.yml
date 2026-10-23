@@ -59,7 +59,7 @@ jobs:
           assert receipt["sourceVersion"] == manifest["name"]
           assert receipt["patches"] == manifest["patches"]
           assert len(receipt["patches"]) == len(manifest["patches"])
-          assert receipt["assets"] and len(receipt["assets"]) == 55
+          assert receipt["assets"] and len(receipt["assets"]) == 56
           raw = (out/"index.html").read_bytes()
           digest = hashlib.sha256(raw).hexdigest()
           assert manifest["finalSha256"] == receipt["finalSha256"] == request["sourceIntegritySha256"] == digest
