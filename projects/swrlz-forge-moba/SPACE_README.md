@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.90
+title: §wyrl§ Engine v11.91
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,15 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+
+## §E v11.91 · Saved Festival Girl and organic anime sculpt (2026-10-23)
+
+The previous **283-part girl starter is preserved** as **Saved Festival Girl · v11.90** (`?project=festival-girl-saved`). The main Model Atelier card now opens **Prism · Organic Anime Girl** (`?project=organic-anime-girl`). Her complete skin is one closed, connected mesh from scalp and ears through the neck, torso, arms, ten fingers, legs and feet: **254,588 vertices / 509,172 triangles**. A more inward-tapering jaw ends in a narrow, rounded chin; shaped cheeks, orbital wells, a refined nose, fitted amber eyes tilted upward six degrees at the outer corners, and lips, hands with nail plates, knees, rear calves and Achilles transitions replace the old separate primitive anatomy.
+
+The full sculpt has **353 editable topology meshes / 1,634,372 triangles**, including the asymmetric festival outfit, original paper-ferret companions and bunny. **72 tapered 3D hair filaments**, modeled stitches, knuckle folds and fitted closed sleeve/yoke shells add geometry detail. Dedicated **4096×4096 color and normal maps** provide skin, hair flow, weave, embroidery, leather, metal and radial iris detail. Body, face, hand and full-character views support close inspection; companion isolation changes the viewport only. Native material editing/Undo, JSON save/import and textured GLB retain the complete model. Detailed native import supports **256 MB**, and a part supports **300,000 vertices / 600,000 triangles**. This is a detailed authoring sculpt; skeletal weight painting has not been added.
+
+Release **123 patches / 64 assets**, HTML **6,421,818 bytes**, SHA-256 `ba0105f62f2e7451d4e78148cae425f4ce5e3684093fc3954d3c1f0e1105b934`, marker `V11_91_ORGANIC_ANIME_GIRL`. All **294** prior runtime/patch sources and **60** prior packaged assets preserve exact bytes. Sheep Tag retains the v11.90 collision, controls and optimized game models. See [targeted verification](reports/ORGANIC_ANIME_GIRL_V11_91.md). Delivery follows [RELEASE_PROCESS.md](RELEASE_PROCESS.md).
 
 ## §E v11.90 · Solid house blockers, furred Astra and match performance (2026-10-23)
 

@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.90",
+  "name": "§wyrl§ Engine v11.91",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_90.html",
+  "finalArtifact": "swyrl_engine_v11_91.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -136,8 +136,9 @@
     "patches/v11_87_organic_animal_starters.py",
     "patches/v11_88_passages_controls_original_wolf.py",
     "patches/v11_89_living_astra_clover_corner_controls.py",
-    "patches/v11_90_solid_blockers_furred_astra.py"
+    "patches/v11_90_solid_blockers_furred_astra.py",
+    "patches/v11_91_organic_anime_girl.py"
   ],
-  "finalBytes": 6390662,
-  "finalSha256": "c76e61f6c4b8457ce1f49d3781c8aa0710d7e44adaf7176d17744fdbda5c663a"
+  "finalBytes": 6421818,
+  "finalSha256": "ba0105f62f2e7451d4e78148cae425f4ce5e3684093fc3954d3c1f0e1105b934"
 }

@@ -139,9 +139,16 @@ def main():
     media_paths.append('scenes/model-atelier-original-wolf-organic-v11-88.swyrl.json')
     media_paths.extend(['scenes/model-atelier-living-astra-v11-89.swyrl.json','scenes/sheep-tag-clover-model-v11-89.swyrl.json'])
     media_paths.extend(['scenes/model-atelier-furred-astra-v11-90.swyrl.json','scenes/sheep-tag-furred-wolf-v11-90.swyrl.json'])
+    media_paths.extend(['scenes/model-atelier-girl-saved-v11-90.swyrl.json','scenes/model-atelier-organic-anime-girl-v11-91.swyrl.json'])
+    media_paths.extend(p.relative_to(ROOT).as_posix() for p in sorted((ROOT / 'assets/models/festival-girl').glob('*')) if p.is_file())
     for rel in media_paths:
         source = ROOT / rel
-        if rel in ['scenes/model-atelier-furred-astra-v11-90.swyrl.json','scenes/sheep-tag-furred-wolf-v11-90.swyrl.json']:
+        if rel in ['scenes/model-atelier-girl-saved-v11-90.swyrl.json','scenes/model-atelier-organic-anime-girl-v11-91.swyrl.json']:
+            payload='saved-v11-90' if 'girl-saved' in rel else 'organic-v11-91'
+            packed=(ROOT / 'payload/festival-girl' / (payload+'.swyrl.json.gz'))
+            compressed=packed.read_bytes() if payload=='saved-v11-90' else b''.join(p.read_bytes() for p in sorted(packed.parent.glob(packed.name+'.part*')))
+            data=gzip.decompress(compressed)
+        elif rel in ['scenes/model-atelier-furred-astra-v11-90.swyrl.json','scenes/sheep-tag-furred-wolf-v11-90.swyrl.json']:
             payload='furred-astra-v11-90' if 'model-atelier' in rel else 'furred-game-v11-90'
             data=gzip.decompress((ROOT / 'payload' / (payload+'.swyrl.json.gz')).read_bytes())
         elif rel in ['scenes/model-atelier-living-astra-v11-89.swyrl.json','scenes/sheep-tag-clover-model-v11-89.swyrl.json']:
