@@ -1,3 +1,13 @@
+## §E v11.88 · Roomier passages, reachable controls and original Astra (2026-10-23)
+
+Sheep prioritize alignment through nearby usable house lanes before steering around an outside corner. Short joystick targets refresh immediately, so previous corner routes cannot keep a sheep trapped. Existing 0.60 m lanes remain usable; new deliberate house-lane snapping leaves **0.75 m**, with native footprint, collision and traffic checks shared by preview and construction.
+
+The joystick moves inward/up and scales to **65% of portrait viewport width**. Building buttons use **21%**, the main house **22%**, and abilities **18%**, with two separated arcs. At the 926 px screenshot width that means roughly **194–204 px building buttons**, about three times the previous size. Phone/landscape sizing and short-screen minimap clearance adapt to the available viewport.
+
+The wolf starter again opens **Astra · Comet Courier**, retaining the original blue/ivory design, amber eyes, tall ears, cape, harness, satchel, compass, scroll, lantern and giant curled comet tail. All **37 original gear/tail parts** remain byte-exact. Three native welded anatomical surfaces add **134,348 triangles** across the torso/shoulders/haunches, skull/jaw and continuous muzzle; the original **4K color and normal maps** remain. Clover sheep stays available as its independent starter. Detailed native editing, material Undo, save/import and textured GLB export remain supported.
+
+Release **120 patches / 56 assets**, HTML **3,371,397 bytes**, SHA-256 `6d4ce7a4f95c2c90fb988d99867ee240c7a505df13b43c7be4b2038f506e4c2e`, marker `V11_88_PASSAGES_CONTROLS_ORIGINAL_WOLF`. All **281** preceding runtime/patch sources and **55** assets preserve exact bytes. See [targeted validation](projects/swrlz-forge-moba/reports/PASSAGES_CONTROLS_ASTRA_V11_88.md). Delivery follows [RELEASE_PROCESS.md](projects/swrlz-forge-moba/RELEASE_PROCESS.md).
+
 ## §E v11.87 · Organic sheep and wolf model starters (2026-10-22)
 
 **Clover · Meadow Sheep** is a new independent Model Atelier starter. **Fen · Wildwood Wolf** replaces the wolf model starter entry and the earlier `comet-courier` shortcut. The wolf is a natural quadruped with a fused ribcage/shoulder/neck/skull/muzzle surface, a tucked waist, bent hocks, four-toed paws, short alert ears and a low brush tail. The sheep has continuous fleece over shoulders/barrel/haunches, a tapered bare muzzle, folded pinnae, horizontal pupils, lower-leg tendons and split hooves. Visible parts are editable indexed organic meshes; there are no sphere, box, cylinder or cone model parts.

@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.87",
+  "name": "§wyrl§ Engine v11.88",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_87.html",
+  "finalArtifact": "swyrl_engine_v11_88.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -133,8 +133,9 @@
     "patches/v11_84_sheep_build_routes.py",
     "patches/v11_85_sheep_large_controls.py",
     "patches/v11_86_sheep_house_slide.py",
-    "patches/v11_87_organic_animal_starters.py"
+    "patches/v11_87_organic_animal_starters.py",
+    "patches/v11_88_passages_controls_original_wolf.py"
   ],
-  "finalBytes": 3359239,
-  "finalSha256": "c2dda3de1cb7bf262e347a47c9dfde2f9c4af267ed1124fee068a804fb6cda40"
+  "finalBytes": 3371397,
+  "finalSha256": "6d4ce7a4f95c2c90fb988d99867ee240c7a505df13b43c7be4b2038f506e4c2e"
 }
