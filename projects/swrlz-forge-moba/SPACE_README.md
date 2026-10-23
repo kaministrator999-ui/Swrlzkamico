@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.89
+title: §wyrl§ Engine v11.90
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,16 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.90 · Solid house blockers, furred Astra and match performance (2026-10-23)
+
+Houses stop sheep on contact. Holding the joystick first walks up to the blocker, then follows a cached, collision-checked route around it; releasing stops immediately. The previous nearest-side/lane-center pulling and construction ejection are retired. Placing a structure over its builder is rejected without moving the sheep or spending gold. Real narrow lanes, rotated houses, unit traffic and automatic ramp/walkway traversal retain native swept collision.
+
+Astra now has flowing shoulder/ribcage/waist contours, **one connected skull-and-ear mesh**, inset velvet pinnae and **1,100 closed curved 3D fur locks** on its body, chest and limbs. The high-resolution wolf starter has **96 editable parts / 639,772 rendered triangles**, with all **37 original courier gear/comet-tail parts byte-exact** and the original **4096×4096 color and normal images**. Native rebuild, edit/Undo, JSON save/reload and textured GLB remain available; detailed native import supports 128 MB.
+
+Sheep Tag uses a separate optimized copy: **69,471 triangles / 29 draw meshes per wolf**, compared with **274,980 / 106** previously. Compatible meshes are merged within each independently animated head/tail/leg joint, sharing cached geometry and materials. Broad-phase collision rejects distant houses before identical narrow-phase samples; footprints cache per navigation revision. Held-stick routes avoid repeated whole-map grid searches. On phones, full-rate run recording uses **10 Hz world snapshots**, preserving command/event captures and explicitly selected slower cadences. These changes target CPU, GPU and recording overhead; owner-device FPS still needs hands-on acceptance. Clover, compact corner controls, the 320×320 m map and seven-minute rounds remain.
+
+Release **122 patches / 60 assets**, HTML **6,390,662 bytes**, SHA-256 `c76e61f6c4b8457ce1f49d3781c8aa0710d7e44adaf7176d17744fdbda5c663a`, marker `V11_90_SOLID_BLOCKERS_FURRED_ASTRA`. All **290** previous runtime/patch files and **58** previous assets preserve exact bytes. See [targeted validation](reports/SOLID_BLOCKERS_FURRED_ASTRA_V11_90.md). Delivery follows [RELEASE_PROCESS.md](RELEASE_PROCESS.md).
 
 ## §E v11.89 · Living Astra, Clover flock and compact corner controls (2026-10-23)
 
