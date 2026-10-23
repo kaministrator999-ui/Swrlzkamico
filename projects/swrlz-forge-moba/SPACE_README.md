@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.91
+title: §wyrl§ Engine v11.92
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,14 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.92 · Reference face, swept hair and longer festival dress (2026-10-23)
+
+The female Model Atelier starter follows the owner's festival references with amber almond eyes, finer arched brows, softer cheeks and a small rounded chin. The cyan/coral hair uses overlapping swept bangs, sculpted layers and cheek-framing locks. The layered teal, ivory and pale-cyan dress extends farther down; its yellow pointed tail reaches toward the knee. Native pleats, raised brocade, running stitches, pastel hem ornaments and a fine gold fringe add editable detail.
+
+The connected skin mesh, original companions, 4K color/normal materials, native material editing/Undo, JSON save/import and textured GLB stay supported. The saved 283-part original and complete v11.91 scene remain packaged byte-exact. Release **124 patches / 65 assets**, **6,442,424 HTML bytes**, SHA-256 `eba0e3000950a95053dc7000bf9387d89e6fefa81e7d11cacdd722f765ddf6c5`, marker `V11_92_FESTIVAL_REFERENCE`. Local native/editor/save/export checks passed; canonical publication follows the separate final deployment request. This changes the existing authoring starter; it does not add skeletal rigging. Release details and validation: [FESTIVAL_REFERENCE_V11_92.md](reports/FESTIVAL_REFERENCE_V11_92.md). Publication follows [RELEASE_PROCESS.md](RELEASE_PROCESS.md); owner-device visual acceptance follows the dedicated release.
+
+
 
 
 ## §E v11.91 · Saved Festival Girl and organic anime sculpt (2026-10-23)
