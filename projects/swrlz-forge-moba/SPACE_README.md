@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.92
+title: §wyrl§ Engine v11.93
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,14 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.93 · Smooth anatomy, visible hair piñatas and fitted coverage (2026-10-23)
+
+Both original hair-attached piñatas are visible in the normal opening/body view, with their original braid grips and sockets. Detail views retain the attached companions; the full-body camera fits their combined bounds. Eyes now rise clearly from lower corners near the nose to higher outer corners, with shallow round pupils and fitted lash wings. The face, cheeks, jaw and rounded chin use a continuous smooth skin contour. Exposed shoulder/arm muscles blend smoothly; thigh, knee, calf and ankle profiles remove the abrupt calf shoulder. A new Leg detail view makes that contour inspectable.
+
+Compact hair locks leave the piñatas as the upper silhouette. More angular overlapping dress panels retain the longer festival tailoring. The existing under-skirt is replaced with fitted opaque shorts, and armor/cuff linings follow the actual finished skin to prevent poke-through and pelvis exposure. Saved originals, previous scenes, all piñata meshes and native socket data remain preserved. Release **125 patches/66 assets/6,477,235 HTML bytes**, SHA-256 `caad492d5e7ee95808c36102b47b24fcff816c340f242f9db1fc5d24a4316cf6`, marker `V11_93_SMOOTH_ANATOMY_PINATAS`. Source/editor/coverage/native-export checks passed; the separate final deployment request follows source publication. Source, editor, coverage and export evidence belongs to [SMOOTH_ANATOMY_PINATAS_V11_93.md](reports/SMOOTH_ANATOMY_PINATAS_V11_93.md). Publication follows [RELEASE_PROCESS.md](RELEASE_PROCESS.md); local source completion does not claim production or owner-device acceptance.
+
+
 
 ## §E v11.92 · Reference face, swept hair and longer festival dress (2026-10-23)
 

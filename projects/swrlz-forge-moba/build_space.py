@@ -142,9 +142,14 @@ def main():
     media_paths.extend(['scenes/model-atelier-girl-saved-v11-90.swyrl.json','scenes/model-atelier-organic-anime-girl-v11-91.swyrl.json'])
     media_paths.extend(p.relative_to(ROOT).as_posix() for p in sorted((ROOT / 'assets/models/festival-girl').glob('*')) if p.is_file())
     media_paths.append('scenes/model-atelier-reference-girl-v11-92.swyrl.json')
+    media_paths.append('scenes/model-atelier-smooth-girl-v11-93.swyrl.json')
     for rel in media_paths:
         source = ROOT / rel
-        if rel=='scenes/model-atelier-reference-girl-v11-92.swyrl.json':
+        if rel=='scenes/model-atelier-smooth-girl-v11-93.swyrl.json':
+            chunks=sorted((ROOT / 'payload/festival-girl').glob('smooth-v11-93.swyrl.json.gz.part*'))
+            if not chunks:raise SystemExit('Missing smooth girl v11.93 payload')
+            data=gzip.decompress(b''.join(p.read_bytes() for p in chunks))
+        elif rel=='scenes/model-atelier-reference-girl-v11-92.swyrl.json':
             chunks=sorted((ROOT / 'payload/festival-girl').glob('reference-v11-92.swyrl.json.gz.part*'))
             if not chunks:raise SystemExit('Missing reference girl v11.92 payload')
             data=gzip.decompress(b''.join(p.read_bytes() for p in chunks))
