@@ -153,6 +153,6 @@
     "patches/v11_104_pick_marker_readable_menus.py",
     "patches/v11_105_sculpt_undo_view_spacing.py"
   ],
-  "finalBytes": 6535811,
-  "finalSha256": "e205d04d8bd66d69994cbeca52b8a089468a6275146bfae59ba884bda6f443f1"
+  "finalBytes": 6539743,
+  "finalSha256": "d845e5ae1b064f4a6e1d7c41a654d1e561bfa8f4e1e02db227b5443ac9af5d3c"
 }
