@@ -1,3 +1,17 @@
+## UPDATE FINISHED — 2026-10-24 — §E v11.94 covered knee armor skirt and softer portrait (source/editor verified; publication follows)
+
+**Outcome:** nine existing native lower panels overlap into a full festival skirt; matched trim and all hanging ornaments end above kneecap Y=1.52 (actual minimum 1.592134). Opaque fitted shorts remain exact. Head narrows 5% with a smooth neck blend; nose bridge, tip and underside use a softer continuous finish. Hair piñatas, grip/socket owners, rising eye corners, smooth leg/body contours and all 117 companion meshes remain preserved.
+
+**Evidence:** source/module checks, 216/216 actual skirt rays with skin clearance, 6 pelvis + 16 armor coverage rays, desktop/mobile piñata framing, actual portrait/hem geometry, exact edit/Undo and 201,471,914-byte JSON round trip, exact source factory equality, and 64,847,948-byte textured GLB with 327 meshes / 1,755,616 triangles and both exact 4K maps passed. All 309 prior source files / 66 prior assets retain hashes. Seal 126 patches / 67 assets / 6495464 HTML bytes, SHA-256 `ede8f335dc9f9086d5d6f1ec6abf7d73711aa56bf3ea123c7494af2daac5d78c`. Detailed evidence: `projects/swrlz-forge-moba/reports/KNEE_SKIRT_SOFT_PORTRAIT_V11_94.md`.
+
+**Lineage/delivery:** Repository Work 1.0.236→1.0.237 at `ced76e1b1e49f36d054f3591cf9a446829d774c7`; Server Runtime/Web Chat/LALM/model weights unchanged. Source publication on main precedes the separate final DEPLOY_REQUEST-only commit; terminal dedicated workflow/live asset verification is required before reporting live. Physical owner-device acceptance remains separate. Cloud setup draft saved with current verifier; publication of that environment configuration is a user settings action.
+
+## UPDATE STARTED — 2026-10-23 — §E v11.94 continuous knee-length armor skirt and softer portrait
+
+**Owner outcome:** arrange the existing lower armor into a full overlapping skirt with crotch coverage, ending at or above the kneecaps; soften the nose and narrow the head slightly to follow the supplied references. Retain smooth anatomy, rising eye corners, restored piñatas, native editing and fitted opaque coverage.
+
+**Reconciliation:** extend the canonical Model Atelier girl factory with one new ordered patch and native geometry refinements; keep historical patches/payloads, companion/socket owners and prior asset receipts intact. Targeted geometry, 360-degree coverage, editor/export and packaging checks precede ordinary source publication, a separate final DEPLOY_REQUEST-only commit and observed hosted verification under §§§.
+
 ## UPDATE FINISHED — 2026-10-23 — §E v11.93 smooth anatomy, visible hair piñatas and fitted coverage (source validated)
 
 Owner requested further work across the female starter: restore hair piñatas, make the inner eye corners lower by the nose and outer corners higher, smooth exposed skin/muscle transitions and calf contour, smooth cheeks/chin, and cover skin beneath armor and the crotch. The presentation defect was a camera-mode visibility filter hiding preserved companion groups; retained-data/export tests missed the opening view. Both original 28-part piñatas now remain visible by default, with exact original grip connectors, unchanged sockets and a viewport-fit check on desktop/phone. Portrait/head, exposed upper-body skin and thigh/knee/calf/ankle geometry are refined on the same closed connected skin indices. Hair fans are compacted; skirt panels are more angular; existing shorts and armor/cuffs receive fitted opaque surfaces. Other products and Chat/LALM behavior are unchanged.

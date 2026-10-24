@@ -1,0 +1,33 @@
+{
+  "version": "v11.94",
+  "moduleSha256": "9dd6ec1bd7e5e295eafb4fa948969cce0eff7476eb4f483e70ecbf92f94e901b",
+  "headWidthScale": 0.95,
+  "nose": {
+    "method": "smooth bridge-depth contraction and nasal Taubin finish",
+    "bridgeContraction": 0.68,
+    "tipContraction": 0.3,
+    "tipReliefFinish": 0.23,
+    "smoothingPairs": 10,
+    "tipFairingPasses": 4,
+    "noseVertices": 5849,
+    "maxDepthReduction": 0.03918,
+    "bridgeReliefBefore": 0.033989,
+    "bridgeReliefAfter": 0.012981,
+    "tipReliefBefore": 0.06135,
+    "tipReliefAfter": 0.02707,
+    "laplacianBefore": 0.001092,
+    "laplacianAfter": 0.000543,
+    "orientationProtectedVertices": 70,
+    "connectedTopologyPreserved": true
+  },
+  "checks": {
+    "unchangedBelow3_70": true,
+    "originalIndicesPreserved": true,
+    "originalUVsPreserved": true,
+    "noInversions": true,
+    "noDegenerates": true,
+    "comparedBodyTriangles": 509172
+  },
+  "changedBodyVertices": 96708,
+  "maxDisplacement": 0.03918280027001642
+}

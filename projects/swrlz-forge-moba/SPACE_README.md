@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.93
+title: §wyrl§ Engine v11.94
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,12 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.94 · Full knee-length festival armor skirt and softer portrait (2026-10-24)
+
+All nine existing lower armor panels now overlap around the hips and thighs as a continuous festival skirt, with matching piping, insets, stitches, brocade, baubles and tassels. Every lower costume piece ends above the kneecaps; the fitted opaque shorts retain crotch coverage. The nose has a softer bridge and rounded tip, and the head is subtly narrower with a smooth neck transition. Original hair piñatas, grips, sockets, rising amber eyes and smooth leg contours remain preserved.
+
+Release **126 patches / 67 assets**, **6,495,464 HTML bytes**, SHA-256 `ede8f335dc9f9086d5d6f1ec6abf7d73711aa56bf3ea123c7494af2daac5d78c`, marker `V11_94_KNEE_SKIRT_SOFT_PORTRAIT`. The native model retains all **327 editable meshes / 1,755,616 triangles** and unchanged UV/index arrays. All **309** previous runtime/patch sources, **66** previous packaged assets and **117** companion meshes remain exact. Targeted validation and release evidence: [KNEE_SKIRT_SOFT_PORTRAIT_V11_94.md](reports/KNEE_SKIRT_SOFT_PORTRAIT_V11_94.md). Publication follows [RELEASE_PROCESS.md](RELEASE_PROCESS.md), with a separate final deployment request after source publication; owner-device visual acceptance follows.
 
 ## §E v11.93 · Smooth anatomy, visible hair piñatas and fitted coverage (2026-10-23)
 
