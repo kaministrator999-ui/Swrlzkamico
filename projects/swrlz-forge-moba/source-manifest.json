@@ -156,6 +156,6 @@
     "patches/v11_107_live_brush_footprint_depth.py",
     "patches/v11_108_sculpt_brush_ghost_preview.py"
   ],
-  "finalBytes": 6555176,
-  "finalSha256": "c420043eee37e7ebb3a30b1af02d51896304c3dd35af01e9c7198cdd1c19f45d"
+  "finalBytes": 6555286,
+  "finalSha256": "176ff6ec6baba39bffe123985ec1fecdd725b3002cf706f1a0c06950ebcf815b"
 }
