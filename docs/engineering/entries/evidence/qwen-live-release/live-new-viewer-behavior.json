@@ -1,0 +1,379 @@
+{
+  "schema": "swrlz-real-webgl-viewer-eval-v3",
+  "candidateSha256": "6b117ace52fde1f36c013109445d20ce49eaef453ea34f4dbcd572d2b77183b7",
+  "dependencyManifestSha256": "12df0568a11fe09096c650cfb1921028aa0f0c7c6d0a2bb4ab94b450cf81e5a6",
+  "sourceBytesRewritten": false,
+  "outsideNetwork": false,
+  "rows": [
+    {
+      "id": "webgl-context-and-draw",
+      "pass": true,
+      "actual": {
+        "hash": 3048689525,
+        "width": 1000,
+        "height": 720,
+        "colors": 2,
+        "detail": 174
+      }
+    },
+    {
+      "id": "visible-geometry",
+      "pass": true,
+      "actual": {
+        "hash": 3048689525,
+        "width": 1000,
+        "height": 720,
+        "colors": 2,
+        "detail": 174
+      }
+    },
+    {
+      "id": "explicit-import-map",
+      "pass": true
+    },
+    {
+      "id": "wireframe-control-reachable",
+      "pass": true,
+      "actual": {
+        "controlBox": {
+          "x": 4,
+          "y": 3,
+          "width": 13,
+          "height": 13
+        },
+        "height": 720,
+        "scrollHeight": 740,
+        "rootOverflow": "visible",
+        "bodyOverflow": "visible"
+      }
+    },
+    {
+      "id": "responsive-mobile-canvas",
+      "pass": true,
+      "actual": {
+        "x": 0,
+        "y": 20,
+        "width": 390,
+        "height": 844
+      }
+    },
+    {
+      "id": "drag-orbits-scene",
+      "pass": true,
+      "control": {
+        "before": {
+          "hash": 3048689525,
+          "width": 1000,
+          "height": 720,
+          "colors": 2,
+          "detail": 174
+        },
+        "after": {
+          "hash": 3048689525,
+          "width": 1000,
+          "height": 720,
+          "colors": 2,
+          "detail": 174
+        }
+      },
+      "treatment": {
+        "before": {
+          "hash": 3048689525,
+          "width": 1000,
+          "height": 720,
+          "colors": 2,
+          "detail": 174
+        },
+        "after": {
+          "hash": 1918526272,
+          "width": 1000,
+          "height": 720,
+          "colors": 2,
+          "detail": 257
+        }
+      }
+    },
+    {
+      "id": "wheel-zooms-scene",
+      "pass": true,
+      "control": {
+        "before": {
+          "hash": 3048689525,
+          "width": 1000,
+          "height": 720,
+          "colors": 2,
+          "detail": 174
+        },
+        "after": {
+          "hash": 3048689525,
+          "width": 1000,
+          "height": 720,
+          "colors": 2,
+          "detail": 174
+        }
+      },
+      "treatment": {
+        "before": {
+          "hash": 3048689525,
+          "width": 1000,
+          "height": 720,
+          "colors": 2,
+          "detail": 174
+        },
+        "after": {
+          "hash": 3402460621,
+          "width": 1000,
+          "height": 720,
+          "colors": 2,
+          "detail": 156
+        }
+      }
+    },
+    {
+      "id": "wireframe-control-changes-scene",
+      "pass": true,
+      "control": {
+        "before": {
+          "hash": 3048689525,
+          "width": 1000,
+          "height": 720,
+          "colors": 2,
+          "detail": 174
+        },
+        "after": {
+          "hash": 3048689525,
+          "width": 1000,
+          "height": 720,
+          "colors": 2,
+          "detail": 174
+        }
+      },
+      "treatment": {
+        "before": {
+          "hash": 3048689525,
+          "width": 1000,
+          "height": 720,
+          "colors": 2,
+          "detail": 174
+        },
+        "after": {
+          "hash": 2749455271,
+          "width": 1000,
+          "height": 720,
+          "colors": 2,
+          "detail": 16
+        }
+      }
+    },
+    {
+      "id": "dependency-loads",
+      "pass": true,
+      "served": [
+        "build/three.module.js",
+        "examples/jsm/controls/OrbitControls.js"
+      ],
+      "blocked": []
+    },
+    {
+      "id": "no-browser-errors",
+      "pass": true,
+      "errors": []
+    }
+  ],
+  "passed": 10,
+  "total": 10,
+  "status": "PASS",
+  "error": null,
+  "harnessRun": {
+    "exitCode": 0,
+    "timedOut": false,
+    "wallSeconds": 4.499,
+    "stdout": "{\"rows\":[{\"id\":\"webgl-context-and-draw\",\"pass\":true,\"actual\":{\"hash\":3048689525,\"width\":1000,\"height\":720,\"colors\":2,\"detail\":174}},{\"id\":\"visible-geometry\",\"pass\":true,\"actual\":{\"hash\":3048689525,\"width\":1000,\"height\":720,\"colors\":2,\"detail\":174}},{\"id\":\"explicit-import-map\",\"pass\":true},{\"id\":\"wireframe-control-reachable\",\"pass\":true,\"actual\":{\"controlBox\":{\"x\":4,\"y\":3,\"width\":13,\"height\":13},\"height\":720,\"scrollHeight\":740,\"rootOverflow\":\"visible\",\"bodyOverflow\":\"visible\"}},{\"id\":\"responsive-mobile-canvas\",\"pass\":true,\"actual\":{\"x\":0,\"y\":20,\"width\":390,\"height\":844}},{\"id\":\"drag-orbits-scene\",\"pass\":true,\"control\":{\"before\":{\"hash\":3048689525,\"width\":1000,\"height\":720,\"colors\":2,\"detail\":174},\"after\":{\"hash\":3048689525,\"width\":1000,\"height\":720,\"colors\":2,\"detail\":174}},\"treatment\":{\"before\":{\"hash\":3048689525,\"width\":1000,\"height\":720,\"colors\":2,\"detail\":174},\"after\":{\"hash\":1918526272,\"width\":1000,\"height\":720,\"colors\":2,\"detail\":257}}},{\"id\":\"wheel-zooms-scene\",\"pass\":true,\"control\":{\"before\":{\"hash\":3048689525,\"width\":1000,\"height\":720,\"colors\":2,\"detail\":174},\"after\":{\"hash\":3048689525,\"width\":1000,\"height\":720,\"colors\":2,\"detail\":174}},\"treatment\":{\"before\":{\"hash\":3048689525,\"width\":1000,\"height\":720,\"colors\":2,\"detail\":174},\"after\":{\"hash\":3402460621,\"width\":1000,\"height\":720,\"colors\":2,\"detail\":156}}},{\"id\":\"wireframe-control-changes-scene\",\"pass\":true,\"control\":{\"before\":{\"hash\":3048689525,\"width\":1000,\"height\":720,\"colors\":2,\"detail\":174},\"after\":{\"hash\":3048689525,\"width\":1000,\"height\":720,\"colors\":2,\"detail\":174}},\"treatment\":{\"before\":{\"hash\":3048689525,\"width\":1000,\"height\":720,\"colors\":2,\"detail\":174},\"after\":{\"hash\":2749455271,\"width\":1000,\"height\":720,\"colors\":2,\"detail\":16}}},{\"id\":\"dependency-loads\",\"pass\":true,\"served\":[\"build/three.module.js\",\"examples/jsm/controls/OrbitControls.js\"],\"blocked\":[]},{\"id\":\"no-browser-errors\",\"pass\":true,\"errors\":[]}],\"served\":[\"build/three.module.js\",\"examples/jsm/controls/OrbitControls.js\"],\"blocked\":[],\"errors\":[]}\n",
+    "stderr": "",
+    "outputTruncated": false,
+    "data": {
+      "rows": [
+        {
+          "id": "webgl-context-and-draw",
+          "pass": true,
+          "actual": {
+            "hash": 3048689525,
+            "width": 1000,
+            "height": 720,
+            "colors": 2,
+            "detail": 174
+          }
+        },
+        {
+          "id": "visible-geometry",
+          "pass": true,
+          "actual": {
+            "hash": 3048689525,
+            "width": 1000,
+            "height": 720,
+            "colors": 2,
+            "detail": 174
+          }
+        },
+        {
+          "id": "explicit-import-map",
+          "pass": true
+        },
+        {
+          "id": "wireframe-control-reachable",
+          "pass": true,
+          "actual": {
+            "controlBox": {
+              "x": 4,
+              "y": 3,
+              "width": 13,
+              "height": 13
+            },
+            "height": 720,
+            "scrollHeight": 740,
+            "rootOverflow": "visible",
+            "bodyOverflow": "visible"
+          }
+        },
+        {
+          "id": "responsive-mobile-canvas",
+          "pass": true,
+          "actual": {
+            "x": 0,
+            "y": 20,
+            "width": 390,
+            "height": 844
+          }
+        },
+        {
+          "id": "drag-orbits-scene",
+          "pass": true,
+          "control": {
+            "before": {
+              "hash": 3048689525,
+              "width": 1000,
+              "height": 720,
+              "colors": 2,
+              "detail": 174
+            },
+            "after": {
+              "hash": 3048689525,
+              "width": 1000,
+              "height": 720,
+              "colors": 2,
+              "detail": 174
+            }
+          },
+          "treatment": {
+            "before": {
+              "hash": 3048689525,
+              "width": 1000,
+              "height": 720,
+              "colors": 2,
+              "detail": 174
+            },
+            "after": {
+              "hash": 1918526272,
+              "width": 1000,
+              "height": 720,
+              "colors": 2,
+              "detail": 257
+            }
+          }
+        },
+        {
+          "id": "wheel-zooms-scene",
+          "pass": true,
+          "control": {
+            "before": {
+              "hash": 3048689525,
+              "width": 1000,
+              "height": 720,
+              "colors": 2,
+              "detail": 174
+            },
+            "after": {
+              "hash": 3048689525,
+              "width": 1000,
+              "height": 720,
+              "colors": 2,
+              "detail": 174
+            }
+          },
+          "treatment": {
+            "before": {
+              "hash": 3048689525,
+              "width": 1000,
+              "height": 720,
+              "colors": 2,
+              "detail": 174
+            },
+            "after": {
+              "hash": 3402460621,
+              "width": 1000,
+              "height": 720,
+              "colors": 2,
+              "detail": 156
+            }
+          }
+        },
+        {
+          "id": "wireframe-control-changes-scene",
+          "pass": true,
+          "control": {
+            "before": {
+              "hash": 3048689525,
+              "width": 1000,
+              "height": 720,
+              "colors": 2,
+              "detail": 174
+            },
+            "after": {
+              "hash": 3048689525,
+              "width": 1000,
+              "height": 720,
+              "colors": 2,
+              "detail": 174
+            }
+          },
+          "treatment": {
+            "before": {
+              "hash": 3048689525,
+              "width": 1000,
+              "height": 720,
+              "colors": 2,
+              "detail": 174
+            },
+            "after": {
+              "hash": 2749455271,
+              "width": 1000,
+              "height": 720,
+              "colors": 2,
+              "detail": 16
+            }
+          }
+        },
+        {
+          "id": "dependency-loads",
+          "pass": true,
+          "served": [
+            "build/three.module.js",
+            "examples/jsm/controls/OrbitControls.js"
+          ],
+          "blocked": []
+        },
+        {
+          "id": "no-browser-errors",
+          "pass": true,
+          "errors": []
+        }
+      ],
+      "served": [
+        "build/three.module.js",
+        "examples/jsm/controls/OrbitControls.js"
+      ],
+      "blocked": [],
+      "errors": []
+    }
+  }
+}

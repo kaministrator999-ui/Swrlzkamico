@@ -1,0 +1,507 @@
+{
+  "source": "actual newly deployed Space via public Station HTTP; fresh anonymous thread",
+  "requestId": "eval-9fd6aa011f1a",
+  "prompt": "Create a complete single-file HTML 3D model viewer using Three.js. Show a cube immediately, with mouse drag to orbit and wheel zoom to inspect the scene, a working wireframe checkbox, and responsive sizing. Use ES modules with an import map pinned to Three.js 0.160.0 on jsDelivr. Wire every visible control. Return one complete HTML code fence, without TODOs or commented-out implementation. Do not claim tests ran. Keep the wireframe control visible and reachable on desktop and mobile.",
+  "requestedModel": "700m",
+  "seconds": 79.35717525899963,
+  "generation": {
+    "requestId": "eval-9fd6aa011f1a",
+    "threadId": "test-15f899e89c2240d581b9b9bdfe621333",
+    "modelId": "700m",
+    "requestedModelId": "700m",
+    "selectedModelId": "coder",
+    "text": "```html\n<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>3D Cube Viewer</title>\n    <script type=\"importmap\">\n        {\n            \"imports\": {\n                \"three\": \"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js\",\n                \"OrbitControls\": \"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/OrbitControls.js\"\n            }\n        }\n    </script>\n    <style>\n        body { margin: 0; }\n        canvas { display: block; }\n    </style>\n</head>\n<body>\n    <input type=\"checkbox\" id=\"wireframeCheckbox\"> Wireframe\n    <script type=\"module\">\n        import * as THREE from 'three';\n        import { OrbitControls } from 'OrbitControls';\n\n        const scene = new THREE.Scene();\n        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);\n        const renderer = new THREE.WebGLRenderer();\n        renderer.setSize(window.innerWidth, window.innerHeight);\n        document.body.appendChild(renderer.domElement);\n\n        const geometry = new THREE.BoxGeometry();\n        const material = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: false });\n        const cube = new THREE.Mesh(geometry, material);\n        scene.add(cube);\n\n        camera.position.z = 5;\n\n        const controls = new OrbitControls(camera, renderer.domElement);\n\n        const wireframeCheckbox = document.getElementById('wireframeCheckbox');\n        wireframeCheckbox.addEventListener('change', () => {\n            material.wireframe = wireframeCheckbox.checked;\n        });\n\n        window.addEventListener('resize', onWindowResize, false);\n\n        function onWindowResize() {\n            camera.aspect = window.innerWidth / window.innerHeight;\n            camera.updateProjectionMatrix();\n            renderer.setSize(window.innerWidth, window.innerHeight);\n        }\n\n        function animate() {\n            requestAnimationFrame(animate);\n            controls.update();\n            renderer.render(scene, camera);\n        }\n\n        animate();\n    </script>\n</body>\n</html>\n```",
+    "phase": "COMPLETE",
+    "terminal": true,
+    "lastSeq": 14,
+    "status": [
+      {
+        "phase": "QUEUED",
+        "reason": "Accepted by Workstation",
+        "atUnixMs": 1792873006492
+      },
+      {
+        "phase": "GENERATING",
+        "reason": "Workstation admitted generation",
+        "atUnixMs": 1792873006494
+      },
+      {
+        "seq": 1,
+        "phase": "PROGRAMMING_INTENT",
+        "reason": "",
+        "atUnixMs": 1792873006499
+      },
+      {
+        "seq": 2,
+        "phase": "CODER_AUTO_ROUTE",
+        "reason": "programming-intent",
+        "categories": [
+          "MODEL_ROUTE"
+        ],
+        "provider": "coder",
+        "atUnixMs": 1792873006499
+      },
+      {
+        "seq": 3,
+        "phase": "DIAGNOSTIC_READY",
+        "reason": "",
+        "atUnixMs": 1792873006499
+      },
+      {
+        "seq": 4,
+        "phase": "RESPONSE_COGNITION",
+        "reason": "",
+        "atUnixMs": 1792873006500
+      },
+      {
+        "seq": 5,
+        "phase": "PROGRAMMING_INTENT",
+        "reason": "",
+        "atUnixMs": 1792873006500
+      },
+      {
+        "seq": 6,
+        "phase": "LOADING",
+        "reason": "",
+        "categories": [],
+        "atUnixMs": 1792873006501
+      },
+      {
+        "seq": 7,
+        "phase": "CONTEXT_BUDGETED",
+        "reason": "",
+        "atUnixMs": 1792873006527
+      },
+      {
+        "seq": 8,
+        "phase": "GENERATING",
+        "reason": "",
+        "categories": [],
+        "atUnixMs": 1792873006527
+      },
+      {
+        "seq": 9,
+        "phase": "RESOURCE_ALLOCATED",
+        "reason": "Workstation inference budget active",
+        "atUnixMs": 1792873006527
+      },
+      {
+        "seq": 10,
+        "phase": "CANDIDATE_ATTEMPT",
+        "reason": "attempt=1",
+        "atUnixMs": 1792873083852
+      },
+      {
+        "seq": 12,
+        "phase": "CANDIDATE_PASS",
+        "reason": "",
+        "atUnixMs": 1792873083852
+      },
+      {
+        "seq": 13,
+        "phase": "GENERATION_TELEMETRY",
+        "reason": "",
+        "atUnixMs": 1792873083852
+      },
+      {
+        "seq": 14,
+        "phase": "COMPLETE",
+        "reason": "",
+        "atUnixMs": 1792873083852
+      },
+      {
+        "phase": "PERSISTING",
+        "reason": "Saving the response to the chat",
+        "atUnixMs": 1792873083852
+      }
+    ],
+    "acceptedAtUnixMs": 1792873006492,
+    "startedAtUnixMs": 1792873006494,
+    "completedAtUnixMs": 1792873083852,
+    "queueWaitMs": 2,
+    "stationTiming": {
+      "acceptedAtUnixMs": 1792873006492,
+      "startedAtUnixMs": 1792873006494,
+      "completedAtUnixMs": 1792873083852,
+      "queueWaitMs": 2,
+      "stationRunMs": 77358,
+      "endToEndMs": 77360
+    },
+    "resourcePlan": {
+      "cpuCapacity": 16,
+      "decodeThreads": 8,
+      "batchThreads": 16,
+      "maxResponseTokens": 3072
+    },
+    "diagnosticTrace": {
+      "schema": "swrlz-decision-trace-v1",
+      "assistant": "\u00a7wyrlz",
+      "user": "the user",
+      "historyTurns": 0,
+      "historyDepth": "none",
+      "profileLayers": {
+        "builtinAssistant": true,
+        "assistantCustomization": false,
+        "userProfile": false
+      },
+      "guards": {
+        "longHistoryClaimSupported": false,
+        "profileIsNotThreadHistory": true,
+        "roleOwnershipEnabled": true
+      },
+      "memoryPolicy": {
+        "source": "conversation evidence only",
+        "rawPrivateReasoningStored": false,
+        "candidateValidationRequired": true
+      }
+    },
+    "memoryCandidates": [],
+    "responseCognition": {
+      "schema": "swrlz-response-cognition-v1",
+      "relation": "standalone",
+      "operation": "create",
+      "historyAvailable": false,
+      "historyTurns": 0,
+      "anchorUserIndex": null,
+      "anchorAssistantIndex": null,
+      "explicitReference": true,
+      "questionLike": false,
+      "detailMode": "normal",
+      "requestedCount": null,
+      "outputOnly": false,
+      "preserveConstraint": true,
+      "programming": true,
+      "deliverable": "code",
+      "sourcePreference": "unspecified"
+    },
+    "onlineResearch": null,
+    "onlineTrace": [],
+    "onlineLogPersistence": null,
+    "sources": [],
+    "widgets": [],
+    "programmingIntent": {
+      "schema": "swrlz-programming-intent-v1",
+      "codingTask": true,
+      "projectContext": "none",
+      "changeClass": "feature",
+      "artifactContinuation": false,
+      "artifactMutationRequested": false,
+      "artifactTargetId": "",
+      "artifactTargetMessageId": "",
+      "baseRevision": 0,
+      "baseSourceHash": "",
+      "newProject": false,
+      "pinnedCodeArtifactCount": 0,
+      "intentContract": {
+        "schema": "swrlz-programming-intent-contract-v3",
+        "originalRequest": "Create a complete single-file HTML 3D model viewer using Three.js. Show a cube immediately, with mouse drag to orbit and wheel zoom to inspect the scene, a working wireframe checkbox, and responsive sizing. Use ES modules with an import map pinned to Three.js 0.160.0 on jsDelivr. Wire every visible control. Return one complete HTML code fence, without TODOs or commented-out implementation. Do not claim tests ran. Keep the wireframe control visible and reachable on desktop and mobile.",
+        "must": [
+          "Create a complete single-file HTML 3D model viewer using Three.js.",
+          "Show a cube immediately, with mouse drag to orbit and wheel zoom to inspect the scene, a working wireframe checkbox, and responsive sizing.",
+          "Use ES modules with an import map pinned to Three.js 0.160.0 on jsDelivr.",
+          "Wire every visible control."
+        ],
+        "mustNot": [
+          "Return one complete HTML code fence, without TODOs or commented-out implementation.",
+          "Do not claim tests ran."
+        ],
+        "preserve": [
+          "Keep the wireframe control visible and reachable on desktop and mobile."
+        ],
+        "languageContract": {
+          "schema": "swrlz-language-contract-v1",
+          "explicit": true,
+          "requestedLanguages": [
+            "html"
+          ],
+          "requiredLanguages": [
+            "html"
+          ],
+          "allowedCompanionLanguages": [
+            "css",
+            "javascript"
+          ],
+          "allowedLanguages": [
+            "html",
+            "css",
+            "javascript"
+          ],
+          "artifactType": "web-page",
+          "substitutionAllowed": false
+        },
+        "acceptanceEvidence": [
+          "technical-validity: returned candidate must be complete and syntactically/build valid when applicable",
+          "intent-validity: original requirements and preservation constraints must be rechecked after every repair",
+          "api-validity: required wrapper/name/signature must remain present unless explicitly changed"
+        ],
+        "completionRule": "done only when complete-source, technical validity, and intent validity all pass"
+      },
+      "repairDirection": "",
+      "canonicalCarry": false,
+      "failureEvidence": null,
+      "failureHistory": [],
+      "repairConstraints": {
+        "schema": "swrlz-repair-constraints-v1",
+        "dependencyPolicy": "evidence-bounded",
+        "unavailableDependencies": [],
+        "forbiddenDependencies": [],
+        "currentReceiptDependencies": [],
+        "addedDependencies": [],
+        "carriedUnavailableDependencies": [],
+        "releasedDependencies": [],
+        "constraintCount": 0
+      },
+      "behaviorLedger": {
+        "schema": "swrlz-behavior-ledger-v1",
+        "suiteKey": "",
+        "currentPassingCases": [],
+        "currentFailingCases": [],
+        "previousPassingCases": [],
+        "previousFailingCases": [],
+        "knownPassingCases": [],
+        "preservePassingCases": [],
+        "resolvedCases": [],
+        "regressedCases": [],
+        "newlyPassingCases": [],
+        "currentScore": null,
+        "bestKnownScore": null,
+        "currentTestedArtifact": null,
+        "bestKnownArtifact": null,
+        "rebaseRecommended": false
+      },
+      "behaviorRepairBase": {
+        "mode": "latest-failing-source",
+        "sourceFingerprint": null,
+        "artifactId": "",
+        "revision": 0,
+        "sourceHash": ""
+      },
+      "behaviorRepairBaseSource": "",
+      "needsFailureEvidence": false,
+      "evidenceRequest": "",
+      "repairLifecycleState": "CANDIDATE_GENERATION",
+      "source": "brain-router"
+    },
+    "intentContract": {
+      "schema": "swrlz-programming-intent-contract-v3",
+      "originalRequest": "Create a complete single-file HTML 3D model viewer using Three.js. Show a cube immediately, with mouse drag to orbit and wheel zoom to inspect the scene, a working wireframe checkbox, and responsive sizing. Use ES modules with an import map pinned to Three.js 0.160.0 on jsDelivr. Wire every visible control. Return one complete HTML code fence, without TODOs or commented-out implementation. Do not claim tests ran. Keep the wireframe control visible and reachable on desktop and mobile.",
+      "must": [
+        "Create a complete single-file HTML 3D model viewer using Three.js.",
+        "Show a cube immediately, with mouse drag to orbit and wheel zoom to inspect the scene, a working wireframe checkbox, and responsive sizing.",
+        "Use ES modules with an import map pinned to Three.js 0.160.0 on jsDelivr.",
+        "Wire every visible control."
+      ],
+      "mustNot": [
+        "Return one complete HTML code fence, without TODOs or commented-out implementation.",
+        "Do not claim tests ran."
+      ],
+      "preserve": [
+        "Keep the wireframe control visible and reachable on desktop and mobile."
+      ],
+      "languageContract": {
+        "schema": "swrlz-language-contract-v1",
+        "explicit": true,
+        "requestedLanguages": [
+          "html"
+        ],
+        "requiredLanguages": [
+          "html"
+        ],
+        "allowedCompanionLanguages": [
+          "css",
+          "javascript"
+        ],
+        "allowedLanguages": [
+          "html",
+          "css",
+          "javascript"
+        ],
+        "artifactType": "web-page",
+        "substitutionAllowed": false
+      },
+      "acceptanceEvidence": [
+        "technical-validity: returned candidate must be complete and syntactically/build valid when applicable",
+        "intent-validity: original requirements and preservation constraints must be rechecked after every repair",
+        "api-validity: required wrapper/name/signature must remain present unless explicitly changed"
+      ],
+      "completionRule": "done only when complete-source, technical validity, and intent validity all pass"
+    },
+    "failureEvidence": null,
+    "repairConstraints": {
+      "schema": "swrlz-repair-constraints-v1",
+      "dependencyPolicy": "evidence-bounded",
+      "unavailableDependencies": [],
+      "forbiddenDependencies": [],
+      "currentReceiptDependencies": [],
+      "addedDependencies": [],
+      "carriedUnavailableDependencies": [],
+      "releasedDependencies": [],
+      "constraintCount": 0
+    },
+    "behaviorLedger": {
+      "schema": "swrlz-behavior-ledger-v1",
+      "suiteKey": "",
+      "currentPassingCases": [],
+      "currentFailingCases": [],
+      "previousPassingCases": [],
+      "previousFailingCases": [],
+      "knownPassingCases": [],
+      "preservePassingCases": [],
+      "resolvedCases": [],
+      "regressedCases": [],
+      "newlyPassingCases": [],
+      "currentScore": null,
+      "bestKnownScore": null,
+      "currentTestedArtifact": null,
+      "bestKnownArtifact": null,
+      "rebaseRecommended": false
+    },
+    "behaviorRepairBase": {
+      "mode": "latest-failing-source",
+      "sourceFingerprint": null,
+      "artifactId": "",
+      "revision": 0,
+      "sourceHash": ""
+    },
+    "candidateValidation": {
+      "status": "PASS",
+      "reasons": [],
+      "languageContract": {
+        "schema": "swrlz-language-contract-v1",
+        "explicit": true,
+        "requestedLanguages": [
+          "html"
+        ],
+        "requiredLanguages": [
+          "html"
+        ],
+        "allowedCompanionLanguages": [
+          "css",
+          "javascript"
+        ],
+        "allowedLanguages": [
+          "html",
+          "css",
+          "javascript"
+        ],
+        "artifactType": "web-page",
+        "substitutionAllowed": false
+      },
+      "detectedLanguages": [
+        "html",
+        "css",
+        "javascript"
+      ],
+      "diagnosticGrounded": false,
+      "receiptCategories": [],
+      "activeRepairConstraints": {
+        "dependencyPolicy": "evidence-bounded",
+        "unavailableDependencies": [],
+        "carriedUnavailableDependencies": []
+      },
+      "behaviorLedger": {
+        "currentScore": null,
+        "bestKnownScore": null,
+        "regressedCases": [],
+        "resolvedCases": [],
+        "preservePassingCases": [],
+        "rebaseRecommended": false,
+        "bestKnownArtifact": null,
+        "repairBaseMode": "latest-failing-source"
+      },
+      "structuredReceipt": {},
+      "executionVerified": false,
+      "verificationState": "NOT_EXECUTION_VERIFIED"
+    },
+    "candidateAttempts": [
+      {
+        "schema": "swrlz-candidate-attempt-v1",
+        "attempt": 1,
+        "trigger": "initial",
+        "durationMs": 77318.648,
+        "firstTokenLatencyMs": 30688.687,
+        "deltaChunks": 470,
+        "candidateFingerprint": "a204a12e9ee5a818",
+        "changedFromPreviousAttempt": null,
+        "changedFromRepairTarget": null,
+        "validationStatus": "PASS",
+        "validationReasons": [],
+        "accepted": true
+      }
+    ],
+    "generationTelemetry": {
+      "schema": "swrlz-programming-generation-telemetry-v1",
+      "attemptCount": 1,
+      "regenerationCount": 0,
+      "firstCandidateRejected": false,
+      "finalAcceptedAttempt": 1,
+      "finalCandidateStatus": "PASS",
+      "guardedTurn": true,
+      "repairTurn": false,
+      "strictLanguage": true,
+      "modelLoadLatencyMs": 25.966,
+      "visibleFirstDeltaLatencyMs": 77350.786,
+      "engineTotalLatencyMs": 77350.838,
+      "totalCandidateGenerationMs": 77318.648,
+      "attempts": [
+        {
+          "schema": "swrlz-candidate-attempt-v1",
+          "attempt": 1,
+          "trigger": "initial",
+          "durationMs": 77318.648,
+          "firstTokenLatencyMs": 30688.687,
+          "deltaChunks": 470,
+          "candidateFingerprint": "a204a12e9ee5a818",
+          "changedFromPreviousAttempt": null,
+          "changedFromRepairTarget": null,
+          "validationStatus": "PASS",
+          "validationReasons": [],
+          "accepted": true
+        }
+      ]
+    },
+    "engineCompletionTelemetry": {
+      "totalLatencyMs": 77350.838,
+      "loadLatencyMs": 25.966,
+      "firstDeltaLatencyMs": 77350.786
+    },
+    "repairDiagnostics": [],
+    "artifactReceipt": {
+      "action": "ARTIFACT_CREATED",
+      "artifactId": "artifact-fdb8a414a49947bc9279c4a7a2fc3b97",
+      "revision": 1,
+      "sourceHash": "7445ca6c1f1ca5250151d0e1abc4a0da18f2c92906d98635b9ed6a85862261d0"
+    },
+    "githubTelemetryPersistence": {
+      "ok": true,
+      "path": "runtime-diagnostics/programming/eval-9fd6aa011f1a/candidate-attempt-telemetry.json",
+      "branch": "runtime",
+      "status": 201,
+      "attempts": 1,
+      "conflictCount": 0,
+      "conflictRecovered": false,
+      "errorPreview": null
+    },
+    "contextBudget": {
+      "contextWindowTokens": 8192,
+      "inputBudgetTokens": 7680,
+      "estimatedInputTokens": 2451,
+      "reservedOutputTokens": 3072,
+      "historyMessagesDropped": 0,
+      "historyMessagesKept": 0,
+      "repairTurn": false,
+      "repairContext": {},
+      "tokenBreakdown": {
+        "system": 2339,
+        "history": 0,
+        "currentPrompt": 112,
+        "total": 2451
+      }
+    },
+    "terminalType": "COMPLETE"
+  },
+  "deadlineReached": false,
+  "authenticatedAcceptance": false,
+  "cookieValuesRecorded": false,
+  "diagnosticsMayPersist": true
+}

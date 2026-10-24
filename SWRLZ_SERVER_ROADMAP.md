@@ -1,3 +1,13 @@
+## UPDATE FINISHED — 2026-10-24 — Qwen7B coding upgrade / live model verified
+
+**Outcome:** guarded HF deployment SUCCESS and fresh live inference/browser acceptance. Exact source `0e361f97d9b0ec72a63581dc06ac22c610a11f1f`; Space `a390838d5da21354c702573666bfb432b59e3a91`; rollback `ffc9d264e3ae7f9df8edca5cc878fd2c8587f9fc`; workflow40128464710. Existing main Forge/§E work preserved.
+
+Qwen coding backend grows from1.5B to pinned7B;700M conversational route remains. Shared code/media and HTML-viewer classification, explicit behavior preservation, version-scoped API grounding, source-bound proposal validation, and scoped execution-receipt repair are active. No model weights were fine-tuned and no provider permission gate was removed.
+
+Actual live request `eval-9fd6aa011f1a entered as700m and routed to coder, returned complete viewer code in79.4s, and its unchanged HTML passed10/10 isolated WebGL/browser cases. The engineer-built sandbox reference is not model acceptance. Local72tests+88subtests,19HFcandidate checks, adjacent regressions and exact-source GitHub CI pass. Core sandbox main310ce70a/CI40126569187 success.
+
+Versions: Repository1.0.239, Server2.3.440, LALM2.1.202; Chat1.5.157/manifest152/streamV2/deploy-control1.0.41 unchanged. Signed-in/provider acceptance remains pending; universal coding competence is not claimed. Current receipt: `docs/engineering/entries/2026-10-24_QWEN_PROJECT_GENERATION.md` and `docs/engineering/entries/evidence/qwen-live-release/receipt.json`.
+
 ## UPDATE PUBLICATION REQUESTED — 2026-10-24 — Qwen project generation
 
 Owner explicitly authorized publishing the validated coding updates. Candidate source `0e361f97d9b0ec72a63581dc06ac22c610a11f1f`, based on accepted Chatv294; exact-source CI [40128272787](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40128272787) is SUCCESS. Existing main Forge/§E changes and deployment workflows are preserved. The request pins this source SHA through the existing HF request→guarded workflow→kamiloki/Swyrlz chain. No direct HF upload or hosting move. Publication/runtime acceptance pending; model/default/version/build receipts must be read from the current checkpoint, not inferred from this request.

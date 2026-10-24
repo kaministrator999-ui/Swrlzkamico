@@ -1,6 +1,6 @@
 # Qwen project generation and authorized HF publication
 
-Mode: IMPLEMENT. State: IN_PROGRESS. Owner explicitly clarified that Qwen must generate working projects, including HTML3D viewers; an engineer-built reference is not model acceptance. Owner explicitly authorized publishing all validated updates live. No additional deploy confirmation is required.
+Mode: IMPLEMENT. State: DEPLOYED_LIVE_VERIFIED. Owner explicitly clarified that Qwen must generate working projects, including HTML3D viewers; an engineer-built reference is not model acceptance. Owner explicitly authorized publishing all validated updates live. No additional deploy confirmation is required.
 
 ## Scope and authority
 
@@ -28,7 +28,7 @@ The current task asks for a single-file HTML viewer with an initial cube, drag o
 - After cognition/artifact fixes:3B emitted an HTML candidate (89.2s) but called a nonexistent geometry API; isolated browser execution failed.7B rendered actual geometry with a correct import map (183.3s) but omitted orbit/zoom and had inconsistent initial wireframe state.
 - A separate driver-only checklist experiment produced the right feature list but3B still emitted invalid API usage and omitted requested controls. That experiment is NOT integrated or represented as a quality improvement.
 -7B same-thread repair was given actual independent failing interactions and the original source/history. It added an invalid namespace OrbitControls call; no success is claimed.
-- With library evidence,3B corrected some API usage but still omitted the import map/control requirements.7B generated a real working WebGL viewer with orbit, zoom, wireframe and correct dependency imports:8/9 independent checks, with mobile overflow remaining. The actual generated source was not edited by the engineer. A final7B layout-only repair uses its exact history plus the independent failing viewport receipt and passing8-case list; the second attempt fixed viewport overflow and passed all9 original WebGL checks (408.7s including a rejected unchanged first draft). A separate source review found that the checkbox became overflow-clipped below the canvas; an additional reachability check records9/10 and a model-only UI repair is in progress. The9-case PASS is not represented as complete UI acceptance.
+- With library evidence,3B corrected some API usage but still omitted the import map/control requirements.7B generated a real working WebGL viewer with orbit, zoom, wireframe and correct dependency imports:8/9 independent checks, with mobile overflow remaining. The actual generated source was not edited by the engineer. A final7B layout-only repair uses its exact history plus the independent failing viewport receipt and passing8-case list; the second attempt fixed viewport overflow and passed all9 original WebGL checks (408.7s including a rejected unchanged first draft). A separate source review found that the checkbox became overflow-clipped below the canvas; an additional reachability check records9/10 and the subsequent model-only UI repair passed10/10, as recorded in final acceptance below. The9-case PASS is not represented as complete UI acceptance.
 
 The independent browser evaluator runs only within Bubblewrap: cleared environment, no credentials/host checkout or outside network, resource limits, read-only synthetic source/software. It uses real Chromium SwiftShader WebGL, verified by clear/readPixels with glError0. CDN URLs are fulfilled with exact pinned official module bytes; candidate HTML is unchanged. Causal interaction tests use identical seeded randomness and an explicit equal-frame RAF scheduler; automatic animation cannot count as drag/zoom. The earlier clock-based viewer harness produced a false drag attribution and is historical, superseded by the equal-frame method. Async resize is allowed to deliver its real event before measuring. Source review remains separate from a syntax/shape PASS.
 
@@ -40,8 +40,18 @@ These are development/regression tasks, not a statistically held-out benchmark o
 
 Sandbox baseline/reference updates were published at `310ce70` on Swrlzing-core main after their independent16/24 browser checks. They remain engineer-built fixtures, not proof of Qwen generation.
 
-Publication status: PENDING. Source SHA, guarded workflow run, rollback Space revision, deployed Space revision and live behavior will be recorded from actual results. An upload or green workflow alone is not model-quality acceptance.
+Initial publication status: PENDING (historical; superseded by final acceptance below). Source SHA, guarded workflow run, rollback Space revision, deployed Space revision and live behavior will be recorded from actual results. An upload or green workflow alone is not model-quality acceptance.
 
 ## Guarded publication request
 
 Owner authorized live publication. Exact candidate source `0e361f97d9b0ec72a63581dc06ac22c610a11f1f`; CI run 40128272787 completed SUCCESS. This request starts the canonical HF workflow; upload/build/runtime acceptance remain pending and will be recorded separately.
+
+## Observed live release — final acceptance
+
+Guarded deploy run [40128464710](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40128464710) completed SUCCESS. Space is RUNNING at `a390838d5da21354c702573666bfb432b59e3a91`, with MODEL_PROVENANCE binding exact source `0e361f97d9b0ec72a63581dc06ac22c610a11f1f`. Previous Space revision `ffc9d264e3ae7f9df8edca5cc878fd2c8587f9fc` remains the rollback reference. The live catalogue names pinned Qwen7B.
+
+Fresh anonymous700M inference completed in9.8s. A fresh live viewer request entered as model700m, automatically routed to coder, and completed in79.4s. Its unmodified generated HTML passed all10 independent isolated WebGL/browser checks, including visible geometry, import map, real drag/zoom, wireframe, mobile sizing, reachable control, dependency loads and no browser errors. This is first-request live success for this explicit task; the earlier native development sequence required repair and remains historical. No engineer-written viewer was substituted. Local final repair also passed10/10 with JavaScript preserved during the UI correction.
+
+Canonical runtime registry updated after observed publication: Repository Work1.0.239, Server2.3.440, LALM2.1.202. Web Chat1.5.157, streamV2, manifest152 and deployment-control1.0.41 remain unchanged. Registry commit `6788c54b6117ddfab68c52b1ebfe439d711d9eea`. Source archive SHA256 `3c7930270cf07749ec80456602764f8db85dc9089ed883a46314041fe41fb53d`; its pending observations are historical and supplemented by this release receipt.
+
+Disposition: source/integration/build/live-model evidence recorded. This verifies one concrete coding task and iterative repair capability, not universal project competence or trained-weight improvement. Signed-in Google/GitHub provider acceptance and existing Stage-1 write restrictions remain separate. No passwords or verification codes were used.

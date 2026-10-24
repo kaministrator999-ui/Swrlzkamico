@@ -1,0 +1,27 @@
+{
+  "schema": "swrlz-qwen-project-generation-acceptance-v1",
+  "sourceCommit": "0e361f97d9b0ec72a63581dc06ac22c610a11f1f",
+  "model": "Qwen2.5-Coder7B Q4_K_M",
+  "weightsFineTuned": false,
+  "actualModelOutput": true,
+  "handEditedCandidate": false,
+  "engineerBuiltReferenceSuppliedToModel": false,
+  "cases": 10,
+  "passed": 10,
+  "receipt": "viewer-7b-ui-repair-behavior.json",
+  "html": "viewer-7b-ui-repair.html",
+  "htmlSha256": "bf7636959049b311fe2b75a8585332d595693a3e5383a451c461255c415bf8a5",
+  "repairSequence": [
+    "Fresh generation with verified API facts passed8/9 original WebGL checks; mobile overflow failed",
+    "Actual viewport receipt produced9/9 after one unchanged first attempt rejected and one corrected second attempt",
+    "Additional source review/reachability check found clipped control; actual UI receipt produced10/10 after one unchanged attempt rejected and a corrected second attempt"
+  ],
+  "finalJavaScriptPreservedDuringUIRepair": true,
+  "evidenceLimits": [
+    "Local actual model engine with pinned GGUF and fixedseed42, not live service generation",
+    "One development/regression viewer task, not universal coding competence",
+    "Browser checks use exact official modulebytes in isolated SwiftShaderWebGL with equal-frame causal controls",
+    "Actual model naturally needed iterative independent feedback; not a first-attempt success",
+    "Signed-in Google/GitHub provider acceptance is separate and not tested here"
+  ]
+}

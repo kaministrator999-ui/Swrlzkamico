@@ -1,0 +1,57 @@
+{
+  "schema": "swrlz-live-qwen-release-v1",
+  "recordedAt": "2026-10-24T20:23:07.381020+00:00",
+  "sourceCommit": "0e361f97d9b0ec72a63581dc06ac22c610a11f1f",
+  "sourceBranch": "integration/qwen-project-generation-20261024",
+  "mainRequestCommit": "56366f2c3d91d533fdaa4afea3493f910fe1ad53",
+  "ciRun": 40128272787,
+  "deployRun": {
+    "id": 40128464710,
+    "status": "completed",
+    "conclusion": "success",
+    "html_url": "https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40128464710",
+    "head_sha": "56366f2c3d91d533fdaa4afea3493f910fe1ad53",
+    "created_at": "2026-10-24T20:08:40Z",
+    "updated_at": "2026-10-24T20:12:16Z"
+  },
+  "spaceRevision": "a390838d5da21354c702573666bfb432b59e3a91",
+  "spaceStage": "RUNNING",
+  "rollbackSpaceRevision": "ffc9d264e3ae7f9df8edca5cc878fd2c8587f9fc",
+  "coder": "Qwen2.5-Coder7B Instruct Q4_K_M",
+  "coderRevision": "13fb94bfda8c8cf22497dc57b78f391a9acb426a",
+  "modelWeightsFineTuned": false,
+  "live700mProbe": "eval-63ed4ba7ef99",
+  "liveCoderProbe": "eval-9fd6aa011f1a",
+  "requestedModel": "700m",
+  "selectedModel": "coder",
+  "liveGenerationSeconds": 79.35717525899963,
+  "browserAcceptance": {
+    "status": "PASS",
+    "passed": 10,
+    "total": 10,
+    "candidateSha256": "6b117ace52fde1f36c013109445d20ce49eaef453ea34f4dbcd572d2b77183b7",
+    "handEdited": false,
+    "sourceBytesRewritten": false
+  },
+  "sourceArchive": {
+    "zip": "/workspace/cloud-setup/deliverables/qwen-project-generation-r4.zip",
+    "sha256": "3c7930270cf07749ec80456602764f8db85dc9089ed883a46314041fe41fb53d",
+    "bytes": 3943528,
+    "source": "0e361f97d9b0ec72a63581dc06ac22c610a11f1f",
+    "files": 676
+  },
+  "sandboxCommit": "310ce70a",
+  "sandboxCiRun": 40126569187,
+  "signedInGoogleGitHubAcceptance": false,
+  "versionsBefore": {
+    "repository-work": "1.0.238",
+    "server-runtime": "2.3.439",
+    "lalm-engine": "2.1.201"
+  },
+  "versionsAfter": {
+    "repository-work": "1.0.239",
+    "server-runtime": "2.3.440",
+    "lalm-engine": "2.1.202"
+  },
+  "runtimeRegistryCommit": "6788c54b6117ddfab68c52b1ebfe439d711d9eea"
+}

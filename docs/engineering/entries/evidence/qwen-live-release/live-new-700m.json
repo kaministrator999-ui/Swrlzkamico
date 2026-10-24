@@ -1,0 +1,266 @@
+{
+  "source": "actual newly deployed Space via public Station HTTP; fresh anonymous thread",
+  "requestId": "eval-63ed4ba7ef99",
+  "prompt": "In one short sentence, explain why measurements are better evidence than guesses.",
+  "requestedModel": "700m",
+  "seconds": 9.7733138399999,
+  "generation": {
+    "requestId": "eval-63ed4ba7ef99",
+    "threadId": "test-3842789f242a400f90eff53b5f5cbd87",
+    "modelId": "700m",
+    "requestedModelId": "700m",
+    "selectedModelId": "700m",
+    "text": "Measurements provide quantifiable data that directly correlates with observable phenomena, reducing ambiguity and error compared to subjective guesses.",
+    "phase": "COMPLETE",
+    "terminal": true,
+    "lastSeq": 34,
+    "status": [
+      {
+        "phase": "QUEUED",
+        "reason": "Accepted by Workstation",
+        "atUnixMs": 1792872914970
+      },
+      {
+        "phase": "GENERATING",
+        "reason": "Workstation admitted generation",
+        "atUnixMs": 1792872914981
+      },
+      {
+        "seq": 1,
+        "phase": "PROGRAMMING_INTENT",
+        "reason": "",
+        "atUnixMs": 1792872914989
+      },
+      {
+        "seq": 2,
+        "phase": "DIAGNOSTIC_READY",
+        "reason": "",
+        "atUnixMs": 1792872914990
+      },
+      {
+        "seq": 3,
+        "phase": "RESPONSE_COGNITION",
+        "reason": "",
+        "atUnixMs": 1792872914993
+      },
+      {
+        "seq": 4,
+        "phase": "LOADING",
+        "reason": "",
+        "categories": [],
+        "atUnixMs": 1792872914994
+      },
+      {
+        "seq": 5,
+        "phase": "CONTEXT_BUDGETED",
+        "reason": "",
+        "atUnixMs": 1792872915014
+      },
+      {
+        "seq": 6,
+        "phase": "GENERATING",
+        "reason": "",
+        "categories": [],
+        "atUnixMs": 1792872915014
+      },
+      {
+        "seq": 7,
+        "phase": "RESOURCE_ALLOCATED",
+        "reason": "Workstation inference budget active",
+        "atUnixMs": 1792872915015
+      },
+      {
+        "seq": 31,
+        "phase": "CANDIDATE_ATTEMPT",
+        "reason": "attempt=1",
+        "atUnixMs": 1792872923848
+      },
+      {
+        "seq": 32,
+        "phase": "CANDIDATE_NOT_APPLICABLE",
+        "reason": "",
+        "atUnixMs": 1792872923848
+      },
+      {
+        "seq": 33,
+        "phase": "GENERATION_TELEMETRY",
+        "reason": "",
+        "atUnixMs": 1792872923848
+      },
+      {
+        "seq": 34,
+        "phase": "COMPLETE",
+        "reason": "",
+        "atUnixMs": 1792872923848
+      },
+      {
+        "phase": "PERSISTING",
+        "reason": "Saving the response to the chat",
+        "atUnixMs": 1792872923848
+      }
+    ],
+    "acceptedAtUnixMs": 1792872914970,
+    "startedAtUnixMs": 1792872914981,
+    "completedAtUnixMs": 1792872923848,
+    "queueWaitMs": 11,
+    "stationTiming": {
+      "acceptedAtUnixMs": 1792872914970,
+      "startedAtUnixMs": 1792872914981,
+      "completedAtUnixMs": 1792872923848,
+      "queueWaitMs": 11,
+      "stationRunMs": 8867,
+      "endToEndMs": 8878
+    },
+    "resourcePlan": {
+      "cpuCapacity": 16,
+      "decodeThreads": 8,
+      "batchThreads": 16,
+      "maxResponseTokens": 768
+    },
+    "diagnosticTrace": {
+      "schema": "swrlz-decision-trace-v1",
+      "assistant": "\u00a7wyrlz",
+      "user": "the user",
+      "historyTurns": 0,
+      "historyDepth": "none",
+      "profileLayers": {
+        "builtinAssistant": true,
+        "assistantCustomization": false,
+        "userProfile": false
+      },
+      "guards": {
+        "longHistoryClaimSupported": false,
+        "profileIsNotThreadHistory": true,
+        "roleOwnershipEnabled": true
+      },
+      "memoryPolicy": {
+        "source": "conversation evidence only",
+        "rawPrivateReasoningStored": false,
+        "candidateValidationRequired": true
+      }
+    },
+    "memoryCandidates": [],
+    "responseCognition": {
+      "schema": "swrlz-response-cognition-v1",
+      "relation": "standalone",
+      "operation": "explain",
+      "historyAvailable": false,
+      "historyTurns": 0,
+      "anchorUserIndex": null,
+      "anchorAssistantIndex": null,
+      "explicitReference": true,
+      "questionLike": false,
+      "detailMode": "compact",
+      "requestedCount": null,
+      "outputOnly": false,
+      "preserveConstraint": false,
+      "programming": false,
+      "deliverable": "none",
+      "sourcePreference": "unspecified"
+    },
+    "onlineResearch": null,
+    "onlineTrace": [],
+    "onlineLogPersistence": null,
+    "sources": [],
+    "widgets": [],
+    "programmingIntent": {
+      "schema": "swrlz-programming-intent-v1",
+      "codingTask": false,
+      "projectContext": "none",
+      "changeClass": "none",
+      "artifactContinuation": false,
+      "artifactMutationRequested": false,
+      "artifactTargetId": "",
+      "artifactTargetMessageId": "",
+      "baseRevision": 0,
+      "baseSourceHash": "",
+      "newProject": false,
+      "source": "brain-router"
+    },
+    "intentContract": null,
+    "failureEvidence": null,
+    "repairConstraints": null,
+    "behaviorLedger": null,
+    "behaviorRepairBase": null,
+    "candidateValidation": {
+      "status": "NOT_APPLICABLE",
+      "reasons": []
+    },
+    "candidateAttempts": [
+      {
+        "schema": "swrlz-candidate-attempt-v1",
+        "attempt": 1,
+        "trigger": "initial-streaming",
+        "durationMs": 8833.065,
+        "firstTokenLatencyMs": 8541.166,
+        "deltaChunks": 23,
+        "candidateFingerprint": "d3f1f3629a0500fa",
+        "changedFromPreviousAttempt": null,
+        "changedFromRepairTarget": null,
+        "validationStatus": "NOT_APPLICABLE",
+        "validationReasons": [],
+        "accepted": false
+      }
+    ],
+    "generationTelemetry": {
+      "schema": "swrlz-programming-generation-telemetry-v1",
+      "attemptCount": 1,
+      "regenerationCount": 0,
+      "firstCandidateRejected": false,
+      "finalAcceptedAttempt": null,
+      "finalCandidateStatus": "NOT_APPLICABLE",
+      "guardedTurn": false,
+      "repairTurn": false,
+      "strictLanguage": false,
+      "modelLoadLatencyMs": 20.14,
+      "visibleFirstDeltaLatencyMs": 8561.462,
+      "engineTotalLatencyMs": 8853.715,
+      "totalCandidateGenerationMs": 8833.065,
+      "attempts": [
+        {
+          "schema": "swrlz-candidate-attempt-v1",
+          "attempt": 1,
+          "trigger": "initial-streaming",
+          "durationMs": 8833.065,
+          "firstTokenLatencyMs": 8541.166,
+          "deltaChunks": 23,
+          "candidateFingerprint": "d3f1f3629a0500fa",
+          "changedFromPreviousAttempt": null,
+          "changedFromRepairTarget": null,
+          "validationStatus": "NOT_APPLICABLE",
+          "validationReasons": [],
+          "accepted": false
+        }
+      ]
+    },
+    "engineCompletionTelemetry": {
+      "totalLatencyMs": 8853.715,
+      "loadLatencyMs": 20.14,
+      "firstDeltaLatencyMs": 8561.462
+    },
+    "repairDiagnostics": [],
+    "artifactReceipt": null,
+    "githubTelemetryPersistence": null,
+    "contextBudget": {
+      "contextWindowTokens": 8192,
+      "inputBudgetTokens": 7680,
+      "estimatedInputTokens": 4990,
+      "reservedOutputTokens": 2048,
+      "historyMessagesDropped": 0,
+      "historyMessagesKept": 0,
+      "repairTurn": false,
+      "repairContext": {},
+      "tokenBreakdown": {
+        "system": 4969,
+        "history": 0,
+        "currentPrompt": 21,
+        "total": 4990
+      }
+    },
+    "terminalType": "COMPLETE"
+  },
+  "deadlineReached": false,
+  "authenticatedAcceptance": false,
+  "cookieValuesRecorded": false,
+  "diagnosticsMayPersist": true
+}
