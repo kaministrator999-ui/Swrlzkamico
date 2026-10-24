@@ -150,6 +150,6 @@
     "patches/v11_101_compact_quarter_panel.py",
     "patches/v11_102_balanced_drag_panel.py"
   ],
-  "finalBytes": 6521969,
-  "finalSha256": "011f44a659a6f0a76d482ba375476735b5f43c038082d3321f19f24bd2416162"
+  "finalBytes": 6525097,
+  "finalSha256": "fb2ec79211686c3aa4a69deaaa06570b83e8137abf9fb85b2d7a4869a2b1bb7c"
 }
