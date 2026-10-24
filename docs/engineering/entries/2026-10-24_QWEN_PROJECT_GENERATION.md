@@ -62,6 +62,14 @@ The original goal includes ordinary wording such as “create a3D HTML viewer,�
 
 This is a bounded inference-activation correction to the already live7B backend. First release/source0e361f97 and its10/10 live acceptance remain historical valid evidence. Follow-up CI, exact source publication, generic prompt and final version receipt are pending.
 
+## Standalone module-resolution repair — same generic-request follow-up
+
+The plain-wording probe after sourcea7003aa9 completed model generation, but browser execution failed resolving the bare `three` import used by the pinned OrbitControls module. Only initial checks executed; this is NOT a10-case failure score or accepted viewer. The earlier explicitly pinned task's10/10 remains valid history.
+
+The Brain now checks standalone browser module declarations before delivery: direct bare imports require an import-map mapping, and verified external module facts expose transitive bare dependencies. Prefix/scoped maps and HTML-relative module script URLs are supported. Comments, strings, templates and regex-like literals are not treated as import statements. Declared bundler/repository contexts remain separate. This bounded source check does not fetch dependencies, execute JavaScript, prove full syntax or grade unknown library internals. Its receipt remains `executionVerified=false`.
+
+Both model engines now receive the actual bounded source-rejection reasons on retries. Retry token allowances are recomputed against the actual context without silently discarding source; insufficient retry context fails closed. No missing import map or project source is inserted by the engineer: Qwen must produce a new complete candidate. A real prior broken live output is rejected by this gate. Six regressions cover direct/transitive imports, scoped/prefix maps, literal/comment preservation, build contexts and actual reason delivery to both engine retry prompts.80focused tests+97subtests and19HFcandidate checks pass. Final generic live browser acceptance remains pending this source repair and guarded publication.
+
 ## Guarded publication request
 
-Owner authorized live publication. Exact candidate source `a7003aa9739ead9e7508c8ece599bf99c6c926db`; CI run 40130015166 completed SUCCESS. This request starts the canonical HF workflow; upload/build/runtime acceptance remain pending and will be recorded separately.
+Owner authorized live publication. Exact candidate source `9a18fb9c180ee01639b1fd1001e9c8c110e1626c`; CI run 40131811998 completed SUCCESS. This request starts the canonical HF workflow; upload/build/runtime acceptance remain pending and will be recorded separately.
