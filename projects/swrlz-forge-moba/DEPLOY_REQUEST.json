@@ -4,7 +4,7 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.99",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_99_MOBILE_SCROLL_SIZE",
-  "reason": "Fail-closed package measurement after reconciling repeated generated editor mobile styles. Exact SHA and bytes to be sealed before upload.",
-  "sourceCommit": "96204418eeb62f0f2873abaa6302bf4d6c22d93c",
-  "sourceIntegritySha256": "9b5033ee9bfcd3714ee4e52c0dd4dc46c2f06b78fb87eae441ffeac33aabe76d"
+  "reason": "Publish §E v11.99 mobile tool panel usability fix. Enlarge inspector and context menus, improve swipe scrolling, expand mobile responsive detection, retain keypad and models. Exact built bytes 6513741; 131 patches, 68 preserved assets. Owner touch test follows.",
+  "sourceCommit": "e9ada1515f68c70f340b4815ca4b9e74769fe405",
+  "sourceIntegritySha256": "726cae0905ef5e2f8a381bebc109856b618451c68f7fa4afb5a0401332d2c783"
 }
