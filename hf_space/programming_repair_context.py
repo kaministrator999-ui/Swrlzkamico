@@ -19,6 +19,30 @@ def contract_rejection_context(validation: dict[str, Any]) -> str:
             +"\nCorrect these source defects while preserving the original requested features. Do not invent a test result.")
 
 
+def candidate_retry_messages(
+    original_messages: list[dict[str, Any]],
+    failed_candidate: str,
+    instruction: str,
+) -> list[dict[str, Any]]:
+    """Give the model its complete latest rejected draft, retaining original authority.
+
+    The caller must count this entire context and reject if it cannot fit. Never
+    shorten source here: an omitted operation can be the actual defect. Build
+    each retry from the original messages so earlier rejected drafts and repair
+    directives do not accumulate or replace the canonical user/repair source.
+    """
+    return [dict(message) for message in original_messages] + [
+        {"role": "assistant", "content": failed_candidate},
+        {"role": "user", "content": (
+            "The preceding assistant draft was rejected by source checks. It is "
+            "a candidate to revise, not an execution receipt or a replacement "
+            "for the original requirements or canonical repair source. Return "
+            "the complete corrected candidate; preserve all original requested "
+            "features and constraints.\n" + instruction
+        )},
+    ]
+
+
 def _bounded(values: Any, limit: int, chars: int) -> list[str]:
     result=[]
     for value in values or []:

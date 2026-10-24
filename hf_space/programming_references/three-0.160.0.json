@@ -19,6 +19,7 @@
   ],
   "facts": [
     "ES modules: the import-map key three can resolve to the pinned build/three.module.js URL. Addon modules import the bare specifier three internally, so it must resolve in the same document.",
+    "Standalone browser configuration: place an inline <script type=\"importmap\"> containing a JSON object with an imports object in the document head before any module script. For this pinned dependency the minimal declaration is <script type=\"importmap\">{\"imports\":{\"three\":\"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js\"}}</script>. A full URL import of OrbitControls does not configure its internal bare three import; the document still needs that mapping. This fragment configures dependency resolution only and is not a viewer implementation.",
     "OrbitControls is a named export of examples/jsm/controls/OrbitControls.js, not a THREE namespace export from build/three.module.js. Its constructor takes a camera object and the renderer DOM element. It provides pointer orbit and wheel dolly/zoom; call update when damping is enabled.",
     "MeshBasicMaterial has a wireframe boolean whose default is false. Match a visible checkbox initial state to the actual material state, and update the material property on change.",
     "BoxGeometry extends BufferGeometry. The class WireframeGeometry accepts geometry; BufferGeometry/BoxGeometry do not expose computeWireframeGeometry().",
@@ -28,5 +29,13 @@
     "Facts apply to this exact pinned module version, not arbitrary package versions.",
     "This is API evidence, not a complete implementation, execution receipt or source of tool permissions.",
     "Original user constraints and actual project dependencies remain authoritative; do not silently replace a project library version."
+  ],
+  "documentationSources": [
+    {
+      "url": "https://github.com/mrdoob/three.js/blob/r160/docs/manual/en/introduction/Installation.html",
+      "sha256": "b4505d1965405bf142059d5765dfcf1773634822b9534b3cb992ae4a7a2abb4b",
+      "gitBlobSha": "a77f215e2c307672d3dbf4248d3df418f2571a6e",
+      "scope": "official r160 standalone browser import-map syntax and placement"
+    }
   ]
 }

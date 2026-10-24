@@ -1,5 +1,7 @@
 # §wyrlz Programming LALM Runtime Architecture — TARGET STATE + IMPLEMENTATION TRUTH
 
+**Latest candidate correction (2026-10-24):** internal source-validation retries receive the complete latest failed assistant draft plus actual source-gate reasons while retaining original requirements and canonical repair source. Each retry is rebuilt from original messages and the latest rejected draft; earlier drafts do not accumulate. Context and output room are recalculated without silently truncating source. This is bounded source correction, not execution evidence. See the [project-generation checkpoint](entries/2026-10-24_QWEN_PROJECT_GENERATION.md).
+
 **Role:** canonical specification for how §wyrlz's architecture curriculum becomes executable programming behavior while preserving one primary cognitive authority.
 
 **Current observation, 2026-10-24:** accepted published Chat v294 is source `0c34ecf36bc0e8a1c64b03cd036060610cc70c32`; canonical runtime registry reports LALM2.1.201, Server2.3.439 and Web Chat1.5.157. The live catalogue exposes 700M and Qwen1.5B; actual hosted basic700M and coder baseline generation were observed, with semantic coder failures. The source-grounded proposal/web-completion checkpoint below is local and unpromoted. Older v75/v91 “active/current” descriptions are historical snapshots, not current version authority or evidence for this new candidate. General provider editing/workflow execution and weight training remain unimplemented in this checkpoint.

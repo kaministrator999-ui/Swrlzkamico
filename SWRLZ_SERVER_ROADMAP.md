@@ -1,3 +1,7 @@
+## UPDATE IN PROGRESS — 2026-10-24 — inspect latest failed draft during coding retries
+
+The ordinary live3D prompt exposed three module-resolution rejections. Same-thread repair produced a working9/10 viewer; mobile overflow remains under model repair. Both engines now retain the latest complete rejected draft with actual validation feedback for bounded correction, preserving the original goal and canonical source and counting the full context. Exact-source CI/live acceptance remain pending. See docs/engineering/entries/2026-10-24_QWEN_PROJECT_GENERATION.md. Earlier first-release10/10 remains valid historical evidence; no universal competence claim or trained-weight change is made.
+
 ## UPDATE STARTED — 2026-10-24 — Qwen project generation and authorized live publication
 
 **Owner correction:** the goal is Qwen itself generating usable projects such as an HTML3D model viewer, not an engineer-built reference. The reference remains explicitly non-model evidence; no additional demo is in scope. User explicitly authorizes publishing all validated updates to the live deployment. Preserve immutable r3 source/evidence package SHA256 `cdef7d3ee5960280ef40ef1dba2d8fbb5472cef556867c2072b3eabbf7343a02` and carry its measured failures forward.

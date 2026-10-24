@@ -3,6 +3,7 @@ import unittest
 from unittest.mock import patch
 from web_module_contract import module_dependency_gaps
 from brain_programming import programming_intent,candidate_contract_gate
+from programming_repair_context import candidate_retry_messages
 from test_github_change_model_context import load_engine,FakeModel
 
 CORE='https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js'
@@ -56,9 +57,76 @@ const object={import:()=>0};object.import('missing');
     self.assertEqual(len(model.calls),2)
     self.assertIn('unresolved-browser-module:three',model.calls[1]['messages'][-1]['content'])
     self.assertIn('no execution',model.calls[1]['messages'][-1]['content'])
+    self.assertEqual(model.calls[1]['messages'][-2],{'role':'assistant','content':'```html\n'+BAD+'\n```'})
     receipt=next(e['validation'] for e in events if e['type']=='CANDIDATE_VALIDATION')
     self.assertEqual(receipt['status'],'PASS');self.assertFalse(receipt['executionVerified'])
     for call in model.calls:
      self.assertLessEqual(engine._token_count(model,call['messages'])+call['max_tokens']+engine.CONTEXT_SAFETY_TOKENS,engine.CONTEXT_TOKENS)
+
+ def test_final_retry_replaces_failed_draft_and_retains_original_goal(self):
+  goal='Create a complete standalone HTML 3D model viewer. Preserve the visible wireframe control.'
+  second=BAD.replace('<html>','<html><h1>Latest failed draft</h1>')
+  for name in ('qwen_coder_engine','lfm2_700m_engine'):
+   with self.subTest(engine=name):
+    engine=load_engine(name)
+    class Responses(FakeModel):
+     def create_chat_completion(self,**kwargs):
+      self.calls.append(kwargs)
+      yield {'choices':[{'delta':{'content':'```html\n'+[BAD,second,GOOD][len(self.calls)-1]+'\n```'}}]}
+    model=Responses()
+    with patch.object(engine,'load',return_value=model):
+     events=list(engine.generate_events({'prompt':goal,'history':[]}))
+    self.assertEqual(len(model.calls),3)
+    original=model.calls[0]['messages']
+    for call,draft in zip(model.calls[1:],[BAD,second]):
+     self.assertEqual(call['messages'][:-2],original)
+     self.assertEqual(call['messages'][-2],{'role':'assistant','content':'```html\n'+draft+'\n```'})
+     self.assertIn('unresolved-browser-module:three (required by OrbitControls.js)',call['messages'][-1]['content'])
+     self.assertIn(goal,str(call['messages'][:-2]))
+     self.assertLessEqual(engine._token_count(model,call['messages'])+call['max_tokens']+engine.CONTEXT_SAFETY_TOKENS,8192)
+    self.assertEqual(next(e['validation'] for e in events if e['type']=='CANDIDATE_VALIDATION')['status'],'PASS')
+
+ def test_retry_context_keeps_canonical_source_and_all_of_latest_draft(self):
+  original=[{'role':'system','content':'Canonical source under repair: original source and MUST contract.'},
+            {'role':'user','content':'Keep the working behavior and repair only the failed dependency.'}]
+  draft='begin failed source\n'+'x'*12000+'\nend failed source'
+  retry=candidate_retry_messages(original,draft,'actual-source-failure')
+  self.assertEqual(retry[:-2],original)
+  self.assertEqual(retry[-2]['content'],draft)
+  self.assertIn('actual-source-failure',retry[-1]['content'])
+  retry[0]['content']='changed copy'
+  self.assertIn('Canonical source',original[0]['content'])
+
+ def test_retry_output_budget_counts_complete_failed_source(self):
+  large=BAD.replace('<html>','<html><!--'+'x'*11000+'-->')
+  for name in ('qwen_coder_engine','lfm2_700m_engine'):
+   with self.subTest(engine=name):
+    engine=load_engine(name)
+    class Responses(FakeModel):
+     def create_chat_completion(self,**kwargs):
+      self.calls.append(kwargs)
+      yield {'choices':[{'delta':{'content':'```html\n'+(large if len(self.calls)==1 else GOOD)+'\n```'}}]}
+    model=Responses()
+    with patch.object(engine,'load',return_value=model):
+     list(engine.generate_events({'prompt':'Create a complete standalone HTML 3D viewer.','history':[{'role':'user','text':'Project context: '+'existing context '*375}]}))
+    self.assertEqual(len(model.calls),2)
+    self.assertLess(model.calls[1]['max_tokens'],model.calls[0]['max_tokens'])
+    self.assertEqual(model.calls[1]['messages'][-2]['content'],'```html\n'+large+'\n```')
+    for call in model.calls:
+     self.assertLessEqual(engine._token_count(model,call['messages'])+call['max_tokens']+engine.CONTEXT_SAFETY_TOKENS,8192)
+
+ def test_oversized_failed_source_rejects_without_silent_truncation(self):
+  oversized=BAD.replace('<html>','<html><!--'+'x'*40000+'-->')
+  for name in ('qwen_coder_engine','lfm2_700m_engine'):
+   with self.subTest(engine=name):
+    engine=load_engine(name)
+    class Responses(FakeModel):
+     def create_chat_completion(self,**kwargs):
+      self.calls.append(kwargs)
+      yield {'choices':[{'delta':{'content':'```html\n'+oversized+'\n```'}}]}
+    model=Responses()
+    with patch.object(engine,'load',return_value=model),self.assertRaisesRegex(ValueError,'Insufficient context'):
+     list(engine.generate_events({'prompt':'Create a complete standalone HTML 3D viewer.','history':[]}))
+    self.assertEqual(len(model.calls),1)
 
 if __name__=='__main__':unittest.main()
