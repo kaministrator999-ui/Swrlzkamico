@@ -48,6 +48,13 @@ jobs:
           raw=html.encode('utf8')
           print('SE_V11113_FULL_BYTES='+str(len(raw)))
           print('SE_V11113_FULL_SHA256='+hashlib.sha256(raw).hexdigest())
+          assert len(raw)==m['finalBytes'], 'Release bytes mismatch'
+          assert hashlib.sha256(raw).hexdigest()==m['finalSha256'], 'Release SHA mismatch'
           print('SE_V11113_FULL_SOURCE_GUARDS_PASS')
           PY
           node --check /tmp/se-v11113.mjs
+      - name: Verify official sealed package and all 68 assets
+        run: |
+          set -euo pipefail
+          python projects/swrlz-forge-moba/scripts/verify_v11_113_release.py --output /tmp/se-v11113-package
+          node --check /tmp/se-v11113-package-module.mjs
