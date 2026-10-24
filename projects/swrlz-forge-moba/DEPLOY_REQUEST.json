@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.110",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_110_TRUE_DISPLACEMENT_PREVIEW",
-  "reason": "Owner-authorized bounded refinement to the now-accepted §E Model Atelier rounded sculpt brush: preview opacity and wireframe reflect actual vertex displacement from an isolated native stroke replay, suppress false teal ghost if zero vertices would move under depth, selection or snapping, and clearly show no-op status. Preserve the amber radius, cyan direction and violet depth, non-destructive Apply, Undo, saved/exported geometry, Wireframe/X-Ray, other scenes, mobile menus and all 68 assets. GitHub sealed preflight #40125000704 confirmed 142 patches, source bytes 6,559,449 SHA-256 85570c8d83a2eb1e15ea4c0854d0571b590f6e9858925996c4458aa1ea187d41. Require exact hosted artifact and SOURCE asset receipt integrity, owner device acceptance remains pending.",
-  "sourceCommit": "d69d77f7053df09dc8d5859b9c410b935e058f9f",
-  "sourceIntegritySha256": "85570c8d83a2eb1e15ea4c0854d0571b590f6e9858925996c4458aa1ea187d41"
+  "releaseVersion": "v11.111",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_111_ROUND_BOWLING_HOLE_KIT",
+  "reason": "Owner requested check existing §E modeling tools before adding simpler bowling ball holes. Audit: legacy brush makes vertex dents, Boolean lasso is a selection mask, face intrusion moves individual triangles, adaptive refine requires baked topology. New focused one-click Round hole maker for selected native spheres builds 1 or 3 genuine circular apertures, cylindrical walls and hemispherical bottoms using original native indexed topology schema. Preview before Apply, Undo restoration, bounded 9k vertices/16k triangles. Tested with THREE native triangulation & topology audit: 1 hole 2114 vertices 4224 faces, 3 holes 3322 vertices 6640 faces, each zero open/nonmanifold/winding/degenerate defects, source rebuild and 68-asset receipt. Fully sealed 143 patches, 6571928 HTML bytes SHA256 eac0886d3fcfbf922979851044344794c9670ccc8feba358e06671d931f3845e. Preserve all existing §E brush features, meshes, exports and unrelated AI Chat/Core commits; hosted exact-source/asset verification required and owner Android acceptance pending.",
+  "sourceCommit": "0c6b4edeb80a6e701c07fb39836e6f7a69216a8f",
+  "sourceIntegritySha256": "eac0886d3fcfbf922979851044344794c9670ccc8feba358e06671d931f3845e"
 }
