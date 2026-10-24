@@ -154,6 +154,6 @@
     "patches/v11_105_sculpt_undo_view_spacing.py",
     "patches/v11_106_sculpt_render_mode_rebuild.py"
   ],
-  "finalBytes": 6539743,
-  "finalSha256": "d845e5ae1b064f4a6e1d7c41a654d1e561bfa8f4e1e02db227b5443ac9af5d3c"
+  "finalBytes": 6541671,
+  "finalSha256": "18da40e3e728b97d0822494bb8038a6fe52a299603e11bebc6cd5aae8e4c3356"
 }
