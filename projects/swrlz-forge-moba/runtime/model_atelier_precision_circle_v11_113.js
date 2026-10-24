@@ -218,10 +218,15 @@ function atelierBorePlanValid(part){
    !Number.isFinite(p.radius)||p.radius<.2||p.radius>4||
    !Array.isArray(p.center)||p.center.length!==3||!p.center.every(Number.isFinite)||
    !Array.isArray(p.axis)||p.axis.length!==3||!p.axis.every(Number.isFinite)||
-   !Array.isArray(p.holes)||p.holes.length<1||p.holes.length>3)return false;
+   !Array.isArray(p.holes)||p.holes.length<1||
+   (p.surface&&!['sphere','box','cylinder'].includes(p.surface))||
+   p.holes.length>(p.surface&&p.surface!=='sphere'?6:3))return false;
+ if(p.surface&&p.surface!=='sphere'&&
+   (![p.halfU,p.halfV,p.halfDepth].every(x=>Number.isFinite(x)&&x>=.1&&x<=4)))return false;
+ const surface=p.surface||'sphere',limit=surface==='sphere'?p.radius*.82:p.halfDepth*1.8;
  return p.holes.every(h=>h&&[h.x,h.y,h.r,h.depth,h.cap].every(Number.isFinite)&&
-   h.r>=p.radius*.07&&h.r<=p.radius*.22&&h.depth>=h.r*1.6&&
-   h.depth<=p.radius*.75&&h.cap>=.5&&h.cap<=1);
+   h.r>=p.radius*.025&&h.r<=p.radius*.29&&h.cap>=0&&h.cap<=1&&
+   h.depth>=h.r*h.cap+.01&&h.depth<=limit);
 }
 const atelierBeforeBoreCheckPart=checkPart;
 checkPart=function(p){return atelierBeforeBoreCheckPart(p)&&atelierBorePlanValid(p);};
@@ -239,18 +244,18 @@ function atelierBowlingInstall(){
  if(!pick||document.getElementById('modelAtelierBoreTools'))return;
  const panel=document.createElement('fieldset');
  panel.id='modelAtelierBoreTools';
- panel.setAttribute('aria-label','Manually place and carve precision circular holes');
- panel.innerHTML='<legend>⭕ Precision circle carve · one hole at a time</legend>'+
-  '<p><b>You control every hole.</b> Press Pick center on mesh above, tap the ball, set radius, depth and bottom curvature, then preview. Make the next hole wherever you choose.</p>'+
-  '<label>Hole to create or adjust<select id="modelAtelierBoreWhich"><option value="new">+ New hole at picked spot</option></select></label>'+
-  '<div class="atelier-pair"><label>Circle radius · local units<input id="modelAtelierBoreRadius" type="number" min=".07" max=".22" step=".01" value=".12"></label>'+
-  '<label>Hole depth · local units<input id="modelAtelierBoreDepth" type="number" min=".15" max=".75" step=".01" value=".36"></label></div>'+
-  '<label>Rounded bottom profile (0.5 shallow · 1.0 hemisphere)<input id="modelAtelierBoreCap" type="number" min=".5" max="1" step=".05" value=".8"></label>'+
-  '<small>Hole centers are manually picked. Holes in one ball share the first hole’s drill direction. Previous holes remain editable. Only clean native spheres or meshes made by this tool are supported. An existing sculpt dent is replaced on the first cut; Undo restores it.</small>'+
+ panel.setAttribute('aria-label','Precision circle cuts on spheres, box faces and cylinder end caps');
+ panel.innerHTML='<legend>⭕ Precision circle cut · reusable shape tool</legend>'+
+  '<p><b>Design every circle yourself.</b> Pick a point on a sphere, flat box face or cylinder end cap; set the radius, depth and bottom finish. Useful for sockets, holes, recesses, vents and similar shapes.</p>'+
+  '<label>Hole to create or adjust<select id="modelAtelierBoreWhich"><option value="new">+ New circular cut at picked spot</option></select></label>'+
+  '<div class="atelier-pair"><label>Cut radius · local units<input id="modelAtelierBoreRadius" type="number" min=".02" max=".29" step=".005" value=".12"></label>'+
+  '<label>Cut depth · local units<input id="modelAtelierBoreDepth" type="number" min=".02" max=".9" step=".01" value=".36"></label></div>'+
+  '<label>Bottom finish · 0 flat / 1 rounded<input id="modelAtelierBoreCap" type="number" min="0" max="1" step=".1" value=".8"></label>'+
+  '<label><input id="modelAtelierBoreRelocate" type="checkbox"> Reposition selected saved cut using a new picked point</label><small>Carve individually: up to 3 cuts on a sphere or 6 on one flat face. Cuts on a part share the first selected face direction. Native box faces and cylinder ends are supported; arbitrary imported mesh Boolean cuts are not. First cut replaces any prior sculpt strokes on that part; Undo restores them.</small>'+
   '<div class="atelier-inspector-actions"><button id="modelAtelierBorePreview" type="button">Preview this hole</button>'+
   '<button id="modelAtelierBoreApply" type="button">Apply this hole</button>'+
   '<button id="modelAtelierBoreHide" type="button">Hide preview</button></div>'+
-  '<output id="modelAtelierBoreInfo" role="status">Pick a location to make the first hole.</output>';
+  '<output id="modelAtelierBoreInfo" role="status">Pick a surface point to start the first precision cut.</output>';
  pick.closest('.atelier-inspector-actions')?.insertAdjacentElement('afterend',panel);
  const el=name=>document.getElementById('modelAtelierBore'+name);
  function clear(reason='Preview cleared. Saved holes unchanged.'){
@@ -260,29 +265,31 @@ function atelierBowlingInstall(){
  function refreshChoices(){
   const old=el('Which').value;
   const p=partById(selection),holes=p?.roundHolePlan?.holes||[];
-  el('Which').replaceChildren(new Option('+ New hole at picked spot','new'));
+  el('Which').replaceChildren(new Option('+ New circular cut at picked spot','new'));
   for(let i=0;i<holes.length;i++)
    el('Which').add(new Option('Adjust hole '+(i+1),'hole-'+i));
   el('Which').value=[...el('Which').options].some(o=>o.value===old)?old:'new';
-  if(holes.length>=3&&el('Which').value==='new')
-   el('Info').textContent='Three saved holes. Select one to adjust its shape or location.';
+  const max=p?.roundHolePlan?.surface&&p.roundHolePlan.surface!=='sphere'?6:3;
+  if(holes.length>=max&&el('Which').value==='new')
+   el('Info').textContent='Maximum '+max+' saved cuts on this face. Select one to edit.';
  }
  el('Which').addEventListener('change',()=>{
   clear();
   const p=partById(selection),idx=Number(el('Which').value.slice(5));
   if(el('Which').value.startsWith('hole-')&&p?.roundHolePlan?.holes[idx]){
    const h=p.roundHolePlan.holes[idx];
-   el('Radius').value=h.r;el('Depth').value=h.depth;el('Cap').value=h.cap;
+   el('Radius').value=h.r;el('Depth').value=h.depth;el('Cap').value=h.cap;el('Relocate').checked=false;
    el('Info').textContent='Editing saved hole '+(idx+1)+'. Change dimensions; optionally pick a new center.';
   }
  });
- for(const id of ['Radius','Depth','Cap'])el(id).addEventListener('input',()=>clear('Dimensions changed. Preview again before Apply.'));
+ for(const id of ['Radius','Depth','Cap','Relocate'])el(id).addEventListener('input',()=>clear('Settings changed. Preview again before Apply.'));
  el('Hide').addEventListener('click',()=>clear());
  el('Preview').addEventListener('click',()=>{
   clear();
   const p=partById(selection);
-  if(!p||!(p.kind==='sphere'||p.kind==='topologyMesh'&&p.roundHolePlan)){
-   status('Choose a native sphere or a mesh created by Precision circle carve.',true);
+  if(!p||!(['sphere','box','cylinder'].includes(p.kind)||
+    p.kind==='topologyMesh'&&p.roundHolePlan)){
+   status('Select a native sphere, box, cylinder or previously edited precision-cut mesh.',true);
    return;
   }
   const mesh=modelRoot?.children.find(o=>o.isMesh&&o.userData.atelierId===p.id);
@@ -293,28 +300,45 @@ function atelierBowlingInstall(){
    status('First tap Pick center on mesh, then tap exactly where your first hole goes.',true);return;
   }
   mesh.geometry.computeBoundingSphere();
-  const bound=mesh.geometry.boundingSphere;
-  const origin=bound.center.toArray();
-  const initialAxis=new THREE.Vector3(...hit?.center||[0,0,1]).sub(new THREE.Vector3(...origin));
-  if(initialAxis.lengthSq()<1e-10)initialAxis.set(0,0,1);
-  const plan=existing||{radius:bound.radius,center:origin,
-     axis:initialAxis.normalize().toArray(),holes:[]};
+  const bound=mesh.geometry.boundingSphere,origin=bound.center.toArray();
+  let plan=existing;
+  if(!plan){
+   const surface=p.kind;
+   const initialAxis=new THREE.Vector3(...(hit?.axis||[0,0,1]));
+   if(surface==='sphere')initialAxis.fromArray(hit.center).sub(new THREE.Vector3(...origin));
+   if(surface==='box'){
+    const index=initialAxis.toArray().map(Math.abs).indexOf(Math.max(...initialAxis.toArray().map(Math.abs)));
+    initialAxis.set(index===0?Math.sign(initialAxis.x):0,
+      index===1?Math.sign(initialAxis.y):0,index===2?Math.sign(initialAxis.z):0);
+   }
+   if(surface==='cylinder'&&Math.abs(initialAxis.y)<.86){
+    status('For cylinders, tap the FLAT top or bottom cap, not the curved side.',true);return;
+   }
+   if(initialAxis.lengthSq()<1e-10)initialAxis.set(0,0,1);
+   const radius=surface==='box'?.5:surface==='cylinder'?1:bound.radius;
+   plan={surface,radius,center:origin,axis:initialAxis.normalize().toArray(),
+     halfU:.5,halfV:.5,halfDepth:.5,holes:[]};
+  }
   const idxStr=el('Which').value,editing=idxStr.startsWith('hole-');
   const index=editing?Number(idxStr.slice(5)):-1;
   if(editing&&!plan.holes[index]){status('Select a saved hole to edit.',true);return;}
   if(!editing&&!hit){status('Use Pick center on mesh to place the next hole.',true);return;}
-  if(!editing&&plan.holes.length>=3){status('Mobile round-hole tool supports 3 individually placed bores per mesh.',true);return;}
-  const position=hit?atelierBoreCoordinates(plan,hit.center):
-    {x:plan.holes[index].x,y:plan.holes[index].y};
-  if(!position){status('Pick the same front hemisphere as your first hole.',true);return;}
+  const max=plan.surface==='sphere'||!plan.surface?3:6;
+  if(!editing&&plan.holes.length>=max){status('This face supports '+max+' individual cuts within the mobile mesh budget.',true);return;}
+  const relocate=editing&&el('Relocate').checked;
+  if(relocate&&!hit){status('Use Pick center on mesh to choose the NEW position of this cut.',true);return;}
+  const position=editing&&!relocate?
+    {x:plan.holes[index].x,y:plan.holes[index].y}:
+    hit?atelierBoreCoordinates(plan,hit.center):null;
+  if(!position){status('Pick the same compatible face/direction as the first cut.',true);return;}
   const r=Number(el('Radius').value),depth=Number(el('Depth').value),cap=Number(el('Cap').value);
   const hole={x:position.x,y:position.y,r,depth,cap};
   if(editing)plan.holes[index]=hole;
   else plan.holes.push(hole);
-  const made=atelierBowlingBuild(plan.radius,plan.center,plan.axis,plan.holes);
+  const made=atelierBowlingBuild(plan.radius,plan.center,plan.axis,plan.holes,plan);
   if(!made.ok){status('Circle carve rejected: '+made.reason,true);return;}
   const candidate={
-   id:p.id,name:(p.roundHolePlan?p.name:p.name+' · hand-cut holes').slice(0,64),
+   id:p.id,name:(p.roundHolePlan?p.name:p.name+' · precision cuts').slice(0,64),
    group:p.group,kind:'topologyMesh',topologyMesh:made.data,
    roundHolePlan:plan,
    position:[...p.position],rotation:[...p.rotation],scale:[...p.scale],
@@ -349,11 +373,11 @@ function atelierBowlingInstall(){
   model().parts[index]=committed;
   atelierSculptHit=null;
   signalEdited();select(committed.id);
-  el('Which').value='new';
+  el('Which').value='new';el('Relocate').checked=false;
   refreshChoices();
   el('Info').textContent='Hole committed. '+committed.roundHolePlan.holes.length+
     ' saved. Pick another position, or select a saved hole to edit.';
-  status('Saved your individual round cut with Undo. Next: pick your next hole center on the ball.');
+  status('Saved your hand-placed round cut with Undo. Pick another point or edit an earlier circular feature.');
  });
  el('Which').addEventListener('focus',refreshChoices);
  // Keep the edit picker synchronized after each selection or prior Undo.
