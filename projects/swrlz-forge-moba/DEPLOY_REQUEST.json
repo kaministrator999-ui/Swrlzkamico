@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.95",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_95_FITTED_SKIRT_WAIST",
-  "reason": "Publish the owner-requested fitted skirt waist: about 25% narrower at the waist and 19% narrower at the upper hip, with a smooth transition into the preserved lower flare. Matching trim and waist jewelry follow the fit; upper side overlap keeps coverage. Anatomy, portrait, piñatas, shorts, lower hem, UVs, indices and transforms are preserved. Source/packaging checks, 720 editor coverage rays, dense skin/underlayer clearance samples, actual waist sections, desktop/phone framing, material Undo, exact native JSON save/import, current factory/package equality and textured GLB passed. Seal 127 patches / 68 assets / 6501581 HTML bytes; SHA256 a0d61bfac63c666ae7037edfb6b92f509abf8f7d4314615decb3b39bffa7ce8c. This is the separate final DEPLOY_REQUEST-only commit after tested source publication. Require terminal dedicated workflow success and exact hosted HTML/SOURCE/all assets; owner-device waist-fit acceptance remains pending.",
-  "sourceCommit": "41b795a82118acdd093727610bc5685181160be3",
+  "releaseVersion": "v11.96",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_96_MOBILE_INPUT_ROUND_BLANK",
+  "reason": "Preflight measurement of §E v11.96 mobile focus-zoom and round blank starter. Must fail closed at source-integrity seal until the newly generated HTML byte count and SHA-256 are measured and written into the governed manifest; do not publish an unverified artifact. This is an explicit user-requested release iteration.",
+  "sourceCommit": "3f5497eb5913aad22565a1e6be4ea563b614ce86",
   "sourceIntegritySha256": "a0d61bfac63c666ae7037edfb6b92f509abf8f7d4314615decb3b39bffa7ce8c"
 }
