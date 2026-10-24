@@ -147,6 +147,6 @@
     "patches/v11_98_mobile_numpad_touch_fix.py",
     "patches/v11_99_mobile_scroll_size.py"
   ],
-  "finalBytes": 6509696,
-  "finalSha256": "9b5033ee9bfcd3714ee4e52c0dd4dc46c2f06b78fb87eae441ffeac33aabe76d"
+  "finalBytes": 6513741,
+  "finalSha256": "726cae0905ef5e2f8a381bebc109856b618451c68f7fa4afb5a0401332d2c783"
 }
