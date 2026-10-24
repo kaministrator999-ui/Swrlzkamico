@@ -4,7 +4,7 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.107",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_107_RADIUS_DEPTH_PREVIEW",
-  "reason": "Fail-closed source measurement only: dynamic sculpt brush radius footprint and planned center depth guide, updated on form changes. Do not upload until artifact SHA-256 and bytes are measured and sealed. Preserve v11.106 viewport render-mode fix.",
-  "sourceCommit": "9cd13b2770391f06759882039057e646269ddf0e",
+  "reason": "Fail-closed exact artifact measurement after robust brush marker replacement boundary. Do not upload before fresh SHA and bytes are sealed.",
+  "sourceCommit": "7ceebc425a39ed41cc308081a94493698628f54a",
   "sourceIntegritySha256": "18da40e3e728b97d0822494bb8038a6fe52a299603e11bebc6cd5aae8e4c3356"
 }
