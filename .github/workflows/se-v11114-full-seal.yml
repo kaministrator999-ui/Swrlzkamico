@@ -48,6 +48,13 @@ jobs:
           raw=html.encode('utf-8')
           print('SE_V11114_FULL_BYTES='+str(len(raw)))
           print('SE_V11114_FULL_SHA256='+hashlib.sha256(raw).hexdigest())
+          assert len(raw)==m['finalBytes'], 'Full HTML byte count mismatch'
+          assert hashlib.sha256(raw).hexdigest()==m['finalSha256'], 'Full HTML SHA mismatch'
           print('SE_V11114_FULL_GIZMO_SOURCE_PASS')
           PY
           node --check /tmp/se-v11114.mjs
+      - name: Verify full official release, source receipt, all bundled assets
+        run: |
+          set -euo pipefail
+          python projects/swrlz-forge-moba/scripts/verify_v11_114_release.py --output /tmp/se-v11114-release
+          node --check /tmp/se-v11114-release-module.mjs

@@ -162,6 +162,6 @@
     "patches/v11_113_general_precision_circle.py",
     "patches/v11_114_circle_viewport_handles.py"
   ],
-  "finalBytes": 6579505,
-  "finalSha256": "445a93e9a1b077aebba942524c54877bb709f8e73687d9b600432232a40194c8"
+  "finalBytes": 6594602,
+  "finalSha256": "7cd989c5973bb978725f0495ad9b20cf17328cbeaacc0954e0ebdf1b5717c22b"
 }
