@@ -1,10 +1,10 @@
 // §E v11.113: manually controlled circular carving for supported primitives.
 // Native sphere, box planar face and cylinder end cap; indexed manifold result.
 // Other topology meshes are not silently treated as Boolean-safe.
-let atelierBowlingDraft=null;
-function atelierBowlingClear(){
- const draft=atelierBowlingDraft;
- atelierBowlingDraft=null;
+let atelierPrecisionCircleDraft=null;
+function atelierPrecisionCircleClear(){
+ const draft=atelierPrecisionCircleDraft;
+ atelierPrecisionCircleDraft=null;
  if(!draft)return;
  if(draft.ghost){
   draft.ghost.parent?.remove(draft.ghost);
@@ -13,7 +13,7 @@ function atelierBowlingClear(){
  }
  if(draft.sourceMesh)draft.sourceMesh.visible=true;
 }
-function atelierBowlingBuild(radius,center,axis,holes,shape={surface:'sphere'}){
+function atelierPrecisionCircleBuild(radius,center,axis,holes,shape={surface:'sphere'}){
  const surface=shape.surface||'sphere';
  if(!['sphere','box','cylinder'].includes(surface))
   return {ok:false,reason:'Use a sphere, flat box face, or cylinder end cap'};
@@ -239,7 +239,7 @@ function atelierBoreCoordinates(plan,point){
  if(offset.dot(n)<=0)return null;
  return {x:offset.dot(u),y:offset.dot(v)};
 }
-function atelierBowlingInstall(){
+function atelierPrecisionCircleInstall(){
  const pick=$m('SculptBrushPick');
  if(!pick||document.getElementById('modelAtelierBoreTools'))return;
  const panel=document.createElement('fieldset');
@@ -247,7 +247,7 @@ function atelierBowlingInstall(){
  panel.setAttribute('aria-label','Precision circle cuts on spheres, box faces and cylinder end caps');
  panel.innerHTML='<legend>⭕ Precision circle cut · reusable shape tool</legend>'+
   '<p><b>Design every circle yourself.</b> Pick a point on a sphere, flat box face or cylinder end cap; set the radius, depth and bottom finish. Useful for sockets, holes, recesses, vents and similar shapes.</p>'+
-  '<label>Hole to create or adjust<select id="modelAtelierBoreWhich"><option value="new">+ New circular cut at picked spot</option></select></label>'+
+  '<label>Circular cut to create or adjust<select id="modelAtelierBoreWhich"><option value="new">+ New circular cut at picked spot</option></select></label>'+
   '<div class="atelier-pair"><label>Cut radius · local units<input id="modelAtelierBoreRadius" type="number" min=".02" max=".29" step=".005" value=".12"></label>'+
   '<label>Cut depth · local units<input id="modelAtelierBoreDepth" type="number" min=".02" max=".9" step=".01" value=".36"></label></div>'+
   '<label>Bottom finish · 0 flat / 1 rounded<input id="modelAtelierBoreCap" type="number" min="0" max="1" step=".1" value=".8"></label>'+
@@ -259,7 +259,7 @@ function atelierBowlingInstall(){
  pick.closest('.atelier-inspector-actions')?.insertAdjacentElement('afterend',panel);
  const el=name=>document.getElementById('modelAtelierBore'+name);
  function clear(reason='Preview cleared. Saved holes unchanged.'){
-  atelierBowlingClear();
+  atelierPrecisionCircleClear();
   el('Info').textContent=reason;
  }
  function refreshChoices(){
@@ -279,7 +279,7 @@ function atelierBowlingInstall(){
   if(el('Which').value.startsWith('hole-')&&p?.roundHolePlan?.holes[idx]){
    const h=p.roundHolePlan.holes[idx];
    el('Radius').value=h.r;el('Depth').value=h.depth;el('Cap').value=h.cap;el('Relocate').checked=false;
-   el('Info').textContent='Editing saved hole '+(idx+1)+'. Change dimensions; optionally pick a new center.';
+   el('Info').textContent='Editing saved circle '+(idx+1)+'. Change dimensions; optionally pick a new center.';
   }
  });
  for(const id of ['Radius','Depth','Cap','Relocate'])el(id).addEventListener('input',()=>clear('Settings changed. Preview again before Apply.'));
@@ -335,7 +335,7 @@ function atelierBowlingInstall(){
   const hole={x:position.x,y:position.y,r,depth,cap};
   if(editing)plan.holes[index]=hole;
   else plan.holes.push(hole);
-  const made=atelierBowlingBuild(plan.radius,plan.center,plan.axis,plan.holes,plan);
+  const made=atelierPrecisionCircleBuild(plan.radius,plan.center,plan.axis,plan.holes,plan);
   if(!made.ok){status('Circle carve rejected: '+made.reason,true);return;}
   const candidate={
    id:p.id,name:(p.roundHolePlan?p.name:p.name+' · precision cuts').slice(0,64),
@@ -351,24 +351,24 @@ function atelierBowlingInstall(){
   ghost.matrixAutoUpdate=false;
   ghost.matrix.copy(mesh.matrixWorld);
   ghost.userData.atelierHelper=true;
-  ghost.name='Temporary hand-placed round-hole geometry';
+  ghost.name='Temporary user-controlled precision circular cut geometry';
   world.add(ghost);
   mesh.visible=false;
-  atelierBowlingDraft={candidate,originalId:p.id,baseline:JSON.stringify(p),sourceMesh:mesh,ghost};
+  atelierPrecisionCircleDraft={candidate,originalId:p.id,baseline:JSON.stringify(p),sourceMesh:mesh,ghost};
   el('Info').textContent=(editing?'Adjusting hole '+(index+1):'Adding hole '+plan.holes.length)+
-    ' · '+made.holes+' individually placed · '+made.vertices+' vertices / '+made.triangles+
+    ' · '+made.holes+' individually designed · '+made.vertices+' vertices / '+made.triangles+
     ' triangles. Rotate to inspect. Apply commits; Undo restores.';
   status('Previewing your individually positioned cylindrical carve and rounded bottom; nothing saved yet.');
  });
  el('Apply').addEventListener('click',()=>{
-  const d=atelierBowlingDraft,p=partById(selection);
+  const d=atelierPrecisionCircleDraft,p=partById(selection);
   if(!d||!p||p.id!==d.originalId||JSON.stringify(p)!==d.baseline){
    status('Preview this current mesh before applying a hole.',true);return;
   }
   const index=model().parts.findIndex(x=>x.id===p.id);
   if(index<0||!checkPart(d.candidate))return;
   const committed=d.candidate;
-  atelierBowlingClear();
+  atelierPrecisionCircleClear();
   checkpoint();
   model().parts[index]=committed;
   atelierSculptHit=null;
