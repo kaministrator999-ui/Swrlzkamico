@@ -152,6 +152,6 @@
     "patches/v11_103_double_inspector_height.py",
     "patches/v11_104_pick_marker_readable_menus.py"
   ],
-  "finalBytes": 6526071,
-  "finalSha256": "7ce2d65c328d3c14f417062daaeb6f37f30b592c8f0b99f5cb305fd3bf1ee395"
+  "finalBytes": 6535811,
+  "finalSha256": "e205d04d8bd66d69994cbeca52b8a089468a6275146bfae59ba884bda6f443f1"
 }
