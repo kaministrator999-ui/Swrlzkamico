@@ -125,6 +125,7 @@ jobs:
           python -m unittest discover -s hf_space -p 'test_github*change*.py' -v
           python hf_space/test_web_code_completeness.py
           python hf_space/test_code_deliverable_cognition.py
+          python hf_space/test_coder_model_config.py
           python hf_space/test_response_cognition_v123.py
           python hf_space/test_dual_model_work_v241.py
           python hf_space/test_github_file_intelligence_v288.py

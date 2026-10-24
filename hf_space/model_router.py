@@ -5,6 +5,7 @@ import json
 import re
 from typing import Callable, Iterator, Any
 from brain_programming import programming_intent
+from coder_model_config import MODEL_LABEL as CODER_LABEL, MODEL_CHECKPOINT as CODER_CHECKPOINT
 from intent_risk_v240 import classify as classify_intent_risk, clarification as risk_clarification
 from online_tools import classify_online_request, stream_online_request, online_camera
 from rich_widget_intent_v285 import plan_conversation_widget
@@ -312,7 +313,7 @@ def routes(stock_checkpoint: str | None = None) -> list[ModelRoute]:
         ModelRoute("r39","§wyrlz R39 — fixed",True,"65e4b5d730f66024c44da25aec27730db27aa0019df0df26c0997d17ce58bdee"),
         ModelRoute("stock","Original HF · LFM2-350M Q4_K_M",True,"LiquidAI/LFM2-350M-GGUF@31cd51db1365/LFM2-350M-Q4_K_M.gguf"),
         ModelRoute("700m","LFM2-700M Q4_K_M",True,"LiquidAI/LFM2-700M-GGUF/LFM2-700M-Q4_K_M.gguf"),
-        ModelRoute("coder","Qwen2.5-Coder-1.5B Instruct Q4_K_M",True,"Qwen/Qwen2.5-Coder-1.5B-Instruct-GGUF/qwen2.5-coder-1.5b-instruct-q4_k_m.gguf"),
+        ModelRoute("coder",CODER_LABEL,True,CODER_CHECKPOINT),
         ModelRoute("compare","Compare both",False,None,"Requires two verified independent inference backends"),
     ]
 

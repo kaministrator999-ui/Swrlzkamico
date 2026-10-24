@@ -8,6 +8,12 @@
 
 ---
 
+## Qwen project-generation continuation (candidate, live publication authorized)
+
+The owner requires Qwen itself to build working projects; an engineer-built reference is not model acceptance. Shared cognition now respects the leading code-creation request rather than feature verbs or3D/audio subjects. HTML viewers and related applications receive web-page language/output handling, and ordinary Show/Use/Wire requirements remain in the persistent contract. Both engines can use bounded version-scoped library facts from verified official package bytes; this is API grounding, not a project template or training.
+
+A single `coder_model_config.py` owns the selected loader/catalogue/probe identity and pins verified official artifacts. The candidate selects Qwen2.5-Coder7B Q4_K_M; normal conversation stays700M. Actual7B library-based viewer output passed8/9 real isolated WebGL checks before a viewport repair. The3B variant still omitted features; driver-only checklist experiments were unsuccessful and were not integrated. Known CPU latency and unverified broader capabilities remain explicit. See [current generation/release checkpoint](entries/2026-10-24_QWEN_PROJECT_GENERATION.md) for final model/browser and publication evidence. Existing source, authorization and execution boundaries remain in force.
+
 ## Source-grounded change candidate (local checkpoint, not deployed)
 
 The existing `hf_space/github_source_specialist_v241.py` owns authenticated GitHub source discovery and subordinate coder inference. Its change-candidate extension accepts a concrete existing-file fix/refactor/edit/improve request, including source-only workflow YAML review. It does not enable ordinary provider edits, workflow dispatch, merge, deployment, or a second project store. Existing create/rename and explicit approval owners retain precedence.

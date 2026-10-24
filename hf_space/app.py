@@ -19,6 +19,7 @@ except Exception as _native_exc:
     print(json.dumps({"event":"R39_NATIVE_BUILD_FAILED","errorType":type(_native_exc).__name__,"detail":str(_native_exc)[-700:]}),flush=True)
 from station import app as station_app, set_generator, persist_runtime_diagnostic
 from model_router import dispatch, routes, ModelUnavailable
+from coder_model_config import MODEL_LABEL as CODER_LABEL
 from original_engine import generate_events as original_generate, load as original_load
 from lfm2_700m_engine import generate_events as large_generate, load as large_load
 from qwen_coder_engine import generate_events as coder_generate, load as coder_load
@@ -236,7 +237,7 @@ with gr.Blocks(title="§wyrlz Inference Laboratory") as demo:
         fn=respond,
         additional_outputs=[gr.File(label="Download LIVE probe JSON (available during generation)",interactive=False),gr.JSON(label="Live inference status")],
         additional_inputs=[
-            gr.Dropdown(choices=[("Original HF · LFM2-350M","stock"),("§wyrlz R39","r39"),("LFM2-700M Q4_K_M","700m"),("Qwen2.5-Coder-1.5B Q4_K_M","coder")],value="700m",label="Inference model"),
+            gr.Dropdown(choices=[("Original HF · LFM2-350M","stock"),("§wyrlz R39","r39"),("LFM2-700M Q4_K_M","700m"),(CODER_LABEL,"coder")],value="700m",label="Inference model"),
             gr.Textbox(label="Optional §wyrlz customization · layered over built-in Mirror Muse core",lines=9,max_lines=18,max_length=2000,value="",info="Optional user-authored assistant customization. The built-in §wyrlzara Mirror Muse + Phoenix Armor/Core/Project/Creative profile is always active and is not replaced by this field."),
             gr.Textbox(label="Test user profile · editable",lines=5,max_lines=12,max_length=2000,value=(
                 "Name: Kami. Collaborative technical/creative partner testing §wyrlz. "

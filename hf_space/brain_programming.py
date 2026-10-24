@@ -567,11 +567,12 @@ def _programming_intent_contract(prompt: str, change_class: str) -> dict[str, An
     negative=re.compile(r"\b(?:must\s+not|mustn't|do\s+not|don't|never|without|avoid|no\s+)\b",re.I)
     preserve_rx=re.compile(r"\b(?:keep|preserve|unchanged|do not change|don't change|change only|only change|same\s+(?:name|signature|settings?|config|configuration|permissions?))\b",re.I)
     requirement_rx=re.compile(r"\b(?:must|should|need(?:s)?\s+to|has\s+to|have\s+to|make\s+sure|ensure|require(?:s|d)?|implement|add|fix|accept|reject|support|compile|build|test|pass)\b",re.I)
+    requested_behavior_rx=re.compile(r"^(?:please\s+)?(?:create|write|show|include|use|return|render|provide|allow|enable|wire)\b",re.I)
     for clause in clauses[:32]:
         item=" ".join(clause.split())[:500]
         if negative.search(item): must_not.append(item)
         elif preserve_rx.search(item): preserve.append(item)
-        elif requirement_rx.search(item): must.append(item)
+        elif requirement_rx.search(item) or requested_behavior_rx.search(item): must.append(item)
     if not must and raw:
         must.append("Satisfy the requested "+str(change_class or "programming")+" operation without changing unrelated behavior.")
     evidence.extend([

@@ -10,9 +10,8 @@ from response_cognition import classify_response_cognition, response_cognition_p
 from social_checkin import style_hint as _social_checkin_style_hint
 from version_literacy import style_hint as _version_literacy_style_hint
 from github_change_candidate import source_change_system, source_change_response_format
+from coder_model_config import MODEL_REPO, MODEL_FILE, download_arguments, verify_artifact
 
-MODEL_REPO=os.environ.get("SWRLZ_CODER_MODEL_REPO","Qwen/Qwen2.5-Coder-1.5B-Instruct-GGUF")
-MODEL_FILE=os.environ.get("SWRLZ_CODER_MODEL_FILE","qwen2.5-coder-1.5b-instruct-q4_k_m.gguf")
 # LFM2 supports a substantially larger native context than this HF probe needs.
 # 4096 keeps the CPU/KV footprint bounded while leaving the always-on §wyrlz
 # profile, role frame, user profile, current prompt and useful history room to coexist.
@@ -122,7 +121,8 @@ def load(context=CONTEXT_TOKENS):
     with _lock:
         if _model is None:
             decode_threads,batch_threads=_thread_plan()
-            path=hf_hub_download(repo_id=MODEL_REPO,filename=MODEL_FILE)
+            path=hf_hub_download(**download_arguments())
+            verify_artifact(path)
             _model=Llama(model_path=path,n_ctx=context,n_threads=decode_threads,n_threads_batch=batch_threads,n_batch=512,n_ubatch=512,n_gpu_layers=0,use_mmap=True,verbose=False)
         return _model
 

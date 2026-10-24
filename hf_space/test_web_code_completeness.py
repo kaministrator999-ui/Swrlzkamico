@@ -28,6 +28,13 @@ SCAFFOLD='''<!DOCTYPE html>
 </script></body></html>'''
 
 class WebCompleteness(unittest.TestCase):
+ def test_requested_behaviors_survive_without_modal_must_wording(self):
+  request='Create an HTML model viewer. Show a cube with drag orbit and wheel zoom. Use a pinned import map. Wire a wireframe checkbox. Do not claim tests ran.\n```js\n// Include an unrelated camera feature.\n```'
+  contract=programming_intent(request,[],[])['intentContract']
+  for clause in ['Show a cube with drag orbit and wheel zoom.','Use a pinned import map.','Wire a wireframe checkbox.']:
+   self.assertIn(clause,contract['must'])
+  self.assertIn('Do not claim tests ran.',contract['mustNot'])
+  self.assertNotIn('unrelated camera',' '.join(contract['must']))
  def test_library_evidence_is_version_scoped_and_not_for_unrelated_turns(self):
   p=programming_intent('Create an HTML 3D model viewer using Three.js 0.160.0',[],[])
   self.assertIn('OrbitControls',programming_library_context(p))
