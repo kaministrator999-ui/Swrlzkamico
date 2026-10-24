@@ -43,6 +43,8 @@ jobs:
           raw=html.encode('utf8')
           print('SE_V11111_FULL_BYTES='+str(len(raw)))
           print('SE_V11111_FULL_SHA256='+hashlib.sha256(raw).hexdigest())
+          assert len(raw)==m['finalBytes'],'Release bytes differ'
+          assert hashlib.sha256(raw).hexdigest()==m['finalSha256'],'Release SHA differs'
           print('SE_V11111_FULL_SOURCE_GUARDS_PASS')
           PY
           node --check /tmp/se-v11111.mjs
