@@ -1,0 +1,43 @@
+name: §E v11.112 bowling surface accuracy regression
+on:
+  push:
+    branches: ['feature/se-v11-112-smooth-ball-exterior']
+    paths: ['.github/workflows/se-v11112-preflight.yml']
+permissions:
+  contents: read
+jobs:
+  mesh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Seal previous version and apply forward-only curvature patch
+        run: |
+          set -euo pipefail
+          python projects/swrlz-forge-moba/scripts/verify_v11_111_release.py --output /tmp/se-v11111
+          python - <<'PY'
+          from pathlib import Path
+          import runpy,hashlib
+          patch=runpy.run_path('projects/swrlz-forge-moba/patches/v11_112_smooth_bowling_surface.py')
+          source=Path('projects/swrlz-forge-moba/runtime/model_atelier_bowling_holes_v11_111.js').read_text()
+          Path('/tmp/se-v11112-optimized.js').write_text(patch['improve_js'](source))
+          prior=Path('/tmp/se-v11111/index.html').read_text()
+          updated=patch['apply'](prior)
+          assert updated.count('SWYRL_ENGINE_DEPLOY_MARKER: V11_112_SMOOTH_ROUND_BALL_SURFACE')==1
+          assert '<title>§wyrl§ Engine · Maker v11.112</title>' in updated
+          assert 'for(let level=0;level<2;level++){' in updated
+          Path('/tmp/se-v11112-module.mjs').write_text(updated.split('<script type="module">',1)[1].rsplit('</script>',1)[0])
+          raw=updated.encode()
+          print('SE_V11112_BYTES='+str(len(raw)))
+          print('SE_V11112_SHA256='+hashlib.sha256(raw).hexdigest())
+          PY
+          node --check /tmp/se-v11112-module.mjs
+      - name: Measure real roundness improvement and validate every cut face
+        run: |
+          set -euo pipefail
+          npm install --no-save --no-package-lock --ignore-scripts three@0.180.0
+          node projects/swrlz-forge-moba/tests/model_atelier_bowling_surface_v11_112.mjs
