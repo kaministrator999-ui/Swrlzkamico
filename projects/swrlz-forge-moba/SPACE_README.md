@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.109
+title: §wyrl§ Engine v11.110
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.110 · Displacement-accurate before-Apply sculpt preview (2026-10-24)
+
+After owner Android acceptance of v11.109's rounded surface-following brush, a bounded audit found one misleading visual edge case: the translucent teal shader could still paint untouched source triangles, including when the submitted stroke would move zero vertices because of depth, snapping or selection. The v11.110 follow-up only improves temporary preview presentation: sample exact native stroke displacements on the already disposable preview geometry, multiply fragment alpha by interpolated movement, trim wireframe edges to moving regions, and explicitly report when no vertices will move. It preserves the existing yellow radius ring, green/cyan gizmo, lavender depth indicator, the stroke/apply operation, Wireframe/X-Ray, mobile menus, Undo, native exports, saved scenes and all 68 bundled assets. The owner remains the final mobile UX acceptance gate. Targeted source preflight [#40124895300](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40124895300) passed: **142 ordered patches, 68 retained assets, 6,559,449 HTML bytes**, SHA-256 `85570c8d83a2eb1e15ea4c0854d0571b590f6e9858925996c4458aa1ea187d41`. Release sealing, hosted integrity verification and owner acceptance remain separate.
 
 ## §E v11.109 · Round surface-following sculpt preview (2026-10-24)
 
