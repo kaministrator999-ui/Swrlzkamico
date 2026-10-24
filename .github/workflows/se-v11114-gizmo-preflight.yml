@@ -1,0 +1,53 @@
+name: §E v11.114 interactive circle gizmo preflight
+on:
+  push:
+    branches: ['feature/se-v11-114-circle-viewport-gizmos']
+    paths: ['.github/workflows/se-v11114-gizmo-preflight.yml']
+permissions:
+  contents: read
+jobs:
+  gizmos:
+    runs-on: ubuntu-latest
+    timeout-minutes: 17
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Simulate radius/depth drag on touch, numeric sync and non-destructive preview
+        run: |
+          set -euo pipefail
+          npm install --no-save --no-package-lock --ignore-scripts three@0.180.0
+          node --check projects/swrlz-forge-moba/runtime/model_atelier_circle_gizmos_v11_114.js
+          node projects/swrlz-forge-moba/tests/model_atelier_precision_gizmos_v11_114.mjs
+      - name: Reconstruct last sealed engine and integrate editor-only handles
+        run: |
+          set -euo pipefail
+          python projects/swrlz-forge-moba/scripts/verify_v11_113_release.py --output /tmp/se-v11113
+          python - <<'PY'
+          from pathlib import Path
+          import runpy,hashlib
+          source=Path('/tmp/se-v11113/index.html').read_text()
+          apply=runpy.run_path('projects/swrlz-forge-moba/patches/v11_114_circle_viewport_handles.py')['apply']
+          html=apply(source)
+          for token in (
+           'SWYRL_ENGINE_DEPLOY_MARKER: V11_114_CIRCLE_VIEWPORT_HANDLES',
+           '<title>§wyrl§ Engine · Maker v11.114</title>',
+           'function atelierPrecisionGizmoDraw(){',
+           'function atelierPrecisionGizmoDown(event){',
+           'function atelierPrecisionGizmoMove(event){',
+           'function atelierPrecisionGizmoUp(event){',
+           'atelierPrecisionGizmoInstall();',
+           'modelAtelierBoreGizmoRadius',
+           'modelAtelierBoreGizmoDepth',
+           'atelierPrecisionGizmoQueue();'
+          ):assert token in html,token
+          js=html.split('<script type="module">',1)[1].rsplit('</script>',1)[0]
+          Path('/tmp/se-v11114.mjs').write_text(js)
+          raw=html.encode('utf8')
+          print('SE_V11114_BYTES='+str(len(raw)))
+          print('SE_V11114_SHA256='+hashlib.sha256(raw).hexdigest())
+          print('SE_V11114_GIZMO_INTEGRATION_PASS')
+          PY
+          node --check /tmp/se-v11114.mjs
