@@ -1,0 +1,24 @@
+{
+  "llama_cpp_version": "0.3.35",
+  "numpy_version": "2.2.6",
+  "huggingface_hub_version": "1.16.0",
+  "engine_imports": "PASS",
+  "gpuOffloadSupported": false,
+  "weightsDownloaded": false,
+  "models": [
+    {
+      "repo": "LiquidAI/LFM2-700M-GGUF",
+      "revision": "fd39e80d7a5ac61494ffff577e61bbbfddbd0d02",
+      "file": "LFM2-700M-Q4_K_M.gguf",
+      "bytes": 468624320,
+      "sha256": "684e8406dc13321452b3f6aeca432776e2a6a7e1ad6c23f7887b8fe3efbe2efa"
+    },
+    {
+      "repo": "Qwen/Qwen2.5-Coder-1.5B-Instruct-GGUF",
+      "revision": "f86cb2c1fa58255f8052cc32aeede1b7482d4361",
+      "file": "qwen2.5-coder-1.5b-instruct-q4_k_m.gguf",
+      "bytes": 1117320768,
+      "sha256": "cc324af070c2ecbfd324a30884d2f951a7ff756aba85cb811a6ec436933bb046"
+    }
+  ]
+}

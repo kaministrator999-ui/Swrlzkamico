@@ -1,0 +1,516 @@
+{
+  "schema": "swrlz-3d-prototype-eval-v2",
+  "candidateSha256": "f0161dcb017ad4c782559e68124b88739b8466b40b4bd8c60982bf396336d285",
+  "rows": [
+    {
+      "id": "canvas-present",
+      "pass": true,
+      "actual": {
+        "hash": 2155282648,
+        "width": 800,
+        "height": 600,
+        "detailPixels": 5,
+        "colors": 4
+      }
+    },
+    {
+      "id": "visible-initial-geometry",
+      "pass": false,
+      "actual": {
+        "hash": 2155282648,
+        "width": 800,
+        "height": 600,
+        "detailPixels": 5,
+        "colors": 4
+      }
+    },
+    {
+      "id": "matched-animation-control",
+      "pass": true,
+      "actual": [
+        {
+          "hash": 2155282648,
+          "width": 800,
+          "height": 600
+        },
+        {
+          "hash": 2155282648,
+          "width": 800,
+          "height": 600
+        }
+      ]
+    },
+    {
+      "id": "add-cube-causal-scene-change",
+      "pass": true,
+      "control": {
+        "before": {
+          "hash": 2155282648,
+          "width": 800,
+          "height": 600
+        },
+        "after": {
+          "hash": 2155282648,
+          "width": 800,
+          "height": 600
+        }
+      },
+      "treatment": {
+        "before": {
+          "hash": 2155282648,
+          "width": 800,
+          "height": 600
+        },
+        "after": {
+          "hash": 1759812582,
+          "width": 800,
+          "height": 600
+        }
+      },
+      "method": "Fresh equal-clock pages with identical seeded Math.random; only treatment receives tested action"
+    },
+    {
+      "id": "position-x-causal-scene-change",
+      "pass": false,
+      "control": {
+        "before": {
+          "hash": 1634616368,
+          "width": 800,
+          "height": 600
+        },
+        "after": {
+          "hash": 1281090520,
+          "width": 800,
+          "height": 600
+        }
+      },
+      "treatment": {
+        "before": {
+          "hash": 1634616368,
+          "width": 800,
+          "height": 600
+        },
+        "after": {
+          "hash": 1281090520,
+          "width": 800,
+          "height": 600
+        }
+      },
+      "method": "Fresh equal-clock pages with identical seeded Math.random; only treatment receives tested action"
+    },
+    {
+      "id": "position-z-causal-scene-change",
+      "pass": false,
+      "control": {
+        "before": {
+          "hash": 1634616368,
+          "width": 800,
+          "height": 600
+        },
+        "after": {
+          "hash": 1281090520,
+          "width": 800,
+          "height": 600
+        }
+      },
+      "treatment": {
+        "before": {
+          "hash": 1634616368,
+          "width": 800,
+          "height": 600
+        },
+        "after": {
+          "hash": 1281090520,
+          "width": 800,
+          "height": 600
+        }
+      },
+      "method": "Fresh equal-clock pages with identical seeded Math.random; only treatment receives tested action"
+    },
+    {
+      "id": "scale-x-causal-scene-change",
+      "pass": false,
+      "control": {
+        "before": {
+          "hash": 1634616368,
+          "width": 800,
+          "height": 600
+        },
+        "after": {
+          "hash": 1281090520,
+          "width": 800,
+          "height": 600
+        }
+      },
+      "treatment": {
+        "before": {
+          "hash": 1634616368,
+          "width": 800,
+          "height": 600
+        },
+        "after": {
+          "hash": 1281090520,
+          "width": 800,
+          "height": 600
+        }
+      },
+      "method": "Fresh equal-clock pages with identical seeded Math.random; only treatment receives tested action"
+    },
+    {
+      "id": "drag-causal-view-change",
+      "pass": false,
+      "control": {
+        "before": {
+          "hash": 1634616368,
+          "width": 800,
+          "height": 600
+        },
+        "after": {
+          "hash": 1281090520,
+          "width": 800,
+          "height": 600
+        }
+      },
+      "treatment": {
+        "before": {
+          "hash": 1634616368,
+          "width": 800,
+          "height": 600
+        },
+        "after": {
+          "hash": 1281090520,
+          "width": 800,
+          "height": 600
+        }
+      },
+      "method": "Fresh equal-clock pages with identical seeded Math.random; only treatment receives tested action"
+    },
+    {
+      "id": "wheel-causal-view-change",
+      "pass": false,
+      "control": {
+        "before": {
+          "hash": 1634616368,
+          "width": 800,
+          "height": 600
+        },
+        "after": {
+          "hash": 1281090520,
+          "width": 800,
+          "height": 600
+        }
+      },
+      "treatment": {
+        "before": {
+          "hash": 1634616368,
+          "width": 800,
+          "height": 600
+        },
+        "after": {
+          "hash": 1281090520,
+          "width": 800,
+          "height": 600
+        }
+      },
+      "method": "Fresh equal-clock pages with identical seeded Math.random; only treatment receives tested action"
+    },
+    {
+      "id": "delete-cube-causal-scene-change",
+      "pass": true,
+      "control": {
+        "before": {
+          "hash": 1634616368,
+          "width": 800,
+          "height": 600
+        },
+        "after": {
+          "hash": 1281090520,
+          "width": 800,
+          "height": 600
+        }
+      },
+      "treatment": {
+        "before": {
+          "hash": 1634616368,
+          "width": 800,
+          "height": 600
+        },
+        "after": {
+          "hash": 1634616368,
+          "width": 800,
+          "height": 600
+        }
+      },
+      "method": "Fresh equal-clock pages with identical seeded Math.random; only treatment receives tested action"
+    },
+    {
+      "id": "no-page-errors",
+      "pass": true,
+      "actual": []
+    }
+  ],
+  "passed": 5,
+  "failed": 6,
+  "error": null,
+  "harnessRun": {
+    "exitCode": 0,
+    "timedOut": false,
+    "wallSeconds": 15.781,
+    "stdout": "{\"rows\":[{\"id\":\"canvas-present\",\"pass\":true,\"actual\":{\"hash\":2155282648,\"width\":800,\"height\":600,\"detailPixels\":5,\"colors\":4}},{\"id\":\"visible-initial-geometry\",\"pass\":false,\"actual\":{\"hash\":2155282648,\"width\":800,\"height\":600,\"detailPixels\":5,\"colors\":4}},{\"id\":\"matched-animation-control\",\"pass\":true,\"actual\":[{\"hash\":2155282648,\"width\":800,\"height\":600},{\"hash\":2155282648,\"width\":800,\"height\":600}]},{\"id\":\"add-cube-causal-scene-change\",\"pass\":true,\"control\":{\"before\":{\"hash\":2155282648,\"width\":800,\"height\":600},\"after\":{\"hash\":2155282648,\"width\":800,\"height\":600}},\"treatment\":{\"before\":{\"hash\":2155282648,\"width\":800,\"height\":600},\"after\":{\"hash\":1759812582,\"width\":800,\"height\":600}},\"method\":\"Fresh equal-clock pages with identical seeded Math.random; only treatment receives tested action\"},{\"id\":\"position-x-causal-scene-change\",\"pass\":false,\"control\":{\"before\":{\"hash\":1634616368,\"width\":800,\"height\":600},\"after\":{\"hash\":1281090520,\"width\":800,\"height\":600}},\"treatment\":{\"before\":{\"hash\":1634616368,\"width\":800,\"height\":600},\"after\":{\"hash\":1281090520,\"width\":800,\"height\":600}},\"method\":\"Fresh equal-clock pages with identical seeded Math.random; only treatment receives tested action\"},{\"id\":\"position-z-causal-scene-change\",\"pass\":false,\"control\":{\"before\":{\"hash\":1634616368,\"width\":800,\"height\":600},\"after\":{\"hash\":1281090520,\"width\":800,\"height\":600}},\"treatment\":{\"before\":{\"hash\":1634616368,\"width\":800,\"height\":600},\"after\":{\"hash\":1281090520,\"width\":800,\"height\":600}},\"method\":\"Fresh equal-clock pages with identical seeded Math.random; only treatment receives tested action\"},{\"id\":\"scale-x-causal-scene-change\",\"pass\":false,\"control\":{\"before\":{\"hash\":1634616368,\"width\":800,\"height\":600},\"after\":{\"hash\":1281090520,\"width\":800,\"height\":600}},\"treatment\":{\"before\":{\"hash\":1634616368,\"width\":800,\"height\":600},\"after\":{\"hash\":1281090520,\"width\":800,\"height\":600}},\"method\":\"Fresh equal-clock pages with identical seeded Math.random; only treatment receives tested action\"},{\"id\":\"drag-causal-view-change\",\"pass\":false,\"control\":{\"before\":{\"hash\":1634616368,\"width\":800,\"height\":600},\"after\":{\"hash\":1281090520,\"width\":800,\"height\":600}},\"treatment\":{\"before\":{\"hash\":1634616368,\"width\":800,\"height\":600},\"after\":{\"hash\":1281090520,\"width\":800,\"height\":600}},\"method\":\"Fresh equal-clock pages with identical seeded Math.random; only treatment receives tested action\"},{\"id\":\"wheel-causal-view-change\",\"pass\":false,\"control\":{\"before\":{\"hash\":1634616368,\"width\":800,\"height\":600},\"after\":{\"hash\":1281090520,\"width\":800,\"height\":600}},\"treatment\":{\"before\":{\"hash\":1634616368,\"width\":800,\"height\":600},\"after\":{\"hash\":1281090520,\"width\":800,\"height\":600}},\"method\":\"Fresh equal-clock pages with identical seeded Math.random; only treatment receives tested action\"},{\"id\":\"delete-cube-causal-scene-change\",\"pass\":true,\"control\":{\"before\":{\"hash\":1634616368,\"width\":800,\"height\":600},\"after\":{\"hash\":1281090520,\"width\":800,\"height\":600}},\"treatment\":{\"before\":{\"hash\":1634616368,\"width\":800,\"height\":600},\"after\":{\"hash\":1634616368,\"width\":800,\"height\":600}},\"method\":\"Fresh equal-clock pages with identical seeded Math.random; only treatment receives tested action\"},{\"id\":\"no-page-errors\",\"pass\":true,\"actual\":[]}],\"limitation\":\"Causal 2D-canvas checks only. Projection math, selection semantics and other input axes need separate review. Browser checks do not prove 3D acceptance.\"}\n",
+    "stderr": "",
+    "outputTruncated": false,
+    "data": {
+      "rows": [
+        {
+          "id": "canvas-present",
+          "pass": true,
+          "actual": {
+            "hash": 2155282648,
+            "width": 800,
+            "height": 600,
+            "detailPixels": 5,
+            "colors": 4
+          }
+        },
+        {
+          "id": "visible-initial-geometry",
+          "pass": false,
+          "actual": {
+            "hash": 2155282648,
+            "width": 800,
+            "height": 600,
+            "detailPixels": 5,
+            "colors": 4
+          }
+        },
+        {
+          "id": "matched-animation-control",
+          "pass": true,
+          "actual": [
+            {
+              "hash": 2155282648,
+              "width": 800,
+              "height": 600
+            },
+            {
+              "hash": 2155282648,
+              "width": 800,
+              "height": 600
+            }
+          ]
+        },
+        {
+          "id": "add-cube-causal-scene-change",
+          "pass": true,
+          "control": {
+            "before": {
+              "hash": 2155282648,
+              "width": 800,
+              "height": 600
+            },
+            "after": {
+              "hash": 2155282648,
+              "width": 800,
+              "height": 600
+            }
+          },
+          "treatment": {
+            "before": {
+              "hash": 2155282648,
+              "width": 800,
+              "height": 600
+            },
+            "after": {
+              "hash": 1759812582,
+              "width": 800,
+              "height": 600
+            }
+          },
+          "method": "Fresh equal-clock pages with identical seeded Math.random; only treatment receives tested action"
+        },
+        {
+          "id": "position-x-causal-scene-change",
+          "pass": false,
+          "control": {
+            "before": {
+              "hash": 1634616368,
+              "width": 800,
+              "height": 600
+            },
+            "after": {
+              "hash": 1281090520,
+              "width": 800,
+              "height": 600
+            }
+          },
+          "treatment": {
+            "before": {
+              "hash": 1634616368,
+              "width": 800,
+              "height": 600
+            },
+            "after": {
+              "hash": 1281090520,
+              "width": 800,
+              "height": 600
+            }
+          },
+          "method": "Fresh equal-clock pages with identical seeded Math.random; only treatment receives tested action"
+        },
+        {
+          "id": "position-z-causal-scene-change",
+          "pass": false,
+          "control": {
+            "before": {
+              "hash": 1634616368,
+              "width": 800,
+              "height": 600
+            },
+            "after": {
+              "hash": 1281090520,
+              "width": 800,
+              "height": 600
+            }
+          },
+          "treatment": {
+            "before": {
+              "hash": 1634616368,
+              "width": 800,
+              "height": 600
+            },
+            "after": {
+              "hash": 1281090520,
+              "width": 800,
+              "height": 600
+            }
+          },
+          "method": "Fresh equal-clock pages with identical seeded Math.random; only treatment receives tested action"
+        },
+        {
+          "id": "scale-x-causal-scene-change",
+          "pass": false,
+          "control": {
+            "before": {
+              "hash": 1634616368,
+              "width": 800,
+              "height": 600
+            },
+            "after": {
+              "hash": 1281090520,
+              "width": 800,
+              "height": 600
+            }
+          },
+          "treatment": {
+            "before": {
+              "hash": 1634616368,
+              "width": 800,
+              "height": 600
+            },
+            "after": {
+              "hash": 1281090520,
+              "width": 800,
+              "height": 600
+            }
+          },
+          "method": "Fresh equal-clock pages with identical seeded Math.random; only treatment receives tested action"
+        },
+        {
+          "id": "drag-causal-view-change",
+          "pass": false,
+          "control": {
+            "before": {
+              "hash": 1634616368,
+              "width": 800,
+              "height": 600
+            },
+            "after": {
+              "hash": 1281090520,
+              "width": 800,
+              "height": 600
+            }
+          },
+          "treatment": {
+            "before": {
+              "hash": 1634616368,
+              "width": 800,
+              "height": 600
+            },
+            "after": {
+              "hash": 1281090520,
+              "width": 800,
+              "height": 600
+            }
+          },
+          "method": "Fresh equal-clock pages with identical seeded Math.random; only treatment receives tested action"
+        },
+        {
+          "id": "wheel-causal-view-change",
+          "pass": false,
+          "control": {
+            "before": {
+              "hash": 1634616368,
+              "width": 800,
+              "height": 600
+            },
+            "after": {
+              "hash": 1281090520,
+              "width": 800,
+              "height": 600
+            }
+          },
+          "treatment": {
+            "before": {
+              "hash": 1634616368,
+              "width": 800,
+              "height": 600
+            },
+            "after": {
+              "hash": 1281090520,
+              "width": 800,
+              "height": 600
+            }
+          },
+          "method": "Fresh equal-clock pages with identical seeded Math.random; only treatment receives tested action"
+        },
+        {
+          "id": "delete-cube-causal-scene-change",
+          "pass": true,
+          "control": {
+            "before": {
+              "hash": 1634616368,
+              "width": 800,
+              "height": 600
+            },
+            "after": {
+              "hash": 1281090520,
+              "width": 800,
+              "height": 600
+            }
+          },
+          "treatment": {
+            "before": {
+              "hash": 1634616368,
+              "width": 800,
+              "height": 600
+            },
+            "after": {
+              "hash": 1634616368,
+              "width": 800,
+              "height": 600
+            }
+          },
+          "method": "Fresh equal-clock pages with identical seeded Math.random; only treatment receives tested action"
+        },
+        {
+          "id": "no-page-errors",
+          "pass": true,
+          "actual": []
+        }
+      ],
+      "limitation": "Causal 2D-canvas checks only. Projection math, selection semantics and other input axes need separate review. Browser checks do not prove 3D acceptance."
+    }
+  },
+  "status": "FAIL",
+  "evaluationLimit": "Causal 2D-canvas checks only. Projection math, selection semantics and other input axes need separate review. Browser checks do not prove 3D acceptance."
+}

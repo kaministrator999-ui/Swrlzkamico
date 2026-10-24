@@ -1,0 +1,32 @@
+{
+  "requestId": "eval-a89f1a18e0bb",
+  "source": "deployed-v294-baseline",
+  "prompt": "In one concise sentence, explain why a measured result is stronger evidence than a confident guess.",
+  "generation": {
+    "phase": "COMPLETE",
+    "terminalType": "COMPLETE",
+    "requestedModelId": "700m",
+    "selectedModelId": "700m",
+    "text": "A measured result, grounded in evidence, is stronger evidence than a confident guess because it demonstrates a clear, verifiable connection between the hypothesis and observed data, whereas a confident guess lacks this explicit link and relies on intuition rather than factual support.",
+    "candidateValidation": {
+      "status": "NOT_APPLICABLE",
+      "reasons": []
+    },
+    "contextBudget": {
+      "contextWindowTokens": 8192,
+      "inputBudgetTokens": 7680,
+      "estimatedInputTokens": 4993,
+      "reservedOutputTokens": 2048,
+      "historyMessagesDropped": 0,
+      "historyMessagesKept": 0,
+      "repairTurn": false,
+      "repairContext": {},
+      "tokenBreakdown": {
+        "system": 4969,
+        "history": 0,
+        "currentPrompt": 24,
+        "total": 4993
+      }
+    }
+  }
+}

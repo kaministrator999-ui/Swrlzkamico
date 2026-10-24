@@ -11,6 +11,7 @@ Upstash Redis; anonymous chat and active generation queues remain process-local.
 External durable inference jobs and live restart recovery are not implemented.
 """
 from __future__ import annotations
+import re
 import asyncio, base64, copy, hashlib, json, os, threading, time, uuid, urllib.error, urllib.parse, urllib.request
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone
@@ -1047,7 +1048,7 @@ def _run(key,request_id,model_id,payload,assistant_id):
             event_source=(github_connection.start_events(payload["githubStart"])
                           if isinstance(payload.get("githubStart"),dict)
                           else github_connection.agent_events(
-                              payload["githubAction"],
+                              {**payload["githubAction"], "requestId": request_id},
                               model_generator={
                                   "r39": _generate,
                                   "stock": _stock_generate,
@@ -1337,6 +1338,10 @@ def _run(key,request_id,model_id,payload,assistant_id):
                 "structuredReceipt":copy.deepcopy(((intent.get("failureEvidence") or {}).get("receiptSemantics") or {}).get("structuredReceipt") or {}),
             } if intent.get("codingTask") else None
             telemetry_meta={"progressTrace":progress_timeline_v238.project(g.get("status"),accepted_ms,request_id)}
+            if validation.get("status") == "SOURCE_VALIDATED_ONLY":
+                # Preserve exact proposal provenance after the next generation
+                # replaces activeGeneration. This is not an execution receipt.
+                telemetry_meta["candidateValidation"]=copy.deepcopy(validation)
             if gh_context: telemetry_meta["githubContext"]=copy.deepcopy(gh_context)
             if response_cognition: telemetry_meta["responseCognition"]=response_cognition
             online_research=copy.deepcopy(g.get("onlineResearch") or {})

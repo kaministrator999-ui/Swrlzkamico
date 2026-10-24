@@ -1,0 +1,96 @@
+{
+  "requestId": "eval-c2c5a5cb0a95",
+  "source": "deployed-v294-baseline-repair-with-external-receipt",
+  "prompt": "Return the complete updated Python module in one python code fence. Preserve the import, public function signature, and all existing behavior for inputs without None. total_score must ignore None entries, sum numeric values, and apply BONUS_POINTS exactly once only when include_bonus is true. Do not mutate inputs. No dependencies or execution claims. Source:\n```python\n\"\"\"Pure score calculations; dependencies must resolve to constants.py.\"\"\"\n\nfrom .constants import BONUS_POINTS\n\n\ndef total_score(scores, include_bonus=False):\n    \"\"\"Return a deterministic total without mutating the input.\"\"\"\n    points = sum(scores)\n    return points + BONUS_POINTS if include_bonus else points\n\n```\n\nSOURCE UNDER REPAIR (previous candidate):\n```python\n\"\"\"Pure score calculations; dependencies must resolve to constants.py.\"\"\"\n\nfrom .constants import BONUS_POINTS\n\n\ndef total_score(scores, include_bonus=False):\n    \"\"\"Return a deterministic total without mutating the input.\"\"\"\n    if scores is None:\n        return None\n    points = sum(scores)\n    return points + BONUS_POINTS if include_bonus else points\n```\n\nIndependent Python execution failure receipt:\nCommand: python3 evaluate.py\nExit code: 1\nObserved: total_score([None, 2, None, 3]) raises TypeError: unsupported operand type(s) for +: int and NoneType. Expected 5. Ordinary total_score([2,3,5]) == 10 and include_bonus=True == 14 already pass and must remain correct.\nRepair the executable source operation that handles list ENTRIES; the task is not about scores=None. Preserve every original requirement. Return complete corrected Python module. Do not claim execution.",
+  "generation": {
+    "phase": "COMPLETE",
+    "terminalType": "COMPLETE",
+    "requestedModelId": "coder",
+    "selectedModelId": "coder",
+    "text": "```python\n\"\"\"Pure score calculations; dependencies must resolve to constants.py.\"\"\"\n\nfrom .constants import BONUS_POINTS\n\n\ndef total_score(scores, include_bonus=False):\n    \"\"\"Return a deterministic total without mutating the input.\"\"\"\n    if scores is None:\n        return None\n    points = sum(scores)\n    return points + BONUS_POINTS if include_bonus else points\n```",
+    "candidateValidation": {
+      "status": "PASS",
+      "reasons": [],
+      "languageContract": {
+        "schema": "swrlz-language-contract-v1",
+        "explicit": true,
+        "requestedLanguages": [
+          "python"
+        ],
+        "requiredLanguages": [
+          "python"
+        ],
+        "allowedCompanionLanguages": [],
+        "allowedLanguages": [
+          "python"
+        ],
+        "artifactType": "program",
+        "substitutionAllowed": false
+      },
+      "detectedLanguages": [
+        "python"
+      ],
+      "diagnosticGrounded": true,
+      "receiptCategories": [
+        "type"
+      ],
+      "activeRepairConstraints": {
+        "dependencyPolicy": "evidence-bounded",
+        "unavailableDependencies": [],
+        "carriedUnavailableDependencies": []
+      },
+      "behaviorLedger": {
+        "currentScore": null,
+        "bestKnownScore": null,
+        "regressedCases": [],
+        "resolvedCases": [],
+        "preservePassingCases": [],
+        "rebaseRecommended": false,
+        "bestKnownArtifact": null,
+        "repairBaseMode": "latest-failing-source"
+      },
+      "structuredReceipt": {
+        "formats": [
+          "json"
+        ],
+        "jsonObjectCount": 1,
+        "caseCount": 0,
+        "failedCaseCount": 0
+      },
+      "executionVerified": false,
+      "verificationState": "AWAITING_EXTERNAL_RECEIPT"
+    },
+    "contextBudget": {
+      "contextWindowTokens": 8192,
+      "inputBudgetTokens": 7680,
+      "estimatedInputTokens": 1849,
+      "reservedOutputTokens": 1536,
+      "historyMessagesDropped": 0,
+      "historyMessagesKept": 0,
+      "repairTurn": true,
+      "repairContext": {
+        "schema": "swrlz-repair-context-budget-v1",
+        "mode": "compact-repair",
+        "systemChars": 7741,
+        "sourceChars": 312,
+        "directionChars": 921,
+        "priorFailureCount": 1,
+        "receiptCategoryCount": 1,
+        "activeUnavailableDependencyCount": 0,
+        "carriedUnavailableDependencyCount": 0,
+        "behaviorRepairBaseMode": "latest-failing-source",
+        "behaviorCurrentScore": null,
+        "behaviorBestKnownScore": null,
+        "behaviorRegressionCount": 0,
+        "behaviorPreserveCount": 0
+      },
+      "tokenBreakdown": {
+        "system": 1651,
+        "history": 0,
+        "currentPrompt": 198,
+        "total": 1849
+      }
+    }
+  },
+  "evaluationNote": "Same task regression/repair check; no longer a blind first-attempt case after failure feedback."
+}

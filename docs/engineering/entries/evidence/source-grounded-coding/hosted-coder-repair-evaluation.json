@@ -1,0 +1,55 @@
+{
+  "kind": "real-hosted-Qwen-repair-probe-independent-evaluation",
+  "requestId": "eval-c2c5a5cb0a95",
+  "candidateSha256": "778f92faabe1326f81b8ede486bace6ada082e919ea4fb824a8bd34f3d2814b7",
+  "sameCandidateAsFirstAttempt": true,
+  "exitCode": 1,
+  "cases": [
+    {
+      "id": "ordinary-total",
+      "status": "PASS",
+      "actual": 10,
+      "expected": 10
+    },
+    {
+      "id": "ordinary-bonus",
+      "status": "PASS",
+      "actual": 14,
+      "expected": 14
+    },
+    {
+      "id": "missing-between-numbers",
+      "status": "FAIL",
+      "errorType": "TypeError",
+      "expected": 5
+    },
+    {
+      "id": "all-missing-plus-bonus",
+      "status": "FAIL",
+      "errorType": "TypeError",
+      "expected": 4
+    },
+    {
+      "id": "zero-negative-fraction",
+      "status": "FAIL",
+      "errorType": "TypeError",
+      "expected": -1.5
+    },
+    {
+      "id": "empty-input",
+      "status": "PASS",
+      "actual": 0,
+      "expected": 0
+    },
+    {
+      "id": "generator",
+      "status": "FAIL",
+      "errorType": "TypeError",
+      "expected": 3
+    }
+  ],
+  "passed": 3,
+  "failed": 4,
+  "isolation": "bubblewrap-no-network-cleared-environment-readonly-fixture-resource-limits",
+  "limitation": "Repair probe used a fresh anonymous thread with exact original task, previous candidate and failing receipt; this is not same-thread canonical-history acceptance."
+}

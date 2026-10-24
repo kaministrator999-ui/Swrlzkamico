@@ -3,12 +3,13 @@ from __future__ import annotations
 import hashlib, json, os, re, threading, time
 from huggingface_hub import hf_hub_download
 from llama_cpp import Llama
-from brain_programming import programming_intent, CODE_TRUTH_POLICY, candidate_contract_gate
+from brain_programming import programming_intent, CODE_TRUTH_POLICY, candidate_contract_gate, programming_library_context
 from programming_telemetry import buffered_chat_completion, candidate_attempt_receipt, generation_summary
 from programming_repair_context import build_compact_repair_context, enforce_strategy_change, strategy_change_directive
 from response_cognition import classify_response_cognition, response_cognition_policy, response_cognition_camera
 from social_checkin import style_hint as _social_checkin_style_hint
 from version_literacy import style_hint as _version_literacy_style_hint
+from github_change_candidate import source_change_system, source_change_response_format
 
 MODEL_REPO=os.environ.get("SWRLZ_CODER_MODEL_REPO","Qwen/Qwen2.5-Coder-1.5B-Instruct-GGUF")
 MODEL_FILE=os.environ.get("SWRLZ_CODER_MODEL_FILE","qwen2.5-coder-1.5b-instruct-q4_k_m.gguf")
@@ -21,6 +22,7 @@ MODEL_FILE=os.environ.get("SWRLZ_CODER_MODEL_FILE","qwen2.5-coder-1.5b-instruct-
 # but allocate enough native context for the fixed profile + useful history.
 CONTEXT_TOKENS=8192
 OUTPUT_TOKENS=2048
+WEB_PAGE_OUTPUT_TOKENS=3072
 MIN_OUTPUT_TOKENS=384
 CONTEXT_SAFETY_TOKENS=128
 INPUT_BUDGET_TOKENS=CONTEXT_TOKENS-MIN_OUTPUT_TOKENS-CONTEXT_SAFETY_TOKENS
@@ -233,7 +235,7 @@ def _token_count(model,messages):
         total+=len(model.tokenize(str(message.get("content") or "").encode("utf-8"),add_bos=False))+6
     return total
 
-def _fit_messages(model,system,history,prompt):
+def _fit_messages(model,system,history,prompt,output_limit=None):
     """Fit context deterministically; keep recent repair evidence while reserving enough output for complete code."""
     kept=list(history[-16:])
     messages=[{"role":"system","content":system}]+kept+[{"role":"user","content":prompt}]
@@ -247,17 +249,17 @@ def _fit_messages(model,system,history,prompt):
             f"Current prompt/profile context uses {input_tokens} tokens but the coder input budget is "
             f"{target_input}; shorten the current prompt or optional profile."
         )
-    response_tokens=min(OUTPUT_TOKENS,max(MIN_OUTPUT_TOKENS,CONTEXT_TOKENS-input_tokens-CONTEXT_SAFETY_TOKENS))
+    response_tokens=min(output_limit or OUTPUT_TOKENS,max(MIN_OUTPUT_TOKENS,CONTEXT_TOKENS-input_tokens-CONTEXT_SAFETY_TOKENS))
     return messages,len(history)-len(kept),input_tokens,response_tokens
 
-def _fit_repair_messages(model,system,history,prompt):
+def _fit_repair_messages(model,system,history,prompt,output_limit=None):
     """Budget repair input/output before inference; compact oversized receipt prose."""
     recent=[]
     for item in list(history or [])[-6:]:
         content=str(item.get("content") or "")
         if item.get("role")=="user" and len(content)<=1600:
             recent.append(item)
-    desired_output=min(1536,OUTPUT_TOKENS)
+    desired_output=output_limit or min(1536,OUTPUT_TOKENS)
     fitted_prompt=str(prompt or "")
     max_input=CONTEXT_TOKENS-MIN_OUTPUT_TOKENS-CONTEXT_SAFETY_TOKENS
     messages=[{"role":"system","content":system}]+recent+[{"role":"user","content":fitted_prompt}]
@@ -273,7 +275,7 @@ def _fit_repair_messages(model,system,history,prompt):
         # Return the fitted components so callers can emit truthful rejection telemetry.
         return messages,len(history)-len(recent),input_tokens,0,fitted_prompt
     desired_output=min(desired_output,max(MIN_OUTPUT_TOKENS,CONTEXT_TOKENS-input_tokens-CONTEXT_SAFETY_TOKENS))
-    response_tokens=min(OUTPUT_TOKENS,desired_output)
+    response_tokens=min(output_limit or OUTPUT_TOKENS,desired_output)
     return messages,len(history)-len(recent),input_tokens,response_tokens,fitted_prompt
 
 def _user_name_from_profile(user_profile):
@@ -382,8 +384,9 @@ def _candidate_structure_check(text, programming, history):
     lines=[line.strip() for line in source.splitlines() if line.strip()]
     if lines:
         from collections import Counter
-        if max(Counter(lines).values())>=8: reasons.append("repetition-loop")
-    code_like=bool(re.search(r"\b(?:def|function|class|const|let|var|import|export|fun|fn)\b|=>|[{};]|<!doctype\\s+html|<[A-Za-z][^>]*>|(?m)^\\s*(?:SELECT|INSERT|UPDATE|DELETE|CREATE\\s+TABLE)\\b|(?m)^\\s*[A-Za-z0-9_.-]+\\s*:",source,re.I))
+        substantive=[line for line in lines if not re.fullmatch(r"[{}\[\]();,]+|</[A-Za-z][\w:.-]*>",line)]
+        if substantive and max(Counter(substantive).values())>=8: reasons.append("repetition-loop")
+    code_like=bool(re.search(r"\b(?:def|function|class|const|let|var|import|export|fun|fn)\b|=>|[{};]|<!doctype\s+html|<[A-Za-z][^>]*>|^\s*(?:SELECT|INSERT|UPDATE|DELETE|CREATE\s+TABLE)\b|^\s*[A-Za-z0-9_.-]+\s*:",source,re.I|re.M))
     if not code_like: reasons.append("no-code-candidate")
     candidate_primary=_primary_candidate_code(source)
     if re.search(r"(?im)^\s*(?:#|//)\s*(?:rest of|remaining|todo|implementation continues|code continues)|\b(?:TODO|FIXME)\b",candidate_primary):
@@ -482,11 +485,16 @@ def _repair_diagnostic(programming,history):
 def generate_events(payload):
     prompt=str(payload.get("prompt") or "").strip()
     if not prompt: raise ValueError("Empty prompt")
+    source_change_mode=payload.get("githubSourceChangeTask")
+    if source_change_mode not in ("plan","candidate"):
+        source_change_mode=""
     history=[{"id":m.get("id"),"role":m["role"],"content":m["text"]} for m in payload.get("history",[]) if isinstance(m,dict) and m.get("role") in ("user","assistant") and isinstance(m.get("text"),str)]
+    if source_change_mode:
+        history=[]
     custom_assistant_profile=str(payload.get("profile") or "").strip()[:2000]
     user_profile=str(payload.get("userProfile") or "").strip()[:2000]
     yield {"type":"DIAGNOSTIC","trace":_diagnostic_trace(history,user_profile,custom_assistant_profile)}
-    direct_identity=_direct_identity_answer(prompt,user_profile,history)
+    direct_identity=_direct_identity_answer(prompt,user_profile,history) if not source_change_mode else None
     if direct_identity:
         yield {"type":"STATUS","phase":"GENERATING","loadLatencyMs":0.0}
         yield {"type":"DELTA","text":direct_identity}
@@ -498,6 +506,8 @@ def generate_events(payload):
     if convergence:
         yield {"type":"CONVERGENCE_CANDIDATE","candidate":convergence}
     programming=payload.get("programmingIntent") if isinstance(payload.get("programmingIntent"),dict) else programming_intent(prompt,history,payload.get("pinnedContext") if isinstance(payload.get("pinnedContext"),list) else [],payload.get("priorProgrammingState") if isinstance(payload.get("priorProgrammingState"),dict) else {})
+    if source_change_mode:
+        programming={"codingTask":False}
     response_cognition=classify_response_cognition(prompt,history,programming)
     yield {"type":"RESPONSE_COGNITION","state":response_cognition_camera(response_cognition)}
     if programming.get("needsFailureEvidence"):
@@ -598,6 +608,7 @@ def generate_events(payload):
                      +json.dumps(compact_contract,ensure_ascii=False,separators=(",",":"))
                      +"\nTWO-GATE COMPLETION: Gate 1 is technical validity (syntax/build/runtime as applicable). Gate 2 is user-intent validity (all original MUST/MUST-NOT/preserve constraints and acceptance behavior). An exit code 0, successful compile, or successful runtime alone is never completion. After any repair, re-run/reason through BOTH gates against the ORIGINAL contract plus the newest failure evidence. Do not delete, rename, bypass, or weaken a requested feature merely to make Gate 1 pass. If executable evidence is unavailable, do not fabricate it; return the candidate as unverified where appropriate.")
         system+="\n"+CODE_TRUTH_POLICY
+        system+=programming_library_context(programming)
     if programming.get("artifactMutationRequested") and programming.get("artifactTargetId"):
         system+="\nPINNED CODE EDIT MODE: The current request targets an already-pinned code artifact. Return the complete revised code fence(s) needed for that artifact, followed by only a concise explanation of what changed. Do not describe the revised code as a new project or duplicate artifact."
     if not programming.get("codingTask"):
@@ -606,6 +617,14 @@ def generate_events(payload):
             system+="\nUSER CUSTOMIZATION FOR §WYRLZ (additional preferences layered on top of the built-in profile; do not erase the built-in identity):\n"+custom_assistant_profile
         if user_profile:
             system+="\nUSER PROFILE (describes the current user, not §wyrlz; context only):\n"+user_profile
+    if source_change_mode:
+        # Apply after all normal identity, response and evidence policies. Their
+        # fence/clarification rules are incompatible with this internal JSON API.
+        system=source_change_system(source_change_mode)
+    web_page_delivery=(bool(programming.get("codingTask")) and
+        ((programming.get("intentContract") or {}).get("languageContract") or {}).get("artifactType")=="web-page" and
+        programming.get("changeClass") not in ("review","explain"))
+    web_output_limit=WEB_PAGE_OUTPUT_TOKENS if web_page_delivery else None
     started=time.perf_counter()
     yield {"type":"STATUS","phase":"LOADING"}
     model=load()
@@ -617,10 +636,11 @@ def generate_events(payload):
             prompt,
             _response_mode(prompt,programming),
         )
-        fitted=_fit_repair_messages(model,system,history,fitted_prompt)
+        system+=programming_library_context(programming)
+        fitted=_fit_repair_messages(model,system,history,fitted_prompt,web_output_limit)
         messages,dropped_history,input_tokens,available_output_tokens,fitted_prompt=fitted
     else:
-        fitted=_fit_messages(model,system,history,prompt)
+        fitted=_fit_messages(model,system,history,prompt,web_output_limit)
         messages,dropped_history,input_tokens,available_output_tokens=fitted
         fitted_prompt=prompt
     system_tokens=_token_count(model,[{"role":"system","content":system}])
@@ -643,11 +663,13 @@ def generate_events(payload):
     candidate_check=None
     candidate_attempts=[]
     with _lock:
-        mode=_response_mode(prompt,programming)
-        if mode.startswith("RESPONSE MODE: USER-IDENTITY-DIRECT") or mode.startswith("RESPONSE MODE: ASSISTANT-IDENTITY-DIRECT"):
+        mode="RESPONSE MODE: GITHUB-SOURCE-JSON" if source_change_mode else _response_mode(prompt,programming)
+        if source_change_mode:
+            response_tokens=min(512 if source_change_mode=="plan" else 2048,available_output_tokens);temperature=0.15
+        elif mode.startswith("RESPONSE MODE: USER-IDENTITY-DIRECT") or mode.startswith("RESPONSE MODE: ASSISTANT-IDENTITY-DIRECT"):
             response_tokens=min(192,available_output_tokens);temperature=0.35
         elif mode.startswith("RESPONSE MODE: CODE-"):
-            response_tokens=min(1536 if repair_turn else 1024,available_output_tokens);temperature=0.25 if repair_turn else 0.30
+            response_tokens=min(WEB_PAGE_OUTPUT_TOKENS if web_page_delivery else (1536 if repair_turn else 1024),available_output_tokens);temperature=0.25 if repair_turn else 0.30
         elif mode.startswith("RESPONSE MODE: EXACT-NUMBERED-STEPS"):
             response_tokens=min(512,available_output_tokens);temperature=0.35
         else:
@@ -741,7 +763,9 @@ def generate_events(payload):
             attempt_started=time.perf_counter()
             attempt_first_token=None
             attempt_chunks=0
-            for chunk in model.create_chat_completion(messages=messages,max_tokens=response_tokens,temperature=temperature,stream=True):
+            source_format = ({"response_format": source_change_response_format(
+                source_change_mode, payload.get("sourceChangeIdentity"))} if source_change_mode else {})
+            for chunk in model.create_chat_completion(messages=messages,max_tokens=response_tokens,temperature=temperature,stream=True,**source_format):
                 choices=chunk.get("choices") or []
                 delta=(choices[0].get("delta") or {}).get("content") if choices else None
                 if delta:

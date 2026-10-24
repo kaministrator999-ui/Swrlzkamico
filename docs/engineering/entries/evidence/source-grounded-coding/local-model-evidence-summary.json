@@ -1,0 +1,551 @@
+{
+  "schema": "swrlz-local-source-change-evidence-summary-v1",
+  "date": "2026-10-24",
+  "scope": "Actual local modified owner and model inference using pinned public sandbox Git fixtures; not authenticated provider or live Chat acceptance",
+  "fairModelLeaderboard": false,
+  "fineTuningPerformed": false,
+  "activeModelDefaultChanged": false,
+  "modelGeneratedChecksExecuted": false,
+  "limits": [
+    "Different recorded source/prompt revisions; no equal-configuration statistical model comparison",
+    "Public development/regression tasks, not statistically held-out evaluation",
+    "Planner schema pass is not plan quality or proof of causal cooperation",
+    "No fixed generation seed; shared CPU latency is observational",
+    "SOURCE_VALIDATED_ONLY does not imply correct behavior",
+    "No candidate is executed when source validation rejects it"
+  ],
+  "runs": [
+    {
+      "directory": "initial-score-700m",
+      "models": [
+        {
+          "repo": "LiquidAI/LFM2-700M-GGUF",
+          "revision": "fd39e80d7a5ac61494ffff577e61bbbfddbd0d02",
+          "file": "LFM2-700M-Q4_K_M.gguf",
+          "bytes": 468624320,
+          "sha256": "684e8406dc13321452b3f6aeca432776e2a6a7e1ad6c23f7887b8fe3efbe2efa",
+          "localPath": "/workspace/cloud-setup/eval/models/LFM2-700M-Q4_K_M.gguf"
+        },
+        {
+          "repo": "Qwen/Qwen2.5-Coder-1.5B-Instruct-GGUF",
+          "revision": "f86cb2c1fa58255f8052cc32aeede1b7482d4361",
+          "file": "qwen2.5-coder-1.5b-instruct-q4_k_m.gguf",
+          "bytes": 1117320768,
+          "sha256": "cc324af070c2ecbfd324a30884d2f951a7ff756aba85cb811a6ec436933bb046",
+          "localPath": "/workspace/cloud-setup/eval/models/qwen2.5-coder-1.5b-instruct-q4_k_m.gguf"
+        }
+      ],
+      "runtimeVersions": {
+        "llama-cpp-python": "0.3.35",
+        "numpy": "2.2.6",
+        "huggingface-hub": "1.16.0"
+      },
+      "sourceFileSha256": {
+        "github_source_specialist_v241.py": "97e09f2c260766f425acbf35cc02bbdb92bceaa9bbab9329d277bd80fad7550e",
+        "github_change_candidate.py": "99c6798043e3de0017d759b9e1c70058114ca93c7516e759a94d1af57b5e1f2b",
+        "qwen_coder_engine.py": "70836c0d2636c9de6036f292f143f6b548376dcb34addb7532be87c3defece78",
+        "lfm2_700m_engine.py": "fda56dc6fd17b65c12c4fb2a7cf94b36f2876d36694c0cc414d68b8a38988b02",
+        "engine_code_agent_v217.py": "f067cf5602dd5147bb92e9d39413e8e2ec1de92dc6108721ba9c554590eab064"
+      },
+      "tasks": [
+        {
+          "taskId": "python-score-missing-values",
+          "baseCommit": "b48669684eb912c0fe3a0011d99f6ea42e526c2e",
+          "baseBlob": "b0bca671eabfe5fd1f0c807c59d315839d62980b",
+          "path": "src/swrlz_lab/scoring.py",
+          "originalGoalSha256": "60449d1812619bfa2b0b9794fd9c641fec4cca1f9a50ffb10c993f0aa4fbf4f8",
+          "candidateState": "SOURCE_REJECTED",
+          "plannerValid": false,
+          "latencySeconds": 32.763135,
+          "rejection": "Model response must be strict JSON with unique fields",
+          "coderCalls": 1,
+          "correctionStatuses": 0,
+          "rawCandidateSha256": [
+            "4ddc8a8a50be7c6e7944fbb77a32942b7c762e131230bde2d8d564ea7294d090"
+          ],
+          "independentEvaluation": "NOT_RUN_NO_ACCEPTED_CANDIDATE"
+        }
+      ]
+    },
+    {
+      "directory": "constrained-score-700m",
+      "models": [
+        {
+          "repo": "LiquidAI/LFM2-700M-GGUF",
+          "revision": "fd39e80d7a5ac61494ffff577e61bbbfddbd0d02",
+          "file": "LFM2-700M-Q4_K_M.gguf",
+          "bytes": 468624320,
+          "sha256": "684e8406dc13321452b3f6aeca432776e2a6a7e1ad6c23f7887b8fe3efbe2efa",
+          "localPath": "/workspace/cloud-setup/eval/models/LFM2-700M-Q4_K_M.gguf"
+        },
+        {
+          "repo": "Qwen/Qwen2.5-Coder-1.5B-Instruct-GGUF",
+          "revision": "f86cb2c1fa58255f8052cc32aeede1b7482d4361",
+          "file": "qwen2.5-coder-1.5b-instruct-q4_k_m.gguf",
+          "bytes": 1117320768,
+          "sha256": "cc324af070c2ecbfd324a30884d2f951a7ff756aba85cb811a6ec436933bb046",
+          "localPath": "/workspace/cloud-setup/eval/models/qwen2.5-coder-1.5b-instruct-q4_k_m.gguf"
+        }
+      ],
+      "runtimeVersions": {
+        "llama-cpp-python": "0.3.35",
+        "numpy": "2.2.6",
+        "huggingface-hub": "1.16.0"
+      },
+      "sourceFileSha256": {
+        "github_source_specialist_v241.py": "536386fb758dd5817da166ff9e0481e52b584f26eba3bfbe379d30cd3298135d",
+        "github_change_candidate.py": "d2e7fad2c36fbff5ef6cdc1f2ed73b4b05f84f030b0073a9b40514d390190b4a",
+        "qwen_coder_engine.py": "62ac6b8decbfbd75b23f98f69f07302fd0ad1aee819ba8ac27f2a127b629f061",
+        "lfm2_700m_engine.py": "62aca31e923724f5ee0d10fd9926248aefb13c3871045f42561bfe1002d539bf",
+        "engine_code_agent_v217.py": "f067cf5602dd5147bb92e9d39413e8e2ec1de92dc6108721ba9c554590eab064"
+      },
+      "tasks": [
+        {
+          "taskId": "python-score-missing-values",
+          "baseCommit": "b48669684eb912c0fe3a0011d99f6ea42e526c2e",
+          "baseBlob": "b0bca671eabfe5fd1f0c807c59d315839d62980b",
+          "path": "src/swrlz_lab/scoring.py",
+          "originalGoalSha256": "60449d1812619bfa2b0b9794fd9c641fec4cca1f9a50ffb10c993f0aa4fbf4f8",
+          "candidateState": "SOURCE_REJECTED",
+          "plannerValid": true,
+          "latencySeconds": 42.205598,
+          "rejection": "Replacement must be shown in the excerpt and unique in full source",
+          "coderCalls": 1,
+          "correctionStatuses": 0,
+          "rawCandidateSha256": [
+            "cc3f9be9c9ecfb2e6738873787aab58faaeb7a9fd795518515d5a8ff52d2bfb4"
+          ],
+          "independentEvaluation": "NOT_RUN_NO_ACCEPTED_CANDIDATE"
+        }
+      ]
+    },
+    {
+      "directory": "constrained-score-coder-only",
+      "models": [
+        {
+          "repo": "Qwen/Qwen2.5-Coder-1.5B-Instruct-GGUF",
+          "revision": "f86cb2c1fa58255f8052cc32aeede1b7482d4361",
+          "file": "qwen2.5-coder-1.5b-instruct-q4_k_m.gguf",
+          "bytes": 1117320768,
+          "sha256": "cc324af070c2ecbfd324a30884d2f951a7ff756aba85cb811a6ec436933bb046",
+          "localPath": "/workspace/cloud-setup/eval/models/qwen2.5-coder-1.5b-instruct-q4_k_m.gguf"
+        }
+      ],
+      "runtimeVersions": {
+        "llama-cpp-python": "0.3.35",
+        "numpy": "2.2.6",
+        "huggingface-hub": "1.16.0"
+      },
+      "sourceFileSha256": {
+        "github_source_specialist_v241.py": "536386fb758dd5817da166ff9e0481e52b584f26eba3bfbe379d30cd3298135d",
+        "github_change_candidate.py": "d2e7fad2c36fbff5ef6cdc1f2ed73b4b05f84f030b0073a9b40514d390190b4a",
+        "qwen_coder_engine.py": "62ac6b8decbfbd75b23f98f69f07302fd0ad1aee819ba8ac27f2a127b629f061",
+        "lfm2_700m_engine.py": "62aca31e923724f5ee0d10fd9926248aefb13c3871045f42561bfe1002d539bf",
+        "engine_code_agent_v217.py": "f067cf5602dd5147bb92e9d39413e8e2ec1de92dc6108721ba9c554590eab064"
+      },
+      "tasks": [
+        {
+          "taskId": "python-score-missing-values",
+          "baseCommit": "b48669684eb912c0fe3a0011d99f6ea42e526c2e",
+          "baseBlob": "b0bca671eabfe5fd1f0c807c59d315839d62980b",
+          "path": "src/swrlz_lab/scoring.py",
+          "originalGoalSha256": "60449d1812619bfa2b0b9794fd9c641fec4cca1f9a50ffb10c993f0aa4fbf4f8",
+          "candidateState": "SOURCE_REJECTED",
+          "plannerValid": false,
+          "latencySeconds": 26.113036,
+          "rejection": "Replacement must be shown in the excerpt and unique in full source",
+          "coderCalls": 1,
+          "correctionStatuses": 0,
+          "rawCandidateSha256": [
+            "9ceed9878d46635ea418512be98ec2f33b151a3d2496a466cffb050ee299eaaa"
+          ],
+          "independentEvaluation": "NOT_RUN_NO_ACCEPTED_CANDIDATE"
+        }
+      ]
+    },
+    {
+      "directory": "constrained-score-3b",
+      "models": [
+        {
+          "repo": "LiquidAI/LFM2-700M-GGUF",
+          "revision": "fd39e80d7a5ac61494ffff577e61bbbfddbd0d02",
+          "file": "LFM2-700M-Q4_K_M.gguf",
+          "bytes": 468624320,
+          "sha256": "684e8406dc13321452b3f6aeca432776e2a6a7e1ad6c23f7887b8fe3efbe2efa",
+          "localPath": "/workspace/cloud-setup/eval/models/LFM2-700M-Q4_K_M.gguf"
+        },
+        {
+          "repo": "Qwen/Qwen2.5-Coder-3B-Instruct-GGUF",
+          "revision": "f74adce6aa16316c625447af059dbebe4983757c",
+          "file": "qwen2.5-coder-3b-instruct-q4_k_m.gguf",
+          "bytes": 2104932800,
+          "sha256": "724fb256bec1ff062b2f65e4569e871ad2e95ab2a3989723d1769c54294730b7",
+          "localPath": "/workspace/cloud-setup/eval/models/qwen2.5-coder-3b-instruct-q4_k_m.gguf"
+        }
+      ],
+      "runtimeVersions": {
+        "llama-cpp-python": "0.3.35",
+        "numpy": "2.2.6",
+        "huggingface-hub": "1.16.0"
+      },
+      "sourceFileSha256": {
+        "github_source_specialist_v241.py": "536386fb758dd5817da166ff9e0481e52b584f26eba3bfbe379d30cd3298135d",
+        "github_change_candidate.py": "d2e7fad2c36fbff5ef6cdc1f2ed73b4b05f84f030b0073a9b40514d390190b4a",
+        "qwen_coder_engine.py": "62ac6b8decbfbd75b23f98f69f07302fd0ad1aee819ba8ac27f2a127b629f061",
+        "lfm2_700m_engine.py": "62aca31e923724f5ee0d10fd9926248aefb13c3871045f42561bfe1002d539bf",
+        "engine_code_agent_v217.py": "f067cf5602dd5147bb92e9d39413e8e2ec1de92dc6108721ba9c554590eab064"
+      },
+      "tasks": [
+        {
+          "taskId": "python-score-missing-values",
+          "baseCommit": "b48669684eb912c0fe3a0011d99f6ea42e526c2e",
+          "baseBlob": "b0bca671eabfe5fd1f0c807c59d315839d62980b",
+          "path": "src/swrlz_lab/scoring.py",
+          "originalGoalSha256": "60449d1812619bfa2b0b9794fd9c641fec4cca1f9a50ffb10c993f0aa4fbf4f8",
+          "candidateState": "SOURCE_VALIDATED_ONLY",
+          "plannerValid": true,
+          "latencySeconds": 66.557134,
+          "rejection": null,
+          "coderCalls": 1,
+          "correctionStatuses": 0,
+          "rawCandidateSha256": [
+            "f09dbea2d8bdc84ce75147a5d44662570da2c57d01ca8ec3ff1bbd8aa510fadd"
+          ],
+          "independentEvaluation": {
+            "candidateSha256": "806d80b81fd124724f48902015591cbd05e966d835c0bc161a09b66502241dcb",
+            "status": "PASS",
+            "counts": {
+              "PASS": 7,
+              "FAIL": 0,
+              "UNRUN": 0
+            },
+            "evidenceLimit": "Finite independently checked cases; no live model, provider-write, deployment or training acceptance implied."
+          }
+        }
+      ]
+    },
+    {
+      "directory": "constrained-suite-3b",
+      "models": [
+        {
+          "repo": "LiquidAI/LFM2-700M-GGUF",
+          "revision": "fd39e80d7a5ac61494ffff577e61bbbfddbd0d02",
+          "file": "LFM2-700M-Q4_K_M.gguf",
+          "bytes": 468624320,
+          "sha256": "684e8406dc13321452b3f6aeca432776e2a6a7e1ad6c23f7887b8fe3efbe2efa",
+          "localPath": "/workspace/cloud-setup/eval/models/LFM2-700M-Q4_K_M.gguf"
+        },
+        {
+          "repo": "Qwen/Qwen2.5-Coder-3B-Instruct-GGUF",
+          "revision": "f74adce6aa16316c625447af059dbebe4983757c",
+          "file": "qwen2.5-coder-3b-instruct-q4_k_m.gguf",
+          "bytes": 2104932800,
+          "sha256": "724fb256bec1ff062b2f65e4569e871ad2e95ab2a3989723d1769c54294730b7",
+          "localPath": "/workspace/cloud-setup/eval/models/qwen2.5-coder-3b-instruct-q4_k_m.gguf"
+        }
+      ],
+      "runtimeVersions": {
+        "llama-cpp-python": "0.3.35",
+        "numpy": "2.2.6",
+        "huggingface-hub": "1.16.0"
+      },
+      "sourceFileSha256": {
+        "github_source_specialist_v241.py": "536386fb758dd5817da166ff9e0481e52b584f26eba3bfbe379d30cd3298135d",
+        "github_change_candidate.py": "d2e7fad2c36fbff5ef6cdc1f2ed73b4b05f84f030b0073a9b40514d390190b4a",
+        "qwen_coder_engine.py": "62ac6b8decbfbd75b23f98f69f07302fd0ad1aee819ba8ac27f2a127b629f061",
+        "lfm2_700m_engine.py": "62aca31e923724f5ee0d10fd9926248aefb13c3871045f42561bfe1002d539bf",
+        "engine_code_agent_v217.py": "f067cf5602dd5147bb92e9d39413e8e2ec1de92dc6108721ba9c554590eab064"
+      },
+      "tasks": [
+        {
+          "taskId": "javascript-points-singular",
+          "baseCommit": "b48669684eb912c0fe3a0011d99f6ea42e526c2e",
+          "baseBlob": "5986abb941977b8992797f433dc13cc13c8a2f31",
+          "path": "src/web/format.js",
+          "originalGoalSha256": "71261b5e4b6e0662ce595adaec070c6e06ef71644f6d092e06cda27883309156",
+          "candidateState": "SOURCE_VALIDATED_ONLY",
+          "plannerValid": true,
+          "latencySeconds": 63.110649,
+          "rejection": null,
+          "coderCalls": 1,
+          "correctionStatuses": 0,
+          "rawCandidateSha256": [
+            "9ce1bf2b22ce679b71ba2468f65e20744ecf422ff44f665c7f0f9966c63cd763"
+          ],
+          "independentEvaluation": {
+            "candidateSha256": "7d27b1b234ebe58923a9fb1abac2dfdf4bb6350879b4cbb30a159fb2b6d42536",
+            "status": "PASS",
+            "counts": {
+              "PASS": 6,
+              "FAIL": 0,
+              "UNRUN": 0
+            },
+            "evidenceLimit": "Finite independently checked cases; no live model, provider-write, deployment or training acceptance implied."
+          }
+        },
+        {
+          "taskId": "python-summary-singular-point",
+          "baseCommit": "b48669684eb912c0fe3a0011d99f6ea42e526c2e",
+          "baseBlob": "669af72a4784229bb424f46f93ea6533da1e3c7d",
+          "path": "src/swrlz_lab/formatting.py",
+          "originalGoalSha256": "41b4e95a5f53c156b67b3d04663eb28c4495d11db79bbc76045205b09abfb976",
+          "candidateState": "SOURCE_VALIDATED_ONLY",
+          "plannerValid": true,
+          "latencySeconds": 63.753258,
+          "rejection": null,
+          "coderCalls": 1,
+          "correctionStatuses": 0,
+          "rawCandidateSha256": [
+            "51db01a39345c5ff470530433fb4e32c3151771d0c5ac37ac0062f673772aaea"
+          ],
+          "independentEvaluation": {
+            "candidateSha256": "fd60b8181a42cae7e1dc338efdbbab5bdacda56d4428d58de14eb2c2debc9fbf",
+            "status": "PASS",
+            "counts": {
+              "PASS": 6,
+              "FAIL": 0,
+              "UNRUN": 0
+            },
+            "evidenceLimit": "Finite independently checked cases; no live model, provider-write, deployment or training acceptance implied."
+          }
+        },
+        {
+          "taskId": "web-counter-shift-step",
+          "baseCommit": "b48669684eb912c0fe3a0011d99f6ea42e526c2e",
+          "baseBlob": "9e647aaad7889ae43fc5646a615e8fb9d56ff515",
+          "path": "web-test/index.html",
+          "originalGoalSha256": "e296719291a7496b230cc8c1bbdf583f95531f3ffd9e651ea0650971b0a444ad",
+          "candidateState": "SOURCE_VALIDATED_ONLY",
+          "plannerValid": true,
+          "latencySeconds": 106.218271,
+          "rejection": null,
+          "coderCalls": 1,
+          "correctionStatuses": 0,
+          "rawCandidateSha256": [
+            "c181ef4b2b7c832776d7d7e497ce491bc7e991445abaee4248c0748c5786f699"
+          ],
+          "independentEvaluation": {
+            "candidateSha256": "a069f778f28c1468078667ec0425b924cbc74ce357f38ea2e612ae68061de01a",
+            "status": "FAIL",
+            "counts": {
+              "PASS": 5,
+              "FAIL": 2,
+              "UNRUN": 0
+            },
+            "evidenceLimit": "Finite independently checked cases; no live model, provider-write, deployment or training acceptance implied."
+          }
+        },
+        {
+          "taskId": "workflow-include-web-test",
+          "baseCommit": "b48669684eb912c0fe3a0011d99f6ea42e526c2e",
+          "baseBlob": "1aca2accc397b4549745182738c8dbc862159466",
+          "path": ".github/workflows/verify-testbed.yml",
+          "originalGoalSha256": "b2ba9c9d72daaf41e48a26578347c45cda66eb0135fe25bbff86f352d5fe850e",
+          "candidateState": "SOURCE_REJECTED",
+          "plannerValid": true,
+          "latencySeconds": 129.313065,
+          "rejection": "Candidate replacement is empty, unchanged or oversized",
+          "coderCalls": 1,
+          "correctionStatuses": 0,
+          "rawCandidateSha256": [
+            "a42c11ca6cc20da3817234857777e136f4d2e27fc87c55f494b6e566d4f8e646"
+          ],
+          "independentEvaluation": "NOT_RUN_NO_ACCEPTED_CANDIDATE"
+        }
+      ]
+    },
+    {
+      "directory": "constrained-hard-suite-7b",
+      "models": [
+        {
+          "repo": "LiquidAI/LFM2-700M-GGUF",
+          "revision": "fd39e80d7a5ac61494ffff577e61bbbfddbd0d02",
+          "file": "LFM2-700M-Q4_K_M.gguf",
+          "bytes": 468624320,
+          "sha256": "684e8406dc13321452b3f6aeca432776e2a6a7e1ad6c23f7887b8fe3efbe2efa",
+          "localPath": "/workspace/cloud-setup/eval/models/LFM2-700M-Q4_K_M.gguf"
+        },
+        {
+          "repo": "Qwen/Qwen2.5-Coder-7B-Instruct-GGUF",
+          "revision": "13fb94bfda8c8cf22497dc57b78f391a9acb426a",
+          "file": "qwen2.5-coder-7b-instruct-q4_k_m.gguf",
+          "bytes": 4683073536,
+          "sha256": "509287f78cb4d4cf6b3843734733b914b2c158e43e22a7f4bf5e963800894d3c",
+          "localPath": "/workspace/cloud-setup/eval/models/qwen2.5-coder-7b-instruct-q4_k_m.gguf"
+        }
+      ],
+      "runtimeVersions": {
+        "llama-cpp-python": "0.3.35",
+        "numpy": "2.2.6",
+        "huggingface-hub": "1.16.0"
+      },
+      "sourceFileSha256": {
+        "github_source_specialist_v241.py": "536386fb758dd5817da166ff9e0481e52b584f26eba3bfbe379d30cd3298135d",
+        "github_change_candidate.py": "d2e7fad2c36fbff5ef6cdc1f2ed73b4b05f84f030b0073a9b40514d390190b4a",
+        "qwen_coder_engine.py": "b1a3c6abda4659ebcf4dee31f54dd6357b13dd911c3ae9826d5151d76d2c5d2c",
+        "lfm2_700m_engine.py": "6f813236994e3d39b13eec5c6c62ccc923866b38f5e98334747172d42a5f954d",
+        "engine_code_agent_v217.py": "f067cf5602dd5147bb92e9d39413e8e2ec1de92dc6108721ba9c554590eab064"
+      },
+      "tasks": [
+        {
+          "taskId": "web-counter-shift-step",
+          "baseCommit": "b48669684eb912c0fe3a0011d99f6ea42e526c2e",
+          "baseBlob": "9e647aaad7889ae43fc5646a615e8fb9d56ff515",
+          "path": "web-test/index.html",
+          "originalGoalSha256": "e296719291a7496b230cc8c1bbdf583f95531f3ffd9e651ea0650971b0a444ad",
+          "candidateState": "SOURCE_REJECTED",
+          "plannerValid": true,
+          "latencySeconds": 174.927874,
+          "rejection": "Model response has unexpected fields",
+          "coderCalls": 1,
+          "correctionStatuses": 0,
+          "rawCandidateSha256": [
+            "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+          ],
+          "independentEvaluation": "NOT_RUN_NO_ACCEPTED_CANDIDATE"
+        },
+        {
+          "taskId": "workflow-include-web-test",
+          "baseCommit": "b48669684eb912c0fe3a0011d99f6ea42e526c2e",
+          "baseBlob": "1aca2accc397b4549745182738c8dbc862159466",
+          "path": ".github/workflows/verify-testbed.yml",
+          "originalGoalSha256": "b2ba9c9d72daaf41e48a26578347c45cda66eb0135fe25bbff86f352d5fe850e",
+          "candidateState": "SOURCE_REJECTED",
+          "plannerValid": true,
+          "latencySeconds": 66.497129,
+          "rejection": "Model response has unexpected fields",
+          "coderCalls": 1,
+          "correctionStatuses": 0,
+          "rawCandidateSha256": [
+            "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+          ],
+          "independentEvaluation": "NOT_RUN_NO_ACCEPTED_CANDIDATE"
+        }
+      ]
+    },
+    {
+      "directory": "correction-hard-suite-7b",
+      "models": [
+        {
+          "repo": "LiquidAI/LFM2-700M-GGUF",
+          "revision": "fd39e80d7a5ac61494ffff577e61bbbfddbd0d02",
+          "file": "LFM2-700M-Q4_K_M.gguf",
+          "bytes": 468624320,
+          "sha256": "684e8406dc13321452b3f6aeca432776e2a6a7e1ad6c23f7887b8fe3efbe2efa",
+          "localPath": "/workspace/cloud-setup/eval/models/LFM2-700M-Q4_K_M.gguf"
+        },
+        {
+          "repo": "Qwen/Qwen2.5-Coder-7B-Instruct-GGUF",
+          "revision": "13fb94bfda8c8cf22497dc57b78f391a9acb426a",
+          "file": "qwen2.5-coder-7b-instruct-q4_k_m.gguf",
+          "bytes": 4683073536,
+          "sha256": "509287f78cb4d4cf6b3843734733b914b2c158e43e22a7f4bf5e963800894d3c",
+          "localPath": "/workspace/cloud-setup/eval/models/qwen2.5-coder-7b-instruct-q4_k_m.gguf"
+        }
+      ],
+      "runtimeVersions": {
+        "llama-cpp-python": "0.3.35",
+        "numpy": "2.2.6",
+        "huggingface-hub": "1.16.0"
+      },
+      "sourceFileSha256": {
+        "github_source_specialist_v241.py": "357a1570bbf371afa7d043d9b00c757a4f492505647e6225d3cea4774edcf2b4",
+        "github_change_candidate.py": "80e26eeb857f32bfbdf179d7dd4adb3bbd718ce0e17b6d07a39d19fbd4d83e0d",
+        "qwen_coder_engine.py": "b1a3c6abda4659ebcf4dee31f54dd6357b13dd911c3ae9826d5151d76d2c5d2c",
+        "lfm2_700m_engine.py": "6f813236994e3d39b13eec5c6c62ccc923866b38f5e98334747172d42a5f954d",
+        "engine_code_agent_v217.py": "f067cf5602dd5147bb92e9d39413e8e2ec1de92dc6108721ba9c554590eab064"
+      },
+      "tasks": [
+        {
+          "taskId": "web-counter-shift-step",
+          "baseCommit": "b48669684eb912c0fe3a0011d99f6ea42e526c2e",
+          "baseBlob": "9e647aaad7889ae43fc5646a615e8fb9d56ff515",
+          "path": "web-test/index.html",
+          "originalGoalSha256": "e296719291a7496b230cc8c1bbdf583f95531f3ffd9e651ea0650971b0a444ad",
+          "candidateState": "SOURCE_REJECTED",
+          "plannerValid": true,
+          "latencySeconds": 177.72243,
+          "rejection": "Model abstained; no source-change candidate was proposed",
+          "coderCalls": 2,
+          "correctionStatuses": 1,
+          "rawCandidateSha256": [
+            "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+            "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+          ],
+          "independentEvaluation": "NOT_RUN_NO_ACCEPTED_CANDIDATE"
+        },
+        {
+          "taskId": "workflow-include-web-test",
+          "baseCommit": "b48669684eb912c0fe3a0011d99f6ea42e526c2e",
+          "baseBlob": "1aca2accc397b4549745182738c8dbc862159466",
+          "path": ".github/workflows/verify-testbed.yml",
+          "originalGoalSha256": "b2ba9c9d72daaf41e48a26578347c45cda66eb0135fe25bbff86f352d5fe850e",
+          "candidateState": "SOURCE_REJECTED",
+          "plannerValid": true,
+          "latencySeconds": 71.300816,
+          "rejection": "Model abstained; no source-change candidate was proposed",
+          "coderCalls": 2,
+          "correctionStatuses": 1,
+          "rawCandidateSha256": [
+            "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+            "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+          ],
+          "independentEvaluation": "NOT_RUN_NO_ACCEPTED_CANDIDATE"
+        }
+      ]
+    },
+    {
+      "directory": "correction-score-1p5b",
+      "models": [
+        {
+          "repo": "LiquidAI/LFM2-700M-GGUF",
+          "revision": "fd39e80d7a5ac61494ffff577e61bbbfddbd0d02",
+          "file": "LFM2-700M-Q4_K_M.gguf",
+          "bytes": 468624320,
+          "sha256": "684e8406dc13321452b3f6aeca432776e2a6a7e1ad6c23f7887b8fe3efbe2efa",
+          "localPath": "/workspace/cloud-setup/eval/models/LFM2-700M-Q4_K_M.gguf"
+        },
+        {
+          "repo": "Qwen/Qwen2.5-Coder-1.5B-Instruct-GGUF",
+          "revision": "f86cb2c1fa58255f8052cc32aeede1b7482d4361",
+          "file": "qwen2.5-coder-1.5b-instruct-q4_k_m.gguf",
+          "bytes": 1117320768,
+          "sha256": "cc324af070c2ecbfd324a30884d2f951a7ff756aba85cb811a6ec436933bb046",
+          "localPath": "/workspace/cloud-setup/eval/models/qwen2.5-coder-1.5b-instruct-q4_k_m.gguf"
+        }
+      ],
+      "runtimeVersions": {
+        "llama-cpp-python": "0.3.35",
+        "numpy": "2.2.6",
+        "huggingface-hub": "1.16.0"
+      },
+      "sourceFileSha256": {
+        "github_source_specialist_v241.py": "357a1570bbf371afa7d043d9b00c757a4f492505647e6225d3cea4774edcf2b4",
+        "github_change_candidate.py": "80e26eeb857f32bfbdf179d7dd4adb3bbd718ce0e17b6d07a39d19fbd4d83e0d",
+        "qwen_coder_engine.py": "b1a3c6abda4659ebcf4dee31f54dd6357b13dd911c3ae9826d5151d76d2c5d2c",
+        "lfm2_700m_engine.py": "6f813236994e3d39b13eec5c6c62ccc923866b38f5e98334747172d42a5f954d",
+        "engine_code_agent_v217.py": "f067cf5602dd5147bb92e9d39413e8e2ec1de92dc6108721ba9c554590eab064"
+      },
+      "tasks": [
+        {
+          "taskId": "python-score-missing-values",
+          "baseCommit": "b48669684eb912c0fe3a0011d99f6ea42e526c2e",
+          "baseBlob": "b0bca671eabfe5fd1f0c807c59d315839d62980b",
+          "path": "src/swrlz_lab/scoring.py",
+          "originalGoalSha256": "60449d1812619bfa2b0b9794fd9c641fec4cca1f9a50ffb10c993f0aa4fbf4f8",
+          "candidateState": "SOURCE_REJECTED",
+          "plannerValid": true,
+          "latencySeconds": 70.40493,
+          "rejection": "Replacement must be shown in the excerpt and unique in full source",
+          "coderCalls": 2,
+          "correctionStatuses": 1,
+          "rawCandidateSha256": [
+            "c4579a2a2e4efaea4bf8e795872e80faf5106b92e37e91df279b2abcdfb68c89",
+            "de8c458de981cfd24c727bfe8947baa23499fb0f6ed0ed8bb4ca19e84a8b237b"
+          ],
+          "independentEvaluation": "NOT_RUN_NO_ACCEPTED_CANDIDATE"
+        }
+      ]
+    }
+  ]
+}

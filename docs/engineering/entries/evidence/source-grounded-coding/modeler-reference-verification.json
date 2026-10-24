@@ -1,0 +1,41 @@
+{
+  "classification": "ENGINEER_BUILT_OFFLINE_SANDBOX_REFERENCE_NOT_MODEL_OUTPUT",
+  "sourcePath": "web-test/modeler.html",
+  "sourceSha256": "04ae76c095b98d6ac31edf3e4875b7f91e3d04f4189ebe02c73c4a7a0ec96303",
+  "testPath": "tests/modeler_smoke.mjs",
+  "testSha256": "e5f2baea5331929e2123e3d1d724c3a0efa19594873d08b26f928b723c37111d",
+  "smokeCommand": "PLAYWRIGHT_MODULE=/opt/codex/cua_node/lib/node_modules/playwright/index.mjs CHROMIUM_PATH=/usr/lib/chromium/chromium node tests/modeler_smoke.mjs",
+  "smokeExitCode": 0,
+  "smokeCases": 24,
+  "smokeViewports": [
+    {
+      "width": 1280,
+      "height": 900
+    },
+    {
+      "width": 390,
+      "height": 844
+    }
+  ],
+  "smokeLogSha256": "0756d54ce74b8a30015535f7ffe5b0e94424be830e44e8d4b49c407bf6dc6e4c",
+  "causalCommand": "/workspace/cloud-setup/eval-venv/bin/python evaluate_3d_page.py --candidate /workspace/Swrlzing-core/web-test/modeler.html --output modeler-causal-behavior.json",
+  "causalStatus": "BROWSER_PASS_SOURCE_REVIEW_REQUIRED",
+  "causalPassed": 11,
+  "causalFailed": 0,
+  "sourceReview": {
+    "geometry": "Eight distinct3D vertices per cube, six faces, all three position/scale coordinates applied independently, camera yaw/pitch rotates3Dcoordinates, positive depth affects perspective factor. Far-to-near face painting and polygon hit testing use projected coordinates.",
+    "controls": "Scene list and mesh pick select object identity; transforms update only selected object; pointer/keyboard orbit, wheel/button zoom, delete/empty/maxscene controls checked. Selection button focus preserved during list refresh.",
+    "manualVisualReview": "Desktop1280/mobile390 full-page screenshots inspected; initialcube has visible three-dimensional faces; controls fit width and remain reachable with ordinary vertical scrolling.",
+    "limitations": [
+      "Small cube-only modelling prototype, not mesh editing or CAD.",
+      "Painter-style face sorting is approximate for intersecting geometry.",
+      "Scene is ephemeral and resets after refresh; no persistence/export.",
+      "A causal browser result alone does not establish3Dmath; source review here is separate."
+    ]
+  },
+  "provenance": "Engineer-authored reference. This page and its acceptance tests were not supplied to ongoing model tasks, used as training examples or counted as generated-model success. No GitHub writes/deployment.",
+  "screenshots": {
+    "modeler-desktop.png": "b068105fdcfa890e479dfa5fb03a998cf51f899dbbd02015b6c3d27fdd7e0263",
+    "modeler-mobile.png": "9a874b25a5cb64c1f581dfcf34c1ea36036b755e8492ad22fa3969a93fea6d47"
+  }
+}

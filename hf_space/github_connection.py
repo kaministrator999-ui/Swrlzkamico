@@ -1960,7 +1960,7 @@ def agent_events(data, model_generator=None, coder_generator=None):
             re.match(r"(?i)^@github\s+explain\s+file\b", prompt)):
         # Source-specialist requests remain inside the Stage-1 authenticated
         # read gate. This is NEVER a route to legacy write/proposal tools.
-        yield from source_specialist.events(sys.modules[__name__], data, coder_generator)
+        yield from source_specialist.events(sys.modules[__name__], data, coder_generator, model_generator)
         return
     clarification = ambiguous_topic_reply(prompt, data.get("githubContext"))
     if clarification:

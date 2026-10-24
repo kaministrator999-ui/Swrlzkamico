@@ -2,9 +2,29 @@
 
 **Role:** canonical specification for how §wyrlz's architecture curriculum becomes executable programming behavior while preserving one primary cognitive authority.
 
-**Current implementation state:** **Runtime-hot programming behavior is active through LALM `2.1.116` / R39 `v91`. v91 adds an executable offline-first Code Truth + local web/UI engineering policy over the preserved v90 stack. Programming turns now receive bounded verification guidance covering syntax/structure, symbols/scope/types/contracts, control/data/state flow, repair re-verification, and HTML/CSS/JavaScript UI/chat invariants. External-provider details remain a separate evidence boundary. Runtime source/static activation is complete; fresh HF user-turn acceptance for v91 remains pending. Repository/tool execution, full deterministic architecture acceptance, coder-model delegation, and model training remain later states.**
+**Current observation, 2026-10-24:** accepted published Chat v294 is source `0c34ecf36bc0e8a1c64b03cd036060610cc70c32`; canonical runtime registry reports LALM2.1.201, Server2.3.439 and Web Chat1.5.157. The live catalogue exposes 700M and Qwen1.5B; actual hosted basic700M and coder baseline generation were observed, with semantic coder failures. The source-grounded proposal/web-completion checkpoint below is local and unpromoted. Older v75/v91 “active/current” descriptions are historical snapshots, not current version authority or evidence for this new candidate. General provider editing/workflow execution and weight training remain unimplemented in this checkpoint.
+
+**Historical v91 implementation snapshot:** **Runtime-hot programming behavior is active through LALM `2.1.116` / R39 `v91`. v91 adds an executable offline-first Code Truth + local web/UI engineering policy over the preserved v90 stack. Programming turns now receive bounded verification guidance covering syntax/structure, symbols/scope/types/contracts, control/data/state flow, repair re-verification, and HTML/CSS/JavaScript UI/chat invariants. External-provider details remain a separate evidence boundary. Runtime source/static activation is complete; fresh HF user-turn acceptance for v91 remains pending. Repository/tool execution, full deterministic architecture acceptance, coder-model delegation, and model training remain later states.**
 
 ---
+
+## Source-grounded change candidate (local checkpoint, not deployed)
+
+The existing `hf_space/github_source_specialist_v241.py` owns authenticated GitHub source discovery and subordinate coder inference. Its change-candidate extension accepts a concrete existing-file fix/refactor/edit/improve request, including source-only workflow YAML review. It does not enable ordinary provider edits, workflow dispatch, merge, deployment, or a second project store. Existing create/rename and explicit approval owners retain precedence.
+
+Flow: verified account/repository read → fresh pinned tree/commit → exact Git blob verification → bounded source/dependency evidence → selected conversational-model advisory plan (700M when selected) → Qwen literal replacement candidate → deterministic identity/scope/source/syntax gate → review diff and unrun verification suggestions. If the planner is unavailable/invalid, the original user request and verified evidence remain available to the coder; no plan success is invented. Missing model completion, cancellation, overflow, malformed JSON, unseen/nonunique old text, wrong path or base identity rejects the candidate. Explanation mode also discards incomplete model prefixes.
+
+`github_change_candidate.py` owns stateless candidate-envelope validation, not authorization or execution. Python/JSON parsing is syntax evidence only; JavaScript/HTML/CSS/YAML still require independent parser/browser/build tests. A `SOURCE_VALIDATED_ONLY` receipt has `executionVerified=false` and the exact base commit/blob plus resulting source SHA-256. It does not prove semantic correctness, unchanged current branch head, applied edits, compiler success, or deployment. Any future write must independently recheck current source and the existing approval/capability gates.
+
+Both model engines support a narrow, server-created `githubSourceChangeTask=plan|candidate` JSON subtask. This bypasses incompatible ordinary code-fence/clarification policies, excludes unrelated profile/history, preserves compact assistant identity and original-request primacy, and treats repository/plan content as untrusted data. Existing `githubPlanning` alone and ordinary conversations keep their prior behavior. Budget checks reject oversized prompts rather than silently dropping source; suggested output is bounded at 512 planner / 2048 coder tokens and available context. Internal flags are not public send passthrough and grant no tools.
+
+Actual llama JSON-schema decoding constrains the internal plan/candidate envelope; candidate commit/blob/path constants come from the source owner. Code content is still generated and independently checked. `{}` is abstention, never a valid proposal. A completed rejected response can receive exactly one correction using the actual source-validator reason, the original task/source, and a bounded untrusted copy of the prior output. Failed, cancelled, incomplete or oversized streams do not retry. This is source feedback, not a test result or a hidden expected solution.
+
+The owner's incomplete 3D HTML is a local completion regression: unrequested implementation placeholders and comment/data-only dynamic scripts reject; explicit templates and static pages remain supported. Embedded HTML CSS/JavaScript count toward language requirements. Qwen single-page web work reserves up to 3072 output tokens within the real context limit; other budgets stay bounded. Regex compilation and false repetition rejection of repeated closing braces/tags are repaired. These checks cannot establish real geometry, control wiring, browser correctness or project completion; active but semantically wrong JavaScript can still pass the source-shape gate.
+
+Real CPU-only local inference used checksum-verified 700M and Qwen 1.5B/3B/7B artifacts. Results include source-valid behavioral failures and 7B abstentions; neither model size nor a schema-shaped answer establishes competence. Larger variants remain explicit evaluation overrides, with the production/default 1.5B selection unchanged. No fine-tuning occurred. The checkpoint preserves failed results and independently isolated evaluator receipts.
+
+Status/provenance and validation correlation use the existing Station event/request/message owners. No hidden reasoning is surfaced; raw source and partial model candidates are not diagnostic logs. Runtime policy/prompt/route improvements are not weight training or real-model competency proof. See [checkpoint evidence](entries/2026-10-23_SOURCE_GROUNDED_CODING.md). Existing trained-model promotion rules remain authoritative.
 
 ## 1. Core design decision
 
@@ -632,6 +652,8 @@ Do not collapse these states. A published/hydrated wrapper is not automatically 
 
 ---
 
-## Bottom line
+## Historical v75 Phase1 summary
+
+The following summary is preserved history; the current observation and source-grounded checkpoint above own present status.
 
 **§wyrlz keeps one primary cognitive authority. LALM 2.1.87 / R39 v75 is the active programming edge: v69 proportional context is live verified; v70/v71 isolated semantic-vs-inference failure correctly; v72 preserves bounded diagnostics; v73 repaired the exact two-token NumPy namespace failure; v74 established proportional first-hop artifact continuation; and v75 preserves provenance across edit chains while adding runnable-edit semantic gates for callable names, entrypoints, and unrequested retry behavior. Server 2.3.257's read-only runtime-hot history-policy seam is production active and authenticated turns have proved both current-index and legacy-index recovery. The remaining Phase 1 checkpoint is a fresh authenticated post-v75 continuation; repository/tool execution and any future coder model remain later, explicitly separate implementation states.**

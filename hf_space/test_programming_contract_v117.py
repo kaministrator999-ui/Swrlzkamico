@@ -204,7 +204,7 @@ def unexpected_coder(payload):
 for question in (opinion,clarification):
     events=list(dispatch("700m",{"prompt":question,"history":read_history,
                                  "pinnedContext":[]},normal_700m,
-                         coder_generate=unexpected_coder))
+                         large_generate=normal_700m, coder_generate=unexpected_coder))
     check(not any(e.get("phase")=="CODER_AUTO_ROUTE" for e in events),
           ("coder route",question,events))
     check(any("I like the joke" in e.get("text","") for e in events),

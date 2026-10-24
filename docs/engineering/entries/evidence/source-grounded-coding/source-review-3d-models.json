@@ -1,0 +1,47 @@
+{
+  "schema": "swrlz-independent-3d-source-review-v1",
+  "reviewBoundary": "Human-readable review of actual generated source plus independent causal browser receipts; not model-authored test claims",
+  "modelDefaultChanged": false,
+  "fineTuningPerformed": false,
+  "candidates": [
+    {
+      "file": "generated-3d-page.html",
+      "coder": "Qwen2.5-Coder-3B-Instruct Q4_K_M",
+      "sha256": "f0161dcb017ad4c782559e68124b88739b8466b40b4bd8c60982bf396336d285",
+      "sourceGate": "PASS_SHAPE_ONLY",
+      "sourceReview": "FAIL",
+      "findings": [
+        "drawCube draws a two-dimensional rectangle, without projected 3D vertices",
+        "z is passed as an ignored extra argument to Canvas2D translate/scale",
+        "position and scale controls have no listeners",
+        "drawing uses a global cube instead of each requested scene object"
+      ],
+      "browserReceipt": "generated-3d-page-causal-behavior.json",
+      "browserPass": 5,
+      "browserCases": 11
+    },
+    {
+      "file": "generated-3d-page-7b.html",
+      "coder": "Qwen2.5-Coder-7B-Instruct Q4_K_M",
+      "sha256": "c19f8ccadedbe64ed058fbda273078f4646046d6023d3141141d6d7186aabcf6",
+      "sourceGate": "PASS_SHAPE_ONLY",
+      "sourceReview": "FAIL",
+      "findings": [
+        "Initial cubes array is empty",
+        "draw uses only four same-z vertices; project screen x/y never depend on z",
+        "position and scale inputs have no listeners; no Delete control or wheel handler",
+        "const selectedCube is reassigned on mouse events and causes TypeError",
+        "full-viewport canvas and overflow:hidden hide following controls"
+      ],
+      "browserReceipt": "generated-3d-page-7b-causal-behavior.json",
+      "browserPass": 3,
+      "browserCases": 11
+    }
+  ],
+  "limits": [
+    "Explicit evaluation prompt requested offline real projected vertices and working controls, stronger and more specific than the original vague request",
+    "Browser pixel changes alone cannot establish genuine 3D geometry",
+    "Earlier animation-confounded browser v1 is superseded by causal paired-page v2",
+    "No generated artifact is represented as a working modeler or a production improvement"
+  ]
+}

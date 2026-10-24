@@ -1,0 +1,11 @@
+{
+  "kind": "real-hosted-Qwen-baseline-independent-evaluation",
+  "requestId": "eval-11c9a0a66afb",
+  "modelRuntimeRevision": "ffc9d264e3ae7f9df8edca5cc878fd2c8587f9fc",
+  "candidateSha256": "778f92faabe1326f81b8ede486bace6ada082e919ea4fb824a8bd34f3d2814b7",
+  "taskId": "python-score-missing-values",
+  "isolation": "bubblewrap-unshared-network-minimal-readonly-mounts-cleared-environment-resource-limits",
+  "exitCode": 1,
+  "stdout": "[{\"id\": \"ordinary-total\", \"status\": \"PASS\", \"actual\": 10, \"expected\": 10}, {\"id\": \"ordinary-bonus\", \"status\": \"PASS\", \"actual\": 14, \"expected\": 14}, {\"id\": \"missing-between-numbers\", \"status\": \"FAIL\", \"errorType\": \"TypeError\", \"expected\": 5}, {\"id\": \"all-missing-plus-bonus\", \"status\": \"FAIL\", \"errorType\": \"TypeError\", \"expected\": 4}, {\"id\": \"zero-negative-fraction\", \"status\": \"FAIL\", \"errorType\": \"TypeError\", \"expected\": -1.5}, {\"id\": \"empty-input\", \"status\": \"PASS\", \"actual\": 0, \"expected\": 0}, {\"id\": \"generator\", \"status\": \"FAIL\", \"errorType\": \"TypeError\", \"expected\": 3}]\n",
+  "stderr": ""
+}

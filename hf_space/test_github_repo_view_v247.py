@@ -129,7 +129,7 @@ def test_dragon59_named_document_opinion_uses_verified_source():
     assert specialist.parse("Your opinion of the §tart §E doc in the repo",ctx)["path"]=="§tart_§E.md"
     assert specialist.parse("What do you think of the repo?",ctx) is None
     assert specialist.parse("What do you think of my music?",ctx) is None
-    assert specialist.parse("Edit the §tart doc in the repo",ctx) is None
+    assert specialist.parse("Edit the §tart doc in the repo",ctx)["mode"] == "change-proposal"
 
     content="# §wyrlz §tart\n\nCanonical project entrypoint. Other contracts own deployment.\n"
     raw=content.encode("utf-8")

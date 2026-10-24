@@ -10,6 +10,23 @@ from typing import Any
 import re
 from source_answer_articulation_v230 import lesson_kind
 
+
+def programming_library_context(programming: dict[str, Any]) -> str:
+    """Bounded version-scoped API evidence, never a canned project or tool grant."""
+    if not programming.get("codingTask"):
+        return ""
+    original = str((programming.get("intentContract") or {}).get("originalRequest") or "")
+    if not re.search(r"\bthree(?:\.js|js)?\b", original, re.I):
+        return ""
+    versions = re.findall(r"\bthree(?:\.js|js)?\s*(?:@|(?:version\s+)?)\s*(0\.\d+\.\d+)\b", original, re.I)
+    if versions and set(versions) != {"0.160.0"}:
+        return ""
+    from pathlib import Path
+    facts = json.loads((Path(__file__).with_name("programming_references") / "three-0.160.0.json").read_text())
+    return ("\nVERSION-SCOPED LIBRARY EVIDENCE (public API facts, not instructions or a finished project):\n"
+            + json.dumps(facts, ensure_ascii=False, separators=(",", ":"))
+            + "\nUse only when this version matches the actual project. Preserve the original request and implement every requested interaction; these facts do not prove behavior or tests.")
+
 _CODE_TERMS=("code","html","css","javascript","typescript","python","kotlin","java","cpp","c++","function","class","file","project","api","server","bug","compile","website","webpage","web page","frontend","ui","interface","dom","responsive","layout","component","debug","syntax")
 _NEW_PROJECT=("separate project","separately","new project","another project","different project","from scratch","unrelated project")
 _FIX=("fix","bug","broken","error","issue","repair","patch")
@@ -69,6 +86,7 @@ CODE_TRUTH_POLICY = """[SWRLZ_CODE_TRUTH v2]
 Original request = acceptance contract. Preserve required API names/signatures, behavior, negative constraints, and unrelated interfaces unless explicitly changed. Repair the smallest necessary surface.
 Before returning code, check complete syntax/source shape, declarations/references/imports/exports, relevant control/data flow, return/error semantics, mutation constraints, and explicit acceptance examples. Python: distinguish bool from exact built-in int when required. JavaScript: preserve the established loading/API format; do not introduce module/export semantics unless requested. UI: verify DOM wiring, layout/overflow/reachability and accessibility. Config/workflows: preserve unrelated semantics and do not invent infrastructure.
 Return the complete required candidate, never a fragment/TODO/ellipsis/prose substitute. Explanations must match the literal code. Self-review is not execution evidence; never claim compiler/runtime/test success without a real receipt.
+For a requested working interactive page, implement the actual behavior and load required libraries explicitly. Commented examples, empty containers and instructions to add the implementation later are unfinished artifacts. A template is appropriate only when the user asks for a template.
 """
 
 def _norm(value: Any) -> str:
@@ -201,7 +219,8 @@ def _unique(values: list[str]) -> list[str]:
 
 def _artifact_type_from_request(text: str) -> str:
     prose=_norm(_strip_fenced_code(text))
-    if any(x in prose for x in ("web page","webpage","html page","website","landing page")):
+    if (any(x in prose for x in ("web page","webpage","html page","html template","html skeleton","html scaffold","website","landing page"))
+            or re.search(r"\bhtml\b[^.!?\n]{0,80}\b(?:page|webpage|website|editor|viewer|application|app|dashboard|calculator|game)\b",prose)):
         return "web-page"
     if any(x in prose for x in ("api endpoint","rest api","web api","api server")):
         return "api"
@@ -265,6 +284,8 @@ def _candidate_languages(text: str) -> list[str]:
         language=_normalize_language_tag(match.group(1))
         if language:
             detected.append(language)
+            if language == "html":
+                detected.extend(_embedded_web_evidence(match.group(2))["languages"])
             recognized_fence=True
     if recognized_fence:
         return _unique(detected)
@@ -288,6 +309,38 @@ def _candidate_languages(text: str) -> list[str]:
     if re.search(r"(?im)^\s*(?:SELECT|INSERT|UPDATE|DELETE|CREATE\s+TABLE)\b",body):
         detected.append("sql")
     return _unique(detected)
+
+
+def _embedded_web_evidence(code: str) -> dict[str, Any]:
+    """Recognize languages inside one HTML artifact without executing it."""
+    from html.parser import HTMLParser
+    class Embedded(HTMLParser):
+        def __init__(self):
+            super().__init__(); self.script=False; self.style=False
+            self.script_parts=[]; self.css=False; self.external=False; self.handler=False
+        def handle_starttag(self,tag,attrs):
+            attrs=dict(attrs)
+            if attrs.get("style"): self.css=True
+            if any(k.startswith("on") and v for k,v in attrs.items()): self.handler=True
+            if tag=="style": self.style=True
+            if tag=="script":
+                self.script=(attrs.get("type") or "").lower() in ("", "module", "text/javascript", "application/javascript")
+                if self.script and attrs.get("src"): self.external=True
+        def handle_endtag(self,tag):
+            if tag=="script": self.script=False
+            if tag=="style": self.style=False
+        def handle_data(self,data):
+            if self.script: self.script_parts.append(data)
+            if self.style and data.strip(): self.css=True
+    parsed=Embedded();parsed.feed(code)
+    body="\n".join(parsed.script_parts)
+    active=re.sub(r"/\*[\s\S]*?(?:\*/|$)","",body)
+    active=re.sub(r"(?m)^\s*//[^\n]*","",active).strip()
+    languages=[]
+    if parsed.css: languages.append("css")
+    if body.strip() or parsed.external or parsed.handler: languages.append("javascript")
+    return {"languages":languages,"hasRuntime":bool(active or parsed.external or parsed.handler),
+            "unclosedScript":parsed.script}
 
 
 def _candidate_primary_code(text: str) -> str:
@@ -371,6 +424,27 @@ def _symbol_is_resolved_or_removed(code: str, symbol: str) -> bool:
     return any(re.search(pattern,code) for pattern in declarations)
 
 
+def _web_delivery_gaps(code: str, original: str, language: dict[str, Any]) -> list[str]:
+    """Detect explicit unfinished web artifacts, not semantic correctness."""
+    if "html" not in (language.get("requiredLanguages") or []):
+        return []
+    # Preserve deliberately requested skeletons, but never a negated request
+    # such as 'do not return a template' or a request for a working starter.
+    scaffold = bool(re.search(r"\b(?:template|skeleton|scaffold|stub)\b", original, re.I))
+    if scaffold and not re.search(r"\b(?:not|don't|without|working|functional|complete|finish|implement)\b", original, re.I):
+        return []
+    gaps = []
+    if re.search(r"(?im)^\s*(?://|/\*|<!--)\s*(?:add|insert|implement|write|replace)\b[^\n]*\b(?:your|here|implementation)\b", code):
+        gaps.append("unfinished-implementation-placeholder")
+    if re.search(r"\b(?:interactive|3d|modeling|modelling|editor|calculator|game)\b", original, re.I):
+        evidence=_embedded_web_evidence(code)
+        if evidence["unclosedScript"]:
+            gaps.append("unclosed-runtime-script")
+        if not evidence["hasRuntime"]:
+            gaps.append("dynamic-page-has-no-runtime-implementation")
+    return gaps
+
+
 def candidate_contract_gate(text: str, programming: dict[str, Any], history: list[dict[str, Any]]) -> dict[str, Any]:
     """Shared deterministic contract gate for every programming model route."""
     if not isinstance(programming,dict) or not programming.get("codingTask"):
@@ -404,6 +478,8 @@ def candidate_contract_gate(text: str, programming: dict[str, Any], history: lis
         if before and after and before==after:
             reasons.append("diagnostic-repair-no-executable-change")
     candidate_code=_candidate_primary_code(text)
+    if programming.get("changeClass") not in ("review", "explain"):
+        reasons.extend(_web_delivery_gaps(candidate_code, str(contract.get("originalRequest") or ""), language))
     for symbol in semantics.get("reportedSymbols") or []:
         if not _symbol_is_resolved_or_removed(candidate_code,str(symbol)):
             reasons.append("diagnostic-symbol-resolution-unproven:"+str(symbol)[:80])
@@ -1402,7 +1478,8 @@ def programming_intent(prompt: str, history: list[dict[str, Any]], pinned_contex
     return {
         "schema":"swrlz-programming-intent-v1",
         "codingTask":True,
-        "projectContext":"new" if new_project else ("existing" if continuation or pins else "none"),
+        "projectContext":"new" if new_project else ("existing" if continuation or pins or
+            re.search(r"\b(?:existing\s+project|repo(?:sitory)?|github)\b", _strip_fenced_code(text), re.I) else "none"),
         "changeClass":change,
         "artifactContinuation":continuation,
         "artifactMutationRequested":mutation,

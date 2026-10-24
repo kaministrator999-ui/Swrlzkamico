@@ -26,7 +26,7 @@ def test_source_question_not_code_mutation():
     assert specialist.parse("Explain this file",
                             {"lastFile": "hf_space/model_router.py",
                              "branch": "fix/branch"})["path"] == "hf_space/model_router.py"
-    assert specialist.parse("@GitHub implement src/app.py") is None
+    assert specialist.parse("@GitHub implement src/app.py")["mode"] == "change-proposal"
     assert specialist.parse("Review and edit src/app.py") is None
     assert specialist.parse("@GitHub explain file .env") is None
     assert specialist.parse("explain the file secrets/passwords.py") == {"invalid": True}

@@ -48,8 +48,8 @@ _ASSET_TARGET = re.compile(
     r"animated model|texture(?:d)? model)\b", re.I,
 )
 _CODE_TARGET = re.compile(
-    r"\b(?:code|python|javascript|typescript|kotlin|java|rust|"
-    r"program|script|function|class|api|website|web app|application|"
+    r"\b(?:code|html|css|python|javascript|typescript|kotlin|java|rust|"
+    r"program|script|function|class|api|website|web[- ]?(?:page|app)|application|"
     r"source files?|compiler)\b", re.I,
 )
 _FILE_TARGET = re.compile(
@@ -74,10 +74,24 @@ _PUBLIC_SOURCE = re.compile(
 )
 
 
+def _requested_output_head(text: str) -> str:
+    """The requested object, before purpose/features can name another medium."""
+    lead = _DELIVERABLE_REQUEST.match(text)
+    if not lead:
+        return ""
+    return re.split(r"\b(?:for|using|with|that|which|to|about)\b|[;!?\n]",
+                    text[lead.end():], maxsplit=1, flags=re.I)[0][:180]
+
+
 def _requested_deliverable(text: str) -> str:
     """Identify a directly requested output medium, never grant execution."""
     if not _DELIVERABLE_REQUEST.search(text):
         return "none"
+    # A web/code application may render models or play music. Those features
+    # do not turn the requested source into an exported mesh or audio artifact.
+    head = _requested_output_head(text)
+    if _CODE_TARGET.search(head) and not _FILE_TARGET.search(head):
+        return "code"
     if _TEXT_TARGET.search(text) and re.search(
         r"\b(?:write|draft|lyrics|poem|rap(?: verses?)?|letter|email|story)\b",
         text, re.I,
@@ -143,6 +157,15 @@ def _operation(text: str, relation: str) -> str:
         return "confirm"
     if relation == "decline":
         return "decline"
+    lead = _DELIVERABLE_REQUEST.match(text)
+    if lead and (
+        _CODE_TARGET.search(_requested_output_head(text))
+        or re.search(r"\b(?:build|create|generate|produce|render|compose|export|implement|code)\s*$",
+                     lead.group(0), re.I)
+    ):
+        # Classify the user's leading action, not verbs describing what the
+        # requested app will let its user do (inspect, compare, calculate...).
+        return "create"
     if re.search(r"\b(?:translate|translation)\b", p):
         return "translate"
     if re.search(r"\b(?:rewrite|rephrase|polish|proofread|edit this|make this sound)\b", p):

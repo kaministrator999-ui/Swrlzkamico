@@ -227,3 +227,10 @@ If those answers are unclear, the component is not ready to enter the play.
 **Scenery. Props. Actors. Stagehands. Curtain. Scene.**
 
 Build one authoritative stage. Prepare structural change behind the curtain. Let legitimate performance mutate in the open. Keep stagehands backstage. Give every visible region one owner. Instrument each component from birth.
+
+
+## Source-grounded coding candidate extension (local, activation pending)
+
+For concrete existing-file changes, the existing source specialist can read verified source, obtain a selected-model advisory plan and a Qwen exact-replacement candidate, and display a source-bound diff. This is a review candidate with unrun checks, not an applied edit or a build/test result. It reuses Station auth, stream, thread/message/context and current create/rename approval owners; the Mask gains no tool authority. General GitHub writes/workflow execution retain the existing capability gates. Partial/failed model explanations are no longer displayed as completed source analysis. See the [Programming LALM architecture](SWRLZ_PROGRAMMING_LALM_RUNTIME_ARCHITECTURE.md#source-grounded-change-candidate-local-checkpoint-not-deployed) and [checkpoint](entries/2026-10-23_SOURCE_GROUNDED_CODING.md).
+
+Internal proposals use constrained JSON and may receive one correction from a real source-validation rejection. Completion checks now reject the owner's empty 3D scaffold, recognize JavaScript/CSS inside HTML, and preserve room for complete web-page output. These local changes do not verify a rendered 3D scene or make the candidate live. Actual larger-model tests still show coding failures; no new model default, weights or GitHub write capability is activated.

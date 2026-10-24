@@ -2,6 +2,7 @@ name: HF Candidate Offline Validation
 on:
   push:
     branches:
+      - integration/qwen-project-generation-*
       - feature/version-literacy-content-layout-v199
       - feature/grounded-version-recall-v201
       - feature/google-chatgpt-archive-import-v202
@@ -118,6 +119,17 @@ jobs:
         run: |
           python -m py_compile hf_space/github_connection.py hf_space/test_github_model_progress_v211.py
           python hf_space/test_github_model_progress_v211.py
+
+      - name: Source-grounded model cooperation and candidate integrity
+        run: |
+          python -m unittest discover -s hf_space -p 'test_github*change*.py' -v
+          python hf_space/test_web_code_completeness.py
+          python hf_space/test_code_deliverable_cognition.py
+          python hf_space/test_response_cognition_v123.py
+          python hf_space/test_dual_model_work_v241.py
+          python hf_space/test_github_file_intelligence_v288.py
+          python hf_space/test_github_repo_view_v247.py
+          python hf_space/test_programming_contract_v117.py
 
       - name: v263 Atomic GitHub file rename, identity, consent and conflict tests
         run: |

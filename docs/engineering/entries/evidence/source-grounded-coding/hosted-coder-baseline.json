@@ -1,0 +1,72 @@
+{
+  "requestId": "eval-11c9a0a66afb",
+  "source": "deployed-v294-baseline",
+  "prompt": "Return the complete updated Python module in one python code fence. Preserve the import, public function signature, and all existing behavior for inputs without None. total_score must ignore None entries, sum numeric values, and apply BONUS_POINTS exactly once only when include_bonus is true. Do not mutate inputs. No dependencies or execution claims. Source:\n```python\n\"\"\"Pure score calculations; dependencies must resolve to constants.py.\"\"\"\n\nfrom .constants import BONUS_POINTS\n\n\ndef total_score(scores, include_bonus=False):\n    \"\"\"Return a deterministic total without mutating the input.\"\"\"\n    points = sum(scores)\n    return points + BONUS_POINTS if include_bonus else points\n\n```",
+  "originalSource": "\"\"\"Pure score calculations; dependencies must resolve to constants.py.\"\"\"\n\nfrom .constants import BONUS_POINTS\n\n\ndef total_score(scores, include_bonus=False):\n    \"\"\"Return a deterministic total without mutating the input.\"\"\"\n    points = sum(scores)\n    return points + BONUS_POINTS if include_bonus else points\n",
+  "generation": {
+    "phase": "COMPLETE",
+    "terminalType": "COMPLETE",
+    "requestedModelId": "coder",
+    "selectedModelId": "coder",
+    "text": "```python\n\"\"\"Pure score calculations; dependencies must resolve to constants.py.\"\"\"\n\nfrom .constants import BONUS_POINTS\n\n\ndef total_score(scores, include_bonus=False):\n    \"\"\"Return a deterministic total without mutating the input.\"\"\"\n    if scores is None:\n        return None\n    points = sum(scores)\n    return points + BONUS_POINTS if include_bonus else points\n```",
+    "candidateValidation": {
+      "status": "PASS",
+      "reasons": [],
+      "languageContract": {
+        "schema": "swrlz-language-contract-v1",
+        "explicit": true,
+        "requestedLanguages": [
+          "python"
+        ],
+        "requiredLanguages": [
+          "python"
+        ],
+        "allowedCompanionLanguages": [],
+        "allowedLanguages": [
+          "python"
+        ],
+        "artifactType": "program",
+        "substitutionAllowed": false
+      },
+      "detectedLanguages": [
+        "python"
+      ],
+      "diagnosticGrounded": false,
+      "receiptCategories": [],
+      "activeRepairConstraints": {
+        "dependencyPolicy": "evidence-bounded",
+        "unavailableDependencies": [],
+        "carriedUnavailableDependencies": []
+      },
+      "behaviorLedger": {
+        "currentScore": null,
+        "bestKnownScore": null,
+        "regressedCases": [],
+        "resolvedCases": [],
+        "preservePassingCases": [],
+        "rebaseRecommended": false,
+        "bestKnownArtifact": null,
+        "repairBaseMode": "latest-failing-source"
+      },
+      "structuredReceipt": {},
+      "executionVerified": false,
+      "verificationState": "NOT_EXECUTION_VERIFIED"
+    },
+    "contextBudget": {
+      "contextWindowTokens": 8192,
+      "inputBudgetTokens": 7680,
+      "estimatedInputTokens": 1833,
+      "reservedOutputTokens": 2048,
+      "historyMessagesDropped": 0,
+      "historyMessagesKept": 0,
+      "repairTurn": false,
+      "repairContext": {},
+      "tokenBreakdown": {
+        "system": 1697,
+        "history": 0,
+        "currentPrompt": 136,
+        "total": 1833
+      }
+    }
+  }
+}

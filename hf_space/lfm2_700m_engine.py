@@ -3,7 +3,7 @@ from __future__ import annotations
 import hashlib, json, os, re, threading, time
 from huggingface_hub import hf_hub_download
 from llama_cpp import Llama
-from brain_programming import programming_intent, CODE_TRUTH_POLICY, candidate_contract_gate
+from brain_programming import programming_intent, CODE_TRUTH_POLICY, candidate_contract_gate, programming_library_context
 from programming_telemetry import buffered_chat_completion, candidate_attempt_receipt, generation_summary
 from programming_repair_context import build_compact_repair_context, enforce_strategy_change, strategy_change_directive
 from response_cognition import classify_response_cognition, response_cognition_policy, response_cognition_camera
@@ -19,6 +19,7 @@ from lyric_research_lab import research_for_creation
 from rap_micro_curriculum import rap_micro_guidance
 from social_checkin import style_hint as _social_checkin_style_hint
 from version_literacy import style_hint as _version_literacy_style_hint
+from github_change_candidate import source_change_system, source_change_response_format
 
 MODEL_REPO="LiquidAI/LFM2-700M-GGUF"
 MODEL_FILE="LFM2-700M-Q4_K_M.gguf"
@@ -511,8 +512,9 @@ def _candidate_structure_check(text, programming, history):
     lines=[line.strip() for line in source.splitlines() if line.strip()]
     if lines:
         from collections import Counter
-        if max(Counter(lines).values())>=8: reasons.append("repetition-loop")
-    code_like=bool(re.search(r"\b(?:def|function|class|const|let|var|import|export|fun|fn)\b|=>|[{};]|<!doctype\\s+html|<[A-Za-z][^>]*>|(?m)^\\s*(?:SELECT|INSERT|UPDATE|DELETE|CREATE\\s+TABLE)\\b|(?m)^\\s*[A-Za-z0-9_.-]+\\s*:",source,re.I))
+        substantive=[line for line in lines if not re.fullmatch(r"[{}\[\]();,]+|</[A-Za-z][\w:.-]*>",line)]
+        if substantive and max(Counter(substantive).values())>=8: reasons.append("repetition-loop")
+    code_like=bool(re.search(r"\b(?:def|function|class|const|let|var|import|export|fun|fn)\b|=>|[{};]|<!doctype\s+html|<[A-Za-z][^>]*>|^\s*(?:SELECT|INSERT|UPDATE|DELETE|CREATE\s+TABLE)\b|^\s*[A-Za-z0-9_.-]+\s*:",source,re.I|re.M))
     if not code_like: reasons.append("no-code-candidate")
     candidate_primary=_primary_candidate_code(source)
     if re.search(r"(?im)^\s*(?:#|//)\s*(?:rest of|remaining|todo|implementation continues|code continues)|\b(?:TODO|FIXME)\b",candidate_primary):
@@ -611,8 +613,13 @@ def _repair_diagnostic(programming,history):
 def generate_events(payload):
     prompt=str(payload.get("prompt") or "").strip()
     if not prompt: raise ValueError("Empty prompt")
+    source_change_mode=payload.get("githubSourceChangeTask")
+    if source_change_mode not in ("plan","candidate"):
+        source_change_mode=""
     history=[{"id":m.get("id"),"role":m["role"],"content":m["text"]} for m in payload.get("history",[]) if isinstance(m,dict) and m.get("role") in ("user","assistant") and isinstance(m.get("text"),str)]
-    model_history,reference_structure=creative_music_reference_projection(prompt,history)
+    if source_change_mode:
+        history=[]
+    model_history,reference_structure=([],None) if source_change_mode else creative_music_reference_projection(prompt,history)
     custom_assistant_profile=str(payload.get("profile") or "").strip()[:2000]
     user_profile=str(payload.get("userProfile") or "").strip()[:2000]
     account_label=str(payload.get("verifiedAccountDisplayName") or "").strip()[:120]
@@ -640,11 +647,13 @@ def generate_events(payload):
     if convergence:
         yield {"type":"CONVERGENCE_CANDIDATE","candidate":convergence}
     programming=payload.get("programmingIntent") if isinstance(payload.get("programmingIntent"),dict) else programming_intent(prompt,history,payload.get("pinnedContext") if isinstance(payload.get("pinnedContext"),list) else [],payload.get("priorProgrammingState") if isinstance(payload.get("priorProgrammingState"),dict) else {})
+    if source_change_mode:
+        programming={"codingTask":False}
     response_cognition=classify_response_cognition(prompt,history,programming)
     followup_subject=_identity_followup_subject(prompt,history)
     identity_followup=bool(followup_subject) and not bool(programming.get("codingTask"))
     file_dialogue=(verified_file_dialogue(prompt,payload.get("history") or [])
-                   if not programming.get("codingTask") else None)
+                   if not source_change_mode and not programming.get("codingTask") else None)
     yield {"type":"RESPONSE_COGNITION","state":response_cognition_camera(response_cognition)}
     if programming.get("needsFailureEvidence"):
         yield {"type":"PROGRAMMING_INTENT","intent":programming}
@@ -725,7 +734,7 @@ def generate_events(payload):
     direct_creative_lyric_contract=None
     lyric_research_receipt={"status":"SKIPPED","sourceCount":0,"lessonCount":0,"cache":False}
     rap_focus="SKIPPED"
-    music_policy=music_model_policy(prompt)
+    music_policy="" if source_change_mode else music_model_policy(prompt)
     if reference_structure and not music_policy:
         # "Do another one" inherits the earlier structural music request but
         # does not itself contain the lexical token "music", "rap" or "song".
@@ -816,6 +825,7 @@ def generate_events(payload):
                      +json.dumps(compact_contract,ensure_ascii=False,separators=(",",":"))
                      +"\nTWO-GATE COMPLETION: Gate 1 is technical validity (syntax/build/runtime as applicable). Gate 2 is user-intent validity (all original MUST/MUST-NOT/preserve constraints and acceptance behavior). An exit code 0, successful compile, or successful runtime alone is never completion. After any repair, re-run/reason through BOTH gates against the ORIGINAL contract plus the newest failure evidence. Do not delete, rename, bypass, or weaken a requested feature merely to make Gate 1 pass. If executable evidence is unavailable, do not fabricate it; return the candidate as unverified where appropriate.")
         system+="\n"+CODE_TRUTH_POLICY
+        system+=programming_library_context(programming)
     if programming.get("artifactMutationRequested") and programming.get("artifactTargetId"):
         system+="\nPINNED CODE EDIT MODE: The current request targets an already-pinned code artifact. Return the complete revised code fence(s) needed for that artifact, followed by only a concise explanation of what changed. Do not describe the revised code as a new project or duplicate artifact."
     if not programming.get("codingTask"):
@@ -912,6 +922,12 @@ def generate_events(payload):
                 "or speculating about who they are. One short sentence."
             )
         system=focused
+    if source_change_mode:
+        # Keep source/plan tokens available and bypass ordinary response-shape
+        # policies only for the server-created JSON subtask.
+        system=source_change_system(source_change_mode)
+        concise_identity_turn=False
+        identity_followup=False
     started=time.perf_counter()
     yield {"type":"STATUS","phase":"LOADING"}
     model=load()
@@ -923,6 +939,7 @@ def generate_events(payload):
             prompt,
             _response_mode(prompt,programming,history),
         )
+        system+=programming_library_context(programming)
         fitted=_fit_repair_messages(model,system,history,fitted_prompt)
         messages,dropped_history,input_tokens,available_output_tokens,fitted_prompt=fitted
     else:
@@ -953,8 +970,10 @@ def generate_events(payload):
     candidate_check=None
     candidate_attempts=[]
     with _lock:
-        mode=_response_mode(prompt,programming,history)
-        if file_dialogue:
+        mode="RESPONSE MODE: GITHUB-SOURCE-JSON" if source_change_mode else _response_mode(prompt,programming,history)
+        if source_change_mode:
+            response_tokens=min(512 if source_change_mode=="plan" else 2048,available_output_tokens);temperature=0.15
+        elif file_dialogue:
             response_tokens=min(320,available_output_tokens);temperature=0.35
         elif concise_identity_turn or identity_followup:
             response_tokens=min(80 if (
@@ -1442,7 +1461,9 @@ def generate_events(payload):
             attempt_started=time.perf_counter()
             attempt_first_token=None
             attempt_chunks=0
-            for chunk in model.create_chat_completion(messages=messages,max_tokens=response_tokens,temperature=temperature,stream=True):
+            source_format = ({"response_format": source_change_response_format(
+                source_change_mode, payload.get("sourceChangeIdentity"))} if source_change_mode else {})
+            for chunk in model.create_chat_completion(messages=messages,max_tokens=response_tokens,temperature=temperature,stream=True,**source_format):
                 choices=chunk.get("choices") or []
                 delta=(choices[0].get("delta") or {}).get("content") if choices else None
                 if delta:
