@@ -49,10 +49,11 @@ const event=(x,y,id)=>({
  button:0,isPrimary:true,pointerType:'touch',
  preventDefault:()=>{},stopImmediatePropagation:()=>{}
 });
-let radiusPt=project(ctx.atelierPrecisionGizmoPick.radiusGrip);
+const state=name=>vm.runInContext(name,ctx);
+let radiusPt=project(state('atelierPrecisionGizmoPick').radiusGrip);
 let begin=event(radiusPt.x,radiusPt.y,1);
 ctx.atelierPrecisionGizmoDown(begin);
-if(!ctx.atelierPrecisionGizmoDrag||ctx.atelierPrecisionGizmoDrag.mode!=='Radius')
+if(!state('atelierPrecisionGizmoDrag')||state('atelierPrecisionGizmoDrag').mode!=='Radius')
  throw Error('Radius ring did not capture touch');
 ctx.atelierPrecisionGizmoMove(event(radiusPt.x+55,radiusPt.y,1));
 if(Number(values.modelAtelierBoreRadius.value)<=.12)
@@ -62,9 +63,9 @@ if(previewCalls!==1||savedCalls!==0)
  throw Error('Pointer release failed read-only preview contract');
 console.log('GIZMO_RADIUS_DRAG_PASS',values.modelAtelierBoreRadius.value);
 vm.runInContext('atelierPrecisionGizmoDraw()',ctx);
-const depthPt=project(ctx.atelierPrecisionGizmoPick.depthGrip);
+const depthPt=project(state('atelierPrecisionGizmoPick').depthGrip);
 ctx.atelierPrecisionGizmoDown(event(depthPt.x,depthPt.y,2));
-if(!ctx.atelierPrecisionGizmoDrag||ctx.atelierPrecisionGizmoDrag.mode!=='Depth')
+if(!state('atelierPrecisionGizmoDrag')||state('atelierPrecisionGizmoDrag').mode!=='Depth')
  throw Error('Camera-front depth handle did not capture touch');
 ctx.atelierPrecisionGizmoMove(event(depthPt.x,depthPt.y+50,2));
 if(Number(values.modelAtelierBoreDepth.value)<=.36)
@@ -76,6 +77,6 @@ console.log('GIZMO_DEPTH_DRAG_PASS',values.modelAtelierBoreDepth.value);
 values.modelAtelierBoreGizmoRadius.getAttribute=()=> 'false';
 values.modelAtelierBoreGizmoDepth.getAttribute=()=> 'false';
 vm.runInContext('atelierPrecisionGizmoDraw()',ctx);
-if(ctx.atelierPrecisionGizmoGroup!==null||ctx.atelierPrecisionGizmoPick!==null)
+if(state('atelierPrecisionGizmoGroup')!==null||state('atelierPrecisionGizmoPick')!==null)
  throw Error('Toggle off did not remove editor-only gizmos');
 console.log('SE_V11114_TOUCH_GIZMO_SYNC_AND_NONDESTRUCTIVE_PASS');
