@@ -160,6 +160,6 @@
     "patches/v11_111_true_bowling_holes.py",
     "patches/v11_112_manual_precision_hole_tools.py"
   ],
-  "finalBytes": 6571928,
-  "finalSha256": "eac0886d3fcfbf922979851044344794c9670ccc8feba358e06671d931f3845e"
+  "finalBytes": 6576477,
+  "finalSha256": "77d8da050f64d09ab611d33bf7b97685a99b24eb7ce81e5fa0d9df21be46d52c"
 }

@@ -45,6 +45,13 @@ jobs:
           raw=html.encode()
           print('SE_V11112_FINAL_BYTES='+str(len(raw)))
           print('SE_V11112_FINAL_SHA256='+hashlib.sha256(raw).hexdigest())
+          assert len(raw)==m['finalBytes'], 'Full sealed size drift'
+          assert hashlib.sha256(raw).hexdigest()==m['finalSha256'], 'Full sealed digest drift'
           print('SE_V11112_MANUAL_RELEASE_SOURCE_PASS')
           PY
           node --check /tmp/se-v11112-module.mjs
+      - name: Verify packaged native HTML, source and all 68 assets
+        run: |
+          set -euo pipefail
+          python projects/swrlz-forge-moba/scripts/verify_v11_112_release.py --output /tmp/se-v11112-full
+          node --check /tmp/se-v11112-full-module.mjs
