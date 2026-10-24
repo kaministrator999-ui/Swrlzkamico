@@ -59,6 +59,8 @@ jobs:
           data=html.encode('utf-8')
           print('SE_V11110_BYTES='+str(len(data)))
           print('SE_V11110_SHA256='+hashlib.sha256(data).hexdigest())
+          assert len(data)==m['finalBytes'], 'v11.110 bytes mismatch'
+          assert hashlib.sha256(data).hexdigest()==m['finalSha256'], 'v11.110 SHA mismatch'
           print('SE_V11110_DISPLACEMENT_ONLY_GUARDS_PASS')
           PY
           node --check /tmp/se-v11110.mjs
