@@ -1,0 +1,48 @@
+name: §E v11.112 hand-placed round-hole preflight
+on:
+  push:
+    branches: ['feature/se-v11-112-manual-precision-holes']
+    paths: ['.github/workflows/se-v11112-manual-holes-preflight.yml']
+permissions:
+  contents: read
+jobs:
+  manual:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Progressive hand-placed real holes, save recipe and geometric curvature tests
+        run: |
+          set -euo pipefail
+          npm install --no-save --no-package-lock --ignore-scripts three@0.180.0
+          node projects/swrlz-forge-moba/tests/model_atelier_manual_holes_v11_112.mjs
+      - name: Rebuild last verified §E source and inject new manual controls
+        run: |
+          set -euo pipefail
+          python projects/swrlz-forge-moba/scripts/verify_v11_111_release.py --output /tmp/se-v11111
+          python - <<'PY'
+          from pathlib import Path
+          import runpy,hashlib
+          old=Path('/tmp/se-v11111/index.html').read_text()
+          patch=runpy.run_path('projects/swrlz-forge-moba/patches/v11_112_manual_precision_hole_tools.py')
+          html=patch['apply'](old)
+          assert "SWYRL_ENGINE_DEPLOY_MARKER: V11_112_MANUAL_ROUND_HOLE_SCULPT" in html
+          for expected in ["function atelierBowlingBuild(radius,center,axis,holes){",
+           "function atelierBoreCoordinates(plan,point){",
+           "function atelierBowlingInstall(){",
+           "Precision circle carve · one hole at a time",
+           "roundHolePlan:plan",
+           "for(let level=0;level<2;level++){"]:
+           assert expected in html,expected
+          assert "3 holes · bowling ball" not in html
+          Path('/tmp/se-v11112-manual.mjs').write_text(html.split('<script type="module">',1)[1].rsplit('</script>',1)[0])
+          raw=html.encode()
+          print('SE_V11112_MANUAL_BYTES='+str(len(raw)))
+          print('SE_V11112_MANUAL_SHA256='+hashlib.sha256(raw).hexdigest())
+          print('SE_V11112_MANUAL_SOURCE_GUARDS_PASS')
+          PY
+          node --check /tmp/se-v11112-manual.mjs
