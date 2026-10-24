@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.103
+title: §wyrl§ Engine v11.104
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.104 · Visible sculpt pick marker and readable mobile menus (2026-10-24)
+
+User Android screenshots show Pick center on mesh populating XYZ coordinates but no visible marker, and extremely cramped, difficult-to-read floating tool menus. This release adds a non-exporting, depth-test-disabled picked point ring/crosshair and outward surface-normal arrow aligned to the selected mesh, with an accessible XYZ status readout. On deselection or repick the marker is cleaned up. Native menu controls receive consistent typography, spacing, fieldsets, contrast, input alignment and touch-sized buttons while preserving the user-approved v11.103 window dimensions, dragging, scrolling gutters and 380ms hold-to-edit numeric keypad. Drilled cylindrical subtraction is **not** implied or added by this UI change; it requires a separate audited geometry feature.
 
 ## §E v11.103 · Double mobile inspector height only (2026-10-24)
 

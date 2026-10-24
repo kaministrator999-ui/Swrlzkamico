@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.103",
+  "name": "§wyrl§ Engine v11.104",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_103.html",
+  "finalArtifact": "swyrl_engine_v11_104.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -149,7 +149,8 @@
     "patches/v11_100_hold_scroll_gutters.py",
     "patches/v11_101_compact_quarter_panel.py",
     "patches/v11_102_balanced_drag_panel.py",
-    "patches/v11_103_double_inspector_height.py"
+    "patches/v11_103_double_inspector_height.py",
+    "patches/v11_104_pick_marker_readable_menus.py"
   ],
   "finalBytes": 6526071,
   "finalSha256": "7ce2d65c328d3c14f417062daaeb6f37f30b592c8f0b99f5cb305fd3bf1ee395"
