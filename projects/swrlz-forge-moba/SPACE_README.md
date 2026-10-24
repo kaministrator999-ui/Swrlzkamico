@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.104
+title: §wyrl§ Engine v11.105
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.105 · Sculpt undo retains viewport mode; roomier floating menus (2026-10-24)
+
+On Android v11.104 the owner confirmed surface-pick marker visibility but reported that clicking **Remove last stroke** while in X-Ray changes the render mode, and the right inspector remains cramped. Code inspection found the stroke-removal handler triggered `signalEdited()` **and** `select(p.id)`, redundantly rebuilding both geometry and view. The new forward patch eliminates the extra select/rebuild and independently preserves the global/per-part viewport display state and the All/Selected scope before refreshing mode UI; no sculpt geometry is altered. The panel becomes slightly wider, keeping 12px+ side trim, and increases vertical rhythm between labeled fields, paragraphs, sections and controls. Previously accepted v11.103 height, window dragging, scrolling gutters, touch-to-hold numeric pad, picked-point marker, 68 assets and all projects remain unchanged. Source checks and physical-device confirmation are distinct release gates.
 
 ## §E v11.104 · Visible sculpt pick marker and readable mobile menus (2026-10-24)
 
