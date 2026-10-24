@@ -53,6 +53,8 @@ jobs:
           data=source.encode('utf8')
           print('SE_V11109_SEAL_BYTES='+str(len(data)))
           print('SE_V11109_SEAL_SHA256='+hashlib.sha256(data).hexdigest())
+          assert len(data)==m['finalBytes'],'sealed bytes mismatch'
+          assert hashlib.sha256(data).hexdigest()==m['finalSha256'],'sealed SHA mismatch'
           print('SE_V11109_ROUND_SURFACE_GUARDS_PASS')
           PY
           node --check /tmp/se-v11109-module.mjs
