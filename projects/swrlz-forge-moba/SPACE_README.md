@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.102
+title: §wyrl§ Engine v11.103
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.103 · Double mobile inspector height only (2026-10-24)
+
+After testing v11.102 on Android, the owner confirmed the floating Model Atelier window is better positioned and sized horizontally but asked to make the menu **twice as tall**. The new forward patch changes only mobile inspector height from 34dvh/350px to 68dvh/700px max, with an expanded state of 78dvh/800px max. The default 390px max width, original drag behavior, scrolling gutters, hold-to-edit keypad, 68 bundled assets, scenes and meshes are unchanged. Exact package integrity and Android viewport acceptance are required before calling this a successful usability change.
 
 ## §E v11.102 · Balanced mobile size and real inspector dragging (2026-10-23)
 
