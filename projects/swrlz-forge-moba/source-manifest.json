@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.96",
+  "name": "§wyrl§ Engine v11.97",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_96.html",
+  "finalArtifact": "swyrl_engine_v11_97.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -142,7 +142,8 @@
     "patches/v11_93_smooth_anatomy_pinatas.py",
     "patches/v11_94_knee_skirt_soft_portrait.py",
     "patches/v11_95_fitted_skirt_waist.py",
-    "patches/v11_96_mobile_input_round_blank.py"
+    "patches/v11_96_mobile_input_round_blank.py",
+    "patches/v11_97_mobile_viewport_focus.py"
   ],
   "finalBytes": 6502021,
   "finalSha256": "c779e0889632a773341a78cbf0c3162932e5c7c9a6da17b20a60fc1166b3f3f9"

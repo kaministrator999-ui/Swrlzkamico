@@ -1,3 +1,7 @@
+## §E v11.97 · Correct phone layout viewport (2026-10-23)
+
+Physical Android screenshots after v11.96 show an entire browser page zoom on numeric input focus, although the editor input is already 16px. The desktop-oriented right rail still appears. v11.97 normalizes the document's viewport meta to device width and initial scale 1 while keeping user pinch-to-zoom enabled. This should activate the existing mobile layout and keyboard-aware tool sheet on phones. The previous 16px inputs and spherical blank starter remain intact. Device acceptance is required; no claims about prior character geometry are changed. Build integrity measurement and final separate deployment request follow.
+
 ## §E v11.96 · Mobile input zoom and spherical blank model (2026-10-23)
 
 New Model Project now opens with a uniformly scaled sphere (`0.6 / 0.6 / 0.6`) instead of the old nonuniform `0.5 / 0.6 / 0.8` blockout. On mobile/coarse-pointer layouts, Model Atelier number/text inputs, selects and text areas use at least 16px fonts to avoid the browser's small-field focus zoom. This changes only the new-model starter and editor input styling: all historical scenes, artwork and game models are preserved. Integrity preflight measured **128 patches / 68 preserved assets / 6,502,021 HTML bytes**, SHA-256 `c779e0889632a773341a78cbf0c3162932e5c7c9a6da17b20a60fc1166b3f3f9`. Model geometry and historical starter assets are unchanged; phone-browser focus behavior requires owner-device acceptance. Publication follows the separate final deployment request.

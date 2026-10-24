@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.96
+title: §wyrl§ Engine v11.97
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.97 · Correct phone layout viewport (2026-10-23)
+
+Physical Android screenshots after v11.96 show an entire browser page zoom on numeric input focus, although the editor input is already 16px. The desktop-oriented right rail still appears. v11.97 normalizes the document's viewport meta to device width and initial scale 1 while keeping user pinch-to-zoom enabled. This should activate the existing mobile layout and keyboard-aware tool sheet on phones. The previous 16px inputs and spherical blank starter remain intact. Device acceptance is required; no claims about prior character geometry are changed. Build integrity measurement and final separate deployment request follow.
 
 ## §E v11.96 · Mobile input zoom and spherical blank model (2026-10-23)
 
