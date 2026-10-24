@@ -4,7 +4,7 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.108",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_108_SCULPT_GHOST_PREVIEW",
-  "reason": "Deploy §E v11.108 actual before-Apply sculpt deformation ghost on a retained yellow radius brush ring. Native stroke evaluation on an isolated mesh copy for <=48k vertices, bounded labeled dense-mesh sampling, preview toggle and responsive brush-input updates, editor-only read-only overlays. Preserve v11.107 depth guide, v11.106 Wireframe/X-Ray safeguard, native saved meshes, Undo and all 68 assets. GitHub targeted preflight 40116649201 passed sealed 140 patches, 6,555,176 HTML bytes, SHA256 c420043eee37e7ebb3a30b1af02d51896304c3dd35af01e9c7198cdd1c19f45d. Verify exact hosted build and assets. Android visual acceptance remains with owner.",
-  "sourceCommit": "cb815cf4f680aa56121bef4442da245e113982a2",
-  "sourceIntegritySha256": "c420043eee37e7ebb3a30b1af02d51896304c3dd35af01e9c7198cdd1c19f45d"
+  "reason": "Corrective final deploy §E v11.108. Initial preflight used the v11.107 manifest and yielded 6,555,176 bytes; fully versioned 140-patch release build measured 6,555,286 bytes SHA256 176ff6ec6baba39bffe123985ec1fecdd725b3002cf706f1a0c06950ebcf815b. Manifest and release notes resealed without weakening validation. Publish owner-requested before-Apply deformable mesh ghost and amber brush ring; preserve existing mode, assets and Undo. Verify exact live SOURCE receipt and served asset integrity.",
+  "sourceCommit": "9a3af18b500a9b97ebc018d8d796de396afc5129",
+  "sourceIntegritySha256": "176ff6ec6baba39bffe123985ec1fecdd725b3002cf706f1a0c06950ebcf815b"
 }
