@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.100",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_100_HOLD_SCROLL_GUTTERS",
-  "reason": "Owner-requested mobile usability refinement: §E v11.100 returns to compact, expandable model inspector; scroll-safe side padding; numeric edits require short stationary 380ms long press. 132 patches, 68 bundled assets, sealed generated HTML 6519939 bytes and SHA256 aca02a1034c5ce79a70b024a2aa692344894493c9b4c79bc1d51b50d25a0eed1. Verify syntax, hosted HTML and assets before declaring release. Physical phone acceptance still pending.",
-  "sourceCommit": "020fdb0888efbefd53d5c20e98461827669b7089",
+  "releaseVersion": "v11.101",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_101_COMPACT_QUARTER_PANEL",
+  "reason": "Fail-closed exact source measurement for v11.101 true quarter-screen mobile Model Atelier panel. Preserve existing saved models, side swipe gutters, 380ms number edit hold. Do not publish until exact package SHA and bytes sealed.",
+  "sourceCommit": "81b52cb5f01d1ecee4f127fd151453844ddb5fcc",
   "sourceIntegritySha256": "aca02a1034c5ce79a70b024a2aa692344894493c9b4c79bc1d51b50d25a0eed1"
 }
