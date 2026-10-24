@@ -2,7 +2,7 @@ name: §E v11.114 interactive circle gizmo preflight
 on:
   push:
     branches: ['feature/se-v11-114-circle-viewport-gizmos']
-    paths: ['.github/workflows/se-v11114-gizmo-preflight.yml']
+    paths: ['.github/workflows/se-v11114-gizmo-preflight.yml', 'projects/swrlz-forge-moba/tests/model_atelier_precision_gizmos_v11_114.mjs', 'projects/swrlz-forge-moba/runtime/model_atelier_circle_gizmos_v11_114.js']
 permissions:
   contents: read
 jobs:
