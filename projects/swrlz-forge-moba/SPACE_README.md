@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.100
+title: §wyrl§ Engine v11.101
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.101 · True quarter-screen compact mobile tools (2026-10-23)
+
+Following real Android testing of v11.100, the owner reported that the supposedly compact tool panel still occupies roughly half the screen. The underlying 49dvh inspector default and 62dvh Expanded value caused that directly; an older mobile-adaptive inspector also carries higher-specificity !important sizing. The new additive release overrides both selectors: mobile inspector starts at no more than 26dvh / 255 CSS px, up to 320px wide, and Expand grows only to 38dvh / 385px and up to 375px wide. Context-sheet defaults are correspondingly reduced. All scroll gutters, deliberate number-field holds, brush controls and prior models remain unchanged. Owner-device verification follows exact sealed deployment.
 
 ## §E v11.100 · Compact mobile panels, side swipe gutters and hold-to-edit (2026-10-23)
 
