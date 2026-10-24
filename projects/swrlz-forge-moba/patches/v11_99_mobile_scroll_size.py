@@ -92,12 +92,15 @@ CSS = """
 def apply(html):
     # Widen prior mobile supervisor's width trigger to include touch browsers
     # in desktop-site/zoomed layout. Keep desktop mouse layouts unchanged.
-    html=one(html,
-        "matchMedia('(max-width:700px), (max-height:600px) and (pointer:coarse)')",
-        "matchMedia('(max-width:980px), (pointer:coarse)')")
-    html=one(html,
-        "@media (max-width:700px),(max-height:600px) and (pointer:coarse){",
-        "@media (max-width:980px),(pointer:coarse){")
+    for old,new in [
+        ("matchMedia('(max-width:700px), (max-height:600px) and (pointer:coarse)')",
+         "matchMedia('(max-width:980px), (pointer:coarse)')"),
+        ("@media (max-width:700px),(max-height:600px) and (pointer:coarse){",
+         "@media (max-width:980px),(pointer:coarse){"),
+    ]:
+        count=html.count(old)
+        assert 1<=count<=8, (old,count)
+        html=html.replace(old,new)
     assert '</head>' in html
     html=html.replace('</head>','<style id="se-v1199-mobile-scroll-size">'+CSS+'</style>\n</head>',1)
     html=one(html,'SWYRL_ENGINE_DEPLOY_MARKER: V11_98_MOBILE_NUMPAD_TOUCH_FIX',
