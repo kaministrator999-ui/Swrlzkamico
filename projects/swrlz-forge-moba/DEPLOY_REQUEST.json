@@ -4,7 +4,7 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.104",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_104_PICK_MARKER_READABLE_MENUS",
-  "reason": "Fail-closed preflight only: build §E v11.104 with visible point ring and normal, XYZ readout and readable tool menu presentation. Source asset seal must be remeasured; no upload until exact bytes/hash are recorded.",
-  "sourceCommit": "b8c19611324d8015ef2118dd7d0c39b184c5f435",
-  "sourceIntegritySha256": "7ce2d65c328d3c14f417062daaeb6f37f30b592c8f0b99f5cb305fd3bf1ee395"
+  "reason": "Owner-requested §E v11.104 release: mark exact picked mesh surface position with persistent editor-only yellow ring/white crosshair and cyan normal arrow, including X-Ray, and apply readable consistent native floating-menu typography, spacing, fieldset hierarchy and touch buttons. Keep approved v11.103 inspector dimensions/drag, scrolling gutters, press-hold input and all model files/assets intact. 136 patches; 68 bundled assets; 6535811 HTML bytes; SHA256 e205d04d8bd66d69994cbeca52b8a089468a6275146bfae59ba884bda6f443f1. Publish only after exact checksum, module syntax, assets and live-host verification. Physical Android acceptance pending.",
+  "sourceCommit": "e95a5303e96b5f5cdccfa8f4afcd09227067dbc7",
+  "sourceIntegritySha256": "e205d04d8bd66d69994cbeca52b8a089468a6275146bfae59ba884bda6f443f1"
 }
