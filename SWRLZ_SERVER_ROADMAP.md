@@ -1,3 +1,9 @@
+## UPDATE PUBLICATION REQUESTED — 2026-10-24 — Qwen project generation
+
+Owner explicitly authorized publishing the validated coding updates. Candidate source `0e361f97d9b0ec72a63581dc06ac22c610a11f1f`, based on accepted Chatv294; exact-source CI [40128272787](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40128272787) is SUCCESS. Existing main Forge/§E changes and deployment workflows are preserved. The request pins this source SHA through the existing HF request→guarded workflow→kamiloki/Swyrlz chain. No direct HF upload or hosting move. Publication/runtime acceptance pending; model/default/version/build receipts must be read from the current checkpoint, not inferred from this request.
+
+See `docs/engineering/entries/2026-10-24_QWEN_PROJECT_GENERATION.md`.
+
 ## UPDATE COMPLETED — 2026-10-24 — §E v11.95 fitted waist live-verified; owner review pending
 
 **Publication evidence:** [dedicated workflow 40047207802](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40047207802) COMPLETED/SUCCESS on trigger `75ed04af5e4c7316ca53df5561daacd2051500ab`, source `41b795a82118acdd093727610bc5685181160be3`. Observed `2026-10-24T00:55:34.789423+00:00`; the named live check succeeded for exact v11.95 HTML, SOURCE and all 68 assets. Seal 127 patches / 68 assets / 6,501,581 HTML bytes, SHA256 `a0d61bfac63c666ae7037edfb6b92f509abf8f7d4314615decb3b39bffa7ce8c`. The canonical live model is https://kamiloki-swrlz-forge-moba.static.hf.space/?project=organic-anime-girl&v=11.95 .
