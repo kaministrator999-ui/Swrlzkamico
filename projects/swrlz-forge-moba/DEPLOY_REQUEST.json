@@ -4,7 +4,7 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.102",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_102_BALANCED_DRAGGABLE_PANEL",
-  "reason": "Fail-closed artifact measurement for §E v11.102 balanced phone inspector sizing plus restored pointer dragging. Do not deploy until exact generated SHA/bytes sealed.",
-  "sourceCommit": "f9d8971cbe13b494b603056df3fbd80b34543e9d",
-  "sourceIntegritySha256": "011f44a659a6f0a76d482ba375476735b5f43c038082d3321f19f24bd2416162"
+  "reason": "User-requested §E v11.102 fix for v11.101 tiny immovable mobile inspector. Correct CSS !important right/bottom constraints that defeated original pointer-drag handler; balance default at max 34dvh/390px wide, Expand 43dvh/440px. Preserve mobile input hold behavior, side scroll gutters, models and assets. Sealed source: 134 patches, 68 assets, 6525097 compiled HTML bytes, SHA256 fb2ec79211686c3aa4a69deaaa06570b83e8137abf9fb85b2d7a4869a2b1bb7c. Publish and verify hosted HTML and assets; physical Android drag acceptance still pending.",
+  "sourceCommit": "438bce8f5f1af159fbb6a1b3439b38428968bbbd",
+  "sourceIntegritySha256": "fb2ec79211686c3aa4a69deaaa06570b83e8137abf9fb85b2d7a4869a2b1bb7c"
 }
