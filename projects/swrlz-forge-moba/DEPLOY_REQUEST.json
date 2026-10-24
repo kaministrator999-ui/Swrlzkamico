@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.104",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_104_PICK_MARKER_READABLE_MENUS",
-  "reason": "Owner-requested §E v11.104 release: mark exact picked mesh surface position with persistent editor-only yellow ring/white crosshair and cyan normal arrow, including X-Ray, and apply readable consistent native floating-menu typography, spacing, fieldset hierarchy and touch buttons. Keep approved v11.103 inspector dimensions/drag, scrolling gutters, press-hold input and all model files/assets intact. 136 patches; 68 bundled assets; 6535811 HTML bytes; SHA256 e205d04d8bd66d69994cbeca52b8a089468a6275146bfae59ba884bda6f443f1. Publish only after exact checksum, module syntax, assets and live-host verification. Physical Android acceptance pending.",
-  "sourceCommit": "e95a5303e96b5f5cdccfa8f4afcd09227067dbc7",
+  "releaseVersion": "v11.105",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_105_SCULPT_UNDO_VIEW_MENU",
+  "reason": "Fail-closed source preflight for §E v11.105: avoid sculpt Undo double redraw and preserve viewport render mode/scope, plus slightly wider and better spaced Model Atelier menus. No publication until new byte count and SHA256 are sealed.",
+  "sourceCommit": "6848f0b2c1538d8675b077b41eb77d239ccf0e79",
   "sourceIntegritySha256": "e205d04d8bd66d69994cbeca52b8a089468a6275146bfae59ba884bda6f443f1"
 }
