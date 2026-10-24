@@ -1,0 +1,16 @@
+{
+  "version": "v11.95",
+  "moduleSha256": "59eecc8491037205efa88aaa5cb84305ed6800366e5162fb64ab7a086ecbb017",
+  "source": "delegated native geometry smoke over the saved v11.94 scene",
+  "rings": 10,
+  "rays": 720,
+  "raysPassed": 720,
+  "skinSamples": 1341,
+  "skinMisses": 0,
+  "skinMinimumClearance": 0.02577,
+  "shortsSamples": 2605,
+  "shortsMisses": 0,
+  "shortsMinimumClearance": 0.00405,
+  "bodyExact": true,
+  "lowerAtAndBelow2_4Exact": true
+}

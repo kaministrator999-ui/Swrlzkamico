@@ -144,9 +144,14 @@ def main():
     media_paths.append('scenes/model-atelier-reference-girl-v11-92.swyrl.json')
     media_paths.append('scenes/model-atelier-smooth-girl-v11-93.swyrl.json')
     media_paths.append('scenes/model-atelier-knee-armor-v11-94.swyrl.json')
+    media_paths.append('scenes/model-atelier-fitted-waist-v11-95.swyrl.json')
     for rel in media_paths:
         source = ROOT / rel
-        if rel=='scenes/model-atelier-knee-armor-v11-94.swyrl.json':
+        if rel=='scenes/model-atelier-fitted-waist-v11-95.swyrl.json':
+            chunks=sorted((ROOT / 'payload/festival-girl').glob('fitted-v11-95.swyrl.json.gz.part*'))
+            if not chunks:raise SystemExit('Missing fitted skirt girl v11.95 payload')
+            data=gzip.decompress(b''.join(p.read_bytes() for p in chunks))
+        elif rel=='scenes/model-atelier-knee-armor-v11-94.swyrl.json':
             chunks=sorted((ROOT / 'payload/festival-girl').glob('knee-v11-94.swyrl.json.gz.part*'))
             if not chunks:raise SystemExit('Missing knee-length armor girl v11.94 payload')
             data=gzip.decompress(b''.join(p.read_bytes() for p in chunks))

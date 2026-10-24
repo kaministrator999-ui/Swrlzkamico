@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.94
+title: §wyrl§ Engine v11.95
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,12 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.95 · Fitted festival skirt waist (2026-10-24)
+
+The upper skirt now follows the existing waist and bodice more closely, then blends smoothly into the lower flare. Matching trim and the waist jewel follow the fitted surface. The lower skirt, knee-limit heights, opaque underlayer, smooth anatomy, soft portrait and original attached hair piñatas are preserved.
+
+Release **127 patches / 68 assets**, **6,501,581 HTML bytes**, SHA-256 `a0d61bfac63c666ae7037edfb6b92f509abf8f7d4314615decb3b39bffa7ce8c`, marker `V11_95_FITTED_SKIRT_WAIST`. Targeted waist dimensions, coverage, native editing/save/export and immutable source lineage are recorded in [FITTED_SKIRT_WAIST_V11_95.md](reports/FITTED_SKIRT_WAIST_V11_95.md). Publication follows [RELEASE_PROCESS.md](RELEASE_PROCESS.md), with ordinary source publication and a separate final deployment-request commit. Owner-device waist-fit acceptance follows the release.
 
 ## §E v11.94 · Full knee-length festival armor skirt and softer portrait (2026-10-24)
 

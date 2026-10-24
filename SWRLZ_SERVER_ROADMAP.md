@@ -1,3 +1,19 @@
+## UPDATE FINISHED — 2026-10-24 — §E v11.95 fitted festival waist (source/editor verified)
+
+Upper skirt width is reduced approximately 25% at Y2.90 and 19% at Y2.80; upper depth reduces 20–22%, with a smooth transition into the preserved lower flare. Matching trim/jewel follows; upper side overlap closes the gap near Y2.79. Skin/portrait/legs/piñatas/shorts and all lower vertices at/below Y2.40 remain exact. All 312 prior runtime/patch sources and 67 prior assets retain hashes.
+
+PASS: actual waist sections, 720 editor coverage rays, 720 native rays, 1,341 skin / 2,605 underlayer samples, desktop/phone visibility, skirt material Undo, exact 201,481,359-byte JSON round trip, current source-factory equality and 64,847,940-byte textured GLB with 327 meshes / 1,755,616 triangles and exact 4K maps. Seal 127 patches / 68 assets / 6,501,581 HTML bytes, SHA256 `a0d61bfac63c666ae7037edfb6b92f509abf8f7d4314615decb3b39bffa7ce8c`. Repository Work 1.0.237→1.0.238 at `21711cf03483d8bb95d233775a6de1316e10ff6b`; other module authorities unchanged. Documentation gate PASS. Report: `projects/swrlz-forge-moba/reports/FITTED_SKIRT_WAIST_V11_95.md`.
+
+Canonical source publication and separate DEPLOY_REQUEST-only trigger follow under §§§. Hosted workflow/asset evidence is recorded after observation; owner-device waist-fit acceptance remains pending. No unrelated test suites or product changes.
+
+## UPDATE STARTED — 2026-10-24 — §E v11.95 fitted skirt waist
+
+**Checkpoint/objective:** refine only the upper festival skirt after owner feedback that the waist is too large. Bring the panels and matching trim closer to the existing body/bodice and blend into the preserved lower flare. Keep full-circle/crotch coverage, knee-limit heights, smooth anatomy, portrait and attached piñatas.
+
+**Baseline and owner evidence:** v11.94 source `b11cda1a89bef9b38a16de88a45a98ca84e3d2bc`, final trigger `ed254935daf19d827a3dabea29930faa9d996a29`; [deployment 40043264773](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40043264773) completed SUCCESS and exact live HTML/SOURCE/all 67 assets were verified. Owner reports waist-fit refinement required; visual/device acceptance of that fit remains unresolved and is carried into this checkpoint. Repository Work 1.0.237 at `ced76e1b1e49f36d054f3591cf9a446829d774c7`.
+
+**Documentation Impact Set:** checkpoint/evidence receipt, release notes, engine README/SPACE_README/ROADMAP, root §tart_§E, manifest/version/patch lineage, packaging and dedicated deployment expectations. No architecture, protocol, identity/trust, Chat/LALM or gameplay change. Native scene payload and sealed SOURCE receipt are the canonical engine package; Android/source-ZIP promotion is not applicable. Success requires measured waist reduction, smooth upper transition, real coverage rays, exact unchanged body/companions/hem, native editing/save/export and exact factory/package equality. Follow §§§ source commit then separate final DEPLOY_REQUEST-only commit and observe hosted verification. No owner-device acceptance is inferred from CI.
+
 ## UPDATE FINISHED — 2026-10-24 — §E v11.94 covered knee armor skirt and softer portrait (source/editor verified; publication follows)
 
 **Outcome:** nine existing native lower panels overlap into a full festival skirt; matched trim and all hanging ornaments end above kneecap Y=1.52 (actual minimum 1.592134). Opaque fitted shorts remain exact. Head narrows 5% with a smooth neck blend; nose bridge, tip and underside use a softer continuous finish. Hair piñatas, grip/socket owners, rising eye corners, smooth leg/body contours and all 117 companion meshes remain preserved.

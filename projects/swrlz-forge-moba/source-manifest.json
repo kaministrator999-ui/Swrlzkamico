@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.94",
+  "name": "§wyrl§ Engine v11.95",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_94.html",
+  "finalArtifact": "swyrl_engine_v11_95.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -140,8 +140,9 @@
     "patches/v11_91_organic_anime_girl.py",
     "patches/v11_92_festival_reference_refinement.py",
     "patches/v11_93_smooth_anatomy_pinatas.py",
-    "patches/v11_94_knee_skirt_soft_portrait.py"
+    "patches/v11_94_knee_skirt_soft_portrait.py",
+    "patches/v11_95_fitted_skirt_waist.py"
   ],
-  "finalBytes": 6495464,
-  "finalSha256": "ede8f335dc9f9086d5d6f1ec6abf7d73711aa56bf3ea123c7494af2daac5d78c"
+  "finalBytes": 6501581,
+  "finalSha256": "a0d61bfac63c666ae7037edfb6b92f509abf8f7d4314615decb3b39bffa7ce8c"
 }
