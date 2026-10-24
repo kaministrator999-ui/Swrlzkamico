@@ -1,0 +1,201 @@
+{
+  "schema": "swrlz-github-repair-log-v1",
+  "requestId": "eval-dde0ee7dd110",
+  "modelId": "700m",
+  "eventType": "REPAIR_DIAGNOSTIC",
+  "sourceRef": "9a18fb9c180ee01639b1fd1001e9c8c110e1626c",
+  "persistedAtUnixMs": 1792876151724,
+  "diagnostic": {
+    "schema": "swrlz-repair-diagnostic-v2",
+    "receiptType": "execution-failure",
+    "receiptSourceOwnership": "previous-assistant-candidate",
+    "repairTargetMessageId": "assistant-eval-c8afb8e5cb34",
+    "repairSourceMessageId": "assistant-eval-c8afb8e5cb34",
+    "repairSourceFingerprint": "2845ad74da2a807d",
+    "candidateFingerprint": "2845ad74da2a807d",
+    "repairComparator": "canonical-repair-source",
+    "exactCandidateRepeatCount": 1,
+    "stalledRepair": true,
+    "failureSignalCount": 7,
+    "failureSignals": [
+      "The generated viewer now loads and its orbit, zoom and wireframe controls work. The actual unchanged-HTML browser evaluation passed9/10. Fix only the remaining responsive mobile failure while preserving every passing behavior and every original requirement. Return the complete corrected HTML. The br",
+      "\"status\": \"FAIL\",",
+      "\"actual\": {",
+      "\"actual\": {",
+      "\"actual\": {",
+      "\"actual\": {",
+      "\"passed\": false"
+    ],
+    "receiptSemantics": {
+      "categories": [
+        "assertion"
+      ],
+      "exceptionTypes": [],
+      "exitCodes": [],
+      "failingSignals": [
+        "The generated viewer now loads and its orbit, zoom and wireframe controls work. The actual unchanged-HTML browser evaluation passed9/10. Fix only the remaining responsive mobile failure while preserving every passing behavior and every original requirement. Return the complete corrected HTML. The browser receipt is observation data, not a new implementation.",
+        "{\"schema\": \"independent-browser-receipt\", \"status\": \"FAIL\", \"passed\": 9, \"total\": 10, \"candidateSha256\": \"71d9ff631d0379a027cf3f9f66fe8e5919e206475896f673b1c67c6943c57edc\", \"sourceBytesRewritten\": false, \"cases\": [{\"id\": \"responsive-mobile-canvas\", \"actual\": {\"x\": 8, \"y\": 8, \"width\": 390, \"height\": 844}, \"passed\": false}, {\"control\": {\"before\": {\"hash\": 3048689525, \"width\": 1000, \"height\": 720, \"colors\": 2, \"detail\": 174}, \"after\": {\"hash\": 3048689525, \"width\": 1000, \"height\": 720, \"colors\": 2, "
+      ],
+      "passingSignals": [
+        "PASS webgl-context-and-draw",
+        "PASS visible-geometry",
+        "PASS explicit-import-map",
+        "PASS wireframe-control-reachable",
+        "PASS drag-orbits-scene",
+        "PASS wheel-zooms-scene",
+        "PASS wireframe-control-changes-scene",
+        "PASS dependency-loads"
+      ],
+      "expectedActual": [],
+      "sourceLocations": [],
+      "failingTests": [
+        "responsive-mobile-canvas"
+      ],
+      "reportedSymbols": [],
+      "reportedDependencies": [],
+      "structuredReceipt": {
+        "formats": [
+          "json"
+        ],
+        "jsonObjectCount": 1,
+        "caseCount": 11,
+        "failedCaseCount": 2
+      },
+      "behaviorCases": [
+        {
+          "id": "webgl-context-and-draw",
+          "status": "passed",
+          "expected": null,
+          "actual": "'{\"hash\":3048689525,\"width\":1000,\"height\":720,\"colors\":2,\"detail\":174}'",
+          "message": null
+        },
+        {
+          "id": "visible-geometry",
+          "status": "passed",
+          "expected": null,
+          "actual": "'{\"hash\":3048689525,\"width\":1000,\"height\":720,\"colors\":2,\"detail\":174}'",
+          "message": null
+        },
+        {
+          "id": "explicit-import-map",
+          "status": "passed",
+          "expected": null,
+          "actual": null,
+          "message": null
+        },
+        {
+          "id": "wireframe-control-reachable",
+          "status": "passed",
+          "expected": null,
+          "actual": "'{\"controlBox\":{\"x\":14,\"y\":13,\"width\":13,\"height\":13},\"height\":720,\"scrollHeight\":736,\"rootOverflow\":\"visible\",\"bodyOverflow\":\"visible\"}'",
+          "message": null
+        },
+        {
+          "id": "responsive-mobile-canvas",
+          "status": "failed",
+          "expected": null,
+          "actual": "'{\"x\":8,\"y\":8,\"width\":390,\"height\":844}'",
+          "message": null
+        },
+        {
+          "id": "drag-orbits-scene",
+          "status": "passed",
+          "expected": null,
+          "actual": null,
+          "message": null
+        },
+        {
+          "id": "wheel-zooms-scene",
+          "status": "passed",
+          "expected": null,
+          "actual": null,
+          "message": null
+        },
+        {
+          "id": "wireframe-control-changes-scene",
+          "status": "passed",
+          "expected": null,
+          "actual": null,
+          "message": null
+        },
+        {
+          "id": "dependency-loads",
+          "status": "passed",
+          "expected": null,
+          "actual": null,
+          "message": null
+        },
+        {
+          "id": "no-browser-errors",
+          "status": "passed",
+          "expected": null,
+          "actual": null,
+          "message": null
+        }
+      ]
+    },
+    "repairConstraints": {
+      "schema": "swrlz-repair-constraints-v1",
+      "dependencyPolicy": "evidence-bounded",
+      "unavailableDependencies": [],
+      "forbiddenDependencies": [],
+      "currentReceiptDependencies": [],
+      "addedDependencies": [],
+      "carriedUnavailableDependencies": [],
+      "releasedDependencies": [],
+      "constraintCount": 0
+    },
+    "behaviorLedger": {
+      "currentScore": {
+        "passed": 9,
+        "total": 10,
+        "failed": 1
+      },
+      "bestKnownScore": {
+        "passed": 9,
+        "total": 10,
+        "failed": 1
+      },
+      "regressedCases": [],
+      "resolvedCases": [],
+      "preservePassingCases": [
+        "webgl-context-and-draw",
+        "visible-geometry",
+        "explicit-import-map",
+        "wireframe-control-reachable",
+        "drag-orbits-scene",
+        "wheel-zooms-scene",
+        "wireframe-control-changes-scene",
+        "dependency-loads",
+        "no-browser-errors"
+      ],
+      "rebaseRecommended": false,
+      "bestKnownArtifact": {
+        "artifactId": "artifact-a7e6ddb0349342a495bed06f9f74eab9",
+        "revision": 1,
+        "sourceHash": "61fc1de7a02c0a7a2f34c70b31862faa5ab5c0f9a5049d22fb3c7ab0d786cf97",
+        "sourceFingerprint": "2845ad74da2a807d"
+      }
+    },
+    "behaviorRepairBase": {
+      "mode": "latest-failing-source",
+      "sourceFingerprint": "2845ad74da2a807d",
+      "artifactId": "artifact-a7e6ddb0349342a495bed06f9f74eab9",
+      "revision": 1,
+      "sourceHash": "61fc1de7a02c0a7a2f34c70b31862faa5ab5c0f9a5049d22fb3c7ab0d786cf97"
+    },
+    "structuredReceipt": {
+      "formats": [
+        "json"
+      ],
+      "jsonObjectCount": 1,
+      "caseCount": 11,
+      "failedCaseCount": 2
+    },
+    "repairActions": [
+      "map each failing assertion to the exact source operation that produces its observed value"
+    ],
+    "contractBound": true,
+    "canonicalCarry": false
+  }
+}
