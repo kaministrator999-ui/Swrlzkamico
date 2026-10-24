@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.113",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_113_GENERAL_PRECISION_CIRCLE",
-  "reason": "§E owner rejected a bowling-ball-specific workflow and instructed us to finish a reusable modeling tool. v11.113 ships a generic manually placed Precision circle cut: pick surface center, adjust independent radius and depth, flat-to-rounded bottom, safe preview/Apply/Undo, explicit optional relocation and editable stored cuts. Native true indexed cavities now support selected spheres (up to 3 cuts), planar box faces and cylinder end caps (up to 6 cuts on a shared first-face direction); imported arbitrary-mesh Boolean and curved cylinder sides remain unsupported, clearly labeled. Test cases include sphere, box socket, flat-bottom box, six box apertures and cylinder cap cuts, with zero open/nonmanifold/inverted/degenerate triangles. Preserve prior §E sculpting features, models, runtime and 68 assets. Targeted preflight #40135278226 and full sealed package #40135549105 passed. 145 source patches, exact 6,579,505 HTML bytes SHA-256 445a93e9a1b077aebba942524c54877bb709f8e73687d9b600432232a40194c8. Require exact hosted integrity and owner Android UX acceptance.",
-  "sourceCommit": "53b31131efe22889e682eab06abdb14f147fe6c4",
-  "sourceIntegritySha256": "445a93e9a1b077aebba942524c54877bb709f8e73687d9b600432232a40194c8"
+  "releaseVersion": "v11.114",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_114_CIRCLE_VIEWPORT_HANDLES",
+  "reason": "Owner requested direct viewport controls for numeric Precision circle cut radius and depth. v11.114 adds independent opt-in amber radius and violet depth handles in Model Atelier, touch/mouse hit testing on ring/grips, mobile-screen drag sensitivity and head-on vertical depth fallback, synchronized existing numeric fields and editor-only rounded footprint/depth guides. Rebuild exact validated cut preview once at pointer release; no mesh mutation or Undo checkpoint until owner explicitly Applies. Preserve normal orbit/pick elsewhere, manual per-hole cut placement, saved editable recipes, supported native spheres/box faces/cylinder caps, organic sculpt tools, renderer modes, JSON/OBJ/GLB, 68 assets and unrelated apps. Targeted pointer simulation #40137169712 succeeded after correction; official full source and 68-asset seal #40137456458 passed. 146 ordered patches, 6,594,602 exact HTML bytes, SHA-256 7cd989c5973bb978725f0495ad9b20cf17328cbeaacc0954e0ebdf1b5717c22b. Require hosted SOURCE/artwork integrity; owner Android UX acceptance remains outstanding.",
+  "sourceCommit": "2647cc4858afb6d79666ca4233060e1c3a511135",
+  "sourceIntegritySha256": "7cd989c5973bb978725f0495ad9b20cf17328cbeaacc0954e0ebdf1b5717c22b"
 }
