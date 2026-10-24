@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.98",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_98_MOBILE_NUMPAD_TOUCH_FIX",
-  "reason": "Publish the sealed v11.98 mobile keypad fix to the Hugging Face Space. Owner requested manual deployment.",
-  "sourceCommit": "5586b8670a11684be195a1c957570e61a8e4741f",
+  "releaseVersion": "v11.99",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_99_MOBILE_SCROLL_SIZE",
+  "reason": "Fail-closed measurement of §E v11.99 enlarged phone editing tool sheets and touch-scroll. Do not upload with stale v11.98 SHA. Capture actual HTML digest/length first.",
+  "sourceCommit": "0aa3aaf2aec3e3d3a29b9bd0ec8a32d04d9b3207",
   "sourceIntegritySha256": "9b5033ee9bfcd3714ee4e52c0dd4dc46c2f06b78fb87eae441ffeac33aabe76d"
 }
