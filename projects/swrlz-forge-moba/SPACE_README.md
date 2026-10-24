@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.98
+title: §wyrl§ Engine v11.99
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.99 · Larger touch-scrollable Model Atelier menus (2026-10-23)
+
+Owner Android testing confirmed the v11.98 keypad works, but scrolling the small floating sculpt panel is difficult and the other tool menus also feel undersized. Root cause candidates identified in the older floating dock are `pointer-events:none` over inspector background and a mobile supervisor width rule that can omit coarse-pointer/desktop-site phones. This mobile-only patch re-enables inspector touch hit testing, explicitly allows vertical panning on scroll surfaces, expands native inspector and context panels, and makes the horizontal tool rail larger. Existing modeling algorithms, the reliable v11.98 keypad, all 68 bundled assets and saved character geometry remain untouched. Exact artifact measurement and owner-device acceptance follow.
 
 ## §E v11.98 · Mobile number pad tap-through repair (2026-10-23)
 
