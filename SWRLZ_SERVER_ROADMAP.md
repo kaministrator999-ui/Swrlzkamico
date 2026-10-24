@@ -1,3 +1,11 @@
+## UPDATE COMPLETED — 2026-10-24 — §E v11.95 fitted waist live-verified; owner review pending
+
+**Publication evidence:** [dedicated workflow 40047207802](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40047207802) COMPLETED/SUCCESS on trigger `75ed04af5e4c7316ca53df5561daacd2051500ab`, source `41b795a82118acdd093727610bc5685181160be3`. Observed `2026-10-24T00:55:34.789423+00:00`; the named live check succeeded for exact v11.95 HTML, SOURCE and all 68 assets. Seal 127 patches / 68 assets / 6,501,581 HTML bytes, SHA256 `a0d61bfac63c666ae7037edfb6b92f509abf8f7d4314615decb3b39bffa7ce8c`. The canonical live model is https://kamiloki-swrlz-forge-moba.static.hf.space/?project=organic-anime-girl&v=11.95 .
+
+**Outcome/disposition:** approximately 25% narrower waist and 19% narrower upper skirt, smooth fitted transition, preserved lower flare/hem, opaque coverage and exact anatomy/portrait/piñatas. Local fit/coverage/native export checks passed before source publication. Checkpoint BUILD_EVIDENCE_RECORDED / DEVICE_TEST_PENDING; physical owner-device waist-fit acceptance is pending. Detailed checkpoint and deployment receipt are under `projects/swrlz-forge-moba/reports/FITTED_SKIRT_WAIST_V11_95.md`.
+
+**Documentation closure:** this evidence-only update changes no engine artifact, module behavior or deployment request. Engine remains v11.95 and Repository Work remains 1.0.238 for the same completed engineering tier; no unrelated suites/product changes. Documentation gate PASS; no additional approval is waiting within this authorized checkpoint.
+
 ## UPDATE FINISHED — 2026-10-24 — §E v11.95 fitted festival waist (source/editor verified)
 
 Upper skirt width is reduced approximately 25% at Y2.90 and 19% at Y2.80; upper depth reduces 20–22%, with a smooth transition into the preserved lower flare. Matching trim/jewel follows; upper side overlap closes the gap near Y2.79. Skin/portrait/legs/piñatas/shorts and all lower vertices at/below Y2.40 remain exact. All 312 prior runtime/patch sources and 67 prior assets retain hashes.

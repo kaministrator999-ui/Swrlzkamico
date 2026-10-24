@@ -1,6 +1,6 @@
 # Checkpoint §E v11.95: fitted festival skirt waist
 
-Mode: IMPLEMENT. Lifecycle: IMPLEMENTATION_VERIFIED / DOCUMENTATION_SYNCED. Documentation gate: PASS. This receipt records the tested source candidate; canonical deployment evidence is recorded at publication.
+Mode: VERIFY / HANDOFF. Lifecycle: BUILD_EVIDENCE_RECORDED / DEVICE_TEST_PENDING. Documentation gate: PASS. Source and canonical deployment are verified; owner-device waist-fit acceptance remains pending.
 
 ## Objective and success criteria
 
@@ -46,4 +46,10 @@ Canonical engine package: versioned native scene plus sealed HTML/SOURCE manifes
 
 Baseline v11.94 source `b11cda1a89bef9b38a16de88a45a98ca84e3d2bc`, trigger `ed254935daf19d827a3dabea29930faa9d996a29`, [run 40043264773](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40043264773): COMPLETED/SUCCESS with exact hosted HTML/SOURCE/all 67 assets. Owner waist-fit feedback is the carried-forward refinement, addressed in this source candidate.
 
-v11.95 local source/editor/export verification is complete. Source publication, separate final DEPLOY_REQUEST-only commit and dedicated hosted verification follow under [§§§](../RELEASE_PROCESS.md). Workflow success and exact live asset evidence will be recorded after observation. Physical owner-device acceptance remains pending and is not inferred from CI. Additional approval: NOT APPLICABLE within the existing owner-directed correction/release loop. No further implementation checkpoint is started by this receipt.
+v11.95 local source/editor/export verification was completed before publication under [§§§](../RELEASE_PROCESS.md); observed hosted evidence follows below. Physical owner-device acceptance remains pending and is not inferred from CI. Additional approval: NOT APPLICABLE within the existing owner-directed correction/release loop. No further implementation checkpoint is started by this receipt.
+
+## Observed publication and checkpoint closure
+
+Observed `2026-10-24T00:55:34.789423+00:00`: [dedicated deployment 40047207802](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40047207802) completed **SUCCESS** on exact trigger `75ed04af5e4c7316ca53df5561daacd2051500ab` after source `41b795a82118acdd093727610bc5685181160be3` was published. The named live-verification step succeeded and confirmed exact hosted v11.95 HTML, SOURCE receipt and all 68 assets against the 127-patch seal, **6,501,581 bytes**, SHA256 `a0d61bfac63c666ae7037edfb6b92f509abf8f7d4314615decb3b39bffa7ce8c`. [Machine-readable deployment evidence](fitted_skirt_v11_95_deployment_receipt.json).
+
+This documentation-only closure records the actual build/runtime evidence without changing the engine artifact or its version. Repository Work remains 1.0.238 for this same bounded checkpoint. The waist-fit issue has an implemented, locally tested and live-verified correction; physical owner-device visual acceptance remains pending. Approval waiting: NOT APPLICABLE; next evidence is owner feedback from the live model. No further implementation is started.
