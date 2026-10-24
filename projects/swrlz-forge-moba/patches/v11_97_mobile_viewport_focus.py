@@ -8,18 +8,24 @@ def exactly(s,old,new):
     return s.replace(old,new,1)
 
 def apply(html):
-    before=re.findall(r'<meta\b[^>]*\bname\s*=\s*["\x27]viewport["\x27][^>]*>',html,flags=re.I)
-    print("SWRLZ_V1197_PREEXISTING_VIEWPORT",len(before),repr(before[:3]),flush=True)
-    assert len(before)<=1, "Ambiguous viewport directives: fix explicitly"
-    # Force true device-width layout; never disable pinch zoom or accessibility.
+    # Restrict changes to the real HTML <head>; older runtime templates may
+    # contain viewport strings inside JavaScript that must remain unchanged.
+    tag_re=r'<meta\b[^>]*\bname\s*=\s*["\x27]viewport["\x27][^>]*>'
+    end=re.search(r'</head\s*>',html,re.I)
+    assert end, 'Cannot locate document head closing tag'
+    dochead,tail=html[:end.start()],html[end.start():]
+    existing=re.findall(tag_re,dochead,flags=re.I)
+    print("SWRLZ_V1197_PREEXISTING_HEAD_VIEWPORT",len(existing),repr(existing),flush=True)
+    print("SWRLZ_V1197_VIEWPORT_OTHER_TEMPLATES",
+          len(re.findall(tag_re,tail,flags=re.I)),flush=True)
+    # Deduplicate conflicting legacy directives and preserve browser pinch zoom.
+    dochead=re.sub(tag_re,'',dochead,flags=re.I)
+    match=re.search(r'<head(?:\s[^>]*)?>',dochead,re.I)
+    assert match, 'Cannot find actual HTML document opening head'
     viewport='<meta name="viewport" content="width=device-width, initial-scale=1">'
-    if before:
-        html=html.replace(before[0],viewport,1)
-    else:
-        match=re.search(r'<head(?:\s[^>]*)?>',html,re.I)
-        assert match, "Cannot find real HTML document head"
-        html=html[:match.end()]+'\n'+viewport+html[match.end():]
-    assert len(re.findall(r'<meta\b[^>]*\bname\s*=\s*["\x27]viewport["\x27][^>]*>',html,flags=re.I))==1
+    dochead=dochead[:match.end()]+'\n'+viewport+dochead[match.end():]
+    html=dochead+tail
+    assert len(re.findall(tag_re,html[:html.lower().find('</head>')],flags=re.I))==1
     marker='SWYRL_ENGINE_DEPLOY_MARKER: V11_96_MOBILE_INPUT_ROUND_BLANK'
     html=exactly(html,marker,'SWYRL_ENGINE_DEPLOY_MARKER: V11_97_MOBILE_VIEWPORT_FOCUS')
     for old,new in [
