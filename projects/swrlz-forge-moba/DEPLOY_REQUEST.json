@@ -4,7 +4,7 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.96",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_96_MOBILE_INPUT_ROUND_BLANK",
-  "reason": "Preflight packaging recheck after correcting an overly strict historical Git blob assertion. Integrity remains fail-closed until measured v11.96 HTML checksum and bytes agree; do not publish unverified output.",
-  "sourceCommit": "7499476fcfa3d5e4078a4fde0eabf395bf3bde40",
+  "reason": "Preflight measurement after restricting mobile focus-style insertion to the first document head. Integrity guard must fail closed until the measured HTML bytes and SHA-256 are recorded.",
+  "sourceCommit": "a048efdd09cb59e7a085f118e1eb5eb6df3ad364",
   "sourceIntegritySha256": "a0d61bfac63c666ae7037edfb6b92f509abf8f7d4314615decb3b39bffa7ce8c"
 }
