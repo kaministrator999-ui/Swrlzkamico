@@ -192,10 +192,14 @@ function atelierPrecisionGizmoDown(event){
  if(mode==='Depth'&&vec.length()<10)vec.set(0,1);
  if(vec.length()<3)vec.set(1,0);
  const unit=vec.normalize();
+ const rect=renderer.domElement.getBoundingClientRect();
+ const worldPerPixel=2*Math.max(.15,orbit.distance)*Math.tan(camera.fov*Math.PI/360)/
+  Math.max(150,rect.height);
+ const projected=Math.hypot(pt.x-c.x,pt.y-c.y);
  const scaled=mode==='Radius'?
-  pick.ctx.radius/Math.max(8,Math.hypot(pt.x-c.x,pt.y-c.y)):
-  pick.ctx.depth/Math.max(14,Math.hypot(pt.x-c.x,pt.y-c.y));
- const pixelToUnit=Math.min(.035,Math.max(.0004,scaled));
+  pick.ctx.radius/Math.max(8,projected):
+  projected>35?pick.ctx.depth/projected:worldPerPixel;
+ const pixelToUnit=Math.min(.014,Math.max(.00035,scaled));
  atelierPrecisionGizmoDrag={
   id:event.pointerId,mode,startX:event.clientX,startY:event.clientY,
   unit,pixelToUnit,startValue:mode==='Radius'?pick.ctx.radius:pick.ctx.depth,
@@ -288,7 +292,7 @@ function atelierPrecisionGizmoInstall(){
  for(const key of ['Preview','Apply','Hide']){
   document.getElementById('modelAtelierBore'+key)?.addEventListener('click',schedule);
  }
- document.getElementById('SculptBrushPick')?.addEventListener('click',schedule);
+ $m('SculptBrushPick')?.addEventListener('click',schedule);
  document.addEventListener('pointerdown',atelierPrecisionGizmoDown,true);
  document.addEventListener('pointermove',atelierPrecisionGizmoMove,true);
  document.addEventListener('pointerup',atelierPrecisionGizmoUp,true);
