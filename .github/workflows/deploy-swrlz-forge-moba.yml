@@ -167,7 +167,7 @@ jobs:
           import json
           from pathlib import Path
           official=json.loads(Path('dist/swrlz-forge-moba/SOURCE.json').read_text())
-          assert len(official['patches'])==139
+          assert len(official['patches'])==140
           assert official['patches'][-1]=='patches/v11_108_sculpt_brush_ghost_preview.py'
           expected={'episodes/ghosts-in-different-forms-ep01.html',
                     'scenes/ghosts-in-different-forms-ep01.swyrl.json',
