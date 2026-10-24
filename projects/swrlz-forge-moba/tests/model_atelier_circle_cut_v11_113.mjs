@@ -7,7 +7,7 @@ const js=fs.readFileSync(root+'model_atelier_precision_circle_v11_113.js','utf8'
 const audit=fs.readFileSync(root+'model_atelier_topology_audit_v11_44.js','utf8');
 const ctx={THREE,console,checkPart:()=>true};
 vm.createContext(ctx);
-vm.runInContext(audit+'\n'+js.split('function atelierBowlingInstall(){')[0],ctx);
+vm.runInContext(audit+'\n'+js.split('function atelierPrecisionCircleInstall(){')[0],ctx);
 ctx.atelierTopologyValid=p=>{
  const d=p.topologyMesh;
  return p.kind==='topologyMesh'&&d&&
@@ -18,7 +18,7 @@ ctx.atelierTopologyValid=p=>{
   d.indices.every(i=>Number.isInteger(i)&&i>=0&&i<d.positions.length/3);
 };
 function check(name,shape,axis,holes,radius){
- const made=ctx.atelierBowlingBuild(radius,[0,0,0],axis,holes,shape);
+ const made=ctx.atelierPrecisionCircleBuild(radius,[0,0,0],axis,holes,shape);
  if(!made.ok)throw Error(name+': '+made.reason);
  const a=ctx.atelierTopologyAudit(made.data);
  const info={scenario:name,vertices:made.vertices,triangles:made.triangles,boundary:a.boundaryEdges,nonmanifold:a.nonManifoldEdges,winding:a.oppositeWindingErrors,degenerates:a.zeroAreaFaces};
@@ -54,7 +54,7 @@ const six=[H(-.30,-.25,.05),H(0,-.25,.05),H(.30,-.25,.05),H(-.30,.25,.05),H(0,.2
 check('box six manual sockets',plane,[0,0,1],six,.5);
 check('cylinder top recessed cap',cyl,[0,1,0],[H(0,0,.17,.32,.9)],1);
 check('cylinder four endcap vents',cyl,[0,1,0],[H(-.32,-.30,.11),H(.32,-.30,.11),H(-.32,.30,.11),H(.32,.30,.11)],1);
-const fail=(name,shape,axis,holes,radius)=>{let r=ctx.atelierBowlingBuild(radius,[0,0,0],axis,holes,shape);if(r.ok)throw Error('Invalid geometry accepted: '+name);};
+const fail=(name,shape,axis,holes,radius)=>{let r=ctx.atelierPrecisionCircleBuild(radius,[0,0,0],axis,holes,shape);if(r.ok)throw Error('Invalid geometry accepted: '+name);};
 fail('overlapping box',plane,[0,0,1],[H(0,0,.10),H(.03,.02,.10)],.5);
 fail('cut crosses face edge',plane,[0,0,1],[H(.45,0,.10)],.5);
 fail('cut through solid',plane,[0,0,1],[H(0,0,.10,1.3)],.5);
@@ -62,7 +62,7 @@ fail('unsupported arbitrary imported mesh',{surface:'topologyMesh'},[0,0,1],[H(0
 const saved={...plane,radius:.5,center:[0,0,0],axis:[0,0,1],holes:six};
 const changed=JSON.parse(JSON.stringify(saved));changed.holes[2].r=.055;
 if(!ctx.atelierBorePlanValid({kind:'topologyMesh',roundHolePlan:changed})||
- !ctx.atelierBowlingBuild(.5,[0,0,0],[0,0,1],changed.holes,changed).ok)
+ !ctx.atelierPrecisionCircleBuild(.5,[0,0,0],[0,0,1],changed.holes,changed).ok)
  throw Error('Cannot re-edit an individual saved feature');
 if(!js.includes("surface==='box'")||!js.includes("surface==='cylinder'")||!js.includes("el('Relocate').checked")||js.includes("3 holes · bowling ball"))
  throw Error('UI source does not expose hand controlled generality');
