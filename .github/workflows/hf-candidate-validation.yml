@@ -127,6 +127,7 @@ jobs:
           python hf_space/test_code_deliverable_cognition.py
           python hf_space/test_coder_model_config.py
           python hf_space/test_programming_structured_receipt_scope.py
+          python hf_space/test_web_module_contract.py
           python hf_space/test_response_cognition_v123.py
           python hf_space/test_dual_model_work_v241.py
           python hf_space/test_github_file_intelligence_v288.py

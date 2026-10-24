@@ -447,6 +447,9 @@ def _web_delivery_gaps(code: str, original: str, language: dict[str, Any]) -> li
     if scaffold and not re.search(r"\b(?:not|don't|without|working|functional|complete|finish|implement)\b", original, re.I):
         return []
     gaps = []
+    if language.get("artifactType")=="web-page" and not re.search(r"\b(?:vite|webpack|parcel|bundler|next\.?js|react|angular|repository|repo)\b", _strip_fenced_code(original), re.I):
+        from web_module_contract import module_dependency_gaps
+        gaps.extend(module_dependency_gaps(code))
     if re.search(r"(?im)^\s*(?://|/\*|<!--)\s*(?:add|insert|implement|write|replace)\b[^\n]*\b(?:your|here|implementation)\b", code):
         gaps.append("unfinished-implementation-placeholder")
     if re.search(r"\b(?:interactive|3d|modeling|modelling|editor|calculator|game)\b", original, re.I):

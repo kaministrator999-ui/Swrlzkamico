@@ -5,7 +5,7 @@ from huggingface_hub import hf_hub_download
 from llama_cpp import Llama
 from brain_programming import programming_intent, CODE_TRUTH_POLICY, candidate_contract_gate, programming_library_context
 from programming_telemetry import buffered_chat_completion, candidate_attempt_receipt, generation_summary
-from programming_repair_context import build_compact_repair_context, enforce_strategy_change, strategy_change_directive
+from programming_repair_context import build_compact_repair_context, enforce_strategy_change, strategy_change_directive, contract_rejection_context
 from response_cognition import classify_response_cognition, response_cognition_policy, response_cognition_camera
 from social_checkin import style_hint as _social_checkin_style_hint
 from version_literacy import style_hint as _version_literacy_style_hint
@@ -711,8 +711,11 @@ def generate_events(payload):
                         "Return one COMPLETE candidate in the explicitly requested language/artifact form. Do not substitute another programming language or framework. "
                         "Requested language contract: "+json.dumps(language_contract,ensure_ascii=False,separators=(",",":"))
                     )
+                retry_instruction+=contract_rejection_context(candidate_check)
                 retry_messages=list(messages)+[{"role":"system","content":retry_instruction}]
-                retry_text,retry_timing=buffered_chat_completion(model,retry_messages,response_tokens,min(0.45,temperature+0.10))
+                retry_tokens=min(response_tokens,CONTEXT_TOKENS-_token_count(model,retry_messages)-CONTEXT_SAFETY_TOKENS)
+                if retry_tokens<MIN_OUTPUT_TOKENS:raise ValueError("Insufficient context for source-grounded programming retry")
+                retry_text,retry_timing=buffered_chat_completion(model,retry_messages,retry_tokens,min(0.45,temperature+0.10))
                 if retry_text.strip():
                     candidate_text=retry_text
                 candidate_check,retry_fp=validate_attempt(candidate_text,candidate_fp)
@@ -733,8 +736,11 @@ def generate_events(payload):
                         if repair_turn else
                         "FINAL PROGRAMMING CONTRACT GATE: two proposals failed deterministic acceptance. Return one complete candidate that obeys the explicit language/artifact contract exactly; no alternate-language substitute, fake execution claim, TODO, or placeholder."
                     )
+                    final_instruction+=contract_rejection_context(candidate_check)
                     final_messages=list(retry_messages)+[{"role":"system","content":final_instruction}]
-                    third_text,third_timing=buffered_chat_completion(model,final_messages,response_tokens,min(0.50,temperature+0.15))
+                    final_tokens=min(response_tokens,CONTEXT_TOKENS-_token_count(model,final_messages)-CONTEXT_SAFETY_TOKENS)
+                    if final_tokens<MIN_OUTPUT_TOKENS:raise ValueError("Insufficient context for source-grounded programming retry")
+                    third_text,third_timing=buffered_chat_completion(model,final_messages,final_tokens,min(0.50,temperature+0.15))
                     if third_text.strip():
                         candidate_text=third_text
                     candidate_check,third_fp=validate_attempt(candidate_text,candidate_fp)

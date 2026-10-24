@@ -11,6 +11,14 @@ import re
 from typing import Any
 
 
+def contract_rejection_context(validation: dict[str, Any]) -> str:
+    """Actual bounded source-gate feedback; never an execution/test receipt."""
+    reasons=[str(item)[:180] for item in (validation.get("reasons") or [])[:8]]
+    return ("\nACTUAL SOURCE CONTRACT REJECTIONS (source checks only; no execution):\n"
+            +json.dumps(reasons,ensure_ascii=False)
+            +"\nCorrect these source defects while preserving the original requested features. Do not invent a test result.")
+
+
 def _bounded(values: Any, limit: int, chars: int) -> list[str]:
     result=[]
     for value in values or []:
