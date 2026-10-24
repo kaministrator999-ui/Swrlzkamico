@@ -1,0 +1,127 @@
+{
+  "schema": "swrlz-github-programming-attempt-log-v1",
+  "requestId": "web-mvmgfowp-1506555225-3647966338",
+  "modelId": "700m",
+  "eventType": "PROGRAMMING_GENERATION_TELEMETRY",
+  "sourceRef": "0c34ecf36bc0e8a1c64b03cd036060610cc70c32",
+  "persistedAtUnixMs": 1792849740891,
+  "diagnostic": {
+    "schema": "swrlz-station-programming-log-v1",
+    "generationTelemetry": {
+      "schema": "swrlz-programming-generation-telemetry-v1",
+      "attemptCount": 2,
+      "regenerationCount": 1,
+      "firstCandidateRejected": true,
+      "finalAcceptedAttempt": 2,
+      "finalCandidateStatus": "PASS",
+      "guardedTurn": true,
+      "repairTurn": false,
+      "strictLanguage": true,
+      "modelLoadLatencyMs": 37.299,
+      "visibleFirstDeltaLatencyMs": 15536.853,
+      "engineTotalLatencyMs": 15536.935,
+      "totalCandidateGenerationMs": 15497.91,
+      "attempts": [
+        {
+          "schema": "swrlz-candidate-attempt-v1",
+          "attempt": 1,
+          "trigger": "initial",
+          "durationMs": 11154.344,
+          "firstTokenLatencyMs": 5269.393,
+          "deltaChunks": 159,
+          "candidateFingerprint": "b973267dc70d691a",
+          "changedFromPreviousAttempt": null,
+          "changedFromRepairTarget": null,
+          "validationStatus": "REJECT",
+          "validationReasons": [
+            "missing-required-language:html",
+            "language-contract-mismatch:python"
+          ],
+          "accepted": false
+        },
+        {
+          "schema": "swrlz-candidate-attempt-v1",
+          "attempt": 2,
+          "trigger": "retry:contract-or-structural-rejection",
+          "durationMs": 4343.566,
+          "firstTokenLatencyMs": 442.537,
+          "deltaChunks": 106,
+          "candidateFingerprint": "a523687fa783ecac",
+          "changedFromPreviousAttempt": true,
+          "changedFromRepairTarget": null,
+          "validationStatus": "PASS",
+          "validationReasons": [],
+          "accepted": true
+        }
+      ]
+    },
+    "stationTiming": {
+      "acceptedAtUnixMs": 1792849725348,
+      "startedAtUnixMs": 1792849725351,
+      "completedAtUnixMs": 1792849740891,
+      "queueWaitMs": 3,
+      "stationRunMs": 15540,
+      "endToEndMs": 15543
+    },
+    "candidateValidation": {
+      "status": "PASS",
+      "reasons": [],
+      "detectedLanguages": [
+        "html"
+      ],
+      "activeRepairConstraints": {
+        "dependencyPolicy": "evidence-bounded",
+        "unavailableDependencies": [],
+        "carriedUnavailableDependencies": []
+      },
+      "behaviorLedger": {
+        "currentScore": null,
+        "bestKnownScore": null,
+        "regressedCases": [],
+        "resolvedCases": [],
+        "preservePassingCases": [],
+        "rebaseRecommended": false,
+        "bestKnownArtifact": null,
+        "repairBaseMode": "latest-failing-source"
+      },
+      "structuredReceipt": {},
+      "executionVerified": false,
+      "verificationState": "NOT_EXECUTION_VERIFIED"
+    },
+    "repairConstraints": {
+      "schema": "swrlz-repair-constraints-v1",
+      "dependencyPolicy": "evidence-bounded",
+      "unavailableDependencies": [],
+      "forbiddenDependencies": [],
+      "currentReceiptDependencies": [],
+      "addedDependencies": [],
+      "carriedUnavailableDependencies": [],
+      "releasedDependencies": [],
+      "constraintCount": 0
+    },
+    "behaviorLedger": {
+      "currentScore": null,
+      "bestKnownScore": null,
+      "regressedCases": [],
+      "resolvedCases": [],
+      "preservePassingCases": [],
+      "rebaseRecommended": false,
+      "bestKnownArtifact": null,
+      "repairBaseMode": "latest-failing-source"
+    },
+    "behaviorRepairBase": {
+      "mode": "latest-failing-source",
+      "sourceFingerprint": null,
+      "artifactId": "",
+      "revision": 0,
+      "sourceHash": ""
+    },
+    "structuredReceipt": {},
+    "artifactReceipt": {
+      "action": "ARTIFACT_CREATED",
+      "revision": 1,
+      "sourceHash": "d094513fd6aeac2684e9368096402cc88cfcb3308c625a6dc524ecd084c392e4",
+      "reason": null
+    }
+  }
+}
