@@ -1,5 +1,11 @@
 ## UPDATE PUBLICATION REQUESTED — 2026-10-24 — Qwen project generation
 
+Owner explicitly authorized publishing the validated coding updates. Candidate source `ad76526a5bc3425838bb01a60c89500809ee3342`, based on accepted Chatv294; exact-source CI [40133191607](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40133191607) is SUCCESS. Existing main Forge/§E changes and deployment workflows are preserved. The request pins this source SHA through the existing HF request→guarded workflow→kamiloki/Swyrlz chain. No direct HF upload or hosting move. Publication/runtime acceptance pending; model/default/version/build receipts must be read from the current checkpoint, not inferred from this request.
+
+See `docs/engineering/entries/2026-10-24_QWEN_PROJECT_GENERATION.md`.
+
+## UPDATE PUBLICATION REQUESTED — 2026-10-24 — Qwen project generation
+
 Owner explicitly authorized publishing the validated coding updates. Candidate source `9a18fb9c180ee01639b1fd1001e9c8c110e1626c`, based on accepted Chatv294; exact-source CI [40131811998](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40131811998) is SUCCESS. Existing main Forge/§E changes and deployment workflows are preserved. The request pins this source SHA through the existing HF request→guarded workflow→kamiloki/Swyrlz chain. No direct HF upload or hosting move. Publication/runtime acceptance pending; model/default/version/build receipts must be read from the current checkpoint, not inferred from this request.
 
 See `docs/engineering/entries/2026-10-24_QWEN_PROJECT_GENERATION.md`.
