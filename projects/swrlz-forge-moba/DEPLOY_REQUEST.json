@@ -4,7 +4,7 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.106",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_106_SCULPT_RENDER_MODE_REBUILD",
-  "reason": "Fail-closed package measurement after moving v11.106 render-mode invariant to the shared geometry-edited microtask, avoiding brittle exact renderParts line matching. Do not upload before sealing real HTML SHA256 and byte count.",
-  "sourceCommit": "bd13a2b888ff9fde857b5f7191dbc920ec845894",
-  "sourceIntegritySha256": "d845e5ae1b064f4a6e1d7c41a654d1e561bfa8f4e1e02db227b5443ac9af5d3c"
+  "reason": "Owner-reported v11.105 wireframe regression: Apply brush rebuilds visible sphere as shaded despite Render mode dropdown still Wireframe. Deploy §E v11.106 shared post-edit mesh material invariant and HD viewport redraw dirty flag. Preserve geometry, saved models, existing viewport modes, menu layout and numeric hold. Sealed 138 patches, 68 assets, HTML 6541671 bytes and SHA256 18da40e3e728b97d0822494bb8038a6fe52a299603e11bebc6cd5aae8e4c3356. Require syntax + hosted HTML/assets integrity before declaring live. Android acceptance remains pending.",
+  "sourceCommit": "53c9c693db40cbb765662d7b6b7292b7a82454b3",
+  "sourceIntegritySha256": "18da40e3e728b97d0822494bb8038a6fe52a299603e11bebc6cd5aae8e4c3356"
 }
