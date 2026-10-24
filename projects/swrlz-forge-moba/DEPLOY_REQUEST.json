@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.112",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_112_MANUAL_ROUND_HOLE_SCULPT",
-  "reason": "Explicit owner correction: remove automatic bowling-ball 3-hole layout and supply individual controls to design every hole by hand. §E v11.112 uses existing Pick center on mesh; new Precision circle carve gives each owner-picked hole independent circle radius, depth and rounded cap (0.5–1.0). Each cut can be previewed and applied on its own; optional validated roundHolePlan is persisted with native indexed geometry for adding and modifying existing holes without losing previous cuts. Shared initial drill axis, 1–3 manually placed bores on native spheres only; don't claim general mesh Booleans. Two stitched sphere subdivisions fix v11.111 distorted exterior. Targeted preflight 40133868935 and sealed full packaging 40134125288 passed (1/2/3 holes: 4674/6050/7426 vertices, 9344/12096/14848 faces; all manifold, exact 144 patches and 68 assets, 6576477 HTML bytes SHA256 77d8da050f64d09ab611d33bf7b97685a99b24eb7ce81e5fa0d9df21be46d52c). Preserve unrelated §E features and AI projects. Verify served live SOURCE and assets; user Android acceptance outstanding.",
-  "sourceCommit": "7891bc1d1036229497ce38cfcb0dcbf271c33ed2",
-  "sourceIntegritySha256": "77d8da050f64d09ab611d33bf7b97685a99b24eb7ce81e5fa0d9df21be46d52c"
+  "releaseVersion": "v11.113",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_113_GENERAL_PRECISION_CIRCLE",
+  "reason": "§E owner rejected a bowling-ball-specific workflow and instructed us to finish a reusable modeling tool. v11.113 ships a generic manually placed Precision circle cut: pick surface center, adjust independent radius and depth, flat-to-rounded bottom, safe preview/Apply/Undo, explicit optional relocation and editable stored cuts. Native true indexed cavities now support selected spheres (up to 3 cuts), planar box faces and cylinder end caps (up to 6 cuts on a shared first-face direction); imported arbitrary-mesh Boolean and curved cylinder sides remain unsupported, clearly labeled. Test cases include sphere, box socket, flat-bottom box, six box apertures and cylinder cap cuts, with zero open/nonmanifold/inverted/degenerate triangles. Preserve prior §E sculpting features, models, runtime and 68 assets. Targeted preflight #40135278226 and full sealed package #40135549105 passed. 145 source patches, exact 6,579,505 HTML bytes SHA-256 445a93e9a1b077aebba942524c54877bb709f8e73687d9b600432232a40194c8. Require exact hosted integrity and owner Android UX acceptance.",
+  "sourceCommit": "53b31131efe22889e682eab06abdb14f147fe6c4",
+  "sourceIntegritySha256": "445a93e9a1b077aebba942524c54877bb709f8e73687d9b600432232a40194c8"
 }
