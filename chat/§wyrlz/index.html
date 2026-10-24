@@ -166,7 +166,7 @@
 
     .message-pin-actions{display:flex;justify-content:flex-end;gap:6px;margin:4px 0 0}.message-pin-button{border:1px solid rgba(126,214,255,.18);border-radius:8px;background:rgba(5,25,42,.58);color:#bfefff;padding:4px 7px;font-size:10px;cursor:pointer}.message-pin-button[aria-pressed="true"]{border-color:rgba(91,242,208,.48);color:#baffef;background:rgba(8,60,57,.5)}
     .pin-rail{position:sticky;top:0;z-index:3;border:1px solid rgba(126,214,255,.28);border-radius:14px;background:rgba(3,19,34,.92);backdrop-filter:blur(18px);box-shadow:0 8px 24px rgba(0,0,0,.24);overflow:hidden}.pin-rail-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:7px 9px}.pin-rail-title{font-family:var(--font-telemetry);font-size:10px;letter-spacing:.07em;color:#bdefff}.pin-rail-toggle,.pin-item-toggle,.pin-jump{border:0;background:transparent;color:#9fdff0;font-size:10px;cursor:pointer}.pin-rail-items{display:grid;gap:6px;padding:0 7px 7px;max-height:38vh;overflow:auto}.pin-rail.collapsed .pin-rail-items{display:none}.pin-item{border:1px solid rgba(126,214,255,.16);border-radius:10px;background:rgba(8,34,52,.72);overflow:hidden}.pin-item-head{display:flex;align-items:center;gap:6px;padding:6px 7px}.pin-item-label{min-width:0;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#dff8ff;font-size:11px}.pin-item-body{padding:7px 9px;border-top:1px solid rgba(126,214,255,.12);white-space:pre-wrap;overflow-wrap:anywhere;max-height:22vh;overflow:auto;color:#cce8f2;font-size:11px}.pin-item.collapsed .pin-item-body{display:none}
-    .assistant-body .code-artifact{margin:10px 0;border:1px solid rgba(126,214,255,.28);border-radius:13px;overflow:hidden;background:rgba(1,10,19,.94)}.assistant-body .code-tabs{display:flex;align-items:center;gap:5px;overflow-x:auto;padding:6px;border-bottom:1px solid rgba(126,214,255,.16);background:rgba(8,31,49,.92)}.assistant-body .code-tab{flex:0 0 auto;border:1px solid rgba(126,214,255,.16);border-radius:7px;background:rgba(5,22,38,.7);color:#9fcfe0;padding:5px 8px;font:9px var(--font-telemetry);cursor:pointer}.assistant-body .code-tab[aria-selected="true"]{border-color:rgba(56,232,255,.5);color:#e6fbff;background:rgba(15,57,78,.9)}.assistant-body .code-artifact>.code-block{margin:0;border:0;border-radius:0}.assistant-body .download-code{border:1px solid rgba(126,214,255,.20);border-radius:7px;padding:4px 7px;background:rgba(7,28,45,.72);color:#d9f7ff;font:inherit;letter-spacing:.05em;cursor:pointer}.assistant-body .code-head-actions{display:flex;gap:5px}
+    .assistant-body .code-artifact{margin:10px 0;border:1px solid rgba(126,214,255,.28);border-radius:13px;overflow:hidden;background:rgba(1,10,19,.94)}.assistant-body .code-tabs{display:flex;align-items:center;gap:5px;overflow-x:auto;padding:6px;border-bottom:1px solid rgba(126,214,255,.16);background:rgba(8,31,49,.92)}.assistant-body .code-tab{flex:0 0 auto;border:1px solid rgba(126,214,255,.16);border-radius:7px;background:rgba(5,22,38,.7);color:#9fcfe0;padding:5px 8px;font:9px var(--font-telemetry);cursor:pointer}.assistant-body .code-tab[aria-selected="true"]{border-color:rgba(56,232,255,.5);color:#e6fbff;background:rgba(15,57,78,.9)}.assistant-body .code-artifact>.code-block{margin:0;border:0;border-radius:0}.assistant-body .download-code{border:1px solid rgba(126,214,255,.20);border-radius:7px;padding:4px 7px;background:rgba(7,28,45,.72);color:#d9f7ff;font:inherit;letter-spacing:.05em;cursor:pointer}.code-package-actions{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin:9px 0 6px}.code-package-link{display:inline-block;border:1px solid rgba(88,232,223,.42);border-radius:9px;padding:7px 11px;background:rgba(5,55,64,.67);color:#e4fff7;font:600 11px var(--font-telemetry);text-decoration:none;min-height:32px}.code-package-link:hover,.code-package-link:focus-visible{border-color:#72ffe3;background:rgba(14,86,92,.8)}.assistant-body .code-head-actions{display:flex;gap:5px}
 
     .account-card{margin-top:12px;margin-bottom:10px;padding:10px;border:1px solid rgba(95,192,255,.28);border-radius:14px;background:rgba(2,15,31,.72)}
     .account-main{display:flex;align-items:center;gap:9px;min-height:38px}.account-avatar{width:34px;height:34px;border-radius:50%;object-fit:cover;border:1px solid rgba(95,192,255,.3);display:none}.account-copy{min-width:0;flex:1}.account-name{font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.account-meta{font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.account-action{border:1px solid rgba(95,192,255,.28);border-radius:10px;padding:7px 9px;color:var(--text);background:rgba(31,72,108,.42);font-size:11px;cursor:pointer}.google-slot{margin-top:8px;min-height:0;overflow:hidden}
@@ -1067,6 +1067,30 @@
         const blob=new Blob([content],{type:"text/plain;charset=utf-8"});const url=URL.createObjectURL(blob);
         const a=document.createElement("a");a.href=url;a.download=safe.split(/[\\/]/).pop()||"code.txt";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
       };
+      const codePackageLink=(thread,msg,forceArchive=false)=>{
+        if(!thread||!msg||msg.role!=="assistant"||msg.meta?.state!=="COMPLETE")return null;
+        const artifact=msg.codeArtifact;
+        if(!artifact||artifact.type!=="code"||!Array.isArray(artifact.files)||!artifact.files.length)return null;
+        const revision=Number(msg.meta?.artifactRevision|| (artifact.sourceMessageId===msg.id?1:artifact.currentRevision)||0);
+        const record=(artifact.revisions||[]).find(r=>Number(r?.revision||0)===revision);
+        const sha=String(msg.meta?.artifactSourceHash||record?.sourceHash||"");
+        if(!revision||!/^[0-9a-f]{64}$/.test(sha))return null;
+        if(!record||!Array.isArray(record.files)||!record.files.length)return null;
+        const count=record.files.length;
+        const archive=forceArchive||count>1||!!record.archiveRequested;
+        const qs=new URLSearchParams({threadId:String(thread.id||""),artifactId:String(artifact.id||""),revision:String(revision),sourceHash:sha,asArchive:archive?"true":"false"});
+        return {url:"/api/lalm_station/artifacts/download?"+qs.toString(),archive,count};
+      };
+      const addCodePackageLink=(node,thread,msg)=>{
+        const packageInfo=codePackageLink(thread,msg);
+        if(!packageInfo)return;
+        const actions=document.createElement("div");actions.className="code-package-actions";
+        const link=document.createElement("a");link.className="code-package-link";
+        link.href=packageInfo.url;
+        link.textContent=packageInfo.archive?"Download ZIP · "+packageInfo.count+" file"+(packageInfo.count===1?"":"s"):"Download file";
+        link.setAttribute("aria-label",packageInfo.archive?"Download generated project ZIP":"Download generated code file");
+        actions.appendChild(link);node.querySelector(".assistant-body")?.appendChild(actions);
+      };
       const parseFenceInfo=info=>{
         const parts=String(info||"").trim().split(/\s+/).filter(Boolean);const language=(parts.shift()||"code").toLowerCase();const attrs={};
         for(const part of parts){const m=part.match(/^([a-zA-Z][\w-]*)=(?:"([^"]+)"|'([^']+)'|(.+))$/);if(m)attrs[m[1].toLowerCase()]=m[2]||m[3]||m[4]||"";}
@@ -1095,9 +1119,19 @@
               const tab=document.createElement("button");tab.type="button";tab.className="code-tab";tab.setAttribute("role","tab");tab.textContent=block.dataset.file;tab.setAttribute("aria-selected",String(index===activeIndex));tab.onclick=()=>activate(index);
               tabs.appendChild(tab);block.hidden=index!==activeIndex;
             });
-            const all=document.createElement("button");all.type="button";all.className="download-code download-all-code";all.textContent="Download all";
-            all.onclick=()=>run.forEach((block,index)=>setTimeout(()=>downloadTextFile(block.dataset.file||("file-"+(index+1)+".txt"),block.querySelector("code")?.textContent||""),index*120));
-            tabs.appendChild(all);artifact.appendChild(tabs);first.before(artifact);run.forEach(block=>artifact.appendChild(block));activate(activeIndex);
+            // A multi-file download is one structured ZIP from the server's
+            // completed, revision-bound canonical artifact, never N downloads.
+            const messageId=container.closest("[data-message-id]")?.dataset.messageId||"";
+            const thread=currentThread();
+            const message=(thread?.messages||[]).find(m=>m.id===messageId);
+            const packageInfo=codePackageLink(thread,message,true);
+            if(packageInfo){
+              const link=document.createElement("a");link.className="download-code download-all-code";
+              link.href=packageInfo.url;link.textContent="Download ZIP";
+              link.setAttribute("aria-label","Download all generated files as one structured ZIP");
+              tabs.appendChild(link);
+            }
+            artifact.appendChild(tabs);first.before(artifact);run.forEach(block=>artifact.appendChild(block));activate(activeIndex);
           }
           i=j;
         }
@@ -1171,6 +1205,8 @@
           const copy=document.createElement("button");copy.type="button";copy.className="copy-code";copy.textContent="Copy";
           copy.onclick=async()=>{try{await navigator.clipboard.writeText(raw);copy.textContent="Copied";setTimeout(()=>copy.textContent="Copy",1200);}catch(_){copy.textContent="Copy failed";setTimeout(()=>copy.textContent="Copy",1200);}};
           const dl=document.createElement("button");dl.type="button";dl.className="download-code";dl.textContent="Download";dl.onclick=()=>downloadTextFile(info.file||("code."+({javascript:"js",typescript:"ts",python:"py",cpp:"cpp",c:"c",html:"html",css:"css",json:"json"}[language]||"txt")),raw);
+          dl.disabled=provisional||!!container.closest(".station-live-message");
+          if(dl.disabled)dl.title="Code download is available after the response finishes";
           const pre=document.createElement("pre");pre.dataset.codeKey=key;const code=document.createElement("code");code.textContent=raw;pre.appendChild(code);actions.append(copy,dl);head.append(label,actions);block.append(head,pre);container.appendChild(block);
         };
         while((match=fence.exec(source))){
@@ -1281,7 +1317,7 @@
         if(!thread){renderedConversationSignature=signature;renderFirstRunWelcome();renderWorkSurface();return true;}
         for(const msg of (thread.messages||[])){
           if(msg.role==="assistant"){
-            const node=assistantTemplate.cloneNode(true); node.removeAttribute("id"); node.dataset.messageId=msg.id||"";node.classList.add("visible","rendered-message"); node.removeAttribute("aria-hidden"); renderAssistantContent(node.querySelector(".assistant-body"),msg.text||"",msg.id||""); attachAssistantTime(node,msg); addCopyButton(node); addWidgetBlock(node,msg); addEvidenceBlock(node,msg);addMessagePinButton(node,thread,msg); messageList.appendChild(node);
+            const node=assistantTemplate.cloneNode(true); node.removeAttribute("id"); node.dataset.messageId=msg.id||"";node.classList.add("visible","rendered-message"); node.removeAttribute("aria-hidden"); renderAssistantContent(node.querySelector(".assistant-body"),msg.text||"",msg.id||""); addCodePackageLink(node,thread,msg); attachAssistantTime(node,msg); addCopyButton(node); addWidgetBlock(node,msg); addEvidenceBlock(node,msg);addMessagePinButton(node,thread,msg); messageList.appendChild(node);
           } else if(msg.role==="user"){
             const node=document.createElement("article");node.className="user-message rendered-message";node.dataset.messageId=msg.id||"";
             const meta=document.createElement("div");meta.className="user-meta";const who=document.createElement("span");who.textContent=chatAccountUser?.displayName||chatAccountUser?.email||"You";meta.appendChild(who);const timeText=formatMessageTime(msg.createdAt);if(timeText){const time=document.createElement("span");time.className="message-time";time.textContent=timeText;time.title=new Date(Number(msg.createdAt)).toLocaleString();meta.appendChild(time);}
@@ -1391,7 +1427,7 @@
           const codeArtifacts=Array.isArray(thread?.codeArtifacts)?thread.codeArtifacts:(Array.isArray(prior?.codeArtifacts)?prior.codeArtifacts:[]);
           thread.codeArtifacts=codeArtifacts;
           const artifactByMessage=new Map(codeArtifacts.map(artifact=>[String(artifact?.sourceMessageId||""),artifact]));
-          serverMessages.forEach(message=>{if(message?.id){message.pinned=!!pinMap[message.id];message.codeArtifact=artifactByMessage.get(String(message.id))||null;}});
+          serverMessages.forEach(message=>{if(message?.id){message.pinned=!!pinMap[message.id];message.codeArtifact=artifactByMessage.get(String(message.id))||codeArtifacts.find(a=>a.id===message?.meta?.codeArtifactId)||null;}});
           const serverIds=new Set(serverMessages.map(m=>m.id));
           const pending=(prior?.messages||[]).filter(m=>m?.meta?.localPending&&!serverIds.has(m.id));
           return {...thread,messages:[...serverMessages,...pending]};
