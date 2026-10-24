@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.105",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_105_SCULPT_UNDO_VIEW_MENU",
-  "reason": "Publish §E v11.105: preserve X-Ray/Wireframe viewport state when Remove last stroke is clicked, eliminate duplicate renderer rebuild, and make the native inspector modestly wider with better menu spacing. Preserve picked point marker, approved panel height/drag, input hold, all 68 packaged assets and geometry. 137 patches, 6,539,743 HTML bytes, SHA-256 d845e5ae1b064f4a6e1d7c41a654d1e561bfa8f4e1e02db227b5443ac9af5d3c. Require syntax/asset/live-host integrity verification. Physical mobile acceptance pending.",
-  "sourceCommit": "0b061f38609a5391ca1eb1c4ffad68632ce79bf7",
+  "releaseVersion": "v11.106",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_106_SCULPT_RENDER_MODE_REBUILD",
+  "reason": "Fail-closed preflight measurement of §E v11.106 sculpt geometry redraw and material invariant. Do not upload with v11.105 SHA. Await actual compiled HTML byte count and digest before separate production deployment.",
+  "sourceCommit": "ac53fae450fcb6fff3c732ab524e2f135d19968d",
   "sourceIntegritySha256": "d845e5ae1b064f4a6e1d7c41a654d1e561bfa8f4e1e02db227b5443ac9af5d3c"
 }
