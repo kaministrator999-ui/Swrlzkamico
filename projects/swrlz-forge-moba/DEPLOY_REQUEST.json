@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.93",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_93_SMOOTH_ANATOMY_PINATAS",
-  "reason": "Publish the owner-requested full-model refinement: both original hair piñatas visible by default with restored exact braid grips; low inner-to-high outer eye corners, shallow round pupils and smooth cheek/jaw/chin; continuous exposed shoulder/arm muscles and calf-to-knee/ankle contours; compact hair, angular layered dress, fitted opaque shorts and native-diagonal armor/cuff linings to prevent skin poke-through and crotch exposure. Desktop/phone default visibility, view transitions, actual 14-degree eye corners, skin/topology checks, six pelvis and sixteen armor coverage rays, material edit/Undo, exact 201451519-byte native JSON round-trip, current source factory/package equality and 64847952-byte textured GLB with327 meshes/1755616 triangles and both exact4K maps passed. All302 prior runtime/patch sources,65 prior assets and117 companion meshes/assembly state preserved. Seal125 patches/66 assets/6477235 HTML bytes, SHA-256 caad492d5e7ee95808c36102b47b24fcff816c340f242f9db1fc5d24a4316cf6. This is the separate final deployment request after validated source publication on main. Require terminal dedicated workflow success and exact live HTML/source/asset verification; owner-device visual acceptance follows.",
-  "sourceCommit": "fa50a795ff983cba23fdd010feefc94e36b67a42",
-  "sourceIntegritySha256": "caad492d5e7ee95808c36102b47b24fcff816c340f242f9db1fc5d24a4316cf6"
+  "releaseVersion": "v11.94",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_94_KNEE_SKIRT_SOFT_PORTRAIT",
+  "reason": "Publish the owner-requested full festival armor skirt: nine existing panels overlap around the hips/thighs, with all matching trim and ornaments above the kneecaps and opaque fitted shorts retaining crotch coverage. Nose bridge/tip/underside softened, head subtly narrowed 5%, original hair piñatas/grips/sockets and smooth lower anatomy preserved. Source integrity, 216 skirt coverage/skin-clearance rays, 6 pelvis and 16 fitted-armor rays, desktop/phone visibility, zero inverted/degenerate skin triangles, exact material Undo/native JSON round-trip/current source factory, and textured GLB 327 meshes/1755616 triangles with exact 4K maps passed. Preserve 309 prior source files, 66 prior assets, 117 companion meshes and all existing UV/index arrays. Seal 126 patches/67 assets/6495464 HTML bytes; SHA-256 ede8f335dc9f9086d5d6f1ec6abf7d73711aa56bf3ea123c7494af2daac5d78c. This is the separate final DEPLOY_REQUEST-only commit after source publication. Require terminal workflow success and exact live HTML/SOURCE/all assets; owner-device acceptance follows.",
+  "sourceCommit": "b11cda1a89bef9b38a16de88a45a98ca84e3d2bc",
+  "sourceIntegritySha256": "ede8f335dc9f9086d5d6f1ec6abf7d73711aa56bf3ea123c7494af2daac5d78c"
 }
