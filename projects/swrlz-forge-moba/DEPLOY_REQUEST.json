@@ -4,7 +4,7 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.106",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_106_SCULPT_RENDER_MODE_REBUILD",
-  "reason": "Fail-closed preflight measurement of §E v11.106 sculpt geometry redraw and material invariant. Do not upload with v11.105 SHA. Await actual compiled HTML byte count and digest before separate production deployment.",
-  "sourceCommit": "ac53fae450fcb6fff3c732ab524e2f135d19968d",
+  "reason": "Fail-closed package measurement after moving v11.106 render-mode invariant to the shared geometry-edited microtask, avoiding brittle exact renderParts line matching. Do not upload before sealing real HTML SHA256 and byte count.",
+  "sourceCommit": "bd13a2b888ff9fde857b5f7191dbc920ec845894",
   "sourceIntegritySha256": "d845e5ae1b064f4a6e1d7c41a654d1e561bfa8f4e1e02db227b5443ac9af5d3c"
 }
