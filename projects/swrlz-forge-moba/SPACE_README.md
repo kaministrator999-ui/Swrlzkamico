@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.108
+title: §wyrl§ Engine v11.109
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.109 · Round surface-following sculpt preview (2026-10-24)
+
+Owner Android acceptance of v11.108 showed the teal before-Apply ghost had squared/polygonal outer edges even though the yellow radius ring was correct. Root cause: the old preview included entire displaced-vertex triangles and rendered their complete face edges. This forward-only patch retains the original native brush stroke and yellow ring, but masks the actual proposed temporary mesh with a radial alpha fade in unmodified object-local space and clips its teal wireframe edges to the brush radius. Unaffected surface faces near the footprint remain available for a smooth transition. Only the non-destructive ghost visualization changes: Undo, Apply, exported/saved meshes, mobile inspector, wireframe/X-Ray, source and 68 bundled assets stay intact. A targeted full-source preflight, exact HTML bytes/SHA, dedicated deployment and hosted verification are mandatory before claiming live status.
 
 ## §E v11.108 · Native sculpt ghost preview with classic amber radius ring (2026-10-24)
 
