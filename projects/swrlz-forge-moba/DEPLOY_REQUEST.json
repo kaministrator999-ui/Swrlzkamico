@@ -4,7 +4,7 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.101",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_101_COMPACT_QUARTER_PANEL",
-  "reason": "Fail-closed exact source measurement for v11.101 true quarter-screen mobile Model Atelier panel. Preserve existing saved models, side swipe gutters, 380ms number edit hold. Do not publish until exact package SHA and bytes sealed.",
-  "sourceCommit": "81b52cb5f01d1ecee4f127fd151453844ddb5fcc",
-  "sourceIntegritySha256": "aca02a1034c5ce79a70b024a2aa692344894493c9b4c79bc1d51b50d25a0eed1"
+  "reason": "Owner-requested v11.101 correction: v11.100 compact panel still covered half screen because 49dvh default height. Now max 26dvh (255px) default, 38dvh expanded, reduced widths, stronger selectors protecting mobile layout, and preserved swiping gutters and hold-to-edit. Sealed 133 patches, 68 assets, HTML 6521969 bytes, SHA256 011f44a659a6f0a76d482ba375476735b5f43c038082d3321f19f24bd2416162. Publish with exact hosted file verification; owner Android acceptance pending.",
+  "sourceCommit": "cbfe8361e30643eeac94410cfdad4bef0168bfe7",
+  "sourceIntegritySha256": "011f44a659a6f0a76d482ba375476735b5f43c038082d3321f19f24bd2416162"
 }
