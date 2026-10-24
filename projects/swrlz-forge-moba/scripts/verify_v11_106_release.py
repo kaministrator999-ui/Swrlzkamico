@@ -27,7 +27,7 @@ for token in [
  '<title>§wyrl§ Engine · Maker v11.106</title>',
  "window.SWRLZ_FORGE_BUILD={version:'v11.106'",
  'function atelierViewEnsureAfterGeometryEdit(){',
- 'renderParts();atelierViewEnsureAfterGeometryEdit();refreshList();refreshInspector();',
+ 'queueMicrotask(atelierViewEnsureAfterGeometryEdit);',
  "mode==='wireframe'&&!mat.wireframe",
  "mode==='xray'&&(!mat.transparent||mat.opacity>.31||mat.depthWrite)",
  "mode==='overlay'&&!hasOverlay",
