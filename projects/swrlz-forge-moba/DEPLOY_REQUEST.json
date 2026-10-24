@@ -4,7 +4,7 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.103",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_103_DOUBLE_INSPECTOR_HEIGHT",
-  "reason": "Fail-closed preflight only for §E v11.103 owner-requested double-height Model Atelier mobile inspector. Preserve width, dragging, touch controls and saved models. Do not publish before measured new bytes and SHA-256 are sealed.",
-  "sourceCommit": "302f4c0ce9f39647a02fd55254818d6e4bfd44d1",
-  "sourceIntegritySha256": "fb2ec79211686c3aa4a69deaaa06570b83e8137abf9fb85b2d7a4869a2b1bb7c"
+  "reason": "Owner-requested §E v11.103 double-height floating inspector, width and drag unchanged. Default height min(68dvh,700px), Expanded min(78dvh,800px); preserve all other modeling input and native tools. Sealed 135 patches, 68 bundled assets, 6526071 HTML bytes, SHA256 7ce2d65c328d3c14f417062daaeb6f37f30b592c8f0b99f5cb305fd3bf1ee395. Publish only after independent hosted HTML and asset verification; owner Android acceptance remains pending.",
+  "sourceCommit": "2daa11816b40b9881b3aa26f1cac10a8233a2bf7",
+  "sourceIntegritySha256": "7ce2d65c328d3c14f417062daaeb6f37f30b592c8f0b99f5cb305fd3bf1ee395"
 }
