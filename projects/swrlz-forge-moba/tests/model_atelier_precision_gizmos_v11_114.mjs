@@ -68,6 +68,7 @@ ctx.atelierPrecisionGizmoDown(event(depthPt.x,depthPt.y,2));
 if(!state('atelierPrecisionGizmoDrag')||state('atelierPrecisionGizmoDrag').mode!=='Depth')
  throw Error('Camera-front depth handle did not capture touch');
 ctx.atelierPrecisionGizmoMove(event(depthPt.x,depthPt.y+50,2));
+console.log('DEBUG_DEPTH',JSON.stringify({depth:values.modelAtelierBoreDepth.value,radius:values.modelAtelierBoreRadius.value,drag:state('atelierPrecisionGizmoDrag'),point:depthPt}));
 if(Number(values.modelAtelierBoreDepth.value)<=.36)
  throw Error('Depth grip did not deepen straight-on');
 ctx.atelierPrecisionGizmoUp(event(depthPt.x,depthPt.y+50,2));
