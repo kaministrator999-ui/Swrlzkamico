@@ -4,7 +4,7 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.108",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_108_SCULPT_GHOST_PREVIEW",
-  "reason": "Corrective final deploy §E v11.108. Initial preflight used the v11.107 manifest and yielded 6,555,176 bytes; fully versioned 140-patch release build measured 6,555,286 bytes SHA256 176ff6ec6baba39bffe123985ec1fecdd725b3002cf706f1a0c06950ebcf815b. Manifest and release notes resealed without weakening validation. Publish owner-requested before-Apply deformable mesh ghost and amber brush ring; preserve existing mode, assets and Undo. Verify exact live SOURCE receipt and served asset integrity.",
-  "sourceCommit": "9a3af18b500a9b97ebc018d8d796de396afc5129",
+  "reason": "Final guarded §E v11.108 deployment after repairing inherited hosted audit's stale 139-patch expectation to 140. Full 140-patch source and 68 asset seal passed: 6,555,286 bytes, SHA256 176ff6ec6baba39bffe123985ec1fecdd725b3002cf706f1a0c06950ebcf815b. Engine sculpt preview unchanged; require terminal dedicated workflow and exact live host SOURCE verification.",
+  "sourceCommit": "dc5f059a22e3362e11cd9851c03d1f53a6789eec",
   "sourceIntegritySha256": "176ff6ec6baba39bffe123985ec1fecdd725b3002cf706f1a0c06950ebcf815b"
 }
