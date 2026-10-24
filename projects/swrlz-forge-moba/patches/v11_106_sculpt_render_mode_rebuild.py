@@ -54,8 +54,8 @@ def apply(html):
       "  function signalEdited(){",
       REPAIR+"\n  function signalEdited(){")
     html=once(html,
-      "renderParts();refreshList();refreshInspector();\n    status('Editable native project",
-      "renderParts();atelierViewEnsureAfterGeometryEdit();refreshList();refreshInspector();\n    status('Editable native project")
+      "  function signalEdited(){",
+      "  function signalEdited(){\n    queueMicrotask(atelierViewEnsureAfterGeometryEdit);")
     html=once(html,
       "function atelierViewRebuild(){if(modelRoot)renderParts();}",
       "function atelierViewRebuild(){if(modelRoot){renderParts();atelierHDDirty=true;}}")
