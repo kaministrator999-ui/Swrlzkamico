@@ -24,7 +24,8 @@ def apply(html):
   }
 }
 </style>"""
-    html = once(html, '</head>', css + '</head>')
+    assert '</head>' in html
+    html = html.replace('</head>', css + '</head>', 1)
     replacements = [
         ('SWYRL_ENGINE_DEPLOY_MARKER: V11_95_FITTED_SKIRT_WAIST',
          'SWYRL_ENGINE_DEPLOY_MARKER: V11_96_MOBILE_INPUT_ROUND_BLANK'),
