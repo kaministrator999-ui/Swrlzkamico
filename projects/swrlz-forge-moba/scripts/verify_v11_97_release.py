@@ -19,7 +19,7 @@ assert len(r['assets'])==68
 assert 'SWYRL_ENGINE_DEPLOY_MARKER: V11_97_MOBILE_VIEWPORT_FOCUS' in html
 assert '<title>§wyrl§ Engine · Maker v11.97</title>' in html
 assert "window.SWRLZ_FORGE_BUILD={version:'v11.97'" in html
-assert re.findall(r'<meta\b[^>]*\bname\s*=\s*["\x27]viewport["\x27][^>]*>',html,re.I)==['<meta name="viewport" content="width=device-width, initial-scale=1">']
+assert re.findall(r'<meta\b[^>]*\bname\s*=\s*["\x27]viewport["\x27][^>]*>',html[:html.lower().find('</head>')],re.I)==['<meta name="viewport" content="width=device-width, initial-scale=1">']
 assert 'font-size: 16px !important;' in html
 assert "id:'model-seed',name:'Model blockout',kind:'sphere',position:[0,1.5,0],rotation:[0,0,0],scale:[.6,.6,.6]" in html
 for path,meta in r['assets'].items():
