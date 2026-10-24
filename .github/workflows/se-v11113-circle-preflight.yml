@@ -1,0 +1,23 @@
+name: §E v11.113 general precision circle preflight
+on:
+  push:
+    branches: ['feature/se-v11-113-general-circle-carve']
+    paths: ['.github/workflows/se-v11113-circle-preflight.yml']
+permissions:
+  contents: read
+jobs:
+  geometry:
+    runs-on: ubuntu-latest
+    timeout-minutes: 17
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Test user-driven circles on sphere, box and cylinder with real indexed topology
+        run: |
+          set -euo pipefail
+          npm install --no-save --no-package-lock --ignore-scripts three@0.180.0
+          node --check projects/swrlz-forge-moba/runtime/model_atelier_precision_circle_v11_113.js
+          node projects/swrlz-forge-moba/tests/model_atelier_circle_cut_v11_113.mjs
