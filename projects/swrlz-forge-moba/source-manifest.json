@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.99",
+  "name": "§wyrl§ Engine v11.100",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_99.html",
+  "finalArtifact": "swyrl_engine_v11_100.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -145,7 +145,8 @@
     "patches/v11_96_mobile_input_round_blank.py",
     "patches/v11_97_mobile_viewport_focus.py",
     "patches/v11_98_mobile_numpad_touch_fix.py",
-    "patches/v11_99_mobile_scroll_size.py"
+    "patches/v11_99_mobile_scroll_size.py",
+    "patches/v11_100_hold_scroll_gutters.py"
   ],
   "finalBytes": 6513741,
   "finalSha256": "726cae0905ef5e2f8a381bebc109856b618451c68f7fa4afb5a0401332d2c783"

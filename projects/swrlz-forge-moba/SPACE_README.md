@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.99
+title: §wyrl§ Engine v11.100
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.100 · Compact mobile panels, side swipe gutters and hold-to-edit (2026-10-23)
+
+Owner Android screenshot confirms v11.99 panel scrolling but its full-width enlarged overlay covers too much of the modeling viewport. Owner asks for a near-original floating default size, a slightly larger optional expansion button, clear left/right scrolling gutters, and deliberate short press-and-hold to open numeric editing so scroll gestures never accidentally open the keypad. v11.100 is a presentation/input-only release. It restores compact floating sheets, adds a native Expand/Shrink button, widens internal scroll padding on both sides, and requires a stationary 380ms touch before the mobile numeric pad opens. Taps and moving touches do not open inputs. All existing mesh, brush, export, keypad Apply and saved-model logic is preserved. Integrity and real-phone acceptance follow.
 
 ## §E v11.99 · Larger touch-scrollable Model Atelier menus (2026-10-23)
 
