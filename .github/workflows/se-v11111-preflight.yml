@@ -1,0 +1,44 @@
+name: §E v11.111 bowling-hole geometry preflight
+on:
+  push:
+    branches: ['feature/se-v11-111-bowling-hole-kit']
+    paths: ['.github/workflows/se-v11111-preflight.yml']
+permissions:
+  contents: read
+jobs:
+  geometry:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Round-hole topology functional test
+        run: |
+          set -euo pipefail
+          npm install --no-save --no-package-lock --ignore-scripts three@0.180.0
+          node projects/swrlz-forge-moba/tests/model_atelier_bowling_holes_v11_111.mjs
+      - name: Reconstruct sealed previous release then apply new native patch
+        run: |
+          set -euo pipefail
+          python projects/swrlz-forge-moba/scripts/verify_v11_110_release.py --output /tmp/se-v11110
+          python - <<'PY'
+          from pathlib import Path
+          import runpy,hashlib
+          p=Path('/tmp/se-v11110/index.html')
+          html=runpy.run_path('projects/swrlz-forge-moba/patches/v11_111_true_bowling_holes.py')['apply'](p.read_text())
+          assert 'SWYRL_ENGINE_DEPLOY_MARKER: V11_111_ROUND_BOWLING_HOLE_KIT' in html
+          assert 'function atelierBowlingBuild(' in html
+          assert 'function atelierBowlingInstall(){' in html
+          assert 'atelierBowlingInstall();' in html
+          assert 'function atelierTopologyAudit(' in html
+          assert 'const candidate={' in html
+          Path('/tmp/se-v11111-module.mjs').write_text(html.split('<script type="module">',1)[1].rsplit('</script>',1)[0])
+          b=html.encode()
+          print('SE_V11111_ARTIFACT_BYTES='+str(len(b)))
+          print('SE_V11111_ARTIFACT_SHA256='+hashlib.sha256(b).hexdigest())
+          print('SE_V11111_NATIVE_SOURCE_GUARDS_PASS')
+          PY
+          node --check /tmp/se-v11111-module.mjs
