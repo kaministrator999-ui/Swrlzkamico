@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.111",
+  "name": "§wyrl§ Engine v11.112",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_111.html",
+  "finalArtifact": "swyrl_engine_v11_112.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -157,8 +157,9 @@
     "patches/v11_108_sculpt_brush_ghost_preview.py",
     "patches/v11_109_surface_brush_falloff_preview.py",
     "patches/v11_110_displacement_truth_preview.py",
-    "patches/v11_111_true_bowling_holes.py"
+    "patches/v11_111_true_bowling_holes.py",
+    "patches/v11_112_manual_precision_hole_tools.py"
   ],
-  "finalBytes": 6571928,
-  "finalSha256": "eac0886d3fcfbf922979851044344794c9670ccc8feba358e06671d931f3845e"
+  "finalBytes": 6576477,
+  "finalSha256": "77d8da050f64d09ab611d33bf7b97685a99b24eb7ce81e5fa0d9df21be46d52c"
 }

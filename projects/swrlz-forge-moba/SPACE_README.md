@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.111
+title: §wyrl§ Engine v11.112
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.112 · Manually place and edit every circle carve (2026-10-24)
+
+Owner correction superseded the v11.111 automatic bowling-ball preset: **the user wants the fundamental precision tools to make each hole themselves**, not a three-hole generator. Replace the UI preset with a manual one-hole-at-a-time workflow in Sculpt: use existing **Pick center on mesh**, tap anywhere on the visible ball hemisphere, choose independent local circle radius, exact depth, and rounded-bottom cap profile (0.5–1.0), preview the changed indexed geometry, and deliberately Apply. `roundHolePlan` is validated native part metadata saved alongside each topology mesh; after a cut, pick another location or choose an earlier hole to modify and rebuild the same ball without losing earlier holes. First cut reconstructs the original procedural sphere, preserving Undo recovery; each subsequent cut remains editable, Undo and JSON saving remain supported. All bores share the first hole's drill axis (the initial lightweight/parallel-cavity limitation). Supports up to three user-positioned holes within the existing portable 9k vertex / 16k triangle cap; this does not claim general-purpose Boolean cutting of arbitrary meshes. A second spherical midpoint refinement pass corrects the crumpled, faceted exterior in the user's v11.111 Android screenshot. Owner selection of each hole is the crucial design requirement; no automatic placement remains in the UI. Targeted [preflight #40133868935](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40133868935) passed manual geometry replay (1/2/3 holes: 4674/6050/7426 verts, 9344/12096/14848 faces), manifold checks, persisted plan schema, curvature improvement, patch application and JavaScript syntax. Full versioned [seal #40134031269](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40134031269) passed with **144 ordered patches / 68 preserved assets / 6,576,477 generated HTML bytes**, SHA-256 `77d8da050f64d09ab611d33bf7b97685a99b24eb7ce81e5fa0d9df21be46d52c`. Hosted integrity and owner Android UX acceptance are independent gates.
 
 ## §E v11.111 · Actual drilled bowling-ball holes (2026-10-24)
 
