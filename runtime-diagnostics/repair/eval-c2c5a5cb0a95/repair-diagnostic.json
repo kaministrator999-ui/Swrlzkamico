@@ -1,0 +1,95 @@
+{
+  "schema": "swrlz-github-repair-log-v1",
+  "requestId": "eval-c2c5a5cb0a95",
+  "modelId": "coder",
+  "eventType": "REPAIR_DIAGNOSTIC",
+  "sourceRef": "0c34ecf36bc0e8a1c64b03cd036060610cc70c32",
+  "persistedAtUnixMs": 1792819256365,
+  "diagnostic": {
+    "schema": "swrlz-repair-diagnostic-v2",
+    "receiptType": "execution-failure",
+    "receiptSourceOwnership": "user-seed",
+    "repairTargetMessageId": null,
+    "repairSourceMessageId": null,
+    "repairSourceFingerprint": "66c13192bf32f587",
+    "candidateFingerprint": "66c13192bf32f587",
+    "repairComparator": "canonical-repair-source",
+    "exactCandidateRepeatCount": 0,
+    "stalledRepair": false,
+    "failureSignalCount": 2,
+    "failureSignals": [
+      "Independent Python execution failure receipt:",
+      "Observed: total_score([None, 2, None, 3]) raises TypeError: unsupported operand type(s) for +: int and NoneType. Expected 5. Ordinary total_score([2,3,5]) == 10 and include_bonus=True == 14 already pass and must remain correct."
+    ],
+    "receiptSemantics": {
+      "categories": [
+        "type"
+      ],
+      "exceptionTypes": [],
+      "exitCodes": [
+        1
+      ],
+      "failingSignals": [
+        "Independent Python execution failure receipt:",
+        "Observed: total_score([None, 2, None, 3]) raises TypeError: unsupported operand type(s) for +: int and NoneType. Expected 5. Ordinary total_score([2,3,5]) == 10 and include_bonus=True == 14 already pass and must remain correct."
+      ],
+      "passingSignals": [
+        "Observed: total_score([None, 2, None, 3]) raises TypeError: unsupported operand type(s) for +: int and NoneType. Expected 5. Ordinary total_score([2,3,5]) == 10 and include_bonus=True == 14 already pass and must remain correct."
+      ],
+      "expectedActual": [],
+      "sourceLocations": [],
+      "failingTests": [],
+      "reportedSymbols": [],
+      "reportedDependencies": [],
+      "structuredReceipt": {
+        "formats": [
+          "json"
+        ],
+        "jsonObjectCount": 1,
+        "caseCount": 0,
+        "failedCaseCount": 0
+      },
+      "behaviorCases": []
+    },
+    "repairConstraints": {
+      "schema": "swrlz-repair-constraints-v1",
+      "dependencyPolicy": "evidence-bounded",
+      "unavailableDependencies": [],
+      "forbiddenDependencies": [],
+      "currentReceiptDependencies": [],
+      "addedDependencies": [],
+      "carriedUnavailableDependencies": [],
+      "releasedDependencies": [],
+      "constraintCount": 0
+    },
+    "behaviorLedger": {
+      "currentScore": null,
+      "bestKnownScore": null,
+      "regressedCases": [],
+      "resolvedCases": [],
+      "preservePassingCases": [],
+      "rebaseRecommended": false,
+      "bestKnownArtifact": null
+    },
+    "behaviorRepairBase": {
+      "mode": "latest-failing-source",
+      "sourceFingerprint": "66c13192bf32f587",
+      "artifactId": "",
+      "revision": 0,
+      "sourceHash": ""
+    },
+    "structuredReceipt": {
+      "formats": [
+        "json"
+      ],
+      "jsonObjectCount": 1,
+      "caseCount": 0,
+      "failedCaseCount": 0
+    },
+    "repairActions": [
+      "trace concrete runtime types through the failing operation and change the operation or validation causing the mismatch"
+    ],
+    "contractBound": true,
+    "canonicalCarry": false
+  }
+}
