@@ -26,6 +26,14 @@ def apply(html):
     dochead=dochead[:match.end()]+'\n'+viewport+dochead[match.end():]
     html=dochead+tail
     assert len(re.findall(tag_re,html[:html.lower().find('</head>')],flags=re.I))==1
+    from pathlib import Path
+    mobile_js=(Path(__file__).resolve().parents[1]/'runtime/model_atelier_mobile_numpad_v11_97.js').read_text()
+    assert html.count('const ModelAtelier=(()=>{')==1
+    html=html.replace('const ModelAtelier=(()=>{',mobile_js+'\nconst ModelAtelier=(()=>{',1)
+    assert html.count('ModelAtelier.install();')==1
+    html=html.replace('ModelAtelier.install();','ModelAtelier.install();\nseMobileNumberPadInstall();',1)
+    input_css=".se-mobile-numpad[hidden]{display:none!important}\n.se-mobile-numpad{position:fixed;inset:0;z-index:9000;color:#edf8ff;font:16px/1.35 system-ui,sans-serif}\n.se-mobile-numpad-shade{position:absolute;inset:0;background:rgba(4,10,24,.74)}\n.se-mobile-numpad-dialog{position:fixed;transform:translate(-50%,-50%);width:340px;overflow-y:auto;\n background:#1a2943;border:1px solid #78c5d3;border-radius:14px;box-shadow:0 14px 40px #000b;padding:12px}\n.se-mobile-numpad-dialog h3{font-size:17px;margin:0 0 8px}\n#seMobileNumValue{display:block;background:#101b31;color:#fff;border:1px solid #6887a6;\n border-radius:8px;padding:8px 10px;font:24px/1.35 ui-monospace,monospace;min-height:48px;overflow-wrap:anywhere}\n#seMobileNumHelp{margin:6px 0 10px;color:#c5d6e7;font-size:13px}\n.se-mobile-numpad-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}\n.se-mobile-numpad-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:10px}\n.se-mobile-numpad button{background:#293e61;color:#f4ffff;border:1px solid #8aaac7;border-radius:9px;\n min-height:44px;font:600 18px/1.3 system-ui,sans-serif;touch-action:manipulation}\n.se-mobile-numpad-actions button{font-size:15px}\n.se-mobile-numpad button.se-mobile-numpad-apply{background:#166c73}\n.se-mobile-numpad button:disabled{opacity:.45}\n"
+    html=html.replace('</head>','<style id="se-v1197-numpad-style">'+input_css+'</style>\n</head>',1)
     marker='SWYRL_ENGINE_DEPLOY_MARKER: V11_96_MOBILE_INPUT_ROUND_BLANK'
     html=exactly(html,marker,'SWYRL_ENGINE_DEPLOY_MARKER: V11_97_MOBILE_VIEWPORT_FOCUS')
     for old,new in [
@@ -38,7 +46,8 @@ def apply(html):
     start=html.index(prefix)+len(prefix)
     notes,size=json.JSONDecoder().raw_decode(html[start:])
     notes.update(title='Mobile device-width editor and focus usability',date='2026-10-23',changes=[
-        'Use the actual phone viewport width for Model Atelier, so the editing dock and tool rail use the responsive mobile layout instead of shrinking a desktop canvas.',
+        'Normalize the actual document viewport and preserve the mobile edit layout.',
+        'Tap a numeric field to use the in-editor number pad without triggering browser keyboard focus and auto magnification.',
         'Retain 16px mobile input fields, keyboard handling and user pinch-to-zoom accessibility.',
         'Preserve the true sphere blank starter, existing characters, model data and all prior assets.'
     ])
