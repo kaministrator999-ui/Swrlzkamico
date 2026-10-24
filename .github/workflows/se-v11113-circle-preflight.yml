@@ -21,3 +21,28 @@ jobs:
           npm install --no-save --no-package-lock --ignore-scripts three@0.180.0
           node --check projects/swrlz-forge-moba/runtime/model_atelier_precision_circle_v11_113.js
           node projects/swrlz-forge-moba/tests/model_atelier_circle_cut_v11_113.mjs
+      - name: Apply precision circle patch to previous verified release
+        run: |
+          set -euo pipefail
+          python projects/swrlz-forge-moba/scripts/verify_v11_112_release.py --output /tmp/se-v11112
+          python - <<'PY'
+          from pathlib import Path
+          import runpy,hashlib
+          prior=Path('/tmp/se-v11112/index.html').read_text()
+          patch=runpy.run_path('projects/swrlz-forge-moba/patches/v11_113_general_precision_circle.py')
+          updated=patch['apply'](prior)
+          for tag in ('SWYRL_ENGINE_DEPLOY_MARKER: V11_113_GENERAL_PRECISION_CIRCLE',
+           'function atelierPrecisionCircleBuild(',
+           'function atelierPrecisionCircleInstall(){',
+           'Precision circle cut · reusable shape tool',
+           'atelierPrecisionCircleInstall();'):
+           assert tag in updated,tag
+          assert '3 holes · bowling ball' not in updated
+          Path('/tmp/se-v11113-module.mjs').write_text(updated.split('<script type="module">',1)[1].rsplit('</script>',1)[0])
+          raw=updated.encode()
+          print('SE_V11113_BYTES='+str(len(raw)))
+          print('SE_V11113_SHA256='+hashlib.sha256(raw).hexdigest())
+          print('SE_V11113_GENERIC_PREVIEW_SOURCE_PASS')
+          PY
+          node --check /tmp/se-v11113-module.mjs
+
