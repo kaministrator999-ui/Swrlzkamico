@@ -1,0 +1,64 @@
+name: §E v11.110 displacement-only brush preflight
+on:
+  push:
+    branches: ['feature/se-v11-110-true-deformation-preview']
+    paths: ['.github/workflows/se-v11110-preflight.yml']
+permissions:
+  contents: read
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Reconstruct all 142 patches; test displacement-only ghost and report seal
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import gzip,base64,json,hashlib,sys
+          root=Path('projects/swrlz-forge-moba')
+          sys.path.insert(0,str(root.resolve()))
+          from build_space import load_patch
+          m=json.loads((root/'source-manifest.json').read_text())
+          assert m['name']=='§wyrl§ Engine v11.110'
+          assert len(m['patches'])==142
+          assert m['patches'][-1]=='patches/v11_110_displacement_truth_preview.py'
+          raw=gzip.decompress(base64.b64decode(''.join((root/p).read_text().strip() for p in m['chunks'])))
+          assert len(raw)==m['baseBytes']
+          assert hashlib.sha256(raw).hexdigest()==m['baseSha256']
+          html=raw.decode('utf-8')
+          for patch in m['patches']:
+              html=load_patch(root/patch)(html)
+          assert html.count('SWYRL_ENGINE_DEPLOY_MARKER: V11_110_TRUE_DISPLACEMENT_PREVIEW')==1
+          assert html.count("window.SWRLZ_FORGE_BUILD={version:'v11.110'")==1
+          assert '<title>§wyrl§ Engine · Maker v11.110</title>' in html
+          start=html.index('function atelierSculptGhostDraw(){')
+          end=html.index('function atelierSculptGhostInstall(){',start)
+          preview=html[start:end]
+          for token in [
+           'const changed=atelierSculptApply(ghost,trial);',
+           'triangleMoves.push(motion[i]);',
+           'float motionFade=smoothstep(0.025,0.22',
+           'uniform float brushMaxMove;',
+           'if(triangles.length&&affected>0){',
+           'const cutoff=Math.max(1e-6,maxMove*0.08);',
+           'No vertices move with these settings',
+           'smoothstep(brushRadius*0.61,brushRadius,radial)',
+           'addRadiusClippedEdge(offset,offset+3);'
+          ]:assert token in preview,token
+          assert 'checkpoint()' not in preview and 'p.sculptBrushes=' not in preview
+          assert 'new THREE.WireframeGeometry(surface)' not in preview
+          assert 'SculptBrushUndoStroke' in html
+          assert 'function atelierViewEnsureAfterGeometryEdit(){' in html
+          Path('/tmp/se-v11110.mjs').write_text(html.split('<script type="module">',1)[1].rsplit('</script>',1)[0])
+          data=html.encode('utf-8')
+          print('SE_V11110_BYTES='+str(len(data)))
+          print('SE_V11110_SHA256='+hashlib.sha256(data).hexdigest())
+          print('SE_V11110_DISPLACEMENT_ONLY_GUARDS_PASS')
+          PY
+          node --check /tmp/se-v11110.mjs
