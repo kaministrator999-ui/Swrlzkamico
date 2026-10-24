@@ -11,10 +11,11 @@ def once(s,a,b):
 
 def apply(html):
     start=html.index('function atelierSculptPickMarkerRefresh(){')
-    end=html.index('\n}\nlet atelierSculptArmed=false,atelierSculptHit=null;',start)+2
+    end=html.index('let atelierSculptArmed=false,atelierSculptHit=null;',start)
+    assert html[start:end].rstrip().endswith('}')
     assert html.count('function atelierSculptPickMarkerRefresh(){')==1
     assert 'const radius=.055;' in html[start:end]
-    html=html[:start]+PREVIEW_JS+html[end:]
+    html=html[:start]+PREVIEW_JS+'\n'+html[end:]
     html=once(html,
        ' atelierSculptPickMarkerInstall();\n $m(\'SculptBrushPick\').addEventListener',
        ' atelierSculptPickMarkerInstall();\n atelierSculptPreviewFieldsInstall();\n $m(\'SculptBrushPick\').addEventListener')
