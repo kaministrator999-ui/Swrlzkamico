@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.97
+title: §wyrl§ Engine v11.98
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.98 · Mobile number pad tap-through repair (2026-10-23)
+
+On the user's Android browser, tapping a numeric field caused the new v11.97 in-editor keypad to appear and immediately disappear. The touch opened the keypad during `pointerdown`; the same gesture's following `click` could land on its Cancel backdrop. v11.98 gates pad click activation to controls that actually received the initiating pointer/touch press. Keyboard activation remains supported; original numeric change handlers, gesture controls, material editors and historical models are untouched. A new exact build SHA/byte receipt is required before the separate manual deployment. Owner touch acceptance remains pending.
 
 ## §E v11.97 · Mobile viewport and focus-free number pad (2026-10-23)
 

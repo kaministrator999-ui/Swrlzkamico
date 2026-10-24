@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.97",
+  "name": "§wyrl§ Engine v11.98",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_97.html",
+  "finalArtifact": "swyrl_engine_v11_98.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -143,7 +143,8 @@
     "patches/v11_94_knee_skirt_soft_portrait.py",
     "patches/v11_95_fitted_skirt_waist.py",
     "patches/v11_96_mobile_input_round_blank.py",
-    "patches/v11_97_mobile_viewport_focus.py"
+    "patches/v11_97_mobile_viewport_focus.py",
+    "patches/v11_98_mobile_numpad_touch_fix.py"
   ],
   "finalBytes": 6508578,
   "finalSha256": "9b3725919cce4c3cb135609dc815b449ceac8711658cc276afd6ba2a80882534"
