@@ -1,6 +1,6 @@
 ## §E v11.103 · Double mobile inspector height only (2026-10-24)
 
-After testing v11.102 on Android, the owner confirmed the floating Model Atelier window is better positioned and sized horizontally but asked to make the menu **twice as tall**. The new forward patch changes only mobile inspector height from 34dvh/350px to 68dvh/700px max, with an expanded state of 78dvh/800px max. The default 390px max width, original drag behavior, scrolling gutters, hold-to-edit keypad, 68 bundled assets, scenes and meshes are unchanged. Exact package integrity and Android viewport acceptance are required before calling this a successful usability change.
+After testing v11.102 on Android, the owner confirmed the floating Model Atelier window is better positioned and sized horizontally but asked to make the menu **twice as tall**. The new forward patch changes only mobile inspector height from 34dvh/350px to 68dvh/700px max, with an expanded state of 78dvh/800px max. The default 390px max width, original drag behavior, scrolling gutters, hold-to-edit keypad, 68 bundled assets, scenes and meshes are unchanged. Source preflight measured **135 patches, 68 preserved assets, 6,526,071 HTML bytes**, SHA-256 `7ce2d65c328d3c14f417062daaeb6f37f30b592c8f0b99f5cb305fd3bf1ee395`. Final hosted integrity verification and actual Android viewport acceptance remain separate gates.
 
 ## §E v11.102 · Balanced mobile size and real inspector dragging (2026-10-23)
 
