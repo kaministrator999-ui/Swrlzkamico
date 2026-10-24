@@ -146,6 +146,6 @@
     "patches/v11_97_mobile_viewport_focus.py",
     "patches/v11_98_mobile_numpad_touch_fix.py"
   ],
-  "finalBytes": 6508578,
-  "finalSha256": "9b3725919cce4c3cb135609dc815b449ceac8711658cc276afd6ba2a80882534"
+  "finalBytes": 6509696,
+  "finalSha256": "9b5033ee9bfcd3714ee4e52c0dd4dc46c2f06b78fb87eae441ffeac33aabe76d"
 }
