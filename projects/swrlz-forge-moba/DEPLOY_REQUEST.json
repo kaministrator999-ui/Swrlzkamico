@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.102",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_102_BALANCED_DRAGGABLE_PANEL",
-  "reason": "User-requested §E v11.102 fix for v11.101 tiny immovable mobile inspector. Correct CSS !important right/bottom constraints that defeated original pointer-drag handler; balance default at max 34dvh/390px wide, Expand 43dvh/440px. Preserve mobile input hold behavior, side scroll gutters, models and assets. Sealed source: 134 patches, 68 assets, 6525097 compiled HTML bytes, SHA256 fb2ec79211686c3aa4a69deaaa06570b83e8137abf9fb85b2d7a4869a2b1bb7c. Publish and verify hosted HTML and assets; physical Android drag acceptance still pending.",
-  "sourceCommit": "438bce8f5f1af159fbb6a1b3439b38428968bbbd",
+  "releaseVersion": "v11.103",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_103_DOUBLE_INSPECTOR_HEIGHT",
+  "reason": "Fail-closed preflight only for §E v11.103 owner-requested double-height Model Atelier mobile inspector. Preserve width, dragging, touch controls and saved models. Do not publish before measured new bytes and SHA-256 are sealed.",
+  "sourceCommit": "302f4c0ce9f39647a02fd55254818d6e4bfd44d1",
   "sourceIntegritySha256": "fb2ec79211686c3aa4a69deaaa06570b83e8137abf9fb85b2d7a4869a2b1bb7c"
 }
