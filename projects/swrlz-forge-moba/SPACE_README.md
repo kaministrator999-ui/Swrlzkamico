@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.105
+title: §wyrl§ Engine v11.106
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.106 · Rebuild sculpt geometry without losing Wireframe/X-Ray (2026-10-24)
+
+User's Android screenshot shows Render mode remains **Wireframe** but the actual sphere changes to a shaded solid immediately after pressing **Apply brush**. v11.105 targeted stroke Undo but did not enforce a viewport material invariant after *geometry edits*. §E v11.106 adds an after-render mesh/material consistency check for the global/selected viewport modes and explicitly requests an HD redraw whenever meshes or render display are rebuilt. It avoids extra geometry reconstruction and retains untouched the approved model window size/spacing/dragging, center marker, touch controls, assets, saved meshes and undo history. A browser-device acceptance test must confirm Wireframe and X-Ray before/after Apply and Remove.
 
 ## §E v11.105 · Sculpt undo retains viewport mode; roomier floating menus (2026-10-24)
 
