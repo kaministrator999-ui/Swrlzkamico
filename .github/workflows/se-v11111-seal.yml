@@ -48,3 +48,8 @@ jobs:
           print('SE_V11111_FULL_SOURCE_GUARDS_PASS')
           PY
           node --check /tmp/se-v11111.mjs
+      - name: Verify the actual final 143-patch package, source receipt and all 68 assets
+        run: |
+          set -euo pipefail
+          python projects/swrlz-forge-moba/scripts/verify_v11_111_release.py --output /tmp/se-v11111-full
+          node --check /tmp/se-v11111-full-module.mjs
