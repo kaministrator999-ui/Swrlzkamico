@@ -176,7 +176,8 @@ def apply(html):
                  "seMobileNumberPadInstall();\nseMobileInspectorSizeInstall();")
     html=one(html,"function seMobileNumberPadInstall(){",
                  EXPAND_JS+"\nfunction seMobileNumberPadInstall(){")
-    html=one(html,"</head>",'<style id="se-v11100-mobile-panel-ergonomics">'+CSS+"</style>\n</head>")
+    assert "</head>" in html
+    html=html.replace("</head>",'<style id="se-v11100-mobile-panel-ergonomics">'+CSS+"</style>\n</head>",1)
     html=one(html,"SWYRL_ENGINE_DEPLOY_MARKER: V11_99_MOBILE_SCROLL_SIZE",
                  "SWYRL_ENGINE_DEPLOY_MARKER: V11_100_HOLD_SCROLL_GUTTERS")
     for a,b in [
