@@ -1,0 +1,58 @@
+name: §E v11.109 targeted sculpt-preview preflight
+on:
+  push:
+    branches: ['feature/se-v11-109-surface-brush-preview']
+    paths: ['.github/workflows/se-v11109-preflight.yml']
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Reconstruct all 141 patches and validate the rounded ghost only
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import base64,gzip,hashlib,json,sys
+          root=Path('projects/swrlz-forge-moba')
+          sys.path.insert(0,str(root.resolve()))
+          from build_space import load_patch
+          m=json.loads((root/'source-manifest.json').read_text())
+          assert m['name']=='§wyrl§ Engine v11.109'
+          assert len(m['patches'])==141
+          assert m['patches'][-1]=='patches/v11_109_surface_brush_falloff_preview.py'
+          raw=gzip.decompress(base64.b64decode(''.join(
+            (root/name).read_text().strip() for name in m['chunks'])))
+          assert len(raw)==m['baseBytes']
+          assert hashlib.sha256(raw).hexdigest()==m['baseSha256']
+          source=raw.decode('utf8')
+          for rel in m['patches']:
+            source=load_patch(root/rel)(source)
+          assert source.count('SWYRL_ENGINE_DEPLOY_MARKER: V11_109_ROUND_SURFACE_BRUSH_PREVIEW')==1
+          start=source.index('function atelierSculptGhostDraw(){')
+          end=source.index('function atelierSculptGhostInstall(){',start)
+          scope=source[start:end]
+          for token in ('new THREE.ShaderMaterial','attribute vec3 brushSource;',
+           'uniform float brushRadius;', 'smoothstep(brushRadius*0.61,brushRadius,radial)',
+           'function addRadiusClippedEdge(first,second){', 'const changed=atelierSculptApply(ghost,trial);'):
+            assert token in scope,token
+          assert 'new THREE.WireframeGeometry(surface)' not in scope
+          assert 'checkpoint()' not in scope and 'p.sculptBrushes=' not in scope
+          assert 'SWYRL_ENGINE_DEPLOY_MARKER: V11_108_SCULPT_GHOST_PREVIEW' not in source
+          assert source.count("window.SWRLZ_FORGE_BUILD={version:'v11.109'")==1
+          assert '<title>§wyrl§ Engine · Maker v11.109</title>' in source
+          js=source.split('<script type="module">',1)[1].rsplit('</script>',1)[0]
+          Path('/tmp/se-v11109-module.mjs').write_text(js)
+          data=source.encode('utf8')
+          print('SE_V11109_SEAL_BYTES='+str(len(data)))
+          print('SE_V11109_SEAL_SHA256='+hashlib.sha256(data).hexdigest())
+          print('SE_V11109_ROUND_SURFACE_GUARDS_PASS')
+          PY
+          node --check /tmp/se-v11109-module.mjs
