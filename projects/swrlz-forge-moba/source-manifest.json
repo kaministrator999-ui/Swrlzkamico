@@ -148,6 +148,6 @@
     "patches/v11_99_mobile_scroll_size.py",
     "patches/v11_100_hold_scroll_gutters.py"
   ],
-  "finalBytes": 6513741,
-  "finalSha256": "726cae0905ef5e2f8a381bebc109856b618451c68f7fa4afb5a0401332d2c783"
+  "finalBytes": 6519939,
+  "finalSha256": "aca02a1034c5ce79a70b024a2aa692344894493c9b4c79bc1d51b50d25a0eed1"
 }
