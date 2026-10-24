@@ -685,7 +685,7 @@ def _latest_user_source(history: list[dict[str, Any]]) -> tuple[str, str]:
     return "",""
 
 
-def _json_receipt_values(text: str) -> list[Any]:
+def _json_receipt_spans(text: str) -> list[tuple[int, int, Any]]:
     """Decode bounded JSON values embedded in otherwise textual receipt output."""
     raw=str(text or "")
     decoder=json.JSONDecoder()
@@ -702,9 +702,41 @@ def _json_receipt_values(text: str) -> list[Any]:
             cursor=start+1
             continue
         if isinstance(value,(dict,list)):
-            values.append(value)
+            values.append((start, start + end, value))
         cursor=start+max(1,end)
     return values
+
+
+def _json_receipt_values(text: str) -> list[Any]:
+    return [value for _start, _end, value in _json_receipt_spans(text)]
+
+
+def _failure_classification_text(text: str) -> str:
+    """Keep plain diagnostics and failed JSON cases, excluding passed-case data."""
+    def prune(value, depth=0):
+        if depth > 8:
+            return None
+        if isinstance(value, list):
+            return [item for item in (prune(v, depth+1) for v in value[:80]) if item is not None]
+        if not isinstance(value, dict):
+            return value
+        status = next((value[k] for k in ("passed", "success", "ok") if isinstance(value.get(k), bool)), None)
+        named = str(value.get("status") or value.get("result") or value.get("outcome") or "").lower()
+        if status is True or (status is not False and named in {"pass", "passed", "ok", "success"}):
+            # A successful transport/aggregate can still contain failed cases.
+            # Retain nested result containers, never a passed case's data fields.
+            children = {k: prune(v, depth+1) for k,v in list(value.items())[:80]
+                        if isinstance(v,(dict,list)) and k not in {"expected","actual","got","received","observed"}}
+            return children or None
+        return {k: prune(v, depth+1) for k,v in list(value.items())[:80]
+                if k not in {"passing", "passingTests", "passedTests", "passedCases"}}
+    pieces=[]; cursor=0
+    for start,end,value in _json_receipt_spans(text):
+        pieces.append(text[cursor:start])
+        pieces.append(json.dumps(prune(value), ensure_ascii=False))
+        cursor=end
+    pieces.append(text[cursor:])
+    return "\n".join(pieces)
 
 
 def _structured_json_receipt_semantics(text: str) -> dict[str, Any]:
@@ -727,6 +759,8 @@ def _structured_json_receipt_semantics(text: str) -> dict[str, Any]:
     def scalar(value):
         if isinstance(value,(str,int,float,bool)) or value is None:
             return value
+        if isinstance(value,(dict,list)):
+            return json.dumps(value, ensure_ascii=False, separators=(",", ":"))[:500]
         return None
 
     def walk(node,depth=0):
@@ -809,13 +843,15 @@ def _structured_json_receipt_semantics(text: str) -> dict[str, Any]:
                 break
         line_value=node.get("line")
         column_value=node.get("column")
-        if file_value and isinstance(line_value,int):
+        if file_value and isinstance(line_value,int) and not (explicit_case and not failed):
             loc=file_value+":"+str(line_value)
             if isinstance(column_value,int):
                 loc+=":"+str(column_value)
             add(locations,loc)
 
         for key,value in list(node.items())[:80]:
+            if explicit_case and not failed and key in {"expected","actual","got","received","observed"}:
+                continue  # Passed observations are data, not additional tests.
             if isinstance(value,(dict,list)):
                 walk(value,depth+1)
 
@@ -838,7 +874,9 @@ def _structured_json_receipt_semantics(text: str) -> dict[str, Any]:
 
 def _receipt_semantics(raw: str) -> dict[str, Any]:
     """Extract bounded repair facts from receipt-shaped output only."""
-    text=_receipt_evidence_text(raw)
+    full_text=_receipt_evidence_text(raw)
+    structured=_structured_json_receipt_semantics(full_text)
+    text=_failure_classification_text(full_text) if structured.get("caseCount") else full_text
     lines=[line.strip() for line in text.splitlines() if line.strip()]
     exceptions=[]
     for line in lines:
@@ -938,7 +976,7 @@ def _receipt_semantics(raw: str) -> dict[str, Any]:
             if name and name not in test_names:
                 test_names.append(name)
 
-    structured=_structured_json_receipt_semantics(text)
+    passing.extend("PASS "+case["id"] for case in structured.get("cases",[]) if case.get("status")=="passed")
     for value in structured.get("categories") or []:
         if value not in categories:
             categories.append(value)
