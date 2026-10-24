@@ -4,7 +4,7 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.97",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_97_MOBILE_VIEWPORT_FOCUS",
-  "reason": "Fail-closed preflight of §E v11.97 mobile numeric editor (native keypad avoids keyboard focus and browser magnification), document-head viewport normalization and preserved spherical starter. Record exact compiled bytes/hash; do not deploy with stale checksum.",
-  "sourceCommit": "ad86deb3fe1fbd6d271b3dbd91020757a7580268",
-  "sourceIntegritySha256": "c779e0889632a773341a78cbf0c3162932e5c7c9a6da17b20a60fc1166b3f3f9"
+  "reason": "Owner-requested §E v11.97 mobile numeric focus repair. Android screenshots showed page magnification even with v11.96 16px input styling. Use one actual document-head viewport tag width=device-width initial-scale=1 without maximum-scale restriction, preserve two historical runtime template tags, add the mobile-only no-focus numeric keypad that forwards Apply via original native change event, retain v11.96 uniform sphere and all previous models. Validated source target: 129 patches, 68 bundled assets, 6,508,578 HTML bytes, SHA256 9b3725919cce4c3cb135609dc815b449ceac8711658cc276afd6ba2a80882534. Publish via separate final deployment commit and verify exact hosted source/assets. User-device acceptance follows.",
+  "sourceCommit": "141f54c512b36b05d660b09cbad381de6ceb989f",
+  "sourceIntegritySha256": "9b3725919cce4c3cb135609dc815b449ceac8711658cc276afd6ba2a80882534"
 }
