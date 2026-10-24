@@ -4,7 +4,7 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.98",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_98_MOBILE_NUMPAD_TOUCH_FIX",
-  "reason": "Preflight-only build measurement of v11.98 guarded mobile numeric keypad. Preserve integrity fail-closed: release must not upload with inherited old v11.97 SHA or bytes. Collect actual generated HTML bytes/hash, then seal before manual production deployment.",
-  "sourceCommit": "f2cbe3d720e05d66ac074246ce3572f4260ad3f3",
+  "reason": "Integrity preflight for corrected v11.98 mobile keypad. Only actual keypad pointer-press may activate a control; synthetic click with detail=0 from opening tap must not cancel. Await exact build byte count and SHA256 before publication; fail closed if stale.",
+  "sourceCommit": "8099b411063b1c51fb3d42062fc71752f09d4e7e",
   "sourceIntegritySha256": "9b3725919cce4c3cb135609dc815b449ceac8711658cc276afd6ba2a80882534"
 }
