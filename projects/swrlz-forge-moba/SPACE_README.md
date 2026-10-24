@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.110
+title: §wyrl§ Engine v11.111
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.111 · Actual drilled bowling-ball holes (2026-10-24)
+
+Code audit confirmed that v11.110 sculpt Intrude pushes native vertices and cannot drill precise circular openings; face intrude is per-triangle, while Boolean lasso is only a selection mask. Instead of implementing broad CSG, a bounded `Round hole maker · bowling ball` is added inside Model Atelier Sculpt. On a selected procedural sphere it generates a **new native indexed topology mesh** with 1 or 3 circular openings, stitched cylindrical interior wall loops and hemispherical ends. Use picked mesh center to orient the group or default front, set finger radius/depth, Preview to temporarily display true edited geometry, then Apply to replace the original sphere; Undo restores the original. The original part's existing sculpt strokes will be replaced by a new clean round-hole mesh (explained beside the controls). The builder reuses the native `topologyMesh` schema, triangle budget, validation and audit; no new core mesh format, external CSG library or portable-format exception. The phone menu, existing sculpt brush, rendering modes, save/export and all 68 bundled assets remain intact. Targeted geometry regression [#40129504189](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40129504189) passed: 1-hole 2,114 vertices/4,224 faces; 3-hole 3,322 vertices/6,640 faces; no open edges, nonmanifold edges, winding conflicts or degenerate triangles. Targeted geometry regression [#40129504189](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40129504189) and full-source reconstruction [#40129688184](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40129688184) passed. **143 ordered patches, 68 preserved assets, 6,571,928 output bytes**, SHA-256 `eac0886d3fcfbf922979851044344794c9670ccc8feba358e06671d931f3845e`. Live-host verification and owner visual testing are distinct final gates.
 
 ## §E v11.110 · Displacement-accurate before-Apply sculpt preview (2026-10-24)
 
