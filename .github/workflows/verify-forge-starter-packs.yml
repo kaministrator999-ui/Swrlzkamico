@@ -1,0 +1,35 @@
+name: Verify §E Starter Pack Sources
+
+on:
+  push:
+    branches:
+      - feature/forge-starter-pack-validation-v216
+  pull_request:
+    paths:
+      - 'projects/swrlz-forge-moba/tools/validate_starter_packs.py'
+      - 'projects/swrlz-forge-moba/tests/test_starter_pack_validation_v216.py'
+      - 'projects/swrlz-forge-moba/scenes/**'
+      - 'projects/swrlz-forge-moba/starter-packs/**'
+      - '.github/workflows/verify-forge-starter-packs.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-native-pack:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Python syntax
+        run: python -m py_compile projects/swrlz-forge-moba/tools/validate_starter_packs.py projects/swrlz-forge-moba/tests/test_starter_pack_validation_v216.py
+      - name: Test schema, hashes and actual native Sheep Tag scene
+        run: python -m unittest discover -s projects/swrlz-forge-moba/tests -p test_starter_pack_validation_v216.py -v
+      - name: Check current canonical editor-native Sheep Tag scene without mutation
+        run: python projects/swrlz-forge-moba/tools/validate_starter_packs.py --scene sheep-tag-meadow
+      - name: Explain validation boundary
+        run: echo 'Schema/hash/native-scene checks only; no Projects registration, Playwright gameplay, engine build, manifest reseal or production publication claimed.'
