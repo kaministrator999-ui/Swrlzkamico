@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.108",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_108_SCULPT_GHOST_PREVIEW",
-  "reason": "Final guarded §E v11.108 deployment after repairing inherited hosted audit's stale 139-patch expectation to 140. Full 140-patch source and 68 asset seal passed: 6,555,286 bytes, SHA256 176ff6ec6baba39bffe123985ec1fecdd725b3002cf706f1a0c06950ebcf815b. Engine sculpt preview unchanged; require terminal dedicated workflow and exact live host SOURCE verification.",
-  "sourceCommit": "dc5f059a22e3362e11cd9851c03d1f53a6789eec",
-  "sourceIntegritySha256": "176ff6ec6baba39bffe123985ec1fecdd725b3002cf706f1a0c06950ebcf815b"
+  "releaseVersion": "v11.109",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_109_ROUND_SURFACE_BRUSH_PREVIEW",
+  "reason": "Publish owner-tested §E v11.108 sculpt preview refinement as §E v11.109. Retain native before-Apply mesh evaluation, yellow brush radius and cyan depth/normal guide; replace hard-edged triangle/quad ghost with fragment-level radial fade over exact temporary deformed surface and clip wireframe segments to local radius. Retain model data, source geometry, Apply/Undo, Wireframe/X-Ray, phone menus, and all 68 assets. Targeted full 141-patch preflight #40119805241 passed; sealed HTML 6,558,232 bytes SHA-256 54f1a4f994a14db376868240a14c56442ed7dfd38c5ac84a3aee2cf1545a1aa4. Require dedicated terminal workflow and exact hosted SOURCE/assets verification; owner Android UX acceptance pending.",
+  "sourceCommit": "89c0ae898bda3b4a18ced6cb70d1ef2585423221",
+  "sourceIntegritySha256": "54f1a4f994a14db376868240a14c56442ed7dfd38c5ac84a3aee2cf1545a1aa4"
 }
