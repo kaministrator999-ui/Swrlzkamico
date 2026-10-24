@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.101
+title: §wyrl§ Engine v11.102
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.102 · Balanced mobile size and real inspector dragging (2026-10-23)
+
+Owner's next Android screenshot confirms the quarter-screen size in v11.101 is now too small and the inspector cannot be dragged. The existing v11.60 header pointer handler does calculate a new position, but later mobile CSS applies `top:auto!important`, `left:auto!important`, fixed `right` and `bottom`, so the script's inline top/left values never win. v11.102 retains that exact original pointer handler, preserves its model/tool behavior and translates its actual coordinates into scoped CSS variables which override mobile docking only after dragging. Default size is balanced at max 34dvh / 350 CSS px high, 390px wide; Expand reaches max 43dvh / 440px high and 440px wide. Side swipe gutters, hold-to-edit numeric pads, all scene geometry and exports remain untouched. Validate via built checks, hosted receipt and owner touch movement.
 
 ## §E v11.101 · True quarter-screen compact mobile tools (2026-10-23)
 
