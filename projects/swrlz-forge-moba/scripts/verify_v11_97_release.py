@@ -21,6 +21,10 @@ assert '<title>§wyrl§ Engine · Maker v11.97</title>' in html
 assert "window.SWRLZ_FORGE_BUILD={version:'v11.97'" in html
 assert re.findall(r'<meta\b[^>]*\bname\s*=\s*["\x27]viewport["\x27][^>]*>',html[:html.lower().find('</head>')],re.I)==['<meta name="viewport" content="width=device-width, initial-scale=1">']
 assert 'font-size: 16px !important;' in html
+assert 'function seMobileNumberPadInstall()' in html
+assert 'seMobileNumberPadInstall();' in html
+assert 'event.preventDefault();' in html
+assert 'id="se-v1197-numpad-style"' in html
 assert "id:'model-seed',name:'Model blockout',kind:'sphere',position:[0,1.5,0],rotation:[0,0,0],scale:[.6,.6,.6]" in html
 for path,meta in r['assets'].items():
     data=(o/path).read_bytes()
