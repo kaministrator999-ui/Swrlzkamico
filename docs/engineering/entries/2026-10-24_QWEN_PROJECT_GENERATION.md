@@ -1,6 +1,6 @@
 # Qwen project generation and authorized HF publication
 
-Mode: IMPLEMENT. State: DEPLOYED_LIVE_VERIFIED. Owner explicitly clarified that Qwen must generate working projects, including HTML3D viewers; an engineer-built reference is not model acceptance. Owner explicitly authorized publishing all validated updates live. No additional deploy confirmation is required.
+Mode: IMPLEMENT. State: FIRST_RELEASE_LIVE_VERIFIED / GENERIC_REQUEST_FOLLOW_UP_IN_PROGRESS. Owner explicitly clarified that Qwen must generate working projects, including HTML3D viewers; an engineer-built reference is not model acceptance. Owner explicitly authorized publishing all validated updates live. No additional deploy confirmation is required.
 
 ## Scope and authority
 
@@ -55,3 +55,13 @@ Fresh anonymous700M inference completed in9.8s. A fresh live viewer request ente
 Canonical runtime registry updated after observed publication: Repository Work1.0.239, Server2.3.440, LALM2.1.202. Web Chat1.5.157, streamV2, manifest152 and deployment-control1.0.41 remain unchanged. Registry commit `6788c54b6117ddfab68c52b1ebfe439d711d9eea`. Source archive SHA256 `3c7930270cf07749ec80456602764f8db85dc9089ed883a46314041fe41fb53d`; its pending observations are historical and supplemented by this release receipt.
 
 Disposition: source/integration/build/live-model evidence recorded. This verifies one concrete coding task and iterative repair capability, not universal project competence or trained-weight improvement. Signed-in Google/GitHub provider acceptance and existing Stage-1 write restrictions remain separate. No passwords or verification codes were used.
+
+## Generic request follow-up, 2026-10-24
+
+The original goal includes ordinary wording such as “create a3D HTML viewer,” without naming a library/version. For a fresh standalone3Dweb request with no chosen stack, the Brain can now supply the same bounded optional verified library reference. Explicit offline/no-library/raw-WebGL/other-framework constraints prevent that inference. A repair retains the facts when its canonical source confirms the pinned module. Plain numerical “three buttons” no longer falsely selects the Three library. No project template or expected code is supplied.
+
+This is a bounded inference-activation correction to the already live7B backend. First release/source0e361f97 and its10/10 live acceptance remain historical valid evidence. Follow-up CI, exact source publication, generic prompt and final version receipt are pending.
+
+## Guarded publication request
+
+Owner authorized live publication. Exact candidate source `a7003aa9739ead9e7508c8ece599bf99c6c926db`; CI run 40130015166 completed SUCCESS. This request starts the canonical HF workflow; upload/build/runtime acceptance remain pending and will be recorded separately.

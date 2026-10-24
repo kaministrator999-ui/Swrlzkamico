@@ -1,3 +1,9 @@
+## UPDATE PUBLICATION REQUESTED — 2026-10-24 — Qwen project generation
+
+Owner explicitly authorized publishing the validated coding updates. Candidate source `a7003aa9739ead9e7508c8ece599bf99c6c926db`, based on accepted Chatv294; exact-source CI [40130015166](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40130015166) is SUCCESS. Existing main Forge/§E changes and deployment workflows are preserved. The request pins this source SHA through the existing HF request→guarded workflow→kamiloki/Swyrlz chain. No direct HF upload or hosting move. Publication/runtime acceptance pending; model/default/version/build receipts must be read from the current checkpoint, not inferred from this request.
+
+See `docs/engineering/entries/2026-10-24_QWEN_PROJECT_GENERATION.md`.
+
 ## UPDATE FINISHED — 2026-10-24 — Qwen7B coding upgrade / live model verified
 
 **Outcome:** guarded HF deployment SUCCESS and fresh live inference/browser acceptance. Exact source `0e361f97d9b0ec72a63581dc06ac22c610a11f1f`; Space `a390838d5da21354c702573666bfb432b59e3a91`; rollback `ffc9d264e3ae7f9df8edca5cc878fd2c8587f9fc`; workflow40128464710. Existing main Forge/§E work preserved.
