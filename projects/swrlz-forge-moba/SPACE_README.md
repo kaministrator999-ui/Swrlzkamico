@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.113
+title: §wyrl§ Engine v11.114
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.114 · Direct viewport radius/depth editing for Precision Circle Cut (2026-10-24)
+
+Owner-requested phone-friendly modeling UX: numeric radius and depth should each have a **toggle** that exposes touch-draggable gizmos directly on the part in Model Atelier. v11.114 adds independent **yellow Radius handle** and **purple Depth handle** toggles inside existing Precision circle cut controls. The radius handle outlines the exact circular footprint on the curved sphere or flat source face; the depth guide reaches from selected surface down the bore's cut axis. The user can drag the colored ring or bead to resize width, or drag the purple grip to increase/decrease depth; the numeric fields stay synchronized. Front-on cameras switch automatically to vertical downward/upward depth adjustment when axial screen projection is too small. Touch interactions are captured only when a handle is hit; tapping elsewhere continues native selection/orbit. During drag only temporary helper geometry/fields change; on release the engine regenerates its validated non-destructive preview once, and only explicit Apply saves/calls Undo checkpoint. Gizmo overlays are editor-only and omitted from model JSON/export; turn both toggles off to restore an uncluttered viewport. Previous manual individually editable cut layout, flat-to-rounded bottoms, prior sculpt modes, Wireframe/X-Ray, histories, 68 assets and unrelated apps are preserved. **Targeted test #40137169712** passed simulated Android pointer drag (radius, straight-on depth, synchronous fields, preview on release with no checkpoint) and complete last-version patch integration. Sealed source [preflight #40137347856](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40137347856) passed 146 ordered patches and JavaScript syntax: **6,594,602 HTML bytes**, SHA-256 `7cd989c5973bb978725f0495ad9b20cf17328cbeaacc0954e0ebdf1b5717c22b`, with 68 preserved assets. Official release packaging, live hosted verification and owner Android UX acceptance are separate gates.
 
 ## §E v11.113 · General precision circle cut (2026-10-24)
 
