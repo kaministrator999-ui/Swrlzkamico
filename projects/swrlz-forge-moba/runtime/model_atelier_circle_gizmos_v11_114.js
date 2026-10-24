@@ -190,7 +190,7 @@ function atelierPrecisionGizmoDown(event){
  // Depth: track screen-projected inward axis; when front-facing it has
  // near-zero projection, so drag DOWN to deepen instead of freezing.
  if(mode==='Depth'&&vec.length()<10)vec.set(0,1);
- if(vec.length()<3)vec.set(1,0);
+ else if(vec.length()<3)vec.set(1,0);
  const unit=vec.normalize();
  const rect=renderer.domElement.getBoundingClientRect();
  const worldPerPixel=2*Math.max(.15,orbit.distance)*Math.tan(camera.fov*Math.PI/360)/
