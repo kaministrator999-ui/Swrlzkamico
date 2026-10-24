@@ -46,7 +46,8 @@ def apply(html):
     html=once(html,
       'atelierSculptHit={partId:selection,center:local.toArray(),axis:normal.toArray()};',
       'atelierSculptHit={partId:selection,center:local.toArray(),axis:normal.toArray()};\n atelierPrecisionGizmoQueue();')
-    html=once(html,'</head>','<style id="se-v11114-circle-gizmos">'+CSS+'</style>\n</head>')
+    assert '</head>' in html
+    html=html.replace('</head>','<style id="se-v11114-circle-gizmos">'+CSS+'</style>\n</head>',1)
     html=once(html,
       'SWYRL_ENGINE_DEPLOY_MARKER: V11_113_GENERAL_PRECISION_CIRCLE',
       'SWYRL_ENGINE_DEPLOY_MARKER: V11_114_CIRCLE_VIEWPORT_HANDLES')
