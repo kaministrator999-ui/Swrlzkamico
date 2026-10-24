@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.106
+title: §wyrl§ Engine v11.107
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.107 · Live radius footprint and depth guide before sculpt Apply (2026-10-24)
+
+During owner testing of the new visible Pick center on mesh marker, the owner requested the marker to **match the brush radius** and show a **second layer preview for depth** before applying the edit. This new forward patch replaces the fixed-size helper ring with a brush-radius footprint and adds an inset ghost depth ring, tapered spokes and a center displacement axis (inward for intrude, outward for extrude). The preview updates as numeric inputs, mode and orientation change; it uses the native sculpt form's validated radius including screen-pixel to local conversion. It is an **illustrative planning guide**, not a Boolean cut or guaranteed precise deformed topology: the real stroke falloff and surface targeting still determine affected vertices. Editor helpers are non-pickable, are not saved or exported and leave brush history untouched. Preserve the v11.106 render-mode fix, menu sizes, touch scrolling, and drag behavior. Verify on the user's Android after publication.
 
 ## §E v11.106 · Rebuild sculpt geometry without losing Wireframe/X-Ray (2026-10-24)
 
