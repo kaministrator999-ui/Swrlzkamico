@@ -28,6 +28,23 @@ SCAFFOLD='''<!DOCTYPE html>
 </script></body></html>'''
 
 class WebCompleteness(unittest.TestCase):
+ def test_ordinary_3d_web_request_gets_an_optional_verified_library_reference(self):
+  p=programming_intent('Create an HTML 3D model viewer with drag orbit and wheel zoom.',[],[])
+  self.assertIn('0.160.0',programming_library_context(p))
+  for request in ('Create an HTML page with three buttons.',
+                  'Create an offline HTML 3D model viewer.',
+                  'Create an HTML 3D viewer without libraries.',
+                  'Create an HTML 3D viewer with no third-party libraries.',
+                  'Create an HTML 3D viewer without external JS libraries.',
+                  'Create an HTML 3D viewer using raw WebGL.',
+                  'Create an HTML 3D viewer using Babylon.js.'):
+   with self.subTest(request=request):
+    self.assertEqual(programming_library_context(programming_intent(request,[],[])),'')
+
+ def test_repair_retains_reference_for_confirmed_pinned_source(self):
+  p=programming_intent('Create an HTML 3D viewer.',[],[])
+  p.update({'artifactContinuation':True,'failureEvidence':{'repairSource':'import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js";'}})
+  self.assertIn('OrbitControls',programming_library_context(p))
  def test_requested_behaviors_survive_without_modal_must_wording(self):
   request='Create an HTML model viewer. Show a cube with drag orbit and wheel zoom. Use a pinned import map. Wire a wireframe checkbox. Do not claim tests ran.\n```js\n// Include an unrelated camera feature.\n```'
   contract=programming_intent(request,[],[])['intentContract']

@@ -16,7 +16,20 @@ def programming_library_context(programming: dict[str, Any]) -> str:
     if not programming.get("codingTask"):
         return ""
     original = str((programming.get("intentContract") or {}).get("originalRequest") or "")
-    if not re.search(r"\bthree(?:\.js|js)?\b", original, re.I):
+    if re.search(r"\b(?:without|avoid|do not use|don't use|no)\s+(?:(?:using|importing|loading)\s+)?(?:any\s+)?(?:(?:external|third[- ]party|javascript|js)\s+){0,3}(?:librar(?:y|ies)|libs|dependencies|three(?:\.js)?)\b", original, re.I):
+        return ""
+    explicit = bool(re.search(r"\bthree(?:\.js|js)\b|\bthree@|['\"]three['\"]", original, re.I)
+                    or re.search(r"\b(?:Three|THREE)\b", original))
+    source = str((programming.get("failureEvidence") or {}).get("repairSource") or "")
+    confirmed_source = bool(re.search(r"\bthree@0\.160\.0/", source))
+    language = (programming.get("intentContract") or {}).get("languageContract") or {}
+    ordinary_3d_web = (language.get("artifactType") == "web-page"
+        and bool(re.search(r"\b3[ -]?d\b|three-dimensional", original, re.I))
+        and programming.get("projectContext") == "none"
+        and not programming.get("artifactContinuation")
+        and not programming.get("failureEvidence")
+        and not re.search(r"\boffline\b|\b(?:raw|native|plain)\s+webgl\b|babylon|aframe|a-frame|playcanvas|react|unity|godot", original, re.I))
+    if not (explicit or confirmed_source or ordinary_3d_web):
         return ""
     versions = re.findall(r"\bthree(?:\.js|js)?\s*(?:@|(?:version\s+)?)\s*(0\.\d+\.\d+)\b", original, re.I)
     if versions and set(versions) != {"0.160.0"}:
