@@ -1,0 +1,48 @@
+name: §E v11.111 full-source seal check
+on:
+  push:
+    branches: ['feature/se-v11-111-bowling-hole-kit']
+    paths: ['.github/workflows/se-v11111-seal.yml']
+permissions:
+  contents: read
+jobs:
+  seal:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Measure complete governed source, all patches and runtime identity
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import gzip,base64,json,hashlib,sys
+          root=Path('projects/swrlz-forge-moba')
+          sys.path.insert(0,str(root.resolve()))
+          from build_space import load_patch
+          m=json.loads((root/'source-manifest.json').read_text())
+          assert m['name']=='§wyrl§ Engine v11.111' and len(m['patches'])==143
+          assert m['patches'][-1]=='patches/v11_111_true_bowling_holes.py'
+          b=gzip.decompress(base64.b64decode(''.join((root/p).read_text().strip() for p in m['chunks'])))
+          assert len(b)==m['baseBytes'] and hashlib.sha256(b).hexdigest()==m['baseSha256']
+          html=b.decode('utf-8')
+          for patch in m['patches']:html=load_patch(root/patch)(html)
+          assert html.count('SWYRL_ENGINE_DEPLOY_MARKER: V11_111_ROUND_BOWLING_HOLE_KIT')==1
+          assert html.count("window.SWRLZ_FORGE_BUILD={version:'v11.111'")==1
+          assert '<title>§wyrl§ Engine · Maker v11.111</title>' in html
+          assert 'atelierBowlingInstall();' in html
+          assert 'function atelierBowlingBuild(' in html
+          assert 'modelAtelierBowlingKit' in html
+          assert 'atelierTopologyAudit(data);' in html
+          js=html.split('<script type="module">',1)[1].rsplit('</script>',1)[0]
+          Path('/tmp/se-v11111.mjs').write_text(js)
+          raw=html.encode('utf8')
+          print('SE_V11111_FULL_BYTES='+str(len(raw)))
+          print('SE_V11111_FULL_SHA256='+hashlib.sha256(raw).hexdigest())
+          print('SE_V11111_FULL_SOURCE_GUARDS_PASS')
+          PY
+          node --check /tmp/se-v11111.mjs
