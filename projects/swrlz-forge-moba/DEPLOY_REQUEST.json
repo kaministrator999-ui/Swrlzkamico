@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.96",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_96_MOBILE_INPUT_ROUND_BLANK",
-  "reason": "Owner-requested §E v11.96 manual deployment. Mobile Model Atelier editable inputs (numeric/text/select/textarea) use 16px on coarse-pointer and narrow screens to reduce Chrome focus-induced page zoom; New Model Project sphere starts with equal 0.6 X/Y/Z scales. Exact measured and sealed source: 128 patches, 68 preserved assets, 6,502,021 HTML bytes, SHA256 c779e0889632a773341a78cbf0c3162932e5c7c9a6da17b20a60fc1166b3f3f9. Publish only after verified packaging; dedicated deploy must verify exact hosted HTML, SOURCE and all assets. Owner Android acceptance remains pending.",
-  "sourceCommit": "3134f2cb41e144bfe6c6423e2149a648d152d115",
+  "releaseVersion": "v11.97",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_97_MOBILE_VIEWPORT_FOCUS",
+  "reason": "Fail-closed preflight for responsive mobile viewport investigation. v11.97 patch prints previously generated viewport meta tags and exact measured HTML SHA/bytes; packaging will reject outdated integrity receipt before Hugging Face upload. Do not publish until measured receipt is sealed.",
+  "sourceCommit": "c46c0ce68fd8465ab1dfb5edea26a2b9d5e23314",
   "sourceIntegritySha256": "c779e0889632a773341a78cbf0c3162932e5c7c9a6da17b20a60fc1166b3f3f9"
 }
