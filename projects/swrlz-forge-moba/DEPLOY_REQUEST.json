@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.109",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_109_ROUND_SURFACE_BRUSH_PREVIEW",
-  "reason": "Publish owner-tested §E v11.108 sculpt preview refinement as §E v11.109. Retain native before-Apply mesh evaluation, yellow brush radius and cyan depth/normal guide; replace hard-edged triangle/quad ghost with fragment-level radial fade over exact temporary deformed surface and clip wireframe segments to local radius. Retain model data, source geometry, Apply/Undo, Wireframe/X-Ray, phone menus, and all 68 assets. Targeted full 141-patch preflight #40119805241 passed; sealed HTML 6,558,232 bytes SHA-256 54f1a4f994a14db376868240a14c56442ed7dfd38c5ac84a3aee2cf1545a1aa4. Require dedicated terminal workflow and exact hosted SOURCE/assets verification; owner Android UX acceptance pending.",
-  "sourceCommit": "89c0ae898bda3b4a18ced6cb70d1ef2585423221",
-  "sourceIntegritySha256": "54f1a4f994a14db376868240a14c56442ed7dfd38c5ac84a3aee2cf1545a1aa4"
+  "releaseVersion": "v11.110",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_110_TRUE_DISPLACEMENT_PREVIEW",
+  "reason": "Owner-authorized bounded refinement to the now-accepted §E Model Atelier rounded sculpt brush: preview opacity and wireframe reflect actual vertex displacement from an isolated native stroke replay, suppress false teal ghost if zero vertices would move under depth, selection or snapping, and clearly show no-op status. Preserve the amber radius, cyan direction and violet depth, non-destructive Apply, Undo, saved/exported geometry, Wireframe/X-Ray, other scenes, mobile menus and all 68 assets. GitHub sealed preflight #40125000704 confirmed 142 patches, source bytes 6,559,449 SHA-256 85570c8d83a2eb1e15ea4c0854d0571b590f6e9858925996c4458aa1ea187d41. Require exact hosted artifact and SOURCE asset receipt integrity, owner device acceptance remains pending.",
+  "sourceCommit": "d69d77f7053df09dc8d5859b9c410b935e058f9f",
+  "sourceIntegritySha256": "85570c8d83a2eb1e15ea4c0854d0571b590f6e9858925996c4458aa1ea187d41"
 }
