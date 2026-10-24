@@ -4,7 +4,7 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.100",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_100_HOLD_SCROLL_GUTTERS",
-  "reason": "Rerun fail-closed artifact measurement for v11.100 following bounded document-head CSS placement. Publication blocked until exact receipt sealed.",
-  "sourceCommit": "c8c1249c62acb09deadd91debbf49be98ae687df",
-  "sourceIntegritySha256": "726cae0905ef5e2f8a381bebc109856b618451c68f7fa4afb5a0401332d2c783"
+  "reason": "Owner-requested mobile usability refinement: §E v11.100 returns to compact, expandable model inspector; scroll-safe side padding; numeric edits require short stationary 380ms long press. 132 patches, 68 bundled assets, sealed generated HTML 6519939 bytes and SHA256 aca02a1034c5ce79a70b024a2aa692344894493c9b4c79bc1d51b50d25a0eed1. Verify syntax, hosted HTML and assets before declaring release. Physical phone acceptance still pending.",
+  "sourceCommit": "020fdb0888efbefd53d5c20e98461827669b7089",
+  "sourceIntegritySha256": "aca02a1034c5ce79a70b024a2aa692344894493c9b4c79bc1d51b50d25a0eed1"
 }
