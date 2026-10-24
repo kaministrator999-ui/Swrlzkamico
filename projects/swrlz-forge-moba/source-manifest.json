@@ -145,6 +145,6 @@
     "patches/v11_96_mobile_input_round_blank.py",
     "patches/v11_97_mobile_viewport_focus.py"
   ],
-  "finalBytes": 6502021,
-  "finalSha256": "c779e0889632a773341a78cbf0c3162932e5c7c9a6da17b20a60fc1166b3f3f9"
+  "finalBytes": 6508578,
+  "finalSha256": "9b3725919cce4c3cb135609dc815b449ceac8711658cc276afd6ba2a80882534"
 }

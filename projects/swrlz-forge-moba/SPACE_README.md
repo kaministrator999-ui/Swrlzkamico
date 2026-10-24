@@ -10,9 +10,13 @@ header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
 
-## §E v11.97 · Correct phone layout viewport (2026-10-23)
+## §E v11.97 · Mobile viewport and focus-free number pad (2026-10-23)
 
-Physical Android screenshots after v11.96 show an entire browser page zoom on numeric input focus, although the editor input is already 16px. The desktop-oriented right rail still appears. v11.97 normalizes the document's viewport meta to device width and initial scale 1 while keeping user pinch-to-zoom enabled. This should activate the existing mobile layout and keyboard-aware tool sheet on phones. The previous 16px inputs and spherical blank starter remain intact. Device acceptance is required; no claims about prior character geometry are changed. Build integrity measurement and final separate deployment request follow.
+Android owner screenshots confirm that §e v11.96's 16px numeric input style did not prevent browser page magnification. The actual document head contained one viewport tag with `maximum-scale=1` (two additional occurrences were inside historical runtime templates, not active document tags). The real head now uses `width=device-width, initial-scale=1` while preserving user pinch zoom and leaving historical templates untouched.
+
+On coarse-pointer devices, tapping a Model Atelier numeric field opens a 44px-button in-engine number pad without focusing the browser input. The pad supports decimal, negative values, backspace, clear, validation against field bounds, Apply/Cancel and dispatches the original native change event. Desktop keyboard input remains unchanged. The v11.96 spherical blank starter stays uniform at `0.6/0.6/0.6`.
+
+Preflight measured **129 patches / 68 preserved assets / 6,508,578 HTML bytes**, SHA-256 `9b3725919cce4c3cb135609dc815b449ceac8711658cc276afd6ba2a80882534`. Deployment and actual Android touch acceptance are separate release gates. Existing character geometry, history and stored assets are unchanged.
 
 ## §E v11.96 · Mobile input zoom and spherical blank model (2026-10-23)
 
