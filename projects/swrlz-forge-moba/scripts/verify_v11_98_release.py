@@ -26,7 +26,7 @@ for token in [
   "let padPressTarget=null;",
   "box.addEventListener('pointerdown',armPad,true);",
   "const pressed=padPressTarget;",
-  "if(event.detail!==0&&pressed!==b){",
+  "if(pressed!==b&&!keyboardActivation){",
   'event.stopPropagation();',
   "input.dispatchEvent(new Event('change',{bubbles:true}));",
   "scale:[.6,.6,.6]",
