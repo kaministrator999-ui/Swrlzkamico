@@ -1,0 +1,40 @@
+name: §E v11.108 targeted preflight (temporary)
+on:
+  push:
+    branches: ['feature/se-v11-108-brush-ghost-preview']
+    paths: ['.github/workflows/se-v11108-preflight.yml']
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Build sealed v11.107, apply isolated v11.108 preview, measure and check invariants
+        run: |
+          set -euo pipefail
+          python projects/swrlz-forge-moba/scripts/verify_v11_107_release.py --output /tmp/se-v11107
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,runpy
+          root=Path('projects/swrlz-forge-moba')
+          original=(Path('/tmp/se-v11107')/'index.html').read_text(encoding='utf-8')
+          after=runpy.run_path(str(root/'patches/v11_108_sculpt_brush_ghost_preview.py'))['apply'](original)
+          assert 'SWYRL_ENGINE_DEPLOY_MARKER: V11_108_SCULPT_GHOST_PREVIEW' in after
+          assert 'function atelierSculptGhostDraw(){' in after
+          assert 'atelierSculptGhostInstall();' in after
+          assert 'V11_107_RADIUS_DEPTH_PREVIEW' not in after
+          body=after[after.index('function atelierSculptGhostDraw(){'):after.index('function atelierSculptGhostInstall(){')]
+          assert 'checkpoint()' not in body and 'p.sculptBrushes=' not in body
+          Path('/tmp/se-v11108.mjs').write_text(after.split('<script type="module">',1)[1].rsplit('</script>',1)[0])
+          raw=after.encode('utf-8')
+          print('SE_V11108_SEAL_BYTES='+str(len(raw)))
+          print('SE_V11108_SEAL_SHA256='+hashlib.sha256(raw).hexdigest())
+          print('SE_V11108_GHOST_PREVIEW_GUARD_PASS')
+          PY
+          node --check /tmp/se-v11108.mjs
