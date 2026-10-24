@@ -27,10 +27,13 @@ def apply(html):
   if(b.hasAttribute('data-se-cancel')){close();return;}""",
 """  if(!b)return;
   // Ignore click-through from the same touch which first opened the pad.
-  // Keyboard-triggered clicks have detail===0 and remain accessible.
+  // A keyboard click is accepted only for the actually focused button.
   const pressed=padPressTarget;
   padPressTarget=null;
-  if(event.detail!==0&&pressed!==b){
+  // Synthetic mobile clicks may also have detail===0; do not treat
+  // zero detail alone as proof of keyboard activation.
+  const keyboardActivation=event.detail===0&&b.tagName==='BUTTON'&&document.activeElement===b;
+  if(pressed!==b&&!keyboardActivation){
    event.preventDefault();
    event.stopPropagation();
    return;
