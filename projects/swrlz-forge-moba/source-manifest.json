@@ -149,6 +149,6 @@
     "patches/v11_100_hold_scroll_gutters.py",
     "patches/v11_101_compact_quarter_panel.py"
   ],
-  "finalBytes": 6519939,
-  "finalSha256": "aca02a1034c5ce79a70b024a2aa692344894493c9b4c79bc1d51b50d25a0eed1"
+  "finalBytes": 6521969,
+  "finalSha256": "011f44a659a6f0a76d482ba375476735b5f43c038082d3321f19f24bd2416162"
 }
