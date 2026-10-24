@@ -1,0 +1,26 @@
+{
+  "schema": "swrlz-github-repair-log-v1",
+  "requestId": "eval-c2c5a5cb0a95",
+  "modelId": "coder",
+  "eventType": "REPAIR_OUTCOME_DIAGNOSTIC",
+  "sourceRef": "0c34ecf36bc0e8a1c64b03cd036060610cc70c32",
+  "persistedAtUnixMs": 1792819266090,
+  "diagnostic": {
+    "schema": "swrlz-repair-outcome-v2",
+    "previousCandidateFingerprint": "66c13192bf32f587",
+    "newCandidateFingerprint": "172aba37144f8e65",
+    "candidateChanged": true,
+    "stalledRepairInput": false,
+    "regenerationAttempted": false,
+    "regenerationReason": null,
+    "candidateValidationStatus": "PASS",
+    "candidateValidationReasons": [],
+    "receiptCategories": [
+      "type"
+    ],
+    "repairActions": [
+      "trace concrete runtime types through the failing operation and change the operation or validation causing the mismatch"
+    ],
+    "executionVerified": false
+  }
+}
