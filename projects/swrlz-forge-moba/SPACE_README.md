@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.107
+title: §wyrl§ Engine v11.108
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.108 · Native sculpt ghost preview with classic amber radius ring (2026-10-24)
+
+The owner's side-by-side Android screenshots establish the intended pre-Apply brush UX: keep the familiar yellow/amber radius ring and visible wireframe, then show a teal temporary deformation preview on the existing mesh. §E v11.108 uses the real native sculpt stroke evaluator on a disposable geometry clone for meshes up to 48,000 vertices, rendering affected wireframe faces, raised/recessed vertex positions and motion vectors before committing. Dense models use a bounded, explicitly labeled sampled push preview where supported; other high-density modes retain the radius/depth guide without misleading precision. The new "Show mesh preview before Apply" toggle starts enabled and reacts to changed brush controls. Preview overlays are editor-only, disposable, non-pickable by the model selector, and never stored in source geometry, Undo history, JSON or GLB. Existing v11.107 amber footprint/violet depth, v11.106 Wireframe/X-Ray safeguards, mobile menus, saved scenes and all 68 assets remain preserved. Targeted GitHub preflight [run 40116649201](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40116649201) passed source reconstruction, exact patch anchors, JavaScript syntax and read-only preview checks; **140 ordered patches / 68 preserved assets / 6,555,176 generated HTML bytes**, SHA-256 `c420043eee37e7ebb3a30b1af02d51896304c3dd35af01e9c7198cdd1c19f45d`. Code sealing and GitHub deployment are separate from actual Android aesthetic/gesture acceptance.
 
 ## §E v11.107 · Live radius footprint and depth guide before sculpt Apply (2026-10-24)
 
