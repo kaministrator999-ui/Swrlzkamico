@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.120",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_120_CENTERED_TOOLBAR_LAYER_AND_TOUCH_ZOOM",
-  "reason": "User's Android v11.119 screenshot demonstrated top-bar dropdown overlapping adjacent rows, quickstrip partly hidden behind top References controls, and bottom category buttons anchored at one edge. Requested bottom toolbar more centered and no Chrome double-tap page zoom. Release v11.120 elevates anchored Export/Views menus, prevents dropdowns opening simultaneously, positions the original mesh quickstrip beneath the measured topbar, scroll-centers selected bottom category while preserving RTL and manual horizontal scrolling, and scopes touch-action:manipulation to Model Atelier so double-tap page zoom is off but pinch/camera gestures and browser accessibility outside editor stay available. Verified main source 08ffaafe, 152 ordered patches, 68 bundled assets, 6,626,204 HTML bytes SHA-256 17d0920293dbc1ab80d34d6576d1ff91c627115db810785214839d360d862aaa; sealed artifact and regression suite #40228299899 green. Owner Android layout and double-tap acceptance remains pending. Deploy exact source and validate live html, source receipt and assets.",
-  "sourceCommit": "08ffaafe5b2610d036aa88def8476f2f9ee2db7a",
-  "sourceIntegritySha256": "17d0920293dbc1ab80d34d6576d1ff91c627115db810785214839d360d862aaa"
+  "releaseVersion": "v11.121",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_121_UNCOVERED_MESH_COMPONENT_TOOLBAR",
+  "reason": "User's Android v11.120 screenshot proved Mesh/Vertex/Edge/Face toolbar with Multi, Tap, Box, Lasso, Clear and nudge controls was still visibly hidden beneath top Render/Views/References controls. Root cause in v11.75 component installer: native component row appended inside absolutely positioned viewport-controls overlay. v11.121 moves the SAME node and original native handlers after #modelAtelierViewportModes into normal flow, adds mobile-safe standalone row styling, keeps all selection, gizmo, undo and camera behavior. Source verified by §E preflight #40233960177: 153 patches, 68 assets, 6,628,284 bytes SHA-256 3066243aa358c72cf31d8c154091f5cfb75e219f0e569cd560f932df3fc41ba9. Owner physical Android acceptance still pending; deploy exact source and verify live checksum, SOURCE receipt and assets.",
+  "sourceCommit": "0d3129bdd27d0dee57b4401725e1cbb96bcf24a3",
+  "sourceIntegritySha256": "3066243aa358c72cf31d8c154091f5cfb75e219f0e569cd560f932df3fc41ba9"
 }
