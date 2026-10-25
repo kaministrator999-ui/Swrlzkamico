@@ -23,3 +23,4 @@ assert.ok(css.includes('max-height:min(178px,30dvh)'));
 assert.ok(!css.includes('pointer-events:none'));
 assert.ok(!css.includes('position:fixed'));
 console.log('SE_V11121_COMPONENT_ROW_BELOW_TOP_REFERENCES_PASS');
+
