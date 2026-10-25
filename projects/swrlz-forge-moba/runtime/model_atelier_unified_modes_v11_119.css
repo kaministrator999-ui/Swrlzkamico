@@ -1,11 +1,11 @@
 
 /* v11.119: one existing draggable tool inspector. The former mobile
    "context sheet" is now an inline settings view, never a second popup. */
-#modelAtelierPanel.se-inspector-mode-view .atelier-inspector{
+#modelAtelierPanel.se-inspector-mode-view:not(.atelier-tools-closed) .atelier-inspector{
  display:flex!important;
  flex-direction:column!important;
 }
-#modelAtelierPanel.se-inspector-mode-view .atelier-inspector>
+#modelAtelierPanel.se-inspector-mode-view:not(.atelier-tools-closed) .atelier-inspector>
  :not(.atelier-tool-handle):not(#atelierContextWorkbench){
  display:none!important;
 }
