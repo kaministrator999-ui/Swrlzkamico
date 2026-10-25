@@ -134,7 +134,7 @@ const object={import:()=>0};object.import('missing');
      self.assertEqual(call['messages'][-2],{'role':'assistant','content':'```html\n'+draft+'\n```'})
      self.assertIn('unresolved-browser-module:three (required by OrbitControls.js)',call['messages'][-1]['content'])
      self.assertIn(goal,str(call['messages'][:-2]))
-     self.assertLessEqual(engine._token_count(model,call['messages'])+call['max_tokens']+engine.CONTEXT_SAFETY_TOKENS,8192)
+     self.assertLessEqual(engine._token_count(model,call['messages'])+call['max_tokens']+engine.CONTEXT_SAFETY_TOKENS,engine.CONTEXT_TOKENS)
     self.assertEqual(next(e['validation'] for e in events if e['type']=='CANDIDATE_VALIDATION')['status'],'PASS')
 
  def test_fresh_project_repeated_draft_gets_causal_strategy_change(self):
@@ -161,7 +161,7 @@ const object={import:()=>0};object.import('missing');
     self.assertNotIn('Replace the unavailable dependency boundary',last[-1]['content'])
     self.assertEqual(next(e['validation'] for e in events if e['type']=='CANDIDATE_VALIDATION')['status'],'PASS')
     for call in model.calls:
-     self.assertLessEqual(engine._token_count(model,call['messages'])+call['max_tokens']+engine.CONTEXT_SAFETY_TOKENS,8192)
+     self.assertLessEqual(engine._token_count(model,call['messages'])+call['max_tokens']+engine.CONTEXT_SAFETY_TOKENS,engine.CONTEXT_TOKENS)
 
  def test_retry_context_keeps_canonical_source_and_all_of_latest_draft(self):
   original=[{'role':'system','content':'Canonical source under repair: original source and MUST contract.'},
@@ -175,10 +175,10 @@ const object={import:()=>0};object.import('missing');
   self.assertIn('Canonical source',original[0]['content'])
 
  def test_retry_output_budget_counts_complete_failed_source(self):
-  large=BAD.replace('<html>','<html><!--'+'x'*11000+'-->')
   for name in ('qwen_coder_engine','lfm2_700m_engine'):
    with self.subTest(engine=name):
     engine=load_engine(name)
+    large=BAD.replace('<html>','<html><!--'+'x'*(engine.CONTEXT_TOKENS*2)+'-->')
     class Responses(FakeModel):
      def create_chat_completion(self,**kwargs):
       self.calls.append(kwargs)
@@ -190,13 +190,13 @@ const object={import:()=>0};object.import('missing');
     self.assertLess(model.calls[1]['max_tokens'],model.calls[0]['max_tokens'])
     self.assertEqual(model.calls[1]['messages'][-2]['content'],'```html\n'+large+'\n```')
     for call in model.calls:
-     self.assertLessEqual(engine._token_count(model,call['messages'])+call['max_tokens']+engine.CONTEXT_SAFETY_TOKENS,8192)
+     self.assertLessEqual(engine._token_count(model,call['messages'])+call['max_tokens']+engine.CONTEXT_SAFETY_TOKENS,engine.CONTEXT_TOKENS)
 
  def test_oversized_failed_source_rejects_without_silent_truncation(self):
-  oversized=BAD.replace('<html>','<html><!--'+'x'*40000+'-->')
   for name in ('qwen_coder_engine','lfm2_700m_engine'):
    with self.subTest(engine=name):
     engine=load_engine(name)
+    oversized=BAD.replace('<html>','<html><!--'+'x'*(engine.CONTEXT_TOKENS*4-3000)+'-->')
     class Responses(FakeModel):
      def create_chat_completion(self,**kwargs):
       self.calls.append(kwargs)

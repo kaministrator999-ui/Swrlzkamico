@@ -10,6 +10,7 @@ from typing import Any
 import re
 from source_answer_articulation_v230 import lesson_kind
 from programming_repair_context import candidate_source_fingerprint
+from response_cognition import requests_web_source, classify_response_cognition
 
 
 def programming_library_context(programming: dict[str, Any]) -> str:
@@ -26,7 +27,7 @@ def programming_library_context(programming: dict[str, Any]) -> str:
     language = (programming.get("intentContract") or {}).get("languageContract") or {}
     ordinary_3d_web = (language.get("artifactType") == "web-page"
         and bool(re.search(r"\b3[ -]?d\b|three-dimensional", original, re.I))
-        and programming.get("projectContext") == "none"
+        and programming.get("projectContext") in ("none","new")
         and not programming.get("artifactContinuation")
         and not programming.get("failureEvidence")
         and not re.search(r"\boffline\b|\b(?:raw|native|plain)\s+webgl\b|babylon|aframe|a-frame|playcanvas|react|unity|godot", original, re.I))
@@ -149,13 +150,15 @@ def _current_programming_signal(text: str) -> bool:
         return False
     if _source_information_request(raw):
         return False
+    if classify_response_cognition(raw).get("deliverable") in ("text","audio","3d-asset"):
+        return False  # A code/library topic is not itself the requested medium.
     if fence in raw or bool(_explicit_languages(raw)):
         return True
     code_word=_phrase_present(prose,"code") and not _has_phrase(prose,_NON_PROGRAMMING_CODE_PHRASES)
     strong=code_word or _has_phrase(prose,_PROGRAMMING_STRONG_TERMS)
     weak_with_action=_has_phrase(prose,_PROGRAMMING_WEAK_TERMS) and _has_phrase(prose,_PROGRAMMING_ACTIONS)
     source_shape=bool(re.search(r"(?m)^\s*(?:def\s+\w+\s*\(|class\s+\w+|(?:const|let|var)\s+\w+|function\s+\w+\s*\(|SELECT\s+.+\s+FROM\s+)",raw))
-    return bool(strong or weak_with_action or source_shape)
+    return bool(strong or weak_with_action or source_shape or requests_web_source(raw))
 
 
 def _programming_continuation_signal(text: str) -> bool:
@@ -220,7 +223,13 @@ def _pick_artifact_target(prompt: str, code_pins: list[dict[str, Any]]) -> dict[
 
 def _strip_fenced_code(text: str) -> str:
     """Remove fenced source/test payloads before extracting natural-language requirements."""
-    return re.sub(r"```[\s\S]*?```"," [CODE_PAYLOAD] ",str(text or ""),flags=re.M)
+    from project_archive import source_fences
+    raw=str(text or "")
+    result=[];cursor=0
+    for block in source_fences(raw):
+        result.extend((raw[cursor:block["start"]]," [CODE_PAYLOAD] "));cursor=block["end"]
+    result.append(raw[cursor:])
+    return "".join(result)
 
 
 def _unique(values: list[str]) -> list[str]:
@@ -233,7 +242,8 @@ def _unique(values: list[str]) -> list[str]:
 
 def _artifact_type_from_request(text: str) -> str:
     prose=_norm(_strip_fenced_code(text))
-    if (any(x in prose for x in ("web page","webpage","html page","html template","html skeleton","html scaffold","website","landing page"))
+    if (requests_web_source(text)
+            or any(x in prose for x in ("web page","webpage","html page","html template","html skeleton","html scaffold","website","landing page"))
             or re.search(r"\bhtml\b[^.!?\n]{0,80}\b(?:page|webpage|website|editor|viewer|application|app|dashboard|calculator|game)\b",prose)):
         return "web-page"
     if any(x in prose for x in ("api endpoint","rest api","web api","api server")):
@@ -292,18 +302,19 @@ def _normalize_language_tag(value: str) -> str:
 def _candidate_languages(text: str) -> list[str]:
     source=str(text or "")
     detected=[]
-    fences=list(re.finditer(r"```([^\n`]*)\n([\s\S]*?)```",source))
+    from project_archive import source_fences
+    fences=source_fences(source)
     recognized_fence=False
     for match in fences:
-        language=_normalize_language_tag(match.group(1))
+        language=_normalize_language_tag(match["header"])
         if language:
             detected.append(language)
             if language == "html":
-                detected.extend(_embedded_web_evidence(match.group(2))["languages"])
+                detected.extend(_embedded_web_evidence(match["content"])["languages"])
             recognized_fence=True
     if recognized_fence:
         return _unique(detected)
-    body="\n".join(match.group(2) for match in fences) if fences else source
+    body="\n".join(match["content"] for match in fences) if fences else source
     if re.search(r"(?is)<!doctype\s+html|<html\b|<body\b|<head\b|<[a-z][^>]*>",body):
         detected.append("html")
     if re.search(r"(?m)^\s*(?:from\s+[A-Za-z_][\w.]*\s+import\s+|import\s+[A-Za-z_][\w.]*|def\s+[A-Za-z_]\w*\s*\(|class\s+[A-Za-z_]\w*\s*[:(])",body):
@@ -359,8 +370,17 @@ def _embedded_web_evidence(code: str) -> dict[str, Any]:
 
 def _candidate_primary_code(text: str) -> str:
     source=str(text or "").strip()
-    fenced=re.findall(r"```[^\n`]*\n([\s\S]*?)```",source)
-    return next((part.strip() for part in fenced if part.strip()),source)
+    from project_archive import ProjectArchiveError, parse_project_files, source_fences
+    try:
+        files=parse_project_files(source)
+    except ProjectArchiveError:
+        files=[]
+    if len(files)>1:
+        executable=[item for item in files if not str(item["path"]).lower().endswith((".md",".txt",".rst"))]
+        selected=executable or files
+        return "\n".join("FILE "+item["path"]+"\n"+item["content"] for item in selected)
+    fenced=source_fences(source)
+    return next((part["content"].strip() for part in fenced if part["content"].strip()),source)
 
 
 def _code_fingerprint(text: str) -> str | None:
@@ -460,6 +480,140 @@ def _web_delivery_gaps(code: str, original: str, language: dict[str, Any]) -> li
     return gaps
 
 
+def _source_delivery_gaps(text: str, original: str, language: dict[str, Any]) -> list[str]:
+    """Bounded completed-source checks; these are not syntax or runtime proof."""
+    source=str(text or "")
+    active=None
+    for line in source.splitlines():
+        match=re.match(r"^[ \t]{0,3}(`{3,}|~{3,})([^\n]*)$",line)
+        if not match:
+            continue
+        marker,tail=match.groups()
+        if active is None:
+            active=marker
+        elif marker[0]==active[0] and len(marker)>=len(active) and not tail.strip():
+            active=None
+    gaps=["unclosed-code-fence"] if active is not None else []
+    from project_archive import ProjectArchiveError, parse_project_files
+    try:
+        files=parse_project_files(source)
+    except ProjectArchiveError as exc:
+        gaps.append("invalid-project-files:"+str(exc)[:140])
+        files=[]
+    if len(files)>1 and re.search(r"\b(?:single[- ]file|one\s+(?:complete\s+)?html\s+file)\b",original,re.I):
+        gaps.append("single-file-request-has-multiple-files")
+    for item in files:
+        if str(item.get("path") or "").lower().endswith(".json"):
+            try:
+                json.loads(item.get("content") or "")
+            except (ValueError,TypeError):
+                gaps.append("invalid-json-project-file:"+str(item.get("path") or "")[:100])
+    html_sources=[str(item.get("content") or "") for item in files
+                  if str(item.get("language") or "").lower() in ("html","html5")
+                  or str(item.get("path") or "").lower().endswith((".html",".htm"))]
+    if not files and (source.lstrip().startswith("<") or
+            ("html" in (language.get("requiredLanguages") or []) and language.get("artifactType")=="web-page")):
+        html_sources=[_candidate_primary_code(source)]
+    fragment=bool(re.search(r"\b(?:fragment|snippet|opening\s+tag|start\s+tag)\b",original,re.I))
+    if fragment:
+        return _unique(gaps)
+    from html.parser import HTMLParser
+    class Shape(HTMLParser):
+        void={"area","base","br","col","embed","hr","img","input","link","meta","param","source","track","wbr"}
+        optional={"html","head","body","p","li","dt","dd","rt","rp","optgroup","option","colgroup","thead","tbody","tfoot","tr","td","th"}
+        def __init__(self):
+            super().__init__();self.stack=[];self.errors=[];self.html=False;self.html_closed=False
+        def handle_starttag(self,tag,attrs):
+            if tag=="html":self.html=True
+            if tag not in self.void and tag not in self.optional:self.stack.append(tag)
+        def handle_startendtag(self,tag,attrs):
+            pass
+        def handle_endtag(self,tag):
+            if tag=="html":self.html_closed=True
+            if tag in self.void or tag in self.optional:return
+            if tag not in self.stack:self.errors.append("unexpected-html-close:"+tag[:30]);return
+            if self.stack[-1]!=tag:self.errors.append("mismatched-html-close:"+tag[:30])
+            index=len(self.stack)-1-self.stack[::-1].index(tag)
+            self.stack=self.stack[:index]
+    for html in html_sources:
+        parsed=Shape();parsed.feed(html)
+        if re.match(r"\s*<(?:/?[A-Za-z]|!|\?)",parsed.rawdata):gaps.append("unfinished-html-token")
+        if parsed.html and not parsed.html_closed:gaps.append("unclosed-html-document")
+        if parsed.stack:gaps.append("unclosed-html-element:"+parsed.stack[-1][:30])
+        gaps.extend(parsed.errors[:4])
+    return _unique(gaps)[:12]
+
+
+def _literal_ui_gaps(text: str, contract: dict[str, Any]) -> list[str]:
+    literals=[item for item in (contract.get("literalUiText") or [])[:8] if isinstance(item,dict)]
+    if not literals:
+        return []
+    from html import unescape
+    from html.parser import HTMLParser
+    class Visible(HTMLParser):
+        tags={"h1","h2","h3","h4","h5","h6","title","header","div","span","p","label","button","a"}
+        def __init__(self):
+            super().__init__();self.active=[];self.values=[];self.ignore=0;self.script=False;self.scripts=[]
+        def handle_starttag(self,tag,attrs):
+            if tag=="script":self.script=str(dict(attrs).get("type") or "").lower() in ("","module","text/javascript","application/javascript")
+            if tag in ("script","style"):self.ignore+=1
+            if tag in self.tags:self.active.append([tag,[]])
+        def handle_data(self,data):
+            if self.script:self.scripts.append(data)
+            if not self.ignore:
+                for item in self.active:item[1].append(data)
+        def handle_endtag(self,tag):
+            if tag=="script":self.script=False
+            if tag in ("script","style") and self.ignore:self.ignore-=1
+            for index in range(len(self.active)-1,-1,-1):
+                if self.active[index][0]==tag:
+                    item=self.active.pop(index);self.values.append((tag,"".join(item[1]).strip()));break
+    from project_archive import ProjectArchiveError, parse_project_files
+    try:
+        files=parse_project_files(text)
+    except ProjectArchiveError:
+        files=[]
+    html=[str(item.get("content") or "") for item in files
+          if str(item.get("language") or "").lower() in ("html","html5")
+          or str(item.get("path") or "").lower().endswith((".html",".htm"))]
+    source="\n".join(html) if html else str(text or "")
+    parsed=Visible();parsed.feed(source)
+    values=list(parsed.values)
+    # A literal text assignment can satisfy a dynamic page. This is source
+    # evidence only; comments and arbitrary prose are never display evidence.
+    executable="\n".join(str(item.get("content") or "") for item in files
+                          if str(item.get("language") or "").lower() in ("javascript","js"))
+    import ast
+    token=re.compile(r"\s+|//[^\n]*|/\*[\s\S]*?\*/|\"(?:\\.|[^\"\\])*\"|'(?:\\.|[^'\\])*'|`(?:\\.|[^`\\])*`|/(?:\\.|[^/\\\n])+/[dgimsuvy]*|[A-Za-z_$][\w$]*|.",re.S)
+    tokens=[]
+    for match in token.finditer("\n".join(parsed.scripts)+"\n"+executable):
+        value=match.group()
+        if value.isspace() or value.startswith(("//","/*")):continue
+        if value[:1] in ('"',"'"):
+            try:decoded=ast.literal_eval(value)
+            except (ValueError,SyntaxError):decoded=None
+            tokens.append(("string",decoded))
+        elif value.startswith(('`','/')):tokens.append(("opaque",None))
+        else:tokens.append(("token",value))
+    for index in range(3,len(tokens)):
+        kind,value=tokens[index]
+        if (kind=="string" and isinstance(value,str) and tokens[index-3]==("token",".")
+                and tokens[index-2][1] in ("textContent","innerText","innerHTML")
+                and tokens[index-1]==("token","=")):
+            if tokens[index-2][1]=="innerHTML":value=unescape(re.sub(r"<[^>]*>","",value))
+            values.append(("dynamic",value.strip()))
+    gaps=[]
+    for item in literals:
+        expected=str(item.get("text") or "").strip()
+        target=item.get("target")
+        tags=({"h1","h2","h3","h4","h5","h6","header","dynamic"} if target=="heading"
+              else {"title","h1","h2","header","dynamic"} if target=="title"
+              else {"button","dynamic"} if target=="button" else None)
+        applicable=[value for tag,value in values if (tags is None and tag!="title") or (tags is not None and tag in tags)]
+        if expected and expected not in applicable:gaps.append("literal-ui-text-mismatch:"+expected[:100])
+    return gaps
+
+
 def candidate_contract_gate(text: str, programming: dict[str, Any], history: list[dict[str, Any]]) -> dict[str, Any]:
     """Shared deterministic contract gate for every programming model route."""
     if not isinstance(programming,dict) or not programming.get("codingTask"):
@@ -477,7 +631,20 @@ def candidate_contract_gate(text: str, programming: dict[str, Any], history: lis
     detected=_candidate_languages(text)
     required=[str(x) for x in (language.get("requiredLanguages") or [])]
     allowed=[str(x) for x in (language.get("allowedLanguages") or [])]
-    if language.get("explicit"):
+    project_files=[]
+    if language.get("artifactType")=="web-page":
+        from project_archive import ProjectArchiveError, parse_project_files
+        try:
+            project_files=parse_project_files(text)
+        except ProjectArchiveError:
+            pass  # The completed-source gate records the precise parse failure.
+        if len(project_files)>1 and not re.search(r"\b(?:html\s+only|only\s+html|single[- ]file)\b",str(contract.get("originalRequest") or ""),re.I):
+            for item in project_files:
+                tag=_normalize_language_tag(item.get("language"))
+                suffix=str(item.get("path") or "").lower()
+                if (tag=="json" and suffix.endswith(".json")) or (tag=="yaml" and suffix.endswith((".yaml",".yml"))):
+                    if tag not in allowed:allowed.append(tag)
+    if language.get("explicit") or language.get("inferredFrom"):
         for item in required:
             if item not in detected:
                 reasons.append("missing-required-language:"+item)
@@ -488,13 +655,21 @@ def candidate_contract_gate(text: str, programming: dict[str, Any], history: lis
     semantics=evidence.get("receiptSemantics") if isinstance(evidence.get("receiptSemantics"),dict) else {}
     repair_source=str(evidence.get("repairSource") or "")
     if evidence and repair_source:
-        before=str(evidence.get("repairSourceFingerprint") or "") or _code_fingerprint(repair_source)
+        before=_code_fingerprint(repair_source) or str(evidence.get("repairSourceFingerprint") or "")
         after=_code_fingerprint(text)
         if before and after and before==after:
             reasons.append("diagnostic-repair-no-executable-change")
     candidate_code=_candidate_primary_code(text)
+    if language.get("artifactType")=="web-page":
+        html_files=[item for item in project_files if str(item.get("path") or "").lower().endswith((".html",".htm")) or str(item.get("language") or "").lower() in ("html","html5")]
+        if html_files:
+            # The entry may follow README/CSS fences. Validate the actual page,
+            # not whichever support file happened to be emitted first.
+            candidate_code="\n".join(str(item["content"]) for item in html_files)
     if programming.get("changeClass") not in ("review", "explain"):
+        reasons.extend(_source_delivery_gaps(text,str(contract.get("originalRequest") or ""),language))
         reasons.extend(_web_delivery_gaps(candidate_code, str(contract.get("originalRequest") or ""), language))
+        reasons.extend(_literal_ui_gaps(text,contract))
     for symbol in semantics.get("reportedSymbols") or []:
         if not _symbol_is_resolved_or_removed(candidate_code,str(symbol)):
             reasons.append("diagnostic-symbol-resolution-unproven:"+str(symbol)[:80])
@@ -509,7 +684,7 @@ def candidate_contract_gate(text: str, programming: dict[str, Any], history: lis
     behavior=programming.get("behaviorLedger") if isinstance(programming.get("behaviorLedger"),dict) else {}
     repair_base=programming.get("behaviorRepairBase") if isinstance(programming.get("behaviorRepairBase"),dict) else {}
     after_fp=_code_fingerprint(text)
-    base_fp=str(repair_base.get("sourceFingerprint") or "")
+    base_fp=_code_fingerprint(str(programming.get("behaviorRepairBaseSource") or "")) or str(repair_base.get("sourceFingerprint") or "")
     if repair_base.get("mode")=="best-known-tested-source" and base_fp and after_fp==base_fp:
         reasons.append("behavior-repair-base-unchanged")
     verification="AWAITING_EXTERNAL_RECEIPT" if evidence else "NOT_EXECUTION_VERIFIED"
@@ -561,7 +736,7 @@ def _last_assistant_artifact(history: list[dict[str, Any]]) -> dict[str, Any]:
         if _provider_read_display(item):
             continue
         meta=item.get("meta") if isinstance(item.get("meta"),dict) else {}
-        text=str(item.get("content") or item.get("text") or "")
+        text=str(meta.get("artifactSourceSnapshot") or item.get("content") or item.get("text") or "")
         if meta.get("codeArtifactId") or "```" in text:
             return {
                 "messageId":str(item.get("id") or ""),
@@ -596,19 +771,68 @@ def _programming_intent_contract(prompt: str, change_class: str) -> dict[str, An
         "api-validity: required wrapper/name/signature must remain present unless explicitly changed",
     ])
     return {
-        "schema":"swrlz-programming-intent-contract-v3","originalRequest":raw[:4000],
+        "schema":"swrlz-programming-intent-contract-v3","originalRequest":raw,
         "must":must[:16],"mustNot":must_not[:16],"preserve":preserve[:16],
         "languageContract":_language_contract(raw),
+        "literalUiText":_literal_ui_text(raw),
         "acceptanceEvidence":evidence,
         "completionRule":"done only when complete-source, technical validity, and intent validity all pass",
     }
 
 
+def _literal_ui_text(text: str) -> list[dict[str, str]]:
+    """Extract bounded user-specified UI strings, separate from location prose."""
+    raw=_strip_fenced_code(str(text or ""))
+    if not re.search(r"\b(?:add|set|change|replace|put|use|make|rename)\b",raw,re.I):
+        return []
+    if not re.search(r"\b(?:text|heading|header|title|label|button|caption)\b",raw,re.I):
+        return []
+    target=("heading" if re.search(r"\b(?:heading|header)\b|\btext\b[^.!?\n]{0,70}\b(?:to|at|on)\s+(?:the\s+)?top\b",raw,re.I)
+            else "title" if re.search(r"\btitle\b",raw,re.I)
+            else "button" if re.search(r"\bbutton\b",raw,re.I) else "text")
+    result=[]
+    for match in re.finditer(r'(["\u201c])([^"\u201d\n]{1,180})["\u201d]|\u2018([^\u2019\n]{1,180})\u2019|\'([^\'\n]{1,180})\'',raw):
+        prefix=raw[max(0,match.start()-100):match.start()]
+        if not re.search(r"\b(?:saying|says?|read(?:ing|s)?|text|heading|header|title|label|caption|to|as)\s*[:=]?\s*$",prefix,re.I):
+            continue
+        value=next((group for group in match.groups()[1:] if group is not None),"").strip()
+        if value and not any(item["text"]==value for item in result):
+            result.append({"text":value,"target":target,"source":"quoted"})
+    if result:
+        return result[:8]
+    # 'Text to the top saying NAME of that viewer' has a trailing UI location,
+    # not a longer title. Only cut a demonstrative application locator, after
+    # an explicit top/header/text placement request; ordinary prose is intact.
+    if re.search(r"\btop\b",raw,re.I):
+        match=re.search(r"\bsaying\s+(.{1,180}?)\s+(?:of|on|in|to)\s+(?:this|that)\s+"
+                        r"(?:(?:3[ -]?d|model|existing|web)\s+){0,3}"
+                        r"(?:viewer|editor|page|website|app|application)\s*[.!?]*$",raw,re.I)
+        if match:
+            return [{"text":match.group(1).strip(),"target":target,"source":"locator-bounded"}]
+    return []
+
+
+def _fresh_web_project_request(text: str) -> bool:
+    """A newly requested page is not an edit merely because another page exists."""
+    if not requests_web_source(text):
+        return False
+    raw=_strip_fenced_code(text)
+    lead=re.match(r"^(?:(?:please|hey|now|okay|ok)[,!\s]+)?"
+                  r"(?:(?:can|could|would|will)\s+you\s+|i\s+(?:want|need)\s+you\s+to\s+)?"
+                  r"(?:make|create|build|write|develop|implement)\s+(?:a|an|another|new)\b",raw,re.I)
+    if not lead:
+        return False
+    head=re.split(r"\b(?:using|with|for|based\s+on)\b",raw[lead.end():],maxsplit=1,flags=re.I)[0]
+    return not bool(re.search(r"\b(?:this|that|same|existing|current|previous)\s+"
+                              r"(?:(?:3[ -]?d|model|web)\s+){0,3}"
+                              r"(?:viewer|editor|page|website|app|application)\b|"
+                              r"\b(?:turn|convert|change|extend|upgrade)\s+(?:this|that|it)\b|\binto\b",head,re.I))
+
+
 def _extract_candidate_code(text: str) -> str:
     """Return the primary executable candidate, ignoring prose/examples/comments."""
     raw=str(text or "").strip()
-    fenced=re.findall(r"```[^\n`]*\n([\s\S]*?)```",raw)
-    candidate=next((part for part in fenced if part.strip()),raw)
+    candidate=_candidate_primary_code(raw)
     lines=[]
     for line in candidate.strip().splitlines():
         stripped=line.strip()
@@ -1139,7 +1363,7 @@ def _user_failure_evidence(prompt: str, history: list[dict[str, Any]]) -> dict[s
         "repairTargetArtifactId":repair_target_artifact_id,
         "repairTargetArtifactRevision":repair_target_artifact_revision,
         "repairTargetArtifactSourceHash":repair_target_artifact_source_hash,
-        "repairSource":repair_source[:12000],
+        "repairSource":repair_source,
         "repairSourceMessageId":repair_source_message_id,
         "repairSourceFingerprint":repair_source_fingerprint,
         "candidateFingerprint":repair_source_fingerprint,
@@ -1166,7 +1390,7 @@ def _original_programming_request(history: list[dict[str, Any]]) -> str:
         if not text or _looks_like_failure_receipt(text):
             continue
         if _current_programming_signal(text):
-            return text[:4000]
+            return text
     return ""
 
 def _behavior_suite_key(case_ids: list[str]) -> str:
@@ -1200,7 +1424,7 @@ def _artifact_snapshot_for_lineage(
             continue
         snapshot=str(meta.get("artifactSourceSnapshot") or "").strip()
         if snapshot:
-            return snapshot[:12000]
+            return snapshot
     return ""
 
 
@@ -1420,15 +1644,16 @@ def programming_intent(prompt: str, history: list[dict[str, Any]], pinned_contex
     prior_contract=prior_state.get("intentContract") if isinstance(prior_state.get("intentContract"),dict) else {}
     prior_failure_evidence=prior_state.get("failureEvidence") if isinstance(prior_state.get("failureEvidence"),dict) else {}
     last_artifact=_last_assistant_artifact(history or [])
+    new_project=any(x in p for x in _NEW_PROJECT) or _fresh_web_project_request(text)
     # A prior false-positive coding contract is not authority by itself.
     # Keep legitimate explicit programming requests and authored artifacts.
     if (prior_contract and not (pins or last_artifact or
             _current_programming_signal(str(prior_contract.get("originalRequest") or "")))):
         prior_contract={}
-    new_failure_evidence=_user_failure_evidence(text,history or [])
+    new_failure_evidence=_user_failure_evidence(text,[] if new_project else (history or []))
     failure_evidence=new_failure_evidence
-    vague_failure=_vague_failure_report(text) and bool(prior_contract or last_artifact or pins)
-    prior_failure_history=prior_state.get("failureHistory") if isinstance(prior_state.get("failureHistory"),list) else []
+    vague_failure=not new_project and _vague_failure_report(text) and bool(prior_contract or last_artifact or pins)
+    prior_failure_history=prior_state.get("failureHistory") if not new_project and isinstance(prior_state.get("failureHistory"),list) else []
     failure_history=[dict(x) for x in prior_failure_history[-3:] if isinstance(x,dict)]
     if new_failure_evidence:
         failure_history.append({
@@ -1459,7 +1684,13 @@ def programming_intent(prompt: str, history: list[dict[str, Any]], pinned_contex
             "newProject":False,"source":"brain-router"
         }
 
-    new_project=any(x in p for x in _NEW_PROJECT)
+    if new_project:
+        # A fresh artifact must not inherit another project's heading, repair
+        # target, unavailable dependency list or behavior score.
+        prior_contract={}
+        canonical_carry=False
+        failure_evidence=new_failure_evidence
+        failure_history=failure_history[-1:] if new_failure_evidence else []
     if failure_evidence or vague_failure:
         change="fix"
     elif new_project:
@@ -1468,6 +1699,8 @@ def programming_intent(prompt: str, history: list[dict[str, Any]], pinned_contex
         change="fix"
     elif any(x in p for x in _REFACTOR):
         change="refactor"
+    elif last_artifact and re.search(r"\b(?:make|turn|convert|transform|upgrade)\s+(?:this|that|it|the\s+existing)\b",p):
+        change="feature"
     elif any(x in p for x in _FEATURE):
         change="feature"
     elif any(x in p for x in _REVIEW):
@@ -1483,6 +1716,15 @@ def programming_intent(prompt: str, history: list[dict[str, Any]], pinned_contex
         if _norm((value.get("path") or value.get("file") or "") if isinstance(value,dict) else value)
     )
     target=_pick_artifact_target(text,pins) if (bool(pins) and not new_project and explicit_reference) else None
+    if (target is None and not new_project and explicit_reference
+            and change in ("feature","fix","refactor","migrate")
+            and last_artifact.get("artifactId")
+            and int(last_artifact.get("artifactRevision") or 0)>0
+            and re.fullmatch(r"[a-f0-9]{64}",str(last_artifact.get("artifactSourceHash") or ""))):
+        # Canonical Station history supplies revision identities. Authored code
+        # alone never invents a persistent mutation target or bypasses the
+        # Station's owned-thread/revision/hash checks.
+        target=dict(last_artifact)
     artifact_id=str((target or {}).get("artifactId") or "")
     target_message_id=str((target or {}).get("messageId") or "")
     base_revision=int((target or {}).get("artifactRevision") or 0)
@@ -1500,7 +1742,11 @@ def programming_intent(prompt: str, history: list[dict[str, Any]], pinned_contex
     continuation=bool(artifact_id or target)
     mutation=bool(continuation and change in {"fix","refactor","feature","migrate"} and not vague_failure)
 
-    if prior_contract and (failure_evidence or vague_failure or canonical_carry):
+    last_source=str((last_artifact or {}).get("text") or "")
+    web_source_continuation=bool(not new_project and continuation_reference
+        and re.search(r"<!doctype\s+html\b|<html\b",last_source,re.I))
+    source_edit=web_source_continuation and change in ("feature","fix","refactor","migrate")
+    if prior_contract and (failure_evidence or vague_failure or canonical_carry or source_edit):
         active_contract=dict(prior_contract)
         if not isinstance(active_contract.get("languageContract"),dict):
             source_request=str(active_contract.get("originalRequest") or original_request or text)
@@ -1508,14 +1754,51 @@ def programming_intent(prompt: str, history: list[dict[str, Any]], pinned_contex
             active_contract["schema"]="swrlz-programming-intent-contract-v3"
     else:
         active_contract=_programming_intent_contract(original_request or text,change)
+    if source_edit:
+        delta=_programming_intent_contract(text,change)
+        active_contract=dict(active_contract)
+        for key in ("must","mustNot","preserve"):
+            active_contract[key]=_unique(list(active_contract.get(key) or [])+list(delta.get(key) or []))[:24]
+        active_contract["currentInstruction"]=text
+    requested_literals=_literal_ui_text(text)
+    if requested_literals:
+        active_contract=dict(active_contract)
+        previous_literals=list(active_contract.get("literalUiText") or [])
+        # Explicitly replacing text retires the old literal condition; it does
+        # not require both the old and replacement title simultaneously.
+        if re.search(r"\b(?:set|change|replace|rename)\b",text,re.I):
+            replaced_targets={item.get("target") for item in requested_literals}
+            previous_literals=[item for item in previous_literals if item.get("target") not in replaced_targets]
+        active_contract["literalUiText"]=(previous_literals+[item for item in requested_literals if item not in previous_literals])[:8]
+
+    # A concrete application page has an implicit browser-source medium. A
+    # follow-up such as adding a heading also retains the supplied HTML source
+    # medium, without inventing a pin, artifact target or persistent mutation.
+    active_language=active_contract.get("languageContract") or {}
+    explicit_web_request=requests_web_source(text)
+    chosen_frontend=bool(re.search(r"\b(?:react|next(?:\.js|js)?|vue|nuxt|svelte|angular|astro|vite|webpack|parcel)\b",_strip_fenced_code(text),re.I))
+    if (not active_language.get("requestedLanguages")
+            and (web_source_continuation or (explicit_web_request and not chosen_frontend))):
+        active_contract=dict(active_contract)
+        active_contract["languageContract"]={
+            **active_language,
+            "explicit":False,
+            "requestedLanguages":[],
+            "requiredLanguages":["html"],
+            "allowedCompanionLanguages":["css","javascript"],
+            "allowedLanguages":["html","css","javascript"],
+            "artifactType":"web-page",
+            "substitutionAllowed":False,
+            "inferredFrom":"html-source-continuation" if web_source_continuation else "application-page-request",
+        }
 
     repair_constraints=_repair_constraints(
-        prior_state,
+        {} if new_project else prior_state,
         new_failure_evidence,
         active_contract,
         text,
     )
-    behavior_ledger=_behavior_ledger(prior_state,new_failure_evidence)
+    behavior_ledger=_behavior_ledger({} if new_project else prior_state,new_failure_evidence)
     if canonical_carry and not new_failure_evidence and isinstance(prior_state.get("behaviorLedger"),dict):
         behavior_ledger=dict(prior_state.get("behaviorLedger") or {})
     behavior_repair_base=_behavior_repair_base(
@@ -1532,19 +1815,20 @@ def programming_intent(prompt: str, history: list[dict[str, Any]], pinned_contex
     return {
         "schema":"swrlz-programming-intent-v1",
         "codingTask":True,
-        "projectContext":"new" if new_project else ("existing" if continuation or pins or
+        "projectContext":"new" if new_project else ("existing" if continuation or pins or web_source_continuation or
             re.search(r"\b(?:existing\s+project|repo(?:sitory)?|github)\b", _strip_fenced_code(text), re.I) else "none"),
         "changeClass":change,
         "artifactContinuation":continuation,
         "artifactMutationRequested":mutation,
         "artifactTargetId":artifact_id,
         "artifactTargetMessageId":target_message_id,
+        "artifactEditSource":str((target or {}).get("text") or "") if mutation else "",
         "baseRevision":base_revision,
         "baseSourceHash":base_source_hash,
         "newProject":new_project,
         "pinnedCodeArtifactCount":len(pins),
         "intentContract":active_contract,
-        "repairDirection":text[:4000] if ((failure_evidence and original_request) or canonical_carry) else "",
+        "repairDirection":text if ((failure_evidence and original_request) or canonical_carry) else "",
         "canonicalCarry":canonical_carry,
         "failureEvidence":failure_evidence,
         "failureHistory":failure_history,
@@ -1557,7 +1841,7 @@ def programming_intent(prompt: str, history: list[dict[str, Any]], pinned_contex
             "revision":behavior_repair_base.get("revision"),
             "sourceHash":behavior_repair_base.get("sourceHash"),
         },
-        "behaviorRepairBaseSource":str(behavior_repair_base.get("source") or "")[:12000],
+        "behaviorRepairBaseSource":str(behavior_repair_base.get("source") or ""),
         "needsFailureEvidence":vague_failure,
         "evidenceRequest":evidence_request,
         "repairLifecycleState":"EVIDENCE_REQUIRED" if vague_failure else ("REPAIR_CANDIDATE" if failure_evidence else "CANDIDATE_GENERATION"),

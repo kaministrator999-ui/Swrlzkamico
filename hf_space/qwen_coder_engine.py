@@ -4,24 +4,21 @@ import hashlib, json, os, re, threading, time
 from huggingface_hub import hf_hub_download
 from llama_cpp import Llama
 from brain_programming import programming_intent, CODE_TRUTH_POLICY, candidate_contract_gate, programming_library_context
-from programming_telemetry import buffered_chat_completion, candidate_attempt_receipt, generation_summary
-from programming_repair_context import build_compact_repair_context, enforce_strategy_change, strategy_change_directive, contract_rejection_context, candidate_retry_messages, candidate_source_fingerprint
+from programming_telemetry import buffered_chat_completion, candidate_attempt_receipt, generation_summary, observe_completion_chunk, completion_validation
+from programming_repair_context import build_compact_repair_context, enforce_strategy_change, strategy_change_directive, contract_rejection_context, candidate_retry_messages, candidate_source_fingerprint, expanded_project_delivery, project_delivery_policy, fresh_project_history, source_fence_present
 from response_cognition import classify_response_cognition, response_cognition_policy, response_cognition_camera
 from social_checkin import style_hint as _social_checkin_style_hint
 from version_literacy import style_hint as _version_literacy_style_hint
 from github_change_candidate import source_change_system, source_change_response_format
 from coder_model_config import MODEL_REPO, MODEL_FILE, download_arguments, verify_artifact
 
-# LFM2 supports a substantially larger native context than this HF probe needs.
-# 4096 keeps the CPU/KV footprint bounded while leaving the always-on §wyrlz
-# profile, role frame, user profile, current prompt and useful history room to coexist.
-# The always-on §wyrlz identity/profile is intentionally substantial. 4096 made
-# that fixed context compete with the current user turn before history could
-# helpfully be trimmed, causing tiny prompts to fail. Keep inference bounded,
-# but allocate enough native context for the fixed profile + useful history.
-CONTEXT_TOKENS=8192
-OUTPUT_TOKENS=2048
-WEB_PAGE_OUTPUT_TOKENS=3072
+# The pinned Qwen model supports this bounded 16K window. Reserve substantial
+# output room before fitting history so complete project files do not compete
+# with old conversation turns for a few remaining decode tokens.
+CONTEXT_TOKENS=16384
+OUTPUT_TOKENS=4096
+WEB_PAGE_OUTPUT_TOKENS=4096
+PROJECT_OUTPUT_TOKENS=6144
 MIN_OUTPUT_TOKENS=384
 CONTEXT_SAFETY_TOKENS=128
 INPUT_BUDGET_TOKENS=CONTEXT_TOKENS-MIN_OUTPUT_TOKENS-CONTEXT_SAFETY_TOKENS
@@ -235,48 +232,48 @@ def _token_count(model,messages):
         total+=len(model.tokenize(str(message.get("content") or "").encode("utf-8"),add_bos=False))+6
     return total
 
-def _fit_messages(model,system,history,prompt,output_limit=None):
-    """Fit context deterministically; keep recent repair evidence while reserving enough output for complete code."""
+def _fit_messages(model,system,history,prompt,output_limit=None,preserve_latest_code=False):
+    """Reserve usable output first; never shorten the mandatory request/source."""
+    desired_output=max(MIN_OUTPUT_TOKENS,int(output_limit or OUTPUT_TOKENS))
+    target_input=CONTEXT_TOKENS-desired_output-CONTEXT_SAFETY_TOKENS
     kept=list(history[-16:])
+    protected=next((message for message in reversed(kept)
+                    if message.get("role")=="assistant" and source_fence_present(message.get("content") or "")),None) if preserve_latest_code else None
     messages=[{"role":"system","content":system}]+kept+[{"role":"user","content":prompt}]
-    target_input=INPUT_BUDGET_TOKENS
     while kept and _token_count(model,messages)>target_input:
-        kept.pop(0)
+        removable=next((index for index,message in enumerate(kept) if message is not protected),None)
+        if removable is None:
+            break
+        kept.pop(removable)
         messages=[{"role":"system","content":system}]+kept+[{"role":"user","content":prompt}]
     input_tokens=_token_count(model,messages)
     if input_tokens>target_input:
         raise ValueError(
-            f"Current prompt/profile context uses {input_tokens} tokens but the coder input budget is "
-            f"{target_input}; shorten the current prompt or optional profile."
+            f"Mandatory prompt/profile or current source uses {input_tokens} tokens; "
+            f"only {target_input} input tokens remain while reserving {desired_output} output tokens. "
+            "The current request/source was not truncated."
         )
-    response_tokens=min(output_limit or OUTPUT_TOKENS,max(MIN_OUTPUT_TOKENS,CONTEXT_TOKENS-input_tokens-CONTEXT_SAFETY_TOKENS))
-    return messages,len(history)-len(kept),input_tokens,response_tokens
+    return messages,len(history)-len(kept),input_tokens,desired_output
 
 def _fit_repair_messages(model,system,history,prompt,output_limit=None):
-    """Budget repair input/output before inference; compact oversized receipt prose."""
+    """Keep canonical source intact and reserve a complete repair's output."""
     recent=[]
     for item in list(history or [])[-6:]:
         content=str(item.get("content") or "")
         if item.get("role")=="user" and len(content)<=1600:
             recent.append(item)
-    desired_output=output_limit or min(1536,OUTPUT_TOKENS)
+    desired_output=max(MIN_OUTPUT_TOKENS,int(output_limit or min(1536,OUTPUT_TOKENS)))
     fitted_prompt=str(prompt or "")
-    max_input=CONTEXT_TOKENS-MIN_OUTPUT_TOKENS-CONTEXT_SAFETY_TOKENS
+    max_input=CONTEXT_TOKENS-desired_output-CONTEXT_SAFETY_TOKENS
     messages=[{"role":"system","content":system}]+recent+[{"role":"user","content":fitted_prompt}]
     while recent and _token_count(model,messages)>max_input:
-        recent.pop(0); messages=[{"role":"system","content":system}]+recent+[{"role":"user","content":fitted_prompt}]
-    if _token_count(model,messages)>max_input and len(fitted_prompt)>9000:
-        head=fitted_prompt[:3000]
-        tail=fitted_prompt[-6000:]
-        fitted_prompt=head+"\n[...receipt compacted to fit repair context...]\n"+tail
+        recent.pop(0)
         messages=[{"role":"system","content":system}]+recent+[{"role":"user","content":fitted_prompt}]
     input_tokens=_token_count(model,messages)
     if input_tokens>max_input:
-        # Return the fitted components so callers can emit truthful rejection telemetry.
         return messages,len(history)-len(recent),input_tokens,0,fitted_prompt
-    desired_output=min(desired_output,max(MIN_OUTPUT_TOKENS,CONTEXT_TOKENS-input_tokens-CONTEXT_SAFETY_TOKENS))
-    response_tokens=min(output_limit or OUTPUT_TOKENS,desired_output)
-    return messages,len(history)-len(recent),input_tokens,response_tokens,fitted_prompt
+    return messages,len(history)-len(recent),input_tokens,desired_output,fitted_prompt
+
 
 def _user_name_from_profile(user_profile):
     for line in str(user_profile or "").splitlines():
@@ -447,7 +444,7 @@ def _repair_diagnostic(programming,history):
     if not evidence:
         return None
     repair_source=str(evidence.get("repairSource") or "")
-    fingerprint=str(evidence.get("repairSourceFingerprint") or "") or _candidate_fingerprint(repair_source)
+    fingerprint=(_candidate_fingerprint(repair_source) if repair_source else None) or str(evidence.get("repairSourceFingerprint") or "")
     signals=evidence.get("failureSignals") if isinstance(evidence.get("failureSignals"),list) else []
     return {
         "schema":"swrlz-repair-diagnostic-v2",
@@ -507,6 +504,7 @@ def generate_events(payload):
     if source_change_mode:
         programming={"codingTask":False}
     response_cognition=classify_response_cognition(prompt,history,programming)
+    history=fresh_project_history(history,programming)
     yield {"type":"RESPONSE_COGNITION","state":response_cognition_camera(response_cognition)}
     if programming.get("needsFailureEvidence"):
         yield {"type":"PROGRAMMING_INTENT","intent":programming}
@@ -594,13 +592,13 @@ def generate_events(payload):
                      +"\nRECEIPT SOURCE OWNERSHIP: "+receipt_owner
                      +("\nCANONICAL SOURCE UNDER REPAIR:\n"+repair_source[:5000] if repair_source else "\nCANONICAL SOURCE UNDER REPAIR: unavailable")
                      +("\nCANONICAL REPAIR SOURCE FINGERPRINT: "+repair_source_fingerprint if repair_source_fingerprint else "")
-                     +("\nADDITIONAL USER REPAIR DIRECTION:\n"+repair_direction[:2500] if repair_direction else "")
+                     +("\nADDITIONAL USER REPAIR DIRECTION:\n"+repair_direction if repair_direction else "")
                      +("\nBOUNDED PRIOR FAILURE HISTORY (regression guard; preserve fixes across rounds):\n"+json.dumps(failure_history[-4:],ensure_ascii=False,separators=(",",":")) if failure_history else "")
                      +"\nTreat the failure receipt as Gate 1 evidence, not as a replacement intent contract. Diagnose only what the separated receipt proves. Repair the canonical source under repair above, not a later refusal/prose turn or an already-passing unrelated assistant candidate. Classify what the log proves (syntax/build, type/name/exception, assertion, timeout, lint/type-check, dependency, or expected-vs-actual behavior), preserve any passing signals, and return a COMPLETE corrected candidate preserving the original API/wrapper/signature and unrelated behavior. Convert each reported expected/actual mismatch into a source-level operation that must change; do not merely paraphrase the receipt. Compare the proposed executable candidate against the canonical repair-source fingerprint before generating. If exactCandidateRepeatCount is 1 or greater, or stalledRepair is true, STRATEGY CHANGE IS MANDATORY: do not return the same algorithm with comment/prose/exception-message edits. Identify which literal source operation causes each still-failing assertion, replace that operation, and preserve previously correct behavior. Treat a newly failing assertion as a regression that must be removed, not as progress. Before emitting, perform a source-shape audit: required wrapper/name/signature present; opening/closing delimiters balanced; no unfinished statement/fence; no forbidden in-place mutation when preservation requires copying. Then mentally trace every explicit acceptance example against the exact code you are returning. Your prose MUST describe only operations literally present in that code; if prose and code disagree, fix the code before answering. Never return only a fragment unless the original request explicitly asked for a fragment. Re-check the reported failing case plus every original acceptance requirement. Do not claim execution without an actual execution receipt.")
         intent_contract=programming.get("intentContract") if isinstance(programming.get("intentContract"),dict) else {}
         if intent_contract:
             compact_contract=dict(intent_contract)
-            compact_contract["originalRequest"]=str(compact_contract.get("originalRequest") or "")[:2500]
+            compact_contract["originalRequest"]=str(compact_contract.get("originalRequest") or "")
             compact_contract.pop("acceptanceEvidence",None)
             system+=("\nPERSISTENT USER INTENT CONTRACT (acceptance target; preserve across every repair):\n"
                      +json.dumps(compact_contract,ensure_ascii=False,separators=(",",":"))
@@ -622,7 +620,10 @@ def generate_events(payload):
     web_page_delivery=(bool(programming.get("codingTask")) and
         ((programming.get("intentContract") or {}).get("languageContract") or {}).get("artifactType")=="web-page" and
         programming.get("changeClass") not in ("review","explain"))
-    web_output_limit=WEB_PAGE_OUTPUT_TOKENS if web_page_delivery else None
+    expanded_delivery=expanded_project_delivery(programming,prompt)
+    delivery_output_limit=(512 if source_change_mode=="plan" else 2048 if source_change_mode else
+        PROJECT_OUTPUT_TOKENS if expanded_delivery else WEB_PAGE_OUTPUT_TOKENS if web_page_delivery else None)
+    system+=project_delivery_policy(programming,prompt)
     started=time.perf_counter()
     yield {"type":"STATUS","phase":"LOADING"}
     model=load()
@@ -635,16 +636,17 @@ def generate_events(payload):
             _response_mode(prompt,programming),
         )
         system+=programming_library_context(programming)
-        fitted=_fit_repair_messages(model,system,history,fitted_prompt,web_output_limit)
+        system+=project_delivery_policy(programming,prompt)
+        fitted=_fit_repair_messages(model,system,history,fitted_prompt,delivery_output_limit)
         messages,dropped_history,input_tokens,available_output_tokens,fitted_prompt=fitted
     else:
-        fitted=_fit_messages(model,system,history,prompt,web_output_limit)
+        fitted=_fit_messages(model,system,history,prompt,delivery_output_limit,preserve_latest_code=bool((programming.get("artifactContinuation") or programming.get("artifactMutationRequested")) and not programming.get("artifactEditSource")))
         messages,dropped_history,input_tokens,available_output_tokens=fitted
         fitted_prompt=prompt
     system_tokens=_token_count(model,[{"role":"system","content":system}])
     prompt_tokens=_token_count(model,[{"role":"user","content":fitted_prompt}])
     history_tokens=max(0,input_tokens-system_tokens-prompt_tokens)
-    yield {"type":"CONTEXT","phase":"BUDGETED","contextWindowTokens":CONTEXT_TOKENS,"inputBudgetTokens":INPUT_BUDGET_TOKENS,"estimatedInputTokens":input_tokens,"reservedOutputTokens":available_output_tokens,"historyMessagesDropped":dropped_history,"historyMessagesKept":len(messages)-2,"repairTurn":repair_turn,"repairContext":repair_context_telemetry,"tokenBreakdown":{"system":system_tokens,"history":history_tokens,"currentPrompt":prompt_tokens,"total":input_tokens}}
+    yield {"type":"CONTEXT","phase":"BUDGETED","contextWindowTokens":CONTEXT_TOKENS,"inputBudgetTokens":CONTEXT_TOKENS-available_output_tokens-CONTEXT_SAFETY_TOKENS,"estimatedInputTokens":input_tokens,"reservedOutputTokens":available_output_tokens,"historyMessagesDropped":dropped_history,"historyMessagesKept":len(messages)-2,"repairTurn":repair_turn,"repairContext":repair_context_telemetry,"tokenBreakdown":{"system":system_tokens,"history":history_tokens,"currentPrompt":prompt_tokens,"total":input_tokens}}
     if repair_turn and available_output_tokens<=0:
         yield {"type":"FAILED","phase":"CONTEXT_REJECTED","reason":f"Repair context uses {input_tokens} tokens; maximum fitted input is {CONTEXT_TOKENS-MIN_OUTPUT_TOKENS-CONTEXT_SAFETY_TOKENS}.","contextBudget":{"system":system_tokens,"history":history_tokens,"currentPrompt":prompt_tokens,"total":input_tokens}}
         return
@@ -656,7 +658,8 @@ def generate_events(payload):
     intent_contract=programming.get("intentContract") if isinstance(programming.get("intentContract"),dict) else {}
     language_contract=intent_contract.get("languageContract") if isinstance(intent_contract.get("languageContract"),dict) else {}
     strict_language=bool(language_contract.get("explicit"))
-    guarded_turn=bool(repair_turn or strict_language)
+    code_delivery=bool(programming.get("codingTask") and programming.get("changeClass") not in ("review","explain"))
+    guarded_turn=not source_change_mode and bool(repair_turn or strict_language or code_delivery)
     candidate_text=""
     candidate_check=None
     candidate_attempts=[]
@@ -667,17 +670,17 @@ def generate_events(payload):
         elif mode.startswith("RESPONSE MODE: USER-IDENTITY-DIRECT") or mode.startswith("RESPONSE MODE: ASSISTANT-IDENTITY-DIRECT"):
             response_tokens=min(192,available_output_tokens);temperature=0.35
         elif mode.startswith("RESPONSE MODE: CODE-"):
-            response_tokens=min(WEB_PAGE_OUTPUT_TOKENS if web_page_delivery else (1536 if repair_turn else 1024),available_output_tokens);temperature=0.25 if repair_turn else 0.30
+            response_tokens=min(PROJECT_OUTPUT_TOKENS if expanded_delivery else WEB_PAGE_OUTPUT_TOKENS if web_page_delivery else (1536 if repair_turn else OUTPUT_TOKENS),available_output_tokens);temperature=0.25 if repair_turn else 0.30
         elif mode.startswith("RESPONSE MODE: EXACT-NUMBERED-STEPS"):
             response_tokens=min(512,available_output_tokens);temperature=0.35
         else:
-            response_tokens=min(768,available_output_tokens);temperature=0.40
+            response_tokens=min(OUTPUT_TOKENS,available_output_tokens);temperature=0.40
         yield {"type":"RESOURCE","cpuCapacity":_cpu_capacity(),"decodeThreads":_thread_plan()[0],"batchThreads":_thread_plan()[1],"maxResponseTokens":response_tokens}
         if guarded_turn:
             repair_target_fp=repair_diagnostic.get("candidateFingerprint") if repair_diagnostic else None
 
-            def validate_attempt(text_value,previous_attempt_fp=None):
-                check=_candidate_structure_check(text_value,programming,history)
+            def validate_attempt(text_value,previous_attempt_fp=None,completion=None):
+                check=completion_validation(_candidate_structure_check(text_value,programming,history),completion or {})
                 fp=_candidate_fingerprint(text_value)
                 check=enforce_strategy_change(
                     check,
@@ -688,7 +691,7 @@ def generate_events(payload):
                 return check,fp
 
             candidate_text,timing=buffered_chat_completion(model,messages,response_tokens,temperature)
-            candidate_check,candidate_fp=validate_attempt(candidate_text)
+            candidate_check,candidate_fp=validate_attempt(candidate_text,completion=timing)
             attempt=candidate_attempt_receipt(
                 1,"initial",timing,candidate_check,candidate_fp,
                 previous_attempt_fingerprint=None,
@@ -716,7 +719,7 @@ def generate_events(payload):
                 retry_text,retry_timing=buffered_chat_completion(model,retry_messages,retry_tokens,min(0.45,temperature+0.10))
                 if retry_text.strip():
                     candidate_text=retry_text
-                candidate_check,retry_fp=validate_attempt(candidate_text,candidate_fp)
+                candidate_check,retry_fp=validate_attempt(candidate_text,candidate_fp,completion=retry_timing)
                 attempt=candidate_attempt_receipt(
                     2,"retry:"+regeneration_reason,retry_timing,candidate_check,retry_fp,
                     previous_attempt_fingerprint=candidate_fp,
@@ -741,7 +744,7 @@ def generate_events(payload):
                     third_text,third_timing=buffered_chat_completion(model,final_messages,final_tokens,min(0.50,temperature+0.15))
                     if third_text.strip():
                         candidate_text=third_text
-                    candidate_check,third_fp=validate_attempt(candidate_text,candidate_fp)
+                    candidate_check,third_fp=validate_attempt(candidate_text,candidate_fp,completion=third_timing)
                     attempt=candidate_attempt_receipt(
                         3,"final-strategy-gate",third_timing,candidate_check,third_fp,
                         previous_attempt_fingerprint=candidate_fp,
@@ -767,9 +770,11 @@ def generate_events(payload):
             attempt_started=time.perf_counter()
             attempt_first_token=None
             attempt_chunks=0
+            stream_observation={"finishReason":None,"requestedMaxTokens":response_tokens}
             source_format = ({"response_format": source_change_response_format(
                 source_change_mode, payload.get("sourceChangeIdentity"))} if source_change_mode else {})
             for chunk in model.create_chat_completion(messages=messages,max_tokens=response_tokens,temperature=temperature,stream=True,**source_format):
+                observe_completion_chunk(stream_observation,chunk)
                 choices=chunk.get("choices") or []
                 delta=(choices[0].get("delta") or {}).get("content") if choices else None
                 if delta:
@@ -788,10 +793,14 @@ def generate_events(payload):
                 "durationMs":round((attempt_ended-attempt_started)*1000,3),
                 "firstTokenLatencyMs":round((attempt_first_token-attempt_started)*1000,3) if attempt_first_token is not None else None,
                 "deltaChunks":attempt_chunks,
+                **stream_observation,
             }
+            candidate_check=completion_validation(candidate_check,timing)
             attempt=candidate_attempt_receipt(1,"initial-streaming",timing,candidate_check,candidate_fp)
             candidate_attempts.append(attempt)
             yield {"type":"CANDIDATE_ATTEMPT","attempt":attempt}
+    if candidate_attempts:
+        candidate_check=completion_validation(candidate_check,candidate_attempts[-1])
     yield {"type":"CANDIDATE_VALIDATION","validation":candidate_check}
     if repair_diagnostic:
         previous_fp=repair_diagnostic.get("candidateFingerprint")
@@ -820,4 +829,7 @@ def generate_events(payload):
         strict_language=strict_language,
     )
     yield {"type":"GENERATION_TELEMETRY","telemetry":telemetry}
+    if candidate_attempts and candidate_attempts[-1].get("finishReason")=="length":
+        yield {"type":"FAILED","phase":"FAILED","reason":"OUTPUT_TOKEN_LIMIT","message":"The model reached its output limit before finishing; no complete artifact was accepted.","finishReason":"length"}
+        return
     yield {"type":"COMPLETED","phase":"COMPLETE","totalLatencyMs":telemetry["engineTotalLatencyMs"],"loadLatencyMs":telemetry["modelLoadLatencyMs"],"firstDeltaLatencyMs":first_delta}

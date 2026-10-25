@@ -39,6 +39,7 @@ import chatgpt_account_memory
 import personal_history_lookup
 import private_account_facts_v208
 import tempfile
+from project_archive import ProjectArchiveError, archive_filename, build_project_archive, parse_project_files, project_markdown, source_fences, validate_project_files
 try:
     from google.auth.transport import requests as google_requests
     from google.oauth2 import id_token as google_id_token
@@ -768,32 +769,19 @@ async def mutate(request:Request):
     return result
 
 def _code_fences(text):
-    import re
-    return re.findall(r"```[^\n]*\n[\s\S]*?```",str(text or ""))
+    source=str(text or "")
+    return [source[item["start"]:item["end"]] for item in source_fences(source)]
 
 def _parse_code_files(text):
-    import re
-    files=[]
-    pattern=re.compile(r"```([^\n]*)\n([\s\S]*?)```")
-    for index,match in enumerate(pattern.finditer(str(text or "")),start=1):
-        header=str(match.group(1) or "").strip()
-        parts=header.split()
-        language=parts[0] if parts and "=" not in parts[0] else "text"
-        attrs={}
-        for part in parts[1:] if parts and "=" not in parts[0] else parts:
-            if "=" in part:
-                key,value=part.split("=",1);attrs[key.strip().lower()]=value.strip().strip('"').strip("'")
-        path=attrs.get("file") or attrs.get("path") or ("code."+({"python":"py","javascript":"js","typescript":"ts","html":"html","css":"css","java":"java","kotlin":"kt","cpp":"cpp","c":"c","json":"json"}.get(language.lower(),"txt")) if index==1 else f"file-{index}.txt")
-        files.append({"path":path[:240],"language":language[:40],"content":match.group(2)})
-    return files
+    try:
+        return parse_project_files(text)
+    except ProjectArchiveError:
+        # Imported/pinned arbitrary text cannot create an unsafe project. The
+        # generation contract reports the detailed source rejection upstream.
+        return []
 
 def _artifact_markdown(files):
-    chunks=[]
-    for item in files or []:
-        language=str(item.get("language") or "text")
-        path=str(item.get("path") or "code.txt")
-        chunks.append(f"```{language} file={path}\n{str(item.get('content') or '')}```")
-    return "\n\n".join(chunks)
+    return project_markdown(files)
 
 def _find_artifact(thread,artifact_id):
     return next((a for a in thread.get("codeArtifacts",[]) if str(a.get("id") or "")==str(artifact_id or "")),None)
@@ -826,12 +814,54 @@ def _artifact_revision_record(artifact,revision):
 def _artifact_revision_markdown(artifact,revision):
     record=_artifact_revision_record(artifact,revision)
     files=copy.deepcopy((record or {}).get("files") or [])
-    return _artifact_markdown(files)[:12000] if files else ""
+    return _artifact_markdown(files) if files else ""
+
+
+@app.get("/api/lalm_station/artifacts/{thread_id}/{artifact_id}/download")
+def download_project_archive(request:Request,thread_id:str,artifact_id:str,revision:int=0):
+    """Download one stored revision from only the verified session's own thread."""
+    _,session=_session(request)
+    with _lock:
+        _refresh_account_chat(session,force=True)
+        thread=next((item for item in session.get("threads",[]) if str(item.get("id") or "")==thread_id),None)
+        artifact=_find_artifact(thread,artifact_id) if thread else None
+        if artifact is None:
+            raise HTTPException(404,"Project artifact not found")
+        selected_revision=revision or int(artifact.get("currentRevision") or 0)
+        if selected_revision<1:
+            raise HTTPException(404,"Project artifact revision not found")
+        record=_artifact_revision_record(artifact,selected_revision)
+        if record is None and selected_revision==int(artifact.get("currentRevision") or 0):
+            # Older imported artifacts can carry only their current snapshot.
+            # Never substitute current files for a missing historical revision.
+            record={"files":artifact.get("files") or [],"sourceHash":artifact.get("currentSourceHash") or ""}
+        if record is None:
+            raise HTTPException(404,"Project artifact revision not found")
+        files=copy.deepcopy(record.get("files") or [])
+        source_hash=str(record.get("sourceHash") or "")
+        title=str(artifact.get("title") or "project")
+    try:
+        validate_project_files(files)
+        actual_source_hash=_artifact_source_hash(files)
+        if source_hash and source_hash!=actual_source_hash:
+            raise HTTPException(409,"Project revision source identity does not match its files")
+        source_hash=source_hash or actual_source_hash
+        content=build_project_archive(files,artifact_id=artifact_id,
+            revision=selected_revision,source_hash=source_hash)
+    except ProjectArchiveError as exc:
+        raise HTTPException(422,str(exc)) from None
+    return Response(content,media_type="application/zip",headers={
+        "Content-Disposition":'attachment; filename="'+archive_filename(title,artifact_id,selected_revision)+'"',
+        "Cache-Control":"private, no-store",
+        "X-Content-Type-Options":"nosniff",
+        "X-SWRLZ-Artifact-Revision":str(selected_revision),
+        "X-SWRLZ-Archive-Sha256":hashlib.sha256(content).hexdigest(),
+    })
 
 
 def _create_code_artifact(thread,message,request_id,text):
     files=_parse_code_files(text)
-    if not files or len(str(text or ""))<120:return None
+    if not files or (len(files)<2 and len(str(text or ""))<120):return None
     existing=_artifact_for_message(thread,message.get("id"))
     if existing:return existing
     artifact_id="artifact-"+uuid.uuid4().hex
@@ -887,7 +917,7 @@ def _artifact_context_item(thread,message):
     return {
         "messageId":message.get("id"),
         "role":str(message.get("role") or "").upper(),
-        "text":_artifact_markdown(files)[:12000],
+        "text":_artifact_markdown(files),
         "pinned":True,
         "artifactType":"code",
         "artifactId":artifact.get("id"),
@@ -955,7 +985,7 @@ def _history_projection(thread):
                     meta["codeArtifactId"]=artifact_id
                     meta["artifactRevision"]=revision
                     meta["artifactSourceHash"]=source_hash
-                    meta["artifactSourceSnapshot"]=_artifact_markdown(record.get("files") or [])[:12000]
+                    meta["artifactSourceSnapshot"]=_artifact_markdown(record.get("files") or [])
         projected.append({
             "id":message.get("id"),
             "role":message["role"],
@@ -1361,7 +1391,9 @@ def _run(key,request_id,model_id,payload,assistant_id):
             if online_log_persistence: telemetry_meta["onlineLogPersistence"]=online_log_persistence
             if programming_telemetry: telemetry_meta["programmingTelemetry"]=programming_telemetry
             artifact_id=str(intent.get("artifactTargetId") or "")
-            artifact=_find_artifact(thread,artifact_id) if artifact_id and intent.get("artifactMutationRequested") and not rejected else None
+            artifact=(_find_artifact(thread,artifact_id)
+                      if artifact_id and intent.get("artifactMutationRequested")
+                      and not intent.get("newProject") and not rejected else None)
             if artifact is not None:
                 committed,reason=_commit_code_artifact_revision(
                     artifact,
@@ -1372,7 +1404,7 @@ def _run(key,request_id,model_id,payload,assistant_id):
                 )
                 if committed:
                     current_hash=str(artifact.get("currentSourceHash") or "")
-                    prose=_response_prose(text) or ("Updated pinned code artifact to revision "+str(artifact["currentRevision"])+".")
+                    prose=_response_prose(text) or ("Updated code artifact to revision "+str(artifact["currentRevision"])+".")
                     message={
                         "id":assistant_id,
                         "role":"assistant",

@@ -99,7 +99,8 @@ class ModelContextTest(unittest.TestCase):
                            "githubSourceChangeTask": "candidate"}
                 model, events = self.generate(engine, payload)
                 context = next(e for e in events if e["type"] == "CONTEXT")
-                self.assertLess(context["reservedOutputTokens"], 2048)
+                self.assertEqual(context["reservedOutputTokens"], 2048)
+                self.assertLessEqual(context["estimatedInputTokens"]+context["reservedOutputTokens"]+engine.CONTEXT_SAFETY_TOKENS,engine.CONTEXT_TOKENS)
                 self.assertEqual(model.calls[0]["max_tokens"], context["reservedOutputTokens"])
                 self.assertEqual(model.calls[0]["messages"][-1]["content"], payload["prompt"].strip())
 
@@ -108,7 +109,7 @@ class ModelContextTest(unittest.TestCase):
             with self.subTest(engine=engine.__name__):
                 model = FakeModel()
                 with patch.object(engine, "load", return_value=model), self.assertRaises(ValueError):
-                    list(engine.generate_events({"prompt": "evidence " * 5000,
+                    list(engine.generate_events({"prompt": "evidence " * engine.CONTEXT_TOKENS,
                                                  "githubSourceChangeTask": "candidate"}))
                 self.assertEqual(model.calls, [])
 

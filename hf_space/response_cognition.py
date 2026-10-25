@@ -35,7 +35,7 @@ _DELIVERABLE_REQUEST = re.compile(
     r"^(?:(?:please|hey|now|okay|ok)[,!\s]+)?"
     r"(?:(?:can|could|would|will)\s+you\s+|i\s+(?:want|need)\s+you\s+to\s+|"
     r"go\s+ahead\s+and\s+)?"
-    r"(?:make|build|create|generate|produce|render|compose|write|draft|"
+    r"(?:make|do|build|create|generate|produce|render|compose|write|draft|"
     r"export|implement|code|give\s+me)\b", re.I,
 )
 _AUDIO_TARGET = re.compile(
@@ -49,7 +49,7 @@ _ASSET_TARGET = re.compile(
 )
 _CODE_TARGET = re.compile(
     r"\b(?:code|html|css|python|javascript|typescript|kotlin|java|rust|"
-    r"program|script|function|class|api|website|web[- ]?(?:page|app)|application|"
+    r"program|script|function|class|api|website|web[- ]?(?:page|app)|application|app|"
     r"source files?|compiler)\b", re.I,
 )
 _FILE_TARGET = re.compile(
@@ -83,8 +83,47 @@ def _requested_output_head(text: str) -> str:
                     text[lead.end():], maxsplit=1, flags=re.I)[0][:180]
 
 
+def requests_web_source(text: str) -> bool:
+    """Recognize a requested application page without requiring the word HTML.
+
+    Scope the requested object before purpose/feature clauses. An editor page is
+    source; a mesh *for* an editor page remains a mesh, and a written page about
+    an editor remains prose. This supplies delivery intent, never tool rights.
+    """
+    raw=_clean(text)
+    head=_requested_output_head(raw)
+    if not head:
+        # Edits to a specifically named application page have the same medium,
+        # even though the general asset-generation verb list excludes repairs.
+        lead=re.match(
+            r"^(?:(?:please|hey|now|okay|ok)[,!\s]+)?"
+            r"(?:(?:can|could|would|will)\s+you\s+)?"
+            r"(?:fix|repair|update|modify|develop)\b",raw,re.I)
+        if not lead:
+            return False
+        head=re.split(r"\b(?:for|using|with|that|which|to|about)\b|[;!?\n]",
+                      raw[lead.end():],maxsplit=1,flags=re.I)[0][:180]
+    prose_target=_TEXT_TARGET.search(head)
+    if prose_target and not re.match(r"\s+(?:editor|viewer)\s+(?:web[- ]?)?page\b",
+                                     head[prose_target.end():],re.I):
+        return False
+    if re.search(
+        r"\b(?:editor|viewer|model[ -]?(?:l?er)|modeling|modelling|dashboard|"
+        r"calculator|whiteboard|drawing|paint|game)\s+(?:web[- ]?)?page\b|"
+        r"\binteractive\s+(?:web[- ]?)?page\b",head,re.I):
+        return True
+    # 'A page to edit models' is also an application. Keep this conditional on
+    # page being the requested object, not an asset's downstream destination.
+    return bool(re.fullmatch(r"\s*(?:(?:a|an|the|my|our|this|that)\s+)?(?:web[- ]?)?page\s*",head,re.I)
+                and re.search(r"\bpage\s+(?:for|to|that\s+(?:can|will))\s+"
+                              r"(?:edit(?:ing)?|view(?:ing)?|draw(?:ing)?|calculat(?:e|ing)|"
+                              r"model(?:ing|ling)?|play(?:ing)?)\b",raw,re.I))
+
+
 def _requested_deliverable(text: str) -> str:
     """Identify a directly requested output medium, never grant execution."""
+    if requests_web_source(text):
+        return "code"
     if not _DELIVERABLE_REQUEST.search(text):
         return "none"
     # A web/code application may render models or play music. Those features
@@ -92,6 +131,8 @@ def _requested_deliverable(text: str) -> str:
     head = _requested_output_head(text)
     if _CODE_TARGET.search(head) and not _FILE_TARGET.search(head):
         return "code"
+    if re.search(r"\b(?:write|draft)\s+(?:(?:me|us)\s+)?(?:a|an|the)\s+page\s+(?:about|on|describing)\b", text, re.I):
+        return "text"
     if _TEXT_TARGET.search(text) and re.search(
         r"\b(?:write|draft|lyrics|poem|rap(?: verses?)?|letter|email|story)\b",
         text, re.I,
@@ -267,6 +308,9 @@ def classify_response_cognition(
 
     user_anchor = _latest_index(history, "user")
     assistant_anchor = _latest_index(history, "assistant")
+    if (programming or {}).get("newProject"):
+        relation = "standalone"
+        explicit_reference = False
     operation = _operation(text, relation)
 
     return {

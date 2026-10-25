@@ -1,5 +1,7 @@
 # §wyrlz Chat Overview — Stage Composition Contract
 
+**Current editor/project repair (2026-10-25, implementation pending acceptance):** inferred editor-page requests, literal UI labels and new-project boundaries are receiving explicit contracts; both engines are gaining16K context and larger response budgets with observed finish-reason handling. Complete multi-file artifacts gain session-owned revision ZIP downloads. ZIP/source validation is distinct from execution. See [current checkpoint](entries/2026-10-25_EDITOR_PROJECT_COMPLETION.md); earlier viewer-only receipts remain historical.
+
 **Role:** canonical overview for how §wyrlz Chat is composed, revealed, mutated, and audited as a theater stage.
 
 **Read with:** `§wyrlz_§tart.md`, `docs/engineering/SWRLZ_RUNTIME_HOTLOADER_GUIDE.md`, and `docs/engineering/SWRLZ_LOCKDOWN_CAMERA_SYSTEM.md`.

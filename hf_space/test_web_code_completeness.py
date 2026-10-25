@@ -133,11 +133,11 @@ class WebCompleteness(unittest.TestCase):
   model=WebModel()
   with patch.object(engine,'load',return_value=model):
    events=list(engine.generate_events({'prompt':'Create a complete static HTML page with a heading','history':[]}))
-  self.assertEqual(model.calls[0]['max_tokens'],3072)
+  self.assertEqual(model.calls[0]['max_tokens'],engine.WEB_PAGE_OUTPUT_TOKENS)
   context=next(e for e in events if e['type']=='CONTEXT')
-  self.assertGreaterEqual(context['reservedOutputTokens'],3072)
-  self.assertLessEqual(context['estimatedInputTokens']+3072+engine.CONTEXT_SAFETY_TOKENS,engine.CONTEXT_TOKENS)
-  fitted=engine._fit_messages(model,'system',[],'source '*4000,3072)
-  self.assertLess(fitted[3],3072)
+  self.assertEqual(context['reservedOutputTokens'],engine.WEB_PAGE_OUTPUT_TOKENS)
+  self.assertLessEqual(context['estimatedInputTokens']+engine.WEB_PAGE_OUTPUT_TOKENS+engine.CONTEXT_SAFETY_TOKENS,engine.CONTEXT_TOKENS)
+  with self.assertRaisesRegex(ValueError,'was not truncated'):
+   engine._fit_messages(model,'system',[],'source '*engine.CONTEXT_TOKENS,engine.WEB_PAGE_OUTPUT_TOKENS)
 
 if __name__=='__main__':unittest.main()

@@ -128,11 +128,20 @@ jobs:
           python hf_space/test_coder_model_config.py
           python hf_space/test_programming_structured_receipt_scope.py
           python hf_space/test_web_module_contract.py
+          python hf_space/test_editor_project_routing.py
+          python hf_space/test_generation_completion_budget.py
+          python hf_space/test_project_archive.py
           python hf_space/test_response_cognition_v123.py
           python hf_space/test_dual_model_work_v241.py
           python hf_space/test_github_file_intelligence_v288.py
           python hf_space/test_github_repo_view_v247.py
           python hf_space/test_programming_contract_v117.py
+
+      - name: Project ZIP download in real Chromium
+        run: |
+          npm install --prefix "$RUNNER_TEMP/swrlz-download-test" --no-package-lock --ignore-scripts playwright@1.57.0
+          "$RUNNER_TEMP/swrlz-download-test/node_modules/.bin/playwright" install --with-deps chromium
+          PLAYWRIGHT_MODULE="$RUNNER_TEMP/swrlz-download-test/node_modules/playwright/index.mjs" node tests/test_project_archive_download.mjs
 
       - name: v263 Atomic GitHub file rename, identity, consent and conflict tests
         run: |
