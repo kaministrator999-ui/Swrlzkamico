@@ -1,0 +1,206 @@
+{
+  "schema": "swrlz-github-repair-log-v1",
+  "requestId": "eval-a692c38adfd1",
+  "modelId": "700m",
+  "eventType": "REPAIR_DIAGNOSTIC",
+  "sourceRef": "ad76526a5bc3425838bb01a60c89500809ee3342",
+  "persistedAtUnixMs": 1792890059049,
+  "diagnostic": {
+    "schema": "swrlz-repair-diagnostic-v2",
+    "receiptType": "execution-failure",
+    "receiptSourceOwnership": "previous-assistant-candidate",
+    "repairTargetMessageId": "assistant-eval-066e6dff1df0",
+    "repairSourceMessageId": "assistant-eval-066e6dff1df0",
+    "repairSourceFingerprint": "ceb22fa8cd15032b",
+    "candidateFingerprint": "ceb22fa8cd15032b",
+    "repairComparator": "canonical-repair-source",
+    "exactCandidateRepeatCount": 1,
+    "stalledRepair": true,
+    "failureSignalCount": 8,
+    "failureSignals": [
+      "The actual unchanged HTML passed9/10 browser checks. Correct the failed wireframe interaction while preserving all passing behavior and original requirements. Return the complete corrected HTML. This is actual browser observation data.",
+      "\"status\": \"FAIL\",",
+      "\"actual\": {",
+      "\"actual\": {",
+      "\"actual\": {",
+      "\"actual\": {",
+      "\"passed\": false,",
+      "\"expected\": \"A first checkbox toggle must change the rendered material/scene; the initial checkbox state must correspond to the actual initial material state.\""
+    ],
+    "receiptSemantics": {
+      "categories": [
+        "behavior-mismatch",
+        "assertion"
+      ],
+      "exceptionTypes": [],
+      "exitCodes": [],
+      "failingSignals": [
+        "The actual unchanged HTML passed9/10 browser checks. Correct the failed wireframe interaction while preserving all passing behavior and original requirements. Return the complete corrected HTML. This is actual browser observation data.",
+        "{\"schema\": \"independent-browser-receipt\", \"status\": \"FAIL\", \"passed\": 9, \"total\": 10, \"candidateSha256\": \"b96261b1b32b0b47f47df662d44060c4dadf8afc543c47ef8f096bba2afbcbdf\", \"sourceBytesRewritten\": false, \"cases\": [{\"control\": {\"before\": {\"hash\": 4261318133, \"width\": 1000, \"height\": 720, \"colors\": 2, \"detail\": 174}, \"after\": {\"hash\": 866582920, \"width\": 1000, \"height\": 720, \"colors\": 2, \"detail\": 173}}, \"treatment\": {\"before\": {\"hash\": 4261318133, \"width\": 1000, \"height\": 720, \"colors\": 2, \"detai"
+      ],
+      "passingSignals": [
+        "PASS webgl-context-and-draw",
+        "PASS visible-geometry",
+        "PASS explicit-import-map",
+        "PASS wireframe-control-reachable",
+        "PASS responsive-mobile-canvas",
+        "PASS drag-orbits-scene",
+        "PASS wheel-zooms-scene",
+        "PASS dependency-loads"
+      ],
+      "expectedActual": [
+        "{\"schema\": \"independent-browser-receipt\", \"status\": \"FAIL\", \"passed\": 9, \"total\": 10, \"candidateSha256\": \"b96261b1b32b0b47f47df662d44060c4dadf8afc543c47ef8f096bba2afbcbdf\", \"sourceBytesRewritten\": false, \"cases\": [{\"control\": {\"before\": {\"hash\": 4261318133, \"width\": 1000, \"height\": 720, \"colors\": 2, \"detail\": 174}, \"after\": {\"hash\": 866582920, \"width\": 1000, \"height\": 720, \"colors\": 2, \"detail\": 173}}, \"treatment\": {\"before\": {\"hash\": 4261318133, \"width\": 1000, \"height\": 720, \"colors\": 2, \"detai"
+      ],
+      "sourceLocations": [],
+      "failingTests": [
+        "wireframe-control-changes-scene"
+      ],
+      "reportedSymbols": [],
+      "reportedDependencies": [],
+      "structuredReceipt": {
+        "formats": [
+          "json"
+        ],
+        "jsonObjectCount": 1,
+        "caseCount": 11,
+        "failedCaseCount": 2
+      },
+      "behaviorCases": [
+        {
+          "id": "webgl-context-and-draw",
+          "status": "passed",
+          "expected": null,
+          "actual": "'{\"hash\":4261318133,\"width\":1000,\"height\":720,\"colors\":2,\"detail\":174}'",
+          "message": null
+        },
+        {
+          "id": "visible-geometry",
+          "status": "passed",
+          "expected": null,
+          "actual": "'{\"hash\":4261318133,\"width\":1000,\"height\":720,\"colors\":2,\"detail\":174}'",
+          "message": null
+        },
+        {
+          "id": "explicit-import-map",
+          "status": "passed",
+          "expected": null,
+          "actual": null,
+          "message": null
+        },
+        {
+          "id": "wireframe-control-reachable",
+          "status": "passed",
+          "expected": null,
+          "actual": "'{\"controlBox\":{\"x\":4,\"y\":3,\"width\":13,\"height\":13},\"height\":720,\"scrollHeight\":740,\"rootOverflow\":\"visible\",\"bodyOverflow\":\"visible\"}'",
+          "message": null
+        },
+        {
+          "id": "responsive-mobile-canvas",
+          "status": "passed",
+          "expected": null,
+          "actual": "'{\"x\":0,\"y\":20,\"width\":390,\"height\":844}'",
+          "message": null
+        },
+        {
+          "id": "drag-orbits-scene",
+          "status": "passed",
+          "expected": null,
+          "actual": null,
+          "message": null
+        },
+        {
+          "id": "wheel-zooms-scene",
+          "status": "passed",
+          "expected": null,
+          "actual": null,
+          "message": null
+        },
+        {
+          "id": "wireframe-control-changes-scene",
+          "status": "failed",
+          "expected": "'A first checkbox toggle must change the rendered material/scene; the initial checkbox state must correspond to the actual initial material state.'",
+          "actual": null,
+          "message": null
+        },
+        {
+          "id": "dependency-loads",
+          "status": "passed",
+          "expected": null,
+          "actual": null,
+          "message": null
+        },
+        {
+          "id": "no-browser-errors",
+          "status": "passed",
+          "expected": null,
+          "actual": null,
+          "message": null
+        }
+      ]
+    },
+    "repairConstraints": {
+      "schema": "swrlz-repair-constraints-v1",
+      "dependencyPolicy": "evidence-bounded",
+      "unavailableDependencies": [],
+      "forbiddenDependencies": [],
+      "currentReceiptDependencies": [],
+      "addedDependencies": [],
+      "carriedUnavailableDependencies": [],
+      "releasedDependencies": [],
+      "constraintCount": 0
+    },
+    "behaviorLedger": {
+      "currentScore": {
+        "passed": 9,
+        "total": 10,
+        "failed": 1
+      },
+      "bestKnownScore": {
+        "passed": 9,
+        "total": 10,
+        "failed": 1
+      },
+      "regressedCases": [],
+      "resolvedCases": [],
+      "preservePassingCases": [
+        "webgl-context-and-draw",
+        "visible-geometry",
+        "explicit-import-map",
+        "wireframe-control-reachable",
+        "responsive-mobile-canvas",
+        "drag-orbits-scene",
+        "wheel-zooms-scene",
+        "dependency-loads",
+        "no-browser-errors"
+      ],
+      "rebaseRecommended": false,
+      "bestKnownArtifact": {
+        "artifactId": "artifact-fd172e4584df4b8f9392167f4e62341f",
+        "revision": 1,
+        "sourceHash": "b92fa880e449b3b48094d93b1b4b19e58d02def2e444a71f2d8e623dd3d65538",
+        "sourceFingerprint": "ceb22fa8cd15032b"
+      }
+    },
+    "behaviorRepairBase": {
+      "mode": "latest-failing-source",
+      "sourceFingerprint": "ceb22fa8cd15032b",
+      "artifactId": "artifact-fd172e4584df4b8f9392167f4e62341f",
+      "revision": 1,
+      "sourceHash": "b92fa880e449b3b48094d93b1b4b19e58d02def2e444a71f2d8e623dd3d65538"
+    },
+    "structuredReceipt": {
+      "formats": [
+        "json"
+      ],
+      "jsonObjectCount": 1,
+      "caseCount": 11,
+      "failedCaseCount": 2
+    },
+    "repairActions": [
+      "map each failing assertion to the exact source operation that produces its observed value",
+      "change the producer of the actual value so it matches the expected contract; do not patch only the displayed example"
+    ],
+    "contractBound": true,
+    "canonicalCarry": false
+  }
+}
