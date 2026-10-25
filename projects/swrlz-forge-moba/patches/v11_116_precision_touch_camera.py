@@ -102,8 +102,8 @@ def apply(html):
   radiusCandidate={mode:'Radius',point:radiusGripPt,d:distance(radiusGripPt)};
  if(atelierPrecisionGizmoEnabled('Radius')){""")
     html=once(html,
-        "    distance(depthPoint)<=threshold?{mode:'Depth',point:depthPoint,d:distance(depthPoint)}:null;",
-        "    distance(depthPoint)<=gripThreshold?{mode:'Depth',point:depthPoint,d:distance(depthPoint)}:null;")
+        "   distance(depthPoint)<=threshold?{mode:'Depth',point:depthPoint,d:distance(depthPoint)}:null;",
+        "   distance(depthPoint)<=gripThreshold?{mode:'Depth',point:depthPoint,d:distance(depthPoint)}:null;")
     # Completely stop native one-finger orbit for the pointer that actually
     # grabbed the precision handle. No checkpoint or mesh movement on drag.
     html=once(html,
