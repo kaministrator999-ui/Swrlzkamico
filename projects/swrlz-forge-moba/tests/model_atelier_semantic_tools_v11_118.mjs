@@ -57,7 +57,7 @@ const cases={
 };
 for(const [id,want] of Object.entries(cases))
  assert.equal(context.detectGroup(id),want,'misclassified '+id);
-assert.equal(context.detectGroup('FutureNewBrushOption','Sculpt'),'section fallback lost');
+assert.equal(context.detectGroup('FutureNewBrushOption','Sculpt'),'Sculpt','section fallback lost');
 assert.equal(context.detectGroup('FutureNewBrushOption','Topology'),'Topology','section fallback lost');
 assert.equal(context.detectGroup('SomethingNew'),'Meshes','safe default wrong');
 assert.ok(source.includes("GROUPS.Sculpt.splice(1,0,['Precision circle cut'"),'precision cut absent');
