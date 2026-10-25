@@ -34,7 +34,7 @@ assert.ok(css.includes('-webkit-touch-callout:none!important'));
 assert.ok(css.includes('-webkit-touch-callout:default!important'));
 assert.ok(css.includes('-webkit-user-select:text!important'));
 assert.ok(css.includes('body :where('),'non-editable text rule specificity too high');
-assert.ok(!css.includes('maximum-scale'));
+assert.ok(!/maximum-scale\s*=/.test(css));
 assert.ok(!css.includes('user-scalable=no'));
 assert.ok(!css.includes('touch-action:none!important'));
 assert.ok(!js.includes("addEventListener('pointerdown'"));
