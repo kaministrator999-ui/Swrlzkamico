@@ -13,6 +13,13 @@ def apply(html):
  css=(root/'runtime/model_atelier_unified_modes_v11_119.css').read_text(encoding='utf8')
  html=once(html,'function atelierAdaptiveInstall(panel){',
                 js+'\nfunction atelierAdaptiveInstall(panel){')
+ # Real Chromium uncovered a historical v11.117 bootstrap scope leak:
+ # the callout helper was declared in the ModelAtelier closure but invoked
+ # after it. Publish it on window without rewriting the historical patch.
+ html=once(html,'function seAtelierCalloutInstall(){',
+           'window.seAtelierCalloutInstall=function seAtelierCalloutInstall(){')
+ html=once(html,'ModelAtelier.install();\nseAtelierCalloutInstall();',
+           'ModelAtelier.install();\nwindow.seAtelierCalloutInstall();')
  # Do not create the second fixed-context sheet. Reuse its field proxies inside
  # the actual draggable inspector, retaining original source controls.
  html=once(html,' panel.append(ui);\n window.__SWRLZ_CONTEXT_BOOT.attached=true;',
