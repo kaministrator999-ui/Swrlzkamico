@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.114",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_114_CIRCLE_VIEWPORT_HANDLES",
-  "reason": "Owner requested direct viewport controls for numeric Precision circle cut radius and depth. v11.114 adds independent opt-in amber radius and violet depth handles in Model Atelier, touch/mouse hit testing on ring/grips, mobile-screen drag sensitivity and head-on vertical depth fallback, synchronized existing numeric fields and editor-only rounded footprint/depth guides. Rebuild exact validated cut preview once at pointer release; no mesh mutation or Undo checkpoint until owner explicitly Applies. Preserve normal orbit/pick elsewhere, manual per-hole cut placement, saved editable recipes, supported native spheres/box faces/cylinder caps, organic sculpt tools, renderer modes, JSON/OBJ/GLB, 68 assets and unrelated apps. Targeted pointer simulation #40137169712 succeeded after correction; official full source and 68-asset seal #40137456458 passed. 146 ordered patches, 6,594,602 exact HTML bytes, SHA-256 7cd989c5973bb978725f0495ad9b20cf17328cbeaacc0954e0ebdf1b5717c22b. Require hosted SOURCE/artwork integrity; owner Android UX acceptance remains outstanding.",
-  "sourceCommit": "2647cc4858afb6d79666ca4233060e1c3a511135",
-  "sourceIntegritySha256": "7cd989c5973bb978725f0495ad9b20cf17328cbeaacc0954e0ebdf1b5717c22b"
+  "releaseVersion": "v11.115",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_115_SAFE_PRECISION_PREVIEW_SELECTION",
+  "reason": "§E owner Android screenshot: Model Atelier showed one native editable sphere selected under Mesh tools Move Z and a visually separate unsaved holed sphere that couldn't be selected. Diagnosis: Precision circle-cut ghost lives in world (not selectable modelRoot); native model move/render rebuild leaves ghost static while actual source moves. v11.115 adds guarded preview lifecycle and click proxy: block whole-part gizmo handles and quick-strip nudges during an active hole preview, cleanup orphan ghost whenever native model render/selection/Undo/transform rebuilds, tap the preview to restore original editable part selection; explicit preview-only info. Do not auto-commit any hole, save checkpoint, or alter existing radius/depth gizmos. Targeted tests #40153683396 passed raycast re-selection, transform block, nudge block, source render cleanup and zero checkpoints. Sealed full official artifact #40153953022 passed 147 ordered patches, all 68 assets, 6600621 HTML bytes SHA-256 5cf410b40661f9c4a0a11089eceaca9a57a6ff1f6664d7a9a1e8cea8ed879f37. Deploy and verify live source and SOURCE receipt; owner Android acceptance remains outstanding.",
+  "sourceCommit": "aa738317b34f59b6394315e1e36f657d0cdf6425",
+  "sourceIntegritySha256": "5cf410b40661f9c4a0a11089eceaca9a57a6ff1f6664d7a9a1e8cea8ed879f37"
 }
