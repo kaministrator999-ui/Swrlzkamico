@@ -26,7 +26,10 @@ try{
  await page.waitForFunction(()=>!!window.SWYRL_ENGINE_MODEL_ATELIER?.loadStarter,
    {timeout:20000});
  if(!(await page.locator('#modelAtelierPanel').count())){
-  const started=await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.loadStarter());
+  const started=await page.evaluate(()=>{
+   window.confirm=()=>true;
+   return window.SWYRL_ENGINE_MODEL_ATELIER.loadStarter();
+  });
   console.log('SE_V11119_CHROME_STARTER',started);
 
  }
