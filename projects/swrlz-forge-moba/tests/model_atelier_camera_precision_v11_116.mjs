@@ -96,7 +96,7 @@ vm.runInContext(String.raw`
 atelierCameraTouches.set(44,{x:310,y:460});
 atelierPrecisionGuardTap={id:44,x:310,y:460};
 atelierPrecisionCircleDraft={ghost:{parent:{}},originalId:'ball'};`,c);
-get('atelierPrecisionGuardPointerUp')?.(up(44));
+get('atelierPrecisionGuardPointerUp')?.({...up(44),clientX:310,clientY:460});
 // V8 function bindings live in context and should resolve through vm as well.
 assert.equal(get('atelierCameraTouches.size'),0,'preview tap stranded finger in camera map');
 assert.equal(selected,'ball','preview tap failed to reselect editable source');
