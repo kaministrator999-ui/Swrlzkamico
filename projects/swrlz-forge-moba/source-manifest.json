@@ -165,6 +165,6 @@
     "patches/v11_116_precision_touch_camera.py",
     "patches/v11_117_editor_native_callout.py"
   ],
-  "finalBytes": 6604917,
-  "finalSha256": "452e66118becd908cd431d9dbf1bc2345996db41c31c9b7da5326c0614d2e779"
+  "finalBytes": 6605187,
+  "finalSha256": "0a7af4ccc8515cc0f12a827427b2fba71e0362e878d3c6f45f16bb74bfecaa84"
 }
