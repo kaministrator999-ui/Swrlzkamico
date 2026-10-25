@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 import assert from 'node:assert/strict';
 const built=fs.readFileSync('/tmp/se-v11119.mjs','utf8');
+const style=fs.readFileSync('projects/swrlz-forge-moba/runtime/model_atelier_unified_modes_v11_119.css','utf8');
 function fn(name){
  const i=built.indexOf('function '+name+'(');
  assert.ok(i>=0,'missing '+name);
@@ -58,7 +59,7 @@ assert.ok(built.includes("const modeBar=document.createElement('nav');"),'no sec
 assert.ok(built.includes("button.addEventListener('click'"),'mode toolbar actions not wired');
 assert.ok(built.includes("const exports=buttons.filter(b=>b!==save&&b!==close);"),'export buttons lost');
 assert.ok(built.includes("menu.append(summary,cameras);"),'camera views not preserved');
-assert.ok(built.includes("#modelAtelierPanel.se-inspector-mode-view .atelier-inspector"),'native panel mobile layout absent');
-assert.ok(built.includes("#modelAtelierPanel .se-atelier-modes[hidden]"),'mode rail missing hidden state');
-assert.ok(built.includes("#modelAtelierPanel.se-inspector-mode-view #atelierContextWorkbench"),'inline context display not styled');
+assert.ok(style.includes("#modelAtelierPanel.se-inspector-mode-view .atelier-inspector"),'native panel mobile layout absent');
+assert.ok(style.includes("#modelAtelierPanel .se-atelier-modes[hidden]"),'mode rail missing hidden state');
+assert.ok(style.includes("#modelAtelierPanel.se-inspector-mode-view #atelierContextWorkbench"),'inline context display not styled');
 console.log('SE_V11119_SINGLE_MOVABLE_INSPECTOR_MODE_RIBBON_AND_TOP_MENUS_PASS');
