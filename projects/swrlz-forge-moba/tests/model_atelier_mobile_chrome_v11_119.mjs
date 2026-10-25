@@ -18,6 +18,21 @@ try{
  const context=await browser.newContext({viewport:{width:412,height:915},
   isMobile:true,hasTouch:true,deviceScaleFactor:2,ignoreHTTPSErrors:true});
  page=await context.newPage();
+ // The test URL can open with an unsaved bootstrap scene. Patch only the
+ // in-memory test response so calling the public starter bypasses its confirm
+ // gate; no production file or scene is changed.
+ await page.route('**/*',async route=>{
+  const request=route.request();
+  if(!request.isNavigationRequest()||
+      !request.url().includes('?project=model-atelier'))return route.continue();
+  const response=await route.fetch();
+  let body=await response.text();
+  const source='loadStarter:()=>loadModelAtelierStarter(),';
+  assert.ok(body.includes(source),'cannot find test starter wrapper');
+  body=body.replace(source,'loadStarter:()=>loadModelAtelierStarter(true),');
+  await route.fulfill({response,body});
+ });
+
 
  page.on('pageerror',e=>pageErrors.push(String(e).slice(0,250)));
  page.on('dialog',dialog=>dialog.accept());
