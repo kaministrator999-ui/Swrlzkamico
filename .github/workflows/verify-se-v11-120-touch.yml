@@ -1,7 +1,7 @@
 name: §E v11.120 toolbar and zoom preflight
 on:
   push:
-    branches: [feature/atelier-top-layers-centered-touch-v11-120]
+    branches: [feature/atelier-uncover-component-tools-v11-121]
 permissions:
   contents: read
 jobs:
