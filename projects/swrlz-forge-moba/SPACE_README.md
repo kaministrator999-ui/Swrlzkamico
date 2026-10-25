@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.114
+title: §wyrl§ Engine v11.115
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.115 · Prevent detached precision-cut preview and accidental mesh moves (2026-10-24)
+
+The owner photographed one Model Atelier sphere plus a separate apparently unselectable second ball with a carved hole while native Mesh tools were set to **Move Z**. The editor showed **1 individually editable meshes**: the holed sphere was actually an unsaved **precision-cut preview ghost** (rendered in `world`, not the selectable `modelRoot`), while the real source sphere moved independently beneath it. This version guards the lifecycle of that temporary render, not the geometry of the underlying cut. During an active ghost preview, block native Mesh Move/Rotate/Scale hit-handle starts and quick-strip +/- whole-mesh nudges, with an explanatory warning directing the user to amber Radius and violet Depth controls. A tap on the ghost proxy now reselects the corresponding editable source mesh safely, and native `renderParts()` selection/Undo/transform rebuilds clean up stale ghost geometry. Clearly mark the cut as **PREVIEW ONLY** until Apply; no preview change invokes `checkpoint()`, changes native mesh source or silently commits a cut. The original user-made precision cut remains fully editable once explicitly Applied. Targeted [preview-safety preflight #40153683396](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40153683396) tested ghost raycast proxy selection, direct transform hit blocking, nudge blocking, render invalidation and zero model checkpoints, alongside the prior sealed artifact + JavaScript syntax. All 68 assets, previous tools, meshes, and viewport radius/depth handles are preserved. Full source checksum, actual hosted integrity and owner Android visual confirmation are separate acceptance gates.
 
 ## §E v11.114 · Direct viewport radius/depth editing for Precision Circle Cut (2026-10-24)
 
