@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.117",
+  "name": "§wyrl§ Engine v11.118",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_117.html",
+  "finalArtifact": "swyrl_engine_v11_118.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -163,8 +163,9 @@
     "patches/v11_114_circle_viewport_handles.py",
     "patches/v11_115_preview_selection_guard.py",
     "patches/v11_116_precision_touch_camera.py",
-    "patches/v11_117_editor_native_callout.py"
+    "patches/v11_117_editor_native_callout.py",
+    "patches/v11_118_semantic_tool_organization.py"
   ],
-  "finalBytes": 6605187,
-  "finalSha256": "0a7af4ccc8515cc0f12a827427b2fba71e0362e878d3c6f45f16bb74bfecaa84"
+  "finalBytes": 6608180,
+  "finalSha256": "d66624d15dd357dac96766a64ab3e74ec442456bbd5454790393dc6e80a9e52c"
 }
