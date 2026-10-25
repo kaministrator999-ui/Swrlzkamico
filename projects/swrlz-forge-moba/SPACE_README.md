@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.116
+title: §wyrl§ Engine v11.117
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,12 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.117 · Suppress Android/Chrome long-press menus inside Model Atelier (2026-10-25)
+
+The owner requested that holding a finger anywhere inside the editor should not trigger the browser's native popup/dropdown context menu. Add a **Model Atelier-scoped** forward-only gesture guard. While `#modelAtelierPanel` is open, capture `contextmenu` on the editor viewport, floating tool panels and other editor controls, including its detached `#seMobileNumberPad` modal. Suppress incidental text selection on **non-editable** editor chrome, while preserving text-input caret, selection and paste, plus the existing touch-action CSS, scrollable inspector, single-finger orbit, two-finger pan/pinch, sculpt and radius/depth gizmo interactions. Closing Model Atelier restores the browser's ordinary context-menu behavior outside the editor; unrelated project/app surfaces are not affected. Scoped `-webkit-touch-callout:none` CSS and the minimal `contextmenu`/`selectstart` handlers never intercept `pointerdown`, `pointermove`, `touchstart` or `touchmove`. This does not claim control over browser/OS chrome outside the page.
+
+**Evidence and gates:** [targeted source preflight #40203921640](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40203921640) passed suppression/selection scoping, previous camera-touch and radius/depth regression, and JavaScript syntax on the 149-patch candidate. Official v11.117 final assembled source is **6,605,187 HTML bytes**, SHA-256 `0a7af4ccc8515cc0f12a827427b2fba71e0362e878d3c6f45f16bb74bfecaa84`, retaining all 68 bundled assets and prior history. Sealed-release CI, guarded Hugging Face deployment, hosted integrity and owner's Android long-hold acceptance remain independent gates.
 
 ## §E v11.116 · Precision radius touch and reliable camera gestures (2026-10-24)
 
