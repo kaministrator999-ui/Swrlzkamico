@@ -1,0 +1,28 @@
+{
+  "schema": "swrlz-github-repair-log-v1",
+  "requestId": "eval-a692c38adfd1",
+  "modelId": "700m",
+  "eventType": "REPAIR_OUTCOME_DIAGNOSTIC",
+  "sourceRef": "ad76526a5bc3425838bb01a60c89500809ee3342",
+  "persistedAtUnixMs": 1792890250719,
+  "diagnostic": {
+    "schema": "swrlz-repair-outcome-v2",
+    "previousCandidateFingerprint": "ceb22fa8cd15032b",
+    "newCandidateFingerprint": "61ead1cd46aa1401",
+    "candidateChanged": true,
+    "stalledRepairInput": true,
+    "regenerationAttempted": true,
+    "regenerationReason": "unchanged-executable-candidate",
+    "candidateValidationStatus": "PASS",
+    "candidateValidationReasons": [],
+    "receiptCategories": [
+      "behavior-mismatch",
+      "assertion"
+    ],
+    "repairActions": [
+      "map each failing assertion to the exact source operation that produces its observed value",
+      "change the producer of the actual value so it matches the expected contract; do not patch only the displayed example"
+    ],
+    "executionVerified": false
+  }
+}
