@@ -1,0 +1,266 @@
+{
+  "source": "actual newly deployed Space via public Station HTTP; fresh anonymous thread",
+  "requestId": "eval-e650459c948f",
+  "prompt": "Describe a quiet lakeside sunrise in two short sentences.",
+  "requestedModel": "700m",
+  "seconds": 22.211259338990203,
+  "generation": {
+    "requestId": "eval-e650459c948f",
+    "threadId": "test-d37041837ade4768a85e1d2c6ab7b30c",
+    "modelId": "700m",
+    "requestedModelId": "700m",
+    "selectedModelId": "700m",
+    "text": "The lakeside awakens with a gentle dawn, its surface glowing softly as sunlight pierces the horizon. A serene silence envelops the tranquil scene, broken only by the distant call of a bird.",
+    "phase": "COMPLETE",
+    "terminal": true,
+    "lastSeq": 55,
+    "status": [
+      {
+        "phase": "QUEUED",
+        "reason": "Accepted by Workstation",
+        "atUnixMs": 1792890676657
+      },
+      {
+        "phase": "GENERATING",
+        "reason": "Workstation admitted generation",
+        "atUnixMs": 1792890676660
+      },
+      {
+        "seq": 1,
+        "phase": "PROGRAMMING_INTENT",
+        "reason": "",
+        "atUnixMs": 1792890676663
+      },
+      {
+        "seq": 2,
+        "phase": "DIAGNOSTIC_READY",
+        "reason": "",
+        "atUnixMs": 1792890676664
+      },
+      {
+        "seq": 3,
+        "phase": "RESPONSE_COGNITION",
+        "reason": "",
+        "atUnixMs": 1792890676665
+      },
+      {
+        "seq": 4,
+        "phase": "LOADING",
+        "reason": "",
+        "categories": [],
+        "atUnixMs": 1792890676666
+      },
+      {
+        "seq": 5,
+        "phase": "CONTEXT_BUDGETED",
+        "reason": "",
+        "atUnixMs": 1792890676690
+      },
+      {
+        "seq": 6,
+        "phase": "GENERATING",
+        "reason": "",
+        "categories": [],
+        "atUnixMs": 1792890676690
+      },
+      {
+        "seq": 7,
+        "phase": "RESOURCE_ALLOCATED",
+        "reason": "Workstation inference budget active",
+        "atUnixMs": 1792890676690
+      },
+      {
+        "seq": 52,
+        "phase": "CANDIDATE_ATTEMPT",
+        "reason": "attempt=1",
+        "atUnixMs": 1792890697442
+      },
+      {
+        "seq": 53,
+        "phase": "CANDIDATE_NOT_APPLICABLE",
+        "reason": "",
+        "atUnixMs": 1792890697442
+      },
+      {
+        "seq": 54,
+        "phase": "GENERATION_TELEMETRY",
+        "reason": "",
+        "atUnixMs": 1792890697442
+      },
+      {
+        "seq": 55,
+        "phase": "COMPLETE",
+        "reason": "",
+        "atUnixMs": 1792890697442
+      },
+      {
+        "phase": "PERSISTING",
+        "reason": "Saving the response to the chat",
+        "atUnixMs": 1792890697442
+      }
+    ],
+    "acceptedAtUnixMs": 1792890676657,
+    "startedAtUnixMs": 1792890676660,
+    "completedAtUnixMs": 1792890697442,
+    "queueWaitMs": 3,
+    "stationTiming": {
+      "acceptedAtUnixMs": 1792890676657,
+      "startedAtUnixMs": 1792890676660,
+      "completedAtUnixMs": 1792890697442,
+      "queueWaitMs": 3,
+      "stationRunMs": 20782,
+      "endToEndMs": 20785
+    },
+    "resourcePlan": {
+      "cpuCapacity": 16,
+      "decodeThreads": 8,
+      "batchThreads": 16,
+      "maxResponseTokens": 768
+    },
+    "diagnosticTrace": {
+      "schema": "swrlz-decision-trace-v1",
+      "assistant": "\u00a7wyrlz",
+      "user": "the user",
+      "historyTurns": 0,
+      "historyDepth": "none",
+      "profileLayers": {
+        "builtinAssistant": true,
+        "assistantCustomization": false,
+        "userProfile": false
+      },
+      "guards": {
+        "longHistoryClaimSupported": false,
+        "profileIsNotThreadHistory": true,
+        "roleOwnershipEnabled": true
+      },
+      "memoryPolicy": {
+        "source": "conversation evidence only",
+        "rawPrivateReasoningStored": false,
+        "candidateValidationRequired": true
+      }
+    },
+    "memoryCandidates": [],
+    "responseCognition": {
+      "schema": "swrlz-response-cognition-v1",
+      "relation": "standalone",
+      "operation": "respond",
+      "historyAvailable": false,
+      "historyTurns": 0,
+      "anchorUserIndex": null,
+      "anchorAssistantIndex": null,
+      "explicitReference": false,
+      "questionLike": false,
+      "detailMode": "compact",
+      "requestedCount": null,
+      "outputOnly": false,
+      "preserveConstraint": false,
+      "programming": false,
+      "deliverable": "none",
+      "sourcePreference": "unspecified"
+    },
+    "onlineResearch": null,
+    "onlineTrace": [],
+    "onlineLogPersistence": null,
+    "sources": [],
+    "widgets": [],
+    "programmingIntent": {
+      "schema": "swrlz-programming-intent-v1",
+      "codingTask": false,
+      "projectContext": "none",
+      "changeClass": "none",
+      "artifactContinuation": false,
+      "artifactMutationRequested": false,
+      "artifactTargetId": "",
+      "artifactTargetMessageId": "",
+      "baseRevision": 0,
+      "baseSourceHash": "",
+      "newProject": false,
+      "source": "brain-router"
+    },
+    "intentContract": null,
+    "failureEvidence": null,
+    "repairConstraints": null,
+    "behaviorLedger": null,
+    "behaviorRepairBase": null,
+    "candidateValidation": {
+      "status": "NOT_APPLICABLE",
+      "reasons": []
+    },
+    "candidateAttempts": [
+      {
+        "schema": "swrlz-candidate-attempt-v1",
+        "attempt": 1,
+        "trigger": "initial-streaming",
+        "durationMs": 20750.988,
+        "firstTokenLatencyMs": 19752.948,
+        "deltaChunks": 44,
+        "candidateFingerprint": "ea90bcb3c32cc23b",
+        "changedFromPreviousAttempt": null,
+        "changedFromRepairTarget": null,
+        "validationStatus": "NOT_APPLICABLE",
+        "validationReasons": [],
+        "accepted": false
+      }
+    ],
+    "generationTelemetry": {
+      "schema": "swrlz-programming-generation-telemetry-v1",
+      "attemptCount": 1,
+      "regenerationCount": 0,
+      "firstCandidateRejected": false,
+      "finalAcceptedAttempt": null,
+      "finalCandidateStatus": "NOT_APPLICABLE",
+      "guardedTurn": false,
+      "repairTurn": false,
+      "strictLanguage": false,
+      "modelLoadLatencyMs": 23.684,
+      "visibleFirstDeltaLatencyMs": 19776.773,
+      "engineTotalLatencyMs": 20775.288,
+      "totalCandidateGenerationMs": 20750.988,
+      "attempts": [
+        {
+          "schema": "swrlz-candidate-attempt-v1",
+          "attempt": 1,
+          "trigger": "initial-streaming",
+          "durationMs": 20750.988,
+          "firstTokenLatencyMs": 19752.948,
+          "deltaChunks": 44,
+          "candidateFingerprint": "ea90bcb3c32cc23b",
+          "changedFromPreviousAttempt": null,
+          "changedFromRepairTarget": null,
+          "validationStatus": "NOT_APPLICABLE",
+          "validationReasons": [],
+          "accepted": false
+        }
+      ]
+    },
+    "engineCompletionTelemetry": {
+      "totalLatencyMs": 20775.288,
+      "loadLatencyMs": 23.684,
+      "firstDeltaLatencyMs": 19776.773
+    },
+    "repairDiagnostics": [],
+    "artifactReceipt": null,
+    "githubTelemetryPersistence": null,
+    "contextBudget": {
+      "contextWindowTokens": 8192,
+      "inputBudgetTokens": 7680,
+      "estimatedInputTokens": 4987,
+      "reservedOutputTokens": 2048,
+      "historyMessagesDropped": 0,
+      "historyMessagesKept": 0,
+      "repairTurn": false,
+      "repairContext": {},
+      "tokenBreakdown": {
+        "system": 4968,
+        "history": 0,
+        "currentPrompt": 19,
+        "total": 4987
+      }
+    },
+    "terminalType": "COMPLETE"
+  },
+  "deadlineReached": false,
+  "authenticatedAcceptance": false,
+  "cookieValuesRecorded": false,
+  "diagnosticsMayPersist": true
+}

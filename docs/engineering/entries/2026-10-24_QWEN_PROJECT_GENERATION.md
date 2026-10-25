@@ -1,6 +1,6 @@
 # Qwen project generation and authorized HF publication
 
-Mode: IMPLEMENT. State: FIRST_RELEASE_LIVE_VERIFIED / GENERIC_REQUEST_FOLLOW_UP_IN_PROGRESS. Owner explicitly clarified that Qwen must generate working projects, including HTML3D viewers; an engineer-built reference is not model acceptance. Owner explicitly authorized publishing all validated updates live. No additional deploy confirmation is required.
+Mode: IMPLEMENT. State: DEPLOYED_LIVE_VERIFIED. Owner explicitly clarified that Qwen must generate working projects, including HTML3D viewers; an engineer-built reference is not model acceptance. Owner explicitly authorized publishing all validated updates live. No additional deploy confirmation is required.
 
 ## Scope and authority
 
@@ -91,3 +91,19 @@ Changed-tree verification:72 focused tests+114subtests,19HF candidate checks, an
 ## Guarded publication request
 
 Owner authorized live publication. Exact candidate source `6240d7151692898b9f30e75675707083ddb7f4cc`; CI run 40149124604 completed SUCCESS. This request starts the canonical HF workflow; upload/build/runtime acceptance remain pending and will be recorded separately.
+
+## Ordinary-request follow-up — final live acceptance, 2026-10-25
+
+Exact source `6240d7151692898b9f30e75675707083ddb7f4cc`; CI40149124604 SUCCESS; guarded deploy [40149219806](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40149219806) SUCCESS. Space RUNNING at `75e45f4148e9eb8972d95305d92b67838c55b47c`; rollback `f61878f448ed84801dd5891df1755ca558fe53d6`. A fresh live prompt requested an HTML3D viewer without naming a library/version. Request `eval-e773b482b0ea` entered as700m and routed to coder. Its accepted response completed in106.0s and its unchanged output passed all10 independent WebGL/browser checks. The first delivered response passed without a same-thread repair request. No engineer-written viewer, expected implementation or test source was supplied to the model.
+
+Shared source fingerprints now retain CSS ID-selector changes, and verified API facts cover exact-name/addon-prefix resolution. Repeated fresh-project drafts receive causal strategy-change guidance. Internal bounded retries also include the latest complete rejected draft and actual source feedback, retaining original requirements and recomputing context/output limits. The inference helper also offers version-scoped facts for compatible fresh standalone3Dweb requests, preserves confirmed facts during repair, and skips explicit offline/no-library/raw-WebGL/other-framework requests. Numerical “three buttons” is not a library request.72 focused tests+114subtests pass; existing19HF candidate and source/repair regressions remain passing, with exact-source CI success.
+
+Final canonical versions: Repository Work1.0.240, LALM2.1.203; Server2.3.440, Chat1.5.157, manifest152, streamV2 and deploy-control1.0.41 unchanged for this follow-up. Registry commit `76ba585557dd36c2d689581a6ecfa74c32993b7d`. Immutable source archive SHA256 `1010e5d48e1c725546f84737645019eaee8c37e71869c465a76ec0b0d1894c51`; final live evidence is separate from its source-candidate observations.
+
+Bounded goal disposition: deployed and live-model/browser verified. General competence beyond tested tasks and signed-in/provider acceptance are not inferred; existing approval/write gates remain intact.
+
+Historical sourcead76526a: the first delivered response and repair1 each passed9/10; repair2 was withheld for unchanged executable source. Earlier9a18 mobile repair also ended rejected. These negative observations remain retained and are not counted as accepted results. The exact final source and live/native acceptance above supersede their in-progress status.
+
+The same-source native seed42 ordinary-prompt trial passed10/10 browser checks on its first complete draft, without an experimental planner or source edits. Fresh ordinary700M live request `eval-e650459c948f` stayed on700m and completed in22.2s.
+
+Same-thread repair rounds before this accepted result: 0. Missing module mappings are checked before delivery and real source-rejection reasons reach bounded, context-fitted retries. This is source validation, not a server claim that JavaScript was executed.

@@ -1,5 +1,7 @@
 # §wyrlz Chat Overview — Stage Composition Contract
 
+**Current verified ordinary-request follow-up (2026-10-25):** LALM2.1.203/Server2.3.440; pinned Qwen7B coding and700M conversation. Live source `6240d7151692898b9f30e75675707083ddb7f4cc` generated a working HTML3D viewer from a request naming no library/version; unchanged output passed10/10 isolated browser checks. See [current release evidence](entries/2026-10-24_QWEN_PROJECT_GENERATION.md). Previous release snapshots below remain history.
+
 **Current verified release (2026-10-24):** live source `0e361f97d9b0ec72a63581dc06ac22c610a11f1f` runs pinned Qwen7B coding with700M conversation; LALM2.1.202/Server2.3.440. Actual live700m→coder viewer output passed10/10 isolated browser checks. Older implementation snapshots below are historical. See [current generation/release checkpoint](entries/2026-10-24_QWEN_PROJECT_GENERATION.md) for scope, exact evidence, limitations and rollback.
 
 **Role:** canonical overview for how §wyrlz Chat is composed, revealed, mutated, and audited as a theater stage.

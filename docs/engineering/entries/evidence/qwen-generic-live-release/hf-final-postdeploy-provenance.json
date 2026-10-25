@@ -1,0 +1,10 @@
+{
+  "sourceRepository": "kaministrator999-ui/Swrlzkamico",
+  "sourceCommit": "6240d7151692898b9f30e75675707083ddb7f4cc",
+  "modelFormat": "SWRLZX",
+  "rawSha256": "65e4b5d730f66024c44da25aec27730db27aa0019df0df26c0997d17ce58bdee",
+  "rawSizeBytes": 233637480,
+  "transportSha256": "f0a466c869447345eb2e13d8ad4cf267830a1d69f20bb88de4e1ecf3ade863c7",
+  "transportChunks": 54,
+  "modelDelivery": "verified chunk download on startup; no model uploaded by workflow"
+}

@@ -1,0 +1,506 @@
+{
+  "source": "actual live Station API with canonical same-thread history on repair; fresh anonymous session",
+  "round": 0,
+  "requestId": "eval-e773b482b0ea",
+  "prompt": "Build a complete single-file HTML 3D model viewer. Show a cube immediately. Include mouse drag to orbit, wheel zoom, a working wireframe checkbox, and responsive sizing. Keep all controls visible and reachable on desktop and mobile. Return complete HTML code without TODOs or instructions to implement missing parts. Do not claim tests ran.",
+  "initialGoalSha256": "2d412f15531dd32526181093e4a414a40d3c816db959ba980c00869a363c1bca",
+  "generation": {
+    "requestId": "eval-e773b482b0ea",
+    "threadId": "test-5c52325a4dbd4a3e9459c5fcd9fb4fd6",
+    "modelId": "700m",
+    "requestedModelId": "700m",
+    "selectedModelId": "coder",
+    "text": "```html\n<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>3D Cube Viewer</title>\n    <script type=\"importmap\">\n        {\n            \"imports\": {\n                \"three\": \"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js\",\n                \"three/addons/\": \"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/\"\n            }\n        }\n    </script>\n    <style>\n        body { margin: 0; }\n        canvas { display: block; }\n    </style>\n</head>\n<body>\n    <input type=\"checkbox\" id=\"wireframeCheckbox\"> Wireframe\n    <script type=\"module\">\n        import * as THREE from 'three';\n        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';\n\n        const scene = new THREE.Scene();\n        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);\n        const renderer = new THREE.WebGLRenderer();\n        renderer.setSize(window.innerWidth, window.innerHeight);\n        document.body.appendChild(renderer.domElement);\n\n        const geometry = new THREE.BoxGeometry();\n        const material = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: false });\n        const cube = new THREE.Mesh(geometry, material);\n        scene.add(cube);\n\n        camera.position.z = 5;\n\n        const controls = new OrbitControls(camera, renderer.domElement);\n\n        const wireframeCheckbox = document.getElementById('wireframeCheckbox');\n        wireframeCheckbox.addEventListener('change', () => {\n            material.wireframe = wireframeCheckbox.checked;\n        });\n\n        function animate() {\n            requestAnimationFrame(animate);\n            cube.rotation.x += 0.01;\n            cube.rotation.y += 0.01;\n            controls.update();\n            renderer.render(scene, camera);\n        }\n\n        animate();\n\n        window.addEventListener('resize', () => {\n            camera.aspect = window.innerWidth / window.innerHeight;\n            camera.updateProjectionMatrix();\n            renderer.setSize(window.innerWidth, window.innerHeight);\n        });\n    </script>\n</body>\n</html>\n```",
+    "phase": "COMPLETE",
+    "terminal": true,
+    "lastSeq": 14,
+    "status": [
+      {
+        "phase": "QUEUED",
+        "reason": "Accepted by Workstation",
+        "atUnixMs": 1792890658510
+      },
+      {
+        "phase": "GENERATING",
+        "reason": "Workstation admitted generation",
+        "atUnixMs": 1792890658515
+      },
+      {
+        "seq": 1,
+        "phase": "PROGRAMMING_INTENT",
+        "reason": "",
+        "atUnixMs": 1792890658526
+      },
+      {
+        "seq": 2,
+        "phase": "CODER_AUTO_ROUTE",
+        "reason": "programming-intent",
+        "categories": [
+          "MODEL_ROUTE"
+        ],
+        "provider": "coder",
+        "atUnixMs": 1792890658526
+      },
+      {
+        "seq": 3,
+        "phase": "DIAGNOSTIC_READY",
+        "reason": "",
+        "atUnixMs": 1792890658527
+      },
+      {
+        "seq": 4,
+        "phase": "RESPONSE_COGNITION",
+        "reason": "",
+        "atUnixMs": 1792890658530
+      },
+      {
+        "seq": 5,
+        "phase": "PROGRAMMING_INTENT",
+        "reason": "",
+        "atUnixMs": 1792890658530
+      },
+      {
+        "seq": 6,
+        "phase": "LOADING",
+        "reason": "",
+        "categories": [],
+        "atUnixMs": 1792890658532
+      },
+      {
+        "seq": 7,
+        "phase": "CONTEXT_BUDGETED",
+        "reason": "",
+        "atUnixMs": 1792890658562
+      },
+      {
+        "seq": 8,
+        "phase": "GENERATING",
+        "reason": "",
+        "categories": [],
+        "atUnixMs": 1792890658562
+      },
+      {
+        "seq": 9,
+        "phase": "RESOURCE_ALLOCATED",
+        "reason": "Workstation inference budget active",
+        "atUnixMs": 1792890658562
+      },
+      {
+        "seq": 10,
+        "phase": "CANDIDATE_ATTEMPT",
+        "reason": "attempt=1",
+        "atUnixMs": 1792890761979
+      },
+      {
+        "seq": 12,
+        "phase": "CANDIDATE_PASS",
+        "reason": "",
+        "atUnixMs": 1792890761979
+      },
+      {
+        "seq": 13,
+        "phase": "GENERATION_TELEMETRY",
+        "reason": "",
+        "atUnixMs": 1792890761979
+      },
+      {
+        "seq": 14,
+        "phase": "COMPLETE",
+        "reason": "",
+        "atUnixMs": 1792890761979
+      },
+      {
+        "phase": "PERSISTING",
+        "reason": "Saving the response to the chat",
+        "atUnixMs": 1792890761979
+      }
+    ],
+    "acceptedAtUnixMs": 1792890658510,
+    "startedAtUnixMs": 1792890658515,
+    "completedAtUnixMs": 1792890761979,
+    "queueWaitMs": 5,
+    "stationTiming": {
+      "acceptedAtUnixMs": 1792890658510,
+      "startedAtUnixMs": 1792890658515,
+      "completedAtUnixMs": 1792890761979,
+      "queueWaitMs": 5,
+      "stationRunMs": 103464,
+      "endToEndMs": 103469
+    },
+    "resourcePlan": {
+      "cpuCapacity": 16,
+      "decodeThreads": 8,
+      "batchThreads": 16,
+      "maxResponseTokens": 3072
+    },
+    "diagnosticTrace": {
+      "schema": "swrlz-decision-trace-v1",
+      "assistant": "\u00a7wyrlz",
+      "user": "the user",
+      "historyTurns": 0,
+      "historyDepth": "none",
+      "profileLayers": {
+        "builtinAssistant": true,
+        "assistantCustomization": false,
+        "userProfile": false
+      },
+      "guards": {
+        "longHistoryClaimSupported": false,
+        "profileIsNotThreadHistory": true,
+        "roleOwnershipEnabled": true
+      },
+      "memoryPolicy": {
+        "source": "conversation evidence only",
+        "rawPrivateReasoningStored": false,
+        "candidateValidationRequired": true
+      }
+    },
+    "memoryCandidates": [],
+    "responseCognition": {
+      "schema": "swrlz-response-cognition-v1",
+      "relation": "standalone",
+      "operation": "create",
+      "historyAvailable": false,
+      "historyTurns": 0,
+      "anchorUserIndex": null,
+      "anchorAssistantIndex": null,
+      "explicitReference": false,
+      "questionLike": false,
+      "detailMode": "normal",
+      "requestedCount": null,
+      "outputOnly": false,
+      "preserveConstraint": true,
+      "programming": true,
+      "deliverable": "code",
+      "sourcePreference": "unspecified"
+    },
+    "onlineResearch": null,
+    "onlineTrace": [],
+    "onlineLogPersistence": null,
+    "sources": [],
+    "widgets": [],
+    "programmingIntent": {
+      "schema": "swrlz-programming-intent-v1",
+      "codingTask": true,
+      "projectContext": "none",
+      "changeClass": "feature",
+      "artifactContinuation": false,
+      "artifactMutationRequested": false,
+      "artifactTargetId": "",
+      "artifactTargetMessageId": "",
+      "baseRevision": 0,
+      "baseSourceHash": "",
+      "newProject": false,
+      "pinnedCodeArtifactCount": 0,
+      "intentContract": {
+        "schema": "swrlz-programming-intent-contract-v3",
+        "originalRequest": "Build a complete single-file HTML 3D model viewer. Show a cube immediately. Include mouse drag to orbit, wheel zoom, a working wireframe checkbox, and responsive sizing. Keep all controls visible and reachable on desktop and mobile. Return complete HTML code without TODOs or instructions to implement missing parts. Do not claim tests ran.",
+        "must": [
+          "Build a complete single-file HTML 3D model viewer.",
+          "Show a cube immediately.",
+          "Include mouse drag to orbit, wheel zoom, a working wireframe checkbox, and responsive sizing."
+        ],
+        "mustNot": [
+          "Return complete HTML code without TODOs or instructions to implement missing parts.",
+          "Do not claim tests ran."
+        ],
+        "preserve": [
+          "Keep all controls visible and reachable on desktop and mobile."
+        ],
+        "languageContract": {
+          "schema": "swrlz-language-contract-v1",
+          "explicit": true,
+          "requestedLanguages": [
+            "html"
+          ],
+          "requiredLanguages": [
+            "html"
+          ],
+          "allowedCompanionLanguages": [
+            "css",
+            "javascript"
+          ],
+          "allowedLanguages": [
+            "html",
+            "css",
+            "javascript"
+          ],
+          "artifactType": "web-page",
+          "substitutionAllowed": false
+        },
+        "acceptanceEvidence": [
+          "technical-validity: returned candidate must be complete and syntactically/build valid when applicable",
+          "intent-validity: original requirements and preservation constraints must be rechecked after every repair",
+          "api-validity: required wrapper/name/signature must remain present unless explicitly changed"
+        ],
+        "completionRule": "done only when complete-source, technical validity, and intent validity all pass"
+      },
+      "repairDirection": "",
+      "canonicalCarry": false,
+      "failureEvidence": null,
+      "failureHistory": [],
+      "repairConstraints": {
+        "schema": "swrlz-repair-constraints-v1",
+        "dependencyPolicy": "evidence-bounded",
+        "unavailableDependencies": [],
+        "forbiddenDependencies": [],
+        "currentReceiptDependencies": [],
+        "addedDependencies": [],
+        "carriedUnavailableDependencies": [],
+        "releasedDependencies": [],
+        "constraintCount": 0
+      },
+      "behaviorLedger": {
+        "schema": "swrlz-behavior-ledger-v1",
+        "suiteKey": "",
+        "currentPassingCases": [],
+        "currentFailingCases": [],
+        "previousPassingCases": [],
+        "previousFailingCases": [],
+        "knownPassingCases": [],
+        "preservePassingCases": [],
+        "resolvedCases": [],
+        "regressedCases": [],
+        "newlyPassingCases": [],
+        "currentScore": null,
+        "bestKnownScore": null,
+        "currentTestedArtifact": null,
+        "bestKnownArtifact": null,
+        "rebaseRecommended": false
+      },
+      "behaviorRepairBase": {
+        "mode": "latest-failing-source",
+        "sourceFingerprint": null,
+        "artifactId": "",
+        "revision": 0,
+        "sourceHash": ""
+      },
+      "behaviorRepairBaseSource": "",
+      "needsFailureEvidence": false,
+      "evidenceRequest": "",
+      "repairLifecycleState": "CANDIDATE_GENERATION",
+      "source": "brain-router"
+    },
+    "intentContract": {
+      "schema": "swrlz-programming-intent-contract-v3",
+      "originalRequest": "Build a complete single-file HTML 3D model viewer. Show a cube immediately. Include mouse drag to orbit, wheel zoom, a working wireframe checkbox, and responsive sizing. Keep all controls visible and reachable on desktop and mobile. Return complete HTML code without TODOs or instructions to implement missing parts. Do not claim tests ran.",
+      "must": [
+        "Build a complete single-file HTML 3D model viewer.",
+        "Show a cube immediately.",
+        "Include mouse drag to orbit, wheel zoom, a working wireframe checkbox, and responsive sizing."
+      ],
+      "mustNot": [
+        "Return complete HTML code without TODOs or instructions to implement missing parts.",
+        "Do not claim tests ran."
+      ],
+      "preserve": [
+        "Keep all controls visible and reachable on desktop and mobile."
+      ],
+      "languageContract": {
+        "schema": "swrlz-language-contract-v1",
+        "explicit": true,
+        "requestedLanguages": [
+          "html"
+        ],
+        "requiredLanguages": [
+          "html"
+        ],
+        "allowedCompanionLanguages": [
+          "css",
+          "javascript"
+        ],
+        "allowedLanguages": [
+          "html",
+          "css",
+          "javascript"
+        ],
+        "artifactType": "web-page",
+        "substitutionAllowed": false
+      },
+      "acceptanceEvidence": [
+        "technical-validity: returned candidate must be complete and syntactically/build valid when applicable",
+        "intent-validity: original requirements and preservation constraints must be rechecked after every repair",
+        "api-validity: required wrapper/name/signature must remain present unless explicitly changed"
+      ],
+      "completionRule": "done only when complete-source, technical validity, and intent validity all pass"
+    },
+    "failureEvidence": null,
+    "repairConstraints": {
+      "schema": "swrlz-repair-constraints-v1",
+      "dependencyPolicy": "evidence-bounded",
+      "unavailableDependencies": [],
+      "forbiddenDependencies": [],
+      "currentReceiptDependencies": [],
+      "addedDependencies": [],
+      "carriedUnavailableDependencies": [],
+      "releasedDependencies": [],
+      "constraintCount": 0
+    },
+    "behaviorLedger": {
+      "schema": "swrlz-behavior-ledger-v1",
+      "suiteKey": "",
+      "currentPassingCases": [],
+      "currentFailingCases": [],
+      "previousPassingCases": [],
+      "previousFailingCases": [],
+      "knownPassingCases": [],
+      "preservePassingCases": [],
+      "resolvedCases": [],
+      "regressedCases": [],
+      "newlyPassingCases": [],
+      "currentScore": null,
+      "bestKnownScore": null,
+      "currentTestedArtifact": null,
+      "bestKnownArtifact": null,
+      "rebaseRecommended": false
+    },
+    "behaviorRepairBase": {
+      "mode": "latest-failing-source",
+      "sourceFingerprint": null,
+      "artifactId": "",
+      "revision": 0,
+      "sourceHash": ""
+    },
+    "candidateValidation": {
+      "status": "PASS",
+      "reasons": [],
+      "languageContract": {
+        "schema": "swrlz-language-contract-v1",
+        "explicit": true,
+        "requestedLanguages": [
+          "html"
+        ],
+        "requiredLanguages": [
+          "html"
+        ],
+        "allowedCompanionLanguages": [
+          "css",
+          "javascript"
+        ],
+        "allowedLanguages": [
+          "html",
+          "css",
+          "javascript"
+        ],
+        "artifactType": "web-page",
+        "substitutionAllowed": false
+      },
+      "detectedLanguages": [
+        "html",
+        "css",
+        "javascript"
+      ],
+      "diagnosticGrounded": false,
+      "receiptCategories": [],
+      "activeRepairConstraints": {
+        "dependencyPolicy": "evidence-bounded",
+        "unavailableDependencies": [],
+        "carriedUnavailableDependencies": []
+      },
+      "behaviorLedger": {
+        "currentScore": null,
+        "bestKnownScore": null,
+        "regressedCases": [],
+        "resolvedCases": [],
+        "preservePassingCases": [],
+        "rebaseRecommended": false,
+        "bestKnownArtifact": null,
+        "repairBaseMode": "latest-failing-source"
+      },
+      "structuredReceipt": {},
+      "executionVerified": false,
+      "verificationState": "NOT_EXECUTION_VERIFIED"
+    },
+    "candidateAttempts": [
+      {
+        "schema": "swrlz-candidate-attempt-v1",
+        "attempt": 1,
+        "trigger": "initial",
+        "durationMs": 103407.249,
+        "firstTokenLatencyMs": 51845.107,
+        "deltaChunks": 483,
+        "candidateFingerprint": "817d1077e6cd7e8c",
+        "changedFromPreviousAttempt": null,
+        "changedFromRepairTarget": null,
+        "validationStatus": "PASS",
+        "validationReasons": [],
+        "accepted": true
+      }
+    ],
+    "generationTelemetry": {
+      "schema": "swrlz-programming-generation-telemetry-v1",
+      "attemptCount": 1,
+      "regenerationCount": 0,
+      "firstCandidateRejected": false,
+      "finalAcceptedAttempt": 1,
+      "finalCandidateStatus": "PASS",
+      "guardedTurn": true,
+      "repairTurn": false,
+      "strictLanguage": true,
+      "modelLoadLatencyMs": 29.698,
+      "visibleFirstDeltaLatencyMs": 103446.874,
+      "engineTotalLatencyMs": 103446.93,
+      "totalCandidateGenerationMs": 103407.249,
+      "attempts": [
+        {
+          "schema": "swrlz-candidate-attempt-v1",
+          "attempt": 1,
+          "trigger": "initial",
+          "durationMs": 103407.249,
+          "firstTokenLatencyMs": 51845.107,
+          "deltaChunks": 483,
+          "candidateFingerprint": "817d1077e6cd7e8c",
+          "changedFromPreviousAttempt": null,
+          "changedFromRepairTarget": null,
+          "validationStatus": "PASS",
+          "validationReasons": [],
+          "accepted": true
+        }
+      ]
+    },
+    "engineCompletionTelemetry": {
+      "totalLatencyMs": 103446.93,
+      "loadLatencyMs": 29.698,
+      "firstDeltaLatencyMs": 103446.874
+    },
+    "repairDiagnostics": [],
+    "artifactReceipt": {
+      "action": "ARTIFACT_CREATED",
+      "artifactId": "artifact-9acfc08d8e51435c98fd03f0e3e57e9d",
+      "revision": 1,
+      "sourceHash": "bbc86da9fe00f04496b7520f0ff498221b3bc44f0dc0ae9a44afbd6eb345b60a"
+    },
+    "githubTelemetryPersistence": {
+      "ok": true,
+      "path": "runtime-diagnostics/programming/eval-e773b482b0ea/candidate-attempt-telemetry.json",
+      "branch": "runtime",
+      "status": 201,
+      "attempts": 1,
+      "conflictCount": 0,
+      "conflictRecovered": false,
+      "errorPreview": null
+    },
+    "contextBudget": {
+      "contextWindowTokens": 8192,
+      "inputBudgetTokens": 7680,
+      "estimatedInputTokens": 2896,
+      "reservedOutputTokens": 3072,
+      "historyMessagesDropped": 0,
+      "historyMessagesKept": 0,
+      "repairTurn": false,
+      "repairContext": {},
+      "tokenBreakdown": {
+        "system": 2823,
+        "history": 0,
+        "currentPrompt": 73,
+        "total": 2896
+      }
+    },
+    "terminalType": "COMPLETE"
+  },
+  "seconds": 106.00127609100309,
+  "sameSessionAndThread": true,
+  "cookiesRecorded": false,
+  "signedInAcceptance": false,
+  "diagnosticsMayPersist": true
+}

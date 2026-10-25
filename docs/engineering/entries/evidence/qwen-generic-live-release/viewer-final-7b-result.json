@@ -1,0 +1,322 @@
+{
+  "prompt": "Build a complete single-file HTML 3D model viewer. Show a cube immediately. Include mouse drag to orbit, wheel zoom, a working wireframe checkbox, and responsive sizing. Keep all controls visible and reachable on desktop and mobile. Return complete HTML code without TODOs or instructions to implement missing parts. Do not claim tests ran.",
+  "history": [],
+  "experimentalDriverAcceptancePlan": false,
+  "plan": null,
+  "model": {
+    "repo": "Qwen/Qwen2.5-Coder-7B-Instruct-GGUF",
+    "revision": "13fb94bfda8c8cf22497dc57b78f391a9acb426a",
+    "file": "qwen2.5-coder-7b-instruct-q4_k_m.gguf",
+    "bytes": 4683073536,
+    "sha256": "509287f78cb4d4cf6b3843734733b914b2c158e43e22a7f4bf5e963800894d3c"
+  },
+  "source": "actual local modified Qwen engine, explicit candidate override",
+  "seed": 42,
+  "sourceFileSha256": {
+    "qwen_coder_engine.py": "36a33d5953a1e8b194946525f1986f389881bf9395ef1e617db9b0d825155729",
+    "brain_programming.py": "c920afa3e5b91f9721c4850bcdb37be634040bae5f21f2ce8ec9cbda6e1b4d98",
+    "response_cognition.py": "b6cedecef9cd05fcdba13fa87bb84c3d013ef4bdd33646a3cd6404bd54531cf4"
+  },
+  "seconds": 327.96118396498787,
+  "text": "```html\n<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>3D Cube Viewer</title>\n    <script type=\"importmap\">\n        {\n            \"imports\": {\n                \"three\": \"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js\",\n                \"three/addons/\": \"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/\"\n            }\n        }\n    </script>\n    <style>\n        body { margin: 0; }\n        canvas { display: block; }\n    </style>\n</head>\n<body>\n    <input type=\"checkbox\" id=\"wireframeCheckbox\"> Wireframe\n    <script type=\"module\">\n        import * as THREE from 'three';\n        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';\n\n        const scene = new THREE.Scene();\n        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);\n        const renderer = new THREE.WebGLRenderer();\n        renderer.setSize(window.innerWidth, window.innerHeight);\n        document.body.appendChild(renderer.domElement);\n\n        const geometry = new THREE.BoxGeometry();\n        const material = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: false });\n        const cube = new THREE.Mesh(geometry, material);\n        scene.add(cube);\n\n        camera.position.z = 5;\n\n        const controls = new OrbitControls(camera, renderer.domElement);\n\n        const wireframeCheckbox = document.getElementById('wireframeCheckbox');\n        wireframeCheckbox.addEventListener('change', () => {\n            material.wireframe = wireframeCheckbox.checked;\n        });\n\n        function animate() {\n            requestAnimationFrame(animate);\n            cube.rotation.x += 0.01;\n            cube.rotation.y += 0.01;\n            controls.update();\n            renderer.render(scene, camera);\n        }\n\n        animate();\n\n        window.addEventListener('resize', () => {\n            camera.aspect = window.innerWidth / window.innerHeight;\n            camera.updateProjectionMatrix();\n            renderer.setSize(window.innerWidth, window.innerHeight);\n        });\n    </script>\n</body>\n</html>\n```",
+  "events": [
+    {
+      "type": "DIAGNOSTIC",
+      "trace": {
+        "schema": "swrlz-decision-trace-v1",
+        "assistant": "\u00a7wyrlz",
+        "user": "the user",
+        "historyTurns": 0,
+        "historyDepth": "none",
+        "profileLayers": {
+          "builtinAssistant": true,
+          "assistantCustomization": false,
+          "userProfile": false
+        },
+        "guards": {
+          "longHistoryClaimSupported": false,
+          "profileIsNotThreadHistory": true,
+          "roleOwnershipEnabled": true
+        },
+        "memoryPolicy": {
+          "source": "conversation evidence only",
+          "rawPrivateReasoningStored": false,
+          "candidateValidationRequired": true
+        }
+      }
+    },
+    {
+      "type": "RESPONSE_COGNITION",
+      "state": {
+        "schema": "swrlz-response-cognition-v1",
+        "relation": "standalone",
+        "operation": "create",
+        "historyAvailable": false,
+        "historyTurns": 0,
+        "anchorUserIndex": null,
+        "anchorAssistantIndex": null,
+        "explicitReference": false,
+        "questionLike": false,
+        "detailMode": "normal",
+        "requestedCount": null,
+        "outputOnly": false,
+        "preserveConstraint": true,
+        "programming": true,
+        "deliverable": "code",
+        "sourcePreference": "unspecified"
+      }
+    },
+    {
+      "type": "PROGRAMMING_INTENT",
+      "intent": {
+        "schema": "swrlz-programming-intent-v1",
+        "codingTask": true,
+        "projectContext": "none",
+        "changeClass": "feature",
+        "artifactContinuation": false,
+        "artifactMutationRequested": false,
+        "artifactTargetId": "",
+        "artifactTargetMessageId": "",
+        "baseRevision": 0,
+        "baseSourceHash": "",
+        "newProject": false,
+        "pinnedCodeArtifactCount": 0,
+        "intentContract": {
+          "schema": "swrlz-programming-intent-contract-v3",
+          "originalRequest": "Build a complete single-file HTML 3D model viewer. Show a cube immediately. Include mouse drag to orbit, wheel zoom, a working wireframe checkbox, and responsive sizing. Keep all controls visible and reachable on desktop and mobile. Return complete HTML code without TODOs or instructions to implement missing parts. Do not claim tests ran.",
+          "must": [
+            "Build a complete single-file HTML 3D model viewer.",
+            "Show a cube immediately.",
+            "Include mouse drag to orbit, wheel zoom, a working wireframe checkbox, and responsive sizing."
+          ],
+          "mustNot": [
+            "Return complete HTML code without TODOs or instructions to implement missing parts.",
+            "Do not claim tests ran."
+          ],
+          "preserve": [
+            "Keep all controls visible and reachable on desktop and mobile."
+          ],
+          "languageContract": {
+            "schema": "swrlz-language-contract-v1",
+            "explicit": true,
+            "requestedLanguages": [
+              "html"
+            ],
+            "requiredLanguages": [
+              "html"
+            ],
+            "allowedCompanionLanguages": [
+              "css",
+              "javascript"
+            ],
+            "allowedLanguages": [
+              "html",
+              "css",
+              "javascript"
+            ],
+            "artifactType": "web-page",
+            "substitutionAllowed": false
+          },
+          "acceptanceEvidence": [
+            "technical-validity: returned candidate must be complete and syntactically/build valid when applicable",
+            "intent-validity: original requirements and preservation constraints must be rechecked after every repair",
+            "api-validity: required wrapper/name/signature must remain present unless explicitly changed"
+          ],
+          "completionRule": "done only when complete-source, technical validity, and intent validity all pass"
+        },
+        "repairDirection": "",
+        "canonicalCarry": false,
+        "failureEvidence": null,
+        "failureHistory": [],
+        "repairConstraints": {
+          "schema": "swrlz-repair-constraints-v1",
+          "dependencyPolicy": "evidence-bounded",
+          "unavailableDependencies": [],
+          "forbiddenDependencies": [],
+          "currentReceiptDependencies": [],
+          "addedDependencies": [],
+          "carriedUnavailableDependencies": [],
+          "releasedDependencies": [],
+          "constraintCount": 0
+        },
+        "behaviorLedger": {
+          "schema": "swrlz-behavior-ledger-v1",
+          "suiteKey": "",
+          "currentPassingCases": [],
+          "currentFailingCases": [],
+          "previousPassingCases": [],
+          "previousFailingCases": [],
+          "knownPassingCases": [],
+          "preservePassingCases": [],
+          "resolvedCases": [],
+          "regressedCases": [],
+          "newlyPassingCases": [],
+          "currentScore": null,
+          "bestKnownScore": null,
+          "currentTestedArtifact": null,
+          "bestKnownArtifact": null,
+          "rebaseRecommended": false
+        },
+        "behaviorRepairBase": {
+          "mode": "latest-failing-source",
+          "sourceFingerprint": null,
+          "artifactId": "",
+          "revision": 0,
+          "sourceHash": ""
+        },
+        "behaviorRepairBaseSource": "",
+        "needsFailureEvidence": false,
+        "evidenceRequest": "",
+        "repairLifecycleState": "CANDIDATE_GENERATION",
+        "source": "brain-router"
+      }
+    },
+    {
+      "type": "STATUS",
+      "phase": "LOADING"
+    },
+    {
+      "type": "CONTEXT",
+      "phase": "BUDGETED",
+      "contextWindowTokens": 8192,
+      "inputBudgetTokens": 7680,
+      "estimatedInputTokens": 2647,
+      "reservedOutputTokens": 3072,
+      "historyMessagesDropped": 0,
+      "historyMessagesKept": 0,
+      "repairTurn": false,
+      "repairContext": null,
+      "tokenBreakdown": {
+        "system": 2574,
+        "history": 0,
+        "currentPrompt": 73,
+        "total": 2647
+      }
+    },
+    {
+      "type": "STATUS",
+      "phase": "GENERATING",
+      "loadLatencyMs": 8916.025
+    },
+    {
+      "type": "RESOURCE",
+      "cpuCapacity": 4,
+      "decodeThreads": 4,
+      "batchThreads": 4,
+      "maxResponseTokens": 3072
+    },
+    {
+      "type": "CANDIDATE_ATTEMPT",
+      "attempt": {
+        "schema": "swrlz-candidate-attempt-v1",
+        "attempt": 1,
+        "trigger": "initial",
+        "durationMs": 319010.06,
+        "firstTokenLatencyMs": 208703.724,
+        "deltaChunks": 483,
+        "candidateFingerprint": "817d1077e6cd7e8c",
+        "changedFromPreviousAttempt": null,
+        "changedFromRepairTarget": null,
+        "validationStatus": "PASS",
+        "validationReasons": [],
+        "accepted": true
+      }
+    },
+    {
+      "type": "CANDIDATE_VALIDATION",
+      "validation": {
+        "status": "PASS",
+        "reasons": [],
+        "languageContract": {
+          "schema": "swrlz-language-contract-v1",
+          "explicit": true,
+          "requestedLanguages": [
+            "html"
+          ],
+          "requiredLanguages": [
+            "html"
+          ],
+          "allowedCompanionLanguages": [
+            "css",
+            "javascript"
+          ],
+          "allowedLanguages": [
+            "html",
+            "css",
+            "javascript"
+          ],
+          "artifactType": "web-page",
+          "substitutionAllowed": false
+        },
+        "detectedLanguages": [
+          "html",
+          "css",
+          "javascript"
+        ],
+        "diagnosticGrounded": false,
+        "receiptCategories": [],
+        "activeRepairConstraints": {
+          "dependencyPolicy": "evidence-bounded",
+          "unavailableDependencies": [],
+          "carriedUnavailableDependencies": []
+        },
+        "behaviorLedger": {
+          "currentScore": null,
+          "bestKnownScore": null,
+          "regressedCases": [],
+          "resolvedCases": [],
+          "preservePassingCases": [],
+          "rebaseRecommended": false,
+          "bestKnownArtifact": null,
+          "repairBaseMode": "latest-failing-source"
+        },
+        "structuredReceipt": {},
+        "executionVerified": false,
+        "verificationState": "NOT_EXECUTION_VERIFIED"
+      }
+    },
+    {
+      "type": "GENERATION_TELEMETRY",
+      "telemetry": {
+        "schema": "swrlz-programming-generation-telemetry-v1",
+        "attemptCount": 1,
+        "regenerationCount": 0,
+        "firstCandidateRejected": false,
+        "finalAcceptedAttempt": 1,
+        "finalCandidateStatus": "PASS",
+        "guardedTurn": true,
+        "repairTurn": false,
+        "strictLanguage": true,
+        "modelLoadLatencyMs": 8916.025,
+        "visibleFirstDeltaLatencyMs": 327951.868,
+        "engineTotalLatencyMs": 327951.906,
+        "totalCandidateGenerationMs": 319010.06,
+        "attempts": [
+          {
+            "schema": "swrlz-candidate-attempt-v1",
+            "attempt": 1,
+            "trigger": "initial",
+            "durationMs": 319010.06,
+            "firstTokenLatencyMs": 208703.724,
+            "deltaChunks": 483,
+            "candidateFingerprint": "817d1077e6cd7e8c",
+            "changedFromPreviousAttempt": null,
+            "changedFromRepairTarget": null,
+            "validationStatus": "PASS",
+            "validationReasons": [],
+            "accepted": true
+          }
+        ]
+      }
+    },
+    {
+      "type": "COMPLETED",
+      "phase": "COMPLETE",
+      "totalLatencyMs": 327951.906,
+      "loadLatencyMs": 8916.025,
+      "firstDeltaLatencyMs": 327951.868
+    }
+  ],
+  "independentBehavior": "NOT_RUN",
+  "liveModelChanged": false
+}
