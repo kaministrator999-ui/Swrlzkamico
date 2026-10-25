@@ -5,7 +5,7 @@ from huggingface_hub import hf_hub_download
 from llama_cpp import Llama
 from brain_programming import programming_intent, CODE_TRUTH_POLICY, candidate_contract_gate, programming_library_context
 from programming_telemetry import buffered_chat_completion, candidate_attempt_receipt, generation_summary
-from programming_repair_context import build_compact_repair_context, enforce_strategy_change, strategy_change_directive, contract_rejection_context, candidate_retry_messages
+from programming_repair_context import build_compact_repair_context, enforce_strategy_change, strategy_change_directive, contract_rejection_context, candidate_retry_messages, candidate_source_fingerprint
 from response_cognition import classify_response_cognition, response_cognition_policy, response_cognition_camera
 from social_checkin import style_hint as _social_checkin_style_hint
 from version_literacy import style_hint as _version_literacy_style_hint
@@ -439,9 +439,7 @@ def _primary_candidate_code(text):
 
 def _candidate_fingerprint(text):
     code=_primary_candidate_code(text)
-    semantic="\n".join(line for line in code.splitlines() if not re.match(r"^\s*(?:#|//)",line))
-    normalized=" ".join(semantic.split())
-    return hashlib.sha256(normalized.encode("utf-8")).hexdigest()[:16] if normalized else None
+    return candidate_source_fingerprint(code,text)
 
 def _repair_diagnostic(programming,history):
     """Bounded observable repair telemetry using Brain-owned canonical source identity."""
@@ -733,7 +731,7 @@ def generate_events(payload):
                     regeneration_reason+=";second-attempt-"+("unchanged" if retry_stalled else "rejected")
                     final_instruction=(
                         strategy_change_directive(programming,candidate_check,3)
-                        if repair_turn else
+                        if repair_turn or "strategy-repeat-previous-attempt" in (candidate_check.get("reasons") or []) else
                         "FINAL PROGRAMMING CONTRACT GATE: two proposals failed deterministic acceptance. Return one complete candidate that obeys the explicit language/artifact contract exactly; no alternate-language substitute, fake execution claim, TODO, or placeholder."
                     )
                     final_instruction+=contract_rejection_context(candidate_check)

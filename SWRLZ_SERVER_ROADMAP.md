@@ -1,3 +1,7 @@
+## UPDATE IN PROGRESS — 2026-10-25 — addon paths, repeated drafts and valid CSS repairs
+
+Latest source correction supplies verified addon-prefix resolution facts, gives repeated fresh-project drafts stronger causal correction feedback, and preserves CSS ID-selector changes in shared Brain/engine source fingerprints.72 focused tests+114subtests,19HF candidate checks and five adjacent scripts pass. New exact-source CI and final live acceptance remain pending. The prior hosted sourcead76526a produced a9/10 viewer; its native repeated-import failure remains evidence. See docs/engineering/entries/2026-10-24_QWEN_PROJECT_GENERATION.md.
+
 ## UPDATE IN PROGRESS — 2026-10-24 — inspect latest failed draft during coding retries
 
 The ordinary live3D prompt exposed three module-resolution rejections. Same-thread repair produced a working9/10 viewer; mobile overflow remains under model repair. Both engines now retain the latest complete rejected draft with actual validation feedback for bounded correction, preserving the original goal and canonical source and counting the full context. Exact-source CI/live acceptance remain pending. See docs/engineering/entries/2026-10-24_QWEN_PROJECT_GENERATION.md. Earlier first-release10/10 remains valid historical evidence; no universal competence claim or trained-weight change is made.

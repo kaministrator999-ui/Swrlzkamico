@@ -1,9 +1,12 @@
 """Standalone module graphs and actual engine rejection-feedback delivery."""
 import unittest
+import json
+import re
+from pathlib import Path
 from unittest.mock import patch
 from web_module_contract import module_dependency_gaps
-from brain_programming import programming_intent,candidate_contract_gate
-from programming_repair_context import candidate_retry_messages
+from brain_programming import programming_intent,candidate_contract_gate,_code_fingerprint
+from programming_repair_context import candidate_retry_messages,contract_rejection_context
 from test_github_change_model_context import load_engine,FakeModel
 
 CORE='https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js'
@@ -19,6 +22,54 @@ class WebModuleContract(unittest.TestCase):
  def test_direct_bare_import_is_not_browser_resolved_without_a_map(self):
   source='<html><script type="module">import * as THREE from "three";</script></html>'
   self.assertEqual(module_dependency_gaps(source),['unresolved-browser-module:three'])
+
+ def test_native_core_only_map_does_not_resolve_addon_subpaths(self):
+  # Exact module graph from the rejected native viewer: its core map was
+  # present, but its addon import used an undeclared package subpath.
+  native=GOOD.replace(ORBIT,'three/examples/jsm/controls/OrbitControls.js')
+  self.assertEqual(module_dependency_gaps(native),['unresolved-browser-module:three/examples/jsm/controls/OrbitControls.js'])
+  facts=json.loads((Path(__file__).with_name('programming_references')/'three-0.160.0.json').read_text())
+  prose='\n'.join(facts['facts'])
+  mapping=re.search(r'<script type="importmap">\s*\{[\s\S]*?</script>',prose).group()
+  standard=mapping+'<script type="module">import {OrbitControls} from "three/addons/controls/OrbitControls.js";</script>'
+  self.assertEqual(module_dependency_gaps(standard),[])
+  self.assertIn('does not map three/examples/jsm/controls/OrbitControls.js',prose)
+
+ def test_browser_resolution_feedback_does_not_invent_dependency_unavailability(self):
+  reason='unresolved-browser-module:three/examples/jsm/controls/OrbitControls.js'
+  feedback=contract_rejection_context({'reasons':[reason]})
+  self.assertIn(reason,feedback)
+  self.assertIn('exact key resolves only that name',feedback)
+  self.assertIn('trailing-slash prefix key and URL',feedback)
+  self.assertIn('does not prove the dependency is unavailable',feedback)
+  self.assertNotIn('BROWSER MODULE RESOLUTION',contract_rejection_context({'reasons':['missing-required-language:html']}))
+
+ def test_css_id_rule_repairs_change_brain_and_both_engine_fingerprints(self):
+  engines=[load_engine(name) for name in ('qwen_coder_engine','lfm2_700m_engine')]
+  fingerprints=[_code_fingerprint]+[engine._candidate_fingerprint for engine in engines]
+  sources=[
+   '```html\n<html><style>\n#viewer { margin: 0; }\n</style></html>\n```',
+   '```css\n#viewer { margin: 0; }\n```',
+   '#viewer {\n margin: 0;\n}',
+  ]
+  for source in sources:
+   changed=source.replace('margin: 0','margin: 10px')
+   with self.subTest(source=source):
+    before=[fingerprint(source) for fingerprint in fingerprints]
+    after=[fingerprint(changed) for fingerprint in fingerprints]
+    self.assertEqual(len(set(before)),1)
+    self.assertEqual(len(set(after)),1)
+    self.assertTrue(all(a!=b for a,b in zip(before,after)))
+
+ def test_comment_only_python_and_javascript_edits_keep_source_fingerprints(self):
+  fingerprints=[_code_fingerprint]+[load_engine(name)._candidate_fingerprint for name in ('qwen_coder_engine','lfm2_700m_engine')]
+  for source,changed in [
+   ('```python\n# old comment\ndef answer():\n return 42\n```','```python\n# new comment\ndef answer():\n return 42\n```'),
+   ('```javascript\n// old comment\nconst answer=42;\n```','```javascript\n// new comment\nconst answer=42;\n```'),
+  ]:
+   for fingerprint in fingerprints:
+    with self.subTest(source=source,owner=fingerprint.__module__):
+     self.assertEqual(fingerprint(source),fingerprint(changed))
 
  def test_prefix_and_scoped_maps_resolve_real_dependency_context(self):
   prefix='<script type="importmap">{"imports":{"three":"'+CORE+'","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script><script type="module">import {OrbitControls} from "three/addons/controls/OrbitControls.js";</script>'
@@ -85,6 +136,32 @@ const object={import:()=>0};object.import('missing');
      self.assertIn(goal,str(call['messages'][:-2]))
      self.assertLessEqual(engine._token_count(model,call['messages'])+call['max_tokens']+engine.CONTEXT_SAFETY_TOKENS,8192)
     self.assertEqual(next(e['validation'] for e in events if e['type']=='CANDIDATE_VALIDATION')['status'],'PASS')
+
+ def test_fresh_project_repeated_draft_gets_causal_strategy_change(self):
+  goal='Build a complete standalone HTML 3D viewer with a working wireframe control.'
+  bad=GOOD.replace(ORBIT,'three/examples/jsm/controls/OrbitControls.js')
+  for name in ('qwen_coder_engine','lfm2_700m_engine'):
+   with self.subTest(engine=name):
+    engine=load_engine(name)
+    class Responses(FakeModel):
+     def create_chat_completion(self,**kwargs):
+      self.calls.append(kwargs)
+      yield {'choices':[{'delta':{'content':'```html\n'+(bad if len(self.calls)<=2 else GOOD)+'\n```'}}]}
+    model=Responses()
+    with patch.object(engine,'load',return_value=model):
+     events=list(engine.generate_events({'prompt':goal,'history':[]}))
+    self.assertEqual(len(model.calls),3)
+    last=model.calls[-1]['messages']
+    self.assertEqual(last[:-2],model.calls[0]['messages'])
+    self.assertIn(goal,str(last[:-2]))
+    self.assertEqual(last[-2]['content'],'```html\n'+bad+'\n```')
+    self.assertIn('strategy-repeat-previous-attempt',last[-1]['content'])
+    self.assertIn('Do not reuse the same executable fingerprint',last[-1]['content'])
+    self.assertIn('Change the unresolved executable import path',last[-1]['content'])
+    self.assertNotIn('Replace the unavailable dependency boundary',last[-1]['content'])
+    self.assertEqual(next(e['validation'] for e in events if e['type']=='CANDIDATE_VALIDATION')['status'],'PASS')
+    for call in model.calls:
+     self.assertLessEqual(engine._token_count(model,call['messages'])+call['max_tokens']+engine.CONTEXT_SAFETY_TOKENS,8192)
 
  def test_retry_context_keeps_canonical_source_and_all_of_latest_draft(self):
   original=[{'role':'system','content':'Canonical source under repair: original source and MUST contract.'},

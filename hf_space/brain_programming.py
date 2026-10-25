@@ -9,6 +9,7 @@ import json
 from typing import Any
 import re
 from source_answer_articulation_v230 import lesson_kind
+from programming_repair_context import candidate_source_fingerprint
 
 
 def programming_library_context(programming: dict[str, Any]) -> str:
@@ -364,9 +365,7 @@ def _candidate_primary_code(text: str) -> str:
 
 def _code_fingerprint(text: str) -> str | None:
     code=_candidate_primary_code(text)
-    semantic="\n".join(line for line in code.splitlines() if not re.match(r"^\s*(?:#|//)",line))
-    normalized=" ".join(semantic.split())
-    return hashlib.sha256(normalized.encode("utf-8")).hexdigest()[:16] if normalized else None
+    return candidate_source_fingerprint(code,text)
 
 
 def _reported_symbols(text: str) -> list[str]:

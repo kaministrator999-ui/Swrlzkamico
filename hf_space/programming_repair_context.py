@@ -6,17 +6,50 @@ acceptance truth.
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 from typing import Any
 
 
+def candidate_source_fingerprint(code: str, original_text: str = "") -> str | None:
+    """Fingerprint source while retaining CSS ID rules as executable changes.
+
+    Keep the established whitespace/full-line-comment normalization. A hash is
+    a selector in CSS and HTML style blocks, so it cannot be stripped as a
+    Python comment there. This is bounded source identity, not a full parser.
+    """
+    fence=re.search(r"```([^\n`]*)\n",str(original_text or ""))
+    language=fence.group(1).strip().lower() if fence else ""
+    web_source=(language in ("html","html5","css","scss","sass","less","svg")
+        or (language not in ("python","py","python3") and bool(
+            re.search(r"<!doctype\s+html\b|<html\b|<style\b",code,re.I)
+            or re.search(r"(?m)^\s*#[A-Za-z_][\w-]*[^\n{]*\{\s*[A-Za-z_-][\w-]*\s*:",code))))
+    comment=r"^\s*//" if web_source else r"^\s*(?:#|//)"
+    semantic="\n".join(line for line in code.splitlines() if not re.match(comment,line))
+    normalized=" ".join(semantic.split())
+    return hashlib.sha256(normalized.encode("utf-8")).hexdigest()[:16] if normalized else None
+
+
 def contract_rejection_context(validation: dict[str, Any]) -> str:
     """Actual bounded source-gate feedback; never an execution/test receipt."""
     reasons=[str(item)[:180] for item in (validation.get("reasons") or [])[:8]]
-    return ("\nACTUAL SOURCE CONTRACT REJECTIONS (source checks only; no execution):\n"
-            +json.dumps(reasons,ensure_ascii=False)
-            +"\nCorrect these source defects while preserving the original requested features. Do not invent a test result.")
+    context=("\nACTUAL SOURCE CONTRACT REJECTIONS (source checks only; no execution):\n"
+             +json.dumps(reasons,ensure_ascii=False)
+             +"\nCorrect these source defects while preserving the original requested features. Do not invent a test result.")
+    if any(reason.startswith("unresolved-browser-module:") for reason in reasons):
+        context+=(
+            "\nBROWSER MODULE RESOLUTION: compare the exact rejected specifier "
+            "with the actual document's import-map keys. An exact key resolves "
+            "only that name; subpaths need their own exact mapping or a matching "
+            "trailing-slash prefix key and URL. Use the applicable verified "
+            "library mapping or absolute module URL, respecting the original "
+            "project stack. A URL-loaded addon can still import a bare name "
+            "internally, which also needs document-level resolution. This "
+            "source defect does not prove the dependency is unavailable; do "
+            "not remove requested features or claim an installation is needed."
+        )
+    return context
 
 
 def candidate_retry_messages(
@@ -242,6 +275,8 @@ def strategy_change_directive(programming: dict[str, Any], validation: dict[str,
         directives.append("Do not reuse the same executable fingerprint, algorithmic operation, import path, or wrapper-only edit; change the causal implementation strategy while preserving the behavior ledger.")
     if any(x.startswith("diagnostic-symbol-resolution-unproven:") for x in reasons):
         directives.append("Resolve or remove the reported unresolved symbol in executable source.")
+    if any(x.startswith("unresolved-browser-module:") for x in reasons):
+        directives.append("Change the unresolved executable import path or its matching document import-map declaration; verify exact-name versus trailing-slash prefix resolution against the supplied library evidence. Repeating the same unmapped specifier cannot resolve this source defect.")
     if any(x.startswith("missing-required-language:") or x.startswith("language-contract-mismatch:") for x in reasons):
         directives.append("Obey the requested language contract exactly; do not substitute another language/framework.")
     directives.append("Return one complete candidate only; no TODO, ellipsis, fake execution claim, or rejected-source repetition.")

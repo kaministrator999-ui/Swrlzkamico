@@ -1,5 +1,7 @@
 # §wyrlz Programming LALM Runtime Architecture — TARGET STATE + IMPLEMENTATION TRUTH
 
+**Candidate repair update (2026-10-25):** Brain and both model engines share source fingerprint normalization that retains HTML/CSS hash selectors. Repeated fresh-project candidates receive causal strategy feedback; unresolved browser imports get exact/prefix mapping guidance and verified version-scoped addon configuration. Source validation stays distinct from browser execution and user/provider approval. See the [checkpoint](entries/2026-10-24_QWEN_PROJECT_GENERATION.md).
+
 **Latest candidate correction (2026-10-24):** internal source-validation retries receive the complete latest failed assistant draft plus actual source-gate reasons while retaining original requirements and canonical repair source. Each retry is rebuilt from original messages and the latest rejected draft; earlier drafts do not accumulate. Context and output room are recalculated without silently truncating source. This is bounded source correction, not execution evidence. See the [project-generation checkpoint](entries/2026-10-24_QWEN_PROJECT_GENERATION.md).
 
 **Role:** canonical specification for how §wyrlz's architecture curriculum becomes executable programming behavior while preserving one primary cognitive authority.
