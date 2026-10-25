@@ -5,20 +5,21 @@ from huggingface_hub import hf_hub_download
 from llama_cpp import Llama
 from brain_programming import programming_intent, CODE_TRUTH_POLICY, candidate_contract_gate, programming_library_context
 from programming_telemetry import buffered_chat_completion, candidate_attempt_receipt, generation_summary, observe_completion_chunk, completion_validation
-from programming_repair_context import build_compact_repair_context, enforce_strategy_change, strategy_change_directive, contract_rejection_context, candidate_retry_messages, candidate_source_fingerprint, expanded_project_delivery, project_delivery_policy, fresh_project_history, source_fence_present
+from programming_repair_context import build_compact_repair_context, enforce_strategy_change, strategy_change_directive, contract_rejection_context, candidate_retry_messages, candidate_source_fingerprint, expanded_project_delivery, project_delivery_policy, fresh_project_history, source_fence_present, response_budget, long_delivery_policy, preserve_existing_source, source_sized_budget
 from response_cognition import classify_response_cognition, response_cognition_policy, response_cognition_camera
 from social_checkin import style_hint as _social_checkin_style_hint
 from version_literacy import style_hint as _version_literacy_style_hint
 from github_change_candidate import source_change_system, source_change_response_format
 from coder_model_config import MODEL_REPO, MODEL_FILE, download_arguments, verify_artifact
 
-# The pinned Qwen model supports this bounded 16K window. Reserve substantial
+# Both pinned GGUFs support this bounded 32K window. Reserve substantial
 # output room before fitting history so complete project files do not compete
 # with old conversation turns for a few remaining decode tokens.
-CONTEXT_TOKENS=16384
+CONTEXT_TOKENS=32768
 OUTPUT_TOKENS=4096
 WEB_PAGE_OUTPUT_TOKENS=4096
-PROJECT_OUTPUT_TOKENS=6144
+PROJECT_OUTPUT_TOKENS=8192
+LARGE_OUTPUT_TOKENS=16384
 MIN_OUTPUT_TOKENS=384
 CONTEXT_SAFETY_TOKENS=128
 INPUT_BUDGET_TOKENS=CONTEXT_TOKENS-MIN_OUTPUT_TOKENS-CONTEXT_SAFETY_TOKENS
@@ -621,12 +622,15 @@ def generate_events(payload):
         ((programming.get("intentContract") or {}).get("languageContract") or {}).get("artifactType")=="web-page" and
         programming.get("changeClass") not in ("review","explain"))
     expanded_delivery=expanded_project_delivery(programming,prompt)
-    delivery_output_limit=(512 if source_change_mode=="plan" else 2048 if source_change_mode else
-        PROJECT_OUTPUT_TOKENS if expanded_delivery else WEB_PAGE_OUTPUT_TOKENS if web_page_delivery else None)
-    system+=project_delivery_policy(programming,prompt)
+    budget_policy=response_budget(programming,prompt)
+    delivery_output_limit=(512 if source_change_mode=="plan" else 2048 if source_change_mode else budget_policy["tokens"])
+    system+=project_delivery_policy(programming,prompt)+long_delivery_policy(budget_policy)
     started=time.perf_counter()
     yield {"type":"STATUS","phase":"LOADING"}
     model=load()
+    if not source_change_mode:
+        budget_policy=source_sized_budget(model,programming,history,budget_policy)
+        delivery_output_limit=budget_policy["tokens"]
     repair_turn=bool(programming.get("failureEvidence")) or bool(programming.get("canonicalCarry"))
     repair_context_telemetry=None
     if repair_turn:
@@ -636,17 +640,17 @@ def generate_events(payload):
             _response_mode(prompt,programming),
         )
         system+=programming_library_context(programming)
-        system+=project_delivery_policy(programming,prompt)
+        system+=project_delivery_policy(programming,prompt)+long_delivery_policy(budget_policy)
         fitted=_fit_repair_messages(model,system,history,fitted_prompt,delivery_output_limit)
         messages,dropped_history,input_tokens,available_output_tokens,fitted_prompt=fitted
     else:
-        fitted=_fit_messages(model,system,history,prompt,delivery_output_limit,preserve_latest_code=bool((programming.get("artifactContinuation") or programming.get("artifactMutationRequested")) and not programming.get("artifactEditSource")))
+        fitted=_fit_messages(model,system,history,prompt,delivery_output_limit,preserve_latest_code=preserve_existing_source(programming))
         messages,dropped_history,input_tokens,available_output_tokens=fitted
         fitted_prompt=prompt
     system_tokens=_token_count(model,[{"role":"system","content":system}])
     prompt_tokens=_token_count(model,[{"role":"user","content":fitted_prompt}])
     history_tokens=max(0,input_tokens-system_tokens-prompt_tokens)
-    yield {"type":"CONTEXT","phase":"BUDGETED","contextWindowTokens":CONTEXT_TOKENS,"inputBudgetTokens":CONTEXT_TOKENS-available_output_tokens-CONTEXT_SAFETY_TOKENS,"estimatedInputTokens":input_tokens,"reservedOutputTokens":available_output_tokens,"historyMessagesDropped":dropped_history,"historyMessagesKept":len(messages)-2,"repairTurn":repair_turn,"repairContext":repair_context_telemetry,"tokenBreakdown":{"system":system_tokens,"history":history_tokens,"currentPrompt":prompt_tokens,"total":input_tokens}}
+    yield {"type":"CONTEXT","phase":"BUDGETED","contextWindowTokens":CONTEXT_TOKENS,"inputBudgetTokens":CONTEXT_TOKENS-available_output_tokens-CONTEXT_SAFETY_TOKENS,"estimatedInputTokens":input_tokens,"reservedOutputTokens":available_output_tokens,"responseBudgetTier":budget_policy["tier"],"historyMessagesDropped":dropped_history,"historyMessagesKept":len(messages)-2,"repairTurn":repair_turn,"repairContext":repair_context_telemetry,"tokenBreakdown":{"system":system_tokens,"history":history_tokens,"currentPrompt":prompt_tokens,"total":input_tokens}}
     if repair_turn and available_output_tokens<=0:
         yield {"type":"FAILED","phase":"CONTEXT_REJECTED","reason":f"Repair context uses {input_tokens} tokens; maximum fitted input is {CONTEXT_TOKENS-MIN_OUTPUT_TOKENS-CONTEXT_SAFETY_TOKENS}.","contextBudget":{"system":system_tokens,"history":history_tokens,"currentPrompt":prompt_tokens,"total":input_tokens}}
         return
@@ -670,11 +674,11 @@ def generate_events(payload):
         elif mode.startswith("RESPONSE MODE: USER-IDENTITY-DIRECT") or mode.startswith("RESPONSE MODE: ASSISTANT-IDENTITY-DIRECT"):
             response_tokens=min(192,available_output_tokens);temperature=0.35
         elif mode.startswith("RESPONSE MODE: CODE-"):
-            response_tokens=min(PROJECT_OUTPUT_TOKENS if expanded_delivery else WEB_PAGE_OUTPUT_TOKENS if web_page_delivery else (1536 if repair_turn else OUTPUT_TOKENS),available_output_tokens);temperature=0.25 if repair_turn else 0.30
+            response_tokens=min(delivery_output_limit,available_output_tokens);temperature=0.25 if repair_turn else 0.30
         elif mode.startswith("RESPONSE MODE: EXACT-NUMBERED-STEPS"):
             response_tokens=min(512,available_output_tokens);temperature=0.35
         else:
-            response_tokens=min(OUTPUT_TOKENS,available_output_tokens);temperature=0.40
+            response_tokens=min(delivery_output_limit,available_output_tokens);temperature=0.40
         yield {"type":"RESOURCE","cpuCapacity":_cpu_capacity(),"decodeThreads":_thread_plan()[0],"batchThreads":_thread_plan()[1],"maxResponseTokens":response_tokens}
         if guarded_turn:
             repair_target_fp=repair_diagnostic.get("candidateFingerprint") if repair_diagnostic else None

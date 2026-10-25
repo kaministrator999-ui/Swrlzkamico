@@ -49,6 +49,7 @@ except Exception:
 
 ROOT=Path(__file__).resolve().parent
 CONTRACT="swrlz-lalm-station-sync-v1"
+MAX_PROMPT_CHARS=131072
 app=FastAPI(title="§wyrlz HF Station candidate")
 app.mount("/chat/§wyrlz/assets",StaticFiles(directory=ROOT/"chat/§wyrlz/assets"),name="chat-assets")
 _lock=threading.RLock()
@@ -1772,7 +1773,7 @@ async def send(request:Request):
     if not isinstance(client_timezone,str) or len(client_timezone)>80:raise HTTPException(400,"Invalid timezone")
     if not isinstance(profile,str) or len(profile)>2000:raise HTTPException(400,"Invalid test profile")
     if not isinstance(user_profile,str) or len(user_profile)>2000:raise HTTPException(400,"Invalid user profile")
-    if not isinstance(prompt,str) or not prompt.strip() or len(prompt)>32768:raise HTTPException(400,"Invalid prompt")
+    if not isinstance(prompt,str) or not prompt.strip() or len(prompt)>MAX_PROMPT_CHARS:raise HTTPException(400,"Invalid prompt")
     if not all(isinstance(v,str) and 0<len(v)<=160 for v in (tid,rid)):raise HTTPException(400,"Invalid IDs")
     # Evidence recovery uses only the account verified by the server, never the
     # user-supplied thread id as an identity or OAuth credential.

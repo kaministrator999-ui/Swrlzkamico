@@ -798,6 +798,13 @@
         animation:none!important;transform:none!important}
     }
 
+    /* Public Chat update history. The native modal keeps keyboard focus inside. */
+    .chat-updates-dialog{box-sizing:border-box;width:min(92vw,680px);max-height:90vh;max-height:90dvh;padding:0;border:1px solid rgba(126,214,255,.34);border-radius:18px;background:#071b2d;color:#e8f8ff;box-shadow:0 24px 90px #0009;color-scheme:dark;overflow:hidden;font:14px/1.55 var(--font-ui,system-ui)}
+    .chat-updates-dialog[open]{display:flex;flex-direction:column}.chat-updates-dialog::backdrop{background:rgba(0,7,16,.80);backdrop-filter:blur(4px)}
+    .chat-updates-dialog header,.chat-updates-dialog footer{padding:18px 20px;flex-shrink:0}.chat-updates-dialog header{border-bottom:1px solid #7ed6ff26}.chat-updates-dialog small{color:#8fd8ed;letter-spacing:.13em;font-size:10px}.chat-updates-dialog h2{margin:4px 0;font-size:22px;line-height:1.25}.chat-updates-dialog header p{margin:8px 0 0;color:#a9c7d7}
+    .chat-updates-content{min-height:0;overflow:auto;overscroll-behavior:contain;padding:8px 20px 20px}.chat-updates-dialog ul{padding-left:22px}.chat-updates-dialog li{margin:9px 0}.chat-updates-dialog summary{cursor:pointer;color:#b7e9ff;padding:10px 0;overflow-wrap:anywhere}.chat-updates-entry{margin-left:8px;border-top:1px solid #7ed6ff1a}.chat-updates-entry summary{font-size:13px}.chat-updates-date,.chat-updates-coverage{font-size:11px;color:#91b0c3}.chat-updates-status:empty{display:none}
+    .chat-updates-dialog footer{display:flex;align-items:center;gap:12px;border-top:1px solid #7ed6ff26;background:#061625}.chat-updates-dialog label{flex:1;display:flex;align-items:center;gap:8px;font-size:12px}.chat-updates-dialog input{width:18px;height:18px;flex-shrink:0;accent-color:#48dff7}.chat-updates-dialog button{padding:10px 16px;border:1px solid #7ed6ff66;border-radius:10px;color:#effcff;background:#17465d;cursor:pointer;font:inherit}.chat-updates-dialog :focus-visible{outline:2px solid #48dff7;outline-offset:3px}#chatUpdatesOpen{display:block;margin:8px 0 0;padding:8px 10px;border:1px solid #7ed6ff44;border-radius:9px;background:#0a263a;color:#d8f5ff;cursor:pointer;width:100%;text-align:left;font:inherit}
+    @media(max-width:480px){.chat-updates-dialog{width:calc(100vw - 16px);max-height:calc(100dvh - 20px)}.chat-updates-dialog header,.chat-updates-dialog footer{padding:14px}.chat-updates-content{padding:4px 14px 14px}.chat-updates-dialog footer{flex-wrap:wrap}.chat-updates-dialog label{flex-basis:100%}.chat-updates-dialog button{margin-left:auto;min-height:44px}}
   </style>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <script src="/chat/§wyrlz/assets/github-explorer-v223.js?v=228"></script>
@@ -1073,7 +1080,7 @@
         </div>
       </div>
     </div>
-    <nav class="chat-data-actions" aria-label="Conversation data"><a class="chat-export-link" href="/api/lalm_station/export" download="swrlz-dragon-chat.json">↓ Download Chat JSON</a></nav>
+    <nav class="chat-data-actions" aria-label="Conversation data"><a class="chat-export-link" href="/api/lalm_station/export" download="swrlz-dragon-chat.json">↓ Download Chat JSON</a><button id="chatUpdatesOpen" type="button">Chat updates</button></nav>
     <section class="thread-panel" aria-label="Chat threads">
       <div class="thread-panel-head"><div class="thread-panel-title">Chats</div><button class="new-thread-button" id="newThreadButton" type="button">+ New chat</button></div>
       <div class="thread-list" id="threadList"></div>
@@ -1116,7 +1123,7 @@
     <button class="composer-collapse" id="composerCollapse" type="button" aria-label="Collapse composer" aria-expanded="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
     <form class="composer" id="composer">
       <div class="composer-box">
-        <textarea id="prompt" rows="1" maxlength="16000" aria-label="Message §wyrlz" placeholder="Message §wyrlz…"></textarea>
+        <textarea id="prompt" rows="1" maxlength="131072" aria-label="Message §wyrlz" placeholder="Message §wyrlz…"></textarea>
         <div class="composer-tools">
           <button class="stop-button" id="stopButton" type="button" aria-label="Stop generating" title="Stop generating" hidden>■</button>
           <button class="send-button" id="sendButton" type="button" aria-label="Send message">
@@ -3861,5 +3868,6 @@
       });
     })();
   </script>
+  <script src="/chat/§wyrlz/assets/chat-updates-v1.js" defer></script>
 </body>
 </html>

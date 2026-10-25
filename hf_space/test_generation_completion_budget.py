@@ -102,7 +102,7 @@ class CompletionBudgetTest(unittest.TestCase):
         for engine in self.engines():
             with self.subTest(engine=engine.__name__):
                 model=FakeModel()
-                history=[{'role':'assistant','content':'old message '+str(i)+'x'*12000} for i in range(8)]
+                history=[{'role':'assistant','content':'old message '+str(i)+'x'*24000} for i in range(8)]
                 fitted,dropped,used,reserved=engine._fit_messages(model,'authoritative system',history,'exact current goal',6144)
                 self.assertGreater(dropped,0)
                 self.assertEqual(reserved,6144)
@@ -177,12 +177,12 @@ class CompletionBudgetTest(unittest.TestCase):
         for engine in self.engines():
             with self.subTest(engine=engine.__name__):
                 model,events=self.generate(engine,{'prompt':'Create a complete HTML project in separate files and provide a ZIP archive.','history':[]},[(files,'stop')])
-                self.assertEqual(model.calls[0]['max_tokens'],6144)
+                self.assertEqual(model.calls[0]['max_tokens'],8192)
                 self.assertIn('file=index.html project=my-project',model.calls[0]['messages'][0]['content'])
                 self.assertIn('application creates the actual ZIP/download',model.calls[0]['messages'][0]['content'])
                 context=next(e for e in events if e['type']=='CONTEXT')
-                self.assertEqual(context['contextWindowTokens'],16384)
-                self.assertEqual(context['reservedOutputTokens'],6144)
+                self.assertEqual(context['contextWindowTokens'],32768)
+                self.assertEqual(context['reservedOutputTokens'],8192)
                 self.assertEqual(events[-1]['type'],'COMPLETED')
 
     def test_project_file_policy_survives_the_compact_repair_system_rebuild(self):

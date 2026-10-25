@@ -174,11 +174,17 @@ const object={import:()=>0};object.import('missing');
   retry[0]['content']='changed copy'
   self.assertIn('Canonical source',original[0]['content'])
 
+ def test_large_source_is_checked_and_oversized_source_is_rejected(self):
+  from project_archive import MAX_FILE_BYTES
+  padded='<!--'+'x'*70000+'-->'+BAD
+  self.assertTrue(any(reason.startswith('unresolved-browser-module:') for reason in module_dependency_gaps(padded)))
+  self.assertEqual(module_dependency_gaps('x'*(MAX_FILE_BYTES+1)), ['browser-module-source-exceeds-validation-limit'])
+
  def test_retry_output_budget_counts_complete_failed_source(self):
   for name in ('qwen_coder_engine','lfm2_700m_engine'):
    with self.subTest(engine=name):
     engine=load_engine(name)
-    large=BAD.replace('<html>','<html><!--'+'x'*(engine.CONTEXT_TOKENS*2)+'-->')
+    large=BAD.replace('<html>','<html><!--'+'x'*(engine.CONTEXT_TOKENS*3)+'-->')
     class Responses(FakeModel):
      def create_chat_completion(self,**kwargs):
       self.calls.append(kwargs)

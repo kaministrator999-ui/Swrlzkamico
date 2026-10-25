@@ -1,0 +1,3799 @@
+{
+  "schema": "swrlz-chat-updates-v1",
+  "latest": {
+    "id": "editor-project-completion-20261025",
+    "date": "2026-10-25",
+    "title": "Project downloads, longer answers and Chat updates",
+    "changes": [
+      "Download generated project files together in a ZIP from their saved Chat artifact.",
+      "New projects keep their own files and identity; follow-up edits retain the selected project.",
+      "Larger response allowances give the 700M model and coding model more room to finish their answers.",
+      "Open Chat updates from the side menu to read the newest notes and all recorded earlier updates.",
+      "Choose “Don’t show again for this update” below to hide this popup until a newer update arrives."
+    ]
+  },
+  "history": [
+    {
+      "id": "qwen-project-generation-6240d715",
+      "date": "2026-10-24",
+      "title": "Qwen project generation and verified cube viewer",
+      "changes": [
+        "Qwen 2.5 Coder 7B handles inferred coding requests alongside the 700M conversational model.",
+        "A generic cube viewer passed its recorded browser checks. Broader editor and project capability remained open."
+      ],
+      "kind": "Source update",
+      "source": {
+        "commit": "6240d7151692898b9f30e75675707083ddb7f4cc",
+        "path": "docs/engineering/entries/2026-10-24_QWEN_PROJECT_GENERATION.md"
+      }
+    },
+    {
+      "id": "registry-b46cf40f7be3fcefe3af14d978d86c0bde840942",
+      "version": "1.5.157",
+      "date": "2026-10-21",
+      "title": "chore(versions): register deployed Chat v294 desktop welcome and governed work",
+      "changes": [
+        "chore(versions): register deployed Chat v294 desktop welcome and governed work"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "b46cf40f7be3fcefe3af14d978d86c0bde840942",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-efb11b971c9b3e93fb2c629d814469052d5da7ba",
+      "version": "1.5.156",
+      "date": "2026-10-21",
+      "title": "release(v292): synchronize Repository Work 1.0.230 and Web Chat 1.5.156",
+      "changes": [
+        "release(v292): synchronize Repository Work 1.0.230 and Web Chat 1.5.156"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "efb11b971c9b3e93fb2c629d814469052d5da7ba",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-f74bf2028f3715669a514081630f2a3be5396c00",
+      "version": "1.5.155",
+      "date": "2026-10-20",
+      "title": "chore(runtime): reconcile deployed v290 versions/web-chat.txt 1.5.155",
+      "changes": [
+        "chore(runtime): reconcile deployed v290 versions/web-chat.txt 1.5.155"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "f74bf2028f3715669a514081630f2a3be5396c00",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-6b7a0d2d542ae040ba844ab4f2f705584fbde2c8",
+      "version": "1.5.154",
+      "date": "2026-10-18",
+      "title": "version(chat v287): reconcile deployed history scroll reuse — repo 1.0.224, web 1.5.154",
+      "changes": [
+        "version(chat v287): reconcile deployed history scroll reuse — repo 1.0.224, web 1.5.154"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "6b7a0d2d542ae040ba844ab4f2f705584fbde2c8",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-dde794192fc85d79a380f87d8319cceb7b363e68",
+      "version": "1.5.153",
+      "date": "2026-10-18",
+      "title": "version(chat v284-v285): register deployed rich widgets — repo 1.0.222, server 2.3.434, chat 1.5.153",
+      "changes": [
+        "version(chat v284-v285): register deployed rich widgets — repo 1.0.222, server 2.3.434, chat 1.5.153"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "dde794192fc85d79a380f87d8319cceb7b363e68",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-07a5650df7da1c253c34ac306c8150e432ec7106",
+      "version": "1.5.152",
+      "date": "2026-10-16",
+      "title": "chore(chat): register terminal v270 verified file-read release versions",
+      "changes": [
+        "chore(chat): register terminal v270 verified file-read release versions"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "07a5650df7da1c253c34ac306c8150e432ec7106",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-a0c45fd1373686138f596d05e7a7a480cacce1af",
+      "version": "1.5.151",
+      "date": "2026-10-16",
+      "title": "chore(chat): atomically register v269 native GitHub explorer release",
+      "changes": [
+        "chore(chat): atomically register v269 native GitHub explorer release"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "a0c45fd1373686138f596d05e7a7a480cacce1af",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-862ccaa5972ab34f8201c9865df9ebce75ca08c2",
+      "version": "1.5.150",
+      "date": "2026-10-16",
+      "title": "chore(chat): atomically register v268 hosted Chat release versions",
+      "changes": [
+        "chore(chat): atomically register v268 hosted Chat release versions"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "862ccaa5972ab34f8201c9865df9ebce75ca08c2",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-f3f47b6ccfdda9b477718616427f9d39c1b3210e",
+      "version": "1.5.149",
+      "date": "2026-10-16",
+      "title": "chore(chat): register terminal v267 Space deployment in versions/web-chat.txt",
+      "changes": [
+        "chore(chat): register terminal v267 Space deployment in versions/web-chat.txt"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "f3f47b6ccfdda9b477718616427f9d39c1b3210e",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-d7b6a347d3138a3bca4bfc184dc99510dff352c5",
+      "version": "1.5.148",
+      "date": "2026-10-16",
+      "title": "chore(chat): record terminal v266 guarded Space release in versions/web-chat.txt",
+      "changes": [
+        "chore(chat): record terminal v266 guarded Space release in versions/web-chat.txt"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "d7b6a347d3138a3bca4bfc184dc99510dff352c5",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-0ae5cd8bd1ba76c7c34c7ed9b3651903a6e5711b",
+      "version": "1.5.147",
+      "date": "2026-10-15",
+      "title": "chore(chat): register terminal v265 guarded HF release in versions/web-chat.txt",
+      "changes": [
+        "chore(chat): register terminal v265 guarded HF release in versions/web-chat.txt"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "0ae5cd8bd1ba76c7c34c7ed9b3651903a6e5711b",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-0a995212c089d30600454c670eecd920d2124f61",
+      "version": "1.5.146",
+      "date": "2026-10-15",
+      "title": "chore(versions): register v264 seamless GitHub Chat actions",
+      "changes": [
+        "chore(versions): register v264 seamless GitHub Chat actions"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "0a995212c089d30600454c670eecd920d2124f61",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-b95034d90d8a29ac54d52c03737919a7ccd63f0f",
+      "version": "1.5.145",
+      "date": "2026-10-15",
+      "title": "chore(versions): register v263 atomic GitHub rename module",
+      "changes": [
+        "chore(versions): register v263 atomic GitHub rename module"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "b95034d90d8a29ac54d52c03737919a7ccd63f0f",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-687f9ce44f434d6e74c7ac856ec81879dc47668d",
+      "version": "1.5.144",
+      "date": "2026-10-15",
+      "title": "chore(versions): register v262 general GitHub file creation and binary upload",
+      "changes": [
+        "chore(versions): register v262 general GitHub file creation and binary upload"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "687f9ce44f434d6e74c7ac856ec81879dc47668d",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-74b3cf27a68e6162c216ffc09d6cbca2b556140a",
+      "version": "1.5.143",
+      "date": "2026-10-15",
+      "title": "chore(versions): v261 full-width Chat response and widget layout",
+      "changes": [
+        "chore(versions): v261 full-width Chat response and widget layout"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "74b3cf27a68e6162c216ffc09d6cbca2b556140a",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-c5af1f125cbdd6058e16f2fa40939e18b9194379",
+      "version": "1.5.142",
+      "date": "2026-10-15",
+      "title": "chore(release): v260 verified GitHub work statistics module versions",
+      "changes": [
+        "chore(release): v260 verified GitHub work statistics module versions"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "c5af1f125cbdd6058e16f2fa40939e18b9194379",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-d00a7d341e85379128b2ef8cd9dce34d44f33237",
+      "version": "1.5.141",
+      "date": "2026-10-15",
+      "title": "chore(versions): register v259 direct harmless GitHub Chat test creation",
+      "changes": [
+        "chore(versions): register v259 direct harmless GitHub Chat test creation"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "d00a7d341e85379128b2ef8cd9dce34d44f33237",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-3341090415323b44e241239d475ff592a95a8d25",
+      "version": "1.5.140",
+      "date": "2026-10-15",
+      "title": "chore(versions): register v258 conversational GitHub TXT action release",
+      "changes": [
+        "chore(versions): register v258 conversational GitHub TXT action release"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "3341090415323b44e241239d475ff592a95a8d25",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-62771e8358180099c46c8392359183423fdab6c9",
+      "version": "1.5.139",
+      "date": "2026-10-15",
+      "title": "chore(lineage): register v257 OAuth-connected sandbox Chat release",
+      "changes": [
+        "chore(lineage): register v257 OAuth-connected sandbox Chat release"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "62771e8358180099c46c8392359183423fdab6c9",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-48104703168b5b09fbb38e454d80fc3361a6cca5",
+      "version": "1.5.138",
+      "date": "2026-10-15",
+      "title": "release(v254): register Chat source purpose answers and compact evidence versions",
+      "changes": [
+        "release(v254): register Chat source purpose answers and compact evidence versions"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "48104703168b5b09fbb38e454d80fc3361a6cca5",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-b44a1d41fad097a19b5434d9996eb465ac997db9",
+      "version": "1.5.137",
+      "date": "2026-10-14",
+      "title": "release(v253): register Chat source-card glass Server 2.3.406 and Web 1.5.137",
+      "changes": [
+        "release(v253): register Chat source-card glass Server 2.3.406 and Web 1.5.137"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "b44a1d41fad097a19b5434d9996eb465ac997db9",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-8bd49c7dd8a962d9f9c4c232967a6742e137cd4d",
+      "version": "1.5.136",
+      "date": "2026-10-14",
+      "title": "release(v252): register verified Forge document followup Chat runtime versions",
+      "changes": [
+        "release(v252): register verified Forge document followup Chat runtime versions"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "8bd49c7dd8a962d9f9c4c232967a6742e137cd4d",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-f01022267d05486c757eefff03fc382a4cd8c9f0",
+      "version": "1.5.135",
+      "date": "2026-10-14",
+      "title": "release(v251): record verified named-doc opinion Chat and Server modules",
+      "changes": [
+        "release(v251): record verified named-doc opinion Chat and Server modules"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "f01022267d05486c757eefff03fc382a4cd8c9f0",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-72b85f59fd7bf9660ea16047dcc26c9d18ecf1e2",
+      "version": "1.5.134",
+      "date": "2026-10-14",
+      "title": "release(v250): register GitHub root-followup Chat v1.5.134, server v2.3.403, repo work v1.0.191",
+      "changes": [
+        "release(v250): register GitHub root-followup Chat v1.5.134, server v2.3.403, repo work v1.0.191"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "72b85f59fd7bf9660ea16047dcc26c9d18ecf1e2",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-49882f425890a15e2d677cd98d7db664489e507e",
+      "version": "1.5.133",
+      "date": "2026-10-14",
+      "title": "release(v249): register Chat 1.5.133 and HF Server 2.3.402, repo work 1.0.190",
+      "changes": [
+        "release(v249): register Chat 1.5.133 and HF Server 2.3.402, repo work 1.0.190"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "49882f425890a15e2d677cd98d7db664489e507e",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-2103c05d35bed83efbb4db882b1e7f47b343596e",
+      "version": "1.5.132",
+      "date": "2026-10-14",
+      "title": "release(v248): advance versions/web-chat.txt to 1.5.132 after guarded HF publication",
+      "changes": [
+        "release(v248): advance versions/web-chat.txt to 1.5.132 after guarded HF publication"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "2103c05d35bed83efbb4db882b1e7f47b343596e",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-835a82887d2ac24f831c04be96f413fe45a624ca",
+      "version": "1.5.131",
+      "date": "2026-10-14",
+      "title": "release(v246): advance versions/web-chat.txt to 1.5.131 after HF receipt",
+      "changes": [
+        "release(v246): advance versions/web-chat.txt to 1.5.131 after HF receipt"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "835a82887d2ac24f831c04be96f413fe45a624ca",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-b52813275a0c66474b7cbdb5f792b49c4e5cedd5",
+      "version": "1.5.130",
+      "date": "2026-10-14",
+      "title": "release(v245): advance versions/web-chat.txt to 1.5.130 after guarded HF publication",
+      "changes": [
+        "release(v245): advance versions/web-chat.txt to 1.5.130 after guarded HF publication"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "b52813275a0c66474b7cbdb5f792b49c4e5cedd5",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-6a98da487457db1dee72380ba9ad873f69e6ac0b",
+      "version": "1.5.129",
+      "date": "2026-10-14",
+      "title": "chore(versions): atomically register guarded-deployed v242 Dragon Chat source repair",
+      "changes": [
+        "chore(versions): atomically register guarded-deployed v242 Dragon Chat source repair"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "6a98da487457db1dee72380ba9ad873f69e6ac0b",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-958f157572a0c58074c6ee2696a5eac927605476",
+      "version": "1.5.128",
+      "date": "2026-10-14",
+      "title": "version(runtime): atomically register v241 verified dual-model Chat release",
+      "changes": [
+        "version(runtime): atomically register v241 verified dual-model Chat release"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "958f157572a0c58074c6ee2696a5eac927605476",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-4a0eefe1946136de89d5d54210a03ce0826be0a9",
+      "version": "1.5.127",
+      "date": "2026-10-14",
+      "title": "chore(versions): register guarded v240 risk-asymmetric chat/model intent release",
+      "changes": [
+        "chore(versions): register guarded v240 risk-asymmetric chat/model intent release"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "4a0eefe1946136de89d5d54210a03ce0826be0a9",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-ebefb6cb17d7e3714b22d763e7b67b6909bbd8c8",
+      "version": "1.5.126",
+      "date": "2026-10-14",
+      "title": "chore(versions): register guarded v239 contextual Chat clarification release",
+      "changes": [
+        "chore(versions): register guarded v239 contextual Chat clarification release"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "ebefb6cb17d7e3714b22d763e7b67b6909bbd8c8",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-bc9016c71a79fa033fbbf902786528abc75a0977",
+      "version": "1.5.125",
+      "date": "2026-10-13",
+      "title": "chore(versions): register guarded v238 timestamped chat activity",
+      "changes": [
+        "chore(versions): register guarded v238 timestamped chat activity"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "bc9016c71a79fa033fbbf902786528abc75a0977",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-0bcf72b90b2a4865ec1709341160f5806cd8921d",
+      "version": "1.5.124",
+      "date": "2026-10-13",
+      "title": "chore(versions): register guarded v237 branch-pinned GitHub reading",
+      "changes": [
+        "chore(versions): register guarded v237 branch-pinned GitHub reading"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "0bcf72b90b2a4865ec1709341160f5806cd8921d",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-2fa99a71d6c409aecf9758e1ab3aac305be52f05",
+      "version": "1.5.123",
+      "date": "2026-10-13",
+      "title": "chore(versions): register guarded v236 GitHub read trace release",
+      "changes": [
+        "chore(versions): register guarded v236 GitHub read trace release"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "2fa99a71d6c409aecf9758e1ab3aac305be52f05",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-c9638b03e198dabb41bed97bb061dd22313edbbc",
+      "version": "1.5.122",
+      "date": "2026-10-13",
+      "title": "chore(versions): register guarded-deployed v235 GitHub read inference",
+      "changes": [
+        "chore(versions): register guarded-deployed v235 GitHub read inference"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "c9638b03e198dabb41bed97bb061dd22313edbbc",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-af23a9e437873725da768a70d432fec2500856e9",
+      "version": "1.5.121",
+      "date": "2026-10-13",
+      "title": "chore(versions): register deployed v234 §tart project focus report refinement",
+      "changes": [
+        "chore(versions): register deployed v234 §tart project focus report refinement"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "af23a9e437873725da768a70d432fec2500856e9",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-d1a3330e179309c81103b2ca13590f262711ed1f",
+      "version": "1.5.120",
+      "date": "2026-10-13",
+      "title": "chore(versions): register published v233 §tart-led project and history",
+      "changes": [
+        "chore(versions): register published v233 §tart-led project and history"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "d1a3330e179309c81103b2ca13590f262711ed1f",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-bc509eb8e092a1d6b5cfb0b9f422be6a3231914f",
+      "version": "1.5.119",
+      "date": "2026-10-13",
+      "title": "chore(versions): record deployed v232 conversational evidence and compact report UI",
+      "changes": [
+        "chore(versions): record deployed v232 conversational evidence and compact report UI"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "bc509eb8e092a1d6b5cfb0b9f422be6a3231914f",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-ff82e947c436f3d6d274f786c71c95cf88223e4b",
+      "version": "1.5.118",
+      "date": "2026-10-13",
+      "title": "chore(versions): register guarded v231 source-facts response-mode release",
+      "changes": [
+        "chore(versions): register guarded v231 source-facts response-mode release"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "ff82e947c436f3d6d274f786c71c95cf88223e4b",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-fabbf5108a6d39dfcea7c7bd206e90be09260f03",
+      "version": "1.5.117",
+      "date": "2026-10-13",
+      "title": "chore(versions): register deployed v230 answer articulation across Chat, Server and LALM",
+      "changes": [
+        "chore(versions): register deployed v230 answer articulation across Chat, Server and LALM"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "fabbf5108a6d39dfcea7c7bd206e90be09260f03",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-31470c04b2f09635a6569e5a145806ade3d7b6a1",
+      "version": "1.5.116",
+      "date": "2026-10-12",
+      "title": "chore(versions): record guarded v229 GitHub followup routing and import date truth",
+      "changes": [
+        "chore(versions): record guarded v229 GitHub followup routing and import date truth"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "31470c04b2f09635a6569e5a145806ade3d7b6a1",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-9c5f5096255883b9c7614dcf0d5a632881811cd4",
+      "version": "1.5.115",
+      "date": "2026-10-12",
+      "title": "chore(versions): register v228 released GitHub explorer browser asset freshness",
+      "changes": [
+        "chore(versions): register v228 released GitHub explorer browser asset freshness"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "9c5f5096255883b9c7614dcf0d5a632881811cd4",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-7508d3ffb5916553e554cdd0ce5aa752471cc6dc",
+      "version": "1.5.114",
+      "date": "2026-10-12",
+      "title": "chore(versions): register deployed v227 GitHub preview persistence fix",
+      "changes": [
+        "chore(versions): register deployed v227 GitHub preview persistence fix"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "7508d3ffb5916553e554cdd0ce5aa752471cc6dc",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-a456a7eb9de423f366a05020c8773be7ea06e8d5",
+      "version": "1.5.113",
+      "date": "2026-10-12",
+      "title": "chore(versions): register deployed v226 scoped GitHub report system",
+      "changes": [
+        "chore(versions): register deployed v226 scoped GitHub report system"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "a456a7eb9de423f366a05020c8773be7ea06e8d5",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-ccc71cdf71f88fd6f7b6c4e795a5b1a0393075f7",
+      "version": "1.5.112",
+      "date": "2026-10-12",
+      "title": "chore(versions): register deployed v225 GitHub directories-first Chat explorer",
+      "changes": [
+        "chore(versions): register deployed v225 GitHub directories-first Chat explorer"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "ccc71cdf71f88fd6f7b6c4e795a5b1a0393075f7",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-1ecfd399709c950a2c0df7761f2f7b7a093adb63",
+      "version": "1.5.111",
+      "date": "2026-10-12",
+      "title": "versions: reconcile v224 Chat nested GitHub folder explorer deployment",
+      "changes": [
+        "versions: reconcile v224 Chat nested GitHub folder explorer deployment"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "1ecfd399709c950a2c0df7761f2f7b7a093adb63",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-c54c2753ea39809205ccb78a4beabeb959dcdca8",
+      "version": "1.5.110",
+      "date": "2026-10-12",
+      "title": "versions: register v223 published repository explorer, Chat UI and source-scoped thread continuity",
+      "changes": [
+        "versions: register v223 published repository explorer, Chat UI and source-scoped thread continuity"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "c54c2753ea39809205ccb78a4beabeb959dcdca8",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-ee74a300adc5a7b21970fb73d0e2c0129c44e4a3",
+      "version": "1.5.109",
+      "date": "2026-10-12",
+      "title": "version: atomic v217+v218 source-grounded coding agent Chat deployment advancement",
+      "changes": [
+        "version: atomic v217+v218 source-grounded coding agent Chat deployment advancement"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "ee74a300adc5a7b21970fb73d0e2c0129c44e4a3",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-e5c92826f2bb2cabcc1e86d057589413c13c245c",
+      "version": "1.5.108",
+      "date": "2026-10-12",
+      "title": "version: register guarded v215 §E starter-pack GitHub workbench release",
+      "changes": [
+        "version: register guarded v215 §E starter-pack GitHub workbench release"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "e5c92826f2bb2cabcc1e86d057589413c13c245c",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-4216f510b83be2523102ce65f567cff37c510c24",
+      "version": "1.5.107",
+      "date": "2026-10-11",
+      "title": "version: atomic published v214 Forge editor and starter agent GitHub tool authority",
+      "changes": [
+        "version: atomic published v214 Forge editor and starter agent GitHub tool authority"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "4216f510b83be2523102ce65f567cff37c510c24",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-e28d5945b71d9fb59446155af18beb537052afc5",
+      "version": "1.5.106",
+      "date": "2026-10-11",
+      "title": "version: atomically advance v213 verified project engineering release authorities",
+      "changes": [
+        "version: atomically advance v213 verified project engineering release authorities"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "e28d5945b71d9fb59446155af18beb537052afc5",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-4a82b204675870b664351a1ba59a085247e8a5c9",
+      "version": "1.5.105",
+      "date": "2026-10-11",
+      "title": "version: atomically advance governed v212 GitHub Actions workflow workbench release modules",
+      "changes": [
+        "version: atomically advance governed v212 GitHub Actions workflow workbench release modules"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "4a82b204675870b664351a1ba59a085247e8a5c9",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-4266cd0d9054efa555bcd4c252db765422616ff3",
+      "version": "1.5.104",
+      "date": "2026-10-11",
+      "title": "version: reconcile published v211.2 first-message Chat visibility",
+      "changes": [
+        "version: reconcile published v211.2 first-message Chat visibility"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "4266cd0d9054efa555bcd4c252db765422616ff3",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-216715faab329508881b41231e0e6ea0f5062e7a",
+      "version": "1.5.103",
+      "date": "2026-10-11",
+      "title": "version: reconcile guarded v211.1 native Chat sidebar and export ordering release",
+      "changes": [
+        "version: reconcile guarded v211.1 native Chat sidebar and export ordering release"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "216715faab329508881b41231e0e6ea0f5062e7a",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-2bda8d76f9b25ed9e2c5cda408dc1528bf4c32fa",
+      "version": "1.5.102",
+      "date": "2026-10-11",
+      "title": "version: advance v211 shipped model-guided GitHub tool progress components atomically",
+      "changes": [
+        "version: advance v211 shipped model-guided GitHub tool progress components atomically"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "2bda8d76f9b25ed9e2c5cda408dc1528bf4c32fa",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-25bfb1a3375c023b80616e99f77500a0d19a9556",
+      "version": "1.5.101",
+      "date": "2026-10-11",
+      "title": "version: atomically reconcile integrated v209.1 native Chat and v210 GitHub deployment",
+      "changes": [
+        "version: atomically reconcile integrated v209.1 native Chat and v210 GitHub deployment"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "25bfb1a3375c023b80616e99f77500a0d19a9556",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-b5d37fef0ba5eef460c74f98ae772c545239ead3",
+      "version": "1.5.100",
+      "date": "2026-10-11",
+      "title": "version: reconcile deployed v209 Google native chat sync modules atomically",
+      "changes": [
+        "version: reconcile deployed v209 Google native chat sync modules atomically"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "b5d37fef0ba5eef460c74f98ae772c545239ead3",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-489a00ee388d4a4f75f85a5872ef0e6d03a25e14",
+      "version": "1.5.99",
+      "date": "2026-10-11",
+      "title": "release(v205): versions/web-chat.txt registered after guarded HF publication",
+      "changes": [
+        "release(v205): versions/web-chat.txt registered after guarded HF publication"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "489a00ee388d4a4f75f85a5872ef0e6d03a25e14",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-672266405af6bc99db6942202465c75769dfeabf",
+      "version": "1.5.98",
+      "date": "2026-10-10",
+      "title": "release(v204): versions/web-chat.txt after guarded HF publication",
+      "changes": [
+        "release(v204): versions/web-chat.txt after guarded HF publication"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "672266405af6bc99db6942202465c75769dfeabf",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-a2fae1b2939d13f99c4f78435175427c1e48f67f",
+      "version": "1.5.97",
+      "date": "2026-10-10",
+      "title": "release(v203): versions/web-chat.txt Android import recovery",
+      "changes": [
+        "release(v203): versions/web-chat.txt Android import recovery"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "a2fae1b2939d13f99c4f78435175427c1e48f67f",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-cb813dde057e57c15d11572080eb8b913bfa31ea",
+      "version": "1.5.96",
+      "date": "2026-10-10",
+      "title": "version(chat): 1.5.96 authenticated ChatGPT import Settings surface",
+      "changes": [
+        "version(chat): 1.5.96 authenticated ChatGPT import Settings surface"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "cb813dde057e57c15d11572080eb8b913bfa31ea",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-d8789c24e630462b262b424492feef0158dc408e",
+      "version": "1.5.95",
+      "date": "2026-10-10",
+      "title": "Record v199 web-chat 1.5.94 → 1.5.95 after guarded HF publication",
+      "changes": [
+        "Record v199 web-chat 1.5.94 → 1.5.95 after guarded HF publication"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "d8789c24e630462b262b424492feef0158dc408e",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-606050dac19535a739bdee6f6b19123b33a9a864",
+      "version": "1.5.94",
+      "date": "2026-10-09",
+      "title": "chore(version): web Chat original-lyrics inline response and source toggle",
+      "changes": [
+        "chore(version): web Chat original-lyrics inline response and source toggle"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "606050dac19535a739bdee6f6b19123b33a9a864",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-963ff86063f439c087e52eed8945d33783f5c80a",
+      "version": "1.5.93",
+      "date": "2026-10-09",
+      "title": "chore(version): Web Chat mobile lyric viewer v194",
+      "changes": [
+        "chore(version): Web Chat mobile lyric viewer v194"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "963ff86063f439c087e52eed8945d33783f5c80a",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-3a7bc3f059d3b107706ab4134465efa36951b1e3",
+      "version": "1.5.92",
+      "date": "2026-10-08",
+      "title": "Advance Web Chat for response-start UX v170",
+      "changes": [
+        "Advance Web Chat for response-start UX v170"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "3a7bc3f059d3b107706ab4134465efa36951b1e3",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-d0c123ba9e892cf52c47ee2465f61f3202c30cef",
+      "version": "1.5.91",
+      "date": "2026-10-07",
+      "title": "Advance Web Chat for v168 renderer",
+      "changes": [
+        "Advance Web Chat for v168 renderer"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "d0c123ba9e892cf52c47ee2465f61f3202c30cef",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-818cd2be31a07bbb76fcd32ba36ee072a1292243",
+      "version": "1.5.90",
+      "date": "2026-10-05",
+      "title": "Advance Web Chat to 1.5.90 for composer recovery",
+      "changes": [
+        "Advance Web Chat to 1.5.90 for composer recovery"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "818cd2be31a07bbb76fcd32ba36ee072a1292243",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-9c43f23b1a16d056924b89db08a4b2df97afd77e",
+      "version": "1.5.89",
+      "date": "2026-10-05",
+      "title": "Advance Web Chat to 1.5.89 for live search status",
+      "changes": [
+        "Advance Web Chat to 1.5.89 for live search status"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "9c43f23b1a16d056924b89db08a4b2df97afd77e",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-9ba268f38e49bb657800c9a92b2c3c6ed4fa96d0",
+      "version": "1.5.88",
+      "date": "2026-10-04",
+      "title": "Advance Web Chat to 1.5.88 for v124 widgets",
+      "changes": [
+        "Advance Web Chat to 1.5.88 for v124 widgets"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "9ba268f38e49bb657800c9a92b2c3c6ed4fa96d0",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-f776ad43a858ff8a2a1cbe4c34edc40a84df59ec",
+      "version": "1.5.87",
+      "date": "2026-09-30",
+      "title": "Advance Web Chat for usability pass",
+      "changes": [
+        "Advance Web Chat for usability pass"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "f776ad43a858ff8a2a1cbe4c34edc40a84df59ec",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-72e23a50a122299a39806940e9a45ca8ada5b609",
+      "version": "1.5.86",
+      "date": "2026-09-19",
+      "title": "version: advance Web Chat to 1.5.86",
+      "changes": [
+        "version: advance Web Chat to 1.5.86"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "72e23a50a122299a39806940e9a45ca8ada5b609",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-a9c7cb819a9c4ee748e8886c127a3679b9bf52ef",
+      "version": "1.5.85",
+      "date": "2026-09-19",
+      "title": "version: web chat 1.5.85 clean-room stage",
+      "changes": [
+        "version: web chat 1.5.85 clean-room stage"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "a9c7cb819a9c4ee748e8886c127a3679b9bf52ef",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-3815d95aa95fc71b76d5492248f4a31088986a75",
+      "version": "1.5.84",
+      "date": "2026-09-19",
+      "title": "version: advance web chat unified lockdown logger to 1.5.84",
+      "changes": [
+        "version: advance web chat unified lockdown logger to 1.5.84"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "3815d95aa95fc71b76d5492248f4a31088986a75",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-cb6189d055d531008e2b9c758de983761d520146",
+      "version": "1.5.83",
+      "date": "2026-09-19",
+      "title": "version: advance web chat lockdown cameras to 1.5.83",
+      "changes": [
+        "version: advance web chat lockdown cameras to 1.5.83"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "cb6189d055d531008e2b9c758de983761d520146",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-7c3d458d31409c383d73838c56f4c1aad4ae1542",
+      "version": "1.5.82",
+      "date": "2026-09-18",
+      "title": "Chat 1.5.82: registry-driven module version display",
+      "changes": [
+        "Chat 1.5.82: registry-driven module version display"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "7c3d458d31409c383d73838c56f4c1aad4ae1542",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-be4b8bec1adf1ed660a2fb5bf613eec03537b7d2",
+      "version": "1.5.81",
+      "date": "2026-09-18",
+      "title": "Chat 1.5.81: preserve healthy stream on foreground",
+      "changes": [
+        "Chat 1.5.81: preserve healthy stream on foreground"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "be4b8bec1adf1ed660a2fb5bf613eec03537b7d2",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-4436785b0f01d229a241b52fbc7c79170213fe5c",
+      "version": "1.5.80",
+      "date": "2026-09-18",
+      "title": "Chat 1.5.80: reconnect phase authority repair",
+      "changes": [
+        "Chat 1.5.80: reconnect phase authority repair"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "4436785b0f01d229a241b52fbc7c79170213fe5c",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-039ba275c4ab5d7a984f509b8dfb76b6527204b2",
+      "version": "1.5.79",
+      "date": "2026-09-18",
+      "title": "Chat 1.5.79: record canonical identity",
+      "changes": [
+        "Chat 1.5.79: record canonical identity"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "039ba275c4ab5d7a984f509b8dfb76b6527204b2",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-7de7247c8aefa1d853953efadf47b886af54966d",
+      "version": "1.5.78",
+      "date": "2026-09-17",
+      "title": "Advance Chat 1.5.78 execution tracer",
+      "changes": [
+        "Advance Chat 1.5.78 execution tracer"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "7de7247c8aefa1d853953efadf47b886af54966d",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-39597d54ecc296f24c634f8b97d66c1651ec1755",
+      "version": "1.5.77",
+      "date": "2026-09-17",
+      "title": "Advance Chat 1.5.77 online research control",
+      "changes": [
+        "Advance Chat 1.5.77 online research control"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "39597d54ecc296f24c634f8b97d66c1651ec1755",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-3fc6700c221d20f240e8708a28a5ab00d5e75058",
+      "version": "1.5.76",
+      "date": "2026-09-17",
+      "title": "Advance Chat 1.5.76 response identity emblem",
+      "changes": [
+        "Advance Chat 1.5.76 response identity emblem"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "3fc6700c221d20f240e8708a28a5ab00d5e75058",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-e8313a3133f4a814c4254ddb256da62ab1a72a83",
+      "version": "1.5.75",
+      "date": "2026-09-17",
+      "title": "Bump Chat for isolated Activity Log tap surface",
+      "changes": [
+        "Bump Chat for isolated Activity Log tap surface"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "e8313a3133f4a814c4254ddb256da62ab1a72a83",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-e288149de88137f46abb3c5cba1d675cb39f0ee4",
+      "version": "1.5.74",
+      "date": "2026-09-17",
+      "title": "Chat 1.5.74 user-owned Activity Log state",
+      "changes": [
+        "Chat 1.5.74 user-owned Activity Log state"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "e288149de88137f46abb3c5cba1d675cb39f0ee4",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-1a8a78c8bd98bcaf690ffa6d3ba536403a81cf09",
+      "version": "1.5.73",
+      "date": "2026-09-17",
+      "title": "Record Chat 1.5.73 activity terminal stabilization",
+      "changes": [
+        "Record Chat 1.5.73 activity terminal stabilization"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "1a8a78c8bd98bcaf690ffa6d3ba536403a81cf09",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-1042b79fa24ec44559f860e2e4b43ca42563c4d0",
+      "version": "1.5.72",
+      "date": "2026-09-17",
+      "title": "version: advance web chat to 1.5.72",
+      "changes": [
+        "version: advance web chat to 1.5.72"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "1042b79fa24ec44559f860e2e4b43ca42563c4d0",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-e2338f86f66afce3458faa47b5508ade88ec7dad",
+      "version": "1.5.71",
+      "date": "2026-09-17",
+      "title": "Advance Web Chat for renderer-owned Activity Log",
+      "changes": [
+        "Advance Web Chat for renderer-owned Activity Log"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "e2338f86f66afce3458faa47b5508ade88ec7dad",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-554ed32714d157964b903727ce03d69c03012490",
+      "version": "1.5.70",
+      "date": "2026-09-17",
+      "title": "Advance Web Chat for Activity Log expansion fix",
+      "changes": [
+        "Advance Web Chat for Activity Log expansion fix"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "554ed32714d157964b903727ce03d69c03012490",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-a203483e5c456d7d5015e4af6259217c07f1d422",
+      "version": "1.5.69",
+      "date": "2026-09-17",
+      "title": "Advance chat for immediate activity spawn",
+      "changes": [
+        "Advance chat for immediate activity spawn"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "a203483e5c456d7d5015e4af6259217c07f1d422",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-b246234c03470a279d305729657394a423448075",
+      "version": "1.5.68",
+      "date": "2026-09-17",
+      "title": "Version Web Chat 1.5.68 for Activity Log dismissal repair",
+      "changes": [
+        "Version Web Chat 1.5.68 for Activity Log dismissal repair"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "b246234c03470a279d305729657394a423448075",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-a230bee6b5cf98afdc043ccab3141f4a4f3375aa",
+      "version": "1.5.67",
+      "date": "2026-09-17",
+      "title": "Bump Web Chat to 1.5.67 for LALM status ownership repair",
+      "changes": [
+        "Bump Web Chat to 1.5.67 for LALM status ownership repair"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "a230bee6b5cf98afdc043ccab3141f4a4f3375aa",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-6f78ddff7be4a4d8d9141d07a9d0fc7a1875c53a",
+      "version": "1.5.66",
+      "date": "2026-09-17",
+      "title": "Advance Chat for shared LALM status plane",
+      "changes": [
+        "Advance Chat for shared LALM status plane"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "6f78ddff7be4a4d8d9141d07a9d0fc7a1875c53a",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-1f1a9fe5469cc66de1a0450a5de35d6108d7420e",
+      "version": "1.5.65",
+      "date": "2026-09-17",
+      "title": "chore(version): Web Chat 1.5.65",
+      "changes": [
+        "chore(version): Web Chat 1.5.65"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "1f1a9fe5469cc66de1a0450a5de35d6108d7420e",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-a6547ea8a7f93d167545b3bd923eb629c0c9830d",
+      "version": "1.5.64",
+      "date": "2026-09-17",
+      "title": "chore(version): web Chat 1.5.64",
+      "changes": [
+        "chore(version): web Chat 1.5.64"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "a6547ea8a7f93d167545b3bd923eb629c0c9830d",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-dd9b44193aa3813cf0740c5486c192e6e03bbbe9",
+      "version": "1.5.63",
+      "date": "2026-09-17",
+      "title": "chore(version): web Chat 1.5.63",
+      "changes": [
+        "chore(version): web Chat 1.5.63"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "dd9b44193aa3813cf0740c5486c192e6e03bbbe9",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-1912b25efe7d176ed334199aa9a6facddaf87157",
+      "version": "1.5.62",
+      "date": "2026-09-17",
+      "title": "Bump Web Chat for menu and registry correction",
+      "changes": [
+        "Bump Web Chat for menu and registry correction"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "1912b25efe7d176ed334199aa9a6facddaf87157",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-e015d94ef4da1e0337aff2cc3df2684af25661b6",
+      "version": "1.5.61",
+      "date": "2026-09-17",
+      "title": "Version Chat 1.5.61 for viewport correction",
+      "changes": [
+        "Version Chat 1.5.61 for viewport correction"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "e015d94ef4da1e0337aff2cc3df2684af25661b6",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-69e9bf5023c1455deeeb1ab26ecf57609cbc8d6c",
+      "version": "1.5.60",
+      "date": "2026-09-17",
+      "title": "Bump Web Chat for version routing and full phone drawer",
+      "changes": [
+        "Bump Web Chat for version routing and full phone drawer"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "69e9bf5023c1455deeeb1ab26ecf57609cbc8d6c",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-790d4dacedfa79246a9bafe6dc2fe9a92dde2429",
+      "version": "1.5.59",
+      "date": "2026-09-17",
+      "title": "Bump Web Chat for single geometry authority",
+      "changes": [
+        "Bump Web Chat for single geometry authority"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "790d4dacedfa79246a9bafe6dc2fe9a92dde2429",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-5960e7c6fe9e7d9dc2079c3da20243d157cce7e7",
+      "version": "1.5.58",
+      "date": "2026-09-17",
+      "title": "version: advance web chat for mobile frame and visual hierarchy",
+      "changes": [
+        "version: advance web chat for mobile frame and visual hierarchy"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "5960e7c6fe9e7d9dc2079c3da20243d157cce7e7",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-51c310221bbeea6a265e0509d9a215eb0c135457",
+      "version": "1.5.57",
+      "date": "2026-09-16",
+      "title": "chore(version): web chat 1.5.57",
+      "changes": [
+        "chore(version): web chat 1.5.57"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "51c310221bbeea6a265e0509d9a215eb0c135457",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-17baae5cd43d6f5cb2228aa9eef2e7fe5a331101",
+      "version": "1.5.56",
+      "date": "2026-09-16",
+      "title": "chore(version): web chat 1.5.56",
+      "changes": [
+        "chore(version): web chat 1.5.56"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "17baae5cd43d6f5cb2228aa9eef2e7fe5a331101",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-44e9006ca46e65cdcbb4d3e1825feab00e61b07c",
+      "version": "1.5.55",
+      "date": "2026-09-16",
+      "title": "chore(version): web chat 1.5.55",
+      "changes": [
+        "chore(version): web chat 1.5.55"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "44e9006ca46e65cdcbb4d3e1825feab00e61b07c",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-b9abfd8ebe73933df6d3801cd2600d61f794909c",
+      "version": "1.5.54",
+      "date": "2026-09-16",
+      "title": "chore(version): web chat 1.5.54",
+      "changes": [
+        "chore(version): web chat 1.5.54"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "b9abfd8ebe73933df6d3801cd2600d61f794909c",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-d6a0855fc49e36909d97a6b0ac32a9c7e4d50a7e",
+      "version": "1.5.53",
+      "date": "2026-09-16",
+      "title": "chore(version): web chat 1.5.53",
+      "changes": [
+        "chore(version): web chat 1.5.53"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "d6a0855fc49e36909d97a6b0ac32a9c7e4d50a7e",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-5f9f5d47f1595e229e3bcf88c853708208366269",
+      "version": "1.5.52",
+      "date": "2026-09-16",
+      "title": "chore(version): web chat 1.5.52",
+      "changes": [
+        "chore(version): web chat 1.5.52"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "5f9f5d47f1595e229e3bcf88c853708208366269",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-dccee88814faa7a4b46ff1829e2092eb6fe9b23b",
+      "version": "1.5.51",
+      "date": "2026-09-16",
+      "title": "Advance Web Chat for fast interactive first paint",
+      "changes": [
+        "Advance Web Chat for fast interactive first paint"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "dccee88814faa7a4b46ff1829e2092eb6fe9b23b",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-47520feea1a1f489a604060bd0c3578ff46932dc",
+      "version": "1.5.50",
+      "date": "2026-09-16",
+      "title": "Advance Web Chat for terminal-safe resume",
+      "changes": [
+        "Advance Web Chat for terminal-safe resume"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "47520feea1a1f489a604060bd0c3578ff46932dc",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-c2f7b241bda95f0c036c4ee15885913945eb7b42",
+      "version": "1.5.49",
+      "date": "2026-09-16",
+      "title": "Advance Web Chat for Activity and sigil fixes",
+      "changes": [
+        "Advance Web Chat for Activity and sigil fixes"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "c2f7b241bda95f0c036c4ee15885913945eb7b42",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-8d515a8c6d7d3bac3cd71707a4887063c7a1077c",
+      "version": "1.5.48",
+      "date": "2026-09-16",
+      "title": "Advance Web Chat 1.5.48",
+      "changes": [
+        "Advance Web Chat 1.5.48"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "8d515a8c6d7d3bac3cd71707a4887063c7a1077c",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-930f6305cb65e55070214a046c400da6234fc387",
+      "version": "1.5.47",
+      "date": "2026-09-16",
+      "title": "Advance Web Chat 1.5.47",
+      "changes": [
+        "Advance Web Chat 1.5.47"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "930f6305cb65e55070214a046c400da6234fc387",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-6d06d501f97e67b68e0a67e8cea78cb433a89a83",
+      "version": "1.5.46",
+      "date": "2026-09-16",
+      "title": "Advance Web Chat to 1.5.46",
+      "changes": [
+        "Advance Web Chat to 1.5.46"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "6d06d501f97e67b68e0a67e8cea78cb433a89a83",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-dfa92f10b5c3e122591e1e9f12f9e430a6751d8a",
+      "version": "1.5.45",
+      "date": "2026-09-16",
+      "title": "Advance Web Chat to 1.5.45",
+      "changes": [
+        "Advance Web Chat to 1.5.45"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "dfa92f10b5c3e122591e1e9f12f9e430a6751d8a",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-191fa4434b860e07f63cbb3c1496b61a8217ad27",
+      "version": "1.5.44",
+      "date": "2026-09-16",
+      "title": "Advance Web Chat for recovery hold and activity state",
+      "changes": [
+        "Advance Web Chat for recovery hold and activity state"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "191fa4434b860e07f63cbb3c1496b61a8217ad27",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-0443dd20e1468d4bf6ee68aab1331bd71c345e65",
+      "version": "1.5.43",
+      "date": "2026-09-16",
+      "title": "Advance Web Chat for canonical terminal recovery",
+      "changes": [
+        "Advance Web Chat for canonical terminal recovery"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "0443dd20e1468d4bf6ee68aab1331bd71c345e65",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-55bd45d5e4d94d6c4426f37fabfcf685acb6aa63",
+      "version": "1.5.42",
+      "date": "2026-09-16",
+      "title": "Advance Web Chat to 1.5.42",
+      "changes": [
+        "Advance Web Chat to 1.5.42"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "55bd45d5e4d94d6c4426f37fabfcf685acb6aa63",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-4241f12910bf7c2bdce5d3685ac4f183f09e6fe3",
+      "version": "1.5.41",
+      "date": "2026-09-16",
+      "title": "Advance Web Chat to 1.5.41",
+      "changes": [
+        "Advance Web Chat to 1.5.41"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "4241f12910bf7c2bdce5d3685ac4f183f09e6fe3",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-f0480707111f8fec32737be53cf4e58a54b077b8",
+      "version": "1.5.40",
+      "date": "2026-09-16",
+      "title": "Bump Web Chat to 1.5.40",
+      "changes": [
+        "Bump Web Chat to 1.5.40"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "f0480707111f8fec32737be53cf4e58a54b077b8",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-c68e7f6a08b061a8de4b3f7a59b0be984560ba68",
+      "version": "1.5.39",
+      "date": "2026-09-16",
+      "title": "Advance Web Chat to 1.5.39 for monotonic terminal text",
+      "changes": [
+        "Advance Web Chat to 1.5.39 for monotonic terminal text"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "c68e7f6a08b061a8de4b3f7a59b0be984560ba68",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-984c5f403c26a05b45b4dde1d404b24d710b85b5",
+      "version": "1.5.38",
+      "date": "2026-09-16",
+      "title": "Advance Web Chat for no-reload hydration fix",
+      "changes": [
+        "Advance Web Chat for no-reload hydration fix"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "984c5f403c26a05b45b4dde1d404b24d710b85b5",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-b90ef3dec0f1f542580677b4a4d8dc78ec71313f",
+      "version": "1.5.37",
+      "date": "2026-09-16",
+      "title": "Advance Web Chat authority to 1.5.37",
+      "changes": [
+        "Advance Web Chat authority to 1.5.37"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "b90ef3dec0f1f542580677b4a4d8dc78ec71313f",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-58ec83e04aab5ef0796bc812a5790928c2a08be9",
+      "version": "1.5.36",
+      "date": "2026-09-16",
+      "title": "Advance Web Chat for quiet canonical adoption",
+      "changes": [
+        "Advance Web Chat for quiet canonical adoption"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "58ec83e04aab5ef0796bc812a5790928c2a08be9",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-9d40e599e3c715d3664d891075aab8b076f930f6",
+      "version": "1.5.35",
+      "date": "2026-09-16",
+      "title": "Advance Web Chat to 1.5.35",
+      "changes": [
+        "Advance Web Chat to 1.5.35"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "9d40e599e3c715d3664d891075aab8b076f930f6",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-df9fadf8e7ed11aca3e7a9595505a100d51e156d",
+      "version": "1.5.34",
+      "date": "2026-09-15",
+      "title": "Advance Web Chat to 1.5.34",
+      "changes": [
+        "Advance Web Chat to 1.5.34"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "df9fadf8e7ed11aca3e7a9595505a100d51e156d",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-2b7c72d103ddae02d817fcdd5bfc3ec2ecadefd3",
+      "version": "1.5.33",
+      "date": "2026-09-15",
+      "title": "Version Web Chat 1.5.33",
+      "changes": [
+        "Version Web Chat 1.5.33"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "2b7c72d103ddae02d817fcdd5bfc3ec2ecadefd3",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-5b4110e003f131ab3b58ef11a543ea68a249cb37",
+      "version": "1.5.32",
+      "date": "2026-09-15",
+      "title": "Advance Web Chat to 1.5.32",
+      "changes": [
+        "Advance Web Chat to 1.5.32"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "5b4110e003f131ab3b58ef11a543ea68a249cb37",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-ba9ba7dabdcc17b08dcdd664551ed99665f6188c",
+      "version": "1.5.31",
+      "date": "2026-09-15",
+      "title": "Bump Web Chat to 1.5.31",
+      "changes": [
+        "Bump Web Chat to 1.5.31"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "ba9ba7dabdcc17b08dcdd664551ed99665f6188c",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-6f5310100f06277ba7b6536c6700ebf9edd3afc1",
+      "version": "1.5.30",
+      "date": "2026-09-15",
+      "title": "Bump Web Chat to 1.5.30",
+      "changes": [
+        "Bump Web Chat to 1.5.30"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "6f5310100f06277ba7b6536c6700ebf9edd3afc1",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-0a7f92ed031ec7d1ffa13429543d568e6e512a38",
+      "version": "1.5.29",
+      "date": "2026-09-15",
+      "title": "Advance Web Chat authority for Phase 2A mutation repair",
+      "changes": [
+        "Advance Web Chat authority for Phase 2A mutation repair"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "0a7f92ed031ec7d1ffa13429543d568e6e512a38",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-a8dd70681e5e47f8f60ce3b74deab98473bb6c8f",
+      "version": "1.5.28",
+      "date": "2026-09-15",
+      "title": "Advance Web Chat to 1.5.28",
+      "changes": [
+        "Advance Web Chat to 1.5.28"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "a8dd70681e5e47f8f60ce3b74deab98473bb6c8f",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-2b828613e11e8158d29a6ec85632da9b12194e7c",
+      "version": "1.5.27",
+      "date": "2026-09-14",
+      "title": "version: advance web chat to 1.5.27",
+      "changes": [
+        "version: advance web chat to 1.5.27"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "2b828613e11e8158d29a6ec85632da9b12194e7c",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-b4335199687d14e24919ea1eb83b85c5c262806b",
+      "version": "1.5.26",
+      "date": "2026-09-14",
+      "title": "Fix Edge Android keyboard shelf with native fixed boundary",
+      "changes": [
+        "Fix Edge Android keyboard shelf with native fixed boundary"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "b4335199687d14e24919ea1eb83b85c5c262806b",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-262db838ba069ccd778771ff103982d8b4ebbd50",
+      "version": "1.5.25",
+      "date": "2026-09-14",
+      "title": "Bump Web Chat for account state synchronization",
+      "changes": [
+        "Bump Web Chat for account state synchronization"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "262db838ba069ccd778771ff103982d8b4ebbd50",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-e4dbfa5c2a13d935ae9e1bc6802bcb0c205c2be5",
+      "version": "1.5.24",
+      "date": "2026-09-14",
+      "title": "Fix Edge Android keyboard viewport gap",
+      "changes": [
+        "Fix Edge Android keyboard viewport gap"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "e4dbfa5c2a13d935ae9e1bc6802bcb0c205c2be5",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-638a41ae5c3c491704c7a313af59c0078565aba1",
+      "version": "1.5.23",
+      "date": "2026-09-14",
+      "title": "Fix Chat drawer scrim input layering",
+      "changes": [
+        "Fix Chat drawer scrim input layering"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "638a41ae5c3c491704c7a313af59c0078565aba1",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-e1b537558b7bd2ba53ea6bd99a437a515d752ca2",
+      "version": "1.5.22",
+      "date": "2026-09-14",
+      "title": "Bump Web Chat to 1.5.22 for cooperative startup scheduler",
+      "changes": [
+        "Bump Web Chat to 1.5.22 for cooperative startup scheduler"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "e1b537558b7bd2ba53ea6bd99a437a515d752ca2",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-52641a0f00f7dc9a09fbe6db3494c53873494248",
+      "version": "1.5.21",
+      "date": "2026-09-13",
+      "title": "chat: bump Web Chat to 1.5.21",
+      "changes": [
+        "chat: bump Web Chat to 1.5.21"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "52641a0f00f7dc9a09fbe6db3494c53873494248",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-c0401da6875ceaea04ef012f0c6401c763d8e471",
+      "version": "1.5.20",
+      "date": "2026-09-13",
+      "title": "chat: bump Web Chat for canonical interface recovery",
+      "changes": [
+        "chat: bump Web Chat for canonical interface recovery"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "c0401da6875ceaea04ef012f0c6401c763d8e471",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-49d728834aca99e09d644ef3344073fa8e41b03e",
+      "version": "1.5.19",
+      "date": "2026-09-13",
+      "title": "version: web chat 1.5.19",
+      "changes": [
+        "version: web chat 1.5.19"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "49d728834aca99e09d644ef3344073fa8e41b03e",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-152015d72da8e654c0a2302ce3444595543a2d1a",
+      "version": "1.5.18",
+      "date": "2026-09-13",
+      "title": "chat: bump web chat to 1.5.18 for parallel hydration",
+      "changes": [
+        "chat: bump web chat to 1.5.18 for parallel hydration"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "152015d72da8e654c0a2302ce3444595543a2d1a",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-e79ef99762c159f7128f936747acc69cae3bdb85",
+      "version": "1.5.17",
+      "date": "2026-09-13",
+      "title": "Bump Web Chat for presentation compatibility restoration",
+      "changes": [
+        "Bump Web Chat for presentation compatibility restoration"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "e79ef99762c159f7128f936747acc69cae3bdb85",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-5e0ad3cd174118ba728cc85d8527e79ad075e5f4",
+      "version": "1.5.16",
+      "date": "2026-09-13",
+      "title": "Bump Web Chat to 1.5.16 for Phase 2 audit correction",
+      "changes": [
+        "Bump Web Chat to 1.5.16 for Phase 2 audit correction"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "5e0ad3cd174118ba728cc85d8527e79ad075e5f4",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-76950cb97b5d4b605dbe63d5e4d5f329856bffd6",
+      "version": "1.5.15",
+      "date": "2026-09-13",
+      "title": "Bump Web Chat for Mask architecture Phase 2",
+      "changes": [
+        "Bump Web Chat for Mask architecture Phase 2"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "76950cb97b5d4b605dbe63d5e4d5f329856bffd6",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-f1ca06b853982e54eed905741e4dea2f4d997dac",
+      "version": "1.5.14",
+      "date": "2026-09-13",
+      "title": "Advance Web Chat to 1.5.14 for settings center",
+      "changes": [
+        "Advance Web Chat to 1.5.14 for settings center"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "f1ca06b853982e54eed905741e4dea2f4d997dac",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-28fbffb3af203aea9648c6a6d80840f7c5fdc8a5",
+      "version": "1.5.13",
+      "date": "2026-09-13",
+      "title": "Advance Web Chat to 1.5.13 for mask brain phase 1",
+      "changes": [
+        "Advance Web Chat to 1.5.13 for mask brain phase 1"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "28fbffb3af203aea9648c6a6d80840f7c5fdc8a5",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-0943a3d3d039a024de5ef24eee27da16f49e01aa",
+      "version": "1.5.12",
+      "date": "2026-09-13",
+      "title": "Advance Web Chat to 1.5.12",
+      "changes": [
+        "Advance Web Chat to 1.5.12"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "0943a3d3d039a024de5ef24eee27da16f49e01aa",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-7dd542d1a0253fdea6a9754b2d6bea6cd22cbb68",
+      "version": "1.5.11",
+      "date": "2026-09-13",
+      "title": "Release Web Chat 1.5.11",
+      "changes": [
+        "Release Web Chat 1.5.11"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "7dd542d1a0253fdea6a9754b2d6bea6cd22cbb68",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-8342c191264266a5acc343ba08a70649257957fd",
+      "version": "1.5.10",
+      "date": "2026-09-13",
+      "title": "Release Web Chat 1.5.10",
+      "changes": [
+        "Release Web Chat 1.5.10"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "8342c191264266a5acc343ba08a70649257957fd",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-4075ed9e5f0f757530ea0be336db9645fc4b5dcf",
+      "version": "1.5.9",
+      "date": "2026-09-13",
+      "title": "Release Web Chat 1.5.9 response composition fix",
+      "changes": [
+        "Release Web Chat 1.5.9 response composition fix"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "4075ed9e5f0f757530ea0be336db9645fc4b5dcf",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-b7d498bddb760af2e11ee4ac2b32823514cfff96",
+      "version": "1.5.8",
+      "date": "2026-09-13",
+      "title": "Web Chat 1.5.8: temporal greeting and terminal UI integrity",
+      "changes": [
+        "Web Chat 1.5.8: temporal greeting and terminal UI integrity"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "b7d498bddb760af2e11ee4ac2b32823514cfff96",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-994df39c2ba5668d6bea7d10676d98597c51acc0",
+      "version": "1.5.7",
+      "date": "2026-09-13",
+      "title": "version: web chat 1.5.7",
+      "changes": [
+        "version: web chat 1.5.7"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "994df39c2ba5668d6bea7d10676d98597c51acc0",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-06fad833e95aa6c7895cf32ed899feeb145e027a",
+      "version": "1.5.6",
+      "date": "2026-09-13",
+      "title": "version: advance Web Chat to 1.5.6",
+      "changes": [
+        "version: advance Web Chat to 1.5.6"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "06fad833e95aa6c7895cf32ed899feeb145e027a",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-c0226f2f11ef347a69616be621fc6fee6c27ec69",
+      "version": "1.5.5",
+      "date": "2026-09-13",
+      "title": "Bump Web Chat for canonical wallpaper and glass tuning",
+      "changes": [
+        "Bump Web Chat for canonical wallpaper and glass tuning"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "c0226f2f11ef347a69616be621fc6fee6c27ec69",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-ebe6ed4672b33e6387dfc4725f6945ec55d579bf",
+      "version": "1.5.4",
+      "date": "2026-09-13",
+      "title": "Web Chat 1.5.4: Ice Dragon §wyrlz brand typography",
+      "changes": [
+        "Web Chat 1.5.4: Ice Dragon §wyrlz brand typography"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "ebe6ed4672b33e6387dfc4725f6945ec55d579bf",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-842549dd7285c43bec02f670bd87f5b28b44727e",
+      "version": "1.5.3",
+      "date": "2026-09-13",
+      "title": "release: bump Web Chat for canonical shell",
+      "changes": [
+        "release: bump Web Chat for canonical shell"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "842549dd7285c43bec02f670bd87f5b28b44727e",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-7eeeef43debf7b3a5045bcf1874550dbda7b1c74",
+      "version": "1.5.2",
+      "date": "2026-09-13",
+      "title": "Bump Web Chat to 1.5.2",
+      "changes": [
+        "Bump Web Chat to 1.5.2"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "7eeeef43debf7b3a5045bcf1874550dbda7b1c74",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-5ffd51e4134c03f371cabb5551fb814c91134111",
+      "version": "1.5.1",
+      "date": "2026-09-13",
+      "title": "release(chat): 1.5.1 Ice Dragon UI polish",
+      "changes": [
+        "release(chat): 1.5.1 Ice Dragon UI polish"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "5ffd51e4134c03f371cabb5551fb814c91134111",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-f808cdd6b0961adb399e5c97f58909590278b3d6",
+      "version": "1.5.0",
+      "date": "2026-09-13",
+      "title": "Version Web Chat 1.5.0",
+      "changes": [
+        "Version Web Chat 1.5.0"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "f808cdd6b0961adb399e5c97f58909590278b3d6",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-8f682f0a03eb103db2469f46afd51d6ccdf55da3",
+      "version": "1.4.99",
+      "date": "2026-09-13",
+      "title": "fix(chat): bridge stale Ice Dragon v20 to exact PNG (Server 2.3.116 / Chat 1.4.99)",
+      "changes": [
+        "fix(chat): bridge stale Ice Dragon v20 to exact PNG (Server 2.3.116 / Chat 1.4.99)"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "8f682f0a03eb103db2469f46afd51d6ccdf55da3",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-5cb3beba1a64ead47410b05ea8bcfe10b93317fc",
+      "version": "1.4.98",
+      "date": "2026-09-13",
+      "title": "fix(chat): direct exact Ice Dragon PNG from repository (Server 2.3.115 / Chat 1.4.98)",
+      "changes": [
+        "fix(chat): direct exact Ice Dragon PNG from repository (Server 2.3.115 / Chat 1.4.98)"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "5cb3beba1a64ead47410b05ea8bcfe10b93317fc",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-5a51baac9fb23b0a6563da8a89cd8194b29d600a",
+      "version": "1.4.97",
+      "date": "2026-09-13",
+      "title": "version: advance web chat for first-paint response presence",
+      "changes": [
+        "version: advance web chat for first-paint response presence"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "5a51baac9fb23b0a6563da8a89cd8194b29d600a",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-9e5ac382d6f128828cf884e2ad23235713ca7862",
+      "version": "1.4.96",
+      "date": "2026-09-13",
+      "title": "fix(chat): exact Ice Dragon PNG backdrop (Server 2.3.113 / Chat 1.4.96)",
+      "changes": [
+        "fix(chat): exact Ice Dragon PNG backdrop (Server 2.3.113 / Chat 1.4.96)"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "9e5ac382d6f128828cf884e2ad23235713ca7862",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-f20b8fb82d448e606f9ab3556c7a2bb831d48c87",
+      "version": "1.4.95",
+      "date": "2026-09-13",
+      "title": "release: bump web chat for context capacity meter",
+      "changes": [
+        "release: bump web chat for context capacity meter"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "f20b8fb82d448e606f9ab3556c7a2bb831d48c87",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-c90965e029dbcb697c754abbcbe10ab9bc6741a5",
+      "version": "1.4.94",
+      "date": "2026-09-13",
+      "title": "noop version confirmation",
+      "changes": [
+        "noop version confirmation"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "c90965e029dbcb697c754abbcbe10ab9bc6741a5",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-bb0b8388c9d675efc03a4af207d1d2f86969e7a1",
+      "version": "1.4.93",
+      "date": "2026-09-13",
+      "title": "versions: advance web chat for terminal integrity",
+      "changes": [
+        "versions: advance web chat for terminal integrity"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "bb0b8388c9d675efc03a4af207d1d2f86969e7a1",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-30ec8aafbe5141237180c844e49612e7fb3734dd",
+      "version": "1.4.92",
+      "date": "2026-09-13",
+      "title": "version: web chat 1.4.92 contextual presence",
+      "changes": [
+        "version: web chat 1.4.92 contextual presence"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "30ec8aafbe5141237180c844e49612e7fb3734dd",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-ba0194115077424921e26906864edbb2b0c7597d",
+      "version": "1.4.91",
+      "date": "2026-09-13",
+      "title": "Web Chat 1.4.91: stage-aware response presence",
+      "changes": [
+        "Web Chat 1.4.91: stage-aware response presence"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "ba0194115077424921e26906864edbb2b0c7597d",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-2406bc9770071a74ea2d7368ac516c4c55a6ab65",
+      "version": "1.4.90",
+      "date": "2026-09-13",
+      "title": "version: Web Chat 1.4.90",
+      "changes": [
+        "version: Web Chat 1.4.90"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "2406bc9770071a74ea2d7368ac516c4c55a6ab65",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-953f7902535c38e7e84e3f0d451aae6a38fff511",
+      "version": "1.4.89",
+      "date": "2026-09-13",
+      "title": "version: Web Chat 1.4.89 strict transcript contract",
+      "changes": [
+        "version: Web Chat 1.4.89 strict transcript contract"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "953f7902535c38e7e84e3f0d451aae6a38fff511",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-98d17931e6aba09fec0435b6a49ffc4a6ef3cf29",
+      "version": "1.4.88",
+      "date": "2026-09-13",
+      "title": "Advance Web Chat to 1.4.88",
+      "changes": [
+        "Advance Web Chat to 1.4.88"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "98d17931e6aba09fec0435b6a49ffc4a6ef3cf29",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-e5ab6b5fb8ae16d287de20ba98d71f1e708da867",
+      "version": "1.4.87",
+      "date": "2026-09-13",
+      "title": "Web Chat 1.4.87: live phase text and proactive foreground resume",
+      "changes": [
+        "Web Chat 1.4.87: live phase text and proactive foreground resume"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "e5ab6b5fb8ae16d287de20ba98d71f1e708da867",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-8ac03c5e424a074e0d5230110232b88dc1470f87",
+      "version": "1.4.86",
+      "date": "2026-09-13",
+      "title": "Web Chat 1.4.86: fix staged commit stream contract mismatch",
+      "changes": [
+        "Web Chat 1.4.86: fix staged commit stream contract mismatch"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "8ac03c5e424a074e0d5230110232b88dc1470f87",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-0889cacb8eafc4b5f8c3413516f239120cd0d6d1",
+      "version": "1.4.85",
+      "date": "2026-09-13",
+      "title": "chore(chat): bump Web Chat to 1.4.85 for Ice Dragon wallpaper repair",
+      "changes": [
+        "chore(chat): bump Web Chat to 1.4.85 for Ice Dragon wallpaper repair"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "0889cacb8eafc4b5f8c3413516f239120cd0d6d1",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-0a50aef8d315e0cf1eea9e6a93552dcf730e7980",
+      "version": "1.4.84",
+      "date": "2026-09-13",
+      "title": "chore(version): advance Web Chat to 1.4.84",
+      "changes": [
+        "chore(version): advance Web Chat to 1.4.84"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "0a50aef8d315e0cf1eea9e6a93552dcf730e7980",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-cdf7302632a847fdbe646f00e892d6bdfc677082",
+      "version": "1.4.83",
+      "date": "2026-09-12",
+      "title": "release(chat): advance Web Chat for same-generation network resume",
+      "changes": [
+        "release(chat): advance Web Chat for same-generation network resume"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "cdf7302632a847fdbe646f00e892d6bdfc677082",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-a16ad21a00ed57f98303e0e482282d698db64429",
+      "version": "1.4.82",
+      "date": "2026-09-12",
+      "title": "release(chat): advance web chat to 1.4.82",
+      "changes": [
+        "release(chat): advance web chat to 1.4.82"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "a16ad21a00ed57f98303e0e482282d698db64429",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-9e81ad35ebcfdd60352a23d66f6939789ad40dea",
+      "version": "1.4.81",
+      "date": "2026-09-12",
+      "title": "version: web chat 1.4.81 semantic final-copy validation",
+      "changes": [
+        "version: web chat 1.4.81 semantic final-copy validation"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "9e81ad35ebcfdd60352a23d66f6939789ad40dea",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-d0cb8ce4549fbe9e7c36b041c3c517562017687e",
+      "version": "1.4.80",
+      "date": "2026-09-12",
+      "title": "version: Web Chat 1.4.80",
+      "changes": [
+        "version: Web Chat 1.4.80"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "d0cb8ce4549fbe9e7c36b041c3c517562017687e",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-9e5645f448ace189e4df378a31acc6474a781090",
+      "version": "1.4.79",
+      "date": "2026-09-12",
+      "title": "version: Web Chat 1.4.79",
+      "changes": [
+        "version: Web Chat 1.4.79"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "9e5645f448ace189e4df378a31acc6474a781090",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-18e39e93c5478d0cb40cfecb9a4787b6ce908622",
+      "version": "1.4.78",
+      "date": "2026-09-12",
+      "title": "Advance Web Chat to 1.4.78",
+      "changes": [
+        "Advance Web Chat to 1.4.78"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "18e39e93c5478d0cb40cfecb9a4787b6ce908622",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-6a4a8f738a8c13e766b1329f54d6107b72b0f325",
+      "version": "1.4.77",
+      "date": "2026-09-12",
+      "title": "Chat 1.4.77 direct Ice Dragon wallpaper contract",
+      "changes": [
+        "Chat 1.4.77 direct Ice Dragon wallpaper contract"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "6a4a8f738a8c13e766b1329f54d6107b72b0f325",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-4b4d548c6519bec8c0b52ef524fa55e5a6c7ab88",
+      "version": "1.4.76",
+      "date": "2026-09-12",
+      "title": "Server 2.3.84 bridge stale Ice Dragon v16 loads to v17",
+      "changes": [
+        "Server 2.3.84 bridge stale Ice Dragon v16 loads to v17"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "4b4d548c6519bec8c0b52ef524fa55e5a6c7ab88",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-415f8ab77f7750c1ee05bd6f8c53b02e6466149a",
+      "version": "1.4.75",
+      "date": "2026-09-12",
+      "title": "Server 2.3.83 reset Ice Dragon wallpaper cache to clean source tier",
+      "changes": [
+        "Server 2.3.83 reset Ice Dragon wallpaper cache to clean source tier"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "415f8ab77f7750c1ee05bd6f8c53b02e6466149a",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-5bf405cdd9b53f1b1a5a5d453231b919bd690a54",
+      "version": "1.4.74",
+      "date": "2026-09-12",
+      "title": "Advance web chat to 1.4.74",
+      "changes": [
+        "Advance web chat to 1.4.74"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "5bf405cdd9b53f1b1a5a5d453231b919bd690a54",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-35c9a09095033a4de0074554039b6ad8f3fc26c2",
+      "version": "1.4.73",
+      "date": "2026-09-12",
+      "title": "fix(auth): repair Google OAuth boot-order race",
+      "changes": [
+        "fix(auth): repair Google OAuth boot-order race"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "35c9a09095033a4de0074554039b6ad8f3fc26c2",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-60053168ce455bd01033862ea98c9f5ccd177ca2",
+      "version": "1.4.72",
+      "date": "2026-09-12",
+      "title": "chore(version): advance Web Chat for Google auth repair",
+      "changes": [
+        "chore(version): advance Web Chat for Google auth repair"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "60053168ce455bd01033862ea98c9f5ccd177ca2",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-9df160ef34b7d84ad9fb2f9798097c23aa6d6d71",
+      "version": "1.4.71",
+      "date": "2026-09-12",
+      "title": "Advance Web Chat to 1.4.71",
+      "changes": [
+        "Advance Web Chat to 1.4.71"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "9df160ef34b7d84ad9fb2f9798097c23aa6d6d71",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-3dd6c2c790f08a79c3916ce8dd906478bdc5c4ce",
+      "version": "1.4.70",
+      "date": "2026-09-12",
+      "title": "Advance Web Chat to 1.4.70 for server-verified Google sign-in",
+      "changes": [
+        "Advance Web Chat to 1.4.70 for server-verified Google sign-in"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "3dd6c2c790f08a79c3916ce8dd906478bdc5c4ce",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-9bf37bcb1540823ddd1ea66861772bbca6f8c277",
+      "version": "1.4.69",
+      "date": "2026-09-12",
+      "title": "Advance web chat for immediate activity and lean time context",
+      "changes": [
+        "Advance web chat for immediate activity and lean time context"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "9bf37bcb1540823ddd1ea66861772bbca6f8c277",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-4c2cda3a162e803b5cd8f26d17424a5a512f202d",
+      "version": "1.4.68",
+      "date": "2026-09-12",
+      "title": "Web Chat 1.4.68: user-local temporal request context",
+      "changes": [
+        "Web Chat 1.4.68: user-local temporal request context"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "4c2cda3a162e803b5cd8f26d17424a5a512f202d",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-2fc88b73dc02164659a965d27b71fa280c9722c3",
+      "version": "1.4.67",
+      "date": "2026-09-12",
+      "title": "Runtime 2.3.73: LALM social participation and Google server config bridge",
+      "changes": [
+        "Runtime 2.3.73: LALM social participation and Google server config bridge"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "2fc88b73dc02164659a965d27b71fa280c9722c3",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-7074153de81d57d7d4af063b02239cfb5e5a1b8f",
+      "version": "1.4.66",
+      "date": "2026-09-12",
+      "title": "Version: Chat 1.4.66 Ice Dragon full-resolution wallpaper",
+      "changes": [
+        "Version: Chat 1.4.66 Ice Dragon full-resolution wallpaper"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "7074153de81d57d7d4af063b02239cfb5e5a1b8f",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-134bc2ef18c76739a779ccc9d223d7ae3cea75c0",
+      "version": "1.4.65",
+      "date": "2026-09-12",
+      "title": "Advance web chat to 1.4.65",
+      "changes": [
+        "Advance web chat to 1.4.65"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "134bc2ef18c76739a779ccc9d223d7ae3cea75c0",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-7711a90a00c9690c3c1fb48c47941983663fc45f",
+      "version": "1.4.64",
+      "date": "2026-09-12",
+      "title": "Version: advance web chat to 1.4.64",
+      "changes": [
+        "Version: advance web chat to 1.4.64"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "7711a90a00c9690c3c1fb48c47941983663fc45f",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-5ccdd063f9975abd587564afe91cbe2fa20e34d5",
+      "version": "1.4.63",
+      "date": "2026-09-12",
+      "title": "Version: Web Chat 1.4.63",
+      "changes": [
+        "Version: Web Chat 1.4.63"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "5ccdd063f9975abd587564afe91cbe2fa20e34d5",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-61411018d8a722df55e8a5e01bee66e22dd9fd14",
+      "version": "1.4.62",
+      "date": "2026-09-12",
+      "title": "Advance Web Chat for Ice Dragon wallpaper quality pass",
+      "changes": [
+        "Advance Web Chat for Ice Dragon wallpaper quality pass"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "61411018d8a722df55e8a5e01bee66e22dd9fd14",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-2457c2cec2a676cd12bc6dd6e887b0b9b81708bb",
+      "version": "1.4.61",
+      "date": "2026-09-11",
+      "title": "versions: advance web chat to 1.4.61",
+      "changes": [
+        "versions: advance web chat to 1.4.61"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "2457c2cec2a676cd12bc6dd6e887b0b9b81708bb",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-ea16fe9fd0b6d23d9018dd21b639edbcb95adc4c",
+      "version": "1.4.60",
+      "date": "2026-09-11",
+      "title": "chore(version): advance web chat to 1.4.60",
+      "changes": [
+        "chore(version): advance web chat to 1.4.60"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "ea16fe9fd0b6d23d9018dd21b639edbcb95adc4c",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-d34f402afbae88102960fd8b93ddbda69654593b",
+      "version": "1.4.59",
+      "date": "2026-09-11",
+      "title": "Bump Web Chat for Ice Dragon decode fix",
+      "changes": [
+        "Bump Web Chat for Ice Dragon decode fix"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "d34f402afbae88102960fd8b93ddbda69654593b",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-21a30d0b0f26009c49dc1ff46d126b2e61ac2a26",
+      "version": "1.4.58",
+      "date": "2026-09-11",
+      "title": "release: chat 1.4.58 theme diagnostics viewer",
+      "changes": [
+        "release: chat 1.4.58 theme diagnostics viewer"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "21a30d0b0f26009c49dc1ff46d126b2e61ac2a26",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-cdeab642e85678e43dd8abdcaf817597d3f02cda",
+      "version": "1.4.57",
+      "date": "2026-09-11",
+      "title": "Chat 1.4.57 versioned theme asset routing",
+      "changes": [
+        "Chat 1.4.57 versioned theme asset routing"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "cdeab642e85678e43dd8abdcaf817597d3f02cda",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-e0430c6755dfa2e5f99f69ccede056089f3fd349",
+      "version": "1.4.56",
+      "date": "2026-09-11",
+      "title": "Chat 1.4.56 theme diagnostics",
+      "changes": [
+        "Chat 1.4.56 theme diagnostics"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "e0430c6755dfa2e5f99f69ccede056089f3fd349",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-197ccc2052a42b14f420939fc974d92cb21b3916",
+      "version": "1.4.55",
+      "date": "2026-09-11",
+      "title": "Chat 1.4.55: direct Ice Dragon wallpaper ownership",
+      "changes": [
+        "Chat 1.4.55: direct Ice Dragon wallpaper ownership"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "197ccc2052a42b14f420939fc974d92cb21b3916",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-2fc7c19c1658936544eb31354396fd35035a5646",
+      "version": "1.4.54",
+      "date": "2026-09-11",
+      "title": "version: web chat 1.4.54",
+      "changes": [
+        "version: web chat 1.4.54"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "2fc7c19c1658936544eb31354396fd35035a5646",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-97362a41154b8743e9ff7ab631e425c8e2499bb6",
+      "version": "1.4.53",
+      "date": "2026-09-11",
+      "title": "Chat 1.4.53: consolidate theme package ownership",
+      "changes": [
+        "Chat 1.4.53: consolidate theme package ownership"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "97362a41154b8743e9ff7ab631e425c8e2499bb6",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-e47741237a3f79651af09c8ea5bd2d430c94bc38",
+      "version": "1.4.52",
+      "date": "2026-09-11",
+      "title": "chore(version): advance web chat to 1.4.52",
+      "changes": [
+        "chore(version): advance web chat to 1.4.52"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "e47741237a3f79651af09c8ea5bd2d430c94bc38",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-9d934a35b2bebec8200c986854cddc9e477fd972",
+      "version": "1.4.51",
+      "date": "2026-09-11",
+      "title": "chore(version): Web Chat 1.4.51 Ice Dragon wallpaper correction",
+      "changes": [
+        "chore(version): Web Chat 1.4.51 Ice Dragon wallpaper correction"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "9d934a35b2bebec8200c986854cddc9e477fd972",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-ef8291492743c348bb884ef39b518debe3f627dc",
+      "version": "1.4.50",
+      "date": "2026-09-11",
+      "title": "versions: advance web chat to 1.4.50",
+      "changes": [
+        "versions: advance web chat to 1.4.50"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "ef8291492743c348bb884ef39b518debe3f627dc",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-8f42eec36e9bff15df2528ed063f3b975d90182f",
+      "version": "1.4.49",
+      "date": "2026-09-11",
+      "title": "chore(version): bump Web Chat for Ice Dragon v8 background fix",
+      "changes": [
+        "chore(version): bump Web Chat for Ice Dragon v8 background fix"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "8f42eec36e9bff15df2528ed063f3b975d90182f",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-f839a0422ba39f752bbf9fa0b5c5a1c730ac5872",
+      "version": "1.4.48",
+      "date": "2026-09-11",
+      "title": "chore(version): bump Web Chat for Ice Dragon Blob decode",
+      "changes": [
+        "chore(version): bump Web Chat for Ice Dragon Blob decode"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "f839a0422ba39f752bbf9fa0b5c5a1c730ac5872",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-e19177eabd342d7b851fb39d2f2f9dfe0bf10ec0",
+      "version": "1.4.47",
+      "date": "2026-09-11",
+      "title": "versions: advance web chat to 1.4.47",
+      "changes": [
+        "versions: advance web chat to 1.4.47"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "e19177eabd342d7b851fb39d2f2f9dfe0bf10ec0",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-eabdfe94167e3a18d998ea32b036d864d53c9582",
+      "version": "1.4.46",
+      "date": "2026-09-11",
+      "title": "release: web chat 1.4.46",
+      "changes": [
+        "release: web chat 1.4.46"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "eabdfe94167e3a18d998ea32b036d864d53c9582",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-93a4492c9de43217eff9d24b2d57ad79395d263e",
+      "version": "1.4.45",
+      "date": "2026-09-11",
+      "title": "version: web chat 1.4.45",
+      "changes": [
+        "version: web chat 1.4.45"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "93a4492c9de43217eff9d24b2d57ad79395d263e",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-5d7446ef6835b5c3ec417ec5e9bb0a93413a80ae",
+      "version": "1.4.44",
+      "date": "2026-09-11",
+      "title": "Web Chat 1.4.44: deterministic turn intent and cache-stable payloads",
+      "changes": [
+        "Web Chat 1.4.44: deterministic turn intent and cache-stable payloads"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "5d7446ef6835b5c3ec417ec5e9bb0a93413a80ae",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-c8a8d476c691247852f4caffad457de1f4124a35",
+      "version": "1.4.43",
+      "date": "2026-09-11",
+      "title": "Advance web chat for authenticated recovery fix",
+      "changes": [
+        "Advance web chat for authenticated recovery fix"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "c8a8d476c691247852f4caffad457de1f4124a35",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-b5ea6f9f31e9349eb808bba14bf493de19e3086d",
+      "version": "1.4.42",
+      "date": "2026-09-11",
+      "title": "Web Chat 1.4.42: background recovery and response framing",
+      "changes": [
+        "Web Chat 1.4.42: background recovery and response framing"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "b5ea6f9f31e9349eb808bba14bf493de19e3086d",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-dfeb9e76f12c08627987456ab6d4cac5b78e76b8",
+      "version": "1.4.41",
+      "date": "2026-09-11",
+      "title": "Version: Web Chat 1.4.41",
+      "changes": [
+        "Version: Web Chat 1.4.41"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "dfeb9e76f12c08627987456ab6d4cac5b78e76b8",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-c0bacc212d12df8bd1a9d27f45edce44b4edb2be",
+      "version": "1.4.40",
+      "date": "2026-09-11",
+      "title": "Chat v1.4.40: background generation resume and catch-up",
+      "changes": [
+        "Chat v1.4.40: background generation resume and catch-up"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "c0bacc212d12df8bd1a9d27f45edce44b4edb2be",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-ec6b3804448d974d9fedbee705c3f50f93a4ebf6",
+      "version": "1.4.39",
+      "date": "2026-09-11",
+      "title": "version: web chat 1.4.39",
+      "changes": [
+        "version: web chat 1.4.39"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "ec6b3804448d974d9fedbee705c3f50f93a4ebf6",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-ba341549ca20aa8ba465735db4e4fb0098523b85",
+      "version": "1.4.38",
+      "date": "2026-09-11",
+      "title": "Advance web chat for Ice Dragon adult background fix",
+      "changes": [
+        "Advance web chat for Ice Dragon adult background fix"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "ba341549ca20aa8ba465735db4e4fb0098523b85",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-0c705bafc88105c1441d090e18adf37f89577b29",
+      "version": "1.4.37",
+      "date": "2026-09-11",
+      "title": "Bump Web Chat to 1.4.37",
+      "changes": [
+        "Bump Web Chat to 1.4.37"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "0c705bafc88105c1441d090e18adf37f89577b29",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-44182cfb8cec58f687c0d47547a27df3df6502ec",
+      "version": "1.4.36",
+      "date": "2026-09-11",
+      "title": "Advance Web Chat for Ice Dragon art fix",
+      "changes": [
+        "Advance Web Chat for Ice Dragon art fix"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "44182cfb8cec58f687c0d47547a27df3df6502ec",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-4ec428fa651083c0147be10312cf5d4011143bc2",
+      "version": "1.4.35",
+      "date": "2026-09-11",
+      "title": "release: advance web chat to 1.4.35",
+      "changes": [
+        "release: advance web chat to 1.4.35"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "4ec428fa651083c0147be10312cf5d4011143bc2",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-9b148351e54671b1914b6bb5571f1895d7d32dc2",
+      "version": "1.4.34",
+      "date": "2026-09-11",
+      "title": "Chat v1.4.34: live markdown code artifact rendering",
+      "changes": [
+        "Chat v1.4.34: live markdown code artifact rendering"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "9b148351e54671b1914b6bb5571f1895d7d32dc2",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-638bece149cb5065477c6aa7de090512d69c74f6",
+      "version": "1.4.33",
+      "date": "2026-09-11",
+      "title": "version: advance Chat for recognizable Ice Dragon artwork",
+      "changes": [
+        "version: advance Chat for recognizable Ice Dragon artwork"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "638bece149cb5065477c6aa7de090512d69c74f6",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-b081922ab1c2f998319f607e959414d6795b367b",
+      "version": "1.4.32",
+      "date": "2026-09-11",
+      "title": "Chat v1.4.32: live code artifact streaming",
+      "changes": [
+        "Chat v1.4.32: live code artifact streaming"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "b081922ab1c2f998319f607e959414d6795b367b",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-43cd432f5482abdeceaa3466a192a2e81933487d",
+      "version": "1.4.31",
+      "date": "2026-09-11",
+      "title": "Web Chat v1.4.31: Ice Dragon theme visual upgrade",
+      "changes": [
+        "Web Chat v1.4.31: Ice Dragon theme visual upgrade"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "43cd432f5482abdeceaa3466a192a2e81933487d",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-f6b58ef5e422ab5f23dc685aca8949c4d48e654f",
+      "version": "1.4.30",
+      "date": "2026-09-11",
+      "title": "Chat v1.4.30: stable streaming DOM",
+      "changes": [
+        "Chat v1.4.30: stable streaming DOM"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "f6b58ef5e422ab5f23dc685aca8949c4d48e654f",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-60d1f20cf7b36d552939544172e0acccf016f9d9",
+      "version": "1.4.29",
+      "date": "2026-09-11",
+      "title": "Chat v1.4.29: tighter mobile header and faster initial paint",
+      "changes": [
+        "Chat v1.4.29: tighter mobile header and faster initial paint"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "60d1f20cf7b36d552939544172e0acccf016f9d9",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-f8f72f2c77a4c5ddb1ca045f9375cc09bae8064c",
+      "version": "1.4.28",
+      "date": "2026-09-11",
+      "title": "Chat v1.4.28: smooth incremental streaming",
+      "changes": [
+        "Chat v1.4.28: smooth incremental streaming"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "f8f72f2c77a4c5ddb1ca045f9375cc09bae8064c",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-8d5f7295e0731bb05673f5eb6573e19f7056ae36",
+      "version": "1.4.27",
+      "date": "2026-09-11",
+      "title": "Chat v1.4.27: nested code artifact containers",
+      "changes": [
+        "Chat v1.4.27: nested code artifact containers"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "8d5f7295e0731bb05673f5eb6573e19f7056ae36",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-5d9f7f8305cc8ae0f6d7195b136b32a0a3893494",
+      "version": "1.4.26",
+      "date": "2026-09-11",
+      "title": "Chat v1.4.26: clickable mobile drawer and bounded desktop sidebar",
+      "changes": [
+        "Chat v1.4.26: clickable mobile drawer and bounded desktop sidebar"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "5d9f7f8305cc8ae0f6d7195b136b32a0a3893494",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-45e082920ba5ccad92310000b1f75ec432eed219",
+      "version": "1.4.25",
+      "date": "2026-09-11",
+      "title": "Chat v1.4.25: crisp mobile sidebar",
+      "changes": [
+        "Chat v1.4.25: crisp mobile sidebar"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "45e082920ba5ccad92310000b1f75ec432eed219",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-10cc10c970ee85531d3afebea61f9d357bdc89f9",
+      "version": "1.4.24",
+      "date": "2026-09-11",
+      "title": "Chat v1.4.24: responsive layout and response-card polish",
+      "changes": [
+        "Chat v1.4.24: responsive layout and response-card polish"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "10cc10c970ee85531d3afebea61f9d357bdc89f9",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-d60c84d98d32a44d4580bcfdfab5b850f60d41e1",
+      "version": "1.4.23",
+      "date": "2026-09-11",
+      "title": "Chat v1.4.23: authoritative LALM engine footer",
+      "changes": [
+        "Chat v1.4.23: authoritative LALM engine footer"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "d60c84d98d32a44d4580bcfdfab5b850f60d41e1",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-0af4dbcf530d0e1aa94d61cbf4ba0e1a22101fa0",
+      "version": "1.4.22",
+      "date": "2026-09-11",
+      "title": "Chat 1.4.22: advance web chat authority",
+      "changes": [
+        "Chat 1.4.22: advance web chat authority"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "0af4dbcf530d0e1aa94d61cbf4ba0e1a22101fa0",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-1756544c5cdf2f1e205bcd4fdb754be70048311a",
+      "version": "1.4.21",
+      "date": "2026-09-11",
+      "title": "release(chat): advance Web Chat to 1.4.21 for Ice Dragon theme",
+      "changes": [
+        "release(chat): advance Web Chat to 1.4.21 for Ice Dragon theme"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "1756544c5cdf2f1e205bcd4fdb754be70048311a",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-a71e53eeff281518105c32102bcd2ff66c370acb",
+      "version": "1.4.20",
+      "date": "2026-09-11",
+      "title": "Chat 1.4.20: expose whole-conversation camera on all live script paths",
+      "changes": [
+        "Chat 1.4.20: expose whole-conversation camera on all live script paths"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "a71e53eeff281518105c32102bcd2ff66c370acb",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-796f5ac14f19280488b5abb96510b8aaea6ec3d6",
+      "version": "1.4.19",
+      "date": "2026-09-11",
+      "title": "chat 1.4.19: whole-conversation camera control",
+      "changes": [
+        "chat 1.4.19: whole-conversation camera control"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "796f5ac14f19280488b5abb96510b8aaea6ec3d6",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-b12fcd71e64f0a8c9c8e1505f7bf3e5ee424002e",
+      "version": "1.4.18",
+      "date": "2026-09-11",
+      "title": "Chat 1.4.18: advance authority for activity log camera and export",
+      "changes": [
+        "Chat 1.4.18: advance authority for activity log camera and export"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "b12fcd71e64f0a8c9c8e1505f7bf3e5ee424002e",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-0fffc0d98ac01201e6f1c257290bd0d4b7ff5590",
+      "version": "1.4.17",
+      "date": "2026-09-10",
+      "title": "versions: advance web chat to 1.4.17",
+      "changes": [
+        "versions: advance web chat to 1.4.17"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "0fffc0d98ac01201e6f1c257290bd0d4b7ff5590",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-c1208c5146a0b19983ea09d3a38d04a9f7219879",
+      "version": "1.4.16",
+      "date": "2026-09-10",
+      "title": "Version web chat 1.4.16 after live stream-focus verification",
+      "changes": [
+        "Version web chat 1.4.16 after live stream-focus verification"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "c1208c5146a0b19983ea09d3a38d04a9f7219879",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-128403f5411ea89174e0c39592258b257b2ee0b7",
+      "version": "1.4.15",
+      "date": "2026-09-10",
+      "title": "Version web chat 1.4.15 after hot scroll wiring correction",
+      "changes": [
+        "Version web chat 1.4.15 after hot scroll wiring correction"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "128403f5411ea89174e0c39592258b257b2ee0b7",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-388114311a336f9164de31c108f78131e1ec7b14",
+      "version": "1.4.14",
+      "date": "2026-09-10",
+      "title": "Version web chat 1.4.14",
+      "changes": [
+        "Version web chat 1.4.14"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "388114311a336f9164de31c108f78131e1ec7b14",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-43058e3d64db6174401ae42b643b7eba2c6021bf",
+      "version": "1.4.13",
+      "date": "2026-09-10",
+      "title": "version: advance Chat to 1.4.13 after direct-auth correction",
+      "changes": [
+        "version: advance Chat to 1.4.13 after direct-auth correction"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "43058e3d64db6174401ae42b643b7eba2c6021bf",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-c7963fe8aedc3f6a4c8e6bb97f14935db73b900b",
+      "version": "1.4.12",
+      "date": "2026-09-10",
+      "title": "version: record Chat 1.4.12 failed direct-auth attempt",
+      "changes": [
+        "version: record Chat 1.4.12 failed direct-auth attempt"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "c7963fe8aedc3f6a4c8e6bb97f14935db73b900b",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-319b53c51e0a760467d33f353eceb53fbb3e801a",
+      "version": "1.4.11",
+      "date": "2026-09-10",
+      "title": "Server 2.3.13: advance Chat authority",
+      "changes": [
+        "Server 2.3.13: advance Chat authority"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "319b53c51e0a760467d33f353eceb53fbb3e801a",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-0c616b47f8e0dfbcd57d45a17a22bc62f135e3c5",
+      "version": "1.4.10",
+      "date": "2026-09-10",
+      "title": "Server 2.3.11: advance Chat authority",
+      "changes": [
+        "Server 2.3.11: advance Chat authority"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "0c616b47f8e0dfbcd57d45a17a22bc62f135e3c5",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "registry-d95edd9a1e741c4f8674638e884e3627f13c0988",
+      "version": "1.4.9",
+      "date": "2026-09-10",
+      "title": "Server 2.3.9: add Chat version file",
+      "changes": [
+        "Server 2.3.9: add Chat version file"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "d95edd9a1e741c4f8674638e884e3627f13c0988",
+        "path": "versions/web-chat.txt"
+      }
+    },
+    {
+      "id": "legacy-changelog-0",
+      "version": "1.3.26",
+      "date": "2026-09-07",
+      "title": "SERVER 2.2.0 / Chat 1.3.26 / LALM UI 1.0.0",
+      "changes": [
+        "split the system into independent Server, LALM, and Chat control planes",
+        "added `/server/` and `/lalm/` dedicated pages",
+        "added `/api/server/status`, `/api/lalm/status`, `/api/control/route`, `/route`, and explicit `POST /api/lalm/verify`",
+        "added scoped hot mutation at `POST /api/control/hot/sync?scope=lalm|server|all`",
+        "`scope=lalm` updates only `web/lalm.html` and `runtime_hot/r39_engine.py` and explicitly reports `chatTouched: false`",
+        "LALM-scoped verification/hot sync may use the bounded signed browser Chat session while Server/all mutation remains Admin-controlled",
+        "Chat stays at 1.3.26 because this release changes infrastructure/model ownership rather than Chat protocol or Chat UX",
+        "the compiled direct-quantized R39 backend remains preferred and the Python/NumPy reference executor remains the correctness/fallback oracle.",
+        "Server owns routing, deployment/base version, instance/capability receipts, and hot control",
+        "LALM owns R39 engine/model/readiness/native-backend diagnostics and runtime tuning",
+        "Chat owns conversation UX, request/stream/reconnect behavior, and the Truth Firewall",
+        "future ordinary R39 tuning must not advance the Chat version unless Chat behavior itself changes.",
+        "2.2.0 requires one base deployment to establish the new Python routes/native build boundary",
+        "after that deployment, ordinary LALM engine/page iteration can hot-sync independently of Chat."
+      ],
+      "kind": "Historical changelog record",
+      "source": {
+        "commit": "f2e6c1b7ee3ee83a7b8f593d8d2c61057df3dafc",
+        "path": "SWRLZ_VERCEL_CHAT_CHANGELOG.md"
+      }
+    },
+    {
+      "id": "legacy-changelog-2",
+      "version": "1.3.13",
+      "date": "2026-09-07",
+      "title": "SERVER 2.1.17 / Chat 1.3.13",
+      "changes": [
+        "the hot Chat/R39 plane now auto-hydrates from GitHub `dev` on the first active hot read of a fresh Vercel instance",
+        "active instances perform throttled request-driven refresh checks approximately every 30 seconds",
+        "hot files are compared by SHA-256 and only changed allowlisted files are atomically replaced during automatic refresh",
+        "the R39 module cache is invalidated only when `runtime_hot/r39_engine.py` actually changes",
+        "GitHub/network refresh failures no longer make the stable request path fail solely because the hot plane is unavailable; existing runtime state or bundled fallback remains available",
+        "manual `/api/hot/sync` is now explicitly a force-refresh/recovery control rather than the required normal update path",
+        "manual clear and rollback suspend automatic refresh so bundled fallback or a restored snapshot can be intentionally held.",
+        "`/tmp/swrlz-admin/runtime/hot/*` remains ephemeral and instance-local",
+        "GitHub `dev` is the durable hot source",
+        "after redeploy/cold start, the expected path is `empty /tmp -> first Chat/R39 hot read -> automatic dev hydration -> runtime override active`.",
+        "this release changes the stable hot-loader/runtime contract and therefore requires one server deployment",
+        "after 2.1.17 is deployed, normal Chat asset and R39 hot-engine iteration returns to the no-redeploy `dev` lane."
+      ],
+      "kind": "Historical changelog record",
+      "source": {
+        "commit": "f2e6c1b7ee3ee83a7b8f593d8d2c61057df3dafc",
+        "path": "SWRLZ_VERCEL_CHAT_CHANGELOG.md"
+      }
+    },
+    {
+      "id": "legacy-changelog-3",
+      "version": "1.3.13",
+      "date": "2026-09-07",
+      "title": "SERVER 2.1.16 / Chat 1.3.13",
+      "changes": [
+        "local R39 reference matvec dequantization batches increased from a 4 MiB target to a bounded 16 MiB target, reducing repeated decode/allocation/BLAS-call overhead while avoiding whole-model dequantization",
+        "small decoded matrices and vectors are cached per model instance so normalization weights and other small tensors are not repeatedly dequantized on every token",
+        "the stock Vercel bridge response directive is compacted only on the local R39 prompt path before tokenization, reducing prefill tokens while preserving the Truth Firewall in the stream/event layer",
+        "the hot R39 engine revision now identifies the `2.1.16-prefill-hotpath` runtime",
+        "production deployment is recorded as `https://swrlzkamico-o3nu.vercel.app`.",
+        "the live trace reached `LOCAL_R39` and began a 55-token prefill but only reached `16/55` before the browser stream failed at roughly 153 seconds",
+        "heartbeats proved the stream remained active, so the dominant failure boundary was reference inference latency rather than route/model-load failure.",
+        "this release optimizes the canonical Python/NumPy reference path; it does not claim compiled-backend throughput or guarantee completion inside every Vercel duration limit",
+        "whole-model dequantization remains prohibited by design in this patch so memory stays bounded."
+      ],
+      "kind": "Historical changelog record",
+      "source": {
+        "commit": "f2e6c1b7ee3ee83a7b8f593d8d2c61057df3dafc",
+        "path": "SWRLZ_VERCEL_CHAT_CHANGELOG.md"
+      }
+    },
+    {
+      "id": "legacy-changelog-4",
+      "version": "1.3.12",
+      "date": "2026-09-07",
+      "title": "SERVER 2.1.15 / Chat 1.3.12",
+      "changes": [
+        "normal same-origin Chat use no longer requires the user to paste or bootstrap a Chat secret through Admin",
+        "loading `/api/chat` now receives a bounded HttpOnly, Secure, SameSite=Strict session cookie scoped to `/api/chat`",
+        "the session is signed from the server-side Chat secret and the permanent `SWRLZ_WEB_CHAT_TOKEN` is never exposed to browser JavaScript",
+        "the legacy explicit Admin session endpoint remains as a compatibility path",
+        "Chat UI uses a non-secret browser marker only to satisfy the historical base UI token guard; actual request authorization is server-managed by the cookie",
+        "Bridge Settings is renamed to Chat Settings and the credential field is hidden from the normal UI",
+        "sending a message no longer opens settings merely because no browser-held Chat token exists.",
+        "`SWRLZ_WEB_CHAT_TOKEN` remains the server-side root secret",
+        "the browser receives only a bounded signed cookie, never the root secret",
+        "manual `x-swrlz-chat-token` validation remains as a fallback compatibility path."
+      ],
+      "kind": "Historical changelog record",
+      "source": {
+        "commit": "f2e6c1b7ee3ee83a7b8f593d8d2c61057df3dafc",
+        "path": "SWRLZ_VERCEL_CHAT_CHANGELOG.md"
+      }
+    },
+    {
+      "id": "legacy-changelog-5",
+      "version": "1.3.11",
+      "date": "2026-09-07",
+      "title": "SERVER 2.1.14 / Chat 1.3.11",
+      "changes": [
+        "Admin-authorized Chat sessions moved from an instance-local in-memory dictionary to stateless signed session tokens",
+        "any Vercel instance can verify an issued session when the shared signing secret is available",
+        "Chat stopped forcing the settings dialog open when authorization was missing and instead reported an authorization receipt in place."
+      ],
+      "kind": "Historical changelog record",
+      "source": {
+        "commit": "f2e6c1b7ee3ee83a7b8f593d8d2c61057df3dafc",
+        "path": "SWRLZ_VERCEL_CHAT_CHANGELOG.md"
+      }
+    },
+    {
+      "id": "legacy-changelog-6",
+      "version": "1.3.6-1.3.10",
+      "date": "2026-09-07",
+      "title": "SERVER 2.1.13 / Chat 1.3.6-1.3.10",
+      "changes": [
+        "live core pages and Chat assets resolve from GitHub `dev` on request with a short in-instance cache and bundled fallback",
+        "live reads no longer depend on the `/tmp` copy created by whichever Vercel instance handled `/api/pages` sync",
+        "`dev`-only Chat version bumps were proven live while the deployed server version remained unchanged (`1.3.7`, `1.3.8`, `1.3.9`, `1.3.10` on Server `2.1.13`)",
+        "Chat settings learned server-side Chat credential state without echoing the secret",
+        "the stale local-R39 boilerplate panel was replaced by Chat status and model status: route, server/instance, credential/session state, readiness, engine, source, model SHA, and blocker.",
+        "GitHub `dev` is the durable source of truth",
+        "supported page/UI changes can appear live without `main` promotion, Vercel server redeploy, or `/tmp` synchronization."
+      ],
+      "kind": "Historical changelog record",
+      "source": {
+        "commit": "f2e6c1b7ee3ee83a7b8f593d8d2c61057df3dafc",
+        "path": "SWRLZ_VERCEL_CHAT_CHANGELOG.md"
+      }
+    },
+    {
+      "id": "legacy-changelog-7",
+      "version": "1.3.5",
+      "date": "2026-09-07",
+      "title": "SERVER 2.1.12 / Chat 1.3.5",
+      "changes": [
+        "Admin auth now resolves `SWRLZ_ADMIN_TOKEN` per request instead of relying on an import-time environment snapshot",
+        "harmless outer whitespace and one matching wrapping quote pair are normalized while identity comparison remains exact and constant-time",
+        "repaired Page Manager regression where SET ADMIN remained locked despite a valid deployment token."
+      ],
+      "kind": "Historical changelog record",
+      "source": {
+        "commit": "f2e6c1b7ee3ee83a7b8f593d8d2c61057df3dafc",
+        "path": "SWRLZ_VERCEL_CHAT_CHANGELOG.md"
+      }
+    },
+    {
+      "id": "legacy-changelog-8",
+      "version": "1.3.5",
+      "date": "2026-09-07",
+      "title": "SERVER 2.1.11 / Chat 1.3.5",
+      "changes": [
+        "Chat operations/status was separated from model inspection so `/api/chat/ops` stays cheap and non-blocking",
+        "server version and route state can render immediately without loading/inspecting the R39 model",
+        "introduced Admin-to-Chat ephemeral session bootstrap while retaining the direct Chat-token fallback",
+        "mobile drawer repair, authoritative status paint, and Chat/server footer receipt remained active."
+      ],
+      "kind": "Historical changelog record",
+      "source": {
+        "commit": "f2e6c1b7ee3ee83a7b8f593d8d2c61057df3dafc",
+        "path": "SWRLZ_VERCEL_CHAT_CHANGELOG.md"
+      }
+    },
+    {
+      "id": "legacy-changelog-9",
+      "version": "1.3.4",
+      "date": "2026-09-07",
+      "title": "SERVER 2.1.10 / Chat 1.3.4",
+      "changes": [
+        "parent UI guards tolerate harmless URL query decoration/tracking parameters",
+        "live manager/UI paths no longer fall through to stale handlers because of unrelated query keys."
+      ],
+      "kind": "Historical changelog record",
+      "source": {
+        "commit": "f2e6c1b7ee3ee83a7b8f593d8d2c61057df3dafc",
+        "path": "SWRLZ_VERCEL_CHAT_CHANGELOG.md"
+      }
+    },
+    {
+      "id": "legacy-changelog-10",
+      "version": "1.3.4",
+      "date": "2026-09-07",
+      "title": "SERVER 2.1.9 / Chat 1.3.4",
+      "changes": [
+        "`/live/` and Chat UI serving were moved onto the unified parent app boundary",
+        "Page Manager gained explicit Admin/GitHub/source status receipts",
+        "mobile drawer stacking and stale bottom status/version behavior were repaired."
+      ],
+      "kind": "Historical changelog record",
+      "source": {
+        "commit": "f2e6c1b7ee3ee83a7b8f593d8d2c61057df3dafc",
+        "path": "SWRLZ_VERCEL_CHAT_CHANGELOG.md"
+      }
+    },
+    {
+      "id": "legacy-changelog-11",
+      "version": "1.3.4",
+      "date": "2026-09-07",
+      "title": "SERVER 2.1.8 / Chat 1.3.4",
+      "changes": [
+        "live Page Manager `/api/pages`",
+        "durable page source on non-deploying `dev`",
+        "editable runtime copies and optional runtime -> `dev` push-back",
+        "source-managed Admin, Chat, Chat CSS/JS, live index, and additional `runtime_pages/pages/*` publication",
+        "server-side GitHub write-token resolution."
+      ],
+      "kind": "Historical changelog record",
+      "source": {
+        "commit": "f2e6c1b7ee3ee83a7b8f593d8d2c61057df3dafc",
+        "path": "SWRLZ_VERCEL_CHAT_CHANGELOG.md"
+      }
+    },
+    {
+      "id": "legacy-changelog-15",
+      "version": "1.3.0",
+      "date": "2026-09-07",
+      "title": "Unified SERVER 2.1.4 / Chat 1.3.0",
+      "changes": [
+        "canonical SWRLZX v1 header/TOC parser for active physical section locations",
+        "tokenizer, tensor-directory, and tensor-data payload reconstruction",
+        "local R39 Python/NumPy reference executor for the supplied LFM2 profile",
+        "BPE tokenization and incremental UTF-8 decoding",
+        "recurrent short-convolution and GQA/KV state execution",
+        "`f32`, `f16`, `bf16`, `q4_0`, `q8_0`, `q4_k`, and `q6_k` tensor readers",
+        "bounded generation controls and local cancellation checks",
+        "local `LOCAL_R39` stream route when no upstream URL is configured",
+        "Gate 5 engine probe that distinguishes physical payload reconstruction from executable one-token readiness",
+        "source verifier `scripts/verify_r39_inference.py`.",
+        "proof-bound upstream stream/cancel mode and upstream contract validation",
+        "browser/Admin auth separation and runtime Chat-token override",
+        "Truth Firewall: only `DELTA.text` becomes assistant prose",
+        "2.1.3 Admin/Live Web/control-plane implementation, preserved in `api/server_v213.py` and wrapped by the 2.1.4 release entrypoint",
+        "R39 Forge transport, exact SHA/size checks, snapshots, activity receipts, capability/release state, and deployment suppression on `dev`.",
+        "source-level local inference wiring is complete and verified against the R299 SERVER architecture contracts",
+        "the executor fails closed on unsupported graph/tensor/profile/quantizer/layout states",
+        "source verification does **not** claim Vercel latency or live completion within platform limits",
+        "production readiness requires deployment receipts plus a successful streamed local R39 request."
+      ],
+      "kind": "Historical changelog record",
+      "source": {
+        "commit": "f2e6c1b7ee3ee83a7b8f593d8d2c61057df3dafc",
+        "path": "SWRLZ_VERCEL_CHAT_CHANGELOG.md"
+      }
+    },
+    {
+      "id": "legacy-changelog-16",
+      "version": "1.2.0",
+      "date": "2026-09-06",
+      "title": "Unified SERVER 2.1.3 / Chat 1.2.0",
+      "changes": [
+        "Added paired Chat/Admin control planes: evidence drawers, retry/fork/context diagnostics, stream camera and generation controls on Chat; runtime Chat-token management, Live Web manager, capability/health/release state, snapshots/rollback, activity receipts, and promote manifests on Admin."
+      ],
+      "kind": "Historical changelog record",
+      "source": {
+        "commit": "f2e6c1b7ee3ee83a7b8f593d8d2c61057df3dafc",
+        "path": "SWRLZ_VERCEL_CHAT_CHANGELOG.md"
+      }
+    },
+    {
+      "id": "legacy-changelog-17",
+      "version": "1.0.0",
+      "date": "2026-09-06",
+      "title": "Unified SERVER 2.1.0 / Chat 1.0.0",
+      "changes": [
+        "Checkpoint: `INT-VERCEL-CHAT-001A` Baseline: SERVER 2.0.7 at `0375f42f57d1e4df000a53a6ec02659bb7a6a5df` Initial additive `/api/chat` integration added the R299-derived responsive UI, browser-local threads, V2 NDJSON streaming contract, independent Chat token, proof-bound upstream bridge, Gate 5 verification, Admin Chat entrypoint, contract/checkpoint documentation, and fail-closed local status-only behavior while inference payload locations were still unresolved."
+      ],
+      "kind": "Historical changelog record",
+      "source": {
+        "commit": "f2e6c1b7ee3ee83a7b8f593d8d2c61057df3dafc",
+        "path": "SWRLZ_VERCEL_CHAT_CHANGELOG.md"
+      }
+    }
+  ],
+  "historyCoverage": {
+    "registryRef": "origin/runtime",
+    "registryCommit": "a17e8e883e4ddbc22267d4598c31cdfc36da83bf",
+    "registryRecords": 249,
+    "oldestRecordedDate": "2026-09-06",
+    "description": "All recorded Chat version-registry changes, earlier Chat changelog entries, and the preceding coding update. Historical records may include failed attempts or repeated versions."
+  }
+}

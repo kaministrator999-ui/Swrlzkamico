@@ -21,6 +21,9 @@ on:
       - 'tests/test_github_source_report_mobile_v232.mjs'
       - 'tests/test_chat_source_context_glass_v253.mjs'
       - 'chat/§wyrlz/index.html'
+      - 'chat/§wyrlz/assets/chat-updates-v1.*'
+      - 'scripts/build_chat_update_history.py'
+      - 'tests/test_chat_updates.mjs'
       - 'tests/test_hf_candidate.py'
       - 'tests/test_archive_grounded_lyric_craft_v182.py'
       - 'training/lyrics/**'
@@ -129,6 +132,11 @@ jobs:
           python hf_space/test_programming_structured_receipt_scope.py
           python hf_space/test_web_module_contract.py
           python hf_space/test_editor_project_routing.py
+          python hf_space/test_application_capabilities.py
+          python hf_space/test_implementation_completeness.py
+          python hf_space/test_large_generation_budget.py
+          python hf_space/test_large_prompt_boundary.py
+          python hf_space/test_fresh_web_project_wording.py
           python hf_space/test_generation_completion_budget.py
           python hf_space/test_project_archive.py
           python hf_space/test_response_cognition_v123.py
@@ -137,11 +145,12 @@ jobs:
           python hf_space/test_github_repo_view_v247.py
           python hf_space/test_programming_contract_v117.py
 
-      - name: Project ZIP download in real Chromium
+      - name: Chat update dialog and project ZIP in real Chromium
         run: |
           npm install --prefix "$RUNNER_TEMP/swrlz-download-test" --no-package-lock --ignore-scripts playwright@1.57.0
           "$RUNNER_TEMP/swrlz-download-test/node_modules/.bin/playwright" install --with-deps chromium
           PLAYWRIGHT_MODULE="$RUNNER_TEMP/swrlz-download-test/node_modules/playwright/index.mjs" node tests/test_project_archive_download.mjs
+          PLAYWRIGHT_MODULE="$RUNNER_TEMP/swrlz-download-test/node_modules/playwright/index.mjs" node tests/test_chat_updates.mjs
 
       - name: v263 Atomic GitHub file rename, identity, consent and conflict tests
         run: |

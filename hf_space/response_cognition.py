@@ -109,15 +109,21 @@ def requests_web_source(text: str) -> bool:
         return False
     if re.search(
         r"\b(?:editor|viewer|model[ -]?(?:l?er)|modeling|modelling|dashboard|"
-        r"calculator|whiteboard|drawing|paint|game)\s+(?:web[- ]?)?page\b|"
-        r"\binteractive\s+(?:web[- ]?)?page\b",head,re.I):
+        r"calculator|whiteboard|drawing|paint|game)\s+(?:(?:html|web[- ]?)\s*)?page\b|"
+        r"\b(?:interactive\s+(?:(?:html|web[- ]?)\s*)?page|html\s+page|web[- ]?page)\b",head,re.I):
         return True
     # 'A page to edit models' is also an application. Keep this conditional on
     # page being the requested object, not an asset's downstream destination.
-    return bool(re.fullmatch(r"\s*(?:(?:a|an|the|my|our|this|that)\s+)?(?:web[- ]?)?page\s*",head,re.I)
-                and re.search(r"\bpage\s+(?:for|to|that\s+(?:can|will))\s+"
-                              r"(?:edit(?:ing)?|view(?:ing)?|draw(?:ing)?|calculat(?:e|ing)|"
-                              r"model(?:ing|ling)?|play(?:ing)?)\b",raw,re.I))
+    return bool(re.fullmatch(
+        r"\s*(?:(?:a|an|another|the|my|our|this|that)\s+)?"
+        r"(?:(?:new|separate|standalone|different|independent)\s+)*"
+        r"(?:(?:html|web[- ]?)\s*)?page\s*",head,re.I)
+        and re.search(
+            r"\bpage\s+(?:for|to|that\s+(?:can|will))\s+"
+            r"(?:(?:a|an|the|my|our)\s+)?"
+            r"(?:(?:3[ -]?d|model|scene|text|code|interactive)\s+)*"
+            r"(?:editor|viewer|edit(?:ing)?|view(?:ing)?|draw(?:ing)?|"
+            r"calculat(?:or|e|ing)|model(?:ing|ling)?|play(?:ing)?)\b",raw,re.I))
 
 
 def _requested_deliverable(text: str) -> str:

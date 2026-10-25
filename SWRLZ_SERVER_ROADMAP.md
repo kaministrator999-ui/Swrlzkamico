@@ -1,6 +1,6 @@
 ## UPDATE IN PROGRESS — 2026-10-25 — complete editors, independent projects and source ZIPs
 
-User-device/export evidence exposed a misrouted3D-editor request:700m/768tokens/no validation, with incomplete HTML reported COMPLETE. The repair also covers exact UI text, separate viewer/editor state, larger700M response budgets and real multi-file project ZIP downloads. The earlier cube-viewer acceptance remains bounded historical evidence. Source/runtime/editor/archive acceptance is pending. Checkpoint: docs/engineering/entries/2026-10-25_EDITOR_PROJECT_COMPLETION.md. Preserve the independent main Forge lane and canonical HF Chat deployment.
+User-device/export evidence exposed a misrouted3D-editor request:700m/768tokens/no validation, with incomplete HTML reported COMPLETE. The repair also covers exact UI text, separate viewer/editor state, larger700M/Qwen code/document response budgets, default complete implementations without pseudocode/placeholders, real multi-file project ZIP downloads and the newest/all-recorded Chat update dialog. The earlier cube-viewer acceptance remains bounded historical evidence. Source/runtime/editor/archive acceptance is pending. Checkpoint: docs/engineering/entries/2026-10-25_EDITOR_PROJECT_COMPLETION.md. Preserve the independent main Forge lane and canonical HF Chat deployment.
 
 ## UPDATE IN PROGRESS — 2026-10-25 — addon paths, repeated drafts and valid CSS repairs
 

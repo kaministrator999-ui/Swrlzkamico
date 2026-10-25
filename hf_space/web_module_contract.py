@@ -58,7 +58,11 @@ class _Document(HTMLParser):
 
 def module_dependency_gaps(source):
     """Check declarations against imports; dependencies may still fail at runtime."""
-    if len(source)>65536:return []
+    # A large response must not silently bypass dependency validation. Every
+    # source file accepted by the archive is checked in full within its bound.
+    from project_archive import MAX_FILE_BYTES
+    if len(source.encode('utf-8')) > MAX_FILE_BYTES:
+        return ['browser-module-source-exceeds-validation-limit']
     document=_Document();document.feed(source)
     imports={};scopes={};modules=[]
     for attrs,body in document.scripts:

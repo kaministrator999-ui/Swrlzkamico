@@ -23,6 +23,104 @@ def expanded_project_delivery(programming: dict[str, Any], prompt: str) -> bool:
         original+"\n"+str(prompt or ""),re.I))
 
 
+
+def response_budget(programming: dict[str, Any], prompt: str) -> dict[str, Any]:
+    """Reserve output by requested deliverable size, not incidental large topics.
+
+    These are bounded allowances, not a promise of exact length or automatic
+    multi-turn execution. Current user shortening instructions win over a
+    carried large-project contract.
+    """
+    programming=programming if isinstance(programming,dict) else {}
+    current=str(prompt or "")
+    short=bool(re.search(
+        r"\b(?:briefly|concisely|tl;?dr)\b|"
+        r"\b(?:keep|make|be|answer|respond)(?:[ \w-]{0,24})\b(?:brief|concise|short)\b|"
+        r"\b(?:one|single|1)\s+(?:sentence|paragraph)\b|"
+        r"\b(?:only|just)\s+(?:a\s+)?(?:small|tiny|short|quick)\s+(?:fix|change|patch|answer)\b",
+        current,re.I))
+    word_limits=[int(value.replace(",","")) for value in re.findall(
+        r"\b(?:under|at most|no more than|fewer than|max(?:imum)?)\s+(\d[\d,]*)\s+words?\b",current,re.I)]
+    if short or any(limit<=500 for limit in word_limits):
+        return {"tier":"normal","tokens":4096,"stagedDelivery":False}
+    original=str((programming.get("intentContract") or {}).get("originalRequest") or "")
+    request=current+"\n"+original
+    coding=bool(programming.get("codingTask"))
+    action=bool(re.search(r"\b(?:write|produce|generate|create|draft|provide|build|implement|return|give|explain|analyse|analyze)\b",request,re.I))
+    action=action or bool(re.match(r"\s*(?:i\s+(?:need|want)|please\s+(?:write|create|generate|produce))\b",request,re.I))
+    large_deliverable=bool(re.search(
+        r"\b(?:huge|large|substantial|extensive|comprehensive|full[- ]length|long[- ]form|lengthy)"
+        r"[ \w,/-]{0,55}\b(?:project|application|app|codebase|implementation|document|documentation|report|guide|manual|chapter|specification|tutorial|essay|article|book|analysis|explanation)\b|"
+        r"\b(?:project|document|report|guide|manual|essay|article|book|analysis)\b[ \w,/-]{0,35}\b(?:in depth|very detailed|comprehensive|extensive)\b|"
+        r"\b(?:lots|a lot|large amount|substantial amount)\s+of\s+(?:code|content|context|detail|text)\b|"
+        r"\b(?:long|detailed|thorough)\s+(?:document|documentation|report|guide|manual|chapter|specification|tutorial|essay|article|book|analysis|explanation)\b",
+        request,re.I))
+    requested_words=[int(value.replace(",","")) for value in re.findall(
+        r"\b(\d[\d,]*)[- ]words?\b",request,re.I)]
+    requested_pages=[int(value) for value in re.findall(r"\b(\d+)[- ]pages?\b",request,re.I)]
+    if action and (large_deliverable or any(n>=2000 for n in requested_words) or any(n>=5 for n in requested_pages)):
+        return {"tier":"large","tokens":16384,"stagedDelivery":True}
+    if (action and any(n>=1000 for n in requested_words)) or expanded_project_delivery(programming,prompt):
+        return {"tier":"project","tokens":8192,"stagedDelivery":coding}
+    return {"tier":"normal","tokens":4096,"stagedDelivery":False}
+
+
+def long_delivery_policy(budget: dict[str, Any]) -> str:
+    """Keep generous decode room separate from unsupported completion claims."""
+    if budget.get("tier") not in ("large","project"):
+        return ""
+    return (
+        "\nSUBSTANTIAL DELIVERY: Use the available response room for the requested "
+        "complete code or substantive document, rather than an outline standing in "
+        "for the work. Do not pad to consume the allowance. If the entire scope "
+        "cannot fit in one delivery, state the completed scope and remaining work "
+        "explicitly. A staged delivery must contain complete, usable files or a "
+        "complete document section; never silently shorten source or label an "
+        "unfinished whole project/document complete. Do not claim automatic "
+        "continuation, generated files, tests, or downloads without actual results."
+    )
+
+
+def preserve_existing_source(programming: dict[str, Any]) -> bool:
+    """Imported source under edit is mandatory even without a stored artifact ID."""
+    return bool(programming.get("codingTask") and not programming.get("newProject")
+        and not programming.get("artifactEditSource")
+        and (programming.get("artifactContinuation") or programming.get("artifactMutationRequested")
+             or programming.get("projectContext")=="existing"))
+
+
+def source_under_edit(programming: dict[str, Any], history: list[dict[str, Any]]) -> str:
+    """Find complete mandatory editing source, without manufacturing identity."""
+    if (not programming.get("codingTask") or programming.get("newProject")
+            or programming.get("changeClass") in ("review","explain")):
+        return ""
+    evidence=programming.get("failureEvidence") if isinstance(programming.get("failureEvidence"),dict) else {}
+    source=str(programming.get("behaviorRepairBaseSource") or evidence.get("repairSource")
+               or programming.get("artifactEditSource") or "")
+    if source:return source
+    if preserve_existing_source(programming):
+        return next((str(item.get("content") or item.get("text") or "")
+            for item in reversed(history or []) if item.get("role")=="assistant"
+            and source_fence_present(item.get("content") or item.get("text") or "")),"")
+    return ""
+
+
+def source_sized_budget(model: Any, programming: dict[str, Any], history: list[dict[str, Any]],
+                        budget: dict[str, Any]) -> dict[str, Any]:
+    """A short edit still needs enough decode room to return its complete file."""
+    source=source_under_edit(programming,history)
+    if not source:return budget
+    count=len(model.tokenize(source.encode("utf-8"),add_bos=False))
+    if count>16384:
+        raise ValueError(
+            f"Canonical source needs {count} tokens for complete-source delivery; "
+            "the bounded output maximum is 16384. The source was not truncated. "
+            "Work on a smaller complete file set/stage before editing this source."
+        )
+    desired=max(int(budget["tokens"]),min(16384,count+1024))
+    if desired==budget["tokens"]:return budget
+    return {**budget,"tokens":desired,"tier":"source-complete","sourceTokens":count}
+
 def project_delivery_policy(programming: dict[str, Any], prompt: str) -> str:
     """Describe the existing file-fence protocol without inventing download URLs."""
     if not programming.get("codingTask") or programming.get("changeClass") in ("review","explain"):
@@ -40,7 +138,9 @@ def project_delivery_policy(programming: dict[str, Any], prompt: str) -> str:
         "The application creates the actual ZIP/download from validated file "
         "contents. Do not invent an archive, tool action, download URL, filesystem "
         "write or successful test. Return the actual code, not instructions to "
-        "fill missing files later."
+        "fill missing files later. Unless the user explicitly requests pseudocode, "
+        "a scaffold, or placeholders, provide implemented behavior rather than "
+        "pseudocode, TODO comments, empty handlers or comments standing in for work."
     )
     source=str(programming.get("artifactEditSource") or "")
     evidence=programming.get("failureEvidence") if isinstance(programming.get("failureEvidence"),dict) else {}
@@ -126,6 +226,16 @@ def contract_rejection_context(validation: dict[str, Any]) -> str:
     context=("\nACTUAL SOURCE CONTRACT REJECTIONS (source checks only; no execution):\n"
              +json.dumps(reasons,ensure_ascii=False)
              +"\nCorrect these source defects while preserving the original requested features. Do not invent a test result.")
+    if any(reason.startswith("literal-ui-text-mismatch:") for reason in reasons):
+        literals=[{"target":str(item.get("target") or "text"), "text":str(item.get("text") or "")}
+            for item in (validation.get("literalUiText") or [])[:8] if isinstance(item,dict)]
+        context+=(
+            "\nEXACT VISIBLE TEXT CORRECTION: replace the entire visible text of each "
+            "specified UI target with its exact text value below. Preserve characters and case. "
+            "Do not append words from the location/reference instruction. A correct browser "
+            "title alone does not satisfy a requested visible heading. Preserve the rest of "
+            "the existing project.\n"+json.dumps(literals,ensure_ascii=False,separators=(",",":"))
+        )
     if any(reason.startswith("unresolved-browser-module:") for reason in reasons):
         context+=(
             "\nBROWSER MODULE RESOLUTION: compare the exact rejected specifier "

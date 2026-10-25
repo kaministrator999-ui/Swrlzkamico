@@ -15,9 +15,9 @@ import stat
 import unicodedata
 import zipfile
 
-MAX_FILES = 32
+MAX_FILES = 2048
 MAX_FILE_BYTES = 512 * 1024
-MAX_PROJECT_BYTES = 2 * 1024 * 1024
+MAX_PROJECT_BYTES = 32 * 1024 * 1024
 MAX_PATH_BYTES = 240
 MANIFEST_PATH = "SWRLZ_PROJECT_MANIFEST.json"
 _RESERVED = {"con", "prn", "aux", "nul"} | {
@@ -98,14 +98,14 @@ def parse_project_files(text):
             "code." + extensions.get(language.lower(), "txt") if index == 1 else f"file-{index}.txt")
         files.append({"path": path, "language": language[:40], "content": fence["content"]})
         if len(files) > MAX_FILES:
-            raise ProjectArchiveError("Project must contain between 1 and 32 files")
+            raise ProjectArchiveError(f"Project must contain between 1 and {MAX_FILES} files")
     return validate_project_files(files) if files else []
 
 
 def validate_project_files(files):
     """Return text-file copies after portable path/count/byte validation."""
     if not isinstance(files, list) or not 1 <= len(files) <= MAX_FILES:
-        raise ProjectArchiveError("Project must contain between 1 and 32 files")
+        raise ProjectArchiveError(f"Project must contain between 1 and {MAX_FILES} files")
     result = []
     names = set()
     total = 0
@@ -142,7 +142,7 @@ def validate_project_files(files):
             raise ProjectArchiveError("A project file exceeds the 512 KiB source limit")
         total += len(encoded)
         if total > MAX_PROJECT_BYTES:
-            raise ProjectArchiveError("Project exceeds the 2 MiB source limit")
+            raise ProjectArchiveError("Project exceeds the 32 MiB source limit")
         result.append({"path": path, "language": str(item.get("language") or "text")[:40],
                        "content": content})
     return result

@@ -11,7 +11,7 @@ import zipfile
 
 from fastapi.testclient import TestClient
 
-from project_archive import (MAX_FILES, MAX_FILE_BYTES, MANIFEST_PATH,
+from project_archive import (MAX_FILES, MAX_FILE_BYTES, MAX_PROJECT_BYTES, MANIFEST_PATH,
     ProjectArchiveError, archive_filename, build_project_archive, parse_project_files, validate_project_files)
 import station
 from brain_programming import programming_intent
@@ -54,6 +54,19 @@ class ProjectArchiveUnit(unittest.TestCase):
         self.assertEqual(content, build_project_archive(FILES,
             artifact_id="artifact-owned", revision=3, source_hash="a" * 64))
 
+    def test_two_thousand_file_source_archive_retains_every_path_and_byte(self):
+        files=[{"path": f"app/src/main/source{n}.kt", "language": "kotlin",
+                "content": f"package sandbox\nval source{n} = {n}\n"} for n in range(2000)]
+        content=build_project_archive(files,artifact_id="large-project",revision=1)
+        with zipfile.ZipFile(io.BytesIO(content)) as archive:
+            self.assertIsNone(archive.testzip())
+            self.assertEqual(len(archive.namelist()),2001)
+            manifest=json.loads(archive.read(MANIFEST_PATH))
+            self.assertEqual(len(manifest['files']),2000)
+            for item,record in zip(files,manifest['files']):
+                self.assertEqual(archive.read(item['path']),item['content'].encode())
+                self.assertEqual(record['sha256'],hashlib.sha256(item['content'].encode()).hexdigest())
+
     def test_unsafe_portable_paths_rejected_without_normalizing_them(self):
         for path in ["", ".", "..", "../x.js", "a/../x.js", "./x.js", "/x.js",
                 "//server/x", "C:/x.js", "a\\x.js", "src//x.js", "src/x.js/",
@@ -82,7 +95,7 @@ class ProjectArchiveUnit(unittest.TestCase):
             validate_project_files([{"path": "a.txt", "content": "☃" * (MAX_FILE_BYTES // 3 + 1)}])
         with self.assertRaises(ProjectArchiveError):
             validate_project_files([{"path": f"file-{n}.txt", "content": "x" * MAX_FILE_BYTES}
-                                    for n in range(5)])
+                                    for n in range(MAX_PROJECT_BYTES // MAX_FILE_BYTES + 1)])
         for item in [None, {}, {"path": "a", "content": b"bytes"}, {"path": "a", "content": "\ud800"}]:
             with self.subTest(item=str(item)[:30]), self.assertRaises(ProjectArchiveError):
                 validate_project_files([item])

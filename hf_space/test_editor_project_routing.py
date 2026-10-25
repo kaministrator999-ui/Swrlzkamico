@@ -184,6 +184,36 @@ class CompleteProjectGate(unittest.TestCase):
                     good.replace('<title>Viewer</title>','<title>§wyrlz</title>').replace('<h1>§wyrlz</h1>','<h1>Wrong</h1>')):
             self.assertIn('literal-ui-text-mismatch:§wyrlz',candidate_contract_gate(bad,state,[])['reasons'])
 
+    def test_exact_literal_is_an_early_actionable_model_requirement_and_retry(self):
+        from programming_repair_context import build_compact_repair_context,contract_rejection_context
+        state=heading_state()
+        requirement=state['intentContract']['must'][0]
+        self.assertIn('heading must display exactly "§wyrlz"',requirement)
+        self.assertNotIn('of that 3d model viewer',requirement)
+        system,_,_=build_compact_repair_context(state,HEADING_REQUEST,'CODE-DELIVERY')
+        self.assertIn('heading must display exactly',system)
+        bad=FENCED.replace('<canvas>','<h1>§wyrlz of that 3d model viewer</h1><canvas>')
+        validation=candidate_contract_gate(bad,state,[])
+        retry=contract_rejection_context(validation)
+        self.assertIn('replace the entire visible text',retry)
+        self.assertIn('"text":"§wyrlz"',retry)
+        self.assertIn('Do not append words',retry)
+
+    def test_both_engine_model_messages_receive_exact_literal_not_only_ambiguous_prompt(self):
+        from unittest.mock import patch
+        from test_github_change_model_context import load_engine
+        from test_generation_completion_budget import Responses
+        source=FENCED.replace('<canvas>','<h1>§wyrlz</h1><canvas>')
+        payload={'prompt':HEADING_REQUEST,'history':owned_history()}
+        for name in ('qwen_coder_engine','lfm2_700m_engine'):
+            engine=load_engine(name);model=Responses([(source,'stop')])
+            with self.subTest(engine=name),patch.object(engine,'load',return_value=model):
+                events=list(engine.generate_events(payload))
+                self.assertEqual(events[-1]['type'],'COMPLETED')
+                policy=model.calls[0]['messages'][0]['content']
+                self.assertIn('Exact visible UI text: heading must display exactly',policy)
+                self.assertIn('Do not append wording outside this literal',policy)
+
     def test_quoted_literals_keep_phrase_case_and_unrelated_target_requirements(self):
         prompt='Add heading text saying "Go on that viewer" to the top.'
         self.assertEqual(_literal_ui_text(prompt)[0]['text'],'Go on that viewer')

@@ -38,6 +38,56 @@ Current next gate: finish focused verification, run actual models/editor and mul
 
 ## Source candidate verification
 
-Current focused changed-tree suite:124 tests+204subtests PASS;19HF candidate checks PASS. Real Chromium download regressions pass for actual ZIP bytes, nested/quoted paths, inline/README fences, displayed revisions, ownership capture, safe filenames and truthful errors. Existing exact three-turn Station/Brain integration confirms viewer r1 → same viewer r2 for heading → separate editor r1. New CI covers the routing/completion/archive tests and the real browser ZIP boundary using pinned Playwright1.57.0.
+The earlier6ee source focused suite:124 tests+204subtests PASS;19HF candidate checks PASS. Real Chromium download regressions pass for actual ZIP bytes, nested/quoted paths, inline/README fences, displayed revisions, ownership capture, safe filenames and truthful errors. Existing exact three-turn Station/Brain integration confirms viewer r1 → same viewer r2 for heading → separate editor r1. New CI covers the routing/completion/archive tests and the real browser ZIP boundary using pinned Playwright1.57.0.
 
 An actual pinned700M native trial used the4096 output allowance, generated971 tokenizer-measured output tokens and stopped normally after68.7s, exceeding its old768 cap. This proves usable response room, not exact compliance with the requested1200-word length. Both engines now have16K context; ordinary/web allowances4096 and editor/multi-file6144, with special short/internal JSON modes preserved. Native Qwen editor/heading/project behavior and final hosted acceptance remain pending.
+
+## Actual native editor negative and capability repair
+
+Exact-source candidate `6ee182280da910d5b2aef8232da9871769b3a276` passed CI [40205760858](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40205760858). This establishes source regression checks, not useful generated editor behavior.
+
+The actual pinned Qwen7B seed42 replay of the exported editor request took330.7s, produced513 output tokens and stopped normally with the6144 allowance. It correctly inferred code/HTML, isolated the new project and dropped old source history. However, the generated page was another rotating cube with camera navigation. It constructed TransformControls without attaching an object or providing editing UI. The source gate passed the complete HTML incorrectly as an editor. Independent isolated browser evaluation classified it INCOMPLETE:6PASS/9NOT_RUN out of15 planned checks; actual object creation, selection, transformation and deletion were unavailable. This is retained negative evidence, not accepted editor output. The ZIP manifest passed source-byte verification, which is a separate fact.
+
+The bounded repair adds explicit application capability requirements for a small3D scene editor, respecting user narrowing. A source-only guard may reject obvious render-only substitutes, but cannot certify runtime behavior. Actual unchanged output must still pass independent browser interaction checks. Public library facts may explain that TransformControls starts unattached and OrbitControls moves the camera; they must not contain a prepared editor implementation.
+
+## Latest requirement: Chat update history dialog
+
+The owner additionally requested the §E-style update popup in Chat: newest notes plus all recorded previous Chat updates; automatically open for a new update; an in-dialog preference suppresses the current update until a newer one exists; manual reopening remains available. This belongs to the same Chat repair/release candidate. The history must identify its recorded sources and preserve historical versions without fabricating missing releases. Startup, reload, version transition, preference persistence, manual history, keyboard and mobile behavior require verification before publication.
+
+## Additional owner requirements during implementation
+
+The owner requested substantial output capacity for huge coding projects and long documents/context, and explicitly prohibited pseudocode and commented implementation placeholders unless requested. Both model paths must use a bounded larger-output tier for clearly substantial deliverables, retain short-format overrides, reserve output before optional history, and preserve canonical editing source or fail truthfully. Model context/output limits remain finite; staged deliverables must identify unfinished scope and cannot be labelled a finished full project. Complete-source implementation is the default; explanatory comments remain valid, but unimplemented TODO bodies, commented instructions replacing code and pseudocode substitutes are not successful code deliveries.
+
+Independent source review additionally found two boundary regressions for repair: imported/raw prior source could be dropped without a stored artifact identity, and natural create wording such as “Can you do a3Dmodel editor page” could retain the old viewer history. Source protection must not invent an artifact ID, and fresh named applications must not inherit old project content merely because their wording differs from the exported exact prompt.
+
+## Editor interaction and implementation source contract
+
+The first exact native Qwen replay after routing repair stopped normally with513 output tokens and a source-gate PASS, but independent browser evaluation classified it INCOMPLETE:6 checks passed and9 editor interactions were NOT_RUN. The output was a rendered rotating cube plus camera orbit and an unattached TransformControls; it had no editing UI. This negative result is retained and is not upgraded into editor acceptance.
+
+A named3D scene/model editor now derives a bounded prototype contract for creating, selecting, transforming and deleting scene objects, including translate/rotate/scale on the selection. These defaults are explicit engineering assumptions and can be reduced by user requests such as selection only, only moving, or no adding/deleting. The capability requirement is included first in `must`, within the existing compact repair-context bound. Static source checks reject the observed render-only/unattached-control shape and missing user-bound operations. They accept evidence from numeric forms, attached transform controls or custom engines without requiring a specific implementation. Such source evidence remains unexecuted; real browser editor acceptance is still required.
+
+The owner's no-pseudocode/no-commented-placeholder default is represented in initial and compact contracts. Source checks reject obvious TODO/FIXME implementation placeholders, pseudocode fences and sole Python function stubs; explanatory comments and literal user text remain permitted. Explicitly requested scaffolds/pseudocode can opt out of the default, and legitimate abstract/Protocol declarations, explicit no-op callbacks and requested exception behavior are preserved. Verified r160 facts clarify that a new TransformControls has no attached object and adding it to a scene does not edit a mesh; OrbitControls moves the camera.
+
+Focused evidence:10 application capability tests,8 implementation completeness tests,15 existing editor routing tests,3 fresh wording tests and the established programming contract/repair/receipt/telemetry regressions PASS. No execution claim follows from these checks. Actual new native editor and hosted acceptance are pending.
+
+
+## Larger deliverables and final source-boundary verification
+
+The later candidate supersedes the initial16K/6144 budget with32K context on both engines:4096 ordinary output,8192 editor/multi-file or moderately long document output,16384 explicitly substantial code/document output. Identity/exact-format/internal-tool modes retain their bounded short caps. Full-source edits receive a tokenizer-measured output floor with1024 tokens of headroom, up to16384; oversized complete-source requests fail rather than silently truncating. Native GGUF metadata confirms LFM2 context128000 and Qwen context131072, both above the configured32K. These are capacity bounds, not a promise that every response uses its allowance or that arbitrary Android projects fit one turn.
+
+Archives now permit2048 text/source files,512KiB per file and32MiB total. A2000-file Kotlin-source fixture passed ZIP integrity, every path/content byte and all manifest hashes. This is engineer-authored archive transport evidence, not a claim that the model generated or built a2000-file Android app. Generated/build directories, installed dependencies and binary build outputs are not implied source deliverables.
+
+The complete local offline-CI replay passed105of106 repository commands; it exposed a real pre-existing module-validation bypass above65536 source characters, newly reachable by longer outputs. That check now inspects each bounded source file in full and explicitly rejects oversized input. Its repaired16-test suite passes, including actual large-source dependency detection and no truncation on retries. The retry-budget fixture now scales to the32K context instead of assuming the old size.
+
+Actual heading replay also preserved two negative drafts that repeated the wrong full phrase despite source rejection. The later repair converts each extracted literal into an early actionable exact-display requirement and direct replacement feedback, independently verified in both engines' model inputs. It does not rewrite model output on the model's behalf. Final native/live heading and editor acceptance remain pending.
+
+
+Final input boundary: the live HF Chat composer and Station accept131072 characters, verified through real HTTP admission/storage/worker tests without clipping. Model tokenizer/context fitting remains separate. Older separate legacyAPI routes retain16000-character limits and are not the live HFStation path.
+
+A second actual700M native trial with the32K context and8192 output allowance generated855 tokenizer tokens/630 words and stopped normally after216.7s ononeCPU. It exceeded the old768-token cap but did not satisfy the1200-word prompt; this remains a model instruction-following limitation, not a budget success claim about word count. See LARGE_GENERATION_BUDGETS.md for the exact configured tiers and limits.
+
+## Source candidate freeze
+
+Final browser reruns pass for actual ZIP downloads and the full update-dialog regression set. An intermittent Escape→immediate-reload dismissal race was reproduced during root review; the dialog now persists the actually displayed update ID synchronously before closing, with queued native close handling as an idempotent fallback. Strengthened tests verify persistence before the native close event, and retain immediate reload without adding an artificial delay. The prior failure remains recorded in the popup validation receipt.
+
+Final changed-surface checks:17 editor-routing tests,19 completion tests,19 archive tests (including2000-file byte/hash fidelity),16 module checks,10 application-capability tests,8 implementation-completeness tests,9 large-budget tests,4 prompt-boundary tests and3 fresh-wording tests pass, plus19HF candidate checks and source staging/check. Counts overlap the earlier CI replay and are not unique model successes. The new exact-source remote CI is the next build gate. Native editor/heading, actual multi-file model output and final hosted acceptance remain pending. No canonical release versions have been incremented yet.

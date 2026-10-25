@@ -11,6 +11,7 @@ import re
 from source_answer_articulation_v230 import lesson_kind
 from programming_repair_context import candidate_source_fingerprint
 from response_cognition import requests_web_source, classify_response_cognition
+from application_capabilities import apply_application_contract, application_source_gaps
 
 
 def programming_library_context(programming: dict[str, Any]) -> str:
@@ -456,14 +457,137 @@ def _symbol_is_resolved_or_removed(code: str, symbol: str) -> bool:
     return any(re.search(pattern,code) for pattern in declarations)
 
 
+def _apply_literal_ui_contract(contract: dict[str, Any]) -> dict[str, Any]:
+    """Make extracted literal text an actionable early acceptance requirement."""
+    prefix="Exact visible UI text: "
+    requirements=[]
+    for index,item in enumerate((contract.get("literalUiText") or [])[:8]):
+        if not isinstance(item,dict) or not str(item.get("text") or ""):
+            continue
+        target=str(item.get("target") or "text")
+        literal=json.dumps(str(item["text"]),ensure_ascii=False)
+        requirement=(prefix+target+" must display exactly "+literal+
+            ". Do not append wording outside this literal; use placement instructions only to position it.")
+        if len(requirement)>320:
+            requirement=(prefix+target+" must equal literalUiText["+str(index)+
+                "].text exactly. Preserve every character. Do not append placement/reference wording.")
+        requirements.append(requirement)
+    if not requirements:
+        return contract
+    result=dict(contract)
+    result["must"]=requirements+[str(item) for item in contract.get("must") or [] if not str(item).startswith(prefix)]
+    return result
+
+
+def _incomplete_implementation_requested(prompt: str) -> bool:
+    """Only an affirmative request can authorize pseudocode/scaffold delivery."""
+    prose=_strip_fenced_code(str(prompt or ""))
+    for clause in re.split(r"[.;!?\n]+",prose):
+        if not re.search(r"\b(?:pseudocode|pseudo-code|scaffold|skeleton|stub|template|TODO(?:\s+(?:comments?|placeholders?))?|commented\s+(?:example|placeholder)s?)\b",clause,re.I):
+            continue
+        if re.search(r"\b(?:no|not|never|without|avoid|don't|do not|working|functional|complete|finish|finished|fully implement)\b",clause,re.I):
+            continue
+        if re.search(r"\b(?:write|show|provide|return|use|allow|include|create|make|give|want|need)\b",clause,re.I):
+            return True
+    return False
+
+
+def _apply_implementation_contract(contract: dict[str, Any], instruction: str) -> dict[str, Any]:
+    result=dict(contract)
+    original=str(contract.get("originalRequest") or "")
+    explicitly_complete=bool(re.search(r"\b(?:no|never|without|avoid|don't|do not)\s+(?:use|return|include|provide)?\s*(?:pseudocode|pseudo-code|placeholders?|stubs?)\b|\b(?:fully\s+implement|finish\s+(?:it|this|the)|make\s+(?:it|this)\s+(?:working|functional|complete))\b", _strip_fenced_code(instruction), re.I))
+    policy="explicit-scaffold" if not explicitly_complete and (_incomplete_implementation_requested(instruction) or
+        _incomplete_implementation_requested(original)) else "complete-source"
+    result["implementationPolicy"]=policy
+    prefix="Implementation completeness: "
+    must=[str(item) for item in contract.get("must") or [] if not str(item).startswith(prefix)]
+    must_not=[str(item) for item in contract.get("mustNot") or [] if not str(item).startswith(prefix)]
+    if policy=="complete-source":
+        requirement=prefix+"return complete usable code implementing the requested behavior; explanatory comments may describe implemented behavior."
+        # Keep both application capabilities and this general rule inside the
+        # compact repair context's first ten requirements.
+        position=1 if must and must[0].startswith("3D scene editor prototype:") else 0
+        must.insert(position,requirement)
+        must_not.insert(0,prefix+"do not substitute pseudocode, TODO/FIXME stubs or commented placeholders for implementation unless explicitly requested.")
+    if policy=="explicit-scaffold":
+        result.pop("applicationCapabilities",None)
+        must=[item for item in must if not item.startswith("3D scene editor prototype:")]
+    result["must"]=must;result["mustNot"]=must_not
+    return result
+
+
+def _implementation_placeholder_gaps(text: str, contract: dict[str, Any]) -> list[str]:
+    """Source-only obvious stub checks, preserving real explanatory comments."""
+    if contract.get("implementationPolicy")=="explicit-scaffold":
+        return []
+    from project_archive import ProjectArchiveError, parse_project_files, source_fences
+    gaps=[]
+    request=str(contract.get("currentInstruction") or contract.get("originalRequest") or "")
+    requested_noop=bool(re.search(r"\b(?:no[- ]?op|noop)\b|\bempty\s+(?:function|callback)\b",request,re.I))
+    requested_unimplemented_error=bool(re.search(r"\b(?:raises?|throws?)\b[^.\n]{0,60}\bNotImplementedError\b",request,re.I))
+    for fence in source_fences(str(text or "")):
+        tag=str(fence.get("header") or "").strip().split()[0].lower() if str(fence.get("header") or "").strip() else ""
+        if tag in ("pseudocode","pseudo","pseudo-code"):
+            gaps.append("pseudocode-instead-of-implementation")
+    try: files=parse_project_files(text)
+    except ProjectArchiveError: files=[]
+    if not files:
+        files=[{"path":"source","content":str(text or ""),"language":""}]
+    import ast
+    import io
+    import tokenize
+    from application_capabilities import _lexical_mask
+    for item in files:
+        path=str(item.get("path") or "").lower()
+        if path.endswith((".md",".markdown",".rst",".txt",".pyi",".d.ts")):
+            continue
+        content=str(item.get("content") or "")
+        language=str(item.get("language") or "").lower()
+        python=path.endswith(".py") or language in ("python","py","python3")
+        comments=[]
+        if python:
+            try:
+                comments=[tok.string for tok in tokenize.generate_tokens(io.StringIO(content).readline) if tok.type==tokenize.COMMENT]
+            except (tokenize.TokenError,IndentationError): pass
+            try:
+                tree=ast.parse(content)
+                protocol_methods={id(method) for cls in ast.walk(tree) if isinstance(cls,ast.ClassDef)
+                    and any((isinstance(base,ast.Name) and base.id=="Protocol") or
+                            (isinstance(base,ast.Attribute) and base.attr=="Protocol") for base in cls.bases)
+                    for method in cls.body if isinstance(method,(ast.FunctionDef,ast.AsyncFunctionDef))}
+                for node in ast.walk(tree):
+                    if not isinstance(node,(ast.FunctionDef,ast.AsyncFunctionDef)) or id(node) in protocol_methods: continue
+                    if any((isinstance(d,ast.Name) and d.id=="abstractmethod") or
+                           (isinstance(d,ast.Attribute) and d.attr=="abstractmethod") for d in node.decorator_list): continue
+                    body=list(node.body)
+                    if body and isinstance(body[0],ast.Expr) and isinstance(body[0].value,ast.Constant) and isinstance(body[0].value.value,str): body=body[1:]
+                    if len(body)!=1: continue
+                    statement=body[0]
+                    stub=not requested_noop and (isinstance(statement,ast.Pass) or (isinstance(statement,ast.Expr) and isinstance(statement.value,ast.Constant) and statement.value.value is Ellipsis))
+                    if isinstance(statement,ast.Raise) and not requested_unimplemented_error:
+                        exception=statement.exc.func if isinstance(statement.exc,ast.Call) else statement.exc
+                        stub=stub or (isinstance(exception,ast.Name) and exception.id=="NotImplementedError")
+                    if stub:gaps.append("unfinished-function-stub:"+node.name[:80])
+            except (SyntaxError,ValueError): pass
+        else:
+            # JS/CSS/HTML comment extraction preserves string literals, so URLs
+            # and text that happens to contain TODO do not become false stubs.
+            token=re.compile(r'<!--[\s\S]*?-->'+r'|/\*[\s\S]*?\*/|//[^\n]*|"(?:\\.|[^"\\])*"|\'(?:\\.|[^\'\\])*\'|`(?:\\.|[^`\\])*`')
+            comments=[m.group() for m in token.finditer(content) if m.group().startswith(("<!--","/*","//"))]
+            clean=_lexical_mask(content,strings=False)
+            if not requested_unimplemented_error and re.search(r"\bthrow\s+new\s+(?:Error|NotImplementedError)\s*\(\s*['\"](?:not\s+implemented|todo|implement\s+(?:me|this))\b",clean,re.I):
+                gaps.append("unfinished-not-implemented-error")
+        for comment in comments:
+            if re.search(r"(?im)^\s*(?://|#|/\*|\*|<!--)?\s*(?:TODO|FIXME)\b",comment) or re.search(r"\b(?:TODO|FIXME)\b\s*(?::|\b(?:implement|add|fill|write|replace|finish|your|here)\b)",comment,re.I) or re.search(r"\b(?:add|insert|implement|write|replace|fill)\b[^\n]{0,100}\b(?:your|here|implementation|this\s+later)\b",comment,re.I):
+                gaps.append("unfinished-implementation-placeholder")
+    return _unique(gaps)
+
+
 def _web_delivery_gaps(code: str, original: str, language: dict[str, Any]) -> list[str]:
     """Detect explicit unfinished web artifacts, not semantic correctness."""
     if "html" not in (language.get("requiredLanguages") or []):
         return []
-    # Preserve deliberately requested skeletons, but never a negated request
-    # such as 'do not return a template' or a request for a working starter.
-    scaffold = bool(re.search(r"\b(?:template|skeleton|scaffold|stub)\b", original, re.I))
-    if scaffold and not re.search(r"\b(?:not|don't|without|working|functional|complete|finish|implement)\b", original, re.I):
+    if _incomplete_implementation_requested(original):
         return []
     gaps = []
     if language.get("artifactType")=="web-page" and not re.search(r"\b(?:vite|webpack|parcel|bundler|next\.?js|react|angular|repository|repo)\b", _strip_fenced_code(original), re.I):
@@ -670,6 +794,9 @@ def candidate_contract_gate(text: str, programming: dict[str, Any], history: lis
         reasons.extend(_source_delivery_gaps(text,str(contract.get("originalRequest") or ""),language))
         reasons.extend(_web_delivery_gaps(candidate_code, str(contract.get("originalRequest") or ""), language))
         reasons.extend(_literal_ui_gaps(text,contract))
+        reasons.extend(_implementation_placeholder_gaps(text,contract))
+        if contract.get("implementationPolicy")!="explicit-scaffold":
+            reasons.extend(application_source_gaps(text,contract))
     for symbol in semantics.get("reportedSymbols") or []:
         if not _symbol_is_resolved_or_removed(candidate_code,str(symbol)):
             reasons.append("diagnostic-symbol-resolution-unproven:"+str(symbol)[:80])
@@ -693,6 +820,7 @@ def candidate_contract_gate(text: str, programming: dict[str, Any], history: lis
         "reasons":_unique(reasons),
         "languageContract":language,
         "detectedLanguages":detected,
+        "literalUiText":[dict(item) for item in (contract.get("literalUiText") or [])[:8] if isinstance(item,dict)],
         "diagnosticGrounded":bool(evidence) and not any(x.startswith("diagnostic-") for x in reasons),
         "receiptCategories":list(semantics.get("categories") or [])[:12],
         "activeRepairConstraints":{
@@ -813,18 +941,25 @@ def _literal_ui_text(text: str) -> list[dict[str, str]]:
 
 
 def _fresh_web_project_request(text: str) -> bool:
-    """A newly requested page is not an edit merely because another page exists."""
+    """Independently requested application pages start a clean project scope.
+
+    Creation verbs and optional articles describe the new deliverable; only an
+    explicit reference/conversion of the current page retains its source scope.
+    Purpose clauses can still reuse colors/assets without mutating that page.
+    """
     if not requests_web_source(text):
         return False
-    raw=_strip_fenced_code(text)
+    raw=_strip_fenced_code(text).strip()
     lead=re.match(r"^(?:(?:please|hey|now|okay|ok)[,!\s]+)?"
-                  r"(?:(?:can|could|would|will)\s+you\s+|i\s+(?:want|need)\s+you\s+to\s+)?"
-                  r"(?:make|create|build|write|develop|implement)\s+(?:a|an|another|new)\b",raw,re.I)
+                  r"(?:(?:can|could|would|will)\s+you\s+|i\s+(?:want|need)\s+you\s+to\s+|"
+                  r"go\s+ahead\s+and\s+)?"
+                  r"(?:make|do|create|build|write|develop|implement|code)\b",raw,re.I)
     if not lead:
         return False
     head=re.split(r"\b(?:using|with|for|based\s+on)\b",raw[lead.end():],maxsplit=1,flags=re.I)[0]
-    return not bool(re.search(r"\b(?:this|that|same|existing|current|previous)\s+"
-                              r"(?:(?:3[ -]?d|model|web)\s+){0,3}"
+    return not bool(re.search(r"^\s*(?:it|this|that)(?:\s+one)?\b|"
+                              r"\b(?:this|that|same|existing|current|previous|above)\s+"
+                              r"(?:(?:3[ -]?d|model|scene|web|html)\s+){0,4}"
                               r"(?:viewer|editor|page|website|app|application)\b|"
                               r"\b(?:turn|convert|change|extend|upgrade)\s+(?:this|that|it)\b|\binto\b",head,re.I))
 
@@ -1791,6 +1926,16 @@ def programming_intent(prompt: str, history: list[dict[str, Any]], pinned_contex
             "substitutionAllowed":False,
             "inferredFrom":"html-source-continuation" if web_source_continuation else "application-page-request",
         }
+
+    # Named interactive applications carry bounded capability defaults. The
+    # original source request remains authoritative; explicit narrower user
+    # scope replaces the default and survives compact repair context.
+    if not active_contract.get("applicationCapabilities"):
+        active_contract=apply_application_contract(active_contract,_strip_fenced_code(str(active_contract.get("originalRequest") or "")))
+    active_contract=apply_application_contract(active_contract,_strip_fenced_code(text))
+
+    active_contract=_apply_implementation_contract(active_contract,text)
+    active_contract=_apply_literal_ui_contract(active_contract)
 
     repair_constraints=_repair_constraints(
         {} if new_project else prior_state,
