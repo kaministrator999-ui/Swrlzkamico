@@ -38,6 +38,19 @@ jobs:
           print('SE_V11119_CANDIDATE_PATCHES',len(m['patches'])+1)
           PY
           node --check /tmp/se-v11119.mjs
+          mkdir -p /tmp/se-v11119-smoke
+          cp /tmp/se-v11119.mjs /tmp/se-v11119-smoke/se-source.mjs
+          # Full output HTML is reconstructed in this workflow without mutating the old manifest.
+          python - <<'PY'
+          import base64,gzip,runpy,json
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          m=json.loads((root/'source-manifest.json').read_text())
+          html=gzip.decompress(base64.b64decode(''.join((root/p).read_text().strip() for p in m['chunks']))).decode('utf8')
+          for file in m['patches']+['patches/v11_119_unified_mode_inspector.py']:
+              html=runpy.run_path(str(root/file))['apply'](html)
+          Path('/tmp/se-v11119-smoke/index.html').write_text(html)
+          PY
       - name: Run unified settings and prior interaction regressions
         run: |
           node projects/swrlz-forge-moba/tests/model_atelier_unified_modes_v11_119.mjs
@@ -49,3 +62,8 @@ jobs:
           node projects/swrlz-forge-moba/tests/model_atelier_preview_selection_v11_115.mjs
           node projects/swrlz-forge-moba/tests/model_atelier_semantic_tools_v11_118.mjs
           node projects/swrlz-forge-moba/tests/model_atelier_callout_guard_v11_117.mjs
+
+      - name: Real Chrome Android-sized tool-inspector interaction smoke
+        run: |
+          npm install --no-save --no-package-lock playwright@1.56.1
+          node projects/swrlz-forge-moba/tests/model_atelier_mobile_chrome_v11_119.mjs
