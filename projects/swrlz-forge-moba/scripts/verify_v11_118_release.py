@@ -7,7 +7,7 @@ p=argparse.ArgumentParser();p.add_argument('--output',required=True)
 out=Path(p.parse_args().output).resolve()
 m=json.loads((ROOT/'source-manifest.json').read_text())
 assert m['name']=='§wyrl§ Engine v11.118'
-assert m['finalArtifact']=='swyrl_engine_v11_117.html'
+assert m['finalArtifact']=='swyrl_engine_v11_118.html'
 assert len(m['patches'])==150
 assert m['patches'][-6:]==['patches/v11_113_general_precision_circle.py','patches/v11_114_circle_viewport_handles.py','patches/v11_115_preview_selection_guard.py','patches/v11_116_precision_touch_camera.py','patches/v11_117_editor_native_callout.py','patches/v11_118_semantic_tool_organization.py']
 subprocess.run(['python',str(ROOT/'build_space.py'),'--output',str(out)],check=True)
