@@ -169,6 +169,6 @@
     "patches/v11_120_toolbar_layers_touch.py",
     "patches/v11_121_uncover_component_toolbar.py"
   ],
-  "finalBytes": 6628174,
-  "finalSha256": "139836a7ece4d3e924dcbd4b1756765d0a31a2a711a533c106316dc5f15de247"
+  "finalBytes": 6628284,
+  "finalSha256": "3066243aa358c72cf31d8c154091f5cfb75e219f0e569cd560f932df3fc41ba9"
 }
