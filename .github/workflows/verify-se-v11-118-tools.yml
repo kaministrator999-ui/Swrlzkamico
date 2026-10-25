@@ -1,0 +1,45 @@
+name: §E v11.118 semantic tool arrangement preflight
+on:
+  push:
+    branches: [feature/atelier-tool-organization-v11-118]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Rebuild sealed v11.117 baseline and apply organization patch
+        run: |
+          python - <<'PY'
+          import base64,gzip,hashlib,json,runpy
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          m=json.loads((root/'source-manifest.json').read_text())
+          s=gzip.decompress(base64.b64decode(''.join((root/p).read_text().strip() for p in m['chunks']))).decode('utf8')
+          assert hashlib.sha256(s.encode()).hexdigest()==m['baseSha256']
+          for patch in m['patches']:
+              s=runpy.run_path(str(root/patch))['apply'](s)
+          assert len(s.encode())==m['finalBytes'] and hashlib.sha256(s.encode()).hexdigest()==m['finalSha256']
+          s=runpy.run_path(str(root/'patches/v11_118_semantic_tool_organization.py'))['apply'](s)
+          Path('/tmp/se-v11118.mjs').write_text(s.split('<script type="module">',1)[1].rsplit('</script>',1)[0])
+          print('SE_V11118_CANDIDATE_BYTES',len(s.encode()))
+          print('SE_V11118_CANDIDATE_SHA256',hashlib.sha256(s.encode()).hexdigest())
+          print('SE_V11118_CANDIDATE_PATCHES',len(m['patches'])+1)
+          PY
+          node --check /tmp/se-v11118.mjs
+      - name: Semantic grouping and gesture regression
+        run: |
+          node projects/swrlz-forge-moba/tests/model_atelier_semantic_tools_v11_118.mjs
+          npm install --no-save --no-package-lock three@0.160.1
+          cp /tmp/se-v11118.mjs /tmp/se-v11116.mjs
+          node projects/swrlz-forge-moba/tests/model_atelier_camera_precision_v11_116.mjs
+          node projects/swrlz-forge-moba/tests/model_atelier_precision_gizmos_v11_114.mjs
+          node projects/swrlz-forge-moba/tests/model_atelier_preview_selection_v11_115.mjs
+          node projects/swrlz-forge-moba/tests/model_atelier_callout_guard_v11_117.mjs
