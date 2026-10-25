@@ -47,8 +47,9 @@ def apply(html):
     # uncommitted drag and HAND BOTH pointers to native camera pinch/pan. This
     # prevents a hidden first touch from turning into a phantom camera finger.
     html=once(html,
-        " atelierCameraTouches.set(e.pointerId,{x:e.clientX,y:e.clientY});",
-        """ if(atelierPrecisionGizmoDrag&&
+        " if(e.button!==0)return false;\n atelierCameraTouches.set(e.pointerId,{x:e.clientX,y:e.clientY});",
+        """ if(e.button!==0)return false;
+ if(atelierPrecisionGizmoDrag&&
     e.pointerId!==atelierPrecisionGizmoDrag.id){
   const d=atelierPrecisionGizmoDrag;
   const field=document.getElementById('modelAtelierBore'+d.mode);
