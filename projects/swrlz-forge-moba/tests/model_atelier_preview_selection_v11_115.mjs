@@ -19,7 +19,7 @@ const elements={
 };
 let part={id:'source',kind:'sphere'};
 const ctx={
- THREE,world,camera,renderer:{domElement:viewport},selection:'source',
+ THREE,world,camera:cam,renderer:{domElement:viewport},selection:'source',
  document:{getElementById:id=>elements[id]||null,
   addEventListener:(type,fn)=>{(listeners[type]??=[]).push(fn)}},
  modelRoot:new THREE.Group(),point:e=>({x:(e.clientX/800)*2-1,y:1-(e.clientY/700)*2}),
