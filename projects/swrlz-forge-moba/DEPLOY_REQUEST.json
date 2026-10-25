@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.121",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_121_UNCOVERED_MESH_COMPONENT_TOOLBAR",
-  "reason": "User's Android v11.120 screenshot proved Mesh/Vertex/Edge/Face toolbar with Multi, Tap, Box, Lasso, Clear and nudge controls was still visibly hidden beneath top Render/Views/References controls. Root cause in v11.75 component installer: native component row appended inside absolutely positioned viewport-controls overlay. v11.121 moves the SAME node and original native handlers after #modelAtelierViewportModes into normal flow, adds mobile-safe standalone row styling, keeps all selection, gizmo, undo and camera behavior. Source verified by §E preflight #40233960177: 153 patches, 68 assets, 6,628,284 bytes SHA-256 3066243aa358c72cf31d8c154091f5cfb75e219f0e569cd560f932df3fc41ba9. Owner physical Android acceptance still pending; deploy exact source and verify live checksum, SOURCE receipt and assets.",
-  "sourceCommit": "0d3129bdd27d0dee57b4401725e1cbb96bcf24a3",
-  "sourceIntegritySha256": "3066243aa358c72cf31d8c154091f5cfb75e219f0e569cd560f932df3fc41ba9"
+  "releaseVersion": "v11.122",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_122_SITEWIDE_EDITOR_TOUCH_BOUNDARIES",
+  "reason": "Owner tested v11.121 on Android and found double-tap still magnified main §E starter-project page and long-holding normal editor controls/text still opened Android/Chrome copy/paste menus. v11.122 fixes site-wide behavior rather than Model Atelier only: document-level CSS touch-action:manipulation prevents double-tap browser zoom throughout both main maker/editor and Model Atelier without blocking browser pinch zoom or canvas drawing gestures; capture contextmenu/selectstart outside editable fields; native input/textarea/contenteditable paste and selection retained, including explicit override of v11.117 input restriction. Chrome mobile emulator confirmed viewport scale stayed 1 after fast double-tap and editable fields preserved text selection; scoped tool tests and prior camera, gizmos, preview and inspector regressions passed in preflight run 40236170378. Sealed release 154 ordered patches, 68 assets, 6,630,602 bytes SHA-256 b5a4c43f561db0d2841fafb42ac9b92663c8ffd55fb8773aa71c81508d69554a. Owner Android acceptance remains pending. Deploy exact output, validate served source checksum, SOURCE receipt and all assets.",
+  "sourceCommit": "3b5f0ca441152a5f807279200f67655ac4e0c96e",
+  "sourceIntegritySha256": "b5a4c43f561db0d2841fafb42ac9b92663c8ffd55fb8773aa71c81508d69554a"
 }
