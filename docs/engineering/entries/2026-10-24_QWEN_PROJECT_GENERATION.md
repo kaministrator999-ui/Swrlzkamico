@@ -78,6 +78,16 @@ The next correction gives both engines their complete latest rejected draft alon
 
 Current changed-tree validation:67 focused tests+103subtests,19HF candidate checks and the three adjacent repair/context/ledger scripts pass. Exact-source CI and live publication/acceptance remain pending. Official r160 installation documentation grounds the minimal import-map configuration (Git blob a77f215e2c307672d3dbf4248d3df418f2571a6e, SHA256 b4505d1965405bf142059d5765dfcf1773634822b9534b3cb992ae4a7a2abb4b). No additional runtime version has been allocated before final live evidence.
 
+## Addon-prefix and CSS-repair correction, 2026-10-25
+
+Sourcead76526a passed exact-source CI40133191607 and guarded deployment40133272645; Spacef61878f448ed84801dd5891df1755ca558fe53d6 confirmed its provenance. Fresh hosted requesteval-066e6dff1df0 generated a complete viewer in94.5s; unchanged HTML passed9/10 browser checks. The remaining checkbox initially disagreed with material state; actual browser feedback is under same-thread repair. No10/10 result is inferred. A separate native seed42 trial repeated an unmapped OrbitControls subpath across all three drafts (537.1s); this negative evidence is retained. The earlier source9a18 mobile-repair round2 also ended rejected/unchanged and is not accepted.
+
+The verified library facts now include the official addon-prefix declaration and exact-versus-prefix matching rules. Actual unresolved-import feedback explains the causal mapping defect without classifying an available dependency as unavailable or changing the user's stack. A repeated fresh-project draft now receives the existing stronger strategy-change directive. This configures dependencies; it does not supply a viewer/project implementation or execute model code.
+
+A separate reproduced implementation bug treated CSS ID-selector lines beginning# as Python comments in source fingerprints, falsely hiding valid layout changes. Brain and both engines now use one bounded fingerprint helper that retains HTML/CSS selector changes while preserving Python# and JavaScript// comment-only equivalence. It is source identity normalization, not a full language parser or execution proof.
+
+Changed-tree verification:72 focused tests+114subtests,19HF candidate checks, and the five adjacent contract/repair/state/ledger/dual-model scripts pass. This revision still requires exact-source CI, guarded publication and final live acceptance before allocating the follow-up registry versions. Earlier release and negative observations remain history.
+
 ## Guarded publication request
 
-Owner authorized live publication. Exact candidate source `ad76526a5bc3425838bb01a60c89500809ee3342`; CI run 40133191607 completed SUCCESS. This request starts the canonical HF workflow; upload/build/runtime acceptance remain pending and will be recorded separately.
+Owner authorized live publication. Exact candidate source `6240d7151692898b9f30e75675707083ddb7f4cc`; CI run 40149124604 completed SUCCESS. This request starts the canonical HF workflow; upload/build/runtime acceptance remain pending and will be recorded separately.
