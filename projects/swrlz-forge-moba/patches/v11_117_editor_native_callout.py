@@ -36,7 +36,8 @@ def apply(html):
     runtime+'\nfunction atelierSculptGhostInstall(){')
  html=once(html,'ModelAtelier.install();',
     'ModelAtelier.install();\nseAtelierCalloutInstall();')
- html=once(html,'</head>','<style id="se-v11117-native-callout">'+CSS+'</style>\n</head>')
+ assert '</head>' in html
+ html=html.replace('</head>','<style id="se-v11117-native-callout">'+CSS+'</style>\n</head>',1)
  html=once(html,
     'SWYRL_ENGINE_DEPLOY_MARKER: V11_116_PRECISION_TOUCH_CAMERA_REPAIR',
     'SWYRL_ENGINE_DEPLOY_MARKER: V11_117_EDITOR_NATIVE_CALLOUT_GUARD')
