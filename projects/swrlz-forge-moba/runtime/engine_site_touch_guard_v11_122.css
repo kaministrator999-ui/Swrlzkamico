@@ -3,7 +3,7 @@
    pinch zoom, panning and descendants' native camera/drawing touch-action.
    No viewport maximum-scale or user-scalable restrictions. */
 html,body{touch-action:manipulation!important}
-body,body *:not(input):not(textarea):not([contenteditable]):not([role="textbox"]){
+body,body :where(*:not(input):not(textarea):not([contenteditable]):not([role="textbox"])){
  -webkit-user-select:none!important;
  user-select:none!important;
  -webkit-touch-callout:none!important;
