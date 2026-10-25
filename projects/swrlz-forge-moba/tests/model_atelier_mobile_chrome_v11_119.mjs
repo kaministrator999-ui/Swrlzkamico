@@ -7,7 +7,7 @@ import assert from 'node:assert/strict';
 import path from 'node:path';
 const server=spawn('python3',['-m','http.server','8765','--bind','127.0.0.1'],
  {cwd:'/tmp/se-v11119-smoke',stdio:'ignore'});
-let browser,page;
+let browser,page;let pageErrors=[];
 try{
  for(let n=0;n<40;n++){
   try{const r=await fetch('http://127.0.0.1:8765/');if(r.ok)break;}catch{}
@@ -18,7 +18,7 @@ try{
  const context=await browser.newContext({viewport:{width:412,height:915},
   isMobile:true,hasTouch:true,deviceScaleFactor:2,ignoreHTTPSErrors:true});
  page=await context.newPage();
- const pageErrors=[];
+
  page.on('pageerror',e=>pageErrors.push(String(e).slice(0,250)));
  page.on('requestfailed',r=>pageErrors.push('request '+r.url().slice(0,100)+' '+r.failure()?.errorText));
  await page.goto('http://127.0.0.1:8765/?project=model-atelier',{waitUntil:'domcontentloaded',timeout:30000});
@@ -105,8 +105,11 @@ try{
   panelExists:!!document.getElementById('modelAtelierPanel'),
   panelHidden:document.getElementById('modelAtelierPanel')?.hidden,
   railExists:!!document.getElementById('modelAtelierToolRail'),
-  scripts:[...document.scripts].slice(0,5).map(s=>s.src||s.type)
+  scripts:[...document.scripts].slice(0,5).map(s=>s.src||s.type),
+  moduleHead:document.querySelector('script[type="module"]')?.textContent?.slice(0,900)
  }));}catch{}
  console.error('SE_V11119_MOBILE_CHROME_DIAGNOSTIC',JSON.stringify(diagnostic));
+ console.error('SE_V11119_MOBILE_CHROME_REQUESTS',JSON.stringify(pageErrors.slice(-15)));
+
  console.error('SE_V11119_MOBILE_CHROME_SMOKE_FAILURE',String(e));throw e;}
 finally{await browser?.close().catch(()=>{});server.kill();}
