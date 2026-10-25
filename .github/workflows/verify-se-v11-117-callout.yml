@@ -1,0 +1,47 @@
+name: §E v11.117 native long-hold source preflight
+on:
+  push:
+    branches: [feature/atelier-native-callout-v11-117]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Reconstruct prior source and apply additive callout guard
+        run: |
+          python - <<'PY'
+          import base64,gzip,hashlib,json,runpy
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          m=json.loads((root/'source-manifest.json').read_text())
+          s=gzip.decompress(base64.b64decode(''.join((root/p).read_text().strip() for p in m['chunks']))).decode('utf8')
+          assert hashlib.sha256(s.encode()).hexdigest()==m['baseSha256']
+          for p in m['patches']:s=runpy.run_path(str(root/p))['apply'](s)
+          assert len(s.encode())==m['finalBytes'] and hashlib.sha256(s.encode()).hexdigest()==m['finalSha256']
+          s=runpy.run_path(str(root/'patches/v11_117_editor_native_callout.py'))['apply'](s)
+          data=s.encode()
+          assert s.count('V11_117_EDITOR_NATIVE_CALLOUT_GUARD')==1
+          assert 'seAtelierCalloutInstall();' in s
+          assert "event.preventDefault();" in s
+          assert 'touch-action:none' in s, 'Previous touch-action behavior unexpectedly absent'
+          Path('/tmp/se-v11117.mjs').write_text(s.split('<script type="module">',1)[1].rsplit('</script>',1)[0])
+          print('SE_V11117_CANDIDATE_BYTES',len(data))
+          print('SE_V11117_CANDIDATE_SHA256',hashlib.sha256(data).hexdigest())
+          print('SE_V11117_CANDIDATE_PATCHES',len(m['patches'])+1)
+          PY
+          node --check /tmp/se-v11117.mjs
+      - name: Scope and interaction smoke checks
+        run: |
+          node projects/swrlz-forge-moba/tests/model_atelier_callout_guard_v11_117.mjs
+          npm install --no-save --no-package-lock three@0.160.1
+          node projects/swrlz-forge-moba/tests/model_atelier_camera_precision_v11_116.mjs
+          node projects/swrlz-forge-moba/tests/model_atelier_precision_gizmos_v11_114.mjs
+          node projects/swrlz-forge-moba/tests/model_atelier_preview_selection_v11_115.mjs
