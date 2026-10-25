@@ -1,0 +1,56 @@
+name: §E v11.115 precision preview selection regression
+on:
+  push:
+    branches: ['feature/se-v11-115-preview-selection-safety']
+    paths:
+      - '.github/workflows/se-v11115-preview-preflight.yml'
+      - 'projects/swrlz-forge-moba/runtime/model_atelier_precision_preview_guard_v11_115.js'
+      - 'projects/swrlz-forge-moba/tests/model_atelier_preview_selection_v11_115.mjs'
+      - 'projects/swrlz-forge-moba/patches/v11_115_preview_selection_guard.py'
+permissions:
+  contents: read
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Verify ghost selection, preview invalidation, nudge/transform safety and no commits
+        run: |
+          set -euo pipefail
+          npm install --no-save --no-package-lock --ignore-scripts three@0.180.0
+          node --check projects/swrlz-forge-moba/runtime/model_atelier_precision_preview_guard_v11_115.js
+          node projects/swrlz-forge-moba/tests/model_atelier_preview_selection_v11_115.mjs
+      - name: Apply additive safety patch to last deployed sealed source
+        run: |
+          set -euo pipefail
+          python projects/swrlz-forge-moba/scripts/verify_v11_114_release.py --output /tmp/se-v11114
+          python - <<'PY'
+          from pathlib import Path
+          import runpy,hashlib
+          prior=Path('/tmp/se-v11114/index.html').read_text()
+          patch=runpy.run_path('projects/swrlz-forge-moba/patches/v11_115_preview_selection_guard.py')
+          updated=patch['apply'](prior)
+          for token in (
+           'SWYRL_ENGINE_DEPLOY_MARKER: V11_115_SAFE_PRECISION_PREVIEW_SELECTION',
+           '<title>§wyrl§ Engine · Maker v11.115</title>',
+           'function atelierPrecisionGuardInstall(){',
+           'function atelierPrecisionGuardPointerUp(event){',
+           'atelierPrecisionGuardInstall();',
+           'atelierMeshGizmoDown=function(event){',
+           'atelierMeshNudge=function(...args){',
+           'renderParts=function(...args){'
+          ):assert token in updated,token
+          assert updated.count('atelierPrecisionGuardInstall();')==1
+          Path('/tmp/se-v11115.mjs').write_text(
+            updated.split('<script type="module">',1)[1].rsplit('</script>',1)[0])
+          raw=updated.encode()
+          print('SE_V11115_BYTES='+str(len(raw)))
+          print('SE_V11115_SHA256='+hashlib.sha256(raw).hexdigest())
+          print('SE_V11115_PREVIEW_GUARD_INTEGRATION_PASS')
+          PY
+          node --check /tmp/se-v11115.mjs
