@@ -69,10 +69,11 @@ const x=cam.position.clone(),proj=new THREE.Vector3(-1.4,0,0).project(cam);
 const xy={x:(proj.x+1)*400,y:(1-proj.y)*350};
 const tapped={target:viewport,button:0,isPrimary:true,pointerId:3,
  clientX:xy.x,clientY:xy.y,preventDefault:()=>{},stopImmediatePropagation:()=>{}};
+world.updateMatrixWorld(true);
 ctx.atelierPrecisionGuardPointerDown(tapped);
 ctx.atelierPrecisionGuardPointerUp(tapped);
 if(selected!=='source'||clears!==1||ctx.atelierPrecisionCircleDraft||checkpoints)
- throw Error('Tapping the unselectable ghost did not restore editable selection safely');
+ throw Error('Tapping the unselectable ghost did not restore editable selection safely: '+JSON.stringify({selected,clears,hasDraft:!!ctx.atelierPrecisionCircleDraft,checkpoints}));
 console.log('GHOST_TAP_RESELECTS_EDITABLE_SOURCE_PASS');
 activate();
 ctx.renderParts();
