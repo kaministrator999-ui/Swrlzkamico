@@ -170,6 +170,6 @@
     "patches/v11_121_uncover_component_toolbar.py",
     "patches/v11_122_sitewide_touch_guard.py"
   ],
-  "finalBytes": 6630602,
-  "finalSha256": "b5a4c43f561db0d2841fafb42ac9b92663c8ffd55fb8773aa71c81508d69554a"
+  "finalBytes": 6630708,
+  "finalSha256": "9e88c9b1c7cbf96f18d7e0720b02562812233ba664facb833368ce71f3a5b449"
 }
