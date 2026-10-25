@@ -120,12 +120,13 @@ def apply(html):
     # occupy the same sphere. Hide mesh arrows while precision tools/preview
     # own the viewport; restore their original implementation afterward.
     html=once(html,
-        "function atelierMeshGizmoBuild(){\n atelierMeshGizmoClear();",
+        "function atelierMeshGizmoBuild(){",
         """function atelierMeshGizmoBuild(){
- atelierMeshGizmoClear();
  if((atelierPrecisionGizmoEnabled('Radius')||
     atelierPrecisionGizmoEnabled('Depth')||
-    atelierPrecisionGuardActive())&&partById(selection))return;""")
+    atelierPrecisionGuardActive())&&partById(selection)){
+  atelierMeshGizmoClear();return;
+ }""")
     html=once(html,
         "   atelierPrecisionGizmoQueue();\n  });\n }\n const schedule=()=>atelierPrecisionGizmoQueue();",
         """   // Changing precision mode also changes ownership of the XYZ arrows.
