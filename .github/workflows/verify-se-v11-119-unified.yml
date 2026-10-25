@@ -1,0 +1,50 @@
+name: §E v11.119 unified movable modes preflight
+on:
+  push:
+    branches: [feature/atelier-unified-mode-inspector-v11-119]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Rebuild source and apply unified inspector
+        run: |
+          python - <<'PY'
+          import base64,gzip,hashlib,json,runpy
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          m=json.loads((root/'source-manifest.json').read_text())
+          s=gzip.decompress(base64.b64decode(''.join((root/p).read_text().strip() for p in m['chunks']))).decode('utf8')
+          assert hashlib.sha256(s.encode()).hexdigest()==m['baseSha256']
+          for patch in m['patches']:s=runpy.run_path(str(root/patch))['apply'](s)
+          assert len(s.encode())==m['finalBytes'] and hashlib.sha256(s.encode()).hexdigest()==m['finalSha256']
+          s=runpy.run_path(str(root/'patches/v11_119_unified_mode_inspector.py'))['apply'](s)
+          raw=s.encode()
+          assert 'V11_119_UNIFIED_DRAGGABLE_MODE_INSPECTOR' in s
+          assert 'inspector.append(ui);' in s
+          assert 'seAtelierModeToolbarInstall(panel);' in s
+          assert 'seAtelierTopBarArrange(panel);' in s
+          Path('/tmp/se-v11119.mjs').write_text(s.split('<script type="module">',1)[1].rsplit('</script>',1)[0])
+          print('SE_V11119_CANDIDATE_BYTES',len(raw))
+          print('SE_V11119_CANDIDATE_SHA256',hashlib.sha256(raw).hexdigest())
+          print('SE_V11119_CANDIDATE_PATCHES',len(m['patches'])+1)
+          PY
+          node --check /tmp/se-v11119.mjs
+      - name: Run unified settings and prior interaction regressions
+        run: |
+          node projects/swrlz-forge-moba/tests/model_atelier_unified_modes_v11_119.mjs
+          npm install --no-save --no-package-lock three@0.160.1
+          cp /tmp/se-v11119.mjs /tmp/se-v11116.mjs
+          node projects/swrlz-forge-moba/tests/model_atelier_camera_precision_v11_116.mjs
+          node projects/swrlz-forge-moba/tests/model_atelier_precision_gizmos_v11_114.mjs
+          node projects/swrlz-forge-moba/tests/model_atelier_preview_selection_v11_115.mjs
+          node projects/swrlz-forge-moba/tests/model_atelier_semantic_tools_v11_118.mjs
+          node projects/swrlz-forge-moba/tests/model_atelier_callout_guard_v11_117.mjs
