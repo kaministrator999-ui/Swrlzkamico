@@ -1,3 +1,11 @@
+## §E v11.122 · Full-workspace mobile gesture boundaries (2026-10-25)
+
+Owner feedback clarified that the Model Atelier-only v11.117 and v11.120 guards did **not** apply to the normal §E maker/editor page: double-tapping starter projects in the main workspace still triggered browser page zoom, and holding non-editable text/controls still opened Android/Chrome selection menus.
+
+**Fix:** Apply document-level `touch-action:manipulation` to §E's HTML/body (not the Chrome application or unrelated websites) so rapid taps do not cause browser *page* zoom, while native browser pinch zoom and the editor's specialized touch/drawing/camera rules remain intact. Capture and cancel `contextmenu` and `selectstart` only on non-editable content across the full engine. Restore CSS callouts, caret, copy/paste and selection specifically for input, textarea, contenteditable and textbox surfaces, including those inside Model Atelier whose older styles blocked them. Do not cancel touchstart, pointerdown, pinch, dragging, scrolling or clicks.
+
+**Evidence:** Chromium mobile-emulation smoke test (viewport scale remained 1× after two fast taps, noneditable menus prevented, editable fields allowed); §E scoped Node tests plus camera, gizmo, preview, inspector and earlier toolbars passed in [focused preflight](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40236170378). The Android owner still needs to verify actual Chrome/WebView behavior and any operating-system-controlled copy menus. Version **v11.122**, **154 ordered patches**, **68 assets**, **6,630,602 HTML bytes** SHA-256 `b5a4c43f561db0d2841fafb42ac9b92663c8ffd55fb8773aa71c81508d69554a`.
+
 ## §E v11.120 · Unobscured top menus, centered category buttons, and editor-only browser double-tap control (2026-10-25)
 
 User Android v11.119 screenshot demonstrated toolbar collisions at the top of Model Atelier, a viewport mesh quickstrip partly hidden behind the header and reference toolbar, and bottom category buttons kept near a rail edge. Fast double-taps within the editor could also trigger Chrome's page zoom instead of a second tool tap. The user requested all three presentation fixes, retaining model operations and camera gestures.
