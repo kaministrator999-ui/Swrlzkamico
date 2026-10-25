@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.119",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_119_UNIFIED_DRAGGABLE_MODE_INSPECTOR",
-  "reason": "User Android screenshots v11.118 showed duplicate mobile compact context sheet plus original draggable inspector, and cluttered top bars. v11.119 embeds the original v11.61 context field proxies inside the existing draggable inspector, puts category-specific modes in a secondary horizontally scrollable rail above bottom categories, and displays each selected mode's settings/actions in the same inspector. More restores the original native inspector. Compact the top Save/Export/Close and camera views using anchored menus with original buttons retained. Repair preexisting v11.117 callout helper bootstrap scope uncovered by real Chrome diagnostics. 151 ordered patches, 68 assets, 6,621,308 HTML bytes SHA256 62dfb014d58287c78281e9579565732ecd7366bcd26d178110cc6d6abadca510; official source seal #40225477942 passed. Headless Chrome bootstrap test could not open disposable starter model and must not be considered owner physical Android acceptance. Deploy exact source and verify live SOURCE receipt and assets.",
-  "sourceCommit": "d2acc0c54950aa0a9ce2bb3d9175448b68a37dcb",
-  "sourceIntegritySha256": "62dfb014d58287c78281e9579565732ecd7366bcd26d178110cc6d6abadca510"
+  "releaseVersion": "v11.120",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_120_CENTERED_TOOLBAR_LAYER_AND_TOUCH_ZOOM",
+  "reason": "User's Android v11.119 screenshot demonstrated top-bar dropdown overlapping adjacent rows, quickstrip partly hidden behind top References controls, and bottom category buttons anchored at one edge. Requested bottom toolbar more centered and no Chrome double-tap page zoom. Release v11.120 elevates anchored Export/Views menus, prevents dropdowns opening simultaneously, positions the original mesh quickstrip beneath the measured topbar, scroll-centers selected bottom category while preserving RTL and manual horizontal scrolling, and scopes touch-action:manipulation to Model Atelier so double-tap page zoom is off but pinch/camera gestures and browser accessibility outside editor stay available. Verified main source 08ffaafe, 152 ordered patches, 68 bundled assets, 6,626,204 HTML bytes SHA-256 17d0920293dbc1ab80d34d6576d1ff91c627115db810785214839d360d862aaa; sealed artifact and regression suite #40228299899 green. Owner Android layout and double-tap acceptance remains pending. Deploy exact source and validate live html, source receipt and assets.",
+  "sourceCommit": "08ffaafe5b2610d036aa88def8476f2f9ee2db7a",
+  "sourceIntegritySha256": "17d0920293dbc1ab80d34d6576d1ff91c627115db810785214839d360d862aaa"
 }
