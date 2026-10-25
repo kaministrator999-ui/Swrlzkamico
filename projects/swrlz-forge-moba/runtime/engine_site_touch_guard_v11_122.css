@@ -17,3 +17,11 @@ body :is(input,textarea,[contenteditable]:not([contenteditable="false"]),
  user-select:text!important;
  -webkit-touch-callout:default!important;
 }
+
+/* Override the older Atelier-wide callout ban specifically for real fields. */
+#modelAtelierPanel :is(input,textarea,[contenteditable]:not([contenteditable="false"]),[role="textbox"]),
+#seMobileNumberPad :is(input,textarea,[contenteditable]:not([contenteditable="false"]),[role="textbox"]){
+ -webkit-user-select:text!important;
+ user-select:text!important;
+ -webkit-touch-callout:default!important;
+}
