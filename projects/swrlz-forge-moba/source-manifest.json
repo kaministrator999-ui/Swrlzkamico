@@ -164,6 +164,6 @@
     "patches/v11_115_preview_selection_guard.py",
     "patches/v11_116_precision_touch_camera.py"
   ],
-  "finalBytes": 6603032,
-  "finalSha256": "e7b28a066ba2a6fce46c7e33e97454e7a9f0b9959923eb935e6e01547392bfe0"
+  "finalBytes": 6603142,
+  "finalSha256": "a779619854cc8fc0639ac5c3e4ca8555c37b09a7993be3db3ec11591ef06868c"
 }
