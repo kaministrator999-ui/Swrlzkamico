@@ -43,6 +43,7 @@ jobs:
           node projects/swrlz-forge-moba/tests/model_atelier_unified_modes_v11_119.mjs
           npm install --no-save --no-package-lock three@0.160.1
           cp /tmp/se-v11119.mjs /tmp/se-v11116.mjs
+          cp /tmp/se-v11119.mjs /tmp/se-v11118.mjs
           node projects/swrlz-forge-moba/tests/model_atelier_camera_precision_v11_116.mjs
           node projects/swrlz-forge-moba/tests/model_atelier_precision_gizmos_v11_114.mjs
           node projects/swrlz-forge-moba/tests/model_atelier_preview_selection_v11_115.mjs
