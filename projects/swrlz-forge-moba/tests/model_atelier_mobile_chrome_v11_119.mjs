@@ -20,12 +20,15 @@ try{
  page=await context.newPage();
 
  page.on('pageerror',e=>pageErrors.push(String(e).slice(0,250)));
+ page.on('dialog',dialog=>dialog.accept());
  page.on('requestfailed',r=>pageErrors.push('request '+r.url().slice(0,100)+' '+r.failure()?.errorText));
  await page.goto('http://127.0.0.1:8765/?project=model-atelier',{waitUntil:'domcontentloaded',timeout:30000});
  await page.waitForFunction(()=>!!window.SWYRL_ENGINE_MODEL_ATELIER?.loadStarter,
    {timeout:20000});
  if(!(await page.locator('#modelAtelierPanel').count())){
-  await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.loadStarter());
+  const started=await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.loadStarter());
+  console.log('SE_V11119_CHROME_STARTER',started);
+
  }
  await page.waitForSelector('#modelAtelierToolRail button',{timeout:16000});
  const installed=await page.evaluate(()=>({
