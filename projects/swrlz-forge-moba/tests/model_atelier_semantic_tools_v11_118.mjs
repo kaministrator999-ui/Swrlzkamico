@@ -62,7 +62,7 @@ assert.equal(context.detectGroup('FutureNewBrushOption','Topology'),'Topology','
 assert.equal(context.detectGroup('SomethingNew'),'Meshes','safe default wrong');
 assert.ok(source.includes("GROUPS.Sculpt.splice(1,0,['Precision circle cut'"),'precision cut absent');
 assert.ok(source.includes("GROUPS.Face.unshift(['Portrait & anatomy'"),'portrait absent');
-assert.ok(source.includes("GROUPS.Appearance=[\\n  ['Materials & colors'"),'appearance misplaced');
+assert.ok(source.includes("GROUPS.Appearance=[\n  ['Materials & colors'"),'appearance misplaced');
 assert.ok(source.includes("const buckets={};"),'section-level mixed classification unchanged');
 assert.ok(source.includes("atelierToolRailArrange(panel);"),'native rail call missing');
 assert.ok(source.includes('V11_117_EDITOR_NATIVE_CALLOUT_GUARD')===false,'stale marker present');
