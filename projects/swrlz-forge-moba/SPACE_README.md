@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.115
+title: §wyrl§ Engine v11.116
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,14 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.116 · Precision radius touch and reliable camera gestures (2026-10-24)
+
+The owner's Android screenshot showed an oversized/clipped white sphere during a radius-handle drag, simultaneously visible XYZ mesh arrows, and incorrect finger-camera behavior. Source inspection found that v11.76 allows the exterior camera to zoom to 0.16 units (inside a selected ball), and the v11.115 preview ghost tap stops propagation of pointerup before the camera's touch map is cleaned, leaving a phantom finger. The wide v11.114 ring touch hit target additionally competed with ordinary orbit movement.
+
+This forward-only fix protects the existing native precision cutter instead of adding a bowling-ball-specific preset. In precision mode, pinch, wheel and zoom buttons respect a camera distance derived from the selected mesh's world-space bounding sphere; opt-in interior inspection retains close camera access. Tapping a ghost preview releases the corresponding camera pointer. Two fingers interrupt an active radius/depth drag safely, restore its uncommitted value, and transfer both pointers to camera pan/pinch; the remaining finger resumes orbit once its partner lifts. Touch grabs use a narrower ring with a separate larger grip target, and XYZ whole-mesh gizmos stay hidden while precision editing is active. Cancellation never saves a half-cut; explicit Apply/Undo remains the sole geometry commit path.
+
+**Validation:** [v11.116 assembled source preflight #40159036309](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40159036309) PASSED 148 sequential patches, 6,603,032 HTML bytes, SHA-256 `e7b28a066ba2a6fce46c7e33e97454e7a9f0b9959923eb935e6e01547392bfe0`, JavaScript syntax, v11.114 radius/depth and v11.115 preview/mesh-transform regressions, and new camera pointer handoff / ghost tap / safe zoom tests. All 68 bundled assets and prior projects are preserved. Official source packaging, gated Hugging Face deployment and owner Android UI acceptance remain separate evidence levels; green automated tests do **not** establish that the owner has visually accepted the gesture feel.
 
 ## §E v11.115 · Prevent detached precision-cut preview and accidental mesh moves (2026-10-24)
 
