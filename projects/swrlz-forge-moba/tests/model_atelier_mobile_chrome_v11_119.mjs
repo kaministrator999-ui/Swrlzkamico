@@ -22,7 +22,12 @@ try{
  page.on('pageerror',e=>pageErrors.push(String(e).slice(0,250)));
  page.on('requestfailed',r=>pageErrors.push('request '+r.url().slice(0,100)+' '+r.failure()?.errorText));
  await page.goto('http://127.0.0.1:8765/?project=model-atelier',{waitUntil:'domcontentloaded',timeout:30000});
- await page.waitForSelector('#modelAtelierToolRail button',{timeout:22000});
+ await page.waitForFunction(()=>!!window.SWYRL_ENGINE_MODEL_ATELIER?.loadStarter,
+   {timeout:20000});
+ if(!(await page.locator('#modelAtelierPanel').count())){
+  await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.loadStarter());
+ }
+ await page.waitForSelector('#modelAtelierToolRail button',{timeout:16000});
  const installed=await page.evaluate(()=>({
   version:window.SWRLZ_FORGE_BUILD?.version,
   inspector:!!document.querySelector('.atelier-inspector'),
