@@ -1,0 +1,50 @@
+name: §E v11.115 full preview selection release seal
+on:
+  push:
+    branches: ['feature/se-v11-115-preview-selection-safety']
+    paths: ['.github/workflows/se-v11115-full-seal.yml']
+permissions:
+  contents: read
+jobs:
+  seal:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Rebuild every §E patch and measure exact version 11.115 artifact
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import gzip,base64,hashlib,json,sys
+          root=Path('projects/swrlz-forge-moba')
+          sys.path.insert(0,str(root.resolve()))
+          from build_space import load_patch
+          m=json.loads((root/'source-manifest.json').read_text())
+          assert m['name']=='§wyrl§ Engine v11.115' and len(m['patches'])==147
+          assert m['patches'][-1]=='patches/v11_115_preview_selection_guard.py'
+          b=gzip.decompress(base64.b64decode(''.join((root/p).read_text().strip() for p in m['chunks'])))
+          assert len(b)==m['baseBytes'] and hashlib.sha256(b).hexdigest()==m['baseSha256']
+          html=b.decode('utf-8')
+          for rel in m['patches']:html=load_patch(root/rel)(html)
+          for token in (
+           'SWYRL_ENGINE_DEPLOY_MARKER: V11_115_SAFE_PRECISION_PREVIEW_SELECTION',
+           '<title>§wyrl§ Engine · Maker v11.115</title>',
+           "window.SWRLZ_FORGE_BUILD={version:'v11.115'",
+           'function atelierPrecisionGuardInstall(){',
+           'function atelierPrecisionGuardPointerUp(event){',
+           'atelierPrecisionGuardInstall();',
+           'atelierMeshNudge=function(...args){',
+           'renderParts=function(...args){'):
+           assert token in html,token
+          Path('/tmp/se-v11115.mjs').write_text(html.split('<script type="module">',1)[1].rsplit('</script>',1)[0])
+          raw=html.encode()
+          print('SE_V11115_FINAL_BYTES='+str(len(raw)))
+          print('SE_V11115_FINAL_SHA256='+hashlib.sha256(raw).hexdigest())
+          print('SE_V11115_FULL_SOURCE_GUARDS_PASS')
+          PY
+          node --check /tmp/se-v11115.mjs
