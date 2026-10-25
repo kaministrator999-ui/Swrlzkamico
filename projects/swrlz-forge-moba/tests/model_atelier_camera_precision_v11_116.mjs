@@ -61,7 +61,7 @@ let atelierPrecisionCircleDraft=null,pressed=null,orbit={distance:3,yaw:.1,pitch
 let atelierCameraInterior=false,atelierDetailTarget={};
 let atelierSculptDrag=null,atelierLassoDrag=null,atelierLassoTempPin=null;
 let atelierLassoFreehand=null,atelierLassoPending=[],atelierLassoArm=null;
-\`,c);
+`,c);
 vm.runInContext(zoom+'\n'+names.map(fn).join('\n'),c);
 const get=expr=>vm.runInContext(expr,c);
 const down=id=>({pointerId:id,pointerType:'touch',clientX:id===17?100:500,
@@ -78,7 +78,7 @@ vm.runInContext(String.raw`
 atelierPrecisionGizmoDrag={
  id:17,mode:'Radius',changed:true,startValue:.12,
  startX:100,startY:230,lastX:150,lastY:260
-};\`,c);
+};`,c);
 assert.equal(get('atelierCameraPointerDown({pointerId:23,pointerType:"touch",button:0,clientX:500,clientY:550})'),true);
 assert.equal(get('atelierPrecisionGizmoDrag'),null,'second finger kept editing radius');
 assert.equal(fields.modelAtelierBoreRadius.value,'0.1200','second finger failed to restore uncommitted radius');
@@ -95,7 +95,7 @@ assert.equal(get('atelierCameraTouches.size'),0,'pinch cleanup retained phantom 
 vm.runInContext(String.raw`
 atelierCameraTouches.set(44,{x:310,y:460});
 atelierPrecisionGuardTap={id:44,x:310,y:460};
-atelierPrecisionCircleDraft={ghost:{parent:{}},originalId:'ball'};\`,c);
+atelierPrecisionCircleDraft={ghost:{parent:{}},originalId:'ball'};`,c);
 get('atelierPrecisionGuardPointerUp')?.(up(44));
 // V8 function bindings live in context and should resolve through vm as well.
 assert.equal(get('atelierCameraTouches.size'),0,'preview tap stranded finger in camera map');
