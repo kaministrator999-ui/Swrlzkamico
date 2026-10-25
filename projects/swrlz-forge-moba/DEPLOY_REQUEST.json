@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.117",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_117_EDITOR_NATIVE_CALLOUT_GUARD",
-  "reason": "Model Atelier Android browser long-press menus: globally capture contextmenu only for the open Model Atelier and its in-editor numeric keypad, block incidental selection on noneditable editor chrome, preserve input caret/paste, camera pinch/orbit, radius/depth drags and inspector scrolling, leave browser menus elsewhere untouched. v11.117 canonical source 783c180, 149 ordered patches, 68 bundled assets, 6605187 HTML bytes / SHA256 0a7af4ccc8515cc0f12a827427b2fba71e0362e878d3c6f45f16bb74bfecaa84; final sealed source preflight #40204314059 green. Deploy exact package and verify hosted SOURCE.json plus all media. Android device acceptance remains an independent gate.",
-  "sourceCommit": "783c180475fb8aa7bbbc61d66a584e6b44bbba6f",
-  "sourceIntegritySha256": "0a7af4ccc8515cc0f12a827427b2fba71e0362e878d3c6f45f16bb74bfecaa84"
+  "releaseVersion": "v11.118",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_118_SEMANTIC_TOOL_ORGANIZATION",
+  "reason": "§E owner requested organized modeling tools, with external UX research from Blender, Autodesk Fusion and Nomad Sculpt. v11.118 semantic layout moves existing rail DOM buttons to Meshes/Sculpt/Lasso/Topology/Face/Appearance/Motion/References/More order; corrects precision circle tools to Sculpt, portrait/anatomy to Face, materials/color to Appearance, and native model export to Meshes. Untracked contextual controls are individually classified, not dumped into Appearance. Preserve native controls, touch gestures, presets, favorites, original tool inspector, native geometry, explicit Apply/Undo and 68 asset bundles. Canonical source commit 086cb0f; v11.118 150 patches, 6,608,292 HTML bytes, SHA256 1c2e048831bcc21ebf2b19149e9ab44263cf66e096f4fae4470fb0978d4efa12. Final GitHub full-source seal #40218515087 passed, owner Android visual acceptance pending.",
+  "sourceCommit": "086cb0fc73a2626581a348f4253be838263c8f21",
+  "sourceIntegritySha256": "1c2e048831bcc21ebf2b19149e9ab44263cf66e096f4fae4470fb0978d4efa12"
 }
