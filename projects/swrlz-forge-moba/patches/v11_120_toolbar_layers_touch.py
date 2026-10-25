@@ -10,10 +10,19 @@ def apply(html):
  css=(root/'runtime/model_atelier_chrome_layer_v11_120.css').read_text(encoding='utf8')
  html=once(html,'function seAtelierModeNames(api,category){',
            js+'\nfunction seAtelierModeNames(api,category){')
- html=once(html,
-  " atelierMeshStrip.style.top=Math.round(atelierMeshClamp(y,50,Math.max(50,height-h-8)))+'px';",
-  """ const safeTop=seAtelierQuickstripSafeTop(stage);
- atelierMeshStrip.style.top=Math.round(atelierMeshClamp(y,safeTop,Math.max(safeTop,height-h-8)))+'px';""")
+ html=once(html,'function atelierMeshToolbarRefresh(){',
+  """// Respect the final existing placement algorithm and only lift the strip
+// when it would otherwise be hidden behind the top toolbar.
+const seAtelierPriorMeshToolbarPosition=atelierMeshToolbarPosition;
+atelierMeshToolbarPosition=function(...args){
+ seAtelierPriorMeshToolbarPosition(...args);
+ if(!atelierMeshStrip||atelierMeshStrip.hidden||!stage)return;
+ const safeTop=seAtelierQuickstripSafeTop(stage);
+ const currentTop=parseFloat(atelierMeshStrip.style.top);
+ if(Number.isFinite(currentTop)&&currentTop<safeTop)
+  atelierMeshStrip.style.top=Math.round(safeTop)+'px';
+};
+function atelierMeshToolbarRefresh(){""")
  html=once(html,' seAtelierModeToolbarInstall(panel);\n seAtelierTopBarArrange(panel);',
  """ seAtelierModeToolbarInstall(panel);
  seAtelierTopBarArrange(panel);
