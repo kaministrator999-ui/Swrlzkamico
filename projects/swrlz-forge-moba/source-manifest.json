@@ -168,6 +168,6 @@
     "patches/v11_119_unified_mode_inspector.py",
     "patches/v11_120_toolbar_layers_touch.py"
   ],
-  "finalBytes": 6626091,
-  "finalSha256": "f5ca0dc9cd841890c22166daa86655f6307686bcf4f5b0ee6f1c8a27d4f71f2c"
+  "finalBytes": 6626204,
+  "finalSha256": "17d0920293dbc1ab80d34d6576d1ff91c627115db810785214839d360d862aaa"
 }
