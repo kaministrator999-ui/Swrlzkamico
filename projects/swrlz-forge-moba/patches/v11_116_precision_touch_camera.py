@@ -107,9 +107,9 @@ def apply(html):
     # Completely stop native one-finger orbit for the pointer that actually
     # grabbed the precision handle. No checkpoint or mesh movement on drag.
     html=once(html,
-        "   partId:pick.ctx.part.id,changed:false};\n try{renderer.domElement.setPointerCapture?.(event.pointerId)}",
-        """   partId:pick.ctx.part.id,changed:false,
-   lastX:event.clientX,lastY:event.clientY};
+        "  partId:pick.ctx.part.id,changed:false};\n try{renderer.domElement.setPointerCapture?.(event.pointerId)}",
+        """  partId:pick.ctx.part.id,changed:false,
+  lastX:event.clientX,lastY:event.clientY};
  pressed=null;
  try{renderer.domElement.setPointerCapture?.(event.pointerId)}""")
     html=once(html,
@@ -127,11 +127,11 @@ def apply(html):
     atelierPrecisionGizmoEnabled('Depth')||
     atelierPrecisionGuardActive())&&partById(selection))return;""")
     html=once(html,
-        "    atelierPrecisionGizmoQueue();\n   });\n  }\n  const schedule=()=>atelierPrecisionGizmoQueue();",
-        """    // Changing precision mode also changes ownership of the XYZ arrows.
-    atelierMeshGizmoBuild();
-    orbit.distance=Math.max(orbit.distance,atelierCameraMinDistance());
-    cameraUpdate();
+        "   atelierPrecisionGizmoQueue();\n  });\n }\n const schedule=()=>atelierPrecisionGizmoQueue();",
+        """   // Changing precision mode also changes ownership of the XYZ arrows.
+   atelierMeshGizmoBuild();
+   orbit.distance=Math.max(orbit.distance,atelierCameraMinDistance());
+   cameraUpdate();
     atelierPrecisionGizmoQueue();
    });
   }
@@ -142,7 +142,7 @@ def apply(html):
         """ atelierPrecisionGizmoDrag=null;
  try{renderer?.domElement?.releasePointerCapture?.(drag.id)}catch(_){}
  if(drag.changed){
-   // Rebuild full validated candidate ONCE after touch release.""",
+  // Rebuild full validated candidate ONCE after touch release.""",
         """ atelierPrecisionGizmoDrag=null;
  try{renderer?.domElement?.releasePointerCapture?.(drag.id)}catch(_){}
  if(event?.type==='pointercancel'&&drag.changed){
@@ -150,7 +150,7 @@ def apply(html):
   if(field)field.value=drag.startValue.toFixed(4);
  }
  if(drag.changed){
-   // Rebuild full validated candidate ONCE after touch release.""")
+  // Rebuild full validated candidate ONCE after touch release.""")
     html=once(html,
         'SWYRL_ENGINE_DEPLOY_MARKER: V11_115_SAFE_PRECISION_PREVIEW_SELECTION',
         'SWYRL_ENGINE_DEPLOY_MARKER: V11_116_PRECISION_TOUCH_CAMERA_REPAIR')
