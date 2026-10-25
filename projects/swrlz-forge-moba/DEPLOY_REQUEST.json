@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.116",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_116_PRECISION_TOUCH_CAMERA_REPAIR",
-  "reason": "§E owner Android screenshot revealed giant clipped sphere facets during precision radius editing and unreliable finger-camera input. v11.116 repairs preview ghost pointerup touch-map cleanup, two-finger pinch/pan takeover and single-finger orbit resume, precision-mode exterior zoom safety, overlapping XYZ vs circular gizmos, and overbroad ring grabs. Cancels interrupted radius/depth edits without committing geometry. Canonical source b14fdc6, 148 patches, 68 preserved assets, 6,603,142 bytes SHA-256 a779619854cc8fc0639ac5c3e4ca8555c37b09a7993be3db3ec11591ef06868c. Full sealed preflight #40159359161 passed; owner Android acceptance is pending. Deploy exact source and validate hosted SOURCE.json/asset hashes.",
-  "sourceCommit": "b14fdc63afa75d79c3a81a0c9167ace9b32c178d",
-  "sourceIntegritySha256": "a779619854cc8fc0639ac5c3e4ca8555c37b09a7993be3db3ec11591ef06868c"
+  "releaseVersion": "v11.117",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_117_EDITOR_NATIVE_CALLOUT_GUARD",
+  "reason": "Model Atelier Android browser long-press menus: globally capture contextmenu only for the open Model Atelier and its in-editor numeric keypad, block incidental selection on noneditable editor chrome, preserve input caret/paste, camera pinch/orbit, radius/depth drags and inspector scrolling, leave browser menus elsewhere untouched. v11.117 canonical source 783c180, 149 ordered patches, 68 bundled assets, 6605187 HTML bytes / SHA256 0a7af4ccc8515cc0f12a827427b2fba71e0362e878d3c6f45f16bb74bfecaa84; final sealed source preflight #40204314059 green. Deploy exact package and verify hosted SOURCE.json plus all media. Android device acceptance remains an independent gate.",
+  "sourceCommit": "783c180475fb8aa7bbbc61d66a584e6b44bbba6f",
+  "sourceIntegritySha256": "0a7af4ccc8515cc0f12a827427b2fba71e0362e878d3c6f45f16bb74bfecaa84"
 }
