@@ -17,9 +17,9 @@ def apply(html):
     # is active. Never allow a precision editor zoom to put the camera through
     # the selected object's surface; interior inspection remains opt-in.
     html=once(html,
-        "const atelierCameraMinDistance=()=>atelierCameraInterior?.08:(atelierDetailTarget?.4:1.2);",
+        "const atelierCameraMinDistance=()=>atelierCameraInterior?.08:.16;",
         """const atelierCameraMinDistance=()=>{
- const baseline=atelierDetailTarget?.4:1.2;
+ const baseline=.16;
  if(atelierCameraInterior)return .08;
  if(!atelierPrecisionGizmoEnabled('Radius')&&
     !atelierPrecisionGizmoEnabled('Depth')&&
@@ -34,6 +34,15 @@ def apply(html):
  return Number.isFinite(r)&&r>0?
    Math.max(baseline,Math.min(24,r*2.55)):baseline;
 };""")
+    # v11.76 deliberately permits extremely close desktop zoom. In precision
+    # editing, wheel and plus-button zoom must respect the same safe boundary
+    # as a two-finger pinch, or the surface still slices through the camera.
+    html=once(html,
+        "Math.max(.16,orbit.distance+Math.sign(e.deltaY)*Math.max(.045,orbit.distance*.085))",
+        "Math.max(atelierCameraMinDistance(),orbit.distance+Math.sign(e.deltaY)*Math.max(.045,orbit.distance*.085))")
+    html=once(html,
+        "Math.max(.16,orbit.distance-Math.max(.045,orbit.distance*.12))",
+        "Math.max(atelierCameraMinDistance(),orbit.distance-Math.max(.045,orbit.distance*.12))")
     # When a second finger arrives during radius/depth editing, roll back that
     # uncommitted drag and HAND BOTH pointers to native camera pinch/pan. This
     # prevents a hidden first touch from turning into a phantom camera finger.
