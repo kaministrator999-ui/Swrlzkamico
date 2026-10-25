@@ -1,6 +1,6 @@
 ID=lalm-engine
-VERSION=2.1.202
-REVISION=2.1.202-qwen7b-project-generation
+VERSION=2.1.203
+REVISION=2.1.203-generic-3d-web-grounding
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
