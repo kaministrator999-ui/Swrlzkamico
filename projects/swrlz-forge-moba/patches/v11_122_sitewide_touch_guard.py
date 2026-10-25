@@ -11,9 +11,9 @@ def apply(html):
  js=(root/'runtime/engine_site_touch_guard_v11_122.js').read_text(encoding='utf8')
  # Site-wide controls are installed at document level, not just while the
  # Model Atelier overlay is active. These are separate from pointer gestures.
- html=once(html,'</head>',
+ html=html.replace('</head>',
   '<style id="se-v11122-site-touch-guard">'+css+'</style>\n'
-  '<script id="se-v11122-site-touch-script">'+js+'</script>\n</head>')
+  '<script id="se-v11122-site-touch-script">'+js+'</script>\n</head>',1)
  # Historical Atelier guard also intercepted contextmenu on real text inputs.
  # Allow native input selection/paste while leaving normal tool guards intact.
  html=once(html,'if(activeScope(event.target))event.preventDefault();',
