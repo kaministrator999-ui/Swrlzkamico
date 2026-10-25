@@ -50,3 +50,4 @@ jobs:
           npm install --no-save --no-package-lock three@0.160.1
           node projects/swrlz-forge-moba/tests/model_atelier_precision_gizmos_v11_114.mjs
           node projects/swrlz-forge-moba/tests/model_atelier_preview_selection_v11_115.mjs
+          node projects/swrlz-forge-moba/tests/model_atelier_camera_precision_v11_116.mjs
