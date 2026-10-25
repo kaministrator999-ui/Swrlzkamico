@@ -45,6 +45,13 @@ jobs:
           raw=html.encode()
           print('SE_V11115_FINAL_BYTES='+str(len(raw)))
           print('SE_V11115_FINAL_SHA256='+hashlib.sha256(raw).hexdigest())
+          assert len(raw)==m['finalBytes'], 'v11.115 byte count drift'
+          assert hashlib.sha256(raw).hexdigest()==m['finalSha256'], 'v11.115 hash drift'
           print('SE_V11115_FULL_SOURCE_GUARDS_PASS')
           PY
           node --check /tmp/se-v11115.mjs
+      - name: Verify full package and preserved assets
+        run: |
+          set -euo pipefail
+          python projects/swrlz-forge-moba/scripts/verify_v11_115_release.py --output /tmp/se-v11115-full
+          node --check /tmp/se-v11115-full-module.mjs

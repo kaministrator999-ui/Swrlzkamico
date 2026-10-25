@@ -163,6 +163,6 @@
     "patches/v11_114_circle_viewport_handles.py",
     "patches/v11_115_preview_selection_guard.py"
   ],
-  "finalBytes": 6594602,
-  "finalSha256": "7cd989c5973bb978725f0495ad9b20cf17328cbeaacc0954e0ebdf1b5717c22b"
+  "finalBytes": 6600621,
+  "finalSha256": "5cf410b40661f9c4a0a11089eceaca9a57a6ff1f6664d7a9a1e8cea8ed879f37"
 }
