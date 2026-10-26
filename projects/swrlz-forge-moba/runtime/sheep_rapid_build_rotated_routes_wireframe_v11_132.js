@@ -129,7 +129,7 @@ function st132EnsureWire(unit){
 function st132GroundUnderDeck(unit,s){
  if(unit.archiveOnUpper)return false;
  return s.buildings.some(b=>b.kind==='st-wall'&&b.hp>0&&b.progress>=1&&
-  stIntersectsObstacle(unit.pos.x,unit.pos.z,0,stBuildingObstacle(b)) &&
+  stIntersectsObstacle(unit.pos.x,unit.pos.z,.05,stBuildingObstacle(b)) &&
   unit.pos.y<terrainHeight(unit.pos.x,unit.pos.z)+1.5);
 }
 function st132CameraBlocked(unit,s){
