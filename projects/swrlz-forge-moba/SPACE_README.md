@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.123
+title: §wyrl§ Engine v11.124
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,14 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.124 · Sheep Tag flush-or-passable house placement (2026-10-25)
+
+Android owner test of v11.123 showed an existing **0.90 m “SHEEP ONLY” gap** that still trapped the sheep. The correction is **in building placement itself, not sheep movement**. Near existing structures, new houses now snap either visually flush (a 2 mm collision-safe epsilon) or one additional navigation grid interval farther out: **1.20 m at the default sheep radius**, dynamically enlarged for larger sheep. The authoritative placement validator rejects intermediate horizontal, vertical, and near-corner slits. For a new snapped passage, it also checks an actual swept sheep-collision segment through the opening against existing obstacles and the proposed house; if obstructed it rejects the placement rather than showing a passable preview. Old houses remain where the user placed them, but the clearance overlay marks their 0.90 m unsafe gap **BLOCKED** instead of SHEEP ONLY, and explains the new minimum safe spacing. Main menu, thumbstick, skills, collisions, movement speed and existing camera/nav paths remain unchanged.
+
+Preflight [run 40270681386](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40270681386) verified official **156 ordered patches and 68 assets**, **6,643,360 bytes** source SHA-256 `8a45b889b2d48edc1101e423b05c97ebf68de55eaf6b158cd4c6fbc7914fa08c`, plus exact snap placement, third-party blockers, honest labels and earlier v11.123–v11.114 editor regressions. Real device passage acceptance remains for the owner to validate.
+
+
 
 ## §E v11.120 · Unobscured top menus, centered category buttons, and editor-only browser double-tap control (2026-10-25)
 
