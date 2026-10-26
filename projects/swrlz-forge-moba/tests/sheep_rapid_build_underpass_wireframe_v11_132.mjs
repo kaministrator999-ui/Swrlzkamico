@@ -16,6 +16,7 @@ let created=0,buttonRotations=0,feedback=[],updated=0;
 const originalActor=new THREE.Group();originalActor.name='stActualSheep';
 originalActor.add(new THREE.Mesh(new THREE.SphereGeometry(.48,6,6),new THREE.MeshBasicMaterial()));
 originalActor.position.set(0,0,0);
+const testScene=new THREE.Scene();testScene.add(originalActor); // live sheep actors are scene-mounted
 const center=new THREE.Mesh(new THREE.BoxGeometry(2.4,.3,6),new THREE.MeshBasicMaterial());
 center.position.set(0,3.2,0);center.updateMatrixWorld(true);
 const building={id:'deck-1',kind:'st-wall',hp:250,progress:1,mesh:center,
