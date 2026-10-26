@@ -1,7 +1,7 @@
 name: §E v11.120 toolbar and zoom preflight
 on:
   push:
-    branches: [feature/sheep-safe-lanes-main-toolbar-v11-123]
+    branches: [feature/sheep-placement-gap-contract-v11-124]
 permissions:
   contents: read
 jobs:
@@ -18,14 +18,16 @@ jobs:
       - name: Verify sealed v11.120 artifact and module
         run: |
           python projects/swrlz-forge-moba/scripts/verify_v11_123_release.py --output /tmp/se-v11123-release
-          cp /tmp/se-v11123-release-module.mjs /tmp/se-v11123.mjs
-          cp /tmp/se-v11123-release/index.html /tmp/se-v11123.html
+          python projects/swrlz-forge-moba/scripts/build_v11_124_candidate.py
+          cp /tmp/se-v11124.mjs /tmp/se-v11123.mjs
+          cp /tmp/se-v11124.html /tmp/se-v11123.html
           cp /tmp/se-v11123.mjs /tmp/se-v11121.mjs
           cp /tmp/se-v11123.mjs /tmp/se-v11122.mjs
           cp /tmp/se-v11121.mjs /tmp/se-v11120.mjs
           node --check /tmp/se-v11120.mjs
       - name: Inspect layers and preserve editor interactions
         run: |
+          SE_ASSEMBLED_HTML=/tmp/se-v11124.html node projects/swrlz-forge-moba/tests/sheep_passable_placement_v11_124.mjs
           SE_ASSEMBLED_HTML=/tmp/se-v11123.html node projects/swrlz-forge-moba/tests/sheep_safe_lanes_editor_toolbar_v11_123.mjs
           node projects/swrlz-forge-moba/tests/engine_sitewide_touch_guard_v11_122.mjs
           node projects/swrlz-forge-moba/tests/model_atelier_component_row_v11_121.mjs
