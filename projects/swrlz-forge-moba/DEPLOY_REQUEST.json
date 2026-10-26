@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.123",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_123_SHEEP_LANE_GRID_AND_WORKFLOW_TOOLBAR",
-  "reason": "Owner screenshot of Sheep Tag showed clusters of houses leaving narrow unusable gaps (nearest gap 0.75 m BLOCKED). Requested house-grid snap that permits only near-flush contact or a space sufficiently wide for a sheep, plus §E main header reordered Projects far left next to Play/Pause/Simulate/Stop with slightly larger buttons, and movement joystick/right skill ring pushed modestly toward center. v11.123 implements stable 0.3 m world grid matching placement guide; magnetizes adjacent farms to contact (1.5cm tolerance) or >=0.9m lane, dynamically larger for configured sheep radii; rejects intermediate misleading slits at native stCanBuild preview/order validator, retaining original rotated polygon overlap, sanctuary, collision and pathfinding. Native toolbar button nodes reordered without detaching listeners. Mobile sheep HUD right abilities move inward 18-28px and joystick left inset +20px. Preflight full release #40249631548 passed sealed 155 patches, all 68 assets, 6,637,490 HTML bytes SHA-256 858c08fae2edd165aec884363672d41a5591db6456e8cb5389e25d73d2668376; owner Android acceptance pending. Deploy and verify served source receipt.",
-  "sourceCommit": "c49ba95c6b349505cb326a15831cb6fc497ce6f4",
-  "sourceIntegritySha256": "858c08fae2edd165aec884363672d41a5591db6456e8cb5389e25d73d2668376"
+  "releaseVersion": "v11.124",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_124_FLUSH_OR_PASSABLE_SHEEP_BUILD_PLACEMENT",
+  "reason": "Owner's Android screenshot of v11.123 shows 0.90m SHEEP ONLY house gap which physically traps their sheep. User explicitly clarifies fix should be building-placement grid, not joystick/path movement. v11.124 makes near house placement snap to visually flush contact or navigable 1.20m at default radius (one ST_GRID extra), rejects intermediate cardinal/diagonal blocked slits via original stCanBuild validation, tests native swept physical clearance of passage entrances with proposed structure and nearby obstacles, and corrects old 0.9m SHEEP ONLY labels to BLOCKED without relocating prior houses. No changes to sheep steering, movement or original §E top bar/HUD. Sealed source preflight run 40270681386 passed 156 ordered patches, 68 assets, 6,643,360 HTML bytes SHA-256 8a45b889b2d48edc1101e423b05c97ebf68de55eaf6b158cd4c6fbc7914fa08c. Real Android playthrough acceptance remains pending. Deploy exactly and verify live HTML and SOURCE receipt.",
+  "sourceCommit": "60003c51ea43258b6e29eda04432077dc6bd0af6",
+  "sourceIntegritySha256": "8a45b889b2d48edc1101e423b05c97ebf68de55eaf6b158cd4c6fbc7914fa08c"
 }
