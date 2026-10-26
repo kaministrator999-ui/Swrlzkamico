@@ -28,7 +28,7 @@ jobs:
       - name: Inspect layers and preserve editor interactions
         run: |
           SE_ASSEMBLED_HTML=/tmp/se-v11124.html node projects/swrlz-forge-moba/tests/sheep_passable_placement_v11_124.mjs
-          SE_ASSEMBLED_HTML=/tmp/se-v11123.html node projects/swrlz-forge-moba/tests/sheep_safe_lanes_editor_toolbar_v11_123.mjs
+          SE_ASSEMBLED_HTML=/tmp/se-v11123-release/index.html node projects/swrlz-forge-moba/tests/sheep_safe_lanes_editor_toolbar_v11_123.mjs
           node projects/swrlz-forge-moba/tests/engine_sitewide_touch_guard_v11_122.mjs
           node projects/swrlz-forge-moba/tests/model_atelier_component_row_v11_121.mjs
           node projects/swrlz-forge-moba/tests/model_atelier_toolbar_layers_touch_v11_120.mjs
