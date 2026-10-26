@@ -1,3 +1,9 @@
+## §E v11.131 · Production deployment and live-source audit completed (2026-10-26)
+
+**Protected deployment [Actions #40373327088](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40373327088) SUCCESS.** Source commit `e155e7d2bf5acb19443134851a465ddcba2ab45d`; isolated deployment request commit `d4931bcdbddd9ce4a2f414bc135d1041ba510980`. Hugging Face static Space `https://kamiloki-swrlz-forge-moba.static.hf.space/` reported **RUNNING** at revision `4315ca0665a372b10d000c806ddb73b17403f597`. The first hosted audit verified the exact **6,679,918-byte v11.131** HTML, SHA-256 `ae889b96eaeddf58d290a6214809463cf84930f88a02b5070cda83ae47080218`, **163 ordered patches**, **68 bundled assets**, and byte-for-byte matching `SOURCE.json` receipt.
+
+Owner Android Chrome acceptance is still required: repeatedly tap starter project selections to test page zoom, choose a house and confirm sheep-position preview, hold sheep joystick and drag the Mirror icon to send the illusion in a chosen direction, observe countdown and lifetime. Hosted integrity proves deployment correctness, **not mobile device UX acceptance**.
+
 ## §E v11.131 · Drag-directed sheep Mirror decoy and ready-to-use mobile fixes (2026-10-26)
 
 Following §E v11.130's successful **sealed-source** check, the owner additionally requested a **visible cooldown counter on the Mirror/decoy skill**, reliable casting while the sheep is moving, **drag-to-direct** the decoy and **short-lived disappearance**. The real archive gameplay `stArchiveSplit` now creates only a **separate decoy**, routes it toward the direction dragged from its skill button using the existing safe ground/upper path planner, boosts only the decoy's speed, and leaves the real sheep's movement/order/joystick completely untouched. A simple tap aims along the sheep's current velocity or facing direction. A blocked destination rejects without using cooldown, and existing unit validity and Classic-off rules remain enforced.
