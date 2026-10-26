@@ -1,5 +1,5 @@
 name: §E v11.137 isolated candidate source measure
-# Re-run with only exact verified meadow input changes; omit stale tooltip rewrite.
+# Re-run with release verifier expecting current v11.137 title and build marker.
 on:
   push:
     branches:
