@@ -1,0 +1,38 @@
+/* §E v11.123: compact, clearer native main menu, not a second overlay. */
+.topbar{overflow-x:auto;overscroll-behavior-inline:contain;scrollbar-width:thin}
+.topbar button.se-main-workflow-button{
+ min-height:40px!important;
+ font-size:clamp(11px,2.65vw,13px)!important;
+ padding:7px 10px!important;
+ flex-shrink:0!important;
+}
+.topbar button.se-main-project-button{
+ border-color:#679be2!important;background:#1d3451!important;
+}
+.topbar button.se-main-workflow-end{
+ margin-right:9px!important;
+ box-shadow:4px 0 0 -2px #587f8d!important;
+}
+@media(pointer:coarse){
+ .topbar button:not(.se-main-workflow-button){
+  min-height:39px!important;
+  font-size:clamp(10.5px,2.55vw,12.5px)!important;
+  padding:7px 9px!important;
+ }
+}
+/* Sheep Tag: move the right-side skill cluster inward without resizing or
+   changing the buttons' touch/click target geometry. 'translate' composes
+   with the rings' existing transform:translate(50%,50%) alignment. */
+body.st-touch-controls #sheepTagHUD .st-builds button[data-st-skill],
+body.st-touch-controls #sheepTagHUD #stAbilityRing button{
+ translate:calc(-1 * clamp(18px,4vw,28px)) 0!important;
+}
+/* Joystick also comes off the physical screen edge by a modest thumb offset. */
+body.st-touch-controls #stMoveStick{
+ left:max(38px,calc(env(safe-area-inset-left) + 30px))!important;
+}
+@media(orientation:landscape) and (max-height:380px){
+ body.st-touch-controls #stMoveStick{
+  left:max(28px,calc(env(safe-area-inset-left) + 24px))!important;
+ }
+}
