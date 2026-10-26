@@ -3,6 +3,9 @@ import hashlib,re,runpy
 from pathlib import Path
 root=Path(__file__).resolve().parents[1]
 old=Path('/tmp/se-v11122-release/index.html').read_text(encoding='utf8')
+for marker in ['A building already occupies that space.','snappedX-building.pos.x','building.halfX+.02','House already occupies']:
+ pos=old.find(marker)
+ print('SE_V11123_SOURCE_ANCHOR',marker,pos,repr(old[max(0,pos-340):pos+240]) if pos>=0 else '')
 html=runpy.run_path(str(root/'patches/v11_123_sheep_lanes_toolbar_controls.py'))['apply'](old)
 out=Path('/tmp/se-v11123.html');out.write_text(html,encoding='utf8')
 Path('/tmp/se-v11123.mjs').write_text(html.split('<script type="module">',1)[1].rsplit('</script>',1)[0],encoding='utf8')
