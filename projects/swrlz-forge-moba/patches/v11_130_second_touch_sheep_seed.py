@@ -17,8 +17,8 @@ def apply(html):
  # building-button finger, including pointerup even for a simple skill tap.
  # Keep the button as a tool *selector*, not a placement world coordinate.
  html=once(html,
-   "if(event.pointerId!==stBuildInput.pointer)return;\n event.preventDefault();event.stopImmediatePropagation();\n if(stBuildInput.session!==stSession",
-   "if(event.pointerId!==stBuildInput.pointer)return;\n event.preventDefault();event.stopImmediatePropagation();\n if(stBuildInput.source==='skill')return; // do not aim at the skill icon or finger during selection\n if(stBuildInput.session!==stSession")
+   "if(event.pointerId!==stBuildInput.pointer)return;\n event.preventDefault();event.stopImmediatePropagation();\n if(stBuildInput.session!==stSession||!stTouchPlacementEnabled()||event.pointerType==='mouse'",
+   "if(event.pointerId!==stBuildInput.pointer)return;\n event.preventDefault();event.stopImmediatePropagation();\n if(stBuildInput.source==='skill')return; // do not aim at the skill icon or finger during selection\n if(stBuildInput.session!==stSession||!stTouchPlacementEnabled()||event.pointerType==='mouse'")
  html=once(html,
    "const source=stBuildInput.source;stBuildInputAim(event);\n if(!stBuildInput.moved&&source==='skill'){stBuildInputFinish('Tool selected',true);st126SeedAtSheep();stUiFeedback('Preview starts at your sheep. Drag on the meadow, release to build.');return;}",
    "const source=stBuildInput.source;\n if(source==='skill'){\n  stBuildInputFinish('Tool selected',true);\n  st126SeedAtSheep();\n  stUiFeedback('Preview begins at your sheep. Touch the meadow to aim, then release to build.');return;\n }\n stBuildInputAim(event);")
