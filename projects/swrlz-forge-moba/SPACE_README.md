@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.124
+title: §wyrl§ Engine v11.125
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,14 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.125 · Honest house clearances and safe builder relocation (2026-10-26)
+
+The owner's actual Android v11.124 playthrough confirmed accurate house placement, but a measured **1.20 m gap** incorrectly appeared **BLOCKED** while the sheep could traverse it. The old label checked a lengthy approach beyond both facing walls; unrelated nearby houses could make a locally walkable corridor red. The v11.125 additive patch uses native swept collision **inside the facing walls** with the current sheep/wolf radii and nearby obstacles when a gap meets the safe snapping width. Cyan/Gold mean **local physically clear space**, not a guarantee of a connected whole-map route. Truly obstructed and historically unsafe 0.90 m gaps remain blocked.
+
+Owner also requested placing houses under the standing sheep and moving the builder to the **closest safe outside position**. The assembled v11.124 native validator already exempts its builder but protects other units. The v11.90 opt-out disabled the existing nearest-safe-side ejection path. v11.125 restores only that previously implemented collision-tested path: if every side is blocked, reject the build without changing gold or structures. Original snapping, joystick movement, collision, structures, other-unit protection, HUD and 68 assets remain unchanged.
+
+[Candidate CI #40278508544](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40278508544) **SUCCESS**: exact sealed v11.124 reconstruction, new patch, JavaScript syntax, earlier passage regression, blocked-gap and nearest-side exit CPU cases. **157 patches**, **68 assets**, **6,645,687 HTML bytes**, SHA-256 29a27f8a683abfbaf31ee0a3b02fc0dabb49168f302602f99c1361998621c1d8. This preflight is not the guarded production deployment or owner Android acceptance.
 
 ## §E v11.124 · Sheep Tag flush-or-passable house placement (2026-10-25)
 
