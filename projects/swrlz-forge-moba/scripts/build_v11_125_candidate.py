@@ -6,6 +6,9 @@ base=Path('/tmp/se-v11124-release/index.html').read_text(encoding='utf8')
 key='Leave room for the units standing here.'
 i=base.find(key)
 print('SE_NATIVE_BUILD_OCCUPANT_CONTEXT',repr(base[i-900:i+150]),flush=True)
+for key in ['function stCanBuild(', 'stCanBuild=function', 'const stLanesCanBuildBase', 'No clear side']:
+ i=base.find(key)
+ print('SE_NATIVE_CONTEXT',repr(key),i,repr(base[i:i+4400]),flush=True)
 apply=runpy.run_path(str(root/'patches/v11_125_gap_builder_exit.py'))['apply']
 html=apply(base)
 raw=html.encode('utf8')
