@@ -3,7 +3,7 @@ import hashlib,re,runpy
 from pathlib import Path
 root=Path(__file__).resolve().parents[1]
 old=Path('/tmp/se-v11122-release/index.html').read_text(encoding='utf8')
-for marker in ['A building already occupies that space.','snappedX-building.pos.x','building.halfX+.02','House already occupies']:
+for marker in ['function stCanBuild(', 'stCanBuild = function(', 'stCanBuild=function(', 'building already', 'snappedX', 'stLanesSnapHouse', 'function stLanesSnapHouse', 'ST_LANE_GAP', 'window.SWRLZ_FORGE_BUILD=']:
  pos=old.find(marker)
  print('SE_V11123_SOURCE_ANCHOR',marker,pos,repr(old[max(0,pos-340):pos+240]) if pos>=0 else '')
 html=runpy.run_path(str(root/'patches/v11_123_sheep_lanes_toolbar_controls.py'))['apply'](old)
