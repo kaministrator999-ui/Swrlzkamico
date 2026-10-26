@@ -1,0 +1,38 @@
+name: §E v11.130 Android second-touch zoom and sheep button origin
+on:
+  push:
+    branches: [feature/se-v11-130-second-touchstart-page-zoom]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - uses: actions/setup-node@v4
+        with: {node-version: "22"}
+      - name: Install actual DOM regression harness
+        run: npm install --prefix /tmp/se130-dom --no-audit --no-fund jsdom@25.0.1
+      - name: Verify unchanged sealed v11.129 release and 68 native assets
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_129_release.py --output /tmp/se129-seal
+      - name: Compile all 162 §E patches and check JS syntax
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          f=Path('projects/swrlz-forge-moba/source-manifest.json')
+          m=json.loads(f.read_text())
+          assert m['name']=='§wyrl§ Engine v11.129' and len(m['patches'])==161
+          m['name']='§wyrl§ Engine v11.130'
+          m['patches'].append('patches/v11_130_second_touch_sheep_seed.py')
+          f.write_text(json.dumps(m,ensure_ascii=False))
+          PY
+          python projects/swrlz-forge-moba/scripts/measure_v11_130_full_chain.py
+          node --check /tmp/se130-full.mjs
+      - name: Verify second browser touchstart, pinch preservation and sheep skill position
+        env:
+          SE_JSDOM_MODULE: /tmp/se130-dom/node_modules/jsdom
+          SE_ASSEMBLED_HTML: /tmp/se130-full.html
+        run: node projects/swrlz-forge-moba/tests/second_touchstart_sheep_build_v11_130.mjs
