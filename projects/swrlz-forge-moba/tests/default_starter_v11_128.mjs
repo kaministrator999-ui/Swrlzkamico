@@ -12,7 +12,7 @@ function fixture(url='https://example.test/'){
  const dom=new JSDOM(html,{url});
  const opened=[],toast=[],record={startup:[]};
  const ctx={document:dom.window.document,window:dom.window,location:dom.window.location,
-  localStorage:dom.window.localStorage,queueMicrotask,console,
+  localStorage:dom.window.localStorage,URLSearchParams:dom.window.URLSearchParams,queueMicrotask,console,
   toast:message=>toast.push(message),
   loadCanonicalGlitchDen:()=>record.startup.push('dragon'),
   loadCanonicalStarforge:()=>record.startup.push('starforge'),
