@@ -128,7 +128,7 @@ if(process.env.SE_ASSEMBLED_HTML){
  for(const fragment of [
   'SWYRL_ENGINE_DEPLOY_MARKER: V11_132_MEADOW_GHOST_DRAG_RAPID_BUILDER_ROTATED_UNDERPASS_WIREFRAME',
   "world=st132MeadowTarget(event.target)",'st132MeadowTarget(document.elementFromPoint(x,y));',
-  "!st132MeadowTarget(event.target)","if(!st132Rapid.on){stUi.build = null; stUiClearPreview();}",
+  "!st132MeadowTarget(event.target)","st132OrderBase=stUiOrderAt","stUi.build=chosen",
   "stBuildInputFinish('Building accepted',st132Rapid.on)",'st132GroundUnderpass','st132OrientWorldRoutes',
   'st132OccludedByStructure','st132RapidInstall'
  ])assert.ok(html.includes(fragment),'assembled source missing '+fragment);
