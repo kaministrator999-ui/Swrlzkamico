@@ -1,3 +1,9 @@
+## §E v11.129 · Live Android project-transition zoom guard verified (2026-10-26)
+
+**Release:** [GitHub production Actions #40368794102](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40368794102) **SUCCESS**. Live Space `https://kamiloki-swrlz-forge-moba.static.hf.space/` was **RUNNING**, revision `d77fbb1dec6a43c2e49edad774d897f78ace1d63`. First hosted audit checked exact HTML (**6,669,441 bytes**, SHA-256 `34caf41b05e3c404e12d0da122a79db61c8187aaea1692b2cd07c380a69a4f7f`), **161 source patches**, all **68 packaged assets**, and `SOURCE.json`. Browser page-zoom defense on project handoff deployed; preserve pinch zoom, native scene input and checkbox selection.
+
+**Manual Android acceptance pending:** repeatedly tap project starters and test rapid taps around modal close; observe whether browser **page scale** changes versus the 3D camera. The synthetic event regression proves controls and transition shield behavior but does not reproduce the physical mobile browser gesture.
+
 ## §E v11.129 · Android project-switch page zoom protection (2026-10-26)
 
 **Owner's reproduced bug:** repeatedly, immediately after selecting a starter project, the **entire browser page** enlarged—not the 3D camera—cutting off editor controls until manually zoomed back out. This occurred despite the pre-existing v11.122 root-page `touch-action:manipulation` rule.
