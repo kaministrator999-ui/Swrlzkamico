@@ -1,0 +1,38 @@
+name: §E v11.129 project handoff page-zoom regression
+on:
+  push:
+    branches: [feature/se-v11-129-project-transition-browser-zoom-guard]
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - uses: actions/setup-node@v4
+        with: {node-version: "22"}
+      - name: Install DOM event simulation
+        run: npm install --prefix /tmp/se129-test --no-audit --no-fund jsdom@25.0.1
+      - name: Validate sealed v11.128 baseline, all original patches and assets
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_128_release.py --output /tmp/se128-seal
+      - name: Measure complete v11.129 output and syntax
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          f=Path('projects/swrlz-forge-moba/source-manifest.json')
+          m=json.loads(f.read_text())
+          assert m['name']=='§wyrl§ Engine v11.128' and len(m['patches'])==160
+          m['name']='§wyrl§ Engine v11.129'
+          m['patches'].append('patches/v11_129_project_touch_zoom_guard.py')
+          f.write_text(json.dumps(m,ensure_ascii=False))
+          PY
+          python projects/swrlz-forge-moba/scripts/measure_v11_129_full_chain.py
+          node --check /tmp/se129-full.mjs
+      - name: Verify native project selection, old/new DOM and page-zoom suppression
+        env:
+          SE_JSDOM_MODULE: /tmp/se129-test/node_modules/jsdom
+          SE_ASSEMBLED_HTML: /tmp/se129-full.html
+        run: node projects/swrlz-forge-moba/tests/project_handoff_page_zoom_v11_129.mjs
