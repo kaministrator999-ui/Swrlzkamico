@@ -10,12 +10,9 @@ def once(s,old,new):
 def apply(html):
  root=Path(__file__).resolve().parent.parent
  js=(root/'runtime/sheep_gap_builder_exit_v11_125.js').read_text(encoding='utf8')
- # The original native self-occupancy check ran before the later vetted
- # nearest-side exit path, making that path unreachable. Exempt only the
- # living builder, not other units; all obstacle/house placement guards stay.
- html=once(html,
-  'for(const unit of s.units)if(!unit.captured&&Math.abs(snappedX-unit.pos.x)',
-  'for(const unit of s.units)if(unit!==owner&&!unit.captured&&Math.abs(snappedX-unit.pos.x)')
+ # The current assembled native validator ALREADY exempts only the builder
+ # (u.id != owner.id); other sheep/wolves still block construction.
+ # No change to the authoritative native unit occupancy guard is necessary.
  # v11.90 intentionally disabled native relocation; new owner direction
  # supersedes that single line. The existing stLanesEjection routine
  # searches closest collision-free side and refuses unsafe outcomes.
