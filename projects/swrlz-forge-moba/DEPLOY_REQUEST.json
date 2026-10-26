@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.126",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_126_SHEEP_CENTERED_BUILD_PERMANENT_ROUTES_READY_SKILLS",
-  "reason": "Owner requested Sheep Tag house ghost placement at controlled sheep rather than dragging from skill icon; three connected authored raised crossings with permanent, indestructible ramps/walkways in canonical Moonbell starter; and starting ready sheep Mirror/Totem skills with shorter repeat cooldowns. §E v11.126 preserves native joystick, aiming, construction, collision, map edits, historical patch lineage and all 68 bundled assets. Feature full 158-patch GitHub preflight 40343082708 passed and sealed main preflight 40343997501 passed, including v11.124/125 regressions. Official 6,651,868-byte HTML SHA-256 dbbc8d1ac954e3e93ec9f8feb74ed0371575c6378a9b27ef77c021c20dabcec5. Deploy only through dedicated GitHub workflow, verify exact served HTML, SOURCE.json and every bundled asset. Real-owner Android gameplay acceptance remains outstanding.",
-  "sourceCommit": "b795e51dbec61dd2d8dbe304b604b3d60879574d",
-  "sourceIntegritySha256": "dbbc8d1ac954e3e93ec9f8feb74ed0371575c6378a9b27ef77c021c20dabcec5"
+  "releaseVersion": "v11.128",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_128_SINGLE_DEFAULT_STARTER_AND_STABLE_BOOT",
+  "reason": "Owner-approved §E v11.128: actual native Clover organic starter sheep reused in Sheep Tag with shared detailed geometry and occasional visual-only pouncing swurv during gait; intermediate legacy editor shell hidden until restored editor/workspace settles; all 10 starter project cards gain one exclusive persistent Load this project by default checkbox, safe startup routing with explicit project URL priority, browser-local preference separate from user files and autosave. GitHub feature source tests PASS Actions 40348104741 and 40350416722; exact sealed main production preflight PASS Actions 40350918273. Official full 160-patch HTML 6,666,214 bytes SHA256 9bf9658db0592f6dccc4c9b57a6eec700c76de04461f542403e50cb6c2a49a2a. Retain all 68 bundled assets; deploy only through dedicated §E workflow with authoritative live HTML/SOURCE.json/assets audit. Manual Android gameplay and startup acceptance separate.",
+  "sourceCommit": "7a647965cc04e1214c525ac897eba7d7e12fc8ae",
+  "sourceIntegritySha256": "9bf9658db0592f6dccc4c9b57a6eec700c76de04461f542403e50cb6c2a49a2a"
 }
