@@ -63,3 +63,6 @@ jobs:
           node projects/swrlz-forge-moba/tests/sheep_gap_builder_exit_v11_125.mjs
           node projects/swrlz-forge-moba/tests/sheep_centered_world_routes_magic_v11_126.mjs
           node projects/swrlz-forge-moba/tests/sheep_ghost_relative_drag_hud_v11_135.mjs
+          python projects/swrlz-forge-moba/scripts/verify_v11_135_release.py --output /tmp/se135-final-verified
+          node --check /tmp/se135-final-verified-module.mjs
+          SE_ASSEMBLED_HTML=/tmp/se135-final-verified/index.html node projects/swrlz-forge-moba/tests/sheep_ghost_relative_drag_hud_v11_135.mjs
