@@ -1,5 +1,5 @@
 name: §E v11.138 isolated candidate source measure
-# Re-run with viewport and skill distinctly modeled in closest() fixtures.
+# Screen-space Rapid candidate: final measured hash and corrected 170-patch release verifier.
 on:
   push:
     branches:
