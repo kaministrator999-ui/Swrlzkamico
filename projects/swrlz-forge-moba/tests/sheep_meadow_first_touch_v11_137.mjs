@@ -24,7 +24,7 @@ const makeElement=name=>({
  hasPointerCapture(id){return this.captured===id;},
  setPointerCapture(id){this.captured=id;},
  releasePointerCapture(){this.captured=null;},
- closest(selector){return selector.includes('data-st-skill')?this:null;}
+ closest(selector){return name==='skill'&&selector.includes('data-st-skill')?this:null;}
 });
 const skill=makeElement('skill'),viewport=makeElement('viewport'),empty={closest(){return null;}};
 const sheep={id:'sheep',kind:'sheep',captured:false,pos:{x:10,z:20}};
