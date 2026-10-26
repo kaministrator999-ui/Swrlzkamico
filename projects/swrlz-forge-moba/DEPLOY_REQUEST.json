@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.139",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_139_SAFE_RAPID_CORNER_SNAP",
-  "reason": "Owner Android screenshot v11.138: red free-house preview beside a compact row of houses, with native warning 'A diagonal crack is not a sheep passage. Join houses or leave 1.20 m.' Root: safe snap worked for side-aligned buildings but not small near-diagonal corner offsets. v11.139 preserves original 1.20 m sheep clearance and all native collision/resource/path rules. Only Rapid ON + exact diagonal rejection proposes a nearby flush x+z corner; full previous stCanBuild validator must accept it or the original red error remains. No wolf, multiplayer, or normal build changes. Sealed source validated 171 patches/68 assets, 6,719,389 bytes SHA256 f605af72628643e87d8fca5d97a08fcba438c43f2d9ffa693e4f6014032ce6fb. Candidate CI #40414592828 PASS including near-corner valid, occupied denial, normal mode unchanged, original sheep tests. Require exact served HTML, SOURCE.json, assets audit. Owner actual Android acceptance remains pending.",
-  "sourceCommit": "49853d87b41edb5a7ec7a204805958f2527b1eae",
-  "sourceIntegritySha256": "f605af72628643e87d8fca5d97a08fcba438c43f2d9ffa693e4f6014032ce6fb"
+  "releaseVersion": "v11.140",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_140_SHEEP_START_MENU_CINEMATIC",
+  "reason": "Owner requested actual Sheep Tag starter main menu with a single Start Game button and animated 3D background camera orbit showing sheep building, fleeing and wolf chasing/tagging. v11.140 installs starter-only responsive menu and transient Three.js 3 sheep, 1 wolf, 4 houses, meadow and trees, scripted lightweight choreography on native render clock. No real match starts during menu; Start Game removes all demo art/UI, restores camera controls, and clicks native Play so official 7-minute game, preflight, sheep controls, wolves, AI, capture, gold and collision rules are unchanged. Loading another project also cleans menu. Other §wyrlz Engine projects unaffected, no second render/simulation. Isolated GitHub validation 40422841273 passed: synthetic 3D attract lifecycle and native Play check, source integrity, JavaScript syntax, earlier sheep tests, 172 patches and all 68 original assets. HTML 6,729,010 bytes SHA256 639cca010358ccf8a1c1c129ab1cfc99b45e32854ecd4802ff3d3610a32d39f7. Verify served HTML and SOURCE.json assets; real Android visual acceptance remains pending.",
+  "sourceCommit": "35e2315bac48f2f5c2c9fd9f7d0c461f36929197",
+  "sourceIntegritySha256": "639cca010358ccf8a1c1c129ab1cfc99b45e32854ecd4802ff3d3610a32d39f7"
 }
