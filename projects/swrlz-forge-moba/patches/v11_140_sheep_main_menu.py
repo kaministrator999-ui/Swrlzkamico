@@ -17,9 +17,7 @@ def apply(html):
  html=once(html,'window.SWRLZ_FORGE_BUILD=',js+'\nwindow.SWRLZ_FORGE_BUILD=')
  # Reuse exactly the native render loop: no independent requestAnimationFrame,
  # no additional stUpdate(), wolf AI, navigation or game-clock simulations.
- html=once(html,
-  'animeUpdateCinematic(dt);if(stSession){stUpdateCamera(dt);stRefreshHUD();}if(shouldRenderFrame(frameNow))',
-  'animeUpdateCinematic(dt);if(stSession){stUpdateCamera(dt);stRefreshHUD();}st140MenuTick(dt);if(shouldRenderFrame(frameNow))')
+ html=once(html,'animeUpdateCinematic(dt);','animeUpdateCinematic(dt);st140MenuTick(dt);')
  html=once(html,
   'SWYRL_ENGINE_DEPLOY_MARKER: V11_139_SAFE_RAPID_CORNER_SNAP',
   'SWYRL_ENGINE_DEPLOY_MARKER: V11_140_SHEEP_START_MENU_CINEMATIC')
