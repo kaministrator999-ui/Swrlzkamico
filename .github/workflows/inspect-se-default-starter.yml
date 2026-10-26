@@ -1,0 +1,19 @@
+name: §E starter template picker and initial restore inspection
+on:
+  push:
+    branches: [feature/se-v11-127-starter-default-project]
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Rebuild sealed source and inspect starter picker
+        run: |
+          python projects/swrlz-forge-moba/scripts/verify_v11_127_release.py --output /tmp/se127-base
+          python projects/swrlz-forge-moba/scripts/diagnose_default_starter_v11_128.py
