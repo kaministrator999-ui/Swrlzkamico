@@ -1,3 +1,9 @@
+## §E v11.133 · Deployed; Android owner acceptance pending (2026-10-26)
+
+**Production [GitHub Actions #40382749397](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40382749397) SUCCESS.** The exact guarded release of §E v11.133 was uploaded to `https://kamiloki-swrlz-forge-moba.static.hf.space/` and the **first live audit passed**. Hugging Face Space reported `RUNNING`, revision `e87a981cf9bb48bd54c2109d6f0185b8a5956d5a`. Live audit verified the exact HTML (**6,696,326 bytes**; SHA-256 `2c2b40a507bc91950479ac9983eb365c6c5d9319a5e85c9fe3b7ac18f27860b8`), all **165 ordered source patches**, all **68 original bundled assets**, and exact `SOURCE.json` receipt.
+
+**Owner Android acceptance still needed:** confirm circular Rapid toggle is touchable beside Income (bottom right), visibly changes OFF/ON, selected House skill leaves a hologram at controlled sheep, same-finger skill-to-meadow drag and separate meadow drag both move preview, and successful Rapid orders retain build mode. Existing live sheep occlusion wireframe remains. Passing DOM synthetic click tests demonstrates handler logic, not conclusive Android touch UX.
+
 ## §E v11.133 · Rapid next to Income, touchable, and sheep-origin build ghost persists (2026-10-26)
 
 **Owner's actual Android screenshot and test:** §E v11.132 rendered the circular Rapid toggle around mid-screen as an unexpectedly **small square**; owner could not turn it on or off. The house skill also frequently failed to leave a working holographic preview after tapping/dragging, although the **cyan sheep occlusion wireframe already worked**. Owner specified Rapid's intended location **immediately left of the Income house icon in the bottom-right build cluster**.
