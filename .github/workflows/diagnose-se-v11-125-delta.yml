@@ -1,0 +1,55 @@
+name: §E v11.125 candidate versus full-chain diagnosis
+on:
+  push:
+    branches: [feature/sheep-gap-builder-exit-v11-125]
+permissions:
+  contents: read
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: e372fcbad648f18f08f2fa5027f9513840ea4182
+          path: current
+      - uses: actions/checkout@v4
+        with:
+          ref: 27db3c43393ec095091fe88ff1776ab25485cd1c
+          path: previous
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Compare genuine prior-patch candidate against complete current build
+        run: |
+          set -euo pipefail
+          python previous/projects/swrlz-forge-moba/scripts/verify_v11_124_release.py --output /tmp/se-v11124-release
+          python current/projects/swrlz-forge-moba/scripts/build_v11_125_candidate.py
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          p=Path('current/projects/swrlz-forge-moba/source-manifest.json')
+          m=json.loads(p.read_text());m['finalBytes']=6645795
+          m['finalSha256']='4b4e0a69a388083817b72e6600c7c7a8e3b6c08247d4714430aebf0717f416ac'
+          p.write_text(json.dumps(m,ensure_ascii=False))
+          PY
+          python current/projects/swrlz-forge-moba/build_space.py --output /tmp/se-v11125-full
+          python - <<'PY'
+          from pathlib import Path
+          import difflib,hashlib
+          a=Path('/tmp/se-v11125.html').read_text()
+          b=Path('/tmp/se-v11125-full/index.html').read_text()
+          print('SE_DIFF_LENGTHS',len(a.encode()),len(b.encode()))
+          i=0
+          while i<min(len(a),len(b)) and a[i]==b[i]:i+=1
+          j=0
+          while j<min(len(a)-i,len(b)-i) and a[-j-1]==b[-j-1]:j+=1
+          print('SE_DIFF_FIRST',i,'SUFFIX',j)
+          print('SE_CANDIDATE_FIRST_CONTEXT',repr(a[max(i-250,0):i+650]))
+          print('SE_FULL_FIRST_CONTEXT',repr(b[max(i-250,0):i+650]))
+          print('SE_CANDIDATE_TAIL_DIFFERENT',repr(a[max(i,len(a)-j-700):len(a)-j]))
+          print('SE_FULL_TAIL_DIFFERENT',repr(b[max(i,len(b)-j-700):len(b)-j]))
+          lines_a=a.splitlines(keepends=True);lines_b=b.splitlines(keepends=True)
+          diff=list(difflib.unified_diff(lines_a,lines_b,n=1))
+          print('SE_DIFF_HUNKS',len(diff))
+          print(''.join(diff)[:9000])
+          PY
