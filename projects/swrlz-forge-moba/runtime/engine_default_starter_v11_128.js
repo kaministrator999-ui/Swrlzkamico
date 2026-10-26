@@ -22,6 +22,7 @@ function se128SetDefault(template){
   return false;
  }
  se128SyncChoices();
+ if(window.SWRLZ_FORGE_BUILD)window.SWRLZ_FORGE_BUILD.defaultProject=template||'glitch-dragons-den';
  return true;
 }
 function se128SyncChoices(){
@@ -64,7 +65,16 @@ se128InstallStarterChoices();
 // but never silently rewrites that preference.
 function se128LaunchStartupProject(){
  const query=new URLSearchParams(location.search).get('project');
- const requested=se128StarterValues.has(query)?query:se128ReadDefault();
+ // Explicit URL routes always win, including specialist Model Atelier loaders.
+ // Do not invoke a second model load for ?project=sheep-model/wolf-model.
+ if(query!==null){
+  if(query==='starforge-observatory'){loadCanonicalStarforge();return;}
+  if(query==='anime-ghosts-ep01'){loadCanonicalAnimeEpisode();return;}
+  if(query==='sheep-tag-meadow'){stLoadStarter();return;}
+  if(query==='maul-frostveil'){maulLoadStarter();return;}
+  loadCanonicalGlitchDen();return;
+ }
+ const requested=se128ReadDefault();
  window.se128StartupPending=true;
  // The original default is Dragon Den; preserve it if preference is unset.
  if(!requested||requested==='glitch-dragons-den'){
