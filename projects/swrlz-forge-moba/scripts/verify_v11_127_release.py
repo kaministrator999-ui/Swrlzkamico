@@ -10,7 +10,7 @@ assert m['name']=='§wyrl§ Engine v11.127'
 assert m['finalArtifact']=='swyrl_engine_v11_127.html'
 assert len(m['patches'])==159
 assert m['patches'][-15:-3]==['patches/v11_113_general_precision_circle.py','patches/v11_114_circle_viewport_handles.py','patches/v11_115_preview_selection_guard.py','patches/v11_116_precision_touch_camera.py','patches/v11_117_editor_native_callout.py','patches/v11_118_semantic_tool_organization.py','patches/v11_119_unified_mode_inspector.py','patches/v11_120_toolbar_layers_touch.py','patches/v11_121_uncover_component_toolbar.py','patches/v11_122_sitewide_touch_guard.py','patches/v11_123_sheep_lanes_toolbar_controls.py','patches/v11_124_sheep_passable_placement.py']
-assert m['patches'][-2]=='patches/v11_125_gap_builder_exit.py'
+assert m['patches'][-3]=='patches/v11_125_gap_builder_exit.py'
 assert m['patches'][-2]=='patches/v11_126_centered_build_permanent_routes_skills.py'
 assert m['patches'][-1]=='patches/v11_127_clover_sheep_editor_boot.py'
 subprocess.run(['python',str(ROOT/'build_space.py'),'--output',str(out)],check=True)
