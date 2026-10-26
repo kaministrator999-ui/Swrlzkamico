@@ -1,5 +1,5 @@
 name: §E v11.137 isolated candidate source measure
-# Re-run with DOM Element.contains in isolated pointer simulation.
+# Re-run with viewport and skill distinctly modeled in closest() fixtures.
 on:
   push:
     branches:
