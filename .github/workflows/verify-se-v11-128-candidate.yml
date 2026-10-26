@@ -1,0 +1,40 @@
+name: §E v11.128 starter default 160-patch candidate
+on:
+  push:
+    branches: [feature/se-v11-127-starter-default-project]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install DOM harness
+        run: npm install --prefix /tmp/se128-dom --no-audit --no-fund jsdom@25.0.1
+      - name: Verify unchanged v11.127 sealed source
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_127_release.py --output /tmp/se127-base
+      - name: Measure exact 160-patch output and JavaScript syntax
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('projects/swrlz-forge-moba/source-manifest.json')
+          m=json.loads(p.read_text())
+          assert m['name']=='§wyrl§ Engine v11.127' and len(m['patches'])==159
+          m['name']='§wyrl§ Engine v11.128'
+          m['patches'].append('patches/v11_128_default_starter_checkbox.py')
+          p.write_text(json.dumps(m,ensure_ascii=False))
+          PY
+          python projects/swrlz-forge-moba/scripts/measure_v11_128_full_chain.py
+          node --check /tmp/se128-full.mjs
+      - name: Test real starter selection UI, persistence, safe startup and deep links
+        env:
+          SE_JSDOM_MODULE: /tmp/se128-dom/node_modules/jsdom
+          SE_ASSEMBLED_HTML: /tmp/se128-full.html
+        run: node projects/swrlz-forge-moba/tests/default_starter_v11_128.mjs
