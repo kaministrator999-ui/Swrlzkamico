@@ -1,5 +1,5 @@
 name: §E v11.139 isolated candidate source measure
-# Screen-space Rapid candidate: VM-bound gesture fixture regression rerun.
+# Rapid corner snap: validate exact v11.139 artifact and native-clearance regression.
 on:
   push:
     branches:
