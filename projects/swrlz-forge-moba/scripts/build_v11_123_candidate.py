@@ -6,6 +6,8 @@ old=Path('/tmp/se-v11122-release/index.html').read_text(encoding='utf8')
 for marker in ['function stCanBuild(', 'stCanBuild = function(', 'stCanBuild=function(', 'building already', 'snappedX', 'stLanesSnapHouse', 'function stLanesSnapHouse', 'ST_LANE_GAP', 'window.SWRLZ_FORGE_BUILD=']:
  pos=old.find(marker)
  print('SE_V11123_SOURCE_ANCHOR',marker,pos,repr(old[max(0,pos-340):pos+240]) if pos>=0 else '')
+p=old.find('function stCanBuild(')
+print('SE_V11123_ACTUAL_CAN_BUILD',repr(old[p:p+4000]))
 html=runpy.run_path(str(root/'patches/v11_123_sheep_lanes_toolbar_controls.py'))['apply'](old)
 out=Path('/tmp/se-v11123.html');out.write_text(html,encoding='utf8')
 Path('/tmp/se-v11123.mjs').write_text(html.split('<script type="module">',1)[1].rsplit('</script>',1)[0],encoding='utf8')
