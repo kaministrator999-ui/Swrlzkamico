@@ -1,5 +1,5 @@
 name: §E v11.137 isolated candidate source measure
-# Rerun against correct native single-detachment capture fixture.
+# Re-run with only exact verified meadow input changes; omit stale tooltip rewrite.
 on:
   push:
     branches:
