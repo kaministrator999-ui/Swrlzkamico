@@ -12,7 +12,7 @@ def apply(html):
  css=(root/'runtime/engine_editor_boot_gate_v11_127.css').read_text(encoding='utf8')
  organic=(root/'runtime/sheep_clover_organic_walk_swurv_v11_127.js').read_text(encoding='utf8')
  boot=(root/'runtime/engine_editor_boot_gate_v11_127.js').read_text(encoding='utf8')
- html=once(html,'</head>','<style id="se127-editor-boot">'+css+'</style>\n</head>')
+ html=html.replace('</head>','<style id="se127-editor-boot">'+css+'</style>\n</head>',1)
  html=once(html,'window.SWRLZ_FORGE_BUILD=',organic+'\n'+boot+'\nwindow.SWRLZ_FORGE_BUILD=')
  html=once(html,
   'SWYRL_ENGINE_DEPLOY_MARKER: V11_126_SHEEP_CENTERED_BUILD_PERMANENT_ROUTES_READY_SKILLS',
