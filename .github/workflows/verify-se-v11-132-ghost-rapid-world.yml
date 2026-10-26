@@ -1,0 +1,39 @@
+name: §E v11.132 ghost drag, rapid build and underpass wireframe preflight
+on:
+  push:
+    branches: [feature/se-v11-132-meadow-ghost-drag]
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - uses: actions/setup-node@v4
+        with: {node-version: "22"}
+      - name: Install actual Three.js and DOM runtime test dependencies
+        run: npm install --prefix /tmp/se132-test --no-audit --no-fund three@0.170.0 jsdom@25.0.1
+      - name: Reconstruct sealed §E v11.131 exactly
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_131_release.py --output /tmp/se131-release
+      - name: Measure 164-patch §E candidate and check JavaScript syntax
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          f=Path('projects/swrlz-forge-moba/source-manifest.json')
+          m=json.loads(f.read_text())
+          assert m['name']=='§wyrl§ Engine v11.131' and len(m['patches'])==163
+          m['name']='§wyrl§ Engine v11.132'
+          m['patches'].append('patches/v11_132_ghost_rapid_routes_wireframe.py')
+          f.write_text(json.dumps(m,ensure_ascii=False))
+          PY
+          python projects/swrlz-forge-moba/scripts/measure_v11_132_full_chain.py
+          node --check /tmp/se132-full.mjs
+      - name: Test actual Three.js routes, depth-independent sheep, mobile build and UI contracts
+        env:
+          SE_JSDOM_MODULE: /tmp/se132-test/node_modules/jsdom
+          SE_THREE_MODULE: /tmp/se132-test/node_modules/three
+          SE_ASSEMBLED_HTML: /tmp/se132-full.html
+        run: node projects/swrlz-forge-moba/tests/sheep_rapid_ghost_underpass_wireframe_v11_132.mjs
