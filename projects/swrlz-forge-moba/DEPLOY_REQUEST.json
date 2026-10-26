@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.137",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_137_MEADOW_FIRST_SHEEP_BUILD_DRAG",
-  "reason": "Android owner reports sheep-origin building hologram is correctly positioned, but dragging directly from bottom-right house button gives too little usable screen travel. v11.137 separates mobile selection from placement: touch/pen skill buttons select only and reseed visible sheep-origin ghost; a fresh meadow touch from any point anchors relative ghost drag and native validated release, or a single meadow tap places at the tapped site. Desktop direct mouse skill drag, one-shot and Rapid build repeats preserved. No wolf/AI/multiplayer changes. GitHub candidate gate #40401256411 PASS: exact 169 ordered patches, 68 assets, 6,711,840 HTML bytes, SHA256 674354d6d9f0a0a324000161a002f31b47e56e8a1734f0b260b7adf8c48fa3ce; integration regression verified touch skill cannot build, separate meadow drag and tap commit, Rapid and desktop mouse remain functional. Publish and audit exact hosted HTML, SOURCE.json and all original assets. Android acceptance pending.",
-  "sourceCommit": "5d46bbcfc04096058519496ff37789f5fdb91abd",
-  "sourceIntegritySha256": "674354d6d9f0a0a324000161a002f31b47e56e8a1734f0b260b7adf8c48fa3ce"
+  "releaseVersion": "v11.138",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_138_RAPID_LAST_BUILD_SCREEN_ANCHOR",
+  "reason": "Owner requested Rapid Build remember the screen position of the last successfully placed house after the sheep and camera move, not the old world coordinates. v11.138 records normalized on-screen coordinates of exact native-validated built center before preview removal, reprojects ghost against current follow camera while idle, and moves next ghost using new meadow finger delta. First build still sheep-centered; canceled placements never change memory; Rapid OFF, Stop, changed session or controlled sheep reset/fence cache. Camera idle refresh is throttled; no building orders are issued until a valid native release. Preserves all previous construction, cost, collision, rapid repeats, performance, wolves, original 68 assets and §wyrlz Engine workflow. Source verifier candidate 40403969385 PASSED: 170 ordered patches, 68 original assets, 6,717,316 bytes, SHA256 384558ce7af5993f36ef002824455d850fdfebf635a881eea1fe4878931f7385. Require hosted exact HTML and SOURCE.json audit before claim live. Android touch feel acceptance remains pending.",
+  "sourceCommit": "974b4e846e98968b3e9e29156a2a0a8cfe9218c4",
+  "sourceIntegritySha256": "384558ce7af5993f36ef002824455d850fdfebf635a881eea1fe4878931f7385"
 }
