@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.135
+title: §wyrl§ Engine v11.136
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,14 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.136 · smoother Sheep Tag build drag and capture cleanup (2026-10-26)
+
+The sheep construction preview now computes its anchor and current finger ray against the same current follow-camera position, so the ghost no longer drifts solely because the camera follows the moving sheep. The previous sheep-origin placement and all snap, collision and resource checks remain authoritative; unchanged snapped grid footprints reuse GPU meshes.
+
+When a sheep is tagged, their owned buildings are immediately removed from collision and the scene, exactly as before. Navigation invalidation is coalesced across the destroyed buildings and GPU resource release is spread across subsequent game frames, then flushed on Stop. Sheep/Wolf combat rules, the seven-minute match, Mirror/Totem, Rapid and all 68 assets are unchanged.
+
+Verified source target: **168 patches, 68 assets, 6,711,684 HTML bytes**, SHA-256 `b6114ad2b3f8e6c3352869336845df015fdf18da40e580e5cb4ef819fc5476af`. Actual Android smoothness and ghost feel still need owner acceptance.
 
 ## §E v11.135 · Sheep-origin hologram and visible Mirror (2026-10-26)
 
