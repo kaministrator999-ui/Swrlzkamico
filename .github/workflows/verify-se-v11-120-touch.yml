@@ -1,7 +1,7 @@
 name: §E v11.120 toolbar and zoom preflight
 on:
   push:
-    branches: [feature/atelier-uncover-component-tools-v11-121]
+    branches: [feature/sheep-safe-lanes-main-toolbar-v11-123]
 permissions:
   contents: read
 jobs:
@@ -17,12 +17,16 @@ jobs:
           node-version: "22"
       - name: Verify sealed v11.120 artifact and module
         run: |
-          python projects/swrlz-forge-moba/scripts/verify_v11_121_release.py --output /tmp/se-v11121-release
-          cp /tmp/se-v11121-release-module.mjs /tmp/se-v11121.mjs
+          python projects/swrlz-forge-moba/scripts/verify_v11_122_release.py --output /tmp/se-v11122-release
+          python projects/swrlz-forge-moba/scripts/build_v11_123_candidate.py
+          cp /tmp/se-v11123.mjs /tmp/se-v11121.mjs
+          cp /tmp/se-v11123.mjs /tmp/se-v11122.mjs
           cp /tmp/se-v11121.mjs /tmp/se-v11120.mjs
           node --check /tmp/se-v11120.mjs
       - name: Inspect layers and preserve editor interactions
         run: |
+          SE_ASSEMBLED_HTML=/tmp/se-v11123.html node projects/swrlz-forge-moba/tests/sheep_safe_lanes_editor_toolbar_v11_123.mjs
+          SE_ASSEMBLED_HTML=/tmp/se-v11123.html node projects/swrlz-forge-moba/tests/engine_sitewide_touch_guard_v11_122.mjs
           node projects/swrlz-forge-moba/tests/model_atelier_component_row_v11_121.mjs
           node projects/swrlz-forge-moba/tests/model_atelier_toolbar_layers_touch_v11_120.mjs
           npm install --no-save --no-package-lock three@0.160.1
