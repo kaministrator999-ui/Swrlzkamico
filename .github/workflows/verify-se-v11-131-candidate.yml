@@ -1,0 +1,38 @@
+name: §E v11.131 moving and aimed Mirror decoy preflight
+on:
+  push:
+    branches: [feature/se-v11-131-directed-mirror-decoy]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - uses: actions/setup-node@v4
+        with: {node-version: "22"}
+      - name: Install DOM test harness
+        run: npm install --prefix /tmp/se131-test --no-audit --no-fund jsdom@25.0.1
+      - name: Verify v11.130 source and earlier gameplay invariants
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_130_release.py --output /tmp/se130-sealed
+      - name: Independently rebuild full 163-patch §E and JS syntax
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          f=Path('projects/swrlz-forge-moba/source-manifest.json')
+          m=json.loads(f.read_text())
+          assert m['name']=='§wyrl§ Engine v11.130' and len(m['patches'])==162
+          m['name']='§wyrl§ Engine v11.131'
+          m['patches'].append('patches/v11_131_directed_mirror_decoy.py')
+          f.write_text(json.dumps(m,ensure_ascii=False))
+          PY
+          python projects/swrlz-forge-moba/scripts/measure_v11_131_full_chain.py
+          node --check /tmp/se131-full.mjs
+      - name: Verify cooldown icon, joystick-safe directional decoy and native fade
+        env:
+          SE_JSDOM_MODULE: /tmp/se131-test/node_modules/jsdom
+          SE_ASSEMBLED_HTML: /tmp/se131-full.html
+        run: node projects/swrlz-forge-moba/tests/sheep_directed_mirror_decoy_v11_131.mjs
