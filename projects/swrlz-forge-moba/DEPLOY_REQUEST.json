@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.135",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_135_SHEEP_ORIGIN_RELATIVE_DRAG_FREE_FORT_MIRROR",
-  "reason": "Owner Android screenshot: building hologram/grid remained near lower-right skill icons instead of starting at controlled sheep; Free House needed bigger control and to swap physical slots with Fortified House; sheep Mirror decoy icon missing next to Totem. §E v11.135 suppresses active pointer re-aim by legacy camera update, seeds ghost at exact sheep and drags relative to first meadow anchor, commits the exact native-validated visual placement, moves/enlarges Free and swaps Fortified, restores separate visible Mirror/Totem HUD slots while honoring rules. Wolf AI/skills, owl scout idea, Chat/Core, older assets and 166 historical patches untouched. Candidate isolated full verifier GitHub Actions 40391947354 SUCCESS: 167 ordered patches, 68 original assets, 6,708,052 HTML bytes, SHA256 40cf34d1322b071812e0061d25a3be5353a4ad81820714d32eb06608161a09b5. Publish only dedicated §E static Hugging Face pipeline; require exact served HTML, marker, SOURCE.json and asset audit. Real Android owner gameplay acceptance remains pending.",
-  "sourceCommit": "56a1f4a6d0a5229002d332f5133c8cfe4077cb07",
-  "sourceIntegritySha256": "40cf34d1322b071812e0061d25a3be5353a4ad81820714d32eb06608161a09b5"
+  "releaseVersion": "v11.136",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_136_SHEEP_DRAG_CAMERA_CAPTURE_CLEANUP",
+  "reason": "Owner Android feedback: v11.135 sheep building hologram was now sheep-origin but dragged inconsistently, with suspected frame stalls when sheep were rapidly caught and their owned buildings disappeared. v11.136 uses two ground rays from the same CURRENT follow camera to stabilize drag, reuses unchanged snapped WebGL grid geometry, batches navigation invalidation across owned buildings per capture while preserving instant HP/collision/scene removal, amortizes expensive GPU resource disposal 2 per frame and flushes at Stop. No changes to wolves, gameplay balance, assets, Rapid, Mirror or Totem. GitHub candidate CI #40395649049 passed: 168 ordered patches, 68 assets, 6,711,684 bytes, source SHA256 b6114ad2b3f8e6c3352869336845df015fdf18da40e580e5cb4ef819fc5476af; exact deployed HTML and source/asset receipt must be audited. Android real-world FPS and drag feel remain pending owner acceptance.",
+  "sourceCommit": "724724f11f75d342e876334df3244902ec7855bb",
+  "sourceIntegritySha256": "b6114ad2b3f8e6c3352869336845df015fdf18da40e580e5cb4ef819fc5476af"
 }
