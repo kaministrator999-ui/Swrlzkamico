@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.128
+title: §wyrl§ Engine v11.129
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,14 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.129 · Android project-switch page zoom protection (2026-10-26)
+
+**Owner's reproduced bug:** repeatedly, immediately after selecting a starter project, the **entire browser page** enlarged—not the 3D camera—cutting off editor controls until manually zoomed back out. This occurred despite the pre-existing v11.122 root-page `touch-action:manipulation` rule.
+
+The targeted fix applies `touch-action:manipulation` on **actual project cards, their default-project checkbox siblings, project picker, and editor workflow chrome** (preserving native scrolling and browser pinch accessibility). During a **touchscreen** starter-card selection only, a 420 ms transparent, non-focusable hit shield intercepts rapid second taps **after** the native Open click finishes, preventing a subsequent tap from landing on a newly exposed unrelated editor control or triggering double-tap page magnification across replaced DOM hit targets. Keyboard/mouse selection, checkbox-only changes, text editing/paste, the 3D viewport's original touch rules, game camera, model sculpt brushes, saved projects, and all prior engine behavior remain unchanged.
+
+**[Feature full source and touch-DOM preflight #40368154931](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40368154931) PASS:** reconstructed the exact preceding v11.128 seal, verified full 161-patch source syntax and measured **6,669,441 HTML bytes**, SHA-256 **`34caf41b05e3c404e12d0da122a79db61c8187aaea1692b2cd07c380a69a4f7f`**. The jsdom harness verified keyboard/mouse taps unaffected, native starter click still fires, default checkbox not intercepted, touch selection adds the shield, double-click prevention, 420 ms cleanup, and no `#viewport`/viewport-scale restrictions. The engine still carries **68 original assets**. This does **not** prove Android browser acceptance; user real-device retest remains necessary.
 
 ## §E v11.128 · Persistent default starter checkbox (2026-10-26)
 

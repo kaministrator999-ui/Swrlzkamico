@@ -1,0 +1,29 @@
+name: §E v11.129 sealed Android page zoom guard preflight
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/source-manifest.json"
+      - "projects/swrlz-forge-moba/scripts/verify_v11_129_release.py"
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - uses: actions/setup-node@v4
+        with: {node-version: "22"}
+      - name: Install DOM regression runner
+        run: npm install --prefix /tmp/se129-test --no-audit --no-fund jsdom@25.0.1
+      - name: Verify exact sealed 161 patches and all 68 original assets
+        run: |
+          python projects/swrlz-forge-moba/scripts/verify_v11_129_release.py --output /tmp/se129-release
+          node --check /tmp/se129-release-module.mjs
+      - name: Browser UI synthetic touch transition and intact legacy selection
+        env:
+          SE_JSDOM_MODULE: /tmp/se129-test/node_modules/jsdom
+          SE_ASSEMBLED_HTML: /tmp/se129-release/index.html
+        run: node projects/swrlz-forge-moba/tests/project_handoff_page_zoom_v11_129.mjs
