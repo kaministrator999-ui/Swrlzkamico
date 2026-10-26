@@ -1,0 +1,32 @@
+/* §E v11.129: a project-card tap changes the DOM beneath the finger.
+   Use the same browser-native manipulation policy on the actual tap targets,
+   not just html/body. This suppresses double-tap page magnification while
+   preserving ordinary scrolling and two-finger pinch-to-zoom. */
+#projectHub,
+#projectHub .project-grid,
+#projectHub .project-card,
+#projectHub .project-card *,
+#projectHub .se128-starter-choice,
+#projectHub .se128-default-checkbox,
+#projectHub .se128-default-checkbox *,
+#projectHub .project-actions button,
+#projectHub #projectClose,
+.engine-command-deck,
+.engine-command-deck button,
+#openProjectsBtn,
+#projectBtn,
+#viewport {
+ touch-action:manipulation!important;
+}
+/* Touch-friendly but transparent handoff shield: catches the rapid follow-up
+   tap during a template's DOM/scene handoff. No permanent interaction lock,
+   and NO browser viewport restrictions. */
+#se129-project-tap-guard {
+ position:fixed;inset:0;
+ z-index:2147483610;
+ background:transparent;
+ pointer-events:auto;
+ touch-action:manipulation!important;
+ -webkit-user-select:none;
+ user-select:none;
+}
