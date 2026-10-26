@@ -70,7 +70,7 @@ if(process.env.SE_ASSEMBLED_HTML){
  const html=fs.readFileSync(process.env.SE_ASSEMBLED_HTML,'utf8');
  for(const t of [
   'SWYRL_ENGINE_DEPLOY_MARKER: V11_125_CLEAR_GAPS_AND_SAFE_BUILDER_EXIT',
-  'unit!==owner&&!unit.captured','stHonestGapLocalClear','SHEEP CLEAR',
+  'u.id!==owner.id&&!u.captured','stHonestGapLocalClear','SHEEP CLEAR',
   '/* §E v11.125: allow existing validated closest-side stLanesEjection. */'
  ]) assert.ok(html.includes(t),'missing integrated behavior '+t);
  assert.ok(!html.includes('stLanesEjection=()=>null;'),'retired ejection disabling remains');
