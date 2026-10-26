@@ -14,8 +14,7 @@
 .engine-command-deck,
 .engine-command-deck button,
 #openProjectsBtn,
-#projectBtn,
-#viewport {
+#projectBtn {
  touch-action:manipulation!important;
 }
 /* Touch-friendly but transparent handoff shield: catches the rapid follow-up
