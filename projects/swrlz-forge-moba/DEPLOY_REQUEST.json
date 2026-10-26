@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.136",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_136_SHEEP_DRAG_CAMERA_CAPTURE_CLEANUP",
-  "reason": "Owner Android feedback: v11.135 sheep building hologram was now sheep-origin but dragged inconsistently, with suspected frame stalls when sheep were rapidly caught and their owned buildings disappeared. v11.136 uses two ground rays from the same CURRENT follow camera to stabilize drag, reuses unchanged snapped WebGL grid geometry, batches navigation invalidation across owned buildings per capture while preserving instant HP/collision/scene removal, amortizes expensive GPU resource disposal 2 per frame and flushes at Stop. No changes to wolves, gameplay balance, assets, Rapid, Mirror or Totem. GitHub candidate CI #40395649049 passed: 168 ordered patches, 68 assets, 6,711,684 bytes, source SHA256 b6114ad2b3f8e6c3352869336845df015fdf18da40e580e5cb4ef819fc5476af; exact deployed HTML and source/asset receipt must be audited. Android real-world FPS and drag feel remain pending owner acceptance. Retrying hosted verification after correcting the historical v11.134 lineage assertion from index -2 to -3; compiled source and assets remain byte-for-byte unchanged.",
-  "sourceCommit": "724724f11f75d342e876334df3244902ec7855bb",
-  "sourceIntegritySha256": "b6114ad2b3f8e6c3352869336845df015fdf18da40e580e5cb4ef819fc5476af"
+  "releaseVersion": "v11.137",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_137_MEADOW_FIRST_SHEEP_BUILD_DRAG",
+  "reason": "Android owner reports sheep-origin building hologram is correctly positioned, but dragging directly from bottom-right house button gives too little usable screen travel. v11.137 separates mobile selection from placement: touch/pen skill buttons select only and reseed visible sheep-origin ghost; a fresh meadow touch from any point anchors relative ghost drag and native validated release, or a single meadow tap places at the tapped site. Desktop direct mouse skill drag, one-shot and Rapid build repeats preserved. No wolf/AI/multiplayer changes. GitHub candidate gate #40401256411 PASS: exact 169 ordered patches, 68 assets, 6,711,840 HTML bytes, SHA256 674354d6d9f0a0a324000161a002f31b47e56e8a1734f0b260b7adf8c48fa3ce; integration regression verified touch skill cannot build, separate meadow drag and tap commit, Rapid and desktop mouse remain functional. Publish and audit exact hosted HTML, SOURCE.json and all original assets. Android acceptance pending.",
+  "sourceCommit": "5d46bbcfc04096058519496ff37789f5fdb91abd",
+  "sourceIntegritySha256": "674354d6d9f0a0a324000161a002f31b47e56e8a1734f0b260b7adf8c48fa3ce"
 }
