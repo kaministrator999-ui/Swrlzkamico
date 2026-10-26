@@ -1,3 +1,9 @@
+## §E v11.137 · Full-screen meadow-first touch construction (2026-10-26)
+
+The owner confirmed the sheep-origin building hologram appears correctly, but the old continuous touch-drag began from the bottom-right build icon, leaving almost no room to move downward/right on the phone display. **v11.137 separates selection from aiming on touch/pen:** tap Free/Income/Fortified/Ramp/Walkway to select, release to leave the hologram visible at the sheep, then touch *any open meadow position* and drag from that fresh anchor to move the preview. Release on valid ground to place, or simply tap a meadow target for single-tap placement. The button-touch alone cannot place a building or move its preview off the sheep. Native single-placement and optional Rapid repeat both still work. Desktop mouse direct-icon dragging stays available; all existing game/safety constraints remain authoritative.
+
+Source seal target: **169 historical-plus-new patches, 68 preserved assets**; build hash/byte count populated only by the isolated exact-source measurement and verification. Real Android comfort/placement remains owner acceptance. No wolf-side development or multiplayer changes.
+
 ## §E v11.136 · Camera-stable sheep preview and capture performance (2026-10-26)
 
 Owner Android gameplay report: v11.135 build hologram now originates at the sheep, but is still slightly inconsistent while dragging; phone frame rate appears to dip when sheep are rapidly captured and their buildings vanish. This is a *source-level optimization* pending Android acceptance, not a claim of measured FPS gains.
