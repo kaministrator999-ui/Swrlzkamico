@@ -13,15 +13,11 @@ def apply(html):
  js=(root/'runtime/sheep_build_skill_click_rapid_ui_v11_133.js').read_text(encoding='utf8')
  html=html.replace('</head>','<style id="se133-rapid-and-skill-click">'+css+'</style>\n</head>',1)
  html=once(html,'window.SWRLZ_FORGE_BUILD=',js+'\nwindow.SWRLZ_FORGE_BUILD=')
- k=html.find('stBuildInput.element.setPointerCapture(event.pointerId);')
- print('SE133_ACTUAL_DOWN',repr(html[k:k+500]),flush=True)
- k=html.find("const source=stBuildInput.source;")
- print('SE133_ACTUAL_UP',repr(html[k:k+580]),flush=True)
  # v11.130 fixed the initial seed, but omitted the synthetic click following
  # pointerup. That click invoked the native skill onclick a second time and
  # toggled its mode OFF; the ghost vanished. Intercept only that duplicate.
  html=once(html,
-  'if(world)stBuildInputAim(event);else stTouchPlacementHide(null);',
+  'if(world)stBuildInputAim(event);else st126SeedAtSheep();',
   'if(world)stBuildInputAim(event);else st133SeedWhileSkillHeld();')
  # Keep ghost at sheep until dragged into open meadow. Pointer capture keeps
  # target on the button even when finger is out in the 3D world, so test the
