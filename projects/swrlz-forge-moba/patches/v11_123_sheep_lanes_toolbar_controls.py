@@ -10,12 +10,8 @@ def apply(html):
  safe=(root/'runtime/sheep_safe_snap_v11_123.js').read_text(encoding='utf8')
  bar=(root/'runtime/engine_main_toolbar_v11_123.js').read_text(encoding='utf8')
  css=(root/'runtime/engine_main_toolbar_sheep_hud_v11_123.css').read_text(encoding='utf8')
- # Base building collision: flush, *non-overlapping* edges are valid.
- # Earlier +.02 margin incorrectly rejected house-to-house contact, producing
- # the visually misleading tiny-gap layouts that the user reported.
- html=once(html,
- "Math.abs(snappedX-building.pos.x)<1.2+building.halfX+.02&&Math.abs(snappedZ-building.pos.z)<1.2+building.halfZ+.02",
- "Math.abs(snappedX-building.pos.x)<1.2+building.halfX-0.00001&&Math.abs(snappedZ-building.pos.z)<1.2+building.halfZ-0.00001")
+ # Preserve the native polygon/SAT collision test. Intentional near-contact
+ # positions avoid crossing an authored house's collision footprint.
  # Late installation, after Sheep Tag's historical lane/collision improvements.
  # Every placement preview, command, and final revalidation uses the same
  # stCanBuild wrapper and stLanesSnapHouse, with no second game state.
