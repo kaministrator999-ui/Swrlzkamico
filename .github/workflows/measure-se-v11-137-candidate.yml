@@ -1,5 +1,5 @@
 name: §E v11.137 isolated candidate source measure
-# Re-run with updated v11.137 touch guard assertion in release verifier.
+# Re-run with DOM Element.contains in isolated pointer simulation.
 on:
   push:
     branches:
