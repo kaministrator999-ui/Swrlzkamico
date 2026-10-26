@@ -184,6 +184,6 @@
     "patches/v11_135_sheep_ghost_relative_drag_hud.py",
     "patches/v11_136_sheep_drag_capture_cleanup.py"
   ],
-  "finalBytes": 6708052,
-  "finalSha256": "40cf34d1322b071812e0061d25a3be5353a4ad81820714d32eb06608161a09b5"
+  "finalBytes": 6711684,
+  "finalSha256": "b6114ad2b3f8e6c3352869336845df015fdf18da40e580e5cb4ef819fc5476af"
 }
