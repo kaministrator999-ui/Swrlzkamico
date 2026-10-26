@@ -171,6 +171,6 @@
     "patches/v11_122_sitewide_touch_guard.py",
     "patches/v11_123_sheep_lanes_toolbar_controls.py"
   ],
-  "finalBytes": 6637490,
-  "finalSha256": "858c08fae2edd165aec884363672d41a5591db6456e8cb5389e25d73d2668376"
+  "finalBytes": 6637431,
+  "finalSha256": "803e98fd6d1f8f3a803febe977bf5e6f63f14f1cffe5bc8ef0db08673af3acaf"
 }
