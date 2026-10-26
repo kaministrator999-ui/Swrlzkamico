@@ -188,6 +188,6 @@
     "patches/v11_139_rapid_safe_corner_snap.py",
     "patches/v11_140_sheep_main_menu.py"
   ],
-  "finalBytes": 6719389,
-  "finalSha256": "f605af72628643e87d8fca5d97a08fcba438c43f2d9ffa693e4f6014032ce6fb"
+  "finalBytes": 6729010,
+  "finalSha256": "639cca010358ccf8a1c1c129ab1cfc99b45e32854ecd4802ff3d3610a32d39f7"
 }
