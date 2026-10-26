@@ -1,3 +1,13 @@
+## §E v11.136 · Camera-stable sheep preview and capture performance (2026-10-26)
+
+Owner Android gameplay report: v11.135 build hologram now originates at the sheep, but is still slightly inconsistent while dragging; phone frame rate appears to dip when sheep are rapidly captured and their buildings vanish. This is a *source-level optimization* pending Android acceptance, not a claim of measured FPS gains.
+
+The previous sheep-origin drag stored its initial ground ray, which could become stale when the follow camera moved. v11.136 casts the drag anchor and live finger from the same current camera, then offsets the living sheep's current position by their difference; the player still sees/commits the authoritative snapped footprint. The placement grid skips redundant geometry uploads for unchanged snapped destinations while revalidating on changed navigation topology.
+
+Capture still immediately marks each owned building destroyed, removes its scene mesh from visibility/collision, triggers Archive callbacks and makes it unavailable to wolves/sheep. A capture wave now emits **one** navigation cache invalidation rather than one per house. Expensive GPU geometry/material disposal is drained over subsequent update frames (2 per frame) and flushed on match stop. No houses persist in gameplay because their disposal is deferred. The performance diagnostics include capture batches, retired/disposed mesh counts, pending queue and grid skip count.
+
+Scope is strictly Sheep Tag's client simulation and UI. Wolf behavior, capture balance, sheep builds/costs, Rapid toggle, Mirror/Totem, saved maps and all native assets are untouched. The exact release seal is **168 source patches / 68 assets / 6,711,684 HTML bytes**, SHA-256 `b6114ad2b3f8e6c3352869336845df015fdf18da40e580e5cb4ef819fc5476af`. The new regression tests same-camera aiming, single nav invalidation per capture, immediate detachment, bounded disposal, stop flush, and placement grid reuse. Android touch feel and actual phone frame-time still require user acceptance.
+
 ## §E v11.135 · Sheep-origin relative hologram, bigger Free House, visible Mirror (2026-10-26)
 
 **Owner Android screenshot:** selecting a house still showed its hologram and placement grid near the bottom-right skill ring rather than visibly originating at the controlled sheep. Free House also needed to trade screen positions with Fortified House and grow larger. Totem was visible, but Mirror/decoy was missing from the sheep's touch HUD. The owner explicitly deferred wolf-side gameplay; no owl scout or wolf behavior is changed in this release.
