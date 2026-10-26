@@ -172,6 +172,6 @@
     "patches/v11_123_sheep_lanes_toolbar_controls.py",
     "patches/v11_124_sheep_passable_placement.py"
   ],
-  "finalBytes": 6643230,
-  "finalSha256": "76ad20c95cfec089d87738c77a4d90015e144c90a615dc6d208393b6c6283d4d"
+  "finalBytes": 6643360,
+  "finalSha256": "8a45b889b2d48edc1101e423b05c97ebf68de55eaf6b158cd4c6fbc7914fa08c"
 }
