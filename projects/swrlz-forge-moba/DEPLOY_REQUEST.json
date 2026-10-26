@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.128",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_128_SINGLE_DEFAULT_STARTER_AND_STABLE_BOOT",
-  "reason": "Owner-approved §E v11.128: actual native Clover organic starter sheep reused in Sheep Tag with shared detailed geometry and occasional visual-only pouncing swurv during gait; intermediate legacy editor shell hidden until restored editor/workspace settles; all 10 starter project cards gain one exclusive persistent Load this project by default checkbox, safe startup routing with explicit project URL priority, browser-local preference separate from user files and autosave. GitHub feature source tests PASS Actions 40348104741 and 40350416722; exact sealed main production preflight PASS Actions 40350918273. Official full 160-patch HTML 6,666,214 bytes SHA256 9bf9658db0592f6dccc4c9b57a6eec700c76de04461f542403e50cb6c2a49a2a. Retain all 68 bundled assets; deploy only through dedicated §E workflow with authoritative live HTML/SOURCE.json/assets audit. Manual Android gameplay and startup acceptance separate.",
-  "sourceCommit": "7a647965cc04e1214c525ac897eba7d7e12fc8ae",
-  "sourceIntegritySha256": "9bf9658db0592f6dccc4c9b57a6eec700c76de04461f542403e50cb6c2a49a2a"
+  "releaseVersion": "v11.129",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_129_PROJECT_HANDOFF_PAGE_ZOOM_GUARD",
+  "reason": "Owner repeatedly reproduces full Android browser PAGE magnification immediately after tapping a starter project, losing editor controls; this is not game camera zoom. §E v11.129 adds targeted touch-action:manipulation to project cards and editor chrome, plus a transparent 420ms touch-only handoff shield after native starter-open click to consume rapid secondary taps across DOM replacement. Retains browser pinch zoom, editable text input, keyboard/mouse selection, camera viewport touch actions, default starter checkboxes, all other engine features. Feature CI 40368154931 SUCCESS; sealed main CI 40368578405 SUCCESS. Exact 161-patch HTML 6,669,441 bytes, SHA256 34caf41b05e3c404e12d0da122a79db61c8187aaea1692b2cd07c380a69a4f7f, 68 original assets. Deploy to dedicated static Space using exact release/integrity guard; verify served HTML/SOURCE and all assets. Final Android Chrome acceptance remains pending.",
+  "sourceCommit": "847e09a0b93d4a21b36b8e0fbc9771d33b94742b",
+  "sourceIntegritySha256": "34caf41b05e3c404e12d0da122a79db61c8187aaea1692b2cd07c380a69a4f7f"
 }
