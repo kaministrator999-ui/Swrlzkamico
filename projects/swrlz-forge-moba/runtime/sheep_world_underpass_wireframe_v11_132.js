@@ -122,6 +122,7 @@ stArchiveAfterUpdate=function(s,dt,t){
    const hide=!st132OccludedByStructure(unit);
    if(hide){if(item)item.overlay.visible=false;continue;}
    item=st132WireFor(unit);
+   item.overlay.visible=true;
   }
   if(item?.overlay.visible){st132SyncWire(item);}
  }
