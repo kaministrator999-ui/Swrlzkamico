@@ -43,7 +43,7 @@ for token in [
  'function st140MenuStart(){',
  'function st140MenuClose(){',
  'function st140MenuTick(dt){',
- 'st140MenuTick(dt);if(shouldRenderFrame(frameNow))',
+ 'animeUpdateCinematic(dt);st140MenuTick(dt);',
  'id="st140MainMenu"',
  'id="se140-sheep-main-menu"',
  'function atelierSculptPreviewFieldsInstall(){',
