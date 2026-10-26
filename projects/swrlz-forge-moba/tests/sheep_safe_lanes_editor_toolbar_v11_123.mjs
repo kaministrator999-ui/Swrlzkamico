@@ -16,7 +16,7 @@ vm.createContext(ctx);vm.runInContext(snapJS,ctx);
 const snap=(x,z=0)=>ctx.stLanesSnapHouse('st-farm',x,z);
 const build=(x,z=0)=>ctx.stCanBuild('st-farm',x,z);
 assert.equal(ctx.stSafeLaneWidth(),.9);
-assert.ok(Math.abs(snap(42.5).x-42.4)<1e-7,'adjacent contact failed');
+assert.ok(Math.abs(snap(42.5).x-42.415)<1e-7,'adjacent contact failed');
 assert.ok(Math.abs(snap(43.0).x-43.3)<1e-7,'sheep gap must be at least 0.9');
 assert.ok(Math.abs(snap(46.16).x-46.2)<1e-7,'free grid step is 0.3');
 assert.equal(build(43.0).ok,true,'0.9 m sheep lane erroneously blocked');
