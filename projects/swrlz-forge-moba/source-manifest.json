@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.125",
+  "name": "§wyrl§ Engine v11.126",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_125.html",
+  "finalArtifact": "swyrl_engine_v11_126.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -171,8 +171,9 @@
     "patches/v11_122_sitewide_touch_guard.py",
     "patches/v11_123_sheep_lanes_toolbar_controls.py",
     "patches/v11_124_sheep_passable_placement.py",
-    "patches/v11_125_gap_builder_exit.py"
+    "patches/v11_125_gap_builder_exit.py",
+    "patches/v11_126_centered_build_permanent_routes_skills.py"
   ],
-  "finalBytes": 6645795,
-  "finalSha256": "4b4e0a69a388083817b72e6600c7c7a8e3b6c08247d4714430aebf0717f416ac"
+  "finalBytes": 6651868,
+  "finalSha256": "dbbc8d1ac954e3e93ec9f8feb74ed0371575c6378a9b27ef77c021c20dabcec5"
 }

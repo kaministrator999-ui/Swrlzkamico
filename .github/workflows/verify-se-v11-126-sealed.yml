@@ -1,0 +1,24 @@
+name: §E v11.126 sealed 158-patch production-source preflight
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/source-manifest.json"
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Verify exact seal, 68 assets, historic editor and Sheep Tag regressions
+        run: |
+          python projects/swrlz-forge-moba/scripts/verify_v11_126_release.py --output /tmp/se-v11126-release
+          node --check /tmp/se-v11126-release-module.mjs
+          SE_ASSEMBLED_HTML=/tmp/se-v11126-release/index.html node projects/swrlz-forge-moba/tests/sheep_passable_placement_v11_124.mjs
