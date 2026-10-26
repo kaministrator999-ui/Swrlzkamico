@@ -1,5 +1,5 @@
 name: §E v11.136 isolated candidate source measure
-# Rerun with numerical-tolerance regression expectations.
+# Rerun against correct native single-detachment capture fixture.
 on:
   push:
     branches:
