@@ -1,0 +1,25 @@
+#stRapidBuild{display:none}
+body.st-touch-controls #sheepTagHUD #stRapidBuild{
+ display:flex;position:fixed;right:clamp(145px,30vw,340px);
+ bottom:clamp(95px,22vh,230px);
+ width:clamp(52px,7vw,68px);height:clamp(52px,7vw,68px);
+ z-index:48;align-items:center;justify-content:center;flex-direction:column;
+ padding:4px;border-radius:50%;border:2px solid #a3ced2;
+ color:#e8fff2;background:radial-gradient(circle at 35% 25%,#456a6b,#152938 76%);
+ box-shadow:0 3px 16px #000a,inset 0 0 12px #63bdd02f;
+ touch-action:manipulation;pointer-events:auto;
+}
+#stRapidBuild span{font:23px/1 system-ui}#stRapidBuild sup{font:13px/1 system-ui}
+#stRapidBuild small{font:800 10px/1.1 system-ui;letter-spacing:.06em;color:#cce0e3}
+body.st-touch-controls #sheepTagHUD #stRapidBuild.active{
+ border-color:#c6ffd4;color:#f1ffeb;
+ background:radial-gradient(circle at 35% 25%,#387b55,#14382c 75%);
+ box-shadow:0 0 0 3px #9bfdba55,0 3px 16px #000a;
+}
+body.st-touch-controls.st-touch-wolf #sheepTagHUD #stRapidBuild,
+#stRapidBuild[hidden]{display:none!important}
+@media(orientation:landscape){
+ body.st-touch-controls #sheepTagHUD #stRapidBuild{
+ right:clamp(160px,27vw,320px);bottom:clamp(70px,25vh,155px);
+ }
+}
