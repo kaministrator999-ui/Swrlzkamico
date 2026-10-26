@@ -13,7 +13,7 @@ def apply(html):
  root=Path(__file__).resolve().parents[1]
  css=(root/'runtime/sheep_main_menu_attract_v11_140.css').read_text(encoding='utf8')
  js=(root/'runtime/sheep_main_menu_attract_v11_140.js').read_text(encoding='utf8')
- html=once(html,'</head>','<style id="se140-sheep-main-menu">'+css+'</style>\n</head>')
+ html=html.replace('</head>','<style id="se140-sheep-main-menu">'+css+'</style>\n</head>',1)
  html=once(html,'window.SWRLZ_FORGE_BUILD=',js+'\nwindow.SWRLZ_FORGE_BUILD=')
  # Reuse exactly the native render loop: no independent requestAnimationFrame,
  # no additional stUpdate(), wolf AI, navigation or game-clock simulations.
