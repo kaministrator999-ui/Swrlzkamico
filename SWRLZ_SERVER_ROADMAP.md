@@ -1,3 +1,9 @@
+## UPDATE PUBLICATION REQUESTED — 2026-10-26 — Editor completion and Chat update history
+
+Owner explicitly authorized publishing the validated editor, project archive, response budget and Chat update-history changes. Candidate source `465d563f81408879766ccd32ae9dc8eeedfed10a`, following source6240d715; exact-source CI [40266983914](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40266983914) is SUCCESS. Existing main Forge/§E changes and deployment workflows are preserved. The request pins this source SHA through the existing HF request→guarded workflow→kamiloki/Swyrlz chain. No direct HF upload or hosting move. Publication/runtime acceptance pending; model/default/version/build receipts must be read from the current checkpoint, not inferred from this request.
+
+See `docs/engineering/entries/2026-10-25_EDITOR_PROJECT_COMPLETION.md`.
+
 ## UPDATE FINISHED — 2026-10-25 — ordinary3DHTML requests / Qwen7B live verified
 
 The owner wanted the model itself to build projects. Fresh live request `eval-e773b482b0ea` named no library/version, entered as700m, routed to pinned7B coder and returned the accepted complete HTML in106.0s. Its unmodified generated viewer passed10/10 independent real WebGL/browser checks. The first delivered response passed without a same-thread repair request. No engineer-built reference was substituted. Exact source `6240d7151692898b9f30e75675707083ddb7f4cc`; CI40149124604 and guarded deployment40149219806 SUCCESS; Space `75e45f4148e9eb8972d95305d92b67838c55b47c`; rollback `f61878f448ed84801dd5891df1755ca558fe53d6`.
