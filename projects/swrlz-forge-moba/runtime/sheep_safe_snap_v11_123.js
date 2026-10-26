@@ -28,7 +28,7 @@ stLanesSnapHouse=function(kind,x,z,snap=.15) {
    if(Math.abs(delta)<extent-.32||Math.abs(delta)>extent+width+.55)continue;
    const sign=Math.sign(delta)||1;
    for(const lane of [0,width]){
-    const target=house.pos[axis]+sign*(extent+lane);
+    const target=house.pos[axis]+sign*(extent+(lane===0?.015:lane));
     const distance=Math.abs(target-point[axis]);
     if(distance<=Math.max(.52,width*.65)&&
        (!choice||distance<choice.distance-1e-8||
