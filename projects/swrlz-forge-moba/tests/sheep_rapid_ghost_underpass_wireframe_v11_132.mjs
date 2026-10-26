@@ -83,7 +83,7 @@ ctx.stMobileStickPoint({pointerId:7});
 assert.equal(me.st132BuildHoldUntil,-Infinity,'movement overrides construction beat');
 assert.equal(me.st132BuildQueue.length,0,'movement cancels queued orders');
 toggle.click();assert.equal(toggle.getAttribute('aria-pressed'),'false');
-assert.equal(ctx.st132Rapid.on,false);
+assert.equal(vm.runInContext('st132Rapid.on',ctx),false);
 assert.ok(css.includes('border-radius:50%')&&css.includes('right:clamp(145px'),'circular inner toggle');
 for(const [name,cx,cz] of [['pinewatch',-52.5,-45],['moonflower',60,-52.5],['amberglade',-52.5,60]]){
  const route=worldRoutes.filter(a=>a.id.includes('route-'+name+'-'));
