@@ -61,3 +61,4 @@ jobs:
         run: |
           node projects/swrlz-forge-moba/tests/sheep_gap_builder_exit_v11_125.mjs
           node projects/swrlz-forge-moba/tests/sheep_centered_world_routes_magic_v11_126.mjs
+          node projects/swrlz-forge-moba/tests/sheep_ghost_relative_drag_hud_v11_135.mjs
