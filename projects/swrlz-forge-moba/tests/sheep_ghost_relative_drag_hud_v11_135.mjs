@@ -86,8 +86,8 @@ ctx.stTouchPlacement.gesture={id:78};
 ctx.st135HandleBuildAim(pointer(78,240,250,'pointerdown'));
 assert.equal(ctx.stUi.preview.position.x,10);
 ctx.st135HandleBuildAim(pointer(78,251,259));
-assert.equal(ctx.stUi.preview.position.x,11.1);
-assert.equal(ctx.stUi.preview.position.z,20.9);
+assert.ok(Math.abs(ctx.stUi.preview.position.x-11.1)<1e-8);
+assert.ok(Math.abs(ctx.stUi.preview.position.z-20.9)<1e-8);
 // Short, non-drag meadow tap continues to work.
 assert.ok(ctx.st135TapPlacement(pointer(78,460,320,'pointerup')));
 assert.equal(ctx.stUi.preview.position.x,46);
