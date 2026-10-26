@@ -23,3 +23,21 @@ jobs:
           node --check /tmp/se-v11126.mjs
       - name: Verify sheep-centered placement, world routes, and ability contract
         run: SE_ASSEMBLED_HTML=/tmp/se-v11126.html node projects/swrlz-forge-moba/tests/sheep_centered_world_routes_magic_v11_126.mjs
+
+      - name: Measure exact full-chain 158-patch release before source sealing
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('projects/swrlz-forge-moba/source-manifest.json')
+          m=json.loads(p.read_text())
+          assert m['name']=='§wyrl§ Engine v11.125'
+          assert len(m['patches'])==157
+          m['name']='§wyrl§ Engine v11.126'
+          m['finalArtifact']='swyrl_engine_v11_126.html'
+          m['patches'].append('patches/v11_126_centered_build_permanent_routes_skills.py')
+          p.write_text(json.dumps(m,ensure_ascii=False))
+          PY
+          python projects/swrlz-forge-moba/scripts/measure_v11_126_full_chain.py
+          node --check /tmp/se-v11126-full.mjs
+          SE_ASSEMBLED_HTML=/tmp/se-v11126-full.html node projects/swrlz-forge-moba/tests/sheep_centered_world_routes_magic_v11_126.mjs
