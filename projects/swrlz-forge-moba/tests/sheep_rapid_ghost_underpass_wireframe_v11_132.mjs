@@ -41,6 +41,8 @@ const ctx={THREE,document:doc,window:dom.window,$,scene,perspectiveCamera:camera
  stArchiveAfterUpdate:()=>{},stSeenByRole:()=>true,stStop:()=>{},
  stInstallUI:()=>{},stRefreshHUD:()=>{},
  stUi:{shown:true,build:'st-farm'},stUiFeedback:(m)=>views.push(m),
+ stBuildInput:{outcome:null},st126SeedAtSheep:()=>true,
+ stUiOrderAt:()=>{ctx.stBuildInput.outcome={ok:true};ctx.stUi.build=null;},
  stIssueBuild:(u,kind,x,z)=>{issued.push([kind,x,z]);u.order={action:'build',kind};return {ok:true};},
  stNewBuilding:(kind,x,z,owner)=>({id:'new',kind,owner}),
  stCanBuild:()=>({ok:true,kind:'st-farm',x:6,z:8,rotation:0}),
@@ -64,6 +66,8 @@ toggle.click();
 assert.equal(toggle.getAttribute('aria-pressed'),'true');
 assert.equal(toggle.querySelector('small').textContent,'ON');
 assert.equal(ctx.stUiStatus().rapidBuild.enabled,true);
+ctx.stUiOrderAt(11,14);
+assert.equal(ctx.stUi.build,'st-farm','successful native order retains chosen house only in Rapid Build');
 const first=ctx.stIssueBuild(me,'st-farm',6,8);
 assert.equal(first.ok,true);assert.equal(issued.length,1);
 const queue=ctx.stIssueBuild(me,'st-farm',9,8);
