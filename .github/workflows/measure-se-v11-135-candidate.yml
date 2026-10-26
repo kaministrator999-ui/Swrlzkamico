@@ -1,4 +1,5 @@
 name: §E v11.135 isolated candidate source measure
+# Rerun with numerical-tolerance regression expectations.
 on:
   push:
     branches:
