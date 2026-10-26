@@ -20,9 +20,9 @@ def apply(html):
    """const button=event.target?.closest?.('button[data-st-skill^="st-"]'),world=event.target===$('viewport');""",
    """const button=event.target?.closest?.('button[data-st-skill^="st-"]'),world=st132MeadowTarget(event.target);""")
  html=once(html,"document.elementFromPoint(x,y)===viewport;","st132MeadowTarget(document.elementFromPoint(x,y));")
- html=once(html,"if (gesture && (event.pointerType!=='touch' || event.target!==$('viewport'))) {",
+ html=html.replace("if (gesture && (event.pointerType!=='touch' || event.target!==$('viewport'))) {",
                 "if (gesture && (event.pointerType!=='touch' || !st132MeadowTarget(event.target))) {")
- html=once(html,
+ html=html.replace(
    "if (!stTouchPlacementEnabled() || event.pointerType!=='touch' || event.target!==$('viewport') ||",
    "if (!stTouchPlacementEnabled() || event.pointerType!=='touch' || !st132MeadowTarget(event.target) ||")
  # Preserve a selected house after a successful order only when toggled on.
