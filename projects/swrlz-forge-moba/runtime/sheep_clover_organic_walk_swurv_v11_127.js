@@ -80,8 +80,8 @@ stMakeVisual=function(type){
   rig.visible=true;rig.userData.st127Organic=true;
   // Set the organic position independently: native scene keeps actor root.
   visual.add(rig);
-  visual.userData.st127Rig=rig;
-  visual.userData.st127OrganicSource='model-atelier:Clover · Meadow Sheep';
+  // No Object3D references in userData: authored save JSON stays acyclic.
+  rig.userData.st127OrganicSource='model-atelier:Clover · Meadow Sheep';
  }catch(error){
   st127SheepModelError=String(error?.message||error);
   // Preserve a functioning, visible old sheep if device can't create model.
@@ -96,7 +96,7 @@ stArchiveAfterUpdate=function(session,dt,t){
  if(!session?.units||!Number.isFinite(session.elapsed))return;
  for(const unit of session.units){
   if(unit.kind!=='sheep'||unit.captured||unit.isIllusion)continue;
-  const rig=unit.actor?.userData?.st127Rig;
+  const rig=unit.actor?.getObjectByName?.('Clover · organic starter sheep');
   if(!rig)continue;
   // native stLeg pivots have already received the real distance-based trot.
   // Pounce is animation-only and never teleports or changes pathfinding.
