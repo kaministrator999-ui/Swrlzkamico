@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.138
+title: §wyrl§ Engine v11.139
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,12 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.139 · Safer, easier Rapid house corner placement (2026-10-26)
+
+When a house hologram turns red beside the existing maze because of **"A diagonal crack is not a sheep passage"**, Rapid mode now tries a small automatic flush-corner adjustment. The ghost and actual order share the fully validated snapped site. The existing native collision and sheep-passage rules still reject blocked or unavailable positions; this does not make unsafe diagonal gaps passable. A correction more than the current safe lane width is not attempted, and Rapid OFF behaves as before.
+
+Source target: 171 patches, 68 unchanged assets, 6,719,389 bytes, SHA-256 `f605af72628643e87d8fca5d97a08fcba438c43f2d9ffa693e4f6014032ce6fb`. Actual Android acceptance is a separate check.
 
 ## §E v11.138 · Rapid follows the last successful building's SCREEN position (2026-10-26)
 
