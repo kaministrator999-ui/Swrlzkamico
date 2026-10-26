@@ -1,0 +1,25 @@
+name: §E v11.126 sheep build, permanent routes, fast skills preflight
+on:
+  push:
+    branches: [feature/sheep-centered-build-permanent-routes-abilities-v11-126]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Rebuild sealed v11.125 without changes
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_125_release.py --output /tmp/se-v11125-release
+      - name: Assemble v11.126 candidate and validate syntax
+        run: |
+          python projects/swrlz-forge-moba/scripts/build_v11_126_candidate.py
+          node --check /tmp/se-v11126.mjs
+      - name: Verify sheep-centered placement, world routes, and ability contract
+        run: SE_ASSEMBLED_HTML=/tmp/se-v11126.html node projects/swrlz-forge-moba/tests/sheep_centered_world_routes_magic_v11_126.mjs
