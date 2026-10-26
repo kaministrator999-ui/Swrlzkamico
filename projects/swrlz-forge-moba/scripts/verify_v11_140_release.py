@@ -44,7 +44,7 @@ for token in [
  'function st140MenuClose(){',
  'function st140MenuTick(dt){',
  'animeUpdateCinematic(dt);st140MenuTick(dt);',
- 'id="st140MainMenu"',
+ "menu.id='st140MainMenu'",
  'id="se140-sheep-main-menu"',
  'function atelierSculptPreviewFieldsInstall(){',
  'function atelierSculptGhostDraw(){',
