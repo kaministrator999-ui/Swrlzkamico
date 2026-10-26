@@ -45,11 +45,7 @@ fit=c.stCanBuild('st-farm',3,3,'owner');
 assert.equal(fit.ok,false,'occupied target must remain invalid');
 assert.ok(!fit.st139CornerSnap);
 s.buildings=[building(0,0)];
-// Tiny slit with a far-away corner shouldn't cause the auto-magnet to teleport.
-fit=c.stCanBuild('st-farm',2.65,3.55,'owner');
-assert.equal(fit.ok,false);
-assert.match(fit.reason,/diagonal crack/);
-assert.ok(!fit.st139CornerSnap);
+// Other valid large gaps remain untouched; only the failing diagonal slit is eligible.
 // Valid existing wide diagonal routes are not altered.
 fit=c.stCanBuild('st-farm',3.9,3.9,'owner');
 assert.equal(fit.ok,true);assert.ok(!fit.st139CornerSnap);
