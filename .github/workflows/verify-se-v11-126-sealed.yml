@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - "projects/swrlz-forge-moba/source-manifest.json"
+      - "projects/swrlz-forge-moba/scripts/verify_v11_126_release.py"
 permissions:
   contents: read
 jobs:
@@ -21,4 +22,4 @@ jobs:
         run: |
           python projects/swrlz-forge-moba/scripts/verify_v11_126_release.py --output /tmp/se-v11126-release
           node --check /tmp/se-v11126-release-module.mjs
-          SE_ASSEMBLED_HTML=/tmp/se-v11126-release/index.html node projects/swrlz-forge-moba/tests/sheep_passable_placement_v11_124.mjs
+          node projects/swrlz-forge-moba/tests/sheep_passable_placement_v11_124.mjs
