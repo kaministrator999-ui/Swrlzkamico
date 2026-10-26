@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.137
+title: §wyrl§ Engine v11.138
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,12 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.138 · Rapid follows the last successful building's SCREEN position (2026-10-26)
+
+With Rapid ON, the next house/ramp/walkway hologram now begins at the same relative position on the phone DISPLAY as the last completed order, not on the same old patch of ground. When the sheep or camera moves, the idle hologram is reprojected into the current world to keep its screen position, without silently placing a building. Dragging from anywhere in the meadow offsets that last screen position by finger movement. First Rapid build, regular builds and canceled placements retain existing behavior; disabling Rapid clears the memory. Native snap, costs, reachability, collisions, bots and multiplayer plans are unchanged.
+
+Sealed target: 170 patches, 68 assets, 6,717,316 bytes, SHA-256 `384558ce7af5993f36ef002824455d850fdfebf635a881eea1fe4878931f7385`. Source audit and actual Android acceptance are distinct.
 
 ## §E v11.137 · Touch a house, then drag from anywhere on the meadow (2026-10-26)
 
