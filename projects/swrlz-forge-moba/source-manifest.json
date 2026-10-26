@@ -183,6 +183,6 @@
     "patches/v11_134_rapid_cancel_sheep_seed_skills_house_swap.py",
     "patches/v11_135_sheep_ghost_relative_drag_hud.py"
   ],
-  "finalBytes": 6700691,
-  "finalSha256": "71a6056da0404f81f09337a2dddb45c87b81450ce49b327f8525fccd5d4efdbe"
+  "finalBytes": 6708052,
+  "finalSha256": "40cf34d1322b071812e0061d25a3be5353a4ad81820714d32eb06608161a09b5"
 }
