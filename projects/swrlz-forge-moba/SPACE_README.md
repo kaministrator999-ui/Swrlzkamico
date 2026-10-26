@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.134
+title: §wyrl§ Engine v11.135
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,12 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.135 · Sheep-origin hologram and visible Mirror (2026-10-26)
+
+The owner reported on real Android that choosing a house still showed its construction ghost beside the skill ring. The v11.135 phone fix prevents active skill-button camera rays from repositioning the ghost, places it at the controlled sheep, and moves the preview from that origin by deliberate meadow drag. The previous automatic placement grid stays hidden until a target is aimed, and the committed order uses the same validated site visible in the preview. Mouse and keyboard placement, sheep passages, collision, cost and Rapid placement logic remain intact.
+
+The enlarged Free House button and Fortified House switch physical positions; Income House remains bottom-right. Mirror (decoy) and Totem remain separate visible mobile buttons, while custom rule restrictions still disable the relevant ability. Wolves and wolf AI are unchanged. Source seal: **167 patches**, **68 assets**, **6,708,052 bytes**, SHA-256 `40cf34d1322b071812e0061d25a3be5353a4ad81820714d32eb06608161a09b5`. Source packaging and real Android owner acceptance are distinct release checks.
 
 ## §E v11.134 · Rapid OFF cancels ghost, exact sheep-origin marker, restored ability slots, Free/Income HUD swap (2026-10-26)
 
