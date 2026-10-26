@@ -265,13 +265,20 @@ jobs:
           }
           assert 0 < INPUT_BUDGET_TOKENS < CONTEXT_TOKENS, INPUT_BUDGET_TOKENS
           assert context and context.get('contextWindowTokens') == CONTEXT_TOKENS, context
-          assert context.get('inputBudgetTokens') == INPUT_BUDGET_TOKENS, context
-          assert context.get('estimatedInputTokens',10**9)<=INPUT_BUDGET_TOKENS, context
+          actual_input=context.get('inputBudgetTokens')
+          reserved_output=context.get('reservedOutputTokens')
+          assert isinstance(actual_input,int) and 0 < actual_input <= INPUT_BUDGET_TOKENS, context
+          assert isinstance(reserved_output,int) and reserved_output >= MIN_OUTPUT_TOKENS, context
+          assert actual_input + reserved_output + CONTEXT_SAFETY_TOKENS == CONTEXT_TOKENS, context
+          assert context.get('estimatedInputTokens',10**9) <= actual_input, context
+          assert any(e.get('type') == 'COMPLETED' for e in events), '700M smoke did not complete'
+          assert not any(e.get('type') == 'FAILED' for e in events), '700M smoke failed'
           assert text, '700M context smoke generated no response'
           print(json.dumps({
               'route':'700m',
               'contextWindowTokens':CONTEXT_TOKENS,
-              'inputBudgetTokens':INPUT_BUDGET_TOKENS,
+              'inputBudgetTokens':actual_input,
+              'maxInputBudgetTokens':INPUT_BUDGET_TOKENS,
               'reservedOutputTokens':context.get('reservedOutputTokens'),
               'estimatedInputTokens':context.get('estimatedInputTokens'),
               'historyMessagesDropped':context.get('historyMessagesDropped'),

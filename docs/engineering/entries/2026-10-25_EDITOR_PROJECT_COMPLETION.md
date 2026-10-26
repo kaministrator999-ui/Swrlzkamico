@@ -116,3 +116,7 @@ CI uses an already installed runner Chrome/Chromium when present (records its ve
 ## Guarded publication request
 
 Owner authorized live publication. Exact candidate source `465d563f81408879766ccd32ae9dc8eeedfed10a`; CI run 40266983914 completed SUCCESS. This request starts the canonical HF workflow; upload/build/runtime acceptance remain pending and will be recorded separately.
+
+## Dynamic-reservation deployment smoke repair
+
+Request run40267297063 stopped before upload at its old700M context-smoke assertion. The prior Space remained RUNNING at75e45f4148e9eb8972d95305d92b67838c55b47c. The reviewed workflow repair checks actual fitted input + reserved output + safety equals the context window, estimated input fits that actual budget, reserved output meets the minimum, and the real model completes without FAILED. The absolute input cap check remains intact. The exact revised assertions passed local pinned700M inference with32K context/4096 output reservation. Display now distinguishes actual input budget from its absolute cap. Existing credentials, target, snapshot/rollback, identity tests and upload gates are preserved. Exact-source CI40266983914 remains SUCCESS; source465d563f is unchanged. This second request retries publication; runtime acceptance remains pending.
