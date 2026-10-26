@@ -80,12 +80,9 @@ assert.ok(Math.abs(rect.left+(projected.x+1)*rect.width/2-anchoredPixel.x)<1e-7)
 assert.ok(Math.abs(rect.top+(1-projected.y)*rect.height/2-anchoredPixel.y)<1e-7);
 assert.equal(tp.valid,false,'no ghost-only order can commit');
 assert.equal(orders,0);
-const aiming={session,pointer:21,x:280,y:240};
-call('st138AttachAim(aiming)');
-assert.ok(aiming.st138Screen,'screen anchor attaches to a meadow gesture');
-// Use the actual VM mutated object to test a new meadow gesture.
 ctx.activeAim={session,pointer:21,x:280,y:240};
 call('st138AttachAim(activeAim)');
+assert.ok(ctx.activeAim.st138Screen,'screen anchor attaches to a meadow gesture');
 const moved=call('st138RapidTarget(activeAim,380,290)');
 const newProjected=moved.clone().project(camera);
 assert.ok(Math.abs(rect.left+(newProjected.x+1)*rect.width/2-(anchoredPixel.x+100))<1e-7);
