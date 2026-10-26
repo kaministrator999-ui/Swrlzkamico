@@ -107,6 +107,7 @@ assert.equal(call('st138SeedFromScreen()'),false);
 assert.equal(call('st138RapidTarget({x:20,y:20},30,30)'),undefined);
 ctx.st132SetRapid(true);
 assert.equal(call('st138SeedFromScreen()'),false,'Rapid reenabled without valid previous placement resets');
+camera.panX=0;camera.panZ=0;
 ui.placement={ok:true,x:8,z:9,rotation:0};
 assert.equal(call('st138RememberLastScreenPosition()'),true);
 session.controlledId='two';
