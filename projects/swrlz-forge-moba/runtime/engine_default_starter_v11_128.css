@@ -1,0 +1,26 @@
+/* Existing project cards remain native click targets; labels are siblings,
+   avoiding nested interactive controls and Android tap misrouting. */
+#projectHub .se128-starter-choice{
+ min-width:0;display:flex;flex-direction:column;align-self:stretch;
+ border-radius:12px;overflow:hidden;
+}
+#projectHub .se128-starter-choice>.project-card{
+ width:100%;flex:1;min-width:0;
+}
+#projectHub .se128-default-checkbox{
+ display:flex;align-items:center;gap:8px;cursor:pointer;
+ min-height:44px;padding:9px 12px;
+ background:#102130;color:#d4e9e9;
+ border:1px solid #42596a;border-top:0;
+ font:600 12px/1.4 system-ui,sans-serif;
+}
+#projectHub .se128-default-checkbox input{
+ width:18px;height:18px;min-width:18px;
+ accent-color:#72d7ba;cursor:pointer;touch-action:manipulation;
+}
+#projectHub .se128-default-checkbox.se128-selected-default{
+ background:#14362e;color:#eafff6;
+}
+#projectHub .se128-default-checkbox:focus-within{
+ outline:2px solid #92ebd8;outline-offset:-2px;
+}
