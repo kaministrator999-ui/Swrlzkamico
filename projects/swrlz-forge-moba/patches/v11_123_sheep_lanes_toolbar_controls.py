@@ -15,6 +15,10 @@ def apply(html):
  # Late installation, after Sheep Tag's historical lane/collision improvements.
  # Every placement preview, command, and final revalidation uses the same
  # stCanBuild wrapper and stLanesSnapHouse, with no second game state.
+ html=once(html,'const ST_LANE_GAP = .75;','const ST_LANE_GAP = .9;')
+ html=once(html,
+  'const corners = fit.corners, snap = stUiRules().buildSnap || .15, gridStep = snap===3 ? 3 : .6;',
+  'const corners = fit.corners, snap = stUi.build && ST_LANE_HOUSES.has(stUi.build) ? ST_GRID : (stUiRules().buildSnap || .15), gridStep = snap===3 ? 3 : .3;')
  html=once(html,"window.SWRLZ_FORGE_BUILD=",safe+'\n'+bar+"\nwindow.SWRLZ_FORGE_BUILD=")
  html=html.replace('</head>','<style id="se-v11123-workflow-safe-lanes">'+css+'</style>\n</head>',1)
  html=once(html,'SWYRL_ENGINE_DEPLOY_MARKER: V11_122_SITEWIDE_EDITOR_TOUCH_BOUNDARIES',
