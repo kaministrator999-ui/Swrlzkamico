@@ -19,6 +19,12 @@ function st132InstallRapid(){
  btn.addEventListener('click',event=>{event.stopPropagation();st132SetRapid(!st132Rapid);
   stUiFeedback(st132Rapid?'Rapid building enabled. Drag repeatedly to place houses.':'Rapid building disabled.');});
  panel.appendChild(btn);st132SetRapid(st132Rapid);
+ const rotate=document.createElement('button');
+ rotate.id='st132Rotate';rotate.type='button';rotate.className='st132-rotate';
+ rotate.textContent='⟳';rotate.title='Rotate ramp or walkway 90 degrees';
+ rotate.setAttribute('aria-label','Rotate ramp or walkway 90 degrees');
+ rotate.addEventListener('click',event=>{event.stopPropagation();stUiRotatePlacement();});
+ panel.appendChild(rotate);
 }
 const st132InstallBase=stInstallUI;
 stInstallUI=function(){st132InstallBase();st132InstallRapid();};
@@ -27,8 +33,9 @@ stRefreshHUD=function(...args){
  const result=st132HudBase(...args),btn=$('st132RapidBuild');
  if(btn){const s=stSession,unit=s?.units?.find(u=>u.id===s.controlledId);
   btn.hidden=!s||!stUi.shown||s.simulate||s.winner||unit?.kind!=='sheep'||!!unit?.captured;
-  btn.disabled=!!paused||!btn.hidden&&!!s?.winner;
+  btn.disabled=!!paused||!!s?.winner;
   st132SetRapid(st132Rapid);}
+ const rotate=$('st132Rotate');if(rotate)rotate.hidden=!stUi.shown||!['st-wall','st-ramp'].includes(stUi.build);
  return result;
 };
 // Native building created after actual valid sheep action, not merely when
@@ -65,7 +72,8 @@ stSetOrder=function(unit,order){
 // ramps still occupy ground and must be approached at their low ends.
 const st132ObstacleBase=stObstacles;
 stObstacles=function(){
- return st132ObstacleBase().filter(o=>o.kind!=='st-wall');
+ return st132ObstacleBase().filter(o=>o.kind!=='st-wall'||
+  !stSession?.buildings?.some(b=>b.id===o.id&&b.hp>0&&b.progress>=1));
 };
 // Prebuilt Moonbell crossings were all rotated 0 degrees. Retain their
 // original permanent IDs, but lay out each local axis at a different angle.
@@ -156,7 +164,6 @@ stArchiveAfterUpdate=function(s,dt,t){
   }
   for(const [id,entry] of st132Wire)if(!alive.has(id)||!entry.actor.parent){entry.actor.remove(entry.overlay);st132Wire.delete(id);}
  }
- for(const entry of st132Wire){} // intentionally no gameplay mutation
  for(const {overlay,pairs} of st132Wire.values())if(overlay.visible)
   for(const [from,to] of pairs){
    to.visible=from.visible;to.position.copy(from.position);
