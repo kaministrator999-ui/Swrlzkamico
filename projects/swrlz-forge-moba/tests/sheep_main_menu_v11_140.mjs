@@ -8,7 +8,7 @@ const assembled=process.env.SE_ASSEMBLED_HTML;
 assert.ok(assembled,'Test assembled sealed HTML, not only standalone runtime fragment');
 const html=fs.readFileSync(assembled,'utf8');
 for(const term of ['V11_140_SHEEP_START_MENU_CINEMATIC',
- 'st140MenuTick(dt);if(shouldRenderFrame(frameNow))',
+ 'animeUpdateCinematic(dt);st140MenuTick(dt);',
  'const st140LoadStarterBase=stLoadStarter',
  'st140MenuStart','se140-sheep-main-menu'])
  assert.ok(html.includes(term),'missing assembled integration '+term);
