@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.129",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_129_PROJECT_HANDOFF_PAGE_ZOOM_GUARD",
-  "reason": "Owner repeatedly reproduces full Android browser PAGE magnification immediately after tapping a starter project, losing editor controls; this is not game camera zoom. §E v11.129 adds targeted touch-action:manipulation to project cards and editor chrome, plus a transparent 420ms touch-only handoff shield after native starter-open click to consume rapid secondary taps across DOM replacement. Retains browser pinch zoom, editable text input, keyboard/mouse selection, camera viewport touch actions, default starter checkboxes, all other engine features. Feature CI 40368154931 SUCCESS; sealed main CI 40368578405 SUCCESS. Exact 161-patch HTML 6,669,441 bytes, SHA256 34caf41b05e3c404e12d0da122a79db61c8187aaea1692b2cd07c380a69a4f7f, 68 original assets. Deploy to dedicated static Space using exact release/integrity guard; verify served HTML/SOURCE and all assets. Final Android Chrome acceptance remains pending.",
-  "sourceCommit": "847e09a0b93d4a21b36b8e0fbc9771d33b94742b",
-  "sourceIntegritySha256": "34caf41b05e3c404e12d0da122a79db61c8187aaea1692b2cd07c380a69a4f7f"
+  "releaseVersion": "v11.131",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_131_DIRECTED_SHORT_MIRROR_DECOY_COOLDOWN",
+  "reason": "Owner reports v11.129 Android browser page smart-zoom persists with rapid project selection, plus Sheep Tag building skill preview still appearing at the skill button. Owner also requests Mirror decoy numeric cooldown counter, ability usable while moving, drag-to-direct quick dash, and disappear shortly. §E v11.131 includes exact tested v11.130 single-finger second-touchstart prevention (preserves pinch, text inputs, native camera) and fixes skill-button pointermove/pointerup overwriting sheep-centered preview. Mirror skill now displays cooldown directly on icon; drag angle routes boosted cloned sheep decoy through native safe path for <=4s, fading only cloned decoy in last 0.7s; real sheep movement/joystick order never touched. Feature full 163-patch CI Actions 40372653251 SUCCESS; sealed main Actions 40373097970 SUCCESS; earlier v11.130 sealed Actions 40371349066 SUCCESS. Official complete artifact 6,679,918 bytes, SHA256 ae889b96eaeddf58d290a6214809463cf84930f88a02b5070cda83ae47080218, 163 patches/68 bundled assets. Publish ONLY via dedicated §E static Space guarded deployment and verify served HTML, SOURCE.json receipt and assets. Actual Android gesture/ability owner acceptance remains pending.",
+  "sourceCommit": "e155e7d2bf5acb19443134851a465ddcba2ab45d",
+  "sourceIntegritySha256": "ae889b96eaeddf58d290a6214809463cf84930f88a02b5070cda83ae47080218"
 }
