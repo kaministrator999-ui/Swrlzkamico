@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.131
+title: §wyrl§ Engine v11.132
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,16 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.132 · Dragging sheep-centered hologram, Rapid Build, rotated raised crossings and occlusion wireframes (2026-10-26)
+
+**Owner gameplay report:** tapping House correctly placed the preview ghost at the sheep after v11.131, but dragging on the meadow **did not move the hologram**. The native v11.84 pointerdown callback was discarding the selected tool and calling `stUiChooseBuild(kind)` again; that API **toggles the same selection off**. The final patch differentiates the selected skill-button event from a subsequent meadow drag, preserves the selected active tool on meadow pointerdown, recognizes viewport descendant targets, follows actual pointermove with native preview/snapping, and commits only upon valid pointerup/resource/collision checks. Finger drag on the skill icon is still separate from moving the hologram.
+
+New **circular, accessible RAPID ON/OFF button near the middle of the mobile screen** keeps the selected house/structure after a successful native building order and reseeds the next hologram at the sheep. Off mode restores one-and-done placement. A companion **⟳ rotate control** exposes the existing 90° rotation for player-built ramps and walkways. On actually constructing any new owned building, the sheep pauses automatically for **0.28 s**; a movement order or joystick direction cancels that recovery immediately, while the game clock, captures, effects and AI remain updated.
+
+All nine indestructible authored prebuilt ramp/deck pieces in **three Moonbell crossings** remain: Pinewatch at 0°, Moonflower at 90°, Amberglade at -90°. Opposing ramp high ends still join their real 6 m deck endpoints exactly. **Completed elevated walkways** now admit sheep/wolves travelling at ground level beneath the 3.3 m platform, without changing upper path surfaces; ramps and incomplete platforms remain blocking until complete. Occluded living sheep receive a **cyan see-through wireframe clone of their own actual animated sheep mesh** only when physically under a walkway or when a house/deck blocks the camera's sightline; it hides once clear and never changes unit physics, controls or original materials.
+
+**[Complete 164-patch gameplay CI #40378516848](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40378516848) PASS**. The run rebuilt the exact preceding v11.131 release, assembled all **164 ordered patches** into **6,691,218 bytes**, SHA-256 **`6d678e0886907007de501b5f9d68916f09246eb25f6fa865a36e56481fa64920`**, checked compiled JavaScript syntax, and exercised actual Three.js wireframe materials, underpass blocking, three rotated crossing groups, responsive rapid toggle and rotation UI, interruptible construction recovery, and required assembled native pointer handler changes. Original 68 bundled assets and all earlier behaviors remain intact. Production deploy and real owner's Android touch acceptance remain separate gates.
 
 ## §E v11.131 · Drag-directed sheep Mirror decoy and ready-to-use mobile fixes (2026-10-26)
 
