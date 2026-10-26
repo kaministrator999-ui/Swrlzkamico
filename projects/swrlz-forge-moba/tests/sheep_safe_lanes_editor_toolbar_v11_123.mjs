@@ -9,7 +9,7 @@ const state={rules:{sheepRadius:.27},buildings:[house(40)]};
 const ctx={console,ST_GRID:.3,ST_LANE_HOUSES:new Set(['st-farm','st-income','st-fort','st-totem']),
 stSession:state,stLanesSnapHouse:(_,x,z)=>({x,z}),
 stCanBuild:(kind,x,z)=>{
- const pt=ctx.stLanesSnapHouse(kind,x,z);
+ const pt=state.raw?{x,z}:ctx.stLanesSnapHouse(kind,x,z);
  return {kind,x:pt.x,z:pt.z,ok:true,cost:0};
 },stResult:(ok,reason,fit)=>({...fit,ok,reason})};
 vm.createContext(ctx);vm.runInContext(snapJS,ctx);
@@ -21,16 +21,12 @@ assert.ok(Math.abs(snap(43.0).x-43.3)<1e-7,'sheep gap must be at least 0.9');
 assert.ok(Math.abs(snap(46.16).x-46.2)<1e-7,'free grid step is 0.3');
 assert.equal(build(43.0).ok,true,'0.9 m sheep lane erroneously blocked');
 assert.equal(build(42.5).ok,true,'flush contact erroneously blocked');
-ctx.stCanBuildBase=ctx.stCanBuild;
-ctx.stCanBuild=(kind,x,z,owner,rotation)=>{
- const pt={kind,x,z,ok:true};
- const lane=.9;
- const gap=Math.abs(x-40)-2.4;
- if(gap>.025&&gap<lane-.025)return {...pt,ok:false,reason:'no sheep lane'};
- return ctx.stCanBuildBase(kind,x,z,owner,rotation);
-};
-// The wrapped logic itself must explicitly reject narrow gaps even if a caller
-// supplies pre-snapped, off-grid coordinates, and recognize a dynamic sheep size.
+state.raw=true;
+assert.equal(build(42.9).ok,false,'off-grid 0.5m slit unexpectedly allowed');
+assert.equal(build(43.3).ok,true,'safe 0.9m lane rejected');
+state.raw=false;
+// Explicit predicate catches narrow spaces even when later callers hand in
+// coordinates that bypass the usual snap helper.
 assert.ok(snapJS.includes('gapX>.025&&gapX<minLane-.025'));
 assert.ok(snapJS.includes('gapZ>.025&&gapZ<minLane-.025'));
 state.rules.sheepRadius=.5;
@@ -68,7 +64,7 @@ if(process.env.SE_ASSEMBLED_HTML){
  const html=fs.readFileSync(process.env.SE_ASSEMBLED_HTML,'utf8');
  for(const text of ['V11_123_SHEEP_LANE_GRID_AND_WORKFLOW_TOOLBAR',
  'stSafeLaneWidth()', 'seMainToolbarOrganize()', 'se-v11123-workflow-safe-lanes',
- 'Math.abs(snappedX-building.pos.x)<1.2+building.halfX-0.00001']){
+ 'const stSafeCanBuildBase=stCanBuild;']){
   assert.ok(html.includes(text),'missing assembled '+text);
  }
 }
