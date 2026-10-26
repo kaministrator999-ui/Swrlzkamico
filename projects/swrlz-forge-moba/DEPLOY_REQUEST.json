@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.124",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_124_FLUSH_OR_PASSABLE_SHEEP_BUILD_PLACEMENT",
-  "reason": "Owner's Android screenshot of v11.123 shows 0.90m SHEEP ONLY house gap which physically traps their sheep. User explicitly clarifies fix should be building-placement grid, not joystick/path movement. v11.124 makes near house placement snap to visually flush contact or navigable 1.20m at default radius (one ST_GRID extra), rejects intermediate cardinal/diagonal blocked slits via original stCanBuild validation, tests native swept physical clearance of passage entrances with proposed structure and nearby obstacles, and corrects old 0.9m SHEEP ONLY labels to BLOCKED without relocating prior houses. No changes to sheep steering, movement or original §E top bar/HUD. Sealed source preflight run 40270681386 passed 156 ordered patches, 68 assets, 6,643,360 HTML bytes SHA-256 8a45b889b2d48edc1101e423b05c97ebf68de55eaf6b158cd4c6fbc7914fa08c. Real Android playthrough acceptance remains pending. Deploy exactly and verify live HTML and SOURCE receipt.",
-  "sourceCommit": "60003c51ea43258b6e29eda04432077dc6bd0af6",
-  "sourceIntegritySha256": "8a45b889b2d48edc1101e423b05c97ebf68de55eaf6b158cd4c6fbc7914fa08c"
+  "releaseVersion": "v11.125",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_125_CLEAR_GAPS_AND_SAFE_BUILDER_EXIT",
+  "reason": "Owner Android acceptance of v11.124 shows 1.20 m house gaps marked red BLOCKED even when traversable. Owner requests placing a house on current sheep position to relocate sheep safely to nearest outer side. v11.125 changes only clearance overlay classification using native local swept collision and restores existing ejection path disabled by v11.90; live current native validation already excludes builder while protecting other units. If no safe exit, reject without gold spend. No joystick, nav path, UI or native asset changes. Candidate GitHub preflight 40278508544 SUCCESS: 157 ordered patches, 68 assets, 6,645,687 HTML bytes SHA256 29a27f8a683abfbaf31ee0a3b02fc0dabb49168f302602f99c1361998621c1d8 plus genuine local gap and nearest-side collision regressions. Owner Android acceptance remains a separate gate. Deploy via dedicated §E workflow and verify hosted source integrity.",
+  "sourceCommit": "b18c210d7414b4abd2d5023e6c3e4178471e1fe6",
+  "sourceIntegritySha256": "29a27f8a683abfbaf31ee0a3b02fc0dabb49168f302602f99c1361998621c1d8"
 }
