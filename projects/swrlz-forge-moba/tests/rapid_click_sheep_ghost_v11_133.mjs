@@ -14,6 +14,7 @@ const chosen=document.getElementById('stBuildFarm'),rapidButton=document.getElem
 const gesture={id:17},placement={gesture};
 const viewport=document.getElementById('viewport'),canvas=document.getElementById('renderCanvas');
 const ctx={window,document,performance:{now:()=>now},stTouchPlacement:placement,
+ stInstallUI:()=>{},
  st126SeedAtSheep:()=>{seeded++;assert.equal(placement.gesture,null,'preview seeded without invalid placement gesture');return true;},
  stTouchPlacementClearCanvas:(x,y)=>false,
  $:id=>document.getElementById(id)};
