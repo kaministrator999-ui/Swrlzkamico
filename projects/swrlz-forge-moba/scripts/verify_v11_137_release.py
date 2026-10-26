@@ -34,8 +34,8 @@ for p,meta in r['assets'].items():
  b=(out/p).read_bytes();assert len(b)==meta['bytes'] and hashlib.sha256(b).hexdigest()==meta['sha256'],p
 for token in [
  'SWYRL_ENGINE_DEPLOY_MARKER: V11_137_MEADOW_FIRST_SHEEP_BUILD_DRAG',
- '<title>§wyrl§ Engine · Maker v11.136</title>',
- "window.SWRLZ_FORGE_BUILD={version:'v11.136'",
+ '<title>§wyrl§ Engine · Maker v11.137</title>',
+ "window.SWRLZ_FORGE_BUILD={version:'v11.137'",
  'function atelierSculptPreviewFieldsInstall(){',
  'function atelierSculptGhostDraw(){',
  'attribute vec3 brushSource;',
