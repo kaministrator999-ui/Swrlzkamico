@@ -1,3 +1,11 @@
+## §E v11.139 · Safe Rapid near-corner house magnet (2026-10-26)
+
+Owner Android screenshot (v11.138) showed a red house hologram beside a compact cluster of existing Free Houses, with the exact native validator error **"A diagonal crack is not a sheep passage. Join houses or leave 1.20 m."** This is not a lost touch; the existing v11.124 diagonal clearance rule is correctly rejecting an intermediate narrow slit. The ergonomic weakness is that the prior house snap only magnetizes side-aligned footprints, so a close diagonal corner cannot easily snap flush on the phone.
+
+The v11.139 Rapid-only improvement checks the rejected diagonal house against nearby existing house corners. It proposes the closest **fully flush x-and-z corner** when the correction is within the current sheep-safe-lane width (typically 1.20 m), and calls the full previous native `stCanBuild` validator on that candidate. Only a valid return changes the ghost to green and updates the actual build destination; if another house, collision, boundary or route rule rejects it, the original red rejection remains. It never relaxes the 1.20m clear lane, alters occupied structures, creates a building during preview or auto-places a faraway ghost. Rapid OFF and non-house structures behave as before; v11.138 same-screen Rapid cursor memory remains.
+
+Sealed target: **171 ordered patches, 68 unchanged assets, 6,719,389 HTML bytes**, SHA256 `f605af72628643e87d8fca5d97a08fcba438c43f2d9ffa693e4f6014032ce6fb`. The regression tests the red original, legal corner snapping, occupied-corner refusal, other build kinds, Rapid OFF, and assembled patch/marker. Android visual and gameplay acceptance remains pending after hosted verification.
+
 ## §E v11.138 · Rapid Build remembers last successful build SCREEN position (2026-10-26)
 
 Owner design request: with Rapid ON, the next ghost should start at **the same spot on the player's phone screen as the last successfully built house**, rather than restarting at the sheep or remaining attached to the old house's world coordinates. This allows sheep to move and the follow camera to pan while maintaining a consistent placement cursor position.
