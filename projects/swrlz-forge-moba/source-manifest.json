@@ -187,6 +187,6 @@
     "patches/v11_138_rapid_screen_anchor.py",
     "patches/v11_139_rapid_safe_corner_snap.py"
   ],
-  "finalBytes": 6717316,
-  "finalSha256": "384558ce7af5993f36ef002824455d850fdfebf635a881eea1fe4878931f7385"
+  "finalBytes": 6719389,
+  "finalSha256": "f605af72628643e87d8fca5d97a08fcba438c43f2d9ffa693e4f6014032ce6fb"
 }
