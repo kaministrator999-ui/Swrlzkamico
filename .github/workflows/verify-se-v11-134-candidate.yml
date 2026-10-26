@@ -1,0 +1,40 @@
+name: §E v11.134 rapid OFF, sheep ghost and skill HUD preflight
+on:
+  push:
+    branches: [feature/se-v11-134-rapid-cancel-sheep-seed-skill-house-swap]
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install DOM test harness
+        run: npm install --prefix /tmp/se134-test --no-audit --no-fund jsdom@25.0.1
+      - name: Verify sealed prior v11.133 source and 68 assets
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_133_release.py --output /tmp/se133-base
+      - name: Compile full 166 patch candidate and check JS syntax
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          p=Path('projects/swrlz-forge-moba/source-manifest.json')
+          m=json.loads(p.read_text())
+          assert m['name']=='§wyrl§ Engine v11.133' and len(m['patches'])==165
+          m['name']='§wyrl§ Engine v11.134'
+          m['patches'].append('patches/v11_134_rapid_cancel_sheep_seed_skills_house_swap.py')
+          p.write_text(json.dumps(m,ensure_ascii=False))
+          PY
+          python projects/swrlz-forge-moba/scripts/measure_v11_134_full_chain.py
+          node --check /tmp/se134-full.mjs
+      - name: Test rapid OFF, exact sheep ghost seed and ability/icon layout
+        env:
+          SE_JSDOM_MODULE: /tmp/se134-test/node_modules/jsdom
+          SE_ASSEMBLED_HTML: /tmp/se134-full.html
+        run: node projects/swrlz-forge-moba/tests/rapid_off_sheep_ghost_skill_layout_v11_134.mjs
