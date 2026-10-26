@@ -39,6 +39,17 @@ stRefreshHUD=function(...args){const result=st132HudBase(...args);st132RapidUpda
 // The skill-button pointerup path is still a *selection*, while the next
 // touch and drag on the actual meadow controls the preview. On successful
 // meadow release, keep the chosen tool only if Rapid Build is ON.
+const st132OrderBase=stUiOrderAt;
+stUiOrderAt=function(clientX,clientY){
+ const chosen=stUi.build;
+ if(chosen&&typeof stBuildInput!=='undefined')stBuildInput.outcome=null;
+ const result=st132OrderBase(clientX,clientY);
+ const accepted=chosen&&st132Rapid.on&&stBuildInput?.outcome?.ok;
+ if(accepted){
+  stUi.build=chosen;st126SeedAtSheep();stRefreshHUD(true);
+ }
+ return result;
+};
 const st132BuildBase=stIssueBuild;
 stIssueBuild=function(unit,kind,x,z,rotation=0){
  if(st132Rapid.on&&unit?.order?.action==='build'){
