@@ -1,0 +1,39 @@
+name: §E v11.132 rapid build, raised crossings and occlusion preflight
+on:
+  push:
+    branches: [feature/se-v11-132-meadow-drag-rapid-build]
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Install Three.js and DOM test harness
+        run: npm install --prefix /tmp/se132-tests --no-audit --no-fund three@0.170.0 jsdom@25.0.1
+      - name: Verify previous exact §E v11.131 source
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_131_release.py --output /tmp/se131-release
+      - name: Rebuild complete 164-patch candidate
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('projects/swrlz-forge-moba/source-manifest.json')
+          m=json.loads(p.read_text())
+          assert m['name']=='§wyrl§ Engine v11.131' and len(m['patches'])==163
+          m['name']='§wyrl§ Engine v11.132'
+          m['patches'].append('patches/v11_132_meadow_rapid_underpass_wireframe.py')
+          p.write_text(json.dumps(m,ensure_ascii=False))
+          PY
+          python projects/swrlz-forge-moba/scripts/measure_v11_132_full_chain.py
+          node --check /tmp/se132-full.mjs
+      - name: Test real Three.js wireframe, mobile build gestures and rotation
+        env:
+          SE_THREE_MODULE: /tmp/se132-tests/node_modules/three
+          SE_JSDOM_MODULE: /tmp/se132-tests/node_modules/jsdom
+          SE_ASSEMBLED_HTML: /tmp/se132-full.html
+        run: node projects/swrlz-forge-moba/tests/sheep_rapid_build_underpass_wireframe_v11_132.mjs
