@@ -1,5 +1,5 @@
 name: §E v11.137 isolated candidate source measure
-# Re-run with release verifier expecting current v11.137 title and build marker.
+# Re-run with updated v11.137 touch guard assertion in release verifier.
 on:
   push:
     branches:
