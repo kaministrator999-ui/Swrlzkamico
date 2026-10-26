@@ -7,7 +7,7 @@ p=argparse.ArgumentParser();p.add_argument('--output',required=True)
 out=Path(p.parse_args().output).resolve()
 m=json.loads((ROOT/'source-manifest.json').read_text())
 assert m['name']=='§wyrl§ Engine v11.124'
-assert m['finalArtifact']=='swyrl_engine_v11_123.html'
+assert m['finalArtifact']=='swyrl_engine_v11_124.html'
 assert len(m['patches'])==156
 assert m['patches'][-12:]==['patches/v11_113_general_precision_circle.py','patches/v11_114_circle_viewport_handles.py','patches/v11_115_preview_selection_guard.py','patches/v11_116_precision_touch_camera.py','patches/v11_117_editor_native_callout.py','patches/v11_118_semantic_tool_organization.py','patches/v11_119_unified_mode_inspector.py','patches/v11_120_toolbar_layers_touch.py','patches/v11_121_uncover_component_toolbar.py','patches/v11_122_sitewide_touch_guard.py','patches/v11_123_sheep_lanes_toolbar_controls.py','patches/v11_124_sheep_passable_placement.py']
 subprocess.run(['python',str(ROOT/'build_space.py'),'--output',str(out)],check=True)
