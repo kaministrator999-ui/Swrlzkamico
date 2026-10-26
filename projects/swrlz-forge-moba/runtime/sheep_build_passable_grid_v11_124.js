@@ -88,8 +88,10 @@ stCanBuild=function(kind,x,z,ownerId=null,rotation=0){
     long=axis==='x'?'halfZ':'halfX';
    const lo=fit[axis]<other.pos[axis]?fit:other;
    const hi=lo===fit?other:fit;
-   const left=(lo===fit?fit[axis]:other.pos[axis])+(lo===fit?halfX:other.halfX);
-   const right=(hi===fit?fit[axis]:other.pos[axis])-(hi===fit?halfX:other.halfX);
+   const left=(lo===fit?fit[axis]:other.pos[axis])+
+     (lo===fit?(axis==='x'?halfX:halfZ):other[half]);
+   const right=(hi===fit?fit[axis]:other.pos[axis])-
+     (hi===fit?(axis==='x'?halfX:halfZ):other[half]);
    const start=Math.max(fit[cross]-(cross==='x'?halfX:halfZ),
                         other.pos[cross]-other[long]);
    const end=Math.min(fit[cross]+(cross==='x'?halfX:halfZ),
