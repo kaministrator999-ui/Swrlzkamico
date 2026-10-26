@@ -1,0 +1,26 @@
+name: §E v11.125 placement and honest-gap candidate preflight
+on:
+  push:
+    branches: [feature/sheep-gap-builder-exit-v11-125]
+permissions:
+  contents: read
+jobs:
+  candidate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Build exact previous sealed release
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_124_release.py --output /tmp/se-v11124-release
+      - name: Reassemble additive candidate and inspect syntax
+        run: |
+          python projects/swrlz-forge-moba/scripts/build_v11_125_candidate.py
+          node --check /tmp/se-v11125.mjs
+          SE_ASSEMBLED_HTML=/tmp/se-v11124-release/index.html node projects/swrlz-forge-moba/tests/sheep_passable_placement_v11_124.mjs
+      - name: Run v11.125 sheep exit and truthful-local-gap CPU cases
+        run: node projects/swrlz-forge-moba/tests/sheep_gap_builder_exit_v11_125.mjs
