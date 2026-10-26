@@ -64,7 +64,7 @@ if(process.env.SE_ASSEMBLED_HTML){
  for(const tok of [
   'SWYRL_ENGINE_DEPLOY_MARKER: V11_127_CLOVER_SHEEP_SWURV_AND_STABLE_EDITOR_BOOT',
   'st127BuildOrganicPrototype','st127AfterUpdateBase','se127-editor-boot',
-  'st127InstallBootGate','st126InstallStarterRoutes','stHonestGapLocalClear'
+  'se127InstallBootGate','st126InstallStarterRoutes','stHonestGapLocalClear'
  ])assert.ok(s.includes(tok),'missing source integration '+tok);
 }
 console.log('SE_V11127_ORGANIC_CLOVER_SHEEP_GAIT_POUNCE_AND_EDITOR_BOOT_PASS',
