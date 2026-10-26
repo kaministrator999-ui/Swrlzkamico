@@ -47,7 +47,7 @@ const ctx={THREE,document:doc,window:dom.window,$,scene,perspectiveCamera:camera
  stNewBuilding:(kind,x,z,owner)=>({id:'new',kind,owner}),
  stCanBuild:()=>({ok:true,kind:'st-farm',x:6,z:8,rotation:0}),
  stBuildApproach:()=>({x:5,z:8}),
- stResult:(ok,reason)=>({ok,reason}),
+ stResult:(ok,reason,extra={})=>({ok,reason,...extra}),
  stCommand:(action)=>{commands.push(action);return {ok:true}},
  stMobileStickPoint:()=>{stMobile.strength=.75;},
  stUpdateSheep:()=>{me.order=null;},stPlaceUnit:()=>{},
