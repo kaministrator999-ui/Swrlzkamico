@@ -1,0 +1,40 @@
+name: §E v11.127 Clover organic sheep and stable editor boot preflight
+on:
+  push:
+    branches: [feature/se-v11-127-organic-sheep-boot-gate]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Prepare geometry library for native starter model integration test
+        run: npm install --prefix /tmp/se127-geometry --no-audit --no-fund three@0.170.0
+      - name: Rebuild sealed previous §E v11.126 source unchanged
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_126_release.py --output /tmp/se-v11126-release
+      - name: Measure and syntax-check exact full 159-patch candidate
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('projects/swrlz-forge-moba/source-manifest.json')
+          m=json.loads(p.read_text())
+          assert m['name']=='§wyrl§ Engine v11.126' and len(m['patches'])==158
+          m['name']='§wyrl§ Engine v11.127'
+          m['patches'].append('patches/v11_127_clover_sheep_editor_boot.py')
+          p.write_text(json.dumps(m,ensure_ascii=False))
+          PY
+          python projects/swrlz-forge-moba/scripts/measure_v11_127_full_chain.py
+          node --check /tmp/se-v11127-full.mjs
+      - name: Test actual starter sheep organic mesh, gait swurv and startup gate
+        env:
+          SE_THREE_MODULE: /tmp/se127-geometry/node_modules/three
+          SE_ASSEMBLED_HTML: /tmp/se-v11127-full.html
+        run: node projects/swrlz-forge-moba/tests/sheep_clover_editor_boot_v11_127.mjs
