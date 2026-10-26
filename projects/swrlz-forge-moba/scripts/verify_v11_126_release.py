@@ -145,7 +145,7 @@ for token in [
  'height:min(68dvh,700px)!important;',
 ]:assert token in s,token
 assert 'stLanesEjection=()=>null;' not in s
-subprocess.run(['node',str(ROOT/'tests/sheep_gap_builder_exit_v11_125.mjs')],check=True,env={**os.environ,'SE_ASSEMBLED_HTML':str(out/'index.html')})
+subprocess.run(['node',str(ROOT/'tests/sheep_gap_builder_exit_v11_125.mjs')],check=True)
 subprocess.run(['node',str(ROOT/'tests/sheep_centered_world_routes_magic_v11_126.mjs')],check=True,env={**os.environ,'SE_ASSEMBLED_HTML':str(out/'index.html')})
 # New preview does not itself call checkpoint, mutate native model data,
 # or apply the brush until the pre-existing explicit Apply handler fires.
