@@ -16,3 +16,12 @@
 #st132RapidBuild:focus-visible{outline:3px solid white;outline-offset:3px}
 #st132RapidBuild[hidden]{display:none!important}
 @media(min-width:900px){#st132RapidBuild{left:calc(50% + 130px);top:58%}}
+
+#st132Rotate{
+ position:fixed;left:calc(50% + clamp(58px,10vw,120px));top:calc(53% + 72px);
+ transform:translateX(-50%);z-index:2250;
+ width:46px;height:46px;border-radius:50%;
+ border:2px solid #77d7c4;background:#163347e8;color:#edffff;
+ font:800 29px/1 system-ui,sans-serif;touch-action:manipulation;
+}
+#st132Rotate[hidden]{display:none!important}
