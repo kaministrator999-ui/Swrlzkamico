@@ -1,3 +1,9 @@
+## §E v11.126 · Live production verified (2026-10-26)
+
+**Production confirmed:** [GitHub deployment Actions #40344188092](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40344188092) completed **SUCCESS** (deployment request `ce590802d9e9a2403bd359fc85cbec04ea5a67ae`). Hugging Face static Space `https://kamiloki-swrlz-forge-moba.static.hf.space/` reported **RUNNING**, revision `eb0fd0ecf3286501ae62faff0664e50416913b80`. Live verification attempt **1** matched the exact v11.126 compiled HTML SHA-256 `dbbc8d1ac954e3e93ec9f8feb74ed0371575c6378a9b27ef77c021c20dabcec5`, **6,651,868 bytes**, **158 patches**, all **68 bundled assets**, and the `SOURCE.json` receipt. This certifies production publishing/integrity, **not manual Android gameplay acceptance**.
+
+**User acceptance next:** open a newly loaded canonical **Grand Moonbell Wildwood Sheep Tag starter** to see three indestructible prebuilt raised crossings; a previously saved personal map is deliberately not overwritten. Tap a house skill, verify its ghost starts on the controlled sheep, drag within the meadow and release to build. Verify the sheep can traverse both ramps/decks without jumping; Mirror ready at level 1 with a 12 s cooldown; Totem becomes usable after constructing one house, with 25 s repeats. Player-built structures remain demolishable. Preserve report of any Android-specific problem and exact game mode/map source.
+
 ## §E v11.126 · Sheep-centered building, permanent raised routes, faster sheep abilities (2026-10-26)
 
 Owner-requested improvements extend the verified v11.125 safe house placement and local collision-gap indicators. On tapping a building skill, its **live green/red build preview starts exactly at the controlled sheep's position** instead of requiring a skill-button drag. Move it by dragging on the meadow, releasing to commit through the native build/placement pipeline. Dragging from the skill ring remains optional. Merely previewing never builds.
