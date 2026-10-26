@@ -1,0 +1,17 @@
+/* §E v11.127 — cover the unfinished legacy/default editor shell.
+   The real editor remains mounted so all initialization/measurements work. */
+html:not(.se127-editor-ready) body::after{
+ content:'§wyrlz Engine  ·  Restoring your workspace…';
+ position:fixed;inset:0;z-index:2147483600;display:flex;
+ align-items:center;justify-content:center;padding:24px;
+ background:#0b1420;color:#cce9e6;
+ font:600 clamp(14px,2.3vw,20px)/1.5 system-ui,sans-serif;
+ letter-spacing:.03em;text-align:center;
+ pointer-events:all;touch-action:none;
+}
+@media(prefers-reduced-motion:no-preference){
+ html:not(.se127-editor-ready) body::after{
+  animation:se127BootSoftPulse 1.6s ease-in-out infinite alternate;
+ }
+ @keyframes se127BootSoftPulse{from{color:#93c8c4}to{color:#f0faf4}}
+}

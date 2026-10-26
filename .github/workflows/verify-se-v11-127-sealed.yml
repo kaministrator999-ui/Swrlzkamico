@@ -1,0 +1,32 @@
+name: §E v11.127 sealed organic sheep and editor boot verification
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/source-manifest.json"
+      - "projects/swrlz-forge-moba/scripts/verify_v11_127_release.py"
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install Three.js for real organic geometry smoke test
+        run: npm install --prefix /tmp/se127-geometry --no-audit --no-fund three@0.170.0
+      - name: Verify sealed 159-patch engine, 68 assets, original gameplay contracts
+        run: |
+          python projects/swrlz-forge-moba/scripts/verify_v11_127_release.py --output /tmp/se-v11127-release
+          node --check /tmp/se-v11127-release-module.mjs
+          node projects/swrlz-forge-moba/tests/sheep_passable_placement_v11_124.mjs
+      - name: Verify genuine Clover animal mesh, swurv, boot and integrated source
+        env:
+          SE_THREE_MODULE: /tmp/se127-geometry/node_modules/three
+          SE_ASSEMBLED_HTML: /tmp/se-v11127-release/index.html
+        run: node projects/swrlz-forge-moba/tests/sheep_clover_editor_boot_v11_127.mjs

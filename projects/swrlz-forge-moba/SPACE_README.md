@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.126
+title: §wyrl§ Engine v11.127
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,14 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.127 · Native Clover organic sheep + smoother editor startup (2026-10-26)
+
+The owner requested that Sheep Tag reuse **Clover · Meadow Sheep**, the existing native Model Atelier organic sheep generator, and give the sheep a more lifelike gait with occasional small, cute pouncing swurvs. The runtime now builds that genuine authored organic geometry *once* at mobile-adjusted tessellation, preserving sculpted fleece, muzzle, face, ears and split hooves. Mesh resources are shared across Sheep Tag sheep; native actor ownership, collision radii, joystick/pathfinding, saves, capture/rescue, and distance-based leg gait remain unchanged. The visual-only pounce triggers occasionally **while moving**, applies small body hop, head tilt and slight sideways *appearance* then returns to walk. Disabled for captured, upper-route, falling and building sheep. Failure to build the organic model retains the existing fallback sheep.
+
+The owner also documented a visible editor startup handoff: temporarily showing an old/default empty editor shell before the current project and toolbars finish restoring. v11.127 inserts the boot style into the document head, covering only the *intermediate visible shell* with a minimal loading surface while project and toolbar signals settle. It reveals the fully restored current editor (or uses an 11 s safety fallback) rather than showing stale controls and then snapping. Rendering/initialization continues unobstructed beneath the overlay; existing persisted projects/data are **not reset or overwritten**. Reduced-motion preference is honored.
+
+**[Full source + real Three.js sheep regression #40348104741](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40348104741) PASS.** Exact previous v11.126 seal rebuilt; all 159 patches independently assembled; compiled HTML syntax passed. Genuine organic sheep generator created **28 parts / 29,332 triangles**, with shared geometry for two animals. Automated tests covered ears/fleece/hooves, four walk pivots, rare cosmetic pounce and no physics drift, old animation callback preservation, editor boot gate and no serialized Object3D metadata. Full build: **6,660,681 bytes**, SHA-256 **`a6dc826751d28b0385971cd32fbb41df47131ea2d2b1d2aeeee1f1aac45e584a`**, 159 patches, original 68 assets. Production deployment and owner's actual Android appearance/startup test remain separate gates.
 
 ## §E v11.126 · Sheep-centered building, permanent raised routes, faster sheep abilities (2026-10-26)
 

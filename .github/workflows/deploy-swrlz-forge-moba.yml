@@ -33,13 +33,13 @@ jobs:
         with:
           node-version: "22"
 
-      - name: Package the verified v11.126 source for deployment
+      - name: Package the verified v11.127 source for deployment
         run: |
           set -euo pipefail
-          python projects/swrlz-forge-moba/scripts/verify_v11_126_release.py --output dist/swrlz-forge-moba
+          python projects/swrlz-forge-moba/scripts/verify_v11_127_release.py --output dist/swrlz-forge-moba
           test -s dist/swrlz-forge-moba/index.html
           test -s dist/swrlz-forge-moba/README.md
-          grep -q "SWYRL_ENGINE_DEPLOY_MARKER: V11_126_SHEEP_CENTERED_BUILD_PERMANENT_ROUTES_READY_SKILLS" dist/swrlz-forge-moba/index.html
+          grep -q "SWYRL_ENGINE_DEPLOY_MARKER: V11_127_CLOVER_SHEEP_SWURV_AND_STABLE_EDITOR_BOOT" dist/swrlz-forge-moba/index.html
           grep -q "sdk: static" dist/swrlz-forge-moba/README.md
           node --check dist/swrlz-forge-moba-module.mjs
           # Ensure runtime labels, source seal and requested deployment agree.
@@ -130,7 +130,7 @@ jobs:
               "sourceRepository": "kaministrator999-ui/Swrlzkamico",
               "sourceCommit": source_sha,
               "sourcePath": "projects/swrlz-forge-moba",
-              "sourceVersion": "v11.126",
+              "sourceVersion": "v11.127",
               "engineName": "§wyrl§ Engine",
               "sourceSha256": source["finalSha256"],
               "sourceBytes": source["finalBytes"],
@@ -153,7 +153,7 @@ jobs:
           print(json.dumps(receipt, indent=2))
           PY
 
-      - name: Verify live Space serves the complete §wyrl§ Engine v11.126 package
+      - name: Verify live Space serves the complete §wyrl§ Engine v11.127 package
         env:
           SOURCE_SHA: ${{ github.sha }}
           APP_URL: ${{ steps.deploy_space.outputs.app_url }}
@@ -167,8 +167,8 @@ jobs:
           import json
           from pathlib import Path
           official=json.loads(Path('dist/swrlz-forge-moba/SOURCE.json').read_text())
-          assert len(official['patches'])==158
-          assert official['patches'][-1]=='patches/v11_126_centered_build_permanent_routes_skills.py'
+          assert len(official['patches'])==159
+          assert official['patches'][-1]=='patches/v11_127_clover_sheep_editor_boot.py'
           expected={'episodes/ghosts-in-different-forms-ep01.html',
                     'scenes/ghosts-in-different-forms-ep01.swyrl.json',
                     'scenes/ghosts-in-different-forms-ep01-storybook.swyrl.json',
@@ -225,7 +225,7 @@ jobs:
           PYCODE
               LIVE_HTML_SHA="$(sha256sum /tmp/forge-live-source.html | cut -d ' ' -f1)"
               LIVE_HTML_BYTES="$(wc -c < /tmp/forge-live-source.html)"
-              if grep -q "SWYRL_ENGINE_DEPLOY_MARKER: V11_126_SHEEP_CENTERED_BUILD_PERMANENT_ROUTES_READY_SKILLS" /tmp/forge-live.html && [ "$LIVE_HTML_SHA" = "$EXPECTED_HTML_SHA" ] && [ "$LIVE_HTML_BYTES" -eq "$EXPECTED_HTML_BYTES" ]; then
+              if grep -q "SWYRL_ENGINE_DEPLOY_MARKER: V11_127_CLOVER_SHEEP_SWURV_AND_STABLE_EDITOR_BOOT" /tmp/forge-live.html && [ "$LIVE_HTML_SHA" = "$EXPECTED_HTML_SHA" ] && [ "$LIVE_HTML_BYTES" -eq "$EXPECTED_HTML_BYTES" ]; then
                 ASSET_OK=1
                 while IFS= read -r asset; do
                   mkdir -p "/tmp/forge-assets/$(dirname "$asset")"
@@ -263,17 +263,17 @@ jobs:
           print('LIVE_V10_9_ARTWORK_SCENES_SCREENING_AND_SOURCE_RECEIPT_MATCH')
           PYCODE
                   then
-                    echo "Verified: exact §wyrl§ Engine v11.126, all bundled artwork/scenes/screening, and SOURCE receipt."
+                    echo "Verified: exact §wyrl§ Engine v11.127, all bundled artwork/scenes/screening, and SOURCE receipt."
                     exit 0
                   fi
                 fi
                 echo "Editor HTML arrived but bundled anime assets or SOURCE receipt did not match yet."
               fi
-              echo "Live page responded, but the exact v11.126 artifact was not present yet."
+              echo "Live page responded, but the exact v11.127 artifact was not present yet."
             fi
             sleep 10
           done
-          echo "::error::Hugging Face upload completed, but the live Space did not serve the complete v11.126 package within the verification window."
+          echo "::error::Hugging Face upload completed, but the live Space did not serve the complete v11.127 package within the verification window."
           exit 1
 
       - name: Preserve deploy receipt
