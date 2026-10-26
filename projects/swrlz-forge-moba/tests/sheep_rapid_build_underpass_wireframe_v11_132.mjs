@@ -26,7 +26,7 @@ const cam=new THREE.PerspectiveCamera(50,1,.1,100);
 cam.position.set(0,10,8);cam.lookAt(0,0,0);cam.updateMatrixWorld(true);
 const ctx={
  THREE,window,document:window.document,console,
- stSession:s,stUi:{shown:true,build:'st-farm'},paused:false,
+ stSession:s,stUi:{shown:true,build:'st-farm'},stMobile:{pointer:null,unit:null,strength:0},paused:false,
  '$':id=>window.document.getElementById(id),
  stInstallUI:()=>{},stRefreshHUD:()=>{},
  stNewBuilding:(kind,x,z,owner,authored)=>{created++;return {id:'player-'+created,kind,owner};},
