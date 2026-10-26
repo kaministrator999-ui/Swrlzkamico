@@ -39,6 +39,26 @@ stArchiveSplit=function(s,unit,payload={}){
  s.message='Mirror! Your decoy darts away while your sheep keeps moving.';
  return stResult(true,'',{cooldown:s.rules.splitCooldown,lifetime:copy.archiveExpires-s.elapsed,decoyId:copy.id,direction:angle});
 };
+// Fade the mirrored actor in its final 0.7 seconds. Original sheep
+// materials are never modified: stArchiveCloneSheep creates independent
+// clone materials and the native archive cleanup disposes only that clone.
+const st131AfterBase=stArchiveAfterUpdate;
+stArchiveAfterUpdate=function(s,dt,t){
+ const result=st131AfterBase(s,dt,t);
+ if(!s?.archive?.decoys)return result;
+ for(const copy of s.archive.decoys){
+  if(!Number.isFinite(copy.st131MirrorAngle))continue;
+  const alpha=Math.min(1,Math.max(0,(copy.archiveExpires-s.elapsed)/.7));
+  if(alpha>=1)continue;
+  for(const entry of s.archive.materialStates.get(copy.actor)||[]){
+   for(const material of entry.clones||[]){
+    material.opacity*=alpha;material.transparent=true;
+    if(alpha<.45)material.depthWrite=false;
+   }
+  }
+ }
+ return result;
+};
 let st131Pointer=null,st131LastPointerCast=-Infinity;
 function st131MirrorCast(angle){
  if(!stSession||stSession.simulate||stSession.winner||paused)return false;
