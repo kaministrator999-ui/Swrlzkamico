@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.139
+title: §wyrl§ Engine v11.140
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,12 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.140 · Sheep Tag starter 3D main menu (2026-10-26)
+
+Open **Sheep Tag · Moonbell Meadow** to see a dedicated title screen with one large **Start Game** button over a genuine 3D cinematic: orbiting meadow camera, sheep running and constructing houses, and a scripted wolf chase/tag loop. The visual-only demo uses the existing engine frame; it never creates a real match or modifies authored map actors. Pressing Start Game cleans up the overlay/demo, restores the original camera, then uses the native Play workflow, including the correct actual seven-minute game with real bots, resources, and rules. Leaving the starter cleans up the temporary menu scene. All other editor projects remain unaffected.
+
+**Sealed release:** 172 ordered patches, 68 original assets, 6,729,010 HTML bytes, SHA-256 `639cca010358ccf8a1c1c129ab1cfc99b45e32854ecd4802ff3d3610a32d39f7`. Source tests are separate from real Android visual acceptance.
 
 ## §E v11.139 · Safer, easier Rapid house corner placement (2026-10-26)
 
