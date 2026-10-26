@@ -168,7 +168,7 @@ jobs:
           from pathlib import Path
           official=json.loads(Path('dist/swrlz-forge-moba/SOURCE.json').read_text())
           assert len(official['patches'])==168
-          assert official['patches'][-2]=='patches/v11_134_rapid_cancel_sheep_seed_skills_house_swap.py'
+          assert official['patches'][-3]=='patches/v11_134_rapid_cancel_sheep_seed_skills_house_swap.py'
           assert official['patches'][-2]=='patches/v11_135_sheep_ghost_relative_drag_hud.py'
           assert official['patches'][-1]=='patches/v11_136_sheep_drag_capture_cleanup.py'
           expected={'episodes/ghosts-in-different-forms-ep01.html',
