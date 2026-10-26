@@ -1,0 +1,24 @@
+name: §E v11.135 targeted sheep-origin preview and phone HUD validation
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Rebuild sealed engine and validate original assets
+        run: |
+          python projects/swrlz-forge-moba/scripts/verify_v11_135_release.py --output /tmp/se135-release
+          node --check /tmp/se135-release-module.mjs
+      - name: Verify exact sheep-origin drag, commit and HUD
+        env:
+          SE_ASSEMBLED_HTML: /tmp/se135-release/index.html
+        run: node projects/swrlz-forge-moba/tests/sheep_ghost_relative_drag_hud_v11_135.mjs

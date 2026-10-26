@@ -1,0 +1,48 @@
+/* §E v11.135 · physical slot swap: Free House takes Fortified's former
+   upper-left slot and becomes larger; Fortified takes Free's former slot.
+   Income stays at its v11.134 bottom-right location. */
+body.st-touch-controls #sheepTagHUD #stBuildFarm{
+ right:calc(12px + var(--st-outer-x))!important;
+ bottom:var(--st-ring-mid)!important;
+ width:calc(var(--st-home-size)*1.12)!important;
+ height:calc(var(--st-home-size)*1.12)!important;
+ min-width:58px!important;min-height:58px!important;
+ border-color:#f5d882!important;
+ z-index:52!important;
+}
+body.st-touch-controls #sheepTagHUD #stBuildFarm .st-skill-icon{
+ width:calc(var(--st-home-size)*.66)!important;
+ height:calc(var(--st-home-size)*.66)!important;
+}
+body.st-touch-controls #sheepTagHUD #stBuildFort{
+ right:calc(12px + var(--st-outer-diag-x))!important;
+ bottom:calc(var(--st-ring-mid) - var(--st-outer-diag-y))!important;
+ width:var(--st-build-size)!important;
+ height:var(--st-build-size)!important;
+ z-index:51!important;
+}
+body.st-touch-controls #sheepTagHUD #stBuildFort .st-skill-icon{
+ width:calc(var(--st-build-size)*.55)!important;
+ height:calc(var(--st-build-size)*.55)!important;
+}
+/* Mirror and Totem are two distinct physical buttons. Mirror is below
+   Totem, above the House/Income area; don't inherit hidden utility-panel
+   visibility or let building rings paint over this skill. */
+body.st-touch-controls:not(.st-touch-wolf) #sheepTagHUD #stAbilityRing #stSplit:not([hidden]){
+ position:fixed!important;
+ display:flex!important;
+ visibility:visible!important;
+ right:calc(12px + var(--st-inner-x))!important;
+ bottom:calc(var(--st-ring-mid) - var(--st-inner-y) + 1px)!important;
+ width:var(--st-ability-size)!important;
+ height:var(--st-ability-size)!important;
+ border-radius:50%!important;
+ pointer-events:auto!important;
+ z-index:108!important;
+}
+body.st-touch-controls #sheepTagHUD #stAbilityRing #stSplit[hidden]{
+ display:none!important;
+}
+body.st-touch-controls #sheepTagHUD #stAbilityRing #stTotem:not([hidden]){
+ z-index:107!important;
+}
