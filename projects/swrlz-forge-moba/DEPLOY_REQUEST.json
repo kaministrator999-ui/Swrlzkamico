@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.134",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_134_RAPID_CANCEL_SHEEP_MARKER_VISIBLE_SKILLS_HOUSE_SWAP",
-  "reason": "Owner requests Rapid Build OFF to cancel any unplaced building ghost and exit tool mode, new building selection to immediately show ghost at the controlled sheep position, restore a missing sheep skill in mobile ability HUD, and swap the physical Free House and Income House buttons so Income occupies bottom-right. §E v11.134 provides explicit OFF transition cleanup only for unplaced preview/gesture, wraps every successful build selection and sheep seed to show a ghost at exact sheep world X/Z regardless of snapped fit, displays both Mirror/Totem slots for sheep (custom-disabled ability visible but disabled), and uses CSS to swap Free/Income locations without changing costs, shortcuts or game logic. Feature full build+DOM tests Actions 40385878910 SUCCESS; sealed main source integrity Actions 40386283114 SUCCESS. Exact 166-patch HTML 6,700,691 bytes; SHA256 71a6056da0404f81f09337a2dddb45c87b81450ce49b327f8525fccd5d4efdbe; 68 bundled assets. Deploy only through dedicated §E workflow with live source, html hash, and asset verification. Actual Android acceptance pending.",
-  "sourceCommit": "a2c274ede9bdfbef75c7aa97676c7240c62305e4",
-  "sourceIntegritySha256": "71a6056da0404f81f09337a2dddb45c87b81450ce49b327f8525fccd5d4efdbe"
+  "releaseVersion": "v11.135",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_135_SHEEP_ORIGIN_RELATIVE_DRAG_FREE_FORT_MIRROR",
+  "reason": "Owner Android screenshot: building hologram/grid remained near lower-right skill icons instead of starting at controlled sheep; Free House needed bigger control and to swap physical slots with Fortified House; sheep Mirror decoy icon missing next to Totem. §E v11.135 suppresses active pointer re-aim by legacy camera update, seeds ghost at exact sheep and drags relative to first meadow anchor, commits the exact native-validated visual placement, moves/enlarges Free and swaps Fortified, restores separate visible Mirror/Totem HUD slots while honoring rules. Wolf AI/skills, owl scout idea, Chat/Core, older assets and 166 historical patches untouched. Candidate isolated full verifier GitHub Actions 40391947354 SUCCESS: 167 ordered patches, 68 original assets, 6,708,052 HTML bytes, SHA256 40cf34d1322b071812e0061d25a3be5353a4ad81820714d32eb06608161a09b5. Publish only dedicated §E static Hugging Face pipeline; require exact served HTML, marker, SOURCE.json and asset audit. Real Android owner gameplay acceptance remains pending.",
+  "sourceCommit": "56a1f4a6d0a5229002d332f5133c8cfe4077cb07",
+  "sourceIntegritySha256": "40cf34d1322b071812e0061d25a3be5353a4ad81820714d32eb06608161a09b5"
 }
