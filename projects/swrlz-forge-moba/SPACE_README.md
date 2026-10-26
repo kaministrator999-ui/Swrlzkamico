@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.132
+title: §wyrl§ Engine v11.133
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,16 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.133 · Rapid next to Income, touchable, and sheep-origin build ghost persists (2026-10-26)
+
+**Owner's actual Android screenshot and test:** §E v11.132 rendered the circular Rapid toggle around mid-screen as an unexpectedly **small square**; owner could not turn it on or off. The house skill also frequently failed to leave a working holographic preview after tapping/dragging, although the **cyan sheep occlusion wireframe already worked**. Owner specified Rapid's intended location **immediately left of the Income house icon in the bottom-right build cluster**.
+
+**Root causes and fix:** The native Sheep Tag HUD root has `pointer-events:none` and only certain child controls explicitly re-enable pointer input; v11.132's free-floating Rapid button inherited the no-pointer policy. The generic HUD button's higher selector specificity also overrode Rapid's circular border. v11.133 mounts Rapid/Rotate inside the actual `.st-builds` skill cluster and positions the circular Rapid ON/OFF icon to the left of Income, with `pointer-events:auto!important`, accessible pressed state, and strong circle styling. Rotation remains context-sensitive.
+
+A second, independent defect: touching the House skill caused native `pointerup` to select the tool and seed its preview at the sheep, **then Chrome dispatched a synthesized click** to the skill button, running `stUiChooseBuild(kind)` again. That function **toggles the already-selected build tool OFF**, removing the hologram. The fix suppresses just the one matching touch-derived click after a handled skill pointer release, not keyboard, mouse or subsequent intentional taps. The ghost is also seeded while the button is held without triggering the old invalid-touch hide path. A continuous drag from icon onto clear meadow now moves the preview when the finger reaches valid ground; a normal tap followed by meadow drag also remains supported. If a skill drag ends above HUD/blocked ground, the selected tool and sheep-origin preview are retained.
+
+**[Full source + Android click/ghost regression #40381957434](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40381957434) PASS:** exact prior v11.132 seal reconstructed; 165 patches compiled and JavaScript syntax checked, `jsdom` reproduced synthetic touch click and verified selection persistence, keyboard/mouse input, clickable Rapid, parent-location near Income, circle/ON/OFF CSS, meadow child canvas hits and all previous §E gameplay integrations. Exact build **6,696,326 bytes**, SHA-256 **`2c2b40a507bc91950479ac9983eb365c6c5d9319a5e85c9fe3b7ac18f27860b8`**, 165 ordered patches and original 68 assets. Owner's live Android acceptance is still needed after deployment; automated DOM events do not prove real Chrome behavior.
 
 ## §E v11.132 · Dragging sheep-centered hologram, Rapid Build, rotated raised crossings and occlusion wireframes (2026-10-26)
 

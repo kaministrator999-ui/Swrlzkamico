@@ -1,0 +1,41 @@
+/* §E v11.133: place Rapid immediately LEFT of Income in the
+   bottom-right skill cluster. HUD inherits pointer-events:none, so each
+   detached control must explicitly become a pointer target. */
+body.st-touch-controls #sheepTagHUD .st-builds #st132RapidBuild{
+ position:absolute!important;
+ left:auto!important;top:auto!important;
+ right:162px!important;bottom:3px!important;
+ transform:none!important;
+ width:56px!important;height:56px!important;
+ min-width:56px!important;min-height:56px!important;
+ padding:3px!important;
+ border-radius:50%!important;
+ border:2px solid #7bd9cd!important;
+ background:rgba(10,55,61,.96)!important;color:#effff9!important;
+ z-index:90!important;
+ display:flex;flex-direction:column;align-items:center;justify-content:center;
+ box-sizing:border-box;
+ pointer-events:auto!important;touch-action:manipulation!important;
+ -webkit-user-select:none;user-select:none;
+ box-shadow:0 2px 13px #021821b8;
+}
+body.st-touch-controls #sheepTagHUD .st-builds #st132RapidBuild.active{
+ background:rgba(13,126,93,.96)!important;
+ border-color:#b8ffe6!important;box-shadow:0 0 15px #6fffcb77;
+}
+body.st-touch-controls #sheepTagHUD .st-builds #st132RapidBuild[hidden]{display:none!important}
+body.st-touch-controls #sheepTagHUD .st-builds #st132RapidBuild span{font-size:17px}
+body.st-touch-controls #sheepTagHUD .st-builds #st132RapidBuild b{font-size:8px}
+body.st-touch-controls #sheepTagHUD .st-builds #st132RapidBuild small{font-size:8px}
+body.st-touch-controls #sheepTagHUD .st-builds #st132Rotate{
+ position:absolute!important;left:auto!important;top:auto!important;
+ right:169px!important;bottom:69px!important;
+ transform:none!important;z-index:90!important;
+ width:44px;height:44px;min-width:44px;min-height:44px;
+ border-radius:50%!important;pointer-events:auto!important;
+ touch-action:manipulation!important;
+}
+body.st-touch-controls #sheepTagHUD .st-builds #st132Rotate[hidden]{display:none!important}
+/* Desktop and responsive fallback also need explicit event targets. */
+#sheepTagHUD #st132RapidBuild,
+#sheepTagHUD #st132Rotate{pointer-events:auto!important;border-radius:50%!important}
