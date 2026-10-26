@@ -22,11 +22,6 @@ def apply(html):
  html=once(html,
   "if(source==='skill'&&!stBuildInput.moved){\n  stBuildInputFinish('Tool selected',true);\n  st126SeedAtSheep();\n  stUiFeedback('House ghost ready at your sheep. Drag onto meadow or touch meadow to place.');return;\n }",
   "if(source==='skill'&&event.pointerType!=='mouse'){\n  stBuildInputFinish('Tool selected',true);\n  st135SeedSheepGhost();\n  stUiFeedback('House selected! Drag anywhere on open meadow; release to build, or tap a target.');return;\n }\n if(source==='skill'&&!stBuildInput.moved){\n  stBuildInputFinish('Tool selected',true);\n  st135SeedSheepGhost();\n  stUiFeedback('House selected! Drag on the meadow; release to build.');return;\n }")
- # Make the legacy tooltip truthful. This does NOT introduce an alternative
- # path that could bypass resource/reachability/collision validation.
- html=once(html,
-  "b.title=f.ok?'Drag to place · release to build':stBuildInputFundsMessage(kind);",
-  "b.title=f.ok?'Tap to select · drag anywhere on the meadow · release to build':stBuildInputFundsMessage(kind);")
  html=once(html,
   'SWYRL_ENGINE_DEPLOY_MARKER: V11_136_SHEEP_DRAG_CAMERA_CAPTURE_CLEANUP',
   'SWYRL_ENGINE_DEPLOY_MARKER: V11_137_MEADOW_FIRST_SHEEP_BUILD_DRAG')
