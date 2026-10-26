@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.133",
+  "name": "§wyrl§ Engine v11.134",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_133.html",
+  "finalArtifact": "swyrl_engine_v11_134.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -179,8 +179,9 @@
     "patches/v11_130_second_touch_sheep_seed.py",
     "patches/v11_131_directed_mirror_decoy.py",
     "patches/v11_132_meadow_rapid_underpass_wireframe.py",
-    "patches/v11_133_rapid_tappable_sheep_ghost.py"
+    "patches/v11_133_rapid_tappable_sheep_ghost.py",
+    "patches/v11_134_rapid_cancel_sheep_seed_skills_house_swap.py"
   ],
-  "finalBytes": 6696326,
-  "finalSha256": "2c2b40a507bc91950479ac9983eb365c6c5d9319a5e85c9fe3b7ac18f27860b8"
+  "finalBytes": 6700691,
+  "finalSha256": "71a6056da0404f81f09337a2dddb45c87b81450ce49b327f8525fccd5d4efdbe"
 }

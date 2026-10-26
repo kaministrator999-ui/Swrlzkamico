@@ -1,0 +1,29 @@
+/* §E v11.134 — swap the physical HUD locations, not the building types,
+   costs, keyboard shortcuts or icon identities. Free House moves to the
+   former Income slot; Income moves to the bottom-right former Free slot. */
+body.st-touch-controls #sheepTagHUD #stBuildFarm{
+ right:calc(12px + var(--st-outer-diag-x))!important;
+ bottom:calc(var(--st-ring-mid) - var(--st-outer-diag-y))!important;
+ width:var(--st-build-size)!important;height:var(--st-build-size)!important;
+ border-color:#f5d882!important;
+}
+body.st-touch-controls #sheepTagHUD #stBuildIncome{
+ right:calc(12px + var(--st-outer-end-x))!important;
+ bottom:calc(var(--st-ring-mid) - var(--st-outer-end-y))!important;
+ width:var(--st-home-size)!important;height:var(--st-home-size)!important;
+ border-color:#72d5b7!important;
+}
+body.st-touch-controls #sheepTagHUD #stBuildFarm .st-skill-icon{
+ width:calc(var(--st-build-size)*.55)!important;
+ height:calc(var(--st-build-size)*.55)!important;
+}
+body.st-touch-controls #sheepTagHUD #stBuildIncome .st-skill-icon{
+ width:calc(var(--st-home-size)*.60)!important;
+ height:calc(var(--st-home-size)*.60)!important;
+}
+body.st-touch-controls #sheepTagHUD #stAbilityRing button.st134-rule-disabled{
+ opacity:.65;border-style:dashed!important;filter:grayscale(.35);
+}
+body.st-touch-controls #sheepTagHUD #stAbilityRing button[hidden]{
+ display:none!important;
+}
