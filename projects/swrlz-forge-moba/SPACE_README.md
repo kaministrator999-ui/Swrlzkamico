@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.136
+title: §wyrl§ Engine v11.137
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,12 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.137 · Touch a house, then drag from anywhere on the meadow (2026-10-26)
+
+On phones, dragging a hologram from its sheep-origin position while the finger begins on a bottom-right building button leaves too little travel room. **Touch/pen controls now use two intentional gestures:** (1) tap a house, ramp or walkway skill to select and show the ghost at the sheep; (2) touch anywhere on open meadow and drag the ghost from that new finger anchor, then release to build. A single meadow tap still places at the tapped validated site. The button gesture alone never builds. Desktop mouse direct drag is retained, and native placement and resource validation is unchanged.
+
+Rapid Build continues selecting the same building after successful meadow placement, so players can repeatedly drag from different meadow starting locations without reselecting the button. No wolf changes. Verified source target: 169 ordered patches, 68 assets, 6,711,840 HTML bytes, SHA-256 `674354d6d9f0a0a324000161a002f31b47e56e8a1734f0b260b7adf8c48fa3ce`. Real Android touch acceptance is separate.
 
 ## §E v11.136 · smoother Sheep Tag build drag and capture cleanup (2026-10-26)
 
