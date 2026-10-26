@@ -71,7 +71,7 @@ assert.equal(serial,1,'synthetic click after pointerup cannot duplicate Mirror')
 const denied=ctx.stArchiveSplit(s,unit,{angle:0});
 assert.equal(denied.ok,false,'cooldown blocks repeated cast');
 assert.ok(denied.cooldown>0);
-s.elapsed=decoy.archiveExpires-.35;
+s.elapsed=decoy.archiveExpires-.2;
 ctx.stArchiveAfterUpdate(s,.016,0);
 assert.ok(decoy.material.opacity<.55&&decoy.material.opacity>.1,'last 700ms fade');
 assert.equal(decoy.material.transparent,true);
