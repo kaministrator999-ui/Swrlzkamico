@@ -25,10 +25,6 @@ def apply(html):
  html=html.replace(
    "if (!stTouchPlacementEnabled() || event.pointerType!=='touch' || event.target!==$('viewport') ||",
    "if (!stTouchPlacementEnabled() || event.pointerType!=='touch' || !st132MeadowTarget(event.target) ||")
- # Preserve a selected house after a successful order only when toggled on.
- html=once(html,
-   "stUiFeedback(name + ' ordered. Your sheep will walk to the construction site.');\n       stUi.build = null; stUiClearPreview(); stRefreshHUD(true);",
-   "stUiFeedback(name + ' ordered. Your sheep will walk to the construction site.');\n       if(!st132Rapid.on){stUi.build = null; stUiClearPreview();} stRefreshHUD(true);")
  # Native world pointerup returns the next ghost to the sheep while keeping
  # the selected build kind. A skill tap continues to be selection-only.
  html=once(html,
