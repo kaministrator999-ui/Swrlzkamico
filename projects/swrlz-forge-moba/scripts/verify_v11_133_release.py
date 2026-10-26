@@ -90,7 +90,7 @@ for token in [
  'st131InstallMirrorControl',
  'st131-mirror-cooldown',
  'se130InstallSecondTapProtection',
- 'if(stBuildInput.source===\'skill\')return; // do not aim at the skill icon or finger',
+ 'if(stBuildInput.source===\'skill\'&&!st133CanAimSkillAt(event.clientX,event.clientY))return;',
  'se129InstallProjectTapGuard',
  'se129-project-zoom-guard',
  'se129-project-tap-guard',
