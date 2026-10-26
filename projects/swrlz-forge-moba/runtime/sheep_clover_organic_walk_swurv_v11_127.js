@@ -116,7 +116,7 @@ stArchiveAfterUpdate=function(session,dt,t){
   }
   const phase=(session.elapsed-unit.st127PounceAt)/.57;
   const leap=phase>=0&&phase<1&&!restricted?Math.sin(Math.PI*phase):0;
-  const bounce=moving&&!restricted?.023*Math.sin((unit.walkDistance||0)*17+unit.phase):0;
+  const bounce=moving&&!restricted ? .023*Math.sin((unit.walkDistance||0)*17+unit.phase) : 0;
   // root local visual offset: physically harmless, no change to unit.pos.
   rig.position.set(leap*.042*(unit.st127PounceDirection||1),Math.max(0,bounce)+leap*.13,0);
   rig.rotation.set(leap*.095,leap*.13*(unit.st127PounceDirection||1),leap*.11*(unit.st127PounceDirection||1));
