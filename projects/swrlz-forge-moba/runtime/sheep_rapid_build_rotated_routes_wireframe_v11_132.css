@@ -1,0 +1,18 @@
+/* A mid-screen, thumb-accessible toggle that doesn't move the joystick,
+   keyboard or the already authored tool strip. */
+#st132RapidBuild{
+ position:fixed;left:calc(50% + clamp(58px,10vw,120px));top:53%;
+ transform:translate(-50%,-50%);z-index:2250;
+ width:70px;height:70px;border-radius:50%;
+ display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
+ border:2px solid #6b92b1;background:rgba(11,34,48,.85);
+ color:#d8f6f5;box-shadow:0 4px 17px #071322a6;
+ font:700 10px/1 system-ui,sans-serif;
+ touch-action:manipulation;user-select:none;-webkit-user-select:none;
+}
+#st132RapidBuild span{font:700 19px/.95 system-ui,sans-serif}
+#st132RapidBuild small{font:800 9px/1 system-ui,sans-serif;letter-spacing:.08em}
+#st132RapidBuild.active{border-color:#75ffe0;background:rgba(8,91,77,.93);color:#f2fff8;box-shadow:0 0 16px #6dffcc75}
+#st132RapidBuild:focus-visible{outline:3px solid white;outline-offset:3px}
+#st132RapidBuild[hidden]{display:none!important}
+@media(min-width:900px){#st132RapidBuild{left:calc(50% + 130px);top:58%}}
