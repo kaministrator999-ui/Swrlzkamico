@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.138",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_138_RAPID_LAST_BUILD_SCREEN_ANCHOR",
-  "reason": "Owner requested Rapid Build remember the screen position of the last successfully placed house after the sheep and camera move, not the old world coordinates. v11.138 records normalized on-screen coordinates of exact native-validated built center before preview removal, reprojects ghost against current follow camera while idle, and moves next ghost using new meadow finger delta. First build still sheep-centered; canceled placements never change memory; Rapid OFF, Stop, changed session or controlled sheep reset/fence cache. Camera idle refresh is throttled; no building orders are issued until a valid native release. Preserves all previous construction, cost, collision, rapid repeats, performance, wolves, original 68 assets and §wyrlz Engine workflow. Source verifier candidate 40403969385 PASSED: 170 ordered patches, 68 original assets, 6,717,316 bytes, SHA256 384558ce7af5993f36ef002824455d850fdfebf635a881eea1fe4878931f7385. Require hosted exact HTML and SOURCE.json audit before claim live. Android touch feel acceptance remains pending.",
-  "sourceCommit": "974b4e846e98968b3e9e29156a2a0a8cfe9218c4",
-  "sourceIntegritySha256": "384558ce7af5993f36ef002824455d850fdfebf635a881eea1fe4878931f7385"
+  "releaseVersion": "v11.139",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_139_SAFE_RAPID_CORNER_SNAP",
+  "reason": "Owner Android screenshot v11.138: red free-house preview beside a compact row of houses, with native warning 'A diagonal crack is not a sheep passage. Join houses or leave 1.20 m.' Root: safe snap worked for side-aligned buildings but not small near-diagonal corner offsets. v11.139 preserves original 1.20 m sheep clearance and all native collision/resource/path rules. Only Rapid ON + exact diagonal rejection proposes a nearby flush x+z corner; full previous stCanBuild validator must accept it or the original red error remains. No wolf, multiplayer, or normal build changes. Sealed source validated 171 patches/68 assets, 6,719,389 bytes SHA256 f605af72628643e87d8fca5d97a08fcba438c43f2d9ffa693e4f6014032ce6fb. Candidate CI #40414592828 PASS including near-corner valid, occupied denial, normal mode unchanged, original sheep tests. Require exact served HTML, SOURCE.json, assets audit. Owner actual Android acceptance remains pending.",
+  "sourceCommit": "49853d87b41edb5a7ec7a204805958f2527b1eae",
+  "sourceIntegritySha256": "f605af72628643e87d8fca5d97a08fcba438c43f2d9ffa693e4f6014032ce6fb"
 }
