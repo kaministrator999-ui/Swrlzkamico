@@ -1,0 +1,29 @@
+name: §E v11.130 sealed second-touch and sheep construction preflight
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/source-manifest.json"
+      - "projects/swrlz-forge-moba/scripts/verify_v11_130_release.py"
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - uses: actions/setup-node@v4
+        with: {node-version: "22"}
+      - name: Install DOM test framework
+        run: npm install --prefix /tmp/se130-dom --no-audit --no-fund jsdom@25.0.1
+      - name: Verify exact 162-patch release, source seal and 68 original assets
+        run: |
+          python projects/swrlz-forge-moba/scripts/verify_v11_130_release.py --output /tmp/se130-release
+          node --check /tmp/se130-release-module.mjs
+      - name: Test second touch and native sheep build handler in official HTML
+        env:
+          SE_JSDOM_MODULE: /tmp/se130-dom/node_modules/jsdom
+          SE_ASSEMBLED_HTML: /tmp/se130-release/index.html
+        run: node projects/swrlz-forge-moba/tests/second_touchstart_sheep_build_v11_130.mjs
