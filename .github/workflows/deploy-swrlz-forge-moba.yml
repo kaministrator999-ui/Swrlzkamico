@@ -168,7 +168,7 @@ jobs:
           from pathlib import Path
           official=json.loads(Path('dist/swrlz-forge-moba/SOURCE.json').read_text())
           assert len(official['patches'])==157
-          assert official['patches'][-1]=='patches/v11_125_sheep_passable_placement.py'
+          assert official['patches'][-1]=='patches/v11_125_gap_builder_exit.py'
           expected={'episodes/ghosts-in-different-forms-ep01.html',
                     'scenes/ghosts-in-different-forms-ep01.swyrl.json',
                     'scenes/ghosts-in-different-forms-ep01-storybook.swyrl.json',
