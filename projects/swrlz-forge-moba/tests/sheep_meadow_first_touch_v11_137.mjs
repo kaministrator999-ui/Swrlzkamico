@@ -20,6 +20,7 @@ assert.ok(lifecycle.includes('if(repeat&&stSession&&!stSession.winner)'),'Rapid 
 const listeners={},docListeners={},seen=[];
 const makeElement=name=>({
  name,dataset:{stSkill:'st-farm'},disabled:false,captured:null,
+ contains(node){return node===this;},
  hasPointerCapture(id){return this.captured===id;},
  setPointerCapture(id){this.captured=id;},
  releasePointerCapture(){this.captured=null;},
