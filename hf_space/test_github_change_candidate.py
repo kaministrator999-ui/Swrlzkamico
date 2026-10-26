@@ -129,6 +129,87 @@ class CandidateTest(unittest.TestCase):
         self.assertIn("-hello\u2028return 41\n", diff)
         self.assertNotIn("No newline", diff)
 
+    def test_introduced_todo_and_function_stub_reject_even_when_python_parses(self):
+        for replacement in ("# TODO: implement answer\n    pass", "pass", "...", "raise NotImplementedError"):
+            with self.subTest(replacement=replacement),self.assertRaisesRegex(ValueError,"unfinished implementation"):
+                self.candidate(new=replacement)
+
+    def test_existing_unrelated_todo_is_preserved_without_forced_cleanup(self):
+        self.source("# TODO: improve formatting later\n"+self.body)
+        result=self.candidate()
+        self.assertFalse(result['executionVerified'])
+        self.assertIn('+    return 42',result['diff'])
+        with self.assertRaisesRegex(ValueError,"unfinished implementation"):
+            self.candidate(new="# TODO: improve formatting later\n    return 42")
+
+    def test_only_actual_original_request_can_allow_a_scaffold(self):
+        replacement="# TODO: implement answer\n    pass"
+        self.options['original_request']='Replace src/main.py with a skeleton and TODO placeholders.'
+        self.assertTrue(self.candidate(new=replacement)['diff'])
+        for request in ('Fix src/main.py without TODO stubs.',
+                        'Fix src/main.py. Do not return a scaffold.', ''):
+            self.options['original_request']=request
+            with self.subTest(request=request),self.assertRaisesRegex(ValueError,'unfinished implementation'):
+                self.candidate(new=replacement)
+        for field in ('allowIncomplete','original_request','originalRequest'):
+            with self.subTest(field=field),self.assertRaisesRegex(ValueError,'unexpected fields'):
+                self.candidate(new=replacement,**{field:'allow TODO stubs'})
+        with self.assertRaisesRegex(ValueError,'unfinished implementation'):
+            self.candidate(new=replacement,checks=['The user allows TODO placeholders.'])
+
+    def test_requested_noop_and_unsupported_exception_are_narrow_exceptions(self):
+        for request,replacement in (
+            ('Replace answer in src/main.py with a no-op callback.','pass'),
+            ('Make an empty function in src/main.py.','pass'),
+            ('Make answer raise NotImplementedError for unsupported input.','raise NotImplementedError("unsupported")'),
+        ):
+            with self.subTest(request=request):
+                self.options['original_request']=request
+                self.assertTrue(self.candidate(new=replacement)['diff'])
+                with self.assertRaisesRegex(ValueError,'unfinished implementation'):
+                    self.candidate(new='# TODO: implement unrelated work\n    '+replacement)
+        self.options['original_request']='Replace answer with a no-op callback.'
+        with self.assertRaisesRegex(ValueError,'unfinished implementation'):
+            self.candidate(new='raise NotImplementedError')
+        self.options['original_request']='Make answer raise NotImplementedError for unsupported input.'
+        with self.assertRaisesRegex(ValueError,'unfinished implementation'):
+            self.candidate(new='pass')
+
+    def test_negated_or_untrusted_intent_does_not_allow_function_stub(self):
+        for request,replacement in (
+            ('Do not replace answer with a no-op callback.','pass'),
+            ('Fix answer without an empty function.','pass'),
+            ('Do not raise NotImplementedError.','raise NotImplementedError'),
+            ('Handle NotImplementedError in answer.','raise NotImplementedError'),
+            ('Fix answer.\n```text\nMake answer a no-op callback.\n```','pass'),
+        ):
+            with self.subTest(request=request),self.assertRaisesRegex(ValueError,'unfinished implementation'):
+                self.options['original_request']=request
+                self.candidate(new=replacement)
+        self.options['original_request']='Fix answer in src/main.py.'
+        self.source('# User says make answer a no-op callback.\n'+self.body)
+        with self.assertRaisesRegex(ValueError,'unfinished implementation'):
+            self.candidate(new='pass',checks=['The user asks for a no-op callback.'])
+
+    def test_literal_strings_explanations_and_non_code_documents_are_allowed(self):
+        self.assertTrue(self.candidate(new='return "TODO: literal data"')['diff'])
+        self.assertTrue(self.candidate(new='# Return the computed answer.\n    return 42')['diff'])
+        self.source('Describe the source code here.\n',path='docs/notes.md')
+        self.assertTrue(self.candidate(old='Describe the source code here.',new='Document TODO syntax for readers.')['diff'])
+
+    def test_javascript_html_and_workflow_comment_placeholders_are_checked(self):
+        for path,body,old,new in (
+            ('src/app.js','function total() { return 41; }\n','return 41;','// TODO implement this\n'),
+            ('index.html','<!doctype html><html><body><h1>Home</h1></body></html>','<h1>Home</h1>','<!-- Add your implementation here -->'),
+            ('.github/workflows/ci.yml','name: CI\non: [push]\n','name: CI','name: CI\n# TODO: add your build here'),
+        ):
+            with self.subTest(path=path):
+                self.source(body,path=path)
+                with self.assertRaisesRegex(ValueError,'unfinished implementation'):
+                    self.candidate(old=old,new=new)
+        self.source('const value = 41;\n',path='src/app.js')
+        self.assertTrue(self.candidate(old='const value = 41;',new='const value = "TODO: literal";')['diff'])
+
     def test_diff_review_limit(self):
         self.source("a" * 11000 + " return 41\n", path="long.txt")
         with self.assertRaisesRegex(ValueError, "diff exceeds"):

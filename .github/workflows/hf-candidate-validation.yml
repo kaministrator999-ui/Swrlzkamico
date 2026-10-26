@@ -15,6 +15,8 @@ on:
     paths:
       - 'hf_space/**'
       - 'scripts/prepare_hf_space.py'
+      - 'scripts/ci_capture_failure.py'
+      - 'tests/test_ci_capture_failure.py'
       - 'chat/§wyrlz/assets/github-explorer-v223.js'
       - 'tests/test_github_directory_parser_v224.mjs'
       - 'tests/test_github_preview_persistence_v227.mjs'
@@ -132,7 +134,9 @@ jobs:
           python hf_space/test_programming_structured_receipt_scope.py
           python hf_space/test_web_module_contract.py
           python hf_space/test_editor_project_routing.py
+          python hf_space/test_source_project_routing.py
           python hf_space/test_application_capabilities.py
+          python hf_space/test_application_delivery_policy.py
           python hf_space/test_implementation_completeness.py
           python hf_space/test_large_generation_budget.py
           python hf_space/test_large_prompt_boundary.py
@@ -145,12 +149,23 @@ jobs:
           python hf_space/test_github_repo_view_v247.py
           python hf_space/test_programming_contract_v117.py
 
-      - name: Chat update dialog and project ZIP in real Chromium
+      - name: Install pinned real Chromium test dependencies
         run: |
-          npm install --prefix "$RUNNER_TEMP/swrlz-download-test" --no-package-lock --ignore-scripts playwright@1.57.0
-          "$RUNNER_TEMP/swrlz-download-test/node_modules/.bin/playwright" install --with-deps chromium
-          PLAYWRIGHT_MODULE="$RUNNER_TEMP/swrlz-download-test/node_modules/playwright/index.mjs" node tests/test_project_archive_download.mjs
-          PLAYWRIGHT_MODULE="$RUNNER_TEMP/swrlz-download-test/node_modules/playwright/index.mjs" node tests/test_chat_updates.mjs
+          python tests/test_ci_capture_failure.py
+          python scripts/ci_capture_failure.py --label "Playwright npm install" -- npm install --prefix "$RUNNER_TEMP/swrlz-download-test" --no-package-lock --ignore-scripts playwright@1.57.0
+          browser_path="$(command -v google-chrome || command -v chromium || true)"
+          if [ -n "$browser_path" ]; then
+            echo "CHROMIUM_PATH=$browser_path" >> "$GITHUB_ENV"
+            "$browser_path" --version
+          else
+            python scripts/ci_capture_failure.py --label "Playwright Chromium install" -- "$RUNNER_TEMP/swrlz-download-test/node_modules/.bin/playwright" install --with-deps chromium
+          fi
+
+      - name: Project ZIP download in real Chromium
+        run: PLAYWRIGHT_MODULE="$RUNNER_TEMP/swrlz-download-test/node_modules/playwright/index.mjs" python scripts/ci_capture_failure.py --label "Project ZIP browser checks" -- node tests/test_project_archive_download.mjs
+
+      - name: Chat update dialog in real Chromium
+        run: PLAYWRIGHT_MODULE="$RUNNER_TEMP/swrlz-download-test/node_modules/playwright/index.mjs" python scripts/ci_capture_failure.py --label "Chat updates browser checks" -- node tests/test_chat_updates.mjs
 
       - name: v263 Atomic GitHub file rename, identity, consent and conflict tests
         run: |

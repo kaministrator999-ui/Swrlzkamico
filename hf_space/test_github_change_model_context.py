@@ -92,6 +92,22 @@ class ModelContextTest(unittest.TestCase):
                         self.assertEqual(context["historyMessagesKept"], 0)
                         self.assertLess(context["tokenBreakdown"]["system"], 400)
 
+    def test_internal_model_policy_keeps_complete_code_default_and_original_user_exception(self):
+        for engine in self.engines:
+            model,_=self.generate(engine,{'prompt':'Fix this source file.','githubSourceChangeTask':'candidate'})
+            policy=model.calls[0]['messages'][0]['content']
+            self.assertIn('no pseudocode',policy)
+            self.assertIn('TODO/FIXME stubs or commented placeholders',policy)
+            self.assertIn('unless the ORIGINAL USER REQUEST explicitly asks',policy)
+
+    def test_large_project_subtasks_keep_only_compact_json_policy(self):
+        for engine in self.engines:
+            for mode,cap in [('plan',512),('candidate',2048)]:
+                with self.subTest(engine=engine.__name__,mode=mode):
+                    model,_=self.generate(engine,{'prompt':'Create a comprehensive large application project; propose its source change as JSON.', 'githubSourceChangeTask':mode})
+                    self.assertEqual(model.calls[0]['messages'][0]['content'],source_change_system(mode))
+                    self.assertEqual(model.calls[0]['max_tokens'],cap)
+
     def test_output_cap_obeys_available_context_budget(self):
         for engine in self.engines:
             with self.subTest(engine=engine.__name__):

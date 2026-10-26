@@ -181,6 +181,11 @@ def application_source_gaps(text: str, contract: dict[str, Any]) -> list[str]:
     capabilities = contract.get("applicationCapabilities") or {}
     if capabilities.get("kind") != "3d-scene-editor":
         return []
+    required_languages=set((contract.get("languageContract") or {}).get("requiredLanguages") or [])
+    if required_languages and not required_languages.intersection({"html","javascript","typescript","css"}):
+        # This evidence scanner follows browser input handlers. It cannot
+        # establish native Kotlin/Python/etc. interaction wiring from source.
+        return []
     from project_archive import ProjectArchiveError, parse_project_files
     try:
         files = parse_project_files(text)

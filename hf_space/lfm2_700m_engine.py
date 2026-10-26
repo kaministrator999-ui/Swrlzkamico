@@ -935,7 +935,8 @@ def generate_events(payload):
     expanded_delivery=expanded_project_delivery(programming,prompt)
     budget_policy=response_budget(programming,prompt)
     delivery_output_limit=(512 if source_change_mode=="plan" else 2048 if source_change_mode else budget_policy["tokens"])
-    system+=project_delivery_policy(programming,prompt)+long_delivery_policy(budget_policy)
+    if not source_change_mode:
+        system+=project_delivery_policy(programming,prompt)+long_delivery_policy(budget_policy)
     started=time.perf_counter()
     yield {"type":"STATUS","phase":"LOADING"}
     model=load()
@@ -951,7 +952,8 @@ def generate_events(payload):
             _response_mode(prompt,programming,history),
         )
         system+=programming_library_context(programming)
-        system+=project_delivery_policy(programming,prompt)+long_delivery_policy(budget_policy)
+        if not source_change_mode:
+            system+=project_delivery_policy(programming,prompt)+long_delivery_policy(budget_policy)
         fitted=_fit_repair_messages(model,system,history,fitted_prompt,delivery_output_limit)
         messages,dropped_history,input_tokens,available_output_tokens,fitted_prompt=fitted
     else:

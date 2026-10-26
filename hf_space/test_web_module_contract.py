@@ -212,4 +212,162 @@ const object={import:()=>0};object.import('missing');
      list(engine.generate_events({'prompt':'Create a complete standalone HTML 3D viewer.','history':[]}))
     self.assertEqual(len(model.calls),1)
 
+ def test_known_pinned_transform_controls_update_is_rejected_on_bound_instance(self):
+  source=(GOOD.replace('OrbitControls','TransformControls')
+      .replace('</script></html>', 'const gizmo=new TransformControls(camera,canvas);scene.add(gizmo);gizmo.update();</script></html>'))
+  reasons=module_dependency_gaps(source)
+  self.assertEqual(len(reasons),1)
+  self.assertTrue(reasons[0].startswith('unsupported-three-r160-api:TransformControls.update()'))
+  self.assertIn('retain editor controls',reasons[0])
+  contract=programming_intent('Create a complete standalone HTML 3D viewer.',[],[])
+  receipt=candidate_contract_gate('```html\n'+source+'\n```',contract,[])
+  self.assertEqual(receipt['status'],'REJECT');self.assertFalse(receipt['executionVerified'])
+  self.assertIn(reasons[0],receipt['reasons'])
+
+ def test_pinned_transform_binding_aliases_and_namespace_are_checked(self):
+  prefix='<script type="importmap">{"imports":{"three":"'+CORE+'","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>'
+  for imported,constructor in (
+   ('import {TransformControls} from "three/addons/controls/TransformControls.js";','TransformControls'),
+   ('import {TransformControls as EditorGizmo} from "three/addons/controls/TransformControls.js";','EditorGizmo'),
+   ('import * as EditAPI from "three/addons/controls/TransformControls.js";','EditAPI.TransformControls'),
+  ):
+   with self.subTest(imported=imported):
+    source=prefix+'<script type="module">'+imported+'const handle=new '+constructor+'(camera,canvas);handle.update();</script>'
+    self.assertTrue(any(r.startswith('unsupported-three-r160-api:') for r in module_dependency_gaps(source)))
+
+ def test_unrelated_versions_updates_and_text_are_not_rejected_as_transform_api(self):
+  fixed=GOOD.replace('OrbitControls','TransformControls').replace('</script></html>','const gizmo=new TransformControls(camera,canvas);gizmo.updateMatrixWorld();</script></html>')
+  for source in (
+   fixed,
+   GOOD.replace('</script></html>','const orbit=new OrbitControls(camera,canvas);orbit.update();</script></html>'),
+   fixed.replace('gizmo.updateMatrixWorld();','const example="gizmo.update()"; // gizmo.update()\n/* gizmo.update() */'),
+   fixed.replace('0.160.0','0.161.0').replace('gizmo.updateMatrixWorld();','gizmo.update();'),
+   '<script type="module">class TransformControls{update(){}}const gizmo=new TransformControls();gizmo.update();</script>',
+  ):
+   with self.subTest(source=source):self.assertFalse(any(r.startswith('unsupported-three-r160-api:') for r in module_dependency_gaps(source)))
+
+ def test_rebinding_shadowing_and_explicit_update_extension_remain_ungraded(self):
+  source=GOOD.replace('OrbitControls','TransformControls').replace('</script></html>','const gizmo=new TransformControls(camera,canvas);BODY</script></html>')
+  for body in (
+   'gizmo.update=()=>0;gizmo.update();',
+   'gizmo["update"]=()=>0;gizmo.update();',
+   'Object.defineProperty(gizmo,"update",{value:()=>0});gizmo.update();',
+   'gizmo=new OtherControls();gizmo.update();',
+   'function custom(gizmo){gizmo.update();}',
+   'function custom(camera,gizmo){gizmo.update();}',
+   'const custom=(gizmo)=>gizmo.update();',
+   'const custom=gizmo=>gizmo.update();',
+   'Object.assign(gizmo,{update(){return 0;}});gizmo.update();',
+  ):
+   with self.subTest(body=body):
+    self.assertEqual(module_dependency_gaps(source.replace('BODY',body)),[])
+
+ def test_actual_transform_api_reason_reaches_both_model_retries(self):
+  bad=GOOD.replace('OrbitControls','TransformControls').replace('</script></html>','const gizmo=new TransformControls(camera,canvas);gizmo.update();</script></html>')
+  for name in ('qwen_coder_engine','lfm2_700m_engine'):
+   with self.subTest(engine=name):
+    engine=load_engine(name)
+    class Responses(FakeModel):
+     def create_chat_completion(self,**kwargs):
+      self.calls.append(kwargs)
+      text=bad if len(self.calls)==1 else GOOD
+      yield {'choices':[{'delta':{'content':'```html\n'+text+'\n```'}}]}
+    model=Responses()
+    with patch.object(engine,'load',return_value=model):
+     events=list(engine.generate_events({'prompt':'Create a complete standalone HTML 3D viewer.','history':[]}))
+    self.assertEqual(len(model.calls),2)
+    self.assertIn('unsupported-three-r160-api:TransformControls.update()',model.calls[1]['messages'][-1]['content'])
+    receipt=next(e['validation'] for e in events if e['type']=='CANDIDATE_VALIDATION')
+    self.assertEqual(receipt['status'],'PASS');self.assertFalse(receipt['executionVerified'])
+
+ def test_multifile_source_gate_checks_returned_editor_module_api(self):
+  from project_archive import project_markdown
+  transform='https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/TransformControls.js'
+  files=[
+   {'path':'index.html','language':'html','content':'<html><script type="importmap">{"imports":{"three":"'+CORE+'","editor-controls":"'+transform+'"}}</script><script type="module" src="src/editor.js"></script></html>'},
+   {'path':'src/editor.js','language':'javascript','content':'import {TransformControls as Gizmo} from "editor-controls";const tool=new Gizmo(camera,canvas);tool.update();'},
+  ]
+  state=programming_intent('Create a complete standalone HTML 3D viewer project in separate files.',[],[])
+  result=candidate_contract_gate(project_markdown(files),state,[])
+  self.assertEqual(result['status'],'REJECT')
+  self.assertTrue(any(r.startswith('unsupported-three-r160-api:') for r in result['reasons']))
+  self.assertFalse(result['executionVerified'])
+  files[1]['content']=files[1]['content'].replace('tool.update();','tool.updateMatrixWorld();')
+  self.assertEqual(candidate_contract_gate(project_markdown(files),state,[])['status'],'PASS')
+
+ def test_multifile_nested_module_graph_resolves_actual_parent_scope(self):
+  transform='https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/TransformControls.js'
+  files=[
+   {'path':'pages/index.html','language':'html','content':'<html><script type="importmap">{"imports":{"three":"'+CORE+'"},"scopes":{"../src/editor/":{"editor-controls":"'+transform+'"}}}</script><script type="module" src="../src/app.js"></script></html>'},
+   {'path':'src/app.js','language':'javascript','content':'import "./editor/my controls.js";'},
+   {'path':'src/editor/my controls.js','language':'javascript','content':'import {TransformControls as Gizmo} from "editor-controls";const tool=new Gizmo(camera,canvas);tool.updateMatrixWorld();'},
+   {'path':'server.js','language':'javascript','content':'import fs from "node-fs-not-a-browser-module";'},
+  ]
+  self.assertEqual(module_dependency_gaps(files[0]['content'],files),[])
+  files[2]['content']=files[2]['content'].replace('tool.updateMatrixWorld();','tool.update();')
+  self.assertTrue(any(r.startswith('unsupported-three-r160-api:') for r in module_dependency_gaps(files[0]['content'],files)))
+  files[2]['content']='import {TransformControls} from "unmapped-controls";'
+  self.assertIn('unresolved-browser-module:unmapped-controls',module_dependency_gaps(files[0]['content'],files))
+
+ def test_multifile_missing_relative_modules_and_document_maps_stay_separate(self):
+  files=[
+   {'path':'a/index.html','language':'html','content':'<html><script type="importmap">{"imports":{"utility":"https://example.invalid/utility.js"}}</script><script type="module" src="app.js?v=1"></script></html>'},
+   {'path':'a/app.js','language':'javascript','content':'import "utility";'},
+   {'path':'b/index.html','language':'html','content':'<html><script type="module" src="app.js"></script></html>'},
+   {'path':'b/app.js','language':'javascript','content':'import "utility";'},
+  ]
+  self.assertIn('unresolved-browser-module:utility',module_dependency_gaps('',files))
+  files[3]['content']='import "./missing.js";'
+  self.assertEqual(module_dependency_gaps('',files),['missing-project-module:b/missing.js'])
+
+ def test_source_declared_vite_react_tsx_graph_requires_build_verification(self):
+  files=[
+   {'path':'index.html','language':'html','content':'<html><script type="module" src="src/main.tsx"></script></html>'},
+   {'path':'src/main.tsx','language':'typescript','content':'import React from "react";import App from "./App";'},
+   {'path':'package.json','language':'json','content':json.dumps({'dependencies':{'react':'^18.3.0'},'devDependencies':{'vite':'^5.4.0'},'scripts':{'build':'vite build','dev':'vite'}})},
+  ]
+  self.assertEqual(module_dependency_gaps('',files),[])
+  # A compiler-driven dist entry is also source awaiting a build, not evidence
+  # that the absent generated file was successfully emitted or executed.
+  files[0]['content']='<html><script type="module" src="dist/main.js"></script></html>'
+  for package_name,script in (('vite','vite build'),('webpack','webpack --mode production'),('esbuild','esbuild src/main.tsx --bundle --outdir=dist'),('typescript','tsc')):
+   with self.subTest(package=package_name):
+    files[2]['content']=json.dumps({'devDependencies':{package_name:'^1.0.0'},'scripts':{'build':script}})
+    self.assertEqual(module_dependency_gaps('',files),[])
+
+ def test_arbitrary_package_metadata_and_script_text_do_not_bypass_browser_checks(self):
+  for package in (
+   {'name':'vite','scripts':{'build':'vite build'}},
+   {'devDependencies':{'vite':'^5.0.0'},'scripts':{'build':'mybuild'}},
+   {'devDependencies':{'vite':'^5.0.0'},'scripts':{'mybuild':'vite build'}},
+   {'devDependencies':{'vite':'^5.0.0'},'scripts':{'build':'echo vite build'}},
+   {'devDependencies':{'vite':'^5.0.0'},'scripts':{'build':'vite --version'}},
+   {'devDependencies':{'typescript':'^5.0.0'},'scripts':{'build':'tsc --noEmit'}},
+   {'devDependencies':{'vite':'^5.0.0'},'scripts':{'build':'node -e \'console.log("vite build")\''}},
+   {'devDependencies':{'typescript':'^5.0.0'},'scripts':{}},
+  ):
+   with self.subTest(package=package):
+    files=[{'path':'index.html','language':'html','content':'<html><script type="module" src="src/main.tsx"></script></html>'},
+           {'path':'src/main.tsx','language':'typescript','content':'import React from "react";'},
+           {'path':'package.json','language':'json','content':json.dumps(package)}]
+    self.assertIn('unresolved-browser-module:react',module_dependency_gaps('',files))
+
+ def test_build_evidence_belongs_to_nearest_html_package(self):
+  built=json.dumps({'devDependencies':{'vite':'^5.0.0'},'scripts':{'build':'vite build'}})
+  files=[{'path':'web/index.html','language':'html','content':'<html><script type="module" src="main.js"></script></html>'},
+         {'path':'web/main.js','language':'javascript','content':'import "unmapped";'},
+         {'path':'tools/package.json','language':'json','content':built}]
+  self.assertIn('unresolved-browser-module:unmapped',module_dependency_gaps('',files))
+  files[2]['path']='package.json'
+  self.assertEqual(module_dependency_gaps('',files),[])
+  files.append({'path':'web/package.json','language':'json','content':'{"name":"plain-browser-project"}'})
+  self.assertIn('unresolved-browser-module:unmapped',module_dependency_gaps('',files))
+
+ def test_matching_build_command_is_recognized_in_actual_shell_position(self):
+  for script in ('NODE_ENV=production vite build','npx --no-install vite build','npm exec vite -- build','echo preparing && vite build'):
+   with self.subTest(script=script):
+    files=[{'path':'index.html','language':'html','content':'<html><script type="module" src="dist/main.js"></script></html>'},
+           {'path':'package.json','language':'json','content':json.dumps({'devDependencies':{'vite':'^5.0.0'},'scripts':{'build':script}})}]
+    self.assertEqual(module_dependency_gaps('',files),[])
+
 if __name__=='__main__':unittest.main()

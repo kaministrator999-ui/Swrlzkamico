@@ -83,6 +83,40 @@ def _requested_output_head(text: str) -> str:
                     text[lead.end():], maxsplit=1, flags=re.I)[0][:180]
 
 
+_SOURCE_FILE = re.compile(
+    r"(?<![\w/])(?:[\w§.-]+/)*[\w§.-]+\.(?:html?|css|[cm]?js|jsx|tsx?|py|kt|java|rs|go|cpp|c|h|cs|swift|dart)\b", re.I,
+)
+_SOFTWARE_PROJECT = re.compile(
+    r"\b(?:editor|viewer|dashboard|calculator|whiteboard|drawing|paint|game)\b|"
+    r"\b(?:software|coding|android|kotlin|desktop|browser|frontend|backend|source)\b", re.I,
+)
+
+
+def requests_source_project(text: str) -> bool:
+    """Recognize a requested software project, preserving an asset's purpose.
+
+    'Editor project with source files' requests software. A mesh for that
+    project, a wedding plan, or a model package containing only asset files
+    does not. This does not choose HTML for a native/desktop application.
+    """
+    raw=_clean(text)
+    head=_requested_output_head(raw)
+    if not head or not re.search(r"\bproject\b",head,re.I):
+        return False
+    if _TEXT_TARGET.search(head) and not _SOFTWARE_PROJECT.search(head):
+        return False
+    if _SOFTWARE_PROJECT.search(head) or _CODE_TARGET.search(head):
+        return True
+    if re.search(r"\b(?:mesh(?:es)?|rigged|sculpt(?:ure)?|character|assets?)\b",head,re.I):
+        return False
+    # Explicit source filenames belonging to the requested project are strong
+    # delivery evidence. A downstream 'for viewer/index.html' destination is
+    # excluded before checking, just as with asset-vs-page classification.
+    lead=_DELIVERABLE_REQUEST.match(raw)
+    scope=re.split(r"\b(?:for|about)\b|[;!?]",raw[lead.end():],maxsplit=1,flags=re.I)[0]
+    return bool(_SOURCE_FILE.search(scope))
+
+
 def requests_web_source(text: str) -> bool:
     """Recognize a requested application page without requiring the word HTML.
 
@@ -92,6 +126,11 @@ def requests_web_source(text: str) -> bool:
     """
     raw=_clean(text)
     head=_requested_output_head(raw)
+    if requests_source_project(raw):
+        lead=_DELIVERABLE_REQUEST.match(raw)
+        scope=re.split(r"\b(?:for|about)\b|[;!?]",raw[lead.end():],maxsplit=1,flags=re.I)[0]
+        if re.search(r"\b(?:html|browser|web|website)\b|[\w§.-]+\.html?\b",scope,re.I):
+            return True
     if not head:
         # Edits to a specifically named application page have the same medium,
         # even though the general asset-generation verb list excludes repairs.
@@ -128,7 +167,7 @@ def requests_web_source(text: str) -> bool:
 
 def _requested_deliverable(text: str) -> str:
     """Identify a directly requested output medium, never grant execution."""
-    if requests_web_source(text):
+    if requests_web_source(text) or requests_source_project(text):
         return "code"
     if not _DELIVERABLE_REQUEST.search(text):
         return "none"

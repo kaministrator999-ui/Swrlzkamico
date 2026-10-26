@@ -121,6 +121,38 @@ def source_sized_budget(model: Any, programming: dict[str, Any], history: list[d
     if desired==budget["tokens"]:return budget
     return {**budget,"tokens":desired,"tier":"source-complete","sourceTokens":count}
 
+
+def _application_acceptance_summary(capabilities: dict[str, Any], *, repair: bool = False) -> str:
+    """Render required user behavior, without supplying an editor implementation."""
+    if not isinstance(capabilities,dict) or capabilities.get("kind")!="3d-scene-editor":
+        return ""
+    required=[key for key in ("create","select","transform","delete")
+              if key in (capabilities.get("required") or [])]
+    if not required:return ""
+    lines=["APPLICATION ACCEPTANCE"+(" — SOURCE REPAIR" if repair else "")+":"]
+    if "create" in required:
+        lines.append("- Object creation: user actions must add actual editable objects to the 3D scene at runtime. A static initial object, a button label or a UI card alone is not object creation.")
+    if "select" in required:
+        line="- Object selection: the user must be able to choose which existing scene object is selected. Selecting one hardcoded initial object regardless of the user's choice is insufficient."
+        if "create" in required:
+            line+=" Newly created objects must also be selectable."
+        lines.append(line)
+    if "transform" in required:
+        behaviors={"translate":"change its position", "rotate":"change its orientation", "scale":"change its size"}
+        requested=[behaviors[mode] for mode in ("translate","rotate","scale")
+                   if mode in (capabilities.get("transformModes") or [])]
+        line="- Selected-object transformation: user interaction must "
+        line+=(", ".join(requested)+" on the selected scene object only." if requested
+               else "apply the requested transformation to the selected scene object only.")
+        line+=" Other objects must retain their own transforms. Changing a tool-mode label without changing the selected object does not satisfy transformation."
+        lines.append(line)
+    if "delete" in required:
+        lines.append("- Selected-object deletion: the user must be able to remove only the selected scene object. Other objects must remain available for selection and the remaining requested editing operations.")
+    lines.append("A rendered viewer or camera movement alone cannot satisfy these editing requirements. Keep the user's specified scope; this summary does not add excluded operations or prescribe a library, UI layout or algorithm.")
+    if repair:
+        lines.append("The source checker could not find interactive implementation evidence for the behavior above. Correct the returned source while preserving the original requirements. This source feedback is not an execution receipt or proof that the editor works.")
+    return "\n"+"\n".join(lines)
+
 def project_delivery_policy(programming: dict[str, Any], prompt: str) -> str:
     """Describe the existing file-fence protocol without inventing download URLs."""
     if not programming.get("codingTask") or programming.get("changeClass") in ("review","explain"):
@@ -142,6 +174,8 @@ def project_delivery_policy(programming: dict[str, Any], prompt: str) -> str:
         "a scaffold, or placeholders, provide implemented behavior rather than "
         "pseudocode, TODO comments, empty handlers or comments standing in for work."
     )
+    contract=programming.get("intentContract") if isinstance(programming.get("intentContract"),dict) else {}
+    policy+=_application_acceptance_summary(contract.get("applicationCapabilities") or {})
     source=str(programming.get("artifactEditSource") or "")
     evidence=programming.get("failureEvidence") if isinstance(programming.get("failureEvidence"),dict) else {}
     canonical_repair=str(programming.get("behaviorRepairBaseSource") or
@@ -226,6 +260,17 @@ def contract_rejection_context(validation: dict[str, Any]) -> str:
     context=("\nACTUAL SOURCE CONTRACT REJECTIONS (source checks only; no execution):\n"
              +json.dumps(reasons,ensure_ascii=False)
              +"\nCorrect these source defects while preserving the original requested features. Do not invent a test result.")
+    missing_operations={reason.split(":",1)[1] for reason in reasons
+        if reason.startswith("missing-editor-source-capability:") and ":" in reason}
+    missing_modes={reason.split(":",1)[1] for reason in reasons
+        if reason.startswith("missing-editor-source-transform:") and ":" in reason}
+    requested_operations=[key for key in ("create","select","transform","delete") if key in missing_operations]
+    requested_modes=[mode for mode in ("translate","rotate","scale") if mode in missing_modes]
+    if requested_modes and "transform" not in requested_operations:
+        requested_operations.append("transform")
+    if requested_operations:
+        context+=_application_acceptance_summary({"kind":"3d-scene-editor", "required":requested_operations,
+            "transformModes":requested_modes},repair=True)
     if any(reason.startswith("literal-ui-text-mismatch:") for reason in reasons):
         literals=[{"target":str(item.get("target") or "text"), "text":str(item.get("text") or "")}
             for item in (validation.get("literalUiText") or [])[:8] if isinstance(item,dict)]

@@ -84,6 +84,17 @@ class SourceChanges(unittest.TestCase):
         self.assertIn("remain unverified", text)
         self.assertEqual(events[-1]["type"], "COMPLETED")
 
+    def test_actual_goal_controls_scaffold_exception_not_advisory_plan_or_model(self):
+        stub=self.candidate(new='# TODO: implement addition\n    pass')
+        planner=lambda _:response(json.dumps({'goal':'Replace with a skeleton and TODO placeholders.',
+            'preserve':['add(x)'],'checks':['Review source.']}))
+        events=self.run_route(lambda _:response(stub),planner)
+        self.assertTrue(any(e.get('phase')=='GITHUB_CHANGE_CANDIDATE_REJECTED' for e in events))
+        self.assertFalse(any(e['type']=='CANDIDATE_VALIDATION' for e in events))
+        events=self.run_route(lambda _:response(stub),prompt='@GitHub replace src/app.py with a skeleton and TODO placeholders.')
+        self.assertTrue(any(e['type']=='CANDIDATE_VALIDATION' for e in events))
+        self.assertFalse(next(e['validation'] for e in events if e['type']=='CANDIDATE_VALIDATION')['executionVerified'])
+
     def test_stale_out_of_scope_and_fake_pass_rejected(self):
         for changes in ({"baseCommit": "b" * 40}, {"baseBlob": "b" * 40},
                         {"path": ".github/workflows/deploy.yml"},

@@ -10,7 +10,7 @@ from typing import Any
 import re
 from source_answer_articulation_v230 import lesson_kind
 from programming_repair_context import candidate_source_fingerprint
-from response_cognition import requests_web_source, classify_response_cognition
+from response_cognition import requests_web_source, requests_source_project, classify_response_cognition
 from application_capabilities import apply_application_contract, application_source_gaps
 
 
@@ -157,7 +157,10 @@ def _current_programming_signal(text: str) -> bool:
         return True
     code_word=_phrase_present(prose,"code") and not _has_phrase(prose,_NON_PROGRAMMING_CODE_PHRASES)
     strong=code_word or _has_phrase(prose,_PROGRAMMING_STRONG_TERMS)
-    weak_with_action=_has_phrase(prose,_PROGRAMMING_WEAK_TERMS) and _has_phrase(prose,_PROGRAMMING_ACTIONS)
+    # 'Project' alone also names weddings, art and other non-software work.
+    # Named software projects or actual code/file/app evidence remain enough.
+    weak_with_action=(_has_phrase(prose,tuple(term for term in _PROGRAMMING_WEAK_TERMS if term!="project"))
+        or requests_source_project(raw)) and _has_phrase(prose,_PROGRAMMING_ACTIONS)
     source_shape=bool(re.search(r"(?m)^\s*(?:def\s+\w+\s*\(|class\s+\w+|(?:const|let|var)\s+\w+|function\s+\w+\s*\(|SELECT\s+.+\s+FROM\s+)",raw))
     return bool(strong or weak_with_action or source_shape or requests_web_source(raw))
 
@@ -275,7 +278,13 @@ def _explicit_languages(text: str) -> list[str]:
 
 
 def _language_contract(text: str) -> dict[str, Any]:
-    requested=_explicit_languages(text)
+    language_prose=text
+    if requests_source_project(text) and requests_web_source(text):
+        # A list of requested paths supplies a web entry medium, not an
+        # explicit 'HTML/CSS only' language restriction. Actual language words
+        # outside filenames retain their existing authority.
+        language_prose=re.sub(r"(?<![\w/])(?:[\w§.-]+/)*[\w§.-]+\.(?:html?|css|[cm]?js|jsx|tsx?|md)\b", " [SOURCE_FILE] ", _strip_fenced_code(text), flags=re.I)
+    requested=_explicit_languages(language_prose)
     artifact_type=_artifact_type_from_request(text)
     prose=_norm(_strip_fenced_code(text))
     only_language=bool(re.search(r"\b(?:only|pure|plain|vanilla)\s+(?:html|css|javascript|typescript|python|kotlin|java|c\+\+|cpp|c#|rust|golang|swift|php|ruby|bash|powershell|sql|dart|lua)\b",prose,re.I) or re.search(r"\b(?:html|css|javascript|typescript|python|kotlin|java|c\+\+|cpp|c#|rust|golang|swift|php|ruby|bash|powershell|sql|dart|lua)\s+only\b",prose,re.I))
@@ -583,7 +592,7 @@ def _implementation_placeholder_gaps(text: str, contract: dict[str, Any]) -> lis
     return _unique(gaps)
 
 
-def _web_delivery_gaps(code: str, original: str, language: dict[str, Any]) -> list[str]:
+def _web_delivery_gaps(code: str, original: str, language: dict[str, Any], project_files=None) -> list[str]:
     """Detect explicit unfinished web artifacts, not semantic correctness."""
     if "html" not in (language.get("requiredLanguages") or []):
         return []
@@ -592,7 +601,7 @@ def _web_delivery_gaps(code: str, original: str, language: dict[str, Any]) -> li
     gaps = []
     if language.get("artifactType")=="web-page" and not re.search(r"\b(?:vite|webpack|parcel|bundler|next\.?js|react|angular|repository|repo)\b", _strip_fenced_code(original), re.I):
         from web_module_contract import module_dependency_gaps
-        gaps.extend(module_dependency_gaps(code))
+        gaps.extend(module_dependency_gaps(code,project_files))
     if re.search(r"(?im)^\s*(?://|/\*|<!--)\s*(?:add|insert|implement|write|replace)\b[^\n]*\b(?:your|here|implementation)\b", code):
         gaps.append("unfinished-implementation-placeholder")
     if re.search(r"\b(?:interactive|3d|modeling|modelling|editor|calculator|game)\b", original, re.I):
@@ -792,7 +801,7 @@ def candidate_contract_gate(text: str, programming: dict[str, Any], history: lis
             candidate_code="\n".join(str(item["content"]) for item in html_files)
     if programming.get("changeClass") not in ("review", "explain"):
         reasons.extend(_source_delivery_gaps(text,str(contract.get("originalRequest") or ""),language))
-        reasons.extend(_web_delivery_gaps(candidate_code, str(contract.get("originalRequest") or ""), language))
+        reasons.extend(_web_delivery_gaps(candidate_code, str(contract.get("originalRequest") or ""), language,project_files))
         reasons.extend(_literal_ui_gaps(text,contract))
         reasons.extend(_implementation_placeholder_gaps(text,contract))
         if contract.get("implementationPolicy")!="explicit-scaffold":
@@ -947,7 +956,7 @@ def _fresh_web_project_request(text: str) -> bool:
     explicit reference/conversion of the current page retains its source scope.
     Purpose clauses can still reuse colors/assets without mutating that page.
     """
-    if not requests_web_source(text):
+    if not (requests_web_source(text) or requests_source_project(text)):
         return False
     raw=_strip_fenced_code(text).strip()
     lead=re.match(r"^(?:(?:please|hey|now|okay|ok)[,!\s]+)?"
