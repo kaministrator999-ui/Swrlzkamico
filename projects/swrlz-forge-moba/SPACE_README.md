@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.144
+title: §wyrl§ Engine v11.145
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,16 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.145 · Immersive Sheep Tag Play, stable house holograms, safer Rapid snap (2026-10-27)
+
+**Android owner observations from v11.144:** Play shows editor toolbar over the live Main Menu and gameplay; the build preview rapidly blinks away/reappears while being moved; nearby red houses are rejected for narrow diagonal cracks even when a closely aligned, valid alternate footprint is available.
+
+**Scope and behavior:** Play now suppresses editor-only topbar/menus/status bars while keeping native game HUD and a small visible **Exit to editor** control that invokes the original Stop flow. The independent authored Main Menu and Gameplay levels remain editable when Play ends. An invalid transient phone drag ray no longer destroys the live house hologram: it stays visibly **red**, never commits during invalid input, and resumes normal color after new native validation. The old periodic HUD reevaluation no longer overwrites the active placement pointer. With Rapid ON, near a narrow opening rejection, the candidate picker evaluates flush-corner and truly aligned neighbor alternatives within 1.65m, accepting only independently successful calls to the existing complete pre-v11.139 `stCanBuild` validation. Rapid OFF, occupied locations, build limits, resource checks, obstacles, safe 1.20m lanes, and the native building order remain authoritative. No additional render/game clock or custom game mode.
+
+**Source and test evidence:** [candidate targeted CI](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40454261079) **SUCCESS**. Exact measured **177 patches**, **68 source assets**, **6,791,082 bytes**, SHA-256 `6448c1b8b004db9556b6760ed6987c4600c4ba0d19b1d38f35ddc29ae04ad206`. Package/JS parse, retained camera/menu/Stop/level/save tests and validator/Rapid/ghost state tests passed. Target is only `kamiloki/swrlz-forge-moba`; this source is not considered live or Android-approved until its own guarded deployment and verified hosted audit.
+
+
 
 ## §E v11.144 · Single menu launch control and cinematic rotating sheep portraits (2026-10-26)
 
