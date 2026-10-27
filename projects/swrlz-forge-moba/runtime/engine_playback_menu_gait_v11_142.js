@@ -22,6 +22,17 @@ function se142RestoreLevelMeta(){
   currentProject.sheepTagMenu=structuredClone(p.sheepTagMenu);
  return true;
 }
+function se142StampLoadedLevel(){
+ // Known successful starter/level switch is stronger evidence than metadata
+ // the native scene loader might have omitted or normalized.
+ const record=seLevelsCurrent();
+ if(!record||!currentProject)return false;
+ currentProject.levelProjectRoot=seLevels.root;
+ currentProject.sheepTagLevel=record.data?.project?.sheepTagLevel||record.role;
+ if(record.data?.project?.sheepTagMenu&&!currentProject.sheepTagMenu)
+  currentProject.sheepTagMenu=structuredClone(record.data.project.sheepTagMenu);
+ return true;
+}
 const se142OwnsBase=seLevelsOwns;
 seLevelsOwns=function(){
  return se142OwnsBase()||se142CurrentMatches();
@@ -29,13 +40,13 @@ seLevelsOwns=function(){
 const se142OpenBase=seLevelsSwitch;
 seLevelsSwitch=function(...args){
  const result=se142OpenBase(...args);
- if(result){se142RestoreLevelMeta();seLevelsRefresh();}
+ if(result){se142StampLoadedLevel();seLevelsRefresh();}
  return result;
 };
 const se142StarterBase=stLoadStarter;
 stLoadStarter=function(...args){
  const result=se142StarterBase(...args);
- se142RestoreLevelMeta();
+ se142StampLoadedLevel();
  seLevelsEnsureUI();seLevelsRefresh();
  return result;
 };
