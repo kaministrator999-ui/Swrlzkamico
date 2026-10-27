@@ -1,0 +1,22 @@
+/* v11.149 editor mirror and HTTPS direct-peer lobby. */
+#st141MenuPreview #se149PreviewLan{
+ display:block;margin:12px auto 0;padding:8px 26px;min-height:39px;
+ font:bold 13px system-ui;letter-spacing:.14em;color:#e6f4dd;
+ border:1px solid #c8d9c6;background:rgba(18,58,49,.9);
+ border-radius:12px;box-shadow:none;opacity:1;pointer-events:none;
+}
+#st141RuntimeMenu .se149-join{margin:14px 0 5px;padding:9px 0;border-top:1px solid #6b8b7d}
+#st141RuntimeMenu .se149-join label{font-size:12px;color:#ead99e}
+#st141RuntimeMenu .se149-join textarea,#st141RuntimeMenu #se149PeerControls textarea{
+ display:block;box-sizing:border-box;width:100%;min-height:54px;max-height:90px;resize:vertical;
+ margin:8px 0;padding:8px;border:1px solid #9aafa1;border-radius:7px;background:#dbe8df;
+ color:#162d23;font:12px monospace;overflow-wrap:anywhere;
+}
+#st141RuntimeMenu #se149PeerControls{margin-top:12px;border-top:1px solid #85aa91;padding-top:10px;text-align:left}
+#st141RuntimeMenu #se149PeerControls[hidden],
+#st141RuntimeMenu #se149HostTools[hidden],#st141RuntimeMenu #se149GuestTools[hidden]{display:none!important}
+#st141RuntimeMenu #se149PeerControls h3{margin:4px 0;font-size:14px}
+#st141RuntimeMenu #se149PeerControls button,
+#st141RuntimeMenu #se149JoinInvite{border:1px solid #e4d18a;background:#28584b;
+ color:#fff5d3;border-radius:8px;min-height:40px;width:100%;padding:8px;margin:6px 0;font-size:13px}
+#st141RuntimeMenu #se149PeerControls p{font-size:11px;line-height:1.4}
