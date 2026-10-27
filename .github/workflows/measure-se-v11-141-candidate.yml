@@ -1,5 +1,5 @@
 name: §E v11.141 isolated candidate source measure
-# Sheep Tag cinematic menu: exact artifact seal and verified native Play lifecycle.
+# Rebuild latest generic project level-manager + native Sheep Tag menu runtime tests.
 on:
   push:
     branches:
@@ -66,6 +66,8 @@ jobs:
           node projects/swrlz-forge-moba/tests/sheep_drag_camera_capture_perf_v11_136.mjs
           node projects/swrlz-forge-moba/tests/sheep_rapid_corner_snap_v11_139.mjs
           node projects/swrlz-forge-moba/tests/sheep_editable_project_levels_v11_141.mjs
+          node projects/swrlz-forge-moba/tests/sheep_level_menu_runtime_v11_141.mjs
           python projects/swrlz-forge-moba/scripts/verify_v11_141_release.py --output /tmp/se141-final-verified
           node --check /tmp/se141-final-verified-module.mjs
           SE_ASSEMBLED_HTML=/tmp/se141-final-verified/index.html node projects/swrlz-forge-moba/tests/sheep_editable_project_levels_v11_141.mjs
+          SE_ASSEMBLED_HTML=/tmp/se141-final-verified/index.html node projects/swrlz-forge-moba/tests/sheep_level_menu_runtime_v11_141.mjs
