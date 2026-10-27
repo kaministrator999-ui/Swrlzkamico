@@ -132,8 +132,10 @@ function seLevelsTransition(to,autoPlay=true){
  if(seLevels.playingMenu)seLevelsStopMenu();
  if(playing||simulating||stSession)stopSession();
  if(!seLevelsSwitch(destination))return false;
- if(autoPlay)return !!beginPlay();
- return true;
+ if(autoPlay){
+  const started=!!beginPlay();seLevelsRefresh();return started;
+ }
+ seLevelsRefresh();return true;
 }
 function seLevelsEditUI(){
  if(!seLevelsOwns()||seLevelsCurrent()?.role!=='menu'||seLevels.playingMenu)return;
@@ -180,6 +182,13 @@ function seLevelsEnsureUI(){
   bar.querySelector('#st141Export').onclick=seLevelsExportLevel;
   seLevels.bar=bar;
  }
+ if(!seLevels.nextButton){
+  const next=document.createElement('button');
+  next.id='st141NextLevel';next.className='st141-next-level';
+  next.type='button';next.textContent='Next Level';
+  next.onclick=()=>seLevelsTransition('',true);
+  $('stopBtn')?.after(next);seLevels.nextButton=next;
+ }
  if(!seLevels.inspector){
   const panel=document.createElement('section');panel.id='st141MenuInspector';
   panel.hidden=true;panel.className='st141-inspector';
@@ -216,6 +225,7 @@ function seLevelsRefresh(){
  const visible=seLevelsOwns()&&!playing&&!simulating&&!stSession&&!seLevels.playingMenu;
  seLevels.bar.hidden=!visible;
  const current=seLevelsCurrent();
+ if(seLevels.nextButton)seLevels.nextButton.hidden=!current?.next||seLevels.playingMenu||!(playing||simulating||stSession);
  if(!current)return;
  const levelSelect=seLevels.bar.querySelector('#st141LevelSelect'),
  nextSelect=seLevels.bar.querySelector('#st141LevelNext');
@@ -343,7 +353,9 @@ stLoadStarter=function(){
 const seLevelNativeBeginPlay=beginPlay;
 beginPlay=function(...args){
  if(seLevelsOwns()&&seLevelsCurrent()?.role==='menu')return seLevelsPlayMenu();
- return seLevelNativeBeginPlay(...args);
+ const started=seLevelNativeBeginPlay(...args);
+ seLevelsRefresh();
+ return started;
 };
 const seLevelNativeBeginSimulate=beginSimulate;
 beginSimulate=function(...args){
@@ -353,7 +365,9 @@ beginSimulate=function(...args){
 const seLevelNativeStop=stopSession;
 stopSession=function(...args){
  if(seLevels.playingMenu)return seLevelsStopMenu();
- return seLevelNativeStop(...args);
+ const stopped=seLevelNativeStop(...args);
+ seLevelsRefresh();
+ return stopped;
 };
 // Retire all editor-time v11.140 cinematic objects and redirect its frame
 // tick to authored menu actors in Play only. No second frame loop.
