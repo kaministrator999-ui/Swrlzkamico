@@ -33,7 +33,7 @@ try:
   host.wait_for_function("() => !!document.querySelector('#se149OfferIn')",timeout=7000)
   # Local HTTP launch normally uses the Python bridge; force the new native
   # browser-only direct-peer path without pretending that this is public HTTPS.
-  host.evaluate("() => se149Host()")
+  host.evaluate("() => window.SWYRL_ENGINE_LAN.hostPeer()")
   host.wait_for_function("() => !!document.querySelector('#se148WaitingRoom') && !document.querySelector('#se148WaitingRoom').hidden")
   assert host.locator("#se148Slots .se148-slot").count()==8
   host.locator("#se149CreateInvite").click()
