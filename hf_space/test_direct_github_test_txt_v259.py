@@ -1,5 +1,6 @@
 """v259: a plain test-file request is complete and should not open a form."""
 import base64
+import ast
 import hashlib
 import pathlib
 import sys
@@ -101,7 +102,18 @@ class DirectTestTxt(unittest.TestCase):
         self.assertIn('elif wants_direct_github_test_txt(prompt):',src)
         self.assertIn('{"userId": google_owner, "prompt": prompt}',src)
         self.assertIn('create_requested_test_file(',src)
-        self.assertIn('elif wants_github_text_file_creation(prompt):',src)
+        branches=[node for node in ast.walk(ast.parse(src)) if isinstance(node,ast.If)
+            and any(isinstance(call,ast.Call) and isinstance(call.func,ast.Name)
+                    and call.func.id=='wants_github_text_file_creation' for call in ast.walk(node.test))
+            and any(isinstance(statement,ast.Assign) and any(isinstance(target,ast.Subscript)
+                    and isinstance(target.value,ast.Name) and target.value.id=='payload'
+                    and isinstance(target.slice,ast.Constant) and target.slice.value=='githubChatFileAction'
+                    for target in statement.targets) for statement in node.body)]
+        self.assertEqual(len(branches),1)
+        condition=compile(ast.Expression(branches[0].test),'Station TXT route','eval')
+        for local,expected in ((False,True),(True,False)):
+            self.assertEqual(eval(condition,{'__builtins__':{}},{'prompt':'Create a text file',
+                'local_project_intent':local,'wants_github_text_file_creation':lambda prompt:True}),expected)
         self.assertNotIn('githubDirectTestTxt"] = True',src)
 
 if __name__=="__main__":
