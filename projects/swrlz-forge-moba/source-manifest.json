@@ -189,6 +189,6 @@
     "patches/v11_140_sheep_main_menu.py",
     "patches/v11_141_editable_sheep_levels.py"
   ],
-  "finalBytes": 6729010,
-  "finalSha256": "639cca010358ccf8a1c1c129ab1cfc99b45e32854ecd4802ff3d3610a32d39f7"
+  "finalBytes": 6764649,
+  "finalSha256": "c7e294783d6539db8835e20024c211b72d5e4bec1ef86ca970a763c71dd37534"
 }
