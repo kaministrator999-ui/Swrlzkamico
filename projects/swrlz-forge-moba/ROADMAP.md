@@ -1,3 +1,11 @@
+### §E v11.145 · Terminal hosted release verified (2026-10-27 UTC)
+
+**Release acceptance:** The [dedicated v11.145 deployment and complete Hugging Face live-host audit](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40454549929) finished **SUCCESS**. Source commit `1104e4874378030af8f937d029193f89ec7224d4`, separate deployment request `db773d871beb6665c31e8925565d2423b7612623`. Existing Space: https://kamiloki-swrlz-forge-moba.static.hf.space/. The actual hosted HTML and `SOURCE.json` match the sealed **§wyrl§ Engine v11.145** source, **177 ordered patches**, **6,791,082 HTML bytes**, SHA-256 `6448c1b8b004db9556b6760ed6987c4600c4ba0d19b1d38f35ddc29ae04ad206`, and **all 68 historical bundled assets**. [Targeted isolated regression suite](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40454261079) **SUCCESS**.
+
+**Resolved candidate failure:** The initial v11.145 source candidate accidentally asserted only one `</head>` token; the historical generated source has two. Corrected the insertion to replace only the first closing tag, then reconstructed and independently resealed the exact resulting source. No integrity gate was bypassed.
+
+**Owner device acceptance outstanding:** Physically inspect game/menu Play without editor chrome, use the real **Exit to editor** control and check restored editing UI, drag the sheep house hologram over blocked/clear ground, and inspect nearby aligned Rapid placements. A red ghost still means not buildable at its current site. Passing CI and hosted source integrity is not proof of Android gesture quality or camera framing.
+
 ## §E v11.145 · Immersive Sheep Tag Play, stable house holograms, safer Rapid snap (2026-10-27)
 
 **Android owner observations from v11.144:** Play shows editor toolbar over the live Main Menu and gameplay; the build preview rapidly blinks away/reappears while being moved; nearby red houses are rejected for narrow diagonal cracks even when a closely aligned, valid alternate footprint is available.
