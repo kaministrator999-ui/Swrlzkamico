@@ -47,4 +47,47 @@ with sync_playwright() as p:
  try:page.screenshot(path="/tmp/se143-after-play.png",full_page=True)
  except Exception as e:print("SCREEN_ERROR",str(e),flush=True)
  print("SMOKE_ERRORS",json.dumps(errors[-22:],ensure_ascii=False),flush=True)
+ # Real Android-like touch viewport: compare actual page.tap and menu hit area.
+ mobile=browser.new_context(viewport={"width":412,"height":915},device_scale_factor=2.5,
+  is_mobile=True,has_touch=True)
+ m=mobile.new_page()
+ mob_errors=[]
+ m.on("pageerror",lambda err: mob_errors.append(str(err)))
+ m.goto(URL,wait_until="domcontentloaded",timeout=60000)
+ m.wait_for_timeout(3200)
+ m.evaluate("() => window.SWYRL_ENGINE_SHEEP_TAG?.load?.()")
+ m.wait_for_timeout(900)
+ def mobile_state(stage):
+  d=m.evaluate("""() => {
+   const play=document.querySelector('#playBtn');
+   const rect=play?.getBoundingClientRect();
+   const menu=document.querySelector('#st141RuntimeMenu');
+   const bar=document.querySelector('#st141LevelBar');
+   const style=menu?getComputedStyle(menu):null;
+   const mb=menu?.getBoundingClientRect();
+   const hit=rect&&document.elementFromPoint(rect.left+rect.width/2,rect.top+rect.height/2);
+   return {
+    viewport:[innerWidth,innerHeight,visualViewport?.width,visualViewport?.height],
+    playRect:rect?{x:rect.x,y:rect.y,width:rect.width,height:rect.height}:null,
+    playHit:hit?{id:hit.id,tag:hit.tagName,text:hit.textContent?.trim().slice(0,45)}:null,
+    menuExists:!!menu,menuCSS:style?{display:style.display,visibility:style.visibility,opacity:style.opacity,z:style.zIndex,pointer:style.pointerEvents}:null,
+    menuRect:mb?{x:mb.x,y:mb.y,width:mb.width,height:mb.height}:null,
+    menuVisible:!!menu&&style.display!=='none'&&style.visibility!=='hidden'&&mb.width>5,
+    barHidden:bar?.hidden,barRect:bar?.getBoundingClientRect().toJSON()||null,
+    state:window.SWYRL_ENGINE_LEVELS?.status(),selected:document.querySelector('#statusBar')?.textContent?.slice(0,220)
+   };
+  }""")
+  print("MOBILE_"+stage,json.dumps(d,ensure_ascii=False),flush=True)
+ mobile_state("STARTER")
+ try:
+  m.locator("#playBtn").tap(timeout=5000)
+  print("MOBILE_TAP_PLAY_DONE",flush=True)
+ except Exception as e:
+  print("MOBILE_TAP_ERROR",str(e)[:1000],flush=True)
+ m.wait_for_timeout(1400)
+ mobile_state("AFTER_TAP")
+ try:m.screenshot(path="/tmp/se143-mobile-after-play.png",full_page=True)
+ except Exception as e:print("MOBILE_SCREEN_ERROR",str(e),flush=True)
+ print("MOBILE_ERRORS",json.dumps(mob_errors[-15:]),flush=True)
+ mobile.close()
  browser.close()
