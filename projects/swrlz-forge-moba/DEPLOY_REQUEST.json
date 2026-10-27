@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.151",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_151_ONE_CODE_AUTOMATIC_JOIN",
-  "reason": "Owner requested one invitation entered once; automatic PeerJS Cloud signaling replaces manual guest reply code on public HTTPS, and actual connected WebRTC guests populate lobby seats and unlock Start Match. This uses a third-party signaling service and client-isolated Wi-Fi may still block direct links. Gameplay remains locally simulated and is not synchronized. Simplified GitHub Action only packages engine and uploads to existing dedicated static HF Space; no Chromium or live-asset verification. Package-only retry after correcting CSS injection anchor to use first closing head tag.",
-  "sourceCommit": "25d18ecedb3965ea48efe21bfdc7fcba7d0c38e5",
+  "releaseVersion": "v11.152",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_152_HOST_AUTHORITATIVE_WORLD",
+  "reason": "User physical shelter laptop + Android test: connected WebRTC room and host Start Match launches both native Sheep Tag sessions, but independent client simulations visibly diverge. v11.152 candidate keeps one host-authoritative native Sheep Tag simulation; guests receive unit/building/economy/timer/capture snapshots (~130ms) and send distinct player orders and mobile joystick intent to host, validated using native build/path rules. Legacy gameplay remains unchanged outside LAN session. PeerJS Cloud is signaling only, and real two-device synchronized behavior is not yet verified. Deployment workflow remains minimal: build/package + upload to HF Space only; no Chromium or remote audit.",
+  "sourceCommit": "89e70dab3593f8e12aef34c09ef3ed36629ba775",
   "sourceIntegritySha256": null
 }
