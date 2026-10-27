@@ -1,3 +1,7 @@
+## §E v11.151 — Owner-requested simplified LAN flow and deploy (2026-10-27)
+
+Primary hosted HTTPS LAN workflow is now one-code: the guest only enters host's invite; automatic offer-answer uses PeerJS Cloud; no manual guest reply. Guest fills a real room slot only after its direct WebRTC channel establishes. Start Match coordinates local Gameplay launch but **does not synchronize sheep/wolves/houses/physics**. The public PeerJS Cloud handles signaling, not game content. GitHub deploy workflow is intentionally only build/package + upload to the dedicated HF Space; no Chromium/full-suite/live asset audits on deploy. Keep 183 historical engine patches and 68 assets. Owner mobile+laptop acceptance pending.
+
 ## §E v11.150 · Host-authorized Sheep Tag match launch (2026-10-27)
 
 **Owner request:** After a laptop/phone join the same Wi-Fi WebRTC waiting room, the host may press **Start Match** to transition the host and connected guest browsers out of the menu and into each device's native Sheep Tag Gameplay level.
