@@ -331,6 +331,7 @@ jobs:
                   'status':'PASS' if accepted and named and not faults else 'REJECT',
               }
               print(json.dumps(diagnostic,ensure_ascii=False))
+              if diagnostic['status']!='PASS': print('::error::Identity model acceptance failed: '+json.dumps(diagnostic,ensure_ascii=True))
               assert diagnostic['status']=='PASS', 'Real 700M identity acceptance failed; production upload blocked'
           PY
       - name: v283 Real 700M nameless user and identity correction continuity gate
@@ -369,6 +370,7 @@ jobs:
                   'remainingFaults':faults,'responseChars':len(reply),
               }
               print(json.dumps(result,ensure_ascii=False))
+              if not accepted or faults: print('::error::Identity model acceptance failed: '+json.dumps(result,ensure_ascii=True))
               assert accepted and not faults, 'v283 multi-turn identity behavioral acceptance failed: '+label
               return reply
 

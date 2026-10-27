@@ -1,3 +1,9 @@
+## UPDATE PUBLICATION REQUESTED — 2026-10-27 — Editor completion and Chat update history
+
+Owner explicitly authorized publishing the validated editor, project archive, response budget and Chat update-history changes. Candidate source `f925e2012ed7ece820e3272700bc6619846c2085`, following source6240d715; exact-source CI [40439785973](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40439785973) is SUCCESS. Existing main Forge/§E changes and deployment workflows are preserved. The request pins this source SHA through the existing HF request→guarded workflow→kamiloki/Swyrlz chain. No direct HF upload or hosting move. Publication/runtime acceptance pending; model/default/version/build receipts must be read from the current checkpoint, not inferred from this request.
+
+See `docs/engineering/entries/2026-10-25_EDITOR_PROJECT_COMPLETION.md`.
+
 ## PUBLICATION RETRY — 2026-10-26 — dynamic700M budget invariant
 
 The first authorized request stopped safely before upload at an obsolete fixed-input-budget assertion. Revised assertions verify the actual input/output reservation and passed real pinned700M inference. Source465d563f/CI40266983914 unchanged; all existing deployment/identity/rollback gates retained. See docs/engineering/entries/2026-10-25_EDITOR_PROJECT_COMPLETION.md. Current live source remains6240d715 until this retry is verified.
