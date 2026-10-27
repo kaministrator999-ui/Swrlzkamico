@@ -1,0 +1,231 @@
+name: Guarded Chat Space Startup Recovery
+on:
+  workflow_dispatch:
+    inputs:
+      source_ref:
+        description: "Exact successful-CI source already uploaded to the existing Chat Space"
+        required: true
+        type: string
+        default: "f925e2012ed7ece820e3272700bc6619846c2085"
+      expected_space_revision:
+        description: "Exact already-uploaded Space HEAD; recovery never uploads a source revision"
+        required: true
+        type: string
+        default: "48515f7fc6e8cb7b4450725320e8fed64fb886e6"
+      expected_runtime_revision:
+        description: "Exact previous runtime and rollback parent"
+        required: true
+        type: string
+        default: "75e45f4148e9eb8972d95305d92b67838c55b47c"
+      approved:
+        description: "Authorize one non-factory restart of the existing kamiloki/Swyrlz only"
+        required: true
+        type: choice
+        options: ["no", "yes"]
+        default: "no"
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: swrlz-hf-space-deployment
+  cancel-in-progress: false
+
+jobs:
+  recover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Install pinned Hugging Face API client
+        run: python -m pip install 'huggingface_hub==1.16.0'
+      - name: Verify publication and perform one approved non-factory restart
+        shell: bash
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
+          SOURCE_REF: ${{ inputs.source_ref }}
+          EXPECTED_SPACE_REVISION: ${{ inputs.expected_space_revision }}
+          EXPECTED_RUNTIME_REVISION: ${{ inputs.expected_runtime_revision }}
+          RECOVERY_APPROVED: ${{ inputs.approved }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          """One guarded non-factory restart of the existing, already published Chat Space.
+          
+          Credentials stay inside the Actions runner. No source, hardware, settings or
+          Space contents are changed. Every request/source/CI/provenance/state guard must
+          pass immediately before the single restart; no retry loop or factory reset.
+          """
+          from __future__ import annotations
+          
+          import base64
+          import json
+          import os
+          import re
+          from urllib.parse import urlparse
+          from urllib.request import HTTPRedirectHandler, Request, build_opener
+          
+          TARGET = "kamiloki/Swyrlz"
+          REPOSITORY = "kaministrator999-ui/Swrlzkamico"
+          GITHUB = "https://api.github.com/repos/" + REPOSITORY
+          HF = "https://huggingface.co"
+          SPACE = HF + "/api/spaces/" + TARGET
+          CI_RUN = 40439785973
+          MAX_RESPONSE = 1024 * 1024
+          ALLOWED_STAGE = {"RUNNING_APP_STARTING", "RUNTIME_ERROR"}
+          
+          
+          class RecoveryBlocked(RuntimeError):
+              pass
+          
+          
+          def require(condition, code):
+              if not condition:
+                  raise RecoveryBlocked(code)
+          
+          
+          def sha(value):
+              return isinstance(value, str) and re.fullmatch(r"[0-9a-f]{40}", value) is not None
+          
+          
+          def request_fields(payload):
+              require(isinstance(payload, dict) and payload.get("encoding") == "base64", "REQUEST_FILE_ENCODING")
+              content = payload.get("content")
+              require(isinstance(content, str) and len(content) <= 8192, "REQUEST_FILE_SIZE")
+              try:
+                  text = base64.b64decode("".join(content.split()), validate=True).decode("utf-8")
+              except (ValueError, UnicodeDecodeError):
+                  raise RecoveryBlocked("REQUEST_FILE_INVALID")
+              require(len(text) <= 4096, "REQUEST_FILE_SIZE")
+              result = {}
+              for line in text.splitlines():
+                  if "=" not in line:
+                      continue
+                  key, value = line.split("=", 1)
+                  require(key not in result, "REQUEST_DUPLICATE_FIELD")
+                  result[key] = value
+              return result
+          
+          
+          def checked_request(get_json, source):
+              fields = request_fields(get_json(GITHUB + "/contents/.deploy/HF_SPACE_REQUEST.txt?ref=main"))
+              require(fields.get("TARGET") == TARGET and fields.get("APPROVED") == "1"
+                      and fields.get("SOURCE_REF") == source, "CURRENT_MAIN_REQUEST_MISMATCH")
+          
+          
+          def checked_space(info, expected_head):
+              require(isinstance(info, dict) and info.get("id") == TARGET and info.get("sha") == expected_head,
+                      "SPACE_HEAD_OR_TARGET_MISMATCH")
+              runtime = info.get("runtime")
+              require(isinstance(runtime, dict), "RUNTIME_METADATA_MISSING")
+              return runtime
+          
+          
+          def checked_provenance(get_json, revision, source=None):
+              record = get_json(HF + "/spaces/" + TARGET + "/resolve/" + revision + "/MODEL_PROVENANCE.json")
+              require(isinstance(record, dict) and record.get("sourceRepository") == REPOSITORY
+                      and sha(record.get("sourceCommit")), "SOURCE_PROVENANCE_INVALID")
+              if source is not None:
+                  require(record["sourceCommit"] == source, "SOURCE_PROVENANCE_MISMATCH")
+              return record["sourceCommit"]
+          
+          
+          def run_recovery(*, source, expected_head, expected_runtime, approved, get_json, restart):
+              require(approved == "yes", "RECOVERY_APPROVAL_REQUIRED")
+              require(sha(source) and sha(expected_head) and sha(expected_runtime)
+                      and expected_head != expected_runtime, "IMMUTABLE_REVISIONS_REQUIRED")
+              checked_request(get_json, source)
+              ci = get_json(GITHUB + "/actions/runs/" + str(CI_RUN))
+              require(isinstance(ci, dict) and ci.get("head_sha") == source
+                      and ci.get("name") == "HF Candidate Offline Validation"
+                      and ci.get("status") == "completed" and ci.get("conclusion") == "success",
+                      "EXACT_SOURCE_CI_NOT_SUCCESSFUL")
+              before = get_json(SPACE)
+              runtime = checked_space(before, expected_head)
+              checked_provenance(get_json, expected_head, source)
+              result = {"target": TARGET, "sourceCommit": source, "expectedSpaceRevision": expected_head,
+                        "expectedPreviousRuntimeRevision": expected_runtime, "ciRun": CI_RUN,
+                        "factoryReboot": False, "sourceUploads": False, "hardwareChangesRequested": False,
+                        "runtimeAcceptance": "NOT_ESTABLISHED_BY_RESTART"}
+              if runtime.get("stage") == "RUNNING" and runtime.get("sha") == expected_head:
+                  return {**result, "status": "ALREADY_RUNNING_NO_RESTART", "restartCalls": 0}
+              require(runtime.get("stage") in ALLOWED_STAGE, "SPACE_NOT_IN_RECOVERABLE_STAGE")
+              require(runtime.get("sha") == expected_runtime, "EXPECTED_PREVIOUS_RUNTIME_MISMATCH")
+              lineage = get_json(SPACE + "/commits/" + expected_head)
+              require(isinstance(lineage, list) and len(lineage) >= 2
+                      and lineage[0].get("id") == expected_head and lineage[1].get("id") == expected_runtime,
+                      "EXACT_ROLLBACK_PARENT_MISSING")
+              checked_provenance(get_json, expected_runtime)
+              hardware = runtime.get("hardware") if isinstance(runtime.get("hardware"), dict) else {}
+              hardware_before = {key: hardware.get(key) for key in ("current", "requested")}
+              # Re-read both authorities immediately before mutation. The workflow uses
+              # the existing deployment concurrency group; no source HEAD is uploaded.
+              checked_request(get_json, source)
+              current_runtime = checked_space(get_json(SPACE), expected_head)
+              if current_runtime.get("stage") == "RUNNING" and current_runtime.get("sha") == expected_head:
+                  return {**result, "status": "BECAME_RUNNING_NO_RESTART", "restartCalls": 0}
+              require(current_runtime.get("stage") in ALLOWED_STAGE
+                      and current_runtime.get("sha") == expected_runtime, "SPACE_CHANGED_BEFORE_RESTART")
+              restart(repo_id=TARGET, factory_reboot=False)
+              after = get_json(SPACE)
+              after_runtime = checked_space(after, expected_head)
+              after_hardware = after_runtime.get("hardware") if isinstance(after_runtime.get("hardware"), dict) else {}
+              for key, value in hardware_before.items():
+                  require(after_hardware.get(key) in (None, value), "HARDWARE_CHANGED_DURING_RECOVERY")
+              return {**result, "status": "NON_FACTORY_RESTART_REQUESTED", "restartCalls": 1,
+                      "stageBefore": current_runtime.get("stage"), "stageAfter": after_runtime.get("stage")}
+          
+          
+          class SameOriginRedirect(HTTPRedirectHandler):
+              def redirect_request(self, request, fp, code, message, headers, newurl):
+                  old = urlparse(request.full_url)
+                  new = urlparse(newurl)
+                  if new.scheme != "https" or old.hostname != new.hostname:
+                      return None
+                  return super().redirect_request(request, fp, code, message, headers, newurl)
+          
+          
+          def main():
+              hf_token = os.environ.get("HF_TOKEN", "").strip()
+              gh_token = os.environ.get("GH_TOKEN", "").strip()
+              if not hf_token or not gh_token:
+                  print("::error::Recovery requires existing runner-only HF_TOKEN and GITHUB_TOKEN credentials.")
+                  return 1
+              opener = build_opener(SameOriginRedirect())
+              def get_json(url):
+                  host = urlparse(url).hostname
+                  require(host in ("huggingface.co", "api.github.com"), "UNEXPECTED_DIAGNOSTIC_HOST")
+                  token = hf_token if host == "huggingface.co" else gh_token
+                  headers = {"Authorization": "Bearer " + token, "User-Agent": "SWRLZ-Guarded-Startup-Recovery/1"}
+                  if host == "api.github.com":
+                      headers["Accept"] = "application/vnd.github+json"
+                  with opener.open(Request(url, headers=headers), timeout=20) as response:
+                      data = response.read(MAX_RESPONSE + 1)
+                  require(len(data) <= MAX_RESPONSE, "OVERSIZED_METADATA_RESPONSE")
+                  return json.loads(data)
+              try:
+                  from huggingface_hub import HfApi
+                  api = HfApi(endpoint=HF, token=hf_token)
+                  result = run_recovery(source=os.environ.get("SOURCE_REF", ""),
+                      expected_head=os.environ.get("EXPECTED_SPACE_REVISION", ""),
+                      expected_runtime=os.environ.get("EXPECTED_RUNTIME_REVISION", ""),
+                      approved=os.environ.get("RECOVERY_APPROVED", ""), get_json=get_json,
+                      restart=api.restart_space)
+              except RecoveryBlocked as error:
+                  print("::error::Guarded startup recovery blocked: " + str(error))
+                  return 1
+              except Exception as error:
+                  # Exception text may contain URLs, headers or response bodies. Never
+                  # print it; a class name is sufficient for this bounded status receipt.
+                  print("::error::Guarded startup recovery failed; errorType=" + type(error).__name__)
+                  return 1
+              text = json.dumps(result, ensure_ascii=True, separators=(",", ":"))
+              assert len(text.encode()) <= 5000
+              print("::notice title=Guarded HF startup recovery::" + text.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A"))
+              return 0
+          
+          
+          if __name__ == "__main__":
+              raise SystemExit(main())
+          PY
