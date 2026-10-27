@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.153
+title: §wyrl§ Engine v11.154
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,12 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.154 — Guest movement transport diagnostics
+
+Host now acknowledges the real guest joystick packets over the established WebRTC connection and moves the registered guest sheep in the authoritative simulation. Guest displays attempted TX separately from confirmed host ACK and applied movement frames. This avoids treating a send attempt as successful delivery. Shared host world and existing 68 assets remain. Minimal HF package/upload deployment only; physical acceptance pending.
+
+
 
 ## §E v11.153 — Guest joystick movement
 
