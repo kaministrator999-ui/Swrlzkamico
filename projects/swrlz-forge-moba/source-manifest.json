@@ -190,6 +190,6 @@
     "patches/v11_141_editable_sheep_levels.py",
     "patches/v11_142_editor_stop_menu_gait.py"
   ],
-  "finalBytes": 6764649,
-  "finalSha256": "c7e294783d6539db8835e20024c211b72d5e4bec1ef86ca970a763c71dd37534"
+  "finalBytes": 6773388,
+  "finalSha256": "def505a3fe5e74daef2c6135b589f59fa12b14670a0f687dab70b278b12db3f3"
 }
