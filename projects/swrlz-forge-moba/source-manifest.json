@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.148",
+  "name": "§wyrl§ Engine v11.149",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_148.html",
+  "finalArtifact": "swyrl_engine_v11_149.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -194,8 +194,9 @@
     "patches/v11_145_play_scene_build_ghost.py",
     "patches/v11_146_local_lan_browser.py",
     "patches/v11_147_fullscreen_menu_viewport.py",
-    "patches/v11_148_sheep_lan_waiting_room.py"
+    "patches/v11_148_sheep_lan_waiting_room.py",
+    "patches/v11_149_peer_menu_parity.py"
   ],
-  "finalBytes": 6814236,
-  "finalSha256": "94bbd9594a9d76b0c9b83140877414d21800fb75e93d364d6ee99426c2da14ea"
+  "finalBytes": 0,
+  "finalSha256": "PENDING_MEASUREMENT"
 }
