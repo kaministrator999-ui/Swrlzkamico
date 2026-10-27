@@ -1,6 +1,6 @@
 // §E v11.146 — actual LAN game directory UI; NO fabricated hosts or browser subnet scans.
 // Local HTTP companion implements discovery and lobby presence. Gameplay netcode is separate.
-const se146Lan={root:null,button:null,active:false,bridge:false,hosting:false,poll:null,busy:false,scanSerial:0};
+const se146Lan={root:null,button:null,active:false,bridge:false,hosting:false,canHost:false,poll:null,busy:false,scanSerial:0};
 function se146Text(node,message){if(node)node.textContent=message;}
 function se146Fetch(path,options={}){
  return fetch(path,{cache:'no-store',...options}).then(async response=>{
@@ -36,11 +36,12 @@ function se146Draw(games){
   const info=document.createElement('div');info.className='se146-game-info';
   const title=document.createElement('b');title.textContent=game.name||'Sheep Tag lobby';
   const description=document.createElement('small');
-  description.textContent=game.host+':'+game.port+' · '+game.players+' player(s) · '+(game.self?'This device':'LAN');
+  const owner=!!game.self&&se146Lan.canHost;
+  description.textContent=game.host+':'+game.port+' · '+game.players+' player(s) · '+(owner?'This device':'LAN');
   info.append(title,description);
   const join=document.createElement('button');join.type='button';
-  join.textContent=game.self?'Your lobby':'Join Lobby';
-  join.disabled=!!game.self;
+  join.textContent=owner?'Your lobby':'Join Lobby';
+  join.disabled=owner;
   join.onclick=()=>se146Join(game);
   card.append(info,join);list.append(card);
  }
@@ -71,9 +72,11 @@ async function se146Scan(force=false){
   }
   const status=await se146Fetch('/api/lan/status');
   if(serial!==se146Lan.scanSerial||!se146Lan.active)return;
-  se146Lan.bridge=true;se146Lan.hosting=!!status.game;
+  se146Lan.bridge=true;se146Lan.canHost=!!status.canHost;
+  se146Lan.hosting=!!status.game&&se146Lan.canHost;
   const button=se146Lan.root.querySelector('#se146LanHost');
-  button.textContent=status.game?'■ Stop Hosting':'＋ Host Game';button.disabled=!status.canHost;
+  button.textContent=se146Lan.hosting?'■ Stop Hosting':se146Lan.canHost?'＋ Host Game':'Hosting requires your own device';
+  button.disabled=!se146Lan.canHost;
   const directory=await se146Fetch('/api/lan/games'+(force?'?scan=1':''));
   if(serial!==se146Lan.scanSerial||!se146Lan.active)return;
   se146Draw(Array.isArray(directory.games)?directory.games:[]);
