@@ -1,0 +1,29 @@
+/* §E v11.148 — independent LAN waiting room inside the existing menu renderer. */
+#st141RuntimeMenu .se148-room[hidden]{display:none!important}
+#st141RuntimeMenu .se148-room{
+ width:min(94vw,480px);max-height:calc(100dvh - 88px);overflow:auto;
+ box-sizing:border-box;padding:clamp(12px,3vw,22px);
+ border:1px solid #b0bca3;border-radius:17px;background:rgba(18,47,40,.97);
+ box-shadow:0 14px 40px #0009;color:#f4eed5;text-align:center;
+ pointer-events:auto;touch-action:pan-y;
+}
+#st141RuntimeMenu .se148-kicker{letter-spacing:.17em;font-size:11px;color:#f1d67b}
+#st141RuntimeMenu .se148-room h2{margin:8px 0;font-size:clamp(20px,5vw,27px)}
+#st141RuntimeMenu .se148-slots{display:grid;gap:5px;max-height:46dvh;overflow:auto;margin:12px 0}
+#st141RuntimeMenu .se148-slot{display:flex;align-items:center;gap:10px;
+ padding:9px 10px;min-height:34px;border-radius:8px;
+ background:#1c3d34;border:1px solid #71948177;text-align:left}
+#st141RuntimeMenu .se148-slot.se148-host{border-color:#ebd57a;background:#38553a}
+#st141RuntimeMenu .se148-slot b{flex:1;font-size:14px;overflow-wrap:anywhere}
+#st141RuntimeMenu .se148-slot small{font-size:10px;letter-spacing:.08em;color:#d7e3d3}
+#st141RuntimeMenu .se148-number{color:#e5d48d;font-family:monospace;font-weight:bold}
+#st141RuntimeMenu .se148-room p{font-size:12px;line-height:1.4}
+#st141RuntimeMenu .se148-room button{display:block;width:100%;border-radius:10px;
+ min-height:42px;padding:10px;margin-top:10px;cursor:pointer}
+#st141RuntimeMenu #se148Start{border:0;background:#dec36b;color:#283c30}
+#st141RuntimeMenu #se148Start:disabled{opacity:.65;cursor:not-allowed}
+#st141RuntimeMenu #se148Leave{background:#285247;color:#e9f4e6;border:1px solid #a2b89b}
+#st141RuntimeMenu #se148PlayerName{display:block;width:100%;margin:8px 0;
+ box-sizing:border-box;padding:10px;min-height:42px;background:#d9e5d8;color:#21392a;
+ border-radius:9px;border:1px solid #b4cab6;font-size:16px}
+body.se145-menu .viewport-wrap > #st141RuntimeMenu .se148-room{max-height:calc(100dvh - 88px)!important}
