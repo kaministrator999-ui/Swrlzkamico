@@ -1,0 +1,36 @@
+name: §E v11.143 live DOM reproduction
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feature/se-v11143-real-browser-menu-repair
+    paths:
+      - '.github/workflows/measure-se-v11-143-live-dom.yml'
+      - 'projects/swrlz-forge-moba/scripts/smoke_real_dom_v11_143.py'
+permissions:
+  contents: read
+jobs:
+  verify-real-editor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install Chrome-browser driver and build exact engine
+        run: |
+          python -m pip install playwright
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/se143-site > /tmp/se143-build.log
+          tail -n 4 /tmp/se143-build.log
+      - name: Reproduce editor Play on actual DOM in Chromium
+        run: |
+          python -m http.server 8765 --bind 127.0.0.1 --directory /tmp/se143-site >/tmp/se143-server.log 2>&1 &
+          python projects/swrlz-forge-moba/scripts/smoke_real_dom_v11_143.py
+      - name: Screenshot for debugging
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: se143-after-play
+          path: /tmp/se143-after-play.png
+          if-no-files-found: ignore
