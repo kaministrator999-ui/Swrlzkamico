@@ -59,9 +59,9 @@ class Slots(unittest.TestCase):
                 self.assertTrue(post("/api/lan/pulse",ident)["ok"])
                 self.assertTrue(post("/api/lan/leave",ident)["ok"])
                 self.assertEqual(get("/api/lan/lobby")["game"]["players"],1)
-                with self.assertRaises(urllib.error.HTTPError) as error:
-                    post("/api/lan/host",{"name":"evil"})
-                # Running on this host is authorized; existing host is unchanged.
+                existing=post("/api/lan/host",{"name":"Replaced?"})["game"]
+                self.assertEqual(existing["id"],game["id"])
+                self.assertEqual(existing["name"],"Moonbell")
             finally:
                 server.shutdown();server.server_close();worker.join(timeout=2)
 
