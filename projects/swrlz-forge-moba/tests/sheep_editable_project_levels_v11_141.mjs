@@ -38,7 +38,17 @@ const context={
  orbit:{target:new V(),enabled:true,update(){}},
  setCameraView(){},initializeHistory(){},toast(){},editorLog(){},
  markSaved(){},
- projectData(){return structuredClone({...sceneData,project:{...context.currentProject}});},
+ projectData(){
+  const data=structuredClone({...sceneData,project:{...context.currentProject}});
+  data.scene.actors=data.scene.actors.map((a,i)=>{
+   const live=context.actors.find(x=>x.userData.id===a.id);
+   if(live){a.position=[live.position.x,live.position.y,live.position.z];
+    a.rotation=[live.rotation.x,live.rotation.y,live.rotation.z];
+    a.scale=[live.scale.x,live.scale.y,live.scale.z];}
+   return a;
+  });
+  return data;
+ },
  loadProject(d){loadCalls++;sceneData=structuredClone(d);context.currentProject=structuredClone(d.project);
  context.actors=d.scene.actors.map(x=>new A(x));return true;},
  beginPlay(){gameStarts++;context.playing=true;context.stSession={role:'sheep'};return true;},
