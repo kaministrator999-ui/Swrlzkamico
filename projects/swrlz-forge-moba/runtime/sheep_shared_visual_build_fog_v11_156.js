@@ -29,7 +29,9 @@ se152ClientApply=function(packet){
  if(se152.received!==packet.seq)return;
  // Clone only authoritative buildings; never create from a guest preview.
  for(const item of items){
-  const owner=packet.units.some(u=>u.id===item.owner)?item.owner:null;
+  const ownerIndex=packet.units.findIndex(u=>u.id===item.owner);
+  const owner=ownerIndex>=0?
+   (s.units.find(u=>u.id===item.owner)||s.units[ownerIndex])?.id:null;
   let b=s.buildings.find(v=>v.id===item.id&&v.hp>0);
   if(!b){
    b=s.buildings.find(v=>v.authored&&v.kind===item.kind&&v.hp>0&&
