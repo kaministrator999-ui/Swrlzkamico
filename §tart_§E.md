@@ -1,3 +1,7 @@
+## §E v11.152 · Owner phone/laptop shared-world correction (2026-10-27)
+
+Owner's two physical devices connected and both started gameplay, but each ran independent sheep/wolf AI and building simulation. v11.152 instead runs Sheep Tag's existing single authoritative native simulation on host; registered WebRTC guests receive approximately 130-ms snapshots and send bounded build/move/attack orders and mobile joystick intent for their distinct assigned animal. Guest local world tick is disabled; existing project, canvas, assets and authoritative build/collision rules preserved. Existing PeerJS Cloud only facilitates WebRTC signaling. This is the first multiplayer state-sync candidate; owner two-device acceptance remains pending. Dedicated HF deploy workflow stays build+upload only (no Chromium, remote asset audit or live polling).
+
 ## §E v11.151 — Owner-requested simplified LAN flow and deploy (2026-10-27)
 
 Primary hosted HTTPS LAN workflow is now one-code: the guest only enters host's invite; automatic offer-answer uses PeerJS Cloud; no manual guest reply. Guest fills a real room slot only after its direct WebRTC channel establishes. Start Match coordinates local Gameplay launch but **does not synchronize sheep/wolves/houses/physics**. The public PeerJS Cloud handles signaling, not game content. GitHub deploy workflow is intentionally only build/package + upload to the dedicated HF Space; no Chromium/full-suite/live asset audits on deploy. Keep 183 historical engine patches and 68 assets. Owner mobile+laptop acceptance pending.
