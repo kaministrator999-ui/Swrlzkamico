@@ -1,0 +1,32 @@
+name: §E v11.148 scoped LAN host/guest waiting-room validation
+on:
+  push:
+    branches: ["feature/se-v11-148-lan-waiting-lobby"]
+    paths:
+      - "projects/swrlz-forge-moba/**"
+      - ".github/workflows/measure-engine-lobby-v11-148.yml"
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Check LAN bridge Python syntax and new runtime JavaScript syntax
+        run: |
+          python -m py_compile projects/swrlz-forge-moba/scripts/lan_bridge.py projects/swrlz-forge-moba/patches/v11_148_sheep_lan_waiting_room.py
+          node --check projects/swrlz-forge-moba/runtime/sheep_lan_waiting_room_v11_148.js
+      - name: Test existing LAN discovery and new server-owned seating
+        run: |
+          python projects/swrlz-forge-moba/tests/lan_bridge_v11_146_test.py
+          python projects/swrlz-forge-moba/tests/lan_waiting_room_v11_148_test.py
+          node projects/swrlz-forge-moba/tests/sheep_lan_browser_v11_146.mjs
+          node projects/swrlz-forge-moba/tests/sheep_lan_waiting_room_v11_148.mjs
+      - name: Reconstruct 180 ordered patches and report exact source seal
+        run: python projects/swrlz-forge-moba/scripts/measure_v11_148_source.py
