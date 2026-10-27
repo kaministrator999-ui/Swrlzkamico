@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.141
+title: §wyrl§ Engine v11.142
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,14 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.142 · Stop button, visible Start Game and articulated actors (2026-10-26)
+
+The project level selector no longer consumes the narrow top Play/Pause/Stop toolbar. It is placed in its own editor viewport strip. **Stop** stays beside Pause and can end a playing menu cinematic or the native gameplay match; when nothing is playing, Stop remains visible but inactive.
+
+Opening the Sheep Tag starter keeps the separately editable Main Menu and Gameplay levels. **Play** on Main Menu now reliably opens its runtime title with the large **Start Game** button. **Play Game** in the level browser explicitly launches through Main Menu from elsewhere. Menu sheep and wolf characters animate their own authored leg/head/tail joints instead of only sliding at the root. Stop and Start Game restore all authored joint poses before editing or transitioning. No changes to gameplay physics, sheep building, wolf mechanics or the original assets.
+
+Source seal: **174 ordered patches, 68 original assets, 6,774,378 bytes**, SHA-256 `c9c19fd57653f3d3e0a0ac6201c3bad90db56f3acac867d469275ff5de212696`. Synthetic CI and Android visual acceptance are separate.
 
 ## §E v11.141 · Independent editable levels and connected maps (2026-10-26)
 
