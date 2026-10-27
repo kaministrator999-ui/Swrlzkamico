@@ -75,11 +75,24 @@ with sync_playwright() as p:
     menuRect:mb?{x:mb.x,y:mb.y,width:mb.width,height:mb.height}:null,
     menuVisible:!!menu&&style.display!=='none'&&style.visibility!=='hidden'&&mb.width>5,
     barHidden:bar?.hidden,barRect:bar?.getBoundingClientRect().toJSON()||null,
+    barCSS:bar?{display:getComputedStyle(bar).display,visibility:getComputedStyle(bar).visibility}:null,
+    viewportRect:document.querySelector('#viewport')?.getBoundingClientRect().toJSON()||null,
+    viewportCSS:document.querySelector('#viewport')?{display:getComputedStyle(document.querySelector('#viewport')).display,
+      visibility:getComputedStyle(document.querySelector('#viewport')).visibility,position:getComputedStyle(document.querySelector('#viewport')).position}:null,
+    viewportAncestors:(()=>{let v=document.querySelector('#viewport');const a=[];for(let i=0;v&&i<5;i++,v=v.parentElement){a.push({tag:v.tagName,id:v.id,cls:String(v.className).slice(0,85),display:getComputedStyle(v).display,
+       rect:v.getBoundingClientRect().toJSON()});}return a;})(),
+    releaseDialog:document.querySelector('#seReleaseNotesDialog')?.open,
     state:window.SWYRL_ENGINE_LEVELS?.status(),selected:document.querySelector('#statusBar')?.textContent?.slice(0,220)
    };
   }""")
   print("MOBILE_"+stage,json.dumps(d,ensure_ascii=False),flush=True)
  mobile_state("STARTER")
+ try:
+  if m.locator('#seReleaseNotesDialog').count() and m.locator('#seReleaseNotesDialog').evaluate('(el)=>el.open'):
+   m.locator('#seReleaseNotesClose').tap(timeout=5000)
+   print("MOBILE_RELEASE_DISMISSED",flush=True)
+ except Exception as e:print("MOBILE_RELEASE_ERROR",str(e)[:800],flush=True)
+ mobile_state("AFTER_UPDATE_CLOSE")
  try:
   m.locator("#playBtn").tap(timeout=5000)
   print("MOBILE_TAP_PLAY_DONE",flush=True)
