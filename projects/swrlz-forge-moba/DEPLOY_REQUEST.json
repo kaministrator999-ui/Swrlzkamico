@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.157",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_157_AUTHORITATIVE_BUILD_REPLICA",
-  "reason": "Owner two-browser field report: Sheep Tag guest movement is now smooth (v11.156), but actual host-constructed houses do not appear on guest. Source investigation found overlapping v11.152 three-kind building mirror and v11.156 expanded guest mirror both mutate/create/delete structures on each snapshot. v11.157 preserves existing native game and guest visual smoothing but replaces duplicate guest building passes with ONE host-ID-keyed reconciliation, mirroring all configured houses/walls/ramps with owner, rotation, HP and build progress, and deleting only structures absent from host snapshot. Guest HUD displays houses guest/host to distinguish network vs visibility errors; diagnostic buildSync() exposes creates, updates, errors, requests and host order acknowledgements. Local focused JS test PASS: created wall + house, repeated snapshot with no duplicates, host removal reflected. Physical two-browser confirmation pending. Engine source: 189 historical patches, 68 assets untouched. GitHub Actions strictly builds package + uploads HF Space, no Chromium, separate verification or polling.",
-  "sourceCommit": "af1b1b557a27b0cb04f5ff5262d28d55c4365128",
+  "releaseVersion": "v11.158",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_158_GUEST_LIVES_FIXED_SEAT",
+  "reason": "Owner real multiplayer confirmed guest can build but on guest sheep capture the player automatically shifts to another sheep; when all sheep are captured the guest changes to watching a wolf. Confirmed root cause v11.152 se152Roster excluded captured actors and reassigned the guest connection on every snapshot. v11.158 reserves each guest's original assigned animal for the complete round even while captured, keeps their own wisp awaiting rescue, restores the SAME sheep on rescue, and never gives control of another sheep or wolf due solely to capture. Guests initially joining can get free sheep or wolf under original initial-allocation rules, without stealing any player seat. Focused JS stable identity capture/all-captured/rescue test PASS. v11.156 movement smoothing, v11.157 building reconciliation and all original assets unchanged; 190 append-only historical patches. Real device capture test pending. GitHub workflow strictly builds and uploads to HF, no Chromium or remote verification.",
+  "sourceCommit": "ea50cd4aaa59cad1ddbb874ac33fabae365a312b",
   "sourceIntegritySha256": null
 }
