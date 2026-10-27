@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.155",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_155_SNAPSHOT_DRIVEN_GUEST",
-  "reason": "Owner two-phone real test: guest joystick TX68, host ACK34 confirms commands delivered, but host moves 0 and sheep remains stationary. v11.155 moves host-assigned guest sheep on the existing reliable 130ms host world snapshot clock rather than the ineffective native frame hook, before replicating world to guest. Prevent double movement on legacy tick; preserve collision/bounds, stale-input cutoff and existing peer authority. Focused self-contained JS test confirmed position change captured in host snapshot. 187 cumulative patches, assets untouched. Owner physical two-phone acceptance still pending. GitHub Actions stays strictly package + HF upload only; no Chromium nor live-site audits.",
-  "sourceCommit": "9540d0e4ea004f57fb141dc7ad4fb8e81e964cda",
+  "releaseVersion": "v11.156",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_156_SMOOTH_BUILD_TEAM_FOG",
+  "reason": "Owner real two-browser multiplayer acceptance: guest movement works, but interpolated sheep steps and stops, guest home placement ghost doesn't show host completed build, and fog should be shared vision from all living team sheep and their houses. v11.156 adds guest visual-only requestAnimationFrame smoothing between authoritative world snapshots; all configured house/wall/ramp/totem variants and rotations mirror with host ownership/progress; accepted guest build commands are acknowledged and previews cleared while host sheep builds; fog combines living allied sheep and owned houses with explored history and refreshes on the guest (which does not run the AI simulation). Host remains authoritative, 188 historical source patches/68 assets preserved. Focused syntax and remote wall/ally house-vision tests passed; physical two-device behavior acceptance pending. Keep GitHub Actions strictly package + upload to HF, no Chromium/remote verification.",
+  "sourceCommit": "d1363c07ad2808a1f0a6bad43f7335d4f0c592ac",
   "sourceIntegritySha256": null
 }
