@@ -29,7 +29,8 @@ assert m['patches'][-6]=='patches/v11_140_sheep_main_menu.py'
 assert m['patches'][-5]=='patches/v11_141_editable_sheep_levels.py'
 assert m['patches'][-4]=='patches/v11_142_editor_stop_menu_gait.py'
 assert m['patches'][-3]=='patches/v11_143_real_canvas_overlay_host.py'
-assert m['patches'][-2]=='patches/v11_145_menu_sheep_camera.py'
+assert m['patches'][-2]=='patches/v11_144_menu_sheep_camera.py'
+assert m['patches'][-1]=='patches/v11_145_play_scene_build_ghost.py'
 subprocess.run(['python',str(ROOT/'build_space.py'),'--output',str(out)],check=True)
 raw=(out/'index.html').read_bytes();s=raw.decode()
 r=json.loads((out/'SOURCE.json').read_text())

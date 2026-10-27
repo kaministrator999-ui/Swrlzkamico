@@ -193,6 +193,6 @@
     "patches/v11_144_menu_sheep_camera.py",
     "patches/v11_145_play_scene_build_ghost.py"
   ],
-  "finalBytes": 6784186,
-  "finalSha256": "f54aea74cafa0c024981390063eb6ec1da1d0301dbd90e4a13e31078b95d0a5a"
+  "finalBytes": 6791082,
+  "finalSha256": "6448c1b8b004db9556b6760ed6987c4600c4ba0d19b1d38f35ddc29ae04ad206"
 }
