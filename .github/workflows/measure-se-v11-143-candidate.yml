@@ -1,5 +1,5 @@
 name: §E v11.143 isolated candidate source measure
-# Real viewport-host correction: verify current artifact name and mobile pointer/UI hit boxes.
+# Real mobile canvas rectangle must size runtime menu and editable preview, not only move HTML.
 # Final v11.143 gate: exact scene bundle, 173-patch source and native menu/game regression.
 on:
   push:
