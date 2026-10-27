@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.152",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_152_HOST_AUTHORITATIVE_WORLD",
-  "reason": "User physical shelter laptop + Android test: connected WebRTC room and host Start Match launches both native Sheep Tag sessions, but independent client simulations visibly diverge. v11.152 candidate keeps one host-authoritative native Sheep Tag simulation; guests receive unit/building/economy/timer/capture snapshots (~130ms) and send distinct player orders and mobile joystick intent to host, validated using native build/path rules. Legacy gameplay remains unchanged outside LAN session. PeerJS Cloud is signaling only, and real two-device synchronized behavior is not yet verified. Deployment workflow remains minimal: build/package + upload to HF Space only; no Chromium or remote audit.",
-  "sourceCommit": "89e70dab3593f8e12aef34c09ef3ed36629ba775",
+  "releaseVersion": "v11.153",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_153_GUEST_JOYSTICK_CONTROL",
+  "reason": "Owner verified two Android browsers see same host world and host/AI movement, but guest's native mobile joystick cannot move assigned character. Fix v11.153 forwards guest joystick intent independently of local stUpdate simulation gating; host accepts bounded WebRTC intent from its assigned peer and moves guest animal each native frame with obstacle checks and 360ms stale-input timeout. Show joystick TX and host RX/movement diagnostics for real device test. Preserve all 185 cumulative patches, existing sprites/scenes and world sync. HF Action still package+upload only, no Chromium nor remote asset polling. Physical guest movement unverified pending owner's test.",
+  "sourceCommit": "59c852b3457af36ed39f73d5a7e98fd380cbf816",
   "sourceIntegritySha256": null
 }
