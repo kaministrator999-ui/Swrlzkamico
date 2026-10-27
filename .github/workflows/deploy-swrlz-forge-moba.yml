@@ -167,11 +167,11 @@ jobs:
           import json
           from pathlib import Path
           official=json.loads(Path('dist/swrlz-forge-moba/SOURCE.json').read_text())
-          assert len(official['patches'])==175
-          assert official['patches'][-10]=='patches/v11_134_rapid_cancel_sheep_seed_skills_house_swap.py'
-          assert official['patches'][-9]=='patches/v11_135_sheep_ghost_relative_drag_hud.py'
-          assert official['patches'][-8]=='patches/v11_136_sheep_drag_capture_cleanup.py'
-          assert official['patches'][-7]=='patches/v11_137_meadow_first_build_input.py'
+          assert len(official['patches'])==176
+          assert official['patches'][-11]=='patches/v11_134_rapid_cancel_sheep_seed_skills_house_swap.py'
+          assert official['patches'][-10]=='patches/v11_135_sheep_ghost_relative_drag_hud.py'
+          assert official['patches'][-9]=='patches/v11_136_sheep_drag_capture_cleanup.py'
+          assert official['patches'][-8]=='patches/v11_137_meadow_first_build_input.py'
           assert official['patches'][-7]=='patches/v11_138_rapid_screen_anchor.py'
           assert official['patches'][-6]=='patches/v11_139_rapid_safe_corner_snap.py'
           assert official['patches'][-5]=='patches/v11_140_sheep_main_menu.py'
