@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.146",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_146_LOCAL_LAN_BROWSER",
-  "reason": "Owner requested Sheep Tag Main Menu Local LAN button opening network browser with Host Game above LAN list and Back. v11.146 adds a real menu screen with refresh, empty/listed lobby states and an honest HTTPS-local discovery limitation. Includes optional Python stdlib LAN bridge on trusted local Wi-Fi: UDP 8766 discovery, bounded private /24 IP probing to TCP 8765, same-origin HTTP host/start/stop and lobby registration, no invented hosts or paid/cloud dependency. Join is LOBBY PRESENCE ONLY; synchronized gameplay/netcode is not yet implemented and UI explicitly states this. Existing independent level browser, sheep game, menu camera, Stop and 68 packaged assets preserved. Exact GitHub rebuilt source v11.146, 178 ordered patches, 6,800,920 bytes, SHA256 ce6479a69e71db8e38a4ef4be1ef6db8a91b5fd4a4f686f9097a7d4403e97dd4. Targeted source/menu/local HTTP and origin security tests PASS: GitHub Actions 40482121555. Release via guarded HF workflow to kamiloki/swrlz-forge-moba; live verification and owner's Android acceptance separate.",
-  "sourceCommit": "a5bd20f63420d256a46ab76b055a302f98d41966",
-  "sourceIntegritySha256": "ce6479a69e71db8e38a4ef4be1ef6db8a91b5fd4a4f686f9097a7d4403e97dd4"
+  "releaseVersion": "v11.147",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_147_FULLSCREEN_MENU_VIEWPORT",
+  "reason": "Owner screenshot: on Android the §E v11.146 Sheep Tag Main Menu appears collapsed to a tiny strip at the top, black unused canvas beneath, editor File/Edit/Outliner/status visible and Exit to editor overlaps Start Game. Repaired v11.145 Play-mode flex shrink regression with Play-only fixed full-dvh viewport and canvas; original v11.143 overlay/camera refit fires after mode changes and native resize; Start Game and Local LAN center with short-screen scrolling; Exit button anchored to bottom. Exit restores editor. No changes to actors, camera animation behavior, construction/safe lanes or LAN lobby discovery. Exact GitHub-source package v11.147: 179 ordered patches, all 68 historic bundled assets, 6,805,561-byte generated HTML, SHA-256 b141c99188fc579faa7ae2acd1b8c432c3c15efa301a69dacfc33a6ecf9996c4. Targeted source+LAN checks and REAL 412x915 Chrome mobile emulation have passed: run 40514112039 measured canvas 412x915, menu 412x915, Start Game y452, LAN y522 and Exit y872; verified Back and Stop restore editor. Publish existing kamiloki/swrlz-forge-moba via guarded HF workflow. Hosted artifact verification and owner Android feel are separate.",
+  "sourceCommit": "f8d6e6ef591f78eefac44a501128a054b005c32d",
+  "sourceIntegritySha256": "b141c99188fc579faa7ae2acd1b8c432c3c15efa301a69dacfc33a6ecf9996c4"
 }
