@@ -69,7 +69,8 @@ with sync_playwright() as p:
    return {
     viewport:[innerWidth,innerHeight,visualViewport?.width,visualViewport?.height],
     playRect:rect?{x:rect.x,y:rect.y,width:rect.width,height:rect.height}:null,
-    playHit:hit?{id:hit.id,tag:hit.tagName,text:hit.textContent?.trim().slice(0,45)}:null,
+    playHit:hit?{id:hit.id,tag:hit.tagName,text:hit.textContent?.trim().slice(0,65),html:hit.outerHTML?.slice(0,900),rect:hit.getBoundingClientRect().toJSON(),pointer:getComputedStyle(hit).pointerEvents}:null,
+    playStack:rect?[...document.elementsFromPoint(rect.left+rect.width/2,rect.top+rect.height/2)].slice(0,8).map(e=>({tag:e.tagName,id:e.id,cls:e.className?.toString().slice(0,100),text:e.textContent?.trim().slice(0,60),pointer:getComputedStyle(e).pointerEvents})):[],
     menuExists:!!menu,menuCSS:style?{display:style.display,visibility:style.visibility,opacity:style.opacity,z:style.zIndex,pointer:style.pointerEvents}:null,
     menuRect:mb?{x:mb.x,y:mb.y,width:mb.width,height:mb.height}:null,
     menuVisible:!!menu&&style.display!=='none'&&style.visibility!=='hidden'&&mb.width>5,
