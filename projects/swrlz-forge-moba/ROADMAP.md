@@ -1,3 +1,7 @@
+## §E v11.154 — Guest-control input acknowledgements (2026-10-27)
+
+Physical guest phone: shared snapshots work and joystick reports local sends but guest sheep still does not move. Replace ambiguous local TX telemetry with explicit host data-channel ACK, room/match-bound input sequence and peer-seat ownership checks. Host movement happens in native frames, still authoritative and collision-aware. Guest labels show TX/ACK/move count; host labels show RX/moved/blocked for field diagnosis. No new backend; dedicated deployment remains package/upload only. Two-phone acceptance pending.
+
 ## §E v11.153 — Guest-owned joystick authority repair
 
 Physical two-browser test: host movement and shared-world snapshots succeeded; guest couldn't move. Added direct guest mobile joystick intent, host-frame authoritative guest actor movement with collision/timeout, and input counters. No new backend or additional CI tasks. Next acceptance is guest movement visible on BOTH screens.
