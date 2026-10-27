@@ -1,5 +1,5 @@
 name: §E v11.143 isolated candidate source measure
-# Real mobile canvas rectangle must size runtime menu and editable preview, not only move HTML.
+# Canvas-host and compact-short-viewport visual/touch acceptance regression.
 # Final v11.143 gate: exact scene bundle, 173-patch source and native menu/game regression.
 on:
   push:
