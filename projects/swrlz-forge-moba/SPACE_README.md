@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.152
+title: §wyrl§ Engine v11.153
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,12 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.153 — Guest joystick movement
+
+Guest-held mobile joystick sends bounded direction over the same existing WebRTC connection and the host advances the assigned guest animal in its authoritative gameplay frame. Live diagnostic counters distinguish send/receive from movement. Physical-device verification still pending. HF deployment stays build + upload only.
+
+
 
 ## §E v11.152 — Shared host-authoritative Sheep Tag world
 
