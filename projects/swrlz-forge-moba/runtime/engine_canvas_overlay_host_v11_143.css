@@ -1,0 +1,34 @@
+/* §E v11.143: actual renderer host is <main class="viewport-wrap">.
+   Canvas fallback descendants have no layout boxes, even with z-index. */
+.viewport-wrap:has(> #viewport){position:relative!important;isolation:isolate;}
+.viewport-wrap > #st141LevelBar.st141-levelbar{
+ position:absolute;top:8px;left:8px;right:8px;z-index:2900;
+ display:flex;flex-wrap:wrap;align-items:center;max-width:calc(100% - 16px);
+ width:max-content;min-height:30px;max-height:100px;overflow:auto;
+ background:rgba(20,50,45,.96);pointer-events:auto;
+ border:1px solid rgba(191,209,181,.6);border-radius:8px;
+ box-shadow:0 7px 18px rgba(0,0,0,.3);
+}
+.viewport-wrap > #st141LevelBar[hidden]{display:none!important;}
+.viewport-wrap > #st141MenuPreview.st141-menu-ui{
+ position:absolute;inset:0;z-index:1700;pointer-events:none!important;
+}
+.viewport-wrap > #st141RuntimeMenu.st141-menu-ui{
+ position:absolute;inset:0;z-index:3900;display:flex!important;
+ align-items:center;justify-content:center;opacity:1!important;
+ visibility:visible!important;pointer-events:auto!important;
+}
+.viewport-wrap > #st141RuntimeMenu[hidden]{display:none!important;}
+.viewport-wrap > #st141RuntimeMenu #st141StartGame{
+ min-height:58px;display:inline-flex!important;visibility:visible!important;
+ align-items:center;justify-content:center;pointer-events:auto!important;
+}
+@media (max-width:600px){
+ .viewport-wrap > #st141LevelBar.st141-levelbar{
+  top:5px;left:4px;right:4px;max-width:calc(100% - 8px);
+  max-height:88px;padding:3px;gap:4px;box-sizing:border-box;
+ }
+ .viewport-wrap > #st141RuntimeMenu .st141-menu-panel{
+  max-width:calc(100% - 26px);max-height:85%;overflow:auto;
+ }
+}
