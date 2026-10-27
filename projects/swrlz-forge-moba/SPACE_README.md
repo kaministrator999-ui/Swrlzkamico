@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.151
+title: §wyrl§ Engine v11.152
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,11 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.152 — Shared host-authoritative Sheep Tag world
+
+The host now runs one native authoritative Sheep Tag simulation. WebRTC guests receive 130-ms snapshots of units, captured wisps, buildings, construction, resources and timer, with input commands and mobile movement sent back to host and validated there. Guests are assigned distinct playable animals and must not run their own separate AI or economy. Public PeerJS Cloud is used only to introduce WebRTC peers, not to host the game simulation; each peer needs connectivity to the host. Untrusted Wi-Fi may block connections. Source includes 184 cumulative patches. Deployment remains package + upload only; physical two-device acceptance is pending.
+
 
 ## §E v11.151 — One-code lobby (2026-10-27)
 
