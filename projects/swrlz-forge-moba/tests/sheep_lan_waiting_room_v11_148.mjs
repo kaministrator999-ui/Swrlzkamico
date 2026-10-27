@@ -13,7 +13,7 @@ assert(js.includes("session.owner"),'host role must be explicit');
 assert(css.includes('.se148-host'),'host seat must have visual distinction');
 const rows=[];
 function node(tag){
- const n={tag,children:[],textContent:'',className:'',append(...children){this.children.push(...children)},
+ const n={tag,children:[],textContent:'',className:'',append(...children){this.children.push(...children)},appendChild(child){this.children.push(child)},
   replaceChildren(){this.children=[]}};
  rows.push(n);return n;
 }
