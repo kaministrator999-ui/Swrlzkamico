@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.156
+title: §wyrl§ Engine v11.157
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,14 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.157 — Authoritative host buildings mirrored reliably (2026-10-27)
+
+Owner's physical browser test confirmed smoother multiplayer sheep movement in v11.156, but structures ordered/constructed on the host still did not appear on the guest. Root code risk: original v11.152 three-kind mirror and v11.156 expanded mirror both mutate the same guest building list during each world packet. v11.157 leaves the existing host snapshot/gameplay simulation intact, suppresses both legacy creation/removal passes only while applying a packet, and then performs one canonical reconcile keyed by the host's building IDs. It renders actual houses, walls, ramps and other supported game structures, including owners, rotations, health and construction progress, and removes only structures absent from the host snapshot. No guest-side independent game simulation.
+
+Guest HUD now distinguishes **houses guest/host** (visible list count against the host's authoritative snapshot), and programmatic `SWYRL_ENGINE_LAN.buildSync()` reports replica creates/updates/destroys/errors and guest build requests versus host-confirmed orders. This is network-source telemetry, not proof the house appears through camera/fog on user devices. Focused script passed creation, repeated update without duplicate, and removal. Owner two-device acceptance pending. Existing v11.156 movement smoothing and team fog remain; deployment workflow strictly package+upload to Hugging Face, no Chromium or remote audits. 189 cumulative patches and all assets retained.
+
+
 
 ## §E v11.156 · Smooth guest movement, complete building replication and team fog (2026-10-27)
 
