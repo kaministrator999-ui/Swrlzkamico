@@ -1,0 +1,71 @@
+name: §E v11.141 isolated candidate source measure
+# Sheep Tag cinematic menu: exact artifact seal and verified native Play lifecycle.
+on:
+  push:
+    branches:
+      - feature/se-v11141-sheep-menu-levels
+    paths:
+      - ".github/workflows/measure-se-v11-141-candidate.yml"
+      - "projects/swrlz-forge-moba/source-manifest.json"
+permissions:
+  contents: read
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Reconstruct candidate and capture exact bytes and SHA
+        run: |
+          set -uo pipefail
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/se141-candidate 2>&1 | tee /tmp/se141-first.log
+          CODE=${PIPESTATUS[0]}
+          set -e
+          echo "First build with unsealed candidate code: exit ${CODE}"
+          grep "SE_V11141_BUILD_MEASURE" /tmp/se141-first.log
+          python - <<'PY'
+          from pathlib import Path
+          import json,re
+          text=Path('/tmp/se141-first.log').read_text()
+          m=re.search(r'SE_V11141_BUILD_MEASURE\s+(\d+)\s+([0-9a-f]{64})',text)
+          assert m,"Candidate patch did not produce a full compiled source measurement"
+          path=Path('projects/swrlz-forge-moba/source-manifest.json')
+          manifest=json.loads(path.read_text())
+          manifest['finalBytes']=int(m.group(1))
+          manifest['finalSha256']=m.group(2)
+          path.write_text(json.dumps(manifest,indent=2)+'\n')
+          print('SE141_MEASURED_CANDIDATE',m.group(1),m.group(2))
+          PY
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/se141-candidate
+          python - <<'PY'
+          from pathlib import Path
+          import json,hashlib
+          d=Path('/tmp/se141-candidate')
+          raw=(d/'index.html').read_bytes()
+          receipt=json.loads((d/'SOURCE.json').read_text())
+          m=json.loads(Path('projects/swrlz-forge-moba/source-manifest.json').read_text())
+          assert len(raw)==m['finalBytes']==receipt['finalBytes']
+          assert hashlib.sha256(raw).hexdigest()==m['finalSha256']==receipt['finalSha256']
+          assert len(receipt['patches'])==173 and len(receipt['assets'])==68
+          assert 'V11_141_EDITABLE_MENU_AND_GAME_LEVELS' in raw.decode()
+          script=raw.decode().split('<script type="module">',1)[1].rsplit('</script>',1)[0]
+          Path('/tmp/se141-module.mjs').write_text(script)
+          print('SE141_CANDIDATE_REBUILT_WITH_VERIFIED_SEAL')
+          PY
+          node --check /tmp/se141-module.mjs
+      - name: Targeted sheep clearance and construction tests
+        run: |
+          node projects/swrlz-forge-moba/tests/sheep_gap_builder_exit_v11_125.mjs
+          node projects/swrlz-forge-moba/tests/sheep_centered_world_routes_magic_v11_126.mjs
+          node projects/swrlz-forge-moba/tests/sheep_ghost_relative_drag_hud_v11_135.mjs
+          node projects/swrlz-forge-moba/tests/sheep_drag_camera_capture_perf_v11_136.mjs
+          node projects/swrlz-forge-moba/tests/sheep_rapid_corner_snap_v11_139.mjs
+          node projects/swrlz-forge-moba/tests/sheep_editable_project_levels_v11_141.mjs
+          python projects/swrlz-forge-moba/scripts/verify_v11_141_release.py --output /tmp/se141-final-verified
+          node --check /tmp/se141-final-verified-module.mjs
+          SE_ASSEMBLED_HTML=/tmp/se141-final-verified/index.html node projects/swrlz-forge-moba/tests/sheep_editable_project_levels_v11_141.mjs
