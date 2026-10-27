@@ -1,0 +1,26 @@
+name: §E v11.144 targeted source seal and sheep menu camera
+on:
+  push:
+    branches: ["feature/se-v11-144-menu-sheep-camera"]
+    paths:
+      - "projects/swrlz-forge-moba/patches/v11_144_menu_sheep_camera.py"
+      - "projects/swrlz-forge-moba/runtime/engine_menu_sheep_camera_v11_144.js"
+      - "projects/swrlz-forge-moba/source-manifest.json"
+      - "projects/swrlz-forge-moba/scripts/measure_v11_144_source.py"
+      - "projects/swrlz-forge-moba/scripts/verify_v11_144_release.py"
+      - "projects/swrlz-forge-moba/tests/sheep_menu_portrait_camera_v11_144.mjs"
+permissions:
+  contents: read
+jobs:
+  measure-and-verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Independently measure source and validate when sealed
+        run: python projects/swrlz-forge-moba/scripts/measure_v11_144_source.py
