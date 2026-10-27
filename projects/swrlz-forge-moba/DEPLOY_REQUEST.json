@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.150",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_150_HOST_START_NATIVE_MATCH",
-  "reason": "Owner requested the LAN host Start Match allow shelter-laptop and Android phone to leave the waiting lobby and enter native Sheep Tag Gameplay. v11.150 enables host-only match start once a real WebRTC guest is connected, sends room-bound match-start to guest channels, preserves peer links across menu teardown and restores Stop cleanup. Coordinated launches ONLY: animals, houses, actions and physics are not replicated and may diverge. Existing local Python LAN Bridge is a separate lobby path without networked match start. Exact source: 182 ordered patches, 6,833,482 HTML bytes, SHA256 2eb170d15eca9046d7116d76baeea7620246f41e1f46d2dc17b1dab66ce1fc54 and 68 packaged assets. Unit/real mobile Chromium host launch, WebRTC guest message receipt and Stop verification SUCCESS Actions 40540706814; streamlined fast CI SUCCESS 40541559886. Merge PR #290 preserved concurrent Chat project updates; user physical two-device test pending.",
-  "sourceCommit": "47d28dfd6da3e27ace2d5a81f6f9bb7d9de34ce2",
-  "sourceIntegritySha256": "2eb170d15eca9046d7116d76baeea7620246f41e1f46d2dc17b1dab66ce1fc54"
+  "releaseVersion": "v11.151",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_151_ONE_CODE_AUTOMATIC_JOIN",
+  "reason": "Owner requested one invitation entered once; automatic PeerJS Cloud signaling replaces manual guest reply code on public HTTPS, and actual connected WebRTC guests populate lobby seats and unlock Start Match. This uses a third-party signaling service and client-isolated Wi-Fi may still block direct links. Gameplay remains locally simulated and is not synchronized. Simplified GitHub Action only packages engine and uploads to existing dedicated static HF Space; no Chromium or live-asset verification.",
+  "sourceCommit": "a865636b597c7a71e5ba64cab0d1d42401abcc48",
+  "sourceIntegritySha256": null
 }
