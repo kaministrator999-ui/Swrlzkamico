@@ -221,3 +221,4 @@ function se149PreviewParity(){
 const se149PreviousLevelsUI=seLevelsEnsureUI;
 seLevelsEnsureUI=function(...args){const result=se149PreviousLevelsUI(...args);se149PreviewParity();return result;};
 se149PreviewParity();
+window.SWYRL_ENGINE_LAN.hostPeer=se149Host;
