@@ -1,0 +1,903 @@
+{
+  "engine": "§wyrl§ Engine · Maker v11.141",
+  "version": 10.1,
+  "project": {
+    "name": "Sheep Tag · Main Menu Level",
+    "canonicalId": "sheep-tag-menu-level",
+    "template": "sheep-tag-menu-level",
+    "kind": "sheep-tag",
+    "environment": "spatial-workspace",
+    "workspaces": {
+      "schema": "swyrl-workspaces-v1",
+      "stations": {}
+    },
+    "teleportZones": [],
+    "sheepTag": {
+      "duration": 420,
+      "headstart": 30,
+      "bounds": 40,
+      "startGold": 80,
+      "role": "sheep",
+      "preset": "archive",
+      "buildSnap": 0.15,
+      "sheepSpeed": 6,
+      "wolfSpeed": 7.2,
+      "wolfDamage": 85,
+      "attackInterval": 0.65,
+      "farmHp": 180,
+      "incomeHp": 240,
+      "fortHp": 650,
+      "sheepRadius": 0.27,
+      "wolfRadius": 0.9,
+      "houseLimit": 28,
+      "fogMode": "team",
+      "sheepVision": 18,
+      "wolfVision": 20,
+      "rescueProtection": 3,
+      "rescueHold": 0.6,
+      "thorns": true,
+      "totems": true,
+      "elevated": true,
+      "split": true,
+      "events": false,
+      "thornChance": 0.35,
+      "thornDuration": 15,
+      "thornCooldown": 6,
+      "scentInterval": 2,
+      "densityRadius": 8,
+      "totemRadius": 5.5,
+      "fadeSeconds": 3,
+      "revealSeconds": 2,
+      "totemLimit": "once",
+      "totemCooldown": 120,
+      "wallCost": 45,
+      "rampCost": 55,
+      "wallHp": 360,
+      "rampHp": 300,
+      "wallHeight": 3.3,
+      "wolvesUseRamps": true,
+      "splitUnlock": 2,
+      "progressionSeconds": 45,
+      "rescueXp": 30,
+      "splitCooldown": 30,
+      "splitLifetime": 5,
+      "eventInterval": 150,
+      "eventWarning": 8,
+      "eventDuration": 15,
+      "seed": 0,
+      "eventPool": [
+        "pressure",
+        "fog",
+        "supply"
+      ],
+      "permittedStructures": [
+        "st-farm",
+        "st-income",
+        "st-fort",
+        "st-wall",
+        "st-ramp"
+      ]
+    },
+    "environmentSettings": {
+      "background": "#c3deda",
+      "fogNear": 70,
+      "fogFar": 190,
+      "exposure": 1.05,
+      "showTerrain": false,
+      "showScenery": false
+    },
+    "sheepTagLevel": "menu",
+    "sheepTagMenu": {
+      "eyebrow": "MOONBELL MEADOW",
+      "title": "SHEEP TAG",
+      "subtitle": "Build. Flee. Survive.",
+      "button": "START GAME",
+      "buttonColor": "#e6c66b",
+      "orbitSeconds": 60
+    }
+  },
+  "editor": {
+    "transformSpace": "world",
+    "snapEnabled": true,
+    "terrainSnapEnabled": true,
+    "viewMode": "lit",
+    "cameraView": "perspective",
+    "revision": 285,
+    "layers": [
+      {
+        "id": "menu-layer-ground",
+        "name": "01 · Menu terrain",
+        "visible": true
+      },
+      {
+        "id": "menu-layer-scenery",
+        "name": "02 · Menu trees",
+        "visible": true
+      },
+      {
+        "id": "menu-layer-buildings",
+        "name": "03 · Menu houses",
+        "visible": true
+      },
+      {
+        "id": "menu-layer-units",
+        "name": "04 · Menu characters",
+        "visible": true
+      }
+    ],
+    "activeLayerId": "menu-layer-units"
+  },
+  "scene": {
+    "background": "#9acbb4",
+    "waveInterval": 0,
+    "paths": {},
+    "actors": [
+      {
+        "id": "menu-level-001",
+        "name": "Menu meadow · editable floor",
+        "type": "st-meadow",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag",
+          "editable-menu-level"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "menu-layer-ground"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Menu Level/Ground",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh"
+        ],
+        "blueprintClass": "SheepTag/meadow",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "menu-level-002",
+        "name": "Menu pine · editable",
+        "type": "st-tree",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag",
+          "editable-menu-level"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "menu-layer-scenery"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -14,
+          0,
+          -11
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.8,
+          0.8,
+          0.8
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Menu Level/Scenery",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/tree",
+        "colliderRadius": 1.7,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "menu-level-003",
+        "name": "Menu pine · editable",
+        "type": "st-tree",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag",
+          "editable-menu-level"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "menu-layer-scenery"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -11,
+          0,
+          12
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.8,
+          0.8,
+          0.8
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Menu Level/Scenery",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/tree",
+        "colliderRadius": 1.7,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "menu-level-004",
+        "name": "Menu pine · editable",
+        "type": "st-tree",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag",
+          "editable-menu-level"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "menu-layer-scenery"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          14,
+          0,
+          10
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.8,
+          0.8,
+          0.8
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Menu Level/Scenery",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/tree",
+        "colliderRadius": 1.7,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "menu-level-005",
+        "name": "Menu pine · editable",
+        "type": "st-tree",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag",
+          "editable-menu-level"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "menu-layer-scenery"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          15,
+          0,
+          -10
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.8,
+          0.8,
+          0.8
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Menu Level/Scenery",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/tree",
+        "colliderRadius": 1.7,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "menu-level-006",
+        "name": "Menu house · editable",
+        "type": "st-farm",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag",
+          "editable-menu-level"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "menu-layer-buildings"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -7,
+          0,
+          -3
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 180,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Menu Level/Buildings",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/farm",
+        "colliderRadius": 1.2,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "menu-level-007",
+        "name": "Menu house · editable",
+        "type": "st-farm",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag",
+          "editable-menu-level"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "menu-layer-buildings"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -3,
+          0,
+          -3
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 180,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Menu Level/Buildings",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/farm",
+        "colliderRadius": 1.2,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "menu-level-008",
+        "name": "Menu house · editable",
+        "type": "st-farm",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag",
+          "editable-menu-level"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "menu-layer-buildings"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          1,
+          0,
+          -3
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 180,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Menu Level/Buildings",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/farm",
+        "colliderRadius": 1.2,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "menu-level-009",
+        "name": "Menu house · editable",
+        "type": "st-farm",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "sheep-tag",
+          "editable-menu-level"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "menu-layer-buildings"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -7,
+          0,
+          1
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 180,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Menu Level/Buildings",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/farm",
+        "colliderRadius": 1.2,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "menu-level-010",
+        "name": "Menu sheep · editable",
+        "type": "st-sheep",
+        "team": "blue",
+        "baked": true,
+        "role": "sheep",
+        "tags": [
+          "sheep-tag",
+          "editable-menu-level"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "menu-layer-units"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -4,
+          0,
+          6
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.95,
+          0.95,
+          0.95
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Menu Level/Characters",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/sheep",
+        "colliderRadius": 0.27,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "menu-level-011",
+        "name": "Menu sheep · editable",
+        "type": "st-sheep",
+        "team": "blue",
+        "baked": true,
+        "role": "sheep",
+        "tags": [
+          "sheep-tag",
+          "editable-menu-level"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "menu-layer-units"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -7,
+          0,
+          7
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.95,
+          0.95,
+          0.95
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Menu Level/Characters",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/sheep",
+        "colliderRadius": 0.27,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "menu-level-012",
+        "name": "Menu sheep · editable",
+        "type": "st-sheep",
+        "team": "blue",
+        "baked": true,
+        "role": "sheep",
+        "tags": [
+          "sheep-tag",
+          "editable-menu-level"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "menu-layer-units"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          -9,
+          0,
+          8
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.95,
+          0.95,
+          0.95
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Menu Level/Characters",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/sheep",
+        "colliderRadius": 0.27,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      },
+      {
+        "id": "menu-level-013",
+        "name": "Menu wolf · editable",
+        "type": "st-wolf",
+        "team": "red",
+        "baked": true,
+        "role": "wolf",
+        "tags": [
+          "sheep-tag",
+          "editable-menu-level"
+        ],
+        "visualColor": "",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "menu-layer-units"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          12,
+          0,
+          5
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.95,
+          0.95,
+          0.95
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Sheep Tag/Menu Level/Characters",
+        "components": [
+          "Transform",
+          "Scene",
+          "StaticMesh",
+          "Collider"
+        ],
+        "blueprintClass": "SheepTag/wolf",
+        "colliderRadius": 0.68,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      }
+    ]
+  }
+}
