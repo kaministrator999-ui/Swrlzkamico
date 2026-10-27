@@ -1,3 +1,41 @@
+## §E v11.143 · Canonical engine continuity and verified live release (2026-10-26; documentation reconciliation 2026-10-27 UTC)
+
+**Latest product authority:** `projects/swrlz-forge-moba/source-manifest.json` identifies **§wyrl§ Engine v11.143**, with **175 ordered patches**, **6,781,776 HTML bytes**, SHA-256 `97e662c9ec70e3e382a5130ff56b17e0a49f534bea5a53b3409dda9f03c05856`, and **68 preserved packaged assets**. Canonical build/runtime patch: `patches/v11_143_real_canvas_overlay_host.py` and `runtime/engine_canvas_overlay_host_v11_143.{js,css}`. Exact source release commit: `d19d5ff26030c3f963712b88c58c66fc2097bab7`. Dedicated deploy-button commit: `48c213edfda05bc03667b6506a96c0d59f080501`.
+
+**Observed release evidence:** [v11.143 isolated candidate validation](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40448591765) **SUCCESS**; [dedicated deployment / live-host verification](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40448900335) **SUCCESS** at that exact trigger SHA. Deployment job passed packaging and the exact served v11.143 `index.html` / `SOURCE.json` source receipt and complete preserved scene/asset audit. No additional engine or Chat/Core runtime changes are implied by this historical documentation correction.
+
+**Root-cause repair:** Real Android screenshot showed hidden Start Game and Project Levels controls despite the menu cinematic running. Instrumented mobile Chromium proved the original #viewport is a `CANVAS`; earlier menu/level HTML was mistakenly appended as fallback canvas children, resulting in zero-size, untouchable controls. v11.143 rehomes *existing* menu overlay, editable preview and Project Levels strip under the real `main.viewport-wrap` canvas parent. Real touch/layout regression verified visible hit-tested Start Game and transition into the original Gameplay session, while keeping independent editable levels, Play/Stop, authored 3D menu, animal joint gait and game rules. See [`VERIFICATION.md`](VERIFICATION.md) and [`§tart_§E.md`](../../§tart_§E.md) for the full scoped acceptance contract.
+
+**Unresolved continuation — physical Android owner acceptance:** Open the live Sheep Tag starter, inspect the static editable **Main Menu** and separate **Gameplay** levels, verify **Project Levels / + New Map** while editing, press native **Play**, check actual visible/tappable **Start Game** and moving leg/head/tail gait, enter Gameplay, then exercise **Stop**, save/load and independent map switching. Automated mobile Chromium and exact HF deployment verification are not proof of the owner's physical-device experience. No new engine code mutation is justified solely by this documentation sync.
+
+## §E v11.142 · Stop, menu playback eligibility and animated gait (2026-10-26)
+
+Responded to the owner's Android report that native Stop became inaccessible, Start Game was missing, and sheep/wolves glided during menu playback. Moved level controls away from the cramped Play/Pause/Stop toolbar; repaired native Stop visibility, menu eligibility recovery after scene load, authored sheep/wolf leg/head/tail animation and transform reset. The subsequent **v11.143** physical DOM mounting repair was necessary because the v11.142 overlay was still inside the canvas fallback subtree. Runtime details and acceptance conditions are in `§tart_§E.md` and `VERIFICATION.md`.
+
+## §E v11.141 · Independent project levels and authored Sheep Tag Main Menu (2026-10-26)
+
+Established `project.levelPack` (`se-levels-v1`) for per-level editable actor snapshots, level chooser, **+ New Map**, naming, next-level links, individual export and whole-project Save/Load. The Sheep Tag starter now has an independently editable 13-actor Main Menu and original 196-actor Gameplay map. Edit mode is static; Play runs menu camera/chase/build animation and Start Game transitions to native gameplay. Menu UI is project-editable. See `scenes/sheep-tag-main-menu-v11-141.swyrl.json` and scoped startup/verification docs. Physical Android acceptance remains distinct.
+
+## §E v11.140 · Sheep Tag 3D main-menu prototype (2026-10-26)
+
+Added a real Three.js attract sequence and single **Start Game** action using the existing engine frame loop and normal native game start, without mutating saved gameplay maps or starting a separate game simulation. Owner corrected this prototype's editor-time behavior in v11.141: menu and gameplay must be **independently editable levels**, and cinematic motion must occur only during Play.
+
+## §E v11.139 · Validated Rapid corner snapping (2026-10-26)
+
+When a house preview near an existing house produces an illegal diagonal sheep gap, Rapid-only placement may propose a nearby fully flush corner, but accepts it **only** after the original `stCanBuild` validation. The 1.20 m passable-lane constraint, resources, collisions and non-Rapid behavior remain unchanged. Follow-up phone placement acceptance is owner-owned.
+
+## §E v11.138 · Screen-anchored Rapid placement (2026-10-26)
+
+After a **successful** Rapid construction, retain the house's normalized **screen** location for the next preview, re-projecting through the current camera instead of reusing obsolete world coordinates. Clear anchors on Rapid OFF or game reset; invalid/cancelled placements never update the anchor.
+
+## §E v11.137 · Meadow-first mobile construction (2026-10-26)
+
+A touch user may select a build tool, release it, and then aim/drag anywhere on the open meadow before committing a valid placement. The origin preview remains at the controlled sheep; mobile HUD button contact alone cannot build. Original validation, resource costs and mouse input remain authoritative.
+
+## §E v11.136 · Stable drag projection and capture cleanup (2026-10-26)
+
+Fixed camera-follow sheep-relative drag by projecting anchor and finger against the same current camera. During capture, immediately retire owned buildings from play while coalescing navigation invalidation and amortizing GPU resource disposal, with a final flush on Stop. Actual Android performance improvements remain unmeasured pending device testing.
+
 ## §E v11.135 · Sheep-origin relative hologram, bigger Free House, visible Mirror (2026-10-26)
 
 **Owner Android screenshot:** selecting a house still showed its hologram and placement grid near the bottom-right skill ring rather than visibly originating at the controlled sheep. Free House also needed to trade screen positions with Fortified House and grow larger. Totem was visible, but Mirror/decoy was missing from the sheep's touch HUD. The owner explicitly deferred wolf-side gameplay; no owl scout or wolf behavior is changed in this release.
