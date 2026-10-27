@@ -191,6 +191,6 @@
     "patches/v11_142_editor_stop_menu_gait.py",
     "patches/v11_143_real_canvas_overlay_host.py"
   ],
-  "finalBytes": 6779748,
-  "finalSha256": "990bdfcc74e13c2fd04c14803cf67f0ef2833a51bc5a1aa7013a512da9a6c54c"
+  "finalBytes": 6781776,
+  "finalSha256": "97e662c9ec70e3e382a5130ff56b17e0a49f534bea5a53b3409dda9f03c05856"
 }
