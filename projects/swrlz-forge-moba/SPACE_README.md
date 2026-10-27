@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.150
+title: §wyrl§ Engine v11.151
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.151 — One-code lobby (2026-10-27)
+
+Host creates one invitation; guest enters it once. PeerJS Cloud performs the WebRTC signaling, and the guest appears in an occupied seat when the direct channel opens. No manual answer code. Cloud signaling requires internet access; client-isolated Wi-Fi or blocked peer traffic may prevent connections. Start Match launches local Gameplay on connected clients, but movement, houses and combat are not network synchronized. Production GitHub Action now only packages and uploads §E; it does not run Chromium, inspect remote assets or poll the live site.
 
 ## §E v11.150 · Host-authorized Sheep Tag match launch (2026-10-27)
 
