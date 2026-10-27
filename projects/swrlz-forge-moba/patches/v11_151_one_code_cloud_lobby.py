@@ -8,7 +8,7 @@ def apply(html):
  root=Path(__file__).resolve().parents[1]
  js=(root/'runtime/sheep_one_code_cloud_lobby_v11_151.js').read_text(encoding='utf-8')
  css=(root/'runtime/sheep_one_code_cloud_lobby_v11_151.css').read_text(encoding='utf-8')
- html=once(html,'</head>','<style id="se151-one-code-lobby">'+css+'</style>\n</head>')
+ html=html.replace('</head>','<style id="se151-one-code-lobby">'+css+'</style>\n</head>',1)
  html=once(html,'window.SWRLZ_FORGE_BUILD=',js+'\nwindow.SWRLZ_FORGE_BUILD=')
  html=once(html,'SWYRL_ENGINE_DEPLOY_MARKER: V11_150_HOST_START_NATIVE_MATCH',
   'SWYRL_ENGINE_DEPLOY_MARKER: V11_151_ONE_CODE_AUTOMATIC_JOIN')
