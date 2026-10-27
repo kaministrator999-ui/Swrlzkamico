@@ -100,7 +100,8 @@ function se152ClientApply(data){
   for(const u of s.units)if(Number.isFinite(Number(data.resources[u.id])))
    s.resources[u.id]=Math.max(0,Number(data.resources[u.id]));
  }
- const controlled=s.units.find(u=>u.id===data.you);
+ const controlled=s.units.find(u=>u.id===data.you)||
+  s.units[data.units.findIndex(u=>u.id===data.you)]; // same authored order if local scene IDs differ
  if(controlled){
   if(se152.assigned!==controlled.id){
    se152.assigned=controlled.id;
@@ -112,8 +113,9 @@ function se152ClientApply(data){
    stUiFeedback('Playing as '+controlled.name+' in the host world.');
   }
  }
- for(const state of data.units){
-  const u=s.units.find(x=>x.id===state.id);
+ for(const [index,state] of data.units.entries()){
+  const u=s.units.find(x=>x.id===state.id)||
+   (s.units[index]?.kind===state.kind?s.units[index]:null);
   if(!u||!Array.isArray(state.pos)||state.pos.length!==3||
       !state.pos.every(Number.isFinite))continue;
   const captured=!!state.captured;
