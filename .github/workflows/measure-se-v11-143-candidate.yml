@@ -1,5 +1,5 @@
 name: §E v11.143 isolated candidate source measure
-# Run complete sealed v11.143 source with corrected historical level regression marker.
+# Real viewport-host correction: verify current artifact name and mobile pointer/UI hit boxes.
 # Final v11.143 gate: exact scene bundle, 173-patch source and native menu/game regression.
 on:
   push:
