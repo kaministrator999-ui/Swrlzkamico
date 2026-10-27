@@ -28,6 +28,10 @@ try:
   host.locator("#playBtn").click(force=True)
   host.wait_for_timeout(400)
   print("SE150_AFTER_PLAY_CLICK",host.evaluate("() => window.SWYRL_ENGINE_LEVELS.status()"),flush=True)
+  if not host.evaluate("() => window.SWYRL_ENGINE_LEVELS.status().menuPlaying"):
+   print("SE150_PLAY_BUTTON_DIAG",host.evaluate("""() => {let b=document.querySelector('#playBtn');let r=b.getBoundingClientRect();return {disabled:b.disabled,html:b.outerHTML.slice(0,350),pointer:getComputedStyle(b).pointerEvents,center:[r.x+r.width/2,r.y+r.height/2],hit:document.elementFromPoint(r.x+r.width/2,r.y+r.height/2)?.id}}"""),flush=True)
+   host.evaluate("() => document.querySelector('#playBtn').click()")
+   print("SE150_AFTER_DOM_CLICK",host.evaluate("() => window.SWYRL_ENGINE_LEVELS.status()"),flush=True)
   host.wait_for_function("() => window.SWYRL_ENGINE_LEVELS.status().menuPlaying",timeout=16000)
   host.locator("#se146LanOpen").click()
   host.evaluate("() => window.SWYRL_ENGINE_LAN.hostPeer()")
