@@ -194,6 +194,6 @@
     "patches/v11_145_play_scene_build_ghost.py",
     "patches/v11_146_local_lan_browser.py"
   ],
-  "finalBytes": 6791082,
-  "finalSha256": "6448c1b8b004db9556b6760ed6987c4600c4ba0d19b1d38f35ddc29ae04ad206"
+  "finalBytes": 6800758,
+  "finalSha256": "ff2b742059adb3a23d73c9707be9e8010f9ddf204fbbdbfda5448238d334aacf"
 }
