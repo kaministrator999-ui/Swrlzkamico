@@ -1,0 +1,27 @@
+name: §E v11.146 LAN discovery source validation
+on:
+  push:
+    branches: ["feature/se-v11-146-local-lan-directory"]
+    paths:
+      - "projects/swrlz-forge-moba/source-manifest.json"
+      - "projects/swrlz-forge-moba/patches/v11_146_local_lan_browser.py"
+      - "projects/swrlz-forge-moba/runtime/sheep_local_lan_browser_v11_146.*"
+      - "projects/swrlz-forge-moba/scripts/lan_bridge.py"
+      - "projects/swrlz-forge-moba/scripts/measure_v11_146_source.py"
+      - "projects/swrlz-forge-moba/tests/lan_bridge_v11_146_test.py"
+      - "projects/swrlz-forge-moba/tests/sheep_lan_browser_v11_146.mjs"
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Measure and verify LAN browser plus local bridge
+        run: python projects/swrlz-forge-moba/scripts/measure_v11_146_source.py

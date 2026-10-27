@@ -1,0 +1,39 @@
+/* §E v11.146 — independent LAN menu screen inside original runtime overlay. */
+#st141RuntimeMenu .st141-menu-panel #se146LanOpen{
+ display:block;min-height:39px;margin:12px auto 0;padding:8px 26px;
+ font-size:13px;letter-spacing:.14em;border:1px solid #c8d9c6;
+ color:#e6f4dd;background:rgba(18,58,49,.9);border-radius:12px;
+ pointer-events:auto;cursor:pointer;
+}
+#st141RuntimeMenu .se146-screen{
+ width:min(92vw,440px);max-height:min(75dvh,650px);
+ overflow-y:auto;pointer-events:auto;touch-action:pan-y;
+ background:rgba(17,47,41,.97);border:1px solid #90b69b;
+ border-radius:17px;padding:18px;box-shadow:0 12px 35px #0009;
+ box-sizing:border-box;text-align:left;color:#f6f0d5;
+}
+#st141RuntimeMenu .se146-screen[hidden]{display:none!important}
+#st141RuntimeMenu:has(.se146-lan-open) .st141-menu-panel{display:none!important}
+#st141RuntimeMenu .se146-title{text-align:center;font-size:23px;font-weight:900;letter-spacing:.14em;margin:0 0 14px}
+#st141RuntimeMenu #se146LanHost{
+ display:block;width:100%;padding:12px;min-height:46px;
+ background:#e6c66b;color:#29392b;border-radius:10px;font-weight:900;
+ border:0;cursor:pointer;
+}
+#st141RuntimeMenu #se146LanHost:disabled{opacity:.52;cursor:default}
+#st141RuntimeMenu .se146-list-head{display:flex;gap:8px;justify-content:space-between;align-items:center;margin:19px 0 10px}
+#st141RuntimeMenu .se146-list-head button,#st141RuntimeMenu #se146LanBack{
+ min-height:36px;padding:6px 13px;border:1px solid #9bbbaa;
+ background:#264d45;color:#f6f0d5;border-radius:9px;cursor:pointer;
+}
+#st141RuntimeMenu .se146-list{min-height:90px;max-height:36dvh;overflow-y:auto}
+#st141RuntimeMenu .se146-empty{font-size:13px;text-align:center;color:#c9d9cd;padding:15px 7px}
+#st141RuntimeMenu .se146-game{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 8px;border-bottom:1px solid #6e95816b}
+#st141RuntimeMenu .se146-game-info{display:flex;flex-direction:column;gap:3px;min-width:0}
+#st141RuntimeMenu .se146-game-info b{overflow-wrap:anywhere}
+#st141RuntimeMenu .se146-game-info small{color:#c2d1c6;font-size:11px;overflow-wrap:anywhere}
+#st141RuntimeMenu .se146-game button{min-height:35px;white-space:nowrap;background:#dbcd8f;color:#283b2e;border:0;border-radius:9px;padding:7px}
+#st141RuntimeMenu .se146-game button:disabled{opacity:.6}
+#st141RuntimeMenu .se146-status{font-size:12px;color:#d5e2cd;line-height:1.5;min-height:40px}
+#st141RuntimeMenu #se146LanBack{display:block;width:100%;margin-top:8px}
+@media(max-width:550px){#st141RuntimeMenu .se146-screen{padding:12px;max-height:78dvh}#st141RuntimeMenu .se146-title{font-size:19px}}

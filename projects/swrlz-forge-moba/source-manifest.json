@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.145",
+  "name": "§wyrl§ Engine v11.146",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_145.html",
+  "finalArtifact": "swyrl_engine_v11_146.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -191,7 +191,8 @@
     "patches/v11_142_editor_stop_menu_gait.py",
     "patches/v11_143_real_canvas_overlay_host.py",
     "patches/v11_144_menu_sheep_camera.py",
-    "patches/v11_145_play_scene_build_ghost.py"
+    "patches/v11_145_play_scene_build_ghost.py",
+    "patches/v11_146_local_lan_browser.py"
   ],
   "finalBytes": 6791082,
   "finalSha256": "6448c1b8b004db9556b6760ed6987c4600c4ba0d19b1d38f35ddc29ae04ad206"

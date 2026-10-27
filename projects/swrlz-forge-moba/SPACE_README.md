@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.145
+title: §wyrl§ Engine v11.146
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,18 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.146 · Local LAN browser and actual discoverable lobby bridge (2026-10-27)
+
+**Owner request:** Add Local LAN to Sheep Tag's cinematic Main Menu; entering it reveals Host Game above a browsing list of genuinely discovered LAN hosts, Refresh, and Back. Retain the original editable project/main-menu/game maps and Start Game.
+
+**Implementation:** `runtime/sheep_local_lan_browser_v11_146.{js,css}` creates its own menu screen in the actual runtime overlay, with Host / Stop Hosting, browsed name/IP/player count, Join Lobby, Refresh and Back. It has no fake IPs or network scanners in the remote browser. A public HTTPS tab honestly reports that browsers lack direct subnet scanning/UDP/server privileges. `scripts/lan_bridge.py` is a standalone Python-standard-library **optional LAN host** serving the packaged engine on a private Wi-Fi HTTP address, with UDP 8766 discovery, bounded /24 HTTP probes to fixed local TCP port 8765, same-origin LAN APIs, host start/stop, lobby registration and peer listing. `LAN_BRIDGE.md` describes setup. The bridge serves the generated §e editor and assets, not an alternative game engine.
+
+**Gameplay boundary:** Host/join/list are authentic LAN **lobby discovery and presence** only. **Networked synchronized gameplay is not implemented**; joining does not synchronize sheep, wolves, building orders, matches or physics. No remote API or paid service. That separate transport/state-authority step is required before multiplayer can be called playable.
+
+**Source:** 178 ordered patches including `patches/v11_146_local_lan_browser.py`; preserve 68 historical packaged assets. Exact source HTML seal and build/deploy receipt are determined by `scripts/measure_v11_146_source.py`. Functional checks cover menu/back/HTTPS unavailable and local bridge HTTP hosting/security.
+
+
 
 ## §E v11.145 · Immersive Sheep Tag Play, stable house holograms, safer Rapid snap (2026-10-27)
 
