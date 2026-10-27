@@ -1,3 +1,7 @@
+## §E v11.155 — Host snapshot-tick guest movement fix (2026-10-27)
+
+Field screenshot: guest TX 68, host ACK 34, host moves 0. The WebRTC receive/ack path works; host movement does not advance. v11.155 moves the registered guest's sheep on the already-running host snapshot tick, before broadcasting authoritative state, with collision checks, stale-intent timeout and no new simulation loop. The prior per-frame input movement path is bypassed to avoid duplicate movement. Focused JavaScript mock confirmed a guest sheep position change appears in the very next host snapshot. Physical two-browser verification pending. GitHub Actions remains build/package + HF upload only, per owner instruction.
+
 ## §E v11.154 — Guest-control input acknowledgements (2026-10-27)
 
 Physical guest phone: shared snapshots work and joystick reports local sends but guest sheep still does not move. Replace ambiguous local TX telemetry with explicit host data-channel ACK, room/match-bound input sequence and peer-seat ownership checks. Host movement happens in native frames, still authoritative and collision-aware. Guest labels show TX/ACK/move count; host labels show RX/moved/blocked for field diagnosis. No new backend; dedicated deployment remains package/upload only. Two-phone acceptance pending.
