@@ -160,6 +160,17 @@ function se142Gait(dt){
 const se142MenuTickBase=seLevelsMenuTick;
 seLevelsMenuTick=function(dt){
  const running=seLevels.playingMenu;
+ if(running){
+  // Capture the previous positions BEFORE the cinematic moves the roots,
+  // otherwise the first walking frame incorrectly records zero displacement.
+  for(const actor of [...seLevelsMenuActors('st-sheep'),...seLevelsMenuActors('st-wolf')]){
+   if(!se142.rigs.has(actor)){
+    se142.rigs.set(actor,se142CapturePivots(actor));
+    se142.lastPositions.set(actor,actor.position.clone());
+    se142.distance.set(actor,0);
+   }
+  }
+ }
  se142MenuTickBase(dt);
  if(running&&seLevels.playingMenu)se142Gait(dt);
 };
