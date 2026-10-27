@@ -49,3 +49,21 @@
 #st141MenuInspector input{box-sizing:border-box;max-width:100%;padding:8px;
  background:#f7f1dd;color:#1c352e;border:1px solid #b4bfaa;border-radius:6px;}
 #st141MenuInspector p{line-height:1.45;color:#dddabf;}
+
+/* Project-wide independent level selector, including mobile editor. */
+#st141LevelBar select,#st141LevelBar input{background:#f8f2df;border:1px solid #9baea0;
+ color:#18362d;border-radius:6px;padding:5px;font:600 11px system-ui,sans-serif;
+ min-height:29px;max-width:120px;}
+#st141LevelBar label{display:flex;align-items:center;gap:4px;}
+#st141LevelBar #st141LevelName{width:96px;}
+#st141NextLevel.st141-next-level{border:1px solid #eed395;border-radius:8px;
+ background:#6f602e;color:#fff4c7;padding:5px 9px;font-weight:800;
+ font-size:11px;cursor:pointer;}
+#st141NextLevel[hidden]{display:none!important;}
+@media(max-width:650px){
+ #st141LevelBar.st141-levelbar{gap:4px;padding:2px 4px;max-width:100%;font-size:10px;}
+ #st141LevelBar .st141-caption{display:none;}
+ #st141LevelBar button{padding:4px 6px;}
+ #st141LevelBar select{max-width:102px;}
+ #st141LevelBar #st141LevelName{width:76px;}
+}
