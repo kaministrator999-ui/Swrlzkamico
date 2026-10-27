@@ -196,6 +196,6 @@
     "patches/v11_147_fullscreen_menu_viewport.py",
     "patches/v11_148_sheep_lan_waiting_room.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": "PENDING_EXACT_BUILD"
+  "finalBytes": 6814236,
+  "finalSha256": "94bbd9594a9d76b0c9b83140877414d21800fb75e93d364d6ee99426c2da14ea"
 }
