@@ -1,5 +1,5 @@
 name: §E v11.142 isolated candidate source measure
-# Re-run corrected Stop/menu/rig fixture.
+# Rebuild source after correct pre-motion gait sampling and stable level stamping.
 # Final v11.142 gate: exact scene bundle, 173-patch source and native menu/game regression.
 on:
   push:
