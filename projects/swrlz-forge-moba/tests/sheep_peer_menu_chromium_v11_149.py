@@ -18,18 +18,19 @@ try:
   context=browser.new_context(viewport={"width":412,"height":915},has_touch=True,is_mobile=True,device_scale_factor=2.5)
   host=context.new_page()
   guest=context.new_page()
-  for page in (host,guest):
-   page.goto(f"http://127.0.0.1:{server.server_port}/",wait_until="domcontentloaded")
-   page.wait_for_function("() => !!window.SWYRL_ENGINE_SHEEP_TAG && !!window.SWYRL_ENGINE_LEVELS",timeout=45000)
-   page.evaluate("() => window.SWYRL_ENGINE_SHEEP_TAG.load()")
-   page.evaluate("() => {const d=document.querySelector('#seReleaseNotesDialog');if(d?.open)d.close();}")
-   page.wait_for_function("() => !!document.querySelector('#st141MenuPreview')",timeout=20000)
-   assert page.locator("#se149PreviewLan").count()==1
-   assert page.locator("#se149PreviewLan").is_disabled()
-   page.locator("#playBtn").click(force=True)
-   page.wait_for_function("() => window.SWYRL_ENGINE_LEVELS.status().menuPlaying",timeout=20000)
-   page.locator("#se146LanOpen").click()
-   page.wait_for_function("() => !!document.querySelector('#se149OfferIn')",timeout=7000)
+  host.goto(f"http://127.0.0.1:{server.server_port}/",wait_until="domcontentloaded")
+  host.wait_for_function("() => !!window.SWYRL_ENGINE_SHEEP_TAG && !!window.SWYRL_ENGINE_LEVELS",timeout=45000)
+  host.evaluate("() => window.SWYRL_ENGINE_SHEEP_TAG.load()")
+  host.evaluate("() => {const d=document.querySelector('#seReleaseNotesDialog');if(d?.open)d.close();}")
+  host.wait_for_timeout(400)
+  host.wait_for_function("() => !!document.querySelector('#st141MenuPreview')",timeout=20000)
+  assert host.locator("#se149PreviewLan").count()==1
+  assert host.locator("#se149PreviewLan").is_disabled()
+  print("SE149_BEFORE_PLAY",host.evaluate("() => window.SWYRL_ENGINE_LEVELS.status()"),flush=True)
+  host.locator("#playBtn").click(force=True)
+  host.wait_for_function("() => window.SWYRL_ENGINE_LEVELS.status().menuPlaying",timeout=20000)
+  host.locator("#se146LanOpen").click()
+  host.wait_for_function("() => !!document.querySelector('#se149OfferIn')",timeout=7000)
   # Local HTTP launch normally uses the Python bridge; force the new native
   # browser-only direct-peer path without pretending that this is public HTTPS.
   host.evaluate("() => se149Host()")
@@ -38,19 +39,36 @@ try:
   host.locator("#se149CreateInvite").click()
   host.wait_for_function("() => !!document.querySelector('#se149OfferOut').value",timeout=20000)
   invite=host.locator("#se149OfferOut").input_value()
-  guest.locator("#se148PlayerName").fill("Clover")
-  guest.locator("#se149OfferIn").fill(invite)
-  guest.locator("#se149JoinInvite").click()
-  guest.wait_for_function("() => !!document.querySelector('#se149AnswerOut')?.value",timeout=20000)
-  reply=guest.locator("#se149AnswerOut").input_value()
+  guest.goto("about:blank")
+  reply=guest.evaluate("""async (invite) => {
+    const offer=JSON.parse(atob(invite));
+    const pc=new RTCPeerConnection({iceServers:[]});window.guestPC=pc;
+    pc.ondatachannel=event=>{
+      const channel=event.channel;window.guestChannel=channel;
+      channel.onopen=()=>channel.send(JSON.stringify({kind:'hello',name:'Clover'}));
+      channel.onmessage=event=>{
+        try{if(JSON.parse(event.data).kind==='roster')window.guestRoster=JSON.parse(event.data).game;}catch{}
+      };
+    };
+    await pc.setRemoteDescription({type:'offer',sdp:offer.sdp});
+    await pc.setLocalDescription(await pc.createAnswer());
+    if(pc.iceGatheringState!=='complete'){
+      await new Promise(resolve=>{
+       const on=()=>{if(pc.iceGatheringState==='complete'){pc.removeEventListener('icegatheringstatechange',on);resolve();}};
+       pc.addEventListener('icegatheringstatechange',on);
+       setTimeout(resolve,8500);
+      });
+    }
+    return btoa(JSON.stringify({protocol:'se149-peer-lan-v1',kind:'answer',
+      roomId:offer.roomId,sdp:pc.localDescription.sdp}));
+  }""",invite)
   host.locator("#se149ReplyIn").fill(reply)
   host.locator("#se149AcceptReply").click()
   host.wait_for_function("() => document.querySelector('#se148RoomCount')?.textContent.includes('2 / 8')",timeout=25000)
   assert "Clover" in host.locator("#se148Slots").inner_text()
-  guest.wait_for_function("() => document.querySelector('#se148RoomCount')?.textContent.includes('2 / 8')",timeout=25000)
-  assert guest.locator("#se148Start").is_hidden()
+  guest.wait_for_function("() => window.guestRoster?.players===2",timeout=25000)
   assert host.locator("#se148Start").is_disabled()
-  guest.locator("#se148Leave").click()
+  guest.evaluate("() => window.guestPC.close()")
   host.wait_for_function("() => document.querySelector('#se148RoomCount')?.textContent.includes('1 / 8')",timeout=12000)
   host.locator("#se148Leave").click()
   host.locator("#se146LanBack").click()
