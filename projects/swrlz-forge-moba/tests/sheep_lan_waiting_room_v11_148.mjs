@@ -25,7 +25,7 @@ const ctx={se146Fetch:async()=>{},se146Install(){},se146Leave(){},se146Host(){},
  window:{SWYRL_ENGINE_LAN:{}},setInterval(){return 1},clearInterval(){},
  se146Scan(){},currentProject:{name:'Sheep Tag'},console,URLSearchParams};
 vm.createContext(ctx);vm.runInContext(js,ctx);
-ctx.se148Room.screen=pane;ctx.se148Room.session={owner:true,host:'192.168.1.2',port:8765,gameId:'g'};
+const room=vm.runInContext('se148Room',ctx);room.screen=pane;room.session={owner:true,host:'192.168.1.2',port:8765,gameId:'g'};
 ctx.se148DrawRoom({id:'g',name:'Moonbell',players:2,capacity:8,
  slots:[{seat:1,name:'Host',role:'host',occupied:true},
         {seat:2,name:'Clover',role:'guest',occupied:true},
