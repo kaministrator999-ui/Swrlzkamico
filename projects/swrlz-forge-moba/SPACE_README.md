@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.154
+title: §wyrl§ Engine v11.155
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,12 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.155 — Host snapshot-tick guest movement fix (2026-10-27)
+
+Field screenshot: guest TX 68, host ACK 34, host moves 0. The WebRTC receive/ack path works; host movement does not advance. v11.155 moves the registered guest's sheep on the already-running host snapshot tick, before broadcasting authoritative state, with collision checks, stale-intent timeout and no new simulation loop. The prior per-frame input movement path is bypassed to avoid duplicate movement. Focused JavaScript mock confirmed a guest sheep position change appears in the very next host snapshot. Physical two-browser verification pending. GitHub Actions remains build/package + HF upload only, per owner instruction.
+
+
 
 ## §E v11.154 — Guest movement transport diagnostics
 
