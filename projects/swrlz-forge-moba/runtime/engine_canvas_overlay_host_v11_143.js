@@ -12,10 +12,32 @@ function se143Mount(element){
  if(element.parentElement!==host)host.appendChild(element);
  return true;
 }
+function se143FitCanvasRect(){
+ const canvas=$('viewport'),host=se143ViewportHost();
+ if(!canvas||!host)return;
+ const a=canvas.getBoundingClientRect(),b=host.getBoundingClientRect();
+ if(a.width<1||a.height<1)return;
+ for(const overlay of [seLevels.preview,seLevels.overlay]){
+  if(!overlay||overlay.parentElement!==host)continue;
+  // The native MAIN container can be content-sized on mobile even while
+  // WebGL's canvas occupies the full editor panel. Constrain HTML to the
+  // ACTUAL displayed canvas bounds, never the parent's intrinsic height.
+  const style=overlay.style;
+  style.setProperty('position','absolute','important');
+  style.setProperty('inset','auto','important');
+  style.setProperty('left',(a.left-b.left)+'px','important');
+  style.setProperty('top',(a.top-b.top)+'px','important');
+  style.setProperty('width',a.width+'px','important');
+  style.setProperty('height',a.height+'px','important');
+  style.setProperty('max-height','none','important');
+  style.setProperty('box-sizing','border-box','important');
+ }
+}
 function se143RehomeProjectGui(){
  se143Mount(seLevels.bar);        // editor Project Levels/New Map/Play Game
  se143Mount(seLevels.preview);    // noninteractive editable menu layout
  se143Mount(seLevels.overlay);    // actual clickable Start Game in Play
+ se143FitCanvasRect();
 }
 // Supersede the v11.142 relocation, which placed the toolbar inside CANVAS.
 se142MoveLevelBar=function(){
@@ -43,6 +65,13 @@ seLevelsPlayMenu=function(...args){
  }
  return result;
 };
+// On device rotation/resize the camera canvas changes size; keep its
+// interface aligned without creating another render/game simulation loop.
+window.addEventListener('resize',se143FitCanvasRect,{passive:true});
+if(typeof ResizeObserver!=='undefined'){
+ const canvas=$('viewport');
+ if(canvas)new ResizeObserver(se143FitCanvasRect).observe(canvas);
+}
 // Handoff Stop relies on seLevelsStopMenu, which owns its own teardown and
 // reverts authored transforms. Do not alter Save/Load, gameplay or physics.
 const se143PreviousStatus=window.SWYRL_ENGINE_LEVELS.status;
