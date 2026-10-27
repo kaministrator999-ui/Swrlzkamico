@@ -1,5 +1,5 @@
 name: §E v11.141 isolated candidate source measure
-# Rebuild latest generic project level-manager + native Sheep Tag menu runtime tests.
+# Final v11.141 gate: exact scene bundle, 173-patch source and native menu/game regression.
 on:
   push:
     branches:
