@@ -158,6 +158,28 @@ jobs:
               return ids
           
           
+          
+          def runtime_recovery_basis(runtime, expected_runtime):
+              """Treat only the observed exact ZeroGPU scheduling failure as no-runtime.
+          
+              A present runtime revision still must be the expected old revision. The
+              absent-revision exception neither invents a live runtime nor selects paid
+              hardware; historical rollback is independently checked from upload lineage.
+              """
+              observed = runtime.get("sha")
+              if observed == expected_runtime:
+                  return "EXPECTED_PREVIOUS_RUNTIME"
+              hardware = runtime.get("hardware")
+              message = runtime.get("errorMessage")
+              normalized = " ".join(message.split()).casefold() if isinstance(message, str) else ""
+              if (runtime.get("stage") == "RUNTIME_ERROR" and observed in (None, "")
+                      and isinstance(hardware, dict) and hardware.get("current") is None
+                      and hardware.get("requested") == "zero-a10g"
+                      and normalized == "scheduling failure: unable to schedule"):
+                  return "EXACT_SCHEDULING_FAILURE_NO_RUNTIME"
+              return None
+          
+          
           def run_recovery(*, source, expected_head, expected_runtime, approved, get_json, restart):
               require(approved == "yes", "RECOVERY_APPROVAL_REQUIRED")
               require(sha(source) and sha(expected_head) and sha(expected_runtime)
@@ -178,7 +200,10 @@ jobs:
               if runtime.get("stage") == "RUNNING" and runtime.get("sha") == expected_head:
                   return {**result, "status": "ALREADY_RUNNING_NO_RESTART", "restartCalls": 0}
               require(runtime.get("stage") in ALLOWED_STAGE, "SPACE_NOT_IN_RECOVERABLE_STAGE")
-              require(runtime.get("sha") == expected_runtime, "EXPECTED_PREVIOUS_RUNTIME_MISMATCH")
+              before_basis = runtime_recovery_basis(runtime, expected_runtime)
+              require(before_basis is not None, "EXPECTED_PREVIOUS_RUNTIME_MISMATCH")
+              result["recoveryBasis"] = before_basis
+              result["runtimeRevisionObservedBefore"] = runtime.get("sha") or None
               lineage = get_json(SPACE + "/commits/" + expected_head)
               result["uploadCommits"] = checked_upload_chain(
                   get_json, lineage, expected_head, expected_runtime, source)
@@ -193,13 +218,22 @@ jobs:
               if current_runtime.get("stage") == "RUNNING" and current_runtime.get("sha") == expected_head:
                   return {**result, "status": "BECAME_RUNNING_NO_RESTART", "restartCalls": 0}
               require(current_runtime.get("stage") in ALLOWED_STAGE
-                      and current_runtime.get("sha") == expected_runtime, "SPACE_CHANGED_BEFORE_RESTART")
+                      and runtime_recovery_basis(current_runtime, expected_runtime) == before_basis,
+                      "SPACE_CHANGED_BEFORE_RESTART")
+              current_hardware = current_runtime.get("hardware") if isinstance(current_runtime.get("hardware"), dict) else {}
+              require(current_hardware.get("requested") == hardware_before.get("requested"),
+                      "REQUESTED_HARDWARE_CHANGED_BEFORE_RESTART")
               restart(repo_id=TARGET, factory_reboot=False)
               after = get_json(SPACE)
               after_runtime = checked_space(after, expected_head)
               after_hardware = after_runtime.get("hardware") if isinstance(after_runtime.get("hardware"), dict) else {}
-              for key, value in hardware_before.items():
-                  require(after_hardware.get(key) in (None, value), "HARDWARE_CHANGED_DURING_RECOVERY")
+              require(after_hardware.get("requested") == hardware_before.get("requested"),
+                      "REQUESTED_HARDWARE_CHANGED_DURING_RECOVERY")
+              before_current = current_hardware.get("current")
+              allowed_current = (None, "zero-a10g") if (before_current is None
+                  and hardware_before.get("requested") == "zero-a10g") else (None, before_current)
+              require(after_hardware.get("current") in allowed_current,
+                      "CURRENT_HARDWARE_CHANGED_DURING_RECOVERY")
               return {**result, "status": "NON_FACTORY_RESTART_REQUESTED", "restartCalls": 1,
                       "stageBefore": current_runtime.get("stage"), "stageAfter": after_runtime.get("stage")}
           
