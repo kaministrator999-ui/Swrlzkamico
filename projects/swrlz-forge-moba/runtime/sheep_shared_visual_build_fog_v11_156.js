@@ -3,6 +3,27 @@
 const se156={tracks:new Map(),raf:0,alive:false,fogAt:0,fogSession:null,
   mirrored:0,buildAcks:0,clock:0};
 
+// Include host rotation in the same existing world snapshot packet.
+// This is essential for authored rotated walls/ramps on guest devices.
+const se156OldSend=se152Send;
+se152Send=function(connection,packet){
+ if(packet?.kind==='world'&&se150Match.active&&se150Match.role==='host'&&
+    stSession&&Array.isArray(packet.buildings)){
+  const rotations=new Map(stSession.buildings.map(b=>[b.id,Number(b.rotation)||0]));
+  packet={...packet,buildings:packet.buildings.map(b=>({...b,rotation:rotations.get(b.id)||0}))};
+ }
+ return se156OldSend(connection,packet);
+};
+// Avoid the older low-resolution fog painter overwriting our team vision
+// between 130-ms world updates; retain its actor-memory/visibility passes.
+const se156OldUpdateVision=stUpdateVision;
+stUpdateVision=function(s,force=false){
+ if(!se150Match.active||!s?.fog)return se156OldUpdateVision(s,force);
+ const oldAt=s.fog.updateAt;s.fog.updateAt=Infinity;
+ try{return se156OldUpdateVision(s,false);}
+ finally{s.fog.updateAt=oldAt;}
+};
+
 // Native Sheep Tag accepts farms, fortified houses, walls, ramps and totems.
 // v11.152's initial three-kind filter silently skipped the latter types.
 const se156PriorClientApply=se152ClientApply;
