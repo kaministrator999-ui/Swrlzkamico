@@ -1,3 +1,7 @@
+## §E v11.151 — One-code cloud signaling and minimal deployment (2026-10-27)
+
+Guest pastes a single Host Game invite, with automatic WebRTC offer/answer mediated by public PeerJS Cloud. Connected guests occupy actual slots and can receive host Start Match. Public-cloud signaling is a third-party dependency; direct peer links can still be blocked by shelter Wi-Fi isolation. Gameplay objects remain unsynchronized. Deployment Action stripped to build + HF upload without remote verification or Chromium. Physical phone+laptop acceptance pending.
+
 ## §E v11.150 · Host-authorized Sheep Tag match launch (2026-10-27)
 
 **Owner request:** After a laptop/phone join the same Wi-Fi WebRTC waiting room, the host may press **Start Match** to transition the host and connected guest browsers out of the menu and into each device's native Sheep Tag Gameplay level.
