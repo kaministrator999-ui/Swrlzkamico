@@ -1,4 +1,4 @@
-# §wyrl§ Engine · Local LAN Bridge (v11.146)
+# §wyrl§ Engine · Local LAN Bridge (v11.148)
 
 The Sheep Tag **Main Menu → Local LAN** screen has **Host Game**, a real local-game directory, **Refresh**, and **Back**.
 
@@ -22,3 +22,7 @@ Open the URL printed by the bridge, for example `http://192.168.1.5:8765/`, on a
 ## Security / operating scope
 
 Private LAN only. No port forwarding. Do not run on untrusted/public Wi-Fi. LAN host/stop APIs reject writes from remote clients, and cross-origin browser writes are rejected. The HTTP service serves only its packaged `--serve` folder. Local IP probes are restricted to the bridge's IPv4 /24 network, using a fixed port and a small timeout; scanning only runs on manual refresh, with UDP/discovery cached between refreshes. Network/firewall restrictions may prevent discovery. The bridge is not authenticated multiplayer infrastructure; it is a private Wi-Fi development service.
+
+## v11.148 waiting-room behavior
+
+Host Game opens the eight-slot room; the host permanently occupies seat 1. A joining guest gets a server-assigned seat, is visible to connected visitors and departs on Leave or after 45 seconds without heartbeat. Only the hosting bridge device can stop hosting. Start Match remains disabled until gameplay synchronization exists. Never internet-forward TCP 8765 or UDP 8766.

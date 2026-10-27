@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.147
+title: §wyrl§ Engine v11.148
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,18 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.148 · Host-owned Local LAN waiting lobby (2026-10-27)
+
+**Owner order of work:** Before synchronized Sheep Tag multiplayer, Host Game opens a waiting room with joinable slots and the hosting player in charge. The editor's static Main Menu and Play's 3D cinematic remain separate presentations; visual parity is deferred, not silently altered.
+
+**Implementation:** The optional LAN Bridge maintains an eight-seat roster: host in seat 1 and up to seven real guest seats, with names, stable seating, admission cap, 45-second heartbeat expiry, leave and host-close actions. GET /api/lan/lobby provides the authoritative roster; /api/lan/join, /api/lan/pulse and /api/lan/leave operate on real LAN registrations including discovered same-subnet host proxying. The browser opens a dedicated responsive waiting room after Host Game or Join Lobby and displays occupied/open seats, headcount and host/guest authority. Only the actual bridge host may close its lobby.
+
+**Truthful boundary:** No synchronized game-state, physics or match-authority transport exists yet; Start Match stays disabled instead of launching a misleading local-only match. The public HTTPS Space cannot host private LAN sockets; a trusted device running the existing local bridge is required. No extra engine/physics loop or replacement mode. Main Menu and Gameplay maps and the original 68 historical assets are unchanged.
+
+**Measured source:** §wyrl§ Engine v11.148, 180 ordered patches, 6,814,236 HTML bytes, SHA-256 94bbd9594a9d76b0c9b83140877414d21800fb75e93d364d6ee99426c2da14ea. Dedicated candidate validation https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40522003917 SUCCESS, including older LAN tests, new HTTP/slot tests, exact source/68-asset build and real 412×915 mobile Chromium Host → Guest joins/leaves → Close → restored editor. Owner Android and two-real-device LAN acceptance are independent gates.
+
+**Deployment gate:** Branch validation does not prove production. A final guarded DEPLOY_REQUEST.json release commit and exact hosted-source audit are required.
 
 ## §E v11.147 · Android Sheep Tag menu collapsed-to-top repair (2026-10-27)
 
