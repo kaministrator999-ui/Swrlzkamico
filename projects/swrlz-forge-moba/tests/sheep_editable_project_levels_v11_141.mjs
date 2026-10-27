@@ -6,7 +6,7 @@ const js=fs.readFileSync(root+'runtime/sheep_editable_levels_v11_141.js','utf8')
 const menu=JSON.parse(fs.readFileSync(root+'scenes/sheep-tag-main-menu-v11-141.swyrl.json','utf8'));
 const gameplay=JSON.parse(fs.readFileSync(root+'scenes/sheep-tag-seven-minute-v11-85.swyrl.json','utf8'));
 const html=process.env.SE_ASSEMBLED_HTML?fs.readFileSync(process.env.SE_ASSEMBLED_HTML,'utf8'):'';
-if(html)for(const term of ['V11_142_EDITOR_STOP_MENU_AND_CHARACTER_GAIT','const ST141_CANONICAL_MENU=',
+if(html)for(const term of ['V11_143_REAL_VIEWPORT_OVERLAY_HOST','const ST141_CANONICAL_MENU=',
  'st140MenuTick=function(dt){seLevelsMenuTick(dt);}','project.levelPack'])
  assert.ok(html.includes(term),'assembled integration missing '+term);
 assert.equal(menu.project.sheepTagLevel,'menu');

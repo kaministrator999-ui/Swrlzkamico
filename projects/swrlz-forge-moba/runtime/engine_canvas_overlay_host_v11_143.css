@@ -1,0 +1,77 @@
+/* §E v11.143: actual renderer host is <main class="viewport-wrap">.
+   Canvas fallback descendants have no layout boxes, even with z-index. */
+.viewport-wrap:has(> #viewport){position:relative!important;isolation:isolate;}
+.viewport-wrap > #st141LevelBar.st141-levelbar{
+ position:absolute;top:8px;left:8px;right:8px;z-index:2900;
+ display:flex;flex-wrap:wrap;align-items:center;max-width:calc(100% - 16px);
+ width:max-content;min-height:30px;max-height:100px;overflow:auto;
+ background:rgba(20,50,45,.96);pointer-events:auto;
+ border:1px solid rgba(191,209,181,.6);border-radius:8px;
+ box-shadow:0 7px 18px rgba(0,0,0,.3);
+}
+.viewport-wrap > #st141LevelBar[hidden]{display:none!important;}
+.viewport-wrap > #st141MenuPreview.st141-menu-ui{
+ position:absolute;inset:0;z-index:1700;pointer-events:none!important;
+}
+.viewport-wrap > #st141RuntimeMenu.st141-menu-ui{
+ position:absolute;inset:0;z-index:3900;display:flex!important;
+ align-items:center;justify-content:center;opacity:1!important;
+ visibility:visible!important;pointer-events:auto!important;
+}
+.viewport-wrap > #st141RuntimeMenu[hidden]{display:none!important;}
+.viewport-wrap > #st141RuntimeMenu #st141StartGame{
+ min-height:58px;display:inline-flex!important;visibility:visible!important;
+ align-items:center;justify-content:center;pointer-events:auto!important;
+}
+@media (max-width:600px){
+ .viewport-wrap > #st141LevelBar.st141-levelbar{
+  top:5px;left:4px;right:4px;max-width:calc(100% - 8px);
+  max-height:88px;padding:3px;gap:4px;box-sizing:border-box;
+ }
+ .viewport-wrap > #st141RuntimeMenu .st141-menu-panel{
+  max-width:calc(100% - 26px);max-height:85%;overflow:auto;
+ }
+}
+
+/* Compact REAL canvas height, not window height. Native/mobile layouts can
+   present a short preview viewport even on a tall phone. Keep Start tappable. */
+.viewport-wrap > #st141RuntimeMenu.se143-compact{
+ padding:3px!important;overflow:hidden!important;
+ align-items:center!important;justify-content:center!important;
+}
+.viewport-wrap > #st141RuntimeMenu.se143-compact .st141-menu-panel{
+ box-sizing:border-box!important;width:min(96%,390px)!important;
+ padding:8px 12px!important;max-height:calc(100% - 6px)!important;
+ overflow:auto!important;border-radius:12px!important;
+ display:flex!important;flex-direction:column!important;
+ align-items:center!important;justify-content:center!important;
+}
+.viewport-wrap > #st141RuntimeMenu.se143-compact .st141-menu-panel small{
+ font-size:10px!important;line-height:1.2!important;letter-spacing:.12em!important;
+}
+.viewport-wrap > #st141RuntimeMenu.se143-compact .st141-menu-panel h1{
+ font-size:clamp(22px,5vw,36px)!important;margin:4px 0!important;
+ line-height:1.06!important;
+}
+.viewport-wrap > #st141RuntimeMenu.se143-compact .st141-menu-panel p{
+ font-size:11px!important;line-height:1.2!important;
+ margin:2px 0 8px!important;
+}
+.viewport-wrap > #st141RuntimeMenu.se143-compact #st141StartGame{
+ min-height:43px!important;padding:7px 14px!important;
+ box-shadow:0 3px 0 rgba(74,58,25,.65)!important;
+ font-size:15px!important;width:min(92%,265px)!important;
+ border-radius:9px!important;
+}
+.viewport-wrap > #st141MenuPreview.se143-compact .st141-menu-panel{
+ padding:8px!important;max-height:calc(100% - 8px)!important;overflow:auto!important;
+}
+.viewport-wrap > #st141MenuPreview.se143-compact h1{
+ font-size:clamp(22px,5vw,36px)!important;margin:5px 0!important;
+}
+.viewport-wrap > #st141MenuPreview.se143-compact p{
+ margin:2px 0 8px!important;font-size:11px!important;
+}
+.viewport-wrap > #st141MenuPreview.se143-compact button{
+ min-height:40px!important;padding:7px 14px!important;font-size:14px!important;
+}

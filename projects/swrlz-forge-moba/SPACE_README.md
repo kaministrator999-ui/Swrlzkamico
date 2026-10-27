@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.142
+title: §wyrl§ Engine v11.143
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,14 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.143 · Visible main menu and editable level UI on mobile (2026-10-26)
+
+The Start Game UI and Project Levels had been placed inside the actual 3D WebGL **canvas** element, where browsers hide HTML descendants as canvas fallback content. The menu simulation could be running, but its Start Game control was invisible and untappable. The level selector and editable title preview were similarly invisible.
+
+**Fix:** Parent those existing controls to the real `main.viewport-wrap` element surrounding the canvas, with correct layering and touch targets. Press Play from Sheep Tag's editable Main Menu level to view the actual Start Game button on top of the animated authored 3D scene; tap it to enter independent Gameplay. Project Levels is visibly accessible during editing, while Stop and the native game/editor workflows remain intact.
+
+Source target: 175 patches, 68 preserved assets, 6,781,776 HTML bytes; source SHA256 `97e662c9ec70e3e382a5130ff56b17e0a49f534bea5a53b3409dda9f03c05856`. Release gate tests actual Android-size Chromium touch and nonzero overlay geometry in addition to full source and Sheep Tag regression tests. Real-device acceptance remains with the owner.
 
 ## §E v11.142 · Stop button, visible Start Game and articulated actors (2026-10-26)
 
