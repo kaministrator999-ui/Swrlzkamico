@@ -53,7 +53,7 @@ const c={
  currentProject:{kind:'sheep-tag',name:'Sheep Tag · Main Menu Level'}, // native loader dropped custom root
  playing:false,simulating:false,stSession:null,
  seLevelsCurrent(){return level;},
- seLevelsOwns(){return this.currentProject?.levelProjectRoot==='sheep-tag-meadow';},
+ seLevelsOwns(){return c.currentProject?.levelProjectRoot==='sheep-tag-meadow';},
  seLevelsSwitch(){return true;},
  stLoadStarter(){},
  loadProject(){},
