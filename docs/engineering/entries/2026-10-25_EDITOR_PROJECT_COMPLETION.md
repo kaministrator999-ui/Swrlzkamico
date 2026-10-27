@@ -185,3 +185,7 @@ Exact-source CI40439231340 for committed successor c3f92d242fb5d0bc8a72fa0ef044e
 ## Guarded publication request
 
 Owner authorized live publication. Exact candidate source `f925e2012ed7ece820e3272700bc6619846c2085`; CI run 40439785973 completed SUCCESS. This request starts the canonical HF workflow; upload/build/runtime acceptance remain pending and will be recorded separately. Existing identity assertions remain intact; bounded synthetic-case failure status is additionally exposed through Actions check annotations because full log downloads were unavailable.
+
+## Read-only guarded startup inspection prepared — 2026-10-27
+
+Guarded publication run40480347832 completed SUCCESS for source `f925e2012ed7ece820e3272700bc6619846c2085`. Uploaded Space revision `48515f7fc6e8cb7b4450725320e8fed64fb886e6` carried matching pinned source, but the public runtime continued to report RUNNING_APP_STARTING with the previous runtime revision. Public run logs required authentication. An inspect-only workflow step now reads existing Space status and narrowly filtered Python startup identifiers using the existing HF_TOKEN only inside the runner. It prints no environment, raw log text, token or user records and performs no Space update/restart. Replica attribution of filtered log messages remains unknown. This is diagnostic evidence, not runtime or model acceptance. Existing deployment assertions, approvals, snapshot/rollback gates and the deployment request are unchanged. Preparation does not mean inspection ran.

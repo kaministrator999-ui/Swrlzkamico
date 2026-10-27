@@ -60,6 +60,186 @@ jobs:
           echo "ref=${{ inputs.source_ref }}" >> "$GITHUB_OUTPUT"
           echo "Selected source ref: ${{ inputs.source_ref }}"
           echo "Selected source SHA: $(git rev-parse HEAD)"
+      - name: Inspect existing Chat Space startup without mutation
+        if: ${{ inputs.mode == 'inspect' }}
+        timeout-minutes: 2
+        shell: bash
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          """Read-only runner diagnostics for the existing Chat Space.
+          
+          This script is embedded into an inspect-only workflow step. The credential
+          stays in the runner environment; no environment, response body or raw log line
+          is printed. Filtered exception identifiers do not establish replica identity.
+          """
+          from __future__ import annotations
+          
+          import json
+          import os
+          import re
+          import socket
+          import time
+          from urllib.error import HTTPError, URLError
+          from urllib.request import HTTPRedirectHandler, Request, build_opener
+          
+          TARGET = "kamiloki/Swyrlz"
+          BASE = "https://huggingface.co/api/spaces/" + TARGET
+          MAX_BYTES = 65536
+          MAX_LINE = 8192
+          MAX_DIAGNOSTICS = 12
+          IDENTIFIER = r"[A-Za-z_][A-Za-z0-9_.]{0,99}"
+          
+          
+          class NoRedirect(HTTPRedirectHandler):
+              def redirect_request(self, request, fp, code, message, headers, newurl):
+                  return None
+          
+          
+          def identifier(value):
+              return value if isinstance(value, str) and re.fullmatch(IDENTIFIER, value) else None
+          
+          
+          def revision(value):
+              return value if isinstance(value, str) and re.fullmatch(r"[0-9a-f]{40}", value) else None
+          
+          
+          def summary(info):
+              runtime = info.get("runtime") if isinstance(info.get("runtime"), dict) else {}
+              stage = runtime.get("stage")
+              return {"target": TARGET,
+                      "repositoryRevision": revision(info.get("sha")),
+                      "runtimeRevision": revision(runtime.get("sha")),
+                      "stage": stage if isinstance(stage, str) and re.fullmatch(r"[A-Z_]{1,60}", stage) else "UNKNOWN",
+                      "operation": "READ_ONLY_NO_SPACE_MUTATION",
+                      "acceptance": "NOT_RUNTIME_OR_MODEL_ACCEPTANCE"}
+          
+          
+          def log_strings(line):
+              """Decode only known SSE string fields; never output the source payload."""
+              value = str(line).removeprefix("data:").strip()
+              try:
+                  data = json.loads(value)
+              except (ValueError, TypeError):
+                  return [value]
+              if isinstance(data, str):
+                  return [data]
+              if isinstance(data, dict):
+                  return [data[key] for key in ("data", "message", "text", "content")
+                          if isinstance(data.get(key), str)]
+              return []
+          
+          
+          def safe_diagnostics(text, credential):
+              """Return code identifiers/classes only, not user text or exception data."""
+              value = str(text or "").replace(credential, "[REDACTED]") if credential else str(text or "")
+              found = []
+              for line in value.splitlines():
+                  try:
+                      structured = json.loads(line)
+                  except (ValueError, TypeError):
+                      structured = None
+                  if isinstance(structured, dict) and structured.get("event") in (
+                          "ZEROGPU_STARTUP_REPORTED", "HF_WARMUP_READY", "HF_WARMUP_FAILED", "HF_MODEL_ROUTES"):
+                      safe = {"event": structured["event"]}
+                      if structured.get("modelId") in ("700m", "coder", "stock", "r39"):
+                          safe["modelId"] = structured["modelId"]
+                      elapsed = structured.get("elapsedSeconds")
+                      if type(elapsed) in (int, float) and 0 <= elapsed <= 86400:
+                          safe["elapsedSeconds"] = elapsed
+                      error_type = identifier(structured.get("errorType"))
+                      if error_type:
+                          safe["errorType"] = error_type
+                      found.append(json.dumps(safe, ensure_ascii=True, separators=(",", ":")))
+                      continue
+                  missing = re.search(r"ModuleNotFoundError:\s*No module named ['\"](" + IDENTIFIER + r")[ '\"]", line)
+                  if missing:
+                      found.append("ModuleNotFoundError: module=" + missing.group(1))
+                      continue
+                  imported = re.search(r"ImportError:\s*cannot import name ['\"](" + IDENTIFIER + r")['\"] from ['\"](" + IDENTIFIER + r")[ '\"]", line)
+                  if imported:
+                      found.append("ImportError: symbol=" + imported.group(1) + " module=" + imported.group(2))
+                      continue
+                  error = re.search(r"\b(ModuleNotFoundError|ImportError|SyntaxError|IndentationError|TabError|NameError|AttributeError|TypeError|ValueError|RuntimeError|OSError|MemoryError|PermissionError)\s*:", line)
+                  if error:
+                      found.append(error.group(1) + ": details omitted")
+                      continue
+                  frame = re.search(r'File [\"\']/(?:app|usr/local/lib/python[0-9.]+/site-packages)/[^\"\']*?([A-Za-z_][A-Za-z0-9_]*\.py)[\"\'], line ([0-9]{1,7})', line)
+                  if frame:
+                      found.append("Python frame: " + frame.group(1) + ":" + frame.group(2))
+                      continue
+                  if "Application startup complete" in line:
+                      found.append("Application startup complete (log replica attribution unknown)")
+                  elif "Running on local URL:" in line or "Uvicorn running on" in line:
+                      found.append("HTTP server listening (log replica attribution unknown)")
+              return list(dict.fromkeys(found))[:MAX_DIAGNOSTICS]
+          
+          
+          def annotation(value):
+              text = json.dumps(value, ensure_ascii=True, separators=(",", ":"))
+              escaped = text.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
+              assert len(escaped.encode()) <= 5000
+              return escaped
+          
+          
+          def main():
+              credential = os.environ.get("HF_TOKEN", "").strip()
+              if not credential:
+                  print("::error::Read-only startup inspection requires the existing HF_TOKEN runner secret.")
+                  return 1
+              opener = build_opener(NoRedirect())
+              def request(path, timeout):
+                  return opener.open(Request(BASE + path, headers={"Authorization": "Bearer " + credential,
+                                      "User-Agent": "SWRLZ-ReadOnly-Startup-Inspection/1"}), timeout=timeout)
+              result = {"target": TARGET, "operation": "READ_ONLY_NO_SPACE_MUTATION",
+                        "acceptance": "NOT_RUNTIME_OR_MODEL_ACCEPTANCE", "diagnostics": [],
+                        "logReplicaAttribution": "UNKNOWN"}
+              try:
+                  with request("", 10) as response:
+                      raw = response.read(MAX_BYTES + 1)
+                  if len(raw) > MAX_BYTES:
+                      result["metadataRead"] = "OVERSIZED_RESPONSE_OMITTED"
+                  else:
+                      info = json.loads(raw)
+                      result.update(summary(info if isinstance(info, dict) else {}))
+                      runtime = info.get("runtime", {}) if isinstance(info, dict) else {}
+                      if isinstance(runtime, dict):
+                          result["diagnostics"].extend(safe_diagnostics(runtime.get("errorMessage", ""), credential))
+              except HTTPError as error:
+                  result["metadataHttpStatus"] = error.code
+              except (URLError, OSError, ValueError, TimeoutError):
+                  result["metadataRead"] = "UNAVAILABLE_DETAILS_OMITTED"
+              try:
+                  with request("/logs/run", 3) as response:
+                      result["runLogHttpStatus"] = response.status
+                      deadline = time.monotonic() + 8
+                      size = 0
+                      while size <= MAX_BYTES and time.monotonic() < deadline:
+                          raw = response.readline(MAX_LINE + 1)
+                          if not raw:
+                              break
+                          size += len(raw)
+                          if len(raw) > MAX_LINE:
+                              result["runLogRead"] = "OVERSIZED_LINE_OMITTED"
+                              break
+                          for value in log_strings(raw.decode("utf-8", "replace")):
+                              result["diagnostics"].extend(safe_diagnostics(value, credential))
+                          result["diagnostics"] = list(dict.fromkeys(result["diagnostics"]))[:MAX_DIAGNOSTICS]
+                          if len(result["diagnostics"]) >= MAX_DIAGNOSTICS:
+                              break
+              except HTTPError as error:
+                  result["runLogHttpStatus"] = error.code
+              except (URLError, OSError, TimeoutError, socket.timeout):
+                  result["runLogRead"] = "UNAVAILABLE_OR_IDLE_DETAILS_OMITTED"
+              print("::warning title=Read-only HF startup inspection::" + annotation(result))
+              return 0
+          
+          
+          if __name__ == "__main__":
+              raise SystemExit(main())
+          PY
       - name: Benchmark untouched 350M and 700M GGUF models on the same CPU
         if: ${{ inputs.mode == 'benchmark' }}
         run: |
