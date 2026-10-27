@@ -74,6 +74,7 @@ jobs:
           CI_RUN = 40439785973
           MAX_RESPONSE = 1024 * 1024
           ALLOWED_STAGE = {"RUNNING_APP_STARTING", "RUNTIME_ERROR"}
+          MAX_UPLOAD_CHAIN_LINKS = 4
           
           
           class RecoveryBlocked(RuntimeError):
@@ -131,6 +132,32 @@ jobs:
               return record["sourceCommit"]
           
           
+          
+          def checked_upload_chain(get_json, lineage, expected_head, stable_runtime, source):
+              """Accept only a bounded multipart upload followed by the known rollback.
+          
+              HEAD provenance is already checked. Every intervening upload revision must
+              carry this exact source; an arbitrary older ancestor is never sufficient.
+              """
+              require(isinstance(lineage, list) and len(lineage) >= 2
+                      and isinstance(lineage[0], dict) and lineage[0].get("id") == expected_head,
+                      "UPLOAD_CHAIN_HEAD_MISMATCH")
+              rollback_index = None
+              ids = [expected_head]
+              for index, entry in enumerate(lineage[1:MAX_UPLOAD_CHAIN_LINKS + 1], start=1):
+                  require(isinstance(entry, dict) and sha(entry.get("id")), "UPLOAD_CHAIN_ENTRY_INVALID")
+                  commit = entry["id"]
+                  require(commit not in ids, "UPLOAD_CHAIN_REVISION_REPEATED")
+                  if commit == stable_runtime:
+                      rollback_index = index
+                      break
+                  ids.append(commit)
+              require(rollback_index is not None, "BOUNDED_ROLLBACK_UPLOAD_CHAIN_MISSING")
+              for intermediate in ids[1:]:
+                  checked_provenance(get_json, intermediate, source)
+              return ids
+          
+          
           def run_recovery(*, source, expected_head, expected_runtime, approved, get_json, restart):
               require(approved == "yes", "RECOVERY_APPROVAL_REQUIRED")
               require(sha(source) and sha(expected_head) and sha(expected_runtime)
@@ -153,9 +180,9 @@ jobs:
               require(runtime.get("stage") in ALLOWED_STAGE, "SPACE_NOT_IN_RECOVERABLE_STAGE")
               require(runtime.get("sha") == expected_runtime, "EXPECTED_PREVIOUS_RUNTIME_MISMATCH")
               lineage = get_json(SPACE + "/commits/" + expected_head)
-              require(isinstance(lineage, list) and len(lineage) >= 2
-                      and lineage[0].get("id") == expected_head and lineage[1].get("id") == expected_runtime,
-                      "EXACT_ROLLBACK_PARENT_MISSING")
+              result["uploadCommits"] = checked_upload_chain(
+                  get_json, lineage, expected_head, expected_runtime, source)
+              result["stableRollbackRevision"] = expected_runtime
               checked_provenance(get_json, expected_runtime)
               hardware = runtime.get("hardware") if isinstance(runtime.get("hardware"), dict) else {}
               hardware_before = {key: hardware.get(key) for key in ("current", "requested")}
@@ -207,11 +234,20 @@ jobs:
               try:
                   from huggingface_hub import HfApi
                   api = HfApi(endpoint=HF, token=hf_token)
+                  def restart_once(**kwargs):
+                      require(kwargs == {"repo_id": TARGET, "factory_reboot": False}, "UNEXPECTED_RESTART_ARGUMENTS")
+                      marker = {"event": "NON_FACTORY_RESTART_CALL_ATTEMPTED", "target": TARGET,
+                                "expectedSpaceRevision": os.environ.get("EXPECTED_SPACE_REVISION", "")}
+                      print("::notice title=Guarded HF startup recovery call::" + json.dumps(marker, ensure_ascii=True, separators=(",", ":")), flush=True)
+                      response = api.restart_space(**kwargs)
+                      marker["event"] = "NON_FACTORY_RESTART_ACKNOWLEDGED"
+                      print("::notice title=Guarded HF startup recovery call::" + json.dumps(marker, ensure_ascii=True, separators=(",", ":")), flush=True)
+                      return response
                   result = run_recovery(source=os.environ.get("SOURCE_REF", ""),
                       expected_head=os.environ.get("EXPECTED_SPACE_REVISION", ""),
                       expected_runtime=os.environ.get("EXPECTED_RUNTIME_REVISION", ""),
                       approved=os.environ.get("RECOVERY_APPROVED", ""), get_json=get_json,
-                      restart=api.restart_space)
+                      restart=restart_once)
               except RecoveryBlocked as error:
                   print("::error::Guarded startup recovery blocked: " + str(error))
                   return 1
