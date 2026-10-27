@@ -16,7 +16,7 @@ The Start Game UI and Project Levels had been placed inside the actual 3D WebGL 
 
 **Fix:** Parent those existing controls to the real `main.viewport-wrap` element surrounding the canvas, with correct layering and touch targets. Press Play from Sheep Tag's editable Main Menu level to view the actual Start Game button on top of the animated authored 3D scene; tap it to enter independent Gameplay. Project Levels is visibly accessible during editing, while Stop and the native game/editor workflows remain intact.
 
-Source target: 175 patches, 68 preserved assets, 6,778,333 HTML bytes; source SHA256 `3f918654e92473a19f8c79d12e1062eafaeffb9bc5d0393056041b169bea20df`. Release gate tests actual Android-size Chromium touch and nonzero overlay geometry in addition to full source and Sheep Tag regression tests. Real-device acceptance remains with the owner.
+Source target: 175 patches, 68 preserved assets, 6,779,748 HTML bytes; source SHA256 `990bdfcc74e13c2fd04c14803cf67f0ef2833a51bc5a1aa7013a512da9a6c54c`. Release gate tests actual Android-size Chromium touch and nonzero overlay geometry in addition to full source and Sheep Tag regression tests. Real-device acceptance remains with the owner.
 
 ## §E v11.142 · Stop button, visible Start Game and articulated actors (2026-10-26)
 
