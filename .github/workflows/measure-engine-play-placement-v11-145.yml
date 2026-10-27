@@ -1,0 +1,27 @@
+name: §E v11.145 targeted Play and placement seal
+on:
+  push:
+    branches: ["feature/se-v11-145-immersive-safe-ghost"]
+    paths:
+      - "projects/swrlz-forge-moba/patches/v11_145_play_scene_build_ghost.py"
+      - "projects/swrlz-forge-moba/runtime/engine_play_scene_build_ghost_v11_145.js"
+      - "projects/swrlz-forge-moba/runtime/engine_play_scene_build_ghost_v11_145.css"
+      - "projects/swrlz-forge-moba/source-manifest.json"
+      - "projects/swrlz-forge-moba/scripts/measure_v11_145_source.py"
+      - "projects/swrlz-forge-moba/scripts/verify_v11_145_release.py"
+      - "projects/swrlz-forge-moba/tests/play_scene_build_ghost_v11_145.mjs"
+permissions:
+  contents: read
+jobs:
+  measure-verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Rebuild and test source
+        run: python projects/swrlz-forge-moba/scripts/measure_v11_145_source.py

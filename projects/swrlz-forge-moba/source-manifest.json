@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.144",
+  "name": "§wyrl§ Engine v11.145",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_144.html",
+  "finalArtifact": "swyrl_engine_v11_145.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -190,7 +190,8 @@
     "patches/v11_141_editable_sheep_levels.py",
     "patches/v11_142_editor_stop_menu_gait.py",
     "patches/v11_143_real_canvas_overlay_host.py",
-    "patches/v11_144_menu_sheep_camera.py"
+    "patches/v11_144_menu_sheep_camera.py",
+    "patches/v11_145_play_scene_build_ghost.py"
   ],
   "finalBytes": 6784186,
   "finalSha256": "f54aea74cafa0c024981390063eb6ec1da1d0301dbd90e4a13e31078b95d0a5a"
