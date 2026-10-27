@@ -227,4 +227,4 @@ end=s.index('function atelierSculptPreviewFieldsInstall(){',start)
 preview=s[start:end]
 assert 'checkpoint()' not in preview and 'p.sculptBrushes=' not in preview
 Path(str(out)+'-module.mjs').write_text(s.split('<script type="module">',1)[1].rsplit('</script>',1)[0])
-print('SWRLZ_V11143_VERIFIED',len(raw),m['finalSha256'],'176_PATCHES_68_ASSETS')
+print('SWRLZ_V11144_VERIFIED',len(raw),m['finalSha256'],'176_PATCHES_68_ASSETS')

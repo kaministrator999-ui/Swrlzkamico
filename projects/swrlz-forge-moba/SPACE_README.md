@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.143
+title: §wyrl§ Engine v11.144
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,16 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.144 · Single menu launch control and cinematic rotating sheep portraits (2026-10-26)
+
+**Owner Android feedback:** The newly visible Sheep Tag menu still presented redundant launch buttons in the editor header, and its orbiting camera did not visit the individual sheep.
+
+**Implemented:** Keep the engine's native **Play/Stop** authoring controls and the interactive menu's large **Start Game** button. Retire the redundant **▶ Play Game** control from the Project Levels strip; the level selector, + New Map, Menu UI, linked Gameplay transition, and all save/load/export operations remain. During native menu playback only, the existing camera continues to orbit but now pauses over each of the three authored sheep in turn, eases between subjects on a seven-second schedule and follows their movement. Menu actors retain their existing chase, build, gait and wolf animation. The editor preview remains still, without gameplay state or a second simulation loop.
+
+**Release candidate source seal:** **176 ordered patches**, **68 preserved assets**, **6,784,186 HTML bytes**, SHA-256 `f54aea74cafa0c024981390063eb6ec1da1d0301dbd90e4a13e31078b95d0a5a`, computed by reconstructing all patches on a GitHub runner rather than altering the source checksum by assertion. Patch `patches/v11_144_menu_sheep_camera.py`, runtime `runtime/engine_menu_sheep_camera_v11_144.js`, targeted independent test `tests/sheep_menu_portrait_camera_v11_144.mjs`. Deploy status is separate from source testing; hands-on Android visual acceptance remains with the owner.
+
+
 
 ## §E v11.143 · Visible main menu and editable level UI on mobile (2026-10-26)
 
