@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.140
+title: §wyrl§ Engine v11.141
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,14 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.141 · Independent editable levels and connected maps (2026-10-26)
+
+**Architecture correction:** Opening the Sheep Tag starter now shows its authored **Main Menu Level in edit mode**—the cinematic does not play while editing. Its sheep, wolf, houses, trees and meadow are real selectable, movable and separately saveable scene actors. The menu's title, subtitle, button text/color and orbit speed can also be changed in **Menu UI**. Press Play to run the attract cinematic; tap Start Game to transition to the separately editable Grand Moonbell Wildwood Gameplay level and start native Play.
+
+**All projects:** A project-wide **Project Levels** toolbar lists independent levels, offers **+ New Map**, level renaming, a **Next** connection and **Export Level**. Selecting a level loads its own editable scene without starting simulation. Save Project exports the full level collection as `project.levelPack` (schema `se-levels-v1`), with every level's data and connection; opening that saved project restores them. A connected runtime level exposes a Next Level control. Existing project types retain their native Play behavior.
+
+All earlier Sheep Tag mechanics, map rules and 68 packaged assets remain intact. Source target: 173 ordered patches; the artifact byte count and SHA-256 are recorded in `source-manifest.json`. Tests validate level edits, creating/linking maps, save/reload, static editor state and native Start Game transition. Actual Android usability remains subject to owner acceptance.
 
 ## §E v11.140 · Sheep Tag starter 3D main menu (2026-10-26)
 
