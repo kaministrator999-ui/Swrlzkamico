@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.146
+title: §wyrl§ Engine v11.147
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,16 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.147 · Android Sheep Tag menu collapsed-to-top repair (2026-10-27)
+
+**Owner visual evidence:** The actual Android hosted v11.146 screenshot shows the entire Start Game menu, 3D scene and Exit to editor squeezed into a short top strip over an otherwise empty black viewport; File/Edit/Outliner/Details/status chrome remains visible. This regressed after v11.145 introduced runtime `.viewport-wrap{flex:1;min-height:0}` in a layout where the WebGL canvas and menu overlay are coupled to the same editor workspace bounds.
+
+**Change:** During native Sheep Tag Main Menu and Gameplay **Play only**, use the original `main.viewport-wrap` and `canvas#viewport` as a fixed full-viewport renderer host (CSS gated on `body.se145-runtime`) rather than relying on inherited editor flex sizing. On entering/leaving Play or switching to game, synchronously call the existing v11.143 menu-to-canvas fitting helper, trigger the original native window-resize handling, and refit once on next animation frame. Preserve original scene/camera and authored level data; do not add a second scene, renderer or game tick. Keep Start Game and Local LAN as scrolling centered menu content and place **Exit to editor** at the actual bottom edge. **Stop** restores editing because runtime styles are wholly scoped to a transient body class.
+
+**Scope and acceptance:** Original 68 historical game assets, LAN bridge and browser logic, sheep/wolf actors, building validation, capture and animations unchanged. Include a targeted layout/resize/state regression plus prior menu/LAN/game tests. Source hash/hosted audit separate from real-device visual approval.
+
+
 
 ## §E v11.146 · Local LAN browser and actual discoverable lobby bridge (2026-10-27)
 

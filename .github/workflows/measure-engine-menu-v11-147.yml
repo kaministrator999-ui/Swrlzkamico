@@ -1,0 +1,30 @@
+name: §E v11.147 targeted Android menu viewport repair
+on:
+  push:
+    branches: ["feature/se-v11-147-restore-main-menu"]
+    paths:
+      - "projects/swrlz-forge-moba/source-manifest.json"
+      - "projects/swrlz-forge-moba/patches/v11_147_fullscreen_menu_viewport.py"
+      - "projects/swrlz-forge-moba/runtime/engine_runtime_fullscreen_v11_147.*"
+      - "projects/swrlz-forge-moba/scripts/measure_v11_147_source.py"
+      - "projects/swrlz-forge-moba/scripts/verify_v11_147_release.py"
+      - "projects/swrlz-forge-moba/tests/runtime_fullscreen_menu_v11_147.mjs"
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install browser test dependency
+        run: python -m pip install playwright
+      - name: Validate scoped fullscreen viewport and source seal
+        run: python projects/swrlz-forge-moba/scripts/measure_v11_147_source.py
+      - name: Android-sized real Chromium menu geometry
+        run: python projects/swrlz-forge-moba/tests/runtime_fullscreen_menu_chromium_v11_147.py
