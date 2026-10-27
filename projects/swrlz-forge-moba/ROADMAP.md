@@ -1,3 +1,12 @@
+### §E v11.147 · Confirmed live Android menu viewport repair (2026-10-27 UTC)
+
+**Terminal outcome:** [v11.147 guarded Hugging Face deploy + live source/asset audit](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40514571546) **SUCCESS**. Dedicated deploy-request commit `fa54c3aaf65d6e5987c3676c6d1cbc1aa34ce03d`, authoritative source commit `f8d6e6ef591f78eefac44a501128a054b005c32d`; live https://kamiloki-swrlz-forge-moba.static.hf.space/. Hosted HTML and `SOURCE.json` match **§wyrl§ Engine v11.147**, **179 ordered patches**, **6,805,561 HTML bytes**, SHA-256 `b141c99188fc579faa7ae2acd1b8c432c3c15efa301a69dacfc33a6ecf9996c4`; **all 68/68 assets** verified.
+
+**Real browser reproduction and correction:** [Scoped verification including actual Android-sized Chromium 412 × 915](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40514112039) **SUCCESS**. Observed canvas/host/overlay **412 × 915**, Start Game visible at y452, Local LAN at y522, Exit to editor at y872; Local LAN→Back and Stop restored level editor. This specifically prevents the observed collapsed-to-top menu/black-screen regression; tests retain actual native canvas, no extra render loop. Owner's physical phone remains final UX acceptance.
+
+**Preserved troubleshooting path:** The first v11.147 pre-seal validation run `40513771760` recorded a real 6,805,561-byte candidate and exited on intentionally unsealed manifest, after which the browser check had no packaged index and failed. Sealed from the exact runner-reconstructed digest, and the complete scoped code + real-browser run succeeded. Never count the first failed candidate as a deployed release.
+
+
 ## §E v11.147 · Android Sheep Tag menu collapsed-to-top repair (2026-10-27)
 
 **Owner visual evidence:** The actual Android hosted v11.146 screenshot shows the entire Start Game menu, 3D scene and Exit to editor squeezed into a short top strip over an otherwise empty black viewport; File/Edit/Outliner/Details/status chrome remains visible. This regressed after v11.145 introduced runtime `.viewport-wrap{flex:1;min-height:0}` in a layout where the WebGL canvas and menu overlay are coupled to the same editor workspace bounds.
