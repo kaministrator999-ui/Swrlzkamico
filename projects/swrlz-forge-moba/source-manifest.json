@@ -195,6 +195,6 @@
     "patches/v11_146_local_lan_browser.py",
     "patches/v11_147_fullscreen_menu_viewport.py"
   ],
-  "finalBytes": 6800920,
-  "finalSha256": "ce6479a69e71db8e38a4ef4be1ef6db8a91b5fd4a4f686f9097a7d4403e97dd4"
+  "finalBytes": 6805561,
+  "finalSha256": "b141c99188fc579faa7ae2acd1b8c432c3c15efa301a69dacfc33a6ecf9996c4"
 }
