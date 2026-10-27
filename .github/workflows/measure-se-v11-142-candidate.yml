@@ -1,5 +1,5 @@
 name: §E v11.142 isolated candidate source measure
-# Rebuild source after correct pre-motion gait sampling and stable level stamping.
+# Run complete sealed v11.142 source with corrected historical level regression marker.
 # Final v11.142 gate: exact scene bundle, 173-patch source and native menu/game regression.
 on:
   push:
