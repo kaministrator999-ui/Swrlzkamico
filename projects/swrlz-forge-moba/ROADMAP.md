@@ -1,3 +1,10 @@
+### §E v11.146 · Live LAN browser release receipt (2026-10-27 UTC)
+
+**Verified release:** [dedicated v11.146 Hugging Face deploy and complete source/asset receipt audit](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40482311629) **SUCCESS**. Exact deploy-button commit `b4853afdde084202e0db048c783b12d62e08457f`, source commit `a5bd20f63420d256a46ab76b055a302f98d41966`. Target: https://kamiloki-swrlz-forge-moba.static.hf.space/. Live `index.html` and `SOURCE.json` match **§wyrl§ Engine v11.146**, **178 patches**, **6,800,920 bytes**, SHA-256 `ce6479a69e71db8e38a4ef4be1ef6db8a91b5fd4a4f686f9097a7d4403e97dd4` and **68/68 packaged assets**. [Candidate targeted menu and local-bridge integration tests](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40482121555) **SUCCESS**. No wider project or AI Chat workflow was modified.
+
+**Remaining owner test and transport boundary:** Android physical menu layout/Back behavior require human acceptance. Public HTTPS-hosted Space cannot scan IPs or accept incoming LAN sockets; actual LAN host discovery requires a local `scripts/lan_bridge.py` service serving the built editor on the private network and documented in `LAN_BRIDGE.md`. Host and Join register **lobby presence only**; no authoritative synchronized Sheep Tag match transport is claimed.
+
+
 ## §E v11.146 · Local LAN browser and actual discoverable lobby bridge (2026-10-27)
 
 **Owner request:** Add Local LAN to Sheep Tag's cinematic Main Menu; entering it reveals Host Game above a browsing list of genuinely discovered LAN hosts, Refresh, and Back. Retain the original editable project/main-menu/game maps and Start Game.
