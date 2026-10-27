@@ -1,0 +1,51 @@
+/* §E v11.141 · editor-level controls and authored menu UI.
+   Title preview never catches clicks in Edit mode. */
+#st141LevelBar.st141-levelbar{
+ display:inline-flex;align-items:center;gap:5px;max-width:min(100%,680px);
+ padding:3px 7px;border:1px solid rgba(126,181,161,.43);border-radius:8px;
+ background:#173a39;color:#edecd6;font:600 11px system-ui,sans-serif;
+ vertical-align:middle;flex-wrap:wrap;
+}
+#st141LevelBar[hidden]{display:none!important;}
+#st141LevelBar .st141-caption{white-space:nowrap;color:#e9cd83;}
+#st141LevelBar button{padding:5px 8px;min-height:29px;border:1px solid #65857a;
+ border-radius:7px;background:#284e49;color:#f5f3d9;cursor:pointer;font-size:11px;}
+#st141LevelBar button[aria-pressed="true"]{background:#efdc99;color:#24392e;border-color:#f7eecb;}
+#viewport:has(.st141-menu-ui){position:relative!important;}
+#st141MenuPreview.st141-menu-ui,#st141RuntimeMenu.st141-menu-ui{
+ position:absolute;inset:0;z-index:1900;color:#fff9e6;
+ display:flex;align-items:center;justify-content:center;
+ text-align:center;padding:20px;background:linear-gradient(180deg,rgba(13,34,31,.08),rgba(8,24,29,.24));
+ font-family:system-ui,-apple-system,sans-serif;
+}
+#st141MenuPreview.st141-menu-ui[hidden],#st141RuntimeMenu.st141-menu-ui[hidden]{display:none!important;}
+#st141MenuPreview.st141-preview{pointer-events:none;opacity:.88;}
+#st141RuntimeMenu.st141-runtime{pointer-events:auto;z-index:4000;}
+#st141MenuPreview .st141-menu-panel,#st141RuntimeMenu .st141-menu-panel{
+ padding:clamp(22px,5vw,44px);max-width:550px;width:min(94%,550px);
+ border-radius:21px;border:1px solid rgba(241,217,155,.55);
+ background:linear-gradient(140deg,rgba(11,37,38,.67),rgba(18,49,46,.46));
+ box-shadow:0 14px 50px #091f204f;backdrop-filter:blur(3px);
+}
+.st141-menu-panel small{color:#f4d78e;letter-spacing:.27em;font-size:clamp(10px,2vw,14px);font-weight:800;}
+.st141-menu-panel h1{font-size:clamp(38px,9vw,83px);line-height:1.04;letter-spacing:-.05em;margin:13px 0;color:#fff7da;text-shadow:0 4px 10px #10322c;font-weight:900;}
+.st141-menu-panel p{font-size:clamp(13px,2.7vw,18px);letter-spacing:.08em;margin:0 0 26px;}
+.st141-menu-panel button{font:bold clamp(16px,3vw,21px) system-ui,sans-serif;
+ border:2px solid #f7e3a2;border-radius:14px;min-height:56px;padding:13px 28px;
+ background:var(--st141-gold,#e6c66b);color:#17352e;cursor:pointer;max-width:100%;
+ box-shadow:0 7px 0 rgba(74,58,25,.8);}
+.st141-preview button{cursor:default;opacity:1;}
+.st141-menu-panel button:focus-visible{outline:3px solid cyan;outline-offset:4px;}
+#st141MenuInspector.st141-inspector{
+ position:absolute;z-index:8000;right:10px;top:48px;width:min(335px,90vw);
+ max-height:75vh;overflow:auto;border-radius:13px;padding:15px;
+ background:#193734;color:#f4f2df;border:1px solid #b5ad77;
+ box-shadow:0 12px 45px rgba(0,0,0,.45);font:12px system-ui,sans-serif;
+}
+#st141MenuInspector[hidden]{display:none!important;}
+.st141-inspector-head{display:flex;justify-content:space-between;align-items:center;font-size:15px;margin-bottom:10px;}
+.st141-inspector-head button{font-size:24px;color:#fff;background:transparent;border:none;cursor:pointer;}
+#st141MenuInspector label{display:flex;flex-direction:column;gap:3px;margin:8px 0;}
+#st141MenuInspector input{box-sizing:border-box;max-width:100%;padding:8px;
+ background:#f7f1dd;color:#1c352e;border:1px solid #b4bfaa;border-radius:6px;}
+#st141MenuInspector p{line-height:1.45;color:#dddabf;}
