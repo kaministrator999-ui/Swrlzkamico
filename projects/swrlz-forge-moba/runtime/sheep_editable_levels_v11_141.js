@@ -7,7 +7,7 @@ const seLevels={records:new Map(),root:'',active:'',loading:false,playingMenu:fa
  time:0,ordinal:0,playCount:0,stopCount:0};
 function seLevelKey(data){
  const p=data?.project||currentProject||{};
- return String(p.levelPack?.root||p.canonicalId||p.name||'unsaved-project');
+ return String(p.levelPack?.root||p.levelProjectRoot||p.canonicalId||p.name||'unsaved-project');
 }
 function seLevelStrip(data){
  const value=structuredClone(data);
@@ -45,6 +45,7 @@ function seLevelsHydrate(data){
 }
 function seLevelsInitSingle(data){
  const root=seLevelKey(data);
+ data=seLevelStrip(data);data.project.levelProjectRoot=root;
  seLevels.root=root;seLevels.records=new Map();
  seLevels.records.set('level-1',seLevelRecord('level-1',data?.project?.name||'Level 1',data,
   data?.project?.kind==='sheep-tag'?'game':'map'));
@@ -106,6 +107,7 @@ function seLevelsCreate(name){
  const source=seLevelsRaw(),id='level-'+(++seLevels.ordinal);
  const title=String(name||'New Map '+seLevels.ordinal).trim().slice(0,90)||'New Level';
  source.project.name=title;
+ source.project.levelProjectRoot=seLevels.root;
  source.project.canonicalId=seLevels.root+'-'+id;
  source.scene.actors=currentProject?.kind==='sheep-tag'?
   source.scene.actors.filter(a=>a.type==='st-meadow').map(a=>structuredClone(a)):[];
@@ -326,6 +328,7 @@ stLoadStarter=function(){
  const menu=seLevelStrip(ST141_CANONICAL_MENU);
  const game=seLevelStrip(ST_CANONICAL_PROJECT);
  game.project.sheepTagLevel='game';
+ menu.project.levelProjectRoot='sheep-tag-meadow';game.project.levelProjectRoot='sheep-tag-meadow';
  seLevels.root='sheep-tag-meadow';
  seLevels.records=new Map([
   ['menu',seLevelRecord('menu','Main Menu',menu,'menu','game')],
