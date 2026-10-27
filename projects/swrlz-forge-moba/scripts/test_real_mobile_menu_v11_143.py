@@ -26,6 +26,7 @@ with sync_playwright() as p:
    const rect=el=>{if(!el)return null;const r=el.getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height};};
    const mr=rect(start);const hit=mr?document.elementFromPoint(mr.x+mr.width/2,mr.y+mr.height/2):null;
    return {version:document.title,state:l,canvas:canvas?.tagName,host:host?.tagName,
+    canvasRect:rect(canvas),hostRect:rect(host),
     barHost:bar?.parentElement?.tagName,bar:rect(bar),preview:rect(preview),
     overlayHost:overlay?.parentElement?.tagName,overlay:rect(overlay),
     start:rect(start),startHit:hit?.id||hit?.tagName,modalOpen:!!document.querySelector('#seReleaseNotesDialog')?.open};
@@ -48,6 +49,7 @@ with sync_playwright() as p:
  except Exception:pass
  assert menu['state']['runtimeGuiMounted'] and menu['state']['runtimeGuiVisible'],menu
  assert menu['overlayHost']=='MAIN' and menu['overlay']['width']>100 and menu['overlay']['height']>100,menu
+ assert menu['overlay']['height']>=menu['canvasRect']['height']-6,'Runtime UI must cover real canvas height, not short wrapper'
  assert menu['start']['width']>75 and menu['start']['height']>20,'Start Game must be visible and touch-sized'
  assert menu['startHit']=='st141StartGame','touch center must hit Start Game, not hidden canvas or tool'
  b=menu['start']
