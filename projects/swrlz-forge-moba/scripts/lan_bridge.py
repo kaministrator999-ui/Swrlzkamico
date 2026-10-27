@@ -24,6 +24,7 @@ QUERY = b"SWYRLZ_LAN_QUERY_V1"
 DEFAULT_PORT = 8765
 DEFAULT_DISCOVERY_PORT = 8766
 MAX_BODY = 4096
+MAX_SLOTS = 8  # one host and up to seven guests
 
 
 def lan_ip():
@@ -78,17 +79,27 @@ class LANState:
         self.last_result = []
         self.scan_lock = threading.Lock()
 
+    def _prune(self):
+        now = time.monotonic()
+        self.players = {token: member for token, member in self.players.items()
+                        if now - member["seen"] < 45}
+
     def snapshot(self, host=None):
         with self.lock:
             if not self.game:
                 return None
-            now = time.monotonic()
-            self.players = {k: v for k, v in self.players.items() if now - v < 45}
-            return {
-                "id": self.game["id"], "name": self.game["name"],
-                "host": host or self.ip, "port": self.port,
-                "players": 1 + len(self.players), "self": True,
-            }
+            self._prune()
+            slots = [{"seat": 1, "name": "Host", "role": "host", "occupied": True}]
+            for seat in range(2, MAX_SLOTS + 1):
+                member = next((m for m in self.players.values() if m["seat"] == seat), None)
+                slots.append({"seat": seat, "name": member["name"] if member else "",
+                              "role": "guest" if member else "open",
+                              "occupied": bool(member)})
+            return {"id": self.game["id"], "name": self.game["name"],
+                    "host": host or self.ip, "port": self.port,
+                    "players": 1 + len(self.players), "capacity": MAX_SLOTS,
+                    "slots": slots, "self": True, "phase": "waiting",
+                    "hostControlsStart": True, "canStartMatch": False}
 
     def start(self, name="Sheep Tag"):
         clean = str(name).strip()[:60] or "Sheep Tag"
@@ -102,12 +113,41 @@ class LANState:
             self.game = None
             self.players.clear()
 
-    def register(self, game_id, player_id):
+    def register(self, game_id, player_id, name=""):
+        token = str(player_id)[:48]
+        if len(token) < 12:
+            return False
         with self.lock:
             if not self.game or self.game["id"] != game_id:
                 return False
-            self.players[str(player_id)[:48]] = time.monotonic()
+            self._prune()
+            if token in self.players:
+                self.players[token]["seen"] = time.monotonic()
+                return True
+            occupied = {m["seat"] for m in self.players.values()}
+            seat = next((i for i in range(2, MAX_SLOTS + 1) if i not in occupied), None)
+            if seat is None:
+                return False
+            clean = str(name).strip()[:32] or "Player " + str(seat)
+            self.players[token] = {"seen": time.monotonic(), "name": clean, "seat": seat}
             return True
+
+    def pulse(self, game_id, player_id):
+        with self.lock:
+            if not self.game or self.game["id"] != game_id:
+                return False
+            self._prune()
+            member = self.players.get(str(player_id))
+            if not member:
+                return False
+            member["seen"] = time.monotonic()
+            return True
+
+    def leave(self, game_id, player_id):
+        with self.lock:
+            if not self.game or self.game["id"] != game_id:
+                return False
+            return self.players.pop(str(player_id), None) is not None
 
     def verify(self, ip, port):
         if not safe_local_ip(ip, self.ip) or not (1 <= int(port) <= 65535):
@@ -252,6 +292,25 @@ def make_handler(state, static_root):
                 self.reply(200, {"available": True, "ip": state.ip,
                                  "canHost": self.peer_admin(), "game": state.snapshot()})
                 return
+            if parsed.path == "/api/lan/lobby":
+                query = urllib.parse.parse_qs(parsed.query)
+                host = query.get("host", [state.ip])[0]
+                try:
+                    port = int(query.get("port", [str(state.port)])[0])
+                    if host in (state.ip, "127.0.0.1") and port == state.port:
+                        room = state.snapshot()
+                    else:
+                        if not safe_local_ip(host, state.ip):
+                            raise ValueError("Host outside private subnet")
+                        remote = json_get(host, port, "/api/lan/status", timeout=1)
+                        room = remote.get("game") if remote and remote.get("protocol") == PROTOCOL else None
+                    if not room:
+                        self.reply(404, {"error": "Lobby has ended"})
+                    else:
+                        self.reply(200, {"game": room})
+                except (OSError, ValueError, TypeError, urllib.error.URLError):
+                    self.reply(404, {"error": "Lobby unavailable"})
+                return
             if parsed.path == "/api/lan/games":
                 force = urllib.parse.parse_qs(parsed.query).get("scan", [""])[0] == "1"
                 self.reply(200, {"games": state.directory(scan=force)})
@@ -277,29 +336,59 @@ def make_handler(state, static_root):
                     return
                 if parsed.path == "/api/lan/register":
                     body = self.body()
-                    if state.register(str(body.get("gameId", "")), str(body.get("playerId", ""))):
+                    if state.register(str(body.get("gameId", "")), str(body.get("playerId", "")), body.get("name", "")):
                         self.reply(200, {"joined": True})
                     else:
                         self.reply(404, {"error": "Lobby is unavailable"})
                     return
                 if parsed.path == "/api/lan/join":
                     body = self.body()
-                    host, port = body.get("host"), int(body.get("port", state.port))
+                    host, port = str(body.get("host", "")), int(body.get("port", state.port))
                     game_id = str(body.get("gameId", ""))
+                    name = str(body.get("name", "")).strip()[:32]
                     found = state.verify(host, port)
                     if not found or found["id"] != game_id:
                         self.reply(404, {"error": "Host no longer advertises this lobby"})
                         return
-                    player = secrets.token_hex(12)
-                    request = urllib.request.Request(
-                        f"http://{host}:{port}/api/lan/register",
-                        json.dumps({"gameId": game_id, "playerId": player}).encode("utf-8"),
-                        {"Content-Type": "application/json"}, method="POST")
-                    with urllib.request.urlopen(request, timeout=1.5) as reply:
-                        if reply.status != 200:
-                            raise ValueError("Lobby registration failed")
-                    self.reply(200, {"joined": True,
-                                     "message": "Joined LAN lobby; synchronized matches are not implemented yet."})
+                    player = secrets.token_hex(16)
+                    if host in (state.ip, "127.0.0.1") and port == state.port:
+                        accepted = state.register(game_id, player, name)
+                    else:
+                        request = urllib.request.Request(
+                            f"http://{host}:{port}/api/lan/register",
+                            json.dumps({"gameId": game_id, "playerId": player,
+                                        "name": name}).encode("utf-8"),
+                            {"Content-Type": "application/json"}, method="POST")
+                        try:
+                            with urllib.request.urlopen(request, timeout=1.5) as reply:
+                                accepted = reply.status == 200
+                        except urllib.error.HTTPError as exc:
+                            accepted = False if exc.code in (404, 409) else None
+                    if not accepted:
+                        self.reply(409, {"error": "Lobby full or unavailable"})
+                        return
+                    self.reply(200, {"joined": True, "playerId": player, "host": host,
+                                     "port": port, "gameId": game_id,
+                                     "message": "Joined waiting lobby; multiplayer game sync not implemented."})
+                    return
+                if parsed.path in ("/api/lan/pulse", "/api/lan/leave"):
+                    body = self.body()
+                    game_id, player_id = str(body.get("gameId", "")), str(body.get("playerId", ""))
+                    host, port = str(body.get("host", state.ip)), int(body.get("port", state.port))
+                    action = "pulse" if parsed.path.endswith("pulse") else "leave"
+                    if not safe_local_ip(host, state.ip):
+                        self.reply(403, {"error": "Host not on private subnet"})
+                        return
+                    if host in (state.ip, "127.0.0.1") and port == state.port:
+                        ok = getattr(state, action)(game_id, player_id)
+                    else:
+                        request = urllib.request.Request(
+                            f"http://{host}:{port}/api/lan/{action}",
+                            json.dumps({"gameId": game_id, "playerId": player_id}).encode(),
+                            {"Content-Type": "application/json"}, method="POST")
+                        with urllib.request.urlopen(request, timeout=1.5) as reply:
+                            ok = reply.status == 200
+                    self.reply(200 if ok else 404, {"ok": bool(ok)})
                     return
                 self.reply(404, {"error": "Unknown LAN API"})
             except (ValueError, TypeError, KeyError, OSError, urllib.error.URLError, json.JSONDecodeError) as exc:
