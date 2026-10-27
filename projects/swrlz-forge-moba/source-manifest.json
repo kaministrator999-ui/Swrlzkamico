@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.156",
+  "name": "§wyrl§ Engine v11.157",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_156.html",
+  "finalArtifact": "swyrl_engine_v11_157.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -202,7 +202,8 @@
     "patches/v11_153_guest_joystick.py",
     "patches/v11_154_guest_input_ack.py",
     "patches/v11_155_guest_snapshot_drive.py",
-    "patches/v11_156_smooth_build_team_fog.py"
+    "patches/v11_156_smooth_build_team_fog.py",
+    "patches/v11_157_authoritative_buildings.py"
   ],
   "finalBytes": null,
   "finalSha256": null
