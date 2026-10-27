@@ -1,3 +1,15 @@
+## §E v11.150 · Host-authorized Sheep Tag match launch (2026-10-27)
+
+**Owner request:** After a laptop/phone join the same Wi-Fi WebRTC waiting room, the host may press **Start Match** to transition the host and connected guest browsers out of the menu and into each device's native Sheep Tag Gameplay level.
+
+**Implemented:** `runtime/sheep_lan_match_start_v11_150.{js,css}` with `patches/v11_150_host_start_native_match.py` enables Start Match only once a verified WebRTC guest is connected. The existing host-controlled data channel delivers a room-matched, unique match-start command. Menu teardown preserves the peer connection; native Stop cleans up and host announces match-end. No new renderer or custom game mode. Original independent editable Main Menu and Gameplay, all existing animal/gameplay logic, and all 68 packaged assets are preserved.
+
+**Truthful gameplay limitation:** This is **coordinated game launch**, NOT synchronized multiplayer. Each client runs its own local gameplay simulation; sheep positions, wolf positions, house placements, abilities, attacks, and physics are not yet replicated. Browser-peer invite exchange remains manual, Wi-Fi may restrict direct WebRTC traffic, and optional Python LAN Bridge players do **not** gain this match-start feature through their distinct protocol. Physical Android/laptop acceptance remains pending.
+
+**Exact candidate seal:** 182 ordered patches; 6,833,482 generated HTML bytes; SHA-256 `2eb170d15eca9046d7116d76baeea7620246f41e1f46d2dc17b1dab66ce1fc54`; 68 verified assets. [Real Chrome and host/guest tests](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40540706814) **SUCCESS**, including actual menu Gameplay transition, direct channel guest-start receipt, editor Stop, and source rebuild. The first simulated Play tap failed in the automated test while a direct DOM click passed: treat this as a test-click limitation, not proof that all real touch hits work.
+
+**CI efficiency correction:** Branch pushes now run focused start-module tests; the expensive exact-source build and Chromium session require an explicit `[verify-release]` commit. The guarded production deploy performs its own full build and hosted-source audit. Do not launch full compilation and browser runs on each debugging edit.
+
 ## §E v11.148 · Host-owned Local LAN waiting lobby (2026-10-27)
 
 **Owner order of work:** Before synchronized Sheep Tag multiplayer, Host Game opens a waiting room with joinable slots and the hosting player in charge. The editor's static Main Menu and Play's 3D cinematic remain separate presentations; visual parity is deferred, not silently altered.

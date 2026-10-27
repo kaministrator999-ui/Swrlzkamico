@@ -23,12 +23,16 @@ jobs:
           node --check projects/swrlz-forge-moba/runtime/sheep_lan_match_start_v11_150.js
           python -m py_compile projects/swrlz-forge-moba/patches/v11_150_host_start_native_match.py
           node projects/swrlz-forge-moba/tests/sheep_host_start_v11_150.mjs
+      # Full release gates are opt-in; regular commits run the fast unit checks.
+      # Add [verify-release] to an intended candidate commit to run them.
       - name: Rebuild full source and 68 assets
+        if: contains(github.event.head_commit.message, '[verify-release]')
         run: |
           python projects/swrlz-forge-moba/scripts/measure_v11_150_source.py
           python projects/swrlz-forge-moba/scripts/verify_v11_150_release.py --output dist/swrlz-forge-moba
           node --check dist/swrlz-forge-moba-module.mjs
       - name: Test real Chrome host LAN start, guest receipt and editor exit
+        if: contains(github.event.head_commit.message, '[verify-release]')
         run: |
           python -m pip install playwright
           python projects/swrlz-forge-moba/tests/sheep_host_start_chromium_v11_150.py
