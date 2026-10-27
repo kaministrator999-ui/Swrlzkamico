@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.149",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_149_PEER_MENU_PARITY",
-  "reason": "Owner Android screenshots: editor Sheep Tag menu omitted latest Local LAN control and Host Game was disabled on public hosted HTTPS. §E v11.149 adds Edit-mode noninteractive menu parity plus direct browser-to-browser invitation/reply peer hosting with real eight-seat roster where supported; existing bridge remains for automatic LAN discovery. No fake LAN scanning or pretend synced gameplay. Verified 181 ordered patches, 68 original assets, 6,826,972 byte exact generated HTML SHA-256 328f1edca9eefa38973d1b843d4deafd9e5957f2791c19a427b458bd8355792b. CI successful 40528399506 including real touch-size Chromium peer host/guest join/leave. Synchronized match Start still disabled; device-to-device acceptance pending.",
-  "sourceCommit": "3456d442b1c1bcf528e240a43f9ae186219bf610",
-  "sourceIntegritySha256": "328f1edca9eefa38973d1b843d4deafd9e5957f2791c19a427b458bd8355792b"
+  "releaseVersion": "v11.150",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_150_HOST_START_NATIVE_MATCH",
+  "reason": "Owner requested the LAN host Start Match allow shelter-laptop and Android phone to leave the waiting lobby and enter native Sheep Tag Gameplay. v11.150 enables host-only match start once a real WebRTC guest is connected, sends room-bound match-start to guest channels, preserves peer links across menu teardown and restores Stop cleanup. Coordinated launches ONLY: animals, houses, actions and physics are not replicated and may diverge. Existing local Python LAN Bridge is a separate lobby path without networked match start. Exact source: 182 ordered patches, 6,833,482 HTML bytes, SHA256 2eb170d15eca9046d7116d76baeea7620246f41e1f46d2dc17b1dab66ce1fc54 and 68 packaged assets. Unit/real mobile Chromium host launch, WebRTC guest message receipt and Stop verification SUCCESS Actions 40540706814; streamlined fast CI SUCCESS 40541559886. Merge PR #290 preserved concurrent Chat project updates; user physical two-device test pending.",
+  "sourceCommit": "47d28dfd6da3e27ace2d5a81f6f9bb7d9de34ce2",
+  "sourceIntegritySha256": "2eb170d15eca9046d7116d76baeea7620246f41e1f46d2dc17b1dab66ce1fc54"
 }
