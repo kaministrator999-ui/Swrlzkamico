@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.145",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_145_PLAY_GHOST_SAFE_SNAP",
-  "reason": "Owner physical Android screenshots v11.144: editor chrome still visible during Main Menu/Game Play; building placement ghost blinks during active meadow aim; red house placement remains rejected by diagonal narrow sheep passage even when nearby house row could safely align. v11.145 introduces Play-only hidden editor chrome + Exit to editor native Stop; retains actual Game HUD and independent editable levels. Active drag invalid ray retains a red non-buildable hologram instead of destroying it, while HUD refresh is blocked from fighting the active pointer; successful new aim restores canonical fit. Rapid ON tests more nearby straight-row/flush-corner legal sites, choosing one ONLY after full original stCanBuild validation; no weakening of collisions, 1.20m sheep lanes, cost or nav. 177 patches, original 68 assets, exact 6,791,082-byte HTML SHA-256 6448c1b8b004db9556b6760ed6987c4600c4ba0d19b1d38f35ddc29ae04ad206. Candidate packaging/JS parse/ghost/Rapid/Stop/level regressions passed in GitHub Actions #40454261079. Guarded deploy target kamiloki/swrlz-forge-moba. Hosted exact receipt and owner Android UI acceptance remain separate.",
-  "sourceCommit": "1104e4874378030af8f937d029193f89ec7224d4",
-  "sourceIntegritySha256": "6448c1b8b004db9556b6760ed6987c4600c4ba0d19b1d38f35ddc29ae04ad206"
+  "releaseVersion": "v11.146",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_146_LOCAL_LAN_BROWSER",
+  "reason": "Owner requested Sheep Tag Main Menu Local LAN button opening network browser with Host Game above LAN list and Back. v11.146 adds a real menu screen with refresh, empty/listed lobby states and an honest HTTPS-local discovery limitation. Includes optional Python stdlib LAN bridge on trusted local Wi-Fi: UDP 8766 discovery, bounded private /24 IP probing to TCP 8765, same-origin HTTP host/start/stop and lobby registration, no invented hosts or paid/cloud dependency. Join is LOBBY PRESENCE ONLY; synchronized gameplay/netcode is not yet implemented and UI explicitly states this. Existing independent level browser, sheep game, menu camera, Stop and 68 packaged assets preserved. Exact GitHub rebuilt source v11.146, 178 ordered patches, 6,800,920 bytes, SHA256 ce6479a69e71db8e38a4ef4be1ef6db8a91b5fd4a4f686f9097a7d4403e97dd4. Targeted source/menu/local HTTP and origin security tests PASS: GitHub Actions 40482121555. Release via guarded HF workflow to kamiloki/swrlz-forge-moba; live verification and owner's Android acceptance separate.",
+  "sourceCommit": "a5bd20f63420d256a46ab76b055a302f98d41966",
+  "sourceIntegritySha256": "ce6479a69e71db8e38a4ef4be1ef6db8a91b5fd4a4f686f9097a7d4403e97dd4"
 }
