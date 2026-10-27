@@ -19,6 +19,7 @@ function se143FitCanvasRect(){
  if(a.width<1||a.height<1)return;
  for(const overlay of [seLevels.preview,seLevels.overlay]){
   if(!overlay||overlay.parentElement!==host)continue;
+  overlay.classList.toggle('se143-compact',a.height<350);
   // The native MAIN container can be content-sized on mobile even while
   // WebGL's canvas occupies the full editor panel. Constrain HTML to the
   // ACTUAL displayed canvas bounds, never the parent's intrinsic height.
