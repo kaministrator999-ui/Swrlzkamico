@@ -75,13 +75,22 @@ stUpdate=function(dt,t){
    else if(!stBlocked(x+dx,z,radius))x+=dx;
    else if(!stBlocked(x,z+dz,radius))z+=dz;
    if(x!==unit.pos.x||z!==unit.pos.z){
+    const traveled=Math.hypot(x-unit.pos.x,z-unit.pos.z);
     unit.pos.x=x;unit.pos.z=z;unit.actor.rotation.y=Math.atan2(intent.x,intent.z);
-    unit.walkDistance+=Math.hypot(x-unit.pos.x,z-unit.pos.z);
+    unit.walkDistance+=traveled;
     stPlaceUnit(unit);se153.moves++;
    }
   }
  }
  return se153BaseUpdate(dt,t);
+};
+const se153BaseSnapshot=se152Snapshot;
+se152Snapshot=function(...args){
+ const value=se153BaseSnapshot(...args);
+ if(se153.rx&&se150Match.role==='host'&&se150Match.badge)
+  se150Match.badge.textContent+=' · guest input '+se153.rx+
+   ' · moved '+se153.moves;
+ return value;
 };
 const se153PreviousStop=stopSession;
 stopSession=function(...args){
