@@ -197,6 +197,6 @@
     "patches/v11_148_sheep_lan_waiting_room.py",
     "patches/v11_149_peer_menu_parity.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": "PENDING_MEASUREMENT"
+  "finalBytes": 6826928,
+  "finalSha256": "d9f9a51595eb9694e1734b9b04f86ec773fc43db428b10f0665a6a8b578f5885"
 }
