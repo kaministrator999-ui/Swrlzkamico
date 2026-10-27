@@ -1,3 +1,7 @@
+## §E v11.152 · Authoritative shared world and guest controls
+
+Phone + laptop physical test verified one-code LAN connection and host Start Match but exposed independent simulations. Implemented one host-authoritative Sheep Tag tick and ~130-ms world snapshots: player sheep/wolf positions, construction/buildings, captures, gold, timer, winner. Guest input orders and mobile joystick flow to host with host rules and distinct assignments. No new game engine; direct WebRTC data transport. Browser/CDN connection and physical device synchronization still require owner acceptance. The existing production GitHub Action remains package and upload only.
+
 ## §E v11.151 — One-code cloud signaling and minimal deployment (2026-10-27)
 
 Guest pastes a single Host Game invite, with automatic WebRTC offer/answer mediated by public PeerJS Cloud. Connected guests occupy actual slots and can receive host Start Match. Public-cloud signaling is a third-party dependency; direct peer links can still be blocked by shelter Wi-Fi isolation. Gameplay objects remain unsynchronized. Deployment Action stripped to build + HF upload without remote verification or Chromium. Physical phone+laptop acceptance pending.
