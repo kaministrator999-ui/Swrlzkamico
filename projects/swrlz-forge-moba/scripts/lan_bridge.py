@@ -115,7 +115,7 @@ class LANState:
 
     def register(self, game_id, player_id, name=""):
         token = str(player_id)[:48]
-        if len(token) < 12:
+        if len(token) < 8:
             return False
         with self.lock:
             if not self.game or self.game["id"] != game_id:
