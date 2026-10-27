@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.155
+title: §wyrl§ Engine v11.156
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,17 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.156 · Smooth guest movement, complete building replication and team fog (2026-10-27)
+
+Owner real two-phone test demonstrated shared authoritative movement but the guest visually stepped/stopped, guest build attempts showed only a ghost while the house built on host, and fog of war did not reveal the team's actual sheep-and-house sight. This focused patch reuses the existing native host world without any new gameplay simulation or server.
+
+- Guest character positions are interpolated visually between 130-ms host snapshots, with bounded predictive lookahead and a guest-only visual animation callback; game AI and physics remain host-authoritative.
+- Replicate all configured Sheep Tag structures (including castle walls, ramps and totems), their rotation, owner, construction progress and HP. Honor host-confirmed guest build orders and clear preview. Preserve native validation/build travel.
+- Multiplayer sheep-team sight is the union of living sheep vision circles plus allied owned structures; wolf vision remains separate. Repaint the actual fog texture and exploration mask on guests even though the guest does not run native game simulation.
+- Source adds the 188th ordered patch; all prior engine assets and the dedicated build-and-upload-only HF deployment workflow remain unchanged. Physical dual-phone acceptance is pending; focus test for remote wall replication and team-house vision passed.
+
+
 
 ## §E v11.155 — Host snapshot-tick guest movement fix (2026-10-27)
 
