@@ -28,5 +28,12 @@ jobs:
           python projects/swrlz-forge-moba/tests/lan_waiting_room_v11_148_test.py
           node projects/swrlz-forge-moba/tests/sheep_lan_browser_v11_146.mjs
           node projects/swrlz-forge-moba/tests/sheep_lan_waiting_room_v11_148.mjs
-      - name: Reconstruct 180 ordered patches and report exact source seal
-        run: python projects/swrlz-forge-moba/scripts/measure_v11_148_source.py
+      - name: Reconstruct 180 ordered patches and verify exact artifact plus original 68 assets
+        run: |
+          python projects/swrlz-forge-moba/scripts/measure_v11_148_source.py
+          python projects/swrlz-forge-moba/scripts/verify_v11_148_release.py --output dist/swrlz-forge-moba
+          node --check dist/swrlz-forge-moba-module.mjs
+      - name: Install actual mobile Chromium browser test dependency
+        run: python -m pip install playwright
+      - name: Test real 412x915 touch Chromium Host Game waiting room and guest join/leave
+        run: python projects/swrlz-forge-moba/tests/lan_waiting_room_chromium_v11_148.py
