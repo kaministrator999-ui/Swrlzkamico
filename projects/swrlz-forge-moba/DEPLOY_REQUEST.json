@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.148",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_148_LAN_WAITING_ROOM",
-  "reason": "Owner requested Host Game enter a waiting lobby with open seats, guests joining, and the host controlling the room before multiplayer gameplay. Real eight-slot LAN Bridge roster, one fixed host seat, seven bounded guest seats, host-only stop, join/leave/pulse presence and responsive waiting screen; public HTTPS cannot host Wi-Fi games; Start Match disabled until synchronized gameplay transport exists. Exact §E v11.148 source: 180 ordered patches, 6,814,236 HTML bytes, SHA-256 94bbd9594a9d76b0c9b83140877414d21800fb75e93d364d6ee99426c2da14ea, 68 historical assets. Branch source/legacy LAN/HTTP tests/real touch-enabled 412x915 Chromium host guest join/leave/stop passed: Actions 40522782798. Publish only existing kamiloki/swrlz-forge-moba; owner physical multi-device LAN test remains pending.",
-  "sourceCommit": "7750ca995f252a215c01f61322d9fa6528f63565",
-  "sourceIntegritySha256": "94bbd9594a9d76b0c9b83140877414d21800fb75e93d364d6ee99426c2da14ea"
+  "releaseVersion": "v11.149",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_149_PEER_MENU_PARITY",
+  "reason": "Owner Android screenshots: editor Sheep Tag menu omitted latest Local LAN control and Host Game was disabled on public hosted HTTPS. §E v11.149 adds Edit-mode noninteractive menu parity plus direct browser-to-browser invitation/reply peer hosting with real eight-seat roster where supported; existing bridge remains for automatic LAN discovery. No fake LAN scanning or pretend synced gameplay. Verified 181 ordered patches, 68 original assets, 6,826,972 byte exact generated HTML SHA-256 328f1edca9eefa38973d1b843d4deafd9e5957f2791c19a427b458bd8355792b. CI successful 40528399506 including real touch-size Chromium peer host/guest join/leave. Synchronized match Start still disabled; device-to-device acceptance pending.",
+  "sourceCommit": "3456d442b1c1bcf528e240a43f9ae186219bf610",
+  "sourceIntegritySha256": "328f1edca9eefa38973d1b843d4deafd9e5957f2791c19a427b458bd8355792b"
 }
