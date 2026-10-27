@@ -32,3 +32,46 @@
   max-width:calc(100% - 26px);max-height:85%;overflow:auto;
  }
 }
+
+/* Compact REAL canvas height, not window height. Native/mobile layouts can
+   present a short preview viewport even on a tall phone. Keep Start tappable. */
+.viewport-wrap > #st141RuntimeMenu.se143-compact{
+ padding:3px!important;overflow:hidden!important;
+ align-items:center!important;justify-content:center!important;
+}
+.viewport-wrap > #st141RuntimeMenu.se143-compact .st141-menu-panel{
+ box-sizing:border-box!important;width:min(96%,390px)!important;
+ padding:8px 12px!important;max-height:calc(100% - 6px)!important;
+ overflow:auto!important;border-radius:12px!important;
+ display:flex!important;flex-direction:column!important;
+ align-items:center!important;justify-content:center!important;
+}
+.viewport-wrap > #st141RuntimeMenu.se143-compact .st141-menu-panel small{
+ font-size:10px!important;line-height:1.2!important;letter-spacing:.12em!important;
+}
+.viewport-wrap > #st141RuntimeMenu.se143-compact .st141-menu-panel h1{
+ font-size:clamp(22px,5vw,36px)!important;margin:4px 0!important;
+ line-height:1.06!important;
+}
+.viewport-wrap > #st141RuntimeMenu.se143-compact .st141-menu-panel p{
+ font-size:11px!important;line-height:1.2!important;
+ margin:2px 0 8px!important;
+}
+.viewport-wrap > #st141RuntimeMenu.se143-compact #st141StartGame{
+ min-height:43px!important;padding:7px 14px!important;
+ box-shadow:0 3px 0 rgba(74,58,25,.65)!important;
+ font-size:15px!important;width:min(92%,265px)!important;
+ border-radius:9px!important;
+}
+.viewport-wrap > #st141MenuPreview.se143-compact .st141-menu-panel{
+ padding:8px!important;max-height:calc(100% - 8px)!important;overflow:auto!important;
+}
+.viewport-wrap > #st141MenuPreview.se143-compact h1{
+ font-size:clamp(22px,5vw,36px)!important;margin:5px 0!important;
+}
+.viewport-wrap > #st141MenuPreview.se143-compact p{
+ margin:2px 0 8px!important;font-size:11px!important;
+}
+.viewport-wrap > #st141MenuPreview.se143-compact button{
+ min-height:40px!important;padding:7px 14px!important;font-size:14px!important;
+}
