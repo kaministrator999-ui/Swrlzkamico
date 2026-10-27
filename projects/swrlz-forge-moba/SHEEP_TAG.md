@@ -1,3 +1,15 @@
+## §E v11.142 · Android STOP, Start Game overlay and character gait corrections (2026-10-26)
+
+**Owner report on v11.141:** On Android the native **Stop** button disappeared from the top area beside Play/Pause; sheep and wolves in the playing cinematic slid without locomotion; the **Start Game** GUI button was absent.
+
+**Root handling:** The project-level bar had been inserted directly into the cramped native Play/Pause/Stop toolbar, moving playback buttons offscreen. The cinematic translated/rotated authored animal roots but did not drive their existing stLeg0..3, stHead and stTail joint pivots. The menu eligibility check depended exclusively on an optional level root metadata property that the native scene loader may drop.
+
+**v11.142 fix:** The **Project Levels** strip is mounted over the editable viewport, out of the main playback toolbar. Native Stop is placed beside Pause, visible and enabled during menu Play and regular sessions, and shown disabled during idle editing; it still invokes native session/scene Stop. Menu eligibility recovers from the current level's project identity and the known authored level record; missing level metadata is restored after loading. The main menu exposes an interactive Start Game button during menu playback, and **Play Game** in the editor level strip can launch via the menu (while native Play continues to run a selected level). Menu sheep and wolves animate their original leg/head/tail pivots from travel distance, restoring joint and actor pose exactly on Stop or Start Game.
+
+This patch does not invent additional wolf gameplay, move collision/capture code, modify original assets, or discard §e multi-level serialization. Existing gameplay already contains distance-based walk pivots and remains unmodified.
+
+**Acceptance:** On Android Stop must remain near Play/Pause; Play Menu displays Start Game; sheep and wolves move their legs instead of sliding; Stop returns to an unchanged editable authored menu; Start Game transitions to the independent gameplay level; Project Levels/New Map/Save/Load and original 68 assets remain intact. Synthetic CI tests and real-device visual acceptance are separate.
+
 ## §E v11.141 · Project-wide separate editable levels, new maps and connected Play flow (2026-10-26)
 
 Owner correction to v11.140: the menu cinematic must **not** animate inside the editor as an uneditable overlay on the gameplay level. Levels are separately authored, editable maps that may be connected for runtime loading, not scenes that silently run when opened for editing.
