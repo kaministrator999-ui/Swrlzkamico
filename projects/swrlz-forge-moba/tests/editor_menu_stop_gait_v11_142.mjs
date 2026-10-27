@@ -6,7 +6,7 @@ const code=fs.readFileSync(ROOT+'runtime/engine_playback_menu_gait_v11_142.js','
 const css=fs.readFileSync(ROOT+'runtime/engine_playback_menu_gait_v11_142.css','utf8');
 const html=process.env.SE_ASSEMBLED_HTML?fs.readFileSync(process.env.SE_ASSEMBLED_HTML,'utf8'):'';
 if(html)for(const key of [
- 'V11_142_EDITOR_STOP_MENU_AND_CHARACTER_GAIT',
+ 'V11_143_REAL_VIEWPORT_OVERLAY_HOST',
  'se142SyncStop','se142MoveLevelBar','se142Gait',
  'id="se142-playback-menu-gait"'])assert.ok(html.includes(key),'assembled source missing '+key);
 class V3{
