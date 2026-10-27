@@ -234,26 +234,35 @@ function se152ApplyRemoteCommand(peer,message){
 // used for the lobby. Never accept game input from arbitrary browser messages.
 const se152BaseAttach=se151HostAttach;
 se151HostAttach=function(conn,serial){
+ const count=se149Peer.links.length;
  se152BaseAttach(conn,serial);
- const peer=se149Peer.links.findLast(p=>p.cloud&&p.channel?.readyState==='open'&&!p.syncAttached);
- if(!peer)return;
- peer.syncAttached=true;
+ // This connection is added synchronously, even before the channel opens.
+ const peer=se149Peer.links.length>count?se149Peer.links.at(-1):null;
+ if(!peer||!peer.cloud)return;
  conn.on('data',value=>{
   const msg=se152Packet(value);
   if(msg&&['world-stick','world-command'].includes(msg.kind))se152ApplyRemoteCommand(peer,msg);
  });
 };
-const se152BaseJoin=se151JoinGame;
-se151JoinGame=async function(...args){
- await se152BaseJoin(...args);
+function se152WatchGuestConnection(){
  const conn=se151.guestConn;
- if(!conn)return;
+ if(!conn||conn.se152Watched)return;
+ conn.se152Watched=true;
  conn.on('data',value=>{
   const msg=se152Packet(value);
   if(!msg)return;
   if(msg.kind==='world')se152ClientApply(msg);
-  else if(msg.kind==='world-feedback'&&msg.matchId===se150Match.matchId)stUiFeedback(String(msg.text||'').slice(0,180),true);
+  else if(msg.kind==='world-feedback'&&msg.matchId===se150Match.matchId)
+   stUiFeedback(String(msg.text||'').slice(0,180),true);
  });
+}
+const se152BaseJoin=se151JoinGame;
+se151JoinGame=async function(...args){
+ await se152BaseJoin(...args);
+ // PeerJS 'open' fires after the async join function returns. Attach after
+ // its original listener constructs se151.guestConn, not before.
+ se152WatchGuestConnection();
+ se151.peer?.on('open',()=>se152WatchGuestConnection());
 };
 const se152BaseStart=se150HostStart;
 se150HostStart=function(...args){
