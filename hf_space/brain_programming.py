@@ -50,10 +50,10 @@ _REFACTOR=("refactor","clean up","cleanup","restructure","optimize")
 _FEATURE=("add","implement","feature","support","extend","include")
 _REVIEW=("review","audit","inspect","check this","find the error","find the bug","what is wrong","validate","verify")
 _EXPLAIN=("explain","what does","how does","walk me through")
-_CONTINUATION=("this","that","it","same","previous","pinned","code","file","project","continue","keep going","update","change","modify")
+_CONTINUATION=("this","that","it","same","previous","pinned","code","file","project","continue","keep going","edit","update","change","modify")
 _PROGRAMMING_STRONG_TERMS=("coding","programming","compiler","compile","debug","debugging","syntax","source code","frontend","backend","dom","repository","repo","github actions","ci pipeline","unit test","integration test")
 _PROGRAMMING_WEAK_TERMS=("website","webpage","web page","api","server","ui","interface","layout","component","file","project","app","application")
-_PROGRAMMING_ACTIONS=("write","create","build","implement","code","develop","fix","repair","debug","refactor","update","modify","change","add","remove","hook","integrate","deploy","test","lint","review","audit")
+_PROGRAMMING_ACTIONS=("write","create","build","implement","code","develop","fix","repair","debug","refactor","edit","update","modify","change","add","remove","hook","integrate","deploy","test","lint","review","audit")
 _NON_PROGRAMMING_CODE_PHRASES=("zip code","area code","dress code","country code","promo code","coupon code","qr code")
 
 _LANGUAGE_PATTERNS=(
@@ -312,8 +312,8 @@ def _normalize_language_tag(value: str) -> str:
 def _candidate_languages(text: str) -> list[str]:
     source=str(text or "")
     detected=[]
-    from project_archive import source_fences
-    fences=source_fences(source)
+    from project_archive import project_source_fences
+    fences=project_source_fences(source)
     recognized_fence=False
     for match in fences:
         language=_normalize_language_tag(match["header"])
@@ -529,7 +529,8 @@ def _implementation_placeholder_gaps(text: str, contract: dict[str, Any]) -> lis
     """Source-only obvious stub checks, preserving real explanatory comments."""
     if contract.get("implementationPolicy")=="explicit-scaffold":
         return []
-    from project_archive import ProjectArchiveError, parse_project_files, source_fences
+    from project_archive import (ProjectArchiveError, parse_project_files, source_fences,
+        leading_file_metadata, leading_file_metadata_matches_path)
     gaps=[]
     request=str(contract.get("currentInstruction") or contract.get("originalRequest") or "")
     requested_noop=bool(re.search(r"\b(?:no[- ]?op|noop)\b|\bempty\s+(?:function|callback)\b",request,re.I))
@@ -586,6 +587,12 @@ def _implementation_placeholder_gaps(text: str, contract: dict[str, Any]) -> lis
             clean=_lexical_mask(content,strings=False)
             if not requested_unimplemented_error and re.search(r"\bthrow\s+new\s+(?:Error|NotImplementedError)\s*\(\s*['\"](?:not\s+implemented|todo|implement\s+(?:me|this))\b",clean,re.I):
                 gaps.append("unfinished-not-implemented-error")
+        # A safe filename label on the leading metadata line is a name, even
+        # when that name starts with TODO/FIXME. Exempt exactly that first
+        # comment; later comments and all implementation bodies still count.
+        if (comments and leading_file_metadata_matches_path(content,language,str(item.get("path") or ""))
+                and leading_file_metadata(comments[0],language)==leading_file_metadata(content,language)):
+            comments=comments[1:]
         for comment in comments:
             if re.search(r"(?im)^\s*(?://|#|/\*|\*|<!--)?\s*(?:TODO|FIXME)\b",comment) or re.search(r"\b(?:TODO|FIXME)\b\s*(?::|\b(?:implement|add|fill|write|replace|finish|your|here)\b)",comment,re.I) or re.search(r"\b(?:add|insert|implement|write|replace|fill)\b[^\n]{0,100}\b(?:your|here|implementation|this\s+later)\b",comment,re.I):
                 gaps.append("unfinished-implementation-placeholder")
@@ -636,6 +643,16 @@ def _source_delivery_gaps(text: str, original: str, language: dict[str, Any]) ->
     if len(files)>1 and re.search(r"\b(?:single[- ]file|one\s+(?:complete\s+)?html\s+file)\b",original,re.I):
         gaps.append("single-file-request-has-multiple-files")
     for item in files:
+        # Header attributes copied into a source body are not executable file
+        # contents. Reject the unambiguous multi-attribute protocol mistake;
+        # never strip it or guess a new filename on the model's behalf.
+        first=next((line.strip() for line in str(item.get("content") or "").splitlines() if line.strip()),"")
+        attribute=r'''(?:file|path|filename|project|group)=(?:"[^"\r\n]*"|'[^'\r\n]*'|[^\s]+)'''
+        if (str(item.get("language") or "").lower() in ("javascript","js","typescript","ts","jsx","tsx","css","scss","less")
+                and re.fullmatch(attribute+r"(?:[ \t]+"+attribute+r")+",first)
+                and re.search(r"(?:^|[ \t])(?:file|path|filename)=",first)
+                and re.search(r"(?:^|[ \t])(?:project|group)=",first)):
+            gaps.append("misplaced-project-file-metadata:"+str(item.get("path") or "")[:100])
         if str(item.get("path") or "").lower().endswith(".json"):
             try:
                 json.loads(item.get("content") or "")
@@ -761,9 +778,31 @@ def candidate_contract_gate(text: str, programming: dict[str, Any], history: lis
     reasons=[]
     contract=programming.get("intentContract") if isinstance(programming.get("intentContract"),dict) else {}
     language=contract.get("languageContract") if isinstance(contract.get("languageContract"),dict) else {}
+    delta_text=str(text or "")
+    revision_file_count=None
+    revision_base_languages=[]
+    if (programming.get("artifactMutationRequested") and programming.get("artifactTargetId")
+            and programming.get("artifactEditSource") and not programming.get("newProject")
+            and type(programming.get("baseRevision")) is int and programming["baseRevision"]>0
+            and re.fullmatch(r"[a-f0-9]{64}",str(programming.get("baseSourceHash") or ""))):
+        # Validate the resulting owned project, while the model supplies only
+        # complete changed files. Selection/owner/base checks remain Station's.
+        from project_archive import ProjectArchiveError, parse_project_files, project_markdown
+        from project_revision_workspace import merge_project_revision_files
+        try:
+            revision_base_files=parse_project_files(str(programming["artifactEditSource"]))
+            revision_files=merge_project_revision_files(
+                revision_base_files,delta_text)
+            text=project_markdown(revision_files)
+            revision_file_count=len(revision_files)
+            revision_base_languages=_candidate_languages(project_markdown(revision_base_files))
+        except ProjectArchiveError as exc:
+            reasons.append("invalid-project-revision:"+str(exc)[:140])
     detected=_candidate_languages(text)
     required=[str(x) for x in (language.get("requiredLanguages") or [])]
     allowed=[str(x) for x in (language.get("allowedLanguages") or [])]
+    # A JavaScript-only edit does not substitute away preserved HTML/CSS.
+    allowed=_unique(allowed+revision_base_languages)
     project_files=[]
     if language.get("artifactType")=="web-page":
         from project_archive import ProjectArchiveError, parse_project_files
@@ -800,10 +839,14 @@ def candidate_contract_gate(text: str, programming: dict[str, Any], history: lis
             # not whichever support file happened to be emitted first.
             candidate_code="\n".join(str(item["content"]) for item in html_files)
     if programming.get("changeClass") not in ("review", "explain"):
+        if revision_file_count is not None:
+            # Raw fence completeness and newly introduced placeholders are
+            # checked before serialization; old unchanged files are not edits.
+            reasons.extend(_source_delivery_gaps(delta_text,str(contract.get("originalRequest") or ""),language))
         reasons.extend(_source_delivery_gaps(text,str(contract.get("originalRequest") or ""),language))
         reasons.extend(_web_delivery_gaps(candidate_code, str(contract.get("originalRequest") or ""), language,project_files))
         reasons.extend(_literal_ui_gaps(text,contract))
-        reasons.extend(_implementation_placeholder_gaps(text,contract))
+        reasons.extend(_implementation_placeholder_gaps(delta_text,contract))
         if contract.get("implementationPolicy")!="explicit-scaffold":
             reasons.extend(application_source_gaps(text,contract))
     for symbol in semantics.get("reportedSymbols") or []:
@@ -829,6 +872,7 @@ def candidate_contract_gate(text: str, programming: dict[str, Any], history: lis
         "reasons":_unique(reasons),
         "languageContract":language,
         "detectedLanguages":detected,
+        "projectRevisionFileCount":revision_file_count,
         "literalUiText":[dict(item) for item in (contract.get("literalUiText") or [])[:8] if isinstance(item,dict)],
         "diagnosticGrounded":bool(evidence) and not any(x.startswith("diagnostic-") for x in reasons),
         "receiptCategories":list(semantics.get("categories") or [])[:12],
@@ -1846,6 +1890,10 @@ def programming_intent(prompt: str, history: list[dict[str, Any]], pinned_contex
     elif last_artifact and re.search(r"\b(?:make|turn|convert|transform|upgrade)\s+(?:this|that|it|the\s+existing)\b",p):
         change="feature"
     elif any(x in p for x in _FEATURE):
+        change="feature"
+    elif last_artifact and re.match(
+            r"^(?:(?:now|please|then|next|and|also|okay|ok)\s+|(?:can|could|would|will)\s+you\s+|"
+            r"i\s+(?:want|need)\s+you\s+to\s+)*(?:edit|update|change|modify|revise|continue)\b",p):
         change="feature"
     elif any(x in p for x in _REVIEW):
         change="review"

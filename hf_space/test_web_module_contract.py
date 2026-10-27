@@ -15,6 +15,15 @@ BAD='<html><script type="module">import {OrbitControls} from "'+ORBIT+'";</scrip
 GOOD='<html><script type="importmap">{"imports":{"three":"'+CORE+'"}}</script><script type="module">import {OrbitControls} from "'+ORBIT+'";</script></html>'
 
 class WebModuleContract(unittest.TestCase):
+ def test_large_malformed_import_sequence_never_searches_each_remaining_suffix(self):
+  from web_module_contract import _requires_module_script
+  # First keyword/default binding already establishes the loading mismatch;
+  # semicolon-free malformed tails do not require repeated suffix traversal.
+  self.assertTrue(_requires_module_script('import binding\n'*32000))
+  for code in ('const object={import:handler};', 'const object={import(value){return value;}};',
+               'object.import("file.js");', 'import("./file.js");'):
+   self.assertFalse(_requires_module_script(code),code)
+
  def test_known_external_module_requires_its_bare_dependency(self):
   self.assertEqual(module_dependency_gaps(BAD),['unresolved-browser-module:three (required by OrbitControls.js)'])
   self.assertEqual(module_dependency_gaps(GOOD),[])
@@ -369,5 +378,53 @@ const object={import:()=>0};object.import('missing');
     files=[{'path':'index.html','language':'html','content':'<html><script type="module" src="dist/main.js"></script></html>'},
            {'path':'package.json','language':'json','content':json.dumps({'devDependencies':{'vite':'^5.0.0'},'scripts':{'build':script}})}]
     self.assertEqual(module_dependency_gaps('',files),[])
+
+ def test_classic_returned_script_with_static_module_import_requires_module_type(self):
+  files=[{'path':'index.html','language':'html','content':'<html><script src="editor.js"></script></html>'},
+         {'path':'editor.js','language':'javascript','content':'import * as THREE from "'+CORE+'";console.log(THREE.REVISION);'}]
+  self.assertEqual(module_dependency_gaps('',files),['classic-script-requires-module:editor.js (static import/export requires type=module)'])
+  from project_archive import project_markdown
+  state=programming_intent('Create a complete standalone HTML project in separate HTML and JavaScript files.',[],[])
+  receipt=candidate_contract_gate(project_markdown(files),state,[])
+  self.assertEqual(receipt['status'],'REJECT');self.assertFalse(receipt['executionVerified'])
+  files[0]['content']=files[0]['content'].replace('<script src=','<script type="module" src=')
+  self.assertEqual(module_dependency_gaps('',files),[])
+
+ def test_static_import_forms_and_export_in_classic_scripts_are_rejected(self):
+  for source in ('import "./dependency.js";',
+                 'import {named} from "./dependency.js";',
+                 'import named from "./dependency.js";',
+                 'export const value=1;',
+                 'export default function value(){}',
+                 'export {value};',
+                 'export * from "./dependency.js";'):
+   with self.subTest(source=source):
+    files=[{'path':'index.html','language':'html','content':'<html><script type="text/javascript" src="src/editor.js?v=1"></script></html>'},
+           {'path':'src/editor.js','language':'javascript','content':source}]
+    self.assertTrue(any(r.startswith('classic-script-requires-module:') for r in module_dependency_gaps('',files)))
+
+ def test_classic_dynamic_import_comments_strings_and_properties_remain_valid(self):
+  for source in (
+   'import("'+CORE+'").then(module=>console.log(module));',
+   '// import * as X from "unmapped";\n/* export default false; */ const marker=true;',
+   'const message="import x from \'unmapped\'";const template=`export default false`;',
+   'const pattern=/import x from "unmapped"/;const obj={import:()=>0,export:()=>0};obj.import();obj.export();',
+   'const obj={import(){return 1;},export(){return 2;}};function importScript(){}importScript();',
+  ):
+   with self.subTest(source=source):
+    files=[{'path':'index.html','language':'html','content':'<html><script src="editor.js"></script></html>'},
+           {'path':'editor.js','language':'javascript','content':source}]
+    self.assertEqual(module_dependency_gaps('',files),[])
+
+ def test_classic_mismatch_abstains_for_source_declared_build_project(self):
+  files=[{'path':'index.html','language':'html','content':'<html><script src="src/main.ts"></script></html>'},
+         {'path':'src/main.ts','language':'typescript','content':'import {value} from "package";'},
+         {'path':'package.json','language':'json','content':json.dumps({'devDependencies':{'vite':'^5.4.0'},'scripts':{'build':'vite build'}})}]
+  self.assertEqual(module_dependency_gaps('',files),[])
+
+ def test_inline_classic_module_declaration_is_not_ignored(self):
+  source='<html><script>import "'+CORE+'";</script></html>'
+  self.assertEqual(module_dependency_gaps(source),['classic-script-requires-module:inline script (static import/export requires type=module)'])
+  self.assertEqual(module_dependency_gaps(source.replace('<script>','<script type="module">')),[])
 
 if __name__=='__main__':unittest.main()

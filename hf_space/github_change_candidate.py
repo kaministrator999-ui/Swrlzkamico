@@ -222,6 +222,12 @@ def _placeholder_markers(source, path):
         # tokens. A URL or literal TODO message is not an implementation stub.
         token=re.compile(r'"(?:\\.|[^"\\])*"|\'(?:\\.|[^\'\\])*\'|`(?:\\.|[^`\\])*`|<!--[\s\S]*?-->|/\*[\s\S]*?\*/|//[^\n]*|(?m:^\s*\#[^\n]*)')
         comments=[m.group() for m in token.finditer(source) if m.group().lstrip().startswith(("<!--","/*","//","#"))]
+    from project_archive import leading_file_metadata, leading_file_metadata_matches_path
+    language={".js":"javascript", ".mjs":"javascript", ".cjs":"javascript", ".ts":"typescript",
+        ".py":"python", ".rs":"rust", ".cpp":"cpp", ".cs":"csharp"}.get(suffix,suffix.lstrip("."))
+    if (comments and leading_file_metadata_matches_path(source,language,path)
+            and leading_file_metadata(comments[0],language)==leading_file_metadata(source,language)):
+        comments=comments[1:]
     for comment in comments:
         if (re.search(r"(?im)^\s*(?://|#|/\*|\*|<!--)?\s*(?:TODO|FIXME|pseudocode)\b",comment)
                 or re.search(r"\b(?:TODO|FIXME)\b\s*:",comment,re.I)

@@ -52,6 +52,30 @@ def _imports(code):
     return result
 
 
+def _requires_module_script(code):
+    """Recognize static ES module declarations, not dynamic import expressions.
+
+    This checks one script-loading mismatch. It is not a JavaScript parser or
+    proof that the remaining source compiles or runs.
+    """
+    tokens=_tokens(code)
+    for i,(kind,word) in enumerate(tokens[:-1]):
+        if kind!='token' or word not in ('import','export') or (i and tokens[i-1][1]=='.'):
+            continue
+        following=tokens[i+1]
+        if word=='export':
+            if following[0]=='token' and following[1] in ('default','const','let','var','function','class','async','{','*'):
+                return True
+        elif following[0]=='string' or following==('token','{') or following==('token','*'):
+            return True
+        elif (following[0]=='token' and re.fullmatch(r'[A-Za-z_$][\w$]*',str(following[1]))):
+            # A default binding immediately follows import. Property keys and
+            # methods have ':' or '(' instead, and importScript is one token.
+            # Do not repeatedly scan/copy a malformed suffix looking for from.
+            return True
+    return False
+
+
 def _pinned_transform_api_gaps(code, resolve, parent="https://standalone.invalid/"):
     """Recognize one verified missing r160 method on clearly bound instances.
 
@@ -232,9 +256,9 @@ def module_dependency_gaps(source, project_files=None):
         if len(html.encode('utf-8'))>MAX_FILE_BYTES:
             gaps.append('browser-module-source-exceeds-validation-limit');continue
         document=_Document();document.feed(html)
-        imports={};scopes={};inline=[];pending=deque()
+        imports={};scopes={};inline=[];classic=[];pending=deque()
         for attrs,body in document.scripts:
-            kind=str(attrs.get('type') or '').lower()
+            kind=str(attrs.get('type') or '').strip().lower()
             if kind=='importmap':
                 try:
                     data=json.loads(body)
@@ -247,6 +271,17 @@ def module_dependency_gaps(source, project_files=None):
                     pending.append(urljoin(base,attrs['src']))
                 else:
                     inline.append((base,body))
+            elif kind in ('','text/javascript','application/javascript','text/ecmascript','application/ecmascript'):
+                if attrs.get('src'):
+                    parts=urlsplit(urljoin(base,attrs['src']))
+                    file_url=urlunsplit((parts.scheme,parts.netloc,quote(unquote(parts.path),safe='/'),'',''))
+                    if file_url in returned:
+                        classic.append((unquote(parts.path).lstrip('/'),returned[file_url]))
+                else:
+                    classic.append(('inline script',body))
+        for label,body in classic:
+            if _requires_module_script(body):
+                gaps.append('classic-script-requires-module:'+label[:100]+' (static import/export requires type=module)')
         def mapped(spec,mapping):
             if spec in mapping:return mapping[spec]
             prefixes=[key for key in mapping if key.endswith('/') and spec.startswith(key)]

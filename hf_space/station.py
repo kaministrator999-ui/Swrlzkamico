@@ -38,8 +38,10 @@ import chatgpt_import_job
 import chatgpt_account_memory
 import personal_history_lookup
 import private_account_facts_v208
+from runtime_capacity import runtime_capacity_snapshot
 import tempfile
 from project_archive import ProjectArchiveError, archive_filename, build_project_archive, parse_project_files, project_markdown, source_fences, validate_project_files
+from project_revision_workspace import RevisionWorkspaceError, merge_project_revision_files
 try:
     from google.auth.transport import requests as google_requests
     from google.oauth2 import id_token as google_id_token
@@ -367,6 +369,11 @@ def chat():
 @app.get("/api/hf/models")
 def models():
     return {"models":[vars(r) for r in routes()]}
+
+@app.get("/api/hf/runtime-capacity")
+def runtime_capacity():
+    """Public numeric controller observations, without a model-fit judgment."""
+    return JSONResponse(runtime_capacity_snapshot(), headers={"Cache-Control":"no-store"})
 
 GOOGLE_CLIENT_ID=os.environ.get("SWRLZ_GOOGLE_CLIENT_ID","").strip() or "1083208613166-bj7isingvbv5dcns9ldtru8cjfj993mc.apps.googleusercontent.com"
 _hf_accounts={}
@@ -929,11 +936,10 @@ def _artifact_context_item(thread,message):
     }
 
 def _commit_code_artifact_revision(artifact,text,request_id,base_revision=0,base_source_hash=""):
-    files=_parse_code_files(text)
-    if not files:return False,"NO_CODE"
     current=int(artifact.get("currentRevision") or 0)
     current_files=copy.deepcopy(artifact.get("files") or [])
-    current_hash=str(artifact.get("currentSourceHash") or "") or _artifact_source_hash(current_files)
+    actual_current_hash=_artifact_source_hash(current_files)
+    current_hash=str(artifact.get("currentSourceHash") or "") or actual_current_hash
     requested_revision=int(base_revision or 0)
     requested_hash=str(base_source_hash or "")
     if requested_revision<=0:
@@ -944,6 +950,14 @@ def _commit_code_artifact_revision(artifact,text,request_id,base_revision=0,base
         return False,"SOURCE_HASH_REQUIRED"
     if requested_hash!=current_hash:
         return False,"SOURCE_HASH_CONFLICT"
+    if current_hash!=actual_current_hash:
+        return False,"CURRENT_SOURCE_HASH_CONFLICT"
+    try:
+        files=merge_project_revision_files(current_files,text)
+    except RevisionWorkspaceError as exc:
+        return False,exc.code
+    except ProjectArchiveError:
+        return False,"INVALID_PROJECT_FILES"
     next_revision=current+1
     now=int(time.time()*1000)
     next_hash=_artifact_source_hash(files)
@@ -962,6 +976,34 @@ def _commit_code_artifact_revision(artifact,text,request_id,base_revision=0,base
     artifact["updatedAt"]=now
     if files:artifact["title"]=artifact.get("title") or files[0]["path"]
     return True,"COMMITTED"
+
+
+def _owned_project_edit_intent(thread,prompt,history,pinned_context,prior_state):
+    """A verified local artifact edit must not become an implicit GitHub action.
+
+    Explicit provider/repository requests retain their existing owner. This
+    precedence applies only to a server-owned artifact's current revision and
+    source identity; user text or model metadata alone cannot select a project.
+    """
+    if re.search(r"@github|\b(?:github|repo|repository)\b|https?://",str(prompt or ""),re.I):
+        return None
+    from brain_programming import programming_intent
+    intent=programming_intent(prompt,history,pinned_context,prior_state)
+    if (not intent.get("codingTask") or not intent.get("artifactMutationRequested")
+            or intent.get("newProject") or not intent.get("artifactTargetId")):
+        return None
+    artifact=_find_artifact(thread,intent["artifactTargetId"])
+    if artifact is None:
+        return None
+    if int(intent.get("baseRevision") or 0)<=0:
+        return None
+    files=artifact.get("files") or []
+    actual_hash=_artifact_source_hash(files)
+    if (int(intent.get("baseRevision") or 0)!=int(artifact.get("currentRevision") or 0)
+            or str(intent.get("baseSourceHash") or "")!=actual_hash
+            or str(artifact.get("currentSourceHash") or actual_hash)!=actual_hash):
+        return None
+    return intent
 
 def _response_prose(text):
     prose=str(text or "")
@@ -1845,6 +1887,9 @@ async def send(request:Request):
             raise
         s["activeGeneration"]={"requestId":rid,"threadId":tid,"modelId":model_id,"requestedModelId":model_id,"selectedModelId":model_id,"text":"","phase":"QUEUED","terminal":False,"lastSeq":0,"status":[{"phase":"QUEUED","reason":"Accepted by Workstation","atUnixMs":now_ms}],"acceptedAtUnixMs":now_ms,"startedAtUnixMs":None,"completedAtUnixMs":None,"queueWaitMs":None,"stationTiming":None,"resourcePlan":None,"diagnosticTrace":None,"memoryCandidates":[],"responseCognition":None,"onlineResearch":None,"onlineTrace":[],"onlineLogPersistence":None,"sources":[],"widgets":[],"programmingIntent":None,"intentContract":None,"failureEvidence":None,"repairConstraints":None,"behaviorLedger":None,"behaviorRepairBase":None,"candidateValidation":None,"candidateAttempts":[],"generationTelemetry":None,"engineCompletionTelemetry":None,"repairDiagnostics":[],"artifactReceipt":None,"githubTelemetryPersistence":None}
     payload={"requestId":rid,"threadId":tid,"prompt":prompt,"history":history,"pinnedContext":pinned_context,"profileId":"LALM","profile":profile,"userProfile":user_profile,"temporalContext":temporal_context,"clientLocation":client_location,"priorProgrammingState":copy.deepcopy(t.get("programmingState") or {})}
+    local_project_intent=_owned_project_edit_intent(t,prompt,history,pinned_context,payload["priorProgrammingState"])
+    if local_project_intent:
+        payload["programmingIntent"]=copy.deepcopy(local_project_intent)
     # Use only the Google session independently verified by Station; never
     # trust a browser-supplied user name as account authentication. This
     # display label is NOT proof of a legal or preferred name and never writes
@@ -1937,17 +1982,17 @@ async def send(request:Request):
     elif wants_direct_github_test_txt(prompt):
         # The explicit accepted human turn authorizes one harmless test create.
         payload["githubDirectTestTxt"] = {"userId": google_owner, "prompt": prompt}
-    elif github_chat_files.is_file_action(prompt,active_github,history) or (
+    elif not local_project_intent and (github_chat_files.is_file_action(prompt,active_github,history) or (
         github_chat_files.has_pending(google_owner,tid) and (
             github_chat_files.is_reply(prompt) or
             (github_chat_files.pending_kind(google_owner,tid) == "need-new-name" and github_chat_files.is_new_name_reply(prompt)) or
             github_chat_files.pending_kind(google_owner,tid) in ("need-content","need-destination")
         )
-    ):
+    )):
         payload["githubChatFileAction"]={"userId":google_owner,
                                          "threadId":tid,"prompt":prompt,
                                          "githubContext":active_github,"history":history[-10:]}
-    elif wants_github_text_file_creation(prompt):
+    elif not local_project_intent and wants_github_text_file_creation(prompt):
         # Legacy TXT requests use the same seamless conversational path.
         payload["githubChatFileAction"]={"userId":google_owner,
                                          "threadId":tid,"prompt":prompt,
@@ -1955,7 +2000,7 @@ async def send(request:Request):
     elif github_connection.is_start_request(prompt):
         _, verified_account = _account_session(request)
         payload["githubStart"]={"userId":str((verified_account or {}).get("id") or "")}
-    elif github_connection.is_github_command(prompt) or github_connection.is_github_conversation(prompt) or github_connection.forge_project_tools_v213.is_conversation(prompt) or (active_github and (github_connection.read_inference.classify_read(prompt,active_github) or github_connection.source_specialist.parse(prompt,active_github) or github_connection._implicit_repo_command(prompt,active_github) or github_connection.ambiguous_topic_reply(prompt,active_github))):
+    elif not local_project_intent and (github_connection.is_github_command(prompt) or github_connection.is_github_conversation(prompt) or github_connection.forge_project_tools_v213.is_conversation(prompt) or (active_github and (github_connection.read_inference.classify_read(prompt,active_github) or github_connection.source_specialist.parse(prompt,active_github) or github_connection._implicit_repo_command(prompt,active_github) or github_connection.ambiguous_topic_reply(prompt,active_github)))):
         _, verified_account = _account_session(request)
         payload["githubAction"]={"userId":str((verified_account or {}).get("id") or ""), "prompt":prompt,
                                  "githubContext":active_github, "requestedModelId":model_id}

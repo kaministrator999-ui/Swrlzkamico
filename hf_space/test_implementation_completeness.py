@@ -74,6 +74,32 @@ class ImplementationCompleteness(unittest.TestCase):
                 self.assertNotIn('applicationCapabilities',state['intentContract'])
                 self.assertEqual(result['status'],'PASS',result)
 
+    def test_leading_todo_filename_metadata_is_allowed_only_for_its_actual_path(self):
+        for label,path,language,body,prompt in (
+            ('// todo.js','todo.js','javascript','const ready=true;','Create JavaScript code.'),
+            ('// TODO-app.js','src/TODO-app.js','javascript','const ready=true;','Create JavaScript code.'),
+            ('# TODO.py','src/TODO.py','python','def answer():\n    return 42','Create Python code.'),
+            ('/* FIXME.css */','FIXME.css','css','body{margin:0}','Create CSS code.'),
+        ):
+            with self.subTest(label=label):
+                source='```'+language+' file='+path+'\n'+label+'\n'+body+'\n```'
+                self.assertEqual(gate(prompt,source)[1]['status'],'PASS')
+        # The shared metadata parser can also infer the first file's path.
+        self.assertEqual(gate('Create JavaScript code.','```javascript\n// todo.js\nconst ready=true;\n```')[1]['status'],'PASS')
+
+    def test_filename_exemption_does_not_hide_real_todo_or_later_comments(self):
+        for path,body in (
+            ('todo.js','// todo.js\n// TODO: implement behavior\nconst ready=true;'),
+            ('todo.js','// todo.js\nconst ready=true;\n// todo.js'),
+            ('todo.js','const ready=true;\n// todo.js'),
+            ('todo.js','// todo.js implement later\nconst ready=true;'),
+            ('app.js','// todo.js\nconst ready=true;'),
+            ('todo.js','// TODO.js\nconst ready=true;'),
+        ):
+            with self.subTest(path=path,body=body):
+                _,result=gate('Create JavaScript code.','```javascript file='+path+'\n'+body+'\n```')
+                self.assertIn('unfinished-implementation-placeholder',result['reasons'])
+
     def test_negative_scaffold_request_does_not_disable_gate(self):
         for prompt in ('Create Python code, no pseudocode or placeholders.',
                        'Create Python code. Do not return a skeleton.',

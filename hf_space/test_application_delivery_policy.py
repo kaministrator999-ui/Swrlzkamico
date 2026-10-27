@@ -70,6 +70,53 @@ class ApplicationDeliveryPolicy(unittest.TestCase):
         state=programming_intent(REQUEST,[],[])
         self.assertEqual(project_delivery_policy({**state,'changeClass':'review'},'Review it.'),'')
 
+    def test_file_metadata_is_explicitly_on_the_opening_line_for_all_source_stacks(self):
+        for prompt in ['Create an HTML project in separate files.',
+                       'Create a Kotlin Android project in separate files.']:
+            with self.subTest(prompt=prompt):
+                policy=project_delivery_policy(programming_intent(prompt,[],[]),prompt)
+                for text in ['SAME physical line as the opening backticks',
+                             '"```html file=index.html project=my-project"',
+                             'NEXT line begins the actual HTML file contents',
+                             'including non-web source/config files',
+                             'Never put bare file=',
+                             'inside the file body',
+                             'becomes literal source']:
+                    self.assertIn(text,policy)
+
+    def test_missing_module_feedback_explains_filename_protocol_without_inventing_source(self):
+        feedback=contract_rejection_context({'reasons':['missing-project-module:editor.js']})
+        for text in ['PROJECT FILE PROTOCOL CORRECTION:',
+                     'exact resolved relative path',
+                     'same physical line as the opening backticks',
+                     'The next line is actual source code',
+                     'does not remove those lines, invent a missing module or repair the code',
+                     'not a runtime or build result']:
+            self.assertIn(text,feedback)
+        self.assertIn('missing-project-module:editor.js',feedback)
+        self.assertNotIn('scene.add(',feedback)
+        self.assertNotIn('PROJECT FILE PROTOCOL CORRECTION:',
+                         contract_rejection_context({'reasons':['missing-required-language:html']}))
+
+    def test_module_filename_protocol_repair_reaches_both_real_engine_calls(self):
+        prompt='Create a small HTML project in separate files with src/app.js.'
+        bad=('```html file=index.html\n<!doctype html><html><body>'
+             '<script type="module" src="src/app.js"></script></body></html>\n```')
+        good=bad+'\n```javascript file=src/app.js\ndocument.body.dataset.ready="true";\n```'
+        for name in ['qwen_coder_engine','lfm2_700m_engine']:
+            engine=load_engine(name)
+            model=Responses([(bad,'stop'),(good,'stop')])
+            with self.subTest(engine=name),patch.object(engine,'load',return_value=model):
+                events=list(engine.generate_events({'prompt':prompt,'history':[]}))
+            self.assertGreaterEqual(len(model.calls),2)
+            self.assertIn('SAME physical line as the opening backticks',
+                          model.calls[0]['messages'][0]['content'])
+            self.assertIn('PROJECT FILE PROTOCOL CORRECTION:',
+                          model.calls[1]['messages'][-1]['content'])
+            self.assertIn('missing-project-module:src/app.js',
+                          model.calls[1]['messages'][-1]['content'])
+            self.assertEqual(events[-1]['type'],'COMPLETED')
+
     def test_both_real_engine_message_builders_deliver_default_and_narrow_policy(self):
         for name in ['qwen_coder_engine','lfm2_700m_engine']:
             engine=load_engine(name)

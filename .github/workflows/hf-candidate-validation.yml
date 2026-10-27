@@ -98,6 +98,7 @@ jobs:
         run: |
           python -m py_compile hf_space/lfm2_700m_engine.py hf_space/test_identity_ownership_v283.py
           python hf_space/test_identity_ownership_v283.py
+          python hf_space/test_identity_completion_retry.py
 
       - name: v282 Model-generated identity role/name candidate guard
         run: |
@@ -139,10 +140,16 @@ jobs:
           python hf_space/test_application_delivery_policy.py
           python hf_space/test_implementation_completeness.py
           python hf_space/test_large_generation_budget.py
+          python hf_space/test_longform_completion.py
+          python hf_space/test_longform_engine_completion.py
           python hf_space/test_large_prompt_boundary.py
           python hf_space/test_fresh_web_project_wording.py
           python hf_space/test_generation_completion_budget.py
           python hf_space/test_project_archive.py
+          python hf_space/test_project_revision_workspace.py
+          python hf_space/test_project_revision_validation.py
+          python hf_space/test_project_selected_context.py
+          python hf_space/test_runtime_capacity.py
           python hf_space/test_response_cognition_v123.py
           python hf_space/test_dual_model_work_v241.py
           python hf_space/test_github_file_intelligence_v288.py

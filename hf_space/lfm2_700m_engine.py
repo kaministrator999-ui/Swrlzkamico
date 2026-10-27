@@ -5,6 +5,7 @@ from huggingface_hub import hf_hub_download
 from llama_cpp import Llama
 from brain_programming import programming_intent, CODE_TRUTH_POLICY, candidate_contract_gate, programming_library_context
 from programming_telemetry import buffered_chat_completion, candidate_attempt_receipt, generation_summary, observe_completion_chunk, completion_validation
+from longform_completion import longform_contract, complete_longform
 from programming_repair_context import build_compact_repair_context, enforce_strategy_change, strategy_change_directive, contract_rejection_context, candidate_retry_messages, candidate_source_fingerprint, expanded_project_delivery, project_delivery_policy, fresh_project_history, source_fence_present, response_budget, long_delivery_policy, preserve_existing_source, source_sized_budget
 from response_cognition import classify_response_cognition, response_cognition_policy, response_cognition_camera
 from verified_file_dialogue_v277 import (verified_file_dialogue, grounding_instruction,
@@ -333,6 +334,15 @@ def _identity_profile_user_name(user_profile):
     return ""
 
 
+def _identity_stated_user_name(text):
+    """Only an unquoted, explicit current-human naming statement; no save."""
+    match=re.fullmatch(
+        r"(?:(?:actually|no|correction)[,:]?\s+)?(?:my name is|call me)\s+"
+        r"([^\W\d_][\w .'-]{0,70})[.!]?",
+        str(text or "").strip(),re.I)
+    return match.group(1).strip().rstrip(".!") if match else ""
+
+
 def _identity_response_faults(text, response_mode, require_canonical=False,
                               expected_user_name="", require_unknown_user=False,
                               identity_followup=False):
@@ -341,7 +351,7 @@ def _identity_response_faults(text, response_mode, require_canonical=False,
     This is a narrow text validator, NOT proof of broader model comprehension.
     The reply is model-authored or rejected; no durable identity writes occur.
     """
-    response=str(text or "").strip()
+    response=str(text or "").strip().translate(str.maketrans({"’":"'","‘":"'","ʼ":"'"}))
     normalized=re.sub(r"\s+"," ",response).casefold()
     faults=[]
     if not response:
@@ -356,6 +366,11 @@ def _identity_response_faults(text, response_mode, require_canonical=False,
         r"\b(?:created|made|built|developed) by\b|\b(?:character|fictional character) (?:in|from)\b.*\bseries\b",
         normalized):
         faults.append("unsupported-assistant-origin-claim")
+    canonical=r"(?:§wyrlz|swyrlz|swurlz)"
+    if re.match(r"^(?:hey|hi|hello|dear)(?: there)?[,!]?\s+"+canonical+r"\b",normalized):
+        faults.append("assistant-name-used-as-user-address")
+    if re.search(canonical+r"\s+(?:as|for)\s+your\s+(?:assistant\s+)?name\b",normalized):
+        faults.append("assistant-name-assigned-to-user")
     assistant_question=str(response_mode).startswith("RESPONSE MODE: ASSISTANT-IDENTITY-DIRECT")
     user_question=str(response_mode).startswith("RESPONSE MODE: USER-IDENTITY-DIRECT")
     if assistant_question:
@@ -368,7 +383,7 @@ def _identity_response_faults(text, response_mode, require_canonical=False,
         if re.search(r"(?im)^\s*\*{0,2}\s*your name\s*\*{0,2}\s*[:=-]\s*\*{0,2}\s*(?:§wyrlz|swyrlz|swurlz)\b",response):
             faults.append("assistant-name-assigned-to-user")
     elif user_question:
-        if re.search(r"(?i)^\s*(?:(?:\*\*)?you(?:\*\*)?\s+(?:are|'re)|(?:\*\*)?your name(?:\*\*)?\s*(?::|is))\s*(?:(?:an?|the)\s+)?(?:assistant|ai assistant|ai|§wyrlz|swyrlz|swurlz)\b",response):
+        if re.search(r"(?i)^\s*(?:(?:\*\*)?you(?:\*\*)?(?:\s+are|'re)|(?:\*\*)?your name(?:\*\*)?\s*(?::|is))\s*(?:(?:an?|the)\s+)?(?:assistant|ai assistant|ai|§wyrlz|swyrlz|swurlz)\b",response):
             faults.append("user-assigned-assistant-identity")
         if re.search(r"(?i)\*{0,2}your name\s*\*{0,2}\s*:\s*\*{0,2}\s*(?:§wyrlz|swyrlz|swurlz)\b",response):
             faults.append("assistant-name-assigned-to-user")
@@ -378,12 +393,20 @@ def _identity_response_faults(text, response_mode, require_canonical=False,
             escaped=re.escape(expected_user_name.casefold())
             if not re.search(r"(?<!\w)"+escaped+r"(?!\w)",normalized):
                 faults.append("known-user-name-not-grounded")
-        if require_unknown_user and not re.search(
-            r"(?:don't|do not|can't|cannot|haven't|have not|not (?:been )?told|"
-            r"no (?:verified|confirmed|preferred|supported) (?:name|identity)|"
-            r"(?:name|identity) (?:isn't|is not) (?:known|available|provided)|"
-            r"you haven't (?:shared|told)|you have not (?:shared|told))",normalized):
-            faults.append("missing-unknown-user-name-calibration")
+            if re.search(r"\b(?:i(?:'m| am)|my name is|call me)\s+"+escaped+r"(?!\w)",normalized):
+                faults.append("user-name-assigned-to-assistant")
+        if require_unknown_user:
+            uncertainty=bool(re.search(
+                r"(?:don't|do not|can't|cannot|haven't|have not|not (?:been )?told|"
+                r"no (?:verified|confirmed|preferred|supported) (?:name|identity)|"
+                r"(?:name|identity) (?:isn't|is not) (?:known|available|provided)|"
+                r"you haven't (?:shared|told)|you have not (?:shared|told))",normalized))
+            user_name_reference=bool(re.search(
+                r"(?:your (?:\w+ ){0,3}(?:name|identity)|"
+                r"(?:name|identity) (?:(?:recorded|confirmed|known|supported|available) ){0,2}"
+                r"(?:for you|of yours|you (?:provided|shared|told))|who you are)",normalized))
+            if not (uncertainty and user_name_reference):
+                faults.append("missing-unknown-user-name-calibration")
     return list(dict.fromkeys(faults))
 
 
@@ -620,18 +643,18 @@ def generate_events(payload):
     custom_assistant_profile=str(payload.get("profile") or "").strip()[:2000]
     user_profile=str(payload.get("userProfile") or "").strip()[:2000]
     account_label=str(payload.get("verifiedAccountDisplayName") or "").strip()[:120]
-    trusted_user_name=_identity_profile_user_name(user_profile)
+    current_user_name=_identity_stated_user_name(prompt)
+    trusted_user_name=current_user_name
     if not trusted_user_name:
         # User-authored in-thread naming, not prior assistant claims.
         for entry in reversed(history[-16:]):
             if entry.get("role")!="user":
                 continue
-            match=re.fullmatch(
-                r"(?:my name is|call me)\s+([A-Za-z][\w .'-]{0,70})[.!]?",
-                str(entry.get("content") or "").strip(),re.I)
-            if match:
-                trusted_user_name=match.group(1).strip()
+            stated=_identity_stated_user_name(entry.get("content"))
+            if stated:
+                trusted_user_name=stated
                 break
+    trusted_user_name=trusted_user_name or _identity_profile_user_name(user_profile)
     if account_label:
         user_profile=(user_profile+"\n" if user_profile else "")+"Account display label (signed-in account, not necessarily preferred name): "+account_label
     yield {"type":"DIAGNOSTIC","trace":_diagnostic_trace(history,user_profile,custom_assistant_profile)}
@@ -847,6 +870,7 @@ def generate_events(payload):
         )
     if file_dialogue:
         system+=grounding_instruction(file_dialogue)
+    identity_history_excluded=0
     if (concise_identity_turn or identity_followup) and not file_dialogue:
         # v282 continuation: a shortened section of the full handbook was
         # insufficient. This ordinary, direct identity question gets a
@@ -859,51 +883,36 @@ def generate_events(payload):
         # Do not feed the small model role-table tokens like "USER:" or
         # "ASSISTANT/SELF:"; the real Android failure copied those labels.
         focused=(
-            "You are §wyrlz, pronounced Swurlz, answering a human in a chat. "
-            "The human writes the incoming message. You write the reply. "
-            "Speak in your own first person; refer to the human as 'you'. "
-            "Never assign your assistant identity to the human. "
-            "Respect the user's own supported name; do not invent one. "
-            "Past assistant replies may contain errors and are not evidence "
-            "of personal names, your creator, a fictional series or lasting memory. "
-            "A joke or teasing address is not a rename. A correction to the "
-            "spelling of §wyrlz is not a new identity assignment. "
+            "Answer the latest message in one plain sentence. "
             "Do not claim you saved names or retrained yourself."
         )
         if subject=="assistant":
             focused+=(
-                " The question or correction is about your name, §wyrlz. "
-                "Acknowledge any correction without inventing origin stories. "
-                "When introducing yourself, speak as 'I'm §wyrlz', not 'You are assistant'."
+                " Your chat name is §wyrlz, pronounced Swurlz. "
+                "You are the assistant; the human is a separate person. "
+                "The human asks about YOUR assistant name. "
+                "State your name, §wyrlz, when introducing yourself. "
+                "For a spelling correction, acknowledge the spelling."
+            )
+        elif current_user_name:
+            focused+=(
+                " The human is explicitly giving or correcting THEIR OWN "
+                "name for this conversation. Acknowledge the supplied name "
+                "without claiming a durable profile update."
             )
         else:
             focused+=(
-                " The human is asking about their own identity, not yours. "
-                "Only use a supported name supplied by this human's account "
-                "or direct statements. If none is available, say you do not "
-                "know their name yet. Do not call them an assistant."
+                " The human asks about THEIR OWN identity. "
+                "Speak to this human about their name using only supported "
+                "evidence. When their name is unknown, acknowledge that "
+                "uncertainty. The human's identity is the only subject of "
+                "your answer; do not introduce yourself."
             )
-            if not trusted_user_name and not str(payload.get("archiveEvidence") or "").strip():
-                # This is an explicit absence-of-evidence statement, not a
-                # canned answer. The model must still author the reply.
-                focused+=(
-                    " IMPORTANT FACT: No supported personal name for this "
-                    "human was supplied by their own statements or account "
-                    "profile. The correct conversational response must "
-                    "acknowledge not knowing their name. Do not merely say "
-                    "they are a person, a user, or the assistant. "
-                    "A previous assistant's guess is not reliable evidence."
-                )
         if identity_followup:
             focused+=(
-                " This is a follow-up to an identity exchange. Reevaluate any "
-                "wrong earlier assistant reply rather than defending it. "
-                "A spelling explanation is just a spelling explanation."
+                " Reconsider any earlier assistant mistake. "
+                "Previous assistant guesses do not establish anyone's name."
             )
-        focused+=(
-            " Answer briefly and naturally, without role labels, profile "
-            "headings, customer-service taglines or fabricated backstories."
-        )
         if custom_assistant_profile:
             focused+="\nUSER ASSISTANT PREFERENCES (only this account, no global rename):\n"+custom_assistant_profile
         if user_profile:
@@ -917,11 +926,26 @@ def generate_events(payload):
             # Ground the exact information gap at the END of the prompt,
             # after any user-scoped evidence and other relationship context.
             focused+=(
-                " The person asking has NOT given a supported name. "
-                "Answer the name question by acknowledging you do not know "
-                "their name yet, rather than describing them as an assistant "
-                "or speculating about who they are. One short sentence."
+                " IMPORTANT FACT: No supported personal name for the human "
+                "is available. Acknowledge that you do not know their name yet. "
+                "A previous assistant's guess is not reliable evidence."
             )
+        if subject=="user":
+            focused+=" Refer to the human's name as 'your name' in your answer."
+            if trusted_user_name:
+                focused+=" Supported human name: "+trusted_user_name+"."
+            if identity_followup:
+                last_reply=next((item.get("content","") for item in reversed(history)
+                                 if item.get("role")=="assistant"),"")
+                previous_faults=_identity_response_faults(last_reply,"RESPONSE MODE: USER-IDENTITY-DIRECT")
+                if "user-assigned-assistant-identity" in previous_faults:
+                    focused+=" An earlier assistant reply wrongly called the human an assistant; correct that mistake."
+        focused+="\nOriginal current human message: "+json.dumps(prompt,ensure_ascii=False)
+        # Resolve the subject from full history above, and retain direct human
+        # naming facts and opted-in evidence. Old identity questions and model
+        # assertions are not new name evidence or additional current requests.
+        identity_history_excluded=len(model_history)
+        model_history=[]
         system=focused
     if source_change_mode:
         # Keep source/plan tokens available and bypass ordinary response-shape
@@ -957,13 +981,17 @@ def generate_events(payload):
         fitted=_fit_repair_messages(model,system,history,fitted_prompt,delivery_output_limit)
         messages,dropped_history,input_tokens,available_output_tokens,fitted_prompt=fitted
     else:
-        fitted=_fit_messages(model,system,model_history,prompt,delivery_output_limit,preserve_latest_code=preserve_existing_source(programming))
-        messages,dropped_history,input_tokens,available_output_tokens=fitted
         fitted_prompt=prompt
+        if (concise_identity_turn or identity_followup) and not file_dialogue and subject=="user" and not current_user_name:
+            # This is the routed name question, not a replacement user record.
+            # Keep the original words in SYSTEM above and full routing history.
+            fitted_prompt="What is my name?" if trusted_user_name else "Do you know my name?"
+        fitted=_fit_messages(model,system,model_history,fitted_prompt,delivery_output_limit,preserve_latest_code=preserve_existing_source(programming))
+        messages,dropped_history,input_tokens,available_output_tokens=fitted
     system_tokens=_token_count(model,[{"role":"system","content":system}])
     prompt_tokens=_token_count(model,[{"role":"user","content":fitted_prompt}])
     history_tokens=max(0,input_tokens-system_tokens-prompt_tokens)
-    yield {"type":"CONTEXT","phase":"BUDGETED","contextWindowTokens":CONTEXT_TOKENS,"inputBudgetTokens":CONTEXT_TOKENS-available_output_tokens-CONTEXT_SAFETY_TOKENS,"estimatedInputTokens":input_tokens,"reservedOutputTokens":available_output_tokens,"responseBudgetTier":budget_policy["tier"],"historyMessagesDropped":dropped_history,"historyMessagesKept":len(messages)-2,"repairTurn":repair_turn,"repairContext":repair_context_telemetry,"tokenBreakdown":{"system":system_tokens,"history":history_tokens,"currentPrompt":prompt_tokens,"total":input_tokens}}
+    yield {"type":"CONTEXT","phase":"BUDGETED","contextWindowTokens":CONTEXT_TOKENS,"inputBudgetTokens":CONTEXT_TOKENS-available_output_tokens-CONTEXT_SAFETY_TOKENS,"estimatedInputTokens":input_tokens,"reservedOutputTokens":available_output_tokens,"responseBudgetTier":budget_policy["tier"],"historyMessagesDropped":dropped_history,"historyMessagesKept":len(messages)-2,"identityHistoryMessagesExcluded":identity_history_excluded,"repairTurn":repair_turn,"repairContext":repair_context_telemetry,"tokenBreakdown":{"system":system_tokens,"history":history_tokens,"currentPrompt":prompt_tokens,"total":input_tokens}}
     if repair_turn and available_output_tokens<=0:
         yield {"type":"FAILED","phase":"CONTEXT_REJECTED","reason":f"Repair context uses {input_tokens} tokens; maximum fitted input is {CONTEXT_TOKENS-MIN_OUTPUT_TOKENS-CONTEXT_SAFETY_TOKENS}.","contextBudget":{"system":system_tokens,"history":history_tokens,"currentPrompt":prompt_tokens,"total":input_tokens}}
         return
@@ -984,6 +1012,8 @@ def generate_events(payload):
     candidate_text=""
     candidate_check=None
     candidate_attempts=[]
+    longform_target=longform_contract(prompt,programming,response_mode=_response_mode(prompt,programming,history),source_change_mode=source_change_mode,creative=bool(strict_lyric_turn or reference_structure),file_dialogue=bool(file_dialogue))
+    longform_result=None
     with _lock:
         mode="RESPONSE MODE: GITHUB-SOURCE-JSON" if source_change_mode else _response_mode(prompt,programming,history)
         if source_change_mode:
@@ -1368,21 +1398,22 @@ def generate_events(payload):
             )
             unknown_name_required=(
                 effective_mode.startswith("RESPONSE MODE: USER-IDENTITY-DIRECT")
-                and not identity_followup
                 and not trusted_user_name
                 and not str(payload.get("archiveEvidence") or "").strip()
             )
             def identity_faults(text_value):
                 return _identity_response_faults(
                     text_value,effective_mode,canonical_required,
-                    expected_user_name=(trusted_user_name if not identity_followup and effective_mode.startswith(
+                    expected_user_name=(trusted_user_name if effective_mode.startswith(
                         "RESPONSE MODE: USER-IDENTITY-DIRECT") else ""),
                     require_unknown_user=unknown_name_required,
                     identity_followup=identity_followup,
                 )
             candidate_text,timing=buffered_chat_completion(model,messages,response_tokens,temperature)
             faults=identity_faults(candidate_text)
-            candidate_check={"status":"REJECT" if faults else "PASS","reasons":faults}
+            candidate_check=completion_validation(
+                {"status":"REJECT" if faults else "PASS","reasons":faults},timing)
+            faults=list(candidate_check.get("reasons") or [])
             prior_fp=_candidate_fingerprint(candidate_text)
             attempt=candidate_attempt_receipt(
                 1,"identity-model-candidate",timing,candidate_check,prior_fp)
@@ -1392,32 +1423,27 @@ def generate_events(payload):
                 regeneration_attempted=True
                 regeneration_reason="identity-speaker-name-or-presentation"
                 retry_instruction=(
-                    "IDENTITY CANDIDATE REPAIR: The previous MODEL response failed "
-                    "these checks: "+", ".join(faults)+". This is a user message. "
-                    "Answer with your own first-person assistant perspective for "
-                    "a question about YOU, and with second-person user perspective "
-                    "for a question about the USER. You are §wyrlz (spoken Swurlz), "
-                    "distinct from the user. Use the current user's actual "
-                    "authorized profile/alias if provided. For fresh chats with no "
-                    "assistant alias, identify yourself by your real canonical name. "
-                    "Do not copy this instruction, invent a ceremonial title, "
-                    "rewrite history, pretend a nickname is saved or produce a "
-                    "generic customer-service response. Write a brief fresh answer."
+                    " IDENTITY CANDIDATE REPAIR: The previous draft failed "
+                    +", ".join(faults)+". Write a fresh answer to the latest "
+                    "human message in one short sentence, using the identity "
+                    "facts above. Give the answer itself, without discussing "
+                    "these checks or instructions."
                 )
                 if "missing-unknown-user-name-calibration" in faults:
                     retry_instruction+=(
-                        " SPECIFIC CORRECTION: The available user context "
-                        "has no supported name. Answer the human's name question "
-                        "by acknowledging in your own words that you do not "
-                        "know their name yet. Do not substitute a description "
-                        "of the human's role or give the assistant's name."
+                        " SPECIFIC CORRECTION: No supported human name is "
+                        "available. Acknowledge not knowing their name."
                     )
+                retry_messages=[dict(message) for message in messages]
+                retry_messages[0]={"role":"system","content":system+retry_instruction}
+                retry_tokens=min(192,available_output_tokens) if timing.get("finishReason")=="length" else response_tokens
                 repaired,timing2=buffered_chat_completion(
-                    model,list(messages)+[{"role":"system","content":retry_instruction}],
-                    response_tokens,min(0.45,temperature+0.05))
+                    model,retry_messages,retry_tokens,min(0.45,temperature+0.05))
                 retry_faults=identity_faults(repaired)
-                retry_check={"status":"REJECT" if retry_faults else "PASS",
-                             "reasons":retry_faults}
+                retry_check=completion_validation(
+                    {"status":"REJECT" if retry_faults else "PASS",
+                     "reasons":retry_faults},timing2)
+                retry_faults=list(retry_check.get("reasons") or [])
                 candidate_attempts.append(candidate_attempt_receipt(
                     2,"identity-model-retry",timing2,retry_check,
                     _candidate_fingerprint(repaired),
@@ -1477,6 +1503,47 @@ def generate_events(payload):
             yield {"type":"CANDIDATE_ATTEMPT","attempt":candidate_attempts[-1]}
             first_delta=round((time.perf_counter()-started)*1000,3)
             yield {"type":"DELTA","text":candidate_text}
+        elif longform_target:
+            longform_result=complete_longform(
+                messages=messages,contract=longform_target,max_output_tokens=response_tokens,
+                context_tokens=CONTEXT_TOKENS,safety_tokens=CONTEXT_SAFETY_TOKENS,
+                temperature=temperature,
+                generate=lambda selected,limit,temp:buffered_chat_completion(model,selected,limit,temp),
+                count_message_tokens=lambda selected:_token_count(model,selected),
+                count_text_tokens=lambda text:len(model.tokenize(text.encode("utf-8"),add_bos=False)),
+            )
+            previous_fp=None
+            for observation in longform_result["attempts"]:
+                fingerprint=_candidate_fingerprint(observation["text"])
+                attempt=candidate_attempt_receipt(
+                    observation["attempt"],"longform-initial" if observation["attempt"]==1 else "longform-substantive-expansion",
+                    observation["timing"],observation["validation"],fingerprint,
+                    previous_attempt_fingerprint=previous_fp,
+                )
+                attempt["selectedForDelivery"]=observation["attempt"]==longform_result["selectedAttempt"]
+                attempt["wordCount"]=observation["validation"]["wordCount"]
+                attempt["outputTokens"]=observation["outputTokens"]
+                attempt["outputTokenAccounting"]=observation["outputTokenAccounting"]
+                candidate_attempts.append(attempt)
+                yield {"type":"CANDIDATE_ATTEMPT","attempt":attempt}
+                previous_fp=fingerprint
+            candidate_text=longform_result["text"]
+            candidate_check=longform_result["validation"]
+            regeneration_attempted=longform_result["expansionAttempted"]
+            regeneration_reason="longform-underlength" if regeneration_attempted else ""
+            yield {"type":"LONGFORM_COMPLETION","observation":{
+                "schema":longform_result["schema"],"requestedWords":longform_target["requestedWords"],
+                "wordCount":candidate_check["wordCount"],"status":candidate_check["status"],
+                "selectedAttempt":longform_result["selectedAttempt"],
+                "attemptCount":len(longform_result["attempts"]),
+                "spentOutputTokens":longform_result["spentOutputTokens"],
+                "maxOutputTokens":longform_result["maxOutputTokens"],
+                "stoppedReason":longform_result["stoppedReason"],
+                "verificationState":"REQUESTED_LENGTH_ONLY",
+            }}
+            if candidate_text:
+                first_delta=round((time.perf_counter()-started)*1000,3)
+                yield {"type":"DELTA","text":candidate_text}
         else:
             generated_parts=[]
             attempt_started=time.perf_counter()
@@ -1511,7 +1578,7 @@ def generate_events(payload):
             attempt=candidate_attempt_receipt(1,"initial-streaming",timing,candidate_check,candidate_fp)
             candidate_attempts.append(attempt)
             yield {"type":"CANDIDATE_ATTEMPT","attempt":attempt}
-    if candidate_attempts:
+    if candidate_attempts and longform_result is None:
         candidate_check=completion_validation(candidate_check,candidate_attempts[-1])
     yield {"type":"CANDIDATE_VALIDATION","validation":candidate_check}
     if repair_diagnostic:
@@ -1542,6 +1609,12 @@ def generate_events(payload):
         max_attempts=6 if strict_lyric_turn else 3,
     )
     yield {"type":"GENERATION_TELEMETRY","telemetry":telemetry}
+    if longform_result is not None and candidate_check.get("status")!="PASS":
+        yield {"type":"FAILED","phase":"FAILED","reason":"LONGFORM_LENGTH_NOT_MET",
+               "message":"The model did not finish a document meeting the requested length within the bounded generation allowance. The displayed draft remains incomplete for that request.",
+               "requestedWords":longform_target["requestedWords"],"wordCount":candidate_check["wordCount"],
+               "finishReason":candidate_check.get("finishReason")}
+        return
     if candidate_attempts and candidate_attempts[-1].get("finishReason")=="length":
         yield {"type":"FAILED","phase":"FAILED","reason":"OUTPUT_TOKEN_LIMIT","message":"The model reached its output limit before finishing; no complete artifact was accepted.","finishReason":"length"}
         return

@@ -210,6 +210,31 @@ class CandidateTest(unittest.TestCase):
         self.source('const value = 41;\n',path='src/app.js')
         self.assertTrue(self.candidate(old='const value = 41;',new='const value = "TODO: literal";')['diff'])
 
+    def test_matching_leading_filename_label_is_not_an_introduced_todo(self):
+        for path,label,body,old,new in (
+            ('src/todo.js','// todo.js','const value = 41;\n','const value = 41;','const value = 42;'),
+            ('TODO-app.js','// TODO-app.js','const value = 41;\n','const value = 41;','const value = 42;'),
+            ('src/TODO.py','# TODO.py',self.body,'def answer():\n    return 41','def answer():\n    return 42'),
+        ):
+            with self.subTest(path=path):
+                self.source(body,path=path)
+                self.assertTrue(self.candidate(old=old,new=label+'\n'+new)['diff'])
+
+    def test_filename_label_exception_preserves_all_other_placeholder_checks(self):
+        body='const value = 41;\n'
+        for path,replacement in (
+            ('todo.js','// todo.js\n// TODO: implement behavior\nconst value = 42;'),
+            ('todo.js','// todo.js\nconst value = 42;\n// todo.js'),
+            ('todo.js','const value = 42;\n// todo.js'),
+            ('todo.js','// todo.js implement later\nconst value = 42;'),
+            ('app.js','// todo.js\nconst value = 42;'),
+            ('todo.js','// TODO.js\nconst value = 42;'),
+        ):
+            with self.subTest(path=path,replacement=replacement):
+                self.source(body,path=path)
+                with self.assertRaisesRegex(ValueError,'unfinished implementation'):
+                    self.candidate(old=body.rstrip(),new=replacement)
+
     def test_diff_review_limit(self):
         self.source("a" * 11000 + " return 41\n", path="long.txt")
         with self.assertRaisesRegex(ValueError, "diff exceeds"):

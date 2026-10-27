@@ -21,6 +21,8 @@ wrong_user=[
     "**Your Name:** §wyrlz",
     "Your name is Swurlz.",
     "I'm an AI assistant.",
+    "Hey there, I'm just a chatbot here to help you. I don't have a name or a specific identity.",
+    "Let me clarify—I don't have a confirmed identity yet.",
 ]
 for text in wrong_user:
     faults=e._identity_response_faults(text,user,require_unknown_user=True)
@@ -34,6 +36,8 @@ for text in (
 
 assert not e._identity_response_faults("You're Avery, as your profile says.",user,expected_user_name="Avery")
 assert "known-user-name-not-grounded" in e._identity_response_faults("You're a person.",user,expected_user_name="Avery")
+for text in ("I'm River.","Call me River.","My name is River."):
+    assert "user-name-assigned-to-assistant" in e._identity_response_faults(text,user,expected_user_name="River")
 assert not e._identity_response_faults("I'm §wyrlz.",assistant,True)
 assert "canonical-assistant-name-missing" in e._identity_response_faults("I'm an AI assistant.",assistant,True)
 assert "assistant-described-in-second-person" in e._identity_response_faults("You are a chatbot.",assistant,True)
@@ -46,6 +50,27 @@ for text in (
         text,assistant,identity_followup=True),text
 assert "assistant-name-assigned-to-user" in e._identity_response_faults(
     "**Your Name:** §wyrlz",user,identity_followup=True)
+
+# Observed native700 failure: a greeting assigned the assistant name to the
+# human, and unrelated self-uncertainty passed the missing-human-name check.
+for text in ("Hey there, §wyrlz! I'm the Swurlz version of you.",
+             "Hello, Swurlz. I'm §wyrlz."):
+    assert "assistant-name-used-as-user-address" in e._identity_response_faults(text,assistant,True)
+assert "missing-unknown-user-name-calibration" in e._identity_response_faults(
+    "I'm an AI assistant, so I don't have a physical form or personal identity like you.",
+    user,require_unknown_user=True)
+for text in ("I don’t know your name.","I donʼt know your name yet.","You haven’t told me your name."):
+    assert not e._identity_response_faults(text,user,require_unknown_user=True),text
+assert "user-assigned-assistant-identity" in e._identity_response_faults("You’re an assistant.",user)
+for text,expected in (("Call me River","River"),("Actually my name is River.","River"),
+                      ("No, my name is Élodie","Élodie")):
+    assert e._identity_stated_user_name(text)==expected
+for text in ('What if my name is River?', '"My name is River"',"The example says call me River"):
+    assert not e._identity_stated_user_name(text),text
+
+assert not e._identity_response_faults("Hi! I'm §wyrlz.",assistant,True)
+assert "assistant-name-assigned-to-user" in e._identity_response_faults(
+    "Thank you for clarifying, I'll use §wyrlz as your assistant name.",assistant,True)
 
 history=[
     {"role":"user","content":"Who are you"},
@@ -93,6 +118,9 @@ identity_src=src[identity_start:identity_end]
 assert 'if "missing-unknown-user-name-calibration" in faults:' in identity_src
 assert "SPECIFIC CORRECTION" in identity_src
 assert "response_tokens=min(80 if" in src
-assert "The person asking has NOT given a supported name" in src
+assert "retry_messages[0]" in identity_src
+assert "retry_tokens=min(192,available_output_tokens)" in identity_src
+assert identity_src.count("completion_validation(")==2
+assert "IMPORTANT FACT: No supported personal name for the human" in src
 assert "identity attribution error" not in guarded_src
 print("v283 ownership, unknown-name, corrections and jokes regressions PASS")

@@ -28,6 +28,50 @@ SCAFFOLD='''<!DOCTYPE html>
 </script></body></html>'''
 
 class WebCompleteness(unittest.TestCase):
+ def test_run_instructions_do_not_replace_html_language_or_invent_shell_files(self):
+  from project_archive import parse_project_files
+  source=('```html file=index.html\n<html><script src="app.js"></script></html>\n```\n\n'
+          '```javascript file=app.js\nconst ready=true;\n```\n\n'
+          'To run this code, use Python\'s HTTP server:\n\n```sh\npython -m http.server 8000\n```')
+  prompt='Create a complete HTML page.'
+  state=programming_intent(prompt,[],[])
+  check=candidate_contract_gate(source,state,[])
+  self.assertEqual(check['status'],'PASS',check)
+  self.assertNotIn('bash',check['detectedLanguages'])
+  self.assertEqual([item['path'] for item in parse_project_files(source)],['index.html','app.js'])
+  for name in ('qwen_coder_engine','lfm2_700m_engine'):
+   engine=load_engine(name)
+   class Response(FakeModel):
+    def create_chat_completion(self,**kwargs):
+     self.calls.append(kwargs)
+     yield {'choices':[{'delta':{'content':source},'finish_reason':'stop'}]}
+   model=Response()
+   with patch.object(engine,'load',return_value=model):
+    events=list(engine.generate_events({'prompt':prompt,'history':[]}))
+   self.assertEqual(''.join(event.get('text','') for event in events if event['type']=='DELTA'),source)
+   self.assertEqual(len(model.calls),1)
+   self.assertTrue(any(event['type']=='COMPLETED' for event in events))
+  named=source.replace('```sh\n','```sh file=serve.sh\n')
+  self.assertIn('language-contract-mismatch:bash',candidate_contract_gate(named,state,[])['reasons'])
+  commented=source.replace('python -m http.server 8000','\n# TODO: implement serving\npython -m http.server 8000')
+  self.assertEqual(candidate_contract_gate(commented,state,[])['status'],'REJECT')
+
+ def test_project_header_attributes_inside_source_are_rejected_without_rewriting(self):
+  from brain_programming import _source_delivery_gaps
+  for language,body in [('javascript','\nfile="src/my editor.js" project=editor\r\nexport const ready=true;'),
+                        ('css','path=styles.css group=editor\nbody { color: green; }')]:
+   source='```'+language+'\n'+body+'\n```'
+   gaps=_source_delivery_gaps(source,'Create a software project',{})
+   self.assertTrue(any(reason.startswith('misplaced-project-file-metadata:') for reason in gaps),gaps)
+   self.assertIn(body,source)
+  for language,body in [('javascript','file="editor.js";\nconst project="editor";'),
+                        ('javascript','// file=editor.js project=editor\nconst ready=true;'),
+                        ('bash','file=output.txt project=editor\nprintf "%s" "$file"'),
+                        ('html','file=output.txt project=editor\n<html></html>'),
+                        ('markdown','file=editor.js project=editor\nThese are example attributes.')]:
+   gaps=_source_delivery_gaps('```'+language+'\n'+body+'\n```','Create a software project',{})
+   self.assertFalse(any(reason.startswith('misplaced-project-file-metadata:') for reason in gaps),gaps)
+
  def test_ordinary_3d_web_request_gets_an_optional_verified_library_reference(self):
   p=programming_intent('Create an HTML 3D model viewer with drag orbit and wheel zoom.',[],[])
   self.assertIn('0.160.0',programming_library_context(p))

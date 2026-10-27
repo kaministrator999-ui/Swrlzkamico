@@ -5,6 +5,7 @@ from huggingface_hub import hf_hub_download
 from llama_cpp import Llama
 from brain_programming import programming_intent, CODE_TRUTH_POLICY, candidate_contract_gate, programming_library_context
 from programming_telemetry import buffered_chat_completion, candidate_attempt_receipt, generation_summary, observe_completion_chunk, completion_validation
+from longform_completion import longform_contract, complete_longform
 from programming_repair_context import build_compact_repair_context, enforce_strategy_change, strategy_change_directive, contract_rejection_context, candidate_retry_messages, candidate_source_fingerprint, expanded_project_delivery, project_delivery_policy, fresh_project_history, source_fence_present, response_budget, long_delivery_policy, preserve_existing_source, source_sized_budget
 from response_cognition import classify_response_cognition, response_cognition_policy, response_cognition_camera
 from social_checkin import style_hint as _social_checkin_style_hint
@@ -669,6 +670,8 @@ def generate_events(payload):
     candidate_text=""
     candidate_check=None
     candidate_attempts=[]
+    longform_target=longform_contract(prompt,programming,response_mode=_response_mode(prompt,programming),source_change_mode=source_change_mode)
+    longform_result=None
     with _lock:
         mode="RESPONSE MODE: GITHUB-SOURCE-JSON" if source_change_mode else _response_mode(prompt,programming)
         if source_change_mode:
@@ -771,6 +774,47 @@ def generate_events(payload):
                     safe_text+=" The failure evidence remains attached to the repair lineage."
                 first_delta=round((time.perf_counter()-started)*1000,3)
                 yield {"type":"DELTA","text":safe_text}
+        elif longform_target:
+            longform_result=complete_longform(
+                messages=messages,contract=longform_target,max_output_tokens=response_tokens,
+                context_tokens=CONTEXT_TOKENS,safety_tokens=CONTEXT_SAFETY_TOKENS,
+                temperature=temperature,
+                generate=lambda selected,limit,temp:buffered_chat_completion(model,selected,limit,temp),
+                count_message_tokens=lambda selected:_token_count(model,selected),
+                count_text_tokens=lambda text:len(model.tokenize(text.encode("utf-8"),add_bos=False)),
+            )
+            previous_fp=None
+            for observation in longform_result["attempts"]:
+                fingerprint=_candidate_fingerprint(observation["text"])
+                attempt=candidate_attempt_receipt(
+                    observation["attempt"],"longform-initial" if observation["attempt"]==1 else "longform-substantive-expansion",
+                    observation["timing"],observation["validation"],fingerprint,
+                    previous_attempt_fingerprint=previous_fp,
+                )
+                attempt["selectedForDelivery"]=observation["attempt"]==longform_result["selectedAttempt"]
+                attempt["wordCount"]=observation["validation"]["wordCount"]
+                attempt["outputTokens"]=observation["outputTokens"]
+                attempt["outputTokenAccounting"]=observation["outputTokenAccounting"]
+                candidate_attempts.append(attempt)
+                yield {"type":"CANDIDATE_ATTEMPT","attempt":attempt}
+                previous_fp=fingerprint
+            candidate_text=longform_result["text"]
+            candidate_check=longform_result["validation"]
+            regeneration_attempted=longform_result["expansionAttempted"]
+            regeneration_reason="longform-underlength" if regeneration_attempted else ""
+            yield {"type":"LONGFORM_COMPLETION","observation":{
+                "schema":longform_result["schema"],"requestedWords":longform_target["requestedWords"],
+                "wordCount":candidate_check["wordCount"],"status":candidate_check["status"],
+                "selectedAttempt":longform_result["selectedAttempt"],
+                "attemptCount":len(longform_result["attempts"]),
+                "spentOutputTokens":longform_result["spentOutputTokens"],
+                "maxOutputTokens":longform_result["maxOutputTokens"],
+                "stoppedReason":longform_result["stoppedReason"],
+                "verificationState":"REQUESTED_LENGTH_ONLY",
+            }}
+            if candidate_text:
+                first_delta=round((time.perf_counter()-started)*1000,3)
+                yield {"type":"DELTA","text":candidate_text}
         else:
             generated_parts=[]
             attempt_started=time.perf_counter()
@@ -805,7 +849,7 @@ def generate_events(payload):
             attempt=candidate_attempt_receipt(1,"initial-streaming",timing,candidate_check,candidate_fp)
             candidate_attempts.append(attempt)
             yield {"type":"CANDIDATE_ATTEMPT","attempt":attempt}
-    if candidate_attempts:
+    if candidate_attempts and longform_result is None:
         candidate_check=completion_validation(candidate_check,candidate_attempts[-1])
     yield {"type":"CANDIDATE_VALIDATION","validation":candidate_check}
     if repair_diagnostic:
@@ -835,6 +879,12 @@ def generate_events(payload):
         strict_language=strict_language,
     )
     yield {"type":"GENERATION_TELEMETRY","telemetry":telemetry}
+    if longform_result is not None and candidate_check.get("status")!="PASS":
+        yield {"type":"FAILED","phase":"FAILED","reason":"LONGFORM_LENGTH_NOT_MET",
+               "message":"The model did not finish a document meeting the requested length within the bounded generation allowance. The displayed draft remains incomplete for that request.",
+               "requestedWords":longform_target["requestedWords"],"wordCount":candidate_check["wordCount"],
+               "finishReason":candidate_check.get("finishReason")}
+        return
     if candidate_attempts and candidate_attempts[-1].get("finishReason")=="length":
         yield {"type":"FAILED","phase":"FAILED","reason":"OUTPUT_TOKEN_LIMIT","message":"The model reached its output limit before finishing; no complete artifact was accepted.","finishReason":"length"}
         return

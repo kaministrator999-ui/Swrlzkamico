@@ -12,7 +12,8 @@ import zipfile
 from fastapi.testclient import TestClient
 
 from project_archive import (MAX_FILES, MAX_FILE_BYTES, MAX_PROJECT_BYTES, MANIFEST_PATH,
-    ProjectArchiveError, archive_filename, build_project_archive, parse_project_files, validate_project_files)
+    ProjectArchiveError, archive_filename, build_project_archive, parse_project_files, validate_project_files,
+    leading_file_metadata_matches_path, source_fences, project_source_fences)
 import station
 from brain_programming import programming_intent
 
@@ -33,6 +34,42 @@ def artifact(files=None, artifact_id="artifact-owned"):
 
 
 class ProjectArchiveUnit(unittest.TestCase):
+    def test_run_commands_stay_visible_without_becoming_project_files(self):
+        files=[{"path":"index.html","language":"html","content":"<html><script src=\"app.js\"></script></html>\r\n"},
+               {"path":"app.js","language":"javascript","content":"const ready=true;\r\n"}]
+        source="\n\n".join("```"+item["language"]+" file="+item["path"]+"\n"+item["content"]+"```" for item in files)
+        usage="python -m http.server 8000\n"
+        source+="\n\nTo run this code, use Python's HTTP server:\n\n```sh\n"+usage+"```"
+        self.assertEqual(len(source_fences(source)),3)
+        self.assertEqual(len(project_source_fences(source)),2)
+        self.assertIn(usage,source_fences(source)[-1]["content"])
+        self.assertEqual(parse_project_files(source),files)
+        with zipfile.ZipFile(io.BytesIO(build_project_archive(parse_project_files(source),artifact_id="usage",revision=1))) as archive:
+            self.assertEqual(archive.namelist(),["index.html","app.js",MANIFEST_PATH])
+            for item in files:self.assertEqual(archive.read(item["path"]),item["content"].encode())
+
+    def test_named_shell_scripts_and_ambiguous_or_implemented_blocks_remain_source(self):
+        primary='```html file=index.html\n<html></html>\n```\n\n'
+        for header,body,intro in (
+                ('sh file=serve.sh','python -m http.server 8000\n','To run this code:'),
+                ('bash path=serve.sh','python -m http.server 8000\n','Usage:'),
+                ('sh filename=serve.sh','python -m http.server 8000\n','Setup:'),
+                ('sh','# serve.sh\npython -m http.server 8000\n','To run this code:'),
+                ('sh','#!/bin/sh\npython -m http.server 8000\n','To run this code:'),
+                ('sh','python -m http.server 8000\n','A second source block follows:'),
+                ('sh','# TODO: implement serving\npython -m http.server 8000\n','To run this code:'),
+                ('sh','serve() { python -m http.server 8000; }\n','To run this code:'),
+                ('sh','python -c "print(42)"\n','To run this code:'),
+                ('sh','npm install && npm run dev\n','To run this code:'),
+        ):
+            with self.subTest(header=header,body=body):
+                source=primary+intro+'\n\n```'+header+'\n'+body+'```'
+                self.assertEqual(len(project_source_fences(source)),2)
+                self.assertEqual(parse_project_files(source)[-1]['content'],body)
+        shell='Usage:\n\n```bash\npython -m http.server 8000\n```'
+        self.assertEqual(len(project_source_fences(shell)),1,'primary Bash remains source')
+        self.assertEqual(len(project_source_fences(shell+'\n\n'+primary)),2,'later HTML cannot reclassify earlier Bash')
+
     def test_three_real_files_roundtrip_paths_bytes_and_honest_manifest(self):
         content = build_project_archive(FILES, artifact_id="artifact-owned", revision=3,
             source_hash="a" * 64)
@@ -56,8 +93,10 @@ class ProjectArchiveUnit(unittest.TestCase):
 
     def test_two_thousand_file_source_archive_retains_every_path_and_byte(self):
         files=[{"path": f"app/src/main/source{n}.kt", "language": "kotlin",
-                "content": f"package sandbox\nval source{n} = {n}\n"} for n in range(2000)]
-        content=build_project_archive(files,artifact_id="large-project",revision=1)
+                "content": f"// app/src/main/source{n}.kt\npackage sandbox\nval source{n} = {n}\n"} for n in range(2000)]
+        markdown="\n".join("```kotlin\n"+item["content"]+"```" for item in files)
+        self.assertEqual(parse_project_files(markdown),files)
+        content=build_project_archive(parse_project_files(markdown),artifact_id="large-project",revision=1)
         with zipfile.ZipFile(io.BytesIO(content)) as archive:
             self.assertIsNone(archive.testzip())
             self.assertEqual(len(archive.namelist()),2001)
@@ -121,6 +160,78 @@ class ProjectArchiveUnit(unittest.TestCase):
             with self.subTest(header=header[:50]), self.assertRaises(ProjectArchiveError):
                 parse_project_files('```' + header + '\nsource\n```')
             self.assertEqual(station._parse_code_files('```' + header + '\nsource\n```'), [])
+
+    def test_first_line_filename_metadata_preserves_every_byte_and_explicit_header_wins(self):
+        files=[
+            {"path":"index.html","language":"html","content":"\n<!-- index.html -->\r\n<!doctype html>\r\n"},
+            {"path":"styles.css","language":"css","content":"/* styles.css */\n#editor { color: green; }\n"},
+            {"path":"src/editor.js","language":"javascript","content":"// src/editor.js\nexport const ready = true;\n"},
+            {"path":"README.md","language":"markdown","content":"# README.md\n\nA complete section.\n"},
+            {"path":"src/my editor.js","language":"javascript","content":'// "src/my editor.js"\nexport const quoted = true;\n'},
+        ]
+        text="\n\n".join("```"+f["language"]+"\n"+f["content"]+"```" for f in files)
+        self.assertEqual(parse_project_files(text),files)
+        self.assertEqual(station._parse_code_files(text),files)
+        with zipfile.ZipFile(io.BytesIO(build_project_archive(parse_project_files(text),artifact_id="comments",revision=1))) as archive:
+            for item in files:self.assertEqual(archive.read(item['path']),item['content'].encode())
+        explicit='```javascript file=canonical.js\n// ../untrusted.js\nexport const ready = true;\n```'
+        self.assertEqual(parse_project_files(explicit)[0]['path'],'canonical.js')
+        self.assertIn('// ../untrusted.js',parse_project_files(explicit)[0]['content'])
+
+    def test_filename_metadata_does_not_guess_from_prose_urls_or_later_comments(self):
+        for language,content in [
+                ('javascript','// https://example.org/editor.js\nexport const ready=true;\n'),
+                ('javascript','// This implements editor.js\nexport const ready=true;\n'),
+                ('javascript','// "An explanatory phrase"\nexport const ready=true;\n'),
+                ('javascript','/* SPDX-License-Identifier: MIT */\nexport const ready=true;\n'),
+                ('javascript','export const ready=true;\n// editor.js\n'),
+                ('javascript','# README.md\nexport const ready=true;\n'),
+                ('markdown','# A guide to README.md\nText.\n')]:
+            with self.subTest(language=language,content=content):
+                self.assertEqual(parse_project_files('```'+language+'\n'+content+'```')[0]['path'],
+                                 'code.js' if language=='javascript' else 'code.txt')
+
+    def test_filename_comment_unicode_boundaries_match_browser_and_shebangs_stay_code(self):
+        for language,content,path in [
+                ('javascript','\ufeff// editor.js\nexport const ready=true;\n','editor.js'),
+                ('javascript','\u0085// editor.js\nexport const ready=true;\n','editor.js'),
+                ('javascript','// foo\u0085.js\nexport const ready=true;\n','code.js'),
+                ('javascript','// licenſe\nexport const ready=true;\n','code.js'),
+                ('python','#!/usr/bin/python3.12\nprint(1)\n','code.py'),
+                ('bash','#!/bin/bash5.2\nprintf ready\n','code.txt'),
+                ('bash','# Dockerfile\nFROM scratch\n','Dockerfile')]:
+            with self.subTest(language=language,path=path,content=content):
+                result=parse_project_files('```'+language+'\n'+content+'```')[0]
+                self.assertEqual(result['path'],path)
+                self.assertEqual(result['content'],content)
+
+    def test_intended_unsafe_filename_comments_reject_and_metadata_collisions_stay_invalid(self):
+        for name in ['../escape.js','/tmp/escape.js','C:/escape.js','src/../escape.js',
+                     'src//escape.js','./escape.js','src\\escape.js','.git/config','.ſvn/editor.js','ſWRLZ_PROJECT_MANIFEﬅ.json','CON',
+                     MANIFEST_PATH,'x'*241+'.js','"src/escape.js "']:
+            with self.subTest(name=name),self.assertRaises(ProjectArchiveError):
+                parse_project_files('```javascript\n// '+name+'\nexport const ready=true;\n```')
+        for first,second in [('src/a.js','src/A.js'),('é.js','e\u0301.js')]:
+            with self.subTest(first=first,second=second),self.assertRaises(ProjectArchiveError):
+                parse_project_files('```javascript\n// '+first+'\nlet a=1;\n```\n```javascript\n// '+second+'\nlet b=2;\n```')
+        # Ambiguous explicit metadata never falls back to an otherwise valid comment.
+        with self.assertRaises(ProjectArchiveError):
+            parse_project_files('```javascript file=a.js path=b.js\n// fallback.js\nlet a=1;\n```')
+
+    def test_leading_filename_matcher_preserves_authoritative_path_and_rejects_unsafe_labels(self):
+        for content,language,path,expected in [
+                ('// todo.js\nexport const ready=true;','javascript','todo.js',True),
+                ('// todo.js\nexport const ready=true;','javascript','src/todo.js',True),
+                ('// src/todo.js\nexport const ready=true;','javascript','src/todo.js',True),
+                ('// other/todo.js\nexport const ready=true;','javascript','src/todo.js',False),
+                ('// TODO.js\nexport const ready=true;','javascript','src/todo.js',False),
+                ('// ../todo.js\nexport const ready=true;','javascript','src/todo.js',False),
+                ('// todo.js\nexport const ready=true;','javascript','../todo.js',False),
+                ('export const ready=true;\n// todo.js','javascript','todo.js',False),
+                ('# TODO.py\nprint(1)','python','src/TODO.py',True),
+                ('// TODO implement this later\nexport const ready=true;','javascript','todo.js',False)]:
+            with self.subTest(content=content,path=path):
+                self.assertEqual(leading_file_metadata_matches_path(content,language,path),expected)
 
     def test_tiny_explicit_multi_file_project_is_persisted_for_zip(self):
         thread = {"codeArtifacts": []}

@@ -209,6 +209,7 @@
 
     .assistant-body .code-download-status{display:block;padding:5px 8px;color:#bdefff;font:10px var(--font-telemetry);line-height:1.4;white-space:normal}.assistant-body .code-download-status:empty{display:none}.assistant-body .download-all-code:disabled{cursor:default;opacity:.6}
     .assistant-body .project-archive-tools{display:flex;align-items:center;flex-wrap:wrap;gap:6px;padding:6px;border-bottom:1px solid rgba(126,214,255,.16)}
+    .assistant-body .project-archive-card{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:10px 0;padding:9px 10px;border:1px solid rgba(126,214,255,.24);border-radius:10px;background:rgba(5,25,42,.7)}.assistant-body .project-archive-summary{flex:1 1 180px;color:#cce8f2;font-size:11px;line-height:1.4}.assistant-body .project-archive-card .code-download-status{flex-basis:100%;padding:0}
     .account-card{margin-top:12px;margin-bottom:10px;padding:10px;border:1px solid rgba(95,192,255,.28);border-radius:14px;background:rgba(2,15,31,.72)}
     .account-main{display:flex;align-items:center;gap:9px;min-height:38px}.account-avatar{width:34px;height:34px;border-radius:50%;object-fit:cover;border:1px solid rgba(95,192,255,.3);display:none}.account-copy{min-width:0;flex:1}.account-name{font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.account-meta{font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.account-action{border:1px solid rgba(95,192,255,.28);border-radius:10px;padding:7px 9px;color:var(--text);background:rgba(31,72,108,.42);font-size:11px;cursor:pointer}.google-slot{margin-top:8px;min-height:0;overflow:hidden}
     .version-head{display:flex;align-items:center;justify-content:space-between;width:100%;padding:0 0 7px;border:0;color:var(--text);background:transparent;cursor:pointer}.version-chevron{transition:transform 180ms ease}.version-box.collapsed .version-chevron{transform:rotate(-90deg)}.version-list{max-height:26vh;overflow-y:auto;overflow-x:hidden;transition:max-height 200ms ease,opacity 160ms ease}.version-box.collapsed .version-list{max-height:0;opacity:0;overflow:hidden}
@@ -1575,7 +1576,7 @@
         const blob=new Blob([content],{type:"text/plain;charset=utf-8"});const url=URL.createObjectURL(blob);
         const a=document.createElement("a");a.href=url;a.download=safe.split(/[\\/]/).pop()||"code.txt";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
       };
-      const parseFenceInfo=info=>{
+      const parseFenceInfo=(info,content="")=>{
         const header=String(info||"").trim(),first=header.split(/\s+/,1)[0]||"";
         const language=(first&&!first.includes("=")?first:"code").toLowerCase(),attrs={};
         const attributes=/([A-Za-z][\w-]*)=(?:"([^"\n]*)"|'([^'\n]*)'|([^\s]+))/g;
@@ -1586,7 +1587,45 @@
         }
         const names=["file","path","filename"].filter(key=>Object.hasOwn(attrs,key)).map(key=>attrs[key]);
         if(new Set(names).size>1)invalid=true;
-        return {language,file:invalid?"":(names[0]||""),project:invalid?"":(attrs.project||attrs.group||"")};
+        const candidate=names.length?names[0]:leadingFileMetadata(content,language);
+        const file=typeof candidate==="string"&&sourceFilePathIsPortable(candidate)?candidate:"";
+        return {language,file:invalid?"":file,project:invalid?"":(attrs.project||attrs.group||"")};
+      };
+      const sourceFileAsciiFold=value=>String(value).toLowerCase().replace(/[ßſﬀﬁﬂﬃﬄﬅﬆ]/g,char=>({"ß":"ss","ſ":"s","ﬀ":"ff","ﬁ":"fi","ﬂ":"fl","ﬃ":"ffi","ﬄ":"ffl","ﬅ":"st","ﬆ":"st"})[char]);
+      const sourceFilePathIsPortable=path=>{
+        if(!path||new TextEncoder().encode(path).length>240||path.startsWith("/")||/[:*?"<>|\\\x00-\x1f\x7f]/.test(path)||[...path].some(char=>char.codePointAt(0)>=0xd800&&char.codePointAt(0)<=0xdfff))return false;
+        const reserved=new Set(["con","prn","aux","nul",...Array.from({length:9},(_,i)=>"com"+(i+1)),...Array.from({length:9},(_,i)=>"lpt"+(i+1))]);
+        const parts=path.split("/");
+        if(parts.some(part=>!part||part==="."||part===".."||/[ .]$/.test(part)||[".git",".hg",".svn"].includes(sourceFileAsciiFold(part))||reserved.has(sourceFileAsciiFold(part.split(".",1)[0]))))return false;
+        const key=sourceFileAsciiFold(path.normalize("NFC")),manifest="swrlz_project_manifest.json";
+        return key!==manifest&&!key.startsWith(manifest+"/");
+      };
+      const leadingFileMetadata=(content,language)=>{
+        const metadataSpace="[\\u0009-\\u000d\\u001c-\\u0020\\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000\\ufeff]";
+        const trimMetadata=value=>String(value).replace(new RegExp("^"+metadataSpace+"+|"+metadataSpace+"+$","g"),"");
+        const first=trimMetadata(String(content||"").split(/\r\n|\r|\n/).find(line=>trimMetadata(line))||"");
+        if(first.startsWith("#!"))return null;
+        const slash=new Set(["javascript","js","typescript","ts","jsx","tsx","css","scss","less","java","kotlin","kt","c","cpp","c++","csharp","cs","rust","go","swift","php","jsonc"]);
+        const hash=new Set(["python","py","python3","bash","sh","shell","yaml","yml","ruby","rb","r","dockerfile","makefile","toml","ini","markdown","md"]);
+        const patterns=[];
+        if(["html","html5","xml","svg"].includes(language))patterns.push(/^<!--[ \t]*(.*?)[ \t]*-->$/s);
+        if(slash.has(language))patterns.push(/^\/\/[ \t]*(.*)$/s, /^\/\*[ \t]*(.*?)[ \t]*\*\/$/s);
+        if(hash.has(language))patterns.push(["markdown","md"].includes(language)?/^#{1,6}[ \t]+(.*)$/s:/^#[ \t]*(.*)$/s);
+        let payload=null;
+        for(const pattern of patterns){const match=first.match(pattern);if(match){payload=trimMetadata(match[1]);break;}}
+        if(!payload)return null;
+        const quoted=["\"","'","`"].includes(payload[0]);
+        if(quoted){
+          const quote=payload[0];if(payload.length<2||payload.at(-1)!==quote||payload.slice(1,-1).includes(quote))return null;
+          payload=payload.slice(1,-1);
+        }else if(new RegExp(metadataSpace).test(payload))return null;
+        if(!payload||/^(?![A-Za-z]:)[A-Za-z][A-Za-z0-9+.-]*:\/\//.test(payload))return null;
+        const basename=payload.split(/[\/\\]/).at(-1),extensionless=new Set(["dockerfile","makefile","license","copying","notice","readme","gemfile","procfile","gradlew",".gitignore",".gitattributes",".editorconfig",".npmrc"]);
+        const nameHint=quoted?basename.replace(new RegExp(metadataSpace+"+$"),""):basename;
+        const filename=/^[^\/\\]+\.[A-Za-z0-9][A-Za-z0-9._-]*$/.test(nameHint)||extensionless.has(nameHint.toLowerCase());
+        const reserved=new Set(["con","prn","aux","nul",...Array.from({length:9},(_,i)=>"com"+(i+1)),...Array.from({length:9},(_,i)=>"lpt"+(i+1))]);
+        const unsafeShape=/^[\/\\]/.test(payload)||/^[A-Za-z]:/.test(payload)||/[\x00-\x1f\x7f]/.test(payload)||payload.split(/[\/\\]/).some(part=>!part||part==="."||part===".."||[".git",".hg",".svn"].includes(sourceFileAsciiFold(part))||reserved.has(sourceFileAsciiFold(part.split(".",1)[0])));
+        return filename||unsafeShape?payload:null;
       };
       const sourceFileFences=value=>{
         const source=String(value||""),opening=/^[ \t]{0,3}(`{3,}|~{3,})([^\r\n]*)\r?\n/gm;
@@ -1618,14 +1657,16 @@
           (wanted&&String(item?.id||"")===wanted)||(messageId&&String(item?.sourceMessageId||"")===messageId));
         const threadId=String(thread?.id||""),artifactId=String(saved?.id||"");
         const revision=Number(revisionOverride||meta.artifactRevision||saved?.currentRevision||0);
-        if(!threadId||!artifactId||!Number.isSafeInteger(revision)||revision<1)return null;
+        if(!threadId||!artifactId||(wanted&&wanted!==artifactId)||!Number.isSafeInteger(revision)||revision<1)return null;
         const revisions=Array.isArray(saved?.revisions)?saved.revisions:[];
         const recordFiles=revisions.find(item=>Number(item?.revision)===revision)?.files;
         const displayedFiles=Array.isArray(recordFiles)?recordFiles:(revision===Number(saved?.currentRevision)?saved?.files:[]);
         const fileCount=Array.isArray(displayedFiles)?displayedFiles.length:0;
+        if(!fileCount)return null;
         return Object.freeze({threadId,artifactId,revision,fileCount,
           url:"/api/lalm_station/artifacts/"+encodeURIComponent(threadId)+"/"+encodeURIComponent(artifactId)+"/download?revision="+revision});
       };
+      const MAX_PROJECT_ARCHIVE_DOWNLOAD_BYTES=40*1024*1024;
       const downloadProjectArchive=async(context,button,status)=>{
         if(!context)return;
         button.disabled=true;button.textContent="Preparing ZIP…";status.textContent="";
@@ -1633,9 +1674,9 @@
           const response=await fetch(context.url,{credentials:"same-origin",cache:"no-store"});
           if(!response.ok||!/^application\/zip(?:;|$)/i.test(response.headers.get("Content-Type")||""))throw new Error("Project archive unavailable");
           const length=Number(response.headers.get("Content-Length")||0);
-          if(length>8*1024*1024)throw new Error("Project archive too large");
+          if(length>MAX_PROJECT_ARCHIVE_DOWNLOAD_BYTES)throw new Error("Project archive too large");
           const blob=await response.blob();
-          if(!blob.size||blob.size>8*1024*1024)throw new Error("Invalid project archive size");
+          if(!blob.size||blob.size>MAX_PROJECT_ARCHIVE_DOWNLOAD_BYTES)throw new Error("Invalid project archive size");
           const disposition=response.headers.get("Content-Disposition")||"";
           const safeName=disposition.match(/filename="([A-Za-z0-9][A-Za-z0-9._-]{0,100}\.zip)"/i)?.[1]
             ||("swrlz-project-r"+context.revision+".zip");
@@ -1686,8 +1727,15 @@
         }
         // Explanatory prose between source fences must not hide the project's
         // download. Preserve every rendered node and add one separate toolbar.
-        if(archiveContext?.fileCount>1&&!container.querySelector(".download-all-code")){
-          const toolbar=document.createElement("div");toolbar.className="project-archive-tools";
+        if(archiveContext?.fileCount>0&&!container.querySelector(".download-all-code")){
+          const toolbar=document.createElement("section");
+          const proseOnly=!container.querySelector(".code-block");
+          toolbar.className=proseOnly?"project-archive-card":"project-archive-tools";
+          if(proseOnly){
+            const summary=document.createElement("span");summary.className="project-archive-summary";
+            summary.textContent="Saved project · revision "+archiveContext.revision+" · "+archiveContext.fileCount.toLocaleString()+" "+(archiveContext.fileCount===1?"file":"files");
+            toolbar.appendChild(summary);
+          }
           const controls=projectArchiveControls(archiveContext);toolbar.append(controls.button,controls.status);container.appendChild(toolbar);
         }
       };
@@ -2065,8 +2113,8 @@
           applyState();
         };
         const appendCode=(header,body,provisional=false)=>{
-          const info=parseFenceInfo(header);const language=info.language;
           const raw=String(body||"").replace(/\n$/,"");
+          const info=parseFenceInfo(header,raw);const language=info.language;
           const block=document.createElement("section");
           const lyricLanguages=new Set(["lyrics","lyric","song","music","verse","chorus"]);
           const codeLanguages=new Set(["javascript","js","typescript","ts","python","py","cpp","c++","c","csharp","cs","java","kotlin","kt","swift","go","rust","rs","php","ruby","rb","html","css","scss","json","yaml","yml","xml","sql","bash","sh","shell","powershell","ps1","dart","lua","r","matlab","code"]);
