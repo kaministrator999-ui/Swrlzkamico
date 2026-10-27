@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.154",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_154_GUEST_INPUT_ACK",
-  "reason": "Owner two-browser test: shared gameplay works, but guest sheep will not respond despite guest HUD showing joystick ACTIVE and 35 local attempted sends. Guest TX counters did not prove host receipt. v11.154 attaches a dedicated validated and sequence-numbered WebRTC input receiver to the registered host peer and moves that peer's assigned sheep in the native authoritative game frames; host sends acknowledgements and displays RX/movement/blocked stats; guest sees TX attempts versus host ACK and applied moves. Focused isolated JS event+movement test PASS, 186 cumulative patches, 68 assets preserved. Physical acceptance pending. GitHub Actions only packages and uploads to HF—no Chromium or hosted verification.",
-  "sourceCommit": "92a4c7d453036c4505e394169a8d033611c820dc",
+  "releaseVersion": "v11.155",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_155_SNAPSHOT_DRIVEN_GUEST",
+  "reason": "Owner two-phone real test: guest joystick TX68, host ACK34 confirms commands delivered, but host moves 0 and sheep remains stationary. v11.155 moves host-assigned guest sheep on the existing reliable 130ms host world snapshot clock rather than the ineffective native frame hook, before replicating world to guest. Prevent double movement on legacy tick; preserve collision/bounds, stale-input cutoff and existing peer authority. Focused self-contained JS test confirmed position change captured in host snapshot. 187 cumulative patches, assets untouched. Owner physical two-phone acceptance still pending. GitHub Actions stays strictly package + HF upload only; no Chromium nor live-site audits.",
+  "sourceCommit": "9540d0e4ea004f57fb141dc7ad4fb8e81e964cda",
   "sourceIntegritySha256": null
 }
