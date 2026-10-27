@@ -8,7 +8,7 @@ def apply(html):
  root=Path(__file__).resolve().parents[1]
  js=(root/'runtime/engine_play_scene_build_ghost_v11_145.js').read_text(encoding='utf8')
  css=(root/'runtime/engine_play_scene_build_ghost_v11_145.css').read_text(encoding='utf8')
- html=once(html,'</head>','<style id="se145-play-and-ghost">'+css+'</style>\n</head>')
+ html=html.replace('</head>','<style id="se145-play-and-ghost">'+css+'</style>\n</head>',1)
  # Native v11.83 refresh must not recompute an actively dragged ghost from
  # stale raw pointer inputs while a newer validated aim owns its placement.
  html=once(html,
