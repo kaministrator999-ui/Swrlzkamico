@@ -1,3 +1,7 @@
+## §E v11.153 — Guest-owned joystick authority repair
+
+Physical two-browser test: host movement and shared-world snapshots succeeded; guest couldn't move. Added direct guest mobile joystick intent, host-frame authoritative guest actor movement with collision/timeout, and input counters. No new backend or additional CI tasks. Next acceptance is guest movement visible on BOTH screens.
+
 ## §E v11.152 · Authoritative shared world and guest controls
 
 Phone + laptop physical test verified one-code LAN connection and host Start Match but exposed independent simulations. Implemented one host-authoritative Sheep Tag tick and ~130-ms world snapshots: player sheep/wolf positions, construction/buildings, captures, gold, timer, winner. Guest input orders and mobile joystick flow to host with host rules and distinct assignments. No new game engine; direct WebRTC data transport. Browser/CDN connection and physical device synchronization still require owner acceptance. The existing production GitHub Action remains package and upload only.
