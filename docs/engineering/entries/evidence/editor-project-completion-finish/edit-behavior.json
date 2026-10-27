@@ -1,0 +1,150 @@
+{
+  "schema": "swrlz-real-counter-project-eval-v1",
+  "candidateKind": "zip",
+  "candidateSha256": "d39727eefc4d459edc8813a4ab2b4b1166bc8ab3ec7e88f284b0f3f96497f96d",
+  "filesSha256": {
+    "index.html": "a0f5b7dd525a610d1d826e0cebb5626b45d6e2b644b7cb5f5fba3ebd90b1a78c",
+    "styles.css": "685507a76e201a8ed923271fd505298dda9e717996006a2ed5f1a4ef90a9d1c0",
+    "src/app.js": "f2c5ee29ca4421c7f9b06e03d80f10091315cb0f6cdf8598895c2f0f694488b2",
+    "README.md": "76f0057ca72a307a3b5aefa03ea76eb6d412caaf4736368961585b2d0cb53e15",
+    "SWRLZ_PROJECT_MANIFEST.json": "3474716f2625be385d88d05bba73fb8c051390e489d74b7000169810d897083d"
+  },
+  "manifest": {
+    "status": "PASS",
+    "fileCount": 4,
+    "revision": 2,
+    "sourceHash": "b75e1c9b090b0804c695de8fd94060fa03fc611e358ad62cdf3ab0283d653757",
+    "executionVerifiedByManifest": false
+  },
+  "expectedInitialCount": 7,
+  "sourceBytesRewritten": false,
+  "expectedImplementationSuppliedToModel": false,
+  "outsideNetwork": false,
+  "isolation": "existing Bubblewrap browser evaluator; read-only candidate, no host checkout or credentials",
+  "rows": [
+    {
+      "id": "initial-count",
+      "status": "PASS",
+      "passed": true,
+      "actual": {
+        "expected": 7,
+        "actual": "7",
+        "readoutVisible": true,
+        "buttonLabel": "Increment",
+        "buttonSemantic": true
+      }
+    },
+    {
+      "id": "three-increments",
+      "status": "PASS",
+      "passed": true,
+      "actual": {
+        "expected": 10,
+        "actual": "10"
+      }
+    },
+    {
+      "id": "mobile-increments",
+      "status": "PASS",
+      "passed": true,
+      "actual": {
+        "initial": "7",
+        "after": "9",
+        "reachable": true,
+        "readoutVisible": true
+      }
+    },
+    {
+      "id": "local-project-assets",
+      "status": "PASS",
+      "passed": true,
+      "actual": {
+        "served": [
+          "index.html",
+          "src/app.js",
+          "styles.css"
+        ],
+        "stylesheetRules": 3
+      }
+    },
+    {
+      "id": "no-browser-errors",
+      "status": "PASS",
+      "passed": true,
+      "actual": {
+        "errors": [],
+        "blocked": []
+      }
+    }
+  ],
+  "passed": 5,
+  "total": 5,
+  "status": "PASS",
+  "error": null,
+  "harnessRun": {
+    "exitCode": 0,
+    "timedOut": false,
+    "wallSeconds": 1.674,
+    "stdout": "{\"rows\":[{\"id\":\"initial-count\",\"status\":\"PASS\",\"passed\":true,\"actual\":{\"expected\":7,\"actual\":\"7\",\"readoutVisible\":true,\"buttonLabel\":\"Increment\",\"buttonSemantic\":true}},{\"id\":\"three-increments\",\"status\":\"PASS\",\"passed\":true,\"actual\":{\"expected\":10,\"actual\":\"10\"}},{\"id\":\"mobile-increments\",\"status\":\"PASS\",\"passed\":true,\"actual\":{\"initial\":\"7\",\"after\":\"9\",\"reachable\":true,\"readoutVisible\":true}},{\"id\":\"local-project-assets\",\"status\":\"PASS\",\"passed\":true,\"actual\":{\"served\":[\"index.html\",\"src/app.js\",\"styles.css\"],\"stylesheetRules\":3}},{\"id\":\"no-browser-errors\",\"status\":\"PASS\",\"passed\":true,\"actual\":{\"errors\":[],\"blocked\":[]}}]}\n",
+    "stderr": "",
+    "outputTruncated": false,
+    "data": {
+      "rows": [
+        {
+          "id": "initial-count",
+          "status": "PASS",
+          "passed": true,
+          "actual": {
+            "expected": 7,
+            "actual": "7",
+            "readoutVisible": true,
+            "buttonLabel": "Increment",
+            "buttonSemantic": true
+          }
+        },
+        {
+          "id": "three-increments",
+          "status": "PASS",
+          "passed": true,
+          "actual": {
+            "expected": 10,
+            "actual": "10"
+          }
+        },
+        {
+          "id": "mobile-increments",
+          "status": "PASS",
+          "passed": true,
+          "actual": {
+            "initial": "7",
+            "after": "9",
+            "reachable": true,
+            "readoutVisible": true
+          }
+        },
+        {
+          "id": "local-project-assets",
+          "status": "PASS",
+          "passed": true,
+          "actual": {
+            "served": [
+              "index.html",
+              "src/app.js",
+              "styles.css"
+            ],
+            "stylesheetRules": 3
+          }
+        },
+        {
+          "id": "no-browser-errors",
+          "status": "PASS",
+          "passed": true,
+          "actual": {
+            "errors": [],
+            "blocked": []
+          }
+        }
+      ]
+    }
+  }
+}

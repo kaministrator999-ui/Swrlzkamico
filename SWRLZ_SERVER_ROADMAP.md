@@ -1,3 +1,11 @@
+## SOURCE DEPLOYED / ACCEPTED WITH FOLLOW-UP — 2026-10-27 — Chat coding, saved project ZIPs and update history
+
+Source `f925e2012ed7ece820e3272700bc6619846c2085` passed exact-source CI40439785973 and guarded deployment40480347832. Recovery40486416861 completed one acknowledged non-factory restart; fresh HF observations verify RUNNING revision `48515f7fc6e8cb7b4450725320e8fed64fb886e6` with matching immutable source provenance. Stable rollback is75e45f4148e9eb8972d95305d92b67838c55b47c, preceding both multipart upload commits. Existing independent Forge/§E source, hosting and history are preserved.
+
+The deployed implementation includes32K context and enlarged output tiers, source-completeness and exact-label/project-boundary contracts, session-owned immutable revision ZIPs with omitted-file preservation and selected-file context, and Chat update history/suppression controls. Deployment is verified; comprehensive generated-project/3Deditor competence remains open. Historical editor negatives and700M underlength failure remain evidence. No model weights/defaults or accepted-release module versions were changed at this partial closeout. Read the [closeout checkpoint](docs/engineering/entries/2026-10-25_EDITOR_PROJECT_COMPLETION.md) and final technical receipt for bounded live UI/project test outcomes. Environment draft saving is separate from publishing its filesystem snapshot.
+
+Earlier publication/recovery sections below are retained as dated history.
+
 ## UPDATE PUBLICATION REQUESTED — 2026-10-27 — Editor completion and Chat update history
 
 Owner explicitly authorized publishing the validated editor, project archive, response budget and Chat update-history changes. Candidate source `f925e2012ed7ece820e3272700bc6619846c2085`, following source6240d715; exact-source CI [40439785973](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40439785973) is SUCCESS. Existing main Forge/§E changes and deployment workflows are preserved. The request pins this source SHA through the existing HF request→guarded workflow→kamiloki/Swyrlz chain. No direct HF upload or hosting move. Publication/runtime acceptance pending; model/default/version/build receipts must be read from the current checkpoint, not inferred from this request.
