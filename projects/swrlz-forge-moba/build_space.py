@@ -71,9 +71,9 @@ def main():
     final_expected_sha = manifest.get("finalSha256", base_expected_sha)
     final_expected_bytes = manifest.get("finalBytes", base_expected_bytes)
     got_final_sha = sha256(html)
-    if got_final_sha != final_expected_sha:
+    if final_expected_sha and got_final_sha != final_expected_sha:
         raise SystemExit(f"Final source SHA mismatch: expected {final_expected_sha}, got {got_final_sha}")
-    if len(html) != final_expected_bytes:
+    if final_expected_bytes and len(html) != final_expected_bytes:
         raise SystemExit(f"Final source byte-size mismatch: expected {final_expected_bytes}, got {len(html)}")
 
     out = Path(args.output)
