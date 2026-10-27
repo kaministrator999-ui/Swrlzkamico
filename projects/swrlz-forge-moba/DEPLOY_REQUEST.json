@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.156",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_156_SMOOTH_BUILD_TEAM_FOG",
-  "reason": "Owner real two-browser multiplayer acceptance: guest movement works, but interpolated sheep steps and stops, guest home placement ghost doesn't show host completed build, and fog should be shared vision from all living team sheep and their houses. v11.156 adds guest visual-only requestAnimationFrame smoothing between authoritative world snapshots; all configured house/wall/ramp/totem variants and rotations mirror with host ownership/progress; accepted guest build commands are acknowledged and previews cleared while host sheep builds; fog combines living allied sheep and owned houses with explored history and refreshes on the guest (which does not run the AI simulation). Host remains authoritative, 188 historical source patches/68 assets preserved. Focused syntax and remote wall/ally house-vision tests passed; physical two-device behavior acceptance pending. Keep GitHub Actions strictly package + upload to HF, no Chromium/remote verification.",
-  "sourceCommit": "d1363c07ad2808a1f0a6bad43f7335d4f0c592ac",
+  "releaseVersion": "v11.157",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_157_AUTHORITATIVE_BUILD_REPLICA",
+  "reason": "Owner two-browser field report: Sheep Tag guest movement is now smooth (v11.156), but actual host-constructed houses do not appear on guest. Source investigation found overlapping v11.152 three-kind building mirror and v11.156 expanded guest mirror both mutate/create/delete structures on each snapshot. v11.157 preserves existing native game and guest visual smoothing but replaces duplicate guest building passes with ONE host-ID-keyed reconciliation, mirroring all configured houses/walls/ramps with owner, rotation, HP and build progress, and deleting only structures absent from host snapshot. Guest HUD displays houses guest/host to distinguish network vs visibility errors; diagnostic buildSync() exposes creates, updates, errors, requests and host order acknowledgements. Local focused JS test PASS: created wall + house, repeated snapshot with no duplicates, host removal reflected. Physical two-browser confirmation pending. Engine source: 189 historical patches, 68 assets untouched. GitHub Actions strictly builds package + uploads HF Space, no Chromium, separate verification or polling.",
+  "sourceCommit": "af1b1b557a27b0cb04f5ff5262d28d55c4365128",
   "sourceIntegritySha256": null
 }
