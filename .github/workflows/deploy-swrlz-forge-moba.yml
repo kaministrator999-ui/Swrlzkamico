@@ -172,12 +172,13 @@ jobs:
           assert official['patches'][-9]=='patches/v11_135_sheep_ghost_relative_drag_hud.py'
           assert official['patches'][-8]=='patches/v11_136_sheep_drag_capture_cleanup.py'
           assert official['patches'][-7]=='patches/v11_137_meadow_first_build_input.py'
-          assert official['patches'][-6]=='patches/v11_138_rapid_screen_anchor.py'
-          assert official['patches'][-5]=='patches/v11_139_rapid_safe_corner_snap.py'
-          assert official['patches'][-4]=='patches/v11_140_sheep_main_menu.py'
-          assert official['patches'][-3]=='patches/v11_141_editable_sheep_levels.py'
-          assert official['patches'][-2]=='patches/v11_142_editor_stop_menu_gait.py'
-          assert official['patches'][-1]=='patches/v11_144_real_canvas_overlay_host.py'
+          assert official['patches'][-7]=='patches/v11_138_rapid_screen_anchor.py'
+          assert official['patches'][-6]=='patches/v11_139_rapid_safe_corner_snap.py'
+          assert official['patches'][-5]=='patches/v11_140_sheep_main_menu.py'
+          assert official['patches'][-4]=='patches/v11_141_editable_sheep_levels.py'
+          assert official['patches'][-3]=='patches/v11_142_editor_stop_menu_gait.py'
+          assert official['patches'][-2]=='patches/v11_143_real_canvas_overlay_host.py'
+          assert official['patches'][-1]=='patches/v11_144_menu_sheep_camera.py'
           expected={'episodes/ghosts-in-different-forms-ep01.html',
                     'scenes/ghosts-in-different-forms-ep01.swyrl.json',
                     'scenes/ghosts-in-different-forms-ep01-storybook.swyrl.json',
