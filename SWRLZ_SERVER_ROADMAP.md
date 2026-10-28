@@ -1,3 +1,7 @@
+## UPDATE CONTINUATION REPAIR — 2026-10-28 — Requirement-covered source audits
+
+Exact-source CI40661367843 passed for e1f24512, but the actual7B auditor returned an empty issue list despite missing requested UI states and broken filtered callbacks. Corrected calibrated browser coverage gives14/20; original6/20 locator-cascade evidence is retained separately. The candidate is REPAIR_REQUIRED and was not published. The same bounded implementation lane now requires an explicit evidence-bearing assessment for every canonical requirement with a finite4096-token audit cap. Actual successor model/browser/visual evidence and guarded publication remain pending; no weights/default/hardware/module versions change on source checks alone.
+
 ## UPDATE CONTINUATION STARTED — 2026-10-28 — Polished starter source review and preserved-project comparison
 
 Candidate590f passed exact-source CI40612678252 and its original18 native browser cases, but manual inspection found missing visible input labeling and useful empty-state guidance. Expanded calibrated coverage regrades the same unchanged model ZIP18/20; original evidence is preserved. The active starter checkpoint now adds concrete UI guidance and bounded model-source review/repair, including previous-versus-proposed project comparison for follow-up edits. No reviewer outcome is compiler/browser evidence. Successor exact CI, actual model/browser/visual acceptance, canonical package and guarded publication remain pending. No deployment request has been pushed and no model/default/hardware/version promotion is inferred.

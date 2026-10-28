@@ -318,3 +318,45 @@ The candidate-validation workflow now also admits the professional-starters
 branch lane on push; deployment remains separately guarded and authorized only
 through the existing main request path. No production model default, weights,
 hardware or runtime module version is changed at this source freeze.
+
+
+## Actual successor review failure and bounded repair — 2026-10-28
+
+Candidate `e1f24512fd47769ba741da409240cd721147a453` passed exact-source remote
+CI40661367843. Its complete local workflow replay passed123/123 with stable
+selected source hashes; the local receipt retains its working-tree qualification.
+The actual pinned7B run completed normally in756.7s with one1443-token draft
+and one512-token audit. The auditor returned `{"issues":[]}` and delivered the
+unchanged draft. This was a source-review false negative: visible input labeling,
+helpful empty guidance and filtered task callbacks were defective.
+
+The original20-case evaluator reported6/20, but investigation found cascading
+locator failures for valid direct title text beside child controls. Its original
+source and receipt remain immutable. The versioned third evaluator changes only
+title/container lookup and screenshot fallback, preserving all20/26 assertions.
+Three positive variants, including direct text beside controls, pass26/26, and
+all nine isolated faults are detected. Its frozen SHA256 is
+`068a918a176596cd8c73093f9b3e38721a2b8392d8cb6f798272065bdbf58346`.
+Regrading the unchanged delivered candidate gives14/20: absent helpful empty
+state/visible input label, filtered restore/delete failures, deletion persistence
+failure and browser errors (`index is not defined`). The prior590f ZIP remains
+18/20 under this corrected grader. Root inspected unchanged desktop/mobile
+screenshots and recorded NOT_ACCEPTED for professional appearance. The
+[sanitized source-review failure receipt](../evidence/professional-starter-native-r2-review-failure.json)
+preserves these distinctions. No candidate was deployed and no module version,
+weights, model default or hardware was promoted from these observations.
+
+The next bounded repair replaces the optional empty issues shortcut with explicit
+coverage of every canonical requirement. Each row must identify its requirement,
+source-only assessment, concise observation and literal source evidence. Supported
+positive/preservation rows need a nonempty source quote. Exemptions for superseded
+or unrelated prior requirements require a real continuation and literal evidence
+from the newest instruction. Missing/duplicate coverage, inconclusive rows or
+invalid evidence cannot approve a candidate. The finite per-audit budget scales
+with requirements up to4096tokens; at most two audits and the existing three
+code drafts remain. Projects beyond bounded source/requirement/context admission
+retain an explicit review-not-run status rather than truncation. Outstanding
+issues cannot be escaped by exceeding those limits. This protocol strengthens
+coverage; it is still fallible model criticism, not actual behavior or appearance
+acceptance. A fresh source freeze, exact CI, real-model review/repair and unchanged
+project/browser/visual checks remain required before publication.

@@ -176,12 +176,22 @@ selection states, wrapping that leaves actions reachable, and coherent visual
 hierarchy are explicit quality expectations. They remain subordinate to the
 user's chosen style, stack and deliberately minimal scope.
 
-The source audit uses at most two512-token JSON reviews within the existing
-maximum three code drafts. JSON grammar and server checks bind findings to
-canonical requirement IDs and literal source quotes. A continuation provides
+The source audit uses at most two JSON reviews, each with a requirement-sized
+allowance bounded at4096tokens, within the existing maximum three code drafts.
+JSON grammar and server checks require exact coverage of canonical requirement
+IDs with source-only assessments and literal evidence. An empty assessment array
+cannot approve a project. Supported positive/preservation requirements need a
+nonempty exact source quote; missing, duplicate or inconclusive assessments cause
+bounded repair. Superseded/out-of-scope exemptions require a real continuation
+and a literal newest-instruction quote. A continuation provides
 both previous canonical source and the full composed proposed tree; combined
 source admission is bounded at64KiB/32files and the actual context window. The
 newest instruction defines edit scope, and review cannot require unrelated old
 defects to be repaired. Known unresolved review findings cannot be escaped by
 padding a replacement beyond the audit limit. Public metadata records only
 bounded status/timing/IDs/hashes, not reviewer prose or execution claims.
+
+Actual candidatee1 review missed source gaps and was not published; see the
+[checkpoint](entries/2026-10-27_PROFESSIONAL_STARTER_PROJECTS.md) and its retained
+negative evidence. Mandatory assessment coverage is a source protocol repair,
+not proof that the model can produce every requested project.

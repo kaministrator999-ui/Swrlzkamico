@@ -17,9 +17,11 @@ from programming_repair_context import expanded_project_delivery
 from programming_telemetry import buffered_chat_completion
 
 MAX_AUDITS = 2
-REVIEW_TOKENS = 512
+REVIEW_TOKENS = 4096
 MAX_SOURCE_BYTES = 64 * 1024
 MAX_FILES = 32
+MAX_REQUIREMENTS = 32
+ASSESSMENT_STATUSES = ("supported", "gap", "inconclusive", "superseded", "out-of-scope")
 REASON_PREFIX = "model-project-review-"
 
 
@@ -89,12 +91,19 @@ class _JsonModel:
 
 def _review_schema(requirements):
     item = {"type": "object", "additionalProperties": False,
-            "required": ["requirementId", "observation", "sourceQuote"],
+            "required": ["requirementId", "status", "observation", "sourceQuote", "instructionQuote"],
             "properties": {"requirementId": {"type": "integer", "enum": [row["requirementId"] for row in requirements]},
-                           "observation": {"type": "string", "minLength": 1, "maxLength": 180},
-                           "sourceQuote": {"type": "string", "maxLength": 180}}}
-    return {"type": "object", "additionalProperties": False, "required": ["issues"],
-            "properties": {"issues": {"type": "array", "maxItems": 3, "items": item}}}
+                           "status": {"type": "string", "enum": list(ASSESSMENT_STATUSES)},
+                           "observation": {"type": "string", "minLength": 1, "maxLength": 120},
+                           "sourceQuote": {"type": "string", "maxLength": 160},
+                           "instructionQuote": {"type": "string", "maxLength": 160}}}
+    return {"type": "object", "additionalProperties": False, "required": ["assessments"],
+            "properties": {"assessments": {"type": "array", "minItems": len(requirements),
+                                              "maxItems": len(requirements), "items": item}}}
+
+
+def _review_tokens(requirements):
+    return min(REVIEW_TOKENS, max(1024, 160 * len(requirements) + 256))
 
 
 def _context_limit(check, state):
@@ -112,8 +121,9 @@ def review_project_candidate(model, candidate, programming, validation, state,
     if check.get("status") != "PASS" or not review_requested(programming):
         return check
     state["feedback"] = ""
-    meta = {"schema": "swrlz-model-project-review-v1", "verification": "MODEL_SOURCE_REVIEW_ONLY",
+    meta = {"schema": "swrlz-model-project-review-v2", "verification": "MODEL_SOURCE_REVIEW_ONLY",
             "executionVerified": False, "auditsUsed": state["audits"], "maxAudits": MAX_AUDITS,
+            "maxRequirements": MAX_REQUIREMENTS,
             "sourceScope": "complete-composed-returned-project"}
     check["projectReview"] = meta
     previous_source = (str(programming.get("artifactEditSource") or "")
@@ -137,11 +147,17 @@ def review_project_candidate(model, candidate, programming, validation, state,
         return _reject(check, state, "budget-exhausted", "The bounded model source review remains unresolved.")
     contract = programming.get("intentContract") or {}
     requirements = _requirements(contract)
+    meta["requirementCount"] = len(requirements)
     if not requirements:
         meta["status"] = "INCONCLUSIVE"
         return _reject(check, state, "requirements-unavailable", "The canonical source-review requirements are unavailable.")
+    if len(requirements) > MAX_REQUIREMENTS:
+        return _context_limit(check, state)
+    review_tokens = _review_tokens(requirements)
+    meta["requestedMaxTokens"] = review_tokens
+    current_instruction = str(contract.get("currentInstruction") or "")
     payload = {"originalRequest": str(contract.get("originalRequest") or ""),
-               "currentInstruction": str(contract.get("currentInstruction") or ""),
+               "currentInstruction": current_instruction,
                "requirements": requirements, "previousProjectSource": previous_source,
                "completeProjectSource": source}
     system = (
@@ -156,57 +172,91 @@ def review_project_candidate(model, candidate, programming, validation, state,
         "Identify concrete requested behavior, empty/error states, label/focus/layout or preservation gaps "
         "visible in the source. A placeholder is not a persistent form label. Do not invent extra features "
         "or claim execution, browser tests, professional appearance acceptance or future file changes. "
-        "Return ONLY JSON {\"issues\":[{\"requirementId\":0,\"observation\":\"specific source gap\","
-        "\"sourceQuote\":\"literal source excerpt or empty for an absent feature\"}]}. "
-        "Use at most 3 issues, existing requirement IDs only, each observation and quote at most180characters. "
-        "Quote source exactly. Use {\"issues\":[]} if no concrete issue is supported."
+        "Assess EVERY requirement separately, exactly once, with its existing requirementId. "
+        "Trace requested interactions through their state change, rendering and save/restore paths. "
+        "A named function or control alone is not evidence that the required behavior is connected. "
+        "Evidence for implemented behavior must come from the actual implementation, not README claims, "
+        "comments or strings asserting that the behavior works; documentation requirements may cite documentation. "
+        "Return ONLY JSON {\"assessments\":[{\"requirementId\":0,\"status\":\"supported\","
+        "\"observation\":\"brief source finding\",\"sourceQuote\":\"literal source excerpt\","
+        "\"instructionQuote\":\"\"}]}. Do not return an empty or partial assessment array. "
+        "Use supported only when the actual source supports the whole requirement; positive must/preserve "
+        "requirements need a nonempty exact sourceQuote. Use gap for a concrete missing/broken requirement "
+        "or inconclusive when support cannot be established. Quotes may be empty for an absent feature or "
+        "a prohibition supported by absence. Use superseded or out-of-scope only for a continuation where "
+        "currentInstruction explicitly changes that requirement or excludes an unrelated pre-existing defect. "
+        "For those two statuses, instructionQuote must quote the relevant currentInstruction exactly and "
+        "observation must explain the override or boundary. Otherwise instructionQuote must be empty. "
+        "Each observation must be1to120characters; sourceQuote and instructionQuote at most160characters. "
+        "Never quote instructions as source evidence or infer an execution result."
     )
     messages = [{"role": "system", "content": system},
                 {"role": "user", "content": json.dumps(payload, ensure_ascii=False, separators=(",", ":"))}]
-    if count_message_tokens(messages) + REVIEW_TOKENS + safety_tokens > context_tokens:
+    if count_message_tokens(messages) + review_tokens + safety_tokens > context_tokens:
         return _context_limit(check, state)
     state["audits"] += 1
     meta["auditsUsed"] = state["audits"]
     started = time.perf_counter()
     try:
-        raw, timing = buffered_chat_completion(_JsonModel(model, _review_schema(requirements)), messages, REVIEW_TOKENS, 0.0)
+        raw, timing = buffered_chat_completion(_JsonModel(model, _review_schema(requirements)), messages, review_tokens, 0.0)
         meta["durationMs"] = round((time.perf_counter() - started) * 1000, 3)
         meta["finishReason"] = timing.get("finishReason")
-        meta["requestedMaxTokens"] = REVIEW_TOKENS
         meta["usage"] = {key: value for key, value in (timing.get("usage") or {}).items()
                          if key in ("prompt_tokens", "completion_tokens", "total_tokens") and type(value) is int and value >= 0}
-        if timing.get("finishReason") != "stop" or len(raw) > 8192:
+        if timing.get("finishReason") != "stop" or len(raw) > 32768:
             raise ValueError("Review did not end as a complete bounded JSON response")
         value = json.loads(raw)
-        if not isinstance(value, dict) or set(value) != {"issues"}:
-            raise ValueError("Review must contain only an issues array")
-        issues = value["issues"]
-        if not isinstance(issues, list) or len(issues) > 3:
-            raise ValueError("Review issue count is invalid")
+        if not isinstance(value, dict) or set(value) != {"assessments"}:
+            raise ValueError("Review must contain only an assessments array")
+        assessments = value["assessments"]
+        if not isinstance(assessments, list) or len(assessments) != len(requirements):
+            raise ValueError("Review must assess every canonical requirement")
         checked = []
-        for item in issues:
-            if not isinstance(item, dict) or set(item) != {"requirementId", "observation", "sourceQuote"}:
-                raise ValueError("Review issue shape is invalid")
+        seen = set()
+        exemptions = 0
+        for item in assessments:
+            if not isinstance(item, dict) or set(item) != {"requirementId", "status", "observation", "sourceQuote", "instructionQuote"}:
+                raise ValueError("Review assessment shape is invalid")
             index = item["requirementId"]
-            observation, quote = item["observation"], item["sourceQuote"]
+            status = item["status"]
+            observation, quote, instruction_quote = item["observation"], item["sourceQuote"], item["instructionQuote"]
             if (type(index) is not int or not 0 <= index < len(requirements)
-                    or not isinstance(observation, str) or not 0 < len(observation.strip()) <= 180
-                    or not isinstance(quote, str) or len(quote) > 180 or (quote and quote not in source)):
+                    or index in seen or not isinstance(status, str) or status not in ASSESSMENT_STATUSES
+                    or not isinstance(observation, str) or not 0 < len(observation.strip()) <= 120
+                    or len(observation) > 120
+                    or not isinstance(quote, str) or len(quote) > 160 or (quote and quote not in source)
+                    or not isinstance(instruction_quote, str) or len(instruction_quote) > 160):
                 raise ValueError("Review requirement or literal source evidence is invalid")
-            checked.append((requirements[index], observation, quote))
+            seen.add(index)
+            if status == "supported" and requirements[index]["kind"] in ("must", "preserve") and not quote.strip():
+                raise ValueError("Positive support requires a literal nonempty source quote")
+            if status in ("superseded", "out-of-scope"):
+                if (not previous_source or not current_instruction.strip() or not instruction_quote.strip()
+                        or instruction_quote not in current_instruction):
+                    raise ValueError("Scope exemptions require a quoted current continuation instruction")
+                exemptions += 1
+            elif instruction_quote:
+                raise ValueError("Only scope exemptions may include an instruction quote")
+            if status in ("gap", "inconclusive"):
+                checked.append((requirements[index], status, observation, quote))
+        if seen != set(range(len(requirements))):
+            raise ValueError("Canonical requirement coverage is incomplete")
     except (ValueError, TypeError, KeyError, RuntimeError):
         meta.setdefault("durationMs", round((time.perf_counter() - started) * 1000, 3))
         meta["status"] = "INCONCLUSIVE"
         return _reject(check, state, "inconclusive", "Return a complete source candidate; the bounded model source audit was inconclusive.")
+    meta["assessmentCount"] = len(assessments)
+    meta["coverageComplete"] = True
+    meta["scopeExemptionCount"] = exemptions
     meta["issueCount"] = len(checked)
     meta["requirementIds"] = [row[0]["requirementId"] for row in checked]
-    meta["status"] = "ISSUES" if checked else "NO_CONCRETE_ISSUES"
+    meta["status"] = ("ISSUES" if any(row[1] == "gap" for row in checked) else "INCONCLUSIVE") if checked else "SOURCE_ASSESSED_NO_GAPS"
     if checked:
         # Keep reviewer prose out of public validation metadata. Only the next
         # model generation receives it as advisory, non-authoritative feedback.
-        feedback = json.dumps([{"requirement": row[0], "observation": row[1], "sourceQuote": row[2]}
-                               for row in checked], ensure_ascii=False)
-        return _reject(check, state, "issues", feedback)
+        feedback = json.dumps([{"requirement": row[0], "status": row[1], "observation": row[2], "sourceQuote": row[3]}
+                               for row in checked[:3]], ensure_ascii=False)
+        return _reject(check, state, "issues" if meta["status"] == "ISSUES" else "inconclusive", feedback)
     state["outstanding"] = False
     return check
 
