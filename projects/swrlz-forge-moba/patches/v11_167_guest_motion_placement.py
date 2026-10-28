@@ -29,7 +29,7 @@ def apply(html):
   'Send actual joystick inputs promptly on pointer motion, throttled to about 65ms, plus immediate press and release over existing authenticated PeerJS data connection.',
   'Apply host-verified guest movement in native authoritative gameplay steps, including the v11.164 host-background catch-up frames, instead of only once on the old 130ms world-snapshot tick.',
   'Use native collision checks and short tangent sliding to escape tight paths without allowing movement through buildings or rocks; protect accepted house build approach orders.',
-  'Provide in-world host movement status for each guest (moving, blocked, stale packet, idle, captured) and telemetry through SWYRL_ENGINE_LAN.guestControlV165().',
+  'Provide in-world host movement status for each guest (moving, blocked, stale packet, idle, captured) and telemetry through SWYRL_ENGINE_LAN.guestControlV167().',
   'Retain the already-deployed v11.165 frame-performance optimization and v11.166 bounded visual input prediction; new runtime state uses distinct se167 names.',
   'Focused JS checks: host moved in gameplay frame, no duplicate snapshot movement, protected placement remained invalid, joystick press/release delivered. Actual cross-device acceptance pending.',
   'Automatic LAN discovery, building replication/growth, team fog, wolf release and the HF build+upload-only deployment workflow unchanged.'
