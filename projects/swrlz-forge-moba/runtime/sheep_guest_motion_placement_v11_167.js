@@ -179,7 +179,7 @@ se152StopWorld=function(...args){
  se167.rejectedPreview=0;se167.previewReason='';
  return se167PreviousStop(...args);
 };
-window.SWYRL_ENGINE_LAN.guestControlV165=()=>({
+window.SWYRL_ENGINE_LAN.guestControlV167=()=>({
  active:se150Match.active,role:se150Match.role,
  attemptedJoystickSends:se167.tx,guestJoystick:stMobile.pointer!==null,
  guestStrength:Math.round((Number(stMobile.strength)||0)*100),
