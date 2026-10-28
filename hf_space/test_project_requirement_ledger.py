@@ -66,7 +66,18 @@ class ProjectRequirementLedger(unittest.TestCase):
                 engine=load_engine(name);model=Responses([(SOURCE,'stop')])
                 with patch.object(engine,'load',return_value=model):
                     events=list(engine.generate_events({'prompt':REQUEST,'history':[]}))
-                self.assertEqual(events[-1]['type'],'COMPLETED')
+                # This context-only model double deliberately omits the requested
+                # CSS/JavaScript; preserving the ledger is not candidate acceptance.
+                self.assertEqual(events[-1]['type'],'FAILED')
+                self.assertEqual(events[-1]['reason'],'PROGRAMMING_CONTRACT_UNRESOLVED')
+                self.assertFalse(any(event['type']=='COMPLETED' for event in events))
+                validation=next(event['validation'] for event in events
+                                if event['type']=='CANDIDATE_VALIDATION')
+                self.assertEqual(validation['status'],'REJECT')
+                self.assertIn('missing-required-language:css',validation['reasons'])
+                self.assertIn('missing-required-language:javascript',validation['reasons'])
+                self.assertNotIn(SOURCE,''.join(event.get('text','') for event in events
+                                              if event['type']=='DELTA'))
                 system=model.calls[0]['messages'][0]['content']
                 marker='PERSISTENT USER INTENT CONTRACT (acceptance target; preserve across every repair):\n'
                 ledger=json.JSONDecoder().raw_decode(system.split(marker,1)[1])[0]

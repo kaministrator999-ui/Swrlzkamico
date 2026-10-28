@@ -195,3 +195,24 @@ Actual candidatee1 review missed source gaps and was not published; see the
 [checkpoint](entries/2026-10-27_PROFESSIONAL_STARTER_PROJECTS.md) and its retained
 negative evidence. Mandatory assessment coverage is a source protocol repair,
 not proof that the model can produce every requested project.
+
+
+### Literal review input and terminal truth repair
+
+The requirement metadata remains server-owned JSON. Complete previous/current
+project sources follow as labeled raw untrusted data, preserving literal bytes
+and hashes rather than duplicating JSON-escaped file contents. The actual message
+representation is counted for context admission. Positive supported assessments
+require nonempty evidence in the JSON grammar as well as exact non-whitespace
+source matching on the server. A prohibition is supported when the forbidden
+behavior is absent; its gap means forbidden behavior is present. Assessment
+fields request source evidence before the model verdict. These are bounded
+source-review controls, not semantic proof from a quote alone.
+
+An outstanding audit remains explicit if a later source/strategy check rejects
+a replacement; its old source hash is labeled as the previously reviewed
+candidate rather than attributed to the new rejected source. Exhausted guarded
+programming rejection emits FAILED and withholds rejected code. A safe refusal
+is never successful project delivery. The actual source119 negative run and
+short attention diagnosis are preserved in the checkpoint and
+[evidence receipt](evidence/professional-starter-native-r3-review-failure.json).

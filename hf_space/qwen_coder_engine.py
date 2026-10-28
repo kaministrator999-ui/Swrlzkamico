@@ -689,6 +689,7 @@ def generate_events(payload):
         if guarded_turn:
             repair_target_fp=repair_diagnostic.get("candidateFingerprint") if repair_diagnostic else None
             project_review_state=new_review_state()
+            last_project_review={}
 
             def validate_attempt(text_value,previous_attempt_fp=None,completion=None):
                 check=completion_validation(_candidate_structure_check(text_value,programming,history),completion or {})
@@ -701,6 +702,24 @@ def generate_events(payload):
                 )
                 check=review_project_candidate(model,text_value,programming,check,project_review_state,
                     lambda rows:_token_count(model,rows),CONTEXT_TOKENS,CONTEXT_SAFETY_TOKENS)
+                if check.get("projectReview"):
+                    last_project_review.clear()
+                    last_project_review.update(check["projectReview"])
+                elif project_review_state.get("outstanding") and check.get("status")!="PASS":
+                    # A source/strategy rejection skips the model audit. Retain
+                    # the unresolved audit as prior-candidate evidence rather
+                    # than relabelling it as a review of the current source.
+                    check["projectReview"]={
+                        "schema":"swrlz-model-project-review-v2",
+                        "verification":"MODEL_SOURCE_REVIEW_ONLY",
+                        "executionVerified":False,"status":"OUTSTANDING",
+                        "auditsUsed":project_review_state["audits"],
+                        "maxAudits":last_project_review.get("maxAudits"),
+                        "currentCandidateReview":"NOT_RUN_CANDIDATE_REJECTED",
+                        "lastReviewedCandidate":dict(last_project_review),
+                    }
+                    check["reasons"]=list(dict.fromkeys([*(check.get("reasons") or []),
+                        "model-project-review-outstanding"]))
                 return check,fp
 
             candidate_text,timing=buffered_chat_completion(model,messages,response_tokens,temperature)
@@ -893,12 +912,17 @@ def generate_events(payload):
                "requestedWords":longform_target["requestedWords"],"wordCount":candidate_check["wordCount"],
                "finishReason":candidate_check.get("finishReason")}
         return
+    if candidate_attempts and candidate_attempts[-1].get("finishReason")=="length":
+        yield {"type":"FAILED","phase":"FAILED","reason":"OUTPUT_TOKEN_LIMIT","message":"The model reached its output limit before finishing; no complete artifact was accepted.","finishReason":"length"}
+        return
     if review_rejection(candidate_check):
         yield {"type":"FAILED","phase":"FAILED","reason":"PROJECT_SOURCE_REVIEW_UNRESOLVED",
                "message":"The bounded model source review remains unresolved; no complete project artifact was accepted.",
                "verificationState":"MODEL_SOURCE_REVIEW_ONLY"}
         return
-    if candidate_attempts and candidate_attempts[-1].get("finishReason")=="length":
-        yield {"type":"FAILED","phase":"FAILED","reason":"OUTPUT_TOKEN_LIMIT","message":"The model reached its output limit before finishing; no complete artifact was accepted.","finishReason":"length"}
+    if guarded_turn and candidate_check.get("status")=="REJECT":
+        yield {"type":"FAILED","phase":"FAILED","reason":"PROGRAMMING_CONTRACT_UNRESOLVED",
+               "message":"The bounded programming attempts did not satisfy the requested contract; no complete project artifact was accepted.",
+               "verificationState":"NOT_EXECUTION_VERIFIED"}
         return
     yield {"type":"COMPLETED","phase":"COMPLETE","totalLatencyMs":telemetry["engineTotalLatencyMs"],"loadLatencyMs":telemetry["modelLoadLatencyMs"],"firstDeltaLatencyMs":first_delta}

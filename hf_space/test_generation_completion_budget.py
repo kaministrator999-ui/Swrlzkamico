@@ -88,6 +88,103 @@ class CompletionBudgetTest(unittest.TestCase):
                 self.assertNotIn(PARTIAL,''.join(e.get('text','') for e in events if e['type']=='DELTA'))
                 self.assertEqual(next(e['validation'] for e in events if e['type']=='CANDIDATE_VALIDATION')['status'],'REJECT')
 
+    def test_invalid_review_then_repeated_code_retains_outstanding_failure(self):
+        from test_project_review import REQUEST, BAD, report
+        invalid=report(quote='')  # Full coverage, but no literal evidence for positive requirements.
+        for engine in self.engines():
+            with self.subTest(engine=engine.__name__):
+                model,events=self.generate(engine,{'prompt':REQUEST,'history':[]},
+                    [(BAD,'stop'),(invalid,'stop'),(BAD,'stop'),(BAD,'stop')])
+                self.assertEqual(len(model.calls),4)
+                self.assertEqual(events[-1]['type'],'FAILED')
+                self.assertEqual(events[-1]['reason'],'PROJECT_SOURCE_REVIEW_UNRESOLVED')
+                self.assertFalse(any(e['type']=='COMPLETED' for e in events))
+                self.assertNotIn(BAD,''.join(e.get('text','') for e in events if e['type']=='DELTA'))
+                check=next(e['validation'] for e in events if e['type']=='CANDIDATE_VALIDATION')
+                self.assertEqual(check['status'],'REJECT')
+                self.assertIn('strategy-repeat-previous-attempt',check['reasons'])
+                self.assertIn('model-project-review-outstanding',check['reasons'])
+                review=check['projectReview']
+                self.assertEqual(review['status'],'OUTSTANDING')
+                self.assertEqual(review['auditsUsed'],1)
+                self.assertEqual(review['currentCandidateReview'],'NOT_RUN_CANDIDATE_REJECTED')
+                self.assertEqual(review['lastReviewedCandidate']['status'],'INCONCLUSIVE')
+                self.assertNotIn('sourceSha256',review)
+                self.assertIn('sourceSha256',review['lastReviewedCandidate'])
+                self.assertFalse(review['executionVerified'])
+                self.assertIn('MODEL SOURCE REVIEW ADVISORY',model.calls[-1]['messages'][-1]['content'])
+
+    def test_changed_but_invalid_source_cannot_erase_an_unresolved_review(self):
+        from test_project_review import REQUEST, BAD
+        broken=BAD.replace('</head>','<link rel="stylesheet" href="missing.css"></head>')
+        changed=broken.replace('<h1>Tasks</h1>','<h1>Updated tasks</h1>')
+        for engine in self.engines():
+            with self.subTest(engine=engine.__name__):
+                model,events=self.generate(engine,{'prompt':REQUEST,'history':[]},
+                    [(BAD,'stop'),('{"assessments":[]}','stop'),(broken,'stop'),(changed,'stop')])
+                self.assertEqual(len(model.calls),4)  # Only the first candidate received an audit.
+                self.assertEqual(events[-1]['reason'],'PROJECT_SOURCE_REVIEW_UNRESOLVED')
+                check=next(e['validation'] for e in events if e['type']=='CANDIDATE_VALIDATION')
+                self.assertIn('model-project-review-outstanding',check['reasons'])
+                self.assertTrue(any('missing' in reason for reason in check['reasons']))
+                self.assertEqual(check['projectReview']['auditsUsed'],1)
+                self.assertEqual(check['projectReview']['lastReviewedCandidate']['status'],'INCONCLUSIVE')
+                self.assertFalse(any(e['type']=='COMPLETED' for e in events))
+                delivered=''.join(e.get('text','') for e in events if e['type']=='DELTA')
+                self.assertNotIn('<html>',delivered)
+
+    def test_a_valid_new_candidate_and_review_clear_the_outstanding_failure(self):
+        from test_project_review import REQUEST, BAD, GOOD, report
+        for engine in self.engines():
+            with self.subTest(engine=engine.__name__):
+                model,events=self.generate(engine,{'prompt':REQUEST,'history':[]},
+                    [(BAD,'stop'),('{"assessments":[]}','stop'),(GOOD,'stop'),(report(),'stop')])
+                self.assertEqual(len(model.calls),4)
+                self.assertEqual(events[-1]['type'],'COMPLETED')
+                self.assertFalse(any(e['type']=='FAILED' for e in events))
+                self.assertEqual(''.join(e.get('text','') for e in events if e['type']=='DELTA'),GOOD)
+                check=next(e['validation'] for e in events if e['type']=='CANDIDATE_VALIDATION')
+                self.assertEqual(check['status'],'PASS')
+                self.assertNotIn('model-project-review-outstanding',check['reasons'])
+                self.assertEqual(check['projectReview']['status'],'SOURCE_ASSESSED_NO_GAPS')
+                self.assertEqual(check['projectReview']['auditsUsed'],2)
+
+    def test_final_length_stop_keeps_output_limit_reason_with_prior_review_failure(self):
+        from test_project_review import REQUEST, BAD
+        for engine in self.engines():
+            with self.subTest(engine=engine.__name__):
+                _,events=self.generate(engine,{'prompt':REQUEST,'history':[]},
+                    [(BAD,'stop'),('{"assessments":[]}','stop'),(BAD,'stop'),(BAD,'length')])
+                self.assertEqual(events[-1]['type'],'FAILED')
+                self.assertEqual(events[-1]['reason'],'OUTPUT_TOKEN_LIMIT')
+                self.assertFalse(any(e['type']=='COMPLETED' for e in events))
+                check=next(e['validation'] for e in events if e['type']=='CANDIDATE_VALIDATION')
+                self.assertIn('model-project-review-outstanding',check['reasons'])
+                self.assertEqual(check['projectReview']['status'],'OUTSTANDING')
+
+    def test_exhausted_ordinary_programming_rejections_are_failed(self):
+        wrong='```python\nprint("Wrong language")\n```'
+        for engine in self.engines():
+            with self.subTest(engine=engine.__name__):
+                model,events=self.generate(engine,{'prompt':'Create a complete HTML page.','history':[]},
+                    [(wrong,'stop')])
+                self.assertEqual(len(model.calls),3)
+                self.assertEqual(events[-1]['type'],'FAILED')
+                self.assertEqual(events[-1]['reason'],'PROGRAMMING_CONTRACT_UNRESOLVED')
+                self.assertFalse(any(e['type']=='COMPLETED' for e in events))
+                self.assertNotIn(wrong,''.join(e.get('text','') for e in events if e['type']=='DELTA'))
+
+    def test_ordinary_non_coding_reply_keeps_its_success_terminal(self):
+        answer='The lake is quiet.'
+        for engine in self.engines():
+            with self.subTest(engine=engine.__name__):
+                model,events=self.generate(engine,{'prompt':'Describe a lake briefly.','history':[]},
+                    [(answer,'stop')])
+                self.assertEqual(len(model.calls),1)
+                self.assertEqual(events[-1]['type'],'COMPLETED')
+                self.assertFalse(any(e['type']=='FAILED' for e in events))
+                self.assertEqual(''.join(e.get('text','') for e in events if e['type']=='DELTA'),answer)
+
     def test_non_coding_length_stop_is_failed_and_normal_budget_is_larger(self):
         for engine in self.engines():
             with self.subTest(engine=engine.__name__):

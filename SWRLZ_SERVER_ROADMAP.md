@@ -1,3 +1,7 @@
+## UPDATE CONTINUATION REPAIR — 2026-10-28 — Literal source evidence and truthful failure terminals
+
+Candidate11986437 passed CI40733863489 and123/123 local commands, but actual mandatory-review coverage returned unsupported empty quotes. Three unchanged drafts were rejected, no project/ZIP was delivered, and a refusal was incorrectly marked COMPLETED. Same-input4/4 tiny attention probes passed; a JSONquote copy probe exposed extra backslashes. The bounded repair now addresses raw source presentation, grammar/polarity and sticky failure status before another actual diagnostic. No candidate is accepted or deployed from this evidence; prior live sourcef925 remains the last observed RUNNING release.
+
 ## UPDATE CONTINUATION REPAIR — 2026-10-28 — Requirement-covered source audits
 
 Exact-source CI40661367843 passed for e1f24512, but the actual7B auditor returned an empty issue list despite missing requested UI states and broken filtered callbacks. Corrected calibrated browser coverage gives14/20; original6/20 locator-cascade evidence is retained separately. The candidate is REPAIR_REQUIRED and was not published. The same bounded implementation lane now requires an explicit evidence-bearing assessment for every canonical requirement with a finite4096-token audit cap. Actual successor model/browser/visual evidence and guarded publication remain pending; no weights/default/hardware/module versions change on source checks alone.

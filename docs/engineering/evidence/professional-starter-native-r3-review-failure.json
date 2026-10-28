@@ -1,0 +1,22 @@
+{
+  "schema": "swrlz-starter-native-review-observation-v1",
+  "sourceCommit": "119864370c300f9565f620f6165c1c93511eaa77",
+  "exactSourceCi": {
+    "id": 40733863489,
+    "conclusion": "success"
+  },
+  "nativeSeconds": 2075.1730856389986,
+  "draftSha256": "c5a4c8cfb237583fdeed77ad9f4c775695c7a05a2fb4252aa7f058f07f5218be",
+  "unchangedDraftCount": 3,
+  "reviewAssessment": "INCONCLUSIVE: supported positive requirements had empty source quotes; server rejected them",
+  "projectDelivered": false,
+  "zipDelivered": false,
+  "actualTerminal": "COMPLETED refusal; misleading terminal status under repair",
+  "disposition": "REPAIR_REQUIRED_NOT_PUBLISHED",
+  "actualAttentionDiagnostic": {
+    "resultFileSha256": "fb2edc236693aeeb8f3dcdca1653408bb4d74ef1d6f8f8888b6b2cb5b98b0e05",
+    "exactTokenCases": "4/4 PASS; no general formatter failure established",
+    "quoteCase": "Extra literal backslashes; quote fidelity not established"
+  },
+  "modelDefaultsWeightsHardwareChanged": false
+}

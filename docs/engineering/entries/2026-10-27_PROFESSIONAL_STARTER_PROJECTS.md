@@ -360,3 +360,34 @@ issues cannot be escaped by exceeding those limits. This protocol strengthens
 coverage; it is still fallible model criticism, not actual behavior or appearance
 acceptance. A fresh source freeze, exact CI, real-model review/repair and unchanged
 project/browser/visual checks remain required before publication.
+
+
+## Actual mandatory-coverage run and repair diagnosis — 2026-10-28
+
+Source `119864370c300f9565f620f6165c1c93511eaa77` passed exact-source
+CI40733863489 and the123-command local replay with stable captured source hashes.
+The real pinned7B run finished after2075.17s. Its first draft exactly matched the
+earlier rejected e1 draft, so the changed reviewer received a controlled same-input
+comparison. The reviewer returned all15 rows, but positive assessments had empty
+source quotes and prohibitions were incorrectly called gaps. The server rejected
+the unsupported report. Both subsequent code attempts repeated the same source
+byte-for-byte and were rejected by the strategy gate. No project or ZIP was
+delivered. Safe withholding is not successful project generation. The refusal's
+COMPLETED terminal event was itself misleading and is being repaired; it cannot
+be used as acceptance. No guarded publication request was pushed.
+
+A bounded real-model attention diagnostic tested system authority, newest-user
+instructions, explicit history correction and changing the request against the
+same history. All four exact-token cases passed, and actual rendered prompts
+contained every message in order with correct chat delimiters. This does not
+establish a general formatter defect as the cause of the repeated large drafts.
+The short JSON quote case returned extra literal backslashes, providing concrete
+evidence that deeply JSON-escaped project source can burden literal source-copy
+review. The next small repair presents complete previous/current source as raw
+marked untrusted data beside server-owned requirement metadata, enforces positive
+quote shape in the JSON grammar, and states prohibition polarity explicitly.
+Source bytes and context admission remain unchanged and bounded. Separate engine
+repair preserves outstanding-review metadata through later source/strategy
+rejections and emits FAILED when no programming candidate is accepted. Actual
+reviewer-only diagnostics precede another full project run; no model weights,
+defaults or hardware are changed by this diagnosis.
