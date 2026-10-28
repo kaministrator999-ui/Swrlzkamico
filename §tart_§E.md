@@ -1,3 +1,11 @@
+## §E v11.161 — Continuous LAN guest movement regression correction (2026-10-27)
+
+Owner confirmed v11.159 live lobby discovery and one-tap join work, but guest sheep motion returned to a step-stop-step-stop pattern in v11.160. Root code issue: v11.156's renderer restarts a smoothstep `ease-in/ease-out` transition at each incoming ~130ms authoritative position snapshot. That imposes zero velocity at every transition boundary, especially visible under network jitter. The guest also runs visual updates through both a native `stUpdate` wrapper and an independent requestAnimationFrame callback.
+
+**Fix:** `runtime/sheep_continuous_guest_motion_v11_161.js` replaces the per-packet restarts with continuously tracked host position and velocity, a short capped extrapolation across jitter, and exponential position/heading correction on the existing guest requestAnimationFrame loop. The redundant native guest visual update is suppressed; host remains the sole gameplay authority and no new loop or server is created. Discontinuous jumps are safely snapped back to host positions. Captured actors remain handled by the existing wisp system. Existing lobby discovery, guest control, construction mirroring, team vision, and wolf countdown are unchanged.
+
+**Focused test:** 85 frames with 11 authoritative snapshots, 62/62 consecutive positive-motion frames after startup, no backwards steps, no duplicate native guest updates — PASS. This is a deterministic JS simulation, not a two-device acceptance result. Release adds append-only patch 193, maintains the 68 asset files. GitHub Action stays build/package and HF upload only; no Chromium or remote asset verification.
+
 ## §E v11.160 — Guest building visibility and timed wolf release (2026-10-27)
 
 Owner live-multiplayer report: guest sheep orders a structure and it appears only in the host's game; wolves already stand in the arena as soon as LAN Gameplay starts even though the release/head-start countdown has not finished. This patch retains real host-authoritative simulation, guest movement smoothing and canonical building snapshot reconciliation.
