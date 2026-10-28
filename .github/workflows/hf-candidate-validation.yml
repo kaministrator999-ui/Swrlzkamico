@@ -134,6 +134,7 @@ jobs:
           python hf_space/test_coder_model_config.py
           python hf_space/test_programming_structured_receipt_scope.py
           python hf_space/test_web_module_contract.py
+          python hf_space/test_web_asset_contract.py
           python hf_space/test_editor_project_routing.py
           python hf_space/test_source_project_routing.py
           python hf_space/test_application_capabilities.py
@@ -148,6 +149,10 @@ jobs:
           python hf_space/test_project_archive.py
           python hf_space/test_project_revision_workspace.py
           python hf_space/test_project_revision_validation.py
+          python hf_space/test_project_intent_continuity.py
+          python hf_space/test_project_requirement_ledger.py
+          python hf_space/test_starter_project_routing.py
+          python hf_space/test_project_quality.py
           python hf_space/test_project_selected_context.py
           python hf_space/test_runtime_capacity.py
           python hf_space/test_response_cognition_v123.py

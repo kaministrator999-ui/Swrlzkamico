@@ -1,4 +1,4 @@
-"""Bounded standalone browser-module resolution checks, never execution proof."""
+"""Bounded standalone browser dependency source checks, never execution proof."""
 from collections import deque
 from html.parser import HTMLParser
 from pathlib import Path
@@ -156,12 +156,101 @@ def _pinned_transform_api_gaps(code, resolve, parent="https://standalone.invalid
 class _Document(HTMLParser):
     def __init__(self):
         super().__init__(convert_charrefs=False);self.scripts=[];self.active=None
+        self.assets=[];self.styles=[];self.active_style=None;self.base_href=None
     def handle_starttag(self,tag,attrs):
-        if tag=='script':self.active=[dict(attrs),[]]
+        attrs=dict(attrs)
+        if tag=='script':
+            self.active=[attrs,[]]
+            if attrs.get('src') and str(attrs.get('type') or '').strip().lower() in (
+                    '', 'module', 'text/javascript', 'application/javascript', 'text/ecmascript', 'application/ecmascript'):
+                self.assets.append((attrs['src'],False))
+        if tag=='base' and self.base_href is None and 'href' in attrs:
+            self.base_href=attrs['href'] or ''
+        if tag=='style':self.active_style=[]
+        if attrs.get('style'):self.styles.append(attrs['style'])
+        rel=set(str(attrs.get('rel') or '').lower().split())
+        if tag=='link' and attrs.get('href') and (rel.intersection({'stylesheet','icon','apple-touch-icon','mask-icon'})):
+            self.assets.append((attrs['href'],'stylesheet' in rel))
+        if tag in ('img','audio','video','source') and attrs.get('src'):
+            self.assets.append((attrs['src'],False))
+        if tag=='video' and attrs.get('poster'):self.assets.append((attrs['poster'],False))
+        if tag=='input' and str(attrs.get('type') or '').lower()=='image' and attrs.get('src'):
+            self.assets.append((attrs['src'],False))
+        if tag=='image' and (attrs.get('href') or attrs.get('xlink:href')):
+            self.assets.append((attrs.get('href') or attrs['xlink:href'],False))
     def handle_data(self,data):
         if self.active is not None:self.active[1].append(data)
+        if self.active_style is not None:self.active_style.append(data)
     def handle_endtag(self,tag):
         if tag=='script' and self.active is not None:self.scripts.append((self.active[0],''.join(self.active[1])));self.active=None
+        if tag=='style' and self.active_style is not None:self.styles.append(''.join(self.active_style));self.active_style=None
+
+
+# Consume complete comments/strings first, so examples in content strings and
+# comments cannot become dependencies. Escaped/dynamic CSS URLs are ungraded.
+_CSS_STRING=r'''(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')'''
+_CSS_SCAN_STRING=r'''(?:"(?:\\[\s\S]?|[^"\\])*(?:"|$)|'(?:\\[\s\S]?|[^'\\])*(?:'|$))'''
+_CSS_URL=r'''(?<![\w-])url\s*\(\s*(?:'''+_CSS_STRING+r'''|[^()'"\s]+)\s*\)'''
+_CSS_REFERENCES=re.compile(
+    r'''/\*[\s\S]*?(?:\*/|$)|(?P<import>@import\b\s*(?:'''+_CSS_STRING+'|'+_CSS_URL+r'''))|(?P<url>'''+_CSS_URL+')|'+_CSS_SCAN_STRING,
+    re.I)
+
+
+def _css_references(source):
+    """Read literal CSS url()/@import references without executing CSS."""
+    for match in _CSS_REFERENCES.finditer(source):
+        value=match.group('import') or match.group('url')
+        if value is None:continue
+        stylesheet=match.group('import') is not None
+        if stylesheet:value=re.sub(r'^@import\s*','',value,flags=re.I)
+        if re.match(r'^url\s*\(',value,re.I):value=value[value.index('(')+1:-1].strip()
+        if len(value)>=2 and value[0] in ('"',"'") and value[-1]==value[0]:value=value[1:-1]
+        if value and '\\' not in value:yield value,stylesheet
+
+
+def _local_asset_url(reference,parent):
+    value=str(reference or '').strip()
+    # External resources, inline fragments and generated URLs are outside the
+    # returned source tree. They are not fetched or advertised as available.
+    if not value or value.startswith(('#','//')) or '\\' in value:
+        return None
+    try:
+        if urlsplit(value).scheme:return None
+        parts=urlsplit(urljoin(parent,value))
+    except ValueError:
+        return None
+    if parts.scheme!='https' or parts.netloc!='standalone.invalid':return None
+    # Decode once, then normalize dot segments before matching safe stored
+    # paths. This retains literal percent filenames and encoded space handling.
+    path=urlsplit(urljoin('https://standalone.invalid/',unquote(parts.path))).path
+    return urlunsplit((parts.scheme,parts.netloc,quote(path,safe='/'),'',''))
+
+
+def _document_asset_gaps(document,base,returned,visited_styles):
+    """Check only declared reachable local files; this is not visual grading.
+
+    CSS paths resolve from their own stylesheet, not the HTML entry. Shared
+    stylesheets are traversed once across documents, including import cycles.
+    srcset, escaped/dynamic CSS URLs and build outputs are deliberately ungraded.
+    """
+    try:
+        base=urljoin(base,document.base_href) if document.base_href is not None else base
+    except ValueError:
+        return ['invalid-project-asset-base']
+    pending=deque((base,reference,stylesheet) for reference,stylesheet in document.assets)
+    for style in document.styles:
+        pending.extend((base,reference,stylesheet) for reference,stylesheet in _css_references(style))
+    gaps=[]
+    while pending:
+        parent,reference,stylesheet=pending.popleft()
+        target=_local_asset_url(reference,parent)
+        if target is None:continue
+        if target not in returned:
+            gaps.append('missing-project-asset:'+unquote(urlsplit(target).path).lstrip('/')[:140])
+        elif stylesheet and target not in visited_styles:
+            visited_styles.add(target)
+            pending.extend((target,child,imported) for child,imported in _css_references(returned[target]))
+    return gaps
 
 
 def _declares_module_build(files, document_path):
@@ -245,7 +334,7 @@ def module_dependency_gaps(source, project_files=None):
                or item.get('language','').lower() in ('html','html5')]
     if not documents:
         documents=[(origin,source)]
-    gaps=[]
+    gaps=[];visited_styles=set()
     facts=json.loads((Path(__file__).with_name('programming_references')/'three-0.160.0.json').read_text())
     known={entry['url']:entry.get('bareImports',[]) for entry in facts['sources']}
     for base,html in documents:
@@ -256,6 +345,7 @@ def module_dependency_gaps(source, project_files=None):
         if len(html.encode('utf-8'))>MAX_FILE_BYTES:
             gaps.append('browser-module-source-exceeds-validation-limit');continue
         document=_Document();document.feed(html)
+        if files:gaps.extend(_document_asset_gaps(document,base,returned,visited_styles))
         imports={};scopes={};inline=[];classic=[];pending=deque()
         for attrs,body in document.scripts:
             kind=str(attrs.get('type') or '').strip().lower()

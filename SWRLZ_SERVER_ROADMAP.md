@@ -1,3 +1,11 @@
+## UPDATE STARTED — 2026-10-27 — Professional starter projects and continued feature work
+
+Primary focus: Chat coding/LALM saved-project generation. Source baseline `f925e2012ed7ece820e3272700bc6619846c2085`; prior bounded closeout is main760e9520. Owner requested stronger starter projects and continued professional appearance/function. One source lane `integration/professional-starters-20261027` adds shared web-project guidance, generic owned-project requirement continuity, concrete starter-stack routing, correctly sized multi-file budgets and conservative local browser-asset source checks. Both model weights/defaults remain unchanged. Exact source CI, successor guarded deployment and actual unchanged-project behavior/visual acceptance are pending at source freeze.
+
+Actual baseline task-board creation/continuation completed and preserved owned archive revisions, but browser behavior failed11/18 and5/24 respectively. Missing task completion/persistence and a follow-up null-handler regression remain negative evidence; archive validity is not application quality. The browser grader is isolated and separately calibrated; professional appearance requires screenshot review. Previous counter/popup acceptance and failed3Deditor/700M length observations remain dated evidence. No new module versions are assigned before actual acceptance.
+
+Checkpoint: `docs/engineering/entries/2026-10-27_PROFESSIONAL_STARTER_PROJECTS.md`. Existing independent main/Forge work and hosting are preserved; live publication uses only the existing guarded `kamiloki/Swyrlz` request path.
+
 ## UPDATE IN PROGRESS — 2026-10-25 — complete editors, independent projects and source ZIPs
 
 User-device/export evidence exposed a misrouted3D-editor request:700m/768tokens/no validation, with incomplete HTML reported COMPLETE. The repair also covers exact UI text, separate viewer/editor state, larger700M/Qwen code/document response budgets, default complete implementations without pseudocode/placeholders, real multi-file project ZIP downloads and the newest/all-recorded Chat update dialog. The earlier cube-viewer acceptance remains bounded historical evidence. Source/runtime/editor/archive acceptance is pending. Checkpoint: docs/engineering/entries/2026-10-25_EDITOR_PROJECT_COMPLETION.md. Preserve the independent main Forge lane and canonical HF Chat deployment.

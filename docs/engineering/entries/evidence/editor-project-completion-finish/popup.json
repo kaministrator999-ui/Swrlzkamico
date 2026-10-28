@@ -1,0 +1,55 @@
+{
+  "sourceCommit": "f925e2012ed7ece820e3272700bc6619846c2085",
+  "liveScriptSha256": "67b2172496735420a30b02d03da6b3e1fefc148f946c160660744d44c85d9d66",
+  "url": "https://kamiloki-swyrlz.hf.space",
+  "historyRecordCount": 264,
+  "sameUpdateSuppressed": true,
+  "manualReopen": true,
+  "source": "actual deployed full Chat HTML and real notes; no mocked manifest",
+  "status": "PASS",
+  "updateId": "editor-project-completion-20261025",
+  "historyCount": 264,
+  "passed": 9,
+  "checks": [
+    {
+      "id": "live-chat-http200",
+      "status": "PASS"
+    },
+    {
+      "id": "current-update-id",
+      "status": "PASS"
+    },
+    {
+      "id": "recorded-history-present",
+      "status": "PASS"
+    },
+    {
+      "id": "suppressed-after-reload",
+      "status": "PASS"
+    },
+    {
+      "id": "manual-reopen",
+      "status": "PASS"
+    },
+    {
+      "id": "preference-remains-checked",
+      "status": "PASS"
+    },
+    {
+      "id": "escape-close",
+      "status": "PASS"
+    },
+    {
+      "id": "mobile-viewport-fit",
+      "status": "PASS"
+    },
+    {
+      "id": "mobile-expanded-history-close",
+      "status": "PASS"
+    }
+  ],
+  "preferenceScope": "exact update ID in browser localStorage",
+  "cookiesRecorded": false,
+  "signedInAcceptance": false,
+  "newerIdSimulation": "separate source browser regression only"
+}

@@ -90,6 +90,14 @@ _SOFTWARE_PROJECT = re.compile(
     r"\b(?:editor|viewer|dashboard|calculator|whiteboard|drawing|paint|game)\b|"
     r"\b(?:software|coding|android|kotlin|desktop|browser|frontend|backend|source)\b", re.I,
 )
+_SOURCE_PROJECT_STACK = re.compile(
+    r"\b(?:react|next(?:\.js|js)|vue|nuxt|svelte|angular|astro|vite|"
+    r"flutter|django|fastapi|express|node(?:\.js|js)?)\b", re.I,
+)
+_STARTER_APPLICATION = re.compile(
+    r"\b(?:task\s*(?:board|manager|tracker)|todo|to-do|notes?\s+app|"
+    r"expense\s+tracker|habit\s+tracker)\b", re.I,
+)
 
 
 def requests_source_project(text: str) -> bool:
@@ -106,6 +114,12 @@ def requests_source_project(text: str) -> bool:
     if _TEXT_TARGET.search(head) and not _SOFTWARE_PROJECT.search(head):
         return False
     if _SOFTWARE_PROJECT.search(head) or _CODE_TARGET.search(head):
+        return True
+    # A named source stack or concrete small application is software even when
+    # the user does not spell out HTML/code. Scope to the requested project,
+    # never a later purpose or a proposal/story about that project.
+    if not _TEXT_TARGET.search(head) and (
+            _SOURCE_PROJECT_STACK.search(head) or _STARTER_APPLICATION.search(head)):
         return True
     if re.search(r"\b(?:mesh(?:es)?|rigged|sculpt(?:ure)?|character|assets?)\b",head,re.I):
         return False
@@ -130,6 +144,9 @@ def requests_web_source(text: str) -> bool:
         lead=_DELIVERABLE_REQUEST.match(raw)
         scope=re.split(r"\b(?:for|about)\b|[;!?]",raw[lead.end():],maxsplit=1,flags=re.I)[0]
         if re.search(r"\b(?:html|browser|web|website)\b|[\w§.-]+\.html?\b",scope,re.I):
+            return True
+        if (re.search(r"\b(?:react|next(?:\.js|js)|vue|nuxt|svelte|angular|astro|vite)\b",scope,re.I)
+                and not re.search(r"\breact[ -]native\b",scope,re.I)):
             return True
     if not head:
         # Edits to a specifically named application page have the same medium,

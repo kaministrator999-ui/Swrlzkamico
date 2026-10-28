@@ -1,18 +1,35 @@
 {
   "schema": "swrlz-chat-updates-v1",
   "latest": {
-    "id": "editor-project-completion-20261025",
-    "date": "2026-10-25",
-    "title": "Project downloads, longer answers and Chat updates",
+    "id": "professional-starter-projects-20261027",
+    "date": "2026-10-27",
+    "title": "Stronger starter projects and follow-up edits",
     "changes": [
-      "Download generated project files together in a ZIP from their saved Chat artifact.",
-      "New projects keep their own files and identity; follow-up edits retain the selected project.",
-      "Larger response allowances give the 700M model and coding model more room to finish their answers.",
-      "Open Chat updates from the side menu to read the newest notes and all recorded earlier updates.",
-      "Choose “Don’t show again for this update” below to hide this popup until a newer update arrives."
+      "Starter web projects receive shared guidance for working interactions, responsive layouts, readable styling and accessible controls.",
+      "Follow-up edits retain the saved project and its earlier requirements across more programming languages.",
+      "Source checks identify missing local stylesheets, scripts and image assets before accepting a standalone web project.",
+      "Named software starter projects receive coding routing and more room for complete multi-file source.",
+      "Source checks and self-review remain separate from actual browser testing."
     ]
   },
   "history": [
+    {
+      "id": "editor-project-completion-20261025",
+      "date": "2026-10-25",
+      "title": "Project downloads, longer answers and Chat updates",
+      "changes": [
+        "Download generated project files together in a ZIP from their saved Chat artifact.",
+        "New projects keep their own files and identity; follow-up edits retain the selected project.",
+        "Larger response allowances give the 700M model and coding model more room to finish their answers.",
+        "Open Chat updates from the side menu to read the newest notes and all recorded earlier updates.",
+        "Choose “Don’t show again for this update” below to hide this popup until a newer update arrives."
+      ],
+      "kind": "Source update",
+      "source": {
+        "commit": "f925e2012ed7ece820e3272700bc6619846c2085",
+        "path": "docs/engineering/entries/2026-10-25_EDITOR_PROJECT_COMPLETION.md"
+      }
+    },
     {
       "id": "qwen-project-generation-6240d715",
       "date": "2026-10-24",

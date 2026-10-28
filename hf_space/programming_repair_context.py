@@ -11,16 +11,41 @@ import json
 import re
 from typing import Any
 
+from project_quality import project_quality_policy
+
 
 def expanded_project_delivery(programming: dict[str, Any], prompt: str) -> bool:
     """Choose a larger bounded generation allowance for files and editing apps."""
     if not programming.get("codingTask") or programming.get("changeClass") in ("review","explain"):
         return False
     original=str((programming.get("intentContract") or {}).get("originalRequest") or "")
-    return bool(re.search(
+    if re.search(
         r"\b(?:multi[- ]?file|multiple files|separate files|project files|project archive|"
         r"zip|archive|bundle|folder structure|editor|modeling|modelling|ide)\b",
-        original+"\n"+str(prompt or ""),re.I))
+        original+"\n"+str(prompt or ""),re.I):
+        return True
+    # Reuse the response-cognition owner's requested-project and source-path
+    # classifiers. A list of real requested filenames is a multi-file delivery
+    # even when the user never uses the phrase "multi-file". Source examples
+    # and a README discussing those names are not an authored project request.
+    from response_cognition import requests_source_project, _requested_output_head, _SOURCE_FILE
+    from project_archive import source_fences
+    for request in (str(prompt or ""), original):
+        cursor=0;prose=[]
+        for fence in source_fences(request):
+            prose.append(request[cursor:fence["start"]]);cursor=fence["end"]
+        prose.append(request[cursor:]);request=" ".join(prose)
+        if not requests_source_project(request):
+            continue
+        head=_requested_output_head(request)
+        if re.search(r"\b(?:readme|documentation|guide|report|explanation|description)\b",head,re.I):
+            continue
+        # The requested object has already been classified as software. Its
+        # explicit filenames can appear in later feature/delivery clauses.
+        source_paths={match.group().casefold() for match in _SOURCE_FILE.finditer(request)}
+        if len(source_paths)>=2 or re.search(r"\bstarter\s+project\b",head,re.I):
+            return True
+    return False
 
 
 
@@ -252,6 +277,7 @@ def project_delivery_policy(programming: dict[str, Any], prompt: str) -> str:
     )
     contract=programming.get("intentContract") if isinstance(programming.get("intentContract"),dict) else {}
     policy+=_application_acceptance_summary(contract.get("applicationCapabilities") or {})
+    policy+=project_quality_policy(programming)
     source=str(programming.get("artifactEditSource") or "")
     evidence=programming.get("failureEvidence") if isinstance(programming.get("failureEvidence"),dict) else {}
     canonical_repair=str(programming.get("behaviorRepairBaseSource") or

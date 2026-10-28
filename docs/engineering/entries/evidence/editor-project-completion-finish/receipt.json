@@ -1,0 +1,83 @@
+{
+  "schema": "swrlz-editor-project-closeout-v1",
+  "closedAt": "2026-10-27T16:26:29.131746+00:00",
+  "lifecycleState": "ACCEPTED_WITH_FOLLOW_UP",
+  "scope": "verified source deployment, bounded saved-project generation/revision ZIP continuity, and update-history popup; full editor capability remains open",
+  "sourceCommit": "f925e2012ed7ece820e3272700bc6619846c2085",
+  "ciRun": 40439785973,
+  "deployRun": 40480347832,
+  "recoveryRun": 40486416861,
+  "spaceRevision": "48515f7fc6e8cb7b4450725320e8fed64fb886e6",
+  "runtimeStage": "RUNNING",
+  "liveUrl": "https://kamiloki-swyrlz.hf.space",
+  "startupRecovery": {
+    "actualRestartCalls": 1,
+    "acknowledged": true,
+    "factoryReboot": false,
+    "hardwareChanged": false,
+    "sourceUploadedByRecovery": false
+  },
+  "stableRollback": "75e45f4148e9eb8972d95305d92b67838c55b47c",
+  "uploadRevisionSequence": [
+    "48515f7fc6e8cb7b4450725320e8fed64fb886e6",
+    "74188fcbb0691cf6dcb17a7193c79b039d16c714"
+  ],
+  "runtimeProof": {
+    "workspace": {
+      "status": "PASS",
+      "receipt": "live-workspace-finish-r1-summary.json",
+      "createSeconds": 82.061082892993,
+      "editSeconds": 35.137039824039675,
+      "sameArtifactR1ToR2": true,
+      "otherThreeFilesByteIdentical": true,
+      "historicalR1ZipByteIdentical": true,
+      "foreignSession404": true,
+      "createBrowserCases": "5/5 PASS",
+      "editBrowserCases": "5/5 PASS",
+      "execution": "unchanged generated ZIPs in Bubblewrap; no outside network or host checkout"
+    },
+    "popup": {
+      "status": "PASS",
+      "cases": "9/9",
+      "historyRecords": 264,
+      "receipt": "live-editor-updates-finish-r2.json",
+      "scriptSha256": "67b2172496735420a30b02d03da6b3e1fefc148f946c160660744d44c85d9d66"
+    },
+    "capacity": {
+      "status": "HTTP200 numeric cgroup observations only",
+      "receipt": "editor-finish-live-state-r1.json"
+    }
+  },
+  "sourcePackage": {
+    "filename": "editor-project-completion-r2.zip",
+    "sha256": "31ca42999ea3a6834987e3d3d18edb1888accd81dc39fb0a20b07186e22c287a",
+    "bytes": 1133855,
+    "base": "6240d7151692898b9f30e75675707083ddb7f4cc"
+  },
+  "productionModelDefaultsChanged": false,
+  "weightsFineTuned": false,
+  "sandboxRepository": {
+    "source": "310ce70ae77815c82161d43c5cd0f6bb8e3d4812",
+    "newDelta": false
+  },
+  "registryVersions": {
+    "repository-work": "1.0.240",
+    "lalm-engine": "2.1.203",
+    "web-chat": "1.5.157",
+    "server-runtime": "2.3.440",
+    "runtime-manifest": "152",
+    "stream-contract": "V2",
+    "deployment-control": "1.0.41"
+  },
+  "newRegistryVersionsAssigned": false,
+  "versionPromotionStatus": "Full planned-release recorder gates (fresh hosted viewer/literal-heading sequence plus editor disposition) not run in finish-up scope; keep registry versions and preserve deployment by exact immutable source identity. No speculative version bump.",
+  "openFollowUps": [
+    "Actual unchanged model-generated 3D editor has not passed all 15 independent editor interactions; earlier editor trials remain failed/interrupted.",
+    "700M actual long-form revision produced 1002/1200 words and correctly failed its length contract; larger response allowance does not guarantee length or quality.",
+    "2000-file context/merge checks use controlled drafts; no actual large Android-app generation or general autonomous project competence is established.",
+    "Signed-in Google/GitHub provider acceptance was not tested; anonymous owned-session tests do not establish account integration.",
+    "Fresh viewer/literal-heading sequence on this final hosted source and full release/version-recorder closure remain separate follow-up acceptance."
+  ],
+  "environmentConfiguration": "Saved draft; user must Review/Save then Publish environment settings to activate installed snapshot. Separate from the live Chat deployment.",
+  "nextGate": "Bounded real-model editor repair and exact delivered ZIP browser acceptance; no further deployment permission required within existing scope."
+}

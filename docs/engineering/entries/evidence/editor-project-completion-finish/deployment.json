@@ -1,0 +1,79 @@
+{
+  "observedAt": "2026-10-27T16:23:48.500335+00:00",
+  "sourceCommit": "f925e2012ed7ece820e3272700bc6619846c2085",
+  "spaceRevision": "48515f7fc6e8cb7b4450725320e8fed64fb886e6",
+  "runtime": {
+    "stage": "RUNNING",
+    "hardware": {
+      "current": "zero-a10g",
+      "requested": "zero-a10g"
+    },
+    "gcTimeout": 172800,
+    "replicas": {
+      "current": 1,
+      "requested": 1
+    },
+    "devMode": false,
+    "domains": [
+      {
+        "domain": "kamiloki-swyrlz.hf.space",
+        "stage": "READY"
+      }
+    ],
+    "sha": "48515f7fc6e8cb7b4450725320e8fed64fb886e6",
+    "pySpacesVersion": "0.51.3"
+  },
+  "provenance": {
+    "sourceRepository": "kaministrator999-ui/Swrlzkamico",
+    "sourceCommit": "f925e2012ed7ece820e3272700bc6619846c2085",
+    "modelFormat": "SWRLZX",
+    "rawSha256": "65e4b5d730f66024c44da25aec27730db27aa0019df0df26c0997d17ce58bdee",
+    "rawSizeBytes": 233637480,
+    "transportSha256": "f0a466c869447345eb2e13d8ad4cf267830a1d69f20bb88de4e1ecf3ade863c7",
+    "transportChunks": 54,
+    "modelDelivery": "verified chunk download on startup; no model uploaded by workflow"
+  },
+  "capacityStatus": 200,
+  "capacity": {
+    "schema": "swrlz-runtime-capacity-v1",
+    "source": "cgroup-v2",
+    "scope": "visible-cgroup",
+    "memory": {
+      "limitBytes": 104000000000,
+      "limitState": "measured",
+      "currentBytes": 9741000704,
+      "currentState": "measured",
+      "peakBytes": 12760072192,
+      "peakState": "measured"
+    },
+    "cpu": {
+      "quotaMicros": 1600000,
+      "periodMicros": 100000,
+      "limitCores": 16.0,
+      "state": "measured"
+    }
+  },
+  "recoveryRuns": [
+    {
+      "id": 40486416861,
+      "head_sha": "2ed5c8c8797fc5def128912dab7f77f79a5cf8ee",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40486416861"
+    },
+    {
+      "id": 40485274286,
+      "head_sha": "9cbae00ff39fdccb20cb83e05e1ff6f1ee83f97f",
+      "status": "completed",
+      "conclusion": "failure",
+      "html_url": "https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40485274286"
+    },
+    {
+      "id": 40484191085,
+      "head_sha": "5091cf82d59cea9cc14eee2b5e66cf5a0afd7ed2",
+      "status": "completed",
+      "conclusion": "failure",
+      "html_url": "https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40484191085"
+    }
+  ]
+}

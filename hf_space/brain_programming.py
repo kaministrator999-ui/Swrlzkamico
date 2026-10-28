@@ -938,12 +938,19 @@ def _programming_intent_contract(prompt: str, change_class: str) -> dict[str, An
     negative=re.compile(r"\b(?:must\s+not|mustn't|do\s+not|don't|never|without|avoid|no\s+)\b",re.I)
     preserve_rx=re.compile(r"\b(?:keep|preserve|unchanged|do not change|don't change|change only|only change|same\s+(?:name|signature|settings?|config|configuration|permissions?))\b",re.I)
     requirement_rx=re.compile(r"\b(?:must|should|need(?:s)?\s+to|has\s+to|have\s+to|make\s+sure|ensure|require(?:s|d)?|implement|add|fix|accept|reject|support|compile|build|test|pass)\b",re.I)
-    requested_behavior_rx=re.compile(r"^(?:please\s+)?(?:create|write|show|include|use|return|render|provide|allow|enable|wire)\b",re.I)
+    requested_behavior_rx=re.compile(r"^(?:please\s+)?(?:create|write|show|include|use|return|render|provide|allow|enable|wire|start|save|persist|store|restore|load|make|let|handle)\b",re.I)
+    per_item_rx=re.compile(r"\b(?:each|every)\b[^.!?;]{0,160}\b(?:needs?|requires?|must|should|has|have)\b",re.I)
+    prohibition_only_rx=re.compile(r"^(?:please\s+)?(?:do\s+not|don't|never|avoid|no\b)",re.I)
     for clause in clauses[:32]:
         item=" ".join(clause.split())[:500]
+        # One clause can specify both a behavior and a restriction (for example,
+        # required files with no external libraries). Keep its literal wording
+        # in both categories instead of discarding the positive requirement.
         if negative.search(item): must_not.append(item)
-        elif preserve_rx.search(item): preserve.append(item)
-        elif requirement_rx.search(item) or requested_behavior_rx.search(item): must.append(item)
+        if preserve_rx.search(item): preserve.append(item)
+        if (not prohibition_only_rx.search(item) and
+                (requirement_rx.search(item) or requested_behavior_rx.search(item) or per_item_rx.search(item))):
+            must.append(item)
     if not must and raw:
         must.append("Satisfy the requested "+str(change_class or "programming")+" operation without changing unrelated behavior.")
     evidence.extend([
@@ -1917,6 +1924,18 @@ def programming_intent(prompt: str, history: list[dict[str, Any]], pinned_contex
         # alone never invents a persistent mutation target or bypasses the
         # Station's owned-thread/revision/hash checks.
         target=dict(last_artifact)
+    selected_target_id=str((target or {}).get("artifactId") or "")
+    prior_target_id=str(prior_state.get("artifactTargetId") or last_artifact.get("artifactId") or "")
+    if selected_target_id and prior_target_id and selected_target_id!=prior_target_id:
+        # A pin can select another saved project without starting a new one.
+        # Retire the previous project's contract and inherited repair evidence;
+        # neither its language nor its passing/failing behavior belongs here.
+        prior_contract={}
+        prior_state={}
+        canonical_carry=False
+        failure_history=[]
+        if not new_failure_evidence:
+            failure_evidence=None
     artifact_id=str((target or {}).get("artifactId") or "")
     target_message_id=str((target or {}).get("messageId") or "")
     base_revision=int((target or {}).get("artifactRevision") or 0)
@@ -1926,7 +1945,7 @@ def programming_intent(prompt: str, history: list[dict[str, Any]], pinned_contex
         target_message_id=str(failure_evidence.get("repairTargetMessageId") or "")
         base_revision=int(failure_evidence.get("repairTargetArtifactRevision") or 0)
         base_source_hash=str(failure_evidence.get("repairTargetArtifactSourceHash") or "")
-    elif vague_failure and last_artifact:
+    elif vague_failure and target is None and last_artifact:
         artifact_id=str(last_artifact.get("artifactId") or "")
         target_message_id=str(last_artifact.get("messageId") or "")
         base_revision=int(last_artifact.get("artifactRevision") or 0)
@@ -1934,10 +1953,17 @@ def programming_intent(prompt: str, history: list[dict[str, Any]], pinned_contex
     continuation=bool(artifact_id or target)
     mutation=bool(continuation and change in {"fix","refactor","feature","migrate"} and not vague_failure)
 
-    last_source=str((last_artifact or {}).get("text") or "")
+    last_source=str((target or last_artifact or {}).get("text") or "")
     web_source_continuation=bool(not new_project and continuation_reference
         and re.search(r"<!doctype\s+html\b|<html\b",last_source,re.I))
-    source_edit=web_source_continuation and change in ("feature","fix","refactor","migrate")
+    # Owned saved projects retain their intent across languages. A Python or
+    # Kotlin follow-up is the same project just as an HTML edit is; its newest
+    # instruction must not replace the original behavior/preservation contract.
+    # Plain source examples without an owned revision do not gain this authority.
+    owned_source_edit=bool(mutation and artifact_id and base_revision>0
+        and re.fullmatch(r"[a-f0-9]{64}",base_source_hash)
+        and str((target or {}).get("text") or ""))
+    source_edit=(web_source_continuation or owned_source_edit) and change in ("feature","fix","refactor","migrate")
     if prior_contract and (failure_evidence or vague_failure or canonical_carry or source_edit):
         active_contract=dict(prior_contract)
         if not isinstance(active_contract.get("languageContract"),dict):

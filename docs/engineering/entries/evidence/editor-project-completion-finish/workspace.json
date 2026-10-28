@@ -1,0 +1,61 @@
+{
+  "schema": "swrlz-live-project-workspace-finish-evidence-v1",
+  "status": "PASS",
+  "scope": "Actual hosted four-file counter creation and same-project single-file edit with unchanged-byte browser tests. Does not prove 3D editor or huge-project generation.",
+  "sourceCommit": "f925e2012ed7ece820e3272700bc6619846c2085",
+  "spaceRevision": "48515f7fc6e8cb7b4450725320e8fed64fb886e6",
+  "turns": [
+    {
+      "turn": "create",
+      "phase": "COMPLETE",
+      "terminalType": "COMPLETE",
+      "selectedModelId": "coder",
+      "sourceBefore": "f925e2012ed7ece820e3272700bc6619846c2085",
+      "sourceAfter": "f925e2012ed7ece820e3272700bc6619846c2085",
+      "artifactId": "artifact-2fb2bc91722d42b691be2eb66d994138",
+      "revision": 1,
+      "archive": "live-workspace-finish-r1-create.zip",
+      "archiveSha256": "35092ac58c858a2e93839fb835f8925d2133fa971652f24078d748b5a1ee527c",
+      "otherSessionStatus": 404,
+      "continuity": null,
+      "behaviorStatus": "PASS",
+      "behaviorPassed": 5,
+      "behaviorTotal": 5,
+      "sourceBytesRewritten": false,
+      "outsideNetwork": false
+    },
+    {
+      "turn": "edit",
+      "phase": "COMPLETE",
+      "terminalType": "COMPLETE",
+      "selectedModelId": "coder",
+      "sourceBefore": "f925e2012ed7ece820e3272700bc6619846c2085",
+      "sourceAfter": "f925e2012ed7ece820e3272700bc6619846c2085",
+      "artifactId": "artifact-2fb2bc91722d42b691be2eb66d994138",
+      "revision": 2,
+      "archive": "live-workspace-finish-r1-edit.zip",
+      "archiveSha256": "d39727eefc4d459edc8813a4ab2b4b1166bc8ab3ec7e88f284b0f3f96497f96d",
+      "otherSessionStatus": 404,
+      "continuity": {
+        "sameArtifact": true,
+        "revisionAdvancedByOne": true,
+        "unchangedOtherFiles": {
+          "styles.css": true,
+          "index.html": true,
+          "README.md": true
+        },
+        "targetChanged": true,
+        "historicalZipByteIdentical": true,
+        "historicalZipSha256": "35092ac58c858a2e93839fb835f8925d2133fa971652f24078d748b5a1ee527c"
+      },
+      "behaviorStatus": "PASS",
+      "behaviorPassed": 5,
+      "behaviorTotal": 5,
+      "sourceBytesRewritten": false,
+      "outsideNetwork": false
+    }
+  ],
+  "cookiesRecorded": false,
+  "signedInAcceptance": false,
+  "expectedImplementationSuppliedToModel": false
+}
