@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.160",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_160_GUEST_BUILD_WOLF_RELEASE",
-  "reason": "Owner report: LAN guest sheep builds only on host view and wolf models already present before headstart countdown ends. v11.160 host sends a room/match authenticated world-building-created-v2 message on actual construction, guest creates original artwork/scene mesh tied to host ID and team ownership; existing v11.157 world snapshots remain authoritative and recover missed events. Older v11.153 joystick input no longer cancels active guest sheep build approach orders. In LAN sessions, wolf models remain hidden while elapsed<headstart on both host and guests despite fog and vision repaint; they become visible at authoritative wolf release time, preserving previous wolf movement/attack gating. Focused source-level JS event test PASS for wolf hidden/released and host building event+guest rendered model. 192 cumulative patches; smoother movement, live directory, team fog and assets unchanged; owner physical two-browser acceptance pending. Dedicated HF deployment Action remains strictly package + upload, no Chromium or remote verification.",
-  "sourceCommit": "f81be68e802356549fd2b70e29228b4a6f482705",
+  "releaseVersion": "v11.161",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_161_CONTINUOUS_GUEST_MOTION",
+  "reason": "Owner verified automatic live game discovery and one-tap joining work, but LAN guest sheep returned to move/stop/move/stop after v11.160. Exact code issue: prior v11.156 smoothstep ease-in/out is restarted on each 130-ms authority packet, forcing visual velocity to zero; separate guest visual calls run through both native update and RAF. v11.161 uses continuous bounded host-velocity extrapolation and exponential guest pose correction on the EXISTING RAF only, suppresses redundant native guest visual call. It does not change host simulation, real LAN discovery, WebRTC, building sync, fog or wolf release. Focused V8 deterministic test PASS: 11 host snapshots over 85 guest rendered frames, all 62 post-startup step deltas positive, no backward steps or duplicate native calls. Physical two-device smoothness acceptance pending. All 193 historical engine patches and 68 assets retained. GitHub deploy workflow strictly packages and uploads to HF, no Chromium or remote audits.",
+  "sourceCommit": "ca7f207457972767978c6e49b77bd062c07cee98",
   "sourceIntegritySha256": null
 }
