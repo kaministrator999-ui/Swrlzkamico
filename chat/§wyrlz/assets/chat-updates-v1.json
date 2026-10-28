@@ -5,7 +5,8 @@
     "date": "2026-10-27",
     "title": "Stronger starter projects and follow-up edits",
     "changes": [
-      "Starter web projects receive shared guidance for working interactions, responsive layouts, readable styling and accessible controls.",
+      "Starter web projects prioritize visible form labels, helpful empty states, responsive controls and consistent styling.",
+      "Polished starter requests get a bounded review against the requested features before code delivery; follow-up reviews compare the saved and proposed project.",
       "Follow-up edits retain the saved project and its earlier requirements across more programming languages.",
       "Source checks identify missing local stylesheets, scripts and image assets before accepting a standalone web project.",
       "Named software starter projects receive coding routing and more room for complete multi-file source.",

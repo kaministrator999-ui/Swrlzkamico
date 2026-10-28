@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - integration/qwen-project-generation-*
+      - integration/professional-starters-*
       - feature/version-literacy-content-layout-v199
       - feature/grounded-version-recall-v201
       - feature/google-chatgpt-archive-import-v202
@@ -153,6 +154,7 @@ jobs:
           python hf_space/test_project_requirement_ledger.py
           python hf_space/test_starter_project_routing.py
           python hf_space/test_project_quality.py
+          python hf_space/test_project_review.py
           python hf_space/test_project_selected_context.py
           python hf_space/test_runtime_capacity.py
           python hf_space/test_response_cognition_v123.py

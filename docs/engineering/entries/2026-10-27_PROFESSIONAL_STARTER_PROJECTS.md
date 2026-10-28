@@ -266,3 +266,55 @@ tests pass after this repair. This small final branch correction follows the
 third local workflow replay; the committed source's complete remote CI remains
 the exact verification authority. Native pinned-model/browser acceptance and
 guarded publication are still pending at this source freeze.
+
+## First committed candidate and real-model evidence — 2026-10-28
+
+Candidate `590f068b4f6286c7a787149784e735a2160b88ae` passed exact-source remote
+CI40612678252. Native pinned Qwen7B, seed42/32K context/four CPU affinity,
+completed its first draft normally in598.3s with1511 visible output tokens and
+the8192-token allowance. The four unchanged model-authored files passed source
+validation and all18 checks in the then-frozen isolated browser evaluator.
+Compared with the earlier11/18 baseline, task completion, persistence and
+literal task text worked in this bounded result.
+
+Independent screenshot/source review still found placeholder-only input naming,
+no helpful empty-list message and basic presentation. The old18-check evaluator
+did not cover the first two explicit user requirements; it must not be called
+professional appearance acceptance. Its exact source and18/18 receipt remain
+immutable. The successor20/26 evaluator is frozen at
+`2cfc621e3c28196e12ac9e0d39861e5af41d64fa18848967ed6d90cd396d4bf3`;
+two trusted positive variants and nine isolated faults calibrated successfully.
+Regrading the identical native ZIP gives18/20, failing only the new visible-label
+and helpful-empty-state checks. This is improved coverage, not changed model
+bytes or a retroactive failure of the old test contract.
+
+Candidate590f has not been published: only a review-only guarded request was
+prepared. The live source remainsf925 pending fresh observation. The successor
+adds more concrete UI guidance and a bounded advisory model-source review inside
+the existing generation/repair owner. It does not fine-tune or replace weights,
+load a larger default model, execute generated code on the host, or claim that
+self-review proves behavior. Source, actual successor native/live project tests,
+manual appearance review, package lineage and exact publication evidence remain
+separate gates.
+
+## Successor review-loop source freeze
+
+The successor contains a shared bounded model source reviewer in both actual
+engine validation loops. It uses at most two512-token schema-constrained JSON
+audits and the existing maximum three complete code drafts. Criticism is
+explicitly advisory and source-only. Invalid scoped audits or unresolved findings
+withhold code rather than produce a false complete artifact. An initially large
+project receives a truthful NOT_RUN_CONTEXT_LIMIT observation without source
+truncation; padding cannot bypass an already outstanding finding. Continuation
+audits compare previous canonical source with the complete proposed composed
+tree, respect the newest edit scope, and preserve existing data/theme/interfaces
+without demanding unrelated pre-existing repairs.
+
+Fifteen focused review tests plus nineteen completion/budget and seven project
+revision tests passed for the final comparison repair. Earlier113-case adjacent
+evidence belongs to the prior helper snapshot. This remains controlled protocol
+evidence; a new actual pinned-model/browser run and exact-source CI are required.
+The candidate-validation workflow now also admits the professional-starters
+branch lane on push; deployment remains separately guarded and authorized only
+through the existing main request path. No production model default, weights,
+hardware or runtime module version is changed at this source freeze.

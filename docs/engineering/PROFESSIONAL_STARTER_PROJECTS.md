@@ -151,3 +151,37 @@ a different pinned project retires unrelated prior language, requirements and
 inherited repair state. The selected source, rather than another project's most
 recent HTML, supplies its medium. This is not an ownership grant; Station still
 validates the selected target and revision.
+
+## Bounded source review for polished starters
+
+Explicitly professional or polished authored web starter requests receive a
+bounded model source review after source/completion checks and before code is
+delivered. The reviewer compares the complete candidate with numbered canonical
+user requirements; it cannot invent requirements, permissions, execution results
+or implementation fixtures. Findings stay advisory source observations. Valid
+findings use the existing bounded complete-file repair loop; unresolved scoped
+reviews are not silently advertised as complete. Ordinary small code examples,
+explanations, reviews, internal provider JSON and explicit scaffolds keep their
+existing owners.
+
+Owned changed-file responses are reviewed against the composed saved tree so
+omitted preserved files cannot look missing. Review context is bounded; a large
+project that exceeds the starter review scope keeps ordinary source validation
+with an explicit review-not-run observation, rather than silently truncating
+canonical source or blocking all selected-file edits. No source review is a
+browser/compiler test or independent professional-design acceptance.
+
+Persistent visible form labels, useful empty-list guidance, clear focus and
+selection states, wrapping that leaves actions reachable, and coherent visual
+hierarchy are explicit quality expectations. They remain subordinate to the
+user's chosen style, stack and deliberately minimal scope.
+
+The source audit uses at most two512-token JSON reviews within the existing
+maximum three code drafts. JSON grammar and server checks bind findings to
+canonical requirement IDs and literal source quotes. A continuation provides
+both previous canonical source and the full composed proposed tree; combined
+source admission is bounded at64KiB/32files and the actual context window. The
+newest instruction defines edit scope, and review cannot require unrelated old
+defects to be repaired. Known unresolved review findings cannot be escaped by
+padding a replacement beyond the audit limit. Public metadata records only
+bounded status/timing/IDs/hashes, not reviewer prose or execution claims.

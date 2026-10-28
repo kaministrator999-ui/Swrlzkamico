@@ -6,6 +6,7 @@ from llama_cpp import Llama
 from brain_programming import programming_intent, CODE_TRUTH_POLICY, candidate_contract_gate, programming_library_context
 from programming_telemetry import buffered_chat_completion, candidate_attempt_receipt, generation_summary, observe_completion_chunk, completion_validation
 from longform_completion import longform_contract, complete_longform
+from project_review import new_review_state, review_project_candidate, review_rejection, review_budget_exhausted, review_retry_instruction
 from programming_repair_context import build_compact_repair_context, enforce_strategy_change, strategy_change_directive, contract_rejection_context, candidate_retry_messages, candidate_source_fingerprint, expanded_project_delivery, project_delivery_policy, fresh_project_history, source_fence_present, response_budget, long_delivery_policy, preserve_existing_source, source_sized_budget
 from response_cognition import classify_response_cognition, response_cognition_policy, response_cognition_camera
 from verified_file_dialogue_v277 import (verified_file_dialogue, grounding_instruction,
@@ -1047,6 +1048,7 @@ def generate_events(payload):
         yield {"type":"RESOURCE","cpuCapacity":_cpu_capacity(),"decodeThreads":_thread_plan()[0],"batchThreads":_thread_plan()[1],"maxResponseTokens":response_tokens}
         if guarded_turn:
             repair_target_fp=repair_diagnostic.get("candidateFingerprint") if repair_diagnostic else None
+            project_review_state=new_review_state()
 
             def validate_attempt(text_value,previous_attempt_fp=None,completion=None):
                 check=completion_validation(_candidate_structure_check(text_value,programming,history),completion or {})
@@ -1057,6 +1059,8 @@ def generate_events(payload):
                     repair_target_fp,
                     previous_attempt_fp,
                 )
+                check=review_project_candidate(model,text_value,programming,check,project_review_state,
+                    lambda rows:_token_count(model,rows),CONTEXT_TOKENS,CONTEXT_SAFETY_TOKENS)
                 return check,fp
 
             candidate_text,timing=buffered_chat_completion(model,messages,response_tokens,temperature)
@@ -1073,7 +1077,10 @@ def generate_events(payload):
                 regeneration_attempted=True
                 stalled="repair-stalled-no-executable-change" in (candidate_check.get("reasons") or [])
                 regeneration_reason="unchanged-executable-candidate" if stalled else "contract-or-structural-rejection"
-                if repair_turn:
+                if review_rejection(candidate_check):
+                    regeneration_reason="model-source-review-advisory"
+                    retry_instruction=review_retry_instruction(project_review_state)
+                elif repair_turn:
                     retry_instruction=strategy_change_directive(programming,candidate_check,2)
                 else:
                     retry_instruction=(
@@ -1098,10 +1105,11 @@ def generate_events(payload):
                 yield {"type":"CANDIDATE_ATTEMPT","attempt":attempt}
                 candidate_fp=retry_fp
 
-                if candidate_check.get("status")=="REJECT":
+                if candidate_check.get("status")=="REJECT" and not review_budget_exhausted(candidate_check):
                     retry_stalled="repair-stalled-no-executable-change" in (candidate_check.get("reasons") or [])
                     regeneration_reason+=";second-attempt-"+("unchanged" if retry_stalled else "rejected")
                     final_instruction=(
+                        review_retry_instruction(project_review_state) if review_rejection(candidate_check) else
                         strategy_change_directive(programming,candidate_check,3)
                         if repair_turn or "strategy-repeat-previous-attempt" in (candidate_check.get("reasons") or []) else
                         "FINAL PROGRAMMING CONTRACT GATE: two proposals failed deterministic acceptance. Return one complete candidate that obeys the explicit language/artifact contract exactly; no alternate-language substitute, fake execution claim, TODO, or placeholder."
@@ -1614,6 +1622,11 @@ def generate_events(payload):
                "message":"The model did not finish a document meeting the requested length within the bounded generation allowance. The displayed draft remains incomplete for that request.",
                "requestedWords":longform_target["requestedWords"],"wordCount":candidate_check["wordCount"],
                "finishReason":candidate_check.get("finishReason")}
+        return
+    if review_rejection(candidate_check):
+        yield {"type":"FAILED","phase":"FAILED","reason":"PROJECT_SOURCE_REVIEW_UNRESOLVED",
+               "message":"The bounded model source review remains unresolved; no complete project artifact was accepted.",
+               "verificationState":"MODEL_SOURCE_REVIEW_ONLY"}
         return
     if candidate_attempts and candidate_attempts[-1].get("finishReason")=="length":
         yield {"type":"FAILED","phase":"FAILED","reason":"OUTPUT_TOKEN_LIMIT","message":"The model reached its output limit before finishing; no complete artifact was accepted.","finishReason":"length"}

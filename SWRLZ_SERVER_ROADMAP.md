@@ -1,3 +1,9 @@
+## UPDATE CONTINUATION STARTED — 2026-10-28 — Polished starter source review and preserved-project comparison
+
+Candidate590f passed exact-source CI40612678252 and its original18 native browser cases, but manual inspection found missing visible input labeling and useful empty-state guidance. Expanded calibrated coverage regrades the same unchanged model ZIP18/20; original evidence is preserved. The active starter checkpoint now adds concrete UI guidance and bounded model-source review/repair, including previous-versus-proposed project comparison for follow-up edits. No reviewer outcome is compiler/browser evidence. Successor exact CI, actual model/browser/visual acceptance, canonical package and guarded publication remain pending. No deployment request has been pushed and no model/default/hardware/version promotion is inferred.
+
+See `docs/engineering/entries/2026-10-27_PROFESSIONAL_STARTER_PROJECTS.md`. Existing main Forge/§E work and hosting are preserved.
+
 ## UPDATE STARTED — 2026-10-27 — Professional starter projects and continued feature work
 
 Primary focus: Chat coding/LALM saved-project generation. Source baseline `f925e2012ed7ece820e3272700bc6619846c2085`; prior bounded closeout is main760e9520. Owner requested stronger starter projects and continued professional appearance/function. One source lane `integration/professional-starters-20261027` adds shared web-project guidance, generic owned-project requirement continuity, concrete starter-stack routing, correctly sized multi-file budgets and conservative local browser-asset source checks. Both model weights/defaults remain unchanged. Exact source CI, successor guarded deployment and actual unchanged-project behavior/visual acceptance are pending at source freeze.
