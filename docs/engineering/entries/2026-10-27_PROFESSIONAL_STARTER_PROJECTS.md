@@ -391,3 +391,25 @@ repair preserves outstanding-review metadata through later source/strategy
 rejections and emits FAILED when no programming candidate is accepted. Actual
 reviewer-only diagnostics precede another full project run; no model weights,
 defaults or hardware are changed by this diagnosis.
+
+
+## Literal-input critic diagnostic and CI fixture repair
+
+The reviewer-only real7B diagnostic at source
+`b8475e2744e779ae52d635e9ba950825a2ce8880` finished in327.54s against the
+identical known failing draft. It produced structurally valid15-row coverage,
+but every row repeated the unrelated complaint that each file lacked a summary.
+This is failed semantic criticism, not successful requirement review or project
+acceptance. The [sanitized diagnostic](../evidence/professional-starter-source-review-r1-failure.json)
+keeps shape validity separate from usefulness. No further code generation was
+started from those irrelevant findings. Focused actual source questions are the
+next diagnostic before changing the review architecture or rerunning a project.
+
+Exact CI40760648350 failed at the source-grounded cooperation step. Local replay
+isolated a budget-only fixture: it names a dynamic3Dviewer but intentionally
+provides only a heading and padding, with no runtime implementation. The previous
+COMPLETED expectation masked its existing source rejection. The test now expects
+truthful FAILED/dynamic-page-has-no-runtime-implementation while retaining all
+budget and source-preservation assertions. The same required step passes all33
+commands locally. This is a test-expectation repair, not fabricated viewer code
+or a changed validator. A fresh successor exact-source CI remains required.

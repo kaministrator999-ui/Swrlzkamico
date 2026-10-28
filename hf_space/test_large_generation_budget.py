@@ -97,7 +97,15 @@ class LargeGenerationPolicy(unittest.TestCase):
                 self.assertGreater(model.calls[0]['max_tokens'],4096)
                 self.assertEqual(next(e for e in events if e['type']=='CONTEXT')['responseBudgetTier'],'source-complete')
                 self.assertTrue(any(before in message['content'] for message in model.calls[0]['messages']))
-                self.assertEqual(events[-1]['type'],'COMPLETED')
+                # The budget-only model double has no viewer runtime; source
+                # sizing does not establish a valid coding candidate.
+                self.assertEqual(events[-1]['type'],'FAILED')
+                self.assertEqual(events[-1]['reason'],'PROGRAMMING_CONTRACT_UNRESOLVED')
+                self.assertFalse(any(e['type']=='COMPLETED' for e in events))
+                validation=next(e['validation'] for e in events if e['type']=='CANDIDATE_VALIDATION')
+                self.assertEqual(validation['status'],'REJECT')
+                self.assertIn('dynamic-page-has-no-runtime-implementation',validation['reasons'])
+                self.assertNotIn(after,''.join(e.get('text','') for e in events if e['type']=='DELTA'))
 
     def test_both_engines_reserve_long_output_before_optional_history(self):
         for name in ('qwen_coder_engine','lfm2_700m_engine'):

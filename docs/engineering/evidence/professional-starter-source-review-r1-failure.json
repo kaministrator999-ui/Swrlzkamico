@@ -1,0 +1,14 @@
+{
+  "schema": "swrlz-model-source-review-diagnostic-v1",
+  "sourceCommit": "b8475e2744e779ae52d635e9ba950825a2ce8880",
+  "candidateResponseSha256": "c5a4c8cfb237583fdeed77ad9f4c775695c7a05a2fb4252aa7f058f07f5218be",
+  "seconds": 327.5433607879968,
+  "modelPinVerified": true,
+  "structuralCoverage": 15,
+  "semanticAcceptance": "FAILED_IRRELEVANT_REPEATED_CRITICISM",
+  "observation": "All15 requirements received the same unrelated per-file-summary complaint; valid shape is not useful criticism.",
+  "projectGenerated": false,
+  "codeExecuted": false,
+  "publication": "NOT_REQUESTED",
+  "actualReceiptSha256": "3c508920bd31946006f33789376c2907db296b149770d103566d7ed523fb4796"
+}
