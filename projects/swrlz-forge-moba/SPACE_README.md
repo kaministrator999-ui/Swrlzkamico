@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.164
+title: §wyrl§ Engine v11.165
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,16 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.165 — Batch guest fog updates and cache unchanged houses (2026-10-28)
+
+Owner's real two-browser v11.164 test now confirms genuine guest building completion, both displays show 36/36 authoritative houses, and host background catch-up works, but the guest game looks laggy. At the previous code level, three separate guest synchronization layers requested full team fog painting during every 130-ms host snapshot, each walking the entire flock and up to 36 houses, drawing radial gradients, rebuilding team exploration masks and uploading a fog texture. The canonical host building reconciler also wrote all house properties/transforms/mesh heights on every packet even when no host state had changed. Those main-thread tasks compete with the existing guest requestAnimationFrame.
+
+**Optimization:** Add `runtime/sheep_guest_frame_performance_v11_165.js` as an append-only patch. On guest only, coalesce multiple fog paint requests into one paint on the *existing* guest animation frame and limit routine paints to approximately once per 235ms; paint immediately after changes to live team unit count, current role/fog mode or active building count. Preserve native fog/exploration implementation, wolf release visibility and team vision. Cache authoritative building state signatures per host ID, and short-circuit unchanged live models that are still mounted in the game scene; changed HP, progress, ownership, building kind, location/rotation and other fields still use the verified canonical reconciler and v11.163 host-driven growth. Prune cache when host removes structures and clear all on game-stop or session restart. Avoid creating new renderer, timers or a network service. Diagnostic `SWYRL_ENGINE_LAN.performance()` reports measured frame FPS, network packet update cost, fog paints/coalescing and unchanged house cache hits. Guest LAN badge adds compact FPS and snapshot processing milliseconds.
+
+**Focused 36-building stress test:** 60 host world snapshots, 480 guest render frames: 2,160 possible state writes became **37 actual changed state applications**, while 180 full fog requests became **32 paints**. All 60 packets and 480 frames processed, no mock errors. These are simulated JavaScript counters, not measured real-device latency or proof of higher user FPS. Physical acceptance pending. No changes to v11.161 movement algorithm, v11.162 guest building commands, v11.163 real house construction progress, v11.164 background host clock, live LAN game search, fog logic or wolf rules. 197 historical source patches with all assets preserved. Production GitHub Action remains **package → Hugging Face upload only** and does not run Chromium or extra remote tests.
+
+
 
 ## §E v11.164 — Host background gameplay keeps construction progressing (2026-10-28)
 
