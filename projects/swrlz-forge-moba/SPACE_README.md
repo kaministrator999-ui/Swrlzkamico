@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.159
+title: §wyrl§ Engine v11.160
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,18 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.160 — Guest building visibility and timed wolf release (2026-10-27)
+
+Owner live-multiplayer report: guest sheep orders a structure and it appears only in the host's game; wolves already stand in the arena as soon as LAN Gameplay starts even though the release/head-start countdown has not finished. This patch retains real host-authoritative simulation, guest movement smoothing and canonical building snapshot reconciliation.
+
+**Construction delivery:** On actual host `stNewBuilding` creation (not on a local preview or speculative tap), broadcast a room/match-scoped `world-building-created-v2` event through the established WebRTC guest channel. The guest renders the authoritative model and host ID, maps the owning sheep and reattaches/shows its real mesh if fog or legacy scene handling hid it. The regular full world snapshot remains the source of truth and continues resolving missed events. Guest ghost clears only after host construction is confirmed. Guard against the older v11.153 joystick handler overriding an active guest sheep `build` approach order; native building validation and navigation remain on the host. Diagnostic `SWYRL_ENGINE_LAN.constructionRelease()` tracks building created/sent/received/rendered counts and current head-start wolves.
+
+**Wolf release:** The native start still creates the wolf gameplay units and keeps the existing collision/AI/head-start rules, but wolf models are hidden on both host and guest until the authoritative `elapsed >= headstart` release moment, even when fog/vision passes repaint visibility. At release they become eligible for visibility according to team fog. No pre-release wolf controls or attacks.
+
+**Verification boundary:** Focused JS source and event test passed: wolf model hidden before timer, shown on release, host building message emitted, guest received and rendered a real house. Physical dual-browser acceptance pending. 192 append-only engine patches, all 68 historic assets retained. Production GitHub Action remains checkout/package/upload to the dedicated HF Space only—no Chromium or remote verification workflow.
+
+
 
 ## §E v11.159 — Automatically discover live hosted Sheep Tag lobbies (2026-10-27)
 
