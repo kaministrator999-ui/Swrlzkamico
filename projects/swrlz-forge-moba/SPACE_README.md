@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.163
+title: §wyrl§ Engine v11.164
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,18 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.164 — Host background gameplay keeps construction progressing (2026-10-28)
+
+**Actual device evidence:** Owner's two-browser screenshot shows LAN guest received host world frames and all **12/12 houses**, but an active house reads **building 9% host / 9% shown · progress stalled**. This disproves the earlier idea that the guest lacks a building replica: authoritative **host simulation** is not progressing. The game's render loop ordinarily calls native `stUpdate(dt,t)` and advances sheep movement, pathing and house progress. When one Android browser is foregrounded as guest, the other browser running the host may have its `requestAnimationFrame` paused or heavily throttled. The separate 130ms host snapshot interval can remain active and keep sending the same stalled construction data.
+
+**Fix:** `runtime/sheep_host_background_sim_v11_164.js` wraps the *existing* host `se152Snapshot` timer. Before the host constructs the next network world packet, compare monotonic session time that the native animation already advanced with wall-clock passage since the last snapshot. Only when native simulation falls behind, execute the **same native `stUpdate`** in capped 50ms steps, at most three seconds/60 steps per timer callback. This progresses actual accepted build routes, actual sheep physics and house construction rather than painting fake completed houses on the guest. Normal host rendering does not double-advance; paused, stopped or completed games do not accrue catch-up debt. Native match rules and existing camera animation are unchanged. A small `hostSimClock` diagnostic piggybacks on real world snapshots; guest HUD may show "host background catch-up", and `SWYRL_ENGINE_LAN.hostSimulationClock()` exposes counters and mode.
+
+**Testing:** Focused deterministic JavaScript test without host animation frames: 9% native house reached 100%, all snapshots reflected actual host progress, no foreground double ticks, no pause catch-up debt — PASS. This is not a physical two-browser acceptance. **Limit:** If Android fully suspends all JavaScript in the host tab, browser code cannot keep the match running until it is resumed; a separate always-on network game authority is required for that level of reliability. No guarantee of fully persistent hosting is made.
+
+Continues v11.161 smoother guest movement, LAN automatic host discovery, canonical guest houses, fog, wolf countdown and original game mechanics, retaining all assets. 196 cumulative append-only patches. Only the established GitHub build/package → Hugging Face upload workflow; no Chromium, remote audits or new server.
+
+
 
 ## §E v11.163 — Guest buildings grow visibly with authoritative construction (2026-10-28)
 
