@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.159",
+  "name": "§wyrl§ Engine v11.160",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_159.html",
+  "finalArtifact": "swyrl_engine_v11_160.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -205,7 +205,8 @@
     "patches/v11_156_smooth_build_team_fog.py",
     "patches/v11_157_authoritative_buildings.py",
     "patches/v11_158_guest_fixed_lives.py",
-    "patches/v11_159_live_game_directory.py"
+    "patches/v11_159_live_game_directory.py",
+    "patches/v11_160_guest_build_wolf_release.py"
   ],
   "finalBytes": null,
   "finalSha256": null
