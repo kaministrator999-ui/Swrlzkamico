@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.165
+title: §wyrl§ Engine v11.166
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,16 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.166 — More responsive guest-controlled sheep (2026-10-28)
+
+Owner reported that guest Sheep Tag felt somewhat laggy even after multiplayer discovery, house construction and movement fixes. v11.165 had already reduced CPU/GPU work through coalesced fog draws and caching unchanged house replicas and was successfully uploaded. This next change addresses **input-to-visual-motion latency**, especially when the host background browser sends snapshots infrequently.
+
+`runtime/sheep_guest_input_visual_v11_166.js` only biases the already-running v11.161 guest visual interpolation target toward the player's held mobile joystick. The on-screen sheep may anticipate up to **0.8 terrain units**, never moving the authoritative host actor or generating local building/physics commands. The per-frame host anchor is restored immediately; prediction is disabled on collision, capture, pause, end of round, pre-release wolf and invalid input. Normal packets correct the displayed sheep back to the host position, and releasing the joystick smoothly converges without persistent drift. No additional timers, packet traffic or render loop. The v11.165 batched fog and cached house work remain intact.
+
+**Focused V8 test:** Held joystick moved the local visual sheep ~0.75 world units with no host positional updates, original authoritative track remained exactly unchanged, releasing returned it to zero with smooth convergence, a blocked prediction had zero movement, and host role was untouched. PASS. This is a *visual latency improvement*, not a guarantee of actual network latency or that a fully background-suspended browser can continue hosting. On-device acceptance pending. `SWYRL_ENGINE_LAN.inputResponse()` exposes assisted frames, maximum lead and suppressed collisions. Prior shared game state and all 68 assets unchanged, cumulative patches 198. Production deployment remains build/package and Hugging Face upload ONLY, without Chromium or extra audit jobs.
+
+
 
 ## §E v11.165 — Batch guest fog updates and cache unchanged houses (2026-10-28)
 
