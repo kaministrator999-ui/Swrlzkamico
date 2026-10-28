@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.166
+title: §wyrl§ Engine v11.167
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,22 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.167 — Guest joystick updates host movement; central no-build previews stay invalid (2026-10-28)
+
+Owner's actual Android LAN guest screenshot (after concurrent v11.165 frame batching and v11.166 visual input prediction) shows `joystick idle · TX 129 · host ACK 66 · host moves 0`, a green House preview within the protected central arena region, and a sheep that only appears to move in a small circle when pushing the joystick. v11.166 intentionally predicted up to 0.8 terrain units **visually only**; when host movement is absent, this can look like a brief local wiggle with no actual translation. Real game movement and collision must still be applied by the host.
+
+**Root source defects and fix:**
+
+- v11.162 guest `stCanBuild` fallback converted many failed native placement validations into `ok:true`. It was not limited to stale guest data, and could turn the Spirit Pen, no-build zones, static obstacles or existing house footprints green. v11.167 uses the native `se162OriginalCanBuild` on the guest for the preview and preserves full host validation on command execution. Restricted ground stays red; no speculative local houses.
+- v11.155 host applied network guest movement only once at the ~130ms world snapshot, distinct from native frame simulation. v11.167 moves only registered guest-owned sheep on every native host `stUpdate` step, including v11.164 background-host fallback steps. It bypasses v11.155's extra snapshot movement step to avoid double movement. Movement uses host `stBlocked` plus constrained tangent slides and preserves accepted construction approach orders.
+- On mobile, after the original joystick pointer handler updates direction, guest sends seq-numbered `guest-stick-v2` intents on pointer changes (roughly 65ms throttle) and immediate release, through the existing verified PeerJS connection. The 115ms game heartbeat is retained as a fallback. No invented local authority, extra game server, or new render loop.
+- Actual host movement reason, joystick strength, input age and blocked counts piggyback in the existing host world packet; the guest badge and `SWYRL_ENGINE_LAN.guestControlV167()` distinguish movement from idle/stale/collision/invalid-seat cases. Stale visual wiggle without corresponding host movement can thus be diagnosed precisely.
+- Existing v11.165 fog/house frame optimizations and v11.166 local visual prediction are **preserved**, without symbol collision (new module uses `se167`). Other LAN discovery, building, wolf countdown, fog and HUD systems unchanged.
+
+**Focused deterministic JS check:** native host move produced movement; old snapshot tick did not move again; blocked central placement remained invalid; guest joystick press and immediate release were transmitted as real sequenced inputs. PASS. Physical two-browser acceptance pending. Source manifest adds patch 199, all existing engine assets retained. Dedicated GitHub Actions remains **package + Hugging Face upload only**, with no Chromium, browser testing or remote audit.
+
+
 
 ## §E v11.166 — More responsive guest-controlled sheep (2026-10-28)
 
