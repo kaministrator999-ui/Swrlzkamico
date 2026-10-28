@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.161",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_161_CONTINUOUS_GUEST_MOTION",
-  "reason": "Owner verified automatic live game discovery and one-tap joining work, but LAN guest sheep returned to move/stop/move/stop after v11.160. Exact code issue: prior v11.156 smoothstep ease-in/out is restarted on each 130-ms authority packet, forcing visual velocity to zero; separate guest visual calls run through both native update and RAF. v11.161 uses continuous bounded host-velocity extrapolation and exponential guest pose correction on the EXISTING RAF only, suppresses redundant native guest visual call. It does not change host simulation, real LAN discovery, WebRTC, building sync, fog or wolf release. Focused V8 deterministic test PASS: 11 host snapshots over 85 guest rendered frames, all 62 post-startup step deltas positive, no backward steps or duplicate native calls. Physical two-device smoothness acceptance pending. All 193 historical engine patches and 68 assets retained. GitHub deploy workflow strictly packages and uploads to HF, no Chromium or remote audits.",
-  "sourceCommit": "ca7f207457972767978c6e49b77bd062c07cee98",
+  "releaseVersion": "v11.162",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_162_RELIABLE_GUEST_HOUSE_ORDERS",
+  "reason": "Owner confirmed §E v11.161 made guest movement smoother, but houses placed by guests still do not build reliably. Root code bug in se152ApplyRemoteCommand: shared 36ms peer.lastInput throttle discards one-shot guest build actions arriving close to joystick packets without acknowledgment. Guest local stCanBuild preview also uses smoothed/stale world. v11.162 separates discrete guest build from movement throttle, validates registered peer/room/match and native game action against the guest sheep on the authoritative host, and returns explicit accepted/rejected/completed messages with stable request IDs and reasons. Host completion only after actual native stNewBuilding, with existing real-model event and snapshot backup intact. Clear stale joystick intent on accepted order; local preview is advisory while final rules are always host-validated. Focused JS test PASS: throttle collision accepted, actual completion event, invalid-site rejection and stale guest preview fallback. 194 cumulative engine patches, v11.161 movement, automatic hosted lobby discovery, buildings, fog, wolf release all preserved. Physical two-browser acceptance pending. GitHub Actions strictly packages and uploads to existing HF Space; no Chromium or remote audit.",
+  "sourceCommit": "daa2ae5161cc741b19ed932687d84c6387801f3b",
   "sourceIntegritySha256": null
 }
