@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.161
+title: §wyrl§ Engine v11.162
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,16 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.162 — Reliable LAN guest house orders and real host receipts (2026-10-28)
+
+Owner confirms v11.161 restored smoother multiplayer guest sheep movement but guest house construction still fails. The actual host code at v11.152 applies a 36-ms `peer.lastInput` throttle to *every* packet, including a discrete `world-command: build`, so build taps arriving immediately after joystick data are silently dropped. Client-side construction preview also validates against potentially stale/smoothed guest positions, which can reject sites before ever asking the authoritative host.
+
+**Fix:** Introduce a narrow room/match/registered-peer-bound host-side build command handler in `runtime/sheep_reliable_guest_build_v11_162.js` that bypasses the joystick throttle for builds only, calls the unchanged native `se152BaseCommand('build', payload)` with the actual guest sheep bound, and returns explicit accepted/rejected results with validated request IDs. Once the native sheep reaches the building site and `stNewBuilding` creates an actual house, send a **completed** result with that real host ID. Preserve v11.160's immediate real-building model broadcast and v11.157's canonical authoritative snapshot reconciliation. A guest's preview is only advisory if its local world is stale; the host still enforces all actual structure rules, resources, geometry, paths and bounds. On acceptance, clear prior stale joystick intent so it cannot cancel the active construction order. `SWYRL_ENGINE_LAN.houseOrders()` surfaces guest send/accept/reject/complete and host pending/accepted/completed telemetry, including reasons. Never treat a local click as a built house.
+
+**Focused JS test:** Host accepted a build even with a fresh `peer.lastInput` (throttle collision), sent real completion only when the native building was created, rejected an invalid path with reason, cleared stale joystick, and let an otherwise stale local preview reach host validation. PASS. No physical dual-browser acceptance yet. This adds patch 194, with prior v11.161 continuous guest motion, live discovery, player seat ownership, fog and wolf countdown unchanged. HF GitHub Action remains **package + upload only**, no Chromium or remote verification.
+
+
 
 ## §E v11.161 — Continuous LAN guest movement regression correction (2026-10-27)
 
