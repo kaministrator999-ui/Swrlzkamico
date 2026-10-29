@@ -216,6 +216,6 @@
     "patches/v11_167_guest_motion_placement.py",
     "patches/v11_168_quest_browser_panel.py"
   ],
-  "finalBytes": null,
-  "finalSha256": null
+  "finalBytes": 6966914,
+  "finalSha256": "276d4c6c7685df559a7a933e3b6694967a4d48def932cd54e599604f2eaa16bf"
 }

@@ -1,3 +1,7 @@
+### §E v11.168 — Exact source integrity seal (2026-10-28)
+
+Successful dedicated build-and-upload [Actions 40809392796](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40809392796) rebuilt all **200 patches**, retaining historical assets, and measured generated HTML at **6,966,914 bytes**, SHA-256 **`276d4c6c7685df559a7a933e3b6694967a4d48def932cd54e599604f2eaa16bf`**. The prior manifest and request contained null optional integrity fields, so seal these actual observed build outputs in `source-manifest.json` and final `DEPLOY_REQUEST.json`, without changing the artifact bytes or bumping the v11.168 code version. A following deployment must validate this seal before upload. This is artifact integrity validation, not proof of headset UX acceptance or directly observed static-page marker.
+
 ### §E v11.168 release-candidate packaging repair (2026-10-28)
 
 The first v11.168 deploy workflow (40809222879) failed before upload because the generated editor HTML contains two literal `</head>` strings; the new CSS insert used a global-count assertion instead of targeting the first actual document head. The original v11.167 live page was therefore not replaced. This targeted corrective commit asserts the tag exists and inserts before the first closing `</head>` only, preserving all later script-string content. Local exact two-occurrence synthetic regression PASS; source release remains v11.168. Re-trigger the existing §E deploy only after this correction, and distinguish package/upload success from Quest 2 physical acceptance.
