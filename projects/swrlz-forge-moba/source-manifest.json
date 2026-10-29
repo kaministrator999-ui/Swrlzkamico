@@ -221,6 +221,6 @@
     "patches/v11_172_clean_chat_header.py",
     "patches/v11_173_dialog_stack.py"
   ],
-  "finalBytes": 7005228,
-  "finalSha256": "1dbd9a7e79b68b47ee2454faa954d1883f5b48e68d2425400bc7ca01c9f13824"
+  "finalBytes": 7005338,
+  "finalSha256": "7f02848d00e954a5358db4a62e3c1a72b454866e54585d436e962f156ff3797a"
 }

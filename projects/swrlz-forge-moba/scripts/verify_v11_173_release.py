@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build and verify the exact §E Chat-panel package, without browser/game suites."""
+"""Rebuild and validate the exact §E dialog-layer package and 68 assets."""
 import argparse
 import hashlib
 import json
