@@ -163,8 +163,9 @@ Current unreleased §E v11.169 seal:201 patches,68 assets,6,995,807 bytes, SHA25
 
 Current release: Chat **1.5.158**, Google account architecture **1.0.18**, LALM
 **2.1.204**, Server runtime **2.3.441**, Repository Work **1.0.241**. Exact prior
-values and changes were committed with the runtime Roadmap in
-`9ba69e6255acfd5f47ad49b576b40519591165bc`. Manifest152, strict streamV2, deploymentcontrol1.0.41 and
+values and changes are registered in runtime
+`9ba69e6255acfd5f47ad49b576b40519591165bc`; its version authorities and the
+canonical main Roadmap were published atomically. Manifest152, strict streamV2, deploymentcontrol1.0.41 and
 other owners remain unchanged. This is registered source/runtime evolution,
 not model training or real-account acceptance.
 
