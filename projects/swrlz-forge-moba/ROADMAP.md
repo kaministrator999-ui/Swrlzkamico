@@ -1,3 +1,7 @@
+### §E v11.168 release-candidate packaging repair (2026-10-28)
+
+The first v11.168 deploy workflow (40809222879) failed before upload because the generated editor HTML contains two literal `</head>` strings; the new CSS insert used a global-count assertion instead of targeting the first actual document head. The original v11.167 live page was therefore not replaced. This targeted corrective commit asserts the tag exists and inserts before the first closing `</head>` only, preserving all later script-string content. Local exact two-occurrence synthetic regression PASS; source release remains v11.168. Re-trigger the existing §E deploy only after this correction, and distinguish package/upload success from Quest 2 physical acceptance.
+
 ## §E v11.168 — Quest 2 Meta Browser adaptive 2D editor (2026-10-28)
 
 Owner requested controller-friendly operation of §E in Meta Quest 2 Browser without regressing phone/PC. Meta Browser supports a resizable 2D Chromium window (desktop/mobile modes); that panel's mouse/pointer/select events are NOT WebXR XRInputSource 3D rays. Full immersive WebXR would require explicit session and renderer/scene/controller integration and is **not** represented as implemented by this patch. Meta's browser guidance recommends controls at least 48×48 CSS px, focus feedback, and feature-checking `navigator.xr.isSessionSupported('immersive-vr')` rather than relying on a user agent for capability.

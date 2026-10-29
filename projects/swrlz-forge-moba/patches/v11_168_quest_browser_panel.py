@@ -10,7 +10,8 @@ def apply(html):
     root = Path(__file__).resolve().parents[1]
     js = (root/'runtime/engine_quest_panel_v11_168.js').read_text(encoding='utf-8')
     css = (root/'runtime/engine_quest_panel_v11_168.css').read_text(encoding='utf-8')
-    html = once(html, '</head>', '<style id="seQuestPanelV11168">\n'+css+'\n</style>\n</head>')
+    assert '</head>' in html, 'Missing HTML head end'
+    html = html.replace('</head>', '<style id="seQuestPanelV11168">\n'+css+'\n</style>\n</head>', 1)
     html = once(html, 'window.SWRLZ_FORGE_BUILD=', js+'\nwindow.SWRLZ_FORGE_BUILD=')
     html = once(html, 'SWYRL_ENGINE_DEPLOY_MARKER: V11_167_HOST_DIRECT_MOVE_STRICT_BUILD',
                 'SWYRL_ENGINE_DEPLOY_MARKER: V11_168_QUEST_BROWSER_PANEL')
