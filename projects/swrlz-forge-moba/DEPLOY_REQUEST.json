@@ -4,7 +4,7 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.168",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_168_QUEST_BROWSER_PANEL",
-  "reason": "v11.168 Quest Browser adaptive panel release: corrective retry after first packaging failed (two literal </head> strings). Patch now targets first actual head, preserving embedded source string; targeted two-token regression, JS parser, Python compile and Quest/phone/PC VM tests PASS. Existing HF packaging+upload only, 200 source patches, no immersive XR claim; on-headset acceptance remains pending.",
-  "sourceCommit": "86ca4adffdd8fc5fa4242924d8876251cf21945c",
-  "sourceIntegritySha256": null
+  "reason": "Final exact-seal v11.168 Quest 2 browser-editor release: last successful Action 40809392796 measured 6,966,914 bytes SHA-256 276d4c6c7685df559a7a933e3b6694967a4d48def932cd54e599604f2eaa16bf after 200 ordered patches. New manifest locks this real measured output; identical Quest CSS/JS, no model/game logic changes, no unrelated tests. Publish only if package integrity passes. User headset acceptance separate.",
+  "sourceCommit": "3baa2b2ac80d98d828dff147dad12b8e2987bba2",
+  "sourceIntegritySha256": "276d4c6c7685df559a7a933e3b6694967a4d48def932cd54e599604f2eaa16bf"
 }
