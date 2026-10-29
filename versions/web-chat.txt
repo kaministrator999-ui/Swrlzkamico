@@ -1,8 +1,10 @@
 ID=web-chat
-VERSION=1.5.157
-REVISION=1.5.157-v294-desktop-welcome-glass-card
+VERSION=1.5.158
+REVISION=1.5.158-chat-forge-account-panel
 KIND=web-interface
 SOURCE_BRANCH=runtime
 STATUS=active
 DISPLAY_NAME=§wyrlz Web Chat
 UPDATE_POLICY=runtime-hot
+
+CHAT_FORGE_20261029_NOTE=full canonical embedded Chat/shared preferences and update notice; Chat source=e4dee084f57788c3c6edc16381203d34ebc0c7e1; engine candidate=51d3d44aa3c5ac85f65cf83e0505dd7442c3c6b1; source/version activation evidence differs from real Google/deployed-store/owner-device acceptance, which remains pending. No model weights/default/hardware change.

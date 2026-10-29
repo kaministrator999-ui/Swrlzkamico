@@ -1,8 +1,10 @@
 ID=lalm-engine
-VERSION=2.1.203
-REVISION=2.1.203-generic-3d-web-grounding
+VERSION=2.1.204
+REVISION=2.1.204-chat-forge-account-panel
 KIND=lalm-engine
 SOURCE_BRANCH=runtime
 STATUS=active
 DISPLAY_NAME=§wyrlz LALM Engine
 UPDATE_POLICY=runtime-hot
+
+CHAT_FORGE_20261029_NOTE=scoped native inference plan and receipt-grounded action routing; Chat source=e4dee084f57788c3c6edc16381203d34ebc0c7e1; engine candidate=51d3d44aa3c5ac85f65cf83e0505dd7442c3c6b1; source/version activation evidence differs from real Google/deployed-store/owner-device acceptance, which remains pending. No model weights/default/hardware change.

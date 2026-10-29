@@ -1,0 +1,12 @@
+# Runtime release transaction receipt
+
+Canonical Roadmap owner: main:SWRLZ_SERVER_ROADMAP.md. This receipt is committed atomically with that Roadmap; it does not establish a second Roadmap authority.
+
+## UPDATE FINISHED — 2026-10-29 — shared Chat account, §E panel and scoped native actions
+
+Completed governed source/publication checkpoint: repository-work 1.0.240→1.0.241; server-runtime 2.3.440→2.3.441; web-chat 1.5.157→1.5.158; lalm-engine 2.1.203→2.1.204; google-account 1.0.17→1.0.18. Each actual changed module authority and this Roadmap are one transaction. Runtime manifest152, strict streamV2 and deploymentcontrol1.0.41 remain unchanged because their activation/schema/control owners are unchanged. Other independent modules are preserved.
+
+Chat exact source e4dee084f57788c3c6edc16381203d34ebc0c7e1 passed CI40928848556 and guarded deploy40929174874; Space5058110eccab6ec8965f550998eb0645609785ba observed RUNNING with matching runtime revision/provenance, canonical popup/broker200, anonymous profile/projects401 and forged editor lease401. §E host-only correction source51d3d44aa3c5ac85f65cf83e0505dd7442c3c6b1 passed CI40930279362; dedicated deploy40931411290 succeeded, Space6fdc0351b04c6b27a5f65b6c4402dfb259b61a72 RUNNING with stored source seal6,995,807/SHA2561c484cf4f627a87c95d720d11fabfe1fb9005f114c2a7712b67f7474222a3d84,201 patches and68 assets. Chat/backend bytes are unchanged between these two source commits, so Chat is not redeployed for the host-only correction. Existing HF target/independent deployment lanes retained; no Vercel/provider/weight/hardware change.
+
+Controlled real Chromium canonical Chat and exact §E desktop/mobile native edits/Undo/Redo/literal labels/account-switch metadata clearing pass; encrypted70MiB snapshot/CAS/isolation/revocation tests and actual pinned7B typed-plan probes pass within their bounds. Native model latency and earlier negative starter/editor/long-form evidence remain explicit. Real Google sign-in, deployed account write/read and owner-device UX remain pending. Direct §E host fetch is blocked by the cloud policy; HF artifact/runtime observations are distinct from hosted physical acceptance. Lifecycle ACCEPTED_WITH_FOLLOW_UP for bounded engineering/publication, DEVICE_TEST_PENDING. Details: docs/engineering/entries/2026-10-29_CHAT_FORGE_INTEGRATION.md at the current main release receipt. Publication approval NOT APPLICABLE (already explicit).
+

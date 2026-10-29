@@ -1,5 +1,5 @@
 ID=google-account
-VERSION=1.0.17
+VERSION=1.0.18
 KIND=account-auth-architecture
 SOURCE_BRANCH=mixed
 STATUS=active
@@ -15,3 +15,5 @@ V212_GITHUB_WORKFLOW_NOTE=Explicit opt-in OAuth scope modes public-workflow/priv
 V243_GITHUB_START_NOTE=GitHub connected-account startup source reader v243 deployed to existing kamiloki/Swyrlz Space revision ac4f1397aece7fcd455c59fc49e14a32506182dc from pinned source 6cf3de3a360683a067cddb44e84c1f78c3e9fed3 after offline CI and guarded HF publish. Independent canonical startup and module-authority GETs now execute as bounded 5-worker SHA-pinned batches with deterministic result order and limited timing metadata. Existing Google-owner OAuth isolation and Stage 1 read-only capability are unchanged. Workflow publication passed; signed-in mobile timing/behavioral acceptance remains pending.
 
 V244_GITHUB_HELP_NOTE=After user Dragon Chat (55) audit, exact Stage-1 GitHub engine help and engine pack help return informational read-only guidance; all other engine commands and all write/confirmation/deploy controls remain locked. Startup document links now pin to the SHA used for GitHub contents reads rather than mutable branch names. CI 38657071181 passed; guarded HF deploy 38657158948 published source 552526004ffaaccce75035eafd9c0fd9cf32a8da at Space revision befcf07137a83a948e0d5265294b09723c6106a1; prior ac4f1397aece7fcd455c59fc49e14a32506182dc preserved for rollback. Signed-in user-facing acceptance remains pending.
+
+CHAT_FORGE_20261029_NOTE=encrypted CAS profiles/projects and isolated Google embed authorization; Chat source=e4dee084f57788c3c6edc16381203d34ebc0c7e1; engine candidate=51d3d44aa3c5ac85f65cf83e0505dd7442c3c6b1; source/version activation evidence differs from real Google/deployed-store/owner-device acceptance, which remains pending. No model weights/default/hardware change.

@@ -1,8 +1,10 @@
 ID=server-runtime
-VERSION=2.3.440
-REVISION=2.3.440-qwen7b-project-generation
+VERSION=2.3.441
+REVISION=2.3.441-chat-forge-account-panel
 KIND=server-runtime
 SOURCE_BRANCH=runtime
 STATUS=active
 DISPLAY_NAME=§wyrlz Server Runtime
 UPDATE_POLICY=runtime-hot
+
+CHAT_FORGE_20261029_NOTE=observed RUNNING HF backend e4dee084/5058110e; Chat source=e4dee084f57788c3c6edc16381203d34ebc0c7e1; engine candidate=51d3d44aa3c5ac85f65cf83e0505dd7442c3c6b1; source/version activation evidence differs from real Google/deployed-store/owner-device acceptance, which remains pending. No model weights/default/hardware change.
