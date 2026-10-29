@@ -11,7 +11,8 @@ def apply(html):
     root=Path(__file__).resolve().parents[1]
     js=(root/'runtime/project_hub_my_projects_v11_170.js').read_text(encoding='utf-8')
     css=(root/'runtime/project_hub_my_projects_v11_170.css').read_text(encoding='utf-8')
-    html=once(html,'</head>','<style id="se170-project-library">'+css+'</style>\n</head>')
+    if '</head>' not in html: raise AssertionError('Missing document head')
+    html=html.replace('</head>','<style id="se170-project-library">'+css+'</style>\n</head>',1)
     html=once(html,'function mount(){\n  if(document.getElementById(\'seChatAccountPanel\')||disposed)return;',js+'\nfunction mount(){\n  if(document.getElementById(\'seChatAccountPanel\')||disposed)return;')
     html=once(html,'async function loadCloud(){','async function loadCloud(requestedId){')
     html=once(html,'const projectId=cloudList.value;if(!projectId)','const projectId=typeof requestedId===\'string\'?requestedId:cloudList.value;if(!projectId)')
