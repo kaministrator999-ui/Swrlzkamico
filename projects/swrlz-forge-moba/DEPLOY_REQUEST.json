@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.172",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_172_CLEAN_CHAT_HEADER",
-  "reason": "Owner requested removing the redundant external Open Chat link adjacent to the §wyrlz Chat title inside §E's embedded side panel. Keep header Close, Google sign-in, account project Save/Load, My Projects and all game/Quest/editor functionality unchanged. Exact source sealed CI 40962863642 PASS, 204 patches, 68 assets, 7003719 HTML bytes. Owner-device visual acceptance remains pending. Do not deploy standalone Chat.",
-  "sourceCommit": "a389466d6d51c0fe221397ac2bee505bf369f7ef",
-  "sourceIntegritySha256": "6037f52db537508b3c338b72bee4ac915498adf55589b8386c76394459ac9e2b"
+  "releaseVersion": "v11.173",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_173_DIALOG_LAYER_PRIORITY",
+  "reason": "Owner Android screenshot: right Details pane occludes open Projects; correct viewport < editor docks < Chat < dialogs by portaling same native Projects node to document.body and preserving controls. v11.173 source exact seal 205 patches, 68 assets, 7005338 HTML bytes, SHA 7f02848d00e954a5358db4a62e3c1a72b454866e54585d436e962f156ff3797a. Targeted and sealed CI 40967655488 SUCCESS. Owner device acceptance pending. Do not deploy standalone Chat.",
+  "sourceCommit": "0674c167bb5886cd433120fd4933d7c50d4a7659",
+  "sourceIntegritySha256": "7f02848d00e954a5358db4a62e3c1a72b454866e54585d436e962f156ff3797a"
 }
