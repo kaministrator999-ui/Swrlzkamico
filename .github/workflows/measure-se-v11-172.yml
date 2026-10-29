@@ -1,0 +1,26 @@
+name: §E v11.172 focused Chat header cleanup
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/patches/v11_172_clean_chat_header.py"
+      - "projects/swrlz-forge-moba/tests/chat_header_v11_172.mjs"
+      - "projects/swrlz-forge-moba/scripts/measure_v11_172_source.py"
+      - ".github/workflows/measure-se-v11-172.yml"
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - uses: actions/setup-node@v4
+        with: {node-version: "22"}
+      - name: Check exact header and existing controls
+        run: |
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_172_clean_chat_header.py
+          node projects/swrlz-forge-moba/tests/chat_header_v11_172.mjs
+      - name: Measure full source HTML
+        run: python projects/swrlz-forge-moba/scripts/measure_v11_172_source.py
