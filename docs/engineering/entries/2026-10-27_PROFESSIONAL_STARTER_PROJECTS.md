@@ -413,3 +413,26 @@ truthful FAILED/dynamic-page-has-no-runtime-implementation while retaining all
 budget and source-preservation assertions. The same required step passes all33
 commands locally. This is a test-expectation repair, not fabricated viewer code
 or a changed validator. A fresh successor exact-source CI remains required.
+
+
+## User-directed continuation boundary — 2026-10-29
+
+Disposition: REPAIR_REQUIRED, carried forward without promotion. The user has
+redirected active engineering to integrating the existing Chat into the §E side
+panel with shared Google-account history/settings and editor-only action access.
+This candidate lane remains preserved at the last source/CI identities; it is not
+the baseline for that integration. Last successful exact-source CI40761864599
+selects ea19d4f0cdd8f283b1670efe4a07ede99d63b2b8. No starter deployment request
+was pushed, no professional starter acceptance was recorded and no model default,
+weights or hardware changed.
+
+Focused7B and verified14B source-review diagnostics both failed the known label,
+empty-guidance and callback-scope cases; larger weights did not establish reliable
+self-review. Their external receipts and all raw drafts are retained. The external
+JS-scope prototype only downloaded verified parser/global metadata and vendor
+assets; it was not integrated or deployed. Source-quality and inference repairs
+remain explicit follow-up work rather than implied acceptance.
+
+The new integration starts from the previously deployed Chat sourcef925e201 and
+fresh canonical §E source from main, preserving this entire experimental branch.
+No additional user approval is pending for the requested integration work.
