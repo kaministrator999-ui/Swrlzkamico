@@ -4,7 +4,7 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.168",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_168_QUEST_BROWSER_PANEL",
-  "reason": "Quest 2 Meta Browser 2D panel compatibility: v11.168 adds auto-detected Quest editor profile, 48px toolbar/Atelier targets, focus cues, persistent Quest UI switch, viewport-responsive profile, pointerType and feature-tested WebXR-support diagnostics. No immersive session or tracked controller action claimed. Focused Node VM test PASS (Quest/phone/PC/profile toggle/pointer); Node syntax and Python patch smoke PASS. Ordered patch 200 retains v11.167 authoritative Sheep Tag LAN simulation and all assets. Deploy via existing package-and-HF-upload-only workflow, not AI Chat.",
-  "sourceCommit": "f379894a81714b45ff37b04bfda95ea6077ae64f",
+  "reason": "v11.168 Quest Browser adaptive panel release: corrective retry after first packaging failed (two literal </head> strings). Patch now targets first actual head, preserving embedded source string; targeted two-token regression, JS parser, Python compile and Quest/phone/PC VM tests PASS. Existing HF packaging+upload only, 200 source patches, no immersive XR claim; on-headset acceptance remains pending.",
+  "sourceCommit": "86ca4adffdd8fc5fa4242924d8876251cf21945c",
   "sourceIntegritySha256": null
 }
