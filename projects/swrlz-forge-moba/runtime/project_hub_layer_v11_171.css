@@ -1,0 +1,13 @@
+/* §E v11.171: the native Projects modal must outrank viewport game menus.
+   v11.143's #st141RuntimeMenu runs at z=3900 (historical overrides up to 4200);
+   the original project hub was at z=30, causing the Sheep Tag title/Play
+   buttons to overlap the active project picker on Android. Scope the priority
+   to the *open* hub; closing it returns the existing game menu unchanged.
+   Fixed positioning preserves a full-screen modal in portrait/landscape.
+   Chat's separately authorized side panel remains above at 2147482300. */
+#projectHub.project-hub.show{
+ position:fixed!important;
+ inset:0!important;
+ z-index:20000!important;
+ isolation:isolate;
+}

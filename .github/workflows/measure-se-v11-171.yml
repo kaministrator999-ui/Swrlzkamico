@@ -1,0 +1,27 @@
+name: §E v11.171 modal stacking focused source test
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/patches/v11_171_project_modal_priority.py"
+      - "projects/swrlz-forge-moba/runtime/project_hub_layer_v11_171.css"
+      - "projects/swrlz-forge-moba/tests/project_modal_stack_v11_171.mjs"
+      - "projects/swrlz-forge-moba/scripts/measure_v11_171_source.py"
+      - ".github/workflows/measure-se-v11-171.yml"
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - uses: actions/setup-node@v4
+        with: {node-version: "22"}
+      - name: Verify isolated foreground modal contract
+        run: |
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_171_project_modal_priority.py
+          node projects/swrlz-forge-moba/tests/project_modal_stack_v11_171.mjs
+      - name: Measure exact generated engine HTML
+        run: python projects/swrlz-forge-moba/scripts/measure_v11_171_source.py
