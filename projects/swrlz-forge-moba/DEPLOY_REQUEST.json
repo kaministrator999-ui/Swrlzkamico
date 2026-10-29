@@ -5,6 +5,6 @@
   "releaseVersion": "v11.169",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_169_CHAT_ACCOUNT_PANEL",
   "reason": "Owner-authorized Chat account side panel, encrypted native project Save/Load and receipt-grounded native mesh/scene actions. Exact committed Chat candidate CI 40930279362 SUCCESS; final native desktop/mobile Chromium, package seal/68 assets and targeted controls pass. Preserve Quest/game/LAN source. This final request-only commit invokes the existing engine package/upload lane; real Google and physical-device acceptance remain separate.",
-  "sourceCommit": "34eed0839902dae96941fed1ab0cff9e9cf4a10a",
+  "sourceCommit": "6a53f242f2739f0348f962564ba6c1ec24c41a36",
   "sourceIntegritySha256": "1c484cf4f627a87c95d720d11fabfe1fb9005f114c2a7712b67f7474222a3d84"
 }
