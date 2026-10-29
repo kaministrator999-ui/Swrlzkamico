@@ -1,0 +1,2985 @@
+{
+  "version": "v11.89",
+  "htmlBytes": 4557192,
+  "htmlSha256": "a9f6b48036c852be5a75150f18ebc9e31633c43acaa28c3b08a79b1d67506ed0",
+  "patches": 121,
+  "assets": 58,
+  "preservedSources": 285,
+  "preservedAssets": 56,
+  "originalGearAndTailPartsPreserved": 37,
+  "closedOrganicSurfaces": 55,
+  "model": {
+    "species": "courier",
+    "valid": true,
+    "parts": 92,
+    "triangles": 547676,
+    "nativeToolRebuildExact": true,
+    "materialEditUndo": true,
+    "nativeSaveReloadExact": true,
+    "texturedGLBExport": true,
+    "errors": []
+  },
+  "cloverAndControls": {
+    "cloverFlock": [
+      {
+        "visualModel": "clover-meadow-sheep",
+        "visualMeshes": 31,
+        "visualTriangles": 33087,
+        "visualSourceTriangles": 275872,
+        "visualTextures": [
+          {
+            "channel": "map",
+            "width": 4096,
+            "height": 4096,
+            "source": "d7cb1b44-bf54-4a2b-815d-5ad568963d48"
+          },
+          {
+            "channel": "normalMap",
+            "width": 4096,
+            "height": 4096,
+            "source": "e4c3b251-eb9e-4562-b3ef-c920ea077e4c"
+          }
+        ],
+        "visualPivots": [
+          {
+            "name": "stHead",
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "children": 17
+          },
+          {
+            "name": "stTail",
+            "rotation": [
+              0,
+              0.026898863845247863,
+              0
+            ],
+            "children": 1
+          },
+          {
+            "name": "stLeg0",
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "children": 3
+          },
+          {
+            "name": "stLeg1",
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "children": 3
+          },
+          {
+            "name": "stLeg2",
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "children": 3
+          },
+          {
+            "name": "stLeg3",
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "children": 3
+          }
+        ],
+        "id": "wildwood-166",
+        "kind": "sheep",
+        "visible": true,
+        "bodyVisible": true,
+        "pos": [
+          4.544375,
+          0,
+          10.971124999999999
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "bounds": [
+          0.6168131398573955,
+          0.8926915426236178,
+          1.2410994523502001
+        ],
+        "meshCount": 31,
+        "opacity": 1,
+        "opacityMin": 1,
+        "opacityMax": 1,
+        "geometrySignature": "[{\"name\":\"Face \u00b7 tapered cheekbones and downturned ovine muzzle\",\"type\":\"BufferGeometry\",\"vertices\":1462},{\"name\":\"Left ear \u00b7 curved outer helix\",\"type\":\"BufferGeometry\",\"vertices\":76},{\"name\":\"Left ear \u00b7 recessed pinna\",\"type\":\"BufferGeometry\",\"vertices\":64},{\"name\":\"Left eye \u00b7 almond socket\",\"type\":\"BufferGeometry\",\"vertices\":260},{\"name\":\"Left eye \u00b7 amber iris\",\"type\":\"BufferGeometry\",\"vertices\":134},{\"name\":\"Left eye \u00b7 horizontal pupil\",\"type\":\"BufferGeometry\",\"vertices\":40},{\"name\":\"Left eye \u00b7 corneal catchlight\",\"type\":\"BufferGeometry\",\"vertices\":18},{\"name\":\"Left eye \u00b7 upper brow and eyelid\",\"type\":\"BufferGeometry\",\"vertices\":163},{\"name\":\"Right ear \u00b7 curved outer helix\",\"type\":\"BufferGeometry\",\"vertices\":76},{\"name\":\"Right ear \u00b7 recessed pinna\",\"type\":\"BufferGeometry\",\"vertices\":64},{\"name\":\"Right eye \u00b7 almond socket\",\"type\":\"BufferGeometry\",\"vertices\":260},{\"name\":\"Right eye \u00b7 amber iris\",\"type\":\"BufferGeometry\",\"vertices\":134},{\"name\":\"Right eye \u00b7 horizontal pupil\",\"type\":\"BufferGeometry\",\"vertices\":40},{\"name\":\"Right eye \u00b7 corneal catchlight\",\"type\":\"BufferGeometry\",\"vertices\":18},{\"name\":\"Right eye \u00b7 upper brow and eyelid\",\"type\":\"BufferGeometry\",\"vertices\":162},{\"name\":\"Nose \u00b7 divided ovine leather\",\"type\":\"BufferGeometry\",\"vertices\":438},{\"name\":\"Mouth \u00b7 subtle split lip\",\"type\":\"BufferGeometry\",\"vertices\":140},{\"name\":\"Tail \u00b7 short curled fleece\",\"type\":\"BufferGeometry\",\"vertices\":715},{\"name\":\"Hind left \u00b7 muscle, knee, tendon and fetlock\",\"type\":\"BufferGeometry\",\"vertices\":1489},{\"name\":\"Hind left \u00b7 split hoof -1\",\"type\":\"BufferGeometry\",\"vertices\":252},{\"name\":\"Hind left \u00b7 split hoof 1\",\"type\":\"BufferGeometry\",\"vertices\":252},{\"name\":\"Hind right \u00b7 muscle, knee, tendon and fetlock\",\"type\":\"BufferGeometry\",\"vertices\":1489},{\"name\":\"Hind right \u00b7 split hoof -1\",\"type\":\"BufferGeometry\",\"vertices\":252},{\"name\":\"Hind right \u00b7 split hoof 1\",\"type\":\"BufferGeometry\",\"vertices\":252},{\"name\":\"Fore left \u00b7 muscle, knee, tendon and fetlock\",\"type\":\"BufferGeometry\",\"vertices\":1287},{\"name\":\"Fore left \u00b7 split hoof -1\",\"type\":\"BufferGeometry\",\"vertices\":310},{\"name\":\"Fore left \u00b7 split hoof 1\",\"type\":\"BufferGeometry\",\"vertices\":310},{\"name\":\"Fore right \u00b7 muscle, knee, tendon and fetlock\",\"type\":\"BufferGeometry\",\"vertices\":1287},{\"name\":\"Fore right \u00b7 split hoof -1\",\"type\":\"BufferGeometry\",\"vertices\":310},{\"name\":\"Fore right \u00b7 split hoof 1\",\"type\":\"BufferGeometry\",\"vertices\":310},{\"name\":\"Fleece \u00b7 continuous shoulders, barrel and haunches\",\"type\":\"BufferGeometry\",\"vertices\":4453}]",
+        "meshes": [
+          {
+            "name": "Face \u00b7 tapered cheekbones and downturned ovine muzzle",
+            "type": "BufferGeometry",
+            "vertices": 1462,
+            "colors": [
+              "c2afa0"
+            ]
+          },
+          {
+            "name": "Left ear \u00b7 curved outer helix",
+            "type": "BufferGeometry",
+            "vertices": 76,
+            "colors": [
+              "ffffff"
+            ]
+          },
+          {
+            "name": "Left ear \u00b7 recessed pinna",
+            "type": "BufferGeometry",
+            "vertices": 64,
+            "colors": [
+              "b99691"
+            ]
+          },
+          {
+            "name": "Left eye \u00b7 almond socket",
+            "type": "BufferGeometry",
+            "vertices": 260,
+            "colors": [
+              "24211e"
+            ]
+          },
+          {
+            "name": "Left eye \u00b7 amber iris",
+            "type": "BufferGeometry",
+            "vertices": 134,
+            "colors": [
+              "ac8e48"
+            ]
+          },
+          {
+            "name": "Left eye \u00b7 horizontal pupil",
+            "type": "BufferGeometry",
+            "vertices": 40,
+            "colors": [
+              "0b1011"
+            ]
+          },
+          {
+            "name": "Left eye \u00b7 corneal catchlight",
+            "type": "BufferGeometry",
+            "vertices": 18,
+            "colors": [
+              "fbf3da"
+            ]
+          },
+          {
+            "name": "Left eye \u00b7 upper brow and eyelid",
+            "type": "BufferGeometry",
+            "vertices": 163,
+            "colors": [
+              "a89989"
+            ]
+          },
+          {
+            "name": "Right ear \u00b7 curved outer helix",
+            "type": "BufferGeometry",
+            "vertices": 76,
+            "colors": [
+              "ffffff"
+            ]
+          },
+          {
+            "name": "Right ear \u00b7 recessed pinna",
+            "type": "BufferGeometry",
+            "vertices": 64,
+            "colors": [
+              "b99691"
+            ]
+          },
+          {
+            "name": "Right eye \u00b7 almond socket",
+            "type": "BufferGeometry",
+            "vertices": 260,
+            "colors": [
+              "24211e"
+            ]
+          },
+          {
+            "name": "Right eye \u00b7 amber iris",
+            "type": "BufferGeometry",
+            "vertices": 134,
+            "colors": [
+              "ac8e48"
+            ]
+          },
+          {
+            "name": "Right eye \u00b7 horizontal pupil",
+            "type": "BufferGeometry",
+            "vertices": 40,
+            "colors": [
+              "0b1011"
+            ]
+          },
+          {
+            "name": "Right eye \u00b7 corneal catchlight",
+            "type": "BufferGeometry",
+            "vertices": 18,
+            "colors": [
+              "fbf3da"
+            ]
+          },
+          {
+            "name": "Right eye \u00b7 upper brow and eyelid",
+            "type": "BufferGeometry",
+            "vertices": 162,
+            "colors": [
+              "a89989"
+            ]
+          },
+          {
+            "name": "Nose \u00b7 divided ovine leather",
+            "type": "BufferGeometry",
+            "vertices": 438,
+            "colors": [
+              "534640"
+            ]
+          },
+          {
+            "name": "Mouth \u00b7 subtle split lip",
+            "type": "BufferGeometry",
+            "vertices": 140,
+            "colors": [
+              "473a34"
+            ]
+          },
+          {
+            "name": "Tail \u00b7 short curled fleece",
+            "type": "BufferGeometry",
+            "vertices": 715,
+            "colors": [
+              "e8dfcd"
+            ]
+          },
+          {
+            "name": "Hind left \u00b7 muscle, knee, tendon and fetlock",
+            "type": "BufferGeometry",
+            "vertices": 1489,
+            "colors": [
+              "a8998b"
+            ]
+          },
+          {
+            "name": "Hind left \u00b7 split hoof -1",
+            "type": "BufferGeometry",
+            "vertices": 252,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Hind left \u00b7 split hoof 1",
+            "type": "BufferGeometry",
+            "vertices": 252,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Hind right \u00b7 muscle, knee, tendon and fetlock",
+            "type": "BufferGeometry",
+            "vertices": 1489,
+            "colors": [
+              "a8998b"
+            ]
+          },
+          {
+            "name": "Hind right \u00b7 split hoof -1",
+            "type": "BufferGeometry",
+            "vertices": 252,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Hind right \u00b7 split hoof 1",
+            "type": "BufferGeometry",
+            "vertices": 252,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Fore left \u00b7 muscle, knee, tendon and fetlock",
+            "type": "BufferGeometry",
+            "vertices": 1287,
+            "colors": [
+              "a8998b"
+            ]
+          },
+          {
+            "name": "Fore left \u00b7 split hoof -1",
+            "type": "BufferGeometry",
+            "vertices": 310,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Fore left \u00b7 split hoof 1",
+            "type": "BufferGeometry",
+            "vertices": 310,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Fore right \u00b7 muscle, knee, tendon and fetlock",
+            "type": "BufferGeometry",
+            "vertices": 1287,
+            "colors": [
+              "a8998b"
+            ]
+          },
+          {
+            "name": "Fore right \u00b7 split hoof -1",
+            "type": "BufferGeometry",
+            "vertices": 310,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Fore right \u00b7 split hoof 1",
+            "type": "BufferGeometry",
+            "vertices": 310,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Fleece \u00b7 continuous shoulders, barrel and haunches",
+            "type": "BufferGeometry",
+            "vertices": 4453,
+            "colors": [
+              "ffffff"
+            ]
+          }
+        ]
+      },
+      {
+        "visualModel": "clover-meadow-sheep",
+        "visualMeshes": 31,
+        "visualTriangles": 33087,
+        "visualSourceTriangles": 275872,
+        "visualTextures": [
+          {
+            "channel": "map",
+            "width": 4096,
+            "height": 4096,
+            "source": "d7cb1b44-bf54-4a2b-815d-5ad568963d48"
+          },
+          {
+            "channel": "normalMap",
+            "width": 4096,
+            "height": 4096,
+            "source": "e4c3b251-eb9e-4562-b3ef-c920ea077e4c"
+          }
+        ],
+        "visualPivots": [
+          {
+            "name": "stHead",
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "children": 17
+          },
+          {
+            "name": "stTail",
+            "rotation": [
+              0,
+              0.15875240523929054,
+              0
+            ],
+            "children": 1
+          },
+          {
+            "name": "stLeg0",
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "children": 3
+          },
+          {
+            "name": "stLeg1",
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "children": 3
+          },
+          {
+            "name": "stLeg2",
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "children": 3
+          },
+          {
+            "name": "stLeg3",
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "children": 3
+          }
+        ],
+        "id": "wildwood-167",
+        "kind": "sheep",
+        "visible": true,
+        "bodyVisible": true,
+        "pos": [
+          10.971124999999999,
+          0,
+          4.544375
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "bounds": [
+          0.6168131398573955,
+          0.8926915426236178,
+          1.2491790668353162
+        ],
+        "meshCount": 31,
+        "opacity": 1,
+        "opacityMin": 1,
+        "opacityMax": 1,
+        "geometrySignature": "[{\"name\":\"Face \u00b7 tapered cheekbones and downturned ovine muzzle\",\"type\":\"BufferGeometry\",\"vertices\":1462},{\"name\":\"Left ear \u00b7 curved outer helix\",\"type\":\"BufferGeometry\",\"vertices\":76},{\"name\":\"Left ear \u00b7 recessed pinna\",\"type\":\"BufferGeometry\",\"vertices\":64},{\"name\":\"Left eye \u00b7 almond socket\",\"type\":\"BufferGeometry\",\"vertices\":260},{\"name\":\"Left eye \u00b7 amber iris\",\"type\":\"BufferGeometry\",\"vertices\":134},{\"name\":\"Left eye \u00b7 horizontal pupil\",\"type\":\"BufferGeometry\",\"vertices\":40},{\"name\":\"Left eye \u00b7 corneal catchlight\",\"type\":\"BufferGeometry\",\"vertices\":18},{\"name\":\"Left eye \u00b7 upper brow and eyelid\",\"type\":\"BufferGeometry\",\"vertices\":163},{\"name\":\"Right ear \u00b7 curved outer helix\",\"type\":\"BufferGeometry\",\"vertices\":76},{\"name\":\"Right ear \u00b7 recessed pinna\",\"type\":\"BufferGeometry\",\"vertices\":64},{\"name\":\"Right eye \u00b7 almond socket\",\"type\":\"BufferGeometry\",\"vertices\":260},{\"name\":\"Right eye \u00b7 amber iris\",\"type\":\"BufferGeometry\",\"vertices\":134},{\"name\":\"Right eye \u00b7 horizontal pupil\",\"type\":\"BufferGeometry\",\"vertices\":40},{\"name\":\"Right eye \u00b7 corneal catchlight\",\"type\":\"BufferGeometry\",\"vertices\":18},{\"name\":\"Right eye \u00b7 upper brow and eyelid\",\"type\":\"BufferGeometry\",\"vertices\":162},{\"name\":\"Nose \u00b7 divided ovine leather\",\"type\":\"BufferGeometry\",\"vertices\":438},{\"name\":\"Mouth \u00b7 subtle split lip\",\"type\":\"BufferGeometry\",\"vertices\":140},{\"name\":\"Tail \u00b7 short curled fleece\",\"type\":\"BufferGeometry\",\"vertices\":715},{\"name\":\"Hind left \u00b7 muscle, knee, tendon and fetlock\",\"type\":\"BufferGeometry\",\"vertices\":1489},{\"name\":\"Hind left \u00b7 split hoof -1\",\"type\":\"BufferGeometry\",\"vertices\":252},{\"name\":\"Hind left \u00b7 split hoof 1\",\"type\":\"BufferGeometry\",\"vertices\":252},{\"name\":\"Hind right \u00b7 muscle, knee, tendon and fetlock\",\"type\":\"BufferGeometry\",\"vertices\":1489},{\"name\":\"Hind right \u00b7 split hoof -1\",\"type\":\"BufferGeometry\",\"vertices\":252},{\"name\":\"Hind right \u00b7 split hoof 1\",\"type\":\"BufferGeometry\",\"vertices\":252},{\"name\":\"Fore left \u00b7 muscle, knee, tendon and fetlock\",\"type\":\"BufferGeometry\",\"vertices\":1287},{\"name\":\"Fore left \u00b7 split hoof -1\",\"type\":\"BufferGeometry\",\"vertices\":310},{\"name\":\"Fore left \u00b7 split hoof 1\",\"type\":\"BufferGeometry\",\"vertices\":310},{\"name\":\"Fore right \u00b7 muscle, knee, tendon and fetlock\",\"type\":\"BufferGeometry\",\"vertices\":1287},{\"name\":\"Fore right \u00b7 split hoof -1\",\"type\":\"BufferGeometry\",\"vertices\":310},{\"name\":\"Fore right \u00b7 split hoof 1\",\"type\":\"BufferGeometry\",\"vertices\":310},{\"name\":\"Fleece \u00b7 continuous shoulders, barrel and haunches\",\"type\":\"BufferGeometry\",\"vertices\":4453}]",
+        "meshes": [
+          {
+            "name": "Face \u00b7 tapered cheekbones and downturned ovine muzzle",
+            "type": "BufferGeometry",
+            "vertices": 1462,
+            "colors": [
+              "c2afa0"
+            ]
+          },
+          {
+            "name": "Left ear \u00b7 curved outer helix",
+            "type": "BufferGeometry",
+            "vertices": 76,
+            "colors": [
+              "ffffff"
+            ]
+          },
+          {
+            "name": "Left ear \u00b7 recessed pinna",
+            "type": "BufferGeometry",
+            "vertices": 64,
+            "colors": [
+              "b99691"
+            ]
+          },
+          {
+            "name": "Left eye \u00b7 almond socket",
+            "type": "BufferGeometry",
+            "vertices": 260,
+            "colors": [
+              "24211e"
+            ]
+          },
+          {
+            "name": "Left eye \u00b7 amber iris",
+            "type": "BufferGeometry",
+            "vertices": 134,
+            "colors": [
+              "ac8e48"
+            ]
+          },
+          {
+            "name": "Left eye \u00b7 horizontal pupil",
+            "type": "BufferGeometry",
+            "vertices": 40,
+            "colors": [
+              "0b1011"
+            ]
+          },
+          {
+            "name": "Left eye \u00b7 corneal catchlight",
+            "type": "BufferGeometry",
+            "vertices": 18,
+            "colors": [
+              "fbf3da"
+            ]
+          },
+          {
+            "name": "Left eye \u00b7 upper brow and eyelid",
+            "type": "BufferGeometry",
+            "vertices": 163,
+            "colors": [
+              "a89989"
+            ]
+          },
+          {
+            "name": "Right ear \u00b7 curved outer helix",
+            "type": "BufferGeometry",
+            "vertices": 76,
+            "colors": [
+              "ffffff"
+            ]
+          },
+          {
+            "name": "Right ear \u00b7 recessed pinna",
+            "type": "BufferGeometry",
+            "vertices": 64,
+            "colors": [
+              "b99691"
+            ]
+          },
+          {
+            "name": "Right eye \u00b7 almond socket",
+            "type": "BufferGeometry",
+            "vertices": 260,
+            "colors": [
+              "24211e"
+            ]
+          },
+          {
+            "name": "Right eye \u00b7 amber iris",
+            "type": "BufferGeometry",
+            "vertices": 134,
+            "colors": [
+              "ac8e48"
+            ]
+          },
+          {
+            "name": "Right eye \u00b7 horizontal pupil",
+            "type": "BufferGeometry",
+            "vertices": 40,
+            "colors": [
+              "0b1011"
+            ]
+          },
+          {
+            "name": "Right eye \u00b7 corneal catchlight",
+            "type": "BufferGeometry",
+            "vertices": 18,
+            "colors": [
+              "fbf3da"
+            ]
+          },
+          {
+            "name": "Right eye \u00b7 upper brow and eyelid",
+            "type": "BufferGeometry",
+            "vertices": 162,
+            "colors": [
+              "a89989"
+            ]
+          },
+          {
+            "name": "Nose \u00b7 divided ovine leather",
+            "type": "BufferGeometry",
+            "vertices": 438,
+            "colors": [
+              "534640"
+            ]
+          },
+          {
+            "name": "Mouth \u00b7 subtle split lip",
+            "type": "BufferGeometry",
+            "vertices": 140,
+            "colors": [
+              "473a34"
+            ]
+          },
+          {
+            "name": "Tail \u00b7 short curled fleece",
+            "type": "BufferGeometry",
+            "vertices": 715,
+            "colors": [
+              "e8dfcd"
+            ]
+          },
+          {
+            "name": "Hind left \u00b7 muscle, knee, tendon and fetlock",
+            "type": "BufferGeometry",
+            "vertices": 1489,
+            "colors": [
+              "a8998b"
+            ]
+          },
+          {
+            "name": "Hind left \u00b7 split hoof -1",
+            "type": "BufferGeometry",
+            "vertices": 252,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Hind left \u00b7 split hoof 1",
+            "type": "BufferGeometry",
+            "vertices": 252,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Hind right \u00b7 muscle, knee, tendon and fetlock",
+            "type": "BufferGeometry",
+            "vertices": 1489,
+            "colors": [
+              "a8998b"
+            ]
+          },
+          {
+            "name": "Hind right \u00b7 split hoof -1",
+            "type": "BufferGeometry",
+            "vertices": 252,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Hind right \u00b7 split hoof 1",
+            "type": "BufferGeometry",
+            "vertices": 252,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Fore left \u00b7 muscle, knee, tendon and fetlock",
+            "type": "BufferGeometry",
+            "vertices": 1287,
+            "colors": [
+              "a8998b"
+            ]
+          },
+          {
+            "name": "Fore left \u00b7 split hoof -1",
+            "type": "BufferGeometry",
+            "vertices": 310,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Fore left \u00b7 split hoof 1",
+            "type": "BufferGeometry",
+            "vertices": 310,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Fore right \u00b7 muscle, knee, tendon and fetlock",
+            "type": "BufferGeometry",
+            "vertices": 1287,
+            "colors": [
+              "a8998b"
+            ]
+          },
+          {
+            "name": "Fore right \u00b7 split hoof -1",
+            "type": "BufferGeometry",
+            "vertices": 310,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Fore right \u00b7 split hoof 1",
+            "type": "BufferGeometry",
+            "vertices": 310,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Fleece \u00b7 continuous shoulders, barrel and haunches",
+            "type": "BufferGeometry",
+            "vertices": 4453,
+            "colors": [
+              "ffffff"
+            ]
+          }
+        ]
+      },
+      {
+        "visualModel": "clover-meadow-sheep",
+        "visualMeshes": 31,
+        "visualTriangles": 33087,
+        "visualSourceTriangles": 275872,
+        "visualTextures": [
+          {
+            "channel": "map",
+            "width": 4096,
+            "height": 4096,
+            "source": "d7cb1b44-bf54-4a2b-815d-5ad568963d48"
+          },
+          {
+            "channel": "normalMap",
+            "width": 4096,
+            "height": 4096,
+            "source": "e4c3b251-eb9e-4562-b3ef-c920ea077e4c"
+          }
+        ],
+        "visualPivots": [
+          {
+            "name": "stHead",
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "children": 17
+          },
+          {
+            "name": "stTail",
+            "rotation": [
+              0,
+              0.16291630139853616,
+              0
+            ],
+            "children": 1
+          },
+          {
+            "name": "stLeg0",
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "children": 3
+          },
+          {
+            "name": "stLeg1",
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "children": 3
+          },
+          {
+            "name": "stLeg2",
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "children": 3
+          },
+          {
+            "name": "stLeg3",
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "children": 3
+          }
+        ],
+        "id": "wildwood-168",
+        "kind": "sheep",
+        "visible": true,
+        "bodyVisible": true,
+        "pos": [
+          10.971124999999999,
+          0,
+          -4.544375
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "bounds": [
+          0.6168131398573955,
+          0.8926915426236178,
+          1.2493966422741338
+        ],
+        "meshCount": 31,
+        "opacity": 1,
+        "opacityMin": 1,
+        "opacityMax": 1,
+        "geometrySignature": "[{\"name\":\"Face \u00b7 tapered cheekbones and downturned ovine muzzle\",\"type\":\"BufferGeometry\",\"vertices\":1462},{\"name\":\"Left ear \u00b7 curved outer helix\",\"type\":\"BufferGeometry\",\"vertices\":76},{\"name\":\"Left ear \u00b7 recessed pinna\",\"type\":\"BufferGeometry\",\"vertices\":64},{\"name\":\"Left eye \u00b7 almond socket\",\"type\":\"BufferGeometry\",\"vertices\":260},{\"name\":\"Left eye \u00b7 amber iris\",\"type\":\"BufferGeometry\",\"vertices\":134},{\"name\":\"Left eye \u00b7 horizontal pupil\",\"type\":\"BufferGeometry\",\"vertices\":40},{\"name\":\"Left eye \u00b7 corneal catchlight\",\"type\":\"BufferGeometry\",\"vertices\":18},{\"name\":\"Left eye \u00b7 upper brow and eyelid\",\"type\":\"BufferGeometry\",\"vertices\":163},{\"name\":\"Right ear \u00b7 curved outer helix\",\"type\":\"BufferGeometry\",\"vertices\":76},{\"name\":\"Right ear \u00b7 recessed pinna\",\"type\":\"BufferGeometry\",\"vertices\":64},{\"name\":\"Right eye \u00b7 almond socket\",\"type\":\"BufferGeometry\",\"vertices\":260},{\"name\":\"Right eye \u00b7 amber iris\",\"type\":\"BufferGeometry\",\"vertices\":134},{\"name\":\"Right eye \u00b7 horizontal pupil\",\"type\":\"BufferGeometry\",\"vertices\":40},{\"name\":\"Right eye \u00b7 corneal catchlight\",\"type\":\"BufferGeometry\",\"vertices\":18},{\"name\":\"Right eye \u00b7 upper brow and eyelid\",\"type\":\"BufferGeometry\",\"vertices\":162},{\"name\":\"Nose \u00b7 divided ovine leather\",\"type\":\"BufferGeometry\",\"vertices\":438},{\"name\":\"Mouth \u00b7 subtle split lip\",\"type\":\"BufferGeometry\",\"vertices\":140},{\"name\":\"Tail \u00b7 short curled fleece\",\"type\":\"BufferGeometry\",\"vertices\":715},{\"name\":\"Hind left \u00b7 muscle, knee, tendon and fetlock\",\"type\":\"BufferGeometry\",\"vertices\":1489},{\"name\":\"Hind left \u00b7 split hoof -1\",\"type\":\"BufferGeometry\",\"vertices\":252},{\"name\":\"Hind left \u00b7 split hoof 1\",\"type\":\"BufferGeometry\",\"vertices\":252},{\"name\":\"Hind right \u00b7 muscle, knee, tendon and fetlock\",\"type\":\"BufferGeometry\",\"vertices\":1489},{\"name\":\"Hind right \u00b7 split hoof -1\",\"type\":\"BufferGeometry\",\"vertices\":252},{\"name\":\"Hind right \u00b7 split hoof 1\",\"type\":\"BufferGeometry\",\"vertices\":252},{\"name\":\"Fore left \u00b7 muscle, knee, tendon and fetlock\",\"type\":\"BufferGeometry\",\"vertices\":1287},{\"name\":\"Fore left \u00b7 split hoof -1\",\"type\":\"BufferGeometry\",\"vertices\":310},{\"name\":\"Fore left \u00b7 split hoof 1\",\"type\":\"BufferGeometry\",\"vertices\":310},{\"name\":\"Fore right \u00b7 muscle, knee, tendon and fetlock\",\"type\":\"BufferGeometry\",\"vertices\":1287},{\"name\":\"Fore right \u00b7 split hoof -1\",\"type\":\"BufferGeometry\",\"vertices\":310},{\"name\":\"Fore right \u00b7 split hoof 1\",\"type\":\"BufferGeometry\",\"vertices\":310},{\"name\":\"Fleece \u00b7 continuous shoulders, barrel and haunches\",\"type\":\"BufferGeometry\",\"vertices\":4453}]",
+        "meshes": [
+          {
+            "name": "Face \u00b7 tapered cheekbones and downturned ovine muzzle",
+            "type": "BufferGeometry",
+            "vertices": 1462,
+            "colors": [
+              "c2afa0"
+            ]
+          },
+          {
+            "name": "Left ear \u00b7 curved outer helix",
+            "type": "BufferGeometry",
+            "vertices": 76,
+            "colors": [
+              "ffffff"
+            ]
+          },
+          {
+            "name": "Left ear \u00b7 recessed pinna",
+            "type": "BufferGeometry",
+            "vertices": 64,
+            "colors": [
+              "b99691"
+            ]
+          },
+          {
+            "name": "Left eye \u00b7 almond socket",
+            "type": "BufferGeometry",
+            "vertices": 260,
+            "colors": [
+              "24211e"
+            ]
+          },
+          {
+            "name": "Left eye \u00b7 amber iris",
+            "type": "BufferGeometry",
+            "vertices": 134,
+            "colors": [
+              "ac8e48"
+            ]
+          },
+          {
+            "name": "Left eye \u00b7 horizontal pupil",
+            "type": "BufferGeometry",
+            "vertices": 40,
+            "colors": [
+              "0b1011"
+            ]
+          },
+          {
+            "name": "Left eye \u00b7 corneal catchlight",
+            "type": "BufferGeometry",
+            "vertices": 18,
+            "colors": [
+              "fbf3da"
+            ]
+          },
+          {
+            "name": "Left eye \u00b7 upper brow and eyelid",
+            "type": "BufferGeometry",
+            "vertices": 163,
+            "colors": [
+              "a89989"
+            ]
+          },
+          {
+            "name": "Right ear \u00b7 curved outer helix",
+            "type": "BufferGeometry",
+            "vertices": 76,
+            "colors": [
+              "ffffff"
+            ]
+          },
+          {
+            "name": "Right ear \u00b7 recessed pinna",
+            "type": "BufferGeometry",
+            "vertices": 64,
+            "colors": [
+              "b99691"
+            ]
+          },
+          {
+            "name": "Right eye \u00b7 almond socket",
+            "type": "BufferGeometry",
+            "vertices": 260,
+            "colors": [
+              "24211e"
+            ]
+          },
+          {
+            "name": "Right eye \u00b7 amber iris",
+            "type": "BufferGeometry",
+            "vertices": 134,
+            "colors": [
+              "ac8e48"
+            ]
+          },
+          {
+            "name": "Right eye \u00b7 horizontal pupil",
+            "type": "BufferGeometry",
+            "vertices": 40,
+            "colors": [
+              "0b1011"
+            ]
+          },
+          {
+            "name": "Right eye \u00b7 corneal catchlight",
+            "type": "BufferGeometry",
+            "vertices": 18,
+            "colors": [
+              "fbf3da"
+            ]
+          },
+          {
+            "name": "Right eye \u00b7 upper brow and eyelid",
+            "type": "BufferGeometry",
+            "vertices": 162,
+            "colors": [
+              "a89989"
+            ]
+          },
+          {
+            "name": "Nose \u00b7 divided ovine leather",
+            "type": "BufferGeometry",
+            "vertices": 438,
+            "colors": [
+              "534640"
+            ]
+          },
+          {
+            "name": "Mouth \u00b7 subtle split lip",
+            "type": "BufferGeometry",
+            "vertices": 140,
+            "colors": [
+              "473a34"
+            ]
+          },
+          {
+            "name": "Tail \u00b7 short curled fleece",
+            "type": "BufferGeometry",
+            "vertices": 715,
+            "colors": [
+              "e8dfcd"
+            ]
+          },
+          {
+            "name": "Hind left \u00b7 muscle, knee, tendon and fetlock",
+            "type": "BufferGeometry",
+            "vertices": 1489,
+            "colors": [
+              "a8998b"
+            ]
+          },
+          {
+            "name": "Hind left \u00b7 split hoof -1",
+            "type": "BufferGeometry",
+            "vertices": 252,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Hind left \u00b7 split hoof 1",
+            "type": "BufferGeometry",
+            "vertices": 252,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Hind right \u00b7 muscle, knee, tendon and fetlock",
+            "type": "BufferGeometry",
+            "vertices": 1489,
+            "colors": [
+              "a8998b"
+            ]
+          },
+          {
+            "name": "Hind right \u00b7 split hoof -1",
+            "type": "BufferGeometry",
+            "vertices": 252,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Hind right \u00b7 split hoof 1",
+            "type": "BufferGeometry",
+            "vertices": 252,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Fore left \u00b7 muscle, knee, tendon and fetlock",
+            "type": "BufferGeometry",
+            "vertices": 1287,
+            "colors": [
+              "a8998b"
+            ]
+          },
+          {
+            "name": "Fore left \u00b7 split hoof -1",
+            "type": "BufferGeometry",
+            "vertices": 310,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Fore left \u00b7 split hoof 1",
+            "type": "BufferGeometry",
+            "vertices": 310,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Fore right \u00b7 muscle, knee, tendon and fetlock",
+            "type": "BufferGeometry",
+            "vertices": 1287,
+            "colors": [
+              "a8998b"
+            ]
+          },
+          {
+            "name": "Fore right \u00b7 split hoof -1",
+            "type": "BufferGeometry",
+            "vertices": 310,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Fore right \u00b7 split hoof 1",
+            "type": "BufferGeometry",
+            "vertices": 310,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Fleece \u00b7 continuous shoulders, barrel and haunches",
+            "type": "BufferGeometry",
+            "vertices": 4453,
+            "colors": [
+              "ffffff"
+            ]
+          }
+        ]
+      },
+      {
+        "visualModel": "clover-meadow-sheep",
+        "visualMeshes": 31,
+        "visualTriangles": 33087,
+        "visualSourceTriangles": 275872,
+        "visualTextures": [
+          {
+            "channel": "map",
+            "width": 4096,
+            "height": 4096,
+            "source": "d7cb1b44-bf54-4a2b-815d-5ad568963d48"
+          },
+          {
+            "channel": "normalMap",
+            "width": 4096,
+            "height": 4096,
+            "source": "e4c3b251-eb9e-4562-b3ef-c920ea077e4c"
+          }
+        ],
+        "visualPivots": [
+          {
+            "name": "stHead",
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "children": 17
+          },
+          {
+            "name": "stTail",
+            "rotation": [
+              0,
+              0.03604139724991869,
+              0
+            ],
+            "children": 1
+          },
+          {
+            "name": "stLeg0",
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "children": 3
+          },
+          {
+            "name": "stLeg1",
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "children": 3
+          },
+          {
+            "name": "stLeg2",
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "children": 3
+          },
+          {
+            "name": "stLeg3",
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "children": 3
+          }
+        ],
+        "id": "wildwood-169",
+        "kind": "sheep",
+        "visible": true,
+        "bodyVisible": true,
+        "pos": [
+          4.544375,
+          0,
+          -10.971124999999999
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "bounds": [
+          0.6168131398573955,
+          0.8926915426236178,
+          1.2417326712692827
+        ],
+        "meshCount": 31,
+        "opacity": 1,
+        "opacityMin": 1,
+        "opacityMax": 1,
+        "geometrySignature": "[{\"name\":\"Face \u00b7 tapered cheekbones and downturned ovine muzzle\",\"type\":\"BufferGeometry\",\"vertices\":1462},{\"name\":\"Left ear \u00b7 curved outer helix\",\"type\":\"BufferGeometry\",\"vertices\":76},{\"name\":\"Left ear \u00b7 recessed pinna\",\"type\":\"BufferGeometry\",\"vertices\":64},{\"name\":\"Left eye \u00b7 almond socket\",\"type\":\"BufferGeometry\",\"vertices\":260},{\"name\":\"Left eye \u00b7 amber iris\",\"type\":\"BufferGeometry\",\"vertices\":134},{\"name\":\"Left eye \u00b7 horizontal pupil\",\"type\":\"BufferGeometry\",\"vertices\":40},{\"name\":\"Left eye \u00b7 corneal catchlight\",\"type\":\"BufferGeometry\",\"vertices\":18},{\"name\":\"Left eye \u00b7 upper brow and eyelid\",\"type\":\"BufferGeometry\",\"vertices\":163},{\"name\":\"Right ear \u00b7 curved outer helix\",\"type\":\"BufferGeometry\",\"vertices\":76},{\"name\":\"Right ear \u00b7 recessed pinna\",\"type\":\"BufferGeometry\",\"vertices\":64},{\"name\":\"Right eye \u00b7 almond socket\",\"type\":\"BufferGeometry\",\"vertices\":260},{\"name\":\"Right eye \u00b7 amber iris\",\"type\":\"BufferGeometry\",\"vertices\":134},{\"name\":\"Right eye \u00b7 horizontal pupil\",\"type\":\"BufferGeometry\",\"vertices\":40},{\"name\":\"Right eye \u00b7 corneal catchlight\",\"type\":\"BufferGeometry\",\"vertices\":18},{\"name\":\"Right eye \u00b7 upper brow and eyelid\",\"type\":\"BufferGeometry\",\"vertices\":162},{\"name\":\"Nose \u00b7 divided ovine leather\",\"type\":\"BufferGeometry\",\"vertices\":438},{\"name\":\"Mouth \u00b7 subtle split lip\",\"type\":\"BufferGeometry\",\"vertices\":140},{\"name\":\"Tail \u00b7 short curled fleece\",\"type\":\"BufferGeometry\",\"vertices\":715},{\"name\":\"Hind left \u00b7 muscle, knee, tendon and fetlock\",\"type\":\"BufferGeometry\",\"vertices\":1489},{\"name\":\"Hind left \u00b7 split hoof -1\",\"type\":\"BufferGeometry\",\"vertices\":252},{\"name\":\"Hind left \u00b7 split hoof 1\",\"type\":\"BufferGeometry\",\"vertices\":252},{\"name\":\"Hind right \u00b7 muscle, knee, tendon and fetlock\",\"type\":\"BufferGeometry\",\"vertices\":1489},{\"name\":\"Hind right \u00b7 split hoof -1\",\"type\":\"BufferGeometry\",\"vertices\":252},{\"name\":\"Hind right \u00b7 split hoof 1\",\"type\":\"BufferGeometry\",\"vertices\":252},{\"name\":\"Fore left \u00b7 muscle, knee, tendon and fetlock\",\"type\":\"BufferGeometry\",\"vertices\":1287},{\"name\":\"Fore left \u00b7 split hoof -1\",\"type\":\"BufferGeometry\",\"vertices\":310},{\"name\":\"Fore left \u00b7 split hoof 1\",\"type\":\"BufferGeometry\",\"vertices\":310},{\"name\":\"Fore right \u00b7 muscle, knee, tendon and fetlock\",\"type\":\"BufferGeometry\",\"vertices\":1287},{\"name\":\"Fore right \u00b7 split hoof -1\",\"type\":\"BufferGeometry\",\"vertices\":310},{\"name\":\"Fore right \u00b7 split hoof 1\",\"type\":\"BufferGeometry\",\"vertices\":310},{\"name\":\"Fleece \u00b7 continuous shoulders, barrel and haunches\",\"type\":\"BufferGeometry\",\"vertices\":4453}]",
+        "meshes": [
+          {
+            "name": "Face \u00b7 tapered cheekbones and downturned ovine muzzle",
+            "type": "BufferGeometry",
+            "vertices": 1462,
+            "colors": [
+              "c2afa0"
+            ]
+          },
+          {
+            "name": "Left ear \u00b7 curved outer helix",
+            "type": "BufferGeometry",
+            "vertices": 76,
+            "colors": [
+              "ffffff"
+            ]
+          },
+          {
+            "name": "Left ear \u00b7 recessed pinna",
+            "type": "BufferGeometry",
+            "vertices": 64,
+            "colors": [
+              "b99691"
+            ]
+          },
+          {
+            "name": "Left eye \u00b7 almond socket",
+            "type": "BufferGeometry",
+            "vertices": 260,
+            "colors": [
+              "24211e"
+            ]
+          },
+          {
+            "name": "Left eye \u00b7 amber iris",
+            "type": "BufferGeometry",
+            "vertices": 134,
+            "colors": [
+              "ac8e48"
+            ]
+          },
+          {
+            "name": "Left eye \u00b7 horizontal pupil",
+            "type": "BufferGeometry",
+            "vertices": 40,
+            "colors": [
+              "0b1011"
+            ]
+          },
+          {
+            "name": "Left eye \u00b7 corneal catchlight",
+            "type": "BufferGeometry",
+            "vertices": 18,
+            "colors": [
+              "fbf3da"
+            ]
+          },
+          {
+            "name": "Left eye \u00b7 upper brow and eyelid",
+            "type": "BufferGeometry",
+            "vertices": 163,
+            "colors": [
+              "a89989"
+            ]
+          },
+          {
+            "name": "Right ear \u00b7 curved outer helix",
+            "type": "BufferGeometry",
+            "vertices": 76,
+            "colors": [
+              "ffffff"
+            ]
+          },
+          {
+            "name": "Right ear \u00b7 recessed pinna",
+            "type": "BufferGeometry",
+            "vertices": 64,
+            "colors": [
+              "b99691"
+            ]
+          },
+          {
+            "name": "Right eye \u00b7 almond socket",
+            "type": "BufferGeometry",
+            "vertices": 260,
+            "colors": [
+              "24211e"
+            ]
+          },
+          {
+            "name": "Right eye \u00b7 amber iris",
+            "type": "BufferGeometry",
+            "vertices": 134,
+            "colors": [
+              "ac8e48"
+            ]
+          },
+          {
+            "name": "Right eye \u00b7 horizontal pupil",
+            "type": "BufferGeometry",
+            "vertices": 40,
+            "colors": [
+              "0b1011"
+            ]
+          },
+          {
+            "name": "Right eye \u00b7 corneal catchlight",
+            "type": "BufferGeometry",
+            "vertices": 18,
+            "colors": [
+              "fbf3da"
+            ]
+          },
+          {
+            "name": "Right eye \u00b7 upper brow and eyelid",
+            "type": "BufferGeometry",
+            "vertices": 162,
+            "colors": [
+              "a89989"
+            ]
+          },
+          {
+            "name": "Nose \u00b7 divided ovine leather",
+            "type": "BufferGeometry",
+            "vertices": 438,
+            "colors": [
+              "534640"
+            ]
+          },
+          {
+            "name": "Mouth \u00b7 subtle split lip",
+            "type": "BufferGeometry",
+            "vertices": 140,
+            "colors": [
+              "473a34"
+            ]
+          },
+          {
+            "name": "Tail \u00b7 short curled fleece",
+            "type": "BufferGeometry",
+            "vertices": 715,
+            "colors": [
+              "e8dfcd"
+            ]
+          },
+          {
+            "name": "Hind left \u00b7 muscle, knee, tendon and fetlock",
+            "type": "BufferGeometry",
+            "vertices": 1489,
+            "colors": [
+              "a8998b"
+            ]
+          },
+          {
+            "name": "Hind left \u00b7 split hoof -1",
+            "type": "BufferGeometry",
+            "vertices": 252,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Hind left \u00b7 split hoof 1",
+            "type": "BufferGeometry",
+            "vertices": 252,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Hind right \u00b7 muscle, knee, tendon and fetlock",
+            "type": "BufferGeometry",
+            "vertices": 1489,
+            "colors": [
+              "a8998b"
+            ]
+          },
+          {
+            "name": "Hind right \u00b7 split hoof -1",
+            "type": "BufferGeometry",
+            "vertices": 252,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Hind right \u00b7 split hoof 1",
+            "type": "BufferGeometry",
+            "vertices": 252,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Fore left \u00b7 muscle, knee, tendon and fetlock",
+            "type": "BufferGeometry",
+            "vertices": 1287,
+            "colors": [
+              "a8998b"
+            ]
+          },
+          {
+            "name": "Fore left \u00b7 split hoof -1",
+            "type": "BufferGeometry",
+            "vertices": 310,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Fore left \u00b7 split hoof 1",
+            "type": "BufferGeometry",
+            "vertices": 310,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Fore right \u00b7 muscle, knee, tendon and fetlock",
+            "type": "BufferGeometry",
+            "vertices": 1287,
+            "colors": [
+              "a8998b"
+            ]
+          },
+          {
+            "name": "Fore right \u00b7 split hoof -1",
+            "type": "BufferGeometry",
+            "vertices": 310,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Fore right \u00b7 split hoof 1",
+            "type": "BufferGeometry",
+            "vertices": 310,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Fleece \u00b7 continuous shoulders, barrel and haunches",
+            "type": "BufferGeometry",
+            "vertices": 4453,
+            "colors": [
+              "ffffff"
+            ]
+          }
+        ]
+      },
+      {
+        "visualModel": "clover-meadow-sheep",
+        "visualMeshes": 31,
+        "visualTriangles": 33087,
+        "visualSourceTriangles": 275872,
+        "visualTextures": [
+          {
+            "channel": "map",
+            "width": 4096,
+            "height": 4096,
+            "source": "d7cb1b44-bf54-4a2b-815d-5ad568963d48"
+          },
+          {
+            "channel": "normalMap",
+            "width": 4096,
+            "height": 4096,
+            "source": "e4c3b251-eb9e-4562-b3ef-c920ea077e4c"
+          }
+        ],
+        "visualPivots": [
+          {
+            "name": "stHead",
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "children": 17
+          },
+          {
+            "name": "stTail",
+            "rotation": [
+              0,
+              -0.11982275730830146,
+              0
+            ],
+            "children": 1
+          },
+          {
+            "name": "stLeg0",
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "children": 3
+          },
+          {
+            "name": "stLeg1",
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "children": 3
+          },
+          {
+            "name": "stLeg2",
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "children": 3
+          },
+          {
+            "name": "stLeg3",
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "children": 3
+          }
+        ],
+        "id": "wildwood-170",
+        "kind": "sheep",
+        "visible": true,
+        "bodyVisible": true,
+        "pos": [
+          -4.544375,
+          0,
+          -10.971124999999999
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "bounds": [
+          0.6168131398573955,
+          0.8926915426236178,
+          1.2444466873322355
+        ],
+        "meshCount": 31,
+        "opacity": 1,
+        "opacityMin": 1,
+        "opacityMax": 1,
+        "geometrySignature": "[{\"name\":\"Face \u00b7 tapered cheekbones and downturned ovine muzzle\",\"type\":\"BufferGeometry\",\"vertices\":1462},{\"name\":\"Left ear \u00b7 curved outer helix\",\"type\":\"BufferGeometry\",\"vertices\":76},{\"name\":\"Left ear \u00b7 recessed pinna\",\"type\":\"BufferGeometry\",\"vertices\":64},{\"name\":\"Left eye \u00b7 almond socket\",\"type\":\"BufferGeometry\",\"vertices\":260},{\"name\":\"Left eye \u00b7 amber iris\",\"type\":\"BufferGeometry\",\"vertices\":134},{\"name\":\"Left eye \u00b7 horizontal pupil\",\"type\":\"BufferGeometry\",\"vertices\":40},{\"name\":\"Left eye \u00b7 corneal catchlight\",\"type\":\"BufferGeometry\",\"vertices\":18},{\"name\":\"Left eye \u00b7 upper brow and eyelid\",\"type\":\"BufferGeometry\",\"vertices\":163},{\"name\":\"Right ear \u00b7 curved outer helix\",\"type\":\"BufferGeometry\",\"vertices\":76},{\"name\":\"Right ear \u00b7 recessed pinna\",\"type\":\"BufferGeometry\",\"vertices\":64},{\"name\":\"Right eye \u00b7 almond socket\",\"type\":\"BufferGeometry\",\"vertices\":260},{\"name\":\"Right eye \u00b7 amber iris\",\"type\":\"BufferGeometry\",\"vertices\":134},{\"name\":\"Right eye \u00b7 horizontal pupil\",\"type\":\"BufferGeometry\",\"vertices\":40},{\"name\":\"Right eye \u00b7 corneal catchlight\",\"type\":\"BufferGeometry\",\"vertices\":18},{\"name\":\"Right eye \u00b7 upper brow and eyelid\",\"type\":\"BufferGeometry\",\"vertices\":162},{\"name\":\"Nose \u00b7 divided ovine leather\",\"type\":\"BufferGeometry\",\"vertices\":438},{\"name\":\"Mouth \u00b7 subtle split lip\",\"type\":\"BufferGeometry\",\"vertices\":140},{\"name\":\"Tail \u00b7 short curled fleece\",\"type\":\"BufferGeometry\",\"vertices\":715},{\"name\":\"Hind left \u00b7 muscle, knee, tendon and fetlock\",\"type\":\"BufferGeometry\",\"vertices\":1489},{\"name\":\"Hind left \u00b7 split hoof -1\",\"type\":\"BufferGeometry\",\"vertices\":252},{\"name\":\"Hind left \u00b7 split hoof 1\",\"type\":\"BufferGeometry\",\"vertices\":252},{\"name\":\"Hind right \u00b7 muscle, knee, tendon and fetlock\",\"type\":\"BufferGeometry\",\"vertices\":1489},{\"name\":\"Hind right \u00b7 split hoof -1\",\"type\":\"BufferGeometry\",\"vertices\":252},{\"name\":\"Hind right \u00b7 split hoof 1\",\"type\":\"BufferGeometry\",\"vertices\":252},{\"name\":\"Fore left \u00b7 muscle, knee, tendon and fetlock\",\"type\":\"BufferGeometry\",\"vertices\":1287},{\"name\":\"Fore left \u00b7 split hoof -1\",\"type\":\"BufferGeometry\",\"vertices\":310},{\"name\":\"Fore left \u00b7 split hoof 1\",\"type\":\"BufferGeometry\",\"vertices\":310},{\"name\":\"Fore right \u00b7 muscle, knee, tendon and fetlock\",\"type\":\"BufferGeometry\",\"vertices\":1287},{\"name\":\"Fore right \u00b7 split hoof -1\",\"type\":\"BufferGeometry\",\"vertices\":310},{\"name\":\"Fore right \u00b7 split hoof 1\",\"type\":\"BufferGeometry\",\"vertices\":310},{\"name\":\"Fleece \u00b7 continuous shoulders, barrel and haunches\",\"type\":\"BufferGeometry\",\"vertices\":4453}]",
+        "meshes": [
+          {
+            "name": "Face \u00b7 tapered cheekbones and downturned ovine muzzle",
+            "type": "BufferGeometry",
+            "vertices": 1462,
+            "colors": [
+              "c2afa0"
+            ]
+          },
+          {
+            "name": "Left ear \u00b7 curved outer helix",
+            "type": "BufferGeometry",
+            "vertices": 76,
+            "colors": [
+              "ffffff"
+            ]
+          },
+          {
+            "name": "Left ear \u00b7 recessed pinna",
+            "type": "BufferGeometry",
+            "vertices": 64,
+            "colors": [
+              "b99691"
+            ]
+          },
+          {
+            "name": "Left eye \u00b7 almond socket",
+            "type": "BufferGeometry",
+            "vertices": 260,
+            "colors": [
+              "24211e"
+            ]
+          },
+          {
+            "name": "Left eye \u00b7 amber iris",
+            "type": "BufferGeometry",
+            "vertices": 134,
+            "colors": [
+              "ac8e48"
+            ]
+          },
+          {
+            "name": "Left eye \u00b7 horizontal pupil",
+            "type": "BufferGeometry",
+            "vertices": 40,
+            "colors": [
+              "0b1011"
+            ]
+          },
+          {
+            "name": "Left eye \u00b7 corneal catchlight",
+            "type": "BufferGeometry",
+            "vertices": 18,
+            "colors": [
+              "fbf3da"
+            ]
+          },
+          {
+            "name": "Left eye \u00b7 upper brow and eyelid",
+            "type": "BufferGeometry",
+            "vertices": 163,
+            "colors": [
+              "a89989"
+            ]
+          },
+          {
+            "name": "Right ear \u00b7 curved outer helix",
+            "type": "BufferGeometry",
+            "vertices": 76,
+            "colors": [
+              "ffffff"
+            ]
+          },
+          {
+            "name": "Right ear \u00b7 recessed pinna",
+            "type": "BufferGeometry",
+            "vertices": 64,
+            "colors": [
+              "b99691"
+            ]
+          },
+          {
+            "name": "Right eye \u00b7 almond socket",
+            "type": "BufferGeometry",
+            "vertices": 260,
+            "colors": [
+              "24211e"
+            ]
+          },
+          {
+            "name": "Right eye \u00b7 amber iris",
+            "type": "BufferGeometry",
+            "vertices": 134,
+            "colors": [
+              "ac8e48"
+            ]
+          },
+          {
+            "name": "Right eye \u00b7 horizontal pupil",
+            "type": "BufferGeometry",
+            "vertices": 40,
+            "colors": [
+              "0b1011"
+            ]
+          },
+          {
+            "name": "Right eye \u00b7 corneal catchlight",
+            "type": "BufferGeometry",
+            "vertices": 18,
+            "colors": [
+              "fbf3da"
+            ]
+          },
+          {
+            "name": "Right eye \u00b7 upper brow and eyelid",
+            "type": "BufferGeometry",
+            "vertices": 162,
+            "colors": [
+              "a89989"
+            ]
+          },
+          {
+            "name": "Nose \u00b7 divided ovine leather",
+            "type": "BufferGeometry",
+            "vertices": 438,
+            "colors": [
+              "534640"
+            ]
+          },
+          {
+            "name": "Mouth \u00b7 subtle split lip",
+            "type": "BufferGeometry",
+            "vertices": 140,
+            "colors": [
+              "473a34"
+            ]
+          },
+          {
+            "name": "Tail \u00b7 short curled fleece",
+            "type": "BufferGeometry",
+            "vertices": 715,
+            "colors": [
+              "e8dfcd"
+            ]
+          },
+          {
+            "name": "Hind left \u00b7 muscle, knee, tendon and fetlock",
+            "type": "BufferGeometry",
+            "vertices": 1489,
+            "colors": [
+              "a8998b"
+            ]
+          },
+          {
+            "name": "Hind left \u00b7 split hoof -1",
+            "type": "BufferGeometry",
+            "vertices": 252,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Hind left \u00b7 split hoof 1",
+            "type": "BufferGeometry",
+            "vertices": 252,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Hind right \u00b7 muscle, knee, tendon and fetlock",
+            "type": "BufferGeometry",
+            "vertices": 1489,
+            "colors": [
+              "a8998b"
+            ]
+          },
+          {
+            "name": "Hind right \u00b7 split hoof -1",
+            "type": "BufferGeometry",
+            "vertices": 252,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Hind right \u00b7 split hoof 1",
+            "type": "BufferGeometry",
+            "vertices": 252,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Fore left \u00b7 muscle, knee, tendon and fetlock",
+            "type": "BufferGeometry",
+            "vertices": 1287,
+            "colors": [
+              "a8998b"
+            ]
+          },
+          {
+            "name": "Fore left \u00b7 split hoof -1",
+            "type": "BufferGeometry",
+            "vertices": 310,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Fore left \u00b7 split hoof 1",
+            "type": "BufferGeometry",
+            "vertices": 310,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Fore right \u00b7 muscle, knee, tendon and fetlock",
+            "type": "BufferGeometry",
+            "vertices": 1287,
+            "colors": [
+              "a8998b"
+            ]
+          },
+          {
+            "name": "Fore right \u00b7 split hoof -1",
+            "type": "BufferGeometry",
+            "vertices": 310,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Fore right \u00b7 split hoof 1",
+            "type": "BufferGeometry",
+            "vertices": 310,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Fleece \u00b7 continuous shoulders, barrel and haunches",
+            "type": "BufferGeometry",
+            "vertices": 4453,
+            "colors": [
+              "ffffff"
+            ]
+          }
+        ]
+      },
+      {
+        "visualModel": "clover-meadow-sheep",
+        "visualMeshes": 31,
+        "visualTriangles": 33087,
+        "visualSourceTriangles": 275872,
+        "visualTextures": [
+          {
+            "channel": "map",
+            "width": 4096,
+            "height": 4096,
+            "source": "d7cb1b44-bf54-4a2b-815d-5ad568963d48"
+          },
+          {
+            "channel": "normalMap",
+            "width": 4096,
+            "height": 4096,
+            "source": "e4c3b251-eb9e-4562-b3ef-c920ea077e4c"
+          }
+        ],
+        "visualPivots": [
+          {
+            "name": "stHead",
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "children": 17
+          },
+          {
+            "name": "stTail",
+            "rotation": [
+              0,
+              -0.1793096295904513,
+              0
+            ],
+            "children": 1
+          },
+          {
+            "name": "stLeg0",
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "children": 3
+          },
+          {
+            "name": "stLeg1",
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "children": 3
+          },
+          {
+            "name": "stLeg2",
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "children": 3
+          },
+          {
+            "name": "stLeg3",
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "children": 3
+          }
+        ],
+        "id": "wildwood-171",
+        "kind": "sheep",
+        "visible": true,
+        "bodyVisible": true,
+        "pos": [
+          -10.971124999999999,
+          0,
+          -4.544375
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "bounds": [
+          0.6168131398573955,
+          0.8926915426236178,
+          1.246372965039226
+        ],
+        "meshCount": 31,
+        "opacity": 1,
+        "opacityMin": 1,
+        "opacityMax": 1,
+        "geometrySignature": "[{\"name\":\"Face \u00b7 tapered cheekbones and downturned ovine muzzle\",\"type\":\"BufferGeometry\",\"vertices\":1462},{\"name\":\"Left ear \u00b7 curved outer helix\",\"type\":\"BufferGeometry\",\"vertices\":76},{\"name\":\"Left ear \u00b7 recessed pinna\",\"type\":\"BufferGeometry\",\"vertices\":64},{\"name\":\"Left eye \u00b7 almond socket\",\"type\":\"BufferGeometry\",\"vertices\":260},{\"name\":\"Left eye \u00b7 amber iris\",\"type\":\"BufferGeometry\",\"vertices\":134},{\"name\":\"Left eye \u00b7 horizontal pupil\",\"type\":\"BufferGeometry\",\"vertices\":40},{\"name\":\"Left eye \u00b7 corneal catchlight\",\"type\":\"BufferGeometry\",\"vertices\":18},{\"name\":\"Left eye \u00b7 upper brow and eyelid\",\"type\":\"BufferGeometry\",\"vertices\":163},{\"name\":\"Right ear \u00b7 curved outer helix\",\"type\":\"BufferGeometry\",\"vertices\":76},{\"name\":\"Right ear \u00b7 recessed pinna\",\"type\":\"BufferGeometry\",\"vertices\":64},{\"name\":\"Right eye \u00b7 almond socket\",\"type\":\"BufferGeometry\",\"vertices\":260},{\"name\":\"Right eye \u00b7 amber iris\",\"type\":\"BufferGeometry\",\"vertices\":134},{\"name\":\"Right eye \u00b7 horizontal pupil\",\"type\":\"BufferGeometry\",\"vertices\":40},{\"name\":\"Right eye \u00b7 corneal catchlight\",\"type\":\"BufferGeometry\",\"vertices\":18},{\"name\":\"Right eye \u00b7 upper brow and eyelid\",\"type\":\"BufferGeometry\",\"vertices\":162},{\"name\":\"Nose \u00b7 divided ovine leather\",\"type\":\"BufferGeometry\",\"vertices\":438},{\"name\":\"Mouth \u00b7 subtle split lip\",\"type\":\"BufferGeometry\",\"vertices\":140},{\"name\":\"Tail \u00b7 short curled fleece\",\"type\":\"BufferGeometry\",\"vertices\":715},{\"name\":\"Hind left \u00b7 muscle, knee, tendon and fetlock\",\"type\":\"BufferGeometry\",\"vertices\":1489},{\"name\":\"Hind left \u00b7 split hoof -1\",\"type\":\"BufferGeometry\",\"vertices\":252},{\"name\":\"Hind left \u00b7 split hoof 1\",\"type\":\"BufferGeometry\",\"vertices\":252},{\"name\":\"Hind right \u00b7 muscle, knee, tendon and fetlock\",\"type\":\"BufferGeometry\",\"vertices\":1489},{\"name\":\"Hind right \u00b7 split hoof -1\",\"type\":\"BufferGeometry\",\"vertices\":252},{\"name\":\"Hind right \u00b7 split hoof 1\",\"type\":\"BufferGeometry\",\"vertices\":252},{\"name\":\"Fore left \u00b7 muscle, knee, tendon and fetlock\",\"type\":\"BufferGeometry\",\"vertices\":1287},{\"name\":\"Fore left \u00b7 split hoof -1\",\"type\":\"BufferGeometry\",\"vertices\":310},{\"name\":\"Fore left \u00b7 split hoof 1\",\"type\":\"BufferGeometry\",\"vertices\":310},{\"name\":\"Fore right \u00b7 muscle, knee, tendon and fetlock\",\"type\":\"BufferGeometry\",\"vertices\":1287},{\"name\":\"Fore right \u00b7 split hoof -1\",\"type\":\"BufferGeometry\",\"vertices\":310},{\"name\":\"Fore right \u00b7 split hoof 1\",\"type\":\"BufferGeometry\",\"vertices\":310},{\"name\":\"Fleece \u00b7 continuous shoulders, barrel and haunches\",\"type\":\"BufferGeometry\",\"vertices\":4453}]",
+        "meshes": [
+          {
+            "name": "Face \u00b7 tapered cheekbones and downturned ovine muzzle",
+            "type": "BufferGeometry",
+            "vertices": 1462,
+            "colors": [
+              "c2afa0"
+            ]
+          },
+          {
+            "name": "Left ear \u00b7 curved outer helix",
+            "type": "BufferGeometry",
+            "vertices": 76,
+            "colors": [
+              "ffffff"
+            ]
+          },
+          {
+            "name": "Left ear \u00b7 recessed pinna",
+            "type": "BufferGeometry",
+            "vertices": 64,
+            "colors": [
+              "b99691"
+            ]
+          },
+          {
+            "name": "Left eye \u00b7 almond socket",
+            "type": "BufferGeometry",
+            "vertices": 260,
+            "colors": [
+              "24211e"
+            ]
+          },
+          {
+            "name": "Left eye \u00b7 amber iris",
+            "type": "BufferGeometry",
+            "vertices": 134,
+            "colors": [
+              "ac8e48"
+            ]
+          },
+          {
+            "name": "Left eye \u00b7 horizontal pupil",
+            "type": "BufferGeometry",
+            "vertices": 40,
+            "colors": [
+              "0b1011"
+            ]
+          },
+          {
+            "name": "Left eye \u00b7 corneal catchlight",
+            "type": "BufferGeometry",
+            "vertices": 18,
+            "colors": [
+              "fbf3da"
+            ]
+          },
+          {
+            "name": "Left eye \u00b7 upper brow and eyelid",
+            "type": "BufferGeometry",
+            "vertices": 163,
+            "colors": [
+              "a89989"
+            ]
+          },
+          {
+            "name": "Right ear \u00b7 curved outer helix",
+            "type": "BufferGeometry",
+            "vertices": 76,
+            "colors": [
+              "ffffff"
+            ]
+          },
+          {
+            "name": "Right ear \u00b7 recessed pinna",
+            "type": "BufferGeometry",
+            "vertices": 64,
+            "colors": [
+              "b99691"
+            ]
+          },
+          {
+            "name": "Right eye \u00b7 almond socket",
+            "type": "BufferGeometry",
+            "vertices": 260,
+            "colors": [
+              "24211e"
+            ]
+          },
+          {
+            "name": "Right eye \u00b7 amber iris",
+            "type": "BufferGeometry",
+            "vertices": 134,
+            "colors": [
+              "ac8e48"
+            ]
+          },
+          {
+            "name": "Right eye \u00b7 horizontal pupil",
+            "type": "BufferGeometry",
+            "vertices": 40,
+            "colors": [
+              "0b1011"
+            ]
+          },
+          {
+            "name": "Right eye \u00b7 corneal catchlight",
+            "type": "BufferGeometry",
+            "vertices": 18,
+            "colors": [
+              "fbf3da"
+            ]
+          },
+          {
+            "name": "Right eye \u00b7 upper brow and eyelid",
+            "type": "BufferGeometry",
+            "vertices": 162,
+            "colors": [
+              "a89989"
+            ]
+          },
+          {
+            "name": "Nose \u00b7 divided ovine leather",
+            "type": "BufferGeometry",
+            "vertices": 438,
+            "colors": [
+              "534640"
+            ]
+          },
+          {
+            "name": "Mouth \u00b7 subtle split lip",
+            "type": "BufferGeometry",
+            "vertices": 140,
+            "colors": [
+              "473a34"
+            ]
+          },
+          {
+            "name": "Tail \u00b7 short curled fleece",
+            "type": "BufferGeometry",
+            "vertices": 715,
+            "colors": [
+              "e8dfcd"
+            ]
+          },
+          {
+            "name": "Hind left \u00b7 muscle, knee, tendon and fetlock",
+            "type": "BufferGeometry",
+            "vertices": 1489,
+            "colors": [
+              "a8998b"
+            ]
+          },
+          {
+            "name": "Hind left \u00b7 split hoof -1",
+            "type": "BufferGeometry",
+            "vertices": 252,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Hind left \u00b7 split hoof 1",
+            "type": "BufferGeometry",
+            "vertices": 252,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Hind right \u00b7 muscle, knee, tendon and fetlock",
+            "type": "BufferGeometry",
+            "vertices": 1489,
+            "colors": [
+              "a8998b"
+            ]
+          },
+          {
+            "name": "Hind right \u00b7 split hoof -1",
+            "type": "BufferGeometry",
+            "vertices": 252,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Hind right \u00b7 split hoof 1",
+            "type": "BufferGeometry",
+            "vertices": 252,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Fore left \u00b7 muscle, knee, tendon and fetlock",
+            "type": "BufferGeometry",
+            "vertices": 1287,
+            "colors": [
+              "a8998b"
+            ]
+          },
+          {
+            "name": "Fore left \u00b7 split hoof -1",
+            "type": "BufferGeometry",
+            "vertices": 310,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Fore left \u00b7 split hoof 1",
+            "type": "BufferGeometry",
+            "vertices": 310,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Fore right \u00b7 muscle, knee, tendon and fetlock",
+            "type": "BufferGeometry",
+            "vertices": 1287,
+            "colors": [
+              "a8998b"
+            ]
+          },
+          {
+            "name": "Fore right \u00b7 split hoof -1",
+            "type": "BufferGeometry",
+            "vertices": 310,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Fore right \u00b7 split hoof 1",
+            "type": "BufferGeometry",
+            "vertices": 310,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Fleece \u00b7 continuous shoulders, barrel and haunches",
+            "type": "BufferGeometry",
+            "vertices": 4453,
+            "colors": [
+              "ffffff"
+            ]
+          }
+        ]
+      },
+      {
+        "visualModel": "clover-meadow-sheep",
+        "visualMeshes": 31,
+        "visualTriangles": 33087,
+        "visualSourceTriangles": 275872,
+        "visualTextures": [
+          {
+            "channel": "map",
+            "width": 4096,
+            "height": 4096,
+            "source": "d7cb1b44-bf54-4a2b-815d-5ad568963d48"
+          },
+          {
+            "channel": "normalMap",
+            "width": 4096,
+            "height": 4096,
+            "source": "e4c3b251-eb9e-4562-b3ef-c920ea077e4c"
+          }
+        ],
+        "visualPivots": [
+          {
+            "name": "stHead",
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "children": 17
+          },
+          {
+            "name": "stTail",
+            "rotation": [
+              0,
+              -0.09457202253273826,
+              0
+            ],
+            "children": 1
+          },
+          {
+            "name": "stLeg0",
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "children": 3
+          },
+          {
+            "name": "stLeg1",
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "children": 3
+          },
+          {
+            "name": "stLeg2",
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "children": 3
+          },
+          {
+            "name": "stLeg3",
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "children": 3
+          }
+        ],
+        "id": "wildwood-172",
+        "kind": "sheep",
+        "visible": true,
+        "bodyVisible": true,
+        "pos": [
+          -10.971124999999999,
+          0,
+          4.544375
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "bounds": [
+          0.6168131398573955,
+          0.8926915426236178,
+          1.2434891255956613
+        ],
+        "meshCount": 31,
+        "opacity": 1,
+        "opacityMin": 1,
+        "opacityMax": 1,
+        "geometrySignature": "[{\"name\":\"Face \u00b7 tapered cheekbones and downturned ovine muzzle\",\"type\":\"BufferGeometry\",\"vertices\":1462},{\"name\":\"Left ear \u00b7 curved outer helix\",\"type\":\"BufferGeometry\",\"vertices\":76},{\"name\":\"Left ear \u00b7 recessed pinna\",\"type\":\"BufferGeometry\",\"vertices\":64},{\"name\":\"Left eye \u00b7 almond socket\",\"type\":\"BufferGeometry\",\"vertices\":260},{\"name\":\"Left eye \u00b7 amber iris\",\"type\":\"BufferGeometry\",\"vertices\":134},{\"name\":\"Left eye \u00b7 horizontal pupil\",\"type\":\"BufferGeometry\",\"vertices\":40},{\"name\":\"Left eye \u00b7 corneal catchlight\",\"type\":\"BufferGeometry\",\"vertices\":18},{\"name\":\"Left eye \u00b7 upper brow and eyelid\",\"type\":\"BufferGeometry\",\"vertices\":163},{\"name\":\"Right ear \u00b7 curved outer helix\",\"type\":\"BufferGeometry\",\"vertices\":76},{\"name\":\"Right ear \u00b7 recessed pinna\",\"type\":\"BufferGeometry\",\"vertices\":64},{\"name\":\"Right eye \u00b7 almond socket\",\"type\":\"BufferGeometry\",\"vertices\":260},{\"name\":\"Right eye \u00b7 amber iris\",\"type\":\"BufferGeometry\",\"vertices\":134},{\"name\":\"Right eye \u00b7 horizontal pupil\",\"type\":\"BufferGeometry\",\"vertices\":40},{\"name\":\"Right eye \u00b7 corneal catchlight\",\"type\":\"BufferGeometry\",\"vertices\":18},{\"name\":\"Right eye \u00b7 upper brow and eyelid\",\"type\":\"BufferGeometry\",\"vertices\":162},{\"name\":\"Nose \u00b7 divided ovine leather\",\"type\":\"BufferGeometry\",\"vertices\":438},{\"name\":\"Mouth \u00b7 subtle split lip\",\"type\":\"BufferGeometry\",\"vertices\":140},{\"name\":\"Tail \u00b7 short curled fleece\",\"type\":\"BufferGeometry\",\"vertices\":715},{\"name\":\"Hind left \u00b7 muscle, knee, tendon and fetlock\",\"type\":\"BufferGeometry\",\"vertices\":1489},{\"name\":\"Hind left \u00b7 split hoof -1\",\"type\":\"BufferGeometry\",\"vertices\":252},{\"name\":\"Hind left \u00b7 split hoof 1\",\"type\":\"BufferGeometry\",\"vertices\":252},{\"name\":\"Hind right \u00b7 muscle, knee, tendon and fetlock\",\"type\":\"BufferGeometry\",\"vertices\":1489},{\"name\":\"Hind right \u00b7 split hoof -1\",\"type\":\"BufferGeometry\",\"vertices\":252},{\"name\":\"Hind right \u00b7 split hoof 1\",\"type\":\"BufferGeometry\",\"vertices\":252},{\"name\":\"Fore left \u00b7 muscle, knee, tendon and fetlock\",\"type\":\"BufferGeometry\",\"vertices\":1287},{\"name\":\"Fore left \u00b7 split hoof -1\",\"type\":\"BufferGeometry\",\"vertices\":310},{\"name\":\"Fore left \u00b7 split hoof 1\",\"type\":\"BufferGeometry\",\"vertices\":310},{\"name\":\"Fore right \u00b7 muscle, knee, tendon and fetlock\",\"type\":\"BufferGeometry\",\"vertices\":1287},{\"name\":\"Fore right \u00b7 split hoof -1\",\"type\":\"BufferGeometry\",\"vertices\":310},{\"name\":\"Fore right \u00b7 split hoof 1\",\"type\":\"BufferGeometry\",\"vertices\":310},{\"name\":\"Fleece \u00b7 continuous shoulders, barrel and haunches\",\"type\":\"BufferGeometry\",\"vertices\":4453}]",
+        "meshes": [
+          {
+            "name": "Face \u00b7 tapered cheekbones and downturned ovine muzzle",
+            "type": "BufferGeometry",
+            "vertices": 1462,
+            "colors": [
+              "c2afa0"
+            ]
+          },
+          {
+            "name": "Left ear \u00b7 curved outer helix",
+            "type": "BufferGeometry",
+            "vertices": 76,
+            "colors": [
+              "ffffff"
+            ]
+          },
+          {
+            "name": "Left ear \u00b7 recessed pinna",
+            "type": "BufferGeometry",
+            "vertices": 64,
+            "colors": [
+              "b99691"
+            ]
+          },
+          {
+            "name": "Left eye \u00b7 almond socket",
+            "type": "BufferGeometry",
+            "vertices": 260,
+            "colors": [
+              "24211e"
+            ]
+          },
+          {
+            "name": "Left eye \u00b7 amber iris",
+            "type": "BufferGeometry",
+            "vertices": 134,
+            "colors": [
+              "ac8e48"
+            ]
+          },
+          {
+            "name": "Left eye \u00b7 horizontal pupil",
+            "type": "BufferGeometry",
+            "vertices": 40,
+            "colors": [
+              "0b1011"
+            ]
+          },
+          {
+            "name": "Left eye \u00b7 corneal catchlight",
+            "type": "BufferGeometry",
+            "vertices": 18,
+            "colors": [
+              "fbf3da"
+            ]
+          },
+          {
+            "name": "Left eye \u00b7 upper brow and eyelid",
+            "type": "BufferGeometry",
+            "vertices": 163,
+            "colors": [
+              "a89989"
+            ]
+          },
+          {
+            "name": "Right ear \u00b7 curved outer helix",
+            "type": "BufferGeometry",
+            "vertices": 76,
+            "colors": [
+              "ffffff"
+            ]
+          },
+          {
+            "name": "Right ear \u00b7 recessed pinna",
+            "type": "BufferGeometry",
+            "vertices": 64,
+            "colors": [
+              "b99691"
+            ]
+          },
+          {
+            "name": "Right eye \u00b7 almond socket",
+            "type": "BufferGeometry",
+            "vertices": 260,
+            "colors": [
+              "24211e"
+            ]
+          },
+          {
+            "name": "Right eye \u00b7 amber iris",
+            "type": "BufferGeometry",
+            "vertices": 134,
+            "colors": [
+              "ac8e48"
+            ]
+          },
+          {
+            "name": "Right eye \u00b7 horizontal pupil",
+            "type": "BufferGeometry",
+            "vertices": 40,
+            "colors": [
+              "0b1011"
+            ]
+          },
+          {
+            "name": "Right eye \u00b7 corneal catchlight",
+            "type": "BufferGeometry",
+            "vertices": 18,
+            "colors": [
+              "fbf3da"
+            ]
+          },
+          {
+            "name": "Right eye \u00b7 upper brow and eyelid",
+            "type": "BufferGeometry",
+            "vertices": 162,
+            "colors": [
+              "a89989"
+            ]
+          },
+          {
+            "name": "Nose \u00b7 divided ovine leather",
+            "type": "BufferGeometry",
+            "vertices": 438,
+            "colors": [
+              "534640"
+            ]
+          },
+          {
+            "name": "Mouth \u00b7 subtle split lip",
+            "type": "BufferGeometry",
+            "vertices": 140,
+            "colors": [
+              "473a34"
+            ]
+          },
+          {
+            "name": "Tail \u00b7 short curled fleece",
+            "type": "BufferGeometry",
+            "vertices": 715,
+            "colors": [
+              "e8dfcd"
+            ]
+          },
+          {
+            "name": "Hind left \u00b7 muscle, knee, tendon and fetlock",
+            "type": "BufferGeometry",
+            "vertices": 1489,
+            "colors": [
+              "a8998b"
+            ]
+          },
+          {
+            "name": "Hind left \u00b7 split hoof -1",
+            "type": "BufferGeometry",
+            "vertices": 252,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Hind left \u00b7 split hoof 1",
+            "type": "BufferGeometry",
+            "vertices": 252,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Hind right \u00b7 muscle, knee, tendon and fetlock",
+            "type": "BufferGeometry",
+            "vertices": 1489,
+            "colors": [
+              "a8998b"
+            ]
+          },
+          {
+            "name": "Hind right \u00b7 split hoof -1",
+            "type": "BufferGeometry",
+            "vertices": 252,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Hind right \u00b7 split hoof 1",
+            "type": "BufferGeometry",
+            "vertices": 252,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Fore left \u00b7 muscle, knee, tendon and fetlock",
+            "type": "BufferGeometry",
+            "vertices": 1287,
+            "colors": [
+              "a8998b"
+            ]
+          },
+          {
+            "name": "Fore left \u00b7 split hoof -1",
+            "type": "BufferGeometry",
+            "vertices": 310,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Fore left \u00b7 split hoof 1",
+            "type": "BufferGeometry",
+            "vertices": 310,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Fore right \u00b7 muscle, knee, tendon and fetlock",
+            "type": "BufferGeometry",
+            "vertices": 1287,
+            "colors": [
+              "a8998b"
+            ]
+          },
+          {
+            "name": "Fore right \u00b7 split hoof -1",
+            "type": "BufferGeometry",
+            "vertices": 310,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Fore right \u00b7 split hoof 1",
+            "type": "BufferGeometry",
+            "vertices": 310,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Fleece \u00b7 continuous shoulders, barrel and haunches",
+            "type": "BufferGeometry",
+            "vertices": 4453,
+            "colors": [
+              "ffffff"
+            ]
+          }
+        ]
+      },
+      {
+        "visualModel": "clover-meadow-sheep",
+        "visualMeshes": 31,
+        "visualTriangles": 33087,
+        "visualSourceTriangles": 275872,
+        "visualTextures": [
+          {
+            "channel": "map",
+            "width": 4096,
+            "height": 4096,
+            "source": "d7cb1b44-bf54-4a2b-815d-5ad568963d48"
+          },
+          {
+            "channel": "normalMap",
+            "width": 4096,
+            "height": 4096,
+            "source": "e4c3b251-eb9e-4562-b3ef-c920ea077e4c"
+          }
+        ],
+        "visualPivots": [
+          {
+            "name": "stHead",
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "children": 17
+          },
+          {
+            "name": "stTail",
+            "rotation": [
+              0,
+              0.06623289190302939,
+              0
+            ],
+            "children": 1
+          },
+          {
+            "name": "stLeg0",
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "children": 3
+          },
+          {
+            "name": "stLeg1",
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "children": 3
+          },
+          {
+            "name": "stLeg2",
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "children": 3
+          },
+          {
+            "name": "stLeg3",
+            "rotation": [
+              0,
+              0,
+              0
+            ],
+            "children": 3
+          }
+        ],
+        "id": "wildwood-173",
+        "kind": "sheep",
+        "visible": true,
+        "bodyVisible": true,
+        "pos": [
+          -4.544375,
+          0,
+          10.971124999999999
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "bounds": [
+          0.6168131398573955,
+          0.8926915426236178,
+          1.243747667745227
+        ],
+        "meshCount": 31,
+        "opacity": 1,
+        "opacityMin": 1,
+        "opacityMax": 1,
+        "geometrySignature": "[{\"name\":\"Face \u00b7 tapered cheekbones and downturned ovine muzzle\",\"type\":\"BufferGeometry\",\"vertices\":1462},{\"name\":\"Left ear \u00b7 curved outer helix\",\"type\":\"BufferGeometry\",\"vertices\":76},{\"name\":\"Left ear \u00b7 recessed pinna\",\"type\":\"BufferGeometry\",\"vertices\":64},{\"name\":\"Left eye \u00b7 almond socket\",\"type\":\"BufferGeometry\",\"vertices\":260},{\"name\":\"Left eye \u00b7 amber iris\",\"type\":\"BufferGeometry\",\"vertices\":134},{\"name\":\"Left eye \u00b7 horizontal pupil\",\"type\":\"BufferGeometry\",\"vertices\":40},{\"name\":\"Left eye \u00b7 corneal catchlight\",\"type\":\"BufferGeometry\",\"vertices\":18},{\"name\":\"Left eye \u00b7 upper brow and eyelid\",\"type\":\"BufferGeometry\",\"vertices\":163},{\"name\":\"Right ear \u00b7 curved outer helix\",\"type\":\"BufferGeometry\",\"vertices\":76},{\"name\":\"Right ear \u00b7 recessed pinna\",\"type\":\"BufferGeometry\",\"vertices\":64},{\"name\":\"Right eye \u00b7 almond socket\",\"type\":\"BufferGeometry\",\"vertices\":260},{\"name\":\"Right eye \u00b7 amber iris\",\"type\":\"BufferGeometry\",\"vertices\":134},{\"name\":\"Right eye \u00b7 horizontal pupil\",\"type\":\"BufferGeometry\",\"vertices\":40},{\"name\":\"Right eye \u00b7 corneal catchlight\",\"type\":\"BufferGeometry\",\"vertices\":18},{\"name\":\"Right eye \u00b7 upper brow and eyelid\",\"type\":\"BufferGeometry\",\"vertices\":162},{\"name\":\"Nose \u00b7 divided ovine leather\",\"type\":\"BufferGeometry\",\"vertices\":438},{\"name\":\"Mouth \u00b7 subtle split lip\",\"type\":\"BufferGeometry\",\"vertices\":140},{\"name\":\"Tail \u00b7 short curled fleece\",\"type\":\"BufferGeometry\",\"vertices\":715},{\"name\":\"Hind left \u00b7 muscle, knee, tendon and fetlock\",\"type\":\"BufferGeometry\",\"vertices\":1489},{\"name\":\"Hind left \u00b7 split hoof -1\",\"type\":\"BufferGeometry\",\"vertices\":252},{\"name\":\"Hind left \u00b7 split hoof 1\",\"type\":\"BufferGeometry\",\"vertices\":252},{\"name\":\"Hind right \u00b7 muscle, knee, tendon and fetlock\",\"type\":\"BufferGeometry\",\"vertices\":1489},{\"name\":\"Hind right \u00b7 split hoof -1\",\"type\":\"BufferGeometry\",\"vertices\":252},{\"name\":\"Hind right \u00b7 split hoof 1\",\"type\":\"BufferGeometry\",\"vertices\":252},{\"name\":\"Fore left \u00b7 muscle, knee, tendon and fetlock\",\"type\":\"BufferGeometry\",\"vertices\":1287},{\"name\":\"Fore left \u00b7 split hoof -1\",\"type\":\"BufferGeometry\",\"vertices\":310},{\"name\":\"Fore left \u00b7 split hoof 1\",\"type\":\"BufferGeometry\",\"vertices\":310},{\"name\":\"Fore right \u00b7 muscle, knee, tendon and fetlock\",\"type\":\"BufferGeometry\",\"vertices\":1287},{\"name\":\"Fore right \u00b7 split hoof -1\",\"type\":\"BufferGeometry\",\"vertices\":310},{\"name\":\"Fore right \u00b7 split hoof 1\",\"type\":\"BufferGeometry\",\"vertices\":310},{\"name\":\"Fleece \u00b7 continuous shoulders, barrel and haunches\",\"type\":\"BufferGeometry\",\"vertices\":4453}]",
+        "meshes": [
+          {
+            "name": "Face \u00b7 tapered cheekbones and downturned ovine muzzle",
+            "type": "BufferGeometry",
+            "vertices": 1462,
+            "colors": [
+              "c2afa0"
+            ]
+          },
+          {
+            "name": "Left ear \u00b7 curved outer helix",
+            "type": "BufferGeometry",
+            "vertices": 76,
+            "colors": [
+              "ffffff"
+            ]
+          },
+          {
+            "name": "Left ear \u00b7 recessed pinna",
+            "type": "BufferGeometry",
+            "vertices": 64,
+            "colors": [
+              "b99691"
+            ]
+          },
+          {
+            "name": "Left eye \u00b7 almond socket",
+            "type": "BufferGeometry",
+            "vertices": 260,
+            "colors": [
+              "24211e"
+            ]
+          },
+          {
+            "name": "Left eye \u00b7 amber iris",
+            "type": "BufferGeometry",
+            "vertices": 134,
+            "colors": [
+              "ac8e48"
+            ]
+          },
+          {
+            "name": "Left eye \u00b7 horizontal pupil",
+            "type": "BufferGeometry",
+            "vertices": 40,
+            "colors": [
+              "0b1011"
+            ]
+          },
+          {
+            "name": "Left eye \u00b7 corneal catchlight",
+            "type": "BufferGeometry",
+            "vertices": 18,
+            "colors": [
+              "fbf3da"
+            ]
+          },
+          {
+            "name": "Left eye \u00b7 upper brow and eyelid",
+            "type": "BufferGeometry",
+            "vertices": 163,
+            "colors": [
+              "a89989"
+            ]
+          },
+          {
+            "name": "Right ear \u00b7 curved outer helix",
+            "type": "BufferGeometry",
+            "vertices": 76,
+            "colors": [
+              "ffffff"
+            ]
+          },
+          {
+            "name": "Right ear \u00b7 recessed pinna",
+            "type": "BufferGeometry",
+            "vertices": 64,
+            "colors": [
+              "b99691"
+            ]
+          },
+          {
+            "name": "Right eye \u00b7 almond socket",
+            "type": "BufferGeometry",
+            "vertices": 260,
+            "colors": [
+              "24211e"
+            ]
+          },
+          {
+            "name": "Right eye \u00b7 amber iris",
+            "type": "BufferGeometry",
+            "vertices": 134,
+            "colors": [
+              "ac8e48"
+            ]
+          },
+          {
+            "name": "Right eye \u00b7 horizontal pupil",
+            "type": "BufferGeometry",
+            "vertices": 40,
+            "colors": [
+              "0b1011"
+            ]
+          },
+          {
+            "name": "Right eye \u00b7 corneal catchlight",
+            "type": "BufferGeometry",
+            "vertices": 18,
+            "colors": [
+              "fbf3da"
+            ]
+          },
+          {
+            "name": "Right eye \u00b7 upper brow and eyelid",
+            "type": "BufferGeometry",
+            "vertices": 162,
+            "colors": [
+              "a89989"
+            ]
+          },
+          {
+            "name": "Nose \u00b7 divided ovine leather",
+            "type": "BufferGeometry",
+            "vertices": 438,
+            "colors": [
+              "534640"
+            ]
+          },
+          {
+            "name": "Mouth \u00b7 subtle split lip",
+            "type": "BufferGeometry",
+            "vertices": 140,
+            "colors": [
+              "473a34"
+            ]
+          },
+          {
+            "name": "Tail \u00b7 short curled fleece",
+            "type": "BufferGeometry",
+            "vertices": 715,
+            "colors": [
+              "e8dfcd"
+            ]
+          },
+          {
+            "name": "Hind left \u00b7 muscle, knee, tendon and fetlock",
+            "type": "BufferGeometry",
+            "vertices": 1489,
+            "colors": [
+              "a8998b"
+            ]
+          },
+          {
+            "name": "Hind left \u00b7 split hoof -1",
+            "type": "BufferGeometry",
+            "vertices": 252,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Hind left \u00b7 split hoof 1",
+            "type": "BufferGeometry",
+            "vertices": 252,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Hind right \u00b7 muscle, knee, tendon and fetlock",
+            "type": "BufferGeometry",
+            "vertices": 1489,
+            "colors": [
+              "a8998b"
+            ]
+          },
+          {
+            "name": "Hind right \u00b7 split hoof -1",
+            "type": "BufferGeometry",
+            "vertices": 252,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Hind right \u00b7 split hoof 1",
+            "type": "BufferGeometry",
+            "vertices": 252,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Fore left \u00b7 muscle, knee, tendon and fetlock",
+            "type": "BufferGeometry",
+            "vertices": 1287,
+            "colors": [
+              "a8998b"
+            ]
+          },
+          {
+            "name": "Fore left \u00b7 split hoof -1",
+            "type": "BufferGeometry",
+            "vertices": 310,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Fore left \u00b7 split hoof 1",
+            "type": "BufferGeometry",
+            "vertices": 310,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Fore right \u00b7 muscle, knee, tendon and fetlock",
+            "type": "BufferGeometry",
+            "vertices": 1287,
+            "colors": [
+              "a8998b"
+            ]
+          },
+          {
+            "name": "Fore right \u00b7 split hoof -1",
+            "type": "BufferGeometry",
+            "vertices": 310,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Fore right \u00b7 split hoof 1",
+            "type": "BufferGeometry",
+            "vertices": 310,
+            "colors": [
+              "393532"
+            ]
+          },
+          {
+            "name": "Fleece \u00b7 continuous shoulders, barrel and haunches",
+            "type": "BufferGeometry",
+            "vertices": 4453,
+            "colors": [
+              "ffffff"
+            ]
+          }
+        ]
+      }
+    ],
+    "layouts": [
+      {
+        "size": {
+          "width": 412,
+          "height": 915
+        },
+        "stick": {
+          "id": "stMoveStick",
+          "x": 18,
+          "y": 761,
+          "width": 132,
+          "height": 132
+        },
+        "buildingSize": 50,
+        "abilitySize": 44,
+        "bottomLeftCorner": true,
+        "separated": true,
+        "scoreContained": true
+      },
+      {
+        "size": {
+          "width": 360,
+          "height": 915
+        },
+        "stick": {
+          "id": "stMoveStick",
+          "x": 18,
+          "y": 761,
+          "width": 132,
+          "height": 132
+        },
+        "buildingSize": 50,
+        "abilitySize": 44,
+        "bottomLeftCorner": true,
+        "separated": true,
+        "scoreContained": true
+      },
+      {
+        "size": {
+          "width": 320,
+          "height": 915
+        },
+        "stick": {
+          "id": "stMoveStick",
+          "x": 18,
+          "y": 761,
+          "width": 132,
+          "height": 132
+        },
+        "buildingSize": 50,
+        "abilitySize": 44,
+        "bottomLeftCorner": true,
+        "separated": true,
+        "scoreContained": true
+      },
+      {
+        "size": {
+          "width": 390,
+          "height": 720
+        },
+        "stick": {
+          "id": "stMoveStick",
+          "x": 18,
+          "y": 566,
+          "width": 132,
+          "height": 132
+        },
+        "buildingSize": 50,
+        "abilitySize": 44,
+        "bottomLeftCorner": true,
+        "separated": true,
+        "scoreContained": true
+      },
+      {
+        "size": {
+          "width": 915,
+          "height": 412
+        },
+        "stick": {
+          "id": "stMoveStick",
+          "x": 18,
+          "y": 249.921875,
+          "width": 140.078125,
+          "height": 140.078125
+        },
+        "buildingSize": 50,
+        "abilitySize": 44,
+        "bottomLeftCorner": true,
+        "separated": true,
+        "scoreContained": true
+      },
+      {
+        "size": {
+          "width": 568,
+          "height": 320
+        },
+        "stick": {
+          "id": "stMoveStick",
+          "x": 18,
+          "y": 166,
+          "width": 132,
+          "height": 132
+        },
+        "buildingSize": 50,
+        "abilitySize": 44,
+        "bottomLeftCorner": true,
+        "separated": true,
+        "scoreContained": true
+      },
+      {
+        "size": {
+          "width": 926,
+          "height": 1700
+        },
+        "stick": {
+          "id": "stMoveStick",
+          "x": 18,
+          "y": 1407.15625,
+          "width": 270.84375,
+          "height": 270.84375
+        },
+        "buildingSize": 87.5,
+        "abilitySize": 75.25,
+        "bottomLeftCorner": true,
+        "separated": true,
+        "scoreContained": true
+      }
+    ],
+    "actualDiagonalMovement": true,
+    "releaseStops": true,
+    "compactHouseButtonBuilds": true,
+    "duration": 420,
+    "timer": "7:00",
+    "old1200Migrates": true,
+    "custom600Preserved": true,
+    "newVersionNotesShown": true,
+    "errors": []
+  },
+  "actualCloverHousePassage": {
+    "nearestSide": [
+      44.499950003729914,
+      0,
+      1.1034777985429695e-05
+    ],
+    "continuedPastHouse": [
+      51.69995000366916,
+      0,
+      2.967517514597383e-10
+    ],
+    "releaseStops": true,
+    "errors": []
+  },
+  "texturedGlb": {
+    "bytes": 23958620,
+    "sha256": "5f4fb9931de7336f19df046a369461932e1bbec643c320dcfd501ed2feb93500",
+    "meshes": 92,
+    "triangles": 547676,
+    "geometryNormalsUvsIndicesValid": true,
+    "embeddedOriginal4KImagesExact": true
+  }
+}

@@ -1,0 +1,9 @@
+# Larger Sheep Tag controls and seven-minute games
+
+The owner requested a much larger joystick shifted diagonally up/right, slightly larger right-side icons, and a seven-minute match. This appended patch changes responsive CSS and default duration, keeping the native stick direction/collision/ramp code and existing placement handlers intact.
+
+Portrait uses a 224 px stick and 92 px knob (previously 156/68). Compact portrait uses 192 px, with 184 px on shorter portrait screens. Landscape uses 208 px or compact 176 px. Right-side building/ability diameters increase, and the arcs, utility buttons and score adapt to the larger footprint. Each round control is tested as a circular target; the map uses a conservative circle-to-rectangle clearance check. This permits visually empty rounded corners to share bounding rectangles while requiring actual controls to stay apart.
+
+The native archive default and new portable scene use 420 seconds. A rule-normalization wrapper converts only the former 1200-second default from saved projects; a deliberately different duration remains unchanged. The native game clock still includes the head start and ends the match at its configured duration.
+
+`test_sheep_large_v11_85.mjs` verifies seven viewport sizes, increased target sizes, up/right displacement, circular clearance, score containment, actual diagonal joystick movement/release, a build from the enlarged house button, current-version update notes, the 7:00 HUD, old-default migration and custom duration preservation. `test_sheep_timer_v11_85.mjs` exercises the native game update immediately before and at the 420-second boundary. `verify_v11_85_release.py` seals exact HTML/SOURCE and preserves all 272 preceding runtime/patch sources and all 50 preceding assets. Final evidence is in `SHEEP_LARGE_EVIDENCE_V11_85.json`. Production uses the separate final deployment request under §§§; device acceptance follows confirmed publication.

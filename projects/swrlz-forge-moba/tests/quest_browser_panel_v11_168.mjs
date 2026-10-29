@@ -1,0 +1,40 @@
+import fs from 'node:fs';
+import vm from 'node:vm';
+import assert from 'node:assert/strict';
+const source=fs.readFileSync(new URL('../runtime/engine_quest_panel_v11_168.js',import.meta.url),'utf8');
+function run({ua='',coarse=false,width=1200,height=680,xr=false,saved='auto'}){
+ const map=new Map([['se.engine.questPanel.v1',saved]]);
+ const events=new Map();const tags=new Map();const classes=new Set();
+ let button;
+ function element(name){return {name,attrs:{},addEventListener(type,cb){this[type]=cb;},setAttribute(k,v){this.attrs[k]=v;}};}
+ const bar={appendChild(n){button=n;tags.set('seQuestModeSwitch',n);}};
+ const document={readyState:'complete',documentElement:{classList:{toggle(c,yes){if(yes)classes.add(c);else classes.delete(c);}},dataset:{}},querySelector:(s)=>s==='.topbar'?bar:null,getElementById:id=>tags.get(id)||null,createElement:element,addEventListener:(name,callback)=>events.set(name,callback)};
+ const window={innerWidth:width,innerHeight:height,matchMedia:()=>({matches:coarse}),addEventListener:(name,callback)=>events.set(name,callback)};
+ const sandbox={window,document,navigator:{userAgent:ua,xr:xr?{isSessionSupported:async()=>true}:undefined},localStorage:{getItem:x=>map.get(x),setItem:(x,v)=>map.set(x,v)},innerWidth:width,innerHeight:height,Promise};
+ vm.runInNewContext(source,sandbox);
+ return {api:window.SWYRL_ENGINE_DEVICE,button,events,classes,document,map};
+}
+const quest=run({ua:'Mozilla/5.0 (X11; Linux x86_64; Quest 2) OculusBrowser/39 Chrome/136 VR'});
+assert.equal(quest.api.read().profile,'quest-browser');
+assert.equal(quest.api.read().questPanelActive,true);
+assert.equal(quest.button.attrs['aria-pressed'],'true');
+assert(quest.classes.has('se-quest-panel'));
+quest.button.click();
+assert.equal(quest.api.read().questPanelActive,false);
+assert.equal(quest.map.get('se.engine.questPanel.v1'),'off');
+assert(!quest.classes.has('se-quest-panel'));
+assert(quest.api.setComfortMode('on'));
+assert(quest.classes.has('se-quest-panel'));
+assert.equal(quest.api.setComfortMode('nonsense'),false);
+quest.events.get('pointerdown')({pointerType:'mouse'});
+assert.equal(quest.api.read().lastPointerType,'mouse');
+const phone=run({ua:'Mozilla/5.0 Android Mobile',coarse:true,width:412,height:915});
+assert.equal(phone.api.read().profile,'phone-tablet');
+assert.equal(phone.api.read().questPanelActive,false);
+const pc=run({ua:'Mozilla/5.0 Windows Chrome',width:1600});
+assert.equal(pc.api.read().profile,'desktop');
+assert.equal(pc.api.read().questPanelActive,false);
+const questMobile=run({ua:'Mozilla/5.0 (Linux; Quest 2) OculusBrowser Mobile VR',coarse:true,width:500,height:495});
+assert.equal(questMobile.api.read().profile,'quest-browser');
+assert(questMobile.classes.has('se-quest-panel'));
+console.log('PASS: Quest 2 auto mode; manual toggles/storage; pointer diagnostics; phone/PC separation; resized Quest window.');

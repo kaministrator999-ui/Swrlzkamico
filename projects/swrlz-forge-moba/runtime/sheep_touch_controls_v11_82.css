@@ -1,0 +1,55 @@
+#stTouchDeck,.st-skill-icon,.st-skill-cost{display:none}
+body.st-touch-controls #stTouchDeck{display:contents}
+body.st-touch-controls #sheepTagHUD .st-commandbar,body.st-touch-controls #sheepTagHUD .st-orders{display:contents!important}
+body.st-touch-controls #sheepTagHUD .st-score{left:106px!important;right:8px!important;gap:5px!important;padding:6px!important}
+body.st-touch-controls #sheepTagHUD .st-title b{font-size:15px}body.st-touch-controls #sheepTagHUD .st-title small{font-size:7px}
+body.st-touch-controls #sheepTagHUD .st-readout{gap:6px}body.st-touch-controls #sheepTagHUD .st-readout b{font-size:18px}
+body.st-touch-controls #sheepTagHUD .st-map{display:block!important;position:fixed;left:max(10px,env(safe-area-inset-left));top:var(--st-touch-top,54px);width:86px!important;padding:0;pointer-events:auto;z-index:40}
+body.st-touch-controls #sheepTagHUD #stMinimap{width:86px!important;height:86px!important;border:2px solid #aab47e;border-radius:12px;background:#13261f;box-shadow:0 3px 14px #0009}
+body.st-touch-controls #sheepTagHUD .st-map span{display:none}
+body.st-touch-controls #sheepTagHUD .st-builds{position:fixed!important;right:max(12px,env(safe-area-inset-right))!important;bottom:max(22px,env(safe-area-inset-bottom))!important;width:190px;height:218px;display:block!important;pointer-events:none;z-index:45}
+body.st-touch-controls #sheepTagHUD .st-builds button[data-st-skill]{position:absolute;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;pointer-events:auto;min-width:0!important;min-height:0!important;width:62px;height:62px;padding:4px!important;border-radius:50%;border:2px solid #b8b678;background:radial-gradient(circle at 40% 25%,#426461,#112c38 62%,#07151f);box-shadow:0 3px 14px #0009,inset 0 0 0 3px #12232b,inset 0 0 15px #6bcbd529;text-align:center;touch-action:none}
+body.st-touch-controls #sheepTagHUD .st-builds button[data-st-skill].active{border-color:#a0ffed;box-shadow:0 0 0 3px #4cebd762,0 0 20px #49d6be88,inset 0 0 12px #8cffdb55}
+body.st-touch-controls #sheepTagHUD .st-builds button[data-st-skill] b{font-size:8px;line-height:1.1;text-shadow:0 2px 3px #000;white-space:nowrap}
+body.st-touch-controls #sheepTagHUD .st-builds button[data-st-skill] small{display:none}
+body.st-touch-controls .st-skill-icon{display:block;width:32px;height:32px;filter:drop-shadow(0 2px 2px #0008)}
+body.st-touch-controls .st-skill-cost{display:block;position:absolute;right:-4px;bottom:-3px;min-width:21px;padding:2px 4px;border:1px solid #bdb27c;border-radius:9px;background:#11251f;color:#ffe09b;font-size:9px;line-height:1.1}
+body.st-touch-controls #sheepTagHUD #stBuildFarm,body.st-touch-controls #sheepTagHUD #stWolfUpgrade{right:0;bottom:0;width:76px;height:76px;border-color:#f5d882}
+body.st-touch-controls #stBuildFarm .st-skill-icon,body.st-touch-controls #stWolfUpgrade .st-skill-icon{width:42px;height:42px}
+body.st-touch-controls #sheepTagHUD #stBuildIncome{right:88px;bottom:0;border-color:#72d5b7}
+body.st-touch-controls #sheepTagHUD #stBuildFort{right:108px;bottom:84px;border-color:#a2cde1}
+body.st-touch-controls #sheepTagHUD #stBuildWall{right:62px;bottom:154px;width:56px;height:56px}
+body.st-touch-controls #sheepTagHUD #stBuildRamp{right:0;bottom:106px;width:56px;height:56px}
+body.st-touch-controls #stBuildWall .st-skill-icon,body.st-touch-controls #stBuildRamp .st-skill-icon{width:27px;height:27px}
+body.st-touch-controls.st-touch-wolf #sheepTagHUD .st-builds [data-st-skill]:not(#stWolfUpgrade){display:none!important}
+body.st-touch-controls #sheepTagHUD #stCancelBuild{position:fixed;left:70px;bottom:176px;width:74px;min-height:44px!important;pointer-events:auto;z-index:47;border-color:#d99383;background:#422a28;font-size:10px}
+body.st-touch-controls #stMoveStick{position:fixed;left:max(14px,env(safe-area-inset-left));bottom:max(24px,env(safe-area-inset-bottom));width:132px;height:132px;border:2px solid #76bcba80;border-radius:50%;background:radial-gradient(circle,#17435770,#0b213b80 58%,#397b8740 60%,#0d223633 66%);box-shadow:inset 0 0 0 8px #0c283344,0 3px 18px #0004;pointer-events:auto;touch-action:none;user-select:none;-webkit-user-select:none;z-index:46}
+body.st-touch-controls #stMoveStick.held{border-color:#a8e7d5;background-color:#1e565c44}
+#stMoveKnob{position:absolute;left:50%;top:50%;width:58px;height:58px;border:2px solid #b5e2dc;border-radius:50%;background:radial-gradient(circle at 35% 25%,#74b8ba,#245365 60%,#153445);box-shadow:0 4px 10px #0006;transform:translate(-50%,-50%);pointer-events:none}
+#stMoveKnob:after{content:'✦';display:block;text-align:center;line-height:58px;color:#c4e2d8;font-size:28px}
+#stMoveStick small{position:absolute;left:0;right:0;bottom:9px;text-align:center;color:#c0d9cb;font:700 9px system-ui;letter-spacing:.16em;pointer-events:none}
+body.st-touch-controls #sheepTagHUD #stTouchOptions{position:fixed;left:16px;bottom:176px;width:44px;height:44px;border-radius:50%;background:#142e30e6;border:1px solid #b4b883;pointer-events:auto;z-index:47;letter-spacing:1px}
+body.st-touch-controls #stTouchUtilities:not([hidden]){display:block;position:fixed;left:50%;bottom:252px;transform:translateX(-50%);width:min(340px,calc(100vw - 32px));box-sizing:border-box;max-height:calc(100dvh - 440px);overflow:auto;padding:10px;border:1px solid #9eac76;border-radius:12px;background:#152e28f5;box-shadow:0 8px 24px #0009;pointer-events:auto;z-index:70}
+#stTouchUtilities header{display:flex;align-items:center;justify-content:space-between;color:#f4df9d}#stTouchUtilities header button{font-size:22px!important}
+body.st-touch-controls #sheepTagHUD #stTouchUtilities .st-selection{display:flex;margin:4px 0}
+body.st-touch-controls #sheepTagHUD #stTouchUtilities .st-extra-actions,body.st-touch-controls #sheepTagHUD #stTouchUtilities #stMoreActions{position:static!important;width:100%;box-sizing:border-box;margin-top:7px}
+body.st-touch-controls #stTouchUtilities button{min-width:44px!important;min-height:44px!important}
+body.st-touch-controls #sheepTagHUD #stProgress,body.st-touch-controls #sheepTagHUD #stTip{display:none}
+body.st-touch-controls #sheepTagHUD #stPlacement,body.st-touch-controls #sheepTagHUD #stFeedback{position:fixed;left:16px;right:16px;bottom:252px;margin:0 auto;max-width:500px;max-height:42px;overflow:hidden;text-align:center;font-size:11px;line-height:1.3;pointer-events:none;text-shadow:0 2px 3px #000;z-index:40}
+body.st-touch-controls:not(.st-touch-building) #sheepTagHUD #stPlacement,body.st-touch-controls.st-touch-building #sheepTagHUD #stFeedback{display:none}
+body.st-touch-controls #stClearanceLegend{font-size:0!important;padding:4px 8px!important;max-width:calc(100vw - 40px)!important;left:12px!important}
+body.st-touch-controls #stClearanceLegend:before{content:attr(data-clearance);font:10px/1.4 system-ui;color:#d8e2c3}body.st-touch-controls #stNearestGap{font-size:11px!important}
+#stTouchAim{display:none;position:fixed;inset:0;width:100vw;height:100dvh;overflow:visible;pointer-events:none;z-index:38}#stTouchAim line{stroke-width:2;stroke-dasharray:4 5;opacity:.9}#stTouchAim circle{fill:#173b3355;stroke-width:2}#stTouchAim .finger{fill:none;opacity:.4;stroke-width:1}
+@media(orientation:landscape){body.st-touch-controls #stTouchUtilities:not([hidden]){left:170px;right:220px;bottom:14px;transform:none;width:auto;max-height:calc(100dvh - 100px)}body.st-touch-controls #sheepTagHUD #stFeedback,body.st-touch-controls #sheepTagHUD #stPlacement{left:170px;right:220px;bottom:22px;max-height:42px}body.st-touch-controls #sheepTagHUD .st-score{left:110px!important}}
+/* The game controls own this space; the editor footer returns on Stop. */
+body.st-touch-controls .app.sheep-tag-runtime{grid-template-rows:48px 1fr 0!important}
+body.st-touch-controls .app.sheep-tag-runtime>footer.status{display:none!important}
+@media(max-width:360px){body.st-touch-controls #stMoveStick{width:112px;height:112px}body.st-touch-controls #stMoveKnob{width:50px;height:50px}body.st-touch-controls #stMoveKnob:after{line-height:50px}}
+@media(orientation:landscape){body.st-touch-controls #sheepTagHUD #stTouchOptions{left:160px;bottom:20px}body.st-touch-controls #sheepTagHUD #stCancelBuild{left:160px;bottom:76px}body.st-touch-controls #sheepTagHUD #stFeedback,body.st-touch-controls #sheepTagHUD #stPlacement{left:220px;right:220px}}
+@media(orientation:landscape) and (max-height:380px){body.st-touch-controls #sheepTagHUD .st-builds{transform:scale(.86);transform-origin:right bottom}body.st-touch-controls #sheepTagHUD #stTouchOptions{left:160px;bottom:20px}body.st-touch-controls #sheepTagHUD #stCancelBuild{left:160px;bottom:76px}body.st-touch-controls #sheepTagHUD #stFeedback{display:none}body.st-touch-controls #sheepTagHUD #stPlacement{left:160px;right:190px;bottom:130px}}
+
+body.st-touch-controls #runtimeDiag{display:none!important}
+
+body.st-touch-controls #sheepTagHUD{z-index:40}
+body.st-touch-controls #stHelpPanel{z-index:90}
+body.st-touch-controls.st-touch-building #stPlacement:before{content:"Drag to aim · release to build";display:block;font-size:10px;color:#d7eee1}

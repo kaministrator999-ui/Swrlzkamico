@@ -1,0 +1,1045 @@
+{
+  "version": "v11.93",
+  "parts": 327,
+  "triangles": 1755616,
+  "presentation": {
+    "revision": "v11.93",
+    "groups": {
+      "Character": {
+        "parts": 210,
+        "visible": 210,
+        "inView": 210
+      },
+      "Azure frost": {
+        "parts": 28,
+        "visible": 28,
+        "inView": 28
+      },
+      "Coral flare": {
+        "parts": 28,
+        "visible": 28,
+        "inView": 28
+      },
+      "Festival companion": {
+        "parts": 61,
+        "visible": 0,
+        "inView": 0
+      }
+    },
+    "hairGroups": [
+      "Azure frost",
+      "Coral flare"
+    ],
+    "camera": {
+      "distance": 10.433903103851147,
+      "aspect": 1.1787819253438114
+    },
+    "coverage": [
+      {
+        "id": "left-wrist-cuff",
+        "opacity": 1,
+        "transparent": false,
+        "side": 2,
+        "visible": true
+      },
+      {
+        "id": "right-arm-band",
+        "opacity": 1,
+        "transparent": false,
+        "side": 2,
+        "visible": true
+      },
+      {
+        "id": "bodice-stitch-2",
+        "opacity": 1,
+        "transparent": false,
+        "side": 2,
+        "visible": true
+      },
+      {
+        "id": "festival-shorts",
+        "opacity": 1,
+        "transparent": false,
+        "side": 2,
+        "visible": true
+      }
+    ],
+    "assemblies": {
+      "enabled": true,
+      "time": 4,
+      "playing": false,
+      "cameraFit": {
+        "left": -0.5698871294881548,
+        "right": 0.5511570103734359,
+        "bottom": -0.8335415154620005,
+        "top": 0.8223014643615857,
+        "aspect": 1.1787819253438114
+      },
+      "components": [
+        {
+          "id": "azure",
+          "state": "attached",
+          "socketId": "hair-azure",
+          "pivot": [
+            -0.445,
+            4.36,
+            0.08374999999999999
+          ],
+          "offset": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": 1,
+          "matrix": [
+            1.0000000000000002,
+            0,
+            0,
+            0,
+            0,
+            1.0000000000000002,
+            0,
+            0,
+            0,
+            0,
+            0.8750000000000002,
+            0,
+            5.551115123125783e-17,
+            8.881784197001252e-16,
+            -0.008125,
+            1.0000000000000002
+          ],
+          "parts": 28,
+          "bounds": {
+            "min": [
+              -2.583261013031006,
+              3.317833900451661,
+              -1.1701232868432998
+            ],
+            "max": [
+              -0.28979502430402876,
+              6.036920070648194,
+              0.4092298866808414
+            ]
+          }
+        },
+        {
+          "id": "coral",
+          "state": "attached",
+          "socketId": "hair-coral",
+          "pivot": [
+            0.445,
+            4.36,
+            0.08374999999999999
+          ],
+          "offset": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": 1,
+          "matrix": [
+            1.0000000000000002,
+            0,
+            0,
+            0,
+            0,
+            1.0000000000000002,
+            0,
+            0,
+            0,
+            0,
+            0.8750000000000002,
+            0,
+            -5.551115123125783e-17,
+            8.881784197001252e-16,
+            -0.008125,
+            1.0000000000000002
+          ],
+          "parts": 28,
+          "bounds": {
+            "min": [
+              0.28980145465081847,
+              3.3195600509643564,
+              -1.1804246532917022
+            ],
+            "max": [
+              2.580889940261841,
+              6.0403127670288095,
+              0.4092298866808414
+            ]
+          }
+        },
+        {
+          "id": "bunny",
+          "state": "free",
+          "socketId": null,
+          "pivot": [
+            1.3,
+            0.1,
+            0.2
+          ],
+          "offset": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": 1,
+          "matrix": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            1
+          ],
+          "parts": 61,
+          "bounds": {
+            "min": [
+              0.9468652560765987,
+              0.027994822503566733,
+              -0.14593706515211347
+            ],
+            "max": [
+              1.6531347439234014,
+              0.9755918107047081,
+              0.522
+            ]
+          }
+        }
+      ],
+      "metrics": {
+        "schema": "swyrl-model-metrics-v1",
+        "basis": "generated Three.js BufferGeometry; CPU buffers only",
+        "meshObjects": 327,
+        "triangles": 1755616,
+        "vertices": 962151,
+        "geometryBytes": 48299196,
+        "estimatedMeshDraws": 327,
+        "groups": {
+          "Character": {
+            "meshObjects": 210,
+            "triangles": 1471728,
+            "vertices": 746424,
+            "geometryBytes": 39692604
+          },
+          "Azure frost": {
+            "meshObjects": 28,
+            "triangles": 139488,
+            "vertices": 106138,
+            "geometryBytes": 4233344
+          },
+          "Coral flare": {
+            "meshObjects": 28,
+            "triangles": 139488,
+            "vertices": 106138,
+            "geometryBytes": 4233344
+          },
+          "Festival companion": {
+            "meshObjects": 61,
+            "triangles": 4912,
+            "vertices": 3451,
+            "geometryBytes": 139904
+          }
+        }
+      }
+    }
+  },
+  "phonePresentation": {
+    "revision": "v11.93",
+    "groups": {
+      "Character": {
+        "parts": 210,
+        "visible": 210,
+        "inView": 210
+      },
+      "Azure frost": {
+        "parts": 28,
+        "visible": 28,
+        "inView": 28
+      },
+      "Coral flare": {
+        "parts": 28,
+        "visible": 28,
+        "inView": 28
+      },
+      "Festival companion": {
+        "parts": 61,
+        "visible": 0,
+        "inView": 0
+      }
+    },
+    "hairGroups": [
+      "Azure frost",
+      "Coral flare"
+    ],
+    "camera": {
+      "distance": 14.920739674000767,
+      "aspect": 0.5500705218617772
+    },
+    "coverage": [
+      {
+        "id": "left-wrist-cuff",
+        "opacity": 1,
+        "transparent": false,
+        "side": 2,
+        "visible": true
+      },
+      {
+        "id": "right-arm-band",
+        "opacity": 1,
+        "transparent": false,
+        "side": 2,
+        "visible": true
+      },
+      {
+        "id": "bodice-stitch-2",
+        "opacity": 1,
+        "transparent": false,
+        "side": 2,
+        "visible": true
+      },
+      {
+        "id": "festival-shorts",
+        "opacity": 1,
+        "transparent": false,
+        "side": 2,
+        "visible": true
+      }
+    ],
+    "assemblies": {
+      "enabled": true,
+      "time": 4,
+      "playing": false,
+      "cameraFit": {
+        "left": -0.842318878315027,
+        "right": 0.8084676824378002,
+        "bottom": -0.55931932647708,
+        "top": 0.5465069830725096,
+        "aspect": 0.5500705218617772
+      },
+      "components": [
+        {
+          "id": "azure",
+          "state": "attached",
+          "socketId": "hair-azure",
+          "pivot": [
+            -0.445,
+            4.36,
+            0.08374999999999999
+          ],
+          "offset": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": 1,
+          "matrix": [
+            1.0000000000000002,
+            0,
+            0,
+            0,
+            0,
+            1.0000000000000002,
+            0,
+            0,
+            0,
+            0,
+            0.8750000000000002,
+            0,
+            5.551115123125783e-17,
+            8.881784197001252e-16,
+            -0.008125,
+            1.0000000000000002
+          ],
+          "parts": 28,
+          "bounds": {
+            "min": [
+              -2.583261013031006,
+              3.317833900451661,
+              -1.1701232868432998
+            ],
+            "max": [
+              -0.28979502430402876,
+              6.036920070648194,
+              0.4092298866808414
+            ]
+          }
+        },
+        {
+          "id": "coral",
+          "state": "attached",
+          "socketId": "hair-coral",
+          "pivot": [
+            0.445,
+            4.36,
+            0.08374999999999999
+          ],
+          "offset": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": 1,
+          "matrix": [
+            1.0000000000000002,
+            0,
+            0,
+            0,
+            0,
+            1.0000000000000002,
+            0,
+            0,
+            0,
+            0,
+            0.8750000000000002,
+            0,
+            -5.551115123125783e-17,
+            8.881784197001252e-16,
+            -0.008125,
+            1.0000000000000002
+          ],
+          "parts": 28,
+          "bounds": {
+            "min": [
+              0.28980145465081847,
+              3.3195600509643564,
+              -1.1804246532917022
+            ],
+            "max": [
+              2.580889940261841,
+              6.0403127670288095,
+              0.4092298866808414
+            ]
+          }
+        },
+        {
+          "id": "bunny",
+          "state": "free",
+          "socketId": null,
+          "pivot": [
+            1.3,
+            0.1,
+            0.2
+          ],
+          "offset": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": 1,
+          "matrix": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            1
+          ],
+          "parts": 61,
+          "bounds": {
+            "min": [
+              0.9468652560765987,
+              0.027994822503566733,
+              -0.14593706515211347
+            ],
+            "max": [
+              1.6531347439234014,
+              0.9755918107047081,
+              0.522
+            ]
+          }
+        }
+      ],
+      "metrics": {
+        "schema": "swyrl-model-metrics-v1",
+        "basis": "generated Three.js BufferGeometry; CPU buffers only",
+        "meshObjects": 327,
+        "triangles": 1755616,
+        "vertices": 962151,
+        "geometryBytes": 48299196,
+        "estimatedMeshDraws": 327,
+        "groups": {
+          "Character": {
+            "meshObjects": 210,
+            "triangles": 1471728,
+            "vertices": 746424,
+            "geometryBytes": 39692604
+          },
+          "Azure frost": {
+            "meshObjects": 28,
+            "triangles": 139488,
+            "vertices": 106138,
+            "geometryBytes": 4233344
+          },
+          "Coral flare": {
+            "meshObjects": 28,
+            "triangles": 139488,
+            "vertices": 106138,
+            "geometryBytes": 4233344
+          },
+          "Festival companion": {
+            "meshObjects": 61,
+            "triangles": 4912,
+            "vertices": 3451,
+            "geometryBytes": 139904
+          }
+        }
+      }
+    }
+  },
+  "portrait": {
+    "version": "v11.93",
+    "skin": "continuous smooth cheek, jaw and rounded chin",
+    "connectedIndicesPreserved": true,
+    "eyeCorners": {
+      "left": {
+        "inner": [
+          -0.027999999999999997,
+          4.044061823738428,
+          0.29843886767916933
+        ],
+        "outer": [
+          -0.212,
+          4.0899381762615725,
+          0.24341932216633233
+        ],
+        "rise": 0.045876,
+        "slopeDegrees": 14
+      },
+      "right": {
+        "inner": [
+          0.027999999999999997,
+          4.044061823738428,
+          0.29843886767916933
+        ],
+        "outer": [
+          0.212,
+          4.0899381762615725,
+          0.24341932216633233
+        ],
+        "rise": 0.045876,
+        "slopeDegrees": 14
+      }
+    },
+    "pupils": "rounded shallow corneal lenses",
+    "localSkinFinish": {
+      "passes": 2,
+      "method": "anchored Taubin",
+      "maximumStep": 0.002
+    }
+  },
+  "legs": {
+    "revision": "smooth-muscle-flow-v11.93",
+    "method": "continuous-native-cross-section-remap",
+    "changedVertices": 57691,
+    "profile": "smooth thigh to knee, full upper calf and tapered ankle",
+    "feetPreservedBelowY": 0.39,
+    "pelvisPreservedAboveY": 2.42,
+    "bodyIndicesPreserved": true,
+    "sections": [
+      {
+        "y": 0.35,
+        "lateralRadius": 0.058,
+        "front": 0.104,
+        "back": -0.008
+      },
+      {
+        "y": 0.5,
+        "lateralRadius": 0.068,
+        "front": 0.094,
+        "back": -0.027
+      },
+      {
+        "y": 0.7,
+        "lateralRadius": 0.086,
+        "front": 0.096,
+        "back": -0.062
+      },
+      {
+        "y": 0.9,
+        "lateralRadius": 0.101,
+        "front": 0.1,
+        "back": -0.101
+      },
+      {
+        "y": 1.1,
+        "lateralRadius": 0.113,
+        "front": 0.107,
+        "back": -0.126
+      },
+      {
+        "y": 1.25,
+        "lateralRadius": 0.113,
+        "front": 0.116,
+        "back": -0.125
+      },
+      {
+        "y": 1.4,
+        "lateralRadius": 0.105,
+        "front": 0.129,
+        "back": -0.101
+      },
+      {
+        "y": 1.52,
+        "lateralRadius": 0.102,
+        "front": 0.136,
+        "back": -0.08
+      },
+      {
+        "y": 1.65,
+        "lateralRadius": 0.108,
+        "front": 0.139,
+        "back": -0.073
+      },
+      {
+        "y": 1.8,
+        "lateralRadius": 0.124,
+        "front": 0.142,
+        "back": -0.088
+      },
+      {
+        "y": 2,
+        "lateralRadius": 0.143,
+        "front": 0.145,
+        "back": -0.113
+      },
+      {
+        "y": 2.2,
+        "lateralRadius": 0.154,
+        "front": 0.148,
+        "back": -0.132
+      },
+      {
+        "y": 2.42,
+        "lateralRadius": 0.176,
+        "front": 0.151,
+        "back": -0.146
+      }
+    ]
+  },
+  "smoothing": {
+    "upperBody": {
+      "version": "v11.93",
+      "method": "regional volume-preserving Taubin",
+      "pairs": 8,
+      "vertices": 54194,
+      "maxDisplacement": 0.008,
+      "laplacianBefore": 0.0033204,
+      "laplacianAfter": 0.00091645,
+      "normalStrength": 0.03,
+      "orientationProtectedVertices": 180,
+      "skinTopologyPreserved": true,
+      "fittedGarments": [
+        "girl-fitted-sleeve",
+        "model-0003",
+        "dark-shoulder"
+      ],
+      "protectedRegions": [
+        "portrait above 3.58",
+        "legs below 2.75",
+        "finger tips and nails",
+        "feet"
+      ]
+    }
+  },
+  "finish": {
+    "revision": "v11.93",
+    "hairScale": 0.58,
+    "hairReach": {
+      "girl-reference-ponytail--1-0": {
+        "oldReach": 0.622935,
+        "newReach": 0.361302
+      },
+      "girl-reference-ponytail--1-0-silk": {
+        "oldReach": 0.623768,
+        "newReach": 0.361786
+      },
+      "girl-reference-ponytail--1-1": {
+        "oldReach": 0.573251,
+        "newReach": 0.332486
+      },
+      "girl-reference-ponytail--1-1-silk": {
+        "oldReach": 0.552526,
+        "newReach": 0.320465
+      },
+      "girl-reference-ponytail--1-2": {
+        "oldReach": 0.544047,
+        "newReach": 0.315548
+      },
+      "girl-reference-ponytail--1-2-silk": {
+        "oldReach": 0.50762,
+        "newReach": 0.29442
+      },
+      "girl-reference-ponytail--1-3": {
+        "oldReach": 0.530746,
+        "newReach": 0.307833
+      },
+      "girl-reference-ponytail--1-3-silk": {
+        "oldReach": 0.496256,
+        "newReach": 0.287828
+      },
+      "girl-reference-ponytail--1-4": {
+        "oldReach": 0.547479,
+        "newReach": 0.317538
+      },
+      "girl-reference-ponytail--1-4-silk": {
+        "oldReach": 0.52065,
+        "newReach": 0.301977
+      },
+      "girl-reference-ponytail-1-0": {
+        "oldReach": 0.622935,
+        "newReach": 0.361302
+      },
+      "girl-reference-ponytail-1-0-silk": {
+        "oldReach": 0.623764,
+        "newReach": 0.361783
+      },
+      "girl-reference-ponytail-1-1": {
+        "oldReach": 0.573251,
+        "newReach": 0.332486
+      },
+      "girl-reference-ponytail-1-1-silk": {
+        "oldReach": 0.552522,
+        "newReach": 0.320463
+      },
+      "girl-reference-ponytail-1-2": {
+        "oldReach": 0.544047,
+        "newReach": 0.315548
+      },
+      "girl-reference-ponytail-1-2-silk": {
+        "oldReach": 0.507618,
+        "newReach": 0.294418
+      },
+      "girl-reference-ponytail-1-3": {
+        "oldReach": 0.530746,
+        "newReach": 0.307833
+      },
+      "girl-reference-ponytail-1-3-silk": {
+        "oldReach": 0.496255,
+        "newReach": 0.287828
+      },
+      "girl-reference-ponytail-1-4": {
+        "oldReach": 0.547479,
+        "newReach": 0.317538
+      },
+      "girl-reference-ponytail-1-4-silk": {
+        "oldReach": 0.520657,
+        "newReach": 0.301981
+      }
+    },
+    "restoredGripParts": [
+      "hair-grip--1",
+      "hair-grip-1"
+    ],
+    "angularDressPanels": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "matchedTrimParts": [
+      "skirt-panel-0",
+      "skirt-piping-0--1",
+      "skirt-piping-0-1",
+      "skirt-panel-1",
+      "skirt-piping-1--1",
+      "skirt-piping-1-1",
+      "skirt-panel-2",
+      "skirt-piping-2--1",
+      "skirt-piping-2-1",
+      "skirt-panel-3",
+      "skirt-piping-3--1",
+      "skirt-piping-3-1",
+      "light-cord--1-0",
+      "light--1-0",
+      "light-cord--1-1",
+      "light--1-1",
+      "light-cord--1-2",
+      "light--1-2",
+      "light-cord-1-0",
+      "light-1-0",
+      "light-cord-1-1",
+      "light-1-1",
+      "light-cord-1-2",
+      "light-1-2",
+      "skirt-inset-0--1",
+      "skirt-inset-0-1",
+      "skirt-inset-1--1",
+      "skirt-inset-1-1",
+      "skirt-inset-3--1",
+      "skirt-inset-3-1",
+      "girl-tailoring-stitches",
+      "girl-dress-inset-pleat-seams",
+      "girl-dress-brocade-diamonds",
+      "girl-dress-running-stitches",
+      "girl-dress-pastel-bauble-0",
+      "girl-dress-bauble-loop-0",
+      "girl-dress-pastel-bauble-1",
+      "girl-dress-bauble-loop-1",
+      "girl-dress-pastel-bauble-2",
+      "girl-dress-bauble-loop-2",
+      "girl-dress-pastel-bauble-3",
+      "girl-dress-bauble-loop-3",
+      "girl-dress-pastel-bauble-4",
+      "girl-dress-bauble-loop-4",
+      "girl-dress-pastel-bauble-5",
+      "girl-dress-bauble-loop-5",
+      "girl-dress-pastel-bauble-6",
+      "girl-dress-bauble-loop-6",
+      "girl-dress-pastel-bauble-7",
+      "girl-dress-bauble-loop-7",
+      "girl-dress-pastel-bauble-8",
+      "girl-dress-bauble-loop-8",
+      "girl-dress-pastel-bauble-9",
+      "girl-dress-bauble-loop-9",
+      "girl-dress-pastel-bauble-10",
+      "girl-dress-bauble-loop-10",
+      "girl-dress-pastel-bauble-11",
+      "girl-dress-bauble-loop-11",
+      "girl-dress-pastel-bauble-12",
+      "girl-dress-bauble-loop-12",
+      "girl-dress-pastel-bauble-13",
+      "girl-dress-bauble-loop-13",
+      "girl-dress-pastel-bauble-14",
+      "girl-dress-bauble-loop-14",
+      "girl-dress-gold-tail-tassel"
+    ]
+  },
+  "coverage": {
+    "version": "v11.93",
+    "underlayer": "festival-shorts",
+    "opaque": true,
+    "coveredRange": {
+      "minimumY": 1.98,
+      "maximumY": 2.84
+    },
+    "armorLinings": [
+      "right-arm-band",
+      "left-wrist-cuff",
+      "bodice-stitch-2",
+      "right-wrist-0",
+      "right-wrist-1",
+      "right-wrist-2"
+    ],
+    "armorFit": "native diagonal hem planes",
+    "skinRetained": true
+  },
+  "coverageRays": [
+    {
+      "name": "front",
+      "skin": 1.1290459907785557,
+      "cloth": 1.1129774934169918,
+      "covered": true
+    },
+    {
+      "name": "back",
+      "skin": 1.1390949913240984,
+      "cloth": 1.1230309235282516,
+      "covered": true
+    },
+    {
+      "name": "left",
+      "skin": 0.8913290296629797,
+      "cloth": 0.8752035530125603,
+      "covered": true
+    },
+    {
+      "name": "right",
+      "skin": 0.89126535921053,
+      "cloth": 0.8751681363677014,
+      "covered": true
+    },
+    {
+      "name": "below",
+      "skin": 1.4000000953674316,
+      "cloth": 1.3840000629425049,
+      "covered": true
+    },
+    {
+      "name": "below-front",
+      "skin": 1.6132006856178378,
+      "cloth": 1.5956363592575804,
+      "covered": true
+    }
+  ],
+  "armorRays": [
+    {
+      "id": "right-arm-band",
+      "side": -1,
+      "skin": 1.438842638384531,
+      "cloth": 1.4040820062849626,
+      "covered": true
+    },
+    {
+      "id": "right-arm-band",
+      "side": 1,
+      "skin": 1.4217769650744603,
+      "cloth": 1.387201466129626,
+      "covered": true
+    },
+    {
+      "id": "left-wrist-cuff",
+      "side": -1,
+      "skin": 1.519627434384862,
+      "cloth": 1.4798177533629575,
+      "covered": true
+    },
+    {
+      "id": "left-wrist-cuff",
+      "side": 1,
+      "skin": 1.3867993766004951,
+      "cloth": 1.3532066285797106,
+      "covered": true
+    },
+    {
+      "id": "bodice-stitch-2",
+      "side": -1,
+      "skin": 1.4288979575312912,
+      "cloth": 1.4148836768809245,
+      "covered": true
+    },
+    {
+      "id": "bodice-stitch-2",
+      "side": 1,
+      "skin": 1.4049163381557839,
+      "cloth": 1.388925940750568,
+      "covered": true
+    },
+    {
+      "id": "right-wrist-0",
+      "side": -1,
+      "skin": 1.4608710458509089,
+      "cloth": 1.4436914777819232,
+      "covered": true
+    },
+    {
+      "id": "right-wrist-0",
+      "side": 1,
+      "skin": 1.4052773606521338,
+      "cloth": 1.3912882809411022,
+      "covered": true
+    },
+    {
+      "id": "right-wrist-1",
+      "side": -1,
+      "skin": 1.4857102057039193,
+      "cloth": 1.4686698721855758,
+      "covered": true
+    },
+    {
+      "id": "right-wrist-1",
+      "side": 1,
+      "skin": 1.3972975584679779,
+      "cloth": 1.3832425844942762,
+      "covered": true
+    },
+    {
+      "id": "right-wrist-2",
+      "side": -1,
+      "skin": 1.513828275961369,
+      "cloth": 1.4986826030163314,
+      "covered": true
+    },
+    {
+      "id": "right-wrist-2",
+      "side": 1,
+      "skin": 1.38818869267637,
+      "cloth": 1.374178648876881,
+      "covered": true
+    },
+    {
+      "id": "model-0003",
+      "side": -1,
+      "skin": 1.3500220516282355,
+      "cloth": 1.341022437028519,
+      "covered": true
+    },
+    {
+      "id": "model-0003",
+      "side": 1,
+      "skin": 1.3243933287658654,
+      "cloth": 1.3149183798766393,
+      "covered": true
+    },
+    {
+      "id": "dark-shoulder",
+      "side": -1,
+      "skin": 1.3853212064147251,
+      "cloth": 1.3677103272253281,
+      "covered": true
+    },
+    {
+      "id": "dark-shoulder",
+      "side": 1,
+      "skin": 1.3823167048407055,
+      "cloth": 1.363567980759153,
+      "covered": true
+    }
+  ],
+  "nativeFactory": {
+    "partsExact": true,
+    "groupsExact": true,
+    "assembliesExact": true
+  },
+  "materialEditUndoExact": true,
+  "nativeSaveImportExact": true,
+  "nativeBytes": 201451519,
+  "texturedGLB": {
+    "bytes": 64847952,
+    "meshes": 327,
+    "embeddedImages": 2
+  },
+  "pageErrors": [],
+  "sourceIntegritySha256": "caad492d5e7ee95808c36102b47b24fcff816c340f242f9db1fc5d24a4316cf6"
+}

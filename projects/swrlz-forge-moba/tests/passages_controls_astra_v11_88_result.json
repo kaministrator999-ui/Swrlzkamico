@@ -1,0 +1,183 @@
+{
+  "version": "v11.88",
+  "htmlBytes": 3371397,
+  "htmlSha256": "6d4ce7a4f95c2c90fb988d99867ee240c7a505df13b43c7be4b2038f506e4c2e",
+  "patches": 120,
+  "assets": 56,
+  "preservedSources": 281,
+  "preservedAssets": 55,
+  "originalGearAndTailPartsPreserved": 37,
+  "nativeSweptPassageCases": "old .60/new .75 lanes; off-center; both directions; both axes; starting inside; three rows; corners/rotation/traffic/blocked/reverse/release/wolf exclusion; native snap",
+  "actualTouchPassage": {
+    "nearestSide": [
+      44.499950003729914,
+      0,
+      1.1034777985429695e-05
+    ],
+    "continuedPastHouse": [
+      51.69995000366916,
+      0,
+      2.967517514597383e-10
+    ],
+    "releaseStops": true,
+    "errors": []
+  },
+  "touchControls": {
+    "layouts": [
+      {
+        "size": {
+          "width": 412,
+          "height": 915
+        },
+        "stick": {
+          "id": "stMoveStick",
+          "x": 32.953125,
+          "y": 243.453125,
+          "width": 267.796875,
+          "height": 267.796875
+        },
+        "buildingSize": 86.515625,
+        "abilitySize": 74.15625,
+        "diagonallyUpRight": true,
+        "separated": true,
+        "scoreContained": true
+      },
+      {
+        "size": {
+          "width": 360,
+          "height": 915
+        },
+        "stick": {
+          "id": "stMoveStick",
+          "x": 28.796875,
+          "y": 328.203125,
+          "width": 234,
+          "height": 234
+        },
+        "buildingSize": 75.59375,
+        "abilitySize": 64.796875,
+        "diagonallyUpRight": true,
+        "separated": true,
+        "scoreContained": true
+      },
+      {
+        "size": {
+          "width": 320,
+          "height": 915
+        },
+        "stick": {
+          "id": "stMoveStick",
+          "x": 25.59375,
+          "y": 393.40625,
+          "width": 208,
+          "height": 208
+        },
+        "buildingSize": 67.1875,
+        "abilitySize": 57.59375,
+        "diagonallyUpRight": true,
+        "separated": true,
+        "scoreContained": true
+      },
+      {
+        "size": {
+          "width": 390,
+          "height": 720
+        },
+        "stick": {
+          "id": "stMoveStick",
+          "x": 31.1875,
+          "y": 153.015625,
+          "width": 226.1875,
+          "height": 226.1875
+        },
+        "buildingSize": 81.890625,
+        "abilitySize": 70.1875,
+        "diagonallyUpRight": true,
+        "separated": true,
+        "scoreContained": true
+      },
+      {
+        "size": {
+          "width": 915,
+          "height": 412
+        },
+        "stick": {
+          "id": "stMoveStick",
+          "x": 102,
+          "y": 111.25,
+          "width": 238.953125,
+          "height": 238.953125
+        },
+        "buildingSize": 86.515625,
+        "abilitySize": 74.15625,
+        "diagonallyUpRight": true,
+        "separated": true,
+        "scoreContained": true
+      },
+      {
+        "size": {
+          "width": 568,
+          "height": 320
+        },
+        "stick": {
+          "id": "stMoveStick",
+          "x": 102,
+          "y": 86.40625,
+          "width": 185.59375,
+          "height": 185.59375
+        },
+        "buildingSize": 67.1875,
+        "abilitySize": 57.59375,
+        "diagonallyUpRight": true,
+        "separated": true,
+        "scoreContained": true
+      },
+      {
+        "size": {
+          "width": 926,
+          "height": 1700
+        },
+        "stick": {
+          "id": "stMoveStick",
+          "x": 74.078125,
+          "y": 191.015625,
+          "width": 601.890625,
+          "height": 601.890625
+        },
+        "buildingSize": 194.453125,
+        "abilitySize": 166.671875,
+        "diagonallyUpRight": true,
+        "separated": true,
+        "scoreContained": true
+      }
+    ],
+    "actualDiagonalMovement": true,
+    "releaseStops": true,
+    "enlargedHouseButtonBuilds": true,
+    "duration": 420,
+    "timer": "7:00",
+    "old1200Migrates": true,
+    "custom600Preserved": true,
+    "newVersionNotesShown": true,
+    "errors": []
+  },
+  "model": {
+    "species": "courier",
+    "valid": true,
+    "parts": 102,
+    "triangles": 399760,
+    "nativeToolRebuildExact": true,
+    "materialEditUndo": true,
+    "nativeSaveReloadExact": true,
+    "texturedGLBExport": true,
+    "errors": []
+  },
+  "actualTexturedGlb": {
+    "bytes": 20501440,
+    "sha256": "f1305e2d4f937b3e2c8ac669e6c48e77943602b61c689808a5c1931914d4eec9",
+    "meshes": 102,
+    "triangles": 399760,
+    "geometryUvsNormalsIndicesValid": true,
+    "original4096ColorAndNormalImagesEmbeddedExact": true
+  }
+}

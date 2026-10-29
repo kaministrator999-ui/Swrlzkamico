@@ -1,0 +1,62 @@
+/* §E v11.74: compact viewport multi-select and non-destructive assembly UI. */
+.model-atelier .atelier-viewport-controls{
+ flex-wrap:wrap;max-width:min(98%,580px);align-items:flex-start;
+}
+.model-atelier .atelier-group-mobile{
+ display:flex;flex-direction:column;position:relative;min-width:0;
+ max-width:min(96vw,340px);font-size:11px;z-index:50;pointer-events:auto;
+}
+.model-atelier .atelier-group-quick{
+ display:flex;flex-wrap:wrap;align-items:center;gap:4px;
+ padding:5px;border:1px solid #4299af;border-radius:9px;
+ background:linear-gradient(115deg,#122e49ec,#27234dea);
+ box-shadow:0 8px 20px #0610228c;
+}
+.model-atelier .atelier-group-quick button{
+ min-height:36px;min-width:0;padding:5px 8px;font-size:11px;
+ white-space:nowrap;flex:0 0 auto;touch-action:manipulation;
+}
+.model-atelier .atelier-group-quick [data-group-multi][aria-pressed=true]{
+ background:linear-gradient(120deg,#117d81,#265dab);border-color:#72fae2;
+}
+.model-atelier [data-group-counter]{
+ color:#a6fff1;font-weight:700;white-space:nowrap;font-variant-numeric:tabular-nums;
+}
+.model-atelier .atelier-group-details{
+ position:absolute;top:calc(100% + 5px);left:0;min-width:min(330px,91vw);
+ width:min(350px,91vw);max-height:min(48vh,370px);overflow-y:auto;
+ border:1px solid #4dbbc6;border-radius:9px;
+ background:linear-gradient(130deg,#122b44,#232145);
+ box-shadow:0 16px 40px #000b;pointer-events:auto;z-index:600;
+}
+.model-atelier .atelier-group-details:not([open]){position:relative;top:auto;left:auto;min-width:0;width:100%;max-height:none}
+.model-atelier .atelier-group-details summary{
+ padding:8px 10px;cursor:pointer;color:#a9f7ff;font-weight:700;
+ touch-action:manipulation;list-style:revert;
+}
+.model-atelier .atelier-group-actions{
+ padding:5px 7px;display:flex;gap:5px;flex-wrap:wrap;
+}
+.model-atelier .atelier-group-actions button{font-size:11px;min-height:39px;padding:5px 7px}
+.model-atelier .atelier-group-actions label{
+ flex:1 1 135px;min-width:0;color:#bfdef0;font-size:11px;
+}
+.model-atelier .atelier-group-actions select{
+ width:100%;max-width:100%;min-width:0;font-size:12px;min-height:37px;
+}
+.model-atelier .atelier-group-details small{display:block;padding:4px 8px 8px;color:#9ec9d7}
+@media(max-width:700px){
+ .model-atelier .atelier-viewport-controls:has(.atelier-group-mobile){
+  max-width:calc(100vw - 62px)!important;gap:4px!important;
+  top:6px!important;left:6px!important;bottom:auto!important;
+ }
+ .model-atelier .atelier-group-mobile{
+  flex:1 1 245px;width:min(92vw,340px);max-width:calc(100vw - 65px);
+ }
+ .model-atelier .atelier-group-quick{gap:4px}
+ .model-atelier .atelier-group-quick button{
+  min-height:42px!important;padding:5px 7px!important;min-width:0!important;
+ }
+ .model-atelier .atelier-group-details summary{min-height:38px}
+ .model-atelier .atelier-group-actions button{min-height:44px!important}
+}

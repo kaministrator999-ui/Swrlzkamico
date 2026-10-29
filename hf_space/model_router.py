@@ -338,7 +338,22 @@ def direct_app_identity_answer(prompt: str) -> str:
             "Yes—I'm §wyrlz, the assistant in this app.")
 
 
-def dispatch(model_id: str, payload: dict[str,Any], r39_generate: Callable[[dict[str,Any]],Iterator[dict[str,Any]]], stock_generate=None,large_generate=None,coder_generate=None):
+def dispatch(model_id: str, payload: dict[str,Any], r39_generate: Callable[[dict[str,Any]],Iterator[dict[str,Any]]], stock_generate=None,large_generate=None,coder_generate=None,*,forge_context=None):
+    if forge_context is not None:
+        import forge_embed
+        from brain_forge import classify_forge_intent
+        from forge_chat_actions import generate_events
+        forge_embed.revalidate(forge_context,require_snapshot=True)
+        native_intent=classify_forge_intent(str(payload.get("prompt") or ""),forge_context.model_context())
+        if native_intent.get("applicable") and native_intent.get("disposition") in ("mutation","read","clarify"):
+            yield from generate_events(payload,forge_context,forge_embed.create_batch,forge_embed.wait_batch)
+            return
+        payload=dict(payload)
+        # Evidence remains separate from the original prompt used by every classifier.
+        summary=forge_context.model_context()
+        for collection in ("meshes","actors"):
+            if isinstance(summary.get(collection),list):summary[collection]=summary[collection][:8]
+        payload["nativeEditorEvidence"]=summary
     history=payload.get("history") if isinstance(payload.get("history"),list) else []
     pins=payload.get("pinnedContext") if isinstance(payload.get("pinnedContext"),list) else []
     intent=programming_intent(str(payload.get("prompt") or ""),history,pins,payload.get("priorProgrammingState") if isinstance(payload.get("priorProgrammingState"),dict) else {})

@@ -1,0 +1,93 @@
+/* §E v11.3 Model Atelier: isolated from existing game and animation surfaces. */
+.model-atelier[hidden],.model-atelier-open[hidden],.model-atelier [hidden]{display:none!important}
+.model-atelier{position:fixed;inset:0;z-index:2000;display:flex;flex-direction:column;background:#101526;color:#f0f5ff;font:14px/1.35 system-ui,sans-serif;overscroll-behavior:contain}
+.model-atelier *{box-sizing:border-box}
+.model-atelier-head{min-height:62px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 17px;background:linear-gradient(90deg,#1d2441,#283451);border-bottom:1px solid #627798;flex-wrap:wrap}
+.model-atelier-head strong{font-size:17px}
+.model-atelier-head small{display:block;font-weight:400;font-size:11px;color:#a7c4dc;margin-top:3px}
+.model-atelier button,.model-atelier select,.model-atelier input{color:#ecf5ff;background:#25314d;border:1px solid #6e8aaa;border-radius:7px;padding:8px;min-height:33px;font:inherit}
+.model-atelier button{cursor:pointer;font-weight:650}
+.model-atelier button:hover,.model-atelier button:focus-visible{border-color:#7dffeb;outline-offset:2px}
+.model-atelier button:disabled{opacity:.44;cursor:not-allowed}
+.model-atelier-actions{display:flex;gap:7px;flex-wrap:wrap}
+.model-atelier-actions button:first-child{background:#166c73}
+.model-atelier-body{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(270px,340px)}
+.atelier-scene{position:relative;min-width:0;min-height:220px;overflow:hidden;background:radial-gradient(circle,#283a59,#101525)}
+.atelier-viewport{position:absolute;inset:0}
+.atelier-viewport canvas{display:block;width:100%;height:100%;outline:none}
+.atelier-viewport-controls{position:absolute;bottom:14px;left:14px;display:flex;gap:5px}
+.atelier-viewport-controls button{background:#131f39ed}
+.atelier-inspector{border-left:1px solid #556b8f;background:#1a243a;min-height:0;overflow:auto;padding:15px;display:flex;flex-direction:column;gap:10px}
+.atelier-inspector h3{margin:0;font-size:16px}
+.atelier-inspector p{margin:0;font-size:12px;color:#a9bfd5}
+#modelAtelierParts{display:block;width:100%;min-height:110px;padding:4px;font-size:12px}
+#modelAtelierParts option{padding:4px 6px}
+.atelier-inspector-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}
+.atelier-inspector-actions button{font-size:11px;padding:5px;min-width:0}
+.atelier-inspector>strong{font-size:12px;color:#89e5e9;overflow-wrap:anywhere}
+#modelAtelierInspectorControls{display:flex;flex-direction:column;gap:10px}
+.atelier-inspector label{display:flex;flex-direction:column;gap:3px;font-size:12px;color:#cddbed}
+.atelier-inspector label>input,.atelier-inspector label>select{width:100%}
+.atelier-pair{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.atelier-transform{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+.atelier-transform strong{grid-column:1/-1;font-size:11px;margin-top:6px;color:#8cbbd2}
+.atelier-transform input{width:100%;min-width:0;padding:5px;font-size:12px}
+.atelier-import{padding-top:6px;border-top:1px solid #4e617d}
+.atelier-import input{font-size:11px;padding:5px}
+.atelier-disclaimer{font-size:11px!important;line-height:1.45}
+.atelier-status{padding:8px 16px;min-height:37px;background:#111c2e;color:#b8ebd4;font-size:12px;border-top:1px solid #354963}
+.atelier-status.error{color:#ffb7b7}
+.model-atelier-open{position:fixed;bottom:17px;right:18px;z-index:1999;padding:10px 16px;border:1px solid #70dce0;border-radius:11px;color:#f4ffff;background:#155d69;font-weight:700;box-shadow:0 6px 23px #0008}
+@media(max-width:750px){
+ .model-atelier-head{padding:7px 9px;min-height:50px}
+ .model-atelier-head strong{font-size:14px}
+ .model-atelier-head small{font-size:10px}
+ .model-atelier-actions{gap:3px}
+ .model-atelier-actions button{padding:6px;font-size:11px;min-height:28px}
+ .model-atelier-body{display:flex;flex-direction:column}
+ .atelier-scene{flex:1;min-height:35vh}
+ .atelier-inspector{flex:0 0 auto;height:38dvh;min-height:145px;max-height:48dvh;border-left:0;border-top:1px solid #556b8f;padding:9px}
+ #modelAtelierParts{min-height:68px;max-height:110px}
+ .atelier-inspector-actions{grid-template-columns:repeat(5,minmax(0,1fr))}
+ .atelier-status{padding:6px 9px;font-size:10px}
+}
+/* v11.6 mobile-first workspace: applies to phone and mobile desktop-site mode. */
+@media (max-width: 900px), (pointer: coarse) {
+ .model-atelier{height:100dvh;max-height:100dvh;overflow:hidden}
+ .model-atelier-head{min-height:42px;flex:0 0 auto;padding:5px 8px;gap:4px}
+ .model-atelier-head strong{font-size:13px}
+ .model-atelier-actions{gap:4px}
+ .model-atelier-actions button{font-size:11px;padding:5px 7px;min-height:30px}
+ .model-atelier-body{display:flex;flex-direction:column;min-height:0;overflow:hidden}
+ .atelier-scene{flex:1 1 auto;min-height:48dvh;max-height:none}
+ .atelier-viewport-controls{bottom:8px;left:8px;z-index:5}
+ .atelier-inspector{height:29dvh;min-height:155px;max-height:36dvh;flex:0 0 auto;overscroll-behavior:contain;overflow-y:auto;padding:8px;gap:6px;border-left:0;border-top:1px solid #526b90}
+ .atelier-inspector h3{font-size:14px}
+ .atelier-inspector p{font-size:11px}
+ #modelAtelierParts{min-height:62px;max-height:84px;font-size:11px}
+ .atelier-inspector-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}
+ .atelier-inspector-actions button{min-height:32px}
+ .atelier-status{flex:0 0 auto;padding:5px 8px;min-height:26px;max-height:44px;overflow:auto}
+ #modelAtelierLoftEditor textarea{width:100%;max-width:100%;font:12px/1.3 monospace;background:#17233a;color:#e2f3ff;border:1px solid #6983a1;border-radius:5px}
+}
+
+/* v11.7 narrow-screen sculpt mode: make geometry dominate while keeping editing reachable. */
+@media (max-width: 900px), (pointer: coarse) {
+ .atelier-scene {min-height: 51dvh; background: radial-gradient(circle at 50% 41%, #2a3b58, #111525 73%)}
+ .atelier-inspector {height: 26dvh;max-height: 29dvh;min-height: 150px;overflow-y:auto;}
+ .model-atelier-head small {color:#b4ebed}
+ .atelier-inspector-actions button {min-height: 30px}
+ .atelier-disclaimer {font-size: 10px!important}
+}
+
+/* v11.8 procedural sculpt tools: scroll locally, never block mobile viewport. */
+.atelier-sculpt-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}
+.atelier-sculpt-actions button{font-size:11px;min-width:0;white-space:normal}
+#modelAtelierSculptEditor{border:1px solid #49647d;border-radius:8px;padding:9px;display:flex;flex-direction:column;gap:7px;background:#152235}
+#modelAtelierSculptEditor[hidden]{display:none!important}
+#modelAtelierSculptEditor input{width:100%;max-width:100%;min-width:0}
+@media (max-width:900px),(pointer:coarse){
+ #modelAtelierSculptEditor{padding:7px;gap:5px}
+ #modelAtelierSculptEditor button{min-height:34px;font-size:11px}
+ .atelier-inspector{overscroll-behavior-y:contain}
+}

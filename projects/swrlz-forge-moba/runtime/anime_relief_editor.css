@@ -1,0 +1,5 @@
+.story-relief-section {margin:12px 0;padding:10px;border:1px solid #8d754b;border-radius:8px;background:rgba(43,31,18,.62)}
+.story-relief-section>summary {cursor:pointer;color:#f1d397;font-weight:700}
+.story-relief-section select {max-width:100%;min-width:0}
+.story-relief-section .story-key-actions {flex-wrap:wrap}
+.story-relief-section[hidden] {display:none!important}

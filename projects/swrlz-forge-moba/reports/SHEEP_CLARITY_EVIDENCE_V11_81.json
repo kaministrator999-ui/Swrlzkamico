@@ -1,0 +1,333 @@
+{
+  "release": "v11.81",
+  "finalBytes": 3258318,
+  "finalSha256": "9fb46459d3ca870f766ff7c90c18a1649ffbfc68352da25c493bc5ffe284186c",
+  "patches": 113,
+  "assets": 49,
+  "previousSourcesPreserved": 257,
+  "previousAssetsPreserved": 49,
+  "cpu": [
+    "[{\"gap\":0.3,\"label\":\"BLOCKED\",\"lengths\":[12.387883264926197,13.250966799187822]},{\"gap\":0.6,\"label\":\"SHEEP ONLY\",\"lengths\":[10,13.550966799187819]},{\"gap\":2.1,\"label\":\"BOTH\",\"lengths\":[10,10]}]",
+    "OFFSET_MOVEMENT 10.289652473703933 [41,0,5]",
+    "SHEEP_CLARITY_CPU_PASS {\"defaults\":{\"speed\":6,\"radius\":0.9},\"pre\":{\"wolfVisible\":false,\"perceives\":false,\"memory\":0,\"physical\":false,\"view\":[\"sheep\"]},\"far\":{\"memory\":0,\"perceives\":false,\"seen\":false},\"seen\":{\"memory\":1,\"perceives\":true,\"seen\":true},\"lost\":{\"memory\":[5,0,0],\"perceives\":false},\"sanctuary\":[false,false,false,false,false],\"base\":[34.949999999999996,0,0],\"gaps\":[{\"gap\":0.3,\"label\":\"BLOCKED\",\"lengths\":[12.387883264926197,13.250966799187822]},{\"gap\":0.6,\"label\":\"SHEEP ONLY\",\"lengths\":[10,13.550966799187819]},{\"gap\":2.1,\"label\":\"BOTH\",\"lengths\":[10,10]}],\"actualGapMove\":[41,0,5]}",
+    "COMPACT_CUSTOM_MAP_BASE_PASS [12,0,0]",
+    "REVERSE_AND_INSIDE_LANE_REPATH_PASS"
+  ],
+  "wispCompatibility": [
+    "VAST_WISP_CRAWL_LEAVE_RETURN_ALL_AXES_REVIVE_AND_FINE_LOCAL_NAV_PASS {\"speed\":0.35,\"firstStep\":0.01750000000000007,\"outside\":{\"x\":5.800000000000014,\"captured\":true,\"returns\":0},\"navigation\":{\"clear\":true,\"points\":135,\"cells\":[95481],\"grid\":0.15}}"
+  ],
+  "nativeGameplayBrowser": {
+    "artifactSha256": "196a2a89e6b57a4130e70546ab814075c09323a556a828f66e5ef6cbde655d61",
+    "results": [
+      {
+        "mode": "desktop",
+        "preReleaseHidden": true,
+        "noAdvanceKnowledge": true,
+        "aiBuildings": [
+          {
+            "pos": [
+              32.4,
+              0,
+              10.35
+            ],
+            "corners": [
+              [
+                31.2,
+                9.15
+              ],
+              [
+                33.6,
+                9.15
+              ],
+              [
+                33.6,
+                11.549999999999999
+              ],
+              [
+                31.2,
+                11.549999999999999
+              ]
+            ]
+          },
+          {
+            "pos": [
+              35.4,
+              0,
+              -16.349999999999998
+            ],
+            "corners": [
+              [
+                34.199999999999996,
+                -17.549999999999997
+              ],
+              [
+                36.6,
+                -17.549999999999997
+              ],
+              [
+                36.6,
+                -15.149999999999999
+              ],
+              [
+                34.199999999999996,
+                -15.149999999999999
+              ]
+            ]
+          },
+          {
+            "pos": [
+              35.4,
+              0,
+              10.35
+            ],
+            "corners": [
+              [
+                34.199999999999996,
+                9.15
+              ],
+              [
+                36.6,
+                9.15
+              ],
+              [
+                36.6,
+                11.549999999999999
+              ],
+              [
+                34.199999999999996,
+                11.549999999999999
+              ]
+            ]
+          },
+          {
+            "pos": [
+              10.35,
+              0,
+              -32.4
+            ],
+            "corners": [
+              [
+                9.15,
+                -33.6
+              ],
+              [
+                11.549999999999999,
+                -33.6
+              ],
+              [
+                11.549999999999999,
+                -31.2
+              ],
+              [
+                9.15,
+                -31.2
+              ]
+            ]
+          }
+        ],
+        "radius": 22,
+        "gapLabels": [
+          "SHEEP ONLY",
+          "SHEEP ONLY",
+          "BLOCKED",
+          "BOTH",
+          "BOTH"
+        ],
+        "realLaneTraversal": true,
+        "postReleaseFarFogHidden": true,
+        "waitingWolfBlind": true,
+        "stopRestored": true,
+        "errors": []
+      },
+      {
+        "mode": "phone",
+        "preReleaseHidden": true,
+        "noAdvanceKnowledge": true,
+        "aiBuildings": [
+          {
+            "pos": [
+              32.4,
+              0,
+              10.35
+            ],
+            "corners": [
+              [
+                31.2,
+                9.15
+              ],
+              [
+                33.6,
+                9.15
+              ],
+              [
+                33.6,
+                11.549999999999999
+              ],
+              [
+                31.2,
+                11.549999999999999
+              ]
+            ]
+          },
+          {
+            "pos": [
+              35.4,
+              0,
+              -16.349999999999998
+            ],
+            "corners": [
+              [
+                34.199999999999996,
+                -17.549999999999997
+              ],
+              [
+                36.6,
+                -17.549999999999997
+              ],
+              [
+                36.6,
+                -15.149999999999999
+              ],
+              [
+                34.199999999999996,
+                -15.149999999999999
+              ]
+            ]
+          },
+          {
+            "pos": [
+              35.4,
+              0,
+              10.35
+            ],
+            "corners": [
+              [
+                34.199999999999996,
+                9.15
+              ],
+              [
+                36.6,
+                9.15
+              ],
+              [
+                36.6,
+                11.549999999999999
+              ],
+              [
+                34.199999999999996,
+                11.549999999999999
+              ]
+            ]
+          },
+          {
+            "pos": [
+              10.35,
+              0,
+              -32.4
+            ],
+            "corners": [
+              [
+                9.15,
+                -33.6
+              ],
+              [
+                11.549999999999999,
+                -33.6
+              ],
+              [
+                11.549999999999999,
+                -31.2
+              ],
+              [
+                9.15,
+                -31.2
+              ]
+            ]
+          }
+        ],
+        "radius": 22,
+        "gapLabels": [
+          "SHEEP ONLY",
+          "SHEEP ONLY",
+          "BLOCKED",
+          "BOTH",
+          "BOTH"
+        ],
+        "realLaneTraversal": true,
+        "postReleaseFarFogHidden": true,
+        "waitingWolfBlind": true,
+        "stopRestored": true,
+        "errors": []
+      }
+    ]
+  },
+  "finalArtifactUIAndOffCenterMovement": {
+    "artifactSha256": "9fb46459d3ca870f766ff7c90c18a1649ffbfc68352da25c493bc5ffe284186c",
+    "results": [
+      {
+        "mode": "desktop",
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        },
+        "legend": {
+          "x": 12,
+          "y": 207,
+          "width": 729.484375,
+          "height": 48.5
+        },
+        "score": {
+          "x": 195,
+          "y": 96,
+          "width": 1050,
+          "height": 60
+        },
+        "phase": {
+          "x": 637.890625,
+          "y": 168,
+          "width": 164.21875,
+          "height": 30.796875
+        },
+        "errors": []
+      },
+      {
+        "mode": "phone",
+        "viewport": {
+          "width": 412,
+          "height": 915
+        },
+        "legend": {
+          "x": 12,
+          "y": 181,
+          "width": 364,
+          "height": 81.5
+        },
+        "score": {
+          "x": 5,
+          "y": 53,
+          "width": 402,
+          "height": 85
+        },
+        "phase": {
+          "x": 138.40625,
+          "y": 147,
+          "width": 135.171875,
+          "height": 26
+        },
+        "errors": []
+      }
+    ]
+  },
+  "changesSinceGameplayBrowser": [
+    "Phone-responsive legend below phase banner",
+    "Nearest-gap readable billboard/HUD text",
+    "Compact custom-map base margins",
+    "Exact portals for sub-grid lanes, including in-lane replanning; tested with final CPU and real browser movement"
+  ],
+  "workflow": {
+    "yaml": true,
+    "embeddedPythonBlocks": 5,
+    "actual113Patch49AssetGuard": true
+  },
+  "physicalAndroidAcceptance": "Owner acceptance after verified publication"
+}

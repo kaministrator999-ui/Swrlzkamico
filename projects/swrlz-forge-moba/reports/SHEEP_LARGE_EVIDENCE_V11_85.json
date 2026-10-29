@@ -1,0 +1,167 @@
+{
+  "version": "v11.85",
+  "htmlBytes": 3338122,
+  "htmlSha256": "76ea088b19a441ed0e846ffdd4a02197eb131b45a3ea55255eeb032f7c5d13f4",
+  "patches": 117,
+  "assets": 51,
+  "historicalRuntimePatchFilesPreserved": 272,
+  "historicalAssetsPreserved": 50,
+  "finalArtifactBrowser": [
+    {
+      "layouts": [
+        {
+          "size": {
+            "width": 412,
+            "height": 915
+          },
+          "stick": {
+            "id": "stMoveStick",
+            "x": 36,
+            "y": 353,
+            "width": 224,
+            "height": 224
+          },
+          "buildingSize": 72,
+          "abilitySize": 62,
+          "diagonallyUpRight": true,
+          "separated": true,
+          "scoreContained": true
+        },
+        {
+          "size": {
+            "width": 360,
+            "height": 915
+          },
+          "stick": {
+            "id": "stMoveStick",
+            "x": 24,
+            "y": 409,
+            "width": 192,
+            "height": 192
+          },
+          "buildingSize": 60,
+          "abilitySize": 54,
+          "diagonallyUpRight": true,
+          "separated": true,
+          "scoreContained": true
+        },
+        {
+          "size": {
+            "width": 320,
+            "height": 915
+          },
+          "stick": {
+            "id": "stMoveStick",
+            "x": 24,
+            "y": 409,
+            "width": 192,
+            "height": 192
+          },
+          "buildingSize": 60,
+          "abilitySize": 54,
+          "diagonallyUpRight": true,
+          "separated": true,
+          "scoreContained": true
+        },
+        {
+          "size": {
+            "width": 390,
+            "height": 720
+          },
+          "stick": {
+            "id": "stMoveStick",
+            "x": 24,
+            "y": 226,
+            "width": 184,
+            "height": 184
+          },
+          "buildingSize": 72,
+          "abilitySize": 62,
+          "diagonallyUpRight": true,
+          "separated": true,
+          "scoreContained": true
+        },
+        {
+          "size": {
+            "width": 915,
+            "height": 412
+          },
+          "stick": {
+            "id": "stMoveStick",
+            "x": 110,
+            "y": 164,
+            "width": 208,
+            "height": 208
+          },
+          "buildingSize": 60,
+          "abilitySize": 54,
+          "diagonallyUpRight": true,
+          "separated": true,
+          "scoreContained": true
+        },
+        {
+          "size": {
+            "width": 568,
+            "height": 320
+          },
+          "stick": {
+            "id": "stMoveStick",
+            "x": 88,
+            "y": 140,
+            "width": 176,
+            "height": 176
+          },
+          "buildingSize": 54,
+          "abilitySize": 48,
+          "diagonallyUpRight": true,
+          "separated": true,
+          "scoreContained": true
+        },
+        {
+          "size": {
+            "width": 1440,
+            "height": 1000
+          },
+          "stick": {
+            "id": "stMoveStick",
+            "x": 110,
+            "y": 752,
+            "width": 208,
+            "height": 208
+          },
+          "buildingSize": 60,
+          "abilitySize": 54,
+          "diagonallyUpRight": true,
+          "separated": true,
+          "scoreContained": true
+        }
+      ],
+      "actualDiagonalMovement": true,
+      "releaseStops": true,
+      "enlargedHouseButtonBuilds": true,
+      "duration": 420,
+      "timer": "7:00",
+      "old1200Migrates": true,
+      "custom600Preserved": true,
+      "newVersionNotesShown": true,
+      "errors": []
+    }
+  ],
+  "nativeTimerBoundary": [
+    "SEVEN_MINUTE_NATIVE_TIMER_BOUNDARY_PASS {\"winner\":\"sheep\",\"elapsed\":420,\"remaining\":0}"
+  ],
+  "workflow": {
+    "yaml": true,
+    "embeddedPythonBlocks": 5,
+    "actual117Patch51AssetGuard": true
+  },
+  "notes": [
+    "Real Chromium touch input moves diagonally and stops on release using the enlarged joystick",
+    "Circular target spacing accounts for empty rounded corners; map clearance is conservatively checked against its rectangle",
+    "Default portrait stick 224 px, compact portrait 192 px, short portrait 184 px, landscape 208 px, short landscape 176 px; centers all shift up/right",
+    "Both canonical starter and native defaults use 420 seconds; saved 1200-second defaults migrate while custom 600-second rules remain unchanged",
+    "Native clock finishes at 420 seconds; current-version update popup is visible and its checkbox persists",
+    "All previous 272 runtime/patch sources and 50 assets retain exact bytes; the new seven-minute portable scene is the only additional asset",
+    "Owner device acceptance follows confirmed publication"
+  ]
+}

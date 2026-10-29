@@ -1,0 +1,7305 @@
+{
+  "engine": "§wyrl§ Engine · Maker v11.4",
+  "version": 11.4,
+  "project": {
+    "name": "Model Atelier · Prism Jester (Ferret Piñata Study)",
+    "canonicalId": "model-atelier-prism-jester",
+    "template": "model-atelier",
+    "kind": "model-atelier",
+    "environment": "spatial-workspace",
+    "environmentSettings": {
+      "background": "#11172c",
+      "fogNear": 80,
+      "fogFar": 140,
+      "exposure": 1.15,
+      "showTerrain": false,
+      "showScenery": false
+    },
+    "modelAtelier": {
+      "schema": "swyrl-model-atelier-v1",
+      "name": "Prism Jester · Ferret-Piñata Fidelity Study",
+      "reference": "Owner-provided carnival hero screenshots interpreted as original study; real creatures bite/hold colored pigtails, no extracted third-party geometry",
+      "parts": [
+        {
+          "id": "model-0001",
+          "name": "Face · tapered anime proportions",
+          "kind": "sphere",
+          "position": [
+            0,
+            3.31,
+            0.045
+          ],
+          "scale": [
+            0.34,
+            0.42,
+            0.285
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#ffd2ba",
+          "material": "silk",
+          "group": "Character",
+          "detail": "smooth"
+        },
+        {
+          "id": "model-0002",
+          "name": "Neck",
+          "kind": "cylinder",
+          "position": [
+            0,
+            2.87,
+            0
+          ],
+          "scale": [
+            0.14,
+            0.25,
+            0.14
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#ffcfb0",
+          "material": "matte",
+          "group": "Character"
+        },
+        {
+          "id": "model-0003",
+          "name": "Torso / midnight bodice",
+          "kind": "sphere",
+          "position": [
+            0,
+            2.52,
+            0
+          ],
+          "scale": [
+            0.3,
+            0.53,
+            0.22
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#172a38",
+          "material": "matte",
+          "group": "Character",
+          "detail": "smooth"
+        },
+        {
+          "id": "model-0004",
+          "name": "Waist / ribbon belt",
+          "kind": "cylinder",
+          "position": [
+            0,
+            2.23,
+            0
+          ],
+          "scale": [
+            0.44,
+            0.16,
+            0.34
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#e7a32f",
+          "material": "metal",
+          "group": "Character"
+        },
+        {
+          "id": "model-0005",
+          "name": "Dress / teal skirt",
+          "kind": "cone",
+          "position": [
+            0,
+            1.77,
+            0
+          ],
+          "scale": [
+            0.64,
+            0.9,
+            0.59
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#009ab5",
+          "material": "matte",
+          "group": "Character"
+        },
+        {
+          "id": "model-0006",
+          "name": "Skirt / cream flare",
+          "kind": "cone",
+          "position": [
+            0.18,
+            1.86,
+            0.18
+          ],
+          "scale": [
+            0.65,
+            0.81,
+            0.47
+          ],
+          "rotation": [
+            0,
+            0,
+            -0.16
+          ],
+          "color": "#fff1cf",
+          "material": "matte",
+          "group": "Character"
+        },
+        {
+          "id": "model-0007",
+          "name": "Skirt / golden tip",
+          "kind": "cone",
+          "position": [
+            0.52,
+            1.61,
+            0.25
+          ],
+          "scale": [
+            0.28,
+            0.86,
+            0.42
+          ],
+          "rotation": [
+            0,
+            0,
+            -0.34
+          ],
+          "color": "#f5d340",
+          "material": "metal",
+          "group": "Character"
+        },
+        {
+          "id": "model-0008",
+          "name": "Teal waist sash",
+          "kind": "box",
+          "position": [
+            -0.27,
+            2.22,
+            0.21
+          ],
+          "scale": [
+            0.31,
+            0.13,
+            0.24
+          ],
+          "rotation": [
+            0,
+            0,
+            -0.2
+          ],
+          "color": "#3adfd5",
+          "material": "silk",
+          "group": "Character"
+        },
+        {
+          "id": "model-0009",
+          "name": "Hat base / split jester cap",
+          "kind": "sphere",
+          "position": [
+            0,
+            3.66,
+            0.04
+          ],
+          "scale": [
+            0.49,
+            0.19,
+            0.38
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#202238",
+          "material": "matte",
+          "group": "Character",
+          "detail": "smooth"
+        },
+        {
+          "id": "model-0010",
+          "name": "Hat crown coral",
+          "kind": "cone",
+          "position": [
+            0.24,
+            3.86,
+            0.03
+          ],
+          "scale": [
+            0.1886,
+            0.26039999999999996,
+            0.205
+          ],
+          "rotation": [
+            0,
+            0,
+            -0.35
+          ],
+          "color": "#fa693f",
+          "material": "silk",
+          "group": "Character"
+        },
+        {
+          "id": "model-0011",
+          "name": "Hat crown teal",
+          "kind": "cone",
+          "position": [
+            -0.21,
+            3.87,
+            0.03
+          ],
+          "scale": [
+            0.1722,
+            0.24180000000000001,
+            0.19679999999999997
+          ],
+          "rotation": [
+            0,
+            0,
+            0.38
+          ],
+          "color": "#17c6cb",
+          "material": "silk",
+          "group": "Character"
+        },
+        {
+          "id": "model-0012",
+          "name": "Left shoulder",
+          "kind": "sphere",
+          "position": [
+            -0.41,
+            2.68,
+            0
+          ],
+          "scale": [
+            0.22,
+            0.23,
+            0.25
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#14293d",
+          "material": "matte",
+          "group": "Character",
+          "detail": "smooth"
+        },
+        {
+          "id": "model-0013",
+          "name": "Left upper arm",
+          "kind": "cylinder",
+          "position": [
+            -0.63,
+            2.37,
+            0.08
+          ],
+          "scale": [
+            0.13,
+            0.62,
+            0.13
+          ],
+          "rotation": [
+            0,
+            0,
+            -0.32
+          ],
+          "color": "#22263a",
+          "material": "matte",
+          "group": "Character"
+        },
+        {
+          "id": "model-0014",
+          "name": "Left elbow",
+          "kind": "sphere",
+          "position": [
+            -0.72,
+            2.06,
+            0.09
+          ],
+          "scale": [
+            0.15,
+            0.16,
+            0.15
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#facab0",
+          "material": "matte",
+          "group": "Character",
+          "detail": "smooth"
+        },
+        {
+          "id": "model-0015",
+          "name": "Left forearm",
+          "kind": "cylinder",
+          "position": [
+            -0.67,
+            2.36,
+            0.29
+          ],
+          "scale": [
+            0.11,
+            0.42,
+            0.12
+          ],
+          "rotation": [
+            0.55,
+            0,
+            0.25
+          ],
+          "color": "#1c2834",
+          "material": "matte",
+          "group": "Character"
+        },
+        {
+          "id": "model-0016",
+          "name": "Left glove",
+          "kind": "sphere",
+          "position": [
+            -0.59,
+            2.58,
+            0.48
+          ],
+          "scale": [
+            0.16,
+            0.14,
+            0.14
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#1d2436",
+          "material": "matte",
+          "group": "Character",
+          "detail": "smooth"
+        },
+        {
+          "id": "model-0017",
+          "name": "Left thigh",
+          "kind": "cylinder",
+          "position": [
+            -0.23,
+            1.23,
+            0
+          ],
+          "scale": [
+            0.165,
+            0.89,
+            0.17
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#fbd0b9",
+          "material": "matte",
+          "group": "Character"
+        },
+        {
+          "id": "model-0018",
+          "name": "Left kneecap",
+          "kind": "sphere",
+          "position": [
+            -0.25,
+            0.86,
+            0.02
+          ],
+          "scale": [
+            0.2,
+            0.19,
+            0.2
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#e9b8aa",
+          "material": "matte",
+          "group": "Character",
+          "detail": "smooth"
+        },
+        {
+          "id": "model-0019",
+          "name": "Left shin",
+          "kind": "cylinder",
+          "position": [
+            -0.27,
+            0.47,
+            0.04
+          ],
+          "scale": [
+            0.137,
+            0.67,
+            0.14
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#fbd0ba",
+          "material": "matte",
+          "group": "Character"
+        },
+        {
+          "id": "model-0020",
+          "name": "Left white sock",
+          "kind": "cylinder",
+          "position": [
+            -0.27,
+            0.3,
+            0.06
+          ],
+          "scale": [
+            0.16,
+            0.35,
+            0.16
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#f0f1f2",
+          "material": "matte",
+          "group": "Character"
+        },
+        {
+          "id": "model-0021",
+          "name": "Left shoe",
+          "kind": "sphere",
+          "position": [
+            -0.28,
+            0.14,
+            0.24
+          ],
+          "scale": [
+            0.235,
+            0.15,
+            0.34
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#145b5d",
+          "material": "gloss",
+          "group": "Character",
+          "detail": "smooth"
+        },
+        {
+          "id": "model-0022",
+          "name": "Left shoe strap",
+          "kind": "box",
+          "position": [
+            -0.28,
+            0.26,
+            0.43
+          ],
+          "scale": [
+            0.32,
+            0.08,
+            0.2
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#e6c444",
+          "material": "metal",
+          "group": "Character"
+        },
+        {
+          "id": "model-0023",
+          "name": "Left hat tip curl",
+          "kind": "cone",
+          "position": [
+            -0.43,
+            3.75,
+            0.12
+          ],
+          "scale": [
+            0.1394,
+            0.21080000000000002,
+            0.1394
+          ],
+          "rotation": [
+            0,
+            0,
+            0.8
+          ],
+          "color": "#2bbfce",
+          "material": "silk",
+          "group": "Character"
+        },
+        {
+          "id": "model-0024",
+          "name": "Left horn",
+          "kind": "cone",
+          "position": [
+            -0.43,
+            3.95,
+            -0.08
+          ],
+          "scale": [
+            0.09839999999999999,
+            0.3286,
+            0.09839999999999999
+          ],
+          "rotation": [
+            0,
+            0,
+            -0.36
+          ],
+          "color": "#20202c",
+          "material": "gloss",
+          "group": "Character"
+        },
+        {
+          "id": "model-0025",
+          "name": "Left eye white",
+          "kind": "sphere",
+          "position": [
+            -0.16,
+            3.37,
+            0.287
+          ],
+          "scale": [
+            0.123,
+            0.096,
+            0.043
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#ffffff",
+          "material": "gloss",
+          "group": "Character",
+          "detail": "smooth"
+        },
+        {
+          "id": "model-0026",
+          "name": "Left iris",
+          "kind": "sphere",
+          "position": [
+            -0.16,
+            3.37,
+            0.335
+          ],
+          "scale": [
+            0.069,
+            0.074,
+            0.022
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#21a7d4",
+          "material": "gloss",
+          "group": "Character",
+          "detail": "smooth"
+        },
+        {
+          "id": "model-0027",
+          "name": "Left pupil",
+          "kind": "sphere",
+          "position": [
+            -0.16,
+            3.37,
+            0.359
+          ],
+          "scale": [
+            0.034,
+            0.049,
+            0.013
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#071422",
+          "material": "gloss",
+          "group": "Character",
+          "detail": "smooth"
+        },
+        {
+          "id": "model-0028",
+          "name": "Left cheek paint",
+          "kind": "sphere",
+          "position": [
+            -0.26,
+            3.18,
+            0.286
+          ],
+          "scale": [
+            0.095,
+            0.053,
+            0.017
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#fa7d7a",
+          "material": "silk",
+          "group": "Character",
+          "detail": "smooth"
+        },
+        {
+          "id": "model-0029",
+          "name": "Right shoulder",
+          "kind": "sphere",
+          "position": [
+            0.41,
+            2.68,
+            0
+          ],
+          "scale": [
+            0.22,
+            0.23,
+            0.25
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#fe804b",
+          "material": "matte",
+          "group": "Character",
+          "detail": "smooth"
+        },
+        {
+          "id": "model-0030",
+          "name": "Right upper arm",
+          "kind": "cylinder",
+          "position": [
+            0.63,
+            2.37,
+            0.08
+          ],
+          "scale": [
+            0.13,
+            0.62,
+            0.13
+          ],
+          "rotation": [
+            0,
+            0,
+            0.32
+          ],
+          "color": "#22263a",
+          "material": "matte",
+          "group": "Character"
+        },
+        {
+          "id": "model-0031",
+          "name": "Right elbow",
+          "kind": "sphere",
+          "position": [
+            0.72,
+            2.06,
+            0.09
+          ],
+          "scale": [
+            0.15,
+            0.16,
+            0.15
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#facab0",
+          "material": "matte",
+          "group": "Character",
+          "detail": "smooth"
+        },
+        {
+          "id": "model-0032",
+          "name": "Right forearm",
+          "kind": "cylinder",
+          "position": [
+            0.67,
+            2.36,
+            0.29
+          ],
+          "scale": [
+            0.11,
+            0.42,
+            0.12
+          ],
+          "rotation": [
+            0.55,
+            0,
+            -0.25
+          ],
+          "color": "#ff744f",
+          "material": "matte",
+          "group": "Character"
+        },
+        {
+          "id": "model-0033",
+          "name": "Right glove",
+          "kind": "sphere",
+          "position": [
+            0.59,
+            2.58,
+            0.48
+          ],
+          "scale": [
+            0.16,
+            0.14,
+            0.14
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#1d2436",
+          "material": "matte",
+          "group": "Character",
+          "detail": "smooth"
+        },
+        {
+          "id": "model-0034",
+          "name": "Right thigh",
+          "kind": "cylinder",
+          "position": [
+            0.23,
+            1.23,
+            0
+          ],
+          "scale": [
+            0.165,
+            0.89,
+            0.17
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#fbd0b9",
+          "material": "matte",
+          "group": "Character"
+        },
+        {
+          "id": "model-0035",
+          "name": "Right kneecap",
+          "kind": "sphere",
+          "position": [
+            0.25,
+            0.86,
+            0.02
+          ],
+          "scale": [
+            0.2,
+            0.19,
+            0.2
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#e9b8aa",
+          "material": "matte",
+          "group": "Character",
+          "detail": "smooth"
+        },
+        {
+          "id": "model-0036",
+          "name": "Right shin",
+          "kind": "cylinder",
+          "position": [
+            0.27,
+            0.47,
+            0.04
+          ],
+          "scale": [
+            0.137,
+            0.67,
+            0.14
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#fbd0ba",
+          "material": "matte",
+          "group": "Character"
+        },
+        {
+          "id": "model-0037",
+          "name": "Right white sock",
+          "kind": "cylinder",
+          "position": [
+            0.27,
+            0.3,
+            0.06
+          ],
+          "scale": [
+            0.16,
+            0.35,
+            0.16
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#f0f1f2",
+          "material": "matte",
+          "group": "Character"
+        },
+        {
+          "id": "model-0038",
+          "name": "Right shoe",
+          "kind": "sphere",
+          "position": [
+            0.28,
+            0.14,
+            0.24
+          ],
+          "scale": [
+            0.235,
+            0.15,
+            0.34
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#122735",
+          "material": "gloss",
+          "group": "Character",
+          "detail": "smooth"
+        },
+        {
+          "id": "model-0039",
+          "name": "Right shoe strap",
+          "kind": "box",
+          "position": [
+            0.28,
+            0.26,
+            0.43
+          ],
+          "scale": [
+            0.32,
+            0.08,
+            0.2
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#e6c444",
+          "material": "metal",
+          "group": "Character"
+        },
+        {
+          "id": "model-0040",
+          "name": "Right hat tip curl",
+          "kind": "cone",
+          "position": [
+            0.43,
+            3.75,
+            0.12
+          ],
+          "scale": [
+            0.1394,
+            0.21080000000000002,
+            0.1394
+          ],
+          "rotation": [
+            0,
+            0,
+            -0.8
+          ],
+          "color": "#ff7143",
+          "material": "silk",
+          "group": "Character"
+        },
+        {
+          "id": "model-0041",
+          "name": "Right horn",
+          "kind": "cone",
+          "position": [
+            0.43,
+            3.95,
+            -0.08
+          ],
+          "scale": [
+            0.09839999999999999,
+            0.3286,
+            0.09839999999999999
+          ],
+          "rotation": [
+            0,
+            0,
+            0.36
+          ],
+          "color": "#20202c",
+          "material": "gloss",
+          "group": "Character"
+        },
+        {
+          "id": "model-0042",
+          "name": "Right eye white",
+          "kind": "sphere",
+          "position": [
+            0.16,
+            3.37,
+            0.287
+          ],
+          "scale": [
+            0.123,
+            0.096,
+            0.043
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#ffffff",
+          "material": "gloss",
+          "group": "Character",
+          "detail": "smooth"
+        },
+        {
+          "id": "model-0043",
+          "name": "Right iris",
+          "kind": "sphere",
+          "position": [
+            0.16,
+            3.37,
+            0.335
+          ],
+          "scale": [
+            0.069,
+            0.074,
+            0.022
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#21a7d4",
+          "material": "gloss",
+          "group": "Character",
+          "detail": "smooth"
+        },
+        {
+          "id": "model-0044",
+          "name": "Right pupil",
+          "kind": "sphere",
+          "position": [
+            0.16,
+            3.37,
+            0.359
+          ],
+          "scale": [
+            0.034,
+            0.049,
+            0.013
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#071422",
+          "material": "gloss",
+          "group": "Character",
+          "detail": "smooth"
+        },
+        {
+          "id": "model-0045",
+          "name": "Right cheek paint",
+          "kind": "sphere",
+          "position": [
+            0.26,
+            3.18,
+            0.286
+          ],
+          "scale": [
+            0.095,
+            0.053,
+            0.017
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#f58f66",
+          "material": "silk",
+          "group": "Character",
+          "detail": "smooth"
+        },
+        {
+          "id": "model-0046",
+          "name": "Smile",
+          "kind": "box",
+          "position": [
+            0,
+            3.14,
+            0.304
+          ],
+          "scale": [
+            0.16,
+            0.02,
+            0.018
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#a73b59",
+          "material": "gloss",
+          "group": "Character"
+        },
+        {
+          "id": "model-0047",
+          "name": "Nose",
+          "kind": "sphere",
+          "position": [
+            0,
+            3.25,
+            0.32
+          ],
+          "scale": [
+            0.055,
+            0.06,
+            0.043
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#ffc1a5",
+          "material": "matte",
+          "group": "Character",
+          "detail": "smooth"
+        },
+        {
+          "id": "model-0048",
+          "name": "Hair swept turquoise fringe",
+          "kind": "cone",
+          "position": [
+            -0.2,
+            3.67,
+            0.32
+          ],
+          "scale": [
+            0.32,
+            0.4,
+            0.2
+          ],
+          "rotation": [
+            0.32,
+            0,
+            -0.35
+          ],
+          "color": "#00b7cb",
+          "material": "silk",
+          "group": "Character"
+        },
+        {
+          "id": "model-0049",
+          "name": "Hair coral side sweep",
+          "kind": "cone",
+          "position": [
+            0.19,
+            3.68,
+            0.33
+          ],
+          "scale": [
+            0.28,
+            0.41,
+            0.17
+          ],
+          "rotation": [
+            0.31,
+            0,
+            0.42
+          ],
+          "color": "#fb674f",
+          "material": "silk",
+          "group": "Character"
+        },
+        {
+          "id": "model-0050",
+          "name": "Tiered dress edging 0",
+          "kind": "box",
+          "position": [
+            -0.18,
+            1.42,
+            0.43
+          ],
+          "scale": [
+            0.36,
+            0.065,
+            0.085
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#2acccd",
+          "material": "silk",
+          "group": "Character"
+        },
+        {
+          "id": "model-0051",
+          "name": "Tiered dress edging 1",
+          "kind": "box",
+          "position": [
+            -0.05,
+            1.56,
+            0.43
+          ],
+          "scale": [
+            0.36,
+            0.065,
+            0.085
+          ],
+          "rotation": [
+            0,
+            0,
+            -0.12
+          ],
+          "color": "#f0d63a",
+          "material": "silk",
+          "group": "Character"
+        },
+        {
+          "id": "model-0052",
+          "name": "Tiered dress edging 2",
+          "kind": "box",
+          "position": [
+            0.08,
+            1.7,
+            0.43
+          ],
+          "scale": [
+            0.36,
+            0.065,
+            0.085
+          ],
+          "rotation": [
+            0,
+            0,
+            -0.24
+          ],
+          "color": "#2acccd",
+          "material": "silk",
+          "group": "Character"
+        },
+        {
+          "id": "model-0053",
+          "name": "Tiered dress edging 3",
+          "kind": "box",
+          "position": [
+            0.21,
+            1.84,
+            0.43
+          ],
+          "scale": [
+            0.36,
+            0.065,
+            0.085
+          ],
+          "rotation": [
+            0,
+            0,
+            -0.36
+          ],
+          "color": "#f0d63a",
+          "material": "silk",
+          "group": "Character"
+        },
+        {
+          "id": "model-0054",
+          "name": "Tiered dress edging 4",
+          "kind": "box",
+          "position": [
+            0.34,
+            1.98,
+            0.43
+          ],
+          "scale": [
+            0.36,
+            0.065,
+            0.085
+          ],
+          "rotation": [
+            0,
+            0,
+            -0.48
+          ],
+          "color": "#2acccd",
+          "material": "silk",
+          "group": "Character"
+        },
+        {
+          "id": "model-0239",
+          "name": "Costume star light 1",
+          "kind": "sphere",
+          "position": [
+            0,
+            1.55,
+            0.363
+          ],
+          "scale": [
+            0.043,
+            0.043,
+            0.043
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#65ffe0",
+          "material": "emissive",
+          "group": "Character",
+          "detail": "smooth"
+        },
+        {
+          "id": "model-0240",
+          "name": "Costume star light 2",
+          "kind": "sphere",
+          "position": [
+            0.307,
+            1.79,
+            0.198
+          ],
+          "scale": [
+            0.043,
+            0.043,
+            0.043
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#ffde4b",
+          "material": "emissive",
+          "group": "Character",
+          "detail": "smooth"
+        },
+        {
+          "id": "model-0241",
+          "name": "Costume star light 3",
+          "kind": "sphere",
+          "position": [
+            -0.453,
+            2.03,
+            0.362
+          ],
+          "scale": [
+            0.043,
+            0.043,
+            0.043
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#65ffe0",
+          "material": "emissive",
+          "group": "Character",
+          "detail": "smooth"
+        },
+        {
+          "id": "model-0242",
+          "name": "Costume star light 4",
+          "kind": "sphere",
+          "position": [
+            0.361,
+            2.27,
+            0.199
+          ],
+          "scale": [
+            0.043,
+            0.043,
+            0.043
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#ffde4b",
+          "material": "emissive",
+          "group": "Character",
+          "detail": "smooth"
+        },
+        {
+          "id": "model-0243",
+          "name": "Costume star light 5",
+          "kind": "sphere",
+          "position": [
+            -0.079,
+            2.51,
+            0.36
+          ],
+          "scale": [
+            0.043,
+            0.043,
+            0.043
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#65ffe0",
+          "material": "emissive",
+          "group": "Character",
+          "detail": "smooth"
+        },
+        {
+          "id": "model-0244",
+          "name": "Costume star light 6",
+          "kind": "sphere",
+          "position": [
+            -0.244,
+            1.55,
+            0.201
+          ],
+          "scale": [
+            0.043,
+            0.043,
+            0.043
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#ffde4b",
+          "material": "emissive",
+          "group": "Character",
+          "detail": "smooth"
+        },
+        {
+          "id": "model-0245",
+          "name": "Costume star light 7",
+          "kind": "sphere",
+          "position": [
+            0.439,
+            1.79,
+            0.357
+          ],
+          "scale": [
+            0.043,
+            0.043,
+            0.043
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#65ffe0",
+          "material": "emissive",
+          "group": "Character",
+          "detail": "smooth"
+        },
+        {
+          "id": "model-0246",
+          "name": "Costume star light 8",
+          "kind": "sphere",
+          "position": [
+            -0.404,
+            2.03,
+            0.204
+          ],
+          "scale": [
+            0.043,
+            0.043,
+            0.043
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#ffde4b",
+          "material": "emissive",
+          "group": "Character",
+          "detail": "smooth"
+        },
+        {
+          "id": "model-0247",
+          "name": "Costume star light 9",
+          "kind": "sphere",
+          "position": [
+            0.156,
+            2.27,
+            0.354
+          ],
+          "scale": [
+            0.043,
+            0.043,
+            0.043
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#65ffe0",
+          "material": "emissive",
+          "group": "Character",
+          "detail": "smooth"
+        },
+        {
+          "id": "model-0248",
+          "name": "Costume star light 10",
+          "kind": "sphere",
+          "position": [
+            0.173,
+            2.51,
+            0.209
+          ],
+          "scale": [
+            0.043,
+            0.043,
+            0.043
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#ffde4b",
+          "material": "emissive",
+          "group": "Character",
+          "detail": "smooth"
+        },
+        {
+          "id": "model-0249",
+          "name": "Costume star light 11",
+          "kind": "sphere",
+          "position": [
+            -0.412,
+            1.55,
+            0.349
+          ],
+          "scale": [
+            0.043,
+            0.043,
+            0.043
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#65ffe0",
+          "material": "emissive",
+          "group": "Character",
+          "detail": "smooth"
+        },
+        {
+          "id": "model-0250",
+          "name": "Costume star light 12",
+          "kind": "sphere",
+          "position": [
+            0.434,
+            1.79,
+            0.214
+          ],
+          "scale": [
+            0.043,
+            0.043,
+            0.043
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#ffde4b",
+          "material": "emissive",
+          "group": "Character",
+          "detail": "smooth"
+        },
+        {
+          "id": "model-0251",
+          "name": "Costume star light 13",
+          "kind": "sphere",
+          "position": [
+            -0.228,
+            2.03,
+            0.343
+          ],
+          "scale": [
+            0.043,
+            0.043,
+            0.043
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#65ffe0",
+          "material": "emissive",
+          "group": "Character",
+          "detail": "smooth"
+        },
+        {
+          "id": "model-0252",
+          "name": "Costume star light 14",
+          "kind": "sphere",
+          "position": [
+            -0.097,
+            2.27,
+            0.22
+          ],
+          "scale": [
+            0.043,
+            0.043,
+            0.043
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#ffde4b",
+          "material": "emissive",
+          "group": "Character",
+          "detail": "smooth"
+        },
+        {
+          "id": "model-0253",
+          "name": "Costume star light 15",
+          "kind": "sphere",
+          "position": [
+            0.372,
+            2.51,
+            0.336
+          ],
+          "scale": [
+            0.043,
+            0.043,
+            0.043
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#65ffe0",
+          "material": "emissive",
+          "group": "Character",
+          "detail": "smooth"
+        },
+        {
+          "id": "atelier-fidelity-401",
+          "name": "Azure piñata · organic continuous spine",
+          "kind": "loft",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#28cddd",
+          "material": "silk",
+          "group": "Azure frost",
+          "path": [
+            [
+              -0.53,
+              3.71,
+              -0.17
+            ],
+            [
+              -1.015151104165403,
+              3.867821758658569,
+              -0.21672939613082604
+            ],
+            [
+              -1.476870137861158,
+              4.012142181475102,
+              -0.2611155852146872
+            ],
+            [
+              -1.892900012474769,
+              4.130136945963353,
+              -0.300932858390334
+            ],
+            [
+              -2.243274684611434,
+              4.21030180807203,
+              -0.33418461131828625
+            ],
+            [
+              -2.511320336880795,
+              4.24302947301907,
+              -0.35920346225950806
+            ],
+            [
+              -2.684491472724687,
+              4.221091345168578,
+              -0.374734861558183
+            ],
+            [
+              -2.755,
+              4.14,
+              -0.38
+            ],
+            [
+              -2.7202057584389725,
+              3.9982342023114352,
+              -0.374734861558183
+            ],
+            [
+              -2.582748908309366,
+              3.7973151873047843,
+              -0.35920346225950806
+            ],
+            [
+              -2.3504175417542914,
+              3.5417303795006014,
+              -0.33418461131828625
+            ],
+            [
+              -2.035757155331912,
+              3.2387083745347818,
+              -0.30093285839033407
+            ],
+            [
+              -1.6554415664325866,
+              2.8978564671893885,
+              -0.26111558521468725
+            ],
+            [
+              -1.2294368184511177,
+              2.530678901515712,
+              -0.21672939613082606
+            ],
+            [
+              -0.7800000000000002,
+              2.15,
+              -0.17000000000000004
+            ]
+          ],
+          "radii": [
+            0.24,
+            0.299,
+            0.354,
+            0.404,
+            0.444,
+            0.473,
+            0.488,
+            0.49,
+            0.477,
+            0.45,
+            0.41,
+            0.358,
+            0.297,
+            0.23,
+            0.16
+          ],
+          "segments": 70,
+          "radialSegments": 14
+        },
+        {
+          "id": "atelier-fidelity-402",
+          "name": "Azure piñata · paper fringe 1-0",
+          "kind": "box",
+          "position": [
+            -0.624,
+            3.7585,
+            -0.0126
+          ],
+          "scale": [
+            0.19,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            1.1457
+          ],
+          "color": "#79eef0",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-403",
+          "name": "Azure piñata · paper fringe 1-1",
+          "kind": "box",
+          "position": [
+            -0.7578,
+            3.8195,
+            0.0703
+          ],
+          "scale": [
+            0.19,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            1.2557
+          ],
+          "color": "#0983a5",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-404",
+          "name": "Azure piñata · paper fringe 1-2",
+          "kind": "box",
+          "position": [
+            -0.8917,
+            3.7585,
+            -0.0126
+          ],
+          "scale": [
+            0.19,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            1.3657
+          ],
+          "color": "#28cddd",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-405",
+          "name": "Azure piñata · paper fringe 2-0",
+          "kind": "box",
+          "position": [
+            -0.8358,
+            3.8316,
+            -0.016
+          ],
+          "scale": [
+            0.2094,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            1.1494
+          ],
+          "color": "#0983a5",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-406",
+          "name": "Azure piñata · paper fringe 2-1",
+          "kind": "box",
+          "position": [
+            -0.9833,
+            3.8926,
+            0.0754
+          ],
+          "scale": [
+            0.2094,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            1.2594
+          ],
+          "color": "#28cddd",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-407",
+          "name": "Azure piñata · paper fringe 2-2",
+          "kind": "box",
+          "position": [
+            -1.1308,
+            3.8316,
+            -0.016
+          ],
+          "scale": [
+            0.2094,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            1.3694
+          ],
+          "color": "#79eef0",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-408",
+          "name": "Azure piñata · paper fringe 3-0",
+          "kind": "box",
+          "position": [
+            -1.0431,
+            3.9019,
+            -0.0194
+          ],
+          "scale": [
+            0.2283,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            1.1557
+          ],
+          "color": "#28cddd",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-409",
+          "name": "Azure piñata · paper fringe 3-1",
+          "kind": "box",
+          "position": [
+            -1.2039,
+            3.9629,
+            0.0803
+          ],
+          "scale": [
+            0.2283,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            1.2657
+          ],
+          "color": "#79eef0",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-410",
+          "name": "Azure piñata · paper fringe 3-2",
+          "kind": "box",
+          "position": [
+            -1.3647,
+            3.9019,
+            -0.0194
+          ],
+          "scale": [
+            0.2283,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            1.3757
+          ],
+          "color": "#0983a5",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-411",
+          "name": "Azure piñata · paper fringe 4-0",
+          "kind": "box",
+          "position": [
+            -1.2438,
+            3.9682,
+            -0.0227
+          ],
+          "scale": [
+            0.2466,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            1.1651
+          ],
+          "color": "#79eef0",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-412",
+          "name": "Azure piñata · paper fringe 4-1",
+          "kind": "box",
+          "position": [
+            -1.4175,
+            4.0292,
+            0.0849
+          ],
+          "scale": [
+            0.2466,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            1.2751
+          ],
+          "color": "#0983a5",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-413",
+          "name": "Azure piñata · paper fringe 4-2",
+          "kind": "box",
+          "position": [
+            -1.5911,
+            3.9682,
+            -0.0227
+          ],
+          "scale": [
+            0.2466,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            1.3851
+          ],
+          "color": "#28cddd",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-414",
+          "name": "Azure piñata · paper fringe 5-0",
+          "kind": "box",
+          "position": [
+            -1.4358,
+            4.029,
+            -0.026
+          ],
+          "scale": [
+            0.2639,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            1.1782
+          ],
+          "color": "#0983a5",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-415",
+          "name": "Azure piñata · paper fringe 5-1",
+          "kind": "box",
+          "position": [
+            -1.6217,
+            4.09,
+            0.0892
+          ],
+          "scale": [
+            0.2639,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            1.2882
+          ],
+          "color": "#28cddd",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-416",
+          "name": "Azure piñata · paper fringe 5-2",
+          "kind": "box",
+          "position": [
+            -1.8075,
+            4.029,
+            -0.026
+          ],
+          "scale": [
+            0.2639,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            1.3982
+          ],
+          "color": "#79eef0",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-417",
+          "name": "Azure piñata · paper fringe 6-0",
+          "kind": "box",
+          "position": [
+            -1.6171,
+            4.0832,
+            -0.0291
+          ],
+          "scale": [
+            0.2801,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            1.196
+          ],
+          "color": "#28cddd",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-418",
+          "name": "Azure piñata · paper fringe 6-1",
+          "kind": "box",
+          "position": [
+            -1.8143,
+            4.1442,
+            0.0931
+          ],
+          "scale": [
+            0.2801,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            1.306
+          ],
+          "color": "#79eef0",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-419",
+          "name": "Azure piñata · paper fringe 6-2",
+          "kind": "box",
+          "position": [
+            -2.0116,
+            4.0832,
+            -0.0291
+          ],
+          "scale": [
+            0.2801,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            1.416
+          ],
+          "color": "#0983a5",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-420",
+          "name": "Azure piñata · paper fringe 7-0",
+          "kind": "box",
+          "position": [
+            -1.7858,
+            4.1296,
+            -0.0322
+          ],
+          "scale": [
+            0.2949,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            1.2202
+          ],
+          "color": "#79eef0",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-421",
+          "name": "Azure piñata · paper fringe 7-1",
+          "kind": "box",
+          "position": [
+            -1.9935,
+            4.1906,
+            0.0966
+          ],
+          "scale": [
+            0.2949,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            1.3302
+          ],
+          "color": "#0983a5",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-422",
+          "name": "Azure piñata · paper fringe 7-2",
+          "kind": "box",
+          "position": [
+            -2.2012,
+            4.1296,
+            -0.0322
+          ],
+          "scale": [
+            0.2949,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            1.4402
+          ],
+          "color": "#28cddd",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-423",
+          "name": "Azure piñata · paper fringe 8-0",
+          "kind": "box",
+          "position": [
+            -1.9402,
+            4.1672,
+            -0.0352
+          ],
+          "scale": [
+            0.3083,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            1.2531
+          ],
+          "color": "#0983a5",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-424",
+          "name": "Azure piñata · paper fringe 8-1",
+          "kind": "box",
+          "position": [
+            -2.1573,
+            4.2282,
+            0.0994
+          ],
+          "scale": [
+            0.3083,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            1.3631
+          ],
+          "color": "#28cddd",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-425",
+          "name": "Azure piñata · paper fringe 8-2",
+          "kind": "box",
+          "position": [
+            -2.3744,
+            4.1672,
+            -0.0352
+          ],
+          "scale": [
+            0.3083,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            1.4731
+          ],
+          "color": "#79eef0",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-426",
+          "name": "Azure piñata · paper fringe 9-0",
+          "kind": "box",
+          "position": [
+            -2.0786,
+            4.1949,
+            -0.038
+          ],
+          "scale": [
+            0.3199,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            1.299
+          ],
+          "color": "#28cddd",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-427",
+          "name": "Azure piñata · paper fringe 9-1",
+          "kind": "box",
+          "position": [
+            -2.3039,
+            4.2559,
+            0.1017
+          ],
+          "scale": [
+            0.3199,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            1.409
+          ],
+          "color": "#79eef0",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-428",
+          "name": "Azure piñata · paper fringe 9-2",
+          "kind": "box",
+          "position": [
+            -2.5292,
+            4.1949,
+            -0.038
+          ],
+          "scale": [
+            0.3199,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            1.519
+          ],
+          "color": "#0983a5",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-429",
+          "name": "Azure piñata · paper fringe 10-0",
+          "kind": "box",
+          "position": [
+            -2.1997,
+            4.2119,
+            -0.0407
+          ],
+          "scale": [
+            0.3298,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            1.3652
+          ],
+          "color": "#79eef0",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-430",
+          "name": "Azure piñata · paper fringe 10-1",
+          "kind": "box",
+          "position": [
+            -2.432,
+            4.2729,
+            0.1033
+          ],
+          "scale": [
+            0.3298,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            1.4752
+          ],
+          "color": "#0983a5",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-431",
+          "name": "Azure piñata · paper fringe 10-2",
+          "kind": "box",
+          "position": [
+            -2.6642,
+            4.2119,
+            -0.0407
+          ],
+          "scale": [
+            0.3298,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            1.5852
+          ],
+          "color": "#28cddd",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-432",
+          "name": "Azure piñata · paper fringe 11-0",
+          "kind": "box",
+          "position": [
+            -2.3023,
+            4.2174,
+            -0.0432
+          ],
+          "scale": [
+            0.3377,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            1.4657
+          ],
+          "color": "#0983a5",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-433",
+          "name": "Azure piñata · paper fringe 11-1",
+          "kind": "box",
+          "position": [
+            -2.5401,
+            4.2784,
+            0.1042
+          ],
+          "scale": [
+            0.3377,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            1.5757
+          ],
+          "color": "#28cddd",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-434",
+          "name": "Azure piñata · paper fringe 11-2",
+          "kind": "box",
+          "position": [
+            -2.7779,
+            4.2174,
+            -0.0432
+          ],
+          "scale": [
+            0.3377,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            1.6857
+          ],
+          "color": "#79eef0",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-435",
+          "name": "Azure piñata · paper fringe 12-0",
+          "kind": "box",
+          "position": [
+            -2.3853,
+            4.2108,
+            -0.0456
+          ],
+          "scale": [
+            0.3435,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            1.6278
+          ],
+          "color": "#28cddd",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-436",
+          "name": "Azure piñata · paper fringe 12-1",
+          "kind": "box",
+          "position": [
+            -2.6272,
+            4.2718,
+            0.1044
+          ],
+          "scale": [
+            0.3435,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            1.7378
+          ],
+          "color": "#79eef0",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-437",
+          "name": "Azure piñata · paper fringe 12-2",
+          "kind": "box",
+          "position": [
+            -2.8691,
+            4.2108,
+            -0.0456
+          ],
+          "scale": [
+            0.3435,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            1.8478
+          ],
+          "color": "#0983a5",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-438",
+          "name": "Azure piñata · paper fringe 13-0",
+          "kind": "box",
+          "position": [
+            -2.4479,
+            4.1916,
+            -0.0478
+          ],
+          "scale": [
+            0.3472,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            1.9041
+          ],
+          "color": "#79eef0",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-439",
+          "name": "Azure piñata · paper fringe 13-1",
+          "kind": "box",
+          "position": [
+            -2.6924,
+            4.2526,
+            0.1038
+          ],
+          "scale": [
+            0.3472,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            2.0141
+          ],
+          "color": "#0983a5",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-440",
+          "name": "Azure piñata · paper fringe 13-2",
+          "kind": "box",
+          "position": [
+            -2.9369,
+            4.1916,
+            -0.0478
+          ],
+          "scale": [
+            0.3472,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            2.1241
+          ],
+          "color": "#28cddd",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-441",
+          "name": "Azure piñata · paper fringe 14-0",
+          "kind": "box",
+          "position": [
+            -2.4896,
+            4.1594,
+            -0.0498
+          ],
+          "scale": [
+            0.3487,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            2.352
+          ],
+          "color": "#0983a5",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-442",
+          "name": "Azure piñata · paper fringe 14-1",
+          "kind": "box",
+          "position": [
+            -2.7352,
+            4.2204,
+            0.1024
+          ],
+          "scale": [
+            0.3487,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            2.462
+          ],
+          "color": "#28cddd",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-443",
+          "name": "Azure piñata · paper fringe 14-2",
+          "kind": "box",
+          "position": [
+            -2.9807,
+            4.1594,
+            -0.0498
+          ],
+          "scale": [
+            0.3487,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            2.572
+          ],
+          "color": "#79eef0",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-444",
+          "name": "Azure piñata · paper fringe 15-0",
+          "kind": "box",
+          "position": [
+            -2.51,
+            4.114,
+            -0.0517
+          ],
+          "scale": [
+            0.3479,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            2.8727
+          ],
+          "color": "#28cddd",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-445",
+          "name": "Azure piñata · paper fringe 15-1",
+          "kind": "box",
+          "position": [
+            -2.755,
+            4.175,
+            0.1002
+          ],
+          "scale": [
+            0.3479,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            2.9827
+          ],
+          "color": "#79eef0",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-446",
+          "name": "Azure piñata · paper fringe 15-2",
+          "kind": "box",
+          "position": [
+            -3,
+            4.114,
+            -0.0517
+          ],
+          "scale": [
+            0.3479,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            3.0927
+          ],
+          "color": "#0983a5",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-447",
+          "name": "Azure piñata · paper fringe 16-0",
+          "kind": "box",
+          "position": [
+            -2.509,
+            4.0554,
+            -0.0534
+          ],
+          "scale": [
+            0.3449,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -3.0307
+          ],
+          "color": "#79eef0",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-448",
+          "name": "Azure piñata · paper fringe 16-1",
+          "kind": "box",
+          "position": [
+            -2.7518,
+            4.1164,
+            0.0972
+          ],
+          "scale": [
+            0.3449,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.9207
+          ],
+          "color": "#0983a5",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-449",
+          "name": "Azure piñata · paper fringe 16-2",
+          "kind": "box",
+          "position": [
+            -2.9947,
+            4.0554,
+            -0.0534
+          ],
+          "scale": [
+            0.3449,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.8107
+          ],
+          "color": "#28cddd",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-450",
+          "name": "Azure piñata · paper fringe 17-0",
+          "kind": "box",
+          "position": [
+            -2.4866,
+            3.9836,
+            -0.0549
+          ],
+          "scale": [
+            0.3396,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.8064
+          ],
+          "color": "#0983a5",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-451",
+          "name": "Azure piñata · paper fringe 17-1",
+          "kind": "box",
+          "position": [
+            -2.7258,
+            4.0446,
+            0.0934
+          ],
+          "scale": [
+            0.3396,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.6964
+          ],
+          "color": "#28cddd",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-452",
+          "name": "Azure piñata · paper fringe 17-2",
+          "kind": "box",
+          "position": [
+            -2.9649,
+            3.9836,
+            -0.0549
+          ],
+          "scale": [
+            0.3396,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.5864
+          ],
+          "color": "#79eef0",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-453",
+          "name": "Azure piñata · paper fringe 18-0",
+          "kind": "box",
+          "position": [
+            -2.4433,
+            3.8988,
+            -0.0563
+          ],
+          "scale": [
+            0.3321,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.6724
+          ],
+          "color": "#28cddd",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-454",
+          "name": "Azure piñata · paper fringe 18-1",
+          "kind": "box",
+          "position": [
+            -2.6772,
+            3.9598,
+            0.0887
+          ],
+          "scale": [
+            0.3321,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.5624
+          ],
+          "color": "#79eef0",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-455",
+          "name": "Azure piñata · paper fringe 18-2",
+          "kind": "box",
+          "position": [
+            -2.9111,
+            3.8988,
+            -0.0563
+          ],
+          "scale": [
+            0.3321,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.4524
+          ],
+          "color": "#0983a5",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-456",
+          "name": "Azure piñata · paper fringe 19-0",
+          "kind": "box",
+          "position": [
+            -2.3796,
+            3.8014,
+            -0.0575
+          ],
+          "scale": [
+            0.3225,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.5871
+          ],
+          "color": "#79eef0",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-457",
+          "name": "Azure piñata · paper fringe 19-1",
+          "kind": "box",
+          "position": [
+            -2.6068,
+            3.8624,
+            0.0833
+          ],
+          "scale": [
+            0.3225,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.4771
+          ],
+          "color": "#0983a5",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-458",
+          "name": "Azure piñata · paper fringe 19-2",
+          "kind": "box",
+          "position": [
+            -2.8339,
+            3.8014,
+            -0.0575
+          ],
+          "scale": [
+            0.3225,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.3671
+          ],
+          "color": "#28cddd",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-459",
+          "name": "Azure piñata · paper fringe 20-0",
+          "kind": "box",
+          "position": [
+            -2.2964,
+            3.6919,
+            -0.0585
+          ],
+          "scale": [
+            0.3108,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.5295
+          ],
+          "color": "#0983a5",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-460",
+          "name": "Azure piñata · paper fringe 20-1",
+          "kind": "box",
+          "position": [
+            -2.5153,
+            3.7529,
+            0.0772
+          ],
+          "scale": [
+            0.3108,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.4195
+          ],
+          "color": "#28cddd",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-461",
+          "name": "Azure piñata · paper fringe 20-2",
+          "kind": "box",
+          "position": [
+            -2.7342,
+            3.6919,
+            -0.0585
+          ],
+          "scale": [
+            0.3108,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.3095
+          ],
+          "color": "#79eef0",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-462",
+          "name": "Azure piñata · paper fringe 21-0",
+          "kind": "box",
+          "position": [
+            -2.1946,
+            3.5709,
+            -0.0594
+          ],
+          "scale": [
+            0.2972,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.4887
+          ],
+          "color": "#28cddd",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-463",
+          "name": "Azure piñata · paper fringe 21-1",
+          "kind": "box",
+          "position": [
+            -2.4039,
+            3.6319,
+            0.0703
+          ],
+          "scale": [
+            0.2972,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.3787
+          ],
+          "color": "#79eef0",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-464",
+          "name": "Azure piñata · paper fringe 21-2",
+          "kind": "box",
+          "position": [
+            -2.6132,
+            3.5709,
+            -0.0594
+          ],
+          "scale": [
+            0.2972,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.2687
+          ],
+          "color": "#0983a5",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-465",
+          "name": "Azure piñata · paper fringe 22-0",
+          "kind": "box",
+          "position": [
+            -2.0755,
+            3.4392,
+            -0.0602
+          ],
+          "scale": [
+            0.2818,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.4589
+          ],
+          "color": "#79eef0",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-466",
+          "name": "Azure piñata · paper fringe 22-1",
+          "kind": "box",
+          "position": [
+            -2.2739,
+            3.5002,
+            0.0628
+          ],
+          "scale": [
+            0.2818,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.3489
+          ],
+          "color": "#0983a5",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-467",
+          "name": "Azure piñata · paper fringe 22-2",
+          "kind": "box",
+          "position": [
+            -2.4724,
+            3.4392,
+            -0.0602
+          ],
+          "scale": [
+            0.2818,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.2389
+          ],
+          "color": "#28cddd",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-468",
+          "name": "Azure piñata · paper fringe 23-0",
+          "kind": "box",
+          "position": [
+            -1.9405,
+            3.2976,
+            -0.0608
+          ],
+          "scale": [
+            0.2646,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.4366
+          ],
+          "color": "#0983a5",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-469",
+          "name": "Azure piñata · paper fringe 23-1",
+          "kind": "box",
+          "position": [
+            -2.1268,
+            3.3586,
+            0.0547
+          ],
+          "scale": [
+            0.2646,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.3266
+          ],
+          "color": "#28cddd",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-470",
+          "name": "Azure piñata · paper fringe 23-2",
+          "kind": "box",
+          "position": [
+            -2.3132,
+            3.2976,
+            -0.0608
+          ],
+          "scale": [
+            0.2646,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.2166
+          ],
+          "color": "#79eef0",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-471",
+          "name": "Azure piñata · paper fringe 24-0",
+          "kind": "box",
+          "position": [
+            -1.7911,
+            3.1472,
+            -0.0613
+          ],
+          "scale": [
+            0.246,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.4198
+          ],
+          "color": "#28cddd",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-472",
+          "name": "Azure piñata · paper fringe 24-1",
+          "kind": "box",
+          "position": [
+            -1.9643,
+            3.2082,
+            0.0461
+          ],
+          "scale": [
+            0.246,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.3098
+          ],
+          "color": "#79eef0",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-473",
+          "name": "Azure piñata · paper fringe 24-2",
+          "kind": "box",
+          "position": [
+            -2.1376,
+            3.1472,
+            -0.0613
+          ],
+          "scale": [
+            0.246,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.1998
+          ],
+          "color": "#0983a5",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-474",
+          "name": "Azure piñata · paper fringe 25-0",
+          "kind": "box",
+          "position": [
+            -1.6292,
+            2.989,
+            -0.0617
+          ],
+          "scale": [
+            0.226,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.407
+          ],
+          "color": "#79eef0",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-475",
+          "name": "Azure piñata · paper fringe 25-1",
+          "kind": "box",
+          "position": [
+            -1.7883,
+            3.05,
+            0.037
+          ],
+          "scale": [
+            0.226,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.297
+          ],
+          "color": "#0983a5",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-476",
+          "name": "Azure piñata · paper fringe 25-2",
+          "kind": "box",
+          "position": [
+            -1.9475,
+            2.989,
+            -0.0617
+          ],
+          "scale": [
+            0.226,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.187
+          ],
+          "color": "#28cddd",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-477",
+          "name": "Azure piñata · paper fringe 26-0",
+          "kind": "box",
+          "position": [
+            -1.4565,
+            2.8242,
+            -0.062
+          ],
+          "scale": [
+            0.2049,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.3975
+          ],
+          "color": "#0983a5",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-478",
+          "name": "Azure piñata · paper fringe 26-1",
+          "kind": "box",
+          "position": [
+            -1.6008,
+            2.8852,
+            0.0274
+          ],
+          "scale": [
+            0.2049,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.2875
+          ],
+          "color": "#28cddd",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-479",
+          "name": "Azure piñata · paper fringe 26-2",
+          "kind": "box",
+          "position": [
+            -1.7451,
+            2.8242,
+            -0.062
+          ],
+          "scale": [
+            0.2049,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.1775
+          ],
+          "color": "#79eef0",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-480",
+          "name": "Azure piñata · paper fringe 27-0",
+          "kind": "box",
+          "position": [
+            -1.2751,
+            2.6539,
+            -0.0623
+          ],
+          "scale": [
+            0.1829,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.3906
+          ],
+          "color": "#28cddd",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-481",
+          "name": "Azure piñata · paper fringe 27-1",
+          "kind": "box",
+          "position": [
+            -1.4039,
+            2.7149,
+            0.0176
+          ],
+          "scale": [
+            0.1829,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.2806
+          ],
+          "color": "#79eef0",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-482",
+          "name": "Azure piñata · paper fringe 27-2",
+          "kind": "box",
+          "position": [
+            -1.5327,
+            2.6539,
+            -0.0623
+          ],
+          "scale": [
+            0.1829,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.1706
+          ],
+          "color": "#0983a5",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-483",
+          "name": "Azure piñata · paper fringe 28-0",
+          "kind": "box",
+          "position": [
+            -1.0871,
+            2.4796,
+            -0.0625
+          ],
+          "scale": [
+            0.1602,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.3859
+          ],
+          "color": "#79eef0",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-484",
+          "name": "Azure piñata · paper fringe 28-1",
+          "kind": "box",
+          "position": [
+            -1.1999,
+            2.5406,
+            0.0075
+          ],
+          "scale": [
+            0.1602,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.2759
+          ],
+          "color": "#0983a5",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-485",
+          "name": "Azure piñata · paper fringe 28-2",
+          "kind": "box",
+          "position": [
+            -1.3128,
+            2.4796,
+            -0.0625
+          ],
+          "scale": [
+            0.1602,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.1659
+          ],
+          "color": "#28cddd",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-486",
+          "name": "Azure ferret · velvet head",
+          "kind": "sphere",
+          "position": [
+            -0.57,
+            3.76,
+            0.18
+          ],
+          "scale": [
+            0.34,
+            0.255,
+            0.265
+          ],
+          "rotation": [
+            0,
+            -0.1,
+            0
+          ],
+          "color": "#242333",
+          "material": "matte",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-487",
+          "name": "Azure ferret · tapered muzzle",
+          "kind": "sphere",
+          "position": [
+            -0.43,
+            3.68,
+            0.4
+          ],
+          "scale": [
+            0.25,
+            0.125,
+            0.17
+          ],
+          "rotation": [
+            0,
+            0,
+            -0.19
+          ],
+          "color": "#353244",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-488",
+          "name": "Azure ferret · nose",
+          "kind": "sphere",
+          "position": [
+            -0.33,
+            3.665,
+            0.546
+          ],
+          "scale": [
+            0.052,
+            0.037,
+            0.034
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#ed8c7d",
+          "material": "gloss",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-489",
+          "name": "Azure ferret · open bite line",
+          "kind": "box",
+          "position": [
+            -0.375,
+            3.615,
+            0.531
+          ],
+          "scale": [
+            0.19,
+            0.024,
+            0.032
+          ],
+          "rotation": [
+            0,
+            0,
+            -0.22
+          ],
+          "color": "#15111b",
+          "material": "matte",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-490",
+          "name": "Azure ferret · pointed ear -1",
+          "kind": "cone",
+          "position": [
+            -0.38,
+            3.998,
+            0.04
+          ],
+          "scale": [
+            0.112,
+            0.29,
+            0.1
+          ],
+          "rotation": [
+            0,
+            0,
+            0.27
+          ],
+          "color": "#201e2b",
+          "material": "matte",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-491",
+          "name": "Azure ferret · inner ear -1",
+          "kind": "sphere",
+          "position": [
+            -0.38,
+            3.98,
+            0.126
+          ],
+          "scale": [
+            0.065,
+            0.13,
+            0.036
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#28cddd",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-492",
+          "name": "Azure ferret · pointed ear 1",
+          "kind": "cone",
+          "position": [
+            -0.76,
+            3.998,
+            0.04
+          ],
+          "scale": [
+            0.112,
+            0.29,
+            0.1
+          ],
+          "rotation": [
+            0,
+            0,
+            -0.27
+          ],
+          "color": "#201e2b",
+          "material": "matte",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-493",
+          "name": "Azure ferret · inner ear 1",
+          "kind": "sphere",
+          "position": [
+            -0.76,
+            3.98,
+            0.126
+          ],
+          "scale": [
+            0.065,
+            0.13,
+            0.036
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#28cddd",
+          "material": "silk",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-494",
+          "name": "Azure ferret · amber eye",
+          "kind": "sphere",
+          "position": [
+            -0.495,
+            3.817,
+            0.402
+          ],
+          "scale": [
+            0.096,
+            0.074,
+            0.033
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#ffc05e",
+          "material": "gloss",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-495",
+          "name": "Azure ferret · slit pupil",
+          "kind": "sphere",
+          "position": [
+            -0.493,
+            3.818,
+            0.431
+          ],
+          "scale": [
+            0.028,
+            0.06,
+            0.014
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#18131e",
+          "material": "gloss",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-496",
+          "name": "Azure ferret · glint",
+          "kind": "sphere",
+          "position": [
+            -0.474,
+            3.84,
+            0.445
+          ],
+          "scale": [
+            0.018,
+            0.018,
+            0.012
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#f5ffff",
+          "material": "emissive",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-497",
+          "name": "Azure ferret · tiny gripping paw 0",
+          "kind": "sphere",
+          "position": [
+            -1.7436,
+            3.9781,
+            -0.0639
+          ],
+          "scale": [
+            0.18,
+            0.12,
+            0.11
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#242232",
+          "material": "matte",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-498",
+          "name": "Azure ferret · paw digit 0-0",
+          "kind": "cone",
+          "position": [
+            -1.8136,
+            3.9081,
+            0.0061
+          ],
+          "scale": [
+            0.035,
+            0.13,
+            0.035
+          ],
+          "rotation": [
+            0.2,
+            0,
+            0
+          ],
+          "color": "#343342",
+          "material": "matte",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-499",
+          "name": "Azure ferret · paw digit 0-1",
+          "kind": "cone",
+          "position": [
+            -1.7536,
+            3.9081,
+            0.0061
+          ],
+          "scale": [
+            0.035,
+            0.13,
+            0.035
+          ],
+          "rotation": [
+            0.2,
+            0,
+            0
+          ],
+          "color": "#343342",
+          "material": "matte",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-500",
+          "name": "Azure ferret · paw digit 0-2",
+          "kind": "cone",
+          "position": [
+            -1.6936,
+            3.9081,
+            0.0061
+          ],
+          "scale": [
+            0.035,
+            0.13,
+            0.035
+          ],
+          "rotation": [
+            0.2,
+            0,
+            0
+          ],
+          "color": "#343342",
+          "material": "matte",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-501",
+          "name": "Azure ferret · tiny gripping paw 1",
+          "kind": "sphere",
+          "position": [
+            -1.8836,
+            3.1045,
+            -0.0639
+          ],
+          "scale": [
+            0.18,
+            0.12,
+            0.11
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#242232",
+          "material": "matte",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-502",
+          "name": "Azure ferret · paw digit 1-0",
+          "kind": "cone",
+          "position": [
+            -1.9536,
+            3.0345,
+            0.0061
+          ],
+          "scale": [
+            0.035,
+            0.13,
+            0.035
+          ],
+          "rotation": [
+            0.2,
+            0,
+            0
+          ],
+          "color": "#343342",
+          "material": "matte",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-503",
+          "name": "Azure ferret · paw digit 1-1",
+          "kind": "cone",
+          "position": [
+            -1.8936,
+            3.0345,
+            0.0061
+          ],
+          "scale": [
+            0.035,
+            0.13,
+            0.035
+          ],
+          "rotation": [
+            0.2,
+            0,
+            0
+          ],
+          "color": "#343342",
+          "material": "matte",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-504",
+          "name": "Azure ferret · paw digit 1-2",
+          "kind": "cone",
+          "position": [
+            -1.8336,
+            3.0345,
+            0.0061
+          ],
+          "scale": [
+            0.035,
+            0.13,
+            0.035
+          ],
+          "rotation": [
+            0.2,
+            0,
+            0
+          ],
+          "color": "#343342",
+          "material": "matte",
+          "group": "Azure frost"
+        },
+        {
+          "id": "atelier-fidelity-505",
+          "name": "Azure pigtail · origin hair bun",
+          "kind": "sphere",
+          "position": [
+            -0.39,
+            3.74,
+            -0.23
+          ],
+          "scale": [
+            0.23,
+            0.22,
+            0.22
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#28cddd",
+          "material": "silk",
+          "group": "Character"
+        },
+        {
+          "id": "atelier-fidelity-506",
+          "name": "Azure pigtail · binding",
+          "kind": "cylinder",
+          "position": [
+            -0.47,
+            3.81,
+            -0.17
+          ],
+          "scale": [
+            0.16,
+            0.13,
+            0.17
+          ],
+          "rotation": [
+            0,
+            0,
+            -0.4
+          ],
+          "color": "#79eef0",
+          "material": "metal",
+          "group": "Character"
+        },
+        {
+          "id": "atelier-fidelity-507",
+          "name": "Coral piñata · organic continuous spine",
+          "kind": "loft",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#fb6749",
+          "material": "silk",
+          "group": "Coral flare",
+          "path": [
+            [
+              0.53,
+              3.71,
+              -0.17
+            ],
+            [
+              1.015151104165403,
+              3.867821758658569,
+              -0.21672939613082604
+            ],
+            [
+              1.476870137861158,
+              4.012142181475102,
+              -0.2611155852146872
+            ],
+            [
+              1.892900012474769,
+              4.130136945963353,
+              -0.300932858390334
+            ],
+            [
+              2.243274684611434,
+              4.21030180807203,
+              -0.33418461131828625
+            ],
+            [
+              2.511320336880795,
+              4.24302947301907,
+              -0.35920346225950806
+            ],
+            [
+              2.684491472724687,
+              4.221091345168578,
+              -0.374734861558183
+            ],
+            [
+              2.755,
+              4.14,
+              -0.38
+            ],
+            [
+              2.7202057584389725,
+              3.9982342023114352,
+              -0.374734861558183
+            ],
+            [
+              2.582748908309366,
+              3.7973151873047843,
+              -0.35920346225950806
+            ],
+            [
+              2.3504175417542914,
+              3.5417303795006014,
+              -0.33418461131828625
+            ],
+            [
+              2.035757155331912,
+              3.2387083745347818,
+              -0.30093285839033407
+            ],
+            [
+              1.6554415664325866,
+              2.8978564671893885,
+              -0.26111558521468725
+            ],
+            [
+              1.2294368184511177,
+              2.530678901515712,
+              -0.21672939613082606
+            ],
+            [
+              0.7800000000000002,
+              2.15,
+              -0.17000000000000004
+            ]
+          ],
+          "radii": [
+            0.24,
+            0.299,
+            0.354,
+            0.404,
+            0.444,
+            0.473,
+            0.488,
+            0.49,
+            0.477,
+            0.45,
+            0.41,
+            0.358,
+            0.297,
+            0.23,
+            0.16
+          ],
+          "segments": 70,
+          "radialSegments": 14
+        },
+        {
+          "id": "atelier-fidelity-508",
+          "name": "Coral piñata · paper fringe 1-0",
+          "kind": "box",
+          "position": [
+            0.624,
+            3.7585,
+            -0.0126
+          ],
+          "scale": [
+            0.19,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.3657
+          ],
+          "color": "#ff9b56",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-509",
+          "name": "Coral piñata · paper fringe 1-1",
+          "kind": "box",
+          "position": [
+            0.7578,
+            3.8195,
+            0.0703
+          ],
+          "scale": [
+            0.19,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.2557
+          ],
+          "color": "#db4243",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-510",
+          "name": "Coral piñata · paper fringe 1-2",
+          "kind": "box",
+          "position": [
+            0.8917,
+            3.7585,
+            -0.0126
+          ],
+          "scale": [
+            0.19,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.1457
+          ],
+          "color": "#fb6749",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-511",
+          "name": "Coral piñata · paper fringe 2-0",
+          "kind": "box",
+          "position": [
+            0.8358,
+            3.8316,
+            -0.016
+          ],
+          "scale": [
+            0.2094,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.3694
+          ],
+          "color": "#db4243",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-512",
+          "name": "Coral piñata · paper fringe 2-1",
+          "kind": "box",
+          "position": [
+            0.9833,
+            3.8926,
+            0.0754
+          ],
+          "scale": [
+            0.2094,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.2594
+          ],
+          "color": "#fb6749",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-513",
+          "name": "Coral piñata · paper fringe 2-2",
+          "kind": "box",
+          "position": [
+            1.1308,
+            3.8316,
+            -0.016
+          ],
+          "scale": [
+            0.2094,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.1494
+          ],
+          "color": "#ff9b56",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-514",
+          "name": "Coral piñata · paper fringe 3-0",
+          "kind": "box",
+          "position": [
+            1.0431,
+            3.9019,
+            -0.0194
+          ],
+          "scale": [
+            0.2283,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.3757
+          ],
+          "color": "#fb6749",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-515",
+          "name": "Coral piñata · paper fringe 3-1",
+          "kind": "box",
+          "position": [
+            1.2039,
+            3.9629,
+            0.0803
+          ],
+          "scale": [
+            0.2283,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.2657
+          ],
+          "color": "#ff9b56",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-516",
+          "name": "Coral piñata · paper fringe 3-2",
+          "kind": "box",
+          "position": [
+            1.3647,
+            3.9019,
+            -0.0194
+          ],
+          "scale": [
+            0.2283,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.1557
+          ],
+          "color": "#db4243",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-517",
+          "name": "Coral piñata · paper fringe 4-0",
+          "kind": "box",
+          "position": [
+            1.2438,
+            3.9682,
+            -0.0227
+          ],
+          "scale": [
+            0.2466,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.3851
+          ],
+          "color": "#ff9b56",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-518",
+          "name": "Coral piñata · paper fringe 4-1",
+          "kind": "box",
+          "position": [
+            1.4175,
+            4.0292,
+            0.0849
+          ],
+          "scale": [
+            0.2466,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.2751
+          ],
+          "color": "#db4243",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-519",
+          "name": "Coral piñata · paper fringe 4-2",
+          "kind": "box",
+          "position": [
+            1.5911,
+            3.9682,
+            -0.0227
+          ],
+          "scale": [
+            0.2466,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.1651
+          ],
+          "color": "#fb6749",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-520",
+          "name": "Coral piñata · paper fringe 5-0",
+          "kind": "box",
+          "position": [
+            1.4358,
+            4.029,
+            -0.026
+          ],
+          "scale": [
+            0.2639,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.3982
+          ],
+          "color": "#db4243",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-521",
+          "name": "Coral piñata · paper fringe 5-1",
+          "kind": "box",
+          "position": [
+            1.6217,
+            4.09,
+            0.0892
+          ],
+          "scale": [
+            0.2639,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.2882
+          ],
+          "color": "#fb6749",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-522",
+          "name": "Coral piñata · paper fringe 5-2",
+          "kind": "box",
+          "position": [
+            1.8075,
+            4.029,
+            -0.026
+          ],
+          "scale": [
+            0.2639,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.1782
+          ],
+          "color": "#ff9b56",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-523",
+          "name": "Coral piñata · paper fringe 6-0",
+          "kind": "box",
+          "position": [
+            1.6171,
+            4.0832,
+            -0.0291
+          ],
+          "scale": [
+            0.2801,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.416
+          ],
+          "color": "#fb6749",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-524",
+          "name": "Coral piñata · paper fringe 6-1",
+          "kind": "box",
+          "position": [
+            1.8143,
+            4.1442,
+            0.0931
+          ],
+          "scale": [
+            0.2801,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.306
+          ],
+          "color": "#ff9b56",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-525",
+          "name": "Coral piñata · paper fringe 6-2",
+          "kind": "box",
+          "position": [
+            2.0116,
+            4.0832,
+            -0.0291
+          ],
+          "scale": [
+            0.2801,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.196
+          ],
+          "color": "#db4243",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-526",
+          "name": "Coral piñata · paper fringe 7-0",
+          "kind": "box",
+          "position": [
+            1.7858,
+            4.1296,
+            -0.0322
+          ],
+          "scale": [
+            0.2949,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.4402
+          ],
+          "color": "#ff9b56",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-527",
+          "name": "Coral piñata · paper fringe 7-1",
+          "kind": "box",
+          "position": [
+            1.9935,
+            4.1906,
+            0.0966
+          ],
+          "scale": [
+            0.2949,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.3302
+          ],
+          "color": "#db4243",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-528",
+          "name": "Coral piñata · paper fringe 7-2",
+          "kind": "box",
+          "position": [
+            2.2012,
+            4.1296,
+            -0.0322
+          ],
+          "scale": [
+            0.2949,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.2202
+          ],
+          "color": "#fb6749",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-529",
+          "name": "Coral piñata · paper fringe 8-0",
+          "kind": "box",
+          "position": [
+            1.9402,
+            4.1672,
+            -0.0352
+          ],
+          "scale": [
+            0.3083,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.4731
+          ],
+          "color": "#db4243",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-530",
+          "name": "Coral piñata · paper fringe 8-1",
+          "kind": "box",
+          "position": [
+            2.1573,
+            4.2282,
+            0.0994
+          ],
+          "scale": [
+            0.3083,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.3631
+          ],
+          "color": "#fb6749",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-531",
+          "name": "Coral piñata · paper fringe 8-2",
+          "kind": "box",
+          "position": [
+            2.3744,
+            4.1672,
+            -0.0352
+          ],
+          "scale": [
+            0.3083,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.2531
+          ],
+          "color": "#ff9b56",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-532",
+          "name": "Coral piñata · paper fringe 9-0",
+          "kind": "box",
+          "position": [
+            2.0786,
+            4.1949,
+            -0.038
+          ],
+          "scale": [
+            0.3199,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.519
+          ],
+          "color": "#fb6749",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-533",
+          "name": "Coral piñata · paper fringe 9-1",
+          "kind": "box",
+          "position": [
+            2.3039,
+            4.2559,
+            0.1017
+          ],
+          "scale": [
+            0.3199,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.409
+          ],
+          "color": "#ff9b56",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-534",
+          "name": "Coral piñata · paper fringe 9-2",
+          "kind": "box",
+          "position": [
+            2.5292,
+            4.1949,
+            -0.038
+          ],
+          "scale": [
+            0.3199,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.299
+          ],
+          "color": "#db4243",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-535",
+          "name": "Coral piñata · paper fringe 10-0",
+          "kind": "box",
+          "position": [
+            2.1997,
+            4.2119,
+            -0.0407
+          ],
+          "scale": [
+            0.3298,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.5852
+          ],
+          "color": "#ff9b56",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-536",
+          "name": "Coral piñata · paper fringe 10-1",
+          "kind": "box",
+          "position": [
+            2.432,
+            4.2729,
+            0.1033
+          ],
+          "scale": [
+            0.3298,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.4752
+          ],
+          "color": "#db4243",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-537",
+          "name": "Coral piñata · paper fringe 10-2",
+          "kind": "box",
+          "position": [
+            2.6642,
+            4.2119,
+            -0.0407
+          ],
+          "scale": [
+            0.3298,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.3652
+          ],
+          "color": "#fb6749",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-538",
+          "name": "Coral piñata · paper fringe 11-0",
+          "kind": "box",
+          "position": [
+            2.3023,
+            4.2174,
+            -0.0432
+          ],
+          "scale": [
+            0.3377,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.6857
+          ],
+          "color": "#db4243",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-539",
+          "name": "Coral piñata · paper fringe 11-1",
+          "kind": "box",
+          "position": [
+            2.5401,
+            4.2784,
+            0.1042
+          ],
+          "scale": [
+            0.3377,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.5757
+          ],
+          "color": "#fb6749",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-540",
+          "name": "Coral piñata · paper fringe 11-2",
+          "kind": "box",
+          "position": [
+            2.7779,
+            4.2174,
+            -0.0432
+          ],
+          "scale": [
+            0.3377,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.4657
+          ],
+          "color": "#ff9b56",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-541",
+          "name": "Coral piñata · paper fringe 12-0",
+          "kind": "box",
+          "position": [
+            2.3853,
+            4.2108,
+            -0.0456
+          ],
+          "scale": [
+            0.3435,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.8478
+          ],
+          "color": "#fb6749",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-542",
+          "name": "Coral piñata · paper fringe 12-1",
+          "kind": "box",
+          "position": [
+            2.6272,
+            4.2718,
+            0.1044
+          ],
+          "scale": [
+            0.3435,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.7378
+          ],
+          "color": "#ff9b56",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-543",
+          "name": "Coral piñata · paper fringe 12-2",
+          "kind": "box",
+          "position": [
+            2.8691,
+            4.2108,
+            -0.0456
+          ],
+          "scale": [
+            0.3435,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.6278
+          ],
+          "color": "#db4243",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-544",
+          "name": "Coral piñata · paper fringe 13-0",
+          "kind": "box",
+          "position": [
+            2.4479,
+            4.1916,
+            -0.0478
+          ],
+          "scale": [
+            0.3472,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.1241
+          ],
+          "color": "#ff9b56",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-545",
+          "name": "Coral piñata · paper fringe 13-1",
+          "kind": "box",
+          "position": [
+            2.6924,
+            4.2526,
+            0.1038
+          ],
+          "scale": [
+            0.3472,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.0141
+          ],
+          "color": "#db4243",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-546",
+          "name": "Coral piñata · paper fringe 13-2",
+          "kind": "box",
+          "position": [
+            2.9369,
+            4.1916,
+            -0.0478
+          ],
+          "scale": [
+            0.3472,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -1.9041
+          ],
+          "color": "#fb6749",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-547",
+          "name": "Coral piñata · paper fringe 14-0",
+          "kind": "box",
+          "position": [
+            2.4896,
+            4.1594,
+            -0.0498
+          ],
+          "scale": [
+            0.3487,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.572
+          ],
+          "color": "#db4243",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-548",
+          "name": "Coral piñata · paper fringe 14-1",
+          "kind": "box",
+          "position": [
+            2.7352,
+            4.2204,
+            0.1024
+          ],
+          "scale": [
+            0.3487,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.462
+          ],
+          "color": "#fb6749",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-549",
+          "name": "Coral piñata · paper fringe 14-2",
+          "kind": "box",
+          "position": [
+            2.9807,
+            4.1594,
+            -0.0498
+          ],
+          "scale": [
+            0.3487,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.352
+          ],
+          "color": "#ff9b56",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-550",
+          "name": "Coral piñata · paper fringe 15-0",
+          "kind": "box",
+          "position": [
+            2.51,
+            4.114,
+            -0.0517
+          ],
+          "scale": [
+            0.3479,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -3.0927
+          ],
+          "color": "#fb6749",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-551",
+          "name": "Coral piñata · paper fringe 15-1",
+          "kind": "box",
+          "position": [
+            2.755,
+            4.175,
+            0.1002
+          ],
+          "scale": [
+            0.3479,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.9827
+          ],
+          "color": "#ff9b56",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-552",
+          "name": "Coral piñata · paper fringe 15-2",
+          "kind": "box",
+          "position": [
+            3,
+            4.114,
+            -0.0517
+          ],
+          "scale": [
+            0.3479,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            -2.8727
+          ],
+          "color": "#db4243",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-553",
+          "name": "Coral piñata · paper fringe 16-0",
+          "kind": "box",
+          "position": [
+            2.509,
+            4.0554,
+            -0.0534
+          ],
+          "scale": [
+            0.3449,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            2.8107
+          ],
+          "color": "#ff9b56",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-554",
+          "name": "Coral piñata · paper fringe 16-1",
+          "kind": "box",
+          "position": [
+            2.7518,
+            4.1164,
+            0.0972
+          ],
+          "scale": [
+            0.3449,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            2.9207
+          ],
+          "color": "#db4243",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-555",
+          "name": "Coral piñata · paper fringe 16-2",
+          "kind": "box",
+          "position": [
+            2.9947,
+            4.0554,
+            -0.0534
+          ],
+          "scale": [
+            0.3449,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            3.0307
+          ],
+          "color": "#fb6749",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-556",
+          "name": "Coral piñata · paper fringe 17-0",
+          "kind": "box",
+          "position": [
+            2.4866,
+            3.9836,
+            -0.0549
+          ],
+          "scale": [
+            0.3396,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            2.5864
+          ],
+          "color": "#db4243",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-557",
+          "name": "Coral piñata · paper fringe 17-1",
+          "kind": "box",
+          "position": [
+            2.7258,
+            4.0446,
+            0.0934
+          ],
+          "scale": [
+            0.3396,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            2.6964
+          ],
+          "color": "#fb6749",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-558",
+          "name": "Coral piñata · paper fringe 17-2",
+          "kind": "box",
+          "position": [
+            2.9649,
+            3.9836,
+            -0.0549
+          ],
+          "scale": [
+            0.3396,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            2.8064
+          ],
+          "color": "#ff9b56",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-559",
+          "name": "Coral piñata · paper fringe 18-0",
+          "kind": "box",
+          "position": [
+            2.4433,
+            3.8988,
+            -0.0563
+          ],
+          "scale": [
+            0.3321,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            2.4524
+          ],
+          "color": "#fb6749",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-560",
+          "name": "Coral piñata · paper fringe 18-1",
+          "kind": "box",
+          "position": [
+            2.6772,
+            3.9598,
+            0.0887
+          ],
+          "scale": [
+            0.3321,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            2.5624
+          ],
+          "color": "#ff9b56",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-561",
+          "name": "Coral piñata · paper fringe 18-2",
+          "kind": "box",
+          "position": [
+            2.9111,
+            3.8988,
+            -0.0563
+          ],
+          "scale": [
+            0.3321,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            2.6724
+          ],
+          "color": "#db4243",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-562",
+          "name": "Coral piñata · paper fringe 19-0",
+          "kind": "box",
+          "position": [
+            2.3796,
+            3.8014,
+            -0.0575
+          ],
+          "scale": [
+            0.3225,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            2.3671
+          ],
+          "color": "#ff9b56",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-563",
+          "name": "Coral piñata · paper fringe 19-1",
+          "kind": "box",
+          "position": [
+            2.6068,
+            3.8624,
+            0.0833
+          ],
+          "scale": [
+            0.3225,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            2.4771
+          ],
+          "color": "#db4243",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-564",
+          "name": "Coral piñata · paper fringe 19-2",
+          "kind": "box",
+          "position": [
+            2.8339,
+            3.8014,
+            -0.0575
+          ],
+          "scale": [
+            0.3225,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            2.5871
+          ],
+          "color": "#fb6749",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-565",
+          "name": "Coral piñata · paper fringe 20-0",
+          "kind": "box",
+          "position": [
+            2.2964,
+            3.6919,
+            -0.0585
+          ],
+          "scale": [
+            0.3108,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            2.3095
+          ],
+          "color": "#db4243",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-566",
+          "name": "Coral piñata · paper fringe 20-1",
+          "kind": "box",
+          "position": [
+            2.5153,
+            3.7529,
+            0.0772
+          ],
+          "scale": [
+            0.3108,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            2.4195
+          ],
+          "color": "#fb6749",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-567",
+          "name": "Coral piñata · paper fringe 20-2",
+          "kind": "box",
+          "position": [
+            2.7342,
+            3.6919,
+            -0.0585
+          ],
+          "scale": [
+            0.3108,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            2.5295
+          ],
+          "color": "#ff9b56",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-568",
+          "name": "Coral piñata · paper fringe 21-0",
+          "kind": "box",
+          "position": [
+            2.1946,
+            3.5709,
+            -0.0594
+          ],
+          "scale": [
+            0.2972,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            2.2687
+          ],
+          "color": "#fb6749",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-569",
+          "name": "Coral piñata · paper fringe 21-1",
+          "kind": "box",
+          "position": [
+            2.4039,
+            3.6319,
+            0.0703
+          ],
+          "scale": [
+            0.2972,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            2.3787
+          ],
+          "color": "#ff9b56",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-570",
+          "name": "Coral piñata · paper fringe 21-2",
+          "kind": "box",
+          "position": [
+            2.6132,
+            3.5709,
+            -0.0594
+          ],
+          "scale": [
+            0.2972,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            2.4887
+          ],
+          "color": "#db4243",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-571",
+          "name": "Coral piñata · paper fringe 22-0",
+          "kind": "box",
+          "position": [
+            2.0755,
+            3.4392,
+            -0.0602
+          ],
+          "scale": [
+            0.2818,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            2.2389
+          ],
+          "color": "#ff9b56",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-572",
+          "name": "Coral piñata · paper fringe 22-1",
+          "kind": "box",
+          "position": [
+            2.2739,
+            3.5002,
+            0.0628
+          ],
+          "scale": [
+            0.2818,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            2.3489
+          ],
+          "color": "#db4243",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-573",
+          "name": "Coral piñata · paper fringe 22-2",
+          "kind": "box",
+          "position": [
+            2.4724,
+            3.4392,
+            -0.0602
+          ],
+          "scale": [
+            0.2818,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            2.4589
+          ],
+          "color": "#fb6749",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-574",
+          "name": "Coral piñata · paper fringe 23-0",
+          "kind": "box",
+          "position": [
+            1.9405,
+            3.2976,
+            -0.0608
+          ],
+          "scale": [
+            0.2646,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            2.2166
+          ],
+          "color": "#db4243",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-575",
+          "name": "Coral piñata · paper fringe 23-1",
+          "kind": "box",
+          "position": [
+            2.1268,
+            3.3586,
+            0.0547
+          ],
+          "scale": [
+            0.2646,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            2.3266
+          ],
+          "color": "#fb6749",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-576",
+          "name": "Coral piñata · paper fringe 23-2",
+          "kind": "box",
+          "position": [
+            2.3132,
+            3.2976,
+            -0.0608
+          ],
+          "scale": [
+            0.2646,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            2.4366
+          ],
+          "color": "#ff9b56",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-577",
+          "name": "Coral piñata · paper fringe 24-0",
+          "kind": "box",
+          "position": [
+            1.7911,
+            3.1472,
+            -0.0613
+          ],
+          "scale": [
+            0.246,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            2.1998
+          ],
+          "color": "#fb6749",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-578",
+          "name": "Coral piñata · paper fringe 24-1",
+          "kind": "box",
+          "position": [
+            1.9643,
+            3.2082,
+            0.0461
+          ],
+          "scale": [
+            0.246,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            2.3098
+          ],
+          "color": "#ff9b56",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-579",
+          "name": "Coral piñata · paper fringe 24-2",
+          "kind": "box",
+          "position": [
+            2.1376,
+            3.1472,
+            -0.0613
+          ],
+          "scale": [
+            0.246,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            2.4198
+          ],
+          "color": "#db4243",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-580",
+          "name": "Coral piñata · paper fringe 25-0",
+          "kind": "box",
+          "position": [
+            1.6292,
+            2.989,
+            -0.0617
+          ],
+          "scale": [
+            0.226,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            2.187
+          ],
+          "color": "#ff9b56",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-581",
+          "name": "Coral piñata · paper fringe 25-1",
+          "kind": "box",
+          "position": [
+            1.7883,
+            3.05,
+            0.037
+          ],
+          "scale": [
+            0.226,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            2.297
+          ],
+          "color": "#db4243",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-582",
+          "name": "Coral piñata · paper fringe 25-2",
+          "kind": "box",
+          "position": [
+            1.9475,
+            2.989,
+            -0.0617
+          ],
+          "scale": [
+            0.226,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            2.407
+          ],
+          "color": "#fb6749",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-583",
+          "name": "Coral piñata · paper fringe 26-0",
+          "kind": "box",
+          "position": [
+            1.4565,
+            2.8242,
+            -0.062
+          ],
+          "scale": [
+            0.2049,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            2.1775
+          ],
+          "color": "#db4243",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-584",
+          "name": "Coral piñata · paper fringe 26-1",
+          "kind": "box",
+          "position": [
+            1.6008,
+            2.8852,
+            0.0274
+          ],
+          "scale": [
+            0.2049,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            2.2875
+          ],
+          "color": "#fb6749",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-585",
+          "name": "Coral piñata · paper fringe 26-2",
+          "kind": "box",
+          "position": [
+            1.7451,
+            2.8242,
+            -0.062
+          ],
+          "scale": [
+            0.2049,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            2.3975
+          ],
+          "color": "#ff9b56",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-586",
+          "name": "Coral piñata · paper fringe 27-0",
+          "kind": "box",
+          "position": [
+            1.2751,
+            2.6539,
+            -0.0623
+          ],
+          "scale": [
+            0.1829,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            2.1706
+          ],
+          "color": "#fb6749",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-587",
+          "name": "Coral piñata · paper fringe 27-1",
+          "kind": "box",
+          "position": [
+            1.4039,
+            2.7149,
+            0.0176
+          ],
+          "scale": [
+            0.1829,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            2.2806
+          ],
+          "color": "#ff9b56",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-588",
+          "name": "Coral piñata · paper fringe 27-2",
+          "kind": "box",
+          "position": [
+            1.5327,
+            2.6539,
+            -0.0623
+          ],
+          "scale": [
+            0.1829,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            2.3906
+          ],
+          "color": "#db4243",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-589",
+          "name": "Coral piñata · paper fringe 28-0",
+          "kind": "box",
+          "position": [
+            1.0871,
+            2.4796,
+            -0.0625
+          ],
+          "scale": [
+            0.1602,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            2.1659
+          ],
+          "color": "#ff9b56",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-590",
+          "name": "Coral piñata · paper fringe 28-1",
+          "kind": "box",
+          "position": [
+            1.1999,
+            2.5406,
+            0.0075
+          ],
+          "scale": [
+            0.1602,
+            0.175,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            2.2759
+          ],
+          "color": "#db4243",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-591",
+          "name": "Coral piñata · paper fringe 28-2",
+          "kind": "box",
+          "position": [
+            1.3128,
+            2.4796,
+            -0.0625
+          ],
+          "scale": [
+            0.1602,
+            0.12,
+            0.026
+          ],
+          "rotation": [
+            0,
+            0,
+            2.3859
+          ],
+          "color": "#fb6749",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-592",
+          "name": "Coral ferret · velvet head",
+          "kind": "sphere",
+          "position": [
+            0.57,
+            3.76,
+            0.18
+          ],
+          "scale": [
+            0.34,
+            0.255,
+            0.265
+          ],
+          "rotation": [
+            0,
+            0.1,
+            0
+          ],
+          "color": "#242333",
+          "material": "matte",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-593",
+          "name": "Coral ferret · tapered muzzle",
+          "kind": "sphere",
+          "position": [
+            0.43,
+            3.68,
+            0.4
+          ],
+          "scale": [
+            0.25,
+            0.125,
+            0.17
+          ],
+          "rotation": [
+            0,
+            0,
+            0.19
+          ],
+          "color": "#353244",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-594",
+          "name": "Coral ferret · nose",
+          "kind": "sphere",
+          "position": [
+            0.33,
+            3.665,
+            0.546
+          ],
+          "scale": [
+            0.052,
+            0.037,
+            0.034
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#ed8c7d",
+          "material": "gloss",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-595",
+          "name": "Coral ferret · open bite line",
+          "kind": "box",
+          "position": [
+            0.375,
+            3.615,
+            0.531
+          ],
+          "scale": [
+            0.19,
+            0.024,
+            0.032
+          ],
+          "rotation": [
+            0,
+            0,
+            0.22
+          ],
+          "color": "#15111b",
+          "material": "matte",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-596",
+          "name": "Coral ferret · pointed ear -1",
+          "kind": "cone",
+          "position": [
+            0.38,
+            3.998,
+            0.04
+          ],
+          "scale": [
+            0.112,
+            0.29,
+            0.1
+          ],
+          "rotation": [
+            0,
+            0,
+            -0.27
+          ],
+          "color": "#201e2b",
+          "material": "matte",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-597",
+          "name": "Coral ferret · inner ear -1",
+          "kind": "sphere",
+          "position": [
+            0.38,
+            3.98,
+            0.126
+          ],
+          "scale": [
+            0.065,
+            0.13,
+            0.036
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#fb6749",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-598",
+          "name": "Coral ferret · pointed ear 1",
+          "kind": "cone",
+          "position": [
+            0.76,
+            3.998,
+            0.04
+          ],
+          "scale": [
+            0.112,
+            0.29,
+            0.1
+          ],
+          "rotation": [
+            0,
+            0,
+            0.27
+          ],
+          "color": "#201e2b",
+          "material": "matte",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-599",
+          "name": "Coral ferret · inner ear 1",
+          "kind": "sphere",
+          "position": [
+            0.76,
+            3.98,
+            0.126
+          ],
+          "scale": [
+            0.065,
+            0.13,
+            0.036
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#fb6749",
+          "material": "silk",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-600",
+          "name": "Coral ferret · amber eye",
+          "kind": "sphere",
+          "position": [
+            0.495,
+            3.817,
+            0.402
+          ],
+          "scale": [
+            0.096,
+            0.074,
+            0.033
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#ffc05e",
+          "material": "gloss",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-601",
+          "name": "Coral ferret · slit pupil",
+          "kind": "sphere",
+          "position": [
+            0.493,
+            3.818,
+            0.431
+          ],
+          "scale": [
+            0.028,
+            0.06,
+            0.014
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#18131e",
+          "material": "gloss",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-602",
+          "name": "Coral ferret · glint",
+          "kind": "sphere",
+          "position": [
+            0.474,
+            3.84,
+            0.445
+          ],
+          "scale": [
+            0.018,
+            0.018,
+            0.012
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#f5ffff",
+          "material": "emissive",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-603",
+          "name": "Coral ferret · tiny gripping paw 0",
+          "kind": "sphere",
+          "position": [
+            1.7436,
+            3.9781,
+            -0.0639
+          ],
+          "scale": [
+            0.18,
+            0.12,
+            0.11
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#242232",
+          "material": "matte",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-604",
+          "name": "Coral ferret · paw digit 0-0",
+          "kind": "cone",
+          "position": [
+            1.6936,
+            3.9081,
+            0.0061
+          ],
+          "scale": [
+            0.035,
+            0.13,
+            0.035
+          ],
+          "rotation": [
+            0.2,
+            0,
+            0
+          ],
+          "color": "#343342",
+          "material": "matte",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-605",
+          "name": "Coral ferret · paw digit 0-1",
+          "kind": "cone",
+          "position": [
+            1.7536,
+            3.9081,
+            0.0061
+          ],
+          "scale": [
+            0.035,
+            0.13,
+            0.035
+          ],
+          "rotation": [
+            0.2,
+            0,
+            0
+          ],
+          "color": "#343342",
+          "material": "matte",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-606",
+          "name": "Coral ferret · paw digit 0-2",
+          "kind": "cone",
+          "position": [
+            1.8136,
+            3.9081,
+            0.0061
+          ],
+          "scale": [
+            0.035,
+            0.13,
+            0.035
+          ],
+          "rotation": [
+            0.2,
+            0,
+            0
+          ],
+          "color": "#343342",
+          "material": "matte",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-607",
+          "name": "Coral ferret · tiny gripping paw 1",
+          "kind": "sphere",
+          "position": [
+            1.8836,
+            3.1045,
+            -0.0639
+          ],
+          "scale": [
+            0.18,
+            0.12,
+            0.11
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#242232",
+          "material": "matte",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-608",
+          "name": "Coral ferret · paw digit 1-0",
+          "kind": "cone",
+          "position": [
+            1.8336,
+            3.0345,
+            0.0061
+          ],
+          "scale": [
+            0.035,
+            0.13,
+            0.035
+          ],
+          "rotation": [
+            0.2,
+            0,
+            0
+          ],
+          "color": "#343342",
+          "material": "matte",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-609",
+          "name": "Coral ferret · paw digit 1-1",
+          "kind": "cone",
+          "position": [
+            1.8936,
+            3.0345,
+            0.0061
+          ],
+          "scale": [
+            0.035,
+            0.13,
+            0.035
+          ],
+          "rotation": [
+            0.2,
+            0,
+            0
+          ],
+          "color": "#343342",
+          "material": "matte",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-610",
+          "name": "Coral ferret · paw digit 1-2",
+          "kind": "cone",
+          "position": [
+            1.9536,
+            3.0345,
+            0.0061
+          ],
+          "scale": [
+            0.035,
+            0.13,
+            0.035
+          ],
+          "rotation": [
+            0.2,
+            0,
+            0
+          ],
+          "color": "#343342",
+          "material": "matte",
+          "group": "Coral flare"
+        },
+        {
+          "id": "atelier-fidelity-611",
+          "name": "Coral pigtail · origin hair bun",
+          "kind": "sphere",
+          "position": [
+            0.39,
+            3.74,
+            -0.23
+          ],
+          "scale": [
+            0.23,
+            0.22,
+            0.22
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#fb6749",
+          "material": "silk",
+          "group": "Character"
+        },
+        {
+          "id": "atelier-fidelity-612",
+          "name": "Coral pigtail · binding",
+          "kind": "cylinder",
+          "position": [
+            0.47,
+            3.81,
+            -0.17
+          ],
+          "scale": [
+            0.16,
+            0.13,
+            0.17
+          ],
+          "rotation": [
+            0,
+            0,
+            0.4
+          ],
+          "color": "#ff9b56",
+          "material": "metal",
+          "group": "Character"
+        },
+        {
+          "id": "atelier-fidelity-613",
+          "name": "Split fringe · strand -1-0",
+          "kind": "sphere",
+          "position": [
+            -0.09,
+            3.635,
+            0.24
+          ],
+          "scale": [
+            0.09,
+            0.19,
+            0.1
+          ],
+          "rotation": [
+            0.14,
+            0,
+            -0.3
+          ],
+          "color": "#13c6d4",
+          "material": "silk",
+          "group": "Character"
+        },
+        {
+          "id": "atelier-fidelity-614",
+          "name": "Split fringe · strand -1-1",
+          "kind": "sphere",
+          "position": [
+            -0.133,
+            3.608,
+            0.25
+          ],
+          "scale": [
+            0.09,
+            0.19,
+            0.1
+          ],
+          "rotation": [
+            0.14,
+            0,
+            -0.3
+          ],
+          "color": "#13c6d4",
+          "material": "silk",
+          "group": "Character"
+        },
+        {
+          "id": "atelier-fidelity-615",
+          "name": "Split fringe · strand -1-2",
+          "kind": "sphere",
+          "position": [
+            -0.176,
+            3.581,
+            0.26
+          ],
+          "scale": [
+            0.09,
+            0.19,
+            0.1
+          ],
+          "rotation": [
+            0.14,
+            0,
+            -0.3
+          ],
+          "color": "#13c6d4",
+          "material": "silk",
+          "group": "Character"
+        },
+        {
+          "id": "atelier-fidelity-616",
+          "name": "Split fringe · strand -1-3",
+          "kind": "sphere",
+          "position": [
+            -0.219,
+            3.554,
+            0.27
+          ],
+          "scale": [
+            0.09,
+            0.19,
+            0.1
+          ],
+          "rotation": [
+            0.14,
+            0,
+            -0.3
+          ],
+          "color": "#13c6d4",
+          "material": "silk",
+          "group": "Character"
+        },
+        {
+          "id": "atelier-fidelity-617",
+          "name": "Split fringe · strand -1-4",
+          "kind": "sphere",
+          "position": [
+            -0.262,
+            3.527,
+            0.28
+          ],
+          "scale": [
+            0.09,
+            0.19,
+            0.1
+          ],
+          "rotation": [
+            0.14,
+            0,
+            -0.3
+          ],
+          "color": "#13c6d4",
+          "material": "silk",
+          "group": "Character"
+        },
+        {
+          "id": "atelier-fidelity-618",
+          "name": "Lash ridge -1",
+          "kind": "box",
+          "position": [
+            -0.16,
+            3.449,
+            0.324
+          ],
+          "scale": [
+            0.15,
+            0.023,
+            0.025
+          ],
+          "rotation": [
+            0,
+            0,
+            -0.08
+          ],
+          "color": "#212335",
+          "material": "matte",
+          "group": "Character"
+        },
+        {
+          "id": "atelier-fidelity-619",
+          "name": "Blush petal -1",
+          "kind": "sphere",
+          "position": [
+            -0.23,
+            3.19,
+            0.305
+          ],
+          "scale": [
+            0.096,
+            0.034,
+            0.01
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#ed8586",
+          "material": "silk",
+          "group": "Character"
+        },
+        {
+          "id": "atelier-fidelity-620",
+          "name": "Split fringe · strand 1-0",
+          "kind": "sphere",
+          "position": [
+            0.09,
+            3.635,
+            0.24
+          ],
+          "scale": [
+            0.09,
+            0.19,
+            0.1
+          ],
+          "rotation": [
+            0.14,
+            0,
+            0.3
+          ],
+          "color": "#f87352",
+          "material": "silk",
+          "group": "Character"
+        },
+        {
+          "id": "atelier-fidelity-621",
+          "name": "Split fringe · strand 1-1",
+          "kind": "sphere",
+          "position": [
+            0.133,
+            3.608,
+            0.25
+          ],
+          "scale": [
+            0.09,
+            0.19,
+            0.1
+          ],
+          "rotation": [
+            0.14,
+            0,
+            0.3
+          ],
+          "color": "#f87352",
+          "material": "silk",
+          "group": "Character"
+        },
+        {
+          "id": "atelier-fidelity-622",
+          "name": "Split fringe · strand 1-2",
+          "kind": "sphere",
+          "position": [
+            0.176,
+            3.581,
+            0.26
+          ],
+          "scale": [
+            0.09,
+            0.19,
+            0.1
+          ],
+          "rotation": [
+            0.14,
+            0,
+            0.3
+          ],
+          "color": "#f87352",
+          "material": "silk",
+          "group": "Character"
+        },
+        {
+          "id": "atelier-fidelity-623",
+          "name": "Split fringe · strand 1-3",
+          "kind": "sphere",
+          "position": [
+            0.219,
+            3.554,
+            0.27
+          ],
+          "scale": [
+            0.09,
+            0.19,
+            0.1
+          ],
+          "rotation": [
+            0.14,
+            0,
+            0.3
+          ],
+          "color": "#f87352",
+          "material": "silk",
+          "group": "Character"
+        },
+        {
+          "id": "atelier-fidelity-624",
+          "name": "Split fringe · strand 1-4",
+          "kind": "sphere",
+          "position": [
+            0.262,
+            3.527,
+            0.28
+          ],
+          "scale": [
+            0.09,
+            0.19,
+            0.1
+          ],
+          "rotation": [
+            0.14,
+            0,
+            0.3
+          ],
+          "color": "#f87352",
+          "material": "silk",
+          "group": "Character"
+        },
+        {
+          "id": "atelier-fidelity-625",
+          "name": "Lash ridge 1",
+          "kind": "box",
+          "position": [
+            0.16,
+            3.449,
+            0.324
+          ],
+          "scale": [
+            0.15,
+            0.023,
+            0.025
+          ],
+          "rotation": [
+            0,
+            0,
+            0.08
+          ],
+          "color": "#212335",
+          "material": "matte",
+          "group": "Character"
+        },
+        {
+          "id": "atelier-fidelity-626",
+          "name": "Blush petal 1",
+          "kind": "sphere",
+          "position": [
+            0.23,
+            3.19,
+            0.305
+          ],
+          "scale": [
+            0.096,
+            0.034,
+            0.01
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#ed8586",
+          "material": "silk",
+          "group": "Character"
+        },
+        {
+          "id": "atelier-fidelity-627",
+          "name": "Layered skirt hem · golden seam 0",
+          "kind": "box",
+          "position": [
+            0.51,
+            1.85,
+            0
+          ],
+          "scale": [
+            0.25,
+            0.035,
+            0.035
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "color": "#f5db62",
+          "material": "metal",
+          "group": "Character"
+        },
+        {
+          "id": "atelier-fidelity-628",
+          "name": "Layered skirt hem · golden seam 1",
+          "kind": "box",
+          "position": [
+            0.3606,
+            1.94,
+            0.2051
+          ],
+          "scale": [
+            0.25,
+            0.035,
+            0.035
+          ],
+          "rotation": [
+            0,
+            0.7854,
+            0
+          ],
+          "color": "#f5db62",
+          "material": "metal",
+          "group": "Character"
+        },
+        {
+          "id": "atelier-fidelity-629",
+          "name": "Layered skirt hem · golden seam 2",
+          "kind": "box",
+          "position": [
+            0,
+            1.85,
+            0.29
+          ],
+          "scale": [
+            0.25,
+            0.035,
+            0.035
+          ],
+          "rotation": [
+            0,
+            1.5708,
+            0
+          ],
+          "color": "#f5db62",
+          "material": "metal",
+          "group": "Character"
+        },
+        {
+          "id": "atelier-fidelity-630",
+          "name": "Layered skirt hem · golden seam 3",
+          "kind": "box",
+          "position": [
+            -0.3606,
+            1.76,
+            0.2051
+          ],
+          "scale": [
+            0.25,
+            0.035,
+            0.035
+          ],
+          "rotation": [
+            0,
+            2.3562,
+            0
+          ],
+          "color": "#f5db62",
+          "material": "metal",
+          "group": "Character"
+        },
+        {
+          "id": "atelier-fidelity-631",
+          "name": "Layered skirt hem · golden seam 4",
+          "kind": "box",
+          "position": [
+            -0.51,
+            1.85,
+            0
+          ],
+          "scale": [
+            0.25,
+            0.035,
+            0.035
+          ],
+          "rotation": [
+            0,
+            3.1416,
+            0
+          ],
+          "color": "#f5db62",
+          "material": "metal",
+          "group": "Character"
+        },
+        {
+          "id": "atelier-fidelity-632",
+          "name": "Layered skirt hem · golden seam 5",
+          "kind": "box",
+          "position": [
+            -0.3606,
+            1.94,
+            -0.2051
+          ],
+          "scale": [
+            0.25,
+            0.035,
+            0.035
+          ],
+          "rotation": [
+            0,
+            3.927,
+            0
+          ],
+          "color": "#f5db62",
+          "material": "metal",
+          "group": "Character"
+        },
+        {
+          "id": "atelier-fidelity-633",
+          "name": "Layered skirt hem · golden seam 6",
+          "kind": "box",
+          "position": [
+            0,
+            1.85,
+            -0.29
+          ],
+          "scale": [
+            0.25,
+            0.035,
+            0.035
+          ],
+          "rotation": [
+            0,
+            4.7124,
+            0
+          ],
+          "color": "#f5db62",
+          "material": "metal",
+          "group": "Character"
+        },
+        {
+          "id": "atelier-fidelity-634",
+          "name": "Layered skirt hem · golden seam 7",
+          "kind": "box",
+          "position": [
+            0.3606,
+            1.76,
+            -0.2051
+          ],
+          "scale": [
+            0.25,
+            0.035,
+            0.035
+          ],
+          "rotation": [
+            0,
+            5.4978,
+            0
+          ],
+          "color": "#f5db62",
+          "material": "metal",
+          "group": "Character"
+        }
+      ],
+      "artDirection": {
+        "primaryTheme": "Carnival mage / ferret piñatas",
+        "designPriority": "animal heads gripping two ponytails; layered paper bodies arching outward and downward",
+        "secondaryReferences": "Other skins: material/face quality only",
+        "stage": "procedural fidelity pass, not a sculpted production character"
+      }
+    }
+  },
+  "editor": {
+    "transformSpace": "world",
+    "snapEnabled": false,
+    "terrainSnapEnabled": false,
+    "viewMode": "edit",
+    "cameraView": "perspective",
+    "revision": 0,
+    "layers": [
+      {
+        "id": "atelier-scene",
+        "name": "Model Atelier Base",
+        "visible": true
+      }
+    ],
+    "activeLayerId": "atelier-scene"
+  },
+  "scene": {
+    "actors": [
+      {
+        "id": "atelier-ground",
+        "name": "Model Atelier neutral ground",
+        "type": "ground",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "model-atelier"
+        ],
+        "visualColor": "#252a43",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "atelier-scene"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Model Atelier/Studio",
+        "components": [
+          "Transform"
+        ],
+        "blueprintClass": "",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      }
+    ]
+  }
+}

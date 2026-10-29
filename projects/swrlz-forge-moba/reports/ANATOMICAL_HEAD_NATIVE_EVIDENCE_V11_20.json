@@ -1,0 +1,1497 @@
+{
+  "release": "v11.20",
+  "marker": "V11_20_ANATOMICAL_HEAD",
+  "nativeEvidence": {
+    "operations": [
+      {
+        "id": "model-0001",
+        "headAnatomy": {
+          "sections": [
+            [
+              -0.81,
+              0,
+              0.7,
+              0.7
+            ],
+            [
+              -0.75,
+              0.2,
+              0.82,
+              0.56
+            ],
+            [
+              -0.6,
+              0.44,
+              0.89,
+              0.05
+            ],
+            [
+              -0.38,
+              0.66,
+              0.91,
+              -0.55
+            ],
+            [
+              -0.12,
+              0.84,
+              0.91,
+              -0.74
+            ],
+            [
+              0.08,
+              0.88,
+              0.91,
+              -0.88
+            ],
+            [
+              0.3,
+              0.83,
+              0.94,
+              -0.97
+            ],
+            [
+              0.55,
+              0.83,
+              0.88,
+              -1.02
+            ],
+            [
+              0.76,
+              0.72,
+              0.69,
+              -0.88
+            ],
+            [
+              0.93,
+              0.4,
+              0.36,
+              -0.47
+            ],
+            [
+              1,
+              0,
+              0,
+              0
+            ]
+          ],
+          "facePlane": 0.65,
+          "noseProjection": 0.13
+        }
+      },
+      {
+        "id": "smile",
+        "path": [
+          [
+            -0.058,
+            3.906,
+            0.3
+          ],
+          [
+            -0.021,
+            3.911,
+            0.3
+          ],
+          [
+            0,
+            3.908,
+            0.3
+          ],
+          [
+            0.021,
+            3.911,
+            0.3
+          ],
+          [
+            0.058,
+            3.912,
+            0.3
+          ]
+        ],
+        "radii": [
+          0.0004,
+          0.0033,
+          0.0024,
+          0.0033,
+          0.0004
+        ]
+      },
+      {
+        "id": "smile",
+        "fitTo": "model-0001",
+        "offset": 0.0007
+      },
+      {
+        "id": "lower-lip",
+        "path": [
+          [
+            -0.057,
+            3.906,
+            0.3
+          ],
+          [
+            -0.018,
+            3.891,
+            0.3
+          ],
+          [
+            0.017,
+            3.892,
+            0.3
+          ],
+          [
+            0.057,
+            3.912,
+            0.3
+          ]
+        ],
+        "radii": [
+          0.0004,
+          0.0045,
+          0.0045,
+          0.0004
+        ]
+      },
+      {
+        "id": "lower-lip",
+        "fitTo": "model-0001",
+        "offset": 0.001
+      },
+      {
+        "id": "left-brow",
+        "path": [
+          [
+            -0.055,
+            4.154,
+            0.3
+          ],
+          [
+            -0.12,
+            4.168,
+            0.3
+          ],
+          [
+            -0.192,
+            4.147,
+            0.3
+          ]
+        ],
+        "radii": [
+          0.0007,
+          0.0045,
+          0.0006
+        ]
+      },
+      {
+        "id": "left-brow",
+        "fitTo": "model-0001",
+        "offset": 0.0008
+      },
+      {
+        "id": "right-brow",
+        "path": [
+          [
+            0.055,
+            4.154,
+            0.3
+          ],
+          [
+            0.12,
+            4.168,
+            0.3
+          ],
+          [
+            0.192,
+            4.147,
+            0.3
+          ]
+        ],
+        "radii": [
+          0.0007,
+          0.0045,
+          0.0006
+        ]
+      },
+      {
+        "id": "right-brow",
+        "fitTo": "model-0001",
+        "offset": 0.0008
+      },
+      {
+        "id": "atelier-local-mvbigdg2-289-jnfbp",
+        "path": [
+          [
+            -0.055,
+            3.906,
+            0.3
+          ],
+          [
+            -0.021,
+            3.901,
+            0.3
+          ],
+          [
+            0,
+            3.9,
+            0.3
+          ],
+          [
+            0.021,
+            3.902,
+            0.3
+          ],
+          [
+            0.055,
+            3.912,
+            0.3
+          ]
+        ],
+        "radii": [
+          0.0004,
+          0.007,
+          0.006,
+          0.007,
+          0.0004
+        ]
+      },
+      {
+        "id": "atelier-local-mvbigdg2-289-jnfbp",
+        "fitTo": "model-0001",
+        "offset": 0.0015
+      },
+      {
+        "id": "atelier-local-mvbiglxr-290-a1ckl",
+        "path": [
+          [
+            -0.026,
+            3.903,
+            0.3
+          ],
+          [
+            0,
+            3.904,
+            0.3
+          ],
+          [
+            0.026,
+            3.906,
+            0.3
+          ]
+        ],
+        "radii": [
+          0.00035,
+          0.0011,
+          0.00035
+        ]
+      },
+      {
+        "id": "atelier-local-mvbiglxr-290-a1ckl",
+        "fitTo": "model-0001",
+        "offset": 0.0045
+      },
+      {
+        "id": "model-0002",
+        "path": [
+          [
+            0,
+            3.94,
+            -0.005
+          ],
+          [
+            0,
+            3.77,
+            0.005
+          ],
+          [
+            0,
+            3.6,
+            0.01
+          ],
+          [
+            0,
+            3.5,
+            0
+          ],
+          [
+            0,
+            3.43,
+            0
+          ],
+          [
+            0,
+            3.38,
+            0
+          ]
+        ],
+        "radii": [
+          0.105,
+          0.095,
+          0.112,
+          0.158,
+          0.25,
+          0.28
+        ]
+      }
+    ],
+    "nativeRoundTrip": true,
+    "density": {
+      "byPart": {
+        "model-0001": {
+          "triangles": 48768,
+          "group": "Character"
+        },
+        "model-0002": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "model-0003": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "left-sclera": {
+          "triangles": 12096,
+          "group": "Character"
+        },
+        "left-iris": {
+          "triangles": 24576,
+          "group": "Character"
+        },
+        "left-eye-catch": {
+          "triangles": 352,
+          "group": "Character"
+        },
+        "left-eye-catch2": {
+          "triangles": 352,
+          "group": "Character"
+        },
+        "left-upper-lid": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "left-lower-lid": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "left-brow": {
+          "triangles": 16384,
+          "group": "Character"
+        },
+        "left-lash-0": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "left-lash-1": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "left-lash-2": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "left-ear": {
+          "triangles": 6016,
+          "group": "Character"
+        },
+        "left-earring": {
+          "triangles": 352,
+          "group": "Character"
+        },
+        "right-sclera": {
+          "triangles": 12096,
+          "group": "Character"
+        },
+        "right-iris": {
+          "triangles": 24576,
+          "group": "Character"
+        },
+        "right-eye-catch": {
+          "triangles": 352,
+          "group": "Character"
+        },
+        "right-eye-catch2": {
+          "triangles": 352,
+          "group": "Character"
+        },
+        "right-upper-lid": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "right-lower-lid": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "right-brow": {
+          "triangles": 16384,
+          "group": "Character"
+        },
+        "right-lash-0": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "right-lash-1": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "right-lash-2": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "right-ear": {
+          "triangles": 6016,
+          "group": "Character"
+        },
+        "right-earring": {
+          "triangles": 352,
+          "group": "Character"
+        },
+        "smile": {
+          "triangles": 3072,
+          "group": "Character"
+        },
+        "lower-lip": {
+          "triangles": 3072,
+          "group": "Character"
+        },
+        "hair-cap": {
+          "triangles": 20224,
+          "group": "Character"
+        },
+        "hair-front--1-0": {
+          "triangles": 16384,
+          "group": "Character"
+        },
+        "hair-front--1-1": {
+          "triangles": 16384,
+          "group": "Character"
+        },
+        "hair-front--1-2": {
+          "triangles": 16384,
+          "group": "Character"
+        },
+        "hair-front--1-3": {
+          "triangles": 16384,
+          "group": "Character"
+        },
+        "hair-front--1-4": {
+          "triangles": 16384,
+          "group": "Character"
+        },
+        "hair-front--1-5": {
+          "triangles": 16384,
+          "group": "Character"
+        },
+        "hair-front--1-6": {
+          "triangles": 16384,
+          "group": "Character"
+        },
+        "hair-back--1-0": {
+          "triangles": 16384,
+          "group": "Character"
+        },
+        "hair-back--1-1": {
+          "triangles": 16384,
+          "group": "Character"
+        },
+        "hair-back--1-2": {
+          "triangles": 16384,
+          "group": "Character"
+        },
+        "hair-back--1-3": {
+          "triangles": 16384,
+          "group": "Character"
+        },
+        "hair-back--1-4": {
+          "triangles": 16384,
+          "group": "Character"
+        },
+        "hair-bun--1": {
+          "triangles": 18432,
+          "group": "Character"
+        },
+        "hair-grip--1": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "hair-front-1-0": {
+          "triangles": 16384,
+          "group": "Character"
+        },
+        "hair-front-1-1": {
+          "triangles": 16384,
+          "group": "Character"
+        },
+        "hair-front-1-2": {
+          "triangles": 16384,
+          "group": "Character"
+        },
+        "hair-front-1-3": {
+          "triangles": 16384,
+          "group": "Character"
+        },
+        "hair-front-1-4": {
+          "triangles": 16384,
+          "group": "Character"
+        },
+        "hair-front-1-5": {
+          "triangles": 16384,
+          "group": "Character"
+        },
+        "hair-front-1-6": {
+          "triangles": 16384,
+          "group": "Character"
+        },
+        "hair-back-1-0": {
+          "triangles": 16384,
+          "group": "Character"
+        },
+        "hair-back-1-1": {
+          "triangles": 16384,
+          "group": "Character"
+        },
+        "hair-back-1-2": {
+          "triangles": 16384,
+          "group": "Character"
+        },
+        "hair-back-1-3": {
+          "triangles": 16384,
+          "group": "Character"
+        },
+        "hair-back-1-4": {
+          "triangles": 16384,
+          "group": "Character"
+        },
+        "hair-bun-1": {
+          "triangles": 18432,
+          "group": "Character"
+        },
+        "hair-grip-1": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "arm-left": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "palm-left": {
+          "triangles": 352,
+          "group": "Character"
+        },
+        "finger-left-0": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "finger-left-1": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "finger-left-2": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "finger-left-3": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "thumb-left": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "left-wrist-cuff": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "arm-right": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "palm-right": {
+          "triangles": 352,
+          "group": "Character"
+        },
+        "finger-right-0": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "finger-right-1": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "finger-right-2": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "finger-right-3": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "thumb-right": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "right-arm-band": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "right-wrist-0": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "right-wrist-1": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "right-wrist-2": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "v119-wrap": {
+          "triangles": 7680,
+          "group": "Character"
+        },
+        "chest-coral": {
+          "triangles": 7680,
+          "group": "Character"
+        },
+        "chest-gold": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "dark-shoulder": {
+          "triangles": 7680,
+          "group": "Character"
+        },
+        "skirt-panel-0": {
+          "triangles": 7680,
+          "group": "Character"
+        },
+        "skirt-piping-0--1": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "skirt-piping-0-1": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "skirt-panel-1": {
+          "triangles": 7680,
+          "group": "Character"
+        },
+        "skirt-piping-1--1": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "skirt-piping-1-1": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "skirt-panel-2": {
+          "triangles": 7680,
+          "group": "Character"
+        },
+        "skirt-piping-2--1": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "skirt-piping-2-1": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "skirt-panel-3": {
+          "triangles": 7680,
+          "group": "Character"
+        },
+        "skirt-piping-3--1": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "skirt-piping-3-1": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "skirt-panel-4": {
+          "triangles": 7680,
+          "group": "Character"
+        },
+        "skirt-piping-4--1": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "skirt-piping-4-1": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "skirt-panel-5": {
+          "triangles": 7680,
+          "group": "Character"
+        },
+        "skirt-piping-5--1": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "skirt-piping-5-1": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "skirt-panel-6": {
+          "triangles": 7680,
+          "group": "Character"
+        },
+        "skirt-piping-6--1": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "skirt-piping-6-1": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "light-cord--1-0": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "light--1-0": {
+          "triangles": 352,
+          "group": "Character"
+        },
+        "light-cord--1-1": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "light--1-1": {
+          "triangles": 352,
+          "group": "Character"
+        },
+        "light-cord--1-2": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "light--1-2": {
+          "triangles": 352,
+          "group": "Character"
+        },
+        "light-cord-1-0": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "light-1-0": {
+          "triangles": 352,
+          "group": "Character"
+        },
+        "light-cord-1-1": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "light-1-1": {
+          "triangles": 352,
+          "group": "Character"
+        },
+        "light-cord-1-2": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "light-1-2": {
+          "triangles": 352,
+          "group": "Character"
+        },
+        "waist-star-0": {
+          "triangles": 28,
+          "group": "Character"
+        },
+        "waist-star-1": {
+          "triangles": 28,
+          "group": "Character"
+        },
+        "waist-star-2": {
+          "triangles": 28,
+          "group": "Character"
+        },
+        "waist-star-3": {
+          "triangles": 28,
+          "group": "Character"
+        },
+        "waist-star-4": {
+          "triangles": 28,
+          "group": "Character"
+        },
+        "atelier-v118-left-leg": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "sock-left": {
+          "triangles": 12288,
+          "group": "Character"
+        },
+        "shoe-left": {
+          "triangles": 12096,
+          "group": "Character"
+        },
+        "heel-left": {
+          "triangles": 12,
+          "group": "Character"
+        },
+        "sole-left": {
+          "triangles": 12096,
+          "group": "Character"
+        },
+        "bow-left--1": {
+          "triangles": 6016,
+          "group": "Character"
+        },
+        "bow-left-1": {
+          "triangles": 6016,
+          "group": "Character"
+        },
+        "atelier-v118-right-leg": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "sock-right": {
+          "triangles": 12288,
+          "group": "Character"
+        },
+        "shoe-right": {
+          "triangles": 12096,
+          "group": "Character"
+        },
+        "heel-right": {
+          "triangles": 12,
+          "group": "Character"
+        },
+        "sole-right": {
+          "triangles": 12096,
+          "group": "Character"
+        },
+        "bow-right--1": {
+          "triangles": 6016,
+          "group": "Character"
+        },
+        "bow-right-1": {
+          "triangles": 6016,
+          "group": "Character"
+        },
+        "azure-body": {
+          "triangles": 45920,
+          "group": "Azure frost"
+        },
+        "azure-skull": {
+          "triangles": 3968,
+          "group": "Azure frost"
+        },
+        "azure-muzzle": {
+          "triangles": 3968,
+          "group": "Azure frost"
+        },
+        "azure-nose": {
+          "triangles": 3968,
+          "group": "Azure frost"
+        },
+        "azure-jaw": {
+          "triangles": 3968,
+          "group": "Azure frost"
+        },
+        "azure-ear--1": {
+          "triangles": 4096,
+          "group": "Azure frost"
+        },
+        "azure-ear-inner--1": {
+          "triangles": 4096,
+          "group": "Azure frost"
+        },
+        "azure-ear-1": {
+          "triangles": 4096,
+          "group": "Azure frost"
+        },
+        "azure-ear-inner-1": {
+          "triangles": 4096,
+          "group": "Azure frost"
+        },
+        "azure-eye--1": {
+          "triangles": 288,
+          "group": "Azure frost"
+        },
+        "azure-pupil--1": {
+          "triangles": 3968,
+          "group": "Azure frost"
+        },
+        "azure-catch--1": {
+          "triangles": 288,
+          "group": "Azure frost"
+        },
+        "azure-eye-1": {
+          "triangles": 288,
+          "group": "Azure frost"
+        },
+        "azure-pupil-1": {
+          "triangles": 3968,
+          "group": "Azure frost"
+        },
+        "azure-catch-1": {
+          "triangles": 288,
+          "group": "Azure frost"
+        },
+        "azure-brow": {
+          "triangles": 4096,
+          "group": "Azure frost"
+        },
+        "azure-paw--1": {
+          "triangles": 3968,
+          "group": "Azure frost"
+        },
+        "azure-claw--1-0": {
+          "triangles": 3968,
+          "group": "Azure frost"
+        },
+        "azure-claw--1-1": {
+          "triangles": 3968,
+          "group": "Azure frost"
+        },
+        "azure-claw--1-2": {
+          "triangles": 3968,
+          "group": "Azure frost"
+        },
+        "azure-paw-1": {
+          "triangles": 3968,
+          "group": "Azure frost"
+        },
+        "azure-claw-1-0": {
+          "triangles": 3968,
+          "group": "Azure frost"
+        },
+        "azure-claw-1-1": {
+          "triangles": 3968,
+          "group": "Azure frost"
+        },
+        "azure-claw-1-2": {
+          "triangles": 3968,
+          "group": "Azure frost"
+        },
+        "coral-body": {
+          "triangles": 45920,
+          "group": "Coral flare"
+        },
+        "coral-skull": {
+          "triangles": 3968,
+          "group": "Coral flare"
+        },
+        "coral-muzzle": {
+          "triangles": 3968,
+          "group": "Coral flare"
+        },
+        "coral-nose": {
+          "triangles": 3968,
+          "group": "Coral flare"
+        },
+        "coral-jaw": {
+          "triangles": 3968,
+          "group": "Coral flare"
+        },
+        "coral-ear--1": {
+          "triangles": 4096,
+          "group": "Coral flare"
+        },
+        "coral-ear-inner--1": {
+          "triangles": 4096,
+          "group": "Coral flare"
+        },
+        "coral-ear-1": {
+          "triangles": 4096,
+          "group": "Coral flare"
+        },
+        "coral-ear-inner-1": {
+          "triangles": 4096,
+          "group": "Coral flare"
+        },
+        "coral-eye--1": {
+          "triangles": 288,
+          "group": "Coral flare"
+        },
+        "coral-pupil--1": {
+          "triangles": 3968,
+          "group": "Coral flare"
+        },
+        "coral-catch--1": {
+          "triangles": 288,
+          "group": "Coral flare"
+        },
+        "coral-eye-1": {
+          "triangles": 288,
+          "group": "Coral flare"
+        },
+        "coral-pupil-1": {
+          "triangles": 3968,
+          "group": "Coral flare"
+        },
+        "coral-catch-1": {
+          "triangles": 288,
+          "group": "Coral flare"
+        },
+        "coral-brow": {
+          "triangles": 4096,
+          "group": "Coral flare"
+        },
+        "coral-paw--1": {
+          "triangles": 3968,
+          "group": "Coral flare"
+        },
+        "coral-claw--1-0": {
+          "triangles": 3968,
+          "group": "Coral flare"
+        },
+        "coral-claw--1-1": {
+          "triangles": 3968,
+          "group": "Coral flare"
+        },
+        "coral-claw--1-2": {
+          "triangles": 3968,
+          "group": "Coral flare"
+        },
+        "coral-paw-1": {
+          "triangles": 3968,
+          "group": "Coral flare"
+        },
+        "coral-claw-1-0": {
+          "triangles": 3968,
+          "group": "Coral flare"
+        },
+        "coral-claw-1-1": {
+          "triangles": 3968,
+          "group": "Coral flare"
+        },
+        "coral-claw-1-2": {
+          "triangles": 3968,
+          "group": "Coral flare"
+        },
+        "bunny-body": {
+          "triangles": 288,
+          "group": "Festival companion"
+        },
+        "bunny-head": {
+          "triangles": 288,
+          "group": "Festival companion"
+        },
+        "bunny-nose": {
+          "triangles": 288,
+          "group": "Festival companion"
+        },
+        "bunny-ear--1": {
+          "triangles": 360,
+          "group": "Festival companion"
+        },
+        "bunny-eye--1": {
+          "triangles": 288,
+          "group": "Festival companion"
+        },
+        "bunny-pupil--1": {
+          "triangles": 288,
+          "group": "Festival companion"
+        },
+        "bunny-foot--1": {
+          "triangles": 288,
+          "group": "Festival companion"
+        },
+        "bunny-ear-1": {
+          "triangles": 360,
+          "group": "Festival companion"
+        },
+        "bunny-eye-1": {
+          "triangles": 288,
+          "group": "Festival companion"
+        },
+        "bunny-pupil-1": {
+          "triangles": 288,
+          "group": "Festival companion"
+        },
+        "bunny-foot-1": {
+          "triangles": 288,
+          "group": "Festival companion"
+        },
+        "bunny-paper-0-0": {
+          "triangles": 32,
+          "group": "Festival companion"
+        },
+        "bunny-paper-0-1": {
+          "triangles": 32,
+          "group": "Festival companion"
+        },
+        "bunny-paper-0-2": {
+          "triangles": 32,
+          "group": "Festival companion"
+        },
+        "bunny-paper-0-3": {
+          "triangles": 32,
+          "group": "Festival companion"
+        },
+        "bunny-paper-0-4": {
+          "triangles": 32,
+          "group": "Festival companion"
+        },
+        "bunny-paper-0-5": {
+          "triangles": 32,
+          "group": "Festival companion"
+        },
+        "bunny-paper-0-6": {
+          "triangles": 32,
+          "group": "Festival companion"
+        },
+        "bunny-paper-0-7": {
+          "triangles": 32,
+          "group": "Festival companion"
+        },
+        "bunny-paper-0-8": {
+          "triangles": 32,
+          "group": "Festival companion"
+        },
+        "bunny-paper-0-9": {
+          "triangles": 32,
+          "group": "Festival companion"
+        },
+        "bunny-paper-1-0": {
+          "triangles": 32,
+          "group": "Festival companion"
+        },
+        "bunny-paper-1-1": {
+          "triangles": 32,
+          "group": "Festival companion"
+        },
+        "bunny-paper-1-2": {
+          "triangles": 32,
+          "group": "Festival companion"
+        },
+        "bunny-paper-1-3": {
+          "triangles": 32,
+          "group": "Festival companion"
+        },
+        "bunny-paper-1-4": {
+          "triangles": 32,
+          "group": "Festival companion"
+        },
+        "bunny-paper-1-5": {
+          "triangles": 32,
+          "group": "Festival companion"
+        },
+        "bunny-paper-1-6": {
+          "triangles": 32,
+          "group": "Festival companion"
+        },
+        "bunny-paper-1-7": {
+          "triangles": 32,
+          "group": "Festival companion"
+        },
+        "bunny-paper-1-8": {
+          "triangles": 32,
+          "group": "Festival companion"
+        },
+        "bunny-paper-1-9": {
+          "triangles": 32,
+          "group": "Festival companion"
+        },
+        "bunny-paper-2-0": {
+          "triangles": 32,
+          "group": "Festival companion"
+        },
+        "bunny-paper-2-1": {
+          "triangles": 32,
+          "group": "Festival companion"
+        },
+        "bunny-paper-2-2": {
+          "triangles": 32,
+          "group": "Festival companion"
+        },
+        "bunny-paper-2-3": {
+          "triangles": 32,
+          "group": "Festival companion"
+        },
+        "bunny-paper-2-4": {
+          "triangles": 32,
+          "group": "Festival companion"
+        },
+        "bunny-paper-2-5": {
+          "triangles": 32,
+          "group": "Festival companion"
+        },
+        "bunny-paper-2-6": {
+          "triangles": 32,
+          "group": "Festival companion"
+        },
+        "bunny-paper-2-7": {
+          "triangles": 32,
+          "group": "Festival companion"
+        },
+        "bunny-paper-2-8": {
+          "triangles": 32,
+          "group": "Festival companion"
+        },
+        "bunny-paper-2-9": {
+          "triangles": 32,
+          "group": "Festival companion"
+        },
+        "bunny-paper-3-0": {
+          "triangles": 32,
+          "group": "Festival companion"
+        },
+        "bunny-paper-3-1": {
+          "triangles": 32,
+          "group": "Festival companion"
+        },
+        "bunny-paper-3-2": {
+          "triangles": 32,
+          "group": "Festival companion"
+        },
+        "bunny-paper-3-3": {
+          "triangles": 32,
+          "group": "Festival companion"
+        },
+        "bunny-paper-3-4": {
+          "triangles": 32,
+          "group": "Festival companion"
+        },
+        "bunny-paper-3-5": {
+          "triangles": 32,
+          "group": "Festival companion"
+        },
+        "bunny-paper-3-6": {
+          "triangles": 32,
+          "group": "Festival companion"
+        },
+        "bunny-paper-3-7": {
+          "triangles": 32,
+          "group": "Festival companion"
+        },
+        "bunny-paper-3-8": {
+          "triangles": 32,
+          "group": "Festival companion"
+        },
+        "bunny-paper-3-9": {
+          "triangles": 32,
+          "group": "Festival companion"
+        },
+        "bunny-paper-4-0": {
+          "triangles": 32,
+          "group": "Festival companion"
+        },
+        "bunny-paper-4-1": {
+          "triangles": 32,
+          "group": "Festival companion"
+        },
+        "bunny-paper-4-2": {
+          "triangles": 32,
+          "group": "Festival companion"
+        },
+        "bunny-paper-4-3": {
+          "triangles": 32,
+          "group": "Festival companion"
+        },
+        "bunny-paper-4-4": {
+          "triangles": 32,
+          "group": "Festival companion"
+        },
+        "bunny-paper-4-5": {
+          "triangles": 32,
+          "group": "Festival companion"
+        },
+        "bunny-paper-4-6": {
+          "triangles": 32,
+          "group": "Festival companion"
+        },
+        "bunny-paper-4-7": {
+          "triangles": 32,
+          "group": "Festival companion"
+        },
+        "bunny-paper-4-8": {
+          "triangles": 32,
+          "group": "Festival companion"
+        },
+        "bunny-paper-4-9": {
+          "triangles": 32,
+          "group": "Festival companion"
+        },
+        "hair-nape-0": {
+          "triangles": 16384,
+          "group": "Character"
+        },
+        "hair-nape-1": {
+          "triangles": 16384,
+          "group": "Character"
+        },
+        "hair-nape-2": {
+          "triangles": 16384,
+          "group": "Character"
+        },
+        "hair-nape-3": {
+          "triangles": 16384,
+          "group": "Character"
+        },
+        "hair-nape-4": {
+          "triangles": 16384,
+          "group": "Character"
+        },
+        "hair-nape-5": {
+          "triangles": 16384,
+          "group": "Character"
+        },
+        "hair-nape-6": {
+          "triangles": 16384,
+          "group": "Character"
+        },
+        "hair-nape-7": {
+          "triangles": 16384,
+          "group": "Character"
+        },
+        "hair-nape-8": {
+          "triangles": 16384,
+          "group": "Character"
+        },
+        "hair-nape-9": {
+          "triangles": 16384,
+          "group": "Character"
+        },
+        "hair-nape-10": {
+          "triangles": 16384,
+          "group": "Character"
+        },
+        "hair-nape-11": {
+          "triangles": 16384,
+          "group": "Character"
+        },
+        "back-shoulder-panel": {
+          "triangles": 7680,
+          "group": "Character"
+        },
+        "portrait-curl--1": {
+          "triangles": 16384,
+          "group": "Character"
+        },
+        "portrait-curl-1": {
+          "triangles": 16384,
+          "group": "Character"
+        },
+        "azure-mask--1": {
+          "triangles": 4096,
+          "group": "Azure frost"
+        },
+        "azure-eyebrow--1": {
+          "triangles": 4096,
+          "group": "Azure frost"
+        },
+        "azure-mask-1": {
+          "triangles": 4096,
+          "group": "Azure frost"
+        },
+        "azure-eyebrow-1": {
+          "triangles": 4096,
+          "group": "Azure frost"
+        },
+        "coral-mask--1": {
+          "triangles": 4096,
+          "group": "Coral flare"
+        },
+        "coral-eyebrow--1": {
+          "triangles": 4096,
+          "group": "Coral flare"
+        },
+        "coral-mask-1": {
+          "triangles": 4096,
+          "group": "Coral flare"
+        },
+        "coral-eyebrow-1": {
+          "triangles": 4096,
+          "group": "Coral flare"
+        },
+        "skirt-inset-0--1": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "skirt-inset-0-1": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "skirt-inset-1--1": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "skirt-inset-1-1": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "skirt-inset-3--1": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "skirt-inset-3-1": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "skirt-inset-4--1": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "skirt-inset-4-1": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "skirt-inset-5--1": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "skirt-inset-5-1": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "bodice-stitch-0": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "bodice-stitch-1": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "bodice-stitch-2": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "skirt-side-left": {
+          "triangles": 7680,
+          "group": "Character"
+        },
+        "skirt-side-right": {
+          "triangles": 7680,
+          "group": "Character"
+        },
+        "festival-shorts": {
+          "triangles": 4096,
+          "group": "Character"
+        },
+        "atelier-local-mvbigdg2-289-jnfbp": {
+          "triangles": 3072,
+          "group": "Character"
+        },
+        "atelier-local-mvbiglxr-290-a1ckl": {
+          "triangles": 3072,
+          "group": "Character"
+        }
+      },
+      "heroTriangles": 1339364,
+      "totalTriangles": 1623252,
+      "topologyView": false
+    }
+  },
+  "exactNativeSceneSha256": "545d13e91b8e1110a4ffd304a1f6eed6ae92d219a85ec32c0fe3346e97126655",
+  "sourceSeal": {
+    "bytes": 2621375,
+    "sha256": "d0db24152221ea1dfd4ecc284f65686af71f74c770d4c7c15134979d98b77494"
+  },
+  "reviewedViews": [
+    "portrait-front",
+    "portrait-profile",
+    "portrait-three",
+    "portrait-studio-2k",
+    "model-three",
+    "model-back",
+    "phone-front",
+    "phone-profile"
+  ],
+  "phoneChecks": [
+    "PHONE_ANATOMY_APPLY_UNDO_PASS",
+    "PHONE_ANATOMY_BOUNDS_AND_ATOMIC_IMPORT_PASS",
+    "PHONE_ANATOMY_SURFACE_CLEANUP_UNDO_PASS"
+  ],
+  "ownerVisualApproval": false
+}

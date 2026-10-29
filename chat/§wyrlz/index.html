@@ -807,6 +807,7 @@
     .chat-updates-dialog footer{display:flex;align-items:center;gap:12px;border-top:1px solid #7ed6ff26;background:#061625}.chat-updates-dialog label{flex:1;display:flex;align-items:center;gap:8px;font-size:12px}.chat-updates-dialog input{width:18px;height:18px;flex-shrink:0;accent-color:#48dff7}.chat-updates-dialog button{padding:10px 16px;border:1px solid #7ed6ff66;border-radius:10px;color:#effcff;background:#17465d;cursor:pointer;font:inherit}.chat-updates-dialog :focus-visible{outline:2px solid #48dff7;outline-offset:3px}#chatUpdatesOpen{display:block;margin:8px 0 0;padding:8px 10px;border:1px solid #7ed6ff44;border-radius:9px;background:#0a263a;color:#d8f5ff;cursor:pointer;width:100%;text-align:left;font:inherit}
     @media(max-width:480px){.chat-updates-dialog{width:calc(100vw - 16px);max-height:calc(100dvh - 20px)}.chat-updates-dialog header,.chat-updates-dialog footer{padding:14px}.chat-updates-content{padding:4px 14px 14px}.chat-updates-dialog footer{flex-wrap:wrap}.chat-updates-dialog label{flex-basis:100%}.chat-updates-dialog button{margin-left:auto;min-height:44px}}
   </style>
+  <script src="/chat/§wyrlz/assets/forge-embed-v1.js"></script>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <script src="/chat/§wyrlz/assets/github-explorer-v223.js?v=228"></script>
   <script src="/chat/§wyrlz/assets/source-guides-v245.js?v=245"></script>
@@ -885,14 +886,14 @@
         <section class="settings-pane" data-settings-pane="model">
           <h3>AI / Model</h3><p class="settings-pane-lead">Choose the inference model used by this clean-room Chat. The selected model is sent explicitly with every Station request.</p>
           <div class="setting-group">
-            <div class="setting-row"><div><div class="setting-label">Default model</div><div class="setting-help">Controls the actual Station inference route for new messages.</div></div><div class="setting-control"><select id="settingDefaultModel"><option value="700m">LFM2-700M Q4_K_M</option><option value="r39">§wyrlz R39</option><option value="stock">Original HF · LFM2-350M</option></select></div></div>
+            <div class="setting-row"><div><div class="setting-label">Default model</div><div class="setting-help">Controls the actual Station inference route for new messages.</div></div><div class="setting-control"><select id="settingDefaultModel"><option value="700m">LFM2-700M Q4_K_M</option><option value="r39">§wyrlz R39</option><option value="stock">Original HF · LFM2-350M</option><option value="coder">Qwen · Coding</option></select></div></div>
             <div class="setting-row" hidden><div><div class="setting-label">Effort preference</div><div class="setting-help">Saved as a model preference only until the LALM routing tier consumes it.</div></div><div class="setting-control"><select id="settingEffort"><option value="auto">Adaptive</option><option value="fast">Fast</option><option value="deep">Deep</option></select></div></div>
             <div class="setting-row" hidden><div><div class="setting-label">Response length</div><div class="setting-help">Your preferred answer depth; persistence does not itself enforce generation length.</div></div><div class="setting-control"><select id="settingResponseLength"><option value="adaptive">Adaptive</option><option value="concise">Concise</option><option value="expanded">Expanded</option></select></div></div>
           </div>
           <div class="settings-note"><strong>Routing truth:</strong> Only controls connected to live generation are shown here.</div>
         </section>
         <section class="settings-pane" data-settings-pane="you">
-          <h3>You</h3><p class="settings-pane-lead">Durable user profile details stay separate from creative lore. Saving here updates the existing account profile authority; Tier C does not yet inject these fields into LALM inference.</p>
+          <h3>You</h3><p class="settings-pane-lead">Save your name, communication preferences and output style to your Google account. Your saved preferences guide responses in both Chat and the §e panel.</p>
           <div class="setting-group">
             <div class="profile-grid">
               <div class="profile-field"><label for="settingDisplayName">Display name</label><div class="setting-control"><input id="settingDisplayName" type="text" maxlength="120" autocomplete="name" placeholder="How §wyrlz should address you"></div></div>
@@ -904,7 +905,7 @@
           </div>
         </section>
         <section class="settings-pane" data-settings-pane="companion">
-          <h3>§wyrlz</h3><p class="settings-pane-lead">Companion identity is versioned separately from your own profile preferences. Name changes preview in Chat presentation; personality fields are stored profile state and are not yet an inference-persona binding.</p>
+          <h3>§wyrlz</h3><p class="settings-pane-lead">Save your preferred presentation and tone for §wyrlz. These preferences guide your conversations while preserving the companion’s canonical identity.</p>
           <div class="setting-group">
             <div class="profile-grid">
               <div class="profile-field"><label for="settingCompanionName">Name</label><div class="setting-control"><input id="settingCompanionName" type="text" maxlength="120" value="§wyrlz"></div></div>
@@ -1185,6 +1186,7 @@
       let chatAccountUser=null;
       let accountProfile=null;
       let accountProfileDurable=false;
+      let accountProfileAvailable=false,accountProjectionEpoch=0;
       let settingsDirty=false;
       const settingsState={
         general:{enterToSend:true,personalityProfile:"default"},
@@ -2524,7 +2526,7 @@
           main.querySelector(".thread-title").textContent=t.title||"New conversation";
           main.querySelector(".thread-meta").textContent=t.draft ? "Unsaved · starts on first message" : ((t.messages||[]).length+" messages");
           if(t.draft) main.querySelector(".thread-meta").classList.add("draft-badge");
-          main.onclick=async()=>{ if(t.draft)return; if(threadSelectionMode){selectedThreadIds.has(t.id)?selectedThreadIds.delete(t.id):selectedThreadIds.add(t.id);if(!selectedThreadIds.size)threadSelectionMode=false;renderThreads();return;} draftThread=false; activeThreadId=t.id; renderThreads(); renderConversation(t,true); setMenu(false); /* Selection is presentation state. Do not feed the metadata-only chat_state response back through applyChatState: that response intentionally carries empty message arrays and would overwrite the Workstation projection. */ await setCurrentThreadMetadata(t.id); };
+          main.onclick=async()=>{ if(t.draft)return; if(threadSelectionMode){selectedThreadIds.has(t.id)?selectedThreadIds.delete(t.id):selectedThreadIds.add(t.id);if(!selectedThreadIds.size)threadSelectionMode=false;renderThreads();return;} draftThread=false; activeThreadId=t.id; window.SwrlzForgeEmbedV1?.setThread(activeThreadId); renderThreads(); renderConversation(t,true); setMenu(false); /* Selection is presentation state. Do not feed the metadata-only chat_state response back through applyChatState: that response intentionally carries empty message arrays and would overwrite the Workstation projection. */ await setCurrentThreadMetadata(t.id); };
           row.appendChild(main);
           if(!t.draft){
             let holdTimer=0,held=false;
@@ -2628,6 +2630,7 @@
         // request. A fresh page with no local generation MUST rehydrate the
         // real in-flight Station response from the signed-in account snapshot.
         const syncedGeneration=data?.activeGeneration||null;
+        (syncedGeneration?.forgeBatches||[]).forEach(event=>window.SwrlzForgeEmbedV1?.forwardBatch(event));
         if(syncedGeneration && (!stationGeneration || syncedGeneration.requestId===stationGeneration.requestId || stationGeneration.terminal)) stationGeneration=syncedGeneration;
         renderThreads(); if(!draftThread)renderConversation(currentThread());
         renderStationGeneration();renderWorkSurface();
@@ -2801,10 +2804,11 @@
       const syncStation = async (fresh=false) => {
         if(stationSyncInFlight){stationSyncAgain=true;return false;}
         stationSyncInFlight=true;
+        const projectionEpoch=accountProjectionEpoch;
         try{
           const r=await fetch("/api/lalm_station/sync"+(fresh?"?fresh=1":""),{credentials:"same-origin",cache:"no-store"});
           if(!r.ok){renderThreads();return false}
-          const data=await r.json(); applyChatState(data);
+          const data=await r.json(); if(projectionEpoch!==accountProjectionEpoch)return false; applyChatState(data);
           if(stationAwaitingCommit || (stationGeneration&&!stationGeneration.terminal)) scheduleStationSync();
           return true;
         }catch(_){renderThreads();return false}
@@ -2849,7 +2853,7 @@
           return r.ok;
         }catch(_){return false;}
       };
-      const startDraft = () => { draftThread=true; pendingDraftThread=null; activeThreadId=""; prompt.value=""; renderedConversationSignature=""; renderConversation(null,true); renderThreads(); closeThreadPopups(); setMenu(false); };
+      const startDraft = () => { window.SwrlzForgeEmbedV1?.setThread(""); draftThread=true; pendingDraftThread=null; activeThreadId=""; prompt.value=""; renderedConversationSignature=""; renderConversation(null,true); renderThreads(); closeThreadPopups(); setMenu(false); };
       newThreadButton.addEventListener("click",startDraft);
       document.addEventListener("click",()=>closeThreadPopups());
       const uid = prefix => prefix+"-"+Date.now().toString(36)+"-"+crypto.getRandomValues(new Uint32Array(2)).join("-");
@@ -2864,6 +2868,7 @@
             let event;try{event=JSON.parse(line)}catch(_){continue}
             if(!stationGeneration)stationGeneration={requestId:event.requestId||"",threadId:activeThreadId,text:"",status:[],widgets:[],terminal:false,lastSeq:0,createdAt:Date.now()};
             stationGeneration.lastSeq=Number(event.seq||stationGeneration.lastSeq||0);
+            if(event.type==="FORGE_BATCH_READY")window.SwrlzForgeEmbedV1?.forwardBatch(event);
             if(event.type==="DELTA")stationGeneration.text=(stationGeneration.text||"")+String(event.text||"");
             else if(event.type==="WIDGET"&&event.widget&&typeof event.widget==="object")stationGeneration.widgets=[...(stationGeneration.widgets||[]),event.widget].slice(0,8);
             else stationGeneration.status=[...(stationGeneration.status||[]),{seq:event.seq,type:event.type,phase:event.phase||"",reason:event.reason||"",categories:Array.isArray(event.categories)?event.categories.slice(0,16):[],site:String(event.site||"").slice(0,180),url:String(event.url||"").slice(0,1000),provider:String(event.provider||"").slice(0,120),httpStatus:event.httpStatus??null,resultCount:event.resultCount??null,atUnixMs:Number(event.atUnixMs||0)||null,proposalReceipt:event.proposalReceipt&&typeof event.proposalReceipt==="object"?event.proposalReceipt:null}].slice(-256);
@@ -2937,11 +2942,12 @@
           prompt.value=""; resizeComposer(); followLatest=false; responseStartAnchorRequestId=""; renderConversation(localThread); renderThreads(); renderStationGeneration();
           const sendPath="/api/lalm_station/send";
           const clientLocation=await maybeSharedWeatherLocation(text);
+          const forgeBinding=await window.SwrlzForgeEmbedV1?.beforeSend(activeThreadId)||{};
           const transportCamera=(stage,data={})=>{try{fetch("/api/chat?__swrlz_client_debug=1",{method:"POST",credentials:"same-origin",cache:"no-store",keepalive:true,headers:{"Content-Type":"application/json"},body:JSON.stringify({runId:"station-send-transport-v1",url:location.pathname,event:{at:new Date().toISOString(),type:"station-send-transport",message:stage,data:{requestId,sendPath,...data}}})}).catch(()=>{})}catch(_){}};
           transportCamera("before-fetch");
           let response;
           try{
-            response=await fetch(sendPath,{method:"POST",credentials:"same-origin",cache:"no-store",headers:{"Content-Type":"application/json","X-SWRLZ-Request-Id":requestId},body:JSON.stringify({protocolVersion:2,requestId,prompt:text,threadId:activeThreadId,messageId:userMessageId,assistantMessageId,contentTag,modelId:String(settingsState.model.defaultModel||"700m"),profileId:String(settingsState.general.personalityProfile||"default"),ingress:"SWRLZ_LALM_STATION",timeZone:(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"UTC"}catch(_){return "UTC"}})(),...(clientLocation?{clientLocation}:{})})});
+            response=await fetch(sendPath,{method:"POST",credentials:"same-origin",cache:"no-store",headers:{"Content-Type":"application/json","X-SWRLZ-Request-Id":requestId},body:JSON.stringify({protocolVersion:2,requestId,prompt:text,threadId:activeThreadId,messageId:userMessageId,assistantMessageId,contentTag,modelId:String(settingsState.model.defaultModel||"700m"),profileId:String(settingsState.general.personalityProfile||"default"),ingress:"SWRLZ_LALM_STATION",timeZone:(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"UTC"}catch(_){return "UTC"}})(),...(clientLocation?{clientLocation}:{}),...forgeBinding})});
             transportCamera("fetch-response",{status:response.status,ok:response.ok});
           }catch(networkError){
             transportCamera("fetch-network-failed",{error:String(networkError?.message||networkError)});
@@ -3144,7 +3150,7 @@
       const applySettingsPreview = () => {
         settingsState.general.enterToSend=!!settingEnterSend.checked;
         settingsState.general.personalityProfile=["default","gegd"].includes(settingPersonalityProfile.value)?settingPersonalityProfile.value:"default";
-        settingsState.model.defaultModel=["700m","r39","stock"].includes(settingDefaultModel.value)?settingDefaultModel.value:"700m";
+        settingsState.model.defaultModel=["700m","r39","stock","coder"].includes(settingDefaultModel.value)?settingDefaultModel.value:"700m";
         settingsState.model.effort=settingEffort.value;
         settingsState.model.responseLength=settingResponseLength.value;
         settingsState.ui.density=settingDensity.value;
@@ -3191,7 +3197,7 @@
         settingCompanionLoreDensity.value=["adaptive","minimal","balanced","mythic"].includes(companion.loreDensity)?companion.loreDensity:"adaptive";
         settingEnterSend.checked=general.enterToSend!==false;
         settingDensity.value=["compact","comfortable"].includes(ui.density)?ui.density:"compact";
-        settingDefaultModel.value=["700m","r39","stock"].includes(model.defaultModel)?model.defaultModel:"700m";
+        settingDefaultModel.value=["700m","r39","stock","coder"].includes(model.defaultModel)?model.defaultModel:"700m";
         settingEffort.value=["auto","fast","deep"].includes(model.effort)?model.effort:"auto";
         settingResponseLength.value=["adaptive","concise","expanded"].includes(model.responseLength)?model.responseLength:"adaptive";
         settingGlass.value=["standard","low"].includes(ui.glass)?ui.glass:"standard";
@@ -3209,7 +3215,7 @@
       };
       const refreshSettingsDurability = () => {
         settingsPrivacyAccount.textContent=chatAccountUser?(chatAccountUser.displayName||chatAccountUser.email||"Signed in"):"Not signed in";
-        settingsPrivacyDurability.textContent=accountProfileDurable?"Durable account profile":"Session preview only";
+        settingsPrivacyDurability.textContent=accountProfileDurable?"Saved account settings":accountProfileAvailable?"Account settings not saved yet":"Session preview only";
         settingsLoreDurability.textContent=accountProfileDurable?"Account-owned Redis records":"Unavailable without durable account";
         settingsRapportDurability.textContent=accountProfileDurable?"Account-owned generation state":"Unavailable without durable account";
         settingsProposalAuthority.textContent=accountProfileDurable?"Tier D account-owned queue":"Unavailable without durable account";
@@ -3218,8 +3224,8 @@
         rapportPauseButton.disabled=!accountProfileDurable;
         rapportResetButton.disabled=!accountProfileDurable;
         proposalRefresh.disabled=!accountProfileDurable;
-        settingsSave.disabled=!chatAccountUser||!accountProfileDurable;
-        settingsSaveState.textContent=accountProfileDurable?(settingsDirty?"Unsaved profile changes.":"Saved profile values loaded; previews remain local until Save."):"Previewing locally. Durable account storage is required to save.";
+        settingsSave.disabled=!chatAccountUser||!accountProfileAvailable;
+        settingsSaveState.textContent=accountProfileDurable?(settingsDirty?"Unsaved profile changes.":"Saved account settings loaded. Changes remain local until Save."):accountProfileAvailable?"Settings have not been saved to this account yet. Choose Save changes to save them.":"Previewing locally. Sign in with available account storage to save.";
       };
       const setSettingsOpen = open => {
         document.body.classList.toggle("settings-open",open);
@@ -3655,7 +3661,7 @@
       });
 
       settingsSave.addEventListener("click",async()=>{
-        if(!chatAccountUser||!accountProfileDurable||!accountProfile){refreshSettingsDurability();return;}
+        if(!chatAccountUser||!accountProfileAvailable||!accountProfile){refreshSettingsDurability();return;}
         settingsSave.disabled=true;settingsSaveState.textContent="Saving…";
         const existingPrefs=accountProfile.preferences&&typeof accountProfile.preferences==="object"?accountProfile.preferences:{};
         const existingModel=accountProfile.model_preferences&&typeof accountProfile.model_preferences==="object"?accountProfile.model_preferences:{};
@@ -3665,20 +3671,20 @@
         settingsState.companion={name:settingCompanionName.value.trim()||"§wyrlz",title:settingCompanionTitle.value.trim()||"Glitch Dragon Kompanion",form:settingCompanionForm.value.trim()||"Glitch Dragon",pronouns:settingCompanionPronouns.value.trim(),warmth:settingCompanionWarmth.value,directness:settingCompanionDirectness.value,humor:settingCompanionHumor.value,loreDensity:settingCompanionLoreDensity.value};
         const proposalPolicy={...proposalPolicyDefaults};proposalPolicyControls.forEach(control=>proposalPolicy[control.dataset.proposalPolicy]=control.value);
         const preferences={...existingPrefs,general:{...(existingPrefs.general&&typeof existingPrefs.general==="object"?existingPrefs.general:{}),enterToSend:settingsState.general.enterToSend,personalityProfile:settingsState.general.personalityProfile},profile:{...(existingPrefs.profile&&typeof existingPrefs.profile==="object"?existingPrefs.profile:{}),pronouns:settingsState.user.pronouns,role:settingsState.user.role,communicationStyle:settingsState.user.communicationStyle,outputStyle:settingsState.user.outputStyle},proposalPolicy};
-        const modelPreferences={...existingModel,effort:settingsState.model.effort,responseLength:settingsState.model.responseLength};
+        const modelPreferences={...existingModel,defaultModel:settingsState.model.defaultModel,effort:settingsState.model.effort,responseLength:settingsState.model.responseLength};
         const uiPreferences={...existingUi,density:settingsState.ui.density,glass:settingsState.ui.glass,motion:settingsState.ui.motion,fontScale:settingsState.ui.fontScale,highContrast:settingsState.ui.highContrast,reducedTransparency:settingsState.ui.reducedTransparency};
         const companionProfile={...existingCompanion,...settingsState.companion};
         try{
           const response=await accountFetch("/api/account/profile",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({displayName:settingsState.user.displayName||accountProfile.display_name||null,preferences,modelPreferences,uiPreferences,companionProfile,version:Number(accountProfile.version||0)})});
           const data=await response.json().catch(()=>({}));
           if(!response.ok||!data?.profile)throw new Error(data?.detail||("Profile save failed ("+response.status+")"));
-          accountProfile=data.profile;accountProfileDurable=true;settingsDirty=false;
+          accountProfile=data.profile;accountProfileAvailable=data.durable===true;accountProfileDurable=accountProfileAvailable&&Number(accountProfile.version||0)>0;settingsDirty=false;
           if(chatAccountUser&&accountProfile.display_name)chatAccountUser={...chatAccountUser,displayName:accountProfile.display_name};
           populateSettingsControls();if(!draftThread)renderConversation(currentThread());refreshSettingsDurability();uiCamera("settings-save-success",{profileVersion:Number(accountProfile.version||0)});
         }catch(error){
           settingsSaveState.textContent="Save failed. Your local preview is still active.";
           uiCamera("settings-save-failed",{errorType:String(error?.name||"Error")});
-        }finally{settingsSave.disabled=!chatAccountUser||!accountProfileDurable;}
+        }finally{settingsSave.disabled=!chatAccountUser||!accountProfileAvailable;}
       });
       const accountName = document.getElementById("accountName");
       const accountMeta = document.getElementById("accountMeta");
@@ -3713,7 +3719,14 @@
         accountUser = user || null;
         chatAccountUser = accountUser;
         accountProfile=profile&&typeof profile==="object"?profile:null;
-        accountProfileDurable=!!accountUser&&!!durable&&Number(accountProfile?.version||0)>0;
+        accountProfileAvailable=!!accountUser&&!!durable&&!!accountProfile;
+        accountProfileDurable=accountProfileAvailable&&Number(accountProfile?.version||0)>0;
+        window.SwrlzForgeEmbedV1?.notifyAccount(accountUser);
+        if(priorUserId!==(accountUser?.id||"")){
+          accountProjectionEpoch++;streamAbortController?.abort();clearTimeout(stationPoll);
+          chatThreads=[];activeThreadId="";pendingDraftThread=null;stationGeneration=null;stationAwaitingCommit="";chatRevision=0;
+          draftThread=!accountUser;window.SwrlzForgeEmbedV1?.setThread("");renderThreads();
+        }
         if(priorUserId!==(accountUser?.id||"")){window.SwrlzGitHubExplorerV223?.reset();loreRecords=[];loreLoadedForUser="";closeLoreEditor();renderLoreRecords();rapportRecords=[];rapportControl=null;rapportLoadedKey="";closeRapportEditor();renderRapportRecords();proposalRecords=[];proposalLoadedForUser="";proposalAuditCache.clear();renderProposalRecords();}
         populateSettingsControls();
         refreshSettingsDurability();
@@ -3767,7 +3780,13 @@
           githubRepoSelect.value=d.repo||"";
         }catch(_){githubConnectStatus.textContent="GitHub status could not be verified. No connection assumed.";}
       };
-      githubConnectButton.addEventListener("click",()=>{if(accountUser)location.assign("/api/github/start");});
+      const openGitHubAuthorization=path=>{
+        if(window.SwrlzForgeEmbedV1?.embedded){
+          window.open(location.origin+"/chat/§wyrlz#github","_blank","noopener");
+          githubConnectStatus.textContent="Connect or authorize GitHub on the standalone Chat page using the same Google account, then return here. Your connected tools refresh when this panel regains focus.";
+        }else location.assign(path);
+      };
+      githubConnectButton.addEventListener("click",()=>{if(accountUser)openGitHubAuthorization("/api/github/start");});
       githubCheckAccess.addEventListener("click",async()=>{
         if(!githubLinked)return;
         githubCheckAccess.disabled=true;githubAuthorizeAccess.hidden=true;githubAuthorizationPath="";
@@ -3790,7 +3809,7 @@
         }catch(error){githubConnectStatus.textContent=String(error?.message||"GitHub permissions could not be verified.");}
         finally{githubCheckAccess.disabled=false;}
       });
-      githubAuthorizeAccess.addEventListener("click",()=>{if(githubLinked&&githubAuthorizationPath)location.assign(githubAuthorizationPath);});
+      githubAuthorizeAccess.addEventListener("click",()=>{if(githubLinked&&githubAuthorizationPath)openGitHubAuthorization(githubAuthorizationPath);});
       githubRepoSelect.addEventListener("change",()=>{if(githubRepoSelect.value)githubRepoManual.value=githubRepoSelect.value;});
       githubRepoSave.addEventListener("click",async()=>{
         if(!githubLinked)return;
@@ -3850,25 +3869,36 @@
         const r=await fetch("/api/github/disconnect",{method:"POST",credentials:"same-origin"});
         if(r.ok)await refreshGitHub();else githubConnectStatus.textContent="Disconnect failed; link remains until verified removed.";
       });
+      window.addEventListener("focus",()=>{if(accountUser)refreshGitHub();});
       const renderGoogle = async () => {
+        if(window.SwrlzForgeEmbedV1?.embedded){
+          googleSlot.textContent="Use Sign in with Google at the top of the §e Chat panel to connect your account.";
+          accountMeta.textContent="Connect your Google account in §e";return;
+        }
         const status = await accountFetch("/api/account/status",{credentials:"same-origin",cache:"no-store"}).then(r=>r.json());
         if(!status?.googleClientId || !window.google?.accounts?.id) throw new Error("Google account service unavailable");
         googleSlot.innerHTML="";
         google.accounts.id.initialize({client_id:status.googleClientId,callback:async response=>{
           const result=await accountFetch("/api/account/google",{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify({credential:response.credential})});
           if(!result.ok) throw new Error("Google sign-in failed");
-          const data=await result.json(); showUser(data.user,data.profile,data.durable!==false&&Number(data.profile?.version||0)>0);
+          const data=await result.json(); showUser(data.user,data.profile,data.durable===true);
         }});
         google.accounts.id.renderButton(googleSlot,{type:"standard",theme:"outline",size:"medium",text:"signin_with",shape:"pill",width:250});
       };
       const refreshAccount = async () => {
-        try{const r=await accountFetch("/api/account/me",{credentials:"same-origin",cache:"no-store"});if(r.ok){const d=await r.json();showUser(d.user,d.profile,d.durable!==false&&Number(d.profile?.version||0)>0);return;}}catch(_){}
+        try{const r=await accountFetch("/api/account/me",{credentials:"same-origin",cache:"no-store"});if(r.ok){const d=await r.json();showUser(d.user,d.profile,d.durable===true);return;}}catch(_){}
         showUser(null,null,false);
         try{await renderGoogle();}catch(e){accountMeta.textContent=e.message;}
       };
       accountAction.addEventListener("click",async()=>{
         if(accountUser){await accountFetch("/api/account/logout",{method:"POST",credentials:"same-origin"});showUser(null,null,false);return;}
       });
+      window.addEventListener("swrlz-forge-account-changed",()=>{
+        accountProjectionEpoch++;streamAbortController?.abort();clearTimeout(stationPoll);
+        chatThreads=[];activeThreadId="";pendingDraftThread=null;stationGeneration=null;stationAwaitingCommit="";chatRevision=0;draftThread=true;
+        renderThreads();renderConversation(null);refreshAccount();
+      });
+      window.addEventListener("swrlz-forge-download-error",event=>{accountMeta.textContent=String(event.detail?.message||"Download failed.");accountMeta.style.display="block";});
       refreshAccount();
       const setMenu = (open) => {
         document.body.classList.toggle("menu-open", open);

@@ -1,0 +1,30 @@
+import {chromium} from 'playwright';
+import fs from 'node:fs/promises';
+import assert from 'node:assert/strict';
+const base=(process.env.SWYRL_ANIME_TEST_URL||'http://127.0.0.1:8781').replace(/\/$/,''),out=process.env.SWYRL_DETAIL_OUT||'character-detail-evidence';await fs.mkdir(out,{recursive:true});
+const browser=await chromium.launch({headless:true,...(process.env.SWYRL_CHROMIUM_PATH?{executablePath:process.env.SWYRL_CHROMIUM_PATH}:{}),args:['--no-sandbox','--disable-dev-shm-usage','--enable-webgl','--enable-unsafe-swiftshader','--use-gl=angle','--use-angle=swiftshader']});
+const page=await browser.newPage({viewport:{width:1440,height:1100},acceptDownloads:true}),errors=[];page.on('pageerror',e=>errors.push(e.message));page.setDefaultTimeout(30000);
+const hit=async id=>{const el=page.locator('#modelAtelier'+id);await el.scrollIntoViewIfNeeded();await el.click();};
+const snap=()=>page.evaluate(()=>window.SWYRL_ENGINE_AGENT.inspectScene());
+const stats=()=>page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.density());
+await page.goto(base+'/?project=model-atelier',{waitUntil:'domcontentloaded',timeout:60000});await page.locator('#modelAtelierPanel canvas').waitFor();
+await page.locator('#modelAtelierParts').selectOption('model-0001');await page.locator('#modelAtelierDetailBudget summary').click();
+await page.locator('#modelAtelierDensityPreset').selectOption('mobile');await hit('DensityPresetApply');
+console.log('MOBILE_HERO_TRIANGLES',(await stats()).heroTriangles);
+await page.locator('#modelAtelierDensityPreset').selectOption('portrait');await hit('DensityPresetApply');console.log('PORTRAIT_HERO_TRIANGLES',(await stats()).heroTriangles);
+const high=(await snap()).project.modelAtelier;
+await hit('FrameSelected');await page.screenshot({path:out+'/portrait-face.png'});
+await page.locator('#modelAtelierTopologyView').check();await page.screenshot({path:out+'/portrait-topology.png'});await page.locator('#modelAtelierTopologyView').uncheck();
+for(const view of ['front','three','right','back']){await page.evaluate(v=>window.SWYRL_ENGINE_MODEL_ATELIER.view(v),view);await page.screenshot({path:out+'/portrait-'+view+'.png'});}
+await page.locator('#modelAtelierDensityPreset').selectOption('mobile');await hit('DensityPresetApply');
+await page.locator('#modelAtelierParts').selectOption('model-0001');await hit('FrameSelected');await page.screenshot({path:out+'/mobile-face.png'});
+await page.locator('#modelAtelierDensityPreset').selectOption('portrait');await hit('DensityPresetApply');
+const wait=page.waitForEvent('download');await hit('Export');const download=await wait;await download.saveAs(out+'/authored.model.json');
+const saved=JSON.parse(await fs.readFile(out+'/authored.model.json','utf8'));assert.deepEqual(saved.model,(await snap()).project.modelAtelier);
+await page.locator('#modelAtelierImportFile').setInputFiles(out+'/authored.model.json');await page.waitForFunction(()=>document.getElementById('modelAtelierStatus').textContent.startsWith('Validated model,'));
+assert.deepEqual(saved.model,(await snap()).project.modelAtelier);
+const native=await snap();await fs.writeFile(out+'/authored.swyrl.json',JSON.stringify(native,null,2)+'\n');
+await fs.writeFile(out+'/portrait.model.json',JSON.stringify({schema:'swyrl-model-atelier-v1',model:high},null,2)+'\n');
+await fs.writeFile(out+'/receipt.json',JSON.stringify({density:await stats(),nativeRoundTrip:true,errors},null,2)+'\n');
+for(const mode of [{name:'phone',viewport:{width:412,height:915}},{name:'desktop-site',viewport:{width:980,height:1700}}]){await page.setViewportSize(mode.viewport);await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.view('front'));await page.screenshot({path:out+'/'+mode.name+'.png'});}
+assert.deepEqual(errors,[]);await browser.close();

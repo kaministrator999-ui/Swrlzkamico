@@ -1,0 +1,2671 @@
+{
+  "version": "v11.87",
+  "htmlBytes": 3359239,
+  "htmlSha256": "c2dda3de1cb7bf262e347a47c9dfde2f9c4af267ed1124fee068a804fb6cda40",
+  "patches": 119,
+  "assets": 55,
+  "historicalSourcesPreserved": 277,
+  "historicalAssetsPreserved": 51,
+  "fullAuthoringBrowserHtmlSha256": "b5bcda2e56d79ef5d195d7755919a6a4c2ba1622982d78ddbae52964d1568ece",
+  "fullAuthoringBrowser": [
+    {
+      "species": "sheep",
+      "valid": true,
+      "parts": 31,
+      "triangles": 275872,
+      "meshes": [
+        {
+          "id": "sheep-0",
+          "vertices": 36746,
+          "triangles": 73488,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "sheep-1",
+          "vertices": 12248,
+          "triangles": 24492,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "sheep-2",
+          "vertices": 12450,
+          "triangles": 24896,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "sheep-3",
+          "vertices": 2278,
+          "triangles": 4552,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "sheep-4",
+          "vertices": 2278,
+          "triangles": 4552,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "sheep-5",
+          "vertices": 10966,
+          "triangles": 21928,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "sheep-6",
+          "vertices": 2362,
+          "triangles": 4720,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "sheep-7",
+          "vertices": 2362,
+          "triangles": 4720,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "sheep-8",
+          "vertices": 12450,
+          "triangles": 24896,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "sheep-9",
+          "vertices": 2278,
+          "triangles": 4552,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "sheep-10",
+          "vertices": 2278,
+          "triangles": 4552,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "sheep-11",
+          "vertices": 10966,
+          "triangles": 21928,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "sheep-12",
+          "vertices": 2362,
+          "triangles": 4720,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "sheep-13",
+          "vertices": 2362,
+          "triangles": 4720,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "sheep-14",
+          "vertices": 650,
+          "triangles": 1296,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "sheep-15",
+          "vertices": 650,
+          "triangles": 1296,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "sheep-16",
+          "vertices": 2142,
+          "triangles": 4280,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "sheep-17",
+          "vertices": 1214,
+          "triangles": 2424,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "sheep-18",
+          "vertices": 298,
+          "triangles": 592,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "sheep-19",
+          "vertices": 130,
+          "triangles": 256,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "sheep-20",
+          "vertices": 1398,
+          "triangles": 2792,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "sheep-21",
+          "vertices": 650,
+          "triangles": 1296,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "sheep-22",
+          "vertices": 650,
+          "triangles": 1296,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "sheep-23",
+          "vertices": 2142,
+          "triangles": 4280,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "sheep-24",
+          "vertices": 1214,
+          "triangles": 2424,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "sheep-25",
+          "vertices": 298,
+          "triangles": 592,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "sheep-26",
+          "vertices": 130,
+          "triangles": 256,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "sheep-27",
+          "vertices": 1368,
+          "triangles": 2732,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "sheep-28",
+          "vertices": 3614,
+          "triangles": 7224,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "sheep-29",
+          "vertices": 1204,
+          "triangles": 2404,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "sheep-30",
+          "vertices": 5860,
+          "triangles": 11716,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        }
+      ],
+      "nativeToolRebuildExact": true,
+      "materialEditUndo": true,
+      "nativeSaveReloadExact": true,
+      "texturedGLBExport": true,
+      "errors": []
+    },
+    {
+      "species": "wolf",
+      "valid": true,
+      "parts": 61,
+      "triangles": 339284,
+      "meshes": [
+        {
+          "id": "wolf-0",
+          "vertices": 28232,
+          "triangles": 56460,
+          "vertexColors": true,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-1",
+          "vertices": 14602,
+          "triangles": 29200,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-2",
+          "vertices": 4246,
+          "triangles": 8488,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-3",
+          "vertices": 1542,
+          "triangles": 3080,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-4",
+          "vertices": 328,
+          "triangles": 652,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "wolf-5",
+          "vertices": 1542,
+          "triangles": 3080,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-6",
+          "vertices": 328,
+          "triangles": 652,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "wolf-7",
+          "vertices": 1542,
+          "triangles": 3080,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-8",
+          "vertices": 328,
+          "triangles": 652,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "wolf-9",
+          "vertices": 1542,
+          "triangles": 3080,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-10",
+          "vertices": 328,
+          "triangles": 652,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "wolf-11",
+          "vertices": 13076,
+          "triangles": 26148,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-12",
+          "vertices": 4246,
+          "triangles": 8488,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-13",
+          "vertices": 1542,
+          "triangles": 3080,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-14",
+          "vertices": 328,
+          "triangles": 652,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "wolf-15",
+          "vertices": 1542,
+          "triangles": 3080,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-16",
+          "vertices": 328,
+          "triangles": 652,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "wolf-17",
+          "vertices": 1542,
+          "triangles": 3080,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-18",
+          "vertices": 328,
+          "triangles": 652,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "wolf-19",
+          "vertices": 1542,
+          "triangles": 3080,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-20",
+          "vertices": 328,
+          "triangles": 652,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "wolf-21",
+          "vertices": 14602,
+          "triangles": 29200,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-22",
+          "vertices": 4246,
+          "triangles": 8488,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-23",
+          "vertices": 1542,
+          "triangles": 3080,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-24",
+          "vertices": 328,
+          "triangles": 652,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "wolf-25",
+          "vertices": 1542,
+          "triangles": 3080,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-26",
+          "vertices": 328,
+          "triangles": 652,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "wolf-27",
+          "vertices": 1542,
+          "triangles": 3080,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-28",
+          "vertices": 328,
+          "triangles": 652,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "wolf-29",
+          "vertices": 1542,
+          "triangles": 3080,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-30",
+          "vertices": 328,
+          "triangles": 652,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "wolf-31",
+          "vertices": 13076,
+          "triangles": 26148,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-32",
+          "vertices": 4246,
+          "triangles": 8488,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-33",
+          "vertices": 1542,
+          "triangles": 3080,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-34",
+          "vertices": 328,
+          "triangles": 652,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "wolf-35",
+          "vertices": 1542,
+          "triangles": 3080,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-36",
+          "vertices": 328,
+          "triangles": 652,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "wolf-37",
+          "vertices": 1542,
+          "triangles": 3080,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-38",
+          "vertices": 328,
+          "triangles": 652,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "wolf-39",
+          "vertices": 1542,
+          "triangles": 3080,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-40",
+          "vertices": 328,
+          "triangles": 652,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "wolf-41",
+          "vertices": 674,
+          "triangles": 1344,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-42",
+          "vertices": 674,
+          "triangles": 1344,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-43",
+          "vertices": 2142,
+          "triangles": 4280,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "wolf-44",
+          "vertices": 1214,
+          "triangles": 2424,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-45",
+          "vertices": 486,
+          "triangles": 968,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "wolf-46",
+          "vertices": 130,
+          "triangles": 256,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "wolf-47",
+          "vertices": 1398,
+          "triangles": 2792,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-48",
+          "vertices": 674,
+          "triangles": 1344,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-49",
+          "vertices": 674,
+          "triangles": 1344,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-50",
+          "vertices": 2142,
+          "triangles": 4280,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "wolf-51",
+          "vertices": 1214,
+          "triangles": 2424,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-52",
+          "vertices": 486,
+          "triangles": 968,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "wolf-53",
+          "vertices": 130,
+          "triangles": 256,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "wolf-54",
+          "vertices": 1368,
+          "triangles": 2732,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-55",
+          "vertices": 6682,
+          "triangles": 13360,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-56",
+          "vertices": 810,
+          "triangles": 1616,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "wolf-57",
+          "vertices": 1490,
+          "triangles": 2960,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "wolf-58",
+          "vertices": 810,
+          "triangles": 1616,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "wolf-59",
+          "vertices": 1744,
+          "triangles": 3464,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "wolf-60",
+          "vertices": 14348,
+          "triangles": 28692,
+          "vertexColors": true,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        }
+      ],
+      "nativeToolRebuildExact": true,
+      "materialEditUndo": true,
+      "nativeSaveReloadExact": true,
+      "texturedGLBExport": true,
+      "errors": []
+    }
+  ],
+  "finalDefaultPolishRetainsAuthoringTestedGeometry": [
+    {
+      "species": "sheep",
+      "allAuthoringTestedPartsGeometryAndUVsExact": true,
+      "onlyDefaultNormalStrengthsChanged": true
+    },
+    {
+      "species": "wolf",
+      "allAuthoringTestedPartsGeometryAndUVsExact": true,
+      "onlyDefaultNormalStrengthsChanged": true
+    }
+  ],
+  "finalNativeToolDataExact": [
+    "FINAL_NATIVE_ORGANIC_TOOL_DEFAULTS_AND_GEOMETRY_EXACT sheep 58f7e41ab6481fb30030540677a03614cf8b4e8f769d9708928fb743b4891f45",
+    "FINAL_NATIVE_ORGANIC_TOOL_DEFAULTS_AND_GEOMETRY_EXACT wolf 6373a2a12f52efe49f35c91eb5ffc3e32d2ccbca10bc32ff0b8d9c7e2fc342e6"
+  ],
+  "finalArtifactBrowser": [
+    {
+      "species": "wolf",
+      "valid": true,
+      "parts": 61,
+      "triangles": 339284,
+      "meshes": [
+        {
+          "id": "wolf-0",
+          "vertices": 28232,
+          "triangles": 56460,
+          "vertexColors": true,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-1",
+          "vertices": 14602,
+          "triangles": 29200,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-2",
+          "vertices": 4246,
+          "triangles": 8488,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-3",
+          "vertices": 1542,
+          "triangles": 3080,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-4",
+          "vertices": 328,
+          "triangles": 652,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "wolf-5",
+          "vertices": 1542,
+          "triangles": 3080,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-6",
+          "vertices": 328,
+          "triangles": 652,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "wolf-7",
+          "vertices": 1542,
+          "triangles": 3080,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-8",
+          "vertices": 328,
+          "triangles": 652,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "wolf-9",
+          "vertices": 1542,
+          "triangles": 3080,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-10",
+          "vertices": 328,
+          "triangles": 652,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "wolf-11",
+          "vertices": 13076,
+          "triangles": 26148,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-12",
+          "vertices": 4246,
+          "triangles": 8488,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-13",
+          "vertices": 1542,
+          "triangles": 3080,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-14",
+          "vertices": 328,
+          "triangles": 652,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "wolf-15",
+          "vertices": 1542,
+          "triangles": 3080,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-16",
+          "vertices": 328,
+          "triangles": 652,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "wolf-17",
+          "vertices": 1542,
+          "triangles": 3080,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-18",
+          "vertices": 328,
+          "triangles": 652,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "wolf-19",
+          "vertices": 1542,
+          "triangles": 3080,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-20",
+          "vertices": 328,
+          "triangles": 652,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "wolf-21",
+          "vertices": 14602,
+          "triangles": 29200,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-22",
+          "vertices": 4246,
+          "triangles": 8488,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-23",
+          "vertices": 1542,
+          "triangles": 3080,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-24",
+          "vertices": 328,
+          "triangles": 652,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "wolf-25",
+          "vertices": 1542,
+          "triangles": 3080,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-26",
+          "vertices": 328,
+          "triangles": 652,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "wolf-27",
+          "vertices": 1542,
+          "triangles": 3080,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-28",
+          "vertices": 328,
+          "triangles": 652,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "wolf-29",
+          "vertices": 1542,
+          "triangles": 3080,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-30",
+          "vertices": 328,
+          "triangles": 652,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "wolf-31",
+          "vertices": 13076,
+          "triangles": 26148,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-32",
+          "vertices": 4246,
+          "triangles": 8488,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-33",
+          "vertices": 1542,
+          "triangles": 3080,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-34",
+          "vertices": 328,
+          "triangles": 652,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "wolf-35",
+          "vertices": 1542,
+          "triangles": 3080,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-36",
+          "vertices": 328,
+          "triangles": 652,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "wolf-37",
+          "vertices": 1542,
+          "triangles": 3080,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-38",
+          "vertices": 328,
+          "triangles": 652,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "wolf-39",
+          "vertices": 1542,
+          "triangles": 3080,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-40",
+          "vertices": 328,
+          "triangles": 652,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "wolf-41",
+          "vertices": 674,
+          "triangles": 1344,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-42",
+          "vertices": 674,
+          "triangles": 1344,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-43",
+          "vertices": 2142,
+          "triangles": 4280,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "wolf-44",
+          "vertices": 1214,
+          "triangles": 2424,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-45",
+          "vertices": 486,
+          "triangles": 968,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "wolf-46",
+          "vertices": 130,
+          "triangles": 256,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "wolf-47",
+          "vertices": 1398,
+          "triangles": 2792,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-48",
+          "vertices": 674,
+          "triangles": 1344,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-49",
+          "vertices": 674,
+          "triangles": 1344,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-50",
+          "vertices": 2142,
+          "triangles": 4280,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "wolf-51",
+          "vertices": 1214,
+          "triangles": 2424,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-52",
+          "vertices": 486,
+          "triangles": 968,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "wolf-53",
+          "vertices": 130,
+          "triangles": 256,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "wolf-54",
+          "vertices": 1368,
+          "triangles": 2732,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-55",
+          "vertices": 6682,
+          "triangles": 13360,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "wolf-56",
+          "vertices": 810,
+          "triangles": 1616,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "wolf-57",
+          "vertices": 1490,
+          "triangles": 2960,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "wolf-58",
+          "vertices": 810,
+          "triangles": 1616,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "wolf-59",
+          "vertices": 1744,
+          "triangles": 3464,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "wolf-60",
+          "vertices": 14348,
+          "triangles": 28692,
+          "vertexColors": true,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        }
+      ],
+      "htmlSha256": "c2dda3de1cb7bf262e347a47c9dfde2f9c4af267ed1124fee068a804fb6cda40",
+      "desktopAndPhoneStudio": true,
+      "texturedGLBExport": true,
+      "errors": []
+    },
+    {
+      "species": "sheep",
+      "valid": true,
+      "parts": 31,
+      "triangles": 275872,
+      "meshes": [
+        {
+          "id": "sheep-0",
+          "vertices": 36746,
+          "triangles": 73488,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "sheep-1",
+          "vertices": 12248,
+          "triangles": 24492,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "sheep-2",
+          "vertices": 12450,
+          "triangles": 24896,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "sheep-3",
+          "vertices": 2278,
+          "triangles": 4552,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "sheep-4",
+          "vertices": 2278,
+          "triangles": 4552,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "sheep-5",
+          "vertices": 10966,
+          "triangles": 21928,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "sheep-6",
+          "vertices": 2362,
+          "triangles": 4720,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "sheep-7",
+          "vertices": 2362,
+          "triangles": 4720,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "sheep-8",
+          "vertices": 12450,
+          "triangles": 24896,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "sheep-9",
+          "vertices": 2278,
+          "triangles": 4552,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "sheep-10",
+          "vertices": 2278,
+          "triangles": 4552,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "sheep-11",
+          "vertices": 10966,
+          "triangles": 21928,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "sheep-12",
+          "vertices": 2362,
+          "triangles": 4720,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "sheep-13",
+          "vertices": 2362,
+          "triangles": 4720,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "sheep-14",
+          "vertices": 650,
+          "triangles": 1296,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "sheep-15",
+          "vertices": 650,
+          "triangles": 1296,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "sheep-16",
+          "vertices": 2142,
+          "triangles": 4280,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "sheep-17",
+          "vertices": 1214,
+          "triangles": 2424,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "sheep-18",
+          "vertices": 298,
+          "triangles": 592,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "sheep-19",
+          "vertices": 130,
+          "triangles": 256,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "sheep-20",
+          "vertices": 1398,
+          "triangles": 2792,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "sheep-21",
+          "vertices": 650,
+          "triangles": 1296,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "sheep-22",
+          "vertices": 650,
+          "triangles": 1296,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "sheep-23",
+          "vertices": 2142,
+          "triangles": 4280,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "sheep-24",
+          "vertices": 1214,
+          "triangles": 2424,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "sheep-25",
+          "vertices": 298,
+          "triangles": 592,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "sheep-26",
+          "vertices": 130,
+          "triangles": 256,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "sheep-27",
+          "vertices": 1368,
+          "triangles": 2732,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "sheep-28",
+          "vertices": 3614,
+          "triangles": 7224,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        },
+        {
+          "id": "sheep-29",
+          "vertices": 1204,
+          "triangles": 2404,
+          "vertexColors": false,
+          "baseColorSize": [
+            0,
+            0
+          ],
+          "normalSize": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "sheep-30",
+          "vertices": 5860,
+          "triangles": 11716,
+          "vertexColors": false,
+          "baseColorSize": [
+            4096,
+            4096
+          ],
+          "normalSize": [
+            4096,
+            4096
+          ]
+        }
+      ],
+      "htmlSha256": "c2dda3de1cb7bf262e347a47c9dfde2f9c4af267ed1124fee068a804fb6cda40",
+      "desktopAndPhoneStudio": true,
+      "texturedGLBExport": true,
+      "errors": []
+    }
+  ],
+  "finalGLB": [
+    "NATIVE_ORGANIC_GLB_GEOMETRY_UV_NORMALS_INDICES_EMBEDDED_4K_MAPS_PASS sheep 16568020 31 275872",
+    "NATIVE_ORGANIC_GLB_GEOMETRY_UV_NORMALS_INDICES_EMBEDDED_4K_MAPS_PASS wolf 18882112 61 339284"
+  ],
+  "closedConnectedTopologyAnd4K": [
+    "ORGANIC_WELDED_TOPOLOGY_CLOSED_CONNECTED_BODY_NATIVE_GROUPS_AND_4K_ASSETS_PASS [{\"species\": \"sheep\", \"parts\": 31, \"triangles\": 275872, \"mainBodyVertices\": 36746, \"mainBodyTriangles\": 73488, \"mainBodyOneConnectedWatertightSurface\": true}, {\"species\": \"wolf\", \"parts\": 61, \"triangles\": 339284, \"mainBodyVertices\": 28232, \"mainBodyTriangles\": 56460, \"mainBodyOneConnectedWatertightSurface\": true}]"
+  ],
+  "workflowPythonBlocks": 5,
+  "notes": [
+    "The final close-up polish adjusts stored normal strengths only; native regeneration matches the final payload exactly.",
+    "The final opening view fits after two layout frames, verified by fresh phone loads.",
+    "Native high-detail parts remain editable; the static model projects are independent starters.",
+    "Sheep Tag includes the already verified v11.86 nearest-side house steering.",
+    "Owner device acceptance follows exact production publication."
+  ]
+}

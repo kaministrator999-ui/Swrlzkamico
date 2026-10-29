@@ -1,18 +1,35 @@
 {
   "schema": "swrlz-chat-updates-v1",
   "latest": {
-    "id": "editor-project-completion-20261025",
-    "date": "2026-10-25",
-    "title": "Project downloads, longer answers and Chat updates",
+    "id": "chat-forge-account-panel-20261029",
+    "date": "2026-10-29",
+    "title": "Your Chat and account projects in §e",
     "changes": [
-      "Download generated project files together in a ZIP from their saved Chat artifact.",
-      "New projects keep their own files and identity; follow-up edits retain the selected project.",
-      "Larger response allowances give the 700M model and coding model more room to finish their answers.",
-      "Open Chat updates from the side menu to read the newest notes and all recorded earlier updates.",
-      "Choose “Don’t show again for this update” below to hide this popup until a newer update arrives."
+      "Open your full §wyrlz Chat in the §e side panel, with the same Google account history and saved settings.",
+      "Sign in through the Chat account window, then use Save to account and My projects to save or load complete native §e projects.",
+      "Ask Chat to inspect the active workspace or make supported mesh and scene edits. Close the panel to pause editor access.",
+      "Editor actions use actual native results and Undo/Redo. Unsupported or unfinished actions are reported without claiming success.",
+      "Saved communication and companion preferences now guide your conversations in both Chat surfaces."
     ]
   },
   "history": [
+    {
+      "id": "editor-project-completion-20261025",
+      "date": "2026-10-25",
+      "title": "Project downloads, longer answers and Chat updates",
+      "changes": [
+        "Download generated project files together in a ZIP from their saved Chat artifact.",
+        "New projects keep their own files and identity; follow-up edits retain the selected project.",
+        "Larger response allowances give the 700M model and coding model more room to finish their answers.",
+        "Open Chat updates from the side menu to read the newest notes and all recorded earlier updates.",
+        "Choose “Don’t show again for this update” below to hide this popup until a newer update arrives."
+      ],
+      "kind": "Source update",
+      "source": {
+        "commit": "f925e2012ed7ece820e3272700bc6619846c2085",
+        "path": "docs/engineering/entries/2026-10-25_EDITOR_PROJECT_COMPLETION.md"
+      }
+    },
     {
       "id": "qwen-project-generation-6240d715",
       "date": "2026-10-24",
@@ -3791,7 +3808,7 @@
   ],
   "historyCoverage": {
     "registryRef": "origin/runtime",
-    "registryCommit": "a17e8e883e4ddbc22267d4598c31cdfc36da83bf",
+    "registryCommit": "5417583b838f7761dd2233bb2023f9e1f6c8653b",
     "registryRecords": 249,
     "oldestRecordedDate": "2026-09-06",
     "description": "All recorded Chat version-registry changes, earlier Chat changelog entries, and the preceding coding update. Historical records may include failed attempts or repeated versions."

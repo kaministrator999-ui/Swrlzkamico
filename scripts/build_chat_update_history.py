@@ -61,6 +61,20 @@ def build():
             'Choose “Don’t show again for this update” below to hide this popup until a newer update arrives.',
         ],
     }
+    records.insert(0, {**latest, 'kind': 'Source update',
+                       'source': {'commit': 'f925e2012ed7ece820e3272700bc6619846c2085',
+                                  'path': 'docs/engineering/entries/2026-10-25_EDITOR_PROJECT_COMPLETION.md'}})
+    latest = {
+        'id': 'chat-forge-account-panel-20261029', 'date': '2026-10-29',
+        'title': 'Your Chat and account projects in §e',
+        'changes': [
+            'Open your full §wyrlz Chat in the §e side panel, with the same Google account history and saved settings.',
+            'Sign in through the Chat account window, then use Save to account and My projects to save or load complete native §e projects.',
+            'Ask Chat to inspect the active workspace or make supported mesh and scene edits. Close the panel to pause editor access.',
+            'Editor actions use actual native results and Undo/Redo. Unsupported or unfinished actions are reported without claiming success.',
+            'Saved communication and companion preferences now guide your conversations in both Chat surfaces.',
+        ],
+    }
     return {'schema': 'swrlz-chat-updates-v1', 'latest': latest, 'history': records,
             'historyCoverage': {'registryRef': REGISTRY_REF, 'registryCommit': head,
                                 'registryRecords': sum(r['kind'] == 'Version registry record' for r in records),

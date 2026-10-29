@@ -1,0 +1,469 @@
+{
+  "sourceVersion": "\u00a7wyrl\u00a7 Engine v11.80",
+  "finalBytes": 3243526,
+  "finalSha256": "a4b58b9da3991fdd10fee42c4fd18648c65a79932b0af69ceea1a117ce5f151d",
+  "patches": 112,
+  "assets": 49,
+  "oldSourceFilesPreserved": 255,
+  "oldAssetsPreserved": 48,
+  "mapSize": [
+    256,
+    256
+  ],
+  "centralSpawnRadius": 9.5,
+  "wispSpeed": 0.35,
+  "wispOutsideAllowance": 2.5,
+  "cpuResult": "VAST_WISP_CRAWL_LEAVE_RETURN_ALL_AXES_REVIVE_AND_FINE_LOCAL_NAV_PASS {\"speed\":0.35,\"firstStep\":0.01750000000000007,\"outside\":{\"x\":5.800000000000014,\"captured\":true,\"returns\":0},\"navigation\":{\"clear\":true,\"points\":135,\"cells\":[95481],\"grid\":0.15}}",
+  "cpuAdditionalCases": [
+    "all four leash sides",
+    "translated resized pen",
+    "clear former raised-route state on capture",
+    "fine house-gap species distinction",
+    "rotated building collision",
+    "world boundary safety",
+    "bounded local grids"
+  ],
+  "browserResults": [
+    {
+      "mode": "desktop",
+      "map": {
+        "sourceScene": "scenes/sheep-tag-vast-wildwood-v11-80.swyrl.json",
+        "bounds": 128,
+        "width": 256,
+        "depth": 256,
+        "groundSize": [
+          256,
+          256
+        ],
+        "textureSize": [
+          4096,
+          4096
+        ],
+        "actorCount": 196,
+        "regions": [
+          "Pinewatch",
+          "Moonflower",
+          "Amberglade",
+          "Willowmere"
+        ],
+        "layerCount": 9
+      },
+      "routes": [
+        {
+          "from": [
+            3.6355,
+            0,
+            8.7769
+          ],
+          "reachable": true,
+          "length": 9.500043887267047
+        },
+        {
+          "from": [
+            8.7769,
+            0,
+            3.6355
+          ],
+          "reachable": true,
+          "length": 9.500043887267047
+        },
+        {
+          "from": [
+            8.7769,
+            0,
+            -3.6355
+          ],
+          "reachable": true,
+          "length": 9.500043887267047
+        },
+        {
+          "from": [
+            3.6355,
+            0,
+            -8.7769
+          ],
+          "reachable": true,
+          "length": 9.500043887267047
+        },
+        {
+          "from": [
+            -3.6355,
+            0,
+            -8.7769
+          ],
+          "reachable": true,
+          "length": 9.500043887267047
+        },
+        {
+          "from": [
+            -8.7769,
+            0,
+            -3.6355
+          ],
+          "reachable": true,
+          "length": 9.500043887267047
+        },
+        {
+          "from": [
+            -8.7769,
+            0,
+            3.6355
+          ],
+          "reachable": true,
+          "length": 9.500043887267047
+        },
+        {
+          "from": [
+            -3.6355,
+            0,
+            8.7769
+          ],
+          "reachable": true,
+          "length": 9.500043887267047
+        },
+        {
+          "from": [
+            0,
+            0,
+            -124
+          ],
+          "reachable": true,
+          "length": 124
+        },
+        {
+          "from": [
+            0,
+            0,
+            124
+          ],
+          "reachable": true,
+          "length": 124
+        },
+        {
+          "from": [
+            -124,
+            0,
+            0
+          ],
+          "reachable": true,
+          "length": 124
+        },
+        {
+          "from": [
+            124,
+            0,
+            0
+          ],
+          "reachable": true,
+          "length": 124
+        }
+      ],
+      "passages": [
+        {
+          "center": [
+            -42,
+            -70
+          ],
+          "paths": [
+            {
+              "reachable": true,
+              "length": 10
+            },
+            {
+              "reachable": true,
+              "length": 15.518733752154189
+            }
+          ]
+        },
+        {
+          "center": [
+            70,
+            -42
+          ],
+          "paths": [
+            {
+              "reachable": true,
+              "length": 10
+            },
+            {
+              "reachable": true,
+              "length": 15.548023074035518
+            }
+          ]
+        },
+        {
+          "center": [
+            42,
+            70
+          ],
+          "paths": [
+            {
+              "reachable": true,
+              "length": 10
+            },
+            {
+              "reachable": true,
+              "length": 15.436879281571429
+            }
+          ]
+        },
+        {
+          "center": [
+            -70,
+            42
+          ],
+          "paths": [
+            {
+              "reachable": true,
+              "length": 10
+            },
+            {
+              "reachable": true,
+              "length": 15.548023074035518
+            }
+          ]
+        }
+      ],
+      "checks": [
+        "all spawns valid",
+        "map corners framed",
+        "all glades and outer roads connected",
+        "four sheep-only shortcuts",
+        "native save/reload",
+        "portable export/import",
+        "floor regeneration",
+        "real movement/building beyond old bounds",
+        "Astra hunters",
+        "terrain minimap",
+        "Stop restoration",
+        "old map compatibility",
+        "actual contact capture",
+        "slow captured-wisp movement",
+        "cannot build as wisp",
+        "another living sheep revives"
+      ],
+      "errors": []
+    },
+    {
+      "mode": "phone",
+      "map": {
+        "sourceScene": "scenes/sheep-tag-vast-wildwood-v11-80.swyrl.json",
+        "bounds": 128,
+        "width": 256,
+        "depth": 256,
+        "groundSize": [
+          256,
+          256
+        ],
+        "textureSize": [
+          4096,
+          4096
+        ],
+        "actorCount": 196,
+        "regions": [
+          "Pinewatch",
+          "Moonflower",
+          "Amberglade",
+          "Willowmere"
+        ],
+        "layerCount": 9
+      },
+      "routes": [
+        {
+          "from": [
+            3.6355,
+            0,
+            8.7769
+          ],
+          "reachable": true,
+          "length": 9.500043887267047
+        },
+        {
+          "from": [
+            8.7769,
+            0,
+            3.6355
+          ],
+          "reachable": true,
+          "length": 9.500043887267047
+        },
+        {
+          "from": [
+            8.7769,
+            0,
+            -3.6355
+          ],
+          "reachable": true,
+          "length": 9.500043887267047
+        },
+        {
+          "from": [
+            3.6355,
+            0,
+            -8.7769
+          ],
+          "reachable": true,
+          "length": 9.500043887267047
+        },
+        {
+          "from": [
+            -3.6355,
+            0,
+            -8.7769
+          ],
+          "reachable": true,
+          "length": 9.500043887267047
+        },
+        {
+          "from": [
+            -8.7769,
+            0,
+            -3.6355
+          ],
+          "reachable": true,
+          "length": 9.500043887267047
+        },
+        {
+          "from": [
+            -8.7769,
+            0,
+            3.6355
+          ],
+          "reachable": true,
+          "length": 9.500043887267047
+        },
+        {
+          "from": [
+            -3.6355,
+            0,
+            8.7769
+          ],
+          "reachable": true,
+          "length": 9.500043887267047
+        },
+        {
+          "from": [
+            0,
+            0,
+            -124
+          ],
+          "reachable": true,
+          "length": 124
+        },
+        {
+          "from": [
+            0,
+            0,
+            124
+          ],
+          "reachable": true,
+          "length": 124
+        },
+        {
+          "from": [
+            -124,
+            0,
+            0
+          ],
+          "reachable": true,
+          "length": 124
+        },
+        {
+          "from": [
+            124,
+            0,
+            0
+          ],
+          "reachable": true,
+          "length": 124
+        }
+      ],
+      "passages": [
+        {
+          "center": [
+            -42,
+            -70
+          ],
+          "paths": [
+            {
+              "reachable": true,
+              "length": 10
+            },
+            {
+              "reachable": true,
+              "length": 15.518733752154189
+            }
+          ]
+        },
+        {
+          "center": [
+            70,
+            -42
+          ],
+          "paths": [
+            {
+              "reachable": true,
+              "length": 10
+            },
+            {
+              "reachable": true,
+              "length": 15.548023074035518
+            }
+          ]
+        },
+        {
+          "center": [
+            42,
+            70
+          ],
+          "paths": [
+            {
+              "reachable": true,
+              "length": 10
+            },
+            {
+              "reachable": true,
+              "length": 15.436879281571429
+            }
+          ]
+        },
+        {
+          "center": [
+            -70,
+            42
+          ],
+          "paths": [
+            {
+              "reachable": true,
+              "length": 10
+            },
+            {
+              "reachable": true,
+              "length": 15.548023074035518
+            }
+          ]
+        }
+      ],
+      "checks": [
+        "all spawns valid",
+        "map corners framed",
+        "all glades and outer roads connected",
+        "four sheep-only shortcuts",
+        "native save/reload",
+        "portable export/import",
+        "floor regeneration",
+        "real movement/building beyond old bounds",
+        "Astra hunters",
+        "terrain minimap",
+        "Stop restoration",
+        "old map compatibility",
+        "actual contact capture",
+        "slow captured-wisp movement",
+        "cannot build as wisp",
+        "another living sheep revives"
+      ],
+      "errors": []
+    }
+  ],
+  "physicalDeviceAcceptance": "owner after publication"
+}

@@ -1,0 +1,26 @@
+/* Scale with the real viewport, including Android's wide desktop-site viewport. */
+body.st-touch-controls{--st-build-size:21vw;--st-home-size:22vw;--st-ability-size:18vw;--st-ring-mid:52vw;--st-outer-x:calc(52vw - 12px);--st-outer-diag-x:calc(40.58vw - 12px);--st-outer-diag-y:27.58vw;--st-outer-end-x:calc(13vw - 12px);--st-outer-end-y:39vw;--st-inner-x:calc(23.55vw - 12px);--st-inner-y:15.07vw}
+body.st-touch-controls #stMoveStick{left:8vw;bottom:min(98vw,calc(100vh - 65vw - var(--st-touch-top,54px) - 100px));width:65vw;height:65vw}
+body.st-touch-controls #stMoveKnob{width:27vw;height:27vw}body.st-touch-controls #stMoveKnob:after{line-height:27vw;font-size:10vw}
+body.st-touch-controls #stMoveStick:after{font-size:2.5vw}
+body.st-touch-controls #sheepTagHUD .st-builds .st-skill-icon{width:11vw;height:11vw}body.st-touch-controls #sheepTagHUD #stBuildFarm .st-skill-icon{width:12vw;height:12vw}
+body.st-touch-controls #sheepTagHUD #stAbilityRing .st-skill-icon{width:9.5vw;height:9.5vw}
+body.st-touch-controls #sheepTagHUD .st-builds button[data-st-skill] b,body.st-touch-controls #stAbilityRing button b{font-size:2.4vw}
+body.st-touch-controls #sheepTagHUD .st-builds button[data-st-skill] small{font-size:2.2vw}
+body.st-touch-controls #sheepTagHUD #stTouchOptions{left:7vw;bottom:82vw;width:11vw;height:11vw;font-size:4vw}
+body.st-touch-controls #sheepTagHUD #stCancelBuild{left:7vw!important;bottom:69vw!important;min-height:11vw;font-size:2.7vw}
+body.st-touch-controls #sheepTagHUD #stPlacement,body.st-touch-controls #sheepTagHUD #stFeedback{left:5vw;right:5vw;bottom:160vw;font-size:2.8vw}
+@media(orientation:landscape){
+ body.st-touch-controls{--st-build-size:21vh;--st-home-size:22vh;--st-ability-size:18vh;--st-ring-mid:50vh;--st-outer-x:calc(13vw + 39vh - 12px);--st-outer-diag-x:calc(13vw + 27.58vh - 12px);--st-outer-diag-y:27.58vh;--st-outer-end-x:calc(13vw - 12px);--st-outer-end-y:39vh;--st-inner-x:calc(13vw + 10.55vh - 12px);--st-inner-y:15.07vh}
+ body.st-touch-controls #stMoveStick{left:max(10vw,102px);bottom:15vh;width:58vh;height:58vh}
+ body.st-touch-controls #stMoveKnob{width:24vh;height:24vh}body.st-touch-controls #stMoveKnob:after{line-height:24vh;font-size:9vh}body.st-touch-controls #stMoveStick:after{font-size:2.5vh}
+ body.st-touch-controls #sheepTagHUD .st-builds .st-skill-icon{width:11vh;height:11vh}body.st-touch-controls #sheepTagHUD #stBuildFarm .st-skill-icon{width:12vh;height:12vh}body.st-touch-controls #sheepTagHUD #stAbilityRing .st-skill-icon{width:9.5vh;height:9.5vh}
+ body.st-touch-controls #sheepTagHUD .st-builds button[data-st-skill] b,body.st-touch-controls #stAbilityRing button b{font-size:2.4vh}body.st-touch-controls #sheepTagHUD .st-builds button[data-st-skill] small{font-size:2.2vh}
+ body.st-touch-controls #sheepTagHUD #stTouchOptions{left:2vw;bottom:34vh;width:10vh;height:10vh;font-size:4vh}body.st-touch-controls #sheepTagHUD #stCancelBuild{left:2vw!important;bottom:15vh!important;min-height:10vh;font-size:2.5vh}
+ body.st-touch-controls #sheepTagHUD #stPlacement,body.st-touch-controls #sheepTagHUD #stFeedback{left:38vw;right:43vw;bottom:4vh;font-size:2.8vh}
+}
+
+body.st-touch-controls .st-skill-cost{font-size:2.3vw;min-width:4vw;padding:.5vw .8vw}
+@media(orientation:landscape){body.st-touch-controls .st-skill-cost{font-size:2.3vh;min-width:4vh;padding:.5vh .8vh}}
+@media(orientation:portrait) and (max-height:760px){body.st-touch-controls #stMoveStick{width:58vw;height:58vw;bottom:min(98vw,calc(100vh - 58vw - var(--st-touch-top,54px) - 100px))}}
+@media(orientation:portrait) and (max-height:660px){body.st-touch-controls #stMoveStick{width:52vw;height:52vw;bottom:min(98vw,calc(100vh - 52vw - var(--st-touch-top,54px) - 100px))}body.st-touch-controls #stMoveKnob{width:23vw;height:23vw}body.st-touch-controls #stMoveKnob:after{line-height:23vw;font-size:9vw}}

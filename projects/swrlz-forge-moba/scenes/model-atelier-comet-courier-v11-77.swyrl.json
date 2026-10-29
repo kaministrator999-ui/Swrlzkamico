@@ -1,0 +1,4743 @@
+{
+  "engine": "§wyrl§ Engine · Maker v11.59",
+  "version": 11.9,
+  "project": {
+    "name": "Astra · Comet Courier",
+    "canonicalId": "comet-courier",
+    "template": "comet-courier",
+    "kind": "model-atelier",
+    "environment": "spatial-workspace",
+    "environmentSettings": {
+      "background": "#11172c",
+      "fogNear": 80,
+      "fogFar": 140,
+      "exposure": 1.15,
+      "showTerrain": false,
+      "showScenery": false
+    },
+    "modelAtelier": {
+      "schema": "swyrl-model-atelier-v1",
+      "name": "Astra · Comet Courier",
+      "parts": [
+        {
+          "id": "model-seed",
+          "name": "Fox · ribcage",
+          "kind": "sphere",
+          "position": [
+            0,
+            1.35,
+            -0.14
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.49,
+            0.57,
+            0.78
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Model",
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "fur",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Fox · proud breast",
+          "kind": "sphere",
+          "position": [
+            0,
+            1.73,
+            0.34
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.4,
+            0.56,
+            0.41
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mvivwt18-1-4i4ag",
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "ivory",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Fox · cranial planes",
+          "kind": "sphere",
+          "position": [
+            0,
+            2.4,
+            0.48
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.46,
+            0.4,
+            0.4
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mvivwuvt-2-oqw2e",
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "fur",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Fox · nasal bridge",
+          "kind": "sphere",
+          "position": [
+            0,
+            2.33,
+            0.75
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.23,
+            0.18,
+            0.32
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mvivww1k-3-eck8p",
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "ivory",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Fox · muzzle lobe -1",
+          "kind": "sphere",
+          "position": [
+            -0.105,
+            2.27,
+            0.87
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.17,
+            0.12,
+            0.24
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mvivwx30-4-llop6",
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "ivory",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Fox · haunch -1",
+          "kind": "sphere",
+          "position": [
+            -0.35,
+            1.04,
+            -0.61
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.3,
+            0.44,
+            0.33
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mvivwy95-5-e96fc",
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "fur",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Fox · foreleg -1",
+          "kind": "loft",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mvivwzqx-6-nzu4z",
+          "path": [
+            [
+              -0.28,
+              1.58,
+              0.4
+            ],
+            [
+              -0.33,
+              1.06,
+              0.5
+            ],
+            [
+              -0.35,
+              0.53,
+              0.47
+            ],
+            [
+              -0.36,
+              0.25,
+              0.58
+            ]
+          ],
+          "radii": [
+            0.14,
+            0.12,
+            0.075,
+            0.09
+          ],
+          "meshDensity": {
+            "u": 48,
+            "v": 24
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "fur",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Fox · hock -1",
+          "kind": "loft",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mvivx1fu-7-xazlj",
+          "path": [
+            [
+              -0.36,
+              1.11,
+              -0.61
+            ],
+            [
+              -0.49,
+              0.75,
+              -0.43
+            ],
+            [
+              -0.44,
+              0.48,
+              -0.81
+            ],
+            [
+              -0.41,
+              0.2,
+              -0.65
+            ]
+          ],
+          "radii": [
+            0.18,
+            0.135,
+            0.08,
+            0.09
+          ],
+          "meshDensity": {
+            "u": 48,
+            "v": 24
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "fur",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Paw · front -1",
+          "kind": "sphere",
+          "position": [
+            -0.36,
+            0.16,
+            0.63
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.18,
+            0.14,
+            0.24
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mvivx3eo-8-bxxyc",
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "lapis",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Toe · front -1 -1",
+          "kind": "sphere",
+          "position": [
+            -0.44799999999999995,
+            0.12,
+            0.78
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.065,
+            0.075,
+            0.12
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mvivx61c-9-5x27u",
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "fur",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Claw · front -1 -1",
+          "kind": "sphere",
+          "position": [
+            -0.44799999999999995,
+            0.095,
+            0.874
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.022,
+            0.025,
+            0.047
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mvivx7qn-10-8xhzm",
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "brass",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Toe · front -1 0",
+          "kind": "sphere",
+          "position": [
+            -0.36,
+            0.12,
+            0.78
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.065,
+            0.075,
+            0.12
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mvivxaeh-11-i9u6s",
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "fur",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Claw · front -1 0",
+          "kind": "sphere",
+          "position": [
+            -0.36,
+            0.095,
+            0.874
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.022,
+            0.025,
+            0.047
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mvivxcby-12-lr0vv",
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "brass",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Toe · front -1 1",
+          "kind": "sphere",
+          "position": [
+            -0.272,
+            0.12,
+            0.78
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.065,
+            0.075,
+            0.12
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mvivxe3o-13-jewgx",
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "fur",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Claw · front -1 1",
+          "kind": "sphere",
+          "position": [
+            -0.272,
+            0.095,
+            0.874
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.022,
+            0.025,
+            0.047
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mvivxgg8-14-45iyb",
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "brass",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Paw · back -1",
+          "kind": "sphere",
+          "position": [
+            -0.41,
+            0.16,
+            -0.6
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.18,
+            0.14,
+            0.24
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mvivxich-15-o8eia",
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "lapis",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Toe · back -1 -1",
+          "kind": "sphere",
+          "position": [
+            -0.498,
+            0.12,
+            -0.44999999999999996
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.065,
+            0.075,
+            0.12
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mvivxkgk-16-ce0sc",
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "fur",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Claw · back -1 -1",
+          "kind": "sphere",
+          "position": [
+            -0.498,
+            0.095,
+            -0.356
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.022,
+            0.025,
+            0.047
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mvivxmse-17-we59b",
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "brass",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Toe · back -1 0",
+          "kind": "sphere",
+          "position": [
+            -0.41,
+            0.12,
+            -0.44999999999999996
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.065,
+            0.075,
+            0.12
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mvivxozm-18-b68l6",
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "fur",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Claw · back -1 0",
+          "kind": "sphere",
+          "position": [
+            -0.41,
+            0.095,
+            -0.356
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.022,
+            0.025,
+            0.047
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mvivxr7q-19-bzgri",
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "brass",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Toe · back -1 1",
+          "kind": "sphere",
+          "position": [
+            -0.32199999999999995,
+            0.12,
+            -0.44999999999999996
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.065,
+            0.075,
+            0.12
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mvivxtp3-20-kogwh",
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "fur",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Claw · back -1 1",
+          "kind": "sphere",
+          "position": [
+            -0.32199999999999995,
+            0.095,
+            -0.356
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.022,
+            0.025,
+            0.047
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mvivxwe3-21-xp152",
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "brass",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Ear · outer -1",
+          "kind": "loft",
+          "position": [
+            -0.29,
+            2.65,
+            0.36
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            0.55
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mvivxzcu-22-2rfxl",
+          "path": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              -0.11,
+              0.37,
+              -0.02
+            ],
+            [
+              -0.16,
+              0.65,
+              -0.08
+            ]
+          ],
+          "radii": [
+            0.205,
+            0.135,
+            0.002
+          ],
+          "meshDensity": {
+            "u": 48,
+            "v": 24
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "fur",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Ear · velvet -1",
+          "kind": "loft",
+          "position": [
+            -0.29,
+            2.65,
+            0.36
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            0.55
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mvivy235-23-7uoz1",
+          "path": [
+            [
+              0,
+              0.035,
+              0.12
+            ],
+            [
+              -0.1,
+              0.36,
+              0.08
+            ],
+            [
+              -0.15,
+              0.57,
+              -0.015
+            ]
+          ],
+          "radii": [
+            0.145,
+            0.087,
+            0.0015
+          ],
+          "meshDensity": {
+            "u": 48,
+            "v": 24
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "cloth",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Ruff · cheek -1 0",
+          "kind": "loft",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mvivy5sv-24-f9oss",
+          "path": [
+            [
+              -0.26,
+              2.35,
+              0.43
+            ],
+            [
+              -0.43,
+              2.29,
+              0.47
+            ],
+            [
+              -0.56,
+              2.16,
+              0.41
+            ]
+          ],
+          "radii": [
+            0.13,
+            0.12,
+            0.0015
+          ],
+          "meshDensity": {
+            "u": 48,
+            "v": 24
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "ivory",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Ruff · cheek -1 1",
+          "kind": "loft",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mvivy8po-25-y3yzo",
+          "path": [
+            [
+              -0.26,
+              2.25,
+              0.43
+            ],
+            [
+              -0.47,
+              2.19,
+              0.47
+            ],
+            [
+              -0.5850000000000001,
+              2.04,
+              0.41
+            ]
+          ],
+          "radii": [
+            0.116,
+            0.102,
+            0.0015
+          ],
+          "meshDensity": {
+            "u": 48,
+            "v": 24
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "ivory",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Ruff · cheek -1 2",
+          "kind": "loft",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mvivycer-26-lqqo6",
+          "path": [
+            [
+              -0.26,
+              2.15,
+              0.43
+            ],
+            [
+              -0.51,
+              2.09,
+              0.47
+            ],
+            [
+              -0.6100000000000001,
+              1.9200000000000002,
+              0.41
+            ]
+          ],
+          "radii": [
+            0.10200000000000001,
+            0.08399999999999999,
+            0.0015
+          ],
+          "meshDensity": {
+            "u": 48,
+            "v": 24
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "ivory",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Eye · dark almond -1",
+          "kind": "sphere",
+          "position": [
+            -0.245,
+            2.48,
+            0.785
+          ],
+          "rotation": [
+            0,
+            -0.22,
+            0.17
+          ],
+          "scale": [
+            0.145,
+            0.09,
+            0.045
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mvivyflp-27-7b9y1",
+          "hdFinish": {
+            "style": "eye",
+            "relief": 0.7
+          },
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "lapis",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Eye · amber iris -1",
+          "kind": "sphere",
+          "position": [
+            -0.25,
+            2.48,
+            0.824
+          ],
+          "rotation": [
+            0,
+            -0.16,
+            0.1
+          ],
+          "scale": [
+            0.066,
+            0.08,
+            0.02
+          ],
+          "color": "#ffffff",
+          "material": "gloss",
+          "group": "Custom",
+          "id": "atelier-local-mvivyihx-28-o6kmw",
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "amber",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Eye · vertical pupil -1",
+          "kind": "sphere",
+          "position": [
+            -0.248,
+            2.48,
+            0.845
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.018,
+            0.055,
+            0.01
+          ],
+          "color": "#0b152b",
+          "material": "gloss",
+          "group": "Custom",
+          "id": "atelier-local-mvivyllf-29-efj58",
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          }
+        },
+        {
+          "name": "Eye · catchlight -1",
+          "kind": "sphere",
+          "position": [
+            -0.236,
+            2.507,
+            0.858
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.012,
+            0.015,
+            0.008
+          ],
+          "color": "#fff9de",
+          "material": "emissive",
+          "group": "Custom",
+          "id": "atelier-local-mvivynjm-30-y3jlb",
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          }
+        },
+        {
+          "name": "Face · expressive brow -1",
+          "kind": "loft",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mvivypgm-31-xpyxg",
+          "path": [
+            [
+              -0.14,
+              2.61,
+              0.774
+            ],
+            [
+              -0.26,
+              2.64,
+              0.77
+            ],
+            [
+              -0.36,
+              2.6,
+              0.72
+            ]
+          ],
+          "radii": [
+            0.013,
+            0.026,
+            0.004
+          ],
+          "meshDensity": {
+            "u": 48,
+            "v": 24
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "ivory",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Face · smile corner -1",
+          "kind": "loft",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "color": "#182b3c",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mvivysec-32-e9f1m",
+          "path": [
+            [
+              0,
+              2.215,
+              1.02
+            ],
+            [
+              -0.12,
+              2.2,
+              1.01
+            ],
+            [
+              -0.23,
+              2.24,
+              0.96
+            ]
+          ],
+          "radii": [
+            0.004,
+            0.007,
+            0.002
+          ],
+          "meshDensity": {
+            "u": 48,
+            "v": 24
+          }
+        },
+        {
+          "name": "Fox · muzzle lobe 1",
+          "kind": "sphere",
+          "position": [
+            0.105,
+            2.27,
+            0.87
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.17,
+            0.12,
+            0.24
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mvivyuy9-33-hneqm",
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "ivory",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Fox · haunch 1",
+          "kind": "sphere",
+          "position": [
+            0.35,
+            1.04,
+            -0.61
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.3,
+            0.44,
+            0.33
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mvivyxjl-34-qthi4",
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "fur",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Fox · foreleg 1",
+          "kind": "loft",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mvivz04t-35-2pqwc",
+          "path": [
+            [
+              0.28,
+              1.58,
+              0.4
+            ],
+            [
+              0.33,
+              1.06,
+              0.5
+            ],
+            [
+              0.35,
+              0.53,
+              0.47
+            ],
+            [
+              0.36,
+              0.25,
+              0.58
+            ]
+          ],
+          "radii": [
+            0.14,
+            0.12,
+            0.075,
+            0.09
+          ],
+          "meshDensity": {
+            "u": 48,
+            "v": 24
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "fur",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Fox · hock 1",
+          "kind": "loft",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mvivz39c-36-8ky16",
+          "path": [
+            [
+              0.36,
+              1.11,
+              -0.61
+            ],
+            [
+              0.49,
+              0.75,
+              -0.43
+            ],
+            [
+              0.44,
+              0.48,
+              -0.81
+            ],
+            [
+              0.41,
+              0.2,
+              -0.65
+            ]
+          ],
+          "radii": [
+            0.18,
+            0.135,
+            0.08,
+            0.09
+          ],
+          "meshDensity": {
+            "u": 48,
+            "v": 24
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "fur",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Paw · front 1",
+          "kind": "sphere",
+          "position": [
+            0.36,
+            0.16,
+            0.63
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.18,
+            0.14,
+            0.24
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mvivz6ht-37-luncq",
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "lapis",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Toe · front 1 -1",
+          "kind": "sphere",
+          "position": [
+            0.272,
+            0.12,
+            0.78
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.065,
+            0.075,
+            0.12
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mvivz9m4-38-27x2k",
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "fur",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Claw · front 1 -1",
+          "kind": "sphere",
+          "position": [
+            0.272,
+            0.095,
+            0.874
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.022,
+            0.025,
+            0.047
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mvivzd29-39-vdexn",
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "brass",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Toe · front 1 0",
+          "kind": "sphere",
+          "position": [
+            0.36,
+            0.12,
+            0.78
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.065,
+            0.075,
+            0.12
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mvivzgel-40-6bj8z",
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "fur",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Claw · front 1 0",
+          "kind": "sphere",
+          "position": [
+            0.36,
+            0.095,
+            0.874
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.022,
+            0.025,
+            0.047
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mvivzj9o-41-u0cau",
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "brass",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Toe · front 1 1",
+          "kind": "sphere",
+          "position": [
+            0.44799999999999995,
+            0.12,
+            0.78
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.065,
+            0.075,
+            0.12
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mvivzm8e-42-td1o8",
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "fur",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Claw · front 1 1",
+          "kind": "sphere",
+          "position": [
+            0.44799999999999995,
+            0.095,
+            0.874
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.022,
+            0.025,
+            0.047
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mvivzp64-43-wjzmn",
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "brass",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Paw · back 1",
+          "kind": "sphere",
+          "position": [
+            0.41,
+            0.16,
+            -0.6
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.18,
+            0.14,
+            0.24
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mvivzs3l-44-k774h",
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "lapis",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Toe · back 1 -1",
+          "kind": "sphere",
+          "position": [
+            0.32199999999999995,
+            0.12,
+            -0.44999999999999996
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.065,
+            0.075,
+            0.12
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mvivzv3t-45-6wiwz",
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "fur",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Claw · back 1 -1",
+          "kind": "sphere",
+          "position": [
+            0.32199999999999995,
+            0.095,
+            -0.356
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.022,
+            0.025,
+            0.047
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mvivzy7l-46-ntjbl",
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "brass",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Toe · back 1 0",
+          "kind": "sphere",
+          "position": [
+            0.41,
+            0.12,
+            -0.44999999999999996
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.065,
+            0.075,
+            0.12
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mviw01a6-47-hh839",
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "fur",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Claw · back 1 0",
+          "kind": "sphere",
+          "position": [
+            0.41,
+            0.095,
+            -0.356
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.022,
+            0.025,
+            0.047
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mviw04ft-48-eu61z",
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "brass",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Toe · back 1 1",
+          "kind": "sphere",
+          "position": [
+            0.498,
+            0.12,
+            -0.44999999999999996
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.065,
+            0.075,
+            0.12
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mviw07lh-49-6zz4k",
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "fur",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Claw · back 1 1",
+          "kind": "sphere",
+          "position": [
+            0.498,
+            0.095,
+            -0.356
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.022,
+            0.025,
+            0.047
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mviw0asa-50-nkj19",
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "brass",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Ear · outer 1",
+          "kind": "loft",
+          "position": [
+            0.29,
+            2.65,
+            0.36
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            0.55
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mviw0e0h-51-agmou",
+          "path": [
+            [
+              0,
+              0,
+              0
+            ],
+            [
+              0.11,
+              0.37,
+              -0.02
+            ],
+            [
+              0.16,
+              0.65,
+              -0.08
+            ]
+          ],
+          "radii": [
+            0.205,
+            0.135,
+            0.002
+          ],
+          "meshDensity": {
+            "u": 48,
+            "v": 24
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "fur",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Ear · velvet 1",
+          "kind": "loft",
+          "position": [
+            0.29,
+            2.65,
+            0.36
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            0.55
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mviw0hsc-52-pmba0",
+          "path": [
+            [
+              0,
+              0.035,
+              0.12
+            ],
+            [
+              0.1,
+              0.36,
+              0.08
+            ],
+            [
+              0.15,
+              0.57,
+              -0.015
+            ]
+          ],
+          "radii": [
+            0.145,
+            0.087,
+            0.0015
+          ],
+          "meshDensity": {
+            "u": 48,
+            "v": 24
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "cloth",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Ruff · cheek 1 0",
+          "kind": "loft",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mviw0llb-53-7kmyv",
+          "path": [
+            [
+              0.26,
+              2.35,
+              0.43
+            ],
+            [
+              0.43,
+              2.29,
+              0.47
+            ],
+            [
+              0.56,
+              2.16,
+              0.41
+            ]
+          ],
+          "radii": [
+            0.13,
+            0.12,
+            0.0015
+          ],
+          "meshDensity": {
+            "u": 48,
+            "v": 24
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "ivory",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Ruff · cheek 1 1",
+          "kind": "loft",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mviw0pwp-54-gmjrp",
+          "path": [
+            [
+              0.26,
+              2.25,
+              0.43
+            ],
+            [
+              0.47,
+              2.19,
+              0.47
+            ],
+            [
+              0.5850000000000001,
+              2.04,
+              0.41
+            ]
+          ],
+          "radii": [
+            0.116,
+            0.102,
+            0.0015
+          ],
+          "meshDensity": {
+            "u": 48,
+            "v": 24
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "ivory",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Ruff · cheek 1 2",
+          "kind": "loft",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mviw0un6-55-dijor",
+          "path": [
+            [
+              0.26,
+              2.15,
+              0.43
+            ],
+            [
+              0.51,
+              2.09,
+              0.47
+            ],
+            [
+              0.6100000000000001,
+              1.9200000000000002,
+              0.41
+            ]
+          ],
+          "radii": [
+            0.10200000000000001,
+            0.08399999999999999,
+            0.0015
+          ],
+          "meshDensity": {
+            "u": 48,
+            "v": 24
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "ivory",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Eye · dark almond 1",
+          "kind": "sphere",
+          "position": [
+            0.245,
+            2.48,
+            0.785
+          ],
+          "rotation": [
+            0,
+            0.22,
+            -0.17
+          ],
+          "scale": [
+            0.145,
+            0.09,
+            0.045
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mviw0zdy-56-x3oxw",
+          "hdFinish": {
+            "style": "eye",
+            "relief": 0.7
+          },
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "lapis",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Eye · amber iris 1",
+          "kind": "sphere",
+          "position": [
+            0.25,
+            2.48,
+            0.824
+          ],
+          "rotation": [
+            0,
+            0.16,
+            -0.1
+          ],
+          "scale": [
+            0.066,
+            0.08,
+            0.02
+          ],
+          "color": "#ffffff",
+          "material": "gloss",
+          "group": "Custom",
+          "id": "atelier-local-mviw13h6-57-wgah4",
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "amber",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Eye · vertical pupil 1",
+          "kind": "sphere",
+          "position": [
+            0.248,
+            2.48,
+            0.845
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.018,
+            0.055,
+            0.01
+          ],
+          "color": "#0b152b",
+          "material": "gloss",
+          "group": "Custom",
+          "id": "atelier-local-mviw16vx-58-cftee",
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          }
+        },
+        {
+          "name": "Eye · catchlight 1",
+          "kind": "sphere",
+          "position": [
+            0.236,
+            2.507,
+            0.858
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.012,
+            0.015,
+            0.008
+          ],
+          "color": "#fff9de",
+          "material": "emissive",
+          "group": "Custom",
+          "id": "atelier-local-mviw1a0z-59-u4l5o",
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          }
+        },
+        {
+          "name": "Face · expressive brow 1",
+          "kind": "loft",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mviw1d72-60-7lzq1",
+          "path": [
+            [
+              0.14,
+              2.61,
+              0.774
+            ],
+            [
+              0.26,
+              2.64,
+              0.77
+            ],
+            [
+              0.36,
+              2.6,
+              0.72
+            ]
+          ],
+          "radii": [
+            0.013,
+            0.026,
+            0.004
+          ],
+          "meshDensity": {
+            "u": 48,
+            "v": 24
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "ivory",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Face · smile corner 1",
+          "kind": "loft",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "color": "#182b3c",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mviw1hj1-61-s9fqv",
+          "path": [
+            [
+              0,
+              2.215,
+              1.02
+            ],
+            [
+              0.12,
+              2.2,
+              1.01
+            ],
+            [
+              0.23,
+              2.24,
+              0.96
+            ]
+          ],
+          "radii": [
+            0.004,
+            0.007,
+            0.002
+          ],
+          "meshDensity": {
+            "u": 48,
+            "v": 24
+          }
+        },
+        {
+          "name": "Nose · graphite leather",
+          "kind": "sphere",
+          "position": [
+            0,
+            2.31,
+            1.081
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.105,
+            0.073,
+            0.075
+          ],
+          "color": "#102335",
+          "material": "gloss",
+          "group": "Custom",
+          "id": "atelier-local-mviw1lmo-62-a3760",
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          }
+        },
+        {
+          "name": "Nose · philtrum",
+          "kind": "loft",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "color": "#182b3c",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mviw1qi8-63-5nldx",
+          "path": [
+            [
+              0,
+              2.28,
+              1.08
+            ],
+            [
+              0,
+              2.22,
+              1.04
+            ]
+          ],
+          "radii": [
+            0.006,
+            0.004
+          ],
+          "meshDensity": {
+            "u": 48,
+            "v": 24
+          }
+        },
+        {
+          "name": "Chest · fur blade 0",
+          "kind": "loft",
+          "position": [
+            0,
+            0,
+            0.52
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            0.18
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mviw1vk1-64-pm45k",
+          "path": [
+            [
+              -0.18,
+              1.95,
+              0.59
+            ],
+            [
+              -0.2,
+              1.65,
+              0.7
+            ],
+            [
+              -0.14,
+              1.34,
+              0.55
+            ]
+          ],
+          "radii": [
+            0.09,
+            0.095,
+            0.002
+          ],
+          "meshDensity": {
+            "u": 48,
+            "v": 24
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "ivory",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Chest · fur blade 1",
+          "kind": "loft",
+          "position": [
+            0,
+            0,
+            0.52
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            0.18
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mviw1zqs-65-izmxq",
+          "path": [
+            [
+              -0.09,
+              1.95,
+              0.59
+            ],
+            [
+              -0.1,
+              1.65,
+              0.7
+            ],
+            [
+              -0.07,
+              1.34,
+              0.55
+            ]
+          ],
+          "radii": [
+            0.09,
+            0.095,
+            0.002
+          ],
+          "meshDensity": {
+            "u": 48,
+            "v": 24
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "ivory",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Chest · fur blade 2",
+          "kind": "loft",
+          "position": [
+            0,
+            0,
+            0.52
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            0.18
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mviw2433-66-p0klt",
+          "path": [
+            [
+              0,
+              1.95,
+              0.59
+            ],
+            [
+              0,
+              1.65,
+              0.7
+            ],
+            [
+              0,
+              1.34,
+              0.55
+            ]
+          ],
+          "radii": [
+            0.09,
+            0.095,
+            0.002
+          ],
+          "meshDensity": {
+            "u": 48,
+            "v": 24
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "ivory",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Chest · fur blade 3",
+          "kind": "loft",
+          "position": [
+            0,
+            0,
+            0.52
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            0.18
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mviw28ju-67-43rg3",
+          "path": [
+            [
+              0.09,
+              1.95,
+              0.59
+            ],
+            [
+              0.1,
+              1.65,
+              0.7
+            ],
+            [
+              0.07,
+              1.34,
+              0.55
+            ]
+          ],
+          "radii": [
+            0.09,
+            0.095,
+            0.002
+          ],
+          "meshDensity": {
+            "u": 48,
+            "v": 24
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "ivory",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Chest · fur blade 4",
+          "kind": "loft",
+          "position": [
+            0,
+            0,
+            0.52
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            0.18
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mviw2e02-68-4p4yx",
+          "path": [
+            [
+              0.18,
+              1.95,
+              0.59
+            ],
+            [
+              0.2,
+              1.65,
+              0.7
+            ],
+            [
+              0.14,
+              1.34,
+              0.55
+            ]
+          ],
+          "radii": [
+            0.09,
+            0.095,
+            0.002
+          ],
+          "meshDensity": {
+            "u": 48,
+            "v": 24
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "ivory",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Comet · flowing tail",
+          "kind": "loft",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mviw2jv8-69-m487c",
+          "path": [
+            [
+              0,
+              1.25,
+              -0.83
+            ],
+            [
+              0.67,
+              1.12,
+              -1.02
+            ],
+            [
+              1.24,
+              1.47,
+              -0.89
+            ],
+            [
+              1.62,
+              2.09,
+              -0.63
+            ],
+            [
+              1.58,
+              2.62,
+              -0.43
+            ],
+            [
+              1.25,
+              2.98,
+              -0.25
+            ],
+            [
+              0.89,
+              3.13,
+              -0.1
+            ]
+          ],
+          "radii": [
+            0.15,
+            0.29,
+            0.34,
+            0.31,
+            0.25,
+            0.15,
+            0.002
+          ],
+          "meshDensity": {
+            "u": 48,
+            "v": 24
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "fur",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Comet · ivory inner sweep",
+          "kind": "loft",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mviw2oqq-70-cbnyr",
+          "path": [
+            [
+              0.53,
+              1.15,
+              -0.78
+            ],
+            [
+              1.09,
+              1.45,
+              -0.65
+            ],
+            [
+              1.42,
+              2.03,
+              -0.42
+            ],
+            [
+              1.43,
+              2.59,
+              -0.21
+            ],
+            [
+              1.14,
+              2.98,
+              -0.03
+            ],
+            [
+              0.88,
+              3.13,
+              0
+            ]
+          ],
+          "radii": [
+            0.12,
+            0.2,
+            0.21,
+            0.17,
+            0.1,
+            0.002
+          ],
+          "meshDensity": {
+            "u": 48,
+            "v": 24
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "ivory",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Comet · luminous leading edge",
+          "kind": "loft",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "color": "#ffffff",
+          "material": "emissive",
+          "group": "Custom",
+          "id": "atelier-local-mviw2tqe-71-umws6",
+          "path": [
+            [
+              1.12,
+              1.55,
+              -0.52
+            ],
+            [
+              1.51,
+              2.11,
+              -0.35
+            ],
+            [
+              1.51,
+              2.62,
+              -0.2
+            ],
+            [
+              1.23,
+              3.02,
+              -0.04
+            ],
+            [
+              0.88,
+              3.14,
+              0.035
+            ]
+          ],
+          "radii": [
+            0.045,
+            0.065,
+            0.07,
+            0.045,
+            0.001
+          ],
+          "meshDensity": {
+            "u": 48,
+            "v": 24
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "comet",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Comet · swept fur lock 0",
+          "kind": "loft",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mviw2ze6-72-ir752",
+          "path": [
+            [
+              0.98,
+              1.45,
+              -0.64
+            ],
+            [
+              1.47,
+              1.75,
+              -0.44
+            ],
+            [
+              1.67,
+              2.11,
+              -0.32
+            ]
+          ],
+          "radii": [
+            0.12,
+            0.14,
+            0.0015
+          ],
+          "meshDensity": {
+            "u": 48,
+            "v": 24
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "fur",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Comet · swept fur lock 1",
+          "kind": "loft",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mviw34bw-73-swer0",
+          "path": [
+            [
+              1.05,
+              1.64,
+              -0.64
+            ],
+            [
+              1.4949999999999999,
+              1.95,
+              -0.44
+            ],
+            [
+              1.63,
+              2.3,
+              -0.32
+            ]
+          ],
+          "radii": [
+            0.12,
+            0.14,
+            0.0015
+          ],
+          "meshDensity": {
+            "u": 48,
+            "v": 24
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "comet",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Comet · swept fur lock 2",
+          "kind": "loft",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mviw39f2-74-pc7aq",
+          "path": [
+            [
+              1.12,
+              1.83,
+              -0.64
+            ],
+            [
+              1.52,
+              2.15,
+              -0.44
+            ],
+            [
+              1.5899999999999999,
+              2.4899999999999998,
+              -0.32
+            ]
+          ],
+          "radii": [
+            0.12,
+            0.14,
+            0.0015
+          ],
+          "meshDensity": {
+            "u": 48,
+            "v": 24
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "fur",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Comet · swept fur lock 3",
+          "kind": "loft",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mviw3ef2-75-7tzhu",
+          "path": [
+            [
+              1.19,
+              2.02,
+              -0.64
+            ],
+            [
+              1.545,
+              2.35,
+              -0.44
+            ],
+            [
+              1.5499999999999998,
+              2.6799999999999997,
+              -0.32
+            ]
+          ],
+          "radii": [
+            0.12,
+            0.14,
+            0.0015
+          ],
+          "meshDensity": {
+            "u": 48,
+            "v": 24
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "comet",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Comet · swept fur lock 4",
+          "kind": "loft",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mviw3jlm-76-8noi7",
+          "path": [
+            [
+              1.26,
+              2.21,
+              -0.64
+            ],
+            [
+              1.57,
+              2.55,
+              -0.44
+            ],
+            [
+              1.51,
+              2.87,
+              -0.32
+            ]
+          ],
+          "radii": [
+            0.12,
+            0.14,
+            0.0015
+          ],
+          "meshDensity": {
+            "u": 48,
+            "v": 24
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "fur",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Cape · shoulder fold -1",
+          "kind": "loft",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            0.76
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mviw3on2-77-sxuv7",
+          "path": [
+            [
+              -0.22,
+              1.99,
+              0.16
+            ],
+            [
+              -0.46,
+              1.82,
+              -0.08
+            ],
+            [
+              -0.57,
+              1.42,
+              -0.44
+            ],
+            [
+              -0.46,
+              1.09,
+              -0.72
+            ]
+          ],
+          "radii": [
+            0.17,
+            0.25,
+            0.27,
+            0.04
+          ],
+          "hdFinish": {
+            "style": "cloth",
+            "relief": 0.7
+          },
+          "meshDensity": {
+            "u": 48,
+            "v": 24
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "cloth",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Cape · gilded hem -1",
+          "kind": "loft",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mviw3usn-78-w2tqc",
+          "path": [
+            [
+              -0.3,
+              1.94,
+              0.2
+            ],
+            [
+              -0.57,
+              1.72,
+              -0.02
+            ],
+            [
+              -0.63,
+              1.4,
+              -0.31
+            ],
+            [
+              -0.48,
+              1.1,
+              -0.53
+            ]
+          ],
+          "radii": [
+            0.016,
+            0.016,
+            0.014,
+            0.008
+          ],
+          "meshDensity": {
+            "u": 48,
+            "v": 24
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "brass",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Harness · collar -1",
+          "kind": "loft",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mviw402j-79-mdvur",
+          "path": [
+            [
+              0,
+              1.92,
+              0.67
+            ],
+            [
+              -0.38,
+              1.95,
+              0.36
+            ],
+            [
+              -0.4,
+              1.98,
+              0.02
+            ],
+            [
+              0,
+              2.03,
+              -0.08
+            ]
+          ],
+          "radii": [
+            0.045,
+            0.045,
+            0.045,
+            0.045
+          ],
+          "meshDensity": {
+            "u": 48,
+            "v": 24
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "leather",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Cape · shoulder fold 1",
+          "kind": "loft",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            0.76
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mviw467u-80-5akr1",
+          "path": [
+            [
+              0.22,
+              1.99,
+              0.16
+            ],
+            [
+              0.46,
+              1.82,
+              -0.08
+            ],
+            [
+              0.57,
+              1.42,
+              -0.44
+            ],
+            [
+              0.46,
+              1.09,
+              -0.72
+            ]
+          ],
+          "radii": [
+            0.17,
+            0.25,
+            0.27,
+            0.04
+          ],
+          "hdFinish": {
+            "style": "cloth",
+            "relief": 0.7
+          },
+          "meshDensity": {
+            "u": 48,
+            "v": 24
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "cloth",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Cape · gilded hem 1",
+          "kind": "loft",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mviw4c5q-81-sd73p",
+          "path": [
+            [
+              0.3,
+              1.94,
+              0.2
+            ],
+            [
+              0.57,
+              1.72,
+              -0.02
+            ],
+            [
+              0.63,
+              1.4,
+              -0.31
+            ],
+            [
+              0.48,
+              1.1,
+              -0.53
+            ]
+          ],
+          "radii": [
+            0.016,
+            0.016,
+            0.014,
+            0.008
+          ],
+          "meshDensity": {
+            "u": 48,
+            "v": 24
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "brass",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Harness · collar 1",
+          "kind": "loft",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mviw4hkg-82-rn6ix",
+          "path": [
+            [
+              0,
+              1.92,
+              0.67
+            ],
+            [
+              0.38,
+              1.95,
+              0.36
+            ],
+            [
+              0.4,
+              1.98,
+              0.02
+            ],
+            [
+              0,
+              2.03,
+              -0.08
+            ]
+          ],
+          "radii": [
+            0.045,
+            0.045,
+            0.045,
+            0.045
+          ],
+          "meshDensity": {
+            "u": 48,
+            "v": 24
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "leather",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Harness · diagonal strap",
+          "kind": "loft",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            0.95
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mviw4n0y-83-tvska",
+          "path": [
+            [
+              -0.38,
+              1.94,
+              0.41
+            ],
+            [
+              0,
+              1.69,
+              0.75
+            ],
+            [
+              0.48,
+              1.22,
+              0.35
+            ]
+          ],
+          "radii": [
+            0.055,
+            0.055,
+            0.055
+          ],
+          "meshDensity": {
+            "u": 48,
+            "v": 24
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "leather",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Satchel · rounded body",
+          "kind": "box",
+          "position": [
+            -0.56,
+            1.14,
+            -0.18
+          ],
+          "rotation": [
+            0.08,
+            0,
+            -0.1
+          ],
+          "scale": [
+            0.28,
+            0.48,
+            0.48
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mviw4sns-84-k2vh8",
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "leather",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Satchel · teal flap",
+          "kind": "box",
+          "position": [
+            -0.7,
+            1.27,
+            -0.18
+          ],
+          "rotation": [
+            0.08,
+            0,
+            -0.1
+          ],
+          "scale": [
+            0.025,
+            0.25,
+            0.5
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mviw4wu1-85-mc9hs",
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "cloth",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Satchel · gold clasp",
+          "kind": "box",
+          "position": [
+            -0.725,
+            1.2,
+            0.04
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.035,
+            0.09,
+            0.075
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mviw50wy-86-7jd9z",
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "brass",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Satchel · stitched edge -0.37",
+          "kind": "loft",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mviw54w8-87-io9f5",
+          "path": [
+            [
+              -0.713,
+              1.47,
+              -0.37
+            ],
+            [
+              -0.738,
+              1.23,
+              -0.37
+            ],
+            [
+              -0.713,
+              0.96,
+              -0.37
+            ]
+          ],
+          "radii": [
+            0.009,
+            0.009,
+            0.009
+          ],
+          "meshDensity": {
+            "u": 48,
+            "v": 24
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "brass",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Satchel · stitched edge 0.02",
+          "kind": "loft",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mviw5ahu-88-xu7jk",
+          "path": [
+            [
+              -0.713,
+              1.47,
+              0.02
+            ],
+            [
+              -0.738,
+              1.23,
+              0.02
+            ],
+            [
+              -0.713,
+              0.96,
+              0.02
+            ]
+          ],
+          "radii": [
+            0.009,
+            0.009,
+            0.009
+          ],
+          "meshDensity": {
+            "u": 48,
+            "v": 24
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "brass",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Badge · compass disc",
+          "kind": "sphere",
+          "position": [
+            0,
+            1.91,
+            0.729
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.105,
+            0.105,
+            0.022
+          ],
+          "color": "#ffffff",
+          "material": "metal",
+          "group": "Custom",
+          "id": "atelier-local-mviw5g7t-89-539uk",
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "brass",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Badge · compass needle -1",
+          "kind": "loft",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "color": "#ffffff",
+          "material": "emissive",
+          "group": "Custom",
+          "id": "atelier-local-mviw5kxy-90-0tfwp",
+          "path": [
+            [
+              0,
+              1.91,
+              0.755
+            ],
+            [
+              -0.065,
+              1.845,
+              0.755
+            ]
+          ],
+          "radii": [
+            0.018,
+            0.0015
+          ],
+          "meshDensity": {
+            "u": 48,
+            "v": 24
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "comet",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Badge · compass needle 1",
+          "kind": "loft",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "color": "#ffffff",
+          "material": "emissive",
+          "group": "Custom",
+          "id": "atelier-local-mviw5qg9-91-un75q",
+          "path": [
+            [
+              0,
+              1.91,
+              0.755
+            ],
+            [
+              0.065,
+              1.9749999999999999,
+              0.755
+            ]
+          ],
+          "radii": [
+            0.018,
+            0.0015
+          ],
+          "meshDensity": {
+            "u": 48,
+            "v": 24
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "comet",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Scroll · parchment roll",
+          "kind": "loft",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mviw5w3d-92-jxngs",
+          "path": [
+            [
+              -0.6,
+              1.52,
+              -0.47
+            ],
+            [
+              -0.6,
+              1.52,
+              -0.02
+            ]
+          ],
+          "radii": [
+            0.085,
+            0.085
+          ],
+          "meshDensity": {
+            "u": 48,
+            "v": 24
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "ivory",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Scroll · endcap -0.43",
+          "kind": "sphere",
+          "position": [
+            -0.6,
+            1.52,
+            -0.43
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.105,
+            0.105,
+            0.025
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mviw62cw-93-vaotw",
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "brass",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Scroll · endcap -0.06",
+          "kind": "sphere",
+          "position": [
+            -0.6,
+            1.52,
+            -0.06
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.105,
+            0.105,
+            0.025
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mviw67lo-94-ufq0w",
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "brass",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Lantern · hanging loop",
+          "kind": "loft",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mviw6ci9-95-h8u07",
+          "path": [
+            [
+              0.42,
+              1.45,
+              0.32
+            ],
+            [
+              0.65,
+              1.4,
+              0.35
+            ],
+            [
+              0.72,
+              1.22,
+              0.36
+            ]
+          ],
+          "radii": [
+            0.012,
+            0.012,
+            0.012
+          ],
+          "meshDensity": {
+            "u": 48,
+            "v": 24
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "brass",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Lantern · blue glass",
+          "kind": "sphere",
+          "position": [
+            0.72,
+            1.06,
+            0.36
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.095,
+            0.17,
+            0.095
+          ],
+          "color": "#ffffff",
+          "material": "emissive",
+          "group": "Custom",
+          "id": "atelier-local-mviw6ijv-96-g28nt",
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "comet",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Lantern · brass rim 0.88",
+          "kind": "sphere",
+          "position": [
+            0.72,
+            0.88,
+            0.36
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.12,
+            0.027,
+            0.12
+          ],
+          "color": "#ffffff",
+          "material": "metal",
+          "group": "Custom",
+          "id": "atelier-local-mviw6nhk-97-g0l3q",
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "brass",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Lantern · brass rim 1.24",
+          "kind": "sphere",
+          "position": [
+            0.72,
+            1.24,
+            0.36
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.12,
+            0.027,
+            0.12
+          ],
+          "color": "#ffffff",
+          "material": "metal",
+          "group": "Custom",
+          "id": "atelier-local-mviw6shg-98-st3da",
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "brass",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Lantern · frame -1",
+          "kind": "loft",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mviw6xfp-99-suuav",
+          "path": [
+            [
+              0.63,
+              0.91,
+              0.36
+            ],
+            [
+              0.615,
+              1.07,
+              0.36
+            ],
+            [
+              0.63,
+              1.22,
+              0.36
+            ]
+          ],
+          "radii": [
+            0.012,
+            0.012,
+            0.012
+          ],
+          "meshDensity": {
+            "u": 48,
+            "v": 24
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "brass",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Lantern · frame 1",
+          "kind": "loft",
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            1,
+            1,
+            1
+          ],
+          "color": "#ffffff",
+          "material": "silk",
+          "group": "Custom",
+          "id": "atelier-local-mviw73jl-100-b5zdz",
+          "path": [
+            [
+              0.8099999999999999,
+              0.91,
+              0.36
+            ],
+            [
+              0.825,
+              1.07,
+              0.36
+            ],
+            [
+              0.8099999999999999,
+              1.22,
+              0.36
+            ]
+          ],
+          "radii": [
+            0.012,
+            0.012,
+            0.012
+          ],
+          "meshDensity": {
+            "u": 48,
+            "v": 24
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "brass",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Stardust · 0",
+          "kind": "sphere",
+          "position": [
+            1.06,
+            3.11,
+            -0.02
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.017,
+            0.017,
+            0.017
+          ],
+          "color": "#ffffff",
+          "material": "emissive",
+          "group": "Custom",
+          "id": "atelier-local-mviw79rl-101-dvxkr",
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "comet",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Stardust · 1",
+          "kind": "sphere",
+          "position": [
+            1.1800000000000002,
+            3.28,
+            -0.02
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.021,
+            0.021,
+            0.021
+          ],
+          "color": "#ffffff",
+          "material": "emissive",
+          "group": "Custom",
+          "id": "atelier-local-mviw7f6l-102-fejvm",
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "comet",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Stardust · 2",
+          "kind": "sphere",
+          "position": [
+            1.3,
+            3.11,
+            -0.02
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.025,
+            0.025,
+            0.025
+          ],
+          "color": "#ffffff",
+          "material": "emissive",
+          "group": "Custom",
+          "id": "atelier-local-mviw7kar-103-2k4bs",
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "comet",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Stardust · 3",
+          "kind": "sphere",
+          "position": [
+            1.42,
+            3.28,
+            -0.02
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.029,
+            0.029,
+            0.029
+          ],
+          "color": "#ffffff",
+          "material": "emissive",
+          "group": "Custom",
+          "id": "atelier-local-mviw7pmm-104-8mygh",
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "comet",
+            "normalStrength": 0.65
+          }
+        },
+        {
+          "name": "Stardust · 4",
+          "kind": "sphere",
+          "position": [
+            1.54,
+            3.11,
+            -0.02
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": [
+            0.033,
+            0.033,
+            0.033
+          ],
+          "color": "#ffffff",
+          "material": "emissive",
+          "group": "Custom",
+          "id": "atelier-local-mviw7ur8-105-c3ic1",
+          "meshDensity": {
+            "u": 48,
+            "v": 32
+          },
+          "textureBinding": {
+            "set": "astra-4k",
+            "tile": "comet",
+            "normalStrength": 0.65
+          }
+        }
+      ],
+      "meshGroups": [
+        {
+          "id": "atelier-group-mviwl9de-5ze55",
+          "name": "Comet tail and stardust",
+          "members": [
+            "atelier-local-mviw2jv8-69-m487c",
+            "atelier-local-mviw2oqq-70-cbnyr",
+            "atelier-local-mviw2tqe-71-umws6",
+            "atelier-local-mviw2ze6-72-ir752",
+            "atelier-local-mviw34bw-73-swer0",
+            "atelier-local-mviw39f2-74-pc7aq",
+            "atelier-local-mviw3ef2-75-7tzhu",
+            "atelier-local-mviw3jlm-76-8noi7",
+            "atelier-local-mviw79rl-101-dvxkr",
+            "atelier-local-mviw7f6l-102-fejvm",
+            "atelier-local-mviw7kar-103-2k4bs",
+            "atelier-local-mviw7pmm-104-8mygh",
+            "atelier-local-mviw7ur8-105-c3ic1"
+          ]
+        },
+        {
+          "id": "atelier-group-mviwlhi9-fvll9",
+          "name": "Face, ears and cheek ruff",
+          "members": [
+            "atelier-local-mvivwuvt-2-oqw2e",
+            "atelier-local-mvivww1k-3-eck8p",
+            "atelier-local-mvivwx30-4-llop6",
+            "atelier-local-mvivxzcu-22-2rfxl",
+            "atelier-local-mvivy235-23-7uoz1",
+            "atelier-local-mvivy5sv-24-f9oss",
+            "atelier-local-mvivy8po-25-y3yzo",
+            "atelier-local-mvivycer-26-lqqo6",
+            "atelier-local-mvivyflp-27-7b9y1",
+            "atelier-local-mvivyihx-28-o6kmw",
+            "atelier-local-mvivyllf-29-efj58",
+            "atelier-local-mvivynjm-30-y3jlb",
+            "atelier-local-mvivypgm-31-xpyxg",
+            "atelier-local-mvivysec-32-e9f1m",
+            "atelier-local-mvivyuy9-33-hneqm",
+            "atelier-local-mviw0e0h-51-agmou",
+            "atelier-local-mviw0hsc-52-pmba0",
+            "atelier-local-mviw0llb-53-7kmyv",
+            "atelier-local-mviw0pwp-54-gmjrp",
+            "atelier-local-mviw0un6-55-dijor",
+            "atelier-local-mviw0zdy-56-x3oxw",
+            "atelier-local-mviw13h6-57-wgah4",
+            "atelier-local-mviw16vx-58-cftee",
+            "atelier-local-mviw1a0z-59-u4l5o",
+            "atelier-local-mviw1d72-60-7lzq1",
+            "atelier-local-mviw1hj1-61-s9fqv",
+            "atelier-local-mviw1lmo-62-a3760",
+            "atelier-local-mviw1qi8-63-5nldx"
+          ]
+        },
+        {
+          "id": "atelier-group-mviwlngi-09vf8",
+          "name": "Forelegs and paws",
+          "members": [
+            "atelier-local-mvivwzqx-6-nzu4z",
+            "atelier-local-mvivx3eo-8-bxxyc",
+            "atelier-local-mvivx61c-9-5x27u",
+            "atelier-local-mvivx7qn-10-8xhzm",
+            "atelier-local-mvivxaeh-11-i9u6s",
+            "atelier-local-mvivxcby-12-lr0vv",
+            "atelier-local-mvivxe3o-13-jewgx",
+            "atelier-local-mvivxgg8-14-45iyb",
+            "atelier-local-mvivz04t-35-2pqwc",
+            "atelier-local-mvivz6ht-37-luncq",
+            "atelier-local-mvivz9m4-38-27x2k",
+            "atelier-local-mvivzd29-39-vdexn",
+            "atelier-local-mvivzgel-40-6bj8z",
+            "atelier-local-mvivzj9o-41-u0cau",
+            "atelier-local-mvivzm8e-42-td1o8",
+            "atelier-local-mvivzp64-43-wjzmn"
+          ]
+        },
+        {
+          "id": "atelier-group-mviwltex-330t0",
+          "name": "Haunches and hind paws",
+          "members": [
+            "atelier-local-mvivwy95-5-e96fc",
+            "atelier-local-mvivx1fu-7-xazlj",
+            "atelier-local-mvivxich-15-o8eia",
+            "atelier-local-mvivxkgk-16-ce0sc",
+            "atelier-local-mvivxmse-17-we59b",
+            "atelier-local-mvivxozm-18-b68l6",
+            "atelier-local-mvivxr7q-19-bzgri",
+            "atelier-local-mvivxtp3-20-kogwh",
+            "atelier-local-mvivxwe3-21-xp152",
+            "atelier-local-mvivyxjl-34-qthi4",
+            "atelier-local-mvivz39c-36-8ky16",
+            "atelier-local-mvivzs3l-44-k774h",
+            "atelier-local-mvivzv3t-45-6wiwz",
+            "atelier-local-mvivzy7l-46-ntjbl",
+            "atelier-local-mviw01a6-47-hh839",
+            "atelier-local-mviw04ft-48-eu61z",
+            "atelier-local-mviw07lh-49-6zz4k",
+            "atelier-local-mviw0asa-50-nkj19"
+          ]
+        },
+        {
+          "id": "atelier-group-mviwlzhh-mctn6",
+          "name": "Couriers travelling gear",
+          "members": [
+            "atelier-local-mviw3on2-77-sxuv7",
+            "atelier-local-mviw3usn-78-w2tqc",
+            "atelier-local-mviw402j-79-mdvur",
+            "atelier-local-mviw467u-80-5akr1",
+            "atelier-local-mviw4c5q-81-sd73p",
+            "atelier-local-mviw4hkg-82-rn6ix",
+            "atelier-local-mviw4n0y-83-tvska",
+            "atelier-local-mviw4sns-84-k2vh8",
+            "atelier-local-mviw4wu1-85-mc9hs",
+            "atelier-local-mviw50wy-86-7jd9z",
+            "atelier-local-mviw54w8-87-io9f5",
+            "atelier-local-mviw5ahu-88-xu7jk",
+            "atelier-local-mviw5g7t-89-539uk",
+            "atelier-local-mviw5kxy-90-0tfwp",
+            "atelier-local-mviw5qg9-91-un75q",
+            "atelier-local-mviw5w3d-92-jxngs",
+            "atelier-local-mviw62cw-93-vaotw",
+            "atelier-local-mviw67lo-94-ufq0w",
+            "atelier-local-mviw6ci9-95-h8u07",
+            "atelier-local-mviw6ijv-96-g28nt",
+            "atelier-local-mviw6nhk-97-g0l3q",
+            "atelier-local-mviw6shg-98-st3da",
+            "atelier-local-mviw6xfp-99-suuav",
+            "atelier-local-mviw73jl-100-b5zdz"
+          ]
+        },
+        {
+          "id": "atelier-group-mviwm5fk-qu4r9",
+          "name": "Body and chest fur",
+          "members": [
+            "model-seed",
+            "atelier-local-mvivwt18-1-4i4ag",
+            "atelier-local-mviw1vk1-64-pm45k",
+            "atelier-local-mviw1zqs-65-izmxq",
+            "atelier-local-mviw2433-66-p0klt",
+            "atelier-local-mviw28ju-67-43rg3",
+            "atelier-local-mviw2e02-68-4p4yx"
+          ]
+        }
+      ],
+      "references": [],
+      "referenceLayout": {
+        "x": 12,
+        "y": 12,
+        "open": false,
+        "collapsed": false,
+        "active": null
+      },
+      "poseFrames": [],
+      "poseNeutral": null,
+      "editedAt": "local"
+    },
+    "workspaces": {
+      "schema": "swyrl-workspaces-v1",
+      "stations": {}
+    },
+    "teleportZones": []
+  },
+  "editor": {
+    "transformSpace": "world",
+    "snapEnabled": true,
+    "terrainSnapEnabled": false,
+    "viewMode": "lit",
+    "cameraView": "perspective",
+    "revision": 0,
+    "layers": [
+      {
+        "id": "atelier-scene",
+        "name": "Model Atelier Base",
+        "visible": true
+      }
+    ],
+    "activeLayerId": "atelier-scene"
+  },
+  "scene": {
+    "background": "#11172c",
+    "waveInterval": 7,
+    "paths": {},
+    "actors": [
+      {
+        "id": "atelier-ground",
+        "name": "World Ground",
+        "type": "ground",
+        "team": "neutral",
+        "baked": true,
+        "role": "",
+        "tags": [
+          "model-atelier"
+        ],
+        "visualColor": "#252a43",
+        "avatarStyle": "",
+        "eyeHeight": null,
+        "groupParentId": null,
+        "groupChildIds": [],
+        "editorLayerIds": [
+          "atelier-scene"
+        ],
+        "workspace": null,
+        "sign": null,
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          1,
+          1,
+          1
+        ],
+        "maxHp": 0,
+        "attackRange": 0,
+        "attackDamage": 0,
+        "attackCooldown": 1,
+        "lane": null,
+        "moveSpeed": 0,
+        "folder": "Model Atelier/Studio",
+        "components": [
+          "Transform"
+        ],
+        "blueprintClass": "",
+        "colliderRadius": 0,
+        "mass": 1,
+        "restitution": 0.25,
+        "componentSpeed": 1,
+        "bobAmplitude": 0.5,
+        "launchStrength": 8,
+        "manualVisible": true,
+        "visible": true
+      }
+    ]
+  }
+}

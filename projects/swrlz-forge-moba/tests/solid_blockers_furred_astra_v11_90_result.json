@@ -1,0 +1,132 @@
+{
+  "version": "v11.90",
+  "model": {
+    "species": "courier",
+    "valid": true,
+    "parts": 96,
+    "triangles": 639772,
+    "nativeToolRebuildExact": true,
+    "materialEditUndo": true,
+    "nativeSaveReloadExact": true,
+    "texturedGLBExport": true,
+    "errors": []
+  },
+  "game": {
+    "contactApproach": [
+      41.19999999999999,
+      0,
+      0
+    ],
+    "heldDetour": [
+      51.49999999999993,
+      0,
+      1.5
+    ],
+    "releaseStops": true,
+    "idleStops": true,
+    "overlapBuildRejectedNoRelocationOrCharge": true,
+    "recordingCadence": 0.1,
+    "recordedFrames": 331,
+    "duration": 32.8,
+    "softwareBrowser30SecondSimulationWallMs": 132341.112517,
+    "errors": []
+  },
+  "hunter": {
+    "visualModel": "comet-courier",
+    "visualMeshes": 29,
+    "visualTriangles": 69471,
+    "visualPivots": [
+      {
+        "name": "stHead",
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "children": 10
+      },
+      {
+        "name": "stTail",
+        "rotation": [
+          0,
+          0.15382780345589098,
+          0
+        ],
+        "children": 4
+      },
+      {
+        "name": "stLeg0",
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "children": 2
+      },
+      {
+        "name": "stLeg1",
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "children": 2
+      },
+      {
+        "name": "stLeg2",
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "children": 2
+      },
+      {
+        "name": "stLeg3",
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "children": 2
+      }
+    ],
+    "visualTextures": [
+      {
+        "channel": "map",
+        "width": 4096,
+        "height": 4096,
+        "source": "070b932e-98c9-484c-b42f-5f81475d8f63"
+      },
+      {
+        "channel": "normalMap",
+        "width": 4096,
+        "height": 4096,
+        "source": "ddddc6be-b2f5-49ff-86b6-114fbb432e72"
+      }
+    ]
+  },
+  "solidBlockerCPU": "test_solid_blockers_v11_90.mjs PASS: approach then detour, idle/release, reversed/rotated, blocked, traffic and 0.60/0.75 m corridors",
+  "broadPhase": {
+    "matchingObstructedSegments": 200,
+    "clearShortSegments": 100,
+    "distantObstacles": 300,
+    "beforeIntersectionCalls": 180000,
+    "afterIntersectionCalls": 0
+  },
+  "GLB": "PASS: 96 meshes, 639772 triangles, exact embedded original 4K color/normal images",
+  "priorSourcesPreserved": 290,
+  "priorAssetsPreserved": 58,
+  "ownerDeviceAcceptance": "pending",
+  "gameAnimation": {
+    "wolfJoystickMovement": true,
+    "allFourLegsAnimate": true,
+    "independentClonedJointTrees": true,
+    "shared4KImages": true,
+    "releaseStops": true,
+    "hunterMeshes": 29,
+    "hunterTriangles": 69471,
+    "errors": []
+  },
+  "releaseSeal": "c76e61f6c4b8457ce1f49d3781c8aa0710d7e44adaf7176d17744fdbda5c663a"
+}

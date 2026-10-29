@@ -1,0 +1,59 @@
+
+/* v11.120: overlay menus above top rows, and reserve space for mesh strips. */
+#modelAtelierPanel .atelier-head{
+ position:relative!important;z-index:3900!important;overflow:visible!important;
+}
+#modelAtelierPanel #modelAtelierViewportModes.atelier-viewbar{
+ position:relative!important;z-index:3800!important;
+ overflow:visible!important;pointer-events:auto!important;
+}
+#modelAtelierPanel #seAtelierViewMenu{
+ position:relative!important;z-index:2!important;
+ justify-self:start!important;min-width:0;max-width:100%;
+}
+#modelAtelierPanel #seAtelierViewMenu[open]{
+ z-index:3905!important;overflow:visible!important;
+}
+#modelAtelierPanel #seAtelierViewMenu[open] .atelier-top-camera{
+ z-index:3910!important;visibility:visible!important;pointer-events:auto!important;
+}
+#modelAtelierPanel #seAtelierExportMenu[open]{
+ z-index:3910!important;overflow:visible!important;
+}
+#modelAtelierPanel #seAtelierExportMenu[open] .se-export-options{
+ z-index:3915!important;visibility:visible!important;pointer-events:auto!important;
+}
+#modelAtelierPanel #seAtelierViewMenu>summary{
+ width:max-content!important;max-width:100%!important;min-width:84px;
+ padding-inline:12px;
+}
+#modelAtelierPanel #modelAtelierViewportModes .atelier-top-advanced{
+ position:relative;z-index:1;min-width:0!important;
+}
+#modelAtelierPanel #modelAtelierViewportModes .atelier-top-advanced[open]{z-index:3}
+/* Preserve user scrolling; center the active bottom category while keeping RTL. */
+#modelAtelierPanel.atelier-mobile-upgrade .atelier-tool-rail{
+ justify-content:safe center!important;align-items:center!important;
+ scroll-padding-inline:40%;overscroll-behavior-inline:contain;
+}
+#modelAtelierPanel.atelier-mobile-upgrade .atelier-tool-rail button{
+ align-self:center!important;
+}
+/* Suppress double-tap page zoom within this editor only; retain pinch zoom,
+   scrolling, camera's custom pointer gestures and browser zoom elsewhere. */
+#modelAtelierPanel{touch-action:manipulation}
+#modelAtelierPanel .atelier-head,
+#modelAtelierPanel #modelAtelierViewportModes{touch-action:manipulation}
+#modelAtelierPanel .atelier-tool-rail,
+#modelAtelierPanel .se-atelier-modes{touch-action:pan-x!important}
+@media(max-width:700px),(pointer:coarse){
+ #modelAtelierPanel #seAtelierViewMenu[open] .atelier-top-camera{
+  min-width:min(300px,calc(100vw - 22px))!important;
+  max-width:calc(100vw - 22px)!important;max-height:43dvh!important;
+  overflow-y:auto!important;overscroll-behavior:contain!important;
+ }
+ #modelAtelierPanel #seAtelierExportMenu[open] .se-export-options{
+  max-height:55dvh!important;overflow-y:auto!important;
+  overscroll-behavior:contain!important;
+ }
+}

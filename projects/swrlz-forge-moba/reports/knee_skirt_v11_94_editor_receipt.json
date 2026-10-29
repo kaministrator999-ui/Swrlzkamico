@@ -1,0 +1,3704 @@
+{
+  "version": "v11.94",
+  "parts": 327,
+  "triangles": 1755616,
+  "presentation": {
+    "revision": "v11.93",
+    "groups": {
+      "Character": {
+        "parts": 210,
+        "visible": 210,
+        "inView": 210
+      },
+      "Azure frost": {
+        "parts": 28,
+        "visible": 28,
+        "inView": 28
+      },
+      "Coral flare": {
+        "parts": 28,
+        "visible": 28,
+        "inView": 28
+      },
+      "Festival companion": {
+        "parts": 61,
+        "visible": 0,
+        "inView": 0
+      }
+    },
+    "hairGroups": [
+      "Azure frost",
+      "Coral flare"
+    ],
+    "camera": {
+      "distance": 10.431252599236185,
+      "aspect": 1.1787819253438114
+    },
+    "coverage": [
+      {
+        "id": "left-wrist-cuff",
+        "opacity": 1,
+        "transparent": false,
+        "side": 2,
+        "visible": true
+      },
+      {
+        "id": "right-arm-band",
+        "opacity": 1,
+        "transparent": false,
+        "side": 2,
+        "visible": true
+      },
+      {
+        "id": "bodice-stitch-2",
+        "opacity": 1,
+        "transparent": false,
+        "side": 2,
+        "visible": true
+      },
+      {
+        "id": "festival-shorts",
+        "opacity": 1,
+        "transparent": false,
+        "side": 2,
+        "visible": true
+      }
+    ],
+    "assemblies": {
+      "enabled": true,
+      "time": 4,
+      "playing": false,
+      "cameraFit": {
+        "left": -0.5702573330289791,
+        "right": 0.5513414819502469,
+        "bottom": -0.8340019125441789,
+        "top": 0.8227126564167857,
+        "aspect": 1.1787819253438114
+      },
+      "components": [
+        {
+          "id": "azure",
+          "state": "attached",
+          "socketId": "hair-azure",
+          "pivot": [
+            -0.445,
+            4.36,
+            0.08374999999999999
+          ],
+          "offset": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": 1,
+          "matrix": [
+            1.0000000000000002,
+            0,
+            0,
+            0,
+            0,
+            1.0000000000000002,
+            0,
+            0,
+            0,
+            0,
+            0.8750000000000002,
+            0,
+            5.551115123125783e-17,
+            8.881784197001252e-16,
+            -0.008125,
+            1.0000000000000002
+          ],
+          "parts": 28,
+          "bounds": {
+            "min": [
+              -2.583261013031006,
+              3.317833900451661,
+              -1.1701232868432998
+            ],
+            "max": [
+              -0.28979502430402876,
+              6.036920070648194,
+              0.4092298866808414
+            ]
+          }
+        },
+        {
+          "id": "coral",
+          "state": "attached",
+          "socketId": "hair-coral",
+          "pivot": [
+            0.445,
+            4.36,
+            0.08374999999999999
+          ],
+          "offset": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": 1,
+          "matrix": [
+            1.0000000000000002,
+            0,
+            0,
+            0,
+            0,
+            1.0000000000000002,
+            0,
+            0,
+            0,
+            0,
+            0.8750000000000002,
+            0,
+            -5.551115123125783e-17,
+            8.881784197001252e-16,
+            -0.008125,
+            1.0000000000000002
+          ],
+          "parts": 28,
+          "bounds": {
+            "min": [
+              0.28980145465081847,
+              3.3195600509643564,
+              -1.1804246532917022
+            ],
+            "max": [
+              2.580889940261841,
+              6.0403127670288095,
+              0.4092298866808414
+            ]
+          }
+        },
+        {
+          "id": "bunny",
+          "state": "free",
+          "socketId": null,
+          "pivot": [
+            1.3,
+            0.1,
+            0.2
+          ],
+          "offset": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": 1,
+          "matrix": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            1
+          ],
+          "parts": 61,
+          "bounds": {
+            "min": [
+              0.9468652560765987,
+              0.027994822503566733,
+              -0.14593706515211347
+            ],
+            "max": [
+              1.6531347439234014,
+              0.9755918107047081,
+              0.522
+            ]
+          }
+        }
+      ],
+      "metrics": {
+        "schema": "swyrl-model-metrics-v1",
+        "basis": "generated Three.js BufferGeometry; CPU buffers only",
+        "meshObjects": 327,
+        "triangles": 1755616,
+        "vertices": 962151,
+        "geometryBytes": 48299196,
+        "estimatedMeshDraws": 327,
+        "groups": {
+          "Character": {
+            "meshObjects": 210,
+            "triangles": 1471728,
+            "vertices": 746424,
+            "geometryBytes": 39692604
+          },
+          "Azure frost": {
+            "meshObjects": 28,
+            "triangles": 139488,
+            "vertices": 106138,
+            "geometryBytes": 4233344
+          },
+          "Coral flare": {
+            "meshObjects": 28,
+            "triangles": 139488,
+            "vertices": 106138,
+            "geometryBytes": 4233344
+          },
+          "Festival companion": {
+            "meshObjects": 61,
+            "triangles": 4912,
+            "vertices": 3451,
+            "geometryBytes": 139904
+          }
+        }
+      }
+    }
+  },
+  "phonePresentation": {
+    "revision": "v11.93",
+    "groups": {
+      "Character": {
+        "parts": 210,
+        "visible": 210,
+        "inView": 210
+      },
+      "Azure frost": {
+        "parts": 28,
+        "visible": 28,
+        "inView": 28
+      },
+      "Coral flare": {
+        "parts": 28,
+        "visible": 28,
+        "inView": 28
+      },
+      "Festival companion": {
+        "parts": 61,
+        "visible": 0,
+        "inView": 0
+      }
+    },
+    "hairGroups": [
+      "Azure frost",
+      "Coral flare"
+    ],
+    "camera": {
+      "distance": 14.916105999498393,
+      "aspect": 0.5500705218617772
+    },
+    "coverage": [
+      {
+        "id": "left-wrist-cuff",
+        "opacity": 1,
+        "transparent": false,
+        "side": 2,
+        "visible": true
+      },
+      {
+        "id": "right-arm-band",
+        "opacity": 1,
+        "transparent": false,
+        "side": 2,
+        "visible": true
+      },
+      {
+        "id": "bodice-stitch-2",
+        "opacity": 1,
+        "transparent": false,
+        "side": 2,
+        "visible": true
+      },
+      {
+        "id": "festival-shorts",
+        "opacity": 1,
+        "transparent": false,
+        "side": 2,
+        "visible": true
+      }
+    ],
+    "assemblies": {
+      "enabled": true,
+      "time": 4,
+      "playing": false,
+      "cameraFit": {
+        "left": -0.8428568919702073,
+        "right": 0.8086897120052402,
+        "bottom": -0.5596134903551733,
+        "top": 0.5467639606869559,
+        "aspect": 0.5500705218617772
+      },
+      "components": [
+        {
+          "id": "azure",
+          "state": "attached",
+          "socketId": "hair-azure",
+          "pivot": [
+            -0.445,
+            4.36,
+            0.08374999999999999
+          ],
+          "offset": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": 1,
+          "matrix": [
+            1.0000000000000002,
+            0,
+            0,
+            0,
+            0,
+            1.0000000000000002,
+            0,
+            0,
+            0,
+            0,
+            0.8750000000000002,
+            0,
+            5.551115123125783e-17,
+            8.881784197001252e-16,
+            -0.008125,
+            1.0000000000000002
+          ],
+          "parts": 28,
+          "bounds": {
+            "min": [
+              -2.583261013031006,
+              3.317833900451661,
+              -1.1701232868432998
+            ],
+            "max": [
+              -0.28979502430402876,
+              6.036920070648194,
+              0.4092298866808414
+            ]
+          }
+        },
+        {
+          "id": "coral",
+          "state": "attached",
+          "socketId": "hair-coral",
+          "pivot": [
+            0.445,
+            4.36,
+            0.08374999999999999
+          ],
+          "offset": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": 1,
+          "matrix": [
+            1.0000000000000002,
+            0,
+            0,
+            0,
+            0,
+            1.0000000000000002,
+            0,
+            0,
+            0,
+            0,
+            0.8750000000000002,
+            0,
+            -5.551115123125783e-17,
+            8.881784197001252e-16,
+            -0.008125,
+            1.0000000000000002
+          ],
+          "parts": 28,
+          "bounds": {
+            "min": [
+              0.28980145465081847,
+              3.3195600509643564,
+              -1.1804246532917022
+            ],
+            "max": [
+              2.580889940261841,
+              6.0403127670288095,
+              0.4092298866808414
+            ]
+          }
+        },
+        {
+          "id": "bunny",
+          "state": "free",
+          "socketId": null,
+          "pivot": [
+            1.3,
+            0.1,
+            0.2
+          ],
+          "offset": [
+            0,
+            0,
+            0
+          ],
+          "rotation": [
+            0,
+            0,
+            0
+          ],
+          "scale": 1,
+          "matrix": [
+            1,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            1
+          ],
+          "parts": 61,
+          "bounds": {
+            "min": [
+              0.9468652560765987,
+              0.027994822503566733,
+              -0.14593706515211347
+            ],
+            "max": [
+              1.6531347439234014,
+              0.9755918107047081,
+              0.522
+            ]
+          }
+        }
+      ],
+      "metrics": {
+        "schema": "swyrl-model-metrics-v1",
+        "basis": "generated Three.js BufferGeometry; CPU buffers only",
+        "meshObjects": 327,
+        "triangles": 1755616,
+        "vertices": 962151,
+        "geometryBytes": 48299196,
+        "estimatedMeshDraws": 327,
+        "groups": {
+          "Character": {
+            "meshObjects": 210,
+            "triangles": 1471728,
+            "vertices": 746424,
+            "geometryBytes": 39692604
+          },
+          "Azure frost": {
+            "meshObjects": 28,
+            "triangles": 139488,
+            "vertices": 106138,
+            "geometryBytes": 4233344
+          },
+          "Coral flare": {
+            "meshObjects": 28,
+            "triangles": 139488,
+            "vertices": 106138,
+            "geometryBytes": 4233344
+          },
+          "Festival companion": {
+            "meshObjects": 61,
+            "triangles": 4912,
+            "vertices": 3451,
+            "geometryBytes": 139904
+          }
+        }
+      }
+    }
+  },
+  "portrait": {
+    "version": "v11.94",
+    "skin": "continuous smooth cheek, jaw and rounded chin",
+    "connectedIndicesPreserved": true,
+    "eyeCorners": {
+      "left": {
+        "inner": [
+          -0.026599999999999995,
+          4.044061823738428,
+          0.29843886767916933
+        ],
+        "outer": [
+          -0.2014,
+          4.0899381762615725,
+          0.24341932216633233
+        ],
+        "rise": 0.045876,
+        "slopeDegrees": 14.705652
+      },
+      "right": {
+        "inner": [
+          0.026599999999999995,
+          4.044061823738428,
+          0.29843886767916933
+        ],
+        "outer": [
+          0.2014,
+          4.0899381762615725,
+          0.24341932216633233
+        ],
+        "rise": 0.045876,
+        "slopeDegrees": 14.705652
+      }
+    },
+    "pupils": "rounded shallow corneal lenses",
+    "localSkinFinish": {
+      "passes": 2,
+      "method": "anchored Taubin",
+      "maximumStep": 0.002
+    }
+  },
+  "legs": {
+    "revision": "smooth-muscle-flow-v11.93",
+    "method": "continuous-native-cross-section-remap",
+    "changedVertices": 57691,
+    "profile": "smooth thigh to knee, full upper calf and tapered ankle",
+    "feetPreservedBelowY": 0.39,
+    "pelvisPreservedAboveY": 2.42,
+    "bodyIndicesPreserved": true,
+    "sections": [
+      {
+        "y": 0.35,
+        "lateralRadius": 0.058,
+        "front": 0.104,
+        "back": -0.008
+      },
+      {
+        "y": 0.5,
+        "lateralRadius": 0.068,
+        "front": 0.094,
+        "back": -0.027
+      },
+      {
+        "y": 0.7,
+        "lateralRadius": 0.086,
+        "front": 0.096,
+        "back": -0.062
+      },
+      {
+        "y": 0.9,
+        "lateralRadius": 0.101,
+        "front": 0.1,
+        "back": -0.101
+      },
+      {
+        "y": 1.1,
+        "lateralRadius": 0.113,
+        "front": 0.107,
+        "back": -0.126
+      },
+      {
+        "y": 1.25,
+        "lateralRadius": 0.113,
+        "front": 0.116,
+        "back": -0.125
+      },
+      {
+        "y": 1.4,
+        "lateralRadius": 0.105,
+        "front": 0.129,
+        "back": -0.101
+      },
+      {
+        "y": 1.52,
+        "lateralRadius": 0.102,
+        "front": 0.136,
+        "back": -0.08
+      },
+      {
+        "y": 1.65,
+        "lateralRadius": 0.108,
+        "front": 0.139,
+        "back": -0.073
+      },
+      {
+        "y": 1.8,
+        "lateralRadius": 0.124,
+        "front": 0.142,
+        "back": -0.088
+      },
+      {
+        "y": 2,
+        "lateralRadius": 0.143,
+        "front": 0.145,
+        "back": -0.113
+      },
+      {
+        "y": 2.2,
+        "lateralRadius": 0.154,
+        "front": 0.148,
+        "back": -0.132
+      },
+      {
+        "y": 2.42,
+        "lateralRadius": 0.176,
+        "front": 0.151,
+        "back": -0.146
+      }
+    ]
+  },
+  "smoothing": {
+    "upperBody": {
+      "version": "v11.93",
+      "method": "regional volume-preserving Taubin",
+      "pairs": 8,
+      "vertices": 54194,
+      "maxDisplacement": 0.008,
+      "laplacianBefore": 0.0033204,
+      "laplacianAfter": 0.00091645,
+      "normalStrength": 0.03,
+      "orientationProtectedVertices": 180,
+      "skinTopologyPreserved": true,
+      "fittedGarments": [
+        "girl-fitted-sleeve",
+        "model-0003",
+        "dark-shoulder"
+      ],
+      "protectedRegions": [
+        "portrait above 3.58",
+        "legs below 2.75",
+        "finger tips and nails",
+        "feet"
+      ]
+    }
+  },
+  "finish": {
+    "revision": "v11.93",
+    "hairScale": 0.58,
+    "hairReach": {
+      "girl-reference-ponytail--1-0": {
+        "oldReach": 0.622935,
+        "newReach": 0.361302
+      },
+      "girl-reference-ponytail--1-0-silk": {
+        "oldReach": 0.623768,
+        "newReach": 0.361786
+      },
+      "girl-reference-ponytail--1-1": {
+        "oldReach": 0.573251,
+        "newReach": 0.332486
+      },
+      "girl-reference-ponytail--1-1-silk": {
+        "oldReach": 0.552526,
+        "newReach": 0.320465
+      },
+      "girl-reference-ponytail--1-2": {
+        "oldReach": 0.544047,
+        "newReach": 0.315548
+      },
+      "girl-reference-ponytail--1-2-silk": {
+        "oldReach": 0.50762,
+        "newReach": 0.29442
+      },
+      "girl-reference-ponytail--1-3": {
+        "oldReach": 0.530746,
+        "newReach": 0.307833
+      },
+      "girl-reference-ponytail--1-3-silk": {
+        "oldReach": 0.496256,
+        "newReach": 0.287828
+      },
+      "girl-reference-ponytail--1-4": {
+        "oldReach": 0.547479,
+        "newReach": 0.317538
+      },
+      "girl-reference-ponytail--1-4-silk": {
+        "oldReach": 0.52065,
+        "newReach": 0.301977
+      },
+      "girl-reference-ponytail-1-0": {
+        "oldReach": 0.622935,
+        "newReach": 0.361302
+      },
+      "girl-reference-ponytail-1-0-silk": {
+        "oldReach": 0.623764,
+        "newReach": 0.361783
+      },
+      "girl-reference-ponytail-1-1": {
+        "oldReach": 0.573251,
+        "newReach": 0.332486
+      },
+      "girl-reference-ponytail-1-1-silk": {
+        "oldReach": 0.552522,
+        "newReach": 0.320463
+      },
+      "girl-reference-ponytail-1-2": {
+        "oldReach": 0.544047,
+        "newReach": 0.315548
+      },
+      "girl-reference-ponytail-1-2-silk": {
+        "oldReach": 0.507618,
+        "newReach": 0.294418
+      },
+      "girl-reference-ponytail-1-3": {
+        "oldReach": 0.530746,
+        "newReach": 0.307833
+      },
+      "girl-reference-ponytail-1-3-silk": {
+        "oldReach": 0.496255,
+        "newReach": 0.287828
+      },
+      "girl-reference-ponytail-1-4": {
+        "oldReach": 0.547479,
+        "newReach": 0.317538
+      },
+      "girl-reference-ponytail-1-4-silk": {
+        "oldReach": 0.520657,
+        "newReach": 0.301981
+      }
+    },
+    "restoredGripParts": [
+      "hair-grip--1",
+      "hair-grip-1"
+    ],
+    "angularDressPanels": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "matchedTrimParts": [
+      "skirt-panel-0",
+      "skirt-piping-0--1",
+      "skirt-piping-0-1",
+      "skirt-panel-1",
+      "skirt-piping-1--1",
+      "skirt-piping-1-1",
+      "skirt-panel-2",
+      "skirt-piping-2--1",
+      "skirt-piping-2-1",
+      "skirt-panel-3",
+      "skirt-piping-3--1",
+      "skirt-piping-3-1",
+      "light-cord--1-0",
+      "light--1-0",
+      "light-cord--1-1",
+      "light--1-1",
+      "light-cord--1-2",
+      "light--1-2",
+      "light-cord-1-0",
+      "light-1-0",
+      "light-cord-1-1",
+      "light-1-1",
+      "light-cord-1-2",
+      "light-1-2",
+      "skirt-inset-0--1",
+      "skirt-inset-0-1",
+      "skirt-inset-1--1",
+      "skirt-inset-1-1",
+      "skirt-inset-3--1",
+      "skirt-inset-3-1",
+      "girl-tailoring-stitches",
+      "girl-dress-inset-pleat-seams",
+      "girl-dress-brocade-diamonds",
+      "girl-dress-running-stitches",
+      "girl-dress-pastel-bauble-0",
+      "girl-dress-bauble-loop-0",
+      "girl-dress-pastel-bauble-1",
+      "girl-dress-bauble-loop-1",
+      "girl-dress-pastel-bauble-2",
+      "girl-dress-bauble-loop-2",
+      "girl-dress-pastel-bauble-3",
+      "girl-dress-bauble-loop-3",
+      "girl-dress-pastel-bauble-4",
+      "girl-dress-bauble-loop-4",
+      "girl-dress-pastel-bauble-5",
+      "girl-dress-bauble-loop-5",
+      "girl-dress-pastel-bauble-6",
+      "girl-dress-bauble-loop-6",
+      "girl-dress-pastel-bauble-7",
+      "girl-dress-bauble-loop-7",
+      "girl-dress-pastel-bauble-8",
+      "girl-dress-bauble-loop-8",
+      "girl-dress-pastel-bauble-9",
+      "girl-dress-bauble-loop-9",
+      "girl-dress-pastel-bauble-10",
+      "girl-dress-bauble-loop-10",
+      "girl-dress-pastel-bauble-11",
+      "girl-dress-bauble-loop-11",
+      "girl-dress-pastel-bauble-12",
+      "girl-dress-bauble-loop-12",
+      "girl-dress-pastel-bauble-13",
+      "girl-dress-bauble-loop-13",
+      "girl-dress-pastel-bauble-14",
+      "girl-dress-bauble-loop-14",
+      "girl-dress-gold-tail-tassel"
+    ]
+  },
+  "coverage": {
+    "version": "v11.93",
+    "underlayer": "festival-shorts",
+    "opaque": true,
+    "coveredRange": {
+      "minimumY": 1.98,
+      "maximumY": 2.84
+    },
+    "armorLinings": [
+      "right-arm-band",
+      "left-wrist-cuff",
+      "bodice-stitch-2",
+      "right-wrist-0",
+      "right-wrist-1",
+      "right-wrist-2"
+    ],
+    "armorFit": "native diagonal hem planes",
+    "skinRetained": true
+  },
+  "coverageRays": [
+    {
+      "name": "front",
+      "skin": 1.1290459907785557,
+      "cloth": 1.1129774934169918,
+      "covered": true
+    },
+    {
+      "name": "back",
+      "skin": 1.1390949913240984,
+      "cloth": 1.1230309235282516,
+      "covered": true
+    },
+    {
+      "name": "left",
+      "skin": 0.8913290296629797,
+      "cloth": 0.8752035530125603,
+      "covered": true
+    },
+    {
+      "name": "right",
+      "skin": 0.89126535921053,
+      "cloth": 0.8751681363677014,
+      "covered": true
+    },
+    {
+      "name": "below",
+      "skin": 1.4000000953674316,
+      "cloth": 1.3840000629425049,
+      "covered": true
+    },
+    {
+      "name": "below-front",
+      "skin": 1.6132006856178378,
+      "cloth": 1.5956363592575804,
+      "covered": true
+    }
+  ],
+  "armorRays": [
+    {
+      "id": "right-arm-band",
+      "side": -1,
+      "skin": 1.438842638384531,
+      "cloth": 1.4040820062849626,
+      "covered": true
+    },
+    {
+      "id": "right-arm-band",
+      "side": 1,
+      "skin": 1.4217769650744603,
+      "cloth": 1.387201466129626,
+      "covered": true
+    },
+    {
+      "id": "left-wrist-cuff",
+      "side": -1,
+      "skin": 1.519627434384862,
+      "cloth": 1.4798177533629575,
+      "covered": true
+    },
+    {
+      "id": "left-wrist-cuff",
+      "side": 1,
+      "skin": 1.3867993766004951,
+      "cloth": 1.3532066285797106,
+      "covered": true
+    },
+    {
+      "id": "bodice-stitch-2",
+      "side": -1,
+      "skin": 1.4288979575312912,
+      "cloth": 1.4148836768809245,
+      "covered": true
+    },
+    {
+      "id": "bodice-stitch-2",
+      "side": 1,
+      "skin": 1.4049163381557839,
+      "cloth": 1.388925940750568,
+      "covered": true
+    },
+    {
+      "id": "right-wrist-0",
+      "side": -1,
+      "skin": 1.4608710458509089,
+      "cloth": 1.4436914777819232,
+      "covered": true
+    },
+    {
+      "id": "right-wrist-0",
+      "side": 1,
+      "skin": 1.4052773606521338,
+      "cloth": 1.3912882809411022,
+      "covered": true
+    },
+    {
+      "id": "right-wrist-1",
+      "side": -1,
+      "skin": 1.4857102057039193,
+      "cloth": 1.4686698721855758,
+      "covered": true
+    },
+    {
+      "id": "right-wrist-1",
+      "side": 1,
+      "skin": 1.3972975584679779,
+      "cloth": 1.3832425844942762,
+      "covered": true
+    },
+    {
+      "id": "right-wrist-2",
+      "side": -1,
+      "skin": 1.513828275961369,
+      "cloth": 1.4986826030163314,
+      "covered": true
+    },
+    {
+      "id": "right-wrist-2",
+      "side": 1,
+      "skin": 1.38818869267637,
+      "cloth": 1.374178648876881,
+      "covered": true
+    },
+    {
+      "id": "model-0003",
+      "side": -1,
+      "skin": 1.3500220516282355,
+      "cloth": 1.341022437028519,
+      "covered": true
+    },
+    {
+      "id": "model-0003",
+      "side": 1,
+      "skin": 1.3243933287658654,
+      "cloth": 1.3149183798766393,
+      "covered": true
+    },
+    {
+      "id": "dark-shoulder",
+      "side": -1,
+      "skin": 1.3853212064147251,
+      "cloth": 1.3677103272253281,
+      "covered": true
+    },
+    {
+      "id": "dark-shoulder",
+      "side": 1,
+      "skin": 1.3823167048407055,
+      "cloth": 1.363567980759153,
+      "covered": true
+    }
+  ],
+  "skirtGeometry": {
+    "panelCount": 9,
+    "rays": [
+      {
+        "y": 2.5,
+        "azimuthDegrees": 0,
+        "covered": true,
+        "distance": 1.0616737131715426,
+        "skinDistance": 1.2395490050315854,
+        "clearance": 0.1778752918600428
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 5,
+        "covered": true,
+        "distance": 1.0610282426483901,
+        "skinDistance": 1.2390297464678728,
+        "clearance": 0.17800150381948265
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 10,
+        "covered": true,
+        "distance": 1.0598015120643174,
+        "skinDistance": 1.2375274504156653,
+        "clearance": 0.17772593835134787
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 15,
+        "covered": true,
+        "distance": 1.056573247601442,
+        "skinDistance": 1.2350722482196235,
+        "clearance": 0.17849900061818147
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 20,
+        "covered": true,
+        "distance": 1.050194137952241,
+        "skinDistance": 1.231648756320464,
+        "clearance": 0.18145461836822308
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 25,
+        "covered": true,
+        "distance": 1.0405284030239963,
+        "skinDistance": 1.2272588919238707,
+        "clearance": 0.18673048889987443
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 30,
+        "covered": true,
+        "distance": 1.0291759455562617,
+        "skinDistance": 1.2218992754385012,
+        "clearance": 0.1927233298822395
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 35,
+        "covered": true,
+        "distance": 1.0260174948267287,
+        "skinDistance": 1.2155513589920797,
+        "clearance": 0.189533864165351
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 40,
+        "covered": true,
+        "distance": 1.0138804281911593,
+        "skinDistance": 1.208134864650458,
+        "clearance": 0.19425443645929863
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 45,
+        "covered": true,
+        "distance": 0.9955774102390809,
+        "skinDistance": 1.1971712021351237,
+        "clearance": 0.20159379189604287
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 50,
+        "covered": true,
+        "distance": 0.9730244343405481,
+        "skinDistance": 1.1785156664996095,
+        "clearance": 0.2054912321590614
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 55,
+        "covered": true,
+        "distance": 0.9532102258891912,
+        "skinDistance": 1.146758458616514,
+        "clearance": 0.1935482327273228
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 60,
+        "covered": true,
+        "distance": 0.9328335936358906,
+        "skinDistance": 1.1044925244906327,
+        "clearance": 0.17165893085474215
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 65,
+        "covered": true,
+        "distance": 0.9038377593326462,
+        "skinDistance": 1.067465420410354,
+        "clearance": 0.16362766107770776
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 70,
+        "covered": true,
+        "distance": 0.892191401071175,
+        "skinDistance": 1.0379492566057662,
+        "clearance": 0.1457578555345912
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 75,
+        "covered": true,
+        "distance": 0.870506676890862,
+        "skinDistance": 1.0149951874771181,
+        "clearance": 0.1444885105862561
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 80,
+        "covered": true,
+        "distance": 0.8472244750152399,
+        "skinDistance": 0.9983886159762785,
+        "clearance": 0.15116414096103858
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 85,
+        "covered": true,
+        "distance": 0.8382623078193294,
+        "skinDistance": 0.9881631392448933,
+        "clearance": 0.14990083142556387
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 90,
+        "covered": true,
+        "distance": 0.8394679837704639,
+        "skinDistance": 0.9844074468066333,
+        "clearance": 0.14493946303616934
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 95,
+        "covered": true,
+        "distance": 0.8328525408149845,
+        "skinDistance": 0.9870158932771456,
+        "clearance": 0.15416335246216106
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 100,
+        "covered": true,
+        "distance": 0.8491044997856266,
+        "skinDistance": 0.9961594414863848,
+        "clearance": 0.14705494170075817
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 105,
+        "covered": true,
+        "distance": 0.8651599546822207,
+        "skinDistance": 1.0115682391639165,
+        "clearance": 0.14640828448169574
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 110,
+        "covered": true,
+        "distance": 0.8889456431944236,
+        "skinDistance": 1.033174194483218,
+        "clearance": 0.14422855128879442
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 115,
+        "covered": true,
+        "distance": 0.917489897560021,
+        "skinDistance": 1.0612216366369178,
+        "clearance": 0.14373173907689685
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 120,
+        "covered": true,
+        "distance": 0.9409804110102271,
+        "skinDistance": 1.0964176241693029,
+        "clearance": 0.15543721315907577
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 125,
+        "covered": true,
+        "distance": 0.9486007763672042,
+        "skinDistance": 1.1422475596868815,
+        "clearance": 0.19364678331967733
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 130,
+        "covered": true,
+        "distance": 0.9731091592948928,
+        "skinDistance": 1.1869589668332354,
+        "clearance": 0.2138498075383426
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 135,
+        "covered": true,
+        "distance": 0.9931683012736882,
+        "skinDistance": 1.2100674184897242,
+        "clearance": 0.21689911721603605
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 140,
+        "covered": true,
+        "distance": 1.0081146980345939,
+        "skinDistance": 1.2218970356996839,
+        "clearance": 0.21378233766509003
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 145,
+        "covered": true,
+        "distance": 1.0209590235861967,
+        "skinDistance": 1.228725780452755,
+        "clearance": 0.2077667568665582
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 150,
+        "covered": true,
+        "distance": 1.0335205105577991,
+        "skinDistance": 1.2338534105211316,
+        "clearance": 0.20033289996333248
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 155,
+        "covered": true,
+        "distance": 1.0454741821265587,
+        "skinDistance": 1.2381799360881105,
+        "clearance": 0.19270575396155176
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 160,
+        "covered": true,
+        "distance": 1.0549362464469754,
+        "skinDistance": 1.2416472708701776,
+        "clearance": 0.1867110244232022
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 165,
+        "covered": true,
+        "distance": 1.0610361439830396,
+        "skinDistance": 1.2442924798046335,
+        "clearance": 0.18325633582159395
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 170,
+        "covered": true,
+        "distance": 1.0640738061826804,
+        "skinDistance": 1.2461095773093687,
+        "clearance": 0.18203577112668823
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 175,
+        "covered": true,
+        "distance": 1.065147728987236,
+        "skinDistance": 1.2472258367781903,
+        "clearance": 0.18207810779095435
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 180,
+        "covered": true,
+        "distance": 1.0652205270315716,
+        "skinDistance": 1.247576007246971,
+        "clearance": 0.1823554802153995
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 185,
+        "covered": true,
+        "distance": 1.0651563545930742,
+        "skinDistance": 1.2472320966187633,
+        "clearance": 0.1820757420256891
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 190,
+        "covered": true,
+        "distance": 1.0640792806029993,
+        "skinDistance": 1.2461084215157152,
+        "clearance": 0.18202914091271594
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 195,
+        "covered": true,
+        "distance": 1.061037548021311,
+        "skinDistance": 1.2442743031549082,
+        "clearance": 0.18323675513359716
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 200,
+        "covered": true,
+        "distance": 1.054932850700215,
+        "skinDistance": 1.2416230743090915,
+        "clearance": 0.18669022360887655
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 205,
+        "covered": true,
+        "distance": 1.045467036542585,
+        "skinDistance": 1.238155776870172,
+        "clearance": 0.19268874032758698
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 210,
+        "covered": true,
+        "distance": 1.0335168265569352,
+        "skinDistance": 1.2338589368202886,
+        "clearance": 0.20034211026335336
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 215,
+        "covered": true,
+        "distance": 1.0209611726092567,
+        "skinDistance": 1.228710296466089,
+        "clearance": 0.2077491238568323
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 220,
+        "covered": true,
+        "distance": 1.008124785172024,
+        "skinDistance": 1.2219050495203276,
+        "clearance": 0.21378026434830355
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 225,
+        "covered": true,
+        "distance": 0.9931696498072065,
+        "skinDistance": 1.2100762284967486,
+        "clearance": 0.2169065786895421
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 230,
+        "covered": true,
+        "distance": 0.9730959541541585,
+        "skinDistance": 1.1869580300048996,
+        "clearance": 0.21386207585074113
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 235,
+        "covered": true,
+        "distance": 0.9486001403902603,
+        "skinDistance": 1.1423445249722617,
+        "clearance": 0.19374438458200138
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 240,
+        "covered": true,
+        "distance": 0.9453766921330754,
+        "skinDistance": 1.0964171668747316,
+        "clearance": 0.15104047474165616
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 245,
+        "covered": true,
+        "distance": 0.922008939400127,
+        "skinDistance": 1.0612351652297058,
+        "clearance": 0.1392262258295789
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 250,
+        "covered": true,
+        "distance": 0.8933430152435057,
+        "skinDistance": 1.0331511656920147,
+        "clearance": 0.13980815044850903
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 255,
+        "covered": true,
+        "distance": 0.8693018860067244,
+        "skinDistance": 1.0115088645149193,
+        "clearance": 0.14220697850819486
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 260,
+        "covered": true,
+        "distance": 0.8532274172467226,
+        "skinDistance": 0.9960901285296825,
+        "clearance": 0.1428627112829599
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 265,
+        "covered": true,
+        "distance": 0.8368321823451237,
+        "skinDistance": 0.986997182457002,
+        "clearance": 0.15016500011187828
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 270,
+        "covered": true,
+        "distance": 0.8413311541062514,
+        "skinDistance": 0.9843421764545132,
+        "clearance": 0.1430110223482618
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 275,
+        "covered": true,
+        "distance": 0.8400205710745984,
+        "skinDistance": 0.9881656741638968,
+        "clearance": 0.1481451030892984
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 280,
+        "covered": true,
+        "distance": 0.8490864376361702,
+        "skinDistance": 0.99840976112467,
+        "clearance": 0.14932332348849975
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 285,
+        "covered": true,
+        "distance": 0.8724944900791135,
+        "skinDistance": 1.014996478183128,
+        "clearance": 0.1425019881040145
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 290,
+        "covered": true,
+        "distance": 0.8941790884617555,
+        "skinDistance": 1.0381028467424864,
+        "clearance": 0.1439237582807309
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 295,
+        "covered": true,
+        "distance": 0.8962192826848018,
+        "skinDistance": 1.0674057795611505,
+        "clearance": 0.17118649687634868
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 300,
+        "covered": true,
+        "distance": 0.9237469139123701,
+        "skinDistance": 1.1045786985508934,
+        "clearance": 0.18083178463852334
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 305,
+        "covered": true,
+        "distance": 0.9454905499514332,
+        "skinDistance": 1.1467558676840073,
+        "clearance": 0.20126531773257406
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 310,
+        "covered": true,
+        "distance": 0.965837630515911,
+        "skinDistance": 1.1785531152219273,
+        "clearance": 0.2127154847060163
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 315,
+        "covered": true,
+        "distance": 0.9872056144530236,
+        "skinDistance": 1.1971451592305558,
+        "clearance": 0.20993954477753218
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 320,
+        "covered": true,
+        "distance": 1.0052794264586384,
+        "skinDistance": 1.2080362184235451,
+        "clearance": 0.2027567919649067
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 325,
+        "covered": true,
+        "distance": 1.0184585250894251,
+        "skinDistance": 1.2155598928478042,
+        "clearance": 0.19710136775837905
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 330,
+        "covered": true,
+        "distance": 1.0292894623368478,
+        "skinDistance": 1.2219051832353776,
+        "clearance": 0.19261572089852974
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 335,
+        "covered": true,
+        "distance": 1.0397469492490237,
+        "skinDistance": 1.2272814772137761,
+        "clearance": 0.18753452796475245
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 340,
+        "covered": true,
+        "distance": 1.0494404301666573,
+        "skinDistance": 1.2316582453660052,
+        "clearance": 0.18221781519934788
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 345,
+        "covered": true,
+        "distance": 1.0566674043883821,
+        "skinDistance": 1.2350710574484915,
+        "clearance": 0.1784036530601094
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 350,
+        "covered": true,
+        "distance": 1.0605819967455292,
+        "skinDistance": 1.2375176074368885,
+        "clearance": 0.17693561069135932
+      },
+      {
+        "y": 2.5,
+        "azimuthDegrees": 355,
+        "covered": true,
+        "distance": 1.0617595631124688,
+        "skinDistance": 1.2390230885148938,
+        "clearance": 0.17726352540242507
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 0,
+        "covered": true,
+        "distance": 1.0407964750200567,
+        "clearance": null
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 5,
+        "covered": true,
+        "distance": 1.0402268966278954,
+        "clearance": null
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 10,
+        "covered": true,
+        "distance": 1.0396497252970587,
+        "clearance": null
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 15,
+        "covered": true,
+        "distance": 1.0368527828781593,
+        "clearance": null
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 20,
+        "covered": true,
+        "distance": 1.030044025107137,
+        "clearance": null
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 25,
+        "covered": true,
+        "distance": 1.0188987776804541,
+        "clearance": null
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 30,
+        "covered": true,
+        "distance": 1.0060177134743715,
+        "clearance": null
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 35,
+        "covered": true,
+        "distance": 1.0025848808420987,
+        "clearance": null
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 40,
+        "covered": true,
+        "distance": 0.9894460988654765,
+        "clearance": null
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 45,
+        "covered": true,
+        "distance": 0.9700946041880948,
+        "clearance": null
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 50,
+        "covered": true,
+        "distance": 0.9459941041234948,
+        "clearance": null
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 55,
+        "covered": true,
+        "distance": 0.9241928175802289,
+        "clearance": null
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 60,
+        "covered": true,
+        "distance": 0.9021284203202796,
+        "skinDistance": 1.1123092984991614,
+        "clearance": 0.21018087817888176
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 65,
+        "covered": true,
+        "distance": 0.8712517097881602,
+        "skinDistance": 1.0530318780982,
+        "clearance": 0.18178016831003974
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 70,
+        "covered": true,
+        "distance": 0.8571477471270972,
+        "skinDistance": 1.0138645619726496,
+        "clearance": 0.15671681484555244
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 75,
+        "covered": true,
+        "distance": 0.83383028742989,
+        "skinDistance": 0.9855681912981126,
+        "clearance": 0.1517379038682226
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 80,
+        "covered": true,
+        "distance": 0.8083006229726459,
+        "skinDistance": 0.9662432334590706,
+        "clearance": 0.15794261048642466
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 85,
+        "covered": true,
+        "distance": 0.7985151887929341,
+        "skinDistance": 0.955432704769677,
+        "clearance": 0.15691751597674286
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 90,
+        "covered": true,
+        "distance": 0.7985026170788808,
+        "skinDistance": 0.953247711334098,
+        "clearance": 0.1547450942552172
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 95,
+        "covered": true,
+        "distance": 0.7931294977139924,
+        "skinDistance": 0.9595611964362706,
+        "clearance": 0.16643169872227814
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 100,
+        "covered": true,
+        "distance": 0.8109006495864173,
+        "skinDistance": 0.9744410416067864,
+        "clearance": 0.16354039202036907
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 105,
+        "covered": true,
+        "distance": 0.8282079138119933,
+        "skinDistance": 0.9981196554420072,
+        "clearance": 0.16991174163001388
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 110,
+        "covered": true,
+        "distance": 0.8542543228995012,
+        "skinDistance": 1.031949350711982,
+        "clearance": 0.1776950278124807
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 115,
+        "covered": true,
+        "distance": 0.8852956020670718,
+        "skinDistance": 1.0796530222608305,
+        "clearance": 0.19435742019375868
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 120,
+        "covered": true,
+        "distance": 0.9104754971762413,
+        "clearance": null
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 125,
+        "covered": true,
+        "distance": 0.9194478346818689,
+        "clearance": null
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 130,
+        "covered": true,
+        "distance": 0.9465318502380635,
+        "clearance": null
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 135,
+        "covered": true,
+        "distance": 0.9680786203873821,
+        "clearance": null
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 140,
+        "covered": true,
+        "distance": 0.9836142460578129,
+        "clearance": null
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 145,
+        "covered": true,
+        "distance": 0.9971178296678878,
+        "clearance": null
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 150,
+        "covered": true,
+        "distance": 1.0107840957800522,
+        "clearance": null
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 155,
+        "covered": true,
+        "distance": 1.0239888175176322,
+        "clearance": null
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 160,
+        "covered": true,
+        "distance": 1.0343773654375432,
+        "clearance": null
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 165,
+        "covered": true,
+        "distance": 1.0408424272584398,
+        "clearance": null
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 170,
+        "covered": true,
+        "distance": 1.0437819422072319,
+        "clearance": null
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 175,
+        "covered": true,
+        "distance": 1.044599777213531,
+        "clearance": null
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 180,
+        "covered": true,
+        "distance": 1.0445156099827522,
+        "clearance": null
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 185,
+        "covered": true,
+        "distance": 1.0445967106538296,
+        "clearance": null
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 190,
+        "covered": true,
+        "distance": 1.0437795390699267,
+        "clearance": null
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 195,
+        "covered": true,
+        "distance": 1.0408416975008858,
+        "clearance": null
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 200,
+        "covered": true,
+        "distance": 1.0343781780338561,
+        "clearance": null
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 205,
+        "covered": true,
+        "distance": 1.0239903507009682,
+        "clearance": null
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 210,
+        "covered": true,
+        "distance": 1.0107855426968293,
+        "clearance": null
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 215,
+        "covered": true,
+        "distance": 0.9971159690280406,
+        "clearance": null
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 220,
+        "covered": true,
+        "distance": 0.9836104963991434,
+        "clearance": null
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 225,
+        "covered": true,
+        "distance": 0.9680772821549906,
+        "clearance": null
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 230,
+        "covered": true,
+        "distance": 0.9465331754561668,
+        "clearance": null
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 235,
+        "covered": true,
+        "distance": 0.9194482022587227,
+        "clearance": null
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 240,
+        "covered": true,
+        "distance": 0.9149160633298363,
+        "clearance": null
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 245,
+        "covered": true,
+        "distance": 0.8897926707043528,
+        "skinDistance": 1.07957183643708,
+        "clearance": 0.18977916573272735
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 250,
+        "covered": true,
+        "distance": 0.8587417614675975,
+        "skinDistance": 1.0317554243261435,
+        "clearance": 0.17301366285854602
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 255,
+        "covered": true,
+        "distance": 0.8324409097225869,
+        "skinDistance": 0.9980841524551338,
+        "clearance": 0.16564324273254694
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 260,
+        "covered": true,
+        "distance": 0.815010151019291,
+        "skinDistance": 0.9743679829686931,
+        "clearance": 0.15935783194940212
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 265,
+        "covered": true,
+        "distance": 0.7972041625699854,
+        "skinDistance": 0.9594091881590142,
+        "clearance": 0.16220502558902883
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 270,
+        "covered": true,
+        "distance": 0.8005112072844413,
+        "skinDistance": 0.9532060301371938,
+        "clearance": 0.1526948228527526
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 275,
+        "covered": true,
+        "distance": 0.8005368122104609,
+        "skinDistance": 0.9555493313864297,
+        "clearance": 0.1550125191759688
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 280,
+        "covered": true,
+        "distance": 0.8103696639004219,
+        "skinDistance": 0.9663572844031002,
+        "clearance": 0.15598762050267834
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 285,
+        "covered": true,
+        "distance": 0.8360129497543559,
+        "skinDistance": 0.9856327700889866,
+        "clearance": 0.14961982033463073
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 290,
+        "covered": true,
+        "distance": 0.8592853961733897,
+        "skinDistance": 1.0138717341072956,
+        "clearance": 0.15458633793390586
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 295,
+        "covered": true,
+        "distance": 0.8631810130382518,
+        "skinDistance": 1.0530239157642873,
+        "clearance": 0.18984290272603555
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 300,
+        "covered": true,
+        "distance": 0.8943599896622526,
+        "skinDistance": 1.1122824609963864,
+        "clearance": 0.21792247133413378
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 305,
+        "covered": true,
+        "distance": 0.9165412269339206,
+        "clearance": null
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 310,
+        "covered": true,
+        "distance": 0.9380225781028496,
+        "clearance": null
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 315,
+        "covered": true,
+        "distance": 0.9622668360082617,
+        "clearance": null
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 320,
+        "covered": true,
+        "distance": 0.9820167353441832,
+        "clearance": null
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 325,
+        "covered": true,
+        "distance": 0.9952518756824129,
+        "clearance": null
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 330,
+        "covered": true,
+        "distance": 1.0061277493463998,
+        "clearance": null
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 335,
+        "covered": true,
+        "distance": 1.0175957967838,
+        "clearance": null
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 340,
+        "covered": true,
+        "distance": 1.028836797129893,
+        "clearance": null
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 345,
+        "covered": true,
+        "distance": 1.0370461532888389,
+        "clearance": null
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 350,
+        "covered": true,
+        "distance": 1.0409203473441113,
+        "clearance": null
+      },
+      {
+        "y": 2.25,
+        "azimuthDegrees": 355,
+        "covered": true,
+        "distance": 1.0414128102287121,
+        "clearance": null
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 0,
+        "covered": true,
+        "distance": 1.021318134396691,
+        "clearance": null
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 5,
+        "covered": true,
+        "distance": 1.0205867086712608,
+        "clearance": null
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 10,
+        "covered": true,
+        "distance": 1.0193521491913844,
+        "clearance": null
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 15,
+        "covered": true,
+        "distance": 1.0159147320794062,
+        "clearance": null
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 20,
+        "covered": true,
+        "distance": 1.0087717035529322,
+        "clearance": null
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 25,
+        "covered": true,
+        "distance": 0.9976330497620167,
+        "clearance": null
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 30,
+        "covered": true,
+        "distance": 0.9843770791370728,
+        "clearance": null
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 35,
+        "covered": true,
+        "distance": 0.9796065982201358,
+        "clearance": null
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 40,
+        "covered": true,
+        "distance": 0.9643479882252578,
+        "clearance": null
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 45,
+        "covered": true,
+        "distance": 0.9443890936133174,
+        "clearance": null
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 50,
+        "covered": true,
+        "distance": 0.9203413770692527,
+        "clearance": null
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 55,
+        "covered": true,
+        "distance": 0.8960918667015638,
+        "clearance": null
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 60,
+        "covered": true,
+        "distance": 0.8704730001004992,
+        "clearance": null
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 65,
+        "covered": true,
+        "distance": 0.8397035882330844,
+        "skinDistance": 1.079828842478181,
+        "clearance": 0.24012525424509656
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 70,
+        "covered": true,
+        "distance": 0.8228431943220633,
+        "skinDistance": 0.9913589308226136,
+        "clearance": 0.1685157365005503
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 75,
+        "covered": true,
+        "distance": 0.7967969757506723,
+        "skinDistance": 0.9509035956074943,
+        "clearance": 0.15410661985682195
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 80,
+        "covered": true,
+        "distance": 0.7709111271389226,
+        "skinDistance": 0.9263596028149959,
+        "clearance": 0.15544847567607323
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 85,
+        "covered": true,
+        "distance": 0.7582215036041342,
+        "skinDistance": 0.9143352346350416,
+        "clearance": 0.15611373103090742
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 90,
+        "covered": true,
+        "distance": 0.7593639766931044,
+        "skinDistance": 0.9143253938958894,
+        "clearance": 0.154961417202785
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 95,
+        "covered": true,
+        "distance": 0.7540595227906768,
+        "skinDistance": 0.9262520114703696,
+        "clearance": 0.17219248867969283
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 100,
+        "covered": true,
+        "distance": 0.7717927721098558,
+        "skinDistance": 0.9513890354801029,
+        "clearance": 0.17959626337024714
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 105,
+        "covered": true,
+        "distance": 0.7923273385336889,
+        "skinDistance": 0.9934870770987988,
+        "clearance": 0.20115973856510994
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 110,
+        "covered": true,
+        "distance": 0.8202508910015343,
+        "clearance": null
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 115,
+        "covered": true,
+        "distance": 0.8522177418449457,
+        "clearance": null
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 120,
+        "covered": true,
+        "distance": 0.8799654682868765,
+        "clearance": null
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 125,
+        "covered": true,
+        "distance": 0.8922306851576957,
+        "clearance": null
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 130,
+        "covered": true,
+        "distance": 0.9190865238714978,
+        "clearance": null
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 135,
+        "covered": true,
+        "distance": 0.9416242746177169,
+        "clearance": null
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 140,
+        "covered": true,
+        "distance": 0.9595962649777962,
+        "clearance": null
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 145,
+        "covered": true,
+        "distance": 0.9750980043176419,
+        "clearance": null
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 150,
+        "covered": true,
+        "distance": 0.989498518344325,
+        "clearance": null
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 155,
+        "covered": true,
+        "distance": 1.0023253500624456,
+        "clearance": null
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 160,
+        "covered": true,
+        "distance": 1.0125720872502955,
+        "clearance": null
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 165,
+        "covered": true,
+        "distance": 1.0195372923032056,
+        "clearance": null
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 170,
+        "covered": true,
+        "distance": 1.023470083604285,
+        "clearance": null
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 175,
+        "covered": true,
+        "distance": 1.0252188662992907,
+        "clearance": null
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 180,
+        "covered": true,
+        "distance": 1.0255381296211679,
+        "clearance": null
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 185,
+        "covered": true,
+        "distance": 1.0252006161016332,
+        "clearance": null
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 190,
+        "covered": true,
+        "distance": 1.0234483575116762,
+        "clearance": null
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 195,
+        "covered": true,
+        "distance": 1.0195270330665371,
+        "clearance": null
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 200,
+        "covered": true,
+        "distance": 1.0125644471344346,
+        "clearance": null
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 205,
+        "covered": true,
+        "distance": 1.002322419372926,
+        "clearance": null
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 210,
+        "covered": true,
+        "distance": 0.9894877913038859,
+        "clearance": null
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 215,
+        "covered": true,
+        "distance": 0.975079985966653,
+        "clearance": null
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 220,
+        "covered": true,
+        "distance": 0.9595581908789411,
+        "clearance": null
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 225,
+        "covered": true,
+        "distance": 0.9416104556283849,
+        "clearance": null
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 230,
+        "covered": true,
+        "distance": 0.9190488420742541,
+        "clearance": null
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 235,
+        "covered": true,
+        "distance": 0.8922090068253999,
+        "clearance": null
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 240,
+        "covered": true,
+        "distance": 0.8843030863463569,
+        "clearance": null
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 245,
+        "covered": true,
+        "distance": 0.8565796377141995,
+        "clearance": null
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 250,
+        "covered": true,
+        "distance": 0.8247989520893713,
+        "clearance": null
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 255,
+        "covered": true,
+        "distance": 0.7966388638368784,
+        "skinDistance": 0.9935423845515667,
+        "clearance": 0.1969035207146883
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 260,
+        "covered": true,
+        "distance": 0.7757224954606041,
+        "skinDistance": 0.9513343275968714,
+        "clearance": 0.1756118321362673
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 265,
+        "covered": true,
+        "distance": 0.7581436432137032,
+        "skinDistance": 0.9262449052829623,
+        "clearance": 0.16810126206925913
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 270,
+        "covered": true,
+        "distance": 0.7615107225471248,
+        "skinDistance": 0.9143334254399943,
+        "clearance": 0.15282270289286948
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 275,
+        "covered": true,
+        "distance": 0.7601803337378715,
+        "skinDistance": 0.9143310531466045,
+        "clearance": 0.15415071940873293
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 280,
+        "covered": true,
+        "distance": 0.7729752012538639,
+        "skinDistance": 0.9265000913925187,
+        "clearance": 0.15352489013865478
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 285,
+        "covered": true,
+        "distance": 0.7989458246729343,
+        "skinDistance": 0.9508847416365015,
+        "clearance": 0.1519389169635672
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 290,
+        "covered": true,
+        "distance": 0.8249864099931687,
+        "skinDistance": 0.9914158041306422,
+        "clearance": 0.16642939413747349
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 295,
+        "covered": true,
+        "distance": 0.8313049805588667,
+        "skinDistance": 1.0776912189364773,
+        "clearance": 0.24638623837761064
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 300,
+        "covered": true,
+        "distance": 0.8635149770909697,
+        "clearance": null
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 305,
+        "covered": true,
+        "distance": 0.8879971354311363,
+        "clearance": null
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 310,
+        "covered": true,
+        "distance": 0.91177877672203,
+        "clearance": null
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 315,
+        "covered": true,
+        "distance": 0.9369072081377541,
+        "clearance": null
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 320,
+        "covered": true,
+        "distance": 0.9574363643865177,
+        "clearance": null
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 325,
+        "covered": true,
+        "distance": 0.9720432261193008,
+        "clearance": null
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 330,
+        "covered": true,
+        "distance": 0.9843045611330663,
+        "clearance": null
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 335,
+        "covered": true,
+        "distance": 0.9964716230347537,
+        "clearance": null
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 340,
+        "covered": true,
+        "distance": 1.0078023027070224,
+        "clearance": null
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 345,
+        "covered": true,
+        "distance": 1.0161519115456776,
+        "clearance": null
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 350,
+        "covered": true,
+        "distance": 1.0204553198677262,
+        "clearance": null
+      },
+      {
+        "y": 2,
+        "azimuthDegrees": 355,
+        "covered": true,
+        "distance": 1.021554364855882,
+        "clearance": null
+      }
+    ],
+    "bounds": [
+      {
+        "id": "skirt-panel-0",
+        "minY": 1.7300000190734863,
+        "maxY": 2.9200000762939453
+      },
+      {
+        "id": "skirt-piping-0--1",
+        "minY": 1.723602056503296,
+        "maxY": 2.7835659980773926
+      },
+      {
+        "id": "skirt-piping-0-1",
+        "minY": 1.77858304977417,
+        "maxY": 2.7790379524230957
+      },
+      {
+        "id": "skirt-panel-1",
+        "minY": 1.7100000381469727,
+        "maxY": 2.938800096511841
+      },
+      {
+        "id": "skirt-piping-1--1",
+        "minY": 1.7566579580307007,
+        "maxY": 2.788520097732544
+      },
+      {
+        "id": "skirt-piping-1-1",
+        "minY": 1.7462559938430786,
+        "maxY": 2.7922070026397705
+      },
+      {
+        "id": "skirt-panel-2",
+        "minY": 1.7799999713897705,
+        "maxY": 2.980799913406372
+      },
+      {
+        "id": "skirt-piping-2--1",
+        "minY": 1.836277961730957,
+        "maxY": 2.8355040550231934
+      },
+      {
+        "id": "skirt-piping-2-1",
+        "minY": 1.7646969556808472,
+        "maxY": 2.837362051010132
+      },
+      {
+        "id": "skirt-panel-3",
+        "minY": 1.690000057220459,
+        "maxY": 2.7128000259399414
+      },
+      {
+        "id": "skirt-piping-3--1",
+        "minY": 1.7468019723892212,
+        "maxY": 2.5905981063842773
+      },
+      {
+        "id": "skirt-piping-3-1",
+        "minY": 1.7466399669647217,
+        "maxY": 2.588670015335083
+      },
+      {
+        "id": "skirt-panel-4",
+        "minY": 1.7599999904632568,
+        "maxY": 2.9047999382019043
+      },
+      {
+        "id": "skirt-piping-4--1",
+        "minY": 1.8313490152359009,
+        "maxY": 2.772974967956543
+      },
+      {
+        "id": "skirt-piping-4-1",
+        "minY": 1.8255540132522583,
+        "maxY": 2.7694029808044434
+      },
+      {
+        "id": "skirt-panel-5",
+        "minY": 1.7200000286102295,
+        "maxY": 2.9070000648498535
+      },
+      {
+        "id": "skirt-piping-5--1",
+        "minY": 1.7762279510498047,
+        "maxY": 2.7651360034942627
+      },
+      {
+        "id": "skirt-piping-5-1",
+        "minY": 1.783553957939148,
+        "maxY": 2.7682011127471924
+      },
+      {
+        "id": "skirt-panel-6",
+        "minY": 1.7999999523162842,
+        "maxY": 2.7679998874664307
+      },
+      {
+        "id": "skirt-piping-6--1",
+        "minY": 1.87090003490448,
+        "maxY": 2.6559031009674072
+      },
+      {
+        "id": "skirt-piping-6-1",
+        "minY": 1.8641680479049683,
+        "maxY": 2.653517007827759
+      },
+      {
+        "id": "light-cord--1-0",
+        "minY": 1.885151982307434,
+        "maxY": 2.0536611080169678
+      },
+      {
+        "id": "light--1-0",
+        "minY": 1.8113670349121094,
+        "maxY": 1.893367052078247
+      },
+      {
+        "id": "light-cord--1-1",
+        "minY": 1.8089619874954224,
+        "maxY": 1.9774709939956665
+      },
+      {
+        "id": "light--1-1",
+        "minY": 1.7351759672164917,
+        "maxY": 1.8171759843826294
+      },
+      {
+        "id": "light-cord--1-2",
+        "minY": 1.7305279970169067,
+        "maxY": 1.8990379571914673
+      },
+      {
+        "id": "light--1-2",
+        "minY": 1.656743049621582,
+        "maxY": 1.7387429475784302
+      },
+      {
+        "id": "light-cord-1-0",
+        "minY": 1.8193089962005615,
+        "maxY": 2.027726888656616
+      },
+      {
+        "id": "light-1-0",
+        "minY": 1.737758994102478,
+        "maxY": 1.8197590112686157
+      },
+      {
+        "id": "light-cord-1-1",
+        "minY": 1.7501599788665771,
+        "maxY": 1.9585779905319214
+      },
+      {
+        "id": "light-1-1",
+        "minY": 1.6686079502105713,
+        "maxY": 1.750607967376709
+      },
+      {
+        "id": "light-cord-1-2",
+        "minY": 1.673684000968933,
+        "maxY": 1.8821040391921997
+      },
+      {
+        "id": "light-1-2",
+        "minY": 1.5921339988708496,
+        "maxY": 1.6741340160369873
+      },
+      {
+        "id": "skirt-inset-0--1",
+        "minY": 1.736171007156372,
+        "maxY": 2.7779650688171387
+      },
+      {
+        "id": "skirt-inset-0-1",
+        "minY": 1.7810980081558228,
+        "maxY": 2.7749180793762207
+      },
+      {
+        "id": "skirt-inset-1--1",
+        "minY": 1.7602380514144897,
+        "maxY": 2.7875759601593018
+      },
+      {
+        "id": "skirt-inset-1-1",
+        "minY": 1.7576309442520142,
+        "maxY": 2.7884979248046875
+      },
+      {
+        "id": "skirt-inset-3--1",
+        "minY": 1.7458070516586304,
+        "maxY": 2.587825059890747
+      },
+      {
+        "id": "skirt-inset-3-1",
+        "minY": 1.7442820072174072,
+        "maxY": 2.58697509765625
+      },
+      {
+        "id": "skirt-inset-4--1",
+        "minY": 1.8236010074615479,
+        "maxY": 2.767570972442627
+      },
+      {
+        "id": "skirt-inset-4-1",
+        "minY": 1.8203669786453247,
+        "maxY": 2.765662908554077
+      },
+      {
+        "id": "skirt-inset-5--1",
+        "minY": 1.7757740020751953,
+        "maxY": 2.762407064437866
+      },
+      {
+        "id": "skirt-inset-5-1",
+        "minY": 1.7791810035705566,
+        "maxY": 2.7629849910736084
+      },
+      {
+        "id": "skirt-side-left",
+        "minY": 1.75,
+        "maxY": 2.8136000633239746
+      },
+      {
+        "id": "skirt-side-right",
+        "minY": 1.7400000095367432,
+        "maxY": 2.7883999347686768
+      },
+      {
+        "id": "girl-tailoring-stitches",
+        "minY": 1.734447956085205,
+        "maxY": 3.2890889644622803
+      },
+      {
+        "id": "girl-dress-inset-pleat-seams",
+        "minY": 1.7646100521087646,
+        "maxY": 2.683130979537964
+      },
+      {
+        "id": "girl-dress-brocade-diamonds",
+        "minY": 1.9551639556884766,
+        "maxY": 2.6613309383392334
+      },
+      {
+        "id": "girl-dress-running-stitches",
+        "minY": 1.8531450033187866,
+        "maxY": 2.8768649101257324
+      },
+      {
+        "id": "girl-dress-pastel-bauble-0",
+        "minY": 2.0769920349121094,
+        "maxY": 2.10099196434021
+      },
+      {
+        "id": "girl-dress-bauble-loop-0",
+        "minY": 2.1046090126037598,
+        "maxY": 2.122183084487915
+      },
+      {
+        "id": "girl-dress-pastel-bauble-1",
+        "minY": 2.0724339485168457,
+        "maxY": 2.0994338989257812
+      },
+      {
+        "id": "girl-dress-bauble-loop-1",
+        "minY": 2.1040549278259277,
+        "maxY": 2.1201460361480713
+      },
+      {
+        "id": "girl-dress-pastel-bauble-2",
+        "minY": 2.067883014678955,
+        "maxY": 2.0978829860687256
+      },
+      {
+        "id": "girl-dress-bauble-loop-2",
+        "minY": 2.103231906890869,
+        "maxY": 2.1180601119995117
+      },
+      {
+        "id": "girl-dress-pastel-bauble-3",
+        "minY": 2.0661680698394775,
+        "maxY": 2.090167999267578
+      },
+      {
+        "id": "girl-dress-bauble-loop-3",
+        "minY": 2.0956060886383057,
+        "maxY": 2.115173101425171
+      },
+      {
+        "id": "girl-dress-pastel-bauble-4",
+        "minY": 2.062100887298584,
+        "maxY": 2.0891010761260986
+      },
+      {
+        "id": "girl-dress-bauble-loop-4",
+        "minY": 2.0953750610351562,
+        "maxY": 2.1131250858306885
+      },
+      {
+        "id": "girl-dress-pastel-bauble-5",
+        "minY": 2.05780291557312,
+        "maxY": 2.0878028869628906
+      },
+      {
+        "id": "girl-dress-bauble-loop-5",
+        "minY": 2.09531307220459,
+        "maxY": 2.1113250255584717
+      },
+      {
+        "id": "girl-dress-pastel-bauble-6",
+        "minY": 2.058527946472168,
+        "maxY": 2.0825281143188477
+      },
+      {
+        "id": "girl-dress-bauble-loop-6",
+        "minY": 2.089042901992798,
+        "maxY": 2.109999895095825
+      },
+      {
+        "id": "girl-dress-pastel-bauble-7",
+        "minY": 2.055325984954834,
+        "maxY": 2.0823259353637695
+      },
+      {
+        "id": "girl-dress-bauble-loop-7",
+        "minY": 2.090394973754883,
+        "maxY": 2.109571933746338
+      },
+      {
+        "id": "girl-dress-pastel-bauble-8",
+        "minY": 2.0544300079345703,
+        "maxY": 2.084429979324341
+      },
+      {
+        "id": "girl-dress-bauble-loop-8",
+        "minY": 2.0942280292510986,
+        "maxY": 2.111388921737671
+      },
+      {
+        "id": "girl-dress-pastel-bauble-9",
+        "minY": 2.0596799850463867,
+        "maxY": 2.0836799144744873
+      },
+      {
+        "id": "girl-dress-bauble-loop-9",
+        "minY": 2.0914618968963623,
+        "maxY": 2.112823009490967
+      },
+      {
+        "id": "girl-dress-pastel-bauble-10",
+        "minY": 2.060689926147461,
+        "maxY": 2.0876901149749756
+      },
+      {
+        "id": "girl-dress-bauble-loop-10",
+        "minY": 2.0959579944610596,
+        "maxY": 2.1147398948669434
+      },
+      {
+        "id": "girl-dress-pastel-bauble-11",
+        "minY": 2.0619380474090576,
+        "maxY": 2.091938018798828
+      },
+      {
+        "id": "girl-dress-bauble-loop-11",
+        "minY": 2.1004199981689453,
+        "maxY": 2.1167221069335938
+      },
+      {
+        "id": "girl-dress-pastel-bauble-12",
+        "minY": 2.068166971206665,
+        "maxY": 2.0921669006347656
+      },
+      {
+        "id": "girl-dress-bauble-loop-12",
+        "minY": 2.0984420776367188,
+        "maxY": 2.118760108947754
+      },
+      {
+        "id": "girl-dress-pastel-bauble-13",
+        "minY": 2.0718328952789307,
+        "maxY": 2.0988330841064453
+      },
+      {
+        "id": "girl-dress-bauble-loop-13",
+        "minY": 2.1050150394439697,
+        "maxY": 2.1223978996276855
+      },
+      {
+        "id": "girl-dress-pastel-bauble-14",
+        "minY": 2.073765993118286,
+        "maxY": 2.1037659645080566
+      },
+      {
+        "id": "girl-dress-bauble-loop-14",
+        "minY": 2.1098520755767822,
+        "maxY": 2.12481689453125
+      },
+      {
+        "id": "girl-dress-gold-tail-tassel",
+        "minY": 1.6155799627304077,
+        "maxY": 1.7942349910736084
+      }
+    ]
+  },
+  "portraitGeometry": {
+    "width": 0.237499,
+    "oldWidth": 0.249999,
+    "widthRatio": 0.9499997999991999,
+    "bridge": 0.310981,
+    "oldBridge": 0.331989,
+    "tip": 0.323319,
+    "oldTip": 0.358295,
+    "changedHeadVertices": 96707,
+    "preservedTopology": true
+  },
+  "kneeSkirt": {
+    "revision": "v11.94",
+    "kneeY": 1.52,
+    "coverage": "overlapping full skirt",
+    "panelIds": [
+      "skirt-panel-0",
+      "skirt-panel-1",
+      "skirt-panel-2",
+      "skirt-panel-3",
+      "skirt-panel-4",
+      "skirt-panel-5",
+      "skirt-panel-6",
+      "skirt-side-left",
+      "skirt-side-right"
+    ],
+    "affectedParts": [
+      "skirt-panel-0",
+      "skirt-piping-0--1",
+      "skirt-piping-0-1",
+      "skirt-panel-1",
+      "skirt-piping-1--1",
+      "skirt-piping-1-1",
+      "skirt-panel-2",
+      "skirt-piping-2--1",
+      "skirt-piping-2-1",
+      "skirt-panel-3",
+      "skirt-piping-3--1",
+      "skirt-piping-3-1",
+      "skirt-panel-4",
+      "skirt-piping-4--1",
+      "skirt-piping-4-1",
+      "skirt-panel-5",
+      "skirt-piping-5--1",
+      "skirt-piping-5-1",
+      "skirt-panel-6",
+      "skirt-piping-6--1",
+      "skirt-piping-6-1",
+      "light-cord--1-0",
+      "light--1-0",
+      "light-cord--1-1",
+      "light--1-1",
+      "light-cord--1-2",
+      "light--1-2",
+      "light-cord-1-0",
+      "light-1-0",
+      "light-cord-1-1",
+      "light-1-1",
+      "light-cord-1-2",
+      "light-1-2",
+      "skirt-inset-0--1",
+      "skirt-inset-0-1",
+      "skirt-inset-1--1",
+      "skirt-inset-1-1",
+      "skirt-inset-3--1",
+      "skirt-inset-3-1",
+      "skirt-inset-4--1",
+      "skirt-inset-4-1",
+      "skirt-inset-5--1",
+      "skirt-inset-5-1",
+      "skirt-side-left",
+      "skirt-side-right",
+      "girl-tailoring-stitches",
+      "girl-dress-inset-pleat-seams",
+      "girl-dress-brocade-diamonds",
+      "girl-dress-running-stitches",
+      "girl-dress-pastel-bauble-0",
+      "girl-dress-bauble-loop-0",
+      "girl-dress-pastel-bauble-1",
+      "girl-dress-bauble-loop-1",
+      "girl-dress-pastel-bauble-2",
+      "girl-dress-bauble-loop-2",
+      "girl-dress-pastel-bauble-3",
+      "girl-dress-bauble-loop-3",
+      "girl-dress-pastel-bauble-4",
+      "girl-dress-bauble-loop-4",
+      "girl-dress-pastel-bauble-5",
+      "girl-dress-bauble-loop-5",
+      "girl-dress-pastel-bauble-6",
+      "girl-dress-bauble-loop-6",
+      "girl-dress-pastel-bauble-7",
+      "girl-dress-bauble-loop-7",
+      "girl-dress-pastel-bauble-8",
+      "girl-dress-bauble-loop-8",
+      "girl-dress-pastel-bauble-9",
+      "girl-dress-bauble-loop-9",
+      "girl-dress-pastel-bauble-10",
+      "girl-dress-bauble-loop-10",
+      "girl-dress-pastel-bauble-11",
+      "girl-dress-bauble-loop-11",
+      "girl-dress-pastel-bauble-12",
+      "girl-dress-bauble-loop-12",
+      "girl-dress-pastel-bauble-13",
+      "girl-dress-bauble-loop-13",
+      "girl-dress-pastel-bauble-14",
+      "girl-dress-bauble-loop-14",
+      "girl-dress-gold-tail-tassel"
+    ],
+    "hemBounds": {
+      "skirt-panel-0": {
+        "minY": 1.73,
+        "maxY": 2.92
+      },
+      "skirt-piping-0--1": {
+        "minY": 1.723602,
+        "maxY": 2.783566
+      },
+      "skirt-piping-0-1": {
+        "minY": 1.778583,
+        "maxY": 2.779038
+      },
+      "skirt-panel-1": {
+        "minY": 1.71,
+        "maxY": 2.9388
+      },
+      "skirt-piping-1--1": {
+        "minY": 1.756658,
+        "maxY": 2.78852
+      },
+      "skirt-piping-1-1": {
+        "minY": 1.746256,
+        "maxY": 2.792207
+      },
+      "skirt-panel-2": {
+        "minY": 1.78,
+        "maxY": 2.9808
+      },
+      "skirt-piping-2--1": {
+        "minY": 1.836278,
+        "maxY": 2.835504
+      },
+      "skirt-piping-2-1": {
+        "minY": 1.764697,
+        "maxY": 2.837362
+      },
+      "skirt-panel-3": {
+        "minY": 1.69,
+        "maxY": 2.7128
+      },
+      "skirt-piping-3--1": {
+        "minY": 1.746802,
+        "maxY": 2.590598
+      },
+      "skirt-piping-3-1": {
+        "minY": 1.74664,
+        "maxY": 2.58867
+      },
+      "skirt-panel-4": {
+        "minY": 1.76,
+        "maxY": 2.9048
+      },
+      "skirt-piping-4--1": {
+        "minY": 1.831349,
+        "maxY": 2.772975
+      },
+      "skirt-piping-4-1": {
+        "minY": 1.825554,
+        "maxY": 2.769403
+      },
+      "skirt-panel-5": {
+        "minY": 1.72,
+        "maxY": 2.907
+      },
+      "skirt-piping-5--1": {
+        "minY": 1.776228,
+        "maxY": 2.765136
+      },
+      "skirt-piping-5-1": {
+        "minY": 1.783554,
+        "maxY": 2.768201
+      },
+      "skirt-panel-6": {
+        "minY": 1.8,
+        "maxY": 2.768
+      },
+      "skirt-piping-6--1": {
+        "minY": 1.8709,
+        "maxY": 2.655903
+      },
+      "skirt-piping-6-1": {
+        "minY": 1.864168,
+        "maxY": 2.653517
+      },
+      "light-cord--1-0": {
+        "minY": 1.885152,
+        "maxY": 2.053661
+      },
+      "light--1-0": {
+        "minY": 1.811367,
+        "maxY": 1.893367
+      },
+      "light-cord--1-1": {
+        "minY": 1.808962,
+        "maxY": 1.977471
+      },
+      "light--1-1": {
+        "minY": 1.735176,
+        "maxY": 1.817176
+      },
+      "light-cord--1-2": {
+        "minY": 1.730528,
+        "maxY": 1.899038
+      },
+      "light--1-2": {
+        "minY": 1.656743,
+        "maxY": 1.738743
+      },
+      "light-cord-1-0": {
+        "minY": 1.819309,
+        "maxY": 2.027727
+      },
+      "light-1-0": {
+        "minY": 1.737759,
+        "maxY": 1.819759
+      },
+      "light-cord-1-1": {
+        "minY": 1.75016,
+        "maxY": 1.958578
+      },
+      "light-1-1": {
+        "minY": 1.668608,
+        "maxY": 1.750608
+      },
+      "light-cord-1-2": {
+        "minY": 1.673684,
+        "maxY": 1.882104
+      },
+      "light-1-2": {
+        "minY": 1.592134,
+        "maxY": 1.674134
+      },
+      "skirt-inset-0--1": {
+        "minY": 1.736171,
+        "maxY": 2.777965
+      },
+      "skirt-inset-0-1": {
+        "minY": 1.781098,
+        "maxY": 2.774918
+      },
+      "skirt-inset-1--1": {
+        "minY": 1.760238,
+        "maxY": 2.787576
+      },
+      "skirt-inset-1-1": {
+        "minY": 1.757631,
+        "maxY": 2.788498
+      },
+      "skirt-inset-3--1": {
+        "minY": 1.745807,
+        "maxY": 2.587825
+      },
+      "skirt-inset-3-1": {
+        "minY": 1.744282,
+        "maxY": 2.586975
+      },
+      "skirt-inset-4--1": {
+        "minY": 1.823601,
+        "maxY": 2.767571
+      },
+      "skirt-inset-4-1": {
+        "minY": 1.820367,
+        "maxY": 2.765663
+      },
+      "skirt-inset-5--1": {
+        "minY": 1.775774,
+        "maxY": 2.762407
+      },
+      "skirt-inset-5-1": {
+        "minY": 1.779181,
+        "maxY": 2.762985
+      },
+      "skirt-side-left": {
+        "minY": 1.75,
+        "maxY": 2.8136
+      },
+      "skirt-side-right": {
+        "minY": 1.74,
+        "maxY": 2.7884
+      },
+      "girl-tailoring-stitches": {
+        "minY": 1.734448,
+        "maxY": 3.289089
+      },
+      "girl-dress-inset-pleat-seams": {
+        "minY": 1.76461,
+        "maxY": 2.683131
+      },
+      "girl-dress-brocade-diamonds": {
+        "minY": 1.955164,
+        "maxY": 2.661331
+      },
+      "girl-dress-running-stitches": {
+        "minY": 1.853145,
+        "maxY": 2.876865
+      },
+      "girl-dress-pastel-bauble-0": {
+        "minY": 2.076992,
+        "maxY": 2.100992
+      },
+      "girl-dress-bauble-loop-0": {
+        "minY": 2.104609,
+        "maxY": 2.122183
+      },
+      "girl-dress-pastel-bauble-1": {
+        "minY": 2.072434,
+        "maxY": 2.099434
+      },
+      "girl-dress-bauble-loop-1": {
+        "minY": 2.104055,
+        "maxY": 2.120146
+      },
+      "girl-dress-pastel-bauble-2": {
+        "minY": 2.067883,
+        "maxY": 2.097883
+      },
+      "girl-dress-bauble-loop-2": {
+        "minY": 2.103232,
+        "maxY": 2.11806
+      },
+      "girl-dress-pastel-bauble-3": {
+        "minY": 2.066168,
+        "maxY": 2.090168
+      },
+      "girl-dress-bauble-loop-3": {
+        "minY": 2.095606,
+        "maxY": 2.115173
+      },
+      "girl-dress-pastel-bauble-4": {
+        "minY": 2.062101,
+        "maxY": 2.089101
+      },
+      "girl-dress-bauble-loop-4": {
+        "minY": 2.095375,
+        "maxY": 2.113125
+      },
+      "girl-dress-pastel-bauble-5": {
+        "minY": 2.057803,
+        "maxY": 2.087803
+      },
+      "girl-dress-bauble-loop-5": {
+        "minY": 2.095313,
+        "maxY": 2.111325
+      },
+      "girl-dress-pastel-bauble-6": {
+        "minY": 2.058528,
+        "maxY": 2.082528
+      },
+      "girl-dress-bauble-loop-6": {
+        "minY": 2.089043,
+        "maxY": 2.11
+      },
+      "girl-dress-pastel-bauble-7": {
+        "minY": 2.055326,
+        "maxY": 2.082326
+      },
+      "girl-dress-bauble-loop-7": {
+        "minY": 2.090395,
+        "maxY": 2.109572
+      },
+      "girl-dress-pastel-bauble-8": {
+        "minY": 2.05443,
+        "maxY": 2.08443
+      },
+      "girl-dress-bauble-loop-8": {
+        "minY": 2.094228,
+        "maxY": 2.111389
+      },
+      "girl-dress-pastel-bauble-9": {
+        "minY": 2.05968,
+        "maxY": 2.08368
+      },
+      "girl-dress-bauble-loop-9": {
+        "minY": 2.091462,
+        "maxY": 2.112823
+      },
+      "girl-dress-pastel-bauble-10": {
+        "minY": 2.06069,
+        "maxY": 2.08769
+      },
+      "girl-dress-bauble-loop-10": {
+        "minY": 2.095958,
+        "maxY": 2.11474
+      },
+      "girl-dress-pastel-bauble-11": {
+        "minY": 2.061938,
+        "maxY": 2.091938
+      },
+      "girl-dress-bauble-loop-11": {
+        "minY": 2.10042,
+        "maxY": 2.116722
+      },
+      "girl-dress-pastel-bauble-12": {
+        "minY": 2.068167,
+        "maxY": 2.092167
+      },
+      "girl-dress-bauble-loop-12": {
+        "minY": 2.098442,
+        "maxY": 2.11876
+      },
+      "girl-dress-pastel-bauble-13": {
+        "minY": 2.071833,
+        "maxY": 2.098833
+      },
+      "girl-dress-bauble-loop-13": {
+        "minY": 2.105015,
+        "maxY": 2.122398
+      },
+      "girl-dress-pastel-bauble-14": {
+        "minY": 2.073766,
+        "maxY": 2.103766
+      },
+      "girl-dress-bauble-loop-14": {
+        "minY": 2.109852,
+        "maxY": 2.124817
+      },
+      "girl-dress-gold-tail-tassel": {
+        "minY": 1.61558,
+        "maxY": 1.794235
+      }
+    }
+  },
+  "headRefinement": {
+    "version": "v11.94",
+    "changedParts": [
+      "girl-organic-body",
+      "left-sclera",
+      "left-iris",
+      "left-eye-catch",
+      "left-eye-catch2",
+      "left-upper-lid",
+      "left-lower-lid",
+      "left-brow",
+      "left-lash-0",
+      "left-lash-1",
+      "left-lash-2",
+      "left-earring",
+      "right-sclera",
+      "right-iris",
+      "right-eye-catch",
+      "right-eye-catch2",
+      "right-upper-lid",
+      "right-lower-lid",
+      "right-brow",
+      "right-lash-0",
+      "right-lash-1",
+      "right-lash-2",
+      "right-earring",
+      "hair-cap",
+      "portrait-curl--1",
+      "portrait-curl-1",
+      "girl-pupil-left",
+      "girl-cupid-lip",
+      "girl-lower-lip",
+      "girl-smile",
+      "girl-pupil-right",
+      "girl-reference-fringe--1-0",
+      "girl-reference-fringe--1-0-silk",
+      "girl-reference-fringe--1-1",
+      "girl-reference-fringe--1-1-silk",
+      "girl-reference-fringe--1-2",
+      "girl-reference-fringe--1-2-silk",
+      "girl-reference-nape--1-0",
+      "girl-reference-nape--1-0-silk",
+      "girl-reference-nape--1-1",
+      "girl-reference-nape--1-2",
+      "girl-reference-nape--1-2-silk",
+      "girl-reference-nape--1-3",
+      "girl-reference-ponytail--1-0",
+      "girl-reference-ponytail--1-0-silk",
+      "girl-reference-ponytail--1-1",
+      "girl-reference-ponytail--1-1-silk",
+      "girl-reference-ponytail--1-2",
+      "girl-reference-ponytail--1-2-silk",
+      "girl-reference-ponytail--1-3",
+      "girl-reference-ponytail--1-3-silk",
+      "girl-reference-ponytail--1-4",
+      "girl-reference-ponytail--1-4-silk",
+      "girl-reference-fringe-1-0",
+      "girl-reference-fringe-1-0-silk",
+      "girl-reference-fringe-1-1",
+      "girl-reference-fringe-1-1-silk",
+      "girl-reference-fringe-1-2",
+      "girl-reference-fringe-1-2-silk",
+      "girl-reference-nape-1-0",
+      "girl-reference-nape-1-0-silk",
+      "girl-reference-nape-1-1",
+      "girl-reference-nape-1-2",
+      "girl-reference-nape-1-2-silk",
+      "girl-reference-nape-1-3",
+      "girl-reference-ponytail-1-0",
+      "girl-reference-ponytail-1-0-silk",
+      "girl-reference-ponytail-1-1",
+      "girl-reference-ponytail-1-1-silk",
+      "girl-reference-ponytail-1-2",
+      "girl-reference-ponytail-1-2-silk",
+      "girl-reference-ponytail-1-3",
+      "girl-reference-ponytail-1-3-silk",
+      "girl-reference-ponytail-1-4",
+      "girl-reference-ponytail-1-4-silk",
+      "girl-reference-cyan-tendril",
+      "girl-reference-cyan-tendril-silk",
+      "girl-reference-coral-temple",
+      "girl-reference-coral-temple-silk"
+    ],
+    "head": {
+      "widthScale": 0.95,
+      "neckBlend": [
+        3.7,
+        3.91
+      ],
+      "attachedParts": [
+        "left-sclera",
+        "left-iris",
+        "left-eye-catch",
+        "left-eye-catch2",
+        "left-upper-lid",
+        "left-lower-lid",
+        "left-brow",
+        "left-lash-0",
+        "left-lash-1",
+        "left-lash-2",
+        "left-earring",
+        "right-sclera",
+        "right-iris",
+        "right-eye-catch",
+        "right-eye-catch2",
+        "right-upper-lid",
+        "right-lower-lid",
+        "right-brow",
+        "right-lash-0",
+        "right-lash-1",
+        "right-lash-2",
+        "right-earring",
+        "hair-cap",
+        "portrait-curl--1",
+        "portrait-curl-1",
+        "girl-pupil-left",
+        "girl-cupid-lip",
+        "girl-lower-lip",
+        "girl-smile",
+        "girl-pupil-right",
+        "girl-reference-fringe--1-0",
+        "girl-reference-fringe--1-0-silk",
+        "girl-reference-fringe--1-1",
+        "girl-reference-fringe--1-1-silk",
+        "girl-reference-fringe--1-2",
+        "girl-reference-fringe--1-2-silk",
+        "girl-reference-nape--1-0",
+        "girl-reference-nape--1-0-silk",
+        "girl-reference-nape--1-1",
+        "girl-reference-nape--1-2",
+        "girl-reference-nape--1-2-silk",
+        "girl-reference-nape--1-3",
+        "girl-reference-ponytail--1-0",
+        "girl-reference-ponytail--1-0-silk",
+        "girl-reference-ponytail--1-1",
+        "girl-reference-ponytail--1-1-silk",
+        "girl-reference-ponytail--1-2",
+        "girl-reference-ponytail--1-2-silk",
+        "girl-reference-ponytail--1-3",
+        "girl-reference-ponytail--1-3-silk",
+        "girl-reference-ponytail--1-4",
+        "girl-reference-ponytail--1-4-silk",
+        "girl-reference-fringe-1-0",
+        "girl-reference-fringe-1-0-silk",
+        "girl-reference-fringe-1-1",
+        "girl-reference-fringe-1-1-silk",
+        "girl-reference-fringe-1-2",
+        "girl-reference-fringe-1-2-silk",
+        "girl-reference-nape-1-0",
+        "girl-reference-nape-1-0-silk",
+        "girl-reference-nape-1-1",
+        "girl-reference-nape-1-2",
+        "girl-reference-nape-1-2-silk",
+        "girl-reference-nape-1-3",
+        "girl-reference-ponytail-1-0",
+        "girl-reference-ponytail-1-0-silk",
+        "girl-reference-ponytail-1-1",
+        "girl-reference-ponytail-1-1-silk",
+        "girl-reference-ponytail-1-2",
+        "girl-reference-ponytail-1-2-silk",
+        "girl-reference-ponytail-1-3",
+        "girl-reference-ponytail-1-3-silk",
+        "girl-reference-ponytail-1-4",
+        "girl-reference-ponytail-1-4-silk",
+        "girl-reference-cyan-tendril",
+        "girl-reference-cyan-tendril-silk",
+        "girl-reference-coral-temple",
+        "girl-reference-coral-temple-silk"
+      ],
+      "fixedHairOwners": [
+        "hair-bun--1",
+        "hair-bun-1",
+        "hair-grip--1",
+        "hair-grip-1"
+      ],
+      "companionSocketsPreserved": true
+    },
+    "nose": {
+      "method": "smooth bridge-depth contraction and nasal Taubin finish",
+      "bridgeContraction": 0.68,
+      "tipContraction": 0.3,
+      "tipReliefFinish": 0.23,
+      "smoothingPairs": 10,
+      "tipFairingPasses": 4,
+      "noseVertices": 5849,
+      "maxDepthReduction": 0.03918,
+      "bridgeReliefBefore": 0.033989,
+      "bridgeReliefAfter": 0.012981,
+      "tipReliefBefore": 0.06135,
+      "tipReliefAfter": 0.02707,
+      "laplacianBefore": 0.001092,
+      "laplacianAfter": 0.000543,
+      "orientationProtectedVertices": 70,
+      "connectedTopologyPreserved": true
+    }
+  },
+  "nativeFactory": {
+    "partsExact": true,
+    "groupsExact": true,
+    "assembliesExact": true
+  },
+  "materialEditUndoExact": true,
+  "nativeSaveImportExact": true,
+  "nativeBytes": 201471914,
+  "texturedGLB": {
+    "bytes": 64847948,
+    "meshes": 327,
+    "embeddedImages": 2
+  },
+  "pageErrors": []
+}

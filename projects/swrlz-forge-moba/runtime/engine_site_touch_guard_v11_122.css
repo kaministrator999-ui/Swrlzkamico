@@ -1,0 +1,27 @@
+/* §E v11.122: site-wide editor touch boundaries.
+   Ancestor-level manipulation disables double-tap page zoom while preserving
+   pinch zoom, panning and descendants' native camera/drawing touch-action.
+   No viewport maximum-scale or user-scalable restrictions. */
+html,body{touch-action:manipulation!important}
+body,body :where(*:not(input):not(textarea):not([contenteditable]):not([role="textbox"])){
+ -webkit-user-select:none!important;
+ user-select:none!important;
+ -webkit-touch-callout:none!important;
+}
+/* Editable text remains copyable and pasteable, including custom editors
+   whose editable descendants are nested under a contenteditable host. */
+body :is(input,textarea,[contenteditable]:not([contenteditable="false"]),
+ [contenteditable]:not([contenteditable="false"]) *,
+ [role="textbox"],[role="textbox"] *){
+ -webkit-user-select:text!important;
+ user-select:text!important;
+ -webkit-touch-callout:default!important;
+}
+
+/* Override the older Atelier-wide callout ban specifically for real fields. */
+#modelAtelierPanel :is(input,textarea,[contenteditable]:not([contenteditable="false"]),[role="textbox"]),
+#seMobileNumberPad :is(input,textarea,[contenteditable]:not([contenteditable="false"]),[role="textbox"]){
+ -webkit-user-select:text!important;
+ user-select:text!important;
+ -webkit-touch-callout:default!important;
+}

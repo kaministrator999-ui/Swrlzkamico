@@ -1,0 +1,72 @@
+{
+  "version": "v11.91",
+  "sourceIntegrity": {
+    "htmlBytes": 6421818,
+    "htmlSha256": "ba0105f62f2e7451d4e78148cae425f4ce5e3684093fc3954d3c1f0e1105b934",
+    "patches": 123,
+    "assets": 64,
+    "frozenPriorRuntimePatchSources": 294,
+    "frozenPriorAssets": 60
+  },
+  "body": {
+    "vertices": 254588,
+    "triangles": 509172,
+    "edgeIncidences": [
+      2
+    ],
+    "components": 1,
+    "completeHeadEarsNeckTrunkArmsTenFingersLegsFeet": true
+  },
+  "nativeEditor": {
+    "version": "v11.91",
+    "valid": true,
+    "parts": 353,
+    "triangles": 1634372,
+    "eyeOuterCornerRise": [
+      {
+        "side": "left",
+        "outerRise": 0.008732891666666909
+      },
+      {
+        "side": "right",
+        "outerRise": 0.02328667500000048
+      }
+    ],
+    "materialEditUndo": true,
+    "nativeSaveReloadExact": true,
+    "nativeSaveBytes": 186986082,
+    "texturedGLBExport": true,
+    "nativeToolRebuild": {
+      "partsExact": true,
+      "groupsExact": true,
+      "assembliesExact": true
+    },
+    "savedOriginalOpens": true,
+    "errors": []
+  },
+  "glb": {
+    "version": "v11.91",
+    "bytes": 61491476,
+    "sha256": "a0705595134fd0c1463113deee903c58550c3b2cb819e9443fa4a94ad99a79d0",
+    "meshes": 353,
+    "triangles": 1634372,
+    "finiteGeometryAttributes": true,
+    "indicesWithinBounds": true,
+    "bodyVertexColors": true,
+    "embedded4KColorAndNormalExact": true,
+    "materialBindingsExact": true
+  },
+  "native4KTextureMeshes": 150,
+  "commands": [
+    "python scripts/verify_v11_91_release.py --output /workspace/organic-girl-release",
+    "node --check /workspace/organic-girl-release-module.mjs",
+    "SWYRL_TEST_URL=http://127.0.0.1:8809 node scripts/test_organic_anime_girl_v11_91.mjs",
+    "python scripts/check_anime_girl_glb_v11_91.py /workspace/organic-girl-tests"
+  ],
+  "workflowChecks": {
+    "allFiveEmbeddedPythonBlocksParse": true,
+    "exactAssetSet64": true,
+    "versionAndHtmlMetadataAligned": true
+  },
+  "eyeAssemblyCantDegrees": 6
+}

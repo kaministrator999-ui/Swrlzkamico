@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <title>Connect §e to §wyrlz Chat</title>
+  <style>
+    :root{color-scheme:dark;font:16px/1.5 system-ui,sans-serif;background:#100f18;color:#f4f1ff}
+    body{margin:0;min-height:100dvh;display:grid;place-items:center;padding:20px;box-sizing:border-box}
+    main{width:min(100%,460px);padding:28px;box-sizing:border-box;border:1px solid #4c405f;border-radius:22px;background:#1b1727;box-shadow:0 20px 60px #0006}
+    h1{font-size:1.55rem;line-height:1.25;margin:8px 0 16px}p{color:#d0c6df}#status{min-height:3em}#account{font-weight:600;color:#fff;overflow-wrap:anywhere}
+    button{font:inherit;padding:12px 18px;border-radius:12px;border:1px solid #ac93d0;background:#d3b5f7;color:#171020;font-weight:650;cursor:pointer;width:100%;margin-top:14px}button:disabled{opacity:.45;cursor:default}button:focus-visible{outline:3px solid white;outline-offset:3px}
+    .fine{font-size:.85rem}#google{min-height:44px;margin:16px 0}a{color:#dfc3ff}
+  </style>
+</head>
+<body>
+<main>
+  <div aria-hidden="true">𓆩𓆩⁽§⁾𓆪wyrlz𓆪</div>
+  <h1>Connect your account to §e</h1>
+  <p>Your §wyrlz Chat history and saved settings stay with the same Google account. §e can save and load your editor projects.</p>
+  <p id="status" role="status" aria-live="polite">Checking this §e connection…</p>
+  <div id="account"></div>
+  <div id="google"></div>
+  <button id="connect" type="button" disabled>Connect to §e</button>
+  <p class="fine">AI editor actions require an active §e panel. Signing in on the standalone Chat page does not enable editor actions.</p>
+</main>
+<script>
+(() => {
+  "use strict";
+  const PROTOCOL="swrlz-forge-chat-v1";
+  const PARENTS=new Set(["https://kamiloki-swrlz-forge-moba.static.hf.space","https://kamiloki-swrlz-forge-moba.hf.space"]);
+  const pairId=new URLSearchParams(location.search).get("pairId")||"";
+  const status=document.getElementById("status"),account=document.getElementById("account"),button=document.getElementById("connect"),googleSlot=document.getElementById("google");
+  let binding=null,bound=false,user=null,complete=false,helloTimer=0;
+  const update=()=>{
+    button.disabled=!bound||!user||complete;
+    if(complete)return;
+    if(!bound)status.textContent="Waiting for the §e window that opened this sign-in…";
+    else status.textContent=user?"Check the account below, then choose Connect to §e.":"Sign in with Google, then choose Connect to §e.";
+    account.textContent=user?String(user.displayName||user.email||"Google Account"):"";
+  };
+  const request=async(path,body)=>{
+    const response=await fetch(path,{method:body===undefined?"GET":"POST",credentials:"same-origin",cache:"no-store",headers:body===undefined?{}:{"Content-Type":"application/json"},...(body===undefined?{}:{body:JSON.stringify(body)})});
+    const value=await response.json().catch(()=>({}));
+    if(!response.ok)throw new Error(typeof value.detail==="string"?value.detail.slice(0,180):"Account service unavailable.");
+    return value;
+  };
+  const message=(type)=>({protocol:PROTOCOL,hostId:binding.hostId,channelId:binding.channelId,type,requestId:crypto.randomUUID().replaceAll("-",""),payload:{pairId}});
+  window.addEventListener("message",event=>{
+    const value=event.data;
+    if(!binding||!window.opener||event.source!==window.opener||event.origin!==binding.parentOrigin||value?.protocol!==PROTOCOL||value.type!=="popup.bind"||value.hostId!==binding.hostId||value.channelId!==binding.channelId||(value.payload?.pairId||value.pairId)!==pairId)return;
+    bound=true;clearInterval(helloTimer);update();
+  });
+  const renderGoogle=async()=>{
+    const config=await request("/api/account/status");
+    if(!config.googleClientId)throw new Error("Google sign-in is unavailable.");
+    const script=document.createElement("script");script.src="https://accounts.google.com/gsi/client";script.async=true;
+    await new Promise((resolve,reject)=>{script.onload=resolve;script.onerror=()=>reject(new Error("Google sign-in could not load."));document.head.append(script);});
+    if(!window.google?.accounts?.id)throw new Error("Google sign-in could not load.");
+    google.accounts.id.initialize({client_id:config.googleClientId,callback:async response=>{
+      button.disabled=true;status.textContent="Verifying your Google account…";
+      try{const value=await request("/api/account/google",{credential:response.credential});user=value.user||null;update();}
+      catch(reason){status.textContent=reason.message;button.disabled=true;}
+    }});
+    google.accounts.id.renderButton(googleSlot,{type:"standard",theme:"outline",size:"large",text:user?"continue_with":"signin_with",shape:"pill",width:300});
+  };
+  button.addEventListener("click",async()=>{
+    if(!bound||!user||complete||!binding)return;
+    button.disabled=true;status.textContent="Connecting this §e panel…";
+    try{
+      await request("/api/forge/embed/pair/approve",{pairId,parentOrigin:binding.parentOrigin,hostId:binding.hostId,channelId:binding.channelId});
+      complete=true;status.textContent="Connected. You can return to §e.";button.textContent="Connected";
+      window.opener.postMessage(message("popup.complete"),binding.parentOrigin);
+      setTimeout(()=>window.close(),1000);
+    }catch(reason){status.textContent=reason.message;button.disabled=false;}
+  });
+  (async()=>{
+    try{
+      if(!/^[a-f0-9]{32}$/.test(pairId)||!window.opener)throw new Error("Open Google sign-in from the §e Chat panel.");
+      const value=await request("/api/forge/embed/pair/"+pairId);
+      if(!PARENTS.has(value.parentOrigin)||!/^[A-Za-z0-9_-]{16,128}$/.test(value.hostId)||!/^[A-Za-z0-9_-]{16,128}$/.test(value.channelId)||value.approved||Date.now()>=Number(value.expiresAt)*1000)throw new Error("This connection expired. Start sign-in again from §e.");
+      binding={parentOrigin:value.parentOrigin,hostId:value.hostId,channelId:value.channelId};
+      const hello=()=>{if(!bound&&window.opener)window.opener.postMessage(message("popup.ready"),binding.parentOrigin);};
+      hello();helloTimer=setInterval(hello,600);
+      setTimeout(()=>{if(!bound){clearInterval(helloTimer);status.textContent="The §e window could not be verified. Close this window and start sign-in from §e again.";}},20000);
+      try{const existing=await request("/api/account/me");user=existing.user||null;}catch(_){}
+      update();
+      try{await renderGoogle();}
+      catch(reason){if(user)update();else{status.textContent=reason.message;button.disabled=true;}}
+    }catch(reason){status.textContent=String(reason.message||"Account connection unavailable.");button.disabled=true;}
+  })();
+})();
+</script>
+</body>
+</html>

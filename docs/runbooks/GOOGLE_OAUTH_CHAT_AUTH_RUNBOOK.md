@@ -1,12 +1,146 @@
 # §wyrlz Google OAuth + Chat Authentication Runbook
 
-**Purpose:** Permanent architecture, diagnosis, recovery, and regression-prevention guide for Google sign-in in §wyrlz Web Chat.
+**Purpose:** Architecture, diagnosis, recovery, and regression prevention for
+Google sign-in in §wyrlz Web Chat, including the isolated §E account connection.
 
 **Read this before changing Google account/authentication behavior.** This document exists because a working Chrome login was broken while extending compatibility to Edge, and the final failure required tracing Google Cloud configuration, stable backend authority, browser-local state, runtime boot order, and live Vercel source delivery together.
 
 ---
 
-## 1. Canonical production identity
+## Current HF Chat and §E account connection — 2026-10-29
+
+This section describes the current integration source. Its release/build/device
+status is recorded separately in
+`docs/engineering/entries/2026-10-29_CHAT_FORGE_INTEGRATION.md`; source presence
+does not establish successful production Google sign-in. The numbered sections
+below preserve the earlier Vercel architecture and2026-09-12 incident. Their
+Vercel paths, browser-local namespaces and runtime source map are historical
+references, not the active HF deployment authority.
+
+The Chat account/inference origin is
+`https://kamiloki-swyrlz.hf.space`. The §E static editor remains separately hosted
+at `https://kamiloki-swrlz-forge-moba.static.hf.space`; the exact companion
+`https://kamiloki-swrlz-forge-moba.hf.space` origin is also allowlisted. §E embeds
+the complete canonical Chat at the Chat origin; it does not copy history or
+Google credentials into the editor origin.
+
+| Current concern | Source |
+|---|---|
+| Google audience verification, first-party account endpoints and verified account resolution | `hf_space/station.py` |
+| Encrypted opaque Google login and account Chat history | `hf_space/account_chat_store.py` |
+| Pairing, scoped embed sessions and live editor leases | `hf_space/forge_embed.py` |
+| Shared explicitly saved settings | `hf_space/account_profile_store.py` |
+| Separate encrypted native editor projects | `hf_space/forge_project_store.py` |
+| Full Chat account/settings UI | `chat/§wyrlz/index.html` |
+| Private-memory embedded account transport | `chat/§wyrlz/assets/forge-embed-v1.js` |
+| Chat-origin Google connection popup served at `/forge/login` | `chat/§wyrlz/forge-connect.html` |
+| Exact API and authority contract | `docs/engineering/CHAT_FORGE_EMBEDDING.md` |
+
+### First-party Google login
+
+`GET /api/account/status` advertises the active `googleClientId`, durable backend
+availability and storage authority. The HF source default is the canonical
+`...bj7ising...apps.googleusercontent.com` client below; a configured
+`SWRLZ_GOOGLE_CLIENT_ID` override is the actual verifier audience. Inspect this
+live endpoint and the exact browser origin when diagnosing failures.
+
+The Chat-origin page initializes Google Identity Services with that audience,
+posts the issued ID credential to `POST /api/account/google`, and receives an
+opaque Secure/HttpOnly/SameSite=Lax `swrlz_hf_account` cookie only after server
+verification and confirmed encrypted login persistence. The cookie has a
+seven-day lifetime. Every authenticated request revalidates its encrypted login
+record; process-local display state is not authentication. `GET /api/account/me`
+returns the verified user and actual profile availability/saved state.
+
+### Connect from §E with third-party cookies blocked
+
+1. The Chat-origin iframe validates the exact §E parent origin, source window,
+   host/channel binding and private MessagePort. A URL layout flag does not grant
+   an account or editor capability.
+2. An explicit §E sign-in opens the Chat-origin
+   `/forge/login?pairId=<random ID>` popup. The iframe retains the PKCE verifier
+   privately; only its S256 challenge and bounded binding reach the pair API.
+3. The popup checks its expected §E opener handshake. It may reuse the existing
+   first-party Google login or offer the same Google sign-in, then requires the
+   user's explicit **Connect to §E** action. Approval uses the verified existing
+   login cookie and exact Chat Origin, not a claimed owner from the request body.
+4. Pair exchange is atomically single-use, bound to host/channel and the PKCE
+   verifier, and expires after300 seconds. Wrong-verifier attempts do not consume
+   an otherwise valid pair. A valid exchange returns a scoped embed credential
+   with a3,600-second lifetime and the same verified Google owner.
+5. That credential remains only in Chat-origin iframe memory. It is attached
+   only to exact same-origin protected API calls, including streams/profile/
+   downloads. It is never written to a URL or browser storage, sent to Google or
+   GitHub, or exposed to the §E parent. The parent receives a bounded account
+   display summary and its explicit project responses.
+
+This design does not require a third-party account cookie. Reloading the iframe
+or expiry requires reconnection; the first-party popup may reuse its still-valid
+login. Do not describe this as persistent §E login or enable global weaker cookie
+settings to avoid reconnection. An invalid supplied embed Authorization header
+fails closed rather than falling back to a different cookie owner.
+
+### Logout, revocation and editor permission
+
+- Embedded Logout calls `POST /api/forge/embed/logout`; it revokes that scoped
+  embed session and clears iframe credentials/account state. The same endpoint
+  is selected for embedded requests to the ordinary account Logout action.
+- First-party `POST /api/account/logout` without an embed credential revokes the
+  root encrypted Google login and clears its account/anonymous cookies. Every
+  dependent embed session and live host action checks that root record, so root
+  logout invalidates them at the next authorization check.
+- Account access, shared history and saved settings do not authorize editor
+  mutation. Only a currently authenticated, Origin-bound active §E host lease,
+  matching thread/project/generation and fresh native checks can execute typed
+  native operations. Closing/hiding or changing the relevant panel context
+  revokes the lease; standalone Chat has no editor authority.
+- Host-only CORS is limited to `/api/forge/embed/host/*` and the two exact §E
+  origins. Do not add general credentialed account/Chat CORS. Never include
+  bearer tokens, Google credentials, private settings or project bodies in
+  diagnostic screenshots/logs.
+
+### Shared settings and project persistence
+
+`GET /api/account/profile` reads the same verified Google owner's encrypted
+profile from standalone and embedded Chat. A missing profile returns complete
+defaults, `version:0`, `updated_at:0`, `durable:true`, `saved:false`, without a
+write. Backend availability and a saved profile are separate facts. Explicit
+`PUT /api/account/profile` with the current version and camelCase frontend
+settings saves through atomic CAS; the response returns the full snake_case
+profile. The initial Save creates version1. Stale saves return409; opening or
+previewing settings never creates a durable profile. No random legacy-user or
+email-based identity migration is attempted.
+
+Native §E Save/Load uses `/api/forge/projects` under a separate encrypted owner
+namespace and chunked CAS store. It preserves the native project instead of
+putting it in Chat history or sending full geometry to inference. A confirmed
+save may report `cleanupPending:true` while its old-revision cleanup journal is
+retained. Unconfirmed or stale saves cannot overwrite the prior cloud revision.
+The exact request fields, limits and recovery behavior are in the embedding
+contract linked above.
+
+### Focused diagnostic and acceptance checks
+
+Check exact origins and `/api/account/status` first, then first-party
+`/api/account/google` and `/api/account/me`. For embedded failures, distinguish
+popup blocking, opener-binding failure, expired pair, wrong verifier, expired
+embed credential and revoked root login. Restart pairing from the §E button
+after expiry instead of editing a URL, replaying a pair or changing credentials.
+Test the same Google account's history and explicit profile Save/load in both
+surfaces, another account's isolation, blocked third-party cookies, iframe
+reload, embedded logout, root logout and the absence of editor permission in
+standalone Chat. Use an actual owner-controlled browser for Google acceptance;
+no password, token or one-time code needs to be posted into this conversation.
+
+The profile/cloud modules passed28 controlled tests, including owner isolation,
+concurrent CAS, failed/unknown writes, cleanup recovery and an exact approximately
+70MiB native snapshot roundtrip. These use in-memory storage and do not establish
+live Redis, real Google login or device acceptance. Preserve that evidence
+boundary when recording release outcomes.
+
+---
+
+## 1. Historical Vercel production identity
 
 ### Canonical Google OAuth Web Client ID
 

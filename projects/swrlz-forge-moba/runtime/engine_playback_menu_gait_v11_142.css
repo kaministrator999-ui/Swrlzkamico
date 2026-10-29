@@ -1,0 +1,32 @@
+/* §E v11.142 — level management no longer consumes playback toolbar space */
+#viewport{position:relative!important;}
+#viewport > #st141LevelBar.st141-levelbar{
+ position:absolute;top:7px;left:7px;right:7px;z-index:2700;
+ display:flex;align-items:center;flex-wrap:wrap;
+ max-width:calc(100% - 14px);width:max-content;
+ background:rgba(20,50,45,.96);
+ box-sizing:border-box;pointer-events:auto;
+ box-shadow:0 5px 18px rgba(0,0,0,.32);
+}
+#viewport > #st141LevelBar.st141-levelbar[hidden]{display:none!important;}
+#se142PlayGame{
+ background:#dec779!important;color:#20392c!important;
+ border-color:#f8e2a6!important;font-weight:900!important;
+}
+#st141RuntimeMenu.st141-menu-ui.st141-runtime{
+ z-index:4200!important;display:flex!important;visibility:visible!important;
+ opacity:1!important;pointer-events:auto!important;
+}
+#st141RuntimeMenu #st141StartGame{
+ display:inline-flex!important;align-items:center;justify-content:center;
+ visibility:visible!important;opacity:1!important;pointer-events:auto!important;
+ min-width:min(72vw,265px);
+}
+#st141RuntimeMenu[hidden]{display:none!important;}
+#st141LevelBar[hidden]{display:none!important;}
+@media(max-width:700px){
+ #viewport > #st141LevelBar.st141-levelbar{max-height:98px;overflow-y:auto;
+   top:5px;left:4px;right:4px;max-width:calc(100% - 8px);font-size:10px;}
+ #viewport > #st141LevelBar button{min-height:30px;}
+ #st141RuntimeMenu .st141-menu-panel{max-width:calc(100% - 14px);}
+}

@@ -1,0 +1,3 @@
+const stSkillRingInstallBase=stInstallUI;stInstallUI=function(){stSkillRingInstallBase();if($('stAbilityRing'))return;const ring=document.createElement('div');ring.id='stAbilityRing';ring.setAttribute('aria-label','Sheep abilities');$('sheepTagHUD').append(ring);
+ for(const [id,label,art] of [['stSplit','Mirror','<path d="M8 17 22 6l14 11-14 32zM30 17 44 6l14 11-14 32z" fill="#8ae1f0" stroke="#d4ffed" stroke-width="2"/>'],['stTotem','Totem','<path fill="#cea76d" d="M24 12h16v43H24z"/><path fill="#7be6c4" d="m8 22 24-17 24 17-24 13z"/><circle cx="32" cy="21" r="7" fill="#edffa4"/>']]){const b=$(id);b.querySelector('b').textContent=label;b.insertAdjacentHTML('afterbegin','<svg class="st-skill-icon" aria-hidden="true" viewBox="0 0 64 64">'+art+'</svg>');ring.append(b);}
+};

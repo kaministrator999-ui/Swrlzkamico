@@ -1,0 +1,30 @@
+/* Model-first desktop and touch workspace; secondary controls never cover the face. */
+.model-atelier:not([hidden]){display:flex;flex-direction:column;height:100dvh;inset:0;overflow:hidden}
+.model-atelier .atelier-head{flex:none;min-height:48px;padding:8px 12px;box-sizing:border-box;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.model-atelier .atelier-body{display:grid;grid-template-columns:minmax(0,1fr) 300px;flex:1;min-height:0;overflow:hidden}
+.model-atelier .atelier-scene{position:relative;min-height:0;height:100%;max-height:none;overflow:hidden}
+.model-atelier .atelier-viewport{position:absolute;inset:0;min-height:0;height:100%;width:100%}
+.model-atelier .atelier-inspector{box-sizing:border-box;min-height:0;height:100%;max-height:none;overflow:auto;padding:12px;background:#18233a}
+.model-atelier .atelier-status{flex:none;min-height:28px;height:auto;padding:6px 12px;box-sizing:border-box}
+.model-atelier #modelAtelierParts{height:128px;min-height:80px;max-height:160px}
+.atelier-assembly-deck{border:1px solid #55738c;border-radius:8px;margin-bottom:12px;background:#142238;color:#e4f5fa}
+.atelier-assembly-deck summary{padding:10px;cursor:pointer;font-size:13px;font-weight:600}
+.atelier-assembly-controls{display:grid;gap:8px;padding:10px}
+.atelier-assembly-controls label{display:grid;gap:4px;font-size:12px}
+.atelier-assembly-controls button,.atelier-assembly-controls input,.atelier-assembly-controls select{min-height:36px;width:100%;box-sizing:border-box;background:#263952;color:#ecf6ff;border:1px solid #5f809b;border-radius:5px;padding:5px;font-size:12px}
+.atelier-assembly-controls small{font-size:11px;line-height:1.5;color:#a6c4cf}
+.model-atelier .atelier-pose-deck{width:160px;max-height:55%;top:10px;right:10px}
+@media(max-width:700px),(pointer:coarse){
+ .model-atelier .atelier-head{padding:6px;display:block;min-height:64px;font-size:12px}
+ .model-atelier .atelier-actions{display:flex;margin-top:4px;gap:4px}
+ .model-atelier .atelier-actions button{font-size:11px;padding:7px;min-height:32px}
+ .model-atelier .atelier-body{display:flex;flex-direction:column}
+ .model-atelier .atelier-scene{flex:1 1 auto;min-height:48dvh;height:auto;max-height:none}
+ .model-atelier .atelier-inspector{flex:0 0 25dvh;height:25dvh;min-height:110px;max-height:28dvh;padding:8px;overflow:auto}
+ .model-atelier .atelier-pose-deck{width:145px;font-size:11px;max-height:68%}
+ .model-atelier .atelier-pose-deck summary{font-size:10px;padding:7px}
+ .model-atelier #modelAtelierParts{height:72px;min-height:60px}
+ .model-atelier .atelier-status{font-size:11px;max-height:48px;overflow:auto}
+}
+
+.atelier-key-xyz{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}.atelier-key-xyz input{min-width:0}

@@ -1,0 +1,16 @@
+.app.anime-cinematic .panel,.app.anime-cinematic .viewport-toolbar,.app.anime-cinematic .badgeBox,
+.app.anime-cinematic .help,.app.anime-cinematic .build-stamp,.app.anime-cinematic .mobile-tabs,
+.app.anime-cinematic .mobile-drawer,.app.anime-cinematic .mobile-tools-panel{display:none!important}
+.app.anime-cinematic #hoverUp,.app.anime-cinematic #hoverDown,.app.anime-cinematic #engineStatsPill,.app.anime-cinematic #toast{display:none!important}
+.app.anime-cinematic .fp-reticle{display:none!important}
+.app.anime-cinematic .workspace{grid-template-columns:1fr!important}
+.app.anime-cinematic .viewport-wrap{grid-column:1 / -1!important}
+.app.story-preview .viewport-toolbar,.app.story-preview .badgeBox,.app.story-preview .help{display:none!important}
+.anime-cine-title{top:9%;background:#0b0807ad;border-color:#bd956038;font-family:Georgia,serif;font-size:clamp(14px,2vw,20px);padding:7px 16px}
+.anime-cine-title small{color:#d9b77d;font:10px system-ui;letter-spacing:.16em}
+.anime-cine-bottom{bottom:38px;width:min(780px,95vw)}
+.anime-cine-subtitle{background:#0b080bd4;border-color:#aa875647;min-height:50px;font:clamp(13px,1.7vw,18px)/1.45 Georgia,serif;padding:9px 16px}
+.anime-cine-controls{background:#161214e8;border:1px solid #876d4d45}
+.anime-cine-controls button{background:#2a242a;border-color:#8b724e;color:#eedcc0}
+.anime-cine-controls input{accent-color:#d5aa66}
+@media(max-width:650px){.anime-cine-title{top:10%;font-size:13px;max-width:92vw}.anime-cine-bottom{bottom:35px}.anime-cine-subtitle{font-size:13px;min-height:58px}.anime-cine-controls{gap:4px}.anime-cine-controls button{font-size:10px;padding:6px}.anime-cine-controls input{flex-basis:75px;min-width:55px}}

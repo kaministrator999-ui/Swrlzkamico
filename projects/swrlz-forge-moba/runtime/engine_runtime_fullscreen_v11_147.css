@@ -1,0 +1,56 @@
+/* §E v11.147 — fix the v11.145 collapsed runtime canvas.
+   Keep authored editor in normal layout; fullscreen is only active in Play.
+   Older .viewport-wrap flex:1/min-height:0 declaration is not a valid
+   layout owner for this editor's grid and can collapse the CANVAS to a strip. */
+body.se145-runtime .viewport-wrap:has(> #viewport){
+ position:fixed!important;inset:0!important;
+ display:block!important;flex:none!important;
+ width:100vw!important;height:100vh!important;height:100dvh!important;
+ min-width:0!important;min-height:100vh!important;min-height:100dvh!important;
+ max-width:none!important;max-height:none!important;
+ margin:0!important;padding:0!important;
+ overflow:hidden!important;box-sizing:border-box!important;
+ z-index:9700!important;isolation:isolate!important;
+}
+body.se145-runtime .viewport-wrap > #viewport{
+ position:absolute!important;inset:0!important;
+ display:block!important;width:100%!important;height:100%!important;
+ min-width:100%!important;min-height:100%!important;
+ max-width:none!important;max-height:none!important;
+ margin:0!important;padding:0!important;
+}
+/* All editable authoring chrome lives BEHIND the dedicated runtime stage.
+   Do not take over editor styles after stop; body class is the sole gate. */
+body.se145-menu .viewport-wrap > #st141RuntimeMenu.st141-menu-ui{
+ display:flex!important;justify-content:center!important;align-items:center!important;
+ padding:clamp(12px,3dvh,28px)!important;
+ padding-bottom:max(56px,env(safe-area-inset-bottom))!important;
+ box-sizing:border-box!important;
+ overflow-y:auto!important;overscroll-behavior:contain;
+}
+body.se145-menu .viewport-wrap > #st141RuntimeMenu .st141-menu-panel{
+ box-sizing:border-box!important;
+ max-width:min(94%,520px)!important;
+ max-height:calc(100dvh - 92px)!important;overflow-y:auto!important;
+}
+body.se145-menu .viewport-wrap > #st141RuntimeMenu .se146-screen{
+ max-height:calc(100dvh - 95px)!important;
+ width:min(92%,440px)!important;overflow-y:auto!important;
+}
+/* The Exit button belongs at the bottom of the full viewport, NOT inside
+   the tiny canvas rectangle seen on Android v11.146. */
+body.se145-runtime .viewport-wrap > #se145ExitEditor{
+ position:absolute!important;bottom:max(9px,env(safe-area-inset-bottom))!important;
+ left:50%!important;top:auto!important;z-index:9800!important;
+}
+@media (max-height:520px){
+ body.se145-menu .viewport-wrap > #st141RuntimeMenu .st141-menu-panel{
+  max-height:calc(100dvh - 52px)!important;padding:8px 12px!important;
+ }
+ body.se145-menu .viewport-wrap > #st141RuntimeMenu .se146-screen{
+  max-height:calc(100dvh - 50px)!important;
+ }
+ body.se145-runtime .viewport-wrap > #se145ExitEditor{
+  bottom:3px!important;min-height:25px!important;
+ }
+}

@@ -1,0 +1,37 @@
+/* §E v11.75 — native component editor; no modal traps on touch. */
+.model-atelier .atelier-component-dock{
+ display:flex;flex-direction:column;gap:4px;min-width:0;
+ width:min(95vw,410px);max-width:100%;padding:5px;border-radius:9px;
+ border:1px solid #468fa7;background:linear-gradient(125deg,#102940ed,#211f42f2);
+ box-shadow:0 7px 22px #060d229c;pointer-events:auto;z-index:55;
+}
+.model-atelier .atelier-component-modes,.model-atelier .atelier-component-tools{
+ display:flex;align-items:center;flex-wrap:wrap;gap:4px;
+}
+.model-atelier .atelier-component-dock button{
+ min-height:37px!important;min-width:0!important;flex:0 0 auto;
+ padding:5px 8px!important;font-size:11px!important;
+ white-space:nowrap;touch-action:manipulation;
+}
+.model-atelier .atelier-component-modes button{flex:1 1 auto}
+.model-atelier .atelier-component-dock button[aria-pressed=true]{
+ color:#061b28!important;background:#68ddd0!important;
+ border-color:#c1fff0!important;font-weight:700;
+}
+.model-atelier .atelier-component-tools output{
+ font-size:11px;color:#b5eee8;font-weight:600;white-space:nowrap;
+ margin-left:auto;min-width:0;
+}
+.model-atelier .atelier-component-dock button:disabled{opacity:.4}
+@media(max-width:700px){
+ .model-atelier .atelier-component-dock{
+  width:min(calc(100vw - 65px),360px);max-width:calc(100vw - 65px);
+  padding:4px;gap:3px;
+ }
+ .model-atelier .atelier-component-dock button{
+  min-height:43px!important;padding:4px 7px!important;
+ }
+ .model-atelier .atelier-component-tools{
+  max-height:92px;overflow-y:auto;scrollbar-width:thin;
+ }
+}

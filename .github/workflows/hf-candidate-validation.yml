@@ -2,6 +2,7 @@ name: HF Candidate Offline Validation
 on:
   push:
     branches:
+      - integration/chat-forge-*
       - integration/qwen-project-generation-*
       - feature/version-literacy-content-layout-v199
       - feature/grounded-version-recall-v201
@@ -156,6 +157,13 @@ jobs:
           python hf_space/test_github_repo_view_v247.py
           python hf_space/test_programming_contract_v117.py
 
+      - name: Shared account and active editor boundaries
+        run: |
+          python -m unittest discover -s hf_space -p 'test_forge*.py' -v
+          python hf_space/test_account_profile_store.py
+          node --check 'chat/§wyrlz/assets/forge-embed-v1.js'
+          node tests/test_forge_embed_frontend.mjs
+
       - name: Install pinned real Chromium test dependencies
         run: |
           python tests/test_ci_capture_failure.py
@@ -170,6 +178,9 @@ jobs:
 
       - name: Project ZIP download in real Chromium
         run: PLAYWRIGHT_MODULE="$RUNNER_TEMP/swrlz-download-test/node_modules/playwright/index.mjs" python scripts/ci_capture_failure.py --label "Project ZIP browser checks" -- node tests/test_project_archive_download.mjs
+
+      - name: Canonical embedded Chat desktop and mobile
+        run: PLAYWRIGHT_MODULE="$RUNNER_TEMP/swrlz-download-test/node_modules/playwright/index.mjs" node tests/test_forge_chat_browser.cjs
 
       - name: Chat update dialog in real Chromium
         run: PLAYWRIGHT_MODULE="$RUNNER_TEMP/swrlz-download-test/node_modules/playwright/index.mjs" python scripts/ci_capture_failure.py --label "Chat updates browser checks" -- node tests/test_chat_updates.mjs

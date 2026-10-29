@@ -1,0 +1,27 @@
+import assert from 'node:assert/strict';
+import * as THREE from 'three';import vm from 'node:vm';import fs from 'node:fs';
+const script=fs.readFileSync(new URL('../runtime/model_atelier_topology_lod_v11_38.js',import.meta.url),'utf8');
+const c=vm.createContext({THREE,MODEL_ATELIER_KINDS:['sphere']});vm.runInContext(script,c);
+const original=new THREE.SphereGeometry(1,64,48),source=Array.from(original.attributes.position.array);
+const before=(original.index?.count||original.attributes.position.count)/3;
+const p=c.atelierLODPlan(original,.35);
+assert(p.ok,p.reason);assert(p.after<before&&p.after>20);
+assert.equal(p.vertices,p.data.positions.length/3);
+assert.equal(p.after,p.data.indices.length/3);
+assert.equal(p.data.uvs.length,p.vertices*2);
+assert(p.canBake);
+const part={kind:'topologyMesh',topologyMesh:p.data};
+assert(c.atelierTopologyValid(part));
+const g=c.atelierTopologyGeometry(part);
+assert.equal(g.attributes.position.count,p.vertices);
+assert.equal(g.index.count/3,p.after);
+assert(g.attributes.normal&&g.attributes.uv);
+assert.deepEqual(Array.from(original.attributes.position.array),source);
+assert(!c.atelierTopologyValid({...part,topologyMesh:{...p.data,indices:[0,0,1]}}));
+assert(!c.atelierTopologyValid({...part,topologyMesh:{...p.data,positions:[NaN,...p.data.positions.slice(1)]}}));
+assert(!c.atelierTopologyValid({...part,topologyMesh:{...p.data,indices:[1,2,999999]}}));
+for(const ratio of [0,-1,1,.001,NaN,Infinity])assert(!c.atelierLODPlan(original,ratio).ok);
+const restored=JSON.parse(JSON.stringify(part));assert(c.atelierTopologyValid(restored));
+assert.deepEqual(Array.from(c.atelierTopologyGeometry(restored).attributes.position.array),Array.from(g.attributes.position.array));
+console.log('V1138_REAL_INDEXED_TOPOLOGY_REDUCTION_NATIVE_JSON_UV_AND_ORIGINAL_PRESERVED_PASS',before,p.after,p.vertices);
+

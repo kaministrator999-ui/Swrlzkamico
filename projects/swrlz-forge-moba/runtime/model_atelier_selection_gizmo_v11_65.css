@@ -1,0 +1,28 @@
+
+/* §E v11.65 native mesh selection controls, visible beside selected geometry. */
+.model-atelier .atelier-viewport{position:relative}
+.model-atelier .atelier-mesh-quickstrip[hidden],.model-atelier .atelier-mesh-quickstrip [hidden]{display:none!important}
+.model-atelier .atelier-mesh-quickstrip{
+ position:absolute;z-index:2155;width:min(312px,calc(100% - 10px));max-height:min(47dvh,380px);
+ padding:7px;border:1px solid #7dc5d4;border-radius:12px;background:#111e34ed;
+ box-shadow:0 7px 25px #000c;overflow:auto;color:#eaf5ff;font:12px system-ui,sans-serif;
+ pointer-events:auto;touch-action:pan-y;overscroll-behavior:contain;
+}
+.model-atelier .amq-head{display:flex;align-items:center;gap:5px;padding-bottom:4px}
+.model-atelier .amq-head strong{white-space:nowrap}
+.model-atelier .amq-head span{flex:1;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;font-size:10px}
+.model-atelier .amq-line{display:flex;gap:4px;flex-wrap:wrap;margin:4px 0}
+.model-atelier .atelier-mesh-quickstrip button{flex:1;min-height:35px;min-width:35px;padding:4px 6px;
+ background:#2b435e;color:#fff;border:1px solid #5d85a3;border-radius:7px;font-size:11px}
+.model-atelier .atelier-mesh-quickstrip button[aria-pressed=true]{background:#18777d;border-color:#70f2df}
+.model-atelier .atelier-mesh-quickstrip button:disabled{opacity:.42;cursor:not-allowed}
+.model-atelier .atelier-mesh-quickstrip .amq-head button{flex:0 0 28px}
+.model-atelier .amq-count{font-size:10px;color:#9dd9ec;margin:4px 2px}
+.model-atelier .atelier-mesh-quickstrip fieldset{border:1px solid #557996;border-radius:7px;padding:6px}
+.model-atelier .atelier-mesh-quickstrip label{display:inline-flex;align-items:center;gap:4px;margin:3px;font-size:11px}
+.model-atelier .atelier-mesh-quickstrip input{width:60px;min-width:0;background:#243c57;color:#fff;border:1px solid #7e9db2;border-radius:4px;padding:5px}
+.model-atelier .atelier-mesh-quickstrip small{display:block;color:#bbd8e5;line-height:1.4}
+@media(max-width:700px){
+ .model-atelier .atelier-mesh-quickstrip{width:min(290px,calc(100% - 10px));max-height:32dvh}
+ .model-atelier .atelier-mesh-quickstrip button{min-height:42px}
+}

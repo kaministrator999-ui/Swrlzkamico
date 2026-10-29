@@ -1,0 +1,16 @@
+/* §E v11.76 desktop wire display controls, scoped to Model Atelier */
+.atelier-desktop-wire-options{
+ display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+ padding:7px 9px;border-top:1px solid #3b6881;
+ color:#c1e5f2;background:#14253b;
+}
+.atelier-desktop-wire-options label{
+ display:flex;align-items:center;gap:5px;cursor:pointer;
+ font-size:12px;white-space:nowrap;
+}
+.atelier-desktop-wire-options input{width:16px;height:16px;accent-color:#51deda}
+.atelier-desktop-wire-options small{font-size:10px;color:#95abbc}
+
+/* Advanced display menu must sit above movable mesh gizmo dialog on desktop. */
+.model-atelier #modelAtelierViewportModes{position:relative;z-index:2205!important}
+.model-atelier .atelier-top-advanced[open]{position:relative;z-index:2206}

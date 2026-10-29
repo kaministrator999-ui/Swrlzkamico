@@ -1,6 +1,6 @@
 # Chat update dialog and recorded history
 
-Checkpoint: `editor-project-completion-20261025`. Source implementation is part of the editor/project completion checkpoint; deployment and live acceptance remain tracked in [its receipt](entries/2026-10-25_EDITOR_PROJECT_COMPLETION.md).
+Current announcement: `chat-forge-account-panel-20261029`, tracked in [the shared account/panel checkpoint](entries/2026-10-29_CHAT_FORGE_INTEGRATION.md). The preceding editor/project notes and all earlier records remain in history. The original dialog implementation and historical release attempts remain recorded in [their receipt](entries/2026-10-25_EDITOR_PROJECT_COMPLETION.md).
 
 Chat now has a public **Chat updates** button beside its conversation export action in the side menu. A native modal presents the newest notes, then an expandable list of all earlier recorded Chat update entries. This follows the §E engine's exact-version preference pattern without importing the engine's release notes or version numbers.
 
@@ -12,7 +12,7 @@ The dialog uses the browser's modal top layer, an explicit Tab/Shift+Tab wrap, n
 
 ## History provenance
 
-`chat/§wyrlz/assets/chat-updates-v1.json` contains the newest stable checkpoint ID and **264 previous recorded entries**:
+`chat/§wyrlz/assets/chat-updates-v1.json` contains the newest stable checkpoint ID and **265 previous recorded entries**:
 
 - 249 records from the full, non-shallow `origin/runtime` history of `versions/web-chat.txt`, preserving each record's actual version, commit date, commit subject and full source commit. Repeated versions and failed attempts remain historical records; they are not silently recast as successful releases.
 - 14 earlier Chat entries from `SWRLZ_VERCEL_CHAT_CHANGELOG.md`, preserving the documented version labels/ranges, dates and original recorded notes. These include the initial Chat 1.0.0 entry on 2026-09-06. Historical Vercel references describe past deployments and do not redirect current publication away from the Hugging Face Space.
@@ -24,7 +24,7 @@ The manifest records the exact registry snapshot commit and each entry's source 
 
 Canonical ownership is `chat/§wyrlz/index.html` for the menu action and dialog styling; `assets/chat-updates-v1.js` for dialog behavior; and `assets/chat-updates-v1.json` for public notes. `scripts/prepare_hf_space.py` stages both new assets byte-for-byte. Station's existing `StaticFiles` mount serves JSON and JavaScript without a new account endpoint or authorization change. Existing artifact/archive helpers are unchanged.
 
-`node tests/test_chat_updates.mjs` passes in real Chromium. It covers all 264 rendered history entries, hostile-looking text remaining literal, focus wrap/Escape, manual reopening, local suppression across reloads/new tabs, newer-ID reopening, generation/draft deferral, empty-composer startup, fetch failure/retry, mobile layout/touch dismissal, and disabled-storage behavior. It does not substitute for hosted model or live deployment acceptance. Candidate staging/check passes, and FastAPI TestClient reads both new Station static assets with correct MIME types and byte-identical bodies.
+`node tests/test_chat_updates.mjs` passes in real Chromium. It covers all 265 rendered history entries, hostile-looking text remaining literal, focus wrap/Escape, manual reopening, local suppression across reloads/new tabs, newer-ID reopening, generation/draft deferral, empty-composer startup, fetch failure/retry, mobile layout/touch dismissal, and disabled-storage behavior. It does not substitute for hosted model or live deployment acceptance. Candidate staging/check passes, and FastAPI TestClient reads both new Station static assets with correct MIME types and byte-identical bodies.
 
 
 ## Exact-source CI observation and failure visibility — 2026-10-26

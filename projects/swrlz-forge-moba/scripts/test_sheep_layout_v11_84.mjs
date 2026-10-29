@@ -1,0 +1,21 @@
+import {chromium} from 'playwright';import assert from 'node:assert/strict';import {mkdir,writeFile} from 'node:fs/promises';
+const base=process.env.SWYRL_TEST_URL||'http://127.0.0.1:8798',out=process.env.SWYRL_TEST_OUT||'/workspace/sheep-recovery-tests';await mkdir(out,{recursive:true});
+const browser=await chromium.launch({headless:true,executablePath:'/usr/bin/chromium',args:['--no-sandbox','--disable-dev-shm-usage','--enable-unsafe-swiftshader','--use-gl=angle','--use-angle=swiftshader']});const results=[];
+try{for(const [mode,viewport,touch] of [['portrait',{width:412,height:915},true]].filter(x=>!process.env.SWYRL_MODE||x[0]===process.env.SWYRL_MODE)){
+ const c=await browser.newContext({viewport,isMobile:touch,hasTouch:touch});await c.addInitScript(()=>{const make=document.createElement.bind(document);window.fogTestCanvases=[];document.createElement=function(...args){const node=make(...args);if(args[0]==='canvas')window.fogTestCanvases.push(node);return node;};});
+ await c.addInitScript(()=>{const raf=requestAnimationFrame.bind(window),now=performance.now.bind(performance),queue=new Map();let frozen=false,time=0,serial=1e9;Object.defineProperty(performance,'now',{configurable:true,value:()=>frozen?time:now()});window.requestAnimationFrame=cb=>{if(!frozen)return raf(cb);const id=serial++;queue.set(id,cb);return id;};window.touchClock={freeze:()=>{frozen=true;time=now();return new Promise(r=>raf(()=>raf(r)));},step:n=>{for(let i=0;i<n;i++){time+=50;const work=[...queue.values()];queue.clear();for(const cb of work)cb(time);}}};});
+ const page=await c.newPage(),errors=[];page.on('pageerror',e=>errors.push(String(e)));page.setDefaultTimeout(90000);const step=n=>page.evaluate(n=>window.touchClock.step(n),n),api=(method,...args)=>page.evaluate(({method,args})=>window.SWYRL_ENGINE_SHEEP_TAG[method](...args),{method,args});
+ const state=()=>api('status'),ui=()=>api('uiStatus'),player=async()=> (await state()).units.find(u=>u.controlled),click=async id=>{await page.locator('#'+id)[touch?'tap':'click']({force:true});await step(1);};
+ await page.goto(base+'/index.html?project=sheep-tag-meadow',{waitUntil:'domcontentloaded'});await page.waitForFunction(()=>window.SWYRL_ENGINE_SHEEP_TAG?.mapStatus().textureSize?.[0]===4096);await page.locator('#seReleaseNotesClose').click();await page.locator('#perfPreset').selectOption('medium',{force:true});await page.evaluate(()=>window.touchClock.freeze());
+
+ await click('playBtn');const layouts=[];
+ for(const size of [{width:412,height:915},{width:360,height:915},{width:320,height:915},{width:915,height:412},{width:568,height:320},{width:1440,height:1000}]){
+  await page.setViewportSize(size);await step(1);
+  const ids=['stBuildFarm','stBuildIncome','stBuildFort','stBuildWall','stBuildRamp','stSplit','stTotem','stMoveStick','stMinimap'],boxes=await Promise.all(ids.map(async id=>({id,...await page.locator('#'+id).boundingBox()})));
+  for(const b of boxes)assert.ok(b.width>=44&&b.height>=44&&b.x>=0&&b.y>=0&&b.x+b.width<=size.width+1&&b.y+b.height<=size.height+1,JSON.stringify({size,b}));
+  for(let i=0;i<boxes.length;i++)for(let j=i+1;j<boxes.length;j++){const a=boxes[i],b=boxes[j];assert.ok(a.x+a.width+2<=b.x||b.x+b.width+2<=a.x||a.y+a.height+2<=b.y||b.y+b.height+2<=a.y,'Final layout overlap '+JSON.stringify({size,a,b}));}
+  const overflow=await page.evaluate(()=>{const score=document.querySelector('.st-score'),r=score.getBoundingClientRect();return [...score.querySelectorAll('.st-readout>*')].filter(n=>n.getClientRects().length).filter(n=>{const b=n.getBoundingClientRect();return b.left<r.left-1||b.right>r.right+1||b.top<r.top-1||b.bottom>r.bottom+1;}).map(n=>n.id);});assert.deepEqual(overflow,[],'Score text overflow at '+JSON.stringify(size));
+  await page.screenshot({path:out+'/final-layout-'+size.width+'x'+size.height+'.png'});layouts.push({size,scoreContained:true,controlsSeparated:true,targetsAtLeast44px:true});
+ }
+ assert.deepEqual(errors,[]);await click('stStop');await c.close();results.push({layouts,errors});console.log('FINAL_ARTIFACT_FULL_MAP_SIX_LAYOUTS_SCORE_AND_RING_SPACING_PASS');
+}}finally{await browser.close();}await writeFile(out+'/layout-receipt.json',JSON.stringify(results,null,2)+'\n');

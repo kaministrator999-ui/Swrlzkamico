@@ -1,0 +1,17 @@
+/* Play is the actual game view, not an editor panel with gameplay over it.
+   Keep the hosted browser chrome and native HUD/Stop logic intact. */
+body.se145-runtime .topbar,body.se145-runtime .menubar,
+body.se145-runtime .menu-bar,body.se145-runtime .statusbar,
+body.se145-runtime .status-bar,
+body.se145-runtime #st141LevelBar{display:none!important}
+body.se145-runtime .viewport-wrap{flex:1 1 auto!important;min-height:0!important}
+body.se145-runtime #st141MenuPreview{display:none!important}
+#se145ExitEditor{
+ display:none;position:absolute;left:50%;bottom:max(8px,env(safe-area-inset-bottom));
+ transform:translateX(-50%);z-index:9600;cursor:pointer;pointer-events:auto;
+ background:rgba(17,40,41,.82);color:#ffedc0;border:1px solid rgba(244,214,148,.7);
+ border-radius:999px;padding:7px 13px;min-height:34px;
+ font:600 12px system-ui,sans-serif;box-shadow:0 3px 14px #0008;
+}
+body.se145-runtime #se145ExitEditor:not([hidden]){display:block!important}
+@media(max-height:450px){#se145ExitEditor{bottom:3px;padding:3px 10px;min-height:27px}}

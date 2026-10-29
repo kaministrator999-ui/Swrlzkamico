@@ -1,0 +1,12 @@
+{
+  "version": "v11.95",
+  "bytes": 64847940,
+  "sha256": "cf422efeb0d21a7acd5e3f51bfebb5b4d7d1e8a5e7433f0e59cd71ca2eb6d414",
+  "meshes": 327,
+  "triangles": 1755616,
+  "finiteGeometryAttributes": true,
+  "indicesWithinBounds": true,
+  "bodyVertexColors": true,
+  "embedded4KColorAndNormalExact": true,
+  "materialBindingsExact": true
+}

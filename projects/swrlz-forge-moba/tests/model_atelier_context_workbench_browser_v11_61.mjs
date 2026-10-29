@@ -1,0 +1,68 @@
+import assert from 'node:assert/strict';
+import {chromium} from 'playwright';
+const url=(process.env.SWYRL_SCULPT_TEST_URL||'http://127.0.0.1:8787').replace(/\/$/,'');
+const browser=await chromium.launch({headless:true,args:['--no-sandbox','--disable-dev-shm-usage','--enable-webgl','--enable-unsafe-swiftshader','--use-gl=angle','--use-angle=swiftshader']});
+try{
+ for(const [mode,viewport,mobile] of [['desktop',{width:1280,height:900},false],['android',{width:412,height:915},true]]){
+  const ctx=await browser.newContext({viewport,isMobile:mobile,hasTouch:mobile});
+  const page=await ctx.newPage();page.setDefaultTimeout(60000);
+  const errors=[];page.on('pageerror',e=>errors.push(e.message));
+  await page.goto(url+'/?project=model-atelier',{waitUntil:'domcontentloaded',timeout:90000});
+  await page.locator('#modelAtelierPanel:not([hidden]) canvas').waitFor();
+  const context=page.locator('#atelierContextWorkbench');
+  const rail=page.locator('#modelAtelierToolRail');
+  assert(await rail.isVisible());
+  assert(!(await context.isVisible()),'native v11.60 default remains unchanged');
+  assert(await page.locator('#modelAtelierParts').isVisible());
+  await page.locator('#modelAtelierParts').selectOption('model-0001');
+  const boot=await page.evaluate(()=>({panel:!!document.getElementById('modelAtelierPanel'),rail:!!document.getElementById('modelAtelierToolRail'),handle:!!document.querySelector('.atelier-tool-handle'),toggle:!!document.getElementById('atelierContextToggle'),workbench:!!document.getElementById('atelierContextWorkbench'),boot:window.__SWRLZ_CONTEXT_BOOT||null,init:typeof atelierAdaptiveInstall,call:document.querySelector('script[type="module"]')?.textContent?.includes('atelierAdaptiveInstall(panel);')}));
+  console.log('CONTEXT_BOOT_DIAG',mode,JSON.stringify(boot),'PAGE_ERRORS',JSON.stringify(errors));
+  const spans=await page.evaluate(()=>{const s=document.querySelector('script[type="module"]')?.textContent||'';return ['function atelierAdaptiveInstall(panel)','atelierAdaptiveInstall(panel);','atelierToolDockInstall(panel);'].map(q=>{const p=s.indexOf(q);return {token:q,count:s.split(q).length-1,at:p,surround:p>=0?s.slice(Math.max(0,p-160),p+150):''}})});
+  console.log('CONTEXT_SOURCE_SPANS',JSON.stringify(spans));
+  const scriptMap=await page.evaluate(()=>[...document.scripts].map((script,i)=>({i,type:script.type,src:script.src||'',length:script.textContent?.length||0,dock:script.textContent?.includes('atelierToolDockInstall(panel);'),context:script.textContent?.includes('atelierAdaptiveInstall(panel);')})));
+  console.log('CONTEXT_SCRIPT_MAP',JSON.stringify(scriptMap));
+  const ownership=await page.evaluate(()=>{const p=document.getElementById('modelAtelierPanel'),r=document.getElementById('modelAtelierToolRail');return {railInPanel:p?.contains(r),handleInPanel:p?.contains(document.querySelector('.atelier-tool-handle')),build:window.SWRLZ_FORGE_BUILD?.version}});
+  console.log('CONTEXT_OWNERSHIP',JSON.stringify(ownership));
+
+  assert(boot.toggle,'Context bootstrap must wire to native dock');
+  await page.locator('#atelierContextToggle').click();
+  assert(await context.isVisible(),'workbench opt-in must open');
+  const groups=await page.evaluate(()=>window.SWYRL_E_CONTEXT.groups());
+  assert(groups.Lasso.includes('Paint mask'));
+  assert(groups.Lasso.includes('Boolean masks'));
+  assert(groups.Sculpt.includes('Brush & falloff'));
+  assert(groups.Topology.includes('LOD planning'));
+  assert(groups.Face.includes('Facial landmarks'));
+  await rail.getByRole('button',{name:'Open Lasso editing tools'}).click();
+  await context.getByRole('button',{name:'Paint mask',exact:true}).click();
+  const lasso=page.locator('#atelierContextProxy_modelAtelierLassoPaintRadius');
+  assert(await lasso.count(),'lasso paint radius comes from native registry');
+  await lasso.fill('.18');await lasso.dispatchEvent('change');
+  assert.equal(await page.locator('#modelAtelierLassoPaintRadius').inputValue(),'.18');
+  const brushRail=rail.getByRole('button',{name:'Open Sculpt editing tools'});
+  await brushRail.click();
+  await context.getByRole('button',{name:'Brush & falloff',exact:true}).click();
+  const brush=page.locator('#atelierContextProxy_modelAtelierSculptBrushRadius');
+  assert(await brush.isVisible());
+  await brush.fill('.45');await brush.dispatchEvent('change');
+  assert.equal(await page.locator('#modelAtelierSculptBrushRadius').inputValue(),'.45');
+  await context.getByRole('button',{name:'Save my values'}).click();
+  await brush.fill('.21');await brush.dispatchEvent('change');
+  await context.getByRole('button',{name:'Apply saved values'}).click();
+  assert.equal(await page.locator('#modelAtelierSculptBrushRadius').inputValue(),'.45');
+  await rail.getByRole('button',{name:'Open Lasso editing tools'}).click();
+  assert.equal(await page.locator('#atelierContextGroupName').textContent(),'Lasso tools');
+  await rail.getByRole('button',{name:'Open Sculpt editing tools'}).click();
+  assert.equal(await page.locator('#modelAtelierSculptBrushRadius').inputValue(),'.45');
+  await rail.getByRole('button',{name:'Open Topology editing tools'}).click();
+  await context.getByRole('button',{name:'LOD planning',exact:true}).click();
+  assert(await page.locator('#atelierContextProxy_modelAtelierLODRatio').count());
+  await context.getByRole('button',{name:'Close contextual tools'}).click();
+  assert(!(await context.isVisible()));
+  assert(await page.locator('#modelAtelierSculptBrush').isVisible());
+  assert((await page.locator('#modelAtelierPartCount').textContent()).includes('283'));
+  assert.deepEqual(errors,[],'no uncaught source runtime errors');
+  console.log('SWRLZ_ADAPTIVE_CONTEXT_PASS',mode,{categories:Object.keys(groups).length,lasso:groups.Lasso.length});
+  await ctx.close();
+ }
+}finally{await browser.close();}

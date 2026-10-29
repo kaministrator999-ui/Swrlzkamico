@@ -1,0 +1,189 @@
+{
+  "version": "v11.92",
+  "nativeFactory": {
+    "partsExact": true,
+    "groupsExact": true,
+    "assembliesExact": true
+  },
+  "geometryVerified": true,
+  "profile": {
+    "version": "v11.92",
+    "face": {
+      "eyeShape": "upturned almond",
+      "eyeCantDegrees": 8,
+      "brow": "slim raised arch",
+      "cheeks": "softly full",
+      "chin": "small rounded taper"
+    },
+    "hair": {
+      "part": "asymmetric swept coral and cyan",
+      "silhouette": "layered short bob with upward tied ponytail tufts",
+      "cheekLock": "long curved cyan tendril"
+    },
+    "source": "owner-provided festival character image"
+  },
+  "dress": {
+    "revision": "festival-reference-v11.92",
+    "style": "long asymmetric layered festival dress",
+    "referenceFeatures": [
+      "ivory wrap",
+      "dark teal outer panel",
+      "pale cyan pleated inset",
+      "long yellow pointed tail",
+      "pastel sewn ornaments",
+      "raised brocade and running stitches"
+    ],
+    "originalHemByPanel": {
+      "skirt-panel-0": 2.18,
+      "skirt-panel-1": 2.16,
+      "skirt-panel-2": 2.37,
+      "skirt-panel-3": 2.08,
+      "skirt-panel-4": 2.1,
+      "skirt-panel-5": 1.87,
+      "skirt-panel-6": 2.27
+    },
+    "detailParts": [
+      "girl-dress-inset-pleat-seams",
+      "girl-dress-brocade-diamonds",
+      "girl-dress-running-stitches",
+      "girl-dress-pastel-bauble-0",
+      "girl-dress-bauble-loop-0",
+      "girl-dress-pastel-bauble-1",
+      "girl-dress-bauble-loop-1",
+      "girl-dress-pastel-bauble-2",
+      "girl-dress-bauble-loop-2",
+      "girl-dress-pastel-bauble-3",
+      "girl-dress-bauble-loop-3",
+      "girl-dress-pastel-bauble-4",
+      "girl-dress-bauble-loop-4",
+      "girl-dress-pastel-bauble-5",
+      "girl-dress-bauble-loop-5",
+      "girl-dress-pastel-bauble-6",
+      "girl-dress-bauble-loop-6",
+      "girl-dress-pastel-bauble-7",
+      "girl-dress-bauble-loop-7",
+      "girl-dress-pastel-bauble-8",
+      "girl-dress-bauble-loop-8",
+      "girl-dress-pastel-bauble-9",
+      "girl-dress-bauble-loop-9",
+      "girl-dress-pastel-bauble-10",
+      "girl-dress-bauble-loop-10",
+      "girl-dress-pastel-bauble-11",
+      "girl-dress-bauble-loop-11",
+      "girl-dress-pastel-bauble-12",
+      "girl-dress-bauble-loop-12",
+      "girl-dress-pastel-bauble-13",
+      "girl-dress-bauble-loop-13",
+      "girl-dress-pastel-bauble-14",
+      "girl-dress-bauble-loop-14",
+      "girl-dress-gold-tail-tassel"
+    ],
+    "pleatSeams": 11,
+    "brocadeMotifs": 45,
+    "pastelBaubles": 15
+  },
+  "eyes": [
+    {
+      "side": "left",
+      "sclera": {
+        "min": [
+          -0.215066,
+          4.025009,
+          0.239056
+        ],
+        "max": [
+          -0.024934,
+          4.125658,
+          0.313301
+        ]
+      },
+      "brow": {
+        "min": [
+          -0.194571,
+          4.160476,
+          0.260665
+        ],
+        "max": [
+          -0.03083,
+          4.202064,
+          0.304036
+        ]
+      },
+      "upper": {
+        "min": [
+          -0.229096,
+          4.054631,
+          0.224806
+        ],
+        "max": [
+          -0.026708,
+          4.132756,
+          0.307731
+        ]
+      },
+      "iris": true,
+      "pupil": true
+    },
+    {
+      "side": "right",
+      "sclera": {
+        "min": [
+          0.024934,
+          4.025009,
+          0.239056
+        ],
+        "max": [
+          0.215066,
+          4.125658,
+          0.313301
+        ]
+      },
+      "brow": {
+        "min": [
+          0.03083,
+          4.160476,
+          0.260665
+        ],
+        "max": [
+          0.194571,
+          4.202064,
+          0.304036
+        ]
+      },
+      "upper": {
+        "min": [
+          0.026708,
+          4.054631,
+          0.224806
+        ],
+        "max": [
+          0.229096,
+          4.132756,
+          0.307731
+        ]
+      },
+      "iris": true,
+      "pupil": true
+    }
+  ],
+  "oldGoldHem": 2.16,
+  "newGoldHem": 1.4912,
+  "parts": 325,
+  "triangles": 1558384,
+  "materialEditUndoExact": true,
+  "nativeSaveImportExact": true,
+  "nativeBytes": 178939550,
+  "texturedGLB": {
+    "bytes": 59340464,
+    "meshes": 325,
+    "embeddedImages": 2
+  },
+  "screenshots": [
+    "body-front.png",
+    "body-three.png",
+    "portrait-front.png",
+    "portrait-three.png"
+  ],
+  "pageErrors": [],
+  "sourceIntegritySha256": "eba0e3000950a95053dc7000bf9387d89e6fefa81e7d11cacdd722f765ddf6c5"
+}

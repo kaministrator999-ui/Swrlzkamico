@@ -1,0 +1,46 @@
+{
+  "release": "v11.77",
+  "native": {
+    "parts": 106,
+    "assemblies": 6,
+    "nativeSaveReimport": true,
+    "project": "Astra · Comet Courier",
+    "errors": []
+  },
+  "parts": 106,
+  "texturedParts": 98,
+  "assemblies": 6,
+  "triangles": 274980,
+  "sourceBytes": 3149026,
+  "sourceSha256": "fc67c2bd03d6c90933c40b117e810675cbbacc29b05b2cfb96f6fe57f2088323",
+  "images": {
+    "astra-normal-4k.png": {
+      "resolution": [
+        4096,
+        4096
+      ],
+      "bytes": 3896394,
+      "sha256": "7067e321bccaa62622b90044f39681cfceedf037451bb45a4b5ac47f3f395f0b"
+    },
+    "astra-basecolor-4k.jpg": {
+      "resolution": [
+        4096,
+        4096
+      ],
+      "bytes": 4202481,
+      "sha256": "608d8018ad86d7023dd39d9a0f32460efa4572b0ce5b93a434f40acdbf0ead6c"
+    }
+  },
+  "originalCanonicalPreserved": true,
+  "preservedSourceFiles": 248,
+  "preservedAssets": 43,
+  "nativeGLB": {
+    "bytes": 16965768,
+    "embeddedImages": 2,
+    "imageResolution": [
+      4096,
+      4096
+    ]
+  },
+  "ownerVisualApproval": false
+}

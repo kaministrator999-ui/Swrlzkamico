@@ -32,6 +32,9 @@ import project_thread_memory
 import project_work_registry_v241 as project_work_registry
 from itertools import chain
 import account_chat_store
+import account_profile_store
+import forge_embed
+import forge_project_store
 import chatgpt_archive
 import chatgpt_upload_session
 import chatgpt_import_job
@@ -57,6 +60,8 @@ app.mount("/chat/§wyrlz/assets",StaticFiles(directory=ROOT/"chat/§wyrlz/assets
 _lock=threading.RLock()
 _github_diagnostic_lock=threading.Lock()
 _sessions={}
+# Trusted capabilities remain process-private; never part of persisted Chat data.
+_forge_contexts={}
 _pool=ThreadPoolExecutor(max_workers=2,thread_name_prefix="hf-r39")
 _generate=None
 _stock_generate=None
@@ -343,11 +348,14 @@ def _commit_revision(s):
         raise
 
 
-def _snapshot(s):
+def _snapshot(s, request=None, key=None):
+    generation=copy.deepcopy(s["activeGeneration"])
+    if isinstance(generation,dict) and generation.get("forgeBatches") and not _project_forge_events(request,key,generation):
+        generation.pop("forgeBatches",None)
     return {"contract":CONTRACT,"revision":s["revision"],"threads":copy.deepcopy(s["threads"]),
             "currentThread":next((copy.deepcopy(t) for t in s["threads"] if t["id"]==s["currentId"]),None),
             "state":{"currentId":s["currentId"],"threads":copy.deepcopy(s["threads"])},
-            "activeGeneration":copy.deepcopy(s["activeGeneration"])}
+            "activeGeneration":generation}
 
 def _chat_document():
     """Serve the canonical Chat document plus the bounded HF presentation adapter."""
@@ -360,11 +368,11 @@ def _chat_document():
 
 @app.get("/")
 def home():
-    return HTMLResponse(_chat_document(),headers={"Cache-Control":"no-store"})
+    return HTMLResponse(_chat_document(),headers={"Cache-Control":"no-store","Content-Security-Policy":"frame-ancestors 'self' https://huggingface.co https://kamiloki-swrlz-forge-moba.static.hf.space https://kamiloki-swrlz-forge-moba.hf.space"})
 
 @app.get("/chat/§wyrlz")
 def chat():
-    return HTMLResponse(_chat_document(),headers={"Cache-Control":"no-store"})
+    return HTMLResponse(_chat_document(),headers={"Cache-Control":"no-store","Content-Security-Policy":"frame-ancestors 'self' https://huggingface.co https://kamiloki-swrlz-forge-moba.static.hf.space https://kamiloki-swrlz-forge-moba.hf.space"})
 
 @app.get("/api/hf/models")
 def models():
@@ -378,12 +386,53 @@ def runtime_capacity():
 GOOGLE_CLIENT_ID=os.environ.get("SWRLZ_GOOGLE_CLIENT_ID","").strip() or "1083208613166-bj7isingvbv5dcns9ldtru8cjfj993mc.apps.googleusercontent.com"
 _hf_accounts={}
 
-def _account_session(request:Request):
+def _legacy_account_session(request:Request):
     sid=request.cookies.get("swrlz_hf_account")
     # Rehydrate independently of the Space process: a previously issued opaque
     # session is verified against encrypted Redis every time, honoring revocation.
     if not sid:return None,None
     return sid,account_chat_store.load_login(sid)
+
+def _account_session(request:Request):
+    sid,user=forge_embed.resolve_account(request)
+    return (sid,user) if sid is not None else _legacy_account_session(request)
+
+
+def _project_forge_events(request,key,generation):
+    context=_forge_contexts.get(key)
+    return (request is not None and context is not None
+            and context.generation_id==generation.get("requestId")
+            and forge_embed.context_request_matches(request,context))
+
+
+def _invalidate_forge(context):
+    if context is not None:
+        try:forge_embed.invalidate_generation(context)
+        except HTTPException:pass  # Unreachable storage also fails closed at host execution.
+
+
+def _profile_response(user):
+    available=account_chat_store.configured()
+    profile=(account_profile_store.load_profile(user["id"]) if available
+             else account_profile_store._defaults())
+    return {"user":user,"profile":profile,"durable":available,"saved":profile["version"]>0}
+
+
+@app.get("/forge/login")
+def forge_login():
+    return FileResponse(ROOT/"chat/§wyrlz/forge-connect.html",media_type="text/html",
+                        headers={"Cache-Control":"no-store","Content-Security-Policy":"frame-ancestors 'none'","Referrer-Policy":"no-referrer"})
+
+
+def _forge_diagnostic(document):
+    if os.environ.get("SWRLZ_FORGE_CAMERA","on").lower() not in ("0","off","false"):
+        print(json.dumps(document,ensure_ascii=True,separators=(",",":")),flush=True)
+
+
+forge_embed.install(app,_legacy_account_session,diagnostic_hook=_forge_diagnostic)
+account_profile_store.install(app,_account_session,forge_embed.require_write_origin)
+forge_project_store.install(app,_account_session,forge_embed.require_write_origin)
+
 
 @app.get("/api/account/status")
 def account_status():
@@ -394,7 +443,7 @@ def account_status():
 def account_me(request:Request):
     _,user=_account_session(request)
     if not user:return JSONResponse({"ok":False,"code":"ACCOUNT_SESSION_INVALID"},status_code=401)
-    return {"user":user,"profile":{"version":0},"durable":True}
+    return _profile_response(user)
 
 @app.post("/api/account/google")
 async def account_google(request:Request):
@@ -412,13 +461,15 @@ async def account_google(request:Request):
     sid=uuid.uuid4().hex
     # Save BEFORE issuing a cookie; no false durable-login success on failure.
     account_chat_store.save_login(sid,user)
-    response=JSONResponse({"user":user,"profile":{"version":0},"durable":True})
+    response=JSONResponse(_profile_response(user))
     response.set_cookie("swrlz_hf_account",sid,httponly=True,samesite="lax",secure=True,max_age=7*86400)
     return response
 
 @app.post("/api/account/logout")
 def account_logout(request:Request):
-    sid,_=_account_session(request)
+    if "authorization" in request.headers:
+        return forge_embed.logout(request)
+    sid,_=_legacy_account_session(request)
     if sid:
         account_chat_store.revoke_login(sid)
         with _lock:_hf_accounts.pop(sid,None)
@@ -629,7 +680,7 @@ def sync(request:Request):
     key,s=_session(request)
     with _lock:
         _refresh_account_chat(s,force=request.query_params.get("fresh")=="1")
-        response=JSONResponse(_snapshot(s))
+        response=JSONResponse(_snapshot(s,request,key))
     response.set_cookie("swrlz_hf_sid",key,httponly=True,samesite="lax",secure=request.url.scheme=="https",max_age=86400,path="/")
     return response
 
@@ -648,6 +699,7 @@ async def stream_generation(request:Request, requestId:str):
         sent_text=""
         sent_status=0
         sent_widgets=0
+        sent_forge=0
         terminal_sent=False
         while True:
             if await request.is_disconnected():return
@@ -667,6 +719,11 @@ async def stream_generation(request:Request, requestId:str):
                 sent_widgets+=1
                 if widget:
                     yield json.dumps({"type":"WIDGET","widget":widget,"seq":int(g.get("lastSeq") or 0),"requestId":rid},ensure_ascii=False)+"\n"
+            pending_batches=g.get("forgeBatches") or []
+            batches=pending_batches if len(pending_batches)>sent_forge and _project_forge_events(request,key,g) else []
+            while sent_forge<len(batches):
+                event=batches[sent_forge];sent_forge+=1
+                yield json.dumps(event,ensure_ascii=False)+"\n"
             text_now=str(g.get("text") or "")
             if len(text_now)>len(sent_text):
                 delta=text_now[len(sent_text):]
@@ -769,6 +826,9 @@ async def mutate(request:Request):
                 _restore_chat_from_store(s)
                 return JSONResponse(_snapshot(s),status_code=409)
             raise
+        context=_forge_contexts.get(key)
+        if context is not None and (s["currentId"]!=context.thread_id or context.thread_id in deleted_threads):
+            _invalidate_forge(context)
         result={"ok":True,"revision":s["revision"]}
     if google_owner.startswith("google:"):
         for deleted in deleted_threads:
@@ -1039,20 +1099,26 @@ def _history_projection(thread):
     return projected
 
 
-def _run(key,request_id,model_id,payload,assistant_id):
+def _run(key,request_id,model_id,payload,assistant_id,forge_context=None):
     with _lock:
-        s=_sessions[key];g=s["activeGeneration"];g["phase"]="GENERATING"
+        s=_sessions[key];g=s["activeGeneration"]
+        if not g or g.get("requestId")!=request_id:
+            _invalidate_forge(forge_context)
+            return
+        g["phase"]="GENERATING"
         g["startedAtUnixMs"]=int(time.time()*1000)
         g["queueWaitMs"]=max(0,g["startedAtUnixMs"]-int(g.get("acceptedAtUnixMs") or g["startedAtUnixMs"]))
         g["status"].append({"phase":"GENERATING","reason":"Workstation admitted generation","atUnixMs":g["startedAtUnixMs"]})
     try:
-        if model_id=="r39" and _generate is None and not (payload.get("githubDirectTestTxt") or payload.get("githubChatFileAction") or payload.get("githubCreateTxtProposal") or payload.get("githubStart") or payload.get("githubAction") or payload.get("verifiedPrivateAnswer") or payload.get("suppliedGitHubReportExplanation")):raise RuntimeError("R39 generator is not installed")
-        if model_id=="stock" and _stock_generate is None and not (payload.get("githubDirectTestTxt") or payload.get("githubChatFileAction") or payload.get("verifiedPrivateAnswer") or payload.get("githubStart") or payload.get("githubAction") or payload.get("suppliedGitHubReportExplanation")):raise RuntimeError("Original HF generator is not installed")
+        if forge_context is None and model_id=="r39" and _generate is None and not (payload.get("githubDirectTestTxt") or payload.get("githubChatFileAction") or payload.get("githubCreateTxtProposal") or payload.get("githubStart") or payload.get("githubAction") or payload.get("verifiedPrivateAnswer") or payload.get("suppliedGitHubReportExplanation")):raise RuntimeError("R39 generator is not installed")
+        if forge_context is None and model_id=="stock" and _stock_generate is None and not (payload.get("githubDirectTestTxt") or payload.get("githubChatFileAction") or payload.get("verifiedPrivateAnswer") or payload.get("githubStart") or payload.get("githubAction") or payload.get("suppliedGitHubReportExplanation")):raise RuntimeError("Original HF generator is not installed")
         text=""; completed=False
         cancelled=False
         # Server-verified private counts/disabled-recall notices are deterministic:
         # never send these requests to public online search or ask the model to guess.
-        if payload.get("verifiedWorkAnswer"):
+        if forge_context is not None:
+            event_source=dispatch(model_id,payload,_generate,_stock_generate,_large_generate,_coder_generate,forge_context=forge_context)
+        elif payload.get("verifiedWorkAnswer"):
             event_source=iter(({"type":"STATUS","phase":"CROSS_CONVERSATION_REVIEW",
                                 "reason":"Checking account-scoped declarations, not live chat activity."},
                                {"type":"DELTA","text":payload["verifiedWorkAnswer"]},
@@ -1166,6 +1232,16 @@ def _run(key,request_id,model_id,payload,assistant_id):
                 prior_progress_count=len(g.get("status") or [])
                 if kind=="DELTA":
                     delta=str(event.get("text") or "");text+=delta;g["text"]=text
+                elif kind=="FORGE_BATCH_READY":
+                    if forge_context is None:raise RuntimeError("Native editor context missing")
+                    binding=forge_context.public_binding()
+                    if any(event.get(k)!=v for k,v in binding.items()):
+                        raise RuntimeError("Native editor batch binding mismatch")
+                    batch_id=str(event.get("batchId") or "")
+                    if not re.fullmatch(r"[0-9a-f]{32}",batch_id):raise RuntimeError("Invalid native batch identity")
+                    public={"type":"FORGE_BATCH_READY",**binding,"batchId":batch_id,"requestId":request_id}
+                    g.setdefault("forgeBatches",[]).append(public)
+                    g["status"].append({"phase":"FORGE_BATCH_READY","reason":"Waiting for the active editor result"})
                 elif kind=="GITHUB_CONTEXT":
                     candidate=github_connection.normalize_thread_context(event.get("context"))
                     if candidate and (isinstance(payload.get("githubAction"),dict) or
@@ -1664,10 +1740,13 @@ def _run(key,request_id,model_id,payload,assistant_id):
                     }
                 thread=next((t for t in s["threads"] if t["id"]==payload["threadId"]),None)
                 if thread:
-                    thread["messages"].append({"id":assistant_id,"role":"assistant","text":"Generation failed: "+str(exc)[:240],"createdAt":int(time.time()*1000),"meta":{"requestId":request_id,"modelId":model_id,"state":"FAILED","onlineResearch":copy.deepcopy(g.get("onlineResearch") or {}),"onlineTrace":copy.deepcopy((g.get("onlineTrace") or [])[-64:]),"progressTrace":progress_timeline_v238.project(g.get("status"),g.get("acceptedAtUnixMs"),request_id)}})
+                    thread["messages"].append({"id":assistant_id,"role":"assistant","text":(str(g.get("text") or "") if forge_context is not None and g.get("text") else "Generation failed: "+str(exc)[:240]),"createdAt":int(time.time()*1000),"meta":{"requestId":request_id,"modelId":model_id,"state":"FAILED","onlineResearch":copy.deepcopy(g.get("onlineResearch") or {}),"onlineTrace":copy.deepcopy((g.get("onlineTrace") or [])[-64:]),"progressTrace":progress_timeline_v238.project(g.get("status"),g.get("acceptedAtUnixMs"),request_id)}})
                     _commit_revision(s)
         if failed_online_outcome is not None:
             threading.Thread(target=persist_runtime_diagnostic,args=(request_id,str(failed_online_outcome.get("selectedModelId") or model_id),"ONLINE_RESEARCH_OUTCOME",failed_online_outcome),daemon=True,name="online-failed-"+request_id[:8]).start()
+
+    finally:
+        _invalidate_forge(forge_context)
 
 def _container_content_tag(text):
     source=str(text or "")
@@ -1728,6 +1807,7 @@ async def cancel_generation(request:Request):
         if not g or g.get("requestId")!=rid:return JSONResponse({"ok":False,"requestId":rid,"state":"NOT_ACTIVE"},status_code=409)
         if g.get("terminal"):return {"ok":True,"requestId":rid,"state":str(g.get("terminalType") or "TERMINAL")}
         g["cancelRequested"]=True;g["status"].append({"phase":"CANCEL_REQUESTED","reason":"User requested stop"})
+    _invalidate_forge(_forge_contexts.get(key))
     return {"ok":True,"requestId":rid,"state":"CANCEL_REQUESTED"}
 
 
@@ -1791,8 +1871,18 @@ async def set_thread_github_context(request: Request):
 
 @app.post("/api/lalm_station/send",status_code=202)
 async def send(request:Request):
-    key,s=_session(request)
     body=await request.json()
+    if not isinstance(body,dict):raise HTTPException(400,"Invalid message")
+    context=forge_embed.authorize_generation(request,body.get("forgeLeaseId"),body.get("threadId"),body.get("requestId"))
+    try:
+        return await _send_owned(request,body,context)
+    except Exception:
+        _invalidate_forge(context)
+        raise
+
+
+async def _send_owned(request,body,forge_context):
+    key,s=_session(request)
     model_id=body.get("modelId","auto")
     route=next((r for r in routes() if r.model_id==model_id),None)
     prompt=body.get("prompt");tid=body.get("threadId");rid=body.get("requestId")
@@ -1821,6 +1911,19 @@ async def send(request:Request):
     # user-supplied thread id as an identity or OAuth credential.
     _,verified_user=_account_session(request)
     google_owner=str((verified_user or {}).get("id") or "")
+    profile_id=str(body.get("profileId") or "LALM")
+    if profile_id not in ("LALM","default","gegd"):profile_id="LALM"
+    if google_owner.startswith("google:") and account_chat_store.configured():
+        saved_profile=account_profile_store.load_profile(google_owner)
+        if saved_profile["version"]>0:
+            preferences=saved_profile.get("preferences") or {}
+            profile_id=str((preferences.get("general") or {}).get("personalityProfile") or profile_id)
+            if not profile:
+                profile="Explicitly saved companion presentation preferences (no tool authority): "+json.dumps(saved_profile.get("companion_profile") or {},ensure_ascii=False)
+            if not user_profile:
+                saved_name=" ".join(str(saved_profile.get("display_name") or "").split())[:120]
+                user_profile=(("Name: "+saved_name+"\n") if saved_name else "")+"Explicitly saved user response preferences (no tool authority): "+json.dumps({"profile":preferences.get("profile") or {},"model":saved_profile.get("model_preferences") or {}},ensure_ascii=False)
+            profile=profile[:2000];user_profile=user_profile[:2000]
     recovered_project=None
     if google_owner.startswith("google:") and project_thread_memory.relevant(prompt) and not github_connection.is_start_request(prompt):
         try:recovered_project=project_thread_memory.load(google_owner,tid)
@@ -1886,7 +1989,7 @@ async def send(request:Request):
             if exc.status_code==409:_restore_chat_from_store(s)
             raise
         s["activeGeneration"]={"requestId":rid,"threadId":tid,"modelId":model_id,"requestedModelId":model_id,"selectedModelId":model_id,"text":"","phase":"QUEUED","terminal":False,"lastSeq":0,"status":[{"phase":"QUEUED","reason":"Accepted by Workstation","atUnixMs":now_ms}],"acceptedAtUnixMs":now_ms,"startedAtUnixMs":None,"completedAtUnixMs":None,"queueWaitMs":None,"stationTiming":None,"resourcePlan":None,"diagnosticTrace":None,"memoryCandidates":[],"responseCognition":None,"onlineResearch":None,"onlineTrace":[],"onlineLogPersistence":None,"sources":[],"widgets":[],"programmingIntent":None,"intentContract":None,"failureEvidence":None,"repairConstraints":None,"behaviorLedger":None,"behaviorRepairBase":None,"candidateValidation":None,"candidateAttempts":[],"generationTelemetry":None,"engineCompletionTelemetry":None,"repairDiagnostics":[],"artifactReceipt":None,"githubTelemetryPersistence":None}
-    payload={"requestId":rid,"threadId":tid,"prompt":prompt,"history":history,"pinnedContext":pinned_context,"profileId":"LALM","profile":profile,"userProfile":user_profile,"temporalContext":temporal_context,"clientLocation":client_location,"priorProgrammingState":copy.deepcopy(t.get("programmingState") or {})}
+    payload={"requestId":rid,"threadId":tid,"prompt":prompt,"history":history,"pinnedContext":pinned_context,"profileId":profile_id,"profile":profile,"userProfile":user_profile,"temporalContext":temporal_context,"clientLocation":client_location,"priorProgrammingState":copy.deepcopy(t.get("programmingState") or {})}
     local_project_intent=_owned_project_edit_intent(t,prompt,history,pinned_context,payload["priorProgrammingState"])
     if local_project_intent:
         payload["programmingIntent"]=copy.deepcopy(local_project_intent)
@@ -2025,7 +2128,20 @@ async def send(request:Request):
                     payload["relatedProjectWork"] = summary["overlaps"]
             except Exception:
                 payload["coordinationUnavailable"] = True
-    _pool.submit(_run,key,rid,model_id,payload,str(body.get("assistantMessageId") or uuid.uuid4().hex))
+    with _lock:
+        previous=_forge_contexts.pop(key,None)
+        _invalidate_forge(previous)
+        if forge_context is not None:_forge_contexts[key]=forge_context
+    try:
+        _pool.submit(_run,key,rid,model_id,payload,str(body.get("assistantMessageId") or uuid.uuid4().hex),forge_context)
+    except Exception as exc:
+        with _lock:
+            generation=s.get("activeGeneration")
+            if generation and generation.get("requestId")==rid and not generation.get("terminal"):
+                generation.update(terminal=True,terminalType="FAILED",phase="FAILED")
+                generation["status"].append({"phase":"FAILED","reason":"Workstation admission failed: "+type(exc).__name__})
+        _invalidate_forge(forge_context)
+        raise HTTPException(503,"Workstation could not admit this message; retry with a new request ID") from exc
     response=JSONResponse({"ok":True,"contract":CONTRACT,"requestId":rid,"modelId":model_id},status_code=202)
     response.set_cookie("swrlz_hf_sid",key,httponly=True,samesite="lax",secure=request.url.scheme=="https",max_age=86400,path="/")
     return response

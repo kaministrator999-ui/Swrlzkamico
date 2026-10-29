@@ -1,5 +1,11 @@
 # §wyrlz Project Diagnostic Cameras + Logs — READ THIS SIXTH
 
+## §E account and native-action boundary camera — 2026-10-29
+
+`hf_space/forge_embed.py` emits `swrlz-forge-boundary-camera-v1` through a bounded optional diagnostic hook. Station writes these observations to its existing process logs when `SWRLZ_FORGE_CAMERA` is enabled (default on); `off`, `false` or `0` suppress observation only. Camera/hook failures never change authorization or transaction outcomes. Controlled tests compare enabled/disabled outcomes.
+
+Allowed fields are event/status/reason code and random pair/lease/batch correlation IDs, operation/receipt counts. Never log bearer/host/Google credentials, PKCE verifier, receipt nonce, owner identity, private history/settings, native labels or full projects. Chat activity uses ordinary status and the final receipt summary; it cannot grant actions. Public batch sideband is transient, restricted to its exact embed and excluded from export. The executor-admission failure and per-poll authorization hot-loop found by controlled integration tests were repaired in Station. See [checkpoint](docs/engineering/entries/2026-10-29_CHAT_FORGE_INTEGRATION.md) for source/test/deployment evidence; no real-account acceptance is inferred from diagnostic tests.
+
 **Compatibility filename:** `SWRLZ_CHAT_CAMERA_LOGS.md` remains the canonical path so existing references do not break.
 
 **Role:** this document owns the project-wide diagnostic observation contract: when to inspect existing evidence, when to add cameras/instrumentation, where repository-side diagnostic evidence lives, where live observations live, and how to separate source facts from runtime facts and user-visible facts.
