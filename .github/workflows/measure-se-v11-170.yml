@@ -1,0 +1,32 @@
+name: §E v11.170 focused project library source measurement
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/patches/v11_170_project_library_tabs.py"
+      - "projects/swrlz-forge-moba/runtime/project_hub_my_projects_v11_170.js"
+      - "projects/swrlz-forge-moba/runtime/project_hub_my_projects_v11_170.css"
+      - "projects/swrlz-forge-moba/tests/project_hub_my_projects_v11_170.mjs"
+      - "projects/swrlz-forge-moba/scripts/measure_v11_170_source.py"
+      - ".github/workflows/measure-se-v11-170.yml"
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Focused syntax and DOM interaction
+        run: |
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_170_project_library_tabs.py
+          node --check projects/swrlz-forge-moba/runtime/project_hub_my_projects_v11_170.js
+          npm install --prefix /tmp/se170-test --no-audit --no-fund jsdom@25.0.1
+          SE_JSDOM_MODULE=/tmp/se170-test/node_modules/jsdom node projects/swrlz-forge-moba/tests/project_hub_my_projects_v11_170.mjs
+      - name: Measure complete historical package without deployment
+        run: python projects/swrlz-forge-moba/scripts/measure_v11_170_source.py

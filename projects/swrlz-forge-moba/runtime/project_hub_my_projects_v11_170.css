@@ -1,0 +1,15 @@
+/* Native Starter Projects / My Projects tab navigation, scoped to the hub. */
+#projectHub .se170-hub-tabs{display:flex;gap:6px;padding:12px 14px 0;border-bottom:1px solid #34435b;flex-wrap:wrap}
+#projectHub .se170-hub-tabs button{min-height:48px;flex:1 1 145px;background:#182739;border:1px solid #425a72;border-radius:10px 10px 0 0;color:#e6effe;font-weight:700;cursor:pointer}
+#projectHub .se170-hub-tabs button[aria-selected=true]{background:#304262;border-color:#88cffa;color:#fff}
+#projectHub .se170-hub-tabs button:focus-visible,#projectHub .se170-hub-pane button:focus-visible{outline:3px solid #9bdcff;outline-offset:2px}
+#projectHub .se170-hub-pane[hidden]{display:none!important}
+#projectHub .se170-my-tools{display:flex;flex-wrap:wrap;gap:9px;padding:14px}
+#projectHub .se170-my-tools button,#projectHub .se170-project-card button{min-height:48px;padding:10px 14px;border-radius:9px;border:1px solid #7086a3;background:#253953;color:#f3f8ff;font-weight:700;cursor:pointer}
+#projectHub .se170-my-tools button:disabled,#projectHub .se170-project-card button:disabled{opacity:.5}
+#projectHub #se170-library-status{padding:0 14px;margin:0 0 8px;min-height:30px;line-height:1.5;color:#c9d7e8}
+#projectHub .se170-project-list{display:grid;gap:10px;padding:0 14px 18px}
+#projectHub .se170-project-card{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:13px;border:1px solid #3c536e;border-radius:12px;background:#162435}
+#projectHub .se170-project-card strong{min-width:150px;flex:1;color:#fff;overflow-wrap:anywhere}
+#projectHub .se170-project-card span{font-size:12px;color:#b9cbe0}
+@media(max-width:620px){#projectHub .se170-project-card{align-items:stretch;flex-direction:column}#projectHub .se170-project-card button{width:100%}}
