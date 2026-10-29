@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.171",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_171_PROJECT_MODAL_PRIORITY",
-  "reason": "Owner Android screenshot: Sheep Tag start/menu title overlaps Projects/My Projects. Scope only open native Projects modal above viewport/gameplay overlays; close returns Sheep Tag unchanged. Exact sealed CI 40961153891 SUCCESS, 203 ordered patches, 68 assets, 7,003,771 HTML bytes. Do not change Chat, accounts or gameplay. Android and Quest owner visual/touch acceptance remains pending.",
-  "sourceCommit": "61cb4d9a66dcd12149219b71c7bf708435369e63",
-  "sourceIntegritySha256": "c20a884ef7b690b03c98b28e74b896c9ac9cceeadb105561abd65ea7730d657e"
+  "releaseVersion": "v11.172",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_172_CLEAN_CHAT_HEADER",
+  "reason": "Owner requested removing the redundant external Open Chat link adjacent to the §wyrlz Chat title inside §E's embedded side panel. Keep header Close, Google sign-in, account project Save/Load, My Projects and all game/Quest/editor functionality unchanged. Exact source sealed CI 40962863642 PASS, 204 patches, 68 assets, 7003719 HTML bytes. Owner-device visual acceptance remains pending. Do not deploy standalone Chat.",
+  "sourceCommit": "a389466d6d51c0fe221397ac2bee505bf369f7ef",
+  "sourceIntegritySha256": "6037f52db537508b3c338b72bee4ac915498adf55589b8386c76394459ac9e2b"
 }
