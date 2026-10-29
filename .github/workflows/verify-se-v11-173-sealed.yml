@@ -1,0 +1,24 @@
+name: §E v11.173 sealed dialog layer priority verification
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/scripts/verify_v11_173_release.py"
+      - ".github/workflows/verify-se-v11-173-sealed.yml"
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - uses: actions/setup-node@v4
+        with: {node-version: "22"}
+      - name: Verify exact §E package and preserved assets
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_173_release.py --output dist/se173
+      - name: Verify focused layering and Chat compatibility
+        run: |
+          node projects/swrlz-forge-moba/tests/dialog_layer_priority_v11_173.mjs
+          node projects/swrlz-forge-moba/tests/chat_header_v11_172.mjs

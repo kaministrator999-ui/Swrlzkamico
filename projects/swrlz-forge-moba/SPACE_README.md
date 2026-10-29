@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.172
+title: §wyrl§ Engine v11.173
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,15 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.173 — Projects dialog above editor docks and Chat (2026-10-29)
+
+**Owner Android screenshot:** the right Details panel covers the active Projects modal. The v11.171 z-index fix was inside an editor stacking context; numeric priority alone cannot escape its ancestor.
+
+**Correction:** Ordered append-only patch **205** (patches/v11_173_dialog_stack.py) and runtime/editor_layer_priority_v11_173.{js,css} reparent the original #projectHub node into document.body. Identity, listeners, Starter/My Projects tabs, default checkboxes, cloud/local Save and Load are retained. Layer order: viewport < Outliner and Details docks < Chat < modal Projects dialog and native modal dialogs. No gameplay, LAN, Quest, model, authentication or Chat backend changes.
+
+**Verification:** [Focused tests and measured complete rebuild](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40967053619) SUCCESS, including dialog portal identity, idempotence and layer ordering. The 205-patch generated HTML is **7,005,228 bytes**, SHA-256 `1dbd9a7e79b68b47ee2454faa954d1883f5b48e68d2425400bc7ca01c9f13824`, with the original **68 assets**. Separate sealed verification and final deployment are pending at this source checkpoint. Owner Android/Quest UI acceptance remains DEVICE_TEST_PENDING.
+
 
 ## §E v11.172 — clean embedded Chat side-panel header (2026-10-29)
 
