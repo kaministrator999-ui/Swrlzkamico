@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.171
+title: §wyrl§ Engine v11.172
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,14 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.172 — clean embedded Chat side-panel header (2026-10-29)
+
+**Owner screenshot/request:** the redundant external **Open Chat** link sits immediately beside the **§wyrlz Chat** title inside §E's already-working Chat panel. Remove that link only; keep the X/Close, launcher, Google Sign In and existing account project controls.
+
+**Implementation:** append-only engine patch **204** (`patches/v11_172_clean_chat_header.py`) removes the unique external-link anchor from the canonical embedded `runtime/chat_account_panel_v1.js` host as the source is assembled. No redesign, new account storage, authentication changes, Chat deployment, model updates, Sheep Tag mechanics, Project Hub/tabs, Quest interface or existing actions modified.
+
+**Verification:** focused [CI 40962520717](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40962520717) succeeded: reconstructed full 204-patch HTML has no redundant link and retains side-panel Close, Google authentication, project Load/Save, and My Projects. Rebuilt engine measured **7,003,719 bytes**, SHA-256 `6037f52db537508b3c338b72bee4ac915498adf55589b8386c76394459ac9e2b`; **68 assets** retained. Sealed release CI and Hugging Face deployment are distinct subsequent gates. Real owner-phone acceptance is separate.
 
 ## §E v11.171 — Projects dialog foreground priority on Sheep Tag (2026-10-29)
 
