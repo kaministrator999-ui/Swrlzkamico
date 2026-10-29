@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.169
+title: §wyrl§ Engine v11.170
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,14 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.170 — Starter Projects + My Projects tabs (2026-10-29)
+
+The existing native **Projects** dialog now includes two tabs: **Starter Projects** (original starter cards, default-project checkboxes and local Save/Load unchanged) and **My Projects** (the current Google/Chat account's saved project library). A connected user can refresh the library, inspect a project's stored revision and choose **Load**. If Chat has not connected, My Projects initializes the existing Chat-origin bridge and offers **Open § Chat / Sign in** rather than pretending to have an account.
+
+My Projects uses the canonical v11.169 `cloud.list` and `cloud.load` authenticated RPCs and the **same native loadCloud importer**, preserving the unsaved-local-changes confirmation, full native scene import, recovery snapshot, Model Atelier reopen and server-enforced account ownership. The list clears on account status changes/logout; names are inserted with `textContent` and are never interpreted as HTML. No new credential store, project database, AI mutation privilege, external server, or automatic cloud deletion is introduced. The feature works in the native picker, independent of whether the Chat side panel is visible once its transport is connected.
+
+**Exact source:** ordered patch **202**, original **68 assets**, generated HTML **7,003,123 bytes**, SHA-256 **`3c54fd230c18967d975fab314d37a23d8b2b0e462ab3143226a733b802ff07a6`**. Focused Node/jsdom UI test passed: starter node identity and checkbox retention, My Projects list, literal project title safety, Load handoff, tab changes and account-clear behavior. The first candidate measured an incorrect CSS insertion count because the historical HTML includes two `</head>` text occurrences; a bounded correction inserts before the first actual document head. Final complete build, SHA/assets verification and production release have their own gate. Real-account Save/Load on owner Android/Quest remains **DEVICE_TEST_PENDING**; no user account data was accessed during synthetic tests. The Chat Space and runtime/LALM versions are unchanged in this §E-only feature.
 
 ## §E v11.169 — shared Chat account and native editor assistance (2026-10-29)
 

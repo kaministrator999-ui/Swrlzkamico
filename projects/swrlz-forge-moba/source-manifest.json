@@ -218,6 +218,6 @@
     "patches/v11_169_chat_account_panel.py",
     "patches/v11_170_project_library_tabs.py"
   ],
-  "finalBytes": null,
-  "finalSha256": null
+  "finalBytes": 7003123,
+  "finalSha256": "3c54fd230c18967d975fab314d37a23d8b2b0e462ab3143226a733b802ff07a6"
 }
