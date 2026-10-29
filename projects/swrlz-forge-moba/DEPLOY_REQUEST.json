@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.167",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_167_HOST_DIRECT_MOVE_STRICT_BUILD",
-  "reason": "Owner physical LAN guest screenshot: joystick TX129 hostACK66, host moves0; guest sheep visually circles locally without actual host translation; green house placement preview appears within central protected/no-build area. Preserve already-deployed v11.165 frame batching and v11.166 bounded guest-only visual prediction. v11.167 fixes REAL authoritative movement by applying authenticated guest-stick-v2 intent on every host native stUpdate gameplay step, including existing v11.164 host-background catch-up, and disables the old duplicate once-per-130ms snapshot movement path. Guest joystick sends direction on pointer move (65ms min) with immediate press/release; same WebRTC channel, no new timers or server. Native map/building collision checks with tangent sliding and protected construction approach; host movement reason/strength/blocked counters piggyback on world snapshots. Fix false green build previews by removing v11.162 permissive bypass: guest stCanBuild uses original native rules for Spirit Pen, no-build zones, static obstacles, occupied buildings and placement limits; host still final authority. Focused JS checks PASS: host frame movement, no duplicate snapshot movement, restricted preview stays invalid, sequenced stick press/release delivered. Patch 199 after current v11.166/198, all 68 assets preserved, physical two-browser acceptance pending. GitHub production Action remains package+HF upload only, no Chromium or extra browser tests.",
-  "sourceCommit": "10837f4bf10a2d14cf2a03e21f75b360d5f17d37",
+  "releaseVersion": "v11.168",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_168_QUEST_BROWSER_PANEL",
+  "reason": "Quest 2 Meta Browser 2D panel compatibility: v11.168 adds auto-detected Quest editor profile, 48px toolbar/Atelier targets, focus cues, persistent Quest UI switch, viewport-responsive profile, pointerType and feature-tested WebXR-support diagnostics. No immersive session or tracked controller action claimed. Focused Node VM test PASS (Quest/phone/PC/profile toggle/pointer); Node syntax and Python patch smoke PASS. Ordered patch 200 retains v11.167 authoritative Sheep Tag LAN simulation and all assets. Deploy via existing package-and-HF-upload-only workflow, not AI Chat.",
+  "sourceCommit": "f379894a81714b45ff37b04bfda95ea6077ae64f",
   "sourceIntegritySha256": null
 }
