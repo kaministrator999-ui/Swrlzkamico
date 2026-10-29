@@ -1,5 +1,5 @@
 ID=repository-work
-VERSION=1.0.241
+VERSION=1.0.242
 KIND=repository-work-lineage
 SOURCE_BRANCH=runtime
 STATUS=active
@@ -7,3 +7,5 @@ DISPLAY_NAME=§wyrlz Repository Work
 UPDATE_POLICY=every-completed-governed-repository-tier
 
 CHAT_FORGE_20261029_NOTE=shared Chat account and §E panel governed checkpoint; Chat source=e4dee084f57788c3c6edc16381203d34ebc0c7e1; engine candidate=51d3d44aa3c5ac85f65cf83e0505dd7442c3c6b1; source/version activation evidence differs from real Google/deployed-store/owner-device acceptance, which remains pending. No model weights/default/hardware change.
+
+ENGINE_PROJECT_LIBRARY_20261029_NOTE=Source and exact sealed CI tier for §E v11.170 native My Projects dialog (separate Forge release lane). Canonical main Roadmap event records 1.0.241 to 1.0.242, 202 patches, 68 assets, 7,003,123 final HTML bytes, SHA256 3c54fd230c18967d975fab314d37a23d8b2b0e462ab3143226a733b802ff07a6; deploy awaited final-only §E trigger at authority update. Chat/Server/LALM/Google module versions intentionally unchanged. Real owner account/device acceptance pending.
