@@ -1,3 +1,15 @@
+## UPDATE FINISHED — 2026-10-29 — §E v11.172 clean embedded Chat side-panel header (source / sealed CI)
+
+**Primary Focus:** §wyrlz Engine embedded Chat side-panel header. **Focus Group:** §E's Chat-host presentation, with unchanged Chat authentication/account store and existing native project library. **Repository Work: 1.0.243 → 1.0.244** for this governed repository tier, recorded in `runtime:versions/repository-work.txt`. The independent §E version advances **v11.171 → v11.172**; Web Chat 1.5.158, Server Runtime 2.3.441, LALM Engine 2.1.204, Google Account 1.0.18, Manifest 152 and Stream V2 are unchanged.
+
+**Owner observation:** Screenshot of right-hand embedded Chat panel shows a redundant external **Open Chat** link next to `§wyrlz Chat`, even though the panel already contains Chat. User requested removing that link. No broader redesign or moving account buttons is authorized.
+
+**Change:** one append-only engine patch 204 `v11_172_clean_chat_header.py` removes exactly that external hyperlink, leaving panel title directly beside Close (×). The existing § Chat launcher, Google sign-in, account cloud Save/Load and My Projects, Chat-origin transport, editor action security and v11.171 project-modal foreground fix are intentionally preserved. The separate Chat product is not modified or deployed.
+
+**Verification:** [focused measurement 40962520717](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40962520717) PASS and [sealed release validation 40962863642](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40962863642) PASS. Exact full build: **204 patches, 68 packaged assets, 7,003,719 HTML bytes, SHA-256 6037f52db537508b3c338b72bee4ac915498adf55589b8386c76394459ac9e2b**. The regression verifies the link is absent while Close, Sign In, Load and earlier project modal remain.
+
+**Release boundary:** this record covers source + sealed CI. The separate engine-only final `DEPLOY_REQUEST.json` commit triggers the Hugging Face deployment; source acceptance must not be mislabeled as published until its exact workflow confirms upload. Owner Android/Quest visual acceptance remains pending.
+
 ## UPDATE FINISHED — 2026-10-29 — §E v11.171 native Projects dialog above Sheep Tag menu
 
 **Primary Focus:** §wyrlz Engine's existing native Projects dialog and its foreground priority over Sheep Tag's runtime menu. **Focus Group:** §E UI/Project Hub; Chat account storage and model integration unchanged. **Repository Work 1.0.242 → 1.0.243** for this governed source/CI tier, with `runtime:versions/repository-work.txt` the authority. Server Runtime **2.3.441**, Web Chat **1.5.158**, LALM Engine **2.1.204**, Google Account **1.0.18**, Runtime Manifest **152**, and Stream **V2** remain unchanged; independent engine version **v11.170 → v11.171**.
