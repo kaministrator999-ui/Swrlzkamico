@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.170",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_170_PROJECT_LIBRARY_TABS",
-  "reason": "Owner-requested native Starter Projects / My Projects tabs. Uses existing Google account project RPC/list/load and unsaved-work recovery; no Chat/model changes. Exact measured engine seal 7,003,123 bytes / 202 patches / 68 assets. Focused DOM tests and exact sealed CI 40950160790 SUCCESS. Preserve all historical §E/Quest/Sheep Tag source. Real account and device acceptance remain pending.",
-  "sourceCommit": "f59a72b709dc7375229e357f88997e289d67b658",
-  "sourceIntegritySha256": "3c54fd230c18967d975fab314d37a23d8b2b0e462ab3143226a733b802ff07a6"
+  "releaseVersion": "v11.171",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_171_PROJECT_MODAL_PRIORITY",
+  "reason": "Owner Android screenshot: Sheep Tag start/menu title overlaps Projects/My Projects. Scope only open native Projects modal above viewport/gameplay overlays; close returns Sheep Tag unchanged. Exact sealed CI 40961153891 SUCCESS, 203 ordered patches, 68 assets, 7,003,771 HTML bytes. Do not change Chat, accounts or gameplay. Android and Quest owner visual/touch acceptance remains pending.",
+  "sourceCommit": "61cb4d9a66dcd12149219b71c7bf708435369e63",
+  "sourceIntegritySha256": "c20a884ef7b690b03c98b28e74b896c9ac9cceeadb105561abd65ea7730d657e"
 }
