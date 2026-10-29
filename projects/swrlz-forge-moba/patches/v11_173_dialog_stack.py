@@ -11,7 +11,8 @@ def apply(html):
     root=Path(__file__).resolve().parents[1]
     css=(root/'runtime/editor_layer_priority_v11_173.css').read_text(encoding='utf-8')
     js=(root/'runtime/editor_layer_priority_v11_173.js').read_text(encoding='utf-8')
-    html=once(html,'</head>','<style id="se173-editor-layer-priority">'+css+'</style>\n</head>')
+    if '</head>' not in html:raise AssertionError('Document head missing')
+    html=html.replace('</head>','<style id="se173-editor-layer-priority">'+css+'</style>\n</head>',1)
     anchor='installPerformanceSettings();applyPerformanceSettings();se128LaunchStartupProject();'
     html=once(html,anchor,js+'\n'+anchor)
     for old,new in [
