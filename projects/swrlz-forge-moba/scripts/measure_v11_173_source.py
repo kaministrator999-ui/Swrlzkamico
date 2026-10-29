@@ -17,6 +17,7 @@ for rel in patches:html=load_patch(ROOT/rel)(html)
 assert 'SWYRL_ENGINE_DEPLOY_MARKER: V11_173_DIALOG_LAYER_PRIORITY' in html
 assert 'se173PromoteProjectDialog' in html and 'se173-editor-layer-priority' in html
 assert 'se170Install' in html and 'st141RuntimeMenu' in html
+# Remeasure the exact documented, versioned main state before sealing.
 raw=html.encode('utf-8')
 print('SE173_BYTES',len(raw),flush=True)
 print('SE173_SHA',hashlib.sha256(raw).hexdigest(),flush=True)
