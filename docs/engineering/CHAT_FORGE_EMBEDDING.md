@@ -1,6 +1,6 @@
 # Chat in the §E workspace
 
-Status: implementation candidate, 2026-10-29; source verification recorded in the checkpoint; not yet deployed or owner accepted.
+Status: published 2026-10-29 through the existing Chat and §E lanes; source/runtime evidence is recorded in the checkpoint. Real Google/deployed-store/owner-device acceptance remains pending.
 
 The user explicitly requests integration of the existing Chat and §E products.
 Their source/deployment lanes remain separate. Chat owns Google identity,
@@ -285,3 +285,5 @@ stale/standalone tool denial, actual native operation receipts/Undo, and desktop
 mobile sidebar behavior. Mocked Google tokens are controlled tests, not real
 Google sign-in acceptance. §E production workflow remains package/upload only;
 no unrelated game suites or automatic hosted browser marathons.
+
+Current release/source evidence is authoritative in [the checkpoint](entries/2026-10-29_CHAT_FORGE_INTEGRATION.md#update-finished--publication-and-handoff-receipt). The host clears cloud project IDs/revisions and its visible cloud list on account-change revoke; ordinary thread changes preserve the current account reference.

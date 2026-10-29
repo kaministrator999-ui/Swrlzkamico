@@ -1,6 +1,6 @@
 # Chat side panel, shared Google account and scoped §E editing
 
-Mode: IMPLEMENT. Lifecycle: BRANCH_ACTIVE. Status: implementation verified locally; exact-source CI/publication pending.
+Mode: IMPLEMENT. Lifecycle: ACCEPTED_WITH_FOLLOW_UP / DEVICE_TEST_PENDING. Status: source, documentation and authorized publication completed.
 
 The user explicitly requests the full existing Chat as a §E pop-out side menu,
 shared Google identity/history/settings, account-owned §E Save/Load, and AI editor
@@ -152,3 +152,77 @@ separate guarded publication lanes, then record actual outcomes.
 ## Exact candidate publication request
 
 Source `e4dee084f57788c3c6edc16381203d34ebc0c7e1`, exact [candidate CI](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40928848556) SUCCESS. Full final §E HTML6,995,656/SHA2566e71a18f0279827ab876b78204437565e5d923818cc8052138919feecdf967d7 passed actual native desktop/mobile Chromium with no page errors (controlled Chat/lease fixture). Final native inference functions match captured R3 exactly; final stricter routing/action guards revalidate all captured plans. This main commit requests only the existing Chat guarded lane; §E source and its separate final trigger follow after the backward-compatible backend is published. Real Google/deployed-store/device acceptance pending.
+
+## Pre-publication §E account-switch correction
+
+Initial source e4dee084f57788c3c6edc16381203d34ebc0c7e1 passed exact CI40928848556 and Chat guarded workflow40929174874. Chat Space upload5058110eccab6ec8965f550998eb0645609785ba reached RUNNING; public route acceptance is being observed. A final host review found cloudRefs and visible cloud project metadata could remain after account changes, causing a safe server rejection when a new account attempted Save with another account’s project reference. The unreleased §E host now clears those IDs/revisions/list on the existing account-change signal, while ordinary thread changes retain the project revision. Local work stays local and no account data is copied. CPU and actual native-browser tests cover this correction. Chat/backend/inference files are byte-identical to published e4; no second Chat deployment is required for this host-only correction.
+
+Current unreleased §E v11.169 seal:201 patches,68 assets,6,995,807 bytes, SHA2561c484cf4f627a87c95d720d11fabfe1fb9005f114c2a7712b67f7474222a3d84. Earlier6,995,656-byte source and immutable r1 package remain prior-candidate evidence, not rewritten. Exact successor CI, r2 source overlay package and §E final-only request follow.
+
+## UPDATE FINISHED — publication and handoff receipt
+
+Current release: Chat **1.5.158**, Google account architecture **1.0.18**, LALM
+**2.1.204**, Server runtime **2.3.441**, Repository Work **1.0.241**. Exact prior
+values and changes were committed with the runtime Roadmap in
+`9ba69e6255acfd5f47ad49b576b40519591165bc`. Manifest152, strict streamV2, deploymentcontrol1.0.41 and
+other owners remain unchanged. This is registered source/runtime evolution,
+not model training or real-account acceptance.
+
+- Accepted Chat source `e4dee084f57788c3c6edc16381203d34ebc0c7e1`;
+  [exact CI40928848556](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40928848556) SUCCESS;
+  [guarded deployment40929174874](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40929174874) SUCCESS.
+  Space `5058110eccab6ec8965f550998eb0645609785ba` observed RUNNING with matching
+  runtime revision and immutable source provenance. Public popup/broker return
+  byte-identical200; anonymous profile/projects and forged editor lease return401.
+- §E application candidate `51d3d44aa3c5ac85f65cf83e0505dd7442c3c6b1`;
+  [exact CI40930279362](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40930279362) SUCCESS.
+  Main source34eed0839902dae96941fed1ab0cff9e9cf4a10a and first final-request-only
+  commit77d7c9cf8c59e3cc5a3fba3a2713ba3993e6c52b deployed via40930867494 SUCCESS.
+  Docs-only6a53f242f2739f0348f962564ba6c1ec24c41a36 repaired the HF README's release
+  evidence link without changing HTML/version; separate final-request-only
+  commitf9ad333f4382ee4db1f7148c4e21f13a50054529 published through
+  [deployment40931411290](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40931411290) SUCCESS.
+  Final static Space `6fdc0351b04c6b27a5f65b6c4402dfb259b61a72` RUNNING. HF stored HTML/SOURCE receipt
+  agrees: **v11.169 /201 patches /68 assets /6,995,807 bytes /SHA256
+  1c484cf4f627a87c95d720d11fabfe1fb9005f114c2a7712b67f7474222a3d84**.
+- Chat/backend/inference source is byte-identical between these two candidate
+  commits; only the unreleased §E account-reference correction differed. No
+  second Chat upload or model change was needed. Existing separate release lanes
+  and concurrent v11.168 Quest implementation were preserved.
+- Final exact native Chromium source passes desktop/mobile including native
+  mesh/actor edits, Undo/Redo, exact hostile-looking labels, scoped permissions,
+  account-switch metadata clearing and no page errors. Canonical Chat desktop/
+  mobile, saved-profile/owner isolation,75 controlled backend tests and source
+  model plan probes pass within their recorded bounds. Source CI ran the real
+  workflow including adjacent regressions. No broad game suite was dispatched.
+
+Canonical source overlay: `chat-forge-integration-source-r2.zip`, **1,389,782bytes**,
+SHA256 **7bc4681c289b2331a34330f3c4ba758e96f83067a88c675932fb6ab95ef3555a**.
+It carries43 full changed sources/docs, exact reconstruction patch/manifest and
+public synthetic evidence. Applying to the recorded composite baselines proves
+the entire Git tree `dbba295b36805eaa5f8452a78b2c58a7c9a3309b`. This is an overlay
+requiring existing repository baselines, not a full standalone app or model
+redistribution. Immutable r1 (`cda812e421fc6687c5f0b4b7c273b97a9932b3a67e1461e9bca1b436e8560337`)
+remains prior-candidate evidence. Delivery files are in
+`/workspace/cloud-setup/deliverables`; the final handoff adds current release
+receipts without rewriting source archives.
+
+Documentation gate PASS. Source/package/CI/promotion/build/HF runtime observations
+are recorded separately. Direct static-host access remains denied by the cloud
+network policy; the static Space/runtime and stored HTML receipt are confirmed
+through the allowed HF API, with exact local/native Chromium acceptance. No
+claim of a live hosted browser, actual Google login, deployed private project
+write/read or physical Android/Quest UX is made. These remain owner acceptance:
+open §e, choose § Chat → Sign in with Google, connect the same account as standalone
+Chat, verify history/preferences, Save/Load a native project and request a native
+edit then Undo. The user signs in directly; no passwords or codes are collected.
+
+Current disposition **ACCEPTED_WITH_FOLLOW_UP / DEVICE_TEST_PENDING** for this
+bounded integration. Earlier broad starter/editor/long-form model failures remain
+REPAIR_REQUIRED and were not promoted by native-plan tests. CPU planning latency
+and RAM-only reconnect behavior remain known limits. No weights/default/hardware
+change; Swrlzing-core remains310ce70ae77815c82161d43c5cd0f6bb8e3d4812.
+Approval waiting: NOT APPLICABLE; authorized publication is finished. Next gate:
+real-account and owner-device acceptance, with any new defect handled as its own
+bounded successor. Environment configuration is separately saved for Review and
+Publish; a draft is not a published environment snapshot.

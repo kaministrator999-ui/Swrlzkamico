@@ -1,6 +1,6 @@
 **Current deployment observation — 2026-10-27:** source `f925e2012ed7ece820e3272700bc6619846c2085` is running at the existing Chat site `https://kamiloki-swyrlz.hf.space`, HF revision `48515f7fc6e8cb7b4450725320e8fed64fb886e6`. HF API reported RUNNING with HEAD equal to runtime SHA, and immutable MODEL_PROVENANCE matches the source. Exact-source CI40439785973, guarded deployment40480347832 and startup recovery40486416861 succeeded. This establishes deployment identity; full 3D editor/project competence remains unaccepted. Canonical module versions are not advanced by this partial closeout. Earlier deployment statements below are dated historical observations superseded by this record. See [checkpoint](entries/2026-10-25_EDITOR_PROJECT_COMPLETION.md).
 
-## Active §E editor integration — 2026-10-29 source candidate
+## Active §E editor integration — 2026-10-29 published source
 
 The same Chat composes into a cross-origin §E panel. `brain_forge.py` owns interpretation of the current human request; `forge_chat_actions.py` asks the existing pinned Qwen coder for a bounded typed JSON plan. Neither module grants authority. Station supplies only a frozen server-produced `AuthorizedForgeContext` from `forge_embed.py`, tied to the verified Google/embed session, visible native host, thread, generation, project and fresh snapshot. Client flags/history/model prose cannot manufacture it. Account access is distinct from editor access.
 
