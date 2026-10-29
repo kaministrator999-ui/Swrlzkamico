@@ -1,0 +1,37 @@
+/* §E v11.168: Meta Browser 2D panel controls, not immersive WebXR. */
+.topbar #seQuestModeSwitch{
+ flex:0 0 auto;white-space:nowrap;min-height:40px;padding:6px 10px;
+ background:#22374d;color:#e9f5ff;border:1px solid #6e90aa;border-radius:8px;
+ font:600 12px system-ui,sans-serif;
+}
+.topbar #seQuestModeSwitch[aria-pressed="true"]{border-color:#95e8d8;background:#164c50}
+html.se-quest-panel .topbar{gap:6px;overflow-x:auto;overscroll-behavior-inline:contain}
+/* Controller rays and hand-select benefit from larger hit boxes. Scope to
+   editor controls, not Sheep Tag live joystick, HUD, or scene raycasting. */
+html.se-quest-panel .topbar button,
+html.se-quest-panel #modelAtelierPanel button,
+html.se-quest-panel .atelier-mesh-quickstrip button,
+html.se-quest-panel .toolbar button{
+ min-width:48px!important;min-height:48px!important;
+ font-size:max(13px,0.92rem)!important;padding:8px 10px!important;
+}
+html.se-quest-panel #modelAtelierPanel :is(input,select,textarea),
+html.se-quest-panel .atelier-mesh-quickstrip :is(input,select,textarea){
+ min-height:42px;font-size:16px!important;
+}
+html.se-quest-panel .atelier-mesh-quickstrip{
+ width:min(385px,calc(100% - 16px));max-height:min(66dvh,510px);
+ font-size:14px;line-height:1.4;
+}
+/* Focus feedback does not depend on gaze hover (which Meta Browser does not
+   send to the page). Hover remains an additional cue for actual ray pointers. */
+html.se-quest-panel :is(button,[role="button"],input,select,textarea):focus-visible{
+ outline:3px solid #f8d37a!important;outline-offset:2px!important;
+}
+html.se-quest-panel :is(.topbar,#modelAtelierPanel,.atelier-mesh-quickstrip,.toolbar)
+ button:not(:disabled):hover{filter:brightness(1.16)}
+/* Allow Quest's small resizable 2D browser window without wide forced panels. */
+@media(max-width:610px){
+ html.se-quest-panel .topbar{flex-wrap:nowrap}
+ html.se-quest-panel .atelier-mesh-quickstrip{max-height:52dvh}
+}
