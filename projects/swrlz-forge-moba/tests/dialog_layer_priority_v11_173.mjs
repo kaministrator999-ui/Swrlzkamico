@@ -1,0 +1,28 @@
+// §E v11.173 targeted priority/DOM identity regression.
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import vm from 'node:vm';
+const root='projects/swrlz-forge-moba/';
+const css=fs.readFileSync(root+'runtime/editor_layer_priority_v11_173.css','utf8');
+const js=fs.readFileSync(root+'runtime/editor_layer_priority_v11_173.js','utf8');
+const prior=fs.readFileSync(root+'runtime/project_hub_layer_v11_171.css','utf8');
+const chat=fs.readFileSync(root+'runtime/chat_account_panel_v1.js','utf8');
+const z=(selector)=>{let selectorEsc=selector.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');const m=css.match(new RegExp(selectorEsc+'\\s*\\{([^}]+)\\}'));assert(m,'missing '+selector);return Number(m[1].match(/z-index:\\s*(\\d+)/)?.[1])};
+assert.match(css,/main\.viewport-wrap\{isolation:isolate/);
+assert.equal(z('#hierarchy,#inspector'),100);
+assert(z('#projectHub.project-hub.show')>z('#seChatAccountPanel'));
+assert(z('#seChatAccountPanel')>z('#hierarchy,#inspector'));
+assert(z('#seChatToggle')>z('#hierarchy,#inspector'));
+assert.match(prior,/z-index:20000/);
+assert.match(chat,/#seChatAccountPanel\{position:fixed/);
+const originalParent={id:'editor-workspace'};
+const hub={id:'projectHub',parentElement:originalParent,events:17,tab:'mine'};
+const body={appendChild(node){assert.equal(node,hub);node.parentElement=this;}};
+const document={body,getElementById(id){return id==='projectHub'?hub:null}};
+vm.runInNewContext(js,{document,Error});
+assert.equal(hub.parentElement,body,'dialog must escape layout stacking context');
+assert.equal(hub.events,17,'native event handlers must survive');
+assert.equal(hub.tab,'mine','existing tabs and state must survive');
+vm.runInNewContext(js,{document,Error});
+assert.equal(hub.parentElement,body,'reparent operation idempotent');
+console.log('SE173_DIALOG_LAYER_PRIORITY_PASS');

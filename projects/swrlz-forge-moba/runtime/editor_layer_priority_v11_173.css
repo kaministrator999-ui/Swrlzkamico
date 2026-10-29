@@ -1,0 +1,18 @@
+/* §E v11.173: explicit editor-layer hierarchy. The legacy v11.171
+   numeric fix was still nested under an editor stacking context, letting
+   inspector panes occlude the project modal. Do not change docking geometry. */
+main.viewport-wrap{isolation:isolate;z-index:0!important}
+#hierarchy,#inspector{z-index:100!important}
+/* Existing first-party Chat launcher/panel retain their original behavior. */
+#seChatToggle{z-index:2147482200!important}
+#seChatAccountPanel{z-index:2147482300!important}
+/* Projects is portaled to document.body by the companion JS. It must
+   outpaint viewport overlays, both docks, and Chat when actually open. */
+#projectHub.project-hub.show{
+ position:fixed!important;
+ inset:0!important;
+ z-index:2147483000!important;
+ isolation:isolate;
+}
+/* Native HTML modal dialogs should remain above the application chrome. */
+dialog[open]:modal{z-index:2147483100!important}

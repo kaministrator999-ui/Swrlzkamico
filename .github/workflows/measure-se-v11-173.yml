@@ -1,0 +1,28 @@
+name: §E v11.173 focused dialog layer correction
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/patches/v11_173_dialog_stack.py"
+      - "projects/swrlz-forge-moba/runtime/editor_layer_priority_v11_173.js"
+      - "projects/swrlz-forge-moba/runtime/editor_layer_priority_v11_173.css"
+      - "projects/swrlz-forge-moba/tests/dialog_layer_priority_v11_173.mjs"
+      - "projects/swrlz-forge-moba/scripts/measure_v11_173_source.py"
+      - ".github/workflows/measure-se-v11-173.yml"
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - uses: actions/setup-node@v4
+        with: {node-version: "22"}
+      - name: Test modal portal and layer order
+        run: |
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_173_dialog_stack.py
+          node projects/swrlz-forge-moba/tests/dialog_layer_priority_v11_173.mjs
+      - name: Measure exact full source
+        run: python projects/swrlz-forge-moba/scripts/measure_v11_173_source.py
