@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.168
+title: §wyrl§ Engine v11.169
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,16 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.169 — shared Chat account and native editor assistance (2026-10-29)
+
+The **§ Chat** button opens the full existing Chat in a responsive side panel. **Sign in with Google** opens the Chat account window; connect the same account to load its Chat history and explicitly saved preferences. **Save to account**, **My projects** and **Load** preserve complete native project snapshots through separate encrypted storage (96MiB raw maximum). Local editing and native downloads remain available without sign-in. After a reload or expired connection, reconnect the account in the popup; credentials stay in Chat-origin memory.
+
+Chat can inspect the active workspace and request supported native Model Atelier mesh add/set/select/duplicate/remove or scene prefab add/transform/select/rename, plus native Undo/Redo. The server requires a fresh account/thread/project-bound editor lease; the host executes fixed native handlers and returns actual results. Closing/hiding the panel, changing project/thread or expiration revokes access. Standalone Chat has no editor mutation grant. No model JavaScript, general method execution, cloud deletion or deployment is exposed. Unsupported/stale/partial edits do not become success. Literal object names stay text, including in the mobile inspector.
+
+Preserves v11.168 Quest controls and all preceding gameplay/LAN/project source. Ordered patch201; generated HTML **6,995,807 bytes**, SHA256 **1c484cf4f627a87c95d720d11fabfe1fb9005f114c2a7712b67f7474222a3d84**;68 packaged assets. The minimal deployment verifier checks the exact package and separate final request identity; no broad game/browser suite is added to production deployment. Source tests and controlled desktop/mobile native and canonical Chat browsers pass; terminal deployment, real Google account, deployed storage and owner-device acceptance remain pending in the [checkpoint](../../docs/engineering/entries/2026-10-29_CHAT_FORGE_INTEGRATION.md). Existing Chat and §E release lanes remain separate.
+
+
 
 ## §E v11.168 — Quest 2 Meta Browser adaptive 2D editor (2026-10-28)
 

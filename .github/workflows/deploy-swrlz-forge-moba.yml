@@ -21,12 +21,14 @@ jobs:
     steps:
       - name: Checkout engine source
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
       - name: Package the engine for HF
-        run: python projects/swrlz-forge-moba/build_space.py --output dist/swrlz-forge-moba
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_169_release.py --output dist/swrlz-forge-moba --request
       - name: Upload to the existing static HF Space
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
