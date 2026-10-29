@@ -76,6 +76,9 @@ use the credential only for exact Chat-origin protected API paths. Never attach
 it to Google, external GitHub, assets or arbitrary URLs. Native Export navigation
 needs an authenticated fetch/blob download adapter. Logout clears scoped state
 and revokes active tools; account switches cannot hydrate another owner's data.
+The host clears its cloud project IDs/revisions and visible project list when
+the broker announces an account-change revoke, while thread changes preserve
+the current account project reference.
 
 Pair API owner: `hf_space/forge_embed.py`, installed by Station:
 

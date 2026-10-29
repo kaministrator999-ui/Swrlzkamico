@@ -217,6 +217,6 @@
     "patches/v11_168_quest_browser_panel.py",
     "patches/v11_169_chat_account_panel.py"
   ],
-  "finalBytes": 6995656,
-  "finalSha256": "6e71a18f0279827ab876b78204437565e5d923818cc8052138919feecdf967d7"
+  "finalBytes": 6995807,
+  "finalSha256": "1c484cf4f627a87c95d720d11fabfe1fb9005f114c2a7712b67f7474222a3d84"
 }

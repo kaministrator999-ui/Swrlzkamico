@@ -148,3 +148,9 @@ embed credentials remain RAM-only and reconnect after reload/expiry.
 Approval waiting: NOT APPLICABLE. Publication remains explicitly authorized.
 Next gate: exact committed candidate CI, canonical packaging and the existing
 separate guarded publication lanes, then record actual outcomes.
+
+## Pre-publication §E account-switch correction
+
+Initial source e4dee084f57788c3c6edc16381203d34ebc0c7e1 passed exact CI40928848556 and Chat guarded workflow40929174874. Chat Space upload5058110eccab6ec8965f550998eb0645609785ba reached RUNNING; public route acceptance is being observed. A final host review found cloudRefs and visible cloud project metadata could remain after account changes, causing a safe server rejection when a new account attempted Save with another account’s project reference. The unreleased §E host now clears those IDs/revisions/list on the existing account-change signal, while ordinary thread changes retain the project revision. Local work stays local and no account data is copied. CPU and actual native-browser tests cover this correction. Chat/backend/inference files are byte-identical to published e4; no second Chat deployment is required for this host-only correction.
+
+Current unreleased §E v11.169 seal:201 patches,68 assets,6,995,807 bytes, SHA2561c484cf4f627a87c95d720d11fabfe1fb9005f114c2a7712b67f7474222a3d84. Earlier6,995,656-byte source and immutable r1 package remain prior-candidate evidence, not rewritten. Exact successor CI, r2 source overlay package and §E final-only request follow.

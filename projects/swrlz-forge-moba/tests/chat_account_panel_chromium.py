@@ -19,7 +19,7 @@ const protocol='swrlz-forge-chat-v1';let binding=null,port=null,n=0;const pendin
 window.fixture={ready:false,rpc(type,payload={}){return new Promise((resolve,reject)=>{const requestId='fixture-request-'+(++n);pending.set(requestId,{resolve,reject});port.postMessage({protocol,...binding,type,requestId,payload:{...payload,...(type==='host.presence'?binding:{})}});});},batch(payload){port.postMessage({protocol,...binding,type:'host.batch',requestId:'fixture-batch-'+(++n),payload});}};
 addEventListener('message',e=>{if(e.source!==parent||e.origin!==''' + json.dumps(FORGE) + '''||e.data.protocol!==protocol)return;const m=e.data;
 if(m.type==='host.hello'){binding={hostId:m.hostId,channelId:m.channelId};parent.postMessage({...m,type:'iframe.ready',payload:{}},e.origin);}
-if(m.type==='host.connect'&&binding&&m.hostId===binding.hostId&&m.channelId===binding.channelId&&e.ports.length===1){port=e.ports[0];port.onmessage=e=>{const m=e.data;if(m.protocol!==protocol||m.hostId!==binding.hostId||m.channelId!==binding.channelId)return;if(m.type==='rpc.result'){const p=pending.get(m.requestId);if(p){pending.delete(m.requestId);m.payload.ok===false?p.reject(Error(m.payload.error)):p.resolve(m.payload.result);}}};port.start();fixture.ready=true;}}
+if(m.type==='host.connect'&&binding&&m.hostId===binding.hostId&&m.channelId===binding.channelId&&e.ports.length===1){port=e.ports[0];port.onmessage=e=>{const m=e.data;if(m.type==='cloud.list'){port.postMessage({...m,type:'rpc.result',payload:{ok:true,result:{projects:[{id:'owner-a-project',name:'Previous account project',revision:3}]}}});return;}if(m.protocol!==protocol||m.hostId!==binding.hostId||m.channelId!==binding.channelId)return;if(m.type==='rpc.result'){const p=pending.get(m.requestId);if(p){pending.delete(m.requestId);m.payload.ok===false?p.reject(Error(m.payload.error)):p.resolve(m.payload.result);}}};port.start();fixture.ready=true;}}
 );</script>'''
 
 
@@ -79,6 +79,10 @@ def run(html_path,vendor_path,out):
             iframe.wait_for_function('()=>window.fixture?.ready',timeout=15000)
             metrics=page.evaluate("""()=>{const p=document.getElementById('seChatAccountPanel'),r=p.getBoundingClientRect();return {bodySibling:p.parentNode===document.body,canvasChild:!!p.closest('canvas'),w:r.width,h:r.height,x:r.x,y:r.y,vw:innerWidth,vh:innerHeight,closeFocused:document.activeElement?.id==='seChatClose',sandbox:document.getElementById('seChatFrame').getAttribute('sandbox')}}""")
             assert metrics['bodySibling'] and not metrics['canvasChild'];assert 300<=metrics['w']<=metrics['vw'];assert metrics['h']<=metrics['vh'];assert metrics['closeFocused'];assert 'allow-popups-to-escape-sandbox' in metrics['sandbox']
+            page.locator('#seChatRefresh').click()
+            page.wait_for_function("()=>!!document.querySelector('#seChatProjects option[value=\"owner-a-project\"]')")
+            iframe.evaluate("()=>{void fixture.rpc('host.revoke',{reason:'account-changed'});}")
+            page.wait_for_function("()=>document.getElementById('seChatProjects').children.length===0")
             def connect():
                 value=iframe.evaluate("()=>fixture.rpc('host.context')")
                 result=iframe.evaluate("value=>fixture.rpc('host.presence',{ticket:'sfp1_CONTROLLED',threadId:'thread-native',projectId:value.projectId})",value)
@@ -120,7 +124,7 @@ def run(html_path,vendor_path,out):
             try:iframe.evaluate("()=>fixture.rpc('host.context')");raise AssertionError('hidden editor context leaked')
             except Exception as exc:assert 'EDITOR_PANEL_NOT_VISIBLE' in str(exc)
             image=out.with_name(out.stem+('-mobile' if mobile else '-desktop')+'.png');page.screenshot(path=str(image))
-            rows.append({'viewport':'mobile' if mobile else 'desktop','metrics':metrics,'nativeMeshAdded':added,'sceneActorAdded':actor,'nativeUndoRedo':True,'sceneUndoRetainedScope':True,'closedHostDenied':True,'screenshot':str(image),'pageErrors':list(errors)})
+            rows.append({'viewport':'mobile' if mobile else 'desktop','metrics':metrics,'nativeMeshAdded':added,'sceneActorAdded':actor,'nativeUndoRedo':True,'sceneUndoRetainedScope':True,'closedHostDenied':True,'accountProjectListCleared':True,'screenshot':str(image),'pageErrors':list(errors)})
             context.close()
         browser.close()
     receipt={'schema':'swrlz-forge-native-chat-browser-v1','classification':'CONTROLLED_BROWSER_FIXTURE_NOT_LIVE_OR_GOOGLE_ACCEPTANCE','htmlSha256':hashlib.sha256(html).hexdigest(),'htmlBytes':len(html),'results':rows,'passed':True}

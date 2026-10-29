@@ -51,8 +51,8 @@ const host=source.slice(source.indexOf('/* ATELIER_BRIDGE_END */')+'/* ATELIER_B
 const anchor='if(ALLOWED_PARENTS.has(location.origin))queueMicrotask(mount);';
 assert.equal(host.split(anchor).length,2);
 const hooks=`globalThis.__test={context,validateOperation,execute,applyBatch,handshake,receive,revoke,heartbeat,
- seed(options){if(options.lease!==undefined)lease=options.lease;if(options.panel!==undefined)panel=options.panel;if(options.frame!==undefined)frame=options.frame;if(options.port!==undefined)port=options.port;if(options.open!==undefined)open=options.open;if(options.lastContext!==undefined)lastContext=options.lastContext;status={dataset:{}};accountText={};},
- state:()=>({lease,port,ready,lastContext}),ids:()=>({hostId,channelId})};`;
+ seed(options){if(options.lease!==undefined)lease=options.lease;if(options.panel!==undefined)panel=options.panel;if(options.frame!==undefined)frame=options.frame;if(options.port!==undefined)port=options.port;if(options.open!==undefined)open=options.open;if(options.lastContext!==undefined)lastContext=options.lastContext;if(options.cloudList!==undefined)cloudList=options.cloudList;status={dataset:{}};accountText={};},
+ rememberCloud(ref){cloudRefs.set(context().projectId,ref);},state:()=>({lease,port,ready,lastContext,cloudReferences:cloudRefs.size}),ids:()=>({hostId,channelId})};`;
 vm.createContext(ctx);vm.runInContext(host.replace(anchor,hooks),ctx);
 const api=ctx.__test, first=api.context();
 assert.equal(first.meshes[0].id,'mesh-one');assert.equal(first.mode,'edit');assert.equal(first.workspace,'model-atelier');
@@ -101,4 +101,12 @@ assert.equal(requests.at(-1).body.results[0].ok,false,'stale snapshot must retur
 api.revoke('test closure');assert.equal(api.state().lease,null);
 const n=requests.length;await api.applyBatch({batchId:'outside',leaseId:'lease111',generationId:'gen-three'});assert.equal(requests.length,n);
 assert(!JSON.stringify(messages).includes('sfr1_private'));
+let clearedLists=0;
+api.seed({cloudList:{replaceChildren(){clearedLists++;}}});
+api.rememberCloud({id:'ownerA-cloud-project',revision:5});
+await api.receive(envelope('host.revoke',{reason:'thread-changed'}));
+assert.equal(api.state().cloudReferences,1,'thread changes preserve the current account project revision');
+await api.receive(envelope('host.revoke',{reason:'account-changed'}));
+assert.equal(api.state().cloudReferences,0,'new accounts cannot reuse another account project IDs/revisions');
+assert.equal(clearedLists,1,'account changes remove prior account project names from the UI');
 console.log(JSON.stringify({ok:true,suite:'chat-account-panel-cpu-v1',checks:['native mesh exact text + atomic checkpoint + undo/redo + add/remove','typed operation bounds and injected-code denial','origin/source/channel handshake','host-private credential','presence activation fresh context','native receipts and replay denial','stale/closed host denial']}));

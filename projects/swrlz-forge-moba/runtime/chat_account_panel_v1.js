@@ -171,7 +171,12 @@ async function receive(message){
     }catch(error){send('rpc.result',{ok:false,error:error.message},requestId);}return;
   }
   if(type==='host.batch'){await applyBatch(payload);return;}
-  if(type==='host.revoke'||type==='account.logout')revoke('Chat session changed.');
+  if(type==='host.revoke'||type==='account.logout'){
+    if(type==='account.logout'||payload.reason==='account-changed'){
+      cloudRefs.clear();if(cloudList)cloudList.replaceChildren();
+    }
+    revoke('Chat session changed.');
+  }
 }
 function handshake(event){
   if(event.origin===CHAT_ORIGIN&&event.source===popup&&popupPair&&event.data?.protocol===PROTOCOL&&event.data.type==='popup.ready'&&event.data.hostId===hostId&&event.data.channelId===channelId&&bounded(event.data.requestId,128)&&event.data.payload?.pairId===popupPair){
