@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.170
+title: §wyrl§ Engine v11.171
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,14 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.171 — Projects dialog foreground priority on Sheep Tag (2026-10-29)
+
+**Owner screenshot:** in portrait Android, Sheep Tag's main/start menu overlaps the native Projects dialog and its **My Projects** tab. Root source: native `.project-hub` uses z-index 30; v11.143's canvas-hosted Sheep Tag runtime overlay uses z-index 3900 (some historical menu rules up to 4200). Projects should be in the foreground when open.
+
+**Correction:** append-only patch 203 introduces `runtime/project_hub_layer_v11_171.css`, scoped to `#projectHub.project-hub.show`: `position:fixed`, full inset, isolation, and z-index 20000. The modal outranks viewport menus/HUD, but stays below the separate Chat panel. Closing the modal removes the selector and reveals Sheep Tag unchanged. No menu rerouting, controller change, gameplay mutation, game camera, LAN, save file, Google account, or Chat backend changes. Existing starter-project checkboxes and My Projects account transport remain the same.
+
+**Source evidence:** [focused stacking test and full build measurement](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40960856304) SUCCESS. 203 historic patches rebuild to **7,003,771 bytes** / SHA-256 `c20a884ef7b690b03c98b28e74b896c9ac9cceeadb105561abd65ea7730d657e`; the original 68 assets remain. Dedicated sealed release CI and deployment receipts are separate. Physical Android/Quest visual and touch acceptance remains pending and cannot be inferred solely from the source test.
 
 ## §E v11.170 — Starter Projects + My Projects tabs (2026-10-29)
 

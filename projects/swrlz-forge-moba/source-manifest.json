@@ -219,6 +219,6 @@
     "patches/v11_170_project_library_tabs.py",
     "patches/v11_171_project_modal_priority.py"
   ],
-  "finalBytes": null,
-  "finalSha256": null
+  "finalBytes": 7003771,
+  "finalSha256": "c20a884ef7b690b03c98b28e74b896c9ac9cceeadb105561abd65ea7730d657e"
 }

@@ -1,0 +1,24 @@
+name: §E v11.171 sealed Projects modal stacking verification
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/scripts/verify_v11_171_release.py"
+      - ".github/workflows/verify-se-v11-171-sealed.yml"
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - uses: actions/setup-node@v4
+        with: {node-version: "22"}
+      - name: Verify exact engine seal and 68 assets
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_171_release.py --output dist/se171
+      - name: Verify scoped foreground menu and unchanged My Projects
+        run: |
+          node projects/swrlz-forge-moba/tests/project_modal_stack_v11_171.mjs
+          node --check projects/swrlz-forge-moba/runtime/project_hub_my_projects_v11_170.js
