@@ -17,6 +17,18 @@
   const sameBinding = value => value && value.protocol === PROTOCOL && binding && value.hostId === binding.hostId && value.channelId === binding.channelId;
   const isAuthenticated = () => !!token && Date.now() < expiresAt;
   const emit = (name, detail) => window.dispatchEvent(new CustomEvent(name,{detail}));
+  const showRecoveryCode = code => {
+    if(!embedded||!document.body||typeof document.getElementById!=="function")return;
+    let note=document.getElementById("swrlz-forge-recovery-note");
+    if(!code){note?.remove();return;}
+    if(!note){
+      note=document.createElement("div");note.id="swrlz-forge-recovery-note";
+      note.setAttribute("role","status");note.setAttribute("aria-live","polite");
+      note.style.cssText="position:fixed;left:8px;right:8px;bottom:8px;z-index:2147483000;padding:10px 14px;border-radius:12px;background:#192840;color:#f1f9ff;border:2px solid #8feaff;font:13px/1.5 system-ui;box-shadow:0 6px 20px #0009;";
+      document.body.appendChild(note);
+    }
+    note.textContent="§E Google connection code: "+code+" — only needed if the Google popup opens in a separate tab and cannot find §E. Return there and enter this code after Google sign-in.";
+  };
   const error = message => new Error(message);
   const send = (type, payload, requestId, transfer = []) => {
     if(!port) throw error("The §e connection is unavailable.");
@@ -35,7 +47,7 @@
     if(port)send("host.revoke",{reason:String(reason||"connection-changed").slice(0,80)});
   };
   const clearAccount = () => {
-    token="";expiresAt=0;accountEpoch++;pairing=null;cloudCatalog.clear();revoke("account-changed");
+    token="";expiresAt=0;accountEpoch++;pairing=null;cloudCatalog.clear();showRecoveryCode("");revoke("account-changed");
     if(port)send("account.status",publicAccount(null));
     emit("swrlz-forge-account-changed",{signedIn:false});
   };
@@ -84,7 +96,8 @@
     const challenge = base64url(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(verifier)));
     const value = await json("/api/forge/embed/pair",{parentOrigin:binding.parentOrigin,hostId:binding.hostId,channelId:binding.channelId,challenge});
     const url = new URL(value.loginUrl,location.origin);
-    if(url.origin !== location.origin || url.pathname !== "/forge/login" || !/^[a-f0-9]{32}$/.test(value.pairId))throw error("Invalid account connection response.");
+    if(url.origin !== location.origin || url.pathname !== "/forge/login" || !/^[a-f0-9]{32}$/.test(value.pairId) || !/^[a-f0-9]{12}$/.test(value.recoveryCode))throw error("Invalid account connection response.");
+    showRecoveryCode(value.recoveryCode);
     pairing={pairId:value.pairId,verifier,until:Number(value.expiresAt)*1000};
     void pollPair(pairing);
     return {loginUrl:url.href,pairId:value.pairId};
@@ -108,7 +121,7 @@
         if(!verified?.user?.id || verified.user.id!==result.user?.id){
           clearAccount();send("account.error",{message:"Chat could not verify the Google connection. Sign in again."});return;
         }
-        pairing=null;
+        pairing=null;showRecoveryCode("");
         send("account.status",publicAccount(verified.user));
         emit("swrlz-forge-account-changed",{signedIn:true});
         return;
@@ -116,7 +129,7 @@
         if(pairing===attempt && attempt.provisional && token===attempt.provisional){
           clearAccount();send("account.error",{message:"Chat account verification failed. Sign in again."});return;
         }
-        if(pairing === attempt && Date.now() >= attempt.until){pairing=null;send("account.error",{message:"Google connection expired. Sign in again."});}
+        if(pairing === attempt && Date.now() >= attempt.until){pairing=null;showRecoveryCode("");send("account.error",{message:"Google connection expired. Sign in again."});}
       }
     }
   };

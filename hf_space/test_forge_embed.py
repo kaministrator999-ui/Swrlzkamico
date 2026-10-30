@@ -211,6 +211,24 @@ class ForgeEmbedTest(unittest.TestCase):
         self.redis.before_eval = None
         self.assertEqual(sorted(outcomes), [200, 409])
 
+    def test_mobile_opener_loss_recovery_code_is_private_and_single_use(self):
+        import re
+        binding = {"parentOrigin": PARENT, "hostId": HOST, "channelId": CHANNEL}
+        verifier = "a" * 64
+        challenge = base64.urlsafe_b64encode(hashlib.sha256(verifier.encode()).digest()).rstrip(b"=").decode()
+        pair = self.post("/api/forge/embed/pair", {**binding, "challenge": challenge})
+        self.assertEqual(pair.status_code, 200)
+        data = pair.json()
+        self.assertRegex(data["recoveryCode"], r"^[a-f0-9]{12}$")
+        self.assertNotIn("recoveryCode", self.client.get("/api/forge/embed/pair/" + data["pairId"]).json())
+        approval = {"pairId": data["pairId"], **binding}
+        self.assertEqual(self.post("/api/forge/embed/pair/approve", {**approval, "recoveryCode": "0" * 12}, sid=SID).status_code, 403)
+        self.assertEqual(self.post("/api/forge/embed/pair/approve", {**approval, "recoveryCode": data["recoveryCode"]}, sid=SID).status_code, 200)
+        self.assertEqual(self.post("/api/forge/embed/pair/approve", {**approval, "recoveryCode": data["recoveryCode"]}, sid=SID).status_code, 409)
+        exchanged = self.post("/api/forge/embed/pair/exchange", {"pairId": data["pairId"], "verifier": verifier, "hostId": HOST, "channelId": CHANNEL})
+        self.assertEqual(exchanged.status_code, 200)
+        self.assertEqual(exchanged.json()["user"]["id"], ALICE["id"])
+
     def test_cookie_blocked_embed_account_and_invalid_auth_never_falls_back(self):
         token, _ = self.pair()
         result = self.client.get("/test/account", headers={"Authorization": "Bearer " + token})

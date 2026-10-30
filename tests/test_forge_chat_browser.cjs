@@ -41,7 +41,7 @@ window.closeHost=()=>send('host.inactive',{reason:'closed'});
           const auth=request.headers()['authorization']||'';requests.push({pathname,auth});
           const body=request.postDataJSON?.()||null;
           const json=(value,status=200)=>route.fulfill({status,contentType:'application/json',body:JSON.stringify(value)});
-          if(pathname==='/api/forge/embed/pair')return json({pairId,loginUrl:'/forge/login?pairId='+pairId,expiresAt:Date.now()/1000+300});
+          if(pathname==='/api/forge/embed/pair')return json({pairId,loginUrl:'/forge/login?pairId='+pairId,expiresAt:Date.now()/1000+300,recoveryCode:'b'.repeat(12)});
           if(pathname==='/api/forge/embed/pair/'+pairId)return json({approved:true});
           if(pathname==='/api/forge/embed/pair/exchange')return json({token,expiresAt:Date.now()/1000+3600,parentOrigin:FORGE,hostId,channelId,user:{id:'google:controlled',displayName:'Account user'}});
           if(pathname==='/api/account/status')return json({googleClientId:'controlled-fixture'});
