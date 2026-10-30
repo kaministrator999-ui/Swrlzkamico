@@ -24,6 +24,13 @@ _EXPLAIN = re.compile(r"\b(?:how\s+(?:(?:do|can|could|would|will)\s+(?:I|you|we)
 _REPORTED = re.compile(r"\b(?:I|we)\s+(?:previously\s+)?(?:asked|told|said|saw|watched|noticed|mentioned|requested)\b|"
                        r"\byou\s+(?:said|promised|tried)\b", re.I)
 _READ = re.compile(r"\b(?:list|inspect|show|describe|what|which|how\s+many|tell\s+me|analy[sz]e|audit|review)\b", re.I)
+_WORKSPACE_FOLLOWUP = re.compile(
+    r"\b(?:duplicate|repeated|shared\s+(?:names?|positions?)|overlap|findings?|scene\s+review|"
+    r"workspace\s+(?:review|analysis|reasoning)|continue\s+(?:the|your|that)\s+(?:analysis|reasoning|review)|"
+    r"(?:what|which)\s+should\s+(?:i|we)\s+(?:check|inspect)\s+next|"
+    r"(?:what|how)\s+(?:can|could|should)\s+(?:we|i)\s+improv(?:e|ing)\s+(?:this|the|our)\s+(?:scene|project)|"
+    r"prioriti[sz]e\s+(?:the|these|those)\s+(?:findings|checks))\b", re.I)
+
 _NEGATED_ACTION = re.compile(r"\b(?:do\s+not|don't|dont|never|avoid|stop)\s+(?:\w+\s+){0,3}"
                             r"(?:add|create|make|build|insert|place|move|rotate|scale|resize|"
                             r"start|rename|color|colour|change|set|select|duplicate|remove|delete|undo|redo)\b", re.I)
@@ -67,6 +74,12 @@ def classify_forge_intent(prompt: str, summary: dict[str, Any] | None = None) ->
     text = current_command_text(text)
     if _CODE.search(text):
         return result("ordinary", "separate-code-or-provider-request")
+    # Continuations refer to a fresh, authorized scene snapshot, never to
+    # stale historical editor grants. Questions cannot trigger native writes.
+    if (isinstance(summary, dict) and _WORKSPACE_FOLLOWUP.search(text)
+            and not (_ACTION.search(text) and not _EXPLAIN.search(text)
+                     and not _READ.search(text))):
+        return result("explain", "verified-current-workspace-followup")
     if _EXPLAIN.search(text):
         return result("explain", "instruction-or-hypothetical")
     if _REPORTED.search(text):

@@ -351,6 +351,16 @@ def dispatch(model_id: str, payload: dict[str,Any], r39_generate: Callable[[dict
         payload=dict(payload)
         # Evidence remains separate from the original prompt used by every classifier.
         summary=forge_context.model_context()
+        # Conversational follow-ups use the user's selected model and current
+        # authenticated snapshot. The typed card is evidence, never an action.
+        if native_intent.get("reason")=="verified-current-workspace-followup":
+            from forge_workspace_insights_v1 import build_insight
+            _, insight_widget=build_insight(summary,str(payload.get("prompt") or ""))
+            yield {"type":"WIDGET","widget":insight_widget}
+            # Put structured findings before the capped object list, so the
+            # selected model sees why a review hint arose and what remains
+            # visually unverified. Untrusted object labels stay data.
+            summary={"workspaceInsights":insight_widget["data"],**summary}
         for collection in ("meshes","actors"):
             if isinstance(summary.get(collection),list):summary[collection]=summary[collection][:8]
         payload["nativeEditorEvidence"]=summary
