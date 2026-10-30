@@ -395,6 +395,32 @@
     @media(max-width:680px){.top-status{gap:4px}.companion-state-chip{padding:3px 5px;max-width:72px;overflow:hidden;text-overflow:ellipsis}.top-ready-label{display:none}}
 
 
+    /* §E v1: compact, account-persisted workspace intelligence cards. */
+    .swrlz-widget.forge-workspace{border-color:rgba(91,220,249,.35);background:linear-gradient(135deg,rgba(6,34,50,.95),rgba(25,22,58,.90))}
+    .forge-ws-heading{padding:0 11px 9px;font-size:11px;font-weight:770;color:#e8faff;overflow-wrap:anywhere}
+    .forge-ws-level{display:block;margin-top:3px;font-size:9px;font-weight:500;color:#91b9cd}
+    .forge-ws-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;padding:0 9px 9px}
+    .forge-ws-stat{padding:8px 6px;border:1px solid rgba(138,216,255,.14);border-radius:10px;text-align:center;background:rgba(2,15,29,.57)}
+    .forge-ws-stat b{display:block;color:#f0ffff;font-size:16px;font-weight:790}
+    .forge-ws-stat span{display:block;margin-top:3px;font-family:var(--font-telemetry);font-size:8px;color:#93b6c7}
+    .forge-ws-selected{margin:0 9px 9px;padding:8px 9px;border-left:2px solid #8ee6fa;border-radius:6px;background:rgba(52,139,175,.11);color:#d3eff9;font-size:10px;overflow-wrap:anywhere}
+    .forge-ws-section{padding:9px 11px;border-top:1px solid rgba(126,214,255,.11)}
+    .forge-ws-section-title{margin-bottom:7px;color:#c3effa;font-family:var(--font-telemetry);font-weight:800;font-size:9px;letter-spacing:.065em;text-transform:uppercase}
+    .forge-ws-bar-row{display:grid;grid-template-columns:minmax(65px,1fr) 45% 22px;gap:6px;align-items:center;margin:6px 0}
+    .forge-ws-bar-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#afcddd;font-size:9px}
+    .forge-ws-bar-track{height:7px;border-radius:9px;background:rgba(126,214,255,.1);overflow:hidden}
+    .forge-ws-bar-fill{height:100%;border-radius:9px;background:linear-gradient(90deg,#50c1e1,#a58dff)}
+    .forge-ws-bar-value{color:#f3fcff;font-size:9px;font-weight:760;text-align:right}
+    .forge-ws-note{font-size:9px;line-height:1.45;color:#a1bbca;overflow-wrap:anywhere}
+    .forge-ws-evidence{margin-top:6px;padding:7px 8px;border:1px solid rgba(128,199,234,.12);border-radius:9px;background:rgba(2,17,30,.52)}
+    .forge-ws-evidence summary{cursor:pointer;font-size:10px;color:#d6f3fb;overflow-wrap:anywhere}
+    .forge-ws-evidence summary .forge-ws-flag{font:8px var(--font-telemetry);color:#e7c592;margin-right:5px}
+    .forge-ws-evidence p{margin:6px 0 0;font-size:9px;line-height:1.5;color:#a9cbd9;overflow-wrap:anywhere}
+    .forge-ws-steps{margin:0;padding-left:16px;color:#c6e7f1;font-size:10px;line-height:1.55}
+    .forge-ws-steps li{padding-bottom:5px}
+    .forge-ws-steps small{display:block;color:#91afbe;font-size:9px}
+    .forge-ws-footer{padding:8px 11px;color:#7ea5ba;font-size:8px;border-top:1px solid rgba(126,214,255,.1)}
+    @media(max-width:440px){.forge-ws-stats{gap:4px}.forge-ws-stat b{font-size:14px}.forge-ws-bar-row{grid-template-columns:minmax(55px,1fr) 39% 19px}}
     /* Glitch Dragon Chat — Tier G work surface, cards, and evidence. */
     .work-surface-button{display:inline-flex;align-items:center;gap:5px;min-height:26px;padding:4px 7px;border:1px solid rgba(126,214,255,.20);border-radius:8px;background:rgba(5,24,40,.56);color:#cdeef7;font-family:var(--font-telemetry);font-size:8px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer}.work-surface-button:hover{border-color:rgba(56,232,255,.46);background:rgba(12,44,62,.68)}.work-count{display:grid;place-items:center;min-width:16px;height:16px;padding:0 4px;border-radius:9px;background:rgba(165,120,255,.24);color:#eee7ff;font-size:8px}.work-count[data-empty="true"]{opacity:.48}
     .work-shade{position:fixed;z-index:8;inset:0;background:rgba(0,8,18,.58);backdrop-filter:blur(2px);opacity:0;visibility:hidden;transition:opacity .18s ease,visibility 0s linear .18s}.work-surface{position:fixed;z-index:9;top:0;right:0;bottom:0;width:min(92vw,420px);display:flex;flex-direction:column;background:linear-gradient(155deg,rgba(3,18,32,.988),rgba(6,27,44,.982) 62%,rgba(20,19,45,.985));border-left:1px solid rgba(126,214,255,.24);box-shadow:-20px 0 58px rgba(0,0,0,.42);transform:translateX(104%);transition:transform .22s cubic-bezier(.2,.8,.2,1)}body.work-open .work-shade{opacity:1;visibility:visible;transition-delay:0s}body.work-open .work-surface{transform:translateX(0)}
@@ -1464,7 +1490,58 @@
           const provider=document.createElement("div");provider.className="widget-provider";provider.textContent=String(widget.provider||"online");
           head.append(title,provider);card.appendChild(head);
           const data=widget.data&&typeof widget.data==="object"?widget.data:{};
-          if(["comparison","math-graph","model-3d"].includes(widget.kind)){
+          if(widget.kind==="forge-workspace" && data.schema==="swrlz-forge-workspace-insights-v1"){
+            // Data is emitted by verified Station native read dispatch. All
+            // project labels are untrusted strings rendered as textContent only.
+            const boundedText=(value,max=160)=>String(value==null?"":value).slice(0,max);
+            const make=(tag,cls,text)=>{const el=document.createElement(tag);if(cls)el.className=cls;if(text!==undefined)el.textContent=boundedText(text,500);return el};
+            const heading=make("div","forge-ws-heading",boundedText(data.project||"Open project"));
+            if(data.level)heading.appendChild(make("span","forge-ws-level","Level · "+boundedText(data.level)));
+            card.appendChild(heading);
+            const total=Number.isSafeInteger(data.total)&&data.total>=0?data.total:0;
+            const sampled=Number.isSafeInteger(data.sampled)&&data.sampled>=0?Math.min(data.sampled,48,total):0;
+            const stats=make("div","forge-ws-stats");
+            [["Actors / meshes",total],["Inspected",sampled],["Coverage",total?Math.round(sampled*100/total)+"%":"—"]].forEach(([label,value])=>{
+              const cell=make("div","forge-ws-stat");
+              cell.append(make("b","",String(value)),make("span","",label));stats.appendChild(cell);
+            });card.appendChild(stats);
+            if(data.selection)card.appendChild(make("div","forge-ws-selected","Selected · "+boundedText(data.selection)+" · "+boundedText(data.selectedType||"object")));
+            const section=(title)=>{const part=make("section","forge-ws-section");part.appendChild(make("div","forge-ws-section-title",title));card.appendChild(part);return part;};
+            const kinds=(Array.isArray(data.types)?data.types:[]).filter(t=>t&&typeof t.name==="string"&&Number.isSafeInteger(t.count)&&t.count>=0).slice(0,10);
+            if(kinds.length){
+              const distribution=section("Inspected object types");
+              kinds.forEach((t,i)=>{
+                const line=make("div","forge-ws-bar-row");
+                const name=make("div","forge-ws-bar-name",t.name);name.title=boundedText(t.name,100);
+                const track=make("div","forge-ws-bar-track");track.setAttribute("role","progressbar");
+                track.setAttribute("aria-label",boundedText(t.name)+" portion of sampled objects");
+                track.setAttribute("aria-valuemin","0");track.setAttribute("aria-valuemax","100");
+                const percent=sampled?Math.min(100,Math.max(0,100*t.count/sampled)):0;
+                track.setAttribute("aria-valuenow",String(Math.round(percent)));
+                const fill=make("div","forge-ws-bar-fill");fill.style.width=percent+"%";track.appendChild(fill);
+                line.append(name,track,make("div","forge-ws-bar-value",t.count));distribution.appendChild(line);
+              });
+              if(total>sampled)distribution.appendChild(make("div","forge-ws-note","Sampled "+sampled+" of "+total+" objects · chart is not a full-scene census."));
+            }
+            const findings=(Array.isArray(data.findings)?data.findings:[]).filter(f=>f&&typeof f==="object").slice(0,8);
+            const evidence=section("Review hints · "+findings.length);
+            if(!findings.length)evidence.appendChild(make("div","forge-ws-note","No repeated names or shared positions in this sample. Not a bug-free guarantee."));
+            findings.forEach(f=>{
+              const detail=make("details","forge-ws-evidence");
+              const summary=make("summary","");
+              summary.append(make("span","forge-ws-flag","REVIEW"),document.createTextNode(boundedText(f.title||"Finding")+" · "+boundedText(f.subject||"")));
+              detail.appendChild(summary);
+              [f.evidence,f.reason,f.nextCheck].filter(Boolean).forEach(str=>detail.appendChild(make("p","",str)));
+              evidence.appendChild(detail);
+            });
+            const suggestions=(Array.isArray(data.recommendations)?data.recommendations:[]).filter(r=>r&&typeof r==="object").slice(0,4);
+            if(suggestions.length){
+              const next=section("Suggested next checks");const list=make("ol","forge-ws-steps");
+              suggestions.forEach(s=>{const li=make("li","",boundedText(s.title||"Inspect"));if(s.check)li.appendChild(make("small","",s.check));list.appendChild(li)});
+              next.appendChild(list);
+            }
+            card.appendChild(make("div","forge-ws-footer",boundedText(data.limitations||"Read-only metadata; no automatic edits.",320)));
+          }else if(["comparison","math-graph","model-3d"].includes(widget.kind)){
             if(!window.SwrlzRichWidgetsV284?.render(card,widget))card.appendChild(Object.assign(document.createElement("div"),{className:"widget-footer",textContent:"Rich widget unavailable — its structured data was not displayable."}));
           }else if(widget.kind==="github-work"){
             if(!window.SwrlzGithubWorkView?.render(card,widget)){
