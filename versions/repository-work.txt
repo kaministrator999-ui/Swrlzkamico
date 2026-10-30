@@ -1,5 +1,5 @@
 ID=repository-work
-VERSION=1.0.244
+VERSION=1.0.245
 KIND=repository-work-lineage
 SOURCE_BRANCH=runtime
 STATUS=active
@@ -13,3 +13,5 @@ ENGINE_PROJECT_LIBRARY_20261029_NOTE=Source and exact sealed CI tier for §E v11
 ENGINE_MODAL_LAYER_20261029_NOTE=Source+sealed CI for §E v11.171 project dialog above Sheep Tag overlay. Main Roadmap governed 1.0.242 to 1.0.243; 203 ordered engine patches, 68 assets, HTML 7003771 bytes, SHA256 c20a884ef7b690b03c98b28e74b896c9ac9cceeadb105561abd65ea7730d657e; exact source/CI 40960856304 and 40961153891 PASS. Final engine-only deploy separate, owner Android visual acceptance pending. All Chat/Server/LALM/Google modules unchanged.
 
 ENGINE_CHAT_HEADER_20261029_NOTE=Source/CI tier for §E v11.172 removes the redundant external Open Chat link from the embedded side panel header, preserving all account, project, gameplay and prior modal behavior. Main Roadmap 1.0.243 to 1.0.244; CI 40962520717 and 40962863642 PASS. 204 patches, 68 assets, 7003719 HTML bytes, SHA256 6037f52db537508b3c338b72bee4ac915498adf55589b8386c76394459ac9e2b. Separate §E deployment follows; phone acceptance pending. Chat/Server/LALM/Google versions unchanged.
+
+ENGINE_MOBILE_20261029_NOTE=Full-height normal-phone native editor and actionable controls, v11.174/206 patches/68 assets/7008228bytes/SHA2561254e78c5bfd0d55a940f0e7d7c5fd590c325f89d4a45dc893b54f0f76fb9ce4. Exact local native Chromium and package pass; deployment40986968627 SUCCESS; HF 4d1c5e2ab11e483fe56b0853057942f31691c364 RUNNING and immutable stored artifact confirmed. Source overlay aedd1733d08c59ba4087fbf45d2a72ba0a80081987a63ab6a38b3f7b4e37497a. Canonical main Roadmap synchronized atomically; other modules unchanged; physical owner acceptance pending.
