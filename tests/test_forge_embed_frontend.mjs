@@ -24,7 +24,7 @@ function fixture({framed=true,query='?forgeEmbed=1',presenceErrors=[],onPresence
     requests.push({url:url.href,init:{...init,headers},body:init.body});
     const path=url.pathname,body=typeof init.body==='string'?JSON.parse(init.body):null;
     const response=(value,status=200)=>new Response(JSON.stringify(value),{status,headers:{'Content-Type':'application/json'}});
-    if(path==='/api/forge/embed/pair')return response({pairId,loginUrl:'/forge/login?pairId='+pairId,expiresAt:Date.now()/1000+300});
+    if(path==='/api/forge/embed/pair')return response({pairId,loginUrl:'/forge/login?pairId='+pairId,expiresAt:Date.now()/1000+300,recoveryCode:'b'.repeat(12)});
     if(path==='/api/forge/embed/pair/'+pairId)return response({approved:true});
     if(path==='/api/forge/embed/pair/exchange')return response({token:bearer,expiresAt:Date.now()/1000+3600,parentOrigin:FORGE,hostId,channelId,user:{id:'google:private',displayName:'Fixture User'}});
     if(path==='/api/forge/embed/presence')return response({ticket:'sfp1_PRIVATE_PRESENCE',hostId,channelId,threadId:body.threadId,projectId:body.projectId});
