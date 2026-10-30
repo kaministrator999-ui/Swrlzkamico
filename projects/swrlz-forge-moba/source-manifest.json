@@ -225,6 +225,6 @@
     "patches/v11_176_chat_account_project_picker.py",
     "patches/v11_177_google_avatar_single_tab.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 7031135,
+  "finalSha256": "329ebe66d3b1e4b75e3777d4cdabff2dc52d16850d9a445601b7d532b9dec5d6"
 }
