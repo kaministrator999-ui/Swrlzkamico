@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.175",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_175_CHAT_PROJECT_WORKFLOW",
-  "reason": "Owner-authorized basic Chat/§E project creation: independent named starter copies, preserved preceding work, isolated workspace drafts, local snapshots/autosave/reload and fresh active-project context. Exact207-patch/68-asset package, real native desktop-primary/phone/adjacent browser tests PASS. Backward-compatible Chat source512a2c4a exactCI40988150983 and guardeddeployment40988395181 SUCCESS; HFd35d2fbc RUNNING, canonicalbroker/updatebytes confirmed. RawQwenplan negatives retained; explicitnativecommands use validated orchestration. RealGoogle/device acceptance pending. Separate final request-only commit.",
-  "sourceCommit": "16cae27e7c925596bcd2fa72e91057c7b6979ba1",
-  "sourceIntegritySha256": "0510e556b49cd94a3d1f89b264c194542476bc26c96169f3c6b8177301d482ff"
+  "releaseVersion": "v11.176",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_176_CHAT_ACCOUNT_PROJECT_PICKER",
+  "reason": "Owner Android §E screenshot correction: Google-connected badge with redundant Sign in button hidden, and a true active/local/cloud native project picker that preserves account isolation and existing guarded loaders. Exact208-patch/68-asset/7028937-byte package SHA861e9eba85cda6feacc7f4ed0e360024ea54a10be30c4b1dd20e08a4339bfbde; sealed CI41113497738 PASS including16 UI state tests. Existing Chat broker, Sheep Tag gameplay and project data unchanged. Chrome/Android/Quest real-device acceptance pending. Separate deploy-request-only commit.",
+  "sourceCommit": "ecc6e95060132f32ff7f4dd0b0479dbd6645ec62",
+  "sourceIntegritySha256": "861e9eba85cda6feacc7f4ed0e360024ea54a10be30c4b1dd20e08a4339bfbde"
 }
