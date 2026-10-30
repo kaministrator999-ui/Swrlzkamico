@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.173",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_173_DIALOG_LAYER_PRIORITY",
-  "reason": "Owner Android screenshot: right Details pane occludes open Projects; correct viewport < editor docks < Chat < dialogs by portaling same native Projects node to document.body and preserving controls. v11.173 source exact seal 205 patches, 68 assets, 7005338 HTML bytes, SHA 7f02848d00e954a5358db4a62e3c1a72b454866e54585d436e962f156ff3797a. Targeted and sealed CI 40967655488 SUCCESS. Owner device acceptance pending. Do not deploy standalone Chat.",
-  "sourceCommit": "0674c167bb5886cd433120fd4933d7c50d4a7659",
-  "sourceIntegritySha256": "7f02848d00e954a5358db4a62e3c1a72b454866e54585d436e962f156ff3797a"
+  "releaseVersion": "v11.174",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_174_MOBILE_EDITOR_VIEWPORT",
+  "reason": "Owner-authorized normal-phone canvas fill and native control overlap repair, preserving current v11.173 source and independent Chat backend. Exact206-patch/68-asset package and targeted real Chromium mobile/desktop/project/resize/pointer/touch plus adjacent native Chat tests PASS. Physical Android/Quest and real Google acceptance remain pending. Final separate request-only commit.",
+  "sourceCommit": "69c3f8737c5f57ea8e8e0cb9681395847a059a72",
+  "sourceIntegritySha256": "1254e78c5bfd0d55a940f0e7d7c5fd590c325f89d4a45dc893b54f0f76fb9ce4"
 }
