@@ -1,0 +1,48 @@
+name: §e workspace insights · focused source verification
+on:
+  push:
+    branches: [feature/forge-workspace-insights-widgets-20261030]
+    paths:
+      - "hf_space/brain_forge.py"
+      - "hf_space/forge_chat_actions.py"
+      - "hf_space/forge_workspace_insights_v1.py"
+      - "hf_space/test_forge_workspace_insights_v1.py"
+      - "chat/§wyrlz/index.html"
+      - ".github/workflows/forge-workspace-insights-v1.yml"
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Check Python owners and bounded scene reasoning
+        run: |
+          python -m py_compile hf_space/brain_forge.py hf_space/forge_chat_actions.py hf_space/forge_workspace_insights_v1.py
+          python hf_space/test_forge_workspace_insights_v1.py
+          python hf_space/test_forge_workspace_read_v1.py
+      - name: Check canonical Chat inline JavaScript presentation
+        run: |
+          python - <<'PY'
+          import re
+          import subprocess
+          from pathlib import Path
+          html=Path("chat/§wyrlz/index.html").read_text(encoding="utf-8")
+          scripts=[m.group(1) for m in re.finditer(r"<script(?:\s[^>]*)?>([\s\S]*?)</script>",html,re.I)
+                   if "const renderWidgetStack=" in m.group(1)]
+          assert len(scripts)==1, "Expected exactly one canonical widget-render script"
+          out=Path("/tmp/swrlz-chat-widget-script.js")
+          out.write_text(scripts[0],encoding="utf-8")
+          subprocess.run(["node","--check",str(out)],check=True)
+          assert 'widget.kind==="forge-workspace"' in scripts[0]
+          assert '"forge-ws-bar-track"' in scripts[0] and '"forge-ws-evidence"' in scripts[0]
+          assert 'card.appendChild(make("div","forge-ws-footer"' in scripts[0]
+          assert 'textContent=boundedText' in scripts[0]
+          print("PASS: Chat widget parser and XSS-safe DOM primitives")
+          PY
