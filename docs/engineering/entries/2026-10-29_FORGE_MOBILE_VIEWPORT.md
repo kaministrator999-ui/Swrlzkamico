@@ -1,6 +1,6 @@
 # §E mobile editor viewport repair
 
-Mode: IMPLEMENT. Lifecycle: IMPLEMENTATION_VERIFIED / DOCUMENTATION_SYNCED. Status: exact successor source verified; publication pending.
+Mode: IMPLEMENT. Lifecycle: ACCEPTED_WITH_FOLLOW_UP / DEVICE_TEST_PENDING. Status: bounded source, documentation and authorized publication complete.
 
 The owner supplied normal Android browser screenshots of §E compressed into the
 upper part of the screen, overlapping level/selection/keyboard overlays and a
@@ -52,3 +52,11 @@ Repair-cycle evidence retained: first local geometry fix exposed the open inspec
 Exact v11.174 source package verifier PASS:206 patches,68 local assets verified by bytes/hash, complete generated receipt and deploy markers. Real Chromium final matrix PASS: canvas650/650 at390×740,825/825 at412×915 and1732/1732 at980×1850; default Dragon Den, blank Model Atelier and returned scene, both landscape resizes. Real Inspector clicks and touch taps open/close, native fullscreen CSS remains fixed and fills the viewport, Chat begins at48px and closes normally. No page errors. One concurrent software-rendered touch run timed out during dispatch at5seconds after actionability checks, with no intercepted hit target; serial rerun with15second touch dispatch timeout passes. Failure receipt retained. Adjacent Chat/native desktop/mobile tests PASS on the same1254e78c… artifact, including literal labels, real native edits/Undo/Redo, closed-host denial and account-change metadata clearing.
 
 Receipts: mobile-v174-layout-r2.json and mobile-v174-chat-native.json under cloud-setup/eval. These are controlled native Chromium checks with transport fixtures, not real Google/private-store/device acceptance. No broad game or hosted browser suites were dispatched. Documentation gate PASS: manifest/runtime/patch/source verifier/dedicated workflow and affected living docs agree. Canonical immutable overlay/checksum and actual publication observation follow in the release closure.
+
+## UPDATE FINISHED — exact publication and lineage
+
+Source `69c3f8737c5f57ea8e8e0cb9681395847a059a72` on main; separate final request-only commit `7a885924348c738bc1e1e68687edee47bb84f47d`. [Dedicated deployment40986968627](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40986968627) SUCCESS. HF static Space `4d1c5e2ab11e483fe56b0853057942f31691c364` observed RUNNING; immutable SOURCE/index fetched through allowed HF repository API agree with **v11.174/206 patches/68 assets/7,008,228 bytes/SHA2561254e78c5bfd0d55a940f0e7d7c5fd590c325f89d4a45dc893b54f0f76fb9ce4**. This is actual stored publication/runtime evidence, not direct hosted-browser or physical acceptance.
+
+Canonical source overlay `forge-mobile-v11-174-source-r1.zip`, 1103132bytes, SHA256 **aedd1733d08c59ba4087fbf45d2a72ba0a80081987a63ab6a38b3f7b4e37497a**,14 full changed source/doc files plus exact binary patch and controlled evidence. The private-index reconstruction proves complete source tree `299d2d489c300d4e042d66f7df734bebe0929d29` from baseline `4b1b1c7c6882a8defe1367edc5ed6758e2c44aab`; unchanged assets/weights require the repository baseline. The overlay is immutable; this closure is separate follow-up evidence.
+
+Repository Work **1.0.244→1.0.245** registered in runtime `2d7ef64e2df83f957bb4923c722f662fa8d37e15` and published atomically with the canonical main Roadmap. Server2.3.441/Chat1.5.158/LALM2.1.204/Google-account1.0.18, manifest152/streamV2/control1.0.41 unchanged. Documentation gate PASS. Chat backend is not redeployed for this host-only repair. Owner physical Android/Quest, real Google/private-store acceptance remain pending. No broad game suites or hosted browser workflow dispatched. User's next requested basic project-creation integration is a separate authorized successor; no new approval waiting.
