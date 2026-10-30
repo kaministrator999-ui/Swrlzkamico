@@ -420,6 +420,10 @@
     .forge-ws-steps li{padding-bottom:5px}
     .forge-ws-steps small{display:block;color:#91afbe;font-size:9px}
     .forge-ws-footer{padding:8px 11px;color:#7ea5ba;font-size:8px;border-top:1px solid rgba(126,214,255,.1)}
+    .forge-ws-followups{padding:9px 11px;display:flex;flex-wrap:wrap;gap:6px;border-top:1px solid rgba(126,214,255,.10)}
+    .forge-ws-followup{padding:7px 9px;border:1px solid rgba(89,207,241,.34);border-radius:9px;color:#d4f3ff;background:rgba(12,59,78,.7);font:9px var(--font-ui);font-weight:760;cursor:pointer}
+    .forge-ws-followup:hover,.forge-ws-followup:focus-visible{border-color:#89e7ff;background:rgba(31,86,115,.78)}
+
     @media(max-width:440px){.forge-ws-stats{gap:4px}.forge-ws-stat b{font-size:14px}.forge-ws-bar-row{grid-template-columns:minmax(55px,1fr) 39% 19px}}
     /* Glitch Dragon Chat — Tier G work surface, cards, and evidence. */
     .work-surface-button{display:inline-flex;align-items:center;gap:5px;min-height:26px;padding:4px 7px;border:1px solid rgba(126,214,255,.20);border-radius:8px;background:rgba(5,24,40,.56);color:#cdeef7;font-family:var(--font-telemetry);font-size:8px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer}.work-surface-button:hover{border-color:rgba(56,232,255,.46);background:rgba(12,44,62,.68)}.work-count{display:grid;place-items:center;min-width:16px;height:16px;padding:0 4px;border-radius:9px;background:rgba(165,120,255,.24);color:#eee7ff;font-size:8px}.work-count[data-empty="true"]{opacity:.48}
@@ -1540,6 +1544,22 @@
               suggestions.forEach(s=>{const li=make("li","",boundedText(s.title||"Inspect"));if(s.check)li.appendChild(make("small","",s.check));list.appendChild(li)});
               next.appendChild(list);
             }
+            // Follow-up chips seed, but NEVER send or authorize, a new human
+            // request. A fresh host lease/snapshot is required at send time.
+            const followups=make("div","forge-ws-followups");
+            const seedPrompt=(label,question)=>{
+              const button=make("button","forge-ws-followup",label);
+              button.type="button";button.addEventListener("click",()=>{
+                if(prompt.value.trim()){prompt.focus();return;}
+                prompt.value=question;
+                prompt.dispatchEvent(new Event("input",{bubbles:true}));
+                prompt.focus();
+              });followups.appendChild(button);
+            };
+            seedPrompt("Explain findings","Explain the current §E workspace findings, the strongest evidence and why these might be intentional. Continue the reasoning without editing anything.");
+            seedPrompt("Prioritize checks","Continue your reasoning about the current §E workspace analysis. What should I inspect next, and why? Read-only.");
+            if(data.selection)seedPrompt("Review selection","Analyze the selected object in the current §E workspace and suggest evidence-based checks. Do not modify it.");
+            card.appendChild(followups);
             card.appendChild(make("div","forge-ws-footer",boundedText(data.limitations||"Read-only metadata; no automatic edits.",320)));
           }else if(["comparison","math-graph","model-3d"].includes(widget.kind)){
             if(!window.SwrlzRichWidgetsV284?.render(card,widget))card.appendChild(Object.assign(document.createElement("div"),{className:"widget-footer",textContent:"Rich widget unavailable — its structured data was not displayable."}));
