@@ -1,0 +1,9 @@
+# Mobile §E → Chat Google pairing recovery (2026-10-30)
+
+**State:** source candidate, until verified CI and guarded Chat publication. Owner Android/Quest Google acceptance requires real device verification.
+
+When a mobile browser detaches a popup from its opening §E window, the existing `window.opener` handshake cannot enable Connect. Preserve that fast path, but allow an explicit fallback: the Chat-origin pair API returns an independent 12-hex one-time recovery proof only to the Chat iframe that initiated the account pairing; encrypted server state stores its SHA-256 hash with the pending pair. The public pair lookup does not expose it. The embedded Chat displays the code temporarily. The first-party Google popup can accept that code only after the same Google login has been verified. Its POST approval compares the code in constant time; a mismatch fails without approval. The existing Chat-origin PKCE verifier and single-use pair exchange, Google principal validation, parent origin, host/channel binding, expiry, lease, revocation, and isolated storage remain unchanged. No Google credential or embed bearer enters §E.
+
+The old opener path continues to use its verified `popup.bind` and requires no code. The fallback is the only path that needs manual entry. In both cases, the user must explicitly press Connect after verified Google login. The extra account recheck button supports signing in on the standalone Chat origin when GIS is unavailable. The code expires with its pair and disappears when the connection succeeds or is cancelled/expired; do not persist or log it.
+
+**Acceptance:** real Android browser, popup staying attached, popup opening a new tab with opener missing, wrong-code denial, right-code success, saved Google history, one logout, account switch, physical Quest browser. Controlled tests cannot prove hosted Google behavior.

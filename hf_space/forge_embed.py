@@ -281,14 +281,19 @@ async def pair(request: Request):
     if not isinstance(challenge, str) or not _CHALLENGE.fullmatch(challenge):
         _error(400, "FORGE_INVALID_PKCE_CHALLENGE")
     pair_id = secrets.token_hex(16)
+    # The browser can lose window.opener when a mobile popup becomes a new tab.
+    # A separate random, short-lived proof belongs ONLY to the original Chat iframe.
+    recovery_code = secrets.token_hex(6)
     record = {"schema": SCHEMA, "kind": "pair", "parentOrigin": origin, "hostId": host,
               "channelId": channel, "challenge": challenge, "approved": False,
+              "recoveryHash": hashlib.sha256(recovery_code.encode("ascii")).hexdigest(),
               "expiresAt": _now() + PAIR_TTL}
     _new("pair", pair_id, record, PAIR_TTL)
     _observe("pair.created", pairId=pair_id)
     binding = {k: record[k] for k in ("parentOrigin", "hostId", "channelId")}
     return _response({"pairId": pair_id, "loginUrl": "/forge/login?pairId=" + pair_id,
-                      "expiresAt": record["expiresAt"], "binding": binding})
+                      "expiresAt": record["expiresAt"], "binding": binding,
+                      "recoveryCode": recovery_code})
 
 
 def _pair(pair_id):
@@ -326,6 +331,15 @@ async def approve(request: Request):
     record, raw = _pair(pair_id)
     if any(body.get(k) != record[k] for k in ("parentOrigin", "hostId", "channelId")):
         _error(403, "FORGE_PAIR_OPENER_BINDING_MISMATCH")
+    # Optional recovery path: when the opener was lost, the user types the
+    # separate one-time proof visible only in the original Chat iframe.
+    # Absence retains the existing verified-opener popup behavior.
+    if "recoveryCode" in body:
+        proof = body["recoveryCode"]
+        if (not isinstance(proof, str) or not re.fullmatch(r"[a-f0-9]{12}", proof)
+                or not secrets.compare_digest(hashlib.sha256(proof.encode("ascii")).hexdigest(),
+                                              record.get("recoveryHash", ""))):
+            _error(403, "FORGE_PAIR_RECOVERY_CODE_INVALID")
     if record.get("approved"):
         _error(409, "FORGE_PAIR_ALREADY_APPROVED")
     new = {**record, "approved": True, "owner": user["id"], "parentSid": sid}
