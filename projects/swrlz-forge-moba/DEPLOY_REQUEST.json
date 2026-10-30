@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.176",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_176_CHAT_ACCOUNT_PROJECT_PICKER",
-  "reason": "Owner Android §E screenshot correction: Google-connected badge with redundant Sign in button hidden, and a true active/local/cloud native project picker that preserves account isolation and existing guarded loaders. Exact208-patch/68-asset/7028937-byte package SHA861e9eba85cda6feacc7f4ed0e360024ea54a10be30c4b1dd20e08a4339bfbde; sealed CI41113497738 PASS including16 UI state tests. Existing Chat broker, Sheep Tag gameplay and project data unchanged. Chrome/Android/Quest real-device acceptance pending. Separate deploy-request-only commit.",
-  "sourceCommit": "ecc6e95060132f32ff7f4dd0b0479dbd6645ec62",
-  "sourceIntegritySha256": "861e9eba85cda6feacc7f4ed0e360024ea54a10be30c4b1dd20e08a4339bfbde"
+  "releaseVersion": "v11.177",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_177_GOOGLE_AVATAR_SINGLE_TAB",
+  "reason": "Owner screenshot: actual Google profile avatar instead of generic G and copyable first-party Chat recovery code BEFORE opening Google in single-tab browsers. Chat source1daf1092e79cb0c875f0d24cd9ba2e9b8261aa7a validated in CI41122173559. Exact §E v11.177 generated 209patch/68assets/7031135bytes/SHA329ebe66d3b1e4b75e3777d4cdabff2dc52d16850d9a445601b7d532b9dec5d6 and sealedCI41122637726 PASS with 14 targeted UI assertions. Original Google PKCE/pair grants and Sheep Tag/project data preserved. Real WebView destroyed-tab and phone/Quest acceptance still pending. Separate final request-only commit.",
+  "sourceCommit": "355e652061fc72d13d513ecfa4be4eb2909f0dc5",
+  "sourceIntegritySha256": "329ebe66d3b1e4b75e3777d4cdabff2dc52d16850d9a445601b7d532b9dec5d6"
 }
