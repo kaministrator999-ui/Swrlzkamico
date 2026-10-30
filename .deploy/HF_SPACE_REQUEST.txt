@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=85006bd53007f3be8c7462744610182e4918543c
-REQUEST_NONCE=forge-google-mobile-popup-85006bd53007-release-1
+SOURCE_REF=1daf1092e79cb0c875f0d24cd9ba2e9b8261aa7a
+REQUEST_NONCE=forge-avatar-preflight-1daf1092e79c-release-1
