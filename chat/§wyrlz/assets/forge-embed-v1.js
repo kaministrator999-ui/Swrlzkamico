@@ -39,6 +39,16 @@
     if(port)send("account.status",publicAccount(null));
     emit("swrlz-forge-account-changed",{signedIn:false});
   };
+  // A 401 from an unrelated protected feature (such as GitHub OAuth) is NOT
+  // evidence that the verified Google/Chat embed session has been revoked.
+  const sessionRejected = async (response,path) => {
+    if(response.status !== 401)return false;
+    const value = await response.clone().json().catch(()=>({}));
+    const code = String(value?.detail || value?.code || "");
+    return ["FORGE_EMBED_SESSION_INVALID","FORGE_PARENT_LOGIN_REVOKED",
+      "FORGE_EMBED_CREDENTIAL_REQUIRED","FORGE_EMBED_CREDENTIAL_INVALID"].includes(code)
+      || (path === "/api/account/me" && code === "ACCOUNT_SESSION_INVALID");
+  };
   const protectedPath = path => /^\/api\/(?:lalm_station(?:\/|$)|chat_state(?:\/|$)|chatgpt_archive(?:\/|$)|chat(?:\/|$)|account(?:\/|$)|github(?:\/|$)|forge\/projects(?:\/|$)|forge\/embed\/(?:presence|logout)(?:\/|$))/.test(path)
     && path !== "/api/account/status";
   if(embedded){
@@ -46,13 +56,17 @@
     window.fetch = async (input, init = {}) => {
       const url = new URL(typeof input === "string" || input instanceof URL ? input : input.url,location.href);
       if(url.origin !== location.origin || !protectedPath(url.pathname))return nativeFetch(input,init);
-      if(!isAuthenticated())return new Response(JSON.stringify({detail:"FORGE_GOOGLE_CONNECTION_REQUIRED"}),{status:401,headers:{"Content-Type":"application/json"}});
+      if(!isAuthenticated()){
+        if(token)clearAccount();
+        return new Response(JSON.stringify({detail:"FORGE_GOOGLE_CONNECTION_REQUIRED"}),{status:401,headers:{"Content-Type":"application/json"}});
+      }
+      const requestToken=token,requestEpoch=accountEpoch;
       const headers = new Headers(init.headers || (input instanceof Request ? input.headers : undefined));
-      headers.set("Authorization","Bearer "+token);
+      headers.set("Authorization","Bearer "+requestToken);
       const requestInput = url.pathname === "/api/account/logout" ? "/api/forge/embed/logout" : input;
       const response = await nativeFetch(requestInput,{...init,headers,credentials:"omit",cache:"no-store"});
-      if(url.pathname === "/api/account/logout" && response.ok)clearAccount();
-      else if(response.status === 401)clearAccount();
+      if(url.pathname === "/api/account/logout" && response.ok && requestToken===token && requestEpoch===accountEpoch)clearAccount();
+      else if(response.status === 401 && requestToken===token && requestEpoch===accountEpoch && await sessionRejected(response,url.pathname) && requestToken===token && requestEpoch===accountEpoch)clearAccount();
       return response;
     };
   }
@@ -85,11 +99,23 @@
         const result = await json("/api/forge/embed/pair/exchange",{pairId:attempt.pairId,verifier:attempt.verifier,hostId:binding.hostId,channelId:binding.channelId});
         if(pairing !== attempt)return;
         if(!/^sfe1_[A-Za-z0-9_-]+$/.test(result.token) || result.parentOrigin !== binding.parentOrigin || result.hostId !== binding.hostId || result.channelId !== binding.channelId)throw error("Account connection did not match this panel.");
-        revoke("account-changed");cloudCatalog.clear();token=result.token;expiresAt=Number(result.expiresAt)*1000;accountEpoch++;pairing=null;
-        send("account.status",publicAccount(result.user));
+        revoke("account-changed");cloudCatalog.clear();token=result.token;expiresAt=Number(result.expiresAt)*1000;accountEpoch++;attempt.provisional=result.token;
+        // Verify the SAME account through the actual Chat session resolver
+        // before telling the editor that embedded Chat has signed in.
+        const checked=await window.fetch("/api/account/me",{cache:"no-store",credentials:"omit"});
+        const verified=checked.ok?await checked.json().catch(()=>({})):null;
+        if(pairing!==attempt)return;
+        if(!verified?.user?.id || verified.user.id!==result.user?.id){
+          clearAccount();send("account.error",{message:"Chat could not verify the Google connection. Sign in again."});return;
+        }
+        pairing=null;
+        send("account.status",publicAccount(verified.user));
         emit("swrlz-forge-account-changed",{signedIn:true});
         return;
       }catch(reason){
+        if(pairing===attempt && attempt.provisional && token===attempt.provisional){
+          clearAccount();send("account.error",{message:"Chat account verification failed. Sign in again."});return;
+        }
         if(pairing === attempt && Date.now() >= attempt.until){pairing=null;send("account.error",{message:"Google connection expired. Sign in again."});}
       }
     }

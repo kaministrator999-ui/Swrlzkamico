@@ -3885,10 +3885,14 @@
         }});
         google.accounts.id.renderButton(googleSlot,{type:"standard",theme:"outline",size:"medium",text:"signin_with",shape:"pill",width:250});
       };
+      // An old anonymous refresh must not erase a newer verified §E login.
+      let accountRefreshSerial=0;
       const refreshAccount = async () => {
-        try{const r=await accountFetch("/api/account/me",{credentials:"same-origin",cache:"no-store"});if(r.ok){const d=await r.json();showUser(d.user,d.profile,d.durable===true);return;}}catch(_){}
+        const serial=++accountRefreshSerial;
+        try{const r=await accountFetch("/api/account/me",{credentials:"same-origin",cache:"no-store"});if(r.ok){const d=await r.json();if(serial!==accountRefreshSerial)return;showUser(d.user,d.profile,d.durable===true);return;}}catch(_){}
+        if(serial!==accountRefreshSerial)return;
         showUser(null,null,false);
-        try{await renderGoogle();}catch(e){accountMeta.textContent=e.message;}
+        try{await renderGoogle();}catch(e){if(serial===accountRefreshSerial)accountMeta.textContent=e.message;}
       };
       accountAction.addEventListener("click",async()=>{
         if(accountUser){await accountFetch("/api/account/logout",{method:"POST",credentials:"same-origin"});showUser(null,null,false);return;}
