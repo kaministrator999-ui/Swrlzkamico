@@ -59,9 +59,17 @@ the Chat backend with the allowed parent/host/channel binding. The backend
 creates a short-lived pairing record and returns a Chat-owned login URL carrying
 only the random pair ID. The parent opens that URL on an explicit sign-in click.
 The popup reuses the existing Google client/origin and server-verified account
-cookie. It must verify its expected §E opener handshake before offering an
-explicit connection action. Same-origin POST approval binds the pair to the
-verified Google principal and parent login; client-supplied owners are ignored.
+cookie. The normal connection verifies its expected §E opener handshake before
+offering the explicit Connect action. In a mobile browser that opens a separate
+tab and loses `window.opener`, the original Chat iframe may instead show a
+separate short-lived 12-hex recovery code from its own pair-creation response.
+The code is never in the popup URL or public pair status. The server stores its
+SHA-256 hash with the encrypted pending pair; after first-party Google sign-in,
+the user can type the code in the popup. Only the popup's entered code is checked
+against that hash; a wrong code does not approve the pair. The original opener
+path is retained without manual entry. Either path requires explicit Connect,
+then same-origin POST approval binds the pair to the verified Google principal
+and parent login. Client-supplied owners are ignored.
 
 The original iframe exchanges its verifier against the approved pair. Redemption
 is atomically single-use, expiry-checked and fails without changing the record
@@ -79,10 +87,14 @@ and revokes active tools; account switches cannot hydrate another owner's data.
 
 Pair API owner: `hf_space/forge_embed.py`, installed by Station:
 
-- `POST /api/forge/embed/pair`: parentOrigin, hostId, channelId, challenge.
-- `GET /api/forge/embed/pair/{pairId}`: public binding/readiness only.
+- `POST /api/forge/embed/pair`: parentOrigin, hostId, channelId, challenge;
+  includes a separate ephemeral `recoveryCode` only in the Chat-origin response.
+- `GET /api/forge/embed/pair/{pairId}`: public binding/readiness only;
+  does not expose recovery code or Google identity.
 - `POST /api/forge/embed/pair/approve`: legacy verified Google cookie,
-  same-origin guard and the popup/opener binding; never a claimed user ID.
+  same-origin guard and expected parent/host/channel binding; normally verifies
+  the popup opener, or validates the separate recoveryCode for detached tabs.
+  Never trusts a claimed user ID.
 - `POST /api/forge/embed/pair/exchange`: pairId, verifier, hostId, channelId;
   returns account session credential/user only after atomic redemption.
 - `POST /api/forge/embed/logout`: revoke the embed session and its capabilities.
