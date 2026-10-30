@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=512a2c4af0115dd6ff96484eb4149a534337b24e
-REQUEST_NONCE=chat-forge-project-512a2c4af011-20261030T015230Z
+SOURCE_REF=00579fabcb2eb81daed9086420dc2eca4b60b6f3
+REQUEST_NONCE=forge-google-account-crossover-00579fabcb2e-release-1
