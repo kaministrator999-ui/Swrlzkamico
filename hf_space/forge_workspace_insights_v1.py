@@ -133,6 +133,14 @@ def build_insight(summary: dict[str, Any], prompt: str = "") -> tuple[str, dict]
         ("Selected: " + _quote(selected_name) + (f" ({_quote(selected_type)})" if selected_type else "") + ".")
         if selected else ("The selected object is outside the bounded summary." if selected_id else "No object is selected."),
     ]
+    starters = summary.get("starters")
+    if isinstance(starters, list) and starters:
+        names = [_quote(item.get("name") or item.get("id")) for item in starters
+                 if isinstance(item, dict)][:3]
+        extra = max(0, len(starters) - len(names))
+        if names:
+            lines.append("Available starters (preview): " + "; ".join(names)
+                         + (f" · and {extra} more in the project picker." if extra else "."))
     if findings:
         lines.append("**What stands out:** " + " ".join(reasons))
         lines.append("**Evidence to review:** " + "; ".join(
