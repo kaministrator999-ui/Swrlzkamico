@@ -1,6 +1,6 @@
 ID=server-runtime
-VERSION=2.3.444
-REVISION=2.3.444-forge-workspace-inspection
+VERSION=2.3.445
+REVISION=2.3.445-forge-workspace-insights
 KIND=server-runtime
 SOURCE_BRANCH=runtime
 STATUS=active
@@ -14,3 +14,5 @@ CHAT_FORGE_PROJECT_20261030_NOTE=Basic catalog-grounded native project creation 
 FORGE_MOBILE_POPUP_RECOVERY_20261030_NOTE=Detached Android/new-tab §E Google Connect popup no longer dead-ends without window.opener. Verified Google sign-in plus short-lived private pair recovery code, server SHA256 check, unchanged PKCE and original opener handshake, explicit account recheck. Chat exact source85006bd53007f3be8c7462744610182e4918543c, controlled offline CI41109412082 SUCCESS, guarded Chat release41109682221 SUCCESS, HF revision aa6f1a153f90d0bfcb3b0a879363795389701483 uploaded with rollback to3972e5e7ddb3d9f65b9948603be0deb5e5345ec7. Deployment checkpoint DEPLOYED_UNVERIFIED; live Android/Quest Google and account save/load acceptance pending. §E engine, LALM, Google identity verifier/owner data unchanged.
 
 FORGE_WORKSPACE_ANALYSIS_20261030_NOTE=Authenticated §E Analyze workspace action uses existing live-project context lease and ordinary Chat message; active scene, level, bounded 48 object metadata, selected object, type groups, potential duplicate names/shared-position findings. Server read dispatcher routes analyze/audit/review as inspection; no native operation batches or editor mutations. Chat source869ffbb65cb803bb548e0c36061f9ca4c7ff8e9a / CI41128929702 SUCCESS; engine v11.178 210patch/68assets/7034587bytes/SHA925c1761e8bc89e22a1ba807320d4ff74f8ed53a6410c4f6e29ed16477773386 / CI41129255647 SUCCESS. Hosted and owner acceptance tracked separately. Google account, LALM weights and gameplay remain unchanged.
+
+FORGE_WORKSPACE_INSIGHTS_20261030_NOTE=Grounded §E workspace intelligence adds typed persistent Chat cards, compact sampled type distribution, review hints and next checks; read-only followups use selected Chat model with newly authenticated editor evidence, no native mutation grant. PR293 merged source26b1010cb5730428dcb5cdea614efe849857fe6d; focused CI41142770753 SUCCESS and exact full Chat CI41142977690 SUCCESS. Guarded Chat HF deploy41143139321 SUCCESS, Space revision8bb95ed09dd02df111de8379d2179da40273789d with rollback87ff19136f90b0cd5149403a38e1d8f5afdd17cd. Live page and owner Android/Quest visual acceptance unverified; engine v11.178 unchanged.
