@@ -1,0 +1,19 @@
+name: §E v11.178 workspace analysis candidate
+on:
+  push:
+    branches: [fix/forge-v11-178-workspace-analysis]
+    paths:
+      - "projects/swrlz-forge-moba/**"
+      - ".github/workflows/forge-v11-178-workspace-analysis.yml"
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify exact v11.178 sealed source and read-only UI
+        run: |
+          python projects/swrlz-forge-moba/scripts/verify_v11_178_release.py --output /tmp/forge178
+          node --check projects/swrlz-forge-moba/runtime/chat_workspace_analysis_v11_178.js
+          node projects/swrlz-forge-moba/tests/test_v11_178_workspace_analysis.mjs
