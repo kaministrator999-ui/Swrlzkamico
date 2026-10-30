@@ -224,6 +224,6 @@
     "patches/v11_175_chat_project_workflow.py",
     "patches/v11_176_chat_account_project_picker.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 7028937,
+  "finalSha256": "861e9eba85cda6feacc7f4ed0e360024ea54a10be30c4b1dd20e08a4339bfbde"
 }
