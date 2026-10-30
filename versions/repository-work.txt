@@ -1,5 +1,5 @@
 ID=repository-work
-VERSION=1.0.248
+VERSION=1.0.249
 KIND=repository-work-lineage
 SOURCE_BRANCH=runtime
 STATUS=active
@@ -21,3 +21,5 @@ CHAT_FORGE_PROJECT_20261030_NOTE=Basic catalog-grounded native project creation 
 GOOGLE_CROSSOVER_20261030_NOTE=Chat-only Google account crossover repair: verified PKCE pair also verifies same principal through /api/account/me before account.status, unrelated API 401 no longer revokes Google, token/epoch-bound 401 and stale account refresh races guarded; Chat source00579fabcb2eb81daed9086420dc2eca4b60b6f3, CI41104491417 SUCCESS with12 focused crossover assertions, guarded Chat release41105373583 SUCCESS, HF Space revision3972e5e7ddb3d9f65b9948603be0deb5e5345ec7 uploaded. No engine source/release or backend/LALM/Google module modification. Live Chat/API and owner Android/Quest Google behavior remain unverified in this session; older optional lyric reader string test failed on preexisting baseline source.
 
 FORGE_MOBILE_POPUP_RECOVERY_20261030_NOTE=Detached Android/new-tab §E Google Connect popup no longer dead-ends without window.opener. Verified Google sign-in plus short-lived private pair recovery code, server SHA256 check, unchanged PKCE and original opener handshake, explicit account recheck. Chat exact source85006bd53007f3be8c7462744610182e4918543c, controlled offline CI41109412082 SUCCESS, guarded Chat release41109682221 SUCCESS, HF revision aa6f1a153f90d0bfcb3b0a879363795389701483 uploaded with rollback to3972e5e7ddb3d9f65b9948603be0deb5e5345ec7. Deployment checkpoint DEPLOYED_UNVERIFIED; live Android/Quest Google and account save/load acceptance pending. §E engine, LALM, Google identity verifier/owner data unchanged.
+
+FORGE_ACCOUNT_PROJECT_PICKER_20261030_NOTE=Engine v11.176 closes owner-observed Google connected-button and empty project selector mismatch: bound Chat account now hides duplicate Sign in, shows Google badge; active native project, on-device copies and verified Google-saved cloud choices appear as distinct selector groups, with guarded local/cloud loaders and stale account-list cancellation. Main source ecc6e95060132f32ff7f4dd0b0479dbd6645ec62, final request b248ed64cd6eff9d88885074177d687cf6f47078, sealed CI41113497738 SUCCESS, engine deploy41114125893 SUCCESS; 208 patches, 68 assets, 7028937bytes, SHA861e9eba85cda6feacc7f4ed0e360024ea54a10be30c4b1dd20e08a4339bfbde. Hugging Face upload confirmed in Actions; direct served SOURCE.json and physical Android/Quest confirmation pending. Chat source/version, Google token verifier, LALM and §E gameplay unchanged.
