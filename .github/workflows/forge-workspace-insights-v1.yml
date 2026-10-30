@@ -5,6 +5,7 @@ on:
     paths:
       - "hf_space/brain_forge.py"
       - "hf_space/forge_chat_actions.py"
+      - "hf_space/model_router.py"
       - "hf_space/forge_workspace_insights_v1.py"
       - "hf_space/test_forge_workspace_insights_v1.py"
       - "chat/§wyrlz/index.html"
@@ -24,7 +25,7 @@ jobs:
           node-version: "22"
       - name: Check Python owners and bounded scene reasoning
         run: |
-          python -m py_compile hf_space/brain_forge.py hf_space/forge_chat_actions.py hf_space/forge_workspace_insights_v1.py
+          python -m py_compile hf_space/model_router.py hf_space/brain_forge.py hf_space/forge_chat_actions.py hf_space/forge_workspace_insights_v1.py
           python hf_space/test_forge_workspace_insights_v1.py
           python hf_space/test_forge_workspace_read_v1.py
       - name: Check canonical Chat inline JavaScript presentation
