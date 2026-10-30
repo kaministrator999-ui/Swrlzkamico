@@ -1,18 +1,35 @@
 {
   "schema": "swrlz-chat-updates-v1",
   "latest": {
-    "id": "chat-forge-account-panel-20261029",
-    "date": "2026-10-29",
-    "title": "Your Chat and account projects in §e",
+    "id": "chat-forge-project-workflow-20261030",
+    "date": "2026-10-30",
+    "title": "Create and continue projects with Chat in §e",
     "changes": [
-      "Open your full §wyrlz Chat in the §e side panel, with the same Google account history and saved settings.",
-      "Sign in through the Chat account window, then use Save to account and My projects to save or load complete native §e projects.",
-      "Ask Chat to inspect the active workspace or make supported mesh and scene edits. Close the panel to pause editor access.",
-      "Editor actions use actual native results and Undo/Redo. Unsupported or unfinished actions are reported without claiming success.",
-      "Saved communication and companion preferences now guide your conversations in both Chat surfaces."
+      "Ask Chat inside §e to create a named project from a blank workspace or an available starter.",
+      "§e opens a separate editable copy and keeps the bundled starter intact. Watch the active project change as it is created.",
+      "Chat can inspect the project and level currently open, list available starters, and use fresh context for your next requested edits.",
+      "Local project snapshots and recovery stay on this device. Save to account remains an explicit action for Google account storage.",
+      "Close the Chat panel to pause editor access. Project creation requires an updated §e editor and a connected Chat account."
     ]
   },
   "history": [
+    {
+      "id": "chat-forge-account-panel-20261029",
+      "date": "2026-10-29",
+      "title": "Your Chat and account projects in §e",
+      "changes": [
+        "Open your full §wyrlz Chat in the §e side panel, with the same Google account history and saved settings.",
+        "Sign in through the Chat account window, then use Save to account and My projects to save or load complete native §e projects.",
+        "Ask Chat to inspect the active workspace or make supported mesh and scene edits. Close the panel to pause editor access.",
+        "Editor actions use actual native results and Undo/Redo. Unsupported or unfinished actions are reported without claiming success.",
+        "Saved communication and companion preferences now guide your conversations in both Chat surfaces."
+      ],
+      "kind": "Source update",
+      "source": {
+        "commit": "e4dee084f57788c3c6edc16381203d34ebc0c7e1",
+        "path": "docs/engineering/entries/2026-10-29_CHAT_FORGE_INTEGRATION.md"
+      }
+    },
     {
       "id": "editor-project-completion-20261025",
       "date": "2026-10-25",
@@ -42,6 +59,20 @@
       "source": {
         "commit": "6240d7151692898b9f30e75675707083ddb7f4cc",
         "path": "docs/engineering/entries/2026-10-24_QWEN_PROJECT_GENERATION.md"
+      }
+    },
+    {
+      "id": "registry-9ba69e6255acfd5f47ad49b576b40519591165bc",
+      "version": "1.5.158",
+      "date": "2026-10-29",
+      "title": "Register observed Chat account and engine integration release lineage",
+      "changes": [
+        "Register observed Chat account and engine integration release lineage"
+      ],
+      "kind": "Version registry record",
+      "source": {
+        "commit": "9ba69e6255acfd5f47ad49b576b40519591165bc",
+        "path": "versions/web-chat.txt"
       }
     },
     {
@@ -3808,8 +3839,8 @@
   ],
   "historyCoverage": {
     "registryRef": "origin/runtime",
-    "registryCommit": "5417583b838f7761dd2233bb2023f9e1f6c8653b",
-    "registryRecords": 249,
+    "registryCommit": "77977a3599db1835f8539bc80c3c35675a012dc0",
+    "registryRecords": 250,
     "oldestRecordedDate": "2026-09-06",
     "description": "All recorded Chat version-registry changes, earlier Chat changelog entries, and the preceding coding update. Historical records may include failed attempts or repeated versions."
   }

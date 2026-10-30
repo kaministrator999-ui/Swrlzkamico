@@ -476,6 +476,8 @@ async def heartbeat(request: Request):
     context, digest = _safe_json(body.get("context"))
     if not isinstance(context, dict):
         _error(400, "FORGE_CONTEXT_OBJECT_REQUIRED")
+    if context.get("projectId") != lease["projectId"]:
+        _error(409, "FORGE_HOST_PROJECT_CHANGED")
     new = {**lease, "context": context, "contextHash": digest,
            "expiresAt": min(_now() + LEASE_TTL, session["expiresAt"])}
     if not _txn([(key, raw), (lease["sessionKey"], session_raw)], [(key, new, 60)]):
@@ -680,7 +682,23 @@ async def finish_batch(batch_id: str, request: Request):
     context, digest = _safe_json(body.get("context"))
     if not isinstance(context, dict):
         _error(400, "FORGE_CONTEXT_OBJECT_REQUIRED")
+    transition = False
+    if len(batch["operations"]) == 1 and batch["operations"][0].get("op") == "project.create" and receipts[0]["ok"]:
+        operation, receipt = batch["operations"][0], receipts[0]
+        project = context.get("project")
+        new_id = receipt.get("projectId")
+        if (receipt.get("op") != "project.create" or not isinstance(new_id, str) or not _HEX.fullmatch(new_id)
+                or new_id == batch["projectId"] or context.get("projectId") != new_id
+                or receipt.get("name") != operation["name"] or receipt.get("starterId") != operation["starterId"]
+                or not isinstance(project, dict) or project.get("name") != operation["name"]
+                or project.get("sourceStarterId") != operation["starterId"] or context.get("mode") != "edit"):
+            _error(409, "FORGE_PROJECT_TRANSITION_RECEIPT_INVALID")
+        transition = True
+    elif context.get("projectId") != batch["projectId"]:
+        _error(409, "FORGE_HOST_PROJECT_CHANGED")
     new = {**batch, "state": "finished", "receipts": receipts, "allSucceeded": all(result["ok"] for result in receipts)}
+    if transition:
+        new["projectTransition"] = True
     new.pop("receiptNonceHash", None)
     new_lease = {**lease, "context": context, "contextHash": digest}
     key, lease_key = _key("batch", batch_id), _key("lease", lease["leaseId"])
@@ -692,10 +710,40 @@ async def finish_batch(batch_id: str, request: Request):
     return _response({"batchId": batch_id, "status": "finished", "allSucceeded": new["allSucceeded"], "receipts": receipts})
 
 
+def _finished_project_transition(context, batch_id):
+    """Read an already-stored creation receipt after the host retires its lease.
+
+    This terminal projection grants no edit authority. The original generation,
+    account session and complete immutable binding must still match. Closing the
+    old host immediately after finish therefore cannot race a truthful response.
+    """
+    if not isinstance(context, AuthorizedForgeContext) or context._seal is not _SEAL:
+        _error(403, "FORGE_SERVER_CONTEXT_REQUIRED")
+    if not isinstance(batch_id, str) or not _HEX.fullmatch(batch_id):
+        return None
+    batch, _ = _read("batch", batch_id)
+    if not batch or batch.get("state") != "finished" or batch.get("projectTransition") is not True:
+        return None
+    _, _, user = _live_session(context._session_key)
+    gen, _ = _read_key(context._generation_key)
+    expected = {"leaseId": context.lease_id, "sessionKey": context._session_key, "owner": context._owner,
+                "threadId": context.thread_id, "generationId": context.generation_id, "projectId": context.project_id}
+    if (user.get("id") != context._owner or batch.get("expiresAt", 0) <= _now()
+            or not gen or gen.get("state") != "active" or gen.get("activeBatchId") != batch_id
+            or gen.get("expiresAt", 0) <= _now()
+            or any(batch.get(k) != value or gen.get(k) != value for k, value in expected.items())):
+        _error(409, "FORGE_PROJECT_RECEIPT_BINDING_MISMATCH")
+    return {"batchId": batch_id, "status": "finished", "allSucceeded": batch["allSucceeded"],
+            "receipts": copy.deepcopy(batch["receipts"])}
+
+
 def wait_batch(context, batchId, timeout=30.0):
     deadline = time.monotonic() + max(0, min(float(timeout), 120))
     while True:
         try:
+            terminal = _finished_project_transition(context, batchId)
+            if terminal is not None:
+                return terminal
             lease, _, _, _, _, _ = _generation(context, False)
             batch, _, _, _ = _batch(batchId, lease)
         except HTTPException as exc:

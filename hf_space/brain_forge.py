@@ -9,12 +9,12 @@ from __future__ import annotations
 import re
 from typing import Any
 
-_ACTION = re.compile(r"\b(?:add|create|make|build|insert|place|move|rotate|scale|resize|"
+_ACTION = re.compile(r"\b(?:add|create|make|build|start|set\s+up|insert|place|move|rotate|scale|resize|"
                      r"rename|recolor|colour|color|change|set|select|duplicate|copy|"
                      r"remove|delete|undo|redo|turn)\b", re.I)
 _NATIVE = re.compile(r"\b(?:boxes|box|cubes?|spheres?|cones?|cylinders?|mesh|meshes|primitives?|object|objects|"
                      r"actor|actors|scene|atelier|wall|rock|bush|crystal|pedestal|"
-                     r"selection|selected|model|position|rotation|material|transform)\b|§[eE]", re.I)
+                     r"selection|selected|model|position|rotation|material|transform|project|projects|starter|starters|workspace)\b|§[eE]", re.I)
 _CODE = re.compile(r"\b(?:html|css|javascript|typescript|python|kotlin|java|source\s+code|"
                    r"github|repository|repo|web\s*(?:page|site)|android|api|workflow|"
                    r"three\.js|react|vue|webgl|function|script|code)\b", re.I)
@@ -26,8 +26,15 @@ _REPORTED = re.compile(r"\b(?:I|we)\s+(?:previously\s+)?(?:asked|told|said|saw|w
 _READ = re.compile(r"\b(?:list|inspect|show|describe|what|which|how\s+many|tell\s+me)\b", re.I)
 _NEGATED_ACTION = re.compile(r"\b(?:do\s+not|don't|dont|never|avoid|stop)\s+(?:\w+\s+){0,3}"
                             r"(?:add|create|make|build|insert|place|move|rotate|scale|resize|"
-                            r"rename|color|colour|change|set|select|duplicate|remove|delete|undo|redo)\b", re.I)
+                            r"start|rename|color|colour|change|set|select|duplicate|remove|delete|undo|redo)\b", re.I)
 _DIRECT_UNDO = re.compile(r"^(?:(?:please|can\s+you|could\s+you|would\s+you)\s+)*(?:undo|redo)(?:\s+(?:that|it|the\s+last\s+(?:change|action|operation)))?[.!?]*$", re.I)
+_PROJECT_ARTIFACT = re.compile(r"\bproject\s+(?:report|summary|context|document|documentation|plan|proposal|description|archive|zip|files?)\b", re.I)
+_NEW_PROJECT = re.compile(
+    r"\b(?:create|make|build|start|set\s+up)\s+(?:(?:me|us)\s+)?"
+    r"(?:(?!(?:in|on|inside|within|for|to|from|with|using|of|this|that|my|our|current|open|existing|the)\b)[\w§'’-]+\s+){0,7}"
+    r"project\b(?!\s+(?:report|summary|context|document|documentation|plan|proposal|description|archive|zip|files?)\b)", re.I)
+_START_FROM_STARTER = re.compile(
+    r"\bstart\s+(?:from|with|using)\s+(?:(?!(?:in|on|inside|within|for|to)\b)[\w§'’-]+\s+){0,7}starter\b", re.I)
 
 
 def _prose(prompt: str) -> str:
@@ -66,6 +73,8 @@ def classify_forge_intent(prompt: str, summary: dict[str, Any] | None = None) ->
         return result("explain", "reported-action-is-not-a-current-command")
     if _NEGATED_ACTION.search(text):
         return result("explain", "negated-native-action")
+    if _PROJECT_ARTIFACT.search(text) and _ACTION.search(text) and not _READ.search(text):
+        return result("ordinary", "separate-project-document-request")
     if _DIRECT_UNDO.fullmatch(text):
         return result("mutation", "explicit-native-history-action")
     target = bool(_NATIVE.search(text))
@@ -76,6 +85,13 @@ def classify_forge_intent(prompt: str, summary: dict[str, Any] | None = None) ->
     if _READ.search(text) and target:
         return result("read", "current-native-inspection")
     return result("ordinary", "no-current-native-request")
+
+
+def requests_new_project(prompt: str) -> bool:
+    """Current human creation request, never a name, explanation or scene edit."""
+    text = current_command_text(prompt) if isinstance(prompt, str) else ""
+    return (classify_forge_intent(prompt)["disposition"] == "mutation"
+            and bool(_NEW_PROJECT.search(text) or _START_FROM_STARTER.search(text)))
 
 
 def native_plan_system(operation_contract: dict[str, Any]) -> str:
@@ -98,6 +114,13 @@ def native_plan_system(operation_contract: dict[str, Any]) -> str:
         "cannot be fully expressed by these operations, return clarify with no operations. "
         "Do not silently replace an unsupported request with a vaguely similar edit. "
         "A how-to/explanation/hypothetical request must never produce operations. "
+        "To create a project, use exactly one project.create operation with a starterId from the advertised "
+        "starters and the user's exact literal project name. This creates a separate editable copy, never "
+        "changes a bundled starter, and must not be combined with object edits. Project creation is allowed "
+        "from either workspace and switches to the chosen starter's workspace. A name written after named "
+        "or called is already supplied: copy it exactly rather than asking for it again. When both the name "
+        "and advertised starter choice are provided, propose project.create. If no name or starter choice "
+        "is clear, ask one concise question. Subsequent messages get a fresh snapshot of the newly opened project. "
         "Never include a success claim, receipt, reasoning or prose outside the JSON. "
         "Operation contract: " + json.dumps(operation_contract, ensure_ascii=False, separators=(",", ":"))
     )
@@ -111,7 +134,22 @@ def inspection_text(summary: dict[str, Any]) -> str:
     items = [item for item in entries if isinstance(item, dict)] if isinstance(entries, list) else []
     label = "Model Atelier meshes" if workspace == "model-atelier" else "scene actors"
     count = total if type(total) is int and total >= len(items) else len(items)
-    lines = [f"The current §e workspace contains {count} {label}."]
+    project = summary.get("project")
+    project = project if isinstance(project, dict) else {}
+    lines = ["Open project: " + _literal(project.get("name") or "Untitled project") + ".",
+             f"The current §e workspace contains {count} {label}."]
+    if project.get("sourceStarterId"):
+        lines.append("Created as an independent copy of starter " + _literal(project["sourceStarterId"]) + ".")
+    if type(summary.get("dirty")) is bool:
+        lines.append("There are unsaved editor changes." if summary["dirty"] else "The editor has no unsaved changes.")
+    level = summary.get("activeLevel")
+    if isinstance(level, dict) and level.get("name"):
+        lines.append("Active level: " + _literal(level["name"]) + ".")
+    starters = summary.get("starters")
+    if isinstance(starters, list) and starters:
+        lines.append("Available starters (new projects use separate copies): " + "; ".join(
+            _literal(item.get("name") or item.get("id")) + " [" + _literal(item.get("id")) + "]"
+            for item in starters[:16] if isinstance(item, dict)) + ".")
     selected = summary.get("selectedId")
     selection = next((item for item in items if item.get("id") == selected), None)
     if selection:

@@ -8,10 +8,12 @@ const repo=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const html=fs.readFileSync(path.join(repo,'chat/§wyrlz/index.html'),'utf8');
 const script=fs.readFileSync(path.join(repo,'chat/§wyrlz/assets/chat-updates-v1.js'),'utf8');
 const production=JSON.parse(fs.readFileSync(path.join(repo,'chat/§wyrlz/assets/chat-updates-v1.json'),'utf8'));
-assert.equal(production.historyCoverage.registryRecords,249);
-assert.equal(production.history.length,265);
-assert.equal(new Set(production.history.map(x=>x.id)).size,265);
+assert.equal(production.historyCoverage.registryRecords,250);
+assert.equal(production.history.length,267);
+assert.equal(new Set(production.history.map(x=>x.id)).size,267);
 assert(production.history.some(x=>x.version==='1.0.0'));
+assert.equal(production.latest.id,'chat-forge-project-workflow-20261030');
+assert.equal(production.history[0].id,'chat-forge-account-panel-20261029');
 assert(html.includes('id="chatUpdatesOpen"'));
 assert(html.includes('<script src="/chat/§wyrlz/assets/chat-updates-v1.js" defer>'));
 assert(!script.includes('innerHTML'),'release data must be rendered as text');
@@ -43,9 +45,9 @@ try{
   assert.equal(await dialog.getAttribute('data-update-id'),production.latest.id);
   assert.equal(await page.locator('#chatUpdatesLatest li').last().textContent(),hostile);
   assert.equal(await page.evaluate(()=>window.badNotes),undefined);
-  assert.equal(await page.locator('#chatUpdatesHistory .chat-updates-entry').count(),265);
+  assert.equal(await page.locator('#chatUpdatesHistory .chat-updates-entry').count(),267);
   await page.locator('#chatUpdatesHistory>summary').click();
-  assert.match(await page.locator('#chatUpdatesHistory>summary').textContent(),/265/);
+  assert.match(await page.locator('#chatUpdatesHistory>summary').textContent(),/267/);
   await page.locator('#chatUpdatesClose').focus();await page.keyboard.press('Tab');
   assert.equal(await page.evaluate(()=>document.activeElement.parentElement.id),'chatUpdatesHistory','native modal traps Tab at its first control');
   await page.keyboard.press('Shift+Tab');assert.equal(await page.evaluate(()=>document.activeElement.id),'chatUpdatesClose');
@@ -115,5 +117,5 @@ try{
     await ip.reload();await ip.waitForTimeout(250);assert.equal(await ip.locator('#chatUpdatesDialog').isVisible(),false,action+' immediate reload retains dismissal');
     await immediate.close();
   }
-  console.log('PASS Chat updates: 265 historical records, literal text, native focus/Escape, per-update persistence, newer update, deferred generation/draft, retry, mobile, restricted storage; '+requests+' no-store manifest requests.');
+  console.log('PASS Chat updates: 267 historical records, literal text, native focus/Escape, per-update persistence, newer update, deferred generation/draft, retry, mobile, restricted storage; '+requests+' no-store manifest requests.');
 } finally {await browser.close();await new Promise(resolve=>server.close(resolve));}

@@ -11,7 +11,7 @@ import math
 import re
 from typing import Any, Callable, Iterator
 
-from brain_forge import classify_forge_intent, current_command_text, inspection_text, native_plan_system
+from brain_forge import classify_forge_intent, current_command_text, inspection_text, native_plan_system, requests_new_project, _literal
 
 MAX_OPERATIONS = 16
 MAX_PLAN_BYTES = 24576
@@ -24,6 +24,7 @@ _HEX = re.compile(r"^[0-9a-f]{32}$")
 _MESH_ATTRIBUTES = {"name", "position", "rotation", "scale", "color", "material"}
 _VECTORS = {"position", "rotation", "scale"}
 _SCHEMA = {
+    "project.create": ({"op", "starterId", "name"}, {"op", "starterId", "name"}),
     "mesh.add": ({"op", "kind"}, _MESH_ATTRIBUTES | {"op", "kind"}),
     "mesh.set": ({"op", "id"}, _MESH_ATTRIBUTES | {"op", "id"}),
     "mesh.select": ({"op", "id"}, {"op", "id"}),
@@ -36,7 +37,7 @@ _SCHEMA = {
     "editor.undo": ({"op"}, {"op"}),
     "editor.redo": ({"op"}, {"op"}),
 }
-_LABELS = {"mesh.add": "add mesh", "mesh.set": "edit mesh", "mesh.select": "select mesh",
+_LABELS = {"project.create": "create separate project", "mesh.add": "add mesh", "mesh.set": "edit mesh", "mesh.select": "select mesh",
            "mesh.duplicate": "duplicate mesh", "mesh.remove": "remove mesh",
            "sceneactor.add": "add scene actor", "sceneactor.transform": "transform scene actor",
            "sceneactor.select": "select scene actor", "sceneactor.rename": "rename scene actor",
@@ -52,9 +53,9 @@ class ForgePlanError(ValueError):
 def operation_contract() -> dict[str, Any]:
     """Small versioned model contract backed by the fixed native host adapter."""
     return {
-        "version": "swrlz-forge-native-v1", "maximumOperations": MAX_OPERATIONS,
-        "workspaceRules": {"model-atelier": "mesh.* and available editor.undo/redo",
-                           "scene": "sceneactor.* and available editor.undo/redo"},
+        "version": "swrlz-forge-native-v2", "maximumOperations": MAX_OPERATIONS,
+        "workspaceRules": {"model-atelier": "mesh.*, project.create and available editor.undo/redo",
+                           "scene": "sceneactor.*, project.create and available editor.undo/redo"},
         "operations": {name: {"required": sorted(required), "optional": sorted(allowed - required)}
                        for name, (required, allowed) in _SCHEMA.items()},
         "meshKinds": list(MESH_KINDS), "sceneActorPrefabs": list(ACTOR_PREFABS),
@@ -66,13 +67,16 @@ def operation_contract() -> dict[str, Any]:
         "mesh.set": "at least one supplied attribute; geometry kind cannot be changed",
         "sceneactor.transform": "at least one supplied transform",
         "undoRedo": "single-operation batch only, and only when corresponding canUndo/canRedo is true",
+        "project.create": "single-operation batch only; starterId must be advertised in current context.starters; "
+                          "name must be the exact user-requested name; creates a new independent project, never overwrites a starter; "
+                          "reconnect to the new active project before further edits",
     }
 
 
 def native_plan_response_format() -> dict[str, Any]:
     """Constrain JSON transport, not semantic correctness or execution success."""
     vector = {"type": "array", "items": {"type": "number"}, "minItems": 3, "maxItems": 3}
-    fields = {"id": {"type": "string"}, "name": {"type": "string"},
+    fields = {"id": {"type": "string"}, "name": {"type": "string"}, "starterId": {"type": "string"},
               "position": vector, "rotation": vector, "scale": vector,
               "color": {"type": "string"}, "material": {"enum": list(MATERIALS)},
               "kind": {"enum": list(MESH_KINDS)}, "prefab": {"enum": list(ACTOR_PREFABS)}}
@@ -157,6 +161,15 @@ def validate_operations(context, operations: Any) -> list[dict[str, Any]]:
         required, allowed = _SCHEMA[name]
         if not required <= set(proposed) or not set(proposed) <= allowed:
             raise ForgePlanError("FORGE_INVALID_NATIVE_OPERATION_FIELDS")
+        if name == "project.create":
+            starters = summary.get("starters")
+            if (len(operations) != 1 or not isinstance(starters, list) or not 1 <= len(starters) <= 16
+                    or any(not isinstance(item, dict) or not isinstance(item.get("id"), str)
+                           or not re.fullmatch(r"[a-z][a-z0-9-]{0,79}", item["id"]) for item in starters)
+                    or len({item["id"] for item in starters}) != len(starters)
+                    or not isinstance(proposed.get("starterId"), str)
+                    or proposed["starterId"] not in {item["id"] for item in starters}):
+                raise ForgePlanError("FORGE_PROJECT_STARTER_UNAVAILABLE")
         if name.startswith("mesh.") and workspace != "model-atelier":
             raise ForgePlanError("FORGE_NATIVE_WORKSPACE_MISMATCH")
         if name.startswith("sceneactor.") and workspace != "scene":
@@ -238,9 +251,61 @@ def _validate_requested_actions(prompt: str, operations: list[dict[str, Any]]) -
                 "mesh.duplicate": r"\b(?:duplicate|copy)\b",
                 "editor.undo": r"\bundo\b", "editor.redo": r"\bredo\b"}
     for op in operations:
+        if (op["op"] == "project.create") != requests_new_project(prompt):
+            raise ForgePlanError("FORGE_UNREQUESTED_NATIVE_ACTION")
+        if op["op"] == "project.create":
+            literal = re.search(r'\b(?:called|named)(?:\s+exactly)?\s+(?:"([^"\n]*)"|“([^”\n]*)”|\x27([^\x27\n]*)\x27)', prompt, re.I)
+            if literal and op["name"] != next(value for value in literal.groups() if value is not None):
+                raise ForgePlanError("FORGE_PROJECT_LITERAL_NAME_MISMATCH")
         pattern = explicit.get(op["op"])
         if pattern and not re.search(pattern, command, re.I):
             raise ForgePlanError("FORGE_UNREQUESTED_NATIVE_ACTION")
+
+
+def explicit_project_plan(prompt: str, summary: dict[str, Any]) -> dict[str, Any] | None:
+    """Resolve a complete literal command against the current native catalog.
+
+    No fuzzy/default starter, generated name, history replay or authority comes
+    from this parser. Ambiguous or incomplete wording stays with the constrained
+    planner. Authorization, complete validation and host receipts remain required.
+    """
+    if not requests_new_project(prompt):
+        return None
+    actions = re.findall(r"\b(?:add|create|make|build|start|set\s+up|insert|place|move|rotate|scale|resize|rename|recolor|colour|color|change|set|select|duplicate|copy|remove|delete|undo|redo|turn)\b",
+                         current_command_text(prompt), re.I)
+    if len(actions) != 1:
+        return None
+    literal = re.search(r'\b(?:called|named)(?:\s+exactly)?\s+(?:"([^"\n]*)"|“([^”\n]*)”|\x27([^\x27\n]*)\x27)', prompt, re.I)
+    starters = summary.get("starters")
+    if not literal or not isinstance(starters, list) or not 1 <= len(starters) <= 16:
+        return None
+    if not re.fullmatch(r"[.!?]*", prompt[literal.end():].strip()):
+        return None
+    name = next(value for value in literal.groups() if value is not None)
+    # Only the current command outside its literal project name may select a
+    # starter. A project named "blank-scene" cannot select that starter itself.
+    command = prompt[:literal.start()] + " LITERAL_NAME " + prompt[literal.end():]
+    matches = set()
+    remainder = command
+    for item in starters:
+        if not isinstance(item, dict) or not isinstance(item.get("id"), str):
+            return None
+        for label in (item["id"], item.get("name")):
+            if not isinstance(label, str) or not label.strip():
+                continue
+            words = re.split(r"\s+", label.strip())
+            pattern = r"(?<![\w-])" + r"\s+".join(re.escape(word) for word in words) + r"(?![\w-])"
+            if re.search(pattern, command, re.I):
+                matches.add(item["id"])
+                remainder = re.sub(pattern, " STARTER ", remainder, flags=re.I)
+    if len(matches) != 1:
+        return None
+    # Every remaining word must belong to the creation/selection grammar.
+    # Requested contents such as "with two boxes" require a richer plan or
+    # clarification, rather than silently reducing the request to a blank copy.
+    if re.sub(r"\b(?:create|make|build|start|set|up|me|us|a|an|another|brand|new|blank|empty|independent|3d|scene|model|game|project|from|with|using|the|starter|called|named|exactly|literal_name)\b|[\s.!?\"'“”]", "", remainder, flags=re.I):
+        return None
+    return {"disposition": "apply", "operations": [{"op": "project.create", "starterId": matches.pop(), "name": name}]}
 
 
 def _generate_plan(messages: list[dict[str, str]], max_tokens: int) -> tuple[str, dict[str, Any]]:
@@ -296,14 +361,20 @@ def generate_events(payload: dict[str, Any], context, register_batch: Callable |
         if summary["mode"] != "edit":
             yield from _failure("Switch §e to Edit mode before requesting editor changes.", "FORGE_NATIVE_EDITOR_MODE_REQUIRED")
             return
+        if requests_new_project(prompt) and not summary.get("starters"):
+            yield from _failure("This §e version does not provide Chat project creation. Refresh the editor after the update, then retry. Your current project was not changed.",
+                                "FORGE_PROJECT_STARTER_UNAVAILABLE")
+            return
         yield {"type": "STATUS", "phase": "FORGE_PLANNING", "reason": "Planning the requested native editor change.",
                "categories": ["FORGE", "NATIVE_EDITOR"]}
         user_data = json.dumps({"currentUserRequest": prompt, "nativeContextData": summary},
                                ensure_ascii=False, separators=(",", ":"), allow_nan=False)
         messages = [{"role": "system", "content": native_plan_system(operation_contract())},
                     {"role": "user", "content": user_data}]
-        text, observation = infer(messages, PLAN_TOKENS)
-        plan = decode_plan(text, observation)
+        plan = explicit_project_plan(prompt, summary)
+        if plan is None:
+            text, observation = infer(messages, PLAN_TOKENS)
+            plan = decode_plan(text, observation)
         # An inference delay cannot turn a closed/changed editor into authority.
         revalidate(context, require_snapshot=True)
         if plan["disposition"] == "clarify":
@@ -334,6 +405,21 @@ def generate_events(payload: dict[str, Any], context, register_batch: Callable |
                                 "FORGE_EXECUTION_RECEIPTS_INCONSISTENT")
             return
         if succeeded == len(operations) and result.get("allSucceeded") is True:
+            if operations[0]["op"] == "project.create":
+                receipt = receipts[0]
+                if (receipt.get("op") != "project.create" or receipt.get("name") != operations[0]["name"]
+                        or receipt.get("starterId") != operations[0]["starterId"]
+                        or not isinstance(receipt.get("projectId"), str)
+                        or not _HEX.fullmatch(receipt["projectId"]) or receipt["projectId"] == context.project_id):
+                    yield from _failure("§e did not confirm the new project identity. Inspect the editor before continuing.",
+                                        "FORGE_PROJECT_RECEIPT_INVALID")
+                    return
+                yield {"type": "DELTA", "text": "§e opened " + _literal(receipt["name"]) +
+                       " as a new project copied from starter " + _literal(receipt["starterId"]) +
+                       ". The bundled starter is preserved. Your next message will use the new project's current context."}
+                yield {"type": "COMPLETED", "phase": "COMPLETE", "forgeStatus": "APPLIED",
+                       "operationCount": 1, "appliedCount": 1}
+                return
             labels = list(dict.fromkeys(_LABELS[op["op"]] for op in operations))
             yield {"type": "DELTA", "text": f"§e confirmed {succeeded} native editor operation{'s' if succeeded != 1 else ''}: " + ", ".join(labels) + "."}
             yield {"type": "COMPLETED", "phase": "COMPLETE", "forgeStatus": "APPLIED",

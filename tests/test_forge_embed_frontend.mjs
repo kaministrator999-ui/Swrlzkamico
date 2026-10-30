@@ -12,7 +12,7 @@ const bearer='sfe1_PRIVATE_FIXTURE_NOT_FOR_PARENT';
 const hash=value=>createHash('sha256').update(new Uint8Array(value)).digest('hex');
 const flush=async()=>{for(let i=0;i<12;i++)await new Promise(resolve=>setImmediate(resolve));};
 
-function fixture({framed=true,query='?forgeEmbed=1'}={}){
+function fixture({framed=true,query='?forgeEmbed=1',presenceErrors=[],onPresence=()=>{}}={}){
   const listeners=new Map(),timers=new Map(),requests=[],windowMessages=[],portMessages=[],events=[];
   let nextTimer=0,upload=null,parts=[],project=null,rawLoaded=new TextEncoder().encode('{"engine":"§E","version":1,"project":{},"editor":{},"scene":{}}');
   const parent={postMessage:(data,target)=>windowMessages.push({data,target})};
@@ -50,7 +50,10 @@ function fixture({framed=true,query='?forgeEmbed=1'}={}){
   const port={start(){},postMessage(data,transfer){
     portMessages.push({data,transfer});
     if(data.type==='host.context')queueMicrotask(()=>port.onmessage({data:envelope('rpc.result',{ok:true,result:{projectId:'native-project',context:{mode:'edit',epoch:'1',meshes:[]}}},data.requestId)}));
-    if(data.type==='host.presence')queueMicrotask(()=>port.onmessage({data:envelope('rpc.result',{ok:true,result:{leaseId}},data.requestId)}));
+    if(data.type==='host.presence'){
+      onPresence();const failure=presenceErrors.shift();
+      queueMicrotask(()=>port.onmessage({data:envelope('rpc.result',failure?{ok:false,error:failure}:{ok:true,result:{leaseId}},data.requestId)}));
+    }
   }};
   const connect=()=>{windowEvent(envelope('host.hello'));windowEvent(envelope('host.connect'),FORGE,parent,[port]);};
   const request=async(type,payload={},requestId='rpc-'+Math.random())=>{
@@ -108,6 +111,21 @@ function fixture({framed=true,query='?forgeEmbed=1'}={}){
   await f.win.fetch('/api/account/logout',{method:'POST'});
   assert.equal(f.requests.at(-1).url,CHAT+'/api/forge/embed/logout','embedded logout does not sign out the standalone account');
   assert.equal((await f.win.fetch('/api/lalm_station/sync')).status,401);
+}
+
+{
+  const retry=fixture({presenceErrors:['EDITOR_CONTEXT_CHANGED']});retry.connect();await retry.pair();
+  assert.equal((await retry.win.SwrlzForgeEmbedV1.beforeSend('new-project-thread')).forgeLeaseId,leaseId);
+  assert.equal(retry.portMessages.filter(item=>item.data.type==='host.context').length,2,'stale activation uses a fresh native snapshot');
+  assert.equal(retry.requests.filter(item=>item.url.endsWith('/embed/presence')).length,2,'every retry obtains a fresh one-use presence ticket');
+  const repeated=fixture({presenceErrors:Array(3).fill('EDITOR_CONTEXT_CHANGED')});repeated.connect();await repeated.pair();
+  await assert.rejects(repeated.win.SwrlzForgeEmbedV1.beforeSend('thread'),/EDITOR_CONTEXT_CHANGED/);
+  assert.equal(repeated.portMessages.filter(item=>item.data.type==='host.context').length,3,'retries are bounded');
+  const detached=fixture({presenceErrors:['EDITOR_PANEL_CLOSED']});detached.connect();await detached.pair();
+  await assert.rejects(detached.win.SwrlzForgeEmbedV1.beforeSend('thread'),/EDITOR_PANEL_CLOSED/);
+  assert.equal(detached.portMessages.filter(item=>item.data.type==='host.context').length,1,'other errors never retry');
+  const hidden=fixture({onPresence:()=>{hidden.doc.visibilityState='hidden';}});hidden.connect();await hidden.pair();
+  await assert.rejects(hidden.win.SwrlzForgeEmbedV1.beforeSend('thread'),/connection changed/,'a hidden editor cannot finish activation');
 }
 
 {

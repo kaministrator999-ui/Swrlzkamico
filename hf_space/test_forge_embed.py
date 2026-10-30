@@ -363,6 +363,73 @@ class ForgeEmbedTest(unittest.TestCase):
                          host_token=lease["hostToken"], origin=PARENT).status_code, 200)
         self.assertEqual(self.take(lease, batch_id).status_code, 409)
 
+    def project_batch(self):
+        summary = {**copy.deepcopy(CONTEXT), "starters": [{"id": "blank-scene", "name": "Blank Scene"}]}
+        token, _ = self.pair()
+        lease, _ = self.activate(token, context=summary)
+        context = embed.authorize_generation(self.request(token), lease["leaseId"], THREAD, "project-generation")
+        operation = {"op": "project.create", "starterId": "blank-scene", "name": "My EXACT §§ project"}
+        batch_id = embed.create_batch(context, [operation])
+        taken = self.take(lease, batch_id)
+        self.assertEqual(taken.status_code, 200, taken.text)
+        new_id = "e" * 32
+        next_context = {**summary, "projectId": new_id,
+                        "project": {"name": operation["name"], "kind": "sandbox", "template": "blank-scene", "sourceStarterId": "blank-scene"}}
+        receipt = {**operation, "ok": True, "changed": True, "projectId": new_id}
+        body = {"leaseId": lease["leaseId"], "receiptNonce": taken.json()["receiptNonce"], "results": [receipt], "context": next_context}
+        return token, lease, context, batch_id, body
+
+    def test_project_transition_receipt_survives_retired_old_lease_without_granting_new_project(self):
+        token, lease, context, batch_id, body = self.project_batch()
+        path = f"/api/forge/embed/host/batches/{batch_id}/finish"
+        result = self.post(path, body, host_token=lease["hostToken"], origin=PARENT)
+        self.assertEqual(result.status_code, 200, result.text)
+        self.assertEqual(self.post("/api/forge/embed/host/close", {"leaseId": lease["leaseId"]},
+                                 host_token=lease["hostToken"], origin=PARENT).status_code, 200)
+        waited = embed.wait_batch(context, batch_id, timeout=0)
+        self.assertTrue(waited["allSucceeded"])
+        self.assertEqual(waited["receipts"][0]["projectId"], body["context"]["projectId"])
+        with self.assertRaises(HTTPException):
+            embed.revalidate(context, require_snapshot=False)
+        with self.assertRaises(HTTPException):
+            embed.create_batch(context, [{"op": "sceneactor.add", "prefab": "rock"}])
+        lease2, _ = self.activate(token, context=body["context"], project=body["context"]["projectId"])
+        next_generation = embed.authorize_generation(self.request(token), lease2["leaseId"], THREAD, "new-project-generation")
+        self.assertEqual(next_generation.project_id, body["context"]["projectId"])
+        self.assertEqual(next_generation.model_context()["project"]["name"], "My EXACT §§ project")
+        self.assertRegex(embed.create_batch(next_generation, [{"op": "sceneactor.add", "prefab": "rock"}]), r"^[a-f0-9]{32}$")
+        for forged in (replace(context, project_id=body["context"]["projectId"]), replace(context, _owner=BOB["id"]),
+                       replace(context, thread_id="other-thread")):
+            self.assertEqual(embed.wait_batch(forged, batch_id, timeout=0)["status"], "cancelled")
+        self.assertEqual(self.post("/api/forge/embed/logout", {}, token=token).status_code, 200)
+        self.assertEqual(embed.wait_batch(context, batch_id, timeout=0)["status"], "cancelled")
+
+    def test_project_transition_identity_name_and_starter_are_receipt_checked(self):
+        token, lease, context, batch_id, body = self.project_batch()
+        path = f"/api/forge/embed/host/batches/{batch_id}/finish"
+        invalid = []
+        for key, value in (("projectId", PROJECT), ("name", "Wrong spelling"), ("starterId", "different-starter")):
+            changed = copy.deepcopy(body);changed["results"][0][key] = value;invalid.append(changed)
+        changed = copy.deepcopy(body);changed["context"]["project"]["sourceStarterId"] = "different-starter";invalid.append(changed)
+        changed = copy.deepcopy(body);changed["context"]["projectId"] = PROJECT;invalid.append(changed)
+        for changed in invalid:
+            result = self.post(path, changed, host_token=lease["hostToken"], origin=PARENT)
+            self.assertEqual(result.status_code, 409, result.text)
+            self.assertEqual(result.json()["detail"], "FORGE_PROJECT_TRANSITION_RECEIPT_INVALID")
+        result = self.post(path, body, host_token=lease["hostToken"], origin=PARENT)
+        self.assertEqual(result.status_code, 200, result.text)
+        self.assertEqual(self.post(path, body, host_token=lease["hostToken"], origin=PARENT).status_code, 409)
+
+    def test_ordinary_native_finish_cannot_switch_project(self):
+        token, lease, context = self.generation()
+        batch_id = self.batch(context)
+        taken = self.take(lease, batch_id)
+        body = {"leaseId": lease["leaseId"], "receiptNonce": taken.json()["receiptNonce"], "results": [{"ok": True}],
+                "context": {**CONTEXT, "projectId": "e" * 32}}
+        result = self.post(f"/api/forge/embed/host/batches/{batch_id}/finish", body, host_token=lease["hostToken"], origin=PARENT)
+        self.assertEqual(result.status_code, 409)
+        self.assertEqual(result.json()["detail"], "FORGE_HOST_PROJECT_CHANGED")
+
     def test_only_host_endpoints_expose_narrow_cors_without_cookies(self):
         host = "/api/forge/embed/host/heartbeat"
         result = self.client.options(host, headers={"Origin": PARENT, "Access-Control-Request-Method": "POST",

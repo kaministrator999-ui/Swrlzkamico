@@ -1,6 +1,16 @@
-# §wyrlz Programming LALM Runtime Architecture — TARGET STATE + IMPLEMENTATION TRUTH
+**Current deployment observation — 2026-10-27:** source `f925e2012ed7ece820e3272700bc6619846c2085` is running at the existing Chat site `https://kamiloki-swyrlz.hf.space`, HF revision `48515f7fc6e8cb7b4450725320e8fed64fb886e6`. HF API reported RUNNING with HEAD equal to runtime SHA, and immutable MODEL_PROVENANCE matches the source. Exact-source CI40439785973, guarded deployment40480347832 and startup recovery40486416861 succeeded. This establishes deployment identity; full 3D editor/project competence remains unaccepted. Canonical module versions are not advanced by this partial closeout. Earlier deployment statements below are dated historical observations superseded by this record. See [checkpoint](entries/2026-10-25_EDITOR_PROJECT_COMPLETION.md).
 
-## Active §E editor integration — 2026-10-29 source candidate
+## Native §E project workflow — v11.175 implementation candidate
+
+Brain-owned native intent recognizes an explicit request to create a native project while preserving how-to, quoted, negated and separate HTML/GitHub request boundaries. The typed planner surface permits `{op:"project.create",starterId,name}` for this transition, using only starter IDs advertised by fresh native context. A bounded deterministic resolver handles fully specified current requests with one exact catalog starter and a quoted literal named/called project name through that same validator/batch/receipt flow. It refuses extra content clauses, fuzzy/default choices and compound create-plus-edit requests. Other requests retain the existing pinned Qwen planner/clarification path. Two actual pinned7B probes redundantly clarified an already supplied name and remain REPAIR_REQUIRED; the resolver does not turn those failures into model acceptance. The one-operation batch cannot combine creation with edits or target invented object IDs. A missing starter catalog is unsupported capability rather than permission to improvise another action.
+
+The live snapshot adds project template/source-starter metadata, dirty status, optional current level and a bounded starter catalog to the existing project/workspace/selection/count evidence. The host opens an independent native copy with a new project instance ID and literal accepted name, preserving the original starter. It commits a complete preceding-workspace recovery copy before switching and a new local copy before success. Workspace drafts/export ownership use the instance ID first and clone loading excludes canonical legacy draft hydration. Local IndexedDB schema2 separates complete project bodies from metadata; listing reads at most1,000 metadata entries. Failed creation restores the preceding snapshot and prior dirty/history/Undo state where restoration succeeds. Local autosave is browser storage; explicit account saving retains its separate owner and receipt.
+
+The server accepts a changed-project finish only for the sole successful `project.create` operation whose receipt agrees with the resulting live context. The host then closes the old lease. A sealed terminal receipt may be read only by the original generation and still-live same-owner session after revocation; it grants no new-project authority. The next user request obtains fresh context and a fresh project-bound lease. The embedded beforeSend handshake permits at most3 fresh attempts only for EDITOR_CONTEXT_CHANGED, rechecking account epoch/thread/authentication/visibility after awaits and preserving native preconditions; other errors fail without retry. Final wording is grounded in the native result, including local-save truth and actual failure/recovery conditions. Standalone Chat and stale/hidden hosts remain denied. This changes orchestration/contracts, not model weights, model defaults or provider permissions.
+
+Focused backend/development-browser evidence, the measured engine seal, failed raw-model probes, pending exact sealed-browser/final-source CI and the two production releases are tracked separately in the [workflow checkpoint](entries/2026-10-30_CHAT_FORGE_PROJECT_WORKFLOW.md). Pending final checks/publication and owner-device/general model acceptance must not be inferred from this candidate architecture section. The full [creation and recovery contract](CHAT_FORGE_EMBEDDING.md#native-project-creation-and-active-project-context--v11175-candidate) owns field/lease semantics.
+
+## Active §E editor integration — 2026-10-29 published source
 
 The same Chat composes into a cross-origin §E panel. `brain_forge.py` owns interpretation of the current human request; `forge_chat_actions.py` asks the existing pinned Qwen coder for a bounded typed JSON plan. Neither module grants authority. Station supplies only a frozen server-produced `AuthorizedForgeContext` from `forge_embed.py`, tied to the verified Google/embed session, visible native host, thread, generation, project and fresh snapshot. Client flags/history/model prose cannot manufacture it. Account access is distinct from editor access.
 
@@ -8,49 +18,76 @@ A native request is routed before unrelated provider/project generation. How-to,
 
 Only an active host takes the canonical batch with its private receipt nonce. `FORGE_BATCH_READY` is an additive **Station NDJSON sideband**, projected only to the bound embed session. Strict legacy `swrlz_llm_stream_v2` remains unchanged. No credentials or capability objects are serialized into Chat history/export. Final messages derive from actual native receipts; timeout/cancel/stale/partial failures are not successful completion. The raw native project never enters model context. Existing coding artifacts/GitHub permissions retain their owners. This integration changes inference orchestration, not model weights/defaults/hardware. Exact source tests and model/browser/runtime evidence remain distinct; see [contract](CHAT_FORGE_EMBEDDING.md) and [checkpoint](entries/2026-10-29_CHAT_FORGE_INTEGRATION.md).
 
-**Current editor/project repair (2026-10-25, implementation pending acceptance):** inferred editor-page requests, literal UI labels and new-project boundaries are receiving explicit contracts; both engines now use32K context with4096 normal,8192 project and16384 explicit large-deliverable output allowances, subject to short-format/internal-tool overrides and full-source reservation. Observed finish reasons prevent length-stopped code becoming complete artifacts. Complete multi-file artifacts gain session-owned revision ZIP downloads, bounded at2048 source files/32MiB total/512KiB per file. Default code contracts reject obvious pseudocode and unimplemented placeholders unless requested. See [generation limits](LARGE_GENERATION_BUDGETS.md). ZIP/source validation is distinct from execution. See [current checkpoint](entries/2026-10-25_EDITOR_PROJECT_COMPLETION.md); earlier viewer-only receipts remain historical.
+# §wyrlz Programming LALM Runtime Architecture — TARGET STATE + IMPLEMENTATION TRUTH
 
-**Successor source validation (2026-10-26, pending exact-source CI/publication):** leading filename metadata may identify returned files without changing any source bytes; explicit fence paths and existing path/ownership gates remain authoritative. Placeholder checks exempt only matching leading filename labels, preserving rejection of actual unimplemented TODO bodies. Returned static ES modules must be loaded as modules in standalone HTML; real build-required project handling remains separate. See [filename/archive contract](PROJECT_FILENAME_METADATA.md). The read-only [capacity endpoint](runtime-capacity.md) observes bounded visible cgroup counters and does not decide model fit. Actual7B four-file editor drafts remain failed evidence;14B is a candidate-only comparison. Source465d563f passed CI but its guarded deployment failed the required700M identity-continuity gate before upload, as recorded in the current checkpoint.
+**Deployed editor/project contracts (2026-10-27, bounded workspace acceptance):** inferred editor-page requests, literal UI labels and new-project boundaries share explicit contracts; both engines now use32K context with4096 normal,8192 project and16384 explicit large-deliverable output allowances, subject to short-format/internal-tool overrides and full-source reservation. Observed finish reasons prevent length-stopped code becoming complete artifacts. Complete multi-file artifacts gain session-owned revision ZIP downloads, bounded at2048 source files/32MiB total/512KiB per file. Default code contracts reject obvious pseudocode and unimplemented placeholders unless requested. See [generation limits](LARGE_GENERATION_BUDGETS.md). ZIP/source validation is distinct from execution. See [current checkpoint](entries/2026-10-25_EDITOR_PROJECT_COMPLETION.md); earlier viewer-only receipts remain historical.
 
-**Ordinary long-prose boundary (2026-10-26, source only):** a shared helper in both engines handles explicit1000–12000-word ordinary-prose requests with at most two complete model drafts under one combined output allowance. Original context and the entire previous draft are retained for revision; the application adds no prose or padding. Underlength completion is a failed request, and measured length acceptance is explicitly separate from factual/document quality. This path excludes programming, identity, exact formats, lyrics and internal GitHub JSON, preserving their existing owners. See [generation/revision limits](LARGE_GENERATION_BUDGETS.md); actual native/live results remain separately required.
+**Historical successor validation (2026-10-26; publication superseded above):** leading filename metadata may identify returned files without changing any source bytes; explicit fence paths and existing path/ownership gates remain authoritative. Placeholder checks exempt only matching leading filename labels, preserving rejection of actual unimplemented TODO bodies. Returned static ES modules must be loaded as modules in standalone HTML; real build-required project handling remains separate. See [filename/archive contract](PROJECT_FILENAME_METADATA.md). The read-only [capacity endpoint](runtime-capacity.md) observes bounded visible cgroup counters and does not decide model fit. Actual7B four-file editor drafts remain failed evidence;14B is a candidate-only comparison. Source465d563f passed CI but its guarded deployment failed the required700M identity-continuity gate before upload, as recorded in the current checkpoint.
 
-**Recovered native observations (2026-10-27, not hosted acceptance):** the actual700M bounded revision expanded its unchanged625-word baseline to1002 lexical words, then truthfully failed the requested1200-word target. The Qwen editor replay retained two complete source-rejected drafts and an interrupted third decode with no final artifact or browser acceptance. Its compiled driver did not persist start hashes, so that run cannot establish exact successor source provenance. See the [checkpoint recovery record](entries/2026-10-25_EDITOR_PROJECT_COMPLETION.md) for immutable receipts, hash qualifications and open live/build gates. Neither observation establishes editor/project competence or justifies a model-default change.
+**Deployed long-prose boundary (2026-10-27, requested-length acceptance still open):** a shared helper in both engines handles explicit1000–12000-word ordinary-prose requests with at most two complete model drafts under one combined output allowance. Original context and the entire previous draft are retained for revision; the application adds no prose or padding. Underlength completion is a failed request, and measured length acceptance is explicitly separate from factual/document quality. This path excludes programming, identity, exact formats, lyrics and internal GitHub JSON, preserving their existing owners. See [generation/revision limits](LARGE_GENERATION_BUDGETS.md); actual native/live results remain separately required.
+
+**Recovered native observations (2026-10-27, not hosted acceptance):** the actual700M bounded revision expanded its unchanged625-word baseline to1002 lexical words, then truthfully failed the requested1200-word target. The Qwen editor replay retained two complete source-rejected drafts and an interrupted third decode with no final artifact or browser acceptance. Its compiled driver did not persist start hashes, so that run cannot establish exact successor source provenance. See the [checkpoint recovery record](entries/2026-10-25_EDITOR_PROJECT_COMPLETION.md) for immutable receipts, hash qualifications and remaining model-acceptance gates. Neither observation establishes editor/project competence or justifies a model-default change.
 
 **Candidate repair update (2026-10-25):** Brain and both model engines share source fingerprint normalization that retains HTML/CSS hash selectors. Repeated fresh-project candidates receive causal strategy feedback; unresolved browser imports get exact/prefix mapping guidance and verified version-scoped addon configuration. Source validation stays distinct from browser execution and user/provider approval. See the [checkpoint](entries/2026-10-24_QWEN_PROJECT_GENERATION.md).
 
 **Latest candidate correction (2026-10-24):** internal source-validation retries receive the complete latest failed assistant draft plus actual source-gate reasons while retaining original requirements and canonical repair source. Each retry is rebuilt from original messages and the latest rejected draft; earlier drafts do not accumulate. Context and output room are recalculated without silently truncating source. This is bounded source correction, not execution evidence. See the [project-generation checkpoint](entries/2026-10-24_QWEN_PROJECT_GENERATION.md).
 
+
+
+## Retained architecture and dated release history
+
+## Validated learning promotion pipeline
+
+**Current verified ordinary-request follow-up (2026-10-25):** LALM2.1.203/Server2.3.440; pinned Qwen7B coding and700M conversation. Live source `6240d7151692898b9f30e75675707083ddb7f4cc` generated a working HTML3D viewer from a request naming no library/version; unchanged output passed10/10 isolated browser checks. See [current release evidence](entries/2026-10-24_QWEN_PROJECT_GENERATION.md). Previous release snapshots below remain history.
+
+**Current verified release (2026-10-24):** live source `0e361f97d9b0ec72a63581dc06ac22c610a11f1f` runs pinned Qwen7B coding with700M conversation; LALM2.1.202/Server2.3.440. Actual live700m→coder viewer output passed10/10 isolated browser checks. Older implementation snapshots below are historical. See [current generation/release checkpoint](entries/2026-10-24_QWEN_PROJECT_GENERATION.md) for scope, exact evidence, limitations and rollback.
+
+Runtime prompting and model learning are separate layers. The 700M must not rewrite its own weights from unverified conversation output.
+
+The governed growth path is:
+
+```text
+coding task + canonical intent
+→ student candidate
+→ deterministic structural checks
+→ independent compiler/runtime/test/browser evidence
+→ accepted corrected candidate
+→ normalized training example
+→ held-out regression suite
+→ LoRA/fine-tune candidate
+→ independent regression comparison
+→ promote model checkpoint only if acceptance improves without protected regressions
+```
+
+Only independently validated examples may enter the promoted training corpus. Generation completion, self-review, user praise, or an explanation that claims a fix are not sufficient labels. Failed candidates remain useful as contrastive/repair examples only when paired with the exact failure evidence and a separately validated corrected target.
+
+Each promoted example should preserve: canonical contract ID, source/candidate lineage, original request, compact requirements, candidate revision, failure/evaluator evidence, corrected target, language/runtime, and acceptance results. Training data must exclude secrets, credentials, unrelated personal profile material, and bulky conversational prose that is not necessary to teach the programming relationship.
+
+The runtime should prefer compact structured state over repeated policy prose. Weight training is a separate release event: changing prompts/contracts does not mean the 700M weights learned. A trained checkpoint/adapter must have its own provenance, dataset revision, evaluation receipt, and rollback path before it can replace the current model route.
+
+# §wyrlz Programming LALM Runtime Architecture — TARGET STATE + IMPLEMENTATION TRUTH
+
 **Role:** canonical specification for how §wyrlz's architecture curriculum becomes executable programming behavior while preserving one primary cognitive authority.
 
-**Current observation, 2026-10-24:** accepted published Chat v294 is source `0c34ecf36bc0e8a1c64b03cd036060610cc70c32`; canonical runtime registry reports LALM2.1.201, Server2.3.439 and Web Chat1.5.157. The live catalogue exposes 700M and Qwen1.5B; actual hosted basic700M and coder baseline generation were observed, with semantic coder failures. The source-grounded proposal/web-completion checkpoint below is local and unpromoted. Older v75/v91 “active/current” descriptions are historical snapshots, not current version authority or evidence for this new candidate. General provider editing/workflow execution and weight training remain unimplemented in this checkpoint.
-
-**Historical v91 implementation snapshot:** **Runtime-hot programming behavior is active through LALM `2.1.116` / R39 `v91`. v91 adds an executable offline-first Code Truth + local web/UI engineering policy over the preserved v90 stack. Programming turns now receive bounded verification guidance covering syntax/structure, symbols/scope/types/contracts, control/data/state flow, repair re-verification, and HTML/CSS/JavaScript UI/chat invariants. External-provider details remain a separate evidence boundary. Runtime source/static activation is complete; fresh HF user-turn acceptance for v91 remains pending. Repository/tool execution, full deterministic architecture acceptance, coder-model delegation, and model training remain later states.**
+**Current implementation state:** **LALM `2.1.148` / v123 extends the live-verified v122 programming-repair lineage with a shared bounded response-cognition layer for ordinary and coding turns. Current-turn scope/grammar remains authoritative; deterministic metadata classifies standalone/topic-reset/continuation/correction/expansion/selection/confirmation/decline/creative-delegation/return-to-prior relationships plus response operation/detail/count/preserve constraints. v117-v122 programming repair, external-receipt, behavior-ledger, and execution-truth gates remain unchanged and authoritative. Static v123 verification covers broad conversational continuations plus the complete v117-v122 regression stack; live v123 activation is established only after guarded HF deployment and runtime acceptance. Historical lineage sections below remain useful archaeology and do not override the current module authority.**
 
 ---
 
-## Qwen project-generation continuation (candidate, live publication authorized)
+### Response cognition — v123
 
-The owner requires Qwen itself to build working projects; an engineer-built reference is not model acceptance. Shared cognition now respects the leading code-creation request rather than feature verbs or3D/audio subjects. HTML viewers and related applications receive web-page language/output handling, and ordinary Show/Use/Wire requirements remain in the persistent contract. Both engines can use bounded version-scoped library facts from verified official package bytes; this is API grounding, not a project template or training.
+v123 adds one shared Brain-owned response relationship compiler consumed by the HF 700M general-response engine and the Qwen coder response engine. It does not create a second semantic authority.
 
-A single `coder_model_config.py` owns the selected loader/catalogue/probe identity and pins verified official artifacts. The candidate selects Qwen2.5-Coder7B Q4_K_M; normal conversation stays700M. Actual7B library-based viewer output passed8/9 real isolated WebGL checks before a viewport repair. The3B variant still omitted features; driver-only checklist experiments were unsuccessful and were not integrated. Known CPU latency and unverified broader capabilities remain explicit. See [current generation/release checkpoint](entries/2026-10-24_QWEN_PROJECT_GENERATION.md) for final model/browser and publication evidence. Existing source, authorization and execution boundaries remain in force.
+The classifier converts the current prompt + bounded canonical history into compact state describing:
+- turn relationship (standalone/topic reset/continuation/correction/expansion/selection/confirmation/decline/creative delegation/return);
+- requested operation;
+- explicit-reference and nearest-turn anchor indices;
+- compact/normal/expanded detail request;
+- exact requested item count when stated numerically;
+- output-only and preserve/do-not-change constraints.
 
-## Source-grounded change candidate (local checkpoint, not deployed)
+Model-facing policy then applies relation-specific behavior: continue without restarting, correct by delta, expand without repeating, bind selections to the newest compatible option set, respect declines, choose delegated creative details, return to explicitly named prior subjects, and drop old constraints on explicit topic reset.
 
-The existing `hf_space/github_source_specialist_v241.py` owns authenticated GitHub source discovery and subordinate coder inference. Its change-candidate extension accepts a concrete existing-file fix/refactor/edit/improve request, including source-only workflow YAML review. It does not enable ordinary provider edits, workflow dispatch, merge, deployment, or a second project store. Existing create/rename and explicit approval owners retain precedence.
-
-Flow: verified account/repository read → fresh pinned tree/commit → exact Git blob verification → bounded source/dependency evidence → selected conversational-model advisory plan (700M when selected) → Qwen literal replacement candidate → deterministic identity/scope/source/syntax gate → review diff and unrun verification suggestions. If the planner is unavailable/invalid, the original user request and verified evidence remain available to the coder; no plan success is invented. Missing model completion, cancellation, overflow, malformed JSON, unseen/nonunique old text, wrong path or base identity rejects the candidate. Explanation mode also discards incomplete model prefixes.
-
-`github_change_candidate.py` owns stateless candidate-envelope validation, not authorization or execution. Python/JSON parsing is syntax evidence only; JavaScript/HTML/CSS/YAML still require independent parser/browser/build tests. A `SOURCE_VALIDATED_ONLY` receipt has `executionVerified=false` and the exact base commit/blob plus resulting source SHA-256. It does not prove semantic correctness, unchanged current branch head, applied edits, compiler success, or deployment. Any future write must independently recheck current source and the existing approval/capability gates.
-
-Both model engines support a narrow, server-created `githubSourceChangeTask=plan|candidate` JSON subtask. This bypasses incompatible ordinary code-fence/clarification policies, excludes unrelated profile/history, preserves compact assistant identity and original-request primacy, and treats repository/plan content as untrusted data. Existing `githubPlanning` alone and ordinary conversations keep their prior behavior. Budget checks reject oversized prompts rather than silently dropping source; suggested output is bounded at 512 planner / 2048 coder tokens and available context. Internal flags are not public send passthrough and grant no tools.
-
-Actual llama JSON-schema decoding constrains the internal plan/candidate envelope; candidate commit/blob/path constants come from the source owner. Code content is still generated and independently checked. `{}` is abstention, never a valid proposal. A completed rejected response can receive exactly one correction using the actual source-validator reason, the original task/source, and a bounded untrusted copy of the prior output. Failed, cancelled, incomplete or oversized streams do not retry. This is source feedback, not a test result or a hidden expected solution.
-
-The owner's incomplete 3D HTML is a local completion regression: unrequested implementation placeholders and comment/data-only dynamic scripts reject; explicit templates and static pages remain supported. Embedded HTML CSS/JavaScript count toward language requirements. Qwen single-page web work reserves up to 3072 output tokens within the real context limit; other budgets stay bounded. Regex compilation and false repetition rejection of repeated closing braces/tags are repaired. These checks cannot establish real geometry, control wiring, browser correctness or project completion; active but semantically wrong JavaScript can still pass the source-shape gate.
-
-Real CPU-only local inference used checksum-verified 700M and Qwen 1.5B/3B/7B artifacts. Results include source-valid behavioral failures and 7B abstentions; neither model size nor a schema-shaped answer establishes competence. Larger variants remain explicit evaluation overrides, with the production/default 1.5B selection unchanged. No fine-tuning occurred. The checkpoint preserves failed results and independently isolated evaluator receipts.
-
-Status/provenance and validation correlation use the existing Station event/request/message owners. No hidden reasoning is surfaced; raw source and partial model candidates are not diagnostic logs. Runtime policy/prompt/route improvements are not weight training or real-model competency proof. See [checkpoint evidence](entries/2026-10-23_SOURCE_GROUNDED_CODING.md). Existing trained-model promotion rules remain authoritative.
+This layer improves conversational coherence while preserving the existing truth boundary: history supports the present request but never outranks it; programming intent remains the coding owner; external compiler/test/runtime receipts remain the behavioral authority for repairs.
 
 ## 1. Core design decision
 
@@ -420,6 +457,119 @@ Phase 1 establishes the cognitive/routing/generation foundation before those mec
 
 ---
 
+
+
+## Intent-grounded iterative development loop
+
+Programming completion has two independent gates. Technical validity is necessary but not sufficient.
+
+```text
+USER INTENT
+  → compile persistent intent contract
+  → generate/modify candidate
+  → Gate 1: build / execute / syntax-runtime validity
+      FAIL → capture evidence → repair → retry
+  → Gate 2: validate ORIGINAL user intent
+      FAIL → identify failed requirement → repair → rebuild/retest
+  → DONE only when technical validity + intent validity both pass
+```
+
+The intent contract persists across correction iterations and records explicit MUST, MUST-NOT, preservation/change-only boundaries, and acceptance evidence expectations. Every repair receives the original contract plus the newest failure evidence. A successful compile, zero exit code, or runtime start cannot by itself satisfy the request.
+
+Repairs must not make Gate 1 pass by deleting, renaming, bypassing, or weakening the requested feature or unrelated compatibility surface. After every repair, the full original acceptance contract is rechecked alongside the newly failing case.
+
+Ownership remains separated: the Brain/LALM reasons from the contract and produces candidates; an independent evaluator/test/tool surface supplies authoritative acceptance evidence when available; the Workstation only orchestrates routing/lifecycle/resources and carries the contract/evidence between stages.
+
+**Current implementation tier:** the HF 700M Brain now compiles and injects a bounded persistent intent contract and applies the two-gate completion rule during generation. The Workstation carries that contract as lifecycle metadata. This tier does **not** yet provide an autonomous compiler/browser/repository tool executor or independent evaluator loop; executable receipts remain a later tool-integrated tier.
+
+
+### Canonical intent ownership during repair
+
+The original coding request owns the active intent contract for the lifetime of that repair exchange. Compiler output, stack traces, test failures, source excerpts, and later repair directions are separate evidence/delta channels and must not be reparsed as replacements for the canonical contract.
+
+A receipt-driven repair binds three distinct inputs:
+
+```text
+CANONICAL ORIGINAL INTENT
++ PREVIOUS COMPLETE CANDIDATE
++ NEW FAILURE EVIDENCE / USER REPAIR DIRECTION
+→ repaired complete candidate
+→ re-check original contract + failing case
+```
+
+Diagnostic text may explain *why* Gate 1 failed, but cannot create new MUST/preserve requirements merely because a stack frame or broken source line contains words such as return, use, or pass. Repair output preserves the complete API/wrapper/signature unless the original request explicitly authorizes a fragment or interface change.
+
+### User-returned compiler/runtime evidence bridge
+
+Before autonomous execution tooling exists, the user can act as the external execution surface. When a user reply contains recognizable compiler, build, runtime, or test failure output after an assistant coding candidate, the Brain treats that reply as **Gate 1 failure evidence**, not as a new unrelated coding request.
+
+The repair turn receives the failure evidence and must:
+1. diagnose the concrete reported failure against the previous candidate;
+2. produce corrected code, not merely explain the error;
+3. preserve the original intent contract and unrelated interfaces/configuration;
+4. re-check Gate 1 conceptually against the reported failure and Gate 2 against the original user requirements; and
+5. avoid claiming successful execution until a real execution receipt exists.
+
+The Workstation may carry this evidence with the job lifecycle but does not interpret or grade it. This bridge is deliberately compatible with the later independent evaluator: user-returned evidence and evaluator-returned evidence use the same conceptual repair path.
+
+
+## Student → Teacher → Independent Evaluator boundary
+
+The current 700M development loop treats the model as a **student**. Its generated answer is a candidate artifact, not an authoritative grade. Known-answer fixtures, deterministic tests, compiler/runtime/browser evidence, repository contracts, and engineering review determine whether the candidate actually passes.
+
+Self-review remains useful: the model should trace its own work, compare it with requirements, and repair obvious misses before submission. That is **pre-submission review**, not independent acceptance. Model confidence or an explanation that says a requirement was satisfied is never, by itself, a verification receipt.
+
+Corrections should teach reusable relationships — intent → requirements → implementation → observed behavior — rather than memorize one literal failed answer. The desired progression is:
+
+```text
+STUDENT
+  → receives known-answer tasks and grounded corrections
+  → learns reusable reasoning relationships
+  → becomes a competent practitioner
+  → may later operate as TEACHER for other agents/tasks
+```
+
+Teacher status does not collapse the evaluator boundary. A future teacher-capable LALM may explain, critique, propose tests, and teach another agent, but it must not be the sole authority grading its own work. Acceptance remains independently grounded in the strongest available evidence.
+
+```text
+PRODUCER / TEACHER
+        ↓ candidate + self-review
+INDEPENDENT EVALUATOR
+        ↓ tests / runtime / browser / contracts / grounded review
+ACCEPT / REPAIR
+```
+
+This separation is architectural, not merely pedagogical: generation/reasoning and authoritative acceptance have different owners.
+
+### Workstation orchestration boundary
+
+The Workstation is **not** a semantic evaluator and does not grade response content. It owns operational orchestration around a response:
+
+```text
+request accepted
+→ identify/routable workload
+→ queue/admit
+→ select worker/engine
+→ assign available compute budget
+→ track start/progress/cancel/terminal lifecycle
+→ receive result/stream terminal state
+→ persist/project response state as owned
+→ synchronize/deliver to the correct client/thread
+```
+
+The Workstation may decide **operational readiness** from transport/lifecycle facts: a job was admitted, a worker started, a stream is active, a terminal result arrived, persistence completed, cancellation occurred, or a response envelope is ready for delivery. It must not inspect semantic content and convert its own interpretation into a correctness grade.
+
+Content correctness, pedagogical review, and acceptance belong outside Workstation scheduling. When an evaluation workflow is requested, the Workstation may route a candidate to an independent evaluator and transport the evaluator's result, but it does not become that evaluator.
+
+```text
+Brain/LALM → produces/reasons
+Evaluator  → independently assesses when required
+Workstation → delegates/schedules/resources/tracks/routes/delivers
+Mask/Chat   → presents/synchronizes
+```
+
+Therefore response **ready** at the Workstation means operationally complete/available for its next routed stage, not semantically proven correct.
+
 ## 5A. Evidence-first code verification gate
 
 Coding responses that analyze, debug, review, repair, or assert that code is correct MUST perform a verification pass before presenting a confident diagnosis or fix.
@@ -579,6 +729,28 @@ The deterministic programming evaluation suite should include adversarial small 
 
 Acceptance requires the model to identify the concrete symbol mismatch, avoid falsely condemning valid API usage, and avoid proposing a no-op “fix.” This regression class should be represented across multiple languages/frameworks rather than overfitting to one HTML/JavaScript example.
 
+### Repository-grounded coder language/dependency/Chat/Forge curriculum
+
+The first source-verified **Qwen coder project curriculum** lives at [`training/coder/PROJECT_STACK_ARCHITECTURE_V1.md`](../../training/coder/PROJECT_STACK_ARCHITECTURE_V1.md). Its [12 public practice exercises](../../training/coder/project_stack_architecture_v1.json) cover actual Python, JavaScript, HTML/CSS, C/NumPy, Three.js, JSON and build/configuration sources; Hugging Face vs root dependency boundaries; `Mask → Station → Brain/model → Station → Mask`; the separate `§wyrl§ Engine` source-manifest/patch/render/edit/save lifecycle; and GitHub concurrency, version and release isolation.
+
+**Training truth / activation:** these are authored **reference lessons and UNGRADED evaluations**, not a new module authority, successful held-out benchmarks, a runtime prompt injection, a LoRA adapter, or changed Qwen/700M model weights. A GitHub-connected programming session may fetch and study the pack on project work; the hosted Qwen backend does **not automatically load this file**. Any future selective model-context loading must be bounded and architecture-reconciled with `hf_space/brain_programming.py` and `hf_space/qwen_coder_engine.py`, with programming-intent gating and context-budget regression. Weight training requires a separately established **coder-model** training/evaluation/provenance pipeline; the existing `training/700m/train_lora.py` is **not** a Qwen trainer.
+
+**Cross-language v2 (prospective only):** [training/coder/CROSS_LANGUAGE_CURRICULUM_V2.md](../../training/coder/CROSS_LANGUAGE_CURRICULUM_V2.md) adds Kotlin/Android, Java/JVM, TypeScript typed transport and Rust/native concepts absent from the scanned implementation trees. Its four [teacher-authored language fixtures](../../training/coder/examples/) and [12 public questions](../../training/coder/cross_language_practice_v2.json) are teaching/evaluation inputs. Local compiler acceptance exists only for Java, Kotlin and TypeScript *reference* examples; Rust and actual Qwen submissions are not verified. The curriculum is not automatically injected into a model context and does not train or update Qwen/700M weights. A runtime integration requires explicit architecture/branch/CI/deployment validation and prompt-budget checks.
+
+**Model maturity v3 / proportional work:** [training/coder/MODEL_MATURITY_EFFORT_V3.md](../../training/coder/MODEL_MATURITY_EFFORT_V3.md) and its [33 public multi-turn ungraded exercises](../../training/coder/model_maturity_practice_v3.json) teach operation-vs-subject, task complexity, source discovery, constraint preservation, independent acceptance and short-first-with-aging as a *future Workstation scheduling* policy. A distinct [draft adaptive-effort code PR #56](https://github.com/kaministrator999-ui/Swrlzkamico/pull/56) is OFF by default and has isolated CI verification; it is **not an active model improvement or weight training**. The optional semantic tier MUST NEVER become an action permission, substitute for correct intent or override external evidence and the independent evaluator.
+
+**Source-aware maturity v4:** [training/coder/MODEL_MATURITY_DISCOVERY_V4.md](../../training/coder/MODEL_MATURITY_DISCOVERY_V4.md) and [24 public post-discovery practice examples](../../training/coder/model_maturity_discovery_v4.json) extend the effort curriculum to verified source/owner/failed-test/risk facts. Experimental [stacked draft PR #57](https://github.com/kaministrator999-ui/Swrlzkamico/pull/57) adds **pure**, trusted-caller-only effort escalation and a *reported-evidence-only* Qwen/700M A/B comparison helper. It does not currently connect source inspection to production Workstation, grade model outputs, authenticate supplied grader receipts, schedule workers, or update any weights. Never promote a raw model/user ``verified`` field into trusted caller authorization; permissions, scheduling and independent acceptance remain separately owned.
+
+**Code deliverable packaging (v184 candidate):** [HF code artifact delivery contract](https://github.com/kaministrator999-ui/Swrlzkamico/blob/feature/coder-download-packages-v184/hf_space/CODE_ARTIFACT_DELIVERY_V184.md) and [draft PR #58](https://github.com/kaministrator999-ui/Swrlzkamico/pull/58) reuse Station-owned versioned codeArtifacts to offer a direct attachment link for a **single completed source file**, a **structured ZIP** for multiple completed files, or a ZIP for an explicit archive request. The Mask shows download links only after committed artifact completion; Qwen may emit safe `language file=relative/path` fences but must not invent hosted links or fabricate missing files. Station owns download bytes, revisions, cookie-scoped authorization, source SHA validation, path/size controls and archive response; Brain still owns intent and independent testing still owns behavioral acceptance. This is **isolated candidate only**, not yet live or weight-trained. Large multi-turn projects need a separate manifest-backed workspace assembler; a ZIP of partial output is never proof of completed requirements.
+
+**Staged code-project assembly (v185 candidate):** [draft PR #59](https://github.com/kaministrator999-ui/Swrlzkamico/pull/59) and its [manifest/workspace contract](https://github.com/kaministrator999-ui/Swrlzkamico/blob/feature/coder-staged-workspaces-v185/hf_space/STAGED_PROJECT_WORKSPACES_V185.md) extend v184 code downloads across multiple *completed* Chat replies. Station maintains thread-scoped manifest, versioned source attachments, missing-file status, cancellation, and READY-only ZIP. The UI offers a user-controlled next-file prompt. Structural READY and `validationState=NOT_RUN` do not certify code correctness or all user requirements. Workspaces remain process-local; automatic multi-turn model inference, durable file storage, independent code-validation and production deployment are **not implemented**. v185 must integrate after v184 and pass protected release gates, independent of concurrent lyric deployments.
+
+**Model-declared multi-turn manifest reconciliation (candidate):** [draft PR #60](https://github.com/kaministrator999-ui/Swrlzkamico/pull/60), stacked on v185 PR #59, corrects a simultaneous development collision: user-managed `projectWorkspaces` and model-declared `autoProjectWorkspaces` cannot safely share Python constructor names or the same thread entry. The v185 reconciliation branch verifies both in the **same** chat/session, uses progress-only browser snapshots, and keeps saved codeArtifact source revisions as the underlying source-code authority. The new model proposal may create a finite required-file manifest and collect completed named code responses over user-initiated follow-ups. Its ZIP is unavailable while required files are missing; its completion means **all declared source files present, NOT_RUN for tests**. This remains draft, not hosted, not trained, not automatically scheduling expensive model calls. Reconcile PR #60 before merging v185 PR #59; do not silently deploy conflicting branches.
+
+**Coder model-guided project plans (draft PR #64):** The [isolated Qwen project planner contract](https://github.com/kaministrator999-ui/Swrlzkamico/blob/feature/coder-manifest-planner-v1/hf_space/CODER_PROJECT_PLANNING_V1.md) adds an explicitly requested, user-reviewed JSON file/dependency manifest before beginning large projects. Station previews only completed same-thread assistant output, hashes original source, requires user confirmation, and attaches an approved plan to the existing staged workspace (draft PRs #58 → #59 → #64). Chat can send **one** next-file generation request per confirmed click; generated files still require completed source-artifact attachment. Parser/endpoint/JS tests pass in isolated CI; no autonomous multi-call runner, cross-restart durability, independent compiler PASS, trained weights, production activation or new semantic authority. Source manifest completeness must never be confused with satisfaction of all original user requirements.
+
+**Source hierarchy:** this architecture document remains policy owner; the curriculum cites branch-specific actual code. The Forge router `§tart_§E.md` remains the release/engine authority, and `§wyrlz_§tart.md` remains the AI Chat/LALM startup router. Never infer live Forge v9.4 or new model competence from a source inventory.
+
 ## 6. When programming architecture activates
 
 ### Lightweight coding
@@ -678,9 +850,7 @@ Do not collapse these states. A published/hydrated wrapper is not automatically 
 
 ---
 
-## Historical v75 Phase1 summary
-
-The following summary is preserved history; the current observation and source-grounded checkpoint above own present status.
+## Bottom line
 
 **§wyrlz keeps one primary cognitive authority. LALM 2.1.87 / R39 v75 is the active programming edge: v69 proportional context is live verified; v70/v71 isolated semantic-vs-inference failure correctly; v72 preserves bounded diagnostics; v73 repaired the exact two-token NumPy namespace failure; v74 established proportional first-hop artifact continuation; and v75 preserves provenance across edit chains while adding runnable-edit semantic gates for callable names, entrypoints, and unrequested retry behavior. Server 2.3.257's read-only runtime-hot history-policy seam is production active and authenticated turns have proved both current-index and legacy-index recovery. The remaining Phase 1 checkpoint is a fresh authenticated post-v75 continuation; repository/tool execution and any future coder model remain later, explicitly separate implementation states.**
 

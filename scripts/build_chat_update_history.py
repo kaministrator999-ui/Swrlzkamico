@@ -75,6 +75,20 @@ def build():
             'Saved communication and companion preferences now guide your conversations in both Chat surfaces.',
         ],
     }
+    records.insert(0, {**latest, 'kind': 'Source update',
+                       'source': {'commit': 'e4dee084f57788c3c6edc16381203d34ebc0c7e1',
+                                  'path': 'docs/engineering/entries/2026-10-29_CHAT_FORGE_INTEGRATION.md'}})
+    latest = {
+        'id': 'chat-forge-project-workflow-20261030', 'date': '2026-10-30',
+        'title': 'Create and continue projects with Chat in §e',
+        'changes': [
+            'Ask Chat inside §e to create a named project from a blank workspace or an available starter.',
+            '§e opens a separate editable copy and keeps the bundled starter intact. Watch the active project change as it is created.',
+            'Chat can inspect the project and level currently open, list available starters, and use fresh context for your next requested edits.',
+            'Local project snapshots and recovery stay on this device. Save to account remains an explicit action for Google account storage.',
+            'Close the Chat panel to pause editor access. Project creation requires an updated §e editor and a connected Chat account.',
+        ],
+    }
     return {'schema': 'swrlz-chat-updates-v1', 'latest': latest, 'history': records,
             'historyCoverage': {'registryRef': REGISTRY_REF, 'registryCommit': head,
                                 'registryRecords': sum(r['kind'] == 'Version registry record' for r in records),

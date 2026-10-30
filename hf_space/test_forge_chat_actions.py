@@ -6,8 +6,8 @@ from unittest.mock import Mock, patch
 from fastapi import HTTPException
 
 import forge_embed
-from brain_forge import classify_forge_intent, inspection_text
-from forge_chat_actions import ForgePlanError, decode_plan, generate_events, validate_operations
+from brain_forge import classify_forge_intent, inspection_text, requests_new_project
+from forge_chat_actions import ForgePlanError, decode_plan, generate_events, validate_operations, explicit_project_plan, _validate_requested_actions
 
 
 PROJECT = "a" * 32
@@ -214,6 +214,97 @@ class PlannerTest(unittest.TestCase):
         self.assertIn("80 Model Atelier meshes", events[0]["text"])
         self.assertNotIn("<script>", events[0]["text"])
         self.assertIn("bounded metadata", events[0]["text"])
+
+    def test_create_project_uses_advertised_starter_and_literal_name_only(self):
+        self.summary["starters"] = [{"id": "blank-scene", "name": "Blank scene", "kind": "sandbox", "workspace": "scene"}]
+        name = "  §§ My exact PROJECT!  "
+        operation = {"op": "project.create", "starterId": "blank-scene", "name": name}
+        self.assertEqual(validate_operations(self.context, [operation]), [operation])
+        receipt = {"op": "project.create", "ok": True, "projectId": "e" * 32, "name": name, "starterId": "blank-scene"}
+        events = self.run_events(operations=[operation], prompt='Create a new blank scene project called "' + name + '"',
+                                 result={"batchId": BATCH, "status": "finished", "allSucceeded": True, "receipts": [receipt]})
+        self.assertEqual(events[-1]["forgeStatus"], "APPLIED")
+        self.assertIn("bundled starter is preserved", events[-2]["text"])
+        self.assertIn("My exact PROJECT\\!", events[-2]["text"])
+        self.assertEqual(self.register.call_args.args[1][0]["name"], name)
+        for invalid in ([{**operation, "starterId": "unknown"}], [operation, {"op": "mesh.add", "kind": "box"}],
+                        [{**operation, "name": ""}], [{**operation, "overwrite": True}]):
+            with self.subTest(invalid=invalid), self.assertRaises(ForgePlanError):
+                validate_operations(self.context, invalid)
+        self.infer.assert_not_called()
+        with self.assertRaises(ForgePlanError) as error:
+            _validate_requested_actions('Create a project from the blank scene starter called "' + name + '"', [{**operation, "name": "Wrong spelling"}])
+        self.assertEqual(error.exception.code, "FORGE_PROJECT_LITERAL_NAME_MISMATCH")
+
+    def test_complete_explicit_creation_resolves_exact_catalog_and_literal_without_model(self):
+        self.summary["starters"] = [{"id": "blank-scene", "name": "Blank Scene"}, {"id": "blank-model", "name": "Blank Model"}]
+        name = "  My Starter §§!  "
+        operation = {"op": "project.create", "starterId": "blank-scene", "name": name}
+        for prompt in ('Create a new project from the Blank Scene starter named exactly "' + name + '".',
+                       'Create a new blank-scene project called "' + name + '"'):
+            self.assertEqual(explicit_project_plan(prompt, self.summary), {"disposition": "apply", "operations": [operation]})
+        for prompt in ('Create a new project called "blank-scene"', 'Create a new project from an unavailable starter called "Desk"',
+                       'Create a new project from Blank Scene or Blank Model named "Desk"',
+                       'Create a Blank Scene project called "Desk" then add a cube',
+                       'Create a Blank Scene project called "Desk", add a cube',
+                       'Create a Blank Scene project called "Desk" with two boxes',
+                       'Create a Blank Scene project with two boxes called "Desk"',
+                       'Create a Blank Scene project', 'Explain creating a Blank Scene project called "Desk"',
+                       'Create a cube in my project called "blank-scene"'):
+            with self.subTest(prompt=prompt):
+                self.assertIsNone(explicit_project_plan(prompt, self.summary))
+
+    def test_project_request_does_not_fall_back_to_mesh_or_reuse_old_host(self):
+        events = self.run_events(prompt='Create a new project called "Desk"')
+        self.infer.assert_not_called()
+        self.register.assert_not_called()
+        self.assertEqual(events[-1]["code"], "FORGE_PROJECT_STARTER_UNAVAILABLE")
+        self.summary["starters"] = [{"id": "model-atelier", "name": "Festival Armor"}]
+        events = self.run_events(operations=[{"op": "mesh.add", "kind": "box"}],
+                                 prompt='Create a new blank model project called "Desk"')
+        self.register.assert_not_called()
+        self.assertEqual(events[-1]["code"], "FORGE_UNREQUESTED_NATIVE_ACTION")
+
+    def test_project_creation_relation_excludes_continuing_edits_and_documents(self):
+        for prompt in ("Make a blue box in my project", "Create a wall in the project", "Build a pedestal in our project",
+                       "Make this project better", "Set up the selected object in this project", "Create a project report",
+                       "Create a project context document", "Create a project summary", "Build a project archive",
+                       "Start working on my project", 'Rename the mesh to "create a project"'):
+            with self.subTest(prompt=prompt):
+                self.assertFalse(requests_new_project(prompt))
+        for prompt in ('Create a new project named "Desk"', 'Make a blank model project called "Desk"',
+                       'Start a Sheep Tag project called "Desk"', 'Set up a new scene project named "Desk"',
+                       'Start from the Sheep Tag starter'):
+            self.assertTrue(requests_new_project(prompt), prompt)
+        for prompt in ("Make a blue box in my project", "Create a wall in the project", "Build a pedestal in our project"):
+            self.assertEqual(classify_forge_intent(prompt, self.summary)["disposition"], "mutation")
+        self.summary["starters"] = [{"id": "blank-model"}]
+        events = self.run_events(operations=[{"op": "project.create", "starterId": "blank-model", "name": "Desk"}],
+                                 prompt="Add a box in this project")
+        self.register.assert_not_called()
+        self.assertEqual(events[-1]["code"], "FORGE_UNREQUESTED_NATIVE_ACTION")
+
+    def test_project_creation_requires_real_identity_receipt(self):
+        self.summary["starters"] = [{"id": "blank-model"}]
+        operation = {"op": "project.create", "starterId": "blank-model", "name": "Desk"}
+        for receipt in ({"ok": True}, {"op": "project.create", "ok": True, "projectId": PROJECT,
+                                      "name": "Desk", "starterId": "blank-model"}):
+            events = self.run_events(operations=[operation], prompt='Start a blank model project called "Desk"',
+                                     result={"batchId": BATCH, "status": "finished", "allSucceeded": True, "receipts": [receipt]})
+            self.assertEqual(events[-1]["code"], "FORGE_PROJECT_RECEIPT_INVALID")
+
+    def test_project_inspection_uses_actual_current_context_without_inference(self):
+        self.summary.update(project={"name": "Desk §§", "kind": "model-atelier", "template": "blank-model", "sourceStarterId": "blank-model"},
+                            dirty=True, activeLevel={"id": "level-1", "name": "Desk level"},
+                            starters=[{"id": "blank-model", "name": "Blank Model"}])
+        for prompt in ("What project is open?", "List the available starters", "What workspace am I in?"):
+            self.assertEqual(classify_forge_intent(prompt, self.summary)["disposition"], "read")
+            events = self.run_events(prompt=prompt)
+            self.infer.assert_not_called()
+            self.register.assert_not_called()
+            self.assertIn("Desk §§", events[0]["text"])
+            self.assertIn("Blank Model", events[0]["text"])
+            self.assertIn("Desk level", events[0]["text"])
 
 
 class RealSealTest(unittest.TestCase):

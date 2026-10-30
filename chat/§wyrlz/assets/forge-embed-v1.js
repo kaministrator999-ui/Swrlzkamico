@@ -194,12 +194,24 @@
       if(!embedded || !binding || !port || !isAuthenticated())return {};
       api.setThread(threadId);
       if(!hostVisible || document.visibilityState !== "visible")return {};
-      const snapshot=await rpc("host.context",{threadId:thread});
-      if(!snapshot || typeof snapshot.projectId !== "string" || !snapshot.context || typeof snapshot.context !== "object")throw error("The editor context is unavailable. Your message was not sent.");
-      const presence=await json("/api/forge/embed/presence",{threadId:thread,projectId:snapshot.projectId,context:snapshot.context});
-      const active=await rpc("host.presence",{...presence,context:snapshot.context});
-      if(typeof active?.leaseId !== "string" || !/^[a-f0-9]{32}$/.test(active.leaseId))throw error("The editor connection could not be confirmed.");
-      lease=active.leaseId;seenBatches.clear();return {forgeLeaseId:lease};
+      const epoch=accountEpoch,expectedThread=thread;
+      const check=()=>{if(epoch!==accountEpoch || expectedThread!==thread || !isAuthenticated() || !hostVisible || document.visibilityState!=="visible")throw error("The editor connection changed. Your message was not sent.");};
+      // Native project opening can finish queued view updates between context
+      // and activation. Retry only that explicit stale-snapshot rejection with
+      // entirely fresh context/ticket; never reuse or weaken its preconditions.
+      for(let attempt=0;attempt<3;attempt++){
+        check();
+        const snapshot=await rpc("host.context",{threadId:thread});check();
+        if(!snapshot || typeof snapshot.projectId !== "string" || !snapshot.context || typeof snapshot.context !== "object")throw error("The editor context is unavailable. Your message was not sent.");
+        const presence=await json("/api/forge/embed/presence",{threadId:thread,projectId:snapshot.projectId,context:snapshot.context});check();
+        try{
+          const active=await rpc("host.presence",{...presence,context:snapshot.context});check();
+          if(typeof active?.leaseId !== "string" || !/^[a-f0-9]{32}$/.test(active.leaseId))throw error("The editor connection could not be confirmed.");
+          lease=active.leaseId;seenBatches.clear();return {forgeLeaseId:lease};
+        }catch(reason){
+          check();if(reason.message!=="EDITOR_CONTEXT_CHANGED" || attempt===2)throw reason;
+        }
+      }
     },
     forwardBatch(event){
       const value=event?.payload && !event.batchId?event.payload:event;
