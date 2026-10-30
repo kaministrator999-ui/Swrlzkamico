@@ -1,6 +1,6 @@
 # Chat–§E project creation and live project context
 
-Mode: IMPLEMENT. Lifecycle: BRANCH_ACTIVE. Status: implementation candidate; focused backend/development-browser evidence recorded, final verification and publication pending.
+Mode: IMPLEMENT. Lifecycle: ACCEPTED_WITH_FOLLOW_UP / DEVICE_TEST_PENDING. Status: bounded source, documentation and authorized publication complete.
 
 ## Objective and success criteria
 
@@ -17,7 +17,7 @@ Success requires an independent named copy, actual editor handoff, confirmed loc
 
 ## Implementation and contract
 
-`project.create` accepts only `op`, `starterId` and literal `name` (1–100 characters under native name constraints). It is the sole operation in its batch. The starter ID must occur in fresh `context.starters`; hosts without a catalog report unsupported capability. The candidate native catalog has11 blank/starter choices, bounded by the server contract to16 unique entries.
+`project.create` accepts only `op`, `starterId` and literal `name` (1–100 characters under native name constraints). It is the sole operation in its batch. The starter ID must occur in fresh `context.starters`; hosts without a catalog report unsupported capability. The native catalog has11 blank/starter choices, bounded by the server contract to16 unique entries.
 
 A bounded deterministic resolver supports a fully specified current human command with one exact live catalog starter and quoted literal named/called project name. It rejects compound or extra content clauses instead of discarding them; it does not guess a starter/name. The result enters the same native validator, server batch and actual-receipt path. Other requests retain the semantic typed planner and clarification flow.
 
@@ -29,11 +29,11 @@ The successful native result includes the new project ID, literal name, starter 
 
 ## Source and documentation impact
 
-Source owners: native `runtime/chat_project_workflow_v11_175.js` and append-only patch; Chat Brain native classification, typed Qwen planner, editor capability/receipt validation and focused tests. The engine source seal is207 ordered patches,68 assets,7,022,679 bytes, SHA-256 `0510e556b49cd94a3d1f89b264c194542476bc26c96169f3c6b8177301d482ff`. Final commits/package identities remain pending.
+Source owners: native `runtime/chat_project_workflow_v11_175.js` and append-only patch; Chat Brain native classification, typed Qwen planner, editor capability/receipt validation and focused tests. The engine source seal is207 ordered patches,68 assets,7,022,679 bytes, SHA-256 `0510e556b49cd94a3d1f89b264c194542476bc26c96169f3c6b8177301d482ff`. Final source and package identities are recorded in the closure below.
 
 Documentation impact set: CONTRACT / PROTOCOL; AI / capability; UI / local persistence; CHECKPOINT / release; provenance / source packaging; FORGE / build; known limitations; authority / Roadmap at closure. Updated candidate documents: this receipt, `CHAT_FORGE_EMBEDDING.md`, `SWRLZ_CHAT_OVERVIEW.md` and `SWRLZ_PROGRAMMING_LALM_RUNTIME_ARCHITECTURE.md`. Engine current-release docs/source metadata and root Roadmap/version authorities must be synchronized with the actual final source, measurements and publication evidence before delivery.
 
-Documentation gate: PENDING final source/evidence synchronization. Existing cloud pair/profile/project APIs, security policies, model weights/hardware and unrelated gameplay/LAN behavior are intentionally unchanged unless an independently recorded implementation change requires correction.
+Documentation gate: PASS; final source/evidence synchronized below. Existing cloud pair/profile/project APIs, security policies, model weights/hardware and unrelated gameplay/LAN behavior are intentionally unchanged unless an independently recorded implementation change requires correction.
 
 ## Verification and evidence
 
@@ -42,11 +42,11 @@ Focused check scope: blank/model/starter creation; independent repeated clones a
 - Backend:71 Forge/planner/embed/Station tests PASS (`forge-project-python-all-r2.log`), plus13 adjacent profile tests PASS. Tests include bounded native shape/authority/receipt behavior and explicit-command resolver cases.
 - Final Node embedded bridge checks: PASS, including one stale-context refresh followed by success, persistent EDITOR_CONTEXT_CHANGED bounded to3 attempts, closed-panel denial without retry and hidden-during-await rejection. Chat update-popup Chromium: PASS with267 previous updates retained. Backend candidate preparation --check: PASS at its current baseline; exact committed-source CI/preparation remains the publication gate.
 - Actual pinned Qwen7B planner probes r1/r2: both TERMINAL_REPAIR_REQUIRED. The exact request supplied Blank Scene and quoted name "My Starter §§"; r1 asked for the name again, and r2 asked to confirm the fully specified request. Neither executed native operations or passed typed-plan acceptance. Immutable `forge-project-planner-7b-r1.json`/`r2.json` and logs retain model/source/driver hashes and outputs. Do not report raw model creation as accepted or imply weights/hardware improved.
-- Native development Chromium: PASS recorded for blank/model creation, nonblank Dragon Den with170 actors, namespace/copy isolation, local metadata listing and rollback checks. Exact sealed final desktop-mode/native-browser result: PENDING root verification. Controlled browser evidence is distinct from owner hardware and real Google.
+- Native development Chromium: PASS recorded for blank/model creation, nonblank Dragon Den with170 actors, namespace/copy isolation, local metadata listing and rollback checks. Exact sealed final desktop-mode/native-browser result: PASS; project-v175-native-final-r2.json and project-v175-adjacent-final.json match0510e556… . Controlled browser evidence is distinct from owner hardware and real Google.
 - Exact v11.175 source rebuild:207 patches,68 assets,7,022,679 HTML bytes, SHA-256 `0510e556b49cd94a3d1f89b264c194542476bc26c96169f3c6b8177301d482ff`. Source seal is distinct from native runtime/browser acceptance.
-- Canonical source ZIP/checksum/archive reconstruction: PENDING.
-- Exact Chat source CI/guarded deployment/runtime provenance: PENDING.
-- Separate §E source/request-only deployment and hosted seal: PENDING.
+- Canonical source ZIP/checksum/archive reconstruction: PASS; immutable overlay identities below.
+- Exact Chat source CI/guarded deployment/runtime provenance: PASS; exact run/source identities below.
+- Separate §E source/request-only deployment and hosted seal: PASS; exact deployment/stored-artifact identities below.
 - Real Google/deployed account storage and physical Android/Quest acceptance: DEVICE_TEST_PENDING.
 
 ## Provenance, limitations and next gate
@@ -55,7 +55,7 @@ Preserve the committed v11.174 mobile source and all v11.170–173 project tabs/
 
 Local project copies belong to this browser origin and can be removed by browser-data clearing. Account/cloud/GitHub writes do not follow from native creation. General file authoring, unsupported scene operations, model JavaScript execution, external provider changes and deployment are outside this native tool surface. The two raw pinned7B planner failures and existing broad coding/editor competence remain REPAIR_REQUIRED until independently evaluated. Deterministic fully specified command routing is deliberately classified as orchestration, not a successful raw-model re-test.
 
-Current disposition: implement and verify the bounded project transition, synchronize final docs/package, then use the existing authorized separate Chat and §E release lanes. Record actual hosted results and leave owner-device acceptance pending. Approval waiting: NOT APPLICABLE within the existing implementation/publication authorization; no new permission request is introduced by this checkpoint.
+Current disposition: ACCEPTED_WITH_FOLLOW_UP / DEVICE_TEST_PENDING. Authorized publication is complete; real owner account/device acceptance remains pending. Approval waiting: NOT APPLICABLE.
 
 ## Exact sealed source verification
 
@@ -64,3 +64,20 @@ Generated v11.175 package verifier PASS:207 ordered patches,68 independently has
 Failurelineage: earlier harness had a keyword-only Playwright argument mistake and nullable workspace field access, corrected in the runner; one strictcontext→presence handshake legitimately detected changednative state and denied with EDITOR_CONTEXT_CHANGED. Boundedthreeattempt freshcontext/ticket retry applies only that denial in the application frontend and testfixture; no rejected snapshot is reused, all account/thread/visibility guards remain. The final exact rerun passes; prior logs retained. No broad game suites or hosted-browser workflow was dispatched.
 
 Source/contract/currentrelease docs and exact metadata agree: documentation gate PASS. Immutable source overlay/checksum follows committed identity, then existing authorized Chat exactCI/guarded release and separate final-request-only §E deployment. Real Google/private-store/owner-device acceptance remains pending. Raw model planning negatives remain explicitly carried forward; successful native orchestration is not weight training or generalcoding acceptance.
+
+## UPDATE FINISHED — publication, source delivery and authority
+
+Chat source `512a2c4af0115dd6ff96484eb4149a534337b24e` passed [exact CI40988150983](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40988150983) and [guarded deployment40988395181](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40988395181). Main request `e3297475bce40084fa920b4cd81db2556e171457` selected that source. HF `d35d2fbc5b012ece97cb5c3b8650de56ecaccebe` is RUNNING with matching immutable MODEL_PROVENANCE. Public broker and update JSON match the canonical candidate bytes; anonymous profile, projects and forged editor presence return401. These probes do not establish real account/model/tool acceptance.
+
+§E application source df4ef542 was followed by documentation synchronization `16cae27e7c925596bcd2fa72e91057c7b6979ba1`, leaving generated HTML unchanged. Final request-only commit `b8b260bab44b3a997a0265098b0849633c4695d2` pins its preceding source exactly. [Dedicated deployment40988952333](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/40988952333) SUCCESS. Static HF `b7c81578905262d3349e5a0dd5c209620b63bc68` is RUNNING; pinned SOURCE/index agree with **v11.175 /207 patches /68 assets /7,022,679 bytes /SHA2560510e556b49cd94a3d1f89b264c194542476bc26c96169f3c6b8177301d482ff**. Direct static-host browser access remains policy blocked; exact local native browser checks are separately recorded above.
+
+Canonical source overlays:
+
+- `chat-forge-project-workflow-source-r1.zip`: 15 full changed files, 177660 bytes, SHA256 **b91401b2e1c4dc74ffd2c93bba414ca27117811a8d81bb8a2245f73765abbe3a**. Baseline `51d3d44aa3c5ac85f65cf83e0505dd7442c3c6b1`; reconstructed complete tree `3a2dc8824fb39c18d6e39db5d63f2eb0dae39a51`.
+- `forge-project-v11-175-source-r2.zip`: 16 full changed files, 1208283 bytes, SHA256 **e530b5a06791302a73c46d5baa5d850fee9c856b2e3b4de253fc3290958702f5**. Baseline `5903ed4403b552c7c97395891075fe1d59acdebb`; complete tree `8209215adadbc2f8d1344f2a587f5a2a4926de0b`. This reissue includes synchronized release docs and the already authorized Chat request. The prior engine r1 remains immutable.
+
+Both ZIPs pass integrity, per-file hashes and private-index patch reconstruction. They require the recorded repository baselines; unchanged assets/weights are not duplicated. This closure adds publication evidence without rewriting those archives. Mobile v11.174 source and release lineage remain preserved.
+
+Registered **repository-work 1.0.245→1.0.246; server-runtime 2.3.441→2.3.442; web-chat 1.5.158→1.5.159; lalm-engine 2.1.204→2.1.205** in runtime `1464272785397fd01bc756f9de91c94cdcffe90d` and published atomically with the canonical main Roadmap. Google-account1.0.18, manifest152, streamV2, deploymentcontrol1.0.41 and other module authorities are unchanged. No weights, defaults or hardware changed. Basic explicit creation uses validated native orchestration; both pinned Qwen7B plan probes remain raw-model REPAIR_REQUIRED. Earlier broad coding/editor failures remain open.
+
+Documentation gate PASS. Source, tests, packages, CI, promotion, build, HF artifacts/runtime and device evidence remain distinct. Local copies belong to this browser; **Save to account** is explicit. Physical desktop/Android/Quest and real Google/private-store acceptance remain pending. Desktop mode was the primary browser workflow and visual review, with phone regression checks. Lifecycle **ACCEPTED_WITH_FOLLOW_UP / DEVICE_TEST_PENDING**. Publication is complete; no additional approval is waiting. Next gate: owner create → inspect → edit → local reload, followed by explicit account save if desired.

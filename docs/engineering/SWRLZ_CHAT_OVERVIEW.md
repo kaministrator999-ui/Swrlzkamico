@@ -302,3 +302,5 @@ If those answers are unclear, the component is not ready to enter the play.
 **Scenery. Props. Actors. Stagehands. Curtain. Scene.**
 
 Build one authoritative stage. Prepare structural change behind the curtain. Let legitimate performance mutate in the open. Keep stagehands backstage. Give every visible region one owner. Instrument each component from birth.
+
+Project-workflow publication/versions/source and remaining owner acceptance are recorded in [the release checkpoint](entries/2026-10-30_CHAT_FORGE_PROJECT_WORKFLOW.md#update-finished--verified-publication-source-delivery-and-authority). Explicit native orchestration does not erase the recorded rawmodelplanning negatives.

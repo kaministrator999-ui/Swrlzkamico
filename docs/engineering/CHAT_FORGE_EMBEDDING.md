@@ -313,3 +313,5 @@ Google sign-in acceptance. §E production workflow remains package/upload only;
 no unrelated game suites or automatic hosted browser marathons.
 
 Current release/source evidence is authoritative in [the checkpoint](entries/2026-10-29_CHAT_FORGE_INTEGRATION.md#update-finished--publication-and-handoff-receipt). The host clears cloud project IDs/revisions and its visible cloud list on account-change revoke; ordinary thread changes preserve the current account reference.
+
+Project-workflow publication/versions/source and remaining owner acceptance are recorded in [the release checkpoint](entries/2026-10-30_CHAT_FORGE_PROJECT_WORKFLOW.md#update-finished--verified-publication-source-delivery-and-authority). Explicit native orchestration does not erase the recorded rawmodelplanning negatives.
