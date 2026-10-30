@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.174",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_174_MOBILE_EDITOR_VIEWPORT",
-  "reason": "Owner-authorized normal-phone canvas fill and native control overlap repair, preserving current v11.173 source and independent Chat backend. Exact206-patch/68-asset package and targeted real Chromium mobile/desktop/project/resize/pointer/touch plus adjacent native Chat tests PASS. Physical Android/Quest and real Google acceptance remain pending. Final separate request-only commit.",
-  "sourceCommit": "69c3f8737c5f57ea8e8e0cb9681395847a059a72",
-  "sourceIntegritySha256": "1254e78c5bfd0d55a940f0e7d7c5fd590c325f89d4a45dc893b54f0f76fb9ce4"
+  "releaseVersion": "v11.175",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_175_CHAT_PROJECT_WORKFLOW",
+  "reason": "Owner-authorized basic Chat/§E project creation: independent named starter copies, preserved preceding work, isolated workspace drafts, local snapshots/autosave/reload and fresh active-project context. Exact207-patch/68-asset package, real native desktop-primary/phone/adjacent browser tests PASS. Backward-compatible Chat source512a2c4a exactCI40988150983 and guardeddeployment40988395181 SUCCESS; HFd35d2fbc RUNNING, canonicalbroker/updatebytes confirmed. RawQwenplan negatives retained; explicitnativecommands use validated orchestration. RealGoogle/device acceptance pending. Separate final request-only commit.",
+  "sourceCommit": "16cae27e7c925596bcd2fa72e91057c7b6979ba1",
+  "sourceIntegritySha256": "0510e556b49cd94a3d1f89b264c194542476bc26c96169f3c6b8177301d482ff"
 }
