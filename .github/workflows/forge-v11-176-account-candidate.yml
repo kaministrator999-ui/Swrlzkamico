@@ -1,0 +1,37 @@
+name: §E v11.176 account project candidate verification
+on:
+  push:
+    branches: [fix/forge-v11-176-account-project-picker]
+    paths:
+      - "projects/swrlz-forge-moba/**"
+      - ".github/workflows/forge-v11-176-account-candidate.yml"
+permissions:
+  contents: read
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build exact ordered candidate and measure source
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          path=Path("projects/swrlz-forge-moba/source-manifest.json")
+          m=json.loads(path.read_text())
+          assert m['name']=="§wyrl§ Engine v11.176"
+          assert len(m['patches'])==208 and m['patches'][-1]=="patches/v11_176_chat_account_project_picker.py"
+          m['finalBytes']=0
+          m['finalSha256']=''
+          path.write_text(json.dumps(m,ensure_ascii=False))
+          PY
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/swrlz-forge-176
+          python projects/swrlz-forge-moba/tests/test_v11_176_chat_account_project_picker.py /tmp/swrlz-forge-176/index.html
+          python - <<'PY'
+          import hashlib
+          from pathlib import Path
+          p=Path("/tmp/swrlz-forge-176/index.html")
+          d=p.read_bytes()
+          print("MEASURED_FINAL_BYTES="+str(len(d)))
+          print("MEASURED_FINAL_SHA256="+hashlib.sha256(d).hexdigest())
+          PY
