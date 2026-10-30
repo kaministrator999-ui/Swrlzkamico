@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.175
+title: §wyrl§ Engine v11.176
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,17 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.176 — connected Google badge and real project selector (2026-10-30)
+
+**Owner Android screenshot:** § Chat showed the verified Google account as connected but still displayed **Sign in with Google**. Its dropdown showed only Google-saved projects (and could be cleared on account change), although Sheep Tag was open locally. The native editor project was not missing; the host's account presentation and project picker were out of sync.
+
+**Fix:** Append-only patch **208** (`patches/v11_176_chat_account_project_picker.py`) hides the redundant sign-in button while connected and displays a Google badge beside the verified account name. The selector always displays the **active native project** and groups available **on-device copies** and **Google account saves** separately. My projects refreshes both lists. Native local loads use the existing v11.175 recovery path; Google-saved loads retain the v11.170 authentication and dirty-state checks. Logout clears cloud names and returns the sign-in button; stale list responses cannot restore another account's projects. No Google credentials or email are shared with §E. Opening the selector never changes the scene.
+
+**Browser boundary:** ChatGPT's in-app browser and an external Chrome tab may not share the original popup/opener context. Open §E directly in Chrome for same-browser Google pairing; mobile recovery codes must remain private to the original Chat iframe. Chrome login succeeded in the owner report; a new v11.176 device test is still pending.
+
+**Source/CI:** §wyrl§ Engine **v11.176**, **208 ordered patches**, **68 packaged assets**, **7,028,937 HTML bytes**, SHA-256 `861e9eba85cda6feacc7f4ed0e360024ea54a10be30c4b1dd20e08a4339bfbde`. [Exact sealed candidate verification](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/41113497738) PASS, including 16 controlled login/logout/local/cloud-picker assertions and generated-artifact verification. `scripts/verify_v11_176_release.py` and the existing request-only deployment process govern production publication. Actual Android/Quest visual acceptance is distinct from source CI.
+
 
 ## §E v11.175 — Chat creates a project from a reusable starter (2026-10-30)
 
