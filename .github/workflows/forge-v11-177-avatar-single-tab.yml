@@ -1,0 +1,37 @@
+name: §E v11.177 avatar and single-tab login candidate
+on:
+  push:
+    branches: [fix/forge-v11-177-avatar-single-tab]
+    paths:
+      - "projects/swrlz-forge-moba/**"
+      - ".github/workflows/forge-v11-177-avatar-single-tab.yml"
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build generated v11.177 candidate and measure exact seal
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("projects/swrlz-forge-moba/source-manifest.json")
+          m=json.loads(p.read_text())
+          assert m['name']=="§wyrl§ Engine v11.177" and len(m['patches'])==209
+          m['finalBytes']=0;m['finalSha256']=''
+          p.write_text(json.dumps(m,ensure_ascii=False))
+          PY
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/forge177
+          node projects/swrlz-forge-moba/tests/test_v11_177_avatar_single_tab.mjs
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib
+          b=Path("/tmp/forge177/index.html").read_bytes()
+          s=b.decode()
+          assert "SWYRL_ENGINE_DEPLOY_MARKER: V11_177_GOOGLE_AVATAR_SINGLE_TAB" in s
+          assert "se177ShowPicture" in s and "Continue to Google" in s
+          print("EXACT_BYTES="+str(len(b)))
+          print("EXACT_SHA256="+hashlib.sha256(b).hexdigest())
+          PY
