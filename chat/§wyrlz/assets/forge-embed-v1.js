@@ -171,6 +171,10 @@
         if(pairing === attempt && Date.now() >= attempt.until){pairing=null;showRecoveryCode("");send("account.error",{message:"Google connection expired. Sign in again."});}
       }
     }
+    // A quietly expired pair must also remove its now-invalid copyable code.
+    if(pairing===attempt && Date.now()>=attempt.until){
+      pairing=null;showRecoveryCode("");send("account.error",{message:"Google connection expired. Sign in again."});
+    }
   };
   const withCloud = async action => {
     if(!isAuthenticated())throw error("Sign in to §e with Google before using account projects.");
