@@ -39,7 +39,7 @@ const sandbox={
   get cloudBusy(){return false;},
   se175Read:async()=>local,
   se175LocalList:new El('select'),
-  se175RefreshLocal:async()=>{},
+  se175RefreshLocal:async()=>{const opt=new El('option');opt.value='local-one';opt.textContent='Independent scene';sandbox.se175LocalList.replaceChildren(opt);},
   se175LoadLocal:async()=>{project={id:'local-one',name:'Independent scene',projectName:'Independent scene'};},
   loadCloud:async()=>{loadCloudCalls++;project={id:'cloud-one',name:'Saved account scene'};return true;},
   rpc:async(type)=>{assert.equal(type,'cloud.list');cloudCalls++;return cloudResolve?await cloudResolve:{projects:cloud};}
