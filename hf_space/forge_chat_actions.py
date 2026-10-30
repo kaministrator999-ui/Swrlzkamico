@@ -12,6 +12,7 @@ import re
 from typing import Any, Callable, Iterator
 
 from brain_forge import classify_forge_intent, current_command_text, inspection_text, native_plan_system, requests_new_project, _literal
+from forge_workspace_insights_v1 import build_insight
 
 MAX_OPERATIONS = 16
 MAX_PLAN_BYTES = 24576
@@ -352,7 +353,11 @@ def generate_events(payload: dict[str, Any], context, register_batch: Callable |
         prompt = payload.get("prompt") if isinstance(payload, dict) else None
         intent = classify_forge_intent(prompt, summary)
         if intent["disposition"] == "read":
-            yield {"type": "DELTA", "text": inspection_text(summary)}
+            # Server-owned scene insights use the freshly revalidated native lease.
+            # Display metadata is a separate widget, never interpreted as commands.
+            explanation, widget = build_insight(summary, prompt)
+            yield {"type": "DELTA", "text": explanation}
+            yield {"type": "WIDGET", "widget": widget}
             yield {"type": "COMPLETED", "phase": "COMPLETE", "forgeStatus": "INSPECTED"}
             return
         if intent["disposition"] != "mutation":
