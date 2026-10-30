@@ -1,5 +1,5 @@
 ID=google-account
-VERSION=1.0.18
+VERSION=1.0.19
 KIND=account-auth-architecture
 SOURCE_BRANCH=mixed
 STATUS=active
@@ -17,3 +17,5 @@ V243_GITHUB_START_NOTE=GitHub connected-account startup source reader v243 deplo
 V244_GITHUB_HELP_NOTE=After user Dragon Chat (55) audit, exact Stage-1 GitHub engine help and engine pack help return informational read-only guidance; all other engine commands and all write/confirmation/deploy controls remain locked. Startup document links now pin to the SHA used for GitHub contents reads rather than mutable branch names. CI 38657071181 passed; guarded HF deploy 38657158948 published source 552526004ffaaccce75035eafd9c0fd9cf32a8da at Space revision befcf07137a83a948e0d5265294b09723c6106a1; prior ac4f1397aece7fcd455c59fc49e14a32506182dc preserved for rollback. Signed-in user-facing acceptance remains pending.
 
 CHAT_FORGE_20261029_NOTE=encrypted CAS profiles/projects and isolated Google embed authorization; Chat source=e4dee084f57788c3c6edc16381203d34ebc0c7e1; engine candidate=51d3d44aa3c5ac85f65cf83e0505dd7442c3c6b1; source/version activation evidence differs from real Google/deployed-store/owner-device acceptance, which remains pending. No model weights/default/hardware change.
+
+FORGE_MOBILE_POPUP_RECOVERY_20261030_NOTE=Detached Android/new-tab §E Google Connect popup no longer dead-ends without window.opener. Verified Google sign-in plus short-lived private pair recovery code, server SHA256 check, unchanged PKCE and original opener handshake, explicit account recheck. Chat exact source85006bd53007f3be8c7462744610182e4918543c, controlled offline CI41109412082 SUCCESS, guarded Chat release41109682221 SUCCESS, HF revision aa6f1a153f90d0bfcb3b0a879363795389701483 uploaded with rollback to3972e5e7ddb3d9f65b9948603be0deb5e5345ec7. Deployment checkpoint DEPLOYED_UNVERIFIED; live Android/Quest Google and account save/load acceptance pending. §E engine, LALM, Google identity verifier/owner data unchanged.
