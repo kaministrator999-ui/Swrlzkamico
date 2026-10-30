@@ -1,3 +1,7 @@
+## UPDATE VERIFIED — 2026-10-29 — §E v11.174 phone canvas and controls repair
+
+Owner's normal-phone canvas collapse reproduced and repaired on current v11.173 main, preserving the intervening My Projects, clean Chat header and foreground-dialog changes. Exact v11.174 source:206 ordered patches,68 assets,7,008,228 bytes/SHA2561254e78c5bfd0d55a940f0e7d7c5fd590c325f89d4a45dc893b54f0f76fb9ce4. Focused native Chromium phone/desktop/project/resize/click/touch and adjacent Chat/native tests PASS. Source/package evidence differs from physical owner acceptance, which remains pending. Existing final request-only §E deployment follows; independent Chat backend is unchanged. Full failure lineage, verification and publication state: docs/engineering/entries/2026-10-29_FORGE_MOBILE_VIEWPORT.md. Publication already authorized.
+
 ## UPDATE FINISHED — 2026-10-29 — §E v11.172 clean embedded Chat side-panel header (source / sealed CI)
 
 **Primary Focus:** §wyrlz Engine embedded Chat side-panel header. **Focus Group:** §E's Chat-host presentation, with unchanged Chat authentication/account store and existing native project library. **Repository Work: 1.0.243 → 1.0.244** for this governed repository tier, recorded in `runtime:versions/repository-work.txt`. The independent §E version advances **v11.171 → v11.172**; Web Chat 1.5.158, Server Runtime 2.3.441, LALM Engine 2.1.204, Google Account 1.0.18, Manifest 152 and Stream V2 are unchanged.

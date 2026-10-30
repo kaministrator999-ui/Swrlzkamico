@@ -1,0 +1,28 @@
+/* Preserve the original narrow-screen absolute canvas host. The v11.143
+   relative overlay rule is correct for the desktop grid, but not mobile block. */
+@media(max-width:620px){
+ body:not(.se145-runtime) .workspace > .viewport-wrap:has(> #viewport){
+  position:absolute!important;inset:0!important;min-height:0!important;
+ }
+ .workspace > .viewport-wrap > .mobile-tabs{
+  top:var(--se-mobile-controls-bottom,104px)!important;z-index:10!important;
+ }
+ .workspace > .viewport-wrap > .mobile-drawer{
+  top:var(--se-mobile-drawer-top,152px)!important;
+ }
+ .workspace > .viewport-wrap > .badgeBox{
+  top:auto!important;bottom:10px!important;right:8px!important;
+  max-width:calc(100% - 16px)!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+ }
+ .workspace > .viewport-wrap > .help,
+ .workspace > .viewport-wrap > .build-stamp,
+ .engine-stats-pill{display:none!important;}
+}
+/* Leave the provider's top-right Space branding unobscured and retain access
+   to our own Chat title, external link and close button below that area. */
+#seChatAccountPanel{top:48px!important;}
+@media(max-width:620px){
+ #seChatAccountPanel{
+  top:48px!important;height:calc(100dvh - 48px)!important;max-height:calc(100dvh - 48px)!important;
+ }
+}

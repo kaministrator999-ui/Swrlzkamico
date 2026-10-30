@@ -70,6 +70,9 @@ def run(html_path,vendor_path,out):
             # disturbing any saved account project or requiring a starter asset.
             page.evaluate("()=>window.SWYRL_ENGINE_AGENT.createProject('blank-model')")
             page.wait_for_function("()=>window.SWYRL_ENGINE_MODEL_ATELIER.status().open",timeout=15000)
+            # Model the provider's high-z top-right branding area; native Chat
+            # controls must stay actionable beneath it on phone and desktop.
+            page.evaluate("""()=>{const e=document.createElement('div');e.id='fixtureProviderBadge';e.textContent='Controlled provider badge';Object.assign(e.style,{position:'fixed',top:'4px',right:'8px',width:'min(320px,calc(100vw - 16px))',height:'32px',zIndex:'2147483647',background:'#263449',color:'white',font:'12px system-ui'});document.body.append(e);}""")
             page.locator('#seChatToggle').click()
             page.wait_for_function("()=>!!document.getElementById('seChatFrame')?.contentWindow",timeout=10000)
             deadline=time.monotonic()+15;iframe=None
@@ -78,7 +81,7 @@ def run(html_path,vendor_path,out):
             assert iframe is not None,{'frames':[f.url for f in page.frames],'element':page.locator('#seChatFrame').evaluate('(e)=>({src:e.src,attribute:e.getAttribute("src"),parentHidden:e.parentNode.hidden})'),'errors':errors}
             iframe.wait_for_function('()=>window.fixture?.ready',timeout=15000)
             metrics=page.evaluate("""()=>{const p=document.getElementById('seChatAccountPanel'),r=p.getBoundingClientRect();return {bodySibling:p.parentNode===document.body,canvasChild:!!p.closest('canvas'),w:r.width,h:r.height,x:r.x,y:r.y,vw:innerWidth,vh:innerHeight,closeFocused:document.activeElement?.id==='seChatClose',sandbox:document.getElementById('seChatFrame').getAttribute('sandbox')}}""")
-            assert metrics['bodySibling'] and not metrics['canvasChild'];assert 300<=metrics['w']<=metrics['vw'];assert metrics['h']<=metrics['vh'];assert metrics['closeFocused'];assert 'allow-popups-to-escape-sandbox' in metrics['sandbox']
+            assert metrics['bodySibling'] and not metrics['canvasChild'];assert 300<=metrics['w']<=metrics['vw'];assert metrics['h']<=metrics['vh'];assert metrics['closeFocused'];assert 'allow-popups-to-escape-sandbox' in metrics['sandbox'];assert metrics['y']>=40,'Chat controls overlap provider branding'
             page.locator('#seChatRefresh').click()
             page.wait_for_function("()=>!!document.querySelector('#seChatProjects option[value=\"owner-a-project\"]')")
             iframe.evaluate("()=>{void fixture.rpc('host.revoke',{reason:'account-changed'});}")

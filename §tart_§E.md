@@ -1,3 +1,11 @@
+## §E v11.174 — full-height phone editor and usable mobile controls (2026-10-29)
+
+Normal phone mode now stretches the existing editor canvas to its workspace instead of collapsing it into a short strip. Mobile Outliner/Inspector buttons sit below the measured Project Levels toolbar, and their drawer opens below the buttons. Narrow screens hide desktop keyboard hints, the stale build stamp and duplicate actor statistics; the native selection badge remains at the bottom. The Chat panel starts 48px below the top edge to leave room for the observed Hugging Face provider badge. This does not guarantee every provider wrapper layout or repair the separately observed unstyled outer Hugging Face page.
+
+The repair uses the original scene, renderer and resize handling, with no new render loop. It preserves v11.170 My Projects and Starter Projects tabs, v11.171/173 dialog layering, v11.172's clean embedded Chat header, desktop layout, native Play fullscreen and existing Chat/account assistance. Focused Chromium checks cover canvas/workspace geometry, real Inspector clicks and taps, project changes, resize and adjacent Chat controls. Their actual results, deployment evidence and owner-device disposition are recorded in the [mobile repair checkpoint](https://github.com/kaministrator999-ui/Swrlzkamico/blob/main/docs/engineering/entries/2026-10-29_FORGE_MOBILE_VIEWPORT.md); source publication alone does not establish physical Android or Google-account acceptance.
+
+Current source seal: **206 ordered patches**, **68 packaged assets**, **7,008,228 HTML bytes**, SHA-256 **`1254e78c5bfd0d55a940f0e7d7c5fd590c325f89d4a45dc893b54f0f76fb9ce4`**. Use `scripts/verify_v11_174_release.py` and the existing separate final request-only deployment lane. Earlier release sections remain historical records; their normal-phone canvas layout is superseded by this repair.
+
 ## §E v11.173 — Projects dialog above editor docks and Chat (2026-10-29)
 
 **Owner Android screenshot:** the right Details panel covers the active Projects modal. The v11.171 z-index fix was inside an editor stacking context; numeric priority alone cannot escape its ancestor.
