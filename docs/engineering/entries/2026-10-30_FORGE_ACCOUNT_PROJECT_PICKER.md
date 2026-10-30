@@ -1,0 +1,11 @@
+# §E v11.176 owner screenshot correction: Google account UI + project selector
+
+Status: SEALED_SOURCE_CI_PASS / DEPLOY_PENDING at initial integration. Production receipt must be recorded separately after the canonical engine deployment trigger and observed workflow result.
+
+Owner reported Chrome successfully connected the shared Google account, but §E's embedded Chat still displayed a redundant Sign in with Google button. The visible cloud-only project dropdown was empty even while Sheep Tag was active. This did not prove absent project storage; the selector was not representing the current native project and was cleared by account-change handling.
+
+**Source:** New append-only `runtime/chat_panel_account_project_v11_176.js` applied through `patches/v11_176_chat_account_project_picker.py`. Verified connection displays Google badge/name with sign-in hidden, and logout restores sign-in and drops cloud names. The selector always identifies the open native project, then on-device saved copies and authenticated cloud saves in separate groups, refreshing on owner request and sign-in. Existing §E native local restore, undo/recovery, cloud revision loading and dirty-state guard remain authoritative. In-flight account-list requests cannot cross a sign-out boundary. Neither the user identity verifier nor §E gameplay is changed.
+
+**CI evidence:** [Exact sealed source validation #41113497738](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/41113497738) SUCCESS, including 16 mocked UI state assertions. Package: 208 ordered patches, 68 assets, 7,028,937 generated HTML bytes, SHA-256 `861e9eba85cda6feacc7f4ed0e360024ea54a10be30c4b1dd20e08a4339bfbde`. New `scripts/verify_v11_176_release.py` asserts exact package and source-only deployment commit invariants. Previous v11.175 seal retained as history. Browser/Google real-device owner acceptance is pending.
+
+**Cross-app limitation:** Opening §E inside ChatGPT and its account popup externally in Chrome can sever the opener identity or make the Chat-origin recovery code difficult to access. Use §E directly in Chrome for the pairing, or explicitly switch back to the original §E iframe if using the short-lived recovery proof; never put the pairing proof or Google ID token in an unverified URL.
