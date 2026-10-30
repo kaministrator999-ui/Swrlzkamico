@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.177",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_177_GOOGLE_AVATAR_SINGLE_TAB",
-  "reason": "Owner screenshot: actual Google profile avatar instead of generic G and copyable first-party Chat recovery code BEFORE opening Google in single-tab browsers. Chat source1daf1092e79cb0c875f0d24cd9ba2e9b8261aa7a validated in CI41122173559. Exact §E v11.177 generated 209patch/68assets/7031135bytes/SHA329ebe66d3b1e4b75e3777d4cdabff2dc52d16850d9a445601b7d532b9dec5d6 and sealedCI41122637726 PASS with 14 targeted UI assertions. Original Google PKCE/pair grants and Sheep Tag/project data preserved. Real WebView destroyed-tab and phone/Quest acceptance still pending. Separate final request-only commit.",
-  "sourceCommit": "355e652061fc72d13d513ecfa4be4eb2909f0dc5",
-  "sourceIntegritySha256": "329ebe66d3b1e4b75e3777d4cdabff2dc52d16850d9a445601b7d532b9dec5d6"
+  "releaseVersion": "v11.178",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_178_WORKSPACE_ANALYSIS",
+  "reason": "Owner request: embedded §wyrlz Chat must analyze the currently open §E project/workspace. Read-only Analyze workspace button, live authenticated scene/level/selection context, bounded 48 object metadata, actual type counts, duplicate-name and shared-position review hints. Existing server lease/permissions, Chat/Google identity, project save/restore, Sheep Tag and model editing preserved. Chat source869ffbb65cb803bb548e0c36061f9ca4c7ff8e9a, offline CI41128929702 PASS, Chat deploy41129324773 SUCCESS. §E 210patch/68assets/7034587bytes/SHA925c1761e8bc89e22a1ba807320d4ff74f8ed53a6410c4f6e29ed16477773386, sealed CI41129255647 PASS. No visual scene validation or owner Android/Quest acceptance claim.",
+  "sourceCommit": "d4d7623182307ca43ac822d035dbe93399dc9894",
+  "sourceIntegritySha256": "925c1761e8bc89e22a1ba807320d4ff74f8ed53a6410c4f6e29ed16477773386"
 }
