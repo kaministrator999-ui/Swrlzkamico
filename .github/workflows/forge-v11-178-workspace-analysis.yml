@@ -1,0 +1,38 @@
+name: §E v11.178 workspace analysis candidate
+on:
+  push:
+    branches: [fix/forge-v11-178-workspace-analysis]
+    paths:
+      - "projects/swrlz-forge-moba/**"
+      - ".github/workflows/forge-v11-178-workspace-analysis.yml"
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build and measure bounded workspace audit source
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("projects/swrlz-forge-moba/source-manifest.json")
+          m=json.loads(p.read_text())
+          assert m['name']=="§wyrl§ Engine v11.178" and len(m['patches'])==210
+          m['finalBytes']=0;m['finalSha256']=''
+          p.write_text(json.dumps(m,ensure_ascii=False))
+          PY
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/forge178
+          node --check projects/swrlz-forge-moba/runtime/chat_workspace_analysis_v11_178.js
+          node projects/swrlz-forge-moba/tests/test_v11_178_workspace_analysis.mjs
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib
+          b=Path("/tmp/forge178/index.html").read_bytes()
+          s=b.decode()
+          assert "SWYRL_ENGINE_DEPLOY_MARKER: V11_178_WORKSPACE_ANALYSIS" in s
+          assert "se178EnrichContext(value)" in s and "se178Install()" in s
+          print("EXACT_BYTES="+str(len(b)))
+          print("EXACT_SHA256="+hashlib.sha256(b).hexdigest())
+          PY
