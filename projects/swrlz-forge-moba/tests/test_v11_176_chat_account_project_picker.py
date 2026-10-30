@@ -23,6 +23,6 @@ assert source.count("se176Install();")>=1
 assert "SWYRL_ENGINE_DEPLOY_MARKER: V11_175_CHAT_PROJECT_WORKFLOW" not in source
 assert "se176AccountState({authenticated:false});" in source
 assert "se176RefreshProjects();return;" in source
-assert "selectedProject.startsWith('cloud:')" in source
+assert "choice.startsWith('cloud:')" in source
 assert "return await se175LoadLocal()" not in source
 print("PASS §E v11.176 account and project picker build contract",len(source.encode("utf-8")))
