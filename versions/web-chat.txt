@@ -1,6 +1,6 @@
 ID=web-chat
-VERSION=1.5.161
-REVISION=1.5.161-forge-mobile-google-popup-recovery
+VERSION=1.5.162
+REVISION=1.5.162-google-avatar-preflight-code
 KIND=web-interface
 SOURCE_BRANCH=runtime
 STATUS=active
@@ -14,3 +14,5 @@ CHAT_FORGE_PROJECT_20261030_NOTE=Basic catalog-grounded native project creation 
 GOOGLE_CROSSOVER_20261030_NOTE=Chat-only Google account crossover repair: verified PKCE pair also verifies same principal through /api/account/me before account.status, unrelated API 401 no longer revokes Google, token/epoch-bound 401 and stale account refresh races guarded; Chat source00579fabcb2eb81daed9086420dc2eca4b60b6f3, CI41104491417 SUCCESS with12 focused crossover assertions, guarded Chat release41105373583 SUCCESS, HF Space revision3972e5e7ddb3d9f65b9948603be0deb5e5345ec7 uploaded. No engine source/release or backend/LALM/Google module modification. Live Chat/API and owner Android/Quest Google behavior remain unverified in this session; older optional lyric reader string test failed on preexisting baseline source.
 
 FORGE_MOBILE_POPUP_RECOVERY_20261030_NOTE=Detached Android/new-tab §E Google Connect popup no longer dead-ends without window.opener. Verified Google sign-in plus short-lived private pair recovery code, server SHA256 check, unchanged PKCE and original opener handshake, explicit account recheck. Chat exact source85006bd53007f3be8c7462744610182e4918543c, controlled offline CI41109412082 SUCCESS, guarded Chat release41109682221 SUCCESS, HF revision aa6f1a153f90d0bfcb3b0a879363795389701483 uploaded with rollback to3972e5e7ddb3d9f65b9948603be0deb5e5345ec7. Deployment checkpoint DEPLOYED_UNVERIFIED; live Android/Quest Google and account save/load acceptance pending. §E engine, LALM, Google identity verifier/owner data unchanged.
+
+GOOGLE_AVATAR_SINGLE_TAB_20261030_NOTE=Verified Google profile-image URL is sent to §E host only as optional display metadata after Chat-origin account verification; invalid/non-Google avatar URLs rejected, fallback G retained. Chat sign-in now prepares private five-minute PKCE recovery proof visible/copyable in embedded Chat BEFORE the second Continue to Google tap; pair remains first-party, single-use, Chat-origin-only. Chat candidate source 1daf1092e79cb0c875f0d24cd9ba2e9b8261aa7a, offline CI41122173559 SUCCESS, guarded Chat deploy41122720286 SUCCESS with HF revision d26a78bb9317ef10c3ec2a9622b535eef51501a9 (rollback aa6f1a153f90d0bfcb3b0a879363795389701483). §E v11.177 source355e652061fc72d13d513ecfa4be4eb2909f0dc5, final-only request4edaa000b2cee683e52ed8f0f43ea9e70da3fd53, sealed CI41122637726 SUCCESS, engine deploy41123278713 SUCCESS,209patch/68assets/7031135bytes/SHA329ebe66d3b1e4b75e3777d4cdabff2dc52d16850d9a445601b7d532b9dec5d6. Hugging Face uploads confirmed, served live SOURCE.json not accessible from this session, physical Android/Quest and destroyed-single-tab pairing acceptance pending. No backend auth, model, Sheep Tag or saved project data changes.
