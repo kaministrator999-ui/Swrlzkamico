@@ -25,7 +25,7 @@ _REPORTED = re.compile(r"\b(?:I|we)\s+(?:previously\s+)?(?:asked|told|said|saw|w
                        r"\byou\s+(?:said|promised|tried)\b", re.I)
 _READ = re.compile(r"\b(?:list|inspect|show|describe|what|which|how\s+many|tell\s+me|analy[sz]e|audit|review)\b", re.I)
 _WORKSPACE_FOLLOWUP = re.compile(
-    r"\b(?:duplicate|repeated|shared\s+(?:name|position)|overlap|finding|scene\s+review|"
+    r"\b(?:duplicate|repeated|shared\s+(?:names?|positions?)|overlap|findings?|scene\s+review|"
     r"workspace\s+(?:review|analysis|reasoning)|continue\s+(?:the|your|that)\s+(?:analysis|reasoning|review)|"
     r"(?:what|which)\s+should\s+(?:i|we)\s+(?:check|inspect)\s+next|"
     r"(?:what|how)\s+(?:can|could|should)\s+(?:we|i)\s+improv(?:e|ing)\s+(?:this|the|our)\s+(?:scene|project)|"
@@ -79,7 +79,7 @@ def classify_forge_intent(prompt: str, summary: dict[str, Any] | None = None) ->
     if (isinstance(summary, dict) and _WORKSPACE_FOLLOWUP.search(text)
             and not (_ACTION.search(text) and not _EXPLAIN.search(text)
                      and not _READ.search(text))):
-        return result("read", "verified-current-workspace-followup")
+        return result("explain", "verified-current-workspace-followup")
     if _EXPLAIN.search(text):
         return result("explain", "instruction-or-hypothetical")
     if _REPORTED.search(text):
