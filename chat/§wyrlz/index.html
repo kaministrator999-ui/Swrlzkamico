@@ -3005,6 +3005,16 @@
         }finally{sending=false;streamAbortController=null;sendButton.disabled=false;sendButton.hidden=false;stopButton.hidden=true;scheduleStationSync()}
       };
       stopButton.addEventListener("click",async()=>{const rid=String(stationGeneration?.requestId||"");if(!rid)return;stopButton.disabled=true;try{streamAbortController?.abort();await fetch("/api/lalm_station/cancel",{method:"POST",credentials:"same-origin",cache:"no-store",headers:{"Content-Type":"application/json"},body:JSON.stringify({requestId:rid})});await syncStation();}finally{stopButton.disabled=false;stopButton.hidden=true;sendButton.hidden=false;}});
+      // §E Analyze is a user-clicked read-only request; it uses the ordinary
+      // authenticated send, server-bound current snapshot and visible thread.
+      // Never overwrite a draft the user is already composing.
+      window.addEventListener("swrlz-forge-analyze-request",()=>{
+        if(!window.SwrlzForgeEmbedV1?.embedded || sending)return;
+        if(prompt.value.trim()){prompt.focus();return;}
+        prompt.value="Analyze the current §E project and workspace. Inspect its actual active level, selected object, object types, scene organization and bounded metadata findings. Suggest useful next checks and improvements. This is read-only: do not modify any objects.";
+        prompt.dispatchEvent(new Event("input",{bubbles:true}));
+        void commitDraftFromPrompt();
+      });
       sendButton.addEventListener("click",commitDraftFromPrompt);
       prompt.addEventListener("keydown",e=>{
         if(e.key!=="Enter"||e.shiftKey)return;

@@ -238,6 +238,13 @@
       else task.resolve(message.payload?.result ?? message.payload);
       return;
     }
+    if(message.type === "host.analyze"){
+      // A verified user clicked Analyze in §E. Only trigger the normal Chat
+      // composer; no untrusted scene strings become executable instructions.
+      if(hostVisible && isAuthenticated() && document.visibilityState === "visible")
+        emit("swrlz-forge-analyze-request",{});
+      return;
+    }
     if(message.type === "host.visibility"){
       hostVisible=message.payload?.visible === true;
       if(!hostVisible){lease="";seenBatches.clear();}

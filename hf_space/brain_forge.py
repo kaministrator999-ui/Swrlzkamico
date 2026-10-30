@@ -23,7 +23,7 @@ _EXPLAIN = re.compile(r"\b(?:how\s+(?:(?:do|can|could|would|will)\s+(?:I|you|we)
                       r"is\s+it\s+(?:possible|safe)|(?:can|could)\s+(?:(?:the|this)\s+)?(?:AI|model|engine|it))\b", re.I)
 _REPORTED = re.compile(r"\b(?:I|we)\s+(?:previously\s+)?(?:asked|told|said|saw|watched|noticed|mentioned|requested)\b|"
                        r"\byou\s+(?:said|promised|tried)\b", re.I)
-_READ = re.compile(r"\b(?:list|inspect|show|describe|what|which|how\s+many|tell\s+me)\b", re.I)
+_READ = re.compile(r"\b(?:list|inspect|show|describe|what|which|how\s+many|tell\s+me|analy[sz]e|audit|review)\b", re.I)
 _NEGATED_ACTION = re.compile(r"\b(?:do\s+not|don't|dont|never|avoid|stop)\s+(?:\w+\s+){0,3}"
                             r"(?:add|create|make|build|insert|place|move|rotate|scale|resize|"
                             r"start|rename|color|colour|change|set|select|duplicate|remove|delete|undo|redo)\b", re.I)
@@ -162,6 +162,27 @@ def inspection_text(summary: dict[str, Any]) -> str:
         lines.append("Available objects: " + "; ".join(_literal(item.get("name") or item.get("id")) for item in items[:12]) + ".")
     if count > min(len(items), 12):
         lines.append("This is a bounded metadata summary; the full project stays in §e.")
+    audit = summary.get("workspaceAudit")
+    if isinstance(audit, dict):
+        sampled = audit.get("sampled")
+        if type(sampled) is int and sampled >= 0:
+            lines.append("Workspace audit inspected " + str(sampled) + " object records" +
+                         (" (bounded sample; not the full scene)." if count > sampled else "."))
+        types = audit.get("types")
+        if isinstance(types, list) and types:
+            text = "; ".join(_literal(row.get("name")) + ": " + str(row.get("count"))
+                             for row in types[:10] if isinstance(row, dict) and
+                             isinstance(row.get("name"), str) and type(row.get("count")) is int)
+            if text:
+                lines.append("Object types in the inspected sample: " + text + ".")
+        findings = audit.get("findings")
+        if isinstance(findings, list) and findings:
+            lines.append("Possible workspace concerns (metadata checks only; not visually verified): " +
+                         "; ".join(_literal(row.get("detail")) for row in findings[:8]
+                                   if isinstance(row, dict) and isinstance(row.get("detail"), str)) + ".")
+        else:
+            lines.append("The bounded metadata checks identified no specific concerns; this does not prove the scene is bug-free.")
+        lines.append("Review suggestions must be validated in the editor. No objects were modified.")
     return "\n\n".join(lines)
 
 

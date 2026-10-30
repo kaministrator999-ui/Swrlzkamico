@@ -1,0 +1,7 @@
+# §E current-project analysis: Chat read-only support, 2026-10-30
+
+The connected Chat already requests an authenticated native snapshot for every editor-bound user message, and requires a valid short-lived editor lease before the server processes it. This change recognizes explicit *analyze / audit / review* requests as read-only inspection, retaining code/GitHub-routing precedence and requiring a live project reference. It adds bounded audit output to the deterministic `inspection_text` result: actual project, active level, sampled object types, possible duplicate names/position findings supplied by §E, selected objects, and limits of the view. It must never claim to inspect render appearance or execute changes.
+
+A new verified host message `host.analyze` emits a Chat-origin UI event only while visible and authenticated. The Chat UI submits a fixed inspection prompt through its existing message send path, with a fresh native context request and server lease. It never overwrites a human's nonempty draft and never sends scene names as instructions or uses an edit batch. §E adds the user-facing button separately in v11.178, in the engine's governed release lane. The original signed-in Chrome/Google and project-save paths remain unchanged.
+
+Acceptance: exact-source Chat candidate CI; editor release CI; owner Android/Quest live smoke test. Source validation is not physical review of the 3D scene.
