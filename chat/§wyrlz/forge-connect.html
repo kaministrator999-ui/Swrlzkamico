@@ -40,7 +40,7 @@
   const pairId=new URLSearchParams(location.search).get("pairId")||"";
   const status=document.getElementById("status"),account=document.getElementById("account"),button=document.getElementById("connect"),googleSlot=document.getElementById("google");
   const recovery=document.getElementById("recovery"),recoveryInput=document.getElementById("recoveryCode"),checkAccount=document.getElementById("checkAccount");
-  const code=()=>recoveryInput.value.trim().toLowerCase().replace(/[-\\s]/g,"");
+  const code=()=>recoveryInput.value.trim().toLowerCase().replace(/[\s-]/g,"");
   const codeReady=()=>/^[a-f0-9]{12}$/.test(code());
   let binding=null,bound=false,user=null,complete=false,helloTimer=0;
   const update=()=>{
