@@ -1,0 +1,19 @@
+name: §E v11.177 avatar and single-tab login candidate
+on:
+  push:
+    branches: [fix/forge-v11-177-avatar-single-tab]
+    paths:
+      - "projects/swrlz-forge-moba/**"
+      - ".github/workflows/forge-v11-177-avatar-single-tab.yml"
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Exact sealed engine and focused single-tab tests
+        run: |
+          python projects/swrlz-forge-moba/scripts/verify_v11_177_release.py --output /tmp/forge177
+          node --check projects/swrlz-forge-moba/runtime/chat_avatar_single_tab_v11_177.js
+          node projects/swrlz-forge-moba/tests/test_v11_177_avatar_single_tab.mjs
