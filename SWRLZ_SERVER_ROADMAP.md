@@ -1,3 +1,19 @@
+## UPDATE FINISHED — 2026-10-30 — §E workspace intelligence Chat cards and conversational reasoning
+
+**Owner request:** Improve the analysis content and chat response presentation for live §E workspaces, including continued §wyrlz reasoning about findings.
+
+**Architecture and implementation:** §E engine remains v11.178; its origin-bound live-context lease and 48-record snapshot are unchanged. Chat Server now derives a compact, factual scene insight report and server-owned `swrlz-widget-v1` card from the freshly authenticated snapshot, with count/coverage/type distribution, selected object, repeated names/shared positions as review hints, and prioritized next checks. The canonical Chat renderer adds responsive bar charts, expandable evidence, and prompt-only follow-up chips; it preserves original response text, Chat history and copy behavior. Explicit analysis follow-ups route to the selected Chat model with freshly revalidated read-only editor evidence; this never grants native editing.
+
+**Source and validation:** PR #293 merged to `integration/chat-forge-workspace-analysis-20261030`, exact source `26b1010cb5730428dcb5cdea614efe849857fe6d`. Focused §E insights/renderer CI #41142770753 SUCCESS; canonical exact-source offline Chat CI #41142977690 SUCCESS, including native account/editor guard and browser checks. Historical mobile lyric-reader CI has a preexisting stale string signature expecting the old `renderAssistantContent` call; it is unrelated to this update and was not rewritten to force a green result.
+
+**Published:** Guarded Chat HF request commit `bf9738d2d6c150f0ddd0ea9676675dfede8ecbc7`; workflow #41143139321 SUCCESS, `kamiloki/Swyrlz` uploaded revision `8bb95ed09dd02df111de8379d2179da40273789d`; rollback revision `87ff19136f90b0cd5149403a38e1d8f5afdd17cd` preserved. No §E Engine deploy, gameplay edits, Google identity backend changes, model weight/default changes or new infrastructure. Exact live browser served-asset and owner Android/Quest interactive acceptance remain UNVERIFIED, despite the upload receipt.
+
+**Version authorities:** runtime branch `5f73326deba3be1945743b2c042e63626a236fc8`: Repository Work **1.0.252**, Web Chat **1.5.164**, Server Runtime **2.3.445**; unrelated registered modules unchanged.
+
+**Next bounded acceptance:** In the owner's authenticated embedded Chat on Android/Quest, Analyze Sheep Tag Menu and Gameplay, verify widget type bars and counts match the active 48-object sample, expand a finding, use the Explain findings/Prioritize checks follow-ups, verify fresh snapshot and retained message widget after reload, and ensure no mutation/dirty flag caused by analysis itself.
+
+---
+
 ## UPDATE FINISHED — 2026-10-30 — §E v11.178 Chat reads and audits the active project/workspace
 
 **Owner goal:** After verified Google account crossover and Sheep Tag project selector, make embedded §wyrlz Chat analyze the actual open editor project, active level, workspace and selection rather than giving generic instructions.
