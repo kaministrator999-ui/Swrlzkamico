@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=1daf1092e79cb0c875f0d24cd9ba2e9b8261aa7a
-REQUEST_NONCE=forge-avatar-preflight-1daf1092e79c-release-1
+SOURCE_REF=869ffbb65cb803bb548e0c36061f9ca4c7ff8e9a
+REQUEST_NONCE=forge-workspace-analysis-869ffbb65cb8-release-1
