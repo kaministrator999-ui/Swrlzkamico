@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.174
+title: §wyrl§ Engine v11.175
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,16 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.175 — Chat creates a project from a reusable starter (candidate, 2026-10-30)
+
+This candidate lets embedded **§ Chat** create a named blank project or a new project from an advertised starter, then open it in §E. The new project is an independent editable copy; the original starter remains available for the next project. Chat receives the actual open project's name, starter, current level, workspace and selection before its next request, so work can continue on the project visible in the editor.
+
+Before opening the copy, §E saves the preceding workspace **on this device**. The new copy is saved locally too; a storage failure stops creation or reports the recovery result. **Projects → My Projects → On this device** lists local copies, and identified projects autosave native edits in this browser. Use **Save to account** separately to sync a complete project through the connected Google account. Local copies can be lost when browser data is cleared; creating a project does not publish it to Google, GitHub or a live site. Copy-specific workspace drafts and exports use the new project identity, and listing reads at most1,000 project names without loading all saved scene bodies.
+
+For the first reliable command path, supply an exact advertised starter and a quoted project name, for example: `Create a new project from the Blank scene starter named exactly "My Starter §§".` A bounded command resolver uses that current catalog and the same native validation/receipt flow. Two actual pinned Qwen7B planner probes redundantly asked for clarification despite the supplied name; those failed probes remain **REPAIR_REQUIRED**. The command path improves orchestration and does not establish improved model weights or general project-building competence. Ambiguous or compound requests retain the typed planner/clarification path.
+
+Current source seal: **207 ordered patches**, **68 packaged assets**, **7,022,679 HTML bytes**, SHA-256 **`0510e556b49cd94a3d1f89b264c194542476bc26c96169f3c6b8177301d482ff`**. Creation is one native action with an actual completion receipt. Further changes use fresh context and the active editor connection for the newly opened project; standalone Chat has no editor access. The update preserves v11.174 phone layout and earlier project/dialog/header features. Focused backend and development-browser evidence exists; exact sealed desktop-mode/native-browser acceptance, final source CI and the separate Chat/§E publications remain recorded individually in the [project workflow checkpoint](https://github.com/kaministrator999-ui/Swrlzkamico/blob/main/docs/engineering/entries/2026-10-30_CHAT_FORGE_PROJECT_WORKFLOW.md). This candidate section does not establish deployment or owner-device acceptance.
 
 ## §E v11.174 — full-height phone editor and usable mobile controls (2026-10-29)
 
