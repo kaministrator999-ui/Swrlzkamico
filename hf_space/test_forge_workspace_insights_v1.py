@@ -72,7 +72,7 @@ for query in [
     "What should I check next?",
     "Explain the shared position concern",
 ]:
-    assert classify_forge_intent(query,snapshot)["disposition"]=="read",query
+    assert classify_forge_intent(query,snapshot)["disposition"]=="explain",query
 assert classify_forge_intent("Move the selected wall",snapshot)["disposition"]=="mutation"
 assert classify_forge_intent("Review Python source code",snapshot)["disposition"]=="ordinary"
 assert classify_forge_intent("Why were those duplicate names flagged?")["disposition"]!="read"
