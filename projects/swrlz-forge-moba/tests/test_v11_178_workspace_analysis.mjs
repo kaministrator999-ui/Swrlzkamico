@@ -37,5 +37,5 @@ account=false;button.click();assert.equal(sent.length,1,'not signed in');
 account=true;visible=false;button.click();assert.equal(sent.length,1,'hidden editor blocked');
 visible=true;ready=false;button.click();assert.equal(sent.length,1,'disconnected Chat blocked');
 const huge={...ctx,actors:Array.from({length:48},(_,i)=>({name:'a'.repeat(100),type:'mesh',position:[i,0,1]})),project:{name:'X'.repeat(30000)}};
-vm.runInContext('se178EnrichContext',vmctx)(huge);assert.equal(huge.workspaceAudit,undefined,'large source snapshot does not overflow lease');
+delete huge.workspaceAudit;vm.runInContext('se178EnrichContext',vmctx)(huge);assert.equal(huge.workspaceAudit,undefined,'large source snapshot does not overflow lease');
 console.log(JSON.stringify({ok:true,suite:'forge-v11-178-workspace-analysis',checks:13}));
