@@ -77,6 +77,7 @@ jobs:
           node --check 'chat/§wyrlz/assets/forge-embed-v1.js'
           node tests/forge_google_account_crossover_v1.mjs
           node tests/test_forge_popup_mobile_recovery.mjs
+          node tests/test_forge_avatar_preflight_v1.mjs
           python hf_space/test_forge_embed.py
       - name: v243 GitHub startup concurrency and source-safety regression
         run: |

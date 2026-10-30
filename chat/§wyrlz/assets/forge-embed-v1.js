@@ -24,10 +24,35 @@
     if(!note){
       note=document.createElement("div");note.id="swrlz-forge-recovery-note";
       note.setAttribute("role","status");note.setAttribute("aria-live","polite");
-      note.style.cssText="position:fixed;left:8px;right:8px;bottom:8px;z-index:2147483000;padding:10px 14px;border-radius:12px;background:#192840;color:#f1f9ff;border:2px solid #8feaff;font:13px/1.5 system-ui;box-shadow:0 6px 20px #0009;";
+      note.style.cssText="position:fixed;top:8px;left:8px;right:8px;z-index:2147483000;padding:12px;border-radius:12px;background:#192840;color:#f1f9ff;border:2px solid #8feaff;font:13px/1.5 system-ui;box-shadow:0 6px 20px #0009;";
       document.body.appendChild(note);
     }
-    note.textContent="§E Google connection code: "+code+" — only needed if the Google popup opens in a separate tab and cannot find §E. Return there and enter this code after Google sign-in.";
+    // Show the proof BEFORE navigation: an in-app browser may replace the tab.
+    // The proof never crosses to the §E parent, a URL, or persistent storage.
+    note.replaceChildren();
+    const label=document.createElement("strong");
+    label.textContent="Copy this one-time Google connection code BEFORE continuing";
+    const input=document.createElement("input");
+    input.type="text";input.value=code;input.readOnly=true;
+    input.setAttribute("aria-label","One-time §E Google pairing code");
+    input.style.cssText="width:100%;box-sizing:border-box;min-height:42px;margin:8px 0;padding:8px;border-radius:8px;background:#fff;color:#15243d;font:700 21px/1.2 monospace;text-align:center;letter-spacing:.06em;user-select:all;";
+    input.addEventListener("click",()=>input.select());
+    const copy=document.createElement("button");copy.type="button";copy.textContent="Copy code";
+    copy.style.cssText="min-height:40px;padding:8px 12px;border-radius:8px;background:#c2eefa;color:#142338;border:0;font-weight:700;cursor:pointer;";
+    const hint=document.createElement("p");
+    hint.textContent="Copy or write down the code now. Then tap Continue to Google above. If the browser replaces §E with sign-in, paste this code into the login page's one-time-code field. It expires in 5 minutes.";
+    hint.style.cssText="margin:6px 0 0;font-size:12px;";
+    copy.addEventListener("click",async()=>{
+      try{
+        if(!window.navigator?.clipboard?.writeText)throw Error("CLIPBOARD_UNAVAILABLE");
+        await window.navigator.clipboard.writeText(code);
+        copy.textContent="Copied ✓";
+      }catch{
+        input.focus();input.select();
+        copy.textContent="Select and copy the highlighted code";
+      }
+    });
+    note.append(label,input,copy,hint);
   };
   const error = message => new Error(message);
   const send = (type, payload, requestId, transfer = []) => {
@@ -41,7 +66,21 @@
     pending.set(requestId,{resolve,reject,timer});
     try{send(type,payload,requestId);}catch(reason){clearTimeout(timer);pending.delete(requestId);reject(reason);}
   });
-  const publicAccount = user => ({authenticated:!!user,user:user?{name:String(user.displayName || "Google Account").slice(0,120)}:null});
+  // Verified user photo is optional presentation data, never a credential.
+  // Restrict it to the Google profile image origin before showing it in §E.
+  const verifiedPicture = user => {
+    try{
+      const picture=new URL(String(user?.picture||""));
+      if(picture.protocol!=="https:" || picture.username || picture.password || picture.port)return "";
+      if(picture.hostname!=="googleusercontent.com" && !picture.hostname.endsWith(".googleusercontent.com"))return "";
+      return picture.href.length<=1024?picture.href:"";
+    }catch{return "";}
+  };
+  const publicAccount = user => ({
+    authenticated:!!user,
+    user:user?{name:String(user.displayName || "Google Account").slice(0,120),
+      ...(verifiedPicture(user)?{picture:verifiedPicture(user)}:{})}:null
+  });
   const revoke = reason => {
     lease="";seenBatches.clear();
     if(port)send("host.revoke",{reason:String(reason||"connection-changed").slice(0,80)});
