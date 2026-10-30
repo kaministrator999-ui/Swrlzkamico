@@ -18,7 +18,7 @@ const reply=(status,body)=>new Response(JSON.stringify(body),{status,headers:{'C
 const nativeFetch=async(input,options={})=>{
  const url=new URL(input,ORIGIN),auth=new Headers(options.headers).get('Authorization');
  requests.push({url:url.href,path:url.pathname,auth,credentials:options.credentials});
- if(url.pathname==='/api/forge/embed/pair')return reply(200,{pairId:PAIR,loginUrl:'/forge/login?pairId='+PAIR,expiresAt:Date.now()/1000+60});
+ if(url.pathname==='/api/forge/embed/pair')return reply(200,{pairId:PAIR,loginUrl:'/forge/login?pairId='+PAIR,expiresAt:Date.now()/1000+60,recoveryCode:'b'.repeat(12)});
  if(url.pathname==='/api/forge/embed/pair/'+PAIR)return reply(200,{approved:true});
  if(url.pathname==='/api/forge/embed/pair/exchange')return reply(200,{token:TOKEN,expiresAt:Date.now()/1000+3600,user:alice,parentOrigin:PARENT,hostId:HOST,channelId:CHANNEL});
  if(url.pathname==='/api/account/me')return valid?reply(200,{user:verifyUser,durable:true,profile:{version:1}}):reply(401,{detail:'FORGE_PARENT_LOGIN_REVOKED'});
