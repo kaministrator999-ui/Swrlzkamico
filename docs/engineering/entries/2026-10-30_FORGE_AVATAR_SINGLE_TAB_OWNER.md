@@ -1,6 +1,6 @@
 # §E v11.177 / Chat avatar + single-tab login recovery — owner Android screenshot
 
-**Release stage:** exact build candidate; owner Android/Quest acceptance pending. Deployment source and proof recorded after separated Chat and §E release gates.
+**Release stage:** CHAT_HF_UPLOADED / ENGINE_HF_UPLOADED / OWNER_ANDROID_QUEST_PENDING. Both guarded deployment runs completed SUCCESS; live served SOURCE.json and hands-on device acceptance remain independently unverified.
 
 **User-observed problem:** Connected Google account showed a placeholder G, not the actual Google profile avatar. In-app browsers that open login as an alternate page did not let the user return to copy the original Chat-origin one-time recovery code. The previous v11.176 fix correctly displayed the active Sheep Tag project and hid redundant login, so those controls remain untouched.
 
@@ -11,3 +11,10 @@
 **Cross-browser limitation:** If a single-tab browser destroys the old §E page entirely, the original iframe also loses its RAM-only PKCE verifier, so a copied code cannot by itself redeem that destroyed session. Code-access is fixed; full destroyed-page recovery requires a separately designed secure resume protocol. Recommend same-browser Chrome where possible; never imply that a code alone guarantees recovery after teardown.
 
 **Publication process:** Chat guarded release to `kamiloki/Swyrlz` and engine final-only `projects/swrlz-forge-moba/DEPLOY_REQUEST.json` to `kamiloki/swrlz-forge-moba` are separate. Verify CI and upload receipts before calling each released; physical Android/Quest test remains pending.
+
+## Published releases and verification boundaries
+
+- Chat candidate source `1daf1092e79cb0c875f0d24cd9ba2e9b8261aa7a`: [exact offline CI #41122173559](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/41122173559) SUCCESS; [guarded Hugging Face Chat deploy #41122720286](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/41122720286) SUCCESS. Revision `d26a78bb9317ef10c3ec2a9622b535eef51501a9` uploaded; previous `aa6f1a153f90d0bfcb3b0a879363795389701483` retained as rollback. Release checkpoint states `DEPLOYED_UNVERIFIED`.
+- §E v11.177 source `355e652061fc72d13d513ecfa4be4eb2909f0dc5`: [sealed CI #41122637726](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/41122637726) SUCCESS; request-only commit `4edaa000b2cee683e52ed8f0f43ea9e70da3fd53`; [dedicated §E deploy #41123278713](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/41123278713) SUCCESS, upload confirmed. Verifier rebuilt 209 patches, 68 assets, 7,031,135 HTML bytes, SHA-256 `329ebe66d3b1e4b75e3777d4cdabff2dc52d16850d9a445601b7d532b9dec5d6`.
+- Runtime version registry commit `537317ddbff2e9fa74070e1411e8727767afb35d`: Web Chat 1.5.162, Google Account 1.0.20, Repository Work 1.0.250; Server Runtime 2.3.443 and LALM unchanged.
+- Direct access to `https://kamiloki-swrlz-forge-moba.static.hf.space/SOURCE.json` returned inaccessible in this session. Do not convert CI upload evidence into a fresh exact served-file proof. User's next Chrome / single-tab / Quest sign-in test remains the owner acceptance gate. If a browser tears down the original editor iframe, retaining the manually copied proof does not rescue the lost in-memory PKCE verifier; the preflight fix does not claim otherwise.
