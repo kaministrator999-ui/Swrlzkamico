@@ -17,14 +17,14 @@ def apply(html):
       "revoke('Account changed.');const user=payload.user;accountText.textContent=payload.authenticated&&user?'Connected · '+summaryName(user.name||user.email||'Google account'):'Google account not connected';",
       "revoke('Account changed.');se176AccountState(payload);")
     html = once(html,
-      "setStatus(payload.authenticated?'Your Chat account is connected.':'Sign in to load your Chat history and save projects to your account.');return;",
-      "setStatus(payload.authenticated?'Your Chat account is connected.':'Sign in to load your Chat history and save projects to your account.');if(payload.authenticated)void se176RefreshProjects();return;")
+      "setStatus(payload.authenticated?'Your Chat account is connected.':'Sign in to load your Chat history and save projects to your account.');se170AccountStatus(payload);return;",
+      "setStatus(payload.authenticated?'Your Chat account is connected.':'Sign in to load your Chat history and save projects to your account.');se170AccountStatus(payload);if(payload.authenticated)void se176RefreshProjects();return;")
     html = once(html,
-      "cloudRefs.clear();if(cloudList)cloudList.replaceChildren();",
-      "cloudRefs.clear();se176AccountState({authenticated:false});")
+      "cloudRefs.clear();if(cloudList)cloudList.replaceChildren();se170Invalidate();",
+      "cloudRefs.clear();se176AccountState({authenticated:false});se170Invalidate();")
     html = once(html,
-      "const projectId=cloudList.value;if(!projectId){setStatus('Choose an account project first.',true);return;}",
-      "const selectedProject=cloudList.value;const projectId=selectedProject.startsWith('cloud:')?selectedProject.slice(6):selectedProject;if(!selectedProject.startsWith('cloud:')){setStatus('Choose a Google-saved project first.',true);return;}")
+      "const projectId=typeof requestedId==='string'?requestedId:cloudList.value;if(!projectId){setStatus('Choose an account project first.',true);return;}",
+      "const choice=typeof requestedId==='string'?requestedId:cloudList.value;const projectId=choice.startsWith('cloud:')?choice.slice(6):choice;if(!projectId||(typeof requestedId!=='string'&&!choice.startsWith('cloud:'))){setStatus('Choose a Google-saved project first.',true);return;}")
     html = once(html,
       "cloudRefs.set(projectId,stored);setStatus('Saved to your account · revision '+stored.revision+'.');",
       "cloudRefs.set(projectId,stored);setStatus('Saved to your account · revision '+stored.revision+'.');void se176RefreshProjects();")
