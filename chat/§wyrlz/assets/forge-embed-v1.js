@@ -18,7 +18,7 @@
   const isAuthenticated = () => !!token && Date.now() < expiresAt;
   const emit = (name, detail) => window.dispatchEvent(new CustomEvent(name,{detail}));
   const showRecoveryCode = code => {
-    if(!embedded)return;
+    if(!embedded||!document.body||typeof document.getElementById!=="function")return;
     let note=document.getElementById("swrlz-forge-recovery-note");
     if(!code){note?.remove();return;}
     if(!note){
