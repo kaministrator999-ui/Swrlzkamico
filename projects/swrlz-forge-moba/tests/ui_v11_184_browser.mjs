@@ -98,6 +98,12 @@ try{
    bootStatus:document.getElementById('se184DefaultBoot')?.textContent||'',
    build:window.SWRLZ_FORGE_BUILD?.version
   }))),errors);
+  console.log('SE184_DB_PROBE',name,JSON.stringify(await page.evaluate(async()=>{
+   const db=await new Promise((resolve,reject)=>{const r=indexedDB.open('swyrl-engine-projects-v1',2);r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)});
+   const row=await new Promise((resolve,reject)=>{const t=db.transaction('projects','readonly');const r=t.objectStore('projects').get('se184-browser-local');r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)});
+   db.close();return {exists:!!row,id:row?.id,name:row?.data?.project?.name,actors:row?.data?.scene?.actors?.length};
+  })));
+  assert.equal(await page.evaluate(()=>window.SWYRL_ENGINE_AGENT.inspectScene()?.project?.name),'Preview Card Test World','startup debug: saved default did not open');
   await page.waitForFunction(()=>{
    const api=window.SWYRL_ENGINE_SAVED_DEFAULT;
    if(!api||!window.SWYRL_ENGINE_AGENT||window.se128StartupPending)return false;
