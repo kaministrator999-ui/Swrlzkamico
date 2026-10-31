@@ -50,8 +50,11 @@ jobs:
           mode=smoke
           if [[ "$GITHUB_EVENT_NAME" == "workflow_dispatch" ]]; then
             mode="${REQUESTED_MODE:-smoke}"
-          elif [[ "$GITHUB_EVENT_NAME" == "push" ]] && git show --format= --name-only "$GITHUB_SHA" | grep -Fxq '.acceptance/CHAT_EVAL_LIVE_REQUEST.txt'; then
-            mode=live
+          elif [[ "$GITHUB_EVENT_NAME" == "push" ]]; then
+            changed_files="$(git diff-tree --no-commit-id --name-only -r "$GITHUB_SHA")"
+            if grep -Fxq '.acceptance/CHAT_EVAL_LIVE_REQUEST.txt' <<< "$changed_files"; then
+              mode=live
+            fi
           fi
           echo "mode=$mode" >> "$GITHUB_OUTPUT"
           echo "Selected mode: $mode"
