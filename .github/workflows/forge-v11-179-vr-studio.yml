@@ -1,0 +1,34 @@
+name: §E v11.179 VR Controller Studio candidate
+on:
+  push:
+    branches: [feature/forge-v11-179-vr-controller-studio-20261031]
+    paths:
+      - "projects/swrlz-forge-moba/**"
+      - ".github/workflows/forge-v11-179-vr-studio.yml"
+permissions:
+  contents: read
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Syntax and independent local controller invariants
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/vr_controller_studio_v11_179.js
+          node projects/swrlz-forge-moba/tests/test_v11_179_vr_studio.cjs
+      - name: Verify exact sealed 211-patch / 68-asset source
+        run: |
+          python projects/swrlz-forge-moba/scripts/verify_v11_179_release.py --output /tmp/forge-vr179
+          python - <<'PY'
+          import hashlib,pathlib,json
+          root=pathlib.Path('/tmp/forge-vr179')
+          content=(root/'index.html').read_bytes()
+          receipt=json.loads((root/'SOURCE.json').read_text())
+          assert len(content)==receipt['finalBytes']==7063978
+          assert hashlib.sha256(content).hexdigest()==receipt['finalSha256']=='2b9119cb587ca262be0948c3d5a04d35cfa3ebf0a1a5169dea116c1619d365fd'
+          assert len(receipt['assets'])==68 and len(receipt['patches'])==211
+          print('FORGE_VR179_SEALED_PASS')
+          PY
