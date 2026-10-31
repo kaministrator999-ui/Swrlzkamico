@@ -33,7 +33,7 @@ def wants_preview(prompt: Any) -> bool:
         return False
     if (_APPLY.search(command) or _EXPLANATION.search(command) or re.search(
             r"\b(?:do not|don't|dont|never|avoid)\s+(?:\w+\s+){0,3}"
-            r"(?:preview|design|propose|make|build|create)\b", command, re.I)):
+            r"(?:preview|design|propose|sketch|draft|plan)\b", command, re.I)):
         return False
     return bool(_PREVIEW.search(command) and _TARGET.search(command))
 
@@ -112,6 +112,9 @@ def build_preview(summary: dict[str, Any], operations: list[dict[str, Any]],
     # Re-approval sends a fresh NATURAL-LANGUAGE command. It is not a hidden
     # token, doesn't bypass the planner and may be rejected/replanned.
     followup = "Apply in §e now: " + "; ".join(_step_command(op) for op in operations)
+    # A candidate must never lose steps on an approval request. Long plans
+    # remain inspectable but require the user to split/revise them.
+    followup_safe = len(followup) <= 8192
     widget = {
         "contract": "swrlz-widget-v1", "kind": "forge-design-preview",
         "title": "§E Design Studio · Review",
@@ -120,10 +123,14 @@ def build_preview(summary: dict[str, Any], operations: list[dict[str, Any]],
             "schema": "swrlz-forge-design-preview-v1",
             "project": _text(project.get("name") or "Open project"),
             "workspace": workspace, "operationCount": len(steps), "steps": steps,
-            "request": _text(request, 300), "followup": followup[:3200],
-            "notice": "Illustrative wireframe only—not a rendered mesh, saved scene or frozen operation. "
-                      "No editor operation has run. Build starts a NEW request that re-plans and "
-                      "validates against the current workspace, so compare the final result.",
+            "request": _text(request, 300),
+            "followup": followup if followup_safe else "",
+            "notice": ("Illustrative wireframe only—not a rendered mesh, saved scene or frozen operation. "
+                       "No editor operation has run. Build starts a NEW request that re-plans and "
+                       "validates against the current workspace, so compare the final result."
+                       if followup_safe else
+                       "The build instructions exceed the safe Chat submission length. "
+                       "No edit was performed. Revise or split the proposal into smaller parts."),
         },
     }
     return ("Prepared a **reviewable §E design blockout** with " + str(len(steps)) +

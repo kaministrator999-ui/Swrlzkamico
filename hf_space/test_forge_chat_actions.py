@@ -79,6 +79,43 @@ class PlannerTest(unittest.TestCase):
         self.assertTrue(self.register.called)
         self.assertTrue(self.wait.called)
 
+
+    def test_actual_model_dispatch_routes_preview_before_falling_back_to_ordinary_chat(self):
+        import forge_chat_actions
+        import model_router
+        for prompt in ("Design a simple robot model in §E",
+                       "Preview a two-part model in §E",
+                       "Can you design a robot model in §E?",
+                       "Plan a robot blockout in §E",
+                       "Please preview a revised §E design: robot model. "
+                       "Show the proposed changes for review, without editing the actual scene."):
+            with self.subTest(prompt=prompt), patch.object(
+                    forge_chat_actions, "generate_events",
+                    return_value=iter([{"type": "COMPLETED", "forgeStatus": "DESIGN_PREVIEW"}])) as native:
+                events = list(model_router.dispatch(
+                    "700m", {"prompt": prompt}, lambda _: iter([]),
+                    forge_context=self.context))
+                self.assertEqual(events[-1]["forgeStatus"], "DESIGN_PREVIEW")
+                native.assert_called_once()
+                self.assertFalse(self.register.called)
+
+    def test_approval_instructions_are_never_silently_truncated(self):
+        operations = [{"op": "mesh.add", "kind": "box",
+                       "name": f"part-{index}-" + "x" * 85,
+                       "position": [index, 1, 2], "rotation": [0, 0.25, 0],
+                       "scale": [1, 1.5, 1], "color": "#abcdef", "material": "metal"}
+                      for index in range(16)]
+        _, widget = build_preview(self.summary, operations, "Preview these 16 parts")
+        followup = widget["data"]["followup"]
+        self.assertGreater(len(followup), 3200)
+        self.assertLessEqual(len(followup), 8192)
+        self.assertEqual(followup.count("Add a box mesh"), 16)
+        self.assertIn("part-15-", followup)
+        extra = operations * 8  # Defensive cap; invalid plans cannot become partial.
+        _, oversize_widget = build_preview(self.summary, extra, "Preview a large plan")
+        self.assertEqual(oversize_widget["data"]["followup"], "")
+        self.assertIn("exceed", oversize_widget["data"]["notice"])
+
     def test_single_mesh_preview_and_non_preview_intent_fences(self):
         op = [{"op": "mesh.add", "kind": "cone", "name": "Roof"}]
         staged = self.run_events(prompt="Preview a cone model in §E", operations=op)
@@ -87,6 +124,7 @@ class PlannerTest(unittest.TestCase):
         self.assertFalse(wants_preview("How can you preview a model?"))
         self.assertFalse(wants_preview("Can you tell me whether the AI can design a model in §E?"))
         self.assertFalse(wants_preview("Do not preview the model."))
+        self.assertTrue(wants_preview("Preview a robot model in §E but do not build it yet."))
         self.assertFalse(wants_preview("Build a React model-3d page in JavaScript"))
         self.assertFalse(should_preview("Apply in §e now: Add a cone mesh", op))
         executed = self.run_events(prompt="Add a cone mesh", operations=op)

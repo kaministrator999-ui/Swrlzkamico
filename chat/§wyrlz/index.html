@@ -1646,7 +1646,7 @@
               v&&typeof v==="object"&&typeof v.op==="string"&&v.op.length<60
               &&validVector(v.position)&&validVector(v.scale)&&v.scale.every(x=>x>0&&x<=20)).slice(0,16);
             const followup=typeof data.followup==="string"&&data.followup.startsWith("Apply in §e now: ")
-              &&data.followup.length<=3200?data.followup:"";
+              &&data.followup.length<=8192?data.followup:"";
             const make=(tag,cls,value)=>{
               const n=document.createElement(tag);if(cls)n.className=cls;
               if(value!==undefined)n.textContent=String(value);return n;
@@ -1797,8 +1797,8 @@
             const actions=make("div","forge-design-actions");
             actions.appendChild(button("✎ Revise design",()=>{
               if(prompt.value.trim()){prompt.focus();return;}
-              prompt.value="Revise this §E design preview: "+String(data.request||"").slice(0,300)
-                +". Show a new preview only; do not build it yet.";
+              prompt.value="Please preview a revised §E design: "+String(data.request||"").slice(0,300)
+                +". Show the proposed changes for review, without editing the actual scene.";
               prompt.dispatchEvent(new Event("input",{bubbles:true}));prompt.focus();
             }));
             const approve=button("Approve · request build in §E",()=>{
@@ -3437,7 +3437,7 @@
         const spec=event.detail||{};
         if(!window.SwrlzForgeEmbedV1?.embedded || sending || prompt.value.trim())return;
         if(typeof spec.prompt!=="string" || !spec.prompt.startsWith("Apply in §e now: ")
-           || spec.prompt.length>3200)return;
+           || spec.prompt.length>8192)return;
         event.preventDefault(); // User click requests a new plan, not a completed native edit.
         prompt.value=spec.prompt;
         prompt.dispatchEvent(new Event("input",{bubbles:true}));
