@@ -59,13 +59,13 @@
   const db=await new Promise((resolve,reject)=>{
    if(!window.indexedDB)return reject(Error('On-device project storage unavailable'));
    const req=indexedDB.open('swyrl-engine-projects-v1',2);
-   req.onupgradeneeded=()=>{
+   req.onupgradeneeded=event=>{
     const db=req.result;
     if(!db.objectStoreNames.contains('projects'))
      db.createObjectStore('projects',{keyPath:'id'});
     if(!db.objectStoreNames.contains('metadata')){
      const meta=db.createObjectStore('metadata',{keyPath:'id'});
-     if(req.transaction&&req.oldVersion>0){
+     if(req.transaction&&event.oldVersion>0){
       const cursor=req.transaction.objectStore('projects').openCursor();
       cursor.onsuccess=()=>{
        const item=cursor.result;if(!item)return;

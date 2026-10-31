@@ -95,7 +95,7 @@ function se184ProjectCard(record,source){
  const article=document.createElement('article');
  article.className='se184-project-card';
  article.dataset.source=source;article.dataset.projectId=id;
- const preview=se184PreviewView(record.preview,record);article.append(preview);
+ let preview=se184PreviewView(record.preview,record);article.append(preview);
  const info=document.createElement('div');info.className='se184-card-info';
  const title=document.createElement('strong');title.textContent=summaryName(record?.name)||'Untitled project';
  title.title=title.textContent;
@@ -153,7 +153,7 @@ function se184ProjectCard(record,source){
     se184CloudPreviews.set(id,summary);
    }
    const fresh=se184PreviewView(summary,record);
-   preview.replaceWith(fresh);
+   preview.replaceWith(fresh);preview=fresh;
    result.textContent='Scene overview ready. The active editor was not changed.';
   }catch(error){
    result.textContent='Could not preview: '+String(error?.message||error).slice(0,140);
