@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.178",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_178_WORKSPACE_ANALYSIS",
-  "reason": "Owner request: embedded §wyrlz Chat must analyze the currently open §E project/workspace. Read-only Analyze workspace button, live authenticated scene/level/selection context, bounded 48 object metadata, actual type counts, duplicate-name and shared-position review hints. Existing server lease/permissions, Chat/Google identity, project save/restore, Sheep Tag and model editing preserved. Chat source869ffbb65cb803bb548e0c36061f9ca4c7ff8e9a, offline CI41128929702 PASS, Chat deploy41129324773 SUCCESS. §E 210patch/68assets/7034587bytes/SHA925c1761e8bc89e22a1ba807320d4ff74f8ed53a6410c4f6e29ed16477773386, sealed CI41129255647 PASS. No visual scene validation or owner Android/Quest acceptance claim.",
-  "sourceCommit": "d4d7623182307ca43ac822d035dbe93399dc9894",
-  "sourceIntegritySha256": "925c1761e8bc89e22a1ba807320d4ff74f8ed53a6410c4f6e29ed16477773386"
+  "releaseVersion": "v11.179",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_179_VR_CONTROLLER_STUDIO",
+  "reason": "Owner-supplied Kami Precision 25-section VR Controller Studio archive: §E v11.179 adds a 2D headset-compatible configurable mapping studio, four profiles, separate Game/Model/Sculpt/Play/Global maps, validated custom profiles and precision, local save/import/export including owner JSON, non-mutating recorder and X+A/Y+B chord priority tests, XR capability diagnostics. No actual immersive tracked game/model/sculpt edits or physical Quest acceptance claimed. 211 patches, 68 assets, 7063978 bytes, sha256 2b9119cb587ca262be0948c3d5a04d35cfa3ebf0a1a5169dea116c1619d365fd. Candidate CI 41216941015 SUCCESS. This is the last DEPLOY_REQUEST-only commit.",
+  "sourceCommit": "a570cb04b75637406a5599f17c9b74fef8ef1608",
+  "sourceIntegritySha256": "2b9119cb587ca262be0948c3d5a04d35cfa3ebf0a1a5169dea116c1619d365fd"
 }
