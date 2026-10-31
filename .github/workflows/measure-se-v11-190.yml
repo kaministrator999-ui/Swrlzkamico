@@ -24,6 +24,8 @@ jobs:
         run: |
           python -m py_compile projects/swrlz-forge-moba/patches/v11_190_render_fps_vault_batch.py
           node --check projects/swrlz-forge-moba/runtime/engine_render_instrument_v11_190.js
+      - name: Strict source receipt and bundled assets (no browser)
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_190_release.py --output /tmp/se190-verified
       - name: Build both routed pages and emit exact integrity receipt
         run: |
           python - <<'PY'

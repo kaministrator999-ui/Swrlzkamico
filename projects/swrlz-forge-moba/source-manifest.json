@@ -238,6 +238,6 @@
     "patches/v11_189_mobile_performance.py",
     "patches/v11_190_render_fps_vault_batch.py"
   ],
-  "finalBytes": 7174054,
-  "finalSha256": "14481c9b520aacc6b631c4e8761bf325dbec250fb8b2d71f70b188a3ffa3ea01"
+  "finalBytes": 7183152,
+  "finalSha256": "823f27e58e34adabfb5610706accc7d81a79c9357b82927d1fd514c1d883fdf9"
 }
