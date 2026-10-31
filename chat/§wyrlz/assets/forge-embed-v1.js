@@ -10,6 +10,7 @@
   const nativeFetch = window.fetch.bind(window);
   let binding = null, port = null, token = "", expiresAt = 0, accountEpoch = 0;
   let thread = "", lease = "", hostVisible = false, pairing = null, cloudBusy = false, resumeNonce = 0;
+  let verifiedAccountId = "", publishedAccountKey = null, cloudListInFlight = null;
   const pending = new Map(), seenBatches = new Set(), cloudCatalog = new Map();
   const id = () => crypto.randomUUID().replaceAll("-", "");
   const validBinding = value => typeof value === "string" && /^[A-Za-z0-9_-]{16,128}$/.test(value);
@@ -81,13 +82,24 @@
     user:user?{name:String(user.displayName || "Google Account").slice(0,120),
       ...(verifiedPicture(user)?{picture:verifiedPicture(user)}:{})}:null
   });
+  // Account UI may refresh independently of the verified embedded bearer.
+  // Publish only a confirmed account and avoid duplicate host refreshes.
+  const publishAccount = user => {
+    if(!port)return;
+    const verified = isAuthenticated() && verifiedAccountId && user?.id === verifiedAccountId ? user : null;
+    const publicValue = publicAccount(verified);
+    const key = verified ? JSON.stringify([verified.id,publicValue.user.name,publicValue.user.picture||""]) : "signed-out";
+    if(key === publishedAccountKey)return;
+    publishedAccountKey=key;
+    send("account.status",publicValue);
+  };
   const revoke = reason => {
     lease="";seenBatches.clear();
     if(port)send("host.revoke",{reason:String(reason||"connection-changed").slice(0,80)});
   };
   const clearAccount = () => {
-    token="";expiresAt=0;accountEpoch++;pairing=null;cloudCatalog.clear();showRecoveryCode("");revoke("account-changed");
-    if(port)send("account.status",publicAccount(null));
+    token="";expiresAt=0;verifiedAccountId="";accountEpoch++;pairing=null;cloudCatalog.clear();showRecoveryCode("");revoke("account-changed");
+    publishAccount(null);
     emit("swrlz-forge-account-changed",{signedIn:false});
   };
   // A 401 from an unrelated protected feature (such as GitHub OAuth) is NOT
@@ -154,7 +166,8 @@
       if(!verified?.user?.id || verified.user.id!==value.user?.id){
         clearAccount();return false;
       }
-      send("account.status",publicAccount(verified.user));
+      verifiedAccountId=verified.user.id;
+      publishAccount(verified.user);
       emit("swrlz-forge-account-changed",{signedIn:true,restored:true});
       return true;
     }catch{return false;}
@@ -192,7 +205,8 @@
           clearAccount();send("account.error",{message:"Chat could not verify the Google connection. Sign in again."});return;
         }
         pairing=null;showRecoveryCode("");
-        send("account.status",publicAccount(verified.user));
+        verifiedAccountId=verified.user.id;
+        publishAccount(verified.user);
         emit("swrlz-forge-account-changed",{signedIn:true});
         return;
       }catch(reason){
@@ -206,6 +220,19 @@
     if(pairing===attempt && Date.now()>=attempt.until){
       pairing=null;showRecoveryCode("");send("account.error",{message:"Google connection expired. Sign in again."});
     }
+  };
+  // Duplicate automatic refreshes are one read, not competing cloud writes.
+  const listCloudProjects = () => {
+    if(cloudListInFlight)return cloudListInFlight;
+    const run=withCloud(async check=>{
+      const value=await json("/api/forge/projects",undefined,"GET");
+      check();
+      for(const project of value.projects||[])cloudCatalog.set(project.id,project);
+      return value;
+    });
+    cloudListInFlight=run;
+    void run.finally(()=>{if(cloudListInFlight===run)cloudListInFlight=null;}).catch(()=>{});
+    return run;
   };
   const withCloud = async action => {
     if(!isAuthenticated())throw error("Sign in to §e with Google before using account projects.");
@@ -287,7 +314,7 @@
     let result;
     try{
       if(message.type === "account.signIn")result=await startPair();
-      else if(message.type === "cloud.list")result=await withCloud(async check=>{const value=await json("/api/forge/projects",undefined,"GET");check();for(const project of value.projects||[])cloudCatalog.set(project.id,project);return value;});
+      else if(message.type === "cloud.list")result=await listCloudProjects();
       else if(message.type === "cloud.save")result=await cloudSave(message.payload);
       else if(message.type === "cloud.load")result=await cloudLoad(message.payload);
       else return;
@@ -303,7 +330,7 @@
       window.parent.postMessage(envelope("iframe.ready",{}),event.origin);
     }else if(message.type === "host.connect" && sameBinding(message) && event.ports?.length === 1 && !port){
       port=event.ports[0];port.onmessage=incoming;port.start();hostVisible=true;
-      send("iframe.connected",{});send("account.status",publicAccount(null));
+      send("iframe.connected",{});publishAccount(null);
       void resumeAccount();
       emit("swrlz-forge-connected",{});
     }
@@ -340,7 +367,12 @@
       seenBatches.add(value.batchId);
       send("host.batch",{batchId:value.batchId,leaseId:lease,threadId:thread,generationId:String(value.generationId||""),projectId:String(value.projectId||"")});
     },
-    notifyAccount(user){if(embedded && port)send("account.status",publicAccount(user));},
+    notifyAccount(user){
+      // showUser can run while embedded sign-in is still restoring. It cannot
+      // assert a host Google identity until the broker has verified its token.
+      if(embedded && port && isAuthenticated() && verifiedAccountId && user?.id===verifiedAccountId)
+        publishAccount(user);
+    },
     requestSignIn(){if(port)send("account.signInRequested",{});},
     revoke,
   };
