@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.188",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_188_GAME_FIRST_WORKSPACE_TABS",
-  "reason": "Owner correction: ordinary §E/index.html launches should always start on Game Engine tab, second top tab Modeling, and never auto-open the native Model Atelier overlay. Gate old model startup open() by route; retain modeler.html direct entry and explicit tab switching. When a model starter or saved local/cloud model is remembered as default, keep that preference and model source intact while opening the Game Engine's normal Dragon Den scene. Existing model draft persistence, Game/Modeler tab switching, VR and project management remain unchanged. Focused Chromium acceptance on mobile 390px and Quest-size 980px PASS in GitHub Actions 41249810520 for ordinary Game landing, saved model starter, saved local model, top tab ordering/visibility, manual Modeling switch, Modeler direct route and draft retention. 220 patch lineage entries, 68 existing asset receipts, exact HTML 7,167,948 bytes SHA-256 6418cfde29f7fc2a90c34a763dde8316131fc64bf1bca777c0acccaa70c70fbb. Physical owner Android/Quest acceptance pending. Deployment verifier-only follow-up: corrected finalArtifact assertion to v11.188 after GitHub Actions 41249998183 rejected the stale v11.187 filename. No shipped HTML bytes or asset changes. Exact artifact SHA stays unchanged.",
-  "sourceCommit": "d4fad4ce2c9daaa400ad3848debf547c56908dab",
-  "sourceIntegritySha256": "6418cfde29f7fc2a90c34a763dde8316131fc64bf1bca777c0acccaa70c70fbb"
+  "releaseVersion": "v11.189",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_189_MOBILE_RENDER_BOOST",
+  "reason": "Owner-reported ~18 FPS and 56.7ms in Dragon Den on Android. Add opt-in 62%-resolution / shadows-off Mobile Boost to native Graphics & Performance, more efficient viewport resize measurement, and CPU update/render submission and draw-call diagnostics; preserve existing graphics preferences, geometry, game/modeler tabs, projects and VR. Source builds/syntax pass. Android-size Chromium smoke measured ~581 scene draw calls and confirmed bounded resize invalidation, but the optional Chromium suite was explicitly removed from automatic GitHub workflows at owner's request due repeated browser installation overhead. Live device performance benefit is unmeasured; owner acceptance pending. Exact 221-patch HTML source: 7,174,054 bytes and SHA-256 14481c9b520aacc6b631c4e8761bf325dbec250fb8b2d71f70b188a3ffa3ea01. Strict deploy package and asset hashes remain mandatory.",
+  "sourceCommit": "0f54d3235477fe1b2cef60b968b05aef8d51cdfd",
+  "sourceIntegritySha256": "14481c9b520aacc6b631c4e8761bf325dbec250fb8b2d71f70b188a3ffa3ea01"
 }
