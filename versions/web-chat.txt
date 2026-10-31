@@ -1,6 +1,6 @@
 ID=web-chat
-VERSION=1.5.169
-REVISION=1.5.168-forge-project-setup
+VERSION=1.5.170
+REVISION=1.5.170-chat-forge-exact-approval-v2
 KIND=web-interface
 SOURCE_BRANCH=runtime
 STATUS=active
@@ -32,3 +32,5 @@ FORGE_CHAT_PROJECT_SETUP_20261030_NOTE=Owner requested natural new-project setup
 CHAT_DESIGN_STUDIO_V1_20261031_NOTE=Web Chat 1.5.169 source candidate merges native preview-only Studio response, 3D/top/front schematic, construction slider, expanded in-chat review, explicit new-request approval interaction, versioned clean-room page 1.1.20, deterministic 16-step/no-partial tests. Verified exact tree 3ef71c6bfd3cf5a1f4d18b0eacddef190666f22a / CI41238565721 PASS; no native batch emitted on preview. Live HF publication and owner Android/Quest acceptance tracked independently. §E engine unchanged.
 
 CHAT_DESIGN_STUDIO_V1_DEPLOY_20261031_NOTE=Guarded Chat-only Hugging Face production request main 3a2c3ca2d7080e12d93aeaf8a55d0618c6a5344c, workflow 41238956846 SUCCESS; exact validated Chat source 1f052e299cfb8930ffbf8b661f3421c5c10653b0 was uploaded to existing kamiloki/Swyrlz, revision 0bc5e381ed61a583a697b9cba2dd85633b556457, rollback 6179b227c625dd2a8162bbf8e9391cf21239843b snapshotted. Exact served assets and authenticated Android/Quest design-build behavior are DEVICE_TEST_PENDING / LIVE_BEHAVIOR_UNVERIFIED. Feature is conceptual primitive schematic and fresh approval-request replanning, not exact frozen-plan approval or full sculpt/rig. Preexisting unrelated Mobile Lyric Reader Integrity matcher failure remains open. No §E engine release or model weight changes.
+
+CHAT_EXACT_APPROVAL_V2_SOURCE_20261031_NOTE=Web Chat 1.5.170 candidate includes in-message exact-plan review attributes/digest, isometric/top/front construction preview, expiry, revision and explicit one-time Approve UI. Server-owned validated immutable plan under existing authenticated §E bridge, atomic claim; approval does not regenerate text instructions. PR304 merged exact CI-tested SHA bcea32aba7f8138e8bae9fdbace943c048cb81c4, exact tree f899fde92b5974e0ada507cedbc3e38b159985b7, CI41241847736 SUCCESS, code review no findings. Production/owner-device acceptance tracked separately; §E engine untouched.
