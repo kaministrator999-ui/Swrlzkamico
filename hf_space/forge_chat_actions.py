@@ -13,6 +13,7 @@ from typing import Any, Callable, Iterator
 
 from brain_forge import classify_forge_intent, current_command_text, inspection_text, native_plan_system, requests_new_project, _literal
 from forge_workspace_insights_v1 import build_insight
+from forge_design_preview_v1 import wants_preview, should_preview, build_preview
 
 MAX_OPERATIONS = 16
 MAX_PLAN_BYTES = 24576
@@ -352,6 +353,10 @@ def generate_events(payload: dict[str, Any], context, register_batch: Callable |
         summary = _summary(context)
         prompt = payload.get("prompt") if isinstance(payload, dict) else None
         intent = classify_forge_intent(prompt, summary)
+        # An explicit design/preview is read-only staging even when ordinary
+        # native intent classification does not recognize the design verb.
+        if wants_preview(prompt) and intent.get("reason") != "separate-code-or-provider-request":
+            intent = {"disposition": "mutation", "reason": "native-design-preview"}
         if intent["disposition"] == "read":
             # Server-owned scene insights use the freshly revalidated native lease.
             # Display metadata is a separate widget, never interpreted as commands.
@@ -401,6 +406,16 @@ def generate_events(payload: dict[str, Any], context, register_batch: Callable |
             return
         operations = validate_operations(context, plan["operations"])
         _validate_requested_actions(prompt, operations)
+        if should_preview(prompt, operations):
+            # No batch ID, host event, write capability or mutation occurs here.
+            # Approval starts a separate human Chat turn that is independently
+            # planned and validated against a fresh authenticated editor state.
+            revalidate(context, require_snapshot=True)
+            explanation, widget = build_preview(summary, operations, prompt)
+            yield {"type": "DELTA", "text": explanation}
+            yield {"type": "WIDGET", "widget": widget}
+            yield {"type": "COMPLETED", "phase": "COMPLETE", "forgeStatus": "DESIGN_PREVIEW"}
+            return
         batch_id = register(context, operations)
         if not isinstance(batch_id, str) or not _HEX.fullmatch(batch_id):
             raise ForgePlanError("FORGE_INVALID_BATCH_RECEIPT")

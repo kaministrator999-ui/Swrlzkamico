@@ -41,6 +41,9 @@ def build_project_setup(summary: dict[str, Any], prompt: str = "") -> tuple[str,
         suggested = "sheep-tag-meadow"
     elif re.search(r"\b(?:glitch\s+)?dragon(?:'s|s)?[\s-]+den\b", command):
         suggested = "glitch-dragons-den"
+    elif re.search(r"\bmodel[\s-]+atelier\b", command):
+        # Explicit advertised starter must outrank generic \"model\" -> empty.
+        suggested = "model-atelier"
     elif re.search(r"\b(?:model\s+starter|starter\s+(?:3d\s+)?model)\b", command):
         suggested = "model-atelier"
     elif re.search(r"\b(?:3d\s+model|models?|sculpt(?:ure)?)\b", command):
