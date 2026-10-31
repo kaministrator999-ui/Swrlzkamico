@@ -63,6 +63,19 @@ try{
   assert.equal(new URL(page.url()).pathname,'/index.html');
   assert.equal(await page.locator('#modelAtelierPanel').getAttribute('hidden')!==null,true);
   assert.equal(await page.locator('#modelAtelierPanel').isVisible(),false,'Hidden Modeler must not cover the Game Engine workspace');
+  console.log('SE187_GAME_NAV_LAYOUT',name,JSON.stringify(await page.evaluate(()=>{
+   const e=document.querySelector('.se187-game-tabs [data-se187-tab="modeler"]');
+   const list=[];
+   for(let n=e;n&&list.length<12;n=n.parentElement){
+    const s=getComputedStyle(n),r=n.getBoundingClientRect();
+    list.push({tag:n.tagName,id:n.id,cls:String(n.className).slice(0,140),
+      display:s.display,visibility:s.visibility,opacity:s.opacity,
+      position:s.position,overflow:s.overflow,
+      x:Math.round(r.x),y:Math.round(r.y),w:Math.round(r.width),h:Math.round(r.height)});
+   }
+   return {route:location.pathname,active:window.SWYRL_ENGINE_WORKSPACES?.active(),
+     panel:document.getElementById('modelAtelierPanel')?.hidden,layout:list};
+  })));
   await page.locator('.se187-game-tabs [data-se187-tab="modeler"]').click({timeout:10000});
   await page.waitForFunction(()=>window.SWYRL_ENGINE_WORKSPACES.active()==='modeler'&&
     window.SWYRL_ENGINE_MODEL_ATELIER.status().open);
