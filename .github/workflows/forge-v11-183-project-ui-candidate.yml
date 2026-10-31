@@ -38,3 +38,27 @@ jobs:
           assert b'seLevelRawLoadProject(structuredClone(chosen.data)' not in b
           print('SE183_CANDIDATE_RECEIPT',json.dumps({'bytes':len(b),'sha256':hashlib.sha256(b).hexdigest()}))
           PY
+
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Build v11.183 fixture and assert one native scene rebuild
+        run: |
+          python - <<'PY'
+          import json,pathlib
+          p=pathlib.Path('projects/swrlz-forge-moba/source-manifest.json')
+          m=json.loads(p.read_text());m['finalBytes']=0;m['finalSha256']=''
+          p.write_text(json.dumps(m,ensure_ascii=False))
+          PY
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/se183-browser >/dev/null
+          node projects/swrlz-forge-moba/tests/test_v11_183_native_single_load.cjs /tmp/se183-browser/index.html
+      - name: Install browser test runtime
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps --only-shell chromium
+      - name: Verify project UI and loading on phone, Quest-size and desktop
+        run: node projects/swrlz-forge-moba/tests/ui_v11_183_browser.mjs
