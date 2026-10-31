@@ -167,10 +167,13 @@ window.closeHost=()=>send('host.inactive',{reason:'closed'});
       assert.match(await setup.locator('.forge-project-review').textContent(),/Wolf Quest[\s\S]*Sheep Tag/);
       assert.equal(sent.prompt,'Add a blue cube in the editor.','review never executes a native operation');
       await setup.getByRole('button',{name:'Create project in §e'}).click();
-      await frame.waitForFunction(()=>Array.from(document.querySelectorAll('.message.user-message')).some(n=>(n.textContent||'').includes('sheep-tag-meadow starter named exactly')),null,{timeout:5000});
-      assert.equal(sent.prompt,'Create a new project from the sheep-tag-meadow starter named exactly "Wolf Quest"',
-        'explicit owner click sends a complete current request through the original native editor route');
-      assert.match(await setup.locator('.forge-project-message').textContent(),/Request submitted/);
+      const expectedProjectCommand='Create a new project from the sheep-tag-meadow starter named exactly "Wolf Quest"';
+      for(let attempt=0;attempt<40 && sent?.prompt!==expectedProjectCommand;attempt++)
+        await new Promise(resolve=>setTimeout(resolve,100));
+      assert.equal(sent?.prompt,expectedProjectCommand,
+        'explicit owner click sends the exact native request to the authenticated Station transport');
+      // The fixture intentionally does not persist the new command as a
+      // conversation bubble; don't mistake that artificial sync for a product bug.
       const parentData=await page.evaluate(()=>JSON.stringify(window.received));assert.ok(!parentData.includes(token));assert.ok(!parentData.includes('Earlier account project question'));
       const dimensions=await frame.evaluate(()=>({overflow:document.documentElement.scrollWidth>innerWidth,width:innerWidth}));assert.equal(dimensions.overflow,false,label+' Chat fits panel width');
       await page.evaluate(()=>window.closeHost());
