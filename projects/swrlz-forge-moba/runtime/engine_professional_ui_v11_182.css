@@ -1,0 +1,247 @@
+/* §E v11.182 — unified professional editor UI, additive and reversible.
+ * Only presentation/stacking. No scene, renderer, camera or controller edits.
+ * Projects modal (body portal), native dialogs, Chat and gameplay overlays
+ * retain their validated priority and behavior. */
+:root{
+ --se182-bg:#0a111c;--se182-surface:#101b2b;--se182-panel:#152337;
+ --se182-raised:#1b2d43;--se182-line:#30465b;--se182-line-strong:#50738a;
+ --se182-text:#f0f6ff;--se182-muted:#a7b7c8;--se182-accent:#8fdccf;
+ --se182-blue:#83b8ff;--se182-focus:#fbd991;
+ --se182-radius:12px;--se182-shadow:0 14px 44px rgba(0,0,0,.38);
+}
+html,body{color-scheme:dark}
+html body{background:var(--se182-bg);color:var(--se182-text)}
+html .app{min-width:0;min-height:0;background:var(--se182-bg)}
+/* Native grid reserves exactly 48px for the toolbar: do not increase its\n   row or cover the scene in compact landscape windows.\n * Native editor toolbar is an intentional horizontal rail, never a second
+   floating sheet over the scene. Its first Projects/Play group stays first. */
+html .app>.topbar{
+ box-sizing:border-box;display:flex;align-items:center;gap:7px;
+ padding:0 clamp(8px,1.25vw,17px);
+ min-height:48px;min-width:0;max-width:100%;
+ flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;
+ overscroll-behavior-x:contain;scrollbar-width:thin;scrollbar-color:#536b80 #101c2b;
+ background:linear-gradient(180deg,#17283a,#101d2e 92%);
+ border-bottom:1px solid #38516a;
+ box-shadow:0 2px 15px rgba(0,0,0,.28);
+}
+html .app>.topbar>*{flex-shrink:0}
+html .app>.topbar .brand{font-weight:700;letter-spacing:.025em;color:var(--se182-text);margin-right:3px}
+html .app>.topbar .brand b{color:#9debdc}
+html .app>.topbar .sep{height:24px;min-width:1px;width:1px;margin:0 3px;background:#436078}
+html .app>.topbar :is(button,select,input:not([type="range"])){
+ border:1px solid var(--se182-line-strong);background:#213348;color:#f4f9ff;
+ min-height:39px;border-radius:9px;box-shadow:none;
+ font:600 12px/1.2 system-ui,sans-serif;
+ transition:border-color .12s ease,background-color .12s ease,box-shadow .12s ease;
+}
+html .app>.topbar button{white-space:nowrap}
+html .app>.topbar button:hover:not(:disabled){background:#2b455d;border-color:#89b5cd}
+html .app>.topbar button.active{background:#294f63;border-color:#9be0d8}
+html .app>.topbar :is(#se179VRControlsOpen,#se181EnterVR){min-height:41px;font-weight:700}
+html .app>.topbar .se-main-project-button{border-color:#7ba9ee!important;background:#244464!important}
+html .app>.topbar .se-main-workflow-button{border-radius:9px}
+html .app>.topbar #se181XRStatus{flex:0 0 auto;max-width:140px;color:#bdd0de}
+/* Consistent chrome, without changing 3D model, viewport or HUD colors. */
+html .app>.workspace{min-width:0;min-height:0;background:var(--se182-bg)}
+html .app>.workspace>.panel{
+ box-sizing:border-box;min-width:0;
+ background:linear-gradient(180deg,#142336,#101c2d);
+ border-color:var(--se182-line);color:var(--se182-text);
+ scrollbar-width:thin;scrollbar-color:#405d76 transparent;
+}
+html .app>.workspace>.panel .section{
+ min-width:0;max-width:100%;border-color:#2c4157;
+}
+html .app>.workspace>.panel .section>h3{
+ margin:0;letter-spacing:.075em;text-transform:uppercase;
+ color:#bcd0e0;font:700 11px/1.45 system-ui,sans-serif;
+}
+html .app>.workspace>.panel :is(.section-body,.hierarchy,.asset-grid,.outliner-tools){
+ max-width:100%;min-width:0;
+}
+html .app>.workspace>.panel :is(input,textarea,select){
+ box-sizing:border-box;max-width:100%;min-width:0;
+ border:1px solid #486277;border-radius:8px;
+ background:#0c1a2a;color:#ecf8ff;
+}
+html .app>.workspace>.panel :is(input,select){min-height:36px}
+html .app>.workspace>.panel button:not(.asset){
+ border-radius:8px;border-color:#425e75;
+}
+html .app>.workspace>.panel button:not(:disabled):hover{border-color:#8ecbd3}
+html .app>.workspace>.panel .asset{
+ min-width:0;border:1px solid #39536b;border-radius:10px;
+ background:#1a2b3e;color:#f0f6ff;
+}
+html .app>.workspace>.panel .asset:hover{border-color:#7badd0;background:#263e55}
+html .app>.workspace>.panel :is(.field,.row,.grid3){min-width:0}
+html .app>.workspace>.panel .field>label{color:#b7c8d7}
+html .app>.workspace>.viewport-wrap{min-width:0;min-height:0;background:#080f1b}
+html .app>.workspace>.viewport-wrap>canvas#viewport{display:block;max-width:100%}
+html .app>.workspace>.viewport-wrap :is(.badgeBox,.viewport-toolbar){
+ max-width:calc(100% - 16px);box-sizing:border-box;
+}
+html .app>.workspace>.viewport-wrap .viewport-toolbar button{
+ border-color:#577a8b;border-radius:8px;
+ background:rgba(17,39,53,.95);color:#effdff;
+}
+/* Scene level controls remain inside canvas bounds, can wrap in their own
+   scroll area, and never spill over mobile tabs from the v11.174 geometry. */
+html .viewport-wrap>#st141LevelBar.st141-levelbar{
+ box-sizing:border-box;max-width:calc(100% - 16px);
+ border:1px solid #618a85;border-radius:10px;
+ background:rgba(13,39,43,.96);backdrop-filter:blur(8px);
+ box-shadow:0 10px 24px rgba(0,0,0,.34);
+ gap:5px;padding:4px;
+}
+html .viewport-wrap>#st141LevelBar.st141-levelbar button{
+ border-radius:7px;min-height:34px;
+}
+/* Native app menus: correct modal layering was established in v11.173.
+   This change only improves size containment and consistent surface style. */
+html #projectHub.project-hub.show{
+ position:fixed!important;inset:0!important;
+ z-index:2147483000!important;isolation:isolate;
+ display:flex;align-items:center;justify-content:center;
+ padding:clamp(8px,2vw,22px);box-sizing:border-box;
+ overflow:hidden;
+}
+html #projectHub .project-window{
+ box-sizing:border-box;width:min(940px,100%);
+ max-height:calc(100dvh - clamp(16px,4vw,44px));
+ overflow:auto;overscroll-behavior:contain;
+ background:var(--se182-surface);border:1px solid #58748b;
+ border-radius:16px;box-shadow:0 24px 80px rgba(0,0,0,.68);
+ scrollbar-width:thin;
+}
+html #projectHub .project-head{
+ position:sticky;top:0;z-index:2;display:flex;align-items:center;
+ flex-wrap:wrap;gap:8px;
+ background:linear-gradient(180deg,#20384d,#162c42);
+ border-bottom:1px solid #466980;
+}
+html #projectHub .project-head>b{color:#f3faff;flex:1 1 180px}
+html #projectHub .project-head button{
+ min-width:42px;min-height:42px;border-color:#7696a6;
+ background:#253e52;color:#fff;
+}
+html #projectHub .se170-hub-tabs{
+ position:relative;z-index:1;background:#13273a;
+}
+html #projectHub .project-card{
+ box-sizing:border-box;min-width:0;border:1px solid #3a5672;
+ border-radius:12px;background:linear-gradient(155deg,#192b42,#132438);
+ box-shadow:none;transition:border-color .15s ease,transform .15s ease;
+}
+html #projectHub .project-card:hover{border-color:#9cd8e5;transform:translateY(-1px)}
+html #projectHub :is(input,select,textarea){max-width:100%;min-width:0;box-sizing:border-box}
+html #projectHub :is(button,input,select,textarea):focus-visible,
+html .app :is(button,input,select,textarea,[role="button"]):focus-visible{
+ outline:2px solid var(--se182-focus)!important;outline-offset:2px!important;
+}
+html dialog[open]:modal{z-index:2147483100!important}
+html dialog[open]{
+ box-sizing:border-box;max-width:calc(100vw - 16px);
+ max-height:calc(100dvh - 16px);
+ overscroll-behavior:contain;
+}
+/* VR Controller Studio is a real <dialog>: maintain top-layer ownership. */
+html .se179-dialog{
+ width:min(900px,calc(100vw - 20px));
+ max-height:calc(100dvh - 24px);
+ border-color:#5b99af;background:#0e2133;
+ box-shadow:0 24px 80px rgba(0,0,0,.65);
+}
+html .se179-dialog .se179-header{
+ background:#173147;border-bottom-color:#476c83;
+}
+html .se179-dialog .se179-body{
+ box-sizing:border-box;max-height:calc(100dvh - 160px);
+ scrollbar-width:thin;
+}
+html .se179-dialog .se179-binding{
+ min-width:0;grid-template-columns:minmax(0,1fr) minmax(128px,210px);
+}
+html .se179-dialog .se179-binding input{min-width:0;width:100%}
+html .se179-dialog :is(.se179-button,input,select){border-radius:8px}
+/* First-party Chat intentionally floats over the editor, but beneath
+   Projects and native modal dialogs. Keep controls reachable. */
+html #seChatToggle{
+ right:calc(12px + env(safe-area-inset-right));
+ box-shadow:0 10px 28px rgba(0,0,0,.5);
+ border:1px solid #d6c5ff;border-radius:100px;
+}
+html #seChatAccountPanel{
+ box-sizing:border-box;max-width:calc(100vw - 12px);
+ border-color:#776c99;
+ box-shadow:-14px 0 55px rgba(0,0,0,.52);
+}
+html #seChatAccountPanel header{
+ border-bottom:1px solid #574f75;
+ background:linear-gradient(100deg,#27223e,#1a263d);
+}
+html #seChatAccountPanel :is(input,select,button){box-sizing:border-box;max-width:100%}
+/* Existing native model editor stays independent. Reuse the palette in its
+   controls without reflowing its sculpting canvas, gizmos or thumb rail. */
+html #modelAtelierPanel :is(button,input,select,textarea):focus-visible,
+html #atelierContextWorkbench :is(button,input,select,textarea):focus-visible{
+ outline:2px solid var(--se182-focus)!important;outline-offset:2px!important;
+}
+html #modelAtelierPanel :is(.atelier-inspector,.atelier-tool-rail),
+html #atelierContextWorkbench{
+ scrollbar-width:thin;scrollbar-color:#526e81 transparent;
+}
+html #modelAtelierPanel :is(input,select,textarea){max-width:100%;box-sizing:border-box}
+/* Enforce sensible bounds on floating editor utilities, excluding in-world
+   HUD/joysticks and the modal Projects/Chat controlled separately. */
+html .app :is(.mobile-tools-panel,.content-drawer,.mobile-drawer){
+ box-sizing:border-box;max-width:100%;
+ overscroll-behavior:contain;
+}
+html #st141RuntimeMenu .st141-menu-panel{
+ box-sizing:border-box;max-width:calc(100% - 14px);
+ max-height:calc(100% - 14px);overflow:auto;
+ border-radius:14px;
+}
+@media(max-width:720px){
+ html .app>.topbar{gap:6px;padding:0 8px;min-height:48px}
+ html .app>.topbar .brand{font-size:12px}
+ html .app>.topbar :is(button,select,input:not([type="range"])){min-height:40px}
+ html .app>.workspace>.panel{max-width:100%}
+ html #projectHub.project-hub.show{padding:6px}
+ html #projectHub .project-window{max-height:calc(100dvh - 12px);border-radius:12px}
+ html #projectHub .project-head{padding:10px 12px}
+ html .se179-dialog{width:calc(100vw - 12px);max-height:calc(100dvh - 12px)}
+ html .se179-dialog .se179-body{max-height:calc(100dvh - 145px);padding:10px}
+ html .se179-dialog .se179-binding{grid-template-columns:minmax(0,1fr)}
+ html #seChatAccountPanel{max-width:100vw}
+}
+@media(max-width:620px){
+ html .viewport-wrap>#st141LevelBar.st141-levelbar{
+  top:5px;left:4px;right:4px;max-width:calc(100% - 8px);
+  max-height:min(86px,28%);overflow:auto;
+ }
+ html .app>.workspace>.viewport-wrap>.mobile-tabs{
+  max-width:calc(100% - 8px);box-sizing:border-box;
+ }
+ html .app>.workspace>.viewport-wrap>.mobile-drawer{
+  max-width:100%;overflow:auto;
+ }
+ html .app>.workspace>.viewport-wrap>.badgeBox{
+  max-width:calc(100% - 16px);overflow:hidden;text-overflow:ellipsis;
+ }
+ html #seChatToggle{
+  bottom:calc(72px + env(safe-area-inset-bottom));
+ }
+}
+@media(max-height:460px) and (orientation:landscape){
+ html #projectHub .project-window{max-height:calc(100dvh - 8px)}
+ html #projectHub .project-head{padding:6px 10px}
+ html .se179-dialog .se179-body{max-height:calc(100dvh - 120px)}
+ html #seChatAccountPanel{max-height:calc(100dvh - 16px)}
+}
+/* Browsers/Quest may expose accessibility preference; respect it across all
+   v11.182 hover/rail transitions without altering legacy animation assets. */
+@media(prefers-reduced-motion:reduce){
+ html .app>.topbar button,html #projectHub .project-card{transition:none!important}
+}

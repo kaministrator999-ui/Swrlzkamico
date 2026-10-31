@@ -1,0 +1,63 @@
+name: §E v11.182 focused UI candidate
+on:
+  push:
+    branches: [feature/forge-v11-182-ui-polish-layout-20261031]
+    paths:
+      - "projects/swrlz-forge-moba/**"
+      - ".github/workflows/forge-v11-182-ui-candidate.yml"
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Test UI geometry and source syntax
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/engine_professional_ui_v11_182.js
+          node projects/swrlz-forge-moba/tests/test_v11_182_ui.cjs
+      - name: Verify exact 214-patch, 68-asset integrity receipt
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_182_release.py --output /tmp/se182-sealed
+      - name: Measure sealed source without changing previous patches
+        run: |
+          python - <<'PY'
+          import json,pathlib
+          path=pathlib.Path('projects/swrlz-forge-moba/source-manifest.json')
+          m=json.loads(path.read_text());assert m['name']=='§wyrl§ Engine v11.182'
+          assert len(m['patches'])==214 and m['patches'][-1]=='patches/v11_182_professional_ui.py'
+          m['finalSha256']='';m['finalBytes']=0
+          path.write_text(json.dumps(m,ensure_ascii=False))
+          PY
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/se182-candidate >/tmp/se182-build.log
+          python - <<'PY'
+          import hashlib,json,pathlib
+          b=pathlib.Path('/tmp/se182-candidate/index.html').read_bytes()
+          for item in [b'V11_182_PROFESSIONAL_UI',b'se182ProfessionalUI',b'SWYRL_ENGINE_UI_AUDIT',b'se181EnterVR',b'se179VRControlsOpen',b'seChatOutsideDismissV11180']:
+            assert item in b,item
+          print('SE182_CANDIDATE',json.dumps({'bytes':len(b),'sha256':hashlib.sha256(b).hexdigest()}))
+          PY
+
+  browser-layout:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Rebuild candidate locally for browser geometry checks
+        run: |
+          python - <<'PY'
+          import json,pathlib
+          p=pathlib.Path('projects/swrlz-forge-moba/source-manifest.json')
+          m=json.loads(p.read_text())
+          m['finalSha256']='';m['finalBytes']=0;p.write_text(json.dumps(m,ensure_ascii=False))
+          PY
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/se182-browser >/tmp/se182-browser-build
+      - name: Install focused Chromium browser tooling
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps --only-shell chromium
+      - name: Test topbar, modal visibility and overlap across phone/Quest/desktop
+        run: node projects/swrlz-forge-moba/tests/ui_layout_v11_182_browser.mjs
