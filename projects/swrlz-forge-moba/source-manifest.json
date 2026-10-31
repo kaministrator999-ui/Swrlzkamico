@@ -235,6 +235,6 @@
     "patches/v11_186_first_paint_wisp_boot.py",
     "patches/v11_187_separate_game_modeler.py"
   ],
-  "finalBytes": 7151793,
-  "finalSha256": "7b0f4379396a83ca97fb99ada3b533b7bcb2c89716b986cc365dc792138a5f00"
+  "finalBytes": 7166103,
+  "finalSha256": "85f2b18399d9d28a7fe32d905dfd77f6102f56ef0acb9b8645c589c23fcb0b3d"
 }

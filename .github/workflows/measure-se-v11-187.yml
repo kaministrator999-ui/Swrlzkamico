@@ -30,6 +30,8 @@ jobs:
           python -m py_compile projects/swrlz-forge-moba/build_space.py
           node --check projects/swrlz-forge-moba/runtime/engine_separate_workspaces_v11_187.js
           node --check projects/swrlz-forge-moba/tests/ui_v11_187_workspaces.mjs
+      - name: Verify sealed v11.187 source, both routes, and bundled asset receipts
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_187_release.py --output /tmp/se187-sealed
       - name: Build and measure exact version with both entrypoint pages
         run: |
           python - <<'PY'
