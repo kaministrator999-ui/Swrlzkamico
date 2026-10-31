@@ -27,6 +27,8 @@ jobs:
           python -m py_compile projects/swrlz-forge-moba/patches/v11_186_first_paint_wisp_boot.py
           node --check projects/swrlz-forge-moba/runtime/engine_boot_first_paint_v11_186.js
           node --check projects/swrlz-forge-moba/tests/ui_v11_186_first_paint.cjs
+      - name: Verify sealed source, all asset hashes, and startup markers
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_186_release.py --output /tmp/se186-strict
       - name: Measure exact rebuilt HTML and first-paint ordering
         run: |
           python - <<'PY'

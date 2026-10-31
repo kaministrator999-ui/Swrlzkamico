@@ -1,14 +1,5 @@
 name: Measure §E v11.185 source integrity
 on:
-  push:
-    branches: [main]
-    paths:
-      - "projects/swrlz-forge-moba/patches/v11_185_wisp_boot_atelier_collapse.py"
-      - "projects/swrlz-forge-moba/runtime/engine_wisp_boot_atelier_v11_185.js"
-      - "projects/swrlz-forge-moba/runtime/engine_wisp_boot_atelier_v11_185.css"
-      - "projects/swrlz-forge-moba/source-manifest.json"
-      - ".github/workflows/measure-se-v11-185.yml"
-      - "projects/swrlz-forge-moba/scripts/verify_v11_185_release.py"
   workflow_dispatch:
 permissions:
   contents: read

@@ -234,6 +234,6 @@
     "patches/v11_185_wisp_boot_atelier_collapse.py",
     "patches/v11_186_first_paint_wisp_boot.py"
   ],
-  "finalBytes": 7144873,
-  "finalSha256": "0191e9f031e7e4e38996fac1ae954a3012aa87a03803bbc876936441bfdafa53"
+  "finalBytes": 7151793,
+  "finalSha256": "7b0f4379396a83ca97fb99ada3b533b7bcb2c89716b986cc365dc792138a5f00"
 }
