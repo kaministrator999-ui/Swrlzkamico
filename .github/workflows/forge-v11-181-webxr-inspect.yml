@@ -20,25 +20,16 @@ jobs:
           node --check projects/swrlz-forge-moba/runtime/immersive_xr_gateway_v11_181.js
           node projects/swrlz-forge-moba/tests/test_v11_181_immersive_xr.cjs
           node projects/swrlz-forge-moba/tests/test_v11_181_xr_session_lifecycle.cjs
-      - name: Rebuild candidate and measure exact source
+      - name: Check sealed immersive XR engine source and packaged assets
         run: |
+          python projects/swrlz-forge-moba/scripts/verify_v11_181_release.py --output /tmp/forge181
           python - <<'PY'
-          import json,pathlib
-          f=pathlib.Path('projects/swrlz-forge-moba/source-manifest.json')
-          m=json.loads(f.read_text())
-          assert m['name']=='§wyrl§ Engine v11.181'
-          assert len(m['patches'])==213 and m['patches'][-1]=='patches/v11_181_immersive_xr_gateway.py'
-          m['finalBytes']=0;m['finalSha256']=''
-          f.write_text(json.dumps(m,ensure_ascii=False))
-          PY
-          python projects/swrlz-forge-moba/build_space.py --output /tmp/forge181
-          python - <<'PY'
-          import hashlib,pathlib,json
-          raw=pathlib.Path('/tmp/forge181/index.html').read_bytes()
-          source=raw.decode('utf-8')
-          assert source.count('renderer.setAnimationLoop(tick);')==1
-          assert source.count('function se181XREnter()')==1
-          assert 'se181XRRender();renderer.render(scene,camera);' in source
-          assert 'SWYRL_ENGINE_DEPLOY_MARKER: V11_181_IMMERSIVE_WEBXR_GATE' in source
-          print('XR_GATEWAY_MEASURED',json.dumps({'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest()}))
+          import hashlib,json,pathlib
+          root=pathlib.Path('/tmp/forge181')
+          raw=(root/'index.html').read_bytes()
+          receipt=json.loads((root/'SOURCE.json').read_text())
+          assert len(raw)==receipt['finalBytes']==7079620
+          assert hashlib.sha256(raw).hexdigest()==receipt['finalSha256']=='fb0732cc05fb4a4e5c5a8e114ffba9518c88be42a220c5d8908090262c20fd77'
+          assert len(receipt['patches'])==213 and len(receipt['assets'])==68
+          print('XR_V11_181_SEALED_PASS')
           PY

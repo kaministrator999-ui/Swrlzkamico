@@ -229,6 +229,6 @@
     "patches/v11_180_chat_outside_dismiss.py",
     "patches/v11_181_immersive_xr_gateway.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 7079620,
+  "finalSha256": "fb0732cc05fb4a4e5c5a8e114ffba9518c88be42a220c5d8908090262c20fd77"
 }
