@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.179",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_179_VR_CONTROLLER_STUDIO",
-  "reason": "Owner-supplied Kami Precision 25-section VR Controller Studio archive: §E v11.179 adds a 2D headset-compatible configurable mapping studio, four profiles, separate Game/Model/Sculpt/Play/Global maps, validated custom profiles and precision, local save/import/export including owner JSON, non-mutating recorder and X+A/Y+B chord priority tests, XR capability diagnostics. No actual immersive tracked game/model/sculpt edits or physical Quest acceptance claimed. 211 patches, 68 assets, 7063978 bytes, sha256 2b9119cb587ca262be0948c3d5a04d35cfa3ebf0a1a5169dea116c1619d365fd. Candidate CI 41216941015 SUCCESS. This is the last DEPLOY_REQUEST-only commit.",
-  "sourceCommit": "a570cb04b75637406a5599f17c9b74fef8ef1608",
-  "sourceIntegritySha256": "2b9119cb587ca262be0948c3d5a04d35cfa3ebf0a1a5169dea116c1619d365fd"
+  "releaseVersion": "v11.180",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_180_CHAT_OUTSIDE_DISMISS",
+  "reason": "§E Chat side panel slides away on outside primary click/tap, ignores in-panel and toggle interactions, preserves iframe conversation and drafts, retains native lease revocation, prevents editor-focus stealing, supports reduced motion and rapid reopening; no Game, Model, VR Studio or Chat auth changes. 212 patches, 68 assets, 7066690 HTML bytes, SHA-256 befd3604d7614483eff73ef958c9652204ba3aeed4533f01a4b6204b9212ea60. Candidate CI 41217936565 PASS. Separate final request only.",
+  "sourceCommit": "68e9469cd54e91f4ced2e504bfbb11e6fa493a54",
+  "sourceIntegritySha256": "befd3604d7614483eff73ef958c9652204ba3aeed4533f01a4b6204b9212ea60"
 }
