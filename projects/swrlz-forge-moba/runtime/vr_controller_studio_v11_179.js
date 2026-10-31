@@ -79,6 +79,60 @@ function sanitise(raw){
  for(const context of CONTEXTS)p.bindings?.[context]?.forEach(row=>{if(row.length!==3)throw Error('Bad binding row')});
  validateProfile(p);return p;
 }
+// A test-only combination resolver: returns symbolic actions, never native writes.
+// Captured modifiers suppress singles even if the buttons are subsequently released.
+const keyState={pressed:new Map(),consumed:new Set(),fired:new Set(),previousTap:new Map(),context:null};
+function clearKeyState(){keyState.pressed.clear();keyState.consumed.clear();keyState.fired.clear();keyState.previousTap.clear();}
+function testInput(event,ctx='game'){
+ if(!CONTEXTS.includes(ctx)||ctx==='global'||!event||!['down','up','tick','axis','reset'].includes(event.type))throw Error('Invalid diagnostic controller input');
+ const time=event.time;
+ if(typeof time!=='number'||!Number.isFinite(time)||time<0)throw Error('Invalid event timestamp');
+ if(keyState.context!==ctx){clearKeyState();keyState.context=ctx;}
+ if(event.type==='reset'){clearKeyState();return [];}
+ const key=event.key;
+ if(event.type!=='tick'&&!Object.hasOwn(LABEL,key))throw Error('Unknown controller key');
+ const rows=[...state.bindings[ctx],...(ctx==='play'?state.bindings.global.filter(row=>row[0]==='open-settings'):state.bindings.global)];
+ const fired=[],used=new Set();
+ const emit=(row,parsed)=>{
+  const identity=parsed.canonical;
+  if(used.has(identity)||keyState.fired.has(identity))return;
+  used.add(identity);keyState.fired.add(identity);
+  parsed.buttons.forEach(k=>keyState.consumed.add(k));
+  fired.push(Object.freeze({action:row[0],binding:row[1],context:ctx,simulation:true}));
+ };
+ if(event.type==='down'&&!keyState.pressed.has(key))keyState.pressed.set(key,time);
+ if(event.type==='axis'){
+  if(typeof event.value!=='number'||!Number.isFinite(event.value)||Math.abs(event.value)>1)throw Error('Invalid axis value');
+  const row=rows.find(r=>{const p=parseBinding(r[1]);return p.kind==='axis'&&p.buttons[0]===key;});
+  return row&&Math.abs(event.value)>=state.thresholds.stickDeadzone?
+   [{action:row[0],binding:row[1],context:ctx,simulation:true,value:event.value}]:[];
+ }
+ for(const row of rows){
+  const parsed=parseBinding(row[1]),keys=parsed.buttons;
+  if(parsed.kind==='chord'&&keys.every(k=>keyState.pressed.has(k))){
+   const timestamps=keys.map(k=>keyState.pressed.get(k));
+   if(Math.max(...timestamps)-Math.min(...timestamps)<=state.thresholds.chordMs)emit(row,parsed);
+  }else if(parsed.kind==='hold'&&keys.every(k=>keyState.pressed.has(k))
+       &&time-Math.max(...keys.map(k=>keyState.pressed.get(k)))>=state.thresholds.longPressMs){
+   emit(row,parsed);
+  }
+ }
+ if(event.type==='up'&&keyState.pressed.has(key)){
+  keyState.pressed.delete(key);
+  if(!keyState.consumed.has(key)){
+   const double=rows.find(r=>{const p=parseBinding(r[1]);return p.kind==='double'&&p.buttons[0]===key;});
+   const tap=rows.find(r=>{const p=parseBinding(r[1]);return p.kind==='tap'&&p.buttons[0]===key;});
+   const prior=keyState.previousTap.get(key);
+   if(double&&typeof prior==='number'&&time-prior<=state.thresholds.doubleTapMs){
+    const parsed=parseBinding(double[1]);keyState.fired.delete(parsed.canonical);emit(double,parsed);keyState.previousTap.delete(key);
+   }else if(tap){fired.push(Object.freeze({action:tap[0],binding:tap[1],context:ctx,simulation:true}));keyState.previousTap.set(key,time);}
+   else keyState.previousTap.set(key,time);
+  }
+  keyState.consumed.delete(key);
+  if(!keyState.pressed.size)keyState.fired.clear();
+ }
+ return fired;
+}
 let state=defaults(),saved=null,dialog=null,chosenContext='game',editing=false,recording=null,diagnostic=false,lastDiagnostic='No controller session attached',xrSupported=null,activeSession=null;
 function restore(){
  try{
@@ -168,6 +222,8 @@ function render(){
  controls.append(button('Import JSON',()=>importInput.click()),importInput);
  body.append(controls);
  const diagram=el('div','se179-diagram');diagram.append(el('strong','','Controller input map · 2D simulation (not hardware capture)'));
+ diagram.append(button('Test X+A chord',()=>{testInput({type:'reset',time:0},chosenContext==='global'?'game':chosenContext);testInput({type:'down',key:'X',time:0},chosenContext==='global'?'game':chosenContext);const fired=testInput({type:'down',key:'A',time:70},chosenContext==='global'?'game':chosenContext);testInput({type:'up',key:'A',time:100},chosenContext==='global'?'game':chosenContext);testInput({type:'up',key:'X',time:120},chosenContext==='global'?'game':chosenContext);status('Simulated action: '+(fired.map(e=>e.action).join(', ')||'unassigned')+' (no editor mutation).');}));
+ diagram.append(button('Test Y+B save hold',()=>{const c=chosenContext==='global'?'game':chosenContext;testInput({type:'reset',time:0},c);testInput({type:'down',key:'Y',time:0},c);testInput({type:'down',key:'B',time:50},c);const fired=testInput({type:'tick',time:550},c);const releases=[...testInput({type:'up',key:'B',time:600},c),...testInput({type:'up',key:'Y',time:610},c)];status('Simulated: '+fired.map(e=>e.action).join(', ')+'; extra actions: '+releases.length+' (no editor mutation).');}));
  const keys=el('div','se179-keys');for(const [k,name] of Object.entries(LABEL)){
   keys.append(button(k+' · '+name,()=>{lastDiagnostic='Simulated '+k+' button · native scene unchanged';if(recording){recording.push(k);status('Simulated input: '+recording.join('+')+'; use binding text to assign.')}else status(lastDiagnostic)}));
  }diagram.append(keys);body.append(diagram);
@@ -197,7 +253,7 @@ function attachSession(session){
 }
 const api=Object.freeze({
  schema:SCHEMA,open,close,read:()=>({schema:SCHEMA,profileId:state.profileId,profileName:state.profileName,contexts:CONTEXTS.slice(),supportedAPI:!!navigator.xr,sessionAttached:!!activeSession,immersiveCommandsActive:false}),
- inspectBinding:parseBinding,validateProfile,attachSession,
+ inspectBinding:parseBinding,validateProfile,attachSession,testInput,
  diagnose:()=>({xrSupported,sessionAttached:!!activeSession,inputSources:activeSession?Array.from(activeSession.inputSources).map(s=>({handedness:s.handedness,profiles:s.profiles,gamepadButtons:s.gamepad?.buttons?.length??0,gamepadAxes:s.gamepad?.axes?.length??0,hasGrip:!!s.gripSpace})):[],liveNativeDispatch:false}),
  resetInput:resetInputs
 });

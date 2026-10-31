@@ -11,7 +11,8 @@ def apply(html):
     root=Path(__file__).resolve().parents[1]
     js=(root/'runtime/vr_controller_studio_v11_179.js').read_text(encoding='utf-8')
     css=(root/'runtime/vr_controller_studio_v11_179.css').read_text(encoding='utf-8')
-    html=once(html,'</head>','<style id="seVRControllerStudioV11179">\n'+css+'\n</style>\n</head>')
+    assert '</head>' in html
+    html=html.replace('</head>','<style id="seVRControllerStudioV11179">\n'+css+'\n</style>\n</head>',1)
     html=once(html,'window.SWRLZ_FORGE_BUILD=',js+'\nwindow.SWRLZ_FORGE_BUILD=')
     for before,after in [
         ('SWYRL_ENGINE_DEPLOY_MARKER: V11_178_WORKSPACE_ANALYSIS','SWYRL_ENGINE_DEPLOY_MARKER: V11_179_VR_CONTROLLER_STUDIO'),
