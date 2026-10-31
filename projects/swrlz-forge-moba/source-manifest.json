@@ -236,6 +236,6 @@
     "patches/v11_187_separate_game_modeler.py",
     "patches/v11_188_game_first_tabs.py"
   ],
-  "finalBytes": 7166103,
-  "finalSha256": "85f2b18399d9d28a7fe32d905dfd77f6102f56ef0acb9b8645c589c23fcb0b3d"
+  "finalBytes": 7167948,
+  "finalSha256": "6418cfde29f7fc2a90c34a763dde8316131fc64bf1bca777c0acccaa70c70fbb"
 }

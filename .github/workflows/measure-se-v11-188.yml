@@ -1,14 +1,5 @@
 name: §E v11.188 Game-first tabs focused acceptance
 on:
-  push:
-    branches: [main]
-    paths:
-      - "projects/swrlz-forge-moba/source-manifest.json"
-      - "projects/swrlz-forge-moba/patches/v11_188_game_first_tabs.py"
-      - "projects/swrlz-forge-moba/runtime/engine_game_first_tabs_v11_188.css"
-      - "projects/swrlz-forge-moba/tests/ui_v11_188_game_landing.mjs"
-      - "projects/swrlz-forge-moba/scripts/verify_v11_188_release.py"
-      - ".github/workflows/measure-se-v11-188.yml"
   workflow_dispatch:
 permissions:
   contents: read
