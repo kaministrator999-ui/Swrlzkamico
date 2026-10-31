@@ -15,7 +15,7 @@ args=p.parse_args()
 out=Path(args.output).resolve()
 m=json.loads((ROOT/'source-manifest.json').read_text())
 assert m['name']=='§wyrl§ Engine v11.190'
-assert m['finalArtifact']=='swyrl_engine_v11_189.html'
+assert m['finalArtifact']=='swyrl_engine_v11_190.html'
 assert len(m['patches'])==222 and m['patches'][-1]=='patches/v11_190_render_fps_vault_batch.py'
 subprocess.run([sys.executable,str(ROOT/'build_space.py'),'--output',str(out)],check=True)
 raw=(out/'index.html').read_bytes()
