@@ -318,6 +318,17 @@
     body.motion-reduced *,body.motion-off *{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}body.motion-off *{animation:none!important;transition:none!important}
     .assistant-body,.user-bubble{font-size:calc(15px * var(--font-scale,1))!important}.side-menu,.settings-sheet{font-size:calc(1em * var(--font-scale,1))}#prompt{font-size:calc(13px * var(--font-scale,1))!important}
     @media(min-width:601px){#prompt{font-size:calc(14px * var(--font-scale,1))!important}}
+    /* Touch devices, including Android's "Desktop site", should not force
+       browser magnification when focusing the embedded Chat composer.
+       Do not restrict manual pinch zoom or alter mouse-only desktop UI. */
+    @media (any-pointer:coarse){
+      .composer-shell:not(.collapsed) #prompt{
+        font-size:max(18px,calc(14px * var(--font-scale,1)))!important;
+        line-height:24px;
+        min-height:48px;
+      }
+      .composer-shell:not(.collapsed) .composer-box{min-height:48px}
+    }
     @media(max-width:680px){.settings-sheet{inset:0;width:100%;border:0;border-radius:0}.settings-layout{grid-template-columns:1fr}.settings-nav{display:flex;gap:5px;padding:8px;border-right:0;border-bottom:1px solid rgba(126,214,255,.12);overflow-x:auto}.settings-nav-button{width:auto;white-space:nowrap;margin:0;padding:7px 9px}.settings-main{padding:14px 12px 92px}.setting-row{grid-template-columns:1fr;gap:8px}.setting-toggle{justify-content:flex-start}.settings-footer{left:0}.settings-header{padding:12px}.settings-title{font-size:16px}}
     @media(prefers-reduced-motion:reduce){.settings-shade,.settings-sheet,.settings-nav-button,.settings-close,.settings-save{transition:none!important}}
 
