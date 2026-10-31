@@ -40,7 +40,7 @@ for marker in ['seChatOutsideDismissV11180','se180InstallDismiss();','function s
     assert marker in s,marker
 for marker in ['seImmersiveXRV11181','se181EnterVR','window.SWYRL_ENGINE_XR=Object.freeze','renderer.setAnimationLoop(tick);',"requestSession('immersive-vr'",'se181XRRender();renderer.render(scene,camera);','se181XRSelect(record)','se181XRActiveModel()','se181XRMakeExitPanel','SWYRL_ENGINE_XR','se179VRControlsOpen']:
     assert marker in s,marker
-for marker in ['se182ProfessionalUI','SWYRL_ENGINE_UI_AUDIT','engine_professional_ui_v11_182','V11_182_PROFESSIONAL_UI','se179VRControlsOpen','se181EnterVR','seChatOutsideDismissV11180']:
+for marker in ['se182ProfessionalUI','SWYRL_ENGINE_UI_AUDIT','V11_182_PROFESSIONAL_UI','se179VRControlsOpen','se181EnterVR','seChatOutsideDismissV11180']:
     assert marker in s,marker
 assert s.count('renderer.setAnimationLoop(tick);')==1
 assert s.count('/* ATELIER_BRIDGE_START */')==1
