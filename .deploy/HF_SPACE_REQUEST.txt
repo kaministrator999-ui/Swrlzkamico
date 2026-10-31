@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=7af72d41fa772eddc71b860647453e07a2cd4815
-REQUEST_NONCE=forge-chat-new-project-setup-7af72d41-20261030-release-1
+SOURCE_REF=0aa82781426e9bf640ed4c6ae5bfb988a67f1340
+REQUEST_NONCE=forge-chat-natural-project-start-0aa82781-20261031-release-1
