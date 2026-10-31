@@ -32,7 +32,7 @@ window.closeHost=()=>send('host.inactive',{reason:'closed'});
       const context=await browser.newContext({viewport:{width,height},serviceWorkers:'block',...(label==='android-desktop-site'?{isMobile:true,hasTouch:true}:{})});
       const page=await context.newPage(),pageErrors=[],requests=[],saves=[];
       page.on('pageerror',error=>pageErrors.push(error.message));
-      let profile=structuredClone(initialProfile),sent=null;
+      let profile=structuredClone(initialProfile),sent=null,projectSetupWidget=null;
       await context.route('**/*',async route=>{
         const request=route.request(),url=new URL(request.url()),pathname=decodeURIComponent(url.pathname);
         if(url.origin===FORGE)return route.fulfill({contentType:'text/html',body:parentHtml});
@@ -50,7 +50,7 @@ window.closeHost=()=>send('host.inactive',{reason:'closed'});
           if(pathname==='/api/account/profile'){
             saves.push(body);profile={display_name:body.displayName,preferences:body.preferences,model_preferences:body.modelPreferences,ui_preferences:body.uiPreferences,companion_profile:body.companionProfile,version:profile.version+1,updated_at:Date.now()};return json({ok:true,profile,durable:true,saved:true});
           }
-          if(pathname==='/api/lalm_station/sync')return json({revision:1,currentThread:{id:'saved-chat'},threads:[{id:'saved-chat',title:'Saved account conversation',pinned:false,createdAt:1,messages:[{id:'history-user',role:'user',text:'Earlier account project question',createdAt:1},{id:'history-assistant',role:'assistant',text:'This history belongs to the shared Google account.',createdAt:2}]}],activeGeneration:null});
+          if(pathname==='/api/lalm_station/sync')return json({revision:1,currentThread:{id:'saved-chat'},threads:[{id:'saved-chat',title:'Saved account conversation',pinned:false,createdAt:1,messages:[{id:'history-user',role:'user',text:'Earlier account project question',createdAt:1},{id:'history-assistant',role:'assistant',text:'This history belongs to the shared Google account.',createdAt:2},...(projectSetupWidget?[{id:'wizard-message',role:'assistant',text:'What kind of §e project would you like to start?',createdAt:3,meta:{widgets:[projectSetupWidget]}}]:[])]}],activeGeneration:null});
           if(pathname==='/api/github/status')return json({configured:false,linked:false});
           if(pathname==='/api/forge/embed/presence')return json({ticket:'sfp1_CONTROLLED_TICKET',hostId,channelId,threadId:body.threadId,projectId:body.projectId});
           if(pathname==='/api/lalm_station/send'){sent=body;return json({requestId:body.requestId});}
@@ -70,6 +70,7 @@ window.closeHost=()=>send('host.inactive',{reason:'closed'});
             ]:[{type:'FORGE_BATCH_READY',batchId,leaseId,threadId:sent.threadId,generationId:sent.requestId,projectId:'native-project',requestId:sent.requestId,seq:1},
               {type:'DELTA',text:'Native receipt confirmed.',requestId:sent.requestId,seq:2},
               {type:'COMPLETED',terminal:true,requestId:sent.requestId,seq:3}];
+            if(wizard)projectSetupWidget=values.find(v=>v.type==='WIDGET').widget;
             return route.fulfill({contentType:'application/x-ndjson',body:values.map(value=>JSON.stringify(value)).join('\n')+'\n'});
           }
           return json({ok:true});
