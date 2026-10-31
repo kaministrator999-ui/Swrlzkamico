@@ -1,6 +1,12 @@
 name: §C two-user intent evaluation pilot
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/eval_chat_pilot.py'
+      - 'docs/engineering/SWRLZ_CHAT_EVALUATION_PILOT.md'
+      - '.github/workflows/chat-eval-pilot.yml'
   pull_request:
     paths:
       - 'scripts/eval_chat_pilot.py'
