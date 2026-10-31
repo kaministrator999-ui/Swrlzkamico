@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=7e240c3b9391c93801a649f67fd6719bae695b61
-REQUEST_NONCE=forge-chat-mobile-focus-zoom-7e240c3b-20261030-release-1
+SOURCE_REF=7af72d41fa772eddc71b860647453e07a2cd4815
+REQUEST_NONCE=forge-chat-new-project-setup-7af72d41-20261030-release-1
