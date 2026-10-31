@@ -32,6 +32,7 @@ try{
   await page.waitForTimeout(250);
   console.log('SE182_SETTLED_STATE',name,JSON.stringify(await quickState()));
   const baseline=await page.evaluate(()=>window.SWYRL_ENGINE_UI_AUDIT.audit());
+  console.log('SE182_BASELINE_GEOMETRY',name,JSON.stringify({toolbar:baseline.rects.toolbar,viewport:baseline.rects.viewport,levels:baseline.rects.levelBar,tabs:baseline.rects.mobileTabs,left:baseline.rects.leftDock,right:baseline.rects.rightDock,issues:baseline.issues}));
   const toolbar=baseline.rects.toolbar;
   assert.ok(toolbar?.visible,name+' toolbar missing');
   assert.ok(toolbar.width>width-10&&toolbar.width<=width+3,name+' toolbar out of width');
