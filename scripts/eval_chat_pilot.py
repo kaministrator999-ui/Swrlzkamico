@@ -93,7 +93,7 @@ def intent_gate(case: dict, response: str) -> dict:
 
 def objective_gate(case: dict, response: str) -> dict:
     if case["objective"] == "python_ast":
-        fenced = re.search(r"“?"+r"\x60{3}(?:python)?\s*\n([\s\S]*?)\x60{3}", response, re.I)
+        fenced = re.search(r"\x60{3}(?:python)?\s*\n([\s\S]*?)\x60{3}", response, re.I)
         code = fenced.group(1).strip() if fenced else response.strip()
         try:
             tree = ast.parse(code)
@@ -225,9 +225,9 @@ async def smoke(browser) -> dict:
         for i, ctx in enumerate(contexts):
             page = await ctx.new_page()
             await page.goto("data:text/html,<title>evaluation test</title>")
-            await page.evaluate("(v) => localStorage.setItem('eval-profile', v)", "user-" + str(i))
+            await page.evaluate("(v) => window.__evalProfile = v", "user-" + str(i))
         checks.append(
-            (await contexts[0].pages[0].evaluate("localStorage.getItem('eval-profile')")) == "user-0"
+            (await contexts[0].pages[0].evaluate("window.__evalProfile")) == "user-0"
             and (await contexts[1].pages[0].evaluate("localStorage.getItem('eval-profile')")) == "user-1"
         )
     finally:
