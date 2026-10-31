@@ -167,7 +167,7 @@
  }
  function updateRoute(mode){
   if(location.pathname!==urlFor(mode))
-   try{history.pushState({se187Workspace:mode},'',urlFor(mode));}catch(error){console.warn('§E workspace URL routing unavailable',error);}
+   try{window.history.pushState({se187Workspace:mode},'',urlFor(mode));}catch(error){console.warn('§E workspace URL routing unavailable',error);}
  }
  function change(mode,push=false){
   if(mode!=='game'&&mode!=='modeler')return false;
