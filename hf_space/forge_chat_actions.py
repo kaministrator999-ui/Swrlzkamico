@@ -370,13 +370,26 @@ def generate_events(payload: dict[str, Any], context, register_batch: Callable |
             yield from _failure("This §e version does not provide Chat project creation. Refresh the editor after the update, then retry. Your current project was not changed.",
                                 "FORGE_PROJECT_STARTER_UNAVAILABLE")
             return
+        # A broad "start a new project" request is a choice, not permission
+        # to guess a template/name. Offer the current native starter catalog
+        # in a Chat widget. A subsequent explicit Create click sends a *new*
+        # complete user command with its own fresh editor lease and receipt.
+        project_plan = explicit_project_plan(prompt, summary) if requests_new_project(prompt) else None
+        if requests_new_project(prompt) and project_plan is None:
+            from forge_project_setup_v1 import build_project_setup
+            explanation, widget = build_project_setup(summary)
+            revalidate(context, require_snapshot=True)
+            yield {"type": "DELTA", "text": explanation}
+            yield {"type": "WIDGET", "widget": widget}
+            yield {"type": "COMPLETED", "phase": "COMPLETE", "forgeStatus": "SETUP_REQUIRED"}
+            return
         yield {"type": "STATUS", "phase": "FORGE_PLANNING", "reason": "Planning the requested native editor change.",
                "categories": ["FORGE", "NATIVE_EDITOR"]}
         user_data = json.dumps({"currentUserRequest": prompt, "nativeContextData": summary},
                                ensure_ascii=False, separators=(",", ":"), allow_nan=False)
         messages = [{"role": "system", "content": native_plan_system(operation_contract())},
                     {"role": "user", "content": user_data}]
-        plan = explicit_project_plan(prompt, summary)
+        plan = project_plan
         if plan is None:
             text, observation = infer(messages, PLAN_TOKENS)
             plan = decode_plan(text, observation)
