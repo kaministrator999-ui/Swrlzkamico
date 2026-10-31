@@ -7,6 +7,7 @@ on:
       - "projects/swrlz-forge-moba/runtime/engine_wisp_boot_atelier_v11_185.js"
       - "projects/swrlz-forge-moba/runtime/engine_wisp_boot_atelier_v11_185.css"
       - "projects/swrlz-forge-moba/source-manifest.json"
+      - ".github/workflows/measure-se-v11-185.yml"
   workflow_dispatch:
 permissions:
   contents: read
@@ -22,6 +23,8 @@ jobs:
         run: |
           python -m py_compile projects/swrlz-forge-moba/patches/v11_185_wisp_boot_atelier_collapse.py
           node --check projects/swrlz-forge-moba/runtime/engine_wisp_boot_atelier_v11_185.js
+      - name: Verify sealed source manifest, exact assets and v11.185 feature markers
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_185_release.py --output /tmp/se185-strict
       - name: Reconstruct exact released HTML for hash measurement
         run: |
           python - <<'PY'
