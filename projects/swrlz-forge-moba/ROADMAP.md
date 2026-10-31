@@ -1,3 +1,17 @@
+## §E v11.182 — Professional interface and overlap audit (2026-10-31)
+
+**Owner request:** Review overlapping editor controls and polish the whole §E interface to professional consistency while preserving the working Game Editor, Model Atelier, VR Controls, Chat, projects and gameplay.
+
+**Implemented:** Unified restrained dark-slate/teal colors, consistent borders, radii, typography, focus states and scrollbars across the native main toolbar, outliner, Details dock, prefab cards, Projects window, Canvas level controls, responsive drawers, Chat panel, VR Controller Studio and compatible Model Atelier control styling. No editor objects are remounted and no listeners, game input, 3D scenes, WebXR render loop or model tools are replaced.
+
+**Layering:** The already-portaled Projects dialog stays above Chat and editor docks; native modal dialogs remain above Projects; the in-world runtime menus remain confined to the viewport. Projects window is viewport-bounded and scrollable, with sticky header and consistently sized close target. Mobile tabs retain the v11.174 measured level-bar offset. First-party topbar remains a horizontal rail rather than floating over the canvas.
+
+**Found/fixed:** A true 8-pixel canvas/toolbar collision in compact 844×390 landscape was caused by a too-tall new header; use the native 48-pixel toolbar grid height instead. A 1-pixel portrait adjacency is ignored by the 3-pixel geometric tolerance, not hidden by a scene override. A transient startup release-notes modal also correctly sits above Projects until dismissed; it must not be "fixed" by weakening dialog priority.
+
+**Verified:** Browser-layout run checked 390×844 portrait, 430×932 portrait, 844×390 landscape, 980×680 Quest-sized browser viewport and 1280×800 desktop. All five passed: no identified unintended baseline chrome collisions, Projects window inside viewport, Projects close button clickable, horizontal toolbar scroll available, no unexpected JS errors. Focused layout audit API is `window.SWYRL_ENGINE_UI_AUDIT.audit()`. These are controlled Chromium results, not physical Quest 2 or Android acceptance.
+
+**Exact source:** 214 ordered patches, 68 bundled assets, 7,094,717 final HTML bytes, SHA-256 `0b4af9562ac14811d597938d75e716a39110ce1849929bb3a8599b78370b4f25`. Build verifier `scripts/verify_v11_182_release.py`; new layout patch `patches/v11_182_professional_ui.py`; focused tests `tests/test_v11_182_ui.cjs` and `tests/ui_layout_v11_182_browser.mjs`. Only the designated deployment workflow should trigger for a final DEPLOY_REQUEST-only commit.
+
 ## §E v11.181 — Enter immersive WebXR from the live §E browser (2026-10-31)
 
 **Owner request:** Open §E normally on Meta Quest 2, then press Enter VR to step *inside* the same 3D project instead of using Quest's controller rays only on a flat floating browser window.

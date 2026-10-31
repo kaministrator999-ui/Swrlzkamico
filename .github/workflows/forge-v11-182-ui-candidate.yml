@@ -18,6 +18,8 @@ jobs:
         run: |
           node --check projects/swrlz-forge-moba/runtime/engine_professional_ui_v11_182.js
           node projects/swrlz-forge-moba/tests/test_v11_182_ui.cjs
+      - name: Verify exact 214-patch, 68-asset integrity receipt
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_182_release.py --output /tmp/se182-sealed
       - name: Measure sealed source without changing previous patches
         run: |
           python - <<'PY'

@@ -230,6 +230,6 @@
     "patches/v11_181_immersive_xr_gateway.py",
     "patches/v11_182_professional_ui.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 7094717,
+  "finalSha256": "0b4af9562ac14811d597938d75e716a39110ce1849929bb3a8599b78370b4f25"
 }
