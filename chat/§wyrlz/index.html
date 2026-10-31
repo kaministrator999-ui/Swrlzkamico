@@ -407,6 +407,23 @@
 
 
     /* §E v1: compact, account-persisted workspace intelligence cards. */
+    /* Native §e project setup is a Chat conversation surface, not a second editor. */
+    .swrlz-widget.forge-project-setup{border-color:rgba(112,219,249,.42);background:linear-gradient(130deg,rgba(5,34,49,.96),rgba(32,22,63,.94))}
+    .forge-project-flow{padding:10px 12px 12px;display:flex;flex-direction:column;gap:10px;color:#dcf5ff}
+    .forge-project-step{font-family:var(--font-telemetry);font-size:10px;color:#89cae6;letter-spacing:.055em}
+    .forge-project-help,.forge-project-note{font-size:12px;line-height:1.5;color:#b8d9ea;overflow-wrap:anywhere}
+    .forge-project-choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;max-height:260px;overflow-y:auto}
+    .forge-project-choice,.forge-project-button{min-height:44px;padding:9px 10px;border:1px solid rgba(117,218,255,.32);border-radius:10px;background:rgba(10,46,72,.77);color:#effaff;text-align:left;font:600 12px/1.35 var(--font-ui);cursor:pointer;touch-action:manipulation}
+    .forge-project-choice:focus-visible,.forge-project-button:focus-visible{outline:2px solid #8feaff;outline-offset:1px}
+    .forge-project-choice:hover,.forge-project-button:hover{background:rgba(31,76,106,.9)}
+    .forge-project-choice span{display:block;margin-top:4px;color:#94bdd0;font-size:10px;font-weight:450}
+    .forge-project-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+    .forge-project-button.primary{background:linear-gradient(110deg,#42bde0,#8b6bf1);border-color:rgba(205,241,255,.6);color:#fff}
+    .forge-project-button:disabled{opacity:.4;cursor:not-allowed}
+    .forge-project-name{display:block;width:100%;min-height:46px;padding:10px 12px;border:1px solid rgba(117,218,255,.45);border-radius:10px;background:#071c2d;color:#f0fbff;font:500 16px/1.35 var(--font-ui)}
+    @media(any-pointer:coarse){.forge-project-name{font-size:18px}}
+    .forge-project-review{padding:10px;background:rgba(5,22,40,.68);border:1px solid rgba(126,214,255,.18);border-radius:10px;font-size:12px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+    .forge-project-message{font-size:11px;color:#e9d397;line-height:1.5}
     .swrlz-widget.forge-workspace{border-color:rgba(91,220,249,.35);background:linear-gradient(135deg,rgba(6,34,50,.95),rgba(25,22,58,.90))}
     .forge-ws-heading{padding:0 11px 9px;font-size:11px;font-weight:770;color:#e8faff;overflow-wrap:anywhere}
     .forge-ws-level{display:block;margin-top:3px;font-size:9px;font-weight:500;color:#91b9cd}
@@ -1505,7 +1522,94 @@
           const provider=document.createElement("div");provider.className="widget-provider";provider.textContent=String(widget.provider||"online");
           head.append(title,provider);card.appendChild(head);
           const data=widget.data&&typeof widget.data==="object"?widget.data:{};
-          if(widget.kind==="forge-workspace" && data.schema==="swrlz-forge-workspace-insights-v1"){
+          if(widget.kind==="forge-project-setup" && data.schema==="swrlz-forge-project-setup-v1"){
+            // Values come only from this server-issued verified starter snapshot.
+            // Labels are displayed via textContent; this card has no native write API.
+            const starters=(Array.isArray(data.starters)?data.starters:[]).filter(x=>
+              x&&typeof x.id==="string"&&/^[a-z][a-z0-9-]{0,79}$/.test(x.id)
+              &&typeof x.name==="string"&&x.name.length<=100
+              &&(x.group==="fresh"||x.group==="starter")).slice(0,16);
+            let phase="mode",group="",chosen=null,projectName="",sent=false,feedback="";
+            const host=document.createElement("div");host.className="forge-project-flow";card.appendChild(host);
+            const el=(tag,className,value)=>{
+              const node=document.createElement(tag);if(className)node.className=className;
+              if(value!==undefined)node.textContent=String(value);return node;
+            };
+            const button=(label,handler,primary=false)=>{
+              const node=el("button","forge-project-button"+(primary?" primary":""),label);
+              node.type="button";node.addEventListener("click",handler);return node;
+            };
+            const validName=()=>projectName.length>0&&projectName.length<=100
+              &&!/[\u0000-\u001f\u007f-\u009f"“”]/.test(projectName);
+            const draw=()=>{
+              host.replaceChildren();
+              host.appendChild(el("div","forge-project-step",
+                phase==="mode"?"1 / 4 · Start fresh or use a starter":
+                phase==="choose"?"2 / 4 · Pick a starting point":
+                phase==="name"?"3 / 4 · Give your project a name":"4 / 4 · Confirm your new project"));
+              if(phase==="mode"){
+                host.appendChild(el("div","forge-project-help","Would you like a fresh blank project or one of §e’s built-in starter packs?"));
+                const choices=el("div","forge-project-choices");
+                for(const [category,label,subtitle] of [
+                  ["fresh","✨ Fresh / blank","Start with an empty scene or model"],
+                  ["starter","🐉 Starter pack","Copy a complete existing starter"]]){
+                  if(!starters.some(s=>s.group===category))continue;
+                  const node=el("button","forge-project-choice",label);node.type="button";
+                  node.appendChild(el("span","",subtitle));
+                  node.addEventListener("click",()=>{group=category;phase="choose";feedback="";draw();});
+                  choices.appendChild(node);
+                }
+                host.appendChild(choices);
+              }else if(phase==="choose"){
+                host.appendChild(el("div","forge-project-help",group==="fresh"?
+                  "Choose the kind of blank workspace.":"Choose a starter pack to copy into your own editable project."));
+                const choices=el("div","forge-project-choices");
+                starters.filter(s=>s.group===group).forEach(s=>{
+                  const node=el("button","forge-project-choice",s.name);node.type="button";
+                  node.dataset.starterId=s.id;node.appendChild(el("span","",(s.workspace||s.kind||"")+(s.group==="starter"?" · independent copy":" · empty workspace")));
+                  node.addEventListener("click",()=>{chosen=s;phase="name";feedback="";draw();});
+                  choices.appendChild(node);
+                });
+                host.appendChild(choices);
+                host.appendChild(button("← Back",()=>{phase="mode";draw();}));
+              }else if(phase==="name"){
+                host.appendChild(el("div","forge-project-help","What would you like to call your "+chosen.name+" project?"));
+                const input=el("input","forge-project-name");input.type="text";input.maxLength=100;
+                input.autocomplete="off";input.spellcheck=false;input.value=projectName;
+                input.placeholder="Example: Dragon Den Adventure";input.setAttribute("aria-label","New §e project name");
+                const next=button("Review project →",()=>{projectName=input.value.trim();if(!validName()){feedback="Enter a name of 1–100 characters without quotes or line breaks.";draw();return;}phase="review";feedback="";draw();},true);
+                input.addEventListener("input",()=>{projectName=input.value.trim();next.disabled=!validName();});
+                next.disabled=!validName();
+                const actions=el("div","forge-project-actions");
+                actions.append(button("← Starter choice",()=>{phase="choose";feedback="";draw();}),next);
+                host.append(input,actions);
+              }else if(phase==="review"){
+                const summary=el("div","forge-project-review",
+                  "Name: "+projectName+"\nStarting point: "+chosen.name+"\nWorkspace: "+(chosen.workspace||chosen.kind||"editor")
+                  +"\nYour current project: preserved\nBuilt-in starter: preserved\nSave to Google: optional, separate");
+                host.appendChild(summary);
+                if(!sent){
+                  host.appendChild(el("div","forge-project-help","Press Create project to send one explicit native creation request. §e will only report success after its editor receipt."));
+                  const actions=el("div","forge-project-actions");
+                  actions.append(button("← Edit name",()=>{phase="name";draw();}),
+                    button("Create project in §e",()=>{
+                      if(!validName()||!chosen)return;
+                      const event=new CustomEvent("swrlz-forge-project-create-request",{
+                        cancelable:true,detail:{name:projectName,starterId:chosen.id}});
+                      window.dispatchEvent(event);
+                      if(event.defaultPrevented){sent=true;feedback="Request submitted. §e must confirm creation in the Chat response.";}
+                      else feedback="Chat is busy, disconnected, or you have an unfinished message. Nothing was created; try again after resolving that.";
+                      draw();
+                    },true));
+                  host.appendChild(actions);
+                }
+              }
+              if(feedback)host.appendChild(el("div","forge-project-message",feedback));
+              host.appendChild(el("div","forge-project-note",
+                "Source: live §e catalog · "+String(data.notice||"A separate project will be created; your current project is preserved.").slice(0,350)));
+            };
+            draw();
+          }else if(widget.kind==="forge-workspace" && data.schema==="swrlz-forge-workspace-insights-v1"){
             // Data is emitted by verified Station native read dispatch. All
             // project labels are untrusted strings rendered as textContent only.
             const boundedText=(value,max=160)=>String(value==null?"":value).slice(0,max);
@@ -3122,6 +3226,18 @@
         prompt.value="Analyze the current §E project and workspace. Inspect its actual active level, selected object, object types, scene organization and bounded metadata findings. Suggest useful next checks and improvements. This is read-only: do not modify any objects.";
         prompt.dispatchEvent(new Event("input",{bubbles:true}));
         void commitDraftFromPrompt();
+      });
+      window.addEventListener("swrlz-forge-project-create-request",event=>{
+        const spec=event.detail||{};
+        if(!window.SwrlzForgeEmbedV1?.embedded || sending || prompt.value.trim())return;
+        if(typeof spec.starterId!=="string"||!/^[a-z][a-z0-9-]{0,79}$/.test(spec.starterId))return;
+        if(typeof spec.name!=="string"||!spec.name.trim()||spec.name.length>100||
+           /[\u0000-\u001f\u007f-\u009f"“”]/.test(spec.name))return;
+        event.preventDefault(); // Widget is allowed to report submitted, not created.
+        prompt.value='Create a new project from the '+spec.starterId+
+          ' starter named exactly "'+spec.name+'"';
+        prompt.dispatchEvent(new Event("input",{bubbles:true}));
+        void commitDraftFromPrompt(); // Fresh §e lease and server/host receipt remain mandatory.
       });
       sendButton.addEventListener("click",commitDraftFromPrompt);
       prompt.addEventListener("keydown",e=>{
