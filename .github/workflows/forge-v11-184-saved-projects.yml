@@ -38,6 +38,20 @@ jobs:
               assert marker in b,marker
           print('SE184_CANDIDATE_RECEIPT',json.dumps({'bytes':len(b),'sha256':hashlib.sha256(b).hexdigest()}))
           PY
+      - name: Inspect startup loader ordering
+        run: |
+          python - <<'PY'
+          import pathlib,re
+          s=pathlib.Path('/tmp/se184-candidate/index.html').read_text()
+          for term in ['se184SavedDefaultInstall','function se128LaunchStartupProject()',
+                       'se128LaunchStartupProject();installAnimeStarterUI();',
+                       'window.SWYRL_ENGINE_SAVED_DEFAULT?.launch()', 'function loadCanonicalGlitchDen()',
+                       'loadCanonicalGlitchDen();','window.SWRLZ_FORGE_BUILD=','se127InstallBootGate']:
+              hits=[m.start() for m in re.finditer(re.escape(term),s)]
+              print('SE184_BOOT_ORDER',term,len(hits),hits[:12])
+              for i in hits[:8]:
+                  print('SE184_BOOT_CONTEXT',term,repr(s[max(0,i-190):i+230]))
+          PY
 
   browser:
     runs-on: ubuntu-latest
