@@ -54,7 +54,24 @@ window.closeHost=()=>send('host.inactive',{reason:'closed'});
           if(pathname==='/api/github/status')return json({configured:false,linked:false});
           if(pathname==='/api/forge/embed/presence')return json({ticket:'sfp1_CONTROLLED_TICKET',hostId,channelId,threadId:body.threadId,projectId:body.projectId});
           if(pathname==='/api/lalm_station/send'){sent=body;return json({requestId:body.requestId});}
-          if(pathname==='/api/lalm_station/stream')return route.fulfill({contentType:'application/x-ndjson',body:[{type:'FORGE_BATCH_READY',batchId,leaseId,threadId:sent.threadId,generationId:sent.requestId,projectId:'native-project',requestId:sent.requestId,seq:1},{type:'DELTA',text:'Native receipt confirmed.',requestId:sent.requestId,seq:2},{type:'COMPLETED',terminal:true,requestId:sent.requestId,seq:3}].map(value=>JSON.stringify(value)).join('\n')+'\n'});
+          if(pathname==='/api/lalm_station/stream'){
+            const wizard=sent.prompt==='Start a new project';
+            const values=wizard?[
+              {type:'DELTA',text:'What kind of §e project would you like to start?',requestId:sent.requestId,seq:1},
+              {type:'WIDGET',widget:{contract:'swrlz-widget-v1',kind:'forge-project-setup',title:'New §e Project',
+                provider:'Current editor starter catalog',data:{schema:'swrlz-forge-project-setup-v1',
+                  currentProject:'Sheep Tag',
+                  starters:[{id:'blank-scene',name:'Blank scene',group:'fresh',workspace:'scene'},
+                    {id:'blank-model',name:'Blank 3D model',group:'fresh',workspace:'model-atelier'},
+                    {id:'sheep-tag-meadow',name:'Sheep Tag',group:'starter',workspace:'scene'},
+                    {id:'glitch-dragons-den',name:'Dragon Den',group:'starter',workspace:'scene'}],
+                  notice:'Your current project will be preserved.'}},requestId:sent.requestId,seq:2},
+              {type:'COMPLETED',terminal:true,requestId:sent.requestId,seq:3}
+            ]:[{type:'FORGE_BATCH_READY',batchId,leaseId,threadId:sent.threadId,generationId:sent.requestId,projectId:'native-project',requestId:sent.requestId,seq:1},
+              {type:'DELTA',text:'Native receipt confirmed.',requestId:sent.requestId,seq:2},
+              {type:'COMPLETED',terminal:true,requestId:sent.requestId,seq:3}];
+            return route.fulfill({contentType:'application/x-ndjson',body:values.map(value=>JSON.stringify(value)).join('\n')+'\n'});
+          }
           return json({ok:true});
         }
         const relative=pathname==='/'?'chat/§wyrlz/index.html':pathname.replace(/^\//,'');
@@ -105,6 +122,28 @@ window.closeHost=()=>send('host.inactive',{reason:'closed'});
       await frame.locator('#prompt').fill('Add a blue cube in the editor.');await frame.locator('#sendButton').click();
       await page.waitForFunction(()=>window.received.some(message=>message.type==='host.batch'));
       assert.equal(sent.forgeLeaseId,leaseId);assert.equal(sent.modelId,'coder');
+      // Controlled server WIDGET simulates the verified current native starter
+      // catalog; no actual project or account write occurs in this fixture.
+      await frame.locator('#prompt').fill('Start a new project');await frame.locator('#sendButton').click();
+      const setup=frame.locator('.forge-project-setup');
+      await setup.getByRole('button',{name:/Fresh \/ blank/i}).waitFor();
+      assert.equal(await setup.getByRole('button',{name:/Starter pack/i}).count(),1,
+        'Chat asks for fresh versus starter, not a guessed default');
+      await setup.getByRole('button',{name:/Fresh \/ blank/i}).click();
+      assert.equal(await setup.locator('button[data-starter-id="blank-scene"]').count(),1);
+      assert.equal(await setup.locator('button[data-starter-id="blank-model"]').count(),1);
+      await setup.getByRole('button',{name:'← Back'}).click();
+      await setup.getByRole('button',{name:/Starter pack/i}).click();
+      await setup.locator('button[data-starter-id="sheep-tag-meadow"]').click();
+      const newName=setup.locator('.forge-project-name');await newName.fill('Wolf Quest');
+      await setup.getByRole('button',{name:'Review project →'}).click();
+      assert.match(await setup.locator('.forge-project-review').textContent(),/Wolf Quest[\s\S]*Sheep Tag/);
+      assert.equal(sent.prompt,'Start a new project','review never executes a native operation');
+      await setup.getByRole('button',{name:'Create project in §e'}).click();
+      await frame.waitForFunction(()=>Array.from(document.querySelectorAll('.message.user-message')).some(n=>(n.textContent||'').includes('sheep-tag-meadow starter named exactly')),null,{timeout:5000});
+      assert.equal(sent.prompt,'Create a new project from the sheep-tag-meadow starter named exactly "Wolf Quest"',
+        'explicit owner click sends a complete current request through the original native editor route');
+      assert.match(await setup.locator('.forge-project-message').textContent(),/Request submitted/);
       const parentData=await page.evaluate(()=>JSON.stringify(window.received));assert.ok(!parentData.includes(token));assert.ok(!parentData.includes('Earlier account project question'));
       const dimensions=await frame.evaluate(()=>({overflow:document.documentElement.scrollWidth>innerWidth,width:innerWidth}));assert.equal(dimensions.overflow,false,label+' Chat fits panel width');
       await page.evaluate(()=>window.closeHost());
