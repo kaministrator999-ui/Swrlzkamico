@@ -127,7 +127,20 @@ window.closeHost=()=>send('host.inactive',{reason:'closed'});
       // catalog; no actual project or account write occurs in this fixture.
       await frame.locator('#prompt').fill('Start a new project');await frame.locator('#sendButton').click();
       const setup=frame.locator('.forge-project-setup');
-      await setup.getByRole('button',{name:/Fresh \/ blank/i}).waitFor();
+      try{await setup.getByRole('button',{name:/Fresh \/ blank/i}).waitFor({timeout:8000});}
+      catch(error){
+        const debug=await frame.evaluate(()=>({
+          focused:document.activeElement?.id||'',
+          composer:document.getElementById('prompt')?.value,
+          widgetKinds:Array.from(document.querySelectorAll('.swrlz-widget')).map(n=>n.dataset.widgetKind),
+          widgetStackCount:document.querySelectorAll('.message-widget-stack').length,
+          assistantTexts:Array.from(document.querySelectorAll('.assistant-message .assistant-body')).slice(-4).map(n=>n.textContent.slice(0,350)),
+          threadRows:document.querySelectorAll('.thread-row').length
+        }));
+        console.error('PROJECT_SETUP_BROWSER_DIAG',JSON.stringify({sentPrompt:sent?.prompt,
+          projectSetupWidget:!!projectSetupWidget,debug,pageErrors},null,2));
+        throw error;
+      }
       assert.equal(await setup.getByRole('button',{name:/Starter pack/i}).count(),1,
         'Chat asks for fresh versus starter, not a guessed default');
       await setup.getByRole('button',{name:/Fresh \/ blank/i}).click();
