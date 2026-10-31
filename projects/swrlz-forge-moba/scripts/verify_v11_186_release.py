@@ -15,7 +15,7 @@ args=p.parse_args()
 out=Path(args.output).resolve()
 m=json.loads((ROOT/'source-manifest.json').read_text())
 assert m['name']=='§wyrl§ Engine v11.186'
-assert m['finalArtifact']=='swyrl_engine_v11_185.html'
+assert m['finalArtifact']=='swyrl_engine_v11_186.html'
 assert len(m['patches'])==218 and m['patches'][-1]=='patches/v11_186_first_paint_wisp_boot.py'
 subprocess.run([sys.executable,str(ROOT/'build_space.py'),'--output',str(out)],check=True)
 raw=(out/'index.html').read_bytes()
