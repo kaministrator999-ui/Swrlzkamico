@@ -32,9 +32,9 @@ const sandbox={innerWidth:390,innerHeight:740,
  Object,Math,Number
 };
 vm.createContext(sandbox);vm.runInContext(js,sandbox);
-const a=sandbox.window.SWYRL_ENGINE_LAYOUT.audit();
+const a=sandbox.window.SWYRL_ENGINE_UI_AUDIT.audit();
 assert.equal(a.ok,true,JSON.stringify(a.issues));assert.equal(a.rects.projectWindow.right,383);
 els['.viewport-wrap > .mobile-tabs']=rect(4,90,230,45);
-const bad=sandbox.window.SWYRL_ENGINE_LAYOUT.audit();
+const bad=sandbox.window.SWYRL_ENGINE_UI_AUDIT.audit();
 assert.equal(bad.ok,false);assert.equal(bad.issues[0].kind,'collision');
 console.log('SE_V11_182_UI_FOCUSED_TESTS_PASS');

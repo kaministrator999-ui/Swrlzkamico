@@ -32,7 +32,7 @@ jobs:
           python - <<'PY'
           import hashlib,json,pathlib
           b=pathlib.Path('/tmp/se182-candidate/index.html').read_bytes()
-          for item in [b'V11_182_PROFESSIONAL_UI',b'se182ProfessionalUI',b'SWYRL_ENGINE_LAYOUT',b'se181EnterVR',b'se179VRControlsOpen',b'seChatOutsideDismissV11180']:
+          for item in [b'V11_182_PROFESSIONAL_UI',b'se182ProfessionalUI',b'SWYRL_ENGINE_UI_AUDIT',b'se181EnterVR',b'se179VRControlsOpen',b'seChatOutsideDismissV11180']:
             assert item in b,item
           print('SE182_CANDIDATE',json.dumps({'bytes':len(b),'sha256':hashlib.sha256(b).hexdigest()}))
           PY

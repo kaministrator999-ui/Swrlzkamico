@@ -1,7 +1,7 @@
 // §E v11.182: live geometry audit of editor chrome; read-only diagnostics.
 // No overlay is inserted. No buttons are moved, simulated, or obscured.
 (function se182LayoutAuditInstall(){
- if(window.SWYRL_ENGINE_LAYOUT)return;
+ if(window.SWYRL_ENGINE_UI_AUDIT)return;
  const names={
   toolbar:'.app > .topbar',viewport:'.app > .workspace > .viewport-wrap',
   leftDock:'.app > .workspace > .panel.left',
@@ -58,5 +58,5 @@
    expectedOverlays:['projects','chat','vrStudio','runtimeMenu'],
    note:'Measured 2D editor chrome only; not a physical Quest headset acceptance test'};
  }
- window.SWYRL_ENGINE_LAYOUT=Object.freeze({audit});
+ window.SWYRL_ENGINE_UI_AUDIT=Object.freeze({audit});
 })();

@@ -24,10 +24,10 @@ try{
    route.abort();
   });
   await page.goto(host+'/',{waitUntil:'domcontentloaded',timeout:60000});
-  await page.waitForFunction("()=>!!window.SWYRL_ENGINE_LAYOUT && !!window.SWYRL_ENGINE_AGENT",{timeout:90000});
+  await page.waitForFunction("()=>!!window.SWYRL_ENGINE_UI_AUDIT && !!window.SWYRL_ENGINE_AGENT",{timeout:90000});
   await page.evaluate(()=>document.querySelector('#seReleaseNotesDialog[open]')?.close());
   await page.waitForTimeout(250);
-  const baseline=await page.evaluate(()=>window.SWYRL_ENGINE_LAYOUT.audit());
+  const baseline=await page.evaluate(()=>window.SWYRL_ENGINE_UI_AUDIT.audit());
   const toolbar=baseline.rects.toolbar;
   assert.ok(toolbar?.visible,name+' toolbar missing');
   assert.ok(toolbar.width>width-10&&toolbar.width<=width+3,name+' toolbar out of width');
@@ -36,7 +36,7 @@ try{
   const bar=await page.locator('.app > .topbar').evaluate(el=>({scrollWidth:el.scrollWidth,clientWidth:el.clientWidth,overflow:getComputedStyle(el).overflowX}));
   assert.ok(bar.scrollWidth>=bar.clientWidth,name+' topbar not scrollable');
   await page.evaluate(()=>document.querySelector('#projectHub').classList.add('show'));
-  const project=await page.evaluate(()=>window.SWYRL_ENGINE_LAYOUT.audit());
+  const project=await page.evaluate(()=>window.SWYRL_ENGINE_UI_AUDIT.audit());
   assert.ok(project.rects.projectWindow?.visible,name+' project modal not visible');
   assert.ok(project.rects.projectWindow.x>=-2&&project.rects.projectWindow.right<=width+2,name+' project dialog side overflow');
   assert.ok(project.rects.projectWindow.y>=-2&&project.rects.projectWindow.bottom<=height+2,name+' project dialog vertical overflow');
@@ -49,7 +49,7 @@ try{
   assert.ok(hit.targetClickable,name+' project close obscured by '+hit.hitId);
   await page.evaluate(()=>document.querySelector('#projectHub').classList.remove('show'));
   if(mobile){
-   const a=await page.evaluate(()=>window.SWYRL_ENGINE_LAYOUT.audit());
+   const a=await page.evaluate(()=>window.SWYRL_ENGINE_UI_AUDIT.audit());
    assert.equal(a.issues.length,0,name+' mobile collision '+JSON.stringify(a.issues));
   }
   const record={name,size:[width,height],toolbar:bar,
