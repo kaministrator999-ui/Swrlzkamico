@@ -45,16 +45,14 @@ jobs:
         shell: bash
         env:
           REQUESTED_MODE: ${{ inputs.mode }}
+          ONE_TIME_LIVE_REQUEST: ${{ github.event_name == 'push' && contains(github.event.head_commit.message, '[chat-eval-live]') }}
         run: |
           set -euo pipefail
           mode=smoke
           if [[ "$GITHUB_EVENT_NAME" == "workflow_dispatch" ]]; then
             mode="${REQUESTED_MODE:-smoke}"
-          elif [[ "$GITHUB_EVENT_NAME" == "push" ]]; then
-            changed_files="$(git diff-tree --no-commit-id --name-only -r "$GITHUB_SHA")"
-            if grep -Fxq '.acceptance/CHAT_EVAL_LIVE_REQUEST.txt' <<< "$changed_files"; then
-              mode=live
-            fi
+          elif [[ "$GITHUB_EVENT_NAME" == "push" && "$ONE_TIME_LIVE_REQUEST" == "true" ]]; then
+            mode=live
           fi
           echo "mode=$mode" >> "$GITHUB_OUTPUT"
           echo "Selected mode: $mode"

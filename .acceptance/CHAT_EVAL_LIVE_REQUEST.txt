@@ -1,5 +1,5 @@
 # §C pilot: one-time authorized live evaluation request
-REQUEST_ID=chat-eval-pilot-live-2026-10-31-02
+REQUEST_ID=chat-eval-pilot-live-2026-10-31-03
 MODE=live
 OBJECTIVE=two dedicated synthetic users; one code repair and one modeler intent task
 BUDGET=two conversations, up to four model turns, 15 minutes maximum
