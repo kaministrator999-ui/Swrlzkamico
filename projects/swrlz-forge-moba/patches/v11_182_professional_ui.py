@@ -11,7 +11,8 @@ def apply(html):
     root=Path(__file__).resolve().parents[1]
     css=(root/'runtime/engine_professional_ui_v11_182.css').read_text(encoding='utf-8')
     js=(root/'runtime/engine_professional_ui_v11_182.js').read_text(encoding='utf-8')
-    html=once(html,'</head>','<style id="se182ProfessionalUI">\n'+css+'\n</style>\n</head>')
+    assert '</head>' in html
+    html=html.replace('</head>','<style id="se182ProfessionalUI">\n'+css+'\n</style>\n</head>',1)
     html=once(html,'window.SWRLZ_FORGE_BUILD=',js+'\nwindow.SWRLZ_FORGE_BUILD=')
     for a,b in [
       ('SWYRL_ENGINE_DEPLOY_MARKER: V11_181_IMMERSIVE_WEBXR_GATE','SWYRL_ENGINE_DEPLOY_MARKER: V11_182_PROFESSIONAL_UI'),
