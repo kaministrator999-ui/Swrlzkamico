@@ -82,6 +82,8 @@ jobs:
           node tests/test_forge_workspace_read_v1.mjs
           python hf_space/test_forge_workspace_read_v1.py
           python hf_space/test_forge_workspace_insights_v1.py
+          python -m py_compile hf_space/forge_project_setup_v1.py hf_space/forge_chat_actions.py
+          python hf_space/test_forge_chat_actions.py
           node tests/test_forge_avatar_preflight_v1.mjs
           python hf_space/test_forge_embed.py
       - name: v243 GitHub startup concurrency and source-safety regression
