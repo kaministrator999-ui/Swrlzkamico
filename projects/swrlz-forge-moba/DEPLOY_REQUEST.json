@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.189",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_189_MOBILE_RENDER_BOOST",
-  "reason": "Owner-reported ~18 FPS and 56.7ms in Dragon Den on Android. Add opt-in 62%-resolution / shadows-off Mobile Boost to native Graphics & Performance, more efficient viewport resize measurement, and CPU update/render submission and draw-call diagnostics; preserve existing graphics preferences, geometry, game/modeler tabs, projects and VR. Source builds/syntax pass. Android-size Chromium smoke measured ~581 scene draw calls and confirmed bounded resize invalidation, but the optional Chromium suite was explicitly removed from automatic GitHub workflows at owner's request due repeated browser installation overhead. Live device performance benefit is unmeasured; owner acceptance pending. Exact 221-patch HTML source: 7,174,054 bytes and SHA-256 14481c9b520aacc6b631c4e8761bf325dbec250fb8b2d71f70b188a3ffa3ea01. Strict deploy package and asset hashes remain mandatory.",
-  "sourceCommit": "0f54d3235477fe1b2cef60b968b05aef8d51cdfd",
-  "sourceIntegritySha256": "14481c9b520aacc6b631c4e8761bf325dbec250fb8b2d71f70b188a3ffa3ea01"
+  "releaseVersion": "v11.190",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_190_RENDER_FPS_VAULT_BATCHING",
+  "reason": "Owner tested Low versus Mobile Boost with different Dragon Den camera views and found apparent 53–60 versus 24–30 FPS. Source inspection revealed prior HUD counted requestAnimationFrame updates rather than actual rendered frames; Low caps WebGL at 45, Boost at 60. Correct HUD/diagnostics to count actual submitted renderer frames; provide matched same-view 60 FPS-cap Low/Boost comparison with full preference restoration; on-demand visible draw-call actor audit. Reduce built-in decorative vault draw submissions via merged canopy/wall geometry and instanced rib/star meshes only within original editable parent groups; retain authored scene, collisions and modeler. Avoid shadow-map reallocation and pixel-ratio reset when unchanged. Strict fast source and asset receipt PASS via GitHub Actions 41253431143: 222 patches, 68 assets, 7,183,152-byte HTML SHA-256 823f27e58e34adabfb5610706accc7d81a79c9357b82927d1fd514c1d883fdf9. No Chromium installation per owner requirement. Browser/device FPS acceptance is pending.",
+  "sourceCommit": "b42f3d43ff83d4c19bda559aa8456d5eab47a47e",
+  "sourceIntegritySha256": "823f27e58e34adabfb5610706accc7d81a79c9357b82927d1fd514c1d883fdf9"
 }
