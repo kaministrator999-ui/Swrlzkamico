@@ -12,12 +12,12 @@
 html,body{color-scheme:dark}
 html body{background:var(--se182-bg);color:var(--se182-text)}
 html .app{min-width:0;min-height:0;background:var(--se182-bg)}
-/* Native editor toolbar is an intentional horizontal rail, never a second
+/* Native grid reserves exactly 48px for the toolbar: do not increase its\n   row or cover the scene in compact landscape windows.\n * Native editor toolbar is an intentional horizontal rail, never a second
    floating sheet over the scene. Its first Projects/Play group stays first. */
 html .app>.topbar{
  box-sizing:border-box;display:flex;align-items:center;gap:7px;
- padding:8px clamp(8px,1.25vw,17px);
- min-height:56px;min-width:0;max-width:100%;
+ padding:0 clamp(8px,1.25vw,17px);
+ min-height:48px;min-width:0;max-width:100%;
  flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;
  overscroll-behavior-x:contain;scrollbar-width:thin;scrollbar-color:#536b80 #101c2b;
  background:linear-gradient(180deg,#17283a,#101d2e 92%);
@@ -204,7 +204,7 @@ html #st141RuntimeMenu .st141-menu-panel{
  border-radius:14px;
 }
 @media(max-width:720px){
- html .app>.topbar{gap:6px;padding:5px 8px;min-height:49px}
+ html .app>.topbar{gap:6px;padding:0 8px;min-height:48px}
  html .app>.topbar .brand{font-size:12px}
  html .app>.topbar :is(button,select,input:not([type="range"])){min-height:40px}
  html .app>.workspace>.panel{max-width:100%}
