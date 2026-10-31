@@ -48,3 +48,31 @@ jobs:
               print('XR_CONTEXT_END')
           print('XR_SCAN_COMPLETE')
           PY
+      - name: Map native loop bootstrap, selection and camera restoration anchors
+        run: |
+          python - <<'PY'
+          import re,pathlib
+          s=pathlib.Path('/tmp/forge181-inspect/index.html').read_text()
+          queries=[
+            (r'\btick\(\);',0,1250000),
+            (r'requestAnimationFrame\(tick\)',0,1200000),
+            (r'function shouldRenderFrame\(',0,1200000),
+            (r'function resize\(',945000,1080000),
+            (r'function selectActor\(',0,1250000),
+            (r'function setSelection\(',0,1250000),
+            (r'function setSelected\(',0,1250000),
+            (r'function select\(',0,1250000),
+            (r'function pick\(',0,1250000),
+            (r'function onPointerDown\(',0,1250000),
+            (r'const raycaster',0,1250000),
+            (r'transform =',0,1250000),
+            (r'function (?:start|stop)Play\(',0,1250000),
+            (r'const THREE',0,320000),
+          ]
+          for pattern,a,b in queries:
+            hits=[m for m in re.finditer(pattern,s) if a<=m.start()<=b]
+            print('XR_DEEP',pattern,'COUNT',len(hits))
+            for match in hits[:6]:
+              i=match.start()
+              print('XR_DEEP_CTX',i,repr(s[max(0,i-330):i+700]))
+          PY
