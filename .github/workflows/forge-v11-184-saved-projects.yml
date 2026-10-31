@@ -38,6 +38,11 @@ jobs:
               assert marker in b,marker
           print('SE184_CANDIDATE_RECEIPT',json.dumps({'bytes':len(b),'sha256':hashlib.sha256(b).hexdigest()}))
           PY
+      - name: Verify exact sealed source and 68 packaged asset hashes
+        run: |
+          git restore projects/swrlz-forge-moba/source-manifest.json
+          python projects/swrlz-forge-moba/scripts/verify_v11_184_release.py --output /tmp/se184-sealed
+
       - name: Inspect startup loader ordering
         run: |
           python - <<'PY'
