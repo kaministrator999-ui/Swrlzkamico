@@ -9,7 +9,7 @@
   const embedded = window.parent !== window && new URLSearchParams(location.search).get("forgeEmbed") === "1";
   const nativeFetch = window.fetch.bind(window);
   let binding = null, port = null, token = "", expiresAt = 0, accountEpoch = 0;
-  let thread = "", lease = "", hostVisible = false, pairing = null, cloudBusy = false;
+  let thread = "", lease = "", hostVisible = false, pairing = null, cloudBusy = false, resumeNonce = 0;
   const pending = new Map(), seenBatches = new Set(), cloudCatalog = new Map();
   const id = () => crypto.randomUUID().replaceAll("-", "");
   const validBinding = value => typeof value === "string" && /^[A-Za-z0-9_-]{16,128}$/.test(value);
@@ -115,7 +115,7 @@
       const headers = new Headers(init.headers || (input instanceof Request ? input.headers : undefined));
       headers.set("Authorization","Bearer "+requestToken);
       const requestInput = url.pathname === "/api/account/logout" ? "/api/forge/embed/logout" : input;
-      const response = await nativeFetch(requestInput,{...init,headers,credentials:"omit",cache:"no-store"});
+      const response = await nativeFetch(requestInput,{...init,headers,credentials:url.pathname === "/api/account/logout" ? "include" : "omit",cache:"no-store"});
       if(url.pathname === "/api/account/logout" && response.ok && requestToken===token && requestEpoch===accountEpoch)clearAccount();
       else if(response.status === 401 && requestToken===token && requestEpoch===accountEpoch && await sessionRejected(response,url.pathname) && requestToken===token && requestEpoch===accountEpoch)clearAccount();
       return response;
@@ -129,7 +129,38 @@
   };
   const base64url = bytes => btoa(String.fromCharCode(...new Uint8Array(bytes))).replaceAll("+","-").replaceAll("/","_").replace(/=+$/g,"");
   const sha = async bytes => [...new Uint8Array(await crypto.subtle.digest("SHA-256",bytes))].map(v=>v.toString(16).padStart(2,"0")).join("");
+  const resumeAccount = async () => {
+    // Only the Chat-origin iframe can access its HttpOnly partitioned cookie.
+    // A reopened §e page has new host/channel IDs: the server verifies the
+    // original Google login before returning a fresh one-hour bearer.
+    if(!embedded || !binding || !port || pairing || isAuthenticated())return false;
+    const attempt=++resumeNonce, bound={...binding};
+    try{
+      const response=await nativeFetch("/api/forge/embed/resume",{
+        method:"POST",credentials:"include",cache:"no-store",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify(bound)
+      });
+      if(!response.ok)return false; // Cookie absent/expired: normal sign-in remains available.
+      const value=await response.json();
+      if(attempt!==resumeNonce || pairing || isAuthenticated() || !port)return false;
+      if(!/^sfe1_[A-Za-z0-9_-]+$/.test(value.token) ||
+         value.parentOrigin!==bound.parentOrigin ||
+         value.hostId!==bound.hostId || value.channelId!==bound.channelId)return false;
+      token=value.token;expiresAt=Number(value.expiresAt)*1000;accountEpoch++;
+      const checked=await window.fetch("/api/account/me",{cache:"no-store",credentials:"omit"});
+      const verified=checked.ok?await checked.json().catch(()=>({})):null;
+      if(attempt!==resumeNonce || pairing || token!==value.token)return false;
+      if(!verified?.user?.id || verified.user.id!==value.user?.id){
+        clearAccount();return false;
+      }
+      send("account.status",publicAccount(verified.user));
+      emit("swrlz-forge-account-changed",{signedIn:true,restored:true});
+      return true;
+    }catch{return false;}
+  };
   const startPair = async () => {
+    resumeNonce++; // A deliberate new login always wins over in-flight restore.
     if(!binding || !port)throw error("Connect from the §e panel first.");
     const verifier = base64url(crypto.getRandomValues(new Uint8Array(48)));
     const challenge = base64url(await crypto.subtle.digest("SHA-256",new TextEncoder().encode(verifier)));
@@ -273,6 +304,7 @@
     }else if(message.type === "host.connect" && sameBinding(message) && event.ports?.length === 1 && !port){
       port=event.ports[0];port.onmessage=incoming;port.start();hostVisible=true;
       send("iframe.connected",{});send("account.status",publicAccount(null));
+      void resumeAccount();
       emit("swrlz-forge-connected",{});
     }
   });
