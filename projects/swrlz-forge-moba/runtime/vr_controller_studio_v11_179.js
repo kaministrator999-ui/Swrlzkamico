@@ -87,6 +87,7 @@ function fromArchive(raw){
    return [row[0],row[2],row[1]];
   });
  }
+ delete p.customProfiles;delete p.activeContext;
  return p;
 }
 function sanitise(raw){
@@ -285,7 +286,7 @@ function attachSession(session){
 }
 const api=Object.freeze({
  schema:SCHEMA,open,close,read:()=>({schema:SCHEMA,profileId:state.profileId,profileName:state.profileName,contexts:CONTEXTS.slice(),supportedAPI:!!navigator.xr,sessionAttached:!!activeSession,immersiveCommandsActive:false}),
- inspectBinding:parseBinding,validateProfile,attachSession,testInput,
+ inspectBinding:parseBinding,validateProfile,validateImport:sanitise,attachSession,testInput,
  diagnose:()=>({xrSupported,sessionAttached:!!activeSession,inputSources:activeSession?Array.from(activeSession.inputSources).map(s=>({handedness:s.handedness,profiles:s.profiles,gamepadButtons:s.gamepad?.buttons?.length??0,gamepadAxes:s.gamepad?.axes?.length??0,hasGrip:!!s.gripSpace})):[],liveNativeDispatch:false}),
  resetInput:resetInputs
 });

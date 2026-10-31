@@ -19,6 +19,17 @@ assert.throws(()=>a.inspectBinding('axis:RT'),/Axis/);
 assert.throws(()=>a.inspectBinding('chord:Y+Y'),/repeated/);
 assert.throws(()=>a.inspectBinding('tap:Y+B'),/Single-input/);
 assert.equal(a.diagnose().liveNativeDispatch,false);
+const original={
+ id:'kami-precision',name:'Kami Precision',version:1,deviceFamily:'meta-quest-touch',handedness:'right',
+ thresholds:{chordMs:160,longPressMs:450,doubleTapMs:280,stickDeadzone:.18,precisionMultiplier:.12,snapDegrees:15},
+ bindings:{global:[['save-project','Save project','hold:Y+B','notes']],game:[['duplicate','Duplicate actor','chord:X+A','notes']],model:[],sculpt:[],play:[]}
+};
+const imported=a.validateImport(original);
+assert.equal(imported.profileId,'kami-precision-imported');
+assert.equal(imported.bindings.game[0][1],'chord:X+A');
+assert.equal(imported.bindings.global[0][2],'Save project');
+assert.throws(()=>a.validateImport({...original,id:'other'}),/Unsupported original/);
+
 assert.throws(()=>a.validateProfile({schema:'swyrl-engine-vr-controls-v1',profileVersion:1}),/Invalid profile identity/);
 a.testInput({type:'reset',time:0});
 assert.deepEqual(Array.from(a.testInput({type:'down',key:'X',time:0})),[]);
