@@ -1,0 +1,15 @@
+{
+  "schema": "swrlz-knowledge-followup-v1",
+  "requestId": "web-mvvx506h-2232975007-904106382",
+  "modelId": "700m",
+  "eventType": "KNOWLEDGE_ACQUISITION_FOLLOWUP_1",
+  "sourceRef": "0aa82781426e9bf640ed4c6ae5bfb988a67f1340",
+  "persistedAtUnixMs": 1793458627008,
+  "diagnostic": {
+    "schema": "swrlz-knowledge-followup-v1",
+    "parentRequestId": "web-mvvx506h-2232975007-904106382",
+    "turnIndex": 1,
+    "userText": "Can you start a new model",
+    "capturedAtUnixMs": 1793458627004
+  }
+}
