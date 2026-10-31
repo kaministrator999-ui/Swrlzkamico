@@ -226,3 +226,13 @@ function se184TryCloudDefault(){
  if(!boot?.pending()||!se184LastAccountState?.authenticated||!se184LastAccountState?.user||!ready)return;
  void boot.openCloud(id=>loadCloud(id));
 }
+
+function se184KickCloudStartup(){
+ // An account default must initialize the normal authenticated Chat iframe,
+ // even if the user has not opened the Chat panel yet. No credentials or
+ // account data are copied into the editor or persisted by this code.
+ const boot=window.SWYRL_ENGINE_SAVED_DEFAULT?.pending();
+ if(boot?.source!=='cloud')return;
+ if(frame&&!frame.src)frame.src=CHAT_ORIGIN+'/?forgeEmbed=1';
+ se184TryCloudDefault();
+}

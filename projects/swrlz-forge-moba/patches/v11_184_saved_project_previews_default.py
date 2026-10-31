@@ -49,6 +49,8 @@ def apply(html):
     html=once(html,old_cloud,'    se184RenderCloudProjects(data.projects);')
     html=once(html,'function se170Invalidate(){\n  se183CloudCacheClear();',
       'function se170Invalidate(){\n  se184AccountReset();\n  se183CloudCacheClear();')
+    html=once(html,'mount();se170Install();se175Install();',
+      'mount();se170Install();se175Install();se184KickCloudStartup();')
     html=once(html,'function se170AccountStatus(payload){\n  se170Invalidate();',
       'function se170AccountStatus(payload){\n  se170Invalidate();\n  se184LastAccountState=payload;\n  se184TryCloudDefault();')
     html=once(html,
