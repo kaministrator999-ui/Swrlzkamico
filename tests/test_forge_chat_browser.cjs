@@ -37,7 +37,7 @@ window.closeHost=()=>send('host.inactive',{reason:'closed'});
       // widget renderer from backend WIDGET-stream timing (tested in Python).
       let projectSetupWidget={contract:'swrlz-widget-v1',kind:'forge-project-setup',title:'New §e Project',
         provider:'Current editor starter catalog',data:{schema:'swrlz-forge-project-setup-v1',
-          currentProject:'Sheep Tag',
+          currentProject:'Sheep Tag',suggestedStarterId:'blank-scene',
           starters:[{id:'blank-scene',name:'Blank scene',group:'fresh',workspace:'scene'},
             {id:'blank-model',name:'Blank 3D model',group:'fresh',workspace:'model-atelier'},
             {id:'sheep-tag-meadow',name:'Sheep Tag',group:'starter',workspace:'scene'},
@@ -70,7 +70,7 @@ window.closeHost=()=>send('host.inactive',{reason:'closed'});
               {type:'DELTA',text:'What kind of §e project would you like to start?',requestId:sent.requestId,seq:1},
               {type:'WIDGET',widget:{contract:'swrlz-widget-v1',kind:'forge-project-setup',title:'New §e Project',
                 provider:'Current editor starter catalog',data:{schema:'swrlz-forge-project-setup-v1',
-                  currentProject:'Sheep Tag',
+                  currentProject:'Sheep Tag',suggestedStarterId:'blank-scene',
                   starters:[{id:'blank-scene',name:'Blank scene',group:'fresh',workspace:'scene'},
                     {id:'blank-model',name:'Blank 3D model',group:'fresh',workspace:'model-atelier'},
                     {id:'sheep-tag-meadow',name:'Sheep Tag',group:'starter',workspace:'scene'},
@@ -136,7 +136,7 @@ window.closeHost=()=>send('host.inactive',{reason:'closed'});
       // Controlled server WIDGET simulates the verified current native starter
       // catalog; no actual project or account write occurs in this fixture.
       const setup=frame.locator('.forge-project-setup');
-      try{await setup.getByRole('button',{name:/Fresh \/ blank/i}).waitFor({timeout:8000});}
+      try{await setup.locator('.forge-project-name').waitFor({timeout:8000});}
       catch(error){
         console.error('PROJECT_SETUP_BROWSER_DIAG_PRE',JSON.stringify({
           sentPrompt:sent?.prompt,projectSetupWidget:!!projectSetupWidget,pageErrors},null,2));
@@ -154,9 +154,9 @@ window.closeHost=()=>send('host.inactive',{reason:'closed'});
         console.error('PROJECT_SETUP_BROWSER_DIAG',JSON.stringify(debug,null,2));
         throw error;
       }
-      assert.equal(await setup.getByRole('button',{name:/Starter pack/i}).count(),1,
-        'Chat asks for fresh versus starter, not a guessed default');
-      await setup.getByRole('button',{name:/Fresh \/ blank/i}).click();
+      assert.equal(await setup.locator('.forge-project-name').count(),1,
+        'New project defaults to naming an independent blank scene, not opening a starter');
+      await setup.getByRole('button',{name:'← Change starting point'}).click();
       assert.equal(await setup.locator('button[data-starter-id="blank-scene"]').count(),1);
       assert.equal(await setup.locator('button[data-starter-id="blank-model"]').count(),1);
       await setup.getByRole('button',{name:'← Back'}).click();

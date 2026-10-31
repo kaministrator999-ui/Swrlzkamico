@@ -43,6 +43,18 @@ _NEW_PROJECT = re.compile(
 _START_FROM_STARTER = re.compile(
     r"\bstart\s+(?:from|with|using)\s+(?:(?!(?:in|on|inside|within|for|to)\b)[\w§'’-]+\s+){0,7}starter\b", re.I)
 
+# Explicit workspace-creation language is separate from ordinary mesh edits.
+# A new game/model is only a project request when the user says new/fresh/
+# blank/another; no existing project or selected mesh is modified by inference.
+_FRESH_WORKSPACE = re.compile(
+    r"\b(?:create|make|build|start|set\s+up)\s+(?:(?:me|us)\s+)?(?:a\s+|an\s+)?"
+    r"(?:(?:brand\s+)?(?:new|fresh|blank|empty|another)\s+)(?:3d\s+)?(?:model|game)\b", re.I)
+_NEW_NAMED_STARTER = re.compile(
+    r"\b(?:create|make|build|start|set\s+up)\s+(?:(?:me|us)\s+)?(?:a\s+|an\s+)?"
+    r"(?:new|fresh)\s+(?:sheep[\s-]+tag|(?:glitch\s+)?dragon(?:'s|s)?[\s-]+den)\b", re.I)
+_SHORT_FRESH = re.compile(
+    r"^(?:please\s+)?(?:new|fresh|blank)\s+(?:3d\s+)?(?:project|model|game)(?:\s+please)?[.!?]*$", re.I)
+
 
 def _prose(prompt: str) -> str:
     # Fenced source and whole-message quotations do not instruct a live editor.
@@ -96,6 +108,9 @@ def classify_forge_intent(prompt: str, summary: dict[str, Any] | None = None) ->
         return result("explain", "negated-native-action")
     if _PROJECT_ARTIFACT.search(text) and _ACTION.search(text) and not _READ.search(text):
         return result("ordinary", "separate-project-document-request")
+    if (_FRESH_WORKSPACE.search(text) or _NEW_NAMED_STARTER.search(text)
+            or _SHORT_FRESH.fullmatch(text)):
+        return result("mutation", "explicit-new-workspace")
     if _DIRECT_UNDO.fullmatch(text):
         return result("mutation", "explicit-native-history-action")
     target = bool(_NATIVE.search(text))
@@ -112,7 +127,9 @@ def requests_new_project(prompt: str) -> bool:
     """Current human creation request, never a name, explanation or scene edit."""
     text = current_command_text(prompt) if isinstance(prompt, str) else ""
     return (classify_forge_intent(prompt)["disposition"] == "mutation"
-            and bool(_NEW_PROJECT.search(text) or _START_FROM_STARTER.search(text)))
+            and bool(_NEW_PROJECT.search(text) or _START_FROM_STARTER.search(text)
+                     or _FRESH_WORKSPACE.search(text) or _NEW_NAMED_STARTER.search(text)
+                     or _SHORT_FRESH.fullmatch(text)))
 
 
 def native_plan_system(operation_contract: dict[str, Any]) -> str:

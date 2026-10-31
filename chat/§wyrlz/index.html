@@ -1529,7 +1529,8 @@
               x&&typeof x.id==="string"&&/^[a-z][a-z0-9-]{0,79}$/.test(x.id)
               &&typeof x.name==="string"&&x.name.length<=100
               &&(x.group==="fresh"||x.group==="starter")).slice(0,16);
-            let phase="mode",group="",chosen=null,projectName="",sent=false,feedback="";
+            const suggested=starters.find(s=>s.id===data.suggestedStarterId)||null;
+            let phase=suggested?"name":"mode",group=suggested?.group||"",chosen=suggested,projectName="",sent=false,feedback="";
             const host=document.createElement("div");host.className="forge-project-flow";card.appendChild(host);
             const el=(tag,className,value)=>{
               const node=document.createElement(tag);if(className)node.className=className;
@@ -1544,9 +1545,9 @@
             const draw=()=>{
               host.replaceChildren();
               host.appendChild(el("div","forge-project-step",
-                phase==="mode"?"1 / 4 · Start fresh or use a starter":
-                phase==="choose"?"2 / 4 · Pick a starting point":
-                phase==="name"?"3 / 4 · Give your project a name":"4 / 4 · Confirm your new project"));
+                phase==="mode"?"Choose fresh or starter":
+                phase==="choose"?"Choose your starting point":
+                phase==="name"?"Name your new project":"Confirm your new project"));
               if(phase==="mode"){
                 host.appendChild(el("div","forge-project-help","Would you like a fresh blank project or one of §e’s built-in starter packs?"));
                 const choices=el("div","forge-project-choices");
@@ -1581,7 +1582,7 @@
                 input.addEventListener("input",()=>{projectName=input.value.trim();next.disabled=!validName();});
                 next.disabled=!validName();
                 const actions=el("div","forge-project-actions");
-                actions.append(button("← Starter choice",()=>{phase="choose";feedback="";draw();}),next);
+                actions.append(button("← Change starting point",()=>{phase="choose";feedback="";draw();}),next);
                 host.append(input,actions);
               }else if(phase==="review"){
                 const summary=el("div","forge-project-review",

@@ -299,6 +299,44 @@ class PlannerTest(unittest.TestCase):
         plan = explicit_project_plan(final, self.summary)
         self.assertEqual(plan["operations"], [{"op": "project.create", "starterId": "sheep-tag-meadow", "name": "My Adventure"}])
 
+    def test_new_game_model_and_named_starter_guide_the_correct_new_copy(self):
+        self.summary["starters"] = [
+            {"id": "blank-scene", "name": "Blank scene", "workspace": "scene"},
+            {"id": "blank-model", "name": "Blank 3D model", "workspace": "model-atelier"},
+            {"id": "sheep-tag-meadow", "name": "Sheep Tag", "workspace": "scene"},
+            {"id": "glitch-dragons-den", "name": "Dragon Den", "workspace": "scene"},
+            {"id": "model-atelier", "name": "Model Atelier", "workspace": "model-atelier"},
+        ]
+        cases = (
+            ("new project", "blank-scene"),
+            ("Start a new project", "blank-scene"),
+            ("new game", "blank-scene"),
+            ("Start a fresh game", "blank-scene"),
+            ("Create a new 3d model", "blank-model"),
+            ("new model", "blank-model"),
+            ("Start a new Sheep Tag game", "sheep-tag-meadow"),
+            ("Start new Dragon Den", "glitch-dragons-den"),
+            ("Start a new model starter", "model-atelier"),
+        )
+        for prompt, expected in cases:
+            with self.subTest(prompt=prompt):
+                self.assertTrue(requests_new_project(prompt), prompt)
+                events = self.run_events(prompt=prompt)
+                self.assertEqual([event["type"] for event in events], ["DELTA", "WIDGET", "COMPLETED"])
+                self.assertEqual(events[1]["widget"]["data"]["suggestedStarterId"], expected)
+                self.assertEqual(events[-1]["forgeStatus"], "SETUP_REQUIRED")
+                self.register.assert_not_called()
+                self.wait.assert_not_called()
+                self.infer.assert_not_called()
+        for prompt in ("Create a 3d model viewer HTML page",
+                       "Explain how to start a new model",
+                       "Do not start a new game",
+                       "I previously started a new game",
+                       "Create a project report",
+                       "Add a model to the scene"):
+            with self.subTest(prompt=prompt):
+                self.assertFalse(requests_new_project(prompt), prompt)
+
     def test_project_chooser_rejects_unadvertised_fake_pack_and_never_executes(self):
         self.summary["starters"] = [{"id": "blank-scene", "name": "Blank scene"},
                                     {"id": "hax<script>", "name": "Bad"},
