@@ -24,6 +24,8 @@ on:
       - 'tests/test_github_source_report_mobile_v232.mjs'
       - 'tests/test_chat_source_context_glass_v253.mjs'
       - 'chat/§wyrlz/index.html'
+      - 'chat/§wyrlz/assets/forge-embed-v1.js'
+      - 'tests/forge_google_account_crossover_v1.mjs'
       - 'chat/§wyrlz/assets/chat-updates-v1.*'
       - 'scripts/build_chat_update_history.py'
       - 'tests/test_chat_updates.mjs'
