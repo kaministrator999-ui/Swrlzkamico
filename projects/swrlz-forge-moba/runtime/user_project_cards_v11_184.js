@@ -4,6 +4,55 @@
 // scene overview on demand, without importing or replacing the editor.
 const SE184_SVG='http://www.w3.org/2000/svg';
 const se184CloudPreviews=new Map();
+const se184LocalPreviews=new Map();
+const se184LocalPreviewQueue=[];
+let se184LocalPreviewActive=0,se184LocalPreviewObserver=null;
+function se184QueueLocalPreview(card){
+ if(!card?.isConnected||card.dataset.se184AutoState)return;
+ card.dataset.se184AutoState='queued';
+ se184LocalPreviewQueue.push(card);se184RunLocalPreviews();
+}
+function se184RunLocalPreviews(){
+ while(se184LocalPreviewActive<2&&se184LocalPreviewQueue.length){
+  const card=se184LocalPreviewQueue.shift();
+  if(!card?.isConnected)continue;
+  se184LocalPreviewActive++;
+  (async()=>{
+   try{
+    const id=card.dataset.projectId;
+    let preview=se184LocalPreviews.get(id);
+    if(!preview){
+     const row=await se175Read(id);
+     preview=se184ExtractPreview(row?.data);
+     if(preview){
+      if(se184LocalPreviews.size>=48)se184LocalPreviews.delete(se184LocalPreviews.keys().next().value);
+      se184LocalPreviews.set(id,preview);
+     }
+    }
+    if(preview&&card.isConnected&&typeof card.se184ApplyPreview==='function')
+     card.se184ApplyPreview(preview);
+   }catch{/* Older project still has an accessible manual Preview scene action. */}
+   finally{se184LocalPreviewActive--;se184RunLocalPreviews();}
+  })();
+ }
+}
+function se184WatchLocalPreviews(gallery){
+ const cards=[...gallery.querySelectorAll('.se184-project-card[data-se184-needs-preview]')];
+ if(!cards.length)return;
+ if(typeof IntersectionObserver==='undefined'){
+  cards.slice(0,8).forEach(se184QueueLocalPreview);return;
+ }
+ if(!se184LocalPreviewObserver){
+  se184LocalPreviewObserver=new IntersectionObserver(entries=>{
+   for(const entry of entries)if(entry.isIntersecting){
+    se184LocalPreviewObserver.unobserve(entry.target);
+    se184QueueLocalPreview(entry.target);
+   }
+  },{root:null,rootMargin:'120px 0px',threshold:0.01});
+ }
+ cards.forEach(card=>se184LocalPreviewObserver.observe(card));
+}
+
 let se184LastAccountState=null,se184PreviewEpoch=0;
 function se184ExtractPreview(data){
  if(!data?.project||!Array.isArray(data.scene?.actors))return null;
@@ -95,7 +144,13 @@ function se184ProjectCard(record,source){
  const article=document.createElement('article');
  article.className='se184-project-card';
  article.dataset.source=source;article.dataset.projectId=id;
+ if(source==='local'&&!record.preview)article.dataset.se184NeedsPreview='1';
  let preview=se184PreviewView(record.preview,record);article.append(preview);
+ article.se184ApplyPreview=summary=>{
+  const next=se184PreviewView(summary,record);
+  preview.replaceWith(next);preview=next;
+  article.querySelector('.se184-card-actions button:nth-child(2)')?.removeAttribute('aria-busy');
+ };
  const info=document.createElement('div');info.className='se184-card-info';
  const title=document.createElement('strong');title.textContent=summaryName(record?.name)||'Untitled project';
  title.title=title.textContent;
@@ -152,8 +207,7 @@ function se184ProjectCard(record,source){
     if(se184CloudPreviews.size>=24)se184CloudPreviews.delete(se184CloudPreviews.keys().next().value);
     se184CloudPreviews.set(id,summary);
    }
-   const fresh=se184PreviewView(summary,record);
-   preview.replaceWith(fresh);preview=fresh;
+   article.se184ApplyPreview(summary);
    result.textContent='Scene overview ready. The active editor was not changed.';
   }catch(error){
    result.textContent='Could not preview: '+String(error?.message||error).slice(0,140);
@@ -200,6 +254,7 @@ function se184RenderLocalProjects(records){
  const frag=document.createDocumentFragment();
  for(const row of rows)frag.append(se184ProjectCard({...row,preview:se184SafePreview(row.preview)},'local'));
  gallery.replaceChildren(frag);
+ se184WatchLocalPreviews(gallery);
  se184SyncDefaultBoxes();
 }
 function se184RenderCloudProjects(rows){
