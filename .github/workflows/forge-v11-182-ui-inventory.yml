@@ -1,0 +1,15 @@
+name: §E v11.182 UI geometry inventory
+on:
+  push:
+    branches: [feature/forge-v11-182-ui-polish-layout-20261031]
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Reconstruct current UI and inspect actual layout anchors
+        run: |
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/se182-audit >/tmp/se182-build
+          python projects/swrlz-forge-moba/tests/inspect_v11_182_ui.py
