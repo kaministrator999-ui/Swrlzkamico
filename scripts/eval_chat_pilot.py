@@ -228,7 +228,7 @@ async def smoke(browser) -> dict:
             await page.evaluate("(v) => window.__evalProfile = v", "user-" + str(i))
         checks.append(
             (await contexts[0].pages[0].evaluate("window.__evalProfile")) == "user-0"
-            and (await contexts[1].pages[0].evaluate("localStorage.getItem('eval-profile')")) == "user-1"
+            and (await contexts[1].pages[0].evaluate("window.__evalProfile")) == "user-1"
         )
     finally:
         await asyncio.gather(*(ctx.close() for ctx in contexts))
