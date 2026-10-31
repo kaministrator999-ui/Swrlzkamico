@@ -24,15 +24,20 @@ try{
    if(uri.host.includes('cdn.jsdelivr.net')){route.continue();return}
    route.abort();
   });
-  await page.goto(host+'/',{waitUntil:'domcontentloaded',timeout:60000});
-  await page.waitForFunction("()=>!!window.SWYRL_ENGINE_UI_AUDIT && !!window.SWYRL_ENGINE_AGENT",{timeout:90000});
+  await page.goto(host+'/',{waitUntil:'load',timeout:90000});
+  // Module import and native project boot can replace editor globals while
+  // the document finishes loading. Require BOTH APIs to stay ready for 900ms.
+  await page.waitForFunction(()=>{
+    const ready=!!window.SWYRL_ENGINE_UI_AUDIT?.audit&&!!window.SWYRL_ENGINE_AGENT;
+    if(!ready){window.__se182ReadySince=0;return false;}
+    if(!window.__se182ReadySince)window.__se182ReadySince=performance.now();
+    return performance.now()-window.__se182ReadySince>=900;
+  },null,{timeout:90000});
   await page.evaluate(()=>document.querySelector('#seReleaseNotesDialog[open]')?.close());
-  const quickState=()=>page.evaluate(()=>({url:location.href,hasAudit:!!window.SWYRL_ENGINE_UI_AUDIT,auditType:typeof window.SWYRL_ENGINE_UI_AUDIT?.audit,hasAgent:!!window.SWYRL_ENGINE_AGENT,ready:document.readyState,build:window.SWRLZ_FORGE_BUILD?.version}));
-  console.log('SE182_BOOT_STATE',name,JSON.stringify(await quickState()));
-  await page.waitForTimeout(250);
-  console.log('SE182_SETTLED_STATE',name,JSON.stringify(await quickState()));
-  await page.evaluate(()=>{const dialog=document.querySelector('#seReleaseNotesDialog[open]');if(dialog)dialog.close();});
-  await page.waitForTimeout(90);
+  console.log('SE182_STABLE_BOOT',name,JSON.stringify(await page.evaluate(()=>({
+    auditType:typeof window.SWYRL_ENGINE_UI_AUDIT?.audit,agent:!!window.SWYRL_ENGINE_AGENT,
+    build:window.SWRLZ_FORGE_BUILD?.version,modalOpen:!!document.querySelector('#seReleaseNotesDialog[open]')
+  }))));
   const baseline=await page.evaluate(()=>window.SWYRL_ENGINE_UI_AUDIT.audit());
   console.log('SE182_BASELINE_GEOMETRY',name,JSON.stringify({toolbar:baseline.rects.toolbar,viewport:baseline.rects.viewport,levels:baseline.rects.levelBar,tabs:baseline.rects.mobileTabs,left:baseline.rects.leftDock,right:baseline.rects.rightDock,issues:baseline.issues}));
   const toolbar=baseline.rects.toolbar;
