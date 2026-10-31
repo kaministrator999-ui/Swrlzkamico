@@ -237,6 +237,6 @@
     "patches/v11_188_game_first_tabs.py",
     "patches/v11_189_mobile_performance.py"
   ],
-  "finalBytes": 7167948,
-  "finalSha256": "6418cfde29f7fc2a90c34a763dde8316131fc64bf1bca777c0acccaa70c70fbb"
+  "finalBytes": 7174054,
+  "finalSha256": "14481c9b520aacc6b631c4e8761bf325dbec250fb8b2d71f70b188a3ffa3ea01"
 }
