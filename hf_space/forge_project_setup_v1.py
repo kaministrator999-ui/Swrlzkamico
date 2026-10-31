@@ -9,7 +9,7 @@ import re
 from typing import Any
 
 
-def build_project_setup(summary: dict[str, Any]) -> tuple[str, dict[str, Any]]:
+def build_project_setup(summary: dict[str, Any], prompt: str = "") -> tuple[str, dict[str, Any]]:
     """Present the *current editor's* advertised starter choices, never guesses."""
     advertised = summary.get("starters") if isinstance(summary, dict) else None
     if not isinstance(advertised, list):
@@ -33,6 +33,22 @@ def build_project_setup(summary: dict[str, Any]) -> tuple[str, dict[str, Any]]:
         })
     if not starters:
         raise ValueError("FORGE_PROJECT_STARTER_UNAVAILABLE")
+    # Suggest a starting point from the CURRENT authorized editor catalog.
+    # This is presentation only: never authorize a write or invent a starter.
+    from brain_forge import current_command_text
+    command = current_command_text(prompt).lower()
+    if re.search(r"\bsheep[\s-]+tag\b", command):
+        suggested = "sheep-tag-meadow"
+    elif re.search(r"\b(?:glitch\s+)?dragon(?:'s|s)?[\s-]+den\b", command):
+        suggested = "glitch-dragons-den"
+    elif re.search(r"\b(?:model\s+starter|starter\s+(?:3d\s+)?model)\b", command):
+        suggested = "model-atelier"
+    elif re.search(r"\b(?:3d\s+model|models?|sculpt(?:ure)?)\b", command):
+        suggested = "blank-model"
+    else:
+        suggested = "blank-scene"
+    if suggested not in seen:
+        suggested = ""
     widget = {
         "contract": "swrlz-widget-v1",
         "kind": "forge-project-setup",
@@ -41,8 +57,10 @@ def build_project_setup(summary: dict[str, Any]) -> tuple[str, dict[str, Any]]:
         "data": {"schema": "swrlz-forge-project-setup-v1",
                  "currentProject": str((summary.get("project") or {}).get("name") or "Open project")[:100],
                  "starters": starters,
+                 "suggestedStarterId": suggested,
                  "notice": "A separate editable local project will be created. The original project and built-in starter are preserved. Saving to your Google account is a separate action."}
     }
-    return ("**What kind of §e project would you like to start?** Choose a fresh blank scene/model "
-            "or one of the actual starter packs in the card. Give it a name, review the setup, "
-            "and press Create project. I won't change your current workspace before that final step."), widget
+    return ("**Let's set up a separate §e project.** I've suggested a starting point from the editor's "
+            "current catalog where your request identifies one. Give your project a name, or change the "
+            "starting point. Review and press Create project; your current workspace remains untouched "
+            "until §e confirms creation."), widget

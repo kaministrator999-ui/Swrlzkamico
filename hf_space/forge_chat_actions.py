@@ -377,7 +377,7 @@ def generate_events(payload: dict[str, Any], context, register_batch: Callable |
         project_plan = explicit_project_plan(prompt, summary) if requests_new_project(prompt) else None
         if requests_new_project(prompt) and project_plan is None:
             from forge_project_setup_v1 import build_project_setup
-            explanation, widget = build_project_setup(summary)
+            explanation, widget = build_project_setup(summary, prompt)
             revalidate(context, require_snapshot=True)
             yield {"type": "DELTA", "text": explanation}
             yield {"type": "WIDGET", "widget": widget}
