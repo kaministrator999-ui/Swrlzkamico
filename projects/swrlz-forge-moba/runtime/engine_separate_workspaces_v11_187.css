@@ -22,6 +22,7 @@ html .app>.topbar .se187-game-tabs button{min-height:36px}
 html .app>.topbar .se187-game-tabs .se187-draft-state{display:none}
 /* Modeler is its own page surface, not a popup nested over an active project.
    Keep native export tools and native 3D editor exactly where they already work. */
+#modelAtelierPanel.se187-modeler-page[hidden]{display:none!important}
 #modelAtelierPanel.se187-modeler-page{height:100dvh;max-height:100dvh;
  display:flex;flex-direction:column;min-height:0}
 #modelAtelierPanel.se187-modeler-page>.se187-model-tabs{flex:0 0 46px;width:100%;

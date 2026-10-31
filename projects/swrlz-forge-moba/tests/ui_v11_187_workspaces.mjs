@@ -62,6 +62,7 @@ try{
   await page.waitForFunction(()=>window.SWYRL_ENGINE_WORKSPACES.active()==='game');
   assert.equal(new URL(page.url()).pathname,'/index.html');
   assert.equal(await page.locator('#modelAtelierPanel').getAttribute('hidden')!==null,true);
+  assert.equal(await page.locator('#modelAtelierPanel').isVisible(),false,'Hidden Modeler must not cover the Game Engine workspace');
   await page.locator('.se187-game-tabs [data-se187-tab="modeler"]').click({timeout:10000});
   await page.waitForFunction(()=>window.SWYRL_ENGINE_WORKSPACES.active()==='modeler'&&
     window.SWYRL_ENGINE_MODEL_ATELIER.status().open);
