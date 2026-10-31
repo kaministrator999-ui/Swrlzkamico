@@ -95,6 +95,7 @@ try{
    bootPending:window.se128StartupPending,
    default:window.SWYRL_ENGINE_SAVED_DEFAULT?.read?.(),
    pendingDefault:window.SWYRL_ENGINE_SAVED_DEFAULT?.pending?.(),
+   bootReport:window.SWYRL_ENGINE_SAVED_DEFAULT?.report?.(),
    bootStatus:document.getElementById('se184DefaultBoot')?.textContent||'',
    build:window.SWRLZ_FORGE_BUILD?.version
   }))),errors);

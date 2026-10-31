@@ -45,7 +45,7 @@
  }
  function complete(state,success,reason=''){
   if(boot!==state||!state.pending)return;
-  state.pending=false;clearTimeout(state.timeout);
+  state.pending=false;state.success=success;state.reason=reason;clearTimeout(state.timeout);
   window.se128StartupPending=false;
   if(!success){
    // A saved default is a user preference, not a reason to strand §E if
@@ -141,6 +141,7 @@
   }
  }
  window.SWYRL_ENGINE_SAVED_DEFAULT=Object.freeze({read,set,sync,launch,openCloud,
-  pending:()=>boot?.pending?{source:boot.source,id:boot.id,loading:boot.loading}:null
+  pending:()=>boot?.pending?{source:boot.source,id:boot.id,loading:boot.loading}:null,
+  report:()=>boot?{attempted:true,source:boot.source,pending:boot.pending,loading:boot.loading,success:boot.success??null,reason:boot.reason||''}:{attempted:false}
  });
 })();
