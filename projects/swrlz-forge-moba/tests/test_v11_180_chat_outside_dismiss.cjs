@@ -4,7 +4,7 @@ const listeners={},buttons={},panel={hidden:true,inert:true,src:'',
  classList:{states:new Set(),add(v){this.states.add(v)},remove(v){this.states.delete(v)},contains(v){return this.states.has(v)}},
  contains(t){return t===this||t===buttons.inside},
  setAttribute(k,v){this[k]=v},removeAttribute(k){delete this[k]}};
-const toggle={expanded:'false',focusCount:0,
+const toggle={focusCount:0,
  setAttribute(k,v){this[k]=v},focus(){this.focusCount++},
  contains(t){return t===this}},closeButton={focusCount:0,focus(){this.focusCount++}};
 const frame={src:''},timers=new Map(),frames=new Map();let next=1,revokes=0,sendCount=0;
@@ -30,7 +30,7 @@ assert.equal(listeners.click.capture,true);
 vm.runInContext('openPanel()',context);frameNext();
 assert.equal(context.open,true);assert.equal(panel.hidden,false);
 assert.equal(panel.classList.contains('se180-chat-visible'),true);
-assert.equal(toggle.expanded,'true');assert.equal(frame.src,'https://chat.example.test/?forgeEmbed=1');
+assert.equal(toggle['aria-expanded'],'true');assert.equal(frame.src,'https://chat.example.test/?forgeEmbed=1');
 down(buttons.inside={});assert.equal(context.open,true,'inside Chat does not close it');
 down(toggle);assert.equal(context.open,true,'Chat toggle is not treated as outside');
 down({id:'canvas'},'pointerdown','mouse',2);assert.equal(context.open,true,'right click stays available');
@@ -43,7 +43,7 @@ assert.equal(panel.hidden,false,'panel stays mounted during exit transition');
 settle();assert.equal(panel.hidden,true);
 assert.equal(frame.src,'https://chat.example.test/?forgeEmbed=1','same iframe retained');
 vm.runInContext('openPanel()',context);frameNext();
-assert.equal(panel.hidden,false);assert.equal(toggle.expanded,'true');
+assert.equal(panel.hidden,false);assert.equal(toggle['aria-expanded'],'true');
 down({id:'workspace'});vm.runInContext('openPanel()',context);frameNext();settle();
 assert.equal(panel.hidden,false,'stale close timer cannot hide a reopened Chat');
 vm.runInContext('closePanel()',context);settle();
