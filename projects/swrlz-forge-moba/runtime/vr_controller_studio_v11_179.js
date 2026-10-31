@@ -70,9 +70,28 @@ function validateProfile(p){
  }
  return warnings;
 }
+function fromArchive(raw){
+ // Accept the user's original 4-column Kami Precision specification as an
+ // imported custom copy, not an attempt to overwrite the built-in preset.
+ if(raw?.id!=='kami-precision'||raw?.version!==1||raw?.deviceFamily!=='meta-quest-touch')throw Error('Unsupported original profile format');
+ const p=defaults();
+ p.profileId='kami-precision-imported';p.profileName='Kami Precision · imported';
+ p.createdAt=new Date().toISOString();p.modifiedAt=p.createdAt;
+ p.dominantHand=raw.handedness;
+ for(const k of Object.keys(PARAMS))if(typeof raw.thresholds?.[k]==='number')p.thresholds[k]=raw.thresholds[k];
+ if(!raw.bindings||typeof raw.bindings!=='object')throw Error('Missing archived mappings');
+ for(const ctx of CONTEXTS){
+  const source=raw.bindings[ctx];if(!Array.isArray(source))throw Error('Missing archived '+ctx+' mappings');
+  p.bindings[ctx]=source.map(row=>{
+   if(!Array.isArray(row)||row.length!==4||typeof row[1]!=='string'||typeof row[2]!=='string')throw Error('Invalid archived binding');
+   return [row[0],row[2],row[1]];
+  });
+ }
+ return p;
+}
 function sanitise(raw){
  if(!raw||typeof raw!=='object'||Array.isArray(raw))throw Error('Invalid file');
- const p=clone(raw);
+ const p=clone(raw.schema===SCHEMA?raw:fromArchive(raw));
  // Imported JSON cannot carry code, external URLs, tokens or hidden fields.
  const keys=['schema','profileId','profileName','profileVersion','createdAt','modifiedAt','dominantHand','thresholds','bindings'];
  for(const k of Object.keys(p))if(!keys.includes(k))throw Error('Unknown profile field: '+k);
@@ -141,7 +160,7 @@ function restore(){
   const safe=raw.customProfiles.map(sanitise);
   const id=String(raw.activeId||'kami-precision');
   state=safe.find(p=>p.profileId===id)||builtins.find(p=>p.profileId===id)||builtins[0];
-  state=clone(state);state.customProfiles=safe;state.activeContext=CONTEXTS.includes(raw.activeContext)?raw.activeContext:'game';
+  state=clone(state);state.customProfiles=safe;state.activeContext=CONTEXTS.includes(raw.activeContext)?raw.activeContext:'game';chosenContext=state.activeContext;
   validateProfile(state);
  }catch(e){state=defaults();lastDiagnostic='Local VR controls could not be loaded: '+String(e.message);}
 }
@@ -158,7 +177,7 @@ function open(){
  render();return true;
 }
 function close(){if(dialog?.open)dialog.close();else dialog?.removeAttribute('open');resetInputs();}
-function resetInputs(){recording=null;}
+function resetInputs(){recording=null;clearKeyState();}
 function profileList(){return [...builtins,...(state.customProfiles||[])];}
 function selectProfile(id){
  const from=profileList().find(p=>p.profileId===id);if(!from)return;
@@ -199,11 +218,13 @@ function render(){
  const tabs=el('nav','se179-tabs');for(const ctx of CONTEXTS){const b=button(ctx==='global'?'Global':ctx==='game'?'Game Editor':ctx==='model'?'Model Editor':ctx==='sculpt'?'Sculpt':'Play',()=>{chosenContext=ctx;render()});b.setAttribute('aria-pressed',String(ctx===chosenContext));tabs.append(b);}body.append(tabs);
  const table=el('div','se179-bindings');table.setAttribute('role','group');table.setAttribute('aria-label',chosenContext+' controller mappings');
  const readOnly=builtInIds.has(state.profileId);
- for(const row of state.bindings[chosenContext]){
+ for(const [rowIndex,row] of state.bindings[chosenContext].entries()){
   const line=el('div','se179-binding');line.append(el('span','',row[2]+' ('+row[0]+')'));
   const input=el('input');input.value=row[1];input.setAttribute('aria-label','Binding for '+row[0]);input.disabled=readOnly;input.maxLength=64;
   input.onchange=()=>{const prev=row[1];row[1]=input.value.toUpperCase().replace(/^(TAP|HOLD|DOUBLE|CHORD|AXIS|SEQUENCE):/,a=>a.toLowerCase());try{updateEditable();const warnings=validateProfile(state);status('Mapping changed. '+warnings.join(' · '));render()}catch(e){row[1]=prev;input.value=prev;status(e.message,true)}};
-  line.append(input);table.append(line);
+  line.append(input);
+  if(!readOnly)line.append(button('Simulate record',()=>{recording={context:chosenContext,rowIndex,keys:[]};status('Click controller buttons below, then Finish simulated capture. This is not Quest hardware recording.');}));
+  table.append(line);
  }body.append(table);
  const params=el('details','se179-precision');params.append(el('summary','','Gestures and precision'));
  for(const [key,[min,max]] of Object.entries(PARAMS)){const row=el('label','se179-param');row.append(el('span','',key));const inp=el('input');inp.type='number';inp.step=(max>100)?'1':'0.01';inp.min=min;inp.max=max;inp.value=state.thresholds[key];inp.disabled=readOnly;inp.onchange=()=>{const old=state.thresholds[key];state.thresholds[key]=Number(inp.value);try{updateEditable();status('Precision parameter updated. Save to persist.')}catch(e){state.thresholds[key]=old;inp.value=old;status(e.message,true)}};row.append(inp);params.append(row);}body.append(params);
@@ -224,8 +245,19 @@ function render(){
  const diagram=el('div','se179-diagram');diagram.append(el('strong','','Controller input map · 2D simulation (not hardware capture)'));
  diagram.append(button('Test X+A chord',()=>{testInput({type:'reset',time:0},chosenContext==='global'?'game':chosenContext);testInput({type:'down',key:'X',time:0},chosenContext==='global'?'game':chosenContext);const fired=testInput({type:'down',key:'A',time:70},chosenContext==='global'?'game':chosenContext);testInput({type:'up',key:'A',time:100},chosenContext==='global'?'game':chosenContext);testInput({type:'up',key:'X',time:120},chosenContext==='global'?'game':chosenContext);status('Simulated action: '+(fired.map(e=>e.action).join(', ')||'unassigned')+' (no editor mutation).');}));
  diagram.append(button('Test Y+B save hold',()=>{const c=chosenContext==='global'?'game':chosenContext;testInput({type:'reset',time:0},c);testInput({type:'down',key:'Y',time:0},c);testInput({type:'down',key:'B',time:50},c);const fired=testInput({type:'tick',time:550},c);const releases=[...testInput({type:'up',key:'B',time:600},c),...testInput({type:'up',key:'Y',time:610},c)];status('Simulated: '+fired.map(e=>e.action).join(', ')+'; extra actions: '+releases.length+' (no editor mutation).');}));
+ diagram.append(button('Finish simulated capture',()=>{
+  if(!recording||!recording.keys.length){status('Choose a mapping row and simulate controller buttons first.',true);return;}
+  const data=recording,kind=data.keys.length>1?'chord':'tap',expression=kind+':'+data.keys.join('+');
+  try{
+   if(builtInIds.has(state.profileId))throw Error('Customize a built-in preset before recording');
+   const target=state.bindings[data.context]?.[data.rowIndex];if(!target)throw Error('Mapping changed during capture');
+   const original=target[1];target[1]=expression;
+   try{updateEditable();validateProfile(state)}catch(e){target[1]=original;throw e}
+   recording=null;render();status('Simulated mapping captured: '+expression+'. Save locally to keep it.');
+  }catch(e){status(e.message,true)}
+ }));
  const keys=el('div','se179-keys');for(const [k,name] of Object.entries(LABEL)){
-  keys.append(button(k+' · '+name,()=>{lastDiagnostic='Simulated '+k+' button · native scene unchanged';if(recording){recording.push(k);status('Simulated input: '+recording.join('+')+'; use binding text to assign.')}else status(lastDiagnostic)}));
+  keys.append(button(k+' · '+name,()=>{lastDiagnostic='Simulated '+k+' button · native scene unchanged';if(recording){if(!recording.keys.includes(k))recording.keys.push(k);status('Simulated input: '+recording.keys.join('+')+'; Finish simulated capture to assign.');}else status(lastDiagnostic)}));
  }diagram.append(keys);body.append(diagram);
  const diag=el('details','se179-diagnostics');diag.open=diagnostic;diag.append(el('summary','','XR capability and diagnostics'));
  const read=window.SWYRL_ENGINE_DEVICE?.read?.()||{};

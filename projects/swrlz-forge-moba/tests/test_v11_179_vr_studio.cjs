@@ -19,6 +19,7 @@ assert.throws(()=>a.inspectBinding('axis:RT'),/Axis/);
 assert.throws(()=>a.inspectBinding('chord:Y+Y'),/repeated/);
 assert.throws(()=>a.inspectBinding('tap:Y+B'),/Single-input/);
 assert.equal(a.diagnose().liveNativeDispatch,false);
+assert.throws(()=>a.validateProfile({schema:'swyrl-engine-vr-controls-v1',profileVersion:1}),/Invalid profile identity/);
 a.testInput({type:'reset',time:0});
 assert.deepEqual(Array.from(a.testInput({type:'down',key:'X',time:0})),[]);
 assert.equal(a.testInput({type:'down',key:'A',time:80})[0]?.action,'duplicate');
