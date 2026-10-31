@@ -20,7 +20,7 @@ Do not conflate a Chat preview with a real mesh, a native receipt with visual ac
 | Explain actor/mesh counts, distribution and review hints | Existing Workspace Intelligence | Occlusion, contact, clipping and physics observations using actual engine probes |
 | Native edits | Existing typed mesh/scene actor allowlist + receipts | Rich tool/brush operators and transactional multi-stage assemblies |
 | Natural multi-primitive modeling | Model constrained to validated, independent native operations | Parametric assemblies, true grouping, booleans, curves, sculpt, UVs, rigging, animations |
-| Preview before applying | **New v1:** conceptual top/front schematic, scrub steps, fullscreen-in-Chat view | True engine ghost preview and exact persisted approval envelope |
+| Preview before applying | **New v1:** conceptual isometric/top/front schematic, scrub steps, fullscreen-in-Chat view | True engine ghost preview and exact persisted approval envelope |
 | Approve inside Chat | **New v1:** explicit button submits a *new* human request for re-planning/revalidation | Cryptographically bound frozen plan/snapshot, exact-once approved transaction and signed preview state |
 | Native execution truth | Existing receipt-constrained response | Production owner device and visual/model correctness acceptance |
 | Native asset export | Current editor's native export paths only where present | Unified artifact/asset versioning + project-file delivery from Chat |
@@ -64,7 +64,7 @@ Response complexity should scale to the task. A one-box color change should not 
 - Workspace intelligence card with sampled object counts, type bars, review hints, read-only follow-ups (existing).
 - Guided project creation card: blank scene, blank 3D model, advertised starters, name, review and Create click (existing).
 - Rich comparison, mathematical graph, 3D model and other typed widgets where their owning implementation is active (existing; not a claim they can render arbitrary imported models).
-- **Design Studio v1 card:** conceptual top/front wireframe, numbered placements, construction slider, expanded overlay inside Chat, step details, revision composer, explicit Build-request button (new candidate).
+- **Design Studio v1 card:** conceptual isometric/top/front wireframe, numbered placements, construction slider, expanded overlay inside Chat, step details, revision composer, explicit Build-request button (new candidate).
 - The Build button *does not invoke the host directly*. It sends an explicit new ordinary user request; a fresh context, native plan, validator and host receipt remain mandatory.
 - Existing GitHub work/source widgets and evidence sections remain separate from native editor permissions.
 
@@ -161,7 +161,7 @@ For one supported native operation, §C can perform the current direct authentic
 
 - Intent: quoted text, explanation questions, negations, code requests, old chat messages and data names do not authorize native writes.
 - Preview: one or many supported operations yields a bounded widget, no native batch registration and no user-data modification.
-- UI: correct top/front view; step slider updates diagram; overlay opens/closes on desktop/mobile; keyboard focus works; reduced-motion respected; names rendered as text.
+- UI: correct isometric/top/front view; step slider updates diagram; overlay opens/closes on desktop/mobile; keyboard focus works; reduced-motion respected; names rendered as text.
 - Build click: explicit, current user gesture only; no silent auto-click; no existing unfinished draft overwritten; no stale host source accepted.
 - Execution: native typed validator and session/owner/project/grant boundary stay unchanged; accurate complete/partial/failure receipt handling.
 - Preservation: current project/starter copies, Google account identity, Chat history, stream truth firewall, saved settings, and independent §E hosting untouched.
