@@ -160,6 +160,56 @@ class ForgeEmbedTest(unittest.TestCase):
         return self.post(f"/api/forge/embed/host/batches/{batch_id}/take", {"leaseId": lease["leaseId"]},
                          host_token=lease["hostToken"], origin=PARENT)
 
+    def test_remembered_login_recovers_after_page_reload_without_new_pair_code(self):
+        # The stored credential is a browser-managed HttpOnly/Partitioned cookie,
+        # not a JS-visible access token or a permanent editor lease.
+        token, _ = self.pair()
+        remembered = self.client.cookies.get(embed.REMEMBER_COOKIE)
+        self.assertTrue(remembered and remembered.startswith("sfm1_"))
+        cookie = self.post("/api/forge/embed/pair", {}).headers.get("set-cookie", "")
+        # Pair creation does not itself issue account continuity.
+        self.assertNotIn(embed.REMEMBER_COOKIE, cookie)
+        self.assertEqual(self.post("/test/account", {}, token=token).status_code, 405)
+        self.clock += embed.SESSION_TTL + 1
+        self.assertEqual(self.client.get("/test/account", headers={"Authorization": "Bearer " + token}).status_code, 401)
+        host2, channel2 = "host_" + "8"*32, "channel_" + "9"*32
+        restored = self.post("/api/forge/embed/resume", {"parentOrigin": PARENT, "hostId": host2,
+                             "channelId": channel2})
+        self.assertEqual(restored.status_code, 200, restored.text)
+        fresh = restored.json()["token"]
+        self.assertNotEqual(fresh, token)
+        self.assertEqual(restored.json()["user"]["id"], ALICE["id"])
+        self.assertEqual(restored.json()["hostId"], host2)
+        self.assertEqual(restored.json()["channelId"], channel2)
+        self.assertNotIn(remembered, json.dumps(restored.json()))
+        self.assertEqual(self.client.get("/test/account", headers={"Authorization": "Bearer " + fresh}).status_code, 200)
+        wrong = self.post("/api/forge/embed/resume", {"parentOrigin": "https://evil.test",
+                          "hostId": host2, "channelId": channel2})
+        self.assertEqual(wrong.status_code, 403)
+        expired = self.clock + embed.REMEMBER_TTL
+        self.clock = expired
+        self.assertEqual(self.post("/api/forge/embed/resume", {"parentOrigin": PARENT,
+                         "hostId": host2, "channelId": channel2}).status_code, 401)
+
+    def test_remember_cookie_rejected_after_login_revocation_and_logout(self):
+        token, _ = self.pair()
+        cookie = self.client.cookies.get(embed.REMEMBER_COOKIE)
+        self.assertTrue(cookie)
+        self.assertEqual(self.post("/api/forge/embed/resume", {"parentOrigin": PARENT,
+                         "hostId": HOST, "channelId": CHANNEL}).status_code, 200)
+        logged_out = self.post("/api/forge/embed/logout", {}, token=token)
+        self.assertEqual(logged_out.status_code, 200, logged_out.text)
+        header = logged_out.headers.get("set-cookie", "")
+        self.assertIn("HttpOnly", header)
+        self.assertIn("Partitioned", header)
+        self.assertIn("Max-Age=0", header)
+        self.assertEqual(self.post("/api/forge/embed/resume", {"parentOrigin": PARENT,
+                         "hostId": HOST, "channelId": CHANNEL}).status_code, 401)
+        token, _ = self.pair()
+        accounts.revoke_login(SID)
+        self.assertEqual(self.post("/api/forge/embed/resume", {"parentOrigin": PARENT,
+                         "hostId": HOST, "channelId": CHANNEL}).status_code, 401)
+
     def test_pair_is_pkce_bound_single_use_and_owner_cannot_be_claimed(self):
         verifier = "x" * 64
         challenge = base64.urlsafe_b64encode(hashlib.sha256(verifier.encode()).digest()).rstrip(b"=").decode()
