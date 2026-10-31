@@ -1,78 +1,43 @@
-name: §E WebXR renderer inventory
+name: §E v11.181 immersive WebXR candidate
 on:
   push:
     branches: [feature/forge-v11-181-immersive-webxr-20261031]
+    paths:
+      - 'projects/swrlz-forge-moba/**'
+      - '.github/workflows/forge-v11-181-webxr-inspect.yml'
 permissions:
   contents: read
 jobs:
-  inspect:
+  verify:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Rebuild existing §E source and print bounded renderer anchors
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check XR module syntax and immutable native boundaries
         run: |
-          python projects/swrlz-forge-moba/build_space.py --output /tmp/forge181-inspect > /tmp/forge181-manifest
+          node --check projects/swrlz-forge-moba/runtime/immersive_xr_gateway_v11_181.js
+          node projects/swrlz-forge-moba/tests/test_v11_181_immersive_xr.cjs
+      - name: Rebuild candidate and measure exact source
+        run: |
           python - <<'PY'
-          import pathlib,re,hashlib
-          raw=pathlib.Path('/tmp/forge181-inspect/index.html').read_bytes()
-          s=raw.decode('utf8')
-          assert hashlib.sha256(raw).hexdigest()=='befd3604d7614483eff73ef958c9652204ba3aeed4533f01a4b6204b9212ea60'
-          needles=[
-            r'new\\s+THREE\\.WebGLRenderer',
-            r'\\brenderer\\s*=',
-            r'\\.setAnimationLoop\\(',
-            r'requestAnimationFrame\\(',
-            r'function\\s+animate\\(',
-            r'function\\s+tick\\(',
-            r'function\\s+frame\\(',
-            r'\\brenderer\\.render\\(',
-            r'function\\s+cameraUpdate\\(',
-            r'function\\s+resize\\(',
-            r'function\\s+render\\(',
-            r'\\bperspectiveCamera\\s*=',
-            r'\\bscene\\s*=',
-            r'<script[^>]+src=',
-            r'function\\s+loop\\(',
-            r'WebGLRenderer',
-            r'const\\s+renderer\\b',
-            r'\\bModelAtelier\\s*=',
-          ]
-          for rawpat in needles:
-            pat=rawpat.replace('\\\\','\\')
-            hits=list(re.finditer(pat,s,re.I))
-            print('XR_SCAN',pat,'COUNT',len(hits))
-            for m in hits[:5]:
-              left=max(0,m.start()-340);right=min(len(s),m.end()+1250)
-              print('XR_CONTEXT_BEGIN',m.start())
-              print(s[left:right].replace('\\n','\\n'))
-              print('XR_CONTEXT_END')
-          print('XR_SCAN_COMPLETE')
+          import json,pathlib
+          f=pathlib.Path('projects/swrlz-forge-moba/source-manifest.json')
+          m=json.loads(f.read_text())
+          assert m['name']=='§wyrl§ Engine v11.181'
+          assert len(m['patches'])==213 and m['patches'][-1]=='patches/v11_181_immersive_xr_gateway.py'
+          m['finalBytes']=0;m['finalSha256']=''
+          f.write_text(json.dumps(m,ensure_ascii=False))
           PY
-      - name: Map native loop bootstrap, selection and camera restoration anchors
-        run: |
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/forge181
           python - <<'PY'
-          import re,pathlib
-          s=pathlib.Path('/tmp/forge181-inspect/index.html').read_text()
-          queries=[
-            (r'\btick\(\);',0,1250000),
-            (r'requestAnimationFrame\(tick\)',0,1200000),
-            (r'function shouldRenderFrame\(',0,1200000),
-            (r'function resize\(',945000,1080000),
-            (r'function selectActor\(',0,1250000),
-            (r'function setSelection\(',0,1250000),
-            (r'function setSelected\(',0,1250000),
-            (r'function select\(',0,1250000),
-            (r'function pick\(',0,1250000),
-            (r'function onPointerDown\(',0,1250000),
-            (r'const raycaster',0,1250000),
-            (r'transform =',0,1250000),
-            (r'function (?:start|stop)Play\(',0,1250000),
-            (r'const THREE',0,320000),
-          ]
-          for pattern,a,b in queries:
-            hits=[m for m in re.finditer(pattern,s) if a<=m.start()<=b]
-            print('XR_DEEP',pattern,'COUNT',len(hits))
-            for match in hits[:6]:
-              i=match.start()
-              print('XR_DEEP_CTX',i,repr(s[max(0,i-330):i+700]))
+          import hashlib,pathlib,json
+          raw=pathlib.Path('/tmp/forge181/index.html').read_bytes()
+          source=raw.decode('utf-8')
+          assert source.count('renderer.setAnimationLoop(tick);')==1
+          assert source.count('function se181XREnter()')==1
+          assert 'se181XRRender();renderer.render(scene,camera);' in source
+          assert 'SWYRL_ENGINE_DEPLOY_MARKER: V11_181_IMMERSIVE_WEBXR_GATE' in source
+          print('XR_GATEWAY_MEASURED',json.dumps({'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest()}))
           PY
