@@ -19,6 +19,10 @@ html .app>.topbar .se187-game-tabs{position:sticky;left:0;z-index:80;flex:0 0 au
  border-radius:0 0 8px 0;margin-left:-8px;margin-right:8px;height:46px;
  padding:3px 5px;border-block:0;box-shadow:5px 0 8px #0a1521b0}
 html .app>.topbar .se187-game-tabs button{min-height:36px}
+html .app>.topbar .se187-game-tabs button[data-se187-tab]{
+ display:inline-flex!important;align-items:center!important;justify-content:center!important;
+ visibility:visible!important;opacity:1!important;
+}
 html .app>.topbar .se187-game-tabs .se187-draft-state{display:none}
 /* Modeler is its own page surface, not a popup nested over an active project.
    Keep native export tools and native 3D editor exactly where they already work. */
