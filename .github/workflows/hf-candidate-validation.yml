@@ -79,6 +79,7 @@ jobs:
           node tests/test_forge_popup_mobile_recovery.mjs
           node tests/test_forge_workspace_read_v1.mjs
           python hf_space/test_forge_workspace_read_v1.py
+          python hf_space/test_forge_workspace_insights_v1.py
           node tests/test_forge_avatar_preflight_v1.mjs
           python hf_space/test_forge_embed.py
       - name: v243 GitHub startup concurrency and source-safety regression
