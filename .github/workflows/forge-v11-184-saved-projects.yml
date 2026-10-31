@@ -38,3 +38,26 @@ jobs:
               assert marker in b,marker
           print('SE184_CANDIDATE_RECEIPT',json.dumps({'bytes':len(b),'sha256':hashlib.sha256(b).hexdigest()}))
           PY
+
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Build browser fixture for saved project gallery and startup
+        run: |
+          python - <<'PY'
+          import json,pathlib
+          p=pathlib.Path('projects/swrlz-forge-moba/source-manifest.json')
+          m=json.loads(p.read_text());m['finalBytes']=0;m['finalSha256']=''
+          p.write_text(json.dumps(m,ensure_ascii=False))
+          PY
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/se184-browser >/tmp/se184-browser-build.log
+      - name: Install Chromium test runtime
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps --only-shell chromium
+      - name: Test local preview cards, exclusive default and saved startup reload
+        run: node projects/swrlz-forge-moba/tests/ui_v11_184_browser.mjs
