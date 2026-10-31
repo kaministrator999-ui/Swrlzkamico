@@ -1,0 +1,34 @@
+name: §E v11.180 outside-Chat dismissal candidate
+on:
+  push:
+    branches: [feature/forge-v11-180-chat-outside-dismiss-20261031]
+    paths:
+      - "projects/swrlz-forge-moba/**"
+      - ".github/workflows/forge-v11-180-chat-outside-dismiss.yml"
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Focused Chat outside-dismiss tests
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/chat_outside_dismiss_v11_180.js
+          node projects/swrlz-forge-moba/tests/test_v11_180_chat_outside_dismiss.cjs
+      - name: Verify exact sealed 212-patch / 68-asset engine
+        run: |
+          python projects/swrlz-forge-moba/scripts/verify_v11_180_release.py --output /tmp/forge180
+          python - <<'PY'
+          import hashlib,pathlib,json
+          root=pathlib.Path('/tmp/forge180')
+          raw=(root/'index.html').read_bytes()
+          receipt=json.loads((root/'SOURCE.json').read_text())
+          assert len(raw)==receipt['finalBytes']==7066690
+          assert hashlib.sha256(raw).hexdigest()==receipt['finalSha256']=='befd3604d7614483eff73ef958c9652204ba3aeed4533f01a4b6204b9212ea60'
+          assert len(receipt['patches'])==212 and len(receipt['assets'])==68
+          print('SE_V11_180_SEALED_PASS')
+          PY

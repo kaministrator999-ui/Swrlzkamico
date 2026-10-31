@@ -1,0 +1,16 @@
+/* §E v11.180: Chat slides toward the screen edge on outside selection. */
+html #seChatAccountPanel{
+ transform:translate3d(calc(100% + 24px),0,0);
+ opacity:0;
+ pointer-events:none;
+ transition:transform 210ms cubic-bezier(.2,.7,.2,1),opacity 175ms ease-out;
+ will-change:transform;
+}
+html #seChatAccountPanel.se180-chat-visible{
+ transform:translate3d(0,0,0);
+ opacity:1;
+ pointer-events:auto;
+}
+@media(prefers-reduced-motion:reduce){
+ html #seChatAccountPanel{transition:none;will-change:auto;}
+}

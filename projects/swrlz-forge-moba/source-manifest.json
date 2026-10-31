@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.179",
+  "name": "§wyrl§ Engine v11.180",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_179.html",
+  "finalArtifact": "swyrl_engine_v11_180.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -225,8 +225,9 @@
     "patches/v11_176_chat_account_project_picker.py",
     "patches/v11_177_google_avatar_single_tab.py",
     "patches/v11_178_workspace_analysis.py",
-    "patches/v11_179_vr_controller_studio.py"
+    "patches/v11_179_vr_controller_studio.py",
+    "patches/v11_180_chat_outside_dismiss.py"
   ],
-  "finalBytes": 7063978,
-  "finalSha256": "2b9119cb587ca262be0948c3d5a04d35cfa3ebf0a1a5169dea116c1619d365fd"
+  "finalBytes": 7066690,
+  "finalSha256": "befd3604d7614483eff73ef958c9652204ba3aeed4533f01a4b6204b9212ea60"
 }

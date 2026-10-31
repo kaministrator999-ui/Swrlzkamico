@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.179
+title: §wyrl§ Engine v11.180
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,23 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.180 — Chat automatically slides away after an outside tap (2026-10-31)
+
+**Owner request:** When the user selects outside the embedded §wyrlz Chat in §E, the Chat should slide away without closing the editor or losing the current conversation.
+
+**Implemented:** A document-capture primary pointerdown handler closes Chat only when the tap/click target lies outside both the Chat side panel and its toggle. A click fallback also handles keyboard-activated controls outside Chat. Pointer events are never canceled or replayed, so selecting a scene/mesh/editor control still works. Right mouse button and secondary touch pointers are ignored to prevent accidental dismissal.
+
+**UX:** The existing Chat aside slides right over 210 ms, supports prefers-reduced-motion, and is hidden/inert after exit. The original iframe stays mounted across opening/closing, so the embedded conversation and draft DOM are not destroyed. The existing close button, toggle and Escape work. On outside selection the focus stays with the chosen editor control instead of jumping back to Chat's toggle.
+
+**Security:** Closing uses the existing revoke() path, withdrawing the short-lived native edit lease; reopening reconnects normally. It does not copy Chat credentials, mutate a project or touch model/gameplay/VR control state.
+
+**Verification:** Focused VM tests cover inside/outside targets, toggle exclusion, right-click, non-stolen focus, transition timing, preserved iframe, stale timer cancellation and explicit close focus. A source build verifies the HTML patch, version, 212 ordered patches and 68 assets.
+
+**Exact source:** v11.180, 212 ordered patches, 68 assets, 7,066,690 HTML bytes, SHA-256 befd3604d7614483eff73ef958c9652204ba3aeed4533f01a4b6204b9212ea60. Implemented with runtime/chat_outside_dismiss_v11_180.js and .css, patches/v11_180_chat_outside_dismiss.py, tests/test_v11_180_chat_outside_dismiss.cjs, scripts/verify_v11_180_release.py.
+
+**Remaining acceptance:** Physical phone/Quest Browser outside-tap behavior and live-hosted hash must be separately checked after the final explicit release request. §E's chat/project/model/game and VR Controller Studio are unchanged otherwise.
+
 
 ## §E v11.179 — VR Controller Studio configuration release (2026-10-31)
 
