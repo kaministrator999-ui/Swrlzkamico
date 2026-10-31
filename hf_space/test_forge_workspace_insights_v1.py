@@ -73,6 +73,11 @@ for query in [
     "Explain the shared position concern",
 ]:
     assert classify_forge_intent(query,snapshot)["disposition"]=="explain",query
+ANALYZE_BUTTON_PROMPT = ("Analyze the current §E project and workspace. Inspect its actual active level, "
+    "selected object, object types, scene organization and bounded metadata findings. "
+    "Suggest useful next checks and improvements. This is read-only: do not modify any objects.")
+assert classify_forge_intent(ANALYZE_BUTTON_PROMPT,snapshot)["disposition"]=="read"
+assert classify_forge_intent(ANALYZE_BUTTON_PROMPT,{**snapshot,"selectedId":None})["disposition"]=="read"
 assert classify_forge_intent("Move the selected wall",snapshot)["disposition"]=="mutation"
 assert classify_forge_intent("Review Python source code",snapshot)["disposition"]=="ordinary"
 assert classify_forge_intent("Why were those duplicate names flagged?")["disposition"]!="read"

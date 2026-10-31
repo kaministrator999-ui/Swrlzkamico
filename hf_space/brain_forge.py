@@ -74,6 +74,14 @@ def classify_forge_intent(prompt: str, summary: dict[str, Any] | None = None) ->
     text = current_command_text(text)
     if _CODE.search(text):
         return result("ordinary", "separate-code-or-provider-request")
+    # An explicit fresh editor audit must use deterministic, receipt-backed
+    # inspection even if its template mentions "findings" or asks for next
+    # checks. Otherwise _WORKSPACE_FOLLOWUP would send the Analyze button's
+    # first report to free-form inference and invent selections or object facts.
+    if (_READ.search(text) and _NATIVE.search(text)
+            and re.search(r"\b(?:analy[sz]e|audit|inspect|review)\b", text, re.I)
+            and not _ACTION.search(text)):
+        return result("read", "explicit-current-native-inspection")
     # Continuations refer to a fresh, authorized scene snapshot, never to
     # stale historical editor grants. Questions cannot trigger native writes.
     if (isinstance(summary, dict) and _WORKSPACE_FOLLOWUP.search(text)
