@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.184",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_184_SAVED_PROJECT_PREVIEWS_AND_DEFAULT",
-  "reason": "§E owner request: My Projects now offers responsive local/account project preview cards, authentic scene-derived local thumbnails, lazy legacy preview calculations, on-demand account scene overviews, native Open project actions, one exclusive Load this project by default checkbox shared with starter cards, same-browser saved default preference and startup restoration (local IndexedDB project; signed-in account-backed project). Explicit ?project= routes still override. Browser Android 390x844 and Quest-window 980x680 both verified local previews, exclusivity and actual startup reload into saved scene. Focused CI 41240589536 PASS; 216 ordered patches, 68 original assets, 7,134,586 final HTML bytes, SHA256 35ba507edf2eedd98a85a49e8ae5e55e5b43f0b78c61139e1b2e6b50e8b95c5b. Merged with unrelated §C history preserved via PR #305. Owner device acceptance and live HF serving receipt outstanding.",
-  "sourceCommit": "849af4b5e3beb4a13295bfabe977090cf8fc964b",
-  "sourceIntegritySha256": "35ba507edf2eedd98a85a49e8ae5e55e5b43f0b78c61139e1b2e6b50e8b95c5b"
+  "releaseVersion": "v11.185",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_185_WISP_GLITCH_BOOT_ATELIER_COLLAPSE",
+  "reason": "§E owner request: replace static editor boot with lightweight cyan/violet particle-fragment §E sigil and wisp startup, real status phases and reduced-motion fallback; add collapsible native Model Atelier render/view/reference settings with saved per-browser state, mobile compact default and preserved Save/Export/Close. No model/game data changes. Focused strict release verification PASS in GitHub Actions 41243185612; source HTML 7,144,873 bytes and SHA-256 0191e9f031e7e4e38996fac1ae954a3012aa87a03803bbc876936441bfdafa53. Owner Android/Quest acceptance is pending.",
+  "sourceCommit": "7cdabdab85ecaa2c0f782928c26a3d621df7b184",
+  "sourceIntegritySha256": "0191e9f031e7e4e38996fac1ae954a3012aa87a03803bbc876936441bfdafa53"
 }
