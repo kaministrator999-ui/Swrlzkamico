@@ -19,23 +19,16 @@ jobs:
         run: |
           node --check projects/swrlz-forge-moba/runtime/chat_outside_dismiss_v11_180.js
           node projects/swrlz-forge-moba/tests/test_v11_180_chat_outside_dismiss.cjs
-      - name: Reconstruct candidate and print exact bytes and SHA
+      - name: Verify exact sealed 212-patch / 68-asset engine
         run: |
+          python projects/swrlz-forge-moba/scripts/verify_v11_180_release.py --output /tmp/forge180
           python - <<'PY'
-          import json,pathlib
-          path=pathlib.Path('projects/swrlz-forge-moba/source-manifest.json')
-          doc=json.loads(path.read_text())
-          assert doc['name']=='§wyrl§ Engine v11.180'
-          assert doc['patches'][-1]=='patches/v11_180_chat_outside_dismiss.py'
-          doc['finalSha256']='';doc['finalBytes']=0
-          path.write_text(json.dumps(doc,ensure_ascii=False))
-          PY
-          python projects/swrlz-forge-moba/build_space.py --output /tmp/forge180 > /tmp/build180
-          python - <<'PY'
-          import hashlib,json,pathlib
-          path=pathlib.Path('/tmp/forge180/index.html')
-          content=path.read_bytes()
-          assert b'seChatOutsideDismissV11180' in content
-          assert b'V11_180_CHAT_OUTSIDE_DISMISS' in content
-          print('SE_V11_180_MEASURED',json.dumps({'bytes':len(content),'sha256':hashlib.sha256(content).hexdigest()}))
+          import hashlib,pathlib,json
+          root=pathlib.Path('/tmp/forge180')
+          raw=(root/'index.html').read_bytes()
+          receipt=json.loads((root/'SOURCE.json').read_text())
+          assert len(raw)==receipt['finalBytes']==7066690
+          assert hashlib.sha256(raw).hexdigest()==receipt['finalSha256']=='befd3604d7614483eff73ef958c9652204ba3aeed4533f01a4b6204b9212ea60'
+          assert len(receipt['patches'])==212 and len(receipt['assets'])==68
+          print('SE_V11_180_SEALED_PASS')
           PY

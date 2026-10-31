@@ -228,6 +228,6 @@
     "patches/v11_179_vr_controller_studio.py",
     "patches/v11_180_chat_outside_dismiss.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 7066690,
+  "finalSha256": "befd3604d7614483eff73ef958c9652204ba3aeed4533f01a4b6204b9212ea60"
 }
