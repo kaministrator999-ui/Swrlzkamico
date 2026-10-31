@@ -232,6 +232,6 @@
     "patches/v11_183_project_ui_loading.py",
     "patches/v11_184_saved_project_previews_default.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 7134586,
+  "finalSha256": "35ba507edf2eedd98a85a49e8ae5e55e5b43f0b78c61139e1b2e6b50e8b95c5b"
 }
