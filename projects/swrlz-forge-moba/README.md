@@ -1,3 +1,15 @@
+## §E v11.190 — honest rendered FPS and built-in vault batching (2026-10-31)
+
+**Measured evidence:** User Android screenshots had reported ~18 FPS on Medium, 53–60 on Low, and 24–30 on Mobile Boost, but screenshots showed different scene views and times. Source inspection identified a telemetry flaw: the displayed FPS counted animation-loop invocations, even when `shouldRenderFrame()` skipped WebGL frames according to the preset cap (Low=45, Mobile Boost=60). These were not apples-to-apples measurements.
+
+**Correctness fix:** The overlay now displays *actual submitted renderer frames per second* and corresponding inter-render interval. Internal update FPS remains separately inspectable, rather than being mislabeled as rendered FPS. Synthetic browser frame rates are not used as a proxy for Android/Quest hardware performance.
+
+**A/B comparison:** In View → Graphics & Performance, use **Compare Low / Boost** to run two consecutive measurements against the same loaded scene/camera under the same temporary 60 FPS cap. The original graphics preference and cap are restored afterward. Keep the camera stationary while the comparison runs. A lightweight on-demand scene audit identifies actor groups with many visible child meshes; its results are *estimates of submesh count*, not precise per-actor GPU timing.
+
+**Safe draw-call batching:** Only existing built-in, non-skeletal vault decoration is modified at rendering-time: opaque vault canopy panels and chamber wall triangles are combined into one mesh per actor; repeated brass and glowing vault rib cylinders and star oculus points become instanced meshes within their original actor groups. The Embervault project JSON, actor IDs, positions, material colors, collisions and editable parent actors remain unchanged. Estimated maximum reduction across visible canonical decorations is around 100 draw calls; actual viewport reduction and device performance must be measured.
+
+**Other:** Switching Low/Boost no longer unnecessarily disposes same-size shadow textures or resets the WebGL pixel ratio when unchanged. Existing modeling, project persistence, game simulation, VR, dynamic actors and 11.189 graphics choices are preserved. Package and syntax checks run automatically; Chromium suites remain opt-in/manual.
+
 ## §E v11.189 — mobile graphics performance controls and diagnostics (2026-10-31)
 
 **Owner issue:** The main §E Game Engine screenshot on Android showed about 18 FPS / 56.7 ms per frame, at 82% rendering scale with a complex Dragon Den scene. The 82% figure is resolution scale, not CPU utilization. This release avoids inventing a claimed FPS gain before physical-device measurement.
