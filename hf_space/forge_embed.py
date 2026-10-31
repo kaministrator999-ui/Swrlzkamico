@@ -35,6 +35,7 @@ REMEMBER_COOKIE = "swrlz_forge_remember"
 PRESENCE_TTL = 30
 LEASE_TTL = 20
 BATCH_TTL = 300
+DESIGN_TTL = 900  # bounded owner-approved window; heartbeat/scene validation remains mandatory
 MAX_CONTEXT_BYTES = 32768
 MAX_OPERATIONS = 16
 MAX_RECORD_BYTES = 196608
@@ -81,7 +82,7 @@ def _observe(event, **fields):
     """Optional bounded camera; never receives accounts, payloads or grants."""
     if _diagnostic_hook is None:
         return
-    allowed = {"status", "code", "pairId", "leaseId", "batchId", "operationCount", "receiptCount"}
+    allowed = {"status", "code", "pairId", "leaseId", "batchId", "proposalId", "operationCount", "receiptCount"}
     document = {key: value for key, value in fields.items() if key in allowed}
     document["schema"] = "swrlz-forge-boundary-camera-v1"
     document["event"] = event
@@ -662,7 +663,74 @@ def invalidate_generation(context):
         _error(409, "FORGE_GENERATION_CHANGED")
 
 
-def create_batch(context, operations):
+
+def _design_digest(operations):
+    """Stable metadata fingerprint; only server-held operations authorize a write."""
+    raw = json.dumps(operations, ensure_ascii=False, sort_keys=True,
+                     separators=(",", ":"), allow_nan=False).encode("utf-8")
+    return hashlib.sha256(raw).hexdigest()
+
+
+def create_design_proposal(context, operations):
+    """Offer an immutable 15-minute proposal without scheduling native work.
+
+    Bound to the active account session, Chat thread, host and native snapshot.
+    Model/planner output is independently revalidated at this durable boundary.
+    """
+    lease, lease_raw, session, session_raw, gen, gen_raw = _generation(context, True)
+    operations, _ = _safe_json(operations, 65536)
+    from forge_chat_actions import validate_operations
+    operations = validate_operations(context, operations)
+    if any(op.get("op") == "project.create" for op in operations):
+        _error(400, "FORGE_DESIGN_PROJECT_WIZARD_REQUIRED")
+    proposal_id = secrets.token_hex(16)
+    expires_at = min(_now() + DESIGN_TTL, session["expiresAt"])
+    record = {
+        "schema": SCHEMA, "kind": "design-proposal", "state": "offered",
+        "proposalId": proposal_id, "operations": operations,
+        "planDigest": _design_digest(operations),
+        **{key: lease[key] for key in
+           ("sessionKey", "owner", "threadId", "projectId", "contextHash",
+            "parentOrigin", "hostId", "channelId")},
+        "expiresAt": expires_at,
+    }
+    key = _key("design", proposal_id)
+    if not _txn([(_key("lease", context.lease_id), lease_raw),
+                 (context._session_key, session_raw), (context._generation_key, gen_raw),
+                 (key, None)], [(key, record, _ttl(record, DESIGN_TTL))]):
+        _error(409, "FORGE_DESIGN_CONTEXT_CHANGED")
+    _observe("design.offered", proposalId=proposal_id, operationCount=len(operations))
+    return {"proposalId": proposal_id, "planDigest": record["planDigest"],
+            "expiresAt": expires_at}
+
+
+def claim_design_proposal(context, proposal_id):
+    """Atomically consume one preview and register the exact original batch.
+
+    The opaque public ID is never a capability: a fresh valid generation,
+    matching encrypted owner/session/thread/project/host/snapshot and the same
+    server-side native validator are required. A replay cannot register a batch.
+    """
+    if not isinstance(proposal_id, str) or not _HEX.fullmatch(proposal_id):
+        _error(400, "FORGE_DESIGN_ID_INVALID")
+    proposal, _ = _read("design", proposal_id)
+    if (not proposal or proposal.get("kind") != "design-proposal"
+            or proposal.get("state") != "offered" or proposal.get("expiresAt", 0) <= _now()):
+        _error(409, "FORGE_DESIGN_EXPIRED_OR_USED")
+    lease, _, _, _, _, _ = _generation(context, True)
+    bindings = ("sessionKey", "owner", "threadId", "projectId", "contextHash",
+                "parentOrigin", "hostId", "channelId")
+    if any(proposal.get(key) != lease.get(key) for key in bindings):
+        _error(409, "FORGE_DESIGN_CONTEXT_MISMATCH")
+    operations = copy.deepcopy(proposal.get("operations"))
+    if (not isinstance(operations, list)
+            or proposal.get("planDigest") != _design_digest(operations)):
+        _error(409, "FORGE_DESIGN_PLAN_CORRUPT")
+    batch_id = create_batch(context, operations, proposal_id=proposal_id)
+    return batch_id, operations, proposal["planDigest"]
+
+
+def create_batch(context, operations, *, proposal_id=None):
     lease, lease_raw, _, session_raw, gen, gen_raw = _generation(context, True)
     if not isinstance(operations, list) or not 1 <= len(operations) <= MAX_OPERATIONS or not all(isinstance(op, dict) for op in operations):
         _error(400, "FORGE_INVALID_OPERATION_BATCH")
@@ -673,17 +741,43 @@ def create_batch(context, operations):
     operations = validate_operations(context, operations)
     if gen.get("activeBatchId"):
         _error(409, "FORGE_BATCH_ALREADY_REGISTERED")
+    # Single atomic Redis transaction consumes the proposal and registers the
+    # batch: racing approvals cannot both claim it. No native action is sent
+    # if the proposal, host, owner or scene changed.
+    proposal_expected, proposal_write, digest = [], [], None
+    if proposal_id is not None:
+        if not isinstance(proposal_id, str) or not _HEX.fullmatch(proposal_id):
+            _error(400, "FORGE_DESIGN_ID_INVALID")
+        record, original = _read("design", proposal_id)
+        keys = ("sessionKey", "owner", "threadId", "projectId", "contextHash",
+                "parentOrigin", "hostId", "channelId")
+        if (not record or record.get("kind") != "design-proposal"
+                or record.get("state") != "offered" or record.get("expiresAt", 0) <= _now()
+                or any(record.get(key) != lease.get(key) for key in keys)
+                or record.get("operations") != operations
+                or record.get("planDigest") != _design_digest(operations)):
+            _error(409, "FORGE_DESIGN_STALE_OR_USED")
+        proposal_key = _key("design", proposal_id)
+        proposal_expected = [(proposal_key, original)]
+        proposal_write = [(proposal_key, {**record, "state": "claimed",
+                                           "claimedByGeneration": context.generation_id},
+                           _ttl(record, DESIGN_TTL))]
+        digest = record["planDigest"]
     batch_id = secrets.token_hex(16)
     batch = {"schema": SCHEMA, "kind": "batch", "state": "pending", "batchId": batch_id,
              "generationKey": context._generation_key, **{k: gen[k] for k in
              ("leaseId", "sessionKey", "owner", "threadId", "generationId", "projectId", "contextHash")},
              "context": copy.deepcopy(lease["context"]), "operations": operations, "receipts": [],
              "expiresAt": min(_now() + BATCH_TTL, gen["expiresAt"])}
+    if digest is not None:
+        batch["designPlanDigest"] = digest
+        batch["designProposalId"] = proposal_id
     key = _key("batch", batch_id)
     new_gen = {**gen, "activeBatchId": batch_id}
     if not _txn([(_key("lease", context.lease_id), lease_raw), (context._session_key, session_raw),
-                 (context._generation_key, gen_raw), (key, None)],
-                [(context._generation_key, new_gen, _ttl(new_gen)), (key, batch, _ttl(batch, BATCH_TTL))]):
+                 (context._generation_key, gen_raw), (key, None), *proposal_expected],
+                [(context._generation_key, new_gen, _ttl(new_gen)), (key, batch, _ttl(batch, BATCH_TTL)),
+                 *proposal_write]):
         _error(409, "FORGE_BATCH_CONTEXT_CHANGED")
     _observe("batch.registered", leaseId=context.lease_id, batchId=batch_id, operationCount=len(operations))
     return batch_id

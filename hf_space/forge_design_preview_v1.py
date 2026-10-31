@@ -107,6 +107,11 @@ def build_preview(summary: dict[str, Any], operations: list[dict[str, Any]],
             "color": op.get("color") or source.get("color") or "#65d9f5",
             "material": _text(op.get("material") or source.get("material") or "", 32),
             "target": _text(op.get("id") or "", 80),
+            # Exact native operation fields for full human review. All values
+            # passed the server's native schema; front-end uses textContent.
+            "fields": {key: op[key] for key in
+                       ("id", "kind", "prefab", "name", "position", "rotation", "scale",
+                        "color", "material") if key in op},
         })
     project = summary.get("project") if isinstance(summary.get("project"), dict) else {}
     # Re-approval sends a fresh NATURAL-LANGUAGE command. It is not a hidden

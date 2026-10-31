@@ -6,6 +6,7 @@ const ROOT=path.resolve(__dirname,'..');
 const CHAT='https://kamiloki-swyrlz.hf.space',FORGE='https://kamiloki-swrlz-forge-moba.static.hf.space';
 const protocol='swrlz-forge-chat-v1',hostId='host_01234567890123456789',channelId='chan_01234567890123456789';
 const pairId='a'.repeat(32),leaseId='b'.repeat(32),batchId='c'.repeat(32);
+const designId='d'.repeat(32),designDigest='e'.repeat(64);
 const token='sfe1_PRIVATE_CONTROLLED_BROWSER_FIXTURE';
 const stationSource=fs.readFileSync(path.join(ROOT,'hf_space/station.py'),'utf8');
 const presentationAdapter=stationSource.match(/^    adapter='([^']*)'/m)?.[1]||'';
@@ -47,11 +48,14 @@ window.closeHost=()=>send('host.inactive',{reason:'closed'});
       const designPreviewWidget={contract:'swrlz-widget-v1',kind:'forge-design-preview',
         title:'§E Design Studio · Review',provider:'Current native context',data:{
           schema:'swrlz-forge-design-preview-v1',project:'Sheep Tag',workspace:'model-atelier',
-          operationCount:2,request:'Design a two-piece robot model',
-          followup:"Apply in §e now: Add a box mesh, name='Robot body'; Add a sphere mesh, name='Robot head'",
-          steps:[{index:1,op:'mesh.add',name:'Robot body',kind:'box',position:[0,0,0],scale:[1,1,1],color:'#65d9f5'},
-            {index:2,op:'mesh.add',name:'Robot head',kind:'sphere',position:[0,2,0],scale:[.6,.6,.6],color:'#9c87ff'}],
-          notice:'Conceptual proposal only. No editor operation has run.'}};
+          operationCount:2,request:'Design a two-piece robot model',proposalId:designId,
+          planDigest:designDigest,expiresAt:Date.now()/1000+900,
+          followup:'Approve §e design preview '+designId,
+          steps:[{index:1,op:'mesh.add',name:'Robot body',kind:'box',position:[0,0,0],scale:[1,1,1],color:'#65d9f5',
+            fields:{kind:'box',name:'Robot body',position:[0,0,0],scale:[1,1,1],color:'#65d9f5'}},
+            {index:2,op:'mesh.add',name:'Robot head',kind:'sphere',position:[0,2,0],scale:[.6,.6,.6],color:'#9c87ff',
+            fields:{kind:'sphere',name:'Robot head',position:[0,2,0],scale:[.6,.6,.6],color:'#9c87ff'}}],
+          notice:'Conceptual proposal only. No editor operation has run; approval claims exact server-held operations.'}};
       await context.route('**/*',async route=>{
         const request=route.request(),url=new URL(request.url()),pathname=decodeURIComponent(url.pathname);
         if(url.origin===FORGE)return route.fulfill({contentType:'text/html',body:parentHtml});
@@ -142,6 +146,9 @@ window.closeHost=()=>send('host.inactive',{reason:'closed'});
       const designCard=frame.locator('.forge-design-preview');
       await designCard.waitFor();
       assert.equal(await designCard.locator('svg').count(),1,label+' Design Studio renders a conceptual SVG');
+      assert.match(await designCard.locator('.forge-design-proof').textContent(),/Plan eeeeeeeeeeee · 2 exact native steps/);
+      await designCard.locator('summary').filter({hasText:'Build steps'}).click();
+      assert.match(await designCard.locator('.forge-design-steps').textContent(),/Robot head/);
       assert.match(await designCard.locator('svg').getAttribute('aria-label'),/isometric view/i);
       await designCard.getByRole('button',{name:'Top view'}).click();
       assert.match(await designCard.locator('svg').getAttribute('aria-label'),/top view/i);
@@ -203,11 +210,12 @@ window.closeHost=()=>send('host.inactive',{reason:'closed'});
         'explicit owner click sends the exact native request to the authenticated Station transport');
       await frame.locator('#sendButton').waitFor({state:'visible'});
       await frame.waitForFunction(()=>!document.getElementById('sendButton').disabled);
-      await designCard.getByRole('button',{name:/Approve · request build/}).click();
-      for(let attempt=0;attempt<40 && !String(sent?.prompt||'').startsWith('Apply in §e now:');attempt++)
+      await designCard.getByRole('button',{name:/Approve exact plan/}).click();
+      const expectedApproval='Approve §e design preview '+designId;
+      for(let attempt=0;attempt<40 && sent?.prompt!==expectedApproval;attempt++)
         await new Promise(resolve=>setTimeout(resolve,100));
-      assert.ok(sent?.prompt.startsWith('Apply in §e now: Add a box mesh'),
-        'design approval sends a NEW current editor request, not an unauthorized native batch');
+      assert.equal(sent?.prompt,expectedApproval,
+        'exact approval sends a short plan ID, not a reconstructed or truncated native instruction');
       // The fixture intentionally does not persist the new command as a
       // conversation bubble; don't mistake that artificial sync for a product bug.
       const parentData=await page.evaluate(()=>JSON.stringify(window.received));assert.ok(!parentData.includes(token));assert.ok(!parentData.includes('Earlier account project question'));
