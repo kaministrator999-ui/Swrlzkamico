@@ -51,7 +51,11 @@
   }
   if(rects.levelBar?.visible&&rects.mobileTabs?.visible&&intersection(rects.levelBar,rects.mobileTabs)>9)
    issues.push({kind:'collision',pair:['levelBar','mobileTabs']});
-  if(rects.toolbar?.visible&&rects.viewport?.visible&&intersection(rects.toolbar,rects.viewport)>9)
+  // A 1px shared border at the native topbar/canvas seam is expected.
+  // Only report a genuine panel collision exceeding 2px in BOTH axes.
+  if(rects.toolbar?.visible&&rects.viewport?.visible&&
+     Math.min(rects.toolbar.right,rects.viewport.right)-Math.max(rects.toolbar.x,rects.viewport.x)>2&&
+     Math.min(rects.toolbar.bottom,rects.viewport.bottom)-Math.max(rects.toolbar.y,rects.viewport.y)>2)
    issues.push({kind:'collision',pair:['toolbar','viewport']});
   if(rects.leftDock?.visible&&rects.viewport?.visible&&intersection(rects.leftDock,rects.viewport)>9&&innerWidth>720)
    issues.push({kind:'collision',pair:['leftDock','viewport']});
