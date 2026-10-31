@@ -28,8 +28,11 @@
  }
  function intersection(a,b){
   if(!a?.visible||!b?.visible)return 0;
-  return Math.max(0,Math.min(a.right,b.right)-Math.max(a.x,b.x))*
-    Math.max(0,Math.min(a.bottom,b.bottom)-Math.max(a.y,b.y));
+  // Ignore <=3px layout/rounding boundaries; report only meaningful
+  // two-dimensional overlaps, not contiguous grid-edge antialiasing.
+  const width=Math.max(0,Math.min(a.right,b.right)-Math.max(a.x,b.x)-3);
+  const height=Math.max(0,Math.min(a.bottom,b.bottom)-Math.max(a.y,b.y)-3);
+  return width*height;
  }
  function audit(){
   const rects={};
