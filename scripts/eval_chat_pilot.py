@@ -169,6 +169,30 @@ async def send_and_receive(context, thread_id: str, prompt: str) -> dict:
     raise TimeoutError("No committed assistant response observed within the bounded timeout.")
 
 
+async def validate_distinct_test_accounts(browser, sessions: list[str]) -> None:
+    """Fail closed before sending prompts if cookies do not identify two distinct test users."""
+    ids = []
+    for session in sessions:
+        context = await browser.new_context()
+        try:
+            await context.add_cookies([{
+                "name": "swrlz_session", "value": session, "url": BASE,
+                "httpOnly": True, "secure": True, "sameSite": "Lax",
+            }])
+            response = await context.request.get(BASE + "/api/account/me", timeout=30000)
+            if response.status != 200:
+                raise RuntimeError("Dedicated evaluation session is not authenticated.")
+            payload = await response.json()
+            user_id = str((payload.get("user") or {}).get("id") or "")
+            if not user_id:
+                raise RuntimeError("Dedicated evaluation session identity is missing.")
+            ids.append(user_id)
+        finally:
+            await context.close()
+    if len(set(ids)) != 2:
+        raise RuntimeError("The two test sessions belong to the same account; independent users required.")
+
+
 async def live_user(browser, case: dict, session: str) -> dict:
     context = await browser.new_context()
     thread_id = "eval-" + case["id"] + "-" + uuid.uuid4().hex[:12]
@@ -283,10 +307,11 @@ async def main(mode: str) -> int:
                 report = {"mode": mode, "model_evaluated": False, "smoke": test}
                 good = test["checks_passed"] == test["checks_total"]
             else:
+                await validate_distinct_test_accounts(browser, sessions)
                 results = await asyncio.gather(*(
                     live_user(browser, case, session) for case, session in zip(SCENARIOS, sessions)
                 ))
-                report = {"mode": mode, "model_evaluated": True, "results": results}
+                report = {"mode": mode, "model_evaluated": any(r.get("turns") for r in results), "results": results}
                 good = all(result["status"] not in ("BLOCKED", "UNTESTED") for result in results)
         finally:
             await browser.close()
