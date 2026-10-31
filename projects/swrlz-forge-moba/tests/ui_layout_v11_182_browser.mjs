@@ -12,6 +12,7 @@ try{
   const context=await browser.newContext({viewport:{width,height},isMobile:mobile,hasTouch:mobile,ignoreHTTPSErrors:true});
   const page=await context.newPage(),pageErrors=[];
   page.on('pageerror',e=>pageErrors.push(String(e).slice(0,280)));
+  page.on('framenavigated',frame=>{if(frame===page.mainFrame())console.log('SE182_NAV',name,frame.url());});
   await page.route('**/*',route=>{
    const uri=new URL(route.request().url());
    if(uri.origin===host){
@@ -26,7 +27,10 @@ try{
   await page.goto(host+'/',{waitUntil:'domcontentloaded',timeout:60000});
   await page.waitForFunction("()=>!!window.SWYRL_ENGINE_UI_AUDIT && !!window.SWYRL_ENGINE_AGENT",{timeout:90000});
   await page.evaluate(()=>document.querySelector('#seReleaseNotesDialog[open]')?.close());
+  const quickState=()=>page.evaluate(()=>({url:location.href,hasAudit:!!window.SWYRL_ENGINE_UI_AUDIT,auditType:typeof window.SWYRL_ENGINE_UI_AUDIT?.audit,hasAgent:!!window.SWYRL_ENGINE_AGENT,ready:document.readyState,build:window.SWRLZ_FORGE_BUILD?.version}));
+  console.log('SE182_BOOT_STATE',name,JSON.stringify(await quickState()));
   await page.waitForTimeout(250);
+  console.log('SE182_SETTLED_STATE',name,JSON.stringify(await quickState()));
   const baseline=await page.evaluate(()=>window.SWYRL_ENGINE_UI_AUDIT.audit());
   const toolbar=baseline.rects.toolbar;
   assert.ok(toolbar?.visible,name+' toolbar missing');
