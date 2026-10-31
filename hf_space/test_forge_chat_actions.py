@@ -57,7 +57,8 @@ class PlannerTest(unittest.TestCase):
                   "position": [0, 2, 0], "scale": [0.6, 0.6, 0.6], "color": "#65d9f5"},
                  {"op": "mesh.add", "kind": "box", "name": "Robot body",
                   "position": [0, 0.5, 0], "scale": [1, 1, 0.5], "color": "#537ff4"}]
-        for text in ("Design a simple robot model in §E", "Preview a two-part model in §E"):
+        for text in ("Design a simple robot model in §E", "Preview a two-part model in §E",
+                     "Can you design a robot model in §E?", "Plan a robot blockout in §E"):
             with self.subTest(text=text):
                 events = self.run_events(prompt=text, operations=steps)
                 self.assertEqual([item["type"] for item in events],
@@ -84,6 +85,7 @@ class PlannerTest(unittest.TestCase):
         self.assertEqual(staged[-1]["forgeStatus"], "DESIGN_PREVIEW")
         self.assertFalse(self.register.called)
         self.assertFalse(wants_preview("How can you preview a model?"))
+        self.assertFalse(wants_preview("Can you tell me whether the AI can design a model in §E?"))
         self.assertFalse(wants_preview("Do not preview the model."))
         self.assertFalse(wants_preview("Build a React model-3d page in JavaScript"))
         self.assertFalse(should_preview("Apply in §e now: Add a cone mesh", op))

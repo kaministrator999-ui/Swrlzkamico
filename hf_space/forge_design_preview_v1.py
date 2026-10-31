@@ -10,7 +10,7 @@ import re
 from typing import Any
 from brain_forge import current_command_text
 
-_PREVIEW = re.compile(r"\b(?:preview|mock[ -]?up|sketch|draft|visuali[sz]e|design|propose)\b", re.I)
+_PREVIEW = re.compile(r"\b(?:preview|mock[ -]?up|sketch|draft|visuali[sz]e|design|propose|blueprint|plan)\b", re.I)
 _TARGET = re.compile(
     r"§[eE]|\b(?:3d|model|mesh|sculpt|scene|actor|editor|atelier|object|"
     r"robot|dragon|castle|tower|bridge|house|character|statue|armor|"
@@ -20,7 +20,7 @@ _COMPLEX = re.compile(
     r"vehicle|tree|arch|stairs|pillar|terrain|environment|multi[ -]?part)\b", re.I)
 _EXPLANATION = re.compile(
     r"^(?:how|why|what if|should|explain|teach|describe|is it possible|"
-    r"can (?:you|i|we|the model|the ai))\b", re.I)
+    r"can (?:the model|the ai))\b", re.I)
 _APPLY = re.compile(r"^Apply in §e now:\s+", re.I)
 
 
@@ -29,6 +29,8 @@ def wants_preview(prompt: Any) -> bool:
     if not isinstance(prompt, str) or not prompt.strip():
         return False
     command = current_command_text(prompt)
+    if re.match(r"^(?:can|could|would)\s+you\s+(?:tell|explain|describe|teach)\b", command, re.I):
+        return False
     if (_APPLY.search(command) or _EXPLANATION.search(command) or re.search(
             r"\b(?:do not|don't|dont|never|avoid)\s+(?:\w+\s+){0,3}"
             r"(?:preview|design|propose|make|build|create)\b", command, re.I)):
