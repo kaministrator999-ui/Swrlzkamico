@@ -332,7 +332,7 @@ class PlannerTest(unittest.TestCase):
         operation = {"op": "project.create", "starterId": "blank-model", "name": "Desk"}
         for receipt in ({"ok": True}, {"op": "project.create", "ok": True, "projectId": PROJECT,
                                       "name": "Desk", "starterId": "blank-model"}):
-            events = self.run_events(operations=[operation], prompt='Start a blank-model project called "Desk"',
+            events = self.run_events(operations=[operation], prompt='Create a new project from the blank-model starter called "Desk"',
                                      result={"batchId": BATCH, "status": "finished", "allSucceeded": True, "receipts": [receipt]})
             self.assertEqual(events[-1]["code"], "FORGE_PROJECT_RECEIPT_INVALID")
 
