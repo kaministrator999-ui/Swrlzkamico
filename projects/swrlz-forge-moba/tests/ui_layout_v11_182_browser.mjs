@@ -48,9 +48,13 @@ try{
   const hit=await page.evaluate(()=>{
    const b=document.getElementById('projectClose'),r=b.getBoundingClientRect();
    const h=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2);
-   return {close:{left:r.left,top:r.top,right:r.right,bottom:r.bottom},
-     hitId:h?.id||'',hitTag:h?.tagName||'',targetClickable:b===h||b.contains(h)}
+   return {close:{left:r.left,top:r.top,right:r.right,bottom:r.bottom,width:r.width,height:r.height},
+     hitId:h?.id||'',hitTag:h?.tagName||'',hitClasses:String(h?.className||'').slice(0,120),
+     projectsParent:document.querySelector('#projectHub')?.parentElement?.tagName,
+     projectDisplay:getComputedStyle(document.querySelector('#projectHub')).display,
+     closeDisplay:getComputedStyle(b).display,targetClickable:b===h||b.contains(h)}
   });
+  console.log('SE182_PROJECT_HIT',name,JSON.stringify({project:project.rects.projectWindow,hit}));
   assert.ok(hit.targetClickable,name+' project close obscured by '+hit.hitId);
   await page.evaluate(()=>document.querySelector('#projectHub').classList.remove('show'));
   if(mobile){
