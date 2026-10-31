@@ -19,6 +19,7 @@ jobs:
         run: |
           node --check projects/swrlz-forge-moba/runtime/immersive_xr_gateway_v11_181.js
           node projects/swrlz-forge-moba/tests/test_v11_181_immersive_xr.cjs
+          node projects/swrlz-forge-moba/tests/test_v11_181_xr_session_lifecycle.cjs
       - name: Rebuild candidate and measure exact source
         run: |
           python - <<'PY'
