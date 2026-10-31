@@ -1,3 +1,19 @@
+## UPDATE STARTED — 2026-10-31 — §C Design Studio v1 native-model preview and Chat response upgrade
+
+**Owner goal:** Improve §wyrlz Chat's understanding of actual §E and Model Atelier tools, primitive model/scene construction, and rich, professional interactive Chat replies with preview-before-build and explicit human confirmation. Also deliver an extensive response-capability document.
+
+**Primary Focus / Focus Group:** Clean-room §C Chat Design Studio Mask and native model-planning/response orchestration; companion server-owned model router, typed §E plan validator, authenticated editor lease, current scene/model context, canonical Chat release. The §E native editor/hosting remains a separate unchanged product/release lane.
+
+**Current source evidence:** PR [#303](https://github.com/kaministrator999-ui/Swrlzkamico/pull/303) merged exact Chat source `1f052e299cfb8930ffbf8b661f3421c5c10653b0` into `integration/chat-forge-workspace-analysis-20261030`. Its Git tree `3ef71c6bfd3cf5a1f4d18b0eacddef190666f22a` exactly matches the validated PR head `a150fe94f87fc5bc9137f0e79741ed7edf624866`. Canonical HF offline CI [#41238565721](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/41238565721) SUCCESS (including native guard tests and two-origin desktop/mobile/Android desktop-site browser preview acceptance). Additional widget, scroll, cue and welcome suites SUCCESS. Legacy Mobile Lyric Reader Integrity retains a PREEXISTING exact-string matcher failure unrelated to this patch; evidence is preserved.
+
+**Change:** Chat surface `1.1.20` with conceptual 3D/isometric, top/front schematic overlay, step scrub, expandable details, revision composer, and explicit user-initiated Build request; server-side native plan preview emits no editable batch/host mutation, and a Build click starts a new independently checked operation request, not an immutable frozen-plan commit. Model planning instruction decomposes named primitive assemblies and does not claim sculpt/rigging/animation that the 16-operation native allowlist cannot express. Explicit Model Atelier starter resolution fixed. Architecture and phased capabilities: `docs/engineering/SWRLZ_CHAT_FORGE_RESPONSE_STUDIO_V1.md`; separate user downloadable 13-page document generated.
+
+**Version/activation:** Runtime version registry update `b13c6bce54bb2f642c971d9b4468245d20912e9c`: Repository Work **1.0.257**, Web Chat **1.5.169**. Server Runtime remains **2.3.447** until actual governed Server publication/activation. Google Account 1.0.20, Stream V2, LALM 2.1.205, Manifest 152, Deployment Control 1.0.41 and all §E engine versions unchanged. This is **SOURCE VALIDATED / PRODUCTION RELEASE PENDING**, not a live device/UI acceptance claim.
+
+**Next boundary:** Guarded existing-Space Chat-only HF request targeting `kamiloki/Swyrlz` with exact SOURCE_REF `1f052e299cfb8930ffbf8b661f3421c5c10653b0`; capture rollback and deployed Space SHA, then advance deployed Server Runtime only if publication changes Server lineage. Confirm actual live and owner Android/Quest UX separately. Never use §E engine deploy nor Vercel.
+
+---
+
 ## UPDATE FINISHED — 2026-10-30 — §E workspace intelligence Chat cards and conversational reasoning
 
 **Owner request:** Improve the analysis content and chat response presentation for live §E workspaces, including continued §wyrlz reasoning about findings.
