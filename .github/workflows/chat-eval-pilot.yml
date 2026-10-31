@@ -1,0 +1,66 @@
+name: §C two-user intent evaluation pilot
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/eval_chat_pilot.py'
+      - 'docs/engineering/SWRLZ_CHAT_EVALUATION_PILOT.md'
+      - '.github/workflows/chat-eval-pilot.yml'
+  pull_request:
+    paths:
+      - 'scripts/eval_chat_pilot.py'
+      - 'docs/engineering/SWRLZ_CHAT_EVALUATION_PILOT.md'
+      - '.github/workflows/chat-eval-pilot.yml'
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Smoke validates the harness; live evaluates two authenticated §C test accounts'
+        type: choice
+        required: true
+        default: smoke
+        options:
+          - smoke
+          - live
+
+permissions:
+  contents: read
+
+concurrency:
+  group: swrlz-chat-eval-pilot-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  pilot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Validate evaluation script syntax
+        run: python -m py_compile scripts/eval_chat_pilot.py
+      - name: Install isolated Chromium evaluator
+        run: |
+          python -m pip install playwright==1.56.0
+          python -m playwright install --with-deps chromium
+      - name: Run two-user pilot
+        env:
+          EVAL_MODE: ${{ github.event_name == 'workflow_dispatch' && inputs.mode || 'smoke' }}
+          SWRLZ_EVAL_SESSION_A: ${{ secrets.SWRLZ_EVAL_SESSION_A }}
+          SWRLZ_EVAL_SESSION_B: ${{ secrets.SWRLZ_EVAL_SESSION_B }}
+        run: python scripts/eval_chat_pilot.py --mode "$EVAL_MODE"
+      - name: Publish evaluation summary
+        if: always()
+        run: |
+          if [ -f reports/chat-eval-pilot/summary.md ]; then
+            cat reports/chat-eval-pilot/summary.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: chat-eval-pilot-${{ github.run_id }}
+          path: reports/chat-eval-pilot/
+          retention-days: 14
+          if-no-files-found: ignore
