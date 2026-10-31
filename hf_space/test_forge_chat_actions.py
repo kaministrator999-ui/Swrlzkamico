@@ -259,11 +259,54 @@ class PlannerTest(unittest.TestCase):
         self.infer.assert_not_called()
         self.register.assert_not_called()
         self.assertEqual(events[-1]["code"], "FORGE_PROJECT_STARTER_UNAVAILABLE")
-        self.summary["starters"] = [{"id": "model-atelier", "name": "Festival Armor"}]
+        self.summary["starters"] = [{"id": "model-atelier", "name": "Festival Armor",
+                                     "workspace": "model-atelier", "kind": "model-atelier"}]
         events = self.run_events(operations=[{"op": "mesh.add", "kind": "box"}],
                                  prompt='Create a new blank model project called "Desk"')
+        self.infer.assert_not_called()
         self.register.assert_not_called()
-        self.assertEqual(events[-1]["code"], "FORGE_UNREQUESTED_NATIVE_ACTION")
+        self.assertEqual(events[-1]["forgeStatus"], "SETUP_REQUIRED")
+        self.assertEqual(events[-2]["widget"]["kind"], "forge-project-setup")
+
+    def test_ambiguous_new_project_gives_catalog_chooser_not_a_model_guess_or_write(self):
+        starters = [{"id": "blank-scene", "name": "Blank scene", "kind": "sandbox", "workspace": "scene"},
+                    {"id": "blank-model", "name": "Blank 3D model", "kind": "model-atelier", "workspace": "model-atelier"},
+                    {"id": "sheep-tag-meadow", "name": "Sheep Tag", "kind": "sheep-tag", "workspace": "scene"},
+                    {"id": "glitch-dragons-den", "name": "Dragon Den", "kind": "dragons-den", "workspace": "scene"}]
+        self.summary["starters"] = starters
+        for prompt in ("Start a new project", "Can you create me a new project?",
+                       'Create a new project named "My Adventure"',
+                       "Start from the Sheep Tag starter"):
+            with self.subTest(prompt=prompt):
+                events = self.run_events(prompt=prompt)
+                self.infer.assert_not_called()
+                self.register.assert_not_called()
+                self.wait.assert_not_called()
+                self.assertEqual([item["type"] for item in events], ["DELTA", "WIDGET", "COMPLETED"])
+                self.assertEqual(events[-1]["forgeStatus"], "SETUP_REQUIRED")
+                card = events[1]["widget"]
+                self.assertEqual(card["contract"], "swrlz-widget-v1")
+                self.assertEqual(card["kind"], "forge-project-setup")
+                self.assertEqual(card["data"]["schema"], "swrlz-forge-project-setup-v1")
+                self.assertEqual([entry["id"] for entry in card["data"]["starters"]],
+                                 [entry["id"] for entry in starters])
+                self.assertEqual([entry["group"] for entry in card["data"]["starters"]],
+                                 ["fresh", "fresh", "starter", "starter"])
+                self.assertNotIn("token", str(card).lower())
+        # The deliberate final Chat request still uses the existing exact
+        # typed-operation planner and real native receipt, never the widget.
+        final = 'Create a new project from the sheep-tag-meadow starter named exactly "My Adventure"'
+        plan = explicit_project_plan(final, self.summary)
+        self.assertEqual(plan["operations"], [{"op": "project.create", "starterId": "sheep-tag-meadow", "name": "My Adventure"}])
+
+    def test_project_chooser_rejects_unadvertised_fake_pack_and_never_executes(self):
+        self.summary["starters"] = [{"id": "blank-scene", "name": "Blank scene"},
+                                    {"id": "hax<script>", "name": "Bad"},
+                                    {"id": "blank-scene", "name": "Duplicated"}]
+        events = self.run_events(prompt="Start a new project")
+        self.assertEqual(events[-1]["forgeStatus"], "SETUP_REQUIRED")
+        self.assertEqual([p["id"] for p in events[1]["widget"]["data"]["starters"]], ["blank-scene"])
+        self.register.assert_not_called()
 
     def test_project_creation_relation_excludes_continuing_edits_and_documents(self):
         for prompt in ("Make a blue box in my project", "Create a wall in the project", "Build a pedestal in our project",
