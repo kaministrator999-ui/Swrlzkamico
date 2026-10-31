@@ -1,0 +1,131 @@
+/* §E v11.183 — actual owner-reported Android/desktop-mode collisions.
+ * Keep native DOM, handlers, 3D viewport and saved project data intact. */
+/* Redundant floating count badge duplicates the native status bar and has
+   repeatedly covered toolbar actions when desktop mode is enabled on phones. */
+html .app .engine-stats-pill{display:none!important}
+/* Fullscreen Sheep Tag menu: editor hints and status are not gameplay HUD.
+   The Start and LAN buttons stay in their original interactive native overlay. */
+html body:has(#st141RuntimeMenu:not([hidden])) .viewport-wrap > :is(
+ .help,.badgeBox,.build-stamp,.engine-stats-pill,.viewport-toolbar,.engine-command-deck),
+html body:has(#st140MainMenu:not([hidden])) .viewport-wrap > :is(
+ .help,.badgeBox,.build-stamp,.engine-stats-pill,.viewport-toolbar,.engine-command-deck){
+ display:none!important;
+}
+html body:has(#st141RuntimeMenu:not([hidden])) .viewport-wrap > #st141LevelBar,
+html body:has(#st140MainMenu:not([hidden])) .viewport-wrap > #st141LevelBar{
+ display:none!important;
+}
+/* Single clean level button; expand for a real control surface instead of
+   cramming seven editable fields into the left 300px of the game canvas. */
+html .viewport-wrap > #st141LevelBar.st141-levelbar.se183-level-panel:not([hidden]){
+ position:absolute!important;
+ top:8px!important;left:8px!important;right:auto!important;
+ width:min(280px,calc(100% - 16px))!important;
+ max-width:calc(100% - 16px)!important;
+ min-height:0!important;max-height:min(75dvh,calc(100% - 16px))!important;
+ display:flex!important;flex-direction:column;align-items:stretch;
+ box-sizing:border-box;gap:0!important;padding:0!important;
+ overflow:hidden!important;z-index:2950!important;
+ border-radius:12px;background:#112a32;
+ border:1px solid #719e9b;
+ box-shadow:0 10px 30px rgba(0,0,0,.45);
+}
+html .viewport-wrap > #st141LevelBar.st141-levelbar.se183-level-panel.se183-expanded:not([hidden]){
+ width:min(515px,calc(100% - 16px))!important;
+}
+#st141LevelBar.se183-level-panel #se183LevelsToggle{
+ box-sizing:border-box;width:100%;max-width:100%;min-height:42px;
+ padding:9px 12px;text-align:left;border:0;border-radius:0;
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+ background:#1a4047;color:#eafffa;
+ font:700 12px/1.3 system-ui,sans-serif;cursor:pointer;
+}
+#st141LevelBar.se183-level-panel #se183LevelsToggle:hover,
+#st141LevelBar.se183-level-panel #se183LevelsToggle[aria-expanded=true]{
+ background:#26545b;color:#fff;
+}
+#st141LevelBar.se183-level-panel #se183LevelsToggle:focus-visible{
+ outline:2px solid #f7da94;outline-offset:-3px;
+}
+#st141LevelBar.se183-level-panel .se183-level-actions{
+ box-sizing:border-box;display:grid;
+ grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+ gap:9px;padding:13px;max-height:calc(min(75dvh,100%) - 44px);
+ overflow-y:auto;overscroll-behavior:contain;align-items:end;
+}
+#st141LevelBar.se183-level-panel:not(.se183-expanded) .se183-level-actions{
+ display:none!important;
+}
+#st141LevelBar.se183-level-panel .st141-caption{
+ grid-column:1/-1;text-transform:uppercase;letter-spacing:.1em;
+ color:#abdbd2;font:800 10px system-ui,sans-serif;
+}
+#st141LevelBar.se183-level-panel .se183-level-actions :is(button,input,select){
+ box-sizing:border-box;min-width:0;max-width:100%;width:100%;
+ min-height:42px;font:600 13px system-ui,sans-serif;
+ border-radius:8px;
+}
+#st141LevelBar.se183-level-panel .se183-level-actions select,
+#st141LevelBar.se183-level-panel .se183-level-actions input{
+ background:#edf5ee;color:#143128;border:1px solid #a9c6b8;
+}
+#st141LevelBar.se183-level-panel .se183-level-actions label{
+ min-width:0;display:flex;flex-direction:column;gap:4px;
+ color:#b9dcd5;font:600 11px system-ui,sans-serif;
+}
+#st141LevelBar.se183-level-panel .se183-level-actions #st141LevelName{width:100%}
+/* Reserve 55px for the collapsed control, not the previous two wrapped rows.
+   Desktop-mode browser can be only ~350px wide in the center column. */
+html .viewport-wrap:has(> #st141LevelBar.se183-level-panel:not([hidden])) > :is(
+ .viewport-toolbar,.badgeBox,.build-stamp){
+ top:var(--se183-level-chrome-clearance,64px)!important;
+}
+html .viewport-wrap:has(> #st141LevelBar.se183-level-panel.se183-expanded:not([hidden])) > :is(
+ .viewport-toolbar,.badgeBox,.build-stamp){display:none!important}
+/* Native v11.174 handles mobile World/Inspector tabs below measured bar. */
+@media(max-width:620px){
+ html .viewport-wrap > #st141LevelBar.st141-levelbar.se183-level-panel:not([hidden]){
+  top:5px!important;left:4px!important;
+  width:min(280px,calc(100% - 8px))!important;
+  max-width:calc(100% - 8px)!important;
+ }
+ html .viewport-wrap > #st141LevelBar.st141-levelbar.se183-level-panel.se183-expanded:not([hidden]){
+  width:min(420px,calc(100% - 8px))!important;
+ }
+ html .viewport-wrap>#st141LevelBar.se183-level-panel .se183-level-actions{padding:10px;gap:7px}
+}
+@media(max-width:360px){
+ #st141LevelBar.se183-level-panel .se183-level-actions{grid-template-columns:minmax(0,1fr)}
+}
+/* Loading: real stage names and elapsed time, never invented percentages.
+   Above Projects/Chat, below genuine HTML modal top layer; nonblocking. */
+#se183LoadStatus{
+ position:fixed;top:calc(56px + env(safe-area-inset-top));
+ left:50%;transform:translateX(-50%);
+ box-sizing:border-box;width:min(440px,calc(100vw - 20px));
+ z-index:2147483040;pointer-events:none;
+ display:flex;align-items:center;gap:12px;
+ padding:12px 14px;border:1px solid #81c7c3;border-radius:13px;
+ background:rgba(13,36,48,.98);color:#f2fcff;
+ box-shadow:0 12px 38px rgba(0,0,0,.65);
+ font:13px/1.4 system-ui,sans-serif;
+}
+#se183LoadStatus[hidden]{display:none!important}
+#se183LoadStatus .se183-load-copy{display:flex;flex-direction:column;min-width:0;gap:2px}
+#se183LoadStatus strong{overflow-wrap:anywhere;font:700 13px/1.3 system-ui}
+#se183LoadStatus small{color:#bfd8df;font:11px/1.35 system-ui}
+#se183LoadStatus .se183-spinner{
+ width:22px;height:22px;flex:0 0 22px;border-radius:50%;
+ border:3px solid #3e6874;border-top-color:#9bf7dc;
+ animation:se183Spin .8s linear infinite;
+}
+#se183LoadStatus.se183-done .se183-spinner{
+ border-color:#84dccb;animation:none;
+}
+@keyframes se183Spin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){
+ #se183LoadStatus .se183-spinner{animation:none}
+}
+@media(max-height:460px){
+ #se183LoadStatus{top:4px;padding:7px 10px;width:min(360px,calc(100vw - 20px))}
+}
