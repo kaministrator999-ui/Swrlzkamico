@@ -1,15 +1,6 @@
-name: §E v11.189 mobile performance focused acceptance
+name: §E v11.189 fast source / package verification (manual)
+# Explicit manual source checks only. No automatic Chromium downloads.
 on:
-  push:
-    branches: [main]
-    paths:
-      - "projects/swrlz-forge-moba/source-manifest.json"
-      - "projects/swrlz-forge-moba/patches/v11_189_mobile_performance.py"
-      - "projects/swrlz-forge-moba/runtime/engine_mobile_performance_v11_189.js"
-      - "projects/swrlz-forge-moba/runtime/engine_mobile_performance_v11_189.css"
-      - "projects/swrlz-forge-moba/scripts/verify_v11_189_release.py"
-      - "projects/swrlz-forge-moba/tests/ui_v11_189_performance.mjs"
-      - ".github/workflows/measure-se-v11-189.yml"
   workflow_dispatch:
 permissions:
   contents: read
@@ -52,9 +43,3 @@ jobs:
           print('SE189_MEASURED_BYTES='+str(len(a)),flush=True)
           print('SE189_MEASURED_SHA256='+hashlib.sha256(a).hexdigest(),flush=True)
           PY
-      - name: Install focused headless Chromium
-        run: |
-          npm install --no-save playwright@1.56.1
-          npx playwright install --with-deps --only-shell chromium
-      - name: Test graphics boost, frame diagnostics, viewport invalidation, modeler routes
-        run: node projects/swrlz-forge-moba/tests/ui_v11_189_performance.mjs
