@@ -5,7 +5,7 @@ const {chromium}=require('playwright');
 (async()=>{
  const source=fs.readFileSync(process.env.SE186_HTML||'/tmp/se186-package/index.html','utf8');
  const body=source.search(/<body\b/i);
- const start=source.indexOf('data-se186-early');
+ const start=source.indexOf('data-se186-early="1"');
  const earlyScript=source.indexOf('<script id="se186StartupBeforeEngine">');
  const engine=source.indexOf('window.SWRLZ_FORGE_BUILD=');
  assert(body>=0&&start>body&&earlyScript>start&&engine>earlyScript,'Startup markup and script must be ahead of engine module');

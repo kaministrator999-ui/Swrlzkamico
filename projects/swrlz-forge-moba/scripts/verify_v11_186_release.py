@@ -44,7 +44,7 @@ for marker in ['se182ProfessionalUI','SWYRL_ENGINE_UI_AUDIT','se183ProjectUI','s
     assert marker in s,marker
 assert 'seLevelRawLoadProject(structuredClone(chosen.data)' not in s
 assert 'const result=seLevelRawLoadProject(target,...options);' in s
-assert s.index('data-se186-early')<s.index('window.SWRLZ_FORGE_BUILD=')
+assert s.index('data-se186-early="1"')<s.index('window.SWRLZ_FORGE_BUILD=')
 assert s.count('renderer.setAnimationLoop(tick);')==1
 assert s.count('/* ATELIER_BRIDGE_START */')==1
 if args.request:

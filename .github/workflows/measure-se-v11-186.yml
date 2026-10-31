@@ -46,7 +46,7 @@ jobs:
           import hashlib,re,json
           p=Path('/tmp/se186-package/index.html')
           s=p.read_text()
-          assert s.find('data-se186-early')<s.find('window.SWRLZ_FORGE_BUILD=')
+          assert s.find('data-se186-early="1"')<s.find('window.SWRLZ_FORGE_BUILD=')
           assert s.find('<script id="se186StartupBeforeEngine">')<s.find('window.SWRLZ_FORGE_BUILD=')
           assert s.count('id="se185Init"')==1
           assert s.count('--se185-radius-out:')>=32
