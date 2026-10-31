@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="swrlz-chat-version" content="1.1.19">
+  <meta name="swrlz-chat-version" content="1.1.20">
   <meta name="theme-color" content="#010812">
   <title>Chat</title>
   <style>
@@ -424,6 +424,34 @@
     @media(any-pointer:coarse){.forge-project-name{font-size:18px}}
     .forge-project-review{padding:10px;background:rgba(5,22,40,.68);border:1px solid rgba(126,214,255,.18);border-radius:10px;font-size:12px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
     .forge-project-message{font-size:11px;color:#e9d397;line-height:1.5}
+
+    /* §C Design Studio: proposal-only wireframe and explicit new-request controls. */
+    .swrlz-widget.forge-design-preview{border-color:rgba(112,223,255,.45);background:linear-gradient(150deg,#072438,#121d3d 70%,#271d47)}
+    .forge-design-shell{padding:12px;display:grid;gap:11px;color:#d9f2ff}
+    .forge-design-kicker{display:flex;align-items:center;flex-wrap:wrap;justify-content:space-between;gap:6px;font:600 10px/1.35 var(--font-telemetry);color:#a1c8da}
+    .forge-design-tag{padding:4px 7px;border:1px solid rgba(255,209,120,.45);border-radius:99px;color:#ffe1a0;background:rgba(85,50,10,.27)}
+    .forge-design-surface{overflow:hidden;border:1px solid rgba(117,217,255,.28);border-radius:13px;background:radial-gradient(ellipse at 50% 20%,rgba(37,84,123,.4),rgba(3,16,32,.9) 72%);min-height:180px}
+    .forge-design-surface svg{display:block;width:100%;height:auto;max-height:310px;min-height:170px}
+    .forge-design-controls,.forge-design-actions{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+    .forge-design-btn{min-height:42px;padding:9px 12px;border-radius:10px;border:1px solid rgba(124,221,255,.38);background:rgba(15,54,81,.88);color:#ecfaff;font:650 12px/1.2 var(--font-ui);cursor:pointer;touch-action:manipulation}
+    .forge-design-btn.primary{background:linear-gradient(112deg,#1a849e,#7451c8);border-color:rgba(212,239,255,.6)}
+    .forge-design-btn:focus-visible{outline:2px solid #9af5ff;outline-offset:2px}
+    .forge-design-btn[aria-pressed="true"]{background:rgba(51,125,149,.75);border-color:#98e8ff}
+    .forge-design-btn:disabled{opacity:.5;cursor:not-allowed}
+    .forge-design-count{color:#bbd5e4;font:600 11px var(--font-telemetry)}
+    .forge-design-progress{display:flex;align-items:center;gap:9px}.forge-design-progress input{min-width:80px;flex:1;accent-color:#5de1ef}
+    .forge-design-steps{display:grid;gap:6px;max-height:290px;overflow-y:auto}
+    .forge-design-step{padding:8px 10px;border:1px solid rgba(112,208,251,.16);border-radius:9px;background:rgba(3,20,40,.58)}
+    .forge-design-step summary{cursor:pointer;font:650 12px/1.4 var(--font-ui);overflow-wrap:anywhere;color:#effbff}
+    .forge-design-step p,.forge-design-note{margin:5px 0 0;color:#a9c9d9;font:11px/1.55 var(--font-ui);overflow-wrap:anywhere}
+    .forge-design-warning{font:11px/1.5 var(--font-ui);color:#e8d29f}
+    .forge-design-message{font:600 11px/1.45 var(--font-ui);color:#a4ecdf}
+    .forge-design-overlay{position:fixed;inset:0;z-index:10000;background:rgba(0,8,20,.91);display:grid;place-items:center;padding:14px}
+    .forge-design-dialog{width:min(100%,950px);max-height:94dvh;overflow:auto;padding:14px;border-radius:16px;background:linear-gradient(155deg,#082239,#161a36);border:1px solid rgba(122,224,255,.42);box-shadow:0 22px 70px rgba(0,0,0,.65)}
+    .forge-design-dialog .forge-design-surface svg{max-height:60dvh;min-height:240px}
+    .forge-design-dialog-head{display:flex;justify-content:space-between;align-items:center;gap:10px;color:#ecfcff;font:750 15px var(--font-ui);margin-bottom:10px}
+    @media(max-width:520px){.forge-design-shell{padding:9px}.forge-design-btn{flex:1 1 auto}.forge-design-dialog{padding:10px}.forge-design-dialog .forge-design-surface svg{min-height:200px}}
+    @media(prefers-reduced-motion:reduce){.forge-design-preview *{animation:none!important;transition:none!important}}
     .swrlz-widget.forge-workspace{border-color:rgba(91,220,249,.35);background:linear-gradient(135deg,rgba(6,34,50,.95),rgba(25,22,58,.90))}
     .forge-ws-heading{padding:0 11px 9px;font-size:11px;font-weight:770;color:#e8faff;overflow-wrap:anywhere}
     .forge-ws-level{display:block;margin-top:3px;font-size:9px;font-weight:500;color:#91b9cd}
@@ -1221,7 +1249,7 @@
       const workArtifactList = document.getElementById("workArtifactList");
       const workEvidenceCount = document.getElementById("workEvidenceCount");
       const workEvidenceList = document.getElementById("workEvidenceList");
-      const SWRLZ_CHAT_VERSION = "1.1.19";
+      const SWRLZ_CHAT_VERSION = "1.1.20";
       const navTraceId = "chat-ui-" + Date.now().toString(36) + "-" + crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
       let lastUiStatusCamera = "";
       let companionState="idle";
@@ -1610,6 +1638,183 @@
                 "Source: live §e catalog · "+String(data.notice||"A separate project will be created; your current project is preserved.").slice(0,350)));
             };
             draw();
+          }else if(widget.kind==="forge-design-preview" && data.schema==="swrlz-forge-design-preview-v1"){
+            // A schematic, not a native engine render. All model text stays
+            // textContent; SVG is generated locally from bounded typed values.
+            const validVector=v=>Array.isArray(v)&&v.length===3&&v.every(n=>typeof n==="number"&&Number.isFinite(n));
+            const steps=(Array.isArray(data.steps)?data.steps:[]).filter((v,i)=>
+              v&&typeof v==="object"&&typeof v.op==="string"&&v.op.length<60
+              &&validVector(v.position)&&validVector(v.scale)&&v.scale.every(x=>x>0&&x<=20)).slice(0,16);
+            const followup=typeof data.followup==="string"&&data.followup.startsWith("Apply in §e now: ")
+              &&data.followup.length<=8192?data.followup:"";
+            const make=(tag,cls,value)=>{
+              const n=document.createElement(tag);if(cls)n.className=cls;
+              if(value!==undefined)n.textContent=String(value);return n;
+            };
+            const button=(label,action,primary=false)=>{
+              const b=make("button","forge-design-btn"+(primary?" primary":""),label);
+              b.type="button";b.addEventListener("click",action);return b;
+            };
+            const main=make("div","forge-design-shell");card.appendChild(main);
+            const kicker=make("div","forge-design-kicker");
+            kicker.append(make("span","","Project · "+String(data.project||"Open project").slice(0,100)+" · "+String(data.workspace||"editor").slice(0,40)),
+              make("span","forge-design-tag","PROPOSED · NOT APPLIED"));
+            main.appendChild(kicker);
+            let view="iso",shown=steps.length,overlay=null,feedback="",submitted=false;
+            const SVG_NS="http://www.w3.org/2000/svg";
+            const svgEl=(name,props={})=>{
+              const n=document.createElementNS(SVG_NS,name);
+              for(const [key,value] of Object.entries(props))n.setAttribute(key,String(value));
+              return n;
+            };
+            const drawSvg=()=>{
+              const svg=svgEl("svg",{viewBox:"0 0 640 350",role:"img","aria-label":
+                "Conceptual "+(view==="iso"?"isometric":view)+" view of "+shown+" of "+steps.length+" planned steps"});
+              const bg=svgEl("rect",{x:0,y:0,width:640,height:350,fill:"transparent"});svg.appendChild(bg);
+              for(let x=40;x<640;x+=40)svg.appendChild(svgEl("path",{d:"M"+x+" 0V350",stroke:"#28536f","stroke-width":.65,opacity:.45}));
+              for(let y=15;y<350;y+=40)svg.appendChild(svgEl("path",{d:"M0 "+y+"H640",stroke:"#28536f","stroke-width":.65,opacity:.45}));
+              svg.appendChild(svgEl("path",{d:"M320 0V350 M0 175H640",stroke:"#5da4bf","stroke-width":1,opacity:.6}));
+              const active=steps.slice(0,shown);
+              const pts=active.map(s=>({x:s.position[0],y:s.position[view==="top"?2:1],s}));
+              const range=Math.max(4,...active.flatMap(s=>s.position.map((v,i)=>Math.abs(v)+s.scale[i])));
+              const mult=Math.min(38,140/range);
+              const iso=(x,y,z)=>({x:320+(x-.8*z)*mult,y:185+(.34*x+.48*z-y)*mult});
+              pts.forEach((p,i)=>{
+                const cx=320+p.x*mult,cy=175+(view==="top"?p.y:-p.y)*mult;
+                const sx=Math.max(7,Math.min(80,p.s.scale[0]*mult));
+                const sy=Math.max(7,Math.min(80,p.s.scale[view==="top"?2:1]*mult));
+                const color=/^#[0-9a-f]{6}$/i.test(p.s.color)?p.s.color:"#65d9f5";
+                const kind=String(p.s.kind||"").toLowerCase();
+                let shape;
+                if(view==="iso" && ["box","wall","pedestal","object"].includes(kind)){
+                  const pos=p.s.position,sc=p.s.scale; // three-dimensional box wireframe
+                  const corners=[];
+                  for(const y of [-1,1])for(const z of [-1,1])for(const x of [-1,1])
+                    corners.push(iso(pos[0]+x*sc[0],pos[1]+y*sc[1],pos[2]+z*sc[2]));
+                  const g=svgEl("g",{"stroke-linecap":"round"});
+                  const edges=[[0,1],[1,3],[3,2],[2,0],[4,5],[5,7],[7,6],[6,4],[0,4],[1,5],[2,6],[3,7]];
+                  for(const [a,b] of edges){
+                    g.appendChild(svgEl("line",{x1:corners[a].x,y1:corners[a].y,x2:corners[b].x,y2:corners[b].y,
+                      stroke:color,"stroke-width":2,opacity:.82}));
+                  }
+                  shape=g;
+                }else if(view==="iso"){
+                  const center=iso(p.s.position[0],p.s.position[1],p.s.position[2]);
+                  shape=svgEl("ellipse",{cx:center.x,cy:center.y,rx:sx,ry:Math.max(6,sy*.7),
+                    fill:color,"fill-opacity":.2,stroke:color,"stroke-width":2});
+                  if(kind==="cone"||kind==="crystal"){
+                    const peak=iso(p.s.position[0],p.s.position[1]+p.s.scale[1],p.s.position[2]);
+                    shape=svgEl("path",{d:"M"+(center.x-sx)+" "+center.y+" L"+peak.x+" "+peak.y+
+                      " L"+(center.x+sx)+" "+center.y+" Z",fill:color,"fill-opacity":.2,
+                      stroke:color,"stroke-width":2});
+                  }
+                }else if(kind==="sphere"||kind==="cylinder"||kind==="rock"||kind==="bush"){
+                  shape=svgEl("ellipse",{cx,cy,rx:sx,ry:sy,fill:color,"fill-opacity":.22,stroke:color,"stroke-width":2});
+                }else if(kind==="cone"||kind==="crystal"){
+                  shape=svgEl("path",{d:"M"+cx+" "+(cy-sy)+" L"+(cx+sx)+" "+(cy+sy)+" L"+(cx-sx)+" "+(cy+sy)+" Z",
+                    fill:color,"fill-opacity":.2,stroke:color,"stroke-width":2});
+                }else{
+                  shape=svgEl("rect",{x:cx-sx,y:cy-sy,width:sx*2,height:sy*2,rx:3,
+                    fill:color,"fill-opacity":.18,stroke:color,"stroke-width":2});
+                }
+                const title=svgEl("title");title.textContent=(i+1)+". "+String(p.s.name||p.s.kind||p.s.op).slice(0,100);shape.appendChild(title);
+                svg.appendChild(shape);
+                const centerPoint=view==="iso"?iso(p.s.position[0],p.s.position[1],p.s.position[2]):{x:cx,y:cy};
+                const index=svgEl("text",{x:centerPoint.x,y:centerPoint.y+4,"text-anchor":"middle",fill:"#f4fbff","font-size":12,"font-weight":700});
+                index.textContent=String(i+1);svg.appendChild(index);
+              });
+              const axis=svgEl("text",{x:13,y:25,fill:"#bde3ed","font-size":12});
+              axis.textContent=view==="iso"?"3D BLOCKOUT · X / Y / Z":view==="top"?"TOP · X / Z":"FRONT · X / Y";svg.appendChild(axis);
+              const note=svgEl("text",{x:13,y:334,fill:"#91b9d0","font-size":10});
+              note.textContent="Illustrative positions and primitive silhouettes · not live render";svg.appendChild(note);
+              return svg;
+            };
+            const surface=make("div","forge-design-surface");
+            const renderViews=()=>{
+              for(const area of [surface,overlay?.querySelector(".forge-design-surface")].filter(Boolean)){
+                area.replaceChildren(drawSvg());
+              }
+              for(const b of main.querySelectorAll("[data-forge-view]"))b.setAttribute("aria-pressed",String(b.dataset.forgeView===view));
+              if(overlay)for(const b of overlay.querySelectorAll("[data-forge-view]"))b.setAttribute("aria-pressed",String(b.dataset.forgeView===view));
+            };
+            const viewControls=()=>{
+              const wrap=make("div","forge-design-controls");
+              for(const [id,label] of [["iso","3D blockout"],["top","Top view"],["front","Front view"]]){
+                const b=button(label,()=>{view=id;renderViews()});b.dataset.forgeView=id;
+                b.setAttribute("aria-pressed",String(view===id));wrap.appendChild(b);
+              }
+              return wrap;
+            };
+            let overlayKey=null,returnFocus=null;
+            const closeOverlay=()=>{
+              if(!overlay)return;const next=overlay;overlay=null;next.remove();
+              if(overlayKey){document.removeEventListener("keydown",overlayKey);overlayKey=null;}
+              if(returnFocus&&returnFocus.isConnected)returnFocus.focus();
+            };
+            const openOverlay=()=>{
+              if(overlay)return;
+              returnFocus=document.activeElement;
+              overlay=make("div","forge-design-overlay");
+              const dialog=make("div","forge-design-dialog");
+              dialog.setAttribute("role","dialog");dialog.setAttribute("aria-modal","true");
+              dialog.setAttribute("aria-label","Expanded §E design preview");
+              const head=make("div","forge-design-dialog-head");
+              head.append(make("span","","§E Design Studio · Conceptual preview"),button("Close ✕",closeOverlay));
+              const area=make("div","forge-design-surface");
+              dialog.append(head,viewControls(),area,make("p","forge-design-note",
+                "This drawing is a proposal only. The current §E scene has not been changed."));
+              overlay.appendChild(dialog);document.body.appendChild(overlay);
+              overlay.addEventListener("click",event=>{if(event.target===overlay)closeOverlay()});
+              overlayKey=event=>{if(event.key==="Escape")closeOverlay();};
+              document.addEventListener("keydown",overlayKey);
+              head.querySelector("button").focus();renderViews();
+            };
+            const controls=viewControls();controls.append(button("Expand preview ⤢",openOverlay));
+            main.append(controls,surface);
+            const progress=make("div","forge-design-progress");
+            progress.appendChild(make("span","forge-design-count","Steps"));
+            const slider=make("input");slider.type="range";slider.min=String(steps.length?1:0);
+            slider.max=String(Math.max(steps.length,1));slider.value=String(shown);
+            slider.setAttribute("aria-label","Preview construction step count");
+            const stepCount=make("span","forge-design-count",shown+" / "+steps.length);
+            slider.addEventListener("input",()=>{
+              shown=Number(slider.value);stepCount.textContent=shown+" / "+steps.length;renderViews();
+            });progress.append(slider,stepCount);main.appendChild(progress);
+            const detailList=make("div","forge-design-steps");
+            steps.forEach((step,i)=>{
+              const detail=make("details","forge-design-step");
+              const summary=make("summary","",(i+1)+". "+String(step.op).replaceAll("."," · ")+" · "+String(step.name||"").slice(0,100));
+              detail.appendChild(summary);
+              detail.appendChild(make("p","",String(step.kind||"")+" | position "+step.position.join(", ")
+                +" | scale "+step.scale.join(", ")+(step.material?" | "+step.material:"")));
+              detailList.appendChild(detail);
+            });
+            const details=make("details");
+            details.append(make("summary","forge-design-count","Build steps · "+steps.length),detailList);
+            main.appendChild(details);
+            main.appendChild(make("div","forge-design-warning",
+              String(data.notice||"Approximate preview only. Build sends a fresh editor request.").slice(0,550)));
+            const actions=make("div","forge-design-actions");
+            actions.appendChild(button("✎ Revise design",()=>{
+              if(prompt.value.trim()){prompt.focus();return;}
+              prompt.value="Please preview a revised §E design: "+String(data.request||"").slice(0,300)
+                +". Show the proposed changes for review, without editing the actual scene.";
+              prompt.dispatchEvent(new Event("input",{bubbles:true}));prompt.focus();
+            }));
+            const approve=button("Approve · request build in §E",()=>{
+              if(submitted||!followup)return;
+              const event=new CustomEvent("swrlz-forge-design-apply-request",{cancelable:true,detail:{prompt:followup}});
+              window.dispatchEvent(event);
+              if(event.defaultPrevented){
+                submitted=true;approve.disabled=true;
+                feedback="Build requested. The current §E workspace will be rechecked; only native receipts confirm edits.";
+              }else feedback="Chat is busy or disconnected, or you have an unfinished draft. No build was submitted.";
+              message.textContent=feedback;
+            },true);
+            approve.disabled=!steps.length||!followup;actions.appendChild(approve);
+            const message=make("div","forge-design-message");
+            main.append(actions,message);
+            renderViews();
           }else if(widget.kind==="forge-workspace" && data.schema==="swrlz-forge-workspace-insights-v1"){
             // Data is emitted by verified Station native read dispatch. All
             // project labels are untrusted strings rendered as textContent only.
@@ -3227,6 +3432,16 @@
         prompt.value="Analyze the current §E project and workspace. Inspect its actual active level, selected object, object types, scene organization and bounded metadata findings. Suggest useful next checks and improvements. This is read-only: do not modify any objects.";
         prompt.dispatchEvent(new Event("input",{bubbles:true}));
         void commitDraftFromPrompt();
+      });
+      window.addEventListener("swrlz-forge-design-apply-request",event=>{
+        const spec=event.detail||{};
+        if(!window.SwrlzForgeEmbedV1?.embedded || sending || prompt.value.trim())return;
+        if(typeof spec.prompt!=="string" || !spec.prompt.startsWith("Apply in §e now: ")
+           || spec.prompt.length>8192)return;
+        event.preventDefault(); // User click requests a new plan, not a completed native edit.
+        prompt.value=spec.prompt;
+        prompt.dispatchEvent(new Event("input",{bubbles:true}));
+        void commitDraftFromPrompt(); // New authenticated lease + planner + host receipts.
       });
       window.addEventListener("swrlz-forge-project-create-request",event=>{
         const spec=event.detail||{};

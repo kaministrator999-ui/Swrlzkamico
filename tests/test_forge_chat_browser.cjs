@@ -43,6 +43,15 @@ window.closeHost=()=>send('host.inactive',{reason:'closed'});
             {id:'sheep-tag-meadow',name:'Sheep Tag',group:'starter',workspace:'scene'},
             {id:'glitch-dragons-den',name:'Dragon Den',group:'starter',workspace:'scene'}],
           notice:'Your current project will be preserved.'}};
+
+      const designPreviewWidget={contract:'swrlz-widget-v1',kind:'forge-design-preview',
+        title:'§E Design Studio · Review',provider:'Current native context',data:{
+          schema:'swrlz-forge-design-preview-v1',project:'Sheep Tag',workspace:'model-atelier',
+          operationCount:2,request:'Design a two-piece robot model',
+          followup:"Apply in §e now: Add a box mesh, name='Robot body'; Add a sphere mesh, name='Robot head'",
+          steps:[{index:1,op:'mesh.add',name:'Robot body',kind:'box',position:[0,0,0],scale:[1,1,1],color:'#65d9f5'},
+            {index:2,op:'mesh.add',name:'Robot head',kind:'sphere',position:[0,2,0],scale:[.6,.6,.6],color:'#9c87ff'}],
+          notice:'Conceptual proposal only. No editor operation has run.'}};
       await context.route('**/*',async route=>{
         const request=route.request(),url=new URL(request.url()),pathname=decodeURIComponent(url.pathname);
         if(url.origin===FORGE)return route.fulfill({contentType:'text/html',body:parentHtml});
@@ -60,7 +69,7 @@ window.closeHost=()=>send('host.inactive',{reason:'closed'});
           if(pathname==='/api/account/profile'){
             saves.push(body);profile={display_name:body.displayName,preferences:body.preferences,model_preferences:body.modelPreferences,ui_preferences:body.uiPreferences,companion_profile:body.companionProfile,version:profile.version+1,updated_at:Date.now()};return json({ok:true,profile,durable:true,saved:true});
           }
-          if(pathname==='/api/lalm_station/sync')return json({revision:1,currentThread:{id:'saved-chat'},threads:[{id:'saved-chat',title:'Saved account conversation',pinned:false,createdAt:1,messages:[{id:'history-user',role:'user',text:'Earlier account project question',createdAt:1},{id:'history-assistant',role:'assistant',text:'This history belongs to the shared Google account.',createdAt:2},...(projectSetupWidget?[{id:'wizard-message',role:'assistant',text:'What kind of §e project would you like to start?',createdAt:3,meta:{widgets:[projectSetupWidget]}}]:[])]}],activeGeneration:null});
+          if(pathname==='/api/lalm_station/sync')return json({revision:1,currentThread:{id:'saved-chat'},threads:[{id:'saved-chat',title:'Saved account conversation',pinned:false,createdAt:1,messages:[{id:'history-user',role:'user',text:'Earlier account project question',createdAt:1},{id:'history-assistant',role:'assistant',text:'This history belongs to the shared Google account.',createdAt:2},...(projectSetupWidget?[{id:'wizard-message',role:'assistant',text:'What kind of §e project would you like to start?',createdAt:3,meta:{widgets:[projectSetupWidget]}},{id:'design-message',role:'assistant',text:'Here is the proposed primitive blockout. No changes have been made.',createdAt:4,meta:{widgets:[designPreviewWidget]}}]:[])]}],activeGeneration:null});
           if(pathname==='/api/github/status')return json({configured:false,linked:false});
           if(pathname==='/api/forge/embed/presence')return json({ticket:'sfp1_CONTROLLED_TICKET',hostId,channelId,threadId:body.threadId,projectId:body.projectId});
           if(pathname==='/api/lalm_station/send'){sent=body;return json({requestId:body.requestId});}
@@ -130,6 +139,26 @@ window.closeHost=()=>send('host.inactive',{reason:'closed'});
         assert.ok(!/user-scalable\s*=\s*no|maximum-scale\s*=\s*1/.test(meta||''),
           'Keep manual browser pinch-zoom and accessibility available');
       }
+      const designCard=frame.locator('.forge-design-preview');
+      await designCard.waitFor();
+      assert.equal(await designCard.locator('svg').count(),1,label+' Design Studio renders a conceptual SVG');
+      assert.match(await designCard.locator('svg').getAttribute('aria-label'),/isometric view/i);
+      await designCard.getByRole('button',{name:'Top view'}).click();
+      assert.match(await designCard.locator('svg').getAttribute('aria-label'),/top view/i);
+      await designCard.getByRole('button',{name:'Front view'}).click();
+      assert.match(await designCard.locator('svg').getAttribute('aria-label'),/front view/i);
+      await designCard.locator('.forge-design-progress input').fill('1');
+      assert.match(await designCard.locator('.forge-design-progress').textContent(),/1 \/ 2/);
+      await designCard.getByRole('button',{name:/Expand preview/}).click();
+      assert.equal(await frame.locator('.forge-design-overlay [role="dialog"]').count(),1);
+      await frame.locator('.forge-design-overlay').getByRole('button',{name:/Close/}).click();
+      assert.equal(await frame.locator('.forge-design-overlay').count(),0);
+      await designCard.getByRole('button',{name:/Revise design/}).click();
+      assert.match(await frame.locator('#prompt').inputValue(),/Please preview a revised §E design/);
+      assert.doesNotMatch(await frame.locator('#prompt').inputValue(),/do not build it yet/);
+      assert.equal(sent,null,'revising the design is an unsent user draft');
+      await frame.locator('#prompt').fill('');
+      assert.equal(sent,null,'inspecting the design preview never submits editor work');
       await frame.locator('#prompt').fill('Add a blue cube in the editor.');await frame.locator('#sendButton').click();
       await page.waitForFunction(()=>window.received.some(message=>message.type==='host.batch'));
       assert.equal(sent.forgeLeaseId,leaseId);assert.equal(sent.modelId,'coder');
@@ -172,6 +201,13 @@ window.closeHost=()=>send('host.inactive',{reason:'closed'});
         await new Promise(resolve=>setTimeout(resolve,100));
       assert.equal(sent?.prompt,expectedProjectCommand,
         'explicit owner click sends the exact native request to the authenticated Station transport');
+      await frame.locator('#sendButton').waitFor({state:'visible'});
+      await frame.waitForFunction(()=>!document.getElementById('sendButton').disabled);
+      await designCard.getByRole('button',{name:/Approve · request build/}).click();
+      for(let attempt=0;attempt<40 && !String(sent?.prompt||'').startsWith('Apply in §e now:');attempt++)
+        await new Promise(resolve=>setTimeout(resolve,100));
+      assert.ok(sent?.prompt.startsWith('Apply in §e now: Add a box mesh'),
+        'design approval sends a NEW current editor request, not an unauthorized native batch');
       // The fixture intentionally does not persist the new command as a
       // conversation bubble; don't mistake that artificial sync for a product bug.
       const parentData=await page.evaluate(()=>JSON.stringify(window.received));assert.ok(!parentData.includes(token));assert.ok(!parentData.includes('Earlier account project question'));

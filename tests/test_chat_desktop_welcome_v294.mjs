@@ -5,7 +5,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 const html=fs.readFileSync("chat/§wyrlz/index.html","utf8");
 const version=fs.readFileSync("chat/§wyrlz/VERSION.txt","utf8").trim();
-assert.equal(version,"1.1.19");
+assert.match(version,/^\d+\.\d+\.\d+$/,"Read the authoritative Chat surface version instead of pinning v294 forever");
 assert.ok(html.includes('<meta name="swrlz-chat-version" content="'+version+'">'));
 assert.ok(html.includes('const SWRLZ_CHAT_VERSION = "'+version+'";'));
 assert.match(html,/\.first-run-welcome\{margin:auto 0;/,"Original mobile layout owner retained");

@@ -342,10 +342,18 @@ def dispatch(model_id: str, payload: dict[str,Any], r39_generate: Callable[[dict
     if forge_context is not None:
         import forge_embed
         from brain_forge import classify_forge_intent
+        from forge_design_preview_v1 import wants_preview
         from forge_chat_actions import generate_events
         forge_embed.revalidate(forge_context,require_snapshot=True)
-        native_intent=classify_forge_intent(str(payload.get("prompt") or ""),forge_context.model_context())
-        if native_intent.get("applicable") and native_intent.get("disposition") in ("mutation","read","clarify"):
+        command=str(payload.get("prompt") or "")
+        native_intent=classify_forge_intent(command,forge_context.model_context())
+        # The outer dispatch gate must recognize preview-only requests too.
+        # No privilege is granted: generate_events still requires the live
+        # editor context, validated native ops, and emits NO batch on preview.
+        native_preview=(wants_preview(command)
+                        and native_intent.get("reason")!="separate-code-or-provider-request")
+        if native_preview or (native_intent.get("applicable")
+                              and native_intent.get("disposition") in ("mutation","read","clarify")):
             yield from generate_events(payload,forge_context,forge_embed.create_batch,forge_embed.wait_batch)
             return
         payload=dict(payload)
