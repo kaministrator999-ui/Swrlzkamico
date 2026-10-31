@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.186
+title: §wyrl§ Engine v11.187
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,18 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.187 — Game Engine and Modeler as separate tabbable workspaces (2026-10-31)
+
+**New architecture:** The existing Game Engine remains at `index.html`; the native Modeler now also has its own public `modeler.html` page. A compact Game Engine / Modeler tab strip switches routes in place, without reloading the page or discarding the active game scene. Both URLs work when opened directly.
+
+**Project-optional modeling:** The model editor opens with a blank, untitled in-browser model when no model project is loaded. Mesh editing, sculpt tools, Add, Import and Export use the existing native Model Atelier. Scratch meshes are stored separately from `currentProject`, preventing edits in Modeler from dirtying or replacing the game workspace. A Blank model button starts a fresh untitled draft after confirmation.
+
+**Draft safety:** An untitled model draft is bounded, validated and retained in the same browser through refresh when local storage permits. Export JSON is available even if local storage fails; user-named model projects still follow native project-save workflows. Neither editor requires a preexisting user-saved file to begin working.
+
+**Packaging:** Both pages share one verified native runtime; the static upload includes a second `modeler.html` entrypoint with the exact sealed bytes. Version-pinned source SHA and 68 packaged asset receipts are unchanged in meaning. Dedicated mobile and desktop browser tests cover direct open, tab switching, draft edits, game state preservation and reload.
+
+**Validation:** Browser acceptance and owner testing on physical Android/Quest remain required before considering UX final.
 
 ## §E v11.186 — first-paint glitch-wisp boot repair (2026-10-31)
 

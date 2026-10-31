@@ -79,6 +79,9 @@ def main():
     out = Path(args.output)
     out.mkdir(parents=True, exist_ok=True)
     (out / "index.html").write_bytes(html)
+    # The native Modeler has its own direct static route. Reuse the exact same
+    # verified JS bundle and CSS; route selection is resolved in-page.
+    (out / "modeler.html").write_bytes(html)
     (out / "README.md").write_text(space_readme, encoding="utf-8")
     # Native game starter source and episode screening travel with the engine.
     assets = {}
@@ -188,6 +191,7 @@ def main():
     (out / "SOURCE.json").write_text(json.dumps({
         "schema": "swrlz-forge-source-v2",
         "sourceVersion": manifest.get("name"),
+        "workspacePages": {"game": "index.html", "modeler": "modeler.html"},
         "baseSha256": got_base_sha,
         "baseBytes": len(base_html),
         "finalSha256": got_final_sha,

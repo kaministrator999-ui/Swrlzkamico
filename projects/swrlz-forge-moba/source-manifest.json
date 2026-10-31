@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.186",
+  "name": "§wyrl§ Engine v11.187",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_186.html",
+  "finalArtifact": "swyrl_engine_v11_187.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -232,7 +232,8 @@
     "patches/v11_183_project_ui_loading.py",
     "patches/v11_184_saved_project_previews_default.py",
     "patches/v11_185_wisp_boot_atelier_collapse.py",
-    "patches/v11_186_first_paint_wisp_boot.py"
+    "patches/v11_186_first_paint_wisp_boot.py",
+    "patches/v11_187_separate_game_modeler.py"
   ],
   "finalBytes": 7151793,
   "finalSha256": "7b0f4379396a83ca97fb99ada3b533b7bcb2c89716b986cc365dc792138a5f00"

@@ -1,0 +1,42 @@
+/* §E v11.187 — distinct Game Engine and Modeler workspaces, shared native runtime. */
+.se187-workspace-tabs{box-sizing:border-box;display:flex;align-items:center;gap:5px;min-width:0;
+ padding:4px 8px;background:linear-gradient(100deg,#152a38,#1b2840);border:1px solid #446777;
+ color:#e6f7f9;font:600 12px/1.25 system-ui,sans-serif}
+.se187-workspace-tabs button{flex:0 0 auto;touch-action:manipulation;min-height:36px;min-width:88px;
+ padding:7px 11px;color:#d4e7ee;background:#22344a;border:1px solid #496b80;
+ border-radius:8px;cursor:pointer;font:700 12px/1.2 system-ui,sans-serif}
+.se187-workspace-tabs button.active,
+.se187-workspace-tabs button[aria-selected=true]{background:#16636b!important;border-color:#7fe0d6!important;color:#f8fffe!important}
+.se187-workspace-tabs button:focus-visible{outline:2px solid #f0d3ff;outline-offset:2px}
+.se187-workspace-tabs .se187-draft-state{margin-inline:auto 2px;min-width:0;
+ white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font:600 10px system-ui,sans-serif;color:#a4cbcf}
+.se187-workspace-tabs .se187-new-model{min-width:0;white-space:nowrap;min-height:36px;
+ background:#234763;border-color:#7592ad;color:#f0f9ff}
+.se187-workspace-tabs .se187-new-model[hidden]{display:none!important}
+/* The game rail remains in its existing native 48px row. Its nav stays reachable
+   while old project/VR/game actions continue horizontally scrolling. */
+html .app>.topbar .se187-game-tabs{position:sticky;left:0;z-index:80;flex:0 0 auto;
+ border-radius:0 0 8px 0;margin-left:-8px;margin-right:8px;height:46px;
+ padding:3px 5px;border-block:0;box-shadow:5px 0 8px #0a1521b0}
+html .app>.topbar .se187-game-tabs button{min-height:36px}
+html .app>.topbar .se187-game-tabs .se187-draft-state{display:none}
+/* Modeler is its own page surface, not a popup nested over an active project.
+   Keep native export tools and native 3D editor exactly where they already work. */
+#modelAtelierPanel.se187-modeler-page{height:100dvh;max-height:100dvh;
+ display:flex;flex-direction:column;min-height:0}
+#modelAtelierPanel.se187-modeler-page>.se187-model-tabs{flex:0 0 46px;width:100%;
+ z-index:3901;position:relative;border-inline:0;border-top:0;border-bottom:1px solid #4c6a81;
+ padding-inline:8px;box-shadow:0 2px 9px #0007}
+#modelAtelierPanel.se187-modeler-page>.atelier-head{flex:0 0 auto}
+#modelAtelierPanel.se187-modeler-page>.atelier-body{flex:1 1 auto;min-height:0}
+#modelAtelierPanel.se187-modeler-page>.atelier-status{flex:0 0 auto}
+@media(max-width:700px),(pointer:coarse){
+ html .app>.topbar .se187-game-tabs{margin-right:5px;padding:3px;max-width:64vw}
+ .se187-workspace-tabs button{min-height:38px;font-size:11px;padding:6px 8px;min-width:72px}
+ #modelAtelierPanel.se187-modeler-page>.se187-model-tabs{padding:4px;gap:4px;flex-basis:44px}
+ #modelAtelierPanel.se187-modeler-page>.se187-model-tabs .se187-draft-state{display:none}
+ #modelAtelierPanel.se187-modeler-page>.se187-model-tabs .se187-new-model{margin-left:auto;min-width:83px;font-size:10px;padding-inline:5px}
+}
+@media(max-width:360px){
+ #modelAtelierPanel.se187-modeler-page>.se187-model-tabs button{min-width:68px;font-size:10px}
+}
