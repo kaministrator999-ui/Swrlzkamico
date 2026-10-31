@@ -38,6 +38,12 @@ try{
    native.project.name='Preview Card Test World';
    native.project.projectName='Preview Card Test World';
    native.project.instanceId=id;
+   // The current native starter may contain a historical multi-level pack;
+   // this fixture is a newly saved independent one-level user scene. Keep
+   // name/scene provenance consistent instead of leaving an Embervault level
+   // record that correctly overrides the outer project name during import.
+   delete native.project.levelPack;
+   delete native.project.levelSystem;
    const row={id,name:'Preview Card Test World',starterId:'test-local',
      updatedAt:new Date().toISOString(),data:native,preview:{
        schema:'se184-scene-overview-v1',kind:'sandbox',count:3,parts:0,
