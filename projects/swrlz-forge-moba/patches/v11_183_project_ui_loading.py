@@ -106,7 +106,7 @@ def apply(html):
       "  se183LoadStep(se183Ticket,'Protecting current workspace');await se183PaintNext();\n  const before=context();recovery=se175Snapshot();")
     html=once(html,
       "  revoke('Loading another local project.');started=true;\n  loadProject(structuredClone(wanted.data),{workspaceLocal:true});",
-      "  revoke('Loading another local project.');started=true;\n  se183LoadStep(se183Ticket,'Building selected 3D scene');await se183PaintNext();\n  loadProject(structuredClone(wanted.data),{workspaceLocal:true});")
+      "  se183LoadStep(se183Ticket,'Building selected 3D scene');await se183PaintNext();\n  if(JSON.stringify(context())!==JSON.stringify(before))throw Error('PROJECT_CHANGED_BEFORE_LOCAL_LOAD');\n  revoke('Loading another local project.');started=true;\n  loadProject(structuredClone(wanted.data),{workspaceLocal:true});")
     html=once(html,
       "se175UpdateLabel();se175LocalMessage('Loaded '+wanted.name+'.');",
       "se175UpdateLabel();se175LocalMessage('Loaded '+wanted.name+'.');opened=true;")
@@ -116,10 +116,10 @@ def apply(html):
     # Cloud load: keep validation, recovery and auth enforcement intact.
     html=once(html,
       "  cloudBusy=true;\n  try{revoke('Loading project.');setStatus('Loading complete native project…');const result=await rpc('cloud.load',{projectId});",
-      "  cloudBusy=true;let se183Opened=false;\n  const se183Ticket=se183StartLoad('Loading saved account project');\n  try{revoke('Loading project.');setStatus('Loading complete native project…');se183LoadStep(se183Ticket,'Downloading account project');const result=await rpc('cloud.load',{projectId});\n    se183LoadStep(se183Ticket,'Validating project data');await se183PaintNext();")
+      "  cloudBusy=true;let se183Opened=false;\n  const se183OriginProject=currentProject,se183OriginRevision=revision;\n  const se183Ticket=se183StartLoad('Loading saved account project');\n  try{revoke('Loading project.');setStatus('Loading complete native project…');se183LoadStep(se183Ticket,'Downloading account project');const result=await rpc('cloud.load',{projectId});\n    se183LoadStep(se183Ticket,'Validating project data');await se183PaintNext();")
     html=once(html,
       "    const recovery=window.SWYRL_ENGINE_AGENT.inspectScene();\n    try{window.SWYRL_ENGINE_AGENT.loadScene(native);",
-      "    const recovery=window.SWYRL_ENGINE_AGENT.inspectScene();\n    se183LoadStep(se183Ticket,'Building selected 3D scene');await se183PaintNext();\n    try{window.SWYRL_ENGINE_AGENT.loadScene(native);")
+      "    if(currentProject!==se183OriginProject||revision!==se183OriginRevision)throw Error('WORKSPACE_CHANGED_DURING_ACCOUNT_DOWNLOAD');\n    const recovery=window.SWYRL_ENGINE_AGENT.inspectScene();\n    se183LoadStep(se183Ticket,'Building selected 3D scene');await se183PaintNext();\n    if(currentProject!==se183OriginProject||revision!==se183OriginRevision)throw Error('WORKSPACE_CHANGED_BEFORE_ACCOUNT_IMPORT');\n    try{window.SWYRL_ENGINE_AGENT.loadScene(native);")
     html=once(html,
       "cloudRefs.set(getProjectId(),result.project);setStatus('Loaded '+summaryName(result.project.name)+' · revision '+result.project.revision+'.');return true;",
       "cloudRefs.set(getProjectId(),result.project);setStatus('Loaded '+summaryName(result.project.name)+' · revision '+result.project.revision+'.');se183Opened=true;return true;")
