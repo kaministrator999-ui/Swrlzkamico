@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.183",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_183_PROJECT_UI_LOADING",
-  "reason": "Owner screenshot fixes: redundant 13-actors pill occluding editor actions hidden, Sheep Tag start-menu editor overlays cleared, cramped Project Levels replaced by compact expandable levels workbench, native multilevel project loader corrected to one scene build, real starter/IndexedDB/cloud load stage and elapsed-time feedback, duplicate account list calls deduplicated with manual refresh bypass and cache invalidation, safety revalidation before imports. 215 ordered patches, 68 preserved assets, 7110847 HTML bytes, SHA256 070aad1b47dcf1a05bdfee3e82f48e81991bc4826e9d128bb904d3bc8f1b3145. Sealed candidate CI 41236552213 SUCCESS; five controlled Chromium sizes successful, physical Quest/Android acceptance pending. Separate request-only deployment commit.",
-  "sourceCommit": "fb9fde8dca3d98e0e9cd3fd8fc22dbfa2e1d79e8",
-  "sourceIntegritySha256": "070aad1b47dcf1a05bdfee3e82f48e81991bc4826e9d128bb904d3bc8f1b3145"
+  "releaseVersion": "v11.184",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_184_SAVED_PROJECT_PREVIEWS_AND_DEFAULT",
+  "reason": "§E owner request: My Projects now offers responsive local/account project preview cards, authentic scene-derived local thumbnails, lazy legacy preview calculations, on-demand account scene overviews, native Open project actions, one exclusive Load this project by default checkbox shared with starter cards, same-browser saved default preference and startup restoration (local IndexedDB project; signed-in account-backed project). Explicit ?project= routes still override. Browser Android 390x844 and Quest-window 980x680 both verified local previews, exclusivity and actual startup reload into saved scene. Focused CI 41240589536 PASS; 216 ordered patches, 68 original assets, 7,134,586 final HTML bytes, SHA256 35ba507edf2eedd98a85a49e8ae5e55e5b43f0b78c61139e1b2e6b50e8b95c5b. Merged with unrelated §C history preserved via PR #305. Owner device acceptance and live HF serving receipt outstanding.",
+  "sourceCommit": "849af4b5e3beb4a13295bfabe977090cf8fc964b",
+  "sourceIntegritySha256": "35ba507edf2eedd98a85a49e8ae5e55e5b43f0b78c61139e1b2e6b50e8b95c5b"
 }
