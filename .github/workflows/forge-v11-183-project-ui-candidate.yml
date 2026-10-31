@@ -1,0 +1,40 @@
+name: §E v11.183 project UI and loading candidate
+on:
+  push:
+    branches: [feature/forge-v11-183-project-hud-load-20261031]
+    paths:
+      - "projects/swrlz-forge-moba/**"
+      - ".github/workflows/forge-v11-183-project-ui-candidate.yml"
+permissions:
+  contents: read
+jobs:
+  focused:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Check UI and cloud-list lifecycle
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/engine_project_ui_load_v11_183.js
+          node projects/swrlz-forge-moba/tests/test_v11_183_ui_loading.cjs
+      - name: Build unsealed candidate and print source receipt
+        run: |
+          python - <<'PY'
+          import pathlib,json
+          p=pathlib.Path('projects/swrlz-forge-moba/source-manifest.json')
+          m=json.loads(p.read_text())
+          assert m['name']=='§wyrl§ Engine v11.183'
+          assert len(m['patches'])==215 and m['patches'][-1]=='patches/v11_183_project_ui_loading.py'
+          m['finalBytes']=0;m['finalSha256']=''
+          p.write_text(json.dumps(m,ensure_ascii=False))
+          PY
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/se183-build >/tmp/se183-build.log
+          python - <<'PY'
+          import pathlib,hashlib,json
+          b=pathlib.Path('/tmp/se183-build/index.html').read_bytes()
+          for name in [b'V11_183_PROJECT_UI_LOADING',b'se183LevelsToggle',b'se183StartLoad',b'se183CloudListCached',b'window.SWYRL_ENGINE_XR']:
+            assert name in b,name
+          assert b'seLevelRawLoadProject(structuredClone(chosen.data)' not in b
+          print('SE183_CANDIDATE_RECEIPT',json.dumps({'bytes':len(b),'sha256':hashlib.sha256(b).hexdigest()}))
+          PY
