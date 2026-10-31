@@ -64,13 +64,13 @@ assert(listings.every(m=>m.payload.ok===true&&Array.isArray(m.payload.result.pro
 assert(requests.some(r=>r.path==='/api/account/me'&&r.auth==='Bearer '+TOKEN&&r.credentials==='omit'),'Chat /me verified by scoped credential');
 await window.fetch('/api/github/status');
 await window.fetch('/api/lalm_station/forbidden');
-assert.equal(sent.at(-1).payload.authenticated,true,'unrelated HTTP 401 must not revoke Google connection');
+assert.equal(sent.filter(m=>m.type==='account.status').at(-1).payload.authenticated,true,'unrelated HTTP 401 must not revoke Google connection');
 assert.equal((await window.fetch('/api/account/me')).status,200,'normal Chat account still authenticated');
 await window.fetch('https://other.example/api/account/me');
 assert.equal(requests.at(-1).auth,null,'Google credential never sent to other origins');
 valid=false;
 assert.equal((await window.fetch('/api/account/me')).status,401,'real Chat session revocation recognized');
-assert.equal(sent.at(-1).payload.authenticated,false,'revoked session clears shared UI');
+assert.equal(sent.filter(m=>m.type==='account.status').at(-1).payload.authenticated,false,'revoked session clears shared UI');
 const before=requests.length;
 assert.equal((await window.fetch('/api/account/me')).status,401,'expired/revoked token denied');
 assert.equal(requests.length,before,'invalid session does not reach network again');
