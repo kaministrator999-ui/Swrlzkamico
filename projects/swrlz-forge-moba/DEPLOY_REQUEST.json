@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.185",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_185_WISP_GLITCH_BOOT_ATELIER_COLLAPSE",
-  "reason": "§E owner request: replace static editor boot with lightweight cyan/violet particle-fragment §E sigil and wisp startup, real status phases and reduced-motion fallback; add collapsible native Model Atelier render/view/reference settings with saved per-browser state, mobile compact default and preserved Save/Export/Close. No model/game data changes. Focused strict release verification PASS in GitHub Actions 41243185612; source HTML 7,144,873 bytes and SHA-256 0191e9f031e7e4e38996fac1ae954a3012aa87a03803bbc876936441bfdafa53. Owner Android/Quest acceptance is pending.",
-  "sourceCommit": "7cdabdab85ecaa2c0f782928c26a3d621df7b184",
-  "sourceIntegritySha256": "0191e9f031e7e4e38996fac1ae954a3012aa87a03803bbc876936441bfdafa53"
+  "releaseVersion": "v11.186",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_186_FIRST_PAINT_WISP_BOOT",
+  "reason": "§E owner screenshot showed only the static initialization fallback instead of v11.185's glowing logo/wisps. v11.186 reparents the decorative boot overlay into initial HTML before the heavy engine module and adds an independent startup status updater with a nonautomatic reload control after 18 seconds; prior §E model toolbar collapse, native project data and VR/Sheep Tag remain unchanged. Focused browser proof at 390px Android size and 980px desktop size confirmed first-paint static DOM, visible §E sigil, 32 animated particles, correct ready-state dismissal and reduced-motion behavior. GitHub Actions 41244263296 PASS on sealed package, 218 patches, 68 assets, exact HTML 7,151,793 bytes SHA-256 7b0f4379396a83ca97fb99ada3b533b7bcb2c89716b986cc365dc792138a5f00. Physical Android/Quest acceptance pending.",
+  "sourceCommit": "9791feb7201ff9be7d65f767f9b26da43d9eb286",
+  "sourceIntegritySha256": "7b0f4379396a83ca97fb99ada3b533b7bcb2c89716b986cc365dc792138a5f00"
 }
