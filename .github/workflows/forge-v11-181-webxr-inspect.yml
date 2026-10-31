@@ -1,0 +1,50 @@
+name: §E WebXR renderer inventory
+on:
+  push:
+    branches: [feature/forge-v11-181-immersive-webxr-20261031]
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Rebuild existing §E source and print bounded renderer anchors
+        run: |
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/forge181-inspect > /tmp/forge181-manifest
+          python - <<'PY'
+          import pathlib,re,hashlib
+          raw=pathlib.Path('/tmp/forge181-inspect/index.html').read_bytes()
+          s=raw.decode('utf8')
+          assert hashlib.sha256(raw).hexdigest()=='befd3604d7614483eff73ef958c9652204ba3aeed4533f01a4b6204b9212ea60'
+          needles=[
+            r'new\\s+THREE\\.WebGLRenderer',
+            r'\\brenderer\\s*=',
+            r'\\.setAnimationLoop\\(',
+            r'requestAnimationFrame\\(',
+            r'function\\s+animate\\(',
+            r'function\\s+tick\\(',
+            r'function\\s+frame\\(',
+            r'\\brenderer\\.render\\(',
+            r'function\\s+cameraUpdate\\(',
+            r'function\\s+resize\\(',
+            r'function\\s+render\\(',
+            r'\\bperspectiveCamera\\s*=',
+            r'\\bscene\\s*=',
+            r'<script[^>]+src=',
+            r'function\\s+loop\\(',
+            r'WebGLRenderer',
+            r'const\\s+renderer\\b',
+            r'\\bModelAtelier\\s*=',
+          ]
+          for rawpat in needles:
+            pat=rawpat.replace('\\\\','\\')
+            hits=list(re.finditer(pat,s,re.I))
+            print('XR_SCAN',pat,'COUNT',len(hits))
+            for m in hits[:5]:
+              left=max(0,m.start()-340);right=min(len(s),m.end()+1250)
+              print('XR_CONTEXT_BEGIN',m.start())
+              print(s[left:right].replace('\\n','\\n'))
+              print('XR_CONTEXT_END')
+          print('XR_SCAN_COMPLETE')
+          PY
