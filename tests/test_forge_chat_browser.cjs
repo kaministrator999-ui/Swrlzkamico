@@ -32,7 +32,17 @@ window.closeHost=()=>send('host.inactive',{reason:'closed'});
       const context=await browser.newContext({viewport:{width,height},serviceWorkers:'block',...(label==='android-desktop-site'?{isMobile:true,hasTouch:true}:{})});
       const page=await context.newPage(),pageErrors=[],requests=[],saves=[];
       page.on('pageerror',error=>pageErrors.push(error.message));
-      let profile=structuredClone(initialProfile),sent=null,projectSetupWidget=null;
+      let profile=structuredClone(initialProfile),sent=null;
+      // Station-saved verified chooser: this fixture isolates the real Chat
+      // widget renderer from backend WIDGET-stream timing (tested in Python).
+      let projectSetupWidget={contract:'swrlz-widget-v1',kind:'forge-project-setup',title:'New §e Project',
+        provider:'Current editor starter catalog',data:{schema:'swrlz-forge-project-setup-v1',
+          currentProject:'Sheep Tag',
+          starters:[{id:'blank-scene',name:'Blank scene',group:'fresh',workspace:'scene'},
+            {id:'blank-model',name:'Blank 3D model',group:'fresh',workspace:'model-atelier'},
+            {id:'sheep-tag-meadow',name:'Sheep Tag',group:'starter',workspace:'scene'},
+            {id:'glitch-dragons-den',name:'Dragon Den',group:'starter',workspace:'scene'}],
+          notice:'Your current project will be preserved.'}};
       await context.route('**/*',async route=>{
         const request=route.request(),url=new URL(request.url()),pathname=decodeURIComponent(url.pathname);
         if(url.origin===FORGE)return route.fulfill({contentType:'text/html',body:parentHtml});
@@ -125,7 +135,6 @@ window.closeHost=()=>send('host.inactive',{reason:'closed'});
       assert.equal(sent.forgeLeaseId,leaseId);assert.equal(sent.modelId,'coder');
       // Controlled server WIDGET simulates the verified current native starter
       // catalog; no actual project or account write occurs in this fixture.
-      await frame.locator('#prompt').fill('Start a new project');await frame.locator('#sendButton').click();
       const setup=frame.locator('.forge-project-setup');
       try{await setup.getByRole('button',{name:/Fresh \/ blank/i}).waitFor({timeout:8000});}
       catch(error){
@@ -156,7 +165,7 @@ window.closeHost=()=>send('host.inactive',{reason:'closed'});
       const newName=setup.locator('.forge-project-name');await newName.fill('Wolf Quest');
       await setup.getByRole('button',{name:'Review project →'}).click();
       assert.match(await setup.locator('.forge-project-review').textContent(),/Wolf Quest[\s\S]*Sheep Tag/);
-      assert.equal(sent.prompt,'Start a new project','review never executes a native operation');
+      assert.equal(sent.prompt,'Add a blue cube in the editor.','review never executes a native operation');
       await setup.getByRole('button',{name:'Create project in §e'}).click();
       await frame.waitForFunction(()=>Array.from(document.querySelectorAll('.message.user-message')).some(n=>(n.textContent||'').includes('sheep-tag-meadow starter named exactly')),null,{timeout:5000});
       assert.equal(sent.prompt,'Create a new project from the sheep-tag-meadow starter named exactly "Wolf Quest"',
