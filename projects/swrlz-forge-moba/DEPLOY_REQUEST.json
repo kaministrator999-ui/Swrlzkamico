@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.186",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_186_FIRST_PAINT_WISP_BOOT",
-  "reason": "§E owner screenshot showed only the static initialization fallback instead of v11.185's glowing logo/wisps. v11.186 reparents the decorative boot overlay into initial HTML before the heavy engine module and adds an independent startup status updater with a nonautomatic reload control after 18 seconds; prior §E model toolbar collapse, native project data and VR/Sheep Tag remain unchanged. Focused browser proof at 390px Android size and 980px desktop size confirmed first-paint static DOM, visible §E sigil, 32 animated particles, correct ready-state dismissal and reduced-motion behavior. GitHub Actions 41244263296 PASS on sealed package, 218 patches, 68 assets, exact HTML 7,151,793 bytes SHA-256 7b0f4379396a83ca97fb99ada3b533b7bcb2c89716b986cc365dc792138a5f00. Physical Android/Quest acceptance pending.",
-  "sourceCommit": "9791feb7201ff9be7d65f767f9b26da43d9eb286",
-  "sourceIntegritySha256": "7b0f4379396a83ca97fb99ada3b533b7bcb2c89716b986cc365dc792138a5f00"
+  "releaseVersion": "v11.187",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_187_GAME_MODELER_WORKSPACES",
+  "reason": "Owner request: make Game Engine and Modeler separate tabbable pages, with project-optional blank Modeler editing. Two static entrypoints index.html and modeler.html reuse one native runtime with in-place route switching, independent locally retained untitled model draft, new Blank model action, preserved game world and native modeling operations, plus native named project support. Fix browser window.history shadowing and mobile Game tab visibility without forcing hidden Modeler page to display. Focused Android-width 390px and Quest-width 980px Chromium browser acceptance PASS in GitHub Actions 41247348876 and strictly sealed source/asset + browser run 41247519822. 219 patches; 68 bundled assets; 7,166,103-byte HTML SHA-256 85f2b18399d9d28a7fe32d905dfd77f6102f56ef0acb9b8645c589c23fcb0b3d. Physical device acceptance remains with owner.",
+  "sourceCommit": "0634f5aee93672445b2947c4ae54d713b25cd54d",
+  "sourceIntegritySha256": "85f2b18399d9d28a7fe32d905dfd77f6102f56ef0acb9b8645c589c23fcb0b3d"
 }
