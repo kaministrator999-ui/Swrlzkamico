@@ -28,8 +28,8 @@ window.closeHost=()=>send('host.inactive',{reason:'closed'});
   const executablePath=process.env.CHROMIUM_PATH||process.env.SWRLZ_CHROMIUM_PATH||(fs.existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined);
   const browser=await chromium.launch({headless:true,...(executablePath?{executablePath}:{}),args:['--no-sandbox','--disable-dev-shm-usage']});
   try{
-    for(const [width,height,label] of [[1440,900,'desktop'],[390,844,'mobile']]){
-      const context=await browser.newContext({viewport:{width,height},serviceWorkers:'block'});
+    for(const [width,height,label] of [[1440,900,'desktop'],[390,844,'mobile'],[980,844,'android-desktop-site']]){
+      const context=await browser.newContext({viewport:{width,height},serviceWorkers:'block',...(label==='android-desktop-site'?{isMobile:true,hasTouch:true}:{})});
       const page=await context.newPage(),pageErrors=[],requests=[],saves=[];
       page.on('pageerror',error=>pageErrors.push(error.message));
       let profile=structuredClone(initialProfile),sent=null;
@@ -84,6 +84,24 @@ window.closeHost=()=>send('host.inactive',{reason:'closed'});
       assert.equal(saves.length,1);assert.equal(saves[0].version,0);assert.equal(saves[0].modelPreferences.defaultModel,'coder');
       await frame.locator('#settingsClose').click();
       if(await frame.locator('body').evaluate(node=>node.classList.contains('menu-open')))await frame.locator('#menuButton').click();
+      if(label==='android-desktop-site'){
+        assert.equal(await frame.evaluate(()=>matchMedia('(any-pointer:coarse)').matches),true,'Android desktop-site emulation has coarse pointer');
+        const beforeScale=await page.evaluate(()=>window.visualViewport?.scale??1);
+        await frame.locator('#prompt').focus();
+        const metrics=await frame.locator('#prompt').evaluate(node=>({
+          fontSize:parseFloat(getComputedStyle(node).fontSize),
+          lineHeight:parseFloat(getComputedStyle(node).lineHeight),
+          height:node.getBoundingClientRect().height
+        }));
+        assert.ok(metrics.fontSize>=18,'Touch composer font must be >=18px despite wide desktop-site viewport');
+        assert.ok(metrics.height>=48,'Touch focus field must fit readable glyphs without clipping');
+        assert.ok(metrics.lineHeight>=24,'Touch composer line height must fit increased font size');
+        assert.equal(await page.evaluate(()=>window.visualViewport?.scale??1),beforeScale,
+          'Controlled desktop-site browser focus does not magnify the parent viewport');
+        const meta=await frame.locator('meta[name="viewport"]').getAttribute('content');
+        assert.ok(!/user-scalable\s*=\s*no|maximum-scale\s*=\s*1/.test(meta||''),
+          'Keep manual browser pinch-zoom and accessibility available');
+      }
       await frame.locator('#prompt').fill('Add a blue cube in the editor.');await frame.locator('#sendButton').click();
       await page.waitForFunction(()=>window.received.some(message=>message.type==='host.batch'));
       assert.equal(sent.forgeLeaseId,leaseId);assert.equal(sent.modelId,'coder');
