@@ -4,7 +4,15 @@ let se189ResizeInvalid=true,se189LastResize=-Infinity,se189ResizeSamples=0;
 const se189ResizeHost=$('viewport')?.parentElement;
 const se189InvalidateViewport=()=>{se189ResizeInvalid=true;};
 if(typeof ResizeObserver==='function'&&se189ResizeHost){
- const observer=new ResizeObserver(se189InvalidateViewport);
+ let previousWidth=-1,previousHeight=-1;
+ const observer=new ResizeObserver(entries=>{
+  const box=entries[0]?.contentRect;
+  if(!box)return;
+  const width=Math.round(box.width),height=Math.round(box.height);
+  if(width===previousWidth&&height===previousHeight)return;
+  previousWidth=width;previousHeight=height;
+  se189InvalidateViewport();
+ });
  observer.observe(se189ResizeHost);
 }
 window.addEventListener('resize',se189InvalidateViewport,{passive:true});
@@ -12,7 +20,10 @@ window.visualViewport?.addEventListener('resize',se189InvalidateViewport,{passiv
 window.addEventListener('orientationchange',se189InvalidateViewport,{passive:true});
 function se189ResizeIfNeeded(now){
  if(renderer.xr.isPresenting)return;
- if(!se189ResizeInvalid&&now-se189LastResize<250)return;
+ // ResizeObserver may fire repeatedly while a WebGL canvas changes its own
+ // layout. Bound actual DOM measurements to <= ~5.6Hz even when dirty.
+ if(now-se189LastResize<180)return;
+ if(!se189ResizeInvalid&&now-se189LastResize<300)return;
  se189ResizeInvalid=false;se189LastResize=now;se189ResizeSamples++;
  resize();
 }

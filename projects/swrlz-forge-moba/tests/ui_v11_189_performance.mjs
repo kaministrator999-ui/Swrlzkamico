@@ -44,7 +44,9 @@ try{
   await page.waitForTimeout(1200);
   const sampled=await page.evaluate(()=>window.SWYRL_ENGINE_PERFORMANCE_V11189.snapshot());
   assert(sampled.frames>initial.profiler.frames,'frame statistics did not advance');
-  assert(sampled.viewportSizeChecks<sampled.frames,'viewport measured on every frame');
+  console.log('SE189_RESIZE_DIAGNOSTICS',name,JSON.stringify({before:initial.profiler,after:sampled}));
+  assert(sampled.viewportSizeChecks-initial.profiler.viewportSizeChecks<=8,
+    'viewport DOM measurements exceeded the 180ms invalidation guard in 1.2s');
   assert(sampled.draws>0,'native scene should submit GPU draw calls');
   assert(sampled.triangles>0,'native scene should contain actual drawable triangles');
   await page.evaluate(()=>window.SWYRL_ENGINE_PERFORMANCE_V11189.mobileBoost());
