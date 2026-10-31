@@ -4,7 +4,7 @@ const boot=fs.readFileSync(path.join(root,'runtime/user_project_default_boot_v11
 const cards=fs.readFileSync(path.join(root,'runtime/user_project_cards_v11_184.js'),'utf8');
 const css=fs.readFileSync(path.join(root,'runtime/user_project_cards_v11_184.css'),'utf8');
 for(const x of ['saved:local:','saved:cloud:','se128StartupPending','indexedDB.open','openCloud','setTimeout'])assert.ok(boot.includes(x));
-for(const x of ['se184ExtractPreview','se184PreviewView','data-se184-default','se184RenderLocalProjects','se184RenderCloudProjects','se175Read','cloud.load'])assert.ok(cards.includes(x),x);
+for(const x of ['se184ExtractPreview','se184PreviewView','dataset.se184Default','se184RenderLocalProjects','se184RenderCloudProjects','se175Read','cloud.load'])assert.ok(cards.includes(x),x);
 assert.match(css,/grid-template-columns:repeat\(auto-fill/);
 assert.match(css,/se184-default-label/);
 assert.doesNotMatch(boot+cards,/(?:\beval\(|new Function\(|innerHTML\s*\+\=|localStorage\.setItem\(.+projectData)/);
