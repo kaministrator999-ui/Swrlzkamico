@@ -152,9 +152,11 @@
   preferScratch=true;
   draftChanged=true;flushDraft();
   if(typeof ModelAtelier!=='undefined'&&active==='modeler'){
-   ModelAtelier.resetScratch?.();
+   // Reopen the existing native viewport so its geometry/selection truly
+   // reflects the new empty model; never replace its renderer or handlers.
+   ModelAtelier.close();
    ModelAtelier.syncProject();
-   ModelAtelier.status()?.open||ModelAtelier.open();
+   ModelAtelier.open();
   }
   renderTabs();
  }

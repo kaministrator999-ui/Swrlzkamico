@@ -46,13 +46,6 @@ def apply(html):
     html=once(html,
       "    const button=$m('Reopen');if(button)button.hidden=!model();",
       "    const button=$m('Reopen');if(button)button.hidden=currentProject?.kind!=='model-atelier'||window.SWYRL_ENGINE_WORKSPACES?.modelerActive?.()===true;")
-    html=once(html,
-      "  return Object.freeze({open,close,install,syncProject,status:()=>({active:!!model(),open:!!panel&&!panel.hidden,count:model()?.parts?.length||0,selected:selection})});",
-      """  function resetScratch(){
-    undo=[];redo=[];selection=null;
-    if(panel&&!panel.hidden){renderParts();refreshList();refreshInspector();}
-  }
-  return Object.freeze({open,close,install,syncProject,resetScratch,status:()=>({active:!!model(),open:!!panel&&!panel.hidden,count:model()?.parts?.length||0,selected:selection})});""")
     # A new user-loaded model takes precedence over the untitled scratch mode.
     html=once(html,
       "  const result=modelAtelierPreviousLoad(...args);",
