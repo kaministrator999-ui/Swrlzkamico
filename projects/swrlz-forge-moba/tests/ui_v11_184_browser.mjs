@@ -13,6 +13,7 @@ try{
   const ctx=await browser.newContext({viewport:{width,height},isMobile:mobile,hasTouch:mobile,ignoreHTTPSErrors:true});
   const page=await ctx.newPage(),errors=[];
   page.on('pageerror',e=>errors.push(String(e).slice(0,500)));
+  page.on('console',msg=>{if(msg.type()==='error')console.log('SE184_CONSOLE_ERROR',name,msg.text().slice(0,1600));});
   await page.route('**/*',route=>{
    const url=new URL(route.request().url());
    if(url.origin===host){
