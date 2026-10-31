@@ -1,7 +1,7 @@
 /* §E v11.185 — startup wisps, particle fragments and compact modeling settings. */
 html:not(.se127-editor-ready) body::after{
- content:''!important;background:#07111f!important;z-index:2147483590!important;
- animation:none!important;color:transparent!important;
+ content:'✦ §E · Initializing workspace'!important;background:#07111f!important;z-index:2147483590!important;
+ animation:none!important;color:#bdeee4!important;font:700 14px/1.5 system-ui,sans-serif!important;letter-spacing:.08em!important;
 }
 #se185Init{
  position:fixed;inset:0;z-index:2147483595;pointer-events:none;

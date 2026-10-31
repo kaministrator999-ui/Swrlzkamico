@@ -12,7 +12,7 @@ def apply(html):
     root=Path(__file__).resolve().parents[1]
     js=(root/'runtime/engine_wisp_boot_atelier_v11_185.js').read_text(encoding='utf8')
     css=(root/'runtime/engine_wisp_boot_atelier_v11_185.css').read_text(encoding='utf8')
-    html=once(html,'</head>','<style id="se185WispBootAtelier">\n'+css+'\n</style>\n</head>')
+    html=html.replace('</head>','<style id="se185WispBootAtelier">\n'+css+'\n</style>\n</head>',1)
     # Earlier stable boot gate owns visibility; decorate only, never change its readiness.
     html=once(html,'window.SWRLZ_FORGE_BUILD=',js+'\nwindow.SWRLZ_FORGE_BUILD=')
     # Call after the native grouped toolbar is assembled. No tool DOM nodes are cloned.
