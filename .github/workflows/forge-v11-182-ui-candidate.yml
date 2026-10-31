@@ -36,3 +36,26 @@ jobs:
             assert item in b,item
           print('SE182_CANDIDATE',json.dumps({'bytes':len(b),'sha256':hashlib.sha256(b).hexdigest()}))
           PY
+
+  browser-layout:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Rebuild candidate locally for browser geometry checks
+        run: |
+          python - <<'PY'
+          import json,pathlib
+          p=pathlib.Path('projects/swrlz-forge-moba/source-manifest.json')
+          m=json.loads(p.read_text())
+          m['finalSha256']='';m['finalBytes']=0;p.write_text(json.dumps(m,ensure_ascii=False))
+          PY
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/se182-browser >/tmp/se182-browser-build
+      - name: Install focused Chromium browser tooling
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps --only-shell chromium
+      - name: Test topbar, modal visibility and overlap across phone/Quest/desktop
+        run: node projects/swrlz-forge-moba/tests/ui_layout_v11_182_browser.mjs
