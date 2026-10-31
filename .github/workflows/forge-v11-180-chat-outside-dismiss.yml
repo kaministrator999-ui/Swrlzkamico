@@ -1,0 +1,41 @@
+name: §E v11.180 outside-Chat dismissal candidate
+on:
+  push:
+    branches: [feature/forge-v11-180-chat-outside-dismiss-20261031]
+    paths:
+      - "projects/swrlz-forge-moba/**"
+      - ".github/workflows/forge-v11-180-chat-outside-dismiss.yml"
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Focused Chat outside-dismiss tests
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/chat_outside_dismiss_v11_180.js
+          node projects/swrlz-forge-moba/tests/test_v11_180_chat_outside_dismiss.cjs
+      - name: Reconstruct candidate and print exact bytes and SHA
+        run: |
+          python - <<'PY'
+          import json,pathlib
+          path=pathlib.Path('projects/swrlz-forge-moba/source-manifest.json')
+          doc=json.loads(path.read_text())
+          assert doc['name']=='§wyrl§ Engine v11.180'
+          assert doc['patches'][-1]=='patches/v11_180_chat_outside_dismiss.py'
+          doc['finalSha256']='';doc['finalBytes']=0
+          path.write_text(json.dumps(doc,ensure_ascii=False))
+          PY
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/forge180 > /tmp/build180
+          python - <<'PY'
+          import hashlib,json,pathlib
+          path=pathlib.Path('/tmp/forge180/index.html')
+          content=path.read_bytes()
+          assert b'seChatOutsideDismissV11180' in content
+          assert b'V11_180_CHAT_OUTSIDE_DISMISS' in content
+          print('SE_V11_180_MEASURED',json.dumps({'bytes':len(content),'sha256':hashlib.sha256(content).hexdigest()}))
+          PY
