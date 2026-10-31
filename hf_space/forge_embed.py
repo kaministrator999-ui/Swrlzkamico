@@ -30,6 +30,8 @@ PARENT_ORIGINS = frozenset({"https://kamiloki-swrlz-forge-moba.hf.space",
                             "https://kamiloki-swrlz-forge-moba.static.hf.space"})
 PAIR_TTL = 300
 SESSION_TTL = 3600
+REMEMBER_TTL = 7 * 86400
+REMEMBER_COOKIE = "swrlz_forge_remember"
 PRESENCE_TTL = 30
 LEASE_TTL = 20
 BATCH_TTL = 300
@@ -40,8 +42,8 @@ _HEX = re.compile(r"^[0-9a-f]{32}$")
 _BINDING = re.compile(r"^[A-Za-z0-9_-]{16,128}$")
 _PKCE = re.compile(r"^[A-Za-z0-9_-]{43,128}$")
 _CHALLENGE = re.compile(r"^[A-Za-z0-9_-]{43}$")
-_TOKEN = re.compile(r"^(sfe1|sfh1|sfp1|sfr1)_[A-Za-z0-9_-]{43}$")
-_TOKEN_TEXT = re.compile(r"\b(?:sfe1|sfh1|sfp1|sfr1)_[A-Za-z0-9_-]{43}\b")
+_TOKEN = re.compile(r"^(sfe1|sfh1|sfp1|sfr1|sfm1)_[A-Za-z0-9_-]{43}$")
+_TOKEN_TEXT = re.compile(r"\b(?:sfe1|sfh1|sfp1|sfr1|sfm1)_[A-Za-z0-9_-]{43}\b")
 _SENSITIVE_KEYS = frozenset({"authorization", "credential", "credentials", "cookie", "cookies",
                             "token", "hosttoken", "receiptnonce", "sid", "sessionid", "googleidtoken"})
 _SEAL = object()
@@ -226,6 +228,29 @@ def _response(value, status=200):
     return JSONResponse(value, status_code=status, headers={"Cache-Control": "no-store"})
 
 
+def _remember_cookie(response, token=""):
+    # CHIPS keeps this HttpOnly credential on the Chat origin, partitioned by
+    # the top-level §e site. Parent scripts never receive or read it.
+    # Browsers lacking partitioned cookies continue to use manual pairing.
+    value = (REMEMBER_COOKIE + "=" + token + "; Path=/api/forge/embed;"
+             + " HttpOnly; Secure; SameSite=None; Partitioned;"
+             + (" Max-Age=" + str(REMEMBER_TTL) if token else " Max-Age=0"))
+    response.headers.append("Set-Cookie", value)
+    return response
+
+
+def _new_embed_session(parent, host, channel):
+    token = _token("sfe1")
+    session = {"schema": SCHEMA, "kind": "session", "audience": "chat-embed",
+               "sessionId": secrets.token_hex(16),
+               "owner": parent["owner"], "parentSid": parent["parentSid"],
+               "parentOrigin": parent["parentOrigin"],
+               "hostId": host, "channelId": channel,
+               "activePresenceId": "", "activeLeaseId": "",
+               "expiresAt": _now() + SESSION_TTL}
+    return token, session
+
+
 def require_write_origin(request):
     if request.headers.get("origin", "") != _chat_origin:
         _error(403, "FORGE_CHAT_ORIGIN_REQUIRED")
@@ -367,16 +392,44 @@ async def exchange(request: Request):
     user = accounts.load_login(record.get("parentSid"))
     if not user or user.get("id") != record.get("owner"):
         _error(401, "FORGE_PARENT_LOGIN_REVOKED")
-    token = _token("sfe1")
-    session = {"schema": SCHEMA, "kind": "session", "audience": "chat-embed",
-               "sessionId": secrets.token_hex(16), "owner": user["id"], "parentSid": record["parentSid"],
-               **{k: record[k] for k in ("parentOrigin", "hostId", "channelId")},
-               "activePresenceId": "", "activeLeaseId": "", "expiresAt": _now() + SESSION_TTL}
-    key = _key("session", token)
-    if not _txn([(_key("pair", pair_id), raw), (key, None)], [(key, session, SESSION_TTL)],
+    token, session = _new_embed_session(record, record["hostId"], record["channelId"])
+    remember = _token("sfm1")
+    remember_record = {"schema": SCHEMA, "kind": "remember",
+                       "parentSid": record["parentSid"], "owner": user["id"],
+                       "parentOrigin": record["parentOrigin"],
+                       "expiresAt": _now() + REMEMBER_TTL}
+    key, remember_key = _key("session", token), _key("remember", remember)
+    if not _txn([(_key("pair", pair_id), raw), (key, None), (remember_key, None)],
+                [(key, session, SESSION_TTL), (remember_key, remember_record, REMEMBER_TTL)],
                 [_key("pair", pair_id)]):
         _error(409, "FORGE_PAIR_ALREADY_REDEEMED")
     _observe("pair.exchanged", pairId=pair_id)
+    response = _response({"token": token, "user": user, "expiresAt": session["expiresAt"],
+                          **{k: session[k] for k in ("parentOrigin", "hostId", "channelId")}})
+    return _remember_cookie(response, remember)
+
+
+@router.post("/api/forge/embed/resume")
+async def resume(request: Request):
+    require_write_origin(request)
+    body = await _body(request)
+    remember = request.cookies.get(REMEMBER_COOKIE, "")
+    if not isinstance(remember, str) or not re.fullmatch(r"sfm1_[A-Za-z0-9_-]{43}", remember):
+        _error(401, "FORGE_REMEMBER_COOKIE_REQUIRED")
+    record, raw = _read("remember", remember)
+    if not record or record.get("kind") != "remember" or record.get("expiresAt", 0) <= _now():
+        _error(401, "FORGE_REMEMBER_SESSION_EXPIRED")
+    origin = body.get("parentOrigin")
+    if origin not in _parent_origins or record.get("parentOrigin") != origin:
+        _error(403, "FORGE_PARENT_ORIGIN_NOT_ALLOWED")
+    host, channel = _binding(body.get("hostId")), _binding(body.get("channelId"))
+    user = accounts.load_login(record.get("parentSid"))
+    if not user or user.get("id") != record.get("owner"):
+        _error(401, "FORGE_PARENT_LOGIN_REVOKED")
+    token, session = _new_embed_session(record, host, channel)
+    _new("session", token, session)
+    # Fresh Chat-origin bearer lives in memory only; cookie never reaches
+    # Javascript, URLs, exported chat messages or the §e parent.
     return _response({"token": token, "user": user, "expiresAt": session["expiresAt"],
                       **{k: session[k] for k in ("parentOrigin", "hostId", "channelId")}})
 
@@ -385,9 +438,17 @@ async def exchange(request: Request):
 def logout(request: Request):
     require_write_origin(request)
     session = require_embed(request)
-    if not _txn([(session["key"], session["raw"])], deletes=[session["key"]]):
+    remember = request.cookies.get(REMEMBER_COOKIE, "")
+    remember_key = _key("remember", remember) if isinstance(remember, str) and re.fullmatch(r"sfm1_[A-Za-z0-9_-]{43}", remember) else None
+    record, raw = _read_key(remember_key) if remember_key else (None, None)
+    owned = bool(record and record.get("kind") == "remember"
+                 and record.get("owner") == session["user"]["id"]
+                 and record.get("parentSid") == session["record"]["parentSid"])
+    expected = [(session["key"], session["raw"])] + ([(remember_key, raw)] if owned else [])
+    deleted = [session["key"]] + ([remember_key] if owned else [])
+    if not _txn(expected, deletes=deleted):
         _error(409, "FORGE_SESSION_CHANGED")
-    return _response({"ok": True})
+    return _remember_cookie(_response({"ok": True}))
 
 
 @router.post("/api/forge/embed/presence")
