@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=22fcfc6784056c82c4e1a05f3f699344d12a24c7
-REQUEST_NONCE=forge-chat-remembered-signin-22fcfc67-20261030-release-1
+SOURCE_REF=68c10a34357683776e12a8b2c1ba1a3e43116817
+REQUEST_NONCE=forge-cloud-list-race-68c10a34-20261030-release-1
