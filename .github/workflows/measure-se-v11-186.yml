@@ -1,15 +1,5 @@
 name: Measure and browser-check §E v11.186 first-paint splash
 on:
-  push:
-    branches: [main]
-    paths:
-      - "projects/swrlz-forge-moba/source-manifest.json"
-      - "projects/swrlz-forge-moba/patches/v11_186_first_paint_wisp_boot.py"
-      - "projects/swrlz-forge-moba/runtime/engine_boot_first_paint_v11_186.js"
-      - "projects/swrlz-forge-moba/runtime/engine_boot_first_paint_v11_186.css"
-      - "projects/swrlz-forge-moba/scripts/verify_v11_186_release.py"
-      - "projects/swrlz-forge-moba/tests/ui_v11_186_first_paint.cjs"
-      - ".github/workflows/measure-se-v11-186.yml"
   workflow_dispatch:
 permissions:
   contents: read

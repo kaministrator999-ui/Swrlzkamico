@@ -1,16 +1,5 @@
 name: §E v11.187 Game and Modeler focused acceptance
 on:
-  push:
-    branches: [main]
-    paths:
-      - "projects/swrlz-forge-moba/source-manifest.json"
-      - "projects/swrlz-forge-moba/build_space.py"
-      - "projects/swrlz-forge-moba/patches/v11_187_separate_game_modeler.py"
-      - "projects/swrlz-forge-moba/runtime/engine_separate_workspaces_v11_187.js"
-      - "projects/swrlz-forge-moba/runtime/engine_separate_workspaces_v11_187.css"
-      - "projects/swrlz-forge-moba/tests/ui_v11_187_workspaces.mjs"
-      - "projects/swrlz-forge-moba/scripts/verify_v11_187_release.py"
-      - ".github/workflows/measure-se-v11-187.yml"
   workflow_dispatch:
 permissions:
   contents: read
