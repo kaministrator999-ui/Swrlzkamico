@@ -427,7 +427,7 @@ async def resume(request: Request):
     if not user or user.get("id") != record.get("owner"):
         _error(401, "FORGE_PARENT_LOGIN_REVOKED")
     token, session = _new_embed_session(record, host, channel)
-    _new("session", token, session)
+    _new("session", token, session, SESSION_TTL)
     # Fresh Chat-origin bearer lives in memory only; cookie never reaches
     # Javascript, URLs, exported chat messages or the §e parent.
     return _response({"token": token, "user": user, "expiresAt": session["expiresAt"],
