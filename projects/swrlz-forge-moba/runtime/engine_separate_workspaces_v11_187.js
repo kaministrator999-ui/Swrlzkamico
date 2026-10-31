@@ -182,6 +182,10 @@
    }else{
     active='game';
     ModelAtelier.close();
+    // Commit visible tab/URL before costly native scene initialization.
+    // This also prevents a transient active=game while URL stays modeler.
+    if(push)updateRoute(mode);
+    renderTabs();
     if(!initializedGame){
      initializedGame=true;
      try{loadCanonicalGlitchDen();}catch(error){
@@ -190,7 +194,7 @@
      }
     }
    }
-   if(push)updateRoute(mode);
+   if(push&&mode==='modeler')updateRoute(mode);
    renderTabs();
    return true;
   }finally{transitioning=false;}
