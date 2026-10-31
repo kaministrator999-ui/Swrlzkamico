@@ -8,11 +8,14 @@ from fastapi import HTTPException
 import forge_embed
 from brain_forge import classify_forge_intent, inspection_text, requests_new_project
 from forge_chat_actions import ForgePlanError, decode_plan, generate_events, validate_operations, explicit_project_plan, _validate_requested_actions
-from forge_design_preview_v1 import wants_preview, should_preview, build_preview
+from forge_design_preview_v1 import wants_preview, should_preview, build_preview, approval_id
 
 
 PROJECT = "a" * 32
 BATCH = "b" * 32
+PROPOSAL = "d" * 32
+PLAN_DIGEST = "e" * 64
+PREVIEW_META = {"proposalId": PROPOSAL, "planDigest": PLAN_DIGEST, "expiresAt": 1600.0}
 
 
 def native_summary(workspace="model-atelier"):
@@ -42,14 +45,19 @@ class PlannerTest(unittest.TestCase):
         self.addCleanup(self.patcher.stop)
 
     def run_events(self, operations=None, *, prompt="Make the selected model red", plan=None,
-                   finish="stop", result=None, infer=None, register=None, wait=None, extra=None):
+                   finish="stop", result=None, infer=None, register=None, wait=None, extra=None,
+                   stage=None, claim=None):
         operations = operations or [{"op": "mesh.set", "id": "mesh-1", "color": "#ff0000"}]
         proposal = plan or {"disposition": "apply", "operations": operations}
         self.infer = infer or Mock(return_value=(json.dumps(proposal), {"finishReason": finish}))
         self.register = register or Mock(return_value=BATCH)
         self.wait = wait or Mock(return_value=result or {"batchId": BATCH, "status": "finished", "allSucceeded": True,
                                                        "receipts": [{"ok": True} for _ in operations]})
-        return list(generate_events({"prompt": prompt, **(extra or {})}, self.context, self.register, self.wait, self.infer))
+        self.stage = stage or Mock(return_value=PREVIEW_META)
+        self.claim = claim or Mock(return_value=(BATCH, operations, PLAN_DIGEST))
+        return list(generate_events({"prompt": prompt, **(extra or {})}, self.context,
+                                    self.register, self.wait, self.infer,
+                                    stage_proposal=self.stage, claim_proposal=self.claim))
 
 
     def test_design_preview_is_read_only_with_a_clear_new_request_boundary(self):
@@ -68,15 +76,19 @@ class PlannerTest(unittest.TestCase):
                 data = events[2]["widget"]["data"]
                 self.assertEqual(data["operationCount"], 2)
                 self.assertEqual([step["kind"] for step in data["steps"]], ["sphere", "box"])
-                self.assertTrue(data["followup"].startswith("Apply in §e now: "))
-                self.assertFalse("preview" in data["followup"].lower())
+                self.assertEqual(data["followup"], "Approve §e design preview " + PROPOSAL)
+                self.assertEqual(data["planDigest"], PLAN_DIGEST)
+                self.stage.assert_called_once()
+                self.assertEqual(self.stage.call_args.args[1], steps)
                 self.assertFalse(self.register.called, "design previews may not register native batches")
                 self.assertFalse(self.wait.called, "design previews may not wait for an edit receipt")
         apply_prompt = data["followup"]
         applied = self.run_events(prompt=apply_prompt, operations=steps)
         self.assertEqual(applied[-1]["forgeStatus"], "APPLIED")
         self.assertTrue(any(item["type"] == "FORGE_BATCH_READY" for item in applied))
-        self.assertTrue(self.register.called)
+        self.assertFalse(self.register.called, "claim already registered the exact batch atomically")
+        self.assertTrue(self.claim.called)
+        self.assertFalse(self.infer.called)
         self.assertTrue(self.wait.called)
 
 
@@ -87,6 +99,7 @@ class PlannerTest(unittest.TestCase):
                        "Preview a two-part model in §E",
                        "Can you design a robot model in §E?",
                        "Plan a robot blockout in §E",
+                       "Approve §e design preview " + PROPOSAL,
                        "Please preview a revised §E design: robot model. "
                        "Show the proposed changes for review, without editing the actual scene."):
             with self.subTest(prompt=prompt), patch.object(
@@ -98,22 +111,46 @@ class PlannerTest(unittest.TestCase):
                 self.assertEqual(events[-1]["forgeStatus"], "DESIGN_PREVIEW")
                 native.assert_called_once()
 
-    def test_approval_instructions_are_never_silently_truncated(self):
+    def test_large_exact_design_never_sends_operations_or_truncates_parts(self):
         operations = [{"op": "mesh.add", "kind": "box",
                        "name": f"part-{index}-" + "x" * 85,
                        "position": [index, 1, 2], "rotation": [0, 0.25, 0],
                        "scale": [1, 1.5, 1], "color": "#abcdef", "material": "metal"}
                       for index in range(16)]
-        _, widget = build_preview(self.summary, operations, "Preview these 16 parts")
-        followup = widget["data"]["followup"]
-        self.assertGreater(len(followup), 3200)
-        self.assertLessEqual(len(followup), 8192)
-        self.assertEqual(followup.count("Add a box mesh"), 16)
-        self.assertIn("part-15-", followup)
-        extra = operations * 8  # Defensive cap; invalid plans cannot become partial.
-        _, oversize_widget = build_preview(self.summary, extra, "Preview a large plan")
-        self.assertEqual(oversize_widget["data"]["followup"], "")
-        self.assertIn("exceed", oversize_widget["data"]["notice"])
+        _, widget = build_preview(self.summary, operations, "Preview these 16 parts", PREVIEW_META)
+        data = widget["data"]
+        self.assertEqual(data["operationCount"], 16)
+        self.assertEqual(data["followup"], "Approve §e design preview " + PROPOSAL)
+        self.assertEqual(data["planDigest"], PLAN_DIGEST)
+        self.assertEqual(len(data["steps"]), 16)
+        self.assertIn("part-15-", data["steps"][-1]["fields"]["name"])
+        self.assertEqual(data["steps"][-1]["fields"]["rotation"], [0, .25, 0])
+        self.assertNotIn("part-15-", data["followup"])
+        self.assertEqual(approval_id(data["followup"]), PROPOSAL)
+        self.assertIsNone(approval_id(data["followup"]+" please"))
+        self.assertIsNone(approval_id('Approve §e design preview "' + PROPOSAL + '"'))
+
+    def test_staged_design_failure_is_not_silently_applied(self):
+        op = [{"op": "mesh.add", "kind": "box"}]
+        stage = Mock(side_effect=ValueError("backend unavailable"))
+        events = self.run_events(operations=op, prompt="Preview a box model in §E", stage=stage)
+        self.assertEqual(events[-1]["type"], "FAILED")
+        self.assertFalse(self.register.called)
+        self.assertFalse(self.wait.called)
+        self.assertFalse(any(e["type"] == "FORGE_BATCH_READY" for e in events))
+
+    def test_approval_requires_single_exact_command_and_never_infers_a_new_plan(self):
+        ops = [{"op": "mesh.add", "kind": "sphere"}]
+        prompt = "Approve §e design preview " + PROPOSAL
+        events = self.run_events(prompt=prompt, operations=ops)
+        self.assertEqual(events[-1]["forgeStatus"], "APPLIED")
+        self.assertEqual(self.claim.call_args.args[1], PROPOSAL)
+        self.assertFalse(self.infer.called)
+        self.assertFalse(self.register.called)
+        self.assertEqual(self.wait.call_args.args[1], BATCH)
+        self.assertIn(PLAN_DIGEST[:12], next(x["text"] for x in events if x["type"]=="DELTA"))
+        self.assertIsNone(approval_id("I saw " + prompt))
+        self.assertIsNone(approval_id("```\n"+prompt+"\n```"))
 
     def test_single_mesh_preview_and_non_preview_intent_fences(self):
         op = [{"op": "mesh.add", "kind": "cone", "name": "Roof"}]
@@ -132,9 +169,9 @@ class PlannerTest(unittest.TestCase):
     def test_studio_avoids_unsupported_native_operation_claims(self):
         text, widget = build_preview(self.summary, [{"op": "mesh.add", "kind": "box",
                                                        "position": [0, 1, 0]}],
-                                     "Make a detailed character model")
-        self.assertIn("not changed", text.lower())
-        self.assertIn("not a rendered mesh", widget["data"]["notice"].lower())
+                                     "Make a detailed character model", PREVIEW_META)
+        self.assertIn("nothing has changed", text.lower())
+        self.assertIn("not an engine-rendered mesh", widget["data"]["notice"].lower())
         self.assertNotIn("nativeResult", widget["data"])
 
     def test_intent_keeps_explanations_code_and_history_outside_mutation(self):

@@ -1,8 +1,9 @@
 """A read-only illustrative blockout for §E's existing native planner.
 
-Proposals are UI guidance, never privileged operation payloads. Pressing Build
-starts a NEW human request, fresh model plan and native context validation.
-The preview is not a frozen source-of-truth plan or a rendered model.
+The browser carries no native operations. Approving a short, opaque ID starts
+one new human turn; the owner/session/host/snapshot-bound server record stores
+the exact validated operations until one atomic claim. The illustration is
+still schematic rather than an engine-rendered model.
 """
 from __future__ import annotations
 
@@ -22,6 +23,15 @@ _EXPLANATION = re.compile(
     r"^(?:how|why|what if|should|explain|teach|describe|is it possible|"
     r"can (?:the model|the ai))\b", re.I)
 _APPLY = re.compile(r"^Apply in §e now:\s+", re.I)
+_APPROVE = re.compile(r"^Approve §e design preview ([0-9a-f]{32})$", re.I)
+
+
+def approval_id(prompt: Any) -> str | None:
+    """Only a complete current human approval phrase can claim a proposal."""
+    if not isinstance(prompt, str) or len(prompt) > 100:
+        return None
+    match = _APPROVE.fullmatch(prompt.strip())
+    return match.group(1).lower() if match else None
 
 
 def wants_preview(prompt: Any) -> bool:
@@ -87,7 +97,7 @@ def _step_command(op: dict[str, Any]) -> str:
 
 
 def build_preview(summary: dict[str, Any], operations: list[dict[str, Any]],
-                  request: str) -> tuple[str, dict[str, Any]]:
+                  request: str, proposal: dict[str, Any]) -> tuple[str, dict[str, Any]]:
     """UI wireframe shows approximate positions/sizes, not actual native meshes."""
     workspace = summary.get("workspace")
     entries = summary.get("meshes" if workspace == "model-atelier" else "actors")
@@ -107,14 +117,19 @@ def build_preview(summary: dict[str, Any], operations: list[dict[str, Any]],
             "color": op.get("color") or source.get("color") or "#65d9f5",
             "material": _text(op.get("material") or source.get("material") or "", 32),
             "target": _text(op.get("id") or "", 80),
+            "fields": {key: op[key] for key in
+                       ("id", "kind", "prefab", "name", "position", "rotation", "scale",
+                        "color", "material") if key in op},
         })
     project = summary.get("project") if isinstance(summary.get("project"), dict) else {}
-    # Re-approval sends a fresh NATURAL-LANGUAGE command. It is not a hidden
-    # token, doesn't bypass the planner and may be rejected/replanned.
-    followup = "Apply in §e now: " + "; ".join(_step_command(op) for op in operations)
-    # A candidate must never lose steps on an approval request. Long plans
-    # remain inspectable but require the user to split/revise them.
-    followup_safe = len(followup) <= 8192
+    # The server holds the exact plan; only an opaque public correlation ID
+    # crosses Chat. This ID alone cannot authorize a native write.
+    proposal_id = proposal.get("proposalId")
+    digest = proposal.get("planDigest")
+    if not (isinstance(proposal_id, str) and re.fullmatch(r"[0-9a-f]{32}", proposal_id)
+            and isinstance(digest, str) and re.fullmatch(r"[0-9a-f]{64}", digest)):
+        raise ValueError("FORGE_DESIGN_PROPOSAL_INVALID")
+    followup = "Approve §e design preview " + proposal_id
     widget = {
         "contract": "swrlz-widget-v1", "kind": "forge-design-preview",
         "title": "§E Design Studio · Review",
@@ -124,16 +139,17 @@ def build_preview(summary: dict[str, Any], operations: list[dict[str, Any]],
             "project": _text(project.get("name") or "Open project"),
             "workspace": workspace, "operationCount": len(steps), "steps": steps,
             "request": _text(request, 300),
-            "followup": followup if followup_safe else "",
-            "notice": ("Illustrative wireframe only—not a rendered mesh, saved scene or frozen operation. "
-                       "No editor operation has run. Build starts a NEW request that re-plans and "
-                       "validates against the current workspace, so compare the final result."
-                       if followup_safe else
-                       "The build instructions exceed the safe Chat submission length. "
-                       "No edit was performed. Revise or split the proposal into smaller parts."),
+            "proposalId": proposal_id, "planDigest": digest,
+            "expiresAt": proposal.get("expiresAt"),
+            "followup": followup,
+            "notice": "Illustrative wireframe, not an engine-rendered mesh. No editor changes have run. "
+                      "Approve requests the exact server-held native plan once. If the project, "
+                      "scene snapshot, host or account session changes—or this proposal expires—"
+                      "§E rejects the build rather than silently regenerating it.",
         },
     }
-    return ("Prepared a **reviewable §E design blockout** with " + str(len(steps)) +
+    return ("Prepared an **exact, reviewable §E operation plan** with " + str(len(steps)) +
             " native step" + ("" if len(steps) == 1 else "s") +
-            ". The workspace has **not changed**. Inspect the interactive preview "
-            "and build steps, then choose Build or revise the design."), widget
+            ". **Nothing has changed in your editor.** Inspect the illustrative "
+            "blockout and build steps. Approve to submit the identical stored "
+            "operations only if the live editor snapshot is still unchanged."), widget

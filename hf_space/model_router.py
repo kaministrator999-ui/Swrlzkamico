@@ -342,7 +342,7 @@ def dispatch(model_id: str, payload: dict[str,Any], r39_generate: Callable[[dict
     if forge_context is not None:
         import forge_embed
         from brain_forge import classify_forge_intent
-        from forge_design_preview_v1 import wants_preview
+        from forge_design_preview_v1 import wants_preview, approval_id
         from forge_chat_actions import generate_events
         forge_embed.revalidate(forge_context,require_snapshot=True)
         command=str(payload.get("prompt") or "")
@@ -352,7 +352,10 @@ def dispatch(model_id: str, payload: dict[str,Any], r39_generate: Callable[[dict
         # editor context, validated native ops, and emits NO batch on preview.
         native_preview=(wants_preview(command)
                         and native_intent.get("reason")!="separate-code-or-provider-request")
-        if native_preview or (native_intent.get("applicable")
+        exact_approval=approval_id(command)
+        # A full explicit approval phrase routes to the server-held proposal
+        # store; ordinary user text, history, or a widget ID alone never can.
+        if exact_approval or native_preview or (native_intent.get("applicable")
                               and native_intent.get("disposition") in ("mutation","read","clarify")):
             yield from generate_events(payload,forge_context,forge_embed.create_batch,forge_embed.wait_batch)
             return

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="swrlz-chat-version" content="1.1.20">
+  <meta name="swrlz-chat-version" content="1.1.21">
   <meta name="theme-color" content="#010812">
   <title>Chat</title>
   <style>
@@ -438,6 +438,7 @@
     .forge-design-btn:focus-visible{outline:2px solid #9af5ff;outline-offset:2px}
     .forge-design-btn[aria-pressed="true"]{background:rgba(51,125,149,.75);border-color:#98e8ff}
     .forge-design-btn:disabled{opacity:.5;cursor:not-allowed}
+    .forge-design-proof{border:1px solid rgba(112,205,229,.28);border-radius:8px;padding:7px 9px;color:#b9e4eb;background:rgba(2,20,35,.55);font:600 10px/1.5 var(--font-telemetry);overflow-wrap:anywhere}
     .forge-design-count{color:#bbd5e4;font:600 11px var(--font-telemetry)}
     .forge-design-progress{display:flex;align-items:center;gap:9px}.forge-design-progress input{min-width:80px;flex:1;accent-color:#5de1ef}
     .forge-design-steps{display:grid;gap:6px;max-height:290px;overflow-y:auto}
@@ -1249,7 +1250,7 @@
       const workArtifactList = document.getElementById("workArtifactList");
       const workEvidenceCount = document.getElementById("workEvidenceCount");
       const workEvidenceList = document.getElementById("workEvidenceList");
-      const SWRLZ_CHAT_VERSION = "1.1.20";
+      const SWRLZ_CHAT_VERSION = "1.1.21";
       const navTraceId = "chat-ui-" + Date.now().toString(36) + "-" + crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
       let lastUiStatusCamera = "";
       let companionState="idle";
@@ -1645,8 +1646,14 @@
             const steps=(Array.isArray(data.steps)?data.steps:[]).filter((v,i)=>
               v&&typeof v==="object"&&typeof v.op==="string"&&v.op.length<60
               &&validVector(v.position)&&validVector(v.scale)&&v.scale.every(x=>x>0&&x<=20)).slice(0,16);
-            const followup=typeof data.followup==="string"&&data.followup.startsWith("Apply in §e now: ")
-              &&data.followup.length<=8192?data.followup:"";
+            const proposalId=typeof data.proposalId==="string"&&/^[a-f0-9]{32}$/.test(data.proposalId)
+              ?data.proposalId:"";
+            const planDigest=typeof data.planDigest==="string"&&/^[a-f0-9]{64}$/.test(data.planDigest)
+              ?data.planDigest:"";
+            const expiry=typeof data.expiresAt==="number"&&Number.isFinite(data.expiresAt)?data.expiresAt:0;
+            const followup=proposalId&&planDigest&&data.followup==="Approve §e design preview "+proposalId
+              ?data.followup:"";
+            const isExpired=()=>!!expiry&&expiry*1000<=Date.now();
             const make=(tag,cls,value)=>{
               const n=document.createElement(tag);if(cls)n.className=cls;
               if(value!==undefined)n.textContent=String(value);return n;
@@ -1660,6 +1667,12 @@
             kicker.append(make("span","","Project · "+String(data.project||"Open project").slice(0,100)+" · "+String(data.workspace||"editor").slice(0,40)),
               make("span","forge-design-tag","PROPOSED · NOT APPLIED"));
             main.appendChild(kicker);
+            const proof=make("div","forge-design-proof");
+            proof.textContent=followup?
+              ("Plan "+planDigest.slice(0,12)+" · "+steps.length+" exact native steps · expires "+
+                (expiry?new Date(expiry*1000).toLocaleTimeString():"soon")):
+              "Older preview: create a fresh proposal before building";
+            main.appendChild(proof);
             let view="iso",shown=steps.length,overlay=null,feedback="",submitted=false;
             const SVG_NS="http://www.w3.org/2000/svg";
             const svgEl=(name,props={})=>{
@@ -1785,8 +1798,12 @@
               const detail=make("details","forge-design-step");
               const summary=make("summary","",(i+1)+". "+String(step.op).replaceAll("."," · ")+" · "+String(step.name||"").slice(0,100));
               detail.appendChild(summary);
-              detail.appendChild(make("p","",String(step.kind||"")+" | position "+step.position.join(", ")
-                +" | scale "+step.scale.join(", ")+(step.material?" | "+step.material:"")));
+              const fields=step.fields&&typeof step.fields==="object"?step.fields:{};
+              const properties=["id","kind","prefab","name","position","rotation","scale","color","material"]
+                .filter(key=>Object.prototype.hasOwnProperty.call(fields,key))
+                .map(key=>key+": "+(Array.isArray(fields[key])?fields[key].join(", "):String(fields[key]).slice(0,110)));
+              detail.appendChild(make("p","",properties.length?properties.join(" · "):
+                "Legacy schematic; generate a new plan to review its exact attributes."));
               detailList.appendChild(detail);
             });
             const details=make("details");
@@ -1801,17 +1818,17 @@
                 +". Show the proposed changes for review, without editing the actual scene.";
               prompt.dispatchEvent(new Event("input",{bubbles:true}));prompt.focus();
             }));
-            const approve=button("Approve · request build in §E",()=>{
-              if(submitted||!followup)return;
-              const event=new CustomEvent("swrlz-forge-design-apply-request",{cancelable:true,detail:{prompt:followup}});
+            const approve=button("Approve exact plan in §E",()=>{
+              if(submitted||!followup||isExpired())return;
+              const event=new CustomEvent("swrlz-forge-design-apply-request",{cancelable:true,detail:{proposalId}});
               window.dispatchEvent(event);
               if(event.defaultPrevented){
                 submitted=true;approve.disabled=true;
-                feedback="Build requested. The current §E workspace will be rechecked; only native receipts confirm edits.";
+                feedback="Exact-plan approval requested. §E must confirm the same snapshot and native receipts before reporting any changes.";
               }else feedback="Chat is busy or disconnected, or you have an unfinished draft. No build was submitted.";
               message.textContent=feedback;
             },true);
-            approve.disabled=!steps.length||!followup;actions.appendChild(approve);
+            approve.disabled=!steps.length||!followup||isExpired();actions.appendChild(approve);
             const message=make("div","forge-design-message");
             main.append(actions,message);
             renderViews();
@@ -3436,12 +3453,11 @@
       window.addEventListener("swrlz-forge-design-apply-request",event=>{
         const spec=event.detail||{};
         if(!window.SwrlzForgeEmbedV1?.embedded || sending || prompt.value.trim())return;
-        if(typeof spec.prompt!=="string" || !spec.prompt.startsWith("Apply in §e now: ")
-           || spec.prompt.length>8192)return;
-        event.preventDefault(); // User click requests a new plan, not a completed native edit.
-        prompt.value=spec.prompt;
+        if(typeof spec.proposalId!=="string"||!/^[a-f0-9]{32}$/.test(spec.proposalId))return;
+        event.preventDefault(); // User click requests the exact server-held plan once.
+        prompt.value="Approve §e design preview "+spec.proposalId;
         prompt.dispatchEvent(new Event("input",{bubbles:true}));
-        void commitDraftFromPrompt(); // New authenticated lease + planner + host receipts.
+        void commitDraftFromPrompt(); // New authenticated generation; NO model re-planning.
       });
       window.addEventListener("swrlz-forge-project-create-request",event=>{
         const spec=event.detail||{};

@@ -408,6 +408,91 @@ class ForgeEmbedTest(unittest.TestCase):
         self.assertEqual(waited["status"], "finished")
         self.assertFalse(waited["allSucceeded"])
 
+
+    def test_exact_design_proposal_stages_without_native_batch_and_one_click_claims_identical_operations(self):
+        token, lease, context = self.generation()
+        operations = [{"op": "sceneactor.add", "prefab": "wall", "name": "Original wall",
+                       "position": [0, 0, 1]},
+                      {"op": "sceneactor.add", "prefab": "rock", "name": "Original rock",
+                       "position": [0, 2, 1]}]
+        staged = embed.create_design_proposal(context, operations)
+        self.assertRegex(staged["proposalId"], r"^[0-9a-f]{32}$")
+        self.assertRegex(staged["planDigest"], r"^[0-9a-f]{64}$")
+        self.assertEqual(staged["planDigest"], embed._design_digest(operations))
+        self.assertEqual(staged["expiresAt"], self.clock + embed.DESIGN_TTL)
+        original, _ = embed._read("design", staged["proposalId"])
+        self.assertEqual(original["state"], "offered")
+        self.assertEqual(original["operations"], operations)
+        generation, _ = embed._read_key(context._generation_key)
+        self.assertEqual(generation["activeBatchId"], "", "preview must not register a host batch")
+        new_context = embed.authorize_generation(
+            self.request(token), lease["leaseId"], THREAD, "approve-generation")
+        batch_id, actual, digest = embed.claim_design_proposal(new_context, staged["proposalId"])
+        self.assertEqual(actual, operations, "approval must not re-plan or change operations")
+        self.assertEqual(digest, staged["planDigest"])
+        claimed, _ = embed._read("design", staged["proposalId"])
+        self.assertEqual(claimed["state"], "claimed")
+        batch, _ = embed._read("batch", batch_id)
+        self.assertEqual(batch["operations"], operations)
+        self.assertEqual(batch["designPlanDigest"], digest)
+        self.assertEqual(batch["designProposalId"], staged["proposalId"])
+        host = self.take(lease, batch_id)
+        self.assertEqual(host.status_code, 200, host.text)
+        self.assertEqual(host.json()["operations"], operations)
+        self.assertNotIn(lease["hostToken"], json.dumps(staged))
+        self.assertNotIn(token, json.dumps(staged))
+        replay_context = embed.authorize_generation(self.request(token), lease["leaseId"],
+                                                     THREAD, "replay-generation")
+        with self.assertRaises(HTTPException) as used:
+            embed.claim_design_proposal(replay_context, staged["proposalId"])
+        self.assertEqual(used.exception.status_code, 409)
+
+    def test_exact_design_refuses_stale_workspace_and_unrelated_account(self):
+        token, lease, context = self.generation()
+        proposal = embed.create_design_proposal(context, [{"op": "sceneactor.add", "prefab": "wall"}])
+        bob_token, _ = self.pair(sid=BOB_SID, host="host_"+"8"*32, channel="channel_"+"9"*32)
+        bob_lease, _ = self.activate(bob_token, host="host_"+"8"*32, channel="channel_"+"9"*32)
+        bob_context = embed.authorize_generation(self.request(bob_token),
+                                                   bob_lease["leaseId"], THREAD, "bob-design-approval")
+        with self.assertRaises(HTTPException):
+            embed.claim_design_proposal(bob_context, proposal["proposalId"])
+        heartbeat = {"leaseId": lease["leaseId"], "hostId": HOST, "channelId": CHANNEL,
+                     "threadId": THREAD, "projectId": PROJECT, "visible": True,
+                     "context": {**CONTEXT, "epoch": 2}}
+        response = self.post("/api/forge/embed/host/heartbeat", heartbeat,
+                             host_token=lease["hostToken"], origin=PARENT)
+        self.assertEqual(response.status_code, 200, response.text)
+        new_context = embed.authorize_generation(self.request(token), lease["leaseId"],
+                                                   THREAD, "changed-workspace-approval")
+        with self.assertRaises(HTTPException) as stale:
+            embed.claim_design_proposal(new_context, proposal["proposalId"])
+        self.assertEqual(stale.exception.detail, "FORGE_DESIGN_CONTEXT_MISMATCH")
+        record, _ = embed._read("design", proposal["proposalId"])
+        self.assertEqual(record["state"], "offered", "stale attempt cannot consume a proposal")
+        self.clock += embed.DESIGN_TTL + 1
+        with self.assertRaises(HTTPException) as expired:
+            embed.claim_design_proposal(new_context, proposal["proposalId"])
+        self.assertEqual(expired.exception.detail, "FORGE_DESIGN_EXPIRED_OR_USED")
+
+    def test_concurrent_exact_approvals_register_one_batch_and_one_claim(self):
+        token, lease, context = self.generation()
+        proposal = embed.create_design_proposal(context, [{"op": "sceneactor.add", "prefab": "crystal"}])
+        contexts = [embed.authorize_generation(self.request(token), lease["leaseId"],
+                     THREAD, "parallel-design-" + str(i)) for i in range(8)]
+        def submit(c):
+            try:
+                return ("ok", embed.claim_design_proposal(c, proposal["proposalId"])[0])
+            except HTTPException as err:
+                return ("rejected", err.detail)
+        with ThreadPoolExecutor(max_workers=8) as workers:
+            results = list(workers.map(submit, contexts))
+        self.assertEqual(sum(row[0] == "ok" for row in results), 1)
+        self.assertEqual(sum(row[0] == "rejected" for row in results), 7)
+        record, _ = embed._read("design", proposal["proposalId"])
+        self.assertEqual(record["state"], "claimed")
+        self.assertEqual(sum(
+            1 for c in contexts if embed._read_key(c._generation_key)[0]["activeBatchId"]), 1)
+
     def test_timeout_cancel_and_native_validation_prevent_late_execution(self):
         token, lease, context = self.generation()
         with patch("forge_chat_actions.validate_operations", side_effect=HTTPException(400, "INVALID_NATIVE_OPERATION")):

@@ -13,7 +13,7 @@ from typing import Any, Callable, Iterator
 
 from brain_forge import classify_forge_intent, current_command_text, inspection_text, native_plan_system, requests_new_project, _literal
 from forge_workspace_insights_v1 import build_insight
-from forge_design_preview_v1 import wants_preview, should_preview, build_preview
+from forge_design_preview_v1 import wants_preview, should_preview, build_preview, approval_id
 
 MAX_OPERATIONS = 16
 MAX_PLAN_BYTES = 24576
@@ -337,7 +337,9 @@ def _failure(message: str, code: str, *, partial=False) -> Iterator[dict[str, An
 
 
 def generate_events(payload: dict[str, Any], context, register_batch: Callable | None = None,
-                    wait_batch: Callable | None = None, generate_plan: Callable | None = None) -> Iterator[dict[str, Any]]:
+                    wait_batch: Callable | None = None, generate_plan: Callable | None = None,
+                    *, stage_proposal: Callable | None = None,
+                    claim_proposal: Callable | None = None) -> Iterator[dict[str, Any]]:
     """Generate one bounded proposal, then answer only from actual host receipts.
 
     ``generate_plan(messages,max_tokens)`` is an injectable trusted inference
@@ -345,78 +347,102 @@ def generate_events(payload: dict[str, Any], context, register_batch: Callable |
     ``register_batch(context,operations)`` returns a public batch ID;
     ``wait_batch(context,batchId,timeout=30)`` returns server-held receipts.
     """
-    from forge_embed import create_batch, wait_batch as await_batch, revalidate
+    from forge_embed import (create_batch, wait_batch as await_batch, revalidate,
+                             create_design_proposal, claim_design_proposal)
     register = register_batch or create_batch
     wait = wait_batch or await_batch
+    stage = stage_proposal or create_design_proposal
+    claim = claim_proposal or claim_design_proposal
     infer = generate_plan or _generate_plan
     try:
         summary = _summary(context)
         prompt = payload.get("prompt") if isinstance(payload, dict) else None
-        intent = classify_forge_intent(prompt, summary)
-        # An explicit design/preview is read-only staging even when ordinary
-        # native intent classification does not recognize the design verb.
-        if wants_preview(prompt) and intent.get("reason") != "separate-code-or-provider-request":
-            intent = {"disposition": "mutation", "reason": "native-design-preview"}
-        if intent["disposition"] == "read":
-            # Server-owned scene insights use the freshly revalidated native lease.
-            # Display metadata is a separate widget, never interpreted as commands.
-            explanation, widget = build_insight(summary, prompt)
-            yield {"type": "DELTA", "text": explanation}
-            yield {"type": "WIDGET", "widget": widget}
-            yield {"type": "COMPLETED", "phase": "COMPLETE", "forgeStatus": "INSPECTED"}
-            return
-        if intent["disposition"] != "mutation":
-            yield from _failure("Please specify the change you want made in the current §e workspace.", "FORGE_NO_CURRENT_NATIVE_EDIT")
-            return
-        if summary["mode"] != "edit":
-            yield from _failure("Switch §e to Edit mode before requesting editor changes.", "FORGE_NATIVE_EDITOR_MODE_REQUIRED")
-            return
-        if requests_new_project(prompt) and not summary.get("starters"):
-            yield from _failure("This §e version does not provide Chat project creation. Refresh the editor after the update, then retry. Your current project was not changed.",
-                                "FORGE_PROJECT_STARTER_UNAVAILABLE")
-            return
-        # A broad "start a new project" request is a choice, not permission
-        # to guess a template/name. Offer the current native starter catalog
-        # in a Chat widget. A subsequent explicit Create click sends a *new*
-        # complete user command with its own fresh editor lease and receipt.
-        project_plan = explicit_project_plan(prompt, summary) if requests_new_project(prompt) else None
-        if requests_new_project(prompt) and project_plan is None:
-            from forge_project_setup_v1 import build_project_setup
-            explanation, widget = build_project_setup(summary, prompt)
+        approved_id = approval_id(prompt)
+        exact_digest = None
+        if approved_id:
+            if summary["mode"] != "edit":
+                yield from _failure("Switch §E to Edit mode before approving a design.", "FORGE_NATIVE_EDITOR_MODE_REQUIRED")
+                return
+            yield {"type": "STATUS", "phase": "FORGE_APPROVING",
+                   "reason": "Checking the exact frozen plan and current §E editor.",
+                   "categories": ["FORGE", "NATIVE_EDITOR", "APPROVAL"]}
+            # No model inference or client operation payload is involved.
+            batch_id, operations, exact_digest = claim(context, approved_id)
+            # claim() itself revalidates the frozen operations BEFORE its
+            # atomic batch registration. No post-commit error may interrupt
+            # forwarding of a registered host batch.
+            if not (isinstance(operations, list) and operations
+                    and all(isinstance(op, dict) and isinstance(op.get("op"), str) for op in operations)):
+                raise ForgePlanError("FORGE_DESIGN_RECEIPT_INVALID")
+            if not (isinstance(exact_digest, str) and re.fullmatch(r"[a-f0-9]{64}", exact_digest)):
+                raise ForgePlanError("FORGE_DESIGN_RECEIPT_INVALID")
+        else:
+            intent = classify_forge_intent(prompt, summary)
+            # An explicit design/preview is read-only staging even when ordinary
+            # native intent classification does not recognize the design verb.
+            if wants_preview(prompt) and intent.get("reason") != "separate-code-or-provider-request":
+                intent = {"disposition": "mutation", "reason": "native-design-preview"}
+            if intent["disposition"] == "read":
+                # Server-owned scene insights use the freshly revalidated native lease.
+                # Display metadata is a separate widget, never interpreted as commands.
+                explanation, widget = build_insight(summary, prompt)
+                yield {"type": "DELTA", "text": explanation}
+                yield {"type": "WIDGET", "widget": widget}
+                yield {"type": "COMPLETED", "phase": "COMPLETE", "forgeStatus": "INSPECTED"}
+                return
+            if intent["disposition"] != "mutation":
+                yield from _failure("Please specify the change you want made in the current §e workspace.", "FORGE_NO_CURRENT_NATIVE_EDIT")
+                return
+            if summary["mode"] != "edit":
+                yield from _failure("Switch §e to Edit mode before requesting editor changes.", "FORGE_NATIVE_EDITOR_MODE_REQUIRED")
+                return
+            if requests_new_project(prompt) and not summary.get("starters"):
+                yield from _failure("This §e version does not provide Chat project creation. Refresh the editor after the update, then retry. Your current project was not changed.",
+                                    "FORGE_PROJECT_STARTER_UNAVAILABLE")
+                return
+            # A broad "start a new project" request is a choice, not permission
+            # to guess a template/name. Offer the current native starter catalog
+            # in a Chat widget. A subsequent explicit Create click sends a *new*
+            # complete user command with its own fresh editor lease and receipt.
+            project_plan = explicit_project_plan(prompt, summary) if requests_new_project(prompt) else None
+            if requests_new_project(prompt) and project_plan is None:
+                from forge_project_setup_v1 import build_project_setup
+                explanation, widget = build_project_setup(summary, prompt)
+                revalidate(context, require_snapshot=True)
+                yield {"type": "DELTA", "text": explanation}
+                yield {"type": "WIDGET", "widget": widget}
+                yield {"type": "COMPLETED", "phase": "COMPLETE", "forgeStatus": "SETUP_REQUIRED"}
+                return
+            yield {"type": "STATUS", "phase": "FORGE_PLANNING", "reason": "Planning the requested native editor change.",
+                   "categories": ["FORGE", "NATIVE_EDITOR"]}
+            user_data = json.dumps({"currentUserRequest": prompt, "nativeContextData": summary},
+                                   ensure_ascii=False, separators=(",", ":"), allow_nan=False)
+            messages = [{"role": "system", "content": native_plan_system(operation_contract())},
+                        {"role": "user", "content": user_data}]
+            plan = project_plan
+            if plan is None:
+                text, observation = infer(messages, PLAN_TOKENS)
+                plan = decode_plan(text, observation)
+            # An inference delay cannot turn a closed/changed editor into authority.
             revalidate(context, require_snapshot=True)
-            yield {"type": "DELTA", "text": explanation}
-            yield {"type": "WIDGET", "widget": widget}
-            yield {"type": "COMPLETED", "phase": "COMPLETE", "forgeStatus": "SETUP_REQUIRED"}
-            return
-        yield {"type": "STATUS", "phase": "FORGE_PLANNING", "reason": "Planning the requested native editor change.",
-               "categories": ["FORGE", "NATIVE_EDITOR"]}
-        user_data = json.dumps({"currentUserRequest": prompt, "nativeContextData": summary},
-                               ensure_ascii=False, separators=(",", ":"), allow_nan=False)
-        messages = [{"role": "system", "content": native_plan_system(operation_contract())},
-                    {"role": "user", "content": user_data}]
-        plan = project_plan
-        if plan is None:
-            text, observation = infer(messages, PLAN_TOKENS)
-            plan = decode_plan(text, observation)
-        # An inference delay cannot turn a closed/changed editor into authority.
-        revalidate(context, require_snapshot=True)
-        if plan["disposition"] == "clarify":
-            yield {"type": "DELTA", "text": plan["question"]}
-            yield {"type": "COMPLETED", "phase": "COMPLETE", "forgeStatus": "CLARIFICATION"}
-            return
-        operations = validate_operations(context, plan["operations"])
-        _validate_requested_actions(prompt, operations)
-        if should_preview(prompt, operations):
-            # No batch ID, host event, write capability or mutation occurs here.
-            # Approval starts a separate human Chat turn that is independently
-            # planned and validated against a fresh authenticated editor state.
-            revalidate(context, require_snapshot=True)
-            explanation, widget = build_preview(summary, operations, prompt)
-            yield {"type": "DELTA", "text": explanation}
-            yield {"type": "WIDGET", "widget": widget}
-            yield {"type": "COMPLETED", "phase": "COMPLETE", "forgeStatus": "DESIGN_PREVIEW"}
-            return
-        batch_id = register(context, operations)
+            if plan["disposition"] == "clarify":
+                yield {"type": "DELTA", "text": plan["question"]}
+                yield {"type": "COMPLETED", "phase": "COMPLETE", "forgeStatus": "CLARIFICATION"}
+                return
+            operations = validate_operations(context, plan["operations"])
+            _validate_requested_actions(prompt, operations)
+            if should_preview(prompt, operations):
+                # No batch ID, host event, write capability or mutation occurs here.
+                # Approval starts a separate user turn that atomically claims
+                # the identical server-held plan; no fresh model re-planning.
+                revalidate(context, require_snapshot=True)
+                proposal = stage(context, operations)  # encrypted, snapshot-bound, no native batch
+                explanation, widget = build_preview(summary, operations, prompt, proposal)
+                yield {"type": "DELTA", "text": explanation}
+                yield {"type": "WIDGET", "widget": widget}
+                yield {"type": "COMPLETED", "phase": "COMPLETE", "forgeStatus": "DESIGN_PREVIEW"}
+                return
+            batch_id = register(context, operations)
         if not isinstance(batch_id, str) or not _HEX.fullmatch(batch_id):
             raise ForgePlanError("FORGE_INVALID_BATCH_RECEIPT")
         # Only public correlations cross the ordinary Chat stream. Host tokens,
@@ -454,7 +480,7 @@ def generate_events(payload: dict[str, Any], context, register_batch: Callable |
                        "operationCount": 1, "appliedCount": 1}
                 return
             labels = list(dict.fromkeys(_LABELS[op["op"]] for op in operations))
-            yield {"type": "DELTA", "text": f"§e confirmed {succeeded} native editor operation{'s' if succeeded != 1 else ''}: " + ", ".join(labels) + "."}
+            yield {"type": "DELTA", "text": ("§E applied the exact reviewed plan (" + exact_digest[:12] + "). " if exact_digest else "") + f"§e confirmed {succeeded} native editor operation{'s' if succeeded != 1 else ''}: " + ", ".join(labels) + "."}
             yield {"type": "COMPLETED", "phase": "COMPLETE", "forgeStatus": "APPLIED",
                    "operationCount": len(operations), "appliedCount": succeeded}
         elif succeeded:
@@ -466,4 +492,15 @@ def generate_events(payload: dict[str, Any], context, register_batch: Callable |
         # Never expose arbitrary exception strings, model output or private
         # context in diagnostics. Exact reasons remain bounded constant codes.
         code = exc.code if isinstance(exc, ForgePlanError) else "FORGE_REQUEST_UNAVAILABLE"
-        yield from _failure("The §e edit could not be verified. Check that the Chat panel is connected to the current editor, then retry with an explicit target.", code)
+        # Do not reveal arbitrary errors/credentials, but communicate a stale
+        # or consumed design proposal clearly instead of implying an edit.
+        try:
+            from fastapi import HTTPException
+            if isinstance(exc, HTTPException) and str(exc.detail).startswith("FORGE_DESIGN_"):
+                code = str(exc.detail)
+        except ImportError:
+            pass
+        if code.startswith("FORGE_DESIGN_"):
+            yield from _failure("This §E design approval is no longer valid for the current workspace or has already been used. No new edit was registered; request a fresh preview.", code)
+        else:
+            yield from _failure("The §e edit could not be verified. Check that the Chat panel is connected to the current editor, then retry with an explicit target.", code)
