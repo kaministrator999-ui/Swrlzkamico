@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.187",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_187_GAME_MODELER_WORKSPACES",
-  "reason": "Owner request: make Game Engine and Modeler separate tabbable pages, with project-optional blank Modeler editing. Two static entrypoints index.html and modeler.html reuse one native runtime with in-place route switching, independent locally retained untitled model draft, new Blank model action, preserved game world and native modeling operations, plus native named project support. Fix browser window.history shadowing and mobile Game tab visibility without forcing hidden Modeler page to display. Focused Android-width 390px and Quest-width 980px Chromium browser acceptance PASS in GitHub Actions 41247348876 and strictly sealed source/asset + browser run 41247519822. 219 patches; 68 bundled assets; 7,166,103-byte HTML SHA-256 85f2b18399d9d28a7fe32d905dfd77f6102f56ef0acb9b8645c589c23fcb0b3d. Physical device acceptance remains with owner.",
-  "sourceCommit": "0634f5aee93672445b2947c4ae54d713b25cd54d",
-  "sourceIntegritySha256": "85f2b18399d9d28a7fe32d905dfd77f6102f56ef0acb9b8645c589c23fcb0b3d"
+  "releaseVersion": "v11.188",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_188_GAME_FIRST_WORKSPACE_TABS",
+  "reason": "Owner correction: ordinary §E/index.html launches should always start on Game Engine tab, second top tab Modeling, and never auto-open the native Model Atelier overlay. Gate old model startup open() by route; retain modeler.html direct entry and explicit tab switching. When a model starter or saved local/cloud model is remembered as default, keep that preference and model source intact while opening the Game Engine's normal Dragon Den scene. Existing model draft persistence, Game/Modeler tab switching, VR and project management remain unchanged. Focused Chromium acceptance on mobile 390px and Quest-size 980px PASS in GitHub Actions 41249810520 for ordinary Game landing, saved model starter, saved local model, top tab ordering/visibility, manual Modeling switch, Modeler direct route and draft retention. 220 patch lineage entries, 68 existing asset receipts, exact HTML 7,167,948 bytes SHA-256 6418cfde29f7fc2a90c34a763dde8316131fc64bf1bca777c0acccaa70c70fbb. Physical owner Android/Quest acceptance pending.",
+  "sourceCommit": "ebbffc8cdbca6fc6723c34dd6dad038273d37d33",
+  "sourceIntegritySha256": "6418cfde29f7fc2a90c34a763dde8316131fc64bf1bca777c0acccaa70c70fbb"
 }
