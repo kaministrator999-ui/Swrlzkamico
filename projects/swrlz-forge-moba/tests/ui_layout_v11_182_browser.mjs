@@ -31,6 +31,8 @@ try{
   console.log('SE182_BOOT_STATE',name,JSON.stringify(await quickState()));
   await page.waitForTimeout(250);
   console.log('SE182_SETTLED_STATE',name,JSON.stringify(await quickState()));
+  await page.evaluate(()=>{const dialog=document.querySelector('#seReleaseNotesDialog[open]');if(dialog)dialog.close();});
+  await page.waitForTimeout(90);
   const baseline=await page.evaluate(()=>window.SWYRL_ENGINE_UI_AUDIT.audit());
   console.log('SE182_BASELINE_GEOMETRY',name,JSON.stringify({toolbar:baseline.rects.toolbar,viewport:baseline.rects.viewport,levels:baseline.rects.levelBar,tabs:baseline.rects.mobileTabs,left:baseline.rects.leftDock,right:baseline.rects.rightDock,issues:baseline.issues}));
   const toolbar=baseline.rects.toolbar;
@@ -49,7 +51,7 @@ try{
    const b=document.getElementById('projectClose'),r=b.getBoundingClientRect();
    const h=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2);
    return {close:{left:r.left,top:r.top,right:r.right,bottom:r.bottom,width:r.width,height:r.height},
-     hitId:h?.id||'',hitTag:h?.tagName||'',hitClasses:String(h?.className||'').slice(0,120),
+     hitId:h?.id||'',hitTag:h?.tagName||'',hitClasses:String(h?.className||'').slice(0,120),hitDialog:h?.closest('dialog')?.id||'',
      projectsParent:document.querySelector('#projectHub')?.parentElement?.tagName,
      projectDisplay:getComputedStyle(document.querySelector('#projectHub')).display,
      closeDisplay:getComputedStyle(b).display,targetClickable:b===h||b.contains(h)}
