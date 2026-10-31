@@ -1,3 +1,17 @@
+## §E v11.181 — Enter immersive WebXR from the live §E browser (2026-10-31)
+
+**Owner request:** Open §E normally on Meta Quest 2, then press Enter VR to step *inside* the same 3D project instead of using Quest's controller rays only on a flat floating browser window.
+
+**Actual native renderer:** The editor's existing main THREE.WebGLRenderer (Three.js 0.169.0) and existing scene/simulation/editor tick remain authoritative. The old main manual requestAnimationFrame chain is replaced with exactly one renderer.setAnimationLoop(tick) bootstrap, so the same renderer serves desktop 2D and WebXR headset stereo views without a competing renderer. The main resize handler never sets the 2D framebuffer size while XR owns the frame buffer, and immersive frames bypass the 2D max-FPS skip. Native actor/play/Sheep Tag/maul physics and animation updates continue from the original tick.
+
+**XR doorway:** A topbar 🥽 Enter VR button probes runtime feature support and only requests an immersive-vr/local-floor session from a direct click on HTTPS. WebXR asks for headset permissions; nothing enters VR automatically on page load. Exiting via a small in-world EXIT VR sign (aim + select trigger) or the Quest system's exit mechanism restores the previous camera, orbit mode, transform gizmo visibility and ordinary 2D renderer, keeping the current scene and project. The WebXR session lifecycle is also attached read-only to the existing Controller Studio for device diagnostics.
+
+**Native interaction milestone:** Real WebXR controller target-ray spaces produce 3D visible rays; ray hits only accepted native actor geometry and change ray color/length. Trigger-select in edit mode calls native selectActor through existing selection rules. No click synthesizing, no mutation operation, no remote/editor/Play trigger forwarding and no new undo transactions. Selection is deliberately non-destructive. Ray/controller geometry and event listeners are removed when XR ends.
+
+**Boundaries:** Model Atelier owns a separate renderer: if its panel is open, Enter VR is blocked rather than showing the wrong game editor. Model Atelier sculpt VR, tracked grab/move transforms, two-handed gestures, locomotion, room alignment customization, floating Chat panels and full Controller Studio action dispatch are not yet implemented. Quest 2 physical acceptance and real tracked input behavior remain pending; browser stereo rendering requires actual supported XR hardware.
+
+**Test/receipt:** Dedicated JS static and mocked headset-session tests cover deferred user-gesture entry, distinct Model Atelier block, existing renderer binding, controller rays, restoring prior camera/orbit/transform after app/Quest exit, XR cleanup, no fake scene mutation and re-entry. Exact 213-patch/68-asset build measured 7,079,620 bytes, SHA-256 fb0732cc05fb4a4e5c5a8e114ffba9518c88be42a220c5d8908090262c20fd77. The sealed source verifier must pass independently from the deployment upload. A physical Quest is still the final acceptance check.
+
 ## §E v11.180 — Chat automatically slides away after an outside tap (2026-10-31)
 
 **Owner request:** When the user selects outside the embedded §wyrlz Chat in §E, the Chat should slide away without closing the editor or losing the current conversation.

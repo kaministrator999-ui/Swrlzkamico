@@ -1,0 +1,35 @@
+name: §E v11.181 immersive WebXR candidate
+on:
+  push:
+    branches: [feature/forge-v11-181-immersive-webxr-20261031]
+    paths:
+      - 'projects/swrlz-forge-moba/**'
+      - '.github/workflows/forge-v11-181-webxr-inspect.yml'
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check XR module syntax and immutable native boundaries
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/immersive_xr_gateway_v11_181.js
+          node projects/swrlz-forge-moba/tests/test_v11_181_immersive_xr.cjs
+          node projects/swrlz-forge-moba/tests/test_v11_181_xr_session_lifecycle.cjs
+      - name: Check sealed immersive XR engine source and packaged assets
+        run: |
+          python projects/swrlz-forge-moba/scripts/verify_v11_181_release.py --output /tmp/forge181
+          python - <<'PY'
+          import hashlib,json,pathlib
+          root=pathlib.Path('/tmp/forge181')
+          raw=(root/'index.html').read_bytes()
+          receipt=json.loads((root/'SOURCE.json').read_text())
+          assert len(raw)==receipt['finalBytes']==7079620
+          assert hashlib.sha256(raw).hexdigest()==receipt['finalSha256']=='fb0732cc05fb4a4e5c5a8e114ffba9518c88be42a220c5d8908090262c20fd77'
+          assert len(receipt['patches'])==213 and len(receipt['assets'])==68
+          print('XR_V11_181_SEALED_PASS')
+          PY
