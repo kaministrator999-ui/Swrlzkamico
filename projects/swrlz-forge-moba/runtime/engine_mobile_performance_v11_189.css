@@ -1,0 +1,14 @@
+/* §E v11.189 — compact graphics diagnostics inside existing settings. */
+#performanceSettings .se189-perf-metrics{
+ margin:12px 0 0;padding:9px 10px;
+ border:1px solid #35536b;border-radius:7px;
+ background:#091726;color:#c4dfe8;font:500 11px/1.55 ui-monospace,monospace;
+}
+#performanceSettings #se189MobileBoost{
+ border:1px solid #4ab8bb;border-radius:7px;
+ background:#15516a;color:#effffb;min-height:36px;
+ font:700 12px/1.2 system-ui,sans-serif;cursor:pointer;
+}
+#performanceSettings #se189MobileBoost:focus-visible{
+ outline:2px solid #c1f6e7;outline-offset:2px;
+}

@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.188
+title: §wyrl§ Engine v11.189
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,18 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.189 — mobile graphics performance controls and diagnostics (2026-10-31)
+
+**Owner issue:** The main §E Game Engine screenshot on Android showed about 18 FPS / 56.7 ms per frame, at 82% rendering scale with a complex Dragon Den scene. The 82% figure is resolution scale, not CPU utilization. This release avoids inventing a claimed FPS gain before physical-device measurement.
+
+**Graphics:** The existing View → Graphics & Performance controls now include an explicit **Mobile Boost** setting (62% render scale, no dynamic shadows, 512 shadow tier, 60 FPS cap). Preserve the user's existing Auto/Low/Medium/High/Custom preference unless they deliberately choose the boost. Model geometry and authored project data are unchanged.
+
+**Viewport work:** Avoid running the main WebGL viewport's DOM-size measurement on every animation frame. ResizeObserver, browser viewport resize and orientation events invalidate the cached sizing, with a fallback check every 250 ms. This does not throttle physics or requestAnimationFrame / XR render updates.
+
+**Evidence:** The Graphics & Performance panel includes CPU-side editor update time and WebGL render-submission time, draw calls and triangle counts. GPU completion times are *not* measured; browser frames may be limited by GPU, JavaScript, thermals, or display refresh. The native FPS overlay remains available independently.
+
+**Scope:** Keep the v11.188 Game Engine/Modeling tab routes, saved projects, native modeling, Sheep Tag gameplay, multiplayer, VR session ownership and editor authoring intact. Dedicated two-size browser smoke verifies graphics choice, preference retention, viewport invalidation and tab switching. Owner Android/Quest comparison still needed.
 
 ## §E v11.188 — Game Engine first, Modeling second (2026-10-31)
 

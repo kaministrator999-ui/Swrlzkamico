@@ -1,0 +1,60 @@
+name: §E v11.189 mobile performance focused acceptance
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/source-manifest.json"
+      - "projects/swrlz-forge-moba/patches/v11_189_mobile_performance.py"
+      - "projects/swrlz-forge-moba/runtime/engine_mobile_performance_v11_189.js"
+      - "projects/swrlz-forge-moba/runtime/engine_mobile_performance_v11_189.css"
+      - "projects/swrlz-forge-moba/scripts/verify_v11_189_release.py"
+      - "projects/swrlz-forge-moba/tests/ui_v11_189_performance.mjs"
+      - ".github/workflows/measure-se-v11-189.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  focused:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Check patch and profiler syntax
+        run: |
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_189_mobile_performance.py
+          node --check projects/swrlz-forge-moba/runtime/engine_mobile_performance_v11_189.js
+          node --check projects/swrlz-forge-moba/tests/ui_v11_189_performance.mjs
+      - name: Reconstruct exact new §E package and measure hashes
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          f=Path('projects/swrlz-forge-moba/source-manifest.json')
+          m=json.loads(f.read_text())
+          assert m['name']=='§wyrl§ Engine v11.189'
+          assert len(m['patches'])==221 and m['patches'][-1]=='patches/v11_189_mobile_performance.py'
+          m['finalBytes']=0;m['finalSha256']=''
+          f.write_text(json.dumps(m,ensure_ascii=False,indent=2)+'\n')
+          PY
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/se189-package >/tmp/se189-build.log
+          python - <<'PY'
+          import hashlib
+          from pathlib import Path
+          a=Path('/tmp/se189-package/index.html').read_bytes()
+          b=Path('/tmp/se189-package/modeler.html').read_bytes()
+          assert a==b and len(a)>7000000
+          for x in ['se189MobilePerformance','V11_189_MOBILE_RENDER_BOOST','se189ResizeIfNeeded','SWYRL_ENGINE_PERFORMANCE_V11189']:
+           assert x in a.decode('utf8'),x
+          print('SE189_MEASURED_BYTES='+str(len(a)),flush=True)
+          print('SE189_MEASURED_SHA256='+hashlib.sha256(a).hexdigest(),flush=True)
+          PY
+      - name: Install focused headless Chromium
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps --only-shell chromium
+      - name: Test graphics boost, frame diagnostics, viewport invalidation, modeler routes
+        run: node projects/swrlz-forge-moba/tests/ui_v11_189_performance.mjs
