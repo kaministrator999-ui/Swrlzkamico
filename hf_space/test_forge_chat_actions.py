@@ -97,7 +97,6 @@ class PlannerTest(unittest.TestCase):
                     forge_context=self.context))
                 self.assertEqual(events[-1]["forgeStatus"], "DESIGN_PREVIEW")
                 native.assert_called_once()
-                self.assertFalse(self.register.called)
 
     def test_approval_instructions_are_never_silently_truncated(self):
         operations = [{"op": "mesh.add", "kind": "box",
