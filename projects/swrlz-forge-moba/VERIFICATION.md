@@ -1,3 +1,15 @@
+## §E v11.183 — Project controls, HUD clearance and visible loading (2026-10-31)
+
+**Owner screenshots:** The right-side actor-count pill covered toolbar actions in desktop-mode phone view; Sheep Tag menu allowed editor-only top/bottom hints to intrude; the Project Levels controls were compressed into the narrow scene column; opening saved and starter projects felt delayed without meaningful feedback.
+
+**UI remediation:** Hide the redundant floating actor-count pill (native status bar still reports actors and selection). While a Sheep Tag cinematic/runtime menu is open, hide editor-only viewport badges, shortcut hints, level-edit overlay and other stray chrome without affecting Start, LAN, Exit or Chat. Project Levels now starts as a compact 44px button, expanding on demand into the original functional selectors/buttons, with outside-click and Escape dismissal. No project IDs, scene controls, input handlers or user data are replaced.
+
+**Real performance work:** v11.141's bundled-level loader previously invoked the native scene rebuild twice: once for the outer scene and once for the selected saved level. v11.183 chooses the active saved level first, then invokes the same native build **once** while hydrating the original level pack for future saves/links. Cloud lists reuse a same-account in-memory result for up to 12 seconds, with explicit Refresh bypass and cache invalidation on account changes. Starter, IndexedDB and account project opening now display stage/elapsed-time status and yield UI frames before synchronous import. Account/local loads recheck workspace state before replacement, preserving native rollback guarantees.
+
+**Evidence:** Focused code and single-native-rebuild VM tests passed. Controlled Chromium UI checks passed at 390×844, 430×932, 844×390, 980×680, and 1280×800; starter flow was exercised in portrait, landscape and Quest-sized desktop window. Actual Quest 2/Android acceptance and device-specific load time remain owner checks.
+
+**Release receipt:** 215 ordered patches; 68 preserved assets; 7,110,847 HTML bytes; SHA-256 `070aad1b47dcf1a05bdfee3e82f48e81991bc4826e9d128bb904d3bc8f1b3145`. Separate final deploy request and upload receipts must confirm this build.
+
 ## §E v11.182 — Professional interface and overlap audit (2026-10-31)
 
 **Owner request:** Review overlapping editor controls and polish the whole §E interface to professional consistency while preserving the working Game Editor, Model Atelier, VR Controls, Chat, projects and gameplay.
