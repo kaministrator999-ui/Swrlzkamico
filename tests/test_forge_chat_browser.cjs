@@ -142,6 +142,8 @@ window.closeHost=()=>send('host.inactive',{reason:'closed'});
       const designCard=frame.locator('.forge-design-preview');
       await designCard.waitFor();
       assert.equal(await designCard.locator('svg').count(),1,label+' Design Studio renders a conceptual SVG');
+      assert.match(await designCard.locator('svg').getAttribute('aria-label'),/isometric view/i);
+      await designCard.getByRole('button',{name:'Top view'}).click();
       assert.match(await designCard.locator('svg').getAttribute('aria-label'),/top view/i);
       await designCard.getByRole('button',{name:'Front view'}).click();
       assert.match(await designCard.locator('svg').getAttribute('aria-label'),/front view/i);

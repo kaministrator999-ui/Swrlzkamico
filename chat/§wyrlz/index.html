@@ -1660,7 +1660,7 @@
             kicker.append(make("span","","Project · "+String(data.project||"Open project").slice(0,100)+" · "+String(data.workspace||"editor").slice(0,40)),
               make("span","forge-design-tag","PROPOSED · NOT APPLIED"));
             main.appendChild(kicker);
-            let view="top",shown=steps.length,overlay=null,feedback="",submitted=false;
+            let view="iso",shown=steps.length,overlay=null,feedback="",submitted=false;
             const SVG_NS="http://www.w3.org/2000/svg";
             const svgEl=(name,props={})=>{
               const n=document.createElementNS(SVG_NS,name);
@@ -1669,15 +1669,16 @@
             };
             const drawSvg=()=>{
               const svg=svgEl("svg",{viewBox:"0 0 640 350",role:"img","aria-label":
-                "Conceptual "+(view==="top"?"top":"front")+" view of "+shown+" of "+steps.length+" planned steps"});
+                "Conceptual "+(view==="iso"?"isometric":view)+" view of "+shown+" of "+steps.length+" planned steps"});
               const bg=svgEl("rect",{x:0,y:0,width:640,height:350,fill:"transparent"});svg.appendChild(bg);
               for(let x=40;x<640;x+=40)svg.appendChild(svgEl("path",{d:"M"+x+" 0V350",stroke:"#28536f","stroke-width":.65,opacity:.45}));
               for(let y=15;y<350;y+=40)svg.appendChild(svgEl("path",{d:"M0 "+y+"H640",stroke:"#28536f","stroke-width":.65,opacity:.45}));
               svg.appendChild(svgEl("path",{d:"M320 0V350 M0 175H640",stroke:"#5da4bf","stroke-width":1,opacity:.6}));
               const active=steps.slice(0,shown);
               const pts=active.map(s=>({x:s.position[0],y:s.position[view==="top"?2:1],s}));
-              const range=Math.max(4,...pts.map(p=>Math.max(Math.abs(p.x)+p.s.scale[0],Math.abs(p.y)+p.s.scale[view==="top"?2:1])));
+              const range=Math.max(4,...active.flatMap(s=>s.position.map((v,i)=>Math.abs(v)+s.scale[i])));
               const mult=Math.min(38,140/range);
+              const iso=(x,y,z)=>({x:320+(x-.8*z)*mult,y:185+(.34*x+.48*z-y)*mult});
               pts.forEach((p,i)=>{
                 const cx=320+p.x*mult,cy=175+(view==="top"?p.y:-p.y)*mult;
                 const sx=Math.max(7,Math.min(80,p.s.scale[0]*mult));
@@ -1685,7 +1686,29 @@
                 const color=/^#[0-9a-f]{6}$/i.test(p.s.color)?p.s.color:"#65d9f5";
                 const kind=String(p.s.kind||"").toLowerCase();
                 let shape;
-                if(kind==="sphere"||kind==="cylinder"||kind==="rock"||kind==="bush"){
+                if(view==="iso" && ["box","wall","pedestal","object"].includes(kind)){
+                  const pos=p.s.position,sc=p.s.scale; // three-dimensional box wireframe
+                  const corners=[];
+                  for(const y of [-1,1])for(const z of [-1,1])for(const x of [-1,1])
+                    corners.push(iso(pos[0]+x*sc[0],pos[1]+y*sc[1],pos[2]+z*sc[2]));
+                  const g=svgEl("g",{"stroke-linecap":"round"});
+                  const edges=[[0,1],[1,3],[3,2],[2,0],[4,5],[5,7],[7,6],[6,4],[0,4],[1,5],[2,6],[3,7]];
+                  for(const [a,b] of edges){
+                    g.appendChild(svgEl("line",{x1:corners[a].x,y1:corners[a].y,x2:corners[b].x,y2:corners[b].y,
+                      stroke:color,"stroke-width":2,opacity:.82}));
+                  }
+                  shape=g;
+                }else if(view==="iso"){
+                  const center=iso(p.s.position[0],p.s.position[1],p.s.position[2]);
+                  shape=svgEl("ellipse",{cx:center.x,cy:center.y,rx:sx,ry:Math.max(6,sy*.7),
+                    fill:color,"fill-opacity":.2,stroke:color,"stroke-width":2});
+                  if(kind==="cone"||kind==="crystal"){
+                    const peak=iso(p.s.position[0],p.s.position[1]+p.s.scale[1],p.s.position[2]);
+                    shape=svgEl("path",{d:"M"+(center.x-sx)+" "+center.y+" L"+peak.x+" "+peak.y+
+                      " L"+(center.x+sx)+" "+center.y+" Z",fill:color,"fill-opacity":.2,
+                      stroke:color,"stroke-width":2});
+                  }
+                }else if(kind==="sphere"||kind==="cylinder"||kind==="rock"||kind==="bush"){
                   shape=svgEl("ellipse",{cx,cy,rx:sx,ry:sy,fill:color,"fill-opacity":.22,stroke:color,"stroke-width":2});
                 }else if(kind==="cone"||kind==="crystal"){
                   shape=svgEl("path",{d:"M"+cx+" "+(cy-sy)+" L"+(cx+sx)+" "+(cy+sy)+" L"+(cx-sx)+" "+(cy+sy)+" Z",
@@ -1696,11 +1719,12 @@
                 }
                 const title=svgEl("title");title.textContent=(i+1)+". "+String(p.s.name||p.s.kind||p.s.op).slice(0,100);shape.appendChild(title);
                 svg.appendChild(shape);
-                const index=svgEl("text",{x:cx,y:cy+4,"text-anchor":"middle",fill:"#f4fbff","font-size":12,"font-weight":700});
+                const centerPoint=view==="iso"?iso(p.s.position[0],p.s.position[1],p.s.position[2]):{x:cx,y:cy};
+                const index=svgEl("text",{x:centerPoint.x,y:centerPoint.y+4,"text-anchor":"middle",fill:"#f4fbff","font-size":12,"font-weight":700});
                 index.textContent=String(i+1);svg.appendChild(index);
               });
               const axis=svgEl("text",{x:13,y:25,fill:"#bde3ed","font-size":12});
-              axis.textContent=view==="top"?"TOP · X / Z":"FRONT · X / Y";svg.appendChild(axis);
+              axis.textContent=view==="iso"?"3D BLOCKOUT · X / Y / Z":view==="top"?"TOP · X / Z":"FRONT · X / Y";svg.appendChild(axis);
               const note=svgEl("text",{x:13,y:334,fill:"#91b9d0","font-size":10});
               note.textContent="Illustrative positions and primitive silhouettes · not live render";svg.appendChild(note);
               return svg;
@@ -1715,17 +1739,21 @@
             };
             const viewControls=()=>{
               const wrap=make("div","forge-design-controls");
-              for(const [id,label] of [["top","Top view"],["front","Front view"]]){
+              for(const [id,label] of [["iso","3D blockout"],["top","Top view"],["front","Front view"]]){
                 const b=button(label,()=>{view=id;renderViews()});b.dataset.forgeView=id;
                 b.setAttribute("aria-pressed",String(view===id));wrap.appendChild(b);
               }
               return wrap;
             };
+            let overlayKey=null,returnFocus=null;
             const closeOverlay=()=>{
               if(!overlay)return;const next=overlay;overlay=null;next.remove();
+              if(overlayKey){document.removeEventListener("keydown",overlayKey);overlayKey=null;}
+              if(returnFocus&&returnFocus.isConnected)returnFocus.focus();
             };
             const openOverlay=()=>{
               if(overlay)return;
+              returnFocus=document.activeElement;
               overlay=make("div","forge-design-overlay");
               const dialog=make("div","forge-design-dialog");
               dialog.setAttribute("role","dialog");dialog.setAttribute("aria-modal","true");
@@ -1737,8 +1765,8 @@
                 "This drawing is a proposal only. The current §E scene has not been changed."));
               overlay.appendChild(dialog);document.body.appendChild(overlay);
               overlay.addEventListener("click",event=>{if(event.target===overlay)closeOverlay()});
-              const onKey=event=>{if(event.key==="Escape"){closeOverlay();document.removeEventListener("keydown",onKey)}};
-              document.addEventListener("keydown",onKey);
+              overlayKey=event=>{if(event.key==="Escape")closeOverlay();};
+              document.addEventListener("keydown",overlayKey);
               head.querySelector("button").focus();renderViews();
             };
             const controls=viewControls();controls.append(button("Expand preview ⤢",openOverlay));
