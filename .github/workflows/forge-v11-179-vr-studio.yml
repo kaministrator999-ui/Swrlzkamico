@@ -19,23 +19,16 @@ jobs:
         run: |
           node --check projects/swrlz-forge-moba/runtime/vr_controller_studio_v11_179.js
           node projects/swrlz-forge-moba/tests/test_v11_179_vr_studio.cjs
-      - name: Rebuild exact engine candidate and print hash
+      - name: Verify exact sealed 211-patch / 68-asset source
         run: |
+          python projects/swrlz-forge-moba/scripts/verify_v11_179_release.py --output /tmp/forge-vr179
           python - <<'PY'
-          import json,pathlib
-          f=pathlib.Path('projects/swrlz-forge-moba/source-manifest.json')
-          data=json.loads(f.read_text())
-          if data['name']!='§wyrl§ Engine v11.179':raise ValueError('Unexpected source')
-          if data['patches'][-1]!='patches/v11_179_vr_controller_studio.py':raise ValueError('Unsealed patch')
-          data['finalSha256']=''
-          data['finalBytes']=0
-          f.write_text(json.dumps(data,ensure_ascii=False))
-          PY
-          python projects/swrlz-forge-moba/build_space.py --output /tmp/forge-vr179 > /tmp/buildout
-          python - <<'PY'
-          import pathlib,hashlib,json
-          data=(pathlib.Path('/tmp/forge-vr179')/'index.html').read_bytes()
-          print('FORGE_VR179_MEASURED',json.dumps({'bytes':len(data),'sha256':hashlib.sha256(data).hexdigest()}))
-          assert b'V11_179_VR_CONTROLLER_STUDIO' in data
-          assert b'SWYRL_VR_CONTROLS' in data
+          import hashlib,pathlib,json
+          root=pathlib.Path('/tmp/forge-vr179')
+          content=(root/'index.html').read_bytes()
+          receipt=json.loads((root/'SOURCE.json').read_text())
+          assert len(content)==receipt['finalBytes']==7063978
+          assert hashlib.sha256(content).hexdigest()==receipt['finalSha256']=='2b9119cb587ca262be0948c3d5a04d35cfa3ebf0a1a5169dea116c1619d365fd'
+          assert len(receipt['assets'])==68 and len(receipt['patches'])==211
+          print('FORGE_VR179_SEALED_PASS')
           PY

@@ -227,6 +227,6 @@
     "patches/v11_178_workspace_analysis.py",
     "patches/v11_179_vr_controller_studio.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 7063978,
+  "finalSha256": "2b9119cb587ca262be0948c3d5a04d35cfa3ebf0a1a5169dea116c1619d365fd"
 }

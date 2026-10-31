@@ -1,3 +1,15 @@
+## §E v11.179 — VR Controller Studio configuration release (2026-10-31)
+
+**Owner source:** Kami Precision VR Controller Studio archive (25-part specification, original JSON). This release implements the 2D configuration foundation; it does NOT claim full immersive Quest controller support.
+
+**Features:** 🎮 VR Controls toolbar panel; Kami Precision (default), Standard, Left-Handed and Precision Sculpt immutable preset profiles; independent Global/Game Editor/Model Editor/Sculpt/Play mappings; editable custom copies; mapping and threshold validation; conflicting/reserved shortcut rejection; 2D simulated capture and resolver for X+A, Y+B and Play isolation; local Save/Revert; versioned JSON import/export including migration from owner-provided Kami Precision format; navigator.xr capability diagnostics and externally attached XR input-source inspection.
+
+**Limitations:** Actual immersive WebXR scene/controller handling, physical Meta Quest 2 input, native scene/model actions, continuous strokes, two-hand gestures, live recording, per-account sync and headset acceptance are NOT implemented. No new renderer loop or unsafe native mutation dispatch. Profiles are device-local rather than account-isolated.
+
+**Exact artifact:** §wyrl§ Engine v11.179, 211 append-only patches, 68 assets, 7,063,978 HTML bytes, SHA-256 2b9119cb587ca262be0948c3d5a04d35cfa3ebf0a1a5169dea116c1619d365fd. Patch: patches/v11_179_vr_controller_studio.py. Runtime: runtime/vr_controller_studio_v11_179.js and .css. Validator: scripts/verify_v11_179_release.py. Read reports/VR_CONTROLLER_STUDIO_V11_179.md for the remaining work and acceptance boundaries.
+
+**Release boundary:** CI/source seal, guarded final DEPLOY_REQUEST-only commit, HF upload/live serving and physical headset verification are separate evidence levels. Preserve v11.178 history and original native editing/Chat.
+
 ## §E v11.150 · Host-authorized Sheep Tag match launch (2026-10-27)
 
 **Owner request:** After a laptop/phone join the same Wi-Fi WebRTC waiting room, the host may press **Start Match** to transition the host and connected guest browsers out of the menu and into each device's native Sheep Tag Gameplay level.
