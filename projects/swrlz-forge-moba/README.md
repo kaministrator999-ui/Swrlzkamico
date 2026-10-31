@@ -1,3 +1,17 @@
+## §E v11.184 — My Projects preview gallery and one saved startup default (2026-10-31)
+
+**Owner request:** Render visual preview cards for user-owned projects directly in the native Projects menu, and let a single checkbox determine which saved project §E opens by default.
+
+**My Projects gallery:** The existing My Projects tab now contains responsive cards for browser-local IndexedDB projects and signed-in § Chat account projects, alongside their native Open actions. Local saves now include a lightweight, bounded top-down scene overview derived from real saved actor coordinates; older local projects lazily generate those overviews only when their cards enter view, with at most two simultaneous reads. Account cards display an immediate illustrative tile, and an explicit Preview scene action can download and inspect one saved account scene without importing it or replacing the active editor. These are actor overviews, **not claimed 3D camera screenshots**. Existing local list controls remain available in expandable advanced controls.
+
+**Exclusive default:** Saved-project cards and original starter cards use the same same-browser `swyrl.engine.defaultStarter.v1` preference. Exactly one optional checkbox can be selected. A selected device-local project loads from the existing IndexedDB store during normal startup; an account default initializes the existing authenticated Chat iframe and attempts loading only when signed in, falling back to Dragon Den with a message if unavailable. Explicit `?project=` deep links still take precedence. This preference is per browser/device, not synced to the Google account or saved project bytes.
+
+**Safety and performance:** No second project store or renderer, no eager cloud downloads, no raw saved scenes in localStorage, no cross-account scene import, no silent project overwrite after the default account timeout. Native file/Cloud loading, rollback, Model Atelier, Sheep Tag, WebXR, editors, and starter behavior are preserved.
+
+**Verification:** Isolated default-pref, cloud-boot callback and JS syntax tests passed; locally seeded browser preview/default/reload acceptance passed on Android-sized and Quest-sized Chromium viewports. Real account sign-in, physical Quest 2 and owner Android visual acceptance are separate checks.
+
+**Receipt:** 216 ordered patches; 68 assets; 7134586 generated HTML bytes; SHA-256 `35ba507edf2eedd98a85a49e8ae5e55e5b43f0b78c61139e1b2e6b50e8b95c5b`.
+
 ## §E v11.183 — Project controls, HUD clearance and visible loading (2026-10-31)
 
 **Owner screenshots:** The right-side actor-count pill covered toolbar actions in desktop-mode phone view; Sheep Tag menu allowed editor-only top/bottom hints to intrude; the Project Levels controls were compressed into the narrow scene column; opening saved and starter projects felt delayed without meaningful feedback.
