@@ -1,3 +1,13 @@
+## §E v11.186 — first-paint glitch-wisp boot repair (2026-10-31)
+
+**Owner screenshot:** Hosted mobile launch displayed only “✦ §E · Initializing workspace” on a dark background instead of animated wisps. Root cause: v11.185 created the decorative overlay from a late engine-module initializer, so the page's earlier pseudo-element fallback could paint alone while the engine script was pending.
+
+**Repair:** Build a static startup overlay directly after the original opening `<body>` tag, before the large engine module. The CSS creates a glowing §E sigil with two rotating rings, three wisps, 32 animated fragments, and a loading shimmer; an independent tiny early script updates human-readable initialization states. Existing v11.127 editor-readiness signal governs exit. The emergency fallback pseudo-element no longer masks the animation.
+
+**Recovery:** If readiness never arrives, reveal a manual Reload §E button after 18 seconds—no fake progress, forced reload or automatic project overwrite. Respect reduced motion.
+
+**Scope:** Leave v11.185 collapsible Model Atelier toolbar, save/export/close controls, native editor, scene geometry, project-default restoration, LAN, VR and Chat integrations unchanged. Test initial paint without evaluating the engine module; check native browser and owner Android/Quest next.
+
 ## §E v11.185 — Glitch-wisp initialization and collapsible Model Atelier settings (2026-10-31)
 
 **Startup:** The existing readiness-gated startup screen now animates lightweight teal/violet glitch fragments, wisp trails, concentric rings and the §E sigil. The status wording reflects real initialization states without invented percentages. The underlying stable boot gate, its fallback, and saved-project restoration stay authoritative. Reduced-motion devices see a calm static presentation.

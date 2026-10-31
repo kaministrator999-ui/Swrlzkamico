@@ -1,0 +1,21 @@
+/* §E v11.186: static first-paint boot DOM is ABOVE the engine script. */
+html:not(.se127-editor-ready) body::after{display:none!important}
+html:not(.se127-editor-ready) body{background:#07111f}
+#se185Init[data-se186-early]{z-index:2147483601}
+#se185Init[data-se186-early] .se185-halo{filter:drop-shadow(0 0 15px #71efdc52)}
+#se185Init[data-se186-early] .se185-particles i{will-change:transform,opacity}
+#se186BootRecovery[hidden]{display:none!important}
+#se186BootRecovery{position:relative;display:flex;flex-direction:column;align-items:center;gap:9px;
+ margin-top:10px;color:#d0eceb;font-size:12px;font-weight:500;}
+#se185Init #se186BootRetry{
+ pointer-events:auto;touch-action:manipulation;cursor:pointer;
+ background:#1d4b5c;border:1px solid #8ae9df;color:#e7fffa;
+ padding:9px 17px;min-height:42px;border-radius:10px;
+ font:700 12px/1.2 system-ui,sans-serif;
+ box-shadow:0 0 18px #26cab82e;
+}
+#se185Init #se186BootRetry:focus-visible{outline:3px solid #e1adff;outline-offset:2px}
+@media(prefers-reduced-motion:reduce){
+ #se185Init[data-se186-early] .se185-halo{filter:none}
+ #se185Init[data-se186-early] .se185-particles i{will-change:auto}
+}
