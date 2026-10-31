@@ -38,6 +38,10 @@ jobs:
           assert b'seLevelRawLoadProject(structuredClone(chosen.data)' not in b
           print('SE183_CANDIDATE_RECEIPT',json.dumps({'bytes':len(b),'sha256':hashlib.sha256(b).hexdigest()}))
           PY
+      - name: Verify the exact sealed v11.183 package and assets
+        run: |
+          git restore projects/swrlz-forge-moba/source-manifest.json
+          python projects/swrlz-forge-moba/scripts/verify_v11_183_release.py --output /tmp/se183-sealed
 
   browser:
     runs-on: ubuntu-latest
