@@ -1,3 +1,11 @@
+## §E v11.185 — Glitch-wisp initialization and collapsible Model Atelier settings (2026-10-31)
+
+**Startup:** The existing readiness-gated startup screen now animates lightweight teal/violet glitch fragments, wisp trails, concentric rings and the §E sigil. The status wording reflects real initialization states without invented percentages. The underlying stable boot gate, its fallback, and saved-project restoration stay authoritative. Reduced-motion devices see a calm static presentation.
+
+**Model Atelier:** A Settings toggle in the main modeling header expands/collapses native render mode, target, camera view, reference and display options while leaving model Save, Export, Close and the working viewport accessible. It remembers its state per browser; coarse-pointer and narrow layouts begin compact. No modeling controls, handlers, undo history or saved meshes are replaced.
+
+**Verification:** The focused v11.185 package/build integrity check is required before a separate deployment request; owner Android/Quest acceptance follows the hosted release.
+
 ## §E v11.184 — My Projects preview gallery and one saved startup default (2026-10-31)
 
 **Owner request:** Render visual preview cards for user-owned projects directly in the native Projects menu, and let a single checkbox determine which saved project §E opens by default.

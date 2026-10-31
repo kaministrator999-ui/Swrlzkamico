@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.184",
+  "name": "§wyrl§ Engine v11.185",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_184.html",
+  "finalArtifact": "swyrl_engine_v11_185.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -230,7 +230,8 @@
     "patches/v11_181_immersive_xr_gateway.py",
     "patches/v11_182_professional_ui.py",
     "patches/v11_183_project_ui_loading.py",
-    "patches/v11_184_saved_project_previews_default.py"
+    "patches/v11_184_saved_project_previews_default.py",
+    "patches/v11_185_wisp_boot_atelier_collapse.py"
   ],
   "finalBytes": 7134586,
   "finalSha256": "35ba507edf2eedd98a85a49e8ae5e55e5b43f0b78c61139e1b2e6b50e8b95c5b"

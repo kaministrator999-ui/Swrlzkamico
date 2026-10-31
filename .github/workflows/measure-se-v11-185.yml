@@ -1,0 +1,51 @@
+name: Measure §E v11.185 source integrity
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/patches/v11_185_wisp_boot_atelier_collapse.py"
+      - "projects/swrlz-forge-moba/runtime/engine_wisp_boot_atelier_v11_185.js"
+      - "projects/swrlz-forge-moba/runtime/engine_wisp_boot_atelier_v11_185.css"
+      - "projects/swrlz-forge-moba/source-manifest.json"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Check new patch syntax and JS parsing
+        run: |
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_185_wisp_boot_atelier_collapse.py
+          node --check projects/swrlz-forge-moba/runtime/engine_wisp_boot_atelier_v11_185.js
+      - name: Reconstruct exact released HTML for hash measurement
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          path=Path('projects/swrlz-forge-moba/source-manifest.json')
+          data=json.loads(path.read_text())
+          assert data['name']=='§wyrl§ Engine v11.185'
+          assert len(data['patches'])==217
+          assert data['patches'][-1]=='patches/v11_185_wisp_boot_atelier_collapse.py'
+          data['finalSha256']=''
+          data['finalBytes']=0
+          path.write_text(json.dumps(data,indent=2)+'\n')
+          PY
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/se185-package
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json
+          folder=Path('/tmp/se185-package')
+          data=(folder/'index.html').read_bytes()
+          source=json.loads((folder/'SOURCE.json').read_text())
+          assert len(source['patches'])==217
+          for expected in ('se185WispBootAtelier','se185InstallAtelierToggle','se185-top-collapsed','V11_185_WISP_GLITCH_BOOT_ATELIER_COLLAPSE'):
+              assert expected in data.decode('utf8'),expected
+          print('SE185_MEASURED_BYTES='+str(len(data)),flush=True)
+          print('SE185_MEASURED_SHA256='+hashlib.sha256(data).hexdigest(),flush=True)
+          PY
