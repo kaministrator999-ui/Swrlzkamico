@@ -45,12 +45,15 @@ jobs:
         run: |
           python -m pip install playwright==1.56.0
           python -m playwright install --with-deps chromium
-      - name: Run two-user pilot
+      - name: Run two-user harness smoke (no secrets)
+        if: github.event_name != 'workflow_dispatch' || inputs.mode == 'smoke'
+        run: python scripts/eval_chat_pilot.py --mode smoke
+      - name: Run two-user authenticated live evaluation
+        if: github.event_name == 'workflow_dispatch' && inputs.mode == 'live'
         env:
-          EVAL_MODE: ${{ github.event_name == 'workflow_dispatch' && inputs.mode || 'smoke' }}
           SWRLZ_EVAL_SESSION_A: ${{ secrets.SWRLZ_EVAL_SESSION_A }}
           SWRLZ_EVAL_SESSION_B: ${{ secrets.SWRLZ_EVAL_SESSION_B }}
-        run: python scripts/eval_chat_pilot.py --mode "$EVAL_MODE"
+        run: python scripts/eval_chat_pilot.py --mode live
       - name: Publish evaluation summary
         if: always()
         run: |
