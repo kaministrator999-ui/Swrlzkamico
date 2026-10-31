@@ -87,6 +87,16 @@ try{
   const pref2=await page.evaluate(()=>window.SWYRL_ENGINE_SAVED_DEFAULT.read());
   assert.equal(pref2.source,'local');
   await page.reload({waitUntil:'load',timeout:90000});
+  await page.waitForTimeout(6000);
+  console.log('SE184_RELOAD_DEBUG',name,JSON.stringify(await page.evaluate(()=>({
+   currentName:window.SWYRL_ENGINE_AGENT?.inspectScene?.()?.project?.name||'none',
+   projectId:window.SWYRL_ENGINE_AGENT?.inspectScene?.()?.project?.instanceId||'',
+   bootPending:window.se128StartupPending,
+   default:window.SWYRL_ENGINE_SAVED_DEFAULT?.read?.(),
+   pendingDefault:window.SWYRL_ENGINE_SAVED_DEFAULT?.pending?.(),
+   bootStatus:document.getElementById('se184DefaultBoot')?.textContent||'',
+   build:window.SWRLZ_FORGE_BUILD?.version
+  }))),errors);
   await page.waitForFunction(()=>{
    const api=window.SWYRL_ENGINE_SAVED_DEFAULT;
    if(!api||!window.SWYRL_ENGINE_AGENT||window.se128StartupPending)return false;
