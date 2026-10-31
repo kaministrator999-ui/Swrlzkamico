@@ -46,6 +46,7 @@ try{
    }))),errors.slice(-10));
    throw e;
   }
+  await page.evaluate(()=>document.querySelector('#seReleaseNotesDialog[open]')?.close());
   assert.equal(new URL(page.url()).pathname,'/modeler.html');
   const initial=await page.evaluate(()=>window.SWYRL_ENGINE_WORKSPACES.inspect());
   assert.equal(initial.active,'modeler');
@@ -72,6 +73,8 @@ try{
     window.SWYRL_ENGINE_MODEL_ATELIER?.status()?.open,null,{timeout:65000});
   assert.equal((await page.evaluate(()=>window.SWYRL_ENGINE_WORKSPACES.inspect())).draftParts,1,
    'draft lost on reloading independent Modeler route');
+  await page.evaluate(()=>document.querySelector('#seReleaseNotesDialog[open]')?.close());
+  page.once('dialog',dialog=>void dialog.accept());
   await page.locator('#modelAtelierPanel .se187-new-model').click({timeout:10000});
   assert.equal((await page.evaluate(()=>window.SWYRL_ENGINE_WORKSPACES.inspect())).draftParts,0);
   console.log('SE187_ROUTED_MODELER_PASS',name,{initial,afterAdd,errors:errors.length});
