@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.181",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_181_IMMERSIVE_WEBXR_GATE",
-  "reason": "Owner-directed immersive WebXR doorway in existing §E main game editor: user-gesture Enter VR with local-floor headset stereo, existing main Three renderer.setAnimationLoop(tick) 2D/XR single-loop migration, native controller target rays and non-destructive actor trigger selection, in-scene EXIT VR and system exit restoration, read-only diagnostics handoff to VR Controller Studio, Model Atelier separate-renderer block, preservation of all native games/assets/auth. Physical Meta Quest 2 acceptance pending and Model Atelier sculpt/grab/locomotion not yet XR-wired. 213 patches, 68 assets, 7079620 bytes, sha256 fb0732cc05fb4a4e5c5a8e114ffba9518c88be42a220c5d8908090262c20fd77. Sealed candidate CI 41227477133 SUCCESS. Final request-only commit.",
-  "sourceCommit": "aebe22cce95f2e4dcd2fd9e8283b1163ad1b43ce",
-  "sourceIntegritySha256": "fb0732cc05fb4a4e5c5a8e114ffba9518c88be42a220c5d8908090262c20fd77"
+  "releaseVersion": "v11.182",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_182_PROFESSIONAL_UI",
+  "reason": "Owner-directed §E professional UI and overlap remediation: consistent editor dark slate/teal palette, toolbar and dock controls, Projects modal, VR Studio, Chat, Model Atelier chrome, responsive mobile dialogs and read-only UI audit. Fixed actual 8px landscape toolbar/canvas collision without changing native grid, kept Projects above docks/Chat and below genuine modal dialogs, preserved level-bar/mobile-tabs spacing and 48px Quest-friendly toolbar fit. Five Chromium cases 390x844, 430x932, 844x390, 980x680 and 1280x800 PASS, no unexpected page errors; physical Quest and Android remain owner acceptance. 214 ordered patches, 68 assets, 7094717 HTML bytes, SHA-256 0b4af9562ac14811d597938d75e716a39110ce1849929bb3a8599b78370b4f25. Sealed CI 41232685219 SUCCESS. Final request-only commit.",
+  "sourceCommit": "4bcaa9311149d1356629b9a731b79bd9ccd714c8",
+  "sourceIntegritySha256": "0b4af9562ac14811d597938d75e716a39110ce1849929bb3a8599b78370b4f25"
 }
