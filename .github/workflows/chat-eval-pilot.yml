@@ -7,6 +7,7 @@ on:
       - 'scripts/eval_chat_pilot.py'
       - 'docs/engineering/SWRLZ_CHAT_EVALUATION_PILOT.md'
       - '.github/workflows/chat-eval-pilot.yml'
+      - '.acceptance/CHAT_EVAL_LIVE_REQUEST.txt'
   pull_request:
     paths:
       - 'scripts/eval_chat_pilot.py'
@@ -39,6 +40,38 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+      - name: Select evaluation mode
+        id: eval_mode
+        shell: bash
+        env:
+          REQUESTED_MODE: ${{ inputs.mode }}
+        run: |
+          set -euo pipefail
+          mode=smoke
+          if [[ "$GITHUB_EVENT_NAME" == "workflow_dispatch" ]]; then
+            mode="${REQUESTED_MODE:-smoke}"
+          elif [[ "$GITHUB_EVENT_NAME" == "push" ]] && git show --format= --name-only "$GITHUB_SHA" | grep -Fxq '.acceptance/CHAT_EVAL_LIVE_REQUEST.txt'; then
+            mode=live
+          fi
+          echo "mode=$mode" >> "$GITHUB_OUTPUT"
+          echo "Selected mode: $mode"
+      - name: Verify two dedicated test sessions are configured
+        if: steps.eval_mode.outputs.mode == 'live'
+        env:
+          EVAL_A: ${{ secrets.SWRLZ_EVAL_SESSION_A }}
+          EVAL_B: ${{ secrets.SWRLZ_EVAL_SESSION_B }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -z "$EVAL_A" || -z "$EVAL_B" ]]; then
+            echo "::error::Live evaluation blocked: configure SWRLZ_EVAL_SESSION_A and SWRLZ_EVAL_SESSION_B as two different dedicated test account session values in Actions secrets."
+            exit 1
+          fi
+          if [[ "$EVAL_A" == "$EVAL_B" ]]; then
+            echo "::error::Live evaluation blocked: test account sessions must be distinct."
+            exit 1
+          fi
+          echo "Test session secrets are configured (values not printed)."
       - name: Validate evaluation script syntax
         run: python -m py_compile scripts/eval_chat_pilot.py
       - name: Install isolated Chromium evaluator
@@ -46,10 +79,10 @@ jobs:
           python -m pip install playwright==1.56.0
           python -m playwright install --with-deps chromium
       - name: Run two-user harness smoke (no secrets)
-        if: github.event_name != 'workflow_dispatch' || inputs.mode == 'smoke'
+        if: steps.eval_mode.outputs.mode == 'smoke'
         run: python scripts/eval_chat_pilot.py --mode smoke
       - name: Run two-user authenticated live evaluation
-        if: github.event_name == 'workflow_dispatch' && inputs.mode == 'live'
+        if: steps.eval_mode.outputs.mode == 'live'
         env:
           SWRLZ_EVAL_SESSION_A: ${{ secrets.SWRLZ_EVAL_SESSION_A }}
           SWRLZ_EVAL_SESSION_B: ${{ secrets.SWRLZ_EVAL_SESSION_B }}
