@@ -1,0 +1,63 @@
+name: §E v11.188 Game-first tabs focused acceptance
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/source-manifest.json"
+      - "projects/swrlz-forge-moba/patches/v11_188_game_first_tabs.py"
+      - "projects/swrlz-forge-moba/runtime/engine_game_first_tabs_v11_188.css"
+      - "projects/swrlz-forge-moba/tests/ui_v11_188_game_landing.mjs"
+      - "projects/swrlz-forge-moba/scripts/verify_v11_188_release.py"
+      - ".github/workflows/measure-se-v11-188.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  focused:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Syntax checks
+        run: |
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_188_game_first_tabs.py
+          node --check projects/swrlz-forge-moba/tests/ui_v11_188_game_landing.mjs
+      - name: Reconstruct exact game-first package and measure source fingerprint
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          f=Path('projects/swrlz-forge-moba/source-manifest.json')
+          m=json.loads(f.read_text())
+          assert m['name']=='§wyrl§ Engine v11.188'
+          assert len(m['patches'])==220
+          assert m['patches'][-1]=='patches/v11_188_game_first_tabs.py'
+          m['finalBytes']=0;m['finalSha256']=''
+          f.write_text(json.dumps(m,ensure_ascii=False,indent=2)+'\n')
+          PY
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/se188-package >/tmp/se188-build.log
+          python - <<'PY'
+          import hashlib
+          from pathlib import Path
+          a=Path('/tmp/se188-package/index.html').read_bytes()
+          b=Path('/tmp/se188-package/modeler.html').read_bytes()
+          assert a==b and len(a)>7000000
+          for x in ['se188GameFirstTabs','V11_188_GAME_FIRST_WORKSPACE_TABS','Game Engine','Modeling']:
+           assert x in a.decode('utf8'),x
+          print('SE188_MEASURED_BYTES='+str(len(a)),flush=True)
+          print('SE188_MEASURED_SHA256='+hashlib.sha256(a).hexdigest(),flush=True)
+          PY
+      - name: Install focused Chromium test runtime
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps --only-shell chromium
+      - name: Verify Game landing, tab switching, model starter and saved-model defaults
+        run: node projects/swrlz-forge-moba/tests/ui_v11_188_game_landing.mjs
+      - name: Verify direct Modeler route and draft retention regression
+        env:
+          SE187_DIST: /tmp/se188-package
+        run: node projects/swrlz-forge-moba/tests/ui_v11_187_workspaces.mjs

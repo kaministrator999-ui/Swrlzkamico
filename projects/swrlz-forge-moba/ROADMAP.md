@@ -1,3 +1,13 @@
+## §E v11.188 — Game Engine first, Modeling second (2026-10-31)
+
+**Owner-requested startup:** Opening the normal §E site or `index.html` lands on the Game Engine, not Modeler. The topmost two native workspace tabs are now **Game Engine** (selected first) and **Modeling** (second); selecting Modeling is the explicit way to move into the separate Modeler page.
+
+**Root fix:** Legacy default-project restore code still called the Model Atelier overlay's `open()` method automatically. The model editor now respects the active workspace route instead of overriding the Game tab. A remembered model starter or saved-model preference is preserved but will not hijack the Game Engine landing page; the regular game scene opens instead. Explicit Modeling tab clicks, the dedicated `modeler.html` URL and native editing remain supported.
+
+**Scope and safety:** Saved project bytes, local/account model defaults, untitled model drafts, VR, Sheep Tag, chat and independent tab state remain untouched. The native Edit Model shortcut enters the Modeling tab rather than bypassing the navigation boundary.
+
+**Validation:** Focused Android-size and Quest-size browser checks cover ordinary startup, user-selected Modeling, back navigation, model-starter default, locally saved model default, and the existing direct-Modeler/draft regression. Physical device acceptance remains with the owner.
+
 ## §E v11.187 — Game Engine and Modeler as separate tabbable workspaces (2026-10-31)
 
 **New architecture:** The existing Game Engine remains at `index.html`; the native Modeler now also has its own public `modeler.html` page. A compact Game Engine / Modeler tab strip switches routes in place, without reloading the page or discarding the active game scene. Both URLs work when opened directly.

@@ -1,0 +1,15 @@
+/* §E v11.188 — native top workspace navigation, Game first. */
+html .app>.topbar>.se187-game-tabs{order:-100!important}
+html .app>.topbar>.se187-game-tabs [data-se187-tab="game"]{order:0}
+html .app>.topbar>.se187-game-tabs [data-se187-tab="modeler"]{order:1}
+html .app>.topbar>.se187-game-tabs button[data-se187-tab]{
+ display:inline-flex!important;visibility:visible!important;opacity:1!important;
+ align-items:center!important;justify-content:center!important;
+}
+#modelAtelierPanel.se187-modeler-page[hidden]{display:none!important}
+#modelAtelierPanel.se187-modeler-page>.se187-model-tabs button[data-se187-tab]{
+ display:inline-flex!important;visibility:visible!important;align-items:center!important;justify-content:center!important;
+}
+@media(max-width:700px),(pointer:coarse){
+ html .app>.topbar>.se187-game-tabs{min-width:155px!important;max-width:64vw!important}
+}
