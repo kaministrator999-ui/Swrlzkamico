@@ -19,8 +19,15 @@ function se193XRKind(){
   se193.editorCaptureOpen?'editor-capture':'';
 }
 function se193XRDisposePanel(){
- if(se193.panel)scene.remove(se193.panel);
- for(const mesh of se193.buttons){mesh.geometry.dispose();mesh.material.dispose();}
+ if(se193.panel){
+  scene.remove(se193.panel);
+  // Dispose headings, backplates and buttons, not just clickable controls.
+  se193.panel.traverse(o=>{
+   if(o.isMesh){o.geometry?.dispose();
+    if(Array.isArray(o.material))o.material.forEach(m=>m.dispose());
+    else o.material?.dispose();}
+  });
+ }
  for(const t of se193.textures)t.dispose();
  se193.panel=null;se193.buttons=[];se193.textures=[];
 }
@@ -60,6 +67,16 @@ function se193XRPanelFor(kind){
    ['buildMenu','BUILDINGS'],['captureMenu','CAPTURE STUDIO'],['sessionMenu','GAME SESSION'],['exit','EXIT VR']];
  const group=new THREE.Group();group.name='§E · Sheep Tag immersive controls';
  const step=.16,top=(entries.length-1)*step/2;
+ // Single low-cost, unlit glass-like backplate keeps the menu readable
+ // over both bright meadows and the dark Dragon Den.
+ const glass=new THREE.Mesh(new THREE.PlaneGeometry(1.04,entries.length*step+.23),
+  new THREE.MeshBasicMaterial({color:0x071a2c,transparent:true,opacity:.88,
+   depthTest:false,depthWrite:false,side:THREE.DoubleSide,toneMapped:false}));
+ glass.position.z=-.018;glass.renderOrder=10006;group.add(glass);
+ const rim=new THREE.Mesh(new THREE.PlaneGeometry(.96,.008),
+  new THREE.MeshBasicMaterial({color:0x68e0d2,depthTest:false,depthWrite:false,
+   side:THREE.DoubleSide,toneMapped:false}));
+ rim.position.set(0,top+.13,.004);rim.renderOrder=10007;group.add(rim);
  for(let i=0;i<entries.length;i++){
   const [action,label]=entries[i],texture=se193XRPanelLine(label,i===0||action==='start');
   if(!texture)continue;
