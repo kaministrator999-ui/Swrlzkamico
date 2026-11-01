@@ -40,13 +40,20 @@ function se193XRPanelFor(kind){
  se193XRDisposePanel();
  if(!kind)return;
  const entries=kind==='menu'?
-  [['heading','SHEEP TAG · VR'],['start','▶ START GAME'],['editor','MAP EDITOR'],['capture','📷 SCREENSHOT'],['exit','EXIT VR']]:
+  se193.page==='help'?
+  [['heading','QUEST CONTROLS'],['info','TRIGGER · SELECT / ORDER'],['info','X · TOOLS   A · BUILD'],
+   ['info','Y · RECENTER   B · CANCEL'],['back','← BACK']]:
+  [['heading','SHEEP TAG · VR'],['start','▶ START GAME'],['editor','MAP EDITOR'],
+   ['help','VR CONTROLS'],['capture','📷 SCREENSHOT'],['exit','EXIT VR']]:
   se193.page==='build'?
   [['heading','BUILD TOOLS'],['farm','FARM · FREE'],['income','INCOME FARM'],['fort','FORTIFIED FARM'],['back','← BACK']]:
   se193.page==='capture'?
   [['heading','VR CAPTURE STUDIO'],['capture','CLEAN IMAGE'],['debug','DEBUG + DATA'],['stereo','STEREO 3D'],['back','← BACK']]:
+  se193.page==='session'?
+  [['heading','GAME SESSION'],['pause','PAUSE / RESUME'],['restart','RESTART ROUND'],
+   ['stop','STOP GAME'],['back','← BACK']]:
   [['heading','SHEEP TAG · VR'],['follow','◎ FOLLOW SHEEP'],['free','FREE CAMERA'],
-   ['buildMenu','BUILDINGS'],['captureMenu','CAPTURE STUDIO'],['stop','STOP GAME'],['exit','EXIT VR']];
+   ['buildMenu','BUILDINGS'],['captureMenu','CAPTURE STUDIO'],['sessionMenu','GAME SESSION'],['exit','EXIT VR']];
  const group=new THREE.Group();group.name='§E · Sheep Tag immersive controls';
  const step=.16,top=(entries.length-1)*step/2;
  for(let i=0;i<entries.length;i++){
@@ -57,7 +64,7 @@ function se193XRPanelFor(kind){
     depthTest:false,depthWrite:false,toneMapped:false}));
   mesh.name='Sheep VR '+action;mesh.userData.se193Action=action;
   mesh.position.set(0,top-i*step,0);mesh.renderOrder=10008;mesh.frustumCulled=false;
-  group.add(mesh);if(action!=='heading')se193.buttons.push(mesh);
+  group.add(mesh);if(action!=='heading'&&action!=='info')se193.buttons.push(mesh);
  }
  scene.add(group);se193.panel=group;se193.panelOpen=true;
  const pose=se191XRHeadPose();
@@ -107,7 +114,24 @@ function se193XRGameSelect(record){
   return true;
  }
  const hit=se192Raycast(record);
- const id=hit?.object?.userData?.id;
+ const cast=se192Ray(record);
+ // Runtime-built farms are session meshes, NOT authored actors. Ray-test both.
+ let dynamic=null;
+ if(cast){
+  const runtime=stSession.buildings.filter(b=>!b.authored&&b.hp>0&&b.mesh?.visible!==false);
+  const roots=runtime.map(b=>b.mesh),hits=cast.ray.intersectObjects(roots,true);
+  for(const test of hits){
+   const building=runtime.find(b=>{
+    let node=test.object;
+    while(node){if(node===b.mesh)return true;node=node.parent;}
+    return false;
+   });
+   if(building&&(!hit?.object||test.distance<hit.distance)){
+    dynamic=building;break;
+   }
+  }
+ }
+ const id=dynamic?.id||hit?.object?.userData?.id;
  const entity=id?[...state.units,...state.buildings].find(e=>e.id===id):null;
  if(entity){
   if(state.role==='wolf'&&(entity.kind==='sheep'||entity.kind?.startsWith('st-'))){
@@ -152,9 +176,12 @@ function se193XRAction(action){
   se193.lastAction='Returned to native map editor';return;
  }
  if(action==='exit'){void se181XRExit();return;}
+ if(action==='pause'){document.getElementById('pauseBtn')?.click();return;}
+ if(action==='restart'){document.getElementById('stRestart')?.click();return;}
  if(action==='stop'){document.getElementById('stopBtn')?.click();return;}
- if(action==='buildMenu'||action==='captureMenu'||action==='back'){
-  se193.page=action==='back'?'main':action==='buildMenu'?'build':'capture';
+ if(action==='buildMenu'||action==='captureMenu'||action==='sessionMenu'||action==='help'||action==='back'){
+  se193.page=action==='back'?'main':action==='buildMenu'?'build':
+   action==='captureMenu'?'capture':action==='help'?'help':'session';
   se193XRPanelFor(se193.kind);return;
  }
  if(action==='follow'){se193XRSnapFollow();return;}
