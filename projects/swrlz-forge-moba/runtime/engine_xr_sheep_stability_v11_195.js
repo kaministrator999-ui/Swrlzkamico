@@ -8,7 +8,7 @@ const se195={
  menuStartSeen:false,lastFrame:0,rayHits:0,fastRayHits:0,uiBlocked:0,
  fogPaints:0,fogSkips:0,fogAt:0,lastFogSession:null,
  rigPosition:new THREE.Vector3(),rigReady:false,rigAt:0,
- lastError:'',lastAction:'',lastStatusAt:0,restore:null
+ lastError:'',lastAction:'',lastStatusAt:0,restore:null,shadowSaved:null
 };
 const se195Gameplay=()=>!!se181XR.session&&renderer.xr.isPresenting&&se193XRGameActive();
 const se195Menu=()=>!!se181XR.session&&renderer.xr.isPresenting&&se193XRMenuActive();
@@ -378,6 +378,14 @@ function se195FogPrepare(s){
  f.texture.generateMipmaps=false;
  se195.fogAt=0;se195.lastFogSession=s;
 }
+// WebXR framebuffer scale must be selected BEFORE Quest presentation.
+// Sheep Tag's high actor/submesh count benefits from reducing the render
+// target modestly (0.72 vs 0.8, ~19% fewer pixels at otherwise equal setup).
+const se195OriginalFramebuffer=se191XRPrepareFramebuffer;
+se191XRPrepareFramebuffer=function(){
+ se191XR.framebufferScale=currentProject?.kind==='sheep-tag'?.72:.8;
+ return se195OriginalFramebuffer();
+};
 const se195OriginalCreateFog=stCreateFog;
 stCreateFog=function(s){
  se195OriginalCreateFog(s);
@@ -513,6 +521,10 @@ se193XRStart=function(){
  se195.menuStartSeen=false;se195.menuT=0;se195.menuFacing=null;
  se195.rigReady=false;se195.rigAt=0;se195.lastFrame=performance.now();
  se195.photo=false;se195.photoWasPaused=false;
+ if(currentProject?.kind==='sheep-tag'&&renderer.shadowMap){
+  se195.shadowSaved=renderer.shadowMap.enabled;
+  renderer.shadowMap.enabled=false; // no costly meadow shadow pass in stereo
+ }
 };
 const se195OldStop=se193XRCleanup;
 se193XRCleanup=function(){
@@ -520,6 +532,9 @@ se193XRCleanup=function(){
  se195DisposeRadial();se195CleanupHands();
  se195.mode='';se195.visible=false;se195.rigReady=false;
  se195.menuFacing=null;se195.lastFogSession=null;se195.fogAt=0;
+ if(se195.shadowSaved!==null&&renderer.shadowMap){
+  renderer.shadowMap.enabled=se195.shadowSaved;se195.shadowSaved=null;
+ }
  se195OldStop();
 };
 const se195OldXRFrame=se193XRFrame;
@@ -571,6 +586,10 @@ window.SWYRL_ENGINE_VR_POLISH=Object.freeze({
   fastRayHits:se195.fastRayHits,radialHits:se195.rayHits,
   uiBlocked:se195.uiBlocked,fogPaints:se195.fogPaints,
   fogThrottled:se195.fogSkips,
+  framebufferPreference:se191XR.framebufferScale,
+  shadowsEnabled:!!renderer.shadowMap?.enabled,
+  drawCalls:renderer.info?.render?.calls??null,
+  triangles:renderer.info?.render?.triangles??null,
   lastAction:se195.lastAction,lastError:se195.lastError
  }),
  photo:se195EnterPhoto,
