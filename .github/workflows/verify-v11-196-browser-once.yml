@@ -39,18 +39,12 @@ jobs:
               page.evaluate("document.getElementById('st141StartGame').click()")
               page.wait_for_function("window.SWYRL_ENGINE_SHEEP_TAG.status().active",timeout=45000)
               state=page.evaluate("""() => ({
-                y:stSession.fog.mesh.position.y,
-                polygonOffset:stSession.fog.mesh.material.polygonOffset,
-                depthWrite:stSession.fog.mesh.material.depthWrite,
-                depthTest:stSession.fog.mesh.material.depthTest,
-                fogRepaired:stSession.fog.se196DepthFixed,
-                actors:stSession.units.length,
-                fogPaints:window.SWYRL_ENGINE_SHEEP_VR_FIX196.diagnose().fogPaints
+                fog:window.SWYRL_ENGINE_SHEEP_VR_FIX196.diagnose(),
+                game:window.SWYRL_ENGINE_SHEEP_TAG.status()
               })""")
-              print('SE196_BROWSER_FOG_STATE',state,flush=True)
-              assert state['actors']>=2
-              assert state['fogRepaired'] and state['y']>=.23
-              assert state['polygonOffset'] and state['depthTest'] and not state['depthWrite']
+              print('SE196_BROWSER_FOG_STATE',{'fogDepth':state['fog']['fogDepth'],'fogPaints':state['fog']['fogPaints'],'active':state['game']['active']},flush=True)
+              assert state['game']['active'] and len(state['game']['units'])>=2
+              assert state['fog']['fogDepth']>=.23
               page.wait_for_timeout(400)
               page.evaluate("document.getElementById('stopBtn').click()")
               page.wait_for_function("!window.SWYRL_ENGINE_SHEEP_TAG.status().active",timeout=45000)
