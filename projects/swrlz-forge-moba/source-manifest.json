@@ -239,6 +239,6 @@
     "patches/v11_190_render_fps_vault_batch.py",
     "patches/v11_191_xr_black_view_recovery.py"
   ],
-  "finalBytes": 7183152,
-  "finalSha256": "823f27e58e34adabfb5610706accc7d81a79c9357b82927d1fd514c1d883fdf9"
+  "finalBytes": 7191207,
+  "finalSha256": "4e970410c4c992f4dabc6b9740e840aee4f3bcbeb8c43cfb70d5522018b96e6c"
 }
