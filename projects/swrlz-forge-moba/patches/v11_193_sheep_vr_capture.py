@@ -45,7 +45,7 @@ def apply(html):
         'beam.scale.z=se193XRGameActive()?Math.min(dist,3.2):dist; // short game beam, distant target reticle')
     html=once(html,
         'dot.position.copy(cast.origin).addScaledVector(cast.direction,dist);',
-        'dot.position.copy(cast.origin).addScaledVector(cast.direction,dist);\\n'
+        'dot.position.copy(cast.origin).addScaledVector(cast.direction,dist);\n'
         ' dot.scale.setScalar(se193XRGameActive()?THREE.MathUtils.clamp(dist/5,1,20):1);')
     # The existing creator palette remains authoritative: add one doorway to
     # the compact XR capture panel rather than a second permanent toolbar.
