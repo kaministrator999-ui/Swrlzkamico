@@ -67,10 +67,12 @@ function se197MeadowInfo(){
  let info=null;
  for(const actor of actors){
   actor.traverse(o=>{
-   if(o.name!=='stMeadowGround')return;
+   if(o.name!=='stMeadowGround'&&o.name!=='MoonbellWildwoodGround')return;
    const tex=o.material?.map;
-   info={mipmapped:tex?.minFilter===THREE.LinearMipmapLinearFilter,
-    anisotropy:tex?.anisotropy||0,generateMipmaps:!!tex?.generateMipmaps};
+   info={name:o.name,mipmapped:tex?.minFilter===THREE.LinearMipmapLinearFilter,
+    anisotropy:tex?.anisotropy||0,generateMipmaps:!!tex?.generateMipmaps,
+    textureWidth:tex?.image?.width||tex?.image?.naturalWidth||0,
+    questDownsampled:!!tex?.userData?.se197QuestDownsampled};
   });
   if(info)break;
  }
