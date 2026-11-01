@@ -6,7 +6,23 @@ class Vec3{
  clone(){return new Vec3(this.x,this.y,this.z)}
  addScaledVector(v,t){this.x+=v.x*t;this.y+=v.y*t;this.z+=v.z*t;return this}
  dot(v){return this.x*v.x+this.y*v.y+this.z*v.z}
+ sub(v){this.x-=v.x;this.y-=v.y;this.z-=v.z;return this}
+ length(){return Math.hypot(this.x,this.y,this.z)}
+ normalize(){const d=this.length()||1;this.x/=d;this.y/=d;this.z/=d;return this}
  copy(v){Object.assign(this,{x:v.x,y:v.y,z:v.z});return this}
+}
+class CylinderGeometry{
+ constructor(){this.disposed=false}
+ dispose(){this.disposed=true}
+}
+class BasicMaterial{
+ constructor(opts){Object.assign(this,opts);this.color={setHex:v=>{this.colorHex=v}};this.disposed=false}
+ dispose(){this.disposed=true}
+}
+class BuildMesh{
+ constructor(geometry,material){this.geometry=geometry;this.material=material;
+  this.position=new Vec3();this.quaternion={setFromUnitVectors(){return this}};
+  this.scale={y:1};this.userData={};this.visible=false}
 }
 class MeshTree{
  constructor(name){this.name=name;this.children=[{
@@ -15,10 +31,16 @@ class MeshTree{
  }];this.position=new Vec3();this.quaternion={clone:()=>({}),copy(){return this}};this.visible=false;this.disposed=false;}
  traverse(fn){fn(this);for(const o of this.children)fn(o)}
 }
+const rightRecord={cast:{origin:new Vec3(0,8.7,-31.9),
+ direction:new Vec3(0,0,1)},se192:{
+ beam:{visible:true},
+ dot:{position:new Vec3(),quaternion:{setFromUnitVectors(){return this}},
+ visible:false}}};
+let originalRayRenders=0;
 const scene={children:[],add(o){this.children.push(o)},remove(o){this.children=this.children.filter(v=>v!==o)}};
 const ctx={
  console,Math,scene,performance:{now:()=>now},
- THREE:{Vector3:Vec3,MathUtils:{clamp:(n,a,b)=>Math.max(a,Math.min(b,n))},
+ THREE:{Vector3:Vec3,CylinderGeometry,MeshBasicMaterial:BasicMaterial,Mesh:BuildMesh,MathUtils:{clamp:(n,a,b)=>Math.max(a,Math.min(b,n))},
   CanvasTexture:class{constructor(c){this.canvas=c;this.disposed=false}dispose(){this.disposed=true;}},
   SRGBColorSpace:'srgb'},
  window:{},
@@ -34,6 +56,9 @@ const ctx={
  terrainHeight:(x,z)=>.01*x,
  se191XRHeadPose:()=>({eye:new Vec3(0,9.1,-31.9)}),
  se192Ray:record=>record?.cast,
+ se192InputRecord:hand=>hand==='right'?rightRecord:null,
+ se192RenderRay:()=>{originalRayRenders++},
+ se203Dummy:0,
  se193XRGameGround:()=>{physicalCalls++;return new Vec3(99,0,99)},
  se195Text:()=>{throw Error('should replace old textures')},
  se195MakeRadial:null,se195SetVisible:null,se195PositionRadial:()=>{positioned++},
@@ -114,6 +139,26 @@ assert.equal(ctx.se193XRGameGround({cast:null}).x,99,'wrist menu never hijacks c
 ctx.se195.visible=false;
 assert.equal(state().forwardAimSamples,5);
 assert.equal(state().physicalAimSamples,1);
+// Forward-target visual MUST end at the mapped real build ground point.
+ctx.se192RenderRay(rightRecord,{});
+const guide=scene.children.find(o=>o.name==='Quest Sheep Tag controller to virtual building target');
+assert.ok(guide?.visible,'reusable link between hand and mapped site');
+assert.equal(rightRecord.se192.beam.visible,false,'original forward beam hidden while building');
+const chosen=ctx.se203GroundFromForwardRay(rightRecord);
+assert.equal(rightRecord.se192.dot.position.x,chosen.x);
+assert.equal(rightRecord.se192.dot.position.z,chosen.z,
+ 'reticle agrees with building placement rather than floating in the air');
+const guideCreated=guide;
+ctx.se192RenderRay(rightRecord,{});
+assert.equal(scene.children.find(o=>o.name==='Quest Sheep Tag controller to virtual building target'),
+ guideCreated,'single GPU guide reused every frame');
+ctx.se195.visible=true;
+ctx.se192RenderRay(rightRecord,{});
+assert.equal(guide.visible,false,'menu blocks build guide');
+assert.equal(rightRecord.se192.beam.visible,true,'native beam restored for menu selection');
+ctx.se195.visible=false;
+ctx.se192RenderRay(rightRecord,{});
+assert.equal(guide.visible,true,'build guide restored after closing menu');
 // Page geometry and small canvas textures must be cached/reused.
 ctx.se195MakeRadial(true);
 const rootMain=ctx.se195.radial;
@@ -148,7 +193,8 @@ assert.equal(handUpdates,1);
 const cachedTextures=[...internal.menuTextures.values()];
 assert.equal(cachedTextures.length,3);
 ctx.se193XRCleanup();
-assert.equal(scene.children.length,0,'both detached and active menu roots released');
+assert.equal(scene.children.length,0,'both detached and active menu roots and guide released');
+assert.ok(guide.geometry.disposed,'long beam GPU geometry freed on exit');
 assert.ok(rootMain.children[0].geometry.disposed);
 assert.ok(rootCapture.children[0].material.disposed);
 assert.ok(cachedTextures.every(t=>t.disposed),'all cached textures disposed once on XR exit');
@@ -163,7 +209,7 @@ assert.ok(original.includes('if(stUi.build&&!se195.visible&&!se195.photo&&now-se
  'modal menu suppresses heavy house preview validation');
 assert.ok(original.includes('se195.visible||se195.photo'),
  'modal menu also suspends cosmetic foundation rebuilding');
-console.log(JSON.stringify({pass:true,checks:35,forwardSamples:state().forwardAimSamples,
+console.log(JSON.stringify({pass:true,checks:43,forwardSamples:state().forwardAimSamples,
  cameraAbove:state().cameraAbove,menuBuilds:oldMenuBuilds,
  menuReuses:state().menuPageReuses,canvasTextures:canvases,
  resourcesDisposed:state().menuResourcesDisposed}));
