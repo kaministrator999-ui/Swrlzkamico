@@ -1,3 +1,19 @@
+## §E v11.192 — Quest 2 spatial Game Editor, native tools, locomotion and target rays (2026-10-31)
+
+**Physical Quest report:** Dragon Den immersive rendering and EXIT VR now work. Owner reports thin disconnected beams floating in air, pointer mismatch with Quest target, zero locomotion, camera-facing scene labels shifting as the head moves, and lack of spatial map-editing tools.
+
+**One live XR editor layer:** Extend the *existing* immersive renderer and tracked `getController(index)` target-ray poses, rather than starting a second game or rendering loop. Draw tapered world-space beams with two target rings per controller, using the same ray origin/direction as selectable editor actor collisions, the EXIT sign and in-world palette. Add a device-local, opt-in yaw-trim action (+/-0.012 radians per click) to align our visual aiming with the Quest UI pointer where browser/device offsets differ.
+
+**VR navigation:** Left thumbstick glides through the game scene (no gravity); left grip + stick enables vertical flight; right thumbstick snap-turns by 20 degrees. Position/heading changes use WebXR reference-space offsets, preserving headset 6DoF and the project's authored Arrival Court spawn rather than moving scene geometry.
+
+**Native authoring:** A fixed-in-world headset palette provides Select, Grab/Move, Place Wall, Place Rock, Undo, aim trim and EXIT VR. Quest trigger selects game editor actors by the calibrated ray; right grip drags a selected actor using its original parent transform and a native single undo transaction. Input capture is from actual connected Quest gamepads, not the Studio's fake diagnostic input; left X toggles the palette and right A toggles the interaction mode. Object placement uses existing native `createPrefab`, `selectActor`, scene hierarchy and transaction functions. Do not change saved objects or enable edits while a game is in Play/Simulate.
+
+**Stable world text:** Native `WorkspaceStationLabel` billboard sprites become fixed planar 3D labels when entering Quest VR and are restored on exit. No texture deletion, no change to authored sign JSON, no edit to world-space actor coordinates.
+
+**Boundaries:** This is a usable first VR **game-map editing** layer, not full Model Atelier VR sculpt, two-hand skeletal rigging, advanced node edits, or cloud controller-profile binding. An immersive palette isn't a replacement for the complete desktop UI. Device FPS and aiming/locomotion calibration require physical Quest acceptance. Keep original mobile/desktop editor, 2D Modeler, scene/project state and Quest menu exit unchanged.
+
+**Testing:** Fast mocked native WebXR ray/controller, undo/transaction, billboard and reference-space tests plus exact HTML/asset hash verification; never install Chromium automatically.
+
 ## §E v11.191 — immersive Quest 2 black-view repair and Arrival Court spawn (2026-10-31)
 
 **Owner report:** Pressing Enter VR in the game editor on Meta Quest 2 entered an immersive black display. The original WebXR gateway initiated local-floor but did not offset tracking coordinates to the saved project arrival zone; the authored Dragon Den Arrival Court is at [0, 0.02, 14.1]. A black headset view may also indicate a renderer or headset-frame failure; the source alone cannot establish which.

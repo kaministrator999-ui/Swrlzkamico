@@ -1,14 +1,5 @@
 name: §E v11.191 XR arrival and recovery fast verification
 on:
-  push:
-    branches: [main]
-    paths:
-      - "projects/swrlz-forge-moba/source-manifest.json"
-      - "projects/swrlz-forge-moba/patches/v11_191_xr_black_view_recovery.py"
-      - "projects/swrlz-forge-moba/runtime/engine_xr_black_screen_recovery_v11_191.js"
-      - "projects/swrlz-forge-moba/tests/test_v11_191_xr_recovery.cjs"
-      - "projects/swrlz-forge-moba/scripts/verify_v11_191_release.py"
-      - ".github/workflows/measure-se-v11-191.yml"
   workflow_dispatch:
 permissions:
   contents: read

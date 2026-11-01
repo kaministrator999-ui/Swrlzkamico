@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.191",
+  "name": "§wyrl§ Engine v11.192",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_191.html",
+  "finalArtifact": "swyrl_engine_v11_192.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -237,7 +237,8 @@
     "patches/v11_188_game_first_tabs.py",
     "patches/v11_189_mobile_performance.py",
     "patches/v11_190_render_fps_vault_batch.py",
-    "patches/v11_191_xr_black_view_recovery.py"
+    "patches/v11_191_xr_black_view_recovery.py",
+    "patches/v11_192_spatial_vr_editor.py"
   ],
   "finalBytes": 7191207,
   "finalSha256": "4e970410c4c992f4dabc6b9740e840aee4f3bcbeb8c43cfb70d5522018b96e6c"
