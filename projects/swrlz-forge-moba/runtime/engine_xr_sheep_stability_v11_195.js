@@ -8,7 +8,8 @@ const se195={
  menuStartSeen:false,lastFrame:0,rayHits:0,fastRayHits:0,uiBlocked:0,
  fogPaints:0,fogSkips:0,fogAt:0,lastFogSession:null,
  rigPosition:new THREE.Vector3(),rigReady:false,rigAt:0,
- lastError:'',lastAction:'',lastStatusAt:0,restore:null,shadowSaved:null
+ lastError:'',lastAction:'',lastStatusAt:0,restore:null,shadowSaved:null,
+ referenceBase:null,referenceOffset:new THREE.Vector3(),referenceWrites:0
 };
 const se195Gameplay=()=>!!se181XR.session&&renderer.xr.isPresenting&&se193XRGameActive();
 const se195Menu=()=>!!se181XR.session&&renderer.xr.isPresenting&&se193XRMenuActive();
@@ -166,7 +167,7 @@ function se195EnterPhoto(){
 function se195LeavePhoto(){
  if(!se195.photo)return;
  se195.photo=false;
- if(se195Gameplay()&&!se195.photoWasPaused&&paused)
+ if(stSession&&currentProject?.kind==='sheep-tag'&&!se195.photoWasPaused&&paused)
   document.getElementById('pauseBtn')?.click();
  se195.photoWasPaused=false;
  se195SetVisible(true);
@@ -291,6 +292,29 @@ function se195CleanupHands(){
  }
  se195.hands.clear();
 }
+// Reuse one XR reference space after the authored landing offset.
+// Otherwise each tick nests a transform inside the previous reference space.
+function se195MoveRig(dx,dy,dz){
+ if(![dx,dy,dz].every(Number.isFinite))return false;
+ const current=renderer.xr.getReferenceSpace?.();
+ if(!current?.getOffsetReferenceSpace||typeof XRRigidTransform!=='function')
+  return se192MoveBy(dx,dy,dz);
+ try{
+  if(!se195.referenceBase){
+   se195.referenceBase=current;se195.referenceOffset.set(0,0,0);
+  }
+  const next=se195.referenceOffset.clone().add(new THREE.Vector3(dx,dy,dz));
+  const shifted=se195.referenceBase.getOffsetReferenceSpace(new XRRigidTransform({
+   x:-next.x,y:-next.y,z:-next.z
+  }));
+  renderer.xr.setReferenceSpace(shifted);
+  se195.referenceOffset.copy(next);se195.referenceWrites++;
+  return true;
+ }catch(e){
+  se195.lastError='XR rig: '+String(e?.message||e).slice(0,140);
+  return false;
+ }
+}
 function se195FollowCamera(dt){
  const s=stSession;
  if(!s||!se195Gameplay())return;
@@ -334,7 +358,7 @@ function se195FollowCamera(dt){
  const speed=se195.rigAt&&performance.now()-se195.rigAt<1100?22:8;
  const maximum=Math.max(0,dt*speed);
  if(maximum&&delta.length()>maximum)delta.setLength(maximum);
- if(delta.lengthSq()>0.00008)se192MoveBy(delta.x,delta.y,delta.z);
+ if(delta.lengthSq()>.0004)se195MoveRig(delta.x,delta.y,delta.z);
 }
 function se195MenuCamera(dt){
  if(!se195Menu())return;
@@ -356,7 +380,7 @@ function se195MenuCamera(dt){
  wanted.y=7.8;
  const delta=wanted.sub(pose.eye),step=Math.max(0,dt*7);
  if(step&&delta.length()>step)delta.setLength(step);
- if(delta.lengthSq()>.0001)se192MoveBy(delta.x,delta.y,delta.z);
+ if(delta.lengthSq()>.0001)se195MoveRig(delta.x,delta.y,delta.z);
 }
 function se195FogPrepare(s){
  if(!se195Active()||!s?.fog)return;
@@ -521,6 +545,8 @@ se193XRStart=function(){
  se195.menuStartSeen=false;se195.menuT=0;se195.menuFacing=null;
  se195.rigReady=false;se195.rigAt=0;se195.lastFrame=performance.now();
  se195.photo=false;se195.photoWasPaused=false;
+ se195.referenceBase=null;se195.referenceOffset.set(0,0,0);
+ se195.referenceWrites=0;
  if(currentProject?.kind==='sheep-tag'&&renderer.shadowMap){
   se195.shadowSaved=renderer.shadowMap.enabled;
   renderer.shadowMap.enabled=false; // no costly meadow shadow pass in stereo
@@ -532,6 +558,7 @@ se193XRCleanup=function(){
  se195DisposeRadial();se195CleanupHands();
  se195.mode='';se195.visible=false;se195.rigReady=false;
  se195.menuFacing=null;se195.lastFogSession=null;se195.fogAt=0;
+ se195.referenceBase=null;se195.referenceOffset.set(0,0,0);
  if(se195.shadowSaved!==null&&renderer.shadowMap){
   renderer.shadowMap.enabled=se195.shadowSaved;se195.shadowSaved=null;
  }
@@ -586,6 +613,7 @@ window.SWYRL_ENGINE_VR_POLISH=Object.freeze({
   fastRayHits:se195.fastRayHits,radialHits:se195.rayHits,
   uiBlocked:se195.uiBlocked,fogPaints:se195.fogPaints,
   fogThrottled:se195.fogSkips,
+  referenceWrites:se195.referenceWrites,referenceDepth:'fixed-base',
   framebufferPreference:se191XR.framebufferScale,
   shadowsEnabled:!!renderer.shadowMap?.enabled,
   drawCalls:renderer.info?.render?.calls??null,
