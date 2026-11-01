@@ -12,9 +12,9 @@ short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 
 ## §E v11.197 — Sheep Tag meadow aliasing, LAN fog and efficient flat camera (2026-10-31)
 
-**Screenshot follow-up:** the 1-pixel periodic grid baked into the original 1024px meadow texture could shimmer and form moiré at shallow camera angles even after the separate fog plane depth fix. v11.197 removes that grid without changing authored ground/paths, applies anisotropic mipmap filtering to the native meadow, blocks the solo fog painter from overwriting LAN team fog, and replaces the flat-screen camera's unnecessary per-frame full `stStatus()` snapshot with native controlled/selected actor position tracking. Existing Quest camera/radial, capture tools, LAN authority, starter projects and saves remain unchanged.
+**Screenshot follow-up:** the 1-pixel periodic grid baked into the original 1024px meadow texture could shimmer and form moiré at shallow camera angles even after the separate fog plane depth fix. v11.197 removes that grid without changing authored ground/paths, configures mipmap filtering for both the old meadow and current 4K Moonbell Wildwood, prefiltering Wildwood to 2K for Quest Browser, blocks the solo fog painter from overwriting LAN team fog, and replaces the flat-screen camera's unnecessary per-frame full `stStatus()` snapshot with native controlled/selected actor position tracking. Existing Quest camera/radial, capture tools, LAN authority, starter projects and saves remain unchanged.
 
-**Authoritative source:** 229 ordered patches, 68 assets, 7,299,654-byte HTML SHA-256 `25c080d6c5fe9982a2feb28d7a529a5b315f0534760f2dab2deb1551fbafd821`. Details and device acceptance limits: `docs/SHEEP_MEADOW_VISUAL_STABILITY_V11_197.md`. Actual Quest 2 long-session GPU/stereo verification remains pending.
+**Authoritative source:** 229 ordered patches, 68 assets, 7,300,640-byte HTML SHA-256 `315e2acb7f54118fce4e428e534cceac14a0ecbaac596291df29ba6dbd7cc54d`. Details and device acceptance limits: `docs/SHEEP_MEADOW_VISUAL_STABILITY_V11_197.md`. Actual Quest 2 long-session GPU/stereo verification remains pending.
 
 ## §E v11.196 — Sheep Tag browser fog and Quest VR menu/camera recovery (2026-10-31)
 
