@@ -59,8 +59,9 @@ const ctx={THREE,scene,window:{},performance:{now:()=>state.time},Number,Math,Ma
  paused:false,actors:[],seLevelsMenuActors:()=>[],stRules:()=>({bounds:40}),
  seLevels:{playingMenu:false},seLevelsOwns:()=>false,seLevelsCurrent:()=>({role:'menu'})
 };
-vm.runInNewContext(script,ctx);
-function evaluate(s){return vm.runInNewContext(s,ctx);}
+const sandbox=vm.createContext(ctx);
+vm.runInContext(script,sandbox);
+function evaluate(s){return vm.runInContext(s,sandbox);}
 const menu=evaluate("se195Options('menu','main')");
 assert.equal(menu.length,5);
 assert.equal(menu.some(([action])=>action==='exit'),false,'Meta system controls exit');
@@ -86,7 +87,7 @@ const previous=state.rayCount;
 assert.equal(evaluate('se195Select({index:1})'),true,'menu misses consume trigger');
 assert.equal(state.rayCount,previous,'menu cannot select background house');
 evaluate('se195.visible=false;');
-const f={mesh:{position:{y:.055},material:{}},canvas:{width:150,height:150},
+const f={width:40,mesh:{position:{y:.055},material:{}},canvas:{width:150,height:150},
  softMemory:{width:150,height:150},texture:{}};
 ctx.stSession.fog=f;
 evaluate('se195.lastFogSession=stSession;se195.fogAt=0;');
