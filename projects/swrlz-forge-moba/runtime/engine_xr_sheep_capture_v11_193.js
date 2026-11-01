@@ -2,7 +2,7 @@
 // Single existing Three/WebXR renderer; never persists gameplay objects into authored scenes.
 // Browser/mobile Sheep Tag remains owned by st140Menu, stUi and stCommand.
 const se193={
- kind:'',page:'main',menuDismissed:false,panel:null,buttons:[],textures:[],panelOpen:true,
+ kind:'',page:'main',menuDismissed:false,editorCaptureOpen:false,panel:null,buttons:[],textures:[],panelOpen:true,
  follow:true,angle:0,zoom:1,focus:new THREE.Vector3(),ready:false,lastFrame:0,
  held:new Map(),previewAt:0,lastAction:'',lastError:'',capture:null,captureCount:0
 };
@@ -15,7 +15,8 @@ function se193XRGameActive(){
  return currentProject?.kind==='sheep-tag'&&!!stSession&&!stSession.simulate;
 }
 function se193XRKind(){
- return se193XRMenuActive()?'menu':se193XRGameActive()?'game':'';
+ return se193XRMenuActive()?'menu':se193XRGameActive()?'game':
+  se193.editorCaptureOpen?'editor-capture':'';
 }
 function se193XRDisposePanel(){
  if(se193.panel)scene.remove(se193.panel);
@@ -39,7 +40,10 @@ function se193XRPanelLine(text,highlight=false){
 function se193XRPanelFor(kind){
  se193XRDisposePanel();
  if(!kind)return;
- const entries=kind==='menu'?
+ const entries=kind==='editor-capture'?
+  [['heading','§E · VR CAPTURE'],['capture','CLEAN SCENE PNG'],
+   ['debug','DEBUG PNG + JSON'],['stereo','STEREO 3D PNG'],['back','← EDITOR']]:
+  kind==='menu'?
   se193.page==='help'?
   [['heading','QUEST CONTROLS'],['info','TRIGGER · SELECT / ORDER'],['info','X · TOOLS   A · BUILD'],
    ['info','Y · RECENTER   B · CANCEL'],['back','← BACK']]:
@@ -176,9 +180,17 @@ function se193XRAction(action){
   se193.lastAction='Returned to native map editor';return;
  }
  if(action==='exit'){void se181XRExit();return;}
+ if(action==='editorCapture'){
+  se193.editorCaptureOpen=true;se192PanelsVisible(false);
+  se193.kind='';return;
+ }
  if(action==='pause'){document.getElementById('pauseBtn')?.click();return;}
  if(action==='restart'){document.getElementById('stRestart')?.click();return;}
  if(action==='stop'){document.getElementById('stopBtn')?.click();return;}
+ if(action==='back'&&se193.editorCaptureOpen){
+  se193.editorCaptureOpen=false;se193XRDisposePanel();se193.kind='';
+  se192PanelsVisible(true);return;
+ }
  if(action==='buildMenu'||action==='captureMenu'||action==='sessionMenu'||action==='help'||action==='back'){
   se193.page=action==='back'?'main':action==='buildMenu'?'build':
    action==='captureMenu'?'capture':action==='help'?'help':'session';
@@ -197,12 +209,17 @@ function se193XRSelect(record){
  if(!se181XR.session||!renderer.xr.isPresenting)return false;
  const panel=se193XRPanelHit(record);
  if(panel){se193XRAction(panel.ui.slice(6));return true;}
+ if(se193.editorCaptureOpen)return true; // Modal capture UI blocks editor actor mutations.
  if(se193XRMenuActive())return true; // The 2D title is intentionally not targetable in XR.
  if(se193XRGameActive())return se193XRGameSelect(record);
  return false;
 }
 function se193XRGameButton(record,button){
  const kind=se193XRKind();if(!kind)return false;
+ if(kind==='editor-capture'){
+  if(button==='x')se193XRAction('back');
+  return true;
+ }
  if(button==='x'){
   if(kind==='game'&&se193.panel){
    se193.panelOpen=!se193.panelOpen;se193.panel.visible=se193.panelOpen;
@@ -379,12 +396,14 @@ function se193XRFrame(){
  }
 }
 function se193XRStart(){
- se193.kind='';se193.ready=false;se193.follow=true;se193.menuDismissed=false;
+ se193.kind='';se193.ready=false;se193.follow=true;
+ se193.menuDismissed=false;se193.editorCaptureOpen=false;
  se193.lastFrame=performance.now();
  se193.held.clear();se193XRDownloadButton();
 }
 function se193XRCleanup(){
  se193XRDisposePanel();se193.kind='';se193.ready=false;
+ se193.editorCaptureOpen=false;
  se193.lastFrame=0;se193.held.clear();
  // Captures intentionally survive leaving XR so Quest can download them in 2D.
 }
