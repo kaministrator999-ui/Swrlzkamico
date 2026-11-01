@@ -69,7 +69,8 @@ function se193XRSnapFollow(){""")
     notes,n=json.JSONDecoder().raw_decode(html[at:])
     notes.update(title='Quest Sheep Tag: pullback framing, joystick-only controls, smoother building performance',
       date='2026-11-01',changes=[
-       'Move the Quest 2 overhead camera farther behind the controlled sheep (22 horizontal, 25 height, default 1.5 zoom plus a 3.5-unit rear composition bias). Keeps sheep higher in a neutral forward-looking headset view without ever overriding headset pitch, translation or physical head movement.',
+       'Move the Quest 2 camera BACK only, to 21 horizontal units at 1.4 zoom plus 2.5 world units rearward bias. Keep the previous 26 unit vertical camera configuration at the same 1.4 zoom, preserving its exact 36.4-unit effective height; never raise the camera or override physical headset pitch/motion.',
+       'Draw a dominant cyan ring at the true native sheep collision radius and a much fainter model-sized selection halo around its visible wool/head. These deliberately differ because the sheep model overhangs its smaller physics radius. Rings track the user-controlled sheep at ground height, reuse the same meshes, and dispose on XR exit.',
        'Immersive VR right trigger over empty ground no longer issues click-to-move orders; left thumbstick remains sole locomotion. Ray selection of units/houses, targeting, rescue, building placement, right-stick orbit/zoom, wrist radial and editor controls remain.',
        'Skip heavyweight 2D status/fog snapshots when constructing Quest building ghost previews. Read current authoritative controlledId and visible buildings directly with stSeenByRole to respect fog.',
        'Skip redundant preview validations for effectively unchanged ray points, with a 520ms expiry to catch moving blockers; maintain same native collision and placement rules.',
