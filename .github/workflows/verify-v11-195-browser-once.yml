@@ -15,6 +15,8 @@ jobs:
         with: {python-version: "3.11"}
       - name: Build exact sealed candidate and install browser smoke runner
         run: |
+          node --check projects/swrlz-forge-moba/runtime/engine_xr_sheep_stability_v11_195.js
+          node projects/swrlz-forge-moba/tests/test_v11_195_quest_stability.cjs
           python projects/swrlz-forge-moba/scripts/verify_v11_195_release.py --output dist/quest195 >/tmp/build-195.log
           python -m pip install --quiet "playwright>=1.50,<2"
           which google-chrome || which google-chrome-stable || which chromium
