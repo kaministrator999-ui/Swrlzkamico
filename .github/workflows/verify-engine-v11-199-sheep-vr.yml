@@ -2,7 +2,16 @@ name: Check §E v11.199 Sheep VR candidate
 on:
   push:
     branches:
+      - main
       - feat/sheep-vr-left-stick-follow-v11-199
+    paths:
+      - 'projects/swrlz-forge-moba/source-manifest.json'
+      - 'projects/swrlz-forge-moba/patches/v11_199_sheep_vr_thumbstick_follow.py'
+      - 'projects/swrlz-forge-moba/runtime/engine_xr_sheep_thumbstick_v11_199.js'
+      - 'projects/swrlz-forge-moba/tests/test_v11_199_sheep_vr.cjs'
+      - 'projects/swrlz-forge-moba/scripts/verify_v11_199_release.py'
+      - '.github/workflows/verify-engine-v11-199-sheep-vr.yml'
+      - '.github/workflows/deploy-swrlz-forge-moba.yml'
   pull_request:
     paths:
       - 'projects/swrlz-forge-moba/**'
@@ -18,6 +27,15 @@ jobs:
         run: |
           node --check projects/swrlz-forge-moba/runtime/engine_xr_sheep_thumbstick_v11_199.js
           node projects/swrlz-forge-moba/tests/test_v11_199_sheep_vr.cjs
+          node projects/swrlz-forge-moba/tests/test_v11_198_editor_6dof_flight_gizmo.cjs
+          node projects/swrlz-forge-moba/tests/test_v11_197_sheep_visual_stability.cjs
+          node projects/swrlz-forge-moba/tests/test_v11_196_quest_fog_menu.cjs
+          node projects/swrlz-forge-moba/tests/test_v11_195_quest_stability.cjs
+          node projects/swrlz-forge-moba/tests/test_v11_194_emberfall_arpg.cjs
+          node projects/swrlz-forge-moba/tests/test_v11_193_sheep_vr.cjs
+          node projects/swrlz-forge-moba/tests/test_v11_192_native_vr_editor.cjs
+          node projects/swrlz-forge-moba/tests/test_v11_191_xr_recovery.cjs
+          node projects/swrlz-forge-moba/tests/test_v11_181_xr_session_lifecycle.cjs
       - name: Build source and record exact output for manifest sealing
         run: |
           python3 projects/swrlz-forge-moba/build_space.py --output "$RUNNER_TEMP/se-v11-199"

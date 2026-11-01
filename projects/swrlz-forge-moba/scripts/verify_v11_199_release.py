@@ -31,7 +31,7 @@ assert len(r['assets'])==68
 for rel,meta in r['assets'].items():
     data=(out/rel).read_bytes()
     assert len(data)==meta['bytes'] and hashlib.sha256(data).hexdigest()==meta['sha256'],rel
-for text in ['SWYRL_ENGINE_DEPLOY_MARKER: V11_199_SPATIAL_EDITOR_FLIGHT_GIZMOS',
+for text in ['SWYRL_ENGINE_DEPLOY_MARKER: V11_199_SHEEP_VR_THUMBSTICK_FOLLOW',
              '<title>§wyrl§ Engine · Maker v11.199</title>',
              "window.SWRLZ_FORGE_BUILD={version:'v11.199'",
              "const PROTOCOL='swrlz-forge-chat-v1'",'seChatAccountPanel','chatAction:seChatAtelierApply',
@@ -43,7 +43,7 @@ for marker in ['seChatOutsideDismissV11180','se180InstallDismiss();','function s
     assert marker in s,marker
 for marker in ['seImmersiveXRV11181','se181EnterVR','window.SWYRL_ENGINE_XR=Object.freeze','renderer.setAnimationLoop(tick);',"requestSession('immersive-vr'",'se181XRRender();se192VRFrame();se193XRFrame();renderer.render(scene,camera);','se181XRSelect(record)','se181XRActiveModel()','se181XRMakeExitPanel','SWYRL_ENGINE_XR','se179VRControlsOpen']:
     assert marker in s,marker
-for marker in ['se182ProfessionalUI','SWYRL_ENGINE_UI_AUDIT','se183ProjectUI','se184SavedGallery','SWYRL_ENGINE_SAVED_DEFAULT','se184ExtractPreview','se184RenderLocalProjects','se184RenderCloudProjects','se184KickCloudStartup','se185WispBootAtelier','se185InstallAtelierToggle','se185-top-collapsed','data-se186-early','se186StartupBeforeEngine','se186BootRecovery','se187SeparateWorkspaces','se188GameFirstTabs','se189MobilePerformance','se190RenderAudit','se190CountSubmittedFrame','window.SWYRL_ENGINE_XR_RECOVERY','se191XRInstallLanding();','se191XRRenderFrame();','window.SWYRL_ENGINE_VR_EDITOR','se192VRFrame();','se193XRFrame();','se193XRCleanup();','se193XRStart();','window.SWYRL_ENGINE_SHEEP_VR','se192VRCleanup();','se192VRStart();','se192FreezeBillboards();','se191XRMakeBeacon();','se191XRCleanup();','se191XRStartWatchdog(requested);','SWYRL_ENGINE_PERFORMANCE_V11190','se190ComparePresets','const ribBrass=new THREE.InstancedMesh(','se189MobileBoost','se189ResizeIfNeeded','SWYRL_ENGINE_PERFORMANCE_V11189','se187WorkspaceTabs','se187-modeler-page','se187-workspace-tabs','SWYRL_ENGINE_WORKSPACES','V11_199_SPATIAL_EDITOR_FLIGHT_GIZMOS','se183LevelsToggle','se183StartLoad','se183CloudListCached','SWYRL_ENGINE_PROJECT_LOAD','se179VRControlsOpen','se181EnterVR','seChatOutsideDismissV11180']:
+for marker in ['se182ProfessionalUI','SWYRL_ENGINE_UI_AUDIT','se183ProjectUI','se184SavedGallery','SWYRL_ENGINE_SAVED_DEFAULT','se184ExtractPreview','se184RenderLocalProjects','se184RenderCloudProjects','se184KickCloudStartup','se185WispBootAtelier','se185InstallAtelierToggle','se185-top-collapsed','data-se186-early','se186StartupBeforeEngine','se186BootRecovery','se187SeparateWorkspaces','se188GameFirstTabs','se189MobilePerformance','se190RenderAudit','se190CountSubmittedFrame','window.SWYRL_ENGINE_XR_RECOVERY','se191XRInstallLanding();','se191XRRenderFrame();','window.SWYRL_ENGINE_VR_EDITOR','se192VRFrame();','se193XRFrame();','se193XRCleanup();','se193XRStart();','window.SWYRL_ENGINE_SHEEP_VR','se192VRCleanup();','se192VRStart();','se192FreezeBillboards();','se191XRMakeBeacon();','se191XRCleanup();','se191XRStartWatchdog(requested);','SWYRL_ENGINE_PERFORMANCE_V11190','se190ComparePresets','const ribBrass=new THREE.InstancedMesh(','se189MobileBoost','se189ResizeIfNeeded','SWYRL_ENGINE_PERFORMANCE_V11189','se187WorkspaceTabs','se187-modeler-page','se187-workspace-tabs','SWYRL_ENGINE_WORKSPACES','V11_199_SHEEP_VR_THUMBSTICK_FOLLOW','se183LevelsToggle','se183StartLoad','se183CloudListCached','SWYRL_ENGINE_PROJECT_LOAD','se179VRControlsOpen','se181EnterVR','seChatOutsideDismissV11180']:
     assert marker in s,marker
 assert 'seLevelRawLoadProject(structuredClone(chosen.data)' not in s
 assert 'const result=seLevelRawLoadProject(target,...options);' in s
@@ -69,7 +69,7 @@ if args.request:
     request=json.loads((ROOT/'DEPLOY_REQUEST.json').read_text())
     assert request['releaseVersion']=='v11.199'
     assert request['sourceIntegritySha256']==m['finalSha256']
-    assert request['deployMarker']=='SWYRL_ENGINE_DEPLOY_MARKER: V11_199_SPATIAL_EDITOR_FLIGHT_GIZMOS'
+    assert request['deployMarker']=='SWYRL_ENGINE_DEPLOY_MARKER: V11_199_SHEEP_VR_THUMBSTICK_FOLLOW'
     repo=ROOT.parents[1]
     head=subprocess.check_output(['git','rev-parse','HEAD'],cwd=repo,text=True).strip()
     paths=subprocess.check_output(['git','diff-tree','--no-commit-id','--name-only','-r',head],cwd=repo,text=True).splitlines()
