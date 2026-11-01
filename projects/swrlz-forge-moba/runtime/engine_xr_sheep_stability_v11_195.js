@@ -573,6 +573,9 @@ se193XRFrame=function(){
  const kind=se195Mode();
  if(kind!==se195.mode){
   const prior=se195.mode;se195.mode=kind;se195.page='main';
+  // Rebase after game/menu transitions; native editor fly movement may have
+  // moved the reference space while this adapter did not own the camera.
+  se195.referenceBase=null;se195.referenceOffset.set(0,0,0);
   se195.rigReady=false;se195.menuT=0;se195.menuFacing=null;
   // Menu is visible when entering the cinematic; gameplay/editor are clean
   // until X summons the wrist dial.
