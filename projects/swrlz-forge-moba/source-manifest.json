@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.196",
+  "name": "§wyrl§ Engine v11.197",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_196.html",
+  "finalArtifact": "swyrl_engine_v11_197.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -242,8 +242,9 @@
     "patches/v11_193_sheep_vr_capture.py",
     "patches/v11_194_emberfall_arpg_starter.py",
     "patches/v11_195_quest_sheep_stability_radial.py",
-    "patches/v11_196_sheep_fog_radial_camera_recovery.py"
+    "patches/v11_196_sheep_fog_radial_camera_recovery.py",
+    "patches/v11_197_sheep_meadow_mip_fog_camera.py"
   ],
-  "finalBytes": 7295859,
-  "finalSha256": "679d14774b8abb97254f1adf072b98f0db51bbad152a2567142105155b944ca1"
+  "finalBytes": 7299654,
+  "finalSha256": "25c080d6c5fe9982a2feb28d7a529a5b315f0534760f2dab2deb1551fbafd821"
 }
