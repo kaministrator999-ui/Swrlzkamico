@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.190
+title: §wyrl§ Engine v11.191
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,18 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.191 — immersive Quest 2 black-view repair and Arrival Court spawn (2026-10-31)
+
+**Owner report:** Pressing Enter VR in the game editor on Meta Quest 2 entered an immersive black display. The original WebXR gateway initiated local-floor but did not offset tracking coordinates to the saved project arrival zone; the authored Dragon Den Arrival Court is at [0, 0.02, 14.1]. A black headset view may also indicate a renderer or headset-frame failure; the source alone cannot establish which.
+
+**Repair:** Place the headset via WebXR's native `getOffsetReferenceSpace()` and Three.js `setReferenceSpace()`, using the project-owned arrival zone (and Dragon Den fallback only for that project type). Preserve the scene JSON, 2D orbit and camera state. Show a head-relative, brightly emissive/unlit startup panel that ignores occlusion, plus the existing EXIT VR surface; both appear in the XR scene even if the world is dark or the headset starts inside a wall. The welcome panel hides after 9 seconds. If zero XR frames arrive in 9 seconds, exit the session and return to the editor rather than leaving the user in a black compositor. Quest menu remains available for immediate exit.
+
+**Performance:** Allow 80% framebuffer scale before requesting the session on supported devices. Bound per-frame controller-ray hit tests to once per ~95ms per hand, preserving immediate native `selectstart` ray hits. Keep exactly one Three renderer, one XR animation loop, authored parent selection and existing controller studio. This is not immersive Model Atelier or controller-based sculpting.
+
+**Diagnostics:** `window.SWYRL_ENGINE_XR_RECOVERY.diagnose()` exposes XR frame count, offset success, arrival source, exit sign visibility and last error to distinguish a missing game view from total XR output failure. No real-headset acceptance can be inferred from mocked or source tests. Physical Quest 2 testing remains required.
+
+**Verification:** Fast Node mocked API and source/rebuild integrity checks only; no automatic Chromium install or browser marathon.
 
 ## §E v11.190 — honest rendered FPS and built-in vault batching (2026-10-31)
 

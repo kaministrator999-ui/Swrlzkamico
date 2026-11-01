@@ -1,0 +1,73 @@
+name: §E v11.191 XR arrival and recovery fast verification
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/source-manifest.json"
+      - "projects/swrlz-forge-moba/patches/v11_191_xr_black_view_recovery.py"
+      - "projects/swrlz-forge-moba/runtime/engine_xr_black_screen_recovery_v11_191.js"
+      - "projects/swrlz-forge-moba/tests/test_v11_191_xr_recovery.cjs"
+      - ".github/workflows/measure-se-v11-191.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  fast:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Syntax and mocked WebXR arrival/exit coverage
+        run: |
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_191_xr_black_view_recovery.py
+          node --check projects/swrlz-forge-moba/runtime/engine_xr_black_screen_recovery_v11_191.js
+          node projects/swrlz-forge-moba/tests/test_v11_191_xr_recovery.cjs
+          node projects/swrlz-forge-moba/tests/test_v11_181_immersive_xr.cjs
+          node projects/swrlz-forge-moba/tests/test_v11_181_xr_session_lifecycle.cjs
+      - name: Build exact same native Game/Modeler runtime; measure package
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          f=Path('projects/swrlz-forge-moba/source-manifest.json')
+          m=json.loads(f.read_text())
+          assert m['name']=='§wyrl§ Engine v11.191'
+          assert len(m['patches'])==223 and m['patches'][-1]=='patches/v11_191_xr_black_view_recovery.py'
+          m['finalBytes']=0;m['finalSha256']=''
+          f.write_text(json.dumps(m,ensure_ascii=False,indent=2)+'\n')
+          PY
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/se191-package > /tmp/se191-build.log
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json
+          p=Path('/tmp/se191-package')
+          html=(p/'index.html').read_bytes()
+          assert html==(p/'modeler.html').read_bytes()
+          s=html.decode('utf8')
+          for mark in [
+             'SWYRL_ENGINE_DEPLOY_MARKER: V11_191_XR_BLACK_VIEW_RECOVERY',
+             'window.SWYRL_ENGINE_XR_RECOVERY',
+             'se191XRInstallLanding();',
+             'se191XRRenderFrame();',
+             'se191XRMakeBeacon();',
+             'se191XRStartWatchdog(requested);',
+             'se191XRRayHit(record)',
+             'se191XRCleanup();',
+             'se191XRPrepareFramebuffer();',
+             "requestSession('immersive-vr',{requiredFeatures:['local-floor']})",
+             "const zone=listTeleportZones()",
+             'renderer.setAnimationLoop(tick);'
+          ]:
+           assert mark in s,mark
+          assert s.count('renderer.setAnimationLoop(tick);')==1
+          receipt=json.loads((p/'SOURCE.json').read_text())
+          assert len(receipt['assets'])==68
+          assert len(html)>7000000
+          print('SE191_BYTES='+str(len(html)),flush=True)
+          print('SE191_SHA256='+hashlib.sha256(html).hexdigest(),flush=True)
+          print('SE191_FAST_BUILD_PASS',flush=True)
+          PY
