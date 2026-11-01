@@ -9,7 +9,8 @@ const se195={
  fogPaints:0,fogSkips:0,fogAt:0,lastFogSession:null,
  rigPosition:new THREE.Vector3(),rigReady:false,rigAt:0,
  lastError:'',lastAction:'',lastStatusAt:0,restore:null,shadowSaved:null,
- referenceBase:null,referenceOffset:new THREE.Vector3(),referenceWrites:0
+ referenceBase:null,referenceOffset:new THREE.Vector3(),referenceWrites:0,
+ fps:0,sampleFrames:0,sampleAt:0,stutters:0
 };
 const se195Gameplay=()=>!!se181XR.session&&renderer.xr.isPresenting&&se193XRGameActive();
 const se195Menu=()=>!!se181XR.session&&renderer.xr.isPresenting&&se193XRMenuActive();
@@ -535,7 +536,12 @@ se193XRCapture=function(mode='clean'){
   }
  }
  if(se195.radial){visuals.push([se195.radial,se195.radial.visible]);se195.radial.visible=false;}
- try{return se195OldCapture(mode);}
+ try{
+  const result=se195OldCapture(mode);
+  if(result&&se193.capture?.metadata)
+   se193.capture.metadata.questDiagnostics=window.SWYRL_ENGINE_VR_POLISH?.diagnose?.()||null;
+  return result;
+ }
  finally{for(const [mesh,visible] of visuals)mesh.visible=visible;}
 };
 const se195OldStart=se193XRStart;
@@ -546,7 +552,8 @@ se193XRStart=function(){
  se195.rigReady=false;se195.rigAt=0;se195.lastFrame=performance.now();
  se195.photo=false;se195.photoWasPaused=false;
  se195.referenceBase=null;se195.referenceOffset.set(0,0,0);
- se195.referenceWrites=0;
+ se195.referenceWrites=0;se195.fps=0;se195.sampleFrames=0;
+ se195.sampleAt=performance.now();se195.stutters=0;
  if(currentProject?.kind==='sheep-tag'&&renderer.shadowMap){
   se195.shadowSaved=renderer.shadowMap.enabled;
   renderer.shadowMap.enabled=false; // no costly meadow shadow pass in stereo
@@ -570,6 +577,11 @@ se193XRFrame=function(){
  if(!se195Active())return;
  const now=performance.now(),dt=Math.min(.05,Math.max(0,(now-(se195.lastFrame||now))/1000));
  se195.lastFrame=now;
+ se195.sampleFrames++;
+ if(now-se195.sampleAt>=1000){
+  se195.fps=Math.round(se195.sampleFrames*1000/(now-se195.sampleAt));
+  se195.sampleFrames=0;se195.sampleAt=now;
+ }
  const kind=se195Mode();
  if(kind!==se195.mode){
   const prior=se195.mode;se195.mode=kind;se195.page='main';
@@ -620,6 +632,7 @@ window.SWYRL_ENGINE_VR_POLISH=Object.freeze({
   framebufferPreference:se191XR.framebufferScale,
   shadowsEnabled:!!renderer.shadowMap?.enabled,
   drawCalls:renderer.info?.render?.calls??null,
+  estimatedXrFps:se195.fps,
   triangles:renderer.info?.render?.triangles??null,
   lastAction:se195.lastAction,lastError:se195.lastError
  }),
