@@ -46,7 +46,7 @@ jobs:
           for marker in ['V11_197_MEADOW_FOG_CAMERA_STABILITY',
              'window.SWYRL_ENGINE_SHEEP_VISUAL_197','function se197MeadowInfo',
              'texture.minFilter=THREE.LinearMipmapLinearFilter',
-             'texture.generateMipmaps=true']:
+             'texture.generateMipmaps=true','stWildwoodGroundTexture.minFilter=THREE.LinearMipmapLinearFilter','se197QuestDownsampled']:
               assert marker in html,marker
           assert '512%30.72' not in html,'subpixel grid remains'
           assert html.count('renderer.setAnimationLoop(tick);')==1
