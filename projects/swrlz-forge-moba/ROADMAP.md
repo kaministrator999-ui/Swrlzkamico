@@ -1,3 +1,13 @@
+## §E v11.195 — Quest 2 Sheep Tag camera, fog, menus and capture repairs (2026-10-31)
+
+**Owner-reported issues addressed in source:** left-offset VR follow camera, severe lag after game begins, fluttering ground/fog texture, controller rays selecting through menus, duplicate Exit VR sign/arrival overlay, static Main Menu positioned by houses and cumbersome tall floating dialog stacks.
+
+**Native XR repair:** keep one stable XR reference-space base while moving the headset to a centered, elevated strategic sheep-follow viewpoint. Skip repeated game-status snapshots and hidden 2D camera/HUD work during headset play, route frequent hover rays to cheap terrain hit tests, and run full scene actor selection only on trigger. The Quest Sheep session uses 72% pre-session framebuffer scale, no extra stereo shadow pass, and a visual fog layer lifted off the meadow with polygon offset and roughly 3 Hz cosmetic repaints. Existing game visibility and fog-of-war logic remain authoritative.
+
+**UI overhaul:** automatic authored-actor Sheep Tag menu cinematic with a slow comfort-aware sheep-centered headset view, compact right-controller-tethered radial palettes (X to open/close, trigger to select), modal menu input interception, minimal low-poly controller grip bodies and glowing calibrated beams with particles. Dismiss duplicate in-world exit signs while retaining Meta system menu and browser toolbar exit. Photo mode freezes play for framing, captures on trigger and restores pause with X; clean/debug JSON/stereo exports use the original screenshot writer with after-XR download fallback. Debug screenshots include FPS/draw-call and fog diagnostics.
+
+**Release source:** 227 patches, 68 assets, 7,288,202 exact HTML bytes, SHA-256 `7fa6242cfeeb6f9b44e8887cf86b905ed5e6ee9c55e7e12696a64fc77a0a31ad`. See `docs/QUEST_SHEEP_VR_STABILITY_V11_195.md`. Browser and unit acceptance cannot replace physical Quest 2 frame/comfort/stereo acceptance; other engines, projects, storage, §C authentication and Model Atelier stay unchanged.
+
 ## §E v11.194 — Emberfall: Shattered Vale, original hack-and-slash starter (2026-10-31)
 
 **New project template:** Projects → **Emberfall · Shattered Vale** creates an independently editable native §E map, with Wayfarer hero, Blightwoods, cliff formations, camp portal, corrupted crystals, shrine ruins, 11 enemies and a Cinder Warden boss. Explicit deep link: `?project=emberfall-arpg`. Original startup project preference and existing saved projects are untouched.

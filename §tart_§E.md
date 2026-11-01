@@ -1,3 +1,7 @@
+## Current §E owner handoff — Quest Sheep VR stability v11.195 (2026-10-31)
+
+**Authority:** The source manifest pins v11.195 to 227 patches, 68 assets, 7,288,202 HTML bytes, SHA-256 `7fa6242cfeeb6f9b44e8887cf86b905ed5e6ee9c55e7e12696a64fc77a0a31ad`. This repair adds a stable-base XR follow rig, Quest fog/render/raycast optimizations, authored menu cinematic, right-hand radial controllers, calibrated glow beams/particles, no duplicate Exit VR sign and an XR photo mode/debug metadata. See `docs/QUEST_SHEEP_VR_STABILITY_V11_195.md`. Update desktop/Quest only via strict verifier plus separate pinned deploy request; device performance acceptance remains pending.
+
 ## Current §E owner handoff — Emberfall v11.194 ARPG starter (2026-10-31)
 
 **Source:** `projects/swrlz-forge-moba/source-manifest.json` is authoritative for v11.194, SHA-256 `740bfa088414731cd6b397aaf85290ef550461d8708ade833f9f3742a27aa2f4` and 7,259,828 bytes. New Projects starter is `emberfall-arpg`; native authored scene & Play-only ARPG loop with spells, loot, enemy AI, quest and companion. See `docs/EMBERFALL_ARPG_STARTER_V11_194.md`. Save/Load and existing startup defaults remain independent. Source-validation gate precedes the separate final `DEPLOY_REQUEST.json` commit and hosted Space verification. Gameplay acceptance on owner devices is pending; do not claim full ARPG/VR support.

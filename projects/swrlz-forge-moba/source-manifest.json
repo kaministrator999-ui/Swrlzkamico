@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.194",
+  "name": "§wyrl§ Engine v11.195",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_194.html",
+  "finalArtifact": "swyrl_engine_v11_195.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -240,8 +240,9 @@
     "patches/v11_191_xr_black_view_recovery.py",
     "patches/v11_192_spatial_vr_editor.py",
     "patches/v11_193_sheep_vr_capture.py",
-    "patches/v11_194_emberfall_arpg_starter.py"
+    "patches/v11_194_emberfall_arpg_starter.py",
+    "patches/v11_195_quest_sheep_stability_radial.py"
   ],
-  "finalBytes": 7259828,
-  "finalSha256": "740bfa088414731cd6b397aaf85290ef550461d8708ade833f9f3742a27aa2f4"
+  "finalBytes": 7288202,
+  "finalSha256": "7fa6242cfeeb6f9b44e8887cf86b905ed5e6ee9c55e7e12696a64fc77a0a31ad"
 }
