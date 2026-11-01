@@ -247,6 +247,6 @@
     "patches/v11_198_xr_editor_flight_gizmo_legend.py",
     "patches/v11_199_sheep_vr_thumbstick_follow.py"
   ],
-  "finalBytes": null,
-  "finalSha256": null
+  "finalBytes": 7327169,
+  "finalSha256": "836f0dda58761cb23fb59c0aebf3d5c5565be36c6cc00dd7b6a720acd0a19788"
 }

@@ -16,7 +16,7 @@ out=Path(args.output).resolve()
 m=json.loads((ROOT/'source-manifest.json').read_text())
 assert m['name']=='§wyrl§ Engine v11.199'
 assert m['finalArtifact']=='swyrl_engine_v11_199.html'
-assert len(m['patches'])==231 and m['patches'][-1]=='patches/v11_199_xr_editor_flight_gizmo_legend.py'
+assert len(m['patches'])==231 and m['patches'][-1]=='patches/v11_199_sheep_vr_thumbstick_follow.py'
 subprocess.run([sys.executable,str(ROOT/'build_space.py'),'--output',str(out)],check=True)
 raw=(out/'index.html').read_bytes()
 s=raw.decode('utf-8')
