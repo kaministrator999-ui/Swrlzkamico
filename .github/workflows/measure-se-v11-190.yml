@@ -1,14 +1,5 @@
 name: §E v11.190 fast render source verification
 on:
-  push:
-    branches: [main]
-    paths:
-      - "projects/swrlz-forge-moba/source-manifest.json"
-      - "projects/swrlz-forge-moba/patches/v11_190_render_fps_vault_batch.py"
-      - "projects/swrlz-forge-moba/runtime/engine_render_instrument_v11_190.js"
-      - "projects/swrlz-forge-moba/runtime/engine_render_instrument_v11_190.css"
-      - "projects/swrlz-forge-moba/scripts/verify_v11_190_release.py"
-      - ".github/workflows/measure-se-v11-190.yml"
   workflow_dispatch:
 permissions:
   contents: read
