@@ -60,7 +60,7 @@ jobs:
              'se192XRGamepadButton',
              'se192Place(type,record)',
              'se192FreezeBillboards();',
-             'se192TaperGeometry();',
+             'function se192TaperGeometry(){',
              "se192Select(record);",
              "se191XRRayHit(record)",
              "renderer.setAnimationLoop(tick);"
