@@ -1,21 +1,21 @@
-name: Check §E v11.200 Sheep VR candidate
+name: Check §E v11.201 Sheep VR candidate
 on:
   push:
     branches:
       - main
-      - fix/sheep-vr-stable-spotlight-v11-200
+      - feat/sheep-warcraft-footprints-v11-201
     paths:
       - 'projects/swrlz-forge-moba/source-manifest.json'
-      - 'projects/swrlz-forge-moba/patches/v11_200_sheep_vr_stabilized_spotlight.py'
-      - 'projects/swrlz-forge-moba/runtime/engine_xr_sheep_spotlight_v11_200.js'
-      - 'projects/swrlz-forge-moba/tests/test_v11_200_sheep_spotlight.cjs'
-      - 'projects/swrlz-forge-moba/scripts/verify_v11_200_release.py'
-      - '.github/workflows/verify-engine-v11-200-sheep-spotlight.yml'
+      - 'projects/swrlz-forge-moba/patches/v11_201_sheep_warcraft_foundation_passages.py'
+      - 'projects/swrlz-forge-moba/runtime/sheep_warcraft_foundation_passages_v11_201.js'
+      - 'projects/swrlz-forge-moba/tests/test_v11_201_warcraft_footprints.cjs'
+      - 'projects/swrlz-forge-moba/scripts/verify_v11_201_release.py'
+      - '.github/workflows/verify-engine-v11-201-sheep-footprints.yml'
       - '.github/workflows/deploy-swrlz-forge-moba.yml'
   pull_request:
     paths:
       - 'projects/swrlz-forge-moba/**'
-      - '.github/workflows/verify-engine-v11-200-sheep-spotlight.yml'
+      - '.github/workflows/verify-engine-v11-201-sheep-footprints.yml'
   workflow_dispatch:
 jobs:
   candidate:
@@ -25,7 +25,8 @@ jobs:
       - uses: actions/checkout@v4
       - name: Validate runtime syntax and movement / follow regression
         run: |
-          node --check projects/swrlz-forge-moba/runtime/engine_xr_sheep_spotlight_v11_200.js
+          node --check projects/swrlz-forge-moba/runtime/sheep_warcraft_foundation_passages_v11_201.js
+          node projects/swrlz-forge-moba/tests/test_v11_201_warcraft_footprints.cjs
           node projects/swrlz-forge-moba/tests/test_v11_200_sheep_spotlight.cjs
           node projects/swrlz-forge-moba/tests/test_v11_199_sheep_vr.cjs
           node projects/swrlz-forge-moba/tests/test_v11_198_editor_6dof_flight_gizmo.cjs
@@ -39,11 +40,11 @@ jobs:
           node projects/swrlz-forge-moba/tests/test_v11_181_xr_session_lifecycle.cjs
       - name: Build source and record exact output for manifest sealing
         run: |
-          python3 projects/swrlz-forge-moba/build_space.py --output "$RUNNER_TEMP/se-v11-200"
-          wc -c "$RUNNER_TEMP/se-v11-200/index.html"
-          sha256sum "$RUNNER_TEMP/se-v11-200/index.html"
+          python3 projects/swrlz-forge-moba/build_space.py --output "$RUNNER_TEMP/se-v11-201"
+          wc -c "$RUNNER_TEMP/se-v11-201/index.html"
+          sha256sum "$RUNNER_TEMP/se-v11-201/index.html"
           if python3 -c 'import json; m=json.load(open("projects/swrlz-forge-moba/source-manifest.json")); assert m.get("finalSha256") and m.get("finalBytes")'; then
-            python3 projects/swrlz-forge-moba/scripts/verify_v11_200_release.py --output "$RUNNER_TEMP/se-v11-200-verified"
+            python3 projects/swrlz-forge-moba/scripts/verify_v11_201_release.py --output "$RUNNER_TEMP/se-v11-201-verified"
           else
             echo "Candidate built; seal reported size/hash in source-manifest before deployment."
           fi
