@@ -27,6 +27,17 @@ def apply(html):
     html=once(html,
         "function se192XRGamepadButton(record,button){\n if(record.input?.handedness==='left'",
         "function se192XRGamepadButton(record,button){\n if(se193XRGameButton(record,button))return true;\n if(record.input?.handedness==='left'")
+    # Sheep Tag strategic scale can put the controller 50+ meters from the
+    # terrain. Keep the editor's normal ray limit unchanged outside gameplay.
+    html=once(html,
+        'return {origin,direction,ray:new THREE.Raycaster(origin,direction,.025,35)};',
+        'return {origin,direction,ray:new THREE.Raycaster(origin,direction,.025,se193XRGameActive()?140:35)};')
+    html=once(html,
+        'point.distanceTo(cast.origin)<35&&point.distanceTo(cast.origin)>.025',
+        'point.distanceTo(cast.origin)<(se193XRGameActive()?140:35)&&point.distanceTo(cast.origin)>.025')
+    html=once(html,
+        'THREE.MathUtils.clamp(Number(hit?.distance)||3,.12,20)',
+        'THREE.MathUtils.clamp(Number(hit?.distance)||3,.12,se193XRGameActive()?140:20)')
     html=once(html,
         'if(!playing&&!simulating)se192MoveFrame(dt);',
         'if(!playing&&!simulating&&!se193XRMenuActive())se192MoveFrame(dt);')
