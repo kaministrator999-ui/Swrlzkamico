@@ -13,6 +13,7 @@ When a free sheep selects a house from the wrist/menu:
 - Neutral forward controller aim is projected onto a virtual, vertical, camera-facing plane through the sheep and then translated onto the actual **game ground near the sheep**. This gives an accessible forward-aim placement method without pretending the actual controller ray touches ground.
 - Aiming left/right chooses a lateral offset, up aims farther ahead and down aims closer to/behind the sheep. Offsets are bounded near the controlled sheep.
 - With a steep down-aim (direction.y < -0.65), the original physical ground intersection is used. When not building, the native scene selection/attack/rescue rays are unchanged.
+- A reusable, lightweight world-space guide connects the Quest controller directly to the **mapped real ground site**, and the target reticle is repositioned onto that exact point; the original straight controller beam returns for steep physical aiming and when the menu is open. The guide mesh is disposed on XR exit.
 - Preview and final placement both use this same mapping; native stCanBuild with all house, player, sanctuary, navigation and anti-trap rules remains the only build authority. The two meaningful sheep selection radii from v11.202 stay intact.
 
 ## Wrist/capture UI frame-time reduction
