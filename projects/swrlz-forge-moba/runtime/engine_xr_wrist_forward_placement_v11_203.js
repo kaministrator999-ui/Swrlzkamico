@@ -6,7 +6,9 @@ const se203={
  activePage:null,textureCreates:0,menuBuilds:0,menuReuses:0,
  menuDisposals:0,menuBuildMs:0,menuLastBuildMs:0,
  aimSamples:0,forwardSamples:0,physicalSamples:0,
- skippedSparks:0,handEffectsMuted:false,releaseCount:0
+ skippedSparks:0,handEffectsMuted:false,releaseCount:0,
+ groundGuide:null,groundGuideRecord:null,groundGuideUpdates:0,
+ groundGuideHides:0
 };
 // An elevated free-look eye cannot place the sheep near eye-level at neutral
 // headset orientation. Keep the v11.202 rearward distance and lower ONLY the
@@ -165,11 +167,81 @@ se195AcquireHand=function(record){
  }
  return result;
 };
+// A virtual forward placement point must also be where the VR reticle
+// actually APPEARS. Render a separate, reusable 3D link from the controller
+// to the snapped virtual target; leave physical raycast mathematics untouched.
+// Steep physical-ground aiming keeps the original native pointer beam.
+const se203PointerUp=new THREE.Vector3(0,1,0);
+const se203DotUp=new THREE.Vector3(0,1,0);
+const se203DotFacing=new THREE.Vector3(0,0,1);
+function se203GroundGuideHide(){
+ const record=se203.groundGuideRecord;
+ if(record?.se192?.beam)record.se192.beam.visible=true;
+ if(se203.groundGuide?.visible){
+  se203.groundGuide.visible=false;se203.groundGuideHides++;
+ }
+ se203.groundGuideRecord=null;
+}
+function se203GroundGuideDispose(){
+ se203GroundGuideHide();
+ if(se203.groundGuide){
+  scene.remove(se203.groundGuide);
+  se203.groundGuide.geometry.dispose();
+  se203.groundGuide.material.dispose();
+  se203.groundGuide=null;
+ }
+}
+const se203OriginalRenderRay=se192RenderRay;
+se192RenderRay=function(record,hit){
+ const result=se203OriginalRenderRay(record,hit);
+ if(record!==se192InputRecord('right'))return result;
+ const isBuild=se200Active()&&stUi.build&&!se195.visible&&!se195.photo;
+ if(!isBuild){se203GroundGuideHide();return result;}
+ const target=se203GroundFromForwardRay(record),cast=se192Ray(record);
+ if(!target||!cast?.origin||!record?.se192){
+  se203GroundGuideHide();return result;
+ }
+ if(!se203.groundGuide){
+  const mesh=new THREE.Mesh(
+   new THREE.CylinderGeometry(.011,.018,1,7,1,true),
+   new THREE.MeshBasicMaterial({
+    color:0x74fff0,transparent:true,opacity:.6,
+    depthTest:false,depthWrite:false,toneMapped:false
+   })
+  );
+  mesh.name='Quest Sheep Tag controller to virtual building target';
+  mesh.userData.sheepTagPreview=true;
+  mesh.renderOrder=9998;mesh.frustumCulled=false;
+  scene.add(mesh);se203.groundGuide=mesh;
+ }
+ const beam=record.se192.beam;
+ beam.visible=false;
+ // World-space beam and target reticle share the ACTUAL preview location.
+ const between=target.clone().sub(cast.origin);
+ const distance=between.length();
+ if(distance>.02&&Number.isFinite(distance)){
+  const link=se203.groundGuide;
+  link.visible=true;
+  link.position.copy(cast.origin).addScaledVector(between,.5);
+  link.quaternion.setFromUnitVectors(se203PointerUp,between.normalize());
+  link.scale.y=distance;
+  link.material.color.setHex(stUi.placement?.ok===false?0xff817f:0x74fff0);
+ }
+ record.se192.dot.position.copy(target);
+ record.se192.dot.quaternion.setFromUnitVectors(
+  se203DotFacing,se203DotUp);
+ record.se192.dot.visible=true;
+ se203.groundGuideRecord=record;
+ se203.groundGuideUpdates++;
+ return result;
+};
+
 const se203OriginalCleanup=se193XRCleanup;
 se193XRCleanup=function(){
  // The previous cleanup owns the active page; cached pages are detached.
  const current=se195.radial;
  const result=se203OriginalCleanup();
+ se203GroundGuideDispose();
  for(const entry of se203.menuPages.values()){
   if(entry.root!==current)se203DisposeCached(entry.root);
  }
@@ -193,6 +265,8 @@ window.SWYRL_ENGINE_QUEST_SHEEP_AIM_203=Object.freeze({
   menuPageBuildMs:Math.round(se203.menuLastBuildMs*100)/100,
   menuResourcesDisposed:se203.menuDisposals,
   handSparksSkipped:se203.skippedSparks,
+  forwardGuideFrames:se203.groundGuideUpdates,
+  forwardGuideHides:se203.groundGuideHides,
   estimatedXrFps:se195.fps
  })
 });
