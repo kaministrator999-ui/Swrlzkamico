@@ -15,6 +15,9 @@ def apply(html):
     # Source is already fully defined before its build marker. Install the
     # light-touch overrides only after all v11.194 original wrappers exist.
     html=once(html,'window.SWRLZ_FORGE_BUILD=',js+'\nwindow.SWRLZ_FORGE_BUILD=')
+    html=once(html,
+      "se181XRNote('Immersive §E active · '+se191XR.reason+' · use the illuminated EXIT VR sign or Quest menu to leave.');",
+      "se181XRNote('Immersive §E active · '+se191XR.reason+' · use the Quest system menu to exit; X opens the §E wrist tools.');")
     for old,new in [
       ('SWYRL_ENGINE_DEPLOY_MARKER: V11_194_EMBERFALL_ARPG_STARTER',
        'SWYRL_ENGINE_DEPLOY_MARKER: V11_195_QUEST_SHEEP_STABILITY_RADIAL'),
