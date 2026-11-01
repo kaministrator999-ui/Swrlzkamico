@@ -73,6 +73,23 @@ assert(state.movement.length>0,'strategic camera must adjust tracked eye');
 assert(state.movement.at(-1).x<0,'sheep x=3 to eye x=5 should recenter left');
 assert(state.movement.at(-1).z>0,'camera should relocate behind the sheep');
 assert.equal(state.statusCalls,0,'follow camera must read native session, not serialize stStatus per XR frame');
+
+const baseSpace={getOffsetReferenceSpace(transform){return {parent:this,transform};}};
+let currentSpace=baseSpace,spaceWrites=0;
+ctx.XRRigidTransform=class{constructor(position){this.position=position;}};
+ctx.renderer.xr.getReferenceSpace=()=>currentSpace;
+ctx.renderer.xr.setReferenceSpace=ref=>{currentSpace=ref;spaceWrites++;};
+evaluate('se195.referenceBase=null;se195.referenceOffset.set(0,0,0);');
+assert.equal(evaluate('se195MoveRig(1,2,3)'),true);
+assert.equal(evaluate('se195MoveRig(1,0,-1)'),true);
+assert.equal(spaceWrites,2,'reference space changes tracked');
+assert.equal(currentSpace.parent,baseSpace,'both writes must reference the original XR base, not nest');
+assert.deepEqual([currentSpace.transform.position.x,currentSpace.transform.position.y,currentSpace.transform.position.z],
+ [-2,-2,-2],'offset uses accumulated inverse translation');
+delete ctx.renderer.xr.getReferenceSpace;
+delete ctx.renderer.xr.setReferenceSpace;
+delete ctx.XRRigidTransform;
+
 const old=state.rayCount;
 const fast=evaluate('se192Raycast({index:1})');
 assert(fast.ground && fast.distance>0,'gameplay beam ray should be cheap terrain target');
