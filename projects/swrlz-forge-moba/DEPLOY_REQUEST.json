@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.194",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_194_EMBERFALL_ARPG_STARTER",
-  "reason": "Owner requested an original hack-and-slash RPG starter in §E informed by Diablo II, Path of Exile and Torchlight mechanics. Add Emberfall · Shattered Vale native project card/deep link, authored Wayfarer hero, 11 enemies + Cinder Warden boss, blighted props/ruins/camp, top-down Play click/tap/WASD movement, Slash/Bolt/Nova, AI attacks, XP/skills, gold, original randomized loot, potions and companion with responsive combat HUD. Preserve original renderer, scene serialization and all legacy starters, Sheep Tag, VR, Modeler and Chat. GitHub candidate strict source PASS #41267965294 (226 ordered patches, 68 assets, 7,259,828-byte HTML SHA-256 740bfa088414731cd6b397aaf85290ef550461d8708ade833f9f3742a27aa2f4), headless Chrome actual starter/Play/HUD/Stop PASS #41268065991, source PR #308 merged at f5ca527c12642f48e4f5ebfa51ca25a077ea29e9. Physical phone/Quest acceptance pending; no copied copyrighted art.",
-  "sourceCommit": "f5ca527c12642f48e4f5ebfa51ca25a077ea29e9",
-  "sourceIntegritySha256": "740bfa088414731cd6b397aaf85290ef550461d8708ade833f9f3742a27aa2f4"
+  "releaseVersion": "v11.195",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_195_QUEST_SHEEP_STABILITY_RADIAL",
+  "reason": "Owner Quest 2 reports: left-offset Sheep Tag follow camera; severe delayed lag; meadow/fog z-fighting; hover rays selecting through menu; duplicate EXIT VR signs; no proper VR authored cinematic, tall panels, missing polished controller cosmetics and photo capture. Release stable-base tracked camera, skip immersive 2D HUD/full stStatus and expensive per-frame actor raycast, 72% Quest Sheep framebuffer, no stereo shadows with full restore, visual fog raised off meadow with polygon offset and 290ms paint budget, native authored menu cinematic, 5-spoke controller-adjacent modal radial, controller shells, calibrated aura/particles, screen photo freeze and existing clean/debug JSON/stereo capture. Keep authoritative Sheep Tag game rules, existing 68 assets, current §E and all prior projects/§C/Modeler. Source PR #309 merged 508cec1a3c41578ffa180edffc2a4104365d82b0. Strict full source+old XR tests PASS GitHub Actions #41270430850 and real Chrome authored menu cinematic/start/stop PASS #41270340257; 227 ordered patches; 7,288,202-byte SHA-256 7fa6242cfeeb6f9b44e8887cf86b905ed5e6ee9c55e7e12696a64fc77a0a31ad. Physical Quest 2 performance, stereo and controller UX acceptance remains pending.",
+  "sourceCommit": "508cec1a3c41578ffa180edffc2a4104365d82b0",
+  "sourceIntegritySha256": "7fa6242cfeeb6f9b44e8887cf86b905ed5e6ee9c55e7e12696a64fc77a0a31ad"
 }
