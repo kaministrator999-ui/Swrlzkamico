@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.192",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_192_XR_SPATIAL_EDITOR",
-  "reason": "Owner Quest 2 accepted the v11.191 immersive scene but reported thin detached misaligned controller beams, unstable head-facing workspace labels, no locomotion, and need for genuine spatial map editing. v11.192 introduces calibrated WebXR target-space tapered beams, per-hand surface ring reticles sharing the actual native select/placement ray, device-local +/- aim trim, free left-stick glide, left-grip vertical flight and right-stick 20-degree snap-turn via XR reference space. Adds a VR world-space palette (Select, Move, Place Wall, Place Rock, Undo, aim trim, EXIT VR), right-grip actor movement committed to existing native undo transactions, native trigger selection, X palette toggle and A tool-mode toggle. Native WorkspaceStationLabel sprite billboards become anchored static planes in immersive edit mode and restore exact original visibility/textures on exit. No data migration or independent renderer; modeler sculpt not claimed. Fast Node mock controller/geometry/grab/reference-space tests and existing XR lifecycle PASS. Strict source/asset verification PASS GitHub Actions 41259793339: 224 patches, 68 assets, 7,210,061-byte HTML SHA-256 506dbfcd6e7ffe9678dcebc4398ffc07af19deaca2a811bb0995fccf8621ba8b. No Chromium installation; physical Quest 2 input ergonomics and render acceptance pending.",
-  "sourceCommit": "d3def59e15622f4f46e305c4e320f628e443e718",
-  "sourceIntegritySha256": "506dbfcd6e7ffe9678dcebc4398ffc07af19deaca2a811bb0995fccf8621ba8b"
+  "releaseVersion": "v11.193",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_193_SHEEP_VR_CAPTURE",
+  "reason": "Owner requested live §E Quest 2 VR Sheep Tag update. Native authored-level immersive title menu, wide elevated follow/free camera with VR snap-to-sheep, accurate gameplay-distance controller rays, game-authoritative move/build/attack/rescue commands and dynamic farm targeting, nested Quest game/session/capture palettes, clean/debug+JSON/stereo PNG in-engine capture and editor Capture Studio doorway. Preserve original WebXR session and renderer, mobile/desktop, Chat, Model Atelier, auth and saved map data. GitHub v11.193 candidate strict PASS run 41266488354 and sealed-source subsequent success 41266604713: 225 ordered patches, 68 assets, 7,230,728-byte HTML SHA-256 f4e7aa71b4d40d1081645eb2b0a7954a4a7b7e06a10e02338b9cd7e7b6a2574b. Source integrated through PR #307 at merge e2a2dda7262fb5de17c088bbb568ca7849cd0fe5. Physical Quest 2 experience not yet owner-accepted.",
+  "sourceCommit": "e2a2dda7262fb5de17c088bbb568ca7849cd0fe5",
+  "sourceIntegritySha256": "f4e7aa71b4d40d1081645eb2b0a7954a4a7b7e06a10e02338b9cd7e7b6a2574b"
 }
