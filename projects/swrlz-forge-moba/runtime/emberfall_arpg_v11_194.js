@@ -315,9 +315,9 @@ function ef194Update(dt){
  }
  s.pet.position.copy(s.hero.position).add(new THREE.Vector3(
   Math.cos(s.time*2)*1.1,1.2+Math.sin(s.time*3)*.23,Math.sin(s.time*2)*1.1));
- if(!s.dead&&s.time>=s.cooldowns.pet){
+ if(!s.dead&&s.cooldowns.pet<=0){
   const near=ef194Nearest(5);
-  if(near){ef194Damage(near,4+s.level*.6,0x80f4e4);s.cooldowns.pet=s.time+1.8;}
+  if(near){ef194Damage(near,4+s.level*.6,0x80f4e4);s.cooldowns.pet=1.8;}
  }
  for(let i=s.vfx.length-1;i>=0;i--){
   const p=s.vfx[i];p.ttl-=dt;p.mesh.scale.setScalar(Math.max(.03,p.ttl/p.full));
@@ -445,3 +445,6 @@ window.SWYRL_ENGINE_EMBERFALL=Object.freeze({
  slash:()=>ef194Cast('slash'),bolt:()=>ef194Cast('bolt'),
  nova:()=>ef194Cast('nova'),potion:ef194Potion,skillUp:ef194SkillUp
 });
+
+if(document.readyState==='complete')ef194InstallInput();
+else window.addEventListener('load',ef194InstallInput,{once:true});
