@@ -1,3 +1,13 @@
+## §E v11.193 — VR Sheep Tag and Capture Studio (2026-10-31)
+
+**Owner goal:** A readable, playable VR Sheep Tag main menu; elevated wide-area follow camera with independent head rotation and free navigation; full-controller gameplay/build orders; and clean in-engine screenshots instead of Quest's unpredictably cropped one-eye snapshots.
+
+**Implementation:** Add `runtime/engine_xr_sheep_capture_v11_193.js` with the single existing WebXR session and renderer; extend `engine_xr_spatial_editor_v11_192.js` through append-only `patches/v11_193_sheep_vr_capture.py`. The native VR title controls invoke the real authored `seLevelsTransition` gameplay route. In play, headset reference-space origin follows the controlled sheep at elevated adjustable distance while leaving normal head look unmodified; right-stick orbit/zoom and left-stick free-pan can detach and the Y button recenters. Controller trigger uses existing Sheep Tag `stUiCommand` authority for game orders and approved buildings, including dynamic in-game houses, without mutating saved maps.
+
+**Spatial tool UX:** Minimal floating glass panels for game/menu/build/session/capture tools, controller button shortcuts, readable far-distance hit reticles, and guarded input to prevent editor grips during Sheep Tag/capture modes. Capture Studio also opens directly from the existing §E spatial editor palette. Clean, debug+JSON and two-eye side-by-side screenshot files are available via a normal browser download fallback after immersive exit.
+
+**Release safety:** The desktop/mobile editor, Model Atelier, Google account, project defaults, original 68 packaged assets, existing XR render loop and exit behavior remain owned by their previous code. Quest 2 physical comfort/FPS/screenshot acceptance is still owner-tested; stereo PNG is not live binocular VR display.
+
 ## §E v11.192 — Quest 2 spatial Game Editor, native tools, locomotion and target rays (2026-10-31)
 
 **Physical Quest report:** Dragon Den immersive rendering and EXIT VR now work. Owner reports thin disconnected beams floating in air, pointer mismatch with Quest target, zero locomotion, camera-facing scene labels shifting as the head moves, and lack of spatial map-editing tools.
