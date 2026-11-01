@@ -22,7 +22,8 @@ def apply(html):
       '<span class="template-tag">HACK-AND-SLASH RPG STARTER</span>'
       '<p>Explore the blighted vale. Hunt enemy packs, slash, cast spells, collect gear, level skills and defeat the Cinder Warden.</p>'
       '<span class="hint">Create editable dark-fantasy ARPG</span></button>')
-    html=once(html,'<div class="project-actions">',card+'<div class="project-actions">')
+    html=once(html,'<span class="hint den-glow">Open Frostveil Maul</span></button>',
+      '<span class="hint den-glow">Open Frostveil Maul</span></button>'+card)
     html=once(html,'</head>','<style id="ef194ProjectCard">'
       '.ef194-project-card{border-color:#896c4780;background:radial-gradient(circle at 65% 15%,#a46b3342,transparent 43%),'
       'linear-gradient(155deg,#28201c,#11171b)}.ef194-project-card:hover{border-color:#e8bc72}'
