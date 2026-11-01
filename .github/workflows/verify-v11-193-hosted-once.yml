@@ -1,0 +1,46 @@
+name: Verify §E v11.193 hosted Space (one-time)
+on:
+  push:
+    branches: [feature/quest-sheep-vr-menu-camera-capture]
+    paths: [".github/workflows/verify-v11-193-hosted-once.yml"]
+permissions:
+  contents: read
+jobs:
+  hosted:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - name: Compare hosted SOURCE and actual HTML bytes to sealed release
+        shell: bash
+        run: |
+          python - <<'PY'
+          import hashlib,json,time,urllib.request
+          base="https://kamiloki-swrlz-forge-moba.static.hf.space"
+          expected_sha="f4e7aa71b4d40d1081645eb2b0a7954a4a7b7e06a10e02338b9cd7e7b6a2574b"
+          expected_bytes=7230728
+          last=None
+          for attempt in range(1,9):
+              try:
+                  def get(path):
+                      req=urllib.request.Request(base+path,headers={"Cache-Control":"no-cache","User-Agent":"se193-live-integrity-check"})
+                      with urllib.request.urlopen(req,timeout=30) as response:return response.read()
+                  receipt=json.loads(get("/SOURCE.json?check="+str(attempt)))
+                  print("HOSTED_SOURCE_VERSION="+str(receipt.get("sourceVersion")),flush=True)
+                  print("HOSTED_SOURCE_BYTES="+str(receipt.get("finalBytes")),flush=True)
+                  print("HOSTED_SOURCE_SHA256="+str(receipt.get("finalSha256")),flush=True)
+                  if receipt.get("sourceVersion")!="§wyrl§ Engine v11.193":raise RuntimeError("Old hosted SOURCE version")
+                  if receipt.get("finalBytes")!=expected_bytes or receipt.get("finalSha256")!=expected_sha:raise RuntimeError("Hosted receipt does not match release source")
+                  if len(receipt.get("assets",{}))!=68:raise RuntimeError("Hosted asset manifest does not contain 68 assets")
+                  html=get("/index.html?check="+str(attempt))
+                  actual=hashlib.sha256(html).hexdigest()
+                  print("HOSTED_INDEX_BYTES="+str(len(html)),flush=True)
+                  print("HOSTED_INDEX_SHA256="+actual,flush=True)
+                  if len(html)!=expected_bytes or actual!=expected_sha:raise RuntimeError("Hosted HTML does not match release source")
+                  print("LIVE_V11_193_EXACT_SOURCE_AND_HTML_VERIFIED",flush=True)
+                  break
+              except Exception as error:
+                  last=error
+                  print("HOSTED_RETRY="+str(attempt)+" REASON="+str(error),flush=True)
+                  if attempt==8:raise SystemExit("LIVE_CHECK_FAILED: "+str(last))
+                  time.sleep(5)
+          PY
