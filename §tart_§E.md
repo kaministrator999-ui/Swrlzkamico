@@ -1,6 +1,6 @@
 ## Current §E handoff — Sheep Tag meadow/fog v11.197 (2026-10-31)
 
-Native source authority: 229 patches, 68 assets, 7,299,654-byte HTML SHA-256 `25c080d6c5fe9982a2feb28d7a529a5b315f0534760f2dab2deb1551fbafd821`. This source-only update removes the meadow 1px aliasing grid, adds mipmapped anisotropic filtering, prevents fog painter conflicts in LAN, and reduces flat camera cost. See `docs/SHEEP_MEADOW_VISUAL_STABILITY_V11_197.md`. Preserve VR editor, Sheep Tag input and all prior source history; deployment only after strict verifier and separate pinned request. Quest hardware acceptance pending.
+Native source authority: 229 patches, 68 assets, 7,300,640-byte HTML SHA-256 `315e2acb7f54118fce4e428e534cceac14a0ecbaac596291df29ba6dbd7cc54d`. This source-only update removes the legacy 1px aliasing grid, explicitly mipmaps the active Moonbell Wildwood and prefilters its 4K art to 2K for Quest Browser, adding anisotropic filtering, prevents fog painter conflicts in LAN, and reduces flat camera cost. See `docs/SHEEP_MEADOW_VISUAL_STABILITY_V11_197.md`. Preserve VR editor, Sheep Tag input and all prior source history; deployment only after strict verifier and separate pinned request. Quest hardware acceptance pending.
 
 ## Current §E owner handoff — Sheep Tag 2D fog/Quest camera v11.196 (2026-10-31)
 
