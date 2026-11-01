@@ -28,6 +28,7 @@ const context=vm.createContext({
  stUiPlacePreview:point=>{context.stUi.placement={ok:true,x:point.x,z:point.z};},
  stUiClearPreview:()=>calls.push('clear-preview'),
  stRefreshHUD:()=>{},stUiFeedback:()=>{},
+ se192PanelsVisible:v=>calls.push('palette:'+v),
  stStatus:()=>({controlledId:'sheep-1',selectedId:'sheep-1',winner:null,units:[{id:'sheep-1',kind:'sheep',pos:[0,0,0]}],buildings:[]}),
  stUiCommand:(action,data)=>{calls.push(action+':'+JSON.stringify(data));return {ok:true};},
  se192Raycast:()=>({empty:true}),
@@ -60,6 +61,14 @@ assert(calls.some(s=>s.includes('move:{"x":3,"z":4}')),
 evalExpr('se193XRSnapFollow()');
 assert.equal(evalExpr('se193.follow'),true);
 assert.equal(context.stUi.follow,true);
+context.stSession=null;context.currentProject.kind='other';
+evalExpr("se193XRAction('editorCapture')");
+assert.equal(evalExpr('se193XRKind()'),'editor-capture',
+ 'spatial editor must have direct access to the capture studio');
+assert.equal(evalExpr('se193.editorCaptureOpen'),true);
+evalExpr("se193XRAction('back')");
+assert.equal(evalExpr('se193.editorCaptureOpen'),false);
+assert(calls.includes('palette:true'),'leaving capture must restore native editor tools');
 assert(!source.includes('renderer.setAnimationLoop('),'adapter must not add a render loop');
 assert(!source.includes('createPrefab('),'VR Sheep Tag must not mutate authored editor objects');
 console.log('PASS v11.193: authored menu, native game orders, builds, follow reset, single-loop boundary');
