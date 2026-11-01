@@ -1,0 +1,56 @@
+name: §E v11.195 hosted Quest Sheep integrity audit (one-time)
+on:
+  push:
+    branches: [fix/quest-sheep-vr-195-camera-fog-radial]
+    paths: [".github/workflows/verify-v11-195-hosted-once.yml"]
+permissions:
+  contents: read
+jobs:
+  hosted:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - name: Build exact package and audit live SOURCE + HTML after provider metadata
+        run: |
+          python projects/swrlz-forge-moba/scripts/verify_v11_195_release.py --output /tmp/quest195 >/tmp/quest195-build.log
+          python - <<'PY'
+          import hashlib,json,time,urllib.request
+          from pathlib import Path
+          base="https://kamiloki-swrlz-forge-moba.static.hf.space"
+          raw=Path('/tmp/quest195/index.html').read_bytes()
+          expected_sha="7fa6242cfeeb6f9b44e8887cf86b905ed5e6ee9c55e7e12696a64fc77a0a31ad"
+          expected_size=7288202
+          assert len(raw)==expected_size and hashlib.sha256(raw).hexdigest()==expected_sha
+          def get(path,nonce):
+              req=urllib.request.Request(base+path+"?audit195="+str(nonce),
+                headers={"Cache-Control":"no-cache","User-Agent":"se195-quest-live-audit"})
+              with urllib.request.urlopen(req,timeout=35) as resp:return resp.read()
+          for n in range(1,10):
+              try:
+                  meta=json.loads(get('/SOURCE.json',n))
+                  assert meta.get('sourceVersion')=="§wyrl§ Engine v11.195",meta.get('sourceVersion')
+                  assert meta.get('finalBytes')==expected_size
+                  assert meta.get('finalSha256')==expected_sha
+                  assert len(meta.get('assets',{}))==68
+                  html=get('/index.html',n)
+                  if html!=raw:
+                      p=0
+                      while p<min(len(raw),len(html)) and raw[p]==html[p]:p+=1
+                      suffix=0
+                      while suffix<min(len(raw),len(html))-p and raw[-1-suffix]==html[-1-suffix]:
+                          suffix+=1
+                      injected=html[p:len(html)-suffix]
+                      assert p==39 and len(injected)<1300
+                      assert b'window.huggingface' in injected and b'og:title' in injected
+                      assert html[:p]+html[p+len(injected):]==raw,'Hosted engine is changed beyond HF metadata'
+                      print("HF_METADATA_INJECTION_BYTES="+str(len(injected)),flush=True)
+                  print("LIVE_V11_195_VERSION_BYTES_SHA_AND_HTML_VERIFIED",flush=True)
+                  break
+              except Exception as err:
+                  print("VERIFY_RETRY="+str(n)+" "+str(err),flush=True)
+                  if n==9:raise
+                  time.sleep(5)
+          PY
