@@ -91,7 +91,7 @@ assert.equal(diag().obstacleReuse,2);
 // Quest preview: full view status never needed for owner or nearby buildings.
 assert.equal(ctx.se202PreviewOwner(),'mine');
 const available=ctx.se202VisibleBuildings();
-assert.deepEqual(available.map(b=>b.id),['a','raised'],
+assert.deepEqual(Array.from(available,b=>b.id),['a','raised'],
  'hidden house must never appear in preview (fog-of-war)');
 assert.equal(hudSnapshots,0,'avoid serializing full fog on XR');
 assert.ok(seenCalls>=2);
@@ -121,7 +121,7 @@ assert.ok(visualHalo.material.opacity<collisionRing.material.opacity,
 assert.equal(collisionRing.position.x,0);
 assert.equal(collisionRing.position.z,-2);
 const oldRingCreations=diag().ringCreations;
-assert.deepEqual(ctx.recentFoundation.buildings.map(b=>b.id),['a','raised']);
+assert.deepEqual(Array.from(ctx.recentFoundation.buildings,b=>b.id),['a','raised']);
 assert.equal(hudSnapshots,0);
 ctx.se193XRFrame();
 assert.equal(foundationCalls,1,'no second overlay at same frame');
