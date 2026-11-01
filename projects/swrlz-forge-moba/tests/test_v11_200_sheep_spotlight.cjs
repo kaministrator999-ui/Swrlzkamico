@@ -31,8 +31,13 @@ const ctx={THREE:{Vector3:V,MathUtils:{clamp:(x,a,b)=>Math.max(a,Math.min(b,x))}
  se193:{angle:Math.PI,zoom:1,focus:new V(),follow:true},
  se195:{rigReady:false,rigAt:0,photo:false},
  se199Gameplay:()=>inside,paused:false,
- se199StickIntent:()=>({x:left.input.gamepad.axes[0],z:-left.input.gamepad.axes[1],
-  strength:Math.min(1,Math.hypot(...left.input.gamepad.axes))}),
+ se199StickIntent:()=>{
+  const [x,y]=left.input.gamepad.axes,a=ctx.se193.angle;
+  const fx=Math.sin(a),fz=Math.cos(a),length=Math.hypot(x,y);
+  const worldX=fx*(-y)-fz*x,worldZ=fz*(-y)+fx*x;
+  return {x:length?worldX/length:0,z:length?worldZ/length:0,
+    strength:Math.min(1,length)};
+ },
  se150Match:{active:false,role:'host'},
  se192InputRecord:side=>side==='left'?left:right,
  se192Stick:r=>({x:r.input.gamepad.axes[0],y:r.input.gamepad.axes[1]}),
