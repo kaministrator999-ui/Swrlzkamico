@@ -351,7 +351,12 @@ function se193XRCapture(mode='clean'){
    xrCamera.cameras.slice(0,2):[xrCamera];
   const count=mode==='stereo'?2:1;
   for(let i=0;i<count;i++){
-   const from=eyes[Math.min(i,eyes.length-1)],camera=new THREE.PerspectiveCamera(68,width/height,.05,2000);
+   const from=eyes[Math.min(i,eyes.length-1)];
+   // Match the headset's vertical projection angle instead of arbitrarily
+   // cropping the image to a tight FOV (which looked zoomed in on Quest shots).
+   const py=Math.abs(Number(from?.projectionMatrix?.elements?.[5])||1);
+   const verticalFov=THREE.MathUtils.clamp(2*Math.atan(1/py)*180/Math.PI,50,112);
+   const camera=new THREE.PerspectiveCamera(verticalFov,width/height,.05,2000);
    from.updateMatrixWorld(true);
    camera.position.copy(from.getWorldPosition(new THREE.Vector3()));
    camera.quaternion.copy(from.getWorldQuaternion(new THREE.Quaternion()));
