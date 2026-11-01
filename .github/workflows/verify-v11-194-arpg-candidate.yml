@@ -1,0 +1,60 @@
+name: Verify §E v11.194 Emberfall ARPG candidate
+on:
+  push:
+    branches: [feature/arpg-emberfall-starter-v11-194]
+    paths:
+      - "projects/swrlz-forge-moba/**"
+      - ".github/workflows/verify-v11-194-arpg-candidate.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - uses: actions/setup-node@v4
+        with: {node-version: "22"}
+      - name: Focused ARPG and XR no-browser regression
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/emberfall_arpg_v11_194.js
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_194_emberfall_arpg_starter.py
+          node projects/swrlz-forge-moba/tests/test_v11_194_emberfall_arpg.cjs
+          node projects/swrlz-forge-moba/tests/test_v11_193_sheep_vr.cjs
+          node projects/swrlz-forge-moba/tests/test_v11_192_native_vr_editor.cjs
+          node projects/swrlz-forge-moba/tests/test_v11_191_xr_recovery.cjs
+      - name: Build canonical 226-patch candidate and measure exact source
+        run: |
+          python - <<'PY'
+          import hashlib,json,subprocess,sys
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          path=root/'source-manifest.json'
+          m=json.loads(path.read_text(encoding='utf8'))
+          patch='patches/v11_194_emberfall_arpg_starter.py'
+          if patch not in m['patches']:m['patches'].append(patch)
+          assert len(m['patches'])==226 and m['patches'][-1]==patch
+          m['name']='§wyrl§ Engine v11.194'
+          m['finalArtifact']='swyrl_engine_v11_194.html'
+          m['finalBytes']=0;m['finalSha256']=''
+          path.write_text(json.dumps(m,ensure_ascii=False,indent=2)+'\n',encoding='utf8')
+          subprocess.run([sys.executable,str(root/'build_space.py'),'--output','dist/emberfall'],check=True)
+          html=Path('dist/emberfall/index.html').read_bytes()
+          s=html.decode('utf8')
+          assert b'EMBERFALL' in html
+          assert '<title>§wyrl§ Engine · Maker v11.194</title>' in s
+          assert 'SWYRL_ENGINE_DEPLOY_MARKER: V11_194_EMBERFALL_ARPG_STARTER' in s
+          assert 'data-project-template="emberfall-arpg"' in s
+          assert 'window.SWYRL_ENGINE_EMBERFALL' in s
+          assert "if(currentProject.kind==='emberfall-arpg')ef194Update(dt);" in s
+          assert "const ef194NativePlay=beginPlay" in s
+          assert s.count('renderer.setAnimationLoop(tick);')==1
+          assert len(json.loads(Path('dist/emberfall/SOURCE.json').read_text())['assets'])==68
+          digest=hashlib.sha256(html).hexdigest()
+          print('EMBERFALL_V11194_BUILT_BYTES='+str(len(html)),flush=True)
+          print('EMBERFALL_V11194_BUILT_SHA256='+digest,flush=True)
+          print('EMBERFALL_V11194_CANDIDATE_PASS',flush=True)
+          PY
