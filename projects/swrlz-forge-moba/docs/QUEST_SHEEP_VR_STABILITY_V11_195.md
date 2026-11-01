@@ -32,4 +32,4 @@ The Node regression suite and ordinary Chrome Play/Stop smoke can verify code, m
 The Dragon Den floating desktop workstation and full Model Atelier VR sculpting are not part of this change. Neither are multiplayer protocol changes or saved project migrations.
 
 ## Integrity
-227 ordered patches, 68 packaged assets, 7,288,106 HTML bytes and SHA-256 9afda333c6bce229ae86ddbd7a1e27e8a31a6988530fdfb268e169d8a478f7b6. Strict verifier: scripts/verify_v11_195_release.py. Deploy only after success in a separate pinned DEPLOY_REQUEST.json commit, followed by a hosted-source audit.
+227 ordered patches, 68 packaged assets, 7,288,202 HTML bytes and SHA-256 7fa6242cfeeb6f9b44e8887cf86b905ed5e6ee9c55e7e12696a64fc77a0a31ad. Strict verifier: scripts/verify_v11_195_release.py. Deploy only after success in a separate pinned DEPLOY_REQUEST.json commit, followed by a hosted-source audit.
