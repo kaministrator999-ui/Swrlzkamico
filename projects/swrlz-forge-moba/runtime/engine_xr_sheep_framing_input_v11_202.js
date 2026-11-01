@@ -2,13 +2,15 @@
 // movement, low-cost building previews and stable cached collision snapshots.
 // Native game authority, HMD tracking, touch input and editor 6DoF unchanged.
 const se202={
- horizontal:22,vertical:25,defaultZoom:1.5,rearBias:3.5,
+ horizontal:21,vertical:26,defaultZoom:1.4,rearBias:2.5,
  snapshotsBuilt:0,snapshotsReused:0,
  previewStatusBypasses:0,previewReuses:0,previewFullChecks:0,
  previewState:null,obstacles:null,obstaclesSession:null,
  obstaclesVersion:-1,completedWalls:-1,
  noClickMoves:0,foundationRefreshes:0,foundationAt:0,
- lastFoundationPoint:null,foundationSession:null,foundationVersion:-1
+ lastFoundationPoint:null,foundationSession:null,foundationVersion:-1,
+ collisionRing:null,visualHalo:null,ringUnit:null,ringRadius:0,
+ haloRadius:0,ringUpdates:0,ringCreations:0,ringDisposals:0
 };
 // Camera stays world-anchored to the controlled sheep; the extra distance
 // biases it toward the upper portion of the neutral headset view WITHOUT
@@ -99,13 +101,81 @@ function se202FoundationFrame(){
  se202.lastFoundationPoint={x:p.x,z:p.z};
  se202.foundationRefreshes++;
 }
+// The stock sheep wool/head visibly overhang its 0.27m gameplay radius.
+// A BRIGHT cyan inside line is the exact collision radius used by pathfinding;
+// a FAINT outer gold halo is only the visual model selector, not a blocker.
+// This deliberately avoids mislabelling a model-sized circle as passability.
+function se202RingDispose(){
+ for(const ring of [se202.collisionRing,se202.visualHalo]){
+  if(!ring)continue;
+  scene.remove(ring);ring.geometry.dispose();ring.material.dispose();
+  se202.ringDisposals++;
+ }
+ se202.collisionRing=se202.visualHalo=null;
+ se202.ringUnit=null;se202.ringRadius=se202.haloRadius=0;
+}
+function se202ModelHalo(unit,radius){
+ // Read the mesh bounds only on selection change, never per game frame.
+ if(!unit.actor||typeof THREE.Box3!=='function')return Math.max(radius+.07,.73);
+ const box=new THREE.Box3().setFromObject(unit.actor);
+ const mid=unit.actor.getWorldPosition(new THREE.Vector3());
+ const extents=[
+  [box.min.x,box.min.z],[box.max.x,box.min.z],
+  [box.min.x,box.max.z],[box.max.x,box.max.z]
+ ];
+ const visual=Math.max(...extents.map(([x,z])=>Math.hypot(x-mid.x,z-mid.z)));
+ return Math.max(radius+.07,Number.isFinite(visual)?visual+.055:.73);
+}
+function se202CreateRing(radius,color,opacity,name){
+ const mesh=new THREE.Mesh(
+  new THREE.RingGeometry(Math.max(.01,radius-.028),radius,64),
+  new THREE.MeshBasicMaterial({color,transparent:true,opacity,
+   depthWrite:false,depthTest:false,side:THREE.DoubleSide,toneMapped:false})
+ );
+ mesh.name=name;mesh.userData.sheepTagPreview=true;
+ mesh.renderOrder=999;mesh.rotation.x=-Math.PI/2;
+ scene.add(mesh);
+ return mesh;
+}
+function se202SheepRingFrame(){
+ if(!se193XRGameActive()||!stSession){
+  if(se202.collisionRing||se202.visualHalo)se202RingDispose();
+  return;
+ }
+ const unit=stSession.units.find(u=>u.id===stSession.controlledId);
+ if(!unit||unit.kind!=='sheep'||unit.captured||unit.isIllusion){
+  if(se202.collisionRing||se202.visualHalo)se202RingDispose();
+  return;
+ }
+ const radius=stUnitRadius(unit);
+ if(!Number.isFinite(radius)||radius<=.04)return;
+ if(se202.ringUnit!==unit||Math.abs(radius-se202.ringRadius)>.0001){
+  se202RingDispose();
+  se202.ringUnit=unit;se202.ringRadius=radius;
+  se202.haloRadius=se202ModelHalo(unit,radius);
+  se202.collisionRing=se202CreateRing(radius,0x70fff1,.9,
+   'Sheep actual navigation collision radius');
+  se202.visualHalo=se202CreateRing(se202.haloRadius,0xffdb85,.24,
+   'Sheep model-size cosmetic selector (not collision)');
+  se202.ringCreations++;
+ }
+ const x=unit.pos.x,z=unit.pos.z;
+ const floorY=Number.isFinite(unit.pos.y)?unit.pos.y:terrainHeight(x,z);
+ const y=floorY+.045;
+ se202.collisionRing.position.set(x,y,z);
+ se202.visualHalo.position.set(x,y+.003,z);
+ se202.ringUpdates++;
+}
+
 const se202PreviousFrame=se193XRFrame;
 se193XRFrame=function(){
  const result=se202PreviousFrame();
  se202FoundationFrame();
+ se202SheepRingFrame();
  return result;
 };
 function se202Reset(){
+ se202RingDispose();
  se202.obstacles=null;se202.obstaclesSession=null;
  se202.obstaclesVersion=-1;se202.completedWalls=-1;
  se202.previewState=null;se202.foundationAt=0;
@@ -126,6 +196,9 @@ window.SWYRL_ENGINE_SHEEP_VR_FOLLOW_INPUT_202=Object.freeze({
   previewFullChecks:se202.previewFullChecks,
   previewSkipped:se202.previewReuses,
   statusBypasses:se202.previewStatusBypasses,
-  foundationRefreshes:se202.foundationRefreshes
+  foundationRefreshes:se202.foundationRefreshes,
+  collisionRadius:se202.ringRadius,visualHaloRadius:se202.haloRadius,
+  ringUpdates:se202.ringUpdates,ringCreations:se202.ringCreations,
+  ringDisposals:se202.ringDisposals
  })
 });
