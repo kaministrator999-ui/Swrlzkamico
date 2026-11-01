@@ -1,0 +1,26 @@
+name: Check §E v11.199 Sheep VR candidate
+on:
+  push:
+    branches:
+      - feat/sheep-vr-left-stick-follow-v11-199
+  pull_request:
+    paths:
+      - 'projects/swrlz-forge-moba/**'
+      - '.github/workflows/verify-engine-v11-199-sheep-vr.yml'
+  workflow_dispatch:
+jobs:
+  candidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate runtime syntax and movement / follow regression
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/engine_xr_sheep_thumbstick_v11_199.js
+          node projects/swrlz-forge-moba/tests/test_v11_199_sheep_vr.cjs
+      - name: Build source and record exact output for manifest sealing
+        run: |
+          python3 projects/swrlz-forge-moba/build_space.py --output "$RUNNER_TEMP/se-v11-199"
+          wc -c "$RUNNER_TEMP/se-v11-199/index.html"
+          sha256sum "$RUNNER_TEMP/se-v11-199/index.html"
+          python3 projects/swrlz-forge-moba/scripts/verify_v11_199_release.py --output "$RUNNER_TEMP/se-v11-199-verified"
