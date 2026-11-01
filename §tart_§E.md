@@ -1,3 +1,7 @@
+## Current §E owner handoff — Emberfall v11.194 ARPG starter (2026-10-31)
+
+**Source:** `projects/swrlz-forge-moba/source-manifest.json` is authoritative for v11.194, SHA-256 `740bfa088414731cd6b397aaf85290ef550461d8708ade833f9f3742a27aa2f4` and 7,259,828 bytes. New Projects starter is `emberfall-arpg`; native authored scene & Play-only ARPG loop with spells, loot, enemy AI, quest and companion. See `docs/EMBERFALL_ARPG_STARTER_V11_194.md`. Save/Load and existing startup defaults remain independent. Source-validation gate precedes the separate final `DEPLOY_REQUEST.json` commit and hosted Space verification. Gameplay acceptance on owner devices is pending; do not claim full ARPG/VR support.
+
 ## Current §E owner handoff — v11.193 Quest VR candidate (2026-10-31)
 
 **Authority:** `projects/swrlz-forge-moba/source-manifest.json` now pins §wyrl§ Engine **v11.193**, 225 ordered patches, 68 assets, 7,230,728 bytes SHA-256 `f4e7aa71b4d40d1081645eb2b0a7954a4a7b7e06a10e02338b9cd7e7b6a2574b`. Source verification PASS [GitHub run #41266488354](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/41266488354). The VR feature extends the single canonical renderer with native Sheep Tag main menu, elevated follow/free orbit, game-authoritative controller building, and clean/debug/stereo scene capture. Existing desktop/mobile, Chat and Model Atelier boundaries remain unchanged.
