@@ -42,11 +42,15 @@ jobs:
               data=page.evaluate("""() => ({
                 game:window.SWYRL_ENGINE_SHEEP_TAG.status(),
                 visual:window.SWYRL_ENGINE_SHEEP_VISUAL_197.diagnose(),
-                fog:window.SWYRL_ENGINE_SHEEP_VR_FIX196.diagnose()
+                fog:window.SWYRL_ENGINE_SHEEP_VR_FIX196.diagnose(),
+                projectGround:window.SWYRL_ENGINE_SHEEP_TAG.project()?.scene?.actors?.
+                  filter(a=>(a.type||'').includes('meadow') || /ground|terrain/i.test(a.name||'')).
+                  map(a=>({type:a.type,name:a.name,scale:a.scale})),
+                mapBounds:window.SWYRL_ENGINE_SHEEP_TAG.rules()?.bounds
               })""")
               v=data['visual']
               print('SE197_LIVE_MEADOW_DIAGNOSTICS',{
-                'meadow':v['meadow'],'cameraFrames':v['cameraFrames'],
+                'meadow':v['meadow'],'projectGround':data['projectGround'],'mapBounds':data['mapBounds'],'cameraFrames':v['cameraFrames'],
                 'avoidedSnapshots':v['avoidedFullStatusSnapshots'],'fogDepth':data['fog']['fogDepth']
               },flush=True)
               assert data['game']['active'] and len(data['game']['units'])>=2
