@@ -88,12 +88,17 @@ function st201Mesh(root,name,color,opacity,order){
  root.add(mesh);return mesh;
 }
 function st201Geometry(mesh,positions){
- const old=mesh.geometry;
- mesh.geometry=new THREE.BufferGeometry();
- mesh.geometry.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));
+ const existing=mesh.geometry.getAttribute('position');
+ if(existing&&existing.count===positions.length/3){
+  existing.array.set(positions);existing.needsUpdate=true;
+ }else{
+  const old=mesh.geometry;
+  mesh.geometry=new THREE.BufferGeometry();
+  mesh.geometry.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));
+  old.dispose();
+ }
  if(positions.length)mesh.geometry.computeBoundingSphere();
  mesh.visible=positions.length>0;
- old.dispose();
 }
 function st201Groups(name){
  const root=new THREE.Group();
@@ -199,8 +204,8 @@ function st201PreviewUpdate(){
  const key=[stSession,stUi.build,fit.x,fit.z,fit.rotation,fit.ok,
    stSession.navVersion,visible.map(b=>b.id+':'+b.kind).join(',')].join('|');
  if(key===st201.previewKey&&st201.preview)return;
- st201PreviewDispose();
- st201.previewKey=key;st201.preview=st201Groups('Sheep Tag live sheep-width lane preview');
+ if(!st201.preview)st201.preview=st201Groups('Sheep Tag live sheep-width lane preview');
+ st201.previewKey=key;
  st201.previewRebuilds++;
  const meshes=st201.preview.userData.meshes,boxes={
   foundation:[],edge:[],buffer:[],trim:[],clear:[],tight:[],blocked:[]};
