@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.198",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_198_SPATIAL_EDITOR_FLIGHT_GIZMOS",
-  "reason": "Owner requested substantial improvements to §E immersive Quest spatial editing: faster/smoother adjustable wisp flight with temporary boost and vertical controls, true right-grip controller delta tracking to pull native objects toward the headset in X/Y/Z, trigger-selectable colored XYZ precision gizmos, accessible in-world button legend, cleaner smaller controller models and beams, guarded menu interaction and cleanup of temporary resources/history. Source PR #312 merged at f90c0677f87655cb8ce33228b2e0faccc7bc3b40. Strict production build and previous XR/Sheep Tag/ARPG regression PASS GitHub Actions #41316423911; native Chrome app, Sheep Tag authored cinematic, game and Stop PASS #41316255094. Original 230 ordered patches, 68 assets, 7,320,589-byte HTML SHA-256 c5e42de3a9c6dca98d72843b70c4cb2eb549c22589aae4a7fb0d4f7e8ba00f0f. Existing §C Chat auth, original saved §E map data, Model Atelier, Dragon Den and game-specific modes preserved. Physical Quest 2 controller alignment, VR performance and comfort acceptance still pending.",
-  "sourceCommit": "f90c0677f87655cb8ce33228b2e0faccc7bc3b40",
-  "sourceIntegritySha256": "c5e42de3a9c6dca98d72843b70c4cb2eb549c22589aae4a7fb0d4f7e8ba00f0f"
+  "releaseVersion": "v11.199",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_199_SHEEP_VR_THUMBSTICK_FOLLOW",
+  "reason": "Owner requested Quest 2 immersive Sheep Tag left thumbstick to move the controlled sheep, auto snap-and-follow the sheep and wider strategic camera framing. PR #313 merged at 16f64991c86dc1a9e4bbf3d0298c4fef00dab481. Native Sheep Tag movement, collision and wall-slide preserved, analog joystick stop and camera-relative movement added, default camera standoff increased 40%; right stick orbit/zoom and manual Free/Follow remain. Isolated VR gameplay only; normal desktop/mobile play, LAN, editor 6DoF, Model Atelier, saves and Chat preserved. New v11.199 movement regression and prior XR/Sheep Tag/ARPG tests PASS; strict 231-patch package, 68 assets, 7,327,169-byte HTML SHA-256 836f0dda58761cb23fb59c0aebf3d5c5565be36c6cc00dd7b6a720acd0a19788 PASS Actions #41324307157. Physical Quest 2 controller comfort and performance verification still pending.",
+  "sourceCommit": "16f64991c86dc1a9e4bbf3d0298c4fef00dab481",
+  "sourceIntegritySha256": "836f0dda58761cb23fb59c0aebf3d5c5565be36c6cc00dd7b6a720acd0a19788"
 }
