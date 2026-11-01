@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.200",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_200_SHEEP_VR_STABILIZED_SPOTLIGHT",
-  "reason": "Owner's physical Quest 2 test of v11.199 found Sheep Tag camera laterally offset, unexpectedly angled and rocking with heavy lag after building houses. Source fixes merged via PR #314 at 5d675d5744ad21c215ff6ef930c88c5fb1018bac: v11.200 sheep-centered overhead 14/26 world unit strategic view, existing default zoom 1.4; natural headset look preserved; one XR initial snap and subsequent anchor-delta-only smooth tracking eliminating live eye feedback; Quest left-stick now uses direct swept native collision and wall-slide instead of repeatedly updating A* routes with each input frame. Right stick orbit/zoom, existing game radial, 6DoF editor, saved scenes, non-VR clients, multiplayer, §C and Model Atelier preserved. Tests: new v11.200 mock with 18 buildings, direct controller and no idle camera reference writes PASS, plus v11.199 through v11.181 XR, Sheep, editor, ARPG regressions PASS. Strict 232-patch packaged engine, 68 assets, 7,334,694-byte HTML SHA-256 f1e6f2b588e637dda042905f852ad83af4ba3989937e6afd51224e10c1e12986 PASS GitHub Actions #41330911911. Hardware headset camera comfort and long-run GPU performance acceptance still pending.",
-  "sourceCommit": "5d675d5744ad21c215ff6ef930c88c5fb1018bac",
-  "sourceIntegritySha256": "f1e6f2b588e637dda042905f852ad83af4ba3989937e6afd51224e10c1e12986"
+  "releaseVersion": "v11.201",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_201_SHEEP_CLEARANCE_FOUNDATIONS",
+  "reason": "Owner requests Warcraft III-style farm boundary readability and a smoother visualization of where sheep can run beside and between Sheep Tag houses. v11.201 source merged via PR #315 at 40273d3753b55355fa397bf16f767788ab702f58. Built houses now have batched, terrain-conforming warmed beveled interior foundations, exact solid native footprint borders, and soft sheep-radius center exclusion bands. Placement ghosts retain native fit red/green and snapping, with a muted grid and nearby teal (comfortably passable), amber (tight passable), red (blocked) lanes derived from stClarityGap/stSafeLaneWidth swept physical collision. All native collision rules, build validity, fog visibility, VR controls and stabilized follow, modeler, LAN, 2D controls and 68 assets are preserved. Twenty-four new headless overlay regression assertions and prior Quest, Sheep, editor and ARPG tests passed. Strict 233-patch output produced 7,347,103 bytes, sha256 092ac1094d7d47e8ceefaee471b404aee50786b80816104a054ce7007c84d0a9 in GitHub Actions #41337449713. Visual checks in physical Quest 2 and on mobile are pending.",
+  "sourceCommit": "40273d3753b55355fa397bf16f767788ab702f58",
+  "sourceIntegritySha256": "092ac1094d7d47e8ceefaee471b404aee50786b80816104a054ce7007c84d0a9"
 }
