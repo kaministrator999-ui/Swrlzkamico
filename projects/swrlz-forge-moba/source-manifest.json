@@ -249,6 +249,6 @@
     "patches/v11_200_sheep_vr_stabilized_spotlight.py",
     "patches/v11_201_sheep_warcraft_foundation_passages.py"
   ],
-  "finalBytes": null,
-  "finalSha256": null
+  "finalBytes": 7347103,
+  "finalSha256": "092ac1094d7d47e8ceefaee471b404aee50786b80816104a054ce7007c84d0a9"
 }
