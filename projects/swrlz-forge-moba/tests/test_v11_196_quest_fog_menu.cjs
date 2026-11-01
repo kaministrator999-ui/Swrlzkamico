@@ -180,5 +180,14 @@ evaluate('se195FollowCamera(.016)');
 assert.equal(state.movement.length,gameStart+1,'gameplay camera snaps immediately to strategic position once');
 assert.equal(evaluate('se196.gameSnaps'),1);
 assert.equal(state.statusCalls,0,'camera never creates full stStatus snapshots every render frame');
+
+state.game=false;state.menu=true;
+const menuOptions=evaluate("se195Options('menu','main')");
+assert(menuOptions.some(([action,label])=>action==='recenter'&&label==='REFOCUS'),'menu offers explicit VR recenter instead of camera flight');
+assert(!menuOptions.some(([action])=>action==='cinema'),'no inert auto-flight camera toggle');
+const previousSnaps=evaluate('se196.menuSnaps');
+evaluate("se195HandleAction('recenter',null)");
+assert.equal(evaluate('se196.menuSnaps'),previousSnaps+1,'REFOCUS is a working explicit camera adjustment');
+
 console.log('PASS V11.196 · 2D fog separation/paint budget, unmoving right-hand radial, one-time cinematic & gameplay camera');
 
