@@ -239,7 +239,8 @@ function se195AcquireHand(record){
  if(!record?.controller||!record?.input||!record.se192||record.se195)return;
  const color=record.input.handedness==='left'?0x67e7fc:0xfec46d;
  const grip=renderer.xr.getControllerGrip?.(record.index)||record.controller;
- if(grip!==record.controller)scene.add(grip);
+ const addedGrip=grip!==record.controller&&!grip.parent;
+ if(addedGrip)scene.add(grip);
  const body=new THREE.Group();body.name='§E Quest controller marker';
  const matte=new THREE.MeshStandardMaterial({color:0x24364c,roughness:.55,metalness:.42});
  const accent=new THREE.MeshBasicMaterial({color,toneMapped:false});
@@ -265,7 +266,7 @@ function se195AcquireHand(record){
   size:.013,transparent:true,opacity:.65,depthTest:false,depthWrite:false,
   blending:THREE.AdditiveBlending,sizeAttenuation:true}));
  points.name='§E aim sparks';points.renderOrder=10010;points.frustumCulled=false;pivot.add(points);
- record.se195={body,grip,halo,points,matte,accent,pointsGeom,array};
+ record.se195={body,grip,addedGrip,halo,points,matte,accent,pointsGeom,array};
  se195.hands.set(record.index,record.se195);
 }
 function se195UpdateHand(record,t,dist){
@@ -284,6 +285,7 @@ function se195CleanupHands(){
  for(const record of se181XR.controllers){
   const h=record.se195;if(!h)continue;
   h.body.removeFromParent();
+  if(h.addedGrip)h.grip.removeFromParent();
   for(const mesh of h.body.children)mesh.geometry?.dispose?.();
   h.matte.dispose();h.accent.dispose();
   h.halo.removeFromParent();h.halo.material.dispose();
