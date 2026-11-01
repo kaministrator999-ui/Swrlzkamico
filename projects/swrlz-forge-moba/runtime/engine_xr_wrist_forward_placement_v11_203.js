@@ -151,6 +151,7 @@ function se203HandEffects(){
 const se203OriginalSetVisible=se195SetVisible;
 se195SetVisible=function(value){
  const result=se203OriginalSetVisible(value);
+ if(se195.visible)se203GroundGuideHide();
  se203HandEffects();
  return result;
 };
