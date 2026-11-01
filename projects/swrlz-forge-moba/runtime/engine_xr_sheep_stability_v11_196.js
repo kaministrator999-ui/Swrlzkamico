@@ -104,6 +104,26 @@ se195PositionRadial=function(force=false){
  se195.radial.updateMatrixWorld(true);
  se196.radialAnchors++;
 };
+// Menu actors already run their cinematic independently. Replace the old
+// CINEMA camera-drift toggle with an explicit comfort-safe REFOCUS command.
+const se196OptionsPrevious=se195Options;
+se195Options=function(mode=se195.mode,page=se195.page){
+ if(mode==='menu'&&page==='main')return [
+  ['start','PLAY'],['recenter','REFOCUS'],['capturePage','CAPTURE'],
+  ['help','CONTROLS'],['editor','EDIT']
+ ];
+ return se196OptionsPrevious(mode,page);
+};
+const se196ActionPrevious=se195HandleAction;
+se195HandleAction=function(action,record){
+ if(action==='recenter'&&se195Menu()){
+  se196.menuAnchored=false;
+  se195MenuCamera(0);
+  se195.lastAction='VR sheep menu recentered';
+  return true;
+ }
+ return se196ActionPrevious(action,record);
+};
 // The existing frame calls se195PositionRadial(false) continuously;
 // the above intentionally makes that a no-op. The dial reanchors only
 // when summoned or when changing its menu page, not when aiming at it.
