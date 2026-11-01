@@ -28,6 +28,8 @@ jobs:
           node projects/swrlz-forge-moba/tests/test_v11_191_xr_recovery.cjs
           node projects/swrlz-forge-moba/tests/test_v11_181_immersive_xr.cjs
           node projects/swrlz-forge-moba/tests/test_v11_181_xr_session_lifecycle.cjs
+      - name: Verify sealed release and all bundled assets
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_191_release.py --output /tmp/se191-strict
       - name: Build exact same native Game/Modeler runtime; measure package
         run: |
           python - <<'PY'
