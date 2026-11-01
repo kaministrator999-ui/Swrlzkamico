@@ -240,6 +240,6 @@
     "patches/v11_191_xr_black_view_recovery.py",
     "patches/v11_192_spatial_vr_editor.py"
   ],
-  "finalBytes": 7191207,
-  "finalSha256": "4e970410c4c992f4dabc6b9740e840aee4f3bcbeb8c43cfb70d5522018b96e6c"
+  "finalBytes": 7210061,
+  "finalSha256": "506dbfcd6e7ffe9678dcebc4398ffc07af19deaca2a811bb0995fccf8621ba8b"
 }
