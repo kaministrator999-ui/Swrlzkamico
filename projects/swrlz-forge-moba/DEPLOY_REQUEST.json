@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.197",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_197_MEADOW_FOG_CAMERA_STABILITY",
-  "reason": "Continuation of Quest 2 screenshot-grounded Sheep Tag terrain/fog shimmer stabilization. Current playable Moonbell Wildwood ground is a 4K original JPEG, distinct from older 1024 canvas meadow. v11.197 explicitly mipmaps both, removes old 1px crosshatch, prefilters Moonbell Wildwood once to a 2048px Quest Browser texture before GPU upload while keeping source art and desktop 4K intact, prevents solo fog painter overriding authoritative LAN/team visual fog, and removes per-frame full game-state serialization from 2D camera. Preserve prior v11.196 XR camera/radial/capture, all scene saves, Modeler/Chat, ARPG and 68 hosted assets. Source PR #311 merged at d122001b1aa278ca05e05c52e6b8d22c09e5f2b8. Final production full-source+XR test PASS #41275978054; Quest-UA emulated actual Chrome cinematic/game/texture-width 2048 and fog depth .23 and Stop PASS #41275843734. 229 ordered patches, 7,300,640-byte sealed HTML SHA-256 315e2acb7f54118fce4e428e534cceac14a0ecbaac596291df29ba6dbd7cc54d. Physical Quest 2 visual/FPS acceptance still pending.",
-  "sourceCommit": "d122001b1aa278ca05e05c52e6b8d22c09e5f2b8",
-  "sourceIntegritySha256": "315e2acb7f54118fce4e428e534cceac14a0ecbaac596291df29ba6dbd7cc54d"
+  "releaseVersion": "v11.198",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_198_SPATIAL_EDITOR_FLIGHT_GIZMOS",
+  "reason": "Owner requested substantial improvements to §E immersive Quest spatial editing: faster/smoother adjustable wisp flight with temporary boost and vertical controls, true right-grip controller delta tracking to pull native objects toward the headset in X/Y/Z, trigger-selectable colored XYZ precision gizmos, accessible in-world button legend, cleaner smaller controller models and beams, guarded menu interaction and cleanup of temporary resources/history. Source PR #312 merged at f90c0677f87655cb8ce33228b2e0faccc7bc3b40. Strict production build and previous XR/Sheep Tag/ARPG regression PASS GitHub Actions #41316423911; native Chrome app, Sheep Tag authored cinematic, game and Stop PASS #41316255094. Original 230 ordered patches, 68 assets, 7,320,589-byte HTML SHA-256 c5e42de3a9c6dca98d72843b70c4cb2eb549c22589aae4a7fb0d4f7e8ba00f0f. Existing §C Chat auth, original saved §E map data, Model Atelier, Dragon Den and game-specific modes preserved. Physical Quest 2 controller alignment, VR performance and comfort acceptance still pending.",
+  "sourceCommit": "f90c0677f87655cb8ce33228b2e0faccc7bc3b40",
+  "sourceIntegritySha256": "c5e42de3a9c6dca98d72843b70c4cb2eb549c22589aae4a7fb0d4f7e8ba00f0f"
 }
