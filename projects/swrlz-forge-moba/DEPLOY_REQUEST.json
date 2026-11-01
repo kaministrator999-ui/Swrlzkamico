@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.199",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_199_SHEEP_VR_THUMBSTICK_FOLLOW",
-  "reason": "Owner requested Quest 2 immersive Sheep Tag left thumbstick to move the controlled sheep, auto snap-and-follow the sheep and wider strategic camera framing. PR #313 merged at 16f64991c86dc1a9e4bbf3d0298c4fef00dab481. Native Sheep Tag movement, collision and wall-slide preserved, analog joystick stop and camera-relative movement added, default camera standoff increased 40%; right stick orbit/zoom and manual Free/Follow remain. Isolated VR gameplay only; normal desktop/mobile play, LAN, editor 6DoF, Model Atelier, saves and Chat preserved. New v11.199 movement regression and prior XR/Sheep Tag/ARPG tests PASS; strict 231-patch package, 68 assets, 7,327,169-byte HTML SHA-256 836f0dda58761cb23fb59c0aebf3d5c5565be36c6cc00dd7b6a720acd0a19788 PASS Actions #41324307157. Physical Quest 2 controller comfort and performance verification still pending.",
-  "sourceCommit": "16f64991c86dc1a9e4bbf3d0298c4fef00dab481",
-  "sourceIntegritySha256": "836f0dda58761cb23fb59c0aebf3d5c5565be36c6cc00dd7b6a720acd0a19788"
+  "releaseVersion": "v11.200",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_200_SHEEP_VR_STABILIZED_SPOTLIGHT",
+  "reason": "Owner's physical Quest 2 test of v11.199 found Sheep Tag camera laterally offset, unexpectedly angled and rocking with heavy lag after building houses. Source fixes merged via PR #314 at 5d675d5744ad21c215ff6ef930c88c5fb1018bac: v11.200 sheep-centered overhead 14/26 world unit strategic view, existing default zoom 1.4; natural headset look preserved; one XR initial snap and subsequent anchor-delta-only smooth tracking eliminating live eye feedback; Quest left-stick now uses direct swept native collision and wall-slide instead of repeatedly updating A* routes with each input frame. Right stick orbit/zoom, existing game radial, 6DoF editor, saved scenes, non-VR clients, multiplayer, §C and Model Atelier preserved. Tests: new v11.200 mock with 18 buildings, direct controller and no idle camera reference writes PASS, plus v11.199 through v11.181 XR, Sheep, editor, ARPG regressions PASS. Strict 232-patch packaged engine, 68 assets, 7,334,694-byte HTML SHA-256 f1e6f2b588e637dda042905f852ad83af4ba3989937e6afd51224e10c1e12986 PASS GitHub Actions #41330911911. Hardware headset camera comfort and long-run GPU performance acceptance still pending.",
+  "sourceCommit": "5d675d5744ad21c215ff6ef930c88c5fb1018bac",
+  "sourceIntegritySha256": "f1e6f2b588e637dda042905f852ad83af4ba3989937e6afd51224e10c1e12986"
 }
