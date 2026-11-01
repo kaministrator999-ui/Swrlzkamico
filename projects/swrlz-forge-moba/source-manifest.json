@@ -248,6 +248,6 @@
     "patches/v11_199_sheep_vr_thumbstick_follow.py",
     "patches/v11_200_sheep_vr_stabilized_spotlight.py"
   ],
-  "finalBytes": null,
-  "finalSha256": null
+  "finalBytes": 7334694,
+  "finalSha256": "f1e6f2b588e637dda042905f852ad83af4ba3989937e6afd51224e10c1e12986"
 }
