@@ -63,12 +63,26 @@ stSoftFogPaint=function(s){
  }
  return se197SoftFogPrevious(s);
 };
+function se197MeadowInfo(){
+ let info=null;
+ for(const actor of actors){
+  actor.traverse(o=>{
+   if(o.name!=='stMeadowGround')return;
+   const tex=o.material?.map;
+   info={mipmapped:tex?.minFilter===THREE.LinearMipmapLinearFilter,
+    anisotropy:tex?.anisotropy||0,generateMipmaps:!!tex?.generateMipmaps};
+  });
+  if(info)break;
+ }
+ return info;
+}
 window.SWYRL_ENGINE_SHEEP_VISUAL_197=Object.freeze({
  diagnose:()=>({
   version:'v11.197',cameraFrames:se197.flatCameraFrames,
   avoidedFullStatusSnapshots:se197.avoidedCameraSnapshots,
   multiplayerFogOverwritePrevented:se197.multiplayerFogOverrides,
   visualFogDepth:stSession?.fog?.mesh?.position?.y??null,
+  meadow:se197MeadowInfo(),
   active:!!stSession,renderCalls:renderer.info?.render?.calls??null,
   lastError:se197.lastError
  })
