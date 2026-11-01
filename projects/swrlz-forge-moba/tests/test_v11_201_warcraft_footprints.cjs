@@ -115,7 +115,7 @@ assert.ok(meshes.foundation.geometry.getAttribute('position').count>60,'soft fou
 assert.ok(meshes.tight.visible,'just-safe sheep lane marked amber');
 assert.ok(meshes.clear.visible,'wide sheep lane marked teal');
 assert.ok(meshes.blocked.visible,'unsafe sheep lane marked red');
-assert.ok(document.getElementById('stClearanceLegend').textContent.includes('Sheep stopping distance'));
+assert.ok(document.getElementById('stClearanceLegend').textContent.includes('sheep stopping distance'));
 const buildsBefore=stats().permanentRebuilds;
 ctx.stClarityUpdateOverlay(state);ctx.stClarityUpdateOverlay(state);
 assert.equal(stats().permanentRebuilds,buildsBefore,'no rebuild on steady frames');
