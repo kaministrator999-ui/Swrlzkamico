@@ -46,6 +46,11 @@ def apply(html):
     html=once(html,
         'function se192Action(action,record){\n se192.lastAction=action;',
         "function se192Action(action,record){\n se192.lastAction=action;\n if(action==='capture'){se193XRAction('editorCapture');return true;}")
+    # The old authoring grip must not select/move map objects while a
+    # native game menu, game session, or capture panel owns input.
+    html=once(html,
+        "if(!gripping||playing||simulating)return;\n const cast=se192Ray(record);if(!cast)return;",
+        "if(!gripping||playing||simulating||se193XRMenuActive()||se193XRGameActive()||se193.editorCaptureOpen)return;\n const cast=se192Ray(record);if(!cast)return;")
     html=once(html,
         'if(!playing&&!simulating)se192MoveFrame(dt);',
         'if(!playing&&!simulating&&!se193XRMenuActive())se192MoveFrame(dt);')
