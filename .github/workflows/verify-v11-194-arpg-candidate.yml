@@ -34,6 +34,7 @@ jobs:
           root=Path('projects/swrlz-forge-moba')
           path=root/'source-manifest.json'
           m=json.loads(path.read_text(encoding='utf8'))
+          expected_bytes,expected_sha=m['finalBytes'],m['finalSha256']
           patch='patches/v11_194_emberfall_arpg_starter.py'
           if patch not in m['patches']:m['patches'].append(patch)
           assert len(m['patches'])==226 and m['patches'][-1]==patch
@@ -54,6 +55,11 @@ jobs:
           assert s.count('renderer.setAnimationLoop(tick);')==1
           assert len(json.loads(Path('dist/emberfall/SOURCE.json').read_text())['assets'])==68
           digest=hashlib.sha256(html).hexdigest()
+          assert len(html)==expected_bytes and digest==expected_sha,'Source seal mismatch'
+          m['finalBytes']=len(html);m['finalSha256']=digest
+          path.write_text(json.dumps(m,ensure_ascii=False,indent=2)+'\n',encoding='utf8')
+          subprocess.run([sys.executable,str(root/'scripts/verify_v11_194_release.py'),'--output','dist/strict'],check=True)
+          print('V11_194_STRICT_PASS',flush=True)
           print('EMBERFALL_V11194_BUILT_BYTES='+str(len(html)),flush=True)
           print('EMBERFALL_V11194_BUILT_SHA256='+digest,flush=True)
           print('EMBERFALL_V11194_CANDIDATE_PASS',flush=True)
