@@ -1,3 +1,9 @@
+## Current §E owner handoff — v11.193 Quest VR candidate (2026-10-31)
+
+**Authority:** `projects/swrlz-forge-moba/source-manifest.json` now pins §wyrl§ Engine **v11.193**, 225 ordered patches, 68 assets, 7,230,728 bytes SHA-256 `f4e7aa71b4d40d1081645eb2b0a7954a4a7b7e06a10e02338b9cd7e7b6a2574b`. Source verification PASS [GitHub run #41266488354](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/41266488354). The VR feature extends the single canonical renderer with native Sheep Tag main menu, elevated follow/free orbit, game-authoritative controller building, and clean/debug/stereo scene capture. Existing desktop/mobile, Chat and Model Atelier boundaries remain unchanged.
+
+**Release path:** Follow `projects/swrlz-forge-moba/RELEASE_PROCESS.md`: coherent source update to main, then only `DEPLOY_REQUEST.json` in a separate final commit pinned to exact source SHA/hash; check terminal deploy and hosted Space source before claiming live. A GitHub mock pass is not a physical Quest 2 acceptance. Dragon Den in-world interactive floating 2D workstation is not yet implemented in this release.
+
 ## §E v11.184 — My Projects preview gallery and one saved startup default (2026-10-31)
 
 **Owner request:** Render visual preview cards for user-owned projects directly in the native Projects menu, and let a single checkbox determine which saved project §E opens by default.

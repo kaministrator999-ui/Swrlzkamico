@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.192
+title: §wyrl§ Engine v11.193
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,16 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.193 — Quest Sheep Tag immersive menu, wide follow camera, and VR Capture Studio (2026-10-31)
+
+**In-world Sheep Tag:** Use a native ray-selectable title menu in Quest VR, backed by the existing authored Sheep Tag Main Menu and canonical level transition. The strategic headset rig follows the sheep from an elevated, zoomable distance, with detach, pan, orbit, recenter and natural independent head-look.
+
+**Quest controls:** Controller rays select and move sheep, attack/rescue and place validated farm structures through Sheep Tag's existing gameplay authority; newly built farm meshes are targetable. Compact in-world pages expose building choices, pause/restart/stop and screenshots. The existing native map editor retains its own creation palette, with a link to Capture Studio.
+
+**Captures:** Generate an in-engine clean PNG, debug PNG plus JSON, or side-by-side stereo PNG via a temporary offscreen render target, with a browser download control after exiting VR. This does not capture the Quest compositor's Facebook-style photo depth effect.
+
+**Safety:** Reuse the original XR session, renderer, scene, project storage, and 2D editor. Preserve Quest system exit. VR menus do not allow accidental authoring/grab actions through their surfaces. Physical Quest 2 comfort, exact UI aiming, performance and downloads require owner acceptance.
 
 ## §E v11.192 — Quest 2 spatial Game Editor, native tools, locomotion and target rays (2026-10-31)
 
