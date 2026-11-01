@@ -1,0 +1,55 @@
+name: Verify v11.193 Quest VR candidate
+on:
+  push:
+    branches:
+      - feature/quest-sheep-vr-menu-camera-capture
+    paths:
+      - "projects/swrlz-forge-moba/**"
+      - ".github/workflows/verify-v11-193-quest-candidate.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Focused Quest VR tests
+        run: |
+          node projects/swrlz-forge-moba/tests/test_v11_193_sheep_vr.cjs
+          node projects/swrlz-forge-moba/scripts/test_v11_192_native_vr_editor.cjs
+          node projects/swrlz-forge-moba/scripts/test_v11_191_xr_recovery.cjs
+      - name: Build candidate HTML and report exact bytes and checksum
+        run: |
+          python - <<'PY'
+          import hashlib,json,subprocess,sys
+          from pathlib import Path
+          root=Path("projects/swrlz-forge-moba")
+          path=root/"source-manifest.json"
+          m=json.loads(path.read_text(encoding="utf-8"))
+          patch="patches/v11_193_sheep_vr_capture.py"
+          if patch not in m["patches"]: m["patches"].append(patch)
+          assert len(m["patches"])==225 and m["patches"][-1]==patch
+          m["name"]="§wyrl§ Engine v11.193"
+          m["finalArtifact"]="swyrl_engine_v11_193.html"
+          m["finalBytes"]=0
+          m["finalSha256"]=""
+          path.write_text(json.dumps(m,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+          subprocess.run([sys.executable,str(root/"build_space.py"),"--output","dist/swrlz-forge-moba"],check=True)
+          html=Path("dist/swrlz-forge-moba/index.html").read_bytes()
+          digest=hashlib.sha256(html).hexdigest()
+          print("VERIFIED_CANDIDATE_BYTES="+str(len(html)),flush=True)
+          print("VERIFIED_CANDIDATE_SHA256="+digest,flush=True)
+          m["finalBytes"]=len(html);m["finalSha256"]=digest
+          path.write_text(json.dumps(m,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
+          subprocess.run([sys.executable,str(root/"scripts/verify_v11_193_release.py"),"--output","dist/strict"],check=True)
+          print("V11_193_STRICT_PASS",flush=True)
+          PY
