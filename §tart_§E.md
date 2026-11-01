@@ -1,3 +1,7 @@
+## Current §E handoff — Sheep Tag meadow/fog v11.197 (2026-10-31)
+
+Native source authority: 229 patches, 68 assets, 7,299,654-byte HTML SHA-256 `25c080d6c5fe9982a2feb28d7a529a5b315f0534760f2dab2deb1551fbafd821`. This source-only update removes the meadow 1px aliasing grid, adds mipmapped anisotropic filtering, prevents fog painter conflicts in LAN, and reduces flat camera cost. See `docs/SHEEP_MEADOW_VISUAL_STABILITY_V11_197.md`. Preserve VR editor, Sheep Tag input and all prior source history; deployment only after strict verifier and separate pinned request. Quest hardware acceptance pending.
+
 ## Current §E owner handoff — Sheep Tag 2D fog/Quest camera v11.196 (2026-10-31)
 
 **Source of truth:** 228 patches, 68 assets, 7,295,859-byte HTML SHA-256 `679d14774b8abb97254f1adf072b98f0db51bbad152a2567142105155b944ca1`. Appendix `docs/SHEEP_VR_FOG_CAMERA_RECOVERY_V11_196.md` documents independent 2D fog-plane depth fight, VR mirrored drifting radial and colliding cinematic/editor rig movements. Strict source verifier `scripts/verify_v11_196_release.py`; deployment must be a separate pinned request commit after checks. Quest 2 physical testing remains pending.
