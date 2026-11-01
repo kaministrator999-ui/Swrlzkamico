@@ -27,11 +27,6 @@ def apply(html):
       "texture.minFilter=THREE.LinearMipmapLinearFilter;texture.magFilter=THREE.LinearFilter;"
       "texture.generateMipmaps=true;texture.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());\n"
       "    const ground=new THREE.Mesh(new THREE.PlaneGeometry(80,80)")
-    # Selection rings previously sat just beneath the meadow plane (.035 < .04).
-    # Keep them visibly above the meadow, with their original fog occlusion.
-    html=once(html,
-      "terrainHeight(entity.pos[0], entity.pos[2]) + .035 + index * .004",
-      "terrainHeight(entity.pos[0], entity.pos[2]) + .10 + index * .014")
     js=(root/'runtime/sheep_visual_stability_v11_197.js').read_text(encoding='utf8')
     html=once(html,'window.SWRLZ_FORGE_BUILD=',js+'\nwindow.SWRLZ_FORGE_BUILD=')
     for old,new in [
@@ -51,7 +46,6 @@ def apply(html):
     notes.update(title='Sheep Tag texture aliasing, multiplayer fog paint and browser performance follow-up',
       date='2026-10-31',changes=[
       'Remove a repeated one-pixel meadow crosshatch that causes moire/crawling horizontal stripes at shallow camera angles in normal Quest Browser and immersive WebXR; use mipmapped anisotropic ground texture filtering.',
-      'Lift Sheep Tag selected-unit marker rings off the meadow surface to avoid another shallow depth overlap, while keeping existing fog and gameplay visibility behavior.',
       'Prevent the solo translucent fog painter from overwriting the independent LAN/team fog visual layer between remote world frames. LAN team visibility computation and orders remain untouched.',
       'Replace the normal Sheep Tag camera per-frame stStatus serialization with direct controlled/selected native actor position tracking, while keeping the native camera angle, zoom, WASD pan and selection rings.',
       'Preserve v11.196 anchored legible Quest radial, one-time camera positioning, screen captures, previous map/editor/project versions, other game starters, modeler and §C. Quest 2 long-run stereo performance still needs hardware acceptance.'
