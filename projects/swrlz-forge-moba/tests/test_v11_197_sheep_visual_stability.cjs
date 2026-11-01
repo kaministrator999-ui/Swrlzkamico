@@ -15,8 +15,8 @@ const units=[
  {id:'wolf',kind:'wolf',pos:new V(-5,0,-6)}
 ];
 const ctx={
- window:{},Number,Math,Set,
- THREE:{MathUtils:{clamp:(n,min,max)=>Math.max(min,Math.min(max,n))}},
+ window:{},Number,Math,Set,actors:[],
+ THREE:{LinearMipmapLinearFilter:1008,MathUtils:{clamp:(n,min,max)=>Math.max(min,Math.min(max,n))}},
  stSession:{simulate:false,controlledId:'mine',selectedId:'friend',rules:{bounds:40},
   units,buildings:[{id:'farm',kind:'st-farm',pos:new V(4,0,4),hp:100}]},
  stUi:{keys:new Set(),follow:true,focus:new V(),zoom:1},
