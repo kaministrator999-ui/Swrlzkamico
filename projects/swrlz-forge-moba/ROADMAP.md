@@ -1,3 +1,13 @@
+## §E v11.194 — Emberfall: Shattered Vale, original hack-and-slash starter (2026-10-31)
+
+**New project template:** Projects → **Emberfall · Shattered Vale** creates an independently editable native §E map, with Wayfarer hero, Blightwoods, cliff formations, camp portal, corrupted crystals, shrine ruins, 11 enemies and a Cinder Warden boss. Explicit deep link: `?project=emberfall-arpg`. Original startup project preference and existing saved projects are untouched.
+
+**Playable first slice:** Play starts a top-down action RPG session. Tap/click terrain to move or tap an enemy to pursue and slash; keyboard WASD/arrows are optional. Slash (Space), arcane Bolt (Q), area Nova (E), and healing Potions (R) all have usable touch buttons and proper mana/cooldown rules. Enemies pursue and damage the player; a friendly lantern follows and occasionally attacks. Kills grant gold/experience, levels grant skill points, randomized common/magic/rare loot drops and auto-upgrades simple attack/armor ratings. Defeat the Cinder Warden for a starter objective.
+
+**Native integration and boundaries:** The editor owns authored objects and project serialization; combat AI, temporary drops, VFX, hero health and XP reset with Play/Stop, preserving the exact editable level. No second WebGL renderer or animation loop; no licensed ARPG assets, names or map designs copied. Full persistent RPG character/inventory, procedural dungeon generation, co-op and dedicated VR ARPG input remain future phases. Physical mobile/Quest tests are required to accept the new gameplay.
+
+**Release receipt:** Source v11.194, **226 ordered patches**, **68 assets**, **7,259,828 HTML bytes**, SHA-256 `740bfa088414731cd6b397aaf85290ef550461d8708ade833f9f3742a27aa2f4`. GitHub candidate run [#41267781381](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/41267781381) built the exact package and passed targeted ARPG and existing Quest regression checks. Final production deployment and owner hardware acceptance remain separately evidenced.
+
 ## §E v11.193 — immersive Sheep Tag gameplay camera, VR menu and Capture Studio (2026-10-31)
 
 **Owner instruction:** Get the previously prepared Quest 2 Sheep Tag / VR capture candidate live. Maintain Dragon Den as the optional launch/home environment and preserve the direct editing viewport; spatial floating desktop-style workstation within Dragon Den remains a separate Quest-performance-measured milestone, NOT claimed by this patch.
