@@ -38,6 +38,14 @@ def apply(html):
     html=once(html,
         'THREE.MathUtils.clamp(Number(hit?.distance)||3,.12,20)',
         'THREE.MathUtils.clamp(Number(hit?.distance)||3,.12,se193XRGameActive()?140:20)')
+    # The existing creator palette remains authoritative: add one doorway to
+    # the compact XR capture panel rather than a second permanent toolbar.
+    html=once(html,
+        "['rock','PLACE ROCK'],['undo','UNDO'],['aimLeft','AIM ←'],",
+        "['rock','PLACE ROCK'],['undo','UNDO'],['capture','CAPTURE'],['aimLeft','AIM ←'],")
+    html=once(html,
+        'function se192Action(action,record){\n se192.lastAction=action;',
+        "function se192Action(action,record){\n se192.lastAction=action;\n if(action==='capture'){se193XRAction('editorCapture');return true;}")
     html=once(html,
         'if(!playing&&!simulating)se192MoveFrame(dt);',
         'if(!playing&&!simulating&&!se193XRMenuActive())se192MoveFrame(dt);')
