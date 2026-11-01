@@ -250,6 +250,6 @@
     "patches/v11_201_sheep_warcraft_foundation_passages.py",
     "patches/v11_202_quest_sheep_camera_input_performance.py"
   ],
-  "finalBytes": null,
-  "finalSha256": null
+  "finalBytes": 7356329,
+  "finalSha256": "2c4de0bb76af4513d06e327c77a98dd107b2823d2d1b04b3b3756d22a835814d"
 }
