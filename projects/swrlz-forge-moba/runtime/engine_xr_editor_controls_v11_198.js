@@ -79,7 +79,7 @@ function se198GrabFrame(record){
   se198.grab=g;
   selectActor(actor);se198.directGrabs++;
  }
- if(g.actor.parent===null||!se198IsValidActor(g.actor)){
+ if(!se198IsValidActor(g.actor)){
   se198FinishGrab(false);return;
  }
  const target=g.worldStart.clone().add(hand.sub(g.handStart));
