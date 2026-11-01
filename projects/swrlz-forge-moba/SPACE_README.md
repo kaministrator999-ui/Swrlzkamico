@@ -18,7 +18,7 @@ short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 
 **UI overhaul:** automatic authored-actor Sheep Tag menu cinematic with a slow comfort-aware sheep-centered headset view, compact right-controller-tethered radial palettes (X to open/close, trigger to select), modal menu input interception, minimal low-poly controller grip bodies and glowing calibrated beams with particles. Dismiss duplicate in-world exit signs while retaining Meta system menu and browser toolbar exit. Photo mode freezes play for framing, captures on trigger and restores pause with X; clean/debug JSON/stereo exports use the original screenshot writer with after-XR download fallback. Debug screenshots include FPS/draw-call and fog diagnostics.
 
-**Release source:** 227 patches, 68 assets, 7,288,106 exact HTML bytes, SHA-256 `9afda333c6bce229ae86ddbd7a1e27e8a31a6988530fdfb268e169d8a478f7b6`. See `docs/QUEST_SHEEP_VR_STABILITY_V11_195.md`. Browser and unit acceptance cannot replace physical Quest 2 frame/comfort/stereo acceptance; other engines, projects, storage, §C authentication and Model Atelier stay unchanged.
+**Release source:** 227 patches, 68 assets, 7,288,202 exact HTML bytes, SHA-256 `7fa6242cfeeb6f9b44e8887cf86b905ed5e6ee9c55e7e12696a64fc77a0a31ad`. See `docs/QUEST_SHEEP_VR_STABILITY_V11_195.md`. Browser and unit acceptance cannot replace physical Quest 2 frame/comfort/stereo acceptance; other engines, projects, storage, §C authentication and Model Atelier stay unchanged.
 
 ## §E v11.194 — Emberfall: Shattered Vale, original hack-and-slash starter (2026-10-31)
 
