@@ -21,10 +21,12 @@ def apply(html):
       "    for(let p=512%30.72;p<1024;p+=30.72){c.beginPath();c.moveTo(p,0);c.lineTo(p,1024);c.stroke();c.beginPath();c.moveTo(0,p);c.lineTo(1024,p);c.stroke();}",
       "    // No subpixel repeating grid: fine alternating lines shimmer when the meadow is minified.")
     html=once(html,
-      "const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;texture.anisotropy=4;",
+      "const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;texture.anisotropy=4;\n"
+      "    const ground=new THREE.Mesh(new THREE.PlaneGeometry(80,80)",
       "const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;"
       "texture.minFilter=THREE.LinearMipmapLinearFilter;texture.magFilter=THREE.LinearFilter;"
-      "texture.generateMipmaps=true;texture.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());")
+      "texture.generateMipmaps=true;texture.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());\n"
+      "    const ground=new THREE.Mesh(new THREE.PlaneGeometry(80,80)")
     # Selection rings previously sat just beneath the meadow plane (.035 < .04).
     # Keep them visibly above the meadow, with their original fog occlusion.
     html=once(html,
