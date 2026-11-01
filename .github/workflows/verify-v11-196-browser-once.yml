@@ -1,0 +1,61 @@
+name: Audit sealed §E v11.196 browser fog and native Sheep gameplay (one-time)
+on:
+  push:
+    branches: [fix/quest-sheep-v196-stable-menu-fog-camera]
+    paths: [".github/workflows/verify-v11-196-browser-once.yml"]
+permissions:
+  contents: read
+jobs:
+  chrome:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - name: Build sealed release and install browser runner
+        run: |
+          python projects/swrlz-forge-moba/scripts/verify_v11_196_release.py --output dist/quest196 >/tmp/se196-source.log
+          python -m pip install --quiet "playwright>=1.50,<2"
+          which google-chrome || which google-chrome-stable || which chromium
+      - name: Inspect real native 2D game fog mesh and editor restore
+        run: |
+          python -m http.server 8765 --directory dist/quest196 >/tmp/se196-http.log 2>&1 &
+          python - <<'PY'
+          from playwright.sync_api import sync_playwright
+          with sync_playwright() as p:
+              browser=p.chromium.launch(headless=True,channel='chrome',args=[
+                '--no-sandbox','--disable-dev-shm-usage','--use-gl=angle',
+                '--use-angle=swiftshader','--enable-webgl','--enable-unsafe-swiftshader'])
+              page=browser.new_page(viewport={'width':1280,'height':780})
+              failures=[]
+              page.on('pageerror',lambda e:failures.append(str(e)))
+              page.goto('http://127.0.0.1:8765/index.html?project=sheep-tag-meadow',wait_until='domcontentloaded',timeout=120000)
+              page.wait_for_function('!!window.SWYRL_ENGINE_SHEEP_VR_FIX196 && window.SWYRL_ENGINE_LEVELS.status().levels>=2',timeout=90000)
+              assert page.evaluate("window.SWYRL_ENGINE_LEVELS.status().active")=='menu'
+              page.evaluate("document.getElementById('playBtn').click()")
+              page.wait_for_function('window.SWYRL_ENGINE_LEVELS.status().menuPlaying',timeout=45000)
+              print('SE196_REAL_CINEMATIC_PASS',flush=True)
+              page.evaluate("document.getElementById('st141StartGame').click()")
+              page.wait_for_function("window.SWYRL_ENGINE_SHEEP_TAG.status().active",timeout=45000)
+              state=page.evaluate("""() => ({
+                y:stSession.fog.mesh.position.y,
+                polygonOffset:stSession.fog.mesh.material.polygonOffset,
+                depthWrite:stSession.fog.mesh.material.depthWrite,
+                depthTest:stSession.fog.mesh.material.depthTest,
+                fogRepaired:stSession.fog.se196DepthFixed,
+                actors:stSession.units.length,
+                fogPaints:window.SWYRL_ENGINE_SHEEP_VR_FIX196.diagnose().fogPaints
+              })""")
+              print('SE196_BROWSER_FOG_STATE',state,flush=True)
+              assert state['actors']>=2
+              assert state['fogRepaired'] and state['y']>=.23
+              assert state['polygonOffset'] and state['depthTest'] and not state['depthWrite']
+              page.wait_for_timeout(400)
+              page.evaluate("document.getElementById('stopBtn').click()")
+              page.wait_for_function("!window.SWYRL_ENGINE_SHEEP_TAG.status().active",timeout=45000)
+              errors=[e for e in failures if 'se196' in e.lower() or 'fog' in e.lower() or 'sheep' in e.lower()]
+              assert not errors,'Relevant browser page errors: '+repr(errors)
+              print('SE196_BROWSER_FOG_CINEMATIC_PLAY_STOP_PASS',flush=True)
+              browser.close()
+          PY
