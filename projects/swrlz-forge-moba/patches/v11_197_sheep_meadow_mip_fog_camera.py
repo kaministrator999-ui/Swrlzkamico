@@ -27,6 +27,29 @@ def apply(html):
       "texture.minFilter=THREE.LinearMipmapLinearFilter;texture.magFilter=THREE.LinearFilter;"
       "texture.generateMipmaps=true;texture.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());\n"
       "    const ground=new THREE.Mesh(new THREE.PlaneGeometry(80,80)")
+    # New starters use the 4K original Wildwood texture, not the older 1024
+    # meadow canvas. Prefilter its 1px grass details to 2048 only on Quest,
+    # before WebGL uploads. Keep full-resolution original source untouched.
+    html=once(html,
+      "stWildwoodGroundTexture=new THREE.TextureLoader().load('assets/sheep-tag/moonbell-wildwood-ground-4k.jpg');",
+      """stWildwoodGroundTexture=new THREE.TextureLoader().load('assets/sheep-tag/moonbell-wildwood-ground-4k.jpg',function(texture){
+   if(!/(?:OculusBrowser|Quest)/i.test(navigator.userAgent||''))return;
+   const source=texture.image;
+   if(!source||!(source.naturalWidth||source.width)||(source.naturalWidth||source.width)<=2048)return;
+   const canvas=document.createElement('canvas');canvas.width=canvas.height=2048;
+   const ctx=canvas.getContext('2d');
+   if(!ctx)return;
+   ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+   ctx.drawImage(source,0,0,canvas.width,canvas.height);
+   texture.image=canvas;texture.needsUpdate=true;
+   texture.userData.se197QuestDownsampled=true;
+  });""")
+    html=once(html,
+      "stWildwoodGroundTexture.colorSpace=THREE.SRGBColorSpace;",
+      "stWildwoodGroundTexture.colorSpace=THREE.SRGBColorSpace;"
+      "stWildwoodGroundTexture.minFilter=THREE.LinearMipmapLinearFilter;"
+      "stWildwoodGroundTexture.magFilter=THREE.LinearFilter;"
+      "stWildwoodGroundTexture.generateMipmaps=true;")
     js=(root/'runtime/sheep_visual_stability_v11_197.js').read_text(encoding='utf8')
     html=once(html,'window.SWRLZ_FORGE_BUILD=',js+'\nwindow.SWRLZ_FORGE_BUILD=')
     for old,new in [
@@ -45,7 +68,7 @@ def apply(html):
     notes,n=json.JSONDecoder().raw_decode(html[pos:])
     notes.update(title='Sheep Tag texture aliasing, multiplayer fog paint and browser performance follow-up',
       date='2026-10-31',changes=[
-      'Remove a repeated one-pixel meadow crosshatch that causes moire/crawling horizontal stripes at shallow camera angles in normal Quest Browser and immersive WebXR; use mipmapped anisotropic ground texture filtering.',
+      'Remove the old 1024px meadow periodic crosshatch and explicitly mipmap both that surface and the actual 4K Moonbell Wildwood starter texture; on Quest Browser prefilter Wildwood to a 2048px texture before GPU upload without altering its original art or desktop resolution.',
       'Prevent the solo translucent fog painter from overwriting the independent LAN/team fog visual layer between remote world frames. LAN team visibility computation and orders remain untouched.',
       'Replace the normal Sheep Tag camera per-frame stStatus serialization with direct controlled/selected native actor position tracking, while keeping the native camera angle, zoom, WASD pan and selection rings.',
       'Preserve v11.196 anchored legible Quest radial, one-time camera positioning, screen captures, previous map/editor/project versions, other game starters, modeler and §C. Quest 2 long-run stereo performance still needs hardware acceptance.'
