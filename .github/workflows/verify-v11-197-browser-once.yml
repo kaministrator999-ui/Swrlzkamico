@@ -27,7 +27,7 @@ jobs:
               browser=p.chromium.launch(headless=True,channel='chrome',args=[
                 '--no-sandbox','--disable-dev-shm-usage','--use-gl=angle',
                 '--use-angle=swiftshader','--enable-webgl','--enable-unsafe-swiftshader'])
-              page=browser.new_page(viewport={'width':1280,'height':820})
+              page=browser.new_page(viewport={'width':1280,'height':820},user_agent='Mozilla/5.0 (Linux; Android 10; Quest 2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 OculusBrowser/33.0')
               errors=[]
               page.on('pageerror',lambda e:errors.append(str(e)))
               page.goto('http://127.0.0.1:8765/index.html?project=sheep-tag-meadow',
@@ -38,7 +38,7 @@ jobs:
               print('SE197_AUTHOR_CINEMATIC_PASS',flush=True)
               page.evaluate("document.getElementById('st141StartGame').click()")
               page.wait_for_function("window.SWYRL_ENGINE_SHEEP_TAG.status().active",timeout=50000)
-              page.wait_for_timeout(850)
+              page.wait_for_function("window.SWYRL_ENGINE_SHEEP_VISUAL_197.diagnose().meadow?.textureWidth===2048",timeout=45000)
               data=page.evaluate("""() => ({
                 game:window.SWYRL_ENGINE_SHEEP_TAG.status(),
                 visual:window.SWYRL_ENGINE_SHEEP_VISUAL_197.diagnose(),
@@ -55,6 +55,7 @@ jobs:
               },flush=True)
               assert data['game']['active'] and len(data['game']['units'])>=2
               assert v['meadow'] and v['meadow']['mipmapped'] and v['meadow']['generateMipmaps']
+              assert v['meadow']['name']=='MoonbellWildwoodGround' and v['meadow']['questDownsampled'] and v['meadow']['textureWidth']==2048
               assert v['meadow']['anisotropy']>=1
               assert v['cameraFrames']>0 and v['avoidedFullStatusSnapshots']>0
               assert data['fog']['fogDepth']>=.23
