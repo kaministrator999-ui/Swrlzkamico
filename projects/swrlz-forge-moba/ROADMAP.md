@@ -1,3 +1,9 @@
+## §E v11.196 — Sheep Tag browser fog and Quest VR menu/camera recovery (2026-10-31)
+
+Two independent screenshot-reported problems fixed. On the **2D floating browser**, transparent fog sat almost coplanar with the meadow and could produce flickering stripes: this patch raises the translucent plane above the ground, adds polygon depth offset and coalesces texture redraws without changing logical fog sight rules. In **immersive Quest VR**, the wrist radial was inverted and repositioned during aiming, and headset movement clashed with Sheep Tag's authored cinematic. The menu now faces the player and remains stationary while open; entry gets a single sheep-centered reposition, gameplay follow snaps once rather than flying toward the sheep, and editor locomotion/grabs cannot compete with cinematic control. The menu retains an explicit REFOCUS action and the existing screen capture tools.
+
+Source: 228 ordered patches, 68 assets, 7,295,859-byte HTML, SHA-256 `679d14774b8abb97254f1adf072b98f0db51bbad152a2567142105155b944ca1`. See `docs/SHEEP_VR_FOG_CAMERA_RECOVERY_V11_196.md`. Source/browser checks cannot establish actual Quest 2 stereo visuals, frame rate or comfort; owner headset acceptance required. Original saved scenes, Sheep Tag network rules, §C, Dragon Den, Emberfall and Model Atelier preserved.
+
 ## §E v11.195 — Quest 2 Sheep Tag camera, fog, menus and capture repairs (2026-10-31)
 
 **Owner-reported issues addressed in source:** left-offset VR follow camera, severe lag after game begins, fluttering ground/fog texture, controller rays selecting through menus, duplicate Exit VR sign/arrival overlay, static Main Menu positioned by houses and cumbersome tall floating dialog stacks.
