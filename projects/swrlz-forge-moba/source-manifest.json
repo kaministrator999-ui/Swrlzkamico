@@ -251,6 +251,6 @@
     "patches/v11_202_quest_sheep_camera_input_performance.py",
     "patches/v11_203_quest_wrist_forward_aim.py"
   ],
-  "finalBytes": null,
-  "finalSha256": null
+  "finalBytes": 7367775,
+  "finalSha256": "e8decb843cd13e9c8da9482ec3704740e133507bb9a9742b80e95ab18b47d14f"
 }
