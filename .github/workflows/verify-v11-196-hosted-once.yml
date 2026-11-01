@@ -1,0 +1,55 @@
+name: Audit hosted §E v11.196 Sheep Tag fog and Quest recovery (one-time)
+on:
+  push:
+    branches: [fix/quest-sheep-v196-stable-menu-fog-camera]
+    paths: [".github/workflows/verify-v11-196-hosted-once.yml"]
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - name: Build strict 228-patch package and validate hosted source and HTML
+        run: |
+          python projects/swrlz-forge-moba/scripts/verify_v11_196_release.py --output /tmp/se196-live >/tmp/se196-build.log
+          python - <<'PY'
+          import json,hashlib,urllib.request,time
+          from pathlib import Path
+          base='https://kamiloki-swrlz-forge-moba.static.hf.space'
+          expected_size=7295859
+          expected_sha='679d14774b8abb97254f1adf072b98f0db51bbad152a2567142105155b944ca1'
+          raw=Path('/tmp/se196-live/index.html').read_bytes()
+          assert len(raw)==expected_size and hashlib.sha256(raw).hexdigest()==expected_sha
+          def get(path,n):
+              req=urllib.request.Request(base+path+'?se196audit='+str(n),
+                 headers={'Cache-Control':'no-cache','User-Agent':'se196-live-source-integrity'})
+              with urllib.request.urlopen(req,timeout=35) as resp:return resp.read()
+          for n in range(1,10):
+              try:
+                  meta=json.loads(get('/SOURCE.json',n))
+                  assert meta['sourceVersion']=='§wyrl§ Engine v11.196'
+                  assert meta['finalBytes']==expected_size
+                  assert meta['finalSha256']==expected_sha
+                  assert len(meta['assets'])==68
+                  html=get('/index.html',n)
+                  if html!=raw:
+                      p=0
+                      while p<min(len(raw),len(html)) and raw[p]==html[p]:p+=1
+                      suffix=0
+                      while suffix<min(len(raw),len(html))-p and raw[-1-suffix]==html[-1-suffix]:suffix+=1
+                      inject=html[p:len(html)-suffix]
+                      assert p==39 and len(inject)<1300
+                      assert b'window.huggingface' in inject and b'og:title' in inject
+                      assert html[:p]+html[p+len(inject):]==raw
+                      print('HF_META_INSERT_BYTES='+str(len(inject)),flush=True)
+                  print('SE196_LIVE_SOURCE_HTML_SHA256_PASS',flush=True)
+                  break
+              except Exception as err:
+                  print('HOST_RETRY='+str(n)+' '+str(err),flush=True)
+                  if n==9:raise
+                  time.sleep(5)
+          PY
