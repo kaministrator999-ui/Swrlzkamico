@@ -1,0 +1,63 @@
+name: §E v11.197 one-time real Chrome meadow/fog/camera smoke
+on:
+  push:
+    branches: [fix/sheep-v11-197-meadow-alias-fog-painter-camera-cost]
+    paths: [".github/workflows/verify-v11-197-browser-once.yml"]
+permissions:
+  contents: read
+jobs:
+  chrome:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - name: Verify exact 229-patch artifact and install Chrome smoke runner
+        run: |
+          python projects/swrlz-forge-moba/scripts/verify_v11_197_release.py --output dist/quest197 >/tmp/se197-package.log
+          python -m pip install --quiet "playwright>=1.50,<2"
+          which google-chrome || which google-chrome-stable || which chromium
+      - name: Native Sheep title cinematic, gameplay meadow minification, 2D camera and stop
+        run: |
+          python -m http.server 8765 --directory dist/quest197 >/tmp/se197-server.log 2>&1 &
+          python - <<'PY'
+          from playwright.sync_api import sync_playwright
+          with sync_playwright() as p:
+              browser=p.chromium.launch(headless=True,channel='chrome',args=[
+                '--no-sandbox','--disable-dev-shm-usage','--use-gl=angle',
+                '--use-angle=swiftshader','--enable-webgl','--enable-unsafe-swiftshader'])
+              page=browser.new_page(viewport={'width':1280,'height':820})
+              errors=[]
+              page.on('pageerror',lambda e:errors.append(str(e)))
+              page.goto('http://127.0.0.1:8765/index.html?project=sheep-tag-meadow',
+                wait_until='domcontentloaded',timeout=120000)
+              page.wait_for_function("!!window.SWYRL_ENGINE_SHEEP_VISUAL_197 && window.SWYRL_ENGINE_LEVELS.status().levels>=2",timeout=90000)
+              page.evaluate("document.getElementById('playBtn').click()")
+              page.wait_for_function("window.SWYRL_ENGINE_LEVELS.status().menuPlaying",timeout=50000)
+              print('SE197_AUTHOR_CINEMATIC_PASS',flush=True)
+              page.evaluate("document.getElementById('st141StartGame').click()")
+              page.wait_for_function("window.SWYRL_ENGINE_SHEEP_TAG.status().active",timeout=50000)
+              page.wait_for_timeout(850)
+              data=page.evaluate("""() => ({
+                game:window.SWYRL_ENGINE_SHEEP_TAG.status(),
+                visual:window.SWYRL_ENGINE_SHEEP_VISUAL_197.diagnose(),
+                fog:window.SWYRL_ENGINE_SHEEP_VR_FIX196.diagnose()
+              })""")
+              v=data['visual']
+              print('SE197_LIVE_MEADOW_DIAGNOSTICS',{
+                'meadow':v['meadow'],'cameraFrames':v['cameraFrames'],
+                'avoidedSnapshots':v['avoidedFullStatusSnapshots'],'fogDepth':data['fog']['fogDepth']
+              },flush=True)
+              assert data['game']['active'] and len(data['game']['units'])>=2
+              assert v['meadow'] and v['meadow']['mipmapped'] and v['meadow']['generateMipmaps']
+              assert v['meadow']['anisotropy']>=1
+              assert v['cameraFrames']>0 and v['avoidedFullStatusSnapshots']>0
+              assert data['fog']['fogDepth']>=.23
+              page.evaluate("document.getElementById('stopBtn').click()")
+              page.wait_for_function("!window.SWYRL_ENGINE_SHEEP_TAG.status().active",timeout=40000)
+              critical=[e for e in errors if 'se197' in e.lower() or 'sheep' in e.lower() or 'fog' in e.lower()]
+              assert not critical,'Relevant runtime error: '+repr(critical)
+              print('SE197_CHROME_MEADOW_GAME_STOP_PASS',flush=True)
+              browser.close()
+          PY
