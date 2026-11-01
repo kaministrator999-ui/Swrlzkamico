@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.193",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_193_SHEEP_VR_CAPTURE",
-  "reason": "Owner requested live §E Quest 2 VR Sheep Tag update. Native authored-level immersive title menu, wide elevated follow/free camera with VR snap-to-sheep, accurate gameplay-distance controller rays, game-authoritative move/build/attack/rescue commands and dynamic farm targeting, nested Quest game/session/capture palettes, clean/debug+JSON/stereo PNG in-engine capture and editor Capture Studio doorway. Preserve original WebXR session and renderer, mobile/desktop, Chat, Model Atelier, auth and saved map data. GitHub v11.193 candidate strict PASS run 41266488354 and sealed-source subsequent success 41266604713: 225 ordered patches, 68 assets, 7,230,728-byte HTML SHA-256 f4e7aa71b4d40d1081645eb2b0a7954a4a7b7e06a10e02338b9cd7e7b6a2574b. Source integrated through PR #307 at merge e2a2dda7262fb5de17c088bbb568ca7849cd0fe5. Physical Quest 2 experience not yet owner-accepted.",
-  "sourceCommit": "e2a2dda7262fb5de17c088bbb568ca7849cd0fe5",
-  "sourceIntegritySha256": "f4e7aa71b4d40d1081645eb2b0a7954a4a7b7e06a10e02338b9cd7e7b6a2574b"
+  "releaseVersion": "v11.194",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_194_EMBERFALL_ARPG_STARTER",
+  "reason": "Owner requested an original hack-and-slash RPG starter in §E informed by Diablo II, Path of Exile and Torchlight mechanics. Add Emberfall · Shattered Vale native project card/deep link, authored Wayfarer hero, 11 enemies + Cinder Warden boss, blighted props/ruins/camp, top-down Play click/tap/WASD movement, Slash/Bolt/Nova, AI attacks, XP/skills, gold, original randomized loot, potions and companion with responsive combat HUD. Preserve original renderer, scene serialization and all legacy starters, Sheep Tag, VR, Modeler and Chat. GitHub candidate strict source PASS #41267965294 (226 ordered patches, 68 assets, 7,259,828-byte HTML SHA-256 740bfa088414731cd6b397aaf85290ef550461d8708ade833f9f3742a27aa2f4), headless Chrome actual starter/Play/HUD/Stop PASS #41268065991, source PR #308 merged at f5ca527c12642f48e4f5ebfa51ca25a077ea29e9. Physical phone/Quest acceptance pending; no copied copyrighted art.",
+  "sourceCommit": "f5ca527c12642f48e4f5ebfa51ca25a077ea29e9",
+  "sourceIntegritySha256": "740bfa088414731cd6b397aaf85290ef550461d8708ade833f9f3742a27aa2f4"
 }
