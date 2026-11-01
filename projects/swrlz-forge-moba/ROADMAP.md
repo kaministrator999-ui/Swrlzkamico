@@ -1,3 +1,9 @@
+## §E v11.197 — Sheep Tag meadow aliasing, LAN fog and efficient flat camera (2026-10-31)
+
+**Screenshot follow-up:** the 1-pixel periodic grid baked into the original 1024px meadow texture could shimmer and form moiré at shallow camera angles even after the separate fog plane depth fix. v11.197 removes that grid without changing authored ground/paths, applies anisotropic mipmap filtering to the native meadow, blocks the solo fog painter from overwriting LAN team fog, and replaces the flat-screen camera's unnecessary per-frame full `stStatus()` snapshot with native controlled/selected actor position tracking. Existing Quest camera/radial, capture tools, LAN authority, starter projects and saves remain unchanged.
+
+**Authoritative source:** 229 ordered patches, 68 assets, 7,299,654-byte HTML SHA-256 `25c080d6c5fe9982a2feb28d7a529a5b315f0534760f2dab2deb1551fbafd821`. Details and device acceptance limits: `docs/SHEEP_MEADOW_VISUAL_STABILITY_V11_197.md`. Actual Quest 2 long-session GPU/stereo verification remains pending.
+
 ## §E v11.196 — Sheep Tag browser fog and Quest VR menu/camera recovery (2026-10-31)
 
 Two independent screenshot-reported problems fixed. On the **2D floating browser**, transparent fog sat almost coplanar with the meadow and could produce flickering stripes: this patch raises the translucent plane above the ground, adds polygon depth offset and coalesces texture redraws without changing logical fog sight rules. In **immersive Quest VR**, the wrist radial was inverted and repositioned during aiming, and headset movement clashed with Sheep Tag's authored cinematic. The menu now faces the player and remains stationary while open; entry gets a single sheep-centered reposition, gameplay follow snaps once rather than flying toward the sheep, and editor locomotion/grabs cannot compete with cinematic control. The menu retains an explicit REFOCUS action and the existing screen capture tools.
