@@ -1,3 +1,11 @@
+## §E v11.198 — Quest editor free flight, controller-driven 3D grabs, selectable gizmos and control legend (2026-11-01)
+
+**Owner controls:** The immersive native editor now provides smoother adjustable free-flight (1.5/3.2/6.4/12.8 world units/s), accelerated/braked velocity, left-stick-click speed boost, left grip + right-stick Y ascent/descent, and optional 15–45° snap-turn increments. The existing stable XR reference-space movement is reused to avoid stacking transforms over time.
+
+**Real scene editing:** Right-grip dragging now follows the controller's full world displacement, including pulling objects closer toward the headset, with one native undo transaction per completed move. Red/green/blue world-axis gizmo arrows are actually selectable with the trigger and restrict movement to X/Y/Z until release. The compact wrist radial gains FLIGHT, GIZMOS and a readable LEGEND page; prefab and capture controls remain accessible. Controller shells, aura and particles are visually smaller, editor-only helpers are kept out of capture, and menu selection remains modal.
+
+**Safety / source receipt:** 230 patches, 68 assets, 7,320,589 generated HTML bytes, SHA-256 `c5e42de3a9c6dca98d72843b70c4cb2eb549c22589aae4a7fb0d4f7e8ba00f0f`. See `docs/QUEST_SPATIAL_EDITOR_FLIGHT_GIZMO_V11_198.md`. Previously working Sheep Tag gameplay, Chat sign-in, Model Atelier, authored scenes and desktop/mobile controls remain outside this change. Real Quest 2 comfort, grip alignment, ray hit sensitivity and frame-rate acceptance require headset testing.
+
 ## §E v11.197 — Sheep Tag meadow aliasing, LAN fog and efficient flat camera (2026-10-31)
 
 **Screenshot follow-up:** the 1-pixel periodic grid baked into the original 1024px meadow texture could shimmer and form moiré at shallow camera angles even after the separate fog plane depth fix. v11.197 removes that grid without changing authored ground/paths, configures mipmap filtering for both the old meadow and current 4K Moonbell Wildwood, prefiltering Wildwood to 2K for Quest Browser, blocks the solo fog painter from overwriting LAN team fog, and replaces the flat-screen camera's unnecessary per-frame full `stStatus()` snapshot with native controlled/selected actor position tracking. Existing Quest camera/radial, capture tools, LAN authority, starter projects and saves remain unchanged.
