@@ -16,7 +16,7 @@ def apply(html):
     js=(root/'runtime/emberfall_arpg_v11_194.js').read_text(encoding='utf-8')
     css=(root/'runtime/emberfall_arpg_v11_194.css').read_text(encoding='utf-8')
     html=once(html,'window.SWRLZ_FORGE_BUILD=',js+'\nwindow.SWRLZ_FORGE_BUILD=')
-    html=once(html,'</head>','<style id="ef194Style">\n'+css+'\n</style>\n</head>')
+    html=html.replace('</head>','<style id="ef194Style">\n'+css+'\n</style>\n</head>',1)
     card=('<button class="project-card ef194-project-card" data-project-template="emberfall-arpg">'
       '<span class="project-icon">⚔️</span><strong>Emberfall · Shattered Vale</strong>'
       '<span class="template-tag">HACK-AND-SLASH RPG STARTER</span>'
@@ -24,11 +24,11 @@ def apply(html):
       '<span class="hint">Create editable dark-fantasy ARPG</span></button>')
     html=once(html,'<span class="hint den-glow">Open Frostveil Maul</span></button>',
       '<span class="hint den-glow">Open Frostveil Maul</span></button>'+card)
-    html=once(html,'</head>','<style id="ef194ProjectCard">'
+    html=html.replace('</head>','<style id="ef194ProjectCard">'
       '.ef194-project-card{border-color:#896c4780;background:radial-gradient(circle at 65% 15%,#a46b3342,transparent 43%),'
       'linear-gradient(155deg,#28201c,#11171b)}.ef194-project-card:hover{border-color:#e8bc72}'
       '.ef194-project-card .template-tag{color:#f0c28b;border-color:#a98052a0}'
-      '</style></head>')
+      '</style></head>',1)
     # Existing starter choice checkbox and new project UI already discover cards
     # by data-project-template; never override the user's saved default.
     html=once(html,
