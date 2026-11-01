@@ -4,7 +4,15 @@
 The Quest 2 Sheep Tag camera is still too close, with the sheep too low in the user's field of view. Joystick locomotion makes click-to-move unnecessary. The previous camera/house improvements helped lag, but dense construction still costs excessive CPU time.
 
 ## Quest composition
-The camera is pulled back **22 horizontal world units** and raised **25 units** per unit zoom, from 14/26 in v11.200. Default zoom increases from 1.4 to 1.5 and adds 3.5 units rearward. **The sheep stays attached to the game-world follow point** rather than to an on-screen HUD/camera overlay. This moves the sheep higher in a neutral down-looking VR view as an approximate composition goal, but **cannot lock it to the exact same screen coordinate while the headset physically turns**. WebXR head pitch/yaw and translational tracking remain completely natural, without screen pitching or motion-induced camera rig feedback. Right stick still adjusts orbit and zoom.
+The camera is pulled **back** to **21 horizontal world units** (previously 14) and gets **2.5 world units of additional rearward bias**. **Height and default zoom are unchanged from v11.200**: 26 units high × 1.4 zoom = 36.4 world units above the focus. It does **not** move the camera upward. **The sheep stays attached to the game-world follow point** rather than to an on-screen HUD/camera overlay. This moves the sheep higher in a neutral down-looking VR view as an approximate composition goal, but **cannot lock it to the exact same screen coordinate while the headset physically turns**. WebXR head pitch/yaw and translational tracking remain completely natural, without screen pitching or motion-induced camera rig feedback. Right stick still adjusts orbit and zoom.
+
+## Sheep selection circle: visual silhouette versus physics
+The wool, face, and tail of the sheep model extend beyond the native 0.27-world-unit movement collision radius. A single circle cannot truthfully enclose the entire sheep mesh **and** represent that smaller collision radius. The new selector therefore uses **two concentric rings**, with distinct meanings:
+
+- **Bright cyan inner circle**: exactly `stUnitRadius(unit)`, the native collision radius used for walking between houses (0.27 units by default). The circular perimeter represents the navigation clearance, not cosmetic wool overhang.
+- **Very faint golden outer halo**: measured once from the model bounds (or a safe fallback), sized to fit around the visible sheep. This is visual selection only and never used as a blocker.
+
+Both follow the controlled living sheep, update their positions cheaply per VR frame, and release their GPU resources on XR exit, restart or loss of control.
 
 ## VR input
 An empty-ground right trigger stops issuing `stUiCommand('move')`. Left joystick remains the sole movement path in immersive Sheep Tag Play. The original trigger can still select and inspect a unit/house, build at a valid site, attack as wolf, or rescue a captive. Editor selection, Play on touchscreen and non-VR input are unchanged.
