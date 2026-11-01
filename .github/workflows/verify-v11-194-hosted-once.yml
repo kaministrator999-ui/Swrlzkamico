@@ -1,0 +1,56 @@
+name: Audit hosted §E v11.194 Emberfall (one-time)
+on:
+  push:
+    branches: [feature/arpg-emberfall-starter-v11-194]
+    paths: [".github/workflows/verify-v11-194-hosted-once.yml"]
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - name: Verify hosted source and normalize Hugging Face metadata insertion
+        run: |
+          python projects/swrlz-forge-moba/scripts/verify_v11_194_release.py --output /tmp/se194-local >/tmp/se194-build.log
+          python - <<'PY'
+          import hashlib,json,time,urllib.request
+          from pathlib import Path
+          expected_bytes=7259828
+          expected_hash="740bfa088414731cd6b397aaf85290ef550461d8708ade833f9f3742a27aa2f4"
+          raw=Path('/tmp/se194-local/index.html').read_bytes()
+          assert len(raw)==expected_bytes and hashlib.sha256(raw).hexdigest()==expected_hash
+          base="https://kamiloki-swrlz-forge-moba.static.hf.space"
+          for n in range(1,9):
+              try:
+                  def get(name):
+                      req=urllib.request.Request(base+name+"?audit="+str(n),
+                        headers={"Cache-Control":"no-cache","User-Agent":"se194-live-integrity-audit"})
+                      with urllib.request.urlopen(req,timeout=35) as response:return response.read()
+                  receipt=json.loads(get("/SOURCE.json"))
+                  assert receipt['sourceVersion']=="§wyrl§ Engine v11.194"
+                  assert receipt['finalBytes']==expected_bytes
+                  assert receipt['finalSha256']==expected_hash
+                  assert len(receipt['assets'])==68
+                  html=get("/index.html")
+                  if html!=raw:
+                      p=0
+                      while p<min(len(raw),len(html)) and raw[p]==html[p]:p+=1
+                      suffix=0
+                      while suffix<min(len(raw),len(html))-p and raw[-suffix-1]==html[-suffix-1]:
+                          suffix+=1
+                      inserted=html[p:len(html)-suffix]
+                      assert p==39 and len(inserted)<1300, "Unexpected HTML transformation"
+                      assert b'window.huggingface' in inserted and b'og:title' in inserted
+                      assert html[:p]+html[p+len(inserted):]==raw, "Hosted engine differs beyond provider metadata"
+                      print('HF_INJECTED_HEADER_BYTES='+str(len(inserted)),flush=True)
+                  print('LIVE_EMBERFALL_V11_194_HTML_AND_SOURCE_VERIFIED',flush=True)
+                  break
+              except Exception as e:
+                  print('RETRY='+str(n)+' '+str(e),flush=True)
+                  if n==8:raise
+                  time.sleep(5)
+          PY
