@@ -1,3 +1,7 @@
+## Current §E owner handoff — Sheep Tag 2D fog/Quest camera v11.196 (2026-10-31)
+
+**Source of truth:** 228 patches, 68 assets, 7,295,859-byte HTML SHA-256 `679d14774b8abb97254f1adf072b98f0db51bbad152a2567142105155b944ca1`. Appendix `docs/SHEEP_VR_FOG_CAMERA_RECOVERY_V11_196.md` documents independent 2D fog-plane depth fight, VR mirrored drifting radial and colliding cinematic/editor rig movements. Strict source verifier `scripts/verify_v11_196_release.py`; deployment must be a separate pinned request commit after checks. Quest 2 physical testing remains pending.
+
 ## Current §E owner handoff — Quest Sheep VR stability v11.195 (2026-10-31)
 
 **Authority:** The source manifest pins v11.195 to 227 patches, 68 assets, 7,288,202 HTML bytes, SHA-256 `7fa6242cfeeb6f9b44e8887cf86b905ed5e6ee9c55e7e12696a64fc77a0a31ad`. This repair adds a stable-base XR follow rig, Quest fog/render/raycast optimizations, authored menu cinematic, right-hand radial controllers, calibrated glow beams/particles, no duplicate Exit VR sign and an XR photo mode/debug metadata. See `docs/QUEST_SHEEP_VR_STABILITY_V11_195.md`. Update desktop/Quest only via strict verifier plus separate pinned deploy request; device performance acceptance remains pending.
