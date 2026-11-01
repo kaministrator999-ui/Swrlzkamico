@@ -74,7 +74,7 @@ assert(state.movement.at(-1).x<0,'sheep x=3 to eye x=5 should recenter left');
 assert(state.movement.at(-1).z>0,'camera should relocate behind the sheep');
 assert.equal(state.statusCalls,0,'follow camera must read native session, not serialize stStatus per XR frame');
 
-const baseSpace={getOffsetReferenceSpace(transform){return {parent:this,transform};}};
+const baseSpace={getOffsetReferenceSpace(transform){return {parent:this,transform,getOffsetReferenceSpace:this.getOffsetReferenceSpace};}};
 let currentSpace=baseSpace,spaceWrites=0;
 ctx.XRRigidTransform=class{constructor(position){this.position=position;}};
 ctx.renderer.xr.getReferenceSpace=()=>currentSpace;
