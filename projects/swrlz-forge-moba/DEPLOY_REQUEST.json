@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.190",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_190_RENDER_FPS_VAULT_BATCHING",
-  "reason": "Owner tested Low versus Mobile Boost with different Dragon Den camera views and found apparent 53–60 versus 24–30 FPS. Source inspection revealed prior HUD counted requestAnimationFrame updates rather than actual rendered frames; Low caps WebGL at 45, Boost at 60. Correct HUD/diagnostics to count actual submitted renderer frames; provide matched same-view 60 FPS-cap Low/Boost comparison with full preference restoration; on-demand visible draw-call actor audit. Reduce built-in decorative vault draw submissions via merged canopy/wall geometry and instanced rib/star meshes only within original editable parent groups; retain authored scene, collisions and modeler. Avoid shadow-map reallocation and pixel-ratio reset when unchanged. Strict fast source and asset receipt PASS via GitHub Actions 41253431143: 222 patches, 68 assets, 7,183,152-byte HTML SHA-256 823f27e58e34adabfb5610706accc7d81a79c9357b82927d1fd514c1d883fdf9. No Chromium installation per owner requirement. Browser/device FPS acceptance is pending.",
-  "sourceCommit": "b42f3d43ff83d4c19bda559aa8456d5eab47a47e",
-  "sourceIntegritySha256": "823f27e58e34adabfb5610706accc7d81a79c9357b82927d1fd514c1d883fdf9"
+  "releaseVersion": "v11.191",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_191_XR_BLACK_VIEW_RECOVERY",
+  "reason": "Owner on Meta Quest 2 enters §E WebXR using Enter VR but sees only black. Source confirmed immersive gateway uses local-floor without mapping headset to the current Dragon Den authored Arrival Court [0,0.02,14.1]. Repair native XR reference space positioning from project arrival zone with safe fallback, add head-visible emissive/unlit welcome diagnostic and persistent EXIT VR sign despite opaque/dark geometry, watchdog for zero presented frames, Quest-safe 80% framebuffer preference before entering XR and cached per-controller hover raycasts (native selectstart still fresh). Never mutate scene or 2D camera/project state. Fully mocked XR lifecycle and new recovery unit tests PASS; strict v11.191 source/asset verifier PASS via GitHub Actions 41257713400: 223 patches, 68 assets, exact 7,191,207-byte HTML SHA-256 4e970410c4c992f4dabc6b9740e840aee4f3bcbeb8c43cfb70d5522018b96e6c. No Chromium per owner instruction. Physical Quest 2 headset black-screen acceptance pending: code validation does not prove stereo compositor or headset output.",
+  "sourceCommit": "9320a9dd3257a7c5fb335cb1dc2f5fb5fe20bb2e",
+  "sourceIntegritySha256": "4e970410c4c992f4dabc6b9740e840aee4f3bcbeb8c43cfb70d5522018b96e6c"
 }
