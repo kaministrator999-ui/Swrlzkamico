@@ -1,0 +1,55 @@
+name: Verify hosted §E v11.197 Sheep texture/fog source (one-time)
+on:
+  push:
+    branches: [fix/sheep-v11-197-meadow-alias-fog-painter-camera-cost]
+    paths: [".github/workflows/verify-v11-197-hosted-once.yml"]
+permissions:
+  contents: read
+jobs:
+  hosted:
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - name: Verify actual hosted v11.197 receipt and exact served HTML
+        run: |
+          python projects/swrlz-forge-moba/scripts/verify_v11_197_release.py --output /tmp/se197-source >/tmp/se197-source.log
+          python - <<'PY'
+          import json,hashlib,time,urllib.request
+          from pathlib import Path
+          base='https://kamiloki-swrlz-forge-moba.static.hf.space'
+          size=7300640
+          digest='315e2acb7f54118fce4e428e534cceac14a0ecbaac596291df29ba6dbd7cc54d'
+          raw=Path('/tmp/se197-source/index.html').read_bytes()
+          assert len(raw)==size and hashlib.sha256(raw).hexdigest()==digest
+          def get(path,n):
+              req=urllib.request.Request(base+path+'?verify197='+str(n),
+                headers={'Cache-Control':'no-cache','User-Agent':'se197-Wildwood-hosted-integrity'})
+              with urllib.request.urlopen(req,timeout=35) as response:return response.read()
+          for n in range(1,10):
+              try:
+                  meta=json.loads(get('/SOURCE.json',n))
+                  assert meta['sourceVersion']=='§wyrl§ Engine v11.197'
+                  assert meta['finalBytes']==size
+                  assert meta['finalSha256']==digest
+                  assert len(meta['assets'])==68
+                  page=get('/index.html',n)
+                  if page!=raw:
+                      p=0
+                      while p<min(len(page),len(raw)) and page[p]==raw[p]:p+=1
+                      suffix=0
+                      while suffix<min(len(page),len(raw))-p and page[-1-suffix]==raw[-1-suffix]:suffix+=1
+                      inserted=page[p:len(page)-suffix]
+                      assert p==39 and len(inserted)<1300
+                      assert b'window.huggingface' in inserted and b'og:title' in inserted
+                      assert page[:p]+page[p+len(inserted):]==raw
+                      print('HF_INJECTED_METADATA_BYTES='+str(len(inserted)),flush=True)
+                  print('V11_197_LIVE_HTML_AND_SOURCE_SHA256_VERIFIED',flush=True)
+                  break
+              except Exception as e:
+                  print('VERIFY_RETRY='+str(n)+' '+str(e),flush=True)
+                  if n==9:raise
+                  time.sleep(5)
+          PY
