@@ -1,0 +1,77 @@
+/* §E Emberfall v11.194: Play-only HUD, no impact on editor layout. */
+#ef194Hud[hidden]{display:none!important}
+#ef194Hud{position:absolute;inset:0;z-index:34;pointer-events:none;
+ color:#f7e9cc;font:12px/1.4 Inter,system-ui,Segoe UI,sans-serif;
+ text-shadow:0 1px 2px #0c1010e0}
+#ef194Hud *,#ef194Hud *:before,#ef194Hud *:after{box-sizing:border-box}
+#ef194Hud .ef194-top{position:absolute;top:10px;left:10px;right:10px;
+ display:flex;gap:14px;align-items:center;max-width:670px;padding:12px 16px;
+ border:1px solid #ac89554d;border-radius:16px;
+ background:linear-gradient(130deg,#1a2125f0,#12181cee);
+ box-shadow:0 18px 35px #0009, inset 0 1px #ffd48a24}
+#ef194Hud .ef194-heading{min-width:135px;display:flex;flex-direction:column;gap:2px}
+#ef194Hud .ef194-heading strong{font:900 20px/.98 Georgia,serif;letter-spacing:2.1px;color:#e6b772}
+#ef194Hud .ef194-heading span{color:#9daeb4;font-size:10px;letter-spacing:2.2px}
+#ef194Hud .ef194-bars{min-width:140px;flex:1;display:grid;align-items:center;
+ grid-template-columns:minmax(80px,1fr) 60px;gap:4px 7px}
+#ef194Hud .ef194-bar{height:10px;background:#080e15;border-radius:20px;overflow:hidden;border:1px solid #f9c98730}
+#ef194Hud .ef194-bar i{display:block;height:100%;width:100%;border-radius:20px;transition:width .13s linear}
+#ef194Hud .ef194-life i{background:linear-gradient(90deg,#942e3f,#ff6774)}
+#ef194Hud .ef194-mana i{background:linear-gradient(90deg,#2861a4,#6be2fc)}
+#ef194Hud .ef194-xp{grid-column:1/3;height:5px}
+#ef194Hud .ef194-xp i{background:linear-gradient(90deg,#d38b33,#ffe19b)}
+#ef194Hud .ef194-bars b{font-variant-numeric:tabular-nums;color:#f6eee1;font-size:10px;text-align:right}
+#ef194Hud .ef194-overview{display:flex;flex-direction:column;align-items:flex-start;gap:4px;max-width:185px}
+#ef194Hud .ef194-overview b{font-size:10px;letter-spacing:.7px;color:#f3c888}
+#ef194Hud #ef194Quest{color:#bbcacb;line-height:1.3}
+#ef194Hud .ef194-side{position:absolute;top:88px;right:10px;width:220px;max-width:36vw;
+ display:flex;flex-direction:column;gap:8px;padding:14px;
+ background:linear-gradient(160deg,#172027ef,#10151bef);border:1px solid #c8a26258;
+ border-radius:14px;box-shadow:0 16px 32px #0008}
+#ef194Hud .ef194-side>b{color:#ffd295;letter-spacing:1.5px;font-size:10px}
+#ef194Hud #ef194Gear{color:#d7e7e7}
+#ef194Hud #ef194Loot{min-height:28px;color:#aeb6c4;line-height:1.4}
+#ef194Hud #ef194SkillPts{font-size:10px;color:#e9bd7a}
+#ef194Hud .ef194-upgrades{display:flex;flex-wrap:wrap;gap:5px;pointer-events:auto}
+#ef194Hud .ef194-upgrades button{font-size:10px;flex:1;white-space:nowrap}
+#ef194Hud .ef194-actions{position:absolute;bottom:38px;left:50%;transform:translateX(-50%);
+ display:flex;gap:7px;max-width:min(660px,96%);width:max-content;padding:10px;
+ border-radius:17px;border:1px solid #e4bd6e50;pointer-events:auto;
+ background:linear-gradient(115deg,#13191ef2,#252026ef);box-shadow:0 16px 40px #000a}
+#ef194Hud button{min-width:0;border:1px solid #bd905d6a;cursor:pointer;
+ color:#f2dba9;background:linear-gradient(180deg,#41312d,#251e20);
+ border-radius:10px;padding:8px 10px;transition:filter .13s,border .13s}
+#ef194Hud button:hover,#ef194Hud button:focus-visible{border-color:#f8ce87;filter:brightness(1.13);outline:none}
+#ef194Hud button:disabled{opacity:.44;cursor:default}
+#ef194Hud .ef194-actions button{display:flex;flex-direction:column;align-items:center;
+ gap:4px;min-width:104px;touch-action:manipulation;user-select:none}
+#ef194Hud .ef194-actions button b{font-size:12px;letter-spacing:.6px}
+#ef194Hud .ef194-actions button small{font-size:9px;color:#b8c3cb}
+#ef194Hud .ef194-tip{position:absolute;bottom:8px;width:100%;text-align:center;color:#d9c3a0;
+ font-size:10px;letter-spacing:.1px;pointer-events:none}
+#ef194Hud #ef194Retry{pointer-events:auto;color:#ffe2ab;border-color:#f3c36f}
+@media(max-width:760px){
+ #ef194Hud .ef194-top{right:8px;left:8px;top:6px;padding:8px;gap:6px;max-width:none;flex-wrap:wrap}
+ #ef194Hud .ef194-heading{min-width:100px}
+ #ef194Hud .ef194-heading strong{font-size:15px;letter-spacing:1px}
+ #ef194Hud .ef194-heading span{font-size:8px}
+ #ef194Hud .ef194-overview{max-width:none;flex-basis:100%;flex-direction:row;align-items:center;gap:8px}
+ #ef194Hud .ef194-overview b{white-space:nowrap}
+ #ef194Hud .ef194-side{top:110px;right:6px;width:162px;max-width:42vw;padding:8px;gap:4px;
+ border-radius:10px;background:#111a20d9}
+ #ef194Hud .ef194-side b,#ef194Hud .ef194-side label{font-size:9px}
+ #ef194Hud #ef194Loot{font-size:9px;min-height:0}
+ #ef194Hud .ef194-upgrades button{font-size:9px;padding:5px}
+ #ef194Hud .ef194-actions{bottom:26px;gap:4px;padding:6px;max-width:98vw}
+ #ef194Hud .ef194-actions button{min-width:0;width:clamp(65px,22vw,96px);padding:8px 4px}
+ #ef194Hud .ef194-actions button b{font-size:10px}
+ #ef194Hud .ef194-actions button small{font-size:8px}
+ #ef194Hud .ef194-tip{bottom:2px;font-size:9px;padding:0 2px}
+}
+@media(max-height:430px){
+ #ef194Hud .ef194-side{top:5px;right:5px;max-height:60%;overflow:auto;opacity:.96}
+ #ef194Hud .ef194-top{left:5px;right:180px;max-width:none}
+ #ef194Hud .ef194-actions{bottom:4px}
+ #ef194Hud .ef194-tip{display:none}
+}
+@media(prefers-reduced-motion:reduce){#ef194Hud .ef194-bar i,#ef194Hud button{transition:none}}
