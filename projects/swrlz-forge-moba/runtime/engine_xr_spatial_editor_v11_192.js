@@ -192,8 +192,9 @@ function se192FreezeBillboards(){
   plane.position.copy(obj.position);plane.scale.set(obj.scale.x,obj.scale.y,1);
   parent.add(plane);
   if(head)plane.lookAt(head.eye); // Orient once at launch, never per head frame.
+  const wasVisible=obj.visible;
   obj.visible=false;obj.userData.se192LabelFixed=true;
-  se192.sprites.push({original:obj,plane,parent,wasVisible:obj.visible});
+  se192.sprites.push({original:obj,plane,parent,wasVisible});
  });
 }
 function se192RestoreBillboards(){
