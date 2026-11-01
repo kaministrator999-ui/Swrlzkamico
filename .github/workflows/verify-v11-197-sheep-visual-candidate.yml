@@ -1,0 +1,57 @@
+name: Verify §E v11.197 Sheep meadow and fog visual stability
+on:
+  push:
+    branches: [fix/sheep-v11-197-meadow-alias-fog-painter-camera-cost]
+    paths:
+      - "projects/swrlz-forge-moba/**"
+      - ".github/workflows/verify-v11-197-sheep-visual-candidate.yml"
+permissions:
+  contents: read
+jobs:
+  candidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - uses: actions/setup-node@v4
+        with: {node-version: "22"}
+      - name: Test Sheep visual performance, existing Quest and ARPG
+        run: |
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_197_sheep_meadow_mip_fog_camera.py
+          node --check projects/swrlz-forge-moba/runtime/sheep_visual_stability_v11_197.js
+          node projects/swrlz-forge-moba/tests/test_v11_197_sheep_visual_stability.cjs
+          node projects/swrlz-forge-moba/tests/test_v11_196_quest_fog_menu.cjs
+          node projects/swrlz-forge-moba/tests/test_v11_195_quest_stability.cjs
+          node projects/swrlz-forge-moba/tests/test_v11_194_emberfall_arpg.cjs
+          node projects/swrlz-forge-moba/tests/test_v11_193_sheep_vr.cjs
+          node projects/swrlz-forge-moba/tests/test_v11_192_native_vr_editor.cjs
+      - name: Build exact 229 patch candidate and calculate checksum
+        run: |
+          python - <<'PY'
+          import sys,json,subprocess,hashlib
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          p=root/'source-manifest.json';m=json.loads(p.read_text(encoding='utf8'))
+          last='patches/v11_197_sheep_meadow_mip_fog_camera.py'
+          if last not in m['patches']:m['patches'].append(last)
+          assert len(m['patches'])==229 and m['patches'][-1]==last
+          m['name']='§wyrl§ Engine v11.197'
+          m['finalArtifact']='swyrl_engine_v11_197.html'
+          m['finalBytes']=0;m['finalSha256']=''
+          p.write_text(json.dumps(m,indent=2,ensure_ascii=False)+'\n',encoding='utf8')
+          subprocess.run([sys.executable,str(root/'build_space.py'),'--output','dist/se197'],check=True)
+          raw=Path('dist/se197/index.html').read_bytes();html=raw.decode('utf8')
+          for marker in ['V11_197_MEADOW_FOG_CAMERA_STABILITY',
+             'window.SWYRL_ENGINE_SHEEP_VISUAL_197','function se197MeadowInfo',
+             'texture.minFilter=THREE.LinearMipmapLinearFilter',
+             'terrainHeight(entity.pos[0], entity.pos[2]) + .10 + index * .014']:
+              assert marker in html,marker
+          assert '512%30.72' not in html,'subpixel grid remains'
+          assert html.count('renderer.setAnimationLoop(tick);')==1
+          assert len(json.loads(Path('dist/se197/SOURCE.json').read_text(encoding='utf8'))['assets'])==68
+          print('SE197_BYTES='+str(len(raw)),flush=True)
+          print('SE197_SHA256='+hashlib.sha256(raw).hexdigest(),flush=True)
+          print('SE197_CANDIDATE_PASS',flush=True)
+          PY
