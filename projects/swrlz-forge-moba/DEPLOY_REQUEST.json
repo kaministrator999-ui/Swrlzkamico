@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.196",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_196_SHEEP_FOG_RADIAL_CAMERA_RECOVERY",
-  "reason": "User Quest 2 screenshot confirmed rapidly striped Sheep Tag fog/ground in the normal flat Quest browser window (not only WebXR), plus mirrored and runaway floating radial UI and cinematic/gameplay headset camera drift. v11.196 stabilizes shared fog mesh depth and cosmetic paint cadence without changing authoritative sight; corrects radial facing and anchors it only on opening, provides REFOCUS; disables competing editor fly/grab inputs during Sheep Tag cinematic and performs one-time centered VR camera entry instead of fast flying. Source PR #310 merged to main 658bb44eadba62b32b3b5b0b898a9232dfbe49a1. Strict 228-patch 68-asset integrity production PASS GitHub Actions #41273133748. Real Chrome native menu/active gameplay/visible fog depth 0.23/Stop PASS #41272954404, Node prior XR/ARPG/Sheep tests PASS. Physical Quest 2 render and controller validation pending.",
-  "sourceCommit": "658bb44eadba62b32b3b5b0b898a9232dfbe49a1",
-  "sourceIntegritySha256": "679d14774b8abb97254f1adf072b98f0db51bbad152a2567142105155b944ca1"
+  "releaseVersion": "v11.197",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_197_MEADOW_FOG_CAMERA_STABILITY",
+  "reason": "Continuation of Quest 2 screenshot-grounded Sheep Tag terrain/fog shimmer stabilization. Current playable Moonbell Wildwood ground is a 4K original JPEG, distinct from older 1024 canvas meadow. v11.197 explicitly mipmaps both, removes old 1px crosshatch, prefilters Moonbell Wildwood once to a 2048px Quest Browser texture before GPU upload while keeping source art and desktop 4K intact, prevents solo fog painter overriding authoritative LAN/team visual fog, and removes per-frame full game-state serialization from 2D camera. Preserve prior v11.196 XR camera/radial/capture, all scene saves, Modeler/Chat, ARPG and 68 hosted assets. Source PR #311 merged at d122001b1aa278ca05e05c52e6b8d22c09e5f2b8. Final production full-source+XR test PASS #41275978054; Quest-UA emulated actual Chrome cinematic/game/texture-width 2048 and fog depth .23 and Stop PASS #41275843734. 229 ordered patches, 7,300,640-byte sealed HTML SHA-256 315e2acb7f54118fce4e428e534cceac14a0ecbaac596291df29ba6dbd7cc54d. Physical Quest 2 visual/FPS acceptance still pending.",
+  "sourceCommit": "d122001b1aa278ca05e05c52e6b8d22c09e5f2b8",
+  "sourceIntegritySha256": "315e2acb7f54118fce4e428e534cceac14a0ecbaac596291df29ba6dbd7cc54d"
 }
