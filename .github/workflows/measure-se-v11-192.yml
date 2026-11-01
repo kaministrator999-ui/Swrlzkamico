@@ -29,6 +29,8 @@ jobs:
           node projects/swrlz-forge-moba/tests/test_v11_192_native_vr_editor.cjs
           node projects/swrlz-forge-moba/tests/test_v11_191_xr_recovery.cjs
           node projects/swrlz-forge-moba/tests/test_v11_181_xr_session_lifecycle.cjs
+      - name: Strict source, routes and 68-asset receipt
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_192_release.py --output /tmp/se192-strict
       - name: Reconstruct both editor routes and issue exact source hash
         run: |
           python - <<'PY'
