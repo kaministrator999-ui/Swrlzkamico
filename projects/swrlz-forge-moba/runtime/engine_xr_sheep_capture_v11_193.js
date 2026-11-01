@@ -2,7 +2,7 @@
 // Single existing Three/WebXR renderer; never persists gameplay objects into authored scenes.
 // Browser/mobile Sheep Tag remains owned by st140Menu, stUi and stCommand.
 const se193={
- kind:'',menuDismissed:false,panel:null,buttons:[],textures:[],panelOpen:true,
+ kind:'',page:'main',menuDismissed:false,panel:null,buttons:[],textures:[],panelOpen:true,
  follow:true,angle:0,zoom:1,focus:new THREE.Vector3(),ready:false,lastFrame:0,
  held:new Map(),previewAt:0,lastAction:'',lastError:'',capture:null,captureCount:0
 };
@@ -41,9 +41,12 @@ function se193XRPanelFor(kind){
  if(!kind)return;
  const entries=kind==='menu'?
   [['heading','SHEEP TAG · VR'],['start','▶ START GAME'],['editor','MAP EDITOR'],['capture','📷 SCREENSHOT'],['exit','EXIT VR']]:
-  [['heading','SHEEP TAG · VR'],['follow','◎ FOLLOW SHEEP'],['farm','BUILD FARM'],['income','INCOME FARM'],
-   ['fort','FORTIFIED FARM'],['free','FREE CAMERA'],['capture','📷 CAPTURE'],['debug','DEBUG CAPTURE'],['stereo','STEREO CAPTURE'],
-   ['stop','STOP GAME'],['exit','EXIT VR']];
+  se193.page==='build'?
+  [['heading','BUILD TOOLS'],['farm','FARM · FREE'],['income','INCOME FARM'],['fort','FORTIFIED FARM'],['back','← BACK']]:
+  se193.page==='capture'?
+  [['heading','VR CAPTURE STUDIO'],['capture','CLEAN IMAGE'],['debug','DEBUG + DATA'],['stereo','STEREO 3D'],['back','← BACK']]:
+  [['heading','SHEEP TAG · VR'],['follow','◎ FOLLOW SHEEP'],['free','FREE CAMERA'],
+   ['buildMenu','BUILDINGS'],['captureMenu','CAPTURE STUDIO'],['stop','STOP GAME'],['exit','EXIT VR']];
  const group=new THREE.Group();group.name='§E · Sheep Tag immersive controls';
  const step=.16,top=(entries.length-1)*step/2;
  for(let i=0;i<entries.length;i++){
@@ -150,6 +153,10 @@ function se193XRAction(action){
  }
  if(action==='exit'){void se181XRExit();return;}
  if(action==='stop'){document.getElementById('stopBtn')?.click();return;}
+ if(action==='buildMenu'||action==='captureMenu'||action==='back'){
+  se193.page=action==='back'?'main':action==='buildMenu'?'build':'capture';
+  se193XRPanelFor(se193.kind);return;
+ }
  if(action==='follow'){se193XRSnapFollow();return;}
  if(action==='free'){se193.follow=false;se193.lastAction='Free VR camera';return;}
  if(action==='farm'){se193XRBuild('st-farm');return;}
@@ -330,7 +337,7 @@ function se193XRFrame(){
  se193.lastFrame=now;
  const kind=se193XRKind();
  if(kind!==se193.kind){
-  se193.kind=kind;se193.ready=false;se193.held.clear();
+  se193.kind=kind;se193.page='main';se193.ready=false;se193.held.clear();
   se193XRPanelFor(kind);
   if(kind)se192PanelsVisible(false);
   else se192PanelsVisible(true);
