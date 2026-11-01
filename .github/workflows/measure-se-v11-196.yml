@@ -1,0 +1,37 @@
+name: §E v11.196 Sheep fog, Quest radial and camera regressions
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/source-manifest.json"
+      - "projects/swrlz-forge-moba/patches/v11_196_sheep_fog_radial_camera_recovery.py"
+      - "projects/swrlz-forge-moba/runtime/engine_xr_sheep_stability_v11_196.js"
+      - "projects/swrlz-forge-moba/tests/test_v11_196_quest_fog_menu.cjs"
+      - "projects/swrlz-forge-moba/scripts/verify_v11_196_release.py"
+      - ".github/workflows/measure-se-v11-196.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  fast:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - uses: actions/setup-node@v4
+        with: {node-version: "22"}
+      - name: Sheep Tag 2D fog, Quest UI/camera and prior gameplay
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/engine_xr_sheep_stability_v11_196.js
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_196_sheep_fog_radial_camera_recovery.py
+          node projects/swrlz-forge-moba/tests/test_v11_196_quest_fog_menu.cjs
+          node projects/swrlz-forge-moba/tests/test_v11_195_quest_stability.cjs
+          node projects/swrlz-forge-moba/tests/test_v11_194_emberfall_arpg.cjs
+          node projects/swrlz-forge-moba/tests/test_v11_193_sheep_vr.cjs
+          node projects/swrlz-forge-moba/tests/test_v11_192_native_vr_editor.cjs
+          node projects/swrlz-forge-moba/tests/test_v11_191_xr_recovery.cjs
+          node projects/swrlz-forge-moba/tests/test_v11_181_xr_session_lifecycle.cjs
+      - name: Exact 228-patch source, workspace and packaged asset integrity
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_196_release.py --output /tmp/se196-strict
