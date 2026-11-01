@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.195",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_195_QUEST_SHEEP_STABILITY_RADIAL",
-  "reason": "Owner Quest 2 reports: left-offset Sheep Tag follow camera; severe delayed lag; meadow/fog z-fighting; hover rays selecting through menu; duplicate EXIT VR signs; no proper VR authored cinematic, tall panels, missing polished controller cosmetics and photo capture. Release stable-base tracked camera, skip immersive 2D HUD/full stStatus and expensive per-frame actor raycast, 72% Quest Sheep framebuffer, no stereo shadows with full restore, visual fog raised off meadow with polygon offset and 290ms paint budget, native authored menu cinematic, 5-spoke controller-adjacent modal radial, controller shells, calibrated aura/particles, screen photo freeze and existing clean/debug JSON/stereo capture. Keep authoritative Sheep Tag game rules, existing 68 assets, current §E and all prior projects/§C/Modeler. Source PR #309 merged 508cec1a3c41578ffa180edffc2a4104365d82b0. Strict full source+old XR tests PASS GitHub Actions #41270430850 and real Chrome authored menu cinematic/start/stop PASS #41270340257; 227 ordered patches; 7,288,202-byte SHA-256 7fa6242cfeeb6f9b44e8887cf86b905ed5e6ee9c55e7e12696a64fc77a0a31ad. Physical Quest 2 performance, stereo and controller UX acceptance remains pending.",
-  "sourceCommit": "508cec1a3c41578ffa180edffc2a4104365d82b0",
-  "sourceIntegritySha256": "7fa6242cfeeb6f9b44e8887cf86b905ed5e6ee9c55e7e12696a64fc77a0a31ad"
+  "releaseVersion": "v11.196",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_196_SHEEP_FOG_RADIAL_CAMERA_RECOVERY",
+  "reason": "User Quest 2 screenshot confirmed rapidly striped Sheep Tag fog/ground in the normal flat Quest browser window (not only WebXR), plus mirrored and runaway floating radial UI and cinematic/gameplay headset camera drift. v11.196 stabilizes shared fog mesh depth and cosmetic paint cadence without changing authoritative sight; corrects radial facing and anchors it only on opening, provides REFOCUS; disables competing editor fly/grab inputs during Sheep Tag cinematic and performs one-time centered VR camera entry instead of fast flying. Source PR #310 merged to main 658bb44eadba62b32b3b5b0b898a9232dfbe49a1. Strict 228-patch 68-asset integrity production PASS GitHub Actions #41273133748. Real Chrome native menu/active gameplay/visible fog depth 0.23/Stop PASS #41272954404, Node prior XR/ARPG/Sheep tests PASS. Physical Quest 2 render and controller validation pending.",
+  "sourceCommit": "658bb44eadba62b32b3b5b0b898a9232dfbe49a1",
+  "sourceIntegritySha256": "679d14774b8abb97254f1adf072b98f0db51bbad152a2567142105155b944ca1"
 }
