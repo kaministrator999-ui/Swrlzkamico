@@ -2,12 +2,14 @@
 // Single existing Three/WebXR renderer; never persists gameplay objects into authored scenes.
 // Browser/mobile Sheep Tag remains owned by st140Menu, stUi and stCommand.
 const se193={
- kind:'',panel:null,buttons:[],textures:[],panelOpen:true,
+ kind:'',menuDismissed:false,panel:null,buttons:[],textures:[],panelOpen:true,
  follow:true,angle:0,zoom:1,focus:new THREE.Vector3(),ready:false,lastFrame:0,
  held:new Map(),previewAt:0,lastAction:'',lastError:'',capture:null,captureCount:0
 };
 function se193XRMenuActive(){
- return currentProject?.kind==='sheep-tag'&&!!st140Menu?.open&&!stSession;
+ if(currentProject?.kind!=='sheep-tag'||stSession||se193.menuDismissed)return false;
+ return !!st140Menu?.open||!!seLevels?.playingMenu||
+  (seLevelsCurrent()?.role==='menu'&&seLevelsOwns());
 }
 function se193XRGameActive(){
  return currentProject?.kind==='sheep-tag'&&!!stSession&&!stSession.simulate;
@@ -40,7 +42,7 @@ function se193XRPanelFor(kind){
  const entries=kind==='menu'?
   [['heading','SHEEP TAG · VR'],['start','▶ START GAME'],['editor','MAP EDITOR'],['capture','📷 SCREENSHOT'],['exit','EXIT VR']]:
   [['heading','SHEEP TAG · VR'],['follow','◎ FOLLOW SHEEP'],['farm','BUILD FARM'],['income','INCOME FARM'],
-   ['fort','FORTIFIED FARM'],['free','FREE CAMERA'],['capture','📷 CAPTURE'],['stereo','STEREO CAPTURE'],
+   ['fort','FORTIFIED FARM'],['free','FREE CAMERA'],['capture','📷 CAPTURE'],['debug','DEBUG CAPTURE'],['stereo','STEREO CAPTURE'],
    ['stop','STOP GAME'],['exit','EXIT VR']];
  const group=new THREE.Group();group.name='§E · Sheep Tag immersive controls';
  const step=.16,top=(entries.length-1)*step/2;
@@ -133,9 +135,17 @@ function se193XRBuild(kind){
  se193.lastAction=stUi.build?'Selected '+kind:'Build cancelled';
 }
 function se193XRAction(action){
- if(action==='start'){if(se193XRMenuActive())st140MenuStart();return;}
+ if(action==='start'){
+  if(se193XRMenuActive()){
+   if(seLevelsCurrent()?.role==='menu'&&seLevelsOwns())seLevelsTransition('',true);
+   else st140MenuStart();
+  }
+  return;
+ }
  if(action==='editor'){
-  if(se193XRMenuActive())st140MenuClose();
+  if(seLevels?.playingMenu)seLevelsStopMenu();
+  if(st140Menu?.open)st140MenuClose();
+  se193.menuDismissed=true;
   se193.lastAction='Returned to native map editor';return;
  }
  if(action==='exit'){void se181XRExit();return;}
@@ -145,7 +155,9 @@ function se193XRAction(action){
  if(action==='farm'){se193XRBuild('st-farm');return;}
  if(action==='income'){se193XRBuild('st-income');return;}
  if(action==='fort'){se193XRBuild('st-fort');return;}
- if(action==='capture'||action==='stereo'){se193XRCapture(action==='stereo'?'stereo':'clean');return;}
+ if(action==='capture'||action==='stereo'||action==='debug'){
+  se193XRCapture(action==='stereo'?'stereo':action==='debug'?'debug':'clean');return;
+ }
 }
 function se193XRSelect(record){
  if(!se181XR.session||!renderer.xr.isPresenting)return false;
@@ -239,7 +251,14 @@ function se193XRDownload(){
  if(!se193.capture)return false;
  const a=document.createElement('a');
  a.href=se193.capture.url;a.download=se193.capture.filename;
- document.body.appendChild(a);a.click();a.remove();return true;
+ document.body.appendChild(a);a.click();a.remove();
+ if(se193.capture.mode==='debug'){
+  const json=document.createElement('a');
+  json.href='data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify(se193.capture.metadata,null,2));
+  json.download=se193.capture.filename.replace(/\.png$/,'.json');
+  document.body.appendChild(json);json.click();json.remove();
+ }
+ return true;
 }
 function se193XRCapture(mode='clean'){
  if(!se181XR.session||!renderer.xr.isPresenting)return false;
@@ -282,10 +301,17 @@ function se193XRCapture(mode='clean'){
    ctx.putImageData(image,i*width,0);
   }
   const stamp=new Date().toISOString().replace(/[:.]/g,'-');
+  const cameraMode=se193XRGameActive()?(se193.follow?'follow':'free'):'editor';
   se193.capture={url:output.toDataURL('image/png'),
    filename:'sE-VR-'+mode+'-'+stamp+'.png',
-   cameraMode:se193XRGameActive()?(se193.follow?'follow':'free'):'editor',
-   project:currentProject?.name||'project',mode,number:++se193.captureCount};
+   metadata:{schema:'se-vr-debug-v1',mode,cameraMode,
+    project:currentProject?.name||'project',selectedActor:selected?.name||null,
+    game:se193XRGameActive()?{selectedId:stStatus().selectedId,
+     controlledId:stStatus().controlledId,build:stUi.build}:null,
+    build:window.SWRLZ_FORGE_BUILD?.version||'unavailable',
+    frame:se181XR.frames,controllers:se181XR.tracked.map(t=>({index:t.index,
+     handedness:t.handedness,targetRayMode:t.targetRayMode})),
+    capturedAt:new Date().toISOString()},mode,number:++se193.captureCount};
   const button=se193XRDownloadButton();button.hidden=false;
   se193.lastAction='Capture ready · Download VR Capture when you exit immersive mode';
   // Preserve the captured image even if Quest blocks automatic XR downloads.
@@ -319,7 +345,8 @@ function se193XRFrame(){
  }
 }
 function se193XRStart(){
- se193.kind='';se193.ready=false;se193.lastFrame=performance.now();
+ se193.kind='';se193.ready=false;se193.follow=true;se193.menuDismissed=false;
+ se193.lastFrame=performance.now();
  se193.held.clear();se193XRDownloadButton();
 }
 function se193XRCleanup(){
