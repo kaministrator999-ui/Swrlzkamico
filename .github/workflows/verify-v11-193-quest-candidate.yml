@@ -25,8 +25,8 @@ jobs:
       - name: Focused Quest VR tests
         run: |
           node projects/swrlz-forge-moba/tests/test_v11_193_sheep_vr.cjs
-          node projects/swrlz-forge-moba/scripts/test_v11_192_native_vr_editor.cjs
-          node projects/swrlz-forge-moba/scripts/test_v11_191_xr_recovery.cjs
+          node projects/swrlz-forge-moba/tests/test_v11_192_native_vr_editor.cjs
+          node projects/swrlz-forge-moba/tests/test_v11_191_xr_recovery.cjs
       - name: Build candidate HTML and report exact bytes and checksum
         run: |
           python - <<'PY'
