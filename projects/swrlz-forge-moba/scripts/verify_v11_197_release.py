@@ -49,7 +49,7 @@ assert 'seLevelRawLoadProject(structuredClone(chosen.data)' not in s
 assert 'const result=seLevelRawLoadProject(target,...options);' in s
 assert s.index('data-se186-early="1"')<s.index('window.SWRLZ_FORGE_BUILD=')
 assert s.count('renderer.setAnimationLoop(tick);')==1
-for marker in ['window.SWYRL_ENGINE_SHEEP_VISUAL_197','texture.minFilter=THREE.LinearMipmapLinearFilter','function se197MeadowInfo','function se197CameraPrevious','multiplayerFogOverwritePrevented']:
+for marker in ['window.SWYRL_ENGINE_SHEEP_VISUAL_197','texture.minFilter=THREE.LinearMipmapLinearFilter','function se197MeadowInfo','const se197CameraPrevious=stUpdateCamera;','multiplayerFogOverwritePrevented']:
     assert marker in s,marker
 assert '512%30.72' not in s,'meadow moire crosshatch persists'
 for needle in ['window.SWYRL_ENGINE_SHEEP_VR_FIX196','function se196FogRepair(s)','se195PositionRadial=function','se195MenuCamera=function','se195FollowCamera=function','se196ActionPrevious','recenter','se196FogRepair(stSession)']:
