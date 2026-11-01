@@ -29,6 +29,7 @@ const THREE={Vector3:V,MathUtils:{clamp:(v,a,b)=>Math.max(a,Math.min(b,v))},Line
 const ctx={THREE,scene,window:{},performance:{now:()=>state.time},Number,Math,Map,Set,
  se181XR:{session:{},controllers:[]},renderer:{xr:{isPresenting:true}},currentProject:{kind:'sheep-tag'},
  se193:{follow:true,focus:new V(),angle:0,zoom:1,ready:false,editorCaptureOpen:false},
+ se191XR:{framebufferScale:.8},se191XRPrepareFramebuffer:()=>{},
  se192:{panel:null,panelButtons:[],panelTextures:[],panelVisible:false},
  stSession:{controlledId:'one',rules:{bounds:40},units:[{id:'one',pos:new V(3,0,1)}]},
  se193XRGameActive:()=>state.game,
