@@ -43,7 +43,7 @@ jobs:
         run: |
           npm install --no-save playwright@1.56.1
           npx playwright install --with-deps --only-shell chromium
-      - name: Validate loaded 14-bone wolf armature with interval polling
+      - name: Verify visible touch-size Wolf Rig controls and live keyed motion
         run: node projects/swrlz-forge-moba/tests/ui_v11_225_wolf_model_smoke.mjs
       - name: Print exact wolf source receipt
         run: |
