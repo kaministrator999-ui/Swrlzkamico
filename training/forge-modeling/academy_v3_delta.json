@@ -64,7 +64,7 @@
       "expected": "Check handedness, reference-space transforms, axis conventions and bind/rest offsets before testing joint rotations.",
       "mustNot": "Assume right-hand calibration works unchanged for left.",
       "source": "training/forge-modeling/HAND_RETARGETING_REFERENCE_V3.md",
-      "anchor": "correct left/right handedness"
+      "anchor": "handedness"
     },
     {
       "id": "M085",
