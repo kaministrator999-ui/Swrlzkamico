@@ -54,7 +54,7 @@ def apply(html):
       " source.engine='§wyrl§ Engine · Maker v11.219';source.version=11.219;",
       " source.engine='§wyrl§ Engine · Maker v11.220';source.version=11.220;")
     css="""
-.atelier-rig-studio{position:absolute;right:8px;top:7px;z-index:12;width:min(305px,80%);
+.atelier-rig-studio{position:absolute;right:8px;top:7px;z-index:40;width:min(305px,80%);
  background:rgba(9,19,37,.97);color:#e9faff;border:1px solid #6486af;border-radius:10px;
  box-shadow:0 7px 24px #0008;max-height:70%;overflow:auto;overscroll-behavior:contain}
 .atelier-rig-studio>summary{font-size:12px;font-weight:750;padding:9px;cursor:pointer;user-select:none}
@@ -73,7 +73,8 @@ def apply(html):
 .atelier-rig-timeline input[type=range]{width:100%;accent-color:#cf55fc}
 .atelier-rig-undo{justify-self:start}
 .atelier-rig-body small{font-size:10px;line-height:1.35;color:#b9cfe5}
-@media(max-width:600px){.atelier-rig-studio{width:min(280px,77%);max-height:64%}
+@media(max-width:900px), (pointer:coarse){.atelier-rig-studio{top:96px;right:8px;max-height:calc(100% - 108px)}}
+@media(max-width:600px){.atelier-rig-studio{width:min(280px,77%);max-height:calc(100% - 108px)}
  .atelier-rig-studio>summary{padding:6px 8px}}
 """
     assert '</head>' in html
