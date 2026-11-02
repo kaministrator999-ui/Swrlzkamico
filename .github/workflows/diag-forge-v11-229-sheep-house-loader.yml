@@ -1,0 +1,29 @@
+name: Diagnose §E native sheep house model loading
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/diag-forge-v11-229-sheep-house-loader.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-loader:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build exact current sealed §E package
+        run: python projects/swrlz-forge-moba/build_space.py --output /tmp/se229-sheep-loader
+      - name: Install Chromium for one focused Model Atelier load
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps --only-shell chromium
+      - name: Reproduce native sheep starter loading on mobile view
+        run: node projects/swrlz-forge-moba/tests/ui_v11_229_sheep_building_loader.mjs
