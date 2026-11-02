@@ -4,7 +4,7 @@
 // and gates resume after throttled/missing XR frames. The game/host/network
 // simulation and the browser's real native XR rendering are never paused.
 const se211={
- session:null,listener:null,lastFrame:0,lastVisible:'none',returnUntil:0,
+ session:null,listener:null,lastFrame:0,lastVisible:'none',returnUntil:0,pendingRelease:false,
  cosmeticUntil:0,suspendStart:0,blurEvents:0,hiddenEvents:0,resumes:0,
  gapEvents:0,maxGapMs:0,overlayMs:0,skippedXRUpdates:0,
  skippedControllerFrames:0,blockedRigWrites:0,blockedHandInputs:0,
@@ -18,6 +18,7 @@ function se211Visibility(){
  return state==='hidden'||state==='visible-blurred'?state:'visible';
 }
 function se211NeutralizeHeldInputs(){
+ se211.pendingRelease=true;
  // A/X (and alternate stick-click profiles) must require a new press after
  // OS camera closes. Do not fabricate a placement or cancel a native skill.
  for(const record of se181XR.controllers||[]){
@@ -113,12 +114,26 @@ function se211Sync(){
  se211BindSession();
  se211SetState(se211Visibility(),performance.now());
 }
+function se211ButtonsReleased(){
+ const left=se192InputRecord('left'),right=se192InputRecord('right');
+ for(const [r,side] of [[left,'left'],[right,'right']]){
+  if(!r)continue;
+  if(se192Pressed(r,1)||se192Pressed(r,3)||se192Pressed(r,4)||
+     (typeof se210Held==='function'&&se210Held(r,side)))return false;
+ }
+ return true;
+}
 function se211Paused(){
  const now=performance.now();
- return se211Visibility()!=='visible'||now<se211.returnUntil;
+ if(se211Visibility()!=='visible'||now<se211.returnUntil)return true;
+ if(se211.pendingRelease){
+  if(!se211ButtonsReleased()){se211.blockedHandInputs++;return true;}
+  se211.pendingRelease=false;
+ }
+ return false;
 }
 function se211CameraSoftReturn(){
- return performance.now()<se211.returnUntil+850;
+ return se211.returnUntil>0&&performance.now()<se211.returnUntil+850;
 }
 function se211OnFrame(){
  se211Sync();
@@ -141,7 +156,7 @@ function se211OnFrame(){
   }
  }
  se211.lastFrame=now;
- const blocked=state!=='visible'||now<se211.returnUntil;
+ const blocked=se211Paused();
  se211Cosmetics(blocked||now<se211.cosmeticUntil);
  return blocked;
 }
@@ -179,6 +194,7 @@ const se211OldStart=se193XRStart;
 se193XRStart=function(){
  se211Cosmetics(false);
  se211.returnUntil=0;se211.cosmeticUntil=0;se211.lastFrame=0;
+ se211.pendingRelease=false;
  se211BindSession();
  return se211OldStart();
 };
@@ -189,6 +205,7 @@ se193XRCleanup=function(){
   se211.session.removeEventListener?.('visibilitychange',se211.listener);
  se211.session=null;se211.listener=null;se211.lastVisible='none';
  se211.lastFrame=0;se211.returnUntil=0;se211.cosmeticUntil=0;
+ se211.pendingRelease=false;
  return se211OldCleanup();
 };
 window.SWYRL_ENGINE_QUEST_OS_STABILITY_211=Object.freeze({
@@ -199,6 +216,8 @@ window.SWYRL_ENGINE_QUEST_OS_STABILITY_211=Object.freeze({
   callbackGaps:se211.gapEvents,largestGapMs:Math.round(se211.maxGapMs),
   skippedGameXRFrames:se211.skippedXRUpdates,
   skippedControllerXRFrames:se211.skippedControllerFrames,
+  waitingForButtonRelease:se211.pendingRelease,
+  blockedStaleControllerInputs:se211.blockedHandInputs,
   blockedCameraReferenceWrites:se211.blockedRigWrites,
   cosmeticsHidden:se211.savedVisible.size,
   cosmeticSuspends:se211.renderSuspensions,
