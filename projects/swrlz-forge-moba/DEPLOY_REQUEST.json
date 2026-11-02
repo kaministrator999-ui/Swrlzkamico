@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.217",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_217_HAND_FINGER_PALM_PROPORTIONS",
-  "reason": "Owner requested direct GitHub fix to Floating Hand after second screenshot review of disproportionate fingers and overlarge opposite-thumb/pinky palm. V11.217 adds parametric four-finger hierarchy (middle > ring > index > pinky), tapered distal and knuckle mesh radii, smaller palmar/dorsal discs, more credible thumb web, and slimmer wrist-to-hypothenar transition. Only newly instantiated native Floating Hand starter is modified. Keeps v11.216 Sheep Tag moving during A/X wheel; preserves chat, editor, Quest controls and saved projects. Chromium phone-width native Model Atelier 53-part loader PASS with 13,070 connected core vertices, 10 groups and no page errors: Actions #41472504506. Strict sealed HTML/68 assets, SHA and native syntax PASS: Actions #41473065087. Generated HTML 7,497,822 bytes SHA-256 4d7b2d0aa3fa8183956b3f751411ad1a5e20662d41c2f7f7123093262a55c5d8; ordered patches 249. Physical Moto and Quest visual acceptance pending.",
-  "sourceCommit": "adf0fef0fecfaebe6065daed1cdb01b4aa4d5033",
-  "sourceIntegritySha256": "4d7b2d0aa3fa8183956b3f751411ad1a5e20662d41c2f7f7123093262a55c5d8"
+  "releaseVersion": "v11.218",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_218_ARCANE_GLOVE_FIDELITY",
+  "reason": "Owner-approved Arcane Glove visual implemented as native editable Model Atelier geometry: slightly longer tapered fingers, separately anchored dorsal purple cable conduits with metal socket/rail clips, true continuous two-turn violet thumb helix winding to back-of-tip with root feed, 3 retainers and terminal, framed backhand sigil, cooler blue-black/silver palette and glowing wrist inserts. Fresh Floating Hand starter only; saved models, §C, Sheep Tag, XR/controller behavior and other projects preserved. Exact sealed v11.218 generated HTML 7,503,389 bytes, SHA-256 fd4f16810ce066eb9b905748461ce8717a2b0f0eee633491364b5f8bb56aab41, 250 ordered patches and 68 assets. Narrow syntax and source build checks passed. Phone/Quest visual acceptance belongs to owner.",
+  "sourceCommit": "50831f01b1b82b2cbc410624ace673b520f149a7",
+  "sourceIntegritySha256": "fd4f16810ce066eb9b905748461ce8717a2b0f0eee633491364b5f8bb56aab41"
 }
