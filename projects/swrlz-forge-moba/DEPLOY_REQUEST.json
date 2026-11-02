@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.228",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_228_GAME_GUI_MENU_STUDIO",
-  "reason": "Owner-requested GUI/Menu Setup mini-tab nested in Game Engine, with independent editor Show/Hide UI and per-layer eye toggles. Add up to 24 project-native GUI labels/buttons/panels with relative viewport layout, colors/text and bounded Play actions, saved with project and level data. Reuses native Sheep Tag editable Main Menu inspector. Follows v11.227 wolf animation and v11.226 sheep building packages without changing their gameplay/VR authority. Focused JavaScript test and real assembled source build passed: 260 ordered patches, 68 existing assets, 7,712,043 HTML bytes SHA-256 16b6e24f471b79a1a9c6ec7ce7df2565dfeb5de8a0c527196e7b9008a907ca2d. Owner Moto/Quest acceptance pending. Corrected the v11.228 release verifier artifact filename before publishing; no engine source byte change. Verified source provenance check now matches v11.228.",
-  "sourceCommit": "06bee59b659d98ef35c01730753333400415fc8b",
-  "sourceIntegritySha256": "16b6e24f471b79a1a9c6ec7ce7df2565dfeb5de8a0c527196e7b9008a907ca2d"
+  "releaseVersion": "v11.229",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_229_SHEEP_HOUSE_NATIVE_LOAD_REPAIR",
+  "reason": "Fix all five native Sheep Tag house Model Atelier starter loads. Browser reproduction of v11.228 showed Invalid editable model parts. Correct material names accidentally supplied as rotation values (nonfinite transforms), absent window trim palette color, and inherited obsolete Festival character socket assemblies. Actual 390px native Model Atelier browser proof PASSED: direct starter deep-link and Free Shelter 18, Thatched Hut 59, Cozy Cottage 68, Flock Barn 37, Ram House 60 separately opened with visible editable part lists. 261 source patches, 68 unchanged assets, 7,712,062 assembled HTML bytes, SHA-256 38012d3e068347a65045da180ef0e2e3f6dcff42a5bc334569aecce203c4a53d. Gameplay builds/costs, wolf and glove, Game GUI studio, Chat and old saved projects unchanged. Physical Moto/Quest user acceptance pending.",
+  "sourceCommit": "373b7bb283384959d74287e789e84033de28a43b",
+  "sourceIntegritySha256": "38012d3e068347a65045da180ef0e2e3f6dcff42a5bc334569aecce203c4a53d"
 }
