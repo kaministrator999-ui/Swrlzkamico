@@ -89,7 +89,7 @@ function se210StatusSkill(id){
  return {label:'UNAVAILABLE',remaining:0,ready:false};
 }
 function se210WheelStatusTexture(panel,art,text){
- if(panel?.type!=='skill'||!/^\\d+s RECHARGE$/.test(text))
+ if(panel?.type!=='skill'||!/^\d+s RECHARGE$/.test(text))
   return se195Text(text);
  if(!art.se210Status){
   const canvas=document.createElement('canvas');canvas.width=384;canvas.height=192;
