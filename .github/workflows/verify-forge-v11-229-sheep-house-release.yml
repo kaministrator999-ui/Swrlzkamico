@@ -1,4 +1,5 @@
 name: Verify §E v11.229 sheep house model loader repair
+# Re-run strict source test with corrected packaged artifact filename.
 on:
   push:
     branches: [main]
