@@ -74,6 +74,25 @@ def apply(html):
  }
  initializeHistory""")
     html=html[:loader_start]+after+html[loader_end:]
+    # The user-facing Model Atelier loader must carry rig metadata through
+    # any later legacy project-normalization before the editor is re-rendered.
+    # Only an explicit fresh wolf request gets this repair; saved scenes
+    # and all other model starters are never migrated.
+    html=once(html,
+      "loadAnimal:(species,options={})=>loadAnimalProject(species,!!options.force,!!options.rebuild),",
+      """loadAnimal:async(species,options={})=>{
+ const ok=await loadAnimalProject(species,!!options.force,!!options.rebuild);
+ if(ok&&species==='wolf'&&currentProject?.kind==='model-atelier'){
+  ModelAtelier.close();
+  const active=currentProject.modelAtelier;
+  se224WolfEnhanceModel(active);
+  active.wolfRig=se224WolfRigSpec();
+  active.wolfAnimations=se224WolfClips();
+  markSaved();ModelAtelier.syncProject();ModelAtelier.open();
+  window.SWYRL_WOLF_LOAD_AUDIT={stage:'public-attached',species,parts:active.parts.length,rig:!!active.wolfRig};
+ }
+ return ok;
+},""")
     html=once(html,'  function refreshList(){',studio+'\n  function refreshList(){')
     html=once(html,'const mesh=se220RigMesh(p);','const mesh=se224WolfRigMesh(p);')
     html=once(html,'se220RigBind();se220RigRefresh();',
