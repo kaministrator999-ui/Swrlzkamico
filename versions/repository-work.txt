@@ -1,5 +1,5 @@
 ID=repository-work
-VERSION=1.0.259
+VERSION=1.0.260
 KIND=repository-work-lineage
 SOURCE_BRANCH=runtime
 STATUS=active
@@ -47,3 +47,5 @@ CHAT_EXACT_APPROVAL_V2_SOURCE_20261031_NOTE=§C Chat Design Studio v2 exact-sour
 CHAT_EXACT_APPROVAL_V2_DEPLOY_20261031_NOTE=Guarded existing §C Space request main039edd606889185aeefa027d7c83273f2f717652; workflow41244654016 SUCCESS, R39/700M preservation and rollback snapshot followed by approved upload to existing kamiloki/Swyrlz. Exact source bcea32aba7f8138e8bae9fdbace943c048cb81c4, resulting HF revision7e31b369526965b9bfeeb8eedac39b401504b4bc, rollback revision0bc5e381ed61a583a697b9cba2dd85633b556457. Source validation CI41241847736 SUCCESS, exact Code Review no findings. Deployed upload confirmed; authenticated owner Android/Quest/§E exact build, stale card UX and live runtime served asset behavior remain DEVICE_TEST_PENDING / DEPLOYED_UNVERIFIED. §E independent engine, game projects, Google auth and LALM weights unchanged; legacy lyric matcher unrelated failure preserved.
 
 CHAT_FORGE_MODELING_20261102_RELEASE=Model Atelier source-grounded bounded context was published with Chat source d7d44c82412adb3b78afc3d0afa2a052adb9e018 via request 3f9a85321a5b911fe2a83e606806c4ebac7627eb; guarded CI/deploy #41484792304 SUCCESS; HF revision 9232b4510b67c13cf7f5c8b0a3fcfa13a8aceda5; rollback 7e31b369526965b9bfeeb8eedac39b401504b4bc. Source and package published; host/model-answer/device acceptance DEPLOYED_UNVERIFIED. No weights, Chat UI or §E Engine version change. Release detail: main:docs/engineering/entries/2026-11-02_CHAT_FORGE_MODELING_CONTEXT_PUBLISHED.md.
+
+CHAT_FORGE_V2_RIG_LESSON_20261102=Source-grounded v11.220 Rig/Pose/Animate teaching expanded to 67 public cases and bounded 700M/Qwen/Brain context; exact Chat source a133e3a821a83fccc42a71cd0bef5b639da28946 passed CI #41497943812 (10/10 static routing tests) and guarded HF deploy #41498642772 SUCCESS; provider Space 3843e804ebaab38de66caeb0475db1bfef357c39, rollback 9232b4510b67c13cf7f5c8b0a3fcfa13a8aceda5. DEPLOYED_UNVERIFIED: no held-out model output, authenticated host edit or Quest/Android acceptance. No model weights, UI or engine source changed. Roadmap 2026-11-02 Academy v2 release / docs/engineering/entries/2026-11-02_CHAT_FORGE_MODELING_ACADEMY_V2_RELEASE.md.
