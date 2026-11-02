@@ -17,6 +17,12 @@ def apply(html):
     html=once(html,
       "return push(name,'cylinder',c,mat,group,{position:center,scale,meshDensity:{u:32,v:1}});",
       "return push(name,'cylinder',c,mat,group,{position:center,scale});")
+    # Fresh hand parts must not inherit named sockets / assemblies from the
+    # character source used only as a canonical project envelope. Old socket
+    # member IDs are intentionally absent from the hand and are invalid.
+    html=once(html,
+      " m.poseFrames=[];m.poseNeutral=null;m.editedAt='local';",
+      " delete m.assemblies;m.poseFrames=[];m.poseNeutral=null;m.editedAt='local';")
     for old,new in [
       ('SWYRL_ENGINE_DEPLOY_MARKER: V11_212_FLOATING_HAND_MODEL_STARTER',
        'SWYRL_ENGINE_DEPLOY_MARKER: V11_213_HAND_PRIMITIVE_SCHEMA_FIX'),
@@ -33,7 +39,7 @@ def apply(html):
     notes,n=json.JSONDecoder().raw_decode(html[pos:])
     notes.update(title='Floating Hand loader: native model validation compatibility',
       date='2026-11-02',changes=[
-        'Correct the Floating Hand wrist sleeve cylinder authored with an invalid meshDensity property (v=1). Native Model Atelier only accepts meshDensity for sphere/loft and requires the appropriate density range.',
+        'Correct the Floating Hand wrist sleeve cylinder authored with invalid meshDensity (v=1) and remove inherited festival-character named sockets/assemblies that reference deleted parts.',
         'Leave all 39 authored glove meshes, sculpted core, armor, colors, crest, ring arrangement, and prior starter identities intact.',
         'Do not relax editor validation, modify user projects or change Sheep Tag, Quest controls, chat or other runtime systems.',
         'Add browser regression for direct starter link and native validator load. Physical owner mobile/Quest visual acceptance remains pending.'
