@@ -21,6 +21,7 @@ Add a rigging, posing and animation studio to §E Model Atelier, then properly r
 The four fingers use individual base positions, segment lengths and splay from the actual v11.218 glove proportions. Weights are computed spatially from each vertex's rest position; joints blend across boundaries. The thumb has a separate curved two-segment axis and ownership falloff; cuff and palm stay weighted to proximal joints. Four weights are normalized for every vertex.
 
 ## Rig · Pose · Animate controls
+- The studio handle is positioned below the existing model component toolbar on touch devices to prevent interaction overlap.
 - A collapsible, touch-friendly studio panel in Model Atelier appears for projects with a valid rig, replacing the old non-skeletal pose deck *only for those projects*.
 - Select any bone and edit rotation along X, Y and Z using mobile-friendly sliders. Show/hide the skeleton helper. Use Open, Fist, Point and Pinch poses.
 - Timeline playhead with pose interpolation between user-saved joint keyframes (up to 32), add/replace or delete a key, set loop and clip length, play or stop, undo a rig pose edit.
@@ -35,7 +36,7 @@ Only the new hand starter is rigged by default; existing user-created hand copie
 ## Integrity receipt
 Version: **§wyrl§ Engine v11.220**.
 Ordered patches: **252**. Packaged assets: **68**.
-Generated editor source: **7,525,951 bytes**.
-SHA-256: `a8365b3078a7168c06fb12eeab0fa356faad6d06ec7b08757df1aba18d8a92e5`.
+Generated editor source: **7,526,079 bytes**.
+SHA-256: `7836708947da5ed574608d82c530d3421cedb6c2ac348eec822860c4c3ebe77e`.
 
 Focused JS/Python syntax, 17-bone/skin-weight/interpolation math, assembled source marker and packaging candidate checks passed. Source checks by themselves do not mean hosted runtime/visual acceptance.
