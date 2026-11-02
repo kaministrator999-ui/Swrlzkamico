@@ -683,7 +683,10 @@ def _lyrics_best_anchor(lines: list[str], subject: str) -> int | None:
                     break
                 if _lyrics_line_is_content(following,allow_single_word=True):
                     opening_content+=1
-            if opening_content>=3:
+            # Intros are often just two genuine lines before Verse 1.
+            # Requiring three would silently discard the intro (v165).
+            min_opening_lines=2 if re.match(r"^\s*\[?\s*intro\b",line,re.I) else 3
+            if opening_content>=min_opening_lines:
                 opening_sections.append(index)
 
         structure=0
