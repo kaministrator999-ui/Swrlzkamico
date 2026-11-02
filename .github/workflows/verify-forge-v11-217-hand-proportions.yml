@@ -46,6 +46,16 @@ jobs:
           print('HAND217_CANDIDATE_BYTES='+str(len(raw)))
           print('HAND217_CANDIDATE_SHA256='+hashlib.sha256(raw).hexdigest())
           PY
+      - name: Diagnose generated hand helpers and scope
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path('/tmp/se217-hand-candidate/index.html').read_text()
+          for needle in ['const se215FingerSpec','const se217FingerSpec','const se212Id','function se212HandScene','const digit=se217FingerSpec','se217OrganicHandSkin']:
+              matches=[i for i in range(len(s)) if s.startswith(needle,i)]
+              print('HAND217_DECLARATION',needle,matches)
+              for i in matches[:2]: print(repr(s[max(0,i-220):i+230]))
+          PY
       - name: Install focused browser runtime
         run: |
           npm install --no-save playwright@1.56.1
