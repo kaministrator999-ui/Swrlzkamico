@@ -44,6 +44,8 @@ jobs:
           print('SHEEP_HOUSE_V11229_CANDIDATE_BYTES='+str(len(b)))
           print('SHEEP_HOUSE_V11229_CANDIDATE_SHA256='+hashlib.sha256(b).hexdigest())
           PY
+      - name: Check assembled five native model envelopes and transforms
+        run: node projects/swrlz-forge-moba/tests/test_v11_229_sheep_house_native_loading.cjs /tmp/se229-sheep-loader/index.html
       - name: Install Chromium for one focused Model Atelier load
         run: |
           npm install --no-save playwright@1.56.1
