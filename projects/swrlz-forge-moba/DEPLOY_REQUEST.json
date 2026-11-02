@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.212",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_212_FLOATING_HAND_MODEL_STARTER",
-  "reason": "Owner-requested Floating Hand · Arcane Glove native §E Model Atelier starter from supplied purple glove reference. New original connected 3D hand shell with tapered thumb/four fingers; individually editable dark/silver knuckle and wrist armor, emissive purple seams, geometric palm/back crests and hover rings. Uses existing native topologyMesh, model groups, project Save/Edit/Export, opt-in starter default and explicit ?project=floating-hand-glove; no changes to Sheep Tag/Quest controls or user scenes. 244 ordered patches, 68 packaged assets, 7,478,674 HTML bytes SHA-256 add8a1718f8d06a1ef178bf4adaa55e12ae38f9d33be1404396637c32ebfa92f. Exact generated artifact and assets passed dedicated v11.212 sealed-source GitHub check; hand visual/ergonomic owner phone/Quest testing pending. The initial open hand is not rigged or animated.",
-  "sourceCommit": "0bc96b63930596cf7ff4423a1d81bf2b60a29743",
-  "sourceIntegritySha256": "add8a1718f8d06a1ef178bf4adaa55e12ae38f9d33be1404396637c32ebfa92f"
+  "releaseVersion": "v11.213",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_213_HAND_PRIMITIVE_SCHEMA_FIX",
+  "reason": "Repair owner-reported Floating Hand starter failure. Focused Chromium reproduction found invalid cylinder meshDensity then inherited Festival-character named socket assembly references. v11.213 appends a targeted patch removing unsupported wrist-cylinder density metadata and deleting only the stale original-character assemblies from the new hand project. Native Model Atelier validation is untouched, preserves the original 39 editable hand meshes, armor, purple runes, palms and ring effects and all previous engine systems. Focused actual Chromium deep-link test passes: active/open 39 meshes, zero browser errors (GitHub Actions #41399909619). Strict source/68 asset and syntax check passes (GitHub Actions #41400431836). Exact sealed HTML: 7,478,295 bytes SHA-256 92785aeafddf55ec02535858b89b2b9e9a6c6f10cfcc149fcd8395ec2b01d8a4, 245 ordered patches. Owner Quest 2/mobile visual acceptance remains pending.",
+  "sourceCommit": "77fa719189d763f34b095aef4102c731670f3f8e",
+  "sourceIntegritySha256": "92785aeafddf55ec02535858b89b2b9e9a6c6f10cfcc149fcd8395ec2b01d8a4"
 }
