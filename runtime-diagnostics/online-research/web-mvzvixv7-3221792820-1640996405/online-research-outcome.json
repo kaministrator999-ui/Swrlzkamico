@@ -1,0 +1,1644 @@
+{
+  "schema": "swrlz-github-online-research-outcome-v2",
+  "requestId": "web-mvzvixv7-3221792820-1640996405",
+  "modelId": "700m",
+  "eventType": "ONLINE_RESEARCH_OUTCOME",
+  "sourceRef": "5d0333bc0737956f18d3e8f2f045ad7b922cccfa",
+  "persistedAtUnixMs": 1793661134694,
+  "diagnostic": {
+    "schema": "swrlz-online-research-outcome-v2",
+    "terminalState": "COMPLETE",
+    "research": {
+      "contract": "swrlz-online-camera-v1",
+      "observabilityRevision": "v181-song-metadata-clean-form-integrity",
+      "kind": "search",
+      "status": "OK",
+      "reason": "existing-lyrics-retrieval",
+      "provider": "bounded-web-search-chain-v1",
+      "resultCount": 1,
+      "widgetKinds": [
+        "search-results"
+      ],
+      "sourceCount": 1,
+      "locationRequired": false,
+      "usedExplicitClientLocation": false,
+      "elapsedMs": 2261,
+      "lyricsSourceAttemptCount": 1,
+      "lyricsFetchDebug": [
+        {
+          "attempt": 1,
+          "origin": "fallback-candidate",
+          "requestedUrl": "https://techcrunch.com/",
+          "finalUrl": "https://techcrunch.com/",
+          "searchResultTitle": "TechCrunch | Startup and Technology News",
+          "fetchedPageTitle": "TechCrunch | Startup and Technology News",
+          "fetchStatus": 200,
+          "fetchedContent": {
+            "chars": 13038,
+            "sha256": "08b78e2ebb16d0aeaf2807ed384d46dd0edafa083d08f752a737cfd4c0263161",
+            "anchorIndex": null,
+            "anchorLine": "",
+            "sectionMarkers": [],
+            "performerMarkers": [],
+            "preview": "TechCrunch | Startup and Technology News\n–:–:–:–\nBuy One Founder Summit Ticket, Get a Second for Free. Register now.\nFounder Summit begins Nov. 4, 9:00 a.m. ET. Get your pass savings & deals before it starts. REGISTER HERE.\nClose\nTechCrunch Desktop Logo\nTechCrunch Mobile Logo\nLatest\nStartups\nVenture\nApple\nSecurity\nAI\nApps\nDisrupt 2026\nEvents",
+            "previewChars": 343,
+            "previewLimit": 600
+          },
+          "extractorOutput": {
+            "chars": 0,
+            "sha256": "",
+            "preview": "",
+            "previewChars": 0,
+            "previewLimit": 600
+          },
+          "extractorDiagnostics": {
+            "requestedScope": "full-lyrics",
+            "rawChars": 13038,
+            "rawLineCount": 907,
+            "anchorIndex": null,
+            "anchorLine": "",
+            "scopedLineCount": 79,
+            "scopedNonEmptyLineCount": 44,
+            "contentLineCount": 13,
+            "musicalSectionCueCount": 0,
+            "performerCueCount": 0,
+            "blankSeparatedChunkCount": 35,
+            "acceptedBlockCount": 0,
+            "blockLineCounts": [],
+            "continuousRunEligible": false,
+            "terminalBoundaryKind": "HARD_BOUNDARY",
+            "terminalBoundaryLine": "Privacy",
+            "decision": "REJECTED",
+            "reason": "INSUFFICIENT_FULL_LYRIC_STRUCTURE",
+            "resultChars": 0,
+            "resultLineCount": 0
+          },
+          "sourceIdentityVerified": false,
+          "sourceIdentityScore": 2,
+          "snippetOverlapCount": 0,
+          "snippetInformativeTokenCount": 0,
+          "snippetSequenceSpan": 0,
+          "musicalSectionCount": 0,
+          "performerCueCount": 0,
+          "outcome": "REJECTED",
+          "rejectionReason": "NO_STRUCTURED_LYRIC_BODY"
+        }
+      ],
+      "blockedLyricsSourceFamilies": [],
+      "musicStructureDebug": null,
+      "candidateAdmissionDebug": [
+        {
+          "query": "who do I catch tech n9ne lyrics",
+          "title": "DO Definition & Meaning - Merriam-Webster",
+          "url": "https://www.merriam-webster.com/dictionary/do",
+          "source": "www.merriam-webster.com",
+          "rank": 1,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [],
+          "coreTerms": [
+            "who",
+            "catch",
+            "tech",
+            "n9ne"
+          ],
+          "snippetPreview": "4 days ago · Feasible comes from faire, the French verb meaning “to do.” Doable and feasible therefore originally meant literally the … Read more"
+        },
+        {
+          "query": "who do I catch tech n9ne lyrics",
+          "title": "DO vs. MD: What's the Difference - WebMD",
+          "url": "https://www.webmd.com/a-to-z-guides/difference-between-md-and-do",
+          "source": "www.webmd.com",
+          "rank": 2,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [],
+          "coreTerms": [
+            "who",
+            "catch",
+            "tech",
+            "n9ne"
+          ],
+          "snippetPreview": "Jul 18, 2024 · Find out the differences between an MD and DO, and discover the pros, cons, risks, and benefits, and how it may …"
+        },
+        {
+          "query": "who do I catch tech n9ne lyrics",
+          "title": "Basic English Grammar | How To Use DO , DOES, DID, DONE",
+          "url": "https://www.youtube.com/watch?v=g0poc28x6mA",
+          "source": "www.youtube.com",
+          "rank": 3,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [],
+          "coreTerms": [
+            "who",
+            "catch",
+            "tech",
+            "n9ne"
+          ],
+          "snippetPreview": "May 14, 2024 · Today, you'll learn how to use DO, DOES, DID, and DONE in English. Improve your English fluency by learning …"
+        },
+        {
+          "query": "who do I catch tech n9ne lyrics",
+          "title": "DO | English meaning - Cambridge Dictionary",
+          "url": "https://dictionary.cambridge.org/dictionary/english/do",
+          "source": "dictionary.cambridge.org",
+          "rank": 4,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [],
+          "coreTerms": [
+            "who",
+            "catch",
+            "tech",
+            "n9ne"
+          ],
+          "snippetPreview": "Do is one of three auxiliary verbs in English: be, do, have. We use do to make negatives (do + not), to make question forms, and to …"
+        },
+        {
+          "query": "who do I catch tech n9ne lyrics",
+          "title": "Do Song - YouTube",
+          "url": "https://www.youtube.com/watch?v=ri7XgYoYO6g",
+          "source": "www.youtube.com",
+          "rank": 5,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [],
+          "coreTerms": [
+            "who",
+            "catch",
+            "tech",
+            "n9ne"
+          ],
+          "snippetPreview": "Aug 21, 2018 · This sight word song teaches kids to see, say and spell the word \"do\" and then hear it used in sentences, like \"What …"
+        },
+        {
+          "query": "who do I catch tech n9ne lyrics",
+          "title": "Do - definition of do by The Free Dictionary",
+          "url": "https://www.thefreedictionary.com/do",
+          "source": "www.thefreedictionary.com",
+          "rank": 6,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [
+            "who"
+          ],
+          "coreTerms": [
+            "who",
+            "catch",
+            "tech",
+            "n9ne"
+          ],
+          "snippetPreview": "1. To behave or conduct oneself; act: Do as I say and you won't get into trouble. 2. a. To get along; fare: students who do well at …"
+        },
+        {
+          "query": "who do I catch tech n9ne lyrics",
+          "title": "DO Definition & Meaning | Dictionary .com",
+          "url": "https://www.dictionary.com/browse/do",
+          "source": "www.dictionary.com",
+          "rank": 7,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [],
+          "coreTerms": [
+            "who",
+            "catch",
+            "tech",
+            "n9ne"
+          ],
+          "snippetPreview": "DO definition: to perform (an act, duty, role, etc.). See examples of do used in a sentence."
+        },
+        {
+          "query": "who do I catch tech n9ne lyrics",
+          "title": "Do vs. Does: How to Use Do and Does in English - ESL Teachers",
+          "url": "https://eslteacher.org/do-vs-does/",
+          "source": "eslteacher.org",
+          "rank": 8,
+          "allowed": false,
+          "reason": "INSUFFICIENT_SUBJECT_TERM_MATCH",
+          "neededHits": 2,
+          "matchedTerms": [],
+          "coreTerms": [
+            "who",
+            "catch",
+            "tech",
+            "n9ne"
+          ],
+          "snippetPreview": "Jan 14, 2026 · Master the grammar rules for do and does. Learn the base verb rule, explore do/does vs. am/is/are, avoid common …"
+        }
+      ],
+      "songIdentity": {
+        "schema": "swrlz-song-identity-v1",
+        "rawSubject": "\"who do I catch\" by tech n9ne",
+        "title": "who do I catch",
+        "titleFolded": "who do i catch",
+        "titleTokens": [
+          "who",
+          "do",
+          "i",
+          "catch"
+        ],
+        "primaryArtist": "tech n9ne",
+        "primaryArtistFolded": "tech n9ne",
+        "artistTokens": [
+          "tech",
+          "n9ne"
+        ],
+        "featuredArtists": [],
+        "requestedVersion": null,
+        "ambiguity": {
+          "level": "low",
+          "score": 0,
+          "commonWordCollision": [],
+          "shortTitle": false,
+          "punctuationHeavy": false,
+          "quotedTitleRequired": false,
+          "artistRequired": true
+        }
+      },
+      "songDiscoveryPlan": [
+        {
+          "strategy": "exact-title-artist",
+          "query": "\"who do I catch\" \"tech n9ne\" lyrics"
+        },
+        {
+          "strategy": "artist-title-song",
+          "query": "\"tech n9ne\" \"who do I catch\" song lyrics"
+        },
+        {
+          "strategy": "source-family-disambiguation",
+          "query": "\"who do I catch\" \"tech n9ne\" lyrics site:genius.com"
+        },
+        {
+          "strategy": "title-artist-verse",
+          "query": "\"who do I catch\" \"tech n9ne\" verse chorus lyrics"
+        },
+        {
+          "strategy": "source-family-disambiguation",
+          "query": "\"who do I catch\" \"tech n9ne\" lyrics site:azlyrics.com"
+        },
+        {
+          "strategy": "source-family-disambiguation",
+          "query": "\"who do I catch\" \"tech n9ne\" lyrics site:musixmatch.com"
+        },
+        {
+          "strategy": "source-family-disambiguation",
+          "query": "\"who do I catch\" \"tech n9ne\" lyrics site:allthelyrics.com"
+        },
+        {
+          "strategy": "source-family-disambiguation",
+          "query": "\"who do I catch\" \"tech n9ne\" lyrics site:lyricsfreak.com"
+        }
+      ],
+      "lyricsRescueSearchDebug": [
+        {
+          "query": "\"who do I catch\" \"tech n9ne\" lyrics",
+          "strategy": "exact-title-artist",
+          "resultCount": 8,
+          "admittedCount": 0,
+          "errorType": "",
+          "candidates": [
+            {
+              "title": "World Health Organization ( WHO )",
+              "url": "https://www.who.int/",
+              "source": "www.who.int",
+              "rank": 1,
+              "allowed": false,
+              "score": 10,
+              "reason": "ARTIST_MISMATCH",
+              "signals": [],
+              "exactTitle": false,
+              "titleHits": 2,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "World Health Organization ( WHO )",
+              "url": "https://www.who.int/en/][",
+              "source": "www.who.int",
+              "rank": 2,
+              "allowed": false,
+              "score": 10,
+              "reason": "ARTIST_MISMATCH",
+              "signals": [],
+              "exactTitle": false,
+              "titleHits": 2,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "World Health Organization - Wikipedia",
+              "url": "https://en.wikipedia.org/wiki/World_Health_Organization",
+              "source": "en.wikipedia.org",
+              "rank": 3,
+              "allowed": false,
+              "score": 10,
+              "reason": "ARTIST_MISMATCH",
+              "signals": [],
+              "exactTitle": false,
+              "titleHits": 2,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "World Health Organization ( WHO ) | History, Organization,",
+              "url": "https://www.britannica.com/topic/World-Health-Organization",
+              "source": "www.britannica.com",
+              "rank": 4,
+              "allowed": false,
+              "score": 10,
+              "reason": "ARTIST_MISMATCH",
+              "signals": [],
+              "exactTitle": false,
+              "titleHits": 2,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "World Health Organization | United Nations",
+              "url": "https://www.un.org/en/academic-impact/who",
+              "source": "www.un.org",
+              "rank": 5,
+              "allowed": false,
+              "score": 10,
+              "reason": "ARTIST_MISMATCH",
+              "signals": [],
+              "exactTitle": false,
+              "titleHits": 2,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "An introduction to the World Health Organization, its vital role in the ...",
+              "url": "https://extranet.who.int/sph/news/introduction-world-health-organization-its-vital-role-fight-against-covid-19-and-world-health",
+              "source": "extranet.who.int",
+              "rank": 6,
+              "allowed": false,
+              "score": 10,
+              "reason": "ARTIST_MISMATCH",
+              "signals": [],
+              "exactTitle": false,
+              "titleHits": 2,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "WHO Data",
+              "url": "https://data.who.int/",
+              "source": "data.who.int",
+              "rank": 7,
+              "allowed": false,
+              "score": 10,
+              "reason": "ARTIST_MISMATCH",
+              "signals": [],
+              "exactTitle": false,
+              "titleHits": 2,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "World Health Organization - Simple English Wikipedia , the free …",
+              "url": "https://simple.wikipedia.org/wiki/World_Health_Organization",
+              "source": "simple.wikipedia.org",
+              "rank": 8,
+              "allowed": false,
+              "score": 10,
+              "reason": "ARTIST_MISMATCH",
+              "signals": [],
+              "exactTitle": false,
+              "titleHits": 2,
+              "artistHits": 0,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            }
+          ]
+        },
+        {
+          "query": "\"tech n9ne\" \"who do I catch\" song lyrics",
+          "strategy": "artist-title-song",
+          "resultCount": 8,
+          "admittedCount": 1,
+          "errorType": "",
+          "candidates": [
+            {
+              "title": "TechCrunch | Startup and Technology News",
+              "url": "https://techcrunch.com/",
+              "source": "techcrunch.com",
+              "rank": 1,
+              "allowed": true,
+              "score": 16,
+              "reason": "ADMITTED",
+              "signals": [],
+              "exactTitle": false,
+              "titleHits": 2,
+              "artistHits": 1,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "TechRadar | the technology experts",
+              "url": "https://www.techradar.com/",
+              "source": "www.techradar.com",
+              "rank": 2,
+              "allowed": false,
+              "score": 11,
+              "reason": "TITLE_MISMATCH",
+              "signals": [],
+              "exactTitle": false,
+              "titleHits": 1,
+              "artistHits": 1,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "Tech - The Verge",
+              "url": "https://www.theverge.com/tech",
+              "source": "www.theverge.com",
+              "rank": 3,
+              "allowed": false,
+              "score": 11,
+              "reason": "TITLE_MISMATCH",
+              "signals": [],
+              "exactTitle": false,
+              "titleHits": 1,
+              "artistHits": 1,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "The Latest News in Technology | PCMag",
+              "url": "https://www.pcmag.com/news",
+              "source": "www.pcmag.com",
+              "rank": 4,
+              "allowed": false,
+              "score": 11,
+              "reason": "TITLE_MISMATCH",
+              "signals": [],
+              "exactTitle": false,
+              "titleHits": 1,
+              "artistHits": 1,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "Tech - CNET",
+              "url": "https://www.cnet.com/tech/",
+              "source": "www.cnet.com",
+              "rank": 5,
+              "allowed": false,
+              "score": 4,
+              "reason": "TITLE_MISMATCH",
+              "signals": [
+                "NON_LYRIC_CONTENT"
+              ],
+              "exactTitle": false,
+              "titleHits": 1,
+              "artistHits": 1,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [
+                "product"
+              ],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "Latest News - TechCrunch",
+              "url": "https://techcrunch.com/latest/",
+              "source": "techcrunch.com",
+              "rank": 6,
+              "allowed": false,
+              "score": 11,
+              "reason": "TITLE_MISMATCH",
+              "signals": [],
+              "exactTitle": false,
+              "titleHits": 1,
+              "artistHits": 1,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "Latest Technology News | TechHQ | Home",
+              "url": "https://techhq.com/",
+              "source": "techhq.com",
+              "rank": 7,
+              "allowed": false,
+              "score": 11,
+              "reason": "TITLE_MISMATCH",
+              "signals": [],
+              "exactTitle": false,
+              "titleHits": 1,
+              "artistHits": 1,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            },
+            {
+              "title": "WIRED - The Latest in Technology, Science, Culture and Business",
+              "url": "https://www.wired.com/",
+              "source": "www.wired.com",
+              "rank": 8,
+              "allowed": false,
+              "score": 11,
+              "reason": "TITLE_MISMATCH",
+              "signals": [],
+              "exactTitle": false,
+              "titleHits": 1,
+              "artistHits": 1,
+              "exactArtist": false,
+              "titleNeeded": 2,
+              "lyricDomain": false,
+              "versionMatch": false,
+              "versionMismatch": false,
+              "negativeContentHints": [],
+              "decision": "",
+              "sourceFamily": "",
+              "identityScore": 0,
+              "sectionMarkersInSnippet": false,
+              "lyricTitleCue": false
+            }
+          ]
+        }
+      ],
+      "lyricsMaxPageAttempts": 3,
+      "lyricsFallbackExhausted": true,
+      "rawPromptStored": false
+    },
+    "trace": [
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1793661132307,
+        "phase": "RESEARCH_STARTED",
+        "activity": "Online research started",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": ""
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1793661132309,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1793661132442,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1793661132442,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1793661132578,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1793661132578,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1793661132992,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1793661132992,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using bing-html",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1793661132992,
+        "phase": "RESEARCH_COMPLETE",
+        "activity": "Online research complete",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_RESCUE_SEARCH",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "activity": "Trying bounded lyrics discovery search",
+        "atUnixMs": 1793661132992
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1793661132992,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1793661133128,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1793661133128,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1793661133266,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1793661133266,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1793661133852,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1793661133852,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using bing-html",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_RESCUE_SEARCH",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "activity": "Trying bounded lyrics discovery search",
+        "atUnixMs": 1793661133854
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1793661133854,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1793661134032,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1793661134032,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1793661134163,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1793661134163,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1793661134456,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1793661134456,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using bing-html",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_FALLBACK_FETCH",
+        "provider": "web-page",
+        "site": "techcrunch.com",
+        "url": "https://techcrunch.com/",
+        "activity": "Trying alternate lyrics source",
+        "atUnixMs": 1793661134458
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1793661134459,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "techcrunch.com",
+        "url": "https://techcrunch.com/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1793661134565,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "activity": "Page fetched",
+        "provider": "web-page",
+        "site": "techcrunch.com",
+        "url": "https://techcrunch.com/",
+        "httpStatus": 200,
+        "responseBytes": 449662
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_SOURCE_VERIFICATION",
+        "provider": "lyrics-verifier",
+        "site": "techcrunch.com",
+        "url": "https://techcrunch.com/",
+        "activity": "Checking fetched lyrics candidate",
+        "atUnixMs": 1793661134565
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_SOURCE_REJECTED",
+        "provider": "lyrics-verifier",
+        "site": "techcrunch.com",
+        "url": "https://techcrunch.com/",
+        "activity": "Lyrics candidate did not satisfy verification",
+        "atUnixMs": 1793661134568
+      }
+    ],
+    "sources": [
+      {
+        "title": "TechCrunch | Startup and Technology News",
+        "source": "techcrunch.com",
+        "url": "https://techcrunch.com/",
+        "snippet": "",
+        "rank": null
+      }
+    ],
+    "sourceSites": [
+      "techcrunch.com"
+    ],
+    "widgets": [
+      {
+        "contract": "swrlz-widget-v1",
+        "kind": "search-results",
+        "version": 1,
+        "title": "Online search · who do I catch tech n9ne lyrics",
+        "provider": "bounded-web-search-chain-v1",
+        "data": {
+          "query": "who do I catch tech n9ne lyrics",
+          "results": [
+            {
+              "title": "TechCrunch | Startup and Technology News",
+              "url": "https://techcrunch.com/",
+              "snippet": "23 hours ago · Equity is TechCrunch’s flagship podcast about the business of startups, unpacked by the writers who know best. …",
+              "source": "techcrunch.com"
+            }
+          ]
+        }
+      }
+    ],
+    "widgetKinds": [
+      "search-results"
+    ],
+    "statusTrail": [
+      {
+        "phase": "QUEUED",
+        "reason": "Accepted by Workstation",
+        "atUnixMs": 1793661131358
+      },
+      {
+        "phase": "GENERATING",
+        "reason": "Workstation admitted generation",
+        "atUnixMs": 1793661132305
+      },
+      {
+        "seq": 1,
+        "phase": "PROGRAMMING_INTENT",
+        "reason": "",
+        "atUnixMs": 1793661132306
+      },
+      {
+        "seq": 2,
+        "phase": "SEARCH_STARTED",
+        "reason": "I’m on it — looking up who do I catch tech n9ne lyrics…",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ],
+        "atUnixMs": 1793661132306
+      },
+      {
+        "seq": 3,
+        "phase": "RESEARCH_STARTED",
+        "reason": "Online research started",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "",
+        "url": "",
+        "provider": "bounded-web-search-chain-v1",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1793661132308
+      },
+      {
+        "seq": 4,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1793661132309
+      },
+      {
+        "seq": 5,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": 202,
+        "resultCount": 0,
+        "atUnixMs": 1793661132442
+      },
+      {
+        "seq": 6,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1793661132442
+      },
+      {
+        "seq": 7,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": 202,
+        "resultCount": 0,
+        "atUnixMs": 1793661132578
+      },
+      {
+        "seq": 8,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1793661132578
+      },
+      {
+        "seq": 9,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "reason": "Search results found",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": 200,
+        "resultCount": 8,
+        "atUnixMs": 1793661132992
+      },
+      {
+        "seq": 10,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "reason": "Using bing-html",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": 8,
+        "atUnixMs": 1793661132992
+      },
+      {
+        "seq": 11,
+        "phase": "RESEARCH_COMPLETE",
+        "reason": "Online research complete",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "",
+        "url": "",
+        "provider": "bounded-web-search-chain-v1",
+        "httpStatus": null,
+        "resultCount": 0,
+        "atUnixMs": 1793661132992
+      },
+      {
+        "seq": 12,
+        "phase": "LYRICS_RESCUE_SEARCH",
+        "reason": "Trying bounded lyrics discovery search",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "",
+        "url": "",
+        "provider": "bounded-web-search-chain-v1",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1793661132993
+      },
+      {
+        "seq": 13,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1793661132993
+      },
+      {
+        "seq": 14,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": 202,
+        "resultCount": 0,
+        "atUnixMs": 1793661133129
+      },
+      {
+        "seq": 15,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1793661133129
+      },
+      {
+        "seq": 16,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": 202,
+        "resultCount": 0,
+        "atUnixMs": 1793661133266
+      },
+      {
+        "seq": 17,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1793661133266
+      },
+      {
+        "seq": 18,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "reason": "Search results found",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": 200,
+        "resultCount": 8,
+        "atUnixMs": 1793661133852
+      },
+      {
+        "seq": 19,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "reason": "Using bing-html",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": 8,
+        "atUnixMs": 1793661133852
+      },
+      {
+        "seq": 20,
+        "phase": "LYRICS_RESCUE_SEARCH",
+        "reason": "Trying bounded lyrics discovery search",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "",
+        "url": "",
+        "provider": "bounded-web-search-chain-v1",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1793661133854
+      },
+      {
+        "seq": 21,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1793661133854
+      },
+      {
+        "seq": 22,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "provider": "duckduckgo-html",
+        "httpStatus": 202,
+        "resultCount": 0,
+        "atUnixMs": 1793661134032
+      },
+      {
+        "seq": 23,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1793661134032
+      },
+      {
+        "seq": 24,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "provider": "duckduckgo-lite",
+        "httpStatus": 202,
+        "resultCount": 0,
+        "atUnixMs": 1793661134163
+      },
+      {
+        "seq": 25,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1793661134163
+      },
+      {
+        "seq": 26,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "reason": "Search results found",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": 200,
+        "resultCount": 8,
+        "atUnixMs": 1793661134456
+      },
+      {
+        "seq": 27,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "reason": "Using bing-html",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "provider": "bing-html",
+        "httpStatus": null,
+        "resultCount": 8,
+        "atUnixMs": 1793661134458
+      },
+      {
+        "seq": 28,
+        "phase": "LYRICS_FALLBACK_FETCH",
+        "reason": "Trying alternate lyrics source",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "techcrunch.com",
+        "url": "https://techcrunch.com/",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1793661134458
+      },
+      {
+        "seq": 29,
+        "phase": "PAGE_FETCH_STARTED",
+        "reason": "Visiting result page",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "techcrunch.com",
+        "url": "https://techcrunch.com/",
+        "provider": "web-page",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1793661134459
+      },
+      {
+        "seq": 30,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "reason": "Page fetched",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "techcrunch.com",
+        "url": "https://techcrunch.com/",
+        "provider": "web-page",
+        "httpStatus": 200,
+        "resultCount": null,
+        "atUnixMs": 1793661134568
+      },
+      {
+        "seq": 31,
+        "phase": "LYRICS_SOURCE_VERIFICATION",
+        "reason": "Checking fetched lyrics candidate",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "techcrunch.com",
+        "url": "https://techcrunch.com/",
+        "provider": "lyrics-verifier",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1793661134568
+      },
+      {
+        "seq": 32,
+        "phase": "LYRICS_SOURCE_REJECTED",
+        "reason": "Lyrics candidate did not satisfy verification",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH",
+          "FETCH"
+        ],
+        "site": "techcrunch.com",
+        "url": "https://techcrunch.com/",
+        "provider": "lyrics-verifier",
+        "httpStatus": null,
+        "resultCount": null,
+        "atUnixMs": 1793661134568
+      },
+      {
+        "seq": 33,
+        "phase": "ONLINE_RESEARCH",
+        "reason": "OK",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ],
+        "atUnixMs": 1793661134570
+      },
+      {
+        "seq": 34,
+        "phase": "WIDGET_READY",
+        "reason": "search-results",
+        "categories": [
+          "WIDGET"
+        ],
+        "atUnixMs": 1793661134571
+      },
+      {
+        "seq": 35,
+        "phase": "SEARCH_COMPLETE",
+        "reason": "Online retrieval ok.",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "SEARCH"
+        ],
+        "atUnixMs": 1793661134571
+      },
+      {
+        "seq": 36,
+        "phase": "LYRICS_VERIFICATION_BLOCKED",
+        "reason": "I found search results for the lyrics, but I couldn't verify the requested lyric text from fetched evidence, so I won't reconstruct it from memory.",
+        "categories": [
+          "ONLINE_RESEARCH",
+          "LYRICS",
+          "GROUNDING"
+        ],
+        "atUnixMs": 1793661134571
+      },
+      {
+        "seq": 38,
+        "phase": "COMPLETE",
+        "reason": "",
+        "atUnixMs": 1793661134571
+      },
+      {
+        "phase": "PERSISTING",
+        "reason": "Saving the response to the chat",
+        "atUnixMs": 1793661134571
+      }
+    ],
+    "responseCognition": {},
+    "programmingIntent": {
+      "schema": "swrlz-programming-intent-v1",
+      "codingTask": false,
+      "projectContext": "none",
+      "changeClass": "none",
+      "artifactContinuation": false,
+      "artifactMutationRequested": false,
+      "artifactTargetId": "",
+      "artifactTargetMessageId": "",
+      "baseRevision": 0,
+      "baseSourceHash": "",
+      "newProject": false,
+      "source": "brain-router"
+    },
+    "candidateValidation": {},
+    "candidateAttempts": [],
+    "generationTelemetry": {},
+    "engineCompletionTelemetry": {
+      "totalLatencyMs": null,
+      "loadLatencyMs": null,
+      "firstDeltaLatencyMs": null
+    },
+    "contextBudget": {},
+    "resourcePlan": {},
+    "finalResponse": "I found search results for the lyrics, but I couldn't verify the requested lyric text from fetched evidence, so I won't reconstruct it from memory.",
+    "finalResponseSha256": "b6fd72ce42d1ea9b8b6e2e4097ee293e0bec3153c5772663f955ff48cdad536a",
+    "requestedModelId": "700m",
+    "selectedModelId": "700m",
+    "stationTiming": {
+      "acceptedAtUnixMs": 1793661131358,
+      "startedAtUnixMs": 1793661132305,
+      "completedAtUnixMs": 1793661134571,
+      "queueWaitMs": 947,
+      "stationRunMs": 2266,
+      "endToEndMs": 3213
+    },
+    "rawPromptStored": false,
+    "historyStored": false,
+    "preciseLocationStored": false,
+    "privateReasoningStored": false
+  }
+}
