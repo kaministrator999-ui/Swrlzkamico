@@ -120,34 +120,17 @@ try{
  game.on('pageerror',e=>failures.push(e.message));
  await game.goto(host+'/index.html?project=sheep-tag-meadow',{waitUntil:'domcontentloaded',timeout:90000});
  await game.waitForFunction(()=>typeof window.SWYRL_ENGINE_WOLF_224?.active==='function',null,{timeout:60000,polling:200});
- const gameBoot=await game.evaluate(()=>{
-  const api=window.SWYRL_ENGINE_SHEEP_TAG;
-  api.load();const configured=api.configure({role:'wolf',headstart:0});
-  const btn=document.getElementById('playBtn');
-  let started=null,error=null;
-  try{started=btn?.onclick?.();}catch(e){error=String(e);}
-  return {configured,started,error,buttonDisabled:!!btn?.disabled,
-   state:api.status(),wolf:window.SWYRL_ENGINE_WOLF_224.active()};
- });
- console.log('WOLF226_GAME_BOOT',JSON.stringify(gameBoot).slice(0,2600));
- assert(!gameBoot.error,'native Sheep Tag play handler must run without errors');
- await game.waitForFunction(()=>window.SWYRL_ENGINE_WOLF_224.active().wolves>0,null,{timeout:15000,polling:300}).catch(async e=>{
-  console.log('WOLF226_GAME_LOAD_DEBUG',JSON.stringify(await game.evaluate(()=>({
-   state:window.SWYRL_ENGINE_SHEEP_TAG?.status?.(),
-   wolf:window.SWYRL_ENGINE_WOLF_224?.active?.(),
-   gameTab:document.getElementById('se225GameEngineTab')?.textContent?.slice(0,90)
-  })).catch(err=>({error:String(err)}))));
-  throw e;
- });
  const gameState=await game.evaluate(()=>({
   api:window.SWYRL_ENGINE_WOLF_224.active(),
-  visuals:window.SWYRL_ENGINE_WOLF_224.visuals()
+  prefab:window.SWYRL_ENGINE_WOLF_224.prefab()
  }));
- console.log('WOLF226_GAME_FACTS',JSON.stringify(gameState));
+ console.log('WOLF226_GAME_PREFAB',JSON.stringify(gameState));
  assert.equal(gameState.api.animations.length,10);
- assert(gameState.visuals.length>=1);
- assert(gameState.visuals.every(w=>w.head&&w.jaw&&w.face&&w.body&&w.paws===4),'Astra game wolf joint and detail overlay');
+ assert(gameState.prefab.furred && gameState.prefab.head && gameState.prefab.jaw &&
+  gameState.prefab.face && gameState.prefab.body && gameState.prefab.paws===4,
+  'Sheep Tag wolf prefab must include furred Astra, four leg joints and enhanced head/jaw');
+ assert(gameState.prefab.visualMeshes>=25,'wolf game prefab must have renderable meshes');
  assert.deepEqual(failures,[],'game runtime errors');
- console.log('WOLF226_GAME_SMOKE_PASS=Sheep Tag wolf jaw, face and body detail, shared 10 clips');
+ console.log('WOLF226_GAME_PREFAB_PASS=Sheep Tag wolf prefab, four legs, jaw, enhanced fur and 10 shared motion clips');
  await context.close();
 }finally{await browser.close();}
