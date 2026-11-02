@@ -252,6 +252,6 @@
     "patches/v11_203_quest_wrist_forward_aim.py",
     "patches/v11_204_sheep_vr_rapid_grid_wheels.py"
   ],
-  "finalBytes": null,
-  "finalSha256": null
+  "finalBytes": 7383740,
+  "finalSha256": "aba9f019d101c0a43071f081dc1d6cc058fa0a992621be9babbf29abb19fa8c7"
 }
