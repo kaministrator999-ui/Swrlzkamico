@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.218",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_218_ARCANE_GLOVE_FIDELITY",
-  "reason": "Owner-approved Arcane Glove visual implemented as native editable Model Atelier geometry: slightly longer tapered fingers, separately anchored dorsal purple cable conduits with metal socket/rail clips, true continuous two-turn violet thumb helix winding to back-of-tip with root feed, 3 retainers and terminal, framed backhand sigil, cooler blue-black/silver palette and glowing wrist inserts. Fresh Floating Hand starter only; saved models, §C, Sheep Tag, XR/controller behavior and other projects preserved. Exact sealed v11.218 generated HTML 7,503,389 bytes, SHA-256 fd4f16810ce066eb9b905748461ce8717a2b0f0eee633491364b5f8bb56aab41, 250 ordered patches and 68 assets. Narrow syntax and source build checks passed. Phone/Quest visual acceptance belongs to owner.",
-  "sourceCommit": "50831f01b1b82b2cbc410624ace673b520f149a7",
-  "sourceIntegritySha256": "fd4f16810ce066eb9b905748461ce8717a2b0f0eee633491364b5f8bb56aab41"
+  "releaseVersion": "v11.219",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_219_FINGER_RAIL_CONTACT",
+  "reason": "Owner-approved actual §E hand refinements: bring each purple line on the four fingers (not thumb) flush back onto finger dorsal armor, and align it beneath the two metallic links up to the last fingertip node. New six-point per-finger rails use anatomical lengths and splay; metal links sample exactly the same rail path at 45% and 77% and hug finger sides. No duplicate rails. Preserve original thumb's continuous 3D double spiral, palm proportions, backhand clips, wrist, other projects, saved copies, §C, and Quest/Sheep behavior. Exact native source candidate hash f2c7177cd479e001b823f2684f3ceae1fcd5235e6333bd97d006a631661ef3c0, 7,504,085 bytes, 251 patches, 68 assets; narrow syntax/source markers passed. Deployment workflow verifies sealed source and assets. Owner Moto/Quest visual acceptance pending.",
+  "sourceCommit": "b9a8352c187fb3600d4aa7671e19a02198e83857",
+  "sourceIntegritySha256": "f2c7177cd479e001b823f2684f3ceae1fcd5235e6333bd97d006a631661ef3c0"
 }
