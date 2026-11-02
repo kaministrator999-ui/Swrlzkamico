@@ -107,7 +107,7 @@ function se223PointCloud(config){
   sizeAttenuation:true,opacity:.95});
  const cloud=new THREE.Points(g,material);
  cloud.name='Particle Studio · '+config.name;
- cloud.userData.se223EditorEffect=true;cloud.userData.editorOnly=true;
+ cloud.userData.se223EditorEffect=true;
  cloud.frustumCulled=false;
  scene.add(cloud);
  return {cloud,geometry:g,material,particles:[],carry:0,burstFired:false,
@@ -213,15 +213,24 @@ function se223Frame(dt,t){
   se223Step(cfg,delta);
  }
 }
-function se223Mutate(label,fn){
+function se223Mutate(label,fn,allowRepair=false){
  if(playing||simulating){toast('Stop Play to edit particle definitions.');return false;}
- const previous=se223Data();if(!previous){toast('Invalid particle source. Use Import to repair.');return false;}
- beginTransaction(label);
- try{const result=fn(se223Data(true));
+ const previous=se223Data();
+ if(!previous&&!allowRepair){toast('Invalid particle source. Use Import to repair.');return false;}
+ try{
+  // Build a fully validated draft BEFORE touching history or the live project.
+  // Rejected edits never leave a half-mutated emitter or an orphan transaction.
+  const draft=structuredClone(previous||se223Empty),result=fn(draft);
+  const validated=se223ValidateModel(draft);
+  beginTransaction(label);
+  currentProject.particleStudio=validated;
   commitTransaction(label);
   if(typeof se223UIRefresh==='function')se223UIRefresh();
   return result;
- }catch(error){toast('Particle edit rejected: '+String(error?.message||error).slice(0,120));return false;}
+ }catch(error){
+  toast('Particle edit rejected: '+String(error?.message||error).slice(0,120));
+  return false;
+ }
 }
 function se223Create(key='magic'){
  if(!SE223_PRESETS[key])key='magic';
@@ -261,15 +270,21 @@ function se223Duplicate(id){
 function se223Replace(model){
  let validated;
  try{validated=se223ValidateModel(model);}catch(error){toast('Particle import rejected: '+error.message);return false;}
- return se223Mutate('Import Particle Studio library',()=>{
-  currentProject.particleStudio=validated;se223Reset();
-  se223State.selected=validated.emitters[0]?.id||null;
-  return true;
- });
+ const result=se223Mutate('Import Particle Studio library',draft=>{
+  draft.emitters=validated.emitters;return true;
+ },true);
+ if(result){
+  se223Reset();se223State.selected=validated.emitters[0]?.id||null;
+  if(typeof se223UIRefresh==='function')se223UIRefresh();
+ }
+ return result;
 }
 function se223Trigger(id,count=null){
  const cfg=se223Get(id);if(!cfg||!cfg.enabled)return 0;
- return se223Spawn(cfg,count==null?cfg.burst:Math.min(96,Math.max(1,Number(count)||1)));
+ se223State.playingLast=true;
+ const n=se223Spawn(cfg,count==null?cfg.burst:Math.min(96,Math.max(1,Number(count)||1)));
+ const rec=se223State.live.get(id);if(rec&&cfg.mode==='burst')rec.burstFired=true;
+ return n;
 }
 window.SWYRL_ENGINE_PARTICLES=Object.freeze({
  schema:SE223_SCHEMA,presets:()=>Object.keys(SE223_PRESETS),
