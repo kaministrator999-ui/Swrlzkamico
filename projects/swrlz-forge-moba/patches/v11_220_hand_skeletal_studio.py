@@ -22,8 +22,8 @@ def apply(html):
     html=once(html,"  function refreshList(){",ui+"\n  function refreshList(){")
     # The native renderer builds real SkinnedMesh objects with per-vertex LBS
     # weights. Each selection/edit re-render rebuilds and re-binds the armature.
-    html=once(html,"const mesh=new THREE.Mesh(geometry(p),material(p));",
-              "const mesh=se220RigMesh(p);")
+    html=once(html,"const mesh=new THREE.Mesh(atelierSculptApply(geometry(p),p),material(p));atelierViewModeApply(mesh,p);",
+              "const mesh=se220RigMesh(p);atelierViewModeApply(mesh,p);")
     html=once(html,"    const current=partById(selection);",
               "    se220RigBind();se220RigRefresh();\n    const current=partById(selection);")
     html=once(html,"  function loop(){\n    if(!renderer)return;",
