@@ -25,7 +25,7 @@ _RIG = re.compile(r"\b(?:rig(?:ging)?|skin(?:ning|ned)?|skeleton|bones?|"
                   r"hand.track(?:ing)?|quest.hand)\b", re.I)
 _ANIMATION = re.compile(r"\b(?:animat(?:e|ion|ing)|keyframes?|timeline|playback|clip|loop|interpolat(?:e|ion|ing)|scrub(?:bing)?)\b", re.I)
 _WEIGHT = re.compile(r"\b(?:skin weights?|skin(?:ning)?|skinned|weight.?paint(?:ing)?|bind|deform(?:ation)?|influences?|linear.blend)\b", re.I)
-_GESTURE = re.compile(r"\\b(?:gestures?|oppos(?:e|able|ition)|shaka|horns?|thumbs\\s+up|peace|finger\\s+gun|wave|grasp|precision\\s+pinch)\\b", re.I)
+_GESTURE = re.compile(r"\b(?:gestures?|oppos(?:e|able|ition)|shaka|horns?|thumbs\s+up|peace|finger\s+gun|wave|grasp|precision\s+pinch)\b", re.I)
 _POSE = re.compile(r"\b(?:pos(?:e|ing)|joints?|fist|pinch|curl|twist|spread|pointing|articulat(?:e|ion))\b", re.I)
 _RESEARCH = re.compile(r"\b(?:references?|research|documentation|manual|tutorials?|sources?|citation|look\s+up|search\s+(?:online|the\s+web|the\s+internet))\b", re.I)
 _COMPONENT = re.compile(
