@@ -1,3 +1,7 @@
+## §E v11.213 — Floating Hand loading repair (2026-11-02)
+
+Fixes the v11.212 Floating Hand starter's actual browser loading failure: an unsupported cylinder mesh-density field and inherited Festival named-socket assemblies caused native Model Atelier validation errors and left zero meshes. The append-only repair keeps all 39 hand parts, corrects the sleeve data, and removes old character socket metadata only from the new hand scene. Focused Chromium deep-link reproduction now passes with **39 meshes loaded and no reported JavaScript errors** (Actions run #41399909619). Source: 245 patches, 68 assets, 7,478,295-byte HTML, SHA-256 92785aeafddf55ec02535858b89b2b9e9a6c6f10cfcc149fcd8395ec2b01d8a4. See docs/FLOATING_HAND_LOADER_FIX_V11_213.md. Hosted/owner acceptance is separate from this candidate browser check.
+
 ## §E v11.212 — Floating Hand · Arcane Glove starter (2026-11-02)
 
 Owner-supplied multi-view glove reference is now an **independent native Model Atelier starter**. Open Projects → Floating Hand · Arcane Glove, or navigate to modeler.html?project=floating-hand-glove. The original indexed organic palm/finger/thumb shell, metal knuckle/dorsal armor, glowing front/back crests, rune seams, cuff and suspended violet rings are separate editable model parts. Saving/exporting uses the existing Model Atelier project/mesh workflow; other starters, user projects, XR bindings, chat and Sheep Tag are unchanged.
