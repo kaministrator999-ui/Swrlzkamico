@@ -17,6 +17,11 @@ def apply(html):
     html=once(html,
       "if(result?.ok){stUi.build=null;stUiClearPreview();stRefreshHUD(true);}",
       "if(result?.ok){if(se204RapidEnabled())se204AfterBuild();else{stUi.build=null;stUiClearPreview();stRefreshHUD(true);}}")
+    # The v11.203 forward-mapped controller beam must not continue
+    # projecting onto game ground behind the new hold-to-select radial.
+    html=once(html,
+      "const isBuild=se200Active()&&stUi.build&&!se195.visible&&!se195.photo;",
+      "const isBuild=se200Active()&&stUi.build&&!se195.visible&&!se195.photo&&!se204.wheel;")
     # Right B opens the native capture/settings wrist menu during VR Play.
     # Left Y stays Recenter. Native editor and non-Play VR buttons unchanged.
     html=once(html,
