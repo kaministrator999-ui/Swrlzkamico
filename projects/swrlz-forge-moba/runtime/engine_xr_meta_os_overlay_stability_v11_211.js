@@ -79,6 +79,7 @@ function se211SetState(next,now){
   if(se210World)se210World.lastReportAt=now;
   if(se210UI)se210UI.lastAt=now;
   if(se207)se207.lastAt=now;
+  se211.lastFrame=0; // Do not treat OS-hidden time as a new XR callback gap.
   se211.resetDt++;
  }
  if(next==='visible-blurred'||next==='hidden'){
