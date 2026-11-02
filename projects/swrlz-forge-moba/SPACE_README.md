@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.222
+title: §wyrl§ Engine v11.223
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.223 — Tighter Fist & Wrist-Twist Wave (2026-11-02)
+
+Owner phone testing requested deeper finger closure, a tighter thumb tuck, and an animated wave that twists and swings the wrist rather than showing one fixed rotated palm. v11.223 tightens MCP/PIP/DIP curls in all four fingers, tucks the opposable thumb across them, and authors an eight-key 2.2-second wrist-driven wave with alternating yaw/roll, palm follow-through and finger flutter. All previously saved clips, native glove geometry, thumb helix, Clover, Sheep Tag, other starters and Quest input remain intact. Focused source/17-bone motion math passed; owner phone acceptance is pending. **v11.223:** 255 ordered patches, 68 packaged assets, 7,551,989 HTML bytes, SHA-256 `db352ebd9c49735b4ec5df884ce2f855d412a995138e7bb987bdeb808c296b4e`. Details: `docs/FIST_CLENCH_WRIST_WAVE_V11_223.md`.
 
 ## §E v11.222 — Clover sheep animations and Sheep Tag construction sparkles (2026-11-02)
 
