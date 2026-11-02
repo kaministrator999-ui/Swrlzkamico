@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.224
+title: §wyrl§ Engine v11.225
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,16 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.225 — Material & Texture Studio + Four Workspace Tabs (2026-11-02)
+
+**Native top workspaces:** Game Engine | Modeling | Particle Studio | Materials & Textures. The existing two editor tabs remain intact, Particle Studio now has its own native tab and full-screen preview workspace, and the new Material & Texture Studio has its own tab with the same live §E Three.js scene (no second rendering loop). The game viewport toolbar's ✨ Particles shortcut enters the Particle Studio tab. Tab switching preserves unsaved scene/model data and native controls.
+
+**Material authoring:** Create/duplicate/delete up to 12 project-native PBR materials using ten starters (steel, gold, wood, stone, brick, fabric, leather, arcane glow, glass and ceramic). Edit roughness, metalness, opacity, emissive color/glow, base/accent colors, seeded procedural detail, UV tiling and texture pattern. Generate eight 256×256 procedural/paintable patterns, draw bounded brush strokes (including Undo/Clear), import PNG/JPEG under strict limits, and export PNG textures or validated JSON material libraries. Apply authored materials to specific scene actors, preview with a native rotating 3D sample sphere, and restore the exact original actor material. Scene assignments and material definitions persist in project snapshots, native Undo/Redo and level records. GPU resources are temporary and disposed on changes. User projects, §C, Sheep Tag authority, native glove rigs and previous Particle Studio VFX data are preserved.
+
+**Exact source receipt:** §wyrl§ Engine **v11.225**, **257 ordered patches**, **68 unchanged packaged assets**, **7,642,176 generated HTML bytes**, SHA-256 `e69ee469f5231bd6c36139ddeb6d6b0cd0647563bf260971b7d81ad1d9cd7002`. Focused generated-JS syntax, procedural texture, material validation, painting, actor assignment/restore, JSON import and project-switch tests passed. Physical Android/Quest 2 layout and rendering remain owner acceptance pending; material-to-Model Atelier part assignment is not yet exposed (PNG/JSON asset export is available).
+
+Read `docs/MATERIAL_TEXTURE_STUDIO_V11_225.md` for workflow, source contracts and limits.
 
 ## §E v11.224 — Native Particle Studio · Creator, Editor & reusable 3D VFX (2026-11-02)
 
