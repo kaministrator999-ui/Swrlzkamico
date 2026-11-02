@@ -8,13 +8,13 @@ function se224WolfRigMesh(part){
  if(!se224WolfActive())return se220RigMesh(part);
  const g=atelierSculptApply(geometry(part),part),mat=material(part),pos=g.getAttribute('position');
  if(!pos)return new THREE.Mesh(g,mat);
- const rig=se224WolfCurrent();
+ const rig=se224WolfCurrent(),indexById=Object.fromEntries(rig.bones.map((b,i)=>[b.id,i]));
  const matrix=new THREE.Matrix4().compose(new THREE.Vector3(...part.position),
   new THREE.Quaternion().setFromEuler(new THREE.Euler(...part.rotation)),new THREE.Vector3(...part.scale));
  const v=new THREE.Vector3(),ids=[],weights=[];
  for(let i=0;i<pos.count;i++){
   v.fromBufferAttribute(pos,i).applyMatrix4(matrix);
-  const inf=se224WolfVertexWeights([v.x,v.y,v.z],rig,part);
+  const inf=se224WolfVertexWeights([v.x,v.y,v.z],rig,part,indexById);
   ids.push(...inf.indexes);weights.push(...inf.weights);
  }
  g.setAttribute('skinIndex',new THREE.Uint16BufferAttribute(ids,4));
@@ -194,3 +194,11 @@ function se224WolfPreviewClose(){
  se224WolfSkeleton=null;se224WolfHelper=null;
  const b=document.getElementById('modelAtelierWolfPlay');if(b)b.textContent='▶ Preview';
 }
+
+window.SWYRL_ENGINE_WOLF_RIG=Object.freeze({status:()=>({
+ available:se224WolfIsModel(),bones:se224WolfCurrent()?.bones?.length||0,
+ skinned:!!se224WolfSkeleton,
+ skinnedMeshes:modelRoot?.children?.filter(m=>m.isSkinnedMesh)?.length||0,
+ clips:model()?.wolfAnimations?.clips?.length||0,
+ playing:se224WolfPreview.playing
+})});
