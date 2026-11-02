@@ -48,7 +48,7 @@ for(const {id,name} of list){
  }
  second.project.modelAtelier.parts[0].name='CHANGED';
  assert.notEqual(first.project.modelAtelier.parts[0].name,'CHANGED');
- assert(parts.some(p=>/Roof/.test(p.name))&&parts.some(p=>/Foundation|plinth|Doorstep/.test(p.name)));
+ assert(parts.some(p=>/roof/i.test(p.name))&&parts.some(p=>/foundation|plinth|doorstep/i.test(p.name)));
  summaries.push(id+': '+parts.length+' parts');
 }
 assert.equal(context.createProjectFromTemplate('not-sheep',true),'original');
