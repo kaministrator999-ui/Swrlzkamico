@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.198
+title: §wyrl§ Engine v11.212
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,13 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.212 — Floating Hand · Arcane Glove starter (2026-11-02)
+
+Owner-supplied multi-view glove reference is now an **independent native Model Atelier starter**. Open Projects → Floating Hand · Arcane Glove, or navigate to modeler.html?project=floating-hand-glove. The original indexed organic palm/finger/thumb shell, metal knuckle/dorsal armor, glowing front/back crests, rune seams, cuff and suspended violet rings are separate editable model parts. Saving/exporting uses the existing Model Atelier project/mesh workflow; other starters, user projects, XR bindings, chat and Sheep Tag are unchanged.
+
+**Sealed source receipt:** 244 ordered patches, 68 assets, 7,478,674 HTML bytes, SHA-256 add8a1718f8d06a1ef178bf4adaa55e12ae38f9d33be1404396637c32ebfa92f. See docs/FLOATING_HAND_MODEL_STARTER_V11_212.md. The open-hand model is not yet bone-rigged, skinned, pose-animated, or linked to Quest hand tracking. Owner phone/Quest visual acceptance remains pending.
+
 
 ## §E v11.198 — Quest editor free flight, controller-driven 3D grabs, selectable gizmos and control legend (2026-11-01)
 
