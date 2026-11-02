@@ -1,4 +1,7 @@
-# §C ⇄ §E Model Atelier Academy · v1→v3
+# §C ⇄ §E Model Atelier Academy · v1→v4
+
+> **v4 — §E v11.224 source-aware animal animation lessons: 120 public teacher cases M001–M120.** The [20 new quadruped cases](academy_v4_delta.json) M101–M120 and [wolf/sheep rigging + gameplay animation guide](QUADRUPED_ANIMATION_V4.md) distinguish the Wolf Model's 14-bone SkinnedMesh, shared 10-clip motion library, Sheep Tag wolf pivot overlay, six Clover sheep motions, clip timing, visual-only effects and §C native-operation limits. [Offline v4 anchor validator](verify_academy_v4.py). **These remain public practice material; they are not scored model evaluations, model-weight updates, or proof of live edits.**
+
 
 > **Current instructional pack (Nov 2, 2026): 100 public cases M001–M100.** New [v3 source-anchored practice M080–M100](academy_v3_delta.json) focuses on 25→17 WebXR joint retargeting design, §E **v11.223** eight-key wrist-driven Wave versus three-key gestures, source-driven Fist deformation, missing hand tracking and safe research. [Compact v3 teaching reference](model_context_v3.txt); [offline v3 source validator](verify_academy_v3.py). See also the evolving [rigging, animation and WebXR guide](RIGGING_ANIMATION_RESEARCH_V2.md). The W3C document is a working draft and is not a claim of existing Quest capture in §E.
 
