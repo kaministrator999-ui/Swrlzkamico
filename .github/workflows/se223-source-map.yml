@@ -45,5 +45,8 @@ jobs:
            p=Path('/tmp')/('se223_inline_'+str(i)+'.mjs')
            p.write_text(script)
            subprocess.run(['node','--check',str(p)],check=True)
+          for needle in ['function applyProjectMeta(', 'function resetWorkspaceState(', 'function projectData()', 'function seLevelStrip(']:
+           at=html.find(needle)
+           print('SE223_META_SOURCE',needle,'at',at,'excerpt',repr(html[at:at+1900]) if at>=0 else '',flush=True)
           print('SE223_SOURCE_AND_SCRIPT_SYNTAX_PASS',flush=True)
           PY
