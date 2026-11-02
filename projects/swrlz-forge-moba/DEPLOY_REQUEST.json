@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.221",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_221_THUMB_OPPOSITION_GESTURES",
-  "reason": "Owner's v11.220 actual Moto screenshots: hand bends, but thumb needs realistic CMC opposition/independent MCP-IP flex and more gestures. v11.221 improves curved thumb capsule skinning so two-turn violet helix follows motion, adds 14 distinct hand poses (Open, Relaxed, Fist, Point, Precision Pinch, OK, Thumbs Up, Peace, Horns, ILY, Shaka, Wave, Grasp, Finger Gun), interactive thumb Opposition and Tip Curl sliders, one-tap 3-key animated previews, and eased keyframe interpolation. No changes to glove source topology, old saves, nonrigged model projects, Sheep Tag, §C or Quest input. Focused math PASS for unique gestures, calibrated index-thumb fingertip contact, upright thumbs-up and thumb weight anchoring. Single phone-width smoke PASS for 17-bone GPU model, pinch/OK/thumbs-up distinct rendered poses, manual thumb controls and playback. Exact v11.221 sealed 253-patch 68-asset HTML: 7,535,801 bytes SHA-256 1f7f32229504110c2d6d758bf3cadf3c0f048630ad8a79ffdbffc4bac8431f90. Owner real-device visual acceptance pending.",
-  "sourceCommit": "c331d980d61d6a63cfcd553ce86d697de0201cdd",
-  "sourceIntegritySha256": "1f7f32229504110c2d6d758bf3cadf3c0f048630ad8a79ffdbffc4bac8431f90"
+  "releaseVersion": "v11.222",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_222_CLOVER_MOTIONS_BUILD_SPARKS",
+  "reason": "Owner-requested Clover sheep animations (Idle/Graze/Walk/Trot/Build/Celebrate) shared by standalone sheep-model starter and Sheep Tag, exported 6-joint native clip tracks and touch preview, render-only match-start aqua sparkle and host-authoritative house-progress amber motes/teal completion with builder cheer; one bounded 96-particle Points draw call, existing movement/LAN/resources/Quest controls unchanged. Strict 254-patch 68-asset source and compiled inline JS check PASS; 7,550,334 HTML bytes, SHA-256 27876c460d3c824f23d6628d3207693eb0d2194db9091a72c743122a95e17a35. Physical Android/Quest owner UX acceptance remains pending.",
+  "sourceCommit": "4f700dfb78459edec53ec038fc26bd7b9cb4053a",
+  "sourceIntegritySha256": "27876c460d3c824f23d6628d3207693eb0d2194db9091a72c743122a95e17a35"
 }
