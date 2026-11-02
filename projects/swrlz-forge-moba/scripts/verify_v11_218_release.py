@@ -15,7 +15,7 @@ args=p.parse_args()
 out=Path(args.output).resolve()
 m=json.loads((ROOT/'source-manifest.json').read_text())
 assert m['name']=='§wyrl§ Engine v11.218'
-assert m['finalArtifact']=='swyrl_engine_v11_217.html'
+assert m['finalArtifact']=='swyrl_engine_v11_218.html'
 assert len(m['patches'])==250 and m['patches'][-1]=='patches/v11_218_arcane_glove_fidelity.py'
 subprocess.run([sys.executable,str(ROOT/'build_space.py'),'--output',str(out)],check=True)
 raw=(out/'index.html').read_bytes()
@@ -136,7 +136,7 @@ for required in ['se218FingerSpec','se218HandDetails',
                  'Thumb · continuous back-to-tip double helix',
                  'Thumb · dorsal joint to helix feed',
                  'Backhand · anchored digit ',
-                 'Finger' if False else 'rail retainer ',
+                 'rail retainer ',
                  'Wrist · ring light insert ',
                  'const digit=se218FingerSpec;',
                  'se218HandDetails({digits:digit,wire,sphere,color});']:
