@@ -5,6 +5,6 @@
   "releaseVersion": "v11.225",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_225_MATERIAL_TEXTURE_STUDIO_TABS",
   "reason": "Owner-requested first-class Material & Texture Studio and standalone Particle Studio workspace beside Game Engine and Modeling. Native §E v11.225 adds ten PBR presets; eight procedural texture modes with 256x256 hand painting and brush undo; bounded PNG/JPEG import and PNG/JSON export; project-native material assignment, restored original ghost transparency, Undo/Redo and saved level records. Particle Studio reuses original 10 presets and capped GPU VFX in its own tab. Existing Game, Modeling, Quest, Sheep Tag authority, model assets, §C and 68 packaged assets retained. Strict 257-patch source check, built JS syntax and focused material lifecycle tests passed. Sealed HTML 7,642,539 bytes SHA-256 7407ca6b520912437c280035c1f4258f5b1e7a8ab577f3701b855db26f7bf3a7. Physical phone and Quest 2 visual/ergonomic testing remains owner acceptance.",
-  "sourceCommit": "248ad9d02757f63901fabd5021f8f303f653ed0f",
+  "sourceCommit": "223a39c92494605ce0e0e1cb57b2dbe1f17afdaf",
   "sourceIntegritySha256": "7407ca6b520912437c280035c1f4258f5b1e7a8ab577f3701b855db26f7bf3a7"
 }
