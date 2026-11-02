@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.223",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_223_FIST_CLENCH_WRIST_WAVE",
-  "reason": "Owner tested Arcane Glove animation and asked for a harder clench and waving with wrist twist as the hand shifts. Native Model Atelier fist now flexes each MCP (1.06–1.14), PIP (1.42–1.49), and DIP (.87–.92) more deeply, with thumb CMC/MCP/IP tucked across fingers. Wave preview now rotates wrist yaw and roll alternately with palm follow-through and finger flutter over 8 editable native joint keyframes in 2.2s; other gestures stay 3-key 1.5s. No saved rig timeline rewrite, mesh edit, §C, Sheep Tag, Clover, or Quest control changes. Targeted generated v11.223 motion math and source candidate tests PASS, sealed 255-patch 68-asset artifact PASS: 7,551,989 HTML bytes, SHA-256 db352ebd9c49735b4ec5df884ce2f855d412a995138e7bb987bdeb808c296b4e. Owner physical phone/Quest visual acceptance pending.",
-  "sourceCommit": "068b9f4155c53f389f0051decfb6d32636a23841",
-  "sourceIntegritySha256": "db352ebd9c49735b4ec5df884ce2f855d412a995138e7bb987bdeb808c296b4e"
+  "releaseVersion": "v11.224",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_224_NATIVE_PARTICLE_STUDIO",
+  "reason": "User-requested native §E Particle Studio: ten reusable particle VFX presets (magic, flame, smoke, sparks, snow, rain, healing, building, portal and confetti), editable emission shapes/modes/rate/lifetime/motion/physics/color, 3D placement and actor attachment, preview and manual burst, reusable JSON import/export, native project/Undo/Redo/levels integration. Cosmetic GPU effects share existing flat/XR renderer with 12-emitter, 96-per-emitter, 576-global bound; malformed imported VFX is rejected. Prior v11.223 wrist-wave/clench, Sheep Tag effects, 68 assets, other starters, §C and Quest mapping preserved. Strict source release gate and scoped particle runtime mock test PASSED; 256 patches, 7,590,193 generated HTML bytes, SHA-256 29583040d840e7bd328d7417d0abb8a0d0c8cebf5a6db2db8014b602bdfb6a54. Owner phone and Quest 2 visual and performance acceptance remain pending.",
+  "sourceCommit": "24d9b452ea9c2a5bf0edd1ed8dc756b0e8bc38ce",
+  "sourceIntegritySha256": "29583040d840e7bd328d7417d0abb8a0d0c8cebf5a6db2db8014b602bdfb6a54"
 }
