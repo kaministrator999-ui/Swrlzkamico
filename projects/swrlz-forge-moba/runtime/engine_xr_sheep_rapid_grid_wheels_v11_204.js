@@ -76,11 +76,14 @@ function se204EquipBuilding(kind){
  if(!se204Gameplay())return false;
  if(kind!==null&&!se204Buildings.some(b=>b.id===kind))return false;
  if(kind===null){
-  se204.building=null;se204.anchor=null;se204.lastPreview=null;
+  // Preserve the lattice through tool changes within one active match.
+  se204.building=null;se204.lastPreview=null;
   stUi.build=null;stUiClearPreview();stRefreshHUD(true);
   se204.lastReason='House tool unequipped';return true;
  }
- se204.building=kind;se204.anchor=null;se204.lastPreview=null;se204.session=stSession;
+ // A different house type must still align with the same streets.
+ if(se204.session!==stSession)se204.anchor=null;
+ se204.building=kind;se204.lastPreview=null;se204.session=stSession;
  stUi.rotation=0; // Only the editor has rotation tools in this Play phase.
  if(stUi.build!==kind)stUiChooseBuild(kind);
  if(stUi.build!==kind){
