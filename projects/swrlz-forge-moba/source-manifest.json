@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.222",
+  "name": "§wyrl§ Engine v11.223",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_222.html",
+  "finalArtifact": "swyrl_engine_v11_223.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -268,8 +268,9 @@
     "patches/v11_219_finger_rail_contact.py",
     "patches/v11_220_hand_skeletal_studio.py",
     "patches/v11_221_thumb_opposition_gestures.py",
-    "patches/v11_222_clover_motion_construction_fx.py"
+    "patches/v11_222_clover_motion_construction_fx.py",
+    "patches/v11_223_fist_clench_wrist_wave.py"
   ],
-  "finalBytes": 7550334,
-  "finalSha256": "27876c460d3c824f23d6628d3207693eb0d2194db9091a72c743122a95e17a35"
+  "finalBytes": 7551989,
+  "finalSha256": "db352ebd9c49735b4ec5df884ce2f855d412a995138e7bb987bdeb808c296b4e"
 }
