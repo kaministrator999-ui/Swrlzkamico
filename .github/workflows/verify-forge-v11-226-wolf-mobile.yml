@@ -43,7 +43,7 @@ jobs:
         run: |
           npm install --no-save playwright@1.56.1
           npx playwright install --with-deps --only-shell chromium
-      - name: Verify Wolf Model editable inspector and Sheep Tag live wolf animations
+      - name: Verify rig UI then native Sheep Tag wolf session startup and visuals
         run: node projects/swrlz-forge-moba/tests/ui_v11_226_wolf_model_smoke.mjs
       - name: Print exact wolf source receipt
         run: |
