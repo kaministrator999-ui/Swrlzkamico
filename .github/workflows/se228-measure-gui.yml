@@ -50,3 +50,5 @@ jobs:
           assert b'SWYRL_ENGINE_GUI_STUDIO' in b
           print('SEGUI_MEASURE_JSON='+json.dumps({'version':'v11.228','bytes':len(b),'sha256':hashlib.sha256(b).hexdigest()}),flush=True)
           PY
+
+# Recheck GUI CSS insertion against native v11.227 assembled engine.
