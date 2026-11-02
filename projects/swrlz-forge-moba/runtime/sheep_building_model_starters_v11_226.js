@@ -72,7 +72,7 @@ function se226MakeBuildingScene(id){
  function windowAt(x,y,z){
   box('Window · wooden backing',x,y,z,.72,.73,.095,P.wood,'Windows');
   box('Window · amber glow',x,y,z+.065,.58,.57,.055,P.glass,'Windows','gloss');
-  box('Window · divider vertical',x,y,z+.101,.065,.60,P.trim,'Windows');
+  box('Window · divider vertical',x,y,z+.101,.065,.60,.04,P.trim,'Windows');
   box('Window · divider horizontal',x,y,z+.106,.62,.06,.04,d.trim,'Windows');
   box('Window · lower sill',x,y-.40,z+.13,.85,.12,.21,d.trim,'Windows');
  }
