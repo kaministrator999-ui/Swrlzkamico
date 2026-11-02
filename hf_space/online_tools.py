@@ -436,14 +436,21 @@ def _lyrics_search_query(text: str) -> str:
     return _search_query_from_prompt(text)
 
 _LYRIC_PAGE_NOISE=re.compile(
-    r"\b(?:blog|download|menu|sign\s*in|log\s*in|privacy|cookies?|terms|contact|"
-    r"share|follow|subscribe|navigation|app\s*store|google\s*play|"
-    r"related\s+(?:songs?|hymns?)|more\s+lyrics?|chords?|copyright)\b",
+    # Match navigation controls as whole lines. Generic words such as "share",
+    # "follow" and "contact" also occur in genuine lyrics; matching them
+    # anywhere in a verse used to truncate otherwise valid extractions.
+    r"^\s*(?:blog|download(?:\s+(?:app|now))?|menu|sign\s*in|log\s*in|"
+    r"privacy(?:\s+policy)?|cookies?(?:\s+(?:settings|policy))?|"
+    r"terms(?:\s+(?:of\s+service|and\s+conditions))?|contact(?:\s+us)?|"
+    r"share(?:\s+(?:this|song|lyrics?|on\s+\w+))?|follow(?:\s+us)?|"
+    r"subscribe(?:\s+now)?|navigation|app\s*store|google\s*play|"
+    r"related\s+(?:songs?|hymns?)|more\s+lyrics?|chords?|copyright)"
+    r"\s*[:.!-]*$",
     re.I,
 )
 _LYRIC_ANCHOR=re.compile(r"^(?:copy\s+lyrics|lyrics(?:\s+text)?)\s*[:.!-]*$",re.I)
 _LYRIC_HARD_BOUNDARY=re.compile(
-    r"^(?:related\s+(?:songs?|hymns?|posts?)|more\s+(?:songs?|lyrics?)|about|contact|privacy|terms|"
+    r"^(?:are\s+these\s+lyrics\s+accurate\??|related\s+(?:songs?|hymns?|posts?)|more\s+(?:songs?|lyrics?)|about|contact|privacy|terms|"
     r"download(?:\s+the)?\s+app|get\s+the\s+.+?\s+app!?|share|subscribe|references?|sources?|"
     r"karaoke(?:\s+video)?(?:\s+with\s+lyrics)?|did\s+you\s+like\s+this\s+post.*|"
     r"you\s+might\s+also\s+like.*|leave\s+a\s+reply.*|submitted\s+by(?:\s+.+)?|"
@@ -461,7 +468,7 @@ _LYRIC_RECOMMENDATION_LINE=re.compile(
     re.I,
 )
 _LYRIC_POST_SONG_META=re.compile(
-    r"^\s*(?:writers?|writer\(s\)|written\s+by|songwriters?|"
+    r"^\s*(?:a\s+collection\s+of\s+song\s+lyrics\b|all\s+lyrics\s+belong\s+to\b|writers?|writer\(s\)|written\s+by|songwriters?|"
     r"publishers?|powered\s+by\s+\S+|"
     r"top\s+(?:lyrics|artists|songs)(?:\s*:)?|"
     r"submit\s+(?:lyrics|corrections?)|"
@@ -488,7 +495,7 @@ _LYRIC_BREADCRUMB=re.compile(
 )
 
 
-def _lyrics_line_is_content(line: str) -> bool:
+def _lyrics_line_is_content(line: str, *, allow_single_word: bool = False) -> bool:
     value=line.strip()
     if not value or len(value)>180:
         return False
@@ -499,7 +506,7 @@ def _lyrics_line_is_content(line: str) -> bool:
     if _LYRIC_PAGE_NOISE.search(value):
         return False
     words=re.findall(r"[A-Za-z0-9][A-Za-z0-9'’\-]*",value)
-    return 2<=len(words)<=24
+    return (1 if allow_single_word else 2)<=len(words)<=24
 
 
 def _lyrics_title_terms(subject: str) -> list[str]:
@@ -668,7 +675,8 @@ def _lyrics_best_anchor(lines: list[str], subject: str) -> int | None:
                 content+=1
         score=base+(structure*3)+min(content,24)
         candidates.append((score,index))
-    return max(candidates)[1] if candidates else None
+    # On equal evidence, anchor at the earliest matching verse, not the last one.
+    return max(candidates,key=lambda row:(row[0],-row[1]))[1] if candidates else None
 
 
 def _lyrics_debug_preview(text: str, subject: str = "", limit: int = 600) -> dict[str,Any]:
@@ -811,7 +819,9 @@ def _lyrics_extract_analysis(text: str, scope: str, subject: str = "") -> dict[s
             started=True
             scoped.append(line)
             continue
-        if _LYRIC_NUMBERED_START.search(line) or _lyrics_line_is_content(line):
+        if _LYRIC_NUMBERED_START.search(line) or _lyrics_line_is_content(
+            line,allow_single_word=bool(started or (anchor_index is not None and _LYRIC_ANCHOR.fullmatch(anchor_line)))
+        ):
             started=True
             scoped.append(line)
             continue
@@ -834,7 +844,7 @@ def _lyrics_extract_analysis(text: str, scope: str, subject: str = "") -> dict[s
             body,
         )
         if explicit:
-            lines=[ln.strip() for ln in explicit.group(1).splitlines() if _lyrics_line_is_content(ln)]
+            lines=[ln.strip() for ln in explicit.group(1).splitlines() if _lyrics_line_is_content(ln,allow_single_word=True)]
             if 2<=len(lines)<=12:
                 result="\n".join(lines)
                 analysis.update({
@@ -869,7 +879,7 @@ def _lyrics_extract_analysis(text: str, scope: str, subject: str = "") -> dict[s
                 current=[]
                 seen_cue=True
                 continue
-            if seen_cue and _lyrics_line_is_content(line):
+            if seen_cue and _lyrics_line_is_content(line,allow_single_word=True):
                 current.append(line)
                 content_line_count+=1
         if seen_cue and len(current)>=2:
@@ -879,7 +889,7 @@ def _lyrics_extract_analysis(text: str, scope: str, subject: str = "") -> dict[s
         analysis["blankSeparatedChunkCount"]=len(chunks)
         for chunk in chunks:
             lines=[ln.strip() for ln in chunk.splitlines() if ln.strip()]
-            content=[ln for ln in lines if _lyrics_line_is_content(ln)]
+            content=[ln for ln in lines if _lyrics_line_is_content(ln,allow_single_word=bool(anchor_index is not None and _LYRIC_ANCHOR.fullmatch(anchor_line)))]
             content_line_count+=len(content)
             if len(content)>=2:
                 blocks.append("\n".join(content))
@@ -891,7 +901,7 @@ def _lyrics_extract_analysis(text: str, scope: str, subject: str = "") -> dict[s
             single_line_run=[]
             for chunk in chunks:
                 lines=[ln.strip() for ln in chunk.splitlines() if ln.strip()]
-                if len(lines)!=1 or not _lyrics_line_is_content(lines[0]):
+                if len(lines)!=1 or not _lyrics_line_is_content(lines[0],allow_single_word=bool(_LYRIC_ANCHOR.fullmatch(anchor_line))):
                     single_line_run=[]
                     break
                 single_line_run.append(lines[0])
@@ -1748,8 +1758,23 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
                 subject,
             ) if lyric_extract else (False,0,0)
             snippet_sequence_span=_lyrics_sequence_span(search_snippet,lyric_extract,subject) if lyric_extract else 0
-            structure_profile=_lyrics_structure_profile(str(item.get("pageExtract") or ""))
-            verified_candidate=bool(lyric_extract and snippet_consistent)
+            raw_page=str(item.get("pageExtract") or "")
+            structure_profile=_lyrics_structure_profile(raw_page)
+            # Search snippets are often site descriptions, not lyric excerpts.
+            # A matching fetched song page with a substantial, structured lyric
+            # body is stronger evidence than an unrelated search snippet.
+            # Require verified destination identity and multiple independently
+            # delimited lyric lines before relaxing snippet/body overlap.
+            body_lines=[ln for ln in lyric_extract.splitlines() if ln.strip()]
+            strong_body=bool(
+                source_identity.get("verified")
+                and len(body_lines)>=8
+                and int(structure_profile.get("musicalSectionCount") or 0)>=2
+            )
+            # Preserve the original short-descriptive-snippet acceptance path;
+            # identity is mandatory only when bypassing a snippet/body mismatch.
+            # A generic "Lyrics" heading alone cannot validate page chrome.
+            verified_candidate=bool(lyric_extract and (snippet_consistent or strong_body))
             if verified_candidate:
                 rejection_reason="VERIFIED"
             elif not lyric_extract:
