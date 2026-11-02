@@ -169,7 +169,7 @@ function se208WorldPoints(s){
 function se208AddInstances(list,geometry,baseColor,colors,name,yScale){
  if(!list.length){geometry.dispose();return;}
  const material=new THREE.MeshBasicMaterial({
-  color:baseColor,vertexColors:true,side:THREE.DoubleSide,
+  color:baseColor,side:THREE.DoubleSide,
   transparent:true,opacity:.84,depthWrite:false,depthTest:true,
   polygonOffset:true,polygonOffsetFactor:-1,polygonOffsetUnits:-1,
   toneMapped:false
