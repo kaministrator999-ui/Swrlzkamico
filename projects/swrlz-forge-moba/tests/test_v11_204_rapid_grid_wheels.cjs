@@ -151,6 +151,8 @@ right.ground=new V(7.4,0,-3.5);tap(right);
 assert.equal(session.buildings.length,2,'occupied cells never place a duplicate');
 assert.ok(diag().blocked>=1);
 assert.equal(ui.build,'st-farm','blocked taps do not deselect');
+// Switching house types must not break the existing 3.6m lattice.
+internal.anchor={x:1.5,z:.75};
 // Open same wheel again, choose Income on right stick (0 degrees).
 right.se192.dot.visible=true;hold(right);
 right.input.gamepad.axes[2]=1;right.input.gamepad.axes[3]=0;frame();
@@ -159,6 +161,8 @@ release(right);
 assert.equal(ui.build,'st-income');
 assert.equal(ui.rotation,0);
 assert.equal(diag().equippedHouse,'st-income');
+near(diag().anchor.x,1.5,'new house type retains the original grid x origin');
+near(diag().anchor.z,.75,'new house type retains the original grid z origin');
 assert.ok(diag().menuReuses>=1,'radial graphics reused, not recreated');
 // Ability wheel uses LEFT X; right stick still selects its options.
 right.input.gamepad.axes[2]=0;right.input.gamepad.axes[3]=0;
