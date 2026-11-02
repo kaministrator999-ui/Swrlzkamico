@@ -1,0 +1,122 @@
+"""§E v11.225 — Astra wolf appearance, weighted native rig and Sheep Tag clips.
+
+Single shared Wolf pose source for game + modeler. No gameplay rules or
+network state changes. Only fresh wolf-model starter is rebuilt in memory.
+"""
+from pathlib import Path
+import json
+
+def once(html,old,new):
+    n=html.count(old)
+    if n!=1:
+        raise AssertionError(('v11.224 wolf patch anchor',old[:160],n))
+    return html.replace(old,new,1)
+
+def apply(html):
+    root=Path(__file__).resolve().parents[1]
+    runtime=root/'runtime'
+    shared=(runtime/'wolf_rig_motions_v11_224.js').read_text('utf8')
+    fidelity=(runtime/'wolf_visual_fidelity_v11_224.js').read_text('utf8')
+    studio=(runtime/'model_atelier_wolf_studio_v11_224.js').read_text('utf8')
+    game=(runtime/'sheep_tag_wolf_animation_v11_224.js').read_text('utf8')
+
+    # Functional motion/visual sources are available at startup to both
+    # engine/world code and the Model Atelier lexical scope.
+    html=once(html,'ModelAtelier.install();',
+              shared+'\n'+fidelity+'\nModelAtelier.install();')
+    # Furred Astra's optimized game template keeps its existing coat + gear;
+    # overlay parts are physically parented to head, moving jaw, and body.
+    html=once(html,
+        "if(type==='st-wolf')return ModelAtelier.createCourierHunter();",
+        "if(type==='st-wolf')return se224WolfGameVisual(ModelAtelier.createCourierHunter());")
+
+    # The stock wolf-model loads the actual Astra scene (not a blank model).
+    # New starter gets editable detail parts, real rig and native authored
+    # keyframes; saved user copies are never silently rewritten.
+    html=once(html,
+      "if(species==='sheep')data.project.modelAtelier.sheepAnimations=se222SheepClips();",
+      """if(species==='sheep')data.project.modelAtelier.sheepAnimations=se222SheepClips();
+ if(species==='wolf'){
+  se224WolfEnhanceModel(data.project.modelAtelier);
+  data.project.modelAtelier.wolfRig=se224WolfRigSpec();
+  data.project.modelAtelier.wolfAnimations=se224WolfClips();
+ }""")
+    html=once(html,'  function refreshList(){',studio+'\n  function refreshList(){')
+    html=once(html,'const mesh=se220RigMesh(p);','const mesh=se224WolfRigMesh(p);')
+    html=once(html,'se220RigBind();se220RigRefresh();',
+        'se220RigBind();se224WolfRigBind();se220RigRefresh();')
+    html=once(html,
+      'se220RigControlsInstall();se221StudioInstall();se222SheepStudioInstall();',
+      'se220RigControlsInstall();se221StudioInstall();se222SheepStudioInstall();se224WolfStudioInstall();')
+    html=once(html,
+      'se220RigFrame();se222SheepPreviewFrame();',
+      'se220RigFrame();se222SheepPreviewFrame();se224WolfPreviewFrame();')
+    html=once(html,
+      'se222SheepPreviewClose();se220RigClose();',
+      'se224WolfPreviewClose();se222SheepPreviewClose();se220RigClose();')
+
+    # Import metadata is bounded and validated. Do not allow imported JSON
+    # to inject unknown bone names, arbitrary links, invalid clips or NaNs.
+    html=once(html,
+      'model().parts=structuredClone(source.parts);',
+      """model().parts=structuredClone(source.parts);
+       if(source.wolfRig||source.wolfAnimations){
+        if(!se224WolfRigValid(source.wolfRig)||!se224WolfClipsValid(source.wolfAnimations))
+         throw Error('Invalid wolf armature or clip keys.');
+        model().wolfRig=structuredClone(source.wolfRig);
+        model().wolfAnimations=structuredClone(source.wolfAnimations);
+       }""")
+
+    # Render-only wolf pose overlay runs after existing Sheep Tag animation
+    # and particle FX, using the current game tick only.
+    html=once(html,'window.SWRLZ_FORGE_BUILD=',game+'\nwindow.SWRLZ_FORGE_BUILD=')
+
+    css="""
+.atelier-wolf-studio{background:rgba(10,23,37,.96);border:1px solid #7b9b8b;
+ border-radius:9px;color:#e8edf1;max-width:100%;padding:4px 8px;
+ font-size:11px;position:relative;z-index:45}
+.atelier-wolf-studio[hidden]{display:none!important}
+.atelier-wolf-studio summary{cursor:pointer;font-weight:750;padding:5px 0}
+.atelier-wolf-panel{display:grid;gap:7px;min-width:0;padding:4px 0}
+.atelier-wolf-panel label{display:grid;gap:3px;font-size:11px}
+.atelier-wolf-panel select,.atelier-wolf-panel button{min-height:34px;max-width:100%;font-size:11px}
+.atelier-wolf-panel input[type=range]{width:100%;min-height:24px;accent-color:#efb75c}
+.atelier-wolf-panel output{text-align:right;color:#f0c77c}
+.atelier-wolf-actions{display:flex;gap:5px}.atelier-wolf-actions button{flex:1}
+.atelier-wolf-axes{display:grid;gap:3px;grid-template-columns:repeat(3,minmax(0,1fr))}
+.atelier-wolf-axes label{min-width:0;word-break:normal}
+.atelier-wolf-check{display:flex!important;flex-direction:row;align-items:center;gap:6px}
+.atelier-wolf-panel small{color:#a8bcc6;line-height:1.35}
+@media(max-width:640px){.atelier-wolf-studio{max-width:min(345px,100%);padding:4px 6px}
+ .atelier-wolf-axes{grid-template-columns:1fr}}
+"""
+    assert '</head>' in html
+    html=html.replace('</head>','<style id="se224WolfStudio">'+css+'</style>\n</head>',1)
+
+    html=once(html,
+      " source.engine='§wyrl§ Engine · Maker v11.224';source.version=11.223;",
+      " source.engine='§wyrl§ Engine · Maker v11.225';source.version=11.225;")
+    for old,new in [
+      ('SWYRL_ENGINE_DEPLOY_MARKER: V11_224_NATIVE_PARTICLE_STUDIO',
+       'SWYRL_ENGINE_DEPLOY_MARKER: V11_225_ASTRA_WOLF_RIG_SHEEP_TAG'),
+      ('ENGINE · MAKER v11.224','ENGINE · MAKER v11.224'),
+      ('v11.224 · Native Particle Studio and reusable VFX emitters',
+       'v11.225 · Astra wolf rig and Sheep Tag animations'),
+      ("window.SWRLZ_FORGE_BUILD={version:'v11.225'",
+       "window.SWRLZ_FORGE_BUILD={version:'v11.224'"),
+      ('<title>§wyrl§ Engine · Maker v11.225</title>',
+       '<title>§wyrl§ Engine · Maker v11.224</title>')
+    ]:
+        html=once(html,old,new)
+    tag='const SE_RELEASE_NOTES='
+    start=html.index(tag)+len(tag)
+    notes,size=json.JSONDecoder().raw_decode(html[start:])
+    notes.update(title='Astra Wolf · refined appearance, rigged model and Sheep Tag motions',
+      date='2026-11-02',changes=[
+        'Astra keeps its original organic furred body, courier equipment, comet tail and 4K texture maps. Added mirrored expressive brows, layered cheek/neck fur, cream muzzle highlighting, sculpted nose and moving jaw with small canine teeth. Details are native editable topology pieces in the wolf starter.',
+        'The freshly loaded Wolf Model starter now has an actual 14-bone hierarchy (root, spine, neck, head, jaw, tail, and upper/lower pivots for all four legs) driving four-influence GPU skinning, including the continuous torso and sculpted attachments.',
+        'Model Atelier Wolf Rig & Motion panel can preview, scrub and edit ten animations and individual bone rotations, show skeleton pivots and save animation keys to exported model JSON.',
+        'Sheep Tag wolves share the same pose source for Idle, Sniff, Stalk, Walk, Run, Pounce, Bite, Howl, Alert and Victory. The game uses its proven optimized mesh/pivots and a new articulated jaw; all animation changes are cosmetic and ride the existing update tick.',
+        'The native wolf headstart, collisions, pathfinding, attacks, fog, camera, LAN messages, Sheep Tag economy and Clover animations remain unchanged. Existing saved user models and clips are preserved.'
+      ])
+    return html[:start]+json.dumps(notes,ensure_ascii=False,separators=(',',':')).replace('</','<\\/')+html[start+size:]
