@@ -1,0 +1,23 @@
+name: Online Lyric Extraction Regression
+on:
+  pull_request:
+    paths:
+      - 'api/online_research.py'
+      - 'hf_space/online_tools.py'
+      - 'hf_space/test_online_lyric_extraction_fix.py'
+      - '.github/workflows/online-lyric-extraction-regression.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  lyric-extraction:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile the extraction boundary and regression fixture
+        run: python -m py_compile api/online_research.py hf_space/online_tools.py hf_space/test_online_lyric_extraction_fix.py
+      - name: Run offline song-identity and extraction fixtures
+        env:
+          PYTHONPATH: hf_space
+        run: python -m unittest discover -s hf_space -p test_online_lyric_extraction_fix.py -v
