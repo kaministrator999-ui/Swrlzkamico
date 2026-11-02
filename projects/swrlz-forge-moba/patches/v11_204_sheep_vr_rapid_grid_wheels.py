@@ -31,8 +31,8 @@ def apply(html):
     # Preserve fine/coarse snapping, castle wall/ramp gameplay, touch play,
     # and modeling/editor rotations without changing any collision rule.
     html=once(html,
-      "const corners = fit.corners, snap = stUiRules().buildSnap || .15, gridStep = snap===3 ? 3 : .6;",
-      "const corners = fit.corners, snap = stUiRules().buildSnap || .15, gridStep = se204RapidEnabled() ? (snap===3 ? 6 : se204.pitch) : (snap===3 ? 3 : .6);")
+      "const corners = fit.corners, snap = stUi.build && ST_LANE_HOUSES.has(stUi.build) ? ST_GRID : (stUiRules().buildSnap || .15), gridStep = snap===3 ? 3 : .3;",
+      "const corners = fit.corners, snap = stUi.build && ST_LANE_HOUSES.has(stUi.build) ? ST_GRID : (stUiRules().buildSnap || .15), gridStep = se204RapidEnabled() ? (stUiRules().buildSnap>=3 ? 6 : se204.pitch) : (snap===3 ? 3 : .3);")
     html=once(html,
       "if (snap!==3) for (let index=1;index<Math.round(length/snap);index++) {",
       "if (snap!==3 && !se204RapidEnabled()) for (let index=1;index<Math.round(length/snap);index++) {")
