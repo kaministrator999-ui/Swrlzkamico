@@ -1,0 +1,64 @@
+name: Calculate §E v11.226 sheep building source receipt
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/calc-forge-v11-226-sheep-buildings.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Focused JS and Python syntax checks
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/sheep_building_model_starters_v11_226.js
+          python3 -m py_compile projects/swrlz-forge-moba/patches/v11_226_sheep_building_starters.py
+      - name: Build unsealed candidate, print exact size and SHA
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('projects/swrlz-forge-moba/source-manifest.json')
+          m=json.loads(p.read_text())
+          assert m['name']=='§wyrl§ Engine v11.225',m['name']
+          assert m['patches'][-1]=='patches/v11_225_material_texture_workspace_tabs.py'
+          m['name']='§wyrl§ Engine v11.226'
+          m['finalArtifact']='swyrl_engine_v11_226.html'
+          m['patches'].append('patches/v11_226_sheep_building_starters.py')
+          m['finalBytes']=0
+          m['finalSha256']=''
+          p.write_text(json.dumps(m,ensure_ascii=False))
+          PY
+          python3 projects/swrlz-forge-moba/build_space.py --output /tmp/se226-buildings > /tmp/se226-build-receipt.json
+          python3 - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          p=Path('/tmp/se226-buildings/index.html')
+          b=p.read_bytes();s=b.decode('utf8')
+          for marker in [
+              'V11_226_SHEEP_BUILDING_MODEL_STARTERS',
+              'const SE226_BUILDINGS=',
+              'se226OpenBuilding',
+              'data-project-template="sheep-free-shelter"',
+              'data-project-template="sheep-thatched-hut"',
+              'data-project-template="sheep-cottage"',
+              'data-project-template="sheep-barn"',
+              'data-project-template="sheep-ram-house"',
+              'SWYRL_ENGINE_SHEEP_BUILDING_STARTERS',
+              '<title>§wyrl§ Engine · Maker v11.226</title>',
+          ]:assert marker in s,marker
+          assert b==Path('/tmp/se226-buildings/modeler.html').read_bytes()
+          r=json.loads(Path('/tmp/se226-buildings/SOURCE.json').read_text())
+          assert len(r['assets'])==68
+          print('SE226_SHEEP_BUILDINGS_BYTES='+str(len(b)))
+          print('SE226_SHEEP_BUILDINGS_SHA256='+hashlib.sha256(b).hexdigest())
+          print('SE226_SHEEP_BUILDINGS_PATCHES='+str(len(r['patches'])))
+          print('SE226_SHEEP_BUILDINGS_MODELER_AND_GAME_IDENTICAL=PASS')
+          PY
