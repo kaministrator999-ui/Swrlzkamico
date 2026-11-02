@@ -48,17 +48,6 @@ jobs:
           const mid=lib.sample(rig,.375);assert(mid.index_pip[0]>.1&&mid.index_pip[0]<1.04);
           console.log('RIG220_MATH_PASS=17 bones 4 weights per vertex thumb/fingers, interpolation');
           JS
-      - name: Inspect current native v11.219 renderer anchors
-        run: |
-          python3 projects/swrlz-forge-moba/build_space.py --output /tmp/se219-before-rig > /tmp/se219-output.log
-          python3 - <<'PY'
-          from pathlib import Path
-          s=Path('/tmp/se219-before-rig/index.html').read_text()
-          for needle in ['  function renderParts(){','const mesh=new THREE.Mesh(geometry(p),material(p));','    const current=partById(selection);','  function loop(){','    panel.addEventListener(\'keydown\',e=>{','  function close(){','const frames=atelierValidatedFrameStore(source);','model().poseFrames=frames.poseFrames;model().poseNeutral=frames.poseNeutral;','delete m.assemblies;m.poseFrames=[];m.poseNeutral=null;m.editedAt=\'local\';']:
-           print('RIG220_ANCHOR',repr(needle),s.count(needle))
-          at=s.find('  function renderParts(){')
-          print('RIG220_RENDER_CONTEXT',repr(s[at:at+2300]))
-          PY
       - name: Assemble unsealed v11.220 candidate
         run: |
           python3 - <<'PY'
@@ -66,11 +55,9 @@ jobs:
           import json
           p=Path('projects/swrlz-forge-moba/source-manifest.json')
           m=json.loads(p.read_text())
-          assert m['name']=='§wyrl§ Engine v11.219'
-          assert m['patches'][-1]=='patches/v11_219_finger_rail_contact.py'
-          m['name']='§wyrl§ Engine v11.220'
-          m['finalArtifact']='swyrl_engine_v11_220.html'
-          m['patches'].append('patches/v11_220_hand_skeletal_studio.py')
+          assert m['name']=='§wyrl§ Engine v11.220'
+          assert m['patches'][-1]=='patches/v11_220_hand_skeletal_studio.py'
+          assert m['finalArtifact']=='swyrl_engine_v11_220.html'
           m['finalSha256']='';m['finalBytes']=0
           p.write_text(json.dumps(m,ensure_ascii=False))
           PY
