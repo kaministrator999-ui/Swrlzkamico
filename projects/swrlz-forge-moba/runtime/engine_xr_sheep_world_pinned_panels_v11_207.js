@@ -152,7 +152,9 @@ function se207Frame(){
  // Meta menus are compositor-owned; editors have independent gizmo grips.
  if(!se207PlayMenu()){
   if(se207.grabbing)se207EndGrab(false);
-  se207.held=false;
+  // Track an already-held grip while the menu is hidden / OS UI is open.
+  // Opening the panel cannot accidentally start dragging until a new press.
+  se207.held=!!se192Pressed(se192InputRecord('right'),1);
   if(se195.mode!=='game'&&se207.pinned){
    se207.anchor=null;se207.pinned=false;
   }
