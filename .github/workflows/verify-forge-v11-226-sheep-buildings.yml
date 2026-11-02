@@ -1,4 +1,5 @@
 name: Verify §E v11.226 sheep building starters
+# Exact packaged v11.226 checksum, unchanged assets and five model meshes.
 on:
   push:
     branches: [main]
