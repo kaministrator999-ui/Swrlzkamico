@@ -32,7 +32,7 @@ for rel,meta in r['assets'].items():
     data=(out/rel).read_bytes()
     assert len(data)==meta['bytes'] and hashlib.sha256(data).hexdigest()==meta['sha256'],rel
 for text in ['SWYRL_ENGINE_DEPLOY_MARKER: V11_227_ASTRA_WOLF_RIG_SHEEP_TAG',
-             '<title>§wyrl§ Engine · Maker v11.226</title>',
+             '<title>§wyrl§ Engine · Maker v11.227</title>',
              "window.SWRLZ_FORGE_BUILD={version:'v11.227'",
              "const PROTOCOL='swrlz-forge-chat-v1'",'seChatAccountPanel','chatAction:seChatAtelierApply',
              'se175ProjectProgress','project.create','se175ActiveProject','se176Install();','se176AccountState(payload);','se177ShowPicture','Continue to Google','se178Install();','se178EnrichContext(value);','host.analyze','Editing now · ','seMobileEditorViewportV11174','seQuestPanelV11168','SWYRL_ENGINE_DEVICE','se-levels-v1','swyrl-workspaces-v1']:
