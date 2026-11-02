@@ -315,7 +315,7 @@ se195Options=function(mode=se195.mode,page=se195.page){
  if(mode==='game'&&page==='workspace')return [
   ['workspaceCamera','CAMERA'],['workspaceBuild','BUILD'],
   ['workspaceSkills','SKILLS'],['workspaceMetrics','METRICS'],
-  ['workspaceControls','CONTROLS'],['workspaceQuality','QUALITY'],
+  ['workspaceControls','CONTROLS'],['workspaceQuality','SETTINGS'],
   ['back','BACK']
  ];
  if(mode==='game'&&page==='bindings')return [
