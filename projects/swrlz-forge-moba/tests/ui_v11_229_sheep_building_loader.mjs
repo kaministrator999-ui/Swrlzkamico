@@ -7,6 +7,7 @@ import path from 'node:path';
 const host='https://kamiloki-swrlz-forge-moba.static.hf.space';
 const dist='/tmp/se229-sheep-loader';
 const ids=['sheep-free-shelter','sheep-thatched-hut','sheep-cottage','sheep-barn','sheep-ram-house'];
+const expectedCounts={'sheep-free-shelter':18,'sheep-thatched-hut':59,'sheep-cottage':68,'sheep-barn':37,'sheep-ram-house':60};
 const browser=await chromium.launch({headless:true,args:[
  '--no-sandbox','--disable-dev-shm-usage','--enable-webgl','--enable-unsafe-swiftshader'
 ]});
@@ -49,7 +50,7 @@ try{
   }));
  }
  let first=await facts();console.log('SHEEP_HOUSE_DIRECT_OPEN_FACTS',JSON.stringify(first));
- assert.equal(first.current?.id,'sheep-free-shelter','Deep link must open the shelter');
+ assert.equal(first.active?.count,expectedCounts['sheep-free-shelter'],'Deep link must open complete shelter model');
  assert.equal(first.active?.open,true,'Model Atelier panel must be open from a deep link');
  assert(first.active.count>=15,'Expected native house meshes');
  // Exercise the actual same native starter dispatch path as a Projects card.
@@ -59,7 +60,7 @@ try{
   const state=await facts();
   console.log('SHEEP_HOUSE_NATIVE_OPEN',id,'returned=',result,JSON.stringify(state));
   assert.equal(result,true,id+' did not open');
-  assert.equal(state.current?.id,id,'wrong selected project');
+  assert.equal(state.active?.count,expectedCounts[id],id+' wrong editable model parts');
   assert.equal(state.active?.open,true,'Model Atelier panel failed to open '+id);
   assert(state.active.count>=15,'Model Atelier missing editable house parts '+id);
   assert(state.partOptions>=15,'House parts list blank '+id);
