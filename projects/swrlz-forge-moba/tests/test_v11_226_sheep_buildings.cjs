@@ -12,6 +12,7 @@ const context={
  MODEL_ATELIER_CANONICAL_PROJECT:base,
  createProjectFromTemplate:()=>{forwarded++;return 'original';},
 };
+context.window=context;
 vm.createContext(context);
 vm.runInContext(code,context,{timeout:3000});
 const api=context.SWYRL_ENGINE_SHEEP_BUILDING_STARTERS;
