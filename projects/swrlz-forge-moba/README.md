@@ -1,3 +1,7 @@
+## §E v11.218 — Arcane Glove fidelity, attached conduits and thumb helix (2026-11-02)
+
+Native Floating Hand starter now uses the approved blue-black/silver/lilac aesthetic: slightly longer proportional fingers, a connected two-turn purple helix wrapping the full 3D thumb to its back-of-tip setting, four separately socketed backhand conduits, finger rail clamps, a geometric dorsal shield frame and illuminated cuff hardware. All new details are editable Model Atelier parts. Existing saves, §C, Sheep Tag and Quest input are untouched. Narrow candidate source build/syntax checks passed; owner phone/Quest acceptance remains pending. **v11.218:** 250 ordered patches / 68 assets / 7,503,389 HTML bytes / SHA-256 `fd4f16810ce066eb9b905748461ce8717a2b0f0eee633491364b5f8bb56aab41`. See `docs/ARCANE_GLOVE_FIDELITY_V11_218.md`.
+
 ## §E v11.217 — Proportional Floating Hand refinement (2026-11-02)
 
 Owner's second phone screenshots exposed oversized cylindrical fingers/knuckle studs and a swollen palm edge opposite the thumb. Added a scoped native signed-distance model refinement: varied index/middle/ring/pinky lengths and roots, tapered smaller distal digits, smaller armor studs/medallions, a narrower pinky-side hypothenar/ulnar contour, and smoother thumb web/thenar connection. New starter loads only; saved hand copies and Quest/Sheep controls are unchanged.
