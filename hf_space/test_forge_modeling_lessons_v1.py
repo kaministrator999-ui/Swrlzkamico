@@ -64,6 +64,54 @@ class ForgeModelingLessonTests(unittest.TestCase):
         self.assertIn("disposition=clarify", scoped)
         self.assertIn(json.dumps(operations, ensure_ascii=False, separators=(",", ":")), scoped)
 
+    def test_v11220_weighted_rig_is_real_but_chat_cannot_pose_it(self):
+        cases = [
+            "Can I rig the Arcane Glove in §E?",
+            "How can I rotate the thumb joint in §E Model Atelier?",
+            "§E: Are the skeleton and skin weights real for the new hand?",
+        ]
+        for prompt in cases:
+            lesson = select_modeling_lesson(prompt)
+            self.assertIn("v11.220", lesson)
+            self.assertIn("17-bone", lesson)
+            self.assertIn("SkinnedMesh", lesson)
+            self.assertIn("NOT a new §C Chat-native", lesson)
+            self.assertIn("old saved gloves", lesson)
+            self.assertLessEqual(len(lesson), 1150)
+
+    def test_v11220_keyframes_and_poses_have_separate_lesson(self):
+        prompts = (
+            "How do I save a pose keyframe in §E?",
+            "How do I edit the glove timeline in §E?",
+            "§E modeler: play a rigged glove animation clip",
+        )
+        for prompt in prompts:
+            lesson = select_modeling_lesson(prompt)
+            self.assertIn("Save/Delete key", lesson)
+            self.assertIn("32 ordered keys", lesson)
+            self.assertIn("2+ to animate", lesson)
+            self.assertIn("OBJ", lesson)
+            self.assertIn("§C Chat still cannot", lesson)
+            self.assertLessEqual(len(lesson), 1150)
+
+    def test_pose_terms_do_not_trigger_on_non_editor_conversation(self):
+        for prompt in (
+            "Pose for a photo with your hand.",
+            "Write a poem about a skeleton.",
+            "Describe a film animation clip.",
+            "I am playing on my Quest.",
+        ):
+            self.assertEqual(select_modeling_lesson(prompt), "", prompt)
+
+    def test_planner_does_not_expand_typed_rig_actions(self):
+        contract = {"schema": "typed-allowed-only", "operations": ["mesh.add"]}
+        answer = native_plan_system(
+            contract, prompt="§E Model Atelier: pose the glove thumb and save a keyframe",
+            summary={"workspace": "model-atelier"})
+        self.assertIn("JSON object only", answer)
+        self.assertIn("no extra operation types", answer)
+        self.assertIn("§C Chat still cannot", answer)
+
     def test_response_engines_share_selector_without_altering_permission_schema(self):
         for file in ("lfm2_700m_engine.py", "qwen_coder_engine.py"):
             source = (ROOT / file).read_text(encoding="utf-8")
