@@ -57,6 +57,17 @@ try{
  const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
  await page.waitForTimeout(300);
  const neutral=sha(await stage.screenshot());
+ const hit=await page.evaluate(()=>{
+  const summary=document.querySelector('#modelAtelierRigStudio summary');
+  const box=summary.getBoundingClientRect(),cx=box.left+box.width/2,cy=box.top+box.height/2;
+  const over=document.elementFromPoint(cx,cy);
+  const panel=document.getElementById('modelAtelierRigStudio');
+  return {x:cx,y:cy,front:over?.className||over?.tagName,
+   own:over===summary||summary.contains(over),
+   rigZ:getComputedStyle(panel).zIndex,
+   dockZ:getComputedStyle(document.querySelector('.atelier-component-dock')).zIndex};
+ });
+ console.log('RIG220_TOUCH_HIT',JSON.stringify(hit));
  await page.locator('#modelAtelierRigStudio summary').click();
  await page.locator('#modelAtelierRigFist').click();
  await page.waitForTimeout(350);
