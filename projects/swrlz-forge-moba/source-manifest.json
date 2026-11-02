@@ -263,6 +263,6 @@
     "patches/v11_214_quest_sheep_upright_modal_one_ray.py",
     "patches/v11_215_floating_hand_anatomy_upgrade.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 7490431,
+  "finalSha256": "90095eecc2a4e2af538d9332966108c7bede67d6cb041c329219ad475f3cdf1d"
 }
