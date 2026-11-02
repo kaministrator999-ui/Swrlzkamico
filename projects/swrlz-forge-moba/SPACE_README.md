@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.218
+title: §wyrl§ Engine v11.219
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.219 — Finger rails mounted under the last finger links (2026-11-02)
+
+Owner review of live v11.218 phone screenshots requested the four purple non-thumb finger rails to follow the finger backs and sit beneath the top metallic links, as in the approved concept. Each finger now has a six-point native dorsal conduit path fitted to its own length/splay. Both metallic retention links sample the same path (45% and 77% height) and wrap around finger sides; the rail runs to the fingertip setting. Thumb helix, anatomy, armor, other starter projects, saved copies, §C and Quest controls are preserved. Focused source/syntax candidate passed; manual phone acceptance pending. **v11.219**: 251 ordered patches, 68 assets, 7,504,085 HTML bytes, SHA-256 `f2c7177cd479e001b823f2684f3ceae1fcd5235e6333bd97d006a631661ef3c0`. See `docs/FINGER_RAIL_CONTACT_V11_219.md`.
 
 ## §E v11.218 — Arcane Glove fidelity, attached conduits and thumb helix (2026-11-02)
 
