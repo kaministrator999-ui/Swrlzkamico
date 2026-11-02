@@ -199,6 +199,9 @@ window.SWYRL_ENGINE_WOLF_RIG=Object.freeze({status:()=>({
  available:se224WolfIsModel(),bones:se224WolfCurrent()?.bones?.length||0,
  skinned:!!se224WolfSkeleton,
  skinnedMeshes:modelRoot?.children?.filter(m=>m.isSkinnedMesh)?.length||0,
+ headX:se224WolfBones?.wolf_head?.rotation.x||0,
+ jawX:se224WolfBones?.wolf_jaw?.rotation.x||0,
+ foreLegX:se224WolfBones?.wolf_fore_l?.rotation.x||0,
  clips:model()?.wolfAnimations?.clips?.length||0,
  playing:se224WolfPreview.playing
 })});
