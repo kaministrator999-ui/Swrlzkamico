@@ -260,6 +260,6 @@
     "patches/v11_211_quest_os_camera_overlay_stability.py",
     "patches/v11_212_floating_hand_model_starter.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 7478674,
+  "finalSha256": "add8a1718f8d06a1ef178bf4adaa55e12ae38f9d33be1404396637c32ebfa92f"
 }
