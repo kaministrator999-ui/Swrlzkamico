@@ -200,22 +200,29 @@ function se225MaterialCanvas(def){
    ctx.beginPath();ctx.arc((col+.5)*step,(row+.5)*step,Math.max(1,step*.22),0,Math.PI*2);ctx.fill();
   }
  }
- for(const stroke of def.strokes){
-  ctx.beginPath();ctx.strokeStyle=stroke.color;ctx.fillStyle=stroke.color;
-  ctx.lineWidth=stroke.width*n;ctx.lineCap='round';ctx.lineJoin='round';
-  for(let i=0;i<stroke.points.length;i++){
-   const [u,v]=stroke.points[i];
-   if(i===0)ctx.moveTo(u*n,v*n);else ctx.lineTo(u*n,v*n);
+ const paint=()=>{
+  for(const stroke of def.strokes){
+   ctx.beginPath();ctx.strokeStyle=stroke.color;ctx.fillStyle=stroke.color;
+   ctx.lineWidth=stroke.width*n;ctx.lineCap='round';ctx.lineJoin='round';
+   for(let i=0;i<stroke.points.length;i++){
+    const [u,v]=stroke.points[i];
+    if(i===0)ctx.moveTo(u*n,v*n);else ctx.lineTo(u*n,v*n);
+   }
+   if(stroke.points.length===1){const [u,v]=stroke.points[0];ctx.beginPath();ctx.arc(u*n,v*n,ctx.lineWidth*.5,0,Math.PI*2);ctx.fill();}
+   else ctx.stroke();
   }
-  if(stroke.points.length===1){const [u,v]=stroke.points[0];ctx.beginPath();ctx.arc(u*n,v*n,ctx.lineWidth*.5,0,Math.PI*2);ctx.fill();}
-  else ctx.stroke();
- }
+ };
  if(def.pattern==='image'&&def.imageData){
   const img=new Image();
-  img.onload=()=>{ctx.drawImage(img,0,0,n,n);se225MaterialInvalidateCanvas(def.id);};
+  // Imported image is the base layer; paint goes on top after decoding.
+  // An older in-flight load must never change the newer selected texture.
+  img.onload=()=>{
+   if(se225Mat.textures.get(def.id)?.canvas!==canvas)return;
+   ctx.drawImage(img,0,0,n,n);paint();se225MaterialInvalidateCanvas(def.id);
+  };
   img.onerror=()=>{console.warn('§E texture PNG could not be decoded');};
   img.src=def.imageData;
- }
+ }else paint();
  return canvas;
 }
 function se225MaterialInvalidateCanvas(id){
