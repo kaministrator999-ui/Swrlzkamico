@@ -1,0 +1,45 @@
+name: §E particle studio scoped source map
+on:
+  push:
+    branches: [feature/engine-v11-223-particle-studio]
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Build native source and inspect only integration anchors
+        run: |
+          python projects/swrlz-forge-moba/build_space.py --output dist/forge >/tmp/se223-build.json
+          python - <<'PY'
+          from pathlib import Path
+          s=Path('dist/forge/index.html').read_text()
+          import re
+          patterns=[
+           r'function markActor\(',r'function projectData\(',r'function loadProject\(',
+           r'function saveProject\(',r'function createProjectFromTemplate\(',
+           r'function tick\(',r'function update\(',r'function addActor\(',
+           r'function removeActor\(',r'function serializeActor\(',
+           r'function actorData\(',r'function makeObject\(',
+           r'function setSelection\(',r'function selectActor\(',
+           r'function refreshAssetList\(',r'function createActor\(',
+           r'function stNewBuilding\(',r'function refreshInspector\(',
+           r'function renderScene\(',r'function loadCanonical',
+           r'function .*Particle',r'function .*Particle.*',
+           r'<button[^>]*[Pp]rojects',r'<div class="topbar"',
+           r'function editorLog\(',r'function markDirty\(',
+           r'function initializeHistory\(',r'function historyStep\(',
+           r'function restoreHistory',r'function projectSnapshot',
+           r'function seLevels',r'renderer.setAnimationLoop\(tick\)'
+          ]
+          for p in patterns:
+           matches=list(re.finditer(p,s))
+           print('\\n###',p,'COUNT',len(matches))
+           for match in matches[:2]:
+            a=max(0,match.start()-400);b=min(len(s),match.start()+2000)
+            print('POSITION',match.start(),'EXCERPT',repr(s[a:b]))
+          PY
