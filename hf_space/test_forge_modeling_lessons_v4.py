@@ -25,8 +25,8 @@ class ForgeModelingLessonsV4(unittest.TestCase):
         self.assertIn("NO native particle.create",text)
 
     def test_particle_gameplay_distinction(self):
-        text=select_modeling_lesson("§E create sparkles for a sheep building")
-        self.assertIn("legacy Sheep Tag",text.lower().replace("legacy sheep tag","legacy Sheep Tag") if "legacy" in text.lower() else text)
+        text=select_modeling_lesson("§E Particle Studio create sparks for a sheep building")
+        self.assertIn("legacy sheep tag",text.lower())
         self.assertIn("not",text.lower())
 
     def test_sheep_preview_is_reversible(self):
