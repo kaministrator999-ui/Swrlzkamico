@@ -1,4 +1,8 @@
-# §C ⇄ §E Model Atelier Academy · v1→v2
+# §C ⇄ §E Model Atelier Academy · v1→v3
+
+> **Current instructional pack (Nov 2, 2026): 100 public cases M001–M100.** New [v3 source-anchored practice M080–M100](academy_v3_delta.json) focuses on 25→17 WebXR joint retargeting design, §E **v11.223** eight-key wrist-driven Wave versus three-key gestures, source-driven Fist deformation, missing hand tracking and safe research. [Compact v3 teaching reference](model_context_v3.txt); [offline v3 source validator](verify_academy_v3.py). See also the evolving [rigging, animation and WebXR guide](RIGGING_ANIMATION_RESEARCH_V2.md). The W3C document is a working draft and is not a claim of existing Quest capture in §E.
+
+> **Evaluation boundary:** all 100 cases are openly teacher-authored; their existence is not observed 700M/Qwen accuracy, held-out testing, weights training, Chat rigging-tool authorization or phone/Quest acceptance. Actual model behavior is reserved for a separate owner-controlled test.
 
 > **Incremental §E v11.221 gesture lesson:** [12 source-anchored cases M068–M079](academy_v2_gesture_delta.json) extend the public Academy to **79 cases**, with thumb opposition and 14 gestures documented in the [rigging/animation/web research guide](RIGGING_ANIMATION_RESEARCH_V2.md). Teaching-only; no new Chat action, weight training, or owner device-test receipt.
 
