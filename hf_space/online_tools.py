@@ -454,6 +454,8 @@ _LYRIC_HARD_BOUNDARY=re.compile(
     r"download(?:\s+the)?\s+app|get\s+the\s+.+?\s+app!?|share|subscribe|references?|sources?|"
     r"karaoke(?:\s+video)?(?:\s+with\s+lyrics)?|did\s+you\s+like\s+this\s+post.*|"
     r"you\s+might\s+also\s+like.*|leave\s+a\s+reply.*|submitted\s+by(?:\s+.+)?|"
+    r"explain\s+(?:these\s+)?lyrics?|correct\s+lyrics?|facts?\s+about\s+[^\n]{2,160}|"
+    r"hottest\s+lyrics(?:\s+with\s+videos?)?|"
     r"correct(?:\s+report)?|all\s+.+?\s+lyrics)\s*[:.!-]*$",
     re.I,
 )
@@ -461,6 +463,11 @@ _LYRIC_SECTION_MARKER=re.compile(
     r"^\s*\[?\s*(?:(?:verse)(?:\s*(?:\d+|one|two|three|four|five|six|seven|eight))?|"
     r"chorus|refrain|bridge|hook|pre[-\s]?chorus|intro|outro)\b[^\]\n]{0,80}\]?\s*:?[\s]*$",
     re.I,
+)
+_LYRIC_OPENING_SECTION_MARKER=re.compile(
+    # A credible Intro / Verse 1 should outrank a later hook with a dense
+    # window of following text. Prefer the actual song beginning to excerpts.
+    r"^\s*\[?\s*(?:intro|verse\s*(?:1|one))\s*:?\s*\]?\s*$", re.I,
 )
 _LYRIC_PERFORMER_MARKER=re.compile(r"^\s*\[\s*([A-Za-z0-9][^\]\n:]{0,70})\s*:\s*\]\s*$")
 _LYRIC_RECOMMENDATION_LINE=re.compile(
@@ -642,6 +649,7 @@ def _lyrics_best_anchor(lines: list[str], subject: str) -> int | None:
     """Choose the lyric-body start by subject match + nearby lyric structure, not first page chrome."""
     title_terms=_lyrics_title_terms(subject)
     candidates=[]
+    opening_sections=[]
     for index,raw_line in enumerate(lines):
         line=raw_line.strip()
         if not line:
@@ -660,6 +668,24 @@ def _lyrics_best_anchor(lines: list[str], subject: str) -> int | None:
         if not base:
             continue
 
+        # Song pages often repeat [Hook] after each verse. Ranking only the
+        # next 45 lines can pick the LAST hook and silently truncate verses.
+        # Promote the first genuinely populated opening section instead.
+        if _LYRIC_OPENING_SECTION_MARKER.fullmatch(line):
+            opening_content=0
+            for following_raw in lines[index+1:index+32]:
+                following=following_raw.strip()
+                if not following:
+                    continue
+                if (_LYRIC_HARD_BOUNDARY.fullmatch(following)
+                    or _LYRIC_POST_SONG_META.fullmatch(following)
+                    or _LYRIC_SECTION_MARKER.fullmatch(following)):
+                    break
+                if _lyrics_line_is_content(following,allow_single_word=True):
+                    opening_content+=1
+            if opening_content>=3:
+                opening_sections.append(index)
+
         structure=0
         content=0
         for offset,following_raw in enumerate(lines[index+1:index+46],1):
@@ -675,7 +701,10 @@ def _lyrics_best_anchor(lines: list[str], subject: str) -> int | None:
                 content+=1
         score=base+(structure*3)+min(content,24)
         candidates.append((score,index))
-    # On equal evidence, anchor at the earliest matching verse, not the last one.
+    if opening_sections:
+        return min(opening_sections)
+    # For songs without an explicit Intro / Verse 1, preserve the original
+    # subject/structure-aware fallback. Never invent a missing opening verse.
     return max(candidates,key=lambda row:(row[0],-row[1]))[1] if candidates else None
 
 
@@ -745,6 +774,7 @@ def _lyrics_extract_analysis(text: str, scope: str, subject: str = "") -> dict[s
         "requestedScope":scope,
         "rawChars":len(raw),
         "rawLineCount":len(raw_lines),
+        "rawMusicalSectionCueCount":sum(1 for ln in raw_lines if _LYRIC_SECTION_MARKER.fullmatch(ln.strip())),
         "anchorIndex":anchor_index,
         "anchorLine":anchor_line[:220],
         "scopedLineCount":0,
