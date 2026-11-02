@@ -58,7 +58,7 @@ jobs:
           wc -c "$RUNNER_TEMP/se-v11-211/index.html"
           sha256sum "$RUNNER_TEMP/se-v11-211/index.html"
           if python3 -c 'import json; m=json.load(open("projects/swrlz-forge-moba/source-manifest.json")); assert m.get("finalSha256") and m.get("finalBytes")'; then
-            python3 projects/swrlz-forge-moba/scripts/verify_v11_210_release.py --output "$RUNNER_TEMP/se-v11-211-verified"
+            python3 projects/swrlz-forge-moba/scripts/verify_v11_211_release.py --output "$RUNNER_TEMP/se-v11-211-verified"
           else
             echo "Candidate built; seal reported size/hash in source-manifest before deployment."
           fi
