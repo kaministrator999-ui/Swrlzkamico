@@ -468,7 +468,7 @@ _LYRIC_RECOMMENDATION_LINE=re.compile(
     re.I,
 )
 _LYRIC_POST_SONG_META=re.compile(
-    r"^\s*(?:writers?|writer\(s\)|written\s+by|songwriters?|"
+    r"^\s*(?:a\s+collection\s+of\s+song\s+lyrics\b|all\s+lyrics\s+belong\s+to\b|writers?|writer\(s\)|written\s+by|songwriters?|"
     r"publishers?|powered\s+by\s+\S+|"
     r"top\s+(?:lyrics|artists|songs)(?:\s*:)?|"
     r"submit\s+(?:lyrics|corrections?)|"
