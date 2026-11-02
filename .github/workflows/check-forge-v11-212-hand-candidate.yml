@@ -1,0 +1,50 @@
+name: §E v11.212 floating hand source receipt
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'projects/swrlz-forge-moba/source-manifest.json'
+      - 'projects/swrlz-forge-moba/runtime/model_atelier_floating_hand_v11_212.js'
+      - 'projects/swrlz-forge-moba/patches/v11_212_floating_hand_model_starter.py'
+      - '.github/workflows/check-forge-v11-212-hand-candidate.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  focused-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check new standalone hand source syntax
+        run: node --check projects/swrlz-forge-moba/runtime/model_atelier_floating_hand_v11_212.js
+      - name: Build candidate and print exact receipt without modifying the repository
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+          p=Path('projects/swrlz-forge-moba/source-manifest.json')
+          m=json.loads(p.read_text())
+          assert m['name']=='§wyrl§ Engine v11.212',m['name']
+          assert m['patches'][-1]=='patches/v11_212_floating_hand_model_starter.py'
+          m['finalSha256']=''
+          m['finalBytes']=0
+          p.write_text(json.dumps(m,ensure_ascii=False))
+          PY
+          python3 projects/swrlz-forge-moba/build_space.py --output /tmp/swrlz-hand-212
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          s=Path('/tmp/swrlz-hand-212/index.html').read_bytes()
+          for item in [b'V11_212_FLOATING_HAND_MODEL_STARTER',b'floating-hand-glove',
+                       b'se212HandScene',b'SWYRL_ENGINE_HAND_SURFACE']:
+              assert item in s,item
+          print('SE212_CANDIDATE_BYTES='+str(len(s)))
+          print('SE212_CANDIDATE_SHA256='+hashlib.sha256(s).hexdigest())
+          print('SE212_FOCUSED_BUILD_PASS')
+          PY
