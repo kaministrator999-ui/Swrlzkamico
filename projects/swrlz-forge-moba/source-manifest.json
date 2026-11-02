@@ -261,6 +261,6 @@
     "patches/v11_212_floating_hand_model_starter.py",
     "patches/v11_213_quest_sheep_upright_modal_one_ray.py"
   ],
-  "finalBytes": null,
-  "finalSha256": null
+  "finalBytes": 7486888,
+  "finalSha256": "21099c2cfb37f3eb5e04ac6369e93ea4c045e2199396fb98f5122f7694ebfbe8"
 }
