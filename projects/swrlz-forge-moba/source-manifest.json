@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.224",
+  "name": "§wyrl§ Engine v11.225",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_224.html",
+  "finalArtifact": "swyrl_engine_v11_225.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -270,8 +270,9 @@
     "patches/v11_221_thumb_opposition_gestures.py",
     "patches/v11_222_clover_motion_construction_fx.py",
     "patches/v11_223_fist_clench_wrist_wave.py",
-    "patches/v11_224_native_particle_studio.py"
+    "patches/v11_224_native_particle_studio.py",
+    "patches/v11_225_material_texture_workspace_tabs.py"
   ],
-  "finalBytes": 7590193,
-  "finalSha256": "29583040d840e7bd328d7417d0abb8a0d0c8cebf5a6db2db8014b602bdfb6a54"
+  "finalBytes": 7642539,
+  "finalSha256": "7407ca6b520912437c280035c1f4258f5b1e7a8ab577f3701b855db26f7bf3a7"
 }
