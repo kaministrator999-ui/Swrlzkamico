@@ -142,7 +142,7 @@
       "expected": "Use index_mcp/index_pip/index_dip in parent chain; tune rotations with joint selection and visual validation, no invented direct Chat op.",
       "mustNot": "Create an invalid index_mpd ID.",
       "source": "projects/swrlz-forge-moba/runtime/model_atelier_skeletal_core_v11_220.js",
-      "anchor": "index_mcp"
+      "anchor": "f.name+'_mcp'"
     },
     {
       "id": "M049",
