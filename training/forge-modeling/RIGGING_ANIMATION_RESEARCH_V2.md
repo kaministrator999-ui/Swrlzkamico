@@ -51,3 +51,11 @@ These links are **teacher-authored starting points** for the existing search ser
 ## Evaluation policy
 
 `academy_v1.json` M001–M036 and `academy_v2_delta.json` M037–M067 are **public open-book practice cases**, not hidden test questions. No student inference PASS, held-out benchmark, weight training or real-device acceptance is claimed. Keep additional unseen prompts, gold labels and actual model outputs for a later explicitly authorized evaluation. Preserve all failure evidence. The user's preferred acceptance loop is deploy → real phone/Quest observation → targeted repair, without full browser testing on every edit.
+
+## §E v11.221 incremental lesson — thumb opposition and gesture authorship
+
+Source authority: `runtime/model_atelier_hand_gestures_v11_221.js`, `runtime/model_atelier_gesture_studio_v11_221.js` and `patches/v11_221_thumb_opposition_gestures.py`. v11.221 reuses the v11.220 17-bone skeleton and native keyframe store, but replaces the uniform thumb bend with independent CMC opposition across the palm plus MCP/IP tip flex. The localized thumb capsule weighting is updated so the decorative helix/rail follows the actual angled thumb rather than floating away. This does not add Quest tracking or a §C Chat-native gesture tool.
+
+The **14** actual named presets are Open, Relaxed, Fist, Point, Precision Pinch, OK, Thumbs Up, Peace, Rock Horns, I Love You, Shaka, Wave, Grasp and Finger Gun. Do not merge distinct gestures into one generic curl. A gesture selector applies a pose without destroying the native rig. **Animate selected gesture** authors a **three-key open→gesture→open** clip at **0, 0.75, 1.5 seconds** and plays it; custom joint sliders and hand-authored frames remain available. The touch UI adds **Opposition across palm** and **Thumb flex / tip curl** independently. Contrast this deliberately simple authored pose system against Blender's more extensive constraints and IK capabilities; do not imply §E already has a full IK/retargeting solver.
+
+Independent open-book prompts in [academy_v2_gesture_delta.json](academy_v2_gesture_delta.json) continue M068–M079. Their source anchors are checked against the current checkout; actual student ability and owner-device acceptance remain untested. The source is version-specific: recheck the engine manifest before repeating any capability claim.
