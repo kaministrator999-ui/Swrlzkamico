@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.211",
+  "name": "§wyrl§ Engine v11.212",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_211.html",
+  "finalArtifact": "swyrl_engine_v11_212.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -257,8 +257,9 @@
     "patches/v11_208_quest_biomes_fog_depth.py",
     "patches/v11_209_quest_radial_icons_feedback.py",
     "patches/v11_210_quest_comprehensive_polish.py",
-    "patches/v11_211_quest_os_camera_overlay_stability.py"
+    "patches/v11_211_quest_os_camera_overlay_stability.py",
+    "patches/v11_212_floating_hand_model_starter.py"
   ],
-  "finalBytes": 7467973,
-  "finalSha256": "7e24d871ee29ec7f37425fa017b5f3650a2b7ffe57848104f603a50ca117669f"
+  "finalBytes": 0,
+  "finalSha256": ""
 }
