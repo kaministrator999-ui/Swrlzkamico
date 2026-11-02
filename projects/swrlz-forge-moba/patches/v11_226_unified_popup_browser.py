@@ -18,7 +18,7 @@ def apply(html):
     css=(root/"runtime/unified_popup_browser_v11_226.css").read_text("utf8")
     html=once(html, "window.SWRLZ_FORGE_BUILD=",
               js+"\nwindow.SWRLZ_FORGE_BUILD=")
-    html=once(html,"</head>","<style id=\"se226UnifiedBrowser\">"+css+"</style>\n</head>")
+    # The native bundle has a separate earlier inline </head> token; match\n    # the first actual document head as the previous studio patches do.\n    assert "</head>" in html\n    html=html.replace("</head>","<style id=\"se226UnifiedBrowser\">"+css+"</style>\n</head>",1)
     html=once(html,
         " source.engine='§wyrl§ Engine · Maker v11.225';source.version=11.225;",
         " source.engine='§wyrl§ Engine · Maker v11.226';source.version=11.226;")
