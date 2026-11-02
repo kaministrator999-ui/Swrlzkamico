@@ -20,13 +20,33 @@ jobs:
         run: |
           node --check projects/swrlz-forge-moba/runtime/model_atelier_hand_motion_v11_223.js
           python3 -m py_compile projects/swrlz-forge-moba/patches/v11_223_fist_clench_wrist_wave.py
+      - name: Build unsealed v11.223 candidate source
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+          p=Path('projects/swrlz-forge-moba/source-manifest.json')
+          m=json.loads(p.read_text())
+          assert m['name']=='§wyrl§ Engine v11.222'
+          assert m['patches'][-1]=='patches/v11_222_clover_motion_construction_fx.py'
+          m['name']='§wyrl§ Engine v11.223'
+          m['finalArtifact']='swyrl_engine_v11_223.html'
+          m['patches'].append('patches/v11_223_fist_clench_wrist_wave.py')
+          m['finalSha256']='';m['finalBytes']=0
+          p.write_text(json.dumps(m,ensure_ascii=False))
+          PY
+          python3 projects/swrlz-forge-moba/build_space.py --output /tmp/se223-hand
       - name: Focused joint and eight-key wave math
         run: |
           node - <<'JS'
           const fs=require('fs'),vm=require('vm'),assert=require('node:assert/strict');
           const root='projects/swrlz-forge-moba/runtime/';
-          const src=['model_atelier_skeletal_core_v11_220.js','model_atelier_hand_gestures_v11_221.js','model_atelier_hand_motion_v11_223.js']
-            .map(x=>fs.readFileSync(root+x,'utf8')).join('\n');
+          const html=fs.readFileSync('/tmp/se223-hand/index.html','utf8');
+          const from=html.indexOf('function se221GesturePose(rig,kind){');
+          const to=html.indexOf('function se221ThumbInfluences(pt,rig){',from);
+          assert(from>=0&&to>from,'generated gesture body must be present');
+          const src=fs.readFileSync(root+'model_atelier_skeletal_core_v11_220.js','utf8')+'\\n'+
+            html.slice(from,to)+'\\n'+fs.readFileSync(root+'model_atelier_hand_motion_v11_223.js','utf8');
           const lib=vm.runInNewContext(src+';({create:se220CreateHandRig,valid:se220RigValidate,gesture:se221GesturePose,wave:se223WaveTimeline});',{structuredClone});
           const digits=[
            {x:-.397,from:2.170,to:3.055,r:.104,splay:-.055,z:.006,name:'index'},
@@ -57,22 +77,6 @@ jobs:
           assert.equal(rig.timeline.at(-1).pose.wrist[2],0);
           console.log('HAND223_MATH_PASS=deep 4-finger clench, tucked thumb, 8-key alternating yaw/roll with finger flutter');
           JS
-      - name: Build unsealed v11.223 candidate source
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          import json
-          p=Path('projects/swrlz-forge-moba/source-manifest.json')
-          m=json.loads(p.read_text())
-          assert m['name']=='§wyrl§ Engine v11.222'
-          assert m['patches'][-1]=='patches/v11_222_clover_motion_construction_fx.py'
-          m['name']='§wyrl§ Engine v11.223'
-          m['finalArtifact']='swyrl_engine_v11_223.html'
-          m['patches'].append('patches/v11_223_fist_clench_wrist_wave.py')
-          m['finalSha256']='';m['finalBytes']=0
-          p.write_text(json.dumps(m,ensure_ascii=False))
-          PY
-          python3 projects/swrlz-forge-moba/build_space.py --output /tmp/se223-hand
       - name: Print exact package hash and assert hand motion in shipped HTML
         run: |
           python3 - <<'PY'
