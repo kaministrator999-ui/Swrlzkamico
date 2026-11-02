@@ -237,7 +237,7 @@
       "expected": "Use bounded web retrieval for current official three.js AnimationMixer/AnimationAction guidance and cite actual returned URLs; compare to native per-unit interpolation; external API docs do not prove the engine uses AnimationMixer.",
       "mustNot": "Pretend tutorial snippets granted permission to replace the game loop.",
       "source": "projects/swrlz-forge-moba/runtime/sheep_tag_wolf_animation_v11_224.js",
-      "anchor": "const fade=se224Ease"
+      "anchor": "fade=se224Ease((s.elapsed-state.changed)/.19)"
     }
   ]
 }
