@@ -274,6 +274,6 @@
     "patches/v11_225_astra_wolf_rig_animations.py",
     "patches/v11_226_material_texture_workspace_tabs.py"
   ],
-  "finalBytes": 7673681,
-  "finalSha256": "d078e04df1f1f140289960f6e080ac0952aa080a302d669c7bc80c208efa64ce"
+  "finalBytes": 0,
+  "finalSha256": ""
 }
