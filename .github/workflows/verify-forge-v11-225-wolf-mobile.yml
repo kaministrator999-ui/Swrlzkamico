@@ -43,7 +43,7 @@ jobs:
         run: |
           npm install --no-save playwright@1.56.1
           npx playwright install --with-deps --only-shell chromium
-      - name: Exercise native Wolf Model starter API, rig controls and Sheep Tag wolf visuals
+      - name: Verify active-project wolf armature handoff, bone controls and game visuals
         run: node projects/swrlz-forge-moba/tests/ui_v11_225_wolf_model_smoke.mjs
       - name: Print exact wolf source receipt
         run: |
