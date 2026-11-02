@@ -1,0 +1,22 @@
+name: Verify §E v11.213 hand loader release
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'projects/swrlz-forge-moba/source-manifest.json'
+      - 'projects/swrlz-forge-moba/patches/v11_213_hand_loader_validation_fix.py'
+      - 'projects/swrlz-forge-moba/scripts/verify_v11_213_release.py'
+      - '.github/workflows/verify-forge-v11-213-hand-release.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  sealed-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify exact source, 39-part loader corrections and 68 assets
+        run: python3 projects/swrlz-forge-moba/scripts/verify_v11_213_release.py --output /tmp/swrlz-hand-v11-213-sealed
+      - name: Syntax check the new hand generation script
+        run: node --check projects/swrlz-forge-moba/runtime/model_atelier_floating_hand_v11_212.js
