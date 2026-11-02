@@ -10,7 +10,7 @@ const se204={
  buttons:{left:{held:false,at:0,opened:false},right:{held:false,at:0,opened:false}},
  selections:0,placed:0,blocked:0,skillUses:0,gridSamples:0,
  wheelBuilds:0,wheelReuses:0,wheelHighlights:0,wheelDisposals:0,
- previousHighlight:null,lastReason:''
+ previousHighlight:null,lastReason:'',lastPreview:null,previewSkipped:0
 };
 const se204Buildings=Object.freeze([
  {id:'st-farm',label:'FARM',color:0x5ddbbb},
@@ -52,11 +52,23 @@ function se204GridPoint(point){
 }
 const se204OldPreview=stUiPlacePreview;
 stUiPlacePreview=function(point){
- // Both the live ghost and actual trigger/rapid-tap path read stUi.placement,
- // so ALL three agree on the exact same snapped cell and build validator.
+ // Both live ghost and trigger/rapid taps share the snapped grid.
  if(se204RapidEnabled()){
   stUi.rotation=0;
-  return se204OldPreview(se204GridPoint(point));
+  const gridPoint=se204GridPoint(point);
+  const now=performance.now(),s=stSession;
+  const prior=se204.lastPreview;
+  const resources=s?.resources?.[s.controlledId]||0;
+  if(prior&&prior.session===s&&prior.kind===stUi.build&&
+     prior.nav===s.navVersion&&prior.resources===resources&&
+     Math.abs(prior.x-gridPoint.x)<.001&&
+     Math.abs(prior.z-gridPoint.z)<.001&&
+     now-prior.at<430&&stUi.placement){
+   se204.previewSkipped++;return;
+  }
+  se204.lastPreview={session:s,kind:stUi.build,x:gridPoint.x,z:gridPoint.z,
+    nav:s.navVersion,resources,at:now};
+  return se204OldPreview(gridPoint);
  }
  return se204OldPreview(point);
 };
@@ -64,11 +76,11 @@ function se204EquipBuilding(kind){
  if(!se204Gameplay())return false;
  if(kind!==null&&!se204Buildings.some(b=>b.id===kind))return false;
  if(kind===null){
-  se204.building=null;se204.anchor=null;
+  se204.building=null;se204.anchor=null;se204.lastPreview=null;
   stUi.build=null;stUiClearPreview();stRefreshHUD(true);
   se204.lastReason='House tool unequipped';return true;
  }
- se204.building=kind;se204.anchor=null;se204.session=stSession;
+ se204.building=kind;se204.anchor=null;se204.lastPreview=null;se204.session=stSession;
  stUi.rotation=0; // Only the editor has rotation tools in this Play phase.
  if(stUi.build!==kind)stUiChooseBuild(kind);
  if(stUi.build!==kind){
@@ -191,6 +203,7 @@ function se204WheelRoot(type){
 function se204WheelShow(type){
  if(!se204Gameplay()||se195.visible)return;
  se204WheelHide();
+ if(typeof se203GroundGuideHide==='function')se203GroundGuideHide();
  let panel=se204.wheels.get(type);
  if(!panel){
   panel=se204WheelRoot(type);se204.wheels.set(type,panel);
@@ -200,7 +213,7 @@ function se204WheelShow(type){
  panel.root.visible=true;
  const current=type==='build'?se204.building:se204.skill;
  const i=panel.items.findIndex(item=>item.entry.id===current);
- panel.selected=i>=0?i:0;
+ panel.selected=i>=0&&current!==null?i:0;
  se204WheelPosition();
  se204WheelHighlight(true);
 }
@@ -286,6 +299,7 @@ function se204WheelDispose(){
 function se204Reset(){
  se204WheelDispose();
  se204.building=se204.skill=null;se204.anchor=null;se204.session=null;
+ se204.lastPreview=null;
  for(const state of Object.values(se204.buttons)){
   state.held=false;state.at=0;state.opened=false;
  }
@@ -334,6 +348,19 @@ se192Select=function(record){
  if(se204.wheel)return; // wheel is MODAL, no buildings selected behind it
  return se204OldSelect(record);
 };
+const se204OldRenderRay=se192RenderRay;
+se192RenderRay=function(record,hit){
+ const result=se204OldRenderRay(record,hit);
+ if(se204.wheel&&record?.se192){
+  // A thumbstick radial is modal. No misleading marker behind the menu.
+  record.se192.dot.visible=false;
+  if(record.se192.beam){
+   record.se192.beam.visible=true;
+   record.se192.beam.scale.z=Math.min(1,record.se192.beam.scale.z||1);
+  }
+ }
+ return result;
+};
 const se204OldStick=se192Stick;
 se192Stick=function(record){
  if(se204.wheel&&record===se192InputRecord('right'))return {x:0,y:0};
@@ -358,6 +385,7 @@ window.SWYRL_ENGINE_SHEEP_QUICK_GRID_204=Object.freeze({
   menuType:se204.wheel?.type||null,
   chosen:se204.selections,placed:se204.placed,blocked:se204.blocked,
   skillUses:se204.skillUses,gridSamples:se204.gridSamples,
+  previewSkipped:se204.previewSkipped,
   menuBuilds:se204.wheelBuilds,menuReuses:se204.wheelReuses,
   menuHighlights:se204.wheelHighlights,menuDisposals:se204.wheelDisposals,
   lastReason:se204.lastReason
