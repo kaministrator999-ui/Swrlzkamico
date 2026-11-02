@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.226",
+  "name": "§wyrl§ Engine v11.227",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_226.html",
+  "finalArtifact": "swyrl_engine_v11_227.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -272,8 +272,9 @@
     "patches/v11_223_fist_clench_wrist_wave.py",
     "patches/v11_224_native_particle_studio.py",
     "patches/v11_225_material_texture_workspace_tabs.py",
-    "patches/v11_226_sheep_building_starters.py"
+    "patches/v11_226_sheep_building_starters.py",
+    "patches/v11_227_astra_wolf_rig_animations.py"
   ],
-  "finalBytes": 7656704,
-  "finalSha256": "7395e442f324b33cf67f49aa1eb1be9349f07c2e4d7f00aa5872d3312112129d"
+  "finalBytes": 7690819,
+  "finalSha256": "daabe71f8e82da2ddbc481f0a481c3be6cde472b15f13e6d7aa0b404e9aa6ce1"
 }
