@@ -1,0 +1,25 @@
+name: Verify §E v11.227 sealed Astra wolf source
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/verify-forge-v11-227-source.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  wolf-release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify exact 259-patch source, wolf rig, sheep houses and artifact hash
+        run: |
+          python3 projects/swrlz-forge-moba/scripts/verify_v11_227_release.py --output /tmp/se227-sealed
+      - name: Verify generated game and modeler entrypoint identity
+        run: |
+          cmp /tmp/se227-sealed/index.html /tmp/se227-sealed/modeler.html
+          echo 'SE227_SEALED_ACCEPTED'
