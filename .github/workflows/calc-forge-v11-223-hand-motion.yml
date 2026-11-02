@@ -45,8 +45,8 @@ jobs:
           const from=html.indexOf('function se221GesturePose(rig,kind){');
           const to=html.indexOf('function se221ThumbInfluences(pt,rig){',from);
           assert(from>=0&&to>from,'generated gesture body must be present');
-          const src=fs.readFileSync(root+'model_atelier_skeletal_core_v11_220.js','utf8')+'\\n'+
-            html.slice(from,to)+'\\n'+fs.readFileSync(root+'model_atelier_hand_motion_v11_223.js','utf8');
+          const src=fs.readFileSync(root+'model_atelier_skeletal_core_v11_220.js','utf8')+'\n'+
+            html.slice(from,to)+'\n'+fs.readFileSync(root+'model_atelier_hand_motion_v11_223.js','utf8');
           const lib=vm.runInNewContext(src+';({create:se220CreateHandRig,valid:se220RigValidate,gesture:se221GesturePose,wave:se223WaveTimeline});',{structuredClone});
           const digits=[
            {x:-.397,from:2.170,to:3.055,r:.104,splay:-.055,z:.006,name:'index'},
