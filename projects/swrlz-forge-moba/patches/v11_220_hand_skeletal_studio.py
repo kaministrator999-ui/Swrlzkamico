@@ -76,7 +76,8 @@ def apply(html):
 @media(max-width:600px){.atelier-rig-studio{width:min(280px,77%);max-height:64%}
  .atelier-rig-studio>summary{padding:6px 8px}}
 """
-    html=once(html,'</head>','<style id="atelierRigStudioV11220">'+css+'</style>\n</head>')
+    assert '</head>' in html
+    html=html.replace('</head>','<style id="atelierRigStudioV11220">'+css+'</style>\n</head>',1)
     for old,new in [
       ('SWYRL_ENGINE_DEPLOY_MARKER: V11_219_FINGER_RAIL_CONTACT',
        'SWYRL_ENGINE_DEPLOY_MARKER: V11_220_NATIVE_HAND_SKELETAL_STUDIO'),
