@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.217",
+  "name": "§wyrl§ Engine v11.218",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_217.html",
+  "finalArtifact": "swyrl_engine_v11_218.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -263,8 +263,9 @@
     "patches/v11_214_quest_sheep_upright_modal_one_ray.py",
     "patches/v11_215_floating_hand_anatomy_upgrade.py",
     "patches/v11_216_sheep_live_move_wheel.py",
-    "patches/v11_217_floating_hand_proportions.py"
+    "patches/v11_217_floating_hand_proportions.py",
+    "patches/v11_218_arcane_glove_fidelity.py"
   ],
-  "finalBytes": 7497822,
-  "finalSha256": "4d7b2d0aa3fa8183956b3f751411ad1a5e20662d41c2f7f7123093262a55c5d8"
+  "finalBytes": 7503389,
+  "finalSha256": "fd4f16810ce066eb9b905748461ce8717a2b0f0eee633491364b5f8bb56aab41"
 }
