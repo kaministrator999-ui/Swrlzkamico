@@ -49,6 +49,33 @@ class OnlineLyricExtractionFixTests(unittest.TestCase):
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]["url"], "https://example.org/song")
 
+    def test_exact_lyric_search_retries_after_off_topic_provider(self):
+        wrong=[{
+            "title": "TechCrunch | Startup and Technology News",
+            "url": "https://techcrunch.com/",
+            "snippet": "Startup news and the latest technology reporting",
+        }]
+        right=[{
+            "title": "Demo Ensemble - Copper Lantern Lyrics",
+            "url": URL,
+            "snippet": "Demo Ensemble song lyrics",
+        }]
+        with patch.object(online_research,"_provider_attempt",side_effect=[wrong,right]) as visit:
+            results=online_research._ddg_search('"Copper Lantern" "Demo Ensemble" lyrics')
+        self.assertEqual(visit.call_count,2)
+        self.assertEqual([item["url"] for item in results],[URL])
+
+    def test_generic_search_does_not_apply_song_identity_filter(self):
+        unrelated=[{
+            "title": "TechCrunch | Startup and Technology News",
+            "url": "https://techcrunch.com/",
+            "snippet": "Startup and technology news",
+        }]
+        with patch.object(online_research,"_provider_attempt",return_value=unrelated) as visit:
+            results=online_research._ddg_search("latest startup technology news")
+        self.assertEqual(visit.call_count,1)
+        self.assertEqual(results,unrelated)
+
     def test_dom_lyric_container_preserves_lines_without_chrome(self):
         page = """<html><body>
         <nav>Privacy Policy Subscribe To Updates</nav>
@@ -148,6 +175,29 @@ class OnlineLyricExtractionFixTests(unittest.TestCase):
         context = result["modelContext"]
         self.assertIsNotNone(context.get("verifiedLyrics"), context.get("lyricsSourceAttempts"))
         self.assertEqual(context["lyricsSourceAttempts"][0]["outcome"], "VERIFIED")
+
+    def test_unrelated_result_never_shown_as_lyric_source(self):
+        bundle=self._bundle(
+            page_title="TechCrunch | Startup and Technology News",
+            url="https://techcrunch.com/",
+        )
+        plan={
+            "query": "Copper Lantern Demo Ensemble lyrics",
+            "contentMode": "lyrics-verification",
+            "requestedScope": "full-lyrics",
+            "subject": SUBJECT,
+        }
+        with (
+            patch.object(online_tools,"run_online_research",return_value=bundle),
+            patch.object(online_tools.canonical_online_research,"search_public",return_value=[]),
+        ):
+            result=online_tools._search_bundle(plan)
+        self.assertEqual(result["status"],"NO_RESULTS")
+        self.assertEqual(result["resultCount"],0)
+        self.assertEqual(result["widgets"],[])
+        self.assertEqual(result["sources"],[])
+        self.assertEqual(result["modelContext"]["evidence"],[])
+        self.assertEqual(result["modelContext"]["unrelatedSearchResultsExcluded"],1)
 
     def test_wrong_song_stays_rejected_even_with_structured_verse(self):
         result = self._lookup(
