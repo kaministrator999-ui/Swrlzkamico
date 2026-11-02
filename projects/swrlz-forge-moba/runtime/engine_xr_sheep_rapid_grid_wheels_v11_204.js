@@ -380,7 +380,7 @@ se193XRCleanup=function(){se204Reset();return se204OldCleanup();};
 window.SWYRL_ENGINE_SHEEP_QUICK_GRID_204=Object.freeze({
  diagnose:()=>({
   gameplay:se204Gameplay(),equippedHouse:se204.building,
-  equippedAbility:se204.skill,pitch:se204.pitch,rotation:0,
+  equippedAbility:se204.skill,pitch:(stUiRules().buildSnap>=3?6:se204.pitch),rotation:0,
   anchor:se204.anchor?{...se204.anchor}:null,
   menuType:se204.wheel?.type||null,
   chosen:se204.selections,placed:se204.placed,blocked:se204.blocked,
