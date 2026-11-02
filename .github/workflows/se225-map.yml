@@ -24,7 +24,7 @@ jobs:
             'const ASSET_LIBRARY=', 'const SE_RELEASE_NOTES=', 'window.SWRLZ_FORGE_BUILD=',
             '<div class="app"', '<div class="topbar"', '<main class="viewport-wrap"',
             '<aside class="sidebar"', '<aside class="inspector"', '<canvas id="viewport"',
-            'function se223UIOpen()', 'function se223Install()', 'function se223UIClose()'
+            'function se223UIOpen()', 'function se223Install()', 'function se223UIClose()', '.app{', '.app {', '.viewport-wrap{', '.viewport-wrap {', 'function ModelAtelier(', 'function renderParts()', 'function makePartMesh('
           ]
           for term in keys:
            matches=[m.start() for m in re.finditer(re.escape(term),s)]
