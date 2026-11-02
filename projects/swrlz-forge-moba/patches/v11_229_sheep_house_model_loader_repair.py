@@ -28,6 +28,14 @@ def apply(html):
         "box('Lantern · glowing glass',x,y,z,.15,.28,.15,P.glass,'Decor / lantern','emissive');",
         "box('Lantern · glowing glass',x,y,z,.15,.28,.15,P.glass,'Decor / lantern',0,'emissive');")
 
+    # The reusable Model Atelier envelope also carries Festival-character
+    # socket assemblies. House mesh IDs replace its parts, so those inherited
+    # named-socket references become dangling and fail native loadProject().
+    # Match only the sheep-house builder's own metadata paragraph.
+    html=once(html,
+        " m.poseFrames=[];m.poseNeutral=null;m.editedAt='local';\n m.reference='Original Sheep Tag faction house concepts: native geometry, front/side/top 3D viewing, no image planes.';",
+        " delete m.assemblies;m.poseFrames=[];m.poseNeutral=null;m.editedAt='local';\n m.reference='Original Sheep Tag faction house concepts: native geometry, front/side/top 3D viewing, no image planes.';")
+
     old=" source.engine='§wyrl§ Engine · Maker v11.228';source.version=11.228;"
     new=" source.engine='§wyrl§ Engine · Maker v11.229';source.version=11.229;"
     if html.count(old)!=2:
