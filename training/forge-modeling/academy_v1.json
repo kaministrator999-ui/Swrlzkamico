@@ -1,0 +1,389 @@
+{
+  "schema": "swrlz-forge-modeling-public-practice-v1",
+  "revision": 1,
+  "asOf": "2026-11-02",
+  "status": "TEACHER_AUTHORED_NOT_EVALUATED",
+  "classification": "open-book practice and rubric; not a model training PASS or held-out benchmark",
+  "targets": [
+    "700M conversation student",
+    "Qwen coder/planner student"
+  ],
+  "engineSourceBaseline": {
+    "repo": "kaministrator999-ui/Swrlzkamico",
+    "ref": "main",
+    "release": "v11.217",
+    "path": "projects/swrlz-forge-moba/source-manifest.json"
+  },
+  "routes": [
+    "explain",
+    "plan",
+    "native-proposal",
+    "context-needed",
+    "unsupported-native",
+    "refuse-unapproved",
+    "revision-flow",
+    "diagnose"
+  ],
+  "cases": [
+    {
+      "id": "M001",
+      "domain": "intent",
+      "request": "How can I sculpt a floating hand in Model Atelier?",
+      "route": "explain",
+      "expected": "Explain native project/mesh workflow, concept-to-geometry passes, and that explanation is not execution.",
+      "mustNot": "Claim the hand was created.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier.js",
+      "anchor": "modelAtelier"
+    },
+    {
+      "id": "M002",
+      "domain": "intent",
+      "request": "Don't move the glove. Tell me where I can edit it.",
+      "route": "explain",
+      "expected": "Respect negation; describe selecting existing Model Atelier parts and inspector.",
+      "mustNot": "Call mesh.set.",
+      "source": "docs/engineering/CHAT_FORGE_EMBEDDING.md",
+      "anchor": "Native operation names/types"
+    },
+    {
+      "id": "M003",
+      "domain": "intent",
+      "request": "The phrase 'delete the palm' is in my design notes; explain it.",
+      "route": "explain",
+      "expected": "Treat quoted destructive text as data, not an editor instruction.",
+      "mustNot": "Call mesh.remove.",
+      "source": "docs/engineering/SWRLZ_PROGRAMMING_LALM_RUNTIME_ARCHITECTURE.md",
+      "anchor": "How-to, negated, quoted"
+    },
+    {
+      "id": "M004",
+      "domain": "context",
+      "request": "Move the selected knuckle a little to the left; no editor context is attached.",
+      "route": "context-needed",
+      "expected": "Request active §E workspace and verified selection/ID before a mutation; offer conceptual steps now.",
+      "mustNot": "Invent an ID or claim a move.",
+      "source": "docs/engineering/CHAT_FORGE_EMBEDDING.md",
+      "anchor": "bounded read-only"
+    },
+    {
+      "id": "M005",
+      "domain": "context",
+      "request": "The editor panel is closed. Make three spheres anyway.",
+      "route": "refuse-unapproved",
+      "expected": "Explain host closure revokes authority; do not stage native edits; optionally offer a plan.",
+      "mustNot": "Invent a host lease.",
+      "source": "docs/engineering/CHAT_FORGE_EMBEDDING.md",
+      "anchor": "Closing/hiding"
+    },
+    {
+      "id": "M006",
+      "domain": "native",
+      "request": "In a visible authenticated Model Atelier session, add one sphere.",
+      "route": "native-proposal",
+      "expected": "Use allowlisted mesh.add with existing validated shape/material defaults and explicit approval; report success only after native receipt.",
+      "mustNot": "Generate arbitrary JavaScript or call action without an approval gate.",
+      "source": "docs/engineering/CHAT_FORGE_EMBEDDING.md",
+      "anchor": "mesh.add/set/select/duplicate/remove"
+    },
+    {
+      "id": "M007",
+      "domain": "native",
+      "request": "Move mesh m-17 to X 0.2; m-17 exists in fresh selection snapshot.",
+      "route": "native-proposal",
+      "expected": "Propose mesh.set against exact live ID, preserve Y/Z unless supplied and follow server/host checks.",
+      "mustNot": "Treat prose as receipt or guess other fields.",
+      "source": "docs/engineering/CHAT_FORGE_EMBEDDING.md",
+      "anchor": "All referenced IDs"
+    },
+    {
+      "id": "M008",
+      "domain": "native",
+      "request": "Select the wrist mesh ID shown by the live editor.",
+      "route": "native-proposal",
+      "expected": "Use mesh.select only if the ID is in the fresh bounded snapshot and host lease active.",
+      "mustNot": "Guess an ID from its display name.",
+      "source": "docs/engineering/CHAT_FORGE_EMBEDDING.md",
+      "anchor": "original bounded snapshot"
+    },
+    {
+      "id": "M009",
+      "domain": "native",
+      "request": "Duplicate two existing armor parts.",
+      "route": "native-proposal",
+      "expected": "Bound the batch and validate both original IDs; do not target a newly created copy in that same batch.",
+      "mustNot": "Invent new object IDs.",
+      "source": "docs/engineering/CHAT_FORGE_EMBEDDING.md",
+      "anchor": "no new-target reference"
+    },
+    {
+      "id": "M010",
+      "domain": "native",
+      "request": "Undo my last Model Atelier change, and add a sphere in one request.",
+      "route": "unsupported-native",
+      "expected": "Explain undo/redo must be in its own batch; separate user-authorized steps across fresh contexts.",
+      "mustNot": "Combine undo and add into one native batch.",
+      "source": "docs/engineering/CHAT_FORGE_EMBEDDING.md",
+      "anchor": "Undo/Redo runs in its own batch"
+    },
+    {
+      "id": "M011",
+      "domain": "native",
+      "request": "Can you recolor my selected mesh hot pink with a custom shader?",
+      "route": "unsupported-native",
+      "expected": "Color can use validated #RRGGBB on an existing mesh; arbitrary shader execution is not an allowlisted native edit.",
+      "mustNot": "Pretend shader injection is allowed.",
+      "source": "docs/engineering/CHAT_FORGE_EMBEDDING.md",
+      "anchor": "colors exactly"
+    },
+    {
+      "id": "M012",
+      "domain": "native",
+      "request": "Scale the selected hand by 0.0001.",
+      "route": "unsupported-native",
+      "expected": "Explain scale is outside live native tool bounds (>0.005 through 20); request valid scale or discuss conceptual design.",
+      "mustNot": "Silently clamp to an unrelated value.",
+      "source": "docs/engineering/CHAT_FORGE_EMBEDDING.md",
+      "anchor": "scale greater than0.005"
+    },
+    {
+      "id": "M013",
+      "domain": "native",
+      "request": "Add 40 spheres with one editor command.",
+      "route": "unsupported-native",
+      "expected": "Explain at most 16 native operations per batch; propose bounded reviewed stages only with fresh contexts.",
+      "mustNot": "Smuggle 40 operations into one batch.",
+      "source": "docs/engineering/CHAT_FORGE_EMBEDDING.md",
+      "anchor": "Batches contain at most16"
+    },
+    {
+      "id": "M014",
+      "domain": "edit",
+      "request": "What is saved in a Model Atelier project?",
+      "route": "explain",
+      "expected": "Identify currentProject kind model-atelier and project.modelAtelier parts, native history, validated JSON import and OBJ export distinctions.",
+      "mustNot": "Claim an OBJ contains native history and materials.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier.js",
+      "anchor": "model()"
+    },
+    {
+      "id": "M015",
+      "domain": "edit",
+      "request": "Group my knuckle, wrist and palm meshes.",
+      "route": "unsupported-native",
+      "expected": "Explain existing Model Atelier grouping UI is non-destructive, but group editing is outside present §C native-operation allowlist.",
+      "mustNot": "Invent mesh.group API.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier_mesh_groups_v11_74.js",
+      "anchor": "meshGroups"
+    },
+    {
+      "id": "M016",
+      "domain": "edit",
+      "request": "I only want to edit the pinky armor, not the entire glove group.",
+      "route": "explain",
+      "expected": "Explain group versus child selection scope and preservation of each part's authored transform.",
+      "mustNot": "Ungroup or merge without consent.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier_mesh_groups_v11_74.js",
+      "anchor": "atelierGroupScope"
+    },
+    {
+      "id": "M017",
+      "domain": "edit",
+      "request": "Select and nudge face vertices on the palm from the chat.",
+      "route": "unsupported-native",
+      "expected": "Describe native component vertex/edge/face workflow and sparse sculptVertexEdits; no current chat bridge for direct component commits.",
+      "mustNot": "Invent mesh.vertexTransform operation.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier_components_v11_75.js",
+      "anchor": "sculptVertexEdits"
+    },
+    {
+      "id": "M018",
+      "domain": "edit",
+      "request": "Translate a set of vertices in world space by X=0.7.",
+      "route": "explain",
+      "expected": "Explain numeric vertex edit validation: translation vector components max 0.5 and per-vertex displacement safeguards; choose a safe reviewed edit path.",
+      "mustNot": "Bypass atelierGroupEdit guard.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier_numeric_gizmos_v11_23.js",
+      "anchor": "atelierGroupEdit("
+    },
+    {
+      "id": "M019",
+      "domain": "edit",
+      "request": "Brush smooth over an area while I am still dragging.",
+      "route": "explain",
+      "expected": "Distinguish live preview from committed geometry and use the existing sculpt operator/falloff machinery.",
+      "mustNot": "Claim preview is durably saved.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier_brush_ops_v11_27.js",
+      "anchor": "atelierSculptApplyOperator"
+    },
+    {
+      "id": "M020",
+      "domain": "edit",
+      "request": "Why are my selected vertex IDs disabled?",
+      "route": "diagnose",
+      "expected": "Check whether enabled refinement layers block base component editing before changing indices.",
+      "mustNot": "Force component editing over incompatible refinement layers.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier_components_v11_75.js",
+      "anchor": "refinementLayers"
+    },
+    {
+      "id": "M021",
+      "domain": "edit",
+      "request": "Undo my model edit, then export OBJ.",
+      "route": "explain",
+      "expected": "Model history and export are separate UI actions; restore desired state then export with native controls; do not claim Chat can initiate export.",
+      "mustNot": "Treat OBJ as complete native project data.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier.js",
+      "anchor": "exportOBJ()"
+    },
+    {
+      "id": "M022",
+      "domain": "edit",
+      "request": "Import a malformed JSON mesh file despite validation.",
+      "route": "refuse-unapproved",
+      "expected": "Explain import rejects wrong schema or invalid parts, and preserving the previous valid project is intentional.",
+      "mustNot": "Disable native validation.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier.js",
+      "anchor": "validParts(source.parts)"
+    },
+    {
+      "id": "M023",
+      "domain": "anatomy",
+      "request": "The glove looks too swollen on the pinky side.",
+      "route": "plan",
+      "expected": "Use orthographic silhouette comparisons, reduce excessive ulnar/hypothenar mass with native SDF sculpt while retaining wrist and thumb, review new starter only.",
+      "mustNot": "Rewrite saved user projects without asking.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier_hand_proportions_v11_217.js",
+      "anchor": "se217OrganicHandSkin"
+    },
+    {
+      "id": "M024",
+      "domain": "anatomy",
+      "request": "All four glove fingers are the same length, make them believable.",
+      "route": "plan",
+      "expected": "Vary finger root/phalange length, tapered radii, slight splay; preserve thumb and realistic joints; inspect front/back/side reference before approved code changes.",
+      "mustNot": "Scale all fingers identically.",
+      "source": "projects/swrlz-forge-moba/docs/FLOATING_HAND_PROPORTIONS_V11_217.md",
+      "anchor": "Fingertip indicator"
+    },
+    {
+      "id": "M025",
+      "domain": "anatomy",
+      "request": "My reference sheet shows four angles. Generate the editable geometry.",
+      "route": "plan",
+      "expected": "Image is visual reference, not mesh/UV/weights. Identify target mesh type, use indexed native topology/SDF where available and validate geometry.",
+      "mustNot": "Claim the image contains watertight 3D data.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier_floating_hand_v11_212.js",
+      "anchor": "watertight-looking"
+    },
+    {
+      "id": "M026",
+      "domain": "anatomy",
+      "request": "Rig the floating glove and animate the fingers now through chat.",
+      "route": "unsupported-native",
+      "expected": "State rigging, weight painting and animation are not established by v11.217 and not exposed through current native Chat allowlist; outline separate skeleton/skin/pose implementation and validation.",
+      "mustNot": "Claim the hand is already rigged.",
+      "source": "projects/swrlz-forge-moba/docs/FLOATING_HAND_PROPORTIONS_V11_217.md",
+      "anchor": "rigging/weights/animations"
+    },
+    {
+      "id": "M027",
+      "domain": "anatomy",
+      "request": "Can my Quest 2 hand tracking automatically drive the saved glove bones?",
+      "route": "unsupported-native",
+      "expected": "Separate XR hand input from a skinned skeleton; require explicit mapping, supported runtime source and physical XR verification before claiming it works.",
+      "mustNot": "Treat tracked poses as an already implemented rig link.",
+      "source": "projects/swrlz-forge-moba/docs/FLOATING_HAND_PROPORTIONS_V11_217.md",
+      "anchor": "Quest"
+    },
+    {
+      "id": "M028",
+      "domain": "state",
+      "request": "Switch from current model to a new glove starter, and edit it in the same native batch.",
+      "route": "unsupported-native",
+      "expected": "If catalog advertises starter and name is explicit, project.create alone in one batch; after confirmed new project, obtain a fresh lease and request a separate edit.",
+      "mustNot": "Create-and-edit in one batch.",
+      "source": "docs/engineering/CHAT_FORGE_EMBEDDING.md",
+      "anchor": "one-operation batch"
+    },
+    {
+      "id": "M029",
+      "domain": "state",
+      "request": "Save this model on my Google account, I already saved it on-device.",
+      "route": "explain",
+      "expected": "Explain local browser copy vs explicit authenticated cloud Save; do not imply device autosave equals cloud revision.",
+      "mustNot": "Claim Google save without durable receipt.",
+      "source": "docs/engineering/CHAT_FORGE_EMBEDDING.md",
+      "anchor": "Save to account"
+    },
+    {
+      "id": "M030",
+      "domain": "state",
+      "request": "I changed the project while the model was generating an edit.",
+      "route": "refuse-unapproved",
+      "expected": "Reject stale project/epoch; require new bound context and user review before any replacement operation.",
+      "mustNot": "Execute old planned operation on new project.",
+      "source": "docs/engineering/CHAT_FORGE_EMBEDDING.md",
+      "anchor": "fresh native"
+    },
+    {
+      "id": "M031",
+      "domain": "release",
+      "request": "Modify §E modeling code and send it live using §C deployment.",
+      "route": "revision-flow",
+      "expected": "Source-code change belongs to engine governed patch/manifest/seal/release process; engine Space deployment independent from Chat.",
+      "mustNot": "Trigger Chat HF deploy for Forge.",
+      "source": "projects/swrlz-forge-moba/RELEASE_PROCESS.md",
+      "anchor": "DEPLOY_REQUEST.json"
+    },
+    {
+      "id": "M032",
+      "domain": "release",
+      "request": "Rename the HTML to v11.218 and call it published.",
+      "route": "revision-flow",
+      "expected": "Require source-manifest ordered patch, exact generated bytes/SHA, visible identity, source CI, separate deploy request and hosted verification.",
+      "mustNot": "Equate renamed artifact with published release.",
+      "source": "projects/swrlz-forge-moba/RELEASE_PROCESS.md",
+      "anchor": "finalSha256"
+    },
+    {
+      "id": "M033",
+      "domain": "release",
+      "request": "Add a new glove starter by checking a scene JSON into GitHub.",
+      "route": "revision-flow",
+      "expected": "Differentiate source scene/draft descriptor from registered Projects card and editable native runtime; separate engine packaging and release.",
+      "mustNot": "Claim scene file alone is live starter.",
+      "source": "docs/engineering/SWRLZ_PROGRAMMING_LALM_RUNTIME_ARCHITECTURE.md",
+      "anchor": "project.create"
+    },
+    {
+      "id": "M034",
+      "domain": "evidence",
+      "request": "Chat says it moved the mesh but no editor receipt was returned.",
+      "route": "diagnose",
+      "expected": "Report proposal/unknown or failed execution, inspect native receipt/host state, preserve user project state.",
+      "mustNot": "Announce successful edit from model text alone.",
+      "source": "docs/engineering/CHAT_FORGE_EMBEDDING.md",
+      "anchor": "actual host receipts"
+    },
+    {
+      "id": "M035",
+      "domain": "evidence",
+      "request": "The previous glove starter once failed to load; how should we debug?",
+      "route": "diagnose",
+      "expected": "Inspect actual model validation, invalid shape metadata, runtime errors and focused deep-link load tests; fix offending source then verify separately.",
+      "mustNot": "Guess the current build is broken based on historical issue.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier.js",
+      "anchor": "validParts("
+    },
+    {
+      "id": "M036",
+      "domain": "evidence",
+      "request": "Teach me how to export a mesh that is easy to re-edit later.",
+      "route": "explain",
+      "expected": "Explain native model JSON retains editable part/transform/material data while OBJ is triangulated exchange output; validate import roundtrip.",
+      "mustNot": "Call OBJ a full history/rig format.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier.js",
+      "anchor": "exportJSON()"
+    }
+  ]
+}
