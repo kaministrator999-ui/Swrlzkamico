@@ -1,5 +1,5 @@
 name: Calculate §E v11.226 sheep building source receipt
-# Focused model starter geometry check + source seal; no browser simulation.
+# Native model geometry regression + packaged release receipt; no browser simulation.
 on:
   push:
     branches: [main]
