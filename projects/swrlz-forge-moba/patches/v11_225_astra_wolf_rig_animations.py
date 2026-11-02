@@ -42,7 +42,11 @@ def apply(html):
       "if(species==='sheep')data.project.modelAtelier.sheepAnimations=se222SheepClips();",
       """if(species==='sheep')data.project.modelAtelier.sheepAnimations=se222SheepClips();
  if(species==='wolf'){
+  window.SWYRL_WOLF_LOAD_AUDIT={stage:'pre',species,rawName:data.project.modelAtelier?.name,rawParts:data.project.modelAtelier?.parts?.length};
   se224WolfEnhanceModel(data.project.modelAtelier);
+  window.SWYRL_WOLF_LOAD_AUDIT.stage='prepared';
+  window.SWYRL_WOLF_LOAD_AUDIT.preparedParts=data.project.modelAtelier.parts.length;
+  window.SWYRL_WOLF_LOAD_AUDIT.preparedRig=!!data.project.modelAtelier.wolfRig;
   data.project.modelAtelier.wolfRig=se224WolfRigSpec();
   data.project.modelAtelier.wolfAnimations=se224WolfClips();
  }""")
@@ -59,6 +63,10 @@ def apply(html):
   se224WolfEnhanceModel(currentProject.modelAtelier);
   currentProject.modelAtelier.wolfRig=se224WolfRigSpec();
   currentProject.modelAtelier.wolfAnimations=se224WolfClips();
+  window.SWYRL_WOLF_LOAD_AUDIT.stage='assigned';
+  window.SWYRL_WOLF_LOAD_AUDIT.activeName=currentProject.modelAtelier?.name;
+  window.SWYRL_WOLF_LOAD_AUDIT.activeParts=currentProject.modelAtelier?.parts?.length;
+  window.SWYRL_WOLF_LOAD_AUDIT.activeRig=!!currentProject.modelAtelier?.wolfRig;
  }
  initializeHistory""")
     html=html[:loader_start]+after+html[loader_end:]
