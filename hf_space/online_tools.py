@@ -1601,18 +1601,28 @@ def time_lookup(plan: dict[str, Any], progress: Callable[[dict[str, Any]], None]
 
 def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], None] | None = None) -> dict[str, Any]:
     query = _clean(plan.get("query"), 500)
+    provider_query=query
+    if plan.get("contentMode")=="lyrics-verification":
+        # Search the exact requested title AND artist before invoking the generic
+        # research reasoner. The previous unquoted query let news about "Tech"
+        # stand in for a Tech N9ne song and consumed lyric fetch slots.
+        identity=plan.get("songIdentity") if isinstance(plan.get("songIdentity"),dict) else song_identity(str(plan.get("subject") or ""))
+        if identity.get("title") and identity.get("primaryArtist"):
+            exact_queries=query_ladder(identity,1)
+            if exact_queries:
+                provider_query=_clean(exact_queries[0].get("query"),500) or query
     payload = {
         "requestId": _clean(plan.get("requestId"), 160),
-        "prompt": query,
+        "prompt": provider_query,
         "researchPlan": {
             "intent": "web-search",
-            "target": query,
-            "requestedInformation": query,
+            "target": provider_query,
+            "requestedInformation": provider_query,
             "targetConfidence": 0.9,
-            "queries": [query],
+            "queries": [provider_query],
             "constraints": ["bounded-public-web-evidence"],
         },
-        "researchQueries": [query],
+        "researchQueries": [provider_query],
     }
     canonical_online_research.set_trace_sink(progress)
     try:
@@ -2262,6 +2272,14 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
                 ],
             }
 
+    # A generic research provider can return off-topic hits (for example a
+    # technology-news page for a Tech N9ne lookup). Never surface those as lyric
+    # sources or use them as song evidence merely because the search succeeded.
+    relevant_evidence=(
+        [item for item in evidence
+         if _lyrics_source_identity(item,str(plan.get("subject") or "")).get("verified")]
+        if plan.get("contentMode")=="lyrics-verification" else evidence
+    )
     if plan.get("contentMode")=="lyrics-verification" and (verified_lyrics or verified_lyrics_source):
         visible_results=[]
         if selected_lyric_evidence and verified_lyrics:
@@ -2288,7 +2306,7 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
     else:
         visible_results=[
             {"title":item["title"],"url":_clean_source_url(item["url"]),"snippet":item["snippet"],"source":item["source"]}
-            for item in evidence[:5] if item.get("url")
+            for item in relevant_evidence[:5] if item.get("url")
         ]
 
     widget = {
@@ -2319,13 +2337,13 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
         context_evidence=[selected_lyric_evidence] if isinstance(selected_lyric_evidence,dict) else []
     else:
         dedup_sources={}
-        for item in evidence:
+        for item in relevant_evidence:
             url=_clean_source_url(str(item.get("url") or ""))
             if not url:
                 continue
             dedup_sources.setdefault(url,{"title":item.get("title") or item.get("source") or "Web result","url":url,"provider":item.get("source")})
         sources=list(dedup_sources.values())
-        context_evidence=evidence[:6]
+        context_evidence=relevant_evidence[:6]
 
     context = {
         "contractId": "swrlz-online-evidence-hf-v1",
@@ -2335,6 +2353,7 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
         "query": query,
         "evidence": context_evidence,
         "errors": (bundle.get("errors") or [])[:4],
+        "unrelatedSearchResultsExcluded": max(0,len(evidence)-len(relevant_evidence)),
         "provenanceEvidence": provenance_evidence[:4],
         "provenanceQueries": provenance_queries,
         "provenanceFetchCount": provenance_fetch_count,
@@ -2370,13 +2389,13 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
         "contract": ONLINE_CONTRACT,
         "requested": True,
         "kind": "search",
-        "status": "OK" if evidence else "NO_RESULTS",
+        "status": "OK" if visible_results else "NO_RESULTS",
         "provider": bundle.get("provider"),
         "query": query,
-        "widgets": [widget] if evidence else [],
+        "widgets": [widget] if visible_results else [],
         "sources": sources,
         "modelContext": context,
-        "resultCount": len(evidence),
+        "resultCount": len(visible_results) if plan.get("contentMode")=="lyrics-verification" else len(evidence),
         "researchId": bundle.get("researchId"),
         "lyricsSourceAttempts": lyrics_source_attempts,
         "lyricsFetchDebug": lyrics_fetch_debug[:LYRICS_MAX_PAGE_ATTEMPTS],
