@@ -152,30 +152,34 @@
   "suggestedGhostFarmCenters": [
     [
       -27,
-      9
+      6
     ],
     [
       -24,
-      9
+      6
     ],
     [
       -21,
-      9
+      6
     ],
     [
       -18,
-      9
+      6
     ],
     [
       -15,
-      9
+      6
     ],
     [
       -12,
-      9
+      6
     ],
     [
       -9,
+      6
+    ],
+    [
+      -27,
       9
     ],
     [
@@ -187,8 +191,8 @@
       15
     ],
     [
-      -27,
-      18
+      -9,
+      9
     ],
     [
       -9,
@@ -197,10 +201,6 @@
     [
       -9,
       15
-    ],
-    [
-      -9,
-      18
     ]
   ],
   "constraints": [
@@ -211,5 +211,5 @@
     "Keep left-thumbstick movement active during the construction wheel",
     "No automatic runtime, scene, or deploy changes"
   ],
-  "suggestedBuildExample": "13 suggested U-shaped farm ghost centers with an open south escape. This is only design reference and must be validated in native stCanBuild."
+  "suggestedBuildExample": "13 suggested U-shaped 3-unit-snap farm ghost centers around the initial owner sheep (-18,18), with an open southern retreat; aligned above the native rock cluster at (-13,12), avoiding fixed collision actors. Design only, validate every placement at play time."
 }
