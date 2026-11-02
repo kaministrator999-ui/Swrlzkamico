@@ -68,6 +68,7 @@ function se210StatusSkill(id){
  const session=stSession,u=session?.units?.find(u=>u.id===session.controlledId);
  const native=u&&session?.archive?stArchiveStatus(u):null;
  if(!id)return {label:'NONE',remaining:0,ready:false};
+ if(!native)return {label:'STATE UNAVAILABLE',remaining:0,ready:false};
  if(id==='split'){
   if(!session?.rules?.split)return {label:'RULE LOCKED',remaining:0,ready:false};
   if(native&&!native.splitUnlocked)
@@ -108,6 +109,7 @@ const se210SavedOffset=(kind)=>{
 };
 function se210Place(panel,pose){
  if(!pose)return;
+ panel.placed=true;
  const off=se210SavedOffset(panel.kind);
  panel.root.position.copy(pose.eye)
   .addScaledVector(pose.right,off[0])
@@ -215,7 +217,7 @@ function se210PanelCreate(kind){
  rim.position.z=-.008;rim.renderOrder=10749;root.add(rim);
  const saved=se210UI.layout[kind];
  panel={kind,root,mesh,texture,canvas,lastKey:'',follow:saved?.follow||false,
-  pinned:true,scale:saved?.scale||1,grabbing:false,handle:rim};
+  pinned:true,scale:saved?.scale||1,grabbing:false,placed:false,handle:rim};
  root.scale.setScalar(panel.scale);
  se210Place(panel,se210Pose());
  root.visible=true;scene.add(root);
@@ -398,7 +400,7 @@ function se210PanelFrame(){
   const pose=se210Pose();
   for(const panel of se210UI.panels.values()){
    if(!panel.root.visible)continue;
-   if(panel.follow&&!panel.grabbing)se210Place(panel,pose);
+   if((panel.follow&&!panel.grabbing)||!panel.placed)se210Place(panel,pose);
    se210CanvasRender(panel);
   }
   if(se204.wheel?.root.visible)se209RefreshWheel(se204.wheel);
