@@ -1,0 +1,212 @@
+{
+  "schema": "swrlz-sheep-map-blueprint-v1",
+  "id": "moonbell-wildwood-great-escape",
+  "status": "reference-only-not-imported",
+  "nativeScene": "projects/swrlz-forge-moba/scenes/sheep-tag-meadow.swyrl.json",
+  "coordinateSystem": "x-z; negative z upward; unit scale 10 px/unit",
+  "bounds": {
+    "x": [
+      -40,
+      40
+    ],
+    "z": [
+      -40,
+      40
+    ]
+  },
+  "sourceSceneRules": {
+    "durationSeconds": 1200,
+    "headstartSeconds": 30,
+    "startGold": 80
+  },
+  "buildingRuleNotes": {
+    "snapUnits": 3,
+    "defaultFootprintUnits": 2.4,
+    "gapUnits": 0.6,
+    "sheepBaseRadius": 0.27,
+    "wolfBaseRadius": 0.68,
+    "laneOverrideWolfRadius": 0.78,
+    "maxBuildingsPerSheep": 14,
+    "maxBuildingsTotal": 84
+  },
+  "nativeSpawns": {
+    "sheep": [
+      [
+        -18,
+        18
+      ],
+      [
+        18,
+        18
+      ],
+      [
+        -18,
+        -18
+      ],
+      [
+        18,
+        -18
+      ],
+      [
+        -27,
+        3
+      ],
+      [
+        27,
+        -3
+      ]
+    ],
+    "wolves": [
+      [
+        -6,
+        0
+      ],
+      [
+        6,
+        0
+      ]
+    ]
+  },
+  "pen": {
+    "center": [
+      0,
+      0
+    ],
+    "halfExtent": 5,
+    "reservedHalfExtent": 7
+  },
+  "shops": [
+    [
+      -32,
+      -32
+    ],
+    [
+      32,
+      -32
+    ],
+    [
+      -32,
+      32
+    ],
+    [
+      32,
+      32
+    ]
+  ],
+  "ponds": [
+    [
+      -29,
+      -12
+    ],
+    [
+      29,
+      12
+    ]
+  ],
+  "rocks": [
+    [
+      -12,
+      -14
+    ],
+    [
+      -14,
+      -13
+    ],
+    [
+      12,
+      14
+    ],
+    [
+      14,
+      13
+    ],
+    [
+      -13,
+      12
+    ],
+    [
+      13,
+      -12
+    ]
+  ],
+  "regions": [
+    {
+      "name": "Pinewatch",
+      "quadrant": "NW"
+    },
+    {
+      "name": "Moonflower",
+      "quadrant": "NE"
+    },
+    {
+      "name": "Amberglade",
+      "quadrant": "SW"
+    },
+    {
+      "name": "Willowmere",
+      "quadrant": "SE"
+    }
+  ],
+  "suggestedGhostFarmCenters": [
+    [
+      -25,
+      17
+    ],
+    [
+      -22,
+      17
+    ],
+    [
+      -19,
+      17
+    ],
+    [
+      -16,
+      17
+    ],
+    [
+      -13,
+      17
+    ],
+    [
+      -25,
+      20
+    ],
+    [
+      -13,
+      20
+    ],
+    [
+      -25,
+      23
+    ],
+    [
+      -13,
+      23
+    ],
+    [
+      -25,
+      26
+    ],
+    [
+      -22,
+      26
+    ],
+    [
+      -19,
+      26
+    ],
+    [
+      -16,
+      26
+    ]
+  ],
+  "constraints": [
+    "Design reference only, not importable as a native .swyrl scene",
+    "Do not prebuild permanent farm walls",
+    "Preserve the center pen and rescue entrances",
+    "Verify swept collision and both sheep/wolf pathing on native hardware",
+    "Keep left-thumbstick movement active during the construction wheel",
+    "No automatic runtime, scene, or deploy changes"
+  ]
+}
