@@ -33,6 +33,11 @@ def apply(html):
     # The stock wolf-model loads the actual Astra scene (not a blank model).
     # New starter gets editable detail parts, real rig and native authored
     # keyframes; saved user copies are never silently rewritten.
+    # The wolf-model card historically fetched Fen while its label described
+    # Astra. Load the actual furred Astra that Sheep Tag uses by default.
+    html=once(html,
+      "fetch('scenes/model-atelier-organic-'+species+'-v11-87.swyrl.json')",
+      "fetch(species==='wolf'?'scenes/model-atelier-furred-astra-v11-90.swyrl.json':'scenes/model-atelier-organic-sheep-v11-87.swyrl.json')")
     html=once(html,
       "if(species==='sheep')data.project.modelAtelier.sheepAnimations=se222SheepClips();",
       """if(species==='sheep')data.project.modelAtelier.sheepAnimations=se222SheepClips();
