@@ -103,8 +103,10 @@ for marker in ['data-project-template="floating-hand-glove"','window.SWYRL_ENGIN
                'se212HandScene','se212OpenHand','SWYRL_ENGINE_HAND_SURFACE',
                'floating-hand-glove','V11_213_HAND_PRIMITIVE_SCHEMA_FIX']:
     assert marker in s,marker
-assert "{position:center,scale,meshDensity:{u:32,v:1}}" not in s,'invalid hand cylinder metadata still present'\nassert "return push(name,'cylinder',c,mat,group,{position:center,scale});" in s
-assert "delete m.assemblies;m.poseFrames=[];m.poseNeutral=null;m.editedAt='local';" in s\nassert '512%30.72' not in s,'meadow moire crosshatch persists'
+assert "{position:center,scale,meshDensity:{u:32,v:1}}" not in s,'invalid hand cylinder metadata still present'
+assert "return push(name,'cylinder',c,mat,group,{position:center,scale});" in s
+assert "delete m.assemblies;m.poseFrames=[];m.poseNeutral=null;m.editedAt='local';" in s
+assert '512%30.72' not in s,'meadow moire crosshatch persists'
 for needle in ['window.SWYRL_ENGINE_SHEEP_VR_FIX196','function se196FogRepair(s)','se195PositionRadial=function','se195MenuCamera=function','se195FollowCamera=function','se196ActionPrevious','recenter','se196FogRepair(stSession)']:
     assert needle in s,needle
 for marker in ['window.SWYRL_ENGINE_VR_POLISH','function se195FollowCamera(dt)','function se195MoveRig(dx,dy,dz)','function se195RadialHit(record','function se195FogPrepare(s)','referenceDepth:\'fixed-base\'','const se195OldCapture=se193XRCapture']:
