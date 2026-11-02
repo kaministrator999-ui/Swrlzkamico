@@ -204,14 +204,14 @@ def select_modeling_lesson(
         return ""
     if _RESEARCH.search(prompt):
         topic = "research"
+    elif _TRACKING.search(prompt):
+        topic = "tracking"
     elif _PARTICLE.search(prompt):
         topic = "particle"
     elif _WOLF.search(prompt):
         topic = "wolf"
     elif _SHEEP.search(prompt):
         topic = "sheep"
-    elif _TRACKING.search(prompt):
-        topic = "tracking"
     elif _GESTURE.search(prompt):
         topic = "gesture"
     elif _ANIMATION.search(prompt) or _TIMELINE.search(prompt):
