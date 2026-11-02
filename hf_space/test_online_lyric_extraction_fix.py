@@ -82,6 +82,27 @@ class OnlineLyricExtractionFixTests(unittest.TestCase):
                 self.assertIn(phrase, lyric)
         self.assertGreaterEqual(len(lyric.splitlines()), 10)
 
+    def test_lyric_page_feedback_and_recommendations_are_not_verses(self):
+        page = (
+            "Copper Lantern Lyrics by Demo Ensemble\nLyrics\n"
+            "Copper lanterns guide the midnight train\n"
+            "We paint the window with a little rain\n"
+            "I carry the light past the gate\n"
+            "The train comes in a little late\n"
+            "The road is quiet in the dawn\n"
+            "We keep the lantern burning on\n"
+            "The morning lights the other shore\n"
+            "The lantern shines a little more\n"
+            "Are these lyrics accurate?\nLooks right\nNeeds a fix\n"
+            "Previous track\nAnother song\nAnother artist\n"
+        )
+        analysis = online_tools._lyrics_extract_analysis(page, "full-lyrics", SUBJECT)
+        lyric = analysis["text"]
+        self.assertNotIn("Looks right", lyric, analysis["diagnostics"])
+        self.assertNotIn("Previous track", lyric, analysis["diagnostics"])
+        self.assertNotIn("Are these lyrics accurate?", lyric)
+        self.assertEqual(analysis["diagnostics"]["terminalBoundaryKind"], "HARD_BOUNDARY")
+
     def _bundle(self, *, page_title: str, url: str):
         return {
             "provider": "offline-fixture",
