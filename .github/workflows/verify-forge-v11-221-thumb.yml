@@ -1,0 +1,31 @@
+name: Verify §E v11.221 thumb gestures (single mobile smoke)
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/verify-forge-v11-221-thumb.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  hand-gestures:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check new thumb and gesture source syntax
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/model_atelier_hand_gestures_v11_221.js
+          node --check projects/swrlz-forge-moba/runtime/model_atelier_gesture_studio_v11_221.js
+          python3 -m py_compile projects/swrlz-forge-moba/patches/v11_221_thumb_opposition_gestures.py
+      - name: Verify sealed §E v11.221 native source and assets
+        run: python3 projects/swrlz-forge-moba/scripts/verify_v11_221_release.py --output /tmp/se221-hand-sealed
+      - name: Prepare one Chromium mobile smoke
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps --only-shell chromium
+      - name: Check opposable thumb and gesture controls at phone width
+        run: node projects/swrlz-forge-moba/tests/ui_v11_221_thumb_gestures_smoke.mjs
