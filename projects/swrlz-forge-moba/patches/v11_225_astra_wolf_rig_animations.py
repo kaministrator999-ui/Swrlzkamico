@@ -32,7 +32,8 @@ def apply(html):
 
     html=once(html,
       "async function loadAnimalProject(species,force=false,rebuild=false){",
-      "async function loadAnimalProject(species,force=false,rebuild=false){\\n window.SWYRL_WOLF_LOAD_AUDIT={stage:'entered',species};")
+      """async function loadAnimalProject(species,force=false,rebuild=false){
+ window.SWYRL_WOLF_LOAD_AUDIT={stage:'entered',species};""")
     # The stock wolf-model loads the actual Astra scene (not a blank model).
     # New starter gets editable detail parts, real rig and native authored
     # keyframes; saved user copies are never silently rewritten.
