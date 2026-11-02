@@ -132,10 +132,10 @@ def requests_new_project(prompt: str) -> bool:
                      or _SHORT_FRESH.fullmatch(text)))
 
 
-def native_plan_system(operation_contract: dict[str, Any]) -> str:
+def native_plan_system(operation_contract: dict[str, Any], *, prompt: str = "",\n                       summary: dict[str, Any] | None = None) -> str:
     """The model proposes data only; server and native host execute separately."""
     import json
-    return (
+    base = (
         "You are §wyrlz, planning ONE requested native §E editor edit. Return one JSON object only. "
         "The exact envelope is {\"disposition\":\"apply\",\"operations\":[...]} or "
         "{\"disposition\":\"clarify\",\"operations\":[],\"question\":\"one concise question\"}. "
@@ -169,6 +169,9 @@ def native_plan_system(operation_contract: dict[str, Any]) -> str:
         "Never include a success claim, receipt, reasoning or prose outside the JSON. "
         "Operation contract: " + json.dumps(operation_contract, ensure_ascii=False, separators=(",", ":"))
     )
+    from forge_modeling_lessons import select_modeling_lesson
+    lesson = select_modeling_lesson(prompt, summary, role="planner")
+    return base + ("\n" + lesson if lesson else "")
 
 
 def inspection_text(summary: dict[str, Any]) -> str:
