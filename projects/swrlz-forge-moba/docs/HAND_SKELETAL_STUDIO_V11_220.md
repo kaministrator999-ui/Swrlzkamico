@@ -36,7 +36,7 @@ Only the new hand starter is rigged by default; existing user-created hand copie
 ## Integrity receipt
 Version: **§wyrl§ Engine v11.220**.
 Ordered patches: **252**. Packaged assets: **68**.
-Generated editor source: **7,526,079 bytes**.
-SHA-256: `7836708947da5ed574608d82c530d3421cedb6c2ac348eec822860c4c3ebe77e`.
+Generated editor source: **7,526,101 bytes**.
+SHA-256: `5551fb674e6a33eae5329880e6195fe404bb22af7a4f10ec7fe42629fdb89b89`.
 
 Focused JS/Python syntax, 17-bone/skin-weight/interpolation math, assembled source marker and packaging candidate checks passed. Source checks by themselves do not mean hosted runtime/visual acceptance.
