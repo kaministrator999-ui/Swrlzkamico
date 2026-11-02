@@ -1,21 +1,21 @@
-name: Verify §E v11.214 Quest Sheep modal camera and single beam
+name: Verify §E v11.215 Sheep Tag move during A/X wheel
 on:
   push:
     branches:
-      - fix/sheep-quest-wheel-camera-beam-v11-214
+      - fix/sheep-vr-move-during-wheel-v11-215
       - main
     paths:
       - 'projects/swrlz-forge-moba/source-manifest.json'
-      - 'projects/swrlz-forge-moba/patches/v11_214_quest_sheep_upright_modal_one_ray.py'
-      - 'projects/swrlz-forge-moba/runtime/engine_xr_sheep_wheel_modal_camera_ray_v11_214.js'
-      - 'projects/swrlz-forge-moba/tests/test_v11_214_quest_modal_wheel_camera_ray.cjs'
-      - 'projects/swrlz-forge-moba/scripts/verify_v11_214_release.py'
-      - '.github/workflows/verify-forge-v11-214-quest-wheel-camera.yml'
+      - 'projects/swrlz-forge-moba/patches/v11_215_sheep_live_move_wheel.py'
+      - 'projects/swrlz-forge-moba/runtime/engine_xr_sheep_live_wheel_v11_215.js'
+      - 'projects/swrlz-forge-moba/tests/test_v11_215_move_while_wheel.cjs'
+      - 'projects/swrlz-forge-moba/scripts/verify_v11_215_release.py'
+      - '.github/workflows/verify-forge-v11-215-sheep-live-wheel.yml'
       - '.github/workflows/deploy-swrlz-forge-moba.yml'
   pull_request:
     paths:
       - 'projects/swrlz-forge-moba/**'
-      - '.github/workflows/verify-forge-v11-214-quest-wheel-camera.yml'
+      - '.github/workflows/verify-forge-v11-215-sheep-live-wheel.yml'
   workflow_dispatch:
 jobs:
   quest-wheel:
@@ -25,8 +25,10 @@ jobs:
       - uses: actions/checkout@v4
       - name: Focused Quest wheel, camera, quick-build and hand source regressions
         run: |
+          node --check projects/swrlz-forge-moba/runtime/engine_xr_sheep_live_wheel_v11_215.js
           node --check projects/swrlz-forge-moba/runtime/engine_xr_sheep_wheel_modal_camera_ray_v11_214.js
           node --check projects/swrlz-forge-moba/runtime/model_atelier_floating_hand_v11_212.js
+          node projects/swrlz-forge-moba/tests/test_v11_215_move_while_wheel.cjs
           node projects/swrlz-forge-moba/tests/test_v11_214_quest_modal_wheel_camera_ray.cjs
           node projects/swrlz-forge-moba/tests/test_v11_211_quest_os_overlay.cjs
           node projects/swrlz-forge-moba/tests/test_v11_210_quest_perf.cjs
@@ -45,7 +47,7 @@ jobs:
           wc -c "$RUNNER_TEMP/se-v11-214/index.html"
           sha256sum "$RUNNER_TEMP/se-v11-214/index.html"
           if python3 -c 'import json; m=json.load(open("projects/swrlz-forge-moba/source-manifest.json")); assert m.get("finalSha256") and m.get("finalBytes")'; then
-            python3 projects/swrlz-forge-moba/scripts/verify_v11_214_release.py --output "$RUNNER_TEMP/se-v11-214-verified"
+            python3 projects/swrlz-forge-moba/scripts/verify_v11_215_release.py --output "$RUNNER_TEMP/se-v11-214-verified"
           else
             echo "Candidate built; seal printed bytes/SHA before deployment."
           fi
