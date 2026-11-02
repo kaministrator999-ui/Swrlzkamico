@@ -89,7 +89,7 @@ stStop=function(...args){
 };
 window.SWYRL_ENGINE_WOLF_224=Object.freeze({
  clips:()=>se224WolfClips(),pose:se224WolfPose,
- active:()=>({version:'v11.225',wolves:stSession?.units?.filter(u=>u.kind==='wolf').length||0,
+ active:()=>({version:'v11.226',wolves:stSession?.units?.filter(u=>u.kind==='wolf').length||0,
   animations:SE224_WOLF_MOTIONS.map(x=>x[0]),cosmeticOnly:true}),
  visuals:()=> (stSession?.units||[]).filter(u=>u.kind==='wolf').map(u=>({
   id:u.id,head:!!u.actor?.getObjectByName('stHead'),
