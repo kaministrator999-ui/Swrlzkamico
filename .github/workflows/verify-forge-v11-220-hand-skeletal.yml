@@ -29,5 +29,5 @@ jobs:
         run: |
           npm install --no-save playwright@1.56.1
           npx playwright install --with-deps --only-shell chromium
-      - name: Real native hand rigging, posing, skinned motion and playback
+      - name: Real native hand rigging, touch-accessible pose controls and playback
         run: node projects/swrlz-forge-moba/tests/ui_v11_220_hand_skeletal_smoke.mjs
