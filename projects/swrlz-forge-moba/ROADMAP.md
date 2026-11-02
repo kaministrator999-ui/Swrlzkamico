@@ -1,3 +1,11 @@
+## §E v11.226 — Five Sheep-Faction 3D Building Model Starters (2026-11-02)
+
+**Owner concept → actual native projects:** Free Sheep Shelter, Thatched Starter Hut, Cozy Sheep Cottage, Flock Barn, and Ram House now have separate starter cards under **Projects → Starter Projects**. Each opens editable native Model Atelier geometry, not a 2D reference image. The pack includes original straw/blue-roof shapes, timber walls, roof pitches, window frames, doorways, sheep crests, hay and cottage decorations. Individual starter IDs: `sheep-free-shelter`, `sheep-thatched-hut`, `sheep-cottage`, `sheep-barn`, `sheep-ram-house`. Use `modeler.html?project=<id>` for a direct route, or select one saved startup default.
+
+**Source receipt:** §wyrl§ Engine **v11.226**, **258 ordered patches**, **68 unchanged packaged assets**, **7,656,704 source HTML bytes**, SHA-256 `7395e442f324b33cf67f49aa1eb1be9349f07c2e4d7f00aa5872d3312112129d`. Code: `runtime/sheep_building_model_starters_v11_226.js`, `patches/v11_226_sheep_building_starters.py`. Focused five-model mesh validation and candidate assembly passed. Strict release verification, HF hosting and physical Moto/Quest acceptance are separate evidence stages. See `docs/SHEEP_BUILDING_MODEL_STARTERS_V11_226.md`.
+
+**Authority boundary:** These are **Model Atelier building assets** only; current Sheep Tag resource costs, build placement, block collisions, wolf movement and LAN authority remain unchanged until deliberately integrated into the in-match asset factory. Preserve existing model, materials/particle tabs, glove/wolf rigs, saved projects, and §C.
+
 ## §E v11.225 — Material & Texture Studio + Four Workspace Tabs (2026-11-02)
 
 **Native top workspaces:** Game Engine | Modeling | Particle Studio | Materials & Textures. The existing two editor tabs remain intact, Particle Studio now has its own native tab and full-screen preview workspace, and the new Material & Texture Studio has its own tab with the same live §E Three.js scene (no second rendering loop). The game viewport toolbar's ✨ Particles shortcut enters the Particle Studio tab. Tab switching preserves unsaved scene/model data and native controls.
