@@ -15,6 +15,7 @@ _MODEL_WORDS = re.compile(
     r"skinn(?:ing|ed)|weight(?:s|ed| painting)?|animat(?:e|ion|ing)|"
     r"glove|floating hand|hand|palm|fingers?|thumb|knuckle|gestures?|gizmo|"
     r"armature|joints?|wrist|skinned|pose|posing|keyframes?|timeline|clip|"
+    r"webxr|xrhand|retarget(?:ing)?|mocap|clench(?:ing)?|fist|wave|waving|"
     r"obj|geometry|primitive|cube|sphere|cylinder|cone|"
     r"group(?:ing)?|export|import|part(?:s)?)\b", re.I)
 _FORGE_WORDS = re.compile(
@@ -31,6 +32,11 @@ _WEIGHT = re.compile(r"\b(?:deform(?:ation)?|influences?|linear.blend|rest.pose|
 _POSE = re.compile(r"\b(?:curl|twist|spread|pointing|articulat(?:e|ion))\b", re.I)
 _GESTURE = re.compile(r"\b(?:gestures?|oppos(?:e|able|ition)|shaka|horns?|thumbs\s+up|peace|finger\s+gun|wave|grasp|precision\s+pinch)\b", re.I)
 _RESEARCH = re.compile(r"\b(?:references?|research|documentation|manual|tutorials?|sources?|citation|look\s+up|search\s+(?:online|the\s+web|the\s+internet))\b", re.I)
+_WEBXR = re.compile(
+    r"\b(?:webxr|xrhand|xrinputsource|hand[- ]?track(?:ing)?|quest[- ]?hand|"
+    r"retarget(?:ing)?|mocap|joint[- ]?mapping)\b", re.I)
+_WAVE = re.compile(r"\b(?:wave|waving|wrist[- ]?wave)\b", re.I)
+_FIST = re.compile(r"\b(?:fist|clench(?:ing)?|closed[- ]?hand)\b", re.I)
 _COMPONENT = re.compile(
     r"\b(?:sculpt(?:ing)?|vertex|vertices|edges?|faces?|brush|falloff|"
     r"component|topology|gizmo|extrud(?:e|ing)|smooth(?:ing)?)\b", re.I)
@@ -47,6 +53,34 @@ _BASE = (
     "claim an edit ran, or treat a text plan as saved geometry."
 )
 _TOPICS = {
+    "webxr": (
+        "W3C WebXR Hand Input Working Draft (2026-10-29) defines a "
+        "hand-tracking session feature and 25 named XRHand joint spaces. "
+        "The current §E v11.223 glove has 17 rig BONES, not 25 matching bones. "
+        "Prospective Quest retargeting needs explicit XR session permission, "
+        "handedness and valid poses, 25→17 anatomy mapping, calibration of "
+        "wrist and thumb CMC, parent-local rotations, smoothing, missing-joint "
+        "fallback and intentional recording. It is NOT yet verified as built "
+        "or authorized by §C. Official web sources are untrusted references."
+    ),
+    "wave": (
+        "At §E v11.223, Animate Selected Gesture Wave uses EIGHT authored "
+        "skeletal keys over 2.20s: parent wrist yaw/roll, palm follow-through, "
+        "alternating left-right swing and finger flutter. Other gestures "
+        "still have 3-key 1.5s previews. Keys live in native model JSON; "
+        "a still pose does not prove playback, and OBJ lacks animation/armature. "
+        "§C has NO native bone/keyframe action; do not claim a clip was edited. "
+        "Headset camera tracking is separate from this skeleton motion."
+    ),
+    "fist": (
+        "§E v11.223 Strong Fist uses stronger STAGGERED MCP/PIP/DIP curls "
+        "across the four fingers and thumb CMC opposition plus MCP/IP flex "
+        "to tuck across curled fingertips. This is articulated weighted "
+        "deformation, not whole-hand scaling. Diagnose mesh anatomy, rest "
+        "joint positions and skin weights separately from bone rotation. "
+        "User-saved pose/clip data is not silently rewritten. §C currently "
+        "cannot invoke a native rig/fist operation or claim it was executed."
+    ),
     "rig": (
         "At source §E v11.220 the NEW Arcane Glove hand starter has a real "
         "17-bone wrist/palm/finger/thumb armature with four-influence skin weights "
@@ -149,6 +183,12 @@ def select_modeling_lesson(
         return ""
     if _RESEARCH.search(prompt):
         topic = "research"
+    elif _WEBXR.search(prompt):
+        topic = "webxr"
+    elif _WAVE.search(prompt):
+        topic = "wave"
+    elif _FIST.search(prompt):
+        topic = "fist"
     elif _GESTURE.search(prompt):
         topic = "gesture"
     elif _ANIMATION.search(prompt) or _TIMELINE.search(prompt):
