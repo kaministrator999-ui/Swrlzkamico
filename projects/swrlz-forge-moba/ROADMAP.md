@@ -1,3 +1,9 @@
+## §E v11.228 — Game Engine GUI / Menu Setup sub-tab (2026-11-02)
+
+Inside **Game Engine**, compact **Scene | GUI / Menus** child tabs and a **Show/Hide UI** editor-preview switch organize existing menus without adding another top-level studio. The new inspector reuses Sheep Tag's editable Main Menu UI (title, subtitle, Start button, color, cinematic orbit) and adds up to 24 validated project-native label/button/panel layers with editable content, colors, viewport-percent layout, and safe Play actions (Start, Next, Stop, display only). Per-layer eye visibility and Show all/Hide all are editor-only; each layer has an independent saved Show in Play flag. GUI definitions participate in project save/export, authored level capture and native Undo/Redo; no new renderer or Quest input loop.
+
+**Verified source:** v11.228, **260 ordered patches**, **68 packaged assets**, **7,712,043 generated HTML bytes**, SHA-256 `16b6e24f471b79a1a9c6ec7ce7df2565dfeb5de8a0c527196e7b9008a907ca2d`. One-shot actual source build, JavaScript syntax, and focused GUI save/restore/visibility tests passed. Device UI acceptance on Moto/Quest is pending. Code: `runtime/game_gui_menu_subtab_v11_228.js`, `.css`, append-only `patches/v11_228_game_gui_menu_subtab.py`.
+
 ## §E v11.226 — Five Sheep-Faction 3D Building Model Starters (2026-11-02)
 
 **Owner concept → actual native projects:** Free Sheep Shelter, Thatched Starter Hut, Cozy Sheep Cottage, Flock Barn, and Ram House now have separate starter cards under **Projects → Starter Projects**. Each opens editable native Model Atelier geometry, not a 2D reference image. The pack includes original straw/blue-roof shapes, timber walls, roof pitches, window frames, doorways, sheep crests, hay and cottage decorations. Individual starter IDs: `sheep-free-shelter`, `sheep-thatched-hut`, `sheep-cottage`, `sheep-barn`, `sheep-ram-house`. Use `modeler.html?project=<id>` for a direct route, or select one saved startup default.
