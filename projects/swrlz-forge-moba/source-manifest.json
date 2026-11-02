@@ -270,6 +270,6 @@
     "patches/v11_221_thumb_opposition_gestures.py",
     "patches/v11_222_clover_motion_construction_fx.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 7550334,
+  "finalSha256": "27876c460d3c824f23d6628d3207693eb0d2194db9091a72c743122a95e17a35"
 }

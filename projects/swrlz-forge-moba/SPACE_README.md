@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.221
+title: §wyrl§ Engine v11.222
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,12 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.222 — Clover sheep animations and Sheep Tag construction sparkles (2026-11-02)
+
+Six common Clover joint animation clips — Idle, Graze, Walk, Trot, Build and Celebrate — now come from one pure joint-pose library. The standalone **Projects → Clover · Meadow Sheep** starter includes timed, exportable model JSON joint keys and a non-destructive, touch-friendly preview selector; the **Sheep Tag** starter reuses the same six poses on the existing head/tail/four-leg hierarchy. On entering Sheep Tag Play, sheep get short aqua spawning sparkles. A house under genuine construction sheds warm amber motes and completes with a teal flourish, with a short owner-sheep celebration. Effects only read the host/guest's displayed construction progress and do not change game authority, collisions, placement, resources or LAN state. All particles use a shared 96-mote point cloud and are disposed at Stop; no additional animation/render loop.
+
+**Exact source:** §wyrl§ Engine **v11.222**, **254 ordered patches**, **68 existing assets**, **7,550,334 generated HTML bytes**, SHA-256 `27876c460d3c824f23d6628d3207693eb0d2194db9091a72c743122a95e17a35`. Changed-only source checks and assembled HTML JavaScript syntax passed on the dedicated branch. See `docs/CLOVER_ANIMATION_VFX_V11_222.md`. Physical Android/Quest 2 animation, effects and performance remain **owner acceptance pending**; source build alone is not live evidence.
 
 ## §E v11.221 — Opposable Thumb and 14 Hand Gestures (2026-11-02)
 

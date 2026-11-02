@@ -21,7 +21,7 @@ jobs:
           python -m py_compile projects/swrlz-forge-moba/patches/v11_222_clover_motion_construction_fx.py
           node --check projects/swrlz-forge-moba/runtime/sheep_animation_particles_v11_222.js
           node --check projects/swrlz-forge-moba/runtime/model_atelier_sheep_animations_v11_222.js
-          python projects/swrlz-forge-moba/build_space.py --output dist/forge
+          python projects/swrlz-forge-moba/scripts/verify_v11_222_release.py --output dist/forge
           python - <<'PY'
           import hashlib,json,re,subprocess
           from pathlib import Path
