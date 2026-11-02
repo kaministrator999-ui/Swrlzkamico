@@ -1,4 +1,4 @@
-name: Calculate §E v11.219 finger rail source receipt
+name: Verify §E v11.219 sealed finger rail release
 on:
   push:
     branches: [main]
@@ -8,7 +8,7 @@ on:
 permissions:
   contents: read
 jobs:
-  source-hash:
+  sealed-rail:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -16,43 +16,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Syntax of only the new rail geometry
+      - name: Syntax check of new hand patch
         run: |
           node --check projects/swrlz-forge-moba/runtime/model_atelier_finger_rails_v11_219.js
           python3 -m py_compile projects/swrlz-forge-moba/patches/v11_219_finger_rail_contact.py
-      - name: Build candidate from all ordered patches without changing saved receipt
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          import json
-          p=Path('projects/swrlz-forge-moba/source-manifest.json')
-          m=json.loads(p.read_text())
-          assert m['name']=='§wyrl§ Engine v11.218'
-          assert m['patches'][-1]=='patches/v11_218_arcane_glove_fidelity.py'
-          m['name']='§wyrl§ Engine v11.219'
-          m['finalArtifact']='swyrl_engine_v11_219.html'
-          m['patches'].append('patches/v11_219_finger_rail_contact.py')
-          m['finalSha256']=''
-          m['finalBytes']=0
-          p.write_text(json.dumps(m,ensure_ascii=False))
-          PY
-          python3 projects/swrlz-forge-moba/build_space.py --output /tmp/se219-rails
-      - name: Verify focused rail source markers and print exact SHA
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          import hashlib
-          raw=Path('/tmp/se219-rails/index.html').read_bytes()
-          s=raw.decode('utf8')
-          for needle in ['V11_219_FINGER_RAIL_CONTACT',
-                         'se219FingerRailPoint(f,t)', 'se219FingerRailPath(f)',
-                         "for(const [j,t] of [.45,.77].entries())",
-                         "Thumb · continuous back-to-tip double helix",
-                         "<title>§wyrl§ Engine · Maker v11.219</title>"]:
-              assert needle in s,needle
-          assert raw==Path('/tmp/se219-rails/modeler.html').read_bytes()
-          assert "for(const [j,t] of [.45,.69].entries())" not in s
-          print('FINGER219_CANDIDATE_BYTES='+str(len(raw)))
-          print('FINGER219_CANDIDATE_SHA256='+hashlib.sha256(raw).hexdigest())
-          print('FINGER219_PATCHES=251')
-          PY
+      - name: Verify sealed 251-patch package, source identity and assets
+        run: python3 projects/swrlz-forge-moba/scripts/verify_v11_219_release.py --output /tmp/se219-finger-rails
