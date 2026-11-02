@@ -13,7 +13,7 @@ _MODEL_WORDS = re.compile(
     r"\b(?:model(?:er|ing)?|atelier|mesh(?:es)?|sculpt(?:ing)?|vertex|vertices|"
     r"polygon|topolog(?:y|ical)|uvs?|texture|rig(?:ging)?|skeleton|bone(?:s)?|"
     r"skinn(?:ing|ed)|weight(?:s|ed| painting)?|animat(?:e|ion|ing)|"
-    r"glove|floating hand|palm|fingers?|thumb|knuckle|gizmo|"
+    r"glove|floating hand|hand|palm|fingers?|thumb|knuckle|gizmo|"
     r"obj|geometry|primitive|cube|sphere|cylinder|cone|"
     r"group(?:ing)?|export|import|part(?:s)?)\b", re.I)
 _FORGE_WORDS = re.compile(
