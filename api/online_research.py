@@ -284,6 +284,111 @@ def _exact_lyric_result_matches(item:dict[str,Any],anchors:tuple[str,...])->bool
     return all(bool(re.search(r"(?<!\w)"+re.escape(anchor)+r"(?!\w)",haystack)) for anchor in anchors)
 
 
+_LRCLIB_API="https://lrclib.net"
+_LRCLIB_CLIENT_AGENT="SWRLZ-Chat/1.0 (https://github.com/kaministrator999-ui/Swrlzkamico)"
+_LRCLIB_MAX_BYTES=400_000
+_lrclib_backoff_until=0.0
+
+
+def _lrclib_normalize(value:str)->str:
+    return " ".join(re.findall(r"[a-z0-9]+",str(value or "").casefold()))
+
+
+def _lrclib_search(query:str)->list[dict[str,Any]]:
+    """Bounded exact title/artist lookup when general engines return no song.
+
+    Only LRCLIB's published metadata is used for search admission. A matched
+    result must still be fetched and pass the existing source/body verifier.
+    """
+    global _lrclib_backoff_until
+    if time.monotonic()<_lrclib_backoff_until:
+        return []
+    titles=re.findall(r'["“]([^"”]{2,})["”]',str(query or ""))
+    if len(titles)<2 or not re.search(r"\blyrics?\b",query,re.I):
+        return []
+    track,artist=(phrase.strip()[:180] for phrase in titles[:2])
+    if not _lrclib_normalize(track) or not _lrclib_normalize(artist):
+        return []
+    url=_LRCLIB_API+"/api/search?"+urllib.parse.urlencode({"track_name":track,"artist_name":artist})
+    _emit_trace("SEARCH_PROVIDER_VISIT",provider="lrclib-api",url=url,reason="Searching title and artist catalog")
+    try:
+        safe=_validate_public_url(url)
+        req=urllib.request.Request(safe,headers={"User-Agent":_LRCLIB_CLIENT_AGENT,"Accept":"application/json"})
+        with _opener().open(req,timeout=PAGE_TIMEOUT_SECONDS) as response:
+            if int(getattr(response,"status",200) or 200)!=200:
+                return []
+            if "json" not in str(response.headers.get("Content-Type","")).casefold():
+                return []
+            raw=response.read(_LRCLIB_MAX_BYTES+1)
+        if len(raw)>_LRCLIB_MAX_BYTES:
+            raise ValueError("LYRIC_CATALOG_RESPONSE_TOO_LARGE")
+        records=json.loads(raw.decode("utf-8","replace"))
+        if not isinstance(records,list):
+            return []
+        results=[]
+        for record in records[:20]:
+            if not isinstance(record,dict) or record.get("instrumental"):
+                continue
+            found_track=str(record.get("trackName") or "")
+            found_artist=str(record.get("artistName") or "")
+            if (_lrclib_normalize(found_track)!=_lrclib_normalize(track)
+                or _lrclib_normalize(found_artist)!=_lrclib_normalize(artist)):
+                continue
+            if not (record.get("plainLyrics") or record.get("syncedLyrics")):
+                continue
+            record_id=record.get("id")
+            if type(record_id) is not int or not 0<record_id<10**15:
+                continue
+            results.append(asdict(Evidence(
+                title=found_artist+" - "+found_track+" Lyrics | LRCLIB",
+                url=_LRCLIB_API+"/api/get/"+str(record_id),
+                snippet="",source="lrclib.net",query=query,
+                rank=len(results)+1,fetched_at=int(time.time())
+            )))
+            if len(results)>=3:
+                break
+        _emit_trace("SEARCH_PROVIDER_RESULTS" if results else "SEARCH_PROVIDER_EMPTY",
+                    provider="lrclib-api",url=url,result_count=len(results),
+                    reason="Matching lyric records found" if results else "No matching lyric records")
+        return results
+    except urllib.error.HTTPError as exc:
+        if exc.code in (429,503):
+            try: seconds=max(1,min(3600,int(exc.headers.get("Retry-After","60"))))
+            except (ValueError,TypeError,AttributeError): seconds=60
+            _lrclib_backoff_until=time.monotonic()+seconds
+        _emit_trace("SEARCH_PROVIDER_ERROR",provider="lrclib-api",url=url,
+                    error_type="HTTP_"+str(exc.code),reason="Catalog source unavailable")
+    except (OSError,ValueError,TypeError,json.JSONDecodeError) as exc:
+        _emit_trace("SEARCH_PROVIDER_ERROR",provider="lrclib-api",url=url,
+                    error_type=type(exc).__name__,reason="Catalog source unavailable")
+    return []
+
+
+def _lrclib_render_page(raw_text:str)->tuple[str,str]:
+    """Render a fetched LRCLIB JSON record as line-preserving song evidence."""
+    record=json.loads(raw_text)
+    if not isinstance(record,dict) or record.get("instrumental"):
+        raise ValueError("LYRIC_CATALOG_RECORD_INVALID")
+    title=str(record.get("trackName") or "").strip()[:180]
+    artist=str(record.get("artistName") or "").strip()[:180]
+    body=record.get("plainLyrics")
+    if not isinstance(body,str) or not body.strip():
+        synced=record.get("syncedLyrics")
+        if isinstance(synced,str):
+            body="\n".join(
+                re.sub(r"^\[\d{1,3}:\d{2}(?:\.\d+)?\]\s*","",line).strip()
+                for line in synced.splitlines()
+                if re.match(r"^\[\d{1,3}:\d{2}(?:\.\d+)?\]",line)
+            )
+    if not title or not artist or not isinstance(body,str) or not body.strip():
+        raise ValueError("LYRIC_CATALOG_BODY_UNAVAILABLE")
+    body=body.replace("\r\n","\n").replace("\r","\n").strip()
+    if len([line for line in body.splitlines() if line.strip()])<4:
+        raise ValueError("LYRIC_CATALOG_BODY_TOO_SHORT")
+    page_title=title+" Lyrics - "+artist+" | LRCLIB"
+    return page_title,(page_title+"\nLyrics\n"+body)[:MAX_PAGE_EXTRACT_CHARS]
+
+
 def _ddg_search(query:str)->list[dict[str,Any]]:
     anchors=_exact_lyric_query_anchors(query)
     encoded=urllib.parse.urlencode({"q":query})
@@ -303,6 +408,12 @@ def _ddg_search(query:str)->list[dict[str,Any]]:
             _emit_trace("SEARCH_PROVIDER_SELECTED",reason="Using "+provider,provider=provider,url=url,result_count=len(results))
             print("SWRLZ_SEARCH_PROVIDER_SELECTED "+json.dumps({"contract":"swrlz-search-provider-selected-v1","provider":provider,"resultCount":len(results)},separators=(",",":")),flush=True)
             return results
+    if anchors:
+        catalog=_lrclib_search(query)
+        if catalog:
+            _emit_trace("SEARCH_PROVIDER_SELECTED",reason="Using lrclib-api",
+                        provider="lrclib-api",url=_LRCLIB_API+"/api/search",result_count=len(catalog))
+            return catalog
     return []
 
 class _LyricDOMExtractor(HTMLParser):
@@ -370,6 +481,15 @@ def _page_fetch(url:str)->dict[str,Any]:
         if len(raw)>MAX_PAGE_BYTES:raise ValueError("PAGE_RESPONSE_TOO_LARGE")
         if not ("text/" in ctype or "html" in ctype or "json" in ctype):raise ValueError("PAGE_CONTENT_TYPE_BLOCKED")
         text=raw.decode("utf-8","replace");tm=re.search(r"<title[^>]*>([\s\S]*?)</title>",text,re.I);title=html.unescape(re.sub(r"<[^>]+>"," ",tm.group(1))).strip()[:300] if tm else ""
+        parsed_final=urllib.parse.urlsplit(final)
+        if (parsed_final.hostname=="lrclib.net"
+            and re.fullmatch(r"/api/get/[0-9]+",parsed_final.path)
+            and "json" in ctype):
+            title,extract=_lrclib_render_page(text)
+            _emit_trace("PAGE_FETCH_COMPLETE",provider="web-page",url=final,status=int(status),
+                        response_bytes=len(raw),reason="Verified catalog record fetched")
+            return {"finalUrl":final,"status":int(status),"title":title,
+                    "extract":extract,"fetchedAt":int(time.time()*1000)}
         lyric_body=_lyric_dom_text(text) if "html" in ctype else ""
         if len([line for line in lyric_body.splitlines() if line.strip()])>=4:
             # Keep page title for identity checks and an explicit body boundary

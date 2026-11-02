@@ -76,6 +76,80 @@ class OnlineLyricExtractionFixTests(unittest.TestCase):
         self.assertEqual(visit.call_count,1)
         self.assertEqual(results,unrelated)
 
+    def test_lyric_catalog_matches_metadata_without_trusting_search_noise(self):
+        class FakeReply:
+            status=200
+            headers={"Content-Type":"application/json; charset=utf-8"}
+            def __enter__(self): return self
+            def __exit__(self,*args): return None
+            def read(self,limit): return self.data[:limit]
+        records=[
+            {"id":11,"trackName":"Copper Lantern","artistName":"Wrong Singer",
+             "plainLyrics":"Invalid wrong artist lyrics\n"*12,"instrumental":False},
+            {"id":42,"trackName":"Copper Lantern","artistName":"Demo Ensemble",
+             "plainLyrics":"One invented test line\n"*12,"instrumental":False},
+        ]
+        response=FakeReply()
+        response.data=__import__("json").dumps(records).encode()
+        with (
+            patch.object(online_research,"_validate_public_url",side_effect=lambda url:url),
+            patch.object(online_research,"_opener") as opener,
+        ):
+            opener.return_value.open.return_value=response
+            result=online_research._lrclib_search('"Copper Lantern" "Demo Ensemble" lyrics')
+        self.assertEqual([item["url"] for item in result],["https://lrclib.net/api/get/42"])
+        self.assertIn("Demo Ensemble",result[0]["title"])
+        self.assertNotIn("Wrong Singer",result[0]["title"])
+
+    def test_lyrics_provider_only_after_all_generic_results_are_irrelevant(self):
+        matching=[{
+            "title":"Demo Ensemble - Copper Lantern Lyrics | LRCLIB",
+            "url":"https://lrclib.net/api/get/42","snippet":"",
+            "source":"lrclib.net","rank":1,
+        }]
+        with (
+            patch.object(online_research,"_provider_attempt",return_value=[{
+                "title":"TechCrunch | Startup and Technology News",
+                "url":"https://techcrunch.com/","snippet":"",
+            }]) as search,
+            patch.object(online_research,"_lrclib_search",return_value=matching) as catalog,
+        ):
+            actual=online_research._ddg_search('"Copper Lantern" "Demo Ensemble" lyrics')
+        self.assertEqual(actual,matching)
+        self.assertEqual(search.call_count,3)
+        catalog.assert_called_once()
+
+    def test_lyrics_provider_preserves_metadata_and_line_breaks(self):
+        import json
+        record={"id":42,"trackName":"Copper Lantern","artistName":"Demo Ensemble",
+                "instrumental":False,"plainLyrics":LYRIC_BODY.split("Lyrics\n",1)[1]}
+        title,body=online_research._lrclib_render_page(json.dumps(record))
+        self.assertEqual(title,"Copper Lantern Lyrics - Demo Ensemble | LRCLIB")
+        self.assertIn("Follow me\nShare the spark\nHey",body)
+        self.assertNotIn("instrumental",body)
+        analysis=online_tools._lyrics_extract_analysis(body,"full-lyrics",SUBJECT)
+        self.assertEqual(analysis["diagnostics"]["decision"],"ACCEPTED",analysis["diagnostics"])
+
+    def test_lyrics_provider_rejects_instrumentals_and_unusable_records(self):
+        import json
+        with self.assertRaises(ValueError):
+            online_research._lrclib_render_page(json.dumps({
+                "trackName":"Copper Lantern","artistName":"Demo Ensemble",
+                "instrumental":True,"plainLyrics":"Invented lyrics\n"*12}))
+        with self.assertRaises(ValueError):
+            online_research._lrclib_render_page(json.dumps({
+                "trackName":"Copper Lantern","artistName":"Demo Ensemble",
+                "instrumental":False,"plainLyrics":None,"syncedLyrics":None}))
+
+    def test_lyrics_provider_lrc_timestamps_removed_when_plain_unavailable(self):
+        import json
+        body="\n".join(f"[00:{i:02d}.20] Invented line number {i}" for i in range(12))
+        _,extract=online_research._lrclib_render_page(json.dumps({
+            "trackName":"Copper Lantern","artistName":"Demo Ensemble",
+            "instrumental":False,"plainLyrics":None,"syncedLyrics":body}))
+        self.assertIn("Invented line number 5",extract)
+        self.assertNotIn("[00:05.20]",extract)
+
     def test_dom_lyric_container_preserves_lines_without_chrome(self):
         page = """<html><body>
         <nav>Privacy Policy Subscribe To Updates</nav>
