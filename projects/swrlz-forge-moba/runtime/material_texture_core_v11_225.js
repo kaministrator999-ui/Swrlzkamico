@@ -28,7 +28,9 @@ function se225MaterialDefault(kind='metal'){
 }
 function se225ValidateMaterial(value){
  if(!value||typeof value!=='object'||Array.isArray(value))throw Error('Material must be an object.');
- const v={...se225MaterialDefault(),...value};
+ // Imported and persisted material data must be complete. Never invent IDs
+ // for malformed source records or silently supply missing PBR properties.
+ const v=value;
  if(typeof v.id!=='string'||!/^[a-zA-Z0-9_-]{2,70}$/.test(v.id))throw Error('Invalid material ID.');
  if(typeof v.name!=='string'||!v.name.trim()||v.name.length>65)throw Error('Material name must be 1–65 characters.');
  if(!SE225_PATTERNS.includes(v.pattern))throw Error('Unknown texture pattern.');
