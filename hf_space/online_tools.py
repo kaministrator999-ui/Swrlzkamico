@@ -55,6 +55,20 @@ _EXPLICIT_WEB = re.compile(
     r"google\s+(?:this|it)|check\s+(?:online|the\s+web))\b",
     re.I,
 )
+# Modeler reference requests are explicit retrieval intent even without the word "web".
+# This does not fetch for ordinary modeling questions and grants no editor authority.
+_MODELER_REFERENCE_SEARCH = re.compile(
+    r"\\b(?:find|show|give|pull\\s+up|look\\s+for)\\s+(?:me\\s+)?"
+    r"(?:(?:official|authoritative|reliable|current|good)\\s+)*"
+    r"(?:references?|sources?|docs?|documentation|tutorials?)\\s+"
+    r"(?:on|for|about|regarding)\\b.{0,140}\\b"
+    r"(?:rig(?:ging)?|armatures?|bones?|skin(?:ning)?|weights?|weight\\s+painting|"
+    r"animation|animate|keyframes?|model(?:er|ing)?|sculpt(?:ing)?|three\\.?js|blender)\\b", re.I,
+)
+_MODELER_REFERENCE_NEGATED = re.compile(
+    r"\\b(?:do\\s+not|don't|dont|without|not)\\s+(?:(?:please|ever|actually|yet)\\s+)?"
+    r"(?:find|show|give|pull\\s+up|look\\s+for)\\b", re.I,
+)
 _FRESHNESS = re.compile(
     r"\b(?:latest|today(?:'s)?|right\s+now|this\s+week|recent\s+(?:news|updates?|developments?)|"
     r"current\s+(?:news|price|prices|score|scores|schedule|status|weather|forecast|version|release))\b",
@@ -1181,6 +1195,7 @@ def classify_online_request(
     history = list(history or [])
     programming = programming if isinstance(programming, dict) else {}
     explicit_web = bool(_EXPLICIT_WEB.search(text))
+    modeler_reference_web = bool(_MODELER_REFERENCE_SEARCH.search(text)) and not bool(_MODELER_REFERENCE_NEGATED.search(text))
     lyrics_creative=creative_music_transform_request(text)
     # Mentioning existing lyrics as a guide to a new composition is NOT a
     # request to fetch the source again. Explicit web-search instructions
@@ -1252,12 +1267,12 @@ def classify_online_request(
             "locationRequired": not bool(location_text or use_shared),
             "programming": False,
         }
-    if explicit_web:
+    if explicit_web or modeler_reference_web:
         return {
             "contract": ONLINE_CONTRACT,
             "requested": True,
             "kind": "search",
-            "reason": "explicit-web-intent",
+            "reason": "explicit-web-intent" if explicit_web else "explicit-modeler-reference-intent",
             "query": _search_query_from_prompt(text),
             "locationText": "",
             "clientLocation": None,
