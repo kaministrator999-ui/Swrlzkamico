@@ -18,7 +18,8 @@ def apply(html):
     # The native Game tab owns the scene and input. The sub-tab only controls
     # authored DOM GUI layers and the existing Sheep Tag level menu inspector.
     html = once(html, 'window.SWRLZ_FORGE_BUILD=', js + '\nwindow.SWRLZ_FORGE_BUILD=')
-    html = once(html, '</head>', '<style id="se228GuiMenu">' + css + '</style>\n</head>')
+    if '</head>' not in html: raise AssertionError('GUI/Menu missing HTML head')
+    html = html.replace('</head>', '<style id="se228GuiMenu">' + css + '</style>\n</head>', 1)
     html = once(html,
         'SWYRL_ENGINE_DEPLOY_MARKER: V11_227_ASTRA_WOLF_RIG_SHEEP_TAG',
         'SWYRL_ENGINE_DEPLOY_MARKER: V11_228_GAME_GUI_MENU_STUDIO')
