@@ -94,7 +94,9 @@ const workspace={
  se193XRFrame:()=>{oldFrame++},
  se193XRStart:()=>{oldStart++},
  se193XRCleanup:()=>{oldCleanup++},
- se204:{holdMs:340,building:'st-farm',skill:'split',wheel:null},
+ se204:{holdMs:340,building:'st-farm',skill:'split',wheel:null,wheels:new Map()},
+ se204WheelDispose:()=>{workspace.se204.wheels.clear();workspace.se204.wheel=null;},
+ se195Text:label=>({label}),
  se204Haptic:()=>{oldHaptic++},
  se209OptionStatus:()=>{oldSkill++;return 'OLD'},
  se209RefreshWheel:()=>{menuSelects++},
@@ -132,6 +134,23 @@ assert.equal(stat().realTotemCooldown.label,'USED THIS MATCH');
 session.rules.totemLimit='cooldown';native.totemUsed=false;
 assert.equal(workspace.se209OptionStatus({type:'build'},{id:'st-farm'}),'OLD');
 assert.equal(oldSkill,1,'existing build price authority unchanged');
+// Native cooldown labels paint the SAME 384x192 texture as seconds elapse.
+const cooldownArt={};
+const current=fn('se210WheelStatusTexture')({type:'skill'},cooldownArt,'8s RECHARGE');
+assert.ok(current?.canvas);
+assert.equal(stat().cooldownTextureCreates,1);
+assert.equal(stat().cooldownTextureUpdates,1);
+const nextTick=fn('se210WheelStatusTexture')({type:'skill'},cooldownArt,'7s RECHARGE');
+assert.strictEqual(nextTick,current,'reuses the existing cooldown texture');
+assert.equal(stat().cooldownTextureCreates,1);
+assert.equal(stat().cooldownTextureUpdates,2);
+const repeated=fn('se210WheelStatusTexture')({type:'skill'},cooldownArt,'7s RECHARGE');
+assert.strictEqual(repeated,current);
+assert.equal(stat().cooldownTextureUpdates,2,'same second has no new GPU upload');
+workspace.se204.wheels.set('skill',{root:{userData:{se209Decor:cooldownArt}}});
+workspace.se204WheelDispose();
+assert.equal(stat().cooldownTextureDisposals,1);
+assert.equal(current.disposed,true);
 session.archive=null;
 assert.equal(stat().realMirrorCooldown.label,'STATE UNAVAILABLE',
  'never fabricate cooldown/readiness if native archive is missing');
@@ -265,6 +284,6 @@ const patch=fs.readFileSync(path.join(__dirname,'..','patches',
  'v11_210_quest_comprehensive_polish.py'),'utf8');
 assert.ok(patch.includes("const pressed=se210Held(record,side);"));
 assert.ok(patch.includes("!se210PanelHit(se192InputRecord('right'))"));
-console.log(JSON.stringify({pass:true,checks:72,panels:stat().panelBuilds,
+console.log(JSON.stringify({pass:true,checks:81,panels:stat().panelBuilds,
  repaints:stat().panelPaints,storageWrites:stat().storageWrites,
  controls:stat().bindingProfile,disposeCount:disposedTex}));
