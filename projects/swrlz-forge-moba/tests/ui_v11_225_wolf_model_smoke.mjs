@@ -28,7 +28,7 @@ try{
   if(['cdn.jsdelivr.net','cdnjs.cloudflare.com','unpkg.com'].includes(url.host)){route.continue();return;}
   route.abort();
  });
- await page.goto(host+'/modeler.html?project=wolf-model',{waitUntil:'domcontentloaded',timeout:90000});
+ await page.goto(host+'/modeler.html',{waitUntil:'domcontentloaded',timeout:90000});
  await page.waitForFunction(()=>typeof window.SWYRL_ENGINE_MODEL_ATELIER?.loadAnimal==='function',null,{timeout:30000});
  const opened=await page.evaluate(async()=>await window.SWYRL_ENGINE_MODEL_ATELIER.loadAnimal('wolf',{force:true}));
  console.log('WOLF225_OPEN_WOLF_MODEL',opened);
