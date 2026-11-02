@@ -28,10 +28,6 @@ def apply(html):
         "box('Lantern · glowing glass',x,y,z,.15,.28,.15,P.glass,'Decor / lantern','emissive');",
         "box('Lantern · glowing glass',x,y,z,.15,.28,.15,P.glass,'Decor / lantern',0,'emissive');")
 
-    html=once(html,
-        " source.engine='§wyrl§ Engine · Maker v11.226';source.version=11.226;",
-        " source.engine='§wyrl§ Engine · Maker v11.229';source.version=11.229;")
-
     old=" source.engine='§wyrl§ Engine · Maker v11.228';source.version=11.228;"
     new=" source.engine='§wyrl§ Engine · Maker v11.229';source.version=11.229;"
     if html.count(old)!=2:
