@@ -1,0 +1,31 @@
+name: Verify §E v11.220 hand rig (single mobile smoke)
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/verify-forge-v11-220-hand-skeletal.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  hand-rig:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax checks for rig code only
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/model_atelier_skeletal_core_v11_220.js
+          node --check projects/swrlz-forge-moba/runtime/model_atelier_rig_studio_v11_220.js
+          python3 -m py_compile projects/swrlz-forge-moba/patches/v11_220_hand_skeletal_studio.py
+      - name: Verify fully sealed native §E v11.220 source and bundled assets
+        run: python3 projects/swrlz-forge-moba/scripts/verify_v11_220_release.py --output /tmp/se220-hand-sealed
+      - name: Prepare one Chromium mobile smoke
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps --only-shell chromium
+      - name: Real native hand rigging, posing, skinned motion and playback
+        run: node projects/swrlz-forge-moba/tests/ui_v11_220_hand_skeletal_smoke.mjs
