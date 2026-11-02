@@ -256,7 +256,36 @@ def fetch_public(url:str)->dict[str,Any]:
     return _page_fetch(url)
 
 
+def _exact_lyric_query_anchors(query:str)->tuple[str,...]:
+    """Exact title/artist phrases for targeted lyric lookups only.
+
+    Ordinary searches and loosely specified lyric questions retain the existing
+    provider behavior. Do not infer song identity from unrelated page snippets.
+    """
+    if not re.search(r"\blyrics?\b",query,re.I):
+        return ()
+    quoted=re.findall(r'["“]([^"”]{2,})["”]',query)
+    if len(quoted)<2:
+        return ()
+    anchors=tuple(
+        " ".join(re.findall(r"[a-z0-9]+",phrase.casefold()))
+        for phrase in quoted[:2]
+    )
+    return anchors if all(len(anchor)>=3 for anchor in anchors) else ()
+
+
+def _exact_lyric_result_matches(item:dict[str,Any],anchors:tuple[str,...])->bool:
+    if not anchors:
+        return True
+    # Titles and canonical URLs identify the result; search snippets alone do
+    # not prove relevance and can reproduce the search query on unrelated pages.
+    identifying=str(item.get("title") or "")+" "+urllib.parse.unquote(str(item.get("url") or ""))
+    haystack=" ".join(re.findall(r"[a-z0-9]+",identifying.casefold()))
+    return all(bool(re.search(r"(?<!\w)"+re.escape(anchor)+r"(?!\w)",haystack)) for anchor in anchors)
+
+
 def _ddg_search(query:str)->list[dict[str,Any]]:
+    anchors=_exact_lyric_query_anchors(query)
     encoded=urllib.parse.urlencode({"q":query})
     attempts=[
         ("duckduckgo-html","https://html.duckduckgo.com/html/?"+encoded,_parse_ddg_html),
@@ -265,6 +294,11 @@ def _ddg_search(query:str)->list[dict[str,Any]]:
     ]
     for provider,url,parser in attempts:
         results=_provider_attempt(provider,url,parser,query)
+        if anchors and results:
+            relevant=[row for row in results if _exact_lyric_result_matches(row,anchors)]
+            if not relevant:
+                _emit_trace("SEARCH_PROVIDER_IRRELEVANT",reason="Provider returned no matching song/artist results",provider=provider,url=url,result_count=0)
+            results=relevant
         if results:
             _emit_trace("SEARCH_PROVIDER_SELECTED",reason="Using "+provider,provider=provider,url=url,result_count=len(results))
             print("SWRLZ_SEARCH_PROVIDER_SELECTED "+json.dumps({"contract":"swrlz-search-provider-selected-v1","provider":provider,"resultCount":len(results)},separators=(",",":")),flush=True)
