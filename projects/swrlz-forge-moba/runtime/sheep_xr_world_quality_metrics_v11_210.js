@@ -125,7 +125,14 @@ function se210WorldFrame(){
   return;
  }
  if(stSession&&!stSession.simulate&&se206.mesh)se210WorldInit(stSession);
- if(se205OverlayActive())se210World.overlayFrames++;
+ const obscured=se205OverlayActive();
+ if(obscured)se210World.overlayFrames++;
+ // An OS overlay gets immediate cosmetic throttling instead of waiting
+ // for the next 60-frame counter. Preserve native XR camera and network.
+ if(obscured!==se210World.lastOverlay){
+  se210World.lastOverlay=obscured;
+  se210WorldRefreshVisibility();
+ }
  se210WorldSample(now);
  if(se210World.frames%60===0)se210WorldRefreshVisibility();
 }
