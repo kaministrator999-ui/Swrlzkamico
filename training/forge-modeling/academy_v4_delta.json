@@ -1,0 +1,264 @@
+{
+  "schema": "swrlz-forge-modeling-public-practice-v4-delta",
+  "revision": 4,
+  "date": "2026-11-02",
+  "status": "TEACHER_AUTHORED_NOT_EVALUATED",
+  "classification": "Public open-book source-anchored learning cases, not hidden tests or weight training",
+  "engineBaseline": {
+    "sealed": "v11.224",
+    "wolfCandidate": "v11.225 source WIP; manifest not yet sealed at corpus authoring",
+    "manifestPath": "projects/swrlz-forge-moba/source-manifest.json"
+  },
+  "webReferences": [
+    {
+      "url": "https://threejs.org/manual/pages/animation-system.html",
+      "reason": "upstream AnimationClip, AnimationMixer, and keyframe-track concepts; do not infer wolf uses them"
+    },
+    {
+      "url": "https://docs.blender.org/manual/en/5.1/animation/armatures/posing/bone_constraints/inverse_kinematics/introduction.html",
+      "reason": "IK as external possible method, not current §E implementation"
+    }
+  ],
+  "cases": [
+    {
+      "id": "M101",
+      "domain": "wolf-rig",
+      "route": "explain",
+      "request": "Explain Astra wolf's native armature compared with our glove.",
+      "expected": "Source wolf armature has 14 bones: root/spine/neck/head/jaw/tail and four upper/lower pairs; hand has 17 distinct anatomical bones.",
+      "mustNot": "Say wolf bone count is 17 or that wolf rig is the same object as the glove.",
+      "source": "projects/swrlz-forge-moba/runtime/wolf_rig_motions_v11_224.js",
+      "anchor": "function se224WolfRigSpec"
+    },
+    {
+      "id": "M102",
+      "domain": "wolf-rig",
+      "route": "explain",
+      "request": "How are the wolf's knees connected to the upper legs?",
+      "expected": "Parented fore/hind upper and knee/lower leg bones on each side; authored rest positions and local poses; no IK implied.",
+      "mustNot": "Claim quadruped IK targets already solve foot plants.",
+      "source": "projects/swrlz-forge-moba/runtime/wolf_rig_motions_v11_224.js",
+      "anchor": "joint+'_knee'"
+    },
+    {
+      "id": "M103",
+      "domain": "wolf-rig",
+      "route": "explain",
+      "request": "How does §E deform Astra instead of moving rigid body parts?",
+      "expected": "Modeler constructs THREE.SkinnedMesh with per-vertex four normalized weights and binds a THREE.Skeleton for actual bone deformation.",
+      "mustNot": "Assume game wolf pivots are identical to modeler SkinnedMesh rig.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier_wolf_studio_v11_224.js",
+      "anchor": "new THREE.SkinnedMesh"
+    },
+    {
+      "id": "M104",
+      "domain": "wolf-rig",
+      "route": "explain",
+      "request": "What counts as a valid imported Wolf Model animation?",
+      "expected": "Validate wolf armature and clip schemas, bounded bone rotations, durations, keys and joints; reject malformed input instead of drawing a guessed wolf.",
+      "mustNot": "Recommend bypassing wolf rig data validation.",
+      "source": "projects/swrlz-forge-moba/runtime/wolf_rig_motions_v11_224.js",
+      "anchor": "function se224WolfClipsValid"
+    },
+    {
+      "id": "M105",
+      "domain": "wolf-animation",
+      "route": "explain",
+      "request": "How many Astra motions are in the authored shared motion library?",
+      "expected": "Ten: idle, sniff, stalk, walk, run, pounce, bite, howl, alert, victory; authored source is not verified deployed Wolf Model v11.225.",
+      "mustNot": "Invent death/swim/fly as already supported wolf clips.",
+      "source": "projects/swrlz-forge-moba/runtime/wolf_rig_motions_v11_224.js",
+      "anchor": "SE224_WOLF_MOTIONS"
+    },
+    {
+      "id": "M106",
+      "domain": "wolf-animation",
+      "route": "explain",
+      "request": "Are wolf's thirteen sampled keyframes the same as hand Wave's eight?",
+      "expected": "No; each authored wolf clip exposes thirteen sampled pose keys; hand Wave has eight keys over 2.20 sec; not interchangeable timelines.",
+      "mustNot": "Assume all rigs use the same keyframe-count cap.",
+      "source": "projects/swrlz-forge-moba/runtime/wolf_rig_motions_v11_224.js",
+      "anchor": "length:13"
+    },
+    {
+      "id": "M107",
+      "domain": "wolf-animation",
+      "route": "explain",
+      "request": "What makes the wolf's walk believable versus sliding?",
+      "expected": "Use opposed/diagonal leg phase with knee lift, body bob and tail/head timing; actual root locomotion/nav is separate from cosmetic gait.",
+      "mustNot": "Claim walk clip automatically changes game wolf pathfinding.",
+      "source": "projects/swrlz-forge-moba/runtime/wolf_rig_motions_v11_224.js",
+      "anchor": "const diagonal="
+    },
+    {
+      "id": "M108",
+      "domain": "wolf-animation",
+      "route": "explain",
+      "request": "What does Astra do differently when pouncing and biting?",
+      "expected": "Pounce has crouch/spring/recovery timing and spine/leg changes; bite uses jaw opening and head recoil; distinguish visual action from actual capture.",
+      "mustNot": "Treat jaw animation as applying tag damage.",
+      "source": "projects/swrlz-forge-moba/runtime/wolf_rig_motions_v11_224.js",
+      "anchor": "case 'pounce'"
+    },
+    {
+      "id": "M109",
+      "domain": "wolf-animation",
+      "route": "explain",
+      "request": "Can I edit the Astra jaw clip key without changing game rules?",
+      "expected": "Native Wolf Rig & Motion panel offers clip selection, scrub, joint axes and Save pose at playhead; loaded model rig keys are saved into model JSON, game rules are separate.",
+      "mustNot": "Invent Chat-native wolf.clip.keyframe operation or assert game damage changes.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier_wolf_studio_v11_224.js",
+      "anchor": "modelAtelierWolfSaveKey"
+    },
+    {
+      "id": "M110",
+      "domain": "wolf-animation",
+      "route": "explain",
+      "request": "How many wolf pose keys can the native editor save per clip?",
+      "expected": "Wolf UI caps at 64 and input validates keys; hand rig max 32, so distinguish format-specific limits.",
+      "mustNot": "Use 32 for the wolf just because hand used 32.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier_wolf_studio_v11_224.js",
+      "anchor": "Max 64 wolf keys per clip"
+    },
+    {
+      "id": "M111",
+      "domain": "wolf-animation",
+      "route": "explain",
+      "request": "If a Wolf Model save has 10 clips, does Sheep Tag copy the full authoring mesh?",
+      "expected": "No; authored modeler uses skinned high-detail source while Sheep Tag keeps merged lightweight representation, and uses shared motion source mapped to game pivots and jaw.",
+      "mustNot": "Claim game wolf always uses the high-detail 14-bone skinned model.",
+      "source": "projects/swrlz-forge-moba/docs/ASTRA_WOLF_RIG_SHEEP_TAG_V11_225.md",
+      "anchor": "optimized Sheep Tag game wolf"
+    },
+    {
+      "id": "M112",
+      "domain": "wolf-animation",
+      "route": "explain",
+      "request": "How does Sheep Tag choose when Astra plays bite, run or alert?",
+      "expected": "Cosmetic game overlay selects clip from capture/attack, speed, headstart, winner and proximity; no gameplay authority is granted.",
+      "mustNot": "Say animation drives collision, attack timing or captured state.",
+      "source": "projects/swrlz-forge-moba/runtime/sheep_tag_wolf_animation_v11_224.js",
+      "anchor": "function se224WolfGameFrame"
+    },
+    {
+      "id": "M113",
+      "domain": "wolf-animation",
+      "route": "explain",
+      "request": "Can the wolf animation change attack radius, fog, or LAN networking?",
+      "expected": "No; animation overlay intentionally avoids mutating gameplay/physics/network logic.",
+      "mustNot": "Claim a paw clip can extend tag radius without a separate gameplay change.",
+      "source": "projects/swrlz-forge-moba/docs/ASTRA_WOLF_RIG_SHEEP_TAG_V11_225.md",
+      "anchor": "No changes to physics"
+    },
+    {
+      "id": "M114",
+      "domain": "wolf-animation",
+      "route": "explain",
+      "request": "Why does the wolf's body bounce during gait?",
+      "expected": "Actor-local visual bob uses pose.bob; not camera movement or world physics; inspect layering if movement jitters.",
+      "mustNot": "Change camera transform when adding a bounce.",
+      "source": "projects/swrlz-forge-moba/runtime/sheep_tag_wolf_animation_v11_224.js",
+      "anchor": "g.position.y=state.base+pose.bob"
+    },
+    {
+      "id": "M115",
+      "domain": "wolf-animation",
+      "route": "diagnose",
+      "request": "How should §C handle a reported Wolf Model loader failure?",
+      "expected": "Distinguish source implementation/loader entry from a successfully loaded live model. Confirm active current model, wolfRig validity and actual preview before success claim.",
+      "mustNot": "Assume draft/source file alone means hosted Wolf Model is accepted.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier_wolf_studio_v11_224.js",
+      "anchor": "function se224WolfIsModel"
+    },
+    {
+      "id": "M116",
+      "domain": "sheep-animation",
+      "route": "explain",
+      "request": "Are Clover sheep animations implemented with the wolf skeleton?",
+      "expected": "No; Clover Model Atelier preview animates displayed part transforms for sheep; wolf modeler has SkinnedMesh armature and Sheep Tag wolf uses optimized pivots.",
+      "mustNot": "Claim Clover already has the wolf's 14-bone skin weights.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier_sheep_animations_v11_222.js",
+      "anchor": "se222SheepPreviewReset"
+    },
+    {
+      "id": "M117",
+      "domain": "particle",
+      "route": "explain",
+      "request": "What does the §E Particle Studio create?",
+      "expected": "Versioned scene emitters and live THREE.Points GPU render objects; definitions are editor project data, not model topology or collision actors.",
+      "mustNot": "Treat particles as sculpted skinned mesh or gameplay damage.",
+      "source": "projects/swrlz-forge-moba/runtime/particle_studio_core_v11_224.js",
+      "anchor": "const SE223_SCHEMA"
+    },
+    {
+      "id": "M118",
+      "domain": "particle",
+      "route": "explain",
+      "request": "Does Particle Studio offer 10 named presets?",
+      "expected": "Yes; magic, fire, smoke, sparks, snow, rain, healing, building, portal, celebration with bounded fields; these are editable templates.",
+      "mustNot": "Invent shader graph or animated texture atlas editor as already shipped.",
+      "source": "projects/swrlz-forge-moba/runtime/particle_studio_core_v11_224.js",
+      "anchor": "const SE223_PRESETS"
+    },
+    {
+      "id": "M119",
+      "domain": "particle",
+      "route": "explain",
+      "request": "How many independent emitters/particles can our native studio render?",
+      "expected": "Max 12 emitters, 96 motes per emitter and 576 total, with per-emitter points draw call; performance limits matter for phone/VR.",
+      "mustNot": "State unlimited effects because GPU point sprites are efficient.",
+      "source": "projects/swrlz-forge-moba/runtime/particle_studio_core_v11_224.js",
+      "anchor": "SE223_MAX_EMITTERS=12"
+    },
+    {
+      "id": "M120",
+      "domain": "particle",
+      "route": "unsupported-native",
+      "request": "Can I add a burst of sheep house-building sparkles through §C's native Chat API?",
+      "expected": "Particle Studio UI has burst/presets; Chat's native typed allowlist has no particle.create or emit action. Explain UI or safe future bridge without fake mutation.",
+      "mustNot": "Emit arbitrary JS or report sparkles already added to the project.",
+      "source": "projects/swrlz-forge-moba/docs/PARTICLE_STUDIO_V11_224.md",
+      "anchor": "Burst now"
+    },
+    {
+      "id": "M121",
+      "domain": "particle",
+      "route": "explain",
+      "request": "What's the difference between an attached emitter and particles already in flight?",
+      "expected": "Emitter origin may track a selected actor; already spawned particles remain in world coordinates; attachment is not permanent parentage of every mote.",
+      "mustNot": "Move every existing particle with the actor after spawn.",
+      "source": "projects/swrlz-forge-moba/docs/PARTICLE_STUDIO_V11_224.md",
+      "anchor": "Already-born particles remain in world space"
+    },
+    {
+      "id": "M122",
+      "domain": "particle",
+      "route": "explain",
+      "request": "Can the particle animation continue while the game editor is paused?",
+      "expected": "Preview-all is an opt-in exception; otherwise playback/simulate gating applies and inactive preview hides particles.",
+      "mustNot": "Claim all emitters run forever while editor idle.",
+      "source": "projects/swrlz-forge-moba/runtime/particle_studio_core_v11_224.js",
+      "anchor": "se223Frame(dt,t)"
+    },
+    {
+      "id": "M123",
+      "domain": "particle",
+      "route": "explain",
+      "request": "Should exported particle VFX JSON also contain GPU geometry?",
+      "expected": "No; serialized emitter definitions are versioned and validated, GPU points/buffers/materials are ephemeral and cleaned on scene change.",
+      "mustNot": "Export runtime GPU buffers as permanent project data.",
+      "source": "projects/swrlz-forge-moba/docs/PARTICLE_STUDIO_V11_224.md",
+      "anchor": "Runtime particle resources are allocated"
+    },
+    {
+      "id": "M124",
+      "domain": "research",
+      "route": "plan",
+      "request": "Search current official three.js AnimationMixer docs, then tell me if our wolf uses it.",
+      "expected": "Search via existing bounded web flow, cite returned official source. Compare to repository wolf's custom se224WolfPose/key sampling, not assume that any online API is already used.",
+      "mustNot": "Claim the wolf playback uses AnimationMixer solely because three.js documents it.",
+      "source": "projects/swrlz-forge-moba/runtime/wolf_rig_motions_v11_224.js",
+      "anchor": "function se224WolfSampleClip"
+    }
+  ]
+}

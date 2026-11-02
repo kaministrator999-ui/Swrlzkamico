@@ -1,4 +1,9 @@
-# §C ⇄ §E Model Atelier Academy · v1→v3
+# §C ⇄ §E Model Atelier Academy · v1→v4
+
+> **v4 (Nov 2, 2026): 124 public source-anchored practice cases M001–M124.** The new [24-case Wolf/Sheep/Particle Studio delta M101–M124](academy_v4_delta.json), [modeling distinctions & official web references](WOLF_SHEEP_PARTICLES_V4.md), and [offline source validator](verify_academy_v4.py) teach Astra wolf's 14-bone rig, ten shared motion formulas, Sheep Tag's cosmetic animation ownership, Clover's separate preview system, and §E v11.224 sealed Particle Studio with its runtime/performance limits. The source-level Wolf Model v11.225 loader should **not** be called a sealed/host-accepted feature until the current engine manifest and deployment confirm it.
+
+> **What training means here:** these are open-book teacher examples and selectable runtime context, NOT LoRA/weight fine-tuning, held-out model scores, observed editor execution or owner Quest/phone acceptance.
+
 
 > **Current instructional pack (Nov 2, 2026): 100 public cases M001–M100.** New [v3 source-anchored practice M080–M100](academy_v3_delta.json) focuses on 25→17 WebXR joint retargeting design, §E **v11.223** eight-key wrist-driven Wave versus three-key gestures, source-driven Fist deformation, missing hand tracking and safe research. [Compact v3 teaching reference](model_context_v3.txt); [offline v3 source validator](verify_academy_v3.py). See also the evolving [rigging, animation and WebXR guide](RIGGING_ANIMATION_RESEARCH_V2.md). The W3C document is a working draft and is not a claim of existing Quest capture in §E.
 
