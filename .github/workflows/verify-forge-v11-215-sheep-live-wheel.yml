@@ -43,11 +43,11 @@ jobs:
           node projects/swrlz-forge-moba/tests/test_v11_192_native_vr_editor.cjs
       - name: Build exact static package and seal if manifest ready
         run: |
-          python3 projects/swrlz-forge-moba/build_space.py --output "$RUNNER_TEMP/se-v11-214"
-          wc -c "$RUNNER_TEMP/se-v11-214/index.html"
-          sha256sum "$RUNNER_TEMP/se-v11-214/index.html"
+          python3 projects/swrlz-forge-moba/build_space.py --output "$RUNNER_TEMP/se-v11-215"
+          wc -c "$RUNNER_TEMP/se-v11-215/index.html"
+          sha256sum "$RUNNER_TEMP/se-v11-215/index.html"
           if python3 -c 'import json; m=json.load(open("projects/swrlz-forge-moba/source-manifest.json")); assert m.get("finalSha256") and m.get("finalBytes")'; then
-            python3 projects/swrlz-forge-moba/scripts/verify_v11_215_release.py --output "$RUNNER_TEMP/se-v11-214-verified"
+            python3 projects/swrlz-forge-moba/scripts/verify_v11_215_release.py --output "$RUNNER_TEMP/se-v11-215-verified"
           else
             echo "Candidate built; seal printed bytes/SHA before deployment."
           fi
