@@ -1,0 +1,24 @@
+name: Verify §E v11.223 sealed fist and wave release
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/verify-forge-v11-223-hand-motion.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  sealed-hand:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax of wave motion source
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/model_atelier_hand_motion_v11_223.js
+          python3 -m py_compile projects/swrlz-forge-moba/patches/v11_223_fist_clench_wrist_wave.py
+      - name: Verify native Model Atelier source, 255-patch seal and assets
+        run: python3 projects/swrlz-forge-moba/scripts/verify_v11_223_release.py --output /tmp/se223-verified
