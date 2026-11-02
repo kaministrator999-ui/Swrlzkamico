@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.228",
+  "name": "§wyrl§ Engine v11.229",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_228.html",
+  "finalArtifact": "swyrl_engine_v11_229.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -274,8 +274,9 @@
     "patches/v11_225_material_texture_workspace_tabs.py",
     "patches/v11_226_sheep_building_starters.py",
     "patches/v11_227_astra_wolf_rig_animations.py",
-    "patches/v11_228_game_gui_menu_subtab.py"
+    "patches/v11_228_game_gui_menu_subtab.py",
+    "patches/v11_229_sheep_house_model_loader_repair.py"
   ],
-  "finalBytes": 7712043,
-  "finalSha256": "16b6e24f471b79a1a9c6ec7ce7df2565dfeb5de8a0c527196e7b9008a907ca2d"
+  "finalBytes": 7712062,
+  "finalSha256": "38012d3e068347a65045da180ef0e2e3f6dcff42a5bc334569aecce203c4a53d"
 }
