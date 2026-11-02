@@ -23,7 +23,7 @@ jobs:
           node --check projects/swrlz-forge-moba/runtime/model_atelier_wolf_studio_v11_224.js
           node --check projects/swrlz-forge-moba/runtime/sheep_tag_wolf_animation_v11_224.js
           python3 -m py_compile projects/swrlz-forge-moba/patches/v11_227_astra_wolf_rig_animations.py
-      - name: Build v11.225 candidate without modifying the persisted manifest
+      - name: Build v11.227 wolf candidate atop sealed v11.226 sheep houses
         run: |
           python3 - <<'PY'
           import json
