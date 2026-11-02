@@ -1,3 +1,9 @@
+## §E v11.212 — Floating Hand · Arcane Glove starter (2026-11-02)
+
+Owner-supplied multi-view glove reference is now an **independent native Model Atelier starter**. Open Projects → Floating Hand · Arcane Glove, or navigate to modeler.html?project=floating-hand-glove. The original indexed organic palm/finger/thumb shell, metal knuckle/dorsal armor, glowing front/back crests, rune seams, cuff and suspended violet rings are separate editable model parts. Saving/exporting uses the existing Model Atelier project/mesh workflow; other starters, user projects, XR bindings, chat and Sheep Tag are unchanged.
+
+**Sealed source receipt:** 244 ordered patches, 68 assets, 7,478,674 HTML bytes, SHA-256 add8a1718f8d06a1ef178bf4adaa55e12ae38f9d33be1404396637c32ebfa92f. See docs/FLOATING_HAND_MODEL_STARTER_V11_212.md. The open-hand model is not yet bone-rigged, skinned, pose-animated, or linked to Quest hand tracking. Owner phone/Quest visual acceptance remains pending.
+
 ## Current §E owner handoff — Quest spatial editor v11.198 (2026-11-01)
 
 **Authority:** §E 230 ordered patches, 68 assets, 7,320,589 bytes SHA-256 `c5e42de3a9c6dca98d72843b70c4cb2eb549c22589aae4a7fb0d4f7e8ba00f0f`. The new editor adapter implements 6DoF right-grip object grabbing, trigger-selectable native XYZ gizmo, adjustable smooth free flight and speed boost, per-device snap-turn settings, in-world controls legend, smaller controller visuals and robust cleanup. Only editing runtime changes; prior project data, Sheep Tag game authority, Chat, Modeler, and saved settings remain independent. Read `docs/QUEST_SPATIAL_EDITOR_FLIGHT_GIZMO_V11_198.md` before further VR changes. Release after strict verifier and a separate pinned deploy request. Quest 2 hardware acceptance pending.
