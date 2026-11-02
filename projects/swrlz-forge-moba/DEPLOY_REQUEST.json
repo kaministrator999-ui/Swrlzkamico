@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.226",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_226_SHEEP_BUILDING_MODEL_STARTERS",
-  "reason": "Owner-requested five separate native Model Atelier sheep-faction building starter projects: Free Shelter, Thatched Hut, Cozy Cottage, Flock Barn and Ram House. Each contains independent editable indexed 3D geometry and model groups, preserves front/side/top native viewing and the original Sheep Tag gameplay collision/build costs/LAN authority. Source/build verification PASSED at 258 patches, 68 unchanged packaged assets, 7,656,704 HTML bytes, SHA-256 7395e442f324b33cf67f49aa1eb1be9349f07c2e4d7f00aa5872d3312112129d. Owner phone/Quest visual acceptance pending.",
-  "sourceCommit": "99be3fc726878d2ffb9b018f4f61a0079cda8308",
-  "sourceIntegritySha256": "7395e442f324b33cf67f49aa1eb1be9349f07c2e4d7f00aa5872d3312112129d"
+  "releaseVersion": "v11.227",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_227_ASTRA_WOLF_RIG_SHEEP_TAG",
+  "reason": "Owner-requested Astra Wolf appearance and Sheep Tag animation upgrade. 108 weighted modeler mesh parts, 14-bone rig, editable howl/run/bite/tail clips and pose-key UI; lightweight game prefab with enhanced face, four leg pivots and moving jaw. A focused mobile-width browser smoke passed for modeler controls and wolf prefab. The exact ordered 259-patch source was verified with 68 packaged assets, 7,690,819 HTML bytes and SHA-256 daabe71f8e82da2ddbc481f0a481c3be6cde472b15f13e6d7aa0b404e9aa6ce1. Live match and owner Moto G Power/Quest 2 visual acceptance remain unverified.",
+  "sourceCommit": "4f8910d9a2050a7904f61e145c7c5fc8dd6f5113",
+  "sourceIntegritySha256": "daabe71f8e82da2ddbc481f0a481c3be6cde472b15f13e6d7aa0b404e9aa6ce1"
 }
