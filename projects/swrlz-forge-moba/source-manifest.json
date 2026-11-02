@@ -264,6 +264,6 @@
     "patches/v11_215_floating_hand_anatomy_upgrade.py",
     "patches/v11_216_sheep_live_move_wheel.py"
   ],
-  "finalBytes": null,
-  "finalSha256": null
+  "finalBytes": 7493268,
+  "finalSha256": "354f8cce2b5833991fb6fd8d30390b096682def3956b2290a5468451f2a1e643"
 }
