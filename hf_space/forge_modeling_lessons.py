@@ -14,6 +14,7 @@ _MODEL_WORDS = re.compile(
     r"polygon|topolog(?:y|ical)|uvs?|texture|rig(?:ging)?|skeleton|bone(?:s)?|"
     r"skinn(?:ing|ed)|weight(?:s|ed| painting)?|animat(?:e|ion|ing)|"
     r"glove|floating hand|hand|palm|fingers?|thumb|knuckle|gizmo|"
+    r"armature|joints?|wrist|skinned|pose|posing|keyframes?|timeline|clip|"
     r"obj|geometry|primitive|cube|sphere|cylinder|cone|"
     r"group(?:ing)?|export|import|part(?:s)?)\b", re.I)
 _FORGE_WORDS = re.compile(
@@ -22,7 +23,9 @@ _FORGE_WORDS = re.compile(
 _SURFACE = re.compile(r"\b(?:uvs?|texture|material|paint|mapping)\b", re.I)
 _RIG = re.compile(r"\b(?:rig(?:ging)?|skin(?:ning|ned)?|skeleton|bones?|"
                   r"weights?|weight.paint(?:ing)?|animat(?:e|ion|ing)|"
-                  r"hand.track(?:ing)?|quest.hand)\b", re.I)
+                  r"hand.track(?:ing)?|quest.hand|armature|joints?|"
+                  r"pose|posing|keyframes?|timeline|clip)\b", re.I)
+_TIMELINE = re.compile(r"\b(?:keyframes?|timeline|clip|scrubb?(?:ing)?|playback|loop)\b", re.I)
 _COMPONENT = re.compile(
     r"\b(?:sculpt(?:ing)?|vertex|vertices|edges?|faces?|brush|falloff|"
     r"component|topology|gizmo|extrud(?:e|ing)|smooth(?:ing)?)\b", re.I)
@@ -40,9 +43,20 @@ _BASE = (
 )
 _TOPICS = {
     "rig": (
-        "Skeletal rigs, skin weights, animations and Quest hand-tracking require "
-        "separate verified implementations; a reference picture or organic hand "
-        "mesh is NOT a working skinned/animated hand. Do not invent rig tools."
+        "At source §E v11.220 the NEW Arcane Glove hand starter has a real "
+        "17-bone wrist/palm/finger/thumb armature with four-influence skin weights "
+        "and THREE.SkinnedMesh deformation. The Rig · Pose · Animate UI edits joints "
+        "and authored animation; old saved gloves are NOT auto-rigged. This is "
+        "an §E editor UI feature, NOT a new §C Chat-native rig/bone operation. "
+        "Quest tracking retargeting is unverified; never invent its integration."
+    ),
+    "animation": (
+        "§E v11.220 new rigged glove supports Open/Fist/Point/Pinch poses, "
+        "Curl/X Twist/Y Spread/Z, timeline Save/Delete key, scrub, Play/Stop, "
+        "duration and looping. Up to 32 ordered keys; 2+ to animate. Native "
+        "JSON preserves rig/clip; OBJ exports posed vertices, not bones or keys. "
+        "§C Chat still cannot call a native bone/pose/keyframe action. Explain "
+        "real UI steps, not fictional tool execution or a saved receipt."
     ),
     "component": (
         "The editor UI supports vertex/edge/face work and sculptVertexEdits, "
@@ -97,7 +111,9 @@ def select_modeling_lesson(
     in_modeler = context.get("workspace") == "model-atelier"
     if not (in_modeler or _FORGE_WORDS.search(prompt)):
         return ""
-    if _RIG.search(prompt):
+    if _TIMELINE.search(prompt):
+        topic = "animation"
+    elif _RIG.search(prompt):
         topic = "rig"
     elif _COMPONENT.search(prompt):
         topic = "component"
