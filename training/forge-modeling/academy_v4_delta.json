@@ -1,0 +1,243 @@
+{
+  "schema": "swrlz-forge-modeling-public-practice-v4-delta",
+  "revision": 4,
+  "asOf": "2026-11-02",
+  "status": "TEACHER_AUTHORED_NOT_EVALUATED",
+  "classification": "public open-book teacher instruction, not held-out model evaluation or weight fine-tuning",
+  "targets": [
+    "700M conversation student",
+    "Qwen coder/planner"
+  ],
+  "engineSourceBaseline": {
+    "repo": "kaministrator999-ui/Swrlzkamico",
+    "release": "v11.224",
+    "manifest": "projects/swrlz-forge-moba/source-manifest.json",
+    "notes": "v11.225 wolf patch exists separately but is not part of the main v11.224 manifest; refresh manifest before future changes"
+  },
+  "referenceSources": [
+    {
+      "title": "three.js Animation System",
+      "url": "https://threejs.org/manual/pages/animation-system.html",
+      "intent": "General AnimationClip, KeyframeTrack and AnimationMixer reference, not implemented-state proof"
+    },
+    {
+      "title": "three.js SkinnedMesh",
+      "url": "https://threejs.org/docs/pages/SkinnedMesh.html",
+      "intent": "General skinIndex, skinWeight, skeleton binding"
+    },
+    {
+      "title": "Blender Animation and Rigging",
+      "url": "https://www.blender.org/features/animation/",
+      "intent": "External workflows for armatures, actions and animation authoring, not native §E UI"
+    }
+  ],
+  "boundaries": [
+    "Model Atelier wolf uses true GPU skinning; Sheep Tag wolf game uses optimized pivots with same motion source",
+    "Sheep preview is part transforms and not weighted wolf or glove rig",
+    "No newly authorized §C rig or keyframe native action",
+    "Gameplay state, construction and collision never owned by cosmetic animations",
+    "No student inference, training, real-device or live editor tests"
+  ],
+  "cases": [
+    {
+      "id": "M101",
+      "domain": "quadruped-rig",
+      "request": "Teach me the actual wolf skeleton in §E.",
+      "route": "explain",
+      "expected": "v11.224 Wolf Model has 14 parented armature bones: root, spine, neck, head, jaw, tail, and four upper/lower leg chains. It is different from the human-style 17-bone glove.",
+      "mustNot": "Claim 17 glove bones are also the wolf hierarchy.",
+      "source": "projects/swrlz-forge-moba/runtime/wolf_rig_motions_v11_224.js",
+      "anchor": "function se224WolfRigSpec()"
+    },
+    {
+      "id": "M102",
+      "domain": "quadruped-rig",
+      "request": "Are the Astra wolf's joints just scene objects or real skinned animation?",
+      "route": "explain",
+      "expected": "Model Atelier Wolf Model uses THREE.SkinnedMesh, skinIndex/skinWeight, and THREE.Skeleton with four-influence normalized weights. Inspect the proper studio source.",
+      "mustNot": "Say the wolf model only has rigid disconnected pivots.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier_wolf_studio_v11_224.js",
+      "anchor": "new THREE.SkinnedMesh"
+    },
+    {
+      "id": "M103",
+      "domain": "quadruped-rig",
+      "request": "How do we keep a model's neutral wolf shape while posing its bones?",
+      "route": "plan",
+      "expected": "Preserve source mesh and rest transforms; assign bone pose channels to bound SkinnedMesh without permanently deforming neutral vertex geometry.",
+      "mustNot": "Bake each preview into the rest mesh without approval.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier_wolf_studio_v11_224.js",
+      "anchor": "se224WolfRigBind"
+    },
+    {
+      "id": "M104",
+      "domain": "quadruped-rig",
+      "request": "How do wolf weight gradients follow head, jaw, tail and legs?",
+      "route": "explain",
+      "expected": "se224WolfVertexWeights transitions influences among spine/neck/head/jaw/tail and paired upper/lower leg segments then normalizes up to four influences.",
+      "mustNot": "Claim all wolf vertices are controlled by the head bone.",
+      "source": "projects/swrlz-forge-moba/runtime/wolf_rig_motions_v11_224.js",
+      "anchor": "function se224WolfVertexWeights"
+    },
+    {
+      "id": "M105",
+      "domain": "animation",
+      "request": "How many wolf animations are authored in §E v11.224?",
+      "route": "explain",
+      "expected": "Ten: idle, sniff, stalk, walk, run, pounce, bite, howl, alert, victory; each has distinct duration/behavior.",
+      "mustNot": "Invent swim, sit, death or a full IK solver as existing clips.",
+      "source": "projects/swrlz-forge-moba/runtime/wolf_rig_motions_v11_224.js",
+      "anchor": "SE224_WOLF_MOTIONS"
+    },
+    {
+      "id": "M106",
+      "domain": "animation",
+      "request": "Is the wolf clip frame library a set of hand-placed 30 fps keys?",
+      "route": "explain",
+      "expected": "The source samples each procedural pose into 13 keys per clip across its duration and validates bone rotations and key counts; not evidence of 30 fps authored mocap.",
+      "mustNot": "Call 13 keys 13 fps or a motion-capture recording.",
+      "source": "projects/swrlz-forge-moba/runtime/wolf_rig_motions_v11_224.js",
+      "anchor": "Array.from({length:13}"
+    },
+    {
+      "id": "M107",
+      "domain": "animation",
+      "request": "Why do diagonal legs move out of phase when Astra walks?",
+      "route": "explain",
+      "expected": "Quadruped gait uses opposed phase offsets [0,π,π,0] and cyclic joint motion, with head/body/tail follow-through; not four identical leg swings.",
+      "mustNot": "Move all legs forward simultaneously in a walk.",
+      "source": "projects/swrlz-forge-moba/runtime/wolf_rig_motions_v11_224.js",
+      "anchor": "const diagonal=[0,Math.PI,Math.PI,0]"
+    },
+    {
+      "id": "M108",
+      "domain": "animation",
+      "request": "How should a pounce differ from a run?",
+      "route": "explain",
+      "expected": "Pounce uses crouch/anticipation, a timed forward leap and recovery; run uses cyclic diagonal gait with stronger bob and spine motion.",
+      "mustNot": "Reuse run loop for a one-shot pounce without anticipation.",
+      "source": "projects/swrlz-forge-moba/runtime/wolf_rig_motions_v11_224.js",
+      "anchor": "case 'pounce':"
+    },
+    {
+      "id": "M109",
+      "domain": "animation",
+      "request": "What makes the wolf's Bite animation independent of damage?",
+      "route": "explain",
+      "expected": "Bite changes jaw/head/neck visual pose. Sheep Tag game timing/damage remain owned by existing gameplay; the animation is cosmetic.",
+      "mustNot": "Drive collision damage from the jaw rotation or change multiplayer rules.",
+      "source": "projects/swrlz-forge-moba/runtime/sheep_tag_wolf_animation_v11_224.js",
+      "anchor": "Never modifies commands"
+    },
+    {
+      "id": "M110",
+      "domain": "animation",
+      "request": "How do we select wolf animations while sheep are moving and building?",
+      "route": "explain",
+      "expected": "Current Sheep Tag wolf overlay derives idle/alert/stalk/walk/run/pounce/bite/howl/victory from existing session/attack/movement state and applies pose visually, without changing orders.",
+      "mustNot": "Make animation state authoritative for gameplay rules.",
+      "source": "projects/swrlz-forge-moba/runtime/sheep_tag_wolf_animation_v11_224.js",
+      "anchor": "let kind='idle'"
+    },
+    {
+      "id": "M111",
+      "domain": "animation",
+      "request": "Why can Sheep Tag wolves use the same motion library as Wolf Model but look different internally?",
+      "route": "explain",
+      "expected": "Shared pose calculations provide consistent motion intent; Model Atelier uses GPU SkinnedMesh while game applies poses to optimized existing pivots and articulated jaw.",
+      "mustNot": "Assert game wolves have the identical GPU skin hierarchy as Model Atelier.",
+      "source": "projects/swrlz-forge-moba/runtime/sheep_tag_wolf_animation_v11_224.js",
+      "anchor": "for(const pivot of u.pivots||[])"
+    },
+    {
+      "id": "M112",
+      "domain": "animation",
+      "request": "How does Sheep Tag avoid snapping a wolf from walk straight into bite?",
+      "route": "explain",
+      "expected": "A per-unit WeakMap stores previous pose/state and fades toward target during state changes over a short blend window (0.19s). This is visual interpolation, not game-state rewrites.",
+      "mustNot": "Treat a new attack clip as instantaneous scene teleport.",
+      "source": "projects/swrlz-forge-moba/runtime/sheep_tag_wolf_animation_v11_224.js",
+      "anchor": "se224WolfGameMemory"
+    },
+    {
+      "id": "M113",
+      "domain": "animation",
+      "request": "Do wolf body bob and tail pose alter terrain collisions?",
+      "route": "diagnose",
+      "expected": "No: overlay body bob/pose only affects cosmetic visual actor transforms; movement/collision stays owned by game logic.",
+      "mustNot": "Assume an animation's body lift changes collision physics.",
+      "source": "projects/swrlz-forge-moba/runtime/sheep_tag_wolf_animation_v11_224.js",
+      "anchor": "cosmetic body bounce"
+    },
+    {
+      "id": "M114",
+      "domain": "sheep-animation",
+      "request": "Does the Clover sheep have the same 14-bone weighted wolf rig?",
+      "route": "explain",
+      "expected": "No: Clover has six named motion clips and six semantic animated pivots/parts in the game and a Model Atelier transform preview; it is not the wolf's 14-bone SkinnedMesh.",
+      "mustNot": "Transfer the wolf 14-bone armature into sheep by renaming IDs.",
+      "source": "projects/swrlz-forge-moba/runtime/sheep_animation_particles_v11_222.js",
+      "anchor": "SE222_SHEEP_MOTIONS"
+    },
+    {
+      "id": "M115",
+      "domain": "sheep-animation",
+      "request": "What are Clover's six current motion clips?",
+      "route": "explain",
+      "expected": "Idle, graze, walk, trot, build and celebrate. Their pose source is se222SheepPose and generated clips store nine sample keys each.",
+      "mustNot": "Invent a sheep bite/howl state.",
+      "source": "projects/swrlz-forge-moba/runtime/sheep_animation_particles_v11_222.js",
+      "anchor": "function se222SheepClips()"
+    },
+    {
+      "id": "M116",
+      "domain": "sheep-animation",
+      "request": "When I preview Clover in the modeler, are neutral sheep vertices rewritten?",
+      "route": "explain",
+      "expected": "No. Model Atelier preview changes displayed mesh transforms around inferred semantic joint points, then resets originals; source vertices/history remain neutral.",
+      "mustNot": "Claim the preview creates a weighted sheep skeleton or bakes its frames.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier_sheep_animations_v11_222.js",
+      "anchor": "The sheep's editable source vertices stay neutral."
+    },
+    {
+      "id": "M117",
+      "domain": "sheep-animation",
+      "request": "If the sheep builds a house, is its build animation responsible for construction progress?",
+      "route": "explain",
+      "expected": "No: the build state adds visual hoof taps/head nod, while gameplay retains construction orders and progress; cosmetic sparkles are independently emitted.",
+      "mustNot": "Set building HP or owner progress from animation time.",
+      "source": "projects/swrlz-forge-moba/runtime/sheep_animation_particles_v11_222.js",
+      "anchor": "Never writes sheep orders"
+    },
+    {
+      "id": "M118",
+      "domain": "vfx",
+      "request": "Are Sheep Tag house construction particles also skeleton keyframes?",
+      "route": "explain",
+      "expected": "No. Cosmetic VFX are a separate THREE.Points layer with a bounded 96-mote cloud and separate lifecycle; skeletal/part animations affect posed geometry.",
+      "mustNot": "Treat a particle emitter as a bone or overwrite sheep joints.",
+      "source": "projects/swrlz-forge-moba/runtime/sheep_animation_particles_v11_222.js",
+      "anchor": "96 cosmetic motes"
+    },
+    {
+      "id": "M119",
+      "domain": "permissions",
+      "request": "Can §C directly animate the Wolf Model with a new rig.pose Chat command right now?",
+      "route": "unsupported-native",
+      "expected": "No new typed §C bone/keyframe operations exist from this academy. Explain the Wolf Studio UI, propose bounded source engineering and wait for verified native actions/receipts.",
+      "mustNot": "Invent arbitrary JavaScript or claim actual edited clips.",
+      "source": "docs/engineering/CHAT_FORGE_EMBEDDING.md",
+      "anchor": "Native operation names/types"
+    },
+    {
+      "id": "M120",
+      "domain": "research",
+      "request": "Find an official tutorial on blending animation clips and compare it to §E's wolf transitions.",
+      "route": "plan",
+      "expected": "Use bounded web retrieval for current official three.js AnimationMixer/AnimationAction guidance and cite actual returned URLs; compare to native per-unit interpolation; external API docs do not prove the engine uses AnimationMixer.",
+      "mustNot": "Pretend tutorial snippets granted permission to replace the game loop.",
+      "source": "projects/swrlz-forge-moba/runtime/sheep_tag_wolf_animation_v11_224.js",
+      "anchor": "const fade=se224Ease"
+    }
+  ]
+}
