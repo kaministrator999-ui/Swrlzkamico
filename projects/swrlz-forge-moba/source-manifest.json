@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.204",
+  "name": "§wyrl§ Engine v11.205",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_204.html",
+  "finalArtifact": "swyrl_engine_v11_205.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -250,8 +250,9 @@
     "patches/v11_201_sheep_warcraft_foundation_passages.py",
     "patches/v11_202_quest_sheep_camera_input_performance.py",
     "patches/v11_203_quest_wrist_forward_aim.py",
-    "patches/v11_204_sheep_vr_rapid_grid_wheels.py"
+    "patches/v11_204_sheep_vr_rapid_grid_wheels.py",
+    "patches/v11_205_sheep_tactical_menu_pointer_overlay.py"
   ],
-  "finalBytes": 7383740,
-  "finalSha256": "aba9f019d101c0a43071f081dc1d6cc058fa0a992621be9babbf29abb19fa8c7"
+  "finalBytes": 7392293,
+  "finalSha256": "0d1cf4ca2ceaecaf5c1df495541ab1c93eb16e24f27bb1e5c8e6db652c97bdad"
 }
