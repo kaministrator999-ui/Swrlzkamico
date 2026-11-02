@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.223
+title: §wyrl§ Engine v11.224
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.224 — Native Particle Studio · Creator, Editor & reusable 3D VFX (2026-11-02)
+
+Following the independently preserved v11.223 Arcane Glove fist/wrist-wave work, §E adds **Particle Studio** to the main Game Editor via **✨ Particles**. Ten reusable effects (Arcane Motes, Flame, Smoke, Sparks, Snow, Rain, Healing Wisps, Building Magic, Portal and Confetti) support creation, duplication, deletion, live preview, burst tests, camera placement and attachment to selected native actors. Edit continuous/one-shot modes, four spawn shapes, rate, burst count, lifetime, motion direction/speed/spread, gravity, drag, 3D position, radius, particle size, both colors and blend mode. Native `currentProject.particleStudio` metadata participates in Save, Undo/Redo, project level snapshots, and validated JSON import/export. Visual motes render on the existing flat/XR frame and never enter authored scene actors, collision or LAN authority; max 12 emitters, 96 motes per emitter and 576 global. Imported project VFX is validated before use. **v11.224 exact source:** 256 ordered patches, 68 preserved assets, **7,590,193 HTML bytes**, SHA-256 `29583040d840e7bd328d7417d0abb8a0d0c8cebf5a6db2db8014b602bdfb6a54`. Focused source build, generated JavaScript syntax, imported-data guard and emitter lifecycle mock test PASS. Dedicated publish and owner's phone/Quest 2 visual approval remain separate gates. Details: `docs/PARTICLE_STUDIO_V11_224.md`.
 
 ## §E v11.223 — Tighter Fist & Wrist-Twist Wave (2026-11-02)
 
