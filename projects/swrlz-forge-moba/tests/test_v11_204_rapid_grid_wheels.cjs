@@ -218,6 +218,8 @@ assert.ok(patch.includes('else if(se204Gameplay())se204MenuToggle()'),
  'right B still opens the full native tools menu');
 assert.ok(patch.includes('se204.anchor?.x')&&patch.includes('se204.anchor?.z'),
  'visual grid lines align with actual snapped houses');
+assert.ok(patch.includes('&&!se204.wheel;'),
+ 'projected world cursor is gated while the in-game radial menu is modal');
 assert.ok(patch.includes('stPlacementGridPositions(guide.ticks,tickPositions)'),
  'dense fine-grid tick marks suppressed in rapid mode');
 console.log(JSON.stringify({pass:true,checks:52,houses:session.buildings.length,
