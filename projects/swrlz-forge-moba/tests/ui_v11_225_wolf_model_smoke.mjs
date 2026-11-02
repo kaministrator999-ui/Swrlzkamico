@@ -13,6 +13,7 @@ try{
  const context=await browser.newContext({
   viewport:{width:390,height:844},isMobile:true,hasTouch:true,ignoreHTTPSErrors:true});
  const page=await context.newPage();
+ page.on('framenavigated',f=>console.log('WOLF_FRAME_NAV',f.url()));
  page.on('pageerror',e=>{failures.push(e.message);console.log('WOLF225_PAGE_ERROR',e.message);});
  page.on('response',r=>{if(r.status()>=400&&r.url().includes('model-atelier'))console.log('WOLF225_ASSET_STATUS',r.status(),r.url());});
  await page.route('**/*',route=>{
