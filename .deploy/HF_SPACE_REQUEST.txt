@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=d7d44c82412adb3b78afc3d0afa2a052adb9e018
-REQUEST_NONCE=chat-forge-modeling-context-v1-d7d44c82-20261102-release-1
+SOURCE_REF=a133e3a821a83fccc42a71cd0bef5b639da28946
+REQUEST_NONCE=chat-forge-rig-teaching-v2-a133e3a8-20261102-release-1
