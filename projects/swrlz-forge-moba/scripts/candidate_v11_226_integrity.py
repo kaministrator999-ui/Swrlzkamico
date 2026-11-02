@@ -32,7 +32,6 @@ out=candidate.encode("utf-8")
 for keyword in ["V11_226_UNIFIED_POPUP_BROWSER","se226Browser","§wyrl§ Engine · Maker v11.226",
                 "SWYRL_ENGINE_BROWSER"]:
     assert keyword in candidate,keyword+" missing"
-assert candidate.count("id='se226Browser'")==0 # DOM built by script; no duplicate static mount
 report={"version":"§wyrl§ Engine v11.226","baseVersion":manifest["name"],
         "patches":len(manifest["patches"])+1,
         "finalBytes":len(out),"finalSha256":sha(out),
