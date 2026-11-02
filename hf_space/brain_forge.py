@@ -132,7 +132,8 @@ def requests_new_project(prompt: str) -> bool:
                      or _SHORT_FRESH.fullmatch(text)))
 
 
-def native_plan_system(operation_contract: dict[str, Any], *, prompt: str = "",\n                       summary: dict[str, Any] | None = None) -> str:
+def native_plan_system(operation_contract: dict[str, Any], *, prompt: str = "",
+                       summary: dict[str, Any] | None = None) -> str:
     """The model proposes data only; server and native host execute separately."""
     import json
     base = (
