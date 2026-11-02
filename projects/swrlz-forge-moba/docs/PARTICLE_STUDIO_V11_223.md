@@ -6,7 +6,7 @@
 - Native version: §wyrl§ Engine v11.223
 - Marker: `SWYRL_ENGINE_DEPLOY_MARKER: V11_223_NATIVE_PARTICLE_STUDIO`
 - Source: `projects/swrlz-forge-moba/`
-- Built: **7587913 bytes**, SHA-256 `db3ff358295c7b02d1b55d40973d328534a0686b822d6906549ab6f83ea9d230`, **255** ordered patches, **68** existing native assets
+- Built: **7588103 bytes**, SHA-256 `d7f038eac94fd604fa65900b221cba7609e4bc649abd43d68403ee3b67bad219`, **255** ordered patches, **68** existing native assets
 
 ## What to try
 
