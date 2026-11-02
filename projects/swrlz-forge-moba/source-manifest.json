@@ -259,6 +259,6 @@
     "patches/v11_210_quest_comprehensive_polish.py",
     "patches/v11_211_quest_os_camera_overlay_stability.py"
   ],
-  "finalBytes": null,
-  "finalSha256": null
+  "finalBytes": 7467973,
+  "finalSha256": "7e24d871ee29ec7f37425fa017b5f3650a2b7ffe57848104f603a50ca117669f"
 }
