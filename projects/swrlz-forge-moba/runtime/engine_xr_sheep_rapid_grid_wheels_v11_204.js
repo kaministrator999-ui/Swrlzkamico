@@ -328,7 +328,7 @@ function se204InputFrame(){
    if(state.opened&&se204.wheel?.type===type)
     se204WheelStep(se192InputRecord('right'));
   }else if(!pressed&&state.held){
-   if(state.opened)se204WheelCommit();
+   if(state.opened&&se204.wheel?.type===type)se204WheelCommit();
    else if(side==='right')se204HouseTap();
    else se204SkillTap();
    state.held=false;state.opened=false;
@@ -355,6 +355,7 @@ const se204OldRenderRay=se192RenderRay;
 se192RenderRay=function(record,hit){
  const result=se204OldRenderRay(record,hit);
  if(se204.wheel&&record?.se192){
+  if(typeof se203GroundGuideHide==='function')se203GroundGuideHide();
   // A thumbstick radial is modal. No misleading marker behind the menu.
   record.se192.dot.visible=false;
   if(record.se192.beam){
