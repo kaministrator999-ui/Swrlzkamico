@@ -17,7 +17,7 @@ assert(code.includes("P.glass,'Windows',0,'gloss'"));
 assert(code.includes("P.glass,'Decor / lantern',0,'emissive'"));
 const template={project:{
  name:'Base',kind:'model-atelier',
- modelAtelier:{schema:'swyrl-model-atelier-v1',parts:[],meshGroups:[]},
+ modelAtelier:{schema:'swyrl-model-atelier-v1',parts:[],meshGroups:[],assemblies:[{name:'Legacy character socket',partId:'festival-0001'}]},
  environmentSettings:{showTerrain:true,showScenery:true,background:'#111111'}
 }};
 const context={MODEL_ATELIER_CANONICAL_PROJECT:template,structuredClone};
@@ -37,6 +37,7 @@ for(const {id} of starters){
  assert.equal(scene.project.kind,'model-atelier');
  assert.equal(scene.project.canonicalId,id);
  assert.equal(scene.project.modelAtelier.schema,'swyrl-model-atelier-v1');
+ assert.equal(scene.project.modelAtelier.assemblies,undefined,'Inherited unrelated character sockets must be removed');
  assert(parts.length>=15&&parts.length<=400,'Invalid Model Atelier part count');
  assert.equal(new Set(parts.map(p=>p.id)).size,parts.length,'Duplicate part IDs');
  for(const p of parts){
