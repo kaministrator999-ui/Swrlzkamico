@@ -25,7 +25,11 @@ jobs:
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          s=Path('/tmp/swrlz-hand-ui/index.html').read_text()
+          import hashlib
+          data=Path('/tmp/swrlz-hand-ui/index.html').read_bytes()
+          print('HAND213_CANDIDATE_BYTES',len(data))
+          print('HAND213_CANDIDATE_SHA256',hashlib.sha256(data).hexdigest())
+          s=data.decode('utf8')
           for marker in ['function checkPart(p){','function validParts(parts){','function atelierTopologyMeshValid(', 'function atelierMeshPrimitiveDensityValid(', 'function atelierCourierBindingValid(', 'function atelierGroupsValid(']:
               i=s.find(marker)
               print('HAND_VALIDATOR_SOURCE',marker,'INDEX',i)
