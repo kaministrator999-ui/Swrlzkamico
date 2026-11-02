@@ -58,16 +58,16 @@ _EXPLICIT_WEB = re.compile(
 # Modeler reference requests are explicit retrieval intent even without the word "web".
 # This does not fetch for ordinary modeling questions and grants no editor authority.
 _MODELER_REFERENCE_SEARCH = re.compile(
-    r"\\b(?:find|show|give|pull\\s+up|look\\s+for)\\s+(?:me\\s+)?"
-    r"(?:(?:official|authoritative|reliable|current|good)\\s+)*"
-    r"(?:references?|sources?|docs?|documentation|tutorials?)\\s+"
-    r"(?:on|for|about|regarding)\\b.{0,140}\\b"
-    r"(?:rig(?:ging)?|armatures?|bones?|skin(?:ning)?|weights?|weight\\s+painting|"
-    r"animation|animate|keyframes?|model(?:er|ing)?|sculpt(?:ing)?|three\\.?js|blender)\\b", re.I,
+    r"\b(?:find|show|give|pull\s+up|look\s+for)\s+(?:me\s+)?"
+    r"(?:(?:official|authoritative|reliable|current|good)\s+)*"
+    r"(?:references?|sources?|docs?|documentation|tutorials?)\s+"
+    r"(?:on|for|about|regarding)\b.{0,140}\b"
+    r"(?:rig(?:ging)?|armatures?|bones?|skin(?:ning)?|weights?|weight\s+painting|"
+    r"animation|animate|keyframes?|model(?:er|ing)?|sculpt(?:ing)?|three\.?js|blender)\b", re.I,
 )
 _MODELER_REFERENCE_NEGATED = re.compile(
-    r"\\b(?:do\\s+not|don't|dont|without|not)\\s+(?:(?:please|ever|actually|yet)\\s+)?"
-    r"(?:find|show|give|pull\\s+up|look\\s+for)\\b", re.I,
+    r"\b(?:do\s+not|don't|dont|without|not)\s+(?:(?:please|ever|actually|yet)\s+)?"
+    r"(?:find|show|give|pull\s+up|look\s+for)\b", re.I,
 )
 _FRESHNESS = re.compile(
     r"\b(?:latest|today(?:'s)?|right\s+now|this\s+week|recent\s+(?:news|updates?|developments?)|"
