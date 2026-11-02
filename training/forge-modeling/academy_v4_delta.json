@@ -248,7 +248,7 @@
       "expected": "No; serialized emitter definitions are versioned and validated, GPU points/buffers/materials are ephemeral and cleaned on scene change.",
       "mustNot": "Export runtime GPU buffers as permanent project data.",
       "source": "projects/swrlz-forge-moba/docs/PARTICLE_STUDIO_V11_224.md",
-      "anchor": "GPU objects never"
+      "anchor": "Runtime particle resources are allocated"
     },
     {
       "id": "M124",
