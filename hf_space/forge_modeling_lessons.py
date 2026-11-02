@@ -82,7 +82,7 @@ _TOPICS = {
         "cannot invoke a native rig/fist operation or claim it was executed."
     ),
     "rig": (
-        "At source §E v11.223 the NEW Arcane Glove hand starter has a real "
+        "Introduced in §E v11.220 and retained in v11.223, the NEW "
         "17-bone wrist/palm/finger/thumb armature with four-influence skin weights "
         "and THREE.SkinnedMesh deformation. The Rig · Pose · Animate UI edits joints "
         "and authored animation; old saved gloves are NOT auto-rigged. This is "
