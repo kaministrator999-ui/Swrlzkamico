@@ -21,10 +21,27 @@ jobs:
         env:
           PYTHONPATH: hf_space
         run: python -m unittest discover -s hf_space -p test_online_lyric_extraction_fix.py -v
-      - name: Replay existing full-lyrics source-verification contracts
+      - name: Replay production lyric-extraction preflight (offline)
         env:
           PYTHONPATH: hf_space
         run: |
           python tests/test_full_lyrics_retrieval_v151.py
+          python tests/test_full_lyrics_fetched_body_provenance_v155.py
+          python tests/test_full_lyrics_wording_polish_v157.py
+          python tests/test_full_lyrics_bounded_fallback_v158.py
+          python tests/test_full_lyrics_structural_extraction_v159.py
           python tests/test_full_lyrics_subject_bound_verification_v160.py
           python tests/test_full_lyrics_source_vs_body_v161.py
+          python tests/test_full_lyrics_fetch_debug_section_blocks_v162.py
+          python tests/test_full_lyrics_search_admission_rescue_v163.py
+          python tests/test_music_structure_presentation_v164.py
+          python tests/test_lyrics_region_integrity_v165.py
+          python tests/test_bing_redirect_canonicalization_v166.py
+          python tests/test_mobile_first_lyric_dividers_v167.py
+          python tests/test_full_width_lyric_boundary_rendering_v168.py
+          python tests/test_versatile_song_discovery_v169.py
+          python tests/test_song_identity_discovery_v169.py
+          python tests/test_song_identity_retrieval_v169.py
+          python tests/test_diverse_lyric_fetch_budget_v170.py
+          python tests/test_response_start_stream_anchor_v170.py
+          python tests/test_continuous_lyric_extractor_diagnostics_v171.py
