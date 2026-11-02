@@ -26,7 +26,9 @@ Keep the four native top-level workspaces. Add compact **Scene** and **GUI / Men
 
 ## Source integrity / remaining release gate
 
-The latest packaged, signed engine at inspection was **v11.225**, with **257 patches**, HTML SHA-256 `7407ca6b520912437c280035c1f4258f5b1e7a8ab577f3701b855db26f7bf3a7`. The repository also has v11.226 candidate patches (wolf and Sheep Tag buildings), not included in the inspected v11.225 manifest. Do not override or bypass those pending lines.
+The authoritative main source advanced during preparation: v11.226 Sheep-faction building models and v11.227 Astra wolf rig have since taken their own version slots. The last observed signed main manifest was **v11.227**, **259 patches**, SHA-256 `daabe71f8e82da2ddbc481f0a481c3be6cde472b15f13e6d7aa0b404e9aa6ce1`. The GUI patch was drafted against v11.226 as a v11.227 candidate **before** that version was assigned to the wolf. Its patch filename and release metadata must be renumbered/rebased to the next available version before source sealing. Never overwrite existing wolf or Sheep-faction lineage.
+
+A one-time narrow measurement workflow deliberately stopped on the newer main-version precondition; it was then removed from this branch. No signed source or deployment request was altered.
 
 The candidate patch is **not** appended to `source-manifest.json` until the authoritative builder can execute, measure the *actual assembled HTML* and reseal `finalBytes`/`finalSha256`. Only after sequencing the pending v11.226 changes (if accepted) should the release operator update the manifest, exact version IDs, `README`, `SPACE_README`, `ROADMAP`, `§tart_§E.md`, current release verifier/workflow references, then commit to `main` and make a **separate final** `DEPLOY_REQUEST.json` commit.
 
