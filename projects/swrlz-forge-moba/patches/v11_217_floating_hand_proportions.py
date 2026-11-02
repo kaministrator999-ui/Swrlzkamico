@@ -14,7 +14,7 @@ def once(html, old, new):
 
 def apply(html):
     root=Path(__file__).resolve().parents[1]
-    code=(root/"runtime/model_atelier_hand_proportions_v11_216.js").read_text(encoding="utf8")
+    code=(root/"runtime/model_atelier_hand_proportions_v11_217.js").read_text(encoding="utf8")
     html=once(html,"const se212Id='floating-hand-glove';",
         code+"\nconst se212Id='floating-hand-glove';")
     # Replace only starter construction's local function bindings, not old
