@@ -1,11 +1,11 @@
-name: Diagnose §E floating hand startup in Chromium
+name: Verify §E floating hand loads in Chromium
 on:
   push:
     branches: [main]
     paths:
       - 'projects/swrlz-forge-moba/tests/ui_v11_212_hand_browser.mjs'
       - 'projects/swrlz-forge-moba/runtime/model_atelier_floating_hand_v11_212.js'
-      - 'projects/swrlz-forge-moba/patches/v11_212_floating_hand_model_starter.py'
+      - 'projects/swrlz-forge-moba/patches/v11_213_hand_loader_validation_fix.py'
       - '.github/workflows/diagnose-forge-v11-212-hand-ui.yml'
   workflow_dispatch:
 permissions:
@@ -19,8 +19,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Build the sealed current engine
-        run: python3 projects/swrlz-forge-moba/build_space.py --output /tmp/swrlz-hand-ui >/tmp/se212-ui-build.log
+      - name: Build the current hand-fix candidate
+        run: python3 projects/swrlz-forge-moba/build_space.py --output /tmp/swrlz-hand-ui >/tmp/se213-ui-build.log
       - name: Print native part validation contract
         run: |
           python3 - <<'PY'
