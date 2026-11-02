@@ -13,7 +13,8 @@ try{
  const context=await browser.newContext({
   viewport:{width:390,height:844},isMobile:true,hasTouch:true,ignoreHTTPSErrors:true});
  const page=await context.newPage();
- page.on('pageerror',e=>failures.push(e.message));
+ page.on('pageerror',e=>{failures.push(e.message);console.log('WOLF225_PAGE_ERROR',e.message);});
+ page.on('response',r=>{if(r.status()>=400&&r.url().includes('model-atelier'))console.log('WOLF225_ASSET_STATUS',r.status(),r.url());});
  await page.route('**/*',route=>{
   const url=new URL(route.request().url());
   if(url.origin===host){
@@ -31,7 +32,18 @@ try{
  await page.waitForFunction(()=>{
   const r=window.SWYRL_ENGINE_WOLF_RIG?.status?.();
   return r?.available && r.skinned && r.bones===14&&r.clips===10&&r.skinnedMeshes>=10;
- },null,{timeout:120000});
+ },null,{timeout:90000}).catch(async e=>{
+  console.log('WOLF225_LOAD_DEBUG',JSON.stringify(await page.evaluate(()=>({
+   build:window.SWRLZ_FORGE_BUILD?.version,
+   model:window.SWYRL_ENGINE_MODEL_ATELIER?.status?.(),
+   rig:window.SWYRL_ENGINE_WOLF_RIG?.status?.(),
+   project:typeof currentProject!=='undefined'?currentProject?.canonicalId:null,
+   toast:document.getElementById('statusBar')?.textContent?.slice(-250),
+   wolfPanel:!!document.getElementById('modelAtelierWolfStudio')
+  })).catch(err=>({evalError:String(err)}))));
+  console.log('WOLF225_ERRORS',JSON.stringify(failures));
+  throw e;
+ });
  const facts=await page.evaluate(()=>({
   version:window.SWRLZ_FORGE_BUILD.version,
   model:window.SWYRL_ENGINE_MODEL_ATELIER?.status?.(),
