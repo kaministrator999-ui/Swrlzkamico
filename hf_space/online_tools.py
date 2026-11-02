@@ -422,9 +422,16 @@ def _lyrics_search_query(text: str) -> str:
     return _search_query_from_prompt(text)
 
 _LYRIC_PAGE_NOISE=re.compile(
-    r"\b(?:blog|download|menu|sign\s*in|log\s*in|privacy|cookies?|terms|contact|"
-    r"share|follow|subscribe|navigation|app\s*store|google\s*play|"
-    r"related\s+(?:songs?|hymns?)|more\s+lyrics?|chords?|copyright)\b",
+    # Match navigation controls as whole lines. Generic words such as "share",
+    # "follow" and "contact" also occur in genuine lyrics; matching them
+    # anywhere in a verse used to truncate otherwise valid extractions.
+    r"^\s*(?:blog|download(?:\s+(?:app|now))?|menu|sign\s*in|log\s*in|"
+    r"privacy(?:\s+policy)?|cookies?(?:\s+(?:settings|policy))?|"
+    r"terms(?:\s+(?:of\s+service|and\s+conditions))?|contact(?:\s+us)?|"
+    r"share(?:\s+(?:this|song|lyrics?|on\s+\w+))?|follow(?:\s+us)?|"
+    r"subscribe(?:\s+now)?|navigation|app\s*store|google\s*play|"
+    r"related\s+(?:songs?|hymns?)|more\s+lyrics?|chords?|copyright)"
+    r"\s*[:.!-]*$",
     re.I,
 )
 _LYRIC_ANCHOR=re.compile(r"^(?:copy\s+lyrics|lyrics(?:\s+text)?)\s*[:.!-]*$",re.I)
@@ -1750,7 +1757,7 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
                 and len(body_lines)>=8
                 and (int(structure_profile.get("musicalSectionCount") or 0)>=2 or has_lyric_heading)
             )
-            verified_candidate=bool(lyric_extract and (snippet_consistent or strong_body))
+            verified_candidate=bool(lyric_extract and source_identity.get("verified") and (snippet_consistent or strong_body))
             if verified_candidate:
                 rejection_reason="VERIFIED"
             elif not lyric_extract:
