@@ -91,6 +91,19 @@ window.SWYRL_ENGINE_WOLF_224=Object.freeze({
  clips:()=>se224WolfClips(),pose:se224WolfPose,
  active:()=>({version:'v11.226',wolves:stSession?.units?.filter(u=>u.kind==='wolf').length||0,
   animations:SE224_WOLF_MOTIONS.map(x=>x[0]),cosmeticOnly:true}),
+ prefab:()=>{
+  // Inspect the exact game prefab without starting or mutating a match.
+  const wolf=stMakeVisual('st-wolf'),model=wolf.getObjectByName('AstraCometCourier');
+  const count=name=>!!wolf.getObjectByName(name);
+  const result={furred:!!model,head:count('stHead'),jaw:count('stJaw'),
+   face:count('Astra · enhanced head'),body:count('Astra · enhanced body'),
+   paws:[0,1,2,3].filter(i=>count('stLeg'+i)).length,
+   visualMeshes:0};
+  wolf.traverse(n=>{if(n.isMesh)result.visualMeshes++;if(n.isMesh&&n.userData.wolf224VisualOnly){
+   n.geometry?.dispose();n.material?.dispose();
+  }});
+  return result;
+ },
  visuals:()=> (stSession?.units||[]).filter(u=>u.kind==='wolf').map(u=>({
   id:u.id,head:!!u.actor?.getObjectByName('stHead'),
   jaw:!!u.actor?.getObjectByName('stJaw'),
