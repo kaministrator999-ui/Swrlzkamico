@@ -1,0 +1,29 @@
+name: Diagnose §E floating hand startup in Chromium
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'projects/swrlz-forge-moba/tests/ui_v11_212_hand_browser.mjs'
+      - 'projects/swrlz-forge-moba/runtime/model_atelier_floating_hand_v11_212.js'
+      - 'projects/swrlz-forge-moba/patches/v11_212_floating_hand_model_starter.py'
+      - '.github/workflows/diagnose-forge-v11-212-hand-ui.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  focused-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build the sealed current engine
+        run: python3 projects/swrlz-forge-moba/build_space.py --output /tmp/swrlz-hand-ui >/tmp/se212-ui-build.log
+      - name: Install Chromium-only runner
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps --only-shell chromium
+      - name: Inspect hand deep link and log browser errors
+        run: node projects/swrlz-forge-moba/tests/ui_v11_212_hand_browser.mjs
