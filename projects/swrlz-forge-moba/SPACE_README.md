@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.225
+title: §wyrl§ Engine v11.226
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.226 — Five editable Sheep Tag house model starters
+
+Projects now includes separate native 3D Model Atelier starters for the **Free Sheep Shelter**, **Thatched Starter Hut**, **Cozy Sheep Cottage**, **Flock Barn** and **Ram House**, based on the cozy farm/sheep visual concept. These projects expose independent editable mesh groups and can be viewed from front, side and top. Sheep Tag's current in-match building rules remain unchanged; owner mobile and VR visual approval is pending. Full details: `docs/SHEEP_BUILDING_MODEL_STARTERS_V11_226.md` in the GitHub source.
 
 ## §E v11.225 — Material & Texture Studio + Four Workspace Tabs (2026-11-02)
 
