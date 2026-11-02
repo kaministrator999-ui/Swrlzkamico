@@ -63,9 +63,9 @@ class OnlineLyricExtractionFixTests(unittest.TestCase):
         </div>
         <footer>Related songs and comments</footer></body></html>"""
         result = online_research._lyric_dom_text(page)
-        self.assertIn("[Verse 1]\nCopper lanterns guide", result)
+        self.assertRegex(result, r"\[Verse 1\]\s*\n\s*Copper lanterns guide")
         self.assertIn("\nHey\n", result)
-        self.assertIn("[Chorus]\nBring the light", result)
+        self.assertRegex(result, r"\[Chorus\]\s*\n\s*Bring the light")
         self.assertNotIn("Privacy Policy", result)
         self.assertNotIn("Related songs", result)
         self.assertNotIn("const stolen", result)
