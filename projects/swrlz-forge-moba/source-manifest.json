@@ -254,6 +254,6 @@
     "patches/v11_205_sheep_tactical_menu_pointer_overlay.py",
     "patches/v11_206_sheep_quest_meadow_fog_polish.py"
   ],
-  "finalBytes": null,
-  "finalSha256": null
+  "finalBytes": 7400838,
+  "finalSha256": "ae698e8388f325a1e851a7b06f2c37ab5eac4e6c800efa7cd20f43d755e83659"
 }
