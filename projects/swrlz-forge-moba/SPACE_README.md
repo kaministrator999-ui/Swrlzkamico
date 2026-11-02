@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.228
+title: §wyrl§ Engine v11.229
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.229 — Sheep house native model loading repaired
+
+All five sheep house starters now load into Model Atelier as editable 3D geometry. A focused mobile-browser regression confirmed the Free Shelter (18 parts), Thatched Hut (59), Cozy Cottage (68), Flock Barn (37) and Ram House (60), using the real modeler project loader. The repair corrects invalid rotation/material fields, window trim colors and inherited character sockets. Sheep Tag gameplay, other editor studios and previously saved models remain unchanged. Android/Quest device visual approval is owner-tested.
 
 ## §E v11.228 — Game Engine GUI / Menu Setup sub-tab (2026-11-02)
 
