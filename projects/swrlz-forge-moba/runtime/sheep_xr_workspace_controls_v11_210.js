@@ -394,14 +394,17 @@ se192Stick=function(record){
 };
 function se210PanelFrame(){
  if(!se210Active())return;
- const now=performance.now();
+ const now=performance.now(),pose=se210Pose();
+ // Spatial follow runs in the EXISTING XR frame, while text refreshes only
+ // once per second. Do not make a headset-following panel jump at 1 Hz.
+ for(const panel of se210UI.panels.values()){
+  if(!panel.root.visible)continue;
+  if((panel.follow&&!panel.grabbing)||!panel.placed)se210Place(panel,pose);
+ }
  if(now-se210UI.lastDraw>=960){
   se210UI.lastDraw=now;
-  const pose=se210Pose();
   for(const panel of se210UI.panels.values()){
-   if(!panel.root.visible)continue;
-   if((panel.follow&&!panel.grabbing)||!panel.placed)se210Place(panel,pose);
-   se210CanvasRender(panel);
+   if(panel.root.visible)se210CanvasRender(panel);
   }
   if(se204.wheel?.root.visible)se209RefreshWheel(se204.wheel);
  }
