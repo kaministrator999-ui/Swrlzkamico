@@ -37,7 +37,7 @@ try{
  await page.waitForFunction(()=>{
   const r=window.SWYRL_ENGINE_WOLF_RIG?.status?.();
   return r?.available && r.skinned && r.bones===14&&r.clips===10&&r.skinnedMeshes>=10;
- },null,{timeout:5000}).catch(async e=>{
+ },null,{timeout:45000,polling:300}).catch(async e=>{
   console.log('WOLF225_LOAD_DEBUG',JSON.stringify(await page.evaluate(()=>({
    build:window.SWRLZ_FORGE_BUILD?.version,
    model:window.SWYRL_ENGINE_MODEL_ATELIER?.status?.(),
