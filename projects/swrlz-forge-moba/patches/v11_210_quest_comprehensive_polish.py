@@ -21,6 +21,11 @@ def apply(html):
     html=once(html,
         "if(stUi.build&&!se195.visible&&!se195.photo&&now-se193.previewAt>100){",
         "if(stUi.build&&!se195.visible&&!se195.photo&&!se210PanelHit(se192InputRecord('right'))&&now-se193.previewAt>100){")
+    # A real native skill cooldown changes every second; paint it into one
+    # small reusable CanvasTexture instead of caching a new label per second.
+    html=once(html,
+        "art.status.material.map=se195Text(text);",
+        "art.status.material.map=se210WheelStatusTexture(panel,art,text);")
     a=(root/'runtime/sheep_xr_world_quality_metrics_v11_210.js').read_text(encoding='utf8')
     b=(root/'runtime/sheep_xr_workspace_controls_v11_210.js').read_text(encoding='utf8')
     html=once(html,'window.SWRLZ_FORGE_BUILD=',a+'\n'+b+'\nwindow.SWRLZ_FORGE_BUILD=')
