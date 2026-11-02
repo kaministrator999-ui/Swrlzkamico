@@ -1,0 +1,56 @@
+name: Verify §E v11.227 wolf model and Sheep Tag visuals (one mobile smoke)
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/verify-forge-v11-227-wolf-mobile.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  wolf-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Compile native wolf source
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/wolf_rig_motions_v11_224.js
+          node --check projects/swrlz-forge-moba/runtime/wolf_visual_fidelity_v11_224.js
+          node --check projects/swrlz-forge-moba/runtime/model_atelier_wolf_studio_v11_224.js
+          node --check projects/swrlz-forge-moba/runtime/sheep_tag_wolf_animation_v11_224.js
+          python3 -m py_compile projects/swrlz-forge-moba/patches/v11_227_astra_wolf_rig_animations.py
+      - name: Build v11.225 candidate without modifying the persisted manifest
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('projects/swrlz-forge-moba/source-manifest.json')
+          m=json.loads(p.read_text())
+          assert m['name']=='§wyrl§ Engine v11.226'
+          assert m['patches'][-1]=='patches/v11_226_sheep_building_starters.py'
+          m['name']='§wyrl§ Engine v11.227'
+          m['finalArtifact']='swyrl_engine_v11_227.html'
+          m['patches'].append('patches/v11_227_astra_wolf_rig_animations.py')
+          m['finalBytes']=0;m['finalSha256']=''
+          p.write_text(json.dumps(m,ensure_ascii=False))
+          PY
+          python3 projects/swrlz-forge-moba/build_space.py --output /tmp/se227-wolf-smoke
+      - name: Install small Chromium test runtime
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps --only-shell chromium
+      - name: Verify editable wolf rig UI and real Sheep Tag wolf prefab without match mutation
+        run: node projects/swrlz-forge-moba/tests/ui_v11_227_wolf_model_smoke.mjs
+      - name: Print exact wolf source receipt
+        run: |
+          python3 - <<'PY'
+          import hashlib
+          from pathlib import Path
+          b=Path('/tmp/se227-wolf-smoke/index.html').read_bytes()
+          print('WOLF227_MOBILE_BYTES='+str(len(b)))
+          print('WOLF227_MOBILE_SHA256='+hashlib.sha256(b).hexdigest())
+          PY
