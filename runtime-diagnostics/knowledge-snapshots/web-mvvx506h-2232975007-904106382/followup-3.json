@@ -1,0 +1,15 @@
+{
+  "schema": "swrlz-knowledge-followup-v1",
+  "requestId": "web-mvvx506h-2232975007-904106382",
+  "modelId": "700m",
+  "eventType": "KNOWLEDGE_ACQUISITION_FOLLOWUP_3",
+  "sourceRef": "c623d93670a493a573907451a4d59357d13337b1",
+  "persistedAtUnixMs": 1793657750279,
+  "diagnostic": {
+    "schema": "swrlz-knowledge-followup-v1",
+    "parentRequestId": "web-mvvx506h-2232975007-904106382",
+    "turnIndex": 3,
+    "userText": "Can you provide the lyrics to who do I catch by tech n9ne",
+    "capturedAtUnixMs": 1793657750276
+  }
+}
