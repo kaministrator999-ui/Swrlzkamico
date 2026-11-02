@@ -46,6 +46,18 @@ def apply(html):
   data.project.modelAtelier.wolfRig=se224WolfRigSpec();
   data.project.modelAtelier.wolfAnimations=se224WolfClips();
  }""")
+    # ModelAtelier's loadProject wrapper can normalize legacy scene metadata.
+    # Ensure the active project—not only the fetched JSON—receives the new
+    # authored wolf rig and details before ModelAtelier.open() renders it.
+    html=once(html,
+      "ModelAtelier.close();loadProject(data,{workspaceLocal:true});initializeHistory",
+      """ModelAtelier.close();loadProject(data,{workspaceLocal:true});
+ if(species==='wolf'&&currentProject?.kind==='model-atelier'){
+  se224WolfEnhanceModel(currentProject.modelAtelier);
+  currentProject.modelAtelier.wolfRig=se224WolfRigSpec();
+  currentProject.modelAtelier.wolfAnimations=se224WolfClips();
+ }
+ initializeHistory""")
     html=once(html,'  function refreshList(){',studio+'\n  function refreshList(){')
     html=once(html,'const mesh=se220RigMesh(p);','const mesh=se224WolfRigMesh(p);')
     html=once(html,'se220RigBind();se220RigRefresh();',
