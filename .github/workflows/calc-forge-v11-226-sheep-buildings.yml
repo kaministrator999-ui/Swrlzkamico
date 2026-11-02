@@ -1,5 +1,5 @@
 name: Calculate §E v11.226 sheep building source receipt
-# Focused native mesh smoke + exact source seal; no browser simulation.
+# Focused model starter geometry check + source seal; no browser simulation.
 on:
   push:
     branches: [main]
