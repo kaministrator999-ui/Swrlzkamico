@@ -19,16 +19,16 @@ Keep the four native top-level workspaces. Add compact **Scene** and **GUI / Men
 
 ## Candidate files
 
-- `runtime/game_gui_menu_subtab_v11_227.js` — GUI model, editor and runtime overlay, Level capture/restore and native inspector reuse.
-- `runtime/game_gui_menu_subtab_v11_227.css` — desktop/phone responsive presentation and preview layering.
-- `patches/v11_227_game_gui_menu_subtab.py` — append-only HTML injection and release metadata candidate.
-- `tests/game_gui_menu_subtab_v11_227.cjs` — focused model, project and level lifecycle tests.
+- `runtime/game_gui_menu_subtab_v11_228.js` — GUI model, editor and runtime overlay, Level capture/restore and native inspector reuse.
+- `runtime/game_gui_menu_subtab_v11_228.css` — desktop/phone responsive presentation and preview layering.
+- `patches/v11_228_game_gui_menu_subtab.py` — append-only HTML injection and release metadata candidate.
+- `tests/game_gui_menu_subtab_v11_228.cjs` — focused model, project and level lifecycle tests.
 
 ## Source integrity / remaining release gate
 
-The authoritative main source advanced during preparation: v11.226 Sheep-faction building models and v11.227 Astra wolf rig have since taken their own version slots. The last observed signed main manifest was **v11.227**, **259 patches**, SHA-256 `daabe71f8e82da2ddbc481f0a481c3be6cde472b15f13e6d7aa0b404e9aa6ce1`. The GUI patch was drafted against v11.226 as a v11.227 candidate **before** that version was assigned to the wolf. Its patch filename and release metadata must be renumbered/rebased to the next available version before source sealing. Never overwrite existing wolf or Sheep-faction lineage.
+The authoritative main source advanced during preparation: v11.226 Sheep-faction building models and v11.227 Astra wolf rig have since taken their own version slots. The last observed signed main manifest was **v11.227**, **259 patches**, SHA-256 `daabe71f8e82da2ddbc481f0a481c3be6cde472b15f13e6d7aa0b404e9aa6ce1`. The GUI patch has now been **rebased as a v11.228 candidate** against the v11.227 wolf release, including that release's two source-provenance slots. Its target version is still contingent on no newer main release occupying v11.228 before the final SHA-backed integration.
 
-A one-time narrow measurement workflow deliberately stopped on the newer main-version precondition; it was then removed from this branch. No signed source or deployment request was altered.
+An initial one-time narrow measurement workflow stopped when main moved from v11.226 to v11.227, and it was removed. A replacement focused candidate measurement targets v11.227 to derive v11.228's real HTML hash. No signed source or deployment request has been modified by this candidate.
 
 The candidate patch is **not** appended to `source-manifest.json` until the authoritative builder can execute, measure the *actual assembled HTML* and reseal `finalBytes`/`finalSha256`. Only after sequencing the pending v11.226 changes (if accepted) should the release operator update the manifest, exact version IDs, `README`, `SPACE_README`, `ROADMAP`, `§tart_§E.md`, current release verifier/workflow references, then commit to `main` and make a **separate final** `DEPLOY_REQUEST.json` commit.
 
