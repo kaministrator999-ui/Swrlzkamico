@@ -28,6 +28,12 @@ def apply(html):
         "box('Lantern · glowing glass',x,y,z,.15,.28,.15,P.glass,'Decor / lantern','emissive');",
         "box('Lantern · glowing glass',x,y,z,.15,.28,.15,P.glass,'Decor / lantern',0,'emissive');")
 
+    # Window mullions referenced an absent P.trim palette entry. Model
+    # validation requires an actual #RRGGBB; each house's trim is d.trim.
+    html=once(html,
+        "box('Window · divider vertical',x,y,z+.101,.065,.60,.04,P.trim,'Windows');",
+        "box('Window · divider vertical',x,y,z+.101,.065,.60,.04,d.trim,'Windows');")
+
     # The reusable Model Atelier envelope also carries Festival-character
     # socket assemblies. House mesh IDs replace its parts, so those inherited
     # named-socket references become dangling and fail native loadProject().
