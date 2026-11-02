@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build and verify the exact §E v11.224 tighter fist and wrist-driven hand-wave animation and native Model Atelier package, with routed Game/Modeler pages."""
+"""Build and verify the exact §E v11.224 native Particle Studio plus preserved hand-motion and modeler package, with routed Game/Modeler pages."""
 import argparse
 import hashlib
 import json
@@ -15,7 +15,7 @@ args=p.parse_args()
 out=Path(args.output).resolve()
 m=json.loads((ROOT/'source-manifest.json').read_text())
 assert m['name']=='§wyrl§ Engine v11.224'
-assert m['finalArtifact']=='swyrl_engine_v11_223.html'
+assert m['finalArtifact']=='swyrl_engine_v11_224.html'
 assert len(m['patches'])==256 and m['patches'][-1]=='patches/v11_224_native_particle_studio.py'
 subprocess.run([sys.executable,str(ROOT/'build_space.py'),'--output',str(out)],check=True)
 raw=(out/'index.html').read_bytes()
