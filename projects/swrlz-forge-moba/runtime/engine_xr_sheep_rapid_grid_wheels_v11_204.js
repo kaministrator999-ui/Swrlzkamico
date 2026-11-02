@@ -35,15 +35,18 @@ function se204GridPoint(point){
  if(!se204RapidEnabled()||!point||
     !Number.isFinite(point.x)||!Number.isFinite(point.z))return point;
  const nativeSnap=stUiRules().buildSnap||.15;
+ // The old coarse 3m rule needs 6m cells to remain on its native lattice.
+ // Fine 0.15m rules use 3.6m (2.4m house + 1.2m passage).
+ const pitch=nativeSnap>=3?6:se204.pitch;
  if(!se204.anchor||se204.session!==stSession){
   se204.session=stSession;
   se204.anchor={x:Math.round(point.x/nativeSnap)*nativeSnap,
    z:Math.round(point.z/nativeSnap)*nativeSnap};
  }
  const x=Math.round((se204.anchor.x+
-  Math.round((point.x-se204.anchor.x)/se204.pitch)*se204.pitch)/nativeSnap)*nativeSnap;
+  Math.round((point.x-se204.anchor.x)/pitch)*pitch)/nativeSnap)*nativeSnap;
  const z=Math.round((se204.anchor.z+
-  Math.round((point.z-se204.anchor.z)/se204.pitch)*se204.pitch)/nativeSnap)*nativeSnap;
+  Math.round((point.z-se204.anchor.z)/pitch)*pitch)/nativeSnap)*nativeSnap;
  se204.gridSamples++;
  return new THREE.Vector3(x,terrainHeight(x,z),z);
 }
@@ -84,14 +87,35 @@ function se204HouseTap(){
  }
  const record=se192InputRecord('right');
  if(!record)return false;
- // The authoritative existing VR selection code performs native
- // stCanBuild, stCommand('build') and feedback. v11.204 only preserves
- // the equipped preview after successful placement.
- const before=stSession.buildings.length;
- se193XRGameSelect(record);
- const added=stSession.buildings.length>before;
- if(added)se204.placed++;else se204.blocked++;
- return added;
+ // Use exactly the same mapped world target, snapped ghost and native
+ // stCommand as the trigger path. The command result is the build receipt,
+ // even for LAN guest requests where a new building is not yet local.
+ const point=se193XRGameGround(record);
+ if(!point){
+  se193XRFeedback({reason:'Aim at the sheep area to place a house'},false);
+  se204.blocked++;return false;
+ }
+ stUiPlacePreview(point);
+ const fit=stUi.placement;
+ if(!fit?.ok){
+  se193XRFeedback({reason:fit?.reason||'House does not fit here'},false);
+  se204.blocked++;return false;
+ }
+ const result=stUiCommand('build',{
+  kind:se204.building,x:fit.x,z:fit.z,rotation:0
+ });
+ se193XRFeedback(result);
+ if(result?.ok){
+  se204.placed++;se204AfterBuild();
+ }else se204.blocked++;
+ return !!result?.ok;
+}
+function se204AfterBuild(){
+ if(!se204RapidEnabled())return;
+ // Keep the same house equipped. Recheck current cell so the ghost turns
+ // red after it becomes occupied, until the player aims at the next cell.
+ if(stUi.placementPoint)stUiPlacePreview(stUi.placementPoint);
+ stRefreshHUD(true);
 }
 function se204EquipSkill(skill){
  if(!se204Gameplay())return false;
