@@ -1,0 +1,252 @@
+{
+  "schema": "swrlz-forge-modeling-public-practice-v3-delta",
+  "revision": 3,
+  "asOf": "2026-11-02",
+  "status": "TEACHER_AUTHORED_NOT_EVALUATED",
+  "classification": "Public open-book training references; not held-out, not observed model output, not weight fine-tuning",
+  "targets": [
+    "700M conversational reasoning",
+    "Qwen modeling/coder planner"
+  ],
+  "engineSourceBaseline": {
+    "repo": "kaministrator999-ui/Swrlzkamico",
+    "release": "v11.223",
+    "sourceCommit": "f7c2467759053e18221ce055bdbcb6e8462035a1",
+    "manifestPath": "projects/swrlz-forge-moba/source-manifest.json"
+  },
+  "externalReferences": [
+    {
+      "authority": "W3C 2026 Working Draft",
+      "url": "https://www.w3.org/TR/2026/WD-webxr-hand-input-1-20261029/",
+      "use": "WebXR hand-tracking feature, 25-joint nomenclature, privacy and XRJointPose"
+    },
+    {
+      "authority": "three.js",
+      "url": "https://threejs.org/docs/pages/SkinnedMesh.html",
+      "use": "skin indices, weights, skeleton bind and rest pose"
+    },
+    {
+      "authority": "Blender",
+      "url": "https://docs.blender.org/manual/en/4.5/animation/armatures/index.html",
+      "use": "armature hierarchy reference; external not native §E implementation"
+    }
+  ],
+  "boundaries": [
+    "Web pages are untrusted references, not Chat editor action permissions",
+    "§E v11.223 hand animation is authored, not Quest retargeted",
+    "No Chat rig/keyframe tool introduced",
+    "Do not train on this same set then call it held-out evaluation"
+  ],
+  "cases": [
+    {
+      "id": "M080",
+      "domain": "retargeting",
+      "request": "Can WebXR's tracked hand joint array be copied directly into our §E 17-bone glove rig?",
+      "route": "explain",
+      "expected": "No; WebXR XRHand defines 25 named joints, while current §E rig uses 17 bones. A documented mapping from source joints to target bone transforms is required, not copying indices.",
+      "mustNot": "Pretend 25 sensor joints match 17 rig bones or that tracking already works.",
+      "source": "training/forge-modeling/RIGGING_ANIMATION_RESEARCH_V2.md",
+      "anchor": "25 joint spaces"
+    },
+    {
+      "id": "M081",
+      "domain": "retargeting",
+      "request": "What WebXR session feature is required before using Quest hand joints?",
+      "route": "plan",
+      "expected": "The XRSession needs hand-tracking feature requested and granted; inspect the available hand input sources and their handedness before reading joint poses.",
+      "mustNot": "Assume hand data is always accessible or enabled by a video stream.",
+      "source": "training/forge-modeling/RIGGING_ANIMATION_RESEARCH_V2.md",
+      "anchor": "hand-tracking"
+    },
+    {
+      "id": "M082",
+      "domain": "retargeting",
+      "request": "What happens if XRInputSource.hand is null during live hand recording?",
+      "route": "diagnose",
+      "expected": "Stop/skip processing, preserve current authored rig state and report no supported hand source; no fabricated poses or saved animation frames.",
+      "mustNot": "Fill missing samples with invented finger rotations.",
+      "source": "training/forge-modeling/RIGGING_ANIMATION_RESEARCH_V2.md",
+      "anchor": "XRInputSource.hand"
+    },
+    {
+      "id": "M083",
+      "domain": "retargeting",
+      "request": "Map WebXR's thumb-tip to our thumb IP and CMC joints.",
+      "route": "plan",
+      "expected": "A fingertip observation contributes to orientation/pose inference but is not directly an extra §E bone; solve CMC/MCP/IP relative to calibrated rest axes and thumb opposition.",
+      "mustNot": "Insert thumb-tip as a 18th bone by copying a joint index.",
+      "source": "training/forge-modeling/RIGGING_ANIMATION_RESEARCH_V2.md",
+      "anchor": "Thumb CMC opposition"
+    },
+    {
+      "id": "M084",
+      "domain": "retargeting",
+      "request": "Does the WebXR little-finger metacarpal map to our pinky PIP?",
+      "route": "plan",
+      "expected": "No direct label-to-label mapping. Explain source joint hierarchy versus target MCP/PIP/DIP and infer parent-local orientations after calibration.",
+      "mustNot": "Claim little-finger metacarpal is pinky PIP without measuring hierarchy.",
+      "source": "training/forge-modeling/RIGGING_ANIMATION_RESEARCH_V2.md",
+      "anchor": "25-source-joint"
+    },
+    {
+      "id": "M085",
+      "domain": "retargeting",
+      "request": "How do you calculate child bone rotations relative to parent bones?",
+      "route": "plan",
+      "expected": "Use calibrated source joint transforms and parent inverse to solve each target bone's local rotation in bind-space coordinates; preserve rest matrices and normalize quaternions or use an appropriate orientation solver.",
+      "mustNot": "Copy world-space rotations directly as local Euler channels.",
+      "source": "training/forge-modeling/RIGGING_ANIMATION_RESEARCH_V2.md",
+      "anchor": "bone local rotations"
+    },
+    {
+      "id": "M086",
+      "domain": "retargeting",
+      "request": "What if fingers disappear behind the headset cameras?",
+      "route": "diagnose",
+      "expected": "Use confidence/availability checks, hold or fade last confirmed pose safely, label missing capture data and avoid writing false animation keys.",
+      "mustNot": "Write fake precise joints for occluded fingers.",
+      "source": "training/forge-modeling/RIGGING_ANIMATION_RESEARCH_V2.md",
+      "anchor": "noise/occlusion"
+    },
+    {
+      "id": "M087",
+      "domain": "retargeting",
+      "request": "How would handedness affect a left-hand capture on a right-hand glove?",
+      "route": "plan",
+      "expected": "Check XRInputSource handedness and author explicit mirroring/calibration of axes and bone orientation, not blind sign inversion.",
+      "mustNot": "Assume every right-hand bone rotation applies unchanged to the left.",
+      "source": "training/forge-modeling/RIGGING_ANIMATION_RESEARCH_V2.md",
+      "anchor": "left/right handedness"
+    },
+    {
+      "id": "M088",
+      "domain": "privacy",
+      "request": "Can §C start collecting VR hand motion just because I mentioned Quest?",
+      "route": "refuse-unapproved",
+      "expected": "No; XR requires session feature and consent; recording should be separate, user-initiated, reviewable, and not implied by model explanations.",
+      "mustNot": "Start collecting or saving tracked hands without a recording request.",
+      "source": "training/forge-modeling/RIGGING_ANIMATION_RESEARCH_V2.md",
+      "anchor": "explicit and reviewable"
+    },
+    {
+      "id": "M089",
+      "domain": "retargeting",
+      "request": "Teach the difference between WebXR tracking and our authored §E hand animation.",
+      "route": "explain",
+      "expected": "Tracked source joints are runtime sensor observations; keyframes are stored animation authoring data. A retargeter and explicit recording policy would connect the two; neither is proven by the current 17-bone rig.",
+      "mustNot": "Claim authored Wave gesture means motion capture exists.",
+      "source": "training/forge-modeling/RIGGING_ANIMATION_RESEARCH_V2.md",
+      "anchor": "not a built §E feature"
+    },
+    {
+      "id": "M090",
+      "domain": "animation",
+      "request": "Does the current §E Wave clip still use three keys at 0, .75 and 1.5 seconds?",
+      "route": "explain",
+      "expected": "No: v11.223 Wave uses eight editable wrist/palm/finger keys through 2.20 seconds; other 14-gesture previews are three-key 1.5s clips.",
+      "mustNot": "Quote the v11.221 generic gesture duration for Wave after v11.223.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier_hand_motion_v11_223.js",
+      "anchor": "{time:2.20,pose:open}"
+    },
+    {
+      "id": "M091",
+      "domain": "animation",
+      "request": "What actually moves during the new v11.223 hand wave?",
+      "route": "explain",
+      "expected": "Wrist Y yaw and Z roll animate the parent joint; palm follows and finger MCP/PIP/DIP rotations add flutter, not a rigid hand sprite translation.",
+      "mustNot": "Say Wave rotates only the hand mesh without the armature.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier_hand_motion_v11_223.js",
+      "anchor": "pose.wrist"
+    },
+    {
+      "id": "M092",
+      "domain": "animation",
+      "request": "Can the animated Wave clip be edited and exported as a native model?",
+      "route": "explain",
+      "expected": "The eight native skeletal keys use the existing rig timeline and are editable and saved in native JSON. OBJ can export posed geometry but not the original animated hierarchy.",
+      "mustNot": "Claim OBJ exports the full Wave rig and timeline.",
+      "source": "projects/swrlz-forge-moba/patches/v11_223_fist_clench_wrist_wave.py",
+      "anchor": "eight-key clip"
+    },
+    {
+      "id": "M093",
+      "domain": "animation",
+      "request": "What's changed in the v11.223 fist compared to v11.221?",
+      "route": "explain",
+      "expected": "Increased MCP/PIP/DIP curl with staggered finger values; thumb CMC opposition and MCP/IP flex now tuck across fingers, not just a larger rendered mesh.",
+      "mustNot": "Assume a whole-hand scale operation produces an anatomical fist.",
+      "source": "projects/swrlz-forge-moba/patches/v11_223_fist_clench_wrist_wave.py",
+      "anchor": "Strong clench"
+    },
+    {
+      "id": "M094",
+      "domain": "animation",
+      "request": "Should a wave make the entire scene camera drift when the wrist twists?",
+      "route": "diagnose",
+      "expected": "No; Wave's wrist/palm bone rotations are local model animation, not a camera or headset transform. Diagnose renderer/camera ownership separately.",
+      "mustNot": "Treat head-tracked camera motion as intended finger animation.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier_hand_motion_v11_223.js",
+      "anchor": "pose.palm"
+    },
+    {
+      "id": "M095",
+      "domain": "animation",
+      "request": "Could one static Wave pose prove our rig is animating correctly?",
+      "route": "diagnose",
+      "expected": "No; inspect repeated alternating pose keys and per-frame interpolation; static pose screenshot is not playback evidence.",
+      "mustNot": "Call a still image a successful eight-key animation.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier_hand_motion_v11_223.js",
+      "anchor": "Multiple alternating directions"
+    },
+    {
+      "id": "M096",
+      "domain": "research",
+      "request": "Search official WebXR hand tracking documentation and compare it with §E. How should §C answer?",
+      "route": "plan",
+      "expected": "Request bounded web evidence, cite actual returned W3C pages; inspect the current repo's 17-bone rig separately and flag source-version differences. No web-derived editor permission.",
+      "mustNot": "Invent citations or treat a tutorial as implemented engine source.",
+      "source": "training/forge-modeling/RIGGING_ANIMATION_RESEARCH_V2.md",
+      "anchor": "W3C WebXR Hand Input"
+    },
+    {
+      "id": "M097",
+      "domain": "research",
+      "request": "A Blender tutorial suggests inverse kinematics for the glove. Is IK already built in §E?",
+      "route": "explain",
+      "expected": "Describe IK as an external option; currently §E supports articulated author keyframes/pose controls, not a proven IK solver. Distinguish research from implementation.",
+      "mustNot": "Present upstream tutorial guidance as installed engine APIs.",
+      "source": "training/forge-modeling/RIGGING_ANIMATION_RESEARCH_V2.md",
+      "anchor": "not a complete mapping algorithm"
+    },
+    {
+      "id": "M098",
+      "domain": "research",
+      "request": "What if two external tutorials disagree on skin weights?",
+      "route": "plan",
+      "expected": "Prefer official current docs, triangulate claims and compare to se220RigWeights source/observed deformation. State uncertainty, do not claim the engine changed.",
+      "mustNot": "Silently choose a blog and overwrite the rig.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier_skeletal_core_v11_220.js",
+      "anchor": "function se220RigWeights"
+    },
+    {
+      "id": "M099",
+      "domain": "permission",
+      "request": "I wrote 'save hand capture' in quoted design notes. Are we recording now?",
+      "route": "refuse-unapproved",
+      "expected": "No: quoted text is not an instruction; no current Chat-native hand-recording tool or active VR capture receipt.",
+      "mustNot": "Infer microphone/camera permission or recording authority from text.",
+      "source": "docs/engineering/CHAT_FORGE_EMBEDDING.md",
+      "anchor": "Native operation names/types"
+    },
+    {
+      "id": "M100",
+      "domain": "evidence",
+      "request": "How do we prove §C understands the Wave keyframe pipeline later?",
+      "route": "plan",
+      "expected": "During user-authorized testing, require accurate source explanation then observed editor result/receipt for an actual action; public teacher case is not an independent skill evaluation.",
+      "mustNot": "Score a hand-written answer fixture as measured model success.",
+      "source": "training/forge-modeling/RIGGING_ANIMATION_RESEARCH_V2.md",
+      "anchor": "Example teaching challenge"
+    }
+  ]
+}
