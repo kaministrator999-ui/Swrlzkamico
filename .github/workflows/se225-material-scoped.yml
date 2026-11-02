@@ -19,15 +19,7 @@ jobs:
           node --check projects/swrlz-forge-moba/runtime/material_texture_editor_v11_225.js
           node --check projects/swrlz-forge-moba/runtime/studio_workspace_tabs_v11_225.js
           node projects/swrlz-forge-moba/scripts/test_material_texture_v11_225.js
-          python - <<'PY'
-          import json
-          from pathlib import Path
-          path=Path('projects/swrlz-forge-moba/source-manifest.json')
-          manifest=json.loads(path.read_text())
-          manifest['finalBytes']=0;manifest['finalSha256']=''
-          path.write_text(json.dumps(manifest))
-          PY
-          python projects/swrlz-forge-moba/build_space.py --output dist/se225
+          python projects/swrlz-forge-moba/scripts/verify_v11_225_release.py --output dist/se225
           python - <<'PY'
           import hashlib,json,re,subprocess
           from pathlib import Path

@@ -273,6 +273,6 @@
     "patches/v11_224_native_particle_studio.py",
     "patches/v11_225_material_texture_workspace_tabs.py"
   ],
-  "finalBytes": 7642176,
-  "finalSha256": "e69ee469f5231bd6c36139ddeb6d6b0cd0647563bf260971b7d81ad1d9cd7002"
+  "finalBytes": 7642539,
+  "finalSha256": "7407ca6b520912437c280035c1f4258f5b1e7a8ab577f3701b855db26f7bf3a7"
 }

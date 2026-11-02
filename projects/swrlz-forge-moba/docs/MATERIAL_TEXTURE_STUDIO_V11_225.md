@@ -2,7 +2,7 @@
 
 **Owner request:** Build a material and texture editor/creator inside §E; promote the existing Particle Studio and new Material & Texture Studio into their **own top-level workspace tabs** beside Game Engine and Modeling.
 
-**Exact source:** 7642176 UTF-8 HTML bytes; SHA-256 `e69ee469f5231bd6c36139ddeb6d6b0cd0647563bf260971b7d81ad1d9cd7002`; 257 ordered patches, 68 existing assets.
+**Exact source:** 7642539 UTF-8 HTML bytes; SHA-256 `7407ca6b520912437c280035c1f4258f5b1e7a8ab577f3701b855db26f7bf3a7`; 257 ordered patches, 68 existing assets.
 **Marker:** `SWYRL_ENGINE_DEPLOY_MARKER: V11_225_MATERIAL_TEXTURE_STUDIO_TABS`
 **Routes:** main game and modeler pages remain `index.html` and `modeler.html`; new studio tab URLs share the game page with `#studio-particles` / `#studio-materials` hashes. No non-existent static HTML pages or second native renderer.
 
