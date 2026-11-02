@@ -265,6 +265,6 @@
     "patches/v11_216_sheep_live_move_wheel.py",
     "patches/v11_217_floating_hand_proportions.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 7497822,
+  "finalSha256": "4d7b2d0aa3fa8183956b3f751411ad1a5e20662d41c2f7f7123093262a55c5d8"
 }
