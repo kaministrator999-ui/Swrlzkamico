@@ -1,0 +1,116 @@
+name: Check §E v11.221 thumb and gestures source candidate
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/calc-forge-v11-221-thumb.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  thumb:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax and append-only patch
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/model_atelier_hand_gestures_v11_221.js
+          node --check projects/swrlz-forge-moba/runtime/model_atelier_gesture_studio_v11_221.js
+          python3 -m py_compile projects/swrlz-forge-moba/patches/v11_221_thumb_opposition_gestures.py
+      - name: Verify 14 distinct hand gestures and calibrated thumb motion without browser suite
+        run: |
+          node - <<'JS'
+          const fs=require('fs'),vm=require('vm'),assert=require('assert');
+          const base='projects/swrlz-forge-moba/runtime/';
+          const src=fs.readFileSync(base+'model_atelier_skeletal_core_v11_220.js','utf8')+
+           fs.readFileSync(base+'model_atelier_hand_gestures_v11_221.js','utf8');
+          const api=vm.runInNewContext(src+';({create:se220CreateHandRig,validate:se220RigValidate,pose:se221GesturePose,list:se221Gestures,thumb:se221ThumbInfluences,interpolate:se220RigInterpolate});',{structuredClone});
+          const digits=[
+           {x:-.397,from:2.170,to:3.055,r:.104,splay:-.055,z:.006,name:'index'},
+           {x:-.131,from:2.197,to:3.255,r:.112,splay:-.017,z:-.009,name:'middle'},
+           {x:.135,from:2.176,to:3.152,r:.103,splay:.028,z:-.009,name:'ring'},
+           {x:.402,from:2.113,to:2.856,r:.084,splay:.083,z:.010,name:'pinky'}
+          ];
+          const rig=api.create(digits);
+          assert(api.validate(rig));
+          assert.equal(rig.bones.length,17);
+          assert.equal(api.list.length,14);
+          const poses=api.list.map(([key])=>api.pose(rig,key));
+          assert.equal(new Set(poses.map(x=>JSON.stringify(x))).size,14,'gestures must have different joint rotations');
+          assert.equal(poses.every(p=>rig.bones.every(b=>Array.isArray(p[b.id])&&p[b.id].every(x=>Number.isFinite(x)&&Math.abs(x)<=2.8))),true);
+          const pinch=api.pose(rig,'pinch'),fist=api.pose(rig,'fist'),up=api.pose(rig,'thumbs-up');
+          assert(pinch.thumb_cmc[1]>1&&pinch.thumb_cmc[2]<-.3);
+          assert(up.thumb_cmc[2]<-1&&fist.thumb_cmc[1]>.8);
+          assert.notDeepEqual(pinch.thumb_mcp,up.thumb_mcp);
+          assert(api.thumb([-1.10,2.01,.23],rig).mix>.7);
+          assert(api.thumb([-.515,1.53,.11],rig).mix<.40,'palm saddle must remain anchored');
+          assert.equal(api.thumb([0,1.7,0],rig).mix,0);
+          const Rx=a=>[[1,0,0],[0,Math.cos(a),-Math.sin(a)],[0,Math.sin(a),Math.cos(a)]];
+          const Ry=a=>[[Math.cos(a),0,Math.sin(a)],[0,1,0],[-Math.sin(a),0,Math.cos(a)]];
+          const Rz=a=>[[Math.cos(a),-Math.sin(a),0],[Math.sin(a),Math.cos(a),0],[0,0,1]];
+          const mul=(a,b)=>a.map(row=>[0,1,2].map(j=>row.reduce((sum,x,k)=>sum+x*b[k][j],0)));
+          const mv=(a,v)=>a.map(row=>row.reduce((sum,x,k)=>sum+x*v[k],0));
+          const sub=(a,b)=>a.map((x,i)=>x-b[i]),add=(a,b)=>a.map((x,i)=>x+b[i]);
+          const chain=(names,tip,pose,rest)=>{
+           let at=rest[names[0]],rot=[[1,0,0],[0,1,0],[0,0,1]];
+           for(let i=0;i<names.length;i++){
+            let angles=pose[names[i]];
+            rot=mul(rot,mul(mul(Rx(angles[0]),Ry(angles[1])),Rz(angles[2])));
+            if(i+1<names.length)at=add(at,mv(rot,sub(rest[names[i+1]],rest[names[i]])));
+           }
+           return add(at,mv(rot,sub(tip,rest[names.at(-1)])));
+          };
+          const rest=Object.fromEntries(rig.bones.map(b=>[b.id,b.rest]));
+          const thumbTip=[-1.117,2.014,.235],indexTip=[-.452,3.055,.026];
+          const fingertip=chain(['index_mcp','index_pip','index_dip'],indexTip,pinch,rest);
+          const thtip=chain(['thumb_cmc','thumb_mcp','thumb_ip'],thumbTip,pinch,rest);
+          assert(Math.hypot(...sub(fingertip,thtip))<.095,'thumb and index tips fail to approach');
+          const raised=chain(['thumb_cmc','thumb_mcp','thumb_ip'],thumbTip,up,rest);
+          assert(raised[1]>thumbTip[1]+.18,'thumbs-up must actually point upward');
+          console.log('THUMB221_MATH_PASS=14 unique gestures, thumb-index near-contact, upright thumb, tip weight and anchored saddle');
+          JS
+      - name: Build unsealed v11.221 candidate
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+          p=Path('projects/swrlz-forge-moba/source-manifest.json')
+          m=json.loads(p.read_text())
+          assert m['name']=='§wyrl§ Engine v11.220'
+          assert m['patches'][-1]=='patches/v11_220_hand_skeletal_studio.py'
+          m['name']='§wyrl§ Engine v11.221'
+          m['finalArtifact']='swyrl_engine_v11_221.html'
+          m['patches'].append('patches/v11_221_thumb_opposition_gestures.py')
+          m['finalSha256']='';m['finalBytes']=0
+          p.write_text(json.dumps(m,ensure_ascii=False))
+          PY
+          python3 projects/swrlz-forge-moba/build_space.py --output /tmp/se221-hand
+      - name: Print exact build receipt and confirm shipped UI functionality
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          b=Path('/tmp/se221-hand/index.html').read_bytes()
+          s=b.decode('utf8')
+          for marker in [
+           'V11_221_THUMB_OPPOSITION_GESTURES',
+           'function se221GesturePose(rig,kind)',
+           'function se221ThumbInfluences(pt,rig)',
+           'se221ThumbInfluences(pt,rig)',
+           'se221StudioInstall();',
+           'modelAtelierRigAnimateGesture',
+           'modelAtelierRigOppose',
+           'modelAtelierRigThumbCurl',
+           's=se220Smooth((t-left.time)/(right.time-left.time))',
+           '<title>§wyrl§ Engine · Maker v11.221</title>'
+          ]:
+           assert marker in s,marker
+          assert b==Path('/tmp/se221-hand/modeler.html').read_bytes()
+          print('THUMB221_CANDIDATE_BYTES='+str(len(b)))
+          print('THUMB221_CANDIDATE_SHA256='+hashlib.sha256(b).hexdigest())
+          print('THUMB221_PATCHES=253')
+          PY
