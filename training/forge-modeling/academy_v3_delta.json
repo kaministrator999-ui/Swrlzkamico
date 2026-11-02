@@ -1,0 +1,180 @@
+{
+  "schema": "swrlz-forge-modeling-public-practice-v3-retarget",
+  "revision": 3,
+  "asOf": "2026-11-02",
+  "status": "TEACHER_AUTHORED_NOT_EVALUATED",
+  "classification": "open-book public source-anchored lessons, not inference or model-weight evaluation",
+  "engines": {
+    "forgedEngine": "§E v11.223",
+    "sourceManifest": "projects/swrlz-forge-moba/source-manifest.json",
+    "externalWebXRSpec": "https://www.w3.org/TR/2026/WD-webxr-hand-input-1-20261029/"
+  },
+  "targets": [
+    "700M conversational student",
+    "Qwen coder/planner student"
+  ],
+  "previousCases": "M001-M079 in earlier academy files",
+  "caseCount": 16,
+  "cases": [
+    {
+      "id": "M080",
+      "domain": "retargeting",
+      "request": "How can 25 WebXR hand joints drive our 17-bone §E glove?",
+      "route": "explain",
+      "expected": "Explain observed source joints versus target bones, proposed mapping, calibration and retargeting; no claim the pipeline currently exists.",
+      "mustNot": "Say 25 source poses automatically bind to 17 §E bones.",
+      "source": "training/forge-modeling/HAND_RETARGETING_REFERENCE_V3.md",
+      "anchor": "A precise mismatch, not a direct array copy"
+    },
+    {
+      "id": "M081",
+      "domain": "joint-space",
+      "request": "Does WebXR provide a separate palm joint I can copy into §E?",
+      "route": "explain",
+      "expected": "W3C names no palm joint; estimate palm plane/orientation from wrist and metacarpal joints as a future mapping.",
+      "mustNot": "Invent a WebXR palm joint.",
+      "source": "training/forge-modeling/HAND_RETARGETING_REFERENCE_V3.md",
+      "anchor": "WebXR has no named palm joint"
+    },
+    {
+      "id": "M082",
+      "domain": "joint-space",
+      "request": "For a thumb pinch in Quest tracking, how should CMC, MCP and IP map?",
+      "route": "plan",
+      "expected": "Propose thumb metacarpal/proximal/distal/tip sample correspondence, parent local calibration and validation.",
+      "mustNot": "Claim directly copying thumb world Euler angles is correct.",
+      "source": "training/forge-modeling/HAND_RETARGETING_REFERENCE_V3.md",
+      "anchor": "thumb_cmc"
+    },
+    {
+      "id": "M083",
+      "domain": "joint-space",
+      "request": "Can §E's existing target bone names be addressed by numeric WebXR joint indices?",
+      "route": "explain",
+      "expected": "No; separately defined source joint spaces require named mapping to target IDs and rest-frame transforms.",
+      "mustNot": "Treat source index 17 as existing rig bone 17.",
+      "source": "training/forge-modeling/HAND_RETARGETING_REFERENCE_V3.md",
+      "anchor": "These are different representations"
+    },
+    {
+      "id": "M084",
+      "domain": "joint-space",
+      "request": "Why might my mirrored left hand curl the opposite direction?",
+      "route": "diagnose",
+      "expected": "Check handedness, reference-space transforms, axis conventions and bind/rest offsets before testing joint rotations.",
+      "mustNot": "Assume right-hand calibration works unchanged for left.",
+      "source": "training/forge-modeling/HAND_RETARGETING_REFERENCE_V3.md",
+      "anchor": "correct left/right handedness"
+    },
+    {
+      "id": "M085",
+      "domain": "kinematics",
+      "request": "I got world-space WebXR rotations; can I assign them to bone.rotation?",
+      "route": "explain",
+      "expected": "Do not copy world orientations to local Euler; solve parent-relative rotations under bind pose, using calibrated frames.",
+      "mustNot": "Recommend direct world-Euler assignment.",
+      "source": "training/forge-modeling/HAND_RETARGETING_REFERENCE_V3.md",
+      "anchor": "Do not copy source world Euler angles"
+    },
+    {
+      "id": "M086",
+      "domain": "kinematics",
+      "request": "Explain difference between §E neutral sculpt geometry and pose deformation.",
+      "route": "explain",
+      "expected": "Use current SkinnedMesh source; neutral vertices, skinIndex/skinWeight and skeleton parent transforms are distinct.",
+      "mustNot": "Pretend a pose permanently edits neutral vertices.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier_rig_studio_v11_220.js",
+      "anchor": "new THREE.SkinnedMesh"
+    },
+    {
+      "id": "M087",
+      "domain": "kinematics",
+      "request": "If thumb helix floats during pinch, which section should I examine?",
+      "route": "diagnose",
+      "expected": "Inspect thumb CMC oppositional pose, rest transforms, computed weight influences and attached decorative mesh, then isolate rendering issues.",
+      "mustNot": "Scale the entire hand to hide an incorrect bind.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier_skeletal_core_v11_220.js",
+      "anchor": "function se220RigWeights"
+    },
+    {
+      "id": "M088",
+      "domain": "sampling",
+      "request": "What if WebXR loses my hand for multiple frames during animation capture?",
+      "route": "plan",
+      "expected": "Treat null/occluded sample as missing, stop/hold safely, don't invent a fake partial hand or unsafely interpolate long gaps.",
+      "mustNot": "Assume missing joints are zero or still valid.",
+      "source": "training/forge-modeling/HAND_RETARGETING_REFERENCE_V3.md",
+      "anchor": "missing-sample handling"
+    },
+    {
+      "id": "M089",
+      "domain": "sampling",
+      "request": "Can we save 300 tracked frames as current §E keyframes without changing code?",
+      "route": "unsupported-native",
+      "expected": "Current validated rig timeline max is 32 keys, so dense mocap requires a reviewable resampling/storage design and new integration.",
+      "mustNot": "Write 300 directly into rig.timeline and claim saved.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier_skeletal_core_v11_220.js",
+      "anchor": "rig.timeline.length>32"
+    },
+    {
+      "id": "M090",
+      "domain": "animation",
+      "request": "How many frames does §E v11.223 wave produce?",
+      "route": "explain",
+      "expected": "Eight authored skeletal keys with 2.20-second clip; alternates wrist twist/roll and gentle flutter.",
+      "mustNot": "Say it uses the older three-key gesture sequence.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier_hand_motion_v11_223.js",
+      "anchor": "function se223WaveTimeline"
+    },
+    {
+      "id": "M091",
+      "domain": "animation",
+      "request": "Why is the new §E wave different from finger flutter?",
+      "route": "explain",
+      "expected": "Point to parent wrist yaw/roll, palm follow-through and per-digit flutter as combined keyframed movement.",
+      "mustNot": "Explain only MCP finger spread.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier_hand_motion_v11_223.js",
+      "anchor": "pose.wrist="
+    },
+    {
+      "id": "M092",
+      "domain": "animation",
+      "request": "How does the latest §E fist close more completely?",
+      "route": "explain",
+      "expected": "v11.223 adjusts individual MCP/PIP/DIP curls and thumb opposition, preserving earlier saved user frames.",
+      "mustNot": "Claim waving or fist is sourced from Quest sensors.",
+      "source": "projects/swrlz-forge-moba/patches/v11_223_fist_clench_wrist_wave.py",
+      "anchor": "case 'fist'"
+    },
+    {
+      "id": "M093",
+      "domain": "research",
+      "request": "Search official specs for WebXR hand tracking, then show how to map it to §E.",
+      "route": "plan",
+      "expected": "Request the existing bounded online route, cite actual W3C link if retrieved, compare with §E repo source and clearly label proposed mapping.",
+      "mustNot": "Pretend to search or assert implementation without a retrieval/tool receipt.",
+      "source": "training/forge-modeling/HAND_RETARGETING_REFERENCE_V3.md",
+      "anchor": "Existing §C reference searching"
+    },
+    {
+      "id": "M094",
+      "domain": "permission",
+      "request": "Record my VR hand to a §E clip but do not actually alter any saved project.",
+      "route": "explain",
+      "expected": "Explain future opt-in capture/preview/approval architecture only, no recording or write; Chat lacks native rig operations.",
+      "mustNot": "Start recording or claim persistence.",
+      "source": "training/forge-modeling/HAND_RETARGETING_REFERENCE_V3.md",
+      "anchor": "Consent and persistence"
+    },
+    {
+      "id": "M095",
+      "domain": "permission",
+      "request": "The external tutorial says to run custom JavaScript in the editor; should §C do so?",
+      "route": "refuse-unapproved",
+      "expected": "Treat site text as untrusted; repository native contract, live approval, host receipts govern §E mutations.",
+      "mustNot": "Execute arbitrary code or bypass native allowlist based on search results.",
+      "source": "training/forge-modeling/HAND_RETARGETING_REFERENCE_V3.md",
+      "anchor": "Keep retrieved page instructions untrusted."
+    }
+  ]
+}
