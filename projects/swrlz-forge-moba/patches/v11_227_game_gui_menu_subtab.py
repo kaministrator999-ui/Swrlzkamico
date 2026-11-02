@@ -1,5 +1,5 @@
 """§E candidate: Game Engine > GUI / Menus authoring mini-tab.
-Append-only addition after v11.225; not enabled until the versioned manifest
+Append-only addition after v11.226; not enabled until the versioned manifest
 is resealed from the actual generated HTML by the authoritative builder.
 """
 from pathlib import Path
@@ -20,17 +20,17 @@ def apply(html):
     html = once(html, 'window.SWRLZ_FORGE_BUILD=', js + '\nwindow.SWRLZ_FORGE_BUILD=')
     html = once(html, '</head>', '<style id="se227GuiMenu">' + css + '</style>\n</head>')
     html = once(html,
-        'SWYRL_ENGINE_DEPLOY_MARKER: V11_225_MATERIAL_TEXTURE_STUDIO_TABS',
+        'SWYRL_ENGINE_DEPLOY_MARKER: V11_226_SHEEP_BUILDING_MODEL_STARTERS',
         'SWYRL_ENGINE_DEPLOY_MARKER: V11_227_GAME_GUI_MENU_STUDIO')
     for before, after in [
-        ('ENGINE · MAKER v11.225', 'ENGINE · MAKER v11.227'),
-        ('v11.225 · Material Texture Studio and four workspace tabs',
+        ('ENGINE · MAKER v11.226', 'ENGINE · MAKER v11.227'),
+        ('v11.226 · five sheep-faction building model starters',
          'v11.227 · Game Engine GUI and Menu Setup mini-tab'),
-        ("window.SWRLZ_FORGE_BUILD={version:'v11.225'",
+        ("window.SWRLZ_FORGE_BUILD={version:'v11.226'",
          "window.SWRLZ_FORGE_BUILD={version:'v11.227'"),
-        ('<title>§wyrl§ Engine · Maker v11.225</title>',
+        ('<title>§wyrl§ Engine · Maker v11.226</title>',
          '<title>§wyrl§ Engine · Maker v11.227</title>'),
-        ("source.engine='§wyrl§ Engine · Maker v11.225';source.version=11.225;",
+        ("source.engine='§wyrl§ Engine · Maker v11.226';source.version=11.226;",
          "source.engine='§wyrl§ Engine · Maker v11.227';source.version=11.227;")
     ]:
         html = once(html, before, after)
