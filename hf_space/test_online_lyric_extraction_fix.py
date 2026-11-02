@@ -176,6 +176,26 @@ class OnlineLyricExtractionFixTests(unittest.TestCase):
         self.assertIsNotNone(context.get("verifiedLyrics"), context.get("lyricsSourceAttempts"))
         self.assertEqual(context["lyricsSourceAttempts"][0]["outcome"], "VERIFIED")
 
+    def test_primary_lyric_research_quotes_song_and_artist(self):
+        plan={
+            "query": "who do I catch tech n9ne lyrics",
+            "contentMode": "lyrics-verification",
+            "requestedScope": "full-lyrics",
+            "subject": '"Who Do I Catch" by Tech N9ne',
+        }
+        with (
+            patch.object(online_tools,"run_online_research",return_value={
+                "provider": "offline-fixture", "evidence": [],
+                "candidatePool": [], "fetchFailures": [], "errors": [],
+            }) as research,
+            patch.object(online_tools.canonical_online_research,"search_public",return_value=[]),
+        ):
+            online_tools._search_bundle(plan)
+        payload=research.call_args.args[0]
+        self.assertIn('"Who Do I Catch"',payload["prompt"])
+        self.assertIn('"Tech N9ne"',payload["prompt"])
+        self.assertEqual(payload["researchQueries"],[payload["prompt"]])
+
     def test_unrelated_result_never_shown_as_lyric_source(self):
         bundle=self._bundle(
             page_title="TechCrunch | Startup and Technology News",
