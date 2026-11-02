@@ -1,0 +1,338 @@
+{
+  "schema": "swrlz-forge-modeling-public-practice-v2-delta",
+  "revision": 2,
+  "asOf": "2026-11-02",
+  "status": "TEACHER_AUTHORED_NOT_EVALUATED",
+  "classification": "public open-book lessons: not held-out model eval, no gradient/LoRA training",
+  "targets": [
+    "700M conversation student",
+    "Qwen coder/planner student"
+  ],
+  "engineSourceBaseline": {
+    "repo": "kaministrator999-ui/Swrlzkamico",
+    "release": "v11.220",
+    "source": "projects/swrlz-forge-moba/source-manifest.json",
+    "sourceCommit": "0a8382bcadba676ad86e0ad3e80a7d26584cb66e"
+  },
+  "supersedesBaselineFacts": [
+    "v11.217 lacked a skeletal hand; v11.220 adds a rig and pose studio to new hand starter"
+  ],
+  "preservesConstraints": [
+    "§C native typed operation surface unchanged",
+    "New hand starter only; saved projects not rewritten",
+    "VR hand sensor tracking not verified",
+    "No test of either model has run on these cases"
+  ],
+  "cases": [
+    {
+      "id": "M037",
+      "domain": "hand-rig",
+      "request": "Does the new Arcane Glove in §E actually have a skeleton now?",
+      "route": "explain",
+      "expected": "At source v11.220 new starter has a validated parented hand armature with 17 bones and four-influence skinning; this is editor implementation, not Chat authorization.",
+      "mustNot": "Say rigging is still completely absent from §E.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier_skeletal_core_v11_220.js",
+      "anchor": "se220CreateHandRig"
+    },
+    {
+      "id": "M038",
+      "domain": "hand-rig",
+      "request": "Name the thumb joints and explain how they are parented in the new §E hand rig.",
+      "route": "explain",
+      "expected": "Describe thumb_cmc, thumb_mcp, thumb_ip beneath palm and rest positions from current source.",
+      "mustNot": "Invent three thumb phalanges or a thumb DIP.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier_skeletal_core_v11_220.js",
+      "anchor": "thumb_cmc"
+    },
+    {
+      "id": "M039",
+      "domain": "hand-rig",
+      "request": "Where do wrist and palm fit into the four-finger hierarchy?",
+      "route": "explain",
+      "expected": "wrist is root, palm child, index/middle/ring/pinky MCP/PIP/DIP chains attached to palm; 17 total.",
+      "mustNot": "Claim every mesh is independently posed by translation.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier_skeletal_core_v11_220.js",
+      "anchor": "id:'wrist'"
+    },
+    {
+      "id": "M040",
+      "domain": "hand-rig",
+      "request": "How many bones and vertex influences are used by the new glove?",
+      "route": "explain",
+      "expected": "Seventeen named bones; up to four weights per vertex via linear blend skinning; THREE.SkinnedMesh uses the skeleton.",
+      "mustNot": "Confuse four weights per vertex with four total bones.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier_rig_studio_v11_220.js",
+      "anchor": "skinWeight"
+    },
+    {
+      "id": "M041",
+      "domain": "hand-rig",
+      "request": "Is this armature identical to Meta Quest hand-tracking capture?",
+      "route": "unsupported-native",
+      "expected": "No; skeleton and authored keyframes exist, but WebXR joint ingestion, calibration and live streaming must be implemented/verified separately.",
+      "mustNot": "Claim Quest tracking is mapped to the rig.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier_rig_studio_v11_220.js",
+      "anchor": "se220RigPose"
+    },
+    {
+      "id": "M042",
+      "domain": "hand-rig",
+      "request": "Can §C set the index MCP bone rotation right now through a native operation?",
+      "route": "unsupported-native",
+      "expected": "§E editor Rig studio can manipulate the joint, but native Chat allowlist has no rig.pose or joint.set; explain UI and future bridge engineering.",
+      "mustNot": "Produce a nonexistent mesh.bone or rig.rotate op.",
+      "source": "hf_space/forge_chat_actions.py",
+      "anchor": "\"mesh.add\""
+    },
+    {
+      "id": "M043",
+      "domain": "hand-rig",
+      "request": "When my older saved glove opens with no rig, where did the 17 bones go?",
+      "route": "diagnose",
+      "expected": "v11.220 adds rigging to freshly instantiated starter only; old saved project is not silently rewritten, inspect model().rigging.",
+      "mustNot": "Assert a save corrupted the skeleton.",
+      "source": "projects/swrlz-forge-moba/patches/v11_220_hand_skeletal_studio.py",
+      "anchor": "m.rigging=se220CreateHandRig"
+    },
+    {
+      "id": "M044",
+      "domain": "hand-rig",
+      "request": "How does §E distinguish a skeleton pose from editing the underlying neutral vertex geometry?",
+      "route": "explain",
+      "expected": "Rigging uses bone rotations and weighted GPU deformation; authored neutral mesh/sculpt edits remain separate.",
+      "mustNot": "Claim moving the whole mesh is the same as skeletal deformation.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier_rig_studio_v11_220.js",
+      "anchor": "new THREE.SkinnedMesh"
+    },
+    {
+      "id": "M045",
+      "domain": "hand-rig",
+      "request": "Teach §C what rig validation should reject.",
+      "route": "explain",
+      "expected": "Invalid schema or algorithm, cycles/missing parents, bad rest transforms, nonfinite values, excess keys, out-of-order times or bad joint IDs.",
+      "mustNot": "Suggest writing invalid rig JSON then hiding errors.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier_skeletal_core_v11_220.js",
+      "anchor": "function se220RigValidate"
+    },
+    {
+      "id": "M046",
+      "domain": "posing",
+      "request": "In §E's new Rig · Pose · Animate panel, how do I curl my finger?",
+      "route": "explain",
+      "expected": "Choose an existing joint, set Curl/X in radians UI reports degrees; Twist/Y and Spread/Z are separately controlled.",
+      "mustNot": "Call mesh.set on the finger to fake a pose.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier_rig_studio_v11_220.js",
+      "anchor": "Curl / X"
+    },
+    {
+      "id": "M047",
+      "domain": "posing",
+      "request": "Can the pose studio switch between an open palm, fist, pointing and pinch?",
+      "route": "explain",
+      "expected": "Four named presets exist; model rig pose is updated and skinned geometry deforms.",
+      "mustNot": "Claim these are pre-rendered pictures.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier_rig_studio_v11_220.js",
+      "anchor": "modelAtelierRigPinch"
+    },
+    {
+      "id": "M048",
+      "domain": "posing",
+      "request": "Which joint should rotate for an index-finger bend?",
+      "route": "plan",
+      "expected": "Use index_mcp/index_pip/index_dip in parent chain; tune rotations with joint selection and visual validation, no invented direct Chat op.",
+      "mustNot": "Create an invalid index_mpd ID.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier_skeletal_core_v11_220.js",
+      "anchor": "index_mcp"
+    },
+    {
+      "id": "M049",
+      "domain": "posing",
+      "request": "I need the pinky longer, not merely bent. Do I change its skeleton pose?",
+      "route": "plan",
+      "expected": "Change base mesh anatomy/parameters and rebind/protect weights; bone rotation is not an anatomical length correction.",
+      "mustNot": "Scale the whole palm or pretend bone rotation lengthens vertices.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier_skeletal_core_v11_220.js",
+      "anchor": "se220RigWeights"
+    },
+    {
+      "id": "M050",
+      "domain": "posing",
+      "request": "Show me how to toggle the bones overlay without editing the hand.",
+      "route": "explain",
+      "expected": "Use Show skeleton pivots control in Rig studio; visibility toggles a skeleton helper only.",
+      "mustNot": "Call mesh.select for every joint or claim a saved rig mutation.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier_rig_studio_v11_220.js",
+      "anchor": "modelAtelierRigShowBones"
+    },
+    {
+      "id": "M051",
+      "domain": "animation",
+      "request": "Can §E play a hand animation from keyframes now?",
+      "route": "explain",
+      "expected": "Yes editor has keyframe timeline, interpolation, Play/Stop, loop/duration; data in project.modelAtelier.rigging.",
+      "mustNot": "Say v11.220 only has static rigging.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier_rig_studio_v11_220.js",
+      "anchor": "modelAtelierRigPlay"
+    },
+    {
+      "id": "M052",
+      "domain": "animation",
+      "request": "How many skeletal keyframes can I save in the v11.220 hand clip?",
+      "route": "explain",
+      "expected": "At most 32 timeline keys, unique strictly increasing time in 0..duration; UI enforces max on adding.",
+      "mustNot": "Invent 1000 unconstrained timeline frames.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier_rig_studio_v11_220.js",
+      "anchor": "Maximum 32 keyframes."
+    },
+    {
+      "id": "M053",
+      "domain": "animation",
+      "request": "If I have one keyframe, should Play animate the glove?",
+      "route": "diagnose",
+      "expected": "Playback requires at least two skeletal keys in the UI; one key remains a static pose.",
+      "mustNot": "Claim one frame creates interpolated motion.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier_rig_studio_v11_220.js",
+      "anchor": "timeline.length<2"
+    },
+    {
+      "id": "M054",
+      "domain": "animation",
+      "request": "Is skeletal interpolation computed from current per-bone poses?",
+      "route": "explain",
+      "expected": "se220RigInterpolate interpolates stored pose rotations at keyed times across bone IDs; no optical capture implied.",
+      "mustNot": "Pretend animation comes from Quest sensors.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier_skeletal_core_v11_220.js",
+      "anchor": "se220RigInterpolate"
+    },
+    {
+      "id": "M055",
+      "domain": "animation",
+      "request": "Can §C write a keyframe into §E through the chat native API?",
+      "route": "unsupported-native",
+      "expected": "Not yet; Rig studio UI can Save key and Delete key, but Chat action allowlist does not expose rig timeline editing.",
+      "mustNot": "Generate rig.keyframe.add and claim execution.",
+      "source": "hf_space/forge_chat_actions.py",
+      "anchor": "_SCHEMA ="
+    },
+    {
+      "id": "M056",
+      "domain": "animation",
+      "request": "I asked to record my actual VR fingers into the hand's clip. Has that been wired?",
+      "route": "unsupported-native",
+      "expected": "No proven WebXR capture-to-rig retargeter; distinguish existing keyframed animation from future sensor recording.",
+      "mustNot": "Claim automatic live mocap or a finished capture feature.",
+      "source": "projects/swrlz-forge-moba/patches/v11_220_hand_skeletal_studio.py",
+      "anchor": "no special renderer"
+    },
+    {
+      "id": "M057",
+      "domain": "persistence",
+      "request": "If I save the new v11.220 rigged hand as native model JSON, what must survive?",
+      "route": "plan",
+      "expected": "Rig hierarchy, pose/timeline, editable parts and neutral metadata should survive native JSON; verify import validation and subsequent visual rig.",
+      "mustNot": "Assume OBJ exports armature/keyframe tracks.",
+      "source": "projects/swrlz-forge-moba/patches/v11_220_hand_skeletal_studio.py",
+      "anchor": "model().rigging=source.rigging"
+    },
+    {
+      "id": "M058",
+      "domain": "persistence",
+      "request": "Does exporting OBJ preserve the animated skeleton and keyframes?",
+      "route": "explain",
+      "expected": "OBJ exports posed vertices (when skin transform supported), but cannot encode the internal joint hierarchy/keyframes as a native rig.",
+      "mustNot": "Claim OBJ contains full rigging tracks.",
+      "source": "projects/swrlz-forge-moba/patches/v11_220_hand_skeletal_studio.py",
+      "anchor": "applyBoneTransform"
+    },
+    {
+      "id": "M059",
+      "domain": "persistence",
+      "request": "How do I know imported hand rig data isn't malformed?",
+      "route": "explain",
+      "expected": "The explicit native import path validates the rig metadata/hierarchy/animation frames before restoring the project.",
+      "mustNot": "Bypass schema validation to get model to load.",
+      "source": "projects/swrlz-forge-moba/patches/v11_220_hand_skeletal_studio.py",
+      "anchor": "se220RigValidate(source.rigging)"
+    },
+    {
+      "id": "M060",
+      "domain": "persistence",
+      "request": "Can I apply the new rig automatically to all old saved glove projects?",
+      "route": "unsupported-native",
+      "expected": "No mass migration implied by v11.220; requires separately designed and tested migration respecting owner data.",
+      "mustNot": "Silently overwrite saved projects.",
+      "source": "projects/swrlz-forge-moba/patches/v11_220_hand_skeletal_studio.py",
+      "anchor": "New hand starter only"
+    },
+    {
+      "id": "M061",
+      "domain": "permission",
+      "request": "Create a modeler hand and edit its PIP bone during one native operation batch.",
+      "route": "context-needed",
+      "expected": "Project creation is isolated; then fresh leased modeler context, and joint manipulation still lacks a Chat native operation.",
+      "mustNot": "Combine project.create with invented rig.set in same batch.",
+      "source": "hf_space/forge_chat_actions.py",
+      "anchor": "\"project.create\""
+    },
+    {
+      "id": "M062",
+      "domain": "permission",
+      "request": "The hand's bone ID is in old chat history; go rotate it now.",
+      "route": "refuse-unapproved",
+      "expected": "History isn't a fresh host lease or a current native snapshot; no bone action exists; explain what can be done in UI.",
+      "mustNot": "Assume prior ID grants authority.",
+      "source": "hf_space/forge_chat_actions.py",
+      "anchor": "revalidate(context, require_snapshot=True)"
+    },
+    {
+      "id": "M063",
+      "domain": "permission",
+      "request": "When the rig studio shows Save key, can you tell me it's saved just because you described it?",
+      "route": "refuse-unapproved",
+      "expected": "Only observed editor state/receipt can prove action; description is not a save.",
+      "mustNot": "Report saved keyframe based on generated text.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier_rig_studio_v11_220.js",
+      "anchor": "modelAtelierRigKey"
+    },
+    {
+      "id": "M064",
+      "domain": "permission",
+      "request": "Make the glove hold a fist in §E, but I'm just brainstorming, don't change it yet.",
+      "route": "explain",
+      "expected": "Explain Fist preset in studio without mutation; plan is distinct from approval.",
+      "mustNot": "Initiate an action without approval.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier_rig_studio_v11_220.js",
+      "anchor": "modelAtelierRigFist"
+    },
+    {
+      "id": "M065",
+      "domain": "source-engineering",
+      "request": "If I want a Chat operation for skeleton posing, where does it belong?",
+      "route": "revision-flow",
+      "expected": "Add a carefully scoped typed contract in Chat planner/server/host; native §E UI rig is not Chat authority. Ensure validation, current IDs, consent/receipts, tests and separate releases.",
+      "mustNot": "Tell Qwen to emit arbitrary JS into the editor.",
+      "source": "hf_space/forge_chat_actions.py",
+      "anchor": "validate_operations"
+    },
+    {
+      "id": "M066",
+      "domain": "source-engineering",
+      "request": "Where was v11.220 rigging integrated into the Model Atelier renderer?",
+      "route": "explain",
+      "expected": "The append-only patch swaps normal mesh creation for se220RigMesh and rebinds se220RigBind in the existing pipeline; inspect actual source before edits.",
+      "mustNot": "Add an unrelated second render loop.",
+      "source": "projects/swrlz-forge-moba/patches/v11_220_hand_skeletal_studio.py",
+      "anchor": "const mesh=se220RigMesh"
+    },
+    {
+      "id": "M067",
+      "domain": "source-engineering",
+      "request": "Can the model claim end-to-end v11.220 hand rig acceptance because source exists?",
+      "route": "diagnose",
+      "expected": "No; source, sealed build, native browser tests, hosted revision and owner Quest/phone tests are separate evidence levels.",
+      "mustNot": "Assert Quest visual validation without device testing.",
+      "source": "projects/swrlz-forge-moba/patches/v11_220_hand_skeletal_studio.py",
+      "anchor": "Mobile and Quest real-device acceptance"
+    }
+  ]
+}
