@@ -1,0 +1,78 @@
+name: Calculate §E v11.220 skeletal hand candidate receipt
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/calc-forge-v11-220-rig-candidate.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-rig:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax-check rig code and append-only patch
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/model_atelier_skeletal_core_v11_220.js
+          node --check projects/swrlz-forge-moba/runtime/model_atelier_rig_studio_v11_220.js
+          python3 -m py_compile projects/swrlz-forge-moba/patches/v11_220_hand_skeletal_studio.py
+      - name: Focused mathematical skin-weight and bone-clip check
+        run: |
+          node - <<'JS'
+          const fs=require('fs'),vm=require('vm'),assert=require('assert');
+          const code=fs.readFileSync('projects/swrlz-forge-moba/runtime/model_atelier_skeletal_core_v11_220.js','utf8');
+          const lib=vm.runInNewContext(code+';({create:se220CreateHandRig,validate:se220RigValidate,weights:se220RigWeights,sample:se220RigInterpolate,preset:se220RigPreset});',{structuredClone});
+          const digits=[
+           {x:-.397,from:2.170,to:3.055,r:.104,splay:-.055,z:.006,name:'index'},
+           {x:-.131,from:2.197,to:3.255,r:.112,splay:-.017,z:-.009,name:'middle'},
+           {x:.135,from:2.176,to:3.152,r:.103,splay:.028,z:-.009,name:'ring'},
+           {x:.402,from:2.113,to:2.856,r:.084,splay:.083,z:.010,name:'pinky'}
+          ];
+          const rig=lib.create(digits);assert(lib.validate(rig));assert.equal(rig.bones.length,17);
+          const id=Object.fromEntries(rig.bones.map((b,i)=>[b.id,i]));
+          for(const p of [[0,.78,0],[0,1.7,0],[-.41,2.58,0],[-.13,3.08,0],[.4,2.7,0],[-1.07,1.97,.2]]){
+           const a=lib.weights(p,rig);
+           assert.equal(a.indices.length,4);assert.equal(a.weights.length,4);
+           assert(Math.abs(a.weights.reduce((s,v)=>s+v,0)-1)<1e-6);
+           assert(a.indices.every(x=>x>=0&&x<rig.bones.length));
+          }
+          assert(lib.weights([-.41,2.72,0],rig).indices.includes(id.index_pip)||lib.weights([-.41,2.72,0],rig).indices.includes(id.index_dip));
+          assert(lib.weights([-.98,1.94,.20],rig).indices.some(n=>[id.thumb_mcp,id.thumb_ip].includes(n)));
+          const mid=lib.sample(rig,.375);assert(mid.index_pip[0]>.1&&mid.index_pip[0]<1.04);
+          console.log('RIG220_MATH_PASS=17 bones 4 weights per vertex thumb/fingers, interpolation');
+          JS
+      - name: Assemble unsealed v11.220 candidate
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+          p=Path('projects/swrlz-forge-moba/source-manifest.json')
+          m=json.loads(p.read_text())
+          assert m['name']=='§wyrl§ Engine v11.219'
+          assert m['patches'][-1]=='patches/v11_219_finger_rail_contact.py'
+          m['name']='§wyrl§ Engine v11.220'
+          m['finalArtifact']='swyrl_engine_v11_220.html'
+          m['patches'].append('patches/v11_220_hand_skeletal_studio.py')
+          m['finalSha256']='';m['finalBytes']=0
+          p.write_text(json.dumps(m,ensure_ascii=False))
+          PY
+          python3 projects/swrlz-forge-moba/build_space.py --output /tmp/se220-rig-candidate
+      - name: Report candidate source receipt
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          raw=Path('/tmp/se220-rig-candidate/index.html').read_bytes()
+          s=raw.decode('utf8')
+          for marker in ['V11_220_NATIVE_HAND_SKELETAL_STUDIO','se220CreateHandRig(digit)','se220RigBind();se220RigRefresh();','new THREE.SkinnedMesh(g,mat)','Rig · Pose · Animate','se220RigInterpolate','<title>§wyrl§ Engine · Maker v11.220</title>']:
+           assert marker in s,marker
+          assert raw==Path('/tmp/se220-rig-candidate/modeler.html').read_bytes()
+          print('RIG220_CANDIDATE_BYTES='+str(len(raw)))
+          print('RIG220_CANDIDATE_SHA256='+hashlib.sha256(raw).hexdigest())
+          print('RIG220_PATCHES=252')
+          PY
