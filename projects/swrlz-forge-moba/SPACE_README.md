@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.215
+title: §wyrl§ Engine v11.217
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,13 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.217 — Proportional Floating Hand refinement (2026-11-02)
+
+Owner's second phone screenshots exposed oversized cylindrical fingers/knuckle studs and a swollen palm edge opposite the thumb. Added a scoped native signed-distance model refinement: varied index/middle/ring/pinky lengths and roots, tapered smaller distal digits, smaller armor studs/medallions, a narrower pinky-side hypothenar/ulnar contour, and smoother thumb web/thenar connection. New starter loads only; saved hand copies and Quest/Sheep controls are unchanged.
+
+**Focused browser proof:** 53 editable meshes, 10 groups, 13,070 connected hand vertices, natural tip-length hierarchy, palm depth 0.629 and ulnar X boundary +0.611 (previous +0.755); no browser errors in [Actions #41472504506](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/41472504506). Version v11.217 retains v11.216 Sheep wheel movement. Sealed 249 patches / 68 assets / 7,497,822 HTML bytes / SHA-256 `4d7b2d0aa3fa8183956b3f751411ad1a5e20662d41c2f7f7123093262a55c5d8`. Full details: `docs/FLOATING_HAND_PROPORTIONS_V11_217.md`. Phone/Quest visual approval remains owner-controlled.
+
 
 ## §E v11.215 — Floating Hand anatomical sculpt (2026-11-02)
 
