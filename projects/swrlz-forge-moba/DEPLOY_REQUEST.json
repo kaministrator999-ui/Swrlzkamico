@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.227",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_227_ASTRA_WOLF_RIG_SHEEP_TAG",
-  "reason": "Owner-requested Astra Wolf appearance and Sheep Tag animation upgrade. 108 weighted modeler mesh parts, 14-bone rig, editable howl/run/bite/tail clips and pose-key UI; lightweight game prefab with enhanced face, four leg pivots and moving jaw. A focused mobile-width browser smoke passed for modeler controls and wolf prefab. The exact ordered 259-patch source was verified with 68 packaged assets, 7,690,819 HTML bytes and SHA-256 daabe71f8e82da2ddbc481f0a481c3be6cde472b15f13e6d7aa0b404e9aa6ce1. Live match and owner Moto G Power/Quest 2 visual acceptance remain unverified.",
-  "sourceCommit": "4f8910d9a2050a7904f61e145c7c5fc8dd6f5113",
-  "sourceIntegritySha256": "daabe71f8e82da2ddbc481f0a481c3be6cde472b15f13e6d7aa0b404e9aa6ce1"
+  "releaseVersion": "v11.228",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_228_GAME_GUI_MENU_STUDIO",
+  "reason": "Owner-requested GUI/Menu Setup mini-tab nested in Game Engine, with independent editor Show/Hide UI and per-layer eye toggles. Add up to 24 project-native GUI labels/buttons/panels with relative viewport layout, colors/text and bounded Play actions, saved with project and level data. Reuses native Sheep Tag editable Main Menu inspector. Follows v11.227 wolf animation and v11.226 sheep building packages without changing their gameplay/VR authority. Focused JavaScript test and real assembled source build passed: 260 ordered patches, 68 existing assets, 7,712,043 HTML bytes SHA-256 16b6e24f471b79a1a9c6ec7ce7df2565dfeb5de8a0c527196e7b9008a907ca2d. Owner Moto/Quest acceptance pending.",
+  "sourceCommit": "6ba5f52df7dc30004d8534f8b906ba13d2329410",
+  "sourceIntegritySha256": "16b6e24f471b79a1a9c6ec7ce7df2565dfeb5de8a0c527196e7b9008a907ca2d"
 }
