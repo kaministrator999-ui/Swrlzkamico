@@ -1,0 +1,72 @@
+/* §E v11.223 · touch-first native Particle Studio. Independent of §C and Model Atelier docks. */
+.viewport-toolbar .se223-open,.se223-open{
+ flex:0 0 auto;min-height:36px;white-space:nowrap;
+ background:linear-gradient(135deg,#24364c,#283f61);
+ color:#e5f9ff;border:1px solid #6489b9;border-radius:8px;padding:6px 12px;
+ font-size:12px;font-weight:700;cursor:pointer}
+.se223-panel[hidden]{display:none!important}
+.se223-panel{position:fixed;right:12px;bottom:12px;z-index:4500;
+ width:min(355px,calc(100vw - 16px));max-height:min(750px,calc(100dvh - 100px));
+ display:flex;flex-direction:column;overflow:hidden;background:rgba(12,23,40,.98);
+ border:1px solid #5d82ad;border-radius:14px;color:#e7f3ff;
+ box-shadow:0 14px 38px #000b;font-size:12px;pointer-events:auto;
+ -webkit-tap-highlight-color:transparent}
+.se223-panel *{box-sizing:border-box}
+.se223-title{display:flex;justify-content:space-between;align-items:center;gap:8px;
+ padding:10px 12px;background:linear-gradient(90deg,#263a59,#172339);
+ border-bottom:1px solid #3c5475;cursor:grab;user-select:none;touch-action:none}
+.se223-title strong{font-size:14px;letter-spacing:.01em}
+.se223-title small{display:block;margin-top:2px;color:#a5cadd;font-size:10px}
+.se223-title button{width:34px;min-height:34px;flex:0 0 34px;border-radius:8px;
+ font-size:23px;font-weight:400;cursor:pointer}
+.se223-scroll{overflow-y:auto;overscroll-behavior:contain;min-height:0;
+ display:grid;gap:10px;padding:11px 12px 14px;scrollbar-width:thin}
+.se223-toolbar,.se223-row,.se223-actions{display:flex;gap:7px;align-items:end;flex-wrap:wrap}
+.se223-toolbar label,.se223-row label{display:grid;gap:4px;flex:1 1 130px;min-width:0}
+.se223-row small{color:#b2cde6;font-size:10px;padding-bottom:7px}
+.se223-panel button,.se223-panel select,.se223-panel input{
+ font-family:inherit;font-size:12px;min-height:36px;max-width:100%;
+ background:#182a43;color:#eef7ff;border:1px solid #557394;
+ border-radius:7px;outline-offset:1px}
+.se223-panel button{padding:6px 10px;font-weight:650;cursor:pointer}
+.se223-panel button:focus-visible,.se223-panel input:focus-visible,.se223-panel select:focus-visible{
+ outline:2px solid #8ccfff}
+.se223-panel button:disabled{opacity:.43;cursor:not-allowed}
+.se223-panel button:hover:not(:disabled){background:#244464}
+.se223-panel input,.se223-panel select{padding:4px 7px;min-width:0;width:100%}
+.se223-panel input[type=checkbox]{min-height:20px;width:20px;accent-color:#70dcfc}
+.se223-panel input[type=color]{min-height:35px;padding:2px;cursor:pointer}
+.se223-panel input[type=range]{min-height:22px;padding:0;width:100%;
+ accent-color:#80d7fa;touch-action:pan-y}
+.se223-actions>button{flex:1 1 auto;min-width:95px}
+.se223-panel #se223Create{min-width:90px}
+.se223-panel #se223Preview{background:#285267;border-color:#5fa1b0}
+.se223-panel #se223Remove{border-color:#8e5a69}
+.se223-editor{display:grid;gap:10px}
+.se223-section{border:1px solid #344c66;border-radius:9px;
+ background:#0d1b2f;padding:0 9px 10px;display:grid;gap:7px}
+.se223-section>summary{cursor:pointer;padding:10px 2px 8px;color:#c2eaff;
+ font-weight:750;list-style:disclosure-closed}
+.se223-section[open]>summary{list-style:disclosure-open}
+.se223-section:not([open]){padding-bottom:0}
+.se223-section>.se223-field,.se223-range-row{display:grid;gap:4px;margin-bottom:7px}
+.se223-field>span,.se223-range-head>span{font-size:11px;color:#c4d8ed}
+.se223-range-head{display:flex;justify-content:space-between;gap:12px;align-items:center}
+.se223-range-head input{width:77px;min-width:77px;min-height:32px;text-align:right}
+.se223-vector{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;
+ margin:4px 0 8px;padding:8px;border:1px solid #334963;border-radius:8px}
+.se223-vector legend{padding:0 4px;color:#b9d3e9;font-size:11px}
+.se223-vector .se223-field{display:grid;gap:3px}
+.se223-vector .se223-field input{font-size:11px;min-height:34px}
+.se223-hint{display:block;margin:0;color:#aec3da;font-size:11px;line-height:1.45}
+.se223-error{color:#ffb4ad}
+@media(max-width:620px){
+ .se223-panel{right:6px;bottom:max(6px,env(safe-area-inset-bottom));
+  width:min(345px,calc(100vw - 12px));
+  max-height:calc(100dvh - 70px);border-radius:11px}
+ .se223-scroll{padding:9px;gap:8px}
+ .se223-title{padding:7px 10px}
+ .se223-panel button,.se223-panel select{min-height:40px}
+ .se223-actions>button{min-width:43%}
+ .viewport-toolbar .se223-open{min-height:40px}
+}
