@@ -253,6 +253,6 @@
     "patches/v11_204_sheep_vr_rapid_grid_wheels.py",
     "patches/v11_205_sheep_tactical_menu_pointer_overlay.py"
   ],
-  "finalBytes": null,
-  "finalSha256": null
+  "finalBytes": 7392293,
+  "finalSha256": "0d1cf4ca2ceaecaf5c1df495541ab1c93eb16e24f27bb1e5c8e6db652c97bdad"
 }
