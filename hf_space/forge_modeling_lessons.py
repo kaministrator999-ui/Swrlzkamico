@@ -16,7 +16,7 @@ _MODEL_WORDS = re.compile(
     r"glove|floating hand|hand|palm|fingers?|thumb|knuckle|gestures?|gizmo|"
     r"armature|joints?|wrist|skinned|pose|posing|keyframes?|timeline|clip|"
     r"webxr|retarget(?:ing)?|mocap|motion.capture|hand.tracking|"
-    r"wolf|wolves|astra|quadruped|pounce|howl|jaw|clover|sheep|"
+    r"wolf|wolves|astra|quadruped|pounce|howl|jaw|"
     r"particles?|emitters?|vfx|motes?|sparks|wisps|"
     r"obj|geometry|primitive|cube|sphere|cylinder|cone|"
     r"group(?:ing)?|export|import|part(?:s)?)\b", re.I)
