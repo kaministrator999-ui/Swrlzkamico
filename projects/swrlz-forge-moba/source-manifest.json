@@ -255,6 +255,6 @@
     "patches/v11_206_sheep_quest_meadow_fog_polish.py",
     "patches/v11_207_sheep_vr_world_pinned_panels.py"
   ],
-  "finalBytes": null,
-  "finalSha256": null
+  "finalBytes": 7409246,
+  "finalSha256": "78eae7139cc5f356552855f67780db345a43c70ac38573ed8eaa604d9844a18a"
 }
