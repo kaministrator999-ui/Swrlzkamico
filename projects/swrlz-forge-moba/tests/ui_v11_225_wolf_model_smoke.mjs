@@ -29,10 +29,14 @@ try{
   route.abort();
  });
  await page.goto(host+'/modeler.html?project=wolf-model',{waitUntil:'domcontentloaded',timeout:90000});
+ await page.waitForFunction(()=>typeof window.SWYRL_ENGINE_MODEL_ATELIER?.loadAnimal==='function',null,{timeout:30000});
+ const opened=await page.evaluate(async()=>await window.SWYRL_ENGINE_MODEL_ATELIER.loadAnimal('wolf',{force:true}));
+ console.log('WOLF225_OPEN_WOLF_MODEL',opened);
+ assert.equal(opened,true,'Wolf Model starter must open via its actual user-facing API');
  await page.waitForFunction(()=>{
   const r=window.SWYRL_ENGINE_WOLF_RIG?.status?.();
   return r?.available && r.skinned && r.bones===14&&r.clips===10&&r.skinnedMeshes>=10;
- },null,{timeout:90000}).catch(async e=>{
+ },null,{timeout:70000}).catch(async e=>{
   console.log('WOLF225_LOAD_DEBUG',JSON.stringify(await page.evaluate(()=>({
    build:window.SWRLZ_FORGE_BUILD?.version,
    model:window.SWYRL_ENGINE_MODEL_ATELIER?.status?.(),
