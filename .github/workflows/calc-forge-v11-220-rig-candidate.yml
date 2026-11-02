@@ -4,6 +4,8 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/calc-forge-v11-220-rig-candidate.yml'
+      - 'projects/swrlz-forge-moba/patches/v11_220_hand_skeletal_studio.py'
+      - 'projects/swrlz-forge-moba/runtime/model_atelier_rig_studio_v11_220.js'
   workflow_dispatch:
 permissions:
   contents: read
