@@ -20,6 +20,7 @@ jobs:
           python -m py_compile projects/swrlz-forge-moba/patches/v11_223_native_particle_studio.py
           node --check projects/swrlz-forge-moba/runtime/particle_studio_core_v11_223.js
           node --check projects/swrlz-forge-moba/runtime/particle_studio_ui_v11_223.js
+          node projects/swrlz-forge-moba/scripts/test_particle_studio_v11_223.js
           python projects/swrlz-forge-moba/build_space.py --output dist/se223
           python - <<'PY'
           import hashlib,re,subprocess,json
