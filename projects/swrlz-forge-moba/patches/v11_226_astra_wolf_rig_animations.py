@@ -93,6 +93,14 @@ def apply(html):
  }
  return ok;
 },""")
+    # User-facing Wolf Model card and URL deep link share the proven public
+    # rigged loader path, not the older unrigged internal starter path.
+    html=once(html,
+      "return loadAnimalProject(template==='sheep-model'?'sheep':'wolf',force).catch(e=>{toast(e.message);return false;});",
+      "return (template==='sheep-model'?loadAnimalProject('sheep',force):window.SWYRL_ENGINE_MODEL_ATELIER.loadAnimal('wolf',{force})).catch(e=>{toast(e.message);return false;});")
+    html=once(html,
+      "queueMicrotask(()=>loadAnimalProject(new URLSearchParams(location.search).get('project')==='sheep-model'?'sheep':'wolf',true).catch(e=>toast(e.message)))",
+      "queueMicrotask(()=>(new URLSearchParams(location.search).get('project')==='sheep-model'?loadAnimalProject('sheep',true):window.SWYRL_ENGINE_MODEL_ATELIER.loadAnimal('wolf',{force:true})).catch(e=>toast(e.message)))")
     html=once(html,'  function refreshList(){',studio+'\n  function refreshList(){')
     html=once(html,'const mesh=se220RigMesh(p);','const mesh=se224WolfRigMesh(p);')
     html=once(html,'se220RigBind();se220RigRefresh();',
