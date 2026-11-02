@@ -49,6 +49,11 @@ class ForgeModelingLessonsV4(unittest.TestCase):
                       "Tell me a joke about a wolf", "Hello friend"):
             self.assertEqual(select_modeling_lesson(query),"")
 
+    def test_webxr_retains_priority_with_wolf_subject(self):
+        text=select_modeling_lesson("Retarget WebXR wolf model hand tracking in §E")
+        self.assertIn("25 XRHand",text)
+        self.assertIn("17 target armature bones",text)
+
     def test_fresh_editor_permission_still_required(self):
         for query in ("§E create a particle emitter now", "§E Wolf rig, save a keyframe"):
             text=select_modeling_lesson(query,CTX,role="planner")
