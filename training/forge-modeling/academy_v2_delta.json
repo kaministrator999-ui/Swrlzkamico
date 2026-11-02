@@ -81,8 +81,8 @@
       "route": "unsupported-native",
       "expected": "§E editor Rig studio can manipulate the joint, but native Chat allowlist has no rig.pose or joint.set; explain UI and future bridge engineering.",
       "mustNot": "Produce a nonexistent mesh.bone or rig.rotate op.",
-      "source": "hf_space/forge_chat_actions.py",
-      "anchor": "\"mesh.add\""
+      "source": "docs/engineering/CHAT_FORGE_EMBEDDING.md",
+      "anchor": "mesh.add"
     },
     {
       "id": "M043",
@@ -211,8 +211,8 @@
       "route": "unsupported-native",
       "expected": "Not yet; Rig studio UI can Save key and Delete key, but Chat action allowlist does not expose rig timeline editing.",
       "mustNot": "Generate rig.keyframe.add and claim execution.",
-      "source": "hf_space/forge_chat_actions.py",
-      "anchor": "_SCHEMA ="
+      "source": "docs/engineering/CHAT_FORGE_EMBEDDING.md",
+      "anchor": "Native operation names/types"
     },
     {
       "id": "M056",
@@ -271,8 +271,8 @@
       "route": "context-needed",
       "expected": "Project creation is isolated; then fresh leased modeler context, and joint manipulation still lacks a Chat native operation.",
       "mustNot": "Combine project.create with invented rig.set in same batch.",
-      "source": "hf_space/forge_chat_actions.py",
-      "anchor": "\"project.create\""
+      "source": "docs/engineering/CHAT_FORGE_EMBEDDING.md",
+      "anchor": "project.create"
     },
     {
       "id": "M062",
@@ -281,8 +281,8 @@
       "route": "refuse-unapproved",
       "expected": "History isn't a fresh host lease or a current native snapshot; no bone action exists; explain what can be done in UI.",
       "mustNot": "Assume prior ID grants authority.",
-      "source": "hf_space/forge_chat_actions.py",
-      "anchor": "revalidate(context, require_snapshot=True)"
+      "source": "docs/engineering/CHAT_FORGE_EMBEDDING.md",
+      "anchor": "original bounded snapshot"
     },
     {
       "id": "M063",
@@ -311,8 +311,8 @@
       "route": "revision-flow",
       "expected": "Add a carefully scoped typed contract in Chat planner/server/host; native §E UI rig is not Chat authority. Ensure validation, current IDs, consent/receipts, tests and separate releases.",
       "mustNot": "Tell Qwen to emit arbitrary JS into the editor.",
-      "source": "hf_space/forge_chat_actions.py",
-      "anchor": "validate_operations"
+      "source": "docs/engineering/CHAT_FORGE_EMBEDDING.md",
+      "anchor": "typed operations"
     },
     {
       "id": "M066",
