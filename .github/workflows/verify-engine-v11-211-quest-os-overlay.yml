@@ -1,23 +1,23 @@
-name: Check §E v11.210 Sheep VR candidate
+name: Check §E v11.211 Quest system Camera overlay
 on:
   push:
     branches:
       - main
-      - feat/sheep-vr-completion-pass-v11-210
+      - fix/quest-meta-overlay-camera-hitch-v11-211
     paths:
       - 'projects/swrlz-forge-moba/source-manifest.json'
-      - 'projects/swrlz-forge-moba/patches/v11_210_quest_comprehensive_polish.py'
-      - 'projects/swrlz-forge-moba/runtime/sheep_xr_world_quality_metrics_v11_210.js'
-      - 'projects/swrlz-forge-moba/runtime/sheep_xr_workspace_controls_v11_210.js'
-      - 'projects/swrlz-forge-moba/tests/test_v11_210_quest_perf.cjs'
+      - 'projects/swrlz-forge-moba/patches/v11_211_quest_os_camera_overlay_stability.py'
+      - 'projects/swrlz-forge-moba/runtime/engine_xr_meta_os_overlay_stability_v11_211.js'
+      - 'projects/swrlz-forge-moba/runtime/engine_xr_meta_os_overlay_stability_v11_211.js'
+      - 'projects/swrlz-forge-moba/tests/test_v11_211_quest_os_overlay.cjs'
       - 'projects/swrlz-forge-moba/tests/test_v11_210_workspace.cjs'
-      - 'projects/swrlz-forge-moba/scripts/verify_v11_210_release.py'
-      - '.github/workflows/verify-engine-v11-210-comprehensive-quest-play.yml'
+      - 'projects/swrlz-forge-moba/scripts/verify_v11_211_release.py'
+      - '.github/workflows/verify-engine-v11-211-quest-os-overlay.yml'
       - '.github/workflows/deploy-swrlz-forge-moba.yml'
   pull_request:
     paths:
       - 'projects/swrlz-forge-moba/**'
-      - '.github/workflows/verify-engine-v11-210-comprehensive-quest-play.yml'
+      - '.github/workflows/verify-engine-v11-211-quest-os-overlay.yml'
   workflow_dispatch:
 jobs:
   candidate:
@@ -27,8 +27,9 @@ jobs:
       - uses: actions/checkout@v4
       - name: Validate runtime syntax and movement / follow regression
         run: |
-          node --check projects/swrlz-forge-moba/runtime/sheep_xr_world_quality_metrics_v11_210.js
+          node --check projects/swrlz-forge-moba/runtime/engine_xr_meta_os_overlay_stability_v11_211.js
           node --check projects/swrlz-forge-moba/runtime/sheep_xr_workspace_controls_v11_210.js
+          node projects/swrlz-forge-moba/tests/test_v11_211_quest_os_overlay.cjs
           node projects/swrlz-forge-moba/tests/test_v11_210_quest_perf.cjs
           node projects/swrlz-forge-moba/tests/test_v11_210_workspace.cjs
           node projects/swrlz-forge-moba/tests/test_v11_209_radial_icons.cjs
@@ -53,11 +54,11 @@ jobs:
           node projects/swrlz-forge-moba/tests/test_v11_181_xr_session_lifecycle.cjs
       - name: Build source and record exact output for manifest sealing
         run: |
-          python3 projects/swrlz-forge-moba/build_space.py --output "$RUNNER_TEMP/se-v11-210"
-          wc -c "$RUNNER_TEMP/se-v11-210/index.html"
-          sha256sum "$RUNNER_TEMP/se-v11-210/index.html"
+          python3 projects/swrlz-forge-moba/build_space.py --output "$RUNNER_TEMP/se-v11-211"
+          wc -c "$RUNNER_TEMP/se-v11-211/index.html"
+          sha256sum "$RUNNER_TEMP/se-v11-211/index.html"
           if python3 -c 'import json; m=json.load(open("projects/swrlz-forge-moba/source-manifest.json")); assert m.get("finalSha256") and m.get("finalBytes")'; then
-            python3 projects/swrlz-forge-moba/scripts/verify_v11_210_release.py --output "$RUNNER_TEMP/se-v11-210-verified"
+            python3 projects/swrlz-forge-moba/scripts/verify_v11_210_release.py --output "$RUNNER_TEMP/se-v11-211-verified"
           else
             echo "Candidate built; seal reported size/hash in source-manifest before deployment."
           fi
