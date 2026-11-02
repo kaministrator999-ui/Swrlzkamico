@@ -1,0 +1,90 @@
+name: Calculate §E v11.224 Wolf rig source receipt
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/calc-forge-v11-224-wolf.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  wolf:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax check new wolf code
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/wolf_rig_motions_v11_224.js
+          node --check projects/swrlz-forge-moba/runtime/wolf_visual_fidelity_v11_224.js
+          node --check projects/swrlz-forge-moba/runtime/model_atelier_wolf_studio_v11_224.js
+          node --check projects/swrlz-forge-moba/runtime/sheep_tag_wolf_animation_v11_224.js
+          python3 -m py_compile projects/swrlz-forge-moba/patches/v11_224_astra_wolf_rig_animations.py
+      - name: Exercise shared wolf armature and animation calculations
+        run: |
+          node - <<'JS'
+          const assert=require('node:assert/strict'),fs=require('fs'),vm=require('vm');
+          const s=fs.readFileSync('projects/swrlz-forge-moba/runtime/wolf_rig_motions_v11_224.js','utf8');
+          const api=vm.runInNewContext(s+';({rig:se224WolfRigSpec,valid:se224WolfRigValid,pose:se224WolfPose,clips:se224WolfClips,clipValid:se224WolfClipsValid,sample:se224WolfSampleClip,weights:se224WolfVertexWeights,motions:SE224_WOLF_MOTIONS});',{});
+          const rig=api.rig(),clips=api.clips();
+          assert.equal(rig.bones.length,14);assert(api.valid(rig));
+          assert.equal(clips.clips.length,10);assert(api.clipValid(clips));
+          assert.equal(new Set(clips.clips.map(x=>x.name)).size,10);
+          for(const position of [[0,1.35,0],[0,2.40,.50],[-.36,.7,.42],[.35,.38,-.61],[0,1.0,-1.2]]){
+           const inf=api.weights(position,rig,{name:'body'});
+           assert.equal(inf.indexes.length,4);assert.equal(inf.weights.length,4);
+           assert(Math.abs(inf.weights.reduce((a,b)=>a+b,0)-1)<.0001);
+           assert(inf.indexes.every(n=>Number.isInteger(n)&&n>=0&&n<14));
+          }
+          const sprint=api.pose('run',.10),bite=api.pose('bite',.19),howl=api.pose('howl',.85),stalk=api.pose('stalk',.30);
+          assert(sprint.legs.some(n=>Math.abs(n)>.15));
+          assert(bite.jaw>.1);assert(howl.head<-.12&&howl.jaw>.05);
+          assert(stalk.spine<0&&stalk.head>0);
+          assert(clips.clips.every(c=>c.keys.length===13&&api.sample(c,.33)));
+          console.log('WOLF224_MATH_PASS 14-bone native rig; four normalized influences; 10 distinct clip families');
+          JS
+      - name: Build candidate from ordered patches (unsealed)
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('projects/swrlz-forge-moba/source-manifest.json')
+          m=json.loads(p.read_text())
+          assert m['name']=='§wyrl§ Engine v11.223'
+          assert m['patches'][-1]=='patches/v11_223_fist_clench_wrist_wave.py'
+          m['name']='§wyrl§ Engine v11.224'
+          m['finalArtifact']='swyrl_engine_v11_224.html'
+          m['patches'].append('patches/v11_224_astra_wolf_rig_animations.py')
+          m['finalBytes']=0;m['finalSha256']=''
+          p.write_text(json.dumps(m,ensure_ascii=False))
+          PY
+          python3 projects/swrlz-forge-moba/build_space.py --output /tmp/se224-wolf
+      - name: Check generated wolf hooks and report exact source receipt
+        run: |
+          python3 - <<'PY'
+          import hashlib
+          from pathlib import Path
+          raw=Path('/tmp/se224-wolf/index.html').read_bytes()
+          s=raw.decode('utf8')
+          for marker in [
+           'V11_224_ASTRA_WOLF_RIG_SHEEP_TAG',
+           'function se224WolfRigSpec()',
+           'function se224WolfRigMesh(part)',
+           'function se224WolfRigBind()',
+           'function se224WolfStudioInstall()',
+           'function se224WolfGameFrame(dt)',
+           'function se224WolfGameVisual(root)',
+           'se224WolfGameVisual(ModelAtelier.createCourierHunter())',
+           "data.project.modelAtelier.wolfRig=se224WolfRigSpec()",
+           'se224WolfPreviewFrame();',
+           'se224WolfGameFrame(args[0]);',
+           '<title>§wyrl§ Engine · Maker v11.224</title>'
+          ]: assert marker in s,marker
+          assert raw==Path('/tmp/se224-wolf/modeler.html').read_bytes()
+          print('WOLF224_CANDIDATE_BYTES='+str(len(raw)))
+          print('WOLF224_CANDIDATE_SHA256='+hashlib.sha256(raw).hexdigest())
+          print('WOLF224_PATCHES=256')
+          PY
