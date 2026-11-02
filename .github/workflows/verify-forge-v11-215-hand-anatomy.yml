@@ -6,6 +6,8 @@ on:
       - 'projects/swrlz-forge-moba/patches/v11_215_floating_hand_anatomy_upgrade.py'
       - 'projects/swrlz-forge-moba/runtime/model_atelier_hand_anatomy_v11_215.js'
       - 'projects/swrlz-forge-moba/tests/ui_v11_215_hand_anatomy.mjs'
+      - 'projects/swrlz-forge-moba/scripts/verify_v11_215_release.py'
+      - 'projects/swrlz-forge-moba/source-manifest.json'
       - '.github/workflows/verify-forge-v11-215-hand-anatomy.yml'
   workflow_dispatch:
 permissions:
@@ -55,3 +57,7 @@ jobs:
           npx playwright install --with-deps --only-shell chromium
       - name: Load native hand and check anatomical XYZ surfaces
         run: node projects/swrlz-forge-moba/tests/ui_v11_215_hand_anatomy.mjs
+      - name: Verify exactly sealed v11.215 release after browser acceptance
+        run: |
+          git restore projects/swrlz-forge-moba/source-manifest.json
+          python3 projects/swrlz-forge-moba/scripts/verify_v11_215_release.py --output /tmp/se215-sealed
