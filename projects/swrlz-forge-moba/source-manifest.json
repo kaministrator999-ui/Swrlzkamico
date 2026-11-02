@@ -258,6 +258,6 @@
     "patches/v11_209_quest_radial_icons_feedback.py",
     "patches/v11_210_quest_comprehensive_polish.py"
   ],
-  "finalBytes": null,
-  "finalSha256": null
+  "finalBytes": 7459845,
+  "finalSha256": "5bb0e6a36e4a9d652687ba71663b25e8ee23d87ec9fb5e3a46a2bd11a18cb6f7"
 }
