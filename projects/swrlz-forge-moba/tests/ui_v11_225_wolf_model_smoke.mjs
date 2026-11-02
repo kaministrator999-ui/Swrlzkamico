@@ -65,8 +65,17 @@ try{
  assert(facts.visible && facts.wolf.skinnedMeshes>10);
  await page.evaluate(()=>document.getElementById('seReleaseNotesDialog')?.close());
  const studio=page.locator('#modelAtelierWolfStudio');
- await studio.locator('summary').click({force:true});
- await page.locator('#modelAtelierWolfClip').selectOption('howl');
+ const wasOpen=await studio.evaluate(el=>el.open);
+ console.log('WOLF225_PANEL_INITIAL',JSON.stringify(await studio.evaluate(el=>({
+  open:el.open,hidden:el.hidden,rect:el.getBoundingClientRect().toJSON(),
+  selectVisible:!!document.getElementById('modelAtelierWolfClip')?.getClientRects().length
+ }))));
+ if(!wasOpen)await studio.locator('summary').click({force:true});
+ console.log('WOLF225_PANEL_AFTER',JSON.stringify(await studio.evaluate(el=>({
+  open:el.open,hidden:el.hidden,selectVisible:!!document.getElementById('modelAtelierWolfClip')?.getClientRects().length
+ }))));
+ assert(await studio.evaluate(el=>el.open),'wolf studio must expand by tapping summary');
+ await page.locator('#modelAtelierWolfClip').selectOption('howl',{force:true});
  await page.locator('#modelAtelierWolfTime').evaluate(el=>{
   el.value='.90';el.dispatchEvent(new Event('input',{bubbles:true}));});
  const howling=await page.evaluate(()=>window.SWYRL_ENGINE_WOLF_RIG.status());
