@@ -450,7 +450,7 @@ _LYRIC_PAGE_NOISE=re.compile(
 )
 _LYRIC_ANCHOR=re.compile(r"^(?:copy\s+lyrics|lyrics(?:\s+text)?)\s*[:.!-]*$",re.I)
 _LYRIC_HARD_BOUNDARY=re.compile(
-    r"^(?:related\s+(?:songs?|hymns?|posts?)|more\s+(?:songs?|lyrics?)|about|contact|privacy|terms|"
+    r"^(?:are\s+these\s+lyrics\s+accurate\??|related\s+(?:songs?|hymns?|posts?)|more\s+(?:songs?|lyrics?)|about|contact|privacy|terms|"
     r"download(?:\s+the)?\s+app|get\s+the\s+.+?\s+app!?|share|subscribe|references?|sources?|"
     r"karaoke(?:\s+video)?(?:\s+with\s+lyrics)?|did\s+you\s+like\s+this\s+post.*|"
     r"you\s+might\s+also\s+like.*|leave\s+a\s+reply.*|submitted\s+by(?:\s+.+)?|"
@@ -1766,13 +1766,15 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
             # Require verified destination identity and multiple independently
             # delimited lyric lines before relaxing snippet/body overlap.
             body_lines=[ln for ln in lyric_extract.splitlines() if ln.strip()]
-            has_lyric_heading=bool(re.search(r"(?im)^\s*lyrics\s*$",raw_page[:1200]))
             strong_body=bool(
                 source_identity.get("verified")
                 and len(body_lines)>=8
-                and (int(structure_profile.get("musicalSectionCount") or 0)>=2 or has_lyric_heading)
+                and int(structure_profile.get("musicalSectionCount") or 0)>=2
             )
-            verified_candidate=bool(lyric_extract and source_identity.get("verified") and (snippet_consistent or strong_body))
+            # Preserve the original short-descriptive-snippet acceptance path;
+            # identity is mandatory only when bypassing a snippet/body mismatch.
+            # A generic "Lyrics" heading alone cannot validate page chrome.
+            verified_candidate=bool(lyric_extract and (snippet_consistent or strong_body))
             if verified_candidate:
                 rejection_reason="VERIFIED"
             elif not lyric_extract:
