@@ -48,8 +48,8 @@ def apply(html):
     # Runtime-only effects hook into the existing game tick, start and stop.
     # They never alter the modeler renderer or any match/host/guest game data.
     html=once(html,'window.SWRLZ_FORGE_BUILD=',shared+'\nwindow.SWRLZ_FORGE_BUILD=')
-    html=once(html,'</head>',
-              '<style id="se222SheepStudio">'+css+'</style>\n</head>')
+    assert '</head>' in html
+    html=html.replace('</head>','<style id="se222SheepStudio">'+css+'</style>\n</head>',1)
     html=once(html,
       " source.engine='§wyrl§ Engine · Maker v11.221';source.version=11.221;",
       " source.engine='§wyrl§ Engine · Maker v11.222';source.version=11.222;")
