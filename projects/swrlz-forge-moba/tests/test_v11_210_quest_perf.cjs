@@ -102,7 +102,9 @@ assert.equal(state().cosmeticQuality,'auto');
 assert.equal(state().autoReduced,true,'sustained low FPS hides only decor');
 assert.ok(init.every(m=>m.visible===false));
 assert.deepEqual(Array.from(session.fog.explored),[0,1,1]);
-for(let i=0;i<760;i++){now+=13.8;xr.se193XRFrame();}
+// Let the 90-frame moving average fully flush the prior low-FPS
+// samples before counting 9.5 seconds of sustained recovery.
+for(let i=0;i<1010;i++){now+=13.8;xr.se193XRFrame();}
 assert.equal(state().autoReduced,false,'recover quality after sustained stable FPS');
 assert.ok(init.every(m=>m.visible===true));
 active=false;now+=17;xr.se193XRFrame();
