@@ -3,7 +3,7 @@
 const se206={
  session:null,canvas:null,ctx:null,mesh:null,texture:null,stage:0,seed:0,
  blooms:0,avoidedRoads:0,frames:0,textureUploads:0,decorCreated:0,
- decorRemoved:0,fogSession:null,fogSetups:0,skippedModalFrames:0,
+ decorRemoved:0,fogSession:null,fogOriginal:null,fogSetups:0,skippedModalFrames:0,
  groundPosition:null,paintMs:0,lastError:''
 };
 function se206Random(){
@@ -20,7 +20,23 @@ function se206RoadClear(x,z,bounds){
  if(p<span*.89&&(Math.abs(x-z)<2.4||Math.abs(x+z)<2.4))return false;
  return true;
 }
+function se206RestoreFog(){
+ const old=se206.fogOriginal;
+ if(!old)return;
+ const {fog,material,mesh,texture}=old;
+ material.opacity=old.opacity;material.depthWrite=old.depthWrite;
+ material.depthTest=old.depthTest;
+ material.polygonOffset=old.polygonOffset;
+ material.polygonOffsetFactor=old.polygonOffsetFactor;
+ material.polygonOffsetUnits=old.polygonOffsetUnits;
+ mesh.position.y=old.height;mesh.renderOrder=old.renderOrder;
+ texture.minFilter=old.minFilter;texture.magFilter=old.magFilter;
+ texture.generateMipmaps=old.generateMipmaps;
+ fog.feather=old.feather;
+ se206.fogOriginal=null;
+}
 function se206DecorStop(){
+ se206RestoreFog();
  if(se206.mesh){
   scene.remove(se206.mesh);
   se206.mesh.geometry.dispose();
@@ -122,6 +138,16 @@ function se206AdjustFog(s){
  // and every host/guest visibility rule. Cosmetic material changes only.
  const mesh=fog.mesh,material=fog.material;
  if(!mesh||!material||!fog.texture)return;
+ se206RestoreFog();
+ const tex=fog.texture;
+ se206.fogOriginal={fog,material,mesh,texture:tex,
+  opacity:material.opacity,depthWrite:material.depthWrite,
+  depthTest:material.depthTest,polygonOffset:material.polygonOffset,
+  polygonOffsetFactor:material.polygonOffsetFactor,
+  polygonOffsetUnits:material.polygonOffsetUnits,
+  height:mesh.position.y,renderOrder:mesh.renderOrder,
+  minFilter:tex.minFilter,magFilter:tex.magFilter,
+  generateMipmaps:tex.generateMipmaps,feather:fog.feather};
  fog.texture.minFilter=THREE.LinearFilter;
  fog.texture.magFilter=THREE.LinearFilter;
  fog.texture.generateMipmaps=false;
