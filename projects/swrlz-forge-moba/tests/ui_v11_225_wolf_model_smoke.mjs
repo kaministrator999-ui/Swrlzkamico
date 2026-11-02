@@ -36,7 +36,7 @@ try{
  await page.waitForFunction(()=>{
   const r=window.SWYRL_ENGINE_WOLF_RIG?.status?.();
   return r?.available && r.skinned && r.bones===14&&r.clips===10&&r.skinnedMeshes>=10;
- },null,{timeout:12000}).catch(async e=>{
+ },null,{timeout:5000}).catch(async e=>{
   console.log('WOLF225_LOAD_DEBUG',JSON.stringify(await page.evaluate(()=>({
    build:window.SWRLZ_FORGE_BUILD?.version,
    model:window.SWYRL_ENGINE_MODEL_ATELIER?.status?.(),
@@ -45,7 +45,10 @@ try{
    toast:document.getElementById('statusBar')?.textContent?.slice(-250),
    wolfPanel:!!document.getElementById('modelAtelierWolfStudio'),
    audit:window.SWYRL_WOLF_LOAD_AUDIT||null,
-   loader:typeof window.SWYRL_ENGINE_MODEL_ATELIER?.loadAnimal==='function'?String(window.SWYRL_ENGINE_MODEL_ATELIER.loadAnimal).slice(0,240):null
+   loader:typeof window.SWYRL_ENGINE_MODEL_ATELIER?.loadAnimal==='function'?String(window.SWYRL_ENGINE_MODEL_ATELIER.loadAnimal).slice(0,240):null,
+   actualLoader:typeof loadAnimalProject==='function'?String(loadAnimalProject).slice(0,2800):null,
+   activeProject:typeof currentProject!=='undefined'?{kind:currentProject?.kind,modelName:currentProject?.modelAtelier?.name,parts:currentProject?.modelAtelier?.parts?.length,rig:!!currentProject?.modelAtelier?.wolfRig}:null,
+   url:location.href
   })).catch(err=>({evalError:String(err)}))));
   console.log('WOLF225_ERRORS',JSON.stringify(failures));
   throw e;
