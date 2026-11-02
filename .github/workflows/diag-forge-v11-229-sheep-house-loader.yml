@@ -1,5 +1,5 @@
 name: Validate §E v11.229 native sheep house model loading repair
-# Follows updated dual-slot engine source provenance from v11.227/228.
+# Validates real native model opening, palette colors, sockets, and transforms.
 on:
   push:
     branches: [main]
