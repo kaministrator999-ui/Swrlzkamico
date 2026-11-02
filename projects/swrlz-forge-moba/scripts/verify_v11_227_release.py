@@ -153,9 +153,9 @@ assert 'for(const [j,t] of [.45,.69].entries())' not in s
 for marker in ['function se220CreateHandRig(digits)', 'function se220RigWeights(pt,rig)',
                'function se220RigValidate(rig)', 'function se220RigInterpolate(rig,time)',
                'new THREE.SkinnedMesh(g,mat)','new THREE.Skeleton(bones)',
-               'se220RigBind();se220RigRefresh();','se220RigControlsInstall();',
+               'se220RigBind();se224WolfRigBind();se220RigRefresh();','se220RigControlsInstall();',
                'se220RigFrame();','m.rigging=se220CreateHandRig(digit);',
-               'se220RigMesh(p)','Rig · Pose · Animate',
+               'se224WolfRigMesh(p)','Rig · Pose · Animate',
                "model().rigging=source.rigging?structuredClone(source.rigging):null;",
                'V11_227_ASTRA_WOLF_RIG_SHEEP_TAG']:
     assert marker in s,marker
