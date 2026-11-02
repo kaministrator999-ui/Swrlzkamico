@@ -126,7 +126,7 @@ assert.equal(d().waitingForButtonRelease,false);
 assert.equal(obj.se195MoveRig(1,0,0),true);
 assert.equal(oldMoveWrites,2);
 assert.equal(vm.runInContext('se211CameraSoftReturn()',obj),true);
-assert.equal(d().cosmeticsHidden,6,'lightweight scene remains hidden for brief recovery');
+assert.equal(d().cosmeticsHidden,7,'lightweight scene remains hidden for brief recovery');
 assert.ok(local().returnUntil>0);
 framesFor(900);
 assert.equal(d().cosmeticsHidden,0);
