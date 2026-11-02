@@ -1,45 +1,48 @@
-name: §E particle studio scoped source map
+name: §E v11.223 scoped particle studio validation
 on:
   push:
     branches: [feature/engine-v11-223-particle-studio]
 permissions:
   contents: read
 jobs:
-  inspect:
+  validate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
-      - name: Build native source and inspect only integration anchors
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate only particle source and generated native engine syntax
         run: |
-          python projects/swrlz-forge-moba/build_space.py --output dist/forge >/tmp/se223-build.json
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_223_native_particle_studio.py
+          node --check projects/swrlz-forge-moba/runtime/particle_studio_core_v11_223.js
+          node --check projects/swrlz-forge-moba/runtime/particle_studio_ui_v11_223.js
+          python projects/swrlz-forge-moba/build_space.py --output dist/se223
           python - <<'PY'
+          import hashlib,re,subprocess,json
           from pathlib import Path
-          s=Path('dist/forge/index.html').read_text()
-          import re
-          patterns=[
-           r'function markActor\(',r'function projectData\(',r'function loadProject\(',
-           r'function saveProject\(',r'function createProjectFromTemplate\(',
-           r'function tick\(',r'function update\(',r'function addActor\(',
-           r'function removeActor\(',r'function serializeActor\(',
-           r'function actorData\(',r'function makeObject\(',
-           r'function setSelection\(',r'function selectActor\(',
-           r'function refreshAssetList\(',r'function createActor\(',
-           r'function stNewBuilding\(',r'function refreshInspector\(',
-           r'function renderScene\(',r'function loadCanonical',
-           r'function .*Particle',r'function .*Particle.*',
-           r'<button[^>]*[Pp]rojects',r'<div class="topbar"',
-           r'function editorLog\(',r'function markDirty\(',
-           r'function initializeHistory\(',r'function historyStep\(',
-           r'function restoreHistory',r'function projectSnapshot',
-           r'function seLevels',r'renderer.setAnimationLoop\(tick\)'
-          ]
-          for p in patterns:
-           matches=list(re.finditer(p,s))
-           print('\\n###',p,'COUNT',len(matches))
-           for match in matches[:2]:
-            a=max(0,match.start()-400);b=min(len(s),match.start()+2000)
-            print('POSITION',match.start(),'EXCERPT',repr(s[a:b]))
+          raw=Path('dist/se223/index.html').read_bytes()
+          html=raw.decode('utf-8')
+          sha=hashlib.sha256(raw).hexdigest()
+          print('SE223_EXACT_SOURCE_BYTES',len(raw),'SHA256',sha,flush=True)
+          marker='SWYRL_ENGINE_DEPLOY_MARKER: V11_223_NATIVE_PARTICLE_STUDIO'
+          assert marker in html
+          for token in ['function se223Frame(dt,t)','se223Frame(dt,t);',
+           'function se223ValidateModel(v)','window.SWYRL_ENGINE_PARTICLES=',
+           'window.SWYRL_ENGINE_PARTICLE_STUDIO=',
+           'id="se223Panel"','se223Install','se223UIImport','se223State.preview',
+           'swyrl-particle-studio-v1', 'SE223_PER_EMITTER=96', 'SE223_TOTAL=576',
+           "window.SWRLZ_FORGE_BUILD={version:'v11.223'",
+           '<title>§wyrl§ Engine · Maker v11.223</title>']:
+           assert token in html,token
+          assert html.count('se223Frame(dt,t);')==1
+          for i,script in enumerate(re.findall(r'<script\b[^>]*>(.*?)</script>',html,re.S)):
+           if not script.strip():continue
+           p=Path('/tmp')/('se223_inline_'+str(i)+'.mjs')
+           p.write_text(script)
+           subprocess.run(['node','--check',str(p)],check=True)
+          print('SE223_SOURCE_AND_SCRIPT_SYNTAX_PASS',flush=True)
           PY
