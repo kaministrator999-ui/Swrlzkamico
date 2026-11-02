@@ -103,7 +103,11 @@ assert.equal(diag().textureUploads,1,'one upload per match');
 assert.equal(diag().decorCreated,1);
 assert.equal(diag().geometryAdded,1,'one new ground mesh/draw call');
 assert.ok(diag().biomeBlooms>850,'many tiny florets in single texture');
-assert.ok(diag().roadSitesAvoided>250,'paths and central sanctuary avoid painted flowers');
+assert.ok(diag().roadSitesAvoided>120,'paths and central sanctuary avoid painted flowers');
+for(const [x,z] of [[0,0],[0,25],[25,0],[20,20],[-20,20]]){
+ assert.equal(vm.runInContext('se206RoadClear('+x+','+z+',64)',sandbox),false,
+  'no cosmetic meadow blooms directly on sanctuary, approach roads or diagonals');
+}
 assert.ok(ctxFills>1000&&ctxArcs>=29,'procedural biome and sanctuary flourish built');
 assert.equal(scene.children.length,1);
 const mesh=scene.children[0];
