@@ -1,0 +1,49 @@
+name: Diagnose §E v11.225 Wolf Model loader scope
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/diag-forge-v11-225-wolf-loader.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  loader:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build candidate wolf source
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+          p=Path('projects/swrlz-forge-moba/source-manifest.json')
+          m=json.loads(p.read_text())
+          assert m['name']=='§wyrl§ Engine v11.224'
+          assert m['patches'][-1]=='patches/v11_224_native_particle_studio.py'
+          m['name']='§wyrl§ Engine v11.225'
+          m['finalArtifact']='swyrl_engine_v11_225.html'
+          m['patches'].append('patches/v11_225_astra_wolf_rig_animations.py')
+          m['finalBytes']=0;m['finalSha256']=''
+          p.write_text(json.dumps(m,ensure_ascii=False))
+          PY
+          python3 projects/swrlz-forge-moba/build_space.py --output /tmp/se225wolfdebug > /tmp/build-log.txt
+      - name: Inspect real generated loader with local source only
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,json
+          s=Path('/tmp/se225wolfdebug/index.html').read_text()
+          start=s.index('async function loadAnimalProject(species')
+          end=s.index('const atelierAnimalTemplateBase=',start)
+          chunk=s[start:end]
+          print('WOLF_LOADER_START',chunk[:2300])
+          print('WOLF_LOADER_COUNT',s.count('async function loadAnimalProject(species'))
+          print('WOLF_LOADER_RIG_ASSIGN',chunk.count('data.project.modelAtelier.wolfRig=se224WolfRigSpec()'),chunk.count('currentProject.modelAtelier.wolfRig=se224WolfRigSpec()'))
+          data=json.loads(Path('/tmp/se225wolfdebug/scenes/model-atelier-furred-astra-v11-90.swyrl.json').read_text())
+          m=data['project']['modelAtelier']
+          print('WOLF_ORIGINAL_BUNDLE',{'name':m.get('name'),'parts':len(m['parts']),'kind':data['project'].get('kind'),'canonicalId':data['project'].get('canonicalId')})
+          print('WOLF225_DEBUG_BYTES',len(s.encode()))
+          print('WOLF225_DEBUG_SHA',hashlib.sha256(s.encode()).hexdigest())
+          PY
