@@ -1,21 +1,21 @@
-name: Check §E v11.206 Sheep VR candidate
+name: Check §E v11.207 Sheep VR candidate
 on:
   push:
     branches:
       - main
-      - feat/sheep-vr-meadow-fog-polish-v11-206
+      - feat/sheep-vr-world-pinned-tools-v11-207
     paths:
       - 'projects/swrlz-forge-moba/source-manifest.json'
-      - 'projects/swrlz-forge-moba/patches/v11_206_sheep_quest_meadow_fog_polish.py'
-      - 'projects/swrlz-forge-moba/runtime/sheep_quest_meadow_fog_polish_v11_206.js'
-      - 'projects/swrlz-forge-moba/tests/test_v11_206_meadow_fog.cjs'
-      - 'projects/swrlz-forge-moba/scripts/verify_v11_206_release.py'
-      - '.github/workflows/verify-engine-v11-206-sheep-meadow-fog.yml'
+      - 'projects/swrlz-forge-moba/patches/v11_207_sheep_vr_world_pinned_panels.py'
+      - 'projects/swrlz-forge-moba/runtime/engine_xr_sheep_world_pinned_panels_v11_207.js'
+      - 'projects/swrlz-forge-moba/tests/test_v11_207_spatial_menu.cjs'
+      - 'projects/swrlz-forge-moba/scripts/verify_v11_207_release.py'
+      - '.github/workflows/verify-engine-v11-207-sheep-spatial-menu.yml'
       - '.github/workflows/deploy-swrlz-forge-moba.yml'
   pull_request:
     paths:
       - 'projects/swrlz-forge-moba/**'
-      - '.github/workflows/verify-engine-v11-206-sheep-meadow-fog.yml'
+      - '.github/workflows/verify-engine-v11-207-sheep-spatial-menu.yml'
   workflow_dispatch:
 jobs:
   candidate:
@@ -25,7 +25,8 @@ jobs:
       - uses: actions/checkout@v4
       - name: Validate runtime syntax and movement / follow regression
         run: |
-          node --check projects/swrlz-forge-moba/runtime/sheep_quest_meadow_fog_polish_v11_206.js
+          node --check projects/swrlz-forge-moba/runtime/engine_xr_sheep_world_pinned_panels_v11_207.js
+          node projects/swrlz-forge-moba/tests/test_v11_207_spatial_menu.cjs
           node projects/swrlz-forge-moba/tests/test_v11_206_meadow_fog.cjs
           node projects/swrlz-forge-moba/tests/test_v11_205_tactical_menu_overlay.cjs
           node projects/swrlz-forge-moba/tests/test_v11_204_rapid_grid_wheels.cjs
@@ -45,11 +46,11 @@ jobs:
           node projects/swrlz-forge-moba/tests/test_v11_181_xr_session_lifecycle.cjs
       - name: Build source and record exact output for manifest sealing
         run: |
-          python3 projects/swrlz-forge-moba/build_space.py --output "$RUNNER_TEMP/se-v11-206"
-          wc -c "$RUNNER_TEMP/se-v11-206/index.html"
-          sha256sum "$RUNNER_TEMP/se-v11-206/index.html"
+          python3 projects/swrlz-forge-moba/build_space.py --output "$RUNNER_TEMP/se-v11-207"
+          wc -c "$RUNNER_TEMP/se-v11-207/index.html"
+          sha256sum "$RUNNER_TEMP/se-v11-207/index.html"
           if python3 -c 'import json; m=json.load(open("projects/swrlz-forge-moba/source-manifest.json")); assert m.get("finalSha256") and m.get("finalBytes")'; then
-            python3 projects/swrlz-forge-moba/scripts/verify_v11_206_release.py --output "$RUNNER_TEMP/se-v11-206-verified"
+            python3 projects/swrlz-forge-moba/scripts/verify_v11_207_release.py --output "$RUNNER_TEMP/se-v11-207-verified"
           else
             echo "Candidate built; seal reported size/hash in source-manifest before deployment."
           fi
