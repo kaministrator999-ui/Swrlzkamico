@@ -1,0 +1,23 @@
+name: Verify §E v11.229 sheep house model loader repair
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/verify-forge-v11-229-sheep-house-release.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate source manifest, five native house meshes and 68 packaged assets
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_229_release.py --output /tmp/se229-sheep-sealed
