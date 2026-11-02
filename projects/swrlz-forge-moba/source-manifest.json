@@ -262,6 +262,6 @@
     "patches/v11_213_hand_loader_validation_fix.py",
     "patches/v11_214_quest_sheep_upright_modal_one_ray.py"
   ],
-  "finalBytes": null,
-  "finalSha256": null
+  "finalBytes": 7487323,
+  "finalSha256": "af854b4ca6f1a88dd1ec2b0014ae872ac6e26cbc842728b50febe9153e0613d5"
 }
