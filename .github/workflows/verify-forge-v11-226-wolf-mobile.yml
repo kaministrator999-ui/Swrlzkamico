@@ -43,7 +43,7 @@ jobs:
         run: |
           npm install --no-save playwright@1.56.1
           npx playwright install --with-deps --only-shell chromium
-      - name: Inspect modeler touch-layer interception then test wolf motions and game visuals
+      - name: Verify inspector touch and local Sheep Tag wolf visuals end to end
         run: node projects/swrlz-forge-moba/tests/ui_v11_226_wolf_model_smoke.mjs
       - name: Print exact wolf source receipt
         run: |
