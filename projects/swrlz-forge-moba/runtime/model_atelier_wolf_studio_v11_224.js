@@ -66,7 +66,7 @@ function se224WolfIsModel(){
 }
 function se224WolfStudioInstall(){
  if(!panel||document.getElementById('modelAtelierWolfStudio'))return;
- const controls=panel.querySelector('.atelier-scene')||panel.querySelector('.atelier-viewport-controls');if(!controls)return;
+ const controls=panel.querySelector('.atelier-inspector')||panel.querySelector('.atelier-scene');if(!controls)return;
  const ui=document.createElement('details');ui.id='modelAtelierWolfStudio';
  ui.className='atelier-wolf-studio';
  ui.innerHTML=`<summary>🐺 Astra · Wolf Rig & Motion</summary>
@@ -91,7 +91,7 @@ function se224WolfStudioInstall(){
    <button type="button" id="modelAtelierWolfSaveKey">Save pose at playhead</button>
    <small>Head, jaw, spine, tail and four two-joint legs. Keys are saved to model JSON.</small>
   </div>`;
- controls.append(ui);
+ controls.prepend(ui);
  const by=id=>document.getElementById('modelAtelierWolf'+id);
  const clipSelect=by('Clip'),boneSelect=by('Bone');
  const rig=se224WolfRigSpec();
