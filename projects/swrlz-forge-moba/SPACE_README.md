@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.213
+title: §wyrl§ Engine v11.215
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,12 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.215 — Floating Hand anatomical sculpt (2026-11-02)
+
+Owner's four-angle phone review exposed a flat palm and weak thumb/opposite-thumb side silhouettes. Updated **only** the Floating Hand starter's native organic signed-distance field with a thicker convex palm, rounded hypothenar (pinky-side) bulge, curved ulnar edge, forward-angled blended thumb saddle/mound and four tapered, gently splayed fingers with anatomical knuckle contours. Repositioned front/back magic symbols over the new volume and added editable thumb, palm, ulnar and finger seams. The original other game/editor starters, v11.214 Quest quick-wheel fix, saved user projects and Model Atelier validation are preserved.
+
+**Focused browser proof:** 53 native editable meshes, 10 groups, 16,938 connected glove vertices; measured central palm front/back range 0.718 units and ulnar-side maximum x +0.755; Chromium mobile-size deep link loaded with no page/console errors (GitHub Actions #41468763144). Strict source: 247 patches, 68 assets, 7,490,431 HTML bytes, SHA-256 `90095eecc2a4e2af538d9332966108c7bede67d6cb041c329219ad475f3cdf1d`. Full scope and physical-device acceptance: `docs/FLOATING_HAND_ANATOMY_V11_215.md`. Initial model is not yet weight-painted, skeletal-rigged or linked to Quest hand tracking.
 
 ## §E v11.213 — Floating Hand loading repair (2026-11-02)
 
