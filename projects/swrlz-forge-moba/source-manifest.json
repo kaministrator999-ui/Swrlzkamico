@@ -268,6 +268,6 @@
     "patches/v11_219_finger_rail_contact.py",
     "patches/v11_220_hand_skeletal_studio.py"
   ],
-  "finalBytes": 7525951,
-  "finalSha256": "a8365b3078a7168c06fb12eeab0fa356faad6d06ec7b08757df1aba18d8a92e5"
+  "finalBytes": 7526079,
+  "finalSha256": "7836708947da5ed574608d82c530d3421cedb6c2ac348eec822860c4c3ebe77e"
 }
