@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.207",
+  "name": "§wyrl§ Engine v11.208",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_207.html",
+  "finalArtifact": "swyrl_engine_v11_208.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -253,8 +253,9 @@
     "patches/v11_204_sheep_vr_rapid_grid_wheels.py",
     "patches/v11_205_sheep_tactical_menu_pointer_overlay.py",
     "patches/v11_206_sheep_quest_meadow_fog_polish.py",
-    "patches/v11_207_sheep_vr_world_pinned_panels.py"
+    "patches/v11_207_sheep_vr_world_pinned_panels.py",
+    "patches/v11_208_quest_biomes_fog_depth.py"
   ],
-  "finalBytes": 7409246,
-  "finalSha256": "78eae7139cc5f356552855f67780db345a43c70ac38573ed8eaa604d9844a18a"
+  "finalBytes": 7420717,
+  "finalSha256": "4f6b5800603141d34d470932b6ff73f1012cceb8a209c66e18dc0c98ba88caa6"
 }
