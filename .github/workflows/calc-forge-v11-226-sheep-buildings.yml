@@ -20,6 +20,7 @@ jobs:
         run: |
           node --check projects/swrlz-forge-moba/runtime/sheep_building_model_starters_v11_226.js
           python3 -m py_compile projects/swrlz-forge-moba/patches/v11_226_sheep_building_starters.py
+          node projects/swrlz-forge-moba/tests/test_v11_226_sheep_buildings.cjs
       - name: Build unsealed candidate, print exact size and SHA
         run: |
           python3 - <<'PY'
