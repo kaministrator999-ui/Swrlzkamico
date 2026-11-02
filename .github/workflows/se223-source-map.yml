@@ -33,7 +33,7 @@ jobs:
           for token in ['function se223Frame(dt,t)','se223Frame(dt,t);',
            'function se223ValidateModel(v)','window.SWYRL_ENGINE_PARTICLES=',
            'window.SWYRL_ENGINE_PARTICLE_STUDIO=',
-           'id="se223Panel"','se223Install','se223UIImport','se223State.preview',
+           "panel.id='se223Panel'",'se223Install','se223UIImport','se223State.preview',
            'swyrl-particle-studio-v1', 'SE223_PER_EMITTER=96', 'SE223_TOTAL=576',
            "window.SWRLZ_FORGE_BUILD={version:'v11.223'",
            '<title>§wyrl§ Engine · Maker v11.223</title>']:
