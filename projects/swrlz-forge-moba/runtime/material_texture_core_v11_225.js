@@ -272,7 +272,10 @@ function se225MaterialActorsChanged(){
 }
 function se225MaterialSync(force=false){
  const data=se225MaterialData();
- const signature=data?JSON.stringify(data):'invalid';
+ // Authoring edits replace this metadata object atomically. Compare its
+ // identity rather than repeatedly JSON.stringify large imported PNG data on
+ // each Quest/Android frame (the actor list is checked separately).
+ const signature=data;
  const changed=force||currentProject!==se225Mat.source||signature!==se225Mat.signature||se225MaterialActorsChanged();
  if(!changed)return;
  se225RestoreMaterials();se225Mat.source=currentProject;se225Mat.signature=signature;
