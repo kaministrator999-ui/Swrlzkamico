@@ -21,3 +21,10 @@ jobs:
         env:
           PYTHONPATH: hf_space
         run: python -m unittest discover -s hf_space -p test_online_lyric_extraction_fix.py -v
+      - name: Replay existing full-lyrics source-verification contracts
+        env:
+          PYTHONPATH: hf_space
+        run: |
+          python tests/test_full_lyrics_retrieval_v151.py
+          python tests/test_full_lyrics_subject_bound_verification_v160.py
+          python tests/test_full_lyrics_source_vs_body_v161.py
