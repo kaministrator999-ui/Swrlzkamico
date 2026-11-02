@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import base64
 import html
+from html.parser import HTMLParser
 import importlib.util
 import ipaddress
 import json
@@ -176,16 +177,25 @@ def _evidence_result(query:str,href:str,title:str,snippet:str,rank:int)->dict[st
     return asdict(Evidence(title=clean_title,url=safe,snippet=_clean_search_text(snippet,1200),source=target.netloc.lower(),query=query,rank=rank,fetched_at=int(time.time())))
 
 def _parse_ddg_html(query:str,text:str)->tuple[list[dict[str,Any]],int]:
-    anchors=list(re.finditer(r'<a[^>]+class=["\'][^"\']*\bresult__a\b[^"\']*["\'][^>]+href=["\']([^"\']+)["\'][^>]*>([\s\S]*?)</a>',text,re.I))
+    # Search engines change HTML attribute order. Select by the result class,
+    # then read href independently instead of assuming class precedes href.
+    anchors=[]
+    for match in re.finditer(r'(?is)<a\b([^>]*)>(.*?)</a>',text):
+        attrs=match.group(1)
+        klass=re.search(r'(?:^|\s)class\s*=\s*(["\'])(.*?)\1',attrs,re.I|re.S)
+        href=re.search(r'(?:^|\s)href\s*=\s*(["\'])(.*?)\1',attrs,re.I|re.S)
+        if klass and href and "result__a" in klass.group(2).split():
+            anchors.append((match,href.group(2),match.group(2)))
     results=[]
-    for index,anchor in enumerate(anchors):
-        region_end=anchors[index+1].start() if index+1<len(anchors) else min(len(text),anchor.end()+5000)
+    for index,(anchor,href,title) in enumerate(anchors):
+        region_end=anchors[index+1][0].start() if index+1<len(anchors) else min(len(text),anchor.end()+5000)
         region=text[anchor.end():region_end]
         sm=re.search(r'class=["\'][^"\']*\bresult__snippet\b[^"\']*["\'][^>]*>([\s\S]*?)</(?:a|div)>',region,re.I)
-        item=_evidence_result(query,anchor.group(1),anchor.group(2),sm.group(1) if sm else "",len(results)+1)
+        item=_evidence_result(query,href,title,sm.group(1) if sm else "",len(results)+1)
         if item:results.append(item)
         if len(results)>=MAX_RESULTS_PER_QUERY:break
     return results,len(anchors)
+
 
 def _parse_ddg_lite(query:str,text:str)->tuple[list[dict[str,Any]],int]:
     anchors=list(re.finditer(r'<a[^>]+(?:class=["\'][^"\']*\bresult-link\b[^"\']*["\'][^>]*)?href=["\']([^"\']+)["\'][^>]*>([\s\S]*?)</a>',text,re.I))
@@ -261,6 +271,61 @@ def _ddg_search(query:str)->list[dict[str,Any]]:
             return results
     return []
 
+class _LyricDOMExtractor(HTMLParser):
+    """Extract lyric containers without flattening their rendered line breaks.
+
+    Only explicitly marked lyric nodes are collected; page navigation, scripts
+    and unrelated recommendations never become lyric evidence.
+    """
+    _VOID={"area","base","br","col","embed","hr","img","input","link","meta","source","track","wbr"}
+    _BLOCK={"div","p","section","article","li"}
+    _SKIP={"script","style","noscript","svg"}
+
+    def __init__(self)->None:
+        super().__init__(convert_charrefs=True)
+        self.depth=0
+        self.hidden=0
+        self.parts:list[str]=[]
+
+    def handle_starttag(self,tag:str,attrs:list[tuple[str,str|None]])->None:
+        if tag in self._VOID:
+            if tag=="br" and self.depth and not self.hidden:self.parts.append("\n")
+            return
+        props={str(key).lower():str(value or "") for key,value in attrs}
+        if self.depth:
+            self.depth+=1
+            if tag in self._SKIP:self.hidden+=1
+            if tag in self._BLOCK and not self.hidden:self.parts.append("\n")
+        elif tag in {"div","section","article"} and (
+            props.get("data-lyrics-container","").lower()=="true"
+            or props.get("id","").lower()=="lyrics"
+            or "lyrics" in props.get("class","").lower().split()
+        ):
+            self.depth=1
+            self.parts.append("\n\n")
+
+    def handle_startendtag(self,tag:str,attrs:list[tuple[str,str|None]])->None:
+        self.handle_starttag(tag,attrs)
+        if tag not in self._VOID:self.handle_endtag(tag)
+
+    def handle_endtag(self,tag:str)->None:
+        if not self.depth:return
+        if tag in self._SKIP and self.hidden:self.hidden-=1
+        if tag in self._BLOCK and not self.hidden:self.parts.append("\n")
+        self.depth-=1
+
+    def handle_data(self,data:str)->None:
+        if self.depth and not self.hidden:self.parts.append(data)
+
+
+def _lyric_dom_text(page_html:str)->str:
+    parser=_LyricDOMExtractor()
+    parser.feed(page_html)
+    value=re.sub(r"[^\S\n]+"," ","".join(parser.parts))
+    value=re.sub(r" *\n *","\n",value)
+    return re.sub(r"\n{3,}","\n\n",value).strip()
+
+
 def _page_fetch(url:str)->dict[str,Any]:
     safe=_validate_public_url(url)
     _emit_trace("PAGE_FETCH_STARTED",provider="web-page",url=safe,reason="Visiting result page")
@@ -271,13 +336,19 @@ def _page_fetch(url:str)->dict[str,Any]:
         if len(raw)>MAX_PAGE_BYTES:raise ValueError("PAGE_RESPONSE_TOO_LARGE")
         if not ("text/" in ctype or "html" in ctype or "json" in ctype):raise ValueError("PAGE_CONTENT_TYPE_BLOCKED")
         text=raw.decode("utf-8","replace");tm=re.search(r"<title[^>]*>([\s\S]*?)</title>",text,re.I);title=html.unescape(re.sub(r"<[^>]+>"," ",tm.group(1))).strip()[:300] if tm else ""
-        cleaned=re.sub(r"(?is)<(script|style|noscript|svg)[^>]*>.*?</\1>"," ",text)
-        cleaned=re.sub(r"(?i)<br\s*/?>","\n",cleaned)
-        cleaned=re.sub(r"(?i)</(?:p|div|li|h[1-6]|section|article|blockquote|tr)>","\n",cleaned)
-        cleaned=html.unescape(re.sub(r"<[^>]+>"," ",cleaned))
-        extract=re.sub(r"[ \t\r\f\v]+"," ",cleaned)
-        extract=re.sub(r" *\n *","\n",extract)
-        extract=re.sub(r"\n{3,}","\n\n",extract).strip()[:MAX_PAGE_EXTRACT_CHARS]
+        lyric_body=_lyric_dom_text(text) if "html" in ctype else ""
+        if len([line for line in lyric_body.splitlines() if line.strip()])>=4:
+            # Keep page title for identity checks and an explicit body boundary
+            # for the existing lyric verifier. Never infer missing verses.
+            extract=((title+"\n" if title else "")+"Lyrics\n"+lyric_body)[:MAX_PAGE_EXTRACT_CHARS]
+        else:
+            cleaned=re.sub(r"(?is)<(script|style|noscript|svg)[^>]*>.*?</\1>"," ",text)
+            cleaned=re.sub(r"(?i)<br\s*/?>","\n",cleaned)
+            cleaned=re.sub(r"(?i)</(?:p|div|li|h[1-6]|section|article|blockquote|tr)>","\n",cleaned)
+            cleaned=html.unescape(re.sub(r"<[^>]+>"," ",cleaned))
+            extract=re.sub(r"[ \t\r\f\v]+"," ",cleaned)
+            extract=re.sub(r" *\n *","\n",extract)
+            extract=re.sub(r"\n{3,}","\n\n",extract).strip()[:MAX_PAGE_EXTRACT_CHARS]
         _emit_trace("PAGE_FETCH_COMPLETE",provider="web-page",url=final,status=int(status),response_bytes=len(raw),reason="Page fetched")
         return {"finalUrl":final,"status":int(status),"title":title,"extract":extract,"fetchedAt":int(time.time()*1000)}
     except Exception as exc:
