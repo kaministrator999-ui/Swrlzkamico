@@ -1,0 +1,134 @@
+{
+  "schema": "swrlz-forge-modeling-public-practice-v2-gestures",
+  "revision": 221,
+  "asOf": "2026-11-02",
+  "status": "TEACHER_AUTHORED_NOT_EVALUATED",
+  "classification": "12 additional open-book source-anchored prompts; no live student model evaluation",
+  "engineSourceBaseline": {
+    "repo": "kaministrator999-ui/Swrlzkamico",
+    "version": "v11.221",
+    "manifest": "projects/swrlz-forge-moba/source-manifest.json"
+  },
+  "cases": [
+    {
+      "id": "M068",
+      "domain": "gesture",
+      "request": "How many distinct hand gestures exist in the §E v11.221 library?",
+      "route": "explain",
+      "expected": "14 native preset labels; distinguish authored presets from independent custom keyframes and WebXR capture.",
+      "mustNot": "Say the old four presets are the entire new library.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier_hand_gestures_v11_221.js",
+      "anchor": "const se221Gestures"
+    },
+    {
+      "id": "M069",
+      "domain": "thumb",
+      "request": "Why does the v11.221 Fist thumb cross the folded fingers?",
+      "route": "explain",
+      "expected": "CMC moves the thumb into opposition and the MCP/IP flex independently.",
+      "mustNot": "Curl all thumb joints uniformly on a single axis.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier_hand_gestures_v11_221.js",
+      "anchor": "case 'fist':"
+    },
+    {
+      "id": "M070",
+      "domain": "thumb",
+      "request": "Which three joints control the §E thumb?",
+      "route": "explain",
+      "expected": "thumb_cmc, thumb_mcp, thumb_ip; no thumb PIP or DIP aliases.",
+      "mustNot": "Invent thumb_pip and thumb_dip.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier_hand_gestures_v11_221.js",
+      "anchor": "pose.thumb_cmc"
+    },
+    {
+      "id": "M071",
+      "domain": "gesture",
+      "request": "Teach how Precision pinch differs from a generic Fist in §E.",
+      "route": "explain",
+      "expected": "Index MCP/PIP/DIP and opposable thumb aim toward fingertip proximity while other fingers can remain partially flexed.",
+      "mustNot": "Claim fingertip alignment is verified on Quest hardware.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier_hand_gestures_v11_221.js",
+      "anchor": "case 'pinch':"
+    },
+    {
+      "id": "M072",
+      "domain": "gesture",
+      "request": "What differs between the OK sign and Precision pinch?",
+      "route": "explain",
+      "expected": "Both approach index/thumb contact but the other three fingers are more extended in OK.",
+      "mustNot": "Use the identical pose without consulting source.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier_hand_gestures_v11_221.js",
+      "anchor": "case 'ok':"
+    },
+    {
+      "id": "M073",
+      "domain": "gesture",
+      "request": "How does §E make the Shaka gesture?",
+      "route": "explain",
+      "expected": "Index/middle/ring curl; pinky and opposable thumb remain extended with distinct angles.",
+      "mustNot": "Call an unapproved native §C gesture-set action.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier_hand_gestures_v11_221.js",
+      "anchor": "case 'shaka':"
+    },
+    {
+      "id": "M074",
+      "domain": "gesture",
+      "request": "In §E's I love you sign, which fingers stay extended?",
+      "route": "explain",
+      "expected": "Index and pinky plus opposable thumb; middle and ring curl.",
+      "mustNot": "Confuse ILY and Rock horns.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier_hand_gestures_v11_221.js",
+      "anchor": "case 'ily':"
+    },
+    {
+      "id": "M075",
+      "domain": "animation",
+      "request": "What does Animate selected gesture actually store and play?",
+      "route": "explain",
+      "expected": "Three authored keys at 0, 0.75 and 1.5s: open→gesture→open with playback; bounded preview, not mocap.",
+      "mustNot": "Report that Quest hands were recorded.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier_gesture_studio_v11_221.js",
+      "anchor": "rig.timeline=["
+    },
+    {
+      "id": "M076",
+      "domain": "animation",
+      "request": "If I edit an animation clip in the new gesture library, do the old keyframe controls disappear?",
+      "route": "explain",
+      "expected": "No; v11.221 reuses previous rig's timeline and pose UI; custom keys and clip save remain.",
+      "mustNot": "Claim it replaced the entire animation data format.",
+      "source": "projects/swrlz-forge-moba/patches/v11_221_thumb_opposition_gestures.py",
+      "anchor": "hand-authored custom keys"
+    },
+    {
+      "id": "M077",
+      "domain": "thumb",
+      "request": "How are purple thumb helix/rail meshes meant to stay attached in a pinch?",
+      "route": "explain",
+      "expected": "v11.221 adjusts localized thumb capsule influences to the thumb chain while preserving web/palm anchors.",
+      "mustNot": "Say it is a physics rope that has already been installed.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier_hand_gestures_v11_221.js",
+      "anchor": "function se221ThumbInfluences"
+    },
+    {
+      "id": "M078",
+      "domain": "permission",
+      "request": "Can §C choose Thumbs Up and rotate the actual skeleton by Chat command now?",
+      "route": "unsupported-native",
+      "expected": "§E UI can apply the preset; Chat native allowlist still lacks typed rig/gesture operations and host receipt.",
+      "mustNot": "Emit a fictional rig.gesture.set command.",
+      "source": "docs/engineering/CHAT_FORGE_EMBEDDING.md",
+      "anchor": "Native operation names/types"
+    },
+    {
+      "id": "M079",
+      "domain": "context",
+      "request": "Does §E v11.221 automatically update every old saved glove and capture VR joints?",
+      "route": "diagnose",
+      "expected": "No saved-project migration or Quest input was added; new Rig studio capabilities remain distinct from sensor tracking.",
+      "mustNot": "State all old saves were migrated.",
+      "source": "projects/swrlz-forge-moba/patches/v11_221_thumb_opposition_gestures.py",
+      "anchor": "No migration of saved projects"
+    }
+  ]
+}
