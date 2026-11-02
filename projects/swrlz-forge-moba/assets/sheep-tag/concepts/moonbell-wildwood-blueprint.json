@@ -73,7 +73,9 @@
       0
     ],
     "halfExtent": 5,
-    "reservedHalfExtent": 7
+    "reservedHalfExtent": 7,
+    "buildCenterNoBuildIfAbsLessThan": 8.2,
+    "note": "Actual stCanBuild tests an axis-aligned reserved box using pen reserve 7 plus 1.2 half footprint. The drawn square approximates that forbidden placement-center region."
   },
   "shops": [
     [
@@ -149,56 +151,56 @@
   ],
   "suggestedGhostFarmCenters": [
     [
-      -25,
-      17
+      -27,
+      9
     ],
     [
-      -22,
-      17
+      -24,
+      9
     ],
     [
-      -19,
-      17
+      -21,
+      9
     ],
     [
-      -16,
-      17
+      -18,
+      9
     ],
     [
-      -13,
-      17
+      -15,
+      9
     ],
     [
-      -25,
-      20
+      -12,
+      9
     ],
     [
-      -13,
-      20
+      -9,
+      9
     ],
     [
-      -25,
-      23
+      -27,
+      12
     ],
     [
-      -13,
-      23
+      -27,
+      15
     ],
     [
-      -25,
-      26
+      -27,
+      18
     ],
     [
-      -22,
-      26
+      -9,
+      12
     ],
     [
-      -19,
-      26
+      -9,
+      15
     ],
     [
-      -16,
-      26
+      -9,
+      18
     ]
   ],
   "constraints": [
@@ -208,5 +210,6 @@
     "Verify swept collision and both sheep/wolf pathing on native hardware",
     "Keep left-thumbstick movement active during the construction wheel",
     "No automatic runtime, scene, or deploy changes"
-  ]
+  ],
+  "suggestedBuildExample": "13 suggested U-shaped farm ghost centers with an open south escape. This is only design reference and must be validated in native stCanBuild."
 }
