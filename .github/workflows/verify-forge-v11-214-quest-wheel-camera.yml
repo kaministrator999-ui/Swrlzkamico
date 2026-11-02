@@ -1,0 +1,51 @@
+name: Verify §E v11.214 Quest Sheep modal camera and single beam
+on:
+  push:
+    branches:
+      - fix/sheep-quest-wheel-camera-beam-v11-214
+      - main
+    paths:
+      - 'projects/swrlz-forge-moba/source-manifest.json'
+      - 'projects/swrlz-forge-moba/patches/v11_214_quest_sheep_upright_modal_one_ray.py'
+      - 'projects/swrlz-forge-moba/runtime/engine_xr_sheep_wheel_modal_camera_ray_v11_214.js'
+      - 'projects/swrlz-forge-moba/tests/test_v11_214_quest_modal_wheel_camera_ray.cjs'
+      - 'projects/swrlz-forge-moba/scripts/verify_v11_214_release.py'
+      - '.github/workflows/verify-forge-v11-214-quest-wheel-camera.yml'
+      - '.github/workflows/deploy-swrlz-forge-moba.yml'
+  pull_request:
+    paths:
+      - 'projects/swrlz-forge-moba/**'
+      - '.github/workflows/verify-forge-v11-214-quest-wheel-camera.yml'
+  workflow_dispatch:
+jobs:
+  quest-wheel:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Focused Quest wheel, camera, quick-build and hand source regressions
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/engine_xr_sheep_wheel_modal_camera_ray_v11_214.js
+          node --check projects/swrlz-forge-moba/runtime/model_atelier_floating_hand_v11_212.js
+          node projects/swrlz-forge-moba/tests/test_v11_214_quest_modal_wheel_camera_ray.cjs
+          node projects/swrlz-forge-moba/tests/test_v11_211_quest_os_overlay.cjs
+          node projects/swrlz-forge-moba/tests/test_v11_210_quest_perf.cjs
+          node projects/swrlz-forge-moba/tests/test_v11_210_workspace.cjs
+          node projects/swrlz-forge-moba/tests/test_v11_209_radial_icons.cjs
+          node projects/swrlz-forge-moba/tests/test_v11_205_tactical_menu_overlay.cjs
+          node projects/swrlz-forge-moba/tests/test_v11_204_rapid_grid_wheels.cjs
+          node projects/swrlz-forge-moba/tests/test_v11_203_wrist_forward_aim.cjs
+          node projects/swrlz-forge-moba/tests/test_v11_200_sheep_spotlight.cjs
+          node projects/swrlz-forge-moba/tests/test_v11_199_sheep_vr.cjs
+          node projects/swrlz-forge-moba/tests/test_v11_193_sheep_vr.cjs
+          node projects/swrlz-forge-moba/tests/test_v11_192_native_vr_editor.cjs
+      - name: Build exact static package and seal if manifest ready
+        run: |
+          python3 projects/swrlz-forge-moba/build_space.py --output "$RUNNER_TEMP/se-v11-214"
+          wc -c "$RUNNER_TEMP/se-v11-214/index.html"
+          sha256sum "$RUNNER_TEMP/se-v11-214/index.html"
+          if python3 -c 'import json; m=json.load(open("projects/swrlz-forge-moba/source-manifest.json")); assert m.get("finalSha256") and m.get("finalBytes")'; then
+            python3 projects/swrlz-forge-moba/scripts/verify_v11_214_release.py --output "$RUNNER_TEMP/se-v11-214-verified"
+          else
+            echo "Candidate built; seal printed bytes/SHA before deployment."
+          fi

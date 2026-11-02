@@ -3,7 +3,6 @@ on:
   push:
     branches: [main]
     paths:
-      - 'projects/swrlz-forge-moba/source-manifest.json'
       - 'projects/swrlz-forge-moba/patches/v11_213_hand_loader_validation_fix.py'
       - 'projects/swrlz-forge-moba/scripts/verify_v11_213_release.py'
       - '.github/workflows/verify-forge-v11-213-hand-release.yml'
