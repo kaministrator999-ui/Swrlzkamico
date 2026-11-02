@@ -272,6 +272,6 @@
     "patches/v11_223_fist_clench_wrist_wave.py",
     "patches/v11_224_native_particle_studio.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 7590193,
+  "finalSha256": "29583040d840e7bd328d7417d0abb8a0d0c8cebf5a6db2db8014b602bdfb6a54"
 }

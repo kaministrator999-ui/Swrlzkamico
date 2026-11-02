@@ -21,7 +21,7 @@ jobs:
           node --check projects/swrlz-forge-moba/runtime/particle_studio_core_v11_224.js
           node --check projects/swrlz-forge-moba/runtime/particle_studio_ui_v11_224.js
           node projects/swrlz-forge-moba/scripts/test_particle_studio_v11_224.js
-          python projects/swrlz-forge-moba/build_space.py --output dist/se224
+          python projects/swrlz-forge-moba/scripts/verify_v11_224_release.py --output dist/se224
           python - <<'PY'
           import hashlib,re,subprocess,json
           from pathlib import Path
