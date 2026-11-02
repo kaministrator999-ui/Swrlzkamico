@@ -261,6 +261,6 @@
     "patches/v11_212_floating_hand_model_starter.py",
     "patches/v11_213_hand_loader_validation_fix.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 7478295,
+  "finalSha256": "92785aeafddf55ec02535858b89b2b9e9a6c6f10cfcc149fcd8395ec2b01d8a4"
 }
