@@ -102,20 +102,21 @@ try{
  const game=await context.newPage();
  game.on('pageerror',e=>failures.push(e.message));
  await game.goto(host+'/index.html?project=sheep-tag-meadow',{waitUntil:'domcontentloaded',timeout:90000});
- await game.waitForFunction(()=>typeof window.SWYRL_ENGINE_WOLF_224?.active==='function',null,{timeout:60000});
- const gameState=await game.evaluate(()=>{
-  const api=window.SWYRL_ENGINE_WOLF_224.active();
-  const wolves=typeof actors!=='undefined'?actors.filter(a=>a.userData?.actorType==='st-wolf'):[];
-  return {api,visuals:wolves.map(a=>({
-   jaw:!!a.getObjectByName('stJaw'),
-   face:!!a.getObjectByName('Astra · enhanced head'),
-   body:!!a.getObjectByName('Astra · enhanced body')
-  }))};
+ await game.waitForFunction(()=>typeof window.SWYRL_ENGINE_WOLF_224?.active==='function',null,{timeout:60000,polling:200});
+ await game.evaluate(()=>{
+  window.SWYRL_ENGINE_SHEEP_TAG.load();
+  window.SWYRL_ENGINE_SHEEP_TAG.configure({role:'wolf',headstart:0});
+  document.getElementById('playBtn')?.click();
  });
+ await game.waitForFunction(()=>window.SWYRL_ENGINE_WOLF_224.active().wolves>0,null,{timeout:30000,polling:300});
+ const gameState=await game.evaluate(()=>({
+  api:window.SWYRL_ENGINE_WOLF_224.active(),
+  visuals:window.SWYRL_ENGINE_WOLF_224.visuals()
+ }));
  console.log('WOLF225_GAME_FACTS',JSON.stringify(gameState));
  assert.equal(gameState.api.animations.length,10);
  assert(gameState.visuals.length>=1);
- assert(gameState.visuals.every(w=>w.jaw&&w.face&&w.body),'Astra game wolf visual overlay');
+ assert(gameState.visuals.every(w=>w.head&&w.jaw&&w.face&&w.body&&w.paws===4),'Astra game wolf joint and detail overlay');
  assert.deepEqual(failures,[],'game runtime errors');
  console.log('WOLF225_GAME_SMOKE_PASS=Sheep Tag wolf jaw, face and body detail, shared 10 clips');
  await context.close();
