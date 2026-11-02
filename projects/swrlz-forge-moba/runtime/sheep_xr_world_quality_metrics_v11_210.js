@@ -179,7 +179,7 @@ window.SWYRL_ENGINE_QUEST_PERFORMANCE_210=Object.freeze({
   fogSampleCalls:se210World.fogSamples,fogTextureUploads:se210World.fogUploads,
   systemOverlayFrames:se210World.overlayFrames,
   cosmeticQuality:se210World.mode,autoReduced:se210World.autoLow,
-  3dLandmarks:se210World.landmarks,extraDrawCalls:se210World.meshes.length,
+  worldLandmarks3d:se210World.landmarks,extraDrawCalls:se210World.meshes.length,
   noPhysicsOrVisibilityChanges:true
  }),
  setQuality:se210Quality
