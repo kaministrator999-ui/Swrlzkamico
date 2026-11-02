@@ -112,6 +112,15 @@ assert.equal(ctx.se195.radial.children.length,2);
 // Reset to fresh menu for grip tests.
 ctx.se195Page('main');
 let panel=ctx.se195.radial;
+// Grip held before opening the radial must NOT suddenly grab it when shown.
+ctx.se195.visible=false;
+right.hit=true;right.input.gamepad.buttons[1].pressed=true;
+state.now+=16;ctx.se193XRFrame();
+assert.equal(diag().grabbing,false);
+ctx.se195.visible=true;state.now+=16;ctx.se193XRFrame();
+assert.equal(diag().grabbing,false,'requires a fresh grip after reopening menu');
+right.input.gamepad.buttons[1].pressed=false;
+state.now+=16;ctx.se193XRFrame();
 right.hit=false;right.input.gamepad.buttons[1].pressed=true;
 state.now+=16;ctx.se193XRFrame();
 assert.equal(diag().grabbing,false,'grip misses do not grab menus');
@@ -195,6 +204,6 @@ const patch=fs.readFileSync(path.join(__dirname,'..','patches',
  'v11_207_sheep_vr_world_pinned_panels.py'),'utf8');
 assert.ok(patch.includes('V11_207_SHEEP_QUEST_SPATIAL_MENU'));
 assert.ok(!patch.includes('stUi.rotation='),'no gameplay house rotations');
-console.log(JSON.stringify({pass:true,checks:47,grips:diag().gripStarts,
+console.log(JSON.stringify({pass:true,checks:49,grips:diag().gripStarts,
  moves:diag().gripMoves,panelsDecorated:diag().menuPagesDecorated,
  resizes:diag().resizes,recenters:diag().recenters}));
