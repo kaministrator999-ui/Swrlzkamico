@@ -1,0 +1,15 @@
+{
+  "schema": "swrlz-knowledge-followup-v1",
+  "requestId": "web-mvztih1u-2322955791-2920653834",
+  "modelId": "700m",
+  "eventType": "KNOWLEDGE_ACQUISITION_FOLLOWUP_2",
+  "sourceRef": "c623d93670a493a573907451a4d59357d13337b1",
+  "persistedAtUnixMs": 1793659776603,
+  "diagnostic": {
+    "schema": "swrlz-knowledge-followup-v1",
+    "parentRequestId": "web-mvztih1u-2322955791-2920653834",
+    "turnIndex": 2,
+    "userText": "Can you provide the lyrics for roll call by tech n9ne",
+    "capturedAtUnixMs": 1793659776603
+  }
+}
