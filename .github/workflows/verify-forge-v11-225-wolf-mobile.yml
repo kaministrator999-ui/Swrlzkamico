@@ -43,7 +43,7 @@ jobs:
         run: |
           npm install --no-save playwright@1.56.1
           npx playwright install --with-deps --only-shell chromium
-      - name: Verify wolf rig and Sheep Tag visuals at 390px
+      - name: Verify actual Astra wolf-model rig loader and Sheep Tag visuals at 390px
         run: node projects/swrlz-forge-moba/tests/ui_v11_225_wolf_model_smoke.mjs
       - name: Print exact wolf source receipt
         run: |
