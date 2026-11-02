@@ -1,0 +1,73 @@
+/* §E Game Engine child workspace: GUI/Menu inspector and per-layer preview. */
+.se187-workspace-tabs .segui-mini{display:inline-flex;align-items:center;gap:4px;
+ flex:0 0 auto;padding:2px 4px;margin-left:3px;border-left:1px solid #577486}
+.se187-workspace-tabs .segui-mini[hidden],#seguiPanel[hidden],#seguiPreview[hidden]{display:none!important}
+.se187-workspace-tabs .segui-mini button{min-width:0!important;min-height:33px!important;
+ padding:5px 8px!important;border-radius:7px;font-size:11px!important;white-space:nowrap;
+ background:#233d52;border:1px solid #577f94;color:#e4f5ff}
+.se187-workspace-tabs .segui-mini button.active{background:#205f6d!important;
+ border-color:#7ed8df!important;color:white!important}
+.se187-workspace-tabs .segui-mini [data-segui-toggle]{background:#315053!important;
+ border-color:#6f9d8d!important}
+.segui-panel{box-sizing:border-box;position:absolute;top:12px;right:8px;z-index:4050;
+ display:flex;flex-direction:column;gap:9px;overflow:auto;overscroll-behavior:contain;
+ width:min(358px,calc(100% - 16px));max-height:calc(100% - 24px);
+ padding:12px;border:1px solid #5c869c;border-radius:12px;background:#10273aee;
+ box-shadow:0 12px 32px #0009;color:#e7f5ff;font:12px/1.4 system-ui,sans-serif;
+ scrollbar-width:thin;pointer-events:auto}
+.segui-panel *{box-sizing:border-box}
+.segui-head{display:flex;flex-direction:column;gap:3px;
+ padding-bottom:7px;border-bottom:1px solid #456278}
+.segui-head strong{font-size:15px}
+.segui-panel small{color:#b9d2df;font-size:11px;line-height:1.35}
+.segui-actions,.segui-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.segui-row{background:#1a3449;border:1px solid #41657c;border-radius:8px;
+ padding:5px 7px;min-height:38px}
+.segui-row>button:first-child{flex:1;min-width:0;text-align:left}
+.segui-row>button:nth-child(2){min-width:34px}
+.segui-panel button,.segui-panel select,.segui-panel input{border-radius:7px;
+ border:1px solid #60849b;background:#223e54;color:#f3fbff;min-height:35px;
+ padding:5px 7px;font:600 12px system-ui,sans-serif}
+.segui-panel button{cursor:pointer;touch-action:manipulation}
+.segui-panel button:focus-visible,.segui-panel input:focus-visible,
+.segui-panel select:focus-visible{outline:2px solid #a2ebed;outline-offset:1px}
+.segui-panel button.segui-picked{background:#1e6571;border-color:#9de1ec}
+.segui-panel button:disabled{opacity:.5;cursor:not-allowed}
+.segui-panel .segui-section-title{font-size:13px;margin-top:4px;color:#a9edf0}
+.segui-panel .segui-in-play{display:flex;align-items:center;gap:4px;font-size:11px}
+.segui-panel input[type=checkbox]{min-height:19px;width:19px;accent-color:#5be7df}
+.segui-list{display:grid;gap:5px}
+.segui-form{display:grid;gap:8px;padding:9px;border:1px solid #476a85;
+ background:#122d43;border-radius:9px}
+.segui-form>label{display:grid;gap:3px;color:#d0e6f2}
+.segui-form input,.segui-form select{width:100%;min-width:0}
+.segui-form input[type=color]{height:36px;padding:2px}
+#st141MenuInspector.segui-native{display:block;position:static!important;
+ width:100%!important;max-width:100%!important;max-height:none!important;
+ padding:8px!important;margin:0!important;box-shadow:none!important;
+ background:#163a3d!important;overflow:visible!important}
+#st141MenuInspector.segui-native[hidden]{display:none!important}
+#st141MenuInspector.segui-native input{max-width:100%}
+.segui-preview{position:absolute;z-index:3550;pointer-events:none;
+ overflow:hidden;box-sizing:border-box}
+.segui-item{position:absolute;display:flex;align-items:center;justify-content:center;
+ box-sizing:border-box;padding:4px 7px;border:1px solid #82a1b7b3;border-radius:7px;
+ text-align:center;word-break:break-word;overflow:hidden;
+ font:700 clamp(10px,1.5vw,18px)/1.25 system-ui,sans-serif}
+.segui-label{background:transparent!important;border-color:transparent!important;
+ text-shadow:0 1px 4px #081927}
+.segui-panel:not([hidden])~.segui-preview:not([hidden]) .segui-item{outline:1px dashed #a6e3ff80}
+.segui-preview .segui-button{pointer-events:none}
+.segui-preview .segui-button:not(:disabled){pointer-events:auto;cursor:pointer;
+ touch-action:manipulation}
+.segui-preview .segui-button:disabled{opacity:1}
+@media(max-width:700px),(pointer:coarse){
+ .se187-workspace-tabs .segui-mini{gap:3px;padding:2px}
+ .se187-workspace-tabs .segui-mini button{font-size:10px!important;
+  padding:5px!important;min-height:36px!important}
+ .segui-panel{top:auto;bottom:6px;right:6px;left:6px;
+  width:calc(100% - 12px);max-height:min(50dvh,365px);padding:9px;
+  font-size:11px}
+ .segui-panel button,.segui-panel select,.segui-panel input{min-height:38px;
+  font-size:12px}
+}
