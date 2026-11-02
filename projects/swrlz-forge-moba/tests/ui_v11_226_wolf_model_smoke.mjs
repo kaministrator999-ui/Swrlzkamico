@@ -16,7 +16,7 @@ try{
  page.on('framenavigated',f=>console.log('WOLF_FRAME_NAV',f.url()));
  page.on('pageerror',e=>{failures.push(e.message);console.log('WOLF226_PAGE_ERROR',e.message);});
  page.on('response',r=>{if(r.status()>=400&&r.url().includes('model-atelier'))console.log('WOLF226_ASSET_STATUS',r.status(),r.url());});
- await page.route('**/*',route=>{
+ await context.route('**/*',route=>{
   const url=new URL(route.request().url());
   if(url.origin===host){
    const rel=url.pathname==='/'?'index.html':url.pathname.replace(/^\/+/, '');
@@ -65,6 +65,7 @@ try{
  assert(facts.visible && facts.wolf.skinnedMeshes>10);
  await page.evaluate(()=>document.getElementById('seReleaseNotesDialog')?.close());
  const studio=page.locator('#modelAtelierWolfStudio');
+ await studio.locator('summary').scrollIntoViewIfNeeded();
  const wasOpen=await studio.evaluate(el=>el.open);
  console.log('WOLF226_PANEL_INITIAL',JSON.stringify(await studio.evaluate(el=>({
   open:el.open,hidden:el.hidden,rect:el.getBoundingClientRect().toJSON(),
@@ -79,12 +80,19 @@ try{
     ownZ:getComputedStyle(el).zIndex,
     sceneZ:getComputedStyle(el.parentElement).zIndex};
  })));
- if(!wasOpen)await studio.evaluate(el=>{el.open=true;});
+ const hit=await studio.evaluate(el=>{
+  const summary=el.querySelector('summary'),r=summary.getBoundingClientRect();
+  const top=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2);
+  return top===summary||summary.contains(top);
+ });
+ assert(hit,'wolf animation summary must receive a real tap, not an overlapping tool button');
+ if(!wasOpen)await studio.locator('summary').click();
+
  console.log('WOLF226_PANEL_AFTER',JSON.stringify(await studio.evaluate(el=>({
   open:el.open,hidden:el.hidden,selectVisible:!!document.getElementById('modelAtelierWolfClip')?.getClientRects().length
  }))));
- assert(await studio.evaluate(el=>el.open),'wolf studio needs an expandable panel');
- await page.locator('#modelAtelierWolfClip').selectOption('howl',{force:true});
+ assert(await studio.evaluate(el=>el.open),'wolf studio should expand by tapping summary');
+ await page.locator('#modelAtelierWolfClip').selectOption('howl');
  await page.locator('#modelAtelierWolfTime').evaluate(el=>{
   el.value='.90';el.dispatchEvent(new Event('input',{bubbles:true}));});
  const howling=await page.evaluate(()=>window.SWYRL_ENGINE_WOLF_RIG.status());
