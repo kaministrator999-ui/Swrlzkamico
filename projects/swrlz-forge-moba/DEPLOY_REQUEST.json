@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.225",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_225_MATERIAL_TEXTURE_STUDIO_TABS",
-  "reason": "Owner-requested first-class Material & Texture Studio and standalone Particle Studio workspace beside Game Engine and Modeling. Native §E v11.225 adds ten PBR presets; eight procedural texture modes with 256x256 hand painting and brush undo; bounded PNG/JPEG import and PNG/JSON export; project-native material assignment, restored original ghost transparency, Undo/Redo and saved level records. Particle Studio reuses original 10 presets and capped GPU VFX in its own tab. Existing Game, Modeling, Quest, Sheep Tag authority, model assets, §C and 68 packaged assets retained. Strict 257-patch source check, built JS syntax and focused material lifecycle tests passed. Sealed HTML 7,642,539 bytes SHA-256 7407ca6b520912437c280035c1f4258f5b1e7a8ab577f3701b855db26f7bf3a7. Physical phone and Quest 2 visual/ergonomic testing remains owner acceptance.",
-  "sourceCommit": "223a39c92494605ce0e0e1cb57b2dbe1f17afdaf",
-  "sourceIntegritySha256": "7407ca6b520912437c280035c1f4258f5b1e7a8ab577f3701b855db26f7bf3a7"
+  "releaseVersion": "v11.226",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_226_SHEEP_BUILDING_MODEL_STARTERS",
+  "reason": "Owner-requested five separate native Model Atelier sheep-faction building starter projects: Free Shelter, Thatched Hut, Cozy Cottage, Flock Barn and Ram House. Each contains independent editable indexed 3D geometry and model groups, preserves front/side/top native viewing and the original Sheep Tag gameplay collision/build costs/LAN authority. Source/build verification PASSED at 258 patches, 68 unchanged packaged assets, 7,656,704 HTML bytes, SHA-256 7395e442f324b33cf67f49aa1eb1be9349f07c2e4d7f00aa5872d3312112129d. Owner phone/Quest visual acceptance pending.",
+  "sourceCommit": "99be3fc726878d2ffb9b018f4f61a0079cda8308",
+  "sourceIntegritySha256": "7395e442f324b33cf67f49aa1eb1be9349f07c2e4d7f00aa5872d3312112129d"
 }
