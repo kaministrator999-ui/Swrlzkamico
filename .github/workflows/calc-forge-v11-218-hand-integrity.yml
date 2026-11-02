@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/calc-forge-v11-218-hand-integrity.yml'
+      - 'projects/swrlz-forge-moba/scripts/verify_v11_218_release.py'
   workflow_dispatch:
 permissions:
   contents: read
