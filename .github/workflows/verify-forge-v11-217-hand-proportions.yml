@@ -1,0 +1,54 @@
+name: Verify §E v11.217 hand proportions
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'projects/swrlz-forge-moba/runtime/model_atelier_hand_proportions_v11_217.js'
+      - 'projects/swrlz-forge-moba/patches/v11_217_floating_hand_proportions.py'
+      - 'projects/swrlz-forge-moba/tests/ui_v11_217_hand_proportions.mjs'
+      - '.github/workflows/verify-forge-v11-217-hand-proportions.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-hand:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax check hand sculpture and patch
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/model_atelier_hand_proportions_v11_217.js
+          python3 -m py_compile projects/swrlz-forge-moba/patches/v11_217_floating_hand_proportions.py
+      - name: Build exact v11.217 candidate and log receipt
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+          p=Path('projects/swrlz-forge-moba/source-manifest.json')
+          m=json.loads(p.read_text())
+          assert m['name']=='§wyrl§ Engine v11.217'
+          assert m['patches'][-1]=='patches/v11_217_floating_hand_proportions.py'
+          m['finalSha256']=''
+          m['finalBytes']=0
+          p.write_text(json.dumps(m,ensure_ascii=False))
+          PY
+          python3 projects/swrlz-forge-moba/build_space.py --output /tmp/se217-hand-candidate
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          raw=Path('/tmp/se217-hand-candidate/index.html').read_bytes()
+          assert b'V11_217_HAND_FINGER_PALM_PROPORTIONS' in raw
+          assert b'se217OrganicHandSkin' in raw
+          print('HAND217_CANDIDATE_BYTES='+str(len(raw)))
+          print('HAND217_CANDIDATE_SHA256='+hashlib.sha256(raw).hexdigest())
+          PY
+      - name: Install focused browser runtime
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps --only-shell chromium
+      - name: Verify real Model Atelier hand has natural proportions
+        run: node projects/swrlz-forge-moba/tests/ui_v11_217_hand_proportions.mjs
