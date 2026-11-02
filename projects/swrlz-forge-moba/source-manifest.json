@@ -256,6 +256,6 @@
     "patches/v11_207_sheep_vr_world_pinned_panels.py",
     "patches/v11_208_quest_biomes_fog_depth.py"
   ],
-  "finalBytes": null,
-  "finalSha256": null
+  "finalBytes": 7420717,
+  "finalSha256": "4f6b5800603141d34d470932b6ff73f1012cceb8a209c66e18dc0c98ba88caa6"
 }
