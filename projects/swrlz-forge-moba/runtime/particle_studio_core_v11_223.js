@@ -68,16 +68,22 @@ function se223ValidateModel(v){
  if(new Set(emitters.map(x=>x.id)).size!==emitters.length)throw Error('Duplicate emitter IDs.');
  return {schema:SE223_SCHEMA,emitters};
 }
+const se223VerifiedModels=new WeakSet();
 function se223Data(create=false){
  if(!currentProject||typeof currentProject!=='object')return null;
  if(!currentProject.particleStudio){
   if(!create)return se223Empty;
   currentProject.particleStudio={schema:SE223_SCHEMA,emitters:[]};
  }
- return currentProject.particleStudio?.schema===SE223_SCHEMA &&
-  Array.isArray(currentProject.particleStudio.emitters) &&
-  currentProject.particleStudio.emitters.length<=SE223_MAX_EMITTERS
-  ?currentProject.particleStudio:null;
+ const data=currentProject.particleStudio;
+ if(!data||typeof data!=='object')return null;
+ if(!se223VerifiedModels.has(data)){
+  // Validate once per project metadata object. External saved levels and
+  // imported project JSON bypass the Studio-specific Import dialog.
+  try{se223ValidateModel(data);se223VerifiedModels.add(data);}
+  catch(error){return null;}
+ }
+ return data;
 }
 function se223List(){
  const data=se223Data();return data?data.emitters.map(e=>structuredClone(e)):[];
