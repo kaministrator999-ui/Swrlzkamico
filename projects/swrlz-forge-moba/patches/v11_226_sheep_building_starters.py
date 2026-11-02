@@ -53,6 +53,10 @@ def apply(html):
   return;
  }""")
 
+    html=once(html,
+      " source.engine='§wyrl§ Engine · Maker v11.225';source.version=11.225;",
+      " source.engine='§wyrl§ Engine · Maker v11.226';source.version=11.226;")
+
     for old,new in [
       ('SWYRL_ENGINE_DEPLOY_MARKER: V11_225_MATERIAL_TEXTURE_STUDIO_TABS',
        'SWYRL_ENGINE_DEPLOY_MARKER: V11_226_SHEEP_BUILDING_MODEL_STARTERS'),
