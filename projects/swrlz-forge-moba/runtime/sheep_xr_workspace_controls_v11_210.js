@@ -7,7 +7,7 @@ const se210UI={
  prefKey:'swyrl.sheep.vr.workspace.v1',binding:'classic',
  haptics:true,holdMs:340,layout:{},storeReads:0,storeWrites:0,
  panelBuilds:0,panelDisposals:0,panelPaints:0,panelHits:0,
- panelSelects:0,panelGrabFrames:0,panelPins:0,sessionRestores:0,
+ panelSelects:0,panelGrabFrames:0,panelPins:0,sessionRestores:0,cooldownTextureCreates:0,cooldownTextureUpdates:0,cooldownTextureDisposals:0,
  xrMenus:0,remaps:0,sessionVisible:false,lastError:''
 };
 const se210Kinds=['camera','build','skills','metrics','controls'];
@@ -88,6 +88,45 @@ function se210StatusSkill(id){
  }
  return {label:'UNAVAILABLE',remaining:0,ready:false};
 }
+function se210WheelStatusTexture(panel,art,text){
+ if(panel?.type!=='skill'||!/^\\d+s RECHARGE$/.test(text))
+  return se195Text(text);
+ if(!art.se210Status){
+  const canvas=document.createElement('canvas');canvas.width=384;canvas.height=192;
+  const texture=new THREE.CanvasTexture(canvas);
+  texture.colorSpace=THREE.SRGBColorSpace;
+  texture.minFilter=THREE.LinearFilter;texture.magFilter=THREE.LinearFilter;
+  texture.generateMipmaps=false;
+  art.se210Status={canvas,texture,text:null};
+  se210UI.cooldownTextureCreates++;
+ }
+ if(art.se210Status.text!==text){
+  const {canvas,texture}=art.se210Status,g=canvas.getContext('2d');
+  if(g){
+   g.clearRect(0,0,384,192);
+   g.fillStyle='#18394b';g.fillRect(0,0,384,192);
+   g.strokeStyle='#6ed9d0';g.lineWidth=5;g.strokeRect(6,6,372,180);
+   g.textAlign='center';g.textBaseline='middle';
+   g.font='bold 43px sans-serif';g.fillStyle='#e9f6f2';
+   g.fillText(text,192,96,346);
+   texture.needsUpdate=true;
+   art.se210Status.text=text;se210UI.cooldownTextureUpdates++;
+  }
+ }
+ return art.se210Status.texture;
+}
+const se210PreviousWheelDispose=se204WheelDispose;
+se204WheelDispose=function(){
+ for(const panel of se204.wheels.values()){
+  const status=panel.root?.userData?.se209Decor?.se210Status;
+  if(status){
+   status.texture.dispose();
+   panel.root.userData.se209Decor.se210Status=null;
+   se210UI.cooldownTextureDisposals++;
+  }
+ }
+ return se210PreviousWheelDispose();
+};
 const se210OldSkillLabel=se209OptionStatus;
 se209OptionStatus=function(panel,entry){
  if(panel?.type==='skill'&&entry?.id)return se210StatusSkill(entry.id).label;
@@ -453,6 +492,9 @@ window.SWYRL_ENGINE_QUEST_WORKSPACE_210=Object.freeze({
   panelPaints:se210UI.panelPaints,panelDisposals:se210UI.panelDisposals,
   panelHits:se210UI.panelHits,panelSelections:se210UI.panelSelects,
   panelGripFrames:se210UI.panelGrabFrames,
+  cooldownTextureCreates:se210UI.cooldownTextureCreates,
+  cooldownTextureUpdates:se210UI.cooldownTextureUpdates,
+  cooldownTextureDisposals:se210UI.cooldownTextureDisposals,
   realMirrorCooldown:se210StatusSkill('split'),
   realTotemCooldown:se210StatusSkill('totem'),
   editorControlsUntouched:true,lastError:se210UI.lastError
