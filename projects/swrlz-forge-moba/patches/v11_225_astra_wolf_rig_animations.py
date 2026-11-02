@@ -99,13 +99,13 @@ def apply(html):
     for old,new in [
       ('SWYRL_ENGINE_DEPLOY_MARKER: V11_224_NATIVE_PARTICLE_STUDIO',
        'SWYRL_ENGINE_DEPLOY_MARKER: V11_225_ASTRA_WOLF_RIG_SHEEP_TAG'),
-      ('ENGINE · MAKER v11.224','ENGINE · MAKER v11.224'),
+      ('ENGINE · MAKER v11.224','ENGINE · MAKER v11.225'),
       ('v11.224 · Native Particle Studio and reusable VFX emitters',
        'v11.225 · Astra wolf rig and Sheep Tag animations'),
-      ("window.SWRLZ_FORGE_BUILD={version:'v11.225'",
-       "window.SWRLZ_FORGE_BUILD={version:'v11.224'"),
-      ('<title>§wyrl§ Engine · Maker v11.225</title>',
-       '<title>§wyrl§ Engine · Maker v11.224</title>')
+      ("window.SWRLZ_FORGE_BUILD={version:'v11.224'",
+       "window.SWRLZ_FORGE_BUILD={version:'v11.225'"),
+      ('<title>§wyrl§ Engine · Maker v11.224</title>',
+       '<title>§wyrl§ Engine · Maker v11.225</title>')
     ]:
         html=once(html,old,new)
     tag='const SE_RELEASE_NOTES='
