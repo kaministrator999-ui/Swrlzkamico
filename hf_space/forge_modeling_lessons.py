@@ -13,7 +13,7 @@ _MODEL_WORDS = re.compile(
     r"\b(?:model(?:er|ing)?|atelier|mesh(?:es)?|sculpt(?:ing)?|vertex|vertices|"
     r"polygon|topolog(?:y|ical)|uvs?|texture|rig(?:ging)?|skeleton|bone(?:s)?|"
     r"skinn(?:ing|ed)|weight(?:s|ed| painting)?|animat(?:e|ion|ing)|"
-    r"glove|floating hand|hand|palm|fingers?|thumb|knuckle|gizmo|"
+    r"glove|floating hand|hand|palm|fingers?|thumb|knuckle|gestures?|gizmo|"
     r"obj|geometry|primitive|cube|sphere|cylinder|cone|"
     r"group(?:ing)?|export|import|part(?:s)?)\b", re.I)
 _FORGE_WORDS = re.compile(
@@ -25,6 +25,7 @@ _RIG = re.compile(r"\b(?:rig(?:ging)?|skin(?:ning|ned)?|skeleton|bones?|"
                   r"hand.track(?:ing)?|quest.hand)\b", re.I)
 _ANIMATION = re.compile(r"\b(?:animat(?:e|ion|ing)|keyframes?|timeline|playback|clip|loop|interpolat(?:e|ion|ing)|scrub(?:bing)?)\b", re.I)
 _WEIGHT = re.compile(r"\b(?:skin weights?|skin(?:ning)?|skinned|weight.?paint(?:ing)?|bind|deform(?:ation)?|influences?|linear.blend)\b", re.I)
+_GESTURE = re.compile(r"\\b(?:gestures?|oppos(?:e|able|ition)|shaka|horns?|thumbs\\s+up|peace|finger\\s+gun|wave|grasp|precision\\s+pinch)\\b", re.I)
 _POSE = re.compile(r"\b(?:pos(?:e|ing)|joints?|fist|pinch|curl|twist|spread|pointing|articulat(?:e|ion))\b", re.I)
 _RESEARCH = re.compile(r"\b(?:references?|research|documentation|manual|tutorials?|sources?|citation|look\s+up|search\s+(?:online|the\s+web|the\s+internet))\b", re.I)
 _COMPONENT = re.compile(
@@ -66,6 +67,15 @@ _TOPICS = {
         "joint axes, weights and topology; do not hide failures by scaling "
         "whole parts or claim a new skinning method was implemented. "
         "No Chat weight-paint or bone action exists."
+    ),
+    "gesture": (
+        "§E v11.221 improves thumb CMC opposition, independent MCP/IP flex "
+        "and localized thumb helix skinning. Native rig studio now offers "
+        "14 authored gestures: Open, Relaxed, Fist, Point, Precision Pinch, "
+        "OK, Thumbs Up, Peace, Rock Horns, I Love You, Shaka, Wave, Grasp, "
+        "Finger Gun; an animated 3-key gesture preview and thumb sliders. "
+        "The original 17-bone skin/timeline remain. These are §E UI features, "
+        "NOT Chat-native gesture commands or Quest sensor recording."
     ),
     "pose": (
         "§E v11.220 hand Rig Studio can select bone joints and change "
@@ -144,6 +154,8 @@ def select_modeling_lesson(
         topic = "animation"
     elif _WEIGHT.search(prompt):
         topic = "weight"
+    elif _GESTURE.search(prompt):
+        topic = "gesture"
     elif _POSE.search(prompt):
         topic = "pose"
     elif _RIG.search(prompt):
