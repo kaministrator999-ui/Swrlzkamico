@@ -248,7 +248,7 @@ for token in [
 ]: assert token in s,token
 assert s.count('se225MaterialFrame(dt,t);')==1,'Only one shared material update in the native renderer'
 assert s.count('renderer.setAnimationLoop(tick);')==1,'No second WebGL render loop'
-assert "source.version=11.227" in s
+assert "source.version=11.228" in s
 for marker in ['const SE226_BUILDINGS=',
                'function se226MakeBuildingScene(id)',
                'function se226OpenBuilding(id,force=false)',
