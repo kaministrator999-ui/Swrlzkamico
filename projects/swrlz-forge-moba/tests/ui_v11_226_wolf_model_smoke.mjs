@@ -120,12 +120,25 @@ try{
  game.on('pageerror',e=>failures.push(e.message));
  await game.goto(host+'/index.html?project=sheep-tag-meadow',{waitUntil:'domcontentloaded',timeout:90000});
  await game.waitForFunction(()=>typeof window.SWYRL_ENGINE_WOLF_224?.active==='function',null,{timeout:60000,polling:200});
- await game.evaluate(()=>{
-  window.SWYRL_ENGINE_SHEEP_TAG.load();
-  window.SWYRL_ENGINE_SHEEP_TAG.configure({role:'wolf',headstart:0});
-  document.getElementById('playBtn')?.click();
+ const gameBoot=await game.evaluate(()=>{
+  const api=window.SWYRL_ENGINE_SHEEP_TAG;
+  api.load();const configured=api.configure({role:'wolf',headstart:0});
+  const btn=document.getElementById('playBtn');
+  let started=null,error=null;
+  try{started=btn?.onclick?.();}catch(e){error=String(e);}
+  return {configured,started,error,buttonDisabled:!!btn?.disabled,
+   state:api.status(),wolf:window.SWYRL_ENGINE_WOLF_224.active()};
  });
- await game.waitForFunction(()=>window.SWYRL_ENGINE_WOLF_224.active().wolves>0,null,{timeout:30000,polling:300});
+ console.log('WOLF226_GAME_BOOT',JSON.stringify(gameBoot).slice(0,2600));
+ assert(!gameBoot.error,'native Sheep Tag play handler must run without errors');
+ await game.waitForFunction(()=>window.SWYRL_ENGINE_WOLF_224.active().wolves>0,null,{timeout:15000,polling:300}).catch(async e=>{
+  console.log('WOLF226_GAME_LOAD_DEBUG',JSON.stringify(await game.evaluate(()=>({
+   state:window.SWYRL_ENGINE_SHEEP_TAG?.status?.(),
+   wolf:window.SWYRL_ENGINE_WOLF_224?.active?.(),
+   gameTab:document.getElementById('se225GameEngineTab')?.textContent?.slice(0,90)
+  })).catch(err=>({error:String(err)}))));
+  throw e;
+ });
  const gameState=await game.evaluate(()=>({
   api:window.SWYRL_ENGINE_WOLF_224.active(),
   visuals:window.SWYRL_ENGINE_WOLF_224.visuals()
