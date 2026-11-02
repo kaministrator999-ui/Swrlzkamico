@@ -48,3 +48,7 @@ jobs:
           print('SE212_CANDIDATE_SHA256='+hashlib.sha256(s).hexdigest())
           print('SE212_FOCUSED_BUILD_PASS')
           PY
+      - name: Verify exact sealed hand source and packaged assets
+        run: |
+          git restore projects/swrlz-forge-moba/source-manifest.json
+          python3 projects/swrlz-forge-moba/scripts/verify_v11_212_release.py --output /tmp/swrlz-hand-212-sealed
