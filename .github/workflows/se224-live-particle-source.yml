@@ -1,0 +1,48 @@
+name: §E v11.224 hosted Particle Studio source verification
+on:
+  push:
+    branches: [feature/engine-v11-224-particle-studio]
+permissions:
+  contents: read
+jobs:
+  verify-hosted:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Confirm served source and expected framework-only HTML injection
+        run: |
+          python projects/swrlz-forge-moba/scripts/verify_v11_224_release.py --output dist/se224
+          python - <<'PY'
+          import urllib.request,hashlib,json
+          from pathlib import Path
+          base='https://kamiloki-swrlz-forge-moba.static.hf.space/'
+          expected=Path('dist/se224/index.html').read_bytes()
+          expected_sha=hashlib.sha256(expected).hexdigest()
+          with urllib.request.urlopen(base+'SOURCE.json',timeout=35) as f:
+           source=json.load(f)
+          with urllib.request.urlopen(base+'index.html',timeout=50) as f:
+           served=f.read()
+          print('HOSTED_VERSION',source.get('sourceVersion'),flush=True)
+          print('SOURCE_SHA',source.get('finalSha256'),'SERVED_BYTES',len(served),flush=True)
+          assert source['sourceVersion']=='§wyrl§ Engine v11.224'
+          assert source['finalSha256']==expected_sha=='29583040d840e7bd328d7417d0abb8a0d0c8cebf5a6db2db8014b602bdfb6a54'
+          assert source['finalBytes']==len(expected)==7590193
+          assert len(source['patches'])==256 and len(source['assets'])==68
+          if served!=expected:
+           prefix=0
+           while prefix<min(len(served),len(expected)) and served[prefix]==expected[prefix]:
+            prefix+=1
+           extra=len(served)-len(expected)
+           assert extra>0 and extra<3000,('unexpected served length',len(served),len(expected))
+           injected=served[prefix:prefix+extra]
+           assert served[prefix+extra:]==expected[prefix:],'served app source differs from sealed build'
+           assert injected.startswith(b'<script>window.huggingface='),'unexpected injected markup'
+           assert b'<meta property="og:title"' in injected,'host metadata expected'
+           print('HOST_ONLY_METADATA_BYTES',extra,'LOCATION',prefix,flush=True)
+          assert b'SWYRL_ENGINE_DEPLOY_MARKER: V11_224_NATIVE_PARTICLE_STUDIO' in served
+          assert b'window.SWYRL_ENGINE_PARTICLES=Object.freeze' in served
+          print('LIVE_PARTICLE_STUDIO_VERIFIED',flush=True)
+          PY
