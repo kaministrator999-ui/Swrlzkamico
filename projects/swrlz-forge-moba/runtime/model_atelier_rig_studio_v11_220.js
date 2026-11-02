@@ -8,7 +8,7 @@ function se220RigAvailable(){
  const r=se220Rig();return !!r&&se220RigValidate(r);
 }
 function se220RigMesh(part){
- const g=geometry(part),mat=material(part);
+ const g=atelierSculptApply(geometry(part),part),mat=material(part);
  if(!se220RigAvailable())return new THREE.Mesh(g,mat);
  const rig=se220Rig(),pos=g.getAttribute('position');
  if(!pos)return new THREE.Mesh(g,mat);
