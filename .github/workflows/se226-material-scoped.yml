@@ -1,0 +1,49 @@
+name: §E v11.226 combined wolf + materials source check
+on:
+  push:
+    branches: [feature/engine-v11-226-material-texture-tabs]
+permissions: {contents: read}
+jobs:
+  focused:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - uses: actions/setup-node@v4
+        with: {node-version: "22"}
+      - name: Verify combined release and material authoring
+        run: |
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_225_astra_wolf_rig_animations.py projects/swrlz-forge-moba/patches/v11_226_material_texture_workspace_tabs.py
+          node --check projects/swrlz-forge-moba/runtime/material_texture_core_v11_226.js
+          node --check projects/swrlz-forge-moba/runtime/material_texture_editor_v11_226.js
+          node --check projects/swrlz-forge-moba/runtime/studio_workspace_tabs_v11_226.js
+          node projects/swrlz-forge-moba/scripts/test_material_texture_v11_226.js
+          python projects/swrlz-forge-moba/build_space.py --output dist/se226 >/tmp/se226-build.json
+          python - <<'PY'
+          import hashlib,json,re,subprocess
+          from pathlib import Path
+          raw=Path('dist/se226/index.html').read_bytes()
+          html=raw.decode('utf8')
+          print('SE226_SOURCE_BYTES',len(raw),'SHA256',hashlib.sha256(raw).hexdigest(),flush=True)
+          for needle in [
+           'SWYRL_ENGINE_DEPLOY_MARKER: V11_226_MATERIAL_TEXTURE_STUDIO_TABS',
+           "window.SWRLZ_FORGE_BUILD={version:'v11.226'",
+           "source.version=11.226",
+           "se225DecorateNativeTabs(nav);",
+           "se223Frame(dt,t);se225MaterialFrame(dt,t);",
+           'window.SWYRL_ENGINE_STUDIOS=Object.freeze',
+           'window.SWYRL_ENGINE_MATERIALS=Object.freeze',
+           'se225MaterialUIPaintDown',
+           'se224WolfPreviewFrame','se224WolfRigMesh',
+           'V11_226_MATERIAL_TEXTURE_STUDIO_TABS'
+          ]:
+           assert needle in html,needle
+          assert html.count('se225MaterialFrame(dt,t);')==1
+          for i,script in enumerate(re.findall(r'<script\b[^>]*>(.*?)</script>',html,re.S)):
+           if not script.strip():continue
+           path=Path('/tmp')/('se226_inline_'+str(i)+'.mjs')
+           path.write_text(script)
+           subprocess.run(['node','--check',str(path)],check=True)
+          print('SE226_COMBINED_SOURCE_SYNTAX_PASS',flush=True)
+          PY
