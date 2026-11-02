@@ -71,7 +71,7 @@ obj.se210UI.grabbing={panel:'camera'};
 focus('visible-blurred');
 assert.equal(d().sessionState,'visible-blurred');
 assert.equal(d().overlayBlurEvents,1);
-assert.equal(d().cosmeticsHidden,6,'only app HUD + decorative scene items hidden');
+assert.equal(d().cosmeticsHidden,7,'only app HUD + decorative scene items hidden');
 assert.equal(drawA.visible,false);assert.equal(drawB.visible,false);
 assert.equal(oldMap.visible,false);assert.equal(panel1.visible,false);
 assert.equal(panel2.visible,false);assert.equal(rim.visible,false);
@@ -95,7 +95,7 @@ const reference=obj.se195.referenceBase;
 const offset=obj.se195.referenceOffset;
 focus('hidden');
 assert.equal(d().overlayHiddenEvents,1);
-assert.equal(d().cosmeticsHidden,6);
+assert.equal(d().cosmeticsHidden,7);
 assert.equal(oldFrames,1,'OS hidden can stop browser callbacks entirely');
 now+=800; // No XR callback while Meta native UI is foregrounded.
 hold('right',4,true);
