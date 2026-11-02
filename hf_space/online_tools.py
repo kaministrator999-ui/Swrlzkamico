@@ -1601,18 +1601,28 @@ def time_lookup(plan: dict[str, Any], progress: Callable[[dict[str, Any]], None]
 
 def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], None] | None = None) -> dict[str, Any]:
     query = _clean(plan.get("query"), 500)
+    provider_query=query
+    if plan.get("contentMode")=="lyrics-verification":
+        # Search the exact requested title AND artist before invoking the generic
+        # research reasoner. The previous unquoted query let news about "Tech"
+        # stand in for a Tech N9ne song and consumed lyric fetch slots.
+        identity=plan.get("songIdentity") if isinstance(plan.get("songIdentity"),dict) else song_identity(str(plan.get("subject") or ""))
+        if identity.get("title") and identity.get("primaryArtist"):
+            exact_queries=query_ladder(identity,1)
+            if exact_queries:
+                provider_query=_clean(exact_queries[0].get("query"),500) or query
     payload = {
         "requestId": _clean(plan.get("requestId"), 160),
-        "prompt": query,
+        "prompt": provider_query,
         "researchPlan": {
             "intent": "web-search",
-            "target": query,
-            "requestedInformation": query,
+            "target": provider_query,
+            "requestedInformation": provider_query,
             "targetConfidence": 0.9,
-            "queries": [query],
+            "queries": [provider_query],
             "constraints": ["bounded-public-web-evidence"],
         },
-        "researchQueries": [query],
+        "researchQueries": [provider_query],
     }
     canonical_online_research.set_trace_sink(progress)
     try:
