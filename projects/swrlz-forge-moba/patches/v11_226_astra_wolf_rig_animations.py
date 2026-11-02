@@ -125,10 +125,9 @@ def apply(html):
 
     css="""
 .atelier-wolf-studio{background:rgba(10,23,37,.96);border:1px solid #7b9b8b;
- border-radius:9px;color:#e8edf1;max-width:min(355px,calc(100% - 20px));padding:4px 8px;
- font-size:11px;position:absolute;top:10px;left:10px;z-index:165;
- max-height:min(72dvh,560px);overflow-y:auto;overscroll-behavior:contain;
- box-shadow:0 8px 22px #000b}
+ border-radius:9px;color:#e8edf1;max-width:100%;padding:5px 8px;
+ font-size:11px;position:relative;z-index:auto;flex:0 0 auto;
+ max-height:none;overflow:visible;box-shadow:0 5px 14px #0007}
 .atelier-wolf-studio[hidden]{display:none!important}
 .atelier-wolf-studio summary{cursor:pointer;font-weight:750;padding:5px 0}
 .atelier-wolf-panel{display:grid;gap:7px;min-width:0;padding:4px 0}
@@ -141,8 +140,7 @@ def apply(html):
 .atelier-wolf-axes label{min-width:0;word-break:normal}
 .atelier-wolf-check{display:flex!important;flex-direction:row;align-items:center;gap:6px}
 .atelier-wolf-panel small{color:#a8bcc6;line-height:1.35}
-@media(max-width:640px){.atelier-wolf-studio{max-width:calc(100% - 16px);top:8px;left:8px;
- max-height:min(43dvh,350px);padding:4px 6px}
+@media(max-width:640px){.atelier-wolf-studio{max-width:100%;padding:4px 6px}
  .atelier-wolf-axes{grid-template-columns:1fr}}
 """
     assert '</head>' in html
