@@ -1,4 +1,4 @@
-name: §E v11.212 floating hand source receipt
+name: §E v11.212 floating hand sealed source receipt
 on:
   push:
     branches: [main]
