@@ -1,0 +1,34 @@
+name: §E v11.225 studio source map
+on:
+  push:
+    branches: [feature/engine-v11-225-material-texture-tabs]
+permissions: {contents: read}
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Map native tabs, renderer and scene material hooks
+        run: |
+          python projects/swrlz-forge-moba/build_space.py --output dist/se225 >/tmp/se225-build.json
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          s=Path('dist/se225/index.html').read_text()
+          keys=[
+            'function markActor(', 'function fromData(', 'function actorData(', 'function projectData(',
+            'function loadProject(', 'function se187WorkspaceTabs()', 'function makeTabs(where)',
+            'function installTabs()', 'function renderTabs()', 'function tick(){',
+            'function makePrefab', 'function createPrefab(', 'function clearAll(',
+            'function applyGhostVisual(', 'function syncActorVisibility(',
+            'const ASSET_LIBRARY=', 'const SE_RELEASE_NOTES=', 'window.SWRLZ_FORGE_BUILD=',
+            '<div class="app"', '<div class="topbar"', '<main class="viewport-wrap"',
+            '<aside class="sidebar"', '<aside class="inspector"', '<canvas id="viewport"',
+            'function se223UIOpen()', 'function se223Install()', 'function se223UIClose()'
+          ]
+          for term in keys:
+           matches=[m.start() for m in re.finditer(re.escape(term),s)]
+           print('SE225_MAP',term,'count',len(matches),flush=True)
+           for at in matches[:1]:
+            print('SE225_EXCERPT',term,'at',at,repr(s[max(0,at-130):at+1500]),flush=True)
+          PY
