@@ -1,4 +1,4 @@
-name: Calculate §E v11.218 Arcane Glove source integrity
+name: Verify §E v11.218 sealed Arcane Glove release
 on:
   push:
     branches: [main]
@@ -8,46 +8,17 @@ on:
 permissions:
   contents: read
 jobs:
-  receipt:
+  sealed-glove:
     runs-on: ubuntu-latest
-    timeout-minutes: 9
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Narrow syntax check
+      - name: Check new hand source syntax
         run: |
           node --check projects/swrlz-forge-moba/runtime/model_atelier_hand_fidelity_v11_218.js
           python3 -m py_compile projects/swrlz-forge-moba/patches/v11_218_arcane_glove_fidelity.py
-      - name: Build fresh v11.218 candidate with temporary unsealed manifest
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          import json
-          p=Path('projects/swrlz-forge-moba/source-manifest.json')
-          m=json.loads(p.read_text())
-          assert m['name']=='§wyrl§ Engine v11.217'
-          assert m['patches'][-1]=='patches/v11_217_floating_hand_proportions.py'
-          m['name']='§wyrl§ Engine v11.218'
-          m['finalArtifact']='swyrl_engine_v11_218.html'
-          m['patches'].append('patches/v11_218_arcane_glove_fidelity.py')
-          m['finalSha256']=''
-          m['finalBytes']=0
-          p.write_text(json.dumps(m,ensure_ascii=False))
-          PY
-          python3 projects/swrlz-forge-moba/build_space.py --output /tmp/se218-glove
-      - name: Print exact hand source integrity and basic content assertions
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          import hashlib
-          raw=Path('/tmp/se218-glove/index.html').read_bytes()
-          s=raw.decode('utf8')
-          for needle in ['V11_218_ARCANE_GLOVE_FIDELITY','se218FingerSpec','se218HandDetails','Thumb · continuous back-to-tip double helix','<title>§wyrl§ Engine · Maker v11.218</title>']:
-              assert needle in s,needle
-          assert raw==Path('/tmp/se218-glove/modeler.html').read_bytes()
-          print('GLOVE218_CANDIDATE_BYTES='+str(len(raw)))
-          print('GLOVE218_CANDIDATE_SHA256='+hashlib.sha256(raw).hexdigest())
-          print('GLOVE218_PATCHES=250')
-          PY
+      - name: Verify exact sealed 250-patch modeler package (no browser suite)
+        run: python3 projects/swrlz-forge-moba/scripts/verify_v11_218_release.py --output /tmp/se218-glove-release
