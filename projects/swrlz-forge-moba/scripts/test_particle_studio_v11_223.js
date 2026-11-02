@@ -78,7 +78,7 @@ assert.ok(stats.particles>0,'active emitter produces particles on native tick');
 assert.ok(stats.particles<=576,'global cap');
 assert.equal(scene.nodes.length,2,'one point cloud per enabled emitter');
 context.playing=false;
-vm.runInContext('se223Frame(.05,0)',context);
+vm.runInContext('se223State.preview=false;se223Frame(.05,0)',context);
 assert.equal(studio.inspect().particles,0,'stopping clears live VFX');
 assert.equal(studio.import({schema:'swyrl-particle-studio-v1',emitters:[{id:'x',name:'invalid'}]}),false);
 assert.deepEqual(JSON.parse(JSON.stringify(context.currentProject.particleStudio)),canonical,'rejected import preserves VFX');
