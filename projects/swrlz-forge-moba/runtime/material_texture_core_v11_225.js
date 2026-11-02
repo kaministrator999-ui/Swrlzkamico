@@ -247,7 +247,9 @@ function se225MakeSurface(def,original){
  // The bitmap owns its base color; prevent the shader from tinting it twice.
  material.color.set('#ffffff');material.roughness=def.roughness;material.metalness=def.metalness;
  material.emissive.set(def.emissive);material.emissiveIntensity=def.glow;
- material.opacity=def.opacity;material.transparent=def.opacity<1;
+ material.opacity=Math.min(def.opacity,typeof original?.opacity==='number'?original.opacity:1);
+ material.transparent=material.opacity<1||!!original?.transparent;
+ material.depthWrite=original?.depthWrite===false?false:material.opacity>=1;
  material.map=se225MaterialTexture(def).texture;material.needsUpdate=true;
  return material;
 }
