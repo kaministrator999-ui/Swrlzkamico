@@ -89,6 +89,11 @@ def apply(html):
   active.wolfRig=se224WolfRigSpec();
   active.wolfAnimations=se224WolfClips();
   markSaved();ModelAtelier.syncProject();ModelAtelier.open();
+  // The historic courier 'Studio view' intentionally hides the inspector.
+  // A rigged Wolf Model opens in editable mode so bone sliders remain usable.
+  document.getElementById('modelAtelierPanel')?.classList.remove('courier-studio');
+  const viewSwitch=document.getElementById('modelAtelierCourierStudio');
+  if(viewSwitch){viewSwitch.textContent='Studio view';viewSwitch.setAttribute('aria-pressed','false');}
   window.SWYRL_WOLF_LOAD_AUDIT={stage:'public-attached',species,parts:active.parts.length,rig:!!active.wolfRig};
  }
  return ok;
