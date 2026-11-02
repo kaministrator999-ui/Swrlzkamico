@@ -1,0 +1,684 @@
+{
+  "schema": "swrlz-github-online-research-trace-v1",
+  "requestId": "web-mvzwq46u-1888907848-3614843621",
+  "modelId": "700m",
+  "eventType": "ONLINE_RESEARCH_TRACE",
+  "sourceRef": "15c103a1b5cf6d15946a27586d317ea56437dd6f",
+  "persistedAtUnixMs": 1793663150368,
+  "diagnostic": {
+    "schema": "swrlz-online-research-log-v1",
+    "research": {
+      "contract": "swrlz-online-camera-v1",
+      "observabilityRevision": "v181-song-metadata-clean-form-integrity",
+      "kind": "search",
+      "status": "OK",
+      "reason": "existing-lyrics-retrieval",
+      "provider": "bounded-web-search-chain-v1",
+      "resultCount": 1,
+      "widgetKinds": [
+        "search-results"
+      ],
+      "sourceCount": 1,
+      "locationRequired": false,
+      "usedExplicitClientLocation": false,
+      "elapsedMs": 4043,
+      "lyricsSourceAttemptCount": 2,
+      "lyricsFetchDebug": [
+        {
+          "attempt": 2,
+          "origin": "fallback-candidate",
+          "requestedUrl": "https://www.elyrics.net/read/t/tech-n9ne-lyrics/who-do-i-catch-lyrics.html",
+          "finalUrl": "https://www.elyrics.net/read/t/tech-n9ne-lyrics/who-do-i-catch-lyrics.html",
+          "searchResultTitle": "WHO DO I CATCH Lyrics - TECH N9NE | eLyrics.net",
+          "fetchedPageTitle": "WHO DO I CATCH Lyrics - TECH N9NE | eLyrics.net",
+          "fetchStatus": 200,
+          "fetchedContent": {
+            "chars": 5388,
+            "sha256": "8fc7c293ef2b96b7c3eccdb8f66427f92aa1879de4910e447115fedb53d9293c",
+            "anchorIndex": 176,
+            "anchorLine": "[Hook]",
+            "sectionMarkers": [
+              "[Verse 1:]",
+              "[Hook:]",
+              "[Verse 2:]",
+              "[Hook]",
+              "[Verse 3:]",
+              "[Hook]"
+            ],
+            "performerMarkers": [],
+            "preview": "[Hook]\n[Verse 3:]\nI hit a pot of gold with the harder flow\nYou haters oughta know that we are the MO\nThis is my land you in my hand and you'sa particle\nAnd I see you marvel over the fact I caught the Carter\n4\nSo that means I caught Martians already\nAnd you talk shit about that because often ya'll petty\nAnd because you jelly sicklin' its costing ya'll bettys\nTo get tossed in our headache cuz we lost in tall fetty\nHey you catch the vapours cause Nina he catch hoes",
+            "previewChars": 466,
+            "previewLimit": 600
+          },
+          "extractorOutput": {
+            "chars": 924,
+            "sha256": "efa4939dd80ea72c5d5e1e5fa933608e090d86e3aaafe6f9f09c555e276c4489",
+            "preview": "Facts about Who Do I Catch\n✔️ Who wrote Who Do I Catch lyrics?\nWho Do I Catch is written by Yates Aaron Dontez, Summers Michael.\nHottest Lyrics with Videos\n53c29b86abbc19a8501b988d41294b65\ncheck amazon for \"who do i catch\" mp3 download\nthese lyrics are submitted by kaan",
+            "previewChars": 270,
+            "previewLimit": 600
+          },
+          "extractorDiagnostics": {
+            "requestedScope": "full-lyrics",
+            "rawChars": 5388,
+            "rawLineCount": 361,
+            "anchorIndex": 176,
+            "anchorLine": "[Hook]",
+            "scopedLineCount": 49,
+            "scopedNonEmptyLineCount": 26,
+            "contentLineCount": 23,
+            "musicalSectionCueCount": 3,
+            "performerCueCount": 1,
+            "blankSeparatedChunkCount": 24,
+            "acceptedBlockCount": 2,
+            "blockLineCounts": [
+              14,
+              9
+            ],
+            "continuousRunEligible": false,
+            "terminalBoundaryKind": "POST_SONG_META_BOUNDARY",
+            "terminalBoundaryLine": "Songwriter(s) : YATES AARON DONTEZ, SUMMERS MICHAEL",
+            "decision": "ACCEPTED",
+            "reason": "MULTI_BLOCK_FULL_LYRICS",
+            "resultChars": 924,
+            "resultLineCount": 23
+          },
+          "sourceIdentityVerified": true,
+          "sourceIdentityScore": 13,
+          "snippetOverlapCount": 1,
+          "snippetInformativeTokenCount": 20,
+          "snippetSequenceSpan": 1,
+          "musicalSectionCount": 6,
+          "performerCueCount": 4,
+          "outcome": "VERIFIED",
+          "rejectionReason": "VERIFIED"
+        }
+      ],
+      "blockedLyricsSourceFamilies": [],
+      "musicStructureDebug": {
+        "schema": "swrlz-music-structure-debug-v1",
+        "workType": "song",
+        "requestedScope": "full-lyrics",
+        "structureBasis": "explicit_musical_source_markers",
+        "sectionCount": 2,
+        "explicitSectionCount": 2,
+        "explicitMusicalSectionCount": 2,
+        "explicitPerformerCueCount": 0,
+        "sourceOrderPreserved": true,
+        "newlineEqualsBar": false,
+        "sections": [
+          {
+            "index": 1,
+            "rawLabel": "[Verse 3:]",
+            "type": "verse",
+            "number": 3,
+            "performer": "",
+            "repeatCount": null,
+            "confidence": 1.0,
+            "basis": "explicit_source_marker",
+            "lineCount": 14,
+            "barCount": null
+          },
+          {
+            "index": 2,
+            "rawLabel": "[Hook]",
+            "type": "hook",
+            "number": null,
+            "performer": "",
+            "repeatCount": null,
+            "confidence": 1.0,
+            "basis": "explicit_source_marker",
+            "lineCount": 9,
+            "barCount": null
+          }
+        ],
+        "presentationChars": 1193,
+        "presentationSha256": "305224299c7bab2b5788232b5d79ef91c7bb230eff8245ff873be30b3152f052",
+        "dividerPresentation": {
+          "outer": "---",
+          "inner": "────────",
+          "outerMeaning": "lyric_document_boundary",
+          "innerMeaning": "lyric_section_transition",
+          "blankLinesAroundDividers": true,
+          "mobileFirst": true
+        }
+      },
+      "candidateAdmissionDebug": [
+        {
+          "query": "\"who do I catch\" \"tech n9ne\" lyrics",
+          "title": "Tech N9ne - Who Do I Catch Lyrics - Genius",
+          "url": "https://genius.com/Tech-n9ne-who-do-i-catch-lyrics",
+          "source": "genius.com",
+          "rank": 1,
+          "allowed": true,
+          "reason": "EXACT_SONG_ENTITY_MATCH",
+          "neededHits": 1,
+          "matchedTerms": [
+            "who do i catch",
+            "tech"
+          ],
+          "coreTerms": [
+            "who do i catch",
+            "tech n9ne"
+          ],
+          "snippetPreview": "The first official single off Tech N9ne 's 13th full studio album and 4th Collabos album, Welcome To Strangeland. This song opens up about how Tech has finally caught the attention"
+        },
+        {
+          "query": "\"who do I catch\" \"tech n9ne\" lyrics",
+          "title": "Tech N9ne - Who Do I Catch Lyrics | AZLyrics.com",
+          "url": "https://www.azlyrics.com/lyrics/techn9ne/whodoicatch.html",
+          "source": "www.azlyrics.com",
+          "rank": 2,
+          "allowed": true,
+          "reason": "EXACT_SONG_ENTITY_MATCH",
+          "neededHits": 1,
+          "matchedTerms": [
+            "who do i catch",
+            "tech"
+          ],
+          "coreTerms": [
+            "who do i catch",
+            "tech n9ne"
+          ],
+          "snippetPreview": "Tech N9ne \" Who Do I Catch \": Now I'm known by the masses 'Cause I've grown to make them smashes On this journey, did many back fl..."
+        },
+        {
+          "query": "\"who do I catch\" \"tech n9ne\" lyrics",
+          "title": "Tech N9ne - Who Do I Catch Lyrics & Meaning - SONGLYRICS.com",
+          "url": "https://www.songlyrics.com/tech-n9ne/who-do-i-catch-lyrics/",
+          "source": "www.songlyrics.com",
+          "rank": 3,
+          "allowed": true,
+          "reason": "EXACT_SONG_ENTITY_MATCH",
+          "neededHits": 1,
+          "matchedTerms": [
+            "who do i catch",
+            "tech"
+          ],
+          "coreTerms": [
+            "who do i catch",
+            "tech n9ne"
+          ],
+          "snippetPreview": "\" Who Do I Catch \" was written by Tech N9ne , MIKE SUMMERS and produced by MIKE SUMMERS. Released in 2011 as part of the album Welcome to Strangeland. Drafted with automated tools from catalog data. Updated Jun 13, 2026. Music Video Song Facts \" Who Do I Catch \" by Tech N9ne was "
+        },
+        {
+          "query": "\"who do I catch\" \"tech n9ne\" lyrics",
+          "title": "Tech N9ne Collabos - Who Do I Catch Lyrics - SONGLYRICS.com",
+          "url": "https://www.songlyrics.com/tech-n9ne-collabos/who-do-i-catch-lyrics/",
+          "source": "www.songlyrics.com",
+          "rank": 4,
+          "allowed": true,
+          "reason": "EXACT_SONG_ENTITY_MATCH",
+          "neededHits": 1,
+          "matchedTerms": [
+            "who do i catch",
+            "tech"
+          ],
+          "coreTerms": [
+            "who do i catch",
+            "tech n9ne"
+          ],
+          "snippetPreview": "Tech N9ne Collabos - Who Do I Catch Lyrics . Now I'm known by the masses 'Cause I've grown to make them smashes On this journey, did many back flips To get your attention, now that I ca"
+        },
+        {
+          "query": "\"who do I catch\" \"tech n9ne\" lyrics",
+          "title": "Tech N9ne - Who Do I Catch Lyrics",
+          "url": "https://www.lyricsmania.com/who_do_i_catch_lyrics_tech_n9ne.html",
+          "source": "www.lyricsmania.com",
+          "rank": 5,
+          "allowed": true,
+          "reason": "EXACT_SONG_ENTITY_MATCH",
+          "neededHits": 1,
+          "matchedTerms": [
+            "who do i catch",
+            "tech"
+          ],
+          "coreTerms": [
+            "who do i catch",
+            "tech n9ne"
+          ],
+          "snippetPreview": "Tech N9ne Who Do I Catch Lyrics . Who Do I Catch lyrics performed by Tech N9ne : Now I'm known by the masses Cause I've grown to make them smash us On this journey, did many back flips To get your attention, now that I caught it"
+        },
+        {
+          "query": "\"who do I catch\" \"tech n9ne\" lyrics",
+          "title": "WHO DO I CATCH - Tech N9ne - LETRAS.COM",
+          "url": "https://www.letras.com/tech-n9ne/who-do-i-catch/",
+          "source": "www.letras.com",
+          "rank": 6,
+          "allowed": true,
+          "reason": "EXACT_SONG_ENTITY_MATCH",
+          "neededHits": 1,
+          "matchedTerms": [
+            "who do i catch",
+            "tech"
+          ],
+          "coreTerms": [
+            "who do i catch",
+            "tech n9ne"
+          ],
+          "snippetPreview": "Tech N9ne - Who do I Catch (Letra y canción para escuchar) - Real rock rap and not to xerox weird not / Enough to make you fear a lot from here watch / I ran scrimmage and i fought to the damn finish / And i popped eyes"
+        },
+        {
+          "query": "\"who do I catch\" \"tech n9ne\" lyrics",
+          "title": "WHO DO I CATCH Lyrics - TECH N9NE | eLyrics.net",
+          "url": "https://www.elyrics.net/read/t/tech-n9ne-lyrics/who-do-i-catch-lyrics.html",
+          "source": "www.elyrics.net",
+          "rank": 7,
+          "allowed": true,
+          "reason": "EXACT_SONG_ENTITY_MATCH",
+          "neededHits": 1,
+          "matchedTerms": [
+            "who do i catch",
+            "tech"
+          ],
+          "coreTerms": [
+            "who do i catch",
+            "tech n9ne"
+          ],
+          "snippetPreview": "Tech N9ne Who Do I Catch lyrics & video : [Verse 1:] Real rock rap and not to Xerox weird not Enough to make you fear a lot from here watch I ran scrimmage and I fought to the ..."
+        },
+        {
+          "query": "\"who do I catch\" \"tech n9ne\" lyrics",
+          "title": "Who Do I Catch Lyrics - Tech N9ne",
+          "url": "https://www.lyricsbox.com/tech-n9ne-who-do-i-catch-lyrics-21vc9w8.html",
+          "source": "www.lyricsbox.com",
+          "rank": 8,
+          "allowed": true,
+          "reason": "EXACT_SONG_ENTITY_MATCH",
+          "neededHits": 1,
+          "matchedTerms": [
+            "who do i catch",
+            "tech"
+          ],
+          "coreTerms": [
+            "who do i catch",
+            "tech n9ne"
+          ],
+          "snippetPreview": "Full and accurate LYRICS for \" Who Do I Catch \" from \" Tech N9ne \": Verse 1 Tech N9ne , Real rock rap and not a Xerox we're not, Enough to make ya fear a lot ..."
+        }
+      ],
+      "songIdentity": {
+        "schema": "swrlz-song-identity-v1",
+        "rawSubject": "\"who do I catch\" by tech n9ne",
+        "title": "who do I catch",
+        "titleFolded": "who do i catch",
+        "titleTokens": [
+          "who",
+          "do",
+          "i",
+          "catch"
+        ],
+        "primaryArtist": "tech n9ne",
+        "primaryArtistFolded": "tech n9ne",
+        "artistTokens": [
+          "tech",
+          "n9ne"
+        ],
+        "featuredArtists": [],
+        "requestedVersion": null,
+        "ambiguity": {
+          "level": "low",
+          "score": 0,
+          "commonWordCollision": [],
+          "shortTitle": false,
+          "punctuationHeavy": false,
+          "quotedTitleRequired": false,
+          "artistRequired": true
+        }
+      },
+      "songDiscoveryPlan": [
+        {
+          "strategy": "exact-title-artist",
+          "query": "\"who do I catch\" \"tech n9ne\" lyrics"
+        },
+        {
+          "strategy": "artist-title-song",
+          "query": "\"tech n9ne\" \"who do I catch\" song lyrics"
+        },
+        {
+          "strategy": "source-family-disambiguation",
+          "query": "\"who do I catch\" \"tech n9ne\" lyrics site:genius.com"
+        },
+        {
+          "strategy": "title-artist-verse",
+          "query": "\"who do I catch\" \"tech n9ne\" verse chorus lyrics"
+        },
+        {
+          "strategy": "source-family-disambiguation",
+          "query": "\"who do I catch\" \"tech n9ne\" lyrics site:azlyrics.com"
+        },
+        {
+          "strategy": "source-family-disambiguation",
+          "query": "\"who do I catch\" \"tech n9ne\" lyrics site:musixmatch.com"
+        },
+        {
+          "strategy": "source-family-disambiguation",
+          "query": "\"who do I catch\" \"tech n9ne\" lyrics site:allthelyrics.com"
+        },
+        {
+          "strategy": "source-family-disambiguation",
+          "query": "\"who do I catch\" \"tech n9ne\" lyrics site:lyricsfreak.com"
+        }
+      ],
+      "lyricsRescueSearchDebug": [],
+      "lyricsMaxPageAttempts": 3,
+      "lyricsFallbackExhausted": false,
+      "rawPromptStored": false
+    },
+    "trace": [
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1793663146323,
+        "phase": "RESEARCH_STARTED",
+        "activity": "Online research started",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": ""
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1793663146334,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1793663146468,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1793663146468,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1793663147361,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1793663147361,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using duckduckgo-lite",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1793663147364,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "genius.com",
+        "url": "https://genius.com/Tech-n9ne-who-do-i-catch-lyrics"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1793663147407,
+        "phase": "PAGE_FETCH_ERROR",
+        "activity": "Page fetch failed",
+        "provider": "web-page",
+        "site": "genius.com",
+        "url": "https://genius.com/Tech-n9ne-who-do-i-catch-lyrics",
+        "errorType": "HTTPError"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1793663147408,
+        "phase": "RESEARCH_COMPLETE",
+        "activity": "Online research complete",
+        "provider": "bounded-web-search-chain-v1",
+        "site": "",
+        "url": "",
+        "resultCount": 1
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_FALLBACK_FETCH",
+        "provider": "web-page",
+        "site": "www.elyrics.net",
+        "url": "https://www.elyrics.net/read/t/tech-n9ne-lyrics/who-do-i-catch-lyrics.html",
+        "activity": "Trying alternate lyrics source",
+        "atUnixMs": 1793663147410
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1793663147411,
+        "phase": "PAGE_FETCH_STARTED",
+        "activity": "Visiting result page",
+        "provider": "web-page",
+        "site": "www.elyrics.net",
+        "url": "https://www.elyrics.net/read/t/tech-n9ne-lyrics/who-do-i-catch-lyrics.html"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1793663147661,
+        "phase": "PAGE_FETCH_COMPLETE",
+        "activity": "Page fetched",
+        "provider": "web-page",
+        "site": "www.elyrics.net",
+        "url": "https://www.elyrics.net/read/t/tech-n9ne-lyrics/who-do-i-catch-lyrics.html",
+        "httpStatus": 200,
+        "responseBytes": 50540
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_SOURCE_VERIFICATION",
+        "provider": "lyrics-verifier",
+        "site": "www.elyrics.net",
+        "url": "https://www.elyrics.net/read/t/tech-n9ne-lyrics/who-do-i-catch-lyrics.html",
+        "activity": "Checking fetched lyrics candidate",
+        "atUnixMs": 1793663147662
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_SOURCE_IDENTITY_VERIFIED",
+        "provider": "lyrics-verifier",
+        "site": "www.elyrics.net",
+        "url": "https://www.elyrics.net/read/t/tech-n9ne-lyrics/who-do-i-catch-lyrics.html",
+        "activity": "Fetched destination matches the requested song identity",
+        "atUnixMs": 1793663147663
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "phase": "LYRICS_SOURCE_VERIFIED",
+        "provider": "lyrics-verifier",
+        "site": "www.elyrics.net",
+        "url": "https://www.elyrics.net/read/t/tech-n9ne-lyrics/who-do-i-catch-lyrics.html",
+        "activity": "Lyrics candidate verified",
+        "atUnixMs": 1793663147671
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1793663147671,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1793663147827,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1793663147827,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1793663148455,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 200,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1793663148455,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1793663148785,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1793663148785,
+        "phase": "SEARCH_PROVIDER_IRRELEVANT",
+        "activity": "Provider returned no matching song/artist results",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1793663148786,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching title and artist catalog",
+        "provider": "lrclib-api",
+        "site": "lrclib.net",
+        "url": "https://lrclib.net/api/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1793663149489,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No matching lyric records",
+        "provider": "lrclib-api",
+        "site": "lrclib.net",
+        "url": "https://lrclib.net/api/search",
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1793663149489,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1793663149614,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-html",
+        "site": "html.duckduckgo.com",
+        "url": "https://html.duckduckgo.com/html/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1793663149614,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1793663149732,
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "activity": "No usable results from provider",
+        "provider": "duckduckgo-lite",
+        "site": "lite.duckduckgo.com",
+        "url": "https://lite.duckduckgo.com/lite/",
+        "httpStatus": 202,
+        "resultCount": 0
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1793663149732,
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "activity": "Searching provider",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search"
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1793663150365,
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "activity": "Search results found",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "httpStatus": 200,
+        "resultCount": 8
+      },
+      {
+        "contract": "swrlz-online-trace-event-v1",
+        "atUnixMs": 1793663150365,
+        "phase": "SEARCH_PROVIDER_SELECTED",
+        "activity": "Using bing-html",
+        "provider": "bing-html",
+        "site": "www.bing.com",
+        "url": "https://www.bing.com/search",
+        "resultCount": 8
+      }
+    ],
+    "sourceSites": [
+      "www.elyrics.net"
+    ],
+    "widgetKinds": [
+      "search-results"
+    ],
+    "requestedModelId": "700m",
+    "selectedModelId": "700m",
+    "rawPromptStored": false,
+    "historyStored": false,
+    "preciseLocationStored": false
+  }
+}
