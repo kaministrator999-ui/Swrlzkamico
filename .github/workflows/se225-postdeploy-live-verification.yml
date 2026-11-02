@@ -8,6 +8,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: 05fef18cc56e0831aab86481331f5ef6f84fdcdd # sealed material workspace source, unaffected by concurrent wolf verifier changes
       - uses: actions/setup-python@v5
         with: {python-version: "3.11"}
       - name: Match material workspace served app source to sealed manifest
