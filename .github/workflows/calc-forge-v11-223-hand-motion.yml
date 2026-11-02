@@ -1,0 +1,97 @@
+name: Check §E v11.223 fist and wave source
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/calc-forge-v11-223-hand-motion.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  hand-motion:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax of new wave motion and patch
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/model_atelier_hand_motion_v11_223.js
+          python3 -m py_compile projects/swrlz-forge-moba/patches/v11_223_fist_clench_wrist_wave.py
+      - name: Focused joint and eight-key wave math
+        run: |
+          node - <<'JS'
+          const fs=require('fs'),vm=require('vm'),assert=require('node:assert/strict');
+          const root='projects/swrlz-forge-moba/runtime/';
+          const src=['model_atelier_skeletal_core_v11_220.js','model_atelier_hand_gestures_v11_221.js','model_atelier_hand_motion_v11_223.js']
+            .map(x=>fs.readFileSync(root+x,'utf8')).join('\n');
+          const lib=vm.runInNewContext(src+';({create:se220CreateHandRig,valid:se220RigValidate,gesture:se221GesturePose,wave:se223WaveTimeline});',{structuredClone});
+          const digits=[
+           {x:-.397,from:2.170,to:3.055,r:.104,splay:-.055,z:.006,name:'index'},
+           {x:-.131,from:2.197,to:3.255,r:.112,splay:-.017,z:-.009,name:'middle'},
+           {x:.135,from:2.176,to:3.152,r:.103,splay:.028,z:-.009,name:'ring'},
+           {x:.402,from:2.113,to:2.856,r:.084,splay:.083,z:.010,name:'pinky'}];
+          const rig=lib.create(digits),fist=lib.gesture(rig,'fist'),wave=lib.gesture(rig,'wave');
+          assert.equal(rig.bones.length,17);
+          for(const name of ['index','middle','ring','pinky']){
+           assert(fist[name+'_mcp'][0]>1.0);
+           assert(fist[name+'_pip'][0]>1.4);
+           assert(fist[name+'_dip'][0]>.85);
+          }
+          assert(fist.thumb_cmc[1]>=1.15);
+          assert(fist.thumb_mcp[2]>.15&&fist.thumb_ip[2]>.25);
+          assert(Math.abs(wave.wrist[1])>.15&&Math.abs(wave.wrist[2])>.2);
+          rig.timeline=lib.wave(rig);rig.duration=2.2;
+          assert.equal(rig.timeline.length,8);
+          assert(lib.valid(rig),'new wave must preserve native skeletal JSON validation');
+          const turns=rig.timeline.slice(1,-1).map(k=>k.pose.wrist);
+          assert(turns.every(v=>Math.abs(v[1])>.1&&Math.abs(v[2])>.18));
+          assert(turns.some(v=>v[1]>.15)&&turns.some(v=>v[1]<-.15));
+          assert(turns.some(v=>v[2]>.2)&&turns.some(v=>v[2]<-.2));
+          assert(turns[0][2]*turns[1][2]<0&&turns[1][2]*turns[2][2]<0);
+          const tip=rig.timeline[2].pose.index_pip[0],alt=rig.timeline[3].pose.index_pip[0];
+          assert.notEqual(tip,alt,'finger flutter should vary through wave');
+          assert.equal(rig.timeline[0].pose.wrist[2],0);
+          assert.equal(rig.timeline.at(-1).pose.wrist[2],0);
+          console.log('HAND223_MATH_PASS=deep 4-finger clench, tucked thumb, 8-key alternating yaw/roll with finger flutter');
+          JS
+      - name: Build unsealed v11.223 candidate source
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+          p=Path('projects/swrlz-forge-moba/source-manifest.json')
+          m=json.loads(p.read_text())
+          assert m['name']=='§wyrl§ Engine v11.222'
+          assert m['patches'][-1]=='patches/v11_222_clover_motion_construction_fx.py'
+          m['name']='§wyrl§ Engine v11.223'
+          m['finalArtifact']='swyrl_engine_v11_223.html'
+          m['patches'].append('patches/v11_223_fist_clench_wrist_wave.py')
+          m['finalSha256']='';m['finalBytes']=0
+          p.write_text(json.dumps(m,ensure_ascii=False))
+          PY
+          python3 projects/swrlz-forge-moba/build_space.py --output /tmp/se223-hand
+      - name: Print exact package hash and assert hand motion in shipped HTML
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          b=Path('/tmp/se223-hand/index.html').read_bytes()
+          s=b.decode('utf8')
+          for marker in [
+           'V11_223_FIST_CLENCH_WRIST_WAVE',
+           "digit('index',1.06,1.42,.87,.020)",
+           "thumb([.37,1.18,-.48],[.34,.19,.20],[.25,.03,.28])",
+           'function se223WaveTimeline(rig)',
+           "rig.duration=kind==='wave'?2.20:1.5",
+           "rig.timeline=kind==='wave'?se223WaveTimeline(rig)",
+           "se220R('Time').max=String(rig.duration)",
+           '<title>§wyrl§ Engine · Maker v11.223</title>'
+          ]:assert marker in s,marker
+          assert b==Path('/tmp/se223-hand/modeler.html').read_bytes()
+          print('HAND223_BYTES='+str(len(b)))
+          print('HAND223_SHA256='+hashlib.sha256(b).hexdigest())
+          print('HAND223_PATCHES=255')
+          PY
