@@ -4,6 +4,7 @@ const assert=require('node:assert/strict');
 class V{
  constructor(x=0,y=0,z=0){this.x=x;this.y=y;this.z=z}
  clone(){return new V(this.x,this.y,this.z)}
+ set(x,y,z){this.x=x;this.y=y;this.z=z;return this}
  copy(a){this.x=a.x;this.y=a.y;this.z=a.z;return this}
  add(v){this.x+=v.x;this.y+=v.y;this.z+=v.z;return this}
  addScaledVector(v,n){this.x+=v.x*n;this.y+=v.y*n;this.z+=v.z*n;return this}
@@ -159,6 +160,7 @@ assert.equal(ui.rotation,0);
 assert.equal(diag().equippedHouse,'st-income');
 assert.ok(diag().menuReuses>=1,'radial graphics reused, not recreated');
 // Ability wheel uses LEFT X; right stick still selects its options.
+right.input.gamepad.axes[2]=0;right.input.gamepad.axes[3]=0;
 hold(left);
 assert.equal(diag().menuType,'skill');
 release(left);
