@@ -46,6 +46,14 @@ class ModelingLearningV2(unittest.TestCase):
         self.assertIn("never tool authority", result)
         self.assertIn("only URLs actually returned", result)
 
+    def test_v11_221_thumb_opposition_and_gesture_library(self):
+        result = select_modeling_lesson("How do I use Shaka gesture in §E Model Atelier?")
+        self.assertIn("v11.221", result)
+        self.assertIn("14 authored gestures", result)
+        self.assertIn("CMC opposition", result)
+        self.assertIn("NOT Chat-native gesture commands", result)
+        self.assertLessEqual(len(result), 1150)
+
     def test_online_search_on_explicit_modeler_reference_request(self):
         for prompt in (
             "Find official documentation for animation keyframes in §E",
