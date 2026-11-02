@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.220
+title: §wyrl§ Engine v11.221
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.221 — Opposable Thumb and 14 Hand Gestures (2026-11-02)
+
+Owner phone screenshots confirmed v11.220 finger skinning and keyframes worked, but the thumb needed proper opposition, a better bend and more gestures. v11.221 keeps the same 17-bone glove and native geometry, improves thumb CMC/MCP/IP movement and capsule skin weights around the violet helix, adds 14 distinct gestures (Open, Relaxed, Fist, Point, Pinch, OK, Thumbs Up, Peace, Horns, ILY, Shaka, Wave, Grasp and Finger Gun), introduces touch-friendly Opposition/Flex sliders and one-tap 3-key gesture clips. Existing saves and other starters remain intact. Candidate syntax and 14-gesture/near-contact math build checks passed. **v11.221**: 253 ordered patches, 68 assets, 7,535,801 HTML bytes, SHA-256 `1f7f32229504110c2d6d758bf3cadf3c0f048630ad8a79ffdbffc4bac8431f90`. Read `docs/THUMB_GESTURES_V11_221.md`.
 
 ## §E v11.220 — Native Hand Rigging, Posing & Animation Studio (2026-11-02)
 
