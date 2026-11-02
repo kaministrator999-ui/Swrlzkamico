@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=a133e3a821a83fccc42a71cd0bef5b639da28946
-REQUEST_NONCE=chat-forge-rig-teaching-v2-a133e3a8-20261102-release-1
+SOURCE_REF=e0c0ca756edb3c6db2cd345c2099509816e53dda
+REQUEST_NONCE=chat-forge-rig-gesture-webref-v21-e0c0ca75-20261102-release-1
