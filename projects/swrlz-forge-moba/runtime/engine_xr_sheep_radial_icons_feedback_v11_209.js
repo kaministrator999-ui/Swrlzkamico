@@ -148,7 +148,7 @@ function se209OptionStatus(panel,entry){
  se209.disabledReads++;
  if(!enabled)return 'RULE LOCKED';
  if(entry.id==='totem'&&!stUi.buildingId)return 'SELECT HOUSE';
- return 'EQUIPPED';
+ return 'AVAILABLE';
 }
 function se209RefreshWheel(panel){
  const art=panel?.root?.userData?.se209Decor;
