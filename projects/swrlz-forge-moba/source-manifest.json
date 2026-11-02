@@ -263,6 +263,6 @@
     "patches/v11_214_quest_sheep_upright_modal_one_ray.py",
     "patches/v11_215_sheep_live_move_wheel.py"
   ],
-  "finalBytes": null,
-  "finalSha256": null
+  "finalBytes": 7489397,
+  "finalSha256": "3de2b564f3172f013e6d8064fc2db4e081a8ca89151b80491b427e63b35ec5f6"
 }
