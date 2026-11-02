@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.222",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_222_CLOVER_MOTIONS_BUILD_SPARKS",
-  "reason": "Owner-requested Clover sheep animations (Idle/Graze/Walk/Trot/Build/Celebrate) shared by standalone sheep-model starter and Sheep Tag, exported 6-joint native clip tracks and touch preview, render-only match-start aqua sparkle and host-authoritative house-progress amber motes/teal completion with builder cheer; one bounded 96-particle Points draw call, existing movement/LAN/resources/Quest controls unchanged. Strict 254-patch 68-asset source and compiled inline JS check PASS; 7,550,334 HTML bytes, SHA-256 27876c460d3c824f23d6628d3207693eb0d2194db9091a72c743122a95e17a35. Physical Android/Quest owner UX acceptance remains pending.",
-  "sourceCommit": "4f700dfb78459edec53ec038fc26bd7b9cb4053a",
-  "sourceIntegritySha256": "27876c460d3c824f23d6628d3207693eb0d2194db9091a72c743122a95e17a35"
+  "releaseVersion": "v11.223",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_223_FIST_CLENCH_WRIST_WAVE",
+  "reason": "Owner tested Arcane Glove animation and asked for a harder clench and waving with wrist twist as the hand shifts. Native Model Atelier fist now flexes each MCP (1.06–1.14), PIP (1.42–1.49), and DIP (.87–.92) more deeply, with thumb CMC/MCP/IP tucked across fingers. Wave preview now rotates wrist yaw and roll alternately with palm follow-through and finger flutter over 8 editable native joint keyframes in 2.2s; other gestures stay 3-key 1.5s. No saved rig timeline rewrite, mesh edit, §C, Sheep Tag, Clover, or Quest control changes. Targeted generated v11.223 motion math and source candidate tests PASS, sealed 255-patch 68-asset artifact PASS: 7,551,989 HTML bytes, SHA-256 db352ebd9c49735b4ec5df884ce2f855d412a995138e7bb987bdeb808c296b4e. Owner physical phone/Quest visual acceptance pending.",
+  "sourceCommit": "068b9f4155c53f389f0051decfb6d32636a23841",
+  "sourceIntegritySha256": "db352ebd9c49735b4ec5df884ce2f855d412a995138e7bb987bdeb808c296b4e"
 }
