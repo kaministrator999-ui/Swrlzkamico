@@ -417,7 +417,7 @@ def generate_events(payload: dict[str, Any], context, register_batch: Callable |
                    "categories": ["FORGE", "NATIVE_EDITOR"]}
             user_data = json.dumps({"currentUserRequest": prompt, "nativeContextData": summary},
                                    ensure_ascii=False, separators=(",", ":"), allow_nan=False)
-            messages = [{"role": "system", "content": native_plan_system(operation_contract())},
+            messages = [{"role": "system", "content": native_plan_system(operation_contract(), prompt=prompt, summary=summary)},
                         {"role": "user", "content": user_data}]
             plan = project_plan
             if plan is None:
