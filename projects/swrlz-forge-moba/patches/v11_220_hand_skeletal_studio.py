@@ -54,7 +54,7 @@ def apply(html):
       " source.engine='§wyrl§ Engine · Maker v11.219';source.version=11.219;",
       " source.engine='§wyrl§ Engine · Maker v11.220';source.version=11.220;")
     css="""
-.atelier-rig-studio{position:absolute;right:8px;top:7px;z-index:40;width:min(305px,80%);
+.atelier-rig-studio{position:absolute;right:8px;top:7px;z-index:4000;pointer-events:auto;width:min(305px,80%);
  background:rgba(9,19,37,.97);color:#e9faff;border:1px solid #6486af;border-radius:10px;
  box-shadow:0 7px 24px #0008;max-height:70%;overflow:auto;overscroll-behavior:contain}
 .atelier-rig-studio>summary{font-size:12px;font-weight:750;padding:9px;cursor:pointer;user-select:none}
