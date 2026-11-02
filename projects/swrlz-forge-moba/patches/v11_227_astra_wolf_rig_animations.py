@@ -159,9 +159,12 @@ def apply(html):
     assert '</head>' in html
     html=html.replace('</head>','<style id="se224WolfStudio">'+css+'</style>\n</head>',1)
 
-    html=once(html,
-      " source.engine='§wyrl§ Engine · Maker v11.226';source.version=11.226;",
-      " source.engine='§wyrl§ Engine · Maker v11.227';source.version=11.227;")
+    # v11.226 sheep-house starters duplicate the source engine provenance
+    # in two embedded code paths; update both while asserting exact lineage.
+    source_old=" source.engine='§wyrl§ Engine · Maker v11.226';source.version=11.226;"
+    source_new=" source.engine='§wyrl§ Engine · Maker v11.227';source.version=11.227;"
+    assert html.count(source_old)==2,('wolf provenance slots',html.count(source_old))
+    html=html.replace(source_old,source_new)
     for old,new in [
       ('SWYRL_ENGINE_DEPLOY_MARKER: V11_226_SHEEP_BUILDING_MODEL_STARTERS',
        'SWYRL_ENGINE_DEPLOY_MARKER: V11_227_ASTRA_WOLF_RIG_SHEEP_TAG'),
