@@ -257,6 +257,6 @@
     "patches/v11_208_quest_biomes_fog_depth.py",
     "patches/v11_209_quest_radial_icons_feedback.py"
   ],
-  "finalBytes": null,
-  "finalSha256": null
+  "finalBytes": 7430235,
+  "finalSha256": "cc59cb2ec4d33a918cb8df4b947866128250de2dca389bc2c8190afefe26ce96"
 }
