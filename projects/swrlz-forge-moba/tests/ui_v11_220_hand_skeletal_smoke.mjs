@@ -51,6 +51,8 @@ try{
  assert(facts.coreVertices>8000);
  assert(facts.rig.skinned&&facts.studioVisible&&facts.oldDeckHidden);
  assert.equal(facts.bones.length,17);
+ // Dismiss the product release-notes modal before interacting with studio controls.
+ await page.evaluate(()=>{const dialog=document.getElementById('seReleaseNotesDialog');if(dialog?.open)dialog.close();});
  const stage=page.locator('#modelAtelierViewport');
  const sha=bytes=>createHash('sha256').update(bytes).digest('hex');
  await page.waitForTimeout(300);
