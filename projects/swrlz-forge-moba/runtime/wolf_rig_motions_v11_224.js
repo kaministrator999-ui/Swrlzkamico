@@ -144,7 +144,7 @@ function se224WolfSampleClip(clip,time){
   a.rotations[id][j]+(b.rotations[id][j]-a.rotations[id][j])*s);
  return {time:t,rotations,bodyBob:a.bodyBob+(b.bodyBob-a.bodyBob)*s};
 }
-function se224WolfVertexWeights(pos,rig,part){
+function se224WolfVertexWeights(pos,rig,part,indexById=null){
  const [x,y,z]=pos,entries=new Map([['wolf_spine',1]]);
  const add=(id,w)=>{if(w>0)entries.set(id,(entries.get(id)||0)+w);};
  const replace=(influences,amount)=>{
@@ -173,7 +173,8 @@ function se224WolfVertexWeights(pos,rig,part){
   }
  }
  const top=[...entries].filter(([,w])=>w>1e-5).sort((a,b)=>b[1]-a[1]).slice(0,4);
- const ids=Object.fromEntries(rig.bones.map((b,i)=>[b.id,i])),sum=top.reduce((s,p)=>s+p[1],0)||1;
+ const ids=indexById||Object.fromEntries(rig.bones.map((b,i)=>[b.id,i]));
+ const sum=top.reduce((s,p)=>s+p[1],0)||1;
  const indexes=top.map(([id])=>ids[id]),weights=top.map(([,w])=>w/sum);
  while(indexes.length<4){indexes.push(0);weights.push(0);}
  return {indexes,weights};
