@@ -76,7 +76,7 @@
       "expected": "A fingertip observation contributes to orientation/pose inference but is not directly an extra §E bone; solve CMC/MCP/IP relative to calibrated rest axes and thumb opposition.",
       "mustNot": "Insert thumb-tip as a 18th bone by copying a joint index.",
       "source": "training/forge-modeling/RIGGING_ANIMATION_RESEARCH_V2.md",
-      "anchor": "Thumb CMC opposition"
+      "anchor": "thumb CMC opposition"
     },
     {
       "id": "M084",
@@ -216,7 +216,7 @@
       "expected": "Describe IK as an external option; currently §E supports articulated author keyframes/pose controls, not a proven IK solver. Distinguish research from implementation.",
       "mustNot": "Present upstream tutorial guidance as installed engine APIs.",
       "source": "training/forge-modeling/RIGGING_ANIMATION_RESEARCH_V2.md",
-      "anchor": "not a complete mapping algorithm"
+      "anchor": "complete mapping algorithm"
     },
     {
       "id": "M098",
