@@ -156,7 +156,7 @@ assert.equal(obj.se204.buttons.right.held,false);
 assert.equal(obj.se204.buttons.left.held,false);
 assert.equal(obj.se195.referenceBase,reference,'gap recovery preserves reference base');
 assert.equal(obj.se195.referenceOffset,offset,'gap recovery preserves cumulative offset');
-assert.equal(d().recoveryDtResets>=2);
+assert.ok(d().recoveryDtResets>=2);
 assert.equal(d().cosmeticSuspends>=2,true);
 framesFor(900);
 assert.equal(drawA.visible,true);
