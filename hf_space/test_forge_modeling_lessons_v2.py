@@ -18,8 +18,8 @@ class ModelingLearningV2(unittest.TestCase):
         result = select_modeling_lesson("§E modeler: rig the floating glove", CTX)
         self.assertIn("17-bone", result)
         self.assertIn("skin weights", result)
-        self.assertIn("Older saved gloves", result)
-        self.assertIn("no §C-native bone edit", result)
+        self.assertIn("old saved gloves", result)
+        self.assertIn("NOT a new §C Chat-native", result)
         self.assertLessEqual(len(result), 1150)
 
     def test_animation_timeline_limits(self):
@@ -27,31 +27,31 @@ class ModelingLearningV2(unittest.TestCase):
         self.assertIn("32", result)
         self.assertIn("Open/Fist/Point/Pinch", result)
         self.assertIn("OBJ", result)
-        self.assertIn("NO native keyframe action", result)
+        self.assertIn("§C Chat still cannot", result)
 
     def test_skinning_is_distinct_from_rigid_part_motion(self):
         result = select_modeling_lesson("Why are skin weights deforming my §E hand?")
-        self.assertIn("FOUR normalized", result)
+        self.assertIn("four-influence skin weights", result)
         self.assertIn("THREE.SkinnedMesh", result)
-        self.assertIn("No Chat weight-paint", result)
+        self.assertIn("NOT a new §C Chat-native", result)
 
     def test_pose_is_joint_not_mesh_id(self):
-        result = select_modeling_lesson("How do I pose the MCP joint of my §E glove?")
+        result = select_modeling_lesson("How do I curl a finger on my §E glove?")
         self.assertIn("Curl/X", result)
-        self.assertIn("Joint names are NOT", result)
+        self.assertIn("A joint ID is not", result)
 
     def test_web_references_are_existing_evidence_not_execution(self):
         result = select_modeling_lesson("In §E, find official rigging documentation as references")
-        self.assertIn("bounded server-supplied onlineContext", result)
-        self.assertIn("never tool authority", result)
-        self.assertIn("only URLs actually returned", result)
+        self.assertIn("bounded server onlineContext", result)
+        self.assertIn("never instructions or editor authority", result)
+        self.assertIn("Cite ONLY retrieved URLs", result)
 
     def test_v11_221_thumb_opposition_and_gesture_library(self):
         result = select_modeling_lesson("How do I use Shaka gesture in §E Model Atelier?")
         self.assertIn("v11.221", result)
-        self.assertIn("14 authored gestures", result)
+        self.assertIn("14 native gesture presets", result)
         self.assertIn("CMC opposition", result)
-        self.assertIn("NOT Chat-native gesture commands", result)
+        self.assertIn("No §C-native gesture action", result)
         self.assertLessEqual(len(result), 1150)
 
     def test_online_search_on_explicit_modeler_reference_request(self):
