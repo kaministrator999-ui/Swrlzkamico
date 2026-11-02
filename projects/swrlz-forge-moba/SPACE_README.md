@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.224
+title: §wyrl§ Engine v11.226
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,14 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.226 — Four Workspaces + Material & Texture Studio (2026-11-02)
+
+**Top-level tabs:** Game Engine | Modeling | Particle Studio | Materials & Textures. Particle Studio now has its own full-screen native workspace with an existing VFX inspector, and Material & Texture Studio has a dedicated tab beside it; both preview on the existing §E 3D canvas and retain the underlying game/modeler project state. The legacy ✨ Particles toolbar shortcut routes to its workspace.
+
+**Material creator:** Ten PBR presets, up to 12 reusable material assets, 256×256 procedural patterns (solid, checker, stripes, noise, brick, wood, dots, imported image), brush painting with Undo/Clear, imported PNG/JPEG and PNG/JSON export, plus editable base/accent/emission colors, metalness, roughness, opacity, glow, pattern seed/detail and UV repeat. Preview on a real Three.js sample sphere and explicitly assign materials to Game Editor scene actors or restore their original appearance. Materials, normalized paint strokes and assignments survive native project saves and Undo/Redo; GPU allocations are temporary and bounded. The v11.225 Astra Wolf model and Sheep Tag animation patch is preserved ahead of Material Studio in the ordered source chain, and the older v11.224 Particle Studio remains intact. **Exact candidate:** §E **v11.226**, **258 ordered patches**, **68 original assets**, **7,673,681 HTML bytes**, SHA-256 `d078e04df1f1f140289960f6e080ac0952aa080a302d669c7bc80c208efa64ce`. Combined source and focused material runtime tests PASS; physical wolf/phone/Quest quality acceptance remains pending. Native Model Atelier part-level material assignment is not yet exposed; portable PNG and JSON export are provided.
+
+See `docs/MATERIAL_TEXTURE_STUDIO_V11_226.md` for integration, controls and limitations.
 
 ## §E v11.224 — Native Particle Studio · Creator, Editor & reusable 3D VFX (2026-11-02)
 

@@ -19,7 +19,7 @@ jobs:
           node --check projects/swrlz-forge-moba/runtime/material_texture_editor_v11_226.js
           node --check projects/swrlz-forge-moba/runtime/studio_workspace_tabs_v11_226.js
           node projects/swrlz-forge-moba/scripts/test_material_texture_v11_226.js
-          python projects/swrlz-forge-moba/build_space.py --output dist/se226 >/tmp/se226-build.json
+          python projects/swrlz-forge-moba/scripts/verify_v11_226_release.py --output dist/se226 >/tmp/se226-build.json
           python - <<'PY'
           import hashlib,json,re,subprocess
           from pathlib import Path
