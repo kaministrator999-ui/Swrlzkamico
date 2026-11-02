@@ -183,6 +183,58 @@ class OnlineLyricExtractionFixTests(unittest.TestCase):
                 self.assertIn(phrase, lyric)
         self.assertGreaterEqual(len(lyric.splitlines()), 10)
 
+    def test_later_hook_does_not_override_real_verse_one_and_footer(self):
+        # Reproduces the live eLyrics failure with entirely invented lines:
+        # multiple verses/hooks followed by clickable lyric-page furniture.
+        page_lines=["Copper Lantern lyrics by Demo Ensemble","Site menu","Latest songs"]
+        page_lines+=["[Verse 1:]"]+[f"Invented opening verse line {i} shines tonight" for i in range(1,13)]
+        page_lines+=["[Hook:]"]+[f"Invented chorus line {i} holds our lantern" for i in range(1,5)]
+        page_lines+=["[Verse 2:]"]+[f"Invented second verse line {i} echoes softly" for i in range(1,13)]
+        page_lines+=["[Hook]"]+[f"Invented repeat chorus line {i} holds our lantern" for i in range(1,5)]
+        page_lines+=["[Verse 3:]"]+[f"Invented final verse line {i} reaches daylight" for i in range(1,13)]
+        page_lines+=["[Hook]","Explain lyrics","Correct lyrics","Facts about Copper Lantern",
+                     "Who wrote Copper Lantern lyrics?","Hottest Lyrics with Videos",
+                     "check amazon for copper lantern mp3 download",
+                     "Songwriter(s): Example Composer"]
+        page="\n".join(page_lines)
+        result=online_tools._lyrics_extract_analysis(page,"full-lyrics",SUBJECT)
+        info=result["diagnostics"]
+        body=result["text"]
+        self.assertEqual(info["decision"],"ACCEPTED",info)
+        self.assertEqual(info["anchorLine"],"[Verse 1:]",info)
+        self.assertEqual(info["rawMusicalSectionCueCount"],6)
+        self.assertEqual(info["musicalSectionCueCount"],6)
+        self.assertGreaterEqual(info["acceptedBlockCount"],5)
+        self.assertTrue(body.startswith("Invented opening verse line 1"),info)
+        self.assertIn("Invented final verse line 12",body)
+        self.assertEqual(info["terminalBoundaryKind"],"HARD_BOUNDARY")
+        self.assertEqual(info["terminalBoundaryLine"],"Explain lyrics")
+        for chrome in ("Explain lyrics","Correct lyrics","Facts about",
+                       "Hottest Lyrics","Who wrote","check amazon","Songwriter"):
+            self.assertNotIn(chrome,body)
+
+    def test_facts_heading_is_a_terminal_boundary_after_lyrics(self):
+        page=(
+            "Copper Lantern Lyrics by Demo Ensemble\nLyrics\n"
+            "[Verse 1]\n"
+            "The river glows beyond the old town\n"
+            "An invented light will never drown\n"
+            "Every window holds a spark of day\n"
+            "The evening wind will lead the way\n"
+            "[Chorus]\n"
+            "Carry the lantern through the rain\n"
+            "The railroad sings a soft refrain\n"
+            "We hear the distant city call\n"
+            "And lift the little lantern tall\n"
+            "Facts about Copper Lantern\n"
+            "This track was released on a Tuesday\n"
+            "Hottest Lyrics with Videos\n"
+        )
+        result=online_tools._lyrics_extract_analysis(page,"full-lyrics",SUBJECT)
+        self.assertEqual(result["diagnostics"]["terminalBoundaryLine"],"Facts about Copper Lantern")
+        self.assertNotIn("This track was released",result["text"])
+        self.assertEqual(result["diagnostics"]["decision"],"ACCEPTED")
+
     def test_lyric_page_feedback_and_recommendations_are_not_verses(self):
         page = (
             "Copper Lantern Lyrics by Demo Ensemble\nLyrics\n"
