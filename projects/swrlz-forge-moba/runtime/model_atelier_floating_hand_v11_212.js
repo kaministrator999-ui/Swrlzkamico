@@ -6,7 +6,8 @@ const se212Id='floating-hand-glove';
 let se212Cached=null;
 function se212HandScene(){
  if(se212Cached)return structuredClone(se212Cached);
- if(typeof atelierAnimalSurface!=='function')throw Error('Native organic surface builder is unavailable.');
+ const ops=window.SWYRL_ENGINE_HAND_SURFACE;
+ if(typeof ops?.surface!=='function'||typeof ops?.weld!=='function')throw Error('Native organic surface builder is unavailable.');
  const source=structuredClone(MODEL_ATELIER_CANONICAL_PROJECT);
  const m=source.project.modelAtelier,parts=[];
  const clean=(v)=>+v.toFixed(5);
@@ -52,7 +53,7 @@ function se212HandScene(){
   return d;
  };
  // The native marching-tetrahedra helper provides indexed mesh geometry and UVs.
- const skinMesh=atelierAnimalWeld(atelierAnimalSurface(skin,[[-1.52,.53,-.40],[.83,3.49,.42]],.049));
+ const skinMesh=ops.weld(ops.surface(skin,[[-1.52,.53,-.40],[.83,3.49,.42]],.049));
  push('Glove · organic connected palm, wrist, thumb and four fingers','topologyMesh',
   color.glove,'silk','Glove / core',{topologyMesh:skinMesh,organicSurface:{species:'arcane-glove',region:'shell'}});
  const sphere=(name,center,scale,c,mat,group)=>{
@@ -180,5 +181,5 @@ createProjectFromTemplate=function(template,force=false){
 };
 window.SWYRL_ENGINE_FLOATING_HAND=Object.freeze({
  createScene:()=>se212HandScene(),open:(force=false)=>se212OpenHand(force),
- status:()=>({ready:typeof atelierAnimalSurface==='function',parts:se212Cached?.project?.modelAtelier?.parts?.length||0})
+ status:()=>({ready:typeof window.SWYRL_ENGINE_HAND_SURFACE?.surface==='function',parts:se212Cached?.project?.modelAtelier?.parts?.length||0})
 });
