@@ -1,4 +1,4 @@
-// §E GUI/Menu subtab: a child of Game Engine, sharing the native viewport.
+// §E v11.228 GUI/Menu subtab: a child of Game Engine, sharing the native viewport.
 // This file is a release candidate until the governed builder seals its manifest.
 (function seGuiMenuStudio(){
  const SCHEMA='swyrl-gui-studio-v1',CAP=24,MODES=['label','button','panel'],ACTIONS=['none','start','next','stop'];

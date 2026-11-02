@@ -1,4 +1,4 @@
-/* §E Game Engine child workspace: GUI/Menu inspector and per-layer preview. */
+/* §E v11.228 Game Engine child workspace: GUI/Menu inspector and per-layer preview. */
 .se187-workspace-tabs .segui-mini{display:inline-flex;align-items:center;gap:4px;
  flex:0 0 auto;padding:2px 4px;margin-left:3px;border-left:1px solid #577486}
 .se187-workspace-tabs .segui-mini[hidden],#seguiPanel[hidden],#seguiPreview[hidden]{display:none!important}

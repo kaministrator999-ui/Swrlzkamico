@@ -1,5 +1,5 @@
 """§E candidate: Game Engine > GUI / Menus authoring mini-tab.
-Append-only addition after v11.226; not enabled until the versioned manifest
+Append-only addition after v11.227; not enabled until the versioned manifest
 is resealed from the actual generated HTML by the authoritative builder.
 """
 from pathlib import Path
@@ -13,27 +13,31 @@ def once(html, old, new):
 
 def apply(html):
     root = Path(__file__).resolve().parents[1]
-    js = (root / 'runtime/game_gui_menu_subtab_v11_227.js').read_text('utf8')
-    css = (root / 'runtime/game_gui_menu_subtab_v11_227.css').read_text('utf8')
+    js = (root / 'runtime/game_gui_menu_subtab_v11_228.js').read_text('utf8')
+    css = (root / 'runtime/game_gui_menu_subtab_v11_228.css').read_text('utf8')
     # The native Game tab owns the scene and input. The sub-tab only controls
     # authored DOM GUI layers and the existing Sheep Tag level menu inspector.
     html = once(html, 'window.SWRLZ_FORGE_BUILD=', js + '\nwindow.SWRLZ_FORGE_BUILD=')
-    html = once(html, '</head>', '<style id="se227GuiMenu">' + css + '</style>\n</head>')
+    html = once(html, '</head>', '<style id="se228GuiMenu">' + css + '</style>\n</head>')
     html = once(html,
-        'SWYRL_ENGINE_DEPLOY_MARKER: V11_226_SHEEP_BUILDING_MODEL_STARTERS',
-        'SWYRL_ENGINE_DEPLOY_MARKER: V11_227_GAME_GUI_MENU_STUDIO')
-    for before, after in [
-        ('ENGINE · MAKER v11.226', 'ENGINE · MAKER v11.227'),
-        ('v11.226 · five sheep-faction building model starters',
-         'v11.227 · Game Engine GUI and Menu Setup mini-tab'),
-        ("window.SWRLZ_FORGE_BUILD={version:'v11.226'",
-         "window.SWRLZ_FORGE_BUILD={version:'v11.227'"),
-        ('<title>§wyrl§ Engine · Maker v11.226</title>',
-         '<title>§wyrl§ Engine · Maker v11.227</title>'),
-        ("source.engine='§wyrl§ Engine · Maker v11.226';source.version=11.226;",
-         "source.engine='§wyrl§ Engine · Maker v11.227';source.version=11.227;")
+        'SWYRL_ENGINE_DEPLOY_MARKER: V11_227_ASTRA_WOLF_RIG_SHEEP_TAG',
+        'SWYRL_ENGINE_DEPLOY_MARKER: V11_228_GAME_GUI_MENU_STUDIO')
+    # v11.227 wolf established two independent engine provenance slots.
+    old=" source.engine='§wyrl§ Engine · Maker v11.227';source.version=11.227;"
+    new=" source.engine='§wyrl§ Engine · Maker v11.228';source.version=11.228;"
+    if html.count(old)!=2:
+        raise AssertionError(('GUI provenance slots',html.count(old)))
+    html=html.replace(old,new)
+    for before,after in [
+        ('ENGINE · MAKER v11.227','ENGINE · MAKER v11.228'),
+        ('v11.227 · Astra wolf rig and Sheep Tag animations',
+         'v11.228 · Game Engine GUI and Menu Setup mini-tab'),
+        ("window.SWRLZ_FORGE_BUILD={version:'v11.227'",
+         "window.SWRLZ_FORGE_BUILD={version:'v11.228'"),
+        ('<title>§wyrl§ Engine · Maker v11.227</title>',
+         '<title>§wyrl§ Engine · Maker v11.228</title>')
     ]:
-        html = once(html, before, after)
+        html=once(html,before,after)
     key='const SE_RELEASE_NOTES='
     pos=html.index(key)+len(key)
     obj,n=json.JSONDecoder().raw_decode(html[pos:])

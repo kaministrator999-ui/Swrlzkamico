@@ -6,7 +6,7 @@ const fs=require('node:fs');
 const vm=require('node:vm');
 const path=require('node:path');
 const root=path.resolve(__dirname,'..');
-const source=fs.readFileSync(path.join(root,'runtime/game_gui_menu_subtab_v11_227.js'),'utf8');
+const source=fs.readFileSync(path.join(root,'runtime/game_gui_menu_subtab_v11_228.js'),'utf8');
 const ctx={
  console,Math,Date,structuredClone,setTimeout,
  currentProject:{name:'Fixture',canonicalId:'fixture',kind:'sheep-tag'},
@@ -32,7 +32,7 @@ const ctx={
 ctx.seLevels.records.set('menu',{id:'menu',role:'menu',data:{project:{name:'Fixture'},scene:{actors:[]}}});
 ctx.seLevels.records.set('game',{id:'game',role:'game',data:{project:{name:'Fixture'},scene:{actors:[]}}});
 vm.createContext(ctx);
-vm.runInContext(source,ctx,{filename:'game_gui_menu_subtab_v11_227.js'});
+vm.runInContext(source,ctx,{filename:'game_gui_menu_subtab_v11_228.js'});
 const api=ctx.window.SWYRL_ENGINE_GUI_STUDIO;
 assert.ok(api);
 assert.equal(api.create('button'),true);
