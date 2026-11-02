@@ -21,6 +21,16 @@ jobs:
           node-version: '22'
       - name: Build the sealed current engine
         run: python3 projects/swrlz-forge-moba/build_space.py --output /tmp/swrlz-hand-ui >/tmp/se212-ui-build.log
+      - name: Print native part validation contract
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path('/tmp/swrlz-hand-ui/index.html').read_text()
+          for marker in ['function checkPart(p){','function validParts(parts){','function atelierTopologyMeshValid(', 'function atelierMeshPrimitiveDensityValid(', 'function atelierCourierBindingValid(', 'function atelierGroupsValid(']:
+              i=s.find(marker)
+              print('HAND_VALIDATOR_SOURCE',marker,'INDEX',i)
+              if i>=0: print(s[i:i+4200])
+          PY
       - name: Install Chromium-only runner
         run: |
           npm install --no-save playwright@1.56.1
