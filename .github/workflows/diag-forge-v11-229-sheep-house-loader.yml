@@ -1,5 +1,5 @@
 name: Validate §E v11.229 native sheep house model loading repair
-# Validates real native model opening, palette colors, sockets, and transforms.
+# Verify all five public Model Atelier statuses, avoiding inaccessible private project state.
 on:
   push:
     branches: [main]
