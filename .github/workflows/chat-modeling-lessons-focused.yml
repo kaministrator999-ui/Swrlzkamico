@@ -1,0 +1,32 @@
+name: Chat Modeling Lessons · Focused Offline Verification
+
+on:
+  pull_request:
+    paths:
+      - 'hf_space/forge_modeling_lessons.py'
+      - 'hf_space/online_tools.py'
+      - 'hf_space/test_forge_modeling_lessons_v1.py'
+      - 'hf_space/test_forge_modeling_lessons_v2.py'
+      - '.github/workflows/chat-modeling-lessons-focused.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  modeling-lessons:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Compile touched lesson/search sources
+        run: python -m py_compile hf_space/forge_modeling_lessons.py hf_space/online_tools.py hf_space/test_forge_modeling_lessons_v1.py hf_space/test_forge_modeling_lessons_v2.py
+      - name: Focused lesson and search-routing unit tests (offline)
+        env:
+          PYTHONPATH: hf_space
+        run: python -m unittest discover -s hf_space -p 'test_forge_modeling_lessons_v*.py' -v
+      - name: Scope receipt
+        run: echo 'Only source-level routing/permission fixtures; no model inference, web retrieval, weight training, engine edit, or device acceptance.'
