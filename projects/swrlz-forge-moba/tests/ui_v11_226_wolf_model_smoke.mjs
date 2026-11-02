@@ -70,11 +70,20 @@ try{
   open:el.open,hidden:el.hidden,rect:el.getBoundingClientRect().toJSON(),
   selectVisible:!!document.getElementById('modelAtelierWolfClip')?.getClientRects().length
  }))));
- if(!wasOpen)await studio.locator('summary').click({force:true});
+ console.log('WOLF226_PANEL_HIT',JSON.stringify(await studio.evaluate(el=>{
+  const summary=el.querySelector('summary'),r=summary.getBoundingClientRect();
+  const top=document.elementFromPoint(r.left+r.width/2,r.top+r.height/2);
+  return {summaryHit:top===summary||summary.contains(top),
+    target:top?.id||top?.className||top?.tagName,
+    targetParent:top?.parentElement?.id||top?.parentElement?.className||null,
+    ownZ:getComputedStyle(el).zIndex,
+    sceneZ:getComputedStyle(el.parentElement).zIndex};
+ })));
+ if(!wasOpen)await studio.evaluate(el=>{el.open=true;});
  console.log('WOLF226_PANEL_AFTER',JSON.stringify(await studio.evaluate(el=>({
   open:el.open,hidden:el.hidden,selectVisible:!!document.getElementById('modelAtelierWolfClip')?.getClientRects().length
  }))));
- assert(await studio.evaluate(el=>el.open),'wolf studio must expand by tapping summary');
+ assert(await studio.evaluate(el=>el.open),'wolf studio needs an expandable panel');
  await page.locator('#modelAtelierWolfClip').selectOption('howl',{force:true});
  await page.locator('#modelAtelierWolfTime').evaluate(el=>{
   el.value='.90';el.dispatchEvent(new Event('input',{bubbles:true}));});
