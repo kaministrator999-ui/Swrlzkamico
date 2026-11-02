@@ -12,7 +12,7 @@
 - `assets/sheep-tag/concepts/moonbell-wildwood-art.svg`: top-down styled woodland map in four previously established biome themes: Pinewatch, Moonflower, Amberglade and Willowmere.
 - `assets/sheep-tag/concepts/moonbell-wildwood-grid.svg`: same map with brighter 3-unit editor snap grid.
 - `assets/sheep-tag/concepts/moonbell-wildwood-blueprint.json`: machine-readable **design** positions and requirements, **not** an editor import schema.
-- The corner merchant icons, two wolves, six sheep, two ponds and rocks show the current starter's known actor positions. Border forest trees are illustrated schematically, not an exact full actor survey. Dash-outlined gold farm blocks show a possible player-built fort around the initial owner sheep. None are in the actual scene as placed buildings.
+- The corner merchant icons, two wolves, six sheep, two ponds and rocks show the current starter's known actor positions. Border forest trees are illustrated schematically, not an exact full actor survey. Dash-outlined gold farm blocks show a possible 13-piece U-shaped starter defense around the initial owner sheep, with a south-side escape opening. The dashed central pen boundary illustrates the native axis-aligned reserved box, not a circular building restriction. None are in the actual scene as placed buildings.
 
 ## Build this level in §E
 1. Duplicate the existing starter scene before visual remaster; preserve saved projects and native actor identities.
