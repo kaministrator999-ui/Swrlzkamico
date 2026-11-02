@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build and verify the exact §E v11.223 opposable thumb and hand gesture animation library and native Model Atelier package, with routed Game/Modeler pages."""
+"""Build and verify exact §E v11.223 Particle Studio and native Engine package, with routed Game/Modeler pages."""
 import argparse
 import hashlib
 import json

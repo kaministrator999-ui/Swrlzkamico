@@ -271,6 +271,6 @@
     "patches/v11_222_clover_motion_construction_fx.py",
     "patches/v11_223_native_particle_studio.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 7587913,
+  "finalSha256": "db3ff358295c7b02d1b55d40973d328534a0686b822d6906549ab6f83ea9d230"
 }
