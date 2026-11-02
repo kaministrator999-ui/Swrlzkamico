@@ -66,7 +66,7 @@ function se224WolfIsModel(){
 }
 function se224WolfStudioInstall(){
  if(!panel||document.getElementById('modelAtelierWolfStudio'))return;
- const controls=panel.querySelector('.atelier-viewport-controls');if(!controls)return;
+ const controls=panel.querySelector('.atelier-scene')||panel.querySelector('.atelier-viewport-controls');if(!controls)return;
  const ui=document.createElement('details');ui.id='modelAtelierWolfStudio';
  ui.className='atelier-wolf-studio';
  ui.innerHTML=`<summary>🐺 Astra · Wolf Rig & Motion</summary>
