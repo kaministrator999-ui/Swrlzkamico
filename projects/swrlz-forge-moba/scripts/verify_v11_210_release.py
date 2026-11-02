@@ -68,7 +68,7 @@ for marker in ["stUiCommand('build'","stUiCommand('attack'","stUiCommand('rescue
     assert marker in selection,marker
 for marker in ['window.SWYRL_ENGINE_QUEST_SHEEP_AIM_203','se203GroundFromForwardRay','se203.menuPages','se203.menuTextures','se203HandEffects','se203DisposeCached']:
     assert marker in s,marker
-assert 'if(stUi.build&&!se195.visible&&!se195.photo&&now-se193.previewAt>100)' in s
+assert "if(stUi.build&&!se195.visible&&!se195.photo&&!se210PanelHit(se192InputRecord('right'))&&now-se193.previewAt>100)" in s
 assert 'if(!se200Active()||!stUi.shown||!stSession||se195.visible||se195.photo)return;' in s
 assert 'se200.vertical=se203.vertical' in s
 for marker in ['window.SWYRL_ENGINE_SHEEP_QUICK_GRID_204','se204Gameplay','se204RapidEnabled','se204GridPoint','se204HouseTap','se204SkillTap','se204WheelShow','se204InputFrame']:
