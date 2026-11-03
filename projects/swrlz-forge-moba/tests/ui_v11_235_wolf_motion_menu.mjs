@@ -56,6 +56,8 @@ try{
  assert.equal(state.wolfHidden,false);
  assert(state.className.includes('se-wolf-motion-focus'));
  assert(state.controls.every(c=>c.visible),'The complete Play/clip/key controls must be visible after tapping Motion');
+ assert(state.controls.find(c=>c.id==='modelAtelierWolfSaveKey')?.rect?.top<700,
+  'Set keyframe must appear alongside Play near the top, not below the mobile viewport');
  const imageBefore=await page.locator('#modelAtelierViewport canvas').screenshot();
  await page.evaluate(()=>{
   const clip=document.getElementById('modelAtelierWolfClip');
