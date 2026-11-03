@@ -320,6 +320,99 @@ class OnlineLyricExtractionFixTests(unittest.TestCase):
         self.assertNotIn("This track was released",result["text"])
         self.assertEqual(result["diagnostics"]["decision"],"ACCEPTED")
 
+    def _unlabeled_corroboration_fixture(self, *, second_witness=True, footer=True):
+        # Invented lines only: a long unlabeled lyric page like the 2026-11-02
+        # letrasboom.com Roll Call result, not an actual song transcription.
+        opening="An amber lantern circles over quiet streets tonight"
+        next_line="Our tiny paper compass points beneath the silver light"
+        blocks=[]
+        for stanza in range(4):
+            lines=[
+                opening if stanza==0 and i==0 else
+                next_line if stanza==0 and i==1 else
+                f"Invented lantern number {stanza} travels with the clock at hour {i}"
+                for i in range(8)
+            ]
+            blocks.append("\n".join(lines))
+        footer_lines=(
+            "\nLetra añadida por el usuario: Example User\n"
+            "Roll Call lyrics\nComenta sobre Copper Lantern por Demo Ensemble\n"
+            "Top 10 Canciones Imperdibles de Demo Ensemble\n"
+        ) if footer else ""
+        page="Copper Lantern Lyrics - Demo Ensemble\nLyrics\n"+"\n\n".join(blocks)+footer_lines
+        witnesses=[
+            {"title":"Demo Ensemble - Copper Lantern Lyrics | AZLyrics",
+             "url":"https://www.azlyrics.com/lyrics/demoensemble/copperlantern.html",
+             "snippet":"Copper Lantern by Demo Ensemble. "+opening+". "+next_line+". Extra lines are not an issue."},
+            {"title":"Copper Lantern Lyrics - Demo Ensemble | LyricsMania",
+             "url":"https://www.lyricsmania.com/copper_lantern_lyrics_demo_ensemble.html",
+             "snippet":"Lyrics for Demo Ensemble Copper Lantern: "+opening+" / "+next_line+" / Album notes"},
+        ]
+        if not second_witness:
+            witnesses=witnesses[:1]
+        bundle={
+            "provider":"offline-test","candidatePool":witnesses,
+            "errors":[],"fetchFailures":[],
+            "evidence":[{
+                "evidenceId":"unlabeled","title":"Copper Lantern Lyrics - Demo Ensemble",
+                "pageTitle":"Copper Lantern Lyrics - Demo Ensemble",
+                "url":"https://www.letrasboom.com/letra/copper-lantern-demo-ensemble",
+                "finalUrl":"https://www.letrasboom.com/letra/copper-lantern-demo-ensemble",
+                "snippet":"Learn about the song, explore the album and discover musical careers, biography, trivia and more.",
+                "extract":page,"fetchedAt":1793650000000,"status":200,
+                "source":"letrasboom.com","query":"Copper Lantern Demo Ensemble lyrics","rank":1
+            }],
+        }
+        plan={"query":"Copper Lantern Demo Ensemble lyrics",
+              "contentMode":"lyrics-verification","requestedScope":"full-lyrics","subject":SUBJECT}
+        return bundle,plan
+
+    def test_unlabeled_lyrics_accept_only_two_independent_matching_snippets_and_footer(self):
+        bundle,plan=self._unlabeled_corroboration_fixture()
+        with (
+            patch.object(online_tools,"run_online_research",return_value=bundle),
+            patch.object(online_tools.canonical_online_research,"search_public",return_value=[]),
+        ):
+            result=online_tools._search_bundle(plan)
+        attempts=result["lyricsSourceAttempts"]
+        self.assertEqual(len(attempts),1,attempts)
+        self.assertEqual(attempts[0]["outcome"],"VERIFIED",attempts)
+        self.assertEqual(attempts[0]["verificationBasis"],"TWO_INDEPENDENT_LYRIC_SNIPPETS")
+        self.assertEqual(len(attempts[0]["independentSnippetFamilies"]),2)
+        verified=result["modelContext"]["verifiedLyrics"]
+        self.assertIsNotNone(verified)
+        self.assertIn("An amber lantern circles",verified["lyricExtract"])
+        self.assertIn("at hour 7",verified["lyricExtract"])
+        self.assertNotIn("Letra añadida",verified["lyricExtract"])
+        self.assertNotIn("Comenta sobre",verified["lyricExtract"])
+        self.assertEqual(result["lyricsFetchDebug"][0]["extractorDiagnostics"]["terminalBoundaryKind"],
+                         "POST_SONG_META_BOUNDARY")
+
+    def test_unlabeled_lyrics_reject_without_two_independent_corroborations(self):
+        bundle,plan=self._unlabeled_corroboration_fixture(second_witness=False)
+        with (
+            patch.object(online_tools,"run_online_research",return_value=bundle),
+            patch.object(online_tools.canonical_online_research,"search_public",return_value=[]),
+            patch.object(online_tools.canonical_online_research,"fetch_public",
+                         side_effect=FileNotFoundError("offline"))):
+            result=online_tools._search_bundle(plan)
+        attempt=result["lyricsSourceAttempts"][0]
+        self.assertEqual(attempt["outcome"],"REJECTED")
+        self.assertEqual(attempt["rejectionReason"],"SNIPPET_BODY_MISMATCH")
+        self.assertEqual(len(attempt["independentSnippetFamilies"]),1)
+
+    def test_unlabeled_lyrics_reject_without_end_of_lyrics_boundary(self):
+        bundle,plan=self._unlabeled_corroboration_fixture(footer=False)
+        with (
+            patch.object(online_tools,"run_online_research",return_value=bundle),
+            patch.object(online_tools.canonical_online_research,"search_public",return_value=[]),
+            patch.object(online_tools.canonical_online_research,"fetch_public",
+                         side_effect=FileNotFoundError("offline"))):
+            result=online_tools._search_bundle(plan)
+        attempt=result["lyricsSourceAttempts"][0]
+        self.assertEqual(attempt["outcome"],"REJECTED")
+        self.assertEqual(attempt["rejectionReason"],"SNIPPET_BODY_MISMATCH")
+
     def test_lyric_page_feedback_and_recommendations_are_not_verses(self):
         page = (
             "Copper Lantern Lyrics by Demo Ensemble\nLyrics\n"
