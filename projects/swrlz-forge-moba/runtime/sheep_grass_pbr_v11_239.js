@@ -55,7 +55,9 @@ function se239ApplyOneGround(mesh){
     return;
   }
   try{
-    const size=1024,canvas=document.createElement('canvas');
+    const quest=/(?:OculusBrowser|Quest)/i.test(navigator.userAgent||'');
+    const size=mesh.name==='MoonbellWildwoodGround'&&!quest?2048:1024;
+    const canvas=document.createElement('canvas');
     canvas.width=canvas.height=size;
     const ctx=canvas.getContext('2d',{willReadFrequently:true});
     if(!ctx)return;
@@ -64,9 +66,12 @@ function se239ApplyOneGround(mesh){
     const grass=document.createElement('canvas');grass.width=grass.height=size;
     const gc=grass.getContext('2d',{willReadFrequently:true});
     if(!gc)return;
-    const pattern=gc.createPattern(se239Grass.source,'repeat');
-    pattern.setTransform(new DOMMatrix().scale(size/(se239Grass.tileCount*256)));
-    gc.fillStyle=pattern;gc.fillRect(0,0,size,size);
+    // Match diffuse tiling to the repeated normal and roughness maps.
+    // Explicit tiles avoid CanvasPattern.setTransform browser variations.
+    const step=size/se239Grass.tileCount;
+    for(let y=0;y<se239Grass.tileCount;y++)
+      for(let x=0;x<se239Grass.tileCount;x++)
+        gc.drawImage(se239Grass.source,x*step,y*step,step,step);
     const d=authored.data,s=gc.getImageData(0,0,size,size).data;
     for(let i=0;i<d.length;i+=4){
       // Green vegetation receives the new texture; roads/landmarks survive.
