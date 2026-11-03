@@ -3,6 +3,7 @@ import {chromium} from 'playwright';
 import fs from 'node:fs';
 import path from 'node:path';
 import {PNG} from 'pngjs';
+import assert from 'node:assert/strict';
 const base='/tmp/se230-visibility';
 const host='https://kamiloki-swrlz-forge-moba.static.hf.space';
 const ids=['sheep-free-shelter','sheep-thatched-hut','sheep-cottage','sheep-barn','sheep-ram-house'];
@@ -25,7 +26,7 @@ try{
  await page.goto(host+'/modeler.html?project=sheep-free-shelter',{waitUntil:'domcontentloaded',timeout:90000});
  await page.waitForFunction(()=>window.SWYRL_ENGINE_MODEL_ATELIER?.status?.().count===18,null,{timeout:30000});
  await page.evaluate(()=>{const dialog=document.getElementById('seReleaseNotesDialog');if(dialog?.open)dialog.close();});
- await page.waitForTimeout(150);
+ await page.waitForTimeout(2300);
  for(const id of ids){
   await page.evaluate(id=>window.SWYRL_ENGINE_SHEEP_BUILDING_STARTERS.open(id,true),id);
   await page.waitForTimeout(440);
@@ -37,6 +38,12 @@ try{
    diagram:window.SE230_HOUSE_DIAG?.(),
    viewport:(()=>{const e=document.getElementById('modelAtelierViewport'),c=e?.querySelector('canvas');return {rect:e?.getBoundingClientRect().toJSON(),canvas:c?.getBoundingClientRect().toJSON(),canvasVisible:!!c?.getClientRects().length,css:c&&getComputedStyle(c).display}})()
   }));
+  assert.equal(info.status.open,true,id+' active Model Atelier panel');
+  const sizes={'sheep-free-shelter':18,'sheep-thatched-hut':59,'sheep-cottage':68,'sheep-barn':37,'sheep-ram-house':60};
+  assert.equal(info.diagram?.meshes,sizes[id],id+' missing live renderer meshes');
+  assert(info.diagram.intersectsView,id+' camera frustum misses model');
+  assert(info.diagram.projectedCorners.every(([x,y,z])=>Math.abs(x)<.97&&Math.abs(y)<.97&&z>0&&z<1.01),id+' camera crops the full house');
+  assert.equal(info.diagram.visible,info.diagram.meshes,id+' hidden meshes');
   const buf=await page.locator('#modelAtelierViewport canvas').screenshot();
   if(id==='sheep-free-shelter'||id==='sheep-barn'){
    const original=PNG.sync.read(buf),thumbnail=new PNG({width:195,height:356});
@@ -57,6 +64,8 @@ try{
    if(r>120&&g>85&&b<100)gold++;
   }
   console.log('SE230_VIEW',id,JSON.stringify(info),'pixels',JSON.stringify({width:png.width,height:png.height,chromatic,bright,red,gold,total}));
+  if(id==='sheep-barn')assert(red>200,'Red barn should be visibly drawn after camera fit, not masked by overlays');
  }
+ console.log('SE231_SHEEP_HOUSE_FULL_FRAMING_PASS');
  await ctx.close();
 }finally{await browser.close();}
