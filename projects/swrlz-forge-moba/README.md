@@ -1,3 +1,11 @@
+## §E v11.242 — Natural Sheep Tag grass instead of square tiled camouflage (2026-11-03)
+
+**Owner screenshot:** On Moto G Power, the newly published v11.241 grass showed obvious bright/dark square patches, even where authored meadow terrain should be smooth. The small 128×128 generated swatch was repeated 16×16 and its saturated colors replaced 75% of the original vegetation — visually unacceptable.
+
+**Targeted correction:** The append-only `patches/v11_242_natural_grass_blend.py` preserves the authored meadow/Wildwood colors and their roads, while applying only a low-contrast, luminance-centered grass detail variation to green vegetation. Reduce swatch repeats from 16 to 8 and lower normal strength from 0.24 to 0.07. Preserve original roughness/normal material channels, renderer, Sheep Tag collisions, build rules, controls, fog, Quest headturn repairs and the independent Particle Studio.
+
+**Owner acceptance:** New grass must be reviewed on phone and Quest 2; this source fix does not claim pixel-perfect seam removal or real-world ground photogrammetry.
+
 ## §E v11.241 — Sheep Tag grass PBR (2026-11-03)
 
 **Owner asset:** The grass texture generated in chat is now a packaged, verified green WebP source. In Sheep Tag, both the original `stMeadowGround` and `MoonbellWildwoodGround` use a native `THREE.MeshStandardMaterial` containing a grass base color and derived tangent normal/roughness maps. Grass detail is composited only on green vegetation, preserving the authored roads, sanctuary, and previous large-scale map shapes.
