@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.233
+title: §wyrl§ Engine v11.235
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.235 — Astra Wolf motion and animation tools
+
+The native Wolf Rig & Motion controls now appear when tapping **Motion** in Model Atelier: clip selector, Play/Stop, playhead, bone pose controls, and **Set keyframe** beside Play on mobile. Wolf bone changes invalidate the existing HD render loop, so animations become visible during playback without moving the camera. The anatomical rig also uses more appropriate head, elbow, hock, limb and fur weights to reduce overstretching. The focused Android-width browser regression passed and reproduced a changing render without camera input. Other saved models, studios, Sheep Tag gameplay and the §C host remain intact. Source: 267 ordered patches, 68 media assets, 7,729,335 HTML bytes, SHA-256 `446edd4f0d7ff1fc8d59216035eef315159437bc70952457203e9a266ce728a5`. Physical Moto/Quest animation quality acceptance remains pending.
 
 ## §E v11.233 — §C native Material, Particle and Rig Studio commands (source candidate)
 
