@@ -4,10 +4,12 @@ import base64
 import gzip
 import hashlib
 import json
+import sys
 from pathlib import Path
-from build_space import load_patch
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
+from build_space import load_patch
 manifest = json.loads((ROOT / "source-manifest.json").read_text(encoding="utf-8"))
 assert manifest["name"] == "§wyrl§ Engine v11.231"
 assert manifest["patches"][-1] == "patches/v11_231_sheep_house_camera_fit.py"
