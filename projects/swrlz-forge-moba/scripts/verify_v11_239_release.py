@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify exact §E v11.239 Quest radial / editor workspace release source."""
+"""Verify exact §E v11.239 Quest gameplay XR raycast budget release source."""
 import argparse
 import hashlib
 import json
@@ -18,7 +18,7 @@ args = cli.parse_args()
 out = Path(args.output).resolve()
 manifest = json.loads((ROOT / "source-manifest.json").read_text(encoding="utf8"))
 assert manifest["name"] == "§wyrl§ Engine v11.239"
-assert manifest["finalArtifact"] == "swyrl_engine_v11_238.html"
+assert manifest["finalArtifact"] == "swyrl_engine_v11_239.html"
 assert len(manifest["patches"]) == 270
 assert manifest["patches"][-1] == "patches/v11_239_quest_gameplay_raycast_budget.py"
 assert manifest["finalBytes"] == EXPECTED_BYTES
@@ -70,6 +70,6 @@ print(json.dumps({
     "status":"PASS_SEALED_SOURCE","version":"v11.239",
     "patches":len(receipt["patches"]),"assets":len(receipt["assets"]),
     "htmlBytes":len(raw),"htmlSha256":EXPECTED_SHA,
-    "questMenu":"v11.239","questBrowserWorkspace":"v11.239",
+    "questMenu":"v11.238","questBrowserWorkspace":"v11.238","headturnBudget":"v11.239",
     "ownerHeadsetAcceptance":False
 },indent=2))
