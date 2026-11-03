@@ -1,3 +1,11 @@
+## §E v11.241 — Sheep Tag grass PBR (2026-11-03)
+
+**Owner asset:** The grass texture generated in chat is now a packaged, verified green WebP source. In Sheep Tag, both the original `stMeadowGround` and `MoonbellWildwoodGround` use a native `THREE.MeshStandardMaterial` containing a grass base color and derived tangent normal/roughness maps. Grass detail is composited only on green vegetation, preserving the authored roads, sanctuary, and previous large-scale map shapes.
+
+**VR/performance:** One-time material construction; 16 tiled repeats; subtle normal strength; mipmaps; Quest limits the assembled terrain to 1024px, while desktop Wildwood retains 2048px. The generated normal/roughness are approximations derived from the color source, not independent scanned physics maps. Native sheep/wolf play, house placement, VR controller mapping, fog, current head-turn fixes, and the new dedicated Particle Studio remain untouched.
+
+**Status:** v11.241 source integrity is sealed via `source-manifest.json`; Quest 2 visual performance and final appearance require owner acceptance. Append-only `patches/v11_241_sheep_grass_pbr.py` follows v11.240 Particle Authoring Chamber. Reference: `runtime/sheep_grass_pbr_v11_241.js`.
+
 ## §E v11.239 — Quest Sheep Tag fast-head-turn frame budget (2026-11-03)
 
 **Owner Quest 2 finding:** After v11.238, rapid head turns still reveal a hard black edge in the right side of the captured immersive view, with sporadic background stutter. The image alone cannot distinguish compositor reprojection, one-eye mirror clipping or missed application frames.
