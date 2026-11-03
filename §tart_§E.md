@@ -1,3 +1,9 @@
+## §E v11.233 — §C native Material, Particle and Rig Studio commands (source candidate)
+
+**New native host bridge:** The existing paired Chat side panel now advertises versioned, live-context Studio Commands v1 only in the correct studio tab. Supported operations are material create/edit/assign-to-scene-actor, particle emitter create/edit, existing hand/wolf bone pose, and animation keyframe save. Each is a bounded **single operation**, validated by both Chat server and native host against exact IDs, current project/studio/edit mode, and approved through the existing immutable design-preview/consent/receipt flow. The native material/particle transaction owners, Model Atelier rig storage, Sheep Tag gameplay and one WebGL renderer remain authoritative. No arbitrary JS, file imports, material-to-modeler-parts application, new hand-tracking capture, or code-based auto-rig generation is added.
+
+**Measured and sealed candidate:** v11.233, 265 ordered patches, 68 unchanged assets, **7,724,884 bytes** HTML, SHA-256 `8fdfc0275d2b3f87f276e4ee50abe595ca089b23a96bd1bdabef140eb9537771`. Candidate source reconstruction passed in GitHub Actions; full release-package/source verification, Chat-server promotion, HF deployment and owner Moto/Quest physical acceptance are separate pending gates. The prior v11.232 workspace-start fix is preserved.
+
 ## §E v11.232 — Native model starter now opens Modeling workspace (2026-11-02)
 
 **Owner screenshots / definitive regression:** When loading Sheep · Ram House or Astra · Furred Comet Courier, the game scene title/background changed but Game Engine remained highlighted and the outliner showed only World Ground. v11.188 deliberately prevents the native Model Atelier popup from opening while the game workspace remains active. The starter loaders were calling `ModelAtelier.open()` without activating the Modeling workspace first. This was a **workspace routing bug**, not missing 3D meshes and not primarily camera framing.
