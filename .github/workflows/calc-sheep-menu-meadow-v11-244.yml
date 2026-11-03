@@ -1,0 +1,25 @@
+name: Calculate Sheep Tag v11.244 Focused Build
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/calc-sheep-menu-meadow-v11-244.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  receipt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate only new Sheep Tag menu / destruction patch and build
+        shell: bash
+        run: |
+          python3 -m py_compile projects/swrlz-forge-moba/patches/v11_244_sheep_menu_meadow_capture.py
+          node --check projects/swrlz-forge-moba/runtime/sheep_removal_performance_v11_244.js
+          python3 projects/swrlz-forge-moba/build_space.py --output "$RUNNER_TEMP/grass-menu-244"
+          echo "SHEEP_244_BYTES=$(wc -c < "$RUNNER_TEMP/grass-menu-244/index.html")"
+          echo "SHEEP_244_SHA256=$(sha256sum "$RUNNER_TEMP/grass-menu-244/index.html" | cut -d' ' -f1)"
+          grep -q 'SWYRL_ENGINE_SHEEP_REMOVAL_PERFORMANCE_244' "$RUNNER_TEMP/grass-menu-244/index.html"
+          grep -q 'se244SheepMenuBlur' "$RUNNER_TEMP/grass-menu-244/index.html"
+          grep -q 'const sprigs=quest?6500:12000' "$RUNNER_TEMP/grass-menu-244/index.html"
