@@ -1,4 +1,5 @@
 name: Verify §E v11.232 model starter workspace routing
+# Retest active Astra wolf rig loader after scoping duplicate historical code.
 on:
   push:
     branches: [main]
