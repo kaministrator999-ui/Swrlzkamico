@@ -50,7 +50,7 @@ def apply(html):
     # selected clip, playhead, joint selectors, pose keys and reset controls.
     html=once(html,
       " controls.prepend(ui);\n const by=id=>document.getElementById('modelAtelierWolf'+id);",
-      " controls.prepend(ui);ui.open=true;\n const by=id=>document.getElementById('modelAtelierWolf'+id);",
+      " controls.prepend(ui);ui.open=true;const se235SaveKey=ui.querySelector('#modelAtelierWolfSaveKey');if(se235SaveKey){se235SaveKey.textContent='Set keyframe at playhead';ui.querySelector('.atelier-wolf-actions')?.after(se235SaveKey);}\n const by=id=>document.getElementById('modelAtelierWolf'+id);",
       'make wolf preview details discoverable on initial load')
 
     # The sole modeler render loop enables HD frame suppression when nothing
@@ -118,7 +118,7 @@ def apply(html):
       changes=[
         'On Android, choosing Motion for Astra now opens the existing Wolf Rig & Motion inspector; clip selector, Play/Stop, reset, playhead, skeleton, editable bones, and Save pose at playhead remain visible and usable.',
         'Correct native mode-view CSS hiding the Wolf Studio behind the generic context workbench; no duplicated controls or second modal added.',
-        'Keep the Wolf Rig & Motion details expanded on initial wolf loading, and return to the existing context inspector when another tool category is selected.',
+        'Keep the Wolf Rig & Motion details expanded on initial wolf loading, place Set keyframe beside Play on mobile, and return to the normal inspector when another tool category is selected.',
         'Invalidate the existing HD viewport when wolf bones change so Play, scrub and pose editing visibly animate without requiring camera orbit. Preserve the existing one-RAF, one-WebGL-renderer design.',
         'Preserve saved wolf clips, geometry, shaders, rig weights, Sheep Tag gameplay, other modeling tools, and existing single render loop.',
         'Owner Moto/Quest checks still required for UI interaction, animation quality and performance.'
