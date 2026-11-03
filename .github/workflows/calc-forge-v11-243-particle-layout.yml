@@ -7,7 +7,7 @@ on:
       - 'projects/swrlz-forge-moba/runtime/particle_studio_mobile_layout_v11_243.js'
       - 'projects/swrlz-forge-moba/patches/v11_243_particle_mobile_layout.py'
       - 'projects/swrlz-forge-moba/source-manifest.json'
-      - '.github/workflows/calc-forge-v11-242-particle-layout.yml'
+      - '.github/workflows/calc-forge-v11-243-particle-layout.yml'
   workflow_dispatch:
 permissions:
   contents: read
