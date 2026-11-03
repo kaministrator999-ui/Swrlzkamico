@@ -23,3 +23,5 @@ jobs:
           grep -q 'SWYRL_ENGINE_SHEEP_REMOVAL_PERFORMANCE_244' "$RUNNER_TEMP/grass-menu-244/index.html"
           grep -q 'se244SheepMenuBlur' "$RUNNER_TEMP/grass-menu-244/index.html"
           grep -q 'const sprigs=quest?6500:12000' "$RUNNER_TEMP/grass-menu-244/index.html"
+
+# Uses the first real </head> after the inherited embedded fragment was corrected.
