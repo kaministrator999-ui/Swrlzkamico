@@ -1,0 +1,47 @@
+name: Calculate §E v11.243 Particle Studio mobile candidate
+on:
+  push:
+    branches: [fix/engine-particle-mobile-ui-v11-243-20261103]
+    paths:
+      - 'projects/swrlz-forge-moba/runtime/particle_studio_mobile_layout_v11_243.css'
+      - 'projects/swrlz-forge-moba/runtime/particle_studio_mobile_layout_v11_243.js'
+      - 'projects/swrlz-forge-moba/patches/v11_243_particle_mobile_layout.py'
+      - 'projects/swrlz-forge-moba/source-manifest.json'
+      - '.github/workflows/calc-forge-v11-243-particle-layout.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Build complete append-only source
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_243_release.py --output /tmp/swrlz-v11-243
+      - name: Verify mobile isolation, native bridge and release seal
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib
+          raw=Path('/tmp/swrlz-v11-243/index.html').read_bytes()
+          assert Path('/tmp/swrlz-v11-243/modeler.html').read_bytes()==raw
+          text=raw.decode('utf8')
+          for must in (
+              'V11_243_PARTICLE_MOBILE_LAYOUT',
+              'id="se243ParticleLayout"',
+              'display:none!important;visibility:hidden!important;pointer-events:none!important',
+              '.app>.workspace>.panel',
+              'se243InspectorToggle',
+              'data-se243-inspector-open=true',
+              'node.open=title===\'Emitter & spawn\'',
+              'frame.setAttribute(\'allow\',\'clipboard-read; clipboard-write\')',
+              'function executeStudio(op)',
+              'SWYRL_ENGINE_PARTICLE_STAGE_240',
+              'se225StudioTabs',
+          ):assert must in text,must
+          print('PASS_ENGINE_243 bytes='+str(len(raw))+' SHA256='+hashlib.sha256(raw).hexdigest())
+          PY
