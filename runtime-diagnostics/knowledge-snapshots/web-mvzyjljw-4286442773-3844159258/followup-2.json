@@ -1,0 +1,15 @@
+{
+  "schema": "swrlz-knowledge-followup-v1",
+  "requestId": "web-mvzyjljw-4286442773-3844159258",
+  "modelId": "700m",
+  "eventType": "KNOWLEDGE_ACQUISITION_FOLLOWUP_2",
+  "sourceRef": "ad298617aaa15deb8f5620a2838598b5893fc63b",
+  "persistedAtUnixMs": 1793687264341,
+  "diagnostic": {
+    "schema": "swrlz-knowledge-followup-v1",
+    "parentRequestId": "web-mvzyjljw-4286442773-3844159258",
+    "turnIndex": 2,
+    "userText": "Create a magic particle emitter in the current §E Particle Studio.",
+    "capturedAtUnixMs": 1793687264340
+  }
+}
