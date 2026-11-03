@@ -1,0 +1,67 @@
+name: Diagnose §E Astra Wolf preview and skin deformation
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/diag-forge-v11-234-wolf-motion.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  wolf-viewport:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build sealed native editor and instrument local diagnostic copy
+        run: |
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/se234-wolf-diagnostic
+          python3 - <<'PY'
+          from pathlib import Path
+          helper=r"""window.SE234_WOLF_DIAG=()=>{
+           const parts=model()?.parts||[],meshes=modelRoot?.children.filter(m=>m.isSkinnedMesh)||[];
+           const byRegion={};for(const p of parts){const k=p.group||'Unknown';byRegion[k]=(byRegion[k]||0)+1;}
+           const weighted=[];
+           for(const m of meshes){
+            const skin=m.geometry.getAttribute('skinIndex'),w=m.geometry.getAttribute('skinWeight');
+            if(!skin||!w)continue;
+            const bones=m.skeleton?.bones||[],totals=new Map();
+            for(let i=0;i<skin.count;i+=Math.max(1,Math.floor(skin.count/80))){
+             for(let j=0;j<4;j++){
+              const name=bones[skin.getComponent(i,j)]?.name||'missing',
+               weight=w.getComponent(i,j);
+              totals.set(name,(totals.get(name)||0)+weight);
+             }
+            }
+            weighted.push({name:m.name,top:[...totals].sort((a,b)=>b[1]-a[1]).slice(0,3).map(([name,w])=>[name,+w.toFixed(2)])});
+           }
+           const bones=se224WolfBones;
+           const axis=name=>bones?.[name]?bones[name].rotation.toArray().slice(0,3).map(x=>+x.toFixed(4)):null;
+           return {frameCount:window.SE234_WOLF_FRAME_COUNT||0,renderFrame:renderer?.info?.render?.frame||0,
+            playing:se224WolfPreview.playing,elapsed:se224WolfPreview.elapsed,root:axis('wolf_root'),
+            head:axis('wolf_head'),fore:axis('wolf_fore_l'),hind:axis('wolf_hind_l'),tail:axis('wolf_tail'),
+            skinned:meshes.length,skinnedNames:weighted.slice(0,60),partsByRegion:byRegion,
+            unmatchedParts:parts.filter(p=>/tail|hind|fore|shoulder|leg|hoof|paw|head|neck|ruff|fur|belly|arm|elbow/i.test(p.name))
+              .map(p=>({name:p.name,group:p.group,position:p.position,scale:p.scale})).slice(0,62),
+            view:window.SWYRL_ENGINE_WORKSPACES?.inspect?.(),
+            status:window.SWYRL_ENGINE_WOLF_RIG?.status?.()};
+          };"""
+          key='function se224WolfPreviewFrame(){'
+          for file in ('index.html','modeler.html'):
+            p=Path('/tmp/se234-wolf-diagnostic')/file
+            s=p.read_text()
+            assert s.count(key)==1
+            s=s.replace(key,key+'\nwindow.SE234_WOLF_FRAME_COUNT=(window.SE234_WOLF_FRAME_COUNT||0)+1;\n'+helper,1)
+            p.write_text(s)
+          PY
+      - name: Install focused browser dependencies
+        run: |
+          npm install --no-save playwright@1.56.1 pngjs@7.0.0
+          npx playwright install --with-deps --only-shell chromium
+      - name: Compare model animation clock, skin poses and rendered pixels without camera input
+        run: node projects/swrlz-forge-moba/tests/ui_v11_234_wolf_motion_diag.mjs
