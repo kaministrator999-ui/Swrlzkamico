@@ -1,0 +1,45 @@
+name: Calculate §E v11.240 isolated Particle Studio source
+on:
+  push:
+    branches: [feature/engine-particle-authoring-stage-v11-240-20261103]
+    paths:
+      - 'projects/swrlz-forge-moba/patches/v11_240_particle_authoring_chamber.py'
+      - 'projects/swrlz-forge-moba/runtime/particle_authoring_stage_v11_240.js'
+      - 'projects/swrlz-forge-moba/source-manifest.json'
+      - '.github/workflows/calc-forge-v11-240-particle-chamber.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  calculate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Construct candidate without a provisional seal
+        run: |
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/particle-chamber
+      - name: Check exact new source and report canonical seal
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib
+          p=Path('/tmp/particle-chamber/index.html')
+          raw=p.read_bytes(); html=raw.decode('utf8')
+          assert (Path('/tmp/particle-chamber/modeler.html').read_bytes() == raw)
+          for needle in (
+            'V11_240_PARTICLE_AUTHORING_CHAMBER',
+            'window.SWYRL_ENGINE_PARTICLE_STAGE_240',
+            'const stageActive=window.SWYRL_ENGINE_PARTICLE_STAGE_240?.frame?.()===true;',
+            'const editEmitters=stageActive?',
+            'camera.layers.set(LAYER);',
+            'camera.layers.mask=state.saved.mask;',
+            'const SE223_PRESETS=Object.freeze({',
+            'function executeStudio(op)',
+          ):
+            assert needle in html, needle
+          print('PASS_Particle_Stage_240 byteCount=',len(raw),'sha256=',hashlib.sha256(raw).hexdigest())
+          PY
