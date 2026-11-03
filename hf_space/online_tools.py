@@ -637,7 +637,12 @@ def _lyrics_independent_snippet_corroboration(
         if not family or family==selected_family or family in families:
             continue
         score=candidate_score(row,identity)
-        if not (score.get("allowed") and score.get("exactTitle") and score.get("exactArtist")):
+        # A singer's NAME can contain a version-like word (e.g. "Demo"
+        # Ensemble), so candidate_score.allowed is too strict for this
+        # independent lyric-phrase witness role. Require exact song identity,
+        # an explicitly titled lyric result, and verbatim body overlap instead.
+        if not (score.get("exactTitle") and score.get("exactArtist")
+                and re.search(r"(?i)\blyrics?\b",str(row.get("title") or ""))):
             continue
         snippet=str(row.get("snippet") or "")
         tokens=_lyrics_informative_tokens(snippet,subject)
