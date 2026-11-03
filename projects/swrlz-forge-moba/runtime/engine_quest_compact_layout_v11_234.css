@@ -7,15 +7,15 @@ html.se-quest-panel[data-se-device-profile="quest-browser"] .app>.topbar{
   scroll-padding-inline:8px;
 }
 html.se-quest-panel[data-se-device-profile="quest-browser"] .app>.topbar>*{
-  position:relative;flex:0 0 auto;
+  flex:0 0 auto;
 }
 /* The formerly sticky left-hand studio rail obscures the scrolling toolbar
    inside Quest's resizable browser window. Keep it in document flow instead. */
 html.se-quest-panel[data-se-device-profile="quest-browser"] .app>.topbar .se187-game-tabs{
-  position:relative!important;left:auto!important;right:auto!important;
+  position:static!important;left:auto!important;right:auto!important;
   max-width:none!important;min-width:max-content!important;
   margin-left:0!important;margin-right:8px!important;
-  box-shadow:none!important;z-index:1;
+  box-shadow:none!important;z-index:auto!important;
 }
 /* 48px forced buttons plus parent border/padding were clipped by 48px rail. */
 html.se-quest-panel[data-se-device-profile="quest-browser"] .app>.topbar button{
