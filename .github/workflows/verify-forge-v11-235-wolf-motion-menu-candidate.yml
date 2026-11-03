@@ -1,4 +1,5 @@
 name: Validate §E v11.235 Wolf Motion menu candidate
+# Use outer document stylesheet injection; preserve the second embedded head.
 on:
   push:
     branches: [main]
