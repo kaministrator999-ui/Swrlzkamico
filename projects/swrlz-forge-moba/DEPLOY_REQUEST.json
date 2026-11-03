@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.236",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_236_SHEEP_GABLES_WOLF_ROOT_STARTER_GROUPS",
-  "reason": "Owner Moto visual feedback: four enclosed Sheep Tag building starter models lack front/rear attic gable pieces; wolf nose and cheek accessories lag the animated head; gait animations cause heavy root bob and spine rocking; Starter Games and Starter Models mixed in one list. Verified append-only v11.236: native indexed triangular solids front/rear and one real interior floor on Hut/Cottage/Barn/Ram House, leave open Shelter unchanged; bind nose/philtrum/cheek/smile details to head with 100% weights; reversible In place root height lock and Steady torso preview toggles on walk/run/stalk, without changing animation keys or gameplay; Starter Games/Starter Models sub-tabs while preserving My Projects and 11 default checkboxes. Narrow 390px actual browser PASS run 41575593800 including all 5 model part counts, face weights, Run bob 0.06928 to 0 with lock, 18% spine pitch with stabilization and 6 game/11 model cards. Strict release source seal PASS run 41575822465: 268 patches, 68 assets, 7,735,923 bytes, SHA-256 02056c0d0ff3722b503a03d6fe31ebfc4a99adbdeb2ba132b58d1ba447d105ae. Preserve existing saved custom models and Sheep Tag gameplay/LAN; physical Quest/phone acceptance pending.",
-  "sourceCommit": "374180baa1a30d20f08fae35c784a738d55b75e5",
-  "sourceIntegritySha256": "02056c0d0ff3722b503a03d6fe31ebfc4a99adbdeb2ba132b58d1ba447d105ae"
+  "releaseVersion": "v11.238",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_238_QUEST_RADIAL_AND_WORKSPACE",
+  "reason": "Owner approved §E v11.238 publication: Quest Sheep Tag circular VIEW radial may stutter and disappear due to >170ms visible XR gaps misclassified as Meta OS focus loss; keep actual OS blur/hidden and long-gap guards, cache radial UI rays/textures for the XR session. Quest Browser 2D Game Engine and Model Atelier topbar/tool rail were crowded and overlapping: accessible native Controls, Model actions, and Edit tools popovers while retaining original DOM handlers, Close and all game input. Strict sealed release source verification PASSED GitHub Actions run 41589738033, 269 patches, 68 original assets, 7,759,927 HTML bytes, exact SHA-256 b732a8868cd74ead21e085365d6c3004f5e71e63a9cfd473ae676b955179e13c. Source merge d14837038ed03f4eed1d59544c781eee31756482; owner Quest 2 live acceptance pending. Does not include experimental PRs #362 or #363.",
+  "sourceCommit": "d14837038ed03f4eed1d59544c781eee31756482",
+  "sourceIntegritySha256": "b732a8868cd74ead21e085365d6c3004f5e71e63a9cfd473ae676b955179e13c"
 }
