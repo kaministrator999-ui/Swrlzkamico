@@ -11,13 +11,19 @@ jobs:
   receipt:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-          filter: blob:none
-          sparse-checkout: |
-            projects/swrlz-forge-moba
+      - name: Retrieve source archive without git checkout
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          curl --fail --silent --show-error --location --retry 2 \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H 'Accept: application/vnd.github+json' \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/tarball/${GITHUB_SHA}" -o /tmp/engine-source.tgz
+          mkdir -p source
+          tar -xzf /tmp/engine-source.tgz -C source --strip-components=1
       - name: Validate only new Sheep Tag menu / destruction patch and build
+        working-directory: source
         shell: bash
         run: |
           python3 -m py_compile projects/swrlz-forge-moba/patches/v11_244_sheep_menu_meadow_capture.py
