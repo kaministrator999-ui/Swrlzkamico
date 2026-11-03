@@ -7,6 +7,7 @@ on:
       - 'projects/swrlz-forge-moba/runtime/particle_inspector_collapse_v11_245.js'
       - 'projects/swrlz-forge-moba/runtime/particle_inspector_collapse_v11_245.css'
       - 'projects/swrlz-forge-moba/source-manifest.json'
+      - 'projects/swrlz-forge-moba/scripts/verify_v11_245_release.py'
       - '.github/workflows/calc-forge-v11-245-particle-collapse.yml'
   workflow_dispatch:
 permissions:
