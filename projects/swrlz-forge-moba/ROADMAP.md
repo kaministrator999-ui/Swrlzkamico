@@ -1,3 +1,7 @@
+## §E v11.230 — Wolf Model load and rig bootstrap hotfix (2026-11-02)
+
+**Source correction delivered:** The effective v11.88 wolf loader bypassed the older v11.87 initializer that v11.227 modified. Its public wolf API was compensating with a second modeler close/open and full mesh rebuild. Initialize the rig and ten clips on the current wolf project before the one required viewport open, and leave existing user saves and Sheep Tag game physics untouched. Release source seal: 7,712,134 bytes / SHA-256 `f22f0ab28b072d6a60498ea82111e62212f2ffd71ba05a175a80a3750e689ac5`; physical hardware and clip-motion UX acceptance pending.
+
 ## §E v11.229 — Sheep house Model Atelier loading repair (2026-11-02)
 
 **Owner report reproduced and repaired:** All five v11.226 sheep-faction house starters failed actual native Model Atelier loading despite the initial geometry-only tests. The root causes were material names passed as box rotation angles (non-finite transforms), an undefined `P.trim` used for window mullions (invalid native colors), and inherited festival-character `modelAtelier.assemblies` named socket references pointing to deleted parts. The v11.229 append-only patch corrects only the assembled house builder's callsites and deletes inherited assemblies when creating fresh sheep-house starter copies. Existing saved user models and gameplay remain untouched.
