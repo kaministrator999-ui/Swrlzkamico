@@ -30,9 +30,10 @@ def apply(html):
     ):
         if expected not in html:
             raise AssertionError(("v11.245 missing prerequisite",expected))
-    html=once(html,"</head>",
+    # Assembled source includes a second inert documentation head; inject only first.
+    html=html.replace("</head>",
         '<style id="se245ParticleCollapseStyle">\n'+css+'\n</style>\n</head>',
-        "dedicated collapsed inspector CSS")
+        1)
     html=once(html,"window.SWRLZ_FORGE_BUILD=",
         js+"\nwindow.SWRLZ_FORGE_BUILD=",
         "single owner of collapsed inspector behavior")
