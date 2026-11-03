@@ -1,0 +1,56 @@
+/* §E v11.245 · real header-only collapse, not v11.243 Compact/Expand resize. */
+body[data-se225-workspace=particles] #se245ParticleCollapse{
+  display:inline-flex!important;align-items:center;justify-content:center;
+  flex:0 0 auto;min-height:36px;min-width:94px;padding:5px 8px;
+  border:1px solid #78abc1;border-radius:8px;
+  background:#1d465b;color:#e8fbff;
+  font:700 11px/1.1 system-ui;cursor:pointer;touch-action:manipulation;
+}
+body[data-se225-workspace=particles] #se245ParticleCollapse:focus-visible{
+  outline:2px solid #abf3ff;outline-offset:2px;
+}
+body[data-se225-workspace=particles] #se223Panel .se223-title>div:first-child{
+  min-width:0;flex:1 1 auto;
+}
+body[data-se225-workspace=particles] #se223Panel .se223-title strong{
+  display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+body[data-se225-workspace=particles][data-se245-particle-collapsed=true]
+  #se223Panel.se225-docked{
+  position:fixed!important;top:auto!important;
+  bottom:max(5px,env(safe-area-inset-bottom))!important;
+  height:59px!important;max-height:59px!important;min-height:0!important;
+  width:min(370px,calc(100vw - 10px))!important;
+  z-index:5500!important;
+}
+body[data-se225-workspace=particles][data-se245-particle-collapsed=true]
+  #se223Panel.se225-docked .se223-scroll{
+  display:none!important;
+}
+body[data-se225-workspace=particles][data-se245-particle-collapsed=true]
+  #se223Panel.se225-docked .se223-title{
+  flex:0 0 59px!important;min-height:59px!important;
+  padding:5px 8px!important;cursor:default!important;
+}
+body[data-se225-workspace=particles][data-se245-particle-collapsed=true]
+  #se243InspectorToggle{
+  display:none!important;
+}
+@media (max-width:850px),(pointer:coarse) and (max-width:1024px){
+ body[data-se225-workspace=particles][data-se245-particle-collapsed=true]
+   #se223Panel.se225-docked{
+   left:5px!important;right:5px!important;
+   width:calc(100vw - 10px)!important;
+ }
+}
+@media(max-width:420px){
+ body[data-se225-workspace=particles] #se223Panel .se223-title small{
+   display:none!important;
+ }
+ body[data-se225-workspace=particles] #se223Panel .se223-title strong{
+   font-size:12px;line-height:1.2;
+ }
+ body[data-se225-workspace=particles] #se245ParticleCollapse{
+   min-width:79px;padding:4px 5px;font-size:10px;
+ }
+}
