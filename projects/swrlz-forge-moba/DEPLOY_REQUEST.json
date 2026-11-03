@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.239",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_239_QUEST_HEADTURN_RAYCAST_BUDGET",
-  "reason": "Owner Quest 2 visual feedback after v11.238: a black right-edge render region appears when turning head quickly. v11.239 removes duplicated v11.181 full-scene actor triangle raycasts for both controllers during immersive Sheep Tag Play; keeps dedicated EXIT VR panel ray and unchanged editor actor picking outside play, v11.238 radial UI, joystick, placement, tracking, projection, fog and renderer quality. Includes read-only frame-gap instrumentation. Strict generated source and 68 media assets PASS GitHub Actions run 41592297166: 270 patches, 7,763,865 HTML bytes, SHA-256 684bb107e5f88a011d6ad71f0f86479a6138de5b315a78b1fe13e764be55d57c. Release merged from PR #365 at 5af6b53cade0aefa229ce6ede90f226bfc912077. Quest 2 performance/black-region acceptance pending; screenshot alone does not prove compositor cause.",
-  "sourceCommit": "5af6b53cade0aefa229ce6ede90f226bfc912077",
-  "sourceIntegritySha256": "684bb107e5f88a011d6ad71f0f86479a6138de5b315a78b1fe13e764be55d57c"
+  "releaseVersion": "v11.240",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_240_PARTICLE_AUTHORING_CHAMBER",
+  "reason": "Owner-requested standalone Particle Studio workspace and §C native emitter reliability. §E v11.240 sealed 271 patches, 7,771,280 HTML bytes, 68 media assets, SHA-256 e63b2a1265015cefe290d3daf3adacca7207c5048285c3574f6e782f5169c015. Source and JavaScript checks PASS run 41593613368. PR #366 squash merged at 5ae09b00e23ee1f3ce10d7bacc8ce7ff4c3f84b8. Dedicated 3D chamber shares current renderer, project VFX definitions remain native, player scene/actor data untouched. Quest 2 and Moto G hands-on acceptance pending.",
+  "sourceCommit": "5ae09b00e23ee1f3ce10d7bacc8ce7ff4c3f84b8",
+  "sourceIntegritySha256": "e63b2a1265015cefe290d3daf3adacca7207c5048285c3574f6e782f5169c015"
 }
