@@ -1,0 +1,49 @@
+// Focused viewport diagnostic: one 390px modeler session, 5 sheep houses.
+import {chromium} from 'playwright';
+import fs from 'node:fs';
+import path from 'node:path';
+import {PNG} from 'pngjs';
+const base='/tmp/se230-visibility';
+const host='https://kamiloki-swrlz-forge-moba.static.hf.space';
+const ids=['sheep-free-shelter','sheep-thatched-hut','sheep-cottage','sheep-barn','sheep-ram-house'];
+const browser=await chromium.launch({headless:true,args:['--no-sandbox','--disable-dev-shm-usage','--enable-webgl','--enable-unsafe-swiftshader']});
+try{
+ const ctx=await browser.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true,ignoreHTTPSErrors:true});
+ await ctx.route('**/*',route=>{
+  const url=new URL(route.request().url());
+  if(url.origin===host){
+   const rel=url.pathname==='/'?'index.html':url.pathname.replace(/^\/+/,'');
+   const file=path.resolve(base,rel);
+   if(file===base||!file.startsWith(base+'/')||!fs.existsSync(file))return route.fulfill({status:404,body:'not bundled'});
+   return route.fulfill({status:200,path:file,contentType:rel.endsWith('.html')?'text/html':undefined});
+  }
+  if(['cdn.jsdelivr.net','cdnjs.cloudflare.com','unpkg.com'].includes(url.host))return route.continue();
+  return route.abort();
+ });
+ const page=await ctx.newPage();
+ page.on('pageerror',e=>console.log('SE230_PAGE_ERROR',String(e)));
+ await page.goto(host+'/modeler.html?project=sheep-free-shelter',{waitUntil:'domcontentloaded',timeout:90000});
+ await page.waitForFunction(()=>window.SWYRL_ENGINE_MODEL_ATELIER?.status?.().count===18,null,{timeout:30000});
+ for(const id of ids){
+  await page.evaluate(id=>window.SWYRL_ENGINE_SHEEP_BUILDING_STARTERS.open(id,true),id);
+  await page.waitForTimeout(440);
+  const info=await page.evaluate(()=>({
+   status:window.SWYRL_ENGINE_MODEL_ATELIER?.status?.(),
+   view:window.SWYRL_ENGINE_VIEW?.status?.(),
+   diagram:window.SE230_HOUSE_DIAG?.(),
+   viewport:(()=>{const e=document.getElementById('modelAtelierViewport'),c=e?.querySelector('canvas');return {rect:e?.getBoundingClientRect().toJSON(),canvas:c?.getBoundingClientRect().toJSON(),canvasVisible:!!c?.getClientRects().length,css:c&&getComputedStyle(c).display}})()
+  }));
+  const buf=await page.locator('#modelAtelierViewport canvas').screenshot();
+  const png=PNG.sync.read(buf),pixels=png.data;
+  let chromatic=0,bright=0,red=0,gold=0,total=0;
+  for(let y=0;y<png.height;y+=3)for(let x=0;x<png.width;x+=3){
+   const i=(y*png.width+x)*4,r=pixels[i],g=pixels[i+1],b=pixels[i+2];total++;
+   if(Math.max(r,g,b)-Math.min(r,g,b)>40&&Math.max(r,g,b)>65)chromatic++;
+   if(Math.max(r,g,b)>180)bright++;
+   if(r>g*1.3&&r>b*1.3&&r>70)red++;
+   if(r>120&&g>85&&b<100)gold++;
+  }
+  console.log('SE230_VIEW',id,JSON.stringify(info),'pixels',JSON.stringify({width:png.width,height:png.height,chromatic,bright,red,gold,total}));
+ }
+ await ctx.close();
+}finally{await browser.close();}
