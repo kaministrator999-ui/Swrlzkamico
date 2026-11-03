@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.239",
+  "name": "§wyrl§ Engine v11.240",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_239.html",
+  "finalArtifact": "swyrl_engine_v11_240.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -284,8 +284,9 @@
     "patches/v11_235_wolf_motion_tools_visibility.py",
     "patches/v11_236_sheep_gables_wolf_root_starter_groups.py",
     "patches/v11_238_quest_radial_workspace_comfort.py",
-    "patches/v11_239_quest_gameplay_raycast_budget.py"
+    "patches/v11_239_quest_gameplay_raycast_budget.py",
+    "patches/v11_240_particle_authoring_chamber.py"
   ],
-  "finalBytes": 7763865,
-  "finalSha256": "684bb107e5f88a011d6ad71f0f86479a6138de5b315a78b1fe13e764be55d57c"
+  "finalBytes": null,
+  "finalSha256": null
 }
