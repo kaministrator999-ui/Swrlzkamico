@@ -59,6 +59,7 @@ try{
  const first=shots[1].data,last=shots.at(-1).data;
  console.log('SE234_SUMMARY',JSON.stringify({
   initialFrame:before.frameCount,finalFrame:last.frameCount,
+  renderCalls:await page.evaluate(()=>window.SE234_RENDER_CALLS||0),
   frameDelta:last.frameCount-before.frameCount,
   renderDelta:last.renderFrame-before.renderFrame,
   initialHead:before.head,lastHead:last.head,
