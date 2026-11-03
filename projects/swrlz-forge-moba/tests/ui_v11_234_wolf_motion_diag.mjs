@@ -31,10 +31,10 @@ try{
  const page=await ctx.newPage();
  page.on('pageerror',e=>console.log('SE234_PAGE_ERROR',String(e).slice(0,650)));
  await page.goto(host+'/index.html',{waitUntil:'domcontentloaded',timeout:90000});
- await page.waitForFunction(()=>window.SWYRL_ENGINE_MODEL_ATELIER?.loadAnimal&&window.SE234_WOLF_DIAG,null,{timeout:35000});
+ await page.waitForFunction(()=>typeof window.SWYRL_ENGINE_MODEL_ATELIER?.loadAnimal==='function',null,{timeout:35000});
  const ok=await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.loadAnimal('wolf',{force:true}));
  console.log('SE234_LOAD',ok);
- await page.waitForFunction(()=>window.SWYRL_ENGINE_WOLF_RIG?.status?.().skinned&&window.SWYRL_ENGINE_WORKSPACES?.active?.()==='modeler',null,{timeout:60000});
+ await page.waitForFunction(()=>window.SWYRL_ENGINE_WOLF_RIG?.status?.().skinned&&window.SWYRL_ENGINE_WORKSPACES?.active?.()==='modeler'&&window.SE234_WOLF_DIAG,null,{timeout:60000});
  const before=await page.evaluate(()=>window.SE234_WOLF_DIAG());
  console.log('SE234_NEUTRAL',JSON.stringify(before).slice(0,11000));
  await page.evaluate(()=>{const e=document.getElementById('seReleaseNotesDialog');if(e?.open)e.close();});
