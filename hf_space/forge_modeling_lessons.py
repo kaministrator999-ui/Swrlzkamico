@@ -11,7 +11,7 @@ from typing import Any
 
 _MODEL_WORDS = re.compile(
     r"\b(?:model(?:er|ing)?|atelier|mesh(?:es)?|sculpt(?:ing)?|vertex|vertices|"
-    r"polygon|topolog(?:y|ical)|uvs?|texture|rig(?:ging)?|skeleton|bone(?:s)?|"
+    r"polygon|topolog(?:y|ical)|uvs?|textures?|materials?|pbr|gui|hud|game|gameplay|scene|building|rig(?:ging)?|skeleton|bone(?:s)?|"
     r"skinn(?:ing|ed)|weight(?:s|ed| painting)?|animat(?:e|ion|ing)|"
     r"glove|floating hand|hand|palm|fingers?|thumb|knuckle|gestures?|gizmo|"
     r"armature|joints?|wrist|skinned|pose|posing|keyframes?|timeline|clip|"
@@ -49,12 +49,26 @@ _EXPORT = re.compile(r"\b(?:export|import|obj|save|load|json|project|undo|redo)\
 _BASE = (
     "§E MODELER REFERENCE (source-grounded instructions, NOT tool access): "
     "The native Model Atelier stores editable parts in project.modelAtelier. "
-    "Current §C live tools are mesh.add/set/select/duplicate/remove, with "
-    "editor.undo/redo separately; only a fresh authorized §E host may execute "
-    "approved typed operations and report real receipts. Never invent IDs, "
+    "§C supports typed mesh/scene/project/history edits and optional Studio "
+    "Commands v1 material/particle/rig steps only when the currently leased §E "
+    "host advertises exact targets; approval and real receipts are mandatory. Never invent IDs, "
     "claim an edit ran, or treat a text plan as saved geometry."
 )
 _TOPICS = {
+    "materials-studio": (
+        "§E Material & Texture Studio owns currentProject.materialStudio, up to "
+        "12 PBR materials and eight texture patterns. Native Apply assigns to "
+        "GAME scene actors, not Model Atelier parts or automatic UV unwrap. "
+        "§C material.create/set/assign only with fresh Studio Commands v1 "
+        "Materials tab, exact actor/material IDs and approved host receipts."
+    ),
+    "game-studio": (
+        "§E Game Engine scene actors, GUI and gameplay are separate from "
+        "Model Atelier geometry. guiStudio has up to 24 native GUI items; "
+        "editor-preview hide is not Show in Play. §C existing typed scene "
+        "actions require current IDs; direct GUI writes and arbitrary code "
+        "remain unsupported. Do not invent a game-state integration."
+    ),
     "wolf": (
         "Astra Wolf source defines a 14-bone parented armature and FOUR "
         "normalized skin influences per vertex in Model Atelier. Ten clip "
@@ -64,7 +78,8 @@ _TOPICS = {
         "with shared pose formulas, NOT the high-detail SkinnedMesh model. "
         "Capture, AI, movement rules and LAN are separate. Source v11.225 "
         "Wolf Model must be checked against the sealed manifest/host before "
-        "claiming a live release. No §C Chat-native wolf rig or clip tool."
+        "claiming a live release. Single-bone wolf posing and one clip keyframe "
+        "require Studio Commands v1 host, selected clip and explicit approval."
     ),
     "particle": (
         "Sealed §E v11.224 Particle Studio belongs to GAME EDITOR scene "
@@ -73,8 +88,8 @@ _TOPICS = {
         "576 total; project JSON saves validated definitions, not temporary "
         "GPU THREE.Points resources. Actor-attached emitters follow the actor "
         "but already spawned motes remain world-space. Legacy Sheep Tag "
-        "build sparkles are separate. §C has NO native particle.create "
-        "operation; explain UI and receipt limits instead of faking edits."
+        "build sparkles are separate. §C particle.create/set require an active "
+        "Studio Commands v1 host in the Particle tab and exact native receipts."
     ),
     "sheep": (
         "§E Clover Model Atelier v11.222 plays reversible part-transform "
@@ -90,30 +105,32 @@ _TOPICS = {
         "17-bone wrist/palm/finger/thumb armature with four-influence skin weights "
         "and THREE.SkinnedMesh deformation. The Rig · Pose · Animate UI edits joints "
         "and authored animation; old saved gloves are NOT auto-rigged. This is "
-        "an §E editor UI feature, NOT a new §C Chat-native rig/bone operation. "
-        "Quest tracking retargeting is unverified; never invent its integration."
+        "a native §E editor UI feature. §C rig.pose/keyframe require exact "
+        "current Studio Commands v1 bone IDs and approval. Quest tracking "
+        "retargeting remains unverified; never invent its integration."
     ),
     "animation": (
         "§E v11.220 new rigged glove supports Open/Fist/Point/Pinch poses, "
         "Curl/X Twist/Y Spread/Z, timeline Save/Delete key, scrub, Play/Stop, "
         "duration and looping. Up to 32 ordered keys; 2+ to animate. Native "
         "JSON preserves rig/clip; OBJ exports posed vertices, not bones or keys. "
-        "§C Chat still cannot call a native bone/pose/keyframe action. Explain "
-        "real UI steps, not fictional tool execution or a saved receipt."
+        "§C can propose one rig.pose/keyframe only with current host Studio "
+        "Commands v1 capability, correct rig and exact host receipt. Never "
+        "claim animation keys were saved without a native receipt."
     ),
     "weight": (
         "For the §E 17-bone glove, diagnose deformation by inspecting the "
         "neutral mesh, parented rest joints, four normalized per-vertex "
         "influences and bind matrices before changing geometry. Rigid whole-"
-        "part transforms are not skinning. There is no Chat-native weight-"
-        "paint or bone transform tool. Cite the source revision."
+        "part transforms are not skinning. Chat cannot paint skin weights; "
+        "one bone pose needs live Studio Commands v1 capability. Cite source."
     ),
     "pose": (
         "§E Rig studio has Curl/X, Twist/Y, Spread/Z joint sliders, helper "
         "overlay and saved joint poses. Finger length/proportion edits belong "
         "to neutral anatomy, not joint rotations; thumb CMC/MCP/IP are distinct. "
-        "A joint ID is not a Model Atelier mesh part ID; Chat cannot call "
-        "a rig.pose operation. Do not claim a pose was executed."
+        "A joint ID is not a Model Atelier mesh part ID; rig.pose is allowed "
+        "only with a live Studio Commands v1 host and exact bone receipt."
     ),
     "gesture": (
         "§E v11.221 retains the 17-bone rig and adds 14 native gesture presets: "
@@ -135,8 +152,8 @@ _TOPICS = {
         "rest/bind transforms. Require opted-in hand-tracking XR session, "
         "handedness and valid XR joint poses; null/occlusion is missing "
         "data, not zero rotation. No §C/§E WebXR capture/retarget bridge "
-        "or Chat-native rig keyframe command is verified. Existing rig "
-        "timeline has max 32 authored keys; dense capture needs new work."
+        "is verified. Studio Commands v1 keyframe writes are manually "
+        "authored only; dense capture needs new work."
     ),
     "research": (
         "§C can use already existing online_tools.py and bounded server "
@@ -208,6 +225,10 @@ def select_modeling_lesson(
         topic = "tracking"
     elif _PARTICLE.search(prompt):
         topic = "particle"
+    elif re.search(r"\b(?:materials?|textures?|pbr|roughness|metalness)\b", prompt, re.I):
+        topic = "materials-studio"
+    elif re.search(r"\b(?:game(?:play| engine| design)?|gui|hud|scene|building)\b", prompt, re.I):
+        topic = "game-studio"
     elif _WOLF.search(prompt):
         topic = "wolf"
     elif _SHEEP.search(prompt):
