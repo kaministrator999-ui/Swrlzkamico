@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.229
+title: §wyrl§ Engine v11.230
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.230 — Wolf Model first-load rig repair (2026-11-02)
+
+Fixed the active Astra Wolf Model starter loader, which had bypassed the rig initialization and relied on a second costly editor close/reopen. Wolf Model now receives the same 14-joint rig, ten motion clips and editable face details *before its first modeler render*, with the Wolf Rig & Motion controls available immediately. The sheep-game wolf, other starters and existing saved projects are untouched. Verified source: **262 ordered patches**, **7,712,134 HTML bytes**, SHA-256 `f22f0ab28b072d6a60498ea82111e62212f2ffd71ba05a175a80a3750e689ac5`. Android/Quest acceptance pending. See `docs/WOLF_MODEL_SINGLE_PASS_LOAD_V11_230.md`.
 
 ## §E v11.229 — Sheep house native model loading repaired
 
