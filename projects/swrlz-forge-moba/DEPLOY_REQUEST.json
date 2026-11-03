@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.244",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_244_SHEEP_MENU_GRASS_REMOVAL",
-  "reason": "Owner-requested Sheep Tag corrections from phone screenshots and Quest 2 observations: remove oversized transparent menu blur by confining backdrop to title card; add fine nonrepeating vegetation sprigs over the v11.242 natural grass; hide destroyed buildings immediately but dispose mesh/material resources one per idle slice; batch navigation invalidation on sheep capture and stagger old bot path recalculation via a safe wrapper without changing native stMoveUnit implementation. Preserve existing roads, fog, sheep/wolf building/capture rules, LAN authority, current VR controller mappings, Quest head-turn fixes and Particle Studio. Focused source assembly PASSED GitHub Actions run 41690720150 with exactly 275 ordered patches, 69 assets, 7,789,769 HTML bytes, SHA256 b0b9190b2c721b2093dc8bad2a514e9dc02129035945ddad9d5343ad01c0e894. Source head 72f6d2b18efc7ce094db87aaa7a0275b5b5b623a. Phone and Quest 2 visual/performance acceptance pending.",
-  "sourceCommit": "72f6d2b18efc7ce094db87aaa7a0275b5b5b623a",
-  "sourceIntegritySha256": "b0b9190b2c721b2093dc8bad2a514e9dc02129035945ddad9d5343ad01c0e894"
+  "releaseVersion": "v11.245",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_245_PARTICLE_INSPECTOR_COLLAPSE",
+  "reason": "Owner Moto G Power report: Particle Studio's v11.243 Compact control resized between 43dvh and 72dvh but never collapsed the bottom inspector. v11.245 adds separate accessible Collapse/Show controls, header-only 59px dock, scroll inert/ARIA state, preserves expand mode and editor VFX settings, resets on workspace exit. Retains all v11.244 Sheep Tag grass, menu and performance fixes, v11.240 one-renderer VFX chamber and §C native-approved operations. Full sealed v11.245 verification PASSED workflow 41698611152: 276 patches, 69 assets, 7796041 bytes, SHA256 b4652dcccdb83b622532d5991d623b1aface82706d67a583e396d699a3db9426. Squash merge PR #372 commit 93eba4d609bc3000038070868eca6635e0041a7e. Owner phone/Quest acceptance outstanding.",
+  "sourceCommit": "93eba4d609bc3000038070868eca6635e0041a7e",
+  "sourceIntegritySha256": "b4652dcccdb83b622532d5991d623b1aface82706d67a583e396d699a3db9426"
 }
