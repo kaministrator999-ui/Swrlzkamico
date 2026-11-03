@@ -361,9 +361,9 @@ def explicit_particle_create_plan(prompt: str, summary: dict[str, Any]) -> dict[
             or len(state.get("items", [])) >= 12):
         return None
     command = current_command_text(prompt).lower()
-    if not re.match(r"^\\s*(?:please\\s+)?(?:create|make|add|spawn|insert)\\b", command):
+    if not re.match(r"^\s*(?:please\s+)?(?:create|make|add|spawn|insert)\b", command):
         return None
-    if not re.search(r"\\b(?:particle\\s+(?:emitter|effect)|emitter)\\b", command):
+    if not re.search(r"\b(?:particle\s+(?:emitter|effect)|emitter)\b", command):
         return None
     # Every significant word must belong to this precise one-action grammar.
     # Locations, actor names, and compound changes fall through to the model.
