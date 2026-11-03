@@ -1,4 +1,5 @@
 name: Validate §E v11.236 houses wolf root starter tabs candidate
+# Validate corrected face word-boundary and Run root-bob test sample.
 on:
   push:
     branches: [main]
