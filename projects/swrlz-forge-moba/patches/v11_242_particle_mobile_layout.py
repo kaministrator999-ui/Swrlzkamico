@@ -42,6 +42,12 @@ def apply(html):
     html = once(html, 'window.SWRLZ_FORGE_BUILD=', js + '\nwindow.SWRLZ_FORGE_BUILD=',
                 "mobile inspector button controller")
 
+    # Explicit clipboard capability for the cross-origin embedded Chat iframe.
+    # Actual clipboard access still needs a direct user gesture and browser consent.
+    html = once(html, "frame.setAttribute('allow','clipboard-write')",
+                "frame.setAttribute('allow','clipboard-read; clipboard-write')",
+                "embedded Chat clipboard permission policy")
+
     before = " source.engine='§wyrl§ Engine · Maker v11.241';source.version=11.241;"
     if html.count(before) != 2:
         raise AssertionError(("v11.242 source provenance", html.count(before)))
