@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.235
+title: §wyrl§ Engine v11.236
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,16 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.236 — Complete sheep houses, steadier Wolf animations and organized starters
+
+**Sheep house models:** Closed front and rear triangular attic walls and an editable interior floor now complete the Thatched Hut, Cottage, Barn and Ram House starter models. The Free Shelter intentionally stays open.
+
+**Astra Wolf modeling:** Nose, cheek ruff and smile details follow the skull during head animation. Two new preview checkboxes in Wolf Motion—**In place (lock root height)** and **Steady torso**—reduce walking/running body bob and rocking without overwriting animation clips or changing gameplay.
+
+**Projects:** Starter Projects now has separate **Starter Games** and **Starter Models** tabs; My Projects and all default-selection checkboxes remain intact.
+
+Focused 390px mobile browser acceptance passed; physical Moto/Quest testing is pending. Verified source: 268 patches, 68 existing media assets, 7,735,923 HTML bytes, SHA-256 `02056c0d0ff3722b503a03d6fe31ebfc4a99adbdeb2ba132b58d1ba447d105ae`. Existing saved custom model files are not rewritten.
 
 ## §E v11.235 — Astra Wolf motion and animation tools
 
