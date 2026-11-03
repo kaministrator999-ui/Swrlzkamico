@@ -14,6 +14,7 @@ from typing import Any, Callable, Iterator
 from brain_forge import classify_forge_intent, current_command_text, inspection_text, native_plan_system, requests_new_project, _literal
 from forge_workspace_insights_v1 import build_insight
 from forge_design_preview_v1 import wants_preview, should_preview, build_preview, approval_id
+from forge_studio_commands_v1 import STUDIO_SCHEMA, STUDIO_LABELS, validate_studio_operation, StudioCommandError
 
 MAX_OPERATIONS = 16
 MAX_PLAN_BYTES = 24576
@@ -39,11 +40,13 @@ _SCHEMA = {
     "editor.undo": ({"op"}, {"op"}),
     "editor.redo": ({"op"}, {"op"}),
 }
+_SCHEMA.update(STUDIO_SCHEMA)
 _LABELS = {"project.create": "create separate project", "mesh.add": "add mesh", "mesh.set": "edit mesh", "mesh.select": "select mesh",
            "mesh.duplicate": "duplicate mesh", "mesh.remove": "remove mesh",
            "sceneactor.add": "add scene actor", "sceneactor.transform": "transform scene actor",
            "sceneactor.select": "select scene actor", "sceneactor.rename": "rename scene actor",
            "editor.undo": "undo", "editor.redo": "redo"}
+_LABELS.update(STUDIO_LABELS)
 
 
 class ForgePlanError(ValueError):
@@ -57,11 +60,16 @@ def operation_contract() -> dict[str, Any]:
     return {
         "version": "swrlz-forge-native-v2", "maximumOperations": MAX_OPERATIONS,
         "workspaceRules": {"model-atelier": "mesh.*, project.create and available editor.undo/redo",
-                           "scene": "sceneactor.*, project.create and available editor.undo/redo"},
+                           "scene": "sceneactor.*, project.create and available editor.undo/redo",
+                           "materials": "material.* only with studioCommands and active Materials tab",
+                           "particles": "particle.* only with studioCommands and active Particle tab",
+                           "model-rig": "rig.pose/keyframe only with studioCommands and active Modeler rig"},
         "operations": {name: {"required": sorted(required), "optional": sorted(allowed - required)}
                        for name, (required, allowed) in _SCHEMA.items()},
         "meshKinds": list(MESH_KINDS), "sceneActorPrefabs": list(ACTOR_PREFABS),
-        "materials": list(MATERIALS), "name": "1–100 literal characters",
+        "materials": list(MATERIALS),
+        "studioCommands": "Host-advertised studioCommands v1, exact source IDs, single-op review approval required; old §E hosts do NOT gain these actions",
+        "name": "1–100 literal characters",
         "color": "#RRGGBB", "vectors": "arrays [x,y,z], three finite numbers",
         "positionAndRotation": "each component between -100 and 100; rotations in radians",
         "scale": "each component greater than .005 and at most 20",
@@ -81,7 +89,13 @@ def native_plan_response_format() -> dict[str, Any]:
     fields = {"id": {"type": "string"}, "name": {"type": "string"}, "starterId": {"type": "string"},
               "position": vector, "rotation": vector, "scale": vector,
               "color": {"type": "string"}, "material": {"enum": list(MATERIALS)},
-              "kind": {"enum": list(MESH_KINDS)}, "prefab": {"enum": list(ACTOR_PREFABS)}}
+              "kind": {"enum": list(MESH_KINDS)}, "prefab": {"enum": list(ACTOR_PREFABS)},
+              "actorId": {"type": "string"}, "boneId": {"type": "string"}, "clip": {"type": "string"},
+              "preset": {"type": "string"}, "baseColor": {"type": "string"},
+              "startColor": {"type": "string"}, "endColor": {"type": "string"},
+              "roughness": {"type": "number"}, "metalness": {"type": "number"},
+              "glow": {"type": "number"}, "rate": {"type": "number"},
+              "life": {"type": "number"}, "size": {"type": "number"}, "time": {"type": "number"}}
     variants = []
     for name, (required, allowed) in _SCHEMA.items():
         properties = {"op": {"const": name}, **{key: fields[key] for key in sorted(allowed - {"op"})}}
@@ -163,6 +177,12 @@ def validate_operations(context, operations: Any) -> list[dict[str, Any]]:
         required, allowed = _SCHEMA[name]
         if not required <= set(proposed) or not set(proposed) <= allowed:
             raise ForgePlanError("FORGE_INVALID_NATIVE_OPERATION_FIELDS")
+        if name in STUDIO_SCHEMA:
+            try:
+                canonical.append(validate_studio_operation(summary, proposed, len(operations)))
+            except StudioCommandError as exc:
+                raise ForgePlanError(exc.code) from exc
+            continue
         if name == "project.create":
             starters = summary.get("starters")
             if (len(operations) != 1 or not isinstance(starters, list) or not 1 <= len(starters) <= 16
@@ -252,7 +272,18 @@ def _validate_requested_actions(prompt: str, operations: list[dict[str, Any]]) -
     explicit = {"mesh.remove": r"\b(?:remove|delete)\b",
                 "mesh.duplicate": r"\b(?:duplicate|copy)\b",
                 "editor.undo": r"\bundo\b", "editor.redo": r"\bredo\b"}
+    studio_verbs = {
+        "material.create": r"\b(?:create|make|add)\b",
+        "material.set": r"\b(?:change|set|edit|adjust|paint|recolor)\b",
+        "material.assign": r"\b(?:assign|apply)\b",
+        "particle.create": r"\b(?:create|make|add)\b",
+        "particle.set": r"\b(?:change|set|edit|adjust|move|recolor)\b",
+        "rig.pose": r"\b(?:pose|rotate|set|move|bend|adjust)\b",
+        "rig.keyframe": r"\b(?:save|add|create|insert|keyframe)\b",
+    }
     for op in operations:
+        if op["op"] in studio_verbs and not re.search(studio_verbs[op["op"]], command, re.I):
+            raise ForgePlanError("FORGE_UNREQUESTED_STUDIO_ACTION")
         if (op["op"] == "project.create") != requests_new_project(prompt):
             raise ForgePlanError("FORGE_UNREQUESTED_NATIVE_ACTION")
         if op["op"] == "project.create":
