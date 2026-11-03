@@ -1,0 +1,402 @@
+{
+  "schema": "swrlz-knowledge-acquisition-snapshot-v1",
+  "requestId": "web-mvzxgb3j-1930227488-3766829033",
+  "modelId": "700m",
+  "eventType": "KNOWLEDGE_ACQUISITION_SNAPSHOT",
+  "sourceRef": "e6232d45b75065f873212cff244938f04014c78d",
+  "persistedAtUnixMs": 1793664377258,
+  "diagnostic": {
+    "schema": "swrlz-knowledge-acquisition-snapshot-v1",
+    "requestId": "web-mvzxgb3j-1930227488-3766829033",
+    "trigger": {
+      "userText": "Now can you provide lyrics for roll call by tech n9ne",
+      "sha256": "4a2e3d461a19b8e73acb09ebbc28277987b60180e9634ca4354100a2b60b3383"
+    },
+    "research": {
+      "kind": "search",
+      "status": "NO_RESULTS",
+      "provider": "bounded-web-search-chain-v1",
+      "reason": "existing-lyrics-retrieval",
+      "query": "",
+      "resultCount": 0,
+      "sources": [],
+      "sourceSites": [],
+      "widgetKinds": [],
+      "trace": [
+        {
+          "phase": "SEARCH_PROVIDER_EMPTY",
+          "provider": "duckduckgo-lite",
+          "activity": "No usable results from provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_VISIT",
+          "provider": "bing-html",
+          "activity": "Searching provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_RESULTS",
+          "provider": "bing-html",
+          "activity": "Search results found",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_IRRELEVANT",
+          "provider": "bing-html",
+          "activity": "Provider returned no matching song/artist results",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "LYRICS_RESCUE_SEARCH",
+          "provider": "bounded-web-search-chain-v1",
+          "activity": "Trying bounded lyrics discovery search",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_VISIT",
+          "provider": "duckduckgo-html",
+          "activity": "Searching provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_EMPTY",
+          "provider": "duckduckgo-html",
+          "activity": "No usable results from provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_VISIT",
+          "provider": "duckduckgo-lite",
+          "activity": "Searching provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_EMPTY",
+          "provider": "duckduckgo-lite",
+          "activity": "No usable results from provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_VISIT",
+          "provider": "bing-html",
+          "activity": "Searching provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_RESULTS",
+          "provider": "bing-html",
+          "activity": "Search results found",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_IRRELEVANT",
+          "provider": "bing-html",
+          "activity": "Provider returned no matching song/artist results",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_VISIT",
+          "provider": "lrclib-api",
+          "activity": "Searching title and artist catalog",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_ERROR",
+          "provider": "lrclib-api",
+          "activity": "Catalog source unavailable",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "LYRICS_RESCUE_SEARCH",
+          "provider": "bounded-web-search-chain-v1",
+          "activity": "Trying bounded lyrics discovery search",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_VISIT",
+          "provider": "duckduckgo-html",
+          "activity": "Searching provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_EMPTY",
+          "provider": "duckduckgo-html",
+          "activity": "No usable results from provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_VISIT",
+          "provider": "duckduckgo-lite",
+          "activity": "Searching provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_EMPTY",
+          "provider": "duckduckgo-lite",
+          "activity": "No usable results from provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_VISIT",
+          "provider": "bing-html",
+          "activity": "Searching provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_RESULTS",
+          "provider": "bing-html",
+          "activity": "Search results found",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_IRRELEVANT",
+          "provider": "bing-html",
+          "activity": "Provider returned no matching song/artist results",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "LYRICS_RESCUE_SEARCH",
+          "provider": "bounded-web-search-chain-v1",
+          "activity": "Trying bounded lyrics discovery search",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_VISIT",
+          "provider": "duckduckgo-html",
+          "activity": "Searching provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_EMPTY",
+          "provider": "duckduckgo-html",
+          "activity": "No usable results from provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_VISIT",
+          "provider": "duckduckgo-lite",
+          "activity": "Searching provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_EMPTY",
+          "provider": "duckduckgo-lite",
+          "activity": "No usable results from provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_VISIT",
+          "provider": "bing-html",
+          "activity": "Searching provider",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_RESULTS",
+          "provider": "bing-html",
+          "activity": "Search results found",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_IRRELEVANT",
+          "provider": "bing-html",
+          "activity": "Provider returned no matching song/artist results",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_VISIT",
+          "provider": "lrclib-api",
+          "activity": "Searching title and artist catalog",
+          "status": null,
+          "elapsedMs": null
+        },
+        {
+          "phase": "SEARCH_PROVIDER_ERROR",
+          "provider": "lrclib-api",
+          "activity": "Catalog source unavailable",
+          "status": null,
+          "elapsedMs": null
+        }
+      ]
+    },
+    "answer": {
+      "text": "I found search results for the lyrics, but I couldn't verify the requested lyric text from fetched evidence, so I won't reconstruct it from memory.",
+      "sha256": "b6fd72ce42d1ea9b8b6e2e4097ee293e0bec3153c5772663f955ff48cdad536a"
+    },
+    "followUpWindow": {
+      "maxUserTurns": 3,
+      "captured": [],
+      "state": "OPEN"
+    },
+    "review": {
+      "state": "PENDING",
+      "promoteToLocalKnowledge": false,
+      "notes": []
+    },
+    "privacy": {
+      "preciseLocationStored": false,
+      "privateReasoningStored": false,
+      "fullHistoryStored": false
+    },
+    "statusTrail": [
+      {
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "reason": "Search results found"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_IRRELEVANT",
+        "reason": "Provider returned no matching song/artist results"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching title and artist catalog"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_ERROR",
+        "reason": "Catalog source unavailable"
+      },
+      {
+        "phase": "LYRICS_RESCUE_SEARCH",
+        "reason": "Trying bounded lyrics discovery search"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "reason": "Search results found"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_IRRELEVANT",
+        "reason": "Provider returned no matching song/artist results"
+      },
+      {
+        "phase": "LYRICS_RESCUE_SEARCH",
+        "reason": "Trying bounded lyrics discovery search"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_EMPTY",
+        "reason": "No usable results from provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching provider"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_RESULTS",
+        "reason": "Search results found"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_IRRELEVANT",
+        "reason": "Provider returned no matching song/artist results"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_VISIT",
+        "reason": "Searching title and artist catalog"
+      },
+      {
+        "phase": "SEARCH_PROVIDER_ERROR",
+        "reason": "Catalog source unavailable"
+      },
+      {
+        "phase": "ONLINE_RESEARCH",
+        "reason": "NO_RESULTS"
+      },
+      {
+        "phase": "SEARCH_COMPLETE",
+        "reason": "Online retrieval no_results."
+      },
+      {
+        "phase": "LYRICS_VERIFICATION_BLOCKED",
+        "reason": "I found search results for the lyrics, but I couldn't verify the requested lyric text from fetched evidence, so I won't reconstruct it from memory."
+      },
+      {
+        "phase": "COMPLETE",
+        "reason": ""
+      },
+      {
+        "phase": "PERSISTING",
+        "reason": "Saving the response to the chat"
+      }
+    ]
+  }
+}
