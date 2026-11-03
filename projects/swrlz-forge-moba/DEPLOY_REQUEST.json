@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.235",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_235_WOLF_MOTION_PANEL_VISIBILITY",
-  "reason": "User Android observed Astra wolf Run playhead advancing without animation until rotating viewport; severe limb and tail stretching during motion; and the Motion tool mode hid its actual Play/Set key controls. Release append-only wolf anatomical skin weights/pivot correction plus Motion panel routing and HD dirty frame invalidation. Focused 390px Chromium native test PASSED: tap Motion exposes Clip/Play/Set keyframe/Time/Bone controls; Run canvas visibly redraws with no camera orbit (128/11154 sample pixels changed after 260ms); rigorous 267-patch, 68-asset source seal PASS at 7,729,335 bytes SHA-256 446edd4f0d7ff1fc8d59216035eef315159437bc70952457203e9a266ce728a5. No duplicate renderer; preserves all Sheep Tag game mechanics, saved projects, model textures and chat studios. Owner Moto/Quest visual quality acceptance pending.",
-  "sourceCommit": "d1a5bdf803711e3ba25d9240647fb50638f5f9d4",
-  "sourceIntegritySha256": "446edd4f0d7ff1fc8d59216035eef315159437bc70952457203e9a266ce728a5"
+  "releaseVersion": "v11.236",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_236_SHEEP_GABLES_WOLF_ROOT_STARTER_GROUPS",
+  "reason": "Owner Moto visual feedback: four enclosed Sheep Tag building starter models lack front/rear attic gable pieces; wolf nose and cheek accessories lag the animated head; gait animations cause heavy root bob and spine rocking; Starter Games and Starter Models mixed in one list. Verified append-only v11.236: native indexed triangular solids front/rear and one real interior floor on Hut/Cottage/Barn/Ram House, leave open Shelter unchanged; bind nose/philtrum/cheek/smile details to head with 100% weights; reversible In place root height lock and Steady torso preview toggles on walk/run/stalk, without changing animation keys or gameplay; Starter Games/Starter Models sub-tabs while preserving My Projects and 11 default checkboxes. Narrow 390px actual browser PASS run 41575593800 including all 5 model part counts, face weights, Run bob 0.06928 to 0 with lock, 18% spine pitch with stabilization and 6 game/11 model cards. Strict release source seal PASS run 41575822465: 268 patches, 68 assets, 7,735,923 bytes, SHA-256 02056c0d0ff3722b503a03d6fe31ebfc4a99adbdeb2ba132b58d1ba447d105ae. Preserve existing saved custom models and Sheep Tag gameplay/LAN; physical Quest/phone acceptance pending.",
+  "sourceCommit": "374180baa1a30d20f08fae35c784a738d55b75e5",
+  "sourceIntegritySha256": "02056c0d0ff3722b503a03d6fe31ebfc4a99adbdeb2ba132b58d1ba447d105ae"
 }
