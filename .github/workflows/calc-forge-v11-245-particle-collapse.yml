@@ -1,0 +1,67 @@
+name: Calculate §E v11.245 Particle Studio collapse source
+on:
+  push:
+    branches: [fix/engine-particle-inspector-collapse-v11-245-20261103]
+    paths:
+      - 'projects/swrlz-forge-moba/patches/v11_245_particle_inspector_collapse.py'
+      - 'projects/swrlz-forge-moba/runtime/particle_inspector_collapse_v11_245.js'
+      - 'projects/swrlz-forge-moba/runtime/particle_inspector_collapse_v11_245.css'
+      - 'projects/swrlz-forge-moba/source-manifest.json'
+      - 'projects/swrlz-forge-moba/scripts/verify_v11_245_release.py'
+      - '.github/workflows/calc-forge-v11-245-particle-collapse.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  calculate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Parse only the new JavaScript and Python patch
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/particle_inspector_collapse_v11_245.js
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_245_particle_inspector_collapse.py
+      - name: Assemble governed candidate with provisional open SHA
+        run: |
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/swrlz245
+      - name: Check collapsed inspector, old controls and exact immutable seal
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json
+          root=Path('/tmp/swrlz245')
+          raw=(root/'index.html').read_bytes()
+          assert (root/'modeler.html').read_bytes()==raw
+          h=raw.decode('utf-8')
+          m=json.loads((Path('projects/swrlz-forge-moba')/'source-manifest.json').read_text())
+          assert len(m['patches'])==276 and m['patches'][-1]=='patches/v11_245_particle_inspector_collapse.py'
+          for marker in (
+              'SWYRL_ENGINE_DEPLOY_MARKER: V11_245_PARTICLE_INSPECTOR_COLLAPSE',
+              'SWYRL_ENGINE_PARTICLE_COLLAPSE_245',
+              'id="se245ParticleCollapseStyle"',
+              'se245ParticleCollapse',
+              'data-se245-particle-collapsed=true',
+              'scroll.inert=collapsed',
+              "toggle.setAttribute('aria-expanded'",
+              "window.SWYRL_ENGINE_PARTICLE_COLLAPSE_245?.reset?.()",
+              'se243InspectorToggle',
+              'const editEmitters=stageActive?',
+              'window.SWYRL_ENGINE_PARTICLE_STAGE_240',
+              'function executeStudio(op)',
+              'SWYRL_ENGINE_SHEEP_REMOVAL_PERFORMANCE_244',
+          ):
+              assert marker in h,marker
+          assert h.count('renderer.setAnimationLoop(tick);')==1
+          src=json.loads((root/'SOURCE.json').read_text())
+          assert src['finalBytes']==len(raw)
+          assert src['finalSha256']==hashlib.sha256(raw).hexdigest()
+          assert len(src['assets'])==69
+          print('PASS_PARTICLE_COLLAPSE_V11_245 bytes=',len(raw),'sha256=',hashlib.sha256(raw).hexdigest(),'assets=',len(src['assets']))
+          PY
+      - name: Validate final sealed source using production verifier
+        run: |
+          python projects/swrlz-forge-moba/scripts/verify_v11_245_release.py --output /tmp/swrlz245-sealed
