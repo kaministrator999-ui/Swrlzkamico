@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.238",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_238_QUEST_RADIAL_AND_WORKSPACE",
-  "reason": "Owner approved §E v11.238 publication: Quest Sheep Tag circular VIEW radial may stutter and disappear due to >170ms visible XR gaps misclassified as Meta OS focus loss; keep actual OS blur/hidden and long-gap guards, cache radial UI rays/textures for the XR session. Quest Browser 2D Game Engine and Model Atelier topbar/tool rail were crowded and overlapping: accessible native Controls, Model actions, and Edit tools popovers while retaining original DOM handlers, Close and all game input. Strict sealed release source verification PASSED GitHub Actions run 41589738033, 269 patches, 68 original assets, 7,759,927 HTML bytes, exact SHA-256 b732a8868cd74ead21e085365d6c3004f5e71e63a9cfd473ae676b955179e13c. Source merge d14837038ed03f4eed1d59544c781eee31756482; owner Quest 2 live acceptance pending. Does not include experimental PRs #362 or #363.",
-  "sourceCommit": "d14837038ed03f4eed1d59544c781eee31756482",
-  "sourceIntegritySha256": "b732a8868cd74ead21e085365d6c3004f5e71e63a9cfd473ae676b955179e13c"
+  "releaseVersion": "v11.239",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_239_QUEST_HEADTURN_RAYCAST_BUDGET",
+  "reason": "Owner Quest 2 visual feedback after v11.238: a black right-edge render region appears when turning head quickly. v11.239 removes duplicated v11.181 full-scene actor triangle raycasts for both controllers during immersive Sheep Tag Play; keeps dedicated EXIT VR panel ray and unchanged editor actor picking outside play, v11.238 radial UI, joystick, placement, tracking, projection, fog and renderer quality. Includes read-only frame-gap instrumentation. Strict generated source and 68 media assets PASS GitHub Actions run 41592297166: 270 patches, 7,763,865 HTML bytes, SHA-256 684bb107e5f88a011d6ad71f0f86479a6138de5b315a78b1fe13e764be55d57c. Release merged from PR #365 at 5af6b53cade0aefa229ce6ede90f226bfc912077. Quest 2 performance/black-region acceptance pending; screenshot alone does not prove compositor cause.",
+  "sourceCommit": "5af6b53cade0aefa229ce6ede90f226bfc912077",
+  "sourceIntegritySha256": "684bb107e5f88a011d6ad71f0f86479a6138de5b315a78b1fe13e764be55d57c"
 }
