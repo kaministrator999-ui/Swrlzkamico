@@ -1,3 +1,11 @@
+## §E v11.231 — Full-building sheep house camera framing (2026-11-02)
+
+**Owner report:** Houses now load but are not visible in the Model Atelier viewport. The actual 390px mobile browser screenshot revealed geometry drawn massively zoomed-in (the Barn showed a cropped wall/roof), rather than missing meshes. All five models had valid bounds/visible GPU meshes, but they used the ordinary fixed-distance character viewport instead of the existing large-model bounding-box camera.
+
+**Focused v11.231 repair:** The five IDs `sheep-free-shelter`, `sheep-thatched-hut`, `sheep-cottage`, `sheep-barn`, and `sheep-ram-house` now route front, side, three-quarter, and top/bottom views through the existing geometry-bounds camera framing. It accounts for the live canvas aspect ratio and adjusts studio fog for large house viewing only. Native mesh contents, UVs, parts/groups, saved projects, Sheep Tag buildings/collisions and LAN authority, wolf/glove rigs, GUI/Materials/Particle studios and VR controller behavior remain unchanged.
+
+**Receipts:** §E **v11.231**, 263 ordered patches, 68 unchanged assets, 7,713,229 assembled HTML bytes; SHA-256 `0e960a32760f081f20bfb8e8ed1cd61cf3a0eec8d1f5e583b865311d2bd6e4d0`. Narrow Chromium 390px test [run 41561484650](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/41561484650) passed all five full projected model bounds, native live scene mesh counts, and visibly rendered red Barn. Owner's Moto G Power and Quest hardware visual acceptance remains outstanding.
+
 ## §E v11.229 — Sheep house Model Atelier loading repair (2026-11-02)
 
 **Owner report reproduced and repaired:** All five v11.226 sheep-faction house starters failed actual native Model Atelier loading despite the initial geometry-only tests. The root causes were material names passed as box rotation angles (non-finite transforms), an undefined `P.trim` used for window mullions (invalid native colors), and inherited festival-character `modelAtelier.assemblies` named socket references pointing to deleted parts. The v11.229 append-only patch corrects only the assembled house builder's callsites and deletes inherited assemblies when creating fresh sheep-house starter copies. Existing saved user models and gameplay remain untouched.
