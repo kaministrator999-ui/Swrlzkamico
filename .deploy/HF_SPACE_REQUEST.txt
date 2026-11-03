@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=38994f1665e3b474f3096ee9de85f2ae036dfd9d
-REQUEST_NONCE=chat-standalone-particle-v1-38994f16-20261103-release-1
+SOURCE_REF=d7e4bfb854f6be63cfdf9a66cb663bec99fcc687
+REQUEST_NONCE=chat-embed-clipboard-touch-v1-d7e4bfb8-20261103-release-1
