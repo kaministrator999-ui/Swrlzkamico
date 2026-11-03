@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.231",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_231_SHEEP_HOUSE_CAMERA_FIT",
-  "reason": "Owner report: all 5 Sheep Tag house starter models loaded but appeared invisible/cropped in Model Atelier because fixed-distance character camera zoomed into the buildings. Use existing native geometry bounds framing for sheep house front/side/top/three-quarter views and adjust house-only fog for fit distance. Focused 390px mobile browser test PASSED all five fully within viewport with visible barn; strict v11.231 source verification PASSED: 263 patches, 68 assets, 7,713,229 bytes, SHA-256 0e960a32760f081f20bfb8e8ed1cd61cf3a0eec8d1f5e583b865311d2bd6e4d0. Preserve preceding v11.230 wolf single-pass rig loader, existing saved projects, game GUI, Sheep Tag collision/LAN authority, player controls, materials and particle studios. Owner Moto/Quest acceptance pending.",
-  "sourceCommit": "2bcf0892a04d3443458cffb07bb57e061d363d4a",
-  "sourceIntegritySha256": "0e960a32760f081f20bfb8e8ed1cd61cf3a0eec8d1f5e583b865311d2bd6e4d0"
+  "releaseVersion": "v11.232",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_232_MODEL_STARTER_WORKSPACE_ACTIVATION",
+  "reason": "Fix owner Android screenshots: choosing Sheep Tag Ram House or Astra Furred Comet Courier left Game Engine tab active and only World Ground visible. Explicit house, active wolf and other model starter loaders now invoke existing Modeling workspace controller after model/rig data load; actual Model Atelier opens once, switches tab to Modeling, updates /modeler.html, shows editing controls. Narrow 390px Game-to-Modeling browser acceptance PASS: Ram House 60 parts, wolf 108 with full rig and 10 clips, blank model 1 part. Game first entry and saved projects unaffected. 264 ordered patches, 68 unchanged assets, 7,714,177 HTML bytes, SHA-256 a5f840685f618872d69b3e1dc1e197e496e68d2500bfb46008883bfb5c6df9d9. Moto/Quest physical acceptance pending.",
+  "sourceCommit": "017427eb1d57798a031abd46c136d74aac668f19",
+  "sourceIntegritySha256": "a5f840685f618872d69b3e1dc1e197e496e68d2500bfb46008883bfb5c6df9d9"
 }
