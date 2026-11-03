@@ -1,0 +1,28 @@
+name: Engine v11.232 Studio Commands candidate measurement
+on:
+  push:
+    branches:
+      - feature/se-v11-232-chat-native-studio-bridge-20261102
+    paths:
+      - .github/workflows/se-v11-232-studio-candidate.yml
+      - projects/swrlz-forge-moba/runtime/chat_account_panel_v1.js
+      - projects/swrlz-forge-moba/patches/v11_232_chat_native_studio_bridge.py
+      - projects/swrlz-forge-moba/scripts/measure_v11_232_chat_studio_candidate.py
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-measurement:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Focused Python/JavaScript parse
+        run: |
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_232_chat_native_studio_bridge.py projects/swrlz-forge-moba/scripts/measure_v11_232_chat_studio_candidate.py
+          node --check projects/swrlz-forge-moba/runtime/chat_account_panel_v1.js
+      - name: Rebuild candidate in memory and report exact version, size and SHA
+        run: python projects/swrlz-forge-moba/scripts/measure_v11_232_chat_studio_candidate.py
