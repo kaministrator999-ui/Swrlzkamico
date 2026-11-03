@@ -1,3 +1,13 @@
+## §E v11.240 — Sheep Tag true grass material (2026-11-03)
+
+**Owner request:** Use the grass texture generated in chat as Sheep Tag's actual ground material, including color, normal and roughness channels. Preserve the current terrain topology and all gameplay.
+
+**Implementation:** Packaged a verified green WebP color source at `assets/sheep-tag/grass-source-color-quest.webp`. New runtime `sheep_grass_pbr_v11_240.js` composes a mipmapped grass albedo over green vegetation in native `stMeadowGround` and `MoonbellWildwoodGround`, keeping the original authored roads and sanctuary map painting. It derives consistent tangent-space normal and matte roughness maps from that same source (artistically approximate, not independently scanned height data). Uses a native Three.js standard PBR material, gentle normal relief, 16 repeats, and one-time generation; Quest maps are reduced to 1024px, while desktop Wildwood retains 2048px detail.
+
+**Non-regressions:** No new per-frame grass draw calls or render loops; no changes to fog-of-war, camera, VR control mapping, collision, saved actor transforms, building placement, sheep and wolf logic, or the other §E studios. Real Quest 2 rendering and visual approval remain owner-tested.
+
+**Release lineage:** `patches/v11_240_sheep_grass_pbr.py` on the v11.239 Quest head-turn/raycast-budgets baseline. Exact final integrity in `source-manifest.json` and `SOURCE.json`.
+
 ## §E v11.239 — Quest Sheep Tag fast-head-turn frame budget (2026-11-03)
 
 **Owner Quest 2 finding:** After v11.238, rapid head turns still reveal a hard black edge in the right side of the captured immersive view, with sporadic background stutter. The image alone cannot distinguish compositor reprojection, one-eye mirror clipping or missed application frames.
