@@ -6,6 +6,7 @@ const se238Radial={
   slowAppFrames:0,maxLocalGapMs:0,radialRestores:0,
   panelRestores:0,hitCaches:0,hitMisses:0,
   pageBuilds:0,visibilityChanges:0,selectionReads:0,
+  textureBuilds:0,textureReuses:0,
   lastLocalGapMs:0,lastError:'', cache:new Map()
 };
 function se238NativeMenuOpen(){
@@ -55,6 +56,25 @@ se211Cosmetics=function(active){
 // The native XR render path and the v11.205 pointer adapter ask the same
 // question several times per frame. Cache only the current menu's ray hit,
 // not game-world rays or trigger actions, and invalidate on pose/UI movement.
+// Page changes used to allocate/reupload 512x256 canvas textures for the
+// same labels, then dispose them immediately. One cached GPU texture per
+// unique label is retained only for this XR session and freed on XR exit.
+const se238LabelTextures=new Map();
+const se238PriorText=se195Text;
+se195Text=function(label,header=false){
+  const key=String(header?'heading:':'item:')+String(label);
+  if(se238LabelTextures.has(key)){
+    se238Radial.textureReuses++;return se238LabelTextures.get(key);
+  }
+  const texture=se238PriorText(label,header);
+  // The original per-page texture disposal must not discard our cache;
+  // se193XRCleanup below is the sole owner of these textures.
+  const i=se195.textures.indexOf(texture);
+  if(i>=0)se195.textures.splice(i,1);
+  se238LabelTextures.set(key,texture);
+  se238Radial.textureBuilds++;
+  return texture;
+};
 const se238PriorRadialHit=se195RadialHit;
 se195RadialHit=function(record,cast){
   if(!se195.visible||!se195.radial||cast||
@@ -92,7 +112,10 @@ se195SetVisible=function(value){
 const se238PriorCleanup=se193XRCleanup;
 se193XRCleanup=function(){
   se238Radial.cache.clear();
-  return se238PriorCleanup();
+  const result=se238PriorCleanup();
+  for(const texture of se238LabelTextures.values())texture.dispose();
+  se238LabelTextures.clear();
+  return result;
 };
 window.SWYRL_ENGINE_QUEST_RADIAL_STABILITY_238=Object.freeze({
  diagnose:()=>({
@@ -107,6 +130,8 @@ window.SWYRL_ENGINE_QUEST_RADIAL_STABILITY_238=Object.freeze({
   reusedRadialRayHits:se238Radial.hitCaches,
   sampledRadialRayHits:se238Radial.hitMisses,
   menuRebuilds:se238Radial.pageBuilds,
+  labelTexturesCreated:se238Radial.textureBuilds,
+  labelTexturesReused:se238Radial.textureReuses,
   menuVisibilityChanges:se238Radial.visibilityChanges,
   gameLeftStickPreserved:true,
   nativeOSBlurGuardsPreserved:true,
