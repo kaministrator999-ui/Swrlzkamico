@@ -82,15 +82,16 @@ _TOPICS = {
         "currentProject.materialStudio; 8 base texture types, seeded patterns, "
         "bounded paint strokes and local image import. Apply targets Game "
         "Editor actors, NOT individual Model Atelier parts. Color is not "
-        "UVs, and image paint is not automatic UV unwrapping. No native §C "
-        "material.create/assign action is approved."
+        "UVs, and image paint is not automatic UV unwrapping. §C can propose bounded material.create/set/assign ONLY when the "
+        "current leased §E host advertises Studio Commands v1; old hosts cannot."
     ),
     "particle": (
         "Particle Studio writes currentProject.particleStudio emitter definitions "
         "for the Game Editor: up to 12 emitters, 96 points per emitter and "
         "576 live points total. An attached source follows its actor while "
         "already-spawned motes remain in world space. Preview/burst and "
-        "gameplay effects differ. No native §C particle.create tool exists."
+        "gameplay effects differ. §C can propose particle.create/set ONLY with a current leased "
+        "§E Studio Commands v1 host and native approval/receipts."
     ),
     "animation": (
         "The glove has 17-bone skeletal skin weights and keyed gestures; "
@@ -98,13 +99,15 @@ _TOPICS = {
         "while its Sheep Tag renderer animates optimized pivots. Clover's "
         "sheep preview changes part transforms, not wolf SkinnedMesh. "
         "Pose/keyframe, save and game trigger are separate; §C has no native "
-        "bone or keyframe edit action."
+        "full auto-rigging. Single-bone rig.pose and rig.keyframe require a "
+        "current host advertising Studio Commands v1, exact bones and approvals."
     ),
     "rig": (
         "Native new-glove Rig Studio has 17 bones with skin weights; "
         "wolf uses 14. Old unrigged saves do not auto-convert. A reference "
         "picture is not topology, bind pose, weights or clips. Quest hand "
-        "tracking is not §E motion capture. §C has no native rig.pose tool."
+        "tracking is not §E motion capture. §C supports a bounded rig.pose/keyframe only with live Studio Commands "
+        "v1 host capability, exact bone/clip snapshot and user approval."
     ),
     "component": (
         "Model Atelier UI supports vertex/edge/face editing and "
