@@ -1,4 +1,5 @@
 name: Validate §E v11.234 Astra Wolf anatomical rig
+# Exercises native preview handlers without requiring a visible inspector dropdown.
 on:
   push:
     branches: [main]
