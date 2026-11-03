@@ -281,6 +281,6 @@
     "patches/v11_232_model_starter_workspace_activation.py",
     "patches/v11_233_chat_native_studio_bridge.py"
   ],
-  "finalBytes": 7724884,
-  "finalSha256": "8fdfc0275d2b3f87f276e4ee50abe595ca089b23a96bd1bdabef140eb9537771"
+  "finalBytes": 7725488,
+  "finalSha256": "936e49ec155d091a8e0e651a6043713554e6ac5c776a7b6fec45884c2967b34c"
 }
