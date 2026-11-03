@@ -48,11 +48,11 @@ def apply(html):
                 "frame.setAttribute('allow','clipboard-read; clipboard-write')",
                 "embedded Chat clipboard permission policy")
 
-    before = " source.engine='§wyrl§ Engine · Maker v11.242';source.version=11.241;"
+    before = " source.engine='§wyrl§ Engine · Maker v11.242';source.version=11.242;"
     if html.count(before) != 2:
         raise AssertionError(("v11.243 source provenance", html.count(before)))
     html = html.replace(before,
-                        " source.engine='§wyrl§ Engine · Maker v11.243';source.version=11.242;")
+                        " source.engine='§wyrl§ Engine · Maker v11.243';source.version=11.243;")
     for previous, current in (
         ('SWYRL_ENGINE_DEPLOY_MARKER: V11_242_SHEEP_NATURAL_GRASS',
          'SWYRL_ENGINE_DEPLOY_MARKER: V11_243_PARTICLE_MOBILE_LAYOUT'),
