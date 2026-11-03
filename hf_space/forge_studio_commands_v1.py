@@ -64,7 +64,7 @@ def _numeric(value: Any, low: float, high: float) -> bool:
 
 def _positive_name(value: Any, length: int) -> bool:
     return (isinstance(value, str) and 0 < len(value) <= length
-            and bool(value.strip()) and all(ord(c) >= 32 and ord(c) != 127 for c in value))
+            and bool(value.strip()) and all(ord(c) >= 32 and not 127 <= ord(c) <= 159 for c in value))
 
 
 def _vector(value: Any, low: float, high: float) -> bool:
@@ -100,7 +100,8 @@ def validate_studio_operation(summary: dict, proposed: dict, count: int) -> dict
     if area == "materials":
         ids = _rows(state.get("items"), 12)
         if op == "material.create":
-            if proposed["preset"] not in MATERIAL_PRESETS or proposed["preset"] not in state.get("presets", []):
+            if (not isinstance(state.get("presets"), list) or proposed["preset"] not in MATERIAL_PRESETS
+                    or proposed["preset"] not in state["presets"]):
                 _fail("FORGE_STUDIO_PRESET_INVALID")
             if len(ids) >= 12:
                 _fail("FORGE_STUDIO_CAP_REACHED")
@@ -126,7 +127,8 @@ def validate_studio_operation(summary: dict, proposed: dict, count: int) -> dict
     elif area == "particles":
         ids = _rows(state.get("items"), 12)
         if op == "particle.create":
-            if proposed["preset"] not in PARTICLE_PRESETS or proposed["preset"] not in state.get("presets", []):
+            if (not isinstance(state.get("presets"), list) or proposed["preset"] not in PARTICLE_PRESETS
+                    or proposed["preset"] not in state["presets"]):
                 _fail("FORGE_STUDIO_PRESET_INVALID")
             if len(ids) >= 12:
                 _fail("FORGE_STUDIO_CAP_REACHED")
@@ -151,7 +153,8 @@ def validate_studio_operation(summary: dict, proposed: dict, count: int) -> dict
         if state.get("kind") not in ("hand", "wolf"):
             _fail("FORGE_STUDIO_RIG_INVALID")
         bones = state.get("bones")
-        if not isinstance(bones, list) or len(bones) not in (14, 17) or len(bones) != len(set(bones)):
+        if (not isinstance(bones, list) or len(bones) != (17 if state["kind"] == "hand" else 14)
+                or any(not isinstance(b, str) for b in bones) or len(bones) != len(set(bones))):
             _fail("FORGE_STUDIO_RIG_INVALID")
         if any(not isinstance(b, str) or not IDENTIFIER.fullmatch(b) for b in bones):
             _fail("FORGE_STUDIO_RIG_INVALID")
@@ -175,6 +178,6 @@ def validate_studio_operation(summary: dict, proposed: dict, count: int) -> dict
                 clips = state.get("clips")
                 if (not isinstance(clips, list) or len(clips) > 16
                         or not isinstance(proposed.get("clip"), str)
-                        or proposed["clip"] not in clips or keys >= 64):
+                        or proposed["clip"] not in clips or proposed["clip"] != state.get("selectedClip") or keys >= 64):
                     _fail("FORGE_STUDIO_WOLF_KEY_UNAVAILABLE")
     return result
