@@ -190,7 +190,7 @@ function validateStudioOperation(op,ctx){
   if(!spec||!cap||cap.schema!=='swrlz-forge-studio-commands-v1'||
      spec[0].some(k=>!Object.hasOwn(op,k))||
      Object.keys(op).some(k=>!spec.flat().includes(k)))throw Error('STUDIO_OPERATION_NOT_ALLOWED');
-  if(ctx.mode!=='edit')throw Error('STOP_PLAY_BEFORE_EDITING');
+  if(ctx.mode!=='edit')throw Error('STUDIO_REQUIRES_EDIT_MODE');
   const domain=op.op.split('.')[0],area=domain==='rig'?'rig':domain==='material'?'materials':'particles';
   const state=cap[area];
   if(state?.available!==true||area==='rig'&&
