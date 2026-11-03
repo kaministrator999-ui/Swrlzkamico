@@ -1,3 +1,13 @@
+## §E v11.239 — Sheep Tag natural grass PBR material (2026-11-03)
+
+**Owner-created reference:** The new ground material uses the green grass artwork created in chat, not a generic replacement shade. A compressed Quest-friendly tile is packaged at `assets/sheep-tag/grass-source-color-quest.webp`.
+
+**Actual Sheep Tag surface:** On native `stMeadowGround` and `MoonbellWildwoodGround`, compose 16 repeats of the grass color tile into the vegetation portions of the authored map, retaining its existing roads, landmarks, sanctuary colors, and separate map dressing. Derive matching normal and predominantly matte roughness maps from the same albedo source at load time. The grass is a real `THREE.MeshStandardMaterial` with `map`, `normalMap` and `roughnessMap`; moderate normal strength and mipmapping avoid over-sharp Quest VR shimmer.
+
+**Ownership and scope:** Changes only ground materials, once when a scene loads. No new geometry, render loop, sheep/wolf abilities, controller mapping, collision, building placement or fog ownership. Native Material & Texture Studio user overrides remain separate. Quest 2 and Moto G Power visual acceptance is still required.
+
+**Lineage:** `patches/v11_239_sheep_grass_pbr.py`, `runtime/sheep_grass_pbr_v11_239.js`, 270 ordered patches; exact source integrity is maintained in `source-manifest.json`.
+
 ## §E v11.238 — Quest radial-menu stability and browser studio controls (2026-11-03)
 
 **Quest 2 owner evidence:** Immersive Sheep Tag is responsive with natural head turning until its **VIEW / BACK / FORWARD / TACTICAL** circular menu opens; the menu then triggers a lag spiral and sometimes disappears. Quest Browser's floating 2D Game Engine and Model Atelier windows overlap menu/tool controls.
