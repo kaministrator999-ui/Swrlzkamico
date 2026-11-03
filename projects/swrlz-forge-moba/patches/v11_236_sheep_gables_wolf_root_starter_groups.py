@@ -104,7 +104,7 @@ def apply(html):
  games.after(models);
  const isModel=id=>
   /^(?:sheep-(?:free-shelter|thatched-hut|cottage|barn|ram-house)|(?:sheep|wolf)-model|comet-courier|blank-model|floating-hand-glove)$/.test(id)||
-  /(?:^|[-_])(?:model|atelier|sculpt|ferret|glove|character)(?:$|[-_])/.test(id);
+  /(?:^|[-_])(?:model|atelier|sculpt|ferret|glove|character|festival)(?:$|[-_])/.test(id);
  for(const child of original){
   const card=child.matches?.('button[data-project-template]')?child:child.querySelector?.('button[data-project-template]');
   if(card&&isModel(card.dataset.projectTemplate))models.append(child);
