@@ -1,0 +1,26 @@
+name: Calculate Sheep Tag Grass PBR Engine Receipt
+on:
+  push:
+    branches:
+      - feature/sheep-tag-grass-pbr
+    paths:
+      - projects/swrlz-forge-moba/source-manifest.json
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build-receipt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Syntax check focused source
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/sheep_grass_pbr_v11_239.js
+          python3 -m py_compile projects/swrlz-forge-moba/patches/v11_239_sheep_grass_pbr.py
+      - name: Build exact governed HTML and print integrity
+        shell: bash
+        run: |
+          python3 projects/swrlz-forge-moba/build_space.py --output "$RUNNER_TEMP/grass-build"
+          echo "GRASS_PBR_FINAL_BYTES=$(wc -c < "$RUNNER_TEMP/grass-build/index.html")"
+          echo "GRASS_PBR_FINAL_SHA256=$(sha256sum "$RUNNER_TEMP/grass-build/index.html" | cut -d' ' -f1)"
+          test -f "$RUNNER_TEMP/grass-build/assets/sheep-tag/grass-source-color-quest.webp"
