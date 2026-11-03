@@ -1,0 +1,77 @@
+name: Verify v11.231 house framing after wolf release
+# Run bounded sheep-house framing against assembled v11.231 candidate.
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/diag-forge-v11-230-sheep-visibility.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  viewport-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Assemble current sealed native editor and instrument local debug copy only
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('projects/swrlz-forge-moba/source-manifest.json')
+          m=json.loads(p.read_text())
+          assert m['name']=='§wyrl§ Engine v11.230'
+          assert m['patches'][-1]=='patches/v11_230_wolf_model_one_pass_load.py'
+          m['name']='§wyrl§ Engine v11.231'
+          m['finalArtifact']='swyrl_engine_v11_230.html'
+          m['patches'].append('patches/v11_231_sheep_house_camera_fit.py')
+          m['finalBytes']=0;m['finalSha256']=''
+          p.write_text(json.dumps(m,ensure_ascii=False))
+          PY
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/se230-visibility
+          python3 - <<'PY'
+          from pathlib import Path
+          helper="""window.SE230_HOUSE_DIAG=()=>{
+           if(!modelRoot||!camera)return {error:'missing active 3D renderer'};
+           const objs=modelRoot.children.filter(o=>o.isMesh&&o.userData.atelierId);
+           camera.updateMatrixWorld(true);
+           for(const o of objs)o.updateMatrixWorld(true);
+           const b=new THREE.Box3();for(const o of objs)b.expandByObject(o);
+           const c=b.getCenter(new THREE.Vector3()),p=c.clone().project(camera);
+           const fr=new THREE.Frustum().setFromProjectionMatrix(new THREE.Matrix4().multiplyMatrices(camera.projectionMatrix,camera.matrixWorldInverse));
+           return {meshes:objs.length,visible:objs.filter(o=>o.visible).length,
+            topologyMeshes:objs.filter(o=>o.geometry?.isBufferGeometry).length,
+            triangles:objs.reduce((s,o)=>s+((o.geometry?.index?.count||o.geometry?.attributes?.position?.count||0)/3),0),
+            first:objs.slice(0,3).map(o=>({name:o.name,visible:o.visible,geo:o.geometry?.type,
+              vert:o.geometry?.attributes?.position?.count,
+              pos:o.position.toArray(),scale:o.scale.toArray()})),
+            camera:camera.position.toArray(),cameraFov:camera.fov,near:camera.near,far:camera.far,aspect:camera.aspect,
+            bounds:{min:b.min.toArray(),max:b.max.toArray(),center:c.toArray()},
+            projectedCenter:p.toArray(),intersectsView:fr.intersectsBox(b),
+            projectedCorners:[b.min.x,b.max.x].flatMap(x=>[b.min.y,b.max.y].flatMap(y=>[b.min.z,b.max.z].map(z=>new THREE.Vector3(x,y,z).project(camera).toArray()))),
+            fog:world?.fog?{near:world.fog.near,far:world.fog.far}:null,
+            sceneDraws:renderer?.info?.render?.calls||0,
+            sceneTriangles:renderer?.info?.render?.triangles||0};
+          };
+          """
+          marker='function renderParts(){'
+          for name in ('index.html','modeler.html'):
+            p=Path('/tmp/se230-visibility')/name
+            s=p.read_text()
+            count=s.count(marker)
+            print('DIAGNOSTIC_HOOK_MATCHES',name,count)
+            assert count>=1
+            p.write_text(s.replace(marker,marker+'\n'+helper,1))
+          PY
+      - name: Focused native browser toolchain
+        run: |
+          npm install --no-save playwright@1.56.1 pngjs@7.0.0
+          npx playwright install --with-deps --only-shell chromium
+      - name: Measure sheep house viewport frustum, parts, and sampled screen pixels
+        run: node projects/swrlz-forge-moba/tests/ui_v11_230_sheep_house_visibility_diag.mjs
