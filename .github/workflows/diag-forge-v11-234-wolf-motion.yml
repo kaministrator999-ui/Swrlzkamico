@@ -52,12 +52,20 @@ jobs:
             view:window.SWYRL_ENGINE_WORKSPACES?.inspect?.(),
             status:window.SWYRL_ENGINE_WOLF_RIG?.status?.()};
           };"""
+          for file in ('index.html',):
+            t=(Path('/tmp/se234-wolf-diagnostic')/file).read_text()
+            at=t.index('  function loop(){')
+            print('SE234_RENDER_LOOP_SOURCE:',repr(t[at:at+600]),flush=True)
+            print('SE234_RENDER_OWNERS_COUNT',t.count('renderer.render(world,camera);'),flush=True)
           key='function se224WolfPreviewFrame(){'
           for file in ('index.html','modeler.html'):
             p=Path('/tmp/se234-wolf-diagnostic')/file
             s=p.read_text()
             assert s.count(key)==1
             s=s.replace(key,key+'\nwindow.SE234_WOLF_FRAME_COUNT=(window.SE234_WOLF_FRAME_COUNT||0)+1;\n'+helper,1)
+            render_key='renderer.render(world,camera);raf=requestAnimationFrame(loop);'
+            assert s.count(render_key)==1,('Unexpected frame owner',s.count(render_key))
+            s=s.replace(render_key,"window.SE234_RENDER_CALLS=(window.SE234_RENDER_CALLS||0)+1;"+render_key,1)
             p.write_text(s)
           PY
       - name: Install focused browser dependencies
