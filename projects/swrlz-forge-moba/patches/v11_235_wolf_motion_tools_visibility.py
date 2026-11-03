@@ -24,7 +24,7 @@ def apply(html):
   panel.classList.remove('se-wolf-motion-focus');
   // Wolf motion uses its existing playable clip/key studio, not the generic
   // Context workbook which otherwise hides this inspector child entirely.
-  if(category==='Motion'&&typeof se224WolfIsModel==='function'&&se224WolfIsModel()){
+  if(category==='Motion'&&window.SWYRL_ENGINE_WOLF_RIG?.status?.().available){
    const wolf=panel.querySelector('#modelAtelierWolfStudio');
    const inspector=panel.querySelector('.atelier-inspector');
    if(wolf&&inspector){
