@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.238
+title: §wyrl§ Engine v11.239
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -10,6 +10,15 @@ header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
 
+
+
+## §E v11.239 — Quest Sheep Tag fast-head-turn frame budget (2026-11-03)
+
+**Owner Quest 2 finding:** After v11.238, rapid head turns still reveal a hard black edge in the right side of the captured immersive view, with sporadic background stutter. The image alone cannot distinguish compositor reprojection, one-eye mirror clipping or missed application frames.
+
+**Measured source hotspot:** The original v11.181 native VR entrypoint kept recursively ray-intersecting every authored actor's mesh for *both controllers every XR frame* even during Sheep Tag, where v11.192+ already owns native gamepad and build targeting. v11.239 skips only this redundant gameplay actor-triangle raycast while preserving the EXIT VR target and editor actor selection outside gameplay. The existing rendering, input, collision, camera and tracking systems remain unchanged.
+
+**Diagnostics and source receipt:** `SWYRL_ENGINE_QUEST_HEADTURN_239.diagnose()` reports frame callback gaps and the number of redundant game raycasts avoided, separately counting gaps when §E's circular radial is open. **270 ordered patches, 68 unchanged assets, 7,763,865 generated HTML bytes, SHA-256 `684bb107e5f88a011d6ad71f0f86479a6138de5b315a78b1fe13e764be55d57c`.** Native Quest hardware performance acceptance is still required. v11.238 layout and menu stabilization stay intact; experimental stereo/camera PRs #362/#363 remain excluded. Source: `docs/QUEST_FAST_HEADTURN_RAYCAST_V11_239.md`.
 
 ## §E v11.238 — Quest radial-menu stability and browser studio controls (2026-11-03)
 
