@@ -1,3 +1,7 @@
+## §E v11.232 — Model starters enter the actual Modeling workspace
+
+Owner Android screenshots showed Game Engine active and only World Ground after selecting Ram House and Astra Wolf. The explicit starter loaders were opening the model while §E's game-first guard blocked Model Atelier. The appended v11.232 fix switches to the existing Modeling tab after native data and wolf rig are loaded, exposing the editor without duplicate WebGL work. Verified 390px Game-to-Modeling startup: Ram House 60 parts, Wolf 108 parts and 10 clips, Blank Model 1 part; main Game startup remains unchanged. 264 patches, 7,714,177 bytes, SHA-256 `a5f840685f618872d69b3e1dc1e197e496e68d2500bfb46008883bfb5c6df9d9`.
+
 ## §E v11.231 — Full-building sheep house camera framing (2026-11-02)
 
 **Owner report:** Houses now load but are not visible in the Model Atelier viewport. The actual 390px mobile browser screenshot revealed geometry drawn massively zoomed-in (the Barn showed a cropped wall/roof), rather than missing meshes. All five models had valid bounds/visible GPU meshes, but they used the ordinary fixed-distance character viewport instead of the existing large-model bounding-box camera.
