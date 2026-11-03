@@ -102,7 +102,7 @@ def apply(html):
       ('v11.233 · Chat Studio Commands v1 reviewed native editing',
        'v11.234 · corrected Astra wolf skeletal deformation'),
       ("window.SWRLZ_FORGE_BUILD={version:'v11.233'",
-       "window.SWRLZ_FORGE_BUILD={version:'v11.233'"),
+       "window.SWRLZ_FORGE_BUILD={version:'v11.234'"),
       ('<title>§wyrl§ Engine · Maker v11.233</title>',
        '<title>§wyrl§ Engine · Maker v11.234</title>')
     ]:
