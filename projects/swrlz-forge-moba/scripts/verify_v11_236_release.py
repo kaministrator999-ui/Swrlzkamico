@@ -15,15 +15,15 @@ args = cli.parse_args()
 output = Path(args.output).resolve()
 manifest = json.loads((ROOT / "source-manifest.json").read_text(encoding="utf8"))
 assert manifest["name"] == "§wyrl§ Engine v11.236"
-assert manifest["finalArtifact"] == "swyrl_engine_v11_235.html"
+assert manifest["finalArtifact"] == "swyrl_engine_v11_236.html"
 assert len(manifest["patches"]) == 268
 assert manifest["patches"][-1] == "patches/v11_236_sheep_gables_wolf_root_starter_groups.py"
 subprocess.run([sys.executable, str(ROOT / "build_space.py"),
                 "--output", str(output)], check=True)
 raw = (output / "index.html").read_bytes()
 assert (output / "modeler.html").read_bytes() == raw
-assert len(raw) == manifest["finalBytes"]
-assert hashlib.sha256(raw).hexdigest() == manifest["finalSha256"]
+assert len(raw) == manifest["finalBytes"] == 7735923
+assert hashlib.sha256(raw).hexdigest() == manifest["finalSha256"] == "02056c0d0ff3722b503a03d6fe31ebfc4a99adbdeb2ba132b58d1ba447d105ae"
 html = raw.decode("utf8")
 required = (
     "SWYRL_ENGINE_DEPLOY_MARKER: V11_236_SHEEP_GABLES_WOLF_ROOT_STARTER_GROUPS",
