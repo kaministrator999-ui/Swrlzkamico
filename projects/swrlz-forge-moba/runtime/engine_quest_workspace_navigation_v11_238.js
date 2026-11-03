@@ -90,6 +90,7 @@
       tools.setAttribute('aria-expanded',String(open));
     });
     head.insertBefore(tools,menu);
+    panel.classList.add('se238-model-ready');
     s.model={panel,head,actions,menu,contents,tools,originals:new Map()};
   }
   function collectModel(){
