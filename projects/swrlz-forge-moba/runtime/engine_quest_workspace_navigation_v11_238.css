@@ -1,0 +1,192 @@
+/* §E v11.238 Quest Browser-only layout. All native buttons remain functional;
+   only browser-page controls move, NOT Meta OS windows or WebXR geometry. */
+#se238GameToolsToggle,#se238GameTools,#se238ModelActions,#se238ModelToolsToggle{
+  display:none!important;
+}
+html.se-quest-panel[data-se-device-profile="quest-browser"] .app>.topbar{
+  box-sizing:border-box!important;display:flex!important;align-items:center!important;
+  flex-wrap:nowrap!important;gap:6px!important;min-width:0!important;
+  width:100%!important;max-width:100%!important;
+  height:52px!important;min-height:52px!important;
+  overflow:hidden!important;padding:3px 6px!important;
+}
+html.se-quest-panel[data-se-device-profile="quest-browser"]
+ .app>.topbar>.se187-game-tabs{
+  box-sizing:border-box!important;display:flex!important;
+  position:static!important;left:auto!important;right:auto!important;
+  flex:1 1 auto!important;min-width:0!important;
+  width:auto!important;max-width:none!important;height:46px!important;
+  overflow-x:auto!important;overflow-y:hidden!important;
+  overscroll-behavior-x:contain;touch-action:pan-x;
+  scroll-padding-inline:8px;scrollbar-width:thin;
+  margin:0!important;padding:2px 4px!important;
+  z-index:1!important;box-shadow:none!important;
+}
+html.se-quest-panel[data-se-device-profile="quest-browser"]
+ .app>.topbar .se187-game-tabs button{
+  box-sizing:border-box!important;min-height:42px!important;
+  max-height:43px!important;min-width:82px!important;
+  white-space:nowrap;padding:5px 9px!important;
+  font-size:12px!important;
+}
+html.se-quest-panel[data-se-device-profile="quest-browser"]
+ .app>.topbar .segui-mini{flex:0 0 auto!important}
+html.se-quest-panel[data-se-device-profile="quest-browser"]
+ .app>.topbar .segui-mini button{min-width:max-content!important}
+html.se-quest-panel[data-se-device-profile="quest-browser"]
+ #se238GameToolsToggle{
+  box-sizing:border-box!important;display:inline-flex!important;
+  align-items:center!important;justify-content:center!important;
+  position:relative!important;flex:0 0 auto!important;
+  min-width:98px!important;min-height:43px!important;height:43px!important;
+  padding:6px 10px!important;border:1px solid #82b9bf!important;
+  border-radius:9px!important;background:#23516a!important;color:#e5ffff!important;
+  font:700 12px/1.2 system-ui,sans-serif!important;z-index:2!important;
+}
+html.se-quest-panel[data-se-device-profile="quest-browser"]
+ #se238GameTools:not([hidden]){
+  display:flex!important;
+}
+html.se-quest-panel[data-se-device-profile="quest-browser"] #se238GameTools{
+  box-sizing:border-box;position:fixed!important;
+  z-index:2147481800!important;
+  top:clamp(56px,9dvh,84px);right:8px;left:auto;
+  width:min(560px,calc(100vw - 16px));
+  max-height:calc(100dvh - 68px);flex-direction:column;
+  overflow:hidden;overscroll-behavior:contain;
+  background:#112339fa;border:1px solid #699ab0;border-radius:13px;
+  box-shadow:0 14px 45px #020914dc;color:#e5f7ff;
+  font:600 12px/1.35 system-ui,sans-serif;
+}
+#se238GameTools .se238-drawer-head{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  flex:0 0 auto;padding:9px 12px;
+  border-bottom:1px solid #567a90;background:#18354a;
+}
+#se238GameTools .se238-drawer-content{
+  display:flex;flex-wrap:wrap;align-content:flex-start;align-items:center;
+  gap:8px;box-sizing:border-box;min-width:0;min-height:0;
+  max-height:calc(100dvh - 130px);padding:12px;overflow:auto;
+  overscroll-behavior:contain;
+}
+#se238GameTools .se238-drawer-content>:is(button,select,input),
+#se238GameTools .se238-drawer-close{
+  box-sizing:border-box;flex:0 1 auto;min-height:44px;max-width:100%;
+  padding:8px 11px;background:#223d55;border:1px solid #66899e;
+  border-radius:8px;color:#ebfaff;font:650 12px system-ui,sans-serif;
+}
+#se238GameTools .se238-drawer-content>.sep{display:none}
+#se238GameTools .se238-drawer-content>.brand{flex:1 0 100%;padding:0 2px}
+#se238GameTools :is(button,input,select):focus-visible{
+  outline:2px solid #b4fff0;outline-offset:2px;
+}
+html.se-quest-panel[data-se-device-profile="quest-browser"]
+ #modelAtelierPanel.se187-modeler-page>.se187-model-tabs{
+  box-sizing:border-box!important;display:flex!important;align-items:center!important;
+  flex:0 0 46px!important;width:100%!important;min-width:0!important;
+  max-width:100%!important;flex-wrap:nowrap!important;
+  overflow-x:auto!important;overflow-y:hidden!important;
+  scroll-padding-inline:8px;overscroll-behavior-x:contain;
+  padding:3px 6px!important;gap:5px!important;scrollbar-width:thin;
+}
+html.se-quest-panel[data-se-device-profile="quest-browser"]
+ #modelAtelierPanel.se187-modeler-page>.se187-model-tabs>*{flex-shrink:0}
+html.se-quest-panel[data-se-device-profile="quest-browser"] #modelAtelierPanel .atelier-head{
+  box-sizing:border-box!important;display:flex!important;align-items:center!important;
+  flex-wrap:wrap!important;gap:6px!important;
+  min-width:0!important;min-height:46px!important;padding:5px 8px!important;
+  max-width:100%!important;overflow:visible!important;
+}
+html.se-quest-panel[data-se-device-profile="quest-browser"] #modelAtelierPanel .atelier-head>strong{
+  flex:1 1 130px!important;min-width:80px!important;max-width:none!important;
+  overflow:hidden!important;text-overflow:ellipsis!important;
+  white-space:nowrap!important;font-size:12px!important;
+}
+html.se-quest-panel[data-se-device-profile="quest-browser"] #modelAtelierPanel
+ .atelier-head>.atelier-actions{
+  flex:0 0 auto!important;min-width:0!important;width:auto!important;
+  display:flex!important;flex-wrap:nowrap!important;overflow:visible!important;
+}
+html.se-quest-panel[data-se-device-profile="quest-browser"] #modelAtelierPanel
+ .atelier-head :is(#se238ModelToolsToggle,#se185AtelierTopToggle){
+  min-height:39px!important;min-width:0!important;white-space:nowrap!important;
+  font:700 11px system-ui,sans-serif!important;padding:6px 9px!important;
+}
+html.se-quest-panel[data-se-device-profile="quest-browser"] #se238ModelToolsToggle{
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  background:#204d60!important;border:1px solid #7daaba!important;
+  border-radius:8px!important;color:#efffff!important;
+}
+html.se-quest-panel[data-se-device-profile="quest-browser"] #se238ModelActions{
+  display:block!important;position:relative!important;z-index:3920!important;
+  flex:0 0 auto!important;min-width:0!important;
+}
+html.se-quest-panel[data-se-device-profile="quest-browser"] #se238ModelActions>summary{
+  box-sizing:border-box;list-style:none;display:flex;align-items:center;
+  justify-content:center;min-height:39px;white-space:nowrap;cursor:pointer;
+  padding:6px 10px;border:1px solid #7c9fb4;border-radius:8px;
+  color:#f0fdff;background:#23465b;font:700 11px system-ui,sans-serif;
+}
+#se238ModelActions>summary::-webkit-details-marker{display:none}
+html.se-quest-panel[data-se-device-profile="quest-browser"]
+ #se238ModelActions .se238-model-menu-content{
+  display:none;box-sizing:border-box;position:absolute!important;
+  right:0!important;left:auto!important;top:calc(100% + 6px)!important;
+  bottom:auto!important;width:min(440px,calc(100vw - 20px))!important;
+  max-height:min(72dvh,540px)!important;overflow:auto!important;
+  overscroll-behavior:contain!important;
+  gap:7px;flex-flow:row wrap;align-content:flex-start;align-items:center;
+  padding:10px;border:1px solid #739aaf;border-radius:12px;
+  background:#193248fc;color:#f0ffff;box-shadow:0 12px 32px #000b;
+  z-index:3940!important;
+}
+html.se-quest-panel[data-se-device-profile="quest-browser"]
+ #se238ModelActions[open] .se238-model-menu-content{display:flex!important}
+html.se-quest-panel[data-se-device-profile="quest-browser"]
+ #se238ModelActions .se238-model-menu-content>button,
+html.se-quest-panel[data-se-device-profile="quest-browser"]
+ #se238ModelActions .se238-model-menu-content>details>summary{
+  box-sizing:border-box;min-width:110px;min-height:41px;
+  padding:8px;border-radius:8px;border:1px solid #64899f;
+  background:#26465e;color:#ecfaff;font:650 12px system-ui,sans-serif;
+}
+html.se-quest-panel[data-se-device-profile="quest-browser"]
+ #modelAtelierPanel .atelier-tool-rail{
+  display:none!important;
+}
+html.se-quest-panel[data-se-device-profile="quest-browser"]
+ #modelAtelierPanel.se238-tool-rail-open .atelier-tool-rail{
+  box-sizing:border-box!important;position:fixed!important;
+  display:flex!important;flex-direction:column!important;align-items:stretch!important;
+  flex-wrap:nowrap!important;right:10px!important;left:auto!important;
+  top:clamp(114px,20dvh,190px)!important;bottom:auto!important;
+  transform:none!important;
+  width:min(220px,calc(100vw - 20px))!important;max-height:64dvh!important;
+  overflow-y:auto!important;overflow-x:hidden!important;
+  padding:8px!important;gap:5px!important;
+  z-index:4100!important;border:1px solid #76aab7!important;border-radius:12px!important;
+  background:#12283cf8!important;box-shadow:0 13px 32px #000b!important;
+}
+html.se-quest-panel[data-se-device-profile="quest-browser"]
+ #modelAtelierPanel.se238-tool-rail-open .atelier-tool-rail button{
+  box-sizing:border-box!important;min-height:39px!important;width:100%!important;
+  min-width:0!important;white-space:normal!important;
+  padding:6px 10px!important;font-size:12px!important;
+}
+html.se-quest-panel[data-se-device-profile="quest-browser"]
+ #modelAtelierPanel :is(.atelier-scene,.atelier-body,.atelier-inspector){
+  min-width:0!important;
+}
+html.se-quest-panel[data-se-device-profile="quest-browser"]
+ #modelAtelierPanel .atelier-inspector{
+  box-sizing:border-box!important;max-width:100%!important;
+  overflow-x:hidden!important;overflow-y:auto!important;
+}
+@media(max-width:680px){
+ html.se-quest-panel[data-se-device-profile="quest-browser"]
+  #modelAtelierPanel .atelier-head>strong{flex-basis:100%!important}
+ html.se-quest-panel[data-se-device-profile="quest-browser"]
+  #se238ModelActions .se238-model-menu-content{
+   right:calc(-1 * min(60px,7vw))!important;
+  }
+}
