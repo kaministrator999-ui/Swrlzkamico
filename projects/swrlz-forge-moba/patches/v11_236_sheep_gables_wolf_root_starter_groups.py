@@ -54,7 +54,7 @@ def apply(html):
        """ }else if(part?.wolf224Joint==='head'||region==='face'||region==='muzzle'||
            named.includes('eye')||named.includes('ear ·')){""",
        """ }else if(part?.wolf224Joint==='head'||region==='face'||region==='muzzle'||
-           /^(?:nose|nostril|face|eye|ear|ruff · cheek|muzzle|snout|whisker|lip|brow|chin|fang|tooth|teeth)(?:\b| ·)/.test(named)||
+           /^(?:nose|nostril|face|eye|ear|ruff · cheek|muzzle|snout|whisker|lip|brow|chin|fang|tooth|teeth)(?:\\b| ·)/.test(named)||
            /(?:^|[-_])(?:nose|nostril|muzzle|snout|whisker|cheek|brow|lip)(?:[-_]|$)/.test(pId)){""",
        "bind separate nose and facial detail parts rigidly to skull")
 
