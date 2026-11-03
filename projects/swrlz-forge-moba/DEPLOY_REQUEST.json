@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.233",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_233_CHAT_NATIVE_STUDIO_BRIDGE",
-  "reason": "Publish sealed §E v11.233 native Studio Commands v1 host: exact live studio snapshots and bounded material create/edit/actor assign, particle emitter create/edit, and existing glove/wolf bone pose/keyframe calls through the current authenticated Chat-host lease and receipt pipeline. Preserve the v11.232 starter workspace fix; no new renderer, arbitrary JavaScript, WebXR capture or gameplay mutation. Exact source verified in focused full package run #41569448070 and #41569420823: 265 patches, 68 assets, 7,725,488 HTML bytes, SHA-256 936e49ec155d091a8e0e651a6043713554e6ac5c776a7b6fec45884c2967b34c. Real owner mobile/Quest and separately released Chat backend remain pending. Deployment verifier correction: require full deploy marker, not only suffix; engine bytes and SHA unchanged from sealed build.",
-  "sourceCommit": "9a18740c9d6a6ed37ed78ddc472f0b3b4c5da8a1",
-  "sourceIntegritySha256": "936e49ec155d091a8e0e651a6043713554e6ac5c776a7b6fec45884c2967b34c"
+  "releaseVersion": "v11.235",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_235_WOLF_MOTION_PANEL_VISIBILITY",
+  "reason": "User Android observed Astra wolf Run playhead advancing without animation until rotating viewport; severe limb and tail stretching during motion; and the Motion tool mode hid its actual Play/Set key controls. Release append-only wolf anatomical skin weights/pivot correction plus Motion panel routing and HD dirty frame invalidation. Focused 390px Chromium native test PASSED: tap Motion exposes Clip/Play/Set keyframe/Time/Bone controls; Run canvas visibly redraws with no camera orbit (128/11154 sample pixels changed after 260ms); rigorous 267-patch, 68-asset source seal PASS at 7,729,335 bytes SHA-256 446edd4f0d7ff1fc8d59216035eef315159437bc70952457203e9a266ce728a5. No duplicate renderer; preserves all Sheep Tag game mechanics, saved projects, model textures and chat studios. Owner Moto/Quest visual quality acceptance pending.",
+  "sourceCommit": "d1a5bdf803711e3ba25d9240647fb50638f5f9d4",
+  "sourceIntegritySha256": "446edd4f0d7ff1fc8d59216035eef315159437bc70952457203e9a266ce728a5"
 }
