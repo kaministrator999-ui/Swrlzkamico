@@ -1,3 +1,11 @@
+## §E v11.238 — Quest VR circular-menu responsiveness and streamlined browser tools (2026-11-03)
+
+**Owner Quest 2 source:** Sheep Tag works under normal headset movement until opening the VIEW / BACK / FORWARD / TACTICAL circular menu. Then the app stalls and hides its own menu. The browser Game Engine and Model Atelier top controls overlap in floating Quest windows.
+
+**Source change:** Preserve the app radial across a still-visible 170–650 ms WebXR frame delay rather than incorrectly entering the Meta OS overlay suppression path; keep genuine hidden/blurred/long-gap safety behavior. Reuse menu hit tests and GPU text textures. The Quest Browser layout reorganizes existing Game Engine commands under Controls and the modeler's original actions and tool rail under Model actions / Edit tools, preserving native button handlers and the Close control. No new WebXR camera, game mechanics, fog-masking or Meta OS window controller.
+
+**Exact governed v11.238 source:** 269 ordered patches, 68 preserved assets, 7,759,927 HTML bytes, SHA-256 `b732a8868cd74ead21e085365d6c3004f5e71e63a9cfd473ae676b955179e13c`. Full Quest 2 UX acceptance is owner-tested. See `projects/swrlz-forge-moba/docs/QUEST_RADIAL_WORKSPACE_V11_238.md`. Separate draft PRs #362 and #363 are excluded.
+
 ## §E v11.236 — Complete Sheep House gables, Wolf root preview, starter categories (2026-11-02)
 
 **Owner inspection / source diagnosis:** The four enclosed Sheep Tag house models had rectangular walls and sloped roof pitches but **no front or rear triangular gable geometry**, leaving large attic openings. Astra's separately authored nose and cheek ruff meshes inherited torso/neck weights even when the skull turned. Procedural walk/run/stalk bob and spine pitch caused global rocking. The existing Starter Projects gallery mixed game and model assets.
