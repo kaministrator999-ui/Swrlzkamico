@@ -4,7 +4,8 @@ The v11.119 generic mode-view CSS hides every direct inspector child except
 the context workbench. Astra's Wolf Rig & Motion is such a child and can appear
 to vanish on the user's Android phone, despite being installed and functional.
 When choosing the native Motion category on a wolf, show that actual original
-panel instead of opening a redundant generic context page. No cloned controls.
+panel instead of opening a redundant generic context page. Mark skin pose edits
+HD-dirty so the original single renderer actually draws animated frames.
 """
 import json
 
@@ -51,6 +52,15 @@ def apply(html):
       " controls.prepend(ui);\n const by=id=>document.getElementById('modelAtelierWolf'+id);",
       " controls.prepend(ui);ui.open=true;\n const by=id=>document.getElementById('modelAtelierWolf'+id);",
       'make wolf preview details discoverable on initial load')
+
+    # The sole modeler render loop enables HD frame suppression when nothing
+    # changes. Animated bones alter GPU skin transforms without changing model
+    # geometry; tell that existing loop to redraw instead of relying on a
+    # camera gesture to make the viewport dirty.
+    html=once(html,
+      ' root.updateMatrixWorld(true);se224WolfSkeleton.update();',
+      ' root.updateMatrixWorld(true);se224WolfSkeleton.update();atelierHDDirty=true;',
+      'invalidate HD viewport whenever the wolf pose changes')
 
     css="""
 <style id="se235WolfMotionVisibility">
@@ -106,6 +116,7 @@ def apply(html):
         'On Android, choosing Motion for Astra now opens the existing Wolf Rig & Motion inspector; clip selector, Play/Stop, reset, playhead, skeleton, editable bones, and Save pose at playhead remain visible and usable.',
         'Correct native mode-view CSS hiding the Wolf Studio behind the generic context workbench; no duplicated controls or second modal added.',
         'Keep the Wolf Rig & Motion details expanded on initial wolf loading, and return to the existing context inspector when another tool category is selected.',
+        'Invalidate the existing HD viewport when wolf bones change so Play, scrub and pose editing visibly animate without requiring camera orbit. Preserve the existing one-RAF, one-WebGL-renderer design.',
         'Preserve saved wolf clips, geometry, shaders, rig weights, Sheep Tag gameplay, other modeling tools, and existing single render loop.',
         'Owner Moto/Quest checks still required for UI interaction, animation quality and performance.'
       ])
