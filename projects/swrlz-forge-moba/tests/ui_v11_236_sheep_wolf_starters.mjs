@@ -23,8 +23,7 @@ try{
  const page=await ctx.newPage();
  const errors=[];page.on('pageerror',err=>errors.push(String(err)));
  await page.goto(host+'/index.html',{waitUntil:'domcontentloaded',timeout:90000});
- await page.waitForFunction(()=>window.SWYRL_ENGINE_SHEEP_BUILDING_STARTERS?.createScene&&
-   window.SE236_TEST_DIAG,null,{timeout:40000});
+ await page.waitForFunction(()=>window.SWYRL_ENGINE_SHEEP_BUILDING_STARTERS?.createScene,null,{timeout:40000});
  const houses=await page.evaluate(()=>{
   const counts={'sheep-free-shelter':18,'sheep-thatched-hut':62,'sheep-cottage':71,'sheep-barn':40,'sheep-ram-house':63};
   return Object.entries(counts).map(([id,expected])=>{
@@ -64,7 +63,7 @@ try{
 
  await page.evaluate(()=>window.SWYRL_ENGINE_MODEL_ATELIER.loadAnimal('wolf',{force:true}));
  await page.waitForFunction(()=>window.SWYRL_ENGINE_WOLF_RIG?.status?.().skinned&&
-  window.SWYRL_ENGINE_WORKSPACES?.active?.()==='modeler',null,{timeout:65000});
+  window.SWYRL_ENGINE_WORKSPACES?.active?.()==='modeler'&&window.SE236_TEST_DIAG,null,{timeout:65000});
  const face=await page.evaluate(()=>window.SE236_TEST_DIAG.faces());
  console.log('SE236_WOLF_FACE_WEIGHTS',JSON.stringify(face));
  for(const p of face){
