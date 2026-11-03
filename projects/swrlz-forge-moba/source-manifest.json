@@ -287,6 +287,6 @@
     "patches/v11_239_quest_gameplay_raycast_budget.py",
     "patches/v11_240_sheep_grass_pbr.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 7770423,
+  "finalSha256": "8a5b1e310f3359cb0dbd97a50b7ca1e0831af097f4a2123def5e96fe47d476bf"
 }
