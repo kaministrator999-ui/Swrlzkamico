@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.242",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_242_SHEEP_NATURAL_GRASS",
-  "reason": "Fix owner-observed green camouflage checkerboard from §E v11.241 Sheep Tag ground: originally 128px swatch 16x16 tiles at 75% color takeover. Preserve original authored meadow palette, roads/sanctuary, and add only subtle zero-centered grass surface grain; 8 repeats and normal relief 0.07, native MeshStandardMaterial base/normal/roughness retained. No effect on Quest headturn improvements, fog, sheep/wolf play, housing placements, controls or Particle Studio. Focused source build PASSED GitHub run 41683854796, source sealed v11.242 exact SHA256 df39c30d49670d58a0bc06dbcb7f2615d7c070ea852575ac7a13d318cd807090, 7,778,326 bytes, 273 ordered patches, 69 packaged assets. Merge commit 3baf8a972e00946c2ead2c8082331f982717a73a. Physical Quest 2/mobile visual acceptance pending. Publish this exact source.",
-  "sourceCommit": "3baf8a972e00946c2ead2c8082331f982717a73a",
-  "sourceIntegritySha256": "df39c30d49670d58a0bc06dbcb7f2615d7c070ea852575ac7a13d318cd807090"
+  "releaseVersion": "v11.243",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_243_PARTICLE_MOBILE_LAYOUT",
+  "reason": "Owner Moto screenshot: Particle Studio game world outliner leaked into dedicated effects workspace; crowded mobile controls. v11.243 hides game editor chrome in separate studios and adds compact/expandable particle inspector; preserves v11.242 natural grass, existing v11.240 VFX test chamber, standalone emitter creation, Quest/Sheep Tag and native Chat approval/receipt. Enables explicit user-gesture clipboard-read permissions for embedded §C Chat. Verified exact merged source, 274 ordered patches, 69 assets, 7,783,817 HTML bytes and SHA256 b49ae5a5a62b560925f1647ac4ac21b86120310e05662c34467fe31a2eff0d16 via focused Actions 41685746169. Owner real-device acceptance pending.",
+  "sourceCommit": "f27302bc6590864db218ebf0ee2d330b2881195e",
+  "sourceIntegritySha256": "b49ae5a5a62b560925f1647ac4ac21b86120310e05662c34467fe31a2eff0d16"
 }
