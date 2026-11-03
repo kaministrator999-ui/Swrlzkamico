@@ -259,7 +259,7 @@ assert wolf_loader.count('wolf.wolfAnimations=se224WolfClips()')==1
 assert "initializeHistory('Opened rigged Astra wolf starter')" in wolf_loader
 assert "panel.classList.remove('courier-studio')" in wolf_loader
 public_start=s.index('loadAnimal:async(species,options={})=>{')
-public_end=s.index(' return ok;\\n},',public_start)
+public_end=s.index(' return ok;\n},',public_start)
 public_loader=s[public_start:public_end]
 assert 'ModelAtelier.close()' not in public_loader
 assert 'ModelAtelier.open()' not in public_loader
