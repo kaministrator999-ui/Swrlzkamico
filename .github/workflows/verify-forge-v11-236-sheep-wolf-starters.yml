@@ -1,0 +1,80 @@
+name: Validate §E v11.236 houses wolf root starter tabs candidate
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/verify-forge-v11-236-sheep-wolf-starters.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  focused:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build isolated append-only v11.236 candidate without changing sealed release
+        run: |
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_236_sheep_gables_wolf_root_starter_groups.py
+          python3 - <<'PY'
+          from pathlib import Path
+          import json
+          p=Path('projects/swrlz-forge-moba/source-manifest.json')
+          m=json.loads(p.read_text())
+          assert m['name']=='§wyrl§ Engine v11.235',m['name']
+          assert m['patches'][-1]=='patches/v11_235_wolf_motion_tools_visibility.py'
+          m['name']='§wyrl§ Engine v11.236'
+          m['finalArtifact']='swyrl_engine_v11_236.html'
+          m['patches'].append('patches/v11_236_sheep_gables_wolf_root_starter_groups.py')
+          m['finalBytes']=0;m['finalSha256']=''
+          p.write_text(json.dumps(m,ensure_ascii=False))
+          PY
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/se236-combined
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          p=Path('/tmp/se236-combined/index.html')
+          b=p.read_bytes();s=b.decode('utf8')
+          assert b==Path('/tmp/se236-combined/modeler.html').read_bytes()
+          assert 'V11_236_SHEEP_GABLES_WOLF_ROOT_STARTER_GROUPS' in s
+          for needle in ('function se236GableInfill(','se236WolfPreviewOptions',
+            'se236InstallStarterGroups','se236StarterModels','Gable · ',
+            'root.position.set(base[0],base[1]+(inPlace?0:bob),base[2])'):
+            assert needle in s,needle
+          helper="""window.SE236_TEST_DIAG={
+           faces:()=>{
+            const rig=se224WolfCurrent(),byId=Object.fromEntries(rig.bones.map((b,i)=>[b.id,i]));
+            const parts=model().parts;const names=['Nose · graphite leather','Nose · philtrum','Ruff · cheek -1 0','Face · smile corner -1'];
+            return names.map(name=>{
+             const p=parts.find(q=>q.name===name);if(!p)throw Error('Missing wolf facial detail '+name);
+             const weight=se224WolfVertexWeights([0,2.34,.87],rig,p,byId);
+             const byName={};for(let i=0;i<4;i++){const id=rig.bones[weight.indexes[i]]?.id||'unknown';byName[id]=(byName[id]||0)+weight.weights[i];}
+             return {name,head:byName.wolf_head||0,spine:byName.wolf_spine||0,byName};
+            });
+           },
+           preview:()=>({
+             rootY:se224WolfBones?.wolf_root?.position.y||0,
+             spineX:se224WolfBones?.wolf_spine?.rotation.x||0,
+             clip:document.getElementById('modelAtelierWolfClip')?.value||'',
+             headX:se224WolfBones?.wolf_head?.rotation.x||0
+           })
+          };"""
+          for file in ('index.html','modeler.html'):
+            p=Path('/tmp/se236-combined')/file
+            t=p.read_text();key='window.SWRLZ_FORGE_BUILD='
+            assert t.count(key)==1
+            p.write_text(t.replace(key,helper+'\n'+key,1))
+          print('SE236_CANDIDATE_BYTES='+str(len(b)))
+          print('SE236_CANDIDATE_SHA256='+hashlib.sha256(b).hexdigest())
+          PY
+      - name: Install one mobile browser
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps --only-shell chromium
+      - name: Validate four solid houses, wolf face/root preview and project category tabs
+        run: node projects/swrlz-forge-moba/tests/ui_v11_236_sheep_wolf_starters.mjs
