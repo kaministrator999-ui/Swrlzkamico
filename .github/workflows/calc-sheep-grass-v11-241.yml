@@ -1,0 +1,31 @@
+name: Calculate Sheep Tag Grass v11.241 Release
+on:
+  push:
+    branches: [feature/sheep-grass-pbr-v11-241]
+    paths:
+      - projects/swrlz-forge-moba/source-manifest.json
+      - .github/workflows/calc-sheep-grass-v11-241.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  grass-receipt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check runtime, image and final artifact
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/sheep_grass_pbr_v11_241.js
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_241_sheep_grass_pbr.py
+          python -m pip -q install Pillow
+          python - <<'PY'
+          from PIL import Image,ImageStat
+          with Image.open("projects/swrlz-forge-moba/assets/sheep-tag/grass-source-color-quest.webp") as im:
+              im.load()
+              print("GRASS_DECODE",im.format,im.size)
+              mean=ImageStat.Stat(im.convert("RGB")).mean
+              assert mean[1]>mean[0] and mean[1]>mean[2]
+          PY
+          python projects/swrlz-forge-moba/build_space.py --output "$RUNNER_TEMP/grass-241"
+          echo "GRASS_241_BYTES=$(wc -c < "$RUNNER_TEMP/grass-241/index.html")"
+          echo "GRASS_241_SHA256=$(sha256sum "$RUNNER_TEMP/grass-241/index.html" | cut -d' ' -f1)"
