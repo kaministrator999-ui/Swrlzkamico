@@ -100,6 +100,14 @@ stStop=function(...args){
   se237Release();
   return se237PriorStop(...args);
 };
+const se237PriorCapture=se193XRCapture;
+se193XRCapture=function(mode='clean'){
+  const ok=se237PriorCapture(mode);
+  if(ok&&se193.capture?.metadata)
+    se193.capture.metadata.questStereoVisual=
+      window.SWYRL_ENGINE_QUEST_STEREO_GUARD_237.diagnose();
+  return ok;
+};
 window.SWYRL_ENGINE_QUEST_STEREO_GUARD_237=Object.freeze({
   diagnose:()=>({
     active:se237.session===stSession&&se193XRGameActive(),
