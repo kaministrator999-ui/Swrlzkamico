@@ -23,8 +23,8 @@ def apply(html):
     for marker in needed:
         if marker not in html:
             raise AssertionError(("missing studio bridge dependency", marker))
-    old = " source.engine='§wyrl§ Engine · Maker v11.231';source.version=11.231;"
-    new = " source.engine='§wyrl§ Engine · Maker v11.233';source.version=11.232;"
+    old = " source.engine='§wyrl§ Engine · Maker v11.232';source.version=11.232;"
+    new = " source.engine='§wyrl§ Engine · Maker v11.233';source.version=11.233;"
     if html.count(old) != 2:
         raise AssertionError(("v11.233 source provenance count", html.count(old)))
     html = html.replace(old, new)
