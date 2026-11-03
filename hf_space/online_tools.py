@@ -479,6 +479,8 @@ _LYRIC_POST_SONG_META=re.compile(
     r"publishers?|powered\s+by\s+\S+|"
     r"top\s+(?:lyrics|artists|songs)(?:\s*:)?|"
     r"lyrics?\s+licensed\s+and\s+provided\s+by\b|keep\s+listening|go\s+beyond\s+the\s+lyrics|"
+    r"letra\s+añadida\s+por\s+el\s+usuario\b|¿?te\s+encanta\s+la\s+letra\b|"
+    r"comenta\s+sobre\b|top\s+\d+\s+canciones\b|"
     r"submit\s+(?:lyrics|corrections?)|"
     r"add\s+song|album\s+lyrics|azlyrics|you\s+may\s+also\s+like|"
     r"back\s+to\s*:\s*.+?\s+lyrics)\b.*$",
@@ -611,6 +613,44 @@ def _lyrics_rescue_query_plan(subject: str) -> list[dict[str,Any]]:
 
 def _lyrics_rescue_queries(subject: str) -> list[str]:
     return [item["query"] for item in _lyrics_rescue_query_plan(subject)]
+
+
+def _lyrics_independent_snippet_corroboration(
+    item: dict[str,Any], lyric_extract: str, subject: str, candidates: list[dict[str,Any]],
+) -> dict[str,Any]:
+    """Cross-source corroboration for long lyric pages without [Verse] labels.
+
+    Search snippets are discovery evidence, not authority. Require TWO other
+    independent source families to contain the same contiguous uncommon words
+    in the actually fetched body. This never substitutes for page identity,
+    lyric-body extraction, or a recognized end-of-lyrics boundary.
+    """
+    selected_family=source_family(item)
+    identity=song_identity(subject)
+    body_tokens=set(_lyrics_informative_tokens(lyric_extract,subject))
+    families=set()
+    spans=[]
+    for row in candidates[:32]:
+        if not isinstance(row,dict):
+            continue
+        family=source_family(row)
+        if not family or family==selected_family or family in families:
+            continue
+        score=candidate_score(row,identity)
+        if not (score.get("allowed") and score.get("exactTitle") and score.get("exactArtist")):
+            continue
+        snippet=str(row.get("snippet") or "")
+        tokens=_lyrics_informative_tokens(snippet,subject)
+        if len(tokens)<8:
+            continue
+        overlap=sum(1 for token in tokens if token in body_tokens)
+        span=_lyrics_sequence_span(snippet,lyric_extract,subject)
+        if span>=5 and overlap>=6:
+            families.add(family)
+            spans.append(span)
+        if len(families)>=2:
+            break
+    return {"familyCount":len(families),"families":sorted(families),"sequenceSpans":spans}
 
 
 def _lyrics_source_identity(item: dict[str,Any], subject: str) -> dict[str,Any]:
@@ -1751,6 +1791,12 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
     song_discovery_plan=query_ladder(song_identity_debug,LYRICS_MAX_RESCUE_SEARCHES) if song_identity_debug else []
     lyrics_rescue_search_debug=[]
     lyrics_fallback_exhausted=False
+    # Keep other-source snippets separate from the fetched source's own
+    # descriptive snippet. No new network work or expanded fetch budget.
+    lyric_corroboration_pool=[
+        row for row in (bundle.get("candidatePool") or [])
+        if isinstance(row,dict)
+    ][:32]
 
     if plan.get("contentMode")=="lyrics-verification":
         fetched = [x for x in evidence if x.get("pageFetched") is True and str(x.get("pageExtract") or "").strip()]
@@ -1777,7 +1823,10 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
 
         def presentation_ready() -> bool:
             return any(
-                isinstance(row,tuple) and len(row)>=4 and int((row[3] or {}).get("musicalSectionCount") or 0)>=2
+                isinstance(row,tuple) and len(row)>=4 and (
+                    int((row[3] or {}).get("musicalSectionCount") or 0)>=2
+                    or int((row[3] or {}).get("independentLyricSnippetFamilies") or 0)>=2
+                )
                 for row in valid
             )
 
@@ -1843,12 +1892,33 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
                 and len(body_lines)>=8
                 and int(structure_profile.get("musicalSectionCount") or 0)>=2
             )
+            independent=_lyrics_independent_snippet_corroboration(
+                item,lyric_extract,subject,lyric_corroboration_pool,
+            ) if lyric_extract and source_identity.get("verified") else {"familyCount":0,"families":[],"sequenceSpans":[]}
+            # Some accurately transcribed rap lyrics have no [Verse] markers.
+            # Accept only a long extracted body, a verified song-specific
+            # destination, an explicit post-song footer, and matching contiguous
+            # wording from two other independently named lyric-site families.
+            corroborated_unlabeled=bool(
+                source_identity.get("verified")
+                and extractor_diagnostics.get("decision")=="ACCEPTED"
+                and extractor_diagnostics.get("terminalBoundaryKind")=="POST_SONG_META_BOUNDARY"
+                and int(extractor_diagnostics.get("acceptedBlockCount") or 0)>=3
+                and len(body_lines)>=24
+                and len(lyric_extract)>=600
+                and int(independent.get("familyCount") or 0)>=2
+            )
             # Preserve the original short-descriptive-snippet acceptance path;
             # identity is mandatory only when bypassing a snippet/body mismatch.
             # A generic "Lyrics" heading alone cannot validate page chrome.
-            verified_candidate=bool(lyric_extract and (snippet_consistent or strong_body))
+            verified_candidate=bool(lyric_extract and (snippet_consistent or strong_body or corroborated_unlabeled))
             if verified_candidate:
                 rejection_reason="VERIFIED"
+                verification_basis=("PRIMARY_SNIPPET" if snippet_consistent else
+                                    "EXPLICIT_SECTIONS" if strong_body else
+                                    "TWO_INDEPENDENT_LYRIC_SNIPPETS")
+            else:
+                verification_basis=""
             elif not lyric_extract:
                 rejection_reason="NO_STRUCTURED_LYRIC_BODY"
             else:
@@ -1871,6 +1941,9 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
                 "sourceIdentityVerified":bool(source_identity.get("verified")),
                 "sourceIdentityScore":int(source_identity.get("score") or 0),
                 "rejectionReason":rejection_reason,
+                "verificationBasis":verification_basis,
+                "independentSnippetFamilies":independent.get("families",[]),
+                "independentSnippetSpans":independent.get("sequenceSpans",[]),
             }
             lyrics_source_attempts.append(attempt)
             lyrics_fetch_debug.append({
@@ -1893,6 +1966,9 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
                 "performerCueCount":int(structure_profile.get("performerCueCount") or 0),
                 "outcome":"VERIFIED" if verified_candidate else "REJECTED",
                 "rejectionReason":rejection_reason,
+                "verificationBasis":verification_basis,
+                "independentSnippetFamilies":independent.get("families",[]),
+                "independentSnippetSpans":independent.get("sequenceSpans",[]),
             })
             if not verified_candidate:
                 _progress(
@@ -1917,6 +1993,8 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
             requested_title,_=_lyrics_subject_parts(subject)
             if requested_title and "original" not in requested_title.casefold() and re.search(r"(?i)\boriginal\b",str(item.get("title") or "")):
                 score-=12
+            if corroborated_unlabeled:
+                structure_profile={**structure_profile,"independentLyricSnippetFamilies":independent["familyCount"]}
             valid.append((score,item,lyric_extract,structure_profile))
             _progress(
                 progress,
