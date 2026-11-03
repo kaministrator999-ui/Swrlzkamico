@@ -19,9 +19,13 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Construct candidate without a provisional seal
+      - name: Parse native authoring stage and append-only patch
         run: |
-          python projects/swrlz-forge-moba/build_space.py --output /tmp/particle-chamber
+          node --check projects/swrlz-forge-moba/runtime/particle_authoring_stage_v11_240.js
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_240_particle_authoring_chamber.py
+      - name: Verify sealed release and 68 native assets
+        run: |
+          python projects/swrlz-forge-moba/scripts/verify_v11_240_release.py --output /tmp/particle-chamber
       - name: Check exact new source and report canonical seal
         run: |
           python - <<'PY'
