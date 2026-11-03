@@ -8,8 +8,8 @@ import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
-EXPECTED_SHA = "bc9ebf1893c6cdad90c4c6fa9c5542c3c296c46ad5b0a8fc253dd6b87f5d0108"
-EXPECTED_BYTES = 7765689
+EXPECTED_SHA = "7b81e6010f708c699cff85faa853380f08e4d8fc37473bbddd42dcf8590831de"
+EXPECTED_BYTES = 7766212
 MARKER = "SWYRL_ENGINE_DEPLOY_MARKER: V11_239_SHEEP_GRASS_PBR"
 cli = argparse.ArgumentParser()
 cli.add_argument("--output", required=True)
