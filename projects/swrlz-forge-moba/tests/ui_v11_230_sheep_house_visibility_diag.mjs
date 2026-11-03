@@ -34,6 +34,15 @@ try{
    viewport:(()=>{const e=document.getElementById('modelAtelierViewport'),c=e?.querySelector('canvas');return {rect:e?.getBoundingClientRect().toJSON(),canvas:c?.getBoundingClientRect().toJSON(),canvasVisible:!!c?.getClientRects().length,css:c&&getComputedStyle(c).display}})()
   }));
   const buf=await page.locator('#modelAtelierViewport canvas').screenshot();
+  if(id==='sheep-free-shelter'||id==='sheep-barn'){
+   const original=PNG.sync.read(buf),thumbnail=new PNG({width:195,height:356});
+   for(let y=0;y<356;y++)for(let x=0;x<195;x++){
+    const src=(Math.min(original.height-1,y*2)*original.width+Math.min(original.width-1,x*2))*4;
+    const dst=(y*195+x)*4;
+    for(let k=0;k<4;k++)thumbnail.data[dst+k]=original.data[src+k];
+   }
+   console.log('SE230_SCREENSHOT_BASE64_'+id,PNG.sync.write(thumbnail).toString('base64'));
+  }
   const png=PNG.sync.read(buf),pixels=png.data;
   let chromatic=0,bright=0,red=0,gold=0,total=0;
   for(let y=0;y<png.height;y+=3)for(let x=0;x<png.width;x+=3){
