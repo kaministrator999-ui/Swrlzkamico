@@ -5,6 +5,7 @@ on:
       - feature/sheep-tag-grass-pbr
     paths:
       - projects/swrlz-forge-moba/source-manifest.json
+      - .github/workflows/calc-sheep-grass-pbr-v11-239.yml
   workflow_dispatch:
 permissions:
   contents: read
@@ -17,6 +18,8 @@ jobs:
         run: |
           node --check projects/swrlz-forge-moba/runtime/sheep_grass_pbr_v11_239.js
           python3 -m py_compile projects/swrlz-forge-moba/patches/v11_239_sheep_grass_pbr.py
+      - name: Verify sealed Sheep Tag grass release source and packaged assets
+        run: python3 projects/swrlz-forge-moba/scripts/verify_v11_239_release.py --output "$RUNNER_TEMP/sealed-grass"
       - name: Build exact governed HTML and print integrity
         shell: bash
         run: |
