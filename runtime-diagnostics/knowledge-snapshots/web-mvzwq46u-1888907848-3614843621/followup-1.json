@@ -1,0 +1,15 @@
+{
+  "schema": "swrlz-knowledge-followup-v1",
+  "requestId": "web-mvzwq46u-1888907848-3614843621",
+  "modelId": "700m",
+  "eventType": "KNOWLEDGE_ACQUISITION_FOLLOWUP_1",
+  "sourceRef": "e6232d45b75065f873212cff244938f04014c78d",
+  "persistedAtUnixMs": 1793664300139,
+  "diagnostic": {
+    "schema": "swrlz-knowledge-followup-v1",
+    "parentRequestId": "web-mvzwq46u-1888907848-3614843621",
+    "turnIndex": 1,
+    "userText": "Can you provide lyrics for the song who do I catch by tech n9ne",
+    "capturedAtUnixMs": 1793664300137
+  }
+}
