@@ -7,6 +7,26 @@ const se234Camera={
   lastWriteAt:0, lastApplied:null, worldWriteAttempts:0,
   worldWrites:0, skippedTiny:0, skippedDense:0, noGameFrames:0
 };
+// One tracked pose snapshot per XR animation frame for camera, menu and
+// spatial panel consumers. Returning clones preserves existing caller ownership;
+// invalidate after an app-owned reference-space translation in the same frame.
+const se234Pose={key:null,snapshot:null,samples:0,reuses:0,invalidations:0};
+const se234OriginalHeadPose=se191XRHeadPose;
+se191XRHeadPose=function(){
+  if(!se195Active())return se234OriginalHeadPose();
+  const key=String(se181XR.frames)+':'+String(se191XR.frames);
+  if(se234Pose.key===key&&se234Pose.snapshot){
+    se234Pose.reuses++;
+    return {eye:se234Pose.snapshot.eye.clone(),
+      forward:se234Pose.snapshot.forward.clone()};
+  }
+  const pose=se234OriginalHeadPose();
+  if(!pose)return pose;
+  se234Pose.key=key;
+  se234Pose.snapshot={eye:pose.eye.clone(),forward:pose.forward.clone()};
+  se234Pose.samples++;
+  return pose;
+};
 const se234OldAnchor=se200CameraAnchor;
 se200CameraAnchor=function(){
   const desired=se234OldAnchor();
@@ -31,6 +51,7 @@ se195MoveRig=function(dx,dy,dz){
   const game=se200Active()&&se200.anchorReady;
   if(game)se234Camera.worldWriteAttempts++;
   const ok=se234OldMoveRig(dx,dy,dz); // Keep v11.211 focus/held-input guards.
+  if(ok){se234Pose.key=null;se234Pose.invalidations++;}
   if(ok&&game){
     se234Camera.lastWriteAt=performance.now();
     se234Camera.worldWrites++;
@@ -41,11 +62,13 @@ se195MoveRig=function(dx,dy,dz){
 const se234PreviousStart=se193XRStart;
 se193XRStart=function(){
   se234Camera.lastWriteAt=0;se234Camera.lastApplied=null;
+  se234Pose.key=null;se234Pose.snapshot=null;
   return se234PreviousStart();
 };
 const se234PreviousCleanup=se193XRCleanup;
 se193XRCleanup=function(){
   se234Camera.lastWriteAt=0;
+  se234Pose.key=null;se234Pose.snapshot=null;
   return se234PreviousCleanup();
 };
 window.SWYRL_ENGINE_QUEST_FRAME_BUDGET_234=Object.freeze({
@@ -59,6 +82,9 @@ window.SWYRL_ENGINE_QUEST_FRAME_BUDGET_234=Object.freeze({
     minTranslation:se234Camera.minTranslation,
     minIntervalMs:se234Camera.minIntervalMs,
     source:'world-anchor only',
+    headsetPoseSamples:se234Pose.samples,
+    headsetPoseReuses:se234Pose.reuses,
+    poseCacheInvalidations:se234Pose.invalidations,
     existingWorldFollowWrites:se200.referenceWrites,
     focusGuard:window.SWYRL_ENGINE_QUEST_OS_STABILITY_211?.diagnose?.()||null
   })
