@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify exact §E v11.245 Sheep Tag menu/grass/removal source integrity."""
+"""Verify v11.245 Particle Studio collapse without regressing v11.244 or earlier."""
 import argparse
 import hashlib
 import json
@@ -18,7 +18,7 @@ args = cli.parse_args()
 out = Path(args.output).resolve()
 manifest = json.loads((ROOT / "source-manifest.json").read_text(encoding="utf8"))
 assert manifest["name"] == "§wyrl§ Engine v11.245"
-assert manifest["finalArtifact"] == "swyrl_engine_v11_244.html"
+assert manifest["finalArtifact"] == "swyrl_engine_v11_245.html"
 assert len(manifest["patches"]) == 276
 assert manifest["patches"][-1] == "patches/v11_245_particle_inspector_collapse.py"
 assert manifest["finalBytes"] == EXPECTED_BYTES
@@ -109,7 +109,7 @@ print(json.dumps({
     "htmlBytes":len(raw),"htmlSha256":EXPECTED_SHA,
     "questMenu":"v11.238","questBrowserWorkspace":"v11.238","headturnBudget":"v11.239",
     "particleAuthoringStage":"v11.240",
-    "particleInspectorCollapse":"v11.245 header-only","particleMobileLayout":"v11.243","sheepGrassMaterial":"v11.245 organic sprigs and PBR",
+    "particleInspectorCollapse":"v11.245 header-only","particleMobileLayout":"v11.243","sheepGrassMaterial":"v11.244 organic sprigs and PBR",
     "captureDisposal":"deferred","menuBlur":"card only",
     "ownerHeadsetAcceptance":False
 },indent=2))
