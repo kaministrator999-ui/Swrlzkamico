@@ -286,6 +286,6 @@
     "patches/v11_238_quest_radial_workspace_comfort.py",
     "patches/v11_239_sheep_grass_pbr.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 7765689,
+  "finalSha256": "bc9ebf1893c6cdad90c4c6fa9c5542c3c296c46ad5b0a8fc253dd6b87f5d0108"
 }
