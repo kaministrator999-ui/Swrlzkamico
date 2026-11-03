@@ -1,0 +1,51 @@
+name: Quest 239 source-seal candidate
+on:
+  push:
+    branches: [fix/quest-fast-headturn-raycast-239]
+    paths: [".github/workflows/quest-239-source-seal.yml"]
+permissions:
+  contents: read
+jobs:
+  seal:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Calculate actual exact v11.239 HTML digest (no deploy)
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('projects/swrlz-forge-moba/source-manifest.json')
+          m=json.loads(p.read_text('utf8'))
+          assert m['name']=='§wyrl§ Engine v11.238'
+          assert len(m['patches'])==269
+          m['patches'].append('patches/v11_239_quest_gameplay_raycast_budget.py')
+          m['name']='§wyrl§ Engine v11.239'
+          m['finalArtifact']='swyrl_engine_v11_239.html'
+          m['finalSha256']=''
+          m['finalBytes']=0
+          p.write_text(json.dumps(m,ensure_ascii=False,indent=2)+'\n',encoding='utf8')
+          PY
+          python projects/swrlz-forge-moba/build_space.py --output dist/quest239 >/tmp/quest239-receipt.json
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json
+          path=Path('dist/quest239')
+          raw=(path/'index.html').read_bytes()
+          html=raw.decode('utf8')
+          for needle in [
+            'SWYRL_ENGINE_DEPLOY_MARKER: V11_239_QUEST_HEADTURN_RAYCAST_BUDGET',
+            'SWYRL_ENGINE_QUEST_HEADTURN_239',
+            'se181XRRaycast=function(record)',
+            'se239XR.legacyActorRaycastsSkipped++',
+            'SWYRL_ENGINE_QUEST_RADIAL_STABILITY_238'
+          ]:assert needle in html,needle
+          receipt=json.loads((path/'SOURCE.json').read_text())
+          assert len(receipt['patches'])==270
+          assert len(receipt['assets'])==68
+          print('SE239_SEAL '+json.dumps({'sha256':hashlib.sha256(raw).hexdigest(),
+              'bytes':len(raw),'patches':len(receipt['patches']),'assets':len(receipt['assets'])}))
+          PY
