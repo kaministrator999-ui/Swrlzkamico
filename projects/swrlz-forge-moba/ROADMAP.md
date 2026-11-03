@@ -1,3 +1,7 @@
+## §E v11.232 — Game-to-Modeling model starter workflow
+
+**Fixed:** Explicit Sheep Tag house and Astra wolf starter selections were changing project metadata but leaving Game Engine selected, so the World Ground scene appeared empty. The existing game-first guard blocked Model Atelier until Modeling was active. Route those user-selected native model starters through the existing workspace controller before the first render, retaining default Game entry, wolf rig, all native model edits, saved user projects and Sheep Tag gameplay. Mobile browser acceptance passed for Ram House (60 meshes), Astra Wolf (108 + 10 clips) and Blank Model (1). Owner Moto/Quest hands-on approval is next. v11.232 source: 264 patches, 7,714,177 bytes, SHA-256 `a5f840685f618872d69b3e1dc1e197e496e68d2500bfb46008883bfb5c6df9d9`.
+
 ## §E v11.231 — Full-building sheep house camera framing (2026-11-02)
 
 **Owner report:** Houses now load but are not visible in the Model Atelier viewport. The actual 390px mobile browser screenshot revealed geometry drawn massively zoomed-in (the Barn showed a cropped wall/roof), rather than missing meshes. All five models had valid bounds/visible GPU meshes, but they used the ordinary fixed-distance character viewport instead of the existing large-model bounding-box camera.
