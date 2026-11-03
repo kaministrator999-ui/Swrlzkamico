@@ -28,9 +28,8 @@ def apply(html):
     ):
         if anchor not in html:
             raise AssertionError(("v11.246 prerequisite",anchor))
-    html=once(html,"</head>",
-      '<style id="se246ParticleBottomToggleStyle">\n'+css+'\n</style>\n</head>',
-      "mount mobile CSS in document head")
+    html=html.replace("</head>",
+      '<style id="se246ParticleBottomToggleStyle">\n'+css+'\n</style>\n</head>',1)
     html=once(html,"window.SWRLZ_FORGE_BUILD=",
       js+"\nwindow.SWRLZ_FORGE_BUILD=",
       "install mobile collapse bridge")
