@@ -1,4 +1,5 @@
 name: Verify §E v11.235 wolf model animation release
+# Re-run against corrected strict v11.235 artifact name and sealed checksum.
 on:
   push:
     branches: [main]
