@@ -2,9 +2,9 @@ name: Engine v11.233 Studio Commands candidate measurement
 on:
   push:
     branches:
-      - feature/se-v11-232-chat-native-studio-bridge-20261102
+      - feature/se-v11-233-chat-native-studio-bridge-20261102
     paths:
-      - .github/workflows/se-v11-232-studio-candidate.yml
+      - .github/workflows/se-v11-233-studio-candidate.yml
       - projects/swrlz-forge-moba/runtime/chat_account_panel_v1.js
       - projects/swrlz-forge-moba/patches/v11_233_chat_native_studio_bridge.py
       - projects/swrlz-forge-moba/scripts/measure_v11_233_chat_studio_candidate.py
