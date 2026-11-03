@@ -14,7 +14,7 @@ def apply(html):
     css=(root/'runtime/sheep_menu_blur_v11_244.css').read_text('utf8')
     js=(root/'runtime/sheep_removal_performance_v11_244.js').read_text('utf8')
     assert 'SWYRL_ENGINE_DEPLOY_MARKER: V11_243_PARTICLE_MOBILE_LAYOUT' in html
-    html=once(html,'</head>','<style id="se244SheepMenuBlur">'+css+'</style>\n</head>','menu css')
+    html=html.replace('</head>','<style id="se244SheepMenuBlur">'+css+'</style>\n</head>',1)
     html=once(html,'window.SWRLZ_FORGE_BUILD=',js+'\nwindow.SWRLZ_FORGE_BUILD=','native game wrappers')
 
     # The original nav-version invalidation forces every bot with a valid
