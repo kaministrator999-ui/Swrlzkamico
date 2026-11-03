@@ -290,6 +290,6 @@
     "patches/v11_242_natural_grass_blend.py",
     "patches/v11_243_particle_mobile_layout.py"
   ],
-  "finalBytes": null,
-  "finalSha256": null
+  "finalBytes": 7783817,
+  "finalSha256": "b49ae5a5a62b560925f1647ac4ac21b86120310e05662c34467fe31a2eff0d16"
 }
