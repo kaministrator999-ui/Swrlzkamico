@@ -1,4 +1,4 @@
-name: Seal §E v11.230 wolf one-pass loader source
+name: Verify §E v11.230 wolf single-pass loader release
 on:
   push:
     branches: [main]
@@ -6,52 +6,18 @@ on:
       - '.github/workflows/seal-forge-v11-230-wolf.yml'
   workflow_dispatch:
 permissions:
-  contents: write
+  contents: read
 jobs:
-  seal:
+  wolf:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 14
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
-          fetch-depth: 2
-      - name: Build and inspect exact one-pass wolf loader
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-          import json
-          p=Path('projects/swrlz-forge-moba/source-manifest.json')
-          m=json.loads(p.read_text())
-          assert m['name']=='§wyrl§ Engine v11.230'
-          assert m['patches'][-1]=='patches/v11_230_wolf_model_one_pass_load.py'
-          assert m['finalSha256']=='' and m['finalBytes']==0
-          PY
-          python projects/swrlz-forge-moba/build_space.py --output /tmp/se230-wolf
-          python - <<'PY'
-          from pathlib import Path
-          import hashlib,json
-          path=Path('projects/swrlz-forge-moba/source-manifest.json')
-          manifest=json.loads(path.read_text())
-          data=Path('/tmp/se230-wolf/index.html').read_bytes()
-          s=data.decode('utf8')
-          active=s[s.index('const atelierOriginalWolfLoader=loadAnimalProject;'):s.index('ModelAtelier.install();',s.index('const atelierOriginalWolfLoader=loadAnimalProject;'))]
-          public=s[s.index('loadAnimal:async(species,options={})=>{'):s.index(' return ok;\n},',s.index('loadAnimal:async(species,options={})=>{'))]
-          assert active.count('wolf.wolfRig=se224WolfRigSpec()')==1
-          assert active.count('wolf.wolfAnimations=se224WolfClips()')==1
-          assert active.count('ModelAtelier.open()')==1
-          assert 'panel.classList.remove(\'courier-studio\')' in active
-          assert 'ModelAtelier.close()' not in public and 'ModelAtelier.open()' not in public
-          assert s.count('V11_230_WOLF_MODEL_ONE_PASS_LOAD')>=1
-          assert Path('/tmp/se230-wolf/modeler.html').read_bytes()==data
-          manifest['finalBytes']=len(data)
-          manifest['finalSha256']=hashlib.sha256(data).hexdigest()
-          path.write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n')
-          print('WOLF230_ONE_PASS_SOURCE_PASS',manifest['finalBytes'],manifest['finalSha256'])
-          PY
-      - name: Commit exact source seal to main
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add projects/swrlz-forge-moba/source-manifest.json
-          git commit -m "build(§E): seal exact v11.230 wolf source bytes and SHA-256"
-          git push origin HEAD:main
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Verify sealed assembled wolf source and prior starters
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_230_release.py --output /tmp/se230-check
