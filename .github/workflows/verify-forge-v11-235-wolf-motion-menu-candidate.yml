@@ -45,6 +45,7 @@ jobs:
             'se-wolf-motion-focus',
             'if(category===\'Motion\'&&typeof se224WolfIsModel',
             'ui.open=true',
+            'root.updateMatrixWorld(true);se224WolfSkeleton.update();atelierHDDirty=true;',
             'se224WolfVertexWeights(pos,rig,part,indexById=null)',
           ]: assert marker in s,marker
           assert b==Path('/tmp/se235-wolf-menu/modeler.html').read_bytes()
@@ -53,7 +54,7 @@ jobs:
           PY
       - name: Install focused browser dependency
         run: |
-          npm install --no-save playwright@1.56.1
+          npm install --no-save playwright@1.56.1 pngjs@7.0.0
           npx playwright install --with-deps --only-shell chromium
       - name: Tap Motion in mobile browser and verify native wolf Play, clip and key UI
         run: node projects/swrlz-forge-moba/tests/ui_v11_235_wolf_motion_menu.mjs
