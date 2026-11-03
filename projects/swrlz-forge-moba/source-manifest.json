@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.233",
+  "name": "§wyrl§ Engine v11.235",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_233.html",
+  "finalArtifact": "swyrl_engine_v11_235.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -279,8 +279,10 @@
     "patches/v11_230_wolf_model_one_pass_load.py",
     "patches/v11_231_sheep_house_camera_fit.py",
     "patches/v11_232_model_starter_workspace_activation.py",
-    "patches/v11_233_chat_native_studio_bridge.py"
+    "patches/v11_233_chat_native_studio_bridge.py",
+    "patches/v11_234_wolf_anatomical_skinning.py",
+    "patches/v11_235_wolf_motion_tools_visibility.py"
   ],
-  "finalBytes": 7725488,
-  "finalSha256": "936e49ec155d091a8e0e651a6043713554e6ac5c776a7b6fec45884c2967b34c"
+  "finalBytes": 7729335,
+  "finalSha256": "446edd4f0d7ff1fc8d59216035eef315159437bc70952457203e9a266ce728a5"
 }
