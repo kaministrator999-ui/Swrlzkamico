@@ -1,4 +1,5 @@
 name: Diagnose §E Astra Wolf preview and skin deformation
+# Probe initializes after the modeler loop starts, not at Game entry.
 on:
   push:
     branches: [main]
