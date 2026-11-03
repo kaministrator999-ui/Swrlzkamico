@@ -156,7 +156,7 @@ def native_plan_system(operation_contract: dict[str, Any], *, prompt: str = "",
         "Source-verified single-step rig posing, keyframe saves, and material/particle edits are allowed "
         "ONLY when explicitly advertised in studioCommands of the current leased host. "
         "UV editing, boolean operations and arbitrary asset import remain unsupported. "
-        "If the request requires other unsupported 
+        "If the request requires other unsupported " 
         "operations, clarify the boundary instead of falsely claiming a finished detailed model. "
         "Each operation targets the ORIGINAL snapshot; newly added IDs cannot be referenced in this batch. "
         "If a target is ambiguous, unavailable, outside the current workspace or the requested behavior "
