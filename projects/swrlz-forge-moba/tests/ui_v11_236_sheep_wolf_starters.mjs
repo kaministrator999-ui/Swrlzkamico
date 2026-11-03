@@ -75,14 +75,14 @@ try{
   const clip=document.getElementById('modelAtelierWolfClip');
   clip.value='run';clip.dispatchEvent(new Event('change',{bubbles:true}));
   const time=document.getElementById('modelAtelierWolfTime');
-  time.value='.25';time.dispatchEvent(new Event('input',{bubbles:true}));
+  time.value='.08';time.dispatchEvent(new Event('input',{bubbles:true}));
   const before=window.SE236_TEST_DIAG.preview();
   const place=document.getElementById('se236WolfInPlace'),steady=document.getElementById('se236WolfSteady');
   place.checked=false;steady.checked=false;steady.dispatchEvent(new Event('change',{bubbles:true}));
-  time.value='.25';time.dispatchEvent(new Event('input',{bubbles:true}));
+  time.value='.08';time.dispatchEvent(new Event('input',{bubbles:true}));
   const authored=window.SE236_TEST_DIAG.preview();
   place.checked=true;steady.checked=true;steady.dispatchEvent(new Event('change',{bubbles:true}));
-  time.value='.25';time.dispatchEvent(new Event('input',{bubbles:true}));
+  time.value='.08';time.dispatchEvent(new Event('input',{bubbles:true}));
   const restored=window.SE236_TEST_DIAG.preview();
   return {before,authored,restored,controls:{inPlace:!!place,steady:!!steady}};
  });
