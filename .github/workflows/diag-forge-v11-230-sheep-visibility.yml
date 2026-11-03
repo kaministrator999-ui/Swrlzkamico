@@ -1,5 +1,5 @@
 name: Verify v11.230 sheep house camera framing candidate
-# Dismiss initial release notes and capture the unobstructed model viewport.
+# Run bounded sheep-house framing against assembled v11.230 candidate.
 on:
   push:
     branches: [main]
