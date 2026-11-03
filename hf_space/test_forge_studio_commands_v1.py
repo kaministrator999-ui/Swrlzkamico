@@ -8,7 +8,7 @@ from forge_studio_commands_v1 import (
     validate_studio_operation as check,
 )
 from forge_design_preview_v1 import should_preview
-from forge_chat_actions import native_plan_response_format, operation_contract
+from forge_chat_actions import native_plan_response_format, operation_contract, explicit_particle_create_plan
 
 
 def snapshot(studio="materials", kind="hand"):
@@ -63,6 +63,31 @@ class StudioCommandTests(unittest.TestCase):
         self.assert_denied(s, {"op": "particle.set", "id": "fx-1", "rate": 81})
         self.assert_denied(s, {"op": "particle.set", "id": "fx-1", "position": [1, float("inf"), 1]})
         self.assert_denied(s, {"op": "particle.create", "preset": "invented"})
+
+    def test_single_particle_creation_needs_no_actor_or_position(self):
+        s = snapshot("particles")
+        phrases = [
+            "Create one particle emitter using the Magic preset in the currently active §E Particle Studio.",
+            "Create a standalone magic particle emitter in Particle Studio.",
+            "Please add one magic emitter.",
+        ]
+        for phrase in phrases:
+            with self.subTest(phrase=phrase):
+                self.assertEqual(explicit_particle_create_plan(phrase, s),
+                                 {"disposition": "apply", "operations": [
+                                     {"op": "particle.create", "preset": "magic"}]})
+        for phrase in [
+            "Create a magic particle emitter next to Menu pine.",
+            "Create a magic particle emitter attached to a sheep actor.",
+            "Create a magic emitter at position X=2.",
+            "Create a magic emitter and move it.",
+            "Can you explain how to create a magic emitter?",
+        ]:
+            with self.subTest(phrase=phrase):
+                self.assertIsNone(explicit_particle_create_plan(phrase, s))
+        self.assertIsNone(explicit_particle_create_plan(phrases[0], snapshot("materials")))
+        s["studioCommands"]["particles"]["available"] = False
+        self.assertIsNone(explicit_particle_create_plan(phrases[0], s))
 
     def test_rig_bone_clip_and_time(self):
         s = snapshot("modeler")
