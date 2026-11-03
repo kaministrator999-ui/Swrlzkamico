@@ -291,6 +291,6 @@
     "patches/v11_243_particle_mobile_layout.py",
     "patches/v11_244_sheep_menu_meadow_capture.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 7789769,
+  "finalSha256": "b0b9190b2c721b2093dc8bad2a514e9dc02129035945ddad9d5343ad01c0e894"
 }
