@@ -289,6 +289,6 @@
     "patches/v11_241_sheep_grass_pbr.py",
     "patches/v11_242_natural_grass_blend.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 7778326,
+  "finalSha256": "df39c30d49670d58a0bc06dbcb7f2615d7c070ea852575ac7a13d318cd807090"
 }
