@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=ad298617aaa15deb8f5620a2838598b5893fc63b
-REQUEST_NONCE=chat-studio-commands-v1-ad298617-20261102-release-1
+SOURCE_REF=38994f1665e3b474f3096ee9de85f2ae036dfd9d
+REQUEST_NONCE=chat-standalone-particle-v1-38994f16-20261103-release-1
