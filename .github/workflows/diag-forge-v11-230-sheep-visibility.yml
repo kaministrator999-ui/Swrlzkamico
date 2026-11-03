@@ -1,5 +1,5 @@
 name: Diagnose native Sheep Tag house visibility
-# Capture a minimal viewport image for identifying what covers the 3D mesh.
+# Dismiss initial release notes and capture the unobstructed model viewport.
 on:
   push:
     branches: [main]
