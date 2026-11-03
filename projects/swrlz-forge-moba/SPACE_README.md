@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.230
+title: §wyrl§ Engine v11.231
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.231 — Sheep house models now auto-fit the camera
+
+The five editable Sheep Tag house starters now use the Model Atelier's real mesh-bounds camera for full-building front, side, top and three-quarter viewing. This fixes scenes that loaded correctly but looked invisible or massively zoomed-in on mobile. Focused 390px browser checks proved each complete house fits in the viewport; all old models, saved projects, Wolf rig and Sheep Tag match rules are preserved. Verified release: **263 ordered patches**, **7,713,229 bytes**, SHA-256 `0e960a32760f081f20bfb8e8ed1cd61cf3a0eec8d1f5e583b865311d2bd6e4d0`. Owner Moto G Power and Quest acceptance remains pending.
 
 ## §E v11.230 — Wolf Model first-load rig repair (2026-11-02)
 
