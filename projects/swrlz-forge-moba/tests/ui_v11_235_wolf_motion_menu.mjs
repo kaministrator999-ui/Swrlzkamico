@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {chromium} from 'playwright';
 import fs from 'node:fs';
 import path from 'node:path';
+import {PNG} from 'pngjs';
 const base='/tmp/se235-wolf-menu';
 const host='https://kamiloki-swrlz-forge-moba.static.hf.space';
 const browser=await chromium.launch({headless:true,args:['--no-sandbox','--disable-dev-shm-usage','--enable-webgl','--enable-unsafe-swiftshader']});
@@ -55,8 +56,24 @@ try{
  assert.equal(state.wolfHidden,false);
  assert(state.className.includes('se-wolf-motion-focus'));
  assert(state.controls.every(c=>c.visible),'The complete Play/clip/key controls must be visible after tapping Motion');
- await page.evaluate(()=>{document.getElementById('modelAtelierWolfPlay').click()});
+ const imageBefore=await page.locator('#modelAtelierViewport canvas').screenshot();
+ await page.evaluate(()=>{
+  const clip=document.getElementById('modelAtelierWolfClip');
+  clip.value='run';clip.dispatchEvent(new Event('change',{bubbles:true}));
+  document.getElementById('modelAtelierWolfPlay').click();
+ });
  await page.waitForTimeout(260);
+ const imageAfter=await page.locator('#modelAtelierViewport canvas').screenshot();
+ const a=PNG.sync.read(imageBefore),b=PNG.sync.read(imageAfter);
+ assert.equal(a.width,b.width);assert.equal(a.height,b.height);
+ let changed=0,total=0;
+ for(let y=0;y<a.height;y+=5)for(let x=0;x<a.width;x+=5){
+  const i=(y*a.width+x)*4;
+  const difference=Math.max(...[0,1,2].map(j=>Math.abs(a.data[i+j]-b.data[i+j])));
+  if(difference>15)changed++;total++;
+ }
+ console.log('SE235_WOLF_VISIBLE_RUN_FRAME_CHANGE',JSON.stringify({changed,total,ratio:changed/total}));
+ assert(changed>total*.007,'Run must redraw the canvas with no camera movement, not just update its clock');
  const playing=await page.evaluate(()=>window.SWYRL_ENGINE_WOLF_RIG.status().playing);
  console.log('SE235_WOLF_MOTION_PLAY_ENABLED',playing);
  assert.equal(playing,true);
