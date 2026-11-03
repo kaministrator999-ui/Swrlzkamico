@@ -28,9 +28,12 @@ def apply(html):
     ):
         if key not in html:
             raise AssertionError(("v11.243 missing prerequisite", key))
-    html = once(html, '</head>',
-                '<style id="se243ParticleLayout">\n' + css + '\n</style>\n</head>',
-                "mobile isolation CSS")
+    if '</head>' not in html:
+        raise AssertionError("v11.243 missing HTML head")
+    # The assembled source can include an inert embedded documentation fragment
+    # with a second closing head; decorate the actual document head only.
+    html = html.replace('</head>',
+                '<style id="se243ParticleLayout">\n' + css + '\n</style>\n</head>', 1)
     html = once(html,
         'function se223UISection(title){\n const node=document.createElement(\'details\');node.className=\'se223-section\';node.open=true;',
         'function se223UISection(title){\n const node=document.createElement(\'details\');node.className=\'se223-section\';node.open=title===\'Emitter & spawn\';',
