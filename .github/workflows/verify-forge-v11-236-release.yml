@@ -1,0 +1,23 @@
+name: Verify §E v11.236 houses wolf root starter categories
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/verify-forge-v11-236-release.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-seal:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify sealed source, 68 assets and v11.236 model/editor contracts
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_236_release.py --output /tmp/se236-sealed
