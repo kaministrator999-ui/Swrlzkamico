@@ -9,6 +9,7 @@ on:
       - projects/swrlz-forge-moba/patches/v11_233_chat_native_studio_bridge.py
       - projects/swrlz-forge-moba/scripts/measure_v11_233_chat_studio_candidate.py
       - projects/swrlz-forge-moba/scripts/verify_v11_233_release.py
+      - projects/swrlz-forge-moba/scripts/inspect_v11_233_seal_candidate.py
       - projects/swrlz-forge-moba/source-manifest.json
       - projects/swrlz-forge-moba/SPACE_README.md
   workflow_dispatch:
@@ -27,5 +28,7 @@ jobs:
         run: |
           python -m py_compile projects/swrlz-forge-moba/patches/v11_233_chat_native_studio_bridge.py projects/swrlz-forge-moba/scripts/verify_v11_233_release.py
           node --check projects/swrlz-forge-moba/runtime/chat_account_panel_v1.js
+      - name: Temporarily inspect actual package digest, restoring the signed manifest
+        run: python projects/swrlz-forge-moba/scripts/inspect_v11_233_seal_candidate.py
       - name: Build and verify sealed v11.233 source, both routes, and 68 assets
         run: python projects/swrlz-forge-moba/scripts/verify_v11_233_release.py --output dist/swrlz-forge-moba
