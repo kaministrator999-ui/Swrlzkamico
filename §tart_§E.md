@@ -1,3 +1,9 @@
+## §E v11.244 — Sheep Tag menu/grass and removal performance (2026-11-03)
+
+**Owner observations:** Large blurred rectangle behind the game menu, flat meadow grass, frame hitches on sheep capture and house removal.
+
+**Correction:** Constrain menu backdrop to title card, bake sparse natural meadow sprigs without more VR geometry, hide removed runtime houses instantly and dispose their resources across idle slices, coalesce capture navigation invalidation and stagger non-player path recalculation. Preserve roads, VR controls, multiplayer authority, Project Studio, Particle Studio, save data and older release lineage. Owner phone and Quest 2 visual/lag acceptance pending.
+
 ## §E v11.242 — Natural Sheep Tag grass instead of square tiled camouflage (2026-11-03)
 
 **Owner screenshot:** On Moto G Power, the newly published v11.241 grass showed obvious bright/dark square patches, even where authored meadow terrain should be smooth. The small 128×128 generated swatch was repeated 16×16 and its saturated colors replaced 75% of the original vegetation — visually unacceptable.
