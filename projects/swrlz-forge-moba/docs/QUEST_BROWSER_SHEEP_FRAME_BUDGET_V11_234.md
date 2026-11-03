@@ -18,7 +18,8 @@
 1. Keep Quest-specific topbar and Modeler tabs in a single horizontal scroll lane; remove the Game/Modeler group's sticky/overlap behavior only for Quest Browser profile. Keep modal/project overlay ordering unchanged.
 2. Fit Quest's 2D toolbar hit targets inside the existing row without shifting the game viewport. Avoid broad phone/desktop changes.
 3. Suppress world-follow translations smaller than 0.055 world units, and delay nonurgent successive translations by 28ms. Preserve larger corrections and all native gamepad, sheep collision, fog, build and XR visibility guards.
-4. Add diagnostics `SWYRL_ENGINE_QUEST_FRAME_BUDGET_234.diagnose()` for write counts and suppression counts, alongside the preexisting v11.211 diagnostics.
+4. Share a single read of the tracked headset pose across each XR animation-frame sequence; invalidate the cached pose after an app-owned reference-space update so panels see updated world coordinates. Every consumer receives its own cloned vectors.
+5. Add diagnostics `SWYRL_ENGINE_QUEST_FRAME_BUDGET_234.diagnose()` for write counts, skipped writes, headset-pose reads/reuses and preexisting v11.211 visibility-gap diagnostics.
 
 ## On-device verification checklist (owner)
 
