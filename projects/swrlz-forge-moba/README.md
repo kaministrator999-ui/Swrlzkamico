@@ -1,3 +1,7 @@
+## §E v11.230 — Wolf Model single-pass loader and animation attachment (2026-11-02)
+
+The actual v11.88 wolf loading override was skipping v11.227's setup attached to an older starter branch; the public wrapper then forced an expensive second Model Atelier WebGL render to attach rig/clips. The v11.230 append-only patch places the 14-bone skeleton and ten wolf motion clips on the active wolf project before first opening and removes the redundant close/reopen. Keeps the editable Astra, Sheep Tag mechanics, and saved owner models unchanged. Verified source: 262 patches, 7,712,134 bytes, SHA-256 `f22f0ab28b072d6a60498ea82111e62212f2ffd71ba05a175a80a3750e689ac5`. Owner Moto/Quest visual approval pending.
+
 ## §E v11.229 — Sheep house Model Atelier loading repair (2026-11-02)
 
 **Owner report reproduced and repaired:** All five v11.226 sheep-faction house starters failed actual native Model Atelier loading despite the initial geometry-only tests. The root causes were material names passed as box rotation angles (non-finite transforms), an undefined `P.trim` used for window mullions (invalid native colors), and inherited festival-character `modelAtelier.assemblies` named socket references pointing to deleted parts. The v11.229 append-only patch corrects only the assembled house builder's callsites and deletes inherited assemblies when creating fresh sheep-house starter copies. Existing saved user models and gameplay remain untouched.
