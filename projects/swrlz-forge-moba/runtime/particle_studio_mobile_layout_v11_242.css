@@ -1,0 +1,79 @@
+/* §E v11.242 · Particle Studio independent mobile UI.
+   Hide native game chrome, not the game project, scene or renderer. */
+body[data-se225-workspace] .app>.topbar,
+body[data-se225-workspace] .app>.workspace>.panel,
+body[data-se225-workspace] .app>.workspace>.side-panel,
+body[data-se225-workspace] .app>.workspace>.left-panel,
+body[data-se225-workspace] .app>.workspace>.right-panel{
+  display:none!important;visibility:hidden!important;pointer-events:none!important;
+}
+body[data-se225-workspace] .app>.workspace{
+  display:block!important;min-width:0!important;min-height:0!important;
+  width:100vw!important;height:100dvh!important;overflow:visible!important;
+}
+body[data-se225-workspace] .app>.workspace>.viewport-wrap{
+  position:fixed!important;inset:0!important;width:100vw!important;
+  height:100dvh!important;max-height:none!important;max-width:none!important;
+  overflow:hidden!important;z-index:1!important;
+}
+body[data-se225-workspace] .viewport-wrap :is(
+  .mobile-tabs,.mobile-drawer,.help,.build-stamp,.badgeBox,.viewport-toolbar,
+  #st141LevelBar,#st141RuntimeMenu,#st141MenuPreview
+){display:none!important;pointer-events:none!important;}
+body[data-se225-workspace] .app>.workspace>.viewport-wrap>#viewport{
+  display:block!important;width:100%!important;height:100%!important;
+}
+body[data-se225-workspace=particles] #se223Panel.se225-docked{
+  border-color:#6896ac!important;background:rgba(9,21,38,.985)!important;
+}
+body[data-se225-workspace=particles] #se223Panel .se223-title{
+  display:flex;gap:7px;padding:8px 10px!important;
+}
+#se242InspectorToggle{
+  display:none;border:1px solid #6aa0ba!important;
+  background:#23475b!important;color:#e7f8ff!important;
+  border-radius:8px!important;min-height:36px!important;
+  padding:5px 10px!important;white-space:nowrap;touch-action:manipulation;
+}
+body[data-se225-workspace=particles] #se223Panel .se223-scroll{
+  min-height:0;overflow-y:auto;overscroll-behavior:contain;
+  scrollbar-width:thin;padding:8px 10px 14px!important;
+}
+body[data-se225-workspace=particles] #se223Panel .se223-editor{
+  gap:6px;
+}
+body[data-se225-workspace=particles] #se223Panel .se223-section{
+  padding-left:8px;padding-right:8px;gap:5px;
+}
+body[data-se225-workspace=particles] #se223Panel :is(button,select,input){
+  touch-action:manipulation;
+}
+@media (max-width:850px),(pointer:coarse) and (max-width:1024px){
+  body[data-se225-workspace=particles] #se223Panel.se225-docked{
+    position:fixed!important;left:5px!important;right:5px!important;
+    top:auto!important;bottom:max(5px,env(safe-area-inset-bottom))!important;
+    width:calc(100vw - 10px)!important;
+    height:43dvh!important;max-height:43dvh!important;
+    min-height:210px!important;
+    border-radius:12px!important;
+  }
+  body[data-se225-workspace=particles][data-se242-inspector-open=true]
+    #se223Panel.se225-docked{
+    height:72dvh!important;max-height:72dvh!important;
+  }
+  body[data-se225-workspace=particles] #se242InspectorToggle{display:inline-flex;align-items:center;}
+  body[data-se225-workspace=particles] .se225-view-note{
+    top:86px!important;right:8px!important;
+    left:auto!important;max-width:min(380px,calc(100vw - 16px))!important;
+    font-size:11px!important;
+  }
+  body[data-se225-workspace=particles] #se223Panel .se223-toolbar{
+    display:grid;grid-template-columns:minmax(0,1fr) auto;gap:7px;
+  }
+  body[data-se225-workspace=particles] #se223Panel .se223-actions>button{
+    flex:1 1 110px;min-width:0;
+  }
+  body[data-se225-workspace=particles] #se223Panel .se223-section:not([open]){
+    padding-bottom:0;
+  }
+}
