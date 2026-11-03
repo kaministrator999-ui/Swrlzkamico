@@ -1,3 +1,15 @@
+## §E v11.244 — Sheep Tag menu, meadow and capture/destruction responsiveness (2026-11-03)
+
+**Owner phone evidence:** An oversized translucent rectangle appears behind the main Sheep Tag menu. The updated meadow is much better than the former camouflage pattern but is still mostly flat. On Quest 2, sheep deaths and building removal hitch the game.
+
+**Menu:** Scoped CSS removes full-screen menu overlay blur/tint and the duplicate preview behind Play. Only the title card has a compact opaque backdrop/shadow; Start Game and Local LAN retain native interactions.
+
+**Grass:** A deterministic baked sprig pass adds fine irregular grass strokes only over green vegetation and keeps the actual v11.242 ground palette, roads, normal/roughness maps and mipmapping. No per-frame billboards or extra 3D grass meshes.
+
+**Capture/destruction:** Runtime buildings hide and detach immediately, while 3D resource disposal is paced one object per idle callback. Sheep-capture bulk house removal invalidates navigation only once; bots with existing paths stagger A* re-path, retaining collision checks and immediate player-controlled input. Author-owned buildings and reset behavior remain untouched. LAN authority, VFX, Quest controller mappings, other studios and original engine patch lineage are preserved.
+
+**Validation:** Focused source assembly and exact SHA receipt required, with phone and Quest 2 visual/frame-time acceptance by the owner.
+
 ## §E v11.242 — Natural Sheep Tag grass instead of square tiled camouflage (2026-11-03)
 
 **Owner screenshot:** On Moto G Power, the newly published v11.241 grass showed obvious bright/dark square patches, even where authored meadow terrain should be smooth. The small 128×128 generated swatch was repeated 16×16 and its saturated colors replaced 75% of the original vegetation — visually unacceptable.
