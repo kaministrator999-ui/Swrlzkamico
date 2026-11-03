@@ -49,6 +49,10 @@ def wants_preview(prompt: Any) -> bool:
 
 
 def should_preview(prompt: Any, operations: list[dict[str, Any]]) -> bool:
+    # Every new studio write is always an exact frozen preview/approval turn.
+    # A text Apply-now prefix cannot silently bypass this additional gate.
+    if any(op.get("op", "").startswith(("material.", "particle.", "rig.")) for op in operations):
+        return True
     if len(operations) == 1 and operations[0]["op"] == "project.create":
         return False
     command = current_command_text(prompt) if isinstance(prompt, str) else ""
@@ -90,7 +94,9 @@ def _step_command(op: dict[str, Any]) -> str:
         return name.split(".")[1].capitalize() + " the last edit"
     else:
         return "Change " + _text(name)
-    for field in ("name", "position", "rotation", "scale", "color", "material"):
+    for field in ("name", "position", "rotation", "scale", "color", "material", "preset", "actorId",
+                  "boneId", "time", "clip", "baseColor", "roughness", "metalness", "glow",
+                  "rate", "life", "size", "startColor", "endColor"):
         if field in op:
             verb += ", " + field + "=" + (repr(op[field]) if field != "name" else repr(_text(op[field], 100)))
     return verb
@@ -108,7 +114,7 @@ def build_preview(summary: dict[str, Any], operations: list[dict[str, Any]],
         source = by_id.get(op.get("id")) or {}
         steps.append({
             "index": index, "op": op["op"],
-            "name": _text(op.get("name") or source.get("name") or op.get("kind")
+            "name": _text(op.get("name") or op.get("preset") or op.get("boneId") or source.get("name") or op.get("kind")
                           or op.get("prefab") or op["op"]),
             "kind": _text(op.get("kind") or op.get("prefab") or source.get("kind")
                           or source.get("type") or "object", 50),
@@ -119,7 +125,9 @@ def build_preview(summary: dict[str, Any], operations: list[dict[str, Any]],
             "target": _text(op.get("id") or "", 80),
             "fields": {key: op[key] for key in
                        ("id", "kind", "prefab", "name", "position", "rotation", "scale",
-                        "color", "material") if key in op},
+                        "color", "material", "preset", "actorId", "boneId", "clip", "time",
+                        "baseColor", "roughness", "metalness", "glow", "rate", "life", "size",
+                        "startColor", "endColor") if key in op},
         })
     project = summary.get("project") if isinstance(summary.get("project"), dict) else {}
     # The server holds the exact plan; only an opaque public correlation ID
