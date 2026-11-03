@@ -8,8 +8,8 @@ import subprocess
 import sys
 
 ROOT=Path(__file__).resolve().parents[1]
-EXPECTED_SHA="__V11_246_SEAL__"
-EXPECTED_BYTES=0  # replaced with calculated release bytes before merge
+EXPECTED_SHA="3dd76f2dae3bc4705feccc0cd39bef4bc1c6c36b5edfa6d6530d829e9854a64e"
+EXPECTED_BYTES=7801207
 MARKER="SWYRL_ENGINE_DEPLOY_MARKER: V11_246_PARTICLE_BOTTOM_TOGGLE"
 p=argparse.ArgumentParser()
 p.add_argument("--output",required=True)
