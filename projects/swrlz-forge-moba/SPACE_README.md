@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.239
+title: §wyrl§ Engine v11.241
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,15 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.241 — Sheep Tag grass PBR (2026-11-03)
+
+**Owner asset:** The grass generated in chat is a packaged, verified green WebP source. Sheep Tag's `stMeadowGround` and `MoonbellWildwoodGround` use a native standard material with composed grass color, matching calculated tangent normal and matte roughness maps. Compose only onto vegetation areas, retaining roads, sanctuary and the existing biomes.
+
+**Quest performance:** One-time map preparation, 16 tile repeats, subtle normal strength, mipmaps, Quest texture budget 1024px, desktop Wildwood 2048px. Approximate normal/roughness maps are computed from color luminance (not independent photogrammetry). No VR controller mapping, collision, sheep/house/wolf movement, fog-of-war, previous head-turn fix or Particle Studio changes.
+
+**Lineage:** Append-only `patches/v11_241_sheep_grass_pbr.py` after v11.240 Particle Authoring Chamber; source-manifest/source receipt carries exact artifact hash. Quest 2 real-device visual acceptance pending.
+
 
 
 
