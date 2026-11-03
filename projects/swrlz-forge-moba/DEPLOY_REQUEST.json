@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.229",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_229_SHEEP_HOUSE_NATIVE_LOAD_REPAIR",
-  "reason": "Fix all five native Sheep Tag house Model Atelier starter loads. Browser reproduction of v11.228 showed Invalid editable model parts. Correct material names accidentally supplied as rotation values (nonfinite transforms), absent window trim palette color, and inherited obsolete Festival character socket assemblies. Actual 390px native Model Atelier browser proof PASSED: direct starter deep-link and Free Shelter 18, Thatched Hut 59, Cozy Cottage 68, Flock Barn 37, Ram House 60 separately opened with visible editable part lists. 261 source patches, 68 unchanged assets, 7,712,062 assembled HTML bytes, SHA-256 38012d3e068347a65045da180ef0e2e3f6dcff42a5bc334569aecce203c4a53d. Gameplay builds/costs, wolf and glove, Game GUI studio, Chat and old saved projects unchanged. Physical Moto/Quest user acceptance pending.",
-  "sourceCommit": "373b7bb283384959d74287e789e84033de28a43b",
-  "sourceIntegritySha256": "38012d3e068347a65045da180ef0e2e3f6dcff42a5bc334569aecce203c4a53d"
+  "releaseVersion": "v11.230",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_230_WOLF_MODEL_ONE_PASS_LOAD",
+  "reason": "Owner reported Wolf Model starter no longer loading. Repaired active v11.88/v11.90 Astra override so v11.227's existing 14-bone rig, ten animations and detail parts attach before the first Model Atelier viewport render, instead of old branch setup followed by an expensive second close/reopen. Source build and scoped full release verifier PASSED (262 patches, 68 packaged assets, 7,712,134 HTML bytes, SHA-256 f22f0ab28b072d6a60498ea82111e62212f2ffd71ba05a175a80a3750e689ac5). Sheep Tag, prior sheep houses, saved projects, materials and VR gameplay unchanged. Owner Moto/Quest visual acceptance pending.",
+  "sourceCommit": "b6a7c4802ea792bac05f39d09c534edb5a7c55f7",
+  "sourceIntegritySha256": "f22f0ab28b072d6a60498ea82111e62212f2ffd71ba05a175a80a3750e689ac5"
 }
