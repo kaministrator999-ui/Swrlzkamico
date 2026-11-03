@@ -1,56 +1,19 @@
-name: Quest 238 candidate source seal
+name: Quest 238 sealed release source check
 on:
   push:
     branches:
       - fix/quest-radial-menu-and-workspace-layout-238
     paths:
       - ".github/workflows/quest-238-seal-candidate.yml"
-      - "projects/swrlz-forge-moba/runtime/engine_quest_radial_frame_guard_v11_238.js"
-      - "projects/swrlz-forge-moba/runtime/engine_quest_workspace_navigation_v11_238.js"
-      - "projects/swrlz-forge-moba/runtime/engine_quest_workspace_navigation_v11_238.css"
-      - "projects/swrlz-forge-moba/patches/v11_238_quest_radial_workspace_comfort.py"
 permissions:
   contents: read
 jobs:
-  seal:
+  verify:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Calculate original-source exact v11.238 HTML receipt (no publish)
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-          import json
-          p=Path('projects/swrlz-forge-moba/source-manifest.json')
-          m=json.loads(p.read_text(encoding='utf8'))
-          assert m['name']=='§wyrl§ Engine v11.236'
-          assert len(m['patches'])==268
-          m['patches'].append('patches/v11_238_quest_radial_workspace_comfort.py')
-          m['name']='§wyrl§ Engine v11.238'
-          m['finalArtifact']='swyrl_engine_v11_238.html'
-          m['finalSha256']=''
-          m['finalBytes']=0
-          p.write_text(json.dumps(m,ensure_ascii=False,indent=2)+'\n',encoding='utf8')
-          PY
-          python projects/swrlz-forge-moba/build_space.py --output dist/quest238 >/tmp/build-receipt.json
-          python - <<'PY'
-          from pathlib import Path
-          import hashlib,json
-          raw=Path('dist/quest238/index.html').read_bytes()
-          html=raw.decode('utf-8')
-          assert 'SWYRL_ENGINE_DEPLOY_MARKER: V11_238_QUEST_RADIAL_AND_WORKSPACE' in html
-          for needle in ['SWYRL_ENGINE_QUEST_RADIAL_STABILITY_238',
-                         'SWYRL_ENGINE_QUEST_WORKSPACE_238','se238ModelActions',
-                         'se238GameToolsToggle']:
-              assert needle in html,needle
-          receipt=json.loads(Path('dist/quest238/SOURCE.json').read_text())
-          assert receipt['finalSha256']==hashlib.sha256(raw).hexdigest()
-          assert len(receipt['patches'])==269
-          assert len(receipt['assets'])==68
-          print('SE238_SEAL '+json.dumps({'sha256':hashlib.sha256(raw).hexdigest(),
-              'bytes':len(raw),'patches':len(receipt['patches']),
-              'assets':len(receipt['assets'])}))
-          PY
+      - name: Verify exact sealed v11.238 artifact and 68 assets (no publish)
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_238_release.py --output dist/swrlz-forge-moba
