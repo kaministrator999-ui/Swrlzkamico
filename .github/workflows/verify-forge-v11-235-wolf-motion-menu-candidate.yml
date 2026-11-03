@@ -44,7 +44,7 @@ jobs:
           for marker in [
             'V11_235_WOLF_MOTION_PANEL_VISIBILITY',
             'se-wolf-motion-focus',
-            'if(category===\'Motion\'&&typeof se224WolfIsModel',
+            'if(category===\'Motion\'&&window.SWYRL_ENGINE_WOLF_RIG',
             'ui.open=true',
             'root.updateMatrixWorld(true);se224WolfSkeleton.update();atelierHDDirty=true;',
             'se224WolfVertexWeights(pos,rig,part,indexById=null)',
