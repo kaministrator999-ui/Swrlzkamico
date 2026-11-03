@@ -3,7 +3,7 @@ name: Verify v11.231 house framing after wolf release
 on:
   push:
     branches: [main]
-    paths: ['.github/workflows/diag-forge-v11-230-sheep-visibility.yml']
+    paths: ['.github/workflows/verify-forge-v11-231-house-framing-candidate.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -29,7 +29,7 @@ jobs:
           assert m['name']=='§wyrl§ Engine v11.230'
           assert m['patches'][-1]=='patches/v11_230_wolf_model_one_pass_load.py'
           m['name']='§wyrl§ Engine v11.231'
-          m['finalArtifact']='swyrl_engine_v11_230.html'
+          m['finalArtifact']='swyrl_engine_v11_231.html'
           m['patches'].append('patches/v11_231_sheep_house_camera_fit.py')
           m['finalBytes']=0;m['finalSha256']=''
           p.write_text(json.dumps(m,ensure_ascii=False))
