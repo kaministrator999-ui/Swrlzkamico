@@ -88,7 +88,10 @@ def apply(html):
 }
 </style>
 """
-    html=once(html,'</head>',css+'</head>','install focused wolf-motion inspector CSS')
+    # One document has a second literal </head> inside an embedded HTML string.
+    # Inject only into the outer document head, not that nested template.
+    if html.count('</head>') not in (1,2):raise AssertionError(('v11.235 HTML head locations',html.count('</head>')))
+    html=html.replace('</head>',css+'</head>',1)
 
     old=" source.engine='§wyrl§ Engine · Maker v11.234';source.version=11.234;"
     if html.count(old)!=2:raise AssertionError(('v11.235 source provenance',html.count(old)))
