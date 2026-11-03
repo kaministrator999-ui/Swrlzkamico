@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.241",
+  "name": "§wyrl§ Engine v11.242",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_241.html",
+  "finalArtifact": "swyrl_engine_v11_242.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -286,8 +286,9 @@
     "patches/v11_238_quest_radial_workspace_comfort.py",
     "patches/v11_239_quest_gameplay_raycast_budget.py",
     "patches/v11_240_particle_authoring_chamber.py",
-    "patches/v11_241_sheep_grass_pbr.py"
+    "patches/v11_241_sheep_grass_pbr.py",
+    "patches/v11_242_natural_grass_blend.py"
   ],
-  "finalBytes": 7778007,
-  "finalSha256": "394d96bd83e9973159bac1878296fa2cf53865afcffccf6c30a578d6042d9e9a"
+  "finalBytes": 7778326,
+  "finalSha256": "df39c30d49670d58a0bc06dbcb7f2615d7c070ea852575ac7a13d318cd807090"
 }

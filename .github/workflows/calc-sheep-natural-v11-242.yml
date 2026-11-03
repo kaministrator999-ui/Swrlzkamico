@@ -1,0 +1,25 @@
+name: Calculate §E v11.242 natural grass receipt
+on:
+  push:
+    branches: [fix/sheep-grass-natural-v11-242]
+    paths:
+      - projects/swrlz-forge-moba/source-manifest.json
+      - .github/workflows/calc-sheep-natural-v11-242.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  receipt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Focused grass patch and source build
+        run: |
+          python3 -m py_compile projects/swrlz-forge-moba/patches/v11_242_natural_grass_blend.py
+          python3 projects/swrlz-forge-moba/scripts/verify_v11_242_release.py --output "$RUNNER_TEMP/sealed-grass-242"
+          python3 projects/swrlz-forge-moba/build_space.py --output "$RUNNER_TEMP/grass-242"
+          echo "NATURAL_GRASS_BYTES=$(wc -c < "$RUNNER_TEMP/grass-242/index.html")"
+          echo "NATURAL_GRASS_SHA256=$(sha256sum "$RUNNER_TEMP/grass-242/index.html" | cut -d' ' -f1)"
+          grep -q 'const modulation=1+green\*grain\*\.14' "$RUNNER_TEMP/grass-242/index.html"
+          grep -q 'V11_242_SHEEP_NATURAL_GRASS' "$RUNNER_TEMP/grass-242/index.html"
+          test -f "$RUNNER_TEMP/grass-242/assets/sheep-tag/grass-source-color-quest.webp"
