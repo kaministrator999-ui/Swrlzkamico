@@ -1,5 +1,5 @@
 name: Validate §E v11.235 Wolf Motion menu candidate
-# Use outer document stylesheet injection; preserve the second embedded head.
+# Stronger Motion-focused CSS specificity overrides generic mode-view hide rule.
 on:
   push:
     branches: [main]
