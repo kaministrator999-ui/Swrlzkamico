@@ -10,6 +10,7 @@ on:
       - hf_space/brain_forge.py
       - hf_space/forge_design_preview_v1.py
       - hf_space/test_forge_studio_commands_v1.py
+      - projects/swrlz-forge-moba/runtime/chat_account_panel_v1.js
   workflow_dispatch:
 permissions:
   contents: read
