@@ -278,6 +278,6 @@
     "patches/v11_229_sheep_house_model_loader_repair.py",
     "patches/v11_230_wolf_model_one_pass_load.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 7712134,
+  "finalSha256": "f22f0ab28b072d6a60498ea82111e62212f2ffd71ba05a175a80a3750e689ac5"
 }
