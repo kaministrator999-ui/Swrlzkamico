@@ -293,6 +293,6 @@
     "patches/v11_245_particle_inspector_collapse.py",
     "patches/v11_246_particle_bottom_toggle.py"
   ],
-  "finalBytes": null,
-  "finalSha256": null
+  "finalBytes": 7801207,
+  "finalSha256": "3dd76f2dae3bc4705feccc0cd39bef4bc1c6c36b5edfa6d6530d829e9854a64e"
 }
