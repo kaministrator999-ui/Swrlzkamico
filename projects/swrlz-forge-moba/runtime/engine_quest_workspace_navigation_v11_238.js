@@ -97,7 +97,7 @@
     for(const element of [...m.actions.children]){
       // Keep the real Close button permanently visible even in a small window.
       const name=(element.getAttribute('aria-label')||element.textContent||'').trim();
-      if(element.tagName==='BUTTON'&&/^close(?:\s+model)?$/i.test(name))continue;
+      if(element.tagName==='BUTTON'&&(/\bclose\b/i.test(name)||/close/i.test(element.id||'')))continue;
       if(portalMove(element,m.contents,m.originals))s.modelMoves++;
     }
   }
