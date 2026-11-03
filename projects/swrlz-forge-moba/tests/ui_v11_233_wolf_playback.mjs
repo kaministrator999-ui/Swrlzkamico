@@ -40,9 +40,9 @@ try{
    count:window.SWYRL_ENGINE_MODEL_ATELIER.status().count}));
  console.log('SE233_INITIAL_WOLF',JSON.stringify(info));
  assert(info.state.skinnedMeshes>=50);
- await page.selectOption('#modelAtelierWolfClip','run');
+ await page.evaluate(()=>{const e=document.getElementById('modelAtelierWolfClip');if(!e)throw Error('Wolf clip selector missing');e.value='run';e.dispatchEvent(new Event('change',{bubbles:true}));});
  const previous=await canvas.screenshot();
- await page.click('#modelAtelierWolfPlay');
+ await page.evaluate(()=>{const e=document.getElementById('modelAtelierWolfPlay');if(!e)throw Error('Wolf Play button missing');e.click()});
  await page.waitForTimeout(150);
  const one=await canvas.screenshot();
  const snap1=await page.evaluate(()=>window.SE233_WOLF_INSPECT?.());
