@@ -150,6 +150,91 @@ class OnlineLyricExtractionFixTests(unittest.TestCase):
         self.assertIn("Invented line number 5",extract)
         self.assertNotIn("[00:05.20]",extract)
 
+    def test_direct_probe_urls_are_unverified_and_subject_specific(self):
+        identity=online_tools.song_identity('"Roll Call" by Tech N9ne')
+        urls=online_tools._lyrics_direct_source_probes(identity)
+        self.assertEqual(
+            urls[0]["url"],
+            "https://lyricsweb.com/song/tech-n9ne/tech-n9ne-roll-call",
+        )
+        self.assertEqual(
+            urls[1]["url"],
+            "https://www.elyrics.net/read/t/tech-n9ne-lyrics/roll-call-lyrics.html",
+        )
+        self.assertTrue(all(not row["title"] and not row["snippet"] for row in urls))
+        self.assertNotIn("roll-call",online_tools._lyrics_direct_source_probes(
+            online_tools.song_identity('"Copper Lantern" by Demo Ensemble'))[0]["url"])
+        self.assertEqual(online_tools._lyrics_direct_source_probes(
+            online_tools.song_identity('"Roll Call"')),[])
+
+    def test_direct_probe_fetches_matching_page_after_empty_search_and_503(self):
+        plan={
+            "query":"Copper Lantern Demo Ensemble lyrics",
+            "contentMode":"lyrics-verification",
+            "requestedScope":"full-lyrics",
+            "subject":SUBJECT,
+        }
+        empty_bundle={
+            "provider":"offline-fixture","researchId":"r-direct-fallback",
+            "errors":[],"candidatePool":[],"fetchFailures":[],"evidence":[],
+        }
+        expected=online_tools._lyrics_direct_source_probes(
+            online_tools.song_identity(SUBJECT))[0]["url"]
+        def fake_fetch(url):
+            self.assertEqual(url,expected)
+            return {
+                "finalUrl":url,"status":200,
+                "title":"Copper Lantern Lyrics by Demo Ensemble",
+                "extract":LYRIC_BODY+"\nLyrics licensed and provided by Test Co.\nKeep listening",
+                "fetchedAt":1793650000000,
+            }
+        with (
+            patch.object(online_tools,"run_online_research",return_value=empty_bundle),
+            patch.object(online_tools.canonical_online_research,"search_public",return_value=[]),
+            patch.object(online_tools.canonical_online_research,"fetch_public",side_effect=fake_fetch) as fetch,
+        ):
+            result=online_tools._search_bundle(plan)
+        self.assertEqual(fetch.call_count,1)
+        self.assertEqual(result["modelContext"]["verifiedLyrics"]["sourceUrl"],expected)
+        self.assertEqual(result["lyricsSourceAttempts"][0]["outcome"],"VERIFIED")
+        extracted=result["modelContext"]["verifiedLyrics"]["lyricExtract"]
+        self.assertIn("Copper lanterns guide",extracted)
+        self.assertNotIn("Lyrics licensed",extracted)
+
+    def test_direct_probe_missing_first_page_tries_next_verified_source(self):
+        plan={
+            "query":"Copper Lantern Demo Ensemble lyrics",
+            "contentMode":"lyrics-verification",
+            "requestedScope":"full-lyrics",
+            "subject":SUBJECT,
+        }
+        empty_bundle={
+            "provider":"offline-fixture","researchId":"r-direct-fallback",
+            "errors":[],"candidatePool":[],"fetchFailures":[],"evidence":[],
+        }
+        probes=online_tools._lyrics_direct_source_probes(online_tools.song_identity(SUBJECT))
+        def fake_fetch(url):
+            if url==probes[0]["url"]:
+                raise FileNotFoundError("404 missing song")
+            self.assertEqual(url,probes[1]["url"])
+            return {
+                "finalUrl":url,"status":200,
+                "title":"Copper Lantern Lyrics by Demo Ensemble",
+                "extract":LYRIC_BODY,"fetchedAt":1793650000000,
+            }
+        with (
+            patch.object(online_tools,"run_online_research",return_value=empty_bundle),
+            patch.object(online_tools.canonical_online_research,"search_public",return_value=[]),
+            patch.object(online_tools.canonical_online_research,"fetch_public",side_effect=fake_fetch) as fetch,
+        ):
+            result=online_tools._search_bundle(plan)
+        self.assertEqual(fetch.call_count,2)
+        self.assertEqual(
+            result["modelContext"]["verifiedLyrics"]["sourceUrl"],probes[1]["url"])
+        self.assertEqual(
+            [x["outcome"] for x in result["lyricsSourceAttempts"]],
+            ["FETCH_ERROR","VERIFIED"])
+
     def test_dom_lyric_container_preserves_lines_without_chrome(self):
         page = """<html><body>
         <nav>Privacy Policy Subscribe To Updates</nav>
