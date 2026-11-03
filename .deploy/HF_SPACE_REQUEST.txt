@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=d3bb816cd9c41b0f0261be546e08c679ab9c84db
-REQUEST_NONCE=chat-lyric-unlabeled-d3bb816c-20261102-release-1
+SOURCE_REF=ad298617aaa15deb8f5620a2838598b5893fc63b
+REQUEST_NONCE=chat-studio-commands-v1-ad298617-20261102-release-1
