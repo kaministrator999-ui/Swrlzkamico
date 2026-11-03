@@ -18,8 +18,8 @@ def apply(html):
     # Reuse *native* model framing, preserving the camera controls and one renderer.
     # Existing courier branch gets true mesh bounds; houses need exactly the same.
     html=once(html,
-        "if(['comet-courier','blank-model'].includes(currentProject?.canonicalId))return atelierCourierCamera(view);",
-        "if(['comet-courier','blank-model'].includes(currentProject?.canonicalId)||se226BuildingIds.has(currentProject?.canonicalId))return atelierCourierCamera(view);")
+        "function atelierSetPoseCamera(view){",
+        "function atelierSetPoseCamera(view){\n if(se226BuildingIds.has(currentProject?.canonicalId))return atelierCourierCamera(view);")
 
     # Expose top/bottom as proper bounds-aware orthographic-ish perspective views
     # only to the house selection (existing top/bottom button still works elsewhere).
