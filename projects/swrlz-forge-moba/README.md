@@ -1,3 +1,11 @@
+## §E v11.231 — Full-building sheep house camera framing (2026-11-02)
+
+**Owner report:** Houses now load but are not visible in the Model Atelier viewport. The actual 390px mobile browser screenshot revealed geometry drawn massively zoomed-in (the Barn showed a cropped wall/roof), rather than missing meshes. All five models had valid bounds/visible GPU meshes, but they used the ordinary fixed-distance character viewport instead of the existing large-model bounding-box camera.
+
+**Focused v11.231 repair:** The five IDs `sheep-free-shelter`, `sheep-thatched-hut`, `sheep-cottage`, `sheep-barn`, and `sheep-ram-house` now route front, side, three-quarter, and top/bottom views through the existing geometry-bounds camera framing. It accounts for the live canvas aspect ratio and adjusts studio fog for large house viewing only. Native mesh contents, UVs, parts/groups, saved projects, Sheep Tag buildings/collisions and LAN authority, wolf/glove rigs, GUI/Materials/Particle studios and VR controller behavior remain unchanged.
+
+**Receipts:** §E **v11.231**, 263 ordered patches, 68 unchanged assets, 7,713,229 assembled HTML bytes; SHA-256 `0e960a32760f081f20bfb8e8ed1cd61cf3a0eec8d1f5e583b865311d2bd6e4d0`. Narrow Chromium 390px test [run 41561484650](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/41561484650) passed all five full projected model bounds, native live scene mesh counts, and visibly rendered red Barn. Owner's Moto G Power and Quest hardware visual acceptance remains outstanding.
+
 ## §E v11.230 — Wolf Model single-pass loader and animation attachment (2026-11-02)
 
 The actual v11.88 wolf loading override was skipping v11.227's setup attached to an older starter branch; the public wrapper then forced an expensive second Model Atelier WebGL render to attach rig/clips. The v11.230 append-only patch places the 14-bone skeleton and ten wolf motion clips on the active wolf project before first opening and removes the redundant close/reopen. Keeps the editable Astra, Sheep Tag mechanics, and saved owner models unchanged. Verified source: 262 patches, 7,712,134 bytes, SHA-256 `f22f0ab28b072d6a60498ea82111e62212f2ffd71ba05a175a80a3750e689ac5`. Owner Moto/Quest visual approval pending.
