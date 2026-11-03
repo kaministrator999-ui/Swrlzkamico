@@ -1,0 +1,47 @@
+name: Calculate §E v11.242 Particle Studio mobile candidate
+on:
+  push:
+    branches: [fix/engine-particle-mobile-ui-v11-242-20261103]
+    paths:
+      - 'projects/swrlz-forge-moba/runtime/particle_studio_mobile_layout_v11_242.css'
+      - 'projects/swrlz-forge-moba/runtime/particle_studio_mobile_layout_v11_242.js'
+      - 'projects/swrlz-forge-moba/patches/v11_242_particle_mobile_layout.py'
+      - 'projects/swrlz-forge-moba/source-manifest.json'
+      - '.github/workflows/calc-forge-v11-242-particle-layout.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Build complete append-only source
+        run: python projects/swrlz-forge-moba/build_space.py --output /tmp/swrlz-v11-242
+      - name: Verify mobile isolation, native bridge and release seal
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib
+          raw=Path('/tmp/swrlz-v11-242/index.html').read_bytes()
+          assert Path('/tmp/swrlz-v11-242/modeler.html').read_bytes()==raw
+          text=raw.decode('utf8')
+          for must in (
+              'V11_242_PARTICLE_MOBILE_LAYOUT',
+              'id="se242ParticleLayout"',
+              'display:none!important;visibility:hidden!important;pointer-events:none!important',
+              '.app>.workspace>.panel',
+              'se242InspectorToggle',
+              'data-se242-inspector-open=true',
+              'node.open=title===\'Emitter & spawn\'',
+              'frame.setAttribute(\'allow\',\'clipboard-read; clipboard-write\')',
+              'function executeStudio(op)',
+              'SWYRL_ENGINE_PARTICLE_STAGE_240',
+              'se225StudioTabs',
+          ):assert must in text,must
+          print('PASS_ENGINE_242 bytes='+str(len(raw))+' SHA256='+hashlib.sha256(raw).hexdigest())
+          PY
