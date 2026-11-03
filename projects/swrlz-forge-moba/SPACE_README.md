@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.232
+title: §wyrl§ Engine v11.233
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,13 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.233 — §C native Material, Particle and Rig Studio commands (source candidate)
+
+**New native host bridge:** The existing paired Chat side panel now advertises versioned, live-context Studio Commands v1 only in the correct studio tab. Supported operations are material create/edit/assign-to-scene-actor, particle emitter create/edit, existing hand/wolf bone pose, and animation keyframe save. Each is a bounded **single operation**, validated by both Chat server and native host against exact IDs, current project/studio/edit mode, and approved through the existing immutable design-preview/consent/receipt flow. The native material/particle transaction owners, Model Atelier rig storage, Sheep Tag gameplay and one WebGL renderer remain authoritative. No arbitrary JS, file imports, material-to-modeler-parts application, new hand-tracking capture, or code-based auto-rig generation is added.
+
+**Measured and sealed candidate:** v11.233, 265 ordered patches, 68 unchanged assets, **7,725,488 bytes** HTML, SHA-256 `936e49ec155d091a8e0e651a6043713554e6ac5c776a7b6fec45884c2967b34c`. Candidate source reconstruction passed in GitHub Actions; full release-package/source verification, Chat-server promotion, HF deployment and owner Moto/Quest physical acceptance are separate pending gates. The prior v11.232 workspace-start fix is preserved.
+
 
 ## §E v11.232 — Model starters now switch to Modeling
 

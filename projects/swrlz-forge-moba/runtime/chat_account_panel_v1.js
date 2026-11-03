@@ -1,8 +1,59 @@
 /* ATELIER_BRIDGE_START */
+// Native rig edits reuse the exact Model Atelier rig/skeleton and dirty paths.
+// No new camera, renderer, bone implementation, or untrusted code execution.
+function seChatRigApply(op){
+  if(!model()||!panel||panel.hidden)throw Error('MODEL_EDITOR_NOT_OPEN');
+  const hand=typeof se220RigAvailable==='function'&&se220RigAvailable();
+  const wolf=!hand&&typeof se224WolfIsModel==='function'&&se224WolfIsModel();
+  if(!hand&&!wolf)throw Error('VALID_RIG_REQUIRED');
+  const rig=hand?se220Rig():se224WolfCurrent();
+  const modelRig=rig?.pose;
+  const bounds=hand?2.8:3.14;
+  if(!modelRig||!Array.isArray(rig.bones))throw Error('RIG_NOT_READY');
+  if(op.op==='rig.pose'){
+    if(!rig.bones.some(b=>b.id===op.boneId)||!Array.isArray(op.rotation)||
+       op.rotation.length!==3||!op.rotation.every(n=>typeof n==='number'&&Number.isFinite(n)&&Math.abs(n)<=bounds))
+      throw Error('INVALID_RIG_POSE');
+    const candidate={...rig,pose:{...rig.pose,[op.boneId]:[...op.rotation]}};
+    if(hand?!se220RigValidate(candidate):!se224WolfRigValid(candidate))throw Error('INVALID_RIG_POSE');
+    if(hand){se220Playing=false;se220RigRemember();rig.pose[op.boneId]=[...op.rotation];
+      se220RigPose(rig.pose);se220RigRefresh();se220RigTouched('Chat pose applied. Save an animation key separately.');
+    }else{se224WolfPreview.playing=false;rig.pose[op.boneId]=[...op.rotation];
+      se224WolfApplyPose(rig.pose);markDirty();status('Chat wolf bone pose applied.');}
+    if(JSON.stringify(rig.pose[op.boneId])!==JSON.stringify(op.rotation))throw Error('POSE_NOT_APPLIED');
+    return {changed:true,boneId:op.boneId,rotation:[...rig.pose[op.boneId]],rig:hand?'hand':'wolf'};
+  }
+  if(op.op!=='rig.keyframe'||!Number.isFinite(op.time)||op.time<0)throw Error('UNSUPPORTED_RIG_OPERATION');
+  if(hand){
+    if(Object.hasOwn(op,'clip')||op.time>rig.duration||!se220RigValidate(rig))throw Error('HAND_KEY_INVALID');
+    const next=structuredClone(rig.timeline),index=next.findIndex(k=>Math.abs(k.time-op.time)<.02);
+    if(index<0&&next.length>=32)throw Error('HAND_KEY_LIMIT');
+    const key={time:op.time,pose:structuredClone(rig.pose)};
+    if(index>=0)next[index]=key;else next.push(key);
+    next.sort((a,b)=>a.time-b.time);
+    if(!se220RigValidate({...rig,timeline:next}))throw Error('HAND_KEY_INVALID');
+    se220Playing=false;se220RigRemember();rig.timeline=next;se220RigRefresh();
+    se220RigTouched('Chat hand key saved at '+op.time.toFixed(2)+'s.');
+    return {changed:true,rig:'hand',time:op.time,keyCount:rig.timeline.length};
+  }
+  const library=model()?.wolfAnimations,clip=library?.clips?.find(c=>c.name===op.clip);
+  if(!clip||op.time>clip.duration||!se224WolfRigValid(rig)||!se224WolfClipsValid(library))
+    throw Error('WOLF_KEY_INVALID');
+  const next=structuredClone(library),target=next.clips.find(c=>c.name===op.clip);
+  const index=target.keys.findIndex(k=>Math.abs(k.time-op.time)<.015);
+  if(index<0&&target.keys.length>=64)throw Error('WOLF_KEY_LIMIT');
+  const key={time:op.time,rotations:structuredClone(rig.pose),bodyBob:0};
+  if(index>=0)target.keys[index]=key;else target.keys.push(key);
+  target.keys.sort((a,b)=>a.time-b.time);
+  if(!se224WolfClipsValid(next))throw Error('WOLF_KEY_INVALID');
+  se224WolfPreview.playing=false;model().wolfAnimations=next;markDirty();
+  status('Chat wolf animation key saved.');return {changed:true,rig:'wolf',clip:op.clip,time:op.time,keyCount:target.keys.length};
+}
 // Runs inside the existing ModelAtelier closure. Every write uses its native
 // checkpoint/render/dirty path; this is data-only and never executes model code.
 function seChatAtelierApply(op){
   if(!model()||!panel||panel.hidden)throw Error('MODEL_EDITOR_NOT_OPEN');
+  if(op.op.startsWith('rig.'))return seChatRigApply(op);
   const describe=p=>p?{id:p.id,name:p.name,kind:p.kind,position:[...p.position],rotation:[...p.rotation],scale:[...p.scale],color:p.color,material:p.material}:null;
   if(op.op==='editor.undo'||op.op==='editor.redo'){
     const back=op.op==='editor.undo';if(!(back?undo:redo).length)throw Error('NO_HISTORY_STEP');
@@ -45,13 +96,40 @@ function getProjectId(){if(!currentProject||typeof currentProject!=='object')thr
 function atelierOpen(){return !!ModelAtelier.status().open;}
 function isVisible(){return open&&!document.hidden&&panel&&!panel.hidden;}
 function prioritized(items,selectedId){const selectedItem=items.find(p=>p.id===selectedId);return [...(selectedItem?[selectedItem]:[]),...items.filter(p=>p.id!==selectedId)].slice(0,MAX_META);}
+function studioSnapshot(workspace){
+  const studio=workspace==='model-atelier'?'modeler':window.SWYRL_ENGINE_STUDIOS?.active?.()||'game';
+  const mat=window.SWYRL_ENGINE_MATERIALS,pt=window.SWYRL_ENGINE_PARTICLES;
+  const matOk=workspace==='scene'&&studio==='materials'&&!!mat&&typeof mat.list==='function'&&
+    !!mat.export?.();
+  const partOk=workspace==='scene'&&studio==='particles'&&!!pt&&typeof pt.list==='function';
+  const rigData=currentProject?.modelAtelier,hand=workspace==='model-atelier'&&
+    window.SWYRL_ENGINE_RIG_STUDIO?.status?.().available===true;
+  const wolf=workspace==='model-atelier'&&!hand&&
+    window.SWYRL_ENGINE_WOLF_RIG?.status?.().available===true;
+  const activeRig=hand?rigData?.rigging:wolf?rigData?.wolfRig:null;
+  const selectedClip=wolf?document.getElementById('modelAtelierWolfClip')?.value:null;
+  const clip=wolf?rigData?.wolfAnimations?.clips?.find(c=>c.name===selectedClip):null;
+  return {studio,studioCommands:{schema:'swrlz-forge-studio-commands-v1',
+    materials:{available:!!matOk,items:matOk?mat.list().slice(0,12).map(x=>({id:x.id,name:summaryName(x.name)})):[],
+      presets:matOk?mat.presets():[]},
+    particles:{available:!!partOk,items:partOk?pt.list().slice(0,12).map(x=>({id:x.id,name:summaryName(x.name)})):[],
+      presets:partOk?pt.presets():[]},
+    rig:{available:!!activeRig&&!!activeRig.bones&&!!activeRig.pose,
+      kind:hand?'hand':wolf?'wolf':null,
+      bones:activeRig?.bones?.slice(0,17).map(b=>b.id)||[],
+      duration:hand?activeRig?.duration||0:clip?.duration||0,
+      keyCount:hand?activeRig?.timeline?.length||0:clip?.keys?.length||0,
+      selectedClip:wolf?selectedClip:null,
+      clips:wolf?rigData?.wolfAnimations?.clips?.map(c=>c.name).slice(0,16)||[]:[]}}};
+}
 function context(){
   const workspace=atelierOpen()?'model-atelier':'scene',ms=ModelAtelier.status(),parts=currentProject?.modelAtelier?.parts||[];
   const selectedId=workspace==='model-atelier'?ms.selected:selected?.userData?.id||null;
   const meshes=workspace==='model-atelier'?prioritized(parts.map(p=>({id:p.id,name:summaryName(p.name),kind:p.kind,position:[...p.position],rotation:[...p.rotation],scale:[...p.scale],color:p.color,material:p.material})),selectedId):[];
   const actorRows=workspace==='scene'?prioritized(actors.map(a=>({id:a.userData.id,name:summaryName(a.name),type:a.userData.actorType||'object',position:a.position.toArray(),rotation:[a.rotation.x,a.rotation.y,a.rotation.z],scale:a.scale.toArray()})),selectedId):[];
   const undoButton=document.getElementById(workspace==='model-atelier'?'modelAtelierUndo':'undoBtn'),redoButton=document.getElementById(workspace==='model-atelier'?'modelAtelierRedo':'redoBtn');
-  const value={projectId:getProjectId(),project:{name:summaryName(currentProject.name),kind:summaryName(currentProject.kind)},workspace,mode:playing||simulating?'play':'edit',epoch,selectedId,meshes,actors:actorRows,totalMeshes:parts.length,totalActors:actors.length,canUndo:!!undoButton&&!undoButton.disabled,canRedo:!!redoButton&&!redoButton.disabled};
+  const studioData=studioSnapshot(workspace);
+  const value={...studioData,projectId:getProjectId(),project:{name:summaryName(currentProject.name),kind:summaryName(currentProject.kind)},workspace,mode:playing||simulating?'play':'edit',epoch,selectedId,meshes,actors:actorRows,totalMeshes:parts.length,totalActors:actors.length,canUndo:!!undoButton&&!undoButton.disabled,canRedo:!!redoButton&&!redoButton.disabled};
   if(new TextEncoder().encode(JSON.stringify(value)).length>32768)throw Error('EDITOR_CONTEXT_TOO_LARGE');return value;
 }
 function setStatus(message,error=false){if(status){status.textContent=message;status.dataset.error=String(error);}}
@@ -74,6 +152,7 @@ async function heartbeat(){
 }
 function validateOperation(op,ctx){
   if(!op||typeof op!=='object'||Array.isArray(op))throw Error('INVALID_OPERATION');
+  if(op.op.startsWith('material.')||op.op.startsWith('particle.')||op.op.startsWith('rig.'))return validateStudioOperation(op,ctx);
   const spec={
     'mesh.add':[['op','kind'],['name','position','rotation','scale','color','material']],
     'mesh.set':[['op','id'],['name','position','rotation','scale','color','material']],
@@ -97,7 +176,94 @@ function validateOperation(op,ctx){
     const rows=op.op.startsWith('mesh.')?ctx.meshes:ctx.actors;if(!bounded(op.id,160)||!rows.some(p=>p.id===op.id))throw Error('TARGET_NOT_IN_SNAPSHOT');
   }
 }
+function validateStudioOperation(op,ctx){
+  const specs={
+    'material.create':[['op','preset'],[]],
+    'material.set':[['op','id'],['name','baseColor','roughness','metalness','glow']],
+    'material.assign':[['op','id','actorId'],[]],
+    'particle.create':[['op','preset'],[]],
+    'particle.set':[['op','id'],['name','position','rate','life','size','startColor','endColor']],
+    'rig.pose':[['op','boneId','rotation'],[]],
+    'rig.keyframe':[['op','time'],['clip']]
+  };
+  const spec=specs[op.op],cap=ctx.studioCommands;
+  if(!spec||!cap||cap.schema!=='swrlz-forge-studio-commands-v1'||
+     spec[0].some(k=>!Object.hasOwn(op,k))||
+     Object.keys(op).some(k=>!spec.flat().includes(k)))throw Error('STUDIO_OPERATION_NOT_ALLOWED');
+  if(ctx.mode!=='edit')throw Error('STUDIO_REQUIRES_EDIT_MODE');
+  const domain=op.op.split('.')[0],area=domain==='rig'?'rig':domain==='material'?'materials':'particles';
+  const state=cap[area];
+  if(state?.available!==true||area==='rig'&&
+     (ctx.workspace!=='model-atelier'||ctx.studio!=='modeler')||
+     area!=='rig'&&(ctx.workspace!=='scene'||ctx.studio!==area))throw Error('STUDIO_WORKSPACE_CHANGED');
+  if(domain==='material'||domain==='particle'){
+    if(op.op.endsWith('create')){
+      if(!state.presets.includes(op.preset)||state.items.length>=12)throw Error('STUDIO_PRESET_UNAVAILABLE');
+    }else if(!state.items.some(x=>x.id===op.id))throw Error('STUDIO_TARGET_STALE');
+    if(op.op==='material.assign'&&!ctx.actors.some(x=>x.id===op.actorId))throw Error('STUDIO_ACTOR_STALE');
+    if(op.op.endsWith('set')){
+      const edited=Object.keys(op).filter(k=>!['op','id'].includes(k));
+      if(!edited.length)throw Error('EMPTY_STUDIO_EDIT');
+      if('name' in op&&(!bounded(op.name,domain==='material'?65:64)||!op.name.trim()))throw Error('INVALID_STUDIO_NAME');
+      const colorKeys=domain==='material'?['baseColor']:['startColor','endColor'];
+      for(const k of colorKeys)if(k in op&&!/^#[0-9a-fA-F]{6}$/.test(op[k]))throw Error('INVALID_STUDIO_COLOR');
+      const ranges=domain==='material'?{roughness:[0,1],metalness:[0,1],glow:[0,3]}:
+        {rate:[0,80],life:[.1,8],size:[.025,.8]};
+      for(const [k,[lo,hi]] of Object.entries(ranges))if(k in op&&
+        !(typeof op[k]==='number'&&Number.isFinite(op[k])&&op[k]>=lo&&op[k]<=hi))throw Error('INVALID_STUDIO_NUMBER');
+      if('position' in op&&!vector(op.position))throw Error('INVALID_STUDIO_POSITION');
+    }
+    return;
+  }
+  if(!['hand','wolf'].includes(state.kind)||!Array.isArray(state.bones))throw Error('RIG_NOT_AVAILABLE');
+  if(op.op==='rig.pose'){
+    const max=state.kind==='hand'?2.8:3.14;
+    if(!state.bones.includes(op.boneId)||!Array.isArray(op.rotation)||op.rotation.length!==3||
+       !op.rotation.every(n=>typeof n==='number'&&Number.isFinite(n)&&Math.abs(n)<=max))throw Error('INVALID_RIG_ROTATION');
+  }else{
+    if(typeof op.time!=='number'||!Number.isFinite(op.time)||op.time<0||op.time>state.duration||
+       state.keyCount>=(state.kind==='hand'?32:64))throw Error('INVALID_KEYFRAME_TIME');
+    if(state.kind==='hand'&&'clip' in op||
+       state.kind==='wolf'&&(!state.clips.includes(op.clip)||op.clip!==state.selectedClip))
+      throw Error('INVALID_RIG_CLIP');
+  }
+}
+function executeStudio(op){
+  if(op.op.startsWith('rig.'))return ModelAtelier.chatAction(op);
+  if(op.op.startsWith('material.')){
+    const api=window.SWYRL_ENGINE_MATERIALS;
+    if(!api)throw Error('MATERIAL_STUDIO_UNAVAILABLE');
+    let result;
+    if(op.op==='material.create')result=api.create(op.preset);
+    else if(op.op==='material.set')result=api.edit(op.id,Object.fromEntries(
+      Object.entries(op).filter(([k])=>!['op','id'].includes(k))));
+    else if(op.op==='material.assign'){
+      result=api.assign(op.actorId,op.id);
+      if(!result||!currentProject.materialStudio?.assignments?.some(a=>a.actorId===op.actorId&&a.materialId===op.id))
+        throw Error('MATERIAL_ASSIGN_NOT_APPLIED');
+      return {changed:true,id:op.id,actorId:op.actorId};
+    }
+    const actual=result&&api.list().find(x=>x.id===(op.id||result.id));
+    if(!actual)throw Error('MATERIAL_EDIT_NOT_APPLIED');
+    for(const [k,v] of Object.entries(op))if(!['op','id'].includes(k)&&k!=='preset'&&actual[k]!==v)
+      throw Error('MATERIAL_EDIT_MISMATCH');
+    return {changed:true,id:actual.id,name:actual.name};
+  }
+  if(op.op.startsWith('particle.')){
+    const api=window.SWYRL_ENGINE_PARTICLES;
+    if(!api)throw Error('PARTICLE_STUDIO_UNAVAILABLE');
+    const result=op.op==='particle.create'?api.create(op.preset):
+      api.update(op.id,Object.fromEntries(Object.entries(op).filter(([k])=>!['op','id'].includes(k))));
+    const actual=result&&api.list().find(x=>x.id===(op.id||result.id));
+    if(!actual)throw Error('PARTICLE_EDIT_NOT_APPLIED');
+    for(const [k,v] of Object.entries(op))if(!['op','id','preset'].includes(k)&&
+      JSON.stringify(actual[k])!==JSON.stringify(v))throw Error('PARTICLE_EDIT_MISMATCH');
+    return {changed:true,id:actual.id,name:actual.name};
+  }
+  throw Error('UNSUPPORTED_STUDIO_OPERATION');
+}
 function execute(op){
+  if(op.op.startsWith('material.')||op.op.startsWith('particle.')||op.op.startsWith('rig.'))return executeStudio(op);
   if(op.op.startsWith('mesh.')||op.op.startsWith('editor.')&&atelierOpen())return ModelAtelier.chatAction(op);
   const agent=window.SWYRL_ENGINE_AGENT;
   if(op.op==='sceneactor.add'){
@@ -127,7 +293,7 @@ async function applyBatch(payload){
     const before=context(),binding=taken.preconditions;
     if(!isVisible()||lease!==active||!binding||binding.leaseId!==active.leaseId||binding.threadId!==active.threadId||binding.projectId!==before.projectId||binding.generationId!==payload.generationId||JSON.stringify(binding.context)!==JSON.stringify(before))throw Error('STALE_NATIVE_PRECONDITIONS');
     if(!Array.isArray(taken.operations)||!taken.operations.length||taken.operations.length>MAX_BATCH)throw Error('INVALID_BATCH');
-    if(taken.operations.length>1&&taken.operations.some(op=>op?.op==='editor.undo'||op?.op==='editor.redo'))throw Error('HISTORY_REQUIRES_SEPARATE_BATCH');
+    if(taken.operations.length>1&&taken.operations.some(op=>op?.op==='editor.undo'||op?.op==='editor.redo'||op?.op?.startsWith('material.')||op?.op?.startsWith('particle.')||op?.op?.startsWith('rig.')))throw Error('HISTORY_OR_STUDIO_REQUIRES_SEPARATE_BATCH');
     for(const op of taken.operations)validateOperation(op,before);
     const results=[];let failed=false;
     for(const op of taken.operations){
