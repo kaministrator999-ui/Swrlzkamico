@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.232",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_232_MODEL_STARTER_WORKSPACE_ACTIVATION",
-  "reason": "Fix owner Android screenshots: choosing Sheep Tag Ram House or Astra Furred Comet Courier left Game Engine tab active and only World Ground visible. Explicit house, active wolf and other model starter loaders now invoke existing Modeling workspace controller after model/rig data load; actual Model Atelier opens once, switches tab to Modeling, updates /modeler.html, shows editing controls. Narrow 390px Game-to-Modeling browser acceptance PASS: Ram House 60 parts, wolf 108 with full rig and 10 clips, blank model 1 part. Game first entry and saved projects unaffected. 264 ordered patches, 68 unchanged assets, 7,714,177 HTML bytes, SHA-256 a5f840685f618872d69b3e1dc1e197e496e68d2500bfb46008883bfb5c6df9d9. Moto/Quest physical acceptance pending.",
-  "sourceCommit": "017427eb1d57798a031abd46c136d74aac668f19",
-  "sourceIntegritySha256": "a5f840685f618872d69b3e1dc1e197e496e68d2500bfb46008883bfb5c6df9d9"
+  "releaseVersion": "v11.233",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_233_CHAT_NATIVE_STUDIO_BRIDGE",
+  "reason": "Publish sealed §E v11.233 native Studio Commands v1 host: exact live studio snapshots and bounded material create/edit/actor assign, particle emitter create/edit, and existing glove/wolf bone pose/keyframe calls through the current authenticated Chat-host lease and receipt pipeline. Preserve the v11.232 starter workspace fix; no new renderer, arbitrary JavaScript, WebXR capture or gameplay mutation. Exact source verified in focused full package run #41569448070 and #41569420823: 265 patches, 68 assets, 7,725,488 HTML bytes, SHA-256 936e49ec155d091a8e0e651a6043713554e6ac5c776a7b6fec45884c2967b34c. Real owner mobile/Quest and separately released Chat backend remain pending.",
+  "sourceCommit": "7812f985c5114189892ce43a52f4f466d9d8a00a",
+  "sourceIntegritySha256": "936e49ec155d091a8e0e651a6043713554e6ac5c776a7b6fec45884c2967b34c"
 }
