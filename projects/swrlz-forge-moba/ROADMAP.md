@@ -1,3 +1,11 @@
+## §E v11.231 — Full-building sheep house camera framing (2026-11-02)
+
+**Owner report:** Houses now load but are not visible in the Model Atelier viewport. The actual 390px mobile browser screenshot revealed geometry drawn massively zoomed-in (the Barn showed a cropped wall/roof), rather than missing meshes. All five models had valid bounds/visible GPU meshes, but they used the ordinary fixed-distance character viewport instead of the existing large-model bounding-box camera.
+
+**Focused v11.231 repair:** The five IDs `sheep-free-shelter`, `sheep-thatched-hut`, `sheep-cottage`, `sheep-barn`, and `sheep-ram-house` now route front, side, three-quarter, and top/bottom views through the existing geometry-bounds camera framing. It accounts for the live canvas aspect ratio and adjusts studio fog for large house viewing only. Native mesh contents, UVs, parts/groups, saved projects, Sheep Tag buildings/collisions and LAN authority, wolf/glove rigs, GUI/Materials/Particle studios and VR controller behavior remain unchanged.
+
+**Receipts:** §E **v11.231**, 263 ordered patches, 68 unchanged assets, 7,713,229 assembled HTML bytes; SHA-256 `0e960a32760f081f20bfb8e8ed1cd61cf3a0eec8d1f5e583b865311d2bd6e4d0`. Narrow Chromium 390px test [run 41561484650](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/41561484650) passed all five full projected model bounds, native live scene mesh counts, and visibly rendered red Barn. Owner's Moto G Power and Quest hardware visual acceptance remains outstanding.
+
 ## §E v11.230 — Wolf Model load and rig bootstrap hotfix (2026-11-02)
 
 **Source correction delivered:** The effective v11.88 wolf loader bypassed the older v11.87 initializer that v11.227 modified. Its public wolf API was compensating with a second modeler close/open and full mesh rebuild. Initialize the rig and ten clips on the current wolf project before the one required viewport open, and leave existing user saves and Sheep Tag game physics untouched. Release source seal: 7,712,134 bytes / SHA-256 `f22f0ab28b072d6a60498ea82111e62212f2ffd71ba05a175a80a3750e689ac5`; physical hardware and clip-motion UX acceptance pending.
