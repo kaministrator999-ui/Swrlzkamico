@@ -12,6 +12,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          filter: blob:none
+          sparse-checkout: |
+            projects/swrlz-forge-moba
       - name: Validate only new Sheep Tag menu / destruction patch and build
         shell: bash
         run: |
