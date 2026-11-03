@@ -288,6 +288,6 @@
     "patches/v11_240_particle_authoring_chamber.py",
     "patches/v11_241_sheep_grass_pbr.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 7778007,
+  "finalSha256": "394d96bd83e9973159bac1878296fa2cf53865afcffccf6c30a578d6042d9e9a"
 }
