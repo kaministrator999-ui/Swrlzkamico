@@ -1,0 +1,21 @@
+/* §E v11.244 · Sheep Tag only. Do not blur or tint the entire
+   full-screen menu overlay or leave the editable preview behind Play. */
+.viewport-wrap > #st141RuntimeMenu.st141-menu-ui,
+.viewport-wrap > #st141MenuPreview.st141-menu-ui,
+body.se145-menu .viewport-wrap > #st141RuntimeMenu.st141-menu-ui{
+  background:transparent!important;
+  backdrop-filter:none!important;
+  filter:none!important;
+  box-shadow:none!important;
+}
+body.se145-menu .viewport-wrap > #st141MenuPreview.st141-menu-ui{
+  display:none!important;
+}
+.viewport-wrap > #st141RuntimeMenu .st141-menu-panel,
+.viewport-wrap > #st141MenuPreview .st141-menu-panel{
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+  background:rgba(17,49,40,.84)!important;
+  box-shadow:0 7px 20px rgba(2,16,13,.23)!important;
+  isolation:isolate;
+}
