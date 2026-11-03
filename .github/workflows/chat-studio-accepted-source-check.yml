@@ -1,0 +1,32 @@
+name: Chat Studio Commands accepted-source verification
+on:
+  push:
+    branches:
+      - feature/chat-studio-native-accepted-v1-20261102
+    paths:
+      - .github/workflows/chat-studio-accepted-source-check.yml
+      - hf_space/forge_studio_commands_v1.py
+      - hf_space/forge_chat_actions.py
+      - hf_space/brain_forge.py
+      - hf_space/forge_design_preview_v1.py
+      - hf_space/forge_modeling_lessons.py
+      - hf_space/test_forge_studio_commands_v1.py
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  focused:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Parse actual accepted-source Chat modules
+        run: |
+          python -m py_compile hf_space/forge_studio_commands_v1.py hf_space/forge_chat_actions.py hf_space/brain_forge.py hf_space/forge_design_preview_v1.py hf_space/forge_modeling_lessons.py hf_space/test_forge_studio_commands_v1.py
+      - name: Run exact native studio authorization and approval checks
+        run: PYTHONPATH=hf_space python hf_space/test_forge_studio_commands_v1.py
+      - name: Preserve previous Model Atelier regression checks
+        run: PYTHONPATH=hf_space python hf_space/test_forge_modeling_lessons_v1.py
