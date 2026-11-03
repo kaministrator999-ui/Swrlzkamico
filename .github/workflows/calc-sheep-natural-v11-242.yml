@@ -16,6 +16,7 @@ jobs:
       - name: Focused grass patch and source build
         run: |
           python3 -m py_compile projects/swrlz-forge-moba/patches/v11_242_natural_grass_blend.py
+          python3 projects/swrlz-forge-moba/scripts/verify_v11_242_release.py --output "$RUNNER_TEMP/sealed-grass-242"
           python3 projects/swrlz-forge-moba/build_space.py --output "$RUNNER_TEMP/grass-242"
           echo "NATURAL_GRASS_BYTES=$(wc -c < "$RUNNER_TEMP/grass-242/index.html")"
           echo "NATURAL_GRASS_SHA256=$(sha256sum "$RUNNER_TEMP/grass-242/index.html" | cut -d' ' -f1)"
