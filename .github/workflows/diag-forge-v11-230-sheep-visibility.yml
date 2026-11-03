@@ -1,4 +1,4 @@
-name: Diagnose native Sheep Tag house visibility
+name: Verify v11.230 sheep house camera framing candidate
 # Dismiss initial release notes and capture the unobstructed model viewport.
 on:
   push:
@@ -21,6 +21,19 @@ jobs:
           node-version: '22'
       - name: Assemble current sealed native editor and instrument local debug copy only
         run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('projects/swrlz-forge-moba/source-manifest.json')
+          m=json.loads(p.read_text())
+          assert m['name']=='§wyrl§ Engine v11.229'
+          assert m['patches'][-1]=='patches/v11_229_sheep_house_model_loader_repair.py'
+          m['name']='§wyrl§ Engine v11.230'
+          m['finalArtifact']='swyrl_engine_v11_230.html'
+          m['patches'].append('patches/v11_230_sheep_house_camera_fit.py')
+          m['finalBytes']=0;m['finalSha256']=''
+          p.write_text(json.dumps(m,ensure_ascii=False))
+          PY
           python projects/swrlz-forge-moba/build_space.py --output /tmp/se230-visibility
           python3 - <<'PY'
           from pathlib import Path
@@ -41,6 +54,8 @@ jobs:
             camera:camera.position.toArray(),cameraFov:camera.fov,near:camera.near,far:camera.far,aspect:camera.aspect,
             bounds:{min:b.min.toArray(),max:b.max.toArray(),center:c.toArray()},
             projectedCenter:p.toArray(),intersectsView:fr.intersectsBox(b),
+            projectedCorners:[b.min.x,b.max.x].flatMap(x=>[b.min.y,b.max.y].flatMap(y=>[b.min.z,b.max.z].map(z=>new THREE.Vector3(x,y,z).project(camera).toArray()))),
+            fog:world?.fog?{near:world.fog.near,far:world.fog.far}:null,
             sceneDraws:renderer?.info?.render?.calls||0,
             sceneTriangles:renderer?.info?.render?.triangles||0};
           };
