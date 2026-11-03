@@ -29,6 +29,7 @@ jobs:
               mean=ImageStat.Stat(im.convert('RGB')).mean
               assert mean[1]>mean[0] and mean[1]>mean[2]
           PY
+          python3 projects/swrlz-forge-moba/scripts/verify_v11_240_release.py --output "$RUNNER_TEMP/verify-grass-240"
           python3 projects/swrlz-forge-moba/build_space.py --output "$RUNNER_TEMP/grass-240"
           echo "GRASS_240_BYTES=$(wc -c < "$RUNNER_TEMP/grass-240/index.html")"
           echo "GRASS_240_SHA256=$(sha256sum "$RUNNER_TEMP/grass-240/index.html" | cut -d' ' -f1)"
