@@ -287,6 +287,6 @@
     "patches/v11_239_quest_gameplay_raycast_budget.py",
     "patches/v11_240_particle_authoring_chamber.py"
   ],
-  "finalBytes": null,
-  "finalSha256": null
+  "finalBytes": 7771280,
+  "finalSha256": "e63b2a1265015cefe290d3daf3adacca7207c5048285c3574f6e782f5169c015"
 }
