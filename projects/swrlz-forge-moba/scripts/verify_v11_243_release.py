@@ -20,7 +20,7 @@ manifest = json.loads((ROOT / "source-manifest.json").read_text(encoding="utf8")
 assert manifest["name"] == "§wyrl§ Engine v11.243"
 assert manifest["finalArtifact"] == "swyrl_engine_v11_243.html"
 assert len(manifest["patches"]) == 274
-assert manifest["patches"][-1] == "patches/v11_243_natural_grass_blend.py"
+assert manifest["patches"][-1] == "patches/v11_243_particle_mobile_layout.py"
 assert manifest["finalBytes"] == EXPECTED_BYTES
 assert manifest["finalSha256"] == EXPECTED_SHA
 subprocess.run([sys.executable,str(ROOT/"build_space.py"),"--output",str(out)],check=True)
