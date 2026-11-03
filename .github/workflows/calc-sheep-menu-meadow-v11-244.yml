@@ -36,3 +36,5 @@ jobs:
           grep -q 'const sprigs=quest?6500:12000' "$RUNNER_TEMP/grass-menu-244/index.html"
 
 # Uses the first real </head> after the inherited embedded fragment was corrected.
+
+# Focused retry after preserving historical movement source and using runtime wrapper.
