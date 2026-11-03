@@ -151,11 +151,11 @@ html.se-quest-panel[data-se-device-profile="quest-browser"]
   background:#26465e;color:#ecfaff;font:650 12px system-ui,sans-serif;
 }
 html.se-quest-panel[data-se-device-profile="quest-browser"]
- #modelAtelierPanel .atelier-tool-rail{
+ #modelAtelierPanel.se238-model-ready .atelier-tool-rail{
   display:none!important;
 }
 html.se-quest-panel[data-se-device-profile="quest-browser"]
- #modelAtelierPanel.se238-tool-rail-open .atelier-tool-rail{
+ #modelAtelierPanel.se238-model-ready.se238-tool-rail-open .atelier-tool-rail{
   box-sizing:border-box!important;position:fixed!important;
   display:flex!important;flex-direction:column!important;align-items:stretch!important;
   flex-wrap:nowrap!important;right:10px!important;left:auto!important;
