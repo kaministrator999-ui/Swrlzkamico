@@ -1917,12 +1917,12 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
                 verification_basis=("PRIMARY_SNIPPET" if snippet_consistent else
                                     "EXPLICIT_SECTIONS" if strong_body else
                                     "TWO_INDEPENDENT_LYRIC_SNIPPETS")
-            else:
-                verification_basis=""
             elif not lyric_extract:
                 rejection_reason="NO_STRUCTURED_LYRIC_BODY"
+                verification_basis=""
             else:
                 rejection_reason="SNIPPET_BODY_MISMATCH"
+                verification_basis=""
             page_debug=_lyrics_debug_preview(str(item.get("pageExtract") or ""),subject,600)
             lyric_debug=_lyrics_debug_preview(lyric_extract,subject,600) if lyric_extract else {
                 "chars":0,"sha256":"","anchorIndex":None,"anchorLine":"","sectionMarkers":[],"preview":"","previewChars":0,"previewLimit":600
