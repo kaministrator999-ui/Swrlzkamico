@@ -15,7 +15,7 @@ args = cli.parse_args()
 output = Path(args.output).resolve()
 manifest = json.loads((ROOT / "source-manifest.json").read_text(encoding="utf8"))
 assert manifest["name"] == "§wyrl§ Engine v11.235"
-assert manifest["finalArtifact"] == "swyrl_engine_v11_233.html"
+assert manifest["finalArtifact"] == "swyrl_engine_v11_235.html"
 assert len(manifest["patches"]) == 267
 assert manifest["patches"][-1] == "patches/v11_235_wolf_motion_tools_visibility.py"
 subprocess.run([sys.executable, str(ROOT / "build_space.py"),
