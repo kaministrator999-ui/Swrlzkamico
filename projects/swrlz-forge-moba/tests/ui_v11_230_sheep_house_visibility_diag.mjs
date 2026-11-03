@@ -24,10 +24,14 @@ try{
  page.on('pageerror',e=>console.log('SE230_PAGE_ERROR',String(e)));
  await page.goto(host+'/modeler.html?project=sheep-free-shelter',{waitUntil:'domcontentloaded',timeout:90000});
  await page.waitForFunction(()=>window.SWYRL_ENGINE_MODEL_ATELIER?.status?.().count===18,null,{timeout:30000});
+ await page.evaluate(()=>{const dialog=document.getElementById('seReleaseNotesDialog');if(dialog?.open)dialog.close();});
+ await page.waitForTimeout(150);
  for(const id of ids){
   await page.evaluate(id=>window.SWYRL_ENGINE_SHEEP_BUILDING_STARTERS.open(id,true),id);
   await page.waitForTimeout(440);
   const info=await page.evaluate(()=>({
+   overlay:document.elementFromPoint(195,350)?.id||document.elementFromPoint(195,350)?.tagName||null,
+   releaseNotesOpen:document.getElementById('seReleaseNotesDialog')?.open,
    status:window.SWYRL_ENGINE_MODEL_ATELIER?.status?.(),
    view:window.SWYRL_ENGINE_VIEW?.status?.(),
    diagram:window.SE230_HOUSE_DIAG?.(),
