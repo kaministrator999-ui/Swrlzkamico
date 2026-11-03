@@ -68,6 +68,24 @@ stCapture=function(...args){
     se244Captured++;
   }
 };
+// The movement implementation has several historical overlays. Keep its
+// authoritative pathing code unchanged; defer only a dirty bot route that
+// already has a safe route and has not reached its short stagger deadline.
+const se244PriorMoveUnit=stMoveUnit;
+stMoveUnit=function(unit,target,dt){
+  const s=stSession;
+  const deferred=!!s&&!!target&&unit.id!==s.controlledId&&
+    unit.pathVersion!==s.navVersion&&unit.path?.length>0&&
+    !!unit.pathTarget&&unit.pathTarget.distanceToSquared(target)<=1&&
+    s.elapsed<unit.repathAt;
+  if(!deferred)return se244PriorMoveUnit(unit,target,dt);
+  const oldVersion=unit.pathVersion;
+  unit.pathVersion=s.navVersion;
+  try{return se244PriorMoveUnit(unit,target,dt);}
+  finally{
+    if(unit.pathVersion===s.navVersion)unit.pathVersion=oldVersion;
+  }
+};
 window.SWYRL_ENGINE_SHEEP_REMOVAL_PERFORMANCE_244=Object.freeze({
   status:()=>({hidden:se244Hidden,disposed:se244Disposed,
     queued:se244DeferredVisuals.length,captureCalls:se244Captured,
