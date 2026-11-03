@@ -1,0 +1,29 @@
+/* §E v11.246 — one obvious mobile bottom inspector control, no competing resize. */
+@media (max-width:850px),(pointer:coarse) and (max-width:1024px){
+ body[data-se225-workspace=particles] #se223Panel.se225-docked #se245ParticleCollapse{
+  display:none!important;
+ }
+ body[data-se225-workspace=particles] #se223Panel.se225-docked #se243InspectorToggle,
+ body[data-se225-workspace=particles][data-se245-particle-collapsed=true] #se223Panel.se225-docked #se243InspectorToggle{
+  display:inline-flex!important;align-items:center;justify-content:center;
+  flex:0 0 auto!important;width:auto!important;min-width:108px!important;
+  min-height:40px!important;padding:6px 9px!important;
+  font-size:11px!important;font-weight:700!important;
+  white-space:nowrap;touch-action:manipulation;
+ }
+ body[data-se225-workspace=particles] #se223Panel.se225-docked .se223-title{
+  gap:6px!important;touch-action:pan-y;
+ }
+ body[data-se225-workspace=particles][data-se245-particle-collapsed=true]
+  #se223Panel.se225-docked .se223-title{
+  touch-action:manipulation;
+ }
+ body[data-se225-workspace=particles] #se223Panel.se225-docked .se223-title>div:first-child{
+  min-width:0!important;flex:1 1 auto!important;
+ }
+}
+@media (max-width:370px){
+ body[data-se225-workspace=particles] #se223Panel.se225-docked #se243InspectorToggle{
+  min-width:94px!important;padding:5px 6px!important;font-size:10px!important;
+ }
+}
