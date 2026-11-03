@@ -11,10 +11,10 @@ from typing import Any
 
 _ACTION = re.compile(r"\b(?:add|create|make|build|start|set\s+up|insert|place|move|rotate|scale|resize|"
                      r"rename|recolor|colour|color|change|set|select|duplicate|copy|"
-                     r"remove|delete|undo|redo|turn)\b", re.I)
+                     r"remove|delete|undo|redo|turn|apply|assign|attach|pose|save|keyframe|edit|adjust)\b", re.I)
 _NATIVE = re.compile(r"\b(?:boxes|box|cubes?|spheres?|cones?|cylinders?|mesh|meshes|primitives?|object|objects|"
                      r"actor|actors|scene|atelier|wall|rock|bush|crystal|pedestal|"
-                     r"selection|selected|model|position|rotation|material|transform|project|projects|starter|starters|workspace)\b|§[eE]", re.I)
+                     r"selection|selected|model|position|rotation|material|texture|particle|emitter|rig|bones?|animation|keyframe|wolf|glove|transform|project|projects|starter|starters|workspace)\b|§[eE]", re.I)
 _CODE = re.compile(r"\b(?:html|css|javascript|typescript|python|kotlin|java|source\s+code|"
                    r"github|repository|repo|web\s*(?:page|site)|android|api|workflow|"
                    r"three\.js|react|vue|webgl|function|script|code)\b", re.I)
@@ -33,7 +33,7 @@ _WORKSPACE_FOLLOWUP = re.compile(
 
 _NEGATED_ACTION = re.compile(r"\b(?:do\s+not|don't|dont|never|avoid|stop)\s+(?:\w+\s+){0,3}"
                             r"(?:add|create|make|build|insert|place|move|rotate|scale|resize|"
-                            r"start|rename|color|colour|change|set|select|duplicate|remove|delete|undo|redo)\b", re.I)
+                            r"start|rename|color|colour|change|set|select|duplicate|remove|delete|undo|redo|apply|assign|attach|pose|save|keyframe|edit|adjust)\b", re.I)
 _DIRECT_UNDO = re.compile(r"^(?:(?:please|can\s+you|could\s+you|would\s+you)\s+)*(?:undo|redo)(?:\s+(?:that|it|the\s+last\s+(?:change|action|operation)))?[.!?]*$", re.I)
 _PROJECT_ARTIFACT = re.compile(r"\bproject\s+(?:report|summary|context|document|documentation|plan|proposal|description|archive|zip|files?)\b", re.I)
 _NEW_PROJECT = re.compile(
@@ -152,8 +152,11 @@ def native_plan_system(operation_contract: dict[str, Any], *, prompt: str = "",
         "native pieces: deliberate proportions, x/y/z positions, positive scales, consistent materials, "
         "symmetry where requested and descriptive literal names. Prefer fewer meaningful parts over "
         "decorative clutter; keep every individual operation valid and within the original 16-operation "
-        "batch limit. This is a primitive blockout, NOT arbitrary sculpting, rigging, animation, "
-        "UV editing, boolean operations or imported assets. If the request requires those unsupported "
+        "batch limit. A primitive blockout is NOT automatic sculpting or rig generation. "
+        "Source-verified single-step rig posing, keyframe saves, and material/particle edits are allowed "
+        "ONLY when explicitly advertised in studioCommands of the current leased host. "
+        "UV editing, boolean operations and arbitrary asset import remain unsupported. "
+        "If the request requires other unsupported " 
         "operations, clarify the boundary instead of falsely claiming a finished detailed model. "
         "Each operation targets the ORIGINAL snapshot; newly added IDs cannot be referenced in this batch. "
         "If a target is ambiguous, unavailable, outside the current workspace or the requested behavior "
