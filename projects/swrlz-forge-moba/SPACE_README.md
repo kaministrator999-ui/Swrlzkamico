@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.231
+title: §wyrl§ Engine v11.232
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.232 — Model starters now switch to Modeling
+
+The five Sheep Tag houses, Astra wolf and other native model starter cards now open the Modeling workspace and show their 3D meshes instead of leaving Game Engine selected with an empty World Ground scene. Model Atelier is opened once after data/rig loading; the native editor and tools are visible. Game Engine still boots first on the main page. Focused mobile browser checks passed: Ram House (60 parts), Astra Wolf (108 parts and 10 clips) and Blank Model (1 part). Verified source: 264 patches, 7,714,177 bytes, SHA-256 `a5f840685f618872d69b3e1dc1e197e496e68d2500bfb46008883bfb5c6df9d9`. Owner phone and Quest acceptance pending.
 
 ## §E v11.231 — Sheep house models now auto-fit the camera
 
