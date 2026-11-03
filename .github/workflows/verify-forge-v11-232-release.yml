@@ -1,0 +1,22 @@
+name: Verify §E v11.232 Modeling starter release
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/verify-forge-v11-232-release.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify sealed source, existing 68 assets, wolf rigs, sheep houses and Modeling router
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_232_release.py --output /tmp/se232-sealed
