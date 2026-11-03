@@ -540,6 +540,36 @@
     .jump-latest{position:fixed;z-index:5;right:16px;bottom:calc(var(--composer-visible-height,70px) + 12px);min-height:38px;padding:0 13px;border:1px solid rgba(56,232,255,.38);border-radius:999px;background:rgba(3,19,34,.94);color:#dffaff;box-shadow:0 8px 24px rgba(0,0,0,.32);cursor:pointer}.jump-latest[hidden]{display:none}
     .stop-button{display:inline-grid;place-items:center;width:36px;height:36px;border:1px solid rgba(255,107,122,.42);border-radius:50%;background:rgba(65,18,31,.92);color:#ffdce2;cursor:pointer;font-size:13px}.stop-button[hidden]{display:none}
     .send-button{width:36px!important;height:36px!important}.send-button svg{width:16px!important;height:16px!important}
+
+    /* Embedded §E touch keyboard/clipboard controls; ordinary standalone Chat unchanged. */
+    body.swrlz-embed-composer .composer-tools{
+      z-index:12;right:6px;bottom:4px;gap:5px;pointer-events:auto;
+    }
+    body.swrlz-embed-composer .composer-box{min-height:54px;overflow:visible}
+    body.swrlz-embed-composer #prompt{
+      width:calc(100% - 136px);min-height:52px;
+      padding:13px 7px 10px 14px;
+      -webkit-user-select:text!important;user-select:text!important;
+      touch-action:auto!important;-webkit-touch-callout:default!important;
+      caret-color:#b9efff;pointer-events:auto;position:relative;z-index:2;
+    }
+    body.swrlz-embed-composer #sendButton{
+      position:relative;z-index:15;min-width:44px!important;width:44px!important;
+      min-height:44px!important;height:44px!important;touch-action:manipulation;
+      pointer-events:auto;flex-shrink:0;-webkit-tap-highlight-color:transparent;
+    }
+    .swrlz-paste-button{display:none}
+    body.swrlz-embed-composer .swrlz-paste-button{
+      display:inline-flex;align-items:center;justify-content:center;
+      min-width:64px;min-height:44px;flex-shrink:0;
+      padding:6px 9px;border:1px solid #5a94b3;border-radius:12px;
+      background:#163b57;color:#dff8ff;font:700 12px system-ui;
+      touch-action:manipulation;pointer-events:auto;position:relative;z-index:15;
+      cursor:pointer;
+    }
+    body.swrlz-embed-composer .swrlz-paste-button:focus-visible,
+    body.swrlz-embed-composer #sendButton:focus-visible{outline:2px solid #87eaff;outline-offset:2px}
+
     .composer-box{max-height:34dvh}.composer-shell.collapsed #prompt{height:40px!important;max-height:40px!important;overflow-y:hidden!important}#prompt{max-height:calc(34dvh - 2px)}
     .pin-rail{position:relative;top:auto;z-index:1}.pin-rail-items{max-height:28vh}.pin-item-body{max-height:18vh}
     .assistant-body .message-text{white-space:normal}.assistant-body .message-text p{margin:.55em 0}.assistant-body .message-text p:first-child{margin-top:0}.assistant-body .message-text p:last-child{margin-bottom:0}
@@ -1214,6 +1244,7 @@
       <div class="composer-box">
         <textarea id="prompt" rows="1" maxlength="131072" aria-label="Message §wyrlz" placeholder="Message §wyrlz…"></textarea>
         <div class="composer-tools">
+          <button class="swrlz-paste-button" id="swrlzEmbedPaste" type="button" aria-label="Paste from clipboard" title="Paste text from clipboard">Paste</button>
           <button class="stop-button" id="stopButton" type="button" aria-label="Stop generating" title="Stop generating" hidden>■</button>
           <button class="send-button" id="sendButton" type="button" aria-label="Send message">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12 20 4l-6 16-3-7-7-1Z"/><path d="m11 13 9-9"/></svg>
@@ -1226,6 +1257,8 @@
     (() => {
       const prompt = document.getElementById("prompt");
       const sendButton = document.getElementById("sendButton");
+      const embedPaste = document.getElementById("swrlzEmbedPaste");
+      if(new URLSearchParams(location.search).get("forgeEmbed")==="1")document.body.classList.add("swrlz-embed-composer");
       const stopButton = document.getElementById("stopButton");
       const chatViewport = document.getElementById("chatViewport");
       const jumpLatest = document.getElementById("jumpLatest");
@@ -3471,7 +3504,43 @@
         prompt.dispatchEvent(new Event("input",{bubbles:true}));
         void commitDraftFromPrompt(); // Fresh §e lease and server/host receipt remain mandatory.
       });
-      sendButton.addEventListener("click",commitDraftFromPrompt);
+      // Android iframe composer: real textarea selection and a user-gesture paste
+      // control. Never invent clipboard content; surface permission failures.
+      embedPaste.addEventListener("click",async()=>{
+        if(!navigator.clipboard?.readText){
+          embedPaste.textContent="Long-press input";prompt.focus();
+          setTimeout(()=>{embedPaste.textContent="Paste";},2000);return;
+        }
+        try{
+          const value=await navigator.clipboard.readText();
+          if(!value){embedPaste.textContent="Clipboard empty";setTimeout(()=>embedPaste.textContent="Paste",1600);return;}
+          const start=prompt.selectionStart??prompt.value.length,end=prompt.selectionEnd??start;
+          const available=prompt.maxLength>0?prompt.maxLength-prompt.value.length+(end-start):131072;
+          const clip=value.slice(0,Math.max(0,available));
+          if(!clip)return;
+          prompt.setRangeText(clip,start,end,"end");
+          prompt.dispatchEvent(new Event("input",{bubbles:true}));
+          prompt.focus();
+        }catch(_){
+          embedPaste.textContent="Use long-press";
+          prompt.focus();
+          setTimeout(()=>embedPaste.textContent="Paste",2300);
+        }
+      });
+      // Native click + touch pointer-up share a short dedupe gate. On Android
+      // embedded browsers a pointer-up may arrive without a usable click.
+      let lastTouchSend=0;
+      sendButton.addEventListener("pointerup",event=>{
+        if(event.pointerType!=="touch"&&event.pointerType!=="pen")return;
+        if(!prompt.value.trim()||sending)return;
+        lastTouchSend=performance.now();event.preventDefault();
+        void commitDraftFromPrompt();
+      });
+      sendButton.addEventListener("click",()=>{
+        if(performance.now()-lastTouchSend<900)return;
+        void commitDraftFromPrompt();
+      });
+
       prompt.addEventListener("keydown",e=>{
         if(e.key!=="Enter"||e.shiftKey)return;
         // IME confirmation (including Android/Gboard and legacy keyCode 229)
