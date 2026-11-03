@@ -1,3 +1,13 @@
+## §E v11.238 — Quest radial-menu stability and browser studio controls (2026-11-03)
+
+**Quest 2 owner evidence:** Immersive Sheep Tag is responsive with natural head turning until its **VIEW / BACK / FORWARD / TACTICAL** circular menu opens; the menu then triggers a lag spiral and sometimes disappears. Quest Browser's floating 2D Game Engine and Model Atelier windows overlap menu/tool controls.
+
+**Runtime correction:** A slow application-owned XR callback (170–650 ms) while its radial remains open and the XR session is still visible no longer gets mistaken for a lost Meta OS overlay event. Genuine native Meta blur/hidden and longer interruptions retain existing focus protection. The native radial reuses same-frame ray hits and label textures between pages, disposing the cached textures on XR exit. No camera reference-space, physical HMD tracking, gameplay movement, fog/visibility, or model geometry changes.
+
+**Quest Browser workspace:** The four native studio tabs remain in a compact scroll lane. Existing Game Engine toolbar controls move into a **Controls** drawer. Model Atelier preserves the original **Close**, with the other existing header controls under **Model actions** and its previous side tool rail under **Edit tools** to avoid covering the Wolf Motion inspector. Existing DOM controls and handlers are reused; opting out of Quest UI restores their original arrangement. Meta OS browser windows themselves are unaffected.
+
+**Verified source:** 269 ordered patches, 68 packaged assets, **7,759,927 bytes** HTML, SHA-256 `b732a8868cd74ead21e085365d6c3004f5e71e63a9cfd473ae676b955179e13c`. Owner headset UX and long-run FPS confirmation pending. Relevant files: `patches/v11_238_quest_radial_workspace_comfort.py`, `docs/QUEST_RADIAL_WORKSPACE_V11_238.md`. Other experimental Quest PRs #362 and #363 are not included.
+
 ## §E v11.236 — Complete Sheep House gables, Wolf root preview, starter categories (2026-11-02)
 
 **Owner inspection / source diagnosis:** The four enclosed Sheep Tag house models had rectangular walls and sloped roof pitches but **no front or rear triangular gable geometry**, leaving large attic openings. Astra's separately authored nose and cheek ruff meshes inherited torso/neck weights even when the skull turned. Procedural walk/run/stalk bob and spine pitch caused global rocking. The existing Starter Projects gallery mixed game and model assets.
