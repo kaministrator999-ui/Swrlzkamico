@@ -4,7 +4,7 @@
 (function(){
   const LAYER=25;
   const state={active:false,scene:null,camera:null,project:null,saved:null,root:null,
-    entries:0,exits:0,lastError:''};
+    entries:0,exits:0,lastError:'',yaw:.55,pitch:.26,distance:10.5,shield:null,hint:null,drag:null};
   const chamberColor=0x162239;
   function layer(object){object.layers.set(LAYER);return object;}
   function buildStage(target){
@@ -31,6 +31,39 @@
     const note=document.getElementById('se225ViewNote');
     if(note){note.textContent=message;note.dataset.error=String(error);}
   }
+  function addShield(){
+    const shell=document.getElementById('se225Shell');if(!shell)return;
+    const shield=document.createElement('div');
+    shield.id='se240ParticleStageOrbit';
+    shield.style.cssText='position:absolute;inset:82px 0 0;z-index:1;pointer-events:auto;touch-action:none;background:transparent;cursor:grab';
+    shield.setAttribute('aria-label','Particle preview: drag to orbit, scroll to zoom');
+    const hint=document.createElement('div');
+    hint.id='se240ParticleStageHint';
+    hint.textContent='✦ EFFECT TEST CHAMBER  ·  Drag to orbit · Scroll to zoom';
+    hint.style.cssText='position:absolute;right:12px;bottom:20px;z-index:2;pointer-events:none;max-width:min(370px,48vw);padding:8px 11px;border:1px solid #416d85;border-radius:9px;background:#0b192be0;color:#c7eff9;font:600 11px system-ui;text-align:center';
+    shield.addEventListener('pointerdown',e=>{
+      if(e.button!==0)return;
+      state.drag={id:e.pointerId,x:e.clientX,y:e.clientY};
+      shield.setPointerCapture?.(e.pointerId);
+      shield.style.cursor='grabbing';
+      e.preventDefault();e.stopPropagation();
+    });
+    shield.addEventListener('pointermove',e=>{
+      const d=state.drag;if(!d||d.id!==e.pointerId)return;
+      state.yaw-=(e.clientX-d.x)*.007;
+      state.pitch=Math.max(-.15,Math.min(1.2,state.pitch+(e.clientY-d.y)*.006));
+      d.x=e.clientX;d.y=e.clientY;
+      e.preventDefault();
+    });
+    const release=()=>{state.drag=null;shield.style.cursor='grab';};
+    shield.addEventListener('pointerup',release);
+    shield.addEventListener('pointercancel',release);
+    shield.addEventListener('wheel',e=>{
+      state.distance=Math.max(3.2,Math.min(23,state.distance*(e.deltaY>0?1.1:.9)));
+      e.preventDefault();e.stopPropagation();
+    },{passive:false});
+    shell.append(shield,hint);state.shield=shield;state.hint=hint;
+  }
   function open(){
     if(state.active)return true;
     if(window.SWYRL_ENGINE_STUDIOS?.active?.()!=='particles')return false;
@@ -43,6 +76,7 @@
       state.saved={position:camera.position.clone(),quaternion:camera.quaternion.clone(),
         mask:camera.layers.mask};
       state.root=buildStage(scene);
+      addShield();
       state.active=true;state.entries++;
       se223State.preview=true;
       se223Reset();
@@ -72,6 +106,7 @@
       });
       state.root.removeFromParent();
     }
+    state.shield?.remove();state.hint?.remove();state.shield=null;state.hint=null;state.drag=null;
     state.root=null;state.saved=null;state.scene=null;state.camera=null;state.project=null;
     state.exits++;
     se223Reset();
@@ -85,7 +120,8 @@
       close();return false;
     }
     // Reassert after engine camera controls; restore its exact previous pose on exit.
-    camera.position.set(6.2,4.4,8.2);
+    const c=Math.cos(state.pitch),d=state.distance;
+    camera.position.set(Math.sin(state.yaw)*c*d,1.35+Math.sin(state.pitch)*d,Math.cos(state.yaw)*c*d);
     camera.lookAt(0,1.35,0);
     camera.layers.set(LAYER);
     camera.updateMatrixWorld(true);
