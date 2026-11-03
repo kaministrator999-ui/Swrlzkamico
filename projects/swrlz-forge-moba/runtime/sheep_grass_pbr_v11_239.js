@@ -48,9 +48,25 @@ function se239ApplyOneGround(mesh){
   const source=original.map.image;
   const width=source?.naturalWidth||source?.width||0;
   if(!width){
-    if(source?.addEventListener&&!se239Grass.waiting.has(mesh)){
+    // TextureLoader may have no image object until its asynchronous callback.
+    // A bounded timer handles this path without polling every XR frame.
+    if(!se239Grass.waiting.has(mesh)){
       se239Grass.waiting.add(mesh);
-      source.addEventListener('load',()=>se239ApplyOneGround(mesh),{once:true});
+      let tries=0;
+      const retry=()=>{
+        if(se239Grass.prepared.has(mesh))return;
+        const pending=mesh.material?.map?.image;
+        if((pending?.naturalWidth||pending?.width||0)>0){
+          se239Grass.waiting.delete(mesh);
+          se239ApplyOneGround(mesh);
+        }else if(++tries<80){
+          setTimeout(retry,150);
+        }else{
+          se239Grass.waiting.delete(mesh);
+          se239Grass.errors++;
+        }
+      };
+      setTimeout(retry,90);
     }
     return;
   }
