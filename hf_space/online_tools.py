@@ -478,6 +478,7 @@ _LYRIC_POST_SONG_META=re.compile(
     r"^\s*(?:a\s+collection\s+of\s+song\s+lyrics\b|all\s+lyrics\s+belong\s+to\b|writers?|writer\(s\)|written\s+by|songwriters?|"
     r"publishers?|powered\s+by\s+\S+|"
     r"top\s+(?:lyrics|artists|songs)(?:\s*:)?|"
+    r"lyrics?\s+licensed\s+and\s+provided\s+by\b|keep\s+listening|go\s+beyond\s+the\s+lyrics|"
     r"submit\s+(?:lyrics|corrections?)|"
     r"add\s+song|album\s+lyrics|azlyrics|you\s+may\s+also\s+like|"
     r"back\s+to\s*:\s*.+?\s+lyrics)\b.*$",
@@ -1632,6 +1633,34 @@ def time_lookup(plan: dict[str, Any], progress: Callable[[dict[str, Any]], None]
     }
     return {"contract":ONLINE_CONTRACT,"requested":True,"kind":"time","status":"OK","provider":"IANA time zone","query":plan.get("query"),"widgets":[widget],"sources":[],"modelContext":{"contractId":"swrlz-online-time-evidence-v1","trust":"SYSTEM_TIMEZONE_DATA","instructionAuthority":False,"location":widget["data"]["location"],"observedAt":widget["observedAt"],"time":widget["data"]["time"],"date":widget["data"]["date"],"utcOffset":offset_label,"epistemicPolicy":"Use only the resolved time-zone clock data; do not invent a different time or location."},"resultCount":1}
 
+def _lyrics_direct_source_probes(identity: dict[str, Any]) -> list[dict[str, Any]]:
+    """Build bounded *unverified* paths when search providers find no lyric pages.
+
+    These are lookup candidates, never citations or claimed matches. The normal
+    public fetch path must confirm the final URL, fetched page identity, and
+    substantive lyric structure before accepting or displaying a source.
+    """
+    title=str(identity.get("title") or "").strip()
+    artist=str(identity.get("primaryArtist") or "").strip()
+    def slug(value: str) -> str:
+        return re.sub(r"-+","-",re.sub(r"[^a-z0-9]+","-",value.casefold())).strip("-")[:100]
+    title_slug=slug(title)
+    artist_slug=slug(artist)
+    if not title_slug or not artist_slug or not re.search(r"[a-z]",title_slug):
+        return []
+    first_letter=artist_slug[0]
+    urls=[
+        ("lyricsweb.com",f"https://lyricsweb.com/song/{artist_slug}/{artist_slug}-{title_slug}"),
+        ("elyrics.net",f"https://www.elyrics.net/read/{first_letter}/{artist_slug}-lyrics/{title_slug}-lyrics.html"),
+        ("songlyrics.com",f"https://www.songlyrics.com/{artist_slug}/{title_slug}-lyrics/"),
+    ]
+    return [{
+        "title":"","url":url,"snippet":"","searchSnippet":"","source":domain,
+        "rank":90+i,"origin":"verified-on-fetch-only","query":f"{title} {artist} lyrics",
+        "sourceFamily":source_family({"url":url}),
+    } for i,(domain,url) in enumerate(urls)]
+
+
 def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], None] | None = None) -> dict[str, Any]:
     query = _clean(plan.get("query"), 500)
     provider_query=query
@@ -2013,6 +2042,23 @@ def _search_bundle(plan: dict[str, Any], progress: Callable[[dict[str, Any]], No
                             break
                 finally:
                     canonical_online_research.clear_trace_sink()
+            if not candidate_pool and not valid:
+                # Search and catalog outages must not be interpreted as a song
+                # not existing. Probe a few predictable source paths only when
+                # normal discovery yielded zero admissible pages. URLs remain
+                # entirely untrusted until the fetched title/body is verified.
+                direct_probes=_lyrics_direct_source_probes(song_id)
+                candidate_pool.extend(direct_probes)
+                if direct_probes:
+                    lyrics_rescue_search_debug.append({
+                        "query":str(plan.get("subject") or ""),
+                        "strategy":"unverified-direct-source-probes",
+                        "resultCount":0,"admittedCount":0,
+                        "probeCount":len(direct_probes),
+                        "candidates":[{"sourceFamily":x["sourceFamily"],"url":x["url"],
+                                       "decision":"UNVERIFIED_FETCH_REQUIRED"}
+                                      for x in direct_probes[:3]],
+                    })
             if callable(fetch_public):
                 canonical_online_research.set_trace_sink(progress)
                 try:
