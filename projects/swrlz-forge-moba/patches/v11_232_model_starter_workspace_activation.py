@@ -48,8 +48,8 @@ function se232ActivateSelectedModelWorkspace(){
     # v11.230 already attaches the rig before this statement. A workspace
     # change here opens the *fully rigged* wolf once, not an unrigged first copy.
     html=scoped(html,'const atelierOriginalWolfLoader=loadAnimalProject;','ModelAtelier.install();',
-        "markSaved();document.getElementById('projectHub')?.classList.remove('show');ModelAtelier.syncProject();ModelAtelier.open();",
-        "markSaved();document.getElementById('projectHub')?.classList.remove('show');se232ActivateSelectedModelWorkspace();ModelAtelier.syncProject();",
+        "initializeHistory('Opened rigged Astra wolf starter');markSaved();document.getElementById('projectHub')?.classList.remove('show');ModelAtelier.syncProject();ModelAtelier.open();",
+        "initializeHistory('Opened rigged Astra wolf starter');markSaved();document.getElementById('projectHub')?.classList.remove('show');se232ActivateSelectedModelWorkspace();ModelAtelier.syncProject();",
         'active Astra wolf model starter')
 
     # The earlier animal starter remains the active sheep implementation;
