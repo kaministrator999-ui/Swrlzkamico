@@ -8,8 +8,8 @@ import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
-EXPECTED_SHA = "PENDING_SEAL"
-EXPECTED_BYTES = 0
+EXPECTED_SHA = "b4652dcccdb83b622532d5991d623b1aface82706d67a583e396d699a3db9426"
+EXPECTED_BYTES = 7796041
 MARKER = "SWYRL_ENGINE_DEPLOY_MARKER: V11_245_PARTICLE_INSPECTOR_COLLAPSE"
 cli = argparse.ArgumentParser()
 cli.add_argument("--output", required=True)
