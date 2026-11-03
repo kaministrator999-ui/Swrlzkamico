@@ -14,7 +14,7 @@ from typing import Any, Callable, Iterator
 from brain_forge import classify_forge_intent, current_command_text, inspection_text, native_plan_system, requests_new_project, _literal
 from forge_workspace_insights_v1 import build_insight
 from forge_design_preview_v1 import wants_preview, should_preview, build_preview, approval_id
-from forge_studio_commands_v1 import STUDIO_SCHEMA, STUDIO_LABELS, validate_studio_operation, StudioCommandError
+from forge_studio_commands_v1 import STUDIO_SCHEMA, STUDIO_LABELS, PARTICLE_PRESETS, validate_studio_operation, StudioCommandError
 
 MAX_OPERATIONS = 16
 MAX_PLAN_BYTES = 24576
@@ -341,6 +341,49 @@ def explicit_project_plan(prompt: str, summary: dict[str, Any]) -> dict[str, Any
     return {"disposition": "apply", "operations": [{"op": "project.create", "starterId": matches.pop(), "name": name}]}
 
 
+def explicit_particle_create_plan(prompt: str, summary: dict[str, Any]) -> dict[str, Any] | None:
+    """Resolve a literal, single-preset emitter request without model guessing.
+
+    A standalone particle.create requires only an advertised preset, not a
+    world target, Menu pine, actor attachment, position or material. Do not
+    short-circuit compound requests or descriptions that may need more edits.
+    This produces a *proposal*, never an executed action or success receipt.
+    """
+    if not isinstance(prompt, str) or not isinstance(summary, dict):
+        return None
+    cap = summary.get("studioCommands")
+    if (summary.get("workspace") != "scene" or summary.get("studio") != "particles"
+            or summary.get("mode") != "edit" or not isinstance(cap, dict)
+            or cap.get("schema") != "swrlz-forge-studio-commands-v1"):
+        return None
+    state = cap.get("particles")
+    if (not isinstance(state, dict) or state.get("available") is not True
+            or len(state.get("items", [])) >= 12):
+        return None
+    command = current_command_text(prompt).lower()
+    if not re.match(r"^\\s*(?:please\\s+)?(?:create|make|add|spawn|insert)\\b", command):
+        return None
+    if not re.search(r"\\b(?:particle\\s+(?:emitter|effect)|emitter)\\b", command):
+        return None
+    # Every significant word must belong to this precise one-action grammar.
+    # Locations, actor names, and compound changes fall through to the model.
+    tokens = re.findall(r"[a-z0-9§]+", command)
+    allowed = {"please", "create", "make", "add", "spawn", "insert", "one",
+               "a", "an", "new", "single", "standalone", "unattached", "particle",
+               "emitter", "effect", "using", "with", "the", "preset", "in",
+               "inside", "currently", "current", "active", "§e", "s", "studio",
+               "directly", "now"}
+    presets = [p for p in PARTICLE_PRESETS if p in tokens]
+    if len(presets) != 1 or any(word not in allowed and word not in PARTICLE_PRESETS
+                               for word in tokens):
+        return None
+    if presets[0] not in state.get("presets", []):
+        return None
+    if any(word in tokens for word in PARTICLE_PRESETS if word != presets[0]):
+        return None
+    return {"disposition": "apply", "operations": [{"op": "particle.create", "preset": presets[0]}]}
+
+
 def _generate_plan(messages: list[dict[str, str]], max_tokens: int) -> tuple[str, dict[str, Any]]:
     # Lazy import keeps routing/tests lightweight and uses the existing pinned
     # artifact, load function and lock. No second model/default/hardware lane.
@@ -450,7 +493,7 @@ def generate_events(payload: dict[str, Any], context, register_batch: Callable |
                                    ensure_ascii=False, separators=(",", ":"), allow_nan=False)
             messages = [{"role": "system", "content": native_plan_system(operation_contract(), prompt=prompt, summary=summary)},
                         {"role": "user", "content": user_data}]
-            plan = project_plan
+            plan = project_plan or explicit_particle_create_plan(prompt, summary)
             if plan is None:
                 text, observation = infer(messages, PLAN_TOKENS)
                 plan = decode_plan(text, observation)
