@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - feature/chat-studio-native-accepted-v1-20261102
+      - feature/chat-particle-create-deterministic-v1-20261103
     paths:
       - .github/workflows/chat-studio-accepted-source-check.yml
       - hf_space/forge_studio_commands_v1.py
