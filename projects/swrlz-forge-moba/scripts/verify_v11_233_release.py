@@ -56,7 +56,7 @@ for path, metadata in receipt["assets"].items():
 if args.request:
     request = json.loads((ROOT / "DEPLOY_REQUEST.json").read_text(encoding="utf8"))
     assert request["releaseVersion"] == "v11.233"
-    assert request["deployMarker"] == "V11_233_CHAT_NATIVE_STUDIO_BRIDGE"
+    assert request["deployMarker"] == "SWYRL_ENGINE_DEPLOY_MARKER: V11_233_CHAT_NATIVE_STUDIO_BRIDGE"
     assert request["sourceIntegritySha256"] == manifest["finalSha256"]
     assert isinstance(request.get("sourceCommit"), str) and len(request["sourceCommit"]) == 40
 print(json.dumps({"status": "PASS_SEALED_SOURCE", "version": manifest["name"],
