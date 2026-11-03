@@ -292,6 +292,6 @@
     "patches/v11_244_sheep_menu_meadow_capture.py",
     "patches/v11_245_particle_inspector_collapse.py"
   ],
-  "finalBytes": null,
-  "finalSha256": null
+  "finalBytes": 7796041,
+  "finalSha256": "b4652dcccdb83b622532d5991d623b1aface82706d67a583e396d699a3db9426"
 }
