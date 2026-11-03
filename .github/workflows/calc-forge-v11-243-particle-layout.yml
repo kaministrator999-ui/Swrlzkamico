@@ -21,14 +21,14 @@ jobs:
         with:
           python-version: '3.11'
       - name: Build complete append-only source
-        run: python projects/swrlz-forge-moba/build_space.py --output /tmp/swrlz-v11-242
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_243_release.py --output /tmp/swrlz-v11-243
       - name: Verify mobile isolation, native bridge and release seal
         run: |
           python - <<'PY'
           from pathlib import Path
           import hashlib
-          raw=Path('/tmp/swrlz-v11-242/index.html').read_bytes()
-          assert Path('/tmp/swrlz-v11-242/modeler.html').read_bytes()==raw
+          raw=Path('/tmp/swrlz-v11-243/index.html').read_bytes()
+          assert Path('/tmp/swrlz-v11-243/modeler.html').read_bytes()==raw
           text=raw.decode('utf8')
           for must in (
               'V11_243_PARTICLE_MOBILE_LAYOUT',
@@ -43,5 +43,5 @@ jobs:
               'SWYRL_ENGINE_PARTICLE_STAGE_240',
               'se225StudioTabs',
           ):assert must in text,must
-          print('PASS_ENGINE_242 bytes='+str(len(raw))+' SHA256='+hashlib.sha256(raw).hexdigest())
+          print('PASS_ENGINE_243 bytes='+str(len(raw))+' SHA256='+hashlib.sha256(raw).hexdigest())
           PY
