@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.245",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_245_PARTICLE_INSPECTOR_COLLAPSE",
-  "reason": "Owner Moto G Power report: Particle Studio's v11.243 Compact control resized between 43dvh and 72dvh but never collapsed the bottom inspector. v11.245 adds separate accessible Collapse/Show controls, header-only 59px dock, scroll inert/ARIA state, preserves expand mode and editor VFX settings, resets on workspace exit. Retains all v11.244 Sheep Tag grass, menu and performance fixes, v11.240 one-renderer VFX chamber and §C native-approved operations. Full sealed v11.245 verification PASSED workflow 41698611152: 276 patches, 69 assets, 7796041 bytes, SHA256 b4652dcccdb83b622532d5991d623b1aface82706d67a583e396d699a3db9426. Squash merge PR #372 commit 93eba4d609bc3000038070868eca6635e0041a7e. Owner phone/Quest acceptance outstanding.",
-  "sourceCommit": "93eba4d609bc3000038070868eca6635e0041a7e",
-  "sourceIntegritySha256": "b4652dcccdb83b622532d5991d623b1aface82706d67a583e396d699a3db9426"
+  "releaseVersion": "v11.246",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_246_PARTICLE_BOTTOM_TOGGLE",
+  "reason": "Owner Moto G Power follow-up: Particle Studio bottom settings still would not collapse. v11.246 binds the existing mobile Compact/Expand control to the v11.245 actual collapse/show API rather than resizing only, uses a single visible button with 59px header-only docking and forced scroll hiding, while preserving VFX emitter data, single renderer, editor and Quest behavior. Source is sealed: 277 patches, 69 assets, 7,801,207 bytes, SHA256 3dd76f2dae3bc4705feccc0cd39bef4bc1c6c36b5edfa6d6530d829e9854a64e. Squash merged PR #373 commit 0ad288ebb92494d8be89a9c62db4619422418a45. Owner manual acceptance pending.",
+  "sourceCommit": "0ad288ebb92494d8be89a9c62db4619422418a45",
+  "sourceIntegritySha256": "3dd76f2dae3bc4705feccc0cd39bef4bc1c6c36b5edfa6d6530d829e9854a64e"
 }
