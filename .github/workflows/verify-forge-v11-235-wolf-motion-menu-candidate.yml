@@ -1,0 +1,59 @@
+name: Validate §E v11.235 Wolf Motion menu candidate
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/verify-forge-v11-235-wolf-motion-menu-candidate.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  focused-menu:
+    runs-on: ubuntu-latest
+    timeout-minutes: 17
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Assemble two append-only pending wolf fixes, without changing sealed manifest
+        run: |
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_234_wolf_anatomical_skinning.py projects/swrlz-forge-moba/patches/v11_235_wolf_motion_tools_visibility.py
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('projects/swrlz-forge-moba/source-manifest.json')
+          m=json.loads(p.read_text())
+          assert m['name']=='§wyrl§ Engine v11.233',m['name']
+          assert m['patches'][-1]=='patches/v11_233_chat_native_studio_bridge.py'
+          m['name']='§wyrl§ Engine v11.235'
+          m['finalArtifact']='swyrl_engine_v11_235.html'
+          m['patches']+=['patches/v11_234_wolf_anatomical_skinning.py','patches/v11_235_wolf_motion_tools_visibility.py']
+          m['finalBytes']=0;m['finalSha256']=''
+          p.write_text(json.dumps(m,ensure_ascii=False))
+          PY
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/se235-wolf-menu
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          p=Path('/tmp/se235-wolf-menu/index.html')
+          b=p.read_bytes();s=b.decode()
+          for marker in [
+            'V11_235_WOLF_MOTION_PANEL_VISIBILITY',
+            'se-wolf-motion-focus',
+            'if(category===\'Motion\'&&typeof se224WolfIsModel',
+            'ui.open=true',
+            'se224WolfVertexWeights(pos,rig,part,indexById=null)',
+          ]: assert marker in s,marker
+          assert b==Path('/tmp/se235-wolf-menu/modeler.html').read_bytes()
+          print('SE235_MOTION_CANDIDATE_BYTES='+str(len(b)))
+          print('SE235_MOTION_CANDIDATE_SHA256='+hashlib.sha256(b).hexdigest())
+          PY
+      - name: Install focused browser dependency
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps --only-shell chromium
+      - name: Tap Motion in mobile browser and verify native wolf Play, clip and key UI
+        run: node projects/swrlz-forge-moba/tests/ui_v11_235_wolf_motion_menu.mjs
