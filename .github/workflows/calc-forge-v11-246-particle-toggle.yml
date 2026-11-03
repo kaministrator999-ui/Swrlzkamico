@@ -1,0 +1,50 @@
+name: Calculate §E v11.246 mobile particle bottom toggle
+on:
+  push:
+    branches: [fix/particle-bottom-panel-toggle-v11-246-20261103]
+    paths:
+      - 'projects/swrlz-forge-moba/runtime/particle_bottom_toggle_v11_246.js'
+      - 'projects/swrlz-forge-moba/runtime/particle_bottom_toggle_v11_246.css'
+      - 'projects/swrlz-forge-moba/patches/v11_246_particle_bottom_toggle.py'
+      - 'projects/swrlz-forge-moba/source-manifest.json'
+      - '.github/workflows/calc-forge-v11-246-particle-toggle.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  calculate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Check only the new runtime patch
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/particle_bottom_toggle_v11_246.js
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_246_particle_bottom_toggle.py
+      - name: Assemble and calculate sealed source hash
+        run: |
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/swrlz246 > /tmp/swrlz246build.log
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json
+          root=Path('/tmp/swrlz246')
+          raw=(root/'index.html').read_bytes()
+          assert (root/'modeler.html').read_bytes()==raw
+          html=raw.decode('utf8')
+          for marker in (
+            'SWYRL_ENGINE_DEPLOY_MARKER: V11_246_PARTICLE_BOTTOM_TOGGLE',
+            'SWYRL_ENGINE_PARTICLE_BOTTOM_TOGGLE_246',
+            'se243InspectorToggle',
+            'se245ParticleCollapse',
+            'height:59px',
+            'window.SWYRL_ENGINE_PARTICLE_COLLAPSE_245',
+            'window.SWYRL_ENGINE_PARTICLE_STAGE_240',
+          ):
+            assert marker in html,marker
+          d=json.loads((root/'SOURCE.json').read_text())
+          assert len(d['patches'])==277 and len(d['assets'])==69
+          print('SEAL_V11_246 bytes='+str(len(raw))+' sha256='+hashlib.sha256(raw).hexdigest()+' assets='+str(len(d['assets'])))
+          PY
