@@ -1,5 +1,5 @@
 name: Validate §E v11.235 Wolf Motion menu candidate
-# Stronger Motion-focused CSS specificity overrides generic mode-view hide rule.
+# Verify accessible top-row Set keyframe and actual motion pixels, with native controls.
 on:
   push:
     branches: [main]
