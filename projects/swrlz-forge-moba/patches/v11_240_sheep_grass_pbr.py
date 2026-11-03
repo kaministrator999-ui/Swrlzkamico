@@ -22,7 +22,7 @@ def apply(html):
     if html.count(before)!=2:raise AssertionError(('grass provenance',html.count(before)))
     html=html.replace(before,after)
     for old,new in (
-      ('SWYRL_ENGINE_DEPLOY_MARKER: V11_238_QUEST_RADIAL_AND_WORKSPACE',
+      ('SWYRL_ENGINE_DEPLOY_MARKER: V11_239_QUEST_HEADTURN_RAYCAST_BUDGET',
        'SWYRL_ENGINE_DEPLOY_MARKER: V11_240_SHEEP_GRASS_PBR'),
       ('ENGINE · MAKER v11.239','ENGINE · MAKER v11.240'),
       ('v11.239 · Quest fast-turn frame budget and native raycast removal',
