@@ -32,3 +32,5 @@ jobs:
           python3 projects/swrlz-forge-moba/build_space.py --output "$RUNNER_TEMP/grass-240"
           echo "GRASS_240_BYTES=$(wc -c < "$RUNNER_TEMP/grass-240/index.html")"
           echo "GRASS_240_SHA256=$(sha256sum "$RUNNER_TEMP/grass-240/index.html" | cut -d' ' -f1)"
+
+# Updated v11.240 source anchor after first candidate build.
