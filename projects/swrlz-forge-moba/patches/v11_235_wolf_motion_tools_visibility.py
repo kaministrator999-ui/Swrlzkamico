@@ -71,8 +71,8 @@ def apply(html):
 }
 #modelAtelierPanel.se-wolf-motion-focus.se-inspector-mode-view
  .atelier-inspector>#atelierContextWorkbench{display:none!important}
-#modelAtelierPanel.se-wolf-motion-focus.se-inspector-mode-view
- .atelier-inspector>#modelAtelierWolfStudio{
+#modelAtelierPanel.se-wolf-motion-focus.se-inspector-mode-view:not(.atelier-tools-closed)
+ .atelier-inspector>#modelAtelierWolfStudio[open]{
  display:block!important;position:relative!important;flex:1 1 auto!important;
  width:100%!important;max-height:100%!important;min-height:0!important;
  margin:0!important;overflow-y:auto!important;overscroll-behavior:contain!important;
