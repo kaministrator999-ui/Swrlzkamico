@@ -1,0 +1,40 @@
+name: Verify §C mobile embedded composer candidate
+on:
+  push:
+    branches: [fix/chat-embed-mobile-composer-v1-20261103]
+    paths:
+      - 'chat/§wyrlz/index.html'
+      - '.github/workflows/check-chat-mobile-embed-v1.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  composer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - name: Extract and syntax-check canonical inline Chat JavaScript
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          html=Path('chat/§wyrlz/index.html').read_text(encoding='utf8')
+          parts=re.findall(r'<script(?:\s[^>]*)?>([\s\S]*?)</script>',html)
+          assert parts
+          for i,part in enumerate(parts):
+            if part.strip():Path('/tmp/swrlz-inline-'+str(i)+'.js').write_text(part,encoding='utf8')
+          for marker in (
+              'id="swrlzEmbedPaste"',
+              'swrlz-embed-composer',
+              'navigator.clipboard?.readText',
+              'sendButton.addEventListener("pointerup"',
+              'sendButton.addEventListener("click"',
+              'prompt.setRangeText',
+              'commitDraftFromPrompt()',
+          ):assert marker in html,marker
+          print('Verified inline scripts:',len(parts))
+          PY
+          for file in /tmp/swrlz-inline-*.js; do node --check "$file"; done
+      - name: Confirm unchanged native command tests
+        run: PYTHONPATH=hf_space python hf_space/test_forge_studio_commands_v1.py
