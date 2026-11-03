@@ -17,16 +17,6 @@ def apply(html):
     html=html.replace('</head>','<style id="se244SheepMenuBlur">'+css+'</style>\n</head>',1)
     html=once(html,'window.SWRLZ_FORGE_BUILD=',js+'\nwindow.SWRLZ_FORGE_BUILD=','native game wrappers')
 
-    # The original nav-version invalidation forces every bot with a valid
-    # route to run A* in the same frame when a sheep loses many houses.
-    old="""  const movedTarget=!unit.pathTarget||unit.pathTarget.distanceToSquared(target)>1;
-  if(unit.pathVersion!==s.navVersion||movedTarget||s.elapsed>=unit.repathAt){"""
-    new="""  const movedTarget=!unit.pathTarget||unit.pathTarget.distanceToSquared(target)>1;
-  const navChanged=unit.pathVersion!==s.navVersion;
-  const deferNav=navChanged&&unit.id!==s.controlledId&&unit.path.length>0&&s.elapsed<unit.repathAt;
-  if(movedTarget||(!deferNav&&(navChanged||s.elapsed>=unit.repathAt))){"""
-    html=once(html,old,new,'stagger structural-change pathfinding')
-
     # Small authored swatch is not a true seamless scan. Add actual organic
     # fine meadow strokes at deterministic random world positions, once when
     # constructing the texture, only where its original base was vegetation.
