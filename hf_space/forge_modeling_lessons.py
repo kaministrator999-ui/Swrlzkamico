@@ -58,7 +58,7 @@ _TOPICS = {
     "materials-studio": (
         "§E Material & Texture Studio owns currentProject.materialStudio, up to "
         "12 PBR materials and eight texture patterns. Native Apply assigns to "
-        "GAME scene actors, not Model Atelier parts or automatic UV unwrap. "
+        "GAME scene actors, not Model Atelier parts or automatic UVs/unwrapping. "
         "§C material.create/set/assign only with fresh Studio Commands v1 "
         "Materials tab, exact actor/material IDs and approved host receipts."
     ),
