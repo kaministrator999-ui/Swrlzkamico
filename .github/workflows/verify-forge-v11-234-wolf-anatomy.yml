@@ -1,0 +1,66 @@
+name: Validate §E v11.234 Astra Wolf anatomical rig
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/verify-forge-v11-234-wolf-anatomy.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  focused:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build candidate after sealed Chat Studio Commands v11.233
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('projects/swrlz-forge-moba/source-manifest.json')
+          m=json.loads(p.read_text())
+          assert m['name']=='§wyrl§ Engine v11.233',m['name']
+          assert m['patches'][-1]=='patches/v11_233_chat_native_studio_bridge.py'
+          m['name']='§wyrl§ Engine v11.234'
+          m['finalArtifact']='swyrl_engine_v11_234.html'
+          m['patches'].append('patches/v11_234_wolf_anatomical_skinning.py')
+          m['finalBytes']=0;m['finalSha256']=''
+          p.write_text(json.dumps(m,ensure_ascii=False))
+          PY
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/se233-wolf-animation
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib
+          b=Path('/tmp/se233-wolf-animation/index.html').read_bytes()
+          for name in ('index.html','modeler.html'):
+           p=Path('/tmp/se233-wolf-animation')/name
+           s=p.read_text()
+           anchor='window.SWRLZ_FORGE_BUILD='
+           assert s.count(anchor)==1
+           inspect="""window.SE233_WOLF_INSPECT=()=>{
+            const rig=se224WolfCurrent();
+            return {playing:se224WolfPreview.playing,time:se224WolfPreview.elapsed,
+             poseFore:se224WolfBones?.wolf_fore_l?.rotation.x??null,
+             poseHind:se224WolfBones?.wolf_hind_l?.rotation.x??null,
+             skinned:modelRoot?.children.filter(x=>x.isSkinnedMesh).length||0,
+             clips:rig?.bones?.length||0};
+           };
+           """
+           p.write_text(s.replace(anchor,inspect+anchor))
+          print('SE234_BYTES='+str(len(b)))
+          print('SE234_SHA256='+hashlib.sha256(b).hexdigest())
+          PY
+      - name: Test anatomical bone positions and skinning weights
+        run: node projects/swrlz-forge-moba/tests/test_v11_233_wolf_skinning.cjs /tmp/se233-wolf-animation/index.html
+      - name: Single focused mobile preview test setup
+        run: |
+          npm install --no-save playwright@1.56.1 pngjs@7.0.0
+          npx playwright install --with-deps --only-shell chromium
+      - name: Wolf Run must animate with a stationary camera
+        run: node projects/swrlz-forge-moba/tests/ui_v11_233_wolf_playback.mjs
