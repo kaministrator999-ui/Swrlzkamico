@@ -66,9 +66,9 @@ jobs:
           };"""
           for file in ('index.html','modeler.html'):
             p=Path('/tmp/se236-combined')/file
-            t=p.read_text();key='window.SWRLZ_FORGE_BUILD='
+            t=p.read_text();key='function se224WolfPreviewFrame(){'
             assert t.count(key)==1
-            p.write_text(t.replace(key,helper+'\n'+key,1))
+            p.write_text(t.replace(key,key+'\n'+helper,1))
           print('SE236_CANDIDATE_BYTES='+str(len(b)))
           print('SE236_CANDIDATE_SHA256='+hashlib.sha256(b).hexdigest())
           PY
