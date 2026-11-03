@@ -22,9 +22,9 @@ subprocess.run([sys.executable, str(ROOT / "build_space.py"),
                 "--output", str(output)], check=True)
 raw = (output / "index.html").read_bytes()
 assert (output / "modeler.html").read_bytes() == raw
-assert len(raw) == manifest["finalBytes"] == 7724884
+assert len(raw) == manifest["finalBytes"] == 7725488
 assert hashlib.sha256(raw).hexdigest() == manifest["finalSha256"] == (
-    "8fdfc0275d2b3f87f276e4ee50abe595ca089b23a96bd1bdabef140eb9537771"
+    "936e49ec155d091a8e0e651a6043713554e6ac5c776a7b6fec45884c2967b34c"
 )
 html = raw.decode("utf8")
 required = (
