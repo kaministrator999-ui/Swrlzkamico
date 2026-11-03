@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.240",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_240_PARTICLE_AUTHORING_CHAMBER",
-  "reason": "Owner-requested standalone Particle Studio workspace and §C native emitter reliability. §E v11.240 sealed 271 patches, 7,771,280 HTML bytes, 68 media assets, SHA-256 e63b2a1265015cefe290d3daf3adacca7207c5048285c3574f6e782f5169c015. Source and JavaScript checks PASS run 41593613368. PR #366 squash merged at 5ae09b00e23ee1f3ce10d7bacc8ce7ff4c3f84b8. Dedicated 3D chamber shares current renderer, project VFX definitions remain native, player scene/actor data untouched. Quest 2 and Moto G hands-on acceptance pending.",
-  "sourceCommit": "5ae09b00e23ee1f3ce10d7bacc8ce7ff4c3f84b8",
-  "sourceIntegritySha256": "e63b2a1265015cefe290d3daf3adacca7207c5048285c3574f6e782f5169c015"
+  "releaseVersion": "v11.241",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_241_SHEEP_GRASS_PBR",
+  "reason": "Owner-directed Sheep Tag full grass material: use chat-created lush green texture on both native meadows and Wildwood vegetation, with real MeshStandardMaterial base/normal/roughness channels, preserve roads, sanctuary, biomes, collision, sheep/wolf gameplay, existing VR controller mapping and prior Quest fixes plus the v11.240 dedicated Particle Studio. Sealed v11.241 source and exact package verification PASSED focused GitHub run 41594345030: 272 ordered patches, 69 assets, 7,778,007 HTML bytes, SHA256 394d96bd83e9973159bac1878296fa2cf53865afcffccf6c30a578d6042d9e9a. Source merge a0ba6e9ba0f34b4d13f5e5f3fd097a0a5a7958c8. Quest 2 owner visual acceptance pending. Publish this exact merged version.",
+  "sourceCommit": "a0ba6e9ba0f34b4d13f5e5f3fd097a0a5a7958c8",
+  "sourceIntegritySha256": "394d96bd83e9973159bac1878296fa2cf53865afcffccf6c30a578d6042d9e9a"
 }
