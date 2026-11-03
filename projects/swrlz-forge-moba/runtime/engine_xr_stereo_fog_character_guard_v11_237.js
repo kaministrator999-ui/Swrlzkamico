@@ -108,6 +108,21 @@ se193XRCapture=function(mode='clean'){
       window.SWYRL_ENGINE_QUEST_STEREO_GUARD_237.diagnose();
   return ok;
 };
+function se237EyeInfo(){
+  if(!renderer.xr.isPresenting)return [];
+  const xrCamera=renderer.xr.getCamera(perspectiveCamera);
+  return (xrCamera?.cameras||[]).map((eye,index)=>{
+    const p=eye.projectionMatrix?.elements||[];
+    const viewport=eye.viewport;
+    return {eye:index===0?'left':index===1?'right':String(index),
+      projectionFinite:p.length===16&&p.every(Number.isFinite),
+      viewport:viewport?{
+        x:viewport.x,y:viewport.y,width:viewport.z,height:viewport.w
+      }:null,
+      near:Number.isFinite(eye.near)?eye.near:null,
+      far:Number.isFinite(eye.far)?eye.far:null};
+  });
+}
 window.SWYRL_ENGINE_QUEST_STEREO_GUARD_237=Object.freeze({
   diagnose:()=>({
     active:se237.session===stSession&&se193XRGameActive(),
@@ -122,6 +137,9 @@ window.SWYRL_ENGINE_QUEST_STEREO_GUARD_237=Object.freeze({
     visualChecks:se237.checks,cleanupCount:se237.restores,
     nativeHeadsetTrackingChanged:false,
     visibilityMasksChanged:false,
-    cameraProjectionChanged:false,lastError:se237.lastError
+    cameraProjectionChanged:false,
+    stereoEyes:se237EyeInfo(),
+    estimatedFps:se210World?.fps||0,
+    lastError:se237.lastError
   })
 });
