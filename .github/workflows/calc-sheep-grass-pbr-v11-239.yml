@@ -18,6 +18,24 @@ jobs:
         run: |
           node --check projects/swrlz-forge-moba/runtime/sheep_grass_pbr_v11_239.js
           python3 -m py_compile projects/swrlz-forge-moba/patches/v11_239_sheep_grass_pbr.py
+      - name: Decode and inspect compressed grass image
+        shell: bash
+        run: |
+          python -m pip -q install Pillow
+          python - <<'PY'
+          from PIL import Image, ImageStat
+          from pathlib import Path
+          p=Path('projects/swrlz-forge-moba/assets/sheep-tag/grass-source-color-quest.webp')
+          with Image.open(p) as im:
+              im.load()
+              rgb=im.convert('RGB')
+              stats=ImageStat.Stat(rgb)
+              print('GRASS_IMAGE_FORMAT',im.format)
+              print('GRASS_IMAGE_DIMENSIONS',im.size)
+              print('GRASS_IMAGE_MEAN_RGB',tuple(round(i,2) for i in stats.mean))
+              assert im.size[0]>16 and im.size[1]>16
+              assert stats.mean[1]>stats.mean[0], 'not a green grass source'
+          PY
       - name: Build exact governed HTML and print integrity
         shell: bash
         run: |
