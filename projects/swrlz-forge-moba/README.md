@@ -6,7 +6,7 @@
 
 **Preservation:** This is an append-only v11.253 patch. The native release-notes Continue button, default game/VR workspace, saved projects, native particles, §E Model Atelier, Sheep Tag gameplay, physics and controller mappings remain unchanged. User Moto / Quest on-device responsiveness acceptance pending.
 
-**Sealed source:** 284 ordered patches; generated HTML **8,004,039 bytes**, SHA-256 `3018949318033dc20dd8be98123fd036ad67470f116016a9248ef4d1f46cabe5`. Focused source reconstruction / startup observer checks passed; real-device acceptance pending.
+**Release integrity:** 284 ordered patches; the authoritative generated HTML byte count and SHA-256 are in `source-manifest.json`. Focused source reconstruction and startup observer checks passed; real-device acceptance pending.
 
 ## §E v11.252 — Model + Particle Stress Test Modifiers (2026-11-04)
 
