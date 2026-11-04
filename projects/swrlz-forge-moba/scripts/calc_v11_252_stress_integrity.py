@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Compute final-tree v11.252 exact artifact receipt after manifest and release docs are set."""
+"""Compute final-tree v11.252 receipt after the corrected release documentation and manifest are sealed."""
 import base64,gzip,hashlib,json,sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
