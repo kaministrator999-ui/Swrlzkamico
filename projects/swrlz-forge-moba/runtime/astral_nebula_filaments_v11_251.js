@@ -135,8 +135,8 @@ function location(u,phase,cfg,origin,offset=0,layer=0){
  const x=Math.cos(a)*r,z=Math.sin(a)*r;
  const tilt=cfg.vortexTilt??.7;
  const waviness=Math.sin(u*18.+a*.45+layer*2.1)*.12*tilt*u;
- return [origin.x+x,origin.y+.55+z*.70+waviness,
-  origin.z+z*.52+Math.sin(u*12.+layer*1.9)*.05*u];
+ return [origin.x+x,origin.y+1.28+z*.84+waviness,
+  origin.z+z*.32+Math.sin(u*12.+layer*1.9)*.05*u];
 }
 function writeMesh(b,cfg,rec,origin){
  const phase=rec.se249Time*(cfg.vortexSpin??1)*se251Rotation(cfg,rec.se251Clock||0)*1.65;
@@ -213,8 +213,8 @@ se223Step=function(cfg,dt){
  const positions=rec.geometry.getAttribute('position');
  for(let i=0;i<rec.particles.length;i++){
   const p=rec.particles[i],z=p.z-origin.z;
-  p.y+=.55+z*.70;
-  p.z=origin.z+z*.52;
+  p.y+=1.28+z*.84;
+  p.z=origin.z+z*.32;
   positions.setXYZ(i,p.x,p.y,p.z);
  }
  positions.needsUpdate=true;
