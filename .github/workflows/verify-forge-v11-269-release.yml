@@ -1,0 +1,25 @@
+name: Verify §E v11.269 sealed galaxy release
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/verify-forge-v11-269-release.yml'
+      - 'projects/swrlz-forge-moba/source-manifest.json'
+      - 'projects/swrlz-forge-moba/scripts/verify_v11_269_release.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Assemble and verify exact source hash, packaging and inline JavaScript syntax
+        run: python3 projects/swrlz-forge-moba/scripts/verify_v11_269_release.py --output /tmp/swyrl-v11-269-release
