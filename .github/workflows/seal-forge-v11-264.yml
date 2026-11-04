@@ -1,0 +1,83 @@
+name: Seal §E v11.264 source and verify particle update
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/seal-forge-v11-264.yml'
+      - 'projects/swrlz-forge-moba/patches/v11_264_purple_rooted_spectral_arms.py'
+      - 'projects/swrlz-forge-moba/scripts/verify_v11_264_release.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: seal-forge-v11-264
+  cancel-in-progress: false
+jobs:
+  seal:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Reconstruct v11.264 from historical patches, then reseal its exact bytes
+        run: |
+          python3 - <<'PY'
+          import base64,gzip,hashlib,json,sys
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          sys.path.insert(0,str(root.resolve()))
+          from build_space import load_patch
+          p=root/'source-manifest.json'
+          m=json.loads(p.read_text('utf8'))
+          assert m['name']=='§wyrl§ Engine v11.264'
+          assert len(m['patches'])==295
+          assert m['patches'][-1]=='patches/v11_264_purple_rooted_spectral_arms.py'
+          enc=''.join((root/name).read_text('utf8').strip() for name in m['chunks'])
+          source=gzip.decompress(base64.b64decode(enc))
+          assert hashlib.sha256(source).hexdigest()==m['baseSha256']
+          html=source.decode('utf8')
+          for name in m['patches']:
+              html=load_patch(root/name)(html)
+          assert 'SWYRL_ENGINE_DEPLOY_MARKER: V11_264_PURPLE_ROOTED_SPECTRAL_ARMS' in html
+          assert 'window.SWYRL_ENGINE_PARTICLE_ERRORS_258' in html
+          assert 'Smoke density' in html
+          assert 'float cloud=.50*n+.33*n2+.17*n3;' in html
+          assert 'float holes=smoothstep(.33,.61,cloud);' in html
+          assert 'float opacity=tip*uOpacity*(1.13*plume+.43*wisp);' in html
+          assert 'const MIST_N=72;' in html
+          assert 'function se264Profile(cfg,arm){' in html
+          assert 'function se264Tint(out,u,profile,seed){' in html
+          assert 'function makeInnerTendrils(cfg){' in html
+          assert 'function updateInnerTendrils(t,cfg,rec,origin){' in html
+          assert 'function makeCoreHalo(){' in html
+          assert 'uniform float uBlueBlend;' in html
+          assert 'uniform float uPurpleBreak;' in html
+          assert 'vMistAngle=atan(direction.y,direction.x);' in html
+          assert 'innerPurpleRootsPerEmitter:ROOT_N' in html
+          assert 'const se263AtlasTexture=new THREE.TextureLoader().load(' in html
+          assert 'data:image/png;base64,' in html
+          assert 'uniform sampler2D uMistAtlas;' in html
+          assert 'g.setAttribute(\'aMistVariant\'' in html
+          assert 'float painted=texture2D(uMistAtlas,(tile+localUV)*.5).r;' in html
+          assert 'atlasTiles:4,atlasSource:\'owner nebula mask\'' in html
+          assert 'function makeNebulaMist(cfg){' in html
+          assert 'function updateNebulaMist(m,cfg,rec,origin){' in html
+          assert "if(b.kind==='smoke')b.mesh.visible=false;" in html
+          assert 'r.se251Nebula.mist.points.layers.mask=mask;' in html
+          assert 'nebulaPuffsPerColor:MIST_N' in html
+          assert '(.035+Math.pow(u,.83)*(.47+b.index*.18))*widthFactor' in html
+          assert '  blending:THREE.AdditiveBlending,' in html
+          assert html.count('renderer.setAnimationLoop(tick);')==1
+          assert html.count('const nextPoint=location(')==1
+          data=html.encode('utf8')
+          m['finalBytes']=len(data)
+          m['finalSha256']=hashlib.sha256(data).hexdigest()
+          p.write_text(json.dumps(m,indent=2)+'\n',encoding='utf8')
+          print('V11_264_SOURCE_RECEIPT',len(data),m['finalSha256'])
+          PY
+      - name: Build and verify the complete release package
+        run: python3 projects/swrlz-forge-moba/scripts/verify_v11_264_release.py --output /tmp/swyrl-forge-264
