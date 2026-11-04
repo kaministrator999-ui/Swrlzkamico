@@ -49,7 +49,7 @@ se223Spawn=function(cfg,n){
  for(let i=first;i<rec.particles.length;i++){
   const p=rec.particles[i],s=p.se248;
   if(!s)continue;
-  const u=c?.015+Math.random()*.13:Math.random();
+  const u=c ? (.015+Math.random()*.13) : Math.random();
   s.se249U=u;
   s.se249Phase=Math.random()*TAU;
   s.se249Jitter=(Math.random()-.5)*(sp?.45:.055);
@@ -63,6 +63,7 @@ function paintRibbon(cfg,rec,band){
  const phase=(rec.se249Time||0)*(cfg.vortexSpin??1)*1.65;
  const spin=cfg.preset==='vortexCyan'?Math.PI:.0;
  const pull=cfg.vortexPull??1,tilt=cfg.vortexTilt??.7;
+ const origin=se223Origin(cfg);
  const w=band.width*(.6+(cfg.vortexGlow??1)*.4);
  const pos=band.mesh.geometry.attributes.position;
  const col=band.mesh.geometry.attributes.color;
@@ -85,7 +86,7 @@ function paintRibbon(cfg,rec,band){
    [p1[0]+nx*q1,p1[1],p1[2]+nz*q1]];
   for(let v=0;v<6;v++){
    const idx=i*6+v,src=verts[v],u=v<=1?t0:t1;
-   pos.setXYZ(idx,src[0],src[1],src[2]);
+   pos.setXYZ(idx,src[0]+origin.x,src[1]+origin.y-1.7,src[2]+origin.z);
    const energy=Math.max(.05,Math.pow(1-u,.6))*(.78+.22*Math.sin(u*18+phase*2));
    ctmp.copy(a).lerp(z,u*.56).multiplyScalar(energy);
    col.setXYZ(idx,ctmp.r,ctmp.g,ctmp.b);
