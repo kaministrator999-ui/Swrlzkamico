@@ -1,3 +1,11 @@
+## §E v11.261 — Visible galaxy smoke without flat sheets (2026-11-04)
+
+**Owner device evidence:** At 2:12 PM on Moto, v11.260 displays six stable half-S cyan/violet filaments, bright core, normal stars and progressing timeline, but the nebula smoke is nearly invisible after the overly restrictive masking pass.
+
+**Cause and focused repair:** The noise-cut alpha mask removed too much cloud coverage and the remaining smoke was normal blended against near-black. Keep the same existing two smoke ribbons per galaxy branch, slow motion, project data and camera. Loosen the fractal smoke threshold, retain noise gaps and feathered outer edges, restore additive emissive smoke, slightly widen its outer trailing edge and cap fragment alpha to avoid reintroducing v11.259's translucent fan panels.
+
+**Preservation:** Reuse one WebGL renderer and existing GPU resources. Keep v11.257 TDZ correction, v11.258 emitter-fault containment, native saved/undoable Smoke density, fast viewport controls, Sheep Tag, network code and VR inputs unchanged. The source verifier validates the code; mobile visual acceptance remains with the owner.
+
 ## §E v11.260 — Galaxy fan geometry corrected to feathered wisps (2026-11-04)
 
 **Owner visual evidence:** At 2:02 PM on the Moto, v11.259 shows six intact short violet/cyan arms and stars, but widened smoke strips turn into large smooth translucent fan/paddle silhouettes. Editor timeline and viewport are visibly active.
