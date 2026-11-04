@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Measure the final documented §E v11.253 startup hotfix source for sealing."""
+"""Verify final sealed §E v11.253 startup hotfix after adding release receipts."""
 import base64,gzip,hashlib,json,sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
