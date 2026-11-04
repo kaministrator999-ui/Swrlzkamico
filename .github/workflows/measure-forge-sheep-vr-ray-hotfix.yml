@@ -1,0 +1,28 @@
+name: §E Sheep Tag VR ray hotfix integrity
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/measure-forge-sheep-vr-ray-hotfix.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-measure:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax check only the changed Sheep Tag VR sources
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/engine_xr_sheep_rapid_grid_wheels_v11_204.js
+          node --check projects/swrlz-forge-moba/runtime/engine_xr_sheep_wheel_modal_camera_ray_v11_214.js
+          node --check projects/swrlz-forge-moba/runtime/engine_xr_sheep_capture_v11_193.js
+          node --check projects/swrlz-forge-moba/runtime/engine_xr_wrist_forward_placement_v11_203.js
+          node --check projects/swrlz-forge-moba/runtime/engine_quest_radial_frame_guard_v11_238.js
+          python3 -m py_compile projects/swrlz-forge-moba/patches/v11_204_sheep_vr_rapid_grid_wheels.py
+      - name: Assemble patch ladder and print actual digest
+        run: python3 projects/swrlz-forge-moba/scripts/calc_v11_250_desktop_docks.py
