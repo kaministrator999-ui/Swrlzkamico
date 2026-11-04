@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Measure documented v11.255 renderer camera ownership and native viewport input."""
+"""Measure sealed v11.255 viewport input release after manifest name and patch-list update."""
 import base64,gzip,hashlib,json,sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT))
