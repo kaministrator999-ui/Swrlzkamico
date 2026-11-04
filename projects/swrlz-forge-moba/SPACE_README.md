@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.252
+title: §wyrl§ Engine v11.253
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,15 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.253 — Release dialog startup responsiveness hotfix (2026-11-04)
+
+**Owner report:** The engine appears to load, opens the new-updates dialog, then becomes unresponsive; Continue and other page controls cannot be activated. This is a startup regression, not a measured particle-performance problem.
+
+**Fix:** The v11.251 shared-editor MutationObserver previously re-initialized workstation layouts on any page childList change, including the textContent mutations produced by its own sync method. It now initializes only on relevant Model Atelier/Materials/Particle Studio workspace mounts. The v11.252 diagnostic panel observer is similarly mount-scoped; its animation-frame measurement loop stays idle during the release notes dialog and when no supported editor is open.
+
+**Preservation:** This is an append-only v11.253 patch. The native release-notes Continue button, default game/VR workspace, saved projects, native particles, §E Model Atelier, Sheep Tag gameplay, physics and controller mappings remain unchanged. User Moto / Quest on-device responsiveness acceptance pending.
+
 
 ## §E v11.252 — Model + Particle Stress Test Modifiers (2026-11-04)
 
