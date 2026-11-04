@@ -3,14 +3,14 @@ on:
   push:
     branches: [main]
     paths:
-      - '.github/workflows/seal-forge-v11-260.yml'
+      - '.github/workflows/seal-forge-v11-261.yml'
       - 'projects/swrlz-forge-moba/patches/v11_261_visible_smoke_wisps.py'
       - 'projects/swrlz-forge-moba/scripts/verify_v11_261_release.py'
   workflow_dispatch:
 permissions:
   contents: read
 concurrency:
-  group: seal-forge-v11-260
+  group: seal-forge-v11-261
   cancel-in-progress: false
 jobs:
   seal:
