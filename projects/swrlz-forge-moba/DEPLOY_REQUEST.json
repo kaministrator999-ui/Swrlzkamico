@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.247",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_247_EDITOR_PREVIEW_TOGGLES",
-  "reason": "Retry v11.247 after integrity gate stopped a candidate digest computed before final manifest identity registration. The finalized 278-patch source was remeasured in a focused 1-renderer build at 7,810,723 bytes, SHA256 0069237edcb5f32d53a349caeb7505cc9fd6466f389def849ed442e8b30cfbb4, then manifest, verifier and docs aligned. Change remains the same owner-requested edit-only Particle and Storyboard Cinematic preview toggles; saved content, Quest play and native engine frame loop are preserved. Owner Quest 2/Moto manual acceptance pending.",
-  "sourceCommit": "b927516319183b82f3cd818b4cee8d6080619c81",
-  "sourceIntegritySha256": "0069237edcb5f32d53a349caeb7505cc9fd6466f389def849ed442e8b30cfbb4"
+  "releaseVersion": "v11.248",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_248_ASTRAL_VORTEX_STARTERS",
+  "reason": "Deploy §E v11.248: owner-requested neon violet/cyan Particle Studio theme, real four-emitter Astral Vortex with spiral arms/core/sparks, Starter Particles tab in Projects and native studio library. 279-patch build measured at 7,831,738 bytes with SHA256 932460d952611fe6857741d1c985049d2edf7d62c302983889fe7601e9fbf27e; focused JS syntax and source integrity passed. The original renderer, world assets, model editor, Sheep Tag/Quest game behavior and mobile inspector collapse are retained. Owner Moto/Quest hands-on acceptance pending.",
+  "sourceCommit": "d252ddedee90496ccc2ddb5902b43d6a1c1a5c2e",
+  "sourceIntegritySha256": "932460d952611fe6857741d1c985049d2edf7d62c302983889fe7601e9fbf27e"
 }
