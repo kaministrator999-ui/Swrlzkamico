@@ -410,10 +410,21 @@ function se193XRFrame(){
  }
  if(kind==='game'){
   se193XRButtonEdges();se193XRCameraFrame(dt);
-  if(stUi.build&&now-se193.previewAt>100){
-   const right=se192InputRecord('right'),point=right&&se193XRGameGround(right);
-   if(point)stUiPlacePreview(point);
-   se193.previewAt=now;
+  if(stUi.build){
+   // XR BUILD and A/X quick wheels are modal. Never run expensive house
+   // collision/footprint checks or draw a ghost behind either panel.
+   // Keep the equipped build tool; normal preview resumes after closing.
+   const menuOpen=(typeof se195!=='undefined'&&se195.visible)||
+     (typeof se204!=='undefined'&&!!se204.wheel?.root?.visible);
+   if(menuOpen){
+    if(stUi.preview?.visible)stUi.preview.visible=false;
+    if(stUi.footprint?.visible)stUi.footprint.visible=false;
+    se193.previewAt=now;
+   }else if(now-se193.previewAt>100){
+    const right=se192InputRecord('right'),point=right&&se193XRGameGround(right);
+    if(point)stUiPlacePreview(point);
+    se193.previewAt=now;
+   }
   }
  }
 }
