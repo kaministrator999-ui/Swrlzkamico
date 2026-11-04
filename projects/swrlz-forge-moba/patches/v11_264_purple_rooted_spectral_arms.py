@@ -108,12 +108,16 @@ function se264Tint(out,u,profile,seed){
     html=html.replace("'varying float vMistVariant;',",
       "'varying float vMistVariant;',\n 'varying float vMistAngle;'",)
     html=once(html,
-        "' gl_Position=projectionMatrix*mv;',",
-        """' gl_Position=projectionMatrix*mv;',
-' vec4 toward=projectionMatrix*modelViewMatrix*vec4(position+aMistTangent,1.0);',
-' vec2 direction=toward.xy/max(.0001,toward.w)-gl_Position.xy/max(.0001,gl_Position.w);',
-' vMistAngle=atan(direction.y,direction.x);',""",
-        "derive projected tangent for point-sprite orientation")
+        """' vMistSeed=aMistSeed;vMistVariant=aMistVariant;vMistTint=aMistTint;',
+ ' vec4 mv=modelViewMatrix*vec4(position,1.0);',
+ ' gl_Position=projectionMatrix*mv;',""",
+        """' vMistSeed=aMistSeed;vMistVariant=aMistVariant;vMistTint=aMistTint;',
+ ' vec4 mv=modelViewMatrix*vec4(position,1.0);',
+ ' gl_Position=projectionMatrix*mv;',
+ ' vec4 toward=projectionMatrix*modelViewMatrix*vec4(position+aMistTangent,1.0);',
+ ' vec2 direction=toward.xy/max(.0001,toward.w)-gl_Position.xy/max(.0001,gl_Position.w);',
+ ' vMistAngle=atan(direction.y,direction.x);',""",
+        "derive projected tangent only in mist vertex shader")
     html=once(html,
         """ const g=new THREE.BufferGeometry(),pos=new Float32Array(MIST_N*3);
  const sizes=new Float32Array(MIST_N),seeds=new Float32Array(MIST_N),variants=new Float32Array(MIST_N),""",
