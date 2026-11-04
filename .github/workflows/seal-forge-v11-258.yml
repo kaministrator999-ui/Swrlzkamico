@@ -1,0 +1,65 @@
+name: Seal §E v11.258 source and verify particle update
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/seal-forge-v11-258.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: seal-forge-v11-258
+  cancel-in-progress: false
+jobs:
+  seal:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Reconstruct v11.258 from historical patches, then reseal its exact bytes
+        run: |
+          python3 - <<'PY'
+          import base64,gzip,hashlib,json,sys
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          sys.path.insert(0,str(root.resolve()))
+          from build_space import load_patch
+          p=root/'source-manifest.json'
+          m=json.loads(p.read_text('utf8'))
+          assert m['name']=='§wyrl§ Engine v11.258'
+          assert len(m['patches'])==289
+          assert m['patches'][-1]=='patches/v11_258_galaxy_slow_smoke_guard.py'
+          enc=''.join((root/name).read_text('utf8').strip() for name in m['chunks'])
+          source=gzip.decompress(base64.b64decode(enc))
+          assert hashlib.sha256(source).hexdigest()==m['baseSha256']
+          html=source.decode('utf8')
+          for name in m['patches']:
+              html=load_patch(root/name)(html)
+          assert 'SWYRL_ENGINE_DEPLOY_MARKER: V11_258_SLOW_NEBULA_FAULT_GUARD' in html
+          assert 'window.SWYRL_ENGINE_PARTICLE_ERRORS_258' in html
+          assert html.count('renderer.setAnimationLoop(tick);')==1
+          assert html.count('const nextPoint=location(')==1
+          data=html.encode('utf8')
+          m['finalBytes']=len(data)
+          m['finalSha256']=hashlib.sha256(data).hexdigest()
+          p.write_text(json.dumps(m,indent=2)+'\n',encoding='utf8')
+          print('v11.258 sealed',len(data),m['finalSha256'])
+          PY
+      - name: Build and verify the complete release package
+        run: python3 projects/swrlz-forge-moba/scripts/verify_v11_258_release.py --output /tmp/swyrl-forge-258
+      - name: Commit source-of-truth hash and size
+        run: |
+          git config user.name "§E source integrity bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add projects/swrlz-forge-moba/source-manifest.json
+          if git diff --cached --quiet; then
+            echo "Receipt already current"
+          else
+            git commit -m "Seal §E v11.258 exact built source integrity"
+            git push origin HEAD:main
+          fi
