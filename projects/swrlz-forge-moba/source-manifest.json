@@ -300,6 +300,6 @@
     "patches/v11_252_stress_diagnostics.py",
     "patches/v11_253_startup_unfreeze.py"
   ],
-  "finalBytes": 8004039,
-  "finalSha256": "3018949318033dc20dd8be98123fd036ad67470f116016a9248ef4d1f46cabe5"
+  "finalBytes": 8004225,
+  "finalSha256": "4501d2552059efdcece73f2a3713a0567480f97ee79382cfa6ff621b1c40c4e8"
 }
