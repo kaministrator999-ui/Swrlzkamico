@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Measure documented v11.254 Particle Studio repair with final release inputs."""
+"""Remeasure exact v11.254 source after final manifest sealing."""
 import base64,gzip,hashlib,json,sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
