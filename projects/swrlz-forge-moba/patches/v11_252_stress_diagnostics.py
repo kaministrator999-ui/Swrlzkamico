@@ -17,13 +17,9 @@ def apply(html):
     # Directly inside the native ModelAtelier closure: use its existing
     # world and renderer rather than spawning a separate WebGL context.
     html=once(html,
-        "  function geometry(part){",
-        model+"\n  function geometry(part){",
-        "insert disposable geometry specimen in native Model Atelier")
-    html=once(html,
-        "  function close(){\n    if(!panel||panel.hidden)return;",
-        "  function close(){\n    se252ModelStop();\n    if(!panel||panel.hidden)return;",
-        "release temporary model buffers on native close")
+        "const ModelAtelier=(()=>{",
+        "const ModelAtelier=(()=>{\n"+model,
+        "insert disposable diagnostic into native Model Atelier closure")
     html=once(html,"window.SWRLZ_FORGE_BUILD=",
         ui+"\nwindow.SWRLZ_FORGE_BUILD=",
         "mount independent stress sliders in existing editor docks")
