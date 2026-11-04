@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.268",
+  "name": "§wyrl§ Engine v11.269",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_268.html",
+  "finalArtifact": "swyrl_engine_v11_269.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -313,8 +313,9 @@
     "patches/v11_265_sheep_render_nerd_stats.py",
     "patches/v11_266_mist_shader_syntax_recovery.py",
     "patches/v11_267_continuous_galaxy_wisps.py",
-    "patches/v11_268_quest_lan_menu.py"
+    "patches/v11_268_quest_lan_menu.py",
+    "patches/v11_269_reference_spiral_wisps.py"
   ],
-  "finalBytes": 8065862,
-  "finalSha256": "32b0aa4e773b01e5cd5c7b8b529a162086c91d8f665376b5a52334a25e7293fd"
+  "finalBytes": 8065496,
+  "finalSha256": "c6028df3c1431ff4cf457832f3542e02fd1e0a948e5d14775a0e4fdacfca0440"
 }
