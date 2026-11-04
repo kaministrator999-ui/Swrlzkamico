@@ -304,6 +304,6 @@
     "patches/v11_256_galaxy_ai_xr_ray.py",
     "patches/v11_257_nebula_tdz_unfreeze.py"
   ],
-  "finalBytes": 8015813,
-  "finalSha256": "e1d057192f972277efca950198d77e92684556a3f37fd634d98cdf83f00b7d3c"
+  "finalBytes": 8015799,
+  "finalSha256": "8dd519e2f2fdd85138c8ff333cdeea72341ebc0af25cbb19741e46e4f4fbc87a"
 }
