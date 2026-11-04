@@ -1,0 +1,68 @@
+#!/usr/bin/env python3
+"""Check the sealed v11.247 editor-preview build without a browser test suite."""
+import argparse
+import hashlib
+import json
+from pathlib import Path
+import subprocess
+import sys
+ROOT=Path(__file__).resolve().parents[1]
+SHA="7d5e780b36c6b64939a8974c8300c0cd768b2b80c00ca4e0104197cbba7b84d8"
+SIZE=7810462
+MARKER="SWYRL_ENGINE_DEPLOY_MARKER: V11_247_EDITOR_PREVIEW_TOGGLES"
+parser=argparse.ArgumentParser()
+parser.add_argument("--output",required=True)
+parser.add_argument("--request",action="store_true")
+args=parser.parse_args()
+manifest=json.loads((ROOT/"source-manifest.json").read_text("utf8"))
+assert manifest["name"]=="§wyrl§ Engine v11.247"
+assert manifest["finalArtifact"]=="swyrl_engine_v11_247.html"
+assert manifest["patches"][-1]=="patches/v11_247_editor_live_previews.py"
+assert len(manifest["patches"])==278
+assert manifest["finalBytes"]==SIZE and manifest["finalSha256"]==SHA
+out=Path(args.output).resolve()
+subprocess.run([sys.executable,str(ROOT/"build_space.py"),"--output",str(out)],check=True)
+raw=(out/"index.html").read_bytes()
+assert raw==(out/"modeler.html").read_bytes()
+assert len(raw)==SIZE and hashlib.sha256(raw).hexdigest()==SHA
+html=raw.decode("utf8")
+for term in (
+    MARKER,
+    "<title>§wyrl§ Engine · Maker v11.247</title>",
+    "window.SWRLZ_FORGE_BUILD={version:'v11.247'",
+    "window.SWYRL_ENGINE_EDITOR_PREVIEW_247=Object.freeze",
+    "function se223Frame(dt,t){",
+    "SWYRL_ENGINE_EDITOR_PREVIEW_247?.sync?.()",
+    'id="se247LivePreviewStyle"',
+    "se247PreviewPanel",
+    "se247-row",
+    "Edit-mode live previews",
+    "se223State.preview=true",
+    "storyPreview(0)",
+    "storyExitPreview()",
+    "animeUpdateCinematic=function(dt)",
+    "SWYRL_ENGINE_GUI_STUDIO",
+    "SWYRL_ENGINE_PARTICLE_STAGE_240",
+    "SWYRL_ENGINE_PARTICLE_BOTTOM_TOGGLE_246",
+):
+    assert term in html,term
+assert html.count("renderer.setAnimationLoop(tick);")==1
+receipt=json.loads((out/"SOURCE.json").read_text("utf8"))
+assert receipt["sourceVersion"]==manifest["name"]
+assert receipt["finalSha256"]==SHA and receipt["finalBytes"]==SIZE
+assert receipt["patches"]==manifest["patches"]
+assert len(receipt["assets"])==69
+for name,metadata in receipt["assets"].items():
+    data=(out/name).read_bytes()
+    assert len(data)==metadata["bytes"],name
+    assert hashlib.sha256(data).hexdigest()==metadata["sha256"],name
+if args.request:
+    request=json.loads((ROOT/"DEPLOY_REQUEST.json").read_text("utf8"))
+    assert request["releaseVersion"]=="v11.247"
+    assert request["deployMarker"]==MARKER
+    assert request["sourceIntegritySha256"]==SHA
+    assert isinstance(request.get("sourceCommit"),str) and len(request["sourceCommit"])==40
+print(json.dumps({"status":"SEALED_SOURCE_VERIFIED",
+ "version":"v11.247","patches":278,"htmlBytes":SIZE,"sha256":SHA,
+ "assets":len(receipt["assets"]),"preview":"Particle and native cinematic Edit-mode toggles",
+ "ownerQuestAcceptance":False},indent=2))
