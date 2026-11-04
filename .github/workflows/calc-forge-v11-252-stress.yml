@@ -1,0 +1,26 @@
+name: §E v11.252 stress diagnostic source integrity
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/calc-forge-v11-252-stress.yml'
+      - 'projects/swrlz-forge-moba/scripts/calc_v11_252_stress_integrity.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  focused-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax check new stress modules
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/model_stress_core_v11_252.js
+          node --check projects/swrlz-forge-moba/runtime/editor_stress_controls_v11_252.js
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_252_stress_diagnostics.py
+      - name: Compute full patched source and exact hash
+        run: python3 projects/swrlz-forge-moba/scripts/calc_v11_252_stress_integrity.py
