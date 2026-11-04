@@ -7,8 +7,8 @@ from pathlib import Path
 import subprocess
 import sys
 ROOT=Path(__file__).resolve().parents[1]
-SHA="7d5e780b36c6b64939a8974c8300c0cd768b2b80c00ca4e0104197cbba7b84d8"
-SIZE=7810462
+SHA="0069237edcb5f32d53a349caeb7505cc9fd6466f389def849ed442e8b30cfbb4"
+SIZE=7810723
 MARKER="SWYRL_ENGINE_DEPLOY_MARKER: V11_247_EDITOR_PREVIEW_TOGGLES"
 parser=argparse.ArgumentParser()
 parser.add_argument("--output",required=True)
