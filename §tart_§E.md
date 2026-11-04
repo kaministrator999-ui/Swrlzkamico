@@ -1,3 +1,13 @@
+## §E v11.255 — Particle viewport input and dedicated camera ownership (2026-11-04)
+
+**Owner regression:** After v11.254, the Particle Studio scene still did not respond to touch/drag/zoom, and native particles were not visible despite the Astral Vortex emitter tree loading. Earlier panel-only fixes did not address the actual render-camera conflict.
+
+**Verified source causes:** The actual visible `#se249Root .se249-stage` was `pointer-events:none`, while an independent invisible, shell-wide shield handled drag/wheel input elsewhere. The base engine also ran Game OrbitControls **after** the Particle Chamber frame set the existing camera position/orientation, potentially overriding the chamber view every frame.
+
+**Focused fix:** In Particle Studio only, make the visible viewport the direct pointer/touch target, use the existing stage camera API for one-pointer orbit/pan/vertical zoom, two-pointer pinch zoom and wheel zoom, and stop Game OrbitControls overwriting the native camera while the chamber is active. The existing Perspective, Focus, +/− zoom and tool buttons keep their native actions; the old shell-wide shield is not hit-testable in the Particle workspace. Preview can open the native chamber on demand if lazy mounting delayed it. A live viewport status line reports chamber readiness, preview state, active particle count and zoom distance to diagnose further reports.
+
+**Preservation:** Append-only 286-patch extension. Keep one existing Three.js scene/renderer/engine tick, original emitter project data and limits, source lineage, §C integration, model+particle stress sliders, Sheep Tag Play, game camera outside Particle Studio, Quest XR controllers and game physics. Focused source reconstruction succeeded; owner Moto and Quest real-device acceptance remains outstanding.
+
 ## §E v11.254 — Particle Studio docks, VFX preview and camera zoom (2026-11-04)
 
 **Owner device screenshot:** Particle Studio displays extraneous purple vertical handles *inside* the Project pane and central viewport, side panes do not expand/collapse or drag-resize, Astral Vortex is absent, and viewport zoom appears unresponsive. Mobile data speed had recovered after a connection reset; these layout problems are independently grounded in the editor source.
