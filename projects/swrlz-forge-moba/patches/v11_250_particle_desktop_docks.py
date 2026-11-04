@@ -17,6 +17,8 @@ def apply(html):
     root=Path(__file__).resolve().parents[1]
     js=(root/"runtime/particle_studio_docking_v11_250.js").read_text("utf8")
     css=(root/"runtime/particle_studio_docking_v11_250.css").read_text("utf8")
+    tracks_js=(root/"runtime/particle_studio_reference_tracks_v11_250.js").read_text("utf8")
+    tracks_css=(root/"runtime/particle_studio_reference_tracks_v11_250.css").read_text("utf8")
     # Fix the previous mobile breakpoint. Desktop-site and XR browser are
     # often coarse pointer / 980 CSS pixels and need true side panels.
     html=once(html,
@@ -24,9 +26,9 @@ def apply(html):
        "@media(max-width:700px){","avoid misclassifying VR/desktop as mobile")
     # Add a post-v11.249 layout layer, initialized after the workstation exists.
     html=once(html,"window.SWRLZ_FORGE_BUILD=",
-       js+"\nwindow.SWRLZ_FORGE_BUILD=","install real dock controls")
+       js+"\n"+tracks_js+"\nwindow.SWRLZ_FORGE_BUILD=","install real dock controls and timeline tracks")
     html=html.replace("</head>",
-       '<style id="se250DesktopDocksStyle">\n'+css+'\n</style>\n</head>',1)
+       '<style id="se250DesktopDocksStyle">\n'+css+'\n'+tracks_css+'\n</style>\n</head>',1)
     # Replace hard-edged colored triangle strips by smoothed, feathered GPU
     # ribbons; stays four lightweight meshes in the same THREE renderer.
     html=once(html,
@@ -182,6 +184,7 @@ def apply(html):
        "Particle Studio uses independent left Project/Assets, right modifier and lower Timeline/Curves docks; all three have keyboard/pointer/touch resize handles, collapse/restore controls and session-persisted widths.",
        "A Layout selector chooses Auto, Desktop/VR and Compact; Auto uses a 700 CSS-pixel threshold; desktop can be explicitly selected on any screen.",
        "Both left tree and right modifier sections have independently collapsible native categories plus Expand all/Collapse all controls.",
+       "The bottom dock shows actual selected-emitter Emission, Size, Opacity, Color and Rotation parameter profiles, with clickable links to editable native controls; it is not falsely labeled a keyframe editor.",
        "Astral Vortex uses continuously joined, additive-shader alpha-feathered 3D ribbons rather than hard-edged segmented geometry; camera framing starts closer and higher.",
        "Previewing a selected Astral Vortex starter displays only that four-emitter instance, even when multiple copies exist in the native project library.",
        "The original WebGL renderer, native stage input, single tick, native emitters, scene/VR game controls, existing undo and project data format are preserved. Owner phone and Quest acceptance pending."
