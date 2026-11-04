@@ -1,3 +1,11 @@
+## §E v11.267 — Continuous galaxy wisps, not stamped smoke (2026-11-04)
+
+**Owner screenshot:** The v11.266 portal now mixes magenta and cyan properly but the textured smoke still reads as clusters of separate stamped leaves, and the long curved filaments are overwhelmed.
+
+**Focused update:** Keep the six purple-rooted half-S energy arms, cyan transitions with purple patches, short inner violet tendrils and magenta center glow. Reduce the sampled smoke count from 72 to 60 per native arm record, shrink random phase/lateral/height/depth offsets, and orient slightly elongated sprites along the projected filament tangent. Blend the owner-derived atlas into a softer feathered low-contrast haze inside the existing fragment shader; strengthen the continuous filament width/opacity slightly for visual hierarchy. Preserve editable Smoke density/arm spread and original slow rotation.
+
+**Performance and protection:** No new emitters, GPU batches, renderers or callbacks. Keep v11.266 JavaScript startup repair, source syntax gate, v11.258 per-emitter containment, v11.265 Sheep Tag house batching/Nerd Stats, saved project data and Quest controls. Reconstruction and Node parse plus full package verification passed; real-device mobile appearance/performance acceptance remains pending.
+
 ## §E v11.264 — Purple-origin spectral galaxy and mixed-color tendrils (2026-11-04)
 
 **Reference interpretation:** On the owner-supplied galaxy screenshot, the white-hot center is enveloped by purple/magenta energy. Major arms originate purple and diverge: most long cyan segments grow from purple roots, a main arm stays violet, and other blue-dominant strands (especially the leftward one) retain intermittent purple blotches. Short violet roots fill space between longer arms.
