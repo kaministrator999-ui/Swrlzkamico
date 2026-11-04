@@ -12,7 +12,7 @@ short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 
 ## §E v11.247 — Optional scene-editor live previews
 
-Game Engine's compact ✦ Preview panel lets creators enable/disable authored particle effects independently of Play mode. The authored cinematic Storyboard episode also has a reversible looping preview that restores the editor camera when stopped. Preview does not change saved scene data or add a second WebGL loop. Current source: 278 patches, 7,810,462 bytes, SHA-256 `7d5e780b36c6b64939a8974c8300c0cd768b2b80c00ca4e0104197cbba7b84d8`; owner phone/Quest acceptance pending.
+Game Engine's compact ✦ Preview panel lets creators enable/disable authored particle effects independently of Play mode. The authored cinematic Storyboard episode also has a reversible looping preview that restores the editor camera when stopped. Preview does not change saved scene data or add a second WebGL loop. Current source: 278 patches, 7,810,723 bytes, SHA-256 `0069237edcb5f32d53a349caeb7505cc9fd6466f389def849ed442e8b30cfbb4`; owner phone/Quest acceptance pending.
 
 
 
