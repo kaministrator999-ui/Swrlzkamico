@@ -313,6 +313,6 @@
     "patches/v11_265_sheep_render_nerd_stats.py",
     "patches/v11_266_mist_shader_syntax_recovery.py"
   ],
-  "finalBytes": 8051289,
-  "finalSha256": "1ec7a7bfd13b04c572bb83242cf95269613a4d0afb52ccd00c5ce73b0fb7495d"
+  "finalBytes": 8051140,
+  "finalSha256": "86187ab2af2675cd158602594ae541ec2c8205f2f0c5aaf533b0591645eb438c"
 }
