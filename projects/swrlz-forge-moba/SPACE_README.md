@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.262
+title: §wyrl§ Engine v11.263
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,14 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.263 — Owner-supplied nebula layer texture integrated into live 3D particles (2026-11-04)
+
+**Reference ZIP evidence:** `galaxy_transparent_layers.zip` includes a composite and five alpha-masked passes: `01_Nebula_Smoke.png`, violet/magenta streams, cyan streams, stars/sparks and core glow. RGB channels are essentially identical across PNG passes; transparency masks isolate visual components. They are art/mask sources, not independent volumetric objects or a ready-made 3D game effect.
+
+**Focused implementation:** Four feathered smoke fragments are cropped from the owner-supplied nebula pass and packed into a ~2.5 KB 128×128 grayscale alpha atlas. The atlas is embedded in the v11.263 shader source (no external network asset) and decoded only once. Existing batched camera-facing mist points (54 per native violet/cyan arm emitter) choose tiles across the six short spiral paths. The smoke fragment shader samples the user-derived plume opacity in place of costly procedural per-pixel noise; a soft analytical fallback is used until the image is ready. Puff size is increased but capped to control mobile GPU overdraw.
+
+**Continuity:** The signed core, 3 violet/3 cyan filaments, stars, slow spiral motion, editor timeline and orbit control stay as before. No new native emitters, render loops, 3D scenes, GPU batches or UI panels. Existing Smoke density and Smoke arm spread still work, with emitter-failure isolation, TDZ repair and GPU cleanup preserved. Final visual and performance acceptance requires real mobile/Quest testing.
 
 ## §E v11.262 — Galaxy smoke rendered as textured mist, not planar strips (2026-11-04)
 
