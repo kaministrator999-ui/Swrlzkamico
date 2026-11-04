@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.268",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_268_QUEST_LAN_MAIN_MENU",
-  "reason": "Owner Quest 2 request: expose Sheep Tag Local LAN multiplayer in the immersive main menu. v11.268 appends an XR radial LOCAL LAN entry with HOST, FIND ROOMS, JOIN CODE (Quest clipboard or entered browser invite), COPY INVITE, START MATCH, LEAVE and BACK; one-time world-pinned room status board; existing public HTTPS shared-egress lobby directory, PeerJS/WebRTC authority, host-verified seats and local Bridge used without duplicate network or simulation loops. Preservation includes v11.267 galaxy wisps, v11.266 editor boot recovery, v11.265 runtime house batching and Nerd Stats, original project/Quest controls and native gameplay. Focused Node menu routing and assembled JavaScript parsing passed; 299 patches, 8,065,862 HTML bytes, SHA256 32b0aa4e773b01e5cd5c7b8b529a162086c91d8f665376b5a52334a25e7293fd. Physical Quest 2 controller, lobby discovery and two-device network acceptance pending.",
-  "sourceCommit": "5e210ae1338a138bdc0f6d68fc1619a55bc03879",
-  "sourceIntegritySha256": "32b0aa4e773b01e5cd5c7b8b529a162086c91d8f665376b5a52334a25e7293fd"
+  "releaseVersion": "v11.269",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_269_REFERENCE_SPIRAL_WISPS",
+  "reason": "Owner reference-matching request in Particle Studio: replace loose half-S galaxy wisps with denser inward-spiraling, smooth purple-rooted cyan/purple arms and longer tapered luminous trails. Increase existing batched reference-textured mist puffs to 72 per colored emitter, soften connected haze, sharpen stars, and reduce white core without new WebGL renderer, frame loop or native emitter. Keep v11.268 Quest LAN, v11.265 Sheep Nerd Stats, v11.258 fault containment, editor camera/timeline, saved projects and models intact. Source assembled at 8,065,611 bytes; sealed SHA-256 7b691c443884ded86a145306600f7a89716a33d091853232e7bc626e2f418768. The publisher must run full v11.269 exact-package and JavaScript verification before upload. Real Moto/Quest visual acceptance pending.",
+  "sourceCommit": "02c86815cfb0a87ccffaf566eef7022619e85402",
+  "sourceIntegritySha256": "7b691c443884ded86a145306600f7a89716a33d091853232e7bc626e2f418768"
 }
