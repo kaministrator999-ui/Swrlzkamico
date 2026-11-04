@@ -4,7 +4,7 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.252",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_252_STRESS_DIAGNOSTICS",
-  "reason": "Publish sealed §E v11.252: model and particle stress-test slider + numeric modifiers. Explicit Apply/Stop, 100–1,000,000 real high-poly model triangles or animated particle points in existing native editor renderers; actual load, approximate RAF FPS and frame time. Tests are temporary editor-only assets and do not change saved projects, native emitter limits, gameplay, Sheep Tag radial menus, physics or VR controls. Exact rebuilt 283-patch HTML 8,003,351 bytes SHA256 364f108cd052ff4877686fa56ee86ebd60141078e57b802a68ff2aec0723b09f; source/syntax validated, owner on-device acceptance pending.",
-  "sourceCommit": "59de88c2dd11c827993329f916f4995ba9512336",
+  "reason": "Publish sealed §E v11.252: model and particle stress-test slider + numeric modifiers. Explicit Apply/Stop, 100–1,000,000 real high-poly model triangles or animated particle points in existing native editor renderers; actual load, approximate RAF FPS and frame time. Tests are temporary editor-only assets and do not change saved projects, native emitter limits, gameplay, Sheep Tag radial menus, physics or VR controls. Exact rebuilt 283-patch HTML 8,003,351 bytes SHA256 364f108cd052ff4877686fa56ee86ebd60141078e57b802a68ff2aec0723b09f; source/syntax validated, owner on-device acceptance pending. Re-triggering after correction of old finalArtifact filename assertion in the v11.252 release verifier; no change to stress-test HTML bytes or SHA.",
+  "sourceCommit": "050a37b254d118a73c15cb3babe9aa8866b68f3b",
   "sourceIntegritySha256": "364f108cd052ff4877686fa56ee86ebd60141078e57b802a68ff2aec0723b09f"
 }
