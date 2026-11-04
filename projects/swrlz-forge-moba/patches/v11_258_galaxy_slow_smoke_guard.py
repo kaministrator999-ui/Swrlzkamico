@@ -112,7 +112,7 @@ def apply(html):
         "' float pulse=.91+.09*sin(x*19.-uTime*.55);',",
         "slow filament shimmer while the swirl turns")
     html=once(html,
-        "' vec2 drift=vec2(x*23.+uTime*.18,y*5.7-uTime*.12);',",
+        "'  vec2 drift=vec2(x*23.+uTime*.18,y*5.7-uTime*.12);',",
         "' vec2 drift=vec2(x*23.+uTime*.045,y*5.7-uTime*.026);',",
         "slow internal nebula drift")
 
