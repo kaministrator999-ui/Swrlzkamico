@@ -132,7 +132,7 @@ function stBotSheep(unit){""",
     notes.update(title="Particle chamber continuity, AI sheep navigation and VR ground-pointer fixes",
       date="2026-11-04",changes=[
        "Particle Studio stays mounted when editing a particle or changing project identity. It rebinds live emitters without discarding camera controls, and recovers the stage after a legitimate scene/camera transition.",
-       "Living AI sheep evaluate the safest available escape candidates first, so they perform fewer expensive A* route searches while retaining the same best reachable destination; bot decisions are staggered slightly.",
+       "Living AI sheep retain the existing sheep/wolf escape-route scoring, but evaluate at most two candidate routes across the flock per game frame, distributing A* work instead of producing synchronized spikes.",
        "In Sheep Tag Quest Play, the right-hand build selector uses the real controller-to-terrain ray anywhere within the playable map; the sheep-relative synthetic build guide has been disabled.",
        "The building ghost is only visible while aiming at the actual ground; sky, a blocked/outside-map ray or an open radial hides it without unequipping the house.",
        "The normal controller ray and contact reticle render in front of the VR radial menus and show the actual menu hit point. Native movement, selected skills, authoritative building rules and project data are unchanged."
