@@ -94,7 +94,7 @@ for term in (
     "updateNebulaMist(rec.se251Nebula.mist,cfg,rec,origin);",
     "mist.points.removeFromParent();mist.g.dispose();mist.mat.dispose();",
     "nebulaPuffsPerColor:MIST_N",
-    "float curl=exp(-vein*vein);",
+    "float wisp=mix(fallback,painted*2.2,uMistAtlasReady);",
     "float opacity=tip*uOpacity*(1.13*plume+.43*wisp);",
     "clamp(opacity,0.,.52)",
     "(.035+Math.pow(u,.83)*(.47+b.index*.18))*widthFactor;",
