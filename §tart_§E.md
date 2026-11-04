@@ -1,3 +1,13 @@
+## §E v11.254 — Particle Studio docks, VFX preview and camera zoom (2026-11-04)
+
+**Owner device screenshot:** Particle Studio displays extraneous purple vertical handles *inside* the Project pane and central viewport, side panes do not expand/collapse or drag-resize, Astral Vortex is absent, and viewport zoom appears unresponsive. Mobile data speed had recovered after a connection reset; these layout problems are independently grounded in the editor source.
+
+**Dock fix:** The extra handles are the Materials studio's `se251-split-materials-*` elements, incorrectly visible while the shared `se225Shell` is showing Particle Studio. Hide and disable pointer events on these only in the particles workspace. When the v11.249 Particle Studio root mounts asynchronously, explicitly invoke v11.250's existing native dock initializer so its own side and bottom splitters, collapse buttons, persisted layout state and drag handlers are actually installed.
+
+**VFX/camera fix:** Keep Game Editor preview teardown from stopping an active standalone Particle Chamber preview. Allow edit-mode chamber particles to run even if the global game simulation was paused; dedicated Particle Preview/Stop still work normally. After opening the chamber, refresh its controls, apply zoom +/- immediately to its original camera, and expose camera distance for focused diagnostics.
+
+**Boundaries:** Native editor-only fix, 285 source patches, one unchanged WebGL renderer. Preserve the native validated 12-emitter library, §E model/particle stress sliders, saved scenes, Sheep Tag runtime, multiplayer, physics, Quest controller mappings, and source history. Focused source integrity passed; physical phone/VR acceptance pending. The editor thumbnail is not the live effect; the actual preview is in the 3D chamber.
+
 ## §E v11.253 — Release dialog startup responsiveness hotfix (2026-11-04)
 
 **Owner report:** The engine appears to load, opens the new-updates dialog, then becomes unresponsive; Continue and other page controls cannot be activated. This is a startup regression, not a measured particle-performance problem.
