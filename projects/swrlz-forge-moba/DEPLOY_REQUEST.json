@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.252",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_252_STRESS_DIAGNOSTICS",
-  "reason": "Publish §E v11.252 sealed Model + Particle Stress Test controls. Stable final-tree 283-patch HTML precisely 8,003,675 bytes and SHA256 f0368006687eb8d588cce4e999e4bd1728701b45760b236d6b8797c9d6628c8b validated twice by focused full patch reconstruction; source-manifest and release verifier now agree. Model Atelier: real disposable high-poly mesh 100 to 1M triangles, Particle Studio: 100 to 1M active animated THREE.Points in isolated test chamber, both with slider, numeric input, manual Apply/Stop and approximate FPS. No changes to saved scenes, game performance limits, Sheep Tag menus, physics or Quest controls; owner real-device acceptance required.",
-  "sourceCommit": "34f61aff5a549c07558efb2812a6595fe8722b5e",
-  "sourceIntegritySha256": "f0368006687eb8d588cce4e999e4bd1728701b45760b236d6b8797c9d6628c8b"
+  "releaseVersion": "v11.253",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_253_STARTUP_UNFREEZE",
+  "reason": "Publish §E v11.253 release-dialog startup freeze fix. Limit shared editor and diagnostic MutationObservers to relevant editor mounts and idle diagnostic animation-frame sampling during the release notes dialog. Preserve saved models/particles, Sheep Tag gameplay and VR input. Exact sealed 284-patch source: 8,004,225 bytes; sha256 4501d2552059efdcece73f2a3713a0567480f97ee79382cfa6ff621b1c40c4e8. Device acceptance pending.",
+  "sourceCommit": "dbc5b533e81bdeaaf54b3d308fca7cbf9dc3154e",
+  "sourceIntegritySha256": "4501d2552059efdcece73f2a3713a0567480f97ee79382cfa6ff621b1c40c4e8"
 }
