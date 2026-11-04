@@ -77,21 +77,29 @@ se195Text=function(label,header=false){
 };
 const se238PriorRadialHit=se195RadialHit;
 se195RadialHit=function(record,cast){
-  if(!se195.visible||!se195.radial||cast||
+  if(!se195.visible||!se195.radial?.visible||
      !record||!Number.isInteger(record.index))
-    return cast?se238PriorRadialHit(record,cast):se238PriorRadialHit(record);
+    return se238PriorRadialHit(record,cast);
+  // Native controller rendering passes an explicit cast. Cache those hits
+  // too: previously they bypassed the cache and repeated button raycasts.
+  // Check BOTH poses so same-frame pointer or menu movement cannot go stale.
+  const ray=cast||se192Ray(record);
+  if(!ray)return null;
   const root=se195.radial,p=root.position,q=root.quaternion;
-  const tick=se181XR.frames;
+  const o=ray.origin,d=ray.direction,tick=se181XR.frames;
   const prior=se238Radial.cache.get(record.index);
   if(prior&&prior.tick===tick&&prior.root===root&&
      prior.x===p.x&&prior.y===p.y&&prior.z===p.z&&
-     prior.qx===q.x&&prior.qy===q.y&&prior.qz===q.z&&prior.qw===q.w){
+     prior.qx===q.x&&prior.qy===q.y&&prior.qz===q.z&&prior.qw===q.w&&
+     prior.ox===o.x&&prior.oy===o.y&&prior.oz===o.z&&
+     prior.dx===d.x&&prior.dy===d.y&&prior.dz===d.z){
     se238Radial.hitCaches++;return prior.hit;
   }
-  const hit=se238PriorRadialHit(record);
+  const hit=se238PriorRadialHit(record,ray);
   se238Radial.cache.set(record.index,{
     tick,root,x:p.x,y:p.y,z:p.z,
-    qx:q.x,qy:q.y,qz:q.z,qw:q.w,hit
+    qx:q.x,qy:q.y,qz:q.z,qw:q.w,
+    ox:o.x,oy:o.y,oz:o.z,dx:d.x,dy:d.y,dz:d.z,hit
   });
   se238Radial.hitMisses++;
   return hit;
