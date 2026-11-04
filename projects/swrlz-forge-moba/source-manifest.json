@@ -296,6 +296,6 @@
     "patches/v11_248_astral_vortex_starters.py",
     "patches/v11_249_particle_studio_workstation.py"
   ],
-  "finalBytes": 7831738,
-  "finalSha256": "932460d952611fe6857741d1c985049d2edf7d62c302983889fe7601e9fbf27e"
+  "finalBytes": 7889180,
+  "finalSha256": "38371bac1f90c7714f1ab117a74288f6b68aa5cbe5d0f78d5821ad51f53b9a47"
 }
