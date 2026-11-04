@@ -229,3 +229,33 @@ html #se251UnifiedMode{
  html #modelAtelierPanel[data-se251-layout=desktop] .atelier-head button{padding:5px!important;font-size:10px!important}
  html .se251-side-title{font-size:11px}
 }
+
+
+/* Consistent explicit dock controls, not hidden behind the Particle workspace. */
+#modelAtelierPanel .se251-external-layout,
+#se225MaterialsPanel .se251-external-layout{
+ display:flex;gap:5px;align-items:center;font:700 10px system-ui;color:#d7b9ec}
+#modelAtelierPanel .se251-external-layout select,
+#se225MaterialsPanel .se251-external-layout select{
+ min-height:28px!important;padding:3px 5px!important;max-width:108px;
+ background:#322143!important;border-color:#9868bd!important}
+#modelAtelierPanel .se251-external-collapse,
+#se225MaterialsPanel .se251-external-collapse{
+ min-height:28px!important;padding:3px 7px!important;background:#422861!important;
+ border:1px solid #a273cf!important;color:#f2d9ff!important;border-radius:6px!important;
+ font:750 10px system-ui!important}
+html #modelAtelierPanel[data-se251-layout=desktop][data-se251-right-collapsed=true] .atelier-body{
+ grid-template-columns:var(--se251-left,205px) minmax(0,1fr) 0px!important}
+html #modelAtelierPanel[data-se251-layout=desktop][data-se251-right-collapsed=true] .atelier-inspector{
+ display:none!important}
+body[data-se225-workspace=materials] #se225Shell[data-se251-layout=desktop][data-se251-right-collapsed=true] #se225MaterialsPanel{
+ display:none!important}
+html #modelAtelierPanel[data-se251-layout=desktop][data-se251-right-collapsed=true] #se251-split-model-right,
+html #se225Shell[data-se251-layout=desktop][data-se251-right-collapsed=true] #se251-split-materials-right{
+ display:none!important}
+body[data-se225-workspace=materials] #se225Shell[data-se251-layout=desktop] #se225MaterialsPanel .se225-m-title{
+ display:flex!important;align-items:center;gap:8px;flex-wrap:wrap}
+body[data-se225-workspace=materials] #se225Shell[data-se251-layout=desktop] #se225MaterialsPanel .se225-m-title strong{
+ flex:1 1 140px}
+html #modelAtelierPanel[data-se251-layout=desktop] .atelier-head>.se251-external-layout{
+ margin-left:auto}
