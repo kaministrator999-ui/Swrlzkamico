@@ -40,6 +40,17 @@ def apply(html):
        "load native curve runtime, galaxy and shared workstation")
     html=html.replace("</head>",
       '<style id="se251UnifiedStudiosStyle">\n'+css+'\n</style>\n</head>',1)
+    # The galaxy plane has been lifted from the horizontal floor into an
+    # upright spiral; centre the isolated authoring camera around the real
+    # new height while leaving the saved Sheep Tag camera untouched.
+    html=once(html,
+       "    targetX:0,targetY:1.35,targetZ:0,shield:null,hint:null,drag:null};",
+       "    targetX:0,targetY:2.75,targetZ:0,shield:null,hint:null,drag:null};",
+       "show raised nebula in the isolated stage")
+    html=once(html,
+       "state.targetX=0;state.targetY=1.35;state.targetZ=0;return true;",
+       "state.targetX=0;state.targetY=2.75;state.targetZ=0;return true;",
+       "focus/reset raised nebula")
     # Compatible source provenance and identity. Keep the single renderer and
     # exactly the same project JSON import/export entrypoints.
     prev=" source.engine='§wyrl§ Engine · Maker v11.250';source.version=11.250;"
