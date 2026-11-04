@@ -1,3 +1,13 @@
+## §E v11.259 — Galaxy smoke thickness and wispy material (2026-11-04)
+
+**Owner screenshot:** The v11.258 Galaxy Portal now has six clear half-S cyan/violet paths and an active editor preview, but the wispy nebula clouds in the reference are barely visible. Most of the shape still reads as smooth, thin neon paths and isolated glowing points.
+
+**Visual repair:** Retain the short half-S geometry and slow rotation. Enlarge the two existing smoke layers per arm as they travel outward, use a soft fractal-noise alpha field with ragged edges/negative space, and switch the smoke to translucent pigment blending while keeping the fine energy filament additive and rendered above it. The glow retains a fading tip and the luminous star/core emitters remain independent.
+
+**Native control and performance:** Add schema-validated `Smoke density` (0.1–2.0) alongside `Smoke arm spread` and `Starfield density`, with original undo/redo and VFX JSON persistence. Upload static ribbon UV coordinates just once instead of every frame. No added emitters, frame callbacks, renderers, or external GPU assets.
+
+**Preservation:** Keep the v11.257 first-frame TDZ repair, v11.258 per-emitter error toasts, saved projects, Sheep Tag, Quest input, and other workstations. User hands-on mobile comparison is the visual acceptance gate.
+
 ## §E v11.258 — Short, slow galaxy wisps and particle fault containment (2026-11-04)
 
 **Reference-matching visual:** The original Astral Vortex drew two long looping rings. This release creates six shorter, half-S curved filaments across alternating violet and cyan arms, with widening irregular smoke layers, embedded small/large stars, softer fading tips and a luminous core.
