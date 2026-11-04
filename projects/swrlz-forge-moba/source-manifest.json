@@ -298,6 +298,6 @@
     "patches/v11_250_particle_desktop_docks.py",
     "patches/v11_251_unified_studios_galaxy_curves.py"
   ],
-  "finalBytes": 7927249,
-  "finalSha256": "c83c9956d6d04fae1c4a9132d4fc657f14fe8fc159d4d0057c21ef7006997f5e"
+  "finalBytes": 7990559,
+  "finalSha256": "aa0e0d0e0bb827c2d28d2cf2ab476ca4ebc18582e11e2557b65b837dfca97337"
 }
