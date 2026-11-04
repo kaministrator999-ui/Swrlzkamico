@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.246",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_246_PARTICLE_BOTTOM_TOGGLE",
-  "reason": "Owner Moto G Power follow-up: Particle Studio bottom settings still would not collapse. v11.246 binds the existing mobile Compact/Expand control to the v11.245 actual collapse/show API rather than resizing only, uses a single visible button with 59px header-only docking and forced scroll hiding, while preserving VFX emitter data, single renderer, editor and Quest behavior. Source is sealed: 277 patches, 69 assets, 7,801,207 bytes, SHA256 3dd76f2dae3bc4705feccc0cd39bef4bc1c6c36b5edfa6d6530d829e9854a64e. Squash merged PR #373 commit 0ad288ebb92494d8be89a9c62db4619422418a45. Owner manual acceptance pending.",
-  "sourceCommit": "0ad288ebb92494d8be89a9c62db4619422418a45",
-  "sourceIntegritySha256": "3dd76f2dae3bc4705feccc0cd39bef4bc1c6c36b5edfa6d6530d829e9854a64e"
+  "releaseVersion": "v11.247",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_247_EDITOR_PREVIEW_TOGGLES",
+  "reason": "Owner-requested edit-only preview switches. Add a compact Game Engine ✦ Preview panel with independent native scene particle preview and authored Storyboard cinematic playback. Both default off, reset when changing project/studio/Play mode, preserve scene saves and camera restoration, and reuse the existing renderer/frame loop. Unsupported projects correctly disable cinematic playback. Focused source reconstruction and JS/Python syntax passed. Sealed 278 patches, 69 assets, 7,810,462 HTML bytes, SHA256 7d5e780b36c6b64939a8974c8300c0cd768b2b80c00ca4e0104197cbba7b84d8. Owner physical Quest 2 and Moto G Power acceptance pending.",
+  "sourceCommit": "cee40cd45fedd9a0a06cb8ed2974dbe14787637a",
+  "sourceIntegritySha256": "7d5e780b36c6b64939a8974c8300c0cd768b2b80c00ca4e0104197cbba7b84d8"
 }
