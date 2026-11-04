@@ -3,7 +3,7 @@ on:
   push:
     branches: [main]
     paths:
-      - '.github/workflows/measure-forge-v11-270.yml'
+      - '.github/workflows/measure-forge-v11-273.yml'
   workflow_dispatch:
 permissions:
   contents: read
@@ -39,7 +39,7 @@ jobs:
           for entry in m['patches']:
               html=load_patch(root/entry)(html)
           data=html.encode('utf8')
-          assert 'SWYRL_ENGINE_DEPLOY_MARKER: V11_273_HAIRLINE_GALAXY_WISPS' in html
+          assert 'SWYRL_ENGINE_DEPLOY_MARKER: V11_273_ORGANIC_GALAXY_FILAMENTS' in html
           print('V11_273_FINAL_SHA256='+hashlib.sha256(data).hexdigest(),flush=True)
           print('V11_273_FINAL_BYTES='+str(len(data)),flush=True)
           print('V11_273_FINAL_PATCHES='+str(len(m['patches'])),flush=True)
