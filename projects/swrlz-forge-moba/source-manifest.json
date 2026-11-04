@@ -299,6 +299,6 @@
     "patches/v11_251_unified_studios_galaxy_curves.py",
     "patches/v11_252_stress_diagnostics.py"
   ],
-  "finalBytes": 8003351,
-  "finalSha256": "364f108cd052ff4877686fa56ee86ebd60141078e57b802a68ff2aec0723b09f"
+  "finalBytes": 8003675,
+  "finalSha256": "f0368006687eb8d588cce4e999e4bd1728701b45760b236d6b8797c9d6628c8b"
 }
