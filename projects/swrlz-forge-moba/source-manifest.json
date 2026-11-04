@@ -308,6 +308,6 @@
     "patches/v11_260_nebula_wisp_mask.py",
     "patches/v11_261_visible_smoke_wisps.py"
   ],
-  "finalBytes": 8019766,
-  "finalSha256": "1384581988b3165007da5d932ce5b2b5b40b558ede4d257923abc4847c761172"
+  "finalBytes": 8020174,
+  "finalSha256": "147d2c864d2d366f134e3924e824a4b13c0b01633264de6853a565f5fed28c68"
 }
