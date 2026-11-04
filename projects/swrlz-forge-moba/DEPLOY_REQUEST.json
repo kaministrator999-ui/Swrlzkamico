@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.271",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_271_LAN_VISIBILITY_AUTOFIND",
-  "reason": "Owner reports absent LOCAL LAN entry and expects automatically discovered Sheep Tag LAN games. v11.271 adds obvious browser editor-menu preview launch and Play-runtime menu button; adds a world-pinned controller-selectable Local LAN tile alongside immersive Quest menu radial; automatically probes existing live room directory on LAN browser open with truthful shared-public-network grouping on HTTPS and genuine private-LAN discovery only through the local Bridge, retaining invite-code fallback. Reuses full host-authoritative PeerJS/WebRTC multiplayer, no new simulation or renderer; preserves v11.270 galaxy and v11.265 nerd stats. Full 302-patch 8,077,925-byte package SHA256 18afc575cb1adbe84d48a941dd601491f8f9feb6bfc7ecadeadaa453e805719a, inline JS parse and focused browser/Quest simulated menu tests passed. Owner Quest/browser and second-device live LAN acceptance pending.",
-  "sourceCommit": "8020d9bf2914e724e340b1b365f9f2a837ad808d",
-  "sourceIntegritySha256": "18afc575cb1adbe84d48a941dd601491f8f9feb6bfc7ecadeadaa453e805719a"
+  "releaseVersion": "v11.272",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_272_SHEEP_NERD_L3_TOGGLE",
+  "reason": "Owner Quest 2 request: pressing the left thumbstick (L3) in immersive Sheep Tag toggles the existing world-pinned, grabbable three-page Nerd Stats panel on/off; button 3 rising-edge with release required and session/OS overlay hold guards; preserve movement stick axes, controller profiles, AI/gameplay, map editor, house batching, multiplayer LAN browser and galaxy materials. Focused Node test confirmed open/hold/release/close, non-repeating press and untouched analog movement; 303-patch 8,080,427-byte sealed engine, inline JavaScript parse and SHA256 e717b9f184bb03ebe1c1259bc64d810548a94aa669da9aa145d8b80b964dde27 verified. Quest 2 actual physical L3 acceptance remains pending.",
+  "sourceCommit": "64a1f891f355a037ebb3604f1b3651d60de9cb90",
+  "sourceIntegritySha256": "e717b9f184bb03ebe1c1259bc64d810548a94aa669da9aa145d8b80b964dde27"
 }
