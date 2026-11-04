@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.248",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_248_ASTRAL_VORTEX_STARTERS",
-  "reason": "Retry sealed v11.248 after exact artifact-filename assertion in verify_v11_248_release.py was corrected; first deploy stopped before upload. Unchanged 279-patch, one-renderer candidate measured as 7,831,738 bytes and SHA256 932460d952611fe6857741d1c985049d2edf7d62c302983889fe7601e9fbf27e. Native Astral Vortex four-emitter starter, purple/cyan Particle Studio and Starter Particles category. No scene, VR Play, modeling, or §C changes. Owner Android/Quest manual acceptance pending.",
-  "sourceCommit": "3c11a9256a3d7bf67e164ee01574dd27e6a1ea90",
-  "sourceIntegritySha256": "932460d952611fe6857741d1c985049d2edf7d62c302983889fe7601e9fbf27e"
+  "releaseVersion": "v11.249",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_249_PARTICLE_WORKSTATION",
+  "reason": "Publish §E v11.249, owner-directed concept-faithful Particle Editor workstation: two-row command header, Project/Assets tree, native camera orbit/pan/zoom tool strips, dominant 3D viewport, tabbed/collapsible real emitter modifiers, timeline/curves/output bottom dock and responsive mobile panes. Astral Vortex now generates GPU-efficient animated cyan/violet ribbon meshes and editable validated vortex spin/pull/glow/tilt. Append-only 280-patch single-renderer build passed source/syntax checks. HTML 7,889,406 bytes SHA256 b03224aa7198a8ec57ec054d1c39b8639f76b9289149c5be6ca539bb56ab5dae. Do not affect §C, original game/modeler/materials, Sheep Tag or Quest play. Physical Moto and Quest acceptance pending.",
+  "sourceCommit": "64079a413894e173b6fadf65a4386dd68c0e7017",
+  "sourceIntegritySha256": "b03224aa7198a8ec57ec054d1c39b8639f76b9289149c5be6ca539bb56ab5dae"
 }
