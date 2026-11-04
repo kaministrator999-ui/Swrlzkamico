@@ -312,6 +312,6 @@
     "patches/v11_264_purple_rooted_spectral_arms.py",
     "patches/v11_265_sheep_render_nerd_stats.py"
   ],
-  "finalBytes": 8051328,
-  "finalSha256": "46461b8bae4051b41392000c7260d8b038f12262bd7b1947c7c9d9c2a1cea6b6"
+  "finalBytes": 8051289,
+  "finalSha256": "1ec7a7bfd13b04c572bb83242cf95269613a4d0afb52ccd00c5ce73b0fb7495d"
 }
