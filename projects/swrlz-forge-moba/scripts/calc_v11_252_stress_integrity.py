@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Compute v11.252 exact artifact receipt after native-closure anchor repair."""
+"""Compute v11.252 exact artifact receipt with scoped live-head stylesheet."""
 import base64,gzip,hashlib,json,sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
