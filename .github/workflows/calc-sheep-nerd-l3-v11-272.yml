@@ -1,0 +1,47 @@
+name: Measure §E v11.272 Sheep L3 Nerd Stats Toggle
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/calc-sheep-nerd-l3-v11-272.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  focused:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify input toggle and source syntax
+        run: |
+          python3 -m py_compile projects/swrlz-forge-moba/patches/v11_272_sheep_nerd_l3_toggle.py
+          node --check projects/swrlz-forge-moba/runtime/sheep_nerd_stats_l3_toggle_v11_272.js
+          node projects/swrlz-forge-moba/tests/sheep_nerd_l3_toggle_v11_272.cjs
+      - name: Rebuild 303-patch source and parse actual assembled editor
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('projects/swrlz-forge-moba/source-manifest.json')
+          m=json.loads(p.read_text('utf8'))
+          assert m['name']=='§wyrl§ Engine v11.272' and len(m['patches'])==303
+          assert m['patches'][-1]=='patches/v11_272_sheep_nerd_l3_toggle.py'
+          m['finalSha256']=None
+          m['finalBytes']=None
+          p.write_text(json.dumps(m,indent=2),encoding='utf8')
+          PY
+          python3 projects/swrlz-forge-moba/build_space.py --output /tmp/se272
+          python3 projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se272/index.html
+          grep -q 'window.SWYRL_ENGINE_SHEEP_NERD_L3_272' /tmp/se272/index.html
+          grep -q 'SWYRL_ENGINE_DEPLOY_MARKER: V11_272_SHEEP_NERD_L3_TOGGLE' /tmp/se272/index.html
+          cmp /tmp/se272/index.html /tmp/se272/modeler.html
+          echo "SE272_BYTES=$(wc -c < /tmp/se272/index.html)"
+          echo "SE272_SHA256=$(sha256sum /tmp/se272/index.html | cut -d' ' -f1)"
+          echo "SE272_BUILD_OK"
