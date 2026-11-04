@@ -15,6 +15,7 @@ function restore(){try{
   for(const side of ['left','right'])if(Number.isFinite(r[side]))
    state[k][side]=Math.max(140,Math.min(480,r[side]));
   state[k].collapsed=r.collapsed===true;
+  state[k].rightCollapsed=r.rightCollapsed===true;
  }
 }catch(e){}}
 function layout(){return state.mode==='auto'?(innerWidth<700?'compact':'desktop'):state.mode}
@@ -28,7 +29,9 @@ function sync(){
   root.style.setProperty('--se251-right',Math.round(state[key].right)+'px');
   root.dataset.se251Layout=mode;
   root.dataset.se251Collapsed=String(state[key].collapsed);
+  root.dataset.se251RightCollapsed=String(!!state[key].rightCollapsed);
  }
+ syncLayoutInputs();
  q('#se251UnifiedMode')?.setAttribute('data-mode',state.mode);
  const names=q('#se251UnifiedMode');
  if(names&&names.value!==state.mode)names.value=state.mode;
@@ -150,6 +153,32 @@ function materialHierarchy(){
  const mo=new MutationObserver(render);mo.observe(native,{childList:true,subtree:true});
  native.addEventListener('change',render);render();return true;
 }
+function layoutControls(root,which){
+ if(!root||root.querySelector('.se251-external-layout'))return;
+ const host=which==='model'?root.querySelector('.atelier-head'):
+  root.querySelector('#se225MaterialsPanel .se225-m-title');
+ if(!host)return;
+ const wrap=document.createElement('label');wrap.className='se251-external-layout';
+ const title=document.createElement('span');title.textContent='Layout';
+ const input=document.createElement('select');input.setAttribute('aria-label',which+' editor layout');
+ for(const [k,name]of [['auto','Auto'],['desktop','Desktop / VR'],['compact','Compact']]){
+  input.append(new Option(name,k));
+ }
+ input.value=state.mode;
+ input.addEventListener('change',()=>{mode(input.value);syncLayoutInputs()});
+ wrap.append(title,input);
+ const collapse=smallButton('‹ Inspector','Collapse or restore the '+which+' modifier dock',()=>{
+  state[which].rightCollapsed=!state[which].rightCollapsed;
+  sync();save();
+ });
+ collapse.className='se251-external-collapse';
+ host.append(wrap,collapse);
+}
+function syncLayoutInputs(){
+ for(const el of document.querySelectorAll('.se251-external-layout select')){
+  if(el.value!==state.mode)el.value=state.mode;
+ }
+}
 function modes(){
  if(q('#se251UnifiedMode'))return;
  const header=q('#se249Root .se249-commandbar');
@@ -165,6 +194,8 @@ function modes(){
 }
 function boot(){
  const changed=modelHierarchy()|materialHierarchy();
+ layoutControls(q('#modelAtelierPanel'),'model');
+ layoutControls(q('#se225Shell'),'materials');
  modes();sync();
  if(changed)state.installed=true;
 }
