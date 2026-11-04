@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.255",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_255_PARTICLE_VIEWPORT_OWNERSHIP",
-  "reason": "Publish §E v11.255 Particle Studio input and camera ownership repair. Fix visible viewport pointer-events:none by binding direct touch/mouse orbit, pan, wheel/2-finger pinch zoom to center viewport; stop shared Game OrbitControls overriding Particle Chamber camera after VFX updates; ensure Preview starts lazy chamber; show live Chamber ON/OFF, Preview ON/OFF, point count, zoom distance. Append-only 286 patches, sealed HTML 8,009,987 bytes SHA256 cdedd2ec43c52cb1a575e6ca0ab5cc295d79067f568ea59a46c74d56aaf76227. Keep original renderer, game/Quest controls outside studio, saved models and particles, Sheep Tag and existing stress test tooling unchanged. Real-phone visual/interaction acceptance pending.",
-  "sourceCommit": "fc4568c37f1d4ccc1147037738ab68364b0228ed",
-  "sourceIntegritySha256": "cdedd2ec43c52cb1a575e6ca0ab5cc295d79067f568ea59a46c74d56aaf76227"
+  "releaseVersion": "v11.256",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_256_GALAXY_AI_XR_RAY",
+  "reason": "Publish targeted §E v11.256: Particle Studio camera/project rebind prevents galaxy preview disappearing and controls detaching after emitter edits; living Sheep Tag AI keeps modern sheep/wolf escape-path scoring but evaluates at most two route candidates per game frame across bots to reduce alive-sheep frame spikes; Quest building selector uses physical controller-to-terrain ray over the playable meadow instead of short sheep-centered synthetic projection; house ghost only on valid ground, VR menu beam/reticle overlays menu icons. Append-only 287-patch source, 8,015,813 bytes, SHA256 e1d057192f972277efca950198d77e92684556a3f37fd634d98cdf83f00b7d3c. No added renderer or broad automated browser/VR tests; owner real-device acceptance pending.",
+  "sourceCommit": "c9543ef491ea29220cbc47af50c6df3865708442",
+  "sourceIntegritySha256": "e1d057192f972277efca950198d77e92684556a3f37fd634d98cdf83f00b7d3c"
 }
