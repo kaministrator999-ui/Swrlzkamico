@@ -315,6 +315,6 @@
     "patches/v11_267_continuous_galaxy_wisps.py",
     "patches/v11_268_quest_lan_menu.py"
   ],
-  "finalBytes": null,
-  "finalSha256": null
+  "finalBytes": 8065862,
+  "finalSha256": "32b0aa4e773b01e5cd5c7b8b529a162086c91d8f665376b5a52334a25e7293fd"
 }
