@@ -249,7 +249,16 @@ html #modelAtelierPanel[data-se251-layout=desktop][data-se251-right-collapsed=tr
 html #modelAtelierPanel[data-se251-layout=desktop][data-se251-right-collapsed=true] .atelier-inspector{
  display:none!important}
 body[data-se225-workspace=materials] #se225Shell[data-se251-layout=desktop][data-se251-right-collapsed=true] #se225MaterialsPanel{
+ display:flex!important;width:38px!important;overflow:hidden!important}
+body[data-se225-workspace=materials] #se225Shell[data-se251-layout=desktop][data-se251-right-collapsed=true] #se225MaterialsPanel .se225-m-scroll{
+ padding:2px!important;overflow:hidden!important}
+body[data-se225-workspace=materials] #se225Shell[data-se251-layout=desktop][data-se251-right-collapsed=true] #se225MaterialsPanel .se225-m-scroll>:not(.se225-m-title){
  display:none!important}
+body[data-se225-workspace=materials] #se225Shell[data-se251-layout=desktop][data-se251-right-collapsed=true] #se225MaterialsPanel .se225-m-title>:not(.se251-external-collapse){
+ display:none!important}
+body[data-se225-workspace=materials] #se225Shell[data-se251-layout=desktop][data-se251-right-collapsed=true] #se225MaterialsPanel .se251-external-collapse{
+ width:32px!important;min-width:32px!important;overflow:hidden!important;padding:0!important;
+ font-size:15px!important}
 html #modelAtelierPanel[data-se251-layout=desktop][data-se251-right-collapsed=true] #se251-split-model-right,
 html #se225Shell[data-se251-layout=desktop][data-se251-right-collapsed=true] #se251-split-materials-right{
  display:none!important}
