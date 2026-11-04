@@ -13,16 +13,16 @@ from pathlib import Path
 
 html_path=Path(sys.argv[1])
 html=html_path.read_text(encoding="utf-8")
-scripts=re.findall(r"<script\\b[^>]*>(.*?)</script\\s*>",html,flags=re.I|re.S)
+scripts=re.findall(r"<script\b[^>]*>(.*?)</script\s*>",html,flags=re.I|re.S)
 targets=[part for part in scripts if "const mistV=[" in part and "vMistAngle" in part]
 if len(targets)!=1:
     raise SystemExit(f"Expected one live nebula JS script, found {len(targets)}; inline scripts={len(scripts)}")
 body=targets[0]
-correct="'varying float vMistAngle;',\\n 'varying vec3 vMistTint;',"
+correct="'varying float vMistAngle;',\n 'varying vec3 vMistTint;',"
 # The two script arrays, mistV and mistF, must be valid JavaScript.
 if body.count(correct)!=2:
     raise SystemExit(f"Expected 2 shader array separators, got {body.count(correct)}")
-bad="'varying float vMistAngle;'\\n 'varying vec3 vMistTint;',"
+bad="'varying float vMistAngle;'\n 'varying vec3 vMistTint;',"
 if bad in body:
     raise SystemExit("Malformed adjacent shader strings survived the boot fix")
 result=subprocess.run(["node","--check","-"],input=body,text=True,capture_output=True)
