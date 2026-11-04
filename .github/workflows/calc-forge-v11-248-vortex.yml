@@ -1,0 +1,25 @@
+name: §E v11.248 focused Astral Vortex integrity
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/calc-forge-v11-248-vortex.yml'
+      - 'projects/swrlz-forge-moba/scripts/calc_v11_248_vortex_integrity.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  vortex-integrity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check native particle and release script syntax
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/astral_vortex_starter_v11_248.js
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_248_astral_vortex_starters.py
+      - name: Measure 279-patch source and one renderer
+        run: python3 projects/swrlz-forge-moba/scripts/calc_v11_248_vortex_integrity.py
