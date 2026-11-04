@@ -314,6 +314,6 @@
     "patches/v11_266_mist_shader_syntax_recovery.py",
     "patches/v11_267_continuous_galaxy_wisps.py"
   ],
-  "finalBytes": 8051140,
-  "finalSha256": "86187ab2af2675cd158602594ae541ec2c8205f2f0c5aaf533b0591645eb438c"
+  "finalBytes": 8052129,
+  "finalSha256": "10231c4158ebca88a9c471d7645b41a2a807ff14b1db0c66c01097e2babb9a80"
 }
