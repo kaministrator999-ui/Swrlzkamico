@@ -7,8 +7,8 @@ from pathlib import Path
 import subprocess
 import sys
 ROOT=Path(__file__).resolve().parents[1]
-SHA="3018949318033dc20dd8be98123fd036ad67470f116016a9248ef4d1f46cabe5"
-SIZE=8004039
+SHA="4501d2552059efdcece73f2a3713a0567480f97ee79382cfa6ff621b1c40c4e8"
+SIZE=8004225
 MARKER="SWYRL_ENGINE_DEPLOY_MARKER: V11_253_STARTUP_UNFREEZE"
 parser=argparse.ArgumentParser()
 parser.add_argument("--output",required=True)
