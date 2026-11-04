@@ -4,7 +4,7 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.250",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_250_DESKTOP_DOCKS",
-  "reason": "Publish §E v11.250 from validated append-only 281-patch HTML (7,923,641 bytes, SHA256 f8d4f6df5a2e64fe8ef200c631557b960f5d4ab197fdfb47b39e58b23cf58954). Owner screenshots showed Chrome Desktop site and Quest browser falling into stacked mobile UI due old <=1080px/coarse-pointer breakpoint. Desktop/VR mode now has actual separate resizable and collapsible left Project/Assets, right tabbed native Modifiers, and bottom Timeline/Curves docks, with keyboard/touch/pointer splitter handles, individually expandable category menus, persistent widths, and Auto/Desktop/Compact override. Original single renderer and scene/Quest Play preserved. Astral Vortex now has feathered shader ribbons rather than jagged strips, with independent selected four-emitter group preview and real selected emitter parameter profiles in lower dock. Focused JS/Python and 281-patch integrity passed. Owner Moto/Quest hands-on acceptance pending.",
-  "sourceCommit": "e2d2753648d53db812b4f0c8051c6a2348c48487",
-  "sourceIntegritySha256": "f8d4f6df5a2e64fe8ef200c631557b960f5d4ab197fdfb47b39e58b23cf58954"
+  "reason": "Publish §E v11.250 Sheep Tag Quest 2 ray/menu hotfix from complete 281-patch verified source (7,927,249 bytes; SHA256 c83c9956d6d04fae1c4a9132d4fc657f14fe8fc159d4d0057c21ef7006997f5e). The A/X wheel now shows controller beams and hit reticles, ray hover and trigger can select Farm/Income/Fort/CANCEL while right-stick selection stays available. Trigger commits cannot fire an accidental house placement on the later A release. Placement guide and expensive building previews are hidden behind modal menus; they return to game placement after the wheel closes. B wrist panel and game/editor/modeler controls remain intact. Focused syntax and full 281-patch assembly passed; owner headset acceptance pending.",
+  "sourceCommit": "ecb8e1236f91be6e973e39bcb9e803178cab7483",
+  "sourceIntegritySha256": "c83c9956d6d04fae1c4a9132d4fc657f14fe8fc159d4d0057c21ef7006997f5e"
 }
