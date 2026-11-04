@@ -3,14 +3,14 @@ on:
   push:
     branches: [main]
     paths:
-      - '.github/workflows/seal-forge-v11-258.yml'
+      - '.github/workflows/seal-forge-v11-259.yml'
       - 'projects/swrlz-forge-moba/patches/v11_259_smoky_arm_volume.py'
       - 'projects/swrlz-forge-moba/scripts/verify_v11_259_release.py'
   workflow_dispatch:
 permissions:
   contents: write
 concurrency:
-  group: seal-forge-v11-258
+  group: seal-forge-v11-259
   cancel-in-progress: false
 jobs:
   seal:
@@ -55,7 +55,7 @@ jobs:
           print('v11.259 sealed',len(data),m['finalSha256'])
           PY
       - name: Build and verify the complete release package
-        run: python3 projects/swrlz-forge-moba/scripts/verify_v11_259_release.py --output /tmp/swyrl-forge-258
+        run: python3 projects/swrlz-forge-moba/scripts/verify_v11_259_release.py --output /tmp/swyrl-forge-259
       - name: Commit source-of-truth hash and size
         run: |
           git config user.name "§E source integrity bot"
