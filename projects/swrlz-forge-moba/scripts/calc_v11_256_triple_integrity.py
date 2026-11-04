@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Focused §E v11.256 source reconstruction and change-path checks."""
+"""Recheck §E v11.256 with modern living-sheep AI route budget preserved."""
 import base64,gzip,hashlib,json,sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
@@ -15,7 +15,7 @@ for name in m["patches"]:html=load_patch(ROOT/name)(html)
 for label,needle in {
  "particle project continuity":"state.projectRebinds=(state.projectRebinds||0)+1",
  "particle stage recovery":"const stageActive=chamber?.frame?.()===true",
- "living AI safest first":"options.sort((a,b)=>b.safety-a.safety)",
+ "AI path-budgeted over frames":"se256AIBudget.used<se256AIBudget.perFrame",
  "XR real ray":"se193XRGameGround=function(record){",
  "no fake build aim":"se203GroundFromForwardRay=function(){return null;}",
  "VR menu cursor foreground":"beam.renderOrder=11100",
