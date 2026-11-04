@@ -310,6 +310,6 @@
     "patches/v11_262_nebula_cloud_billow_points.py",
     "patches/v11_263_reference_texture_smoke.py"
   ],
-  "finalBytes": 8025626,
-  "finalSha256": "a92a3c016e196e42f186bd83eba55c982e3b62db2ff37b81e968a442bfef0fa4"
+  "finalBytes": 8030567,
+  "finalSha256": "6e28c92c2a6e8e21e85d68a96d86b2d36243f7f905257d355f710918251f7ed7"
 }
