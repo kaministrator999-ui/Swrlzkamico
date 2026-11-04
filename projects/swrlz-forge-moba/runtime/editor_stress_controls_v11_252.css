@@ -1,0 +1,17 @@
+/* §E v11.252 independent temporary stress-test modifiers. */
+.se252-stress{box-sizing:border-box;width:100%;min-width:0;max-width:100%;margin:10px 0;padding:9px;
+ background:linear-gradient(145deg,#241639,#111727);border:1px solid #66517c;
+ border-radius:9px;color:#dce6f8;font:12px/1.5 system-ui,sans-serif;overflow:hidden}
+.se252-stress summary{cursor:pointer;font-weight:700;color:#ead6ff;list-style-position:inside;white-space:normal}
+.se252-stress p{margin:9px 0;color:#b4c6de}
+.se252-controls{display:grid;grid-template-columns:minmax(0,1fr) minmax(64px,92px);align-items:center;gap:8px}
+.se252-controls input[type=range]{min-width:0;width:100%;accent-color:#a56bfb;touch-action:pan-y}
+.se252-controls input[type=number]{box-sizing:border-box;min-width:0;width:100%;padding:7px 4px;color:#fff;
+ background:#171a2a;border:1px solid #69567b;border-radius:5px;font:inherit}
+.se252-actions{display:flex;flex-wrap:wrap;gap:7px;margin:9px 0}
+.se252-actions button{flex:1;min-width:90px;padding:7px 6px;color:#fff;border:1px solid #7e619f;
+ background:#41305b;border-radius:6px;font:600 12px system-ui}
+.se252-actions button:disabled{opacity:.4;cursor:not-allowed}
+.se252-stress [data-se252-readout],.se252-stress [data-se252-fps]{margin-top:5px;color:#b5f0f4;font-variant-numeric:tabular-nums}
+.se252-stress [data-se252-status]{display:block;overflow-wrap:anywhere;color:#ffe4b1}
+.se252-stress small{display:block;margin-top:8px;color:#a4b6ca}
