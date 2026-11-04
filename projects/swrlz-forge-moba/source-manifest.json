@@ -294,6 +294,6 @@
     "patches/v11_246_particle_bottom_toggle.py",
     "patches/v11_247_editor_live_previews.py"
   ],
-  "finalBytes": 7810462,
-  "finalSha256": "7d5e780b36c6b64939a8974c8300c0cd768b2b80c00ca4e0104197cbba7b84d8"
+  "finalBytes": 7810723,
+  "finalSha256": "0069237edcb5f32d53a349caeb7505cc9fd6466f389def849ed442e8b30cfbb4"
 }
