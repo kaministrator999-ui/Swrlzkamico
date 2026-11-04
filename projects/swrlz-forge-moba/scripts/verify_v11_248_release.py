@@ -16,7 +16,7 @@ parser.add_argument("--request",action="store_true")
 args=parser.parse_args()
 manifest=json.loads((ROOT/"source-manifest.json").read_text("utf8"))
 assert manifest["name"]=="§wyrl§ Engine v11.248"
-assert manifest["finalArtifact"]=="swyrl_engine_v11_247.html"
+assert manifest["finalArtifact"]=="swyrl_engine_v11_248.html"
 assert manifest["patches"][-1]=="patches/v11_248_astral_vortex_starters.py"
 assert len(manifest["patches"])==279
 assert manifest["finalBytes"]==SIZE and manifest["finalSha256"]==SHA
