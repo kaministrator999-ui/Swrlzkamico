@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.269",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_269_REFERENCE_SPIRAL_WISPS",
-  "reason": "Owner reference-matching request in Particle Studio: replace loose half-S galaxy wisps with denser inward-spiraling, smooth purple-rooted cyan/purple arms and longer tapered luminous trails. Increase existing batched reference-textured mist puffs to 72 per colored emitter, soften connected haze, sharpen stars, and reduce white core without new WebGL renderer, frame loop or native emitter. Keep v11.268 Quest LAN, v11.265 Sheep Nerd Stats, v11.258 fault containment, editor camera/timeline, saved projects and models intact. Source assembled at 8,065,611 bytes; sealed SHA-256 7b691c443884ded86a145306600f7a89716a33d091853232e7bc626e2f418768. The publisher must run full v11.269 exact-package and JavaScript verification before upload. Real Moto/Quest visual acceptance pending.",
-  "sourceCommit": "02c86815cfb0a87ccffaf566eef7022619e85402",
-  "sourceIntegritySha256": "7b691c443884ded86a145306600f7a89716a33d091853232e7bc626e2f418768"
+  "releaseVersion": "v11.270",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_270_HAIRLINE_GALAXY_WISPS",
+  "reason": "Owner Moto 5:23 preview shows improved compact swirl but fine hairline wisps still missing beneath broad smoke. Release v11.270 adds six independent fine secondary wisps to each cyan/violet native arm emitter, retains three short purple roots per emitter, colors secondary filaments purple-to-cyan or purple-only, and modestly reduces smoke alpha to reveal detail. One batched mesh per emitter, no extra renderer, no new RAF, native particle system or emissive cloud layer. Retain v11.269 core shape, existing editor pan/zoom/timeline, v11.258 error isolation, Quest LAN, Sheep Tag Nerd Stats and all saved assets. Sealed 301 patches, 8,067,220 HTML bytes, SHA-256 fb546be8222ec957fb62ec52424a62632b68f712c376e03016317bbfc04a2654. Candidate JavaScript syntax and sealed package checks successful. Owner Moto/Quest visual acceptance pending.",
+  "sourceCommit": "42809c04f2c8f36fa55029b6bb2243a669f617fd",
+  "sourceIntegritySha256": "fb546be8222ec957fb62ec52424a62632b68f712c376e03016317bbfc04a2654"
 }
