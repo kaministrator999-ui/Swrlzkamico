@@ -1,0 +1,58 @@
+name: Check §E v11.273 organic galaxy candidate
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/check-forge-v11-273-galaxy.yml'
+      - 'projects/swrlz-forge-moba/patches/v11_273_organic_galaxy_filaments.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  candidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check sealed predecessor, candidate assembly, JavaScript and SHA
+        run: |
+          python3 - <<'PY'
+          import hashlib,base64,gzip,json,sys
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          sys.path.insert(0,str(root.resolve()))
+          from build_space import load_patch
+          m=json.loads((root/'source-manifest.json').read_text('utf8'))
+          assert m['name']=='§wyrl§ Engine v11.272',m['name']
+          assert len(m['patches'])==303
+          assert m['patches'][-1]=='patches/v11_272_sheep_nerd_l3_toggle.py'
+          raw=gzip.decompress(base64.b64decode(''.join((root/n).read_text('utf8').strip() for n in m['chunks'])))
+          assert hashlib.sha256(raw).hexdigest()==m['baseSha256']
+          html=raw.decode('utf8')
+          for p in m['patches']:
+              html=load_patch(root/p)(html)
+          sealed=html.encode('utf8')
+          assert hashlib.sha256(sealed).hexdigest()==m['finalSha256']
+          assert len(sealed)==m['finalBytes']
+          html=load_patch(root/'patches/v11_273_organic_galaxy_filaments.py')(html)
+          for needle in ('SWYRL_ENGINE_DEPLOY_MARKER: V11_273_ORGANIC_GALAXY_FILAMENTS',
+            'function se270WispSpec(k,cfg){','float rough=noise2(',
+            'slimWispsPerEmitter:ROOT_N-ROOT_INNER',
+            'window.SWYRL_ENGINE_SHEEP_NERD_L3_272',
+            'window.SWYRL_ENGINE_SHEEP_LAN_VISIBILITY_271'):
+            assert needle in html,needle
+          assert html.count('renderer.setAnimationLoop(tick);')==1
+          data=html.encode('utf8')
+          Path('/tmp/se273.html').write_bytes(data)
+          print('V11_273_CANDIDATE_SHA256='+hashlib.sha256(data).hexdigest(),flush=True)
+          print('V11_273_CANDIDATE_BYTES='+str(len(data)),flush=True)
+          print('V11_273_CANDIDATE_PATCHES='+str(len(m['patches'])+1),flush=True)
+          PY
+          python3 projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se273.html
+          python3 -m py_compile projects/swrlz-forge-moba/patches/v11_273_organic_galaxy_filaments.py
