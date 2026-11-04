@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Focused §E v11.251 validation: final source after curve-dock and star-phase fixes."""
+"""Focused §E v11.251 validation: upright galaxy, editor docking and real curve settings."""
 import base64,gzip,hashlib,json,sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
