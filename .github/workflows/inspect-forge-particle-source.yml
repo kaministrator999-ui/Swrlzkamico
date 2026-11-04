@@ -1,0 +1,17 @@
+name: §E effective particle source diagnostic
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'projects/swrlz-forge-moba/scripts/inspect_v11_254_runtime.py'
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Inspect effective stage / workspace / render source
+        run: python3 projects/swrlz-forge-moba/scripts/inspect_v11_254_runtime.py
