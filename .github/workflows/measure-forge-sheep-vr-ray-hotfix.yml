@@ -1,4 +1,5 @@
 name: §E Sheep Tag VR ray hotfix integrity
+# Hotfix measurement after moving the preview guard behind the patch ladder.
 on:
   push:
     branches: [main]
