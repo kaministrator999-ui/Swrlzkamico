@@ -32,7 +32,7 @@ def apply(html):
 '  gl_FragColor=vec4(uColor*(.70+.85*turbulence),clamp(opacity,0.,.96));',""",
        "billowing irregular smoke with soft negative space")
     html=once(html,
-      "'  vec2 drift=vec2(x*23.+uTime*.045,y*5.7-uTime*.026);',",
+      "' vec2 drift=vec2(x*23.+uTime*.045,y*5.7-uTime*.026);',",
       "'  vec2 drift=vec2(x*17.+uTime*.038,y*4.2-uTime*.021);',",
       "coarser smoke mass, slow texture crawl")
     # No extra GPU draw calls: two smoke ribbons already exist for each arm.
