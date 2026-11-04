@@ -223,9 +223,8 @@ function se265UpdateHud(now){
     currentProject?.kind==='sheep-tag'&&!renderer.xr?.isPresenting;
   hud.button.hidden=!eligible;
   hud.panel.hidden=!eligible||!se265Perf.hudOpen;
-  if(eligible&&se265Perf.hudOpen&&now-se265Perf.lastHudPaint>920){
-    se265Perf.lastHudPaint=now;se265PaintHud();
-  }
+  if(eligible&&se265Perf.hudOpen)se265PaintHud();
+  se265Perf.lastHudPaint=now;
 }
 const se265OldUpdate=stUpdate;
 stUpdate=function(dt,t){
@@ -239,7 +238,7 @@ stUpdate=function(dt,t){
     }
     se265Perf.flatLast=now;
   }else se265Perf.flatLast=0;
-  if(!se265Perf.hud||now-se265Perf.lastHudPaint>700)se265UpdateHud(now);
+  if(!se265Perf.hud||now-se265Perf.lastHudPaint>950)se265UpdateHud(now);
   return r;
 };
 const se265OldStop=stStop;
