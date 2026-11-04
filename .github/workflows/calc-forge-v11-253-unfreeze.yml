@@ -1,0 +1,20 @@
+name: §E v11.253 startup unfreeze source check
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/calc-forge-v11-253-unfreeze.yml'
+      - 'projects/swrlz-forge-moba/scripts/calc_v11_253_unfreeze_integrity.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  focused-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check Python patch
+        run: python -m py_compile projects/swrlz-forge-moba/patches/v11_253_startup_unfreeze.py
+      - name: Rebuild source and verify boot observer hotfix
+        run: python3 projects/swrlz-forge-moba/scripts/calc_v11_253_unfreeze_integrity.py
