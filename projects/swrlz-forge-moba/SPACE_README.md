@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.247
+title: §wyrl§ Engine v11.249
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.249 — Native Particle Editor workstation
+
+Full purple/cyan editor workspace inspired by the owner-approved concept: Project/Assets tree, interactive camera rail, native preview, tabbed editable modifiers and a live Timeline/Curves/Output dock. Astral Vortex adds paired dynamic 3D ribbon meshes, editable vortex spin/pull/glow/tilt parameters and existing four native emitter layers. Responsive one-at-a-time mobile docks keep the 3D preview accessible; original renderer, project save, Sheep Tag, modeler and VR controls are retained. Source: 280 ordered patches; owner Moto G Power/Quest 2 acceptance pending.
 
 ## §E v11.247 — Optional scene-editor live previews
 
