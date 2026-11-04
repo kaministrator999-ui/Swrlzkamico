@@ -7,8 +7,8 @@ from pathlib import Path
 import subprocess
 import sys
 ROOT=Path(__file__).resolve().parents[1]
-SHA="aa768eb37c7a27f0252eff14b3e2a0f50b9754fb536af95e5036cd826883cb2c"
-SIZE=8004949
+SHA="ff144b3515b48ee91f9bb1522c2a42b43db0f1a5b71960394be63c1886e46f22"
+SIZE=8005222
 MARKER="SWYRL_ENGINE_DEPLOY_MARKER: V11_254_PARTICLE_DOCK_PREVIEW_CAMERA"
 parser=argparse.ArgumentParser()
 parser.add_argument("--output",required=True)
