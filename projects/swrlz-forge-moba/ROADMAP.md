@@ -1,3 +1,7 @@
+## §E v11.249 — Full native Particle Editor workstation (2026-11-04)
+
+Owner-directed redesign to match the original purple workstation image rather than merely recolor the old inspector. Two-row menu/command header; Project and Assets tree; centred VFX stage with vertical selection, pan/orbit/zoom tools plus horizontal camera/grid/focus controls; lower dock with live emitter timeline, derived curves and output; and an editable right-side inspector with Properties, Emission, Forces and Material tabs and expandable groups. Mobile uses same UI vocabulary with accessible Project, Timeline and Modifiers drawers. Astral Vortex uses 3D animated violet/cyan ribbon meshes on the existing Three.js renderer and stores four validated vortex parameters with backward-compatible defaults. Source: 280 patches. Visual/Quest acceptance remains with the owner.
+
 ## §E v11.247 — On-demand editor-side live previews (2026-11-03)
 
 Add Game Editor ✦ Preview panel containing separate authored particle and storyboard cinematic animation toggles. Reuse existing `se223Frame`, `se223State.preview` and `animeUpdateCinematic`, preserve single renderer, editor camera return, no persisted project edits, no new Play-mode burden. Preview off by default, auto-off on project/studio/Play change. Availability correctly limits cinematic to the authored Storyboard episode. Candidate source seal: 278 patches, 7,810,723 bytes, SHA-256 `0069237edcb5f32d53a349caeb7505cc9fd6466f389def849ed442e8b30cfbb4`; physical validation outstanding.
