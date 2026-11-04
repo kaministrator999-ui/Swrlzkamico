@@ -24,24 +24,7 @@ jobs:
           python3 -m py_compile projects/swrlz-forge-moba/patches/v11_271_lan_visibility_autofind.py
           node --check projects/swrlz-forge-moba/runtime/sheep_lan_visibility_autofind_v11_271.js
           node projects/swrlz-forge-moba/tests/sheep_lan_visibility_autofind_v11_271.cjs
-      - name: Reconstruct 302-patch engine and parse actual assembled JavaScript
+      - name: Verify exact sealed 302-patch engine, assets and assembled JS syntax
         run: |
-          python3 - <<'PY'
-          import json
-          from pathlib import Path
-          p=Path('projects/swrlz-forge-moba/source-manifest.json')
-          m=json.loads(p.read_text('utf8'))
-          assert m['name']=='§wyrl§ Engine v11.271' and len(m['patches'])==302
-          assert m['patches'][-1]=='patches/v11_271_lan_visibility_autofind.py'
-          m['finalSha256']=None
-          m['finalBytes']=None
-          p.write_text(json.dumps(m,indent=2),encoding='utf8')
-          PY
-          python3 projects/swrlz-forge-moba/build_space.py --output /tmp/se271
-          python3 projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se271/index.html
-          grep -q 'window.SWYRL_ENGINE_SHEEP_LAN_VISIBILITY_271' /tmp/se271/index.html
-          grep -q 'SWYRL_ENGINE_DEPLOY_MARKER: V11_271_LAN_VISIBILITY_AUTOFIND' /tmp/se271/index.html
-          cmp /tmp/se271/index.html /tmp/se271/modeler.html
-          echo "SE271_BYTES=$(wc -c < /tmp/se271/index.html)"
-          echo "SE271_SHA256=$(sha256sum /tmp/se271/index.html | cut -d' ' -f1)"
-          echo "SE271_SOURCE_OK"
+          python3 projects/swrlz-forge-moba/scripts/verify_v11_271_release.py --output /tmp/se271-verified
+          echo SE271_SOURCE_VERIFIED
