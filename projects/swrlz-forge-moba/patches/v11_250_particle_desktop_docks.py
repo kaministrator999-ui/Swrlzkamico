@@ -41,7 +41,7 @@ def apply(html):
    blending:THREE.AdditiveBlending,opacity,color:0xffffff
   });"""
     new_mat="""  const mat=new THREE.ShaderMaterial({
-   side:THREE.DoubleSide,transparent:true,depthWrite:false,
+   vertexColors:true,side:THREE.DoubleSide,transparent:true,depthWrite:false,
    blending:THREE.AdditiveBlending,
    uniforms:{uOpacity:{value:opacity},uTime:{value:0}},
    vertexShader:`
