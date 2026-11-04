@@ -354,6 +354,12 @@ function build(){
   mobile.append(b);
  }root.append(mobile);shell.append(root);
  holder.append(panel);restructure();
+ // Older mobile collapse left an inline !important display:none on this scroll area.
+ // Reset that native state before our independently docked modifier inspector mounts.
+ window.SWYRL_ENGINE_PARTICLE_COLLAPSE_245?.reset?.();
+ const scroll=panel.querySelector('.se223-scroll');
+ scroll?.style.removeProperty('display');scroll?.removeAttribute('aria-hidden');
+ if(scroll)scroll.inert=false;
  panel.hidden=false;panel.classList.add('se225-docked');
  const legacy=panel.querySelector('.se223-scroll');
  if(legacy){legacy.querySelector('.se223-editor')?.removeAttribute('hidden');}
