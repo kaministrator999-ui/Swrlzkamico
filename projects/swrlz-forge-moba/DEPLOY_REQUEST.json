@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.259",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_259_SMOKY_GALAXY_ARMS",
-  "reason": "Publish §E v11.259 in response to owner's 11:42 Moto screenshot: six arms are now shaped correctly but clouds remain too faint and effects read as neon wires. Existing half-S ribbons now use outward-widening irregular, softly blended violet/cyan smoke under emissive filaments; coarser slowly drifting turbulence, native schema-validated editable Smoke density and one-time UV uploads. Preserve 11.257 TDZ and 11.258 isolated particle errors, single renderer, star/core and slow rotation. Generated 290 patches, 8,019,484 HTML bytes, exact source SHA256 b7c674c2e2b1b772f0816997b891ca812ae37ff6684460e903154e0e68b29bde from successful reconstruction. Full packaging verification is the deploy gate; physical Moto/Quest acceptance pending.",
-  "sourceCommit": "c8dd8453dc6a4eed0249c2867890a78d6e23f558",
-  "sourceIntegritySha256": "b7c674c2e2b1b772f0816997b891ca812ae37ff6684460e903154e0e68b29bde"
+  "releaseVersion": "v11.260",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_260_NEBULA_WISP_ALPHA_MASK",
+  "reason": "Publish §E v11.260 in response to owner Moto screenshot v11.259 at 2:02 PM showing flat translucent colored fan/paddle smoke panels. Narrow original 6 half-S arm smoke ribbons and use layered noise-carved holes, feathered edges and slender wisps instead of a uniform alpha floor; preserve native smoke density, slow rotation, bright filament/core/stars, source lineage, v11.257 TDZ fix and v11.258 per-emitter errors. Full package verification passed; source sealed at 291 patches, 8,019,766 bytes, SHA256 1384581988b3165007da5d932ce5b2b5b40b558ede4d257923abc4847c761172. Real Moto/Quest visual validation remains owner acceptance gate.",
+  "sourceCommit": "0212f74a584ed30d16d5dead9cd1fd87c4b92a64",
+  "sourceIntegritySha256": "1384581988b3165007da5d932ce5b2b5b40b558ede4d257923abc4847c761172"
 }
