@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Compute the v11.252 exact artifact receipt without bypassing the sealed v11.251 manifest."""
+"""Compute v11.252 exact artifact receipt after native-closure anchor repair."""
 import base64,gzip,hashlib,json,sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
