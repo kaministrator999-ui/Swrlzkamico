@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Print focused effective runtime source for the 11.254 Particle Studio bug."""
+"""Inspect effective preview and camera runtime source for 11.254 bug reproduction."""
 import base64,gzip,json,hashlib,sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT))
