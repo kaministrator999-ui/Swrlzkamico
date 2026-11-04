@@ -1,0 +1,24 @@
+name: §E v11.247 focused integrity calculator
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/calc-forge-v11-247-editor-preview.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  editor-preview-integrity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check only the new preview source syntax
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/editor_live_preview_v11_247.js
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_247_editor_live_previews.py
+      - name: Measure exact 278-patch candidate and confirm single renderer
+        run: python3 projects/swrlz-forge-moba/scripts/calc_v11_247_preview_integrity.py
