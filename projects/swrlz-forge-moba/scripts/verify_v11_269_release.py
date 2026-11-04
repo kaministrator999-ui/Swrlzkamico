@@ -146,7 +146,7 @@ for term in (
     "float alpha=clamp((haze*.90+wisp*.54)*edge*uMistDensity*shimmer,0.0,.30);",
     "vec2 p=rotated*vec2(1.10,.67);",
     "const u=.018+.96*(ordinal+.31+Math.random()*.24)/(MIST_N/3);",
-    "lateral:side*(.014+.083*u),height:(Math.random()-.5)*(.025+.105*u)",
+    "lateral:side*(.014+.072*u),height:(Math.random()-.5)*(.018+.085*u)",
     "const grow=u=>b.kind==='filament'?",
     "   .031+u*.014:",
     "b.mat.uniforms.uOpacity.value=(b.kind==='filament'?1.08",
