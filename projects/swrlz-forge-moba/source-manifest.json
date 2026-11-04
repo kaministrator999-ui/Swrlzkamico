@@ -307,6 +307,6 @@
     "patches/v11_259_smoky_arm_volume.py",
     "patches/v11_260_nebula_wisp_mask.py"
   ],
-  "finalBytes": 8019484,
-  "finalSha256": "b7c674c2e2b1b772f0816997b891ca812ae37ff6684460e903154e0e68b29bde"
+  "finalBytes": 8019766,
+  "finalSha256": "1384581988b3165007da5d932ce5b2b5b40b558ede4d257923abc4847c761172"
 }
