@@ -319,6 +319,6 @@
     "patches/v11_271_lan_visibility_autofind.py",
     "patches/v11_272_sheep_nerd_l3_toggle.py"
   ],
-  "finalBytes": null,
-  "finalSha256": null
+  "finalBytes": 8080427,
+  "finalSha256": "e717b9f184bb03ebe1c1259bc64d810548a94aa669da9aa145d8b80b964dde27"
 }
