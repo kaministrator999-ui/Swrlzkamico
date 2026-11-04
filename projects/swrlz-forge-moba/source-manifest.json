@@ -295,6 +295,6 @@
     "patches/v11_247_editor_live_previews.py",
     "patches/v11_248_astral_vortex_starters.py"
   ],
-  "finalBytes": 7810723,
-  "finalSha256": "0069237edcb5f32d53a349caeb7505cc9fd6466f389def849ed442e8b30cfbb4"
+  "finalBytes": 7831738,
+  "finalSha256": "932460d952611fe6857741d1c985049d2edf7d62c302983889fe7601e9fbf27e"
 }
