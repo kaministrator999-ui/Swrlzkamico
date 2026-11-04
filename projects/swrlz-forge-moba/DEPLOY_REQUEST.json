@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.261",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_261_LUMINOUS_NEBULA_WISPS",
-  "reason": "Owner Moto 2:12 PM screenshot confirms v11.260 six half-S arms, core/stars, and timeline work but smoke is nearly invisible. v11.261 restores luminous additive smoke using existing ribbon geometry, loosens overly restrictive fractal alpha mask, retains noise-carved gaps and feathered tips, gently widens outer trails and caps fragment alpha to prevent previous opaque fan/paddle artifacts. No additional particles, renderer or update loops; preserve saved Smoke density, older TDZ fix, emitter fault toasts and Sheep Tag/Quest input. Focused full package verification success; sealed 292 patches, 8,020,174 bytes, SHA256 147d2c864d2d366f134e3924e824a4b13c0b01633264de6853a565f5fed28c68. Owner Moto/Quest visual/performance acceptance pending.",
-  "sourceCommit": "35e79d9cc930c486dcd6bc9d278e5b71c081ee02",
-  "sourceIntegritySha256": "147d2c864d2d366f134e3924e824a4b13c0b01633264de6853a565f5fed28c68"
+  "releaseVersion": "v11.262",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_262_BILLOWING_GALAXY_MIST",
+  "reason": "User's three Moto screenshots show v11.261 neon-wires and stars with nearly invisible fog across three camera angles. Root cause: planar smoke ribbons cannot make a cloud volume; prior alpha adjustments oscillated between fan panels and near-invisible strips. v11.262 retains six short half-S filaments, stars, central core and slow rotation, hides flat smoke strip meshes, adds a single batched THREE.Points geometry of 54 camera-facing procedurally textured, feathered and noise-broken purple/cyan billows per native arm emitter (one extra draw call each), updates them in the existing se223Step with no new loops and disposes GPU buffers on removal. Keeps native smoke spread/density controls, particle error isolation, the v11.257 TDZ repair, project/editor/Quest/Sheep Tag integrity. Focused full package source verification succeeded, 293 patches, 8,025,626 HTML bytes, SHA256 a92a3c016e196e42f186bd83eba55c982e3b62db2ff37b81e968a442bfef0fa4. Owner mobile/Quest performance and visual acceptance pending.",
+  "sourceCommit": "4f12e0b885e2fea3e0d4e4f3e99e6f55f91c9d1f",
+  "sourceIntegritySha256": "a92a3c016e196e42f186bd83eba55c982e3b62db2ff37b81e968a442bfef0fa4"
 }
