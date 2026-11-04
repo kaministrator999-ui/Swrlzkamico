@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.266",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_266_SHADER_ARRAY_BOOT_FIX",
-  "reason": "Emergency §E initialization fix. v11.264 inserted 'varying float vMistAngle;' into both mist shader JavaScript string arrays without a trailing comma, causing SyntaxError: Unexpected string while parsing the entire editor inline script (before particle-error guards could execute). v11.266 repairs precisely those two array separators. New release gate extracts the actual assembled inline script and runs node --check, which passed (INLINE_JS_PARSE_OK, 7,613,087 chars). Full source package and 69 assets verify: 297 patches, 8,051,140 HTML bytes, SHA256 86187ab2af2675cd158602594ae541ec2c8205f2f0c5aaf533b0591645eb438c. Preserves v11.264 purple-rooted galaxy visual assets and independent v11.265 Sheep Tag house batching and VR/browser Nerd Stats; no new gameplay/VR changes. Owner real-device startup, galaxy and Quest performance acceptance pending.",
-  "sourceCommit": "56151d6c07f5557dd4107e2ddd6573c3fb90dd14",
-  "sourceIntegritySha256": "86187ab2af2675cd158602594ae541ec2c8205f2f0c5aaf533b0591645eb438c"
+  "releaseVersion": "v11.267",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_267_CONTINUOUS_GALAXY_WISPS",
+  "reason": "Owner Moto screenshot confirms purple/cyan galaxy color correction but visible individual leaf/decal smoke stamps overwhelm the continuous long energy arms. v11.267 keeps 6 purple-rooted half-S filaments with cyan transitions, purple patches, 6 short inner violet tendrils and core glow. Focused correction: keep 60 instead of 72 mist sprites per native color emitter, restrict random phase/lateral/height/depth scattering to the spiral paths, stretch sprite alpha along projected tangents with reduced rotation variation, soften artist-derived atlas masks using a low-contrast connecting haze in the same shader, and increase fine main filament width and opacity slightly. Preserve slow swirl, user smoke controls, native emitters, draw-call count, renderer, v11.266 boot syntax recovery, v11.258 particle fault isolation, v11.265 Sheep Tag batching/Nerd Stats, and Quest controls. Full 298-patch source reconstruction, assembled Node JS syntax check and complete 69 asset package verification succeeded. 8,052,129 HTML bytes, SHA256 10231c4158ebca88a9c471d7645b41a2a807ff14b1db0c66c01097e2babb9a80. Mobile/VR visual acceptance pending.",
+  "sourceCommit": "90ac641efeb58aaa39c14eff3afa03161725997b",
+  "sourceIntegritySha256": "10231c4158ebca88a9c471d7645b41a2a807ff14b1db0c66c01097e2babb9a80"
 }
