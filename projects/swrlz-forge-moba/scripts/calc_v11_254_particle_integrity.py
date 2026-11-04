@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Source rebuild and focused Particle Studio dock/preview/camera regression check."""
+"""Measure documented v11.254 Particle Studio repair with final release inputs."""
 import base64,gzip,hashlib,json,sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
