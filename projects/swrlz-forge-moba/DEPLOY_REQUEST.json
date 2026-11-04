@@ -4,7 +4,7 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.249",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_249_PARTICLE_WORKSTATION",
-  "reason": "Publish §E v11.249, owner-directed concept-faithful Particle Editor workstation: two-row command header, Project/Assets tree, native camera orbit/pan/zoom tool strips, dominant 3D viewport, tabbed/collapsible real emitter modifiers, timeline/curves/output bottom dock and responsive mobile panes. Astral Vortex now generates GPU-efficient animated cyan/violet ribbon meshes and editable validated vortex spin/pull/glow/tilt. Append-only 280-patch single-renderer build passed source/syntax checks. HTML 7,889,406 bytes SHA256 b03224aa7198a8ec57ec054d1c39b8639f76b9289149c5be6ca539bb56ab5dae. Do not affect §C, original game/modeler/materials, Sheep Tag or Quest play. Physical Moto and Quest acceptance pending.",
-  "sourceCommit": "64079a413894e173b6fadf65a4386dd68c0e7017",
+  "reason": "Retry §E v11.249 workstation deploy after correcting the verifier finalArtifact filename from the previous v11.248 name. First request stopped at the package gate before upload; app source is unchanged. Verified 280 patches, 7,889,406 HTML bytes, SHA256 b03224aa7198a8ec57ec054d1c39b8639f76b9289149c5be6ca539bb56ab5dae. Purple/cyan multi-dock Particle Editor, timeline and modifier groups, camera controls, native 3D Astral Vortex ribbons; owner phone and Quest acceptance pending.",
+  "sourceCommit": "6b7139c3f54f7382833a4d138c5741779b4c03dc",
   "sourceIntegritySha256": "b03224aa7198a8ec57ec054d1c39b8639f76b9289149c5be6ca539bb56ab5dae"
 }
