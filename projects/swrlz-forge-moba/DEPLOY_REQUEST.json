@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.256",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_256_GALAXY_AI_XR_RAY",
-  "reason": "Publish targeted §E v11.256: Particle Studio camera/project rebind prevents galaxy preview disappearing and controls detaching after emitter edits; living Sheep Tag AI keeps modern sheep/wolf escape-path scoring but evaluates at most two route candidates per game frame across bots to reduce alive-sheep frame spikes; Quest building selector uses physical controller-to-terrain ray over the playable meadow instead of short sheep-centered synthetic projection; house ghost only on valid ground, VR menu beam/reticle overlays menu icons. Append-only 287-patch source, 8,015,813 bytes, SHA256 e1d057192f972277efca950198d77e92684556a3f37fd634d98cdf83f00b7d3c. No added renderer or broad automated browser/VR tests; owner real-device acceptance pending.",
-  "sourceCommit": "c9543ef491ea29220cbc47af50c6df3865708442",
-  "sourceIntegritySha256": "e1d057192f972277efca950198d77e92684556a3f37fd634d98cdf83f00b7d3c"
+  "releaseVersion": "v11.257",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_257_GALAXY_FIRST_FRAME_UNFREEZE",
+  "reason": "Publish §E v11.257 focused Astral Vortex native particle first-frame ReferenceError repair. Confirmed in real Three.js repro: v11.251 nebula normalAt's const b=location(...b.index) shadows outer ribbon band b, throws TDZ error and aborts shared animation frame, freezing timeline/viewport when violet/cyan emitters load. New append-only patch renames inner sample nextPoint without changing shaders, native particles, saved projects, game runtime or Quest. Corrected source passed all four emitter first steps and 90 complete frames, 2 nebula bands, 4 live records. Sealed 288 patches, 8,015,799 bytes, SHA256 8dd519e2f2fdd85138c8ff333cdeea72341ebc0af25cbb19741e46e4f4fbc87a. Owner phone UI visual acceptance pending.",
+  "sourceCommit": "604560f2b6da636e56249e4a4c8e4d34876ae5a7",
+  "sourceIntegritySha256": "8dd519e2f2fdd85138c8ff333cdeea72341ebc0af25cbb19741e46e4f4fbc87a"
 }
