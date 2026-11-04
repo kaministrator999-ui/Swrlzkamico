@@ -1,6 +1,6 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.258",
+  "name": "\u00a7wyrl\u00a7 Engine v11.258",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
@@ -305,6 +305,6 @@
     "patches/v11_257_nebula_tdz_unfreeze.py",
     "patches/v11_258_galaxy_slow_smoke_guard.py"
   ],
-  "finalBytes": 8015799,
-  "finalSha256": "8dd519e2f2fdd85138c8ff333cdeea72341ebc0af25cbb19741e46e4f4fbc87a"
+  "finalBytes": 8019032,
+  "finalSha256": "d86e28c28430f01b57c6e7f546d0448194229f86136633469f59ed44c203b121"
 }
