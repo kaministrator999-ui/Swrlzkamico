@@ -73,7 +73,7 @@ for term in (
     "nebulaDensity",
     "Smoke density",
     "kind===\'filament\'?THREE.AdditiveBlending:THREE.NormalBlending",
-    "const turbulence=.64*n+.36*n2;",
+    "float turbulence=.64*n+.36*n2;",
     "if(!b.se259UVReady)",
     "const bands=[];",
     "const a=phase+spin+arm*TAU/3+u*3.0+.38*Math.sin(TAU*u);",
