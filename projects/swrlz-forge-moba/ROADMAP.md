@@ -1,6 +1,6 @@
 ## §E v11.247 — On-demand editor-side live previews (2026-11-03)
 
-Add Game Editor ✦ Preview panel containing separate authored particle and storyboard cinematic animation toggles. Reuse existing `se223Frame`, `se223State.preview` and `animeUpdateCinematic`, preserve single renderer, editor camera return, no persisted project edits, no new Play-mode burden. Preview off by default, auto-off on project/studio/Play change. Availability correctly limits cinematic to the authored Storyboard episode. Candidate source seal: 278 patches, 7,810,462 bytes, SHA-256 `7d5e780b36c6b64939a8974c8300c0cd768b2b80c00ca4e0104197cbba7b84d8`; physical validation outstanding.
+Add Game Editor ✦ Preview panel containing separate authored particle and storyboard cinematic animation toggles. Reuse existing `se223Frame`, `se223State.preview` and `animeUpdateCinematic`, preserve single renderer, editor camera return, no persisted project edits, no new Play-mode burden. Preview off by default, auto-off on project/studio/Play change. Availability correctly limits cinematic to the authored Storyboard episode. Candidate source seal: 278 patches, 7,810,723 bytes, SHA-256 `0069237edcb5f32d53a349caeb7505cc9fd6466f389def849ed442e8b30cfbb4`; physical validation outstanding.
 
 ## §E v11.244 — Sheep Tag menu, meadow and capture/destruction responsiveness (2026-11-03)
 
