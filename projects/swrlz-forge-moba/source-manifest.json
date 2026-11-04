@@ -301,6 +301,6 @@
     "patches/v11_253_startup_unfreeze.py",
     "patches/v11_254_particle_dock_preview_camera.py"
   ],
-  "finalBytes": 8004949,
-  "finalSha256": "aa768eb37c7a27f0252eff14b3e2a0f50b9754fb536af95e5036cd826883cb2c"
+  "finalBytes": 8005222,
+  "finalSha256": "ff144b3515b48ee91f9bb1522c2a42b43db0f1a5b71960394be63c1886e46f22"
 }
