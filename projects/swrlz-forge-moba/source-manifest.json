@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.251",
+  "name": "§wyrl§ Engine v11.252",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_251.html",
+  "finalArtifact": "swyrl_engine_v11_252.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -296,8 +296,9 @@
     "patches/v11_248_astral_vortex_starters.py",
     "patches/v11_249_particle_studio_workstation.py",
     "patches/v11_250_particle_desktop_docks.py",
-    "patches/v11_251_unified_studios_galaxy_curves.py"
+    "patches/v11_251_unified_studios_galaxy_curves.py",
+    "patches/v11_252_stress_diagnostics.py"
   ],
-  "finalBytes": 7990559,
-  "finalSha256": "aa0e0d0e0bb827c2d28d2cf2ab476ca4ebc18582e11e2557b65b837dfca97337"
+  "finalBytes": 8003351,
+  "finalSha256": "364f108cd052ff4877686fa56ee86ebd60141078e57b802a68ff2aec0723b09f"
 }
