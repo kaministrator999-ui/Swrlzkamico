@@ -37,9 +37,8 @@ def apply(html):
     html = once(html, "window.SWRLZ_FORGE_BUILD=",
                 js + "\nwindow.SWRLZ_FORGE_BUILD=",
                 "load native vortex motion and real library UI")
-    html = once(html, "</head>",
-                '<style id="se248AstralVortexTheme">\n' + css + '\n</style>\n</head>',
-                "add scoped purple/cyan Particle Studio styling")
+    html = html.replace("</head>",
+                        '<style id="se248AstralVortexTheme">\n' + css + '\n</style>\n</head>', 1)
     old_provenance = " source.engine='§wyrl§ Engine · Maker v11.247';source.version=11.247;"
     if html.count(old_provenance) != 2:
         raise AssertionError(("v11.248 source provenance", html.count(old_provenance)))
