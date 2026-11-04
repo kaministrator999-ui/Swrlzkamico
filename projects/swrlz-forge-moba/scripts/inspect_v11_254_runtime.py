@@ -6,8 +6,9 @@ ROOT=Path(__file__).resolve().parents[1];sys.path.insert(0,str(ROOT))
 from build_space import load_patch
 m=json.loads((ROOT/'source-manifest.json').read_text())
 s=gzip.decompress(base64.b64decode(''.join((ROOT/n).read_text().strip() for n in m['chunks']))).decode()
-for name in m['patches']:s=load_patch(ROOT/name)(s)
+for name in m['patches'][:-1]:s=load_patch(ROOT/name)(s)
 for key,aft,bef in [
+ ('function stBotSheep(unit)',2300,0),
  ('function se225Open(mode,push=true)',3600,0),
  ('function se225Hide(clearRoute=false)',1000,0),
  ('const stageActive=window.SWYRL_ENGINE_PARTICLE_STAGE_240',1500,450),
