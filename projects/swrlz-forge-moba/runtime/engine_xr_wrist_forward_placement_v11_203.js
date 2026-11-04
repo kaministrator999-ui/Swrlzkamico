@@ -196,7 +196,10 @@ const se203OriginalRenderRay=se192RenderRay;
 se192RenderRay=function(record,hit){
  const result=se203OriginalRenderRay(record,hit);
  if(record!==se192InputRecord('right'))return result;
- const isBuild=se200Active()&&stUi.build&&!se195.visible&&!se195.photo;
+  // The quick-build thumbstick wheel has its own modal pointer. Do not
+  // regenerate the costly ground target/3D guide behind that wheel.
+  const quickWheelOpen=typeof se204!=='undefined'&&!!se204.wheel?.root?.visible;
+  const isBuild=se200Active()&&stUi.build&&!se195.visible&&!se195.photo&&!quickWheelOpen;
  if(!isBuild){se203GroundGuideHide();return result;}
  const target=se203GroundFromForwardRay(record),cast=se192Ray(record);
  if(!target||!cast?.origin||!record?.se192){
