@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Recheck §E v11.256 with modern living-sheep AI route budget preserved."""
+"""Measure current v11.256 modern AI path budgets and real VR rays."""
 import base64,gzip,hashlib,json,sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
