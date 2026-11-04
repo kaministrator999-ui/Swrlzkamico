@@ -20,7 +20,7 @@ short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 
 **Control and instrumentation:** Explicit Apply and Stop, resource disposal on stop/workspace exit/visibility loss, current actual count, approximate requestAnimationFrame FPS and frame time. These are whole-page animation-frame readings, not GPU timing metrics. Extremely high loads are *intentionally* capable of stalling a weak device; movement of the slider itself never allocates giant geometry. Tests do not change Sheep Tag Play, radial menus, VR controls, scene files, network authority or physics.
 
-**Source receipt:** v11.252 has 283 ordered patches; generated HTML **8,003,351 bytes**, SHA-256 `364f108cd052ff4877686fa56ee86ebd60141078e57b802a68ff2aec0723b09f`. Focused JavaScript syntax and full patched-source integrity succeeded; real Moto G Power / Quest 2 acceptance remains with the owner.
+**Source receipt:** v11.252 has 283 ordered patches; generated HTML **8,003,675 bytes**, SHA-256 `f0368006687eb8d588cce4e999e4bd1728701b45760b236d6b8797c9d6628c8b`. Focused JavaScript syntax and full patched-source integrity succeeded; real Moto G Power / Quest 2 acceptance remains with the owner.
 
 
 ## §E v11.251 · Upright Galaxy Nebula + native editable curves + unified studios (2026-11-04)
