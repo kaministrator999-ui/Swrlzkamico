@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.248",
+  "name": "§wyrl§ Engine v11.249",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_248.html",
+  "finalArtifact": "swyrl_engine_v11_249.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -293,7 +293,8 @@
     "patches/v11_245_particle_inspector_collapse.py",
     "patches/v11_246_particle_bottom_toggle.py",
     "patches/v11_247_editor_live_previews.py",
-    "patches/v11_248_astral_vortex_starters.py"
+    "patches/v11_248_astral_vortex_starters.py",
+    "patches/v11_249_particle_studio_workstation.py"
   ],
   "finalBytes": 7831738,
   "finalSha256": "932460d952611fe6857741d1c985049d2edf7d62c302983889fe7601e9fbf27e"
