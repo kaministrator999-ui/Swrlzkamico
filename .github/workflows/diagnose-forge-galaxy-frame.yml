@@ -6,6 +6,7 @@ on:
       - '.github/workflows/diagnose-forge-galaxy-frame.yml'
       - 'projects/swrlz-forge-moba/scripts/test_galaxy_runtime_257.cjs'
       - 'projects/swrlz-forge-moba/scripts/extract_vfx_runtime_257.py'
+      - 'projects/swrlz-forge-moba/scripts/calc_v11_257_galaxy_integrity.py'
   workflow_dispatch:
 permissions:
   contents: read
@@ -27,3 +28,5 @@ jobs:
           THREE_PATH: /tmp/se257/node_modules/three
           RUNTIME_ROOT: projects/swrlz-forge-moba/runtime
         run: node projects/swrlz-forge-moba/scripts/test_galaxy_runtime_257.cjs /tmp/se257/effective.js /tmp/se257/nebula.js
+      - name: Rebuild final v11.257 and calculate release receipt
+        run: python3 projects/swrlz-forge-moba/scripts/calc_v11_257_galaxy_integrity.py
