@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.264",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_264_PURPLE_ROOTED_SPECTRAL_ARMS",
-  "reason": "Owner's visual reference analysis: white-hot core inside a violet energy sphere; all big wisps begin purple, long arms transition into cyan with asymmetric purple outer splotches especially left-side, at least one continuous violet arm, and shorter mostly violet tendrils between long strands. v11.264 implements per-branch cyan-transition/purple-break GLSL for six half-S filaments, coordinating atlas-textured smoke and star colors, six short purple inner strands batched in two geometries, one magenta core-halo, and tangent-aligned softened 72 mist particles per colored emitter. Preserve v11.257 TDZ and v11.258 emitter error isolation, slow rotation, saved Smoke density/spread, editor, Sheep Tag, VR and single render loop. Full package verification success, 295 patches, HTML 8,038,504 bytes, SHA256 f40af009831967e7ef8d734862900a1c75f2040f4aa41a8019a88b7b9107b61f. Owner Moto/Quest visual and performance acceptance pending.",
-  "sourceCommit": "4ff58fee6d41d7f11a70a43370a1bc612dee9f38",
-  "sourceIntegritySha256": "f40af009831967e7ef8d734862900a1c75f2040f4aa41a8019a88b7b9107b61f"
+  "releaseVersion": "v11.265",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_265_SHEEP_RENDER_NERD_STATS",
+  "reason": "Owner Quest 2 evidence: Sheep Tag lags and shows ground/white screen artifacts with visible dense houses and sheep, while comparative WebXR games remain smooth. v11.265 batches static meshes per material only for runtime-placed Sheep Tag houses, retaining texture UVs, exact shape, materials/shadows, dynamic pivots, gameplay geometry, physics, networking, VR controller tracking and the existing render loop. The in-game Nerd Stats UI is toggled on the flat browser, or opened from the VR SESSION wheel; it reports renderer draws/triangles/memory, runtime house batching estimates, frame callback cadence and gaps, fog uploads/CPU. Flat HUD refresh is throttled. Full 296-patch source built and checksum sealed at 8,051,289 bytes with SHA256 1ec7a7bfd13b04c572bb83242cf95269613a4d0afb52ccd00c5ce73b0fb7495d. Quest 2 real-time performance and white fog-edge artifact acceptance remain pending; no false GPU timing claim.",
+  "sourceCommit": "b01ba38cc7039cb3ac20f1404d391c3907da3678",
+  "sourceIntegritySha256": "1ec7a7bfd13b04c572bb83242cf95269613a4d0afb52ccd00c5ce73b0fb7495d"
 }
