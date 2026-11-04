@@ -1,0 +1,26 @@
+name: §E v11.249 Particle Editor focused integrity
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/calc-forge-v11-249-workstation.yml'
+      - 'projects/swrlz-forge-moba/scripts/calc_v11_249_workstation_integrity.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  particle-workstation-integrity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax of changed studio/UI/ribbon programs
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/particle_studio_workstation_v11_249.js
+          node --check projects/swrlz-forge-moba/runtime/astral_vortex_ribbons_v11_249.js
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_249_particle_studio_workstation.py
+      - name: Measure exact 280-patch HTML and single renderer
+        run: python3 projects/swrlz-forge-moba/scripts/calc_v11_249_workstation_integrity.py
