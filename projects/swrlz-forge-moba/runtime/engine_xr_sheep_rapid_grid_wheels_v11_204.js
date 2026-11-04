@@ -280,10 +280,17 @@ function se204WheelRayHit(record){
  const hit=back&&cast.ray.intersectObject(back,false)[0];
  return hit?{ui:'se204:block',distance:hit.distance,point:hit.point}:null;
 }
-function se204WheelHover(record,hit){
+function se204WheelHover(record,hit,force=false){
  const panel=se204.wheel,index=hit?.wheelIndex;
  if(!panel||!Number.isInteger(index)||index<0||
     index>=panel.items.length||index===panel.selected)return false;
+ // The right stick remains an alternate selector. A held stick must win
+ // over passive ray hovering so the two paths cannot vibrate/flip each frame.
+ const axes=se192InputRecord('right')?.input?.gamepad?.axes;
+ if(!force&&axes?.length>=2){
+  const x=Number(axes[axes.length-2])||0,y=Number(axes[axes.length-1])||0;
+  if(Math.hypot(x,y)>=.45)return false;
+ }
  panel.selected=index;se204WheelHighlight();se204Haptic(record);
  return true;
 }
@@ -396,7 +403,7 @@ se192Select=function(record){
   // Trigger picks the ACTUAL pointed option; a miss blocks world placement.
   const hit=se204WheelRayHit(record);
   if(Number.isInteger(hit?.wheelIndex)){
-   se204WheelHover(record,hit);
+   se204WheelHover(record,hit,true);
    se204WheelCommit();
   }
   return;
