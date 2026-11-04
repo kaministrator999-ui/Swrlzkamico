@@ -424,3 +424,7 @@ body[data-se225-workspace=particles] #se249Root .se249-bottom{pointer-events:aut
 
 /* Respect the native empty-emitter state, including while a project has no VFX. */
 body[data-se225-workspace=particles] #se249Root #se223Editor[hidden]{display:none!important}
+
+/* Never leak Particle Studio chrome into Materials or Game/Modeling routes. */
+#se249Root{display:none!important}
+body[data-se225-workspace=particles] #se249Root{display:grid!important}
