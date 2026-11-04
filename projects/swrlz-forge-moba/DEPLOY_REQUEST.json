@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.272",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_272_SHEEP_NERD_L3_TOGGLE",
-  "reason": "Owner Quest 2 request: pressing the left thumbstick (L3) in immersive Sheep Tag toggles the existing world-pinned, grabbable three-page Nerd Stats panel on/off; button 3 rising-edge with release required and session/OS overlay hold guards; preserve movement stick axes, controller profiles, AI/gameplay, map editor, house batching, multiplayer LAN browser and galaxy materials. Focused Node test confirmed open/hold/release/close, non-repeating press and untouched analog movement; 303-patch 8,080,427-byte sealed engine, inline JavaScript parse and SHA256 e717b9f184bb03ebe1c1259bc64d810548a94aa669da9aa145d8b80b964dde27 verified. Quest 2 actual physical L3 acceptance remains pending.",
-  "sourceCommit": "64a1f891f355a037ebb3604f1b3651d60de9cb90",
-  "sourceIntegritySha256": "e717b9f184bb03ebe1c1259bc64d810548a94aa669da9aa145d8b80b964dde27"
+  "releaseVersion": "v11.273",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_273_ORGANIC_GALAXY_FILAMENTS",
+  "reason": "Owner Moto 5:51 PM reference-feedback iteration: v11.270 made long even neon ring arcs instead of organically tapered energy wisps and clouds remain stamped/blocky. v11.273 uses the same six shared spiral arms and existing batched secondary wisp ribbons but introduces irregular edge taper, multiple glint/break segments, varied strand lengths, purple-rooted cyan transitions and gentle daughter-branch deviations; narrows main luminous filaments, adds subtle shared trajectory turbulence, and softens existing atlas-smoke billboard edges and density. No extra particle emitter, WebGL render pass, renderer or animation tick. Preserve Particle Studio UI, mobile pan/zoom/timeline, v11.271 LAN auto-find, v11.272 Quest L3 Nerd Stats, Sheep Tag and saved projects. Sealed 304 patches at 8,081,616 assembled HTML bytes, SHA-256 e42d08da5eb7d9ce7f406da5da8d54546e0ea8e8acc2f834b434480ce4c09c2f. Full release package and JavaScript verification passed, physical mobile/Quest appearance acceptance still pending.",
+  "sourceCommit": "f3e783efc38f4a0f352b23a269ea48c507245591",
+  "sourceIntegritySha256": "e42d08da5eb7d9ce7f406da5da8d54546e0ea8e8acc2f834b434480ce4c09c2f"
 }
