@@ -4,7 +4,7 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.247",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_247_EDITOR_PREVIEW_TOGGLES",
-  "reason": "Owner-requested edit-only preview switches. Add a compact Game Engine ✦ Preview panel with independent native scene particle preview and authored Storyboard cinematic playback. Both default off, reset when changing project/studio/Play mode, preserve scene saves and camera restoration, and reuse the existing renderer/frame loop. Unsupported projects correctly disable cinematic playback. Focused source reconstruction and JS/Python syntax passed. Sealed 278 patches, 69 assets, 7,810,462 HTML bytes, SHA256 7d5e780b36c6b64939a8974c8300c0cd768b2b80c00ca4e0104197cbba7b84d8. Owner physical Quest 2 and Moto G Power acceptance pending.",
-  "sourceCommit": "cee40cd45fedd9a0a06cb8ed2974dbe14787637a",
-  "sourceIntegritySha256": "7d5e780b36c6b64939a8974c8300c0cd768b2b80c00ca4e0104197cbba7b84d8"
+  "reason": "Retry v11.247 after integrity gate stopped a candidate digest computed before final manifest identity registration. The finalized 278-patch source was remeasured in a focused 1-renderer build at 7,810,723 bytes, SHA256 0069237edcb5f32d53a349caeb7505cc9fd6466f389def849ed442e8b30cfbb4, then manifest, verifier and docs aligned. Change remains the same owner-requested edit-only Particle and Storyboard Cinematic preview toggles; saved content, Quest play and native engine frame loop are preserved. Owner Quest 2/Moto manual acceptance pending.",
+  "sourceCommit": "b927516319183b82f3cd818b4cee8d6080619c81",
+  "sourceIntegritySha256": "0069237edcb5f32d53a349caeb7505cc9fd6466f389def849ed442e8b30cfbb4"
 }
