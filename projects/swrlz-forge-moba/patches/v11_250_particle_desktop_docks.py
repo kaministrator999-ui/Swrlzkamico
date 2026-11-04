@@ -44,15 +44,15 @@ def apply(html):
    side:THREE.DoubleSide,transparent:true,depthWrite:false,
    blending:THREE.AdditiveBlending,
    uniforms:{uOpacity:{value:opacity},uTime:{value:0}},
-   vertexShader:\`
+   vertexShader:`
     varying vec2 vRibbonUV;
     varying vec3 vRibbonColor;
     void main(){
      vRibbonUV=uv;
      vRibbonColor=color;
      gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);
-    }\`,
-   fragmentShader:\`
+    }`,
+   fragmentShader:`
     precision mediump float;
     varying vec2 vRibbonUV;
     varying vec3 vRibbonColor;
@@ -67,7 +67,7 @@ def apply(html):
        (1.0-smoothstep(0.83,1.0,vRibbonUV.x));
      float alpha=feather*flow*wisp*lengthFade*uOpacity;
      gl_FragColor=vec4(vRibbonColor*1.18,alpha);
-    }\`
+    }`
   });"""
     html=once(html,old_mat,new_mat,"feather ribbons in the original WebGL renderer")
     # Old segment normal produced visible dark cuts between individual ribbon
@@ -116,8 +116,7 @@ def apply(html):
     html=once(html,
       "   pos.setXYZ(idx,src[0]+origin.x,src[1]+origin.y-1.7,src[2]+origin.z);",
       "   pos.setXYZ(idx,src[0]+origin.x,src[1]+origin.y-1.7,src[2]+origin.z);\n"
-      "   const uvPair=[[t0,0],[t0,1],[t1,0],[t0,1],[t1,1],[t1,0]][v];\n"
-      "   uv.setXY(idx,uvPair[0],uvPair[1]);",
+      "   uv.setXY(idx,(v===2||v===4||v===5)?t1:t0,(v===1||v===3||v===4)?1:0);",
       "soft edge interpolation on each ribbon triangle")
     html=once(html,
       " pos.needsUpdate=true;col.needsUpdate=true;\n}\nse223Step=function(cfg,dt){",
