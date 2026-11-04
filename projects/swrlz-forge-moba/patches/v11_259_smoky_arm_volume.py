@@ -27,7 +27,8 @@ def apply(html):
 '  float body=1.0-smoothstep(.48,1.04,ragged);',
 '  float current=.12*sin(x*28.+y*8.-uTime*.12);',
 '  float billows=smoothstep(.19,.73,turbulence+current);',
-'  float wisp=exp(-pow((edge-.28-.22*n)*5.5,2.0))*.2*n2;',
+'  float vein=(edge-.28-.22*n)*5.5;',
+'  float wisp=exp(-vein*vein)*.2*n2;',
 '  float opacity=tip*uOpacity*(body*(.29+.71*billows)+wisp);',
 '  gl_FragColor=vec4(uColor*(.70+.85*turbulence),clamp(opacity,0.,.96));',""",
        "billowing irregular smoke with soft negative space")
