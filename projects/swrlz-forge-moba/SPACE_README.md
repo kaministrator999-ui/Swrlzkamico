@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.256
+title: §wyrl§ Engine v11.257
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,17 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.257 — Confirmed Astral Vortex first-frame freeze repair (2026-11-04)
+
+**Owner reproduction:** Particle Studio camera and timeline animate normally until the Astral Vortex starter is loaded. On adding the violet and cyan arms, native rendering and the timeline playhead stop together while independent DOM modifier controls remain responsive.
+
+**Confirmed root cause:** The v11.251 nebula ribbon function `writeMesh` defines `normalAt` with outer band parameter `b`. Inside `normalAt`, a local declaration `const b=location(...,b.index)` shadows the outer band and tries to read the new binding before initialization. JavaScript throws `ReferenceError: Cannot access 'b' before initialization` on the first violet/cyan emitter frame, aborting the shared animation callback. This is a code exception, not evidence of particle count or GPU overload.
+
+**Minimal repair:** A new append-only patch changes only that inner sample name to `nextPoint`, retaining the correct outer band's `b.index`. No modifications to saved emitters, galaxy geometry design, shader effects, the viewport's input mapping, Sheep Tag, Quest controls, or the one renderer.
+
+**Verified:** Focused regression executed the sealed native particle core plus the real v11.248/249/251 effect modules against the Three.js library. The historical original failed for both vortex arms on the first frame; the corrected generated source passed first-step tests for violet, cyan, core and sparks, then completed 90 particle frames with four live emitter records and two nebula arms. Full release packaging and owner phone acceptance are separate gates.
+
 
 ## §E v11.256 — Galaxy preview continuity, AI sheep route smoothing and Quest building rays (2026-11-04)
 
