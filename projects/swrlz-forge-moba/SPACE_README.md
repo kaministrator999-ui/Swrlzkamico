@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.249
+title: §wyrl§ Engine v11.250
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,12 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.250 — True desktop/VR Particle Studio docks and soft vortex (2026-11-04)
+
+**Owner test feedback:** The previous 1080px/coarse-pointer CSS treated Chrome "Desktop site" and Quest browser as mobile, stacking Project and modifiers into huge bottom panels. This release uses automatic Compact only below 700 CSS pixels plus a visible **Auto / Desktop-Quest / Compact** override. Desktop mode shows the Project/Assets tree at left, live VFX viewport in the center and native Properties/Emission/Forces/Material modifiers at right. Left and right separators drag horizontally, bottom Timeline separator drags vertically, each dock has a collapse/restore button, and modifier/tree sections keep native individual accordion controls with expand-all/collapse-all. Preferences persist locally when browser storage permits.
+
+The selected Astral Vortex now uses feathered GPU shader ribbons with consistent segment normals instead of segmented neon rings; selected four-emitter starter groups are preview-isolated even after repeated loads. The lower Timeline has selected-emitter-derived Emission, Size, Opacity, Color and Rotation profiles that open real modifiers; **no keyframe editor or arbitrary extra renderer is implied**. Native project data and Quest gameplay are preserved. Sealed release source: 281 patches, 7,923,641 HTML bytes, SHA256 `f8d4f6df5a2e64fe8ef200c631557b960f5d4ab197fdfb47b39e58b23cf58954`. Owner real-device acceptance is pending.
 
 ## §E v11.249 — Native Particle Editor workstation
 
