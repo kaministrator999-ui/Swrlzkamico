@@ -297,6 +297,6 @@
     "patches/v11_249_particle_studio_workstation.py",
     "patches/v11_250_particle_desktop_docks.py"
   ],
-  "finalBytes": 7889406,
-  "finalSha256": "b03224aa7198a8ec57ec054d1c39b8639f76b9289149c5be6ca539bb56ab5dae"
+  "finalBytes": 7923641,
+  "finalSha256": "f8d4f6df5a2e64fe8ef200c631557b960f5d4ab197fdfb47b39e58b23cf58954"
 }
