@@ -9,6 +9,7 @@ const se214={
  entered:0,exited:0,positionFrames:0,headingFallbacks:0,
  cameraBlocks:0,movementBlocks:0,stoppedOrders:0,groundBlocks:0,
  beamsHidden:0,extraEffectsMuted:0,rayRestores:0,
+ menuRayHits:0,menuRayMisses:0,menuRaySelections:0,
  lastMode:'',lastError:''
 };
 function se214WheelOpen(){
@@ -43,8 +44,8 @@ function se214PositionWheel(){
 function se214HideExtraRays(){
  if(!se193XRGameActive())return;
  // se203 can reconstruct the physical-to-virtual-ground link EVERY frame
- // while stUi.build remains equipped. A modal A/X wheel is NOT a ground
- // placement action: it uses right thumbstick for the sector selector.
+ // while stUi.build remains equipped. Keep the placement guide hidden while
+ // a modal A/X wheel owns the rays; do not hide the menu targeting beams.
  if(typeof se203GroundGuideHide==='function')se203GroundGuideHide();
  for(const record of se181XR.controllers||[]){
   if(record.ray)record.ray.visible=false;
@@ -52,9 +53,8 @@ function se214HideExtraRays(){
   if(visual?.halo?.visible){visual.halo.visible=false;se214.extraEffectsMuted++;}
   if(visual?.points?.visible){visual.points.visible=false;se214.extraEffectsMuted++;}
   if(se214WheelOpen()&&record.se192){
-   if(record.se192.beam.visible)se214.beamsHidden++;
-   record.se192.beam.visible=false;
-   record.se192.dot.visible=false;
+   // A/X modal: retain controller beams for visual ray-based selection.
+   record.se192.beam.visible=true;
   }
  }
 }
@@ -137,8 +137,8 @@ se203GroundFromForwardRay=function(record){
  return se214PriorForwardGround(record);
 };
 // The original controller marker appends a SECOND glow cylinder around the
-// native tapered §E beam. In Sheep Tag Play it's visually redundant.
-// Keep one beam when placing; no beam while choosing via the thumbstick.
+// native tapered §E beam. Keep only one visible ray for the modal wheel,
+// with an endpoint on the actual hit option (not on the game terrain).
 // Editor/modeler controller effects retain their own ownership.
 const se214PriorHand=se195UpdateHand;
 se195UpdateHand=function(record,t,dist){
@@ -154,9 +154,24 @@ se192RenderRay=function(record,hit){
   if(hand?.points)hand.points.visible=false;
   if(se214WheelOpen()){
    if(typeof se203GroundGuideHide==='function')se203GroundGuideHide();
+   const menuHit=se204WheelRayHit(record);
    if(record?.se192){
-    record.se192.beam.visible=false;
-    record.se192.dot.visible=false;
+    const cast=se192Ray(record),{beam,dot}=record.se192;
+    beam.visible=true;
+    beam.scale.z=THREE.MathUtils.clamp(menuHit?.distance||1.08,.12,2.5);
+    if(menuHit?.point&&cast){
+     dot.position.copy(menuHit.point);
+     dot.lookAt(cast.origin);
+     dot.scale.setScalar(.7);dot.visible=true;
+     se214.menuRayHits++;
+     if(Number.isInteger(menuHit.wheelIndex)){
+      if(se204WheelHover(record,menuHit))se214.menuRaySelections++;
+      beam.material.color.setHex(0x9affdf);
+     }else beam.material.color.setHex(0xffd180);
+    }else{
+     dot.visible=false;beam.material.color.setHex(0xffd180);
+     se214.menuRayMisses++;
+    }
    }
    if(record?.ray)record.ray.visible=false;
   }
@@ -193,6 +208,8 @@ window.SWYRL_ENGINE_SHEEP_WHEEL_COMFORT_214=Object.freeze({
   underlyingBuildGuideSuppressed:se214.groundBlocks,
   extraRayHides:se214.beamsHidden,
   duplicateControllerAuraSuppressed:se214.extraEffectsMuted,
+  menuRayHits:se214.menuRayHits,menuRayMisses:se214.menuRayMisses,
+  rayHoverChanges:se214.menuRaySelections,
   pointerRestores:se214.rayRestores,lastError:se214.lastError
  })
 });
