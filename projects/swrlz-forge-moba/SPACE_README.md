@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.263
+title: §wyrl§ Engine v11.264
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,14 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.264 — Purple-origin spectral galaxy and mixed-color tendrils (2026-11-04)
+
+**Reference interpretation:** On the owner-supplied galaxy screenshot, the white-hot center is enveloped by purple/magenta energy. Major arms originate purple and diverge: most long cyan segments grow from purple roots, a main arm stays violet, and other blue-dominant strands (especially the leftward one) retain intermittent purple blotches. Short violet roots fill space between longer arms.
+
+**Implementation:** Branch-specific `se264Profile` transitions now color all six live spiral filaments, their associated atlas-textured smoke puffs, and the separate stars. Add three short, all-purple inner filaments per vortex arm emitter in one batched geometry each, and one purple halo behind the existing core. Purple splotches break up cyan outer lengths rather than dividing the galaxy into monochrome arms. The shared mist buffer uses 72 rather than 54 overlapping, softer smoke samples per color (same number of draw calls), with dynamic projected-tangent orientation.
+
+**Preserved:** Reference-derived 128px atlas, six half-S paths, slow swirl, editable Smoke density/arm spread, native emitter count, renderer/tick, cleanup, editor zoom/timeline, v11.257 TDZ fix, v11.258 faulty-emitter isolation and Sheep Tag/Quest controls. Focused source/package verification passed; owner real-device visual and FPS acceptance remains pending.
 
 ## §E v11.263 — Owner-supplied nebula layer texture integrated into live 3D particles (2026-11-04)
 
