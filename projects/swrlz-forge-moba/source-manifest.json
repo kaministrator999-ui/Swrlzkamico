@@ -311,6 +311,6 @@
     "patches/v11_263_reference_texture_smoke.py",
     "patches/v11_264_purple_rooted_spectral_arms.py"
   ],
-  "finalBytes": 8030567,
-  "finalSha256": "6e28c92c2a6e8e21e85d68a96d86b2d36243f7f905257d355f710918251f7ed7"
+  "finalBytes": 8038504,
+  "finalSha256": "f40af009831967e7ef8d734862900a1c75f2040f4aa41a8019a88b7b9107b61f"
 }
