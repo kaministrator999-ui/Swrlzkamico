@@ -108,12 +108,6 @@ function stBotSheep(unit){""",
   }
   unit.se256Escape=null;"""
     html=html[:begin]+replacement+html[finish:]
-    html=once(html,
-       "if(unit.captured||s.elapsed<unit.botAt)return;unit.botAt=s.elapsed+.8;",
-       "if(unit.captured||s.elapsed<unit.botAt)return;"
-       "unit.botAt=s.elapsed+.8+((unit.botIndex||0)%5)*.035;",
-       "spread AI sheep replanning over time")
-
     html=once(html,"window.SWRLZ_FORGE_BUILD=",ray+"\nwindow.SWRLZ_FORGE_BUILD=",
        "integrate physical controller ray after all previous XR wrappers")
 
