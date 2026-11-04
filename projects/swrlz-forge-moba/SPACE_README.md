@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.251
+title: §wyrl§ Engine v11.252
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,19 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.252 — Model + Particle Stress Test Modifiers (2026-11-04)
+
+**Owner request:** Add sliders and numeric modifiers inside the actual Model Atelier and Particle Studio to measure how far real geometry and active particle counts can be pushed. No automatic or hidden stress load.
+
+**Model:** Collapsible Model Geometry Stress Test in the native right inspector. Slider and exact numeric entry request 100–1,000,000 triangles. **Apply load** generates a temporary indexed high-poly sphere inside the already-running Model Atelier renderer, reports actual produced triangles and viewport render calls. It does not add an authored part, change model topology, or enter model save/Undo history.
+
+**Particles:** Collapsible Particle Stress Test in Particle Studio's right inspector, with 100–1,000,000 selectable live particles. **Apply load** creates a disposable, animated THREE.Points / BufferGeometry test cloud in the existing isolated Particle Chamber layer 25; the typed position buffer is updated each frame. This is distinct from saved native emitters, whose validated normal 96-per-emitter / 576-total runtime limits remain unchanged.
+
+**Control and instrumentation:** Explicit Apply and Stop, resource disposal on stop/workspace exit/visibility loss, current actual count, approximate requestAnimationFrame FPS and frame time. These are whole-page animation-frame readings, not GPU timing metrics. Extremely high loads are *intentionally* capable of stalling a weak device; movement of the slider itself never allocates giant geometry. Tests do not change Sheep Tag Play, radial menus, VR controls, scene files, network authority or physics.
+
+**Source receipt:** v11.252 has 283 ordered patches; generated HTML **8,003,351 bytes**, SHA-256 `364f108cd052ff4877686fa56ee86ebd60141078e57b802a68ff2aec0723b09f`. Focused JavaScript syntax and full patched-source integrity succeeded; real Moto G Power / Quest 2 acceptance remains with the owner.
+
 
 ## §E v11.251 · Upright Galaxy Nebula + native editable curves + unified studios (2026-11-04)
 
