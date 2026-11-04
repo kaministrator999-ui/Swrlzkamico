@@ -157,7 +157,10 @@ function detailsGroup(){
 function init(){
  const root=q('#se249Root');if(!root)return false;
  if(root.dataset.se250Installed==='true')return true;
- root.dataset.se250Installed='true';readSaved();
+ root.dataset.se250Installed='true';
+ state.width.left=Math.min(270,Math.round(innerWidth*.22));
+ state.width.right=Math.min(350,Math.round(innerWidth*.28));
+ readSaved();
  commandBar();
  addButton(root.querySelector('.se249-left>.se249-tabbar'),'left');
  addButton(root.querySelector('.se249-right>.se249-tabbar'),'right');
