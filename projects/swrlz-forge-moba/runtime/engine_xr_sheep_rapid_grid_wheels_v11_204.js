@@ -246,6 +246,38 @@ function se204WheelHighlight(force=false){
   se204.wheelHighlights++;se204.previousHighlight=panel.selected;
  }
 }
+// Ray targeting is menu-only: four small cached option surfaces, NEVER the
+// world/actor meshes. The pointer can hit icons, labels or large ring sectors.
+function se204WheelRayHit(record){
+ const panel=se204.wheel;
+ if(!panel?.root?.visible||!record?.controller||!se204Gameplay())return null;
+ const cast=se192Ray(record);if(!cast)return null;
+ panel.root.updateMatrixWorld(true);
+ const decor=panel.root.userData.se209Decor;
+ let closest=null;
+ const test=(mesh,index)=>{
+  if(!mesh)return;
+  const hit=cast.ray.intersectObject(mesh,false)[0];
+  if(hit&&(!closest||hit.distance<closest.distance))
+   closest={ui:'se204:option',distance:hit.distance,point:hit.point,wheelIndex:index};
+ };
+ for(let i=0;i<panel.items.length;i++){
+  test(panel.items[i].mesh,i);
+  test(decor?.wedges?.[i],i);
+  test(decor?.icons?.[i],i);
+ }
+ if(closest)return closest;
+ const back=panel.root.children[0];
+ const hit=back&&cast.ray.intersectObject(back,false)[0];
+ return hit?{ui:'se204:block',distance:hit.distance,point:hit.point}:null;
+}
+function se204WheelHover(record,hit){
+ const panel=se204.wheel,index=hit?.wheelIndex;
+ if(!panel||!Number.isInteger(index)||index<0||
+    index>=panel.items.length||index===panel.selected)return false;
+ panel.selected=index;se204WheelHighlight();se204Haptic(record);
+ return true;
+}
 function se204WheelStep(record){
  const panel=se204.wheel;
  if(!panel)return;
@@ -328,8 +360,11 @@ function se204InputFrame(){
    if(state.opened&&se204.wheel?.type===type)
     se204WheelStep(se192InputRecord('right'));
   }else if(!pressed&&state.held){
-   if(state.opened&&se204.wheel?.type===type)se204WheelCommit();
-   else if(side==='right')se204HouseTap();
+   // Trigger selection may have already closed the wheel while A/X is held.
+   // Never reinterpret that release as a new building placement or skill.
+   if(state.opened){
+    if(se204.wheel?.type===type)se204WheelCommit();
+   }else if(side==='right')se204HouseTap();
    else se204SkillTap();
    state.held=false;state.opened=false;
   }
@@ -343,12 +378,20 @@ se192XRGamepadButton=function(record,button){
 };
 const se204OldRaycast=se192Raycast;
 se192Raycast=function(record){
- if(se204.wheel)return {ui:'se204:block',distance:1.1};
+ if(se204.wheel)return se204WheelRayHit(record)||{ui:'se204:block',distance:1.1};
  return se204OldRaycast(record);
 };
 const se204OldSelect=se192Select;
 se192Select=function(record){
- if(se204.wheel)return; // wheel is MODAL, no buildings selected behind it
+ if(se204.wheel){
+  // Trigger picks the ACTUAL pointed option; a miss blocks world placement.
+  const hit=se204WheelRayHit(record);
+  if(Number.isInteger(hit?.wheelIndex)){
+   se204WheelHover(record,hit);
+   se204WheelCommit();
+  }
+  return;
+ }
  return se204OldSelect(record);
 };
 const se204OldRenderRay=se192RenderRay;
@@ -392,6 +435,7 @@ window.SWYRL_ENGINE_SHEEP_QUICK_GRID_204=Object.freeze({
   previewSkipped:se204.previewSkipped,
   menuBuilds:se204.wheelBuilds,menuReuses:se204.wheelReuses,
   menuHighlights:se204.wheelHighlights,menuDisposals:se204.wheelDisposals,
+  raySelectable:true,triggerCommitsOption:true,
   lastReason:se204.lastReason
  })
 });
