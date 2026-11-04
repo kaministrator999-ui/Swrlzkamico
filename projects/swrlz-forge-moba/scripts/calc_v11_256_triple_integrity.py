@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Measure current v11.256 modern AI path budgets and real VR rays."""
+"""Measure final documented v11.256 full source with preserved AI scoring."""
 import base64,gzip,hashlib,json,sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
