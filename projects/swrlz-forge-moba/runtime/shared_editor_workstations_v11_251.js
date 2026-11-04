@@ -30,6 +30,9 @@ function sync(){
   root.dataset.se251Layout=mode;
   root.dataset.se251Collapsed=String(state[key].collapsed);
   root.dataset.se251RightCollapsed=String(!!state[key].rightCollapsed);
+  const toggle=root.querySelector('.se251-external-collapse');
+  if(toggle){toggle.textContent=state[key].rightCollapsed?'›':'‹ Inspector';
+   toggle.setAttribute('aria-expanded',String(!state[key].rightCollapsed));}
  }
  syncLayoutInputs();
  q('#se251UnifiedMode')?.setAttribute('data-mode',state.mode);
