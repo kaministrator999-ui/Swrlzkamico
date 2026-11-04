@@ -29,7 +29,7 @@ se223Spawn=function(cfg,n){
    speed:(sparks?1.6:2.2)+Math.random()*.55,core,sparks,ox:o.x,oy:o.y,oz:o.z};
   p.x=o.x+Math.cos(angle)*radius;p.y=o.y+p.se248.height;p.z=o.z+Math.sin(angle)*radius;
  }
- const texture=glowMap();if(texture){rec.material.map=texture;rec.material.needsUpdate=true;}
+ const texture=glowMap();if(texture&&rec.material.map!==texture){rec.material.map=texture;rec.material.needsUpdate=true;}
  return count;
 };
 se223Step=function(cfg,dt){
