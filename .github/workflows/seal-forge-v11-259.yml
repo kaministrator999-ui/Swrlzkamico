@@ -45,6 +45,8 @@ jobs:
           assert 'SWYRL_ENGINE_DEPLOY_MARKER: V11_259_SMOKY_GALAXY_ARMS' in html
           assert 'window.SWYRL_ENGINE_PARTICLE_ERRORS_258' in html
           assert 'Smoke density' in html
+          assert 'float vein=(edge-.28-.22*n)*5.5;' in html
+          assert 'float wisp=exp(-vein*vein)*.2*n2;' in html
           assert 'kind===\'filament\'?THREE.AdditiveBlending:THREE.NormalBlending' in html
           assert html.count('renderer.setAnimationLoop(tick);')==1
           assert html.count('const nextPoint=location(')==1
