@@ -306,6 +306,6 @@
     "patches/v11_258_galaxy_slow_smoke_guard.py",
     "patches/v11_259_smoky_arm_volume.py"
   ],
-  "finalBytes": 8019032,
-  "finalSha256": "d86e28c28430f01b57c6e7f546d0448194229f86136633469f59ed44c203b121"
+  "finalBytes": 8019484,
+  "finalSha256": "b7c674c2e2b1b772f0816997b891ca812ae37ff6684460e903154e0e68b29bde"
 }
