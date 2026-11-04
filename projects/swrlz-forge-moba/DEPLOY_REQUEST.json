@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.265",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_265_SHEEP_RENDER_NERD_STATS",
-  "reason": "Owner Quest 2 evidence: Sheep Tag lags and shows ground/white screen artifacts with visible dense houses and sheep, while comparative WebXR games remain smooth. v11.265 batches static meshes per material only for runtime-placed Sheep Tag houses, retaining texture UVs, exact shape, materials/shadows, dynamic pivots, gameplay geometry, physics, networking, VR controller tracking and the existing render loop. The in-game Nerd Stats UI is toggled on the flat browser, or opened from the VR SESSION wheel; it reports renderer draws/triangles/memory, runtime house batching estimates, frame callback cadence and gaps, fog uploads/CPU. Flat HUD refresh is throttled. Full 296-patch source built and checksum sealed at 8,051,289 bytes with SHA256 1ec7a7bfd13b04c572bb83242cf95269613a4d0afb52ccd00c5ce73b0fb7495d. Quest 2 real-time performance and white fog-edge artifact acceptance remain pending; no false GPU timing claim.",
-  "sourceCommit": "b01ba38cc7039cb3ac20f1404d391c3907da3678",
-  "sourceIntegritySha256": "1ec7a7bfd13b04c572bb83242cf95269613a4d0afb52ccd00c5ce73b0fb7495d"
+  "releaseVersion": "v11.266",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_266_SHADER_ARRAY_BOOT_FIX",
+  "reason": "Emergency §E initialization fix. v11.264 inserted 'varying float vMistAngle;' into both mist shader JavaScript string arrays without a trailing comma, causing SyntaxError: Unexpected string while parsing the entire editor inline script (before particle-error guards could execute). v11.266 repairs precisely those two array separators. New release gate extracts the actual assembled inline script and runs node --check, which passed (INLINE_JS_PARSE_OK, 7,613,087 chars). Full source package and 69 assets verify: 297 patches, 8,051,140 HTML bytes, SHA256 86187ab2af2675cd158602594ae541ec2c8205f2f0c5aaf533b0591645eb438c. Preserves v11.264 purple-rooted galaxy visual assets and independent v11.265 Sheep Tag house batching and VR/browser Nerd Stats; no new gameplay/VR changes. Owner real-device startup, galaxy and Quest performance acceptance pending.",
+  "sourceCommit": "56151d6c07f5557dd4107e2ddd6573c3fb90dd14",
+  "sourceIntegritySha256": "86187ab2af2675cd158602594ae541ec2c8205f2f0c5aaf533b0591645eb438c"
 }
