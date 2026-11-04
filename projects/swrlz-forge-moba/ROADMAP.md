@@ -1,3 +1,13 @@
+## §E v11.258 — Short, slow galaxy wisps and particle fault containment (2026-11-04)
+
+**Reference-matching visual:** The original Astral Vortex drew two long looping rings. This release creates six shorter, half-S curved filaments across alternating violet and cyan arms, with widening irregular smoke layers, embedded small/large stars, softer fading tips and a luminous core.
+
+**Motion:** Remove duplicated spin-curve multiplication, slow global rotation and star trajectories, retain slow internal smoke motion. Avoid recalculating invisible legacy ribbon meshes and reuse the same WebGL renderer; owner device confirmation still required.
+
+**Error containment:** Per-emitter preview guards stop only the particle responsible for a runtime error, display a one-time toast with the emitter and reason, and keep the other emitters and engine tick operating. A final guard prevents particle-frame errors from aborting camera/timeline updates. Invalid saved particle data now produces a visible warning without mutating the saved project.
+
+**Boundaries:** v11.257's first-frame TDZ repair is preserved. Native actor/game data, 12-emitter limit, Sheep Tag, §C and Quest control bindings are unchanged. Deployment and owner real-device acceptance are distinct from source verification.
+
 ## §E v11.257 — Confirmed Astral Vortex first-frame freeze repair (2026-11-04)
 
 **Owner reproduction:** Particle Studio camera and timeline animate normally until the Astral Vortex starter is loaded. On adding the violet and cyan arms, native rendering and the timeline playhead stop together while independent DOM modifier controls remain responsive.
