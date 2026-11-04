@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.257",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_257_GALAXY_FIRST_FRAME_UNFREEZE",
-  "reason": "Publish §E v11.257 focused Astral Vortex native particle first-frame ReferenceError repair. Confirmed in real Three.js repro: v11.251 nebula normalAt's const b=location(...b.index) shadows outer ribbon band b, throws TDZ error and aborts shared animation frame, freezing timeline/viewport when violet/cyan emitters load. New append-only patch renames inner sample nextPoint without changing shaders, native particles, saved projects, game runtime or Quest. Corrected source passed all four emitter first steps and 90 complete frames, 2 nebula bands, 4 live records. Sealed 288 patches, 8,015,799 bytes, SHA256 8dd519e2f2fdd85138c8ff333cdeea72341ebc0af25cbb19741e46e4f4fbc87a. Owner phone UI visual acceptance pending.",
-  "sourceCommit": "604560f2b6da636e56249e4a4c8e4d34876ae5a7",
-  "sourceIntegritySha256": "8dd519e2f2fdd85138c8ff333cdeea72341ebc0af25cbb19741e46e4f4fbc87a"
+  "releaseVersion": "v11.258",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_258_SLOW_NEBULA_FAULT_GUARD",
+  "reason": "Publish §E v11.258 after complete source reconstruction and package verifier succeeded. Visual: 6 short half-S filaments (3 violet + 3 cyan), visibly layered irregular smoke, brighter thin trailing glow, small/large scattered stars and slow galaxy + internal drift. Stability: per-emitter preview try/catch with one-time toast, invalid saved VFX warning, shared-engine frame fault boundary, keep v11.257 TDZ hotfix. 289 patches, 8,019,032 HTML bytes, sealed SHA256 d86e28c28430f01b57c6e7f546d0448194229f86136633469f59ed44c203b121. Owner phone/Quest performance and visual acceptance pending.",
+  "sourceCommit": "e12f48be61eca059a885f9c6af7a77e48ff51f05",
+  "sourceIntegritySha256": "d86e28c28430f01b57c6e7f546d0448194229f86136633469f59ed44c203b121"
 }
