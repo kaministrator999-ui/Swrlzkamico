@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Focused v11.248 candidate calculator: no browser suites, no publish."""
+"""Focused v11.248 candidate calculator: no browser suites, no publish.\nRerun after HTML head insertion anchor repair.\n"""
 import base64
 import gzip
 import hashlib
