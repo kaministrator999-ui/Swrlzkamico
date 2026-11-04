@@ -14,14 +14,14 @@ sys.path.insert(0,str(ROOT))
 from build_space import load_patch
 
 manifest=json.loads((ROOT/'source-manifest.json').read_text('utf8'))
-assert manifest['name']=='§wyrl§ Engine v11.246'
-assert len(manifest['patches'])==277
+assert manifest['name']=='§wyrl§ Engine v11.247'
+assert len(manifest['patches'])==278
 base=gzip.decompress(base64.b64decode(''.join(
  (ROOT/name).read_text('utf8').strip() for name in manifest['chunks'])))
 assert len(base)==manifest['baseBytes']
 assert hashlib.sha256(base).hexdigest()==manifest['baseSha256']
 html=base.decode('utf8')
-for rel in [*manifest['patches'],'patches/v11_247_editor_live_previews.py']:
+for rel in manifest['patches']:
     html=load_patch(ROOT/rel)(html)
 raw=html.encode('utf8')
 for key in (
