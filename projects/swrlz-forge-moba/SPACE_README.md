@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.259
+title: §wyrl§ Engine v11.260
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,14 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.260 — Galaxy fan geometry corrected to feathered wisps (2026-11-04)
+
+**Owner visual evidence:** At 2:02 PM on the Moto, v11.259 shows six intact short violet/cyan arms and stars, but widened smoke strips turn into large smooth translucent fan/paddle silhouettes. Editor timeline and viewport are visibly active.
+
+**Root cause and fix:** The previous smoke pass made each planar ribbon too wide and left a nonzero body-opacity floor across most of it. Retain the proven six-arm path and slow spin, but reduce outer strip width, carve broad gaps via layered animated noise, add a faint slender wispy vein and feathered edges, and cap maximum fragment alpha so crossing layers do not form colored solid sheets. No new particles, renderer, shader program, UI panels, or update loops.
+
+**Continuity:** Preserve native saved smoke-density control, v11.257 TDZ repair, v11.258 per-emitter fault isolation, v11.259 static UV uploads and project history; no changes to Sheep Tag, other studios, multiplayer or Quest controls. Build/source verification is separate from real-device visual acceptance.
 
 ## §E v11.259 — Galaxy smoke thickness and wispy material (2026-11-04)
 
