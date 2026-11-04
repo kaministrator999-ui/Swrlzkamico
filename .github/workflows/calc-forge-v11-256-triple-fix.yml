@@ -1,0 +1,25 @@
+name: §E v11.256 galaxy AI XR ray source integrity
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/calc-forge-v11-256-triple-fix.yml'
+      - 'projects/swrlz-forge-moba/scripts/calc_v11_256_triple_integrity.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  focused-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax check native XR helper and append-only patch
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/sheep_real_build_ray_v11_256.js
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_256_galaxy_ai_xr_ray.py
+      - name: Rebuild sealed native engine and inspect targeted corrections
+        run: python3 projects/swrlz-forge-moba/scripts/calc_v11_256_triple_integrity.py
