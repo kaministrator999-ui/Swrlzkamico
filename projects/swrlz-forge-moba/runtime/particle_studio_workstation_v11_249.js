@@ -277,7 +277,7 @@ function build(){
   ['Help',[['Open project library','project']]]])dropdown.append(menu(title,actions));
  menus.append(dropdown);header.append(menus);
  const cmd=vn('div','se249-commandbar');
- for(const [label,op,cls] of [['▤ New','new',''],['▱ Projects','project',''],['▣ Save','save',''],['↶','undo','se249-square'],['↷','redo','se249-square'],['▶ Preview','preview','se249-primary'],['↺ Restart','restart',''],['■ Stop','stop',''],['✦ Burst','burst',''],['⇧ Export','export','se249-export']])cmd.append(button(label,op,cls));
+ for(const [label,op,cls] of [['▤ New','new',''],['▱ Projects','project',''],['▣ Save','save',''],['↶','undo','se249-square'],['↷','redo','se249-square'],['▶ Preview','preview','se249-primary'],['Ⅱ Pause','pause',''],['↺ Restart','restart',''],['■ Stop','stop',''],['✦ Burst','burst',''],['⇧ Export','export','se249-export']]){const b=button(label,op,cls);if(op==='preview')b.id='se249Play';cmd.append(b);}
  const projectLabel=vn('span','se249-current-project','PROJECT · VFX WORKSPACE');cmd.append(projectLabel);
  header.append(cmd);root.append(header);
  const left=vn('aside','se249-left');
@@ -372,7 +372,7 @@ function frame(dt){
  const b=vq('#se249Play');if(b)b.textContent=se223State.preview?'■ Stop preview':'▶ Preview';
 }
 window.SWYRL_ENGINE_PARTICLE_UI_249=Object.freeze({inspect:()=>({
- installed:state.installed,left:state.left,right:state.right,bottom:state.bottom,mobile:state.mobile,
+ installed:state.installed,left:state.left,right:state.right,bottom:state.bottom,mobile:state.mobile,tool:state.tool,
  emitterCount:se223List().length}),refresh:sync,frame});
 function boot(){
  if(build())return;
