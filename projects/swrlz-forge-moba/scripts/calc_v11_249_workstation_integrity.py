@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Focused §E v11.249 final candidate measurement after native panel state reset. No full browser suites."""
+"""Focused §E v11.249 final candidate measurement after route isolation and toolbar synchronization. No full browser suites."""
 import base64,gzip,hashlib,json,sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
