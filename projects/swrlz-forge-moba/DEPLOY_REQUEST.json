@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.253",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_253_STARTUP_UNFREEZE",
-  "reason": "Publish §E v11.253 release-dialog startup freeze fix. Limit shared editor and diagnostic MutationObservers to relevant editor mounts and idle diagnostic animation-frame sampling during the release notes dialog. Preserve saved models/particles, Sheep Tag gameplay and VR input. Exact sealed 284-patch source: 8,004,225 bytes; sha256 4501d2552059efdcece73f2a3713a0567480f97ee79382cfa6ff621b1c40c4e8. Device acceptance pending.",
-  "sourceCommit": "dbc5b533e81bdeaaf54b3d308fca7cbf9dc3154e",
-  "sourceIntegritySha256": "4501d2552059efdcece73f2a3713a0567480f97ee79382cfa6ff621b1c40c4e8"
+  "releaseVersion": "v11.254",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_254_PARTICLE_DOCK_PREVIEW_CAMERA",
+  "reason": "Publish §E v11.254 owner-reported Particle Studio UI and VFX hotfix. Materials resize grips no longer leak over Particle workspace; real Particle Studio splitters and collapse controls initialize after lazy mount; Game Editor preview teardown won't stop active Particle authoring, and global game pause does not block VFX chamber. Zoom +/- applies to native camera immediately and exposes camera distance. Append-only 285 patches, 8,004,949 generated HTML bytes, SHA-256 aa768eb37c7a27f0252eff14b3e2a0f50b9754fb536af95e5036cd826883cb2c. Focused source checks passed; owner device acceptance required. No changes to Sheep Tag/VR gameplay, saves, model/particle stress tests or emitter schema.",
+  "sourceCommit": "e2e21f5b02afd6787a60a1a730c2f9182de16f93",
+  "sourceIntegritySha256": "aa768eb37c7a27f0252eff14b3e2a0f50b9754fb536af95e5036cd826883cb2c"
 }
