@@ -1,0 +1,231 @@
+/* §E v11.251: one dark-violet workstation design language across all four editors.
+   Native rendering, canvas, VR controls and tool actions remain untouched. */
+:root{
+ --se251-bg:#0e0b1c;--se251-pane:#181226;--se251-raised:#281a3b;
+ --se251-line:#63477f;--se251-accent:#ae69f5;--se251-text:#f0e6ff;
+ --se251-muted:#bca9ce;
+ --se182-bg:#0e0b1c;--se182-surface:#161124;--se182-panel:#1a1429;
+ --se182-raised:#281a3b;--se182-line:#604877;--se182-line-strong:#815ba6;
+ --se182-text:#f0e6ff;--se182-muted:#bca9ce;--se182-accent:#bd77f8;
+ --se182-blue:#ba82f4;--se182-focus:#e2b0ff;
+}
+html body{background:var(--se251-bg);color:var(--se251-text)}
+html .app{background:var(--se251-bg)}
+html .app>.topbar{
+ background:linear-gradient(#191225,#100d1e)!important;
+ border-color:#5c4373!important;box-shadow:0 3px 15px #000a!important}
+html .app>.topbar :is(button,select,input:not([type=range])){
+ background:linear-gradient(#2b2040,#20172f)!important;
+ border-color:#634983!important;color:#f5eaff!important;border-radius:8px!important}
+html .app>.topbar button.active,
+html .app>.topbar button[aria-pressed=true]{
+ background:#643694!important;border-color:#c284ff!important;color:#fff!important}
+html .app>.topbar .se-main-project-button{
+ background:#593184!important;border-color:#b978f7!important}
+html .app>.topbar .brand b{color:#d59dff}
+html .app>.workspace{background:#0e0b1c}
+html .app>.workspace>.panel{
+ background:linear-gradient(160deg,#1b142a,#100f20)!important;
+ border-color:#594275!important;color:#f2e7ff!important;
+ scrollbar-color:#704a94 transparent}
+html .app>.workspace>.panel .section>h3{
+ color:#d5b8ee!important}
+html .app>.workspace>.panel :is(.section,.asset,.asset-grid,.field,.row){
+ border-color:#574071;color:#dbcaf4}
+html .app>.workspace>.panel :is(input,select,textarea,button:not(.asset)){
+ background:#21172f!important;border-color:#654784!important;color:#eee4ff!important}
+html .app>.workspace>.panel .asset{background:#221930!important;border-color:#574071!important}
+html .app>.workspace>.panel .asset:hover{
+ border-color:#b774f6!important;background:#38234d!important}
+html .app>.workspace>.viewport-wrap{
+ background:#0a0918!important;border-color:#51406b}
+html .app>.workspace>.viewport-wrap .viewport-toolbar button{
+ background:#21152fe8!important;border-color:#8656ad!important;color:#f5e9ff!important}
+html .app>.workspace>.viewport-wrap .viewport-toolbar button.active{
+ background:#653a90!important;border-color:#bd8aff!important}
+/* Game-editor popup menus and actor inspectors are themed, not moved or cloned. */
+html .app :is(.content-drawer,.mobile-tools-panel,.mobile-drawer){
+ background:#191329!important;color:#f3e8ff!important;border-color:#6f4d90!important}
+html #engineMenubar :is(button,summary),html .se187-workspace-tabs button{
+ color:#eee4ff!important;background:#281d3d!important;border-color:#675082!important}
+html #engineMenubar :is(button,summary):hover{
+ background:#46305d!important}
+html .se187-workspace-tabs [aria-selected=true],
+html .se187-workspace-tabs .active{
+ background:#63368d!important;border-color:#bb84ff!important}
+html .se187-game-tabs,html #modelAtelierPanel>.se187-model-tabs{
+ background:#14101f!important;border-color:#593a78!important}
+html #modelAtelierPanel.se187-modeler-page{
+ color:var(--se251-text);background:#0e0b1c!important}
+html #modelAtelierPanel .atelier-head{
+ background:linear-gradient(90deg,#251731,#141122)!important;
+ border-bottom:1px solid #664a82!important;color:#f2e8ff!important}
+html #modelAtelierPanel .atelier-head strong{color:#eedbff!important}
+html #modelAtelierPanel .atelier-head button,
+html #modelAtelierPanel .atelier-head select,
+html #modelAtelierPanel :is(#seAtelierViewMenu,#seAtelierExportMenu)>summary{
+ background:#281e3b!important;border:1px solid #715091!important;color:#f0e2ff!important}
+html #modelAtelierPanel .atelier-scene{
+ background:radial-gradient(ellipse at center,#201733,#070817 65%)!important}
+html #modelAtelierPanel .atelier-viewbar,
+html #modelAtelierPanel #modelAtelierViewportModes,
+html #modelAtelierPanel .atelier-tool-rail,
+html #modelAtelierPanel .se-atelier-modes{
+ background:#191124ef!important;border-color:#68498b!important}
+html #modelAtelierPanel .atelier-tool-rail button,
+html #modelAtelierPanel .se-atelier-modes button{
+ background:#281c39!important;border-color:#654b81!important;color:#f1e5ff!important}
+html #modelAtelierPanel .atelier-tool-rail button[aria-pressed=true],
+html #modelAtelierPanel .se-atelier-modes button[aria-pressed=true]{
+ background:#653a8d!important;border-color:#c485ff!important}
+html #modelAtelierPanel .atelier-inspector,
+html #atelierContextWorkbench{
+ background:#191324!important;border-color:#674a83!important;color:#f0e4ff!important}
+html #modelAtelierPanel .atelier-inspector :is(input,select,button,textarea),
+html #atelierContextWorkbench :is(input,select,button,textarea){
+ background:#241b36!important;border-color:#694d87!important;color:#f3eaff!important}
+html #modelAtelierPanel .atelier-inspector :is(summary,h3,strong),
+html #atelierContextWorkbench :is(summary,h3,strong){color:#e0baf9!important}
+html #modelAtelierPanel .atelier-status{
+ background:#171126!important;border-color:#5d417a!important;color:#d2aef8!important}
+html #modelAtelierPanel .atelier-tool-handle{
+ background:#30213f!important;border-color:#8159a5!important}
+body[data-se225-workspace=materials] #se225Shell{
+ color:#f3e8ff;background:linear-gradient(100deg,#19102240,transparent 70%)!important}
+body[data-se225-workspace=materials] #se225Shell>.se225-workspace-header{
+ background:linear-gradient(#1d142d,#100d1d)!important;border-color:#634b80!important}
+body[data-se225-workspace=materials] #se225Shell>.se225-workspace-header button{
+ color:#f0e3ff;background:#2a1c3c;border-color:#664c81}
+body[data-se225-workspace=materials] #se225Shell>.se225-workspace-header button.active{
+ background:#65368e;border-color:#bc84fb}
+body[data-se225-workspace=materials] #se225MaterialsPanel{
+ background:#161122!important;border-color:#71558e!important;color:#f1e6ff!important}
+body[data-se225-workspace=materials] #se225MaterialsPanel .se225-m-section{
+ background:#1a142a!important;border-color:#644980!important}
+body[data-se225-workspace=materials] #se225MaterialsPanel .se225-m-section summary{
+ color:#d9b9f4!important}
+body[data-se225-workspace=materials] #se225MaterialsPanel :is(input,select,button){
+ background:#291d3c!important;border-color:#73518f!important;color:#eee3ff!important}
+body[data-se225-workspace=materials] #se225MaterialsPanel input[type=range]{
+ accent-color:#b46dff}
+body[data-se225-workspace=materials] #se225MaterialsPanel #se225MCanvas{
+ border-color:#9e6bce!important}
+body[data-se225-workspace=materials] #se225MaterialsPanel .se225-m-title{
+ border-color:#6e508c!important}
+body[data-se225-workspace=materials] #se225MaterialsPanel .se225-m-title strong{
+ color:#e3c5fd!important}
+body[data-se225-workspace=materials] #se225MaterialsPanel .se225-m-title span{
+ color:#bda7d2!important}
+#se251ModelLibrary,#se251MaterialLibrary{display:none}
+.se251-side-library{
+ box-sizing:border-box;min-width:0;overflow:hidden;pointer-events:auto;
+ flex-direction:column;gap:6px;
+ background:linear-gradient(150deg,#1c152b,#111020);
+ border-right:1px solid #684b87;color:#ead9ff;
+ font:600 12px system-ui}
+.se251-side-title{
+ min-height:39px;display:flex;align-items:center;padding:8px 11px;
+ border-bottom:1px solid #594075;background:#241935;
+ color:#e6c5ff;font-size:13px;font-weight:800}
+.se251-side-library>input{
+ background:#171123;border:1px solid #664883;border-radius:7px;
+ color:#f4e7ff;margin:6px 9px;padding:7px 9px;min-height:33px;min-width:0}
+.se251-side-actions{padding:4px 9px;display:flex;gap:4px;flex-wrap:wrap}
+.se251-side-actions button{
+ background:#4b2c6d;color:#f6eaff;border:1px solid #9968ca;
+ border-radius:6px;min-height:29px;font:650 10px system-ui}
+.se251-model-scroll{flex:1;min-height:0;overflow:auto;padding:4px 7px 8px;
+ display:flex;flex-direction:column;gap:3px}
+.se251-model-tree-item{
+ display:block;min-height:32px;border:1px solid transparent;
+ padding:6px 8px;text-align:left;background:transparent;color:#d9c9e9;
+ border-radius:6px;font:650 11px system-ui;
+ overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.se251-model-tree-item[aria-pressed=true]{
+ background:#653590;border-color:#b473ef;color:#fff}
+.se251-model-tree-item:hover:not([aria-pressed=true]){
+ background:#332342}
+html [data-se251-layout=desktop] .se251-side-library{
+ display:flex!important}
+html [data-se251-layout=desktop][data-se251-collapsed=true] .se251-side-library{
+ width:34px!important;overflow:hidden!important}
+html [data-se251-layout=desktop][data-se251-collapsed=true] .se251-side-library>*:not(.se251-side-title){
+ display:none!important}
+html [data-se251-layout=desktop][data-se251-collapsed=true] .se251-side-title{
+ writing-mode:vertical-rl;font-size:10px;padding:10px 6px;height:100%}
+html #modelAtelierPanel.se187-modeler-page[data-se251-layout=desktop] .atelier-body{
+ display:grid!important;grid-template-columns:var(--se251-left,205px) minmax(0,1fr) var(--se251-right,305px)!important;
+ grid-template-rows:minmax(0,1fr)!important;
+ min-height:0!important;position:relative}
+html #modelAtelierPanel.se187-modeler-page[data-se251-layout=desktop][data-se251-collapsed=true] .atelier-body{
+ grid-template-columns:34px minmax(0,1fr) var(--se251-right,305px)!important}
+html #modelAtelierPanel.se187-modeler-page[data-se251-layout=desktop] .atelier-scene{
+ grid-column:2!important;grid-row:1!important;
+ width:auto!important;height:auto!important;min-height:0!important;max-height:none!important;
+ margin:0!important;position:relative!important}
+html #modelAtelierPanel.se187-modeler-page[data-se251-layout=desktop] .atelier-inspector{
+ grid-column:3!important;grid-row:1!important;
+ position:relative!important;inset:auto!important;left:auto!important;right:auto!important;
+ top:auto!important;bottom:auto!important;transform:none!important;
+ display:flex!important;flex-direction:column!important;
+ width:100%!important;height:100%!important;min-height:0!important;
+ max-height:none!important;max-width:none!important;overflow-y:auto!important;
+ border-top:0!important;border-left:1px solid #6a4a89!important;
+ padding:9px!important}
+html #modelAtelierPanel.se187-modeler-page[data-se251-layout=desktop] .atelier-inspector.atelier-tools-closed{
+ display:none!important}
+html #modelAtelierPanel.se187-modeler-page[data-se251-layout=desktop] .atelier-tool-rail{
+ border-color:#795399!important}
+/* Material studio uses exactly the same left hierarchy/right modifiers grammar. */
+body[data-se225-workspace=materials] #se225Shell[data-se251-layout=desktop] #se251MaterialLibrary{
+ display:flex!important;position:absolute;top:84px;bottom:0;left:0;width:var(--se251-left,205px);
+ z-index:7;pointer-events:auto}
+body[data-se225-workspace=materials] #se225Shell[data-se251-layout=desktop][data-se251-collapsed=true] #se251MaterialLibrary{
+ width:34px!important}
+body[data-se225-workspace=materials] #se225Shell[data-se251-layout=desktop] #se225MaterialsPanel{
+ position:absolute!important;top:84px!important;bottom:0!important;left:auto!important;right:0!important;
+ width:var(--se251-right,335px)!important;height:auto!important;max-height:none!important;
+ z-index:7!important;border-radius:0!important;
+ box-shadow:none!important;display:flex!important}
+body[data-se225-workspace=materials] #se225Shell[data-se251-layout=desktop] #se225MaterialsPanel[hidden]{
+ display:none!important}
+/* Pointer/Quest splitters: no fake draggable screenshot panels. */
+.se251-resize-grip{display:none;position:absolute;top:0;bottom:0;z-index:18;
+ background:transparent;width:10px;cursor:col-resize;
+ touch-action:none;user-select:none}
+.se251-resize-grip::after{
+ content:'';display:block;position:absolute;left:3px;top:40%;height:60px;width:4px;
+ background:#745092;border-radius:5px;box-shadow:0 0 10px #ad72ff33}
+html #modelAtelierPanel[data-se251-layout=desktop] .se251-resize-grip{
+ display:block}
+html #modelAtelierPanel[data-se251-layout=desktop] #se251-split-model-left{
+ left:calc(var(--se251-left,205px) - 5px)}
+html #modelAtelierPanel[data-se251-layout=desktop] #se251-split-model-right{
+ right:calc(var(--se251-right,305px) - 5px)}
+html #se225Shell[data-se251-layout=desktop] .se251-resize-grip{
+ display:block;top:84px;pointer-events:auto}
+html #se225Shell[data-se251-layout=desktop] #se251-split-materials-left{
+ left:calc(var(--se251-left,205px) - 5px)}
+html #se225Shell[data-se251-layout=desktop] #se251-split-materials-right{
+ right:calc(var(--se251-right,335px) - 5px)}
+html .se251-resize-grip:hover::after{background:#c17dfb;box-shadow:0 0 15px #bf6efb}
+html #modelAtelierPanel[data-se251-layout=compact] .se251-side-library,
+html #se225Shell[data-se251-layout=compact] .se251-side-library{
+ display:none!important}
+body[data-se225-workspace=materials] #se225Shell[data-se251-layout=compact] #se225MaterialsPanel{
+ top:auto!important;left:5px!important;right:5px!important;bottom:5px!important;
+ width:auto!important;height:min(57dvh,510px)!important;max-height:57dvh!important}
+html #modelAtelierPanel[data-se251-layout=compact] .atelier-body{
+ display:flex!important;flex-direction:column!important}
+html #modelAtelierPanel[data-se251-layout=compact] .atelier-inspector{
+ height:min(36dvh,330px)!important;max-height:42dvh!important}
+html .se251-unified-mode{
+ display:flex;align-items:center;gap:5px;flex:0 0 auto;color:#d5c2e4;font:700 10px system-ui}
+html #se251UnifiedMode{
+ background:#312045;border-color:#845aac;border-radius:6px;
+ color:#fff;padding:4px 6px;min-height:30px}
+@media(max-width:920px){
+ html #modelAtelierPanel[data-se251-layout=desktop] .atelier-head{gap:5px!important}
+ html #modelAtelierPanel[data-se251-layout=desktop] .atelier-head button{padding:5px!important;font-size:10px!important}
+ html .se251-side-title{font-size:11px}
+}
