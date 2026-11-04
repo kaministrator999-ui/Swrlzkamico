@@ -1,0 +1,34 @@
+name: Measure §E v11.265 Sheep Render and Nerd Stats
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/calc-sheep-render-v11-265.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  targeted-build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Parse the focused patch and live runtime
+        run: |
+          python3 -m py_compile projects/swrlz-forge-moba/patches/v11_265_sheep_render_nerd_stats.py
+          node --check projects/swrlz-forge-moba/runtime/sheep_dense_render_nerd_stats_v11_265.js
+      - name: Rebuild package from all 296 source patches
+        run: |
+          python3 projects/swrlz-forge-moba/build_space.py --output /tmp/se265
+          grep -q 'SWYRL_ENGINE_SHEEP_NERD_STATS_265' /tmp/se265/index.html
+          grep -q 'V11_265_SHEEP_RENDER_NERD_STATS' /tmp/se265/index.html
+          cmp /tmp/se265/index.html /tmp/se265/modeler.html
+          echo "SE265_BYTES=$(wc -c < /tmp/se265/index.html)"
+          echo "SE265_SHA256=$(sha256sum /tmp/se265/index.html | cut -d' ' -f1)"
+          echo "SE265_BUILD_OK"
