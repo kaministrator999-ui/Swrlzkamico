@@ -4,7 +4,7 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.248",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_248_ASTRAL_VORTEX_STARTERS",
-  "reason": "Deploy §E v11.248: owner-requested neon violet/cyan Particle Studio theme, real four-emitter Astral Vortex with spiral arms/core/sparks, Starter Particles tab in Projects and native studio library. 279-patch build measured at 7,831,738 bytes with SHA256 932460d952611fe6857741d1c985049d2edf7d62c302983889fe7601e9fbf27e; focused JS syntax and source integrity passed. The original renderer, world assets, model editor, Sheep Tag/Quest game behavior and mobile inspector collapse are retained. Owner Moto/Quest hands-on acceptance pending.",
-  "sourceCommit": "d252ddedee90496ccc2ddb5902b43d6a1c1a5c2e",
+  "reason": "Retry sealed v11.248 after exact artifact-filename assertion in verify_v11_248_release.py was corrected; first deploy stopped before upload. Unchanged 279-patch, one-renderer candidate measured as 7,831,738 bytes and SHA256 932460d952611fe6857741d1c985049d2edf7d62c302983889fe7601e9fbf27e. Native Astral Vortex four-emitter starter, purple/cyan Particle Studio and Starter Particles category. No scene, VR Play, modeling, or §C changes. Owner Android/Quest manual acceptance pending.",
+  "sourceCommit": "3c11a9256a3d7bf67e164ee01574dd27e6a1ea90",
   "sourceIntegritySha256": "932460d952611fe6857741d1c985049d2edf7d62c302983889fe7601e9fbf27e"
 }
