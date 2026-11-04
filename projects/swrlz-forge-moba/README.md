@@ -4,7 +4,7 @@
 
 **Implementation:** Compact ✦ Preview panel beside Game Engine Scene / GUI/Menus. Independent runtime-only switches turn authored native scene emitters on or off, and loop the existing Storyboard episode timeline (where available). Both default off and reset on project/studio/Play transitions. No second renderer, requestAnimationFrame loop, scene serialization change or Sheep Tag mechanics change. Cinematic toggle is disabled outside supported authored episode projects; it is not a generic animation system.
 
-**Seal:** 278 ordered patches, 69 assets, 7,810,462 HTML bytes, SHA-256 `7d5e780b36c6b64939a8974c8300c0cd768b2b80c00ca4e0104197cbba7b84d8`. Focused syntax/source reconstruction passed; owner Quest 2 and Moto G Power acceptance pending.
+**Seal:** 278 ordered patches, 69 assets, 7,810,723 HTML bytes, SHA-256 `0069237edcb5f32d53a349caeb7505cc9fd6466f389def849ed442e8b30cfbb4`. Focused syntax/source reconstruction passed; owner Quest 2 and Moto G Power acceptance pending.
 
 ## §E v11.244 — Sheep Tag menu, meadow and capture/destruction responsiveness (2026-11-03)
 
