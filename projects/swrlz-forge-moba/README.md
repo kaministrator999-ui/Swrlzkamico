@@ -1,3 +1,11 @@
+## §E v11.247 — Edit-mode particles and cinematic preview toggles (2026-11-03)
+
+**Owner direction:** Editor geometry, camera orbit, gizmos and panels are already smooth on Quest 2; offer optional particles and cinematic playback while editing, without forcing Play mode or additional game simulation.
+
+**Implementation:** Compact ✦ Preview panel beside Game Engine Scene / GUI/Menus. Independent runtime-only switches turn authored native scene emitters on or off, and loop the existing Storyboard episode timeline (where available). Both default off and reset on project/studio/Play transitions. No second renderer, requestAnimationFrame loop, scene serialization change or Sheep Tag mechanics change. Cinematic toggle is disabled outside supported authored episode projects; it is not a generic animation system.
+
+**Seal:** 278 ordered patches, 69 assets, 7,810,462 HTML bytes, SHA-256 `7d5e780b36c6b64939a8974c8300c0cd768b2b80c00ca4e0104197cbba7b84d8`. Focused syntax/source reconstruction passed; owner Quest 2 and Moto G Power acceptance pending.
+
 ## §E v11.244 — Sheep Tag menu, meadow and capture/destruction responsiveness (2026-11-03)
 
 **Owner phone evidence:** An oversized translucent rectangle appears behind the main Sheep Tag menu. The updated meadow is much better than the former camouflage pattern but is still mostly flat. On Quest 2, sheep deaths and building removal hitch the game.
