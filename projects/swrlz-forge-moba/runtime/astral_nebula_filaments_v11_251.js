@@ -142,7 +142,6 @@ function writeMesh(b,cfg,rec,origin){
  const phase=rec.se249Time*(cfg.vortexSpin??1)*1.65;
  const attr=b.geom.getAttribute('position'),uv=b.geom.getAttribute('uv');
  const widthFactor=cfg.nebulaSpread??1;
- const old=new THREE.Vector3(),next=new THREE.Vector3();
  for(let i=0;i<SEG;i++){
   const u0=i/SEG,u1=(i+1)/SEG;
   const p0=location(u0,phase,cfg,origin,0,b.index);
