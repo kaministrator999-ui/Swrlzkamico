@@ -137,7 +137,7 @@ function se223List(){""",
         "warn on invalid embedded/saved particle models")
     # Scope failures to the emitter that raised them; do not mutate saved JSON.
     html=once(html,
-        """ for(const cfg of data.emitters){
+        """ for(const cfg of editEmitters){
   const r=se223Runtime(cfg);r.cloud.visible=cfg.enabled;
   if(!cfg.enabled){r.particles.length=0;r.geometry.setDrawRange(0,0);continue;}
   if(cfg.mode==='burst'){if(!r.burstFired){se223Spawn(cfg,cfg.burst);r.burstFired=true;}}
@@ -145,7 +145,7 @@ function se223List(){""",
    r.carry-=amount;if(amount)se223Spawn(cfg,amount);}
   se223Step(cfg,delta);
  }""",
-        """ for(const cfg of data.emitters){
+        """ for(const cfg of editEmitters){
   if(window.SWYRL_ENGINE_PARTICLE_ERRORS_258?.shouldSkip(cfg))continue;
   try{
    const r=se223Runtime(cfg);r.cloud.visible=cfg.enabled;
