@@ -2,7 +2,7 @@
 
 **Owner benchmark:** Full editor viewport/model rotation is smooth on Quest 2 while active Sheep Tag can lag; preserve the editor as baseline for future runtime profiling.
 
-**Source update:** `projects/swrlz-forge-moba/patches/v11_247_editor_live_previews.py` adds a compact native Game Editor ✦ Preview panel with independent Particle and Cinematic animation switches. Preview is entirely optional and reset when leaving Edit mode; existing particle renderer and storyboard timeline are reused, with no new loop or persisted gameplay changes. The cinematic control is available only where the native Storyboard episode exists. Version v11.247, 278 ordered patches, 69 assets, 7,810,462 bytes, SHA-256 `7d5e780b36c6b64939a8974c8300c0cd768b2b80c00ca4e0104197cbba7b84d8`.
+**Source update:** `projects/swrlz-forge-moba/patches/v11_247_editor_live_previews.py` adds a compact native Game Editor ✦ Preview panel with independent Particle and Cinematic animation switches. Preview is entirely optional and reset when leaving Edit mode; existing particle renderer and storyboard timeline are reused, with no new loop or persisted gameplay changes. The cinematic control is available only where the native Storyboard episode exists. Version v11.247, 278 ordered patches, 69 assets, 7,810,723 bytes, SHA-256 `0069237edcb5f32d53a349caeb7505cc9fd6466f389def849ed442e8b30cfbb4`.
 
 **Validation:** Focused source reconstruction and JS/Python syntax passed; Meta Quest 2/Moto G Power owner acceptance pending. Preserve historical lineage, single native renderer, Quest input mappings and saved projects.
 
