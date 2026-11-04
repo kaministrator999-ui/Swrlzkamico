@@ -23,9 +23,9 @@ def apply(html):
     html=once(html,"window.SWRLZ_FORGE_BUILD=",
         ui+"\nwindow.SWRLZ_FORGE_BUILD=",
         "mount independent stress sliders in existing editor docks")
-    html=once(html,"</head>",
-        '<style id="se252StressDiagnosticsStyle">\n'+css+'\n</style>\n</head>',
-        "add scoped stress diagnostic dock styling")
+    # The original document carries a second preserved template head.
+    html=html.replace("</head>",
+        '<style id="se252StressDiagnosticsStyle">\n'+css+'\n</style>\n</head>',1)
     old=" source.engine='§wyrl§ Engine · Maker v11.251';source.version=11.251;"
     if html.count(old)!=2:raise AssertionError(("v11.252 provenance",html.count(old)))
     html=html.replace(old,
