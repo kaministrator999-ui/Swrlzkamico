@@ -49,35 +49,65 @@ def apply(html):
        "      projectRebinds:state.projectRebinds||0,",
        "expose chamber rebind count")
 
-    old="""  if(danger){
-    let best=null,score=-Infinity;
-    for(let i=0;i<12;i++){
-      const angle=i*Math.PI/6,x=unit.pos.x+Math.cos(angle)*7.5,z=unit.pos.z+Math.sin(angle)*7.5;
-      if(stBlocked(x,z,ST_SHEEP_RADIUS))continue;
-      const safety=Math.min(...wolves.map(w=>(x-w.pos.x)**2+(z-w.pos.z)**2));
-      if(safety>score&&stPath(unit.pos,new THREE.Vector3(x,0,z),ST_SHEEP_RADIUS)){score=safety;best={x,z};}
+    # The current effective AI (not the obsolete base Sheep Tag function)
+    # uses sheep AND wolf path lengths in its danger score. Spread its exact
+    # 12-candidate decision over frames rather than deleting its tactics.
+    html=once(html,"function stBotSheep(unit){",
+      """const se256AIBudget={frame:-1,used:0,perFrame:2,checks:0,completed:0};
+window.SWYRL_ENGINE_SHEEP_AI_BUDGET_256=Object.freeze({
+ diagnose:()=>({...se256AIBudget,pending:stSession?.units?.filter(u=>u.se256Escape).length||0})
+});
+function stBotSheep(unit){""",
+      "instrument frame-bounded live AI sheep evaluation")
+    html=once(html,
+      "if(unit.captured||unit.isIllusion||unit.archiveRoute||s.elapsed<unit.botAt)return;unit.botAt=s.elapsed+1.1;",
+      "if(unit.captured||unit.isIllusion||unit.archiveRoute||"
+      "(!unit.se256Escape&&s.elapsed<unit.botAt))return;"
+      "if(!unit.se256Escape)unit.botAt=s.elapsed+1.1;",
+      "continue a pending AI escape search across frames")
+    old_start="  if(danger){let best=null,score=-Infinity;const candidates="
+    assert html.count(old_start)==1,("v11.256 effective AI danger anchor",html.count(old_start))
+    begin=html.index(old_start)
+    end_token="}return;}"
+    finish=html.index(end_token,begin)+len(end_token)
+    replacement="""  if(danger){
+    let scan=unit.se256Escape;
+    if(!scan||scan.nav!==s.navVersion||scan.near!==near.id){
+      const candidates=Array.from({length:12},(_,i)=>
+        new THREE.Vector3(unit.pos.x+Math.cos(i*Math.PI/6)*6,0,
+          unit.pos.z+Math.sin(i*Math.PI/6)*6));
+      if(unit.base)candidates.unshift(unit.base.clone());
+      scan=unit.se256Escape={candidates,index:0,score:-Infinity,best:null,
+        nav:s.navVersion,near:near.id};
     }
-    if(best)stSetOrder(unit,{action:'move',...best});return;
-  }"""
-    new="""  if(danger){
-    const options=[];
-    for(let i=0;i<12;i++){
-      const angle=i*Math.PI/6,x=unit.pos.x+Math.cos(angle)*7.5,z=unit.pos.z+Math.sin(angle)*7.5;
-      if(stBlocked(x,z,ST_SHEEP_RADIUS))continue;
-      const safety=Math.min(...wolves.map(w=>(x-w.pos.x)**2+(z-w.pos.z)**2));
-      options.push({x,z,safety});
+    if(se256AIBudget.frame!==s.elapsed){
+      se256AIBudget.frame=s.elapsed;se256AIBudget.used=0;
     }
-    // Same safest reachable destination, fewer A* calls for weaker options.
-    options.sort((a,b)=>b.safety-a.safety);
-    for(const option of options){
-      if(stPath(unit.pos,new THREE.Vector3(option.x,0,option.z),ST_SHEEP_RADIUS)){
-        stSetOrder(unit,{action:'move',x:option.x,z:option.z});
-        break;
+    if(se256AIBudget.used<se256AIBudget.perFrame&&scan.index<scan.candidates.length){
+      se256AIBudget.used++;se256AIBudget.checks++;
+      const p=scan.candidates[scan.index++];
+      if(!stBlocked(p.x,p.z,stUnitRadius(unit))){
+        const route=stPath(unit.pos,p,stUnitRadius(unit));
+        if(route){
+          const safety=Math.min(...known.map(w=>p.distanceToSquared(w.pos)));
+          const wolfPath=stPath(near.pos,p,stUnitRadius('wolf'));
+          const defence=wolfPath?0:180;
+          const value=safety+defence-route.length*.07;
+          if(value>scan.score){scan.score=value;scan.best=p;}
+        }
       }
     }
+    if(scan.index>=scan.candidates.length){
+      if(scan.best){
+        unit.aiIntent='evade through a sheep-sized exit';
+        stSetOrder(unit,{action:'move',x:scan.best.x,z:scan.best.z});
+      }
+      unit.se256Escape=null;se256AIBudget.completed++;
+    }else unit.botAt=s.elapsed;
     return;
-  }"""
-    html=once(html,old,new,"rank cheap sheep escape candidates before A*")
+  }
+  unit.se256Escape=null;"""
+    html=html[:begin]+replacement+html[finish:]
     html=once(html,
        "if(unit.captured||s.elapsed<unit.botAt)return;unit.botAt=s.elapsed+.8;",
        "if(unit.captured||s.elapsed<unit.botAt)return;"
