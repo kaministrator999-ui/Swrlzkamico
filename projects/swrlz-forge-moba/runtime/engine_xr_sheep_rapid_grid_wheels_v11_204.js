@@ -52,6 +52,15 @@ function se204GridPoint(point){
 }
 const se204OldPreview=stUiPlacePreview;
 stUiPlacePreview=function(point){
+ // The historical v11.193/v11.202 frame path still asks for a ghost every
+ // 100ms. A modal wheel must not run collision or detailed mesh recoloring.
+ // Keep this guard after those patches so original build anchors stay valid.
+ if(se193XRGameActive()&&(se195.visible||!!se204.wheel?.root?.visible)){
+  if(stUi.preview)stUi.preview.visible=false;
+  if(stUi.footprint)stUi.footprint.visible=false;
+  se204.lastPreview=null;se204.previewSkipped++;
+  return;
+ }
  // Both live ghost and trigger/rapid taps share the snapped grid.
  if(se204RapidEnabled()){
   stUi.rotation=0;
