@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Focused §E v11.251 validation: assembled source and original one-renderer invariants."""
+"""Focused §E v11.251 validation: final source after curve-dock and star-phase fixes."""
 import base64,gzip,hashlib,json,sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
