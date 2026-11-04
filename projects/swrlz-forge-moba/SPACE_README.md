@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.261
+title: §wyrl§ Engine v11.262
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,16 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.262 — Galaxy smoke rendered as textured mist, not planar strips (2026-11-04)
+
+**Owner feedback:** Three Moto screenshots at 2:33 PM show that v11.261 has working short half-S violet/cyan filaments, bright central core and animated stars at multiple camera angles and zoom levels, but virtually no visible curling nebula. Flat surface smoke alternated between invisible noise and large colored fan panels in previous attempts.
+
+**Source-level correction:** The six line filaments and native star emitters are preserved. Hide the two planar smoke ribbons per branch and instead add **one** dynamic `THREE.Points` batch (54 soft, irregular, camera-facing clouds per native violet/cyan emitter) with procedurally noise-shaped sprite alpha, slow internal curl, transparent edges, and a wider radius near each arm's outer end. The cloud batch follows the same branch-aware `location` and existing `se223Step` timing; there is no new render loop or native particle-emitter record.
+
+**Performance/cleanup:** One extra GPU draw call per native vortex emitter, no external image/texture requests, static sprite size/seed/color buffers, only dynamic positions. Dispose the new points' geometry and shader material when the emitter is removed. The existing editable, persisted Smoke density and Smoke arm spread values control the mist. Retain first-frame TDZ fix, particle-failure isolation/toast, editor navigation, Sheep Tag and VR controls.
+
+**Acceptance:** Source integrity and generated package must pass before publishing. Real-device graphics quality, GPU performance and camera-angle behavior remain for user verification.
 
 ## §E v11.261 — Visible galaxy smoke without flat sheets (2026-11-04)
 
