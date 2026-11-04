@@ -34,7 +34,7 @@ def apply(html):
       "less uniformly hot neon filament")
     html=once(html,
       "   .034+u*.015:",
-      "   (.009+.024*Math.pow(Math.sin(Math.PI*u),.72))*(.91+.09*Math.sin(u*29.+b.arm*3.));",
+      "   (.009+.024*Math.pow(Math.sin(Math.PI*u),.72))*(.91+.09*Math.sin(u*29.+b.arm*3.)):",
       "narrow primary energy lines with gradual tapered edges")
     # Keep same smoke billboard count and derived atlas, but remove sharp
     # rectangular individual sprite impressions.
