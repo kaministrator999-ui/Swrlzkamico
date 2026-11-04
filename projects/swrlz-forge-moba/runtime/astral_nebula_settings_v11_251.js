@@ -6,7 +6,7 @@ const specs=[['nebulaSpread','Smoke arm spread',.25,2.5,.05,1],
  ['starDensity','Starfield density',0,1,.05,.75]];
 se223Default=function(...args){
  const value=previousDefault(...args);
- for(const [k,,,,defaultValue]of specs)value[k]=defaultValue;
+ for(const item of specs)value[item[0]]=item[5];
  return value;
 };
 se223ValidateEmitter=function(input){
@@ -26,7 +26,8 @@ function sync(){
  const c=selected(),isArm=c&&(c.preset==='vortex'||c.preset==='vortexCyan');
  root.hidden=!isArm;
  if(!isArm)return;
- for(const [key,,,,fallback]of specs){
+ for(const item of specs){
+  const key=item[0],fallback=item[5];
   for(const input of root.querySelectorAll('[data-se251-param="'+key+'"]')){
    if(document.activeElement!==input)input.value=c[key]??fallback;
   }
