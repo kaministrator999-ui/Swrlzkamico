@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.263",
+  "name": "§wyrl§ Engine v11.264",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_263.html",
+  "finalArtifact": "swyrl_engine_v11_264.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -308,7 +308,8 @@
     "patches/v11_260_nebula_wisp_mask.py",
     "patches/v11_261_visible_smoke_wisps.py",
     "patches/v11_262_nebula_cloud_billow_points.py",
-    "patches/v11_263_reference_texture_smoke.py"
+    "patches/v11_263_reference_texture_smoke.py",
+    "patches/v11_264_purple_rooted_spectral_arms.py"
   ],
   "finalBytes": 8030567,
   "finalSha256": "6e28c92c2a6e8e21e85d68a96d86b2d36243f7f905257d355f710918251f7ed7"
