@@ -21,7 +21,7 @@ for(const filename of ['astral_vortex_starter_v11_248.js',
  'astral_vortex_ribbons_v11_249.js',
  'particle_curve_runtime_v11_251.js',
  'astral_nebula_filaments_v11_251.js']){
- vm.runInContext(fs.readFileSync(runtime+'/'+filename,'utf8'),ctx,{filename});
+ vm.runInContext(fs.readFileSync(filename==='astral_nebula_filaments_v11_251.js'?process.argv[3]:runtime+'/'+filename,'utf8'),ctx,{filename});
 }
 vm.runInContext("var galaxyConfigs=['vortex','vortexCyan','vortexCore','vortexSpark'].map(k=>se223Default(k))",ctx);
 ctx.currentProject={particleStudio:{schema:'swyrl-particle-studio-v1',emitters:ctx.galaxyConfigs}};
@@ -37,9 +37,11 @@ for(const cfg of ctx.galaxyConfigs){
   process.exitCode=1;
  }
 }
-for(let i=0;i<8;i++){
+for(let i=0;i<90;i++){
  try{vm.runInContext('se223Frame(.016,0)',ctx);}
  catch(error){console.error('FAIL whole galaxy frame:',i,error.stack||error);process.exitCode=1;break}
 }
-console.log('Native runtime records:',vm.runInContext('se223State.live.size',ctx));
+const report=vm.runInContext('({records:se223State.live.size,counts:[...se223State.live.values()].map(r=>r.particles.length),nebula:[...se223State.live.values()].filter(r=>r.se251Nebula).length})',ctx);
+console.log('PASS 90 complete particle frames:',JSON.stringify(report));
+if(report.records!==4||report.nebula!==2||report.counts.some(n=>n<=0))process.exitCode=1;
 if(process.exitCode)process.exit(process.exitCode);
