@@ -1,0 +1,46 @@
+name: Measure §E v11.273 release fingerprint
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/measure-forge-v11-270.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Measure actual assembled v11.273 bytes with release manifest metadata
+        run: |
+          python3 - <<'PY'
+          import json,hashlib,gzip,base64,sys
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          sys.path.insert(0,str(root.resolve()))
+          from build_space import load_patch
+          p=root/'source-manifest.json'
+          m=json.loads(p.read_text('utf8'))
+          assert m['name']=='§wyrl§ Engine v11.272'
+          assert len(m['patches'])==303
+          m['name']='§wyrl§ Engine v11.273'
+          m['finalArtifact']='swyrl_engine_v11_273.html'
+          m['patches'].append('patches/v11_273_organic_galaxy_filaments.py')
+          # No file committed or published by this measurement.
+          p.write_text(json.dumps(m,indent=2)+'\n',encoding='utf8')
+          raw=gzip.decompress(base64.b64decode(''.join((root/n).read_text('utf8').strip() for n in m['chunks'])))
+          assert hashlib.sha256(raw).hexdigest()==m['baseSha256']
+          html=raw.decode('utf8')
+          for entry in m['patches']:
+              html=load_patch(root/entry)(html)
+          data=html.encode('utf8')
+          assert 'SWYRL_ENGINE_DEPLOY_MARKER: V11_273_HAIRLINE_GALAXY_WISPS' in html
+          print('V11_273_FINAL_SHA256='+hashlib.sha256(data).hexdigest(),flush=True)
+          print('V11_273_FINAL_BYTES='+str(len(data)),flush=True)
+          print('V11_273_FINAL_PATCHES='+str(len(m['patches'])),flush=True)
+          PY
