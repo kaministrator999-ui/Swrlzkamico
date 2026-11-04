@@ -21,9 +21,9 @@ jobs:
       - name: Install isolated real Three.js
         run: npm install --no-audit --no-fund --prefix /tmp/se257 three@0.171.0
       - name: Extract sealed native particle source
-        run: python3 projects/swrlz-forge-moba/scripts/extract_vfx_runtime_257.py /tmp/se257/effective.js
+        run: python3 projects/swrlz-forge-moba/scripts/extract_vfx_runtime_257.py /tmp/se257/effective.js /tmp/se257/nebula.js
       - name: Reproduce native emitter create and frame
         env:
           THREE_PATH: /tmp/se257/node_modules/three
           RUNTIME_ROOT: projects/swrlz-forge-moba/runtime
-        run: node projects/swrlz-forge-moba/scripts/test_galaxy_runtime_257.cjs /tmp/se257/effective.js
+        run: node projects/swrlz-forge-moba/scripts/test_galaxy_runtime_257.cjs /tmp/se257/effective.js /tmp/se257/nebula.js
