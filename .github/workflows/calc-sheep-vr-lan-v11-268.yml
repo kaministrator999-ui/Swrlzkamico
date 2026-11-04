@@ -24,21 +24,9 @@ jobs:
           node --check projects/swrlz-forge-moba/runtime/sheep_vr_lan_menu_v11_268.js
           node projects/swrlz-forge-moba/tests/quest_vr_lan_menu_v11_268.cjs
           python3 -m py_compile projects/swrlz-forge-moba/patches/v11_268_quest_lan_menu.py
-      - name: Reconstruct all 299 engine patches and parse assembled editor script
+      - name: Verify sealed v11.268 build and assembled JavaScript syntax
         run: |
-          python3 - <<'PY'
-          import json
-          from pathlib import Path
-          p=Path('projects/swrlz-forge-moba/source-manifest.json')
-          m=json.loads(p.read_text('utf8'))
-          assert m['name']=='§wyrl§ Engine v11.268' and len(m['patches'])==299
-          assert m['patches'][-1]=='patches/v11_268_quest_lan_menu.py'
-          m['finalSha256']=None
-          m['finalBytes']=None
-          p.write_text(json.dumps(m,indent=2),encoding='utf8')
-          PY
-          python3 projects/swrlz-forge-moba/build_space.py --output /tmp/se268
-          python3 projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se268/index.html
+          python3 projects/swrlz-forge-moba/scripts/verify_v11_268_release.py --output /tmp/se268
           grep -q 'window.SWYRL_ENGINE_SHEEP_VR_LAN_268' /tmp/se268/index.html
           grep -q 'SWYRL_ENGINE_DEPLOY_MARKER: V11_268_QUEST_LAN_MAIN_MENU' /tmp/se268/index.html
           cmp /tmp/se268/index.html /tmp/se268/modeler.html
