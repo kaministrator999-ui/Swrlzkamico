@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/seal-forge-v11-258.yml'
+      - 'projects/swrlz-forge-moba/patches/v11_258_galaxy_slow_smoke_guard.py'
   workflow_dispatch:
 permissions:
   contents: write
