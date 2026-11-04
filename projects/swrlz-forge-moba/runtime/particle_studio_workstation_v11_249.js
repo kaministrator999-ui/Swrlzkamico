@@ -30,10 +30,10 @@ function perform(name){
  case 'redo':if(typeof redo==='function')redo();else if(!nativeButton('Redo'))report('Redo unavailable here');break;
  case 'duplicate':if(cfg){se223Duplicate(cfg.id);report('Duplicated '+cfg.name);}break;
  case 'delete':if(cfg&&confirm('Delete particle emitter "'+cfg.name+'"?')){se223Remove(cfg.id);report('Deleted '+cfg.name);}break;
- case 'preview':action('se223Preview');break;
+ case 'preview':state.paused=false;action('se223Preview');break;
  case 'pause':state.paused=!state.paused;se223State.preview=!state.paused;
     if(!state.paused)se223State.playingLast=false;report(state.paused?'Preview paused':'Preview resumed');break;
- case 'stop':se223State.preview=false;se223State.playingLast=false;se223Reset();report('Preview stopped');break;
+ case 'stop':state.paused=false;se223State.preview=false;se223State.playingLast=false;se223Reset();report('Preview stopped');break;
  case 'restart':se223Reset();se223State.preview=true;state.paused=false;state.clock=0;report('Preview restarted');break;
  case 'burst':if(cfg)se223Trigger(cfg.id);report('Triggered burst');break;
  case 'focus':stage?.adjust?.('reset');break;
