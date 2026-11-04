@@ -316,6 +316,6 @@
     "patches/v11_268_quest_lan_menu.py",
     "patches/v11_269_reference_spiral_wisps.py"
   ],
-  "finalBytes": 8065496,
-  "finalSha256": "c6028df3c1431ff4cf457832f3542e02fd1e0a948e5d14775a0e4fdacfca0440"
+  "finalBytes": 8065611,
+  "finalSha256": "7b691c443884ded86a145306600f7a89716a33d091853232e7bc626e2f418768"
 }
