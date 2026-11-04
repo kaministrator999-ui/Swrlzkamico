@@ -1,0 +1,25 @@
+name: §E v11.250 desktop docks focused validation
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/calc-forge-v11-250-desktop-docks.yml'
+      - 'projects/swrlz-forge-moba/scripts/calc_v11_250_desktop_docks.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-integrity:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check JS and patch syntax
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/particle_studio_docking_v11_250.js
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_250_particle_desktop_docks.py
+      - name: Assemble all patches and measure
+        run: python3 projects/swrlz-forge-moba/scripts/calc_v11_250_desktop_docks.py
