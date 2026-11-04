@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/calc-forge-v11-247-editor-preview.yml'
+      - 'projects/swrlz-forge-moba/scripts/calc_v11_247_preview_integrity.py'
   workflow_dispatch:
 permissions:
   contents: read
