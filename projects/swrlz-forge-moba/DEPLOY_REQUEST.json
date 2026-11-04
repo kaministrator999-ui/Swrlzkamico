@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.249",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_249_PARTICLE_WORKSTATION",
-  "reason": "Retry §E v11.249 workstation deploy after correcting the verifier finalArtifact filename from the previous v11.248 name. First request stopped at the package gate before upload; app source is unchanged. Verified 280 patches, 7,889,406 HTML bytes, SHA256 b03224aa7198a8ec57ec054d1c39b8639f76b9289149c5be6ca539bb56ab5dae. Purple/cyan multi-dock Particle Editor, timeline and modifier groups, camera controls, native 3D Astral Vortex ribbons; owner phone and Quest acceptance pending.",
-  "sourceCommit": "6b7139c3f54f7382833a4d138c5741779b4c03dc",
-  "sourceIntegritySha256": "b03224aa7198a8ec57ec054d1c39b8639f76b9289149c5be6ca539bb56ab5dae"
+  "releaseVersion": "v11.250",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_250_DESKTOP_DOCKS",
+  "reason": "Publish §E v11.250 from validated append-only 281-patch HTML (7,923,641 bytes, SHA256 f8d4f6df5a2e64fe8ef200c631557b960f5d4ab197fdfb47b39e58b23cf58954). Owner screenshots showed Chrome Desktop site and Quest browser falling into stacked mobile UI due old <=1080px/coarse-pointer breakpoint. Desktop/VR mode now has actual separate resizable and collapsible left Project/Assets, right tabbed native Modifiers, and bottom Timeline/Curves docks, with keyboard/touch/pointer splitter handles, individually expandable category menus, persistent widths, and Auto/Desktop/Compact override. Original single renderer and scene/Quest Play preserved. Astral Vortex now has feathered shader ribbons rather than jagged strips, with independent selected four-emitter group preview and real selected emitter parameter profiles in lower dock. Focused JS/Python and 281-patch integrity passed. Owner Moto/Quest hands-on acceptance pending.",
+  "sourceCommit": "e2d2753648d53db812b4f0c8051c6a2348c48487",
+  "sourceIntegritySha256": "f8d4f6df5a2e64fe8ef200c631557b960f5d4ab197fdfb47b39e58b23cf58954"
 }
