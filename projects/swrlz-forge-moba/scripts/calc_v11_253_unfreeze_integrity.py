@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Focused integrity and startup observer regression source check for §E v11.253."""
+"""Measure the final documented §E v11.253 startup hotfix source for sealing."""
 import base64,gzip,hashlib,json,sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
