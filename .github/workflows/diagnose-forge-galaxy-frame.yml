@@ -1,0 +1,29 @@
+name: §E focused Galaxy first-frame reproduction
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/diagnose-forge-galaxy-frame.yml'
+      - 'projects/swrlz-forge-moba/scripts/test_galaxy_runtime_257.cjs'
+      - 'projects/swrlz-forge-moba/scripts/extract_vfx_runtime_257.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  particle-first-frame:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install isolated real Three.js
+        run: npm install --no-audit --no-fund --prefix /tmp/se257 three@0.171.0
+      - name: Extract sealed native particle source
+        run: python3 projects/swrlz-forge-moba/scripts/extract_vfx_runtime_257.py /tmp/se257/effective.js
+      - name: Reproduce native emitter create and frame
+        env:
+          THREE_PATH: /tmp/se257/node_modules/three
+          RUNTIME_ROOT: projects/swrlz-forge-moba/runtime
+        run: node projects/swrlz-forge-moba/scripts/test_galaxy_runtime_257.cjs /tmp/se257/effective.js
