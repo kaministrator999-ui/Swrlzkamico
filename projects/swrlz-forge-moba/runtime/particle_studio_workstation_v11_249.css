@@ -421,3 +421,6 @@ body[data-se225-workspace=particles] #se249Root .se249-bottom{pointer-events:aut
 @media(prefers-reduced-motion:reduce){
  #se249Root *,#se249Root *::before,#se249Root *::after{animation:none!important}
 }
+
+/* Respect the native empty-emitter state, including while a project has no VFX. */
+body[data-se225-workspace=particles] #se249Root #se223Editor[hidden]{display:none!important}
