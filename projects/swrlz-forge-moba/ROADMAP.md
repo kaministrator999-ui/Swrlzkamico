@@ -1,3 +1,15 @@
+## §E v11.256 — Galaxy preview continuity, AI sheep route smoothing and Quest building rays (2026-11-04)
+
+**Owner symptoms:** Adding a galaxy particle can leave Particle Studio's rendered preview empty and its camera nonresponsive. Living AI sheep correlate with intermittent gameplay frame spikes; once all AI sheep are captured the spikes stop. In Quest Play, equipping a building produces a sheep-centered extra beam and limits ghost movement to near the sheep; VR menu cursor is visually behind its labels/options.
+
+**Particle correction:** The authoring chamber's previous frame invalidation checked `currentProject !== state.project`. Authoring transactions can replace the project object without changing the actual Three.js scene, closing the layer-25 chamber and restoring the game camera. Rebind the chamber to the edited project and dispose stale live emitter GPU resources without closing its camera; reopen on a legitimate scene/camera swap. Recovery is in the existing engine tick.
+
+**Sheep AI:** The danger-escape bot previously called A* for each progressively better candidate, sometimes repeatedly per living sheep. Rank candidates by cheap squared-distance safety, then run A* from safest to less safe until finding the first reachable site (same optimum as the prior logic); stagger the 0.8s thinking cadence very slightly per sheep to avoid synchronized spikes. No behavior changes to controlled sheep, wolves, authoritative host, collisions, or nav rules.
+
+**XR controller ray:** Disable the virtual short-range forward projection and secondary synthetic building beam. Use the physical right controller orientation to intersect actual terrain out to the playable map bounds, with no arbitrary radius around the sheep. A ghost appears only on actual ground, never in sky or in front of a menu; the normal world ray stays free. Modal A/X wheel and VR radial rays/reticles use foreground render ordering above menus with existing hit testing.
+
+**Validation:** Append-only extension of the existing one-renderer source. Full source reconstruction, syntax, package integrity and on-device acceptance recorded separately. Do not turn on broad browser/VR test suites by default.
+
 ## §E v11.255 — Particle viewport input and dedicated camera ownership (2026-11-04)
 
 **Owner regression:** After v11.254, the Particle Studio scene still did not respond to touch/drag/zoom, and native particles were not visible despite the Astral Vortex emitter tree loading. Earlier panel-only fixes did not address the actual render-camera conflict.
