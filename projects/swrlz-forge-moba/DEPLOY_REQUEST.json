@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.258",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_258_SLOW_NEBULA_FAULT_GUARD",
-  "reason": "Publish §E v11.258 after complete source reconstruction and package verifier succeeded. Visual: 6 short half-S filaments (3 violet + 3 cyan), visibly layered irregular smoke, brighter thin trailing glow, small/large scattered stars and slow galaxy + internal drift. Stability: per-emitter preview try/catch with one-time toast, invalid saved VFX warning, shared-engine frame fault boundary, keep v11.257 TDZ hotfix. 289 patches, 8,019,032 HTML bytes, sealed SHA256 d86e28c28430f01b57c6e7f546d0448194229f86136633469f59ed44c203b121. Owner phone/Quest performance and visual acceptance pending.",
-  "sourceCommit": "e12f48be61eca059a885f9c6af7a77e48ff51f05",
-  "sourceIntegritySha256": "d86e28c28430f01b57c6e7f546d0448194229f86136633469f59ed44c203b121"
+  "releaseVersion": "v11.259",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_259_SMOKY_GALAXY_ARMS",
+  "reason": "Publish §E v11.259 in response to owner's 11:42 Moto screenshot: six arms are now shaped correctly but clouds remain too faint and effects read as neon wires. Existing half-S ribbons now use outward-widening irregular, softly blended violet/cyan smoke under emissive filaments; coarser slowly drifting turbulence, native schema-validated editable Smoke density and one-time UV uploads. Preserve 11.257 TDZ and 11.258 isolated particle errors, single renderer, star/core and slow rotation. Generated 290 patches, 8,019,484 HTML bytes, exact source SHA256 b7c674c2e2b1b772f0816997b891ca812ae37ff6684460e903154e0e68b29bde from successful reconstruction. Full packaging verification is the deploy gate; physical Moto/Quest acceptance pending.",
+  "sourceCommit": "c8dd8453dc6a4eed0249c2867890a78d6e23f558",
+  "sourceIntegritySha256": "b7c674c2e2b1b772f0816997b891ca812ae37ff6684460e903154e0e68b29bde"
 }
