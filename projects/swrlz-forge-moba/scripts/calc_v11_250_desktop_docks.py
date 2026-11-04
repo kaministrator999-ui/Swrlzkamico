@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Measure final §E v11.250 desktop/VR dock and shader candidate. No browser suite."""
+"""Measure final §E v11.250 dock, softened shaders, and parameter tracks. No browser suite."""
 import base64,gzip,hashlib,json,sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
@@ -14,7 +14,7 @@ html=raw.decode("utf8")
 for p in m["patches"]:html=load_patch(ROOT/p)(html)
 for key in ("SWYRL_ENGINE_DEPLOY_MARKER: V11_250_DESKTOP_DOCKS",
  "se250DesktopDocksStyle","SWYRL_ENGINE_PARTICLE_DOCKS_250",
- "se250Handle-left","se250LayoutMode","ShaderMaterial",
+ "se250Handle-left","se250LayoutMode","SWYRL_ENGINE_PARTICLE_TRACKS_250","ShaderMaterial",
  "vRibbonUV","se250GroupStart"):
  assert key in html,key
 assert html.count("renderer.setAnimationLoop(tick);")==1
