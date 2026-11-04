@@ -7,8 +7,8 @@ from pathlib import Path
 import subprocess
 import sys
 ROOT=Path(__file__).resolve().parents[1]
-SHA="364f108cd052ff4877686fa56ee86ebd60141078e57b802a68ff2aec0723b09f"
-SIZE=8003351
+SHA="f0368006687eb8d588cce4e999e4bd1728701b45760b236d6b8797c9d6628c8b"
+SIZE=8003675
 MARKER="SWYRL_ENGINE_DEPLOY_MARKER: V11_252_STRESS_DIAGNOSTICS"
 parser=argparse.ArgumentParser()
 parser.add_argument("--output",required=True)
