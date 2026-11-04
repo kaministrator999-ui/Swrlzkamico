@@ -32,7 +32,7 @@ jobs:
           m=json.loads(p.read_text('utf8'))
           m['finalSha256']=None
           m['finalBytes']=None
-          p.write_text(json.dumps(m,indent=2)+'\\n',encoding='utf8')
+          p.write_text(json.dumps(m,indent=2),encoding='utf8')
           PY
       - name: Rebuild package from all 296 source patches
         run: |
