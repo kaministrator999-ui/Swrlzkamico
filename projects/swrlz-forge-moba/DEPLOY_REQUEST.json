@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.254",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_254_PARTICLE_DOCK_PREVIEW_CAMERA",
-  "reason": "Republish sealed §E v11.254 Particle Studio dock/preview/camera hotfix, after reconciled final manifest. 285 patches, final generated HTML exactly 8,005,222 bytes; SHA256 ff144b3515b48ee91f9bb1522c2a42b43db0f1a5b71960394be63c1886e46f22. Scope remains: hide Materials grips inside Particle Studio; initialize its real dock splitters after delayed mount; isolate VFX chamber playback from Game Preview teardown/global game pause; immediate zoom camera update and inspector distance. Preserves Sheep Tag, VR controls, all model/particle project data, source history and stress tests. Owner real-device visual check pending.",
-  "sourceCommit": "5c0a640e25382c411a9d3ea62e7a49fbf91f9fb3",
-  "sourceIntegritySha256": "ff144b3515b48ee91f9bb1522c2a42b43db0f1a5b71960394be63c1886e46f22"
+  "releaseVersion": "v11.255",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_255_PARTICLE_VIEWPORT_OWNERSHIP",
+  "reason": "Publish §E v11.255 Particle Studio input and camera ownership repair. Fix visible viewport pointer-events:none by binding direct touch/mouse orbit, pan, wheel/2-finger pinch zoom to center viewport; stop shared Game OrbitControls overriding Particle Chamber camera after VFX updates; ensure Preview starts lazy chamber; show live Chamber ON/OFF, Preview ON/OFF, point count, zoom distance. Append-only 286 patches, sealed HTML 8,009,987 bytes SHA256 cdedd2ec43c52cb1a575e6ca0ab5cc295d79067f568ea59a46c74d56aaf76227. Keep original renderer, game/Quest controls outside studio, saved models and particles, Sheep Tag and existing stress test tooling unchanged. Real-phone visual/interaction acceptance pending.",
+  "sourceCommit": "fc4568c37f1d4ccc1147037738ab68364b0228ed",
+  "sourceIntegritySha256": "cdedd2ec43c52cb1a575e6ca0ab5cc295d79067f568ea59a46c74d56aaf76227"
 }
