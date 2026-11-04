@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.270",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_270_HAIRLINE_GALAXY_WISPS",
-  "reason": "Owner Moto 5:23 preview shows improved compact swirl but fine hairline wisps still missing beneath broad smoke. Release v11.270 adds six independent fine secondary wisps to each cyan/violet native arm emitter, retains three short purple roots per emitter, colors secondary filaments purple-to-cyan or purple-only, and modestly reduces smoke alpha to reveal detail. One batched mesh per emitter, no extra renderer, no new RAF, native particle system or emissive cloud layer. Retain v11.269 core shape, existing editor pan/zoom/timeline, v11.258 error isolation, Quest LAN, Sheep Tag Nerd Stats and all saved assets. Sealed 301 patches, 8,067,220 HTML bytes, SHA-256 fb546be8222ec957fb62ec52424a62632b68f712c376e03016317bbfc04a2654. Candidate JavaScript syntax and sealed package checks successful. Owner Moto/Quest visual acceptance pending.",
-  "sourceCommit": "42809c04f2c8f36fa55029b6bb2243a669f617fd",
-  "sourceIntegritySha256": "fb546be8222ec957fb62ec52424a62632b68f712c376e03016317bbfc04a2654"
+  "releaseVersion": "v11.271",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_271_LAN_VISIBILITY_AUTOFIND",
+  "reason": "Owner reports absent LOCAL LAN entry and expects automatically discovered Sheep Tag LAN games. v11.271 adds obvious browser editor-menu preview launch and Play-runtime menu button; adds a world-pinned controller-selectable Local LAN tile alongside immersive Quest menu radial; automatically probes existing live room directory on LAN browser open with truthful shared-public-network grouping on HTTPS and genuine private-LAN discovery only through the local Bridge, retaining invite-code fallback. Reuses full host-authoritative PeerJS/WebRTC multiplayer, no new simulation or renderer; preserves v11.270 galaxy and v11.265 nerd stats. Full 302-patch 8,077,925-byte package SHA256 18afc575cb1adbe84d48a941dd601491f8f9feb6bfc7ecadeadaa453e805719a, inline JS parse and focused browser/Quest simulated menu tests passed. Owner Quest/browser and second-device live LAN acceptance pending.",
+  "sourceCommit": "8020d9bf2914e724e340b1b365f9f2a837ad808d",
+  "sourceIntegritySha256": "18afc575cb1adbe84d48a941dd601491f8f9feb6bfc7ecadeadaa453e805719a"
 }
