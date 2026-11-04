@@ -1,0 +1,20 @@
+name: §E v11.255 particle viewport ownership source check
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/calc-forge-v11-255-particle-input.yml'
+      - 'projects/swrlz-forge-moba/scripts/calc_v11_255_particle_input_integrity.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  focused-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 13
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check patch syntax
+        run: python -m py_compile projects/swrlz-forge-moba/patches/v11_255_particle_viewport_ownership.py
+      - name: Rebuild and inspect effective camera input source
+        run: python3 projects/swrlz-forge-moba/scripts/calc_v11_255_particle_input_integrity.py
