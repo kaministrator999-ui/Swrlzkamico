@@ -1,0 +1,216 @@
+/* §E v11.250: desktop-site and Quest browser use true side docks.
+   Mobile compact mode is explicit or viewport <700 CSS px, never pointer:coarse. */
+body[data-se225-workspace=particles] #se249Root{
+ --se250-left:270px;--se250-right:350px;--se250-bottom:225px;
+ --se250-left-grid:var(--se250-left);--se250-right-grid:var(--se250-right);
+ --se250-bottom-grid:var(--se250-bottom);
+}
+body[data-se225-workspace=particles] #se249Root[data-se250-left-collapsed=true]{
+ --se250-left-grid:36px}
+body[data-se225-workspace=particles] #se249Root[data-se250-right-collapsed=true]{
+ --se250-right-grid:36px}
+body[data-se225-workspace=particles] #se249Root[data-se250-bottom-collapsed=true]{
+ --se250-bottom-grid:38px}
+body[data-se225-workspace=particles][data-se250-layout=desktop] #se249Root{
+ display:grid!important;
+ grid-template-columns:var(--se250-left-grid) minmax(0,1fr) var(--se250-right-grid)!important;
+ grid-template-rows:103px minmax(0,1fr)!important;
+}
+body[data-se225-workspace=particles][data-se250-layout=desktop] #se249Root .se249-header{
+ grid-column:1/-1!important;grid-row:1!important;grid-template-rows:45px 58px!important;
+ height:auto!important}
+body[data-se225-workspace=particles][data-se250-layout=desktop] #se249Root .se249-menubar{
+ gap:10px!important;padding:0 10px!important;overflow:visible!important}
+body[data-se225-workspace=particles][data-se250-layout=desktop] #se249Root .se249-mark b{
+ display:inline!important;font-size:14px!important}
+body[data-se225-workspace=particles][data-se250-layout=desktop] #se249Root .se249-menus{
+ display:flex!important;gap:0!important}
+body[data-se225-workspace=particles][data-se250-layout=desktop] #se249Root .se249-menu summary{
+ font-size:11px!important;padding:6px 7px!important}
+body[data-se225-workspace=particles][data-se250-layout=desktop] #se249Root .se249-workspaces{
+ flex:1 1 310px!important;min-width:0!important}
+body[data-se225-workspace=particles][data-se250-layout=desktop] #se249Root .se249-workspaces button{
+ font-size:10px!important;min-height:30px!important;padding:4px 7px!important}
+body[data-se225-workspace=particles][data-se250-layout=desktop] #se249Root .se249-commandbar{
+ padding:7px 9px!important;gap:6px!important}
+body[data-se225-workspace=particles][data-se250-layout=desktop] #se249Root .se249-commandbar button{
+ min-height:36px!important;padding:6px 9px!important;font-size:11px!important}
+body[data-se225-workspace=particles][data-se250-layout=desktop] #se249Root .se249-left,
+body[data-se225-workspace=particles][data-se250-layout=desktop] #se249Root .se249-right{
+ position:relative!important;display:flex!important;flex-direction:column!important;
+ top:auto!important;bottom:auto!important;left:auto!important;right:auto!important;
+ height:auto!important;max-height:none!important;width:auto!important;max-width:none!important;
+ border-radius:0!important;box-shadow:none!important;min-height:0!important;
+ margin:0!important;z-index:8!important}
+body[data-se225-workspace=particles][data-se250-layout=desktop] #se249Root .se249-left{
+ grid-column:1!important;grid-row:2!important;border-right:1px solid #674c7e!important}
+body[data-se225-workspace=particles][data-se250-layout=desktop] #se249Root .se249-right{
+ grid-column:3!important;grid-row:2!important;border-left:1px solid #674c7e!important}
+body[data-se225-workspace=particles][data-se250-layout=desktop] #se249Root .se249-center{
+ grid-column:2!important;grid-row:2!important;min-height:0!important;
+ display:grid!important;grid-template-rows:39px minmax(0,1fr) var(--se250-bottom-grid)!important}
+body[data-se225-workspace=particles][data-se250-layout=desktop] #se249Root .se249-bottom{
+ grid-row:3!important;grid-column:1!important;display:flex!important;visibility:visible!important;
+ min-height:0!important;height:100%!important;max-height:none!important;
+ margin:0!important;inset:auto!important;
+ border-radius:8px 8px 0 0!important}
+body[data-se225-workspace=particles][data-se250-layout=desktop] #se249Root .se249-bottom>.se249-tabbar{
+ min-height:36px!important;height:36px!important;flex-basis:36px!important}
+body[data-se225-workspace=particles][data-se250-layout=desktop] #se249Root .se249-stage-tabs .se249-tabbar{
+ min-height:39px!important;height:39px!important}
+body[data-se225-workspace=particles][data-se250-layout=desktop] #se249Root .se249-stage-label{
+ display:block!important}
+body[data-se225-workspace=particles][data-se250-layout=desktop] #se249Root .se249-mobile-dock{
+ display:none!important}
+body[data-se225-workspace=particles][data-se250-layout=desktop] #se249Root .se249-left-preview{
+ min-height:205px!important}
+body[data-se225-workspace=particles][data-se250-layout=desktop] #se249Root .se249-preview-graphic{
+ height:104px!important}
+body[data-se225-workspace=particles][data-se250-layout=desktop] #se249Root .se249-vertical-tools{
+ top:12px!important;left:10px!important}
+body[data-se225-workspace=particles][data-se250-layout=desktop] #se249Root .se249-horizontal-tools{
+ top:12px!important;right:9px!important}
+body[data-se225-workspace=particles][data-se250-layout=desktop] #se249Root .se249-stats{
+ display:flex!important}
+body[data-se225-workspace=particles][data-se250-layout=desktop] #se249Root .se249-right .se249-native-holder{
+ flex:1!important;min-height:0!important;overflow:hidden}
+body[data-se225-workspace=particles][data-se250-layout=desktop] #se249Root .se249-right #se223Panel.se225-docked{
+ height:100%!important;max-height:100%!important}
+body[data-se225-workspace=particles] #se249Root .se249-tabbar{position:relative!important}
+body[data-se225-workspace=particles] #se249Root .se249-tabbar .se250-collapse{
+ flex:0 0 27px!important;position:absolute;top:3px;right:4px;z-index:6;
+ min-height:28px!important;width:27px!important;padding:2px!important;
+ border-radius:6px!important;color:#f2d8ff!important;
+ background:#35264d!important;border:1px solid #855bb1!important;
+ font:800 19px system-ui!important;cursor:pointer}
+body[data-se225-workspace=particles] #se249Root .se249-tabbar{
+ padding-right:36px!important}
+body[data-se225-workspace=particles] #se249Root .se249-bottom>.se249-tabbar{
+ padding-right:32px!important}
+body[data-se225-workspace=particles] #se249Root .se250-mode-selector{
+ margin-left:auto;display:flex;align-items:center;gap:5px;padding:3px 6px;
+ border:1px solid #574071;border-radius:7px;background:#1b132b;
+ font:700 10px system-ui;color:#cab6dd;flex:0 0 auto}
+body[data-se225-workspace=particles] #se249Root .se250-mode-selector select{
+ min-height:27px;border-radius:5px;border:1px solid #72518c;
+ background:#241637;padding:1px 4px;font:700 10px system-ui;max-width:115px}
+body[data-se225-workspace=particles] #se249Root .se250-mode-hint{
+ display:none}
+body[data-se225-workspace=particles] #se249Root .se250-splitter{
+ display:none;position:absolute;z-index:35;pointer-events:auto;
+ touch-action:none;user-select:none;
+ background:transparent;color:#d9a6ff;cursor:col-resize}
+body[data-se225-workspace=particles][data-se250-layout=desktop] #se249Root .se250-splitter{
+ display:flex;justify-content:center;align-items:center}
+body[data-se225-workspace=particles][data-se250-layout=desktop] #se249Root .se250-left-splitter{
+ top:103px;bottom:0;left:calc(var(--se250-left-grid) - 5px);width:10px}
+body[data-se225-workspace=particles][data-se250-layout=desktop] #se249Root .se250-right-splitter{
+ top:103px;bottom:0;right:calc(var(--se250-right-grid) - 5px);width:10px}
+body[data-se225-workspace=particles][data-se250-layout=desktop] #se249Root .se250-bottom-splitter{
+ bottom:var(--se250-bottom-grid);height:11px;
+ left:var(--se250-left-grid);right:var(--se250-right-grid);cursor:row-resize}
+body[data-se225-workspace=particles] #se249Root .se250-splitter span{
+ display:inline-flex;justify-content:center;align-items:center;
+ border-radius:12px;border:1px solid #8a62b6;background:#4a2e63;
+ color:#e9bfff;box-shadow:0 2px 10px #0009;font-weight:900}
+body[data-se225-workspace=particles] #se249Root .se250-left-splitter span,
+body[data-se225-workspace=particles] #se249Root .se250-right-splitter span{
+ width:7px;height:64px}
+body[data-se225-workspace=particles] #se249Root .se250-bottom-splitter span{
+ width:58px;height:7px;line-height:4px;letter-spacing:4px}
+body[data-se225-workspace=particles] #se249Root .se250-splitter:hover span,
+body[data-se225-workspace=particles] #se249Root .se250-splitter.is-dragging span{
+ border-color:#efbaff;background:#8254a6;box-shadow:0 0 15px #a661fa88}
+body[data-se225-workspace=particles] #se249Root .se250-splitter:focus-visible{outline:2px solid #d5a6ff}
+body[data-se225-workspace=particles] #se249Root .se250-group-controls{
+ padding:5px 7px;display:flex;justify-content:flex-end;gap:5px;
+ border-bottom:1px solid #453457;background:#1a1427}
+body[data-se225-workspace=particles] #se249Root .se250-group-controls button{
+ padding:3px 8px;min-height:25px;background:#31213e;border-radius:5px;
+ border:1px solid #62477b;color:#cbb7df;font:700 10px system-ui}
+body[data-se225-workspace=particles] #se249Root .se249-project-title{
+ font-size:13px;font-weight:800}
+body[data-se225-workspace=particles] #se249Root .se249-tree-select{
+ font-size:12px}
+body[data-se225-workspace=particles] #se249Root .se249-selected strong{
+ min-height:35px}
+body[data-se225-workspace=particles][data-se250-layout=desktop] #se249Root[data-se250-left-collapsed=true] .se249-left-main,
+body[data-se225-workspace=particles][data-se250-layout=desktop] #se249Root[data-se250-left-collapsed=true] .se249-left-preview,
+body[data-se225-workspace=particles][data-se250-layout=desktop] #se249Root[data-se250-right-collapsed=true] .se249-selected,
+body[data-se225-workspace=particles][data-se250-layout=desktop] #se249Root[data-se250-right-collapsed=true] .se249-native-holder,
+body[data-se225-workspace=particles][data-se250-layout=desktop] #se249Root[data-se250-right-collapsed=true] #se250RightControls,
+body[data-se225-workspace=particles][data-se250-layout=desktop] #se249Root[data-se250-bottom-collapsed=true] .se249-bottom-view,
+body[data-se225-workspace=particles][data-se250-layout=desktop] #se249Root[data-se250-bottom-collapsed=true] .se249-stats{
+ display:none!important}
+body[data-se225-workspace=particles][data-se250-layout=desktop] #se249Root[data-se250-left-collapsed=true] .se249-left .se249-tabbar,
+body[data-se225-workspace=particles][data-se250-layout=desktop] #se249Root[data-se250-right-collapsed=true] .se249-right .se249-tabbar{
+ display:flex;flex-direction:column;gap:10px;width:36px!important;height:100%!important;
+ padding:5px 1px!important;overflow:hidden}
+body[data-se225-workspace=particles][data-se250-layout=desktop] #se249Root[data-se250-left-collapsed=true] .se249-left .se249-tabbar>[role=tab],
+body[data-se225-workspace=particles][data-se250-layout=desktop] #se249Root[data-se250-right-collapsed=true] .se249-right .se249-tabbar>[role=tab]{
+ display:none!important}
+body[data-se225-workspace=particles][data-se250-layout=desktop] #se249Root[data-se250-left-collapsed=true] .se249-left .se249-tabbar::after{
+ content:"PROJECT / ASSETS";writing-mode:vertical-rl;padding:45px 8px;color:#b995d3;
+ font:750 10px system-ui;letter-spacing:.1em}
+body[data-se225-workspace=particles][data-se250-layout=desktop] #se249Root[data-se250-right-collapsed=true] .se249-right .se249-tabbar::after{
+ content:"MODIFIERS";writing-mode:vertical-rl;padding:50px 8px;color:#b995d3;
+ font:750 10px system-ui;letter-spacing:.1em}
+body[data-se225-workspace=particles][data-se250-layout=desktop] #se249Root[data-se250-left-collapsed=true] .se250-left-splitter,
+body[data-se225-workspace=particles][data-se250-layout=desktop] #se249Root[data-se250-right-collapsed=true] .se250-right-splitter,
+body[data-se225-workspace=particles][data-se250-layout=desktop] #se249Root[data-se250-bottom-collapsed=true] .se250-bottom-splitter{
+ display:none!important}
+body[data-se225-workspace=particles][data-se250-layout=desktop] #se249Root[data-se250-bottom-collapsed=true] .se249-bottom{
+ overflow:hidden!important}
+body[data-se225-workspace=particles] #se249Root .se249-native-holder{
+ min-height:0!important}
+body[data-se225-workspace=particles] #se249Root .se249-modifier summary{
+ font-weight:800;font-size:12px}
+body[data-se225-workspace=particles] #se249Root .se249-vortex-field{
+ margin:5px 0}
+@media(max-width:1010px){
+ body[data-se225-workspace=particles][data-se250-layout=desktop] #se249Root .se249-mark b{
+  font-size:12px!important}
+ body[data-se225-workspace=particles][data-se250-layout=desktop] #se249Root .se249-menus summary{
+  padding:5px!important;font-size:10px!important}
+ body[data-se225-workspace=particles][data-se250-layout=desktop] #se249Root .se249-workspaces button{
+  padding:4px 5px!important;font-size:9px!important}
+ body[data-se225-workspace=particles][data-se250-layout=desktop] #se249Root .se249-stage-label{display:none!important}
+}
+@media(max-width:700px){
+ body[data-se225-workspace=particles][data-se250-layout=compact] #se249Root .se249-commandbar{
+  flex-wrap:nowrap}
+ body[data-se225-workspace=particles][data-se250-layout=compact] #se249Root .se250-mode-selector{
+  position:sticky;right:0;background:#201431}
+ body[data-se225-workspace=particles][data-se250-layout=compact] #se249Root .se250-splitter{display:none!important}
+}
+/* Explicit Compact override even when desktop/VR browser is wide. */
+body[data-se225-workspace=particles][data-se250-layout=compact] #se249Root{
+ grid-template-columns:1fr!important;
+ grid-template-rows:92px minmax(0,1fr)!important}
+body[data-se225-workspace=particles][data-se250-layout=compact] #se249Root .se249-header{
+ grid-column:1!important;grid-row:1!important;grid-template-rows:41px 51px!important}
+body[data-se225-workspace=particles][data-se250-layout=compact] #se249Root .se249-center{
+ grid-column:1!important;grid-row:2!important;
+ grid-template-rows:35px minmax(0,1fr) auto!important}
+body[data-se225-workspace=particles][data-se250-layout=compact] #se249Root .se249-left,
+body[data-se225-workspace=particles][data-se250-layout=compact] #se249Root .se249-right{
+ position:fixed!important;z-index:25!important;grid-column:auto!important;grid-row:auto!important;
+ top:auto!important;left:4px!important;right:4px!important;bottom:47px!important;
+ width:calc(100vw - 8px)!important;height:min(68dvh,550px)!important;
+ max-height:calc(100dvh - 140px)!important;
+ border:1px solid #79519b!important;border-radius:10px!important;box-shadow:0 0 18px #000c!important}
+body[data-se225-workspace=particles][data-se250-layout=compact] #se249Root .se249-left,
+body[data-se225-workspace=particles][data-se250-layout=compact] #se249Root .se249-right{
+ display:none!important}
+body[data-se225-workspace=particles][data-se250-layout=compact][data-se249-mobile=left] #se249Root .se249-left,
+body[data-se225-workspace=particles][data-se250-layout=compact][data-se249-mobile=right] #se249Root .se249-right{
+ display:flex!important;flex-direction:column!important}
+body[data-se225-workspace=particles][data-se250-layout=compact] #se249Root .se249-bottom{
+ height:162px!important;margin-bottom:47px!important}
+body[data-se225-workspace=particles][data-se250-layout=compact] #se249Root .se249-mobile-dock{
+ display:flex!important}
+body[data-se225-workspace=particles][data-se250-layout=compact] #se249Root .se249-menus{display:none!important}
+body[data-se225-workspace=particles][data-se250-layout=compact] #se249Root .se250-splitter{
+ display:none!important}
+body[data-se225-workspace=particles][data-se250-layout=compact] #se249Root .se249-commandbar{
+ overflow-x:auto}
