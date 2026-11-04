@@ -1,0 +1,58 @@
+name: Candidate §E v11.270 hairline galaxy wisps
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/check-forge-v11-270-galaxy.yml'
+      - 'projects/swrlz-forge-moba/patches/v11_270_hairline_galaxy_wisps.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-candidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify prior sealed release and append fine wisps with exact syntax check
+        run: |
+          python3 - <<'PY'
+          import base64, gzip, hashlib, json, sys
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          sys.path.insert(0,str(root.resolve()))
+          from build_space import load_patch
+          m=json.loads((root/'source-manifest.json').read_text('utf8'))
+          assert m['name']=='§wyrl§ Engine v11.269'
+          assert m['patches'][-1]=='patches/v11_269_reference_spiral_wisps.py'
+          raw=gzip.decompress(base64.b64decode(''.join((root/n).read_text('utf8').strip() for n in m['chunks'])))
+          assert hashlib.sha256(raw).hexdigest()==m['baseSha256']
+          html=raw.decode('utf8')
+          for p in m['patches']:
+              html=load_patch(root/p)(html)
+          sealed=html.encode('utf8')
+          assert len(sealed)==m['finalBytes']
+          assert hashlib.sha256(sealed).hexdigest()==m['finalSha256']
+          html=load_patch(root/'patches/v11_270_hairline_galaxy_wisps.py')(html)
+          assert html.count('renderer.setAnimationLoop(tick);')==1
+          for s in ('const ROOT_N=9,ROOT_SEG=28,ROOT_INNER=3;',
+                    'function se270WispSpec(k,cfg){',
+                    'slimWispsPerEmitter:ROOT_N-ROOT_INNER',
+                    'SWYRL_ENGINE_DEPLOY_MARKER: V11_270_HAIRLINE_GALAXY_WISPS',
+                    'window.SWYRL_ENGINE_SHEEP_VR_LAN_268',
+                    'window.SWYRL_ENGINE_PARTICLE_ERRORS_258'):
+              assert s in html,s
+          data=html.encode('utf8')
+          Path('/tmp/se270.html').write_bytes(data)
+          print('V11_270_CANDIDATE_SHA256='+hashlib.sha256(data).hexdigest(),flush=True)
+          print('V11_270_CANDIDATE_BYTES='+str(len(data)),flush=True)
+          print('V11_270_CANDIDATE_PATCHES='+str(len(m['patches'])+1),flush=True)
+          PY
+          python3 projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se270.html
+          python3 -m py_compile projects/swrlz-forge-moba/patches/v11_270_hairline_galaxy_wisps.py
