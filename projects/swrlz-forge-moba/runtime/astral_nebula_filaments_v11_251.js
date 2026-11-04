@@ -57,7 +57,7 @@ const starV=[
 ' vSeed=aSeed;vTint=aTint;',
 ' vec4 mv=modelViewMatrix*vec4(position,1.0);',
 ' gl_Position=projectionMatrix*mv;',
-' gl_PointSize=clamp(aSize*uPixels*(2.9/max(.7,-mv.z)),1.,37.);',
+' gl_PointSize=clamp(aSize*uPixels*(4.5/max(.7,-mv.z)),1.,37.);',
 '}'
 ].join('\n');
 const starF=[
@@ -139,7 +139,7 @@ function location(u,phase,cfg,origin,offset=0,layer=0){
   origin.z+z*.52+Math.sin(u*12.+layer*1.9)*.05*u];
 }
 function writeMesh(b,cfg,rec,origin){
- const phase=rec.se249Time*(cfg.vortexSpin??1)*1.65;
+ const phase=rec.se249Time*(cfg.vortexSpin??1)*se251Rotation(cfg,rec.se251Clock||0)*1.65;
  const attr=b.geom.getAttribute('position'),uv=b.geom.getAttribute('uv');
  const widthFactor=cfg.nebulaSpread??1;
  for(let i=0;i<SEG;i++){
@@ -180,7 +180,7 @@ function writeMesh(b,cfg,rec,origin){
   clamp(cfg.vortexGlow??1,.15,2);
 }
 function updateStars(s,cfg,rec,origin){
- const a=s.g.getAttribute('position'),phase=rec.se249Time*(cfg.vortexSpin??1)*1.65;
+ const a=s.g.getAttribute('position'),phase=rec.se249Time*(cfg.vortexSpin??1)*se251Rotation(cfg,rec.se251Clock||0)*1.65;
  const density=clamp(cfg.starDensity??.75,0,1);
  const count=Math.max(0,Math.min(STARS,Math.round(STARS*density)));
  s.g.setDrawRange(0,count);
