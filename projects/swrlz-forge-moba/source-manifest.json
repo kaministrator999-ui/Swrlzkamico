@@ -302,6 +302,6 @@
     "patches/v11_254_particle_dock_preview_camera.py",
     "patches/v11_255_particle_viewport_ownership.py"
   ],
-  "finalBytes": 8009423,
-  "finalSha256": "56968f058ec76a22a5a324b92ad1f1cf04595c738fbbccc7250889fcffadccbd"
+  "finalBytes": 8009987,
+  "finalSha256": "cdedd2ec43c52cb1a575e6ca0ab5cc295d79067f568ea59a46c74d56aaf76227"
 }
