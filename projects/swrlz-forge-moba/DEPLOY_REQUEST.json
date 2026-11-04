@@ -4,7 +4,7 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.254",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_254_PARTICLE_DOCK_PREVIEW_CAMERA",
-  "reason": "Publish §E v11.254 owner-reported Particle Studio UI and VFX hotfix. Materials resize grips no longer leak over Particle workspace; real Particle Studio splitters and collapse controls initialize after lazy mount; Game Editor preview teardown won't stop active Particle authoring, and global game pause does not block VFX chamber. Zoom +/- applies to native camera immediately and exposes camera distance. Append-only 285 patches, 8,004,949 generated HTML bytes, SHA-256 aa768eb37c7a27f0252eff14b3e2a0f50b9754fb536af95e5036cd826883cb2c. Focused source checks passed; owner device acceptance required. No changes to Sheep Tag/VR gameplay, saves, model/particle stress tests or emitter schema.",
-  "sourceCommit": "e2e21f5b02afd6787a60a1a730c2f9182de16f93",
-  "sourceIntegritySha256": "aa768eb37c7a27f0252eff14b3e2a0f50b9754fb536af95e5036cd826883cb2c"
+  "reason": "Republish sealed §E v11.254 Particle Studio dock/preview/camera hotfix, after reconciled final manifest. 285 patches, final generated HTML exactly 8,005,222 bytes; SHA256 ff144b3515b48ee91f9bb1522c2a42b43db0f1a5b71960394be63c1886e46f22. Scope remains: hide Materials grips inside Particle Studio; initialize its real dock splitters after delayed mount; isolate VFX chamber playback from Game Preview teardown/global game pause; immediate zoom camera update and inspector distance. Preserves Sheep Tag, VR controls, all model/particle project data, source history and stress tests. Owner real-device visual check pending.",
+  "sourceCommit": "5c0a640e25382c411a9d3ea62e7a49fbf91f9fb3",
+  "sourceIntegritySha256": "ff144b3515b48ee91f9bb1522c2a42b43db0f1a5b71960394be63c1886e46f22"
 }
