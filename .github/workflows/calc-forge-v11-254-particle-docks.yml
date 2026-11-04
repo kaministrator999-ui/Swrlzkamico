@@ -1,0 +1,20 @@
+name: §E v11.254 particle studio dock and preview integrity
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/calc-forge-v11-254-particle-docks.yml'
+      - 'projects/swrlz-forge-moba/scripts/calc_v11_254_particle_integrity.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  focused-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+      - name: Syntax check append-only patch
+        run: python -m py_compile projects/swrlz-forge-moba/patches/v11_254_particle_dock_preview_camera.py
+      - name: Rebuild native VFX source and check change anchors
+        run: python3 projects/swrlz-forge-moba/scripts/calc_v11_254_particle_integrity.py
