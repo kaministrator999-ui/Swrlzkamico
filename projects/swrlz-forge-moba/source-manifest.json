@@ -309,6 +309,6 @@
     "patches/v11_261_visible_smoke_wisps.py",
     "patches/v11_262_nebula_cloud_billow_points.py"
   ],
-  "finalBytes": 8020174,
-  "finalSha256": "147d2c864d2d366f134e3924e824a4b13c0b01633264de6853a565f5fed28c68"
+  "finalBytes": 8025626,
+  "finalSha256": "a92a3c016e196e42f186bd83eba55c982e3b62db2ff37b81e968a442bfef0fa4"
 }
