@@ -1,12 +1,14 @@
-"""Offline, bounded image-preprocessing and provider-wire tests for §C."""
+"""Offline no-paid-provider contract tests for §C self-hosted image understanding."""
 from __future__ import annotations
 
 import base64
 import importlib.util
 import json
-import os
 from pathlib import Path
 from unittest.mock import patch
+
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
 
 
 SOURCE = Path(__file__).resolve().parents[1] / "hf_space" / "chat_vision.py"
@@ -26,58 +28,73 @@ def expect_invalid(value: object, expected: str) -> None:
 
 
 jpeg = b"\xff\xd8\xff" + b"\0" * 20
-valid = "data:image/jpeg;base64," + base64.b64encode(jpeg).decode()
+valid = "data:image/jpeg;base64," + base64.b64encode(jpeg).decode("ascii")
 assert vision._validated_image(valid) == valid
 expect_invalid("data:image/svg+xml;base64," + base64.b64encode(jpeg).decode(), "IMAGE_FORMAT_INVALID")
 expect_invalid("data:image/jpeg;base64,?", "IMAGE_FORMAT_INVALID")
 expect_invalid("data:image/jpeg;base64," + base64.b64encode(b"not-jpeg").decode(), "IMAGE_FORMAT_INVALID")
 expect_invalid("data:image/jpeg;base64," + base64.b64encode(b"\xff\xd8\xff" + b"\0" * vision.MAX_IMAGE_BYTES).decode(), "IMAGE_TOO_LARGE")
 
-with patch.dict(os.environ, {
-    "SWRLZ_VISION_API_URL": "https://example.test/v1/chat/completions",
-    "SWRLZ_VISION_MODEL": "vision-test-model",
-    "SWRLZ_VISION_API_KEY": "test-only-token",
-}):
-    endpoint, model, token = vision._vision_config()
-    assert endpoint == "https://example.test/v1/chat/completions"
-    assert model == "vision-test-model"
-    assert token == "test-only-token"
+source = SOURCE.read_text(encoding="utf-8")
+assert "SWRLZ_VISION_API_KEY" not in source
+assert "router.huggingface.co" not in source
+assert "urllib.request" not in source
+assert vision.MODEL_REPO == "ggml-org/SmolVLM-256M-Instruct-GGUF"
+assert len(vision.MODEL_REVISION) == 40
+assert vision.MODEL_FILE == "SmolVLM-256M-Instruct-Q8_0.gguf"
+assert vision.PROJECTOR_FILE == "mmproj-SmolVLM-256M-Instruct-Q8_0.gguf"
 
-    class FakeResponse:
-        def __enter__(self):
-            return self
-        def __exit__(self, *_):
-            return False
-        def read(self, _):
-            return json.dumps({"choices": [{"message": {"content": "A grounded visual description."}}]}).encode()
+class FakeModel:
+    def __init__(self):
+        self.calls = []
 
-    observed = []
+    def create_chat_completion(self, **kwargs):
+        self.calls.append(kwargs)
+        return {"choices": [{"message": {"content": "A white dog on grass."}}]}
 
-    def fake_urlopen(request, timeout):
-        assert timeout == 35
-        assert request.get_method() == "POST"
-        assert request.get_header("Authorization") == "Bearer test-only-token"
-        payload = json.loads(request.data)
-        observed.append(payload)
-        return FakeResponse()
+fake_model = FakeModel()
+with patch.object(vision, "_prepare_image", lambda image: image), patch.object(vision, "_load_local_model", lambda: fake_model):
+    answer = vision._ask_vision_local(valid, "What is shown?")
+assert answer == "A white dog on grass."
+assert len(fake_model.calls) == 1
+assert fake_model.calls[0]["messages"][0]["content"][1]["image_url"]["url"] == valid
+assert fake_model.calls[0]["max_tokens"] <= 112
 
-    with patch.object(vision.urllib.request, "urlopen", fake_urlopen):
-        description = vision._ask_vision(endpoint, model, token, valid, "What is shown?")
-    assert description == "A grounded visual description."
-    assert len(observed) == 1
-    assert observed[0]["model"] == model
-    assert observed[0]["messages"][0]["content"][1]["image_url"]["url"] == valid
-
-with patch.dict(os.environ, {
-    "SWRLZ_VISION_API_URL": "http://insecure.test/v1/chat/completions",
-    "SWRLZ_VISION_MODEL": "vision-test-model",
-    "SWRLZ_VISION_API_KEY": "test-only-token",
-}):
+vision._inference_lock.acquire()
+try:
     try:
-        vision._vision_config()
-    except ValueError as exc:
-        assert str(exc) == "VISION_ENDPOINT_INVALID"
+        vision._ask_vision_local(valid, "Busy?")
+    except vision.VisionBusy:
+        pass
     else:
-        raise AssertionError("Non-HTTPS vision endpoint accepted")
+        raise AssertionError("Overlapping vision requests were not rejected")
+finally:
+    vision._inference_lock.release()
 
-print("Chat vision: size, format, HTTPS and mocked provider POST PASS")
+app = FastAPI()
+vision.install(app, lambda _: None)
+client = TestClient(app)
+with patch.object(vision, "_ask_vision_local", lambda image, question: "A local visual description."):
+    response = client.post("/api/lalm_station/vision", json={"image": valid, "question": "What is shown?"})
+    assert response.status_code == 200, response.text
+    assert response.json() == {
+        "ok": True,
+        "description": "A local visual description.",
+        "imageStored": False,
+        "backend": "local-cpu",
+    }
+assert client.post("/api/lalm_station/vision", json={"image": "invalid"}).status_code == 400
+assert client.post("/api/lalm_station/vision", data="oops", headers={"Content-Type": "text/plain"}).status_code == 415
+
+unauthenticated = FastAPI()
+vision.install(unauthenticated, lambda _: (_ for _ in ()).throw(PermissionError()))
+assert TestClient(unauthenticated).post("/api/lalm_station/vision", json={"image": valid}).status_code == 401
+
+with patch.object(vision, "_ask_vision_local", side_effect=vision.VisionBusy()):
+    assert client.post("/api/lalm_station/vision", json={"image": valid}).status_code == 429
+with patch.object(vision, "_ask_vision_local", side_effect=RuntimeError("private source pixels")):
+    response = client.post("/api/lalm_station/vision", json={"image": valid})
+    assert response.status_code == 503
+    assert "private source pixels" not in response.text
+
+print("Chat vision local CPU: authenticated boundaries, no paid provider, concurrency and mocked inference PASS")
