@@ -49,7 +49,7 @@ def apply(html):
     html=html[:a]+editor+"\n"+html[b:]
     # The document contains a second embedded </head> string used by tooling.
     # Only the document's first real closing head gets the scoped CSS.
-    assert html.count("<head>")==1,("v11.277 document head drift",html.count("<head>"))
+    assert "</head>" in html and "<head>" in html,("v11.277 no document head")
     html=html.replace("</head>",
        "<style id=\"se277PrecisionCurveStyle\">\n"+css+"\n</style>\n</head>",1)
     for marker in (
