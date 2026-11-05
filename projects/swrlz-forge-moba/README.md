@@ -1590,3 +1590,8 @@ Open the new model directly with `?project=comet-courier`; choose **Edit model**
 ### v11.274 · Browser viewport Nerd Stats
 
 A compact optional Nerd Stats HUD is available in the Game, Model, Particle and Material editor viewports (toggle button or F3). It reports approximate RAF cadence and available renderer/stress diagnostic counters, with measurement limitations labeled. No additional WebGL context, requestAnimationFrame loop, or gameplay scheduling changes. The existing Quest VR L3 metrics and Sheep Tag gameplay HUD are preserved. See `docs/EDITOR_VIEWPORT_NERD_STATS_V11_274.md`.
+
+
+### v11.276 · Quest left-controller Nerd Stats
+
+In *immersive WebXR Sheep Tag*, the existing native three-page Nerd Stats panel now follows the left controller and keeps its text facing the headset. Press the left stick (L3) to toggle it; the panel updates within the existing XR loop and uses a head-relative fallback when left-controller tracking is unavailable. A floating **2D Quest Browser window is not immersive WebXR**: its HTML stats HUD cannot physically track a controller. Enter immersive VR to use the controller-attached HUD. AI, LAN, particle studio and browser stats are unchanged. See `docs/QUEST_LEFT_CONTROLLER_NERD_STATS_V11_276.md`.

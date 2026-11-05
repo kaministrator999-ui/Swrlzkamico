@@ -2102,3 +2102,8 @@ The first v11.77 deployment packaged and uploaded the correct sealed model build
 #### v11.274 delivered in source · Opt-in viewport Nerd Stats
 
 A small toggle (and F3 shortcut) in Game, Model, Particle and Materials browser viewports exposes the existing approximate browser RAF frame cadence, renderer draw/triangle counts and active diagnostic load. It is additive and independent of the Sheep Tag VR L3 metrics panel. Owner mobile/Quest acceptance remains pending. See `docs/EDITOR_VIEWPORT_NERD_STATS_V11_274.md`.
+
+
+#### v11.276 · Quest Nerd Stats wrist alignment
+
+Immersive WebXR metrics follow the Quest left controller every native frame with correct front-face orientation and L3 toggle preserved; use a head-relative fallback during hand disconnection. Browser-in-VR's ordinary 2D window retains its HTML stats, since physical wrist mounting requires immersive WebXR. Real Quest 2 acceptance pending; other systems unchanged.
