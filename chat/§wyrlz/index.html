@@ -923,6 +923,26 @@
     .chat-updates-content{min-height:0;overflow:auto;overscroll-behavior:contain;padding:8px 20px 20px}.chat-updates-dialog ul{padding-left:22px}.chat-updates-dialog li{margin:9px 0}.chat-updates-dialog summary{cursor:pointer;color:#b7e9ff;padding:10px 0;overflow-wrap:anywhere}.chat-updates-entry{margin-left:8px;border-top:1px solid #7ed6ff1a}.chat-updates-entry summary{font-size:13px}.chat-updates-date,.chat-updates-coverage{font-size:11px;color:#91b0c3}.chat-updates-status:empty{display:none}
     .chat-updates-dialog footer{display:flex;align-items:center;gap:12px;border-top:1px solid #7ed6ff26;background:#061625}.chat-updates-dialog label{flex:1;display:flex;align-items:center;gap:8px;font-size:12px}.chat-updates-dialog input{width:18px;height:18px;flex-shrink:0;accent-color:#48dff7}.chat-updates-dialog button{padding:10px 16px;border:1px solid #7ed6ff66;border-radius:10px;color:#effcff;background:#17465d;cursor:pointer;font:inherit}.chat-updates-dialog :focus-visible{outline:2px solid #48dff7;outline-offset:3px}#chatUpdatesOpen{display:block;margin:8px 0 0;padding:8px 10px;border:1px solid #7ed6ff44;border-radius:9px;background:#0a263a;color:#d8f5ff;cursor:pointer;width:100%;text-align:left;font:inherit}
     @media(max-width:480px){.chat-updates-dialog{width:calc(100vw - 16px);max-height:calc(100dvh - 20px)}.chat-updates-dialog header,.chat-updates-dialog footer{padding:14px}.chat-updates-content{padding:4px 14px 14px}.chat-updates-dialog footer{flex-wrap:wrap}.chat-updates-dialog label{flex-basis:100%}.chat-updates-dialog button{margin-left:auto;min-height:44px}}
+  
+    /* Chat media controls sit below the editable input so §E's Paste/Send/Stop
+       and the narrow Android iframe input retain their existing touch targets. */
+    .composer-media-tools{display:flex;align-items:center;gap:7px;flex-wrap:wrap;padding:4px 8px 0;min-height:31px}
+    .composer-media-button{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-height:28px;border:1px solid rgba(126,214,255,.30);border-radius:10px;padding:4px 9px;background:rgba(17,47,71,.85);color:#d4f5ff;font:600 11px system-ui;touch-action:manipulation;cursor:pointer}
+    .composer-media-button svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+    .composer-media-button[aria-pressed="true"]{background:rgba(130,34,73,.95);border-color:#ff7ab2;color:white}
+    .composer-media-button:disabled{opacity:.42;cursor:default}
+    .composer-media-status{min-width:0;max-width:100%;padding:1px 6px;color:#b9e5fc;font-size:11px}
+    .composer-media-status.error{color:#ffabb6}
+    .composer-media-status[hidden],.image-attachment[hidden]{display:none!important}
+    .image-attachment{display:flex;align-items:center;gap:5px;min-width:0;max-width:100%;font-size:11px;color:#d7efff}
+    .image-attachment img{height:28px;width:28px;object-fit:cover;border-radius:5px}
+    .image-attachment span{max-width:120px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .image-attachment button{border:0;background:transparent;color:#e3faff;font-size:17px;cursor:pointer}
+    .composer-shell.collapsed .composer-media-tools{display:none}
+    .user-image-attachment{display:block;max-width:min(240px,100%);max-height:180px;object-fit:contain;margin-top:9px;border-radius:9px}
+    .user-vision-summary{margin-top:8px;font-size:11px;color:#d4e9f7;white-space:pre-wrap}
+    .user-vision-summary summary{cursor:pointer}
+    @media(max-width:400px){.composer-media-tools{gap:4px;padding-left:3px;padding-right:3px}.composer-media-button{padding:3px 7px;font-size:10px}.image-attachment span{max-width:78px}}
   </style>
   <script src="/chat/§wyrlz/assets/forge-embed-v1.js"></script>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -1251,6 +1271,21 @@
           </button>
         </div>
       </div>
+      <div class="composer-media-tools" aria-label="Message media">
+        <button class="composer-media-button" id="imagePickButton" type="button" title="Attach image" aria-label="Attach image">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="8" cy="9" r="1.5"/><path d="m4 17 5-5 4 4 3-3 5 5"/></svg> Image
+        </button>
+        <button class="composer-media-button" id="micButton" type="button" aria-label="Start speech-to-text" aria-pressed="false" title="Dictate message">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 17v5m-4 0h8"/></svg> Mic
+        </button>
+        <input id="imagePicker" type="file" accept="image/jpeg,image/png,image/webp" hidden>
+        <div class="image-attachment" id="imageAttachment" hidden>
+          <img id="imageAttachmentThumbnail" alt="Image preview">
+          <span id="imageAttachmentName"></span>
+          <button id="imageRemoveButton" type="button" aria-label="Remove attached image">✕</button>
+        </div>
+        <div class="composer-media-status" id="composerFeedback" role="status" aria-live="polite" hidden></div>
+      </div>
     </form>
   </footer>
   <script>
@@ -1260,6 +1295,122 @@
       const embedPaste = document.getElementById("swrlzEmbedPaste");
       if(new URLSearchParams(location.search).get("forgeEmbed")==="1")document.body.classList.add("swrlz-embed-composer");
       const stopButton = document.getElementById("stopButton");
+      const imagePicker=document.getElementById("imagePicker");
+      const imagePickButton=document.getElementById("imagePickButton");
+      const imageRemoveButton=document.getElementById("imageRemoveButton");
+      const imageAttachment=document.getElementById("imageAttachment");
+      const imageAttachmentThumbnail=document.getElementById("imageAttachmentThumbnail");
+      const imageAttachmentName=document.getElementById("imageAttachmentName");
+      const composerFeedback=document.getElementById("composerFeedback");
+      const micButton=document.getElementById("micButton");
+      const VISION_START="\n\n[Uploaded image — vision description, not original pixels]\n";
+      const VISION_END="\n[/Uploaded image]";
+      const imagePreviews=new Map();
+      let selectedImage=null, speechRecognition=null;
+      const composerNotice=(message,error=false)=>{
+        composerFeedback.textContent=message||"";
+        composerFeedback.hidden=!message;
+        composerFeedback.classList.toggle("error",!!error);
+      };
+      const updateImagePreview=()=>{
+        imageAttachment.hidden=!selectedImage;
+        imageAttachmentThumbnail.removeAttribute("src");
+        if(selectedImage){
+          imageAttachmentThumbnail.src=selectedImage.url;
+          imageAttachmentName.textContent=selectedImage.file.name;
+        }
+      };
+      const removeSelectedImage=()=>{
+        if(selectedImage)URL.revokeObjectURL(selectedImage.url);
+        selectedImage=null;updateImagePreview();
+      };
+      imagePickButton.addEventListener("click",()=>imagePicker.click());
+      imagePicker.addEventListener("change",()=>{
+        const file=imagePicker.files&&imagePicker.files[0];
+        imagePicker.value="";
+        if(!file)return;
+        if(!["image/jpeg","image/png","image/webp"].includes(file.type)||file.size>8*1024*1024){
+          composerNotice("Choose a JPEG, PNG, or WebP under 8 MB.",true);return;
+        }
+        removeSelectedImage();
+        selectedImage={file,url:URL.createObjectURL(file)};
+        updateImagePreview();composerNotice("");
+      });
+      imageRemoveButton.addEventListener("click",()=>{removeSelectedImage();composerNotice("");});
+      const encodeImageForVision=attachment=>new Promise((resolve,reject)=>{
+        const img=new Image();
+        img.onload=()=>{
+          try{
+            const scale=Math.min(1,1600/Math.max(img.naturalWidth,img.naturalHeight));
+            const canvas=document.createElement("canvas");
+            canvas.width=Math.max(1,Math.round(img.naturalWidth*scale));
+            canvas.height=Math.max(1,Math.round(img.naturalHeight*scale));
+            const ctx=canvas.getContext("2d");
+            if(!ctx)throw new Error("Image conversion is unavailable.");
+            ctx.fillStyle="#ffffff";ctx.fillRect(0,0,canvas.width,canvas.height);
+            ctx.drawImage(img,0,0,canvas.width,canvas.height);
+            let dataURL="";
+            for(const quality of [.86,.72,.56]){
+              dataURL=canvas.toDataURL("image/jpeg",quality);
+              if(dataURL.length<=2600000)break;
+            }
+            if(dataURL.length>2600000)throw new Error("Image is too complex; choose a smaller picture.");
+            resolve(dataURL);
+          }catch(error){reject(error);}
+        };
+        img.onerror=()=>reject(new Error("Unable to read this image."));
+        img.src=attachment.url;
+      });
+      const requestVisionDescription=async(attachment,question)=>{
+        const image=await encodeImageForVision(attachment);
+        const response=await fetch("/api/lalm_station/vision",{
+          method:"POST",credentials:"same-origin",cache:"no-store",
+          headers:{"Content-Type":"application/json"},
+          body:JSON.stringify({image,question:question||"Describe this image."})
+        });
+        let result=null;
+        try{result=await response.json()}catch(_){}
+        if(!response.ok||!result?.ok||!result.description){
+          throw new Error(result?.detail||"Image inference failed. Your message was not sent.");
+        }
+        return String(result.description).slice(0,6000);
+      };
+      micButton.addEventListener("click",()=>{
+        if(speechRecognition){speechRecognition.stop();return;}
+        const Recognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+        if(!Recognition){composerNotice("Speech recognition is unavailable in this browser. Try Chrome or your keyboard's microphone.",true);return;}
+        const recognition=new Recognition();
+        recognition.lang=navigator.language||"en-US";
+        recognition.interimResults=true;
+        recognition.continuous=false;
+        const original=prompt.value;
+        speechRecognition=recognition;
+        micButton.setAttribute("aria-pressed","true");
+        micButton.setAttribute("aria-label","Stop speech-to-text");
+        composerNotice("Listening… tap the microphone to stop.");
+        recognition.onresult=event=>{
+          let transcript="";
+          for(let i=0;i<event.results.length;i++)transcript+=String(event.results[i][0]?.transcript||"");
+          const separator=original&&!/\s$/.test(original)?" ":"";
+          prompt.value=(original+separator+transcript).slice(0,prompt.maxLength);
+          prompt.dispatchEvent(new Event("input",{bubbles:true}));
+        };
+        recognition.onerror=event=>{
+          const code=String(event.error||"unknown");
+          composerNotice(code==="not-allowed"?"Microphone permission was denied.":"Dictation stopped: "+code,true);
+        };
+        recognition.onend=()=>{
+          if(speechRecognition!==recognition)return;
+          speechRecognition=null;micButton.setAttribute("aria-pressed","false");
+          micButton.setAttribute("aria-label","Start speech-to-text");
+          if(!composerFeedback.classList.contains("error"))composerNotice("");
+        };
+        try{recognition.start()}catch(error){
+          speechRecognition=null;micButton.setAttribute("aria-pressed","false");
+          micButton.setAttribute("aria-label","Start speech-to-text");
+          composerNotice("Unable to start microphone recognition.",true);
+        }
+      });
       const chatViewport = document.getElementById("chatViewport");
       const jumpLatest = document.getElementById("jumpLatest");
       const threadList = document.getElementById("threadList");
@@ -2890,7 +3041,23 @@
             const meta=document.createElement("div");meta.className="user-meta";const who=document.createElement("span");who.textContent=chatAccountUser?.displayName||chatAccountUser?.email||"You";meta.appendChild(who);const timeText=formatMessageTime(msg.createdAt);if(timeText){const time=document.createElement("span");time.className="message-time";time.textContent=timeText;time.title=new Date(Number(msg.createdAt)).toLocaleString();meta.appendChild(time);}
             const bubble=document.createElement("div");bubble.className="user-bubble";
             const persistedTag=String(msg?.meta?.contentTag||"").toLowerCase();
-            if(persistedTag==="container:code"||persistedTag==="container:lyrics"){
+            const imageText=String(msg.text||"");
+            const imageStart=imageText.indexOf(VISION_START);
+            const hasVision=imageStart>=0&&imageText.endsWith(VISION_END);
+            if(hasVision){
+              bubble.textContent=imageText.slice(0,imageStart)||"Image attached";
+              const previewURL=imagePreviews.get(msg.id||"");
+              if(previewURL){
+                const image=document.createElement("img");image.className="user-image-attachment";
+                image.src=previewURL;image.alt="Uploaded image";bubble.appendChild(image);
+              }
+              const details=document.createElement("details");details.className="user-vision-summary";
+              const summary=document.createElement("summary");
+              summary.textContent=previewURL?"Image analyzed":"Image analyzed · original image not stored";
+              const description=document.createElement("div");
+              description.textContent=imageText.slice(imageStart+VISION_START.length,-VISION_END.length);
+              details.append(summary,description);bubble.appendChild(details);
+            }else if(persistedTag==="container:code"||persistedTag==="container:lyrics"){
               bubble.classList.add("user-container-message");
               const syntheticFence=(persistedTag==="container:lyrics"?"lyrics":"code")+"\n"+String(msg.text||"");
               renderAssistantContent(bubble,"```"+syntheticFence+"```",msg.id||"");
@@ -3321,7 +3488,7 @@
           return r.ok;
         }catch(_){return false;}
       };
-      const startDraft = () => { window.SwrlzForgeEmbedV1?.setThread(""); draftThread=true; pendingDraftThread=null; activeThreadId=""; prompt.value=""; renderedConversationSignature=""; renderConversation(null,true); renderThreads(); closeThreadPopups(); setMenu(false); };
+      const startDraft = () => { window.SwrlzForgeEmbedV1?.setThread(""); draftThread=true; pendingDraftThread=null; activeThreadId=""; prompt.value=""; removeSelectedImage(); composerNotice(""); renderedConversationSignature=""; renderConversation(null,true); renderThreads(); closeThreadPopups(); setMenu(false); };
       newThreadButton.addEventListener("click",startDraft);
       document.addEventListener("click",()=>closeThreadPopups());
       const uid = prefix => prefix+"-"+Date.now().toString(36)+"-"+crypto.getRandomValues(new Uint32Array(2)).join("-");
@@ -3380,11 +3547,22 @@
       };
 
       const commitDraftFromPrompt = async () => {
-        const text=prompt.value.trim(); if(!text||sending)return false;
-        const contentTag=classifyUserContent(text);
-        let sendAcknowledged=false;
-        sending=true; sendButton.disabled=true;
+        const draftText=prompt.value.trim(), attachment=selectedImage;
+        if((!draftText&&!attachment)||sending)return false;
+        let text=draftText;
+        const contentTag=classifyUserContent(draftText);
+        let sendAcknowledged=false,sendStarted=false;
+        sending=true; sendButton.disabled=true; imagePickButton.disabled=true; micButton.disabled=true;
+        if(speechRecognition)speechRecognition.stop();
         try{
+          if(attachment){
+            composerNotice("Analyzing image…");
+            const description=await requestVisionDescription(attachment,draftText);
+            text=(draftText||"Describe this image.")+VISION_START+description+VISION_END;
+            if(text.length>131072)throw new Error("The combined image analysis is too long.");
+            composerNotice("");
+          }
+          sendStarted=true;
           if(draftThread){
             const id=threadId(), now=Date.now(), title=titleFrom(text);
             // The Mask may stage the first turn optimistically, but it does not
@@ -3431,6 +3609,16 @@
           const accepted=await response.json();
           if(accepted.requestId!==requestId)throw new Error("SEND_ACK_REQUEST_MISMATCH");
           sendAcknowledged=true;
+          if(attachment&&selectedImage===attachment){
+            imagePreviews.set(userMessageId,attachment.url);
+            while(imagePreviews.size>12){
+              const oldest=imagePreviews.keys().next().value;
+              URL.revokeObjectURL(imagePreviews.get(oldest));imagePreviews.delete(oldest);
+            }
+            selectedImage=null;updateImagePreview();
+            renderConversation(currentThread(),true);
+            composerNotice("");
+          }
           if(pendingDraftThread?.id===activeThreadId){
             chatThreads=promoteAcceptedNativeThread(chatThreads,pendingDraftThread,accepted.requestId,requestId);
             pendingDraftThread=null;
@@ -3461,16 +3649,21 @@
           await syncStation();
           return true;
         }catch(err){
+          if(!sendStarted){
+            composerNotice(String(err?.message||err).slice(0,220),true);
+            setCompanionState("idle","vision-not-sent");
+            return false;
+          }
           setCompanionState("error","client-transport");
           const raw=String(err?.message||err);
           const reason=/SEND_HTTP_413/.test(raw)
             ?"New message not saved: native account snapshot storage limit reached. Draft restored; existing history remains preserved."
             :"New message not confirmed saved. Draft restored; refresh saved conversations before retrying.";
-          if(!sendAcknowledged){prompt.value=text;resizeComposer();}
+          if(!sendAcknowledged){prompt.value=draftText;resizeComposer();}
           if(stationGeneration){stationGeneration.status=[...(stationGeneration.status||[]),{type:"FAILED",phase:"CLIENT_TRANSPORT",reason}];stationGeneration.terminal=true;renderStationGeneration();}
           uiCamera("chat-save-unconfirmed",{reasonCode:/SEND_HTTP_413/.test(raw)?"SNAPSHOT_LIMIT":"SEND_FAILED",acknowledged:sendAcknowledged});
           return false;
-        }finally{sending=false;streamAbortController=null;sendButton.disabled=false;sendButton.hidden=false;stopButton.hidden=true;scheduleStationSync()}
+        }finally{sending=false;streamAbortController=null;sendButton.disabled=false;imagePickButton.disabled=false;micButton.disabled=false;sendButton.hidden=false;stopButton.hidden=true;scheduleStationSync()}
       };
       stopButton.addEventListener("click",async()=>{const rid=String(stationGeneration?.requestId||"");if(!rid)return;stopButton.disabled=true;try{streamAbortController?.abort();await fetch("/api/lalm_station/cancel",{method:"POST",credentials:"same-origin",cache:"no-store",headers:{"Content-Type":"application/json"},body:JSON.stringify({requestId:rid})});await syncStation();}finally{stopButton.disabled=false;stopButton.hidden=true;sendButton.hidden=false;}});
       // §E Analyze is a user-clicked read-only request; it uses the ordinary
@@ -3532,7 +3725,7 @@
       let lastTouchSend=0;
       sendButton.addEventListener("pointerup",event=>{
         if(event.pointerType!=="touch"&&event.pointerType!=="pen")return;
-        if(!prompt.value.trim()||sending)return;
+        if((!prompt.value.trim()&&!selectedImage)||sending)return;
         lastTouchSend=performance.now();event.preventDefault();
         void commitDraftFromPrompt();
       });
