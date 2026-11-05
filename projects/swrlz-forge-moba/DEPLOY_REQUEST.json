@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.277",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_277_LIVE_PRECISION_CURVES",
-  "reason": "Owner §E Particle Studio request: improve overall curve-editing precision and make graph/particle viewport update live as a point is dragged, not only after release. v11.277 replaces the re-created-on-every-move SVG with stable pointer-captured hit targets (touch/mouse/pen), drag value delta to avoid snapping, Fine ×10 sensitivity, Shift/Alt fine mode, .1-percent numeric inputs and precise keyboard arrows. The existing saved five-point curve format remains unchanged. The renderer samples a temporary per-emitter curve overlay on each native particle frame while dragging, and the selected timeline lane and graph readout update immediately. On release a single validated se223Update project transaction is created (one Undo step); cancel discards staged data. Preserves galaxy main + continuous flow, saved projects, game/model/material editors, v11.274 viewport Nerd Stats, v11.276 left-controller VR Nerd Stats, Sheep Tag LAN and one WebGL renderer/animation loop. Verified exact v11.277 source: 308 patches, 8,106,424-byte HTML, SHA-256 3c7beb83eb6cf3c4c38e2c50b776038a8b92d8406299e2c9c27c86a71b4f90fe; complete assets and inline JS syntax check successful. Real mobile precision and live GPU behavior await owner test.",
-  "sourceCommit": "b63003f5d2e6ddcc24a2c6bff6db9fcac85dadf4",
-  "sourceIntegritySha256": "3c7beb83eb6cf3c4c38e2c50b776038a8b92d8406299e2c9c27c86a71b4f90fe"
+  "releaseVersion": "v11.278",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_278_QUEST_MENU_CADENCE",
+  "reason": "Owner Quest 2 feedback: stats HUD follows left controller but is too close to read, and opening menus worsens Sheep Tag lag. v11.278 moves the existing native wrist metrics panel 12 cm farther forward and 6 cm higher, reuses a single scratch vector in native XR tracking, and throttles stats texture repaints to ~1.85s while preserving instant page changes and the L3 toggle. Adds Nerd Stats fourth page with approximate XR callback frame times for stats/radial menu open/closed combinations and sample counts so owner can isolate menu cost at fixed house count. No change to gameplay AI, camera, LAN authority, menus or particle editor. Quest scenes at 38 houses/3092 draws/10 FPS vs 17 houses/1806 draws/26 FPS suggest substantial scene-load contribution, not proof of menu root cause. Fully verified 309-patch source and 69 assets, 8,111,652 assembled HTML bytes, SHA-256 046c28a36a95ce89827e7c8b753fe289189e803e6cd76fba8d0141195625d89a. Real Quest 2 UX/performance acceptance pending.",
+  "sourceCommit": "75845283af010389f0afef41b0bcd4f744da98d9",
+  "sourceIntegritySha256": "046c28a36a95ce89827e7c8b753fe289189e803e6cd76fba8d0141195625d89a"
 }
