@@ -403,7 +403,7 @@ def install(app, require_account) -> None:
             job["lastPolledAt"] = now
             phase = job["phase"]
             response = {
-                "ok": phase != "FAILED",
+                "ok": phase not in ("FAILED", "CANCELLED"),
                 "jobId": jobId,
                 "phase": phase,
                 "done": phase not in ACTIVE_PHASES,
