@@ -1478,7 +1478,7 @@
         const status=document.createElement("div");status.className="vision-work-status";status.setAttribute("role","status");status.setAttribute("aria-live","polite");
         root.append(header,message,preview,steps,status);messageList.appendChild(root);
         const activity={
-          root,abort:new AbortController(),update(phase,detail=""){
+          root,originThreadId:activeThreadId,originDraft:draftThread,abort:new AbortController(),update(phase,detail=""){
             const positions={PREPARING:0,UPLOADING:0,QUEUED:1,PREPROCESSING:1,LOADING_MODEL:1,ANALYZING:2,COMPLETE:3,SENDING:3,RESPONDING:4};
             const index=positions[phase];
             if(phase==="ERROR"||phase==="STOPPED"){
@@ -3099,6 +3099,11 @@
       const renderConversation = (thread,force=false) => {
         const signature=conversationRenderSignature(thread);
         if(!force&&signature===renderedConversationSignature)return false;
+        if(visionActivity){
+          visionActivity.root.hidden=visionActivity.originDraft
+            ? !draftThread
+            : draftThread||visionActivity.originThreadId!==String(thread?.id||"");
+        }
         captureCodeViewState();syncTopEdge(thread);
         const threadId=String(thread?.id||"");
         const reuse=!!thread&&!force&&threadId===renderedConversationThreadId;
@@ -3647,6 +3652,7 @@
 
       const commitDraftFromPrompt = async () => {
         const draftText=prompt.value.trim(), attachment=selectedImage;
+        const originalThreadId=activeThreadId,originalDraft=draftThread;
         if((!draftText&&!attachment)||sending)return false;
         let text=draftText;
         const contentTag=classifyUserContent(draftText);
@@ -3660,6 +3666,9 @@
             const description=await requestVisionDescription(attachment,draftText,activity);
             text=(draftText||"Describe this image.")+VISION_START+description+VISION_END;
             if(text.length>131072)throw new Error("The combined image analysis is too long.");
+            if(draftThread!==originalDraft||activeThreadId!==originalThreadId){
+              throw new Error("You switched chats during image analysis. Return to the original chat and press Send again.");
+            }
             activity.update("SENDING");
           }
           sendStarted=true;
@@ -3669,6 +3678,7 @@
             // create an official conversation or populate the drawer. The
             // Workstation promotes/persists the thread when it accepts this send.
             draftThread=false; activeThreadId=id;
+            if(activity){activity.originDraft=false;activity.originThreadId=id;}
             pendingDraftThread={id,title,pinned:false,createdAt:now,messages:[]};
           }else{
             const t=currentThread(); if(t&&(!t.title||t.title==="New conversation"))await mutateChat([{type:"UPSERT_THREAD",threadId:t.id,title:titleFrom(text),pinned:!!t.pinned,createdAt:t.createdAt||Date.now()}]);
