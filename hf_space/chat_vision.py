@@ -33,8 +33,8 @@ MODEL_FILE = "SmolVLM-256M-Instruct-Q8_0.gguf"
 PROJECTOR_FILE = "mmproj-SmolVLM-256M-Instruct-Q8_0.gguf"
 # Existing browser handoff markers are part of persisted text, not new storage.
 # Export derives a clearly labeled view of the exact text passed to Chat.
-VISION_START = "\\n\\n[Uploaded image — vision description, not original pixels]\\n"
-VISION_END = "\\n[/Uploaded image]"
+VISION_START = "\n\n[Uploaded image — vision description, not original pixels]\n"
+VISION_END = "\n[/Uploaded image]"
 
 
 def vision_handoff_from_message(message: object) -> dict | None:
