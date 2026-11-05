@@ -1389,8 +1389,10 @@
         const body=JSON.stringify({image,question:question||"Describe this image."});
         let jobId="",reconnects=0,pollingErrors=0;
         const acceptJob=async()=>{
+          let attempted=false;
           while(!activity.abort.signal.aborted){
-            activity.update("UPLOADING");
+            if(!attempted)activity.update("UPLOADING");
+            attempted=true;
             let response;
             try{
               response=await fetch("/api/lalm_station/vision",{
