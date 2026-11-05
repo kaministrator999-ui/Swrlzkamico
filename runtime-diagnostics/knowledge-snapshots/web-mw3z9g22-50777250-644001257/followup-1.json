@@ -1,0 +1,15 @@
+{
+  "schema": "swrlz-knowledge-followup-v1",
+  "requestId": "web-mw3z9g22-50777250-644001257",
+  "modelId": "700m",
+  "eventType": "KNOWLEDGE_ACQUISITION_FOLLOWUP_1",
+  "sourceRef": "28c07377f36cd342a556ae320a18ac774df7ad6b",
+  "persistedAtUnixMs": 1793909425633,
+  "diagnostic": {
+    "schema": "swrlz-knowledge-followup-v1",
+    "parentRequestId": "web-mw3z9g22-50777250-644001257",
+    "turnIndex": 1,
+    "userText": "📍 Pin",
+    "capturedAtUnixMs": 1793909425633
+  }
+}
