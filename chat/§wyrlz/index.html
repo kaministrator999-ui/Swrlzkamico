@@ -1407,6 +1407,11 @@
               continue;
             }
             let result=null;try{result=await response.json()}catch(_){}
+            if(response.status>=500||response.status===408){
+              activity.note("Space temporarily unavailable. Reconnecting automatically…");
+              await visionSleep(4000,activity.abort.signal);
+              continue;
+            }
             if(response.status===429&&result?.code==="VISION_QUEUE_FULL"){
               activity.update("QUEUED","The local CPU queue is full. Retrying automatically when a slot opens…");
               await visionSleep(Math.min(12000,Math.max(2000,Number(result.retryAfterSeconds||8)*1000)),activity.abort.signal);
