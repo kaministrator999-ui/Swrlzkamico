@@ -53,7 +53,7 @@ assert.match(html,/if\(\(!prompt\.value\.trim\(\)&&!selectedImage\)\|\|sending\)
 assert.match(html,/const restorePendingVisionDraft=\(\)=>/);
 assert.match(html,/if\(provisionalThread&&provisionalMessageId\)/);
 assert.match(html,/m\.id!==provisionalMessageId/);
-assert.match(html,/if\(originalDraft\)\{/);
+assert.match(html,/if\(originalDraft&&!imageThreadCreated\)\{/);
 assert.match(html,/activity\.onAccepted=async\(\)=>/);
 assert.match(html,/await activity\.onAccepted\?\.\(\)/);
 assert.match(html,/if\(originalDraft&&draftThread\)\{/);
