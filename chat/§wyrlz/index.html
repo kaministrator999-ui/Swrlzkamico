@@ -235,6 +235,24 @@
     @media(prefers-reduced-motion:reduce){body:not(.motion-full) .work-shade,body:not(.motion-full) .work-surface,body:not(.motion-full) .message-evidence summary::before{transition:none!important}}
     @media(max-width:760px){.work-surface{width:100vw}.work-surface-button{padding:4px 6px}.work-surface-button .work-label{display:none}.top-model{display:none}.message-evidence{margin-left:38px}}
 
+  
+    /* Multimodal composer: local preview, server-side vision, browser dictation. */
+    #prompt{width:calc(100% - 120px)}
+    .composer-tools{gap:3px}
+    .composer-tool{width:28px;height:28px;flex:none;display:grid;place-items:center;border:1px solid rgba(126,214,255,.3);border-radius:50%;background:rgba(24,60,88,.78);color:#d4f5ff;cursor:pointer}
+    .composer-tool svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+    .composer-tool[aria-pressed="true"]{background:#842e4e;border-color:#ff7ab2;color:white;box-shadow:0 0 9px rgba(255,90,149,.45)}
+    .composer-tool:disabled{opacity:.45;cursor:default}
+    .image-attachment{display:flex;align-items:center;gap:8px;padding:5px 8px;margin:5px 0 0;border:1px solid rgba(126,214,255,.25);border-radius:11px;background:rgba(4,20,34,.84);color:#cceaff;font-size:11px}
+    .image-attachment[hidden],.composer-feedback[hidden]{display:none}
+    .image-attachment img{width:38px;height:38px;object-fit:cover;border-radius:6px}
+    .image-attachment span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .image-attachment button{border:0;background:transparent;color:#dffaff;font-size:18px;cursor:pointer;padding:3px}
+    .composer-feedback{padding:5px 10px;color:#b9e5fc;font-size:11px}
+    .composer-feedback.error{color:#ffabb6}
+    .user-image-attachment{display:block;max-width:min(240px,100%);max-height:180px;object-fit:contain;margin-top:9px;border-radius:9px}
+    .user-vision-summary{margin-top:8px;font-size:11px;color:#d4e9f7;white-space:pre-wrap}
+    .user-vision-summary summary{cursor:pointer}
   </style>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
@@ -519,17 +537,147 @@
       <div class="composer-box">
         <textarea id="prompt" rows="1" maxlength="16000" aria-label="Message §wyrlz" placeholder="Message §wyrlz…"></textarea>
         <div class="composer-tools">
+          <button class="composer-tool" id="imagePickButton" type="button" aria-label="Attach image" title="Attach image">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="8" cy="9" r="1.5"/><path d="m4 17 5-5 4 4 3-3 5 5"/></svg>
+          </button>
+          <button class="composer-tool" id="micButton" type="button" aria-label="Start speech-to-text" aria-pressed="false" title="Dictate message">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 17v5m-4 0h8"/></svg>
+          </button>
           <button class="send-button" id="sendButton" type="button" aria-label="Send message">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12 20 4l-6 16-3-7-7-1Z"/><path d="m11 13 9-9"/></svg>
           </button>
         </div>
       </div>
+      <input id="imagePicker" type="file" accept="image/jpeg,image/png,image/webp" hidden>
+      <div class="image-attachment" id="imageAttachment" hidden>
+        <img id="imageAttachmentThumbnail" alt="Image preview">
+        <span id="imageAttachmentName"></span>
+        <button id="imageRemoveButton" type="button" aria-label="Remove attached image">✕</button>
+      </div>
+      <div class="composer-feedback" id="composerFeedback" role="status" aria-live="polite" hidden></div>
     </form>
   </footer>
   <script>
     (() => {
       const prompt = document.getElementById("prompt");
       const sendButton = document.getElementById("sendButton");
+
+      const imagePicker=document.getElementById("imagePicker");
+      const imagePickButton=document.getElementById("imagePickButton");
+      const imageRemoveButton=document.getElementById("imageRemoveButton");
+      const imageAttachment=document.getElementById("imageAttachment");
+      const imageAttachmentThumbnail=document.getElementById("imageAttachmentThumbnail");
+      const imageAttachmentName=document.getElementById("imageAttachmentName");
+      const composerFeedback=document.getElementById("composerFeedback");
+      const micButton=document.getElementById("micButton");
+      const VISION_START="\n\n[Uploaded image — vision description, not original pixels]\n";
+      const VISION_END="\n[/Uploaded image]";
+      const imagePreviews=new Map();
+      let selectedImage=null, speechRecognition=null;
+      const composerNotice=(message,error=false)=>{
+        composerFeedback.textContent=message||"";
+        composerFeedback.hidden=!message;
+        composerFeedback.classList.toggle("error",!!error);
+      };
+      const updateImagePreview=()=>{
+        imageAttachment.hidden=!selectedImage;
+        imageAttachmentThumbnail.removeAttribute("src");
+        if(selectedImage){
+          imageAttachmentThumbnail.src=selectedImage.url;
+          imageAttachmentName.textContent=selectedImage.file.name;
+        }
+      };
+      const removeSelectedImage=()=>{
+        if(selectedImage)URL.revokeObjectURL(selectedImage.url);
+        selectedImage=null;updateImagePreview();
+      };
+      imagePickButton.addEventListener("click",()=>imagePicker.click());
+      imagePicker.addEventListener("change",()=>{
+        const file=imagePicker.files&&imagePicker.files[0];
+        imagePicker.value="";
+        if(!file)return;
+        if(!["image/jpeg","image/png","image/webp"].includes(file.type)||file.size>8*1024*1024){
+          composerNotice("Choose a JPEG, PNG, or WebP under 8 MB.",true);return;
+        }
+        removeSelectedImage();
+        selectedImage={file,url:URL.createObjectURL(file)};
+        updateImagePreview();composerNotice("");
+      });
+      imageRemoveButton.addEventListener("click",()=>{removeSelectedImage();composerNotice("");});
+      const encodeImageForVision=attachment=>new Promise((resolve,reject)=>{
+        const img=new Image();
+        img.onload=()=>{
+          try{
+            const scale=Math.min(1,1600/Math.max(img.naturalWidth,img.naturalHeight));
+            const canvas=document.createElement("canvas");
+            canvas.width=Math.max(1,Math.round(img.naturalWidth*scale));
+            canvas.height=Math.max(1,Math.round(img.naturalHeight*scale));
+            const ctx=canvas.getContext("2d");
+            if(!ctx)throw new Error("Image conversion is unavailable.");
+            ctx.fillStyle="#ffffff";ctx.fillRect(0,0,canvas.width,canvas.height);
+            ctx.drawImage(img,0,0,canvas.width,canvas.height);
+            let dataURL="";
+            for(const quality of [.86,.72,.56]){
+              dataURL=canvas.toDataURL("image/jpeg",quality);
+              if(dataURL.length<=2600000)break;
+            }
+            if(dataURL.length>2600000)throw new Error("Image is too complex; choose a smaller picture.");
+            resolve(dataURL);
+          }catch(error){reject(error);}
+        };
+        img.onerror=()=>reject(new Error("Unable to read this image."));
+        img.src=attachment.url;
+      });
+      const requestVisionDescription=async(attachment,question)=>{
+        const image=await encodeImageForVision(attachment);
+        const response=await fetch("/api/lalm_station/vision",{
+          method:"POST",credentials:"same-origin",cache:"no-store",
+          headers:{"Content-Type":"application/json"},
+          body:JSON.stringify({image,question:question||"Describe this image."})
+        });
+        let result=null;
+        try{result=await response.json()}catch(_){}
+        if(!response.ok||!result?.ok||!result.description){
+          throw new Error(result?.detail||"Image inference failed. Your message was not sent.");
+        }
+        return String(result.description).slice(0,6000);
+      };
+      micButton.addEventListener("click",()=>{
+        if(speechRecognition){speechRecognition.stop();return;}
+        const Recognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+        if(!Recognition){composerNotice("Speech recognition is unavailable in this browser. Try Chrome or your keyboard's microphone.",true);return;}
+        const recognition=new Recognition();
+        recognition.lang=navigator.language||"en-US";
+        recognition.interimResults=true;
+        recognition.continuous=false;
+        const original=prompt.value;
+        speechRecognition=recognition;
+        micButton.setAttribute("aria-pressed","true");
+        micButton.setAttribute("aria-label","Stop speech-to-text");
+        composerNotice("Listening… tap the microphone to stop.");
+        recognition.onresult=event=>{
+          let transcript="";
+          for(let i=0;i<event.results.length;i++)transcript+=String(event.results[i][0]?.transcript||"");
+          const separator=original&&!/\s$/.test(original)?" ":"";
+          prompt.value=(original+separator+transcript).slice(0,prompt.maxLength);
+          prompt.dispatchEvent(new Event("input",{bubbles:true}));
+        };
+        recognition.onerror=event=>{
+          const code=String(event.error||"unknown");
+          composerNotice(code==="not-allowed"?"Microphone permission was denied.":"Dictation stopped: "+code,true);
+        };
+        recognition.onend=()=>{
+          if(speechRecognition!==recognition)return;
+          speechRecognition=null;micButton.setAttribute("aria-pressed","false");
+          micButton.setAttribute("aria-label","Start speech-to-text");
+          if(!composerFeedback.classList.contains("error"))composerNotice("");
+        };
+        try{recognition.start()}catch(error){
+          speechRecognition=null;micButton.setAttribute("aria-pressed","false");
+          micButton.setAttribute("aria-label","Start speech-to-text");
+          composerNotice("Unable to start microphone recognition.",true);
+        }
+      });
       const threadList = document.getElementById("threadList");
       const newThreadButton = document.getElementById("newThreadButton");
       const messageList = document.getElementById("messageList");
@@ -959,7 +1107,26 @@
           } else if(msg.role==="user"){
             const node=document.createElement("article");node.className="user-message rendered-message";node.dataset.messageId=msg.id||"";
             const meta=document.createElement("div");meta.className="user-meta";meta.textContent=chatAccountUser?.displayName||chatAccountUser?.email||"You";
-            const bubble=document.createElement("div");bubble.className="user-bubble";bubble.textContent=msg.text||"";
+            const fullText=String(msg.text||"");
+            const imageStart=fullText.indexOf(VISION_START);
+            const hasVision=imageStart>=0&&fullText.endsWith(VISION_END);
+            const visibleText=hasVision?fullText.slice(0,imageStart):fullText;
+            const bubble=document.createElement("div");bubble.className="user-bubble";
+            bubble.textContent=visibleText||"Image attached";
+            if(hasVision){
+              const previewURL=imagePreviews.get(msg.id||"");
+              if(previewURL){
+                const image=document.createElement("img");image.className="user-image-attachment";
+                image.src=previewURL;image.alt="Uploaded image";bubble.appendChild(image);
+              }
+              const details=document.createElement("details");details.className="user-vision-summary";
+              const summary=document.createElement("summary");
+              summary.textContent=previewURL?"Image analyzed":"Image analyzed · original image not stored";
+              details.appendChild(summary);
+              const content=document.createElement("div");
+              content.textContent=fullText.slice(imageStart+VISION_START.length,-VISION_END.length);
+              details.appendChild(content);bubble.appendChild(details);
+            }
             if(chatAccountUser?.picture){
               const avatar=document.createElement("img");avatar.className="user-avatar";avatar.src=chatAccountUser.picture;avatar.alt="";node.append(meta,bubble,avatar);
             }else{
@@ -1155,7 +1322,7 @@
           return r.ok;
         }catch(_){return false;}
       };
-      const startDraft = () => { draftThread=true; pendingDraftThread=null; activeThreadId=""; prompt.value=""; renderConversation(null); renderThreads(); closeThreadPopups(); setMenu(false); };
+      const startDraft = () => { draftThread=true; pendingDraftThread=null; activeThreadId=""; prompt.value=""; removeSelectedImage(); composerNotice(""); renderConversation(null); renderThreads(); closeThreadPopups(); setMenu(false); };
       newThreadButton.addEventListener("click",startDraft);
       document.addEventListener("click",()=>closeThreadPopups());
       const uid = prefix => prefix+"-"+Date.now().toString(36)+"-"+crypto.getRandomValues(new Uint32Array(2)).join("-");
@@ -1178,9 +1345,19 @@
         }
       };
       const commitDraftFromPrompt = async () => {
-        const text=prompt.value.trim(); if(!text||sending)return false;
-        sending=true; sendButton.disabled=true;
+        const draftText=prompt.value.trim(),attachment=selectedImage;
+        if((!draftText&&!attachment)||sending)return false;
+        sending=true;sendButton.disabled=true;imagePickButton.disabled=true;micButton.disabled=true;
+        if(speechRecognition)speechRecognition.stop();
         try{
+          let text=draftText;
+          if(attachment){
+            composerNotice("Analyzing image…");
+            const description=await requestVisionDescription(attachment,draftText);
+            text=(draftText||"Describe this image.")+VISION_START+description+VISION_END;
+            if(text.length>16000)throw new Error("Image analysis is too long for the chat input.");
+            composerNotice("");
+          }
           if(draftThread){
             const id=threadId(), now=Date.now(), title=titleFrom(text);
             // The Mask may stage the first turn optimistically, but it does not
@@ -1203,7 +1380,7 @@
           }
           localThread.messages=Array.isArray(localThread.messages)?localThread.messages:[];
           if(!localThread.messages.some(m=>m.id===userMessageId)) localThread.messages.push({id:userMessageId,role:"user",text,meta:{requestId,localPending:true}});
-          prompt.value=""; renderConversation(localThread); renderThreads(); renderStationGeneration();
+          renderConversation(localThread); renderThreads(); renderStationGeneration();
           const sendPath="/api/lalm_station/send";
           const transportCamera=(stage,data={})=>{try{fetch("/api/chat?__swrlz_client_debug=1",{method:"POST",credentials:"same-origin",cache:"no-store",keepalive:true,headers:{"Content-Type":"application/json"},body:JSON.stringify({runId:"station-send-transport-v1",url:location.pathname,event:{at:new Date().toISOString(),type:"station-send-transport",message:stage,data:{requestId,sendPath,...data}}})}).catch(()=>{})}catch(_){}};
           transportCamera("before-fetch");
@@ -1223,16 +1400,28 @@
           // authoritative Station snapshot without blocking the composer.
           const accepted=await response.json();
           if(accepted.requestId!==requestId)throw new Error("SEND_ACK_REQUEST_MISMATCH");
+          if(prompt.value===draftText)prompt.value="";
+          prompt.dispatchEvent(new Event("input",{bubbles:true}));
+          if(attachment&&selectedImage===attachment){
+            imagePreviews.set(userMessageId,attachment.url);
+            while(imagePreviews.size>12){
+              const oldest=imagePreviews.keys().next().value;
+              URL.revokeObjectURL(imagePreviews.get(oldest));imagePreviews.delete(oldest);
+            }
+            selectedImage=null;updateImagePreview();
+            renderConversation(currentThread());
+          }
           stationGeneration.status=[{type:"QUEUED",phase:"QUEUED"}];
           setCompanionState("accepted","send-ack");
           renderStationGeneration();
           await syncStation();
           return true;
         }catch(err){
+          composerNotice(String(err?.message||err).slice(0,220),true);
           setCompanionState("error","client-transport");
           if(stationGeneration){stationGeneration.status=[...(stationGeneration.status||[]),{type:"FAILED",phase:"CLIENT_TRANSPORT",reason:String(err)}];stationGeneration.terminal=true;renderStationGeneration();}
           return false;
-        }finally{sending=false;sendButton.disabled=false;scheduleStationSync()}
+        }finally{sending=false;sendButton.disabled=false;imagePickButton.disabled=false;micButton.disabled=false;scheduleStationSync()}
       };
       sendButton.addEventListener("click",commitDraftFromPrompt);
       prompt.addEventListener("keydown",e=>{
