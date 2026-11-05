@@ -1,0 +1,40 @@
+name: Inspect §E curve live-binding contracts
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/inspect-forge-curve-contracts.yml'
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Read assembled runtime around curve state and update
+        run: |
+          python3 - <<'PY'
+          import json,gzip,base64,sys
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          sys.path.insert(0,str(root.resolve()))
+          from build_space import load_patch
+          m=json.loads((root/'source-manifest.json').read_text())
+          h=gzip.decompress(base64.b64decode(''.join((root/p).read_text().strip() for p in m['chunks']))).decode()
+          for p in m['patches']:h=load_patch(root/p)(h)
+          for needle in [
+              'function se223Get(', 'function se223Data(', 'function se223Update(',
+              'function se223UIRefresh(', 'const se223State=', 'function se223Frame(',
+              'function se251CurveValue(', 'function se251CurveValidate(',
+              '// §E v11.251 — native five-point editable particle curves.',
+              '// §E v11.251: real 5-channel timeline'
+          ]:
+              n=h.count(needle)
+              ix=h.find(needle)
+              print('\n--- '+needle+' | count='+str(n)+' | at='+str(ix)+' ---',flush=True)
+              if ix>=0:print(h[max(0,ix-300):ix+2100],flush=True)
+          PY
