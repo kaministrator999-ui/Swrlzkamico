@@ -54,10 +54,10 @@ assert.match(html,/activity\.onAccepted\?\.\(\)/);
 assert.match(html,/if\(prompt\.value\.trim\(\)===draftText\)prompt\.value=""/);
 assert.match(html,/if\(selectedImage===attachment\)selectedImage=null/);
 assert.match(html,/if\(!selectedImage\)\{selectedImage=attachment;updateImagePreview\(\);\}/);
-assert.match(html,/if\(!sendAcknowledged\)\{restorePendingVisionDraft\(\)/);
+assert.match(html,/if\(!sendAcknowledged\)\{[\s\S]*?restorePendingVisionDraft\(\)/);
 assert.match(html,/const scale=Math\.min\(1,768\/Math\.max\(img\.naturalWidth,img\.naturalHeight\)\)/);
 assert.ok(!html.includes("1600/Math.max(img.naturalWidth"),"do not encode unused pixels at 1600px");
-assert.match(html,/if\(attachment&&selectedImage===attachment\)/);
+assert.match(html,/if\(attachment\)\{[\s\S]*?imagePreviews\.set\(userMessageId,attachment\.url\)/);
 
 const inline=html.match(/<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/i);
 assert.ok(inline,"Canonical inline Chat controller exists");
