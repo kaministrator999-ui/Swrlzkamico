@@ -20,6 +20,69 @@ const SE280_SPELLS=Object.freeze({
  crystalBloom:{name:'Crystal Bloom',desc:'Gemlike prismatic ice energy',motion:'bloom',school:'Ice'},
  thunderRing:{name:'Thunder Ring',desc:'A bright electric ring blast',motion:'ring',school:'Storm'}
 });
+// Enhance authored native Particle Studio previews without altering the
+// existing base/vortex emitter path. Real project emitters still pass through
+// original validation, curve edits, particle budgets and frame scheduler.
+const se280OriginalSpawn=se223Spawn,se280OriginalStep=se223Step,se280OriginalRuntime=se223Runtime;
+se223Runtime=function(cfg){
+ const rec=se280OriginalRuntime(cfg);
+ if(SE280_SPELLS[cfg.preset]&&!rec.se280GlowApplied){
+  const texture=se280Glow();if(texture){rec.material.map=texture;rec.material.needsUpdate=true;}
+  rec.se280GlowApplied=true;
+ }
+ return rec;
+};
+se223Spawn=function(cfg,n){
+ const count=se280OriginalSpawn(cfg,n),spec=SE280_SPELLS[cfg.preset];
+ if(!spec||count<1)return count;
+ const rec=se223State.live.get(cfg.id),o=se223Origin(cfg);
+ if(!rec)return count;
+ for(let i=rec.particles.length-count;i<rec.particles.length;i++){
+  const p=rec.particles[i],theta=Math.random()*Math.PI*2;
+  const radius=Math.max(.09,Math.random()*Math.max(.08,cfg.radius));
+  p.se280={theta,radius,origin:[o.x,o.y,o.z]};
+  if(spec.motion==='ring'){
+   p.x=o.x+Math.cos(theta)*radius;p.z=o.z+Math.sin(theta)*radius;
+   p.vx=Math.cos(theta)*Math.max(.35,cfg.speed);
+   p.vz=Math.sin(theta)*Math.max(.35,cfg.speed);p.vy=(Math.random()-.5)*.09;
+  }else if(spec.motion==='spiral'){
+   p.x=o.x+Math.cos(theta)*radius;p.z=o.z+Math.sin(theta)*radius;
+   p.vx=0;p.vz=0;p.vy=Math.max(.12,cfg.speed*.3);
+  }else if(spec.motion==='storm'){
+   p.vx+=(Math.random()-.5)*.75;p.vy+=(Math.random()-.5)*.75;
+  }
+ }
+ return count;
+};
+se223Step=function(cfg,dt){
+ const out=se280OriginalStep(cfg,dt),spec=SE280_SPELLS[cfg.preset];
+ if(!spec||!['ring','spiral','storm'].includes(spec.motion))return out;
+ const rec=se223State.live.get(cfg.id);if(!rec)return out;
+ const positions=rec.geometry.getAttribute('position');
+ for(let i=0;i<rec.particles.length;i++){
+  const p=rec.particles[i],saved=p.se280;
+  if(!saved)continue;
+  const phase=Math.min(1,p.age/p.life),c=saved.origin;
+  if(spec.motion==='ring'){
+   const radius=saved.radius+phase*Math.max(.35,cfg.speed)*1.5;
+   p.x=c[0]+radius*Math.cos(saved.theta);
+   p.z=c[2]+radius*Math.sin(saved.theta);
+   p.y=c[1]+Math.sin(saved.theta*4+phase*5)*.055;
+  }else if(spec.motion==='spiral'){
+   const theta=saved.theta+p.age*(2.0+cfg.speed);
+   const radius=saved.radius*(1-.40*phase);
+   p.x=c[0]+Math.cos(theta)*radius;
+   p.z=c[2]+Math.sin(theta)*radius;
+   p.y=c[1]+phase*(cfg.preset==='windSpiral'?2.2:.52);
+  }else{
+   p.x+=Math.sin(saved.theta+p.age*38)*.022;
+   p.y+=Math.cos(saved.theta+p.age*31)*.018;
+  }
+  positions.setXYZ(i,p.x,p.y,p.z);
+ }
+ positions.needsUpdate=true;
+ return out;
+};
 const SE280_CYCLE=['arcaneMissile','emberBolt','frostNova','stormArc','healingCircle','shadowPulse','windSpiral','holyNova','voidOrb','infernoBreath','iceLance','meteorShower'];
 const SE280_PACK=['emberBolt','frostNova','stormArc','arcaneMissile','healingCircle','shadowPulse','gravityWell','holyNova'];
 const se280SpellState={
