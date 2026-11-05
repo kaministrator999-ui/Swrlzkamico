@@ -59,7 +59,7 @@ untouched; the image bytes are never added to the persisted conversation.
 **Image upload progress:** POST /api/lalm_station/vision validates the image
 and immediately returns a short-lived, account-owned job ID (HTTP 202).
 GET /api/lalm_station/vision/status?jobId=... provides factual phases:
-QUEUED, PREPROCESSING, LOADING_MODEL, ANALYZING, COMPLETE or FAILED.
+QUEUED, PREPROCESSING, LOADING_MODEL, ANALYZING, COMPLETE, FAILED or CANCELLED.
 Only the authenticated Google account that started the job can poll it.
 One image is analyzed at a time; one additional image may wait in a
 bounded local queue. A third distinct simultaneous image gets
@@ -68,8 +68,16 @@ reuses the same job ID, so a retry can resume instead of launching
 another costly inference. Progress contains no fabricated percentage.
 Jobs and visual descriptions are process-memory-only, bounded by a short
 TTL; the original image bytes are not added to saved conversation history.
-Stopping the browser's waiting UI does not forcibly interrupt native CPU
-inference. This is important when a model holds the CPU for several minutes.
+The image card offers **Cancel analysis**: it requests owner-authenticated
+POST /api/lalm_station/vision/cancel, then stops polling. The local CPU model
+now streams generated text and checks cancellation between chunks. A queued
+job can be cancelled before it acquires the model lock. An active native image
+encoder/prefill cannot necessarily be preempted until it returns control to
+Python, so cancellation is cooperative, not an instant CPU kill.
+The last progress poll is tracked per job: an active job with no watcher for
+90 seconds is marked for cooperative cancellation on the next request/status
+check, preventing abandoned work from indefinitely occupying the free CPU
+when other requests arrive. Jobs with active status polling are not evicted.
 
 The browser image card displays a live MM:SS elapsed counter and the elapsed
 time in its current stage, anchored to server monotonic job timings when
@@ -80,7 +88,7 @@ job disappears (404), the browser can resubmit the still-attached image
 (up to two Space restart recoveries). A full CPU queue is also retried
 automatically rather than requiring repeated Send taps. These mechanisms
 improve observability and resilience, not the underlying local CPU's
-image-processing throughput. Stop waiting is the user's explicit exit.
+image-processing throughput. Cancel analysis is the user's explicit exit and a best-effort CPU cancellation request.
 A pending image appears in the chat viewport with its preview and five
 short steps, clearly marked as **not yet sent to Chat** until the vision
 description succeeds and Station accepts the normal text conversation.
