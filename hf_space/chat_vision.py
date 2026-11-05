@@ -417,3 +417,34 @@ def install(app, require_account) -> None:
                 response["code"] = job.get("code") or "LOCAL_VISION_FAILED"
                 response["detail"] = job.get("detail") or "Local image analysis failed."
         return JSONResponse(response, headers={"Cache-Control": "no-store"})
+
+    @app.post("/api/lalm_station/vision/cancel", include_in_schema=False)
+    async def cancel_vision(request: Request):
+        owner = _owner(request)
+        if not owner:
+            return _error(401, "ACCOUNT_SESSION_INVALID", "Sign in to cancel image analysis.")
+        if request.headers.get("content-type", "").split(";")[0].strip().lower() != "application/json":
+            return _error(415, "CONTENT_TYPE_INVALID", "Send JSON with a jobId.")
+        raw = await request.body()
+        if len(raw) > 512:
+            return _error(413, "REQUEST_TOO_LARGE", "Invalid cancel request.")
+        try:
+            payload = json.loads(raw)
+            job_id = str(payload.get("jobId") or "") if isinstance(payload, dict) else ""
+        except (ValueError, UnicodeDecodeError):
+            job_id = ""
+        if len(job_id) != 32 or any(ch not in "0123456789abcdef" for ch in job_id):
+            return _error(400, "VISION_JOB_INVALID", "Invalid image job identifier.")
+        with _jobs_lock:
+            job = _jobs.get(job_id)
+            if not job or job["owner"] != owner:
+                return _error(404, "VISION_JOB_NOT_FOUND", "Image job not found.")
+            requested = job["phase"] in ACTIVE_PHASES
+            if requested:
+                job["cancelEvent"].set()
+            phase = job["phase"]
+        return JSONResponse({
+            "ok": True, "cancelRequested": requested, "phase": phase,
+            "detail": ("Cancellation requested; native processing may need time to stop."
+                       if requested else "Image job already finished."),
+        }, headers={"Cache-Control": "no-store"})
