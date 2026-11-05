@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.276",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_276_LEFT_CONTROLLER_NERD_STATS",
-  "reason": "Owner Quest 2 screenshots showed browser-window Nerd Stats pinned at one position and requested a left-controller follower with readable front text. In *immersive WebXR Sheep Tag* the existing native three-page HUD now follows the tracked left controller in the existing VR frame callback, or moves head-relative if that left controller is missing, and corrects the back-facing panel orientation to face headset. Quest L3 toggling, right-ray page selection, native AI, LAN and rendering budgets remain unchanged. A normal floating Quest browser 2D window cannot supply native controller tracking; user must enter immersive VR for the wrist feature. 307 patches; sealed 8,098,113-byte HTML SHA-256 9ed306118afdf0949dab67e369a72488bbe51b6c65403cff771277cfb5f20b1e; isolated source, JavaScript and asset verification all passed. Real Quest 2 UX acceptance pending.",
-  "sourceCommit": "ae529b4b08dabdcc92a6fa10014c2df3fc8c1863",
-  "sourceIntegritySha256": "9ed306118afdf0949dab67e369a72488bbe51b6c65403cff771277cfb5f20b1e"
+  "releaseVersion": "v11.277",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_277_LIVE_PRECISION_CURVES",
+  "reason": "Owner §E Particle Studio request: improve overall curve-editing precision and make graph/particle viewport update live as a point is dragged, not only after release. v11.277 replaces the re-created-on-every-move SVG with stable pointer-captured hit targets (touch/mouse/pen), drag value delta to avoid snapping, Fine ×10 sensitivity, Shift/Alt fine mode, .1-percent numeric inputs and precise keyboard arrows. The existing saved five-point curve format remains unchanged. The renderer samples a temporary per-emitter curve overlay on each native particle frame while dragging, and the selected timeline lane and graph readout update immediately. On release a single validated se223Update project transaction is created (one Undo step); cancel discards staged data. Preserves galaxy main + continuous flow, saved projects, game/model/material editors, v11.274 viewport Nerd Stats, v11.276 left-controller VR Nerd Stats, Sheep Tag LAN and one WebGL renderer/animation loop. Verified exact v11.277 source: 308 patches, 8,106,424-byte HTML, SHA-256 3c7beb83eb6cf3c4c38e2c50b776038a8b92d8406299e2c9c27c86a71b4f90fe; complete assets and inline JS syntax check successful. Real mobile precision and live GPU behavior await owner test.",
+  "sourceCommit": "b63003f5d2e6ddcc24a2c6bff6db9fcac85dadf4",
+  "sourceIntegritySha256": "3c7beb83eb6cf3c4c38e2c50b776038a8b92d8406299e2c9c27c86a71b4f90fe"
 }
