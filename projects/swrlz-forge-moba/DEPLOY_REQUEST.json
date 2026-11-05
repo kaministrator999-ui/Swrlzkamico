@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.274",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_274_VIEWPORT_NERD_STATS",
-  "reason": "Owner-requested toggleable viewport Nerd Stats for §E Game, Model, Particle and Material editors. Small optional ▥ Nerd Stats button and desktop F3 toggle, approximate RAF FPS/frame milliseconds, draw calls, triangles, renderer GPU-object counts, viewport dimensions and existing stress-load counters. Lightweight 800 ms DOM-only HUD, no extra WebGL renderer or game/AI changes. Preserve existing Sheep Tag browser Nerd Stats and Quest VR left thumbstick L3 metrics. Exact v11.274 build passed full HTML checksum (8,088,940 bytes, SHA-256 28622a0cf56e0b154d2cc253ac2660f3408634a0e73ef58652de10a618028612), full inline JavaScript syntax and sealed release verifier; physical phone/Quest acceptance pending.",
-  "sourceCommit": "cb7c6adfc6004c3b973761527de60d26d048d387",
-  "sourceIntegritySha256": "28622a0cf56e0b154d2cc253ac2660f3408634a0e73ef58652de10a618028612"
+  "releaseVersion": "v11.275",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_275_CONTINUOUS_SWIRL_FLOW",
+  "reason": "Owner request: implement in §E repo supplementary continuous spiral flow that does not visibly rewind when existing Particle Studio timeline wraps. Preserve all existing nebula smoke, purple/cyan main spiral filaments, starfield, slim wisps, core and particles unchanged. Add 84 GPU-shader particles per native colored arm emitter (one lightweight batched Points draw call per emitter); each independently emerges in the vortex, drifts outward along the current shared curved spiral, fades fully to zero and reincarnates at randomized initial life phase, with no visible backward jump. New per-record monotonic local clock advances with original particle step and never follows looping timeline time. No new native emitter, WebGL context, separate RAF or saved schema changes. Keep v11.274 editor Nerd Stats, v11.272 Quest L3 Nerd Stats and v11.271 Sheep Tag LAN features; immediate focused source+JS checks passed. Sealed v11.275 contains 306 patches and 8,094,757 HTML bytes, SHA-256 9fb53d005e305248b0921a4651483656abc7f73619604764decb3c175b9f1421. Publish only after exact release package verifier succeeds; physical Moto/Quest appearance/performance acceptance pending.",
+  "sourceCommit": "dc798a26861af7d947a8b48f3ff62a60c7e11350",
+  "sourceIntegritySha256": "9fb53d005e305248b0921a4651483656abc7f73619604764decb3c175b9f1421"
 }
