@@ -44,5 +44,5 @@ assert.ok(!backend.includes("router.huggingface.co"),"no paid inference provider
 assert.match(backend,/MAX_IMAGE_BYTES = 2_000_000/);
 assert.match(backend,/imageStored": False/);
 assert.match(backend,/asyncio\.to_thread\(_ask_vision_local/);
-assert.match(backend,/https/);
+assert.match(backend,/MODEL_REVISION = "[0-9a-f]{40}"/);
 console.log("Chat media v1: free local vision, composer contracts, and inline JS PASS");
