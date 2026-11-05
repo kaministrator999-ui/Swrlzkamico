@@ -1,3 +1,11 @@
+## §E v11.280 — Mage Spell Lab particle library and VR glove casting (2026-11-05)
+
+**Native catalog:** Starter Particles and Particle Studio now expose all 14 existing engine-native presets plus 18 new editable Mage spell emitters (32 in total). There is a searchable library, individual Add Emitter actions and a one-click 8-spell testing pack; every emission remains under the native 12-emitter validation/undo/save/export path. Fire, ice, electricity, spiral, ring, healing, void and other categories have different emitter behavior.
+
+**Quest VR sandbox:** The v11.279 blank Arcane Gloves starter casts from either tracked Touch controller using that hand's trigger. Both hands have independent equipped spell choices and small readable tracked labels. L3/R3 clicks cycle the spell on that hand only, grip-driven finger poses remain. Cast effects are bounded temporary native point clouds sharing the existing VR render callback; no combat/authority, no extra scene actors and no change to Sheep Tag bindings.
+
+**Scope:** Existing original glove, mirrored glove, saved scenes, original Vortex and its 4-emitter loader, native curve editor and other studios stay intact. This is a visual spellcasting foundation; Quest 2 physical acceptance is pending. See `docs/MAGE_SPELL_LAB_V11_280.md`.
+
 ## §E v11.279 — Blank VR starter with dual Arcane Glove hands (2026-11-05)
 
 **Game:** New **Blank VR · Arcane Hands** Starter Game (`?project=blank-vr-hands`) creates a ground-only editable level with no enemies, scenery, or pawn. In Quest immersive VR, the existing rigged glove model attaches to the tracked right controller and a true mirrored copy to the left. Each independently responds to grip (grasp/fist) and trigger (pinch); no hand-tracking claim.
