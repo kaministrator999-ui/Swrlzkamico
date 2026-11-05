@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.278",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_278_QUEST_MENU_CADENCE",
-  "reason": "Owner Quest 2 feedback: stats HUD follows left controller but is too close to read, and opening menus worsens Sheep Tag lag. v11.278 moves the existing native wrist metrics panel 12 cm farther forward and 6 cm higher, reuses a single scratch vector in native XR tracking, and throttles stats texture repaints to ~1.85s while preserving instant page changes and the L3 toggle. Adds Nerd Stats fourth page with approximate XR callback frame times for stats/radial menu open/closed combinations and sample counts so owner can isolate menu cost at fixed house count. No change to gameplay AI, camera, LAN authority, menus or particle editor. Quest scenes at 38 houses/3092 draws/10 FPS vs 17 houses/1806 draws/26 FPS suggest substantial scene-load contribution, not proof of menu root cause. Fully verified 309-patch source and 69 assets, 8,111,652 assembled HTML bytes, SHA-256 046c28a36a95ce89827e7c8b753fe289189e803e6cd76fba8d0141195625d89a. Real Quest 2 UX/performance acceptance pending.",
-  "sourceCommit": "75845283af010389f0afef41b0bcd4f744da98d9",
-  "sourceIntegritySha256": "046c28a36a95ce89827e7c8b753fe289189e803e6cd76fba8d0141195625d89a"
+  "releaseVersion": "v11.279",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_279_BLANK_VR_ARCANE_HANDS",
+  "reason": "Owner requested a native blank §E Starter Game with the existing Arcane Glove as both Quest VR Touch controller hands, plus an independent left-hand Starter Model using equivalent native geometry, reflected thumb/17-bone rig and all mirrored gesture/keyframe animations. Blank world has no pawn, enemies or scenery; left/right controller poses, grip=grasp/fist and trigger=pinch use the existing XR renderer and cleanup. Original right glove, saved models, Sheep Tag/LAN, controller mappings and other editors stay unchanged. v11.279 exact rebuilt package: 310 patches, 69 assets, 8,125,233 HTML bytes, SHA-256 678667a1360fc495366cda34d0e7873042c6763baf92e1a6f766ae2de194f0ed. Candidate and sealed source JS syntax gates passed; owner Quest 2 UX/performance acceptance pending.",
+  "sourceCommit": "57389d793117157ec022d500c35e6c684d6eb377",
+  "sourceIntegritySha256": "678667a1360fc495366cda34d0e7873042c6763baf92e1a6f766ae2de194f0ed"
 }
