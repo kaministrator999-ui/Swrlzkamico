@@ -328,6 +328,6 @@
     "patches/v11_280_mage_spell_lab.py",
     "patches/v11_281_rocky_anime_hand.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 8168989,
+  "finalSha256": "758b3b52681f16f775ff4194bc409d0d5ede9acdb1821331ba59f8008abaac59"
 }
