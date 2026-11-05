@@ -3775,6 +3775,9 @@
             activity=startVisionActivity(attachment,draftText);
             activity.onAccepted=async()=>{
               if(visionDraftHeld)return;
+              if(draftThread!==originalDraft||activeThreadId!==originalThreadId){
+                throw new Error("Chat changed before image upload was accepted. Restore the original conversation and retry.");
+              }
               // An accepted image creates/activates a real new conversation
               // immediately, before the model completes visual analysis.
               // It contains no fabricated user/assistant messages yet.
