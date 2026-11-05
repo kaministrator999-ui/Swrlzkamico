@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.280",
+  "name": "§wyrl§ Engine v11.281",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_280.html",
+  "finalArtifact": "swyrl_engine_v11_281.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -325,8 +325,9 @@
     "patches/v11_277_live_precision_curves.py",
     "patches/v11_278_quest_menu_cadence.py",
     "patches/v11_279_blank_vr_arcane_hands.py",
-    "patches/v11_280_mage_spell_lab.py"
+    "patches/v11_280_mage_spell_lab.py",
+    "patches/v11_281_rocky_anime_hand.py"
   ],
-  "finalBytes": 8154910,
-  "finalSha256": "b4e9bdb3126a07fd1bae53799436c0bdf5d924f4325085f744d698abf9787fa3"
+  "finalBytes": 0,
+  "finalSha256": ""
 }
