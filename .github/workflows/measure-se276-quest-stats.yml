@@ -25,3 +25,5 @@ jobs:
         run: python projects/swrlz-forge-moba/build_space.py --output /tmp/se276-measure
       - name: Syntax-check assembled inline JavaScript
         run: python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se276-measure/index.html
+      - name: Validate sealed v11.276 source, assets and wrist-HUD anchors
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_276_release.py --output /tmp/se276-verify
