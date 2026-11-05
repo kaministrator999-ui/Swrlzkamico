@@ -64,6 +64,17 @@ Jobs and visual descriptions are process-memory-only, bounded by a short
 TTL; the original image bytes are not added to saved conversation history.
 Stopping the browser's waiting UI does not forcibly interrupt native CPU
 inference. This is important when a model holds the CPU for several minutes.
+
+The browser image card displays a live MM:SS elapsed counter and the elapsed
+time in its current stage, anchored to server monotonic job timings when
+available. A running image job does **not** expire from client-side polling
+after six minutes. Status fetch/network interruptions trigger automatic
+reconnection to the same job. If the free Space restarts and the in-memory
+job disappears (404), the browser can resubmit the still-attached image
+(up to two Space restart recoveries). A full CPU queue is also retried
+automatically rather than requiring repeated Send taps. These mechanisms
+improve observability and resilience, not the underlying local CPU's
+image-processing throughput. Stop waiting is the user's explicit exit.
 A pending image appears in the chat viewport with its preview and five
 short steps, clearly marked as **not yet sent to Chat** until the vision
 description succeeds and Station accepts the normal text conversation.

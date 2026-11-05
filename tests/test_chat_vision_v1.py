@@ -108,6 +108,9 @@ with patch.object(vision, "_prepare_image", lambda x: x), patch.object(vision, "
     assert done["phase"] == "COMPLETE", done
     assert done["description"] == "A white dog on grass."
     assert done["done"] is True
+    assert done["elapsedSeconds"] >= done["phaseElapsedSeconds"] >= 0
+    assert isinstance(done["elapsedSeconds"], float)
+    assert isinstance(done["phaseElapsedSeconds"], float)
 
 assert client.post("/api/lalm_station/vision", json={"image": "invalid"}).status_code == 400
 assert client.post("/api/lalm_station/vision", data="oops", headers={"Content-Type": "text/plain"}).status_code == 415
@@ -148,6 +151,11 @@ with patch.object(vision, "_prepare_image", lambda x: x), patch.object(vision, "
     second_id = second.json()["jobId"]
     queued = client.get("/api/lalm_station/vision/status", params={"jobId": second_id}).json()
     assert queued["phase"] == "QUEUED", queued
+    assert queued["elapsedSeconds"] >= queued["phaseElapsedSeconds"] >= 0
+    time.sleep(.07)
+    queued_later = client.get("/api/lalm_station/vision/status", params={"jobId": second_id}).json()
+    assert queued_later["elapsedSeconds"] >= queued["elapsedSeconds"]
+    assert queued_later["phaseElapsedSeconds"] >= queued["phaseElapsedSeconds"]
     third = client.post("/api/lalm_station/vision", json={"image": valid, "question": "Third"})
     assert third.status_code == 429
     assert third.json()["code"] == "VISION_QUEUE_FULL"
