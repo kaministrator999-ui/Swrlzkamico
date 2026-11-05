@@ -108,8 +108,11 @@ def _set_job_phase(job_id: str, phase: str, **fields) -> None:
         job = _jobs.get(job_id)
         if job is None:
             return
+        now = time.monotonic()
+        if job["phase"] != phase:
+            job["phaseStartedAt"] = now
         job["phase"] = phase
-        job["updatedAt"] = time.monotonic()
+        job["updatedAt"] = now
         job.update(fields)
     print(json.dumps({"event": "LOCAL_VISION_STAGE", "phase": phase, "job": job_id[:8]}), flush=True)
 
@@ -329,6 +332,7 @@ def install(app, require_account) -> None:
                 phase = "QUEUED"
                 _jobs[job_id] = {"id": job_id, "owner": owner,
                                  "fingerprint": fingerprint, "phase": phase,
+                                 "createdAt": now, "phaseStartedAt": now,
                                  "updatedAt": now}
                 threading.Thread(
                     target=_run_vision_job, args=(job_id, image, question),
@@ -353,11 +357,15 @@ def install(app, require_account) -> None:
             if not job or job["owner"] != owner:
                 return _error(404, "VISION_JOB_NOT_FOUND", "Image analysis is no longer available; resend the image.")
             phase = job["phase"]
+            now = time.monotonic()
             response = {
                 "ok": phase != "FAILED",
                 "jobId": jobId,
                 "phase": phase,
                 "done": phase not in ACTIVE_PHASES,
+                # True monotonic worker time, even when client reconnects.
+                "elapsedSeconds": round(max(0.0, now - job["createdAt"]), 1),
+                "phaseElapsedSeconds": round(max(0.0, now - job["phaseStartedAt"]), 1),
             }
             if phase == "COMPLETE":
                 response["description"] = job["description"]
