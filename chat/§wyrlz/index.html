@@ -941,6 +941,20 @@
     .composer-shell.collapsed .composer-media-tools{display:none}
     .user-image-attachment{display:block;max-width:min(240px,100%);max-height:180px;object-fit:contain;margin-top:9px;border-radius:9px}
     .user-vision-summary{margin-top:8px;font-size:11px;color:#d4e9f7;white-space:pre-wrap}
+    /* Image preflight stays in the chat viewport, not hidden in the composer. */
+    .vision-work-card{align-self:flex-end;width:min(430px,94%);border:1px solid rgba(100,211,247,.34);border-radius:14px;padding:10px 12px;background:rgba(7,28,48,.94);color:#e6f7ff;box-shadow:0 6px 24px rgba(0,0,0,.27);font-size:12px;line-height:1.45}
+    .vision-work-header{display:flex;align-items:center;justify-content:space-between;gap:8px;font-weight:750}
+    .vision-work-header button{flex:0 0 auto;background:transparent;border:1px solid rgba(135,218,248,.3);border-radius:7px;color:#b9eaff;padding:4px 7px;font-size:11px}
+    .vision-work-prompt{font-size:13px;margin:8px 0;white-space:pre-wrap;overflow-wrap:anywhere}
+    .vision-work-preview{max-height:116px;max-width:100%;object-fit:contain;display:block;margin:5px 0 8px;border-radius:7px}
+    .vision-work-steps{margin:7px 0 4px;padding:0;list-style:none;display:grid;gap:4px;font-size:11px;color:#90b6cb}
+    .vision-work-steps li::before{content:"○";display:inline-block;width:20px;color:#7893ac}
+    .vision-work-steps li[data-state="active"]{color:#d7f9ff;font-weight:750}
+    .vision-work-steps li[data-state="active"]::before{content:"◉";color:#67dfff}
+    .vision-work-steps li[data-state="done"]{color:#a7d4dc}
+    .vision-work-steps li[data-state="done"]::before{content:"✓";color:#7de2c9}
+    .vision-work-status{color:#a4d4e9;font-size:11px;margin-top:6px}
+    .vision-work-card[data-state="error"] .vision-work-status{color:#ffb3c2}
     .user-vision-summary summary{cursor:pointer}
     @media(max-width:400px){.composer-media-tools{gap:4px;padding-left:3px;padding-right:3px}.composer-media-button{padding:3px 7px;font-size:10px}.image-attachment span{max-width:78px}}
   </style>
@@ -1361,19 +1375,48 @@
         img.onerror=()=>reject(new Error("Unable to read this image."));
         img.src=attachment.url;
       });
-      const requestVisionDescription=async(attachment,question)=>{
+      const visionSleep=(ms,signal)=>new Promise((resolve,reject)=>{
+        if(signal.aborted){reject(new Error("Stopped waiting for image analysis."));return;}
+        const onAbort=()=>{clearTimeout(timer);reject(new Error("Stopped waiting for image analysis."));};
+        const timer=setTimeout(()=>{signal.removeEventListener("abort",onAbort);resolve();},ms);
+        signal.addEventListener("abort",onAbort,{once:true});
+      });
+      const requestVisionDescription=async(attachment,question,activity)=>{
+        activity.update("PREPARING");
         const image=await encodeImageForVision(attachment);
+        activity.update("UPLOADING");
         const response=await fetch("/api/lalm_station/vision",{
           method:"POST",credentials:"same-origin",cache:"no-store",
           headers:{"Content-Type":"application/json"},
+          signal:activity.abort.signal,
           body:JSON.stringify({image,question:question||"Describe this image."})
         });
         let result=null;
         try{result=await response.json()}catch(_){}
-        if(!response.ok||!result?.ok||!result.description){
-          throw new Error(result?.detail||"Image inference failed. Your message was not sent.");
+        if(!response.ok||!result?.ok||!result.jobId){
+          throw new Error(result?.detail||"Image upload could not be accepted.");
         }
-        return String(result.description).slice(0,6000);
+        activity.update(result.phase||"QUEUED");
+        // Status is polled from the actual server worker, never a fake percent.
+        const started=Date.now();
+        while(true){
+          const check=await fetch("/api/lalm_station/vision/status?jobId="+encodeURIComponent(result.jobId),{
+            credentials:"same-origin",cache:"no-store",signal:activity.abort.signal
+          });
+          let state=null;try{state=await check.json()}catch(_){}
+          if(!check.ok||!state?.ok){
+            throw new Error(state?.detail||"Unable to read the local image-analysis status.");
+          }
+          activity.update(state.phase||"QUEUED");
+          if(state.phase==="COMPLETE"){
+            if(!state.description)throw new Error("The vision model returned no description.");
+            return String(state.description).slice(0,6000);
+          }
+          if(Date.now()-started>6*60*1000){
+            throw new Error("Image analysis is still running on the local CPU. Press Send again to resume checking.");
+          }
+          await visionSleep(1600,activity.abort.signal);
+        }
       };
       micButton.addEventListener("click",()=>{
         if(speechRecognition){speechRecognition.stop();return;}
@@ -1417,6 +1460,62 @@
       const newThreadButton = document.getElementById("newThreadButton");
       const messageList = document.getElementById("messageList");
       const assistantTemplate = document.getElementById("assistantTemplate");
+      let visionActivity=null;
+      const startVisionActivity=(attachment,question)=>{
+        visionActivity?.root.remove();
+        const root=document.createElement("section");root.className="vision-work-card";root.dataset.state="working";
+        root.setAttribute("aria-label","Image upload and local analysis progress");
+        const header=document.createElement("div");header.className="vision-work-header";
+        const title=document.createElement("span");title.textContent="Image message · preparing";
+        const cancel=document.createElement("button");cancel.type="button";cancel.textContent="Stop waiting";
+        header.append(title,cancel);
+        const message=document.createElement("div");message.className="vision-work-prompt";
+        message.textContent=question||"Describe this image.";
+        const preview=document.createElement("img");preview.className="vision-work-preview";preview.src=attachment.url;preview.alt="Image attached to pending message";
+        const steps=document.createElement("ol");steps.className="vision-work-steps";
+        const names=["Upload image","Prepare image and load model","Identify visual details","Pass description to §C","Generate chat response"];
+        const entries=names.map(name=>{const li=document.createElement("li");li.textContent=name;li.dataset.state="pending";steps.appendChild(li);return li;});
+        const status=document.createElement("div");status.className="vision-work-status";status.setAttribute("role","status");status.setAttribute("aria-live","polite");
+        root.append(header,message,preview,steps,status);messageList.appendChild(root);
+        const activity={
+          root,abort:new AbortController(),update(phase,detail=""){
+            const positions={PREPARING:0,UPLOADING:0,QUEUED:1,PREPROCESSING:1,LOADING_MODEL:1,ANALYZING:2,COMPLETE:3,SENDING:3,RESPONDING:4};
+            const index=positions[phase];
+            if(phase==="ERROR"||phase==="STOPPED"){
+              root.dataset.state="error";title.textContent="Image not sent to chat";
+              status.textContent=detail||"Image analysis did not finish. The image remains attached so you can retry.";
+              cancel.hidden=true;return;
+            }
+            if(index===undefined)return;
+            root.dataset.state="working";
+            entries.forEach((li,i)=>{li.dataset.state=i<index?"done":i===index?"active":"pending";});
+            title.textContent=phase==="RESPONDING"?"Image sent · §C responding":"Image message · working";
+            const labels={
+              PREPARING:"Preparing your image on this device…",
+              UPLOADING:"Uploading image to our Space…",
+              QUEUED:"Upload received · waiting for local CPU slot…",
+              PREPROCESSING:"Preparing image for the vision model…",
+              LOADING_MODEL:"Loading local image model into memory…",
+              ANALYZING:"Reading visible objects and design details…",
+              COMPLETE:"Visual description ready.",
+              SENDING:"Sending the visual description to §C…",
+              RESPONDING:"§C has accepted the message and is composing its reply."
+            };
+            status.textContent=detail||labels[phase]||"";
+            if(phase==="RESPONDING")cancel.hidden=true;
+          }
+        };
+        cancel.addEventListener("click",()=>activity.abort.abort());
+        activity.update("PREPARING");visionActivity=activity;
+        requestAnimationFrame(()=>{if(root.isConnected)root.scrollIntoView({block:"end",behavior:"smooth"});});
+        return activity;
+      };
+      const removeVisionActivity=activity=>{
+        if(!activity)return;
+        activity.root.remove();
+        if(visionActivity===activity)visionActivity=null;
+      };
+
       const topEdge = document.getElementById("topEdge");
       const topThreadTitle = document.getElementById("topThreadTitle");
       const topReadyLabel = document.getElementById("topReadyLabel");
@@ -3551,16 +3650,17 @@
         if((!draftText&&!attachment)||sending)return false;
         let text=draftText;
         const contentTag=classifyUserContent(draftText);
-        let sendAcknowledged=false,sendStarted=false;
+        let sendAcknowledged=false,sendStarted=false,activity=null;
         sending=true; sendButton.disabled=true; imagePickButton.disabled=true; micButton.disabled=true;
         if(speechRecognition)speechRecognition.stop();
         try{
           if(attachment){
-            composerNotice("Analyzing image…");
-            const description=await requestVisionDescription(attachment,draftText);
+            activity=startVisionActivity(attachment,draftText);
+            composerNotice("");
+            const description=await requestVisionDescription(attachment,draftText,activity);
             text=(draftText||"Describe this image.")+VISION_START+description+VISION_END;
             if(text.length>131072)throw new Error("The combined image analysis is too long.");
-            composerNotice("");
+            activity.update("SENDING");
           }
           sendStarted=true;
           if(draftThread){
@@ -3609,6 +3709,11 @@
           const accepted=await response.json();
           if(accepted.requestId!==requestId)throw new Error("SEND_ACK_REQUEST_MISMATCH");
           sendAcknowledged=true;
+          if(activity){
+            activity.update("RESPONDING");
+            // Station now owns the real chat response and its own activity UI.
+            removeVisionActivity(activity);
+          }
           if(attachment&&selectedImage===attachment){
             imagePreviews.set(userMessageId,attachment.url);
             while(imagePreviews.size>12){
@@ -3650,12 +3755,15 @@
           return true;
         }catch(err){
           if(!sendStarted){
-            composerNotice(String(err?.message||err).slice(0,220),true);
+            const detail=String(err?.message||err).slice(0,220);
+            if(activity)activity.update(activity.abort.signal.aborted?"STOPPED":"ERROR",detail);
+            composerNotice(detail,true);
             setCompanionState("idle","vision-not-sent");
             return false;
           }
           setCompanionState("error","client-transport");
           const raw=String(err?.message||err);
+          if(activity&&!sendAcknowledged)activity.update("ERROR","Chat send not confirmed. Your image remains attached; retry after checking the saved thread.");
           const reason=/SEND_HTTP_413/.test(raw)
             ?"New message not saved: native account snapshot storage limit reached. Draft restored; existing history remains preserved."
             :"New message not confirmed saved. Draft restored; refresh saved conversations before retrying.";
