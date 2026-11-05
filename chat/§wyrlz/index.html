@@ -1456,7 +1456,7 @@
             continue;
           }
           if(!check.ok||!state?.ok){
-            if(check.status===401||check.status===403||state?.phase==="FAILED"||check.status===400){
+            if(check.status===401||check.status===403||["FAILED","CANCELLED"].includes(state?.phase)||check.status===400){
               throw new Error(state?.detail||"Image analysis failed.");
             }
             pollingErrors++;
