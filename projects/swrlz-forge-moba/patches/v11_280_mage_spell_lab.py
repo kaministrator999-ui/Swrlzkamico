@@ -58,9 +58,11 @@ def apply(html):
       "append eighteen schema-native particle presets")
     html=once(html,"window.SWRLZ_FORGE_BUILD=",
       js+"\nwindow.SWRLZ_FORGE_BUILD=","native UI plus single-loop glove casting")
-    html=once(html,"</head>",
-      '<style id="se280MageSpellLibrary">'+css+'</style>\n</head>',
-      "responsive magic catalog and equipped spell selectors")
+    # The assembled source contains an inert additional </head> literal in JS.
+    # Insert only before the real document's FIRST closing head tag.
+    assert "</head>" in html
+    html=html.replace("</head>",
+      '<style id="se280MageSpellLibrary">'+css+'</style>\n</head>',1)
 
     before=" source.engine='§wyrl§ Engine · Maker v11.279';source.version=11.279;"
     n=html.count(before)
