@@ -1,3 +1,10 @@
+## 2026-11-05 — §C image analysis auto-resync and live elapsed times (source candidate)
+
+- **Observed:** owner waited with real server stage `ANALYZING` shown; after 6 minutes client itself stopped watching and incorrectly demanded another Send, although native local CPU job was still running.
+- **Changed:** remove arbitrary browser six-minute timeout, continue polling while job remains active; recover transient polling/network failures automatically, resume same job ID, handle bounded queue-full retries, resubmit still-attached image if free HF Space restarts and loses RAM-only job (max two restart recoveries). No duplicate normal text messages; normal Station send still occurs only after complete description. Explicit Stop waiting still aborts browser polling only.
+- **Timing:** local chat activity shows total elapsed MM:SS and current stage MM:SS, updated every second using server monotonic `elapsedSeconds`/`phaseElapsedSeconds` when status provides them. Frontend timer stops on failed/stopped/accepted chat handoff. Accurate stage observability does not imply faster inference.
+- **Scope:** existing CPU Basic hardware and SmolVLM-256M Q8_0 remain unchanged; no paid inference provider, model weight changes, §E edits, or account storage changes. Add Python and inline JS contract checks; validate in HF CI and use guarded deployment with rollback.
+
 ## 2026-11-05 — §C image-to-chat progress and CPU queue (source candidate)
 
 - **Owner device evidence:** image upload remained on composer-only "Analyzing image…" for minutes, then returned "Local image analysis is busy. Try again shortly"; no visible chat message or breakdown. The old `_inference_lock.acquire(blocking=False)` returned 429 whenever an earlier CPU invocation still owned the lock, irrespective of whether its browser request had expired.
