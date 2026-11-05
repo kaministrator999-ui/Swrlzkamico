@@ -134,6 +134,8 @@ def _run_vision_job(job_id: str, image: str, question: str, cancel_event: thread
             image, question, report_phase=lambda phase: _set_job_phase(job_id, phase),
             should_cancel=cancel_event.is_set,
         )
+        if cancel_event.is_set():
+            raise VisionCancelled()
         _set_job_phase(job_id, "COMPLETE", description=description)
     except VisionCancelled:
         _set_job_phase(job_id, "CANCELLED", code="VISION_CANCELLED",
