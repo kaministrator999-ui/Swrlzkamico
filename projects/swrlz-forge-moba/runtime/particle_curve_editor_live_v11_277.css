@@ -1,0 +1,78 @@
+/* §E v11.277 — precise, touch-safe curves without growing the dock. */
+body[data-se225-workspace=particles] #se249Root .se277-live-curve{
+ --se277-border:#78599a;
+ --se277-accent:#bc7df2;
+ gap:5px;
+ padding:7px 10px 10px;
+}
+body[data-se225-workspace=particles] #se249Root .se277-live-curve .se251-curves-head{
+ flex:0 0 auto;flex-wrap:wrap;gap:6px;
+}
+body[data-se225-workspace=particles] #se249Root .se277-live-curve .se251-curves-head strong{
+ margin-right:auto;white-space:nowrap;font-size:10px;
+}
+body[data-se225-workspace=particles] #se249Root .se277-live-curve .se251-curves-head select{
+ min-width:88px;max-width:148px;
+}
+body[data-se225-workspace=particles] #se249Root .se277-live-curve .se277-fine[aria-pressed=true]{
+ background:#62408d;border-color:#d6a5ff;color:#fff;box-shadow:inset 0 0 0 1px #ad6de7;
+}
+body[data-se225-workspace=particles] #se249Root .se277-curve-readout,
+body[data-se225-workspace=particles] #se249Root #se277CurveReadout{
+ display:block;flex:0 0 auto;min-height:13px;
+ color:#aeefdb;font:700 10px/1.25 system-ui;
+ font-variant-numeric:tabular-nums;letter-spacing:.03em;
+}
+body[data-se225-workspace=particles] #se249Root .se277-live-curve[data-live=true] #se277CurveReadout{
+ color:#6cf9ce;
+}
+body[data-se225-workspace=particles] #se249Root .se277-live-curve #se251CurveGraph{
+ touch-action:none;user-select:none;-webkit-user-select:none;
+ min-height:102px;flex:1 1 auto;
+ cursor:crosshair;background:
+ linear-gradient(90deg,rgba(86,47,117,.10),rgba(14,12,32,.23)),
+ linear-gradient(180deg,#1d142d,#101021);
+ border:1px solid var(--se277-border);
+ overflow:hidden;overscroll-behavior:contain;
+}
+body[data-se225-workspace=particles] #se249Root .se277-live-curve #se251CurveGraph [role=slider]{
+ cursor:ns-resize;touch-action:none;outline:none;
+}
+body[data-se225-workspace=particles] #se249Root .se277-live-curve #se251CurveGraph [role=slider]:focus{
+ stroke:#fff;stroke-width:2.5;
+}
+body[data-se225-workspace=particles] #se249Root .se277-live-curve .se251-curve-values{
+ flex:0 0 auto;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px;
+}
+body[data-se225-workspace=particles] #se249Root .se277-live-curve .se251-curve-values label{
+ flex-direction:column;align-items:stretch;text-align:center;gap:3px;
+ white-space:nowrap;font-size:9px;
+}
+body[data-se225-workspace=particles] #se249Root .se277-live-curve .se251-curve-values input{
+ height:31px;min-width:0;padding:3px 3px;font-size:11px;
+ text-align:center;font-variant-numeric:tabular-nums;
+}
+body[data-se225-workspace=particles] #se249Root .se277-live-curve .se251-curve-values input:focus{
+ outline:2px solid #ac7cff;outline-offset:-1px;
+}
+@media(max-width:900px){
+ body[data-se225-workspace=particles] #se249Root .se277-live-curve{
+  padding:5px 6px 8px;gap:3px;
+ }
+ body[data-se225-workspace=particles] #se249Root .se277-live-curve .se251-curves-head{
+  gap:4px;
+ }
+ body[data-se225-workspace=particles] #se249Root .se277-live-curve .se251-curves-head strong{
+  font-size:9px;
+ }
+ body[data-se225-workspace=particles] #se249Root .se277-live-curve .se251-curves-head select,
+ body[data-se225-workspace=particles] #se249Root .se277-live-curve .se251-curves-head button{
+  min-height:30px;padding:3px 5px;font-size:10px;
+ }
+ body[data-se225-workspace=particles] #se249Root .se277-live-curve .se251-curve-values{gap:3px;}
+ body[data-se225-workspace=particles] #se249Root .se277-live-curve #se251CurveGraph{min-height:88px;}
+ body[data-se225-workspace=particles] #se249Root #se277CurveReadout{font-size:9px;}
+ body[data-se225-workspace=particles] #se249Root .se277-live-curve .se251-curve-values label{
+  font-size:9px;gap:1px;
+ }
+}
