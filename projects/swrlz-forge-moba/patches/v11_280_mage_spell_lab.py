@@ -66,7 +66,7 @@ def apply(html):
 
     before=" source.engine='§wyrl§ Engine · Maker v11.279';source.version=11.279;"
     n=html.count(before)
-    assert n==2,("v11.280 provenance",n)
+    assert n==3,("v11.280 provenance: two native model starters plus mirrored glove",n)
     html=html.replace(before," source.engine='§wyrl§ Engine · Maker v11.280';source.version=11.280;")
     for old,new in (
       ("SWYRL_ENGINE_DEPLOY_MARKER: V11_279_BLANK_VR_ARCANE_HANDS",
