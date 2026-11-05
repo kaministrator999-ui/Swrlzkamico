@@ -325,6 +325,6 @@
     "patches/v11_277_live_precision_curves.py",
     "patches/v11_278_quest_menu_cadence.py"
   ],
-  "finalBytes": null,
-  "finalSha256": null
+  "finalBytes": 8111652,
+  "finalSha256": "046c28a36a95ce89827e7c8b753fe289189e803e6cd76fba8d0141195625d89a"
 }
