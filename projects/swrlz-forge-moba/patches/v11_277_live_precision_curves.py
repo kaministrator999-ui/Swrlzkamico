@@ -18,7 +18,7 @@ def apply(html):
     css=(ROOT/"runtime/particle_curve_editor_live_v11_277.css").read_text("utf8")
     for symbol in (
       "window.SWYRL_ENGINE_VIEWPORT_NERD_STATS_274=Object.freeze",
-      "window.SWYRL_ENGINE_SHEEP_LEFT_NERD_276",
+      "window.SWYRL_ENGINE_QUEST_LEFT_WRIST_STATS_276",
       "window.SWYRL_ENGINE_SHEEP_LAN_VISIBILITY_271",
       "window.SWYRL_ENGINE_PARTICLE_ERRORS_258",
       "function se251CurveValue(cfg,key,t){",
@@ -58,7 +58,7 @@ def apply(html):
       "function commit(){",
       "updateLane(arr);",
       "window.SWYRL_ENGINE_PARAMETER_TIMELINE_251=Object.freeze",
-      "window.SWYRL_ENGINE_SHEEP_LEFT_NERD_276",
+      "window.SWYRL_ENGINE_QUEST_LEFT_WRIST_STATS_276",
     ):assert marker in html,("v11.277 preservation",marker)
     assert html.count("renderer.setAnimationLoop(tick);")==1
     prev=" source.engine='§wyrl§ Engine · Maker v11.276';source.version=11.276;"
