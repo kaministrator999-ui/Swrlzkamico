@@ -3745,7 +3745,7 @@
         if((!draftText&&!attachment)||sending)return false;
         let text=draftText;
         const contentTag=classifyUserContent(draftText);
-        let sendAcknowledged=false,sendStarted=false,activity=null,visionDraftHeld=false;
+        let sendAcknowledged=false,sendStarted=false,activity=null,visionDraftHeld=false,provisionalThread=null,provisionalMessageId="";
         const restorePendingVisionDraft=()=>{
           if(!attachment||!visionDraftHeld)return;
           // Do not overwrite anything the user typed while the CPU was busy.
@@ -3799,7 +3799,10 @@
             pendingDraftThread=localThread;
           }
           localThread.messages=Array.isArray(localThread.messages)?localThread.messages:[];
-          if(!localThread.messages.some(m=>m.id===userMessageId)) localThread.messages.push({id:userMessageId,role:"user",text,createdAt:Date.now(),meta:{requestId,localPending:true,...(contentTag?{contentTag}: {})}});
+          if(!localThread.messages.some(m=>m.id===userMessageId)){
+            localThread.messages.push({id:userMessageId,role:"user",text,createdAt:Date.now(),meta:{requestId,localPending:true,...(contentTag?{contentTag}: {})}});
+            provisionalThread=localThread;provisionalMessageId=userMessageId;
+          }
           prompt.value=""; resizeComposer(); followLatest=false; responseStartAnchorRequestId=""; renderConversation(localThread); renderThreads(); renderStationGeneration();
           const sendPath="/api/lalm_station/send";
           const clientLocation=await maybeSharedWeatherLocation(text);
@@ -3886,7 +3889,21 @@
           const reason=/SEND_HTTP_413/.test(raw)
             ?"New message not saved: native account snapshot storage limit reached. Draft restored; existing history remains preserved."
             :"New message not confirmed saved. Draft restored; refresh saved conversations before retrying.";
-          if(!sendAcknowledged){restorePendingVisionDraft();if(!prompt.value.trim()){prompt.value=draftText;resizeComposer();}}
+          if(!sendAcknowledged){
+            // Neither the vision job nor the optimistic UI turn is a durable
+            // Station message. Undo only our own pending unsaved turn.
+            if(provisionalThread&&provisionalMessageId){
+              provisionalThread.messages=(provisionalThread.messages||[]).filter(m=>m.id!==provisionalMessageId);
+            }
+            if(originalDraft){
+              draftThread=true;activeThreadId=originalThreadId;pendingDraftThread=null;
+              renderConversation(null,true);renderThreads();
+            }else if(provisionalThread){
+              renderConversation(currentThread(),true);
+            }
+            restorePendingVisionDraft();
+            if(!prompt.value.trim()){prompt.value=draftText;resizeComposer();}
+          }
           if(stationGeneration){stationGeneration.status=[...(stationGeneration.status||[]),{type:"FAILED",phase:"CLIENT_TRANSPORT",reason}];stationGeneration.terminal=true;renderStationGeneration();}
           uiCamera("chat-save-unconfirmed",{reasonCode:/SEND_HTTP_413/.test(raw)?"SNAPSHOT_LIMIT":"SEND_FAILED",acknowledged:sendAcknowledged});
           return false;
