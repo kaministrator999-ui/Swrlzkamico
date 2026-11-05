@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.280
+title: §wyrl§ Engine v11.281
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,11 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.281 — Rocky Anime Hand · Emberstone (2026-11-05)
+
+Added an **independent Starter Model** in Projects → Starter Models. Based on the generated rocky anime hand reference, it has actual native chiseled low-poly gray-violet rock plates on front/back palm, individual three-section finger stones, a segmented thumb, layered wrist blocks, and glowing amber fracture-line meshes. All parts remain editable in Model Atelier. The verified native 17-bone wrist/palm/finger/thumb rig provides open → fist → open animation. New route: `?project=rocky-anime-hand`. The prior Arcane Gloves, VR casting, Sheep Tag, saved levels and §C are unchanged. See `docs/ROCKY_ANIME_HAND_V11_281.md`. Owner 3D visual acceptance pending.
+
 
 ## §E v11.280 — Mage Spell Lab particle library and VR glove casting (2026-11-05)
 
