@@ -5,8 +5,8 @@
 const s={on:false,mode:'',root:null,button:null,panel:null,body:null,title:null,
  samples:0,timer:null};
 const q=sel=>document.querySelector(sel);
-const n=v=>Number.isFinite(Number(v))?Math.round(Number(v)).toLocaleString('en-US'):'—';
-const f=v=>Number.isFinite(Number(v))?Number(v).toFixed(1):'—';
+const n=v=>v!=null&&Number.isFinite(Number(v))?Math.round(Number(v)).toLocaleString('en-US'):'—';
+const f=v=>v!=null&&Number.isFinite(Number(v))?Number(v).toFixed(1):'—';
 const present=()=>typeof renderer!=='undefined'&&!!renderer?.xr?.isPresenting;
 function active(){
  const a=q('#modelAtelierPanel');
@@ -27,7 +27,8 @@ function sheepHud(){
 }
 function snapshot(m){
  const stress=window.SWYRL_ENGINE_STRESS_TEST_252?.inspect?.()||{};
- const model=m==='modeler'?window.SWYRL_ENGINE_MODEL_STRESS_252?.inspect?.():null;
+ const candidate=m==='modeler'?window.SWYRL_ENGINE_MODEL_STRESS_252?.inspect?.():null;
+ const model=candidate?.open?candidate:null;
  const primary=typeof renderer!=='undefined'?renderer?.info:null;
  const ri=model?null:primary;
  const rect=target(m)?.getBoundingClientRect?.();
@@ -110,7 +111,7 @@ function refresh(){
  if(!valid){s.root.hidden=true;return;}
  if(s.mode!==m){s.mode=m;s.on=false;s.button.setAttribute('aria-pressed','false');}
  const x=Math.min(Math.max(5,rect.left+68),Math.max(5,innerWidth-98));
- const y=Math.min(Math.max(5,rect.top+12),Math.max(5,innerHeight-80));
+ const y=Math.min(Math.max(5,rect.top+(m==='materials'?108:12)),Math.max(5,innerHeight-80));
  s.root.style.transform='translate('+Math.round(x)+'px,'+Math.round(y)+'px)';
  s.root.hidden=false;s.panel.hidden=!s.on;
  if(s.on){const data=snapshot(m);s.title.textContent='§E / '+m.toUpperCase();
