@@ -1,3 +1,9 @@
+## 2026-11-05 — §C image thread starts immediately on job acceptance (source candidate)
+
+- **Owner follow-up:** sending an image from a new conversation should create/select the real chat thread immediately, rather than waiting minutes for visual inference. Preserve the same image card, question, and eventual normal text answer inside the newly created thread.
+- **Change in v8 PR:** `activity.onAccepted` awaits authenticated existing `mutateChat` operations `UPSERT_THREAD` + `SET_CURRENT_THREAD` as soon as HTTP202 image job is accepted. `activeThreadId` and pending activity's origin are set to the new ID, thread appears in sidebar and stays active. This is a **durable empty thread**, not a falsely saved image/user turn; only completed visual analysis and Station /send create actual chat messages. Sending images inside an existing thread preserves that thread instead of creating duplicates.
+- **Error handling:** new thread persists if analysis subsequently fails, with truthful pending/failed state and original draft restorable; creation failures do not silently claim a chat was created. If user navigates before acceptance, do not create a thread in the wrong conversation. Tests assert the transition and existing account-state operations. No new database schema or API, source of truth remains Station/chat_state.
+
 ## 2026-11-05 — §C cancel abandoned CPU vision work to reduce queue delays (source candidate)
 
 - **Owner screenshot:** Little Crystal Mage upload pending in real QUEUED phase 1:55, despite the new v7 composer clearing correctly. The status was not evidence of a slow upload; it reflected a single `_inference_lock` already held by an earlier vision operation (or thread scheduling), with no native cancellation mechanism. v5-v7 "Stop waiting" stopped browser polling but let model decoding continue.
