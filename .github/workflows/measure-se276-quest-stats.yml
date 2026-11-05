@@ -1,0 +1,27 @@
+name: Measure §E v11.276 Quest left-hand Nerd Stats
+on:
+  push:
+    branches: [fix/se276-quest-left-controller-stats]
+    paths:
+      - "projects/swrlz-forge-moba/source-manifest.json"
+      - "projects/swrlz-forge-moba/runtime/sheep_left_controller_nerd_stats_v11_276.js"
+      - "projects/swrlz-forge-moba/patches/v11_276_left_controller_nerd_stats.py"
+      - "projects/swrlz-forge-moba/scripts/verify_v11_276_release.py"
+      - ".github/workflows/measure-se276-quest-stats.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Syntax-check lightweight new XR runtime
+        run: node --check projects/swrlz-forge-moba/runtime/sheep_left_controller_nerd_stats_v11_276.js
+      - name: Assemble exact §E bundle and print source SHA256
+        run: python projects/swrlz-forge-moba/build_space.py --output /tmp/se276-measure
+      - name: Syntax-check assembled inline JavaScript
+        run: python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se276-measure/index.html
