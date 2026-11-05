@@ -1,3 +1,11 @@
+## 2026-11-05 — §C visual evidence grounding + exact handoff JSON export (source candidate)
+
+- **Owner observation:** a multi-view Little Crystal Mage character reference sheet was mistakenly described as a "character transformation". Vision-only and text LALM interpretations are distinct failure points; the owner wants factual visual details and the **actual text handed to the LALM** in the sidebar's Download Chat JSON.
+- **Code:** `hf_space/chat_vision.py` now asks for literal image type, readable labels, same-character views, clothing, accessories, colors, uncertainties, and explicitly avoids invented change-over-time/emotion/story. Response allowance increased from 112 to 192 tokens; first/CPU latency may increase.
+- **Downstream:** `hf_space/model_router.py` inserts inference-only visual evidence grounding for image-associated prompts **after** ordinary routing and intent classification, without changing persisted user text or granting tools.
+- **Transparency:** The authenticated `/api/lalm_station/export` creates an **export-only** `visionAnalysis` per relevant user turn, with `questionSentToChatModel` and `descriptionSentToChatModel` copied exactly from historical stored image markers. The original thread/message order/text and durable account snapshot are unchanged. Old image turns included. Export states `isVerifiedVisionModelReceipt:false` because browser-composed marker text cannot authenticate model provenance; images/pixels remain excluded.
+- **Tests:** mock local image prompt/generation, export parser nonmutation/edge cases, and inference-only grounding. Source owner HF Chat branch; no §E, auth, hosting billing, paid API, UI version, or model weights change. Live image accuracy requires owner retest.
+
 ## 2026-11-05 — §C vision build-time preload (source candidate)
 
 - **Owner-observed symptom:** first image in deployed self-hosted vision remains at “Analyzing image…”; this UI state alone does not diagnose whether model download, CPU model initialization, or actual inference is taking time.
