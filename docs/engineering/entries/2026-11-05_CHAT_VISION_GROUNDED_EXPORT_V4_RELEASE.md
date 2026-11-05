@@ -1,0 +1,23 @@
+# 2026-11-05 — §C Grounded Vision + Inspectable Image Handoff JSON (v4)
+
+**Scope:** Chat app hosted at HF Space `kamiloki/Swyrlz`. Does not change §E Forge Engine, frontend UI contract, microphone, Google auth, or model checkpoints. Stays self-hosted on existing free CPU hardware.
+
+## Why
+Owner supplied live §C output on a "Little Crystal Mage" character turnaround reference with front, side, back, and top views, purple clothing, a crystal staff, and palette/details. §C called the sheet a "character transformation" and added a story of evolving emotions/colors over time. Neither the image nor the vision description had been independently inspected against that output. The owner also requested that the **exact output handed from image analyzer to text LALM** be present in the existing side-menu **Download Chat JSON**.
+
+## Source changes
+- `hf_space/chat_vision.py`: prompt local SmolVLM-256M to identify image type, readable title/view labels, visible objects, clothes, accessories, palettes, layout relationships and uncertainty. Explicitly forbid deducing that front/side/back/top views are temporal transformation stages unless explicitly labeled. Increase vision description max tokens from 112 to 192 (may increase CPU time).
+- `hf_space/model_router.py`: after normal intent/online classification, prepend an inference-only "IMAGE EVIDENCE INTERPRETATION" note to the text model prompt when the accepted user message contains the existing vision handoff block. State that visual description is fallible, the LALM has not seen original pixels, and unsupported emotion/narrative/transformation claims should not be generated. The persisted original user message remains unchanged.
+- `hf_space/station.py` and `hf_space/chat_vision.py`: the existing authenticated `GET /api/lalm_station/export` includes a **new per-user-message `visionAnalysis` export-only object**. Its `questionSentToChatModel` and `descriptionSentToChatModel` are extracted exactly from the original stored text using unchanged `VISION_START`/`VISION_END` markers. Works for previously saved image turns without migration; JSON remains `swrlz-hf-session-export-v1`; existing `text` unchanged. Does not include original image pixels or add an account database field.
+- Provenance is accurately labeled `source: parsed-from-saved-user-message` and `isVerifiedVisionModelReceipt: false`, because the same marker syntax can be manually supplied by a client. It records *what the text model was handed*, not cryptographic proof the image model generated that text.
+- Existing browser Image picker/preview, chat and response rendering, Google session, local CPU model weights, and Hugging Face preload remain intact.
+
+## Tests and release evidence
+- [PR #377](https://github.com/kaministrator999-ui/Swrlzkamico/pull/377) merged into production Chat source branch `fix/chat-embed-mobile-composer-v1-20261103` as squash commit `fd381c9c4767e7d41a0367c2b77165c096aa004c`.
+- [HF Candidate Offline Validation #42106270668](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/42106270668): focused local image route, exact export handoff regression, nonmutating export and inference-only grounding PASS, plus compiler/Chat media checks. Full workflow ends FAIL on four known old unrelated `test_forge_modeling_lessons_v2.py` expectations. Four separate widget/Chat workflows ran PASS. No false green claim.
+- Guarded deployment request `main:.deploy/HF_SPACE_REQUEST.txt` committed at `a8333aa6d50c39c45f589ad42b30b87c3108e26d`. [Deployment #42106461433](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/42106461433) SUCCESS: validation, R39 & 700M protection, pre-deploy snapshot, release checkpoint, upload to existing Space.
+- **Published HF revision:** `c976720256b3a0d6ef2b69392a678bb006106ce7`; rollback HF revision `bebf80279efc837b001546e303ff75aa4c505c51`.
+- Version authority bumped on runtime: Repository Work `1.0.264`, Server Runtime `2.3.455`. Web Chat `1.5.171`, local frontend `1.1.22` unchanged; §E and model checkpoints unchanged.
+
+## Acceptance
+**DEPLOYED_UNVERIFIED.** Source publication is confirmed, but no authenticated post-deploy retest against the owner’s actual Little Crystal Mage reference image has been observed. Correctness, extra token latency, and any remaining interpretation errors require the user's live-device test. For export verification: reload §C, open side menu, **Download Chat JSON**, inspect `threads[].messages[].visionAnalysis.descriptionSentToChatModel` for the previous uploaded image turn. The raw description is exact saved handoff text; original image pixels are not included.
