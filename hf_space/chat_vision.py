@@ -351,9 +351,11 @@ def install(app, require_account) -> None:
         now = time.monotonic()
         with _jobs_lock:
             _prune_jobs(now)
+            _cancel_unwatched_jobs(now)
             prior = next((job for job in _jobs.values()
                           if job["owner"] == owner and job["fingerprint"] == fingerprint
-                          and job["phase"] != "FAILED"), None)
+                          and (job["phase"] in ACTIVE_PHASES or job["phase"] == "COMPLETE")
+                          and not job["cancelEvent"].is_set()), None)
             if prior:
                 job_id = prior["id"]
                 phase = prior["phase"]
@@ -368,12 +370,14 @@ def install(app, require_account) -> None:
             else:
                 job_id = uuid.uuid4().hex
                 phase = "QUEUED"
+                cancel_event = threading.Event()
                 _jobs[job_id] = {"id": job_id, "owner": owner,
                                  "fingerprint": fingerprint, "phase": phase,
                                  "createdAt": now, "phaseStartedAt": now,
+                                 "lastPolledAt": now, "cancelEvent": cancel_event,
                                  "updatedAt": now}
                 threading.Thread(
-                    target=_run_vision_job, args=(job_id, image, question),
+                    target=_run_vision_job, args=(job_id, image, question, cancel_event),
                     daemon=True, name="vision-cpu-" + job_id[:8],
                 ).start()
         return JSONResponse(
@@ -390,12 +394,14 @@ def install(app, require_account) -> None:
         if len(jobId) != 32 or any(ch not in "0123456789abcdef" for ch in jobId):
             return _error(400, "VISION_JOB_INVALID", "Invalid image-analysis identifier.")
         with _jobs_lock:
-            _prune_jobs(time.monotonic())
+            now = time.monotonic()
+            _prune_jobs(now)
+            _cancel_unwatched_jobs(now)
             job = _jobs.get(jobId)
             if not job or job["owner"] != owner:
                 return _error(404, "VISION_JOB_NOT_FOUND", "Image analysis is no longer available; resend the image.")
+            job["lastPolledAt"] = now
             phase = job["phase"]
-            now = time.monotonic()
             response = {
                 "ok": phase != "FAILED",
                 "jobId": jobId,
@@ -407,7 +413,7 @@ def install(app, require_account) -> None:
             }
             if phase == "COMPLETE":
                 response["description"] = job["description"]
-            elif phase == "FAILED":
+            elif phase in ("FAILED", "CANCELLED"):
                 response["code"] = job.get("code") or "LOCAL_VISION_FAILED"
                 response["detail"] = job.get("detail") or "Local image analysis failed."
         return JSONResponse(response, headers={"Cache-Control": "no-store"})
