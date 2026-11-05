@@ -1585,3 +1585,8 @@ Scene data belongs to `scenes/embervault-atelier.swyrl.json` and `scenes/starfor
 The manifest defines the governed 65-patch chain, preserving Animation Studio, character rigs, layered scenery, sockets/book emergence, full-length staff artwork and episode shuttle playback. Sheep Tag retains archive rules/creator, double-tap selection, ground placement guides, touch aim above the finger, house lanes and physical traffic; v10.5 adds the opt-in native Play recorder and completed-run review/export. [ROADMAP.md](ROADMAP.md) preserves historical releases and receipts. Every §E update synchronizes version surfaces, updates the roadmap, reconstructs and syntax-checks the artifact, then changes `DEPLOY_REQUEST.json` as the final repository mutation. Production authority is recorded in the final `DEPLOY_REQUEST.json`, the dedicated deployment receipt, and the exact hosted-release audit. Completion requires the exact Actions run to succeed and the served host to verify the current marker and artifact integrity; root `§tart_§E.md` defines that contract.
 
 Open the new model directly with `?project=comet-courier`; choose **Edit model** for the full toolset. `?project=blank-model` starts a separate clean modeling workspace.
+
+
+### v11.274 · Browser viewport Nerd Stats
+
+A compact optional Nerd Stats HUD is available in the Game, Model, Particle and Material editor viewports (toggle button or F3). It reports approximate RAF cadence and available renderer/stress diagnostic counters, with measurement limitations labeled. No additional WebGL context, requestAnimationFrame loop, or gameplay scheduling changes. The existing Quest VR L3 metrics and Sheep Tag gameplay HUD are preserved. See `docs/EDITOR_VIEWPORT_NERD_STATS_V11_274.md`.
