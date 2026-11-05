@@ -1422,6 +1422,7 @@
             if(!response.ok||!result?.ok||!result.jobId){
               throw new Error(result?.detail||"Image upload could not be accepted.");
             }
+            activity.jobId=String(result.jobId);
             activity.update(result.phase||"QUEUED");
             activity.onAccepted?.(); // Accepted vision job; not yet a saved chat message.
             return String(result.jobId);
@@ -1545,7 +1546,7 @@
         };
         const activity={
           root,originThreadId:activeThreadId,originDraft:draftThread,
-          abort:new AbortController(),phase:"",phaseStart:initialTime,
+          jobId:"",abort:new AbortController(),phase:"",phaseStart:initialTime,
           serverTiming:null,interval:null,
           tick(){
             const now=Date.now();
@@ -1582,7 +1583,7 @@
             const labels={
               PREPARING:"Preparing your image on this device…",
               UPLOADING:"Uploading image to our Space…",
-              QUEUED:"Upload received · waiting for local CPU slot…",
+              QUEUED:"Upload received · queued behind the local image worker…",
               PREPROCESSING:"Preparing image for the vision model…",
               LOADING_MODEL:"Loading local image model into memory…",
               ANALYZING:"Reading visible objects and design details…",
@@ -1594,7 +1595,21 @@
             if(phase==="RESPONDING")cancel.hidden=true;
           }
         };
-        cancel.addEventListener("click",()=>activity.abort.abort());
+        cancel.textContent="Cancel analysis";
+        cancel.addEventListener("click",()=>{
+          const jobId=activity.jobId;
+          activity.abort.abort();
+          if(!jobId)return;
+          // Request owner-scoped cancellation: Stop waiting alone previously
+          // left an expensive native CPU task blocking the next image.
+          fetch("/api/lalm_station/vision/cancel",{
+            method:"POST",credentials:"same-origin",cache:"no-store",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({jobId})
+          }).then(async response=>{
+            if(!response.ok)activity.note("Stopped watching; server cancellation could not be confirmed.");
+          }).catch(()=>activity.note("Stopped watching; server cancellation could not be confirmed."));
+        });
         activity.update("PREPARING");activity.interval=setInterval(()=>activity.tick(),1000);visionActivity=activity;
         requestAnimationFrame(()=>{if(root.isConnected)root.scrollIntoView({block:"end",behavior:"smooth"});});
         return activity;
