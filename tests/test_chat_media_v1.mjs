@@ -20,7 +20,7 @@ assert.match(html,/description=await requestVisionDescription\(attachment,draftT
 assert.match(html,/const startVisionActivity=\(attachment,question\)=>/);
 assert.match(html,/const visionSleep=\(ms,signal\)=>/);
 assert.match(html,/\/api\/lalm_station\/vision\/status\?jobId=/);
-assert.match(html,/activity\.update\(state\.phase\|\|"QUEUED"\)/);
+assert.match(html,/activity\.update\(state\.phase\|\|"QUEUED","",\{/);
 assert.match(html,/elapsedSeconds:state\.elapsedSeconds/);
 assert.match(html,/phaseElapsedSeconds:state\.phaseElapsedSeconds/);
 assert.match(html,/const durationText=seconds=>/);
