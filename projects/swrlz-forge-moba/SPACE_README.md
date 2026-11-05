@@ -1376,3 +1376,8 @@ The Game, Modeling, Particle, and Materials browser viewports now have an option
 ## §E v11.276 · Left-controller immersive Nerd Stats
 
 In immersive WebXR Sheep Tag, clicking the left joystick opens the same three-page Nerd Stats panel, now following the left controller and orienting the visible text toward the headset rather than freezing in the world or showing its back. Click L3 again to hide. In a normal Quest Browser floating 2D window, the HTML statistics overlay remains browser-bound; controller mounting works after entering immersive VR. No extra VR renderer or game/AI logic changes.
+
+
+## §E v11.278 · Quest menu performance comparison
+
+Nerd Stats in immersive VR sits 12 cm farther forward and 6 cm higher over the left controller. The existing L3 toggle remains; in-world text repaint is limited to approximately two seconds except on immediate page changes. Metrics **page 4/4** compares approximate frame cadence for no panels, Nerd Stats only, radial menu only and both open, helping test Quest 2 menu-induced lag. Values are WebXR callback intervals, not GPU render time; observations at different house counts should not be treated as a controlled performance comparison.
