@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.279",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_279_BLANK_VR_ARCANE_HANDS",
-  "reason": "Owner requested a native blank §E Starter Game with the existing Arcane Glove as both Quest VR Touch controller hands, plus an independent left-hand Starter Model using equivalent native geometry, reflected thumb/17-bone rig and all mirrored gesture/keyframe animations. Blank world has no pawn, enemies or scenery; left/right controller poses, grip=grasp/fist and trigger=pinch use the existing XR renderer and cleanup. Original right glove, saved models, Sheep Tag/LAN, controller mappings and other editors stay unchanged. v11.279 exact rebuilt package: 310 patches, 69 assets, 8,125,233 HTML bytes, SHA-256 678667a1360fc495366cda34d0e7873042c6763baf92e1a6f766ae2de194f0ed. Candidate and sealed source JS syntax gates passed; owner Quest 2 UX/performance acceptance pending.",
-  "sourceCommit": "57389d793117157ec022d500c35e6c684d6eb377",
-  "sourceIntegritySha256": "678667a1360fc495366cda34d0e7873042c6763baf92e1a6f766ae2de194f0ed"
+  "releaseVersion": "v11.280",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_280_MAGE_SPELL_LAB",
+  "reason": "Owner request: build Mage Spell Particle Pack for the dual Arcane Glove blank VR starter, expose all 14 existing Particle Studio registered presets and add 18 new editable mage spell emitters in Starter Particles and the Particle Editor. Add searchable native catalog, individual emitter loading, one-click 8-spell pack, independent left/right equip selectors, VR trigger casts and thumbstick click spell switching with tracked labels. Distinct ring, spiral, lightning motion in real native particle emitter preview. Reuse one existing XR renderer/frame callback, do not change Sheep Tag inputs, source glove models, saved levels, LAN, or §C. v11.280 exact package verified: 311 ordered patches, 69 bundled assets, 8,154,910 HTML bytes, SHA-256 b4e9bdb3126a07fd1bae53799436c0bdf5d924f4325085f744d698abf9787fa3. Candidate source, JS syntax and sealed-source checks passed. Real Quest 2 visual/performance acceptance remains pending.",
+  "sourceCommit": "0d2ab6d6ab4afdbe8dba6ba55a9859ed2704aaf2",
+  "sourceIntegritySha256": "b4e9bdb3126a07fd1bae53799436c0bdf5d924f4325085f744d698abf9787fa3"
 }
