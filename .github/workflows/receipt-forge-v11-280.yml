@@ -1,0 +1,47 @@
+name: §E v11.280 Mage Spell Lab candidate source receipt
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/receipt-forge-v11-280.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  candidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build candidate and print exact SHA
+        run: |
+          python - <<'PY'
+          import pathlib,json
+          p=pathlib.Path("projects/swrlz-forge-moba/source-manifest.json")
+          m=json.loads(p.read_text(encoding="utf8"))
+          assert m["name"]=="§wyrl§ Engine v11.280"
+          assert m["patches"][-1]=="patches/v11_280_mage_spell_lab.py"
+          m["finalBytes"]=0
+          m["finalSha256"]=""
+          p.write_text(json.dumps(m,ensure_ascii=False,indent=2)+"\n",encoding="utf8")
+          PY
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/se280-candidate
+          python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se280-candidate/index.html
+          python - <<'PY'
+          import pathlib,json,hashlib
+          p=pathlib.Path("/tmp/se280-candidate/index.html")
+          raw=p.read_bytes()
+          meta=json.loads(pathlib.Path("projects/swrlz-forge-moba/source-manifest.json").read_text(encoding="utf8"))
+          text=raw.decode("utf8")
+          for key in ("emberBolt","frostNova","stormArc","arcaneMissile","healingCircle","windSpiral",
+                      "se280MageFrame();","data-se280-catalog","Mage Spell particle pack",
+                      "se248StarterParticles","SWYRL_ENGINE_DEPLOY_MARKER: V11_280_MAGE_SPELL_LAB"):
+              assert key in text,key
+          print("SE280_RECEIPT "+json.dumps({"bytes":len(raw),"sha256":hashlib.sha256(raw).hexdigest(),"patches":len(meta["patches"]),"assets":len(json.loads(pathlib.Path("/tmp/se280-candidate/SOURCE.json").read_text(encoding="utf8"))["assets"])}),flush=True)
+          PY
