@@ -40,59 +40,6 @@ expect_invalid("data:image/jpeg;base64," + base64.b64encode(b"\xff\xd8\xff" + b"
 source = SOURCE.read_text(encoding="utf-8")
 assert "SWRLZ_VISION_API_KEY" not in source
 
-# Cancellation must free a queued request before it acquires the model lock,
-# and should stop streaming generation between chunks, never release the lock
-# before native inference really returns.
-cancel_started = threading.Event()
-allow_next_chunk = threading.Event()
-
-
-class CancellableModel:
-    def create_chat_completion(self, **kwargs):
-        def chunks():
-            cancel_started.set()
-            yield {"choices": [{"delta": {"content": "partial"}}]}
-            if not allow_next_chunk.wait(timeout=3):
-                raise RuntimeError("test did not release token generation")
-            yield {"choices": [{"delta": {"content": " that must not be saved"}}]}
-        return chunks()
-
-
-with patch.object(vision, "_prepare_image", lambda x: x), patch.object(vision, "_load_local_model", lambda: CancellableModel()):
-    running = client.post("/api/lalm_station/vision", json={"image": valid, "question": "Cancel running"})
-    assert running.status_code == 202
-    cancelled_id = running.json()["jobId"]
-    assert cancel_started.wait(timeout=2)
-    other_cancel = TestClient(other_user).post("/api/lalm_station/vision/cancel", json={"jobId": cancelled_id})
-    assert other_cancel.status_code == 404, other_cancel.text
-    assert TestClient(unauthenticated).post("/api/lalm_station/vision/cancel", json={"jobId": cancelled_id}).status_code == 401
-    stopped = client.post("/api/lalm_station/vision/cancel", json={"jobId": cancelled_id})
-    assert stopped.status_code == 200 and stopped.json()["cancelRequested"] is True
-    allow_next_chunk.set()
-    cancelled = poll_done(cancelled_id)
-    assert cancelled["phase"] == "CANCELLED" and cancelled["done"] is True
-    assert cancelled["ok"] is False
-    assert "description" not in cancelled
-    resumed = client.post("/api/lalm_station/vision", json={"image": valid, "question": "Cancel running"})
-    assert resumed.status_code == 202
-    assert resumed.json()["jobId"] != cancelled_id
-    assert poll_done(resumed.json()["jobId"])["phase"] == "COMPLETE"
-
-# An unwatched request triggers a cooperative cancellation flag. A poll on a
-# genuinely live request keeps its lease current, so the queue does not evict it.
-with vision._jobs_lock:
-    active = {"phase": "QUEUED", "id": "a" * 32,
-              "lastPolledAt": 100.0, "cancelEvent": threading.Event()}
-    watched = {"phase": "ANALYZING", "id": "b" * 32,
-               "lastPolledAt": 205.0, "cancelEvent": threading.Event()}
-    vision._jobs["a" * 32] = active
-    vision._jobs["b" * 32] = watched
-    vision._cancel_unwatched_jobs(205.0)
-    assert active["cancelEvent"].is_set()
-    assert not watched["cancelEvent"].is_set()
-    vision._jobs.pop("a" * 32)
-    vision._jobs.pop("b" * 32)
-
 assert "router.huggingface.co" not in source
 assert "urllib.request" not in source
 assert vision.MODEL_REPO == "ggml-org/SmolVLM-256M-Instruct-GGUF"
@@ -227,6 +174,60 @@ with patch.object(vision, "_ask_vision_local", side_effect=RuntimeError("secret 
     result = poll_done(failed.json()["jobId"])
     assert result["phase"] == "FAILED" and result["ok"] is False
     assert "secret image bytes" not in json.dumps(result)
+
+# Cancellation must free a queued request before it acquires the model lock,
+# and should stop streaming generation between chunks, never release the lock
+# before native inference really returns.
+cancel_started = threading.Event()
+allow_next_chunk = threading.Event()
+
+
+class CancellableModel:
+    def create_chat_completion(self, **kwargs):
+        def chunks():
+            cancel_started.set()
+            yield {"choices": [{"delta": {"content": "partial"}}]}
+            if not allow_next_chunk.wait(timeout=3):
+                raise RuntimeError("test did not release token generation")
+            yield {"choices": [{"delta": {"content": " that must not be saved"}}]}
+        return chunks()
+
+
+with patch.object(vision, "_prepare_image", lambda x: x), patch.object(vision, "_load_local_model", lambda: CancellableModel()):
+    running = client.post("/api/lalm_station/vision", json={"image": valid, "question": "Cancel running"})
+    assert running.status_code == 202
+    cancelled_id = running.json()["jobId"]
+    assert cancel_started.wait(timeout=2)
+    other_cancel = TestClient(other_user).post("/api/lalm_station/vision/cancel", json={"jobId": cancelled_id})
+    assert other_cancel.status_code == 404, other_cancel.text
+    assert TestClient(unauthenticated).post("/api/lalm_station/vision/cancel", json={"jobId": cancelled_id}).status_code == 401
+    stopped = client.post("/api/lalm_station/vision/cancel", json={"jobId": cancelled_id})
+    assert stopped.status_code == 200 and stopped.json()["cancelRequested"] is True
+    allow_next_chunk.set()
+    cancelled = poll_done(cancelled_id)
+    assert cancelled["phase"] == "CANCELLED" and cancelled["done"] is True
+    assert cancelled["ok"] is False
+    assert "description" not in cancelled
+    resumed = client.post("/api/lalm_station/vision", json={"image": valid, "question": "Cancel running"})
+    assert resumed.status_code == 202
+    assert resumed.json()["jobId"] != cancelled_id
+    assert poll_done(resumed.json()["jobId"])["phase"] == "COMPLETE"
+
+# An unwatched request triggers a cooperative cancellation flag. A poll on a
+# genuinely live request keeps its lease current, so the queue does not evict it.
+with vision._jobs_lock:
+    active = {"phase": "QUEUED", "id": "a" * 32,
+              "lastPolledAt": 100.0, "cancelEvent": threading.Event()}
+    watched = {"phase": "ANALYZING", "id": "b" * 32,
+               "lastPolledAt": 205.0, "cancelEvent": threading.Event()}
+    vision._jobs["a" * 32] = active
+    vision._jobs["b" * 32] = watched
+    vision._cancel_unwatched_jobs(205.0)
+    assert active["cancelEvent"].is_set()
+    assert not watched["cancelEvent"].is_set()
+    vision._jobs.pop("a" * 32)
+    vision._jobs.pop("b" * 32)
+
 
 assert "router.huggingface.co" not in source
 assert "SWRLZ_VISION_API_KEY" not in source
