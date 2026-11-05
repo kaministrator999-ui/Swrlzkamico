@@ -4,6 +4,8 @@ emoji: 🐉
 sdk: gradio
 app_file: app.py
 pinned: false
+preload_from_hub:
+  - "ggml-org/SmolVLM-256M-Instruct-GGUF SmolVLM-256M-Instruct-Q8_0.gguf,mmproj-SmolVLM-256M-Instruct-Q8_0.gguf b9e4379657e1450d04d02eec8e345667265b0a00"
 ---
 
 # §wyrlz R39 isolated candidate
@@ -18,8 +20,9 @@ matching multimodal projector, at pinned upstream revision
 `b9e4379657e1450d04d02eec8e345667265b0a00` (Apache-2.0).
 The existing `llama-cpp-python==0.3.35` runtime provides
 `MTMDChatHandler`. Both GGUF files download from the public Hugging Face
-model repository into the Space's nonpersistent cache the first time image
-analysis is requested. The total download is approximately 279 MB, with
+model repository into the Space's standard cache **at build time** via
+Space YAML `preload_from_hub`. This avoids the first-upload model download.
+The total pretrained weight download is approximately 279 MB, with
 no external inference API or API key and no per-image provider fee.
 CPU Basic hosting is $0/hour; usage may be slow on two vCPUs and free
 Spaces sleep when inactive. Do not upgrade hardware for this feature.
@@ -40,8 +43,11 @@ pixels remain ephemeral and are never saved to thread history.
 The selected image briefly appears in the browser preview and is
 not restored when reopening a thread.
 
-First-use model download or CPU inference may take a while on a free
-Space. The dedicated endpoint fails closed rather than sending the
+Build-time model caching avoids a first-request download when the Space
+retains its standard preloaded Hub cache. Initial RAM initialization and
+CPU image inference can still be slow on the free two-core Space; these
+are separate from file download. Do not eagerly load duplicate models into
+RAM or upgrade to paid hardware. The dedicated endpoint fails closed rather than sending the
 original chat request when visual inference fails. Model quality and
 latency require real-device acceptance; mocked tests are not evidence
 of successful live inference.
