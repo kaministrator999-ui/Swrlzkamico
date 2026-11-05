@@ -3797,6 +3797,12 @@
                   throw new Error("Could not create the image conversation. Image remains available for retry.");
                 }
                 imageThreadCreated=true;
+                // The server accepted a durable thread. Its sync projection may
+                // briefly lag, so show the acknowledged thread in the drawer
+                // immediately without fabricating a saved image message.
+                if(!chatThreads.some(t=>t.id===id)){
+                  chatThreads.push(pendingDraftThread||{id,title,pinned:false,createdAt:now,messages:[]});
+                }
                 window.SwrlzForgeEmbedV1?.setThread(id);
                 renderThreads();renderConversation(currentThread(),true);
                 // Retain the same live progress card inside the new thread.
