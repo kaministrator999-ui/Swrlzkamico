@@ -953,6 +953,8 @@
     .vision-work-steps li[data-state="active"]::before{content:"◉";color:#67dfff}
     .vision-work-steps li[data-state="done"]{color:#a7d4dc}
     .vision-work-steps li[data-state="done"]::before{content:"✓";color:#7de2c9}
+    .vision-work-timer{margin:8px 0 4px;font:11px var(--font-telemetry,monospace);font-variant-numeric:tabular-nums;color:#a6ecf8}
+    .vision-work-timer[data-long="true"]{color:#ffd29b}
     .vision-work-status{color:#a4d4e9;font-size:11px;margin-top:6px}
     .vision-work-card[data-state="error"] .vision-work-status{color:#ffb3c2}
     .user-vision-summary summary{cursor:pointer}
@@ -1384,39 +1386,85 @@
       const requestVisionDescription=async(attachment,question,activity)=>{
         activity.update("PREPARING");
         const image=await encodeImageForVision(attachment);
-        activity.update("UPLOADING");
-        const response=await fetch("/api/lalm_station/vision",{
-          method:"POST",credentials:"same-origin",cache:"no-store",
-          headers:{"Content-Type":"application/json"},
-          signal:activity.abort.signal,
-          body:JSON.stringify({image,question:question||"Describe this image."})
-        });
-        let result=null;
-        try{result=await response.json()}catch(_){}
-        if(!response.ok||!result?.ok||!result.jobId){
-          throw new Error(result?.detail||"Image upload could not be accepted.");
-        }
-        activity.update(result.phase||"QUEUED");
-        // Status is polled from the actual server worker, never a fake percent.
-        const started=Date.now();
-        while(true){
-          const check=await fetch("/api/lalm_station/vision/status?jobId="+encodeURIComponent(result.jobId),{
-            credentials:"same-origin",cache:"no-store",signal:activity.abort.signal
-          });
-          let state=null;try{state=await check.json()}catch(_){}
-          if(!check.ok||!state?.ok){
-            throw new Error(state?.detail||"Unable to read the local image-analysis status.");
+        const body=JSON.stringify({image,question:question||"Describe this image."});
+        let jobId="",reconnects=0,pollingErrors=0;
+        const acceptJob=async()=>{
+          while(!activity.abort.signal.aborted){
+            activity.update("UPLOADING");
+            let response;
+            try{
+              response=await fetch("/api/lalm_station/vision",{
+                method:"POST",credentials:"same-origin",cache:"no-store",
+                headers:{"Content-Type":"application/json"},
+                signal:activity.abort.signal,body
+              });
+            }catch(error){
+              if(activity.abort.signal.aborted)throw error;
+              activity.note("Connection interrupted. Reconnecting to the image service automatically…");
+              await visionSleep(3000,activity.abort.signal);
+              continue;
+            }
+            let result=null;try{result=await response.json()}catch(_){}
+            if(response.status===429&&result?.code==="VISION_QUEUE_FULL"){
+              activity.update("QUEUED","The local CPU queue is full. Retrying automatically when a slot opens…");
+              await visionSleep(Math.min(12000,Math.max(2000,Number(result.retryAfterSeconds||8)*1000)),activity.abort.signal);
+              continue;
+            }
+            if(!response.ok||!result?.ok||!result.jobId){
+              throw new Error(result?.detail||"Image upload could not be accepted.");
+            }
+            activity.update(result.phase||"QUEUED");
+            return String(result.jobId);
           }
-          activity.update(state.phase||"QUEUED");
+          throw new Error("Stopped waiting for image analysis.");
+        };
+        jobId=await acceptJob();
+        // Never give up merely because a CPU job takes over six minutes.
+        // The user's explicit Stop waiting control is the cancel boundary.
+        while(!activity.abort.signal.aborted){
+          let check,state=null;
+          try{
+            check=await fetch("/api/lalm_station/vision/status?jobId="+encodeURIComponent(jobId),{
+              credentials:"same-origin",cache:"no-store",signal:activity.abort.signal
+            });
+            try{state=await check.json()}catch(_){}
+          }catch(error){
+            if(activity.abort.signal.aborted)throw error;
+            pollingErrors++;
+            activity.note("Connection interrupted. Reconnecting to the same image job automatically…");
+            await visionSleep(Math.min(12000,2000*pollingErrors),activity.abort.signal);
+            continue;
+          }
+          if(check.status===404&&state?.code==="VISION_JOB_NOT_FOUND"){
+            // HF Free Space restarted: its RAM-only job no longer exists.
+            if(reconnects>=2)throw new Error("The Space restarted repeatedly; image analysis needs a fresh attempt.");
+            reconnects++;
+            activity.note("The Space restarted. Restoring the image job automatically…");
+            jobId=await acceptJob();
+            pollingErrors=0;
+            continue;
+          }
+          if(!check.ok||!state?.ok){
+            if(check.status===401||check.status===403||state?.phase==="FAILED"||check.status===400){
+              throw new Error(state?.detail||"Image analysis failed.");
+            }
+            pollingErrors++;
+            activity.note("Image service temporarily unavailable. Reconnecting automatically…");
+            await visionSleep(Math.min(12000,2000*pollingErrors),activity.abort.signal);
+            continue;
+          }
+          pollingErrors=0;
+          activity.update(state.phase||"QUEUED","",{
+            elapsedSeconds:state.elapsedSeconds,
+            phaseElapsedSeconds:state.phaseElapsedSeconds
+          });
           if(state.phase==="COMPLETE"){
             if(!state.description)throw new Error("The vision model returned no description.");
             return String(state.description).slice(0,6000);
           }
-          if(Date.now()-started>6*60*1000){
-            throw new Error("Image analysis is still running on the local CPU. Press Send again to resume checking.");
-          }
           await visionSleep(1600,activity.abort.signal);
         }
+        throw new Error("Stopped waiting for image analysis.");
       };
       micButton.addEventListener("click",()=>{
         if(speechRecognition){speechRecognition.stop();return;}
@@ -1462,7 +1510,7 @@
       const assistantTemplate = document.getElementById("assistantTemplate");
       let visionActivity=null;
       const startVisionActivity=(attachment,question)=>{
-        visionActivity?.root.remove();
+        if(visionActivity){visionActivity.stopClock();visionActivity.root.remove();}
         const root=document.createElement("section");root.className="vision-work-card";root.dataset.state="working";
         root.setAttribute("aria-label","Image upload and local analysis progress");
         const header=document.createElement("div");header.className="vision-work-header";
@@ -1475,16 +1523,47 @@
         const steps=document.createElement("ol");steps.className="vision-work-steps";
         const names=["Upload image","Prepare image and load model","Identify visual details","Pass description to §C","Generate chat response"];
         const entries=names.map(name=>{const li=document.createElement("li");li.textContent=name;li.dataset.state="pending";steps.appendChild(li);return li;});
+        const timer=document.createElement("div");timer.className="vision-work-timer";timer.setAttribute("aria-label","Elapsed processing time");
         const status=document.createElement("div");status.className="vision-work-status";status.setAttribute("role","status");status.setAttribute("aria-live","polite");
-        root.append(header,message,preview,steps,status);messageList.appendChild(root);
+        root.append(header,message,preview,steps,timer,status);messageList.appendChild(root);
+        const initialTime=Date.now();
+        const durationText=seconds=>{
+          const n=Math.max(0,Math.floor(Number(seconds)||0)),m=Math.floor(n/60),sec=String(n%60).padStart(2,"0");
+          return m>=60
+            ?String(Math.floor(m/60))+":"+String(m%60).padStart(2,"0")+":"+sec
+            :String(m).padStart(2,"0")+":"+sec;
+        };
         const activity={
-          root,originThreadId:activeThreadId,originDraft:draftThread,abort:new AbortController(),update(phase,detail=""){
+          root,originThreadId:activeThreadId,originDraft:draftThread,
+          abort:new AbortController(),phase:"",phaseStart:initialTime,
+          serverTiming:null,interval:null,
+          tick(){
+            const now=Date.now();
+            const timing=this.serverTiming&&this.serverTiming.phase===this.phase
+              ?{total:this.serverTiming.total+(now-this.serverTiming.receivedAt)/1000,
+                 step:this.serverTiming.step+(now-this.serverTiming.receivedAt)/1000}
+              :{total:(now-initialTime)/1000,step:(now-this.phaseStart)/1000};
+            timer.textContent="Elapsed "+durationText(timing.total)+" · Current step "+durationText(timing.step);
+            timer.dataset.long=String(this.phase==="ANALYZING"&&timing.step>=60);
+          },
+          stopClock(){if(this.interval!==null){clearInterval(this.interval);this.interval=null;}this.tick();},
+          note(text){status.textContent=String(text||"");},
+          update(phase,detail="",timing=null){
             const positions={PREPARING:0,UPLOADING:0,QUEUED:1,PREPROCESSING:1,LOADING_MODEL:1,ANALYZING:2,COMPLETE:3,SENDING:3,RESPONDING:4};
             const index=positions[phase];
+            if(phase!==this.phase){
+              this.phase=phase;this.phaseStart=Date.now();this.serverTiming=null;
+            }
+            if(timing&&Number.isFinite(Number(timing.elapsedSeconds))&&Number.isFinite(Number(timing.phaseElapsedSeconds))){
+              this.serverTiming={phase,receivedAt:Date.now(),
+                total:Math.max(0,Number(timing.elapsedSeconds)),
+                step:Math.max(0,Number(timing.phaseElapsedSeconds))};
+            }
+            this.tick();
             if(phase==="ERROR"||phase==="STOPPED"){
               root.dataset.state="error";title.textContent="Image not sent to chat";
               status.textContent=detail||"Image analysis did not finish. The image remains attached so you can retry.";
-              cancel.hidden=true;return;
+              cancel.hidden=true;this.stopClock();return;
             }
             if(index===undefined)return;
             root.dataset.state="working";
@@ -1506,13 +1585,13 @@
           }
         };
         cancel.addEventListener("click",()=>activity.abort.abort());
-        activity.update("PREPARING");visionActivity=activity;
+        activity.update("PREPARING");activity.interval=setInterval(()=>activity.tick(),1000);visionActivity=activity;
         requestAnimationFrame(()=>{if(root.isConnected)root.scrollIntoView({block:"end",behavior:"smooth"});});
         return activity;
       };
       const removeVisionActivity=activity=>{
         if(!activity)return;
-        activity.root.remove();
+        activity.stopClock();activity.root.remove();
         if(visionActivity===activity)visionActivity=null;
       };
 
