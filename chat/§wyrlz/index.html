@@ -1424,7 +1424,7 @@
             }
             activity.jobId=String(result.jobId);
             activity.update(result.phase||"QUEUED");
-            activity.onAccepted?.(); // Accepted vision job; not yet a saved chat message.
+            await activity.onAccepted?.(); // Accepted vision job; establish its real conversation now.
             return String(result.jobId);
           }
           throw new Error("Stopped waiting for image analysis.");
@@ -3760,7 +3760,7 @@
         if((!draftText&&!attachment)||sending)return false;
         let text=draftText;
         const contentTag=classifyUserContent(draftText);
-        let sendAcknowledged=false,sendStarted=false,activity=null,visionDraftHeld=false,provisionalThread=null,provisionalMessageId="";
+        let sendAcknowledged=false,sendStarted=false,activity=null,visionDraftHeld=false,provisionalThread=null,provisionalMessageId="",imageThreadCreated=false,imageThreadId="";
         const restorePendingVisionDraft=()=>{
           if(!attachment||!visionDraftHeld)return;
           // Do not overwrite anything the user typed while the CPU was busy.
@@ -3773,10 +3773,33 @@
         try{
           if(attachment){
             activity=startVisionActivity(attachment,draftText);
-            activity.onAccepted=()=>{
+            activity.onAccepted=async()=>{
               if(visionDraftHeld)return;
-              // The activity card now owns the pending unsaved image/text;
-              // keep the attachment object/URL alive for retry or final preview.
+              // An accepted image creates/activates a real new conversation
+              // immediately, before the model completes visual analysis.
+              // It contains no fabricated user/assistant messages yet.
+              if(originalDraft&&draftThread){
+                const id=threadId(),now=Date.now(),title=titleFrom(draftText||"Image message");
+                pendingDraftThread={id,title,pinned:false,createdAt:now,messages:[]};
+                draftThread=false;activeThreadId=id;
+                imageThreadId=id;
+                activity.originDraft=false;activity.originThreadId=id;
+                const saved=await mutateChat([
+                  {type:"UPSERT_THREAD",threadId:id,title,pinned:false,createdAt:now},
+                  {type:"SET_CURRENT_THREAD",threadId:id}
+                ]);
+                if(!saved){
+                  pendingDraftThread=null;draftThread=true;activeThreadId=originalThreadId;
+                  activity.originDraft=true;activity.originThreadId=originalThreadId;
+                  throw new Error("Could not create the image conversation. Image remains available for retry.");
+                }
+                imageThreadCreated=true;
+                window.SwrlzForgeEmbedV1?.setThread(id);
+                renderThreads();renderConversation(currentThread(),true);
+                // Retain the same live progress card inside the new thread.
+                messageList.appendChild(activity.root);
+              }
+              // This is a pending activity, not a confirmed saved Chat turn.
               visionDraftHeld=true;
               if(prompt.value.trim()===draftText)prompt.value="";
               if(selectedImage===attachment)selectedImage=null;
@@ -3786,7 +3809,9 @@
             const description=await requestVisionDescription(attachment,draftText,activity);
             text=(draftText||"Describe this image.")+VISION_START+description+VISION_END;
             if(text.length>131072)throw new Error("The combined image analysis is too long.");
-            if(draftThread!==originalDraft||activeThreadId!==originalThreadId){
+            const stillOriginal=(draftThread===originalDraft&&activeThreadId===originalThreadId);
+            const newImageThread=imageThreadCreated&&!draftThread&&activeThreadId===imageThreadId;
+            if(!stillOriginal&&!newImageThread){
               throw new Error("You switched chats during image analysis. Return to the original chat and press Send again.");
             }
             activity.update("SENDING");
@@ -3910,7 +3935,7 @@
             if(provisionalThread&&provisionalMessageId){
               provisionalThread.messages=(provisionalThread.messages||[]).filter(m=>m.id!==provisionalMessageId);
             }
-            if(originalDraft){
+            if(originalDraft&&!imageThreadCreated){
               draftThread=true;activeThreadId=originalThreadId;pendingDraftThread=null;
               renderConversation(null,true);renderThreads();
             }else if(provisionalThread){
