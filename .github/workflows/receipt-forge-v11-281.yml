@@ -1,0 +1,46 @@
+name: §E v11.281 Rocky Anime Hand candidate build
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/receipt-forge-v11-281.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  candidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build candidate and inspect source code
+        run: |
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/se281-candidate
+          python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se281-candidate/index.html
+          python - <<'PY'
+          import hashlib,json,pathlib
+          root=pathlib.Path("projects/swrlz-forge-moba")
+          raw=pathlib.Path("/tmp/se281-candidate/index.html").read_bytes()
+          manifest=json.loads((root/"source-manifest.json").read_text("utf8"))
+          html=raw.decode("utf8")
+          assert manifest["name"]=="§wyrl§ Engine v11.281"
+          assert manifest["patches"][-1]=="patches/v11_281_rocky_anime_hand.py"
+          assert len(manifest["patches"])==312
+          for required in (
+            "data-project-template=\"rocky-anime-hand\"",
+            "function se281RockTopology(", "function se281CrackTopology(",
+            "function se281RockScene()", "m.rigging",
+            "se220RigValidate(m.rigging)",
+            "se281OpenRockyHand(true)", "window.SWYRL_ENGINE_ROCK_HAND",
+            "SWYRL_ENGINE_DEPLOY_MARKER: V11_281_ROCKY_ANIME_HAND"
+          ):assert required in html,required
+          assets=json.loads(pathlib.Path("/tmp/se281-candidate/SOURCE.json").read_text("utf8"))["assets"]
+          print("SE281_RECEIPT "+json.dumps({"bytes":len(raw),"sha256":hashlib.sha256(raw).hexdigest(),
+             "patches":len(manifest["patches"]),"assets":len(assets)}),flush=True)
+          PY
