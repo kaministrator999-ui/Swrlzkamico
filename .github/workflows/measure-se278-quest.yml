@@ -25,3 +25,5 @@ jobs:
         run: python projects/swrlz-forge-moba/build_space.py --output /tmp/se278-measure
       - name: Validate complete inline JavaScript
         run: python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se278-measure/index.html
+      - name: Validate sealed v11.278 source, assets and XR menu diagnostics
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_278_release.py --output /tmp/se278-verify
