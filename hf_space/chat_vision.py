@@ -87,6 +87,7 @@ _jobs_lock = threading.Lock()
 _jobs: dict[str, dict[str, Any]] = {}
 ACTIVE_PHASES = {"QUEUED", "PREPROCESSING", "LOADING_MODEL", "ANALYZING"}
 JOB_TTL_SECONDS = 15 * 60
+WATCH_LEASE_SECONDS = 90  # A job with no live progress polling may be abandoned.
 
 
 def _prune_jobs(now: float) -> None:
@@ -103,6 +104,16 @@ def _prune_jobs(now: float) -> None:
         _jobs.pop(key, None)
 
 
+def _cancel_unwatched_jobs(now: float) -> None:
+    """Called with _jobs_lock held; release only genuinely unwatched work."""
+    for job in _jobs.values():
+        if job["phase"] in ACTIVE_PHASES and now - job["lastPolledAt"] > WATCH_LEASE_SECONDS:
+            if not job["cancelEvent"].is_set():
+                job["cancelEvent"].set()
+                print(json.dumps({"event": "LOCAL_VISION_CANCEL_UNWATCHED",
+                                  "phase": job["phase"], "job": job["id"][:8]}), flush=True)
+
+
 def _set_job_phase(job_id: str, phase: str, **fields) -> None:
     with _jobs_lock:
         job = _jobs.get(job_id)
@@ -117,14 +128,16 @@ def _set_job_phase(job_id: str, phase: str, **fields) -> None:
     print(json.dumps({"event": "LOCAL_VISION_STAGE", "phase": phase, "job": job_id[:8]}), flush=True)
 
 
-def _run_vision_job(job_id: str, image: str, question: str) -> None:
+def _run_vision_job(job_id: str, image: str, question: str, cancel_event: threading.Event) -> None:
     try:
         description = _ask_vision_local(
-            image, question, lambda phase: _set_job_phase(job_id, phase),
+            image, question, report_phase=lambda phase: _set_job_phase(job_id, phase),
+            should_cancel=cancel_event.is_set,
         )
         _set_job_phase(job_id, "COMPLETE", description=description)
-    except VisionBusy:
-        _set_job_phase(job_id, "FAILED", code="VISION_BUSY", detail="Vision worker is occupied.")
+    except VisionCancelled:
+        _set_job_phase(job_id, "CANCELLED", code="VISION_CANCELLED",
+                       detail="Image analysis cancelled or no longer watched.")
     except ValueError as exc:
         code = str(exc)
         if code in ("IMAGE_FORMAT_INVALID", "IMAGE_PIXELS_TOO_LARGE"):
@@ -137,7 +150,8 @@ def _run_vision_job(job_id: str, image: str, question: str) -> None:
         _set_job_phase(job_id, "FAILED", code="LOCAL_VISION_UNAVAILABLE", detail="Local image analysis could not complete.")
 
 
-class VisionBusy(Exception):
+class VisionCancelled(Exception):
+    """An unwatched, queued or explicitly cancelled job."""
     pass
 
 
