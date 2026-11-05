@@ -47,9 +47,11 @@ def apply(html):
       "window.SWYRL_ENGINE_PARTICLE_CURVES_251=Object.freeze",
     ): assert symbol in old,("legacy curve contract drift",symbol)
     html=html[:a]+editor+"\n"+html[b:]
-    html=once(html,"</head>",
-       "<style id=\"se277PrecisionCurveStyle\">\n"+css+"\n</style>\n</head>",
-       "install scoped precision curve CSS")
+    # The document contains a second embedded </head> string used by tooling.
+    # Only the document's first real closing head gets the scoped CSS.
+    assert html.count("<head>")==1,("v11.277 document head drift",html.count("<head>"))
+    html=html.replace("</head>",
+       "<style id=\"se277PrecisionCurveStyle\">\n"+css+"\n</style>\n</head>",1)
     for marker in (
       "window.SWYRL_ENGINE_CURVE_LIVE_277=api;",
       "window.SWYRL_ENGINE_PARTICLE_CURVES_251=api;",
