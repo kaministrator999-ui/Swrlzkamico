@@ -48,7 +48,13 @@ readable titles/labels, multiple viewpoints of the same design, and supported
 shapes, colors, and accessories. The downstream text LALM receives an explicit
 grounding reminder that the vision description is fallible and must not be
 turned into speculative transformation stories, emotions, or symbolism.
-Max local vision generation is 192 tokens; free CPU decoding may be slower.
+For reduced CPU text decoding, the local vision request now uses a concise
+factual prompt and **112 maximum output tokens** (previously 192). It may
+describe fewer fine details; no improvement in actual throughput is assumed
+without real runtime measurement. The browser downscales to **768px** before
+upload (matching the existing server's 768px cap), avoiding unnecessary
+1600px encoding and transfer. The original local image preview remains
+untouched; the image bytes are never added to the persisted conversation.
 
 **Image upload progress:** POST /api/lalm_station/vision validates the image
 and immediately returns a short-lived, account-owned job ID (HTTP 202).
@@ -78,7 +84,14 @@ image-processing throughput. Stop waiting is the user's explicit exit.
 A pending image appears in the chat viewport with its preview and five
 short steps, clearly marked as **not yet sent to Chat** until the vision
 description succeeds and Station accepts the normal text conversation.
-Any failure keeps the original composer image attached for retry.
+Once the vision endpoint **accepts** a job, the pending image/text live in
+the chat viewport card and the composer clears. This is *not* yet a durable
+Station send; if vision or chat acknowledgement fails, the draft and selected
+image are restored for retry when the composer is otherwise empty. Pending
+attachment image object URLs stay alive until Station accepts the generated
+text chat message; the existing UI preview is preserved. A failure before
+job acceptance never discards the composer draft. No image is saved in
+account chat just because its vision job was accepted.
 
 **Download Chat JSON** in the side menu includes a structured
 `visionAnalysis` field on image-associated user turns with

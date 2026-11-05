@@ -1,3 +1,10 @@
+## 2026-11-05 — §C image composer handoff + lean CPU inference (source candidate)
+
+- **Owner observation:** real Moto image test in local `ANALYZING` stage still slow after 2m46; the question and thumbnail remained in the bottom composer even though the image processing card already displayed the same pending request in chat.
+- **Composer fix:** after authenticated vision endpoint returns **HTTP 202 and a jobId**, pending image/question are owned by the temporary chat-area activity card. Clear composer text and thumbnail, retain the attachment object URL for the eventual authoritative user turn. If vision fails, aborts, or normal Station send does not acknowledge the request, restore draft/image (without overwriting newly typed input) and undo only the optimistic uncommitted turn. Do **not** claim the job itself constitutes a saved Chat message.
+- **Performance reduction:** browser limits encoded image to 768px (matching existing server 768px cap, formerly wasteful 1600px upload) with bounded JPEG quality; original preview remains full source. SmolVLM retains Q8_0 model and same n_ctx/image preprocessing but shortens factual grounded instructions and limits text generation to 112 tokens (down from 192). Potential reduction in upload bytes and text decode time, NOT a verified speed improvement; output detail may be more concise.
+- **Preserved:** free HF CPU hosting, Space build preload, Google session binding, one running plus one queued local vision job, elapsed timers/autoresync, vision description in exported JSON, selected chat model, §E. Tests cover static composer state/data handoff, failure restore, 768px encoding, token count and no paid API. Real CPU latency and acceptance remain user-device testing.
+
 ## 2026-11-05 — §C image analysis auto-resync and live elapsed times (source candidate)
 
 - **Observed:** owner waited with real server stage `ANALYZING` shown; after 6 minutes client itself stopped watching and incorrectly demanded another Send, although native local CPU job was still running.
