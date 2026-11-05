@@ -2107,3 +2107,8 @@ A small toggle (and F3 shortcut) in Game, Model, Particle and Materials browser 
 #### v11.276 · Quest Nerd Stats wrist alignment
 
 Immersive WebXR metrics follow the Quest left controller every native frame with correct front-face orientation and L3 toggle preserved; use a head-relative fallback during hand disconnection. Browser-in-VR's ordinary 2D window retains its HTML stats, since physical wrist mounting requires immersive WebXR. Real Quest 2 acceptance pending; other systems unchanged.
+
+
+#### v11.278 · Quest menu diagnostic tuning
+
+Controller-mounted VR Nerd Stats pushed forward/up for usable viewing; lower frequency diagnostics canvas upload; 4th in-VR page compares measured callback frame intervals for four HUD/radial menu combinations. Owner Quest 2 acceptance and controlled same-scene A/B timings pending. Preserve game-side 2D stats, Sheep Tag AI, LAN, and all particle studio work.
