@@ -37,12 +37,12 @@ const station=fs.readFileSync("hf_space/station.py","utf8");
 assert.match(station,/install_chat_vision\(app, _require_vision_account\)/);
 assert.match(station,/startsWith\('google:'\)|startswith\('google:'\)/);
 const backend=fs.readFileSync("hf_space/chat_vision.py","utf8");
-for(const name of ["SWRLZ_VISION_API_URL","SWRLZ_VISION_MODEL","SWRLZ_VISION_API_KEY"]){
-  assert.ok(backend.includes(name),name+" is server-only");
-  assert.ok(!inline[1].includes(name),name+" must not appear in browser JavaScript");
-}
+assert.ok(backend.includes('MODEL_REPO = "ggml-org/SmolVLM-256M-Instruct-GGUF"'));
+assert.ok(backend.includes("MTMDChatHandler"));
+assert.ok(!backend.includes("SWRLZ_VISION_API_KEY"),"no paid inference credentials needed");
+assert.ok(!backend.includes("router.huggingface.co"),"no paid inference provider calls");
 assert.match(backend,/MAX_IMAGE_BYTES = 2_000_000/);
 assert.match(backend,/imageStored": False/);
-assert.match(backend,/asyncio\.to_thread\(_ask_vision/);
+assert.match(backend,/asyncio\.to_thread\(_ask_vision_local/);
 assert.match(backend,/https/);
-console.log("Chat media v1: composer contracts, source isolation, and inline JS PASS");
+console.log("Chat media v1: free local vision, composer contracts, and inline JS PASS");
