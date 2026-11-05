@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.275",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_275_CONTINUOUS_SWIRL_FLOW",
-  "reason": "Owner request: implement in §E repo supplementary continuous spiral flow that does not visibly rewind when existing Particle Studio timeline wraps. Preserve all existing nebula smoke, purple/cyan main spiral filaments, starfield, slim wisps, core and particles unchanged. Add 84 GPU-shader particles per native colored arm emitter (one lightweight batched Points draw call per emitter); each independently emerges in the vortex, drifts outward along the current shared curved spiral, fades fully to zero and reincarnates at randomized initial life phase, with no visible backward jump. New per-record monotonic local clock advances with original particle step and never follows looping timeline time. No new native emitter, WebGL context, separate RAF or saved schema changes. Keep v11.274 editor Nerd Stats, v11.272 Quest L3 Nerd Stats and v11.271 Sheep Tag LAN features; immediate focused source+JS checks passed. Sealed v11.275 contains 306 patches and 8,094,757 HTML bytes, SHA-256 9fb53d005e305248b0921a4651483656abc7f73619604764decb3c175b9f1421. Publish only after exact release package verifier succeeds; physical Moto/Quest appearance/performance acceptance pending.",
-  "sourceCommit": "dc798a26861af7d947a8b48f3ff62a60c7e11350",
-  "sourceIntegritySha256": "9fb53d005e305248b0921a4651483656abc7f73619604764decb3c175b9f1421"
+  "releaseVersion": "v11.276",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_276_LEFT_CONTROLLER_NERD_STATS",
+  "reason": "Owner Quest 2 screenshots showed browser-window Nerd Stats pinned at one position and requested a left-controller follower with readable front text. In *immersive WebXR Sheep Tag* the existing native three-page HUD now follows the tracked left controller in the existing VR frame callback, or moves head-relative if that left controller is missing, and corrects the back-facing panel orientation to face headset. Quest L3 toggling, right-ray page selection, native AI, LAN and rendering budgets remain unchanged. A normal floating Quest browser 2D window cannot supply native controller tracking; user must enter immersive VR for the wrist feature. 307 patches; sealed 8,098,113-byte HTML SHA-256 9ed306118afdf0949dab67e369a72488bbe51b6c65403cff771277cfb5f20b1e; isolated source, JavaScript and asset verification all passed. Real Quest 2 UX acceptance pending.",
+  "sourceCommit": "ae529b4b08dabdcc92a6fa10014c2df3fc8c1863",
+  "sourceIntegritySha256": "9ed306118afdf0949dab67e369a72488bbe51b6c65403cff771277cfb5f20b1e"
 }
