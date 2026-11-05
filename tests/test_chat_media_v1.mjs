@@ -63,6 +63,7 @@ assert.match(html,/\{type:"SET_CURRENT_THREAD",threadId:id\}/);
 assert.match(html,/imageThreadCreated=true/);
 assert.match(html,/activity\.originDraft=false;activity\.originThreadId=id/);
 assert.match(html,/messageList\.appendChild\(activity\.root\)/);
+assert.match(html,/if\(!chatThreads\.some\(t=>t\.id===id\)\)\{/);
 assert.match(html,/const newImageThread=imageThreadCreated&&!draftThread&&activeThreadId===imageThreadId/);
 assert.match(html,/if\(originalDraft&&!imageThreadCreated\)/);
 assert.match(html,/activity\.onAccepted\?\.\(\)/);
