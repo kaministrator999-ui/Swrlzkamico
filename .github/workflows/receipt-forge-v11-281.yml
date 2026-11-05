@@ -1,4 +1,5 @@
 name: §E v11.281 Rocky Anime Hand sealed release
+# Rerun after adding missing dot/cross vector operations to the narrow smoke harness
 on:
   push:
     branches: [main]

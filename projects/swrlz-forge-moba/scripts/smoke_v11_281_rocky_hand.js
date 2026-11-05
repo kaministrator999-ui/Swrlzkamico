@@ -6,6 +6,8 @@ class V {
  constructor(x=0,y=0,z=0){this.x=x;this.y=y;this.z=z}
  clone(){return new V(this.x,this.y,this.z)}
  sub(p){this.x-=p.x;this.y-=p.y;this.z-=p.z;return this}
+ dot(p){return this.x*p.x+this.y*p.y+this.z*p.z}
+ crossVectors(a,b){this.x=a.y*b.z-a.z*b.y;this.y=a.z*b.x-a.x*b.z;this.z=a.x*b.y-a.y*b.x;return this}
  lengthSq(){return this.x*this.x+this.y*this.y+this.z*this.z}
  normalize(){const n=Math.sqrt(this.lengthSq())||1;this.x/=n;this.y/=n;this.z/=n;return this}
  set(x,y,z){this.x=x;this.y=y;this.z=z;return this}
