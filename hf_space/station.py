@@ -2145,3 +2145,17 @@ async def _send_owned(request,body,forge_context):
     response=JSONResponse({"ok":True,"contract":CONTRACT,"requestId":rid,"modelId":model_id},status_code=202)
     response.set_cookie("swrlz_hf_sid",key,httponly=True,samesite="lax",secure=request.url.scheme=="https",max_age=86400,path="/")
     return response
+
+
+# Independent, authenticated image understanding ingress; does not replace
+# Station's text-only local LALM or its account-owned send/stream lifecycle.
+from chat_vision import install as install_chat_vision
+
+
+def _require_vision_account(request: Request) -> None:
+    _, verified_user = _account_session(request)
+    if not str((verified_user or {}).get('id') or '').startswith('google:'):
+        raise HTTPException(status_code=401, detail='Sign in to analyze images')
+
+
+install_chat_vision(app, _require_vision_account)
