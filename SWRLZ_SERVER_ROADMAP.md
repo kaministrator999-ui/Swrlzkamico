@@ -1,3 +1,7 @@
+## 2026-11-04 — §C Image / Voice Chat release (DEPLOYED_UNVERIFIED)
+
+PR #374 merged exact source adcab6555d7e6f9ba284ca072d073682ccd30f41; Chat 1.1.22 adds browser Mic dictation and optional Google-authenticated JPEG/PNG/WebP image-analysis description endpoint without changing text LALM weights, §E, account authority or stream. Focused tests and desktop/Android Chat regressions PASS; older unrelated modeling v2 and lyric v194 exact-string tests still FAIL. Guarded existing HF Space deploy #41962451298 SUCCESS, Space revision d8fb9d12a7c41303b26b189d367d907947097c00, rollback 6f8b3ff8191fe4d4d57678955fb1ffd9eb9afc61. Source published; no real-device, active vision-provider, or SpeechRecognition browser acceptance claimed. Vision requires server-side SWRLZ_VISION_API_URL/MODEL/API_KEY. Runtime versions Repository Work 1.0.261, Web Chat 1.5.171, Server Runtime 2.3.452. See [release record](docs/engineering/entries/2026-11-04_CHAT_MEDIA_V1_RELEASE.md).
+
 ## 2026-11-02 — §C Model Atelier Academy v2 teaching publication (UPDATE FINISHED)
 
 Primary focus: LALM Engine · §C bounded modeling context. Focus group: Server Runtime, Repository Work, Forge editor integration (read-only source dependency). Baseline canonical runtime authorities: Repository Work **1.0.259**, LALM Engine **2.1.206**, Server Runtime **2.3.450**. This source-changing deployed Chat release advances **1.0.260 / 2.1.207 / 2.3.451** respectively. Web Chat UI, weight checkpoints and separate §E Engine are unchanged.
