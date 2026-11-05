@@ -398,11 +398,13 @@ def install(app, require_account) -> None:
         with _jobs_lock:
             now = time.monotonic()
             _prune_jobs(now)
-            _cancel_unwatched_jobs(now)
             job = _jobs.get(jobId)
             if not job or job["owner"] != owner:
                 return _error(404, "VISION_JOB_NOT_FOUND", "Image analysis is no longer available; resend the image.")
+            # The returning watcher renews its own lease BEFORE stale eviction.
+            # Still cancel abandoned jobs belonging to other requests.
             job["lastPolledAt"] = now
+            _cancel_unwatched_jobs(now)
             phase = job["phase"]
             response = {
                 "ok": phase not in ("FAILED", "CANCELLED"),

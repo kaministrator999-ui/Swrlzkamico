@@ -292,4 +292,9 @@ assert "from chat_vision import export_threads_with_vision_handoffs" in station_
 assert '"threads":export_threads_with_vision_handoffs(_ordered_native_threads(snapshot["threads"]))' in station_source
 assert '"Cache-Control":"no-store"' in station_source
 
+# A watcher resuming after a pause renews its own lease before pruning
+# other abandoned jobs. This guards browser auto-resync after mobile sleep.
+station_source = (SOURCE.parent / "chat_vision.py").read_text(encoding="utf-8")
+assert station_source.index('job["lastPolledAt"] = now', station_source.index("def vision_status(")) < station_source.index('_cancel_unwatched_jobs(now)', station_source.index("def vision_status("))
+
 print("Chat vision local CPU: authenticated boundaries, no paid provider, concurrency and mocked inference and export handoff PASS")

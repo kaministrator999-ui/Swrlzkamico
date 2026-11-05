@@ -1,3 +1,9 @@
+## 2026-11-05 — §C cancellation vs mobile auto-resync edge correction (source candidate)
+
+- **Fix:** when an authenticated status poll returns after a pause, refresh that job's `lastPolledAt` first, then mark *other* unwatched jobs for cancellation. This prevents returning progress watchers from being immediately cancelled before their own lease renewal; preserves the earlier automatic reconnect behavior.
+- **Fix:** browser recognizes real `CANCELLED` job status as terminal and restores the draft/image with an accurate error instead of retrying it forever as a temporary network outage. Explicit cancellation and abandoned-job cleanup remain cooperative and do not forcibly interrupt native image prefill.
+- **Scope:** small follow-up to v8 cancellable vision and early creation of durable image chat thread, with focused Python/JS contract checks; no billing, weights, §E changes, or new API.
+
 ## 2026-11-05 — §C image thread starts immediately on job acceptance (source candidate)
 
 - **Owner follow-up:** sending an image from a new conversation should create/select the real chat thread immediately, rather than waiting minutes for visual inference. Preserve the same image card, question, and eventual normal text answer inside the newly created thread.
