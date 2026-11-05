@@ -50,6 +50,25 @@ grounding reminder that the vision description is fallible and must not be
 turned into speculative transformation stories, emotions, or symbolism.
 Max local vision generation is 192 tokens; free CPU decoding may be slower.
 
+**Image upload progress:** POST /api/lalm_station/vision validates the image
+and immediately returns a short-lived, account-owned job ID (HTTP 202).
+GET /api/lalm_station/vision/status?jobId=... provides factual phases:
+QUEUED, PREPROCESSING, LOADING_MODEL, ANALYZING, COMPLETE or FAILED.
+Only the authenticated Google account that started the job can poll it.
+One image is analyzed at a time; one additional image may wait in a
+bounded local queue. A third distinct simultaneous image gets
+VISION_QUEUE_FULL (429). An identical request while a job is retained
+reuses the same job ID, so a retry can resume instead of launching
+another costly inference. Progress contains no fabricated percentage.
+Jobs and visual descriptions are process-memory-only, bounded by a short
+TTL; the original image bytes are not added to saved conversation history.
+Stopping the browser's waiting UI does not forcibly interrupt native CPU
+inference. This is important when a model holds the CPU for several minutes.
+A pending image appears in the chat viewport with its preview and five
+short steps, clearly marked as **not yet sent to Chat** until the vision
+description succeeds and Station accepts the normal text conversation.
+Any failure keeps the original composer image attached for retry.
+
 **Download Chat JSON** in the side menu includes a structured
 `visionAnalysis` field on image-associated user turns with
 `questionSentToChatModel` and `descriptionSentToChatModel`, parsed exactly

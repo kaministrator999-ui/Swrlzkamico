@@ -2153,10 +2153,12 @@ async def _send_owned(request,body,forge_context):
 from chat_vision import install as install_chat_vision
 
 
-def _require_vision_account(request: Request) -> None:
+def _require_vision_account(request: Request) -> str:
     _, verified_user = _account_session(request)
-    if not str((verified_user or {}).get('id') or '').startswith('google:'):
+    owner = str((verified_user or {}).get('id') or '')
+    if not owner.startswith('google:'):
         raise HTTPException(status_code=401, detail='Sign in to analyze images')
+    return owner
 
 
 install_chat_vision(app, _require_vision_account)

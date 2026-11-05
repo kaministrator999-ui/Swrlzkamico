@@ -4,6 +4,8 @@ from __future__ import annotations
 import base64
 import importlib.util
 import json
+import threading
+import time
 from pathlib import Path
 from unittest.mock import patch
 
@@ -78,43 +80,90 @@ assert "not a transformation" in visual_prompt
 assert "title or view labels" in visual_prompt
 assert "Do not invent evolution" in visual_prompt
 
-vision._inference_lock.acquire()
-try:
-    try:
-        vision._ask_vision_local(valid, "Busy?")
-    except vision.VisionBusy:
-        pass
-    else:
-        raise AssertionError("Overlapping vision requests were not rejected")
-finally:
-    vision._inference_lock.release()
-
+# Async job contract: the POST acknowledges immediately, status exposes real
+# worker stages, duplicate submissions resume the same job, and one other image
+# can wait for CPU. A third distinct upload is bounded rather than piling up.
 app = FastAPI()
-vision.install(app, lambda _: None)
+vision.install(app, lambda _: "google:test")
 client = TestClient(app)
-with patch.object(vision, "_ask_vision_local", lambda image, question: "A local visual description."):
-    response = client.post("/api/lalm_station/vision", json={"image": valid, "question": "What is shown?"})
-    assert response.status_code == 200, response.text
-    assert response.json() == {
-        "ok": True,
-        "description": "A local visual description.",
-        "imageStored": False,
-        "backend": "local-cpu",
-    }
+
+
+def poll_done(job_id):
+    for _ in range(200):
+        r = client.get("/api/lalm_station/vision/status", params={"jobId": job_id})
+        assert r.status_code == 200, r.text
+        payload = r.json()
+        if payload["done"]:
+            return payload
+        time.sleep(.02)
+    raise AssertionError("Mocked image job did not finish")
+
+
+with patch.object(vision, "_prepare_image", lambda x: x), patch.object(vision, "_load_local_model", lambda: fake_model):
+    response = client.post("/api/lalm_station/vision", json={"image": valid, "question": "Simple"})
+    assert response.status_code == 202, response.text
+    job_id = response.json()["jobId"]
+    assert len(job_id) == 32
+    done = poll_done(job_id)
+    assert done["phase"] == "COMPLETE", done
+    assert done["description"] == "A white dog on grass."
+    assert done["done"] is True
+
 assert client.post("/api/lalm_station/vision", json={"image": "invalid"}).status_code == 400
 assert client.post("/api/lalm_station/vision", data="oops", headers={"Content-Type": "text/plain"}).status_code == 415
+assert client.get("/api/lalm_station/vision/status", params={"jobId": "invalid"}).status_code == 400
+assert client.get("/api/lalm_station/vision/status", params={"jobId": "a"*32}).status_code == 404
 
 unauthenticated = FastAPI()
 vision.install(unauthenticated, lambda _: (_ for _ in ()).throw(PermissionError()))
 assert TestClient(unauthenticated).post("/api/lalm_station/vision", json={"image": valid}).status_code == 401
+assert TestClient(unauthenticated).get("/api/lalm_station/vision/status", params={"jobId": job_id}).status_code == 401
+other_user = FastAPI()
+vision.install(other_user, lambda _: "google:other")
+assert TestClient(other_user).get("/api/lalm_station/vision/status", params={"jobId": job_id}).status_code == 404
 
-with patch.object(vision, "_ask_vision_local", side_effect=vision.VisionBusy()):
-    assert client.post("/api/lalm_station/vision", json={"image": valid}).status_code == 429
-with patch.object(vision, "_ask_vision_local", side_effect=RuntimeError("private source pixels")):
-    response = client.post("/api/lalm_station/vision", json={"image": valid})
-    assert response.status_code == 503
-    assert "private source pixels" not in response.text
+started = threading.Event()
+release = threading.Event()
 
+
+class SlowFakeModel:
+    def create_chat_completion(self, **kwargs):
+        user_prompt = kwargs["messages"][0]["content"][0]["text"]
+        if "Question: First" in user_prompt or "User question: First" in user_prompt:
+            started.set()
+            if not release.wait(timeout=3):
+                raise RuntimeError("test worker never released")
+        return {"choices": [{"message": {"content": "The image contains a small mage."}}]}
+
+
+with patch.object(vision, "_prepare_image", lambda x: x), patch.object(vision, "_load_local_model", lambda: SlowFakeModel()):
+    first = client.post("/api/lalm_station/vision", json={"image": valid, "question": "First"})
+    assert first.status_code == 202
+    assert started.wait(timeout=2)
+    first_id = first.json()["jobId"]
+    again = client.post("/api/lalm_station/vision", json={"image": valid, "question": "First"})
+    assert again.status_code == 202 and again.json()["jobId"] == first_id
+    second = client.post("/api/lalm_station/vision", json={"image": valid, "question": "Second"})
+    assert second.status_code == 202
+    second_id = second.json()["jobId"]
+    queued = client.get("/api/lalm_station/vision/status", params={"jobId": second_id}).json()
+    assert queued["phase"] == "QUEUED", queued
+    third = client.post("/api/lalm_station/vision", json={"image": valid, "question": "Third"})
+    assert third.status_code == 429
+    assert third.json()["code"] == "VISION_QUEUE_FULL"
+    release.set()
+    assert poll_done(first_id)["phase"] == "COMPLETE"
+    assert poll_done(second_id)["phase"] == "COMPLETE"
+
+with patch.object(vision, "_ask_vision_local", side_effect=RuntimeError("secret image bytes")):
+    failed = client.post("/api/lalm_station/vision", json={"image": valid, "question": "Error case"})
+    assert failed.status_code == 202
+    result = poll_done(failed.json()["jobId"])
+    assert result["phase"] == "FAILED" and result["ok"] is False
+    assert "secret image bytes" not in json.dumps(result)
+
+assert "router.huggingface.co" not in source
+assert "SWRLZ_VISION_API_KEY" not in source
 
 # Parse exactly what the text-only Chat model received. The existing side-menu
 # download is owned by Station and returns saved threads, not private pixels.
