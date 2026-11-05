@@ -1357,7 +1357,9 @@
         const img=new Image();
         img.onload=()=>{
           try{
-            const scale=Math.min(1,1600/Math.max(img.naturalWidth,img.naturalHeight));
+            // The local vision server caps inference images at 768px anyway.
+            // Resize before transfer to avoid shipping/encoding unused pixels.
+            const scale=Math.min(1,768/Math.max(img.naturalWidth,img.naturalHeight));
             const canvas=document.createElement("canvas");
             canvas.width=Math.max(1,Math.round(img.naturalWidth*scale));
             canvas.height=Math.max(1,Math.round(img.naturalHeight*scale));
@@ -1366,7 +1368,7 @@
             ctx.fillStyle="#ffffff";ctx.fillRect(0,0,canvas.width,canvas.height);
             ctx.drawImage(img,0,0,canvas.width,canvas.height);
             let dataURL="";
-            for(const quality of [.86,.72,.56]){
+            for(const quality of [.8,.65,.5]){
               dataURL=canvas.toDataURL("image/jpeg",quality);
               if(dataURL.length<=2600000)break;
             }
@@ -1421,6 +1423,7 @@
               throw new Error(result?.detail||"Image upload could not be accepted.");
             }
             activity.update(result.phase||"QUEUED");
+            activity.onAccepted?.(); // Accepted vision job; not yet a saved chat message.
             return String(result.jobId);
           }
           throw new Error("Stopped waiting for image analysis.");
@@ -3742,12 +3745,28 @@
         if((!draftText&&!attachment)||sending)return false;
         let text=draftText;
         const contentTag=classifyUserContent(draftText);
-        let sendAcknowledged=false,sendStarted=false,activity=null;
+        let sendAcknowledged=false,sendStarted=false,activity=null,visionDraftHeld=false;
+        const restorePendingVisionDraft=()=>{
+          if(!attachment||!visionDraftHeld)return;
+          // Do not overwrite anything the user typed while the CPU was busy.
+          if(!prompt.value.trim())prompt.value=draftText;
+          if(!selectedImage){selectedImage=attachment;updateImagePreview();}
+          resizeComposer();visionDraftHeld=false;
+        };
         sending=true; sendButton.disabled=true; imagePickButton.disabled=true; micButton.disabled=true;
         if(speechRecognition)speechRecognition.stop();
         try{
           if(attachment){
             activity=startVisionActivity(attachment,draftText);
+            activity.onAccepted=()=>{
+              if(visionDraftHeld)return;
+              // The activity card now owns the pending unsaved image/text;
+              // keep the attachment object/URL alive for retry or final preview.
+              visionDraftHeld=true;
+              if(prompt.value.trim()===draftText)prompt.value="";
+              if(selectedImage===attachment)selectedImage=null;
+              updateImagePreview();resizeComposer();composerNotice("");
+            };
             composerNotice("");
             const description=await requestVisionDescription(attachment,draftText,activity);
             text=(draftText||"Describe this image.")+VISION_START+description+VISION_END;
@@ -3810,13 +3829,16 @@
             // Station now owns the real chat response and its own activity UI.
             removeVisionActivity(activity);
           }
-          if(attachment&&selectedImage===attachment){
+          if(attachment){
+            // The composer was intentionally cleared when the vision job was
+            // accepted; keep its original object URL for the committed turn.
             imagePreviews.set(userMessageId,attachment.url);
             while(imagePreviews.size>12){
               const oldest=imagePreviews.keys().next().value;
               URL.revokeObjectURL(imagePreviews.get(oldest));imagePreviews.delete(oldest);
             }
-            selectedImage=null;updateImagePreview();
+            if(selectedImage===attachment){selectedImage=null;updateImagePreview();}
+            visionDraftHeld=false;
             renderConversation(currentThread(),true);
             composerNotice("");
           }
@@ -3851,6 +3873,7 @@
           return true;
         }catch(err){
           if(!sendStarted){
+            restorePendingVisionDraft();
             const detail=String(err?.message||err).slice(0,220);
             if(activity)activity.update(activity.abort.signal.aborted?"STOPPED":"ERROR",detail);
             composerNotice(detail,true);
@@ -3863,7 +3886,7 @@
           const reason=/SEND_HTTP_413/.test(raw)
             ?"New message not saved: native account snapshot storage limit reached. Draft restored; existing history remains preserved."
             :"New message not confirmed saved. Draft restored; refresh saved conversations before retrying.";
-          if(!sendAcknowledged){prompt.value=draftText;resizeComposer();}
+          if(!sendAcknowledged){restorePendingVisionDraft();if(!prompt.value.trim()){prompt.value=draftText;resizeComposer();}}
           if(stationGeneration){stationGeneration.status=[...(stationGeneration.status||[]),{type:"FAILED",phase:"CLIENT_TRANSPORT",reason}];stationGeneration.terminal=true;renderStationGeneration();}
           uiCamera("chat-save-unconfirmed",{reasonCode:/SEND_HTTP_413/.test(raw)?"SNAPSHOT_LIMIT":"SEND_FAILED",acknowledged:sendAcknowledged});
           return false;
