@@ -6,6 +6,7 @@ on:
       - "projects/swrlz-forge-moba/source-manifest.json"
       - "projects/swrlz-forge-moba/runtime/editor_viewport_nerd_stats_v11_274.js"
       - "projects/swrlz-forge-moba/patches/v11_274_viewport_nerd_stats.py"
+      - "projects/swrlz-forge-moba/scripts/verify_v11_274_release.py"
       - ".github/workflows/measure-se274-viewport.yml"
   workflow_dispatch:
 permissions:
