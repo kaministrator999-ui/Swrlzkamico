@@ -92,10 +92,17 @@ image-processing throughput. Cancel analysis is the user's explicit exit and a b
 A pending image appears in the chat viewport with its preview and five
 short steps, clearly marked as **not yet sent to Chat** until the vision
 description succeeds and Station accepts the normal text conversation.
-Once the vision endpoint **accepts** a job, the pending image/text live in
-the chat viewport card and the composer clears. This is *not* yet a durable
-Station send; if vision or chat acknowledgement fails, the draft and selected
-image are restored for retry when the composer is otherwise empty. Pending
+Once the vision endpoint **accepts** a job, a new image send from draft mode
+immediately creates and activates a durable named conversation via the
+existing authenticated chat-state UPSERT_THREAD + SET_CURRENT_THREAD operations,
+before image inference completes. The new thread appears in the chat sidebar
+with its pending activity card and the composer clears; an image sent from an
+existing chat stays in that existing conversation. The thread itself exists,
+but the pending image and question are **not yet saved as a user message**;
+the authoritative Station send occurs after vision completion. If vision or
+chat acknowledgement fails, the thread remains visible with a truthful
+temporary failure card, and the draft/image are restored for retry when the
+composer is otherwise empty. Pending
 attachment image object URLs stay alive until Station accepts the generated
 text chat message; the existing UI preview is preserved. A failure before
 job acceptance never discards the composer draft. No image is saved in
