@@ -32,8 +32,6 @@ assert.match(html,/Connection interrupted\. Reconnecting to the same image job a
 assert.match(html,/The local CPU queue is full\. Retrying automatically/);
 assert.ok(!html.includes("Date.now()-started>6*60*1000"),"never abort still-running CPU image at six minutes");
 assert.ok(!html.includes("Press Send again to resume checking"),"no manual resend required for continued polling");
-assert.match(backend,/phaseElapsedSeconds/);
-assert.match(backend,/elapsedSeconds/);
 assert.match(html,/activity\.update\("SENDING"\)/);
 assert.match(html,/activity\.update\("RESPONDING"\)/);
 assert.match(html,/activity\.update\(activity\.abort\.signal\.aborted\?"STOPPED":"ERROR",detail\)/);
@@ -58,6 +56,8 @@ const station=fs.readFileSync("hf_space/station.py","utf8");
 assert.match(station,/install_chat_vision\(app, _require_vision_account\)/);
 assert.match(station,/startsWith\('google:'\)|startswith\('google:'\)/);
 const backend=fs.readFileSync("hf_space/chat_vision.py","utf8");
+assert.match(backend,/phaseElapsedSeconds/);
+assert.match(backend,/elapsedSeconds/);
 assert.ok(backend.includes('MODEL_REPO = "ggml-org/SmolVLM-256M-Instruct-GGUF"'));
 assert.ok(backend.includes("MTMDChatHandler"));
 assert.ok(!backend.includes("SWRLZ_VISION_API_KEY"),"no paid inference credentials needed");
