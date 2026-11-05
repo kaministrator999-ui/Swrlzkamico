@@ -1,0 +1,74 @@
+name: Check §E v11.277 precision live curve candidate
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/check-forge-v11-277-curves.yml'
+      - 'projects/swrlz-forge-moba/patches/v11_277_live_precision_curves.py'
+      - 'projects/swrlz-forge-moba/runtime/particle_curve_editor_live_v11_277.js'
+      - 'projects/swrlz-forge-moba/runtime/particle_curve_editor_live_v11_277.css'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  candidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify predecessor source, apply live editor and parse entire JS
+        run: |
+          python3 - <<'PY'
+          import gzip,base64,hashlib,json,sys
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          sys.path.insert(0,str(root.resolve()))
+          from build_space import load_patch
+          m=json.loads((root/'source-manifest.json').read_text('utf8'))
+          assert m['name']=='§wyrl§ Engine v11.276',m['name']
+          assert len(m['patches'])==307
+          assert m['patches'][-1]=='patches/v11_276_left_controller_nerd_stats.py'
+          raw=gzip.decompress(base64.b64decode(''.join((root/p).read_text('utf8').strip() for p in m['chunks'])))
+          assert hashlib.sha256(raw).hexdigest()==m['baseSha256']
+          h=raw.decode('utf8')
+          for p in m['patches']:h=load_patch(root/p)(h)
+          assert hashlib.sha256(h.encode('utf8')).hexdigest()==m['finalSha256']
+          assert len(h.encode('utf8'))==m['finalBytes']
+          h=load_patch(root/'patches/v11_277_live_precision_curves.py')(h)
+          for needle in (
+           'window.SWYRL_ENGINE_CURVE_LIVE_277=api;',
+           'const v=window.SWYRL_ENGINE_CURVE_LIVE_277?.value?.(cfg,key)',
+           'function commit(){',
+           'function stage(i,value){',
+           'graph.setPointerCapture?.(e.pointerId);',
+           'se223Update(d.id,{curves:{...c.curves,[d.channel]:d.values.slice()}});',
+           "window.SWYRL_ENGINE_QUEST_LEFT_WRIST_STATS_276=Object.freeze",
+           'window.SWYRL_ENGINE_PARTICLE_ERRORS_258',
+           'SWYRL_ENGINE_DEPLOY_MARKER: V11_277_LIVE_PRECISION_CURVES'
+          ):assert needle in h,needle
+          assert 'graph.replaceChildren();' not in h
+          assert h.count('renderer.setAnimationLoop(tick);')==1
+          data=h.encode('utf8')
+          Path('/tmp/se277.html').write_bytes(data)
+          print('V11_277_CANDIDATE_SHA256='+hashlib.sha256(data).hexdigest(),flush=True)
+          print('V11_277_CANDIDATE_BYTES='+str(len(data)),flush=True)
+          m['name']='§wyrl§ Engine v11.277'
+          m['finalArtifact']='swyrl_engine_v11_277.html'
+          m['patches'].append('patches/v11_277_live_precision_curves.py')
+          (root/'source-manifest.json').write_text(json.dumps(m,indent=2)+'\n',encoding='utf8')
+          h=raw.decode('utf8')
+          for p in m['patches']:h=load_patch(root/p)(h)
+          data=h.encode('utf8')
+          Path('/tmp/se277release.html').write_bytes(data)
+          print('V11_277_RELEASE_SHA256='+hashlib.sha256(data).hexdigest(),flush=True)
+          print('V11_277_RELEASE_BYTES='+str(len(data)),flush=True)
+          print('V11_277_RELEASE_PATCHES='+str(len(m['patches'])),flush=True)
+          PY
+          python3 projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se277release.html
+          python3 -m py_compile projects/swrlz-forge-moba/patches/v11_277_live_precision_curves.py
