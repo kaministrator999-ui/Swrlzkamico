@@ -1,3 +1,11 @@
+## 2026-11-05 — §C cancel abandoned CPU vision work to reduce queue delays (source candidate)
+
+- **Owner screenshot:** Little Crystal Mage upload pending in real QUEUED phase 1:55, despite the new v7 composer clearing correctly. The status was not evidence of a slow upload; it reflected a single `_inference_lock` already held by an earlier vision operation (or thread scheduling), with no native cancellation mechanism. v5-v7 "Stop waiting" stopped browser polling but let model decoding continue.
+- **Change:** authenticated `POST /api/lalm_station/vision/cancel` marks an owner's active/queued job for cancellation; UI button says **Cancel analysis**, sends request and stops polling. Background model uses `stream=True` from pinned MTMDChatHandler, checks cancellation before CPU lock, in a bounded timed acquisition loop, between preprocessing/loading and every output chunk, closes its stream and releases `_inference_lock` only after native control returns. Cancelled jobs are terminal (not successful) and are not cached as reusable completed results.
+- **Abandoned watcher:** status GET updates a server monotonic last-watch timestamp; on later HTTP activity jobs with no progress watcher for 90 seconds are marked for cooperative cancellation. Active watchers do not lose valid work. This does NOT forcibly interrupt a blocking native image embedding/prefill call and does not imply faster inference for jobs that are still legitimately running.
+- **Safety:** per-Google-account cancellation authorization and 404 for cross-account IDs, no persistent image bytes or paid provider; same model Q8_0 CPU hardware and bounded one-active/one-queued execution remain. Focused tests exercise streaming generation, cancel while running, wrong-user access and stale lease plus unchanged v7 composer/JSON export behavior.
+- **Acceptance:** verify cancellation roundtrip and queue release on user device; don't claim instant native interruption or performance speedup without observing it.
+
 ## 2026-11-05 — §C image composer handoff + lean CPU inference (source candidate)
 
 - **Owner observation:** real Moto image test in local `ANALYZING` stage still slow after 2m46; the question and thumbnail remained in the bottom composer even though the image processing card already displayed the same pending request in chat.
