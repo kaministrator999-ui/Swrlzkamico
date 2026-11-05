@@ -1,5 +1,5 @@
 name: §E v11.280 Mage Spell Lab candidate source receipt
-# Rebuilt after the one-anchor head insertion correction
+# Rebuilt after the head-anchor and mirrored-glove provenance corrections
 on:
   push:
     branches: [main]
