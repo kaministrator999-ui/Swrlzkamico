@@ -1,0 +1,24 @@
+name: Measure §E v11.274 viewport stats source
+on:
+  push:
+    branches: [feat/se274-viewport-nerd-stats]
+    paths:
+      - "projects/swrlz-forge-moba/source-manifest.json"
+      - "projects/swrlz-forge-moba/runtime/editor_viewport_nerd_stats_v11_274.js"
+      - "projects/swrlz-forge-moba/patches/v11_274_viewport_nerd_stats.py"
+      - ".github/workflows/measure-se274-viewport.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Assemble exact HTML and print byte count / SHA256
+        run: python projects/swrlz-forge-moba/build_space.py --output /tmp/se274-measure
+      - name: Check full assembled inline JavaScript syntax
+        run: python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se274-measure/index.html
