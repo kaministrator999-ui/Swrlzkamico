@@ -28,6 +28,7 @@ from api.chat_resume_sessions import install as _install_chat_resume_sessions
 from api.chat_rmcca_passthrough import install as _install_chat_rmcca_passthrough
 from api.chat_transcript_store import STORE as _transcript_store
 from api.lalm_station import install as _install_lalm_station
+from api.chat_vision import install as _install_chat_vision
 from api.chat_state import app as _chat_state_app
 import api.chat_extensions as _chat_extensions
 
@@ -60,6 +61,7 @@ _install_live_source_guard(_server)
 _install_chat_resume_sessions(_chat_extensions)
 _install_chat_rmcca_passthrough(_chat_extensions)
 _install_lalm_station(_server, _chat_extensions)
+_install_chat_vision(_server)
 
 
 def _warm_lalm_at_start() -> None:
