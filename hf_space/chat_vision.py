@@ -236,20 +236,32 @@ def _load_local_model():
     return instance
 
 
-def _ask_vision_local(image_url: str, question: str, report_phase=None) -> str:
-    """One CPU inference at a time, without blocking other Chat endpoints."""
-    # CPU slots are serialized. A second accepted upload waits in its own
-    # bounded queued job instead of returning an immediate false-failure 429.
-    _inference_lock.acquire()
-    started = time.monotonic()
+def _ask_vision_local(image_url: str, question: str, report_phase=None, should_cancel=None) -> str:
+    """Run one MTMD inference; check cancellation while waiting and generating.
+
+    Native multimodal image encoding/prefill is synchronous and cannot always
+    be interrupted until control returns to Python. Keep the model lock until
+    that operation has actually stopped.
+    """
     report = report_phase or (lambda _: None)
+    cancelled = should_cancel or (lambda: False)
+
+    def check_cancel():
+        if cancelled():
+            raise VisionCancelled()
+
+    check_cancel()
+    while not _inference_lock.acquire(timeout=0.25):
+        check_cancel()
+    started = time.monotonic()
     try:
+        check_cancel()
         report("PREPROCESSING")
         image = _prepare_image(image_url)
+        check_cancel()
         report("LOADING_MODEL")
         model = _load_local_model()
-        # Shorter prompt/output budget reduces avoidable CPU text decoding.
-        # Keep explicit grounding for multi-view model reference sheets.
+        check_cancel()
         prompt = (
             "Describe only visible facts: image type, readable title and labels, "
             "subject, appearance, colors, accessories and layout. Front, side, "
@@ -259,7 +271,7 @@ def _ask_vision_local(image_url: str, question: str, report_phase=None) -> str:
             "User question: " + question[:260]
         )
         report("ANALYZING")
-        result = model.create_chat_completion(
+        stream = model.create_chat_completion(
             messages=[{
                 "role": "user",
                 "content": [
@@ -269,18 +281,32 @@ def _ask_vision_local(image_url: str, question: str, report_phase=None) -> str:
             }],
             max_tokens=112,
             temperature=0.1,
-            stream=False,
+            stream=True,
         )
-        choices = result.get("choices") if isinstance(result, dict) else None
-        content = (choices[0].get("message") or {}).get("content") if isinstance(choices, list) and choices and isinstance(choices[0], dict) else None
-        if not isinstance(content, str) or not content.strip():
+        parts = []
+        try:
+            for chunk in stream:
+                check_cancel()
+                choices = chunk.get("choices") if isinstance(chunk, dict) else None
+                delta = ((choices[0].get("delta") or {}).get("content")
+                         if isinstance(choices, list) and choices and isinstance(choices[0], dict)
+                         else None)
+                if isinstance(delta, str) and delta:
+                    parts.append(delta)
+        finally:
+            close = getattr(stream, "close", None)
+            if callable(close):
+                close()
+        check_cancel()
+        content = "".join(parts).strip()
+        if not content:
             raise ValueError("VISION_RESPONSE_EMPTY")
         print(json.dumps({
             "event": "LOCAL_VISION_DONE",
             "seconds": round(time.monotonic() - started, 1),
             "chars": min(len(content), MAX_DESCRIPTION_CHARS),
         }), flush=True)
-        return content.strip()[:MAX_DESCRIPTION_CHARS]
+        return content[:MAX_DESCRIPTION_CHARS]
     finally:
         _inference_lock.release()
 
