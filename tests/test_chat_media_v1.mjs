@@ -45,7 +45,15 @@ assert.match(html,/window\.SpeechRecognition\|\|window\.webkitSpeechRecognition/
 assert.match(html,/if\(speechRecognition\)\{speechRecognition\.stop\(\);return;\}/);
 assert.match(html,/if\(\(!draftText&&!attachment\)\|\|sending\)return false/);
 assert.match(html,/if\(\(!prompt\.value\.trim\(\)&&!selectedImage\)\|\|sending\)return/);
-assert.match(html,/if\(!sendAcknowledged\)\{prompt\.value=draftText/);
+assert.match(html,/const restorePendingVisionDraft=\(\)=>/);
+assert.match(html,/activity\.onAccepted=\(\)=>/);
+assert.match(html,/activity\.onAccepted\?\.\(\)/);
+assert.match(html,/if\(prompt\.value\.trim\(\)===draftText\)prompt\.value=""/);
+assert.match(html,/if\(selectedImage===attachment\)selectedImage=null/);
+assert.match(html,/if\(!selectedImage\)\{selectedImage=attachment;updateImagePreview\(\);\}/);
+assert.match(html,/if\(!sendAcknowledged\)\{restorePendingVisionDraft\(\)/);
+assert.match(html,/const scale=Math\.min\(1,768\/Math\.max\(img\.naturalWidth,img\.naturalHeight\)\)/);
+assert.ok(!html.includes("1600/Math.max(img.naturalWidth"),"do not encode unused pixels at 1600px");
 assert.match(html,/if\(attachment&&selectedImage===attachment\)/);
 
 const inline=html.match(/<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/i);
@@ -58,6 +66,7 @@ assert.match(station,/startsWith\('google:'\)|startswith\('google:'\)/);
 const backend=fs.readFileSync("hf_space/chat_vision.py","utf8");
 assert.match(backend,/phaseElapsedSeconds/);
 assert.match(backend,/elapsedSeconds/);
+assert.match(backend,/max_tokens=112/);
 assert.ok(backend.includes('MODEL_REPO = "ggml-org/SmolVLM-256M-Instruct-GGUF"'));
 assert.ok(backend.includes("MTMDChatHandler"));
 assert.ok(!backend.includes("SWRLZ_VISION_API_KEY"),"no paid inference credentials needed");
