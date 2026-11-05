@@ -87,6 +87,7 @@ _jobs_lock = threading.Lock()
 _jobs: dict[str, dict[str, Any]] = {}
 ACTIVE_PHASES = {"QUEUED", "PREPROCESSING", "LOADING_MODEL", "ANALYZING"}
 JOB_TTL_SECONDS = 15 * 60
+WATCH_LEASE_SECONDS = 90  # A job with no live progress polling may be abandoned.
 
 
 def _prune_jobs(now: float) -> None:
@@ -103,6 +104,16 @@ def _prune_jobs(now: float) -> None:
         _jobs.pop(key, None)
 
 
+def _cancel_unwatched_jobs(now: float) -> None:
+    """Called with _jobs_lock held; release only genuinely unwatched work."""
+    for job in _jobs.values():
+        if job["phase"] in ACTIVE_PHASES and now - job["lastPolledAt"] > WATCH_LEASE_SECONDS:
+            if not job["cancelEvent"].is_set():
+                job["cancelEvent"].set()
+                print(json.dumps({"event": "LOCAL_VISION_CANCEL_UNWATCHED",
+                                  "phase": job["phase"], "job": job["id"][:8]}), flush=True)
+
+
 def _set_job_phase(job_id: str, phase: str, **fields) -> None:
     with _jobs_lock:
         job = _jobs.get(job_id)
@@ -117,14 +128,18 @@ def _set_job_phase(job_id: str, phase: str, **fields) -> None:
     print(json.dumps({"event": "LOCAL_VISION_STAGE", "phase": phase, "job": job_id[:8]}), flush=True)
 
 
-def _run_vision_job(job_id: str, image: str, question: str) -> None:
+def _run_vision_job(job_id: str, image: str, question: str, cancel_event: threading.Event) -> None:
     try:
         description = _ask_vision_local(
-            image, question, lambda phase: _set_job_phase(job_id, phase),
+            image, question, report_phase=lambda phase: _set_job_phase(job_id, phase),
+            should_cancel=cancel_event.is_set,
         )
+        if cancel_event.is_set():
+            raise VisionCancelled()
         _set_job_phase(job_id, "COMPLETE", description=description)
-    except VisionBusy:
-        _set_job_phase(job_id, "FAILED", code="VISION_BUSY", detail="Vision worker is occupied.")
+    except VisionCancelled:
+        _set_job_phase(job_id, "CANCELLED", code="VISION_CANCELLED",
+                       detail="Image analysis cancelled or no longer watched.")
     except ValueError as exc:
         code = str(exc)
         if code in ("IMAGE_FORMAT_INVALID", "IMAGE_PIXELS_TOO_LARGE"):
@@ -137,7 +152,8 @@ def _run_vision_job(job_id: str, image: str, question: str) -> None:
         _set_job_phase(job_id, "FAILED", code="LOCAL_VISION_UNAVAILABLE", detail="Local image analysis could not complete.")
 
 
-class VisionBusy(Exception):
+class VisionCancelled(Exception):
+    """An unwatched, queued or explicitly cancelled job."""
     pass
 
 
@@ -222,20 +238,32 @@ def _load_local_model():
     return instance
 
 
-def _ask_vision_local(image_url: str, question: str, report_phase=None) -> str:
-    """One CPU inference at a time, without blocking other Chat endpoints."""
-    # CPU slots are serialized. A second accepted upload waits in its own
-    # bounded queued job instead of returning an immediate false-failure 429.
-    _inference_lock.acquire()
-    started = time.monotonic()
+def _ask_vision_local(image_url: str, question: str, report_phase=None, should_cancel=None) -> str:
+    """Run one MTMD inference; check cancellation while waiting and generating.
+
+    Native multimodal image encoding/prefill is synchronous and cannot always
+    be interrupted until control returns to Python. Keep the model lock until
+    that operation has actually stopped.
+    """
     report = report_phase or (lambda _: None)
+    cancelled = should_cancel or (lambda: False)
+
+    def check_cancel():
+        if cancelled():
+            raise VisionCancelled()
+
+    check_cancel()
+    while not _inference_lock.acquire(timeout=0.25):
+        check_cancel()
+    started = time.monotonic()
     try:
+        check_cancel()
         report("PREPROCESSING")
         image = _prepare_image(image_url)
+        check_cancel()
         report("LOADING_MODEL")
         model = _load_local_model()
-        # Shorter prompt/output budget reduces avoidable CPU text decoding.
-        # Keep explicit grounding for multi-view model reference sheets.
+        check_cancel()
         prompt = (
             "Describe only visible facts: image type, readable title and labels, "
             "subject, appearance, colors, accessories and layout. Front, side, "
@@ -245,7 +273,7 @@ def _ask_vision_local(image_url: str, question: str, report_phase=None) -> str:
             "User question: " + question[:260]
         )
         report("ANALYZING")
-        result = model.create_chat_completion(
+        stream = model.create_chat_completion(
             messages=[{
                 "role": "user",
                 "content": [
@@ -255,18 +283,32 @@ def _ask_vision_local(image_url: str, question: str, report_phase=None) -> str:
             }],
             max_tokens=112,
             temperature=0.1,
-            stream=False,
+            stream=True,
         )
-        choices = result.get("choices") if isinstance(result, dict) else None
-        content = (choices[0].get("message") or {}).get("content") if isinstance(choices, list) and choices and isinstance(choices[0], dict) else None
-        if not isinstance(content, str) or not content.strip():
+        parts = []
+        try:
+            for chunk in stream:
+                check_cancel()
+                choices = chunk.get("choices") if isinstance(chunk, dict) else None
+                delta = ((choices[0].get("delta") or {}).get("content")
+                         if isinstance(choices, list) and choices and isinstance(choices[0], dict)
+                         else None)
+                if isinstance(delta, str) and delta:
+                    parts.append(delta)
+        finally:
+            close = getattr(stream, "close", None)
+            if callable(close):
+                close()
+        check_cancel()
+        content = "".join(parts).strip()
+        if not content:
             raise ValueError("VISION_RESPONSE_EMPTY")
         print(json.dumps({
             "event": "LOCAL_VISION_DONE",
             "seconds": round(time.monotonic() - started, 1),
             "chars": min(len(content), MAX_DESCRIPTION_CHARS),
         }), flush=True)
-        return content.strip()[:MAX_DESCRIPTION_CHARS]
+        return content[:MAX_DESCRIPTION_CHARS]
     finally:
         _inference_lock.release()
 
@@ -311,9 +353,11 @@ def install(app, require_account) -> None:
         now = time.monotonic()
         with _jobs_lock:
             _prune_jobs(now)
+            _cancel_unwatched_jobs(now)
             prior = next((job for job in _jobs.values()
                           if job["owner"] == owner and job["fingerprint"] == fingerprint
-                          and job["phase"] != "FAILED"), None)
+                          and (job["phase"] in ACTIVE_PHASES or job["phase"] == "COMPLETE")
+                          and not job["cancelEvent"].is_set()), None)
             if prior:
                 job_id = prior["id"]
                 phase = prior["phase"]
@@ -328,12 +372,14 @@ def install(app, require_account) -> None:
             else:
                 job_id = uuid.uuid4().hex
                 phase = "QUEUED"
+                cancel_event = threading.Event()
                 _jobs[job_id] = {"id": job_id, "owner": owner,
                                  "fingerprint": fingerprint, "phase": phase,
                                  "createdAt": now, "phaseStartedAt": now,
+                                 "lastPolledAt": now, "cancelEvent": cancel_event,
                                  "updatedAt": now}
                 threading.Thread(
-                    target=_run_vision_job, args=(job_id, image, question),
+                    target=_run_vision_job, args=(job_id, image, question, cancel_event),
                     daemon=True, name="vision-cpu-" + job_id[:8],
                 ).start()
         return JSONResponse(
@@ -350,14 +396,16 @@ def install(app, require_account) -> None:
         if len(jobId) != 32 or any(ch not in "0123456789abcdef" for ch in jobId):
             return _error(400, "VISION_JOB_INVALID", "Invalid image-analysis identifier.")
         with _jobs_lock:
-            _prune_jobs(time.monotonic())
+            now = time.monotonic()
+            _prune_jobs(now)
+            _cancel_unwatched_jobs(now)
             job = _jobs.get(jobId)
             if not job or job["owner"] != owner:
                 return _error(404, "VISION_JOB_NOT_FOUND", "Image analysis is no longer available; resend the image.")
+            job["lastPolledAt"] = now
             phase = job["phase"]
-            now = time.monotonic()
             response = {
-                "ok": phase != "FAILED",
+                "ok": phase not in ("FAILED", "CANCELLED"),
                 "jobId": jobId,
                 "phase": phase,
                 "done": phase not in ACTIVE_PHASES,
@@ -367,7 +415,38 @@ def install(app, require_account) -> None:
             }
             if phase == "COMPLETE":
                 response["description"] = job["description"]
-            elif phase == "FAILED":
+            elif phase in ("FAILED", "CANCELLED"):
                 response["code"] = job.get("code") or "LOCAL_VISION_FAILED"
                 response["detail"] = job.get("detail") or "Local image analysis failed."
         return JSONResponse(response, headers={"Cache-Control": "no-store"})
+
+    @app.post("/api/lalm_station/vision/cancel", include_in_schema=False)
+    async def cancel_vision(request: Request):
+        owner = _owner(request)
+        if not owner:
+            return _error(401, "ACCOUNT_SESSION_INVALID", "Sign in to cancel image analysis.")
+        if request.headers.get("content-type", "").split(";")[0].strip().lower() != "application/json":
+            return _error(415, "CONTENT_TYPE_INVALID", "Send JSON with a jobId.")
+        raw = await request.body()
+        if len(raw) > 512:
+            return _error(413, "REQUEST_TOO_LARGE", "Invalid cancel request.")
+        try:
+            payload = json.loads(raw)
+            job_id = str(payload.get("jobId") or "") if isinstance(payload, dict) else ""
+        except (ValueError, UnicodeDecodeError):
+            job_id = ""
+        if len(job_id) != 32 or any(ch not in "0123456789abcdef" for ch in job_id):
+            return _error(400, "VISION_JOB_INVALID", "Invalid image job identifier.")
+        with _jobs_lock:
+            job = _jobs.get(job_id)
+            if not job or job["owner"] != owner:
+                return _error(404, "VISION_JOB_NOT_FOUND", "Image job not found.")
+            requested = job["phase"] in ACTIVE_PHASES
+            if requested:
+                job["cancelEvent"].set()
+            phase = job["phase"]
+        return JSONResponse({
+            "ok": True, "cancelRequested": requested, "phase": phase,
+            "detail": ("Cancellation requested; native processing may need time to stop."
+                       if requested else "Image job already finished."),
+        }, headers={"Cache-Control": "no-store"})
