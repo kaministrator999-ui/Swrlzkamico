@@ -1,0 +1,42 @@
+name: §E v11.279 candidate receipt (targeted source build)
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/receipt-forge-v11-279.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  receipt:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build candidate without changing source integrity receipts
+        run: |
+          python - <<'PY'
+          import pathlib,json
+          p=pathlib.Path("projects/swrlz-forge-moba/source-manifest.json")
+          m=json.loads(p.read_text(encoding="utf8"))
+          assert m["name"]=="§wyrl§ Engine v11.279"
+          assert m["patches"][-1]=="patches/v11_279_blank_vr_arcane_hands.py"
+          m["finalBytes"]=0
+          m["finalSha256"]=""
+          p.write_text(json.dumps(m,ensure_ascii=False,indent=2)+"\n",encoding="utf8")
+          PY
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/se279-candidate
+          python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se279-candidate/index.html
+          python - <<'PY'
+          import hashlib,json,pathlib
+          p=pathlib.Path("/tmp/se279-candidate/index.html")
+          raw=p.read_bytes()
+          meta=json.loads(pathlib.Path("projects/swrlz-forge-moba/source-manifest.json").read_text(encoding="utf8"))
+          print("SE279_RECEIPT "+json.dumps({"bytes":len(raw),"sha256":hashlib.sha256(raw).hexdigest(),"patches":len(meta["patches"]),"assets":len(json.loads(pathlib.Path("/tmp/se279-candidate/SOURCE.json").read_text(encoding="utf8"))["assets"])}),flush=True)
+          PY
