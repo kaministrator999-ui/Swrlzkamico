@@ -73,12 +73,13 @@ with patch.object(vision, "_prepare_image", lambda image: image), patch.object(v
 assert answer == "A white dog on grass."
 assert len(fake_model.calls) == 1
 assert fake_model.calls[0]["messages"][0]["content"][1]["image_url"]["url"] == valid
-assert fake_model.calls[0]["max_tokens"] <= 192
+assert fake_model.calls[0]["max_tokens"] == 112
 visual_prompt = fake_model.calls[0]["messages"][0]["content"][0]["text"]
-assert "different viewpoints" in visual_prompt
-assert "not a transformation" in visual_prompt
-assert "title or view labels" in visual_prompt
-assert "Do not invent evolution" in visual_prompt
+assert "Front, side" in visual_prompt
+assert "not evolution" in visual_prompt
+assert "visible facts" in visual_prompt
+assert "No invented story" in visual_prompt
+assert "User question: What is shown?" in visual_prompt
 
 # Async job contract: the POST acknowledges immediately, status exposes real
 # worker stages, duplicate submissions resume the same job, and one other image
