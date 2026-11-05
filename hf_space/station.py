@@ -42,6 +42,7 @@ import chatgpt_account_memory
 import personal_history_lookup
 import private_account_facts_v208
 from runtime_capacity import runtime_capacity_snapshot
+from chat_vision import export_threads_with_vision_handoffs
 import tempfile
 from project_archive import ProjectArchiveError, archive_filename, build_project_archive, parse_project_files, project_markdown, source_fences, validate_project_files
 from project_revision_workspace import RevisionWorkspaceError, merge_project_revision_files
@@ -773,7 +774,7 @@ def export_session(request:Request):
     durable=str(s.get("ownerGoogleId") or "").startswith("google:")
     document={"format":"swrlz-hf-session-export-v1","exportedAtUnixMs":int(time.time()*1000),
               "storage":"encrypted-google-account-redis" if durable else "anonymous-process-local",
-              "threads":_ordered_native_threads(snapshot["threads"]),"activeGeneration":snapshot["activeGeneration"]}
+              "threads":export_threads_with_vision_handoffs(_ordered_native_threads(snapshot["threads"])),"activeGeneration":snapshot["activeGeneration"]}
     return Response(content=json.dumps(document,ensure_ascii=False,indent=2),media_type="application/json",headers={"Content-Disposition":"attachment; filename=swrlz-dragon-chat.json","Cache-Control":"no-store","X-Content-Type-Options":"nosniff"})
 
 @app.post("/api/chat_state")

@@ -71,7 +71,12 @@ with patch.object(vision, "_prepare_image", lambda image: image), patch.object(v
 assert answer == "A white dog on grass."
 assert len(fake_model.calls) == 1
 assert fake_model.calls[0]["messages"][0]["content"][1]["image_url"]["url"] == valid
-assert fake_model.calls[0]["max_tokens"] <= 112
+assert fake_model.calls[0]["max_tokens"] <= 192
+visual_prompt = fake_model.calls[0]["messages"][0]["content"][0]["text"]
+assert "different viewpoints" in visual_prompt
+assert "not a transformation" in visual_prompt
+assert "title or view labels" in visual_prompt
+assert "Do not invent evolution" in visual_prompt
 
 vision._inference_lock.acquire()
 try:
@@ -110,4 +115,65 @@ with patch.object(vision, "_ask_vision_local", side_effect=RuntimeError("private
     assert response.status_code == 503
     assert "private source pixels" not in response.text
 
-print("Chat vision local CPU: authenticated boundaries, no paid provider, concurrency and mocked inference PASS")
+
+# Parse exactly what the text-only Chat model received. The existing side-menu
+# download is owned by Station and returns saved threads, not private pixels.
+question = "What do you see in this picture?"
+observed = "Title: Character Turnaround.\nMultiple views of the same purple-hooded mage."
+saved = question + vision.VISION_START + observed + vision.VISION_END
+user_message = {"id": "u1", "role": "user", "text": saved, "meta": {"requestId": "r1"}}
+unrelated = {"id": "u2", "role": "user", "text": "No image here."}
+assistant = {"id": "a1", "role": "assistant", "text": "A summary."}
+threads = [{"id": "t1", "messages": [user_message, unrelated, assistant]}]
+exported = vision.export_threads_with_vision_handoffs(threads)
+analysis = exported[0]["messages"][0]["visionAnalysis"]
+assert analysis == {
+    "schema": "swrlz-vision-handoff-export-v1",
+    "questionSentToChatModel": question,
+    "descriptionSentToChatModel": observed,
+    "source": "parsed-from-saved-user-message",
+    "isVerifiedVisionModelReceipt": False,
+    "imagePixelsIncluded": False,
+}
+assert exported[0]["messages"][0]["text"] == saved
+assert "visionAnalysis" not in threads[0]["messages"][0], "Export must not change durable state"
+assert "visionAnalysis" not in exported[0]["messages"][1]
+assert "visionAnalysis" not in exported[0]["messages"][2]
+assert vision.vision_handoff_from_message({"role": "user", "text": question + vision.VISION_START + vision.VISION_END}) is None
+assert vision.vision_handoff_from_message({"role": "user", "text": saved + " extra"}) is None
+assert vision.vision_handoff_from_message({"role": "assistant", "text": saved}) is None
+assert vision.vision_handoff_from_message({"role": "user", "text": question + vision.VISION_START + "x"*6001 + vision.VISION_END}) is None
+# Marker-shaped user text is labeled as a parser result, NOT an independently
+# verified inference receipt. The same parser works for older image chats.
+assert analysis["isVerifiedVisionModelReceipt"] is False
+
+# Grounding is added to the inference-only copy after classification; neither
+# the export nor the stored prompt is rewritten by the second model's policy.
+import ast
+import typing
+router_source = (SOURCE.parent / "model_router.py").read_text(encoding="utf-8")
+tree = ast.parse(router_source)
+selected = [node for node in tree.body if isinstance(node, (ast.Assign, ast.FunctionDef)) and (
+    isinstance(node, ast.FunctionDef) and node.name == "_ground_vision_handoff"
+    or isinstance(node, ast.Assign) and any(isinstance(target, ast.Name) and target.id in {"_VISION_START","_VISION_END"} for target in node.targets)
+)]
+namespace = {"Any": typing.Any}
+exec(compile(ast.Module(body=selected, type_ignores=[]), "<vision-grounding>", "exec"), namespace)
+ground = namespace["_ground_vision_handoff"]
+unchanged = {"prompt": "Hello", "history": []}
+assert ground(unchanged) is unchanged
+input_payload = {"prompt": saved, "history": []}
+grounded = ground(input_payload)
+assert grounded is not input_payload
+assert grounded["prompt"].endswith(saved)
+assert "NOT transformation stages" in grounded["prompt"]
+assert "FALLIBLE textual description" in grounded["prompt"]
+assert input_payload["prompt"] == saved
+assert "payload=_ground_vision_handoff(_apply_personality(payload))" in router_source
+
+station_source = (SOURCE.parent / "station.py").read_text(encoding="utf-8")
+assert "from chat_vision import export_threads_with_vision_handoffs" in station_source
+assert '"threads":export_threads_with_vision_handoffs(_ordered_native_threads(snapshot["threads"]))' in station_source
+assert '"Cache-Control":"no-store"' in station_source
+
+print("Chat vision local CPU: authenticated boundaries, no paid provider, concurrency and mocked inference and export handoff PASS")
