@@ -46,6 +46,9 @@ assert.match(html,/if\(speechRecognition\)\{speechRecognition\.stop\(\);return;\
 assert.match(html,/if\(\(!draftText&&!attachment\)\|\|sending\)return false/);
 assert.match(html,/if\(\(!prompt\.value\.trim\(\)&&!selectedImage\)\|\|sending\)return/);
 assert.match(html,/const restorePendingVisionDraft=\(\)=>/);
+assert.match(html,/if\(provisionalThread&&provisionalMessageId\)/);
+assert.match(html,/m\.id!==provisionalMessageId/);
+assert.match(html,/if\(originalDraft\)\{/);
 assert.match(html,/activity\.onAccepted=\(\)=>/);
 assert.match(html,/activity\.onAccepted\?\.\(\)/);
 assert.match(html,/if\(prompt\.value\.trim\(\)===draftText\)prompt\.value=""/);
