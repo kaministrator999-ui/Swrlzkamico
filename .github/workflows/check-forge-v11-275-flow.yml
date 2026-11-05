@@ -1,0 +1,74 @@
+name: Verify §E v11.275 independent continuous swirl candidate
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/check-forge-v11-275-flow.yml'
+      - 'projects/swrlz-forge-moba/patches/v11_275_continuous_swirl_flow.py'
+      - 'projects/swrlz-forge-moba/runtime/astral_continuous_swirl_v11_275.js'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify old sealed build, append flow, measure final release and parse JS
+        run: |
+          python3 - <<'PY'
+          import json,base64,gzip,hashlib,sys
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          sys.path.insert(0,str(root.resolve()))
+          from build_space import load_patch
+          m=json.loads((root/'source-manifest.json').read_text('utf8'))
+          assert m['name']=='§wyrl§ Engine v11.274',m['name']
+          assert len(m['patches'])==305
+          assert m['patches'][-1]=='patches/v11_274_viewport_nerd_stats.py'
+          raw=gzip.decompress(base64.b64decode(''.join((root/p).read_text('utf8').strip() for p in m['chunks'])))
+          assert hashlib.sha256(raw).hexdigest()==m['baseSha256']
+          h=raw.decode('utf8')
+          for p in m['patches']:h=load_patch(root/p)(h)
+          assert hashlib.sha256(h.encode('utf8')).hexdigest()==m['finalSha256']
+          assert len(h.encode('utf8'))==m['finalBytes']
+          h=load_patch(root/'patches/v11_275_continuous_swirl_flow.py')(h)
+          for needle in (
+             'const SE275_N=84;',
+             'function makeContinuousSwirl(cfg){',
+             'function updateContinuousSwirl(flow,cfg,rec,origin,dt){',
+             'updateContinuousSwirl(rec.se251Nebula.flow,cfg,rec,origin,dt);',
+             'flow.mesh.removeFromParent();flow.geom.dispose();flow.material.dispose();',
+             'continuousFlowMotesPerEmitter:SE275_N,flowClockIndependent:true',
+             'window.SWYRL_ENGINE_VIEWPORT_NERD_STATS_274=Object.freeze',
+             'window.SWYRL_ENGINE_SHEEP_NERD_L3_272',
+             'window.SWYRL_ENGINE_SHEEP_LAN_VISIBILITY_271',
+             'window.SWYRL_ENGINE_PARTICLE_ERRORS_258',
+             'SWYRL_ENGINE_DEPLOY_MARKER: V11_275_CONTINUOUS_SWIRL_FLOW',
+          ):assert needle in h,needle
+          assert h.count('renderer.setAnimationLoop(tick);')==1
+          d=h.encode('utf8')
+          Path('/tmp/se275.html').write_bytes(d)
+          print('V11_275_CANDIDATE_SHA256='+hashlib.sha256(d).hexdigest(),flush=True)
+          print('V11_275_CANDIDATE_BYTES='+str(len(d)),flush=True)
+          m['name']='§wyrl§ Engine v11.275'
+          m['finalArtifact']='swyrl_engine_v11_275.html'
+          m['patches'].append('patches/v11_275_continuous_swirl_flow.py')
+          (root/'source-manifest.json').write_text(json.dumps(m,indent=2)+'\n',encoding='utf8')
+          h=raw.decode('utf8')
+          for p in m['patches']:h=load_patch(root/p)(h)
+          d=h.encode('utf8')
+          Path('/tmp/se275release.html').write_bytes(d)
+          print('V11_275_RELEASE_SHA256='+hashlib.sha256(d).hexdigest(),flush=True)
+          print('V11_275_RELEASE_BYTES='+str(len(d)),flush=True)
+          print('V11_275_RELEASE_PATCHES='+str(len(m['patches'])),flush=True)
+          PY
+          python3 projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se275release.html
+          python3 -m py_compile projects/swrlz-forge-moba/patches/v11_275_continuous_swirl_flow.py
