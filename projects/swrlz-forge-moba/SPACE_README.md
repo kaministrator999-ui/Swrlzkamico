@@ -1371,3 +1371,8 @@ New: Astra · Comet Courier, an independent textured model project with 4K base 
 ## §E v11.274 · Toggleable viewport Nerd Stats
 
 The Game, Modeling, Particle, and Materials browser viewports now have an optional **▥ Nerd Stats** overlay (tap its button or press F3 on desktop). It reuses the existing RAF cadence, Three.js render counts, and disposable stress-test data and updates at 800 ms intervals; it does not add a WebGL context or renderer loop. Frame timing is an approximate callback measurement, not GPU time. Sheep Tag live browser diagnostics and the Quest VR L3 metrics panel remain separate and unchanged.
+
+
+## §E v11.276 · Left-controller immersive Nerd Stats
+
+In immersive WebXR Sheep Tag, clicking the left joystick opens the same three-page Nerd Stats panel, now following the left controller and orienting the visible text toward the headset rather than freezing in the world or showing its back. Click L3 again to hide. In a normal Quest Browser floating 2D window, the HTML statistics overlay remains browser-bound; controller mounting works after entering immersive VR. No extra VR renderer or game/AI logic changes.
