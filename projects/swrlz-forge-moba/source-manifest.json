@@ -327,6 +327,6 @@
     "patches/v11_279_blank_vr_arcane_hands.py",
     "patches/v11_280_mage_spell_lab.py"
   ],
-  "finalBytes": 8125233,
-  "finalSha256": "678667a1360fc495366cda34d0e7873042c6763baf92e1a6f766ae2de194f0ed"
+  "finalBytes": 8154910,
+  "finalSha256": "b4e9bdb3126a07fd1bae53799436c0bdf5d924f4325085f744d698abf9787fa3"
 }
