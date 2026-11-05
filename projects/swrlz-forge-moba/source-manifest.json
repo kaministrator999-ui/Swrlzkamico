@@ -326,6 +326,6 @@
     "patches/v11_278_quest_menu_cadence.py",
     "patches/v11_279_blank_vr_arcane_hands.py"
   ],
-  "finalBytes": 8111652,
-  "finalSha256": "046c28a36a95ce89827e7c8b753fe289189e803e6cd76fba8d0141195625d89a"
+  "finalBytes": 8125233,
+  "finalSha256": "678667a1360fc495366cda34d0e7873042c6763baf92e1a6f766ae2de194f0ed"
 }
