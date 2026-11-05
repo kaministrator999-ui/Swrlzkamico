@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=f38e2d08785ab5fadb4887ad5cac926a05141e61
-REQUEST_NONCE=chat-vision-auto-resync-elapsed-v6-f38e2d08-20261105-r1
+SOURCE_REF=8b189ec88ec2529e5291e760893a35cead26f76e
+REQUEST_NONCE=chat-vision-composer-clear-lean-v7-8b189ec8-20261105-r1
