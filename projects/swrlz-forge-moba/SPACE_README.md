@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.264
+title: §wyrl§ Engine v11.279
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,15 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.279 — Blank VR starter with dual Arcane Glove hands (2026-11-05)
+
+**Game:** New **Blank VR · Arcane Hands** Starter Game (`?project=blank-vr-hands`) creates a ground-only editable level with no enemies, scenery, or pawn. In Quest immersive VR, the existing rigged glove model attaches to the tracked right controller and a true mirrored copy to the left. Each independently responds to grip (grasp/fist) and trigger (pinch); no hand-tracking claim.
+
+**Model:** **Floating Hand · Arcane Glove (Left)** (`?project=arcane-glove-left`) appears in Starter Models with physically mirrored geometry, thumb alignment, 17 bone pivots, saved animation poses and all gesture presets. Original right glove and saved models remain unchanged.
+
+**Release integrity:** 310 patches, 69 assets, 8,125,233 assembled bytes, SHA-256 `678667a1360fc495366cda34d0e7873042c6763baf92e1a6f766ae2de194f0ed`; targeted source/JS syntax passed. Meta Quest 2 physical rendering, controller offsets and latency require owner acceptance. See `docs/BLANK_VR_ARCANE_HANDS_V11_279.md`.
+
 
 ## §E v11.267 — Continuous galaxy wisps, not stamped smoke (2026-11-04)
 
