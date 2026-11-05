@@ -1,5 +1,5 @@
 ID=repository-work
-VERSION=1.0.260
+VERSION=1.0.261
 KIND=repository-work-lineage
 SOURCE_BRANCH=runtime
 STATUS=active
@@ -49,3 +49,5 @@ CHAT_EXACT_APPROVAL_V2_DEPLOY_20261031_NOTE=Guarded existing §C Space request m
 CHAT_FORGE_MODELING_20261102_RELEASE=Model Atelier source-grounded bounded context was published with Chat source d7d44c82412adb3b78afc3d0afa2a052adb9e018 via request 3f9a85321a5b911fe2a83e606806c4ebac7627eb; guarded CI/deploy #41484792304 SUCCESS; HF revision 9232b4510b67c13cf7f5c8b0a3fcfa13a8aceda5; rollback 7e31b369526965b9bfeeb8eedac39b401504b4bc. Source and package published; host/model-answer/device acceptance DEPLOYED_UNVERIFIED. No weights, Chat UI or §E Engine version change. Release detail: main:docs/engineering/entries/2026-11-02_CHAT_FORGE_MODELING_CONTEXT_PUBLISHED.md.
 
 CHAT_FORGE_V2_RIG_LESSON_20261102=Source-grounded v11.220 Rig/Pose/Animate teaching expanded to 67 public cases and bounded 700M/Qwen/Brain context; exact Chat source a133e3a821a83fccc42a71cd0bef5b639da28946 passed CI #41497943812 (10/10 static routing tests) and guarded HF deploy #41498642772 SUCCESS; provider Space 3843e804ebaab38de66caeb0475db1bfef357c39, rollback 9232b4510b67c13cf7f5c8b0a3fcfa13a8aceda5. DEPLOYED_UNVERIFIED: no held-out model output, authenticated host edit or Quest/Android acceptance. No model weights, UI or engine source changed. Roadmap 2026-11-02 Academy v2 release / docs/engineering/entries/2026-11-02_CHAT_FORGE_MODELING_ACADEMY_V2_RELEASE.md.
+
+CHAT_MEDIA_V1_20261104_RELEASE=Chat local 1.1.22 source adcab6555d7e6f9ba284ca072d073682ccd30f41; guarded HF Space workflow 41962451298 SUCCESS, source published to kamiloki/Swyrlz revision d8fb9d12a7c41303b26b189d367d907947097c00; rollback snapshot 6f8b3ff8191fe4d4d57678955fb1ffd9eb9afc61. New image attachment/compression/Google-gated optional OpenAI-compatible vision description endpoint and editable browser SpeechRecognition; no original image in durable Chat history. Vision requires server-only SWRLZ_VISION_API_URL/MODEL/API_KEY and must not be claimed operational without configuration. Focused image/mic checks and desktop/Android UI regressions PASS; separate old modeling/lyric exact-string tests FAIL pre-existing assumptions. HF upload observed; hosted interaction and owner Android/Quest behavior DEPLOYED_UNVERIFIED. LALM weights, §E engine, Google auth unchanged.
