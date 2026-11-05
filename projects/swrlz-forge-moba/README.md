@@ -1595,3 +1595,8 @@ A compact optional Nerd Stats HUD is available in the Game, Model, Particle and 
 ### v11.276 · Quest left-controller Nerd Stats
 
 In *immersive WebXR Sheep Tag*, the existing native three-page Nerd Stats panel now follows the left controller and keeps its text facing the headset. Press the left stick (L3) to toggle it; the panel updates within the existing XR loop and uses a head-relative fallback when left-controller tracking is unavailable. A floating **2D Quest Browser window is not immersive WebXR**: its HTML stats HUD cannot physically track a controller. Enter immersive VR to use the controller-attached HUD. AI, LAN, particle studio and browser stats are unchanged. See `docs/QUEST_LEFT_CONTROLLER_NERD_STATS_V11_276.md`.
+
+
+### v11.278 · Quest wrist HUD clearance and menu cadence
+
+In immersive Sheep Tag, move the controller-mounted Nerd Stats surface 12 cm farther forward and 6 cm up for better readability. Reduce ordinary CanvasTexture metric redraw frequency to about two seconds (page changes remain immediate), reuse a scratch coordinate vector per XR frame, and introduce Nerd Stats **page 4/4** comparing callback frame cadence when the metrics/radial menus are on or off. These are observational frame-gap figures, not GPU timings or controlled benchmarks. No changes to scene geometry, AI, multiplayer or VR gameplay controls. See `docs/QUEST_MENU_CADENCE_V11_278.md`.
