@@ -44,6 +44,19 @@ assert len(vision.MODEL_REVISION) == 40
 assert vision.MODEL_FILE == "SmolVLM-256M-Instruct-Q8_0.gguf"
 assert vision.PROJECTOR_FILE == "mmproj-SmolVLM-256M-Instruct-Q8_0.gguf"
 
+# Space metadata must fetch exactly the pinned local CPU vision assets at build
+# time, not on the first user image upload. Keep the runtime revision identical.
+space_readme = (SOURCE.parent / "README.md").read_text(encoding="utf-8")
+preload = (
+    'ggml-org/SmolVLM-256M-Instruct-GGUF '
+    'SmolVLM-256M-Instruct-Q8_0.gguf,'
+    'mmproj-SmolVLM-256M-Instruct-Q8_0.gguf '
+    + vision.MODEL_REVISION
+)
+assert 'preload_from_hub:' in space_readme
+assert preload in space_readme
+assert space_readme.count('preload_from_hub:') == 1
+
 class FakeModel:
     def __init__(self):
         self.calls = []

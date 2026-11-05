@@ -1,3 +1,10 @@
+## 2026-11-05 — §C vision build-time preload (source candidate)
+
+- **Owner-observed symptom:** first image in deployed self-hosted vision remains at “Analyzing image…”; this UI state alone does not diagnose whether model download, CPU model initialization, or actual inference is taking time.
+- **Change:** Space root `hf_space/README.md` now uses official `preload_from_hub` YAML with **only** Q8_0 256M GGUF and matching projector, pinned at exact `b9e4379657e1450d04d02eec8e345667265b0a00`; same revision/files as `hf_space/chat_vision.py`. HF builds cache public weights before serving the Space, avoiding a first-user file download when the default HF cache is retained.
+- **Deliberate limits:** don't eagerly duplicate/load vision into RAM while the existing 700M, 7B coder, 350M and R39 warmup share free CPU. CPU initialization and decoding remain real costs, and current observation cannot prove the earlier delay was download. No new provider, secrets, paid hardware, HTML/UI, model architecture, or §E changes.
+- **Validation:** focused source-level test asserts build preloader and runtime use identical immutable artifact IDs. Target owner's next image test after guarded deployment. The prior release remains available via rollback.
+
 ## 2026-11-05 — §C self-hosted local vision on free CPU (source candidate)
 
 - **Ownership:** existing isolated HF Chat Space `kamiloki/Swyrlz`, source branch `fix/chat-embed-mobile-composer-v1-20261103`. No §E changes; no change to Chat 1.1.22 composer, login, LALM weights or text model.
