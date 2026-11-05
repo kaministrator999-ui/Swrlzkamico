@@ -21,6 +21,7 @@ assert.match(html,/const startVisionActivity=\(attachment,question\)=>/);
 assert.match(html,/activity\.jobId=String\(result\.jobId\)/);
 assert.match(html,/cancel\.textContent="Cancel analysis"/);
 assert.match(html,/\/api\/lalm_station\/vision\/cancel/);
+assert.match(html,/\["FAILED","CANCELLED"\]\.includes\(state\?\.phase\)/);
 assert.match(html,/body:JSON\.stringify\(\{jobId\}\)/);
 assert.match(html,/queued behind the local image worker/);
 assert.match(html,/const visionSleep=\(ms,signal\)=>/);
