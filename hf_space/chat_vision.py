@@ -221,8 +221,9 @@ def _load_local_model():
 
 def _ask_vision_local(image_url: str, question: str, report_phase=None) -> str:
     """One CPU inference at a time, without blocking other Chat endpoints."""
-    if not _inference_lock.acquire(blocking=False):
-        raise VisionBusy()
+    # CPU slots are serialized. A second accepted upload waits in its own
+    # bounded queued job instead of returning an immediate false-failure 429.
+    _inference_lock.acquire()
     started = time.monotonic()
     report = report_phase or (lambda _: None)
     try:
@@ -311,17 +312,17 @@ def install(app, require_account) -> None:
             _prune_jobs(now)
             prior = next((job for job in _jobs.values()
                           if job["owner"] == owner and job["fingerprint"] == fingerprint
-                          and job["phase"] in ACTIVE_PHASES), None)
+                          and job["phase"] != "FAILED"), None)
             if prior:
                 job_id = prior["id"]
                 phase = prior["phase"]
-            elif any(job["phase"] in ACTIVE_PHASES for job in _jobs.values()):
+            elif sum(job["phase"] in ACTIVE_PHASES for job in _jobs.values()) >= 2:
                 return JSONResponse(
-                    {"ok": False, "code": "VISION_BUSY",
-                     "detail": "Local vision is processing another image; waiting for its CPU slot.",
-                     "retryAfterSeconds": 6},
+                    {"ok": False, "code": "VISION_QUEUE_FULL",
+                     "detail": "Both local image-analysis slots are occupied. Retry when one finishes.",
+                     "retryAfterSeconds": 8},
                     status_code=429,
-                    headers={"Cache-Control": "no-store", "Retry-After": "6"},
+                    headers={"Cache-Control": "no-store", "Retry-After": "8"},
                 )
             else:
                 job_id = uuid.uuid4().hex
@@ -334,7 +335,7 @@ def install(app, require_account) -> None:
                     daemon=True, name="vision-cpu-" + job_id[:8],
                 ).start()
         return JSONResponse(
-            {"ok": True, "jobId": job_id, "phase": phase, "done": False},
+            {"ok": True, "jobId": job_id, "phase": phase, "done": phase not in ACTIVE_PHASES},
             status_code=202,
             headers={"Cache-Control": "no-store"},
         )
