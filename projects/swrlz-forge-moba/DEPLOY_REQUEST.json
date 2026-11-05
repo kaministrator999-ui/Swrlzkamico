@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.280",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_280_MAGE_SPELL_LAB",
-  "reason": "Owner request: build Mage Spell Particle Pack for the dual Arcane Glove blank VR starter, expose all 14 existing Particle Studio registered presets and add 18 new editable mage spell emitters in Starter Particles and the Particle Editor. Add searchable native catalog, individual emitter loading, one-click 8-spell pack, independent left/right equip selectors, VR trigger casts and thumbstick click spell switching with tracked labels. Distinct ring, spiral, lightning motion in real native particle emitter preview. Reuse one existing XR renderer/frame callback, do not change Sheep Tag inputs, source glove models, saved levels, LAN, or §C. v11.280 exact package verified: 311 ordered patches, 69 bundled assets, 8,154,910 HTML bytes, SHA-256 b4e9bdb3126a07fd1bae53799436c0bdf5d924f4325085f744d698abf9787fa3. Candidate source, JS syntax and sealed-source checks passed. Real Quest 2 visual/performance acceptance remains pending.",
-  "sourceCommit": "0d2ab6d6ab4afdbe8dba6ba55a9859ed2704aaf2",
-  "sourceIntegritySha256": "b4e9bdb3126a07fd1bae53799436c0bdf5d924f4325085f744d698abf9787fa3"
+  "releaseVersion": "v11.281",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_281_ROCKY_ANIME_HAND",
+  "reason": "Owner requested the newly generated Rocky Anime Hand reference as a real editable independent §E Starter Model, not a VR controller replacement. Rocky Anime Hand · Emberstone adds faceted indexed stone anatomy, individually editable dorsal/palm armor plates and finger phalanges, angular thumb and wrist, physically modeled amber emissive cracks, valid original 17-bone hand skeleton and preserved open/fist animation. Separate project card and ?project=rocky-anime-hand route; original Arcane Gloves, Sheep Tag, Mage Spell Lab, source lineage, saved levels and §C remain unchanged. Native model-geometry/rig smoke and sealed HTML build/inline-JS syntax checks passed. Source v11.281: 312 append-only patches, 69 assets, 8,168,989 HTML bytes, SHA-256 758b3b52681f16f775ff4194bc409d0d5ede9acdb1821331ba59f8008abaac59. Physical owner 3D/Quest acceptance pending.",
+  "sourceCommit": "684e9439b14b6901dcbac277dfaa9d6dd39fb16c",
+  "sourceIntegritySha256": "758b3b52681f16f775ff4194bc409d0d5ede9acdb1821331ba59f8008abaac59"
 }
