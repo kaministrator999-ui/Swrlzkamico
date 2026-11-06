@@ -16,7 +16,7 @@ function se291MaterialCanvas(tile,mode){
  const c=document.createElement('canvas');c.width=c.height=256;
  const ctx=c.getContext('2d',{willReadFrequently:true});
  const def=se291Tiles[tile]||se291Tiles.uniform;
- const rgb=new THREE.Color(def[0]);const base=[rgb.r,rgb.g,rgb.b].map(v=>Math.round(255*THREE.MathUtils.LinearToSRGB(v)));
+ const hex=def[0].replace('#','');const base=[0,2,4].map(i=>parseInt(hex.slice(i,i+2),16));
  const pix=ctx.createImageData(256,256),a=pix.data;
  const hash=(x,y)=>{let q=(x*374761393+y*668265263+tile.length*2654435761)|0;q=Math.imul(q^(q>>>13),1274126177);return ((q^(q>>>16))>>>0)/4294967295;};
  const height=(x,y)=>{
@@ -89,7 +89,7 @@ function se291Map(tile,mode){
  const tex=new THREE.CanvasTexture(se291MaterialCanvas(tile,mode));
  tex.colorSpace=mode==='color'?THREE.SRGBColorSpace:THREE.NoColorSpace;
  tex.wrapS=THREE.RepeatWrapping;tex.wrapT=THREE.RepeatWrapping;
- tex.anisotropy=Math.min(4,renderer?.capabilities?.getMaxAnisotropy?.()||2);
+ tex.anisotropy=2;
  tex.minFilter=THREE.LinearMipmapLinearFilter;tex.magFilter=THREE.LinearFilter;
  tex.needsUpdate=true;se291Textures.set(key,tex);return tex;
 }
