@@ -104,7 +104,8 @@ with patch.object(vision, "_prepare_image", lambda image: image), patch.object(v
         report_phase=lambda phase, **fields: recorded_phases.append((phase, fields)),
     )
 assert answer == "A white dog on grass."
-assert ("ANALYZING", {"inferenceStage": "PREFILL"}) in recorded_phases
+assert any(phase=="ANALYZING" and fields.get("inferenceStage")=="PREFILL" and
+           fields.get("activeLevel")==1 for phase,fields in recorded_phases)
 assert any(phase == "ANALYZING" and fields.get("inferenceStage") == "DECODING" and
            fields.get("firstChunkSeconds") >= 0 for phase, fields in recorded_phases)
 assert len(fake_model.calls) == 1
@@ -161,8 +162,9 @@ for call in detail_model.calls:
     with Image.open(io.BytesIO(base64.b64decode(url.partition(",")[2]))) as im:
         detail_dimensions.append(im.size)
 assert detail_dimensions == [(384, 288), (640, 480)], detail_dimensions
-assert ("ANALYZING", {"inferenceStage": "DETAIL_RETRY",
-                      "detailRetryReason": "GENERIC_CHARACTER_SHEET"}) in detail_phases
+assert any(phase=="ANALYZING" and fields.get("inferenceStage")=="DETAIL_RETRY" and
+           fields.get("detailRetryReason")=="GENERIC_CHARACTER_SHEET" and
+           fields.get("activeLevel")==2 for phase,fields in detail_phases)
 assert any(fields.get("inferenceStage") == "DETAIL_DECODING" for _, fields in detail_phases)
 
 class RetryFailureModel:
@@ -195,6 +197,63 @@ with patch.object(vision, "_load_local_model", return_value=specific_model):
     detailed_first = vision._ask_vision_local(encoded_image, "What is shown?")
 assert "purple hood" in detailed_first
 assert len(specific_model.calls) == 1
+
+# Explicit level study runs L1/L2/L3, even when L1 is descriptive.
+# It preserves exact source text and actual per-level durations, not a claim
+# that a descriptor-keyword score establishes pixel accuracy.
+class ThreeLevelModel:
+    def __init__(self):
+        self.calls=[]
+    def create_chat_completion(self, **kwargs):
+        self.calls.append(kwargs)
+        sample=[
+            "A purple mage in gold boots holding a crystal staff.",
+            "Character turnaround of a purple-hooded mage holding a violet crystal staff.",
+            "Multi-view character design: purple hood, gold trim, brown boots and a crystal staff.",
+        ][len(self.calls)-1]
+        return iter([{"choices":[{"delta":{"content":sample}}]}])
+
+study_model=ThreeLevelModel()
+study_phases=[]
+with patch.object(vision,"_load_local_model",return_value=study_model):
+    study=vision._ask_vision_local(encoded_image,"What do you see in this picture?",
+        analysis_levels=3,
+        report_phase=lambda phase,**fields: study_phases.append((phase,fields)))
+assert len(study_model.calls)==3
+assert "Level 1" in study and "Level 2" in study and "Level 3" in study
+assert "raw model outputs" in study and "accuracy unverified" in study
+assert "A purple mage in gold boots" in study
+assert "gold trim, brown boots" in study
+assert [x["max_tokens"] for x in study_model.calls]==[
+    vision.MAX_VISION_OUTPUT_TOKENS,vision.DETAIL_RETRY_TOKENS,vision.LEVEL3_TOKENS]
+study_pixels=[]
+for call in study_model.calls:
+    url=call["messages"][0]["content"][1]["image_url"]["url"]
+    with Image.open(io.BytesIO(base64.b64decode(url.partition(",")[2]))) as im:
+        study_pixels.append(im.size)
+assert study_pixels==[(384,288),(640,480),(768,576)],study_pixels
+last_records=[fields["levelRecords"] for phase,fields in study_phases if fields.get("levelRecords")]
+assert len(last_records[-1])==3
+assert last_records[-1][0]["description"]=="A purple mage in gold boots holding a crystal staff."
+assert last_records[-1][2]["inputMaxSide"]==768
+assert all(x["elapsedSeconds"]>=0 for x in last_records[-1])
+assert any(f.get("inferenceStage")=="LEVEL3_PREFILL" for _,f in study_phases)
+assert any(f.get("inferenceStage")=="LEVEL3_DECODING" for _,f in study_phases)
+assert any(f.get("inferenceStage")=="LEVEL3_RETRY" for _,f in study_phases)
+
+# Explicit L1 disables automatic retry even for an uninformative caption.
+one_level_model=DetailFakeModel()
+with patch.object(vision,"_load_local_model",return_value=one_level_model):
+    only_fast=vision._ask_vision_local(encoded_image,"Describe image",analysis_levels=1)
+assert len(one_level_model.calls)==1
+assert only_fast=="Character turnaround page with various views of character."
+for invalid in (0,4,"3",True):
+    try:
+        vision._ask_vision_local(encoded_image,"test",analysis_levels=invalid)
+    except ValueError as exc:
+        assert str(exc)=="VISION_LEVEL_INVALID"
+    else:
+        raise AssertionError("Invalid analysis level should be rejected")
 
 # Cooperative cancellation during the optional pass cannot be converted into
 # apparent success by the fallback error handler.
@@ -252,12 +311,21 @@ with patch.object(vision, "_prepare_image", lambda x: x), patch.object(vision, "
     assert done["inferenceStage"] == "DECODING", done
     assert done["firstChunkSeconds"] >= 0, done
     assert done["description"] == "A white dog on grass."
+    assert done["requestedLevels"] == 2
+    assert done["completedLevels"] == 1
+    assert len(done["levelRecords"]) == 1
+    assert done["levelRecords"][0]["level"] == 1
+    assert done["selectedLevel"] == 1
     assert done["done"] is True
     assert done["elapsedSeconds"] >= done["phaseElapsedSeconds"] >= 0
     assert isinstance(done["elapsedSeconds"], float)
     assert isinstance(done["phaseElapsedSeconds"], float)
 
 assert client.post("/api/lalm_station/vision", json={"image": "invalid"}).status_code == 400
+for bad in (0,4,"3",True):
+    invalid_response=client.post("/api/lalm_station/vision",
+        json={"image":valid,"question":"test","analysisLevels":bad})
+    assert invalid_response.status_code==400,invalid_response.text
 assert client.post("/api/lalm_station/vision", data="oops", headers={"Content-Type": "text/plain"}).status_code == 415
 assert client.get("/api/lalm_station/vision/status", params={"jobId": "invalid"}).status_code == 400
 assert client.get("/api/lalm_station/vision/status", params={"jobId": "a"*32}).status_code == 404
