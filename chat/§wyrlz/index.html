@@ -1670,6 +1670,10 @@
             else if(observed==="LEVEL3_PREFILL")status.textContent="Level 3 · reading retained 768px image…";
             else if(observed==="LEVEL3_DECODING")status.textContent="Level 3 · generating deep description… first text after "+
                 durationText(timing.firstChunkSeconds??0);
+            else if(observed==="FUSION_PREPARE")status.textContent="Combining region observations into one scene…";
+            else if(observed==="FUSION_PREFILL")status.textContent="Rechecking the whole image against region observations…";
+            else if(observed==="FUSION_DECODING")status.textContent="Generating one integrated image description…";
+            else if(observed==="FUSION_COMPLETE")status.textContent="Integrated interpretation generated; evaluating visual specificity…";
             else status.textContent=labels[phase]||"";
             if(phase==="ANALYZING"&&timing?.requestedLevels){
               title.textContent="Image message · level "+Math.max(1,Number(timing.activeLevel)||1)+"/"+timing.requestedLevels;
