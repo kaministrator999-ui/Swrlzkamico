@@ -5,7 +5,7 @@ import vm from "node:vm";
 
 const html=fs.readFileSync("chat/§wyrlz/index.html","utf8");
 const version=fs.readFileSync("chat/§wyrlz/VERSION.txt","utf8").trim();
-assert.equal(version,"1.1.27");
+assert.equal(version,"1.1.28");
 assert.ok(html.includes('<meta name="swrlz-chat-version" content="'+version+'">'));
 assert.ok(html.includes('const SWRLZ_CHAT_VERSION = "'+version+'";'));
 
@@ -72,7 +72,16 @@ assert.match(html,/if\(prompt\.value\.trim\(\)===draftText\)prompt\.value=""/);
 assert.match(html,/if\(selectedImage===attachment\)selectedImage=null/);
 assert.match(html,/if\(!selectedImage\)\{selectedImage=attachment;updateImagePreview\(\);\}/);
 assert.match(html,/if\(!sendAcknowledged\)\{[\s\S]*?restorePendingVisionDraft\(\)/);
-assert.match(html,/const scale=Math\.min\(1,768\/Math\.max\(img\.naturalWidth,img\.naturalHeight\)\)/);
+assert.match(html,/const encodeImageForVision=attachment=>new Promise/);
+assert.match(html,/const reader=new FileReader\(\)/);
+assert.match(html,/reader\.readAsDataURL\(file\)/);
+assert.match(html,/image=await encodeImageForVision\(attachment\)/);
+assert.ok(!html.includes("canvas.toDataURL"),"client must not recompress source before upload");
+assert.ok(!html.includes("img.naturalWidth*scale"),"client must not downscale source before upload");
+assert.match(html,/originalBytesPreserved:state\.originalBytesPreserved/);
+assert.match(html,/sourceWidth:state\.sourceWidth/);
+assert.match(html,/sourceHeight:state\.sourceHeight/);
+assert.match(html,/Original received by server/);
 for(const id of ["imageVisionLevelSelect"]){
   assert.equal((html.match(new RegExp('id="'+id+'"','g'))||[]).length,1);
 }
@@ -102,6 +111,10 @@ assert.match(backend,/max_tokens=tokens/);
 assert.match(backend,/generate\(image, prompt, MAX_VISION_OUTPUT_TOKENS\)/);
 assert.match(backend,/DETAIL_RETRY_SIDE = 640/);
 assert.match(backend,/DETAIL_RETRY_TOKENS = 144/);
+assert.match(backend,/MAX_BODY_BYTES = 12_000_000/);
+assert.match(backend,/MAX_IMAGE_BYTES = 8 \* 1024 \* 1024/);
+assert.match(backend,/focus_center=True/);
+assert.match(backend,/def _source_image_metadata\(/);
 assert.match(html,/observed==="DETAIL_RETRY"/);
 assert.match(html,/observed==="DETAIL_PREFILL"/);
 assert.match(html,/observed==="DETAIL_DECODING"/);
