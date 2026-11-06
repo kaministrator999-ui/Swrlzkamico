@@ -12,6 +12,28 @@ preload_from_hub:
 
 This is a migration candidate, not a claim of production Chat parity. The real R39 engine and its accepted overlays are staged from the canonical repository. The model is reconstructed on startup from 54 SHA-verified source chunks pinned to the exact source commit. A full clean-room Chat transport, account persistence, and queue migration require separate acceptance.
 
+### Chat v1.1.27 — empirical 1–3 level vision study
+
+An image attachment now offers three bounded, user-controlled analysis modes:
+**L1 Fast** (384px / 88 tokens, no automatic retry), **L2 Adaptive**
+(default: fast pass, then conditional 640px / 144-token retry on generic
+captions), and **L3 Compare all (slow)**. L3 intentionally runs L1 and L2
+even when L1 seems specific, then adds a 768px / 192-token pass using the
+existing transient browser image. No additional model/provider is used.
+
+The authenticated image-job status contains actual completed level records
+(level number, input-side cap, decoder-token limit, seconds, first-chunk
+seconds, the exact generated description and a *keyword count*). The progress
+card can expand each raw level output. **L3 results also appear as a full
+comparison in the saved chat message and its JSON export**, so the user can
+inspect the captions after the transient card disappears. The chosen level
+is *only* a descriptor-count heuristic, never a certified visual truth score.
+Only an actual image-versus-answer check by the user can establish which
+level is accurate. Failed or cancelled passes are not fabricated. CPU work
+remains sequential and bounded; L3 is opt-in because it may be substantially
+slower than the 10-second baseline. Stored chat image pixels are still
+excluded, and the source upload is not persisted.
+
 ### Chat v1.1.26 — adaptive detail recovery for character sheets
 
 An exported Little Crystal Mage example verified that local 384px SmolVLM
