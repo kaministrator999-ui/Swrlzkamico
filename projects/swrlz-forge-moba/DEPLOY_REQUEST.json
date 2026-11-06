@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.287",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_287_CLIFF_SCULPT_PBR",
-  "reason": "Owner-directed real repo sculpting and materialization of Plain Hand Base as Cliff Hand per owner-provided turnaround reference and supplied ten-map PBR ZIP. Generate independently editable 360-degree weathered stone palm, fingers, thumb and wrist, layered chiseled rock plates, dark crevices, selective moss and dirt. Apply owner-derived atlas normal/roughness/AO/base/height maps at actual native rigged MeshStandardMaterial site. Keep 17-joint pose and open/fist timeline; leave independent Rocky Anime Hand, Arcane Gloves, user saves, Sheep Tag head-motion metrics, and other projects unchanged. Targeted sealed release run 42166234333 SUCCESS: 318 patches, 70 assets, exact 8,215,967 HTML bytes, SHA-256 7681d6ec830515d6a0b5feb322b77a82cf33097e89fc8796c01adbbfc46a915c; assembled and standalone JS syntax passed. Owner Android/Quest visual and rig acceptance pending.",
-  "sourceCommit": "f72728b23a5abe68833f80c71507d291d6223e88",
-  "sourceIntegritySha256": "7681d6ec830515d6a0b5feb322b77a82cf33097e89fc8796c01adbbfc46a915c"
+  "releaseVersion": "v11.288",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_288_SMOOTH_CLIFF_PBR",
+  "reason": "Owner directed: current Plain Hand looks like 121 stacked 3D rocks and geometry cracks. Replace actual Plain Hand Base generator with ONE smooth connected SDF-anatomy hand shell; retain native 17-bone rig. Draw rock plate divisions, cracks, small relief and sparse moss through owner-supplied albedo/normal/roughness/AO in higher-resolution 384px-per-tile atlas. Remove all separately modeled rock pieces and crack curves from starter output; avoid disturbing independent Rocky Anime Hand, other models, saved scenes, VR or gameplay. Exact 319-patch source SHA-256 e9862396dd559208637d2b073155fd69b959716cb303e83519d520f44102d859 and 8,221,626 HTML bytes; 71 assets and source syntax verified by targeted receipt workflow 42168959522. Owner phone visual and open-fist animation acceptance pending.",
+  "sourceCommit": "0e698fa779b3fdf293a52b0c6ff7000ccaf40646",
+  "sourceIntegritySha256": "e9862396dd559208637d2b073155fd69b959716cb303e83519d520f44102d859"
 }
