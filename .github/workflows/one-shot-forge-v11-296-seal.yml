@@ -1,0 +1,55 @@
+name: One-shot §E v11.296 Vanguard reconstruction measurement
+# Narrow checksum/syntax/native-factory check only. Owner retains visual acceptance.
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/one-shot-forge-v11-296-seal.yml'
+permissions:
+  contents: read
+jobs:
+  seal:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Parse reconstructed character source and exercise native scene + fingers
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/hooded_vanguard_rebuild_v11_296.js
+          node projects/swrlz-forge-moba/tests/hooded_vanguard_rebuild_v11_296.cjs
+      - name: Assemble, inspect and print exact source SHA without faking source receipt
+        run: |
+          python - <<'PY'
+          import json,hashlib,subprocess,sys
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          manifest=json.loads((root/'source-manifest.json').read_text('utf8'))
+          assert manifest['name']=='§wyrl§ Engine v11.296'
+          assert len(manifest['patches'])==327
+          assert manifest['patches'][-1]=='patches/v11_296_vanguard_rebuild.py'
+          assert manifest['finalBytes']==0 and manifest['finalSha256']==''
+          out=Path('/tmp/se296-rebuild')
+          subprocess.run([sys.executable,str(root/'build_space.py'),'--output',str(out)],check=True)
+          raw=(out/'index.html').read_bytes()
+          assert raw==(out/'modeler.html').read_bytes()
+          html=raw.decode('utf8')
+          for token in (
+           'SWYRL_ENGINE_DEPLOY_MARKER: V11_296_VANGUARD_REBUILT',
+           'se291HeroScene=se296HeroScene;',
+           '<strong>Hooded Vanguard · Rebuilt Character</strong>',
+           "window.SWRLZ_FORGE_BUILD={version:'v11.296'",
+          ):
+            assert token in html,token
+          receipt=json.loads((out/'SOURCE.json').read_text('utf8'))
+          assert len(receipt['assets'])==71
+          subprocess.run([sys.executable,str(root/'scripts/check_inline_js_syntax_v11_266.py'),
+                          str(out/'index.html')],check=True)
+          print('SE296_EXACT_MEASUREMENT='+json.dumps({
+           'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest(),
+           'patches':len(receipt['patches']),'assets':len(receipt['assets']),
+           'nativeGeometryTestPassed':True},sort_keys=True),flush=True)
+          PY
