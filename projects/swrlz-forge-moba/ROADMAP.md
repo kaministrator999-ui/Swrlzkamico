@@ -1,3 +1,7 @@
+## §E v11.296 · Rebuild Hooded Vanguard anatomy, clothing and UV materials (candidate)
+
+Fresh Starter Models Hooded Vanguard generator now uses an integrated head/jaw, five-fingered gloves, fitted hood, layered hair/scarf, refined plate armor and two teal coat panels. Dedicated 384px UV-aligned base color, normal and roughness art maps are generated for each material family. Original v11.291 generator, existing saved scenes, Chat loft v11.295, and all unrelated editor starters are retained. Owner-device visual acceptance and any additional iteration follow source/build checks. See [v11.296 checkpoint](docs/VANGUARD_REBUILD_V11_296.md).
+
 ## §E v11.295 · Correct lighting on Chat-created curved meshes (candidate)
 
 Plain loft meshes authored through §c now present outward-facing triangles and recomputed surface normals to the existing renderer. This corrects the inverted shading that made saved ivory hair and other curved parts catch the cyan backlight from the wrong side. The saved part colors, paths, radii, UVs and transforms remain unchanged.
