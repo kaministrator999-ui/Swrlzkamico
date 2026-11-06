@@ -109,7 +109,7 @@ class DetailedImageRoutingTests(unittest.TestCase):
         self.assertEqual(model.calls[1]["max_tokens"], 128)
         self.assertIn("subject you can SEE",
                       model.calls[0]["messages"][0]["content"][0]["text"])
-        self.assertIn("Describe the ACTUAL SUBJECT",
+        self.assertIn("Describe this image CROP in 1 or 2 SHORT factual sentences",
                       model.calls[1]["messages"][0]["content"][0]["text"])
 
     def test_cancelled_job_stops_before_region_inference(self):
