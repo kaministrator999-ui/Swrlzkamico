@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=6c09d500705f21b9181612acd23e58b7442c298c
-REQUEST_NONCE=chat-vision-grounded-regions-6c09d500-20261105-r1
+SOURCE_REF=cc639b2b630bc78eeb2a2dfd0b8548f69935c2ec
+REQUEST_NONCE=chat-vision-grounded-regions-cc639b2b-20261105-r2
