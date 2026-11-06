@@ -550,9 +550,9 @@ def _ask_vision_local(image_url: str, question: str, report_phase=None, should_c
                      " (not a visual accuracy score)."]
             for item in level_records:
                 lines.append("\nLevel {level} · {inputMaxSide}px max side · {elapsedSeconds:.2f}s · "
-                             "{descriptorCount} descriptor keywords{view}:\n{description}".format(
-                                 view=(" · center-source-crop-if-large" if item["level"] == 3 else
-                                       " · whole-image"), **item))
+                             "{descriptorCount} descriptor keywords{viewLabel}:\n{description}".format(
+                                 viewLabel=(" · center-source-crop-if-large" if item["level"] == 3 else
+                                            " · whole-image"), **item))
             if len(level_records) < 3:
                 lines.append("\nSome levels failed; no missing output is fabricated.")
             content = "\n".join(lines)[:MAX_DESCRIPTION_CHARS]
