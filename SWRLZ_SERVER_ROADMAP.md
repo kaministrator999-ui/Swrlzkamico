@@ -1,3 +1,11 @@
+## 2026-11-05 — §C empirical vision levels v13 (source candidate)
+
+- **Intent:** Kami requested multiple successive vision analysis levels to determine experimentally at which level the Little Crystal Mage turnaround becomes genuinely recognizable. A keyword-rich caption must not be mislabeled visually correct.
+- **Levels:** L1 384px/88 tokens, L2 existing adaptive second pass 640px/144 tokens, L3 explicit three-pass comparison using retained 768px/192-token deep pass. Default remains L2 adaptive, preserving the prior fast first pass. Selecting L3 intentionally runs all three passes even if L1 looks specific. CPU inference stays serialized and cancellable.
+- **Evidence:** Owner-authenticated status reports only completed, real model text per level and observed elapsed/first-chunk seconds, while the Chat activity card shows each as text. L3 formats the same raw captions into the saved chat reply so the existing downloaded Chat JSON contains them without inventing new receipts. Best-caption selection is a keyword-count *heuristic*, not visual truth; manually judge the result against image details.
+- **Safeguards:** Strict level integer 1/2/3, idempotency keyed by selected level, same local CPU model, no external inference, bounded per-image size, no stored pixels, same cancellation/queue limits, no fake completed levels on errors.
+- **Verification:** focused tests for all-level inference, source dimensions, exact captions, statuses, invalid levels and fast-mode compatibility. Production gated by existing vision/media validations and normal HF snapshot; real-device evaluation remains necessary.
+
 ## 2026-11-05 — §C adaptive image detail v12 (source candidate)
 
 - **Evidence:** Four saved vision-associated turns (three unique message IDs) in the uploaded Chat JSON all passed generic turnaround descriptions. v11 removed the second LALM paraphrase, but the analyzer itself failed to identify purple clothing and crystal staff. The export is parsed from saved text, not an authenticated model-origin receipt.
