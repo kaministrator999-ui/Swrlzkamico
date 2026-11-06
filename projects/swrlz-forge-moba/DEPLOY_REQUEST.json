@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.295",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_295_CHAT_LOFT_SURFACE_NORMALS",
-  "reason": "Correct confirmed inward triangle winding on plain Chat-authored lofts: saved ivory hair and brown wood colors were correct but the outer surface received inside-face cyan backlighting. Reverse winding and recompute outward normals only for plain atelier-chat lofts; preserve positions, colors, UVs, saved descriptors, native history, existing textured/HD/styled paths, all historical patches and the v11.294 Hooded Vanguard socket-loader fix. Sealed 326-patch artifact is 8,263,130 bytes, SHA-256 b993cd47e55d42ae32315c3ff536e6adc5a7ca6f743d4d9f9d8d458eb374e5c8; 71 asset hashes, identical index/modeler, assembled JavaScript, prior native Chat-tool cases and pinned real-Three outward-normal/preservation tests pass. Owner device appearance acceptance remains pending.",
-  "sourceCommit": "bbd4b769e53b5f9f6fd9cb9cdbf7d08a5a46c61c",
-  "sourceIntegritySha256": "b993cd47e55d42ae32315c3ff536e6adc5a7ca6f743d4d9f9d8d458eb374e5c8"
+  "releaseVersion": "v11.296",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_296_VANGUARD_REBUILT",
+  "reason": "Replace fresh Hooded Vanguard Starter Model with 17-part reconstructed anatomy, proportioned face and hair, wrapped hood and scarf, five-finger gloves, shaped steel armor, teal flowing coat panels and 11 UV-aligned 384px color/height-derived-normal/roughness material families. Preserve v11.291 original source history, saved model scenes, other starters, v11.295 Chat loft correction and all existing editor functions. Narrow factory/UV/digit test passed; sealed 327-patch artifact 8,282,034 bytes SHA-256 a43cd402283fee23e38bad664936ca766708c9598f40c6b1e450cc2dcfc5ba8d, 71 bundled assets, full assembled inline-JS syntax passed. Owner Android/Quest appearance acceptance pending.",
+  "sourceCommit": "dcaf3eb2c48f801586269b6cf1916dfebe0886ed",
+  "sourceIntegritySha256": "a43cd402283fee23e38bad664936ca766708c9598f40c6b1e450cc2dcfc5ba8d"
 }
