@@ -1,0 +1,38 @@
+name: §E v11.286 one-time source seal probe
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/swrlz-v11-286-hash-probe.yml"
+permissions:
+  contents: read
+jobs:
+  seal:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Derive actual built artifact SHA and bytes without bypassing release integrity
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path("projects/swrlz-forge-moba/source-manifest.json")
+          j=json.loads(p.read_text("utf8"))
+          assert j["name"]=="§wyrl§ Engine v11.286"
+          assert j["patches"][-1]=="patches/v11_286_sheep_head_motion_diagnostics.py"
+          j["finalBytes"]=0
+          j["finalSha256"]=""
+          p.write_text(json.dumps(j,ensure_ascii=False))
+          PY
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/swrlz-v11-286-probe
+          python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/swrlz-v11-286-probe/index.html
+          python - <<'PY'
+          import hashlib
+          from pathlib import Path
+          b=Path("/tmp/swrlz-v11-286-probe/index.html").read_bytes()
+          print("V11_286_EXACT_SOURCE_BYTES=",len(b))
+          print("V11_286_EXACT_SOURCE_SHA256=",hashlib.sha256(b).hexdigest())
+          PY
