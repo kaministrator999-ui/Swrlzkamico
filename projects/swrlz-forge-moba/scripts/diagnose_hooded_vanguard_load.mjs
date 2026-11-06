@@ -28,6 +28,6 @@ try{
  console.log('VANGUARD_NATIVE_LOAD_RECEIPT',JSON.stringify(output));
  try{await page.screenshot({path:'vanguard-load-diagnostic.png',fullPage:false,timeout:12000})}catch(e){console.log('SCREENSHOT_UNAVAILABLE',e.message)}
  await writeFile('vanguard-load-diagnostic.json',JSON.stringify(output,null,2));
- if(!receipt.status?.successes||!receipt.atelier?.open||!receipt.atelier?.count)process.exitCode=2;
+ if(receipt.build!=='v11.294'||!receipt.status?.successes||!receipt.atelier?.open||receipt.atelier?.count!==14)process.exitCode=2;
 }catch(error){console.error('VANGUARD_BROWSER_EXCEPTION',error.stack);process.exitCode=3}
 finally{await context.close();await browser.close();}
