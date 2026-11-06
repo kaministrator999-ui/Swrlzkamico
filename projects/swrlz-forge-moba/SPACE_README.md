@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.293
+title: §wyrl§ Engine v11.294
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,14 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.294 · Hooded Vanguard Starter Models loader correction (2026-11-06)
+
+Targeted hosted mobile Chromium check on v11.293 reproduced the owner's report: Hooded Vanguard generated **14 meshes / 61,476 triangles** correctly, then `loadProject()` threw **`Invalid named socket.`** Native Prism Jester assemblies/sockets had been inherited from the canonical project while all original part IDs and groups had been replaced. New `patches/v11_294_vanguard_socket_loader_fix.py` clears only this starter's obsolete `model.assemblies` graph before loading; its own native geometry, texture maps, and existing model editing path remain intact. Other model starters, the v11.292 Cliff Hand material work, Chat character tools, saved projects, and game/VR flows are unchanged.
+
+Verification gates: exact assembled source SHA/bytes, targeted JS syntax and native hosted load, then owner Android/Quest appearance acceptance. The release is static until a dedicated full-body skeleton is authored.
+
+
 
 ## §E v11.293 — §c character geometry and visible editor work (candidate)
 
