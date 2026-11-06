@@ -332,7 +332,7 @@ def _direct_vision_description(payload: dict[str, Any]) -> str | None:
     description = description.strip()
     if not description or len(description) > 6000:
         return None
-    question = re.sub(r"\\s+", " ", question.strip().lower().rstrip("?! .")).strip()
+    question = re.sub(r"\s+", " ", question.strip().lower().rstrip("?! .")).strip()
     if question.startswith("please "):
         question = question[7:]
     if question.startswith("can you please "):
@@ -360,7 +360,7 @@ def _direct_vision_description(payload: dict[str, Any]) -> str | None:
     }
     if question not in direct_questions:
         return None
-    return "Local image analyzer's description (not directly inspected by §C):\\n\\n" + description
+    return "Local image analyzer's description (not directly inspected by §C):\n\n" + description
 
 
 def _ground_vision_handoff(payload: dict[str, Any]) -> dict[str, Any]:
