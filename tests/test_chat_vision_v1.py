@@ -60,6 +60,31 @@ assert 'preload_from_hub:' in space_readme
 assert preload in space_readme
 assert space_readme.count('preload_from_hub:') == 1
 
+# Real image preprocessing must bound the pixels supplied to the CPU projector.
+import io
+from PIL import Image
+assert vision.MODEL_INPUT_SIDE == 512
+source_image = Image.new("RGB", (1024, 768), "purple")
+source_bytes = io.BytesIO()
+source_image.save(source_bytes, format="PNG")
+encoded_image = "data:image/png;base64," + base64.b64encode(source_bytes.getvalue()).decode("ascii")
+prepared = vision._prepare_image(encoded_image)
+with Image.open(io.BytesIO(base64.b64decode(prepared.partition(",")[2]))) as downsized:
+    assert downsized.size == (512, 384), downsized.size
+
+# A build-time cache hit must NOT incur a Hub network metadata request.
+from huggingface_hub.errors import LocalEntryNotFoundError
+with patch("huggingface_hub.hf_hub_download", return_value="/cached/model") as download:
+    assert vision._cached_asset(vision.MODEL_FILE) == "/cached/model"
+    assert download.call_count == 1
+    assert download.call_args.kwargs["local_files_only"] is True
+with patch("huggingface_hub.hf_hub_download", side_effect=[
+        LocalEntryNotFoundError("not preloaded"), "/downloaded/model"]) as download:
+    assert vision._cached_asset(vision.MODEL_FILE) == "/downloaded/model"
+    assert download.call_count == 2
+    assert download.call_args_list[0].kwargs["local_files_only"] is True
+    assert "local_files_only" not in download.call_args_list[1].kwargs
+
 class FakeModel:
     def __init__(self):
         self.calls = []
@@ -69,6 +94,9 @@ class FakeModel:
         return iter([{"choices": [{"delta": {"content": "A white dog on grass."}}]}])
 
 fake_model = FakeModel()
+with patch.object(vision, "_load_local_model", return_value=fake_model) as loader:
+    assert vision.prewarm_local_model() is fake_model
+    loader.assert_called_once()
 with patch.object(vision, "_prepare_image", lambda image: image), patch.object(vision, "_load_local_model", lambda: fake_model):
     answer = vision._ask_vision_local(valid, "What is shown?")
 assert answer == "A white dog on grass."
