@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.297
+title: §wyrl§ Engine v11.298
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,11 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+## §E v11.298 · Actual generated image pixels mapped to Hooded Vanguard (candidate)
+
+The fresh **Starter Models → Hooded Vanguard · Real Artwork UV** now uses **actual image pixels from the previously generated Hooded Vanguard texture illustration**, not a hand-drawn JavaScript imitation. The artwork was manually cropped into 11 surface regions, resampled into a 512×384 JPEG sheet (4×3 cells of 128×128), SHA-256 verified, and embedded directly into the engine. Each of the 17 native editable meshes gets a UV tile assignment to its corresponding painted face/hair/hood/scarf/uniform/armor/pauldron/teal/leather/glove/boot region. Shared source-color texture replaces v11.297's procedural look; conservative material roughness/metalness remains per part. The exact image checksum, 17-part mapping and unrelated-material fallthrough are verified by a focused native test. Historical saved models, the other starters, §C, VR and Sheep Tag are unchanged. This is still a static character; the image atlas is a **mobile-resolution image sample**, not an artist-retopologized full-resolution UV bake, so device visual acceptance and finer art alignment remain separate.
+
+
 
 ## §E v11.297 · Hooded Vanguard painted-UV remaster (candidate)
 
