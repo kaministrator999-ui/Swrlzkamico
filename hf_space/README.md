@@ -12,6 +12,30 @@ preload_from_hub:
 
 This is a migration candidate, not a claim of production Chat parity. The real R39 engine and its accepted overlays are staged from the canonical repository. The model is reconstructed on startup from 54 SHA-verified source chunks pinned to the exact source commit. A full clean-room Chat transport, account persistence, and queue migration require separate acceptance.
 
+### Chat v1.1.28 — original-image transport, native server crops
+
+The browser now transfers the **actual user-selected JPEG, PNG or WebP
+file bytes**, via FileReader/readAsDataURL, without canvas downscaling,
+JPEG recompression, or pixel reconstruction. The same 8 MiB attachment
+limit applies. Authenticated server accepts at most 8 MiB decoded image
+bytes (12 MB JSON/base64 request cap), still rejects images above
+16 megapixels, and verifies the actual incoming source width/height/bytes
+with Pillow before inference. The browser shows server-measured dimensions
+on the image job card; L3 saves them alongside the level outputs.
+
+CPU inference stays bounded and local. L1 (384px) and conditional L2
+(640px) still see the full sheet after the **server** resizes directly
+from original pixels. In L3 comparison mode, pass 3 can now analyze a
+*centered half-size crop of the actual original pixels* when the image's
+longest edge is at least 1536px. It is labeled as a geometric center
+crop, **not** an AI-chosen subject region or an established recognition
+success. For smaller originals, L3 uses the full image at up to 768px.
+Each pass is measured, comparison text remains true raw vision output,
+and no source image pixels are written into persistent chat history.
+The original image may take longer to upload than a reduced JPEG.
+No upgraded CPU hardware, new inference model, paid provider, or
+additional mandatory inference pass is introduced.
+
 ### Chat v1.1.27 — empirical 1–3 level vision study
 
 An image attachment now offers three bounded, user-controlled analysis modes:
@@ -98,7 +122,7 @@ public GGUF weights themselves are downloaded from Hugging Face.
 Only verified Google-chat sessions may call the image endpoint. The
 browser compresses a selected JPEG/PNG/WebP image and sends it when
 the user explicitly presses Send. The server caps incoming images at
-2 MB decoded, rejects oversize pixel dimensions, resizes to 384px
+8 MiB decoded, rejects images above 16 megapixels, resizes to 384px for L1
 on its longest edge, and runs only one CPU vision request at a time.
 Only a short visual description reaches the existing text LALM;
 pixels remain ephemeral and are never saved to thread history.
@@ -113,9 +137,9 @@ turned into speculative transformation stories, emotions, or symbolism.
 For reduced CPU text decoding, the local vision request now uses a concise
 factual prompt and **88 maximum output tokens** (previously 112). It may
 describe fewer fine details; no improvement in actual throughput is assumed
-without real runtime measurement. The browser retains up to **768px** before
-upload (the server fast pass uses a 384px cap), avoiding unnecessary
-1600px encoding and transfer. The original local image preview remains
+without real runtime measurement. The browser now sends the original file without canvas conversion.
+The server derives capped 384px/640px views and a conditional 768px
+source-pixel focus crop. Upload can be larger than in previous versions. The original local image preview remains
 untouched; the image bytes are never added to the persisted conversation.
 Preloaded GGUF files now resolve from the local Hub cache first, avoiding
 first-image network metadata checks; missing weights may still download from
