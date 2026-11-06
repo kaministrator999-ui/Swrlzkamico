@@ -324,7 +324,7 @@ def _ask_vision_local(image_url: str, question: str, report_phase=None, should_c
     """
     report = report_phase or (lambda _: None)
     cancelled = should_cancel or (lambda: False)
-    if analysis_levels not in (1, 2, 3):
+    if type(analysis_levels) is not int or analysis_levels not in (1, 2, 3):
         raise ValueError("VISION_LEVEL_INVALID")
 
     def check_cancel():
