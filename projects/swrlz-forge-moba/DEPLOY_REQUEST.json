@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.296",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_296_VANGUARD_REBUILT",
-  "reason": "Replace fresh Hooded Vanguard Starter Model with 17-part reconstructed anatomy, proportioned face and hair, wrapped hood and scarf, five-finger gloves, shaped steel armor, teal flowing coat panels and 11 UV-aligned 384px color/height-derived-normal/roughness material families. Preserve v11.291 original source history, saved model scenes, other starters, v11.295 Chat loft correction and all existing editor functions. Narrow factory/UV/digit test passed; sealed 327-patch artifact 8,282,034 bytes SHA-256 a43cd402283fee23e38bad664936ca766708c9598f40c6b1e450cc2dcfc5ba8d, 71 bundled assets, full assembled inline-JS syntax passed. Owner Android/Quest appearance acceptance pending. A release verifier label was corrected from face to skin after its first run failed; the measured and sealed HTML artifact is unchanged.",
-  "sourceCommit": "c87860b68c5fd4b96f0812f89e749c4903b02f64",
-  "sourceIntegritySha256": "a43cd402283fee23e38bad664936ca766708c9598f40c6b1e450cc2dcfc5ba8d"
+  "releaseVersion": "v11.297",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_297_PAINTED_UV_VANGUARD",
+  "reason": "Real §E Starter Models UV-art remaster of Hooded Vanguard, not just an image: 17 editable native parts, rounded head/jaw, filled hood crown and side wrap, draped white scarf, softer hair locks and reshaped teal coat panels. Eleven hand-composed 384px albedo atlases with conservatively derived normal and roughness maps matching actual per-part UVs; replaces older gray stripe procedural materials; original v11.296 and all saved projects, Chat tools, VR/Sheep Tag remain. Screenshot concept atlas was used as art direction not falsely treated as UV bake. One-shot 328-patch factory+UV/syntax test passed; exact source 8,299,419 bytes, SHA-256 6de05f0fb2e2d9226e4c2130a08f3420500334a2ca11b39b872056f5ad1cca40 and 71 assets. Owner mobile visual review still required.",
+  "sourceCommit": "477c983a6be80540387b3c4636f3ec8e5a6894dd",
+  "sourceIntegritySha256": "6de05f0fb2e2d9226e4c2130a08f3420500334a2ca11b39b872056f5ad1cca40"
 }
