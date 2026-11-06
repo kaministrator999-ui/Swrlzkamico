@@ -1,0 +1,33 @@
+name: One-shot §E Hooded Vanguard real loader diagnosis
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/one-shot-vanguard-browser-diag.yml'
+permissions:
+  contents: read
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 9
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install narrow headless Chromium harness
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps --only-shell chromium
+      - name: Exercise published Hooded Vanguard direct load and capture actual state
+        env:
+          SWYRL_TEST_URL: https://kamiloki-swrlz-forge-moba.static.hf.space
+        run: node projects/swrlz-forge-moba/scripts/diagnose_hooded_vanguard_load.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: vanguard-load-diagnostic
+          path: |
+            vanguard-load-diagnostic.json
+            vanguard-load-diagnostic.png
+          retention-days: 3
