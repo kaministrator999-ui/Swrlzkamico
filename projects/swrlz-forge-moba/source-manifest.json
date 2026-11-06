@@ -350,6 +350,6 @@
     "patches/v11_302_vanguard_mapped_pbr_relief.py",
     "patches/v11_303_vanguard_face_geometry_uv_portrait.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 8375417,
+  "finalSha256": "7f7be6fdee1a05589d6eed3301b6d2192a3dfee15dfa362b65b5c69d72b01419"
 }
