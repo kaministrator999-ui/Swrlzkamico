@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="swrlz-chat-version" content="1.1.27">
+  <meta name="swrlz-chat-version" content="1.1.28">
   <meta name="theme-color" content="#010812">
   <title>Chat</title>
   <style>
@@ -1376,30 +1376,23 @@
       });
       imageRemoveButton.addEventListener("click",()=>{removeSelectedImage();composerNotice("");});
       const encodeImageForVision=attachment=>new Promise((resolve,reject)=>{
-        const img=new Image();
-        img.onload=()=>{
-          try{
-            // Retain up to 768px for a conditional accuracy retry in the Space.
-// Its fast first pass still downscales to 384px on the server.
-            const scale=Math.min(1,768/Math.max(img.naturalWidth,img.naturalHeight));
-            const canvas=document.createElement("canvas");
-            canvas.width=Math.max(1,Math.round(img.naturalWidth*scale));
-            canvas.height=Math.max(1,Math.round(img.naturalHeight*scale));
-            const ctx=canvas.getContext("2d");
-            if(!ctx)throw new Error("Image conversion is unavailable.");
-            ctx.fillStyle="#ffffff";ctx.fillRect(0,0,canvas.width,canvas.height);
-            ctx.drawImage(img,0,0,canvas.width,canvas.height);
-            let dataURL="";
-            for(const quality of [.8,.65,.5]){
-              dataURL=canvas.toDataURL("image/jpeg",quality);
-              if(dataURL.length<=2600000)break;
-            }
-            if(dataURL.length>2600000)throw new Error("Image is too complex; choose a smaller picture.");
-            resolve(dataURL);
-          }catch(error){reject(error);}
+        // CLIENT → SERVER: transmit original encoded file bytes unchanged.
+        // Resizing and optional detail crops belong to the server only.
+        // Never reconstruct the image through canvas or JPEG conversion.
+        const file=attachment?.file;
+        if(!file||!["image/jpeg","image/png","image/webp"].includes(file.type)||
+           !file.size||file.size>8*1024*1024){
+          reject(new Error("Choose a valid JPEG, PNG, or WebP under 8 MB."));return;
+        }
+        const reader=new FileReader();
+        reader.onload=()=>{
+          if(typeof reader.result==="string"&&reader.result.startsWith("data:"+file.type+";base64,"))
+            resolve(reader.result);
+          else reject(new Error("Unable to read the original image bytes."));
         };
-        img.onerror=()=>reject(new Error("Unable to read this image."));
-        img.src=attachment.url;
+        reader.onerror=()=>reject(new Error("Unable to read the original image bytes."));
+        reader.onabort=()=>reject(new Error("Image file read was cancelled."));
+        reader.readAsDataURL(file);
       });
       const visionSleep=(ms,signal)=>new Promise((resolve,reject)=>{
         if(signal.aborted){reject(new Error("Stopped waiting for image analysis."));return;}
@@ -1410,6 +1403,7 @@
       const requestVisionDescription=async(attachment,question,activity)=>{
         activity.update("PREPARING");
         const image=await encodeImageForVision(attachment);
+        activity.note("Original image preserved for server-side processing.");
         const body=JSON.stringify({image,question:question||"Describe this image.",
           analysisLevels:Math.max(1,Math.min(3,Number(attachment.analysisLevels)||2))});
         let jobId="",reconnects=0,pollingErrors=0;
@@ -1704,7 +1698,7 @@
       const workArtifactList = document.getElementById("workArtifactList");
       const workEvidenceCount = document.getElementById("workEvidenceCount");
       const workEvidenceList = document.getElementById("workEvidenceList");
-      const SWRLZ_CHAT_VERSION = "1.1.27";
+      const SWRLZ_CHAT_VERSION = "1.1.28";
       const navTraceId = "chat-ui-" + Date.now().toString(36) + "-" + crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
       let lastUiStatusCamera = "";
       let companionState="idle";
