@@ -1,3 +1,11 @@
+## 2026-11-05 — §C adaptive image detail v12 (source candidate)
+
+- **Evidence:** Four saved vision-associated turns (three unique message IDs) in the uploaded Chat JSON all passed generic turnaround descriptions. v11 removed the second LALM paraphrase, but the analyzer itself failed to identify purple clothing and crystal staff. The export is parsed from saved text, not an authenticated model-origin receipt.
+- **Change:** browser retains up to 768px transient upload; 384px / 88-token fast pass remains unchanged for most images. The vision worker detects a generic multi-view character/reference-sheet description *from model text only* and runs at most one optional 640px / 144-token pass on the same pinned local CPU model, using the retained source pixels. Select refined response only when it adds concrete visual descriptors. Preserve short original if the optional pass fails or remains generic. No mage-specific facts are hardcoded.
+- **Truth/telemetry:** report actual DETAIL_RETRY, DETAIL_PREFILL and DETAIL_DECODING states; continue exact description handoff and progress provenance. No fabricated completion percentages, no external inference, no extra persistent image bytes. Cancellation and one-active/one-waiting CPU queue unaffected.
+- **Costs:** conditional fallback can run much longer than 10 seconds and may still miss fine print; image resolution is not proof of visual understanding. This should be accepted on a real device against the Little Crystal Mage benchmark, inspecting latency and the resulting direct description.
+- **Verification:** targeted regression tests cover the user's exported generic outputs, fast-path bypass, two-pass dimensions, fallback selection and failure safety. Full live inference acceptance is separate from source tests and guarded publication.
+
 ## 2026-11-05 — §C fast vision quality v11 (source candidate; live acceptance pending)
 
 - **User result:** After v10 deployment, the same Little Crystal Mage image completed in about **10 seconds** on a phone, compared with earlier multi-minute runs. The response was unusably generic ("presence of a head", "clothing items are visible") despite a visually distinctive turnaround sheet. The exact analyzer-to-§C text handoff was not supplied, so we cannot yet attribute all omissions to the vision model versus the secondary text model.
