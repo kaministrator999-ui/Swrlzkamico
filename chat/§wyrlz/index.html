@@ -3854,7 +3854,10 @@
           if(attachment){
             activity=startVisionActivity(attachment,draftText);
             activity.onAccepted=async()=>{
-              if(visionDraftHeld)return;
+              // A local pending card is staged immediately on Send. A durable
+              // thread is still created only after the vision server accepts
+              // the job; repeat accept/poll reconnects are idempotent.
+              if(activity.threadAccepted)return;
               if(draftThread!==originalDraft||activeThreadId!==originalThreadId){
                 throw new Error("Chat changed before image upload was accepted. Restore the original conversation and retry.");
               }
@@ -3888,13 +3891,19 @@
                 // Retain the same live progress card inside the new thread.
                 messageList.appendChild(activity.root);
               }
-              // This is a pending activity, not a confirmed saved Chat turn.
-              visionDraftHeld=true;
-              if(prompt.value.trim()===draftText)prompt.value="";
-              if(selectedImage===attachment)selectedImage=null;
-              updateImagePreview();resizeComposer();composerNotice("");
+              // The thread was acknowledged, but the vision analysis and
+              // actual user message are still pending.
+              activity.threadAccepted=true;
             };
-            composerNotice("");
+            // Display the submitted request and preview in the pending chat
+            // activity card immediately. Do not leave a duplicate in the
+            // composer while the file uploads or the CPU worker analyzes it.
+            // None of this is called a saved user message yet, and failures
+            // restore the exact draft and original attachment.
+            visionDraftHeld=true;
+            if(prompt.value.trim()===draftText)prompt.value="";
+            if(selectedImage===attachment)selectedImage=null;
+            updateImagePreview();resizeComposer();composerNotice("");
             const description=await requestVisionDescription(attachment,draftText,activity);
             text=(draftText||"Describe this image.")+VISION_START+description+VISION_END;
             if(text.length>131072)throw new Error("The combined image analysis is too long.");
