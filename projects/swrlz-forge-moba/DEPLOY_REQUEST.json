@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.286",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_286_SHEEP_HEAD_MOTION_DIAGNOSTICS",
-  "reason": "Finalize v11.286 Quest Sheep Tag headset motion/idle Nerd Stats: publish the exact sealed 317-patch HTML and corrected Hugging Face Space listing/title, README and ROADMAP. Earlier HF upload succeeded but listing still showed v11.285; no runtime HTML change since SHA-256 seal dc2ff5a05ae376fac7995195d56384979b10e6e74bcbda8decc655eec250f564. Quest 2 acceptance pending.",
-  "sourceCommit": "f88e90ca874b0f2b3c0c6d73f3b618b84617a36a",
-  "sourceIntegritySha256": "dc2ff5a05ae376fac7995195d56384979b10e6e74bcbda8decc655eec250f564"
+  "releaseVersion": "v11.287",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_287_CLIFF_SCULPT_PBR",
+  "reason": "Owner-directed real repo sculpting and materialization of Plain Hand Base as Cliff Hand per owner-provided turnaround reference and supplied ten-map PBR ZIP. Generate independently editable 360-degree weathered stone palm, fingers, thumb and wrist, layered chiseled rock plates, dark crevices, selective moss and dirt. Apply owner-derived atlas normal/roughness/AO/base/height maps at actual native rigged MeshStandardMaterial site. Keep 17-joint pose and open/fist timeline; leave independent Rocky Anime Hand, Arcane Gloves, user saves, Sheep Tag head-motion metrics, and other projects unchanged. Targeted sealed release run 42166234333 SUCCESS: 318 patches, 70 assets, exact 8,215,967 HTML bytes, SHA-256 7681d6ec830515d6a0b5feb322b77a82cf33097e89fc8796c01adbbfc46a915c; assembled and standalone JS syntax passed. Owner Android/Quest visual and rig acceptance pending.",
+  "sourceCommit": "f72728b23a5abe68833f80c71507d291d6223e88",
+  "sourceIntegritySha256": "7681d6ec830515d6a0b5feb322b77a82cf33097e89fc8796c01adbbfc46a915c"
 }
