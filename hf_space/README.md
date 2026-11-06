@@ -12,6 +12,24 @@ preload_from_hub:
 
 This is a migration candidate, not a claim of production Chat parity. The real R39 engine and its accepted overlays are staged from the canonical repository. The model is reconstructed on startup from 54 SHA-verified source chunks pinned to the exact source commit. A full clean-room Chat transport, account persistence, and queue migration require separate acceptance.
 
+### Chat v1.1.25 — direct observation fidelity
+
+The fast local vision path stays pinned at 384px, 88 tokens, one CPU worker,
+and build-preloaded Q8_0 weights. Visual requests now prompt for *distinctive,
+observable specifics* (named objects, colors, attire, arrangements and legible
+labels) instead of generic categories. For basic "what do you see in this image"
+questions, Station receives the analyzer's exact factual description through
+the existing Chat model dispatcher with a VISION_DESCRIPTION_DIRECT status
+event; §C does **not** paraphrase it through the separate text model.
+The reply identifies its origin as local vision analysis, not a direct
+inspection by the text-only §C model. For open-ended design, reasoning, or
+follow-up questions, normal Chat reasoning remains enabled with stronger
+instructions to preserve every supported detail. This prevents a second
+model from inventing filler or discarding detail, but **does not prove the
+vision model's own observations are correct or detailed**. The saved
+vision-analysis handoff in Download Chat JSON remains unmodified.
+No image, authorization, paid-provider, or provenance changes.
+
 ## Local image understanding for §wyrlz Chat (no paid inference API)
 
 Chat's primary LALM remains text-only. **Image** uses a CPU-based local
