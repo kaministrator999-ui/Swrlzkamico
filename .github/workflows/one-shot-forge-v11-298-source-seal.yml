@@ -1,0 +1,56 @@
+name: One-shot §E v11.298 real-image UV source seal
+# Run only on creation of this workflow, not on normal §E commits.
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/one-shot-forge-v11-298-source-seal.yml'
+permissions:
+  contents: read
+jobs:
+  seal:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 17
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Verify native UV mapping and source-derived illustration JPEG
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/hooded_vanguard_real_uv_v11_298.js
+          node projects/swrlz-forge-moba/tests/hooded_vanguard_real_uv_v11_298.cjs
+      - name: Assemble and calculate exact §E source SHA-256
+        run: |
+          python - <<'PY'
+          import hashlib,json,subprocess,sys
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          m=json.loads((root/'source-manifest.json').read_text('utf8'))
+          assert m['name']=='§wyrl§ Engine v11.298'
+          assert len(m['patches'])==329
+          assert m['patches'][-1]=='patches/v11_298_actual_reference_uv_atlas.py'
+          assert m['finalBytes']==0 and m['finalSha256']==''
+          out=Path('/tmp/se298-real-image-art')
+          subprocess.run([sys.executable,str(root/'build_space.py'),'--output',str(out)],check=True)
+          raw=(out/'index.html').read_bytes()
+          assert raw==(out/'modeler.html').read_bytes()
+          html=raw.decode('utf8')
+          for token in (
+           'SWYRL_ENGINE_DEPLOY_MARKER: V11_298_ACTUAL_IMAGE_UV_ATLAS',
+           'const se298AtlasDataURL="data:image/jpeg;base64,',
+           'd34f6afc422cbfafe54dfbbd420752b12d37967654ea5c1443c031f3b6720b27',
+           '<strong>Hooded Vanguard · Real Artwork UV</strong>',
+           "window.SWRLZ_FORGE_BUILD={version:'v11.298'",
+          ):assert token in html,token
+          receipt=json.loads((out/'SOURCE.json').read_text('utf8'))
+          assert len(receipt['assets'])==71
+          subprocess.run([sys.executable,str(root/'scripts/check_inline_js_syntax_v11_266.py'),
+           str(out/'index.html')],check=True)
+          print('SE298_EXACT_MEASUREMENT='+json.dumps({
+           'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest(),
+           'patches':len(receipt['patches']),'assets':len(receipt['assets']),
+           'actualArtworkSha256':'d34f6afc422cbfafe54dfbbd420752b12d37967654ea5c1443c031f3b6720b27'
+          },sort_keys=True),flush=True)
+          PY
