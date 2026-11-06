@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="swrlz-chat-version" content="1.1.25">
+  <meta name="swrlz-chat-version" content="1.1.26">
   <meta name="theme-color" content="#010812">
   <title>Chat</title>
   <style>
@@ -1357,9 +1357,9 @@
         const img=new Image();
         img.onload=()=>{
           try{
-            // Match the CPU vision 384px cap before encoding and transfer.
-            // Resize before transfer to avoid shipping/encoding unused pixels.
-            const scale=Math.min(1,384/Math.max(img.naturalWidth,img.naturalHeight));
+            // Retain up to 768px for a conditional accuracy retry in the Space.
+// Its fast first pass still downscales to 384px on the server.
+            const scale=Math.min(1,768/Math.max(img.naturalWidth,img.naturalHeight));
             const canvas=document.createElement("canvas");
             canvas.width=Math.max(1,Math.round(img.naturalWidth*scale));
             canvas.height=Math.max(1,Math.round(img.naturalHeight*scale));
@@ -1598,6 +1598,10 @@
             else if(observed==="PREFILL")status.textContent="CPU encoding image and preparing the first text chunk…";
             else if(observed==="DECODING")status.textContent="Vision model generating description… first text after "+
                 durationText(timing.firstChunkSeconds??0);
+            else if(observed==="DETAIL_RETRY")status.textContent="Initial description lacked specifics; checking retained image details…";
+            else if(observed==="DETAIL_PREFILL")status.textContent="Refining visual details from a higher-resolution image…";
+            else if(observed==="DETAIL_DECODING")status.textContent="Generating a more specific visual description… first text after "+
+                durationText(timing.firstChunkSeconds??0);
             else status.textContent=labels[phase]||"";
             if(phase==="RESPONDING")cancel.hidden=true;
           }
@@ -1644,7 +1648,7 @@
       const workArtifactList = document.getElementById("workArtifactList");
       const workEvidenceCount = document.getElementById("workEvidenceCount");
       const workEvidenceList = document.getElementById("workEvidenceList");
-      const SWRLZ_CHAT_VERSION = "1.1.25";
+      const SWRLZ_CHAT_VERSION = "1.1.26";
       const navTraceId = "chat-ui-" + Date.now().toString(36) + "-" + crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
       let lastUiStatusCamera = "";
       let companionState="idle";
