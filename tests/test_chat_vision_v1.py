@@ -361,6 +361,9 @@ with patch.object(vision, "_prepare_image", lambda x: x), patch.object(vision, "
     assert len(done["levelRecords"]) == 1
     assert done["levelRecords"][0]["level"] == 1
     assert done["selectedLevel"] == 1
+    assert done["sourceWidth"] == 16 and done["sourceHeight"] == 16
+    assert done["sourceBytes"] == len(jpeg)
+    assert done["originalBytesPreserved"] is True
     # Status reflects only server-read original dimensions, never a guessed
     # pixel size or a fabricated verified visual recognition score.
     assert done["done"] is True
