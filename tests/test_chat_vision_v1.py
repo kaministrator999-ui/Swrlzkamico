@@ -742,4 +742,47 @@ assert identities[-1]["activeVisionModel"] == vision.MODEL_REPO
 assert identities[-1]["activeVisionRevision"] == vision.MODEL_REVISION
 assert identities[-1]["activeVisionProjector"] == vision.PROJECTOR_FILE
 
+# Regression for a detailed crop paragraph that previously ended mid-word
+# at the decoder's 128-token limit. Only a real finish_reason="length"
+# should flag truncation; other finish reasons must not be mislabeled.
+class RegionFinishModel:
+    def __init__(self):
+        self.calls = []
+    def create_chat_completion(self, **kwargs):
+        self.calls.append(kwargs)
+        index = len(self.calls)
+        prompt = kwargs["messages"][0]["content"][0]["text"]
+        if index == 1:
+            response = "Character turnaround reference sheet with four views."
+        elif index == 4:
+            response = "A purple hooded mage holds a staff and has a crescent"
+        elif index == 6:
+            response = "A mage in a purple coat holding a staff."
+        else:
+            response = "Purple cloak, gold trim, crystal staff."
+        yield {"choices": [{"delta": {"content": response}}]}
+        yield {"choices": [{"delta": {},
+                            "finish_reason": "length" if index == 4 else "stop"}]}
+
+finish_model = RegionFinishModel()
+finish_stages = []
+with patch.object(vision, "_load_local_model", return_value=finish_model):
+    limited = vision._ask_vision_local(
+        reference_encoded, "Describe the mage.",
+        report_phase=lambda phase, **fields: finish_stages.append((phase, fields)),
+    )
+assert len(finish_model.calls) == 6
+assert "at 128-token limit; description may be incomplete" in limited
+assert "crescent" in limited
+crop_snapshots = [
+    f["spatialRegionRecords"] for _, f in finish_stages
+    if "spatialRegionRecords" in f
+]
+assert crop_snapshots
+assert sum(bool(item.get("tokenLimitReached")) for item in crop_snapshots[-1]) == 1
+assert crop_snapshots[-1][2]["finishReason"] == "length"
+assert all("at most 55 words" in call["messages"][0]["content"][0]["text"]
+           for call in finish_model.calls[1:5])
+assert not crop_snapshots[-1][0]["tokenLimitReached"]
+
 print("Chat vision local CPU: authenticated boundaries, no paid provider, concurrency and mocked inference and export handoff PASS")
