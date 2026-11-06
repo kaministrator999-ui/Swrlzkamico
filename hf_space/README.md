@@ -36,7 +36,7 @@ public GGUF weights themselves are downloaded from Hugging Face.
 Only verified Google-chat sessions may call the image endpoint. The
 browser compresses a selected JPEG/PNG/WebP image and sends it when
 the user explicitly presses Send. The server caps incoming images at
-2 MB decoded, rejects oversize pixel dimensions, resizes to 512px
+2 MB decoded, rejects oversize pixel dimensions, resizes to 384px
 on its longest edge, and runs only one CPU vision request at a time.
 Only a short visual description reaches the existing text LALM;
 pixels remain ephemeral and are never saved to thread history.
@@ -49,10 +49,10 @@ shapes, colors, and accessories. The downstream text LALM receives an explicit
 grounding reminder that the vision description is fallible and must not be
 turned into speculative transformation stories, emotions, or symbolism.
 For reduced CPU text decoding, the local vision request now uses a concise
-factual prompt and **112 maximum output tokens** (previously 192). It may
+factual prompt and **88 maximum output tokens** (previously 192). It may
 describe fewer fine details; no improvement in actual throughput is assumed
-without real runtime measurement. The browser downscales to **512px** before
-upload (matching the existing server's 512px cap), avoiding unnecessary
+without real runtime measurement. The browser downscales to **384px** before
+upload (matching the existing server's 384px cap), avoiding unnecessary
 1600px encoding and transfer. The original local image preview remains
 untouched; the image bytes are never added to the persisted conversation.
 Preloaded GGUF files now resolve from the local Hub cache first, avoiding
