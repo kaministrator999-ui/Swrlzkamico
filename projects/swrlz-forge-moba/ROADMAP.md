@@ -1,3 +1,9 @@
+## §E v11.293 — §c character geometry and visible editor work (candidate)
+
+Negotiated Chat mesh tools add curved lofts, open lathe surfaces and native framing. Reviewed plans support 64 operations, painted between edits with named native progress; snapshots retain the backward-compatible 48-row cap and truthful full totals. Closing Chat, Stop and intervening edits halt subsequent work. Native persistence, scratch authority and history remain in place.
+
+Preserves the latest Cliff Hand, Hooded Vanguard, project picker, XR and particle changes. The paired Chat source also repairs interrupted-stream delivery, grounded no-edit inspection, bounded error reporting and heartbeat CAS retries. Source seal, verification and deployment evidence are recorded in [the checkpoint](docs/CHAT_CHARACTER_TOOLS_V11_293.md). Actual mage construction and owner device acceptance are separate evidence.
+
 ## §E v11.292 · Cliff Hand: wrist-only moss and PBR knuckles (2026-11-06)
 
 The owner's real-device gauntlet screenshot showed too much green moss on the palm and fingers, and insufficient knuckle definition. Only the existing **Starter Models → Plain Hand Base · Smooth Cliff Hand** material changes: clean sandstone covers the palm, thumb and fingers; original mossy stone is composited through a feathered mask over the **lowest ~23% of the wrist/gauntlet**. Four knuckle-shaped mineral ridges are drawn into matching albedo, OpenGL normal and AO map regions to suggest raised chiseled rock under light, **not as new 3D objects**. The original local 384px-per-tile source atlas remains unchanged; four lightweight CanvasTextures are derived once when the owner starts this hand. Original textured crack geometry, the single connected gauntlet surface, rig, saved projects and separate **Hooded Vanguard v11.291** remain intact.

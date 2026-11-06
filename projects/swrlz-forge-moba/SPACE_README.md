@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.292
+title: §wyrl§ Engine v11.293
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,12 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.293 — §c character geometry and visible editor work (candidate)
+
+Negotiated Chat mesh tools add curved lofts, open lathe surfaces and native framing. Reviewed plans support 64 operations, painted between edits with named native progress; snapshots retain the backward-compatible 48-row cap and truthful full totals. Closing Chat, Stop and intervening edits halt subsequent work. Native persistence, scratch authority and history remain in place.
+
+Preserves the latest Cliff Hand, Hooded Vanguard, project picker, XR and particle changes. The paired Chat source also repairs interrupted-stream delivery, grounded no-edit inspection, bounded error reporting and heartbeat CAS retries. Source seal, verification and deployment evidence are recorded in [the checkpoint](docs/CHAT_CHARACTER_TOOLS_V11_293.md). Actual mage construction and owner device acceptance are separate evidence.
 
 ## §E v11.292 · Cliff Hand: wrist-only moss and PBR knuckles (2026-11-06)
 
