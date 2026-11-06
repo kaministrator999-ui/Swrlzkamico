@@ -18,7 +18,7 @@ def main():
     args = parser.parse_args()
     manifest = json.loads((ROOT / "source-manifest.json").read_text())
     assert manifest["name"] == "§wyrl§ Engine v11.294"
-    assert manifest["finalArtifact"] == "swyrl_engine_v11_293.html"
+    assert manifest["finalArtifact"] == "swyrl_engine_v11_294.html"
     assert len(manifest["patches"]) == 325
     assert manifest["patches"][-2:] == ["patches/v11_293_chat_character_tools.py", "patches/v11_294_vanguard_socket_loader_fix.py"]
     assert isinstance(manifest["finalBytes"], int) and manifest["finalBytes"] > 0
