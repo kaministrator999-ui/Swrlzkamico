@@ -345,6 +345,6 @@
     "patches/v11_297_painted_uv_vanguard.py",
     "patches/v11_298_actual_reference_uv_atlas.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 8319487,
+  "finalSha256": "f9faf29428cfceb28cd073a2ceadd5c0bc96e1f208ca9068c07e311be9888aa7"
 }
