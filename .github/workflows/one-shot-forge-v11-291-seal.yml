@@ -43,3 +43,5 @@ jobs:
         run: |
           python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/v11_291_index.html
           node --check projects/swrlz-forge-moba/runtime/hooded_vanguard_v11_291.js
+      - name: Verify sealed 322-patch release, JS syntax and all packaged assets
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_291_release.py --output /tmp/swrlz-v11-291-final
