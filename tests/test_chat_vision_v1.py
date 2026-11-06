@@ -428,7 +428,7 @@ assert "NOT transformation stages" in grounded["prompt"]
 assert "FALLIBLE textual description" in grounded["prompt"]
 assert input_payload["prompt"] == saved
 direct = namespace["_direct_vision_description"]
-assert direct(input_payload) is None  # Not a generic direct identification question.
+assert direct(input_payload) is not None  # This is an intentional direct image-description question.
 direct_user = "What do you see in this picture?" + vision.VISION_START + observed + vision.VISION_END
 direct_response = direct({"prompt": direct_user, "history": []})
 assert isinstance(direct_response, str)
