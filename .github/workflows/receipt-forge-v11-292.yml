@@ -1,0 +1,67 @@
+name: §E v11.292 Wrist-only Moss and Rock Knuckles source receipt
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/receipt-forge-v11-292.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 17
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test four painted stone knuckles, lower wrist mask, and PBR material hooks
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/cliff_knuckle_wrist_moss_v11_292.js
+          node projects/swrlz-forge-moba/scripts/test_v11_292_cliff_material.cjs
+      - name: Assemble 323-patch engine and calculate exact source integrity
+        run: |
+          python - <<'PY'
+          import hashlib,json,subprocess,sys
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          f=root/'source-manifest.json'
+          m=json.loads(f.read_text('utf8'))
+          assert m['name']=='§wyrl§ Engine v11.292'
+          assert len(m['patches'])==323
+          assert m['patches'][-2:] == [
+            'patches/v11_291_hooded_vanguard_materials.py',
+            'patches/v11_292_cliff_knuckle_wrist_moss.py']
+          m['finalBytes']=0;m['finalSha256']=''
+          f.write_text(json.dumps(m,ensure_ascii=False),encoding='utf8')
+          subprocess.run([sys.executable,str(root/'build_space.py'),'--output','/tmp/se292'],check=True)
+          out=Path('/tmp/se292');raw=(out/'index.html').read_bytes()
+          assert raw==(out/'modeler.html').read_bytes()
+          html=raw.decode('utf8')
+          for target in (
+            'SWYRL_ENGINE_DEPLOY_MARKER: V11_292_CLIFF_WRIST_MOSS_KNUCKLES',
+            "window.SWRLZ_FORGE_BUILD={version:'v11.292'",
+            'function se292WristMossKnuckleMaterial(part){',
+            'function se292DrawKnuckleRelief(ctx,kind){',
+            'function se292PaintAtlas(img){',
+            "mat=part.cliffPBR?.atlas==='cliff_pbr_atlas_384'?se292WristMossKnuckleMaterial(part):",
+            'model.parts=[stone];model.meshGroups=[];',
+            'function se291HeroMaterial(part){',
+            'data-project-template="hooded-vanguard"',
+          ):
+           assert target in html,target
+          receipt=json.loads((out/'SOURCE.json').read_text('utf8'))
+          assert len(receipt['patches'])==323
+          assert len(receipt['assets'])==71
+          assert 'assets/cliff-hand/cliff_pbr_atlas_384.jpg' in receipt['assets']
+          print('SE292_SHA256='+hashlib.sha256(raw).hexdigest())
+          print('SE292_BYTES='+str(len(raw)))
+          print('SE292_PATCHES='+str(len(receipt['patches'])))
+          print('SE292_ASSETS='+str(len(receipt['assets'])))
+          PY
+      - name: Parse assembled engine JavaScript
+        run: python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se292/index.html
