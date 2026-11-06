@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.297",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_297_PAINTED_UV_VANGUARD",
-  "reason": "Real §E Starter Models UV-art remaster of Hooded Vanguard, not just an image: 17 editable native parts, rounded head/jaw, filled hood crown and side wrap, draped white scarf, softer hair locks and reshaped teal coat panels. Eleven hand-composed 384px albedo atlases with conservatively derived normal and roughness maps matching actual per-part UVs; replaces older gray stripe procedural materials; original v11.296 and all saved projects, Chat tools, VR/Sheep Tag remain. Screenshot concept atlas was used as art direction not falsely treated as UV bake. One-shot 328-patch factory+UV/syntax test passed; exact source 8,299,419 bytes, SHA-256 6de05f0fb2e2d9226e4c2130a08f3420500334a2ca11b39b872056f5ad1cca40 and 71 assets. Owner mobile visual review still required. A packaging-only verifier assertion for project source.version was corrected from 11.296 to 11.297; artifact SHA/bytes are unchanged.",
-  "sourceCommit": "6c61ffcdef0ee37d8703eb735c64770fd387d38a",
-  "sourceIntegritySha256": "6de05f0fb2e2d9226e4c2130a08f3420500334a2ca11b39b872056f5ad1cca40"
+  "releaseVersion": "v11.298",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_298_ACTUAL_IMAGE_UV_ATLAS",
+  "reason": "Actually map the generated Hooded Vanguard texture image pixels to the 17 native editable meshes in Starter Models, rather than procedurally imitating the illustration. Cropped genuine illustrated surfaces for face, hair, hood, scarf, uniform, armor, pauldrons, teal coat, leather, gloves, boots to one 512x384 image texture with 11 native UV tiles. Exact JPEG SHA-256 d34f6afc422cbfafe54dfbbd420752b12d37967654ea5c1443c031f3b6720b27 verified from 4 GitHub source chunks. Native factory, UV and material-regression test passed; 329 patches, sealed 8,319,487-byte HTML SHA-256 f9faf29428cfceb28cd073a2ceadd5c0bc96e1f208ca9068c07e311be9888aa7, 71 packaged static assets, assembled JS parsed. Only fresh Vanguard starter changed, no existing saved models, other starters, Chat, VR or Sheep Tag. The image is a mobile-resolution remap, not a full-resolution topology-perfect UV bake; owner device visual acceptance pending.",
+  "sourceCommit": "4a40b0c5e507e0a14114832439d57b51642a3181",
+  "sourceIntegritySha256": "f9faf29428cfceb28cd073a2ceadd5c0bc96e1f208ca9068c07e311be9888aa7"
 }
