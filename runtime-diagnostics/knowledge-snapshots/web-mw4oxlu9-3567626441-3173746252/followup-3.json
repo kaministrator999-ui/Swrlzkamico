@@ -1,0 +1,15 @@
+{
+  "schema": "swrlz-knowledge-followup-v1",
+  "requestId": "web-mw4oxlu9-3567626441-3173746252",
+  "modelId": "700m",
+  "eventType": "KNOWLEDGE_ACQUISITION_FOLLOWUP_3",
+  "sourceRef": "d049c0216d7ae8ff2059ba363c0b93c51cc6f32c",
+  "persistedAtUnixMs": 1793953820188,
+  "diagnostic": {
+    "schema": "swrlz-knowledge-followup-v1",
+    "parentRequestId": "web-mw4oxlu9-3567626441-3173746252",
+    "turnIndex": 3,
+    "userText": "Approve §e design preview 48bf532b17af18cc38dd6454838bfd00",
+    "capturedAtUnixMs": 1793953820188
+  }
+}
