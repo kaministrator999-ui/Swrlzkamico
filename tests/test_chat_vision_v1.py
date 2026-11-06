@@ -556,7 +556,7 @@ assert "[USER QUESTION]\nWhat do you see in this picture?" in grounded["prompt"]
 assert "NOT inspect its pixels" in grounded["prompt"]
 assert "conversation history and project" in grounded["prompt"]
 assert "FALLIBLE" not in grounded["prompt"]  # The message is a new bounded handoff.
-assert "character" not in grounded["prompt"].split("[LOCAL VISION OBSERVATIONS")[1].lower() or "purple-hooded" in grounded["prompt"]
+assert "Multiple views of the same purple-hooded mage." in grounded["prompt"], "Keep the observed image detail, not just the page title"
 assert input_payload["prompt"] == saved
 
 # Simple direct-identification questions must use the selected chat model so
@@ -614,7 +614,7 @@ assert "How can we use this for our §E mage model?" in mage_inference["prompt"]
 assert "moon symbol [Center-right detail]" in mage_inference["prompt"]
 assert "For project/modeling questions" in mage_inference["prompt"]
 assert mage_payload["prompt"].endswith(vision.VISION_END)
-assert len(mage_inference["prompt"]) < len(mage_payload["prompt"]) + 1300
+assert len(mage_inference["prompt"]) < 4300, "Keep 700M inference context bounded"
 
 assert "VISION_CONTEXT_REASONING" in router_source
 assert "VISION_DESCRIPTION_DIRECT" in router_source
