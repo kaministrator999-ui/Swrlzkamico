@@ -1,4 +1,5 @@
 name: §E v11.282 sealed Rock Cliff Hand + native mesh check
+# Rerun with corrected 282 model provenance expectation
 on:
   push:
     branches: [main]
