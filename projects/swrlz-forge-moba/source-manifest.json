@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.288",
+  "name": "§wyrl§ Engine v11.289",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_288.html",
+  "finalArtifact": "swyrl_engine_v11_289.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -333,7 +333,8 @@
     "patches/v11_285_compact_project_categories.py",
     "patches/v11_286_sheep_head_motion_diagnostics.py",
     "patches/v11_287_cliff_sculpt_pbr.py",
-    "patches/v11_288_smooth_cliff_pbr.py"
+    "patches/v11_288_smooth_cliff_pbr.py",
+    "patches/v11_289_short_cliff_gauntlet.py"
   ],
   "finalBytes": 8221626,
   "finalSha256": "e9862396dd559208637d2b073155fd69b959716cb303e83519d520f44102d859"
