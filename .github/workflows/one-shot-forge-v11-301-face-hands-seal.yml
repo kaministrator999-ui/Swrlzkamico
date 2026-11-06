@@ -1,0 +1,59 @@
+name: One-shot §E v11.301 face, painted UV and neutral hands seal
+# Scoped to the updated Hooded Vanguard starter. No broader VR/game tests.
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/one-shot-forge-v11-301-face-hands-seal.yml'
+permissions:
+  contents: read
+jobs:
+  seal:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Exercise face mesh, every native UV painting and two aligned hands
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/hooded_vanguard_stylized_pose_v11_301.js
+          node projects/swrlz-forge-moba/tests/hooded_vanguard_stylized_pose_v11_301.cjs
+      - name: Assemble and measure exact release source and bundled asset receipt
+        run: |
+          python - <<'PY'
+          import hashlib,json,subprocess,sys
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          m=json.loads((root/'source-manifest.json').read_text('utf8'))
+          assert m['name']=='§wyrl§ Engine v11.301'
+          assert m['finalArtifact']=='swyrl_engine_v11_301.html'
+          assert len(m['patches'])==332
+          assert m['patches'][-1]=='patches/v11_301_vanguard_face_art_wrist_pose.py'
+          assert m['finalBytes']==0 and m['finalSha256']==''
+          out=Path('/tmp/swrlz-v11-301')
+          subprocess.run([sys.executable,str(root/'build_space.py'),'--output',str(out)],check=True)
+          raw=(out/'index.html').read_bytes()
+          assert raw==(out/'modeler.html').read_bytes()
+          html=raw.decode('utf8')
+          for token in (
+            'SWYRL_ENGINE_DEPLOY_MARKER: V11_301_VANGUARD_FACE_PAINT_HAND_ALIGNMENT',
+            "window.SWRLZ_FORGE_BUILD={version:'v11.301'",
+            'se300DrawArtwork=function(_reference,family,canvas){',
+            'correctedHandAlignment:true,photographicCutoutTextures:false',
+            '<strong>Hooded Vanguard · Styled Face & Neutral Hands</strong>'
+          ):
+            assert token in html,token
+          subprocess.run([sys.executable,str(root/'scripts/check_inline_js_syntax_v11_266.py'),
+                          str(out/'index.html')],check=True)
+          receipt=json.loads((out/'SOURCE.json').read_text('utf8'))
+          assert receipt['sourceVersion']==m['name']
+          assert len(receipt['assets'])==71
+          print('SE301_EXACT_MEASUREMENT='+json.dumps({
+            'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest(),
+            'patches':len(receipt['patches']),'assets':len(receipt['assets']),
+            'stylizedFaceMaterialHandTestPassed':True
+          },sort_keys=True),flush=True)
+          PY
