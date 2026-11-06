@@ -127,7 +127,7 @@ assert.ok(backend.includes('MODEL_REPO = "ggml-org/SmolVLM-256M-Instruct-GGUF"')
 assert.ok(backend.includes("MTMDChatHandler"));
 assert.ok(!backend.includes("SWRLZ_VISION_API_KEY"),"no paid inference credentials needed");
 assert.ok(!backend.includes("router.huggingface.co"),"no paid inference provider calls");
-assert.match(backend,/MAX_IMAGE_BYTES = 2_000_000/);
+assert.match(backend,/MAX_IMAGE_BYTES = 8 \\* 1024 \\* 1024/);
 assert.match(backend,/def _run_vision_job\(/);
 assert.match(backend,/def vision_status\(/);
 assert.match(backend,/threading\.Thread\(/);
