@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.294",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_294_VANGUARD_SOCKET_LOAD_FIX",
-  "reason": "Fix confirmed Hooded Vanguard starter launch rejection: live v11.293 mobile Chromium produced 14 native meshes / 61,476 triangles then loadProject threw 'Invalid named socket.' Root cause was stale Prism Jester named sockets/components copied by structuredClone(MODEL_ATELIER_CANONICAL_PROJECT), referring to model part IDs removed during native Vanguard generation. v11.294 clears only Hooded Vanguard's obsolete model.assemblies graph after replacing its parts, preserving mapped PBR textures, editable model, §E v11.293 Chat character tools, v11.292 Cliff Hand and all other starters. Exact 325-patch 8,261,794-byte artifact SHA-256 39088e9ae2b215246515f3e3601f0b001ed2436ab0d1e7d1d7f7f70bbfbab7fd confirmed in targeted GitHub source measurement and assembled JS syntax receipt. Final hosted launch and owner's real device appearance pending. Deployment retried after correcting the focused verifier's v11_294 artifact filename; prior deploy correctly stopped without uploading because verifier expected the v11_293 name. Verifier numeric scene version and reported patch count corrected; retesting exact unchanged v11.294 artifact.",
-  "sourceCommit": "c5dc288d3562f0357afbcef0d29349e7623b037a",
-  "sourceIntegritySha256": "39088e9ae2b215246515f3e3601f0b001ed2436ab0d1e7d1d7f7f70bbfbab7fd"
+  "releaseVersion": "v11.295",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_295_CHAT_LOFT_SURFACE_NORMALS",
+  "reason": "Correct confirmed inward triangle winding on plain Chat-authored lofts: saved ivory hair and brown wood colors were correct but the outer surface received inside-face cyan backlighting. Reverse winding and recompute outward normals only for plain atelier-chat lofts; preserve positions, colors, UVs, saved descriptors, native history, existing textured/HD/styled paths, all historical patches and the v11.294 Hooded Vanguard socket-loader fix. Sealed 326-patch artifact is 8,263,130 bytes, SHA-256 b993cd47e55d42ae32315c3ff536e6adc5a7ca6f743d4d9f9d8d458eb374e5c8; 71 asset hashes, identical index/modeler, assembled JavaScript, prior native Chat-tool cases and pinned real-Three outward-normal/preservation tests pass. Owner device appearance acceptance remains pending.",
+  "sourceCommit": "bbd4b769e53b5f9f6fd9cb9cdbf7d08a5a46c61c",
+  "sourceIntegritySha256": "b993cd47e55d42ae32315c3ff536e6adc5a7ca6f743d4d9f9d8d458eb374e5c8"
 }
