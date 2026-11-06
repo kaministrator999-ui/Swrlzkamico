@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.285",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_285_COMPACT_PROJECT_CATEGORIES",
-  "reason": "Owner Android screenshot: project picker is oversized, overlaps the right Details drawer, and model-only templates remain mixed into Starter Games. v11.285 repairs a cross-scope category initialization defect, groups model and game starters independently of Chat account startup, portals the native project modal above editor drawers, and uses a compact scrollable mobile picker. Preserves existing cards, selectors, user projects, loaders and default project preferences. Exact source and inline JS verified by dedicated §E v11.285 GitHub workflow (316 patches and 69 assets). Owner Android/Quest UI acceptance pending.",
-  "sourceCommit": "3bb2f7c21fdd6de933491aa08e031025976b9281",
-  "sourceIntegritySha256": "c1d2134960ec4358fb907e3ceb1e4e0358ebede4970182eeb31ef81dbc2ead88"
+  "releaseVersion": "v11.286",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_286_SHEEP_HEAD_MOTION_DIAGNOSTICS",
+  "reason": "Owner Quest 2 gameplay-only head-turn lag: add Sheep Tag VR Nerd Stats pages 5/6 and 6/6 comparing head-moving versus stationary XR callback gaps, renderer draw-call averages and existing pose/raycast/camera/panel/HUD activity. Normalize HMD translation against gameplay camera-rig movement. 317-patch v11.286 build and inline JavaScript syntax verified by one-time GitHub narrow source probe; exact bytes/hash sealed. Physical Quest 2 acceptance pending.",
+  "sourceCommit": "0cde1a335151651dff5830ec05e3a2de7e0912ab",
+  "sourceIntegritySha256": "dc2ff5a05ae376fac7995195d56384979b10e6e74bcbda8decc655eec250f564"
 }
