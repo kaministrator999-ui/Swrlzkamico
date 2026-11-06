@@ -523,43 +523,100 @@ assert vision.vision_handoff_from_message({"role": "user", "text": question + vi
 # verified inference receipt. The same parser works for older image chats.
 assert analysis["isVerifiedVisionModelReceipt"] is False
 
-# Grounding is added to the inference-only copy after classification; neither
-# the export nor the stored prompt is rewritten by the second model's policy.
+# The stored user turn and exported full vision record remain unchanged.
+# Only the inference-time copy is shortened and interpreted in context.
 import ast
 import typing
 router_source = (SOURCE.parent / "model_router.py").read_text(encoding="utf-8")
 tree = ast.parse(router_source)
 selected = [node for node in tree.body if isinstance(node, (ast.Assign, ast.FunctionDef)) and (
-    isinstance(node, ast.FunctionDef) and node.name in {"_ground_vision_handoff", "_direct_vision_description"}
-    or isinstance(node, ast.Assign) and any(isinstance(target, ast.Name) and target.id in {"_VISION_START","_VISION_END"} for target in node.targets)
+    isinstance(node, ast.FunctionDef) and node.name in {
+        "_ground_vision_handoff", "_direct_vision_description",
+        "_vision_evidence_digest",
+    }
+    or isinstance(node, ast.Assign) and any(
+        isinstance(target, ast.Name) and target.id in {"_VISION_START", "_VISION_END"}
+        for target in node.targets)
 )]
 namespace = {"Any": typing.Any, "re": __import__("re")}
 exec(compile(ast.Module(body=selected, type_ignores=[]), "<vision-grounding>", "exec"), namespace)
 ground = namespace["_ground_vision_handoff"]
+direct = namespace["_direct_vision_description"]
+digest = namespace["_vision_evidence_digest"]
+
 unchanged = {"prompt": "Hello", "history": []}
 assert ground(unchanged) is unchanged
-input_payload = {"prompt": saved, "history": []}
+history = [{"role": "user", "text": "We are making a mage model in §E."}]
+input_payload = {"prompt": saved, "history": history, "pinnedContext": ["§E modeler"]}
 grounded = ground(input_payload)
 assert grounded is not input_payload
-assert grounded["prompt"].endswith(saved)
-assert "NOT transformation stages" in grounded["prompt"]
-assert "FALLIBLE textual description" in grounded["prompt"]
+assert grounded["history"] is history
+assert grounded["pinnedContext"] is input_payload["pinnedContext"]
+assert "[USER QUESTION]\nWhat do you see in this picture?" in grounded["prompt"]
+assert "NOT inspect its pixels" in grounded["prompt"]
+assert "conversation history and project" in grounded["prompt"]
+assert "FALLIBLE" not in grounded["prompt"]  # The message is a new bounded handoff.
+assert "character" not in grounded["prompt"].split("[LOCAL VISION OBSERVATIONS")[1].lower() or "purple-hooded" in grounded["prompt"]
 assert input_payload["prompt"] == saved
-direct = namespace["_direct_vision_description"]
-assert direct(input_payload) is not None  # This is an intentional direct image-description question.
-direct_user = "What do you see in this picture?" + vision.VISION_START + observed + vision.VISION_END
-direct_response = direct({"prompt": direct_user, "history": []})
-assert isinstance(direct_response, str)
-assert "Local image analyzer's description" in direct_response
-assert direct_response.endswith(observed)
-assert direct_response.count(observed) == 1, "Never regenerate or invent description"
-assert direct({"prompt": "Describe this image" + vision.VISION_START + observed + vision.VISION_END}) is not None
-assert direct({"prompt": "What do you see in this image?" + vision.VISION_START + observed + vision.VISION_END}) is not None
-assert direct({"prompt": "Please describe this image!" + vision.VISION_START + observed + vision.VISION_END}) is not None
-assert direct({"prompt": "What do you see in this picture?\nPlease identify tiny text" + vision.VISION_START + observed + vision.VISION_END}) is None
+
+# Simple direct-identification questions must use the selected chat model so
+# the model can connect observed details with context when relevant.
+for wording in ("What do you see in this picture?", "Describe this image",
+                "What do you see in this image?",
+                "Please describe this image!",
+                "Can you tell me what's in this picture?"):
+    assert direct({"prompt": wording + vision.VISION_START + observed + vision.VISION_END}) is None
+
+raw_user = ("Show me the raw vision model output" + vision.VISION_START
+            + observed + vision.VISION_END)
+raw_output = direct({"prompt": raw_user, "history": history})
+assert isinstance(raw_output, str)
+assert "not directly inspected by §C" in raw_output
+assert raw_output.endswith(observed)
+assert raw_output.count(observed) == 1
 assert direct({"prompt": "How should I model this?" + vision.VISION_START + observed + vision.VISION_END}) is None
 assert direct({"prompt": "What do you see in this picture?" + vision.VISION_START + vision.VISION_END}) is None
 assert direct({"prompt": "What do you see in this picture?"}) is None
+
+# The actual five-crop mage evidence must survive digesting. Generic synthesis
+# and telemetry must not displace the appearance features.
+five_crops = """Local vision observations (accuracy unverified):
+Cross-region feature index (exact phrases extracted from unverified crop captions; NOT independently seen or confirmed):
+Hair: white hair [Center-left detail]
+Clothing: purple clothes [Center-left detail]; purple hoodie [Center-right detail]
+Symbols: moon symbol [Center-right detail]
+Handheld items: wand [Center detail]
+Far-left detail (source-image crop): A girl holding a wooden staff.
+Center-left detail (source-image crop): A girl with white hair and purple clothes.
+Center detail (source-image crop): A character with a wand.
+Center-right detail (source-image crop): Purple hood with a moon symbol.
+Far-right detail (source-image crop): Purple and gold item on blank background.
+Whole-image synthesis (not selected by descriptor heuristic; accuracy unverified):
+Character turnarounds.
+Region descriptions are unverified local vision-model observations."""
+summary = digest(five_crops)
+assert "white hair [Center-left detail]" in summary
+assert "purple hoodie [Center-right detail]" in summary
+assert "moon symbol [Center-right detail]" in summary
+assert "wand [Center detail]" in summary
+assert "A girl holding a wooden staff." in summary
+assert "Character turnarounds." not in summary
+assert "not selected by descriptor heuristic" not in summary
+assert len(summary) <= 2350
+
+mage_question = "How can we use this for our §E mage model?"
+mage_payload = {"prompt": mage_question + vision.VISION_START + five_crops + vision.VISION_END,
+                "history": history, "pinnedContext": ["§E modeler"]}
+mage_inference = ground(mage_payload)
+assert mage_inference["history"] is history
+assert mage_inference["pinnedContext"] == ["§E modeler"]
+assert "How can we use this for our §E mage model?" in mage_inference["prompt"]
+assert "moon symbol [Center-right detail]" in mage_inference["prompt"]
+assert "For project/modeling questions" in mage_inference["prompt"]
+assert mage_payload["prompt"].endswith(vision.VISION_END)
+assert len(mage_inference["prompt"]) < len(mage_payload["prompt"]) + 1300
+
+assert "VISION_CONTEXT_REASONING" in router_source
 assert "VISION_DESCRIPTION_DIRECT" in router_source
 assert 'direct_vision = _direct_vision_description(payload)' in router_source
 assert "payload=_ground_vision_handoff(_apply_personality(payload))" in router_source
