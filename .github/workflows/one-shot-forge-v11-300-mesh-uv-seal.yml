@@ -1,0 +1,59 @@
+name: One-shot §E v11.300 coupled Vanguard geometry and UV seal
+# Deliberately narrow source/mesh/UV test, not unrelated engine CI.
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/one-shot-forge-v11-300-mesh-uv-seal.yml'
+permissions:
+  contents: read
+jobs:
+  focused:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 13
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Exercise real edited native part topology, UVs and source art
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/hooded_vanguard_mesh_uv_v11_300.js
+          node projects/swrlz-forge-moba/tests/hooded_vanguard_mesh_uv_v11_300.cjs
+      - name: Assemble full source with ordered patches and measure exact SHA
+        run: |
+          python - <<'PY'
+          import json,hashlib,subprocess,sys
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          m=json.loads((root/'source-manifest.json').read_text('utf8'))
+          assert m['name']=='§wyrl§ Engine v11.300'
+          assert len(m['patches'])==331
+          assert m['patches'][-1]=='patches/v11_300_vanguard_mesh_uv_rebuild.py'
+          assert m['finalBytes']==0 and m['finalSha256']==''
+          out=Path('/tmp/swrlz-v11-300')
+          subprocess.run([sys.executable,str(root/'build_space.py'),'--output',str(out)],check=True)
+          raw=(out/'index.html').read_bytes()
+          assert raw==(out/'modeler.html').read_bytes()
+          text=raw.decode('utf8')
+          for token in (
+            'SWYRL_ENGINE_DEPLOY_MARKER: V11_300_VANGUARD_MESH_UV_COUPLED',
+            "window.SWRLZ_FORGE_BUILD={version:'v11.300'",
+            'function se300BuildCharacter(scene){',
+            'function se300DrawArtwork(img,name,canvas){',
+            '<strong>Hooded Vanguard · Geometry + UV Rebuild</strong>'
+          ):
+            assert token in text,token
+          subprocess.run([sys.executable,str(root/'scripts/check_inline_js_syntax_v11_266.py'),
+                          str(out/'index.html')],check=True)
+          receipt=json.loads((out/'SOURCE.json').read_text('utf8'))
+          assert receipt['sourceVersion']==m['name']
+          assert len(receipt['assets'])==71
+          print('SE300_EXACT_MEASUREMENT='+json.dumps({
+            'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest(),
+            'patches':len(receipt['patches']),
+            'assets':len(receipt['assets']),
+            'geometryUVTestPassed':True
+          },sort_keys=True),flush=True)
+          PY
