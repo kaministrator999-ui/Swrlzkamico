@@ -1,0 +1,77 @@
+name: One-shot §E v11.296 hosted Vanguard mobile-load smoke
+# Solely a one-shot single-starter browser check, not general engine CI.
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/one-shot-forge-v11-296-hosted-load.yml'
+permissions:
+  contents: read
+jobs:
+  mobile-starter:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Install minimal mobile Chromium
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps --only-shell chromium
+      - name: Verify actual hosted source, create native model, capture appearance
+        run: |
+          node --input-type=module <<'JS'
+          import { chromium } from 'playwright';
+          import { mkdirSync } from 'node:fs';
+          import assert from 'node:assert/strict';
+          const root='https://kamiloki-swrlz-forge-moba.static.hf.space/';
+          const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
+          try{
+           const page=await browser.newPage({viewport:{width:412,height:915},
+            deviceScaleFactor:1,isMobile:true,hasTouch:true,
+            userAgent:'Mozilla/5.0 (Linux; Android 16; Mobile) AppleWebKit/537.36 Chrome/133.0.0.0 Mobile Safari/537.36'});
+           const errors=[];
+           page.on('pageerror',e=>errors.push(String(e)));
+           page.on('console',m=>{
+             if(m.type()==='error'&&/Hooded Vanguard|vanguard|Invalid named socket/i.test(m.text()))
+              errors.push(m.text().slice(0,400));
+           });
+           const receiptResponse=await page.request.get(root+'SOURCE.json?smoke=v11.296', {timeout:40000});
+           assert.equal(receiptResponse.status(),200);
+           const receipt=await receiptResponse.json();
+           assert.equal(receipt.sourceVersion,'§wyrl§ Engine v11.296');
+           assert.equal(receipt.finalSha256,'a43cd402283fee23e38bad664936ca766708c9598f40c6b1e450cc2dcfc5ba8d');
+           console.log('HOSTED_SOURCE_RECEIPT_OK',receipt.finalBytes,receipt.finalSha256);
+           await page.goto(root+'index.html?project=hooded-vanguard',
+            {waitUntil:'domcontentloaded',timeout:85000});
+           await page.waitForFunction(
+             ()=>window.SWYRL_ENGINE_HOODED_VANGUARD?.status?.().successes>=1,
+             null,{timeout:85000});
+           await page.waitForTimeout(4500);
+           const state=await page.evaluate(()=>{
+             const a=window.SWYRL_ENGINE_HOODED_VANGUARD?.status?.();
+             return {a,build:window.SWRLZ_FORGE_BUILD?.version,
+              editor:!!window.SWYRL_ENGINE_MODEL_ATELIER,
+              hubOpen:document.querySelector('#projectHub')?.classList.contains('show')||false,
+              body:document.body?.innerText.slice(0,450)||''};
+           });
+           console.log('HOSTED_VANGUARD_MODEL',JSON.stringify(state));
+           assert.equal(state.build,'v11.296');
+           assert.equal(state.a.lastParts,17);
+           assert.equal(state.a.lastError,null);
+           assert(state.a.generatedAtlases>0,'mapped material runtime was not reached');
+           assert(state.editor,'Model Atelier API absent');
+           assert.equal(state.hubOpen,false,'model starter hub did not close');
+           assert.equal(errors.length,0,JSON.stringify(errors));
+           mkdirSync('vanguard-v11-296-hosted',{recursive:true});
+           await page.screenshot({path:'vanguard-v11-296-hosted/mobile.png',fullPage:false});
+           console.log('HOSTED_VANGUARD_LOADED_WITH_MATERIALS_OK');
+          } finally {await browser.close();}
+          JS
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v11-296-vanguard-mobile-preview
+          path: vanguard-v11-296-hosted/
+          retention-days: 5
