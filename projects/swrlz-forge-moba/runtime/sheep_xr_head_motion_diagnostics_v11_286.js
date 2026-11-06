@@ -30,7 +30,10 @@ se191XRHeadPose=function(...args){
   if(se286Active()&&pose?.eye&&pose?.forward){
     se286Motion.poseReads++;se286Motion.poseVersion++;
     const p=se286Motion.latest,e=pose.eye,f=pose.forward;
-    p.x=e.x;p.y=e.y;p.z=e.z;
+    // Exclude the game's accumulated camera-rig translation so sheep
+    // following is not mistaken for physical headset movement.
+    const rig=se195.referenceOffset;
+    p.x=e.x-(rig?.x||0);p.y=e.y-(rig?.y||0);p.z=e.z-(rig?.z||0);
     p.fx=f.x;p.fy=f.y;p.fz=f.z;
   }
   return pose;
