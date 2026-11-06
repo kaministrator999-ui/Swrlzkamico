@@ -4,7 +4,7 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.286",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_286_SHEEP_HEAD_MOTION_DIAGNOSTICS",
-  "reason": "Owner Quest 2 gameplay-only head-turn lag: add Sheep Tag VR Nerd Stats pages 5/6 and 6/6 comparing head-moving versus stationary XR callback gaps, renderer draw-call averages and existing pose/raycast/camera/panel/HUD activity. Normalize HMD translation against gameplay camera-rig movement. 317-patch v11.286 build and inline JavaScript syntax verified by one-time GitHub narrow source probe; exact bytes/hash sealed. Physical Quest 2 acceptance pending.",
-  "sourceCommit": "0cde1a335151651dff5830ec05e3a2de7e0912ab",
+  "reason": "Finalize v11.286 Quest Sheep Tag headset motion/idle Nerd Stats: publish the exact sealed 317-patch HTML and corrected Hugging Face Space listing/title, README and ROADMAP. Earlier HF upload succeeded but listing still showed v11.285; no runtime HTML change since SHA-256 seal dc2ff5a05ae376fac7995195d56384979b10e6e74bcbda8decc655eec250f564. Quest 2 acceptance pending.",
+  "sourceCommit": "f88e90ca874b0f2b3c0c6d73f3b618b84617a36a",
   "sourceIntegritySha256": "dc2ff5a05ae376fac7995195d56384979b10e6e74bcbda8decc655eec250f564"
 }
