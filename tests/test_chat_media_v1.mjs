@@ -5,7 +5,7 @@ import vm from "node:vm";
 
 const html=fs.readFileSync("chat/§wyrlz/index.html","utf8");
 const version=fs.readFileSync("chat/§wyrlz/VERSION.txt","utf8").trim();
-assert.equal(version,"1.1.25");
+assert.equal(version,"1.1.26");
 assert.ok(html.includes('<meta name="swrlz-chat-version" content="'+version+'">'));
 assert.ok(html.includes('const SWRLZ_CHAT_VERSION = "'+version+'";'));
 
@@ -72,7 +72,7 @@ assert.match(html,/if\(prompt\.value\.trim\(\)===draftText\)prompt\.value=""/);
 assert.match(html,/if\(selectedImage===attachment\)selectedImage=null/);
 assert.match(html,/if\(!selectedImage\)\{selectedImage=attachment;updateImagePreview\(\);\}/);
 assert.match(html,/if\(!sendAcknowledged\)\{[\s\S]*?restorePendingVisionDraft\(\)/);
-assert.match(html,/const scale=Math\.min\(1,384\/Math\.max\(img\.naturalWidth,img\.naturalHeight\)\)/);
+assert.match(html,/const scale=Math\.min\(1,768\/Math\.max\(img\.naturalWidth,img\.naturalHeight\)\)/);
 assert.ok(!html.includes("1600/Math.max(img.naturalWidth"),"do not encode unused pixels at 1600px");
 assert.match(html,/if\(attachment\)\{[\s\S]*?imagePreviews\.set\(userMessageId,attachment\.url\)/);
 
