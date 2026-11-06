@@ -1,3 +1,9 @@
+## §E v11.291 · Hooded Vanguard native material-first starter (2026-11-06)
+
+New **Starter Models → Hooded Vanguard · Material Study** recreates the owner's hooded-armored character concept as an original editable male model **without the weapon or bird**. Rather than assembling hundreds of trim objects, the generator produces one continuous male silhouette and dedicated shaped face, hood, hair, scarf, chest armor, pauldrons, coat tails, belt, boots and gloves: **14 editable native mesh entries**. Decorative chest filigree, clothing grain, gold trim, leather and scarf details are drawn onto aligned per-part 256px base-color / normal / roughness UV maps. Coat tails and shoulder armor stay independent for potential future animation.
+
+The first release is **a static visual/modeling study, not a full-body skinned rig**. The engine source and JavaScript are checked through a targeted build; real Android/Quest appearance, export/material persistence, and detailed visual fidelity require owner's acceptance. The previous 121-piece rock hand, updated connected cliff hand, Scorchette and all existing projects remain unchanged.
+
 ## §E v11.267 — Continuous galaxy wisps, not stamped smoke (2026-11-04)
 
 **Owner screenshot:** The v11.266 portal now mixes magenta and cyan properly but the textured smoke still reads as clusters of separate stamped leaves, and the long curved filaments are overwhelmed.
