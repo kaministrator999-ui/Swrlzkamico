@@ -4,6 +4,9 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/receipt-forge-v11-285.yml'
+      - 'projects/swrlz-forge-moba/patches/v11_285_compact_project_categories.py'
+      - 'projects/swrlz-forge-moba/runtime/project_hub_compact_v11_285.js'
+      - 'projects/swrlz-forge-moba/runtime/project_hub_compact_v11_285.css'
   workflow_dispatch:
 permissions:
   contents: read
