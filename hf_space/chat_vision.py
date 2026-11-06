@@ -920,6 +920,10 @@ def install(app, require_account) -> None:
                 "requestedRegions": job.get("requestedRegions", 0),
                 "completedRegions": job.get("completedRegions", 0),
                 "spatialRegionRecords": [dict(item) for item in job.get("spatialRegionRecords", [])],
+                "integratedObservation": (dict(job["integratedObservation"])
+                                          if isinstance(job.get("integratedObservation"), dict)
+                                          else None),
+                "integratedSelected": bool(job.get("integratedSelected", False)),
                 "sourceWidth": job.get("sourceWidth"),
                 "sourceHeight": job.get("sourceHeight"),
                 "sourceBytes": job.get("sourceBytes"),
