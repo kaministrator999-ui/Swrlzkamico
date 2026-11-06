@@ -601,4 +601,24 @@ for label, encoded in regions:
         assert cropped.width <= 768, (label, cropped.size)
 assert vision._detail_regions(valid, "Red background") == []
 
+# A 0/0/0 study must never imply that Level 1 won on accuracy.
+class ZeroDescriptorStudyModel:
+    def __init__(self):
+        self.calls = 0
+    def create_chat_completion(self, **kwargs):
+        captions = [
+            "Character page with various features.",
+            "A character has different views.",
+            "A character turnaround poster.",
+        ]
+        text = captions[self.calls]
+        self.calls += 1
+        return iter([{"choices": [{"delta": {"content": text}}]}])
+zero_model = ZeroDescriptorStudyModel()
+with patch.object(vision, "_load_local_model", return_value=zero_model):
+    zero_study = vision._ask_vision_local(valid, "What do you see?", analysis_levels=3)
+assert zero_model.calls == 3
+assert "All level captions returned 0 tracked descriptors" in zero_study
+assert "Level 1 remains the fallback, not a quality winner" in zero_study
+
 print("Chat vision local CPU: authenticated boundaries, no paid provider, concurrency and mocked inference and export handoff PASS")
