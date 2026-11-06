@@ -337,6 +337,6 @@
     "patches/v11_289_short_cliff_gauntlet.py",
     "patches/v11_290_cliff_gauntlet_load_material.py"
   ],
-  "finalBytes": 8224606,
-  "finalSha256": "55ad1adf274728e665ff851a6eae6cd4ea730063f2a8ad6fca21cc643c029ca5"
+  "finalBytes": 8229895,
+  "finalSha256": "b7a8ade38caa3bbc5ee2ae6319c75c8352149ac7d0aa4e37699b89e75e08709f"
 }
