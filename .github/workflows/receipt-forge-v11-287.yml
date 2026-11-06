@@ -1,0 +1,65 @@
+name: §E v11.287 Cliff Hand source calculator and targeted syntax smoke
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/receipt-forge-v11-287.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  seal-candidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate Cliff Hand JavaScript source
+        run: node --check projects/swrlz-forge-moba/runtime/cliff_hand_sculpt_pbr_v11_287.js
+      - name: Build all 318 patches and calculate exact next integrity seal
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json,hashlib,subprocess,sys
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          p=root/'source-manifest.json'
+          m=json.loads(p.read_text('utf8'))
+          assert m['name']=='§wyrl§ Engine v11.287'
+          assert m['patches'][-1]=='patches/v11_287_cliff_sculpt_pbr.py'
+          assert len(m['patches'])==318
+          # Calculation only: the build routine uses these manifest values
+          # as input constraints, so omit outdated v11.286 seal locally.
+          m['finalBytes']=0
+          m['finalSha256']=''
+          p.write_text(json.dumps(m,ensure_ascii=False),encoding='utf8')
+          subprocess.run([sys.executable,str(root/'build_space.py'),'--output','/tmp/forge-cliff-287'],check=True)
+          raw=Path('/tmp/forge-cliff-287/index.html').read_bytes()
+          assert raw==Path('/tmp/forge-cliff-287/modeler.html').read_bytes()
+          text=raw.decode('utf8')
+          for needle in [
+           'SWYRL_ENGINE_DEPLOY_MARKER: V11_287_CLIFF_SCULPT_PBR',
+           "window.SWRLZ_FORGE_BUILD={version:'v11.287'",
+           'function se286CliffHandScene(){',
+           'function se286CreateCliffMaterial(part){',
+           'return se286CliffHandScene();',
+           'if(part.cliffPBR)return se286CreateCliffMaterial(part);',
+           'Plain Hand Base · Cliff Hand',
+          ]:
+           assert needle in text,needle
+          receipt=json.loads(Path('/tmp/forge-cliff-287/SOURCE.json').read_text('utf8'))
+          assert 'assets/cliff-hand/cliff_pbr_atlas_128.jpg' in receipt['assets']
+          jpeg=Path('/tmp/forge-cliff-287/assets/cliff-hand/cliff_pbr_atlas_128.jpg').read_bytes()
+          assert jpeg.startswith(b'\\xff\\xd8\\xff') and len(jpeg)==25639
+          print('SE287_SHA256='+hashlib.sha256(raw).hexdigest())
+          print('SE287_BYTES='+str(len(raw)))
+          print('SE287_ASSETS='+str(len(receipt['assets'])))
+          print('SE287_PATCHES='+str(len(receipt['patches'])))
+          PY
+      - name: Syntax check actual assembled editor source
+        run: python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/forge-cliff-287/index.html
