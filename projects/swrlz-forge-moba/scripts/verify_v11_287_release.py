@@ -171,7 +171,7 @@ for term in (
     "function se284SortStarterCards(){",
     "window.SWYRL_ENGINE_PLAIN_HAND_BASE=Object.freeze",
     'data-project-template="plain-hand-base"',
-    "STARTER MODEL · PLAIN RIGGED ANATOMY",
+    "STARTER MODEL · CLIFF STONE / MOSS PBR / 17-BONE RIG",
     "se284OpenPlainHand(true);",
     MARKER,
     "<title>§wyrl§ Engine · Maker v11.287</title>",
