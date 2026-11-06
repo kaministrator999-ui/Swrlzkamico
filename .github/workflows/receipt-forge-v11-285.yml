@@ -1,0 +1,47 @@
+name: §E v11.285 candidate project picker integrity
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/receipt-forge-v11-285.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  candidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Calculate exact candidate artifact SHA without modifying the sealed manifest
+        run: |
+          python - <<'PY'
+          import sys,json,base64,gzip,hashlib
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          sys.path.insert(0,str(root.resolve()))
+          from build_space import load_patch
+          meta=json.loads((root/'source-manifest.json').read_text('utf8'))
+          original=gzip.decompress(base64.b64decode(''.join(
+            (root/path).read_text('utf8').strip() for path in meta['chunks'])))
+          assert hashlib.sha256(original).hexdigest()==meta['baseSha256']
+          raw=original.decode('utf8')
+          for path in meta['patches']:
+            raw=load_patch(root/path)(raw)
+          current=raw.encode('utf8')
+          assert len(current)==meta['finalBytes']
+          assert hashlib.sha256(current).hexdigest()==meta['finalSha256']
+          raw=load_patch(root/'patches/v11_285_compact_project_categories.py')(raw)
+          candidate=raw.encode('utf8')
+          Path('/tmp/se285_candidate.html').write_bytes(candidate)
+          print('SE285_CANDIDATE_BYTES='+str(len(candidate)),flush=True)
+          print('SE285_CANDIDATE_SHA256='+hashlib.sha256(candidate).hexdigest(),flush=True)
+          assert 'V11_285_COMPACT_PROJECT_CATEGORIES' in raw
+          assert 'const se284PriorGroups=se236InstallStarterGroups' not in raw
+          assert 'window.SWYRL_ENGINE_PROJECT_HUB_285=Object.freeze' in raw
+          PY
+      - name: Verify assembled JS syntax (no browser regression suite)
+        run: python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se285_candidate.html
