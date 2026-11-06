@@ -347,6 +347,6 @@
     "patches/v11_299_real_image_uv_alignment.py",
     "patches/v11_300_vanguard_mesh_uv_rebuild.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 8345062,
+  "finalSha256": "7f2612e73b63537b44840c3433705e2de54c64ff63dbdff85130dc892bec5228"
 }
