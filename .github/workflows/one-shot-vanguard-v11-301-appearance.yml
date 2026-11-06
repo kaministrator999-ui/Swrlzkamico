@@ -64,6 +64,23 @@ jobs:
            assert.equal(errors.length,0,JSON.stringify(errors));
            fs.mkdirSync('vanguard301',{recursive:true});
            await page.screenshot({path:'vanguard301/desktop-front.png',fullPage:false});
+           const canvasInfo=await page.evaluate(()=>{
+            return [...document.querySelectorAll('canvas')].map((c,i)=>{
+             const r=c.getBoundingClientRect();
+             return {i,w:c.width,h:c.height,screen:[r.x,r.y,r.width,r.height],
+              webgl:!!(c.getContext('webgl2')||c.getContext('webgl')),
+              image:c.width>250&&c.height>250?c.toDataURL('image/png'):null};
+            });
+           });
+           console.log('MODEL_CANVAS_DIAGNOSTIC',JSON.stringify(
+            canvasInfo.map(({image,...rest})=>({...rest,imageLength:image?.length||0}))));
+           let k=0;
+           for(const c of canvasInfo){
+            if(c.image&&c.image.length>3000){
+             fs.writeFileSync('vanguard301/raw-canvas-'+(k++)+'.png',
+              Buffer.from(c.image.split(',')[1],'base64'));
+            }
+           }
            console.log('HOSTED_V301_VISUAL_STATE',JSON.stringify(state));
            console.log('HOSTED_V301_VISUAL_CAPTURE_OK');
           }finally{await browser.close();}
