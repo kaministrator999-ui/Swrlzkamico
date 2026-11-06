@@ -1,0 +1,25 @@
+name: §E v11.287 sealed Cliff Hand release check
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/verify-forge-v11-287-cliff-release.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 17
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify sealed 318-patch model + atlas package and actual inline JS
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_287_release.py --output /tmp/swrlz-cliff-287
+      - name: Verify standalone Cliff Hand runtime syntax
+        run: node --check projects/swrlz-forge-moba/runtime/cliff_hand_sculpt_pbr_v11_287.js
