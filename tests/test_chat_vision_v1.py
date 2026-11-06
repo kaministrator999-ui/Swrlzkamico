@@ -63,14 +63,14 @@ assert space_readme.count('preload_from_hub:') == 1
 # Real image preprocessing must bound the pixels supplied to the CPU projector.
 import io
 from PIL import Image
-assert vision.MODEL_INPUT_SIDE == 512
+assert vision.MODEL_INPUT_SIDE == 384
 source_image = Image.new("RGB", (1024, 768), "purple")
 source_bytes = io.BytesIO()
 source_image.save(source_bytes, format="PNG")
 encoded_image = "data:image/png;base64," + base64.b64encode(source_bytes.getvalue()).decode("ascii")
 prepared = vision._prepare_image(encoded_image)
 with Image.open(io.BytesIO(base64.b64decode(prepared.partition(",")[2]))) as downsized:
-    assert downsized.size == (512, 384), downsized.size
+    assert downsized.size == (384, 288), downsized.size
 
 # A build-time cache hit must NOT incur a Hub network metadata request.
 from huggingface_hub.errors import LocalEntryNotFoundError
@@ -102,7 +102,7 @@ with patch.object(vision, "_prepare_image", lambda image: image), patch.object(v
 assert answer == "A white dog on grass."
 assert len(fake_model.calls) == 1
 assert fake_model.calls[0]["messages"][0]["content"][1]["image_url"]["url"] == valid
-assert fake_model.calls[0]["max_tokens"] == 112
+assert fake_model.calls[0]["max_tokens"] == vision.MAX_VISION_OUTPUT_TOKENS == 88
 assert fake_model.calls[0]["stream"] is True
 visual_prompt = fake_model.calls[0]["messages"][0]["content"][0]["text"]
 assert "Front, side" in visual_prompt
