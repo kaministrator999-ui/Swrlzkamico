@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.283",
+  "name": "§wyrl§ Engine v11.284",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_283.html",
+  "finalArtifact": "swyrl_engine_v11_284.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -328,8 +328,9 @@
     "patches/v11_280_mage_spell_lab.py",
     "patches/v11_281_rocky_anime_hand.py",
     "patches/v11_282_rock_cliff_hand.py",
-    "patches/v11_283_weathered_rock_hand.py"
+    "patches/v11_283_weathered_rock_hand.py",
+    "patches/v11_284_plain_hand_starter_categories.py"
   ],
-  "finalBytes": 8186789,
-  "finalSha256": "01d2bc06dab63fa444f747a02952b8bd5abd7df52709a5576c5eea46cca970b0"
+  "finalBytes": 0,
+  "finalSha256": ""
 }

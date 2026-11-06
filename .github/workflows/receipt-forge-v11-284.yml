@@ -1,0 +1,46 @@
+name: §E v11.284 Plain Hand and Starter Models candidate
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/receipt-forge-v11-284.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  candidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 17
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify plain native hand and starter card sorter
+        run: node projects/swrlz-forge-moba/scripts/smoke_v11_284_plain_hand.js
+      - name: Build candidate and check exact JavaScript syntax
+        run: |
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/se284-candidate
+          python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se284-candidate/index.html
+          python - <<'PY'
+          import json,hashlib,pathlib
+          root=pathlib.Path("projects/swrlz-forge-moba")
+          p=pathlib.Path("/tmp/se284-candidate/index.html")
+          data=p.read_bytes()
+          m=json.loads((root/"source-manifest.json").read_text("utf8"))
+          assert m["name"]=="§wyrl§ Engine v11.284"
+          assert len(m["patches"])==315
+          assert m["patches"][-1]=="patches/v11_284_plain_hand_starter_categories.py"
+          txt=data.decode("utf8")
+          for needle in ("se284PlainHandScene", "se284SortStarterCards",
+             'data-project-template="plain-hand-base"',
+             "SWYRL_ENGINE_DEPLOY_MARKER: V11_284_PLAIN_HAND_MODEL_CATEGORIES"):
+              assert needle in txt,needle
+          assets=json.loads(pathlib.Path("/tmp/se284-candidate/SOURCE.json").read_text("utf8"))["assets"]
+          print("SE284_RECEIPT "+json.dumps({"bytes":len(data),
+            "sha256":hashlib.sha256(data).hexdigest(),
+            "patches":len(m["patches"]),"assets":len(assets)}),flush=True)
+          PY
