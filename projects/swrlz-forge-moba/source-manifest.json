@@ -336,6 +336,6 @@
     "patches/v11_288_smooth_cliff_pbr.py",
     "patches/v11_289_short_cliff_gauntlet.py"
   ],
-  "finalBytes": 8221626,
-  "finalSha256": "e9862396dd559208637d2b073155fd69b959716cb303e83519d520f44102d859"
+  "finalBytes": 8224606,
+  "finalSha256": "55ad1adf274728e665ff851a6eae6cd4ea730063f2a8ad6fca21cc643c029ca5"
 }
