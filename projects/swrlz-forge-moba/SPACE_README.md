@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.289
+title: §wyrl§ Engine v11.290
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,13 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.290 · Smooth Cliff Hand gauntlet load repair and richer rock PBR (2026-11-06)
+
+Owner Android screenshot: **Starter Models → Plain Hand Base · Smooth Cliff Hand** failed before opening after the v11.289 forearm update. The cause was a hardcoded lower-bound assumption: the current v11.217 organic hand closes near **y≈0.85**, but the earlier synthetic test started near y≈0.60. The v11.289 post-process therefore rejected the valid hand under its minimum extension assertion. **v11.290 removes the failing stretch path.** The short, subtly flared stone gauntlet is now included in the same native signed-distance hand surface *before* meshing, producing **one connected rigged topology** with a clean lower rim, smooth wrist transition, original fingers/thumb/palm and no separately modeled crack or rock chunks.
+
+The original owner-provided **384px-per-tile cliff PBR atlas** remains. The material uses stronger tangent-space normal relief (1.12), darker AO crevices (1.28), non-metallic rough sandstone (0.88), subtly warm stone toning and continuous forearm UVs. A focused regression exercises the actual v11.217 anatomy field and the new connected gauntlet field, the mesh/UV contract and material selection, alongside the complete engine's syntax and source-integrity build. It does **not** replace the owner's real phone/Quest visual and rig acceptance. Other starters, saved user projects, Sheep Tag and VR controls remain unchanged. See `docs/CLIFF_GAUNTLET_LOAD_FIX_V11_290.md`.
+
 
 ## §E v11.289 · Short gauntlet forearm on the smooth Cliff Hand (2026-11-05)
 
