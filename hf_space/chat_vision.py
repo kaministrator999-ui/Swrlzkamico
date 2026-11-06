@@ -263,18 +263,18 @@ def _detail_regions(image_url: str, overview: str) -> list[tuple[str, str]]:
     if edges.width > 12 and edges.height > 12:
         edges = edges.crop((5, 5, edges.width - 5, edges.height - 5))
     edge_mean = ImageStat.Stat(edges).mean[0]
-    # Solid colors, smooth backgrounds and simple gradients do not need
-    # more model calls. This is texture detection, NOT visual accuracy.
-    if edge_mean < 7:
-        return []
-
     reference_sheet = bool(re.search(
-        r"\b(turnaround|reference sheet|character sheet|multiple views|"
-        r"front and back|side and back|different views|several views|"
-        r"design sheet|model sheet|collage|diagram|panels)\b",
+        r"\b(turnaround|reference sheet|character sheet|character page|"
+        r"character poster|multiple views|front and back|side and back|"
+        r"different views|several views|design sheet|model sheet|"
+        r"collage|diagram|panels)\b",
         overview, flags=re.I,
     ))
-    if not reference_sheet and edge_mean < 13:
+    # A sparse line-art turnaround on white can have a low average edge
+    # density despite containing many tiny features. Solid colors and smooth
+    # gradients should still be handled with a single full-image pass.
+    # This selects work; it is not a vision accuracy score.
+    if edge_mean < (2.5 if reference_sheet else 13):
         return []
 
     if reference_sheet and width > height * 1.2:
