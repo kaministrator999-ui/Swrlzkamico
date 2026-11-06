@@ -27,9 +27,9 @@ se236InstallStarterGroups=function(){
        "remove cross-scope starter-group access")
     css=(ROOT/"runtime/project_hub_compact_v11_285.css").read_text("utf8")
     js=(ROOT/"runtime/project_hub_compact_v11_285.js").read_text("utf8")
-    html=once(html,"</head>",
-       '<style id="se285ProjectHubCompact">\n'+css+'\n</style>\n</head>',
-       "compact responsive modal and layering")
+    assert "</head>" in html
+    html=html.replace("</head>",
+       '<style id="se285ProjectHubCompact">\n'+css+'\n</style>\n</head>',1)
     html=once(html,"window.SWRLZ_FORGE_BUILD=",
        js+"\nwindow.SWRLZ_FORGE_BUILD=",
        "repair native grouping after DOM initialization")
