@@ -332,6 +332,6 @@
     "patches/v11_284_plain_hand_starter_categories.py",
     "patches/v11_285_compact_project_categories.py"
   ],
-  "finalBytes": 8201529,
-  "finalSha256": "50137a071c250adb32dfad4638ae7081895323c7ccb17bad1932c15d717e24c3"
+  "finalBytes": 8201720,
+  "finalSha256": "c1d2134960ec4358fb907e3ceb1e4e0358ebede4970182eeb31ef81dbc2ead88"
 }
