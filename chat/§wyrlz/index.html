@@ -1487,7 +1487,8 @@
             continue;
           }
           pollingErrors=0;
-          const regionDetail=(state.phase==="ANALYZING"&&state.activeRegion)
+          const regionDetail=(state.phase==="ANALYZING"&&state.activeRegion&&
+            state.activeRegion!=="Whole-scene synthesis")
             ? "Inspecting "+String(state.activeRegion)+" · "+
               String(Number(state.completedRegions)||0)+"/"+
               String(Number(state.requestedRegions)||0)+" regions completed"
@@ -1497,6 +1498,8 @@
             requestedRegions:state.requestedRegions,
             completedRegions:state.completedRegions,
             spatialRegionRecords:state.spatialRegionRecords,
+            integratedObservation:state.integratedObservation,
+            integratedSelected:state.integratedSelected,
             elapsedSeconds:state.elapsedSeconds,
             phaseElapsedSeconds:state.phaseElapsedSeconds,
             inferenceStage:state.inferenceStage,
@@ -1604,8 +1607,10 @@
             for(const record of records){
               const entry=document.createElement("div");entry.className="vision-level-entry";
               const heading=document.createElement("strong");
+              const noDescriptors=records.every(item=>Number(item.descriptorCount||0)===0);
               heading.textContent="L"+record.level+" · "+record.inputMaxSide+"px · "+
-                Number(record.elapsedSeconds||0).toFixed(2)+"s"+(selected===record.level?" · selected by heuristic":"");
+                Number(record.elapsedSeconds||0).toFixed(2)+"s"+
+                (selected===record.level?(noDescriptors?" · fallback (no descriptors)":" · selected by heuristic"):"");
               const body=document.createElement("div");
               body.textContent=String(record.description||"");
               entry.append(heading,body);evidenceContents.append(entry);
@@ -1673,6 +1678,10 @@
             else if(observed==="LEVEL3_PREFILL")status.textContent="Level 3 · reading retained 768px image…";
             else if(observed==="LEVEL3_DECODING")status.textContent="Level 3 · generating deep description… first text after "+
                 durationText(timing.firstChunkSeconds??0);
+            else if(observed==="FUSION_PREPARE")status.textContent="Combining region observations into one scene…";
+            else if(observed==="FUSION_PREFILL")status.textContent="Rechecking the whole image against region observations…";
+            else if(observed==="FUSION_DECODING")status.textContent="Generating one integrated image description…";
+            else if(observed==="FUSION_COMPLETE")status.textContent="Integrated interpretation generated; evaluating visual specificity…";
             else status.textContent=labels[phase]||"";
             if(phase==="ANALYZING"&&timing?.requestedLevels){
               title.textContent="Image message · level "+Math.max(1,Number(timing.activeLevel)||1)+"/"+timing.requestedLevels;
@@ -3997,7 +4006,10 @@
             activity=startVisionActivity(attachment,draftText);
             activity.onAccepted=async()=>{
               if(!ownsSubmission())throw new Error("Account changed during image analysis.");
-              if(visionDraftHeld)return;
+              // A local pending card is staged immediately on Send. A durable
+              // thread is still created only after the vision server accepts
+              // the job; repeat accept/poll reconnects are idempotent.
+              if(activity.threadAccepted)return;
               if(draftThread!==originalDraft||activeThreadId!==originalThreadId){
                 throw new Error("Chat changed before image upload was accepted. Restore the original conversation and retry.");
               }
@@ -4032,13 +4044,19 @@
                 // Retain the same live progress card inside the new thread.
                 messageList.appendChild(activity.root);
               }
-              // This is a pending activity, not a confirmed saved Chat turn.
-              visionDraftHeld=true;
-              if(prompt.value.trim()===draftText)prompt.value="";
-              if(selectedImage===attachment)selectedImage=null;
-              updateImagePreview();resizeComposer();composerNotice("");
+              // The thread was acknowledged, but the vision analysis and
+              // actual user message are still pending.
+              activity.threadAccepted=true;
             };
-            composerNotice("");
+            // Display the submitted request and preview in the pending chat
+            // activity card immediately. Do not leave a duplicate in the
+            // composer while the file uploads or the CPU worker analyzes it.
+            // None of this is called a saved user message yet, and failures
+            // restore the exact draft and original attachment.
+            visionDraftHeld=true;
+            if(prompt.value.trim()===draftText)prompt.value="";
+            if(selectedImage===attachment)selectedImage=null;
+            updateImagePreview();resizeComposer();composerNotice("");
             const description=await requestVisionDescription(attachment,draftText,activity);
             if(!ownsSubmission())return false;
             text=(draftText||"Describe this image.")+VISION_START+description+VISION_END;

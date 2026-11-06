@@ -621,4 +621,53 @@ assert zero_model.calls == 3
 assert "All level captions returned 0 tracked descriptors" in zero_study
 assert "Level 1 remains the fallback, not a quality winner" in zero_study
 
+# The whole-image integration pass must use BOTH actual pixels and
+# accumulated region observations. A generic final caption must not replace
+# already-specific raw crops, and simple images must not incur this pass.
+class JointVisionModel:
+    def __init__(self, generic_final=False):
+        self.calls = []
+        self.generic_final = generic_final
+    def create_chat_completion(self, **kwargs):
+        self.calls.append(kwargs)
+        captions = [
+            "Character page with various features.",
+            "Purple hood with golden stitching and a crystal staff.",
+            "Purple cape with a moon symbol on the back.",
+            "Gold boots under purple robes.",
+            "A purple cloak with gold trim and moon markings.",
+            ("A character with various features." if self.generic_final
+             else "A mage wears a purple hood and gold-trimmed cloak with moon "
+                  "markings, and carries a crystal staff."),
+        ]
+        return iter([{"choices": [{"delta": {"content": captions[len(self.calls)-1]}}]}])
+joint_model = JointVisionModel()
+joint_phases = []
+with patch.object(vision, "_load_local_model", return_value=joint_model):
+    joined = vision._ask_vision_local(
+        reference_encoded, "Describe the visible mage.",
+        report_phase=lambda phase, **fields: joint_phases.append((phase, fields)),
+    )
+assert len(joint_model.calls) == 6, "one initial view, four region views, one integrated view"
+assert joined.startswith("Integrated whole-image observation")
+assert "mage wears a purple hood" in joined
+assert "Far-left detail (source-image crop)" in joined
+final_prompt = joint_model.calls[-1]["messages"][0]["content"]
+assert final_prompt[1]["type"] == "image_url", "the integration must see the source image"
+assert "Whole scene:" in final_prompt[0]["text"]
+assert "Center-right detail" in final_prompt[0]["text"]
+assert any(f.get("inferenceStage") == "FUSION_PREFILL" for _, f in joint_phases)
+assert any(f.get("integratedSelected") is True for _, f in joint_phases)
+assert joint_model.calls[-1]["max_tokens"] == 192
+weaker_model = JointVisionModel(generic_final=True)
+weaker_phases = []
+with patch.object(vision, "_load_local_model", return_value=weaker_model):
+    retained = vision._ask_vision_local(
+        reference_encoded, "Describe the visible mage.",
+        report_phase=lambda phase, **fields: weaker_phases.append((phase, fields)),
+    )
+assert "Purple hood with golden stitching and a crystal staff" in retained
+assert not retained.startswith("Integrated whole-image observation")
+assert any(f.get("integratedSelected") is False for _, f in weaker_phases)
+
 print("Chat vision local CPU: authenticated boundaries, no paid provider, concurrency and mocked inference and export handoff PASS")
