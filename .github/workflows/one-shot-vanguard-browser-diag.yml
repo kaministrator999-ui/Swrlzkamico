@@ -1,4 +1,5 @@
 name: One-shot §E Hooded Vanguard real loader diagnosis
+# Post-deployment v11.294 acceptance against actual native editor route
 on:
   push:
     branches: [main]
