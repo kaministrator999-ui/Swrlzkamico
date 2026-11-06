@@ -1,0 +1,77 @@
+/* §E v11.285: compact, foreground native project picker on phones/Quest. */
+#projectHub.project-hub.show{
+ position:fixed!important;inset:0!important;
+ z-index:2147483000!important;isolation:isolate!important;
+ display:flex!important;align-items:center!important;justify-content:center!important;
+ overflow:hidden!important;box-sizing:border-box!important;
+}
+#projectHub .project-window{
+ box-sizing:border-box!important;
+ width:min(760px,calc(100vw - 24px))!important;
+ max-width:calc(100vw - 24px)!important;
+ max-height:min(82dvh,780px)!important;
+ min-height:0!important;height:auto!important;
+ overflow-x:hidden!important;overflow-y:auto!important;
+ overscroll-behavior:contain;
+ -webkit-overflow-scrolling:touch;
+}
+#projectHub .project-head{
+ position:sticky;top:0;z-index:5;
+ background:#162537;
+}
+#projectHub .se170-hub-tabs{
+ position:sticky;top:44px;z-index:4;
+ background:#162537;padding:5px 10px!important;gap:6px!important;
+}
+#projectHub .se236-starter-tabs{
+ position:sticky;top:91px;z-index:3;
+ background:#162537;padding:5px 10px!important;gap:6px!important;
+}
+#projectHub .se236-starter-tabs button{
+ flex:1 1 130px!important;min-height:40px!important;
+ padding:7px 10px!important;
+}
+#projectHub .project-grid.se236-starter-grid,
+#projectHub #se236StarterGames,#projectHub #se236StarterModels{
+ grid-template-columns:repeat(auto-fill,minmax(min(200px,100%),1fr))!important;
+ gap:8px!important;padding:10px!important;
+ align-items:start!important;
+}
+#projectHub .se236-starter-grid[hidden]{display:none!important}
+#projectHub .project-card{
+ box-sizing:border-box!important;min-width:0!important;
+ height:auto!important;min-height:0!important;
+ padding:11px!important;gap:5px!important;
+}
+#projectHub .project-card p{
+ margin:5px 0!important;
+ line-height:1.35!important;
+ display:-webkit-box!important;-webkit-box-orient:vertical!important;
+ -webkit-line-clamp:2;overflow:hidden!important;
+}
+#projectHub .project-card .project-icon{font-size:23px!important}
+#projectHub .project-card strong{font-size:13px!important;line-height:1.3!important}
+#projectHub .project-card .template-tag{font-size:9px!important;line-height:1.2!important}
+#projectHub .se170-hub-tabs button{
+ min-height:42px!important;flex:1 1 135px!important;
+}
+@media(max-width:980px),(pointer:coarse){
+ #projectHub .project-window{
+  width:min(600px,calc(100vw - 16px))!important;
+  max-width:calc(100vw - 16px)!important;
+  max-height:min(73dvh,650px)!important;
+ }
+ #projectHub .project-card{padding:9px!important}
+ #projectHub .se170-hub-tabs{top:42px}
+ #projectHub .se236-starter-tabs{top:87px}
+}
+@media(max-width:620px){
+ #projectHub .project-grid.se236-starter-grid,
+ #projectHub #se236StarterGames,#projectHub #se236StarterModels{
+  grid-template-columns:minmax(0,1fr)!important;
+ }
+ #projectHub .project-card p{-webkit-line-clamp:2}
+}
+@media(max-height:480px){
+ #projectHub .project-window{max-height:calc(100dvh - 12px)!important}
+}
