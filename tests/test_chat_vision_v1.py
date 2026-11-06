@@ -97,9 +97,16 @@ fake_model = FakeModel()
 with patch.object(vision, "_load_local_model", return_value=fake_model) as loader:
     assert vision.prewarm_local_model() is fake_model
     loader.assert_called_once()
+recorded_phases = []
 with patch.object(vision, "_prepare_image", lambda image: image), patch.object(vision, "_load_local_model", lambda: fake_model):
-    answer = vision._ask_vision_local(valid, "What is shown?")
+    answer = vision._ask_vision_local(
+        valid, "What is shown?",
+        report_phase=lambda phase, **fields: recorded_phases.append((phase, fields)),
+    )
 assert answer == "A white dog on grass."
+assert ("ANALYZING", {"inferenceStage": "PREFILL"}) in recorded_phases
+assert any(phase == "ANALYZING" and fields.get("inferenceStage") == "DECODING" and
+           fields.get("firstChunkSeconds") >= 0 for phase, fields in recorded_phases)
 assert len(fake_model.calls) == 1
 assert fake_model.calls[0]["messages"][0]["content"][1]["image_url"]["url"] == valid
 assert fake_model.calls[0]["max_tokens"] == vision.MAX_VISION_OUTPUT_TOKENS == 88
@@ -137,6 +144,8 @@ with patch.object(vision, "_prepare_image", lambda x: x), patch.object(vision, "
     assert len(job_id) == 32
     done = poll_done(job_id)
     assert done["phase"] == "COMPLETE", done
+    assert done["inferenceStage"] == "DECODING", done
+    assert done["firstChunkSeconds"] >= 0, done
     assert done["description"] == "A white dog on grass."
     assert done["done"] is True
     assert done["elapsedSeconds"] >= done["phaseElapsedSeconds"] >= 0
