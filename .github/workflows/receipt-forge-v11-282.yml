@@ -1,4 +1,4 @@
-name: §E v11.282 Rock Cliff Hand candidate + native geometry smoke
+name: §E v11.282 sealed Rock Cliff Hand + native mesh check
 on:
   push:
     branches: [main]
@@ -8,9 +8,9 @@ on:
 permissions:
   contents: read
 jobs:
-  candidate:
+  sealed:
     runs-on: ubuntu-latest
-    timeout-minutes: 16
+    timeout-minutes: 17
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -19,27 +19,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Verify actual native cliff-rock generator and mesh rig
+      - name: Native 17-bone and full rock coverage generator smoke
         run: node projects/swrlz-forge-moba/scripts/smoke_v11_282_cliff_hand.js
-      - name: Build candidate and inspect inline script syntax
-        run: |
-          python projects/swrlz-forge-moba/build_space.py --output /tmp/se282-candidate
-          python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se282-candidate/index.html
-          python - <<'PY'
-          import pathlib,json,hashlib
-          root=pathlib.Path("projects/swrlz-forge-moba")
-          data=pathlib.Path("/tmp/se282-candidate/index.html").read_bytes()
-          src=data.decode("utf8")
-          m=json.loads((root/"source-manifest.json").read_text("utf8"))
-          assert m["name"]=="§wyrl§ Engine v11.282"
-          assert len(m["patches"])==313
-          assert m["patches"][-1]=="patches/v11_282_rock_cliff_hand.py"
-          for needle in ("se282FullRockScene","se282StoneSegment",
-            "se281RockScene=se282FullRockScene;",
-            "STARTER MODEL · 360° CLIFF ROCK + 17-BONE RIG",
-            "SWYRL_ENGINE_DEPLOY_MARKER: V11_282_ROCK_CLIFF_HAND"):
-            assert needle in src,needle
-          print("SE282_RECEIPT "+json.dumps({"bytes":len(data),"sha256":hashlib.sha256(data).hexdigest(),
-            "patches":len(m["patches"]),
-            "assets":len(json.loads(pathlib.Path("/tmp/se282-candidate/SOURCE.json").read_text("utf8"))["assets"])}),flush=True)
-          PY
+      - name: Verify sealed HTML, 313 patches, asset checksums and inline script
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_282_release.py --output /tmp/se282-sealed

@@ -329,6 +329,6 @@
     "patches/v11_281_rocky_anime_hand.py",
     "patches/v11_282_rock_cliff_hand.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 8181975,
+  "finalSha256": "3c6e9c949aa926f601df06af171198e3d84e46f43dbf0a983eccaf342cdff629"
 }

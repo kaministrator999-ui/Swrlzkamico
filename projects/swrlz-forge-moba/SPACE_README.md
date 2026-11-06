@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.281
+title: §wyrl§ Engine v11.282
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,11 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.282 · Rock Cliff Hand — solid stone anatomy (2026-11-05)
+
+The user's real-phone screenshot showed a smooth glove with separated rock armor rather than a cliff-rock hand. In response the independent Rocky Anime Hand · Emberstone Starter Model has been fully rebuilt: **no visible organic core**, a closed angular palm volume with complete front/back/side rock coverage, thick overlapping stone strata, 12 solid finger stone sections, a fully rock-covered articulated thumb, chipped side silhouette and a broad rooted basalt wrist. Short glowing amber fault lines mark joints and rock cracks. Each element is editable native 3D geometry with existing 17-bone rig and animation. Original Arcane Gloves, VR glove game, Mage Spell Lab, Sheep Tag and saved projects are preserved. Source: `runtime/rock_cliff_hand_v11_282.js`, `patches/v11_282_rock_cliff_hand.py`; evidence and testing: `docs/ROCK_CLIFF_HAND_V11_282.md`. On-device visual acceptance pending.
+
 
 ## §E v11.281 — Rocky Anime Hand · Emberstone (2026-11-05)
 
