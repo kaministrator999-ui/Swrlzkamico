@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.291",
+  "name": "§wyrl§ Engine v11.292",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_291.html",
+  "finalArtifact": "swyrl_engine_v11_292.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -336,7 +336,8 @@
     "patches/v11_288_smooth_cliff_pbr.py",
     "patches/v11_289_short_cliff_gauntlet.py",
     "patches/v11_290_cliff_gauntlet_load_material.py",
-    "patches/v11_291_hooded_vanguard_materials.py"
+    "patches/v11_291_hooded_vanguard_materials.py",
+    "patches/v11_292_cliff_knuckle_wrist_moss.py"
   ],
   "finalBytes": 8245089,
   "finalSha256": "d0bfb2799c1650317768f0d128d1e9483ca4f53c427937892b6adeb4455ff1f5"
