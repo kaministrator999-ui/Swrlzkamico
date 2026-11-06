@@ -1491,7 +1491,11 @@
             activeLevel:state.activeLevel,
             completedLevels:state.completedLevels,
             selectedLevel:state.selectedLevel,
-            levelRecords:state.levelRecords
+            levelRecords:state.levelRecords,
+            sourceWidth:state.sourceWidth,
+            sourceHeight:state.sourceHeight,
+            sourceBytes:state.sourceBytes,
+            originalBytesPreserved:state.originalBytesPreserved
           });
           if(state.phase==="COMPLETE"){
             if(!state.description)throw new Error("The vision model returned no description.");
@@ -1560,10 +1564,11 @@
         const entries=names.map(name=>{const li=document.createElement("li");li.textContent=name;li.dataset.state="pending";steps.appendChild(li);return li;});
         const timer=document.createElement("div");timer.className="vision-work-timer";timer.setAttribute("aria-label","Elapsed processing time");
         const status=document.createElement("div");status.className="vision-work-status";status.setAttribute("role","status");status.setAttribute("aria-live","polite");
+        const sourceInfo=document.createElement("div");sourceInfo.className="vision-work-status";sourceInfo.hidden=true;
         const evidence=document.createElement("details");evidence.className="vision-level-evidence";evidence.hidden=true;
         const evidenceSummary=document.createElement("summary");evidenceSummary.textContent="Observed levels";
         const evidenceContents=document.createElement("div");evidence.append(evidenceSummary,evidenceContents);
-        root.append(header,message,preview,steps,timer,status,evidence);messageList.appendChild(root);
+        root.append(header,message,preview,steps,timer,sourceInfo,status,evidence);messageList.appendChild(root);
         const initialTime=Date.now();
         const durationText=seconds=>{
           const n=Math.max(0,Math.floor(Number(seconds)||0)),m=Math.floor(n/60),sec=String(n%60).padStart(2,"0");
@@ -1636,6 +1641,11 @@
               RESPONDING:"§C has accepted the message and is composing its reply."
             };
             const observed=phase==="ANALYZING" && timing?.inferenceStage;
+            if(timing?.originalBytesPreserved&&Number(timing.sourceWidth)>0&&Number(timing.sourceHeight)>0){
+              sourceInfo.hidden=false;
+              sourceInfo.textContent="Original received by server: "+timing.sourceWidth+" × "+timing.sourceHeight+
+                "px · "+(Number(timing.sourceBytes||0)/1048576).toFixed(2)+" MiB";
+            }
             if(timing?.levelRecords)this.showLevels(timing.levelRecords,Number(timing.selectedLevel)||1);
             if(detail)status.textContent=detail;
             else if(observed==="PREFILL")status.textContent="CPU encoding image and preparing the first text chunk…";
