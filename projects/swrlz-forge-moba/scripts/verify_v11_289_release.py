@@ -18,7 +18,7 @@ parser.add_argument('--request',action='store_true')
 args=parser.parse_args()
 manifest=json.loads((ROOT/'source-manifest.json').read_text('utf8'))
 assert manifest['name']=='§wyrl§ Engine '+VERSION
-assert manifest['finalArtifact']=='swyrl_engine_'+VERSION.replace('v','').replace('.','_')+'.html'
+assert manifest['finalArtifact']=='swyrl_engine_v11_289.html'
 assert manifest['patches'][-1]=='patches/v11_289_short_cliff_gauntlet.py'
 assert len(manifest['patches'])==320
 assert manifest['finalBytes']==EXPECTED_SIZE
