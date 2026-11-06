@@ -347,6 +347,49 @@ def _needs_detail_retry(description: str) -> bool:
     return _visual_specificity(description) < 2
 
 
+def _cross_view_evidence_index(region_records: list[dict]) -> str:
+    """Index concrete words that the vision model actually wrote in each crop.
+
+    This does NOT make a new visual inference. It preserves provenance, avoids
+    hallucinated connections between views, and gives the text-only chat model
+    usable grounded details even when the small VLM's whole-scene synthesis
+    degenerates into 'character turnaround'. Raw captions remain available.
+    """
+    if len(region_records) < 3:
+        return ""
+    categories = (
+        ("Hair", r"\b(?:white|silver|blond(?:e)?|black|brown|purple|pink|blue|red|grey|gray|golden)\s+hair\b"),
+        ("Clothing", r"\b(?:purple|gold(?:en)?|brown|black|white|blue|red|green|pink)\s+(?:hoodie|hood|hooded cloak|cloak|robe|robes|dress|coat|clothes|outfit|boots|belt)\b"),
+        ("Symbols", r"\b(?:crescent(?:\s+moon)?|moon(?:\s+symbol)?|star(?:\s+symbol)?)\b"),
+        ("Handheld items", r"\b(?:stick\s+with\s+a\s+flower\s+on\s+it|(?:purple|crystal|glowing)\s+object|wand|staff|stick|crystal)\b"),
+        ("Other color clues", r"\b(?:purple\s+and\s+gold\s+colou?red\s+item|purple\s+and\s+gold\s+item)\b"),
+    )
+    observations = []
+    for label, expression in categories:
+        found = []
+        seen = set()
+        for record in region_records:
+            region = str(record.get("region", "Region"))[:48]
+            description = str(record.get("description", ""))[:400]
+            for match in re.finditer(expression, description, flags=re.I):
+                literal = " ".join(match.group().split())
+                key = (literal.casefold(), region)
+                if key not in seen:
+                    found.append(f"{literal} [{region}]")
+                    seen.add(key)
+                if len(found) >= 7:
+                    break
+            if len(found) >= 7:
+                break
+        if found:
+            observations.append(label + ": " + "; ".join(found))
+    if len(observations) < 2:
+        return ""
+    return ("\nCross-region feature index (exact phrases extracted from "
+            "unverified crop captions; NOT independently seen or confirmed):\n"
+            + "\n".join(observations) + "\n")
+
+
 def _reference_figure_columns(image) -> list[tuple[float, float]]:
     """Find illustrated figure columns by foreground ink, not OCR/caption text.
 
@@ -813,6 +856,13 @@ def _ask_vision_local(image_url: str, question: str, report_phase=None, should_c
             note = "\nRegion inference did not complete for: " + ", ".join(region_failures) + "."
             if len(content) + len(note) <= MAX_DESCRIPTION_CHARS:
                 content += note
+        # Small VLMs sometimes describe five crops correctly, then collapse
+        # to 'Character turnarounds' on the global pass. Keep an auditable,
+        # non-generative index of what was ACTUALLY reported across crops.
+        # Source phrases remain tentative and individually attributed.
+        cross_view_index = _cross_view_evidence_index(region_records)
+        if cross_view_index and len(content) + len(cross_view_index) <= MAX_DESCRIPTION_CHARS:
+            content = cross_view_index.lstrip("\n") + "\n" + content
         # Revisit the ENTIRE source image with the evidence collected from
         # regions. This is not a text-only rephrasing: the local vision model
         # receives pixels again, plus its own fallible, region-labeled notes.
