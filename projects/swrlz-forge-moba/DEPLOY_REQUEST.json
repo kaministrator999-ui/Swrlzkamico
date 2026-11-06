@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.290",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_290_CLIFF_GAUNTLET_LOAD_MATERIAL",
-  "reason": "Owner Android screenshot: opening Plain Hand Base · Smooth Cliff Hand fails immediately after v11.289. Confirmed in actual v11.217 anatomical SDF that hand begins at about y0.85 and older gauntlet synthetic test assumed y0.60; the fixed-bottom 0.60-unit-extension assertion rejected the valid model. Replace only this starter's invoked forearm generator with one seamless SDF union of original hand and short tapered clipped forearm through existing native surface/weld, retaining one editable skinned topology and 17-bone hand animation. Keep no individual 3D stone chunks or crack objects. Reapply high-resolution owner 384px atlas with more noticeable normal-map relief, darker AO crevices, warm nonmetallic rough stone and continuous UVs, preserve subdued moss. Narrow actual 217-hand field regression and native mesh/UV contract succeeded, complete 321-patch engine 8,229,895 bytes, 71 asset and assembled JS syntax validated in GitHub receipt 42174514741, SHA-256 b7a8ade38caa3bbc5ee2ae6319c75c8352149ac7d0aa4e37699b89e75e08709f. Other model starters, games, user saves, Quest and §C unchanged. Real Android/Quest model appearance acceptance pending.",
-  "sourceCommit": "61f08e6a9f591660166f221bc3d54230b633401f",
-  "sourceIntegritySha256": "b7a8ade38caa3bbc5ee2ae6319c75c8352149ac7d0aa4e37699b89e75e08709f"
+  "releaseVersion": "v11.292",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_292_CLIFF_WRIST_MOSS_KNUCKLES",
+  "reason": "Owner real-device screenshot: smooth single-mesh Cliff Hand gauntlet loads well but moss is too pervasive across fingers/palm, and four knuckles need visible stone depth without adding mesh objects. Keep native 17-bone connected hand and short forearm geometry from v11.290 intact. Generate four CanvasTextures once from local user-supplied 384px-per-tile cliff atlas: clean sandstone base across entire palm/fingers; apply original mossy composite only to bottom ~23% wrist/gauntlet with feathered mask; draw four stone knuckle facets in matching albedo, tangent-space normals and AO, preserve original cracks and roughness. No new rock chunks, extra mesh parts, or 3D cracks. Preserve separate concurrent v11.291 Hooded Vanguard starter and material branch. Targeted canvas/PBR test, full 323-patch engine build and assembled JS syntax success in GitHub run 42178475464; SHA-256 d1b9b3c700a9c9063c3f46de8cf71b68b5f029d9f0a690e1ac62d8175f4daabc, 8,252,255 HTML bytes, 71 assets. Owner phone appearance acceptance pending.",
+  "sourceCommit": "3e8515cfd4aec700c96c3141c8f7d2a0c373e5e5",
+  "sourceIntegritySha256": "d1b9b3c700a9c9063c3f46de8cf71b68b5f029d9f0a690e1ac62d8175f4daabc"
 }
