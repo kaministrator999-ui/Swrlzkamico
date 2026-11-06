@@ -28,6 +28,8 @@ MAX_IMAGE_BYTES = 2_000_000
 MAX_QUESTION_CHARS = 2_000
 MAX_DESCRIPTION_CHARS = 6_000
 MAX_IMAGE_PIXELS = 16_000_000
+# Small-model CPU vision: bounded pixels reduce multimodal projector work.
+MODEL_INPUT_SIDE = 512
 MODEL_REPO = "ggml-org/SmolVLM-256M-Instruct-GGUF"
 # Immutable public upstream snapshot. No HF access token or inference credits.
 MODEL_REVISION = "b9e4379657e1450d04d02eec8e345667265b0a00"
@@ -197,12 +199,30 @@ def _prepare_image(image_url: str) -> str:
             if source.width * source.height > MAX_IMAGE_PIXELS:
                 raise ValueError("IMAGE_PIXELS_TOO_LARGE")
             image = ImageOps.exif_transpose(source).convert("RGB")
-            image.thumbnail((768, 768), Image.Resampling.LANCZOS)
+            image.thumbnail((MODEL_INPUT_SIDE, MODEL_INPUT_SIDE), Image.Resampling.LANCZOS)
             output = io.BytesIO()
             image.save(output, format="JPEG", quality=80)
     except (OSError, Image.DecompressionBombError) as exc:
         raise ValueError("IMAGE_FORMAT_INVALID") from exc
     return "data:image/jpeg;base64," + base64.b64encode(output.getvalue()).decode("ascii")
+
+
+def _cached_asset(filename: str) -> str:
+    """Prefer build-preloaded weights without a network metadata request.
+
+    Only a genuine cache miss may download from the public model hub; neither
+    path calls an inference API or stores the user's image.
+    """
+    from huggingface_hub import hf_hub_download
+    from huggingface_hub.errors import LocalEntryNotFoundError
+
+    options = dict(repo_id=MODEL_REPO, filename=filename, revision=MODEL_REVISION)
+    try:
+        return hf_hub_download(**options, local_files_only=True)
+    except LocalEntryNotFoundError:
+        print(json.dumps({"event": "LOCAL_VISION_ASSET_CACHE_MISS",
+                          "asset": "projector" if filename == PROJECTOR_FILE else "model"}), flush=True)
+        return hf_hub_download(**options)
 
 
 def _load_local_model():
@@ -211,16 +231,11 @@ def _load_local_model():
     if _model is not None:
         return _model
 
-    from huggingface_hub import hf_hub_download
     from llama_cpp import Llama
     from llama_cpp.llama_chat_format import MTMDChatHandler
 
-    model_path = hf_hub_download(
-        repo_id=MODEL_REPO, filename=MODEL_FILE, revision=MODEL_REVISION,
-    )
-    projector_path = hf_hub_download(
-        repo_id=MODEL_REPO, filename=PROJECTOR_FILE, revision=MODEL_REVISION,
-    )
+    model_path = _cached_asset(MODEL_FILE)
+    projector_path = _cached_asset(PROJECTOR_FILE)
     handler = MTMDChatHandler(
         clip_model_path=projector_path, use_gpu=False, verbose=False,
     )
@@ -236,6 +251,12 @@ def _load_local_model():
     _model = instance
     print(json.dumps({"event": "LOCAL_VISION_MODEL_READY", "model": "SmolVLM-256M-Q8_0"}), flush=True)
     return instance
+
+
+def prewarm_local_model():
+    """Share the CPU inference lock with real jobs to avoid double loads."""
+    with _inference_lock:
+        return _load_local_model()
 
 
 def _ask_vision_local(image_url: str, question: str, report_phase=None, should_cancel=None) -> str:
