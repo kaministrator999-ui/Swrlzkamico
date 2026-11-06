@@ -1,3 +1,9 @@
+## §E v11.286 · Quest Sheep Tag head movement diagnostics (2026-11-05)
+
+Added two observational pages to the existing left-controller VR Nerd Stats panel. Page 5/6 compares headset-moving versus stationary game callback frame gaps (>35ms) and previous-render draw-call averages. Page 6/6 compares existing pose reads, camera-rig writes, game raycasts, spatial panel placements and HUD redraws by head movement state. Motion classification subtracts the existing Sheep Tag camera-rig translation to avoid mistaking sheep-follow movement for physical head movement. The existing L3 show/hide and center-to-next-page controls remain unchanged.
+
+The 317-patch v11.286 build is SHA-256 sealed and its inline JavaScript syntax verified; no additional render loop, XR reference-space updates from diagnostics, gameplay rules changes or asset migrations. These metrics are callback observations, not GPU timings or proof of causation. See `docs/QUEST_HEAD_MOTION_DIAGNOSTICS_V11_286.md`. Real Quest 2 acceptance is pending.
+
 ## §E v11.285 · Compact Projects picker and reliable Starter Models (2026-11-05)
 
 The native **Projects → Starter Projects** picker now keeps playable starters under **Starter Games** and editable hand, wolf, sheep-building and other model-only starters under **Starter Models**. This repairs a v11.284 category helper that accidentally depended on the private Chat-host scope, and also covers the picker before Chat mounts. Existing native cards and default selections are moved in place—not cloned or reset.
