@@ -1357,9 +1357,9 @@
         const img=new Image();
         img.onload=()=>{
           try{
-            // The local vision server caps inference images at 768px anyway.
+            // Match the CPU vision 512px cap before encoding and transfer.
             // Resize before transfer to avoid shipping/encoding unused pixels.
-            const scale=Math.min(1,768/Math.max(img.naturalWidth,img.naturalHeight));
+            const scale=Math.min(1,512/Math.max(img.naturalWidth,img.naturalHeight));
             const canvas=document.createElement("canvas");
             canvas.width=Math.max(1,Math.round(img.naturalWidth*scale));
             canvas.height=Math.max(1,Math.round(img.naturalHeight*scale));
