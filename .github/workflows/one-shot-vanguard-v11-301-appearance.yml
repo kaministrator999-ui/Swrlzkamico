@@ -64,6 +64,17 @@ jobs:
            assert.equal(errors.length,0,JSON.stringify(errors));
            fs.mkdirSync('vanguard301',{recursive:true});
            await page.screenshot({path:'vanguard301/desktop-front.png',fullPage:false});
+           await page.evaluate(()=>{
+            const c=[...document.querySelectorAll('canvas')]
+             .find(c=>c.width===690 && c.height===771);
+            if(!c)throw Error('Cannot find native Model Atelier WebGL canvas');
+            document.body.appendChild(c);
+            Object.assign(c.style,{position:'fixed',top:'0',left:'0',
+             zIndex:'2147483647',width:'100vw',height:'100vh',
+             display:'block',pointerEvents:'none'});
+           });
+           await page.waitForTimeout(1150);
+           await page.screenshot({path:'vanguard301/model-unobstructed.png',fullPage:false});
            const canvasInfo=await page.evaluate(()=>{
             return [...document.querySelectorAll('canvas')].map((c,i)=>{
              const r=c.getBoundingClientRect();
