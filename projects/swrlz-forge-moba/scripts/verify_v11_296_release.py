@@ -47,7 +47,7 @@ def main():
        'SWYRL_ENGINE_HAND_SURFACE',
     ):
         assert token in html,token
-    for item in ('face','hair','hood','scarf','uniform','armor','pauldron','teal',
+    for item in ('skin','hair','hood','scarf','uniform','armor','pauldron','teal',
                  'leather','gloves','boots'):
         assert "'v296:"+item+"'" in html,item
     assert html.count("source.engine='§wyrl§ Engine · Maker v11.296';source.version=11.296;")==3
