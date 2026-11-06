@@ -1,0 +1,58 @@
+name: One-shot §E v11.297 painted Vanguard source seal
+# Narrow version/source/UV checks; not the game or VR regression suite.
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/one-shot-seal-v11-297.yml'
+permissions:
+  contents: read
+jobs:
+  seal:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 17
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Parse mapped material builder and reconstruct 17-part native model
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/hooded_vanguard_painted_v11_297.js
+          node projects/swrlz-forge-moba/tests/hooded_vanguard_painted_v11_297.cjs
+      - name: Measure exact appended source and parse final combined JS
+        run: |
+          python - <<'PY'
+          import json,sys,hashlib,subprocess
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          manifest=json.loads((root/'source-manifest.json').read_text())
+          assert manifest['name']=='§wyrl§ Engine v11.297'
+          assert len(manifest['patches'])==328
+          assert manifest['patches'][-1]=='patches/v11_297_painted_uv_vanguard.py'
+          assert manifest['finalBytes']==0 and manifest['finalSha256']==''
+          out=Path('/tmp/swrlz297')
+          subprocess.run([sys.executable,str(root/'build_space.py'),'--output',str(out)],check=True,
+            stdout=subprocess.DEVNULL)
+          data=(out/'index.html').read_bytes()
+          assert data==(out/'modeler.html').read_bytes()
+          html=data.decode('utf8')
+          for needle in (
+           'SWYRL_ENGINE_DEPLOY_MARKER: V11_297_PAINTED_UV_VANGUARD',
+           'function se297Artwork(tile){','function se297Redesign(scene){',
+           '<strong>Hooded Vanguard · Painted Remaster</strong>',
+           "window.SWRLZ_FORGE_BUILD={version:'v11.297'",
+          ):
+           assert needle in html,needle
+          receipt=json.loads((out/'SOURCE.json').read_text())
+          assert receipt['patches']==manifest['patches']
+          assert len(receipt['assets'])==71
+          subprocess.run([sys.executable,str(root/'scripts/check_inline_js_syntax_v11_266.py'),
+                          str(out/'index.html')],check=True)
+          print('SE297_EXACT_MEASUREMENT='+json.dumps({
+           'bytes':len(data),'sha256':hashlib.sha256(data).hexdigest(),
+           'patches':len(manifest['patches']),'assets':len(receipt['assets']),
+           'editorJSParsed':True,'nativeUVScenePassed':True
+           },sort_keys=True),flush=True)
+          PY
