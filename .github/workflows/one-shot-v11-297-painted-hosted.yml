@@ -1,0 +1,75 @@
+name: One-shot §E v11.297 hosted painted Vanguard visual smoke
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/one-shot-v11-297-painted-hosted.yml'
+permissions:
+  contents: read
+jobs:
+  mobile:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 17
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Install mobile-size browser
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps --only-shell chromium
+      - name: Load the live remastered knight, verify drawn material maps and capture model
+        run: |
+          node --input-type=module <<'JS'
+          import { chromium } from 'playwright';
+          import assert from 'node:assert/strict';
+          import { mkdirSync } from 'node:fs';
+          const root='https://kamiloki-swrlz-forge-moba.static.hf.space/';
+          const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
+          try{
+           const page=await browser.newPage({viewport:{width:1010,height:940},
+             deviceScaleFactor:1,isMobile:false,hasTouch:true});
+           const errors=[];
+           page.on('pageerror',e=>errors.push(String(e)));
+           page.on('console',m=>{if(m.type()==='error'&&/vanguard|paint|normal map/i.test(m.text()))errors.push(m.text());});
+           const receiptResponse=await page.request.get(root+'SOURCE.json?painted=297',{timeout:40000});
+           assert.equal(receiptResponse.status(),200);
+           const receipt=await receiptResponse.json();
+           assert.equal(receipt.sourceVersion,'§wyrl§ Engine v11.297');
+           assert.equal(receipt.finalSha256,'6de05f0fb2e2d9226e4c2130a08f3420500334a2ca11b39b872056f5ad1cca40');
+           await page.goto(root+'modeler.html?project=hooded-vanguard',
+             {waitUntil:'domcontentloaded',timeout:85000});
+           await page.waitForFunction(()=>window.SWYRL_ENGINE_HOODED_VANGUARD?.status()?.successes>=1,null,{timeout:85000});
+           await page.waitForTimeout(3000);
+           const next=page.getByRole('button',{name:'Continue',exact:true});
+           if(await next.count()){
+             try{await next.first().click({timeout:1800});}catch(e){console.log('NEWS_BUTTON_NOT_CLICKABLE',String(e).slice(0,150));}
+           }
+           await page.waitForTimeout(1900);
+           const state=await page.evaluate(()=>{
+             const api=window.SWYRL_ENGINE_HOODED_VANGUARD;
+             const status=api?.status();
+             const a=window.SWYRL_ENGINE_MODEL_ATELIER;
+             return {build:window.SWRLZ_FORGE_BUILD?.version,status,
+               visibleParts:document.body.innerText.includes('17 individually editable meshes'),
+               atelier:!!a,
+               htmlAtelier:document.body.innerText.includes('§E Model Atelier')};
+           });
+           console.log('SE297_HOSTED_PAINTED_MODEL',JSON.stringify(state));
+           assert.equal(state.build,'v11.297');
+           assert.equal(state.status.lastParts,17);
+           assert.equal(state.status.paintedTileCount,11,'11 painted atlases not initialized');
+           assert.equal(state.status.lastError,null);
+           assert.equal(state.atelier,true);
+           assert.equal(errors.length,0,JSON.stringify(errors));
+           mkdirSync('vanguard-v11-297-evidence',{recursive:true});
+           await page.screenshot({path:'vanguard-v11-297-evidence/painted-model.png',fullPage:false});
+           console.log('SE297_HOSTED_TEXTURED_KNIGHT_OK');
+          }finally{await browser.close();}
+          JS
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: painted-vanguard-v11-297-visual
+          path: vanguard-v11-297-evidence/
+          retention-days: 5
