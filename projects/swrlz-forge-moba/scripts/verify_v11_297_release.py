@@ -55,7 +55,7 @@ def main():
     for item in ('skin','hair','hood','scarf','uniform','armor','pauldron','teal',
                  'leather','gloves','boots'):
         assert "'v296:"+item+"'" in html,item
-    assert html.count("source.engine='§wyrl§ Engine · Maker v11.297';source.version=11.296;")==3
+    assert html.count("source.engine='§wyrl§ Engine · Maker v11.297';source.version=11.297;")==3
     assert html.count('se291HeroScene=se296HeroScene;')==1
     assert html.count('se291HeroScene=function(){return se297Redesign(se297PreviousScene());};')==1
     subprocess.run(['node','--check',str(ROOT/'runtime/hooded_vanguard_painted_v11_297.js')],check=True)
