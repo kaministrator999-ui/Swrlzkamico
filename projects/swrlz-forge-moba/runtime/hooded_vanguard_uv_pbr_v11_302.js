@@ -135,6 +135,16 @@ se291HeroMaterial=function(part){
  mat.needsUpdate=true;
  return mat;
 };
+const se302PreviousHeroScene=se291HeroScene;
+se291HeroScene=function(){
+ const scene=se302PreviousHeroScene();
+ scene.engine='§wyrl§ Engine · Maker v11.302';scene.version=11.302;
+ scene.project.modelAtelier.name='Hooded Vanguard · Painted PBR Study';
+ scene.project.name=scene.project.modelAtelier.name;
+ scene.project.modelAtelier.reference=
+  'v11.302 adds UV-matched normal and grayscale roughness maps to eleven native painted material families. Subtle cloth fold relief, engraved metal seams and leather micro grain enhance v11.301 face, hand pose and geometry. No image cutouts. Static; no bird, weapon or full rig.';
+ return scene;
+};
 window.SWYRL_ENGINE_HOODED_VANGUARD=Object.freeze({
  id:'hooded-vanguard',open:se291OpenHero,createScene:se291HeroScene,
  status:()=>({...se291Stats,...se300Status,...se301Result,...se302SurfaceStatus,
