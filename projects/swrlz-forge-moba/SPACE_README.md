@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.300
+title: §wyrl§ Engine v11.301
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+## §E v11.301 · Stylized face, surface artwork and neutral wrists (2026-11-06)
+
+Owner's Android screenshot of v11.300 showed a distorted face, armour/clothing that looked like pasted magazine photographs, and five-digit hands hanging vertically despite diagonally outstretched forearms. This append-only patch changes **fresh Hooded Vanguard Starter Model construction only**: broadens and smooths the jaw/nose on the continuous head mesh, authors face UV painting at measured forehead/eye/nose/lip coordinates (plain skin around rear longitude), and paints **11 distinct native game-art material maps** for ivory hood/scarf, dark suit, engraved steel, teal coat, leather, gloves, hair and boots. The generated concept art remains the style/palette reference, not a cutout texture pasted onto geometry. The tapered breastplate gains a pointed lower silhouette; both existing five-digit glove meshes rotate **±0.64 rad about their wrists** to follow the forearms in a relaxed A-pose. All 17 editable part identities, historical patches, saved scenes and other §E tools stay unchanged. A focused JS/model/UV/material test and source seal verify engineering correctness; Android/Quest appearance remains owner acceptance. See [v11.301 notes](docs/VANGUARD_STYLIZED_FACE_WRISTS_V11_301.md).
+
 ## §E v11.300 · Hooded Vanguard joint mesh + UV rebuild (2026-11-06)
 
 After the owner's front/back Android screenshots exposed mismatched Boba Fett-like hood, rectangular chest armor, extreme coat-tail shapes and still-misaligned image textures, v11.300 redesigns **the underlying mesh contours and their UVs together**. The new starter has a continuous rounded head, layered tapered hair, an arched hood opening with full canopy/back mantle, anatomically fitted neck/chest scarf, contoured tapered breastplate, curved shoulder armor and two-sided draped teal cloth panels. Five-fingered native hands, boots, belt and the other model projects remain intact. All 17 editable parts have explicit UV coordinates matched to the new surface shape and material; textures sample actual pixels from the previously imported generated artwork only in appropriate surface regions, while the rest uses matching dyed fabric/metal/skin. No more arbitrary whole-illustration torso/back wrapping. This remains a **static character** without bird, weapon or complete rig. Owner-device front/side/back visual acceptance still pending. See [v11.300 checkpoint](docs/VANGUARD_MODEL_UV_REBUILD_V11_300.md).
