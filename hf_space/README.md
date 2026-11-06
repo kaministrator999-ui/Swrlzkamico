@@ -20,7 +20,8 @@ first pass remains the default. The browser now retains **up to 768px** in
 its transient JPEG upload rather than discarding small details before the
 server. The server *still downsamples to 384px for the fast first pass*.
 Only when a character/reference sheet's initial description lacks at least
-two observable distinguishing descriptors does the same local CPU model try
+two observable distinguishing descriptors, or a caption is entirely
+content-free (such as "image with various objects"), does the same CPU model try
 a **single** 640px/144-token detail pass; it reports honest DETAIL_RETRY,
 DETAIL_PREFILL, and DETAIL_DECODING stages. It keeps the refined output only
 if it adds concrete descriptors rather than longer generic prose. A failed
