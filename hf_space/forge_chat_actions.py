@@ -26,6 +26,9 @@ ACTOR_PREFABS = ("wall", "rock", "bush", "crystal", "pedestal")
 _COLOR = re.compile(r"^#[0-9a-fA-F]{6}$")
 _HEX = re.compile(r"^[0-9a-f]{32}$")
 _MESH_ATTRIBUTES = {"name", "position", "rotation", "scale", "color", "material"}
+# Inference grammar order follows the way a visual part is described. Keep it
+# separate from the backward-compatible optional attributes in _SCHEMA.
+_MESH_PLANNING_FIELDS = ("name", "position", "rotation", "scale", "color", "material")
 _VECTORS = {"position", "rotation", "scale"}
 _SCHEMA = {
     "project.create": ({"op", "starterId", "name"}, {"op", "starterId", "name"}),
@@ -106,6 +109,9 @@ def operation_contract(summary: dict[str, Any] | None = None) -> dict[str, Any]:
         "studioCommands": "Host-advertised studioCommands v1, exact source IDs, single-op review approval required; old §E hosts do NOT gain these actions",
         "name": "1–100 literal characters",
         "color": "#RRGGBB", "vectors": "arrays [x,y,z], three finite numbers",
+        "mesh.add": "Planner output must explicitly supply name, position, rotation, scale, color and material for every new mesh. "
+                    "Use the requested palette, not native defaults. Loft also requires path, radii and segments; "
+                    "lathe also requires profile, segments, arcStart and arcLength (2pi for a closed revolution).",
         "positionAndRotation": "each component between -100 and 100; rotations in radians",
         "scale": "each component greater than .005 and at most 20",
         "targets": "only exact IDs in the original current workspace summary",
@@ -119,7 +125,11 @@ def operation_contract(summary: dict[str, Any] | None = None) -> dict[str, Any]:
 
 
 def native_plan_response_format(summary: dict[str, Any] | None = None) -> dict[str, Any]:
-    """Constrain JSON transport, not semantic correctness or execution success."""
+    """Require explicit visual planning; server acceptance remains backward compatible.
+
+    The grammar prevents omissions, not semantic errors or execution failure.
+    Legacy operations can still omit optional attributes at validation time.
+    """
     vector = {"type": "array", "items": {"type": "number"}, "minItems": 3, "maxItems": 3}
     fields = {"id": {"type": "string"}, "name": {"type": "string"}, "starterId": {"type": "string"},
               "position": vector, "rotation": vector, "scale": vector,
@@ -143,13 +153,16 @@ def native_plan_response_format(summary: dict[str, Any] | None = None) -> dict[s
         if name == "mesh.add":
             kinds = MESH_KINDS if mesh_tools(summary) else LEGACY_KINDS
             for kind in kinds:
-                geometry = ({"path", "radii", "segments"} if kind == "loft" else
-                            {"profile", "segments", "arcStart", "arcLength"} if kind == "lathe" else set())
-                keys = (_MESH_ATTRIBUTES | {"kind"} | geometry)
-                properties = {"op": {"const": name}, **{key: fields[key] for key in sorted(keys)}}
-                properties["kind"] = {"const": kind}
-                needed = required | ({"path", "radii"} if kind == "loft" else {"profile"} if kind == "lathe" else set())
-                variants.append({"type": "object", "properties": properties, "required": sorted(needed), "additionalProperties": False})
+                geometry = (("path", "radii", "segments") if kind == "loft" else
+                            ("profile", "arcStart", "arcLength", "segments") if kind == "lathe" else ())
+                properties = {"op": {"const": name}, "kind": {"const": kind},
+                              **{key: fields[key] for key in (*_MESH_PLANNING_FIELDS, *geometry)}}
+                needed = required | set(_MESH_PLANNING_FIELDS) | (
+                    {"path", "radii", "segments"} if kind == "loft" else
+                    {"profile", "segments", "arcStart", "arcLength"} if kind == "lathe" else set())
+                variants.append({"type": "object", "properties": properties,
+                                 "required": [key for key in properties if key in needed],
+                                 "additionalProperties": False})
             continue
         properties = {"op": {"const": name}, **{key: fields[key] for key in sorted(allowed - {"op"})}}
         variants.append({"type": "object", "properties": properties, "required": sorted(required),
