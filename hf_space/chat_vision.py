@@ -29,7 +29,9 @@ MAX_QUESTION_CHARS = 2_000
 MAX_DESCRIPTION_CHARS = 6_000
 MAX_IMAGE_PIXELS = 16_000_000
 # Small-model CPU vision: bounded pixels reduce multimodal projector work.
-MODEL_INPUT_SIDE = 512
+MODEL_INPUT_SIDE = 384
+# Bound CPU decoder work; longer descriptions remain possible in the text LALM.
+MAX_VISION_OUTPUT_TOKENS = 88
 MODEL_REPO = "ggml-org/SmolVLM-256M-Instruct-GGUF"
 # Immutable public upstream snapshot. No HF access token or inference credits.
 MODEL_REVISION = "b9e4379657e1450d04d02eec8e345667265b0a00"
@@ -133,7 +135,8 @@ def _set_job_phase(job_id: str, phase: str, **fields) -> None:
 def _run_vision_job(job_id: str, image: str, question: str, cancel_event: threading.Event) -> None:
     try:
         description = _ask_vision_local(
-            image, question, report_phase=lambda phase: _set_job_phase(job_id, phase),
+            image, question,
+            report_phase=lambda phase, **fields: _set_job_phase(job_id, phase, **fields),
             should_cancel=cancel_event.is_set,
         )
         if cancel_event.is_set():
@@ -244,8 +247,11 @@ def _load_local_model():
         chat_handler=handler,
         n_gpu_layers=0,
         n_ctx=2048,
-        n_batch=128,
+        # Larger prefill batches reduce overhead on image embedding tokens.
+        n_batch=512,
+        n_ubatch=256,
         n_threads=2,
+        n_threads_batch=2,
         verbose=False,
     )
     _model = instance
@@ -294,6 +300,14 @@ def _ask_vision_local(image_url: str, question: str, report_phase=None, should_c
             "User question: " + question[:260]
         )
         report("ANALYZING")
+        # First streamed content is the only reliable indication that native
+        # image encoding and prompt prefill have returned control to Python.
+        report_detail = lambda **fields: None
+        if report_phase is not None:
+            report_detail = lambda **fields: report_phase("ANALYZING", **fields)
+        report_detail(inferenceStage="PREFILL")
+        inference_started = time.monotonic()
+        first_chunk_seconds = None
         stream = model.create_chat_completion(
             messages=[{
                 "role": "user",
@@ -302,7 +316,7 @@ def _ask_vision_local(image_url: str, question: str, report_phase=None, should_c
                     {"type": "image_url", "image_url": {"url": image}},
                 ],
             }],
-            max_tokens=112,
+            max_tokens=MAX_VISION_OUTPUT_TOKENS,
             temperature=0.1,
             stream=True,
         )
@@ -315,6 +329,11 @@ def _ask_vision_local(image_url: str, question: str, report_phase=None, should_c
                          if isinstance(choices, list) and choices and isinstance(choices[0], dict)
                          else None)
                 if isinstance(delta, str) and delta:
+                    if first_chunk_seconds is None:
+                        first_chunk_seconds = round(time.monotonic() - inference_started, 2)
+                        report_detail(inferenceStage="DECODING", firstChunkSeconds=first_chunk_seconds)
+                        print(json.dumps({"event":"LOCAL_VISION_FIRST_TEXT",
+                                          "firstChunkSeconds":first_chunk_seconds}), flush=True)
                     parts.append(delta)
         finally:
             close = getattr(stream, "close", None)
@@ -328,6 +347,7 @@ def _ask_vision_local(image_url: str, question: str, report_phase=None, should_c
             "event": "LOCAL_VISION_DONE",
             "seconds": round(time.monotonic() - started, 1),
             "chars": min(len(content), MAX_DESCRIPTION_CHARS),
+            "firstChunkSeconds": first_chunk_seconds,
         }), flush=True)
         return content[:MAX_DESCRIPTION_CHARS]
     finally:
@@ -436,6 +456,11 @@ def install(app, require_account) -> None:
                 "elapsedSeconds": round(max(0.0, now - job["createdAt"]), 1),
                 "phaseElapsedSeconds": round(max(0.0, now - job["phaseStartedAt"]), 1),
             }
+            if phase in ("ANALYZING", "COMPLETE"):
+                # Observed native inference progress only, never fabricated percentages.
+                response["inferenceStage"] = job.get("inferenceStage")
+                if job.get("firstChunkSeconds") is not None:
+                    response["firstChunkSeconds"] = job["firstChunkSeconds"]
             if phase == "COMPLETE":
                 response["description"] = job["description"]
             elif phase in ("FAILED", "CANCELLED"):
