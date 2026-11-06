@@ -1,0 +1,76 @@
+name: One-shot v11.301 Vanguard visual inspection
+# Targeted owner-model screenshot only; no general engine regression.
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/one-shot-vanguard-v11-301-appearance.yml'
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Install local headless Chromium
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps --only-shell chromium
+      - name: Observe hosted v11.301 Vanguard character in native editor
+        run: |
+          node --input-type=module <<'JS'
+          import { chromium } from 'playwright';
+          import assert from 'node:assert/strict';
+          import fs from 'node:fs';
+          const browser=await chromium.launch({headless:true,args:['--no-sandbox']});
+          try {
+           const page=await browser.newPage({viewport:{width:1200,height:900},deviceScaleFactor:1});
+           const errors=[];page.on('pageerror',e=>errors.push(String(e)));
+           const root='https://kamiloki-swrlz-forge-moba.static.hf.space/';
+           const response=await page.request.get(root+'SOURCE.json?inspect=301',{timeout:70000});
+           assert.equal(response.status(),200);
+           const receipt=await response.json();
+           assert.equal(receipt.sourceVersion,'§wyrl§ Engine v11.301');
+           assert.equal(receipt.finalSha256,'6ee49abfef8a85f077d313375398e42bba2cf3d245e22d95a07ca839ea44aa67');
+           await page.goto(root+'index.html?project=hooded-vanguard',
+              {waitUntil:'domcontentloaded',timeout:90000});
+           await page.waitForFunction(
+             ()=>window.SWYRL_ENGINE_HOODED_VANGUARD?.status?.().correctedHands===2,
+             null,{timeout:90000});
+           await page.waitForTimeout(4500);
+           const continueButton=page.getByRole('button',{name:'Continue',exact:true});
+           if(await continueButton.count() && await continueButton.first().isVisible()){
+             await continueButton.first().click();
+             await page.waitForTimeout(1100);
+           }
+           await page.evaluate(()=>{
+             const x=[...document.querySelectorAll('button')].find(el=>/Hide/i.test(el.textContent||''));
+             if(x&&x.offsetParent)x.click();
+           });
+           await page.waitForTimeout(950);
+           const state=await page.evaluate(()=>{
+             const status=window.SWYRL_ENGINE_HOODED_VANGUARD.status();
+             const model=window.SWYRL_ENGINE_MODEL_ATELIER;
+             return {status,build:window.SWRLZ_FORGE_BUILD?.version,
+               canvasCount:document.querySelectorAll('canvas').length,
+               editor:!!model};
+           });
+           assert.equal(state.build,'v11.301');
+           assert.equal(state.status.correctedHands,2);
+           assert.equal(state.status.retouchedFamilies,11);
+           assert.equal(errors.length,0,JSON.stringify(errors));
+           fs.mkdirSync('vanguard301',{recursive:true});
+           await page.screenshot({path:'vanguard301/desktop-front.png',fullPage:false});
+           console.log('HOSTED_V301_VISUAL_STATE',JSON.stringify(state));
+           console.log('HOSTED_V301_VISUAL_CAPTURE_OK');
+          }finally{await browser.close();}
+          JS
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: vanguard301-observed-desktop
+          path: vanguard301/
+          retention-days: 5
