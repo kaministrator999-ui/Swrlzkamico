@@ -823,4 +823,36 @@ for index, (name, uri) in enumerate(five_sections):
         assert not (center[1] > 200 and center[0] < 50), (name, center)
 assert vision._reference_figure_columns(Image.new("RGB", (1448, 1086), "white")) == []
 
+# Multi-view synthesis quality regression from the actual five-crop report.
+# It must surface specific phrases WITH source regions instead of discarding
+# them when the VLM's final global caption only says 'Character turnarounds'.
+five_caption_records = [
+    {"region": "Far-left detail", "description":
+     "A cartoon image of a girl holding a stick with a flower on it."},
+    {"region": "Center-left detail", "description":
+     "A girl with white hair and purple clothes holding a purple object."},
+    {"region": "Center detail", "description":
+     "An illustration of a girl holding a wand."},
+    {"region": "Center-right detail", "description":
+     "A cartoon character with a purple hoodie and moon symbol on it."},
+    {"region": "Far-right detail", "description":
+     "Purple and gold colored item on top of a blank background."},
+]
+indexed = vision._cross_view_evidence_index(five_caption_records)
+assert "white hair [Center-left detail]" in indexed
+assert "purple clothes [Center-left detail]" in indexed
+assert "purple hoodie [Center-right detail]" in indexed
+assert "moon symbol [Center-right detail]" in indexed
+assert "wand [Center detail]" in indexed
+assert "stick with a flower on it [Far-left detail]" in indexed
+assert "purple object [Center-left detail]" in indexed
+assert "Purple and gold colored item [Far-right detail]" in indexed
+assert "NOT independently seen or confirmed" in indexed
+assert "magical powers" not in indexed, "Never invent unsupported traits"
+assert not vision._cross_view_evidence_index([
+    {"region": "Left", "description": "Character turnarounds."},
+    {"region": "Center", "description": "Little Crystal."},
+    {"region": "Right", "description": "Top View."},
+]), "Do not fabricate a combined picture from only labels"
+
 print("Chat vision local CPU: authenticated boundaries, no paid provider, concurrency and mocked inference and export handoff PASS")
