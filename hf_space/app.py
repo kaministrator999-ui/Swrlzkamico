@@ -263,8 +263,10 @@ if "demo" not in legacy:
 app=gr.mount_gradio_app(app,legacy["demo"],path="/legacy",ssr_mode=False)
 
 def _warm_backends():
-    """Move one-time model setup off the first interactive request."""
-    for name,loader in (("700m",large_load),("coder",coder_load),("stock",original_load),("r39",engine)):
+    """Prewarm primary text and CPU vision before optional model routes."""
+    from chat_vision import prewarm_local_model
+    for name,loader in (("700m",large_load),("vision",prewarm_local_model),
+                        ("coder",coder_load),("stock",original_load),("r39",engine)):
         start=time.perf_counter()
         try:
             loader()
