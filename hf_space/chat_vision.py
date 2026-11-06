@@ -681,7 +681,8 @@ def _ask_vision_local(image_url: str, question: str, report_phase=None, should_c
             # fabricate missing features or convert keyword counts to accuracy.
             block = "\n" + label + " (source-image crop): " + detail
             if len(content) + len(block) + 110 > MAX_DESCRIPTION_CHARS:
-                content += "\nFurther region observations omitted from text due to size limit."
+                notice = "\nFurther region observations omitted due to the output size limit."
+                content = content[:MAX_DESCRIPTION_CHARS - len(notice)] + notice
                 break
             content += block
         if region_records:
@@ -813,6 +814,10 @@ def install(app, require_account) -> None:
                 "levelRecords": [dict(item) for item in job.get("levelRecords", [])],
                 "completedLevels": job.get("completedLevels", 0),
                 "selectedLevel": job.get("selectedLevel", 1),
+                "activeRegion": job.get("activeRegion"),
+                "requestedRegions": job.get("requestedRegions", 0),
+                "completedRegions": job.get("completedRegions", 0),
+                "spatialRegionRecords": [dict(item) for item in job.get("spatialRegionRecords", [])],
                 "sourceWidth": job.get("sourceWidth"),
                 "sourceHeight": job.get("sourceHeight"),
                 "sourceBytes": job.get("sourceBytes"),
