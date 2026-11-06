@@ -1,0 +1,39 @@
+name: One-shot §E v11.294 exact source measurement
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/one-shot-seal-v11-294.yml'
+permissions:
+  contents: read
+jobs:
+  seal:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Assemble and measure only current v11.294 source
+        run: |
+          python - <<'PY'
+          import json,sys,base64,gzip,hashlib
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          sys.path.insert(0,str(root.resolve()))
+          from build_space import load_patch
+          manifest=json.loads((root/'source-manifest.json').read_text())
+          assert manifest['name']=='§wyrl§ Engine v11.294'
+          assert manifest['patches'][-2:]==['patches/v11_293_chat_character_tools.py','patches/v11_294_vanguard_socket_loader_fix.py']
+          base=gzip.decompress(base64.b64decode(''.join((root/n).read_text().strip() for n in manifest['chunks'])))
+          assert len(base)==manifest['baseBytes'] and hashlib.sha256(base).hexdigest()==manifest['baseSha256']
+          html=base.decode('utf8')
+          for patch in manifest['patches']:
+            html=load_patch(root/patch)(html)
+          assert 'model.parts=parts;model.meshGroups=[];model.assemblies=null;' in html
+          assert 'SWYRL_ENGINE_DEPLOY_MARKER: V11_294_VANGUARD_SOCKET_LOAD_FIX' in html
+          data=html.encode('utf8')
+          Path('/tmp/se294-index.html').write_bytes(data)
+          print('V11_294_SEAL',json.dumps({'size':len(data),'sha256':hashlib.sha256(data).hexdigest(),'patches':len(manifest['patches'])}),flush=True)
+          PY
+      - name: Parse exact combined JavaScript
+        run: python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se294-index.html
