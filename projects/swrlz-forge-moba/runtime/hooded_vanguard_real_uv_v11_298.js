@@ -11,8 +11,8 @@ const se298AtlasLayout=Object.freeze({
 const se298AtlasMetadata=Object.freeze({
  source:'hooded_vanguard_game_texture_atlas.png',
  pipeline:'actual-image-crop-then-native-uv-tile-remapping',
- jpegSha256:'20ef9a5c10a7b6d90fe16250834794e6517a207f3695061aa9658639bc1d8c71',
- sheetPixels:[448,336],cellPixels:[112,112],layout:[4,3],
+ jpegSha256:'d34f6afc422cbfafe54dfbbd420752b12d37967654ea5c1443c031f3b6720b27',
+ sheetPixels:[512,384],cellPixels:[128,128],layout:[4,3],
  materialFamilies:Object.keys(se298AtlasLayout)
 });
 let se298Texture=null;
@@ -71,7 +71,7 @@ se291HeroScene=function(){
   // Existing editor UVs refer to one complete square [0,1]^2. Pack each
   // square into its corresponding real artwork tile in the 4x3 raster atlas.
   // Three.js UV V starts at the bottom; the art sheet rows start at the top.
-  const gutter=1.5/112;
+  const gutter=1.5/128;
   for(let i=0;i<uv.length;i+=2){
    const u=Math.max(0,Math.min(1,uv[i]));
    const v=Math.max(0,Math.min(1,uv[i+1]));
