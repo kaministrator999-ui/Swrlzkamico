@@ -405,10 +405,13 @@ def _ask_vision_local(image_url: str, question: str, report_phase=None, should_c
             detail_attempted = True
             # The original browser upload is 768px; never upscale the 384px
             # initial image. The second pass alone uses the retained detail.
+            retry_reason = ("GENERIC_CHARACTER_SHEET"
+                            if _CHARACTER_SHEET_WORDS.search(content)
+                            else "CONTENT_FREE_CAPTION")
             report_detail(inferenceStage="DETAIL_RETRY",
-                          detailRetryReason="GENERIC_CHARACTER_SHEET")
+                          detailRetryReason=retry_reason)
             print(json.dumps({"event": "LOCAL_VISION_DETAIL_RETRY",
-                              "reason": "GENERIC_CHARACTER_SHEET"}), flush=True)
+                              "reason": retry_reason}), flush=True)
             try:
                 detail_image = _prepare_image(image_url, max_side=DETAIL_RETRY_SIDE)
                 check_cancel()
