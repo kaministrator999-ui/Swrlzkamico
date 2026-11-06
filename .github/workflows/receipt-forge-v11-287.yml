@@ -63,3 +63,5 @@ jobs:
           PY
       - name: Syntax check actual assembled editor source
         run: python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/forge-cliff-287/index.html
+
+# Retry: native rigged mesh PBR hook supersedes shadowed material helper.
