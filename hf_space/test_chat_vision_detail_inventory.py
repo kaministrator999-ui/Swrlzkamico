@@ -59,8 +59,8 @@ class DetailedImageRoutingTests(unittest.TestCase):
         with patch.object(chat_vision, "_load_local_model", return_value=model):
             result = chat_vision._ask_vision_local(picture, "What is visible?")
         self.assertEqual(len(model.calls), 1)
-        self.assertIn("Whole image:", result)
-        self.assertNotIn("Far-left detail:", result)
+        self.assertIn("A plain red field.", result)
+        self.assertNotIn("Far-left detail (source-image crop)", result)
 
     def test_dense_reference_has_distinct_spatial_crops_not_repeated_resizes(self):
         picture = data_url(reference_sheet())
@@ -72,10 +72,13 @@ class DetailedImageRoutingTests(unittest.TestCase):
             "Center-right detail", "Far-right detail",
         ])
         self.assertEqual(len({encoded for _, encoded in crops}), 4)
+        # The wide sheet's top figure band is cropped; full-height
+        # strips would mix the figures with title/footer swatches.
         for _, encoded in crops:
             raw = base64.b64decode(encoded.partition(",")[2])
             with Image.open(io.BytesIO(raw)) as view:
                 self.assertLessEqual(max(view.size), 768)
+                self.assertLessEqual(view.height, 545)
 
     def test_full_image_then_crops_uses_specific_instructions_and_observed_text(self):
         picture = data_url(reference_sheet())
@@ -87,16 +90,16 @@ class DetailedImageRoutingTests(unittest.TestCase):
                 report_phase=lambda phase, **fields: phases.append((phase, fields)),
             )
         self.assertEqual(len(model.calls), 5)
-        self.assertIn("Whole image:", result)
-        self.assertIn("Far-left detail:", result)
-        self.assertIn("Far-right detail:", result)
+        self.assertIn("Character turnaround sheet", result)
+        self.assertIn("Far-left detail (source-image crop):", result)
+        self.assertIn("Far-right detail (source-image crop):", result)
         self.assertIn("gold stitching", result)
         self.assertEqual(sum(fields.get("inferenceStage") == "REGION_PREFILL" for _, fields in phases), 4)
         self.assertEqual(model.calls[0]["max_tokens"], chat_vision.MAX_VISION_OUTPUT_TOKENS)
         self.assertEqual(model.calls[1]["max_tokens"], 128)
         self.assertIn("subject you can SEE",
                       model.calls[0]["messages"][0]["content"][0]["text"])
-        self.assertIn("Look ONLY at this actual crop",
+        self.assertIn("Describe the ACTUAL SUBJECT",
                       model.calls[1]["messages"][0]["content"][0]["text"])
 
     def test_cancelled_job_stops_before_region_inference(self):
