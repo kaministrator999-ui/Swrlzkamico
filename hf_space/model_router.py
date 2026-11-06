@@ -388,7 +388,9 @@ def _vision_evidence_digest(description: str) -> str:
             continue
         elif re.match(r"^(?:[A-Za-z -]+) (?:\u00b7|\|) \d+(?:px|s)\b", line):
             continue
-        elif not index and not regions and not overview:
+        elif not index and not regions and len(overview) < 3:
+            # Keep several simple whole-image sentences, not just the
+            # first title line. The next line may contain the actual details.
             overview.append(line[:320])
     selected = []
     if index:
