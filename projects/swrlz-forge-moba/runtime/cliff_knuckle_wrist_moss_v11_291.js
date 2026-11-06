@@ -81,7 +81,7 @@ function se291DrawKnuckleRelief(ctx,kind){
     a[p+1]=Math.round(a[p+1]*(1-weight)+targetG*weight);
     a[p+2]=Math.round(a[p+2]*(1-weight)+245*weight);
    }else if(kind==='ao'){
-    const edge=Math.exp(-((d-.91)/.16)**2);
+    const edge=Math.exp(-(((d-.91)/.16)**2));
     const under=Math.max(0,dy)*Math.max(0,1-d);
     const dark=76*edge+23*under;
     a[p]=Math.max(0,a[p]-dark);
