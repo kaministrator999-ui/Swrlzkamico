@@ -118,6 +118,75 @@ assert "specific visible details" in visual_prompt
 assert "Avoid filler" in visual_prompt
 assert "Question: What is shown?" in visual_prompt
 
+# The actual exported turnaround attempts were too generic even when Chat
+# faithfully relayed them. The gate tests *observations*, not image identities.
+for generic in (
+    "Character turnaround page with various views of character.",
+    "Character turnaround page with various pictures and text.",
+    "The image is a character turnaround. It includes various views of the character, including front view, left side view, right side view, back view, top view, and details about the color palette.",
+):
+    assert vision._needs_detail_retry(generic), generic
+assert not vision._needs_detail_retry(
+    "Character turnaround of a mage in a purple hood, gold boots and a crystal staff."
+)
+assert not vision._needs_detail_retry("A white dog on grass.")
+assert not vision._needs_detail_retry("A red car parked beside a building.")
+
+# A generic first pass must use the *original* retained resolution for one
+# extra inference, not attempt to upscale the already-downsampled 384px JPEG.
+class DetailFakeModel:
+    def __init__(self):
+        self.calls = []
+    def create_chat_completion(self, **kwargs):
+        self.calls.append(kwargs)
+        result = ("Character turnaround page with various views of character."
+                  if len(self.calls) == 1 else
+                  "A small mage with a purple hood, golden trim and a crystal staff, shown from multiple angles.")
+        return iter([{"choices": [{"delta": {"content": result}}]}])
+
+detail_model = DetailFakeModel()
+detail_phases = []
+with patch.object(vision, "_load_local_model", return_value=detail_model):
+    refined = vision._ask_vision_local(encoded_image, "What do you see in this picture?",
+        report_phase=lambda phase, **fields: detail_phases.append((phase, fields)))
+assert "purple hood" in refined and "crystal staff" in refined
+assert len(detail_model.calls) == 2
+assert [call["max_tokens"] for call in detail_model.calls] == [
+    vision.MAX_VISION_OUTPUT_TOKENS, vision.DETAIL_RETRY_TOKENS]
+detail_dimensions = []
+for call in detail_model.calls:
+    url = call["messages"][0]["content"][1]["image_url"]["url"]
+    with Image.open(io.BytesIO(base64.b64decode(url.partition(",")[2]))) as im:
+        detail_dimensions.append(im.size)
+assert detail_dimensions == [(384, 288), (640, 480)], detail_dimensions
+assert ("ANALYZING", {"inferenceStage": "DETAIL_RETRY",
+                      "detailRetryReason": "GENERIC_CHARACTER_SHEET"}) in detail_phases
+assert any(fields.get("inferenceStage") == "DETAIL_DECODING" for _, fields in detail_phases)
+
+class RetryFailureModel:
+    def __init__(self):
+        self.calls = 0
+    def create_chat_completion(self, **kwargs):
+        self.calls += 1
+        if self.calls > 1:
+            raise RuntimeError("detail model failed")
+        return iter([{"choices": [{"delta": {"content":
+            "Character turnaround page with various views of character."}}]}])
+
+retry_failure = RetryFailureModel()
+with patch.object(vision, "_load_local_model", return_value=retry_failure):
+    coarse = vision._ask_vision_local(encoded_image, "What do you see?")
+assert coarse == "Character turnaround page with various views of character."
+assert retry_failure.calls == 2
+
+# Never invoke optional retry when original inference was already descriptive.
+specific_model = DetailFakeModel()
+specific_model.calls.append({"already": "seen"})
+with patch.object(vision, "_load_local_model", return_value=specific_model):
+    detailed_first = vision._ask_vision_local(encoded_image, "What is shown?")
+assert "purple hood" in detailed_first
+assert len(specific_model.calls) == 2
+
 # Async job contract: the POST acknowledges immediately, status exposes real
 # worker stages, duplicate submissions resume the same job, and one other image
 # can wait for CPU. A third distinct upload is bounded rather than piling up.
