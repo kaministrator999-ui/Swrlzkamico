@@ -112,10 +112,10 @@ assert fake_model.calls[0]["messages"][0]["content"][1]["image_url"]["url"] == v
 assert fake_model.calls[0]["max_tokens"] == vision.MAX_VISION_OUTPUT_TOKENS == 88
 assert fake_model.calls[0]["stream"] is True
 visual_prompt = fake_model.calls[0]["messages"][0]["content"][0]["text"]
-assert "front/side/back/top" in visual_prompt
-assert "not stages of transformation" in visual_prompt
-assert "specific visible details" in visual_prompt
-assert "Avoid filler" in visual_prompt
+assert "multi-view character sheet" in visual_prompt
+assert "distinctive colors" in visual_prompt
+assert "held objects" in visual_prompt
+assert "only clearly legible labels" in visual_prompt
 assert "Question: What is shown?" in visual_prompt
 
 # The actual exported turnaround attempts were too generic even when Chat
@@ -131,6 +131,8 @@ assert not vision._needs_detail_retry(
 )
 assert not vision._needs_detail_retry("A white dog on grass.")
 assert not vision._needs_detail_retry("A red car parked beside a building.")
+assert vision._needs_detail_retry("Image with various objects.")
+assert vision._needs_detail_retry("An image of some shapes.")
 
 # A generic first pass must use the *original* retained resolution for one
 # extra inference, not attempt to upscale the already-downsampled 384px JPEG.
@@ -180,12 +182,19 @@ assert coarse == "Character turnaround page with various views of character."
 assert retry_failure.calls == 2
 
 # Never invoke optional retry when original inference was already descriptive.
-specific_model = DetailFakeModel()
-specific_model.calls.append({"already": "seen"})
+class SpecificFakeModel:
+    def __init__(self):
+        self.calls = []
+    def create_chat_completion(self, **kwargs):
+        self.calls.append(kwargs)
+        return iter([{"choices": [{"delta": {"content":
+            "Character turnaround of a mage in a purple hood and gold boots holding a crystal staff."}}]}])
+
+specific_model = SpecificFakeModel()
 with patch.object(vision, "_load_local_model", return_value=specific_model):
     detailed_first = vision._ask_vision_local(encoded_image, "What is shown?")
 assert "purple hood" in detailed_first
-assert len(specific_model.calls) == 2
+assert len(specific_model.calls) == 1
 
 # Async job contract: the POST acknowledges immediately, status exposes real
 # worker stages, duplicate submissions resume the same job, and one other image
