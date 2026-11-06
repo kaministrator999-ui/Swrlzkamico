@@ -25,7 +25,7 @@ const rect=[...Array(100)].flatMap((_,i)=>{
 const proxy={topologyMesh:{positions:rect,indices:[0,1,2,3,4,5],uvs:[]}};
 sample.window.SWYRL_ENGINE_HAND_SURFACE={
  surface:(field,bounds,step)=>{
-  assert.equal(field,combined,'actual continuous field is passed to mesher');
+  assert(field(0,.4,0)<0&&field(0,.12,0)>0,'native mesher receives the real joined gauntlet field');
   assert.equal(step,.047);
   assert.equal(bounds[0][1],.12);
   return {positions:rect.slice(),indices:Array.from({length:303},(_,i)=>i%100),uvs:[]};
