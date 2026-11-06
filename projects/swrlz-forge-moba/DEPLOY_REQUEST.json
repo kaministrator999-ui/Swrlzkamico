@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.292",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_292_CLIFF_WRIST_MOSS_KNUCKLES",
-  "reason": "Owner real-device screenshot: smooth single-mesh Cliff Hand gauntlet loads well but moss is too pervasive across fingers/palm, and four knuckles need visible stone depth without adding mesh objects. Keep native 17-bone connected hand and short forearm geometry from v11.290 intact. Generate four CanvasTextures once from local user-supplied 384px-per-tile cliff atlas: clean sandstone base across entire palm/fingers; apply original mossy composite only to bottom ~23% wrist/gauntlet with feathered mask; draw four stone knuckle facets in matching albedo, tangent-space normals and AO, preserve original cracks and roughness. No new rock chunks, extra mesh parts, or 3D cracks. Preserve separate concurrent v11.291 Hooded Vanguard starter and material branch. Targeted canvas/PBR test, full 323-patch engine build and assembled JS syntax success in GitHub run 42178475464; SHA-256 d1b9b3c700a9c9063c3f46de8cf71b68b5f029d9f0a690e1ac62d8175f4daabc, 8,252,255 HTML bytes, 71 assets. Owner phone appearance acceptance pending.",
-  "sourceCommit": "3e8515cfd4aec700c96c3141c8f7d2a0c373e5e5",
-  "sourceIntegritySha256": "d1b9b3c700a9c9063c3f46de8cf71b68b5f029d9f0a690e1ac62d8175f4daabc"
+  "releaseVersion": "v11.293",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_293_CHAT_CHARACTER_TOOLS",
+  "reason": "Owner request: Chat-driven editable character modeling. Add negotiated loft and partial-lathe geometry, native framing and 64-step reviewed plans with visible actual native progress, cancellation and truthful partial receipts. Preserve 48-row compatibility, native history/persistence, latest Cliff Hand/Hooded Vanguard/project-picker/XR/particle work, 324 ordered patches and 71 assets. Strict reconstructed HTML, inline JavaScript, focused native tests and all asset hashes pass. Paired Chat source 1f50a0b64f61dfc83fcfcdce02e081f035b88fa6 is confirmed RUNNING. Real mage construction and owner device acceptance remain pending this paired release.",
+  "sourceCommit": "de5992dc558b786e0ee90ead26f0305ac3ae310a",
+  "sourceIntegritySha256": "16b4be42df32cb792dab0a766a6cb35857711f72758bd5b24b12135dcf71027f"
 }
