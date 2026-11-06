@@ -30,6 +30,8 @@ assert.match(html,/const regionDetail=\(state\.phase==="ANALYZING"&&state\.activ
 assert.match(html,/state\.activeRegion!=="Whole-scene synthesis"/);
 assert.match(html,/activity\.update\(state\.phase\|\|"QUEUED",regionDetail,\{/);
 assert.match(html,/spatialRegionRecords:state\.spatialRegionRecords/);
+assert.match(html,/spatialRegionFailures:state\.spatialRegionFailures/);
+assert.match(html,/integratedOutcome:state\.integratedOutcome/);
 assert.match(html,/elapsedSeconds:state\.elapsedSeconds/);
 assert.match(html,/phaseElapsedSeconds:state\.phaseElapsedSeconds/);
 assert.match(html,/const durationText=seconds=>/);
