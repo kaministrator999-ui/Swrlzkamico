@@ -48,14 +48,14 @@ jobs:
            'function se286CliffHandScene(){',
            'function se286CreateCliffMaterial(part){',
            'return se286CliffHandScene();',
-           'if(part.cliffPBR)return se286CreateCliffMaterial(part);',
+           'mat=part.cliffPBR?se286CreateCliffMaterial(part):material(part);',
            'Plain Hand Base · Cliff Hand',
           ]:
            assert needle in text,needle
           receipt=json.loads(Path('/tmp/forge-cliff-287/SOURCE.json').read_text('utf8'))
           assert 'assets/cliff-hand/cliff_pbr_atlas_128.jpg' in receipt['assets']
           jpeg=Path('/tmp/forge-cliff-287/assets/cliff-hand/cliff_pbr_atlas_128.jpg').read_bytes()
-          assert jpeg.startswith(b'\\xff\\xd8\\xff') and len(jpeg)==25639
+          assert jpeg.startswith(bytes((0xff,0xd8,0xff))) and len(jpeg)==25639
           print('SE287_SHA256='+hashlib.sha256(raw).hexdigest())
           print('SE287_BYTES='+str(len(raw)))
           print('SE287_ASSETS='+str(len(receipt['assets'])))
