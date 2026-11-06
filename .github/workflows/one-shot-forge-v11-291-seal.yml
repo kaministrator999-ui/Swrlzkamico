@@ -1,0 +1,45 @@
+name: One-shot §E v11.291 source seal and JS smoke
+# Exactly one narrow run on initial workflow creation. Future model changes
+# do not trigger this workflow; owner continues to use the regular deploy gate.
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/one-shot-forge-v11-291-seal.yml
+permissions:
+  contents: read
+jobs:
+  seal:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Assemble v11.291 patch lineage without bypassing or modifying receipt
+        run: |
+          python - <<'PY'
+          import sys,json,base64,gzip,hashlib
+          from pathlib import Path
+          p=Path('projects/swrlz-forge-moba')
+          sys.path.insert(0,str(p.resolve()))
+          from build_space import load_patch
+          m=json.loads((p/'source-manifest.json').read_text())
+          assert m['name']=='§wyrl§ Engine v11.291'
+          base=gzip.decompress(base64.b64decode(''.join((p/n).read_text().strip() for n in m['chunks'])))
+          assert hashlib.sha256(base).hexdigest()==m['baseSha256']
+          h=base.decode('utf8')
+          for path in m['patches']:
+              print('PATCH',path,flush=True)
+              h=load_patch(p/path)(h)
+          b=h.encode('utf8')
+          Path('/tmp/v11_291_index.html').write_bytes(b)
+          print('V11_291_ARTIFACT',json.dumps({'bytes':len(b),'sha256':hashlib.sha256(b).hexdigest(),'patches':len(m['patches']),'markerFound':'SWYRL_ENGINE_DEPLOY_MARKER: V11_291_HOODED_VANGUARD_MATERIALS' in h,'starterFound':'data-project-template="hooded-vanguard"' in h}),flush=True)
+          PY
+      - name: Parse the fully assembled browser JavaScript
+        run: |
+          python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/v11_291_index.html
+          node --check projects/swrlz-forge-moba/runtime/hooded_vanguard_v11_291.js
