@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.284",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_284_PLAIN_HAND_MODEL_CATEGORIES",
-  "reason": "Owner directly requested a distinct plain anatomical hand for alternate future rocky hand modeling, and moving existing model project cards incorrectly shown in Starter Games into Starter Models. §E v11.284 creates Plain Hand Base using only connected native five-finger and thumb sculpt topology, a clean matte neutral surface, 17-joint rig and open/fist/open animation; no rock, armor, glove accessories, sigils or effects. Keeps Rocky Anime Hand Emberstone, original and mirrored Arcane Gloves, other models and saved projects unchanged. Corrects v11.236 hardcoded gallery sorter using actual model category labels and project identities; reparent original cards without cloning, keep Blank VR Arcane Hands and other playable games in Starter Games. Node smoke PASS for plain mesh, 17 bones, preserved card identity and model/game categorization. Exact sealed source verification PASS: 315 append-only patches, 69 assets, 8,194,079 HTML bytes, SHA256 9d5df131bccd31fe024b370ab4833c6199142c5079fc0b67f4b7e44a53d4cd2a. Real phone/Quest visual acceptance pending.",
-  "sourceCommit": "68721322daf8136c68af1d77be17bf6fc7fc211d",
-  "sourceIntegritySha256": "9d5df131bccd31fe024b370ab4833c6199142c5079fc0b67f4b7e44a53d4cd2a"
+  "releaseVersion": "v11.285",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_285_COMPACT_PROJECT_CATEGORIES",
+  "reason": "Owner Android screenshot: project picker is oversized, overlaps the right Details drawer, and model-only templates remain mixed into Starter Games. v11.285 repairs a cross-scope category initialization defect, groups model and game starters independently of Chat account startup, portals the native project modal above editor drawers, and uses a compact scrollable mobile picker. Preserves existing cards, selectors, user projects, loaders and default project preferences. Exact source and inline JS verified by dedicated §E v11.285 GitHub workflow (316 patches and 69 assets). Owner Android/Quest UI acceptance pending.",
+  "sourceCommit": "3bb2f7c21fdd6de933491aa08e031025976b9281",
+  "sourceIntegritySha256": "c1d2134960ec4358fb907e3ceb1e4e0358ebede4970182eeb31ef81dbc2ead88"
 }
