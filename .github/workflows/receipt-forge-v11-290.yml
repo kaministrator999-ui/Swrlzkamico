@@ -1,0 +1,66 @@
+name: §E v11.290 real-hand gauntlet and PBR source seal
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/receipt-forge-v11-290.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  seal:
+    runs-on: ubuntu-latest
+    timeout-minutes: 17
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check native 217-hand SDF, real connected forearm and PBR
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/cliff_gauntlet_surface_material_v11_290.js
+          node projects/swrlz-forge-moba/scripts/test_v11_290_cliff_gauntlet.cjs
+      - name: Assemble 321-patch engine and calculate exact release hash
+        run: |
+          python - <<'PY'
+          import hashlib,json,subprocess,sys
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          mf=root/'source-manifest.json'
+          m=json.loads(mf.read_text('utf8'))
+          assert m['name']=='§wyrl§ Engine v11.290'
+          assert len(m['patches'])==321 and m['patches'][-1]=='patches/v11_290_cliff_gauntlet_load_material.py'
+          m['finalBytes']=0;m['finalSha256']=''
+          mf.write_text(json.dumps(m,ensure_ascii=False),encoding='utf8')
+          subprocess.run([sys.executable,str(root/'build_space.py'),'--output','/tmp/swrlz-gauntlet-290'],check=True)
+          out=Path('/tmp/swrlz-gauntlet-290')
+          raw=(out/'index.html').read_bytes()
+          assert raw==(out/'modeler.html').read_bytes()
+          html=raw.decode('utf8')
+          for term in (
+           'SWYRL_ENGINE_DEPLOY_MARKER: V11_290_CLIFF_GAUNTLET_LOAD_MATERIAL',
+           "window.SWRLZ_FORGE_BUILD={version:'v11.290'",
+           'function se290GauntletField(){',
+           'function se290BuildGauntletSurface(part){',
+           'const gauntlet=se290BuildGauntletSurface(stone);',
+           'const vertices=se290GauntletUV(stone);',
+           'function se290CliffMaterial(part){',
+           "mat=part.cliffPBR?.atlas==='cliff_pbr_atlas_384'?se290CliffMaterial(part):",
+           'model.parts=[stone];model.meshGroups=[];',
+           'SWYRL_ENGINE_CLIFF_GAUNTLET_290',
+          ):
+           assert term in html,term
+          receipt=json.loads((out/'SOURCE.json').read_text('utf8'))
+          assert len(receipt['patches'])==321
+          assert len(receipt['assets'])==71
+          assert 'assets/cliff-hand/cliff_pbr_atlas_384.jpg' in receipt['assets']
+          print('SE290_SHA256='+hashlib.sha256(raw).hexdigest())
+          print('SE290_BYTES='+str(len(raw)))
+          print('SE290_PATCHES='+str(len(receipt['patches'])))
+          print('SE290_ASSETS='+str(len(receipt['assets'])))
+          PY
+      - name: Verify assembled inline JavaScript syntax
+        run: python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/swrlz-gauntlet-290/index.html
