@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.301
+title: §wyrl§ Engine v11.302
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+## §E v11.302 · Hooded Vanguard UV-consistent material depth (2026-11-06)
+
+Continuing the v11.301 hand/face overhaul, this focused pass leaves **17 editable native meshes and their painted albedo UVs intact**. It adds mobile-friendly **256px tangent-space normal and grayscale roughness maps** for the eleven existing surface families, with shallow height relief drawn where hood/scarf folds, metal embossing, coat borders, hair strands and leather seams logically lie on the UVs. Skin remains nearly smooth; cloth and steel reflect light differently; no photographic concept-art collage is reintroduced. Preserve v11.301 corrected wrists, face, all other model/game starters, §C/VR/Sheep Tag, saved projects and append-only source lineage. Source/geometry integrity and real device visual inspection are separate gates. See [the v11.302 checkpoint](docs/VANGUARD_UV_PBR_RELIEF_V11_302.md).
+
 ## §E v11.301 · Stylized face, surface artwork and neutral wrists (2026-11-06)
 
 Owner's Android screenshot of v11.300 showed a distorted face, armour/clothing that looked like pasted magazine photographs, and five-digit hands hanging vertically despite diagonally outstretched forearms. This append-only patch changes **fresh Hooded Vanguard Starter Model construction only**: broadens and smooths the jaw/nose on the continuous head mesh, authors face UV painting at measured forehead/eye/nose/lip coordinates (plain skin around rear longitude), and paints **11 distinct native game-art material maps** for ivory hood/scarf, dark suit, engraved steel, teal coat, leather, gloves, hair and boots. The generated concept art remains the style/palette reference, not a cutout texture pasted onto geometry. The tapered breastplate gains a pointed lower silhouette; both existing five-digit glove meshes rotate **±0.64 rad about their wrists** to follow the forearms in a relaxed A-pose. All 17 editable part identities, historical patches, saved scenes and other §E tools stay unchanged. A focused JS/model/UV/material test and source seal verify engineering correctness; Android/Quest appearance remains owner acceptance. See [v11.301 notes](docs/VANGUARD_STYLIZED_FACE_WRISTS_V11_301.md).
