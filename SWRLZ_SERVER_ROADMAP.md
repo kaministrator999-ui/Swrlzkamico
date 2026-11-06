@@ -1,3 +1,10 @@
+## 2026-11-05 — §C original source-pixel upload v14 (source candidate)
+
+- **User correction:** L1/L2/L3 all returned generic descriptions; 768px was merely the resized browser input, not the user's original file size. The underlying need is CLIENT → SERVER transmission of the original image, not resolution inflation or more levels.
+- **Implementation:** browser uploads exact JPEG/PNG/WebP file contents via FileReader (no canvas/JPEG), max 8 MiB. Server validates up to 8 MiB decoded, 12 MB JSON body and 16 megapixels, then derives 384px and 640px full-sheet model inputs from original pixels. L3 optionally gets a native center-half crop for source files at least 1536px across before bounding to 768px. It is an explicit geometric center crop, not a verified subject recognizer.
+- **Evidence:** owner-only status reports image size and source byte count verified by Pillow after upload. L3 comparison includes source dimensions in saved reply. No image pixels persist in account chat or logs; keep same 2-slot CPU queue, full cancellation, model weights, time accounting and raw image captions. Acceptance remains actual user phone image recognition.
+- **Verification:** targeted regression checks for client FileReader path, avoiding downscaling, 8 MiB server cap, exact source byte retention, server-resized views, source-native focus crop, status metadata, and L1/L2/L3 behavior. Guarded HF workflow is the publication gate.
+
 ## 2026-11-05 — §C empirical vision levels v13 (source candidate)
 
 - **Intent:** Kami requested multiple successive vision analysis levels to determine experimentally at which level the Little Crystal Mage turnaround becomes genuinely recognizable. A keyword-rich caption must not be mislabeled visually correct.
