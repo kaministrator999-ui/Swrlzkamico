@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.293",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_293_CHAT_CHARACTER_TOOLS",
-  "reason": "Owner request: Chat-driven editable character modeling. Add negotiated loft and partial-lathe geometry, native framing and 64-step reviewed plans with visible actual native progress, cancellation and truthful partial receipts. Preserve 48-row compatibility, native history/persistence, latest Cliff Hand/Hooded Vanguard/project-picker/XR/particle work, 324 ordered patches and 71 assets. Strict reconstructed HTML, inline JavaScript, focused native tests and all asset hashes pass. Paired Chat source 1f50a0b64f61dfc83fcfcdce02e081f035b88fa6 is confirmed RUNNING. Real mage construction and owner device acceptance remain pending this paired release.",
-  "sourceCommit": "de5992dc558b786e0ee90ead26f0305ac3ae310a",
-  "sourceIntegritySha256": "16b4be42df32cb792dab0a766a6cb35857711f72758bd5b24b12135dcf71027f"
+  "releaseVersion": "v11.294",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_294_VANGUARD_SOCKET_LOAD_FIX",
+  "reason": "Fix confirmed Hooded Vanguard starter launch rejection: live v11.293 mobile Chromium produced 14 native meshes / 61,476 triangles then loadProject threw 'Invalid named socket.' Root cause was stale Prism Jester named sockets/components copied by structuredClone(MODEL_ATELIER_CANONICAL_PROJECT), referring to model part IDs removed during native Vanguard generation. v11.294 clears only Hooded Vanguard's obsolete model.assemblies graph after replacing its parts, preserving mapped PBR textures, editable model, §E v11.293 Chat character tools, v11.292 Cliff Hand and all other starters. Exact 325-patch 8,261,794-byte artifact SHA-256 39088e9ae2b215246515f3e3601f0b001ed2436ab0d1e7d1d7f7f70bbfbab7fd confirmed in targeted GitHub source measurement and assembled JS syntax receipt. Final hosted launch and owner's real device appearance pending.",
+  "sourceCommit": "13e7aaa233bf4c223822e66421950d8f87d46f79",
+  "sourceIntegritySha256": "39088e9ae2b215246515f3e3601f0b001ed2436ab0d1e7d1d7f7f70bbfbab7fd"
 }
