@@ -196,6 +196,33 @@ with patch.object(vision, "_load_local_model", return_value=specific_model):
 assert "purple hood" in detailed_first
 assert len(specific_model.calls) == 1
 
+# Cooperative cancellation during the optional pass cannot be converted into
+# apparent success by the fallback error handler.
+class CancelDuringDetail:
+    def __init__(self, stop):
+        self.calls = 0
+        self.stop = stop
+    def create_chat_completion(self, **kwargs):
+        self.calls += 1
+        if self.calls == 1:
+            return iter([{"choices": [{"delta": {"content":
+                "Character turnaround page with various pictures and text."}}]}])
+        self.stop.set()
+        return iter([{"choices": [{"delta": {"content": "A purple hood."}}]}])
+
+stop_detail = threading.Event()
+cancel_detail_model = CancelDuringDetail(stop_detail)
+with patch.object(vision, "_load_local_model", return_value=cancel_detail_model):
+    try:
+        vision._ask_vision_local(encoded_image, "Describe this image",
+                                 should_cancel=stop_detail.is_set)
+    except vision.VisionCancelled:
+        pass
+    else:
+        raise AssertionError("Cancelled detail retry must remain cancelled")
+assert cancel_detail_model.calls == 2
+assert not vision._inference_lock.locked(), "Cancelled retry must release CPU lock"
+
 # Async job contract: the POST acknowledges immediately, status exposes real
 # worker stages, duplicate submissions resume the same job, and one other image
 # can wait for CPU. A third distinct upload is bounded rather than piling up.
