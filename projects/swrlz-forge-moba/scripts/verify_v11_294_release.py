@@ -60,7 +60,7 @@ def main():
         "model.parts=parts;model.meshGroups=[];model.assemblies=null;",
     ):
         assert term in html, term
-    assert html.count("source.engine='§wyrl§ Engine · Maker v11.294';source.version=11.293;") == 3
+    assert html.count("source.engine='§wyrl§ Engine · Maker v11.294';source.version=11.294;") == 3
     assert html.count("function seChatAtelierApply(op)") == 1
     assert html.count("model.parts=parts;model.meshGroups=[];model.assemblies=null;") == 1
     assert html.count("function applyBatch(payload)") == 1
@@ -85,7 +85,7 @@ def main():
         assert request["sourceIntegritySha256"] == manifest["finalSha256"]
         assert len(request["sourceCommit"]) == 40
     print(json.dumps({"status": "SEALED_SOURCE_VERIFIED", "version": "v11.294",
-                      "patches": 324, "htmlBytes": len(raw),
+                      "patches": 325, "htmlBytes": len(raw),
                       "sha256": manifest["finalSha256"], "assets": 71,
                       "ownerDeviceAcceptance": False}, indent=2))
 
