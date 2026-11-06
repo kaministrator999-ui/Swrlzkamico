@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.302",
+  "name": "§wyrl§ Engine v11.303",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_302.html",
+  "finalArtifact": "swyrl_engine_v11_303.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -347,8 +347,9 @@
     "patches/v11_299_real_image_uv_alignment.py",
     "patches/v11_300_vanguard_mesh_uv_rebuild.py",
     "patches/v11_301_vanguard_face_art_wrist_pose.py",
-    "patches/v11_302_vanguard_mapped_pbr_relief.py"
+    "patches/v11_302_vanguard_mapped_pbr_relief.py",
+    "patches/v11_303_vanguard_face_geometry_uv_portrait.py"
   ],
-  "finalBytes": 8363668,
-  "finalSha256": "434a0221e5d3717b8ca179d39b574ba247473bcf630c1db61491295090850487"
+  "finalBytes": 0,
+  "finalSha256": ""
 }
