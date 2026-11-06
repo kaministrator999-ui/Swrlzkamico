@@ -46,6 +46,8 @@ class FakeVisionModel:
         if ordinal == 1:
             caption = ("A plain red field." if "What is visible?" in kwargs["messages"][0]["content"][0]["text"]
                        else "Character turnaround sheet showing four views of a purple-clothed mage.")
+        elif ordinal == 6:
+            caption = "A purple mage wears a gold-trimmed robe with moon symbols and holds a staff."
         else:
             caption = "Region %d: purple sleeve, gold stitching and a staff." % ordinal
         yield {"choices": [{"delta": {"content": caption}}]}
@@ -89,12 +91,20 @@ class DetailedImageRoutingTests(unittest.TestCase):
                 picture, "Describe the mage's actual appearance.",
                 report_phase=lambda phase, **fields: phases.append((phase, fields)),
             )
-        self.assertEqual(len(model.calls), 5)
-        self.assertIn("Character turnaround sheet", result)
+        self.assertEqual(len(model.calls), 6)
+        self.assertIn("Integrated whole-image observation", result)
+        self.assertIn("A purple mage wears a gold-trimmed robe", result)
         self.assertIn("Far-left detail (source-image crop):", result)
         self.assertIn("Far-right detail (source-image crop):", result)
         self.assertIn("gold stitching", result)
         self.assertEqual(sum(fields.get("inferenceStage") == "REGION_PREFILL" for _, fields in phases), 4)
+        self.assertEqual(sum(fields.get("inferenceStage") == "FUSION_PREFILL" for _, fields in phases), 1)
+        fused_input = model.calls[-1]["messages"][0]["content"]
+        self.assertIn("Whole scene:", fused_input[0]["text"])
+        self.assertIn("Center-right detail", fused_input[0]["text"])
+        self.assertEqual(fused_input[1]["type"], "image_url")
+        self.assertEqual(model.calls[-1]["max_tokens"], 192)
+        self.assertTrue(any(fields.get("integratedSelected") is True for _, fields in phases))
         self.assertEqual(model.calls[0]["max_tokens"], chat_vision.MAX_VISION_OUTPUT_TOKENS)
         self.assertEqual(model.calls[1]["max_tokens"], 128)
         self.assertIn("subject you can SEE",
