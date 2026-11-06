@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.285",
+  "name": "§wyrl§ Engine v11.286",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_285.html",
+  "finalArtifact": "swyrl_engine_v11_286.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -330,7 +330,8 @@
     "patches/v11_282_rock_cliff_hand.py",
     "patches/v11_283_weathered_rock_hand.py",
     "patches/v11_284_plain_hand_starter_categories.py",
-    "patches/v11_285_compact_project_categories.py"
+    "patches/v11_285_compact_project_categories.py",
+    "patches/v11_286_sheep_head_motion_diagnostics.py"
   ],
   "finalBytes": 8201720,
   "finalSha256": "c1d2134960ec4358fb907e3ceb1e4e0358ebede4970182eeb31ef81dbc2ead88"
