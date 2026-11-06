@@ -334,6 +334,6 @@
     "patches/v11_286_sheep_head_motion_diagnostics.py",
     "patches/v11_287_cliff_sculpt_pbr.py"
   ],
-  "finalBytes": 8208359,
-  "finalSha256": "dc2ff5a05ae376fac7995195d56384979b10e6e74bcbda8decc655eec250f564"
+  "finalBytes": 8215967,
+  "finalSha256": "7681d6ec830515d6a0b5feb322b77a82cf33097e89fc8796c01adbbfc46a915c"
 }
