@@ -64,13 +64,51 @@ assert space_readme.count('preload_from_hub:') == 1
 import io
 from PIL import Image
 assert vision.MODEL_INPUT_SIDE == 384
+assert vision.MAX_IMAGE_BYTES == 8 * 1024 * 1024
+assert vision.MAX_BODY_BYTES > 4 * vision.MAX_IMAGE_BYTES // 3
 source_image = Image.new("RGB", (1024, 768), "purple")
 source_bytes = io.BytesIO()
 source_image.save(source_bytes, format="PNG")
 encoded_image = "data:image/png;base64," + base64.b64encode(source_bytes.getvalue()).decode("ascii")
+assert vision._validated_image(encoded_image) == encoded_image
+assert vision._source_image_metadata(encoded_image) == {
+    "sourceWidth": 1024, "sourceHeight": 768,
+    "sourceBytes": len(source_bytes.getvalue()),
+    "originalBytesPreserved": True,
+}
 prepared = vision._prepare_image(encoded_image)
 with Image.open(io.BytesIO(base64.b64decode(prepared.partition(",")[2]))) as downsized:
     assert downsized.size == (384, 288), downsized.size
+
+# The server must accept real source pixels larger than its old 2 MB cap,
+# without rewriting JPEG/PNG/WebP payloads at ingress.
+import os
+noise_image = Image.frombytes("RGB", (1024, 1024), os.urandom(1024*1024*3))
+noise_buffer=io.BytesIO()
+noise_image.save(noise_buffer, format="PNG")
+noise_data=noise_buffer.getvalue()
+assert 2_000_000 < len(noise_data) < vision.MAX_IMAGE_BYTES
+noise_url="data:image/png;base64,"+base64.b64encode(noise_data).decode("ascii")
+assert vision._validated_image(noise_url)==noise_url
+assert vision._source_image_metadata(noise_url)["sourceBytes"]==len(noise_data)
+assert base64.b64decode(noise_url.partition(",")[2])==noise_data
+
+# Cropping a large original must focus on actual inner source pixels, not
+# upscale the previous whole-sheet 768px or 384px preview.
+source_large=Image.new("RGB",(2048,1536),"blue")
+source_large.paste(Image.new("RGB",(1024,768),"red"),(512,384))
+large_buffer=io.BytesIO()
+source_large.save(large_buffer,format="PNG")
+large_url="data:image/png;base64,"+base64.b64encode(large_buffer.getvalue()).decode("ascii")
+whole=vision._prepare_image(large_url,max_side=768)
+focus=vision._prepare_image(large_url,max_side=768,focus_center=True)
+with Image.open(io.BytesIO(base64.b64decode(whole.partition(",")[2]))) as im:
+    assert im.size==(768,576)
+    assert im.getpixel((0,im.height//2))[2] > 160, "Whole-sheet edge should be blue"
+with Image.open(io.BytesIO(base64.b64decode(focus.partition(",")[2]))) as im:
+    assert im.size==(768,576)
+    assert im.getpixel((0,im.height//2))[0] > 160, "Native center crop edge should be red"
+assert focus!=whole
 
 # A build-time cache hit must NOT incur a Hub network metadata request.
 from huggingface_hub.errors import LocalEntryNotFoundError
@@ -98,7 +136,9 @@ with patch.object(vision, "_load_local_model", return_value=fake_model) as loade
     assert vision.prewarm_local_model() is fake_model
     loader.assert_called_once()
 recorded_phases = []
-with patch.object(vision, "_prepare_image", lambda image: image), patch.object(vision, "_load_local_model", lambda: fake_model):
+with patch.object(vision, "_prepare_image", lambda image: image), \
+     patch.object(vision, "_source_image_metadata", return_value={"sourceWidth":1,"sourceHeight":1,"sourceBytes":len(jpeg),"originalBytesPreserved":True}), \
+     patch.object(vision, "_load_local_model", lambda: fake_model):
     answer = vision._ask_vision_local(
         valid, "What is shown?",
         report_phase=lambda phase, **fields: recorded_phases.append((phase, fields)),
@@ -222,6 +262,8 @@ with patch.object(vision,"_load_local_model",return_value=study_model):
 assert len(study_model.calls)==3
 assert "Level 1" in study and "Level 2" in study and "Level 3" in study
 assert "raw model outputs" in study and "accuracy unverified" in study
+assert "Original source received: 1024 × 768px" in study
+assert "center-source-crop-if-large" in study
 assert "A purple mage in gold boots" in study
 assert "gold trim, brown boots" in study
 assert [x["max_tokens"] for x in study_model.calls]==[
@@ -316,6 +358,8 @@ with patch.object(vision, "_prepare_image", lambda x: x), patch.object(vision, "
     assert len(done["levelRecords"]) == 1
     assert done["levelRecords"][0]["level"] == 1
     assert done["selectedLevel"] == 1
+    # Status reflects only server-read original dimensions, never a guessed
+    # pixel size or a fabricated verified visual recognition score.
     assert done["done"] is True
     assert done["elapsedSeconds"] >= done["phaseElapsedSeconds"] >= 0
     assert isinstance(done["elapsedSeconds"], float)
