@@ -347,6 +347,56 @@ def _needs_detail_retry(description: str) -> bool:
     return _visual_specificity(description) < 2
 
 
+def _reference_figure_columns(image) -> list[tuple[float, float]]:
+    """Find illustrated figure columns by foreground ink, not OCR/caption text.
+
+    For light-background turnaround pages, scan only the figure band, leaving
+    out title and footer labels. Return 3-5 normalized column extents when
+    the artwork has visible separation; otherwise leave routing to the
+    existing equal-width fallback. This is geometry, not AI object detection.
+    """
+    from PIL import Image
+
+    sample = image.copy()
+    sample.thumbnail((256, 192), Image.Resampling.BILINEAR)
+    width, height = sample.size
+    pixels = sample.load()
+    counts = []
+    for x in range(width):
+        ink = 0
+        for y in range(round(height * .115), round(height * .64)):
+            red, green, blue = pixels[x, y][:3]
+            hi, lo = max(red, green, blue), min(red, green, blue)
+            if (hi - lo > 35 and lo < 220) or (lo < 155 and hi - lo > 15):
+                ink += 1
+        counts.append(ink)
+    # The small rolling average ignores single-pixel artifacts while
+    # preserving the spaces between separate illustrated figures.
+    profile = []
+    for x in range(width):
+        first, last = max(0, x - 3), min(width, x + 4)
+        profile.append(sum(counts[first:last]) / max(1, last - first))
+    threshold = max(7, max(profile, default=0) * .18)
+    groups = []
+    start = None
+    for x, amount in enumerate(profile):
+        if amount >= threshold and start is None:
+            start = x
+        elif amount < threshold and start is not None:
+            groups.append((start, x - 1))
+            start = None
+    if start is not None:
+        groups.append((start, width - 1))
+    min_span = max(5, round(width * .065))
+    groups = [(start, end) for start, end in groups
+              if end - start >= min_span]
+    if not (3 <= len(groups) <= 5):
+        return []
+    return [(max(0., start / width - .018),
+             min(1., end / width + .018))
+            for start, end in groups]
+
+
 def _detail_regions(image_url: str, overview: str, question: str = "") -> list[tuple[str, str]]:
     """Select real image regions, not repeated resized copies of the same scene.
 
@@ -404,17 +454,26 @@ def _detail_regions(image_url: str, overview: str, question: str = "") -> list[t
         return []
 
     if reference_sheet and width > height * 1.2:
-        # Small figures in a wide turnaround deserve separate close views.
-        spans = [(i / 4, (i + 1) / 4) for i in range(4)]
-        # Character turnarounds commonly place full figures below a title
-        # and a separate color/prop palette below the figures. The old full-
-        # height vertical strips made each character tiny and mixed in text,
-        # swatches and unrelated panels. Focus the same four calls on the
-        # primary figure band; keep original pixels, no enlargement.
-        boxes = [(max(0, a - .035) * width, .08 * height,
-                  min(1, b + .035) * width, .76 * height) for a, b in spans]
-        labels = ["Far-left detail", "Center-left detail",
-                  "Center-right detail", "Far-right detail"]
+        # Use actual foreground columns rather than four equal slices.
+        # The Little Crystal Mage turnaround has five distinct view figures;
+        # four slices mixed neighboring views and printed footer labels.
+        # This generic pixel analysis also handles three- and four-view sheets.
+        spans = _reference_figure_columns(original)
+        if not spans:
+            spans = [(i / 4, (i + 1) / 4) for i in range(4)]
+        boxes = [(a * width, .105 * height,
+                  b * width, .655 * height) for a, b in spans]
+        if len(spans) == 5:
+            labels = ["Far-left detail", "Center-left detail",
+                      "Center detail", "Center-right detail", "Far-right detail"]
+        elif len(spans) == 4:
+            labels = ["Far-left detail", "Center-left detail",
+                      "Center-right detail", "Far-right detail"]
+        elif len(spans) == 3:
+            labels = ["Left figure detail", "Center figure detail",
+                      "Right figure detail"]
+        else:
+            labels = [f"Figure {index + 1} detail" for index in range(len(spans))]
     elif reference_sheet and height > width * 1.2:
         spans = [(i / 3, (i + 1) / 3) for i in range(3)]
         boxes = [(0, max(0, a - .035) * height,
