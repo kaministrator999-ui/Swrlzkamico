@@ -64,6 +64,21 @@ def test_dedup_and_privacy_contract():
     assert "privateReasoning" not in str(result)
 
 
+def test_symbolic_forge_failure_codes_are_bounded_and_kept_distinct():
+    events=progress.project([
+        {"phase":"FORGE_FAILED","reason":"Check current editor","code":"FORGE_CONTEXT_CHANGED"},
+        {"phase":"FORGE_FAILED","reason":"Check current editor","code":"FORGE_REQUEST_UNAVAILABLE"},
+        {"phase":"FAILED","code":"FORGE_"+"A"*90},
+        {"phase":"FAILED","code":"FORGE_"+"A"*91},
+        {"phase":"FAILED","code":"FORGE_BAD secret=value"},
+        {"phase":"QUEUED","code":"FORGE_CONTEXT_CHANGED"},
+    ])["events"]
+    assert [row["code"] for row in events if row.get("code")] == [
+        "FORGE_CONTEXT_CHANGED","FORGE_REQUEST_UNAVAILABLE","FORGE_"+"A"*90]
+    assert "secret=value" not in str(events)
+    assert all("code" not in row for row in events if row["phase"]=="QUEUED")
+
+
 def test_station_and_chat_ui_contracts():
     station = (ROOT / "station.py").read_text(encoding="utf-8")
     html = (ROOT.parent / "chat" / "§wyrlz" / "index.html").read_text(encoding="utf-8")
@@ -85,5 +100,6 @@ if __name__ == "__main__":
     test_observation_timestamps_are_not_invented()
     test_redaction_and_bounded_log()
     test_dedup_and_privacy_contract()
+    test_symbolic_forge_failure_codes_are_bounded_and_kept_distinct()
     test_station_and_chat_ui_contracts()
     print("v238 timestamped activity trace contract PASS")

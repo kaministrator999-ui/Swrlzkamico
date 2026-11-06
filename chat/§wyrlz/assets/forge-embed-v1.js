@@ -11,7 +11,7 @@
   let binding = null, port = null, token = "", expiresAt = 0, accountEpoch = 0;
   let thread = "", lease = "", hostVisible = false, pairing = null, cloudBusy = false, resumeNonce = 0;
   let verifiedAccountId = "", publishedAccountKey = null, cloudListInFlight = null;
-  const pending = new Map(), seenBatches = new Set(), cloudCatalog = new Map();
+  const pending = new Map(), seenBatches = new Set(), activeBatches = new Map(), cloudCatalog = new Map();
   const id = () => crypto.randomUUID().replaceAll("-", "");
   const validBinding = value => typeof value === "string" && /^[A-Za-z0-9_-]{16,128}$/.test(value);
   const envelope = (type, payload, requestId = id()) => ({protocol:PROTOCOL,...binding,type,requestId,payload});
@@ -94,7 +94,7 @@
     send("account.status",publicValue);
   };
   const revoke = reason => {
-    lease="";seenBatches.clear();
+    lease="";seenBatches.clear();activeBatches.clear();
     if(port)send("host.revoke",{reason:String(reason||"connection-changed").slice(0,80)});
   };
   const clearAccount = () => {
@@ -296,6 +296,28 @@
       else task.resolve(message.payload?.result ?? message.payload);
       return;
     }
+    if(message.type === "host.progress"){
+      // Only this private, origin-bound MessagePort can report native progress.
+      // Correlate it with a batch this broker actually forwarded in this lease.
+      const value=message.payload, active=activeBatches.get(value?.batchId);
+      if(!active || !lease || !hostVisible || !isAuthenticated() || document.visibilityState!=="visible"
+        || active.leaseId!==lease || active.threadId!==thread
+        || value?.generationId!==active.generationId
+        || !Number.isSafeInteger(value.completed) || !Number.isSafeInteger(value.total)
+        || value.total<1 || value.total>64 || value.completed<1 || value.completed>value.total
+        || (active.total!==undefined && value.total!==active.total)
+        || value.completed<active.completed || typeof value.ok!=="boolean"
+        || typeof value.op!=="string" || !/^[a-z][a-z0-9]*(?:\.[a-z][a-z0-9]*)+$/.test(value.op)
+        || value.op.length>60 || typeof value.name!=="string" || value.name.length>160
+        || (value.code!==undefined && (typeof value.code!=="string" || !/^[A-Z0-9_]{1,80}$/.test(value.code))))return;
+      active.completed=value.completed;active.total=value.total;
+      // This is transient presentation only. Final success still comes from
+      // the authenticated server's stored native receipts, never this event.
+      emit("swrlz-forge-progress",Object.freeze({batchId:value.batchId,generationId:active.generationId,
+        threadId:active.threadId,completed:value.completed,total:value.total,op:value.op,
+        name:value.name,ok:value.ok,...(value.code?{code:value.code}:{})}));
+      return;
+    }
     if(message.type === "host.analyze"){
       // A verified user clicked Analyze in §E. Only trigger the normal Chat
       // composer; no untrusted scene strings become executable instructions.
@@ -305,11 +327,11 @@
     }
     if(message.type === "host.visibility"){
       hostVisible=message.payload?.visible === true;
-      if(!hostVisible){lease="";seenBatches.clear();}
+      if(!hostVisible){lease="";seenBatches.clear();activeBatches.clear();}
       return;
     }
     if(message.type === "host.closed" || message.type === "host.projectChanged" || message.type === "host.inactive"){
-      lease="";seenBatches.clear();return;
+      lease="";seenBatches.clear();activeBatches.clear();return;
     }
     let result;
     try{
@@ -355,7 +377,7 @@
         try{
           const active=await rpc("host.presence",{...presence,context:snapshot.context});check();
           if(typeof active?.leaseId !== "string" || !/^[a-f0-9]{32}$/.test(active.leaseId))throw error("The editor connection could not be confirmed.");
-          lease=active.leaseId;seenBatches.clear();return {forgeLeaseId:lease};
+          lease=active.leaseId;seenBatches.clear();activeBatches.clear();return {forgeLeaseId:lease};
         }catch(reason){
           check();if(reason.message!=="EDITOR_CONTEXT_CHANGED" || attempt===2)throw reason;
         }
@@ -363,9 +385,15 @@
     },
     forwardBatch(event){
       const value=event?.payload && !event.batchId?event.payload:event;
-      if(!embedded || !port || !lease || !hostVisible || !isAuthenticated() || value?.leaseId !== lease || value?.threadId !== thread || !/^[a-f0-9]{32}$/.test(value?.batchId) || seenBatches.has(value.batchId))return;
+      if(!embedded || !port || !lease || !hostVisible || !isAuthenticated() || value?.leaseId !== lease || value?.threadId !== thread || !/^[a-f0-9]{32}$/.test(value?.batchId) || typeof value.generationId!=="string" || !value.generationId || value.generationId.length>160 || seenBatches.has(value.batchId))return;
       seenBatches.add(value.batchId);
+      activeBatches.set(value.batchId,{leaseId:lease,threadId:thread,generationId:value.generationId,completed:0});
       send("host.batch",{batchId:value.batchId,leaseId:lease,threadId:thread,generationId:String(value.generationId||""),projectId:String(value.projectId||"")});
+    },
+    finishGeneration(generationId,threadId){
+      // Called only after a server terminal event or persisted terminal message.
+      for(const [batchId,active] of activeBatches)
+        if(active.generationId===generationId && active.threadId===threadId)activeBatches.delete(batchId);
     },
     notifyAccount(user){
       // showUser can run while embedded sign-in is still restoring. It cannot

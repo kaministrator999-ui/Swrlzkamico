@@ -11,6 +11,8 @@ import time
 
 SCHEMA = "swrlz-chat-activity-timeline-v1"
 MAX_EVENTS = 64
+_FORGE_CODE = re.compile(r"FORGE_[A-Z0-9_]{1,90}")
+_FORGE_FAILURE_PHASES = frozenset({"FORGE_FAILED", "FORGE_PARTIAL", "FAILED"})
 _PHASE = re.compile(r"^[A-Z][A-Z0-9_]{1,79}$")
 _REDACT = re.compile(
     r"(?i)(bearer\s+\S+|gh[opusr]_[A-Za-z0-9_]{12,}|"
@@ -19,6 +21,13 @@ _REDACT = re.compile(
 )
 _SKIP = frozenset({"RESPONSE_COGNITION", "MEMORY_CANDIDATE", "DIAGNOSTIC_READY",
                    "GENERATION_TELEMETRY"})
+
+
+def forge_failure_fields(value, phase):
+    """Project only bounded symbolic Forge diagnostics, never exception text."""
+    if isinstance(phase, str) and phase in _FORGE_FAILURE_PHASES and isinstance(value, str) and _FORGE_CODE.fullmatch(value):
+        return {"code": value}
+    return {}
 
 
 def mark_new(statuses, start, at_unix_ms=None):
@@ -55,14 +64,16 @@ def project(statuses, accepted_at=None, request_id=None):
         reason = _clean(item.get("reason"), 130)
         timestamp = item.get("atUnixMs")
         timestamp = int(timestamp) if isinstance(timestamp, (int, float)) and timestamp > 0 else None
-        # At most one row per contiguous repetition of an identical activity.
-        if rows and (rows[-1]["phase"], rows[-1]["reason"]) == (phase, reason):
+        fields=forge_failure_fields(item.get("code"),phase)
+        # Distinct symbolic failures remain distinct even with identical prose.
+        if rows and (rows[-1]["phase"], rows[-1]["reason"],rows[-1].get("code")) == (phase, reason,fields.get("code")):
             continue
         rows.append({
             "index": index + 1,
             "phase": phase,
             "reason": reason,
             "atUnixMs": timestamp,
+            **fields,
         })
     omitted = max(0, len(rows) - MAX_EVENTS)
     events = rows if not omitted else rows[:1] + rows[-(MAX_EVENTS - 1):]

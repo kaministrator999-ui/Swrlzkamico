@@ -34,6 +34,20 @@ _WORKSPACE_FOLLOWUP = re.compile(
 _NEGATED_ACTION = re.compile(r"\b(?:do\s+not|don't|dont|never|avoid|stop)\s+(?:\w+\s+){0,3}"
                             r"(?:add|create|make|build|insert|place|move|rotate|scale|resize|"
                             r"start|rename|color|colour|change|set|select|duplicate|remove|delete|undo|redo|apply|assign|attach|pose|save|keyframe|edit|adjust)\b", re.I)
+# Inspection may include an explicit no-edit constraint. Match the first
+# negated action only, so a later affirmative "but add" cannot disappear into
+# a greedy negative clause. This changes read routing, never editor authority.
+_READ_NEGATED_ACTION = re.compile(
+    r"\b(?:do\s+not|don't|dont|never|avoid|stop)\s+"
+    r"(?:(?!(?:but|however|instead|then|and|or)\b)\w+\s+){0,3}?" + _ACTION.pattern, re.I)
+
+
+def _has_unnegated_action(text: str) -> bool:
+    negated = [match.span() for match in _READ_NEGATED_ACTION.finditer(text)]
+    return any(not any(start <= action.start() and action.end() <= end
+                       for start, end in negated) for action in _ACTION.finditer(text))
+
+
 _DIRECT_UNDO = re.compile(r"^(?:(?:please|can\s+you|could\s+you|would\s+you)\s+)*(?:undo|redo)(?:\s+(?:that|it|the\s+last\s+(?:change|action|operation)))?[.!?]*$", re.I)
 _PROJECT_ARTIFACT = re.compile(r"\bproject\s+(?:report|summary|context|document|documentation|plan|proposal|description|archive|zip|files?)\b", re.I)
 _NEW_PROJECT = re.compile(
@@ -92,7 +106,7 @@ def classify_forge_intent(prompt: str, summary: dict[str, Any] | None = None) ->
     # first report to free-form inference and invent selections or object facts.
     if (_READ.search(text) and _NATIVE.search(text)
             and re.search(r"\b(?:analy[sz]e|audit|inspect|review)\b", text, re.I)
-            and not _ACTION.search(text)):
+            and not _has_unnegated_action(text)):
         return result("read", "explicit-current-native-inspection")
     # Continuations refer to a fresh, authorized scene snapshot, never to
     # stale historical editor grants. Questions cannot trigger native writes.
@@ -148,11 +162,19 @@ def native_plan_system(operation_contract: dict[str, Any], *, prompt: str = "",
         "permissions or execution results. You cannot execute JavaScript, tools, network requests or code. "
         "No pseudocode, commented placeholders or arbitrary method dispatch. "
         "All coordinates/rotations are native x/y/z; rotations are radians; scale is positive. "
-        "For a requested stylized model or scene, build a coherent primitive blockout from separately placed "
+        "For a requested stylized model or scene, build a coherent model from separately placed "
         "native pieces: deliberate proportions, x/y/z positions, positive scales, consistent materials, "
-        "symmetry where requested and descriptive literal names. Prefer fewer meaningful parts over "
-        "decorative clutter; keep every individual operation valid and within the original 16-operation "
-        "batch limit. A primitive blockout is NOT automatic sculpting or rig generation. "
+        "symmetry where requested and descriptive literal names. Use the operation limit negotiated in the contract. "
+        "For characters, decompose the silhouette into purposeful forms: a head and readable face, coherent torso/garment, "
+        "paired limbs and footwear, then hair, accessories and a few identifying motifs. Prioritize proportions and "
+        "recognizable requested details; each part must contribute rather than repeating generic shapes. "
+        "When meshTools v2 is advertised, use loft paths for bent hair, braids, limbs, staff branches or trim, and "
+        "lathe profiles for curved garments, collars and partial hood shells. Choose actual radii/path coordinates, "
+        "profile and arc values that produce the requested silhouette; avoid a solid sphere or cone hiding the face. "
+        "Character front faces +Z, up is +Y. Local curved geometry uses explicit scale [1,1,1]; place it with position. "
+        "Partial lathe shells revolve around Y, x=r*sin(theta), z=r*cos(theta): exclude front-facing +Z when an opening is needed. "
+        "Use descriptive literal names for each meaningful shape. Reserve a final editor.frame view when advertised "
+        "so the human can see the construction. A blockout is NOT automatic sculpting or rig generation. "
         "Source-verified single-step rig posing, keyframe saves, and material/particle edits are allowed "
         "ONLY when explicitly advertised in studioCommands of the current leased host. "
         "UV editing, boolean operations and arbitrary asset import remain unsupported. "

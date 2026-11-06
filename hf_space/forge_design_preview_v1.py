@@ -10,6 +10,7 @@ from __future__ import annotations
 import re
 from typing import Any
 from brain_forge import current_command_text
+from forge_mesh_tools_v2 import extended_plan
 
 _PREVIEW = re.compile(r"\b(?:preview|mock[ -]?up|sketch|draft|visuali[sz]e|design|propose|blueprint|plan)\b", re.I)
 _TARGET = re.compile(
@@ -49,6 +50,10 @@ def wants_preview(prompt: Any) -> bool:
 
 
 def should_preview(prompt: Any, operations: list[dict[str, Any]]) -> bool:
+    # Old cached UI only understands sixteen primitive steps. Extended plans
+    # always require a v2 exact preview, even with an Apply-now prefix.
+    if extended_plan(operations):
+        return True
     # Every new studio write is always an exact frozen preview/approval turn.
     # A text Apply-now prefix cannot silently bypass this additional gate.
     if any(op.get("op", "").startswith(("material.", "particle.", "rig.")) for op in operations):
@@ -92,6 +97,8 @@ def _step_command(op: dict[str, Any]) -> str:
         return "Select " + ("mesh" if name.startswith("mesh") else "scene actor") + " ID " + op["id"]
     elif name in ("editor.undo", "editor.redo"):
         return name.split(".")[1].capitalize() + " the last edit"
+    elif name == "editor.frame":
+        return "Frame the model in " + op.get("view", "three") + " view"
     else:
         return "Change " + _text(name)
     for field in ("name", "position", "rotation", "scale", "color", "material", "preset", "actorId",
@@ -110,7 +117,7 @@ def build_preview(summary: dict[str, Any], operations: list[dict[str, Any]],
     by_id = {item.get("id"): item for item in (entries or [])
              if isinstance(item, dict) and isinstance(item.get("id"), str)}
     steps = []
-    for index, op in enumerate(operations[:16], 1):
+    for index, op in enumerate(operations, 1):
         source = by_id.get(op.get("id")) or {}
         steps.append({
             "index": index, "op": op["op"],
@@ -127,7 +134,8 @@ def build_preview(summary: dict[str, Any], operations: list[dict[str, Any]],
                        ("id", "kind", "prefab", "name", "position", "rotation", "scale",
                         "color", "material", "preset", "actorId", "boneId", "clip", "time",
                         "baseColor", "roughness", "metalness", "glow", "rate", "life", "size",
-                        "startColor", "endColor") if key in op},
+                        "startColor", "endColor", "path", "radii", "profile", "segments",
+                        "arcStart", "arcLength", "view") if key in op},
         })
     project = summary.get("project") if isinstance(summary.get("project"), dict) else {}
     # The server holds the exact plan; only an opaque public correlation ID
@@ -143,7 +151,7 @@ def build_preview(summary: dict[str, Any], operations: list[dict[str, Any]],
         "title": "§E Design Studio · Review",
         "provider": "Current native context + constrained model plan",
         "data": {
-            "schema": "swrlz-forge-design-preview-v1",
+            "schema": "swrlz-forge-design-preview-v2" if extended_plan(operations) else "swrlz-forge-design-preview-v1",
             "project": _text(project.get("name") or "Open project"),
             "workspace": workspace, "operationCount": len(steps), "steps": steps,
             "request": _text(request, 300),

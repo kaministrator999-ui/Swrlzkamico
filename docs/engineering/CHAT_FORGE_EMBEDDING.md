@@ -271,6 +271,55 @@ The host takes server-canonical operations, executes the native allowlist, then
 posts receipts. Final response is grounded in those receipts; missing/expired/
 partial/rejected operations cannot become a successful completion.
 
+## Negotiated character mesh tools — v2 candidate
+
+The bounded [character mesh checkpoint](entries/2026-11-05_CHAT_CHARACTER_MESH_TOOLS_V2.md)
+extends the existing protocol without changing account, lease or native-write
+authority. The exact host capability is `meshTools:{schema:"swrlz-forge-mesh-tools-v2",
+kinds:["sphere","box","cone","cylinder","loft","lathe"],maxOperations:64}`.
+Absent, malformed or unknown capabilities retain the16-operation primitive
+contract. Model context exposes only this sanitized capability; the raw native
+context and hash remain intact for exact host preconditions.
+
+With v2, `mesh.add` additionally accepts bounded loft path/radii or lathe
+profile/arc data, and Model Atelier accepts `editor.frame` with optional
+`front/back/left/right/three/hero/top/bottom` view. Backend and native host
+independently validate the complete operation list. Curved, frame and over16
+plans always use `swrlz-forge-design-preview-v2` with every exact step and
+geometry field, requiring the existing frozen one-use human approval. Older
+cached UI cannot approve a partially rendered v2 plan. Legacy previews retain v1.
+
+An approved batch has a fixed server application deadline25 seconds after
+registration. Its authenticated take response returns conservative remaining
+`applicationWindowMs`, an integer1000..25000; delivery delay consumes this
+budget. The host subtracts a further1000ms, checks before every native action,
+and renews the existing short lease during longer batches. The receipt wait
+remains30 seconds. Private-port `host.progress` reports actual per-operation
+receipts for the current batch/generation/thread; these are transient UI status.
+Only server terminal receipts complete the response. Stop immediately revokes
+editor authority before waiting for cancellation transport.
+
+If a stream closes before its acknowledged Station generation is terminal,
+Chat keeps polling that same authenticated generation and keeps Stop available.
+Snapshot retries forward native batch readiness through the existing scoped
+broker. Neither EOF nor a cancel acknowledgement releases the composer as a
+completed response; only matching server terminal evidence does. See the
+[stream recovery follow-up](entries/2026-11-05_CHAT_STREAM_EOF_RECOVERY.md).
+
+Trusted Forge failure status and terminal projections retain only a bounded
+`FORGE_` constant (uppercase letters, digits and underscores; at most 96
+characters). The same code remains inspectable in saved/live activity logs;
+invalid values and unrelated event codes are omitted. See the
+[failure diagnostic receipt](entries/2026-11-06_CHAT_FORGE_FAILURE_CODES.md).
+
+Explicit current inspections retain deterministic snapshot reads when their
+recognized action verbs occur only in explicit negative constraints such as
+"Do not edit anything." Mixed affirmative edits retain the existing mutation
+and negation policies. Batch registration retries a confirmed no-write CAS miss
+at most three times, with the full live authority/snapshot/proposal validation
+on each attempt; unknown storage outcomes are not retried. See the
+[inspection and heartbeat receipt](entries/2026-11-06_CHAT_INSPECTION_AND_HEARTBEAT_CAS.md).
+
 ## Native project creation and active-project context — v11.175 candidate
 
 Status: implementation candidate with focused backend/development-browser evidence and a measured engine source seal. Exact sealed-browser verification, final-source CI, publication and real-model/device acceptance remain separately classified in the [project workflow checkpoint](entries/2026-10-30_CHAT_FORGE_PROJECT_WORKFLOW.md). The existing published integration above is retained; this section does not claim the successor is live.

@@ -380,6 +380,107 @@ class ForgeEmbedTest(unittest.TestCase):
         self.assertEqual(self.post("/api/forge/embed/host/close", {"leaseId": lease2["leaseId"]},
                          host_token=lease2["hostToken"], origin=PARENT).status_code, 200)
 
+    def test_unchanged_heartbeats_during_planning_do_not_stale_batch_registration(self):
+        summary = {**copy.deepcopy(CONTEXT),
+                   "starters": [{"id": "blank-scene", "name": "Blank Scene"}]}
+        token, _ = self.pair()
+        lease, _ = self.activate(token, context=summary)
+        context = embed.authorize_generation(self.request(token), lease["leaseId"],
+                                             THREAD, "planning-through-heartbeats")
+        original, prior_raw = embed._read("lease", lease["leaseId"])
+        heartbeat = {"leaseId": lease["leaseId"], "hostId": HOST, "channelId": CHANNEL,
+                     "threadId": THREAD, "projectId": PROJECT, "visible": True,
+                     "context": summary}
+        # Planning spans three real heartbeat refreshes. The encrypted lease
+        # and expiry change each time; native snapshot/authority do not.
+        for _ in range(3):
+            self.clock += 5
+            response = self.post("/api/forge/embed/host/heartbeat", heartbeat,
+                                 host_token=lease["hostToken"], origin=PARENT)
+            self.assertEqual(response.status_code, 200, response.text)
+            current, raw = embed._read("lease", lease["leaseId"])
+            self.assertNotEqual(raw, prior_raw)
+            self.assertEqual(current["contextHash"], original["contextHash"])
+            self.assertGreater(current["expiresAt"], original["expiresAt"])
+            embed.revalidate(context)
+            prior_raw = raw
+        operation = {"op": "project.create", "starterId": "blank-scene",
+                     "name": "Project after fifteen seconds of planning"}
+        batch_id = embed.create_batch(context, [operation])
+        self.assertEqual(embed._read_key(context._generation_key)[0]["activeBatchId"], batch_id)
+        taken = self.take(lease, batch_id)
+        self.assertEqual(taken.status_code, 200, taken.text)
+        self.assertEqual(taken.json()["operations"], [operation])
+
+    def test_heartbeat_between_registration_read_and_commit_revalidates_before_retry(self):
+        token, lease, context = self.generation()
+        heartbeat = {"leaseId": lease["leaseId"], "hostId": HOST, "channelId": CHANNEL,
+                     "threadId": THREAD, "projectId": PROJECT, "visible": True,
+                     "context": CONTEXT}
+        def refresh_before_batch_commit(keys):
+            if not any(":batch:" in key for key in keys):
+                return
+            self.redis.before_eval = None
+            self.clock += 5
+            response = self.post("/api/forge/embed/host/heartbeat", heartbeat,
+                                 host_token=lease["hostToken"], origin=PARENT)
+            self.assertEqual(response.status_code, 200, response.text)
+        self.redis.before_eval = refresh_before_batch_commit
+        operations = [{"op": "sceneactor.add", "prefab": "wall"}]
+        batch_id = embed.create_batch(context, operations)
+        self.assertEqual(embed._read_key(context._generation_key)[0]["activeBatchId"], batch_id)
+        self.assertEqual(sum(":batch:" in key for key in self.redis.values), 1)
+        self.assertEqual(sum(event["event"] == "batch.registered" for event in self.camera), 1)
+        taken = self.take(lease, batch_id)
+        self.assertEqual(taken.status_code, 200, taken.text)
+        self.assertEqual(taken.json()["operations"], operations)
+
+    def test_batch_retry_rejects_changed_snapshot_and_generation_cancellation(self):
+        for change in ("snapshot", "cancel"):
+            with self.subTest(change=change):
+                token, lease, context = self.generation()
+                def change_before_batch_commit(keys):
+                    if not any(":batch:" in key for key in keys):
+                        return
+                    self.redis.before_eval = None
+                    if change == "cancel":
+                        embed.invalidate_generation(context)
+                        return
+                    heartbeat = {"leaseId": lease["leaseId"], "hostId": HOST, "channelId": CHANNEL,
+                                 "threadId": THREAD, "projectId": PROJECT, "visible": True,
+                                 "context": {**CONTEXT, "epoch": 2}}
+                    response = self.post("/api/forge/embed/host/heartbeat", heartbeat,
+                                         host_token=lease["hostToken"], origin=PARENT)
+                    self.assertEqual(response.status_code, 200, response.text)
+                self.redis.before_eval = change_before_batch_commit
+                with self.assertRaises(HTTPException) as error:
+                    self.batch(context)
+                self.assertEqual(error.exception.detail, "FORGE_NATIVE_CONTEXT_STALE"
+                                 if change == "snapshot" else "FORGE_GENERATION_CANCELLED")
+                self.assertEqual(embed._read_key(context._generation_key)[0]["activeBatchId"], "")
+                self.assertFalse(any(":batch:" in key for key in self.redis.values))
+
+    def test_batch_cas_retry_is_bounded_and_unknown_storage_outcomes_are_not_retried(self):
+        token, lease, context = self.generation()
+        self.redis.force_reply = 0
+        with patch.object(embed, "_txn", wraps=embed._txn) as commit:
+            with self.assertRaises(HTTPException) as error:
+                self.batch(context)
+        self.assertEqual(error.exception.detail, "FORGE_BATCH_CONTEXT_CHANGED")
+        self.assertEqual(commit.call_count, embed.BATCH_REGISTRATION_ATTEMPTS)
+        self.redis.force_reply = True
+        with patch.object(embed, "_txn", wraps=embed._txn) as commit:
+            with self.assertRaises(HTTPException) as error:
+                self.batch(context)
+        self.assertEqual(error.exception.detail, "FORGE_ATOMIC_COMMIT_NOT_CONFIRMED")
+        self.assertEqual(commit.call_count, 1)
+        with patch.object(embed, "_txn", side_effect=TimeoutError("unknown commit outcome")) as commit:
+            with self.assertRaises(TimeoutError):
+                self.batch(context)
+        self.assertEqual(commit.call_count, 1)
+        self.assertEqual(embed._read_key(context._generation_key)[0]["activeBatchId"], "")
+        self.assertFalse(any(":batch:" in key for key in self.redis.values))
+
     def test_batch_receipt_nonce_is_private_single_use_and_actual_failure_is_preserved(self):
         token, lease, context = self.generation()
         batch_id = self.batch(context)

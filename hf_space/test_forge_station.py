@@ -343,6 +343,54 @@ class ForgeStationHTTP(unittest.TestCase):
         self.assertNotIn("sfh1_", json.dumps(snapshot))
         self.assertNotIn("sfr1_", json.dumps(snapshot))
 
+    def test_trusted_forge_failure_code_survives_sync_stream_and_saved_activity(self):
+        token=self.pair();lease=self.activate(token)
+        code="FORGE_PROJECT_TEMPLATE_UNAVAILABLE"
+        events=list(forge_chat_actions._failure("The editor edit could not be verified.",code))
+        with mock.patch.object(station,"dispatch",return_value=iter(events)):
+            response=self.send(token=token,lease=lease)
+        self.assertEqual(response.status_code,202,response.text)
+        snapshot=self.client.get("/api/lalm_station/sync",headers=self.headers(token=token)).json()
+        generation=snapshot["activeGeneration"]
+        self.assertEqual(generation["code"],code)
+        self.assertEqual(generation["terminalType"],"FAILED")
+        self.assertEqual([item["code"] for item in generation["status"] if item.get("code")],[code,code])
+        stream=self.client.get("/api/lalm_station/stream",params={"requestId":RID},headers=self.headers(token=token))
+        projected=[json.loads(line) for line in stream.text.splitlines()]
+        self.assertEqual(projected[-1]["code"],code)
+        self.assertTrue(projected[-1]["terminal"])
+        self.assertEqual([item["code"] for item in projected if item["type"]=="STATUS" and item.get("code")],[code,code])
+        message=next(m for m in snapshot["currentThread"]["messages"] if m["role"]=="assistant")
+        self.assertEqual([item["code"] for item in message["meta"]["progressTrace"]["events"] if item.get("code")],[code,code])
+        self.assertNotIn("forgeBatches",generation)
+
+    def test_invalid_unrelated_and_untrusted_forge_failure_codes_are_omitted(self):
+        for index,(code,phase,trusted) in enumerate([
+            ("FORGE_REQUEST_UNAVAILABLE secret=value","FORGE_FAILED",True),
+            ("FORGE_"+"X"*91,"FORGE_FAILED",True),
+            ("PROVIDER_TOKEN_ERROR","FORGE_FAILED",True),
+            ("FORGE_VALID_SYMBOL","ORDINARY_FAILED",True),
+            ("FORGE_VALID_SYMBOL","FORGE_FAILED",False),
+        ]):
+            with self.subTest(code=code,phase=phase,trusted=trusted):
+                # Each subcase starts a new account projection; failed history
+                # must not trigger unrelated knowledge-followup background work.
+                self.saved.clear();station._sessions.clear()
+                token=self.pair();lease=self.activate(token) if trusted else None
+                rid=RID+str(index)
+                event={"type":"FAILED","phase":phase,"reason":"Controlled failure","code":code}
+                with mock.patch.object(station,"dispatch",return_value=iter([event])):
+                    response=self.send(token=token,lease=lease,requestId=rid)
+                self.assertEqual(response.status_code,202,response.text)
+                snapshot=self.client.get("/api/lalm_station/sync",headers=self.headers(token=token)).json()
+                generation=snapshot["activeGeneration"]
+                self.assertNotIn("code",generation)
+                self.assertTrue(all("code" not in item for item in generation["status"]))
+                stream=self.client.get("/api/lalm_station/stream",params={"requestId":rid},headers=self.headers(token=token))
+                self.assertTrue(all("code" not in json.loads(line) for line in stream.text.splitlines()))
+                message=next(m for m in reversed(snapshot["currentThread"]["messages"]) if m["role"]=="assistant")
+                self.assertTrue(all("code" not in item for item in message["meta"]["progressTrace"]["events"]))
+
     def test_mismatched_batch_binding_fails_without_projecting_batch(self):
         token = self.pair()
         lease = self.activate(token)

@@ -713,7 +713,7 @@ async def stream_generation(request:Request, requestId:str):
             while sent_status<len(statuses):
                 item=statuses[sent_status] if isinstance(statuses[sent_status],dict) else {}
                 sent_status+=1
-                yield json.dumps({"type":"STATUS","phase":str(item.get("phase") or "STATUS"),"reason":str(item.get("reason") or ""),"categories":copy.deepcopy(item.get("categories") or []),"site":str(item.get("site") or "")[:180],"url":str(item.get("url") or "")[:1000],"provider":str(item.get("provider") or "")[:120],"httpStatus":item.get("httpStatus"),"resultCount":item.get("resultCount"),"atUnixMs":item.get("atUnixMs"),"seq":sent_status,"requestId":rid},ensure_ascii=False)+"\n"
+                yield json.dumps({"type":"STATUS","phase":str(item.get("phase") or "STATUS"),"reason":str(item.get("reason") or ""),"categories":copy.deepcopy(item.get("categories") or []),"site":str(item.get("site") or "")[:180],"url":str(item.get("url") or "")[:1000],"provider":str(item.get("provider") or "")[:120],"httpStatus":item.get("httpStatus"),"resultCount":item.get("resultCount"),"atUnixMs":item.get("atUnixMs"),**progress_timeline_v238.forge_failure_fields(item.get("code"),item.get("phase")),"seq":sent_status,"requestId":rid},ensure_ascii=False)+"\n"
             widgets=g.get("widgets") if isinstance(g.get("widgets"),list) else []
             while sent_widgets<len(widgets):
                 widget=widgets[sent_widgets] if isinstance(widgets[sent_widgets],dict) else {}
@@ -732,7 +732,7 @@ async def stream_generation(request:Request, requestId:str):
                 yield json.dumps({"type":"DELTA","text":delta,"seq":int(g.get("lastSeq") or 0),"requestId":rid},ensure_ascii=False)+"\n"
             if g.get("terminal") and not terminal_sent:
                 terminal_sent=True
-                yield json.dumps({"type":str(g.get("terminalType") or "COMPLETE"),"phase":str(g.get("phase") or "COMPLETE"),"terminal":True,"seq":int(g.get("lastSeq") or 0),"requestId":rid},ensure_ascii=False)+"\n"
+                yield json.dumps({"type":str(g.get("terminalType") or "COMPLETE"),"phase":str(g.get("phase") or "COMPLETE"),"terminal":True,**progress_timeline_v238.forge_failure_fields(g.get("code"),g.get("phase")),"seq":int(g.get("lastSeq") or 0),"requestId":rid},ensure_ascii=False)+"\n"
                 return
             await asyncio.sleep(0.025)
     return StreamingResponse(events(),media_type="application/x-ndjson",headers={"Cache-Control":"no-store, no-transform","X-Accel-Buffering":"no"})
@@ -1386,7 +1386,14 @@ def _run(key,request_id,model_id,payload,assistant_id,forge_context=None):
                         "firstDeltaLatencyMs":event.get("firstDeltaLatencyMs"),
                     }
                     g["status"].append({"seq":g["lastSeq"],"phase":"COMPLETE","reason":""})
-                else:g["status"].append({"seq":g["lastSeq"],"phase":str(event.get("phase") or kind),"reason":str(event.get("reason") or "")[:200],"categories":[str(x)[:80] for x in (event.get("categories") or [])[:16]] if isinstance(event.get("categories"),list) else []})
+                else:
+                    status={"seq":g["lastSeq"],"phase":str(event.get("phase") or kind),"reason":str(event.get("reason") or "")[:200],"categories":[str(x)[:80] for x in (event.get("categories") or [])[:16]] if isinstance(event.get("categories"),list) else []}
+                    if forge_context is not None and kind=="FAILED" and event.get("phase") in ("FORGE_FAILED","FORGE_PARTIAL"):
+                        # Only structured failures from the trusted Forge route
+                        # can expose a symbolic diagnostic; never parse exc text.
+                        fields=progress_timeline_v238.forge_failure_fields(event.get("code"),event.get("phase"))
+                        status.update(fields);g.update(fields)
+                    g["status"].append(status)
                 progress_timeline_v238.mark_new(g["status"],prior_progress_count)
             if persist_event is not None:
                 persist_kind,persist_payload=persist_event
@@ -1725,7 +1732,7 @@ def _run(key,request_id,model_id,payload,assistant_id,forge_context=None):
             g=s["activeGeneration"]
             if g and g["requestId"]==request_id:
                 g.update(terminal=True,terminalType="FAILED",phase="FAILED")
-                g["status"].append({"phase":"FAILED","reason":str(exc)[:240],"atUnixMs":int(time.time()*1000)})
+                g["status"].append({"phase":"FAILED","reason":str(exc)[:240],"atUnixMs":int(time.time()*1000),**progress_timeline_v238.forge_failure_fields(g.get("code"),"FAILED")})
                 if isinstance(g.get("onlineResearch"),dict) and g.get("onlineResearch"):
                     failed_online_outcome={
                         "schema":"swrlz-online-research-outcome-v1",

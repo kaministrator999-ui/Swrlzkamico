@@ -92,6 +92,25 @@ class PlannerTest(unittest.TestCase):
         self.assertTrue(self.wait.called)
 
 
+    def test_native_registration_http_boundary_code_is_retained_without_claiming_execution(self):
+        register=Mock(side_effect=HTTPException(409,"FORGE_CONTEXT_CHANGED"))
+        events=self.run_events(register=register)
+        self.assertEqual(events[-1]["type"],"FAILED")
+        self.assertEqual(events[-1]["code"],"FORGE_CONTEXT_CHANGED")
+        self.assertFalse(any(event["type"]=="FORGE_BATCH_READY" for event in events))
+        self.wait.assert_not_called()
+        register.assert_called_once()
+
+    def test_http_boundary_details_do_not_escape_the_symbolic_code_allowlist(self):
+        for detail in ("FORGE_CONTEXT_CHANGED token=private", "PROVIDER_ERROR", "FORGE_"+"X"*91,
+                       "FORGE_DESIGN_STALE\nsecret=value", {"code":"FORGE_CONTEXT_CHANGED","secret":"private"}):
+            with self.subTest(detail=detail):
+                events=self.run_events(register=Mock(side_effect=HTTPException(409,detail)))
+                self.assertEqual(events[-1]["code"],"FORGE_REQUEST_UNAVAILABLE")
+                self.assertNotIn("secret=value",json.dumps(events))
+                self.assertNotIn("token=private",json.dumps(events))
+                self.wait.assert_not_called()
+
     def test_actual_model_dispatch_routes_preview_before_falling_back_to_ordinary_chat(self):
         import forge_chat_actions
         import model_router
@@ -498,6 +517,44 @@ class PlannerTest(unittest.TestCase):
             events = self.run_events(operations=[operation], prompt='Create a new project from the blank-model starter called "Desk"',
                                      result={"batchId": BATCH, "status": "finished", "allSucceeded": True, "receipts": [receipt]})
             self.assertEqual(events[-1]["code"], "FORGE_PROJECT_RECEIPT_INVALID")
+
+    def test_current_project_inspection_with_no_edit_constraint_uses_zero_native_meshes(self):
+        prompt = ("Inspect the currently connected §e project. Report its current project name, "
+                  "active workspace and mesh count. Do not edit anything.")
+        self.summary.update(project={"name":"Connected empty model"},meshes=[],totalMeshes=0,selectedId=None)
+        self.assertEqual(classify_forge_intent(prompt,self.summary)["disposition"],"read")
+        events=self.run_events(prompt=prompt)
+        self.assertEqual(events[-1]["forgeStatus"],"INSPECTED")
+        text="".join(event.get("text","") for event in events if event["type"]=="DELTA")
+        self.assertIn("Connected empty model",text)
+        self.assertIn("0 Model Atelier meshes",text)
+        self.assertNotIn("64",text)
+        self.infer.assert_not_called();self.register.assert_not_called();self.wait.assert_not_called()
+        self.assertFalse(any(event["type"]=="FORGE_BATCH_READY" for event in events))
+        import model_router
+        ordinary=Mock(side_effect=AssertionError("verified inspection must not use free-form inference"))
+        with patch.object(forge_embed,"create_batch") as register,patch.object(forge_embed,"wait_batch") as wait:
+            dispatched=list(model_router.dispatch("700m",{"prompt":prompt},ordinary,
+                            stock_generate=ordinary,large_generate=ordinary,coder_generate=ordinary,
+                            forge_context=self.context))
+        ordinary.assert_not_called();register.assert_not_called();wait.assert_not_called()
+        self.assertEqual(dispatched[-1]["forgeStatus"],"INSPECTED")
+        self.assertIn("0 Model Atelier meshes","".join(event.get("text","") for event in dispatched))
+
+    def test_no_edit_constraints_do_not_mask_affirmative_edits_or_grant_inspection_alone(self):
+        for prompt in ("Inspect the current project. Do not edit anything.",
+                       "Inspect the current project. Don't delete or do not move objects.",
+                       "Audit this workspace. Never recolor meshes. Do not copy objects."):
+            with self.subTest(prompt=prompt):
+                self.assertEqual(classify_forge_intent(prompt,self.summary)["disposition"],"read")
+        self.assertEqual(classify_forge_intent("Inspect the project and add a cube",self.summary)["disposition"],"mutation")
+        for prompt in ("Inspect the project. Do not edit but add a cube.",
+                       "Inspect the project. Do not edit. Create a mesh.",
+                       "Don't edit", "Do not edit the project"):
+            with self.subTest(prompt=prompt):
+                intent=classify_forge_intent(prompt,self.summary)
+                self.assertNotEqual(intent["disposition"],"read")
+                self.assertFalse(intent["applicable"],"existing negative-action policy still blocks mutation")
 
     def test_project_inspection_uses_actual_current_context_without_inference(self):
         self.summary.update(project={"name": "Desk §§", "kind": "model-atelier", "template": "blank-model", "sourceStarterId": "blank-model"},

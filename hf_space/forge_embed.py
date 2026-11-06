@@ -23,6 +23,7 @@ from fastapi.responses import JSONResponse, Response
 
 import account_chat_store as accounts
 import github_connection as gh
+from forge_mesh_tools_v2 import MAX_OPERATIONS, mesh_tools
 
 SCHEMA = "swrlz-forge-chat-v1"
 CHAT_ORIGIN = "https://kamiloki-swyrlz.hf.space"
@@ -35,9 +36,10 @@ REMEMBER_COOKIE = "swrlz_forge_remember"
 PRESENCE_TTL = 30
 LEASE_TTL = 20
 BATCH_TTL = 300
+BATCH_APPLICATION_SECONDS = 25
+BATCH_REGISTRATION_ATTEMPTS = 3
 DESIGN_TTL = 900  # bounded owner-approved window; heartbeat/scene validation remains mandatory
 MAX_CONTEXT_BYTES = 32768
-MAX_OPERATIONS = 16
 MAX_RECORD_BYTES = 196608
 _HEX = re.compile(r"^[0-9a-f]{32}$")
 _BINDING = re.compile(r"^[A-Za-z0-9_-]{16,128}$")
@@ -585,7 +587,14 @@ class AuthorizedForgeContext:
     _seal: object = field(repr=False, compare=False)
 
     def model_context(self):
-        return copy.deepcopy(self._summary)
+        summary = copy.deepcopy(self._summary)
+        capability = mesh_tools(summary)
+        summary.pop("meshTools", None)
+        if capability:
+            summary["meshTools"] = capability
+        # The original raw context remains unchanged in the lease and batch
+        # preconditions: capability normalization must not change its hash.
+        return summary
 
     def public_binding(self):
         return {"leaseId": self.lease_id, "threadId": self.thread_id,
@@ -731,6 +740,24 @@ def claim_design_proposal(context, proposal_id):
 
 
 def create_batch(context, operations, *, proposal_id=None):
+    if not isinstance(context, AuthorizedForgeContext) or context._seal is not _SEAL:
+        _error(403, "FORGE_SERVER_CONTEXT_REQUIRED")
+    if not isinstance(operations, list) or not 1 <= len(operations) <= MAX_OPERATIONS or not all(isinstance(op, dict) for op in operations):
+        _error(400, "FORGE_INVALID_OPERATION_BATCH")
+    # Freeze one bounded request across attempts. Only an explicit failed CAS
+    # proves no writes happened; transport/unknown storage results must escape.
+    operations, _ = _safe_json(operations, 65536)
+    for _ in range(BATCH_REGISTRATION_ATTEMPTS):
+        batch_id = _create_batch_attempt(context, operations, proposal_id=proposal_id)
+        if batch_id is not None:
+            return batch_id
+    _error(409, "FORGE_BATCH_CONTEXT_CHANGED")
+
+
+def _create_batch_attempt(context, operations, *, proposal_id=None):
+    # Every attempt rechecks the live owner/session/generation/snapshot and
+    # native data. A heartbeat may refresh ciphertext without changing those
+    # facts, but no retry may bypass cancellation, scene changes or claim use.
     lease, lease_raw, _, session_raw, gen, gen_raw = _generation(context, True)
     if not isinstance(operations, list) or not 1 <= len(operations) <= MAX_OPERATIONS or not all(isinstance(op, dict) for op in operations):
         _error(400, "FORGE_INVALID_OPERATION_BATCH")
@@ -768,6 +795,7 @@ def create_batch(context, operations, *, proposal_id=None):
              "generationKey": context._generation_key, **{k: gen[k] for k in
              ("leaseId", "sessionKey", "owner", "threadId", "generationId", "projectId", "contextHash")},
              "context": copy.deepcopy(lease["context"]), "operations": operations, "receipts": [],
+             "applicationDeadline": min(_now() + BATCH_APPLICATION_SECONDS, gen["expiresAt"]),
              "expiresAt": min(_now() + BATCH_TTL, gen["expiresAt"])}
     if digest is not None:
         batch["designPlanDigest"] = digest
@@ -778,7 +806,7 @@ def create_batch(context, operations, *, proposal_id=None):
                  (context._generation_key, gen_raw), (key, None), *proposal_expected],
                 [(context._generation_key, new_gen, _ttl(new_gen)), (key, batch, _ttl(batch, BATCH_TTL)),
                  *proposal_write]):
-        _error(409, "FORGE_BATCH_CONTEXT_CHANGED")
+        return None
     _observe("batch.registered", leaseId=context.lease_id, batchId=batch_id, operationCount=len(operations))
     return batch_id
 
@@ -805,6 +833,10 @@ async def take_batch(batch_id: str, request: Request):
         _error(409, "FORGE_BATCH_ALREADY_TAKEN")
     if batch["contextHash"] != lease["contextHash"]:
         _error(409, "FORGE_NATIVE_CONTEXT_STALE")
+    application_deadline = batch.get("applicationDeadline")
+    if (type(application_deadline) not in (int, float)
+            or application_deadline - _now() < 1):
+        _error(409, "FORGE_BATCH_APPLICATION_EXPIRED")
     nonce = _token("sfr1")
     new = {**batch, "state": "taken", "receiptNonceHash": hashlib.sha256(nonce.encode()).hexdigest()}
     key = _key("batch", batch_id)
@@ -813,7 +845,11 @@ async def take_batch(batch_id: str, request: Request):
                 [(key, new, _ttl(new, BATCH_TTL))]):
         _error(409, "FORGE_BATCH_CHANGED")
     _observe("batch.taken", leaseId=lease["leaseId"], batchId=batch_id, operationCount=len(batch["operations"]))
+    application_window_ms = min(25000, math.floor((application_deadline - _now()) * 1000))
+    if application_window_ms < 1000:
+        _error(409, "FORGE_BATCH_APPLICATION_EXPIRED")
     return _response({"batchId": batch_id, "operations": batch["operations"], "receiptNonce": nonce,
+                      "applicationWindowMs": application_window_ms,
                       "preconditions": {**{k: batch[k] for k in
                       ("leaseId", "threadId", "projectId", "generationId", "contextHash")}, "context": batch["context"]}})
 

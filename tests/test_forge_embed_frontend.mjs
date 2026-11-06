@@ -98,6 +98,33 @@ function fixture({framed=true,query='?forgeEmbed=1',presenceErrors=[],onPresence
   f.win.SwrlzForgeEmbedV1.forwardBatch({...event,leaseId:'0'.repeat(32)});
   f.win.SwrlzForgeEmbedV1.forwardBatch(event);f.win.SwrlzForgeEmbedV1.forwardBatch(event);
   assert.equal(f.portMessages.filter(item=>item.data.type==='host.batch').length,1,'only a matching live batch is forwarded once');
+  const progress={batchId:event.batchId,generationId:event.generationId,completed:1,total:40,op:'mesh.add',name:'<img src=x onerror=alert(1)> staff',ok:true};
+  const progressEvents=()=>f.events.filter(item=>item.type==='swrlz-forge-progress');
+  f.windowEvent(f.envelope('host.progress',progress));
+  assert.equal(progressEvents().length,0,'ordinary window messages cannot impersonate the private port');
+  await f.port.onmessage({data:{...f.envelope('host.progress',progress),channelId:'wrong-channel'}});
+  for(const invalid of [
+    {...progress,batchId:'0'.repeat(32)}, {...progress,generationId:'stale-generation'},
+    {...progress,total:65}, {...progress,completed:41}, {...progress,completed:1.5},
+    {...progress,name:undefined}, {...progress,ok:'true'}, {...progress,op:'eval(script)'},
+  ])await f.port.onmessage({data:f.envelope('host.progress',invalid)});
+  assert.equal(progressEvents().length,0,'invalid batch/generation/counters/typed text fail closed');
+  await f.port.onmessage({data:f.envelope('host.progress',progress)});
+  assert.equal(progressEvents().length,1);
+  assert.equal(progressEvents()[0].detail.threadId,'thread-1','thread comes from the broker forwarded batch');
+  assert.equal(progressEvents()[0].detail.name,progress.name,'labels remain literal presentation text');
+  assert.ok(!JSON.stringify(progressEvents()).includes(bearer));
+  await f.port.onmessage({data:f.envelope('host.progress',{...progress,completed:2})});
+  await f.port.onmessage({data:f.envelope('host.progress',{...progress,completed:1})});
+  await f.port.onmessage({data:f.envelope('host.progress',{...progress,completed:3,total:39})});
+  assert.equal(progressEvents().length,2,'a batch cannot move backwards or change its total');
+  f.win.SwrlzForgeEmbedV1.finishGeneration(event.generationId,'another-thread');
+  await f.port.onmessage({data:f.envelope('host.progress',{...progress,completed:3})});
+  assert.equal(progressEvents().length,3,'an unrelated terminal thread cannot retire this batch');
+  f.win.SwrlzForgeEmbedV1.finishGeneration(event.generationId,event.threadId);
+  await f.port.onmessage({data:f.envelope('host.progress',{...progress,completed:4})});
+  assert.equal(progressEvents().length,3,'server terminal retirement blocks late native progress');
+
   await f.port.onmessage({data:f.envelope('host.inactive',{reason:'closed'})});
   f.win.SwrlzForgeEmbedV1.forwardBatch({...event,batchId:'f'.repeat(32)});
   assert.equal(f.portMessages.filter(item=>item.data.type==='host.batch').length,1,'closing the host revokes forwarding');
@@ -143,4 +170,4 @@ const popup=fs.readFileSync(fileURLToPath(new URL('../chat/§wyrlz/forge-connect
 for(const match of popup.matchAll(/<script\b(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/g))new vm.Script(match[1]);
 assert.match(html,/defaultModel:settingsState\.model\.defaultModel/,'explicit settings save includes selected inference model');
 assert.match(html,/settingsSave\.disabled=!chatAccountUser\|\|!accountProfileAvailable/,'an available version0 profile can be saved explicitly');
-console.log('PASS: strict frame identity, private account transport, scoped actions/revocation, multipart native project roundtrip, settings bootstrap and script syntax');
+console.log('PASS: scoped typed native progress and terminal retirement, strict frame identity, private account transport, scoped actions/revocation, multipart native project roundtrip, settings bootstrap and script syntax');

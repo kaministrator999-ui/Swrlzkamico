@@ -26,6 +26,8 @@ on:
       - 'chat/§wyrlz/index.html'
       - 'chat/§wyrlz/assets/forge-embed-v1.js'
       - 'tests/forge_google_account_crossover_v1.mjs'
+      - 'tests/test_forge_embed_frontend.mjs'
+      - 'tests/test_forge_live_progress_browser.cjs'
       - 'chat/§wyrlz/assets/chat-updates-v1.*'
       - 'scripts/build_chat_update_history.py'
       - 'tests/test_chat_updates.mjs'
@@ -82,6 +84,7 @@ jobs:
           node tests/test_github_source_report_mobile_v232.mjs
           node tests/test_chatgpt_archive_sidebar_v204.mjs
           node --check 'chat/§wyrlz/assets/forge-embed-v1.js'
+          node tests/test_forge_embed_frontend.mjs
           node tests/forge_google_account_crossover_v1.mjs
           node tests/test_forge_popup_mobile_recovery.mjs
           node tests/test_forge_workspace_read_v1.mjs
@@ -89,6 +92,7 @@ jobs:
           python hf_space/test_forge_workspace_insights_v1.py
           python -m py_compile hf_space/forge_project_setup_v1.py hf_space/forge_chat_actions.py
           python hf_space/test_forge_chat_actions.py
+          python hf_space/test_forge_mesh_tools_v2.py
           python -m py_compile hf_space/forge_modeling_lessons.py hf_space/online_tools.py hf_space/test_forge_modeling_lessons_v2.py hf_space/test_forge_modeling_lessons_v3.py hf_space/test_forge_modeling_lessons_v4.py
           python hf_space/test_forge_modeling_lessons_v1.py
           python hf_space/test_forge_modeling_lessons_v2.py

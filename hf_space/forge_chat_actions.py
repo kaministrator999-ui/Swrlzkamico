@@ -13,14 +13,15 @@ from typing import Any, Callable, Iterator
 
 from brain_forge import classify_forge_intent, current_command_text, inspection_text, native_plan_system, requests_new_project, _literal
 from forge_workspace_insights_v1 import build_insight
+from progress_timeline_v238 import forge_failure_fields
 from forge_design_preview_v1 import wants_preview, should_preview, build_preview, approval_id
 from forge_studio_commands_v1 import STUDIO_SCHEMA, STUDIO_LABELS, PARTICLE_PRESETS, validate_studio_operation, StudioCommandError
+from forge_mesh_tools_v2 import (MAX_OPERATIONS, MESH_KINDS, LEGACY_KINDS, GEOMETRY_FIELDS,
+                                FRAME_VIEWS, mesh_tools, operation_limit, validate_geometry)
 
-MAX_OPERATIONS = 16
-MAX_PLAN_BYTES = 24576
-PLAN_TOKENS = 3072
+MAX_PLAN_BYTES = 65536
+PLAN_TOKENS = 12000
 MATERIALS = ("matte", "silk", "gloss", "metal", "emissive")
-MESH_KINDS = ("sphere", "box", "cone", "cylinder")
 ACTOR_PREFABS = ("wall", "rock", "bush", "crystal", "pedestal")
 _COLOR = re.compile(r"^#[0-9a-fA-F]{6}$")
 _HEX = re.compile(r"^[0-9a-f]{32}$")
@@ -28,7 +29,7 @@ _MESH_ATTRIBUTES = {"name", "position", "rotation", "scale", "color", "material"
 _VECTORS = {"position", "rotation", "scale"}
 _SCHEMA = {
     "project.create": ({"op", "starterId", "name"}, {"op", "starterId", "name"}),
-    "mesh.add": ({"op", "kind"}, _MESH_ATTRIBUTES | {"op", "kind"}),
+    "mesh.add": ({"op", "kind"}, _MESH_ATTRIBUTES | GEOMETRY_FIELDS | {"op", "kind"}),
     "mesh.set": ({"op", "id"}, _MESH_ATTRIBUTES | {"op", "id"}),
     "mesh.select": ({"op", "id"}, {"op", "id"}),
     "mesh.duplicate": ({"op", "id"}, {"op", "id"}),
@@ -39,13 +40,14 @@ _SCHEMA = {
     "sceneactor.rename": ({"op", "id", "name"}, {"op", "id", "name"}),
     "editor.undo": ({"op"}, {"op"}),
     "editor.redo": ({"op"}, {"op"}),
+    "editor.frame": ({"op"}, {"op", "view"}),
 }
 _SCHEMA.update(STUDIO_SCHEMA)
 _LABELS = {"project.create": "create separate project", "mesh.add": "add mesh", "mesh.set": "edit mesh", "mesh.select": "select mesh",
            "mesh.duplicate": "duplicate mesh", "mesh.remove": "remove mesh",
            "sceneactor.add": "add scene actor", "sceneactor.transform": "transform scene actor",
            "sceneactor.select": "select scene actor", "sceneactor.rename": "rename scene actor",
-           "editor.undo": "undo", "editor.redo": "redo"}
+           "editor.undo": "undo", "editor.redo": "redo", "editor.frame": "frame model view"}
 _LABELS.update(STUDIO_LABELS)
 
 
@@ -55,18 +57,51 @@ class ForgePlanError(ValueError):
         self.code = code
 
 
-def operation_contract() -> dict[str, Any]:
+def _available_operation(summary, name):
+    if summary is None:
+        return name != "editor.frame"
+    workspace = summary.get("workspace")
+    if name.startswith("mesh."):
+        return workspace == "model-atelier"
+    if name.startswith("sceneactor."):
+        return workspace == "scene"
+    if name == "project.create":
+        return bool(summary.get("starters"))
+    if name in ("editor.undo", "editor.redo"):
+        return summary.get("canUndo" if name == "editor.undo" else "canRedo") is True
+    if name == "editor.frame":
+        return workspace == "model-atelier" and bool(mesh_tools(summary))
+    if name in STUDIO_SCHEMA:
+        prefix = name.split(".", 1)[0]
+        area = {"material": "materials", "particle": "particles", "rig": "rig"}[prefix]
+        capability = summary.get("studioCommands")
+        state = capability.get(area) if isinstance(capability, dict) else None
+        return (isinstance(state, dict) and state.get("available") is True and
+                ((area in ("materials", "particles") and workspace == "scene" and summary.get("studio") == area) or
+                 (area == "rig" and workspace == "model-atelier" and summary.get("studio") == "modeler")))
+    return False
+
+
+def operation_contract(summary: dict[str, Any] | None = None) -> dict[str, Any]:
     """Small versioned model contract backed by the fixed native host adapter."""
     return {
-        "version": "swrlz-forge-native-v2", "maximumOperations": MAX_OPERATIONS,
+        "version": "swrlz-forge-native-v2", "maximumOperations": operation_limit(summary),
         "workspaceRules": {"model-atelier": "mesh.*, project.create and available editor.undo/redo",
                            "scene": "sceneactor.*, project.create and available editor.undo/redo",
                            "materials": "material.* only with studioCommands and active Materials tab",
                            "particles": "particle.* only with studioCommands and active Particle tab",
                            "model-rig": "rig.pose/keyframe only with studioCommands and active Modeler rig"},
-        "operations": {name: {"required": sorted(required), "optional": sorted(allowed - required)}
-                       for name, (required, allowed) in _SCHEMA.items()},
-        "meshKinds": list(MESH_KINDS), "sceneActorPrefabs": list(ACTOR_PREFABS),
+        "operations": {name: {"required": sorted(required), "optional": sorted(
+                           (allowed - required) - (GEOMETRY_FIELDS if not mesh_tools(summary) else set()))}
+                       for name, (required, allowed) in _SCHEMA.items() if _available_operation(summary, name)},
+        "meshKinds": list(MESH_KINDS if mesh_tools(summary) else LEGACY_KINDS), "sceneActorPrefabs": list(ACTOR_PREFABS),
+        "meshTools": mesh_tools(summary),
+        "curvedGeometry": "Only with meshTools v2: loft path 2..40 xyz points each -100..100, matching radii .00025..5; "
+                          "lathe profile 2..24 [radius,y] points, radius 0..5 and y -100..100, at least one positive radius. "
+                          "Consecutive points must be >.000001 apart. Optional segments integer 8..64; lathe arcStart -2pi..2pi, "
+                          "arcLength .05..2pi. Lathe revolves around local Y with x=r*sin(theta), z=r*cos(theta). "
+                          "Use local geometry with explicit scale [1,1,1]. Geometry fields only belong to their shape, never mesh.set.",
+        "editor.frame": "Only meshTools v2 in model-atelier; optional view " + ",".join(FRAME_VIEWS) + "; defaults three. May be the last operation.",
         "materials": list(MATERIALS),
         "studioCommands": "Host-advertised studioCommands v1, exact source IDs, single-op review approval required; old §E hosts do NOT gain these actions",
         "name": "1–100 literal characters",
@@ -83,7 +118,7 @@ def operation_contract() -> dict[str, Any]:
     }
 
 
-def native_plan_response_format() -> dict[str, Any]:
+def native_plan_response_format(summary: dict[str, Any] | None = None) -> dict[str, Any]:
     """Constrain JSON transport, not semantic correctness or execution success."""
     vector = {"type": "array", "items": {"type": "number"}, "minItems": 3, "maxItems": 3}
     fields = {"id": {"type": "string"}, "name": {"type": "string"}, "starterId": {"type": "string"},
@@ -95,15 +130,33 @@ def native_plan_response_format() -> dict[str, Any]:
               "startColor": {"type": "string"}, "endColor": {"type": "string"},
               "roughness": {"type": "number"}, "metalness": {"type": "number"},
               "glow": {"type": "number"}, "rate": {"type": "number"},
-              "life": {"type": "number"}, "size": {"type": "number"}, "time": {"type": "number"}}
+              "life": {"type": "number"}, "size": {"type": "number"}, "time": {"type": "number"},
+              "path": {"type": "array", "items": vector, "minItems": 2, "maxItems": 40},
+              "radii": {"type": "array", "items": {"type": "number"}, "minItems": 2, "maxItems": 40},
+              "profile": {"type": "array", "items": {"type": "array", "items": {"type": "number"}, "minItems": 2, "maxItems": 2}, "minItems": 2, "maxItems": 24},
+              "segments": {"type": "integer"}, "arcStart": {"type": "number"}, "arcLength": {"type": "number"},
+              "view": {"enum": list(FRAME_VIEWS)}}
     variants = []
     for name, (required, allowed) in _SCHEMA.items():
+        if not _available_operation(summary, name):
+            continue
+        if name == "mesh.add":
+            kinds = MESH_KINDS if mesh_tools(summary) else LEGACY_KINDS
+            for kind in kinds:
+                geometry = ({"path", "radii", "segments"} if kind == "loft" else
+                            {"profile", "segments", "arcStart", "arcLength"} if kind == "lathe" else set())
+                keys = (_MESH_ATTRIBUTES | {"kind"} | geometry)
+                properties = {"op": {"const": name}, **{key: fields[key] for key in sorted(keys)}}
+                properties["kind"] = {"const": kind}
+                needed = required | ({"path", "radii"} if kind == "loft" else {"profile"} if kind == "lathe" else set())
+                variants.append({"type": "object", "properties": properties, "required": sorted(needed), "additionalProperties": False})
+            continue
         properties = {"op": {"const": name}, **{key: fields[key] for key in sorted(allowed - {"op"})}}
         variants.append({"type": "object", "properties": properties, "required": sorted(required),
                          "additionalProperties": False})
     schema = {"oneOf": [
         {"type": "object", "properties": {"disposition": {"const": "apply"},
-         "operations": {"type": "array", "items": {"oneOf": variants}, "minItems": 1, "maxItems": MAX_OPERATIONS}},
+         "operations": {"type": "array", "items": {"oneOf": variants}, "minItems": 1, "maxItems": operation_limit(summary)}},
          "required": ["disposition", "operations"], "additionalProperties": False},
         {"type": "object", "properties": {"disposition": {"const": "clarify"},
          "operations": {"type": "array", "maxItems": 0}, "question": {"type": "string"}},
@@ -161,12 +214,12 @@ def validate_operations(context, operations: Any) -> list[dict[str, Any]]:
     summary = _summary(context)
     if summary["mode"] != "edit":
         raise ForgePlanError("FORGE_NATIVE_EDITOR_MODE_REQUIRED")
-    if (not isinstance(operations, list) or not 1 <= len(operations) <= MAX_OPERATIONS
+    if (not isinstance(operations, list) or not 1 <= len(operations) <= operation_limit(summary)
             or any(not isinstance(op, dict) for op in operations)):
         raise ForgePlanError("FORGE_INVALID_NATIVE_OPERATION_COUNT")
     workspace = summary["workspace"]
     entries = summary.get("meshes" if workspace == "model-atelier" else "actors")
-    if not isinstance(entries, list) or len(entries) > 48:
+    if not isinstance(entries, list) or len(entries) > (64 if mesh_tools(summary) else 48):
         raise ForgePlanError("FORGE_NATIVE_SUMMARY_INVALID")
     ids = {item.get("id") for item in entries if isinstance(item, dict) and isinstance(item.get("id"), str)}
     canonical = []
@@ -196,7 +249,12 @@ def validate_operations(context, operations: Any) -> list[dict[str, Any]]:
             raise ForgePlanError("FORGE_NATIVE_WORKSPACE_MISMATCH")
         if name.startswith("sceneactor.") and workspace != "scene":
             raise ForgePlanError("FORGE_NATIVE_WORKSPACE_MISMATCH")
-        if name.startswith("editor."):
+        if name == "editor.frame":
+            if workspace != "model-atelier" or not mesh_tools(summary):
+                raise ForgePlanError("FORGE_MESH_TOOLS_UNAVAILABLE")
+            if "view" in proposed and proposed["view"] not in FRAME_VIEWS:
+                raise ForgePlanError("FORGE_INVALID_FRAME_VIEW")
+        elif name.startswith("editor."):
             flag = "canUndo" if name == "editor.undo" else "canRedo"
             if len(operations) != 1 or summary.get(flag) is not True:
                 raise ForgePlanError("FORGE_NATIVE_HISTORY_UNAVAILABLE")
@@ -207,8 +265,12 @@ def validate_operations(context, operations: Any) -> list[dict[str, Any]]:
         if name == "sceneactor.transform" and not (set(proposed) & _VECTORS):
             raise ForgePlanError("FORGE_NATIVE_EMPTY_CHANGE")
         op = dict(proposed)
-        if "kind" in op and op["kind"] not in MESH_KINDS:
+        if "kind" in op and op["kind"] not in (MESH_KINDS if mesh_tools(summary) else LEGACY_KINDS):
             raise ForgePlanError("FORGE_NATIVE_KIND_NOT_ALLOWED")
+        if name == "mesh.add":
+            geometry_error = validate_geometry(op)
+            if geometry_error:
+                raise ForgePlanError(geometry_error)
         if "prefab" in op and op["prefab"] not in ACTOR_PREFABS:
             raise ForgePlanError("FORGE_NATIVE_PREFAB_NOT_ALLOWED")
         if "material" in op and op["material"] not in MATERIALS:
@@ -384,7 +446,7 @@ def explicit_particle_create_plan(prompt: str, summary: dict[str, Any]) -> dict[
     return {"disposition": "apply", "operations": [{"op": "particle.create", "preset": presets[0]}]}
 
 
-def _generate_plan(messages: list[dict[str, str]], max_tokens: int) -> tuple[str, dict[str, Any]]:
+def _generate_plan(messages: list[dict[str, str]], max_tokens: int, *, summary=None) -> tuple[str, dict[str, Any]]:
     # Lazy import keeps routing/tests lightweight and uses the existing pinned
     # artifact, load function and lock. No second model/default/hardware lane.
     import qwen_coder_engine as coder
@@ -392,16 +454,17 @@ def _generate_plan(messages: list[dict[str, str]], max_tokens: int) -> tuple[str
     with coder._lock:
         model = coder.load()
         actual, _, _, budget = coder._fit_messages(model, messages[0]["content"], [], messages[1]["content"], max_tokens)
-        return buffered_chat_completion(_ConstrainedPlanModel(model), actual, budget, .1)
+        return buffered_chat_completion(_ConstrainedPlanModel(model, summary), actual, budget, .1)
 
 
 class _ConstrainedPlanModel:
     """Use the existing buffering/termination observer with native JSON grammar."""
-    def __init__(self, model):
+    def __init__(self, model, summary=None):
         self.model = model
+        self.summary = summary
 
     def create_chat_completion(self, **kwargs):
-        return self.model.create_chat_completion(**kwargs, response_format=native_plan_response_format())
+        return self.model.create_chat_completion(**kwargs, response_format=native_plan_response_format(self.summary))
 
 
 def _failure(message: str, code: str, *, partial=False) -> Iterator[dict[str, Any]]:
@@ -427,9 +490,9 @@ def generate_events(payload: dict[str, Any], context, register_batch: Callable |
     wait = wait_batch or await_batch
     stage = stage_proposal or create_design_proposal
     claim = claim_proposal or claim_design_proposal
-    infer = generate_plan or _generate_plan
     try:
         summary = _summary(context)
+        infer = generate_plan or (lambda messages, budget: _generate_plan(messages, budget, summary=summary))
         prompt = payload.get("prompt") if isinstance(payload, dict) else None
         approved_id = approval_id(prompt)
         exact_digest = None
@@ -491,7 +554,7 @@ def generate_events(payload: dict[str, Any], context, register_batch: Callable |
                    "categories": ["FORGE", "NATIVE_EDITOR"]}
             user_data = json.dumps({"currentUserRequest": prompt, "nativeContextData": summary},
                                    ensure_ascii=False, separators=(",", ":"), allow_nan=False)
-            messages = [{"role": "system", "content": native_plan_system(operation_contract(), prompt=prompt, summary=summary)},
+            messages = [{"role": "system", "content": native_plan_system(operation_contract(summary), prompt=prompt, summary=summary)},
                         {"role": "user", "content": user_data}]
             plan = project_plan or explicit_particle_create_plan(prompt, summary)
             if plan is None:
@@ -499,12 +562,34 @@ def generate_events(payload: dict[str, Any], context, register_batch: Callable |
                 plan = decode_plan(text, observation)
             # An inference delay cannot turn a closed/changed editor into authority.
             revalidate(context, require_snapshot=True)
-            if plan["disposition"] == "clarify":
-                yield {"type": "DELTA", "text": plan["question"]}
-                yield {"type": "COMPLETED", "phase": "COMPLETE", "forgeStatus": "CLARIFICATION"}
-                return
-            operations = validate_operations(context, plan["operations"])
-            _validate_requested_actions(prompt, operations)
+            for attempt in range(2):
+                if plan["disposition"] == "clarify":
+                    yield {"type": "DELTA", "text": plan["question"]}
+                    yield {"type": "COMPLETED", "phase": "COMPLETE", "forgeStatus": "CLARIFICATION"}
+                    return
+                try:
+                    operations = validate_operations(context, plan["operations"])
+                    _validate_requested_actions(prompt, operations)
+                    break
+                except ForgePlanError as invalid:
+                    # One repair is justified only by a complete decoded plan
+                    # with a concrete typed-validation failure. Never retry an
+                    # unfinished/invalid JSON stream, transport failure or an
+                    # expired/revoked capability, and never run a failed plan.
+                    if attempt or project_plan is not None:
+                        raise
+                    revalidate(context, require_snapshot=True)
+                    yield {"type": "STATUS", "phase": "FORGE_REPAIRING",
+                           "reason": "Correcting an invalid native plan before preview; no edits have run.",
+                           "categories": ["FORGE", "NATIVE_EDITOR"]}
+                    repair_data = {"currentUserRequest": prompt, "nativeContextData": summary,
+                                   "typedValidationFailure": invalid.code,
+                                   "invalidProposedPlan": plan,
+                                   "repairInstruction": "Return one corrected complete plan for the same request and snapshot. Preserve literal names and constraints. No operations have run."}
+                    messages[1] = {"role": "user", "content": json.dumps(repair_data, ensure_ascii=False, separators=(",", ":"), allow_nan=False)}
+                    text, observation = infer(messages, PLAN_TOKENS)
+                    plan = decode_plan(text, observation)
+                    revalidate(context, require_snapshot=True)
             if should_preview(prompt, operations):
                 # No batch ID, host event, write capability or mutation occurs here.
                 # Approval starts a separate user turn that atomically claims
@@ -565,13 +650,14 @@ def generate_events(payload: dict[str, Any], context, register_batch: Callable |
     except Exception as exc:
         # Never expose arbitrary exception strings, model output or private
         # context in diagnostics. Exact reasons remain bounded constant codes.
-        code = exc.code if isinstance(exc, ForgePlanError) else "FORGE_REQUEST_UNAVAILABLE"
-        # Do not reveal arbitrary errors/credentials, but communicate a stale
-        # or consumed design proposal clearly instead of implying an edit.
+        code = (forge_failure_fields(exc.code,"FORGE_FAILED").get("code","FORGE_REQUEST_UNAVAILABLE")
+                if isinstance(exc, ForgePlanError) else "FORGE_REQUEST_UNAVAILABLE")
+        # Trusted authorization boundaries use bounded symbolic FORGE_* codes.
+        # Preserve those without copying arbitrary HTTP details or credentials.
         try:
             from fastapi import HTTPException
-            if isinstance(exc, HTTPException) and str(exc.detail).startswith("FORGE_DESIGN_"):
-                code = str(exc.detail)
+            if isinstance(exc, HTTPException):
+                code = forge_failure_fields(exc.detail,"FORGE_FAILED").get("code","FORGE_REQUEST_UNAVAILABLE")
         except ImportError:
             pass
         if code.startswith("FORGE_DESIGN_"):
