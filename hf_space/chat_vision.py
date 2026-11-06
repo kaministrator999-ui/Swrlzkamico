@@ -201,6 +201,24 @@ def _validated_image(value: object) -> str:
     return value
 
 
+def _source_image_metadata(image_url: str) -> dict:
+    """Inspect actual uploaded source metadata without resizing or storing it."""
+    from PIL import Image
+    raw = base64.b64decode(image_url.partition(",")[2], validate=True)
+    try:
+        with Image.open(io.BytesIO(raw)) as source:
+            if source.width * source.height > MAX_IMAGE_PIXELS:
+                raise ValueError("IMAGE_PIXELS_TOO_LARGE")
+            return {
+                "sourceWidth": source.width,
+                "sourceHeight": source.height,
+                "sourceBytes": len(raw),
+                "originalBytesPreserved": True,
+            }
+    except (OSError, Image.DecompressionBombError) as exc:
+        raise ValueError("IMAGE_FORMAT_INVALID") from exc
+
+
 def _prepare_image(image_url: str, max_side: int = MODEL_INPUT_SIDE,
                    *, focus_center: bool = False) -> str:
     """Derive a bounded model view from original full-resolution image bytes.
@@ -352,7 +370,7 @@ def _ask_vision_local(image_url: str, question: str, report_phase=None, should_c
     started = time.monotonic()
     try:
         check_cancel()
-        report("PREPROCESSING")
+        report("PREPROCESSING", **_source_image_metadata(image_url))
         image = _prepare_image(image_url)
         check_cancel()
         report("LOADING_MODEL")
@@ -659,6 +677,10 @@ def install(app, require_account) -> None:
                 "levelRecords": [dict(item) for item in job.get("levelRecords", [])],
                 "completedLevels": job.get("completedLevels", 0),
                 "selectedLevel": job.get("selectedLevel", 1),
+                "sourceWidth": job.get("sourceWidth"),
+                "sourceHeight": job.get("sourceHeight"),
+                "sourceBytes": job.get("sourceBytes"),
+                "originalBytesPreserved": job.get("originalBytesPreserved", False),
             }
             if phase in ("ANALYZING", "COMPLETE"):
                 # Observed native inference progress only, never fabricated percentages.
