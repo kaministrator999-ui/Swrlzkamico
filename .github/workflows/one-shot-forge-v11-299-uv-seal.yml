@@ -1,0 +1,57 @@
+name: One-shot §E v11.299 real artwork UV correction source seal
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/one-shot-forge-v11-299-uv-seal.yml'
+permissions:
+  contents: read
+jobs:
+  uv-seal:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Test real source-pixel crop, local UV restore, and native material dispatch
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/hooded_vanguard_uv_repair_v11_299.js
+          node projects/swrlz-forge-moba/tests/hooded_vanguard_uv_alignment_v11_299.cjs
+      - name: Assemble accurate engine and calculate candidate release seal
+        run: |
+          python - <<'PY'
+          import json,hashlib,subprocess,sys
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          path=root/'source-manifest.json'
+          m=json.loads(path.read_text('utf8'))
+          assert m['name']=='§wyrl§ Engine v11.299'
+          assert len(m['patches'])==330
+          assert m['patches'][-1]=='patches/v11_299_real_image_uv_alignment.py'
+          assert m['finalBytes']==0 and m['finalSha256']==''
+          out=Path('/tmp/swrlz-v11-299')
+          subprocess.run([sys.executable,str(root/'build_space.py'),'--output',str(out)],check=True)
+          raw=(out/'index.html').read_bytes()
+          assert raw==(out/'modeler.html').read_bytes()
+          html=raw.decode('utf8')
+          for token in (
+            'SWYRL_ENGINE_DEPLOY_MARKER: V11_299_REAL_IMAGE_UV_ALIGNMENT',
+            "window.SWRLZ_FORGE_BUILD={version:'v11.299'",
+            'function se299ExtractImage(image,family){',
+            'se299State.restoredLocalUVVertices',
+            '<strong>Hooded Vanguard · Corrected Artwork UV</strong>'
+          ):
+            assert token in html,token
+          subprocess.run([sys.executable,str(root/'scripts/check_inline_js_syntax_v11_266.py'),
+                          str(out/'index.html')],check=True)
+          source=json.loads((out/'SOURCE.json').read_text('utf8'))
+          assert len(source['assets'])==71
+          print('SE299_EXACT_MEASUREMENT='+json.dumps({
+            'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest(),
+            'patches':len(source['patches']),'assets':len(source['assets']),
+            'uvArtworkSamplingTestPassed':True
+          },sort_keys=True),flush=True)
+          PY
