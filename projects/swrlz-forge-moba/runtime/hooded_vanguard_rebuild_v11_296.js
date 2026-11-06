@@ -150,19 +150,17 @@ const se296OriginalHeroMaterial=se291HeroMaterial;
 se291HeroMaterial=function(part){
  const tile=part.heroPBR?.tile;
  if(!se296Palette[tile])return se296OriginalHeroMaterial(part);
- const canvases=se296TextureSet(tile),spec=se296Palette[tile],maps={};
- for(const mode of ['color','normal','roughness']){
-  const tex=new THREE.CanvasTexture(canvases[mode]);
-  tex.colorSpace=mode==='color'?THREE.SRGBColorSpace:THREE.NoColorSpace;
-  tex.wrapS=tex.wrapT=THREE.ClampToEdgeWrapping;
-  tex.anisotropy=2;tex.minFilter=THREE.LinearMipmapLinearFilter;
-  tex.needsUpdate=true;maps[mode]=tex;
+ const previous=se296TextureSet(tile),spec=se296Palette[tile];
+ if(!previous.textures){
+  previous.textures={};
+  for(const mode of ['color','normal','roughness']){
+   const tex=new THREE.CanvasTexture(previous[mode]);
+   tex.colorSpace=mode==='color'?THREE.SRGBColorSpace:THREE.NoColorSpace;
+   tex.wrapS=tex.wrapT=THREE.ClampToEdgeWrapping;
+   tex.anisotropy=2;tex.minFilter=THREE.LinearMipmapLinearFilter;
+   tex.needsUpdate=true;previous.textures[mode]=tex;
+  }
  }
- // Dispose only the redundant CanvasTexture wrappers, not source canvases:
- // subsequent parts reuse one preconstructed material texture set.
- const previous=se296Maps.get(tile);
- if(previous.textures)for(const mode of Object.keys(maps))maps[mode].dispose();
- else previous.textures=maps;
  const tex=previous.textures;
  return new THREE.MeshStandardMaterial({color:'#ffffff',map:tex.color,
   normalMap:tex.normal,normalScale:new THREE.Vector2(.44,.44),
