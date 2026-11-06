@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.289",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_289_SHORT_CLIFF_GAUNTLET",
-  "reason": "Owner's Android front and back screenshots show v11.288 smooth single-mesh Cliff Hand with too little forearm below the palm. Extend that same connected native skinned mesh by ~0.74 model units at the lower carpal/wrist area with gentle tapered 9% distal flare; preserve upper fingers/thumb/palm, original 17-bone rig, and material-only stone cracks. Remap owner-derived 384px stone albedo/normal/roughness/AO continuously over newly extended forearm, no additional meshes, rock blocks or 3D cracks. Exact v11.289 SHA 55ad1adf274728e665ff851a6eae6cd4ea730063f2a8ad6fca21cc643c029ca5, 8,224,606 bytes, 320 patches, 71 assets. Source receipt 42171811242 and final sealed verification 42172057663 passed, including synthetic geometry test and assembled inline JS. No changes to separate models, user saves, Sheep Tag gameplay, XR or §C. Owner device visual and rig test pending.",
-  "sourceCommit": "06fc3f7471d14f312452e16e91cc7120c8513b15",
-  "sourceIntegritySha256": "55ad1adf274728e665ff851a6eae6cd4ea730063f2a8ad6fca21cc643c029ca5"
+  "releaseVersion": "v11.290",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_290_CLIFF_GAUNTLET_LOAD_MATERIAL",
+  "reason": "Owner Android screenshot: opening Plain Hand Base · Smooth Cliff Hand fails immediately after v11.289. Confirmed in actual v11.217 anatomical SDF that hand begins at about y0.85 and older gauntlet synthetic test assumed y0.60; the fixed-bottom 0.60-unit-extension assertion rejected the valid model. Replace only this starter's invoked forearm generator with one seamless SDF union of original hand and short tapered clipped forearm through existing native surface/weld, retaining one editable skinned topology and 17-bone hand animation. Keep no individual 3D stone chunks or crack objects. Reapply high-resolution owner 384px atlas with more noticeable normal-map relief, darker AO crevices, warm nonmetallic rough stone and continuous UVs, preserve subdued moss. Narrow actual 217-hand field regression and native mesh/UV contract succeeded, complete 321-patch engine 8,229,895 bytes, 71 asset and assembled JS syntax validated in GitHub receipt 42174514741, SHA-256 b7a8ade38caa3bbc5ee2ae6319c75c8352149ac7d0aa4e37699b89e75e08709f. Other model starters, games, user saves, Quest and §C unchanged. Real Android/Quest model appearance acceptance pending.",
+  "sourceCommit": "61f08e6a9f591660166f221bc3d54230b633401f",
+  "sourceIntegritySha256": "b7a8ade38caa3bbc5ee2ae6319c75c8352149ac7d0aa4e37699b89e75e08709f"
 }
