@@ -23,7 +23,6 @@ def apply(html):
         'function se220RigMesh(part){',
         'function se282FullRockScene(){',
         'function se283WeatherRockTopology(topology){',
-        'function material(part){\n if(!part.hdFinish)return atelierPreviousMaterial(part);',
         'window.SWRLZ_FORGE_BUILD=',
         'data-project-template="plain-hand-base"',
     ):
@@ -36,14 +35,10 @@ def apply(html):
     html=once(html,'function se284PlainHandScene(){',
               'function se284PlainHandScene(){\n return se286CliffHandScene();',
               'replace plain clay starter with editable cliff sculpt')
-    # HD materials override the base material factory; hook the *active* final
-    # material function, not the earlier one shadowed by HD Model Atelier.
-    html=once(html,'function material(part){\n if(!part.hdFinish)return atelierPreviousMaterial(part);',
-              'function material(part){\n if(part.cliffPBR)return se286CreateCliffMaterial(part);\n if(!part.hdFinish)return atelierPreviousMaterial(part);',
-              'install actual textured PBR in native Model Atelier')
+    # Intercept the material at the native 17-bone mesh creation site.
     html=once(html,
         'const g=atelierSculptApply(geometry(part),part),mat=material(part);',
-        'const g=atelierSculptApply(geometry(part),part),mat=material(part);\n'
+        'const g=atelierSculptApply(geometry(part),part),mat=part.cliffPBR?se286CreateCliffMaterial(part):material(part);\n'
         " if(part.cliffPBR&&g.getAttribute('uv')&&!g.getAttribute('uv2'))\n"
         "  g.setAttribute('uv2',g.getAttribute('uv').clone());",
         'lightmap AO support in 17-bone native mesh')
