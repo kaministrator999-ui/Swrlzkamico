@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.287
+title: §wyrl§ Engine v11.288
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,13 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.288 · Smooth Cliff Hand, texture-built stone illusion (2026-11-05)
+
+Following the owner's real-phone screenshots and reference analysis, **Plain Hand Base → Smooth Cliff Hand** now uses **one connected 3D hand topology**, not the v11.287 assembly of 121 separate stone blocks, palm plates, chips and dark 3D crack objects. The original high-quality organic finger/thumb/palm/wrist silhouette and **17-bone rig** are kept. There are no new floating rocks, geometry seams or discrete modeled cracks. All stone faces and separations are drawn directly in the material's color map, OpenGL normal map, roughness and ambient occlusion; sparse moss is baked into the albedo. The original supplied ZIP was used to prepare a **384px-per-map** PBR atlas `assets/cliff-hand/cliff_pbr_atlas_384.jpg` so details stay clearer on phone than in the prior 128px atlas. One continuous X/Y projection maps the texture across the whole connected hand, instead of repeating it separately on 121 shapes.
+
+The `plain-hand-base` template, save behavior and actual rig are preserved; unrelated Rocky Anime Hand, Arcane Gloves, Sheep Tag and user projects are not modified. Targeted assembled source and JavaScript checks are used; owner Moto/Quest real-device visual acceptance remains pending. See `docs/SMOOTH_CLIFF_HAND_V11_288.md`.
+
 
 ## §E v11.287 · Cliff Hand sculpt with owner PBR materials (2026-11-05)
 
