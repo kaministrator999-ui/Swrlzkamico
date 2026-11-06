@@ -5,10 +5,21 @@ sdk: gradio
 app_file: app.py
 pinned: false
 preload_from_hub:
-  - "ggml-org/SmolVLM-256M-Instruct-GGUF SmolVLM-256M-Instruct-Q8_0.gguf,mmproj-SmolVLM-256M-Instruct-Q8_0.gguf b9e4379657e1450d04d02eec8e345667265b0a00"
+  - "ggml-org/SmolVLM-500M-Instruct-GGUF SmolVLM-500M-Instruct-Q8_0.gguf,mmproj-SmolVLM-500M-Instruct-Q8_0.gguf 72e986006ef53e37cdd3f6d4241c90b0f01df376"
 ---
 
 # §wyrlz R39 isolated candidate
+
+### Experimental model evaluation branch (NOT deployed)
+
+This isolated branch pins the official ggml-org SmolVLM-500M-Instruct Q8_0
+GGUF and its matching projector, at a verified immutable model revision.
+The production §C vision baseline remains SmolVLM-256M until the new model
+is proven to load and improve real character-sheet recognition on the
+existing free CPU hardware. Changes are model-only to isolate the variable;
+existing crop sequencing, privacy, cancellation, and honest output receipts
+are intentionally preserved. The new model may increase inference latency.
+
 
 This is a migration candidate, not a claim of production Chat parity. The real R39 engine and its accepted overlays are staged from the canonical repository. The model is reconstructed on startup from 54 SHA-verified source chunks pinned to the exact source commit. A full clean-room Chat transport, account persistence, and queue migration require separate acceptance.
 
