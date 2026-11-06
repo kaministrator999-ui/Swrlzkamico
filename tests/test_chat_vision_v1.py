@@ -785,4 +785,41 @@ assert all("at most 55 words" in call["messages"][0]["content"][0]["text"]
            for call in finish_model.calls[1:5])
 assert not crop_snapshots[-1][0]["tokenLimitReached"]
 
+# Five-view reference pages cannot be divided into four equal slices. Those
+# slices intersect adjacent figures and often center on a printed view label.
+# Build a synthetic visual-only page to verify geometry without storing or
+# injecting anyone's reference image or claiming vision accuracy.
+five_view = Image.new("RGB", (1448, 1086), "white")
+draw = ImageDraw.Draw(five_view)
+for index in range(5):
+    x = 20 + index * 285
+    draw.rectangle((x, 160, x + 170, 660),
+                   fill="#7040ba", outline="#202020", width=12)
+    for line in range(9):
+        y = 190 + line * 50
+        draw.line((x + 20, y, x + 145, y + 25),
+                  fill="#f4b751", width=8)
+# Bright footer controls and captions are unrelated to the figures.
+draw.rectangle((0, 850, 1447, 1085), fill="#0aeb13")
+buffer = io.BytesIO()
+five_view.save(buffer, format="PNG")
+five_encoded = "data:image/png;base64," + base64.b64encode(buffer.getvalue()).decode("ascii")
+five_sections = vision._detail_regions(
+    five_encoded, "A page with several drawings and colors.", "What is shown?"
+)
+assert [name for name, _ in five_sections] == [
+    "Far-left detail", "Center-left detail", "Center detail",
+    "Center-right detail", "Far-right detail",
+], "Five separate figure columns must remain five separate image crops"
+assert len(vision._reference_figure_columns(five_view)) == 5
+for index, (name, uri) in enumerate(five_sections):
+    with Image.open(io.BytesIO(base64.b64decode(uri.partition(",")[2]))) as crop:
+        assert 0 < crop.width <= 768 and 0 < crop.height <= 768
+        # A crop must show actual purple illustration and must not pull
+        # the solid green footer into its visual analysis.
+        center = crop.convert("RGB").getpixel((crop.width // 2, crop.height // 2))
+        assert center[2] > center[1], (name, center)
+        assert not (center[1] > 200 and center[0] < 50), (name, center)
+assert vision._reference_figure_columns(Image.new("RGB", (1448, 1086), "white")) == []
+
 print("Chat vision local CPU: authenticated boundaries, no paid provider, concurrency and mocked inference and export handoff PASS")
