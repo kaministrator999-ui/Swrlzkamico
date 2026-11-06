@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="swrlz-chat-version" content="1.1.26">
+  <meta name="swrlz-chat-version" content="1.1.27">
   <meta name="theme-color" content="#010812">
   <title>Chat</title>
   <style>
@@ -938,6 +938,14 @@
     .image-attachment img{height:28px;width:28px;object-fit:cover;border-radius:5px}
     .image-attachment span{max-width:120px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .image-attachment button{border:0;background:transparent;color:#e3faff;font-size:17px;cursor:pointer}
+    .vision-level-label{display:inline-flex;align-items:center;gap:5px;max-width:100%;color:#b8ddec;font:10px/1.3 var(--font-telemetry)}
+    .vision-level-label select{min-width:106px;max-width:160px;border:1px solid rgba(86,207,248,.33);border-radius:7px;background:#071e31;color:#e0faff;padding:5px;font:inherit}
+    .vision-level-label select:focus-visible{outline:2px solid #67dfff}
+    .vision-level-evidence{margin:8px 0 0;padding:6px 8px;border:1px solid rgba(105,214,246,.22);border-radius:8px;background:rgba(0,17,31,.44);font:10px/1.4 var(--font-telemetry)}
+    .vision-level-evidence[hidden]{display:none!important}
+    .vision-level-evidence summary{cursor:pointer;color:#b6e9f6}
+    .vision-level-entry{padding:7px 0;border-top:1px solid rgba(105,214,246,.13);white-space:pre-wrap;overflow-wrap:anywhere;color:#b7d4e2}
+    .vision-level-entry strong{display:block;margin-bottom:3px;color:#e3faff}
     .composer-shell.collapsed .composer-media-tools{display:none}
     .user-image-attachment{display:block;max-width:min(240px,100%);max-height:180px;object-fit:contain;margin-top:9px;border-radius:9px}
     .user-vision-summary{margin-top:8px;font-size:11px;color:#d4e9f7;white-space:pre-wrap}
@@ -1298,6 +1306,13 @@
         <div class="image-attachment" id="imageAttachment" hidden>
           <img id="imageAttachmentThumbnail" alt="Image preview">
           <span id="imageAttachmentName"></span>
+          <label class="vision-level-label" for="imageVisionLevelSelect">Vision
+            <select id="imageVisionLevelSelect" aria-label="Vision analysis levels">
+              <option value="1">L1 · Fast</option>
+              <option value="2" selected>L2 · Adaptive</option>
+              <option value="3">L3 · Compare all (slow)</option>
+            </select>
+          </label>
           <button id="imageRemoveButton" type="button" aria-label="Remove attached image">✕</button>
         </div>
         <div class="composer-media-status" id="composerFeedback" role="status" aria-live="polite" hidden></div>
@@ -1317,6 +1332,7 @@
       const imageAttachment=document.getElementById("imageAttachment");
       const imageAttachmentThumbnail=document.getElementById("imageAttachmentThumbnail");
       const imageAttachmentName=document.getElementById("imageAttachmentName");
+      const imageVisionLevelSelect=document.getElementById("imageVisionLevelSelect");
       const composerFeedback=document.getElementById("composerFeedback");
       const micButton=document.getElementById("micButton");
       const VISION_START="\n\n[Uploaded image — vision description, not original pixels]\n";
@@ -1334,6 +1350,7 @@
         if(selectedImage){
           imageAttachmentThumbnail.src=selectedImage.url;
           imageAttachmentName.textContent=selectedImage.file.name;
+          imageVisionLevelSelect.value=String(selectedImage.analysisLevels||2);
         }
       };
       const removeSelectedImage=()=>{
@@ -1349,8 +1366,13 @@
           composerNotice("Choose a JPEG, PNG, or WebP under 8 MB.",true);return;
         }
         removeSelectedImage();
-        selectedImage={file,url:URL.createObjectURL(file)};
+        selectedImage={file,url:URL.createObjectURL(file),analysisLevels:2};
         updateImagePreview();composerNotice("");
+      });
+      imageVisionLevelSelect.addEventListener("change",()=>{
+        if(selectedImage)selectedImage.analysisLevels=Number(imageVisionLevelSelect.value)||2;
+        if(imageVisionLevelSelect.value==="3")composerNotice("L3 compares all three real CPU passes. This is slower; captions will be saved in the chat for comparison.");
+        else composerNotice("");
       });
       imageRemoveButton.addEventListener("click",()=>{removeSelectedImage();composerNotice("");});
       const encodeImageForVision=attachment=>new Promise((resolve,reject)=>{
@@ -1388,7 +1410,8 @@
       const requestVisionDescription=async(attachment,question,activity)=>{
         activity.update("PREPARING");
         const image=await encodeImageForVision(attachment);
-        const body=JSON.stringify({image,question:question||"Describe this image."});
+        const body=JSON.stringify({image,question:question||"Describe this image.",
+          analysisLevels:Math.max(1,Math.min(3,Number(attachment.analysisLevels)||2))});
         let jobId="",reconnects=0,pollingErrors=0;
         const acceptJob=async()=>{
           let attempted=false;
@@ -1469,7 +1492,12 @@
             elapsedSeconds:state.elapsedSeconds,
             phaseElapsedSeconds:state.phaseElapsedSeconds,
             inferenceStage:state.inferenceStage,
-            firstChunkSeconds:state.firstChunkSeconds
+            firstChunkSeconds:state.firstChunkSeconds,
+            requestedLevels:state.requestedLevels,
+            activeLevel:state.activeLevel,
+            completedLevels:state.completedLevels,
+            selectedLevel:state.selectedLevel,
+            levelRecords:state.levelRecords
           });
           if(state.phase==="COMPLETE"){
             if(!state.description)throw new Error("The vision model returned no description.");
@@ -1538,7 +1566,10 @@
         const entries=names.map(name=>{const li=document.createElement("li");li.textContent=name;li.dataset.state="pending";steps.appendChild(li);return li;});
         const timer=document.createElement("div");timer.className="vision-work-timer";timer.setAttribute("aria-label","Elapsed processing time");
         const status=document.createElement("div");status.className="vision-work-status";status.setAttribute("role","status");status.setAttribute("aria-live","polite");
-        root.append(header,message,preview,steps,timer,status);messageList.appendChild(root);
+        const evidence=document.createElement("details");evidence.className="vision-level-evidence";evidence.hidden=true;
+        const evidenceSummary=document.createElement("summary");evidenceSummary.textContent="Observed levels";
+        const evidenceContents=document.createElement("div");evidence.append(evidenceSummary,evidenceContents);
+        root.append(header,message,preview,steps,timer,status,evidence);messageList.appendChild(root);
         const initialTime=Date.now();
         const durationText=seconds=>{
           const n=Math.max(0,Math.floor(Number(seconds)||0)),m=Math.floor(n/60),sec=String(n%60).padStart(2,"0");
@@ -1549,7 +1580,24 @@
         const activity={
           root,originThreadId:activeThreadId,originDraft:draftThread,
           jobId:"",abort:new AbortController(),phase:"",phaseStart:initialTime,
-          serverTiming:null,interval:null,
+          serverTiming:null,interval:null,renderedLevels:"",
+          showLevels(records,selected){
+            if(!Array.isArray(records)||!records.length)return;
+            const signature=records.map(x=>[x.level,x.description,x.elapsedSeconds].join("|")).join("~")+"|"+selected;
+            if(signature===this.renderedLevels)return;
+            this.renderedLevels=signature;evidence.hidden=false;
+            evidenceSummary.textContent="Observed model outputs · "+records.length+" level"+(records.length===1?"":"s")+" (not accuracy-verified)";
+            evidenceContents.replaceChildren();
+            for(const record of records){
+              const entry=document.createElement("div");entry.className="vision-level-entry";
+              const heading=document.createElement("strong");
+              heading.textContent="L"+record.level+" · "+record.inputMaxSide+"px · "+
+                Number(record.elapsedSeconds||0).toFixed(2)+"s"+(selected===record.level?" · selected by heuristic":"");
+              const body=document.createElement("div");
+              body.textContent=String(record.description||"");
+              entry.append(heading,body);evidenceContents.append(entry);
+            }
+          },
           tick(){
             const now=Date.now();
             const timing=this.serverTiming&&this.serverTiming.phase===this.phase
@@ -1594,15 +1642,23 @@
               RESPONDING:"§C has accepted the message and is composing its reply."
             };
             const observed=phase==="ANALYZING" && timing?.inferenceStage;
+            if(timing?.levelRecords)this.showLevels(timing.levelRecords,Number(timing.selectedLevel)||1);
             if(detail)status.textContent=detail;
             else if(observed==="PREFILL")status.textContent="CPU encoding image and preparing the first text chunk…";
             else if(observed==="DECODING")status.textContent="Vision model generating description… first text after "+
                 durationText(timing.firstChunkSeconds??0);
             else if(observed==="DETAIL_RETRY")status.textContent="Initial description lacked specifics; checking retained image details…";
             else if(observed==="DETAIL_PREFILL")status.textContent="Refining visual details from a higher-resolution image…";
-            else if(observed==="DETAIL_DECODING")status.textContent="Generating a more specific visual description… first text after "+
+            else if(observed==="DETAIL_DECODING")status.textContent="Level 2 · generating more specific details… first text after "+
+                durationText(timing.firstChunkSeconds??0);
+            else if(observed==="LEVEL3_RETRY")status.textContent="Level 3 · preparing deep image comparison…";
+            else if(observed==="LEVEL3_PREFILL")status.textContent="Level 3 · reading retained 768px image…";
+            else if(observed==="LEVEL3_DECODING")status.textContent="Level 3 · generating deep description… first text after "+
                 durationText(timing.firstChunkSeconds??0);
             else status.textContent=labels[phase]||"";
+            if(phase==="ANALYZING"&&timing?.requestedLevels){
+              title.textContent="Image message · level "+Math.max(1,Number(timing.activeLevel)||1)+"/"+timing.requestedLevels;
+            }
             if(phase==="RESPONDING")cancel.hidden=true;
           }
         };
@@ -1648,7 +1704,7 @@
       const workArtifactList = document.getElementById("workArtifactList");
       const workEvidenceCount = document.getElementById("workEvidenceCount");
       const workEvidenceList = document.getElementById("workEvidenceList");
-      const SWRLZ_CHAT_VERSION = "1.1.26";
+      const SWRLZ_CHAT_VERSION = "1.1.27";
       const navTraceId = "chat-ui-" + Date.now().toString(36) + "-" + crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
       let lastUiStatusCamera = "";
       let companionState="idle";
