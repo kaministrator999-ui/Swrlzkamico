@@ -1,0 +1,65 @@
+name: §E v11.288 Smooth Cliff Hand source seal calculator
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/receipt-forge-v11-288.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  seal-candidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify native single-shell builder JavaScript syntax
+        run: node --check projects/swrlz-forge-moba/runtime/smooth_cliff_hand_v11_288.js
+      - name: Assemble engine, verify material and compute integrity values
+        run: |
+          python - <<'PY'
+          import json,hashlib,subprocess,sys
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          path=root/'source-manifest.json'
+          m=json.loads(path.read_text('utf8'))
+          assert m['name']=='§wyrl§ Engine v11.288'
+          assert m['patches'][-1]=='patches/v11_288_smooth_cliff_pbr.py'
+          assert len(m['patches'])==319
+          m['finalBytes']=0;m['finalSha256']=''
+          path.write_text(json.dumps(m,ensure_ascii=False),encoding='utf8')
+          subprocess.run([sys.executable,str(root/'build_space.py'),'--output','/tmp/se288'],check=True)
+          raw=(Path('/tmp/se288')/'index.html').read_bytes()
+          assert raw==(Path('/tmp/se288')/'modeler.html').read_bytes()
+          html=raw.decode('utf8')
+          for needle in (
+            'SWYRL_ENGINE_DEPLOY_MARKER: V11_288_SMOOTH_CLIFF_PBR',
+            "window.SWRLZ_FORGE_BUILD={version:'v11.288'",
+            'function se288SmoothCliffHandScene(){',
+            'return se288SmoothCliffHandScene();',
+            'model.parts=[stone];model.meshGroups=[];',
+            'stone.cliffPBR={atlas:',
+            'function se288ProjectCliffUV(part){',
+            'function se288CliffMaterial(part){',
+            "mat=part.cliffPBR?.atlas==='cliff_pbr_atlas_384'?se288CliffMaterial(part):",
+            'Plain Hand Base · Smooth Cliff Hand',
+          ):
+            assert needle in html,needle
+          receipt=json.loads((Path('/tmp/se288')/'SOURCE.json').read_text('utf8'))
+          assert len(receipt['patches'])==319
+          assert 'assets/cliff-hand/cliff_pbr_atlas_384.jpg' in receipt['assets']
+          pic=(Path('/tmp/se288')/'assets/cliff-hand/cliff_pbr_atlas_384.jpg').read_bytes()
+          assert len(pic)==404577 and pic.startswith(bytes((0xff,0xd8,0xff)))
+          print('SE288_SHA256='+hashlib.sha256(raw).hexdigest())
+          print('SE288_BYTES='+str(len(raw)))
+          print('SE288_ASSETS='+str(len(receipt['assets'])))
+          print('SE288_PATCHES='+str(len(receipt['patches'])))
+          PY
+      - name: Parse assembled engine JavaScript
+        run: python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se288/index.html
