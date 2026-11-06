@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.295",
+  "name": "§wyrl§ Engine v11.296",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_295.html",
+  "finalArtifact": "swyrl_engine_v11_296.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -340,8 +340,9 @@
     "patches/v11_292_cliff_knuckle_wrist_moss.py",
     "patches/v11_293_chat_character_tools.py",
     "patches/v11_294_vanguard_socket_loader_fix.py",
-    "patches/v11_295_chat_loft_surface_normals.py"
+    "patches/v11_295_chat_loft_surface_normals.py",
+    "patches/v11_296_vanguard_rebuild.py"
   ],
-  "finalBytes": 8263130,
-  "finalSha256": "b993cd47e55d42ae32315c3ff536e6adc5a7ca6f743d4d9f9d8d458eb374e5c8"
+  "finalBytes": 0,
+  "finalSha256": ""
 }
