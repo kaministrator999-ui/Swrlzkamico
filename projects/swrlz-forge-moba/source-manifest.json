@@ -343,6 +343,6 @@
     "patches/v11_295_chat_loft_surface_normals.py",
     "patches/v11_296_vanguard_rebuild.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 8282034,
+  "finalSha256": "a43cd402283fee23e38bad664936ca766708c9598f40c6b1e450cc2dcfc5ba8d"
 }
