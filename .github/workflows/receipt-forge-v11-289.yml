@@ -1,0 +1,67 @@
+name: §E v11.289 Gauntlet forearm targeted source receipt
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/receipt-forge-v11-289.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  seal:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate short connected forearm, untouched upper hand and UV mapping
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/cliff_gauntlet_forearm_v11_289.js
+          node projects/swrlz-forge-moba/scripts/test_v11_289_gauntlet.cjs
+      - name: Build engine and calculate exact SHA for source sealing
+        run: |
+          python - <<'PY'
+          import hashlib,json,subprocess,sys
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          path=root/'source-manifest.json'
+          m=json.loads(path.read_text('utf8'))
+          assert m['name']=='§wyrl§ Engine v11.289'
+          assert len(m['patches'])==320
+          assert m['patches'][-1]=='patches/v11_289_short_cliff_gauntlet.py'
+          m['finalBytes']=0;m['finalSha256']=''
+          path.write_text(json.dumps(m,ensure_ascii=False),encoding='utf8')
+          subprocess.run([sys.executable,str(root/'build_space.py'),'--output','/tmp/swrlz-gauntlet-289'],check=True)
+          out=Path('/tmp/swrlz-gauntlet-289')
+          raw=(out/'index.html').read_bytes()
+          assert raw==(out/'modeler.html').read_bytes()
+          text=raw.decode('utf8')
+          for target in (
+           'SWYRL_ENGINE_DEPLOY_MARKER: V11_289_SHORT_CLIFF_GAUNTLET',
+           "window.SWRLZ_FORGE_BUILD={version:'v11.289'",
+           'function se289ExtendGauntletTopology(part){',
+           'function se289ProjectGauntletUV(part){',
+           'const gauntlet=se289ExtendGauntletTopology(stone);',
+           'const vertices=se289ProjectGauntletUV(stone);',
+           'model.parts=[stone];model.meshGroups=[];',
+           'const scene=se212HandScene(),model=scene.project.modelAtelier;',
+           'SWYRL_ENGINE_CLIFF_GAUNTLET_289',
+           'short tapered gauntlet forearm',
+          ):
+            assert target in text,target
+          assets=json.loads((out/'SOURCE.json').read_text('utf8'))
+          assert len(assets['patches'])==320
+          assert len(assets['assets'])==71
+          assert 'assets/cliff-hand/cliff_pbr_atlas_384.jpg' in assets['assets']
+          print('SE289_SHA256='+hashlib.sha256(raw).hexdigest())
+          print('SE289_BYTES='+str(len(raw)))
+          print('SE289_PATCHES='+str(len(assets['patches'])))
+          print('SE289_ASSETS='+str(len(assets['assets'])))
+          PY
+      - name: Parse actual assembled engine JavaScript
+        run: python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/swrlz-gauntlet-289/index.html
