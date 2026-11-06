@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.288",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_288_SMOOTH_CLIFF_PBR",
-  "reason": "Owner directed: current Plain Hand looks like 121 stacked 3D rocks and geometry cracks. Replace actual Plain Hand Base generator with ONE smooth connected SDF-anatomy hand shell; retain native 17-bone rig. Draw rock plate divisions, cracks, small relief and sparse moss through owner-supplied albedo/normal/roughness/AO in higher-resolution 384px-per-tile atlas. Remove all separately modeled rock pieces and crack curves from starter output; avoid disturbing independent Rocky Anime Hand, other models, saved scenes, VR or gameplay. Exact 319-patch source SHA-256 e9862396dd559208637d2b073155fd69b959716cb303e83519d520f44102d859 and 8,221,626 HTML bytes; 71 assets and source syntax verified by targeted receipt workflow 42168959522. Owner phone visual and open-fist animation acceptance pending.",
-  "sourceCommit": "0e698fa779b3fdf293a52b0c6ff7000ccaf40646",
-  "sourceIntegritySha256": "e9862396dd559208637d2b073155fd69b959716cb303e83519d520f44102d859"
+  "releaseVersion": "v11.289",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_289_SHORT_CLIFF_GAUNTLET",
+  "reason": "Owner's Android front and back screenshots show v11.288 smooth single-mesh Cliff Hand with too little forearm below the palm. Extend that same connected native skinned mesh by ~0.74 model units at the lower carpal/wrist area with gentle tapered 9% distal flare; preserve upper fingers/thumb/palm, original 17-bone rig, and material-only stone cracks. Remap owner-derived 384px stone albedo/normal/roughness/AO continuously over newly extended forearm, no additional meshes, rock blocks or 3D cracks. Exact v11.289 SHA 55ad1adf274728e665ff851a6eae6cd4ea730063f2a8ad6fca21cc643c029ca5, 8,224,606 bytes, 320 patches, 71 assets. Source receipt 42171811242 and final sealed verification 42172057663 passed, including synthetic geometry test and assembled inline JS. No changes to separate models, user saves, Sheep Tag gameplay, XR or §C. Owner device visual and rig test pending.",
+  "sourceCommit": "06fc3f7471d14f312452e16e91cc7120c8513b15",
+  "sourceIntegritySha256": "55ad1adf274728e665ff851a6eae6cd4ea730063f2a8ad6fca21cc643c029ca5"
 }
