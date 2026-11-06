@@ -134,7 +134,7 @@ for term in (
     "window.SWYRL_ENGINE_ROCK_HAND=Object.freeze",
     'data-project-template="rocky-anime-hand"',
     "modelAtelier",
-    "source.version=11.281",
+    "source.version=11.282",
     "Amber",
     "rock-hand-group-",
     "Energy / articulated knuckles",
