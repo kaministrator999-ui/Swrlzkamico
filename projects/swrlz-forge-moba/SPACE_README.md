@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.282
+title: §wyrl§ Engine v11.283
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,11 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.283 · Weathered Rocky Anime Hand (2026-11-05)
+
+The owner requested a **slightly smoother rock hand** following the fully covered cliff-rock rebuild. On the independent Rocky Anime Hand · Emberstone Starter Model, each solid rock is now gently rounded: the generator shares matching mesh vertices, subdivides faces once, and softens their sharp corners through two restrained surface-smoothing passes. The original 360° rock anatomy, 12 stone finger sections, three thumb sections, closed angular palm, fractured wrist, 25 crisp emissive fault-line parts and editable 17-bone rig are preserved; **no organic glove is exposed**. The 89-part native scene remains individually editable and saveable. Original Arcane Gloves, Quest VR game, Sheep Tag, Mage Spell Lab, other projects and §C remain unchanged. Model test confirmed 64 weathered solids (8,708 vertices and 17,160 triangles); build checksum and visual acceptance are separate. Details: `docs/WEATHERED_ROCK_HAND_V11_283.md`.
+
 
 ## §E v11.282 · Rock Cliff Hand — solid stone anatomy (2026-11-05)
 

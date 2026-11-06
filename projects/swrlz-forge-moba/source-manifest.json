@@ -330,6 +330,6 @@
     "patches/v11_282_rock_cliff_hand.py",
     "patches/v11_283_weathered_rock_hand.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 8186789,
+  "finalSha256": "01d2bc06dab63fa444f747a02952b8bd5abd7df52709a5576c5eea46cca970b0"
 }
