@@ -338,6 +338,6 @@
     "patches/v11_290_cliff_gauntlet_load_material.py",
     "patches/v11_291_hooded_vanguard_materials.py"
   ],
-  "finalBytes": 8229895,
-  "finalSha256": "b7a8ade38caa3bbc5ee2ae6319c75c8352149ac7d0aa4e37699b89e75e08709f"
+  "finalBytes": 8245089,
+  "finalSha256": "d0bfb2799c1650317768f0d128d1e9483ca4f53c427937892b6adeb4455ff1f5"
 }
