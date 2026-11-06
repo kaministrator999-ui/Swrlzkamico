@@ -1,0 +1,56 @@
+name: One-shot §E v11.302 native UV PBR source seal
+# Scoped to Hooded Vanguard texture details; no other game/VR CI.
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/one-shot-forge-v11-302-uv-pbr-seal.yml'
+permissions:
+  contents: read
+jobs:
+  seal:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Verify native UV albedo, depth maps and cache directly
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/hooded_vanguard_uv_pbr_v11_302.js
+          node projects/swrlz-forge-moba/tests/hooded_vanguard_uv_pbr_v11_302.cjs
+      - name: Measure exact assembled engine and source asset receipt
+        run: |
+          python - <<'PY'
+          import hashlib,json,subprocess,sys
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          m=json.loads((root/'source-manifest.json').read_text('utf8'))
+          assert m['name']=='§wyrl§ Engine v11.302'
+          assert len(m['patches'])==333
+          assert m['patches'][-1]=='patches/v11_302_vanguard_mapped_pbr_relief.py'
+          assert m['finalBytes']==0 and m['finalSha256']==''
+          out=Path('/tmp/swrlz-v11-302')
+          subprocess.run([sys.executable,str(root/'build_space.py'),'--output',str(out)],check=True)
+          raw=(out/'index.html').read_bytes()
+          assert raw==(out/'modeler.html').read_bytes()
+          html=raw.decode('utf8')
+          for token in (
+           'SWYRL_ENGINE_DEPLOY_MARKER: V11_302_MAPPED_PBR_SURFACE_RELIEF',
+           "window.SWRLZ_FORGE_BUILD={version:'v11.302'",
+           'function se302BuildSet(family){',
+           'nativeUVPBRMaps:true',
+           '<strong>Hooded Vanguard · Painted PBR Study</strong>'
+          ):assert token in html,token
+          subprocess.run([sys.executable,str(root/'scripts/check_inline_js_syntax_v11_266.py'),
+                          str(out/'index.html')],check=True)
+          receipt=json.loads((out/'SOURCE.json').read_text('utf8'))
+          assert len(receipt['assets'])==71
+          print('SE302_EXACT_MEASUREMENT='+json.dumps({
+           'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest(),
+           'patches':len(receipt['patches']),'assets':len(receipt['assets']),
+           'nativeUVPBRTestPassed':True
+          },sort_keys=True),flush=True)
+          PY
