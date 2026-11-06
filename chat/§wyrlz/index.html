@@ -1357,23 +1357,26 @@
         const img=new Image();
         img.onload=()=>{
           try{
-            // The local vision server caps inference images at 768px anyway.
-            // Resize before transfer to avoid shipping/encoding unused pixels.
-            const scale=Math.min(1,768/Math.max(img.naturalWidth,img.naturalHeight));
+            // Preserve detail in reference sheets before the server crops them.
+            // Each vision inference still receives a bounded 768px view.
+            // Never upscale the source or exceed the existing 2 MB upload cap.
+            const longest=Math.max(img.naturalWidth,img.naturalHeight);
             const canvas=document.createElement("canvas");
-            canvas.width=Math.max(1,Math.round(img.naturalWidth*scale));
-            canvas.height=Math.max(1,Math.round(img.naturalHeight*scale));
             const ctx=canvas.getContext("2d");
             if(!ctx)throw new Error("Image conversion is unavailable.");
-            ctx.fillStyle="#ffffff";ctx.fillRect(0,0,canvas.width,canvas.height);
-            ctx.drawImage(img,0,0,canvas.width,canvas.height);
-            let dataURL="";
-            for(const quality of [.8,.65,.5]){
-              dataURL=canvas.toDataURL("image/jpeg",quality);
-              if(dataURL.length<=2600000)break;
+            for(const maxEdge of [1536,1280,1024,768]){
+              const scale=Math.min(1,maxEdge/longest);
+              canvas.width=Math.max(1,Math.round(img.naturalWidth*scale));
+              canvas.height=Math.max(1,Math.round(img.naturalHeight*scale));
+              ctx.fillStyle="#ffffff";
+              ctx.fillRect(0,0,canvas.width,canvas.height);
+              ctx.drawImage(img,0,0,canvas.width,canvas.height);
+              for(const quality of [.82,.7,.55]){
+                const dataURL=canvas.toDataURL("image/jpeg",quality);
+                if(dataURL.length<=2600000){resolve(dataURL);return;}
+              }
             }
-            if(dataURL.length>2600000)throw new Error("Image is too complex; choose a smaller picture.");
-            resolve(dataURL);
+            throw new Error("Image is too complex; choose a smaller picture.");
           }catch(error){reject(error);}
         };
         img.onerror=()=>reject(new Error("Unable to read this image."));
