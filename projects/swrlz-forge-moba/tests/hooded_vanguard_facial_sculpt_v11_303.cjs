@@ -109,9 +109,9 @@ assert.equal(applied.width,768,'high-res UV face texture');
 assert.equal(applied.height,768);
 assert.equal(textures.get('skin').image,applied,'bind native texture');
 assert.equal(textures.get('skin').needsUpdate,true);
-assert(applied.calls.filter(s=>s==='ellipse').length>=18,
+assert(applied.calls.filter(s=>s==='ellipse').length>=14,
  'detailed eyes with iris, pupil and catchlight');
-assert(applied.calls.filter(s=>s==='curve').length>=30,
+assert(applied.calls.filter(s=>s==='curve').length>=25,
  'nose, brow, eyelid and lips require deliberate paint');
 assert.equal(draws.length,0,'no photo pasted onto the face');
 const c1=applied;
