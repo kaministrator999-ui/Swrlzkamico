@@ -12,6 +12,27 @@ preload_from_hub:
 
 This is a migration candidate, not a claim of production Chat parity. The real R39 engine and its accepted overlays are staged from the canonical repository. The model is reconstructed on startup from 54 SHA-verified source chunks pinned to the exact source commit. A full clean-room Chat transport, account persistence, and queue migration require separate acceptance.
 
+### Chat v1.1.26 — adaptive detail recovery for character sheets
+
+An exported Little Crystal Mage example verified that local 384px SmolVLM
+descriptions remained generic after direct-text handoff. The 384px/88-token
+first pass remains the default. The browser now retains **up to 768px** in
+its transient JPEG upload rather than discarding small details before the
+server. The server *still downsamples to 384px for the fast first pass*.
+Only when a character/reference sheet's initial description lacks at least
+two observable distinguishing descriptors does the same local CPU model try
+a **single** 640px/144-token detail pass; it reports honest DETAIL_RETRY,
+DETAIL_PREFILL, and DETAIL_DECODING stages. It keeps the refined output only
+if it adds concrete descriptors rather than longer generic prose. A failed
+optional retry preserves the original factual observation. Cancellation,
+account ownership, bounded queue and ephemeral pixels remain unchanged.
+Other images and already-specific sheets incur no second inference.
+
+The second pass is deliberately slower when triggered, and the small
+SmolVLM model may still miss details. Resolution and heuristics do not prove
+accuracy; device timings and the exported analyzer text remain acceptance
+evidence. No hard-coded mage traits are inserted into inference output.
+
 ### Chat v1.1.25 — direct observation fidelity
 
 The fast local vision path stays pinned at 384px, 88 tokens, one CPU worker,
@@ -69,8 +90,8 @@ turned into speculative transformation stories, emotions, or symbolism.
 For reduced CPU text decoding, the local vision request now uses a concise
 factual prompt and **88 maximum output tokens** (previously 112). It may
 describe fewer fine details; no improvement in actual throughput is assumed
-without real runtime measurement. The browser downscales to **384px** before
-upload (matching the existing server's 384px cap), avoiding unnecessary
+without real runtime measurement. The browser retains up to **768px** before
+upload (the server fast pass uses a 384px cap), avoiding unnecessary
 1600px encoding and transfer. The original local image preview remains
 untouched; the image bytes are never added to the persisted conversation.
 Preloaded GGUF files now resolve from the local Hub cache first, avoiding
