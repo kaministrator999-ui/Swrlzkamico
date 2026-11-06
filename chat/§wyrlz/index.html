@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="swrlz-chat-version" content="1.1.23">
+  <meta name="swrlz-chat-version" content="1.1.24">
   <meta name="theme-color" content="#010812">
   <title>Chat</title>
   <style>
@@ -1357,9 +1357,9 @@
         const img=new Image();
         img.onload=()=>{
           try{
-            // Match the CPU vision 512px cap before encoding and transfer.
+            // Match the CPU vision 384px cap before encoding and transfer.
             // Resize before transfer to avoid shipping/encoding unused pixels.
-            const scale=Math.min(1,512/Math.max(img.naturalWidth,img.naturalHeight));
+            const scale=Math.min(1,384/Math.max(img.naturalWidth,img.naturalHeight));
             const canvas=document.createElement("canvas");
             canvas.width=Math.max(1,Math.round(img.naturalWidth*scale));
             canvas.height=Math.max(1,Math.round(img.naturalHeight*scale));
@@ -1467,7 +1467,9 @@
           pollingErrors=0;
           activity.update(state.phase||"QUEUED","",{
             elapsedSeconds:state.elapsedSeconds,
-            phaseElapsedSeconds:state.phaseElapsedSeconds
+            phaseElapsedSeconds:state.phaseElapsedSeconds,
+            inferenceStage:state.inferenceStage,
+            firstChunkSeconds:state.firstChunkSeconds
           });
           if(state.phase==="COMPLETE"){
             if(!state.description)throw new Error("The vision model returned no description.");
@@ -1591,7 +1593,12 @@
               SENDING:"Sending the visual description to §C…",
               RESPONDING:"§C has accepted the message and is composing its reply."
             };
-            status.textContent=detail||labels[phase]||"";
+            const observed=phase==="ANALYZING" && timing?.inferenceStage;
+            if(detail)status.textContent=detail;
+            else if(observed==="PREFILL")status.textContent="CPU encoding image and preparing the first text chunk…";
+            else if(observed==="DECODING")status.textContent="Vision model generating description… first text after "+
+                durationText(timing.firstChunkSeconds??0);
+            else status.textContent=labels[phase]||"";
             if(phase==="RESPONDING")cancel.hidden=true;
           }
         };
@@ -1637,7 +1644,7 @@
       const workArtifactList = document.getElementById("workArtifactList");
       const workEvidenceCount = document.getElementById("workEvidenceCount");
       const workEvidenceList = document.getElementById("workEvidenceList");
-      const SWRLZ_CHAT_VERSION = "1.1.23";
+      const SWRLZ_CHAT_VERSION = "1.1.24";
       const navTraceId = "chat-ui-" + Date.now().toString(36) + "-" + crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
       let lastUiStatusCamera = "";
       let companionState="idle";
