@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.298
+title: §wyrl§ Engine v11.299
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+## §E v11.299 · Corrected artwork UV alignment (2026-11-06)
+
+Owner screenshots revealed v11.298 did embed genuine painted image pixels, but used each entire **illustrated concept-sheet cutout** as a full-square material texture. The front face, chest and back therefore showed stretched, mismatched art and white page fragments. The v11.299 successor keeps the same original source image bytes and **17 editable native meshes** but extracts tighter painted surface samples from the existing atlas, recovers the exact pre-v11.298 local UVs, tiles real material pixels per family with mirrored repetition, and reserves frontal face art for the front of the head only (neutral skin on the back). One CanvasTexture per surface material family; no extra decorative geometry, no changes to saved projects. This is a focused image-mapping correction, **not** a perfect high-resolution artist-authored UV bake, and owner Android/Quest visual acceptance remains pending. Details in [the correction checkpoint](docs/VANGUARD_IMAGE_UV_ALIGNMENT_V11_299.md).
+
 ## §E v11.298 · Actual generated image pixels mapped to Hooded Vanguard (candidate)
 
 The fresh **Starter Models → Hooded Vanguard · Real Artwork UV** now uses **actual image pixels from the previously generated Hooded Vanguard texture illustration**, not a hand-drawn JavaScript imitation. The artwork was manually cropped into 11 surface regions, resampled into a 512×384 JPEG sheet (4×3 cells of 128×128), SHA-256 verified, and embedded directly into the engine. Each of the 17 native editable meshes gets a UV tile assignment to its corresponding painted face/hair/hood/scarf/uniform/armor/pauldron/teal/leather/glove/boot region. Shared source-color texture replaces v11.297's procedural look; conservative material roughness/metalness remains per part. The exact image checksum, 17-part mapping and unrelated-material fallthrough are verified by a focused native test. Historical saved models, the other starters, §C, VR and Sheep Tag are unchanged. This is still a static character; the image atlas is a **mobile-resolution image sample**, not an artist-retopologized full-resolution UV bake, so device visual acceptance and finer art alignment remain separate.
