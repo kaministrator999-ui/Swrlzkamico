@@ -1,3 +1,9 @@
+## §E v11.285 · Compact Projects picker and reliable Starter Models (2026-11-05)
+
+The native **Projects → Starter Projects** picker now keeps playable starters under **Starter Games** and editable hand, wolf, sheep-building and other model-only starters under **Starter Models**. This repairs a v11.284 category helper that accidentally depended on the private Chat-host scope, and also covers the picker before Chat mounts. Existing native cards and default selections are moved in place—not cloned or reset.
+
+On phones and touch/desktop-mode browsers, the project picker is now a **compact, scrollable dialog** with smaller cards and persistent category navigation. Its active window is promoted above right-side editor/inspector panels instead of disappearing behind them. No scene, model geometry, Sheep Tag, particle, WebXR, AI Chat or saved-project data migration. Candidate assembly and inline JavaScript syntax verified; real Moto/Quest visual acceptance is still owner-tested.
+
 ## §E v11.284 · Plain Hand Base and corrected Starter Models tab (2026-11-05)
 
 Added a separate **Plain Hand Base** Model Atelier starter using one clean, connected five-finger hand mesh with a neutral matte finish and the original **17-bone** open/fist animation. It contains **no armor, glove details, rocks, runes, cuffs or effects**. All previous models—including the weathered Rocky Anime Hand and both Arcane Gloves—remain unchanged. Direct route: `?project=plain-hand-base`.
