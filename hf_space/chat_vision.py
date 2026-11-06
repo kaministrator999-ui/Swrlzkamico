@@ -284,6 +284,13 @@ _CHARACTER_SHEET_WORDS = re.compile(
     r"\b(?:turnaround|reference sheet|character sheet|model sheet|"
     r"design sheet|multiple views|different views)\b", re.I,
 )
+# Generic captions are not treated as reliable visual recognition. These are
+# words actually returned by the model, not an inference about image content.
+_EMPTY_CAPTION = re.compile(
+    r"^(?:this is |there is )?(?:an? )?image (?:of|showing|with|contains?)? "
+    r"(?:various|some|different|a few) (?:objects|things|pictures|shapes|details)"
+    r"(?:[.! ]*)$", re.I,
+)
 
 
 def _visual_specificity(description: str) -> int:
@@ -297,6 +304,8 @@ def _needs_detail_retry(description: str) -> bool:
     Deliberately conservative: simple photos or an already specific first pass
     take the fast path, with no second local inference.
     """
+    if _EMPTY_CAPTION.fullmatch(description.strip()):
+        return True
     if not _CHARACTER_SHEET_WORDS.search(description):
         return False
     return _visual_specificity(description) < 2
