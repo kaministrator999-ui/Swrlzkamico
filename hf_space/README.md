@@ -49,7 +49,7 @@ shapes, colors, and accessories. The downstream text LALM receives an explicit
 grounding reminder that the vision description is fallible and must not be
 turned into speculative transformation stories, emotions, or symbolism.
 For reduced CPU text decoding, the local vision request now uses a concise
-factual prompt and **88 maximum output tokens** (previously 192). It may
+factual prompt and **88 maximum output tokens** (previously 112). It may
 describe fewer fine details; no improvement in actual throughput is assumed
 without real runtime measurement. The browser downscales to **384px** before
 upload (matching the existing server's 384px cap), avoiding unnecessary
@@ -84,6 +84,14 @@ The last progress poll is tracked per job: an active job with no watcher for
 90 seconds is marked for cooperative cancellation on the next request/status
 check, preventing abandoned work from indefinitely occupying the free CPU
 when other requests arrive. Jobs with active status polling are not evicted.
+
+The first real output chunk now marks the transition from native image/prompt
+prefill to CPU text decoding in the authenticated progress view, with measured
+time-to-first-chunk rather than a fabricated progress percentage. The local
+llama.cpp backend uses larger logical prefill batches (512, physical 256)
+on the same two CPU threads. This is a latency-focused candidate, **not**
+proof of faster end-to-end runtime until live device timing is observed.
+Smaller input resolution and output budget may lose fine print/detail.
 
 The browser image card displays a live MM:SS elapsed counter and the elapsed
 time in its current stage, anchored to server monotonic job timings when
