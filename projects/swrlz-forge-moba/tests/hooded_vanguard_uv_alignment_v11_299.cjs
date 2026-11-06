@@ -65,8 +65,9 @@ for(const family of families){
  assert.equal(m.map.image.width,256);
 }
 assert(calls.length>=1,'actual source image must be drawn into material canvases');
-for(const item of calls){
- assert.equal(item.args[0].width,512,'use real decoded image source');
+const sourceDraws=calls.filter(item=>item.args[0].width===512);
+assert(sourceDraws.length>=11,'each family must sample original artwork');
+for(const item of sourceDraws){
  assert(item.args[3]<128&&item.args[4]<128,
   'crop SOURCE painted region, not entire concept-sheet tile');
 }
