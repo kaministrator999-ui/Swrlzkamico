@@ -1601,8 +1601,10 @@
             for(const record of records){
               const entry=document.createElement("div");entry.className="vision-level-entry";
               const heading=document.createElement("strong");
+              const noDescriptors=records.every(item=>Number(item.descriptorCount||0)===0);
               heading.textContent="L"+record.level+" · "+record.inputMaxSide+"px · "+
-                Number(record.elapsedSeconds||0).toFixed(2)+"s"+(selected===record.level?" · selected by heuristic":"");
+                Number(record.elapsedSeconds||0).toFixed(2)+"s"+
+                (selected===record.level?(noDescriptors?" · fallback (no descriptors)":" · selected by heuristic"):"");
               const body=document.createElement("div");
               body.textContent=String(record.description||"");
               entry.append(heading,body);evidenceContents.append(entry);
