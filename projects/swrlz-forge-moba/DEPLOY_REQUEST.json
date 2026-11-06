@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.298",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_298_ACTUAL_IMAGE_UV_ATLAS",
-  "reason": "Actually map the generated Hooded Vanguard texture image pixels to the 17 native editable meshes in Starter Models, rather than procedurally imitating the illustration. Cropped genuine illustrated surfaces for face, hair, hood, scarf, uniform, armor, pauldrons, teal coat, leather, gloves, boots to one 512x384 image texture with 11 native UV tiles. Exact JPEG SHA-256 d34f6afc422cbfafe54dfbbd420752b12d37967654ea5c1443c031f3b6720b27 verified from 4 GitHub source chunks. Native factory, UV and material-regression test passed; 329 patches, sealed 8,319,487-byte HTML SHA-256 f9faf29428cfceb28cd073a2ceadd5c0bc96e1f208ca9068c07e311be9888aa7, 71 packaged static assets, assembled JS parsed. Only fresh Vanguard starter changed, no existing saved models, other starters, Chat, VR or Sheep Tag. The image is a mobile-resolution remap, not a full-resolution topology-perfect UV bake; owner device visual acceptance pending.",
-  "sourceCommit": "4a40b0c5e507e0a14114832439d57b51642a3181",
-  "sourceIntegritySha256": "f9faf29428cfceb28cd073a2ceadd5c0bc96e1f208ca9068c07e311be9888aa7"
+  "releaseVersion": "v11.299",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_299_REAL_IMAGE_UV_ALIGNMENT",
+  "reason": "Fix owner-confirmed UV map corruption on v11.298 Hooded Vanguard: original concept-sheet image cells were stretched wholesale across face, front armor, back and coat. Keep SAME verified real art JPEG source SHA-256 d34f6afc422cbfafe54dfbbd420752b12d37967654ea5c1443c031f3b6720b27; crop only meaningful painted surface patches, discard dark-material paper gaps, constrain front facial picture to front longitude with a neutral skin back, restore local native per-part UVs by inverting 4x3 mosaic offsets, and assign per-family CanvasTextures. All 17 editable meshes and unrelated saved projects/VR/Sheep Tag/Chat tools retained. Focused actual-source-image sampling / native UV test passed; sealed 330-patch HTML 8,328,206 bytes SHA-256 7e5fc32fed7722f444a1912b3ed7a1576144a46adb750aa12768c79acb615a08 and 71 assets; full inline JS parse passed. Owner appearance acceptance pending; inherited source JPEG is low-resolution and is not an artist-authored full UV bake.",
+  "sourceCommit": "5dcf8b3ad8db19ae3a795f859ad1e1cc54996fcb",
+  "sourceIntegritySha256": "7e5fc32fed7722f444a1912b3ed7a1576144a46adb750aa12768c79acb615a08"
 }
