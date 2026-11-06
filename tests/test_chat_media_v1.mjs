@@ -5,7 +5,7 @@ import vm from "node:vm";
 
 const html=fs.readFileSync("chat/§wyrlz/index.html","utf8");
 const version=fs.readFileSync("chat/§wyrlz/VERSION.txt","utf8").trim();
-assert.equal(version,"1.1.26");
+assert.equal(version,"1.1.27");
 assert.ok(html.includes('<meta name="swrlz-chat-version" content="'+version+'">'));
 assert.ok(html.includes('const SWRLZ_CHAT_VERSION = "'+version+'";'));
 
@@ -73,6 +73,18 @@ assert.match(html,/if\(selectedImage===attachment\)selectedImage=null/);
 assert.match(html,/if\(!selectedImage\)\{selectedImage=attachment;updateImagePreview\(\);\}/);
 assert.match(html,/if\(!sendAcknowledged\)\{[\s\S]*?restorePendingVisionDraft\(\)/);
 assert.match(html,/const scale=Math\.min\(1,768\/Math\.max\(img\.naturalWidth,img\.naturalHeight\)\)/);
+for(const id of ["imageVisionLevelSelect"]){
+  assert.equal((html.match(new RegExp('id="'+id+'"','g'))||[]).length,1);
+}
+assert.match(html,/analysisLevels:Math\.max\(1,Math\.min\(3,Number\(attachment\.analysisLevels\)\|\|2\)\)/);
+assert.match(html,/option value="1"/);
+assert.match(html,/option value="2" selected/);
+assert.match(html,/option value="3"/);
+assert.match(html,/observed==="LEVEL3_PREFILL"/);
+assert.match(html,/observed==="LEVEL3_DECODING"/);
+assert.match(html,/showLevels\(records,selected\)/);
+assert.match(html,/levelRecords:state\.levelRecords/);
+
 assert.ok(!html.includes("1600/Math.max(img.naturalWidth"),"do not encode unused pixels at 1600px");
 assert.match(html,/if\(attachment\)\{[\s\S]*?imagePreviews\.set\(userMessageId,attachment\.url\)/);
 
