@@ -335,6 +335,6 @@
     "patches/v11_287_cliff_sculpt_pbr.py",
     "patches/v11_288_smooth_cliff_pbr.py"
   ],
-  "finalBytes": 8215967,
-  "finalSha256": "7681d6ec830515d6a0b5feb322b77a82cf33097e89fc8796c01adbbfc46a915c"
+  "finalBytes": 8221626,
+  "finalSha256": "e9862396dd559208637d2b073155fd69b959716cb303e83519d520f44102d859"
 }
