@@ -112,11 +112,11 @@ assert fake_model.calls[0]["messages"][0]["content"][1]["image_url"]["url"] == v
 assert fake_model.calls[0]["max_tokens"] == vision.MAX_VISION_OUTPUT_TOKENS == 88
 assert fake_model.calls[0]["stream"] is True
 visual_prompt = fake_model.calls[0]["messages"][0]["content"][0]["text"]
-assert "Front, side" in visual_prompt
-assert "not evolution" in visual_prompt
-assert "visible facts" in visual_prompt
-assert "No invented story" in visual_prompt
-assert "User question: What is shown?" in visual_prompt
+assert "front/side/back/top" in visual_prompt
+assert "not stages of transformation" in visual_prompt
+assert "specific visible details" in visual_prompt
+assert "Avoid filler" in visual_prompt
+assert "Question: What is shown?" in visual_prompt
 
 # Async job contract: the POST acknowledges immediately, status exposes real
 # worker stages, duplicate submissions resume the same job, and one other image
@@ -307,10 +307,10 @@ import typing
 router_source = (SOURCE.parent / "model_router.py").read_text(encoding="utf-8")
 tree = ast.parse(router_source)
 selected = [node for node in tree.body if isinstance(node, (ast.Assign, ast.FunctionDef)) and (
-    isinstance(node, ast.FunctionDef) and node.name == "_ground_vision_handoff"
+    isinstance(node, ast.FunctionDef) and node.name in {"_ground_vision_handoff", "_direct_vision_description"}
     or isinstance(node, ast.Assign) and any(isinstance(target, ast.Name) and target.id in {"_VISION_START","_VISION_END"} for target in node.targets)
 )]
-namespace = {"Any": typing.Any}
+namespace = {"Any": typing.Any, "re": __import__("re")}
 exec(compile(ast.Module(body=selected, type_ignores=[]), "<vision-grounding>", "exec"), namespace)
 ground = namespace["_ground_vision_handoff"]
 unchanged = {"prompt": "Hello", "history": []}
@@ -322,6 +322,23 @@ assert grounded["prompt"].endswith(saved)
 assert "NOT transformation stages" in grounded["prompt"]
 assert "FALLIBLE textual description" in grounded["prompt"]
 assert input_payload["prompt"] == saved
+direct = namespace["_direct_vision_description"]
+assert direct(input_payload) is None  # Not a generic direct identification question.
+direct_user = "What do you see in this picture?" + vision.VISION_START + observed + vision.VISION_END
+direct_response = direct({"prompt": direct_user, "history": []})
+assert isinstance(direct_response, str)
+assert "Local image analyzer's description" in direct_response
+assert direct_response.endswith(observed)
+assert direct_response.count(observed) == 1, "Never regenerate or invent description"
+assert direct({"prompt": "Describe this image" + vision.VISION_START + observed + vision.VISION_END}) is not None
+assert direct({"prompt": "What do you see in this image?" + vision.VISION_START + observed + vision.VISION_END}) is not None
+assert direct({"prompt": "Please describe this image!" + vision.VISION_START + observed + vision.VISION_END}) is not None
+assert direct({"prompt": "What do you see in this picture?\nPlease identify tiny text" + vision.VISION_START + observed + vision.VISION_END}) is None
+assert direct({"prompt": "How should I model this?" + vision.VISION_START + observed + vision.VISION_END}) is None
+assert direct({"prompt": "What do you see in this picture?" + vision.VISION_START + vision.VISION_END}) is None
+assert direct({"prompt": "What do you see in this picture?"}) is None
+assert "VISION_DESCRIPTION_DIRECT" in router_source
+assert 'direct_vision = _direct_vision_description(payload)' in router_source
 assert "payload=_ground_vision_handoff(_apply_personality(payload))" in router_source
 
 station_source = (SOURCE.parent / "station.py").read_text(encoding="utf-8")
