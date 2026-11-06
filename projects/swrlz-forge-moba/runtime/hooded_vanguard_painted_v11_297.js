@@ -251,7 +251,7 @@ function se297Artwork(tile){
   const k=(y*W+x)*4;
   seed=(Math.imul(seed,1664525)+1013904223)|0;
   const grain=((seed>>>17)&31)-15;
-  const strength=(name==='skin'?0.12:name==='armor'||name==='pauldron'?.2:.33);
+  const strength=name==='skin' ? 0.12 : ((name==='armor'||name==='pauldron') ? 0.2 : 0.33);
   for(let j=0;j<3;j++)pix[k+j]=Math.max(0,Math.min(255,pix[k+j]+grain*strength));
  }
  c.putImageData(img,0,0);
