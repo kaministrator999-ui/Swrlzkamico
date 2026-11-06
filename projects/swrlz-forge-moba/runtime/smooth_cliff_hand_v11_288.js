@@ -43,7 +43,7 @@ function se288CliffMaterial(part){
 }
 function se288ProjectCliffUV(part){
  const mesh=part.topologyMesh;
- if(!mesh||!Array.isArray(mesh.positions)||mesh.positions.length<9)
+ if(!mesh||!mesh.positions||mesh.positions.length<9)
   throw Error('Smooth Cliff Hand requires the connected original anatomy topology.');
  // One continuous projection across the entire hand, instead of mapping a
  // complete rock tile onto EVERY disconnected rock object.
@@ -65,7 +65,7 @@ function se288SmoothCliffHandScene(){
  const scene=se212HandScene(),model=scene.project.modelAtelier;
  const shell=model.parts.find(p=>p.kind==='topologyMesh'
    &&p.organicSurface?.region==='shell'
-   &&Array.isArray(p.topologyMesh?.positions)
+   &&p.topologyMesh?.positions
    &&p.topologyMesh.positions.length>9);
  if(!shell)throw Error('Plain Hand connected anatomical shell not found.');
  if(!se220RigValidate(model.rigging)||model.rigging.bones.length!==17)
