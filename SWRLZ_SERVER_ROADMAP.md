@@ -1,3 +1,10 @@
+## 2026-11-05 — §C vision CPU fastpath v9 (source candidate; live timing pending)
+
+- **User evidence:** screenshot shows image analysis at 10:16 elapsed with Identify visual details still active and current analysis step 2:02. The screenshot demonstrates excessive latency, not a measured breakdown of root cause.
+- **Implementation:** cap vision input and browser upload encoding to 512px (was 768px), preserving full-size local preview; resolve model/projector from Hugging Face's build-preloaded local cache before attempting remote model asset fallback; prewarm CPU vision after primary 700M text model and before optional routes, using the inference lock to avoid duplicate loads.
+- **Trade-off:** lower pixels reduce work sent to the local multimodal projector, but small text/diagram detail may be less legible. No paid inference or third-party image service; original image bytes still not saved in Chat. The pinned Q8_0 model, 112-token budget, account ownership, queue/cancel safeguards and Chat JSON description handoff remain unchanged.
+- **Evidence:** focused regression tests added for local-only cache hit, missing-asset fallback, prewarm and 512px resizing. Source changes verified against the exact current requested HF release baseline 6a561f95, rather than deploying a divergent older branch. Production deployment and live CPU timing require separate receipts.
+
 ## 2026-11-05 — §C cancellation vs mobile auto-resync edge correction (source candidate)
 
 - **Fix:** when an authenticated status poll returns after a pause, refresh that job's `lastPolledAt` first, then mark *other* unwatched jobs for cancellation. This prevents returning progress watchers from being immediately cancelled before their own lease renewal; preserves the earlier automatic reconnect behavior.
