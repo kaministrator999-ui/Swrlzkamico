@@ -149,20 +149,26 @@ se300DrawArtwork=function(_reference,family,canvas){
 // Rebuild paint synchronously instead of depending on a 512px JPEG that
 // contained preview photographs. The concept art remains the palette guide.
 se300InitArt=function(){
- if(se301Result.retouchedFamilies)return;
- for(const family of Object.keys(se300Families)){
-  const atlas=se300Canvas();
-  se300DrawArtwork(null,family,atlas);
-  se300Atlases.set(family,atlas);
-  const texture=se300MaterialTex.get(family);
-  if(texture){texture.image=atlas;texture.needsUpdate=true;}
+ if(!se301Result.retouchedFamilies){
+  for(const family of Object.keys(se300Families)){
+   const atlas=se300Canvas();
+   se300DrawArtwork(null,family,atlas);
+   se300Atlases.set(family,atlas);
+  }
+  se301Result.retouchedFamilies=se300Atlases.size;
+  se300Status.materialSource='purpose-painted game surfaces matching native UVs';
+  se300Status.paintedFamilies=se300Atlases.size;
+  se300Status.created=se300Atlases.size;
+  se300Status.imageReady=true;
+  se300Status.imageError=null;
  }
- se301Result.retouchedFamilies=se300Atlases.size;
- se300Status.materialSource='purpose-painted game surfaces matching native UVs';
- se300Status.paintedFamilies=se300Atlases.size;
- se300Status.created=se300Atlases.size;
- se300Status.imageReady=true;
- se300Status.imageError=null;
+ // Materials are instantiated lazily: synchronize EVERY late-loaded material
+ // with its authored atlas, not only the first one created on this page.
+ for(const [family,texture] of se300MaterialTex){
+  const atlas=se300Atlases.get(family);
+  if(!atlas)throw Error('Missing UV painting for '+family);
+  if(texture.image!==atlas){texture.image=atlas;texture.needsUpdate=true;}
+ }
 };
 const se301SceneBefore=se291HeroScene;
 se291HeroScene=function(){
