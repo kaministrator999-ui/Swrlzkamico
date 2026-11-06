@@ -40,7 +40,7 @@ def apply(html):
     html=html.replace(old," source.engine='§wyrl§ Engine · Maker v11.292';source.version=11.292;")
     for old,new in (
       ('SWYRL_ENGINE_DEPLOY_MARKER: V11_291_HOODED_VANGUARD_MATERIALS',
-       'SWYRL_ENGINE_DEPLOY_MARKER: V11_291_CLIFF_WRIST_MOSS_KNUCKLES'),
+       'SWYRL_ENGINE_DEPLOY_MARKER: V11_292_CLIFF_WRIST_MOSS_KNUCKLES'),
       ('ENGINE · MAKER v11.291','ENGINE · MAKER v11.292'),
       ('v11.291 · Hooded Vanguard native sculpt and mapped material study',
        'v11.292 · wrist-only moss and texture-mapped rock knuckles'),
