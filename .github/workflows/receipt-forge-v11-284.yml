@@ -1,4 +1,4 @@
-name: §E v11.284 Plain Hand and Starter Models candidate
+name: §E v11.284 sealed Plain Hand Base and model starter tabs
 on:
   push:
     branches: [main]
@@ -8,7 +8,7 @@ on:
 permissions:
   contents: read
 jobs:
-  candidate:
+  sealed:
     runs-on: ubuntu-latest
     timeout-minutes: 17
     steps:
@@ -19,28 +19,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Verify plain native hand and starter card sorter
+      - name: Verify native plain hand, 17 bones, and live model card grouping
         run: node projects/swrlz-forge-moba/scripts/smoke_v11_284_plain_hand.js
-      - name: Build candidate and check exact JavaScript syntax
-        run: |
-          python projects/swrlz-forge-moba/build_space.py --output /tmp/se284-candidate
-          python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se284-candidate/index.html
-          python - <<'PY'
-          import json,hashlib,pathlib
-          root=pathlib.Path("projects/swrlz-forge-moba")
-          p=pathlib.Path("/tmp/se284-candidate/index.html")
-          data=p.read_bytes()
-          m=json.loads((root/"source-manifest.json").read_text("utf8"))
-          assert m["name"]=="§wyrl§ Engine v11.284"
-          assert len(m["patches"])==315
-          assert m["patches"][-1]=="patches/v11_284_plain_hand_starter_categories.py"
-          txt=data.decode("utf8")
-          for needle in ("se284PlainHandScene", "se284SortStarterCards",
-             'data-project-template="plain-hand-base"',
-             "SWYRL_ENGINE_DEPLOY_MARKER: V11_284_PLAIN_HAND_MODEL_CATEGORIES"):
-              assert needle in txt,needle
-          assets=json.loads(pathlib.Path("/tmp/se284-candidate/SOURCE.json").read_text("utf8"))["assets"]
-          print("SE284_RECEIPT "+json.dumps({"bytes":len(data),
-            "sha256":hashlib.sha256(data).hexdigest(),
-            "patches":len(m["patches"]),"assets":len(assets)}),flush=True)
-          PY
+      - name: Verify 315-patch sealed HTML, assembled JavaScript and assets
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_284_release.py --output /tmp/se284-sealed

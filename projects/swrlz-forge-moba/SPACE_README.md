@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.283
+title: §wyrl§ Engine v11.284
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,13 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.284 · Plain Hand Base and corrected Starter Models tab (2026-11-05)
+
+Added a separate **Plain Hand Base** Model Atelier starter using one clean, connected five-finger hand mesh with a neutral matte finish and the original **17-bone** open/fist animation. It contains **no armor, glove details, rocks, runes, cuffs or effects**. All previous models—including the weathered Rocky Anime Hand and both Arcane Gloves—remain unchanged. Direct route: `?project=plain-hand-base`.
+
+Repaired the original Starter Games / Starter Models card classifier: legacy category rules missed some later-model IDs. The gallery now moves original model card nodes (including Rocky Anime Hand, Arcane Glove Left, original glove, plain hand and other model-only starters) into **Starter Models**, while true playable games remain in **Starter Games**. Existing card events, scene IDs, project saves and Starter Particles are preserved. See `docs/PLAIN_HAND_STARTER_V11_284.md`. Owner phone/VR acceptance pending.
+
 
 ## §E v11.283 · Weathered Rocky Anime Hand (2026-11-05)
 

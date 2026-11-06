@@ -331,6 +331,6 @@
     "patches/v11_283_weathered_rock_hand.py",
     "patches/v11_284_plain_hand_starter_categories.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 8194079,
+  "finalSha256": "9d5df131bccd31fe024b370ab4833c6199142c5079fc0b67f4b7e44a53d4cd2a"
 }
