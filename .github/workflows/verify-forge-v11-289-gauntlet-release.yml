@@ -1,0 +1,23 @@
+name: §E v11.289 sealed short-gauntlet release verification
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/verify-forge-v11-289-gauntlet-release.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify sealed Cliff Gauntlet source, rig path, UVs, assets and JavaScript
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_289_release.py --output /tmp/swrlz-gauntlet-289
