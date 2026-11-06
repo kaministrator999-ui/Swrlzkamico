@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.302
+title: §wyrl§ Engine v11.303
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+## §E v11.303 · Anatomical face sculpt + aligned 768px portrait (2026-11-06)
+
+Owner's latest real-device review found the face was still a flat oval with primitive, childlike facial markings. The new Hooded Vanguard starter uses one **continuous 80×144 facial topology** with recessed eye sockets, eyelid/brow ridges, cheekbones, a shaped nose bridge/tip/alar wings, philtrum, lips and chin, together with a purpose-painted **768px UV portrait** featuring detailed blue-gray irises, realistic eyelids, nuanced skin tones, subtle nostrils, brows and lips. The scalp silhouette, hairline and front locks are refitted to reveal the facial work. The **other fourteen mesh geometries stay unchanged**, including improved chest and pauldrons, forearm-aligned hands, scarf and teal coat. All 17 editable IDs, eleven mapped material families, existing saves and unrelated §E studios are preserved. Source/UV/JavaScript tests precede live release; visual quality remains subject to device inspection. See [face sculpt checkpoint](docs/VANGUARD_ANATOMICAL_PORTRAIT_V11_303.md).
+
 ## §E v11.302 · Hooded Vanguard UV-consistent material depth (2026-11-06)
 
 Continuing the v11.301 hand/face overhaul, this focused pass leaves **17 editable native meshes and their painted albedo UVs intact**. It adds mobile-friendly **256px tangent-space normal and grayscale roughness maps** for the eleven existing surface families, with shallow height relief drawn where hood/scarf folds, metal embossing, coat borders, hair strands and leather seams logically lie on the UVs. Skin remains nearly smooth; cloth and steel reflect light differently; no photographic concept-art collage is reintroduced. Preserve v11.301 corrected wrists, face, all other model/game starters, §C/VR/Sheep Tag, saved projects and append-only source lineage. Source/geometry integrity and real device visual inspection are separate gates. See [the v11.302 checkpoint](docs/VANGUARD_UV_PBR_RELIEF_V11_302.md).
