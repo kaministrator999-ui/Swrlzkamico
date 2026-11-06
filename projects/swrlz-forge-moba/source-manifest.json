@@ -344,6 +344,6 @@
     "patches/v11_296_vanguard_rebuild.py",
     "patches/v11_297_painted_uv_vanguard.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 8299419,
+  "finalSha256": "6de05f0fb2e2d9226e4c2130a08f3420500334a2ca11b39b872056f5ad1cca40"
 }
