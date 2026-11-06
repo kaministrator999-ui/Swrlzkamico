@@ -1,0 +1,60 @@
+name: One-shot §E v11.303 anatomical face and UV portrait source seal
+# Only Vanguard face, no general model/game/VR CI or browser runs.
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/one-shot-forge-v11-303-face-uv-seal.yml'
+permissions:
+  contents: read
+jobs:
+  seal:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Verify head sculpt, UV portrait and other 14 unchanged meshes
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/hooded_vanguard_facial_sculpt_v11_303.js
+          node projects/swrlz-forge-moba/tests/hooded_vanguard_facial_sculpt_v11_303.cjs
+      - name: Assemble real source, parse engine and measure byte-accurate SHA
+        run: |
+          python - <<'PY'
+          import hashlib,json,subprocess,sys
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          manifest=json.loads((root/'source-manifest.json').read_text('utf8'))
+          assert manifest['name']=='§wyrl§ Engine v11.303'
+          assert manifest['finalArtifact']=='swyrl_engine_v11_303.html'
+          assert len(manifest['patches'])==334
+          assert manifest['patches'][-1]=='patches/v11_303_vanguard_face_geometry_uv_portrait.py'
+          assert manifest['finalBytes']==0 and manifest['finalSha256']==''
+          out=Path('/tmp/swrlz-v11-303')
+          subprocess.run([sys.executable,str(root/'build_space.py'),'--output',str(out)],check=True)
+          raw=(out/'index.html').read_bytes()
+          assert raw==(out/'modeler.html').read_bytes()
+          html=raw.decode('utf8')
+          for token in (
+            'SWYRL_ENGINE_DEPLOY_MARKER: V11_303_VANGUARD_ANATOMICAL_PORTRAIT',
+            "window.SWRLZ_FORGE_BUILD={version:'v11.303'",
+            'function se303HeadSurface(t,v){',
+            'function se303DrawPortrait(canvas){',
+            'faceAtlasPixels:768',
+            '<strong>Hooded Vanguard · Anatomical Face Study</strong>'
+          ):
+            assert token in html,token
+          subprocess.run([sys.executable,str(root/'scripts/check_inline_js_syntax_v11_266.py'),
+                          str(out/'index.html')],check=True)
+          receipt=json.loads((out/'SOURCE.json').read_text('utf8'))
+          assert receipt['sourceVersion']==manifest['name']
+          assert len(receipt['assets'])==71
+          print('SE303_EXACT_MEASUREMENT='+json.dumps({
+            'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest(),
+            'patches':len(receipt['patches']),'assets':len(receipt['assets']),
+            'anatomicalSculptUVTestPassed':True
+          },sort_keys=True),flush=True)
+          PY
