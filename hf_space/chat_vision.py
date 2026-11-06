@@ -370,7 +370,8 @@ def _ask_vision_local(image_url: str, question: str, report_phase=None, should_c
     started = time.monotonic()
     try:
         check_cancel()
-        report("PREPROCESSING", **_source_image_metadata(image_url))
+        source_meta = _source_image_metadata(image_url)
+        report("PREPROCESSING", **source_meta)
         image = _prepare_image(image_url)
         check_cancel()
         report("LOADING_MODEL")
@@ -542,6 +543,9 @@ def _ask_vision_local(image_url: str, question: str, report_phase=None, should_c
             # Comparison is deliberately NOT a claim of accuracy. Preserve
             # actual text from all completed passes so the user can judge.
             lines = ["Vision study · raw model outputs (accuracy unverified).",
+                     "Original source received: {sourceWidth} × {sourceHeight}px, "
+                     "{sourceBytes} encoded file bytes (preserved until server preprocessing).".format(
+                         **source_meta),
                      "Selected by descriptor-count heuristic: Level " + str(selected_level) +
                      " (not a visual accuracy score)."]
             for item in level_records:
