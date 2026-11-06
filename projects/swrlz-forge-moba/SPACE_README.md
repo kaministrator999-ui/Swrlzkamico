@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.296
+title: §wyrl§ Engine v11.297
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,14 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.297 · Hooded Vanguard painted-UV remaster (candidate)
+
+The owner clarified that the generated UV concept sheet should become **a better native character in §E**, not another render. The reference board is not an actual matching UV bake, so the updated **Starter Models → Hooded Vanguard · Painted Remaster** maps hand-composed surface artwork to the *real UV coordinates* of each current mesh: face shading and placed eyes/mouth, brown layered hair, ivory/gold hood, draped white scarf, engraved dark armor, shoulder metal, gray fitted clothing, teal embroidered coat panels, leather, gloves and boots. Eleven cached 384px base-color maps are accompanied by conservative derived tangent-normal and roughness maps. Geometry changes in the same 17 native parts round the face/jaw, create a head-covering hood crown and lower wrap, reshape the paper-bib scarf, soften hair locks, and turn leaf-like coat tails into flowing fabric. No new decorative mesh confetti; existing five-finger gloves remain.
+
+**Boundaries:** This is a new-starter reconstruction, not rewriting saved projects. No actual reference-sheet pixels are claimed as directly UV-baked, and the image itself is not the material file. This remains a static unrigged character without weapon/bird. Source integrity, native loading and owner Android visual acceptance are separate gates. See [the checkpoint](docs/VANGUARD_PAINTED_UV_V11_297.md).
+
+
 ## §E v11.296 · Hooded Vanguard reconstructed from reference (candidate, 2026-11-06)
 
 After owner Android visual inspection exposed an oversized chin/mouth, rounded ear lumps, flat hood, crude hair and absent fingers, the fresh **Starter Models → Hooded Vanguard · Rebuilt Character** factory now constructs a continuous fitted face with subtly sculpted nose, layered hair locks, a wrapping hood plus curved forehead brim, gathered/draped scarf, fitted breastplate, formed shoulder pauldrons, flowing teal coats, narrow belt/boots, and **two separate five-digit glove meshes**. Geometry, proportions and fabric silhouettes are deliberately simplified, while detail is carried by **384px UV-aligned color, normal and roughness maps** per material (skin, hair, hood, scarf, uniform, armor, pauldrons, teal cloth, leather, gloves, boots). Decorative filigree is painted, not assembled from hundreds of meshes. The older v11.291 model generator remains in append-only source history; previously saved models are not rewritten.
