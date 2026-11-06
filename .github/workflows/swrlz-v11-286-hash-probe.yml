@@ -36,3 +36,5 @@ jobs:
           print("V11_286_EXACT_SOURCE_BYTES=",len(b))
           print("V11_286_EXACT_SOURCE_SHA256=",hashlib.sha256(b).hexdigest())
           PY
+
+# Recompute after excluding camera-rig offsets from head translation.
