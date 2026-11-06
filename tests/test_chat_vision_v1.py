@@ -574,4 +574,31 @@ assert '"Cache-Control":"no-store"' in station_source
 station_source = (SOURCE.parent / "chat_vision.py").read_text(encoding="utf-8")
 assert station_source.index('job["lastPolledAt"] = now', station_source.index("def vision_status(")) < station_source.index('_cancel_unwatched_jobs(now)', station_source.index("def vision_status("))
 
+# Dense wide reference sheets need real source-pixel crops focused on the
+# figure band, not four full-height strips containing unrelated footer panels.
+from PIL import ImageDraw
+reference = Image.new("RGB", (1448, 1086), "white")
+painter = ImageDraw.Draw(reference)
+for index in range(4):
+    left = 32 + index * 360
+    painter.rectangle((left, 170, left + 160, 670),
+                      fill="#7040ba", outline="#202020", width=12)
+    painter.line((left + 25, 200, left + 140, 625),
+                 fill="#e5b744", width=14)
+# Palette below figures must not occupy each character-focused crop.
+painter.rectangle((0, 950, 1447, 1085), fill="#11aa22")
+buffer = io.BytesIO()
+reference.save(buffer, format="PNG")
+reference_encoded = "data:image/png;base64," + base64.b64encode(buffer.getvalue()).decode("ascii")
+regions = vision._detail_regions(reference_encoded, "Character page with various features.")
+assert [label for label, _ in regions] == [
+    "Far-left detail", "Center-left detail",
+    "Center-right detail", "Far-right detail",
+]
+for label, encoded in regions:
+    with Image.open(io.BytesIO(base64.b64decode(encoded.partition(",")[2]))) as cropped:
+        assert cropped.height <= 740, (label, cropped.size)
+        assert cropped.width <= 768, (label, cropped.size)
+assert vision._detail_regions(valid, "Red background") == []
+
 print("Chat vision local CPU: authenticated boundaries, no paid provider, concurrency and mocked inference and export handoff PASS")
