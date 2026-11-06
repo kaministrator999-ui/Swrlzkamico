@@ -136,7 +136,9 @@ assert.match(backend,/def _cancel_unwatched_jobs\(/);
 assert.match(backend,/def cancel_vision\(/);
 assert.match(backend,/stream=True/);
 assert.match(backend,/raise VisionCancelled\(\)/);
-assert.ok(backend.includes('MODEL_REPO = "ggml-org/SmolVLM-256M-Instruct-GGUF"'));
+// Accept only the two pinned local SmolVLM CPU candidates; the dedicated
+// Python contract verifies the exact selected model/projector/revision pair.
+assert.match(backend,/^MODEL_REPO = "ggml-org\\/SmolVLM-(?:256|500)M-Instruct-GGUF"$/m);
 assert.ok(backend.includes("MTMDChatHandler"));
 assert.ok(!backend.includes("SWRLZ_VISION_API_KEY"),"no paid inference credentials needed");
 assert.ok(!backend.includes("router.huggingface.co"),"no paid inference provider calls");
