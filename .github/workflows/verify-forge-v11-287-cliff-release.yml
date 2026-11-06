@@ -24,3 +24,5 @@ jobs:
       - name: Verify standalone Cliff Hand runtime syntax
         run: node --check projects/swrlz-forge-moba/runtime/cliff_hand_sculpt_pbr_v11_287.js
 # Retest: expect renamed Cliff Hand card rather than the former clay-only label.
+
+# Recheck independent release identity predicates after restoring a list separator.
