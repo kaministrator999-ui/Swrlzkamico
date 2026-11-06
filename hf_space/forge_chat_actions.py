@@ -673,7 +673,9 @@ def generate_events(payload: dict[str, Any], context, register_batch: Callable |
                 code = forge_failure_fields(exc.detail,"FORGE_FAILED").get("code","FORGE_REQUEST_UNAVAILABLE")
         except ImportError:
             pass
-        if code.startswith("FORGE_DESIGN_"):
+        if code == "FORGE_DESIGN_CONTEXT_CHANGED":
+            yield from _failure("§E could not save this preview against the current editor connection. No edit was registered. Keep the Chat panel connected and request a fresh preview.", code)
+        elif code.startswith("FORGE_DESIGN_"):
             yield from _failure("This §E design approval is no longer valid for the current workspace or has already been used. No new edit was registered; request a fresh preview.", code)
         else:
             yield from _failure("The §e edit could not be verified. Check that the Chat panel is connected to the current editor, then retry with an explicit target.", code)

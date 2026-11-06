@@ -92,6 +92,19 @@ class PlannerTest(unittest.TestCase):
         self.assertTrue(self.wait.called)
 
 
+    def test_preview_registration_failure_is_not_reported_as_an_already_used_approval(self):
+        stage = Mock(side_effect=HTTPException(409, "FORGE_DESIGN_CONTEXT_CHANGED"))
+        events = self.run_events(prompt="Preview a sphere model in §E",
+                                 operations=[{"op": "mesh.add", "kind": "sphere"}], stage=stage)
+        self.assertEqual(events[-1]["code"], "FORGE_DESIGN_CONTEXT_CHANGED")
+        text = "".join(event.get("text", "") for event in events)
+        self.assertIn("could not save this preview", text)
+        self.assertNotIn("already been used", text)
+        self.assertFalse(any(event["type"] in ("WIDGET", "FORGE_BATCH_READY") for event in events))
+        self.register.assert_not_called()
+        self.claim.assert_not_called()
+        self.wait.assert_not_called()
+
     def test_native_registration_http_boundary_code_is_retained_without_claiming_execution(self):
         register=Mock(side_effect=HTTPException(409,"FORGE_CONTEXT_CHANGED"))
         events=self.run_events(register=register)

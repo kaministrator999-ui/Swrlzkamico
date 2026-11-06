@@ -548,6 +548,110 @@ class ForgeEmbedTest(unittest.TestCase):
             embed.claim_design_proposal(replay_context, staged["proposalId"])
         self.assertEqual(used.exception.status_code, 409)
 
+    def test_design_heartbeat_race_revalidates_frozen_operations_and_offers_once(self):
+        import forge_chat_actions
+        token, lease, context = self.generation()
+        operations = [{"op": "sceneactor.add", "prefab": "wall", "name": "Original wall",
+                       "position": [0, 0, 1]}]
+        frozen = copy.deepcopy(operations)
+        heartbeat = {"leaseId": lease["leaseId"], "hostId": HOST, "channelId": CHANNEL,
+                     "threadId": THREAD, "projectId": PROJECT, "visible": True,
+                     "context": CONTEXT}
+        def refresh_before_proposal_commit(keys):
+            if not any(":design:" in key for key in keys):
+                return
+            self.redis.before_eval = None
+            # Caller mutation cannot replace the frozen plan during a retry.
+            operations[0]["name"] = "Changed after staging began"
+            operations[0]["position"][2] = 99
+            self.clock += 5
+            response = self.post("/api/forge/embed/host/heartbeat", heartbeat,
+                                 host_token=lease["hostToken"], origin=PARENT)
+            self.assertEqual(response.status_code, 200, response.text)
+        self.redis.before_eval = refresh_before_proposal_commit
+        with patch.object(forge_chat_actions, "validate_operations",
+                          wraps=forge_chat_actions.validate_operations) as validate:
+            staged = embed.create_design_proposal(context, operations)
+        self.assertEqual(validate.call_count, 2)
+        for call in validate.call_args_list:
+            self.assertIs(call.args[0], context)
+            self.assertEqual(call.args[1], frozen)
+        offered, _ = embed._read("design", staged["proposalId"])
+        self.assertEqual(offered["operations"], frozen)
+        self.assertEqual(staged["planDigest"], embed._design_digest(frozen))
+        self.assertEqual(sum(":design:" in key for key in self.redis.values), 1)
+        self.assertEqual(sum(event["event"] == "design.offered" for event in self.camera), 1)
+        self.assertEqual(embed._read_key(context._generation_key)[0]["activeBatchId"], "")
+        self.assertFalse(any(":batch:" in key for key in self.redis.values))
+
+    def test_design_retry_refuses_cancellation_changed_snapshot_and_revoked_session(self):
+        expected = {"snapshot": "FORGE_NATIVE_CONTEXT_STALE",
+                    "cancel": "FORGE_GENERATION_CANCELLED",
+                    "logout": "FORGE_EMBED_SESSION_INVALID"}
+        for change, code in expected.items():
+            with self.subTest(change=change):
+                token, lease, context = self.generation()
+                def change_before_proposal_commit(keys):
+                    if not any(":design:" in key for key in keys):
+                        return
+                    self.redis.before_eval = None
+                    if change == "cancel":
+                        embed.invalidate_generation(context)
+                    elif change == "logout":
+                        response = self.post("/api/forge/embed/logout", {}, token=token)
+                        self.assertEqual(response.status_code, 200, response.text)
+                    else:
+                        heartbeat = {"leaseId": lease["leaseId"], "hostId": HOST, "channelId": CHANNEL,
+                                     "threadId": THREAD, "projectId": PROJECT, "visible": True,
+                                     "context": {**CONTEXT, "epoch": 2}}
+                        response = self.post("/api/forge/embed/host/heartbeat", heartbeat,
+                                             host_token=lease["hostToken"], origin=PARENT)
+                        self.assertEqual(response.status_code, 200, response.text)
+                self.redis.before_eval = change_before_proposal_commit
+                with self.assertRaises(HTTPException) as error:
+                    embed.create_design_proposal(context, [{"op": "sceneactor.add", "prefab": "rock"}])
+                self.assertEqual(error.exception.detail, code)
+                self.assertFalse(any(":design:" in key or ":batch:" in key for key in self.redis.values))
+                self.assertFalse(any(event["event"] == "design.offered" for event in self.camera))
+
+    def test_design_retry_is_bounded_and_unknown_commit_results_are_not_retried(self):
+        token, lease, context = self.generation()
+        operations = [{"op": "sceneactor.add", "prefab": "rock"}]
+        self.redis.force_reply = 0
+        with patch.object(embed, "_txn", wraps=embed._txn) as commit:
+            with self.assertRaises(HTTPException) as error:
+                embed.create_design_proposal(context, operations)
+        self.assertEqual(error.exception.detail, "FORGE_DESIGN_CONTEXT_CHANGED")
+        self.assertEqual(commit.call_count, embed.DESIGN_REGISTRATION_ATTEMPTS)
+        self.assertFalse(any(":design:" in key or ":batch:" in key for key in self.redis.values))
+        self.assertFalse(any(event["event"] == "design.offered" for event in self.camera))
+        self.redis.force_reply = True  # an untyped reply is not confirmed CAS success/failure
+        with patch.object(embed, "_txn", wraps=embed._txn) as commit:
+            with self.assertRaises(HTTPException) as error:
+                embed.create_design_proposal(context, operations)
+        self.assertEqual(error.exception.detail, "FORGE_ATOMIC_COMMIT_NOT_CONFIRMED")
+        self.assertEqual(commit.call_count, 1)
+        with patch.object(embed, "_txn", return_value=None) as commit:
+            with self.assertRaises(HTTPException) as error:
+                embed.create_design_proposal(context, operations)
+        self.assertEqual(error.exception.detail, "FORGE_ATOMIC_COMMIT_NOT_CONFIRMED")
+        self.assertEqual(commit.call_count, 1)
+        # A transport timeout can hide a committed write. Never duplicate it
+        # or announce a preview whose atomic publication was not confirmed.
+        self.redis.force_reply = None
+        real_commit = embed._txn
+        def commit_then_lose_response(*args, **kwargs):
+            self.assertTrue(real_commit(*args, **kwargs))
+            raise TimeoutError("unknown commit outcome")
+        with patch.object(embed, "_txn", side_effect=commit_then_lose_response) as commit:
+            with self.assertRaises(TimeoutError):
+                embed.create_design_proposal(context, operations)
+        self.assertEqual(commit.call_count, 1)
+        self.assertEqual(sum(":design:" in key for key in self.redis.values), 1)
+        self.assertFalse(any(event["event"] == "design.offered" for event in self.camera))
+        self.assertEqual(embed._read_key(context._generation_key)[0]["activeBatchId"], "")
+        self.assertFalse(any(":batch:" in key for key in self.redis.values))
+
     def test_exact_design_refuses_stale_workspace_and_unrelated_account(self):
         token, lease, context = self.generation()
         proposal = embed.create_design_proposal(context, [{"op": "sceneactor.add", "prefab": "wall"}])

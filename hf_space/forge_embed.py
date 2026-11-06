@@ -39,6 +39,7 @@ BATCH_TTL = 300
 BATCH_APPLICATION_SECONDS = 25
 BATCH_REGISTRATION_ATTEMPTS = 3
 DESIGN_TTL = 900  # bounded owner-approved window; heartbeat/scene validation remains mandatory
+DESIGN_REGISTRATION_ATTEMPTS = 3
 MAX_CONTEXT_BYTES = 32768
 MAX_RECORD_BYTES = 196608
 _HEX = re.compile(r"^[0-9a-f]{32}$")
@@ -686,12 +687,27 @@ def create_design_proposal(context, operations):
     Bound to the active account session, Chat thread, host and native snapshot.
     Model/planner output is independently revalidated at this durable boundary.
     """
-    lease, lease_raw, session, session_raw, gen, gen_raw = _generation(context, True)
+    if not isinstance(context, AuthorizedForgeContext) or context._seal is not _SEAL:
+        _error(403, "FORGE_SERVER_CONTEXT_REQUIRED")
+    # Freeze the caller's one bounded plan before retrying. Only a confirmed
+    # false CAS proves no proposal was written; unknown outcomes must escape.
     operations, _ = _safe_json(operations, 65536)
+    for _ in range(DESIGN_REGISTRATION_ATTEMPTS):
+        proposal = _create_design_proposal_attempt(context, operations)
+        if proposal is not None:
+            return proposal
+    _error(409, "FORGE_DESIGN_CONTEXT_CHANGED")
+
+
+def _create_design_proposal_attempt(context, operations):
+    # Revalidate exact operation data and all current owner/session/generation/
+    # snapshot bindings on every attempt. Read CAS preconditions after native
+    # validation so its extra lease reads do not widen the heartbeat race.
     from forge_chat_actions import validate_operations
-    operations = validate_operations(context, operations)
+    operations = validate_operations(context, copy.deepcopy(operations))
     if any(op.get("op") == "project.create" for op in operations):
         _error(400, "FORGE_DESIGN_PROJECT_WIZARD_REQUIRED")
+    lease, lease_raw, session, session_raw, gen, gen_raw = _generation(context, True)
     proposal_id = secrets.token_hex(16)
     expires_at = min(_now() + DESIGN_TTL, session["expiresAt"])
     record = {
@@ -704,10 +720,13 @@ def create_design_proposal(context, operations):
         "expiresAt": expires_at,
     }
     key = _key("design", proposal_id)
-    if not _txn([(_key("lease", context.lease_id), lease_raw),
-                 (context._session_key, session_raw), (context._generation_key, gen_raw),
-                 (key, None)], [(key, record, _ttl(record, DESIGN_TTL))]):
-        _error(409, "FORGE_DESIGN_CONTEXT_CHANGED")
+    committed = _txn([(_key("lease", context.lease_id), lease_raw),
+                      (context._session_key, session_raw), (context._generation_key, gen_raw),
+                      (key, None)], [(key, record, _ttl(record, DESIGN_TTL))])
+    if committed is False:
+        return None
+    if committed is not True:
+        _error(503, "FORGE_ATOMIC_COMMIT_NOT_CONFIRMED")
     _observe("design.offered", proposalId=proposal_id, operationCount=len(operations))
     return {"proposalId": proposal_id, "planDigest": record["planDigest"],
             "expiresAt": expires_at}
