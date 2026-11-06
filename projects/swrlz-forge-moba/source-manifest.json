@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.296",
+  "name": "§wyrl§ Engine v11.297",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_296.html",
+  "finalArtifact": "swyrl_engine_v11_297.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -341,8 +341,9 @@
     "patches/v11_293_chat_character_tools.py",
     "patches/v11_294_vanguard_socket_loader_fix.py",
     "patches/v11_295_chat_loft_surface_normals.py",
-    "patches/v11_296_vanguard_rebuild.py"
+    "patches/v11_296_vanguard_rebuild.py",
+    "patches/v11_297_painted_uv_vanguard.py"
   ],
-  "finalBytes": 8282034,
-  "finalSha256": "a43cd402283fee23e38bad664936ca766708c9598f40c6b1e450cc2dcfc5ba8d"
+  "finalBytes": 0,
+  "finalSha256": ""
 }
