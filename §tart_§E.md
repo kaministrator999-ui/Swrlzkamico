@@ -1,3 +1,9 @@
+## §E v11.295 · Correct lighting on Chat-created curved meshes (candidate)
+
+Plain loft meshes authored through §c now present outward-facing triangles and recomputed surface normals to the existing renderer. This corrects the inverted shading that made saved ivory hair and other curved parts catch the cyan backlight from the wrong side. The saved part colors, paths, radii, UVs and transforms remain unchanged.
+
+The repair is limited to plain Chat-authored lofts. Existing textured and styled surfaces keep their established rendering path; Hooded Vanguard's v11.294 loader repair, all model provenance, native editing/history, Chat progress and account saves are preserved. Focused real-Three geometry checks, the existing native character-tool checks and the exact source package seal are recorded in [the checkpoint](projects/swrlz-forge-moba/docs/CHAT_LOFT_SURFACE_NORMALS_V11_295.md). Publication and owner-device visual acceptance are separate gates.
+
 ## §E v11.294 · Hooded Vanguard Starter Models loader correction (2026-11-06)
 
 Targeted hosted mobile Chromium check on v11.293 reproduced the owner's report: Hooded Vanguard generated **14 meshes / 61,476 triangles** correctly, then `loadProject()` threw **`Invalid named socket.`** Native Prism Jester assemblies/sockets had been inherited from the canonical project while all original part IDs and groups had been replaced. New `patches/v11_294_vanguard_socket_loader_fix.py` clears only this starter's obsolete `model.assemblies` graph before loading; its own native geometry, texture maps, and existing model editing path remain intact. Other model starters, the v11.292 Cliff Hand material work, Chat character tools, saved projects, and game/VR flows are unchanged.

@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.294
+title: §wyrl§ Engine v11.295
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,12 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.295 · Correct lighting on Chat-created curved meshes (candidate)
+
+Plain loft meshes authored through §c now present outward-facing triangles and recomputed surface normals to the existing renderer. This corrects the inverted shading that made saved ivory hair and other curved parts catch the cyan backlight from the wrong side. The saved part colors, paths, radii, UVs and transforms remain unchanged.
+
+The repair is limited to plain Chat-authored lofts. Existing textured and styled surfaces keep their established rendering path; Hooded Vanguard's v11.294 loader repair, all model provenance, native editing/history, Chat progress and account saves are preserved. Focused real-Three geometry checks, the existing native character-tool checks and the exact source package seal are recorded in [the checkpoint](docs/CHAT_LOFT_SURFACE_NORMALS_V11_295.md). Publication and owner-device visual acceptance are separate gates.
 
 ## §E v11.294 · Hooded Vanguard Starter Models loader correction (2026-11-06)
 
