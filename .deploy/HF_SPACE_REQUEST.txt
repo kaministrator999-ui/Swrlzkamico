@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=ca9563eda549e6eabab3ead65f3a727b8fb980ca
-REQUEST_NONCE=chat-vision-adaptive-detail-v12-ca9563ed-20261105-r3
+SOURCE_REF=7bbfbf47a6bafa2dc926092a59844050332ce526
+REQUEST_NONCE=chat-vision-level-study-v13-7bbfbf47-20261105-r1
