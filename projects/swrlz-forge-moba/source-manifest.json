@@ -348,6 +348,6 @@
     "patches/v11_300_vanguard_mesh_uv_rebuild.py",
     "patches/v11_301_vanguard_face_art_wrist_pose.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 8357316,
+  "finalSha256": "6ee49abfef8a85f077d313375398e42bba2cf3d245e22d95a07ca839ea44aa67"
 }
