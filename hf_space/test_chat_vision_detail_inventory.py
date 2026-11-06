@@ -84,14 +84,14 @@ class DetailedImageRoutingTests(unittest.TestCase):
         with patch.object(chat_vision, "_load_local_model", return_value=model):
             result = chat_vision._ask_vision_local(
                 picture, "Describe the mage's actual appearance.",
-                report_phase=lambda phase, **fields: phases.append(phase),
+                report_phase=lambda phase, **fields: phases.append((phase, fields)),
             )
         self.assertEqual(len(model.calls), 5)
         self.assertIn("Whole image:", result)
         self.assertIn("Far-left detail:", result)
         self.assertIn("Far-right detail:", result)
         self.assertIn("gold stitching", result)
-        self.assertEqual(phases.count("ANALYZING"), 5)
+        self.assertEqual(sum(fields.get("inferenceStage") == "REGION_PREFILL" for _, fields in phases), 4)
         self.assertEqual(model.calls[0]["max_tokens"], chat_vision.MAX_VISION_OUTPUT_TOKENS)
         self.assertEqual(model.calls[1]["max_tokens"], 128)
         self.assertIn("subject you can SEE",
