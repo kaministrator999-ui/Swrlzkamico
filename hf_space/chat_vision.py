@@ -360,8 +360,7 @@ def _ask_vision_local(image_url: str, question: str, report_phase=None, should_c
 
         def generate(prepared: str, instructions: str, tokens: int,
                      *, level: int = 1) -> tuple[str, float, float | None]:
-            detail = level > 1
-            stage_prefix = "DETAIL_" if detail else ""
+            stage_prefix = "LEVEL3_" if level == 3 else "DETAIL_" if level == 2 else ""
             report_detail(inferenceStage=stage_prefix + "PREFILL",
                           activeLevel=level, requestedLevels=analysis_levels)
             inference_started = time.monotonic()
@@ -392,7 +391,7 @@ def _ask_vision_local(image_url: str, question: str, report_phase=None, should_c
                                           firstChunkSeconds=first_chunk_seconds)
                             print(json.dumps({
                                 "event": "LOCAL_VISION_FIRST_TEXT",
-                                "pass": "detail" if detail else "fast",
+                                "pass": "level3" if level == 3 else "detail" if level == 2 else "fast",
                                 "firstChunkSeconds": first_chunk_seconds,
                             }), flush=True)
                         parts.append(delta)
@@ -434,8 +433,8 @@ def _ask_vision_local(image_url: str, question: str, report_phase=None, should_c
         if analysis_levels >= 2 and (analysis_levels == 3 or _needs_detail_retry(content)):
             check_cancel()
             detail_attempted = True
-            # The original browser upload is 768px; never upscale the 384px
-            # initial image. The second pass alone uses the retained detail.
+            # Retained original browser upload is up to 768px; never upscale
+            # the already-downsampled 384px first-pass image.
             retry_reason = ("GENERIC_CHARACTER_SHEET"
                             if _CHARACTER_SHEET_WORDS.search(content)
                             else "CONTENT_FREE_CAPTION")
@@ -443,7 +442,7 @@ def _ask_vision_local(image_url: str, question: str, report_phase=None, should_c
                           requestedLevels=analysis_levels,
                           detailRetryReason=("LEVEL_STUDY" if analysis_levels == 3 else retry_reason))
             print(json.dumps({"event": "LOCAL_VISION_DETAIL_RETRY",
-                              "reason": retry_reason}), flush=True)
+                              "reason": "LEVEL_STUDY" if analysis_levels == 3 else retry_reason}), flush=True)
             try:
                 detail_image = _prepare_image(image_url, max_side=DETAIL_RETRY_SIDE)
                 check_cancel()
