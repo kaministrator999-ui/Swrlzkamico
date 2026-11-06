@@ -36,7 +36,7 @@ public GGUF weights themselves are downloaded from Hugging Face.
 Only verified Google-chat sessions may call the image endpoint. The
 browser compresses a selected JPEG/PNG/WebP image and sends it when
 the user explicitly presses Send. The server caps incoming images at
-2 MB decoded, rejects oversize pixel dimensions, resizes to 768px
+2 MB decoded, rejects oversize pixel dimensions, resizes to 512px
 on its longest edge, and runs only one CPU vision request at a time.
 Only a short visual description reaches the existing text LALM;
 pixels remain ephemeral and are never saved to thread history.
@@ -51,10 +51,16 @@ turned into speculative transformation stories, emotions, or symbolism.
 For reduced CPU text decoding, the local vision request now uses a concise
 factual prompt and **112 maximum output tokens** (previously 192). It may
 describe fewer fine details; no improvement in actual throughput is assumed
-without real runtime measurement. The browser downscales to **768px** before
-upload (matching the existing server's 768px cap), avoiding unnecessary
+without real runtime measurement. The browser downscales to **512px** before
+upload (matching the existing server's 512px cap), avoiding unnecessary
 1600px encoding and transfer. The original local image preview remains
 untouched; the image bytes are never added to the persisted conversation.
+Preloaded GGUF files now resolve from the local Hub cache first, avoiding
+first-image network metadata checks; missing weights may still download from
+the public model hub. Startup warms vision after the primary 700M route but
+before optional text routes, sharing the CPU lock with image jobs to avoid
+duplicate initialization. Real speed improvements require a timed live image
+request; the lower pixel budget may omit small text detail.
 
 **Image upload progress:** POST /api/lalm_station/vision validates the image
 and immediately returns a short-lived, account-owned job ID (HTTP 202).
