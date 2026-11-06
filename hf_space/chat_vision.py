@@ -272,17 +272,17 @@ def prewarm_local_model():
 # Conservative source-only quality signal. It does NOT identify objects in
 # pixels and must never invent visual attributes or alter the model's wording.
 _VISUAL_DETAIL_WORDS = re.compile(
-    r"\\b(?:red|blue|green|yellow|purple|violet|pink|orange|black|white|"
+    r"\b(?:red|blue|green|yellow|purple|violet|pink|orange|black|white|"
     r"brown|grey|gray|gold|golden|silver|blonde|blond|auburn|teal|"
     r"hood|hooded|robe|dress|skirt|cloak|cape|hat|helmet|jacket|coat|"
     r"boots|shoes|gloves|armor|armour|tunic|staff|wand|sword|shield|"
     r"crystal|gem|jewel|crown|pigtails|braids|wings|horns|tail|ears|"
-    r"beard|glasses|ribbon|belt|brooch|flower|leaf|moon|star)\\b",
+    r"beard|glasses|ribbon|belt|brooch|flower|leaf|moon|star)\b",
     re.I,
 )
 _CHARACTER_SHEET_WORDS = re.compile(
-    r"\\b(?:turnaround|reference sheet|character sheet|model sheet|"
-    r"design sheet|multiple views|different views)\\b", re.I,
+    r"\b(?:turnaround|reference sheet|character sheet|model sheet|"
+    r"design sheet|multiple views|different views)\b", re.I,
 )
 
 
