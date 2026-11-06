@@ -37,7 +37,7 @@ def main():
         "function seChatAtelierApply(op)",
         'SE295_CHAT_LOFT_SURFACE_NORMALS_START'):
         assert token in s,token
-    assert s.count("source.engine='§wyrl§ Engine · Maker v11.299';source.version=11.298;")==3
+    assert s.count("source.engine='§wyrl§ Engine · Maker v11.299';source.version=11.299;")==3
     assert '__SE298_ATLAS_DATA_URL__' not in s
     # Test real source image bytes and the saved native UV/material dispatch.
     subprocess.run(['node','--check',str(ROOT/'runtime/hooded_vanguard_uv_repair_v11_299.js')],check=True)
