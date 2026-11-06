@@ -1487,7 +1487,16 @@
             continue;
           }
           pollingErrors=0;
-          activity.update(state.phase||"QUEUED","",{
+          const regionDetail=(state.phase==="ANALYZING"&&state.activeRegion)
+            ? "Inspecting "+String(state.activeRegion)+" · "+
+              String(Number(state.completedRegions)||0)+"/"+
+              String(Number(state.requestedRegions)||0)+" regions completed"
+            : "";
+          activity.update(state.phase||"QUEUED",regionDetail,{
+            activeRegion:state.activeRegion,
+            requestedRegions:state.requestedRegions,
+            completedRegions:state.completedRegions,
+            spatialRegionRecords:state.spatialRegionRecords,
             elapsedSeconds:state.elapsedSeconds,
             phaseElapsedSeconds:state.phaseElapsedSeconds,
             inferenceStage:state.inferenceStage,
