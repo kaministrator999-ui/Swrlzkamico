@@ -63,3 +63,5 @@ jobs:
           PY
       - name: Parse assembled engine JavaScript
         run: python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se288/index.html
+
+# Repeat source checksum with typed-array-safe hand mesh predicate.
