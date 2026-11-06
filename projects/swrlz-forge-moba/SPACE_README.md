@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.295
+title: §wyrl§ Engine v11.296
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,11 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+## §E v11.296 · Hooded Vanguard reconstructed from reference (candidate, 2026-11-06)
+
+After owner Android visual inspection exposed an oversized chin/mouth, rounded ear lumps, flat hood, crude hair and absent fingers, the fresh **Starter Models → Hooded Vanguard · Rebuilt Character** factory now constructs a continuous fitted face with subtly sculpted nose, layered hair locks, a wrapping hood plus curved forehead brim, gathered/draped scarf, fitted breastplate, formed shoulder pauldrons, flowing teal coats, narrow belt/boots, and **two separate five-digit glove meshes**. Geometry, proportions and fabric silhouettes are deliberately simplified, while detail is carried by **384px UV-aligned color, normal and roughness maps** per material (skin, hair, hood, scarf, uniform, armor, pauldrons, teal cloth, leather, gloves, boots). Decorative filigree is painted, not assembled from hundreds of meshes. The older v11.291 model generator remains in append-only source history; previously saved models are not rewritten.
+
+This is still a **static character** without a full-body rig, bird or weapon. Source integrity, loaded model and actual owner phone/Quest appearance are separate verification gates. See [the v11.296 reconstruction checkpoint](docs/VANGUARD_REBUILD_V11_296.md).
 
 ## §E v11.295 · Correct lighting on Chat-created curved meshes (candidate)
 
