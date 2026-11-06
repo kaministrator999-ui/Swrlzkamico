@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=1f50a0b64f61dfc83fcfcdce02e081f035b88fa6
-REQUEST_NONCE=chat-character-tools-v2-1f50a0b64f61-20261106-r1
+SOURCE_REF=1df995b6c5010f84735d0e0c16bbe2aa9f543198
+REQUEST_NONCE=chat-creative-complete-parts-1df995b6c501-20261106-r1
