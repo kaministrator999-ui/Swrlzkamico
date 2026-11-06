@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.291
+title: §wyrl§ Engine v11.292
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,13 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.292 · Cliff Hand: wrist-only moss and PBR knuckles (2026-11-06)
+
+The owner's real-device gauntlet screenshot showed too much green moss on the palm and fingers, and insufficient knuckle definition. Only the existing **Starter Models → Plain Hand Base · Smooth Cliff Hand** material changes: clean sandstone covers the palm, thumb and fingers; original mossy stone is composited through a feathered mask over the **lowest ~23% of the wrist/gauntlet**. Four knuckle-shaped mineral ridges are drawn into matching albedo, OpenGL normal and AO map regions to suggest raised chiseled rock under light, **not as new 3D objects**. The original local 384px-per-tile source atlas remains unchanged; four lightweight CanvasTextures are derived once when the owner starts this hand. Original textured crack geometry, the single connected gauntlet surface, rig, saved projects and separate **Hooded Vanguard v11.291** remain intact.
+
+A focused test validates the exact mask, four UV knuckle targets and matching PBR channels, plus assembled engine syntax/source seal. Owner phone/Quest visual inspection remains the acceptance test. See `docs/CLIFF_WRIST_MOSS_KNUCKLES_V11_292.md`.
+
 
 ## §E v11.291 · Hooded Vanguard native material-first starter (2026-11-06)
 
