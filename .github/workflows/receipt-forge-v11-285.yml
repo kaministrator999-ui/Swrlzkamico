@@ -17,5 +17,24 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+      - name: Diagnose source and byte integrity from current inputs
+        run: |
+          python - <<'PY'
+          import sys,json,base64,gzip,hashlib
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          sys.path.insert(0,str(root.resolve()))
+          from build_space import load_patch
+          meta=json.loads((root/'source-manifest.json').read_text('utf8'))
+          original=gzip.decompress(base64.b64decode(''.join((root/path).read_text('utf8').strip() for path in meta['chunks'])))
+          raw=original.decode('utf8')
+          for idx,path in enumerate(meta['patches']):
+            raw=load_patch(root/path)(raw)
+            if idx==len(meta['patches'])-2:
+              prefix=raw.encode('utf8')
+              print('V284_CURRENT_BYTES',len(prefix),'SHA256',hashlib.sha256(prefix).hexdigest(),flush=True)
+          final=raw.encode('utf8')
+          print('V285_CURRENT_BYTES',len(final),'SHA256',hashlib.sha256(final).hexdigest(),flush=True)
+          PY
       - name: Verify exact 316-patch artifact, assembled JavaScript, model grouping and 69 assets
         run: python projects/swrlz-forge-moba/scripts/verify_v11_285_release.py --output /tmp/se285-sealed
