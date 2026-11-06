@@ -346,6 +346,6 @@
     "patches/v11_298_actual_reference_uv_atlas.py",
     "patches/v11_299_real_image_uv_alignment.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 8328206,
+  "finalSha256": "7e5fc32fed7722f444a1912b3ed7a1576144a46adb750aa12768c79acb615a08"
 }
