@@ -1498,6 +1498,8 @@
             requestedRegions:state.requestedRegions,
             completedRegions:state.completedRegions,
             spatialRegionRecords:state.spatialRegionRecords,
+            spatialRegionFailures:state.spatialRegionFailures,
+            integratedOutcome:state.integratedOutcome,
             integratedObservation:state.integratedObservation,
             integratedSelected:state.integratedSelected,
             elapsedSeconds:state.elapsedSeconds,
@@ -1667,6 +1669,8 @@
             }
             if(timing?.levelRecords)this.showLevels(timing.levelRecords,Number(timing.selectedLevel)||1);
             if(detail)status.textContent=detail;
+            else if(timing?.integratedOutcome==="FAILED")status.textContent="Whole-image synthesis failed; retaining raw region observations.";
+            else if(timing?.integratedOutcome==="NOT_SELECTED")status.textContent="Whole-image synthesis too generic; retaining raw region observations.";
             else if(observed==="PREFILL")status.textContent="CPU encoding image and preparing the first text chunk…";
             else if(observed==="DECODING")status.textContent="Vision model generating description… first text after "+
                 durationText(timing.firstChunkSeconds??0);
