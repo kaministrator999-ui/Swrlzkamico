@@ -711,4 +711,35 @@ assert "Whole-image synthesis (not selected by descriptor heuristic" in retained
 assert any(fields.get("integratedOutcome") == "NOT_SELECTED" for _, fields in retention_phases)
 assert any(fields.get("integratedSelected") is False for _, fields in retention_phases)
 
+# The vision model's vague opening caption must not decide whether a bright,
+# detailed, wide reference page gets figure-sized crops or two giant halves.
+# Earlier code routed this exact shape to Left-side/Right-side detail whenever
+# the small model omitted "turnaround" from its caption.
+generic_regions = vision._detail_regions(
+    reference_encoded, "An illustration with different colors.", "What is this?"
+)
+assert [label for label, _ in generic_regions] == [
+    "Far-left detail", "Center-left detail",
+    "Center-right detail", "Far-right detail",
+], "Paper-layout image evidence must route to figure columns despite vague text"
+assert vision._detail_regions(valid, "An illustration.") == [], "Blank image stays fast"
+
+# A model identity receipt is issued AFTER a successful local model load and
+# is returned via real progress events; it is not invented by the browser.
+identity_model = JointVisionModel()
+identity_events = []
+with patch.object(vision, "_load_local_model", return_value=identity_model):
+    vision._ask_vision_local(
+        reference_encoded, "Describe the reference sheet.",
+        report_phase=lambda phase, **fields: identity_events.append((phase, fields)),
+    )
+identities = [
+    fields for phase, fields in identity_events
+    if fields.get("visionModelLoaded") is True
+]
+assert identities
+assert identities[-1]["activeVisionModel"] == vision.MODEL_REPO
+assert identities[-1]["activeVisionRevision"] == vision.MODEL_REVISION
+assert identities[-1]["activeVisionProjector"] == vision.PROJECTOR_FILE
+
 print("Chat vision local CPU: authenticated boundaries, no paid provider, concurrency and mocked inference and export handoff PASS")
