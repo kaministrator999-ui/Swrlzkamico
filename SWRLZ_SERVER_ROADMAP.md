@@ -1,3 +1,10 @@
+## 2026-11-05 — §C fast vision quality v11 (source candidate; live acceptance pending)
+
+- **User result:** After v10 deployment, the same Little Crystal Mage image completed in about **10 seconds** on a phone, compared with earlier multi-minute runs. The response was unusably generic ("presence of a head", "clothing items are visible") despite a visually distinctive turnaround sheet. The exact analyzer-to-§C text handoff was not supplied, so we cannot yet attribute all omissions to the vision model versus the secondary text model.
+- **Repair:** Preserve current 384px/88-token CPU fastpath and real prefill/decoding status; request specific visual features rather than filler from the pinned SmolVLM. For simple identification questions, pass the exact (fallible) vision description to the chat response with explicit source labeling and VISION_DESCRIPTION_DIRECT status; skip a second LALM paraphrase that may flatten observations. Questions requiring reasoning, design, modeling or transformations still use the configured LALM with a tighter evidence-specificity guard.
+- **Safety/lineage:** No paid inference API, no image pixel persistence, no changes to auth/cancellation/queues, no claim that model output was visually verified, unchanged downloaded Chat JSON extraction. Regression assertions cover exact preservation, no direct path for complex tasks, existing vision boundaries and changed prompt specificity.
+- **Verification:** source and static regression checks are separate from the guarded Hugging Face deploy and future user-device acceptance; do not claim speed/quality acceptance until observed.
+
 ## 2026-11-05 — §C vision prefill v10 (measured live improvement pending)
 
 - **Device evidence:** After published v9, user retested the same Little Crystal Mage turnaround; the card showed **02:46 elapsed, current stage 02:46**, still in `Identify visual details`. This confirms unacceptable latency in the CPU vision stage, not a completed timing benchmark.
