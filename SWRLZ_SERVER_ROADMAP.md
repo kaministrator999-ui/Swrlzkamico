@@ -1,3 +1,11 @@
+## 2026-11-05 — §C vision prefill v10 (measured live improvement pending)
+
+- **Device evidence:** After published v9, user retested the same Little Crystal Mage turnaround; the card showed **02:46 elapsed, current stage 02:46**, still in `Identify visual details`. This confirms unacceptable latency in the CPU vision stage, not a completed timing benchmark.
+- **Candidate:** retain same pinned local SmolVLM-256M Q8 model, no external inference API, account scope, thread creation and side-menu exports. Reduce CPU vision input from 512px to 384px; bound generated description from 112 to 88 tokens; enlarge llama.cpp prefill logical/physical batches from 128/default to 512/256 with two threads to reduce potential microbatch overhead. The browser sends at the same 384px size.
+- **Diagnostics:** inference reports `PREFILL` until the first observed nonempty generated text chunk, then `DECODING`, with actual monotonic first-chunk seconds in owner-scoped status. The UI displays what has actually been observed, not simulated progress. Native image prefill remains cooperatively non-preemptible until control returns.
+- **Trade-off:** 384px may lose small labels; shorter descriptions may omit details; larger batch settings may have variable CPU performance. No verified speedup is claimed without user-device measurement, and source checks do not constitute a live inference test.
+- **Verification:** targeted offline regression assertions were extended for downscale, bounded output, stage evidence, cancellation and account ownership. Keep separate source/static checks and publication receipts; don't equate commits with activation.
+
 ## 2026-11-05 — §C vision CPU fastpath v9 (source candidate; live timing pending)
 
 - **User evidence:** screenshot shows image analysis at 10:16 elapsed with Identify visual details still active and current analysis step 2:02. The screenshot demonstrates excessive latency, not a measured breakdown of root cause.
