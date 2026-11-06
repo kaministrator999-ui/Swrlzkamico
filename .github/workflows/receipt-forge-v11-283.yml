@@ -1,0 +1,45 @@
+name: §E v11.283 Weathered Rock Hand candidate and rig smoke
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/receipt-forge-v11-283.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  candidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 17
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test weathered mesh topology and original hand rig
+        run: node projects/swrlz-forge-moba/scripts/smoke_v11_283_weathered_hand.js
+      - name: Build candidate, check JS syntax and inspect exact checksum
+        run: |
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/se283-candidate
+          python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se283-candidate/index.html
+          python - <<'PY'
+          import pathlib,json,hashlib
+          root=pathlib.Path("projects/swrlz-forge-moba")
+          p=pathlib.Path("/tmp/se283-candidate/index.html")
+          raw=p.read_bytes()
+          manifest=json.loads((root/"source-manifest.json").read_text("utf8"))
+          assert manifest["name"]=="§wyrl§ Engine v11.283"
+          assert len(manifest["patches"])==314
+          assert manifest["patches"][-1]=="patches/v11_283_weathered_rock_hand.py"
+          txt=raw.decode("utf8")
+          for term in ("se283WeatherRockTopology", "se281RockScene=function(){",
+            "SWYRL_ENGINE_DEPLOY_MARKER: V11_283_WEATHERED_ROCK_HAND",
+            "STARTER MODEL · WEATHERED STONE + 17-BONE RIG"):
+            assert term in txt,term
+          assets=json.loads(pathlib.Path("/tmp/se283-candidate/SOURCE.json").read_text("utf8"))["assets"]
+          print("SE283_RECEIPT "+json.dumps({"bytes":len(raw),"sha256":hashlib.sha256(raw).hexdigest(),
+            "patches":len(manifest["patches"]),"assets":len(assets)}),flush=True)
+          PY
