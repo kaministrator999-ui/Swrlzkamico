@@ -41,11 +41,11 @@ DETAIL_RETRY_TOKENS = 144
 # Explicit level-comparison mode only: no automatic L3 CPU work.
 LEVEL3_SIDE = 768
 LEVEL3_TOKENS = 192
-MODEL_REPO = "ggml-org/SmolVLM-256M-Instruct-GGUF"
+MODEL_REPO = "ggml-org/SmolVLM-500M-Instruct-GGUF"
 # Immutable public upstream snapshot. No HF access token or inference credits.
-MODEL_REVISION = "b9e4379657e1450d04d02eec8e345667265b0a00"
-MODEL_FILE = "SmolVLM-256M-Instruct-Q8_0.gguf"
-PROJECTOR_FILE = "mmproj-SmolVLM-256M-Instruct-Q8_0.gguf"
+MODEL_REVISION = "72e986006ef53e37cdd3f6d4241c90b0f01df376"
+MODEL_FILE = "SmolVLM-500M-Instruct-Q8_0.gguf"
+PROJECTOR_FILE = "mmproj-SmolVLM-500M-Instruct-Q8_0.gguf"
 # Existing browser handoff markers are part of persisted text, not new storage.
 # Export derives a clearly labeled view of the exact text passed to Chat.
 VISION_START = "\n\n[Uploaded image — vision description, not original pixels]\n"
@@ -295,7 +295,7 @@ def _load_local_model():
         verbose=False,
     )
     _model = instance
-    print(json.dumps({"event": "LOCAL_VISION_MODEL_READY", "model": "SmolVLM-256M-Q8_0"}), flush=True)
+    print(json.dumps({"event": "LOCAL_VISION_MODEL_READY", "model": "SmolVLM-500M-Q8_0"}), flush=True)
     return instance
 
 
