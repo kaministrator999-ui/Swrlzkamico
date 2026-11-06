@@ -659,6 +659,9 @@ def _ask_vision_local(image_url: str, question: str, report_phase=None, should_c
         if analysis_levels >= 2 and not region_plan:
             region_plan = _detail_regions(image_url, content, question)
         region_records = []
+        region_failures = []
+        region_blocks = []
+        original_overview = content
         for label, crop in region_plan:
             check_cancel()
             focus_prompt = (
@@ -678,6 +681,9 @@ def _ask_vision_local(image_url: str, question: str, report_phase=None, should_c
             except VisionCancelled:
                 raise
             except Exception as exc:
+                region_failures.append(label)
+                report_detail(spatialRegionFailures=list(region_failures),
+                              requestedRegions=len(region_plan))
                 print(json.dumps({"event": "LOCAL_VISION_REGION_FAILED",
                                   "region": label,
                                   "errorType": type(exc).__name__}), flush=True)
@@ -688,19 +694,34 @@ def _ask_vision_local(image_url: str, question: str, report_phase=None, should_c
             report_detail(spatialRegionRecords=[dict(item) for item in region_records],
                           completedRegions=len(region_records),
                           requestedRegions=len(region_plan))
-            # Only for ordinary chat, suppress a zero-descriptor overview
-            # when a crop actually reports a tracked visible attribute.
-            # The explicit level-study mode always retains all raw outputs.
-            if analysis_levels != 3 and _visual_specificity(content) == 0 and _visual_specificity(detail) > 0:
-                content = "Local vision observations (accuracy unverified):"
-            # The returned text is the model's actual observation. We do not
-            # fabricate missing features or convert keyword counts to accuracy.
-            block = "\n" + label + " (source-image crop): " + detail
-            if len(content) + len(block) + 110 > MAX_DESCRIPTION_CHARS:
-                notice = "\nFurther region observations omitted due to the output size limit."
-                content = content[:MAX_DESCRIPTION_CHARS - len(notice)] + notice
+            # Record every actual crop output independently. Never clear this
+            # accumulated evidence just because a later crop first mentions
+            # a tracked color or garment. Empty model outputs remain visible.
+            shown = detail if detail else "[Vision model returned no text]"
+            region_blocks.append("\n" + label + " (source-image crop): " + shown)
+        # Suppress a vague full-image caption only ONCE, after all raw
+        # regional observations have been accumulated. The explicit L3
+        # comparison always preserves all three raw whole-image passes.
+        if (analysis_levels != 3 and region_records and
+                _visual_specificity(original_overview) == 0 and
+                any(_visual_specificity(item["description"]) > 0 for item in region_records)):
+            content = "Local vision observations (accuracy unverified):"
+        else:
+            content = original_overview
+        # Keep region outputs in chronological order, within the existing
+        # bounded LALM handoff. Never erase earlier observations to make room
+        # for a later crop. Report any omitted output explicitly.
+        for block in region_blocks:
+            if len(content) + len(block) + 200 > MAX_DESCRIPTION_CHARS:
+                note = "\nAdditional region output omitted due to the size limit."
+                if len(content) + len(note) <= MAX_DESCRIPTION_CHARS:
+                    content += note
                 break
             content += block
+        if region_failures:
+            note = "\nRegion inference did not complete for: " + ", ".join(region_failures) + "."
+            if len(content) + len(note) <= MAX_DESCRIPTION_CHARS:
+                content += note
         # Revisit the ENTIRE source image with the evidence collected from
         # regions. This is not a text-only rephrasing: the local vision model
         # receives pixels again, plus its own fallible, region-labeled notes.
@@ -708,8 +729,9 @@ def _ask_vision_local(image_url: str, question: str, report_phase=None, should_c
         # One bounded final pass is preferable to recursively re-inferencing
         # after every crop on a two-thread CPU-only Space.
         integrated = None
-        if region_records and any(_visual_specificity(item["description"]) > 0
-                                  for item in region_records):
+        if region_records:
+            # Synthesis is valuable even when the keyword heuristic scores
+            # all local captions at zero; that heuristic is not understanding.
             check_cancel()
             evidence_lines = [
                 "Whole scene: " + level_records[0]["description"][:220],
@@ -752,10 +774,12 @@ def _ask_vision_local(image_url: str, question: str, report_phase=None, should_c
                     "accuracyVerified": False,
                 }
                 report_detail(integratedObservation=dict(integrated),
+                              integratedOutcome="OBSERVED",
                               inferenceStage="FUSION_COMPLETE", activeRegion=None)
             except VisionCancelled:
                 raise
             except Exception as exc:
+                report_detail(integratedOutcome="FAILED", activeRegion=None)
                 print(json.dumps({"event": "LOCAL_VISION_FUSION_FAILED",
                                   "errorType": type(exc).__name__}), flush=True)
 
@@ -768,9 +792,10 @@ def _ask_vision_local(image_url: str, question: str, report_phase=None, should_c
             best_local = max((_visual_specificity(item["description"])
                               for item in region_records), default=0)
             joint_specificity = _visual_specificity(fused_text)
-            report_detail(integratedSelected=(joint_specificity >= best_local
-                                              and joint_specificity > 0))
-            if joint_specificity >= best_local and joint_specificity > 0:
+            chosen = joint_specificity >= best_local and joint_specificity > 0
+            report_detail(integratedSelected=chosen,
+                          integratedOutcome="SELECTED" if chosen else "NOT_SELECTED")
+            if chosen:
                 header = ("\nIntegrated whole-image observation (local vision model; "
                           "accuracy unverified):\n")
                 summary = header + fused_text
@@ -787,6 +812,21 @@ def _ask_vision_local(image_url: str, question: str, report_phase=None, should_c
                                + fused_text + "\n\nSource observations:\n"
                                + supporting)
                     content = content[:MAX_DESCRIPTION_CHARS]
+            else:
+                # A rejected synthesis still happened. Preserve its actual
+                # text with explicit provenance instead of silently hiding it.
+                note = ("\nWhole-image synthesis (not selected by descriptor "
+                        "heuristic; accuracy unverified):\n" + fused_text)
+                if len(content) + len(note) <= MAX_DESCRIPTION_CHARS:
+                    content += note
+                else:
+                    brief = "\nWhole-image synthesis ran but was not selected; raw text omitted due to size limit."
+                    if len(content) + len(brief) <= MAX_DESCRIPTION_CHARS:
+                        content += brief
+        elif region_records:
+            note = "\nWhole-image synthesis failed; original crop observations retained."
+            if len(content) + len(note) <= MAX_DESCRIPTION_CHARS:
+                content += note
         if region_records:
             footer = "\nRegion descriptions are unverified local vision-model observations."
             if len(content) + len(footer) <= MAX_DESCRIPTION_CHARS:
