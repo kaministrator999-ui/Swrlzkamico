@@ -341,6 +341,6 @@
     "patches/v11_293_chat_character_tools.py",
     "patches/v11_294_vanguard_socket_loader_fix.py"
   ],
-  "finalBytes": 8261754,
-  "finalSha256": "16b4be42df32cb792dab0a766a6cb35857711f72758bd5b24b12135dcf71027f"
+  "finalBytes": 8261794,
+  "finalSha256": "39088e9ae2b215246515f3e3601f0b001ed2436ab0d1e7d1d7f7f70bbfbab7fd"
 }
