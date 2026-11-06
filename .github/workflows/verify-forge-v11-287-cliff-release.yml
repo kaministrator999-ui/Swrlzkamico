@@ -23,3 +23,4 @@ jobs:
         run: python projects/swrlz-forge-moba/scripts/verify_v11_287_release.py --output /tmp/swrlz-cliff-287
       - name: Verify standalone Cliff Hand runtime syntax
         run: node --check projects/swrlz-forge-moba/runtime/cliff_hand_sculpt_pbr_v11_287.js
+# Retest: expect renamed Cliff Hand card rather than the former clay-only label.
