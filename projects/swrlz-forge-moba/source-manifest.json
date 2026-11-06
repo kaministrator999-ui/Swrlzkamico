@@ -333,6 +333,6 @@
     "patches/v11_285_compact_project_categories.py",
     "patches/v11_286_sheep_head_motion_diagnostics.py"
   ],
-  "finalBytes": 8201720,
-  "finalSha256": "c1d2134960ec4358fb907e3ceb1e4e0358ebede4970182eeb31ef81dbc2ead88"
+  "finalBytes": 8208359,
+  "finalSha256": "dc2ff5a05ae376fac7995195d56384979b10e6e74bcbda8decc655eec250f564"
 }
