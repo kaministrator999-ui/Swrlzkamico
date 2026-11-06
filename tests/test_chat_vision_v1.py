@@ -654,7 +654,8 @@ assert "mage wears a purple hood" in joined
 assert "Far-left detail (source-image crop)" in joined
 final_prompt = joint_model.calls[-1]["messages"][0]["content"]
 assert final_prompt[1]["type"] == "image_url", "the integration must see the source image"
-assert "Whole scene:" in final_prompt[0]["text"]
+assert "Whole scene:" not in final_prompt[0]["text"], "generic overview must not dominate synthesis"
+assert "Purple hood with golden stitching and a crystal staff." in final_prompt[0]["text"]
 assert "Center-right detail" in final_prompt[0]["text"]
 assert any(f.get("inferenceStage") == "FUSION_PREFILL" for _, f in joint_phases)
 assert any(f.get("integratedSelected") is True for _, f in joint_phases)
