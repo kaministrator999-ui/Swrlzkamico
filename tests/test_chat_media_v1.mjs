@@ -5,7 +5,7 @@ import vm from "node:vm";
 
 const html=fs.readFileSync("chat/§wyrlz/index.html","utf8");
 const version=fs.readFileSync("chat/§wyrlz/VERSION.txt","utf8").trim();
-assert.equal(version,"1.1.24");
+assert.equal(version,"1.1.25");
 assert.ok(html.includes('<meta name="swrlz-chat-version" content="'+version+'">'));
 assert.ok(html.includes('const SWRLZ_CHAT_VERSION = "'+version+'";'));
 
