@@ -136,6 +136,7 @@ def main():
     media_paths.extend(["scenes/sheep-tag-wildwood-v11-79.swyrl.json", "assets/sheep-tag/moonbell-wildwood-ground-4k.jpg"])
     media_paths.append("assets/sheep-tag/grass-source-color-quest.webp")
     media_paths.append('assets/cliff-hand/cliff_pbr_atlas_128.jpg')
+    media_paths.append('assets/cliff-hand/cliff_pbr_atlas_384.jpg')
     media_paths.append("scenes/sheep-tag-vast-wildwood-v11-80.swyrl.json")
     media_paths.append('scenes/sheep-tag-wide-walkways-v11-84.swyrl.json')
     media_paths.append('scenes/sheep-tag-seven-minute-v11-85.swyrl.json')
