@@ -29,7 +29,12 @@ def expect_invalid(value: object, expected: str) -> None:
         raise AssertionError("Expected rejection " + expected)
 
 
-jpeg = b"\xff\xd8\xff" + b"\0" * 20
+# Exercise real image parsing, not just a JPEG magic-byte stub.
+import io
+from PIL import Image
+jpeg_buffer = io.BytesIO()
+Image.new("RGB", (16, 16), "white").save(jpeg_buffer, format="JPEG")
+jpeg = jpeg_buffer.getvalue()
 valid = "data:image/jpeg;base64," + base64.b64encode(jpeg).decode("ascii")
 assert vision._validated_image(valid) == valid
 expect_invalid("data:image/svg+xml;base64," + base64.b64encode(jpeg).decode(), "IMAGE_FORMAT_INVALID")
@@ -61,8 +66,6 @@ assert preload in space_readme
 assert space_readme.count('preload_from_hub:') == 1
 
 # Real image preprocessing must bound the pixels supplied to the CPU projector.
-import io
-from PIL import Image
 assert vision.MODEL_INPUT_SIDE == 384
 assert vision.MAX_IMAGE_BYTES == 8 * 1024 * 1024
 assert vision.MAX_BODY_BYTES > 4 * vision.MAX_IMAGE_BYTES // 3
