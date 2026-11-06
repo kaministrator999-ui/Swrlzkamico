@@ -1482,7 +1482,8 @@
             continue;
           }
           pollingErrors=0;
-          const regionDetail=(state.phase==="ANALYZING"&&state.activeRegion)
+          const regionDetail=(state.phase==="ANALYZING"&&state.activeRegion&&
+            state.activeRegion!=="Whole-scene synthesis")
             ? "Inspecting "+String(state.activeRegion)+" · "+
               String(Number(state.completedRegions)||0)+"/"+
               String(Number(state.requestedRegions)||0)+" regions completed"
