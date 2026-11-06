@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.285
+title: §wyrl§ Engine v11.286
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
