@@ -147,7 +147,6 @@ for term in (
     "if(parts.some(p=>p.organicSurface||p.name.includes('Underlying')))",
     "se281RockScene=se282FullRockScene;",
     "window.SWYRL_ENGINE_ROCK_CLIFF_HAND=Object.freeze",
-    "STARTER MODEL · 360° CLIFF ROCK + 17-BONE RIG",
     "const se283RockOriginalMesh=se282Mesh;",
     "function se283WeatherRockTopology(topology){",
     "se282Mesh=function(){",

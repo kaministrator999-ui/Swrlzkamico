@@ -1,4 +1,5 @@
 name: §E v11.283 Weathered Rock Hand sealed release
+# Re-verify current weathered gallery label rather than replaced v11.282 label
 on:
   push:
     branches: [main]
