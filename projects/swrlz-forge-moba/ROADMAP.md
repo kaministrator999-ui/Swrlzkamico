@@ -1,3 +1,9 @@
+## §E v11.287 · Cliff Hand sculpt with owner PBR materials (2026-11-05)
+
+**Plain Hand Base** now opens a native, 17-bone **Cliff Hand** instead of the neutral clay anatomy. The editable hand has complete faceted stone fingers, thumb, wrist, rounded rock volumes and 32 additional small, layered palm/back sandstone slabs. Amber glows are replaced with recessed dark cracks. It preserves the original open/fist animation timeline and starter ID; existing saved scenes and the separate Rocky Anime Hand remain unchanged.
+
+The supplied texture ZIP was used to produce a packed **128px-per-map mobile PBR atlas** at `assets/cliff-hand/cliff_pbr_atlas_128.jpg`: sandstone, moss composite, packed dirt, OpenGL normals, roughness, ambient occlusion, height bump and crack mask. Native `MeshStandardMaterial` now applies those maps to the skinned cliff geometry with per-piece UVs, uv2, rough nonmetallic stone and selective moss. No game spell-growth implementation is implied. See `docs/CLIFF_HAND_SCULPT_PBR_V11_287.md`. Owner phone/Quest visual and rig acceptance pending.
+
 ## §E v11.286 · Quest Sheep Tag head movement diagnostics (2026-11-05)
 
 Added two observational pages to the existing left-controller VR Nerd Stats panel. Page 5/6 compares headset-moving versus stationary game callback frame gaps (>35ms) and previous-render draw-call averages. Page 6/6 compares existing pose reads, camera-rig writes, game raycasts, spatial panel placements and HUD redraws by head movement state. Motion classification subtracts the existing Sheep Tag camera-rig translation to avoid mistaking sheep-follow movement for physical head movement. The existing L3 show/hide and center-to-next-page controls remain unchanged.
