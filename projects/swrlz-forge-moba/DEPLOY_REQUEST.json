@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.282",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_282_ROCK_CLIFF_HAND",
-  "reason": "Owner's phone screenshot showed the v11.281 rocky hand still looked like a smooth organic glove with sparse armor pieces. §E v11.282 replaces only that independent Starter Model with TRUE fully faceted rock anatomy: no visible smooth organic core, sealed multi-faceted palm volume covering back/palm/sides, overlapping thick cliff strata, 12 full-360-degree finger stone shafts, 3 solid angled thumb sections, jagged lateral outcrops and basalt-root wrist, 25 short editable glowing fracture meshes. Preserve the validated 17-bone articulated rig, gestures, scene save/export, gallery, original Arcane Gloves, mirrored gloves, Mage Spell Lab and Sheep Tag. Focused native geometry smoke PASS: 89 rock meshes; all valid indexed meshes; 12 finger solids; 3 thumb solids; 0 organic core. Source-verified build and inline JS syntax PASS, 313 append-only patches, 69 assets, 8,181,975 HTML bytes; SHA-256 3c6e9c949aa926f601df06af171198e3d84e46f43dbf0a983eccaf342cdff629. Owner mobile/Quest visual acceptance pending.",
-  "sourceCommit": "a3176cb291536c938ca72ca0044a00f66279f751",
-  "sourceIntegritySha256": "3c6e9c949aa926f601df06af171198e3d84e46f43dbf0a983eccaf342cdff629"
+  "releaseVersion": "v11.283",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_283_WEATHERED_ROCK_HAND",
+  "reason": "Owner requested the fully rock-cliff hand to be more smoothish while remaining fully rocky. v11.283 retains 89 independent editable rock parts, solid faceted palm, 12 full-circumference finger segments, 3 stone thumb sections, 25 crisp glowing faults, 17-bone rig and no exposed smooth glove. The 64 rock solids now weld shared vertices, subdivide once and gently smooth adjacent corners for a natural weathered rock appearance. No changes to original/mirrored Arcane Gloves, Mage Spell Lab, VR game, Sheep Tag, §C or saved projects. Focused native model test and sealed source verified: 314 ordered patches, 69 packaged assets, 8,186,789 bytes, SHA256 01d2bc06dab63fa444f747a02952b8bd5abd7df52709a5576c5eea46cca970b0. Mobile/Quest visual acceptance pending.",
+  "sourceCommit": "6bad231d228c3f1b18ea0803807fe993c3603aca",
+  "sourceIntegritySha256": "01d2bc06dab63fa444f747a02952b8bd5abd7df52709a5576c5eea46cca970b0"
 }
