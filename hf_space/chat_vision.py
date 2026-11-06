@@ -355,7 +355,7 @@ def _ask_vision_local(image_url: str, question: str, report_phase=None, should_c
     be interrupted until control returns to Python. Keep the model lock until
     that operation has actually stopped.
     """
-    report = report_phase or (lambda _: None)
+    report = report_phase or (lambda _phase, **_fields: None)
     cancelled = should_cancel or (lambda: False)
     if type(analysis_levels) is not int or analysis_levels not in (1, 2, 3):
         raise ValueError("VISION_LEVEL_INVALID")
