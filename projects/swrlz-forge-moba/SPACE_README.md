@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.288
+title: §wyrl§ Engine v11.289
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,11 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.289 · Short gauntlet forearm on the smooth Cliff Hand (2026-11-05)
+
+Based on the owner's front/back Android screenshots, **Plain Hand Base → Smooth Cliff Hand** now extends the existing connected stone hand into a **short, tapered forearm**, enough to read as a gauntlet without becoming an entire arm. A smooth monotonic geometry remap lengthens only the lower wrist/carpal vertices by approximately **0.74 model units**, with a restrained **9% flare** near the end. Upper palm, thumb and fingers retain their shape. There is still exactly **one rigged native topology mesh**—no new cuffs, chunky stones, cracks, overlays or separate mesh objects. The existing 384px/tile owner rock PBR texture now remaps continuously over the longer forearm. The **17-bone rig** and unrelated model/game starters are preserved. Phone/Quest visual and animation checks remain owner-tested. See `docs/SHORT_CLIFF_GAUNTLET_V11_289.md`.
+
 
 ## §E v11.288 · Smooth Cliff Hand, texture-built stone illusion (2026-11-05)
 
