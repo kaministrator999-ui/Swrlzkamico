@@ -12,7 +12,7 @@ def apply(html):
     assert 'function se292WristMossKnuckleMaterial(part){' in js
     for key in (
        'function se290CliffMaterial(part){',
-       "mat=part.cliffPBR?.atlas==='cliff_pbr_atlas_384'?se290CliffMaterial(part):",
+       "part.cliffPBR?.atlas==='cliff_pbr_atlas_384'?se290CliffMaterial(part):",
        'SWYRL_ENGINE_DEPLOY_MARKER: V11_291_HOODED_VANGUARD_MATERIALS',
        'window.SWRLZ_FORGE_BUILD=',
        'Connected smooth Cliff Hand and short stone gauntlet forearm'):
@@ -20,8 +20,8 @@ def apply(html):
     html=once(html,'window.SWRLZ_FORGE_BUILD=',js+'\nwindow.SWRLZ_FORGE_BUILD=',
        'register locally authored knuckle PBR and wrist-only moss mask')
     html=once(html,
-       "mat=part.cliffPBR?.atlas==='cliff_pbr_atlas_384'?se290CliffMaterial(part):",
-       "mat=part.cliffPBR?.atlas==='cliff_pbr_atlas_384'?se292WristMossKnuckleMaterial(part):",
+       "part.cliffPBR?.atlas==='cliff_pbr_atlas_384'?se290CliffMaterial(part):",
+       "part.cliffPBR?.atlas==='cliff_pbr_atlas_384'?se292WristMossKnuckleMaterial(part):",
        'connect new knuckle material to existing rigged hand')
     html=once(html,
        '<p>Connected smooth Cliff Hand and short stone gauntlet forearm with enhanced sandstone normal depth, dark texture-mapped cracks, selective moss and the native 17-bone rig.</p>',
