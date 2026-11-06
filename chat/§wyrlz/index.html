@@ -1498,6 +1498,9 @@
             requestedRegions:state.requestedRegions,
             completedRegions:state.completedRegions,
             spatialRegionRecords:state.spatialRegionRecords,
+            activeVisionModel:state.activeVisionModel,
+            activeVisionRevision:state.activeVisionRevision,
+            visionModelLoaded:state.visionModelLoaded,
             spatialRegionFailures:state.spatialRegionFailures,
             integratedOutcome:state.integratedOutcome,
             integratedObservation:state.integratedObservation,
@@ -1666,6 +1669,14 @@
               sourceInfo.hidden=false;
               sourceInfo.textContent="Original received by server: "+timing.sourceWidth+" × "+timing.sourceHeight+
                 "px · "+(Number(timing.sourceBytes||0)/1048576).toFixed(2)+" MiB";
+            }
+            if(timing?.visionModelLoaded&&timing.activeVisionModel){
+              sourceInfo.hidden=false;
+              const actualModel=String(timing.activeVisionModel).split("/").pop();
+              const revision=String(timing.activeVisionRevision||"").slice(0,8);
+              const line="Loaded local vision model: "+actualModel+(revision?" · revision "+revision:"");
+              if(!sourceInfo.textContent.includes("Loaded local vision model:"))
+                sourceInfo.textContent+=(sourceInfo.textContent?"\n":"")+line;
             }
             if(timing?.levelRecords)this.showLevels(timing.levelRecords,Number(timing.selectedLevel)||1);
             if(detail)status.textContent=detail;
