@@ -372,18 +372,35 @@ def _detail_regions(image_url: str, overview: str, question: str = "") -> list[t
     if edges.width > 12 and edges.height > 12:
         edges = edges.crop((5, 5, edges.width - 5, edges.height - 5))
     edge_mean = ImageStat.Stat(edges).mean[0]
-    reference_sheet = bool(re.search(
-        r"\b(turnaround|reference sheet|character sheet|character page|"
-        r"character poster|multiple views|front and back|side and back|"
-        r"different views|several views|design sheet|model sheet|"
-        r"collage|diagram|panels)\b",
+    # Recognize the page's actual light background and drawn content BEFORE
+    # relying on a tiny vision model to identify its layout in words.
+    # This is a conservative image-layout routing heuristic, not a semantic
+    # classifier or a claim about visual recognition accuracy.
+    pixels = list(sample.getdata())
+    paper_fraction = sum(
+        1 for red, green, blue in pixels
+        if min(red, green, blue) >= 200
+        and max(red, green, blue) - min(red, green, blue) <= 65
+    ) / max(1, len(pixels))
+    model_mentions_sheet = bool(re.search(
+        r"\b(turnaround|character turn(?:s|around)?|reference sheet|"
+        r"character sheet|character page|character poster|multiple views|"
+        r"front and back|side and back|front view|back view|"
+        r"left side view|right side view|different views|several views|"
+        r"design sheet|model sheet|color palette|collage|diagram|panels)\b",
         overview + " " + question, flags=re.I,
     ))
-    # A sparse line-art turnaround on white can have a low average edge
-    # density despite containing many tiny features. Solid colors and smooth
-    # gradients should still be handled with a single full-image pass.
-    # This selects work; it is not a vision accuracy score.
-    if edge_mean < (2.5 if reference_sheet else 13):
+    # Detailed wide character/reference pages typically have a light paper
+    # field and nontrivial line work. Don't require SmolVLM's vague caption
+    # to say 'turnaround' before exposing the figures at usable scale.
+    image_looks_like_sheet = (
+        width >= height * 1.2 and paper_fraction >= .48
+        and edge_mean >= 5.5
+    )
+    reference_sheet = model_mentions_sheet or image_looks_like_sheet
+    # White/near-blank uploads still take the single-pass fast path.
+    # These thresholds are routing heuristics, NOT accuracy/confidence.
+    if edge_mean < (2.5 if model_mentions_sheet else 5.5 if image_looks_like_sheet else 13):
         return []
 
     if reference_sheet and width > height * 1.2:
@@ -462,6 +479,12 @@ def _ask_vision_local(image_url: str, question: str, report_phase=None, should_c
         report("LOADING_MODEL")
         model = _load_local_model()
         check_cancel()
+        # These fields are reported only after the local inference instance
+        # successfully loaded from the pinned GGUF and matching projector.
+        # They identify the configured loaded model, not an accuracy score.
+        report("LOADING_MODEL", activeVisionModel=MODEL_REPO,
+               activeVisionRevision=MODEL_REVISION,
+               activeVisionProjector=PROJECTOR_FILE, visionModelLoaded=True)
         prompt = (
             "Describe the subject you can SEE, not just the type of image. "
             "State distinctive colors, clothing, held objects, and other visible "
@@ -956,6 +979,10 @@ def install(app, require_account) -> None:
                 "levelRecords": [dict(item) for item in job.get("levelRecords", [])],
                 "completedLevels": job.get("completedLevels", 0),
                 "selectedLevel": job.get("selectedLevel", 1),
+                "activeVisionModel": job.get("activeVisionModel"),
+                "activeVisionRevision": job.get("activeVisionRevision"),
+                "activeVisionProjector": job.get("activeVisionProjector"),
+                "visionModelLoaded": bool(job.get("visionModelLoaded", False)),
                 "activeRegion": job.get("activeRegion"),
                 "requestedRegions": job.get("requestedRegions", 0),
                 "completedRegions": job.get("completedRegions", 0),
