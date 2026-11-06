@@ -1,4 +1,4 @@
 TARGET=kamiloki/Swyrlz
 APPROVED=1
-SOURCE_REF=d1638c34a307545b0db7e617465c9ad787d3d974
-REQUEST_NONCE=chat-vision-cpu-prefill-v10-d1638c34-20261105-r1
+SOURCE_REF=0ec7fa9be5cda5bb2a4b78f7d9b8cafeaaebd580
+REQUEST_NONCE=chat-vision-observation-fidelity-v11-0ec7fa9b-20261105-r1
