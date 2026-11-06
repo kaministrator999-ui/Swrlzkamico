@@ -48,7 +48,7 @@ jobs:
             'function se292WristMossKnuckleMaterial(part){',
             'function se292DrawKnuckleRelief(ctx,kind){',
             'function se292PaintAtlas(img){',
-            "mat=part.cliffPBR?.atlas==='cliff_pbr_atlas_384'?se292WristMossKnuckleMaterial(part):",
+            "part.cliffPBR?.atlas==='cliff_pbr_atlas_384'?se292WristMossKnuckleMaterial(part):",
             'model.parts=[stone];model.meshGroups=[];',
             'function se291HeroMaterial(part){',
             'data-project-template="hooded-vanguard"',
