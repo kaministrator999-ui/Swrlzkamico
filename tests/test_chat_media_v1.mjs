@@ -74,6 +74,14 @@ assert.match(html,/if\(prompt\.value\.trim\(\)===draftText\)prompt\.value=""/);
 assert.match(html,/if\(selectedImage===attachment\)selectedImage=null/);
 assert.match(html,/if\(!selectedImage\)\{selectedImage=attachment;updateImagePreview\(\);\}/);
 assert.match(html,/if\(!sendAcknowledged\)\{[\s\S]*?restorePendingVisionDraft\(\)/);
+assert.match(html,/if\(activity\.threadAccepted\)return/);
+assert.match(html,/integratedObservation:state\.integratedObservation/);
+assert.match(html,/observed==="FUSION_PREFILL"/);
+const stagedIndex=html.indexOf("visionDraftHeld=true;\n            if(prompt.value.trim()===draftText)");
+const inferenceIndex=html.indexOf("description=await requestVisionDescription(attachment,draftText,activity)");
+assert.ok(stagedIndex>=0&&inferenceIndex>stagedIndex,
+  "image and prompt move into visible pending card before uploading/inferring");
+assert.match(html,/const restorePendingVisionDraft=\(\)=>/);
 assert.match(html,/const encodeImageForVision=attachment=>new Promise/);
 assert.match(html,/const reader=new FileReader\(\)/);
 assert.match(html,/reader\.readAsDataURL\(file\)/);
