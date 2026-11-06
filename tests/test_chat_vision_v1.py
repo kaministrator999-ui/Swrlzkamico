@@ -670,4 +670,45 @@ assert "Purple hood with golden stitching and a crystal staff" in retained
 assert not retained.startswith("Integrated whole-image observation")
 assert any(f.get("integratedSelected") is False for _, f in weaker_phases)
 
+# Regression: an informative third crop must NOT overwrite the previously
+# accumulated zero-keyword crop observations. An unselected whole-scene
+# synthesis remains visible with its real, unverified model text.
+class PriorCropRetentionModel:
+    def __init__(self):
+        self.calls = []
+    def create_chat_completion(self, **kwargs):
+        self.calls.append(kwargs)
+        captions = [
+            "Character page with various features.",
+            "A character drawing in one panel.",
+            "A figure shown from another angle.",
+            "A girl wearing a purple coat.",
+            "A character holding a crystal staff.",
+            "A character page with various features.",
+        ]
+        return iter([{"choices": [{"delta": {
+            "content": captions[len(self.calls) - 1],
+        }}]}])
+
+retention_model = PriorCropRetentionModel()
+retention_phases = []
+with patch.object(vision, "_load_local_model", return_value=retention_model):
+    retained_crops = vision._ask_vision_local(
+        reference_encoded,
+        "Describe the character turnaround.",
+        report_phase=lambda phase, **fields: retention_phases.append((phase, fields)),
+    )
+assert len(retention_model.calls) == 6, "whole image, four crops, final whole-image synthesis"
+for caption in [
+    "A character drawing in one panel.",
+    "A figure shown from another angle.",
+    "A girl wearing a purple coat.",
+    "A character holding a crystal staff.",
+]:
+    assert caption in retained_crops, ("Earlier crop was erased", caption)
+assert retained_crops.index("A character drawing in one panel.") < retained_crops.index("A girl wearing a purple coat.")
+assert "Whole-image synthesis (not selected by descriptor heuristic" in retained_crops
+assert any(fields.get("integratedOutcome") == "NOT_SELECTED" for _, fields in retention_phases)
+assert any(fields.get("integratedSelected") is False for _, fields in retention_phases)
+
 print("Chat vision local CPU: authenticated boundaries, no paid provider, concurrency and mocked inference and export handoff PASS")
