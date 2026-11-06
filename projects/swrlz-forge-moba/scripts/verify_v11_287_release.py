@@ -175,7 +175,7 @@ for term in (
     "se284OpenPlainHand(true);",
     MARKER,
     "<title>§wyrl§ Engine · Maker v11.287</title>",
-    "window.SWRLZ_FORGE_BUILD={version:'v11.287'"
+    "window.SWRLZ_FORGE_BUILD={version:'v11.287'",
     "window.SWYRL_ENGINE_EDITOR_PREVIEW_247=Object.freeze",
     "window.SWYRL_ENGINE_SHEEP_VR_LAN_268=Object.freeze",
     "window.SWYRL_ENGINE_SHEEP_LAN_VISIBILITY_271=Object.freeze",
