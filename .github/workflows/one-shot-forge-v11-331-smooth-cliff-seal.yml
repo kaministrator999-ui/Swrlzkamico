@@ -36,7 +36,7 @@ jobs:
           for token in (
             'SWYRL_ENGINE_DEPLOY_MARKER: V11_331_SMOOTH_CLIFF_MATERIAL_UV',
             "window.SWRLZ_FORGE_BUILD={version:'v11.331'",
-            "if(part.cliffPBR?.atlas==='cliff_pbr_atlas_384')",
+            "if(part.cliffPBR?.atlas==='cliff_pbr_atlas_384'&&",
             "g.setAttribute('uv1',g.getAttribute('uv2'));",
             "if(kind==='ao')tex.channel=1;",
             "function se292WristMossKnuckleMaterial(part){",
@@ -46,7 +46,7 @@ jobs:
             assert token in html,token
           assert html.count("g.setAttribute('uv1',g.getAttribute('uv2'));")==1
           assert "g.setAttribute('uv2',g.getAttribute('uv').clone());" in html
-          assert "color:'#fff2e6'" in html, 'preserve old historical material, change only the active one'
+          assert "  color:'#ffffff'," in html, 'the active sandstone albedo must be neutral white'
           assert html.count("source.engine='§wyrl§ Engine · Maker v11.331';source.version=11.331;")==3
           assert len(json.loads((out/'SOURCE.json').read_text('utf8'))['assets'])==71
           subprocess.run([sys.executable,str(root/'scripts/check_inline_js_syntax_v11_266.py'),str(out/'index.html')],check=True)
