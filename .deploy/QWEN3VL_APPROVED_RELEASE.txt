@@ -8,3 +8,4 @@ RETRY_32K_BUDGET=Release smoke expected obsolete 8192/6016. Source uses 32768 wi
 RUNTIME_RECOVERY_APPROVAL=YES
 RUNTIME_FAILURE_CAUSE=Existing Space variable Qwen/Qwen2.5-VL-3B-Instruct rejected by Qwen3 selector
 FIX_SCOPE=explicit legacy migration; defer heavy Qwen startup; mobile response continuity; no architecture replacement
+STARTUP_PREWARM_RELEASE_20261107=approved ongoing Qwen image integration; restore prewarm on Space startup without new UI
