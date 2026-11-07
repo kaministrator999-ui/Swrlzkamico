@@ -690,7 +690,7 @@ assert "Character turnaround with braided white hair" not in joined, "no duplica
 assert vision.RAW_CROP_MARKER in joined, "original crop notes remain inspectable in the saved user handoff"
 direct_joined = direct({"prompt": "What do you see in this image?" +
                         vision.VISION_START + joined + vision.VISION_END})
-assert "Subject and views:" in direct_joined
+assert "### Subject & views" in direct_joined
 assert "Upper-left figure detail" not in direct_joined, "no second raw-crop text dump in §C reply"
 assert vision.RAW_CROP_MARKER not in direct_joined
 final_prompt = joint_model.calls[-1]["messages"][0]["content"]
@@ -700,9 +700,12 @@ assert final_prompt[1]["image_url"]["url"] == (
 ), "final synthesis must reuse the complete 768px overview, not downsize again"
 assert "Whole scene:" in final_prompt[0]["text"]
 assert "Central outfit and prop detail" in final_prompt[0]["text"]
+assert "View comparisons:" in final_prompt[0]["text"]
+assert "visible belt buckle cannot" in final_prompt[0]["text"]
+assert "170 to 230 words" in final_prompt[0]["text"]
 assert any(f.get("inferenceStage") == "FUSION_PREFILL" for _, f in joint_phases)
 assert any(f.get("integratedSelected") is True for _, f in joint_phases)
-assert joint_model.calls[-1]["max_tokens"] == 320
+assert joint_model.calls[-1]["max_tokens"] == 384
 assert any(fields.get("referenceProgress") is True and fields.get("requestedRegions") == 2
            for _, fields in joint_phases), "show overview before crops finish"
 assert any(fields.get("completedRegions") == 1 for _, fields in joint_phases)
