@@ -12,7 +12,6 @@ import base64
 import binascii
 import io
 import json
-import os
 import re
 import threading
 import time
@@ -31,46 +30,20 @@ MAX_IMAGE_BYTES = 8 * 1024 * 1024
 MAX_QUESTION_CHARS = 2_000
 MAX_DESCRIPTION_CHARS = 6_000
 MAX_IMAGE_PIXELS = 16_000_000
-# Runtime migration: the existing Space still has an older Qwen2.5 repo ID
-# stored in SWRLZ_VISION_MODEL. The approved trial replaces that route with
-# Qwen3-VL-4B. Never crash the *entire chat* due to an unrecognized variant.
-# The pinned Qwen backend uses a separate local llama-server subprocess.
-VISION_MODEL_SETTING = os.getenv("SWRLZ_VISION_MODEL", "qwen3-vl-4b").strip().lower()
-if VISION_MODEL_SETTING in ("qwen3-vl-4b", "qwen/qwen3-vl-4b-instruct"):
-    VISION_MODEL_VARIANT = "qwen3-vl-4b"
-elif VISION_MODEL_SETTING == "qwen/qwen2.5-vl-3b-instruct":
-    VISION_MODEL_VARIANT = "qwen3-vl-4b"
-    print(json.dumps({"event":"VISION_MODEL_LEGACY_SETTING_MIGRATED",
-                      "from":"qwen2.5-vl-3b","to":"qwen3-vl-4b"}),flush=True)
-elif VISION_MODEL_SETTING in ("smolvlm-500m", "ggml-org/smolvlm-500m-instruct-gguf"):
-    VISION_MODEL_VARIANT = "smolvlm-500m"
-else:
-    VISION_MODEL_VARIANT = "smolvlm-500m"
-    print(json.dumps({"event":"VISION_MODEL_INVALID_SETTING",
-                      "fallback":"smolvlm-500m"}),flush=True)
-# Qwen sees a larger single view; all views still derive from original pixels.
-MODEL_INPUT_SIDE = 768 if VISION_MODEL_VARIANT == "qwen3-vl-4b" else 384
-# Avoid generic 88-token truncation when evaluating Qwen visual detail.
-MAX_VISION_OUTPUT_TOKENS = 224 if VISION_MODEL_VARIANT == "qwen3-vl-4b" else 88
-# A second local inference is reserved for demonstrably generic character sheets.
-# The initial 384px / 88-token fast path is left untouched.
-DETAIL_RETRY_SIDE = 768 if VISION_MODEL_VARIANT == "qwen3-vl-4b" else 640
-DETAIL_RETRY_TOKENS = 224 if VISION_MODEL_VARIANT == "qwen3-vl-4b" else 144
-# Explicit level-comparison mode only: no automatic L3 CPU work.
+# One image-analysis engine only. Older Space SWRLZ_VISION_MODEL settings
+# are intentionally ignored: no fallback loads an obsolete model or weights.
+# The other LALM/text-chat engines are independent and unchanged.
+VISION_MODEL_VARIANT = "qwen3-vl-4b"
+MODEL_INPUT_SIDE = 768
+MAX_VISION_OUTPUT_TOKENS = 224
+DETAIL_RETRY_SIDE = 768
+DETAIL_RETRY_TOKENS = 224
 LEVEL3_SIDE = 768
 LEVEL3_TOKENS = 192
-# Pin both public model families to immutable upstream revisions.
-# Qwen Q4_K_M + Q8 projector is nearly 3 GB on disk, plus runtime memory.
-if VISION_MODEL_VARIANT == "qwen3-vl-4b":
-    MODEL_REPO = "Qwen/Qwen3-VL-4B-Instruct-GGUF"
-    MODEL_REVISION = "1cd86afb9a95c410a6038ab3b40d8b578c892266"
-    MODEL_FILE = "Qwen3VL-4B-Instruct-Q4_K_M.gguf"
-    PROJECTOR_FILE = "mmproj-Qwen3VL-4B-Instruct-Q8_0.gguf"
-else:
-    MODEL_REPO = "ggml-org/SmolVLM-500M-Instruct-GGUF"
-    MODEL_REVISION = "72e986006ef53e37cdd3f6d4241c90b0f01df376"
-    MODEL_FILE = "SmolVLM-500M-Instruct-Q8_0.gguf"
-    PROJECTOR_FILE = "mmproj-SmolVLM-500M-Instruct-Q8_0.gguf"
+MODEL_REPO = "Qwen/Qwen3-VL-4B-Instruct-GGUF"
+MODEL_REVISION = "1cd86afb9a95c410a6038ab3b40d8b578c892266"
+MODEL_FILE = "Qwen3VL-4B-Instruct-Q4_K_M.gguf"
+PROJECTOR_FILE = "mmproj-Qwen3VL-4B-Instruct-Q8_0.gguf"
 # Existing browser handoff markers are part of persisted text, not new storage.
 # Export derives a clearly labeled view of the exact text passed to Chat.
 VISION_START = "\n\n[Uploaded image — vision description, not original pixels]\n"
@@ -249,7 +222,7 @@ def _prepare_image(image_url: str, max_side: int = MODEL_INPUT_SIDE,
     """Derive a bounded model view from original full-resolution image bytes.
 
     The optional L3 center zoom uses actual source pixels, not an upscale of
-    a previous 384/640px inference image.
+    a previous resized inference image.
     """
     from PIL import Image, ImageOps
 
@@ -301,28 +274,10 @@ def _load_local_model():
 
     model_path = _cached_asset(MODEL_FILE)
     projector_path = _cached_asset(PROJECTOR_FILE)
-    if VISION_MODEL_VARIANT == "qwen3-vl-4b":
-        # Qwen is isolated in a pinned official llama.cpp process, leaving
-        # the existing 0.3.35 llama-cpp-python wheel and text routes untouched.
-        from qwen3vl_local_server import load
-        instance = load(model_path, projector_path)
-    else:
-        from llama_cpp import Llama
-        from llama_cpp.llama_chat_format import MTMDChatHandler
-        handler = MTMDChatHandler(
-            clip_model_path=projector_path, use_gpu=False, verbose=False,
-        )
-        instance = Llama(
-            model_path=model_path,
-            chat_handler=handler,
-            n_gpu_layers=0,
-            n_ctx=2048,
-            n_batch=512,
-            n_ubatch=256,
-            n_threads=2,
-            n_threads_batch=2,
-            verbose=False,
-        )
+    # Qwen is isolated in a pinned official llama.cpp process. There is
+    # deliberately no second local vision model or silent model fallback.
+    from qwen3vl_local_server import load
+    instance = load(model_path, projector_path)
     _model = instance
     print(json.dumps({"event": "LOCAL_VISION_MODEL_READY", "model": VISION_MODEL_VARIANT,
                       "modelRevision": MODEL_REVISION}), flush=True)
@@ -421,7 +376,7 @@ def _detail_regions(image_url: str, overview: str, question: str = "") -> list[t
         overview + " " + question, flags=re.I,
     ))
     # Detailed wide character/reference pages typically have a light paper
-    # field and nontrivial line work. Don't require SmolVLM's vague caption
+    # field and nontrivial line work. Don't require the first model caption
     # to say 'turnaround' before exposing the figures at usable scale.
     image_looks_like_sheet = (
         width >= height * 1.2 and paper_fraction >= .48
@@ -826,8 +781,8 @@ def _ask_vision_local(image_url: str, question: str, report_phase=None, should_c
             )
             try:
                 fused, fused_seconds, fused_first_chunk, fused_finish_reason = generate(
-                    _prepare_image(image_url, max_side=640),
-                    fusion_prompt, 192, region="Whole-scene synthesis",
+                    image,  # Full overview pixels, not a smaller 640px reconstruction.
+                    fusion_prompt, 256, region="Whole-scene synthesis",
                 )
                 integrated = {
                     "description": fused, "elapsedSeconds": fused_seconds,
@@ -847,16 +802,15 @@ def _ask_vision_local(image_url: str, question: str, report_phase=None, should_c
                 print(json.dumps({"event": "LOCAL_VISION_FUSION_FAILED",
                                   "errorType": type(exc).__name__}), flush=True)
 
-        # Raw level comparisons and raw crop outputs stay inspectable. Only
-        # promote a joint interpretation if it adds at least as many distinct
-        # concrete attributes as the best local crop. Keyword matching is a
-        # conservative display gate, NOT an accuracy or confidence metric.
+        # Present a coherent whole-scene interpretation when it contains
+        # concrete visual attributes, even if the combined four crops contain
+        # more tracked keywords. Four descriptions naturally have more words,
+        # but that is NOT evidence they are more accurate than one synthesis.
+        # Reject only an entirely generic/empty integration; retain all crop
+        # observations for provenance, regardless of which text is selected.
         if integrated:
             fused_text = integrated["description"]
-            best_local = max((_visual_specificity(item["description"])
-                              for item in region_records), default=0)
-            joint_specificity = _visual_specificity(fused_text)
-            chosen = joint_specificity >= best_local and joint_specificity > 0
+            chosen = _visual_specificity(fused_text) > 0 and not _needs_detail_retry(fused_text)
             report_detail(integratedSelected=chosen,
                           integratedOutcome="SELECTED" if chosen else "NOT_SELECTED")
             if chosen:
@@ -879,12 +833,12 @@ def _ask_vision_local(image_url: str, question: str, report_phase=None, should_c
             else:
                 # A rejected synthesis still happened. Preserve its actual
                 # text with explicit provenance instead of silently hiding it.
-                note = ("\nWhole-image synthesis (not selected by descriptor "
-                        "heuristic; accuracy unverified):\n" + fused_text)
+                note = ("\nWhole-image synthesis (too generic to select; "
+                        "accuracy unverified):\n" + fused_text)
                 if len(content) + len(note) <= MAX_DESCRIPTION_CHARS:
                     content += note
                 else:
-                    brief = "\nWhole-image synthesis ran but was not selected; raw text omitted due to size limit."
+                    brief = "\nWhole-image synthesis was too generic; raw text omitted due to size limit."
                     if len(content) + len(brief) <= MAX_DESCRIPTION_CHARS:
                         content += brief
         elif region_records:
