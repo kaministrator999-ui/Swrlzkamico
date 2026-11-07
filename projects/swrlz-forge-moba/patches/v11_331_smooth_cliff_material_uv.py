@@ -17,10 +17,10 @@ def apply(html):
     # A later rigged-mesh pass ALREADY adds uv2 for cliff materials. Do not
     # duplicate its working channel. Recent Three.js versions call the same
     # second set "uv1"; alias the existing attribute just for this starter.
-    old = (" if(part.cliffPBR&&g.getAttribute('uv')&&!g.getAttribute('uv2'))\\n"
+    old = (" if(part.cliffPBR&&g.getAttribute('uv')&&!g.getAttribute('uv2'))\n"
            "  g.setAttribute('uv2',g.getAttribute('uv').clone());")
-    new = old + ("\\n if(part.cliffPBR?.atlas==='cliff_pbr_atlas_384'&&"
-                 "g.getAttribute('uv2')&&!g.getAttribute('uv1'))\\n"
+    new = old + ("\n if(part.cliffPBR?.atlas==='cliff_pbr_atlas_384'&&"
+                 "g.getAttribute('uv2')&&!g.getAttribute('uv1'))\n"
                  "  g.setAttribute('uv1',g.getAttribute('uv2'));")
     html = once(html, old, new, "preserve existing AO uv2 and alias modern uv1")
 
