@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.308",
+  "name": "§wyrl§ Engine v11.309",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_308.html",
+  "finalArtifact": "swyrl_engine_v11_309.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -353,8 +353,9 @@
     "patches/v11_305_vanguard_complete_mesh_uv.py",
     "patches/v11_306_sheep_pursuit_performance.py",
     "patches/v11_307_arcane_vr_glove_orientation.py",
-    "patches/v11_308_arcane_grip_fit_hide_rays.py"
+    "patches/v11_308_arcane_grip_fit_hide_rays.py",
+    "patches/v11_309_arcane_native_ray_aim.py"
   ],
-  "finalBytes": 8399073,
-  "finalSha256": "a0148e2a9d406ef806bc580eee692e66011dc0922a0573ae07820d4f9f242511"
+  "finalBytes": null,
+  "finalSha256": null
 }
