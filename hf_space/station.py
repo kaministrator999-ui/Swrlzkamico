@@ -42,7 +42,7 @@ import chatgpt_account_memory
 import personal_history_lookup
 import private_account_facts_v208
 from runtime_capacity import runtime_capacity_snapshot, ResponseResourceMeter
-from chat_vision import export_threads_with_vision_handoffs
+from chat_vision import export_threads_with_vision_handoffs, vision_job_resource_receipt
 import tempfile
 from project_archive import ProjectArchiveError, archive_filename, build_project_archive, parse_project_files, project_markdown, source_fences, validate_project_files
 from project_revision_workspace import RevisionWorkspaceError, merge_project_revision_files
@@ -1540,6 +1540,8 @@ def _run(key,request_id,model_id,payload,assistant_id,forge_context=None):
             if online_trace: telemetry_meta["onlineTrace"]=online_trace
             if online_log_persistence: telemetry_meta["onlineLogPersistence"]=online_log_persistence
             if programming_telemetry: telemetry_meta["programmingTelemetry"]=programming_telemetry
+            if isinstance(payload.get("visionResourceUsage"),dict):
+                telemetry_meta["visionResourceUsage"]=copy.deepcopy(payload["visionResourceUsage"])
             artifact_id=str(intent.get("artifactTargetId") or "")
             artifact=(_find_artifact(thread,artifact_id)
                       if artifact_id and intent.get("artifactMutationRequested")
@@ -1949,6 +1951,10 @@ async def _send_owned(request,body,forge_context):
     # user-supplied thread id as an identity or OAuth credential.
     _,verified_user=_account_session(request)
     google_owner=str((verified_user or {}).get("id") or "")
+    # Never trust browser telemetry: cross-check the live Qwen job against
+    # verified account identity AND its exact saved model-description handoff.
+    vision_receipt=(vision_job_resource_receipt(google_owner,body.get("visionJobId"),prompt)
+                    if isinstance(body.get("visionJobId"),str) else None)
     profile_id=str(body.get("profileId") or "LALM")
     if profile_id not in ("LALM","default","gegd"):profile_id="LALM"
     if google_owner.startswith("google:") and account_chat_store.configured():
@@ -2018,7 +2024,8 @@ async def _send_owned(request,body,forge_context):
         history=_history_projection(t)
         pins=t.get("messagePins") if isinstance(t.get("messagePins"),dict) else {}
         pinned_context=[_artifact_context_item(t,m) for m in t["messages"] if pins.get(str(m.get("id") or "")) and m.get("role") in ("user","assistant")]
-        t["messages"].append({"id":str(body.get("messageId") or uuid.uuid4().hex),"role":"user","text":prompt,"createdAt":now_ms,"meta":{"requestId":rid,"modelId":model_id,**({"contentTag":content_tag} if content_tag else {})}})
+        t["messages"].append({"id":str(body.get("messageId") or uuid.uuid4().hex),"role":"user","text":prompt,"createdAt":now_ms,"meta":{"requestId":rid,"modelId":model_id,**({"contentTag":content_tag} if content_tag else {}),
+                    **({"visionResourceUsage":copy.deepcopy(vision_receipt)} if vision_receipt else {})}})
         s["currentId"]=tid
         try:_commit_revision(s)
         except HTTPException as exc:
@@ -2028,6 +2035,8 @@ async def _send_owned(request,body,forge_context):
             raise
         s["activeGeneration"]={"requestId":rid,"threadId":tid,"modelId":model_id,"requestedModelId":model_id,"selectedModelId":model_id,"text":"","phase":"QUEUED","terminal":False,"lastSeq":0,"status":[{"phase":"QUEUED","reason":"Accepted by Workstation","atUnixMs":now_ms}],"acceptedAtUnixMs":now_ms,"startedAtUnixMs":None,"completedAtUnixMs":None,"queueWaitMs":None,"stationTiming":None,"resourcePlan":None,"diagnosticTrace":None,"memoryCandidates":[],"responseCognition":None,"onlineResearch":None,"onlineTrace":[],"onlineLogPersistence":None,"sources":[],"widgets":[],"programmingIntent":None,"intentContract":None,"failureEvidence":None,"repairConstraints":None,"behaviorLedger":None,"behaviorRepairBase":None,"candidateValidation":None,"candidateAttempts":[],"generationTelemetry":None,"engineCompletionTelemetry":None,"repairDiagnostics":[],"artifactReceipt":None,"githubTelemetryPersistence":None}
     payload={"requestId":rid,"threadId":tid,"prompt":prompt,"history":history,"pinnedContext":pinned_context,"profileId":profile_id,"profile":profile,"userProfile":user_profile,"temporalContext":temporal_context,"clientLocation":client_location,"priorProgrammingState":copy.deepcopy(t.get("programmingState") or {})}
+    if vision_receipt:
+        payload["visionResourceUsage"]=copy.deepcopy(vision_receipt)
     local_project_intent=_owned_project_edit_intent(t,prompt,history,pinned_context,payload["priorProgrammingState"])
     if local_project_intent:
         payload["programmingIntent"]=copy.deepcopy(local_project_intent)
