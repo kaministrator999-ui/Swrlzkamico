@@ -52,3 +52,5 @@ jobs:
 # Retry with source excerpt diagnostics.
 
 # v11.256 sheep AI preservation is intentional.
+
+# Print current wolf implementation on anchor mismatch.
