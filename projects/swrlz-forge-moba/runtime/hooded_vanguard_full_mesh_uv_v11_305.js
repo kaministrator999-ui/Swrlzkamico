@@ -72,7 +72,7 @@ function se305Ear(side){
   const y=4.187+.155*Math.sin(phi)-.025*v;
   const z=.018+outer*Math.cos(phi)+.018*flare-.011*Math.sin(3*Math.PI*v);
   return [x,y,z-inner*Math.sin(Math.PI*u)];
- },(u,v)=>[side<0?.075+.075*v:.85+.075*v,.43+.21*u]);
+ },(u,v)=>[(side<0 ? .075+.075*v : .85+.075*v),.43+.21*u]);
 }
 function se305Face(){
  // Preserve accurate v11.303 facial anatomy and its aligned portrait map.
