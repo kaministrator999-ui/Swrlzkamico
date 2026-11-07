@@ -532,7 +532,7 @@ tree = ast.parse(router_source)
 selected = [node for node in tree.body if isinstance(node, (ast.Assign, ast.FunctionDef)) and (
     isinstance(node, ast.FunctionDef) and node.name in {
         "_ground_vision_handoff", "_direct_vision_description",
-        "_vision_evidence_digest",
+        "_vision_evidence_digest", "_guard_vision_answer",
     }
     or isinstance(node, ast.Assign) and any(
         isinstance(target, ast.Name) and target.id in {"_VISION_START", "_VISION_END"}
@@ -615,6 +615,80 @@ assert "moon symbol [Center-right detail]" in mage_inference["prompt"]
 assert "For project/modeling questions" in mage_inference["prompt"]
 assert mage_payload["prompt"].endswith(vision.VISION_END)
 assert len(mage_inference["prompt"]) < 4300, "Keep 700M inference context bounded"
+
+# Turnaround layout is a vision-reported page observation, not an invitation
+# to invent fractured anatomy or mystical story arcs.
+turnaround_case = """Local vision observations (accuracy unverified):
+Cross-region feature index (exact phrases extracted from unverified crop captions; NOT independently seen or confirmed):
+Hair: white hair [Center-left detail]
+Clothing: purple clothes [Center-left detail]; purple hoodie [Center-right detail]
+Symbols: moon symbol [Center-right detail]
+Handheld items: wand [Center detail]; stick [Far-left detail]
+Far-left detail (source-image crop): A girl holding a stick.
+Center-left detail (source-image crop): White hair and purple clothes.
+Center detail (source-image crop): A girl with a wand.
+Center-right detail (source-image crop): A hood with a moon symbol.
+Far-right detail (source-image crop): A purple-and-gold item.
+Whole-image synthesis (not selected by descriptor heuristic; accuracy unverified):
+Character turnarounds.
+Region descriptions are unverified local vision-model observations."""
+turnaround_digest = digest(turnaround_case)
+assert "Page layout (vision-model suggestion, UNVERIFIED)" in turnaround_digest
+assert "different angles of the SAME design" in turnaround_digest
+assert "moon symbol [Center-right detail]" in turnaround_digest
+assert "Character turnarounds." not in turnaround_digest
+turnaround_payload = {
+    "prompt": "What do you see in this image?" + vision.VISION_START
+              + turnaround_case + vision.VISION_END,
+    "history": history, "pinnedContext": ["§E modeling"]
+}
+turnaround_inference = ground(turnaround_payload)
+assert "NOT a list of hypothetical" in turnaround_inference["prompt"]
+assert "NOT a list of hypothetical" not in turnaround_payload["prompt"]
+assert "SAME design" in turnaround_inference["prompt"]
+assert "moon symbol [Center-right detail]" in turnaround_inference["prompt"]
+assert turnaround_inference["history"] is history
+
+guard = namespace["_guard_vision_answer"]
+off_task = """This image is a fragmented representation of a character.
+It might depict a dreamlike state and multiple identities or a magical transformation.
+The fragmented consciousness may be an artistic experiment."""
+terminal = {"type": "COMPLETED", "phase": "COMPLETE"}
+def answer_events(answer, final=terminal):
+    return iter([{"type": "STATUS", "phase": "MODEL_DECODING"},
+                 {"type": "DELTA", "text": answer[:35]},
+                 {"type": "DELTA", "text": answer[35:]},
+                 final])
+repaired = list(guard(answer_events(off_task), turnaround_payload["prompt"]))
+assert any(e.get("phase") == "VISION_ANSWER_GROUNDING_GUARD" for e in repaired)
+replacement = "".join(e.get("text", "") for e in repaired if e.get("type") == "DELTA")
+assert "character turnaround/reference sheet" in replacement
+assert "white hair [Center-left detail]" in replacement
+assert "moon symbol [Center-right detail]" in replacement
+assert "dreamlike state" not in replacement
+assert "multiple identities" not in replacement
+assert repaired[-1]["type"] == "COMPLETED"
+
+# No overbroad filtering: a good factual answer remains model-authored.
+good = "The local captions suggest one mage viewed from several sides, wearing purple clothes."
+preserved = list(guard(answer_events(good), turnaround_payload["prompt"]))
+assert "".join(e.get("text", "") for e in preserved if e.get("type") == "DELTA") == good
+assert all(e.get("phase") != "VISION_ANSWER_GROUNDING_GUARD" for e in preserved)
+
+# An explicit interpretive question remains free to explore possibilities;
+# only ordinary image-inventory responses receive the grounded fallback.
+creative_prompt = ("What could this fantasy story symbolize?" + vision.VISION_START
+                   + turnaround_case + vision.VISION_END)
+creative = list(guard(answer_events(off_task), creative_prompt))
+assert "".join(e.get("text", "") for e in creative if e.get("type") == "DELTA") == off_task
+assert all(e.get("phase") != "VISION_ANSWER_GROUNDING_GUARD" for e in creative)
+plain = list(guard(answer_events(off_task), "What do you see in this image?"))
+assert "".join(e.get("text", "") for e in plain if e.get("type") == "DELTA") == off_task
+failure = {"type": "FAILED", "reason": "mocked model stop"}
+failed = list(guard(answer_events(off_task, failure), turnaround_payload["prompt"]))
+assert "".join(e.get("text", "") for e in failed if e.get("type") == "DELTA") == off_task
+assert failed[-1]["type"] == "FAILED"
+
 
 assert "VISION_CONTEXT_REASONING" in router_source
 assert "VISION_DESCRIPTION_DIRECT" in router_source
