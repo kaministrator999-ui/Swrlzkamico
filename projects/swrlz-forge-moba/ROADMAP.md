@@ -1,3 +1,7 @@
+## §E v11.305 · Whole Hooded Vanguard mesh + UV reconstruction (2026-11-06)
+
+The owner requested a **whole-model sculpt and UV mapping fix together**, not just another face/texture patch. The new character factory replaces the old planar body projection with true front/back radial seam UVs for the torso, tapered arms/legs and swept forearms; builds a soft open hood, cowl and overlapping scarf, two-sided teal cloth, rounded boots, a buckled waist belt, shaped cartilage ears and naturally aligned five-digit hands. The existing successful chest and shoulder surfaces keep their original contour and UVs, gaining closed metal thickness. Retains the improved v11.303 768px face portrait and hair, all eleven dedicated painted color/normal/roughness material families, all **17 native editable part IDs** and previous v11.304 document synchronization. Other Modeler starters, Chat, VR, Sheep Tag and saved projects are unaffected. The owner will determine actual visual quality on Android/Quest. [Full checkpoint](docs/VANGUARD_COMPLETE_MESH_UV_V11_305.md).
+
 ## §E v11.304 · Loaded models refresh the open Modeler (deployed)
 
 Loading a saved native model into an already-open Model Atelier now rebuilds its derived mesh scene, mesh list and inspector in place. Previously, the document and JSON could contain every saved part while the old empty viewport and GLB export still contained no meshes. The synchronization follows the effective native/scratch model that was actually rendered, so valid empty scratch documents also clear the previous view correctly.
