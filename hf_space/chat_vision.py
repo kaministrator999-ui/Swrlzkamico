@@ -1004,24 +1004,37 @@ def install(app, require_account) -> None:
             analysis_levels = payload.get("analysisLevels", 2)
             if type(analysis_levels) is not int or analysis_levels not in (1, 2, 3):
                 raise ValueError("VISION_LEVEL_INVALID")
+            vision_request_id = payload.get("visionRequestId", "")
+            if not isinstance(vision_request_id, str) or len(vision_request_id) > 128 or (
+                vision_request_id and not re.fullmatch(r"[A-Za-z0-9_-]{12,128}", vision_request_id)
+            ):
+                raise ValueError("VISION_REQUEST_ID_INVALID")
         except (ValueError, UnicodeDecodeError, json.JSONDecodeError) as exc:
             code = str(exc) if isinstance(exc, ValueError) and str(exc) in {
                 "IMAGE_TOO_LARGE", "IMAGE_FORMAT_INVALID", "IMAGE_BASE64_INVALID", "REQUEST_INVALID",
-                "VISION_LEVEL_INVALID",
+                "VISION_LEVEL_INVALID", "VISION_REQUEST_ID_INVALID",
             } else "REQUEST_INVALID"
             return _error(413 if code == "IMAGE_TOO_LARGE" else 400, code,
                           "Upload a valid JPEG, PNG or WebP image under 8 MB.")
 
-        # Idempotent retry for an interrupted browser request. We do not queue
-        # unlimited pixels/jobs or dispatch overlapping llama.cpp CPU inference.
-        fingerprint = hashlib.sha256((image + "\0" + question + "\0" + str(analysis_levels)).encode("utf-8")).hexdigest()
+        # CLIENT → SERVER: a new Send gets a new visionRequestId; network
+        # retries of the *same* submission keep that ID. This preserves
+        # idempotency without silently replaying a COMPLETE job when someone
+        # intentionally uploads the identical image/question again. Legacy
+        # clients without an ID deduplicate only still-running jobs.
+        # The image itself is not retained in the job map or logs.
+        fingerprint = hashlib.sha256((
+            image + "\0" + question + "\0" + str(analysis_levels) +
+            "\0" + vision_request_id
+        ).encode("utf-8")).hexdigest()
         now = time.monotonic()
         with _jobs_lock:
             _prune_jobs(now)
             _cancel_unwatched_jobs(now)
             prior = next((job for job in _jobs.values()
                           if job["owner"] == owner and job["fingerprint"] == fingerprint
-                          and (job["phase"] in ACTIVE_PHASES or job["phase"] == "COMPLETE")
+                          and (job["phase"] in ACTIVE_PHASES or
+                               (bool(vision_request_id) and job["phase"] == "COMPLETE"))
                           and not job["cancelEvent"].is_set()), None)
             if prior:
                 job_id = prior["id"]
@@ -1049,7 +1062,9 @@ def install(app, require_account) -> None:
                     daemon=True, name="vision-cpu-" + job_id[:8],
                 ).start()
         return JSONResponse(
-            {"ok": True, "jobId": job_id, "phase": phase, "done": phase not in ACTIVE_PHASES},
+            {"ok": True, "jobId": job_id, "phase": phase,
+             "resumedExistingJob": bool(prior),
+             "done": phase not in ACTIVE_PHASES},
             status_code=202,
             headers={"Cache-Control": "no-store"},
         )
