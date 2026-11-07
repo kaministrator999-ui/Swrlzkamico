@@ -355,6 +355,6 @@
     "patches/v11_307_arcane_vr_glove_orientation.py",
     "patches/v11_308_arcane_grip_fit_hide_rays.py"
   ],
-  "finalBytes": null,
-  "finalSha256": null
+  "finalBytes": 8399073,
+  "finalSha256": "a0148e2a9d406ef806bc580eee692e66011dc0922a0573ae07820d4f9f242511"
 }
