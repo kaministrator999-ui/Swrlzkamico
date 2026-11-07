@@ -4,3 +4,4 @@ NO_SPACE_MUTATION=YES
 RECHECK=Capture sanitized startup exception detail
 MODEL_ENV_CHECK=YES
 POST_DEPLOY_RUNTIME_HEALTH=Release 42349862830 success; verify RUNNING
+STARTUP_PREWARM_POST_DEPLOY_824331=Verify running stage and server-side warmup events after authorized prewarm release
