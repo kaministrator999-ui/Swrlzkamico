@@ -5,23 +5,55 @@ sdk: gradio
 app_file: app.py
 pinned: false
 preload_from_hub:
-  - "ggml-org/SmolVLM-500M-Instruct-GGUF SmolVLM-500M-Instruct-Q8_0.gguf,mmproj-SmolVLM-500M-Instruct-Q8_0.gguf 72e986006ef53e37cdd3f6d4241c90b0f01df376"
+  - "Qwen/Qwen3-VL-4B-Instruct-GGUF Qwen3VL-4B-Instruct-Q4_K_M.gguf,mmproj-Qwen3VL-4B-Instruct-Q8_0.gguf 1cd86afb9a95c410a6038ab3b40d8b578c892266"
 ---
 
 # §wyrlz R39 isolated candidate
 
-### Experimental model evaluation branch (NOT deployed)
+### Qwen3-VL-4B CPU image analysis trial (deployment still requires guarded release)
 
-This isolated branch pins the official ggml-org SmolVLM-500M-Instruct Q8_0
-GGUF and its matching projector, at a verified immutable model revision.
-The production §C vision baseline remains SmolVLM-256M until the new model
-is proven to load and improve real character-sheet recognition on the
-existing free CPU hardware. Changes are model-only to isolate the variable;
-existing crop sequencing, privacy, cancellation, and honest output receipts
-are intentionally preserved. The new model may increase inference latency.
+This source branch selects Qwen3-VL-4B-Instruct Q4_K_M plus its Q8 vision
+projector, pinned to the immutable official model revision above. Source
+image bytes stay inside the authenticated Space request. A pinned official
+llama.cpp executable runs Qwen on loopback only so the established Python
+llama-cpp text/model routes remain unchanged. **Qwen3-VL-4B is the sole active
+vision model.** The retired SmolVLM route and its build-time weight preload
+have been removed; historical notes below describe earlier versions only.
 
+Qwen is prewarmed once by the Space's background startup worker, using the
+exact llama.cpp commit pinned in `qwen3vl_local_server.py`. The worker builds
+the executable if needed, then holds the loaded local model server resident for
+subsequent images in that Space process. Chat startup does not wait for the
+prewarm; no additional frontend model-status UI is needed. A Space restart or
+runtime eviction requires a new load, and the first image can still wait if it
+arrives before prewarm finishes. The current CPU configuration can have a long
+cold start; a live image inference receipt remains required to verify success.
 
-This is a migration candidate, not a claim of production Chat parity. The real R39 engine and its accepted overlays are staged from the canonical repository. The model is reconstructed on startup from 54 SHA-verified source chunks pinned to the exact source commit. A full clean-room Chat transport, account persistence, and queue migration require separate acceptance.
+This trial preserves the chat image source privacy boundary and existing
+per-pass observations. It does not enable an external inference API, publish
+images to third parties, or rewrite older release records.
+
+### Current Qwen3-VL image analysis
+
+Default analysis uses the same prewarmed Qwen3-VL model for a concise
+whole-image overview (up to 768px), zero to two focused source-pixel
+close-ups *only when details are useful*, and one whole-image synthesis
+when close-ups were actually generated. Geometric detail regions emphasize
+face/hood features, outfit or armor ornamentation, or small annotations
+requested by the user; they never pretend to identify objects semantically.
+No blanket four-crop pass is required for character turnarounds.
+The overview prompt targets 80–120 words rather than lengthy per-view
+lists that hit the decoder limit. The final modeling pass receives the full
+768px overview pixels and a 320-token budget, with concise labeled sections.
+The visible analysis card shows abbreviated progressive findings, has a
+bounded mobile height and optional expanded raw observations. The final
+chat handoff leads with the integrated description and up to two clearly
+labeled crop notes without repeating the full first-pass transcript.
+This remains one model, not a parallel vision ensemble. Simple images
+without useful close-up regions take the one-pass route.
+
+Earlier descriptions below are retained as historical release notes;
+they do not define the active Qwen-only configuration.
 
 ### Chat v1.1.28 — original-image transport, native server crops
 

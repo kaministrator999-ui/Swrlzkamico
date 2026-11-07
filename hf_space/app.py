@@ -265,6 +265,9 @@ app=gr.mount_gradio_app(app,legacy["demo"],path="/legacy",ssr_mode=False)
 def _warm_backends():
     """Prewarm primary text and CPU vision before optional model routes."""
     from chat_vision import prewarm_local_model
+    # The existing daemon worker starts with the Space, independently of
+    # accepting chat connections. Qwen stays loaded in its loopback server
+    # across subsequent image requests for this process lifetime.
     for name,loader in (("700m",large_load),("vision",prewarm_local_model),
                         ("coder",coder_load),("stock",original_load),("r39",engine)):
         start=time.perf_counter()

@@ -87,7 +87,7 @@ jobs:
           brain = (root / "brain_programming.py").read_text(encoding="utf-8")
           engine700 = (root / "lfm2_700m_engine.py").read_text(encoding="utf-8")
           r39 = (root / "accepted_runtime" / "lalm" / "r39_engine.py").read_text(encoding="utf-8")
-          assert "SWRLZ_CODE_TRUTH v1" in brain and "offline-first" in brain, "HF Code Truth policy missing"
+          assert "SWRLZ_CODE_TRUTH v2" in brain and "Self-review is not execution evidence" in brain, "HF Code Truth policy missing"
           assert "CODE_TRUTH_POLICY" in engine700, "700M programming route is not consuming Code Truth policy"
           assert "_V91_COMMIT" in r39 and "r39_engine_v91_overlay.py" in r39, "Staged R39 v91 programming overlay missing"
           print("Static package shape + Code Truth programming layer accepted; runtime inference still requires separate verification.")
@@ -184,7 +184,7 @@ jobs:
           set -euo pipefail
           PYTHONPATH=hf_space python - <<'PY'
           import json
-          from lfm2_700m_engine import generate_events, CONTEXT_TOKENS, INPUT_BUDGET_TOKENS
+          from lfm2_700m_engine import generate_events, CONTEXT_TOKENS, INPUT_BUDGET_TOKENS, MIN_OUTPUT_TOKENS, CONTEXT_SAFETY_TOKENS
           payload={
               'requestId':'hf-predeploy-700m-context-smoke',
               'prompt':"How's things going 😊",
@@ -195,15 +195,15 @@ jobs:
           events=list(generate_events(payload))
           context=next((e for e in events if e.get('type')=='CONTEXT'),None)
           text=''.join(str(e.get('text') or '') for e in events if e.get('type')=='DELTA').strip()
-          assert CONTEXT_TOKENS==8192, CONTEXT_TOKENS
-          assert INPUT_BUDGET_TOKENS==6016, INPUT_BUDGET_TOKENS
+          assert CONTEXT_TOKENS==32768, CONTEXT_TOKENS
+          assert INPUT_BUDGET_TOKENS==CONTEXT_TOKENS-MIN_OUTPUT_TOKENS-CONTEXT_SAFETY_TOKENS, INPUT_BUDGET_TOKENS
           assert context and context.get('estimatedInputTokens',10**9)<=INPUT_BUDGET_TOKENS, context
           assert text, '700M context smoke generated no response'
           print(json.dumps({
               'route':'700m',
               'contextWindowTokens':CONTEXT_TOKENS,
               'inputBudgetTokens':INPUT_BUDGET_TOKENS,
-              'reservedOutputTokens':2048,
+              'reservedOutputTokens':context.get('reservedOutputTokens'),
               'estimatedInputTokens':context.get('estimatedInputTokens'),
               'historyMessagesDropped':context.get('historyMessagesDropped'),
               'responseChars':len(text),

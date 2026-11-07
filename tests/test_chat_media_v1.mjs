@@ -125,8 +125,8 @@ assert.match(backend,/phaseElapsedSeconds/);
 assert.match(backend,/elapsedSeconds/);
 assert.match(backend,/max_tokens=tokens/);
 assert.match(backend,/generate\(image, prompt, MAX_VISION_OUTPUT_TOKENS\)/);
-assert.match(backend,/DETAIL_RETRY_SIDE = 640/);
-assert.match(backend,/DETAIL_RETRY_TOKENS = 144/);
+assert.ok(backend.includes('DETAIL_RETRY_SIDE = 768'));
+assert.ok(backend.includes('DETAIL_RETRY_TOKENS = 224'));
 assert.match(backend,/MAX_BODY_BYTES = 12_000_000/);
 assert.match(backend,/MAX_IMAGE_BYTES = 8 \* 1024 \* 1024/);
 assert.match(backend,/focus_center=True/);
@@ -134,21 +134,49 @@ assert.match(backend,/def _source_image_metadata\(/);
 assert.match(html,/observed==="DETAIL_RETRY"/);
 assert.match(html,/observed==="DETAIL_PREFILL"/);
 assert.match(html,/observed==="DETAIL_DECODING"/);
-assert.match(backend,/WATCH_LEASE_SECONDS = 90/);
+assert.match(backend,/WATCH_LEASE_SECONDS = 20 \* 60/);
+assert.match(html,/if\(event\.type==="HEARTBEAT"\)continue/);
+assert.match(html,/document\.addEventListener\("resume",keepStationHydrated\)/);
+assert.match(station,/next_heartbeat=time\.monotonic\(\)\+15\.0/);
 assert.match(backend,/def _cancel_unwatched_jobs\(/);
 assert.match(backend,/def cancel_vision\(/);
 assert.match(backend,/stream=True/);
 assert.match(backend,/raise VisionCancelled\(\)/);
-// Accept only the two pinned local SmolVLM CPU candidates; the dedicated
-// Python contract verifies the exact selected model/projector/revision pair.
-assert.match(backend,/^MODEL_REPO = "ggml-org\/SmolVLM-(?:256|500)M-Instruct-GGUF"$/m);
-assert.ok(backend.includes("MTMDChatHandler"));
+// The image analyzer has only Qwen3-VL, with no legacy alternate backend.
+assert.ok(backend.includes('MODEL_REPO = "Qwen/Qwen3-VL-4B-Instruct-GGUF"'));
+assert.ok(backend.includes('VISION_MODEL_VARIANT = "qwen3-vl-4b"'));
+assert.ok(!backend.includes("MTMDChatHandler"));
+assert.ok(!backend.includes("ggml-org/SmolVLM"));
 assert.ok(!backend.includes("SWRLZ_VISION_API_KEY"),"no paid inference credentials needed");
 assert.ok(!backend.includes("router.huggingface.co"),"no paid inference provider calls");
 assert.match(backend,/MAX_IMAGE_PIXELS = 16_000_000/);
 assert.match(backend,/def _run_vision_job\(/);
 assert.match(backend,/def _detail_regions\(/);
 assert.match(backend,/spatialRegionRecords/);
+assert.match(backend,/referenceProgress/);
+assert.match(html,/vision-reference-findings/);
+assert.match(html,/showReferenceFindings\(timing\)/);
+assert.match(html,/referenceProgress:state\.referenceProgress/);
+assert.match(html,/Final modeling description/);
+assert.match(html,/Read full observation/);
+assert.match(html,/vision-reference-more/);
+// The image analysis card must not trap touch scrolling in a nested 72dvh
+// scrollport; swiping anywhere on it scrolls the single chat viewport.
+assert.match(html,/\.vision-work-card\{[^}]*max-height:none;overflow:visible;touch-action:pan-y/s);
+assert.ok(!html.includes('max-height:72dvh;overflow-y:auto;overscroll-behavior:contain'),"no nested image-card scroll trap");
+// Both an in-progress attachment and the committed chat image get the same
+// keyboard/Android-tappable expanded image preview, with native Escape close.
+assert.match(html,/const openVisionImagePreview=\(imageUrl/);
+assert.match(html,/dialog\.showModal\(\);close\.focus\(\)/);
+assert.match(html,/dialog\.addEventListener\("close",\(\)=>dialog\.remove\(\)/);
+assert.match(html,/previewButton\.addEventListener\("click",\(\)=>openVisionImagePreview\(attachment\.url/);
+assert.match(html,/expand\.addEventListener\("click",\(\)=>openVisionImagePreview\(previewURL/);
+assert.match(html,/vision-image-dialog-close/);
+assert.match(backend,/proposals = proposals\[:2\]/);
+assert.match(backend,/about 80 to 120 words/);
+assert.match(backend,/Focused image details/);
+assert.ok(!backend.includes('"\\n\\nSource observations:\\n"'),"final response must not repeat the whole raw overview");
+assert.ok(!html.includes('Checking for contradictions'),"internal inference consistency checks stay hidden");
 assert.match(backend,/def vision_status\(/);
 assert.match(backend,/threading\.Thread\(/);
 assert.match(backend,/ACTIVE_PHASES/);

@@ -1,0 +1,16 @@
+APPROVED_BY_USER=YES
+TARGET_SPACE=kamiloki/Swyrlz
+DEPLOYMENT_WORKFLOW=manual-hf-space.yml
+REQUEST=qwen3-vl-4b image analysis in existing swyrlz chat
+SAFETY=snapshot existing space and rollback checkpoint before upload; preserve SmolVLM fallback
+RETRY_REASON=Align stale v1 Code Truth release check with verified current v2 policy; no package upload occurred in first attempt.
+RETRY_32K_BUDGET=Release smoke expected obsolete 8192/6016. Source uses 32768 with dynamic derived input limit.
+RUNTIME_RECOVERY_APPROVAL=YES
+RUNTIME_FAILURE_CAUSE=Existing Space variable Qwen/Qwen2.5-VL-3B-Instruct rejected by Qwen3 selector
+FIX_SCOPE=explicit legacy migration; defer heavy Qwen startup; mobile response continuity; no architecture replacement
+STARTUP_PREWARM_RELEASE_20261107=approved ongoing Qwen image integration; restore prewarm on Space startup without new UI
+QWEN3_ONLY_WHOLE_CROP_FUSION_20261107=Use only Qwen3-VL for image analysis; remove Smol model preload and runtime selector; preserve 768px overview and integrate native pixel crops
+QWEN_ONLY_GUARD_RETRY_1=New guard checks sole Qwen3 model and rejects retired image model files
+REFERENCE_PROGRESSIVE_FIVE_20261107=Progressive numbered reference findings 1-4 as real image/crop passes finish, integrated modeling description 5, no exposed contradiction checks
+SELECTIVE_REFERENCE_CROPS_FORMAT_20261107=Skip unnecessary repeated crops, perform no more than two close-ups for useful fine detail, concise complete overview, structured readable final, compact mobile analysis card
+VISION_CARD_SCROLL_IMAGE_LIGHTBOX_20261107=Restore single conversation scrollport over image analysis card; enlarge pending and committed image previews in native closeable modal
