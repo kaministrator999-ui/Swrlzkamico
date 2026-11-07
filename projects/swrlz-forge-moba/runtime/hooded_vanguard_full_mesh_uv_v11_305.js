@@ -135,15 +135,41 @@ function se305Shawl(){
  return se305Combine(cloth);
 }
 function se305Armor(current){
- // Preserve the owner's decent armor form, add a real back layer and bevel
- // around its existing front *without moving* its original contour/UV.
+ // Preserve the already-good armor outline and authored UVs; make genuine
+ // thickness with a back surface AND a closed gold-trimmed boundary wall.
  const front=current,back={positions:[],uvs:[...front.uvs],indices:[]};
+ const inset=.024;
  for(let i=0;i<front.positions.length;i+=3)
   back.positions.push(front.positions[i],front.positions[i+1],
-   front.positions[i+2]-.024);
+   front.positions[i+2]-inset);
  for(let i=0;i<front.indices.length;i+=3)
   back.indices.push(front.indices[i],front.indices[i+2],front.indices[i+1]);
- return se305Combine([front,back]);
+ // Only exposed triangle edges form the panel rim. Shared interior edges
+ // are cancelled, so this does not spawn thousands of decorative scraps.
+ const boundary=new Map();
+ for(let i=0;i<front.indices.length;i+=3){
+  const a=front.indices[i],b=front.indices[i+1],c=front.indices[i+2];
+  for(const [x,y] of [[a,b],[b,c],[c,a]]){
+   const key=Math.min(x,y)+':'+Math.max(x,y);
+   if(boundary.has(key))boundary.delete(key);
+   else boundary.set(key,[x,y]);
+  }
+ }
+ const rim={positions:[],uvs:[],indices:[]};
+ for(const [a,b] of boundary.values()){
+  const offset=rim.positions.length/3;
+  for(const [i,depth] of [[a,0],[b,0],[b,inset],[a,inset]]){
+   rim.positions.push(front.positions[i*3],front.positions[i*3+1],
+    front.positions[i*3+2]-depth);
+   // Border paint belongs on the actual plate boundary.
+   rim.uvs.push(depth ? .060 : .035,
+    Math.max(.07,Math.min(.93,front.uvs[2*i+1])));
+  }
+  rim.indices.push(offset,offset+1,offset+2,
+   offset,offset+2,offset+3);
+ }
+ if(!boundary.size)throw Error('Cannot close Vanguard armor rim');
+ return se305Combine([front,back,rim]);
 }
 function se305Cloth(side){
  const front=se305MiterBand(64,40,(u,v)=>{
