@@ -390,3 +390,7 @@ owned by that source lane; this task does not change `DEPLOY_REQUEST.json`.
 No source commit, push, deploy request or publication was made by this local
 integration. Paired Chat-driven reference mage construction and owner-device
 visual acceptance remain pending.
+
+## Owner-requested saved-mage cleanup — 2026-11-07
+
+After a fresh verified Google reconnection, both account records were read back and matched their recorded native SHA/part counts. Only the older 41-part revision-3 checkpoint was deleted using its expected revision. A subsequent protected catalog read confirmed one Little Crystal Mage record: the unchanged complete 59-part revision 2. Earlier historical statements that the older checkpoint was preserved describe its state at those checkpoints and are superseded by this owner-directed cleanup. No other account projects were removed.
