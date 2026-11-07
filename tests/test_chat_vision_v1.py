@@ -665,7 +665,15 @@ assert "Whole scene:" in final_prompt[0]["text"]
 assert "Center-right detail" in final_prompt[0]["text"]
 assert any(f.get("inferenceStage") == "FUSION_PREFILL" for _, f in joint_phases)
 assert any(f.get("integratedSelected") is True for _, f in joint_phases)
-assert joint_model.calls[-1]["max_tokens"] == 256
+assert joint_model.calls[-1]["max_tokens"] == 384
+assert any(fields.get("referenceProgress") is True and fields.get("requestedRegions") == 4
+           for _, fields in joint_phases), "show overview before crops finish"
+assert any(fields.get("completedRegions") == 1 for _, fields in joint_phases)
+assert any(fields.get("completedRegions") == 4 for _, fields in joint_phases)
+assert any(fields.get("integratedObservation") for _, fields in joint_phases)
+# The pipeline emits real intermediate results, not fictional consistency stages.
+assert all(fields.get("inferenceStage") not in ("CONTRADICTION_CHECK", "CONSISTENCY_CHECK")
+           for _, fields in joint_phases)
 # A short coherent full-image interpretation must win over four verbose
 # crop observations; total keyword count across crops is not scene accuracy.
 class CompactFusionModel:
