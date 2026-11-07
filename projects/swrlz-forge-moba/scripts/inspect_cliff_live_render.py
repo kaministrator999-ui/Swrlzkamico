@@ -31,7 +31,31 @@ async def handle(route):
                   roughness:texture(m?.roughnessMap),wireframe:m?.wireframe,
                   opaque:m?.opacity,vertexColors:m?.vertexColors,needsUpdate:m?.version,
                   uv:a('uv')?.count,uv1:a('uv1')?.count,uv2:a('uv2')?.count,
-                  position:a('position')?.count,meshUserData:o.userData,worldVisible:o.visible}
+                  position:a('position')?.count,meshUserData:o.userData,worldVisible:o.visible,
+                  uvCoverage:(()=>{
+                    const uv=a('uv'),c=m?.map?.image,ctx=c?.getContext?.('2d');
+                    if(!uv)return null;
+                    const pixels=ctx?.getImageData?.(0,0,c.width,c.height)?.data;
+                    let uMin=Infinity,vMin=Infinity,uMax=-Infinity,vMax=-Infinity;
+                    let dark=0,samples=0;const bins=Array(16).fill(0);
+                    let nr=0,ng=0,nb=0;
+                    for(let i=0;i<uv.count;i++){
+                      const u=uv.getX(i),v=uv.getY(i);
+                      uMin=Math.min(uMin,u);uMax=Math.max(uMax,u);
+                      vMin=Math.min(vMin,v);vMax=Math.max(vMax,v);
+                      const x=Math.max(0,Math.min(3,Math.floor(u*4)));
+                      const y=Math.max(0,Math.min(3,Math.floor(v*4)));
+                      bins[y*4+x]++;
+                      if(pixels){
+                        const j=(Math.max(0,Math.min(c.height-1,Math.floor((1-v)*c.height)))*
+                          c.width+Math.max(0,Math.min(c.width-1,Math.floor(u*c.width))))*4;
+                        nr+=pixels[j];ng+=pixels[j+1];nb+=pixels[j+2];
+                        if((pixels[j]+pixels[j+1]+pixels[j+2])/3<100)dark++;
+                        samples++;
+                      }
+                    }
+                    return {uMin,vMin,uMax,vMax,bins,samples,dark,meanRGB:[nr/samples,ng/samples,nb/samples]};
+                  })()}
               })||[]})"""
             if html.count(needle)!=1:raise RuntimeError('Cannot install read-only Model Atelier mesh inspection')
             return await route.fulfill(body=html.replace(needle,extra,1),content_type='text/html')
