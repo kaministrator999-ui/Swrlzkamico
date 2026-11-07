@@ -412,9 +412,10 @@ def _vision_evidence_digest(description: str) -> str:
     if regions:
         selected.append("Original region captions (fallible, not verified):")
         selected.extend(regions)
-    if not selected:
-        # A simple single-object image may only have an overview. Do not
-        # manufacture feature labels or suppress its one meaningful caption.
+    if not index and not regions:
+        # A layout hint is not a substitute for actual visual observations.
+        # Keep the original whole-image captions for simple images as well,
+        # including details on subsequent lines after a generic page title.
         selected.append("Local vision observation (unverified):")
         selected.extend(overview[:3] or [str(description or "").strip()[:320]])
     return "\n".join(selected)[:2350]
