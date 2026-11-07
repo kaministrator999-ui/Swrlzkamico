@@ -689,6 +689,35 @@ failed = list(guard(answer_events(off_task, failure), turnaround_payload["prompt
 assert "".join(e.get("text", "") for e in failed if e.get("type") == "DELTA") == off_task
 assert failed[-1]["type"] == "FAILED"
 
+# Regression: after the original fragmented-character phrasing was blocked,
+# the model expressed the same unsupported story as "lunar powers", "purity",
+# and separate character abilities. A plain "what is in this image" request
+# is a visual inventory, not evidence that the illustrated mage has powers.
+lunar_speculation = (
+    "Visual Inventory Across Views:\n"
+    "White hair, a purple hoodie, a moon symbol and a staff appear.\n"
+    "**Implications and Assumptions:**\n"
+    "The moon could indicate lunar powers, control over tides, night vision. "
+    "The white background might symbolize purity or a reflective state. "
+    "Various views emphasize different aspects of her abilities."
+)
+lunar_guard = list(guard(answer_events(lunar_speculation), turnaround_payload["prompt"]))
+assert any(e.get("phase") == "VISION_ANSWER_GROUNDING_GUARD" for e in lunar_guard)
+lunar_clean = "".join(e.get("text", "") for e in lunar_guard if e.get("type") == "DELTA")
+assert "white hair [Center-left detail]" in lunar_clean
+assert "moon symbol [Center-right detail]" in lunar_clean
+assert "control over tides" not in lunar_clean
+assert "purity or a reflective state" not in lunar_clean
+assert "Decorative moon and magic motifs do not independently establish" in lunar_clean
+assert lunar_guard[-1]["type"] == "COMPLETED"
+
+# A direct description with only visible features is preserved in full.
+detail_only = ("The local observations show a purple-robed character with "
+               "white hair and a moon motif across several reference views.")
+detail_events = list(guard(answer_events(detail_only), turnaround_payload["prompt"]))
+assert "".join(e.get("text", "") for e in detail_events if e.get("type") == "DELTA") == detail_only
+
+
 
 assert "VISION_CONTEXT_REASONING" in router_source
 assert "VISION_DESCRIPTION_DIRECT" in router_source
