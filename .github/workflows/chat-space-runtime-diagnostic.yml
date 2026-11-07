@@ -39,4 +39,11 @@ jobs:
                   kind=re.search(r'(?:[A-Za-z_]+Error|Traceback|Killed|Segmentation fault|fatal error|exit code|signal: killed|OOM|out.of.memory|QWEN3_VL_[A-Z_]+)',line,re.I)
                   if kind:seen.append(kind.group(0))
           print('SANITIZED_ERROR_CATEGORIES:',json.dumps(seen[-35:]),flush=True)
+          # Print only startup exception type plus bounded message, never full requests.
+          for line in lines[-75:]:
+              match=re.search(r'(?<![A-Za-z])(?:RuntimeError|ImportError|ModuleNotFoundError|ValueError|OSError|FileNotFoundError):[^\\n]*',line)
+              if not match:continue
+              diagnostic=match.group(0)[:240]
+              diagnostic=re.sub(r'(?:hf_[A-Za-z0-9]{10,}|Bearer\\s+[A-Za-z0-9._-]+)','[REDACTED]',diagnostic)
+              print('STARTUP_EXCEPTION:',diagnostic,flush=True)
           PY
