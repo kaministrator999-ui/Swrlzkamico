@@ -1,0 +1,23 @@
+name: Focused §E Smooth Cliff Hand actual texture render diagnosis
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/diagnose-forge-cliff-textures-v11-331.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Build exact sealed engine and launch real Chromium against packaged textures
+        run: |
+          python -m pip install --quiet playwright
+          python -m playwright install --with-deps chromium
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/se-cliff-inspect
+          python projects/swrlz-forge-moba/scripts/inspect_cliff_live_render.py --package /tmp/se-cliff-inspect
