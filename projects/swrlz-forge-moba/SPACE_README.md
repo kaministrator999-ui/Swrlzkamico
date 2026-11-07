@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.306
+title: §wyrl§ Engine v11.307
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+## §E v11.307 · Arcane Quest VR glove orientation (2026-11-06)
+
+Fixed the **Blank VR · Arcane Hands** starter's upside-down glove mounts: fingertips still follow the controller target ray, but the armored backhand now faces up and the palm faces down. The 180° roll also inverts the thumb X-axis; the tracked controller uses the opposite authored mirrored glove instance to keep each thumb inward without changing the independently editable model starters or skeletons. Trigger/grip gestures, Spell Lab casting, Sheep Tag and other controls remain unchanged. Source checked with a focused 338-patch/71-asset build; exact generated HTML **8,397,373 bytes**, SHA-256 `6c3591a2e2261366de0f96f09517e5f933a770440a8d1b8a782bc8cd1b8f278a`. Physical Quest 2 orientation/fit acceptance remains the owner's test. [Focused checkpoint](docs/VR_GLOVE_ORIENTATION_V11_307.md).
+
 ## §E v11.306 · Sheep Tag wolf pursuit cache and simulation diagnostics (2026-11-06)
 
 The owner isolated two distinct stress cases: occasional stutter when **all sheep and all wolves** move, and sustained game-wide slowdown when three wolves switch from attacking maximum houses to pursuing the last surviving sheep. Review of the *effective* `sheep_lanes.js` route resolver identified an overstrict 0.2-unit moving-target cache that could repeat up to nine A* approach tests almost every frame during pursuit. The new shared 0.40–0.56-second cache reuses reachable and blocked approach decisions across both wolf AI and target resolution, with movement and navigation invalidation. Preserves existing v11.256 frame-budgeted sheep evasions, all building/capture rules and WebXR controls. Nerd Stats pages 7/8 and 8/8 report path CPU, cache reuse and the simulation/wall-clock ratio; GPU timing and live Quest acceptance are not claimed. Source sealed at 337 patches / 71 assets / 8,397,357 bytes (SHA-256 `a47415627055cda09f2152e9c6adc311347ed709971e6c0bea1be6bc7195910c`). [Focused checkpoint](docs/SHEEP_PURSUIT_CACHE_V11_306.md).
