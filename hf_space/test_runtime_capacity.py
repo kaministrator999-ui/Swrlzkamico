@@ -100,6 +100,9 @@ class PerResponseResourceUsage(unittest.TestCase):
         self.assertEqual(result["observed"]["memoryStartBytes"],1000)
         self.assertEqual(result["observed"]["memoryEndBytes"],1200)
         self.assertEqual(result["observed"]["memoryPeakSampledBytes"],1800)
+        self.assertEqual(result["observed"]["memoryEndMinusStartBytes"],200)
+        self.assertEqual(result["observed"]["memoryPeakAboveStartBytes"],800)
+        self.assertIsNone(result["observed"]["memorySamplingIntervalMs"])
         self.assertEqual(result["observed"]["memorySampleCount"],3)
         self.assertEqual(result["observed"]["cgroupCpuUsageUsecDelta"],250000)
         self.assertGreaterEqual(result["wallTimeMs"],0)
@@ -116,6 +119,9 @@ class PerResponseResourceUsage(unittest.TestCase):
         self.assertIsNone(result["observed"]["cgroupCpuUsageUsecDelta"])
         self.assertIsNone(result["observed"]["averageCgroupCpuCores"])
         self.assertIsNone(result["observed"]["memoryPeakSampledBytes"])
+        self.assertIsNone(result["observed"]["memoryPeakAboveStartBytes"])
+        self.assertIsNone(result["observed"]["memoryEndMinusStartBytes"])
+        self.assertEqual(result["source"],"unavailable")
         self.assertEqual(result["observed"]["memorySampleCount"],0)
 
     def test_unlimited_cap_is_not_reported_as_allocated_cores(self):
