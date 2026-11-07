@@ -13,3 +13,4 @@ QWEN3_ONLY_WHOLE_CROP_FUSION_20261107=Use only Qwen3-VL for image analysis; remo
 QWEN_ONLY_GUARD_RETRY_1=New guard checks sole Qwen3 model and rejects retired image model files
 REFERENCE_PROGRESSIVE_FIVE_20261107=Progressive numbered reference findings 1-4 as real image/crop passes finish, integrated modeling description 5, no exposed contradiction checks
 SELECTIVE_REFERENCE_CROPS_FORMAT_20261107=Skip unnecessary repeated crops, perform no more than two close-ups for useful fine detail, concise complete overview, structured readable final, compact mobile analysis card
+VISION_CARD_SCROLL_IMAGE_LIGHTBOX_20261107=Restore single conversation scrollport over image analysis card; enlarge pending and committed image previews in native closeable modal
