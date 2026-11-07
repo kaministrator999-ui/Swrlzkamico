@@ -951,6 +951,13 @@
     .vision-level-evidence summary{cursor:pointer;color:#b6e9f6}
     .vision-level-entry{padding:7px 0;border-top:1px solid rgba(105,214,246,.13);white-space:pre-wrap;overflow-wrap:anywhere;color:#b7d4e2}
     .vision-level-entry strong{display:block;margin-bottom:3px;color:#e3faff}
+    .vision-reference-findings{margin:10px 0 8px;padding:9px 10px;border-radius:9px;border:1px solid rgba(105,214,246,.24);background:rgba(0,14,28,.42);color:#d8f2ff}
+    .vision-reference-findings[hidden]{display:none!important}
+    .vision-reference-findings-title{display:block;margin-bottom:5px;color:#f0fbff;font-size:12px}
+    .vision-reference-findings ol{list-style:decimal;margin:0;padding-left:20px;display:grid;gap:8px}
+    .vision-reference-findings li{padding-left:2px;white-space:normal;overflow-wrap:anywhere}
+    .vision-reference-findings li strong{display:block;margin-bottom:2px;color:#c2eafb}
+    .vision-reference-findings li div{white-space:pre-wrap;line-height:1.45;color:#d9eaf4}
     .composer-shell.collapsed .composer-media-tools{display:none}
     .user-image-attachment{display:block;max-width:min(240px,100%);max-height:180px;object-fit:contain;margin-top:9px;border-radius:9px}
     .user-vision-summary{margin-top:8px;font-size:11px;color:#d4e9f7;white-space:pre-wrap}
@@ -1498,6 +1505,7 @@
             requestedRegions:state.requestedRegions,
             completedRegions:state.completedRegions,
             spatialRegionRecords:state.spatialRegionRecords,
+            referenceProgress:state.referenceProgress,
             activeVisionModel:state.activeVisionModel,
             activeVisionRevision:state.activeVisionRevision,
             visionModelLoaded:state.visionModelLoaded,
@@ -1587,10 +1595,16 @@
         const timer=document.createElement("div");timer.className="vision-work-timer";timer.setAttribute("aria-label","Elapsed processing time");
         const status=document.createElement("div");status.className="vision-work-status";status.setAttribute("role","status");status.setAttribute("aria-live","polite");
         const sourceInfo=document.createElement("div");sourceInfo.className="vision-work-status";sourceInfo.hidden=true;
+        const findings=document.createElement("section");findings.className="vision-reference-findings";findings.hidden=true;
+        findings.setAttribute("aria-label","Modeling reference analysis findings");
+        const findingsTitle=document.createElement("strong");findingsTitle.className="vision-reference-findings-title";
+        findingsTitle.textContent="Reference image observations";
+        const findingsList=document.createElement("ol");findingsList.setAttribute("aria-live","polite");
+        findings.append(findingsTitle,findingsList);
         const evidence=document.createElement("details");evidence.className="vision-level-evidence";evidence.hidden=true;
         const evidenceSummary=document.createElement("summary");evidenceSummary.textContent="Observed levels";
         const evidenceContents=document.createElement("div");evidence.append(evidenceSummary,evidenceContents);
-        root.append(header,message,preview,steps,timer,sourceInfo,status,evidence);messageList.appendChild(root);
+        root.append(header,message,preview,steps,timer,sourceInfo,status,findings,evidence);messageList.appendChild(root);
         const initialTime=Date.now();
         const durationText=seconds=>{
           const n=Math.max(0,Math.floor(Number(seconds)||0)),m=Math.floor(n/60),sec=String(n%60).padStart(2,"0");
@@ -1601,7 +1615,38 @@
         const activity={
           root,originThreadId:activeThreadId,originDraft:draftThread,
           jobId:"",abort:new AbortController(),phase:"",phaseStart:initialTime,
-          serverTiming:null,interval:null,renderedLevels:"",
+          serverTiming:null,interval:null,renderedLevels:"",renderedFindings:"",
+          showReferenceFindings(timing){
+            // Only multi-view/reference requests get the live numbered narrative.
+            // Everything shown here comes from completed model passes; internal
+            // comparison/consistency checks are never presented as progress.
+            if(timing?.referenceProgress!==true)return;
+            const overview=timing.levelRecords?.[0]?.description;
+            if(typeof overview!=="string"||!overview.trim())return;
+            const regions=Array.isArray(timing.spatialRegionRecords)?timing.spatialRegionRecords:[];
+            const entries=[["Whole-image overview",overview]];
+            if(regions[0])entries.push([String(regions[0].region||"First view"),String(regions[0].description||"")]);
+            if(regions[1])entries.push([String(regions[1].region||"Second view"),String(regions[1].description||"")]);
+            if(regions.length>=3){
+              entries.push(["Remaining reference views",regions.slice(2).map(
+                record=>String(record.region||"View")+": "+String(record.description||"")
+              ).join("\n")]);
+            }
+            const integrated=timing.integratedObservation?.description;
+            if(timing.integratedSelected===true&&typeof integrated==="string"&&integrated.trim())
+              entries.push(["Integrated modeling description",integrated]);
+            const signature=JSON.stringify(entries);
+            if(signature===this.renderedFindings)return;
+            this.renderedFindings=signature;
+            findings.hidden=false;findingsList.replaceChildren();
+            for(const [name,body] of entries){
+              if(!body.trim())continue;
+              const item=document.createElement("li");
+              const heading=document.createElement("strong");heading.textContent=name;
+              const content=document.createElement("div");content.textContent=body;
+              item.append(heading,content);findingsList.append(item);
+            }
+          },
           showLevels(records,selected){
             if(!Array.isArray(records)||!records.length)return;
             const signature=records.map(x=>[x.level,x.description,x.elapsedSeconds].join("|")).join("~")+"|"+selected;
@@ -1679,6 +1724,7 @@
                 sourceInfo.textContent+=(sourceInfo.textContent?"\n":"")+line;
             }
             if(timing?.levelRecords)this.showLevels(timing.levelRecords,Number(timing.selectedLevel)||1);
+            this.showReferenceFindings(timing);
             if(detail)status.textContent=detail;
             else if(timing?.integratedOutcome==="FAILED")status.textContent="Whole-image synthesis failed; retaining raw region observations.";
             else if(timing?.integratedOutcome==="NOT_SELECTED")status.textContent="Whole-image synthesis too generic; retaining raw region observations.";
