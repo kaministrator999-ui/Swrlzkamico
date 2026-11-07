@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.320",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_320_STUDIO_NAVIGATION_LAYOUT",
-  "reason": "Owner-requested organization of Game, Model and Particle studios: distinct navigation/menu/action rows, reserved model category rail beside the inspector with reachable collapse/restore controls, readable mobile menus, non-overlapping Starter/My Projects tabs, and successful native project loads routed to their appropriate studio without replacing loaded content. Preserves all owner v11.309 Arcane and earlier runtime work. Strict ordered reconstruction, 341 patches, 71 assets, 8,445,313 HTML bytes; SHA-256 784249443e626d13740ada224b61f54358011c98678c6e6ee41f581660264347. Targeted routing/native geometry tests and desktop/phone browser interactions passed, including repeated studio switches and unchanged 59-part mage. Physical-device appearance/XR acceptance remains owner testing.",
-  "sourceCommit": "40a08cc0d67dd8cf43c6a98b20655e0a146a6a4f",
-  "sourceIntegritySha256": "784249443e626d13740ada224b61f54358011c98678c6e6ee41f581660264347"
+  "releaseVersion": "v11.321",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_321_SHEEP_SIGHT_XR_CROWD",
+  "reason": "Owner-directed Sheep Tag Quest follow-up. Wolf/Sheep enemy sight now respects current built house footprints when fog is on, rather than tracking through walls; last-seen positions, shared team vision and scent remain legitimate. Per-update visibility cache. Busy XR matches with 2+ living sheep and 8+ houses spread unchanged sheep escape candidates over more frames (one per update instead of two). Nerd Stats pages 9/10 and 10/10 report headset-moving vs stationary callback gaps, prior-render draw calls, blocked sight checks and AI budget. Correct v11.306 A* wolf radius metrics to configured 0.78. Preserve v11.306 chase optimization, Game/Model/Particle studio v11.320, saves, controls, LAN authority, XR reference-space, camera, building rules and 50ms simulation step. Exact sealed source: 342 patches, 71 assets, 8,451,859 HTML bytes SHA-256 47e8cc9f9f54fb1592715961ecd4faab13fc94f56e0f8208c250efc3306b2079. Focused source test, inline JS syntax and geometric sight/cache regression passed; Quest gameplay and frame-time improvement await owner acceptance.",
+  "sourceCommit": "c9c6178ad4b4f4c9868a12f435dac3d6dc79f794",
+  "sourceIntegritySha256": "47e8cc9f9f54fb1592715961ecd4faab13fc94f56e0f8208c250efc3306b2079"
 }
