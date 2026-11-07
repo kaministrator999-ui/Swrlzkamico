@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/diagnose-forge-cliff-textures-v11-331.yml'
+      - 'projects/swrlz-forge-moba/scripts/inspect_cliff_live_render.py'
   workflow_dispatch:
 permissions:
   contents: read
