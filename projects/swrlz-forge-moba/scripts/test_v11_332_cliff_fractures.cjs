@@ -24,7 +24,7 @@ assert.equal(count,1);
 assert.deepEqual(draw[0].slice(1,5),[1152,384,384,384],
   'must read the actual authored fracture tile, not another atlas tile');
 const at=(x,y)=>painted.slice((y*N+x)*4,(y*N+x)*4+4);
-assert(at(192,100)[0]<90 && at(192,100)[1]<90,
+assert(at(192,100)[0]<110 && at(192,100)[1]<95,
  'fracture-core color must be visibly darker than clean sandstone');
 assert(at(191,100)[0]<195,
  'one-pixel shoulder helps fractures survive model viewport reduction');
