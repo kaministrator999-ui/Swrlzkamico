@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.307",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_307_ARCANE_VR_GLOVE_ORIENTATION",
-  "reason": "Owner-reported Arcane Spell Casting / Blank VR Arcane Hands gloves upside down on Quest 2. Append-only v11.307 source fix rotates the controller-mounted glove to fingers forward, armored backhand up and palm down; selects the opposite mirrored authored mesh on each side to preserve inward thumb anatomy. Retains existing editable source gloves, native skeleton/gestures, tracked WebXR controllers, raycast, Mage Spell Lab spell casts and unrelated Sheep Tag behavior. Focused source build/inline JavaScript syntax succeeded; 338 patches, 71 assets, 8,397,373 bytes, SHA-256 6c3591a2e2261366de0f96f09517e5f933a770440a8d1b8a782bc8cd1b8f278a. Owner Quest 2 fit acceptance pending.",
-  "sourceCommit": "bf05bbc4d4e3ef88604e383d20ba7f4a9f684a1e",
-  "sourceIntegritySha256": "6c3591a2e2261366de0f96f09517e5f933a770440a8d1b8a782bc8cd1b8f278a"
+  "releaseVersion": "v11.308",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_308_ARCANE_HAND_GRIP_FIT",
+  "reason": "Owner-directed Arcane Spell Casting/Blank VR Arcane Hands Quest 2 glove alignment and visual cleanup. Mount native rigged gloves to real WebXR gripSpace where available with target-ray fallback, fine-tune visual wrist offset and reduce glove scale slightly; hide cyan/yellow ray line visuals exclusively in this starter while preserving controller target-ray data for casting, existing input/hit testing and restoring rays for other games. Equipped spell labels follow glove pose. Preserves analog trigger/grip gesture interpolation, original 17-joint editable glove starters, spells, Sheep Tag and other XR controls. Focused JS syntax and 4-scenario grip/ray regression passed (GitHub Actions run 42343559222). Sealed v11.308 with 339 patches, 71 assets, HTML 8,399,073 bytes, SHA-256 a0148e2a9d406ef806bc580eee692e66011dc0922a0573ae07820d4f9f242511. Owner Quest 2 grip alignment acceptance remains pending.",
+  "sourceCommit": "e49298299bbeb793c4bd29e8d114915fc7ffd739",
+  "sourceIntegritySha256": "a0148e2a9d406ef806bc580eee692e66011dc0922a0573ae07820d4f9f242511"
 }
