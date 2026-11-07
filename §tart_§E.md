@@ -1,8 +1,8 @@
-## §E v11.330 · Dedicated Material & Texture Studio (source and browser verified)
+## §E v11.330 · Dedicated Material & Texture Studio (deployed)
 
 Materials opens a dedicated library, preview/painting workspace and property inspector. Desktop uses reserved columns; phones and wider portrait frames use Library, Preview & paint and Properties tabs. An empty library hides unavailable fields and offers a clear first-material action. The default texture view covers the underlying game editor; an explicit native 3D scene preview remains available. Covered 3D drawing pauses while editing textures, then resumes for the visible scene preview; native updates and history continue.
 
-The existing material definitions, PBR controls, direct texture painting, brush undo, scene assignments, project saves and PNG/JSON import/export handlers remain authoritative. Opening Materials does not create a material or replace the current project. Model, Game and Particle studios retain the v11.320 navigation changes and the owner's v11.321 sightline/Quest work. Source and browser verification plus publication receipts are recorded in [the checkpoint](projects/swrlz-forge-moba/docs/MATERIAL_STUDIO_LAYOUT_V11_330.md); physical-device appearance remains owner acceptance.
+The existing material definitions, PBR controls, direct texture painting, brush undo, scene assignments, project saves and PNG/JSON import/export handlers remain authoritative. Opening Materials does not create a material or replace the current project. Model, Game and Particle studios retain the v11.320 navigation changes and the owner's v11.321 sightline/Quest work. Source and browser verification plus publication receipts are recorded in [the checkpoint](projects/swrlz-forge-moba/docs/MATERIAL_STUDIO_LAYOUT_V11_330.md); physical-device appearance remains owner acceptance. Deployment [run 42365572126](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/42365572126) succeeded; the RUNNING hosted index and Modeler files independently match the browser-tested source seal.
 
 ## §E v11.321 · Sheep Tag house sightlines and crowded Quest diagnostics (2026-11-07)
 

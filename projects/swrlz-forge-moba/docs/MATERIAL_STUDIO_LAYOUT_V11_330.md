@@ -1,6 +1,6 @@
 # Dedicated Material & Texture Studio — v11.330
 
-Lifecycle: IMPLEMENTATION_APPROVED; SOURCE_VERIFIED; BROWSER_VERIFIED. Source publication, hosted confirmation and owner-device visual acceptance remain separately recorded gates.
+Lifecycle: IMPLEMENTATION_APPROVED; SOURCE_VERIFIED; BROWSER_VERIFIED; SOURCE_PUBLISHED; FEATURE_DEPLOYED; HOSTED_ARTIFACT_VERIFIED. Owner-device visual/XR acceptance remains separate.
 
 ## Resulting behavior
 
@@ -35,4 +35,10 @@ The portable browser check requires Playwright/Chromium, an isolated guest profi
 
 ## Publication
 
-Pending the cohesive source publication, separate request-only deployment commit and independent hosted confirmation.
+- Published source: [`244e1d9146dd6ed8dd4147604eba4965007d5fac`](https://github.com/kaministrator999-ui/Swrlzkamico/commit/244e1d9146dd6ed8dd4147604eba4965007d5fac).
+- Separate request-only commit: [`6db015cd324f20e9d93f7f07e6ebcb81fc3b31be`](https://github.com/kaministrator999-ui/Swrlzkamico/commit/6db015cd324f20e9d93f7f07e6ebcb81fc3b31be); comparison with the source is exactly one commit and only `DEPLOY_REQUEST.json`.
+- Dedicated deployment [run 42365572126](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/42365572126): **SUCCESS**. No unrelated game verification workflow was dispatched.
+- Hugging Face revision **`30babc193eae715c3942308b89279d95f8062529`**: **RUNNING**; its official revision-pinned SOURCE receipt identifies v11.330 / 343 patches / 71 assets.
+- Independently streamed official `index.html` and `modeler.html`: each **8,484,905 bytes**, SHA-256 **`aa783d286c545bdeb13ea654f171e0915ab70ec975ab4a9e0c51f93649019ac9`**. Both match the canonical reconstruction, strict local package and browser-tested HTML.
+
+Live engine: https://huggingface.co/spaces/kamiloki/swrlz-forge-moba . Hosted artifacts and browser/source checks are complete; physical-device appearance and XR acceptance remain owner testing. This documentation-only closure does not alter runtime code, its manifest seal or the deployment request.
