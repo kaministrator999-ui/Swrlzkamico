@@ -5292,6 +5292,10 @@
         window.SwrlzForgeEmbedV1?.notifyAccount(accountUser);
         if(priorUserId!==(accountUser?.id||"")){
           accountProjectionEpoch++;streamAbortController?.abort();clearTimeout(stationPoll);
+          // Model crop evidence and local upload previews belong to one account
+          // session. Release both when the account projection changes.
+          for(const previewUrl of imagePreviews.values())URL.revokeObjectURL(previewUrl);
+          imagePreviews.clear();imageRegionEvidence.clear();
           chatThreads=[];activeThreadId="";pendingDraftThread=null;stationGeneration=null;stationAwaitingCommit="";stationAcknowledgedRequest=null;stationSubmission=null;stationCancellation=null;stationSyncOwner=null;stationSyncAgain=false;sending=false;streamAbortController=null;stationSettledRequests.clear();forgeNativeProgress.clear();syncStationControls();chatRevision=0;
           draftThread=!accountUser;window.SwrlzForgeEmbedV1?.setThread("");renderThreads();
         }
@@ -5467,6 +5471,10 @@
       });
       window.addEventListener("swrlz-forge-account-changed",()=>{
         accountProjectionEpoch++;streamAbortController?.abort();clearTimeout(stationPoll);
+          // Model crop evidence and local upload previews belong to one account
+          // session. Release both when the account projection changes.
+          for(const previewUrl of imagePreviews.values())URL.revokeObjectURL(previewUrl);
+          imagePreviews.clear();imageRegionEvidence.clear();
         chatThreads=[];activeThreadId="";pendingDraftThread=null;stationGeneration=null;stationAwaitingCommit="";stationAcknowledgedRequest=null;stationSubmission=null;stationCancellation=null;stationSyncOwner=null;stationSyncAgain=false;sending=false;streamAbortController=null;stationSettledRequests.clear();forgeNativeProgress.clear();syncStationControls();chatRevision=0;draftThread=true;
         renderThreads();renderConversation(null);refreshAccount();
       });
