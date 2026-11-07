@@ -31,12 +31,23 @@ MAX_IMAGE_BYTES = 8 * 1024 * 1024
 MAX_QUESTION_CHARS = 2_000
 MAX_DESCRIPTION_CHARS = 6_000
 MAX_IMAGE_PIXELS = 16_000_000
-# Explicit experimental selection. Default remains the working SmolVLM path.
-# Qwen requires a Qwen3-VL-capable llama-cpp-python build, which is NOT supplied
-# by the production 0.3.35 pin. Do not select it on the live Space until verified.
-VISION_MODEL_VARIANT = os.getenv("SWRLZ_VISION_MODEL", "qwen3-vl-4b").strip().lower()
-if VISION_MODEL_VARIANT not in ("smolvlm-500m", "qwen3-vl-4b"):
-    raise RuntimeError("SWRLZ_VISION_MODEL must be smolvlm-500m or qwen3-vl-4b")
+# Runtime migration: the existing Space still has an older Qwen2.5 repo ID
+# stored in SWRLZ_VISION_MODEL. The approved trial replaces that route with
+# Qwen3-VL-4B. Never crash the *entire chat* due to an unrecognized variant.
+# The pinned Qwen backend uses a separate local llama-server subprocess.
+VISION_MODEL_SETTING = os.getenv("SWRLZ_VISION_MODEL", "qwen3-vl-4b").strip().lower()
+if VISION_MODEL_SETTING in ("qwen3-vl-4b", "qwen/qwen3-vl-4b-instruct"):
+    VISION_MODEL_VARIANT = "qwen3-vl-4b"
+elif VISION_MODEL_SETTING == "qwen/qwen2.5-vl-3b-instruct":
+    VISION_MODEL_VARIANT = "qwen3-vl-4b"
+    print(json.dumps({"event":"VISION_MODEL_LEGACY_SETTING_MIGRATED",
+                      "from":"qwen2.5-vl-3b","to":"qwen3-vl-4b"}),flush=True)
+elif VISION_MODEL_SETTING in ("smolvlm-500m", "ggml-org/smolvlm-500m-instruct-gguf"):
+    VISION_MODEL_VARIANT = "smolvlm-500m"
+else:
+    VISION_MODEL_VARIANT = "smolvlm-500m"
+    print(json.dumps({"event":"VISION_MODEL_INVALID_SETTING",
+                      "fallback":"smolvlm-500m"}),flush=True)
 # Qwen sees a larger single view; all views still derive from original pixels.
 MODEL_INPUT_SIDE = 768 if VISION_MODEL_VARIANT == "qwen3-vl-4b" else 384
 # Avoid generic 88-token truncation when evaluating Qwen visual detail.
@@ -113,8 +124,8 @@ _inference_lock = threading.Lock()
 _jobs_lock = threading.Lock()
 _jobs: dict[str, dict[str, Any]] = {}
 ACTIVE_PHASES = {"QUEUED", "PREPROCESSING", "LOADING_MODEL", "ANALYZING"}
-JOB_TTL_SECONDS = 15 * 60
-WATCH_LEASE_SECONDS = 90  # A job with no live progress polling may be abandoned.
+JOB_TTL_SECONDS = 45 * 60
+WATCH_LEASE_SECONDS = 20 * 60  # Android may throttle or suspend hidden-tab progress polling.
 
 
 def _prune_jobs(now: float) -> None:
