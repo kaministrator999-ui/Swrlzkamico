@@ -160,6 +160,60 @@ assert.match(html,/referenceProgress:state\.referenceProgress/);
 assert.match(html,/Final modeling description/);
 assert.match(html,/Read full observation/);
 assert.match(html,/vision-reference-more/);
+// The final image analysis is rendered into a semantic visual reference,
+// using ONLY the model's own text: no fabricated view counts or 3D geometry.
+assert.match(html,/const buildVisionReferenceReport=raw=>/);
+assert.match(html,/vision-report-grid/);
+assert.match(html,/vision-report-view/);
+assert.match(html,/vision-report-crops/);
+assert.match(html,/vision-report-raw/);
+assert.match(html,/imageText\.slice\(imageStart\+VISION_START\.length,-VISION_END\.length\)/);
+assert.match(html,/const visual=buildVisionReferenceReport\(originalText\)/);
+assert.match(html,/visionReportOpenState\.get\(stateKey\):true/);
+assert.match(html,/\.user-vision-plain\{white-space:pre-wrap/);
+assert.ok(!html.includes("crop.innerHTML="),"model observations must never be rendered as untrusted HTML");
+
+const visualStart=html.indexOf("const visionReportOpenState=new Map();");
+const visualEnd=html.indexOf("let visionActivity=null;",visualStart);
+assert.ok(visualStart>0&&visualEnd>visualStart,"extract the actual inline report builder");
+const element=(tag)=>({
+  tag,className:"",textContent:"",dataset:{},children:[],attrs:{},
+  append(...children){this.children.push(...children);},
+  setAttribute(key,value){this.attrs[key]=value;}
+});
+const renderReport=vm.runInNewContext(
+  html.slice(visualStart,visualEnd)+"\n buildVisionReferenceReport",
+  {document:{createElement:element}}
+);
+const fixture=[
+  "Character reference · local model observation (accuracy unverified)",
+  "Subject and views: One mage shown in front, left side, right side, back, and top.",
+  "Silhouette and anatomy: Chibi proportions and two white braids.",
+  "Clothing and surface detail: Purple robe with gold embroidery.",
+  "Props and small features: One purple crystal-topped staff.",
+  "Visibility limits: Some surfaces are obscured; do not infer invisible geometry.",
+  "",
+  "Focused image details (unverified source-crop observations):",
+  "- Upper-left figure detail: White braids and a crystal staff.",
+  "- Central outfit and prop detail: Robe trim and a pouch."
+].join("\n");
+const report=renderReport(fixture);
+assert.equal(report.className,"vision-report");
+const reportHead=report.children.find(x=>x.className==="vision-report-head");
+const angleStrip=reportHead.children.find(x=>x.className==="vision-report-views");
+assert.deepEqual(Array.from(angleStrip.children,x=>x.textContent),
+  ["Front","Left side","Right side","Back","Top"]);
+const reportGrid=report.children.find(x=>x.className==="vision-report-grid");
+assert.equal(reportGrid.children.length,5);
+assert.deepEqual(Array.from(reportGrid.children,x=>x.dataset.kind),
+  ["subject","anatomy","materials","props","limits"]);
+assert.equal(reportGrid.children[3].children[1].textContent,"One purple crystal-topped staff.");
+const cropGroup=report.children.find(x=>x.className==="vision-report-crops");
+assert.equal(cropGroup.children.length,3,"two actual crop records and one summary");
+const sourcePanel=report.children.find(x=>x.className==="vision-report-raw");
+assert.equal(sourcePanel.children[1].textContent,fixture,"raw model text remains inspectable");
+assert.equal(renderReport("A cat sitting on a table."),null,
+  "simple image results keep their ordinary text layout");
 // The image analysis card must not trap touch scrolling in a nested 72dvh
 // scrollport; swiping anywhere on it scrolls the single chat viewport.
 assert.match(html,/\.vision-work-card\{[^}]*max-height:none;overflow:visible;touch-action:pan-y/s);
