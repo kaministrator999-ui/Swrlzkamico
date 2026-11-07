@@ -534,7 +534,7 @@ import typing
 router_source = (SOURCE.parent / "model_router.py").read_text(encoding="utf-8")
 tree = ast.parse(router_source)
 selected = [node for node in tree.body if isinstance(node, (ast.Assign, ast.FunctionDef)) and (
-    isinstance(node, ast.FunctionDef) and node.name in {"_ground_vision_handoff", "_direct_vision_description", "_format_direct_vision_report"}
+    isinstance(node, ast.FunctionDef) and node.name in {"_ground_vision_handoff", "_direct_vision_description", "_format_direct_vision_report", "_omit_unverifiable_turnaround_claims"}
     or isinstance(node, ast.Assign) and any(isinstance(target, ast.Name) and target.id in {"_VISION_START","_VISION_END"} for target in node.targets)
 )]
 namespace = {"Any": typing.Any, "re": __import__("re")}
@@ -572,6 +572,47 @@ assert "### Shape & proportions" in legacy_answer
 assert "### Materials & markings" in legacy_answer
 assert "Upper-left crop" not in legacy_answer
 assert legacy_answer.count("Large hood and compact body.") == 1
+
+# Regression from an actual Little Crystal Mage turnaround observation:
+# visually unverifiable categorical negatives and cross-view absolutes must
+# not be polished into false certainty by the final presentation layer.
+problematic_vision = (
+    "Character reference · local model observation (accuracy unverified)\n\n"
+    "Subject and views: Front, left side, right side, back, and top views of "
+    "a single character, Little Crystal Mage.\n"
+    "Silhouette and anatomy: Pale skin, silver-white braided hair, purple eyes. "
+    "Standing posture with arms at sides or holding staff. "
+    "No occlusion in any view; all limbs and head are visible.\n"
+    "Clothing and surface detail: Deep purple hooded robe with gold embroidery. "
+    "Belt with pouch. Brown boots. No buckles or hidden construction.\n"
+    "Props and small features: Staff topped with glowing purple crystal. "
+    "Braids are visible in all views. No leaf emblems or leaf motifs on the staff.\n"
+    "Visibility limits: Back view shows only the back of the robe and staff; "
+    "no occlusion of the character's face or limbs. "
+    "Top view shows only the head and shoulders; no occlusion of the staff or hands.\n"
+    "\nFocused image details (unverified source-crop observations):\n"
+    "- Upper-left figure detail: Two identical figures in purple robes."
+)
+problematic_result = direct({
+    "prompt": "What do you see in this image?" +
+              vision.VISION_START + problematic_vision + vision.VISION_END
+})
+assert problematic_result.startswith("## Image analysis")
+for unsafe in (
+    "No occlusion", "no occlusion", "all limbs and head are visible",
+    "No buckles", "No leaf emblems", "Braids are visible in all views",
+    "Two identical figures"
+):
+    assert unsafe not in problematic_result, unsafe
+for preserved in (
+    "Little Crystal Mage", "silver-white braided hair", "Deep purple hooded robe",
+    "Staff topped with glowing purple crystal",
+    "Back view shows only the back of the robe"
+):
+    assert preserved in problematic_result, preserved
+assert problematic_vision.count("No occlusion") == 1, "raw observation remains untouched"
+assert "not independently verified" in problematic_result
+
 assert direct({"prompt": "Describe this image" + vision.VISION_START + observed + vision.VISION_END}) is not None
 assert direct({"prompt": "What do you see in this image?" + vision.VISION_START + observed + vision.VISION_END}) is not None
 assert direct({"prompt": "Please describe this image!" + vision.VISION_START + observed + vision.VISION_END}) is not None
