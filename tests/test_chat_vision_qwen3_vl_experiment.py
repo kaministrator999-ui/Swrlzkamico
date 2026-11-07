@@ -63,6 +63,21 @@ def test_trial_loads_separate_process_without_overwriting_llama_cpp():
     assert calls == [("/cache/" + vision.MODEL_FILE, "/cache/" + vision.PROJECTOR_FILE)]
 
 
+def test_qwen_prewarms_once_on_space_startup_without_ui_status():
+    # Source-only guard: importing app.py would start costly HF runtime setup.
+    app = (ROOT / "app.py").read_text(encoding="utf-8")
+    assert '("vision",prewarm_local_model)' in app
+    assert 'threading.Thread(target=_warm_backends,daemon=True' in app
+    assert "QWEN3_VL_LOAD_ON_FIRST_IMAGE" not in app
+    assert "HF_WARMUP_DEFERRED" not in app
+    assert '("700m",large_load)' in app
+    # Vision model cache is shared by startup prewarm and subsequent images.
+    source = SOURCE.read_text(encoding="utf-8")
+    assert "_model = instance" in source
+    assert "if _model is not None:" in source
+    assert "with _inference_lock:" in source
+
+
 def test_qwen_server_is_local_and_source_revision_immutable():
     import sys
     sys.path.insert(0, str(ROOT))
