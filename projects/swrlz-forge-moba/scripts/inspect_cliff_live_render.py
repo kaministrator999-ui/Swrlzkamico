@@ -50,7 +50,7 @@ async def main():
               darkPixels:cracks,levels:distinct.size,center:[...d.slice((192*384+192)*4,(192*384+192)*4+4)]}
           }
           return {
-            engine:window.SWRLZ_FORGE_BUILD?.version,opened,
+            engine:window.SWRLZ_FORGE_BUILD?.version,
             scene:{name:currentProject?.name,partCount:currentProject?.modelAtelier?.parts?.length,
                cliffPBR:currentProject?.modelAtelier?.parts?.[0]?.cliffPBR,
                uvCount:currentProject?.modelAtelier?.parts?.[0]?.topologyMesh?.uvs?.length},
