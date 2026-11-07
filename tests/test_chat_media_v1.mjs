@@ -160,6 +160,18 @@ assert.match(html,/referenceProgress:state\.referenceProgress/);
 assert.match(html,/Final modeling description/);
 assert.match(html,/Read full observation/);
 assert.match(html,/vision-reference-more/);
+// The image analysis card must not trap touch scrolling in a nested 72dvh
+// scrollport; swiping anywhere on it scrolls the single chat viewport.
+assert.match(html,/\.vision-work-card\{[^}]*max-height:none;overflow:visible;touch-action:pan-y/s);
+assert.ok(!html.includes('max-height:72dvh;overflow-y:auto;overscroll-behavior:contain'),"no nested image-card scroll trap");
+// Both an in-progress attachment and the committed chat image get the same
+// keyboard/Android-tappable expanded image preview, with native Escape close.
+assert.match(html,/const openVisionImagePreview=\(imageUrl/);
+assert.match(html,/dialog\.showModal\(\);close\.focus\(\)/);
+assert.match(html,/dialog\.addEventListener\("close",\(\)=>dialog\.remove\(\)/);
+assert.match(html,/previewButton\.addEventListener\("click",\(\)=>openVisionImagePreview\(attachment\.url/);
+assert.match(html,/expand\.addEventListener\("click",\(\)=>openVisionImagePreview\(previewURL/);
+assert.match(html,/vision-image-dialog-close/);
 assert.match(backend,/proposals = proposals\[:2\]/);
 assert.match(backend,/about 80 to 120 words/);
 assert.match(backend,/Focused image details/);
