@@ -302,6 +302,31 @@ def _load_local_model():
     return instance
 
 
+
+def vision_job_resource_receipt(owner: str, job_id: str, saved_prompt: str) -> dict | None:
+    """Return only a matching, completed, owner-verified Qwen usage receipt.
+
+    A client-supplied job ID is NEVER evidence on its own. Match the exact
+    model description in the submitted image handoff to prevent attaching
+    another job's resource numbers. Never return uploaded pixels.
+    """
+    if not isinstance(owner, str) or not owner.startswith("google:"):
+        return None
+    if not isinstance(job_id, str) or not re.fullmatch(r"[a-f0-9]{32}", job_id):
+        return None
+    handoff = vision_handoff_from_message({"role": "user", "text": saved_prompt})
+    if not handoff:
+        return None
+    with _jobs_lock:
+        job = _jobs.get(job_id)
+        if (not job or job.get("owner") != owner or job.get("phase") != "COMPLETE"
+                or job.get("description") != handoff["descriptionSentToChatModel"]
+                or not isinstance(job.get("resourceUsage"), dict)):
+            return None
+        return {"modelRoute": VISION_MODEL_VARIANT,
+                "usage": dict(job["resourceUsage"]),
+                "source": "owner-and-description-verified-vision-job"}
+
 def prewarm_local_model():
     """Share the CPU inference lock with real jobs to avoid double loads."""
     with _inference_lock:
