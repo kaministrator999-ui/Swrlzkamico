@@ -125,8 +125,8 @@ assert.match(backend,/phaseElapsedSeconds/);
 assert.match(backend,/elapsedSeconds/);
 assert.match(backend,/max_tokens=tokens/);
 assert.match(backend,/generate\(image, prompt, MAX_VISION_OUTPUT_TOKENS\)/);
-assert.match(backend,/DETAIL_RETRY_SIDE = 640/);
-assert.match(backend,/DETAIL_RETRY_TOKENS = 144/);
+assert.ok(backend.includes('DETAIL_RETRY_SIDE = 768 if VISION_MODEL_VARIANT == "qwen3-vl-4b" else 640'));
+assert.ok(backend.includes('DETAIL_RETRY_TOKENS = 224 if VISION_MODEL_VARIANT == "qwen3-vl-4b" else 144'));
 assert.match(backend,/MAX_BODY_BYTES = 12_000_000/);
 assert.match(backend,/MAX_IMAGE_BYTES = 8 \* 1024 \* 1024/);
 assert.match(backend,/focus_center=True/);
@@ -139,9 +139,10 @@ assert.match(backend,/def _cancel_unwatched_jobs\(/);
 assert.match(backend,/def cancel_vision\(/);
 assert.match(backend,/stream=True/);
 assert.match(backend,/raise VisionCancelled\(\)/);
-// Accept only the two pinned local SmolVLM CPU candidates; the dedicated
-// Python contract verifies the exact selected model/projector/revision pair.
-assert.match(backend,/^MODEL_REPO = "ggml-org\/SmolVLM-(?:256|500)M-Instruct-GGUF"$/m);
+// Guard both pinned model routes: original SmolVLM and isolated Qwen3-VL.
+assert.ok(backend.includes('MODEL_REPO = "ggml-org/SmolVLM-500M-Instruct-GGUF"'));
+assert.ok(backend.includes('MODEL_REPO = "Qwen/Qwen3-VL-4B-Instruct-GGUF"'));
+assert.ok(backend.includes('VISION_MODEL_VARIANT'));
 assert.ok(backend.includes("MTMDChatHandler"));
 assert.ok(!backend.includes("SWRLZ_VISION_API_KEY"),"no paid inference credentials needed");
 assert.ok(!backend.includes("router.huggingface.co"),"no paid inference provider calls");
