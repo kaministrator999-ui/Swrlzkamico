@@ -533,6 +533,7 @@ selected = [node for node in tree.body if isinstance(node, (ast.Assign, ast.Func
     isinstance(node, ast.FunctionDef) and node.name in {
         "_ground_vision_handoff", "_direct_vision_description",
         "_vision_evidence_digest", "_guard_vision_answer",
+        "_natural_vision_fallback",
     }
     or isinstance(node, ast.Assign) and any(
         isinstance(target, ast.Name) and target.id in {"_VISION_START", "_VISION_END"}
@@ -663,8 +664,9 @@ repaired = list(guard(answer_events(off_task), turnaround_payload["prompt"]))
 assert any(e.get("phase") == "VISION_ANSWER_GROUNDING_GUARD" for e in repaired)
 replacement = "".join(e.get("text", "") for e in repaired if e.get("type") == "DELTA")
 assert "character turnaround/reference sheet" in replacement
-assert "white hair [Center-left detail]" in replacement
-assert "moon symbol [Center-right detail]" in replacement
+assert "hair described as white hair" in replacement
+assert "[Center-left detail]" not in replacement
+assert "Reported decorative motifs include moon symbol" in replacement
 assert "dreamlike state" not in replacement
 assert "multiple identities" not in replacement
 assert repaired[-1]["type"] == "COMPLETED"
@@ -704,12 +706,37 @@ lunar_speculation = (
 lunar_guard = list(guard(answer_events(lunar_speculation), turnaround_payload["prompt"]))
 assert any(e.get("phase") == "VISION_ANSWER_GROUNDING_GUARD" for e in lunar_guard)
 lunar_clean = "".join(e.get("text", "") for e in lunar_guard if e.get("type") == "DELTA")
-assert "white hair [Center-left detail]" in lunar_clean
-assert "moon symbol [Center-right detail]" in lunar_clean
+assert "hair described as white hair" in lunar_clean
+assert "Reported decorative motifs include moon symbol" in lunar_clean
 assert "control over tides" not in lunar_clean
 assert "purity or a reflective state" not in lunar_clean
-assert "Decorative moon and magic motifs do not independently establish" in lunar_clean
+assert "not proof of any specific powers, events, or symbolic meanings" in lunar_clean
 assert lunar_guard[-1]["type"] == "COMPLETED"
+
+# Real user feedback: a correct guard still produced a dump of
+# source-region references instead of a usable description.
+natural_source = """Local vision observations (accuracy unverified):
+Cross-region feature index (exact phrases extracted from unverified crop captions; NOT independently seen or confirmed):
+Hair: white hair [Center-left detail]
+Clothing: purple hood [Far-left detail]; purple dress [Center-left detail]; purple hoodie [Center-right detail]
+Symbols: moon symbol [Center-right detail]; star [Far-right detail]
+Handheld items: stick [Far-left detail]; purple object [Center-left detail]; wand [Center detail]
+Far-left detail (source-image crop): A cartoon character holding a stick.
+Center-left detail (source-image crop): White-haired girl wearing a purple dress.
+Center-right detail (source-image crop): A purple hood with a moon symbol.
+Whole-image synthesis (not selected by descriptor heuristic; accuracy unverified):
+Character turnarounds."""
+natural = namespace["_natural_vision_fallback"](natural_source)
+assert "same illustrated subject from several angles" in natural
+assert "white hair" in natural and "purple hood" in natural
+assert "moon symbol" in natural and "star" in natural
+assert "stick" in natural and "purple object" in natural and "wand" in natural
+assert "described differently across the views" in natural
+assert "[Center-left detail]" not in natural
+assert "Hair:" not in natural and "Handheld items:" not in natural
+assert "lunar powers" not in natural and "purity" not in natural
+assert len(natural) < 1150, "A direct visual description should be concise"
+
 
 # A direct description with only visible features is preserved in full.
 detail_only = ("The local observations show a purple-robed character with "
