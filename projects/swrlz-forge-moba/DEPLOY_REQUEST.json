@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.321",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_321_SHEEP_SIGHT_XR_CROWD",
-  "reason": "Owner-directed Sheep Tag Quest follow-up. Wolf/Sheep enemy sight now respects current built house footprints when fog is on, rather than tracking through walls; last-seen positions, shared team vision and scent remain legitimate. Per-update visibility cache. Busy XR matches with 2+ living sheep and 8+ houses spread unchanged sheep escape candidates over more frames (one per update instead of two). Nerd Stats pages 9/10 and 10/10 report headset-moving vs stationary callback gaps, prior-render draw calls, blocked sight checks and AI budget. Correct v11.306 A* wolf radius metrics to configured 0.78. Preserve v11.306 chase optimization, Game/Model/Particle studio v11.320, saves, controls, LAN authority, XR reference-space, camera, building rules and 50ms simulation step. Exact sealed source: 342 patches, 71 assets, 8,451,859 HTML bytes SHA-256 47e8cc9f9f54fb1592715961ecd4faab13fc94f56e0f8208c250efc3306b2079. Focused source test, inline JS syntax and geometric sight/cache regression passed; Quest gameplay and frame-time improvement await owner acceptance.",
-  "sourceCommit": "c9c6178ad4b4f4c9868a12f435dac3d6dc79f794",
-  "sourceIntegritySha256": "47e8cc9f9f54fb1592715961ecd4faab13fc94f56e0f8208c250efc3306b2079"
+  "releaseVersion": "v11.330",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_330_MATERIAL_STUDIO_LAYOUT",
+  "reason": "Owner Materials screenshot repair: dedicated library/texture/inspector layout, phone and wide-portrait panel tabs, proper empty state, hidden legacy Particle/title overlap, native 3D sample placement and viewport input, scoped keyboard controls, and no covered main-canvas draws outside XR. Native material painting, PNG/image and JSON transfers, assignment/history/serialization retained; owner v11.321 and prior studios preserved. Strict source/native tests and real browser interactions passed on desktop1440x1000, phone390x844, portrait980x1800, including two full studio round trips, Delete isolation, actual render pause/resume and zero page errors. Canonical reconstructed HTML is byte-identical to tested HTML: 343 patches,71 assets,8,484,905 bytes,SHA-256 aa783d286c545bdeb13ea654f171e0915ab70ec975ab4a9e0c51f93649019ac9. Physical-device visual/XR acceptance remains separate.",
+  "sourceCommit": "244e1d9146dd6ed8dd4147604eba4965007d5fac",
+  "sourceIntegritySha256": "aa783d286c545bdeb13ea654f171e0915ab70ec975ab4a9e0c51f93649019ac9"
 }
