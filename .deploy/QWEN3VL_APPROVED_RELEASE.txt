@@ -15,3 +15,4 @@ REFERENCE_PROGRESSIVE_FIVE_20261107=Progressive numbered reference findings 1-4 
 SELECTIVE_REFERENCE_CROPS_FORMAT_20261107=Skip unnecessary repeated crops, perform no more than two close-ups for useful fine detail, concise complete overview, structured readable final, compact mobile analysis card
 VISION_CARD_SCROLL_IMAGE_LIGHTBOX_20261107=Restore single conversation scrollport over image analysis card; enlarge pending and committed image previews in native closeable modal
 TAP_ANCHORED_IMAGE_ZOOM_20261107=Anchor full-size image zoom to actual tapped pixel, keep original-size panning and close modal; Qwen vision unchanged
+MODEL_REFERENCE_SPATIAL_REPORT_VISUALS_20261107=Improve Qwen full-image spatial consistency and source evidence, present structured visual modeling report with source-view chips and expandable provenance; no additional inference passes
