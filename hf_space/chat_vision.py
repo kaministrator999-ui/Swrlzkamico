@@ -288,8 +288,6 @@ def _load_local_model():
     if _model is not None:
         return _model
 
-    from llama_cpp import Llama
-
     model_path = _cached_asset(MODEL_FILE)
     projector_path = _cached_asset(PROJECTOR_FILE)
     if VISION_MODEL_VARIANT == "qwen3-vl-4b":
