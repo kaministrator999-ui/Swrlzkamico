@@ -5,6 +5,7 @@ on:
     paths:
       - '.github/workflows/one-shot-forge-v11-332-crack-atlas-seal.yml'
       - 'projects/swrlz-forge-moba/patches/v11_332_smooth_cliff_crack_atlas.py'
+      - 'projects/swrlz-forge-moba/scripts/test_v11_332_cliff_fractures.cjs'
   workflow_dispatch:
 permissions:
   contents: read
