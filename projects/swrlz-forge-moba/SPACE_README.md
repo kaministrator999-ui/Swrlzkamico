@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.331
+title: §wyrl§ Engine v11.332
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,11 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.332 · Smooth Cliff Hand original fracture mask repair (2026-11-07)
+
+The connected **Plain Hand Base · Smooth Cliff Hand** used clean sandstone albedo, normal, roughness and AO tiles, but did not composite the supplied atlas's separate bottom-right *fracture outline mask*. Thin base-color cracks were therefore easy to lose at phone/Quest display size. The new material step reads that existing fracture mask, adds clearly visible dark mineral seams with a narrow one-pixel shoulder, then preserves the four painted stone knuckles and wrist-only moss. This uses the same original asset and mapped UVs; **zero additional geometry**, no floating crack tubes, one connected gauntlet mesh, and the original 17-joint rig/animations. The 345-patch package measures **8,487,373 bytes**, SHA-256 `0d84c3c8d7243db25a8f7406146eac54b7c23da8ab4771686d2bd96d656fc308`. Focused pixel/atlas/source checks passed; phone/Quest visual acceptance remains owner-controlled.
+
 
 ## §E v11.331 · Smooth Cliff Hand sandstone PBR repair (2026-11-07)
 
