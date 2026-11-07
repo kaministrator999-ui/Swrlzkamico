@@ -661,6 +661,38 @@ for preserved in (
 ):
     assert preserved in problematic_result, preserved
 assert problematic_vision.count("No occlusion") == 1, "raw observation remains untouched"
+
+# Captured improved-but-verbose mage caption: report the final answer once,
+# remove raw crop confusion and verbatim cross-section repetitions while
+# retaining view-specific information. These are presentation regressions,
+# not evidence that Qwen correctly identified original image pixels.
+newer_mage_observation = (
+    "Character reference · local model observation (accuracy unverified)\n\n"
+    "Subject and views: One character shown in five views: front, left side, "
+    "right side, back, and top. All views depict the same character and props.\n"
+    "Silhouette and anatomy: Silver-white hair in two braids. The back view "
+    "shows the full cape and a staff. The top view shows the hood's shape "
+    "and the staff's position.\n"
+    "Clothing and surface detail: Purple robe with gold trim. Brown boots "
+    "with fur lining.\n"
+    "Props and small features: Staff topped with glowing purple crystal. "
+    "The staff is visible in all views. Brown satchel hangs at the hip. "
+    "The top view shows the hood's shape and the staff's position.\n"
+    "Visibility limits: The back view does not show the face; the top view "
+    "shows only the hood, not the whole body.\n"
+    "\nFocused image details (unverified source-crop observations):\n"
+    "- Upper-left figure detail: Two identical chibi figures."
+)
+formatted_newer=direct({"prompt":"What do you see in this image?" +
+                        vision.VISION_START + newer_mage_observation +
+                        vision.VISION_END})
+assert formatted_newer.count("The top view shows the hood's shape and the staff's position.") == 1
+assert "The staff is visible in all views" not in formatted_newer
+assert "Two identical chibi figures" not in formatted_newer
+assert "Brown satchel hangs at the hip" in formatted_newer
+assert "The back view does not show the face" in formatted_newer
+assert "not independently verified" in formatted_newer
+
 assert "not independently verified" in problematic_result
 
 assert direct({"prompt": "Describe this image" + vision.VISION_START + observed + vision.VISION_END}) is not None
@@ -793,7 +825,11 @@ assert "Whole scene:" in final_prompt[0]["text"]
 assert "Central outfit and prop detail" in final_prompt[0]["text"]
 assert "View comparisons:" in final_prompt[0]["text"]
 assert "visible belt buckle cannot" in final_prompt[0]["text"]
-assert "170 to 230 words" in final_prompt[0]["text"]
+assert "110 to 175 information-dense words" in final_prompt[0]["text"]
+assert "No props, hand-held objects" in final_prompt[0]["text"]
+assert "only when clearly" in final_prompt[0]["text"]
+assert "different crop" in final_prompt[0]["text"]
+assert "Do NOT narrate what each view fails to show" in final_prompt[0]["text"]
 assert any(f.get("inferenceStage") == "FUSION_PREFILL" for _, f in joint_phases)
 assert any(f.get("integratedSelected") is True for _, f in joint_phases)
 assert joint_model.calls[-1]["max_tokens"] == 384
