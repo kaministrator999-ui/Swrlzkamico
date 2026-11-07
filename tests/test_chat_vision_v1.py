@@ -373,12 +373,46 @@ with patch.object(vision, "_prepare_image", lambda x: x), patch.object(vision, "
     assert done["elapsedSeconds"] >= done["phaseElapsedSeconds"] >= 0
     assert isinstance(done["elapsedSeconds"], float)
     assert isinstance(done["phaseElapsedSeconds"], float)
+    # Each explicit Send gets its own ID. Retries of that Send reuse the
+    # accepted completed job; a new Send never replays stale completed text.
+    first_payload = {"image": valid, "question": "Fresh resend",
+                     "visionRequestId": "vision-fresh-0001"}
+    first = client.post("/api/lalm_station/vision", json=first_payload)
+    assert first.status_code == 202 and first.json()["resumedExistingJob"] is False
+    first_id = first.json()["jobId"]
+    assert poll_done(first_id)["phase"] == "COMPLETE"
+    calls_after_first = len(fake_model.calls)
+    retry = client.post("/api/lalm_station/vision", json=first_payload)
+    assert retry.status_code == 202
+    assert retry.json()["jobId"] == first_id
+    assert retry.json()["resumedExistingJob"] is True
+    assert retry.json()["done"] is True
+    assert len(fake_model.calls) == calls_after_first, "retry may not rerun inference"
+    second_payload = dict(first_payload, visionRequestId="vision-fresh-0002")
+    second = client.post("/api/lalm_station/vision", json=second_payload)
+    assert second.status_code == 202
+    assert second.json()["resumedExistingJob"] is False
+    assert second.json()["jobId"] != first_id
+    assert poll_done(second.json()["jobId"])["phase"] == "COMPLETE"
+    assert len(fake_model.calls) == calls_after_first + 1, "new Send must rerun local inference"
+    # Older clients without per-send IDs must not silently replay a completed
+    # request just because image, prompt and analysis level match.
+    legacy = client.post("/api/lalm_station/vision", json={"image": valid, "question": "Simple"})
+    assert legacy.status_code == 202
+    assert legacy.json()["jobId"] != job_id
+    assert legacy.json()["resumedExistingJob"] is False
+    assert poll_done(legacy.json()["jobId"])["phase"] == "COMPLETE"
 
 assert client.post("/api/lalm_station/vision", json={"image": "invalid"}).status_code == 400
 for bad in (0,4,"3",True):
     invalid_response=client.post("/api/lalm_station/vision",
         json={"image":valid,"question":"test","analysisLevels":bad})
     assert invalid_response.status_code==400,invalid_response.text
+for invalid_nonce in ("x", "has spaces in it", "z" * 129, 17):
+    invalid_response = client.post("/api/lalm_station/vision", json={
+        "image": valid, "question": "test", "visionRequestId": invalid_nonce})
+    assert invalid_response.status_code == 400
+    assert invalid_response.json()["code"] == "VISION_REQUEST_ID_INVALID"
 assert client.post("/api/lalm_station/vision", data="oops", headers={"Content-Type": "text/plain"}).status_code == 415
 assert client.get("/api/lalm_station/vision/status", params={"jobId": "invalid"}).status_code == 400
 assert client.get("/api/lalm_station/vision/status", params={"jobId": "a"*32}).status_code == 404
