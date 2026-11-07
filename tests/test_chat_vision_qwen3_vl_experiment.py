@@ -1,4 +1,4 @@
-"""Offline configuration and mocked-loader checks; no model download or paid inference."""
+"""Offline Qwen3-VL route checks; no Space mutation or model downloads."""
 from __future__ import annotations
 
 import importlib.util
@@ -8,7 +8,8 @@ import sys
 import types
 from unittest.mock import patch
 
-SOURCE = Path(__file__).resolve().parents[1] / "hf_space" / "chat_vision.py"
+ROOT = Path(__file__).resolve().parents[1] / "hf_space"
+SOURCE = ROOT / "chat_vision.py"
 
 
 def _vision(variant):
@@ -19,7 +20,7 @@ def _vision(variant):
     return module
 
 
-def test_current_smolvlm_default_preserved():
+def test_smolvlm_fallback_preserved():
     vision = _vision("smolvlm-500m")
     assert vision.VISION_MODEL_VARIANT == "smolvlm-500m"
     assert vision.MODEL_REPO == "ggml-org/SmolVLM-500M-Instruct-GGUF"
@@ -27,7 +28,7 @@ def test_current_smolvlm_default_preserved():
     assert vision.MAX_VISION_OUTPUT_TOKENS == 88
 
 
-def test_qwen_config_pins_matching_weights_and_projector():
+def test_qwen_trial_config_pinned():
     vision = _vision("qwen3-vl-4b")
     assert vision.MODEL_REPO == "Qwen/Qwen3-VL-4B-Instruct-GGUF"
     assert vision.MODEL_REVISION == "1cd86afb9a95c410a6038ab3b40d8b578c892266"
@@ -37,48 +38,57 @@ def test_qwen_config_pins_matching_weights_and_projector():
     assert vision.MAX_VISION_OUTPUT_TOKENS == 224
 
 
-def test_qwen_loader_uses_compatible_handler_and_matching_projector():
+def test_trial_loads_separate_process_without_overwriting_llama_cpp():
     vision = _vision("qwen3-vl-4b")
-    observed = {}
-
-    class FakeHandler:
-        def __init__(self, **kwargs):
-            observed["handler"] = kwargs
-
-    class FakeLlama:
-        def __init__(self, **kwargs):
-            observed["llama"] = kwargs
-
-    fake_cpp = types.ModuleType("llama_cpp")
-    fake_cpp.Llama = FakeLlama
-    fake_multimodal = types.ModuleType("llama_cpp.llama_multimodal")
-    fake_multimodal.Qwen3VLChatHandler = FakeHandler
-    with patch.dict(sys.modules, {"llama_cpp": fake_cpp,
-                                  "llama_cpp.llama_multimodal": fake_multimodal}):
-        with patch.object(vision, "_cached_asset", side_effect=lambda filename: "/test/" + filename):
-            instance = vision._load_local_model()
-    assert isinstance(instance, FakeLlama)
-    assert observed["handler"]["mmproj_path"].endswith(vision.PROJECTOR_FILE)
-    assert observed["handler"]["force_reasoning"] is False
-    assert observed["handler"]["image_min_tokens"] == 1024
-    assert observed["handler"]["use_gpu"] is False
-    assert observed["llama"]["model_path"].endswith(vision.MODEL_FILE)
-    assert observed["llama"]["n_ctx"] == 10240
-    assert observed["llama"]["n_gpu_layers"] == 0
+    calls = []
+    sentinel = object()
+    fake_backend = types.ModuleType("qwen3vl_local_server")
+    fake_backend.load = lambda model, projector: (calls.append((model, projector)), sentinel)[1]
+    with patch.dict(sys.modules, {"qwen3vl_local_server": fake_backend}):
+        with patch.object(vision, "_cached_asset", side_effect=lambda name: "/cache/" + name):
+            assert vision._load_local_model() is sentinel
+    assert calls == [("/cache/" + vision.MODEL_FILE, "/cache/" + vision.PROJECTOR_FILE)]
 
 
-def test_unsupported_runtime_fails_before_downloading_weights():
-    vision = _vision("qwen3-vl-4b")
-    fake_cpp = types.ModuleType("llama_cpp")
-    fake_cpp.Llama = object
-    # A plain 0.3.35-style distribution without Qwen3VLChatHandler
-    # must not download 3GB of weights and then quietly use the wrong handler.
-    with patch.dict(sys.modules, {"llama_cpp": fake_cpp}):
-        sys.modules.pop("llama_cpp.llama_multimodal", None)
-        with patch.object(vision, "_cached_asset", side_effect=AssertionError("download attempted")):
-            try:
-                vision._load_local_model()
-            except RuntimeError as exc:
-                assert "QWEN3_VL_BACKEND_UNAVAILABLE" in str(exc)
-            else:
-                raise AssertionError("incompatible runtime was accepted")
+def test_qwen_server_is_local_and_source_revision_immutable():
+    import sys
+    sys.path.insert(0, str(ROOT))
+    import qwen3vl_local_server as server
+    assert server.LLAMA_CPP_COMMIT == "fd27b2034905f8dadd8bd6d2cc44595f4929d391"
+    assert server.SERVER_URL.startswith("http://127.0.0.1:")
+    assert "github.com/ggml-org/llama.cpp.git" == server.UPSTREAM_URL
+
+
+def test_qwen_server_sse_yields_real_choices_not_synthetic_output():
+    import sys
+    sys.path.insert(0, str(ROOT))
+    import qwen3vl_local_server as server
+
+    class FakeHTTP:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *_):
+            pass
+
+        def __iter__(self):
+            return iter([
+                b'data: {"choices":[{"delta":{"content":"rock"}}]}\n',
+                b'data: {"choices":[{"delta":{"content":" hand"}}]}\n',
+                b'data: [DONE]\n'
+            ])
+
+    with patch.object(server.urllib.request, "urlopen", return_value=FakeHTTP()):
+        adapter = object.__new__(server.LocalQwen3VL)
+        events = list(adapter.create_chat_completion(
+            messages=[{"role":"user","content":"test"}], max_tokens=8,
+            temperature=0.1, stream=True
+        ))
+    assert [chunk["choices"][0]["delta"]["content"] for chunk in events] == ["rock", " hand"]
+
+
+if __name__ == "__main__":
+    for name, obj in sorted(globals().items()):
+        if name.startswith("test_") and callable(obj):
+            obj()
+    print("Qwen3-VL isolated source/adapter tests: PASS")
