@@ -367,6 +367,22 @@ with patch.object(vision, "_prepare_image", lambda x: x), patch.object(vision, "
     assert done["sourceWidth"] == 16 and done["sourceHeight"] == 16
     assert done["sourceBytes"] == len(jpeg)
     assert done["originalBytesPreserved"] is True
+    # Resource observations are from shared cgroup, not model-owned RAM/CPU.
+    usage = done["resourceUsage"]
+    assert usage["schema"] == "swrlz-response-resource-usage-v1"
+    assert usage["scope"] == "shared-cgroup-v2"
+    assert usage["isolatedModelAttribution"] is False
+    assert usage["routeId"] == "qwen3-vl-4b"
+    assert usage["outcome"] == "COMPLETE"
+    assert "memoryPeakSampledBytes" in usage["observed"]
+    # Only the actual account and matching completed vision handoff may attach
+    # those readings to a saved user/assistant message.
+    handoff_prompt = "Describe this image." + vision.VISION_START + done["description"] + vision.VISION_END
+    receipt = vision.vision_job_resource_receipt("google:test",job_id,handoff_prompt)
+    assert receipt is not None and receipt["usage"]["routeId"] == "qwen3-vl-4b"
+    assert vision.vision_job_resource_receipt("google:other",job_id,handoff_prompt) is None
+    assert vision.vision_job_resource_receipt("google:test","0"*32,handoff_prompt) is None
+    assert vision.vision_job_resource_receipt("google:test",job_id,handoff_prompt+"tampered") is None
     # Status reflects only server-read original dimensions, never a guessed
     # pixel size or a fabricated verified visual recognition score.
     assert done["done"] is True
