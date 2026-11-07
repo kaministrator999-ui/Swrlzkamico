@@ -157,16 +157,24 @@ async def main():
         await mobile.close()
         # External hosting check: whether the actual static Space serves the sealed build.
         for remote in ('https://kamiloki-swrlz-forge-moba.static.hf.space/SOURCE.json',
-                       'https://huggingface.co/spaces/kamiloki/swrlz-forge-moba/resolve/main/SOURCE.json'):
+                       'https://huggingface.co/spaces/kamiloki/swrlz-forge-moba/resolve/main/SOURCE.json',
+                       'https://kamiloki-swrlz-forge-moba.static.hf.space/assets/cliff-hand/cliff_pbr_atlas_384.jpg',
+                       'https://huggingface.co/spaces/kamiloki/swrlz-forge-moba/resolve/main/assets/cliff-hand/cliff_pbr_atlas_384.jpg'):
             try:
                 def get_remote():
                     with urlopen(Request(remote,headers={'Cache-Control':'no-cache','User-Agent':'SwrlzCliffDiagnostics/1.0'}),timeout=20) as response:
-                        return response.status,response.headers.get('Cache-Control'),response.read(100000)
+                        return response.status,response.headers.get('Cache-Control'),response.read(800000)
                 code,cache,content=await asyncio.to_thread(get_remote)
-                obj=json.loads(content)
-                print('CLIFF_HOSTED_SOURCE='+json.dumps({'url':remote,'status':code,'cacheControl':cache,
-                    'version':obj.get('sourceVersion'),'sha256':obj.get('finalSha256'),
-                    'bytes':obj.get('finalBytes')}),flush=True)
+                if remote.endswith('.jpg'):
+                    local=(root/'assets/cliff-hand/cliff_pbr_atlas_384.jpg').read_bytes()
+                    print('CLIFF_HOSTED_ATLAS='+json.dumps({'url':remote,'status':code,'cacheControl':cache,
+                        'bytes':len(content),'sha256':hashlib.sha256(content).hexdigest(),
+                        'matchesPackagedAtlas':content==local}),flush=True)
+                else:
+                    obj=json.loads(content)
+                    print('CLIFF_HOSTED_SOURCE='+json.dumps({'url':remote,'status':code,'cacheControl':cache,
+                        'version':obj.get('sourceVersion'),'sha256':obj.get('finalSha256'),
+                        'bytes':obj.get('finalBytes')}),flush=True)
             except Exception as e:
                 print('CLIFF_HOSTED_SOURCE_ERROR='+json.dumps({'url':remote,'error':str(e)[:500]}),flush=True)
         await browser.close()
