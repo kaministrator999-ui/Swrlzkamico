@@ -957,7 +957,13 @@
     .vision-reference-findings ol{list-style:decimal;margin:0;padding-left:20px;display:grid;gap:8px}
     .vision-reference-findings li{padding-left:2px;white-space:normal;overflow-wrap:anywhere}
     .vision-reference-findings li strong{display:block;margin-bottom:2px;color:#c2eafb}
-    .vision-reference-findings li div{white-space:pre-wrap;line-height:1.45;color:#d9eaf4}
+    .vision-reference-findings li div{white-space:pre-wrap;line-height:1.5;color:#d9eaf4}
+    .vision-reference-final{border-top:1px solid rgba(105,214,246,.25);padding-top:10px!important}
+    .vision-reference-final>strong{color:#eaffff!important}
+    .vision-reference-more{margin-top:6px;font-size:11px;color:#9fd4ee}
+    .vision-reference-more summary{cursor:pointer}
+    .vision-reference-more>div{margin-top:6px}
+
     .composer-shell.collapsed .composer-media-tools{display:none}
     .user-image-attachment{display:block;max-width:min(240px,100%);max-height:180px;object-fit:contain;margin-top:9px;border-radius:9px}
     .user-vision-summary{margin-top:8px;font-size:11px;color:#d4e9f7;white-space:pre-wrap}
@@ -1617,34 +1623,47 @@
           jobId:"",abort:new AbortController(),phase:"",phaseStart:initialTime,
           serverTiming:null,interval:null,renderedLevels:"",renderedFindings:"",
           showReferenceFindings(timing){
-            // Only multi-view/reference requests get the live numbered narrative.
-            // Everything shown here comes from completed model passes; internal
-            // comparison/consistency checks are never presented as progress.
+            // Show only completed model observations. Keep the entire first
+            // output in an opt-in disclosure instead of filling the viewport
+            // and repeating the same long text in the raw-output box.
             if(timing?.referenceProgress!==true)return;
             const overview=timing.levelRecords?.[0]?.description;
             if(typeof overview!=="string"||!overview.trim())return;
             const regions=Array.isArray(timing.spatialRegionRecords)?timing.spatialRegionRecords:[];
-            const entries=[["Whole-image overview",overview]];
-            if(regions[0])entries.push([String(regions[0].region||"First view"),String(regions[0].description||"")]);
-            if(regions[1])entries.push([String(regions[1].region||"Second view"),String(regions[1].description||"")]);
-            if(regions.length>=3){
-              entries.push(["Remaining reference views",regions.slice(2).map(
-                record=>String(record.region||"View")+": "+String(record.description||"")
-              ).join("\n")]);
+            const entries=[["Whole-image overview",overview,false]];
+            for(const region of regions){
+              if(typeof region.description==="string"&&region.description.trim())
+                entries.push([String(region.region||"Focused detail"),region.description,false]);
             }
             const integrated=timing.integratedObservation?.description;
             if(timing.integratedSelected===true&&typeof integrated==="string"&&integrated.trim())
-              entries.push(["Integrated modeling description",integrated]);
+              entries.push(["Final modeling description",integrated,true]);
             const signature=JSON.stringify(entries);
             if(signature===this.renderedFindings)return;
-            this.renderedFindings=signature;
-            findings.hidden=false;findingsList.replaceChildren();
-            for(const [name,body] of entries){
-              if(!body.trim())continue;
+            this.renderedFindings=signature;findings.hidden=false;
+            findingsList.replaceChildren();
+            for(const [name,body,isFinal] of entries){
               const item=document.createElement("li");
+              if(isFinal)item.classList.add("vision-reference-final");
               const heading=document.createElement("strong");heading.textContent=name;
-              const content=document.createElement("div");content.textContent=body;
-              item.append(heading,content);findingsList.append(item);
+              item.append(heading);
+              const content=document.createElement("div");
+              if(!isFinal&&body.length>420){
+                // Preview ends on a complete sentence or line whenever
+                // possible. The exact raw observation remains one tap away.
+                const cut=body.slice(0,390);
+                const boundary=Math.max(cut.lastIndexOf(". "),cut.lastIndexOf("\n"));
+                const preview=(boundary>180?cut.slice(0,boundary+1):cut).trimEnd();
+                content.textContent=preview+"…";
+                const more=document.createElement("details");
+                more.className="vision-reference-more";
+                const label=document.createElement("summary");label.textContent="Read full observation";
+                const full=document.createElement("div");full.textContent=body;
+                more.append(label,full);item.append(content,more);
+              }else{
+                content.textContent=body;item.append(content);
+              }
+              findingsList.append(item);
             }
           },
           showLevels(records,selected){
@@ -1652,7 +1671,7 @@
             const signature=records.map(x=>[x.level,x.description,x.elapsedSeconds].join("|")).join("~")+"|"+selected;
             if(signature===this.renderedLevels)return;
             this.renderedLevels=signature;evidence.hidden=false;
-            evidenceSummary.textContent="Observed model outputs · "+records.length+" level"+(records.length===1?"":"s")+" (not accuracy-verified)";
+            evidenceSummary.textContent="Raw model output · "+records.length+" level"+(records.length===1?"":"s")+" (expand if needed)";
             evidenceContents.replaceChildren();
             for(const record of records){
               const entry=document.createElement("div");entry.className="vision-level-entry";
