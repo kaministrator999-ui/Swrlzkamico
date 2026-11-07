@@ -386,7 +386,12 @@ def _format_direct_vision_report(description: str) -> str:
     matches = list(pattern.finditer(text))
     # A heading-based report does not confer accuracy on crop observations.
     # For multi-view reference sheets, abstain from overly broad absolutes.
-    turnaround = len(set(re.findall(r"\\b(?:front|back|top|side)\\b", text, re.I))) >= 3 and bool(re.search(r"\\bviews?\\b", text, re.I))
+    turnaround = (
+        len(set(match.lower() for match in re.findall(
+            r"\b(?:front|back|top|side)\b", text, re.I
+        ))) >= 3
+        and bool(re.search(r"\bviews?\b", text, re.I))
+    )
     sections = []
     if len(matches) >= 2:
         seen = set()
