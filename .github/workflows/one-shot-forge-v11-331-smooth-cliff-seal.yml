@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/one-shot-forge-v11-331-smooth-cliff-seal.yml'
+      - 'projects/swrlz-forge-moba/patches/v11_331_smooth_cliff_material_uv.py'
 permissions:
   contents: read
 jobs:
