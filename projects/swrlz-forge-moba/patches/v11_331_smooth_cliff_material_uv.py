@@ -5,7 +5,12 @@ MARKER = "SWYRL_ENGINE_DEPLOY_MARKER: V11_331_SMOOTH_CLIFF_MATERIAL_UV"
 def once(html, old, new, label):
     count = html.count(old)
     if count != 1:
-        raise AssertionError(("v11.331", label, count, old[:110]))
+        diag = {}
+        if label == "provide a second UV channel for the cliff AO texture":
+            for key in ("function atelierTopologyGeometry(part){", "function se220RigMesh(part){", "setAttribute('uv'", "setAttribute('uv2'"):
+                at = html.find(key)
+                diag[key] = (at, html[max(0, at - 100):at + 620] if at >= 0 else "")
+        raise AssertionError(("v11.331", label, count, old[:110], diag))
     return html.replace(old, new, 1)
 
 def apply(html):
