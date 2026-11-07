@@ -1,6 +1,6 @@
 # Organized studio interfaces and project navigation — v11.320
 
-Lifecycle: IMPLEMENTATION_APPROVED; SOURCE_VERIFIED; BROWSER_VERIFIED. Publication/hosted confirmation and owner device acceptance are recorded separately below.
+Lifecycle: IMPLEMENTATION_APPROVED; SOURCE_VERIFIED; BROWSER_VERIFIED; SOURCE_PUBLISHED; FEATURE_DEPLOYED; HOSTED_ARTIFACT_VERIFIED. Owner device visual/XR acceptance remains separate.
 
 ## Resulting behavior
 
@@ -18,7 +18,7 @@ Completed native loads select Modeling for model documents, a saved Particle/Mat
 
 The release integrates on canonical `38832d5cc76e6303a6b439b2de20fa3eebb5d58d`, preserving the owner's v11.309 native-ray work and every earlier registered patch. The new UI patch appends at position **341**. No provisional UI deployment replaced the concurrent Arcane releases.
 
-Full ordered reconstruction and strict packaging verified **8,445,313 HTML bytes**, SHA-256 **`784249443e626d13740ada224b61f54358011c98678c6e6ee41f581660264347`**, **71 assets** and exactly **75 package files**. Index and Modeler HTML are identical; every asset matches its bytes/hash receipt. The manifest, runtime identity, deploy marker, verifier, workflow and current docs identify v11.320. The predecessor deployment request remains until the source publication and final separate request-only commit.
+Full ordered reconstruction and strict packaging verified **8,445,313 HTML bytes**, SHA-256 **`784249443e626d13740ada224b61f54358011c98678c6e6ee41f581660264347`**, **71 assets** and exactly **75 package files**. Index and Modeler HTML are identical; every asset matches its bytes/hash receipt. The manifest, runtime identity, deploy marker, verifier, workflow and current docs identify v11.320. The published source and separate final request-only commit identify this same exact seal; deployment receipts follow below.
 
 No source integrity check was waived. Historical release-history generation depends on the complete ordered manifest, so the final seal is measured from the original checksum-gated payload and all 341 patches.
 
@@ -36,6 +36,16 @@ python projects/swrlz-forge-moba/scripts/check_studio_ui_v11_320.py --html dist/
 ```
 
 The portable browser check requires Playwright and Chromium. It uses a fresh isolated profile, local sealed HTML at the canonical app origin, and verified-TLS guest Chat/CDN requests. An optional `--native-project` exercises a private fixture without packaging it. Browser checks do not establish physical phone/Quest appearance or XR calibration acceptance.
+
+## Publication and hosted confirmation — 2026-11-07
+
+- Published source: [`40a08cc0d67dd8cf43c6a98b20655e0a146a6a4f`](https://github.com/kaministrator999-ui/Swrlzkamico/commit/40a08cc0d67dd8cf43c6a98b20655e0a146a6a4f).
+- Separate final request: [`b3a5a3748edf426af64f212f7dfca7a032bf99b6`](https://github.com/kaministrator999-ui/Swrlzkamico/commit/b3a5a3748edf426af64f212f7dfca7a032bf99b6); the source-to-request comparison is exactly one commit changing only `projects/swrlz-forge-moba/DEPLOY_REQUEST.json`.
+- Dedicated deployment [run 42345232697](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/42345232697): **SUCCESS**, including strict source packaging and upload to the existing Space. No unrelated game/browser workflow was dispatched.
+- Hugging Face revision **`713f60ce7bbe93d8ce8ccae230f8acd3d23cba02`**: **RUNNING**. Its official revision-pinned `SOURCE.json` identifies v11.320, 341 ordered patches and 71 assets.
+- Independently streamed official `index.html` and `modeler.html`: each **8,445,313 bytes**, SHA-256 **`784249443e626d13740ada224b61f54358011c98678c6e6ee41f581660264347`**. Both match the locally verified package and source manifest.
+
+Live engine: https://huggingface.co/spaces/kamiloki/swrlz-forge-moba . Source/browser/hosted verification is complete. Physical phone/Quest appearance and XR alignment are owner acceptance, not implied by these receipts. This documentation-only closure does not change the runtime, manifest seal or deployment request.
 
 ## Saved-mage cleanup and account flow
 

@@ -394,3 +394,5 @@ visual acceptance remain pending.
 ## Owner-requested saved-mage cleanup — 2026-11-07
 
 After a fresh verified Google reconnection, both account records were read back and matched their recorded native SHA/part counts. Only the older 41-part revision-3 checkpoint was deleted using its expected revision. A subsequent protected catalog read confirmed one Little Crystal Mage record: the unchanged complete 59-part revision 2. Earlier historical statements that the older checkpoint was preserved describe its state at those checkpoints and are superseded by this owner-directed cleanup. No other account projects were removed.
+
+The related studio-navigation v11.320 release subsequently deployed successfully in [run 42345232697](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/42345232697); its hosted index and Modeler pages independently match the exact source seal. The account-connected preview had already verified canonical My Projects loading this unchanged 59-part save into Model Studio. Full release and verification boundaries are recorded in [the studio checkpoint](STUDIO_NAVIGATION_LAYOUT_V11_320.md).
