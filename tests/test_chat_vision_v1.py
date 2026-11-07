@@ -676,7 +676,7 @@ assert any(f.get("integratedSelected") is True for _, f in joint_phases)
 assert joint_model.calls[-1]["max_tokens"] == 416
 for rule in (
     "MULTI-VIEW RULE:", "SPATIAL RULE:", "SURFACE RULE:",
-    "VISIBILITY RULE:", "the SAME character", "which anatomical hand",
+    "VISIBILITY RULE:", "the SAME character", "the SUBJECT's",
 ):
     assert rule in final_prompt[0]["text"], ("missing modeling consistency rule", rule)
 assert "no hidden parts" in final_prompt[0]["text"]
