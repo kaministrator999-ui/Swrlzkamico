@@ -534,7 +534,7 @@ import typing
 router_source = (SOURCE.parent / "model_router.py").read_text(encoding="utf-8")
 tree = ast.parse(router_source)
 selected = [node for node in tree.body if isinstance(node, (ast.Assign, ast.FunctionDef)) and (
-    isinstance(node, ast.FunctionDef) and node.name in {"_ground_vision_handoff", "_direct_vision_description"}
+    isinstance(node, ast.FunctionDef) and node.name in {"_ground_vision_handoff", "_direct_vision_description", "_format_direct_vision_report"}
     or isinstance(node, ast.Assign) and any(isinstance(target, ast.Name) and target.id in {"_VISION_START","_VISION_END"} for target in node.targets)
 )]
 namespace = {"Any": typing.Any, "re": __import__("re")}
@@ -554,9 +554,24 @@ assert direct(input_payload) is not None  # This is an intentional direct image-
 direct_user = "What do you see in this picture?" + vision.VISION_START + observed + vision.VISION_END
 direct_response = direct({"prompt": direct_user, "history": []})
 assert isinstance(direct_response, str)
-assert "Local image analyzer's description" in direct_response
-assert direct_response.endswith(observed)
+assert direct_response.startswith("## Image analysis\n\n")
+assert observed in direct_response
 assert direct_response.count(observed) == 1, "Never regenerate or invent description"
+assert "not independently verified" in direct_response
+# Real old Qwen descriptions keep one readable final answer; the raw model
+# appendix stays in the saved user message and its export.
+legacy = ("Character reference · local model observation (accuracy unverified)\n\n"
+          "Subject and views: One hooded character in multiple views.\n"
+          "Shape and proportions: Large hood and compact body.\n"
+          "Materials and markings: Purple robe, gold trim.\n"
+          "\nFocused image details (unverified source-crop observations):\n"
+          "- Upper-left crop: Large hood and compact body.")
+legacy_answer = direct({"prompt": question + vision.VISION_START + legacy + vision.VISION_END})
+assert legacy_answer.startswith("## Image analysis")
+assert "### Shape & proportions" in legacy_answer
+assert "### Materials & markings" in legacy_answer
+assert "Upper-left crop" not in legacy_answer
+assert legacy_answer.count("Large hood and compact body.") == 1
 assert direct({"prompt": "Describe this image" + vision.VISION_START + observed + vision.VISION_END}) is not None
 assert direct({"prompt": "What do you see in this image?" + vision.VISION_START + observed + vision.VISION_END}) is not None
 assert direct({"prompt": "Please describe this image!" + vision.VISION_START + observed + vision.VISION_END}) is not None
