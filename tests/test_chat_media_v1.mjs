@@ -172,6 +172,12 @@ assert.match(html,/dialog\.addEventListener\("close",\(\)=>dialog\.remove\(\)/);
 assert.match(html,/previewButton\.addEventListener\("click",\(\)=>openVisionImagePreview\(attachment\.url/);
 assert.match(html,/expand\.addEventListener\("click",\(\)=>openVisionImagePreview\(previewURL/);
 assert.match(html,/vision-image-dialog-close/);
+// Zoom must preserve the pixel selected by the user's tap, not start at (0,0).
+assert.match(html,/const fractionX=Math\.max\(0,Math\.min\(1,\(event\.clientX-before\.left\)\/before\.width\)\)/);
+assert.match(html,/const fractionY=Math\.max\(0,Math\.min\(1,\(event\.clientY-before\.top\)\/before\.height\)\)/);
+assert.match(html,/dialog\.scrollLeft\+=after\.left\+fractionX\*after\.width-event\.clientX/);
+assert.match(html,/dialog\.scrollTop\+=after\.top\+fractionY\*after\.height-event\.clientY/);
+assert.match(html,/image\.style\.height=image\.naturalHeight\+"px"/);
 assert.match(backend,/proposals = proposals\[:2\]/);
 assert.match(backend,/about 80 to 120 words/);
 assert.match(backend,/Focused image details/);
