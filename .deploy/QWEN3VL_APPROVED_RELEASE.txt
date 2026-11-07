@@ -11,3 +11,4 @@ FIX_SCOPE=explicit legacy migration; defer heavy Qwen startup; mobile response c
 STARTUP_PREWARM_RELEASE_20261107=approved ongoing Qwen image integration; restore prewarm on Space startup without new UI
 QWEN3_ONLY_WHOLE_CROP_FUSION_20261107=Use only Qwen3-VL for image analysis; remove Smol model preload and runtime selector; preserve 768px overview and integrate native pixel crops
 QWEN_ONLY_GUARD_RETRY_1=New guard checks sole Qwen3 model and rejects retired image model files
+REFERENCE_PROGRESSIVE_FIVE_20261107=Progressive numbered reference findings 1-4 as real image/crop passes finish, integrated modeling description 5, no exposed contradiction checks
