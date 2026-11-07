@@ -1126,6 +1126,13 @@ def _run(key,request_id,model_id,payload,assistant_id,forge_context=None):
         if resource_usage is None:
             resource_usage=resource_meter.finish()
             resource_usage["routeId"]=str(model_id or "unknown")[:80]
+            # The RESOURCE event reports actual configured *thread budgets*,
+            # not CPU usage or a guarantee those threads were busy.
+            with _lock:
+                active=s.get("activeGeneration")
+                plan=(active.get("resourcePlan") if active and
+                      active.get("requestId")==request_id else None)
+            resource_usage["configuredEngineThreadBudget"]=copy.deepcopy(plan) if isinstance(plan,dict) else None
             resource_usage["outcome"]=outcome
             print(json.dumps({"event":"STATION_RESPONSE_RESOURCE_USAGE",
                               "requestId":request_id,"usage":resource_usage}),flush=True)
