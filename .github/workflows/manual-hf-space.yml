@@ -40,7 +40,7 @@ jobs:
           name: lfm2-350m-vs-700m
           path: lfm2-350m-vs-700m.json
           retention-days: 30
-      - name: Stage canonical R39 sources and model provenance
+      - name: Stage canonical Chat sources and model provenance
         if: ${{ inputs.mode == 'validate' || inputs.mode == 'deploy' }}
         env:
           SWRLZ_SOURCE_COMMIT: ${{ github.sha }}
@@ -80,103 +80,29 @@ jobs:
           app = (root / "app.py").read_text(encoding="utf-8")
           ast.parse(app)
           assert "§wyrlz" in app or "Swyrlz" in app, "App must identify the actual project"
-          assert "accepted_runtime" in app or "r39_engine" in app, "App must integrate the real R39 runtime, not a bootstrap echo"
-          assert (root / "accepted_runtime" / "lalm" / "r39_engine.py").is_file(), "R39 engine is not staged"
+          assert "set_generator" in app and "model_router" in app, "Chat model registration missing"
+          assert (root / "qwen3vl_local_server.py").is_file(), "Qwen vision runtime missing"
           assert (root / "chat" / "§wyrlz" / "index.html").is_file(), "Clean-room Chat is not staged"
           assert (root / "MODEL_PROVENANCE.json").is_file(), "Model identity/provenance not staged"
           brain = (root / "brain_programming.py").read_text(encoding="utf-8")
           engine700 = (root / "lfm2_700m_engine.py").read_text(encoding="utf-8")
-          r39 = (root / "accepted_runtime" / "lalm" / "r39_engine.py").read_text(encoding="utf-8")
           assert "SWRLZ_CODE_TRUTH v2" in brain and "Self-review is not execution evidence" in brain, "HF Code Truth policy missing"
           assert "CODE_TRUTH_POLICY" in engine700, "700M programming route is not consuming Code Truth policy"
-          assert "_V91_COMMIT" in r39 and "r39_engine_v91_overlay.py" in r39, "Staged R39 v91 programming overlay missing"
           print("Static package shape + Code Truth programming layer accepted; runtime inference still requires separate verification.")
           PY
       - name: Install candidate runtime dependencies
         if: ${{ inputs.mode != 'inspect' }}
         run: python -m pip install -r hf_space/requirements.txt
-      - name: Build and verify native R39 kernels in validation environment
+      - name: Verify supported Chat model routes without loading weights
         if: ${{ inputs.mode != 'inspect' }}
         run: |
-          set -euo pipefail
-          python hf_space/scripts/build_r39_native.py
-          PYTHONPATH=hf_space python scripts/verify_r39_native.py
           PYTHONPATH=hf_space python - <<'PY'
-          from swyrlz import r39_native
-          assert r39_native.available() and r39_native.matmat_available(), r39_native.diagnostics()
-          print("R39 native matvec and batched prefill imports: PASS")
+          from model_router import routes
+          from chat_vision import MODEL_REPO
+          assert [r.model_id for r in routes()] == ["stock","700m","coder","compare"]
+          assert MODEL_REPO == "Qwen/Qwen3-VL-4B-Instruct-GGUF"
+          print("Retired-model routing guard: PASS")
           PY
-      - name: Reconstruct and verify real R39 model before any publication
-        if: ${{ inputs.mode != 'inspect' }}
-        env:
-          SWRLZ_REPO_ROOT: ${{ github.workspace }}/hf_space
-          SWRLZ_R39_TRANSPORT_MANIFEST: ${{ github.workspace }}/hf_space/lalm§wyrlz.transport.json
-          SWRLZ_GITHUB_OWNER: kaministrator999-ui
-          SWRLZ_GITHUB_REPO: Swrlzkamico
-          SWRLZ_GITHUB_REF: ${{ github.sha }}
-        run: |
-          python - <<'PY'
-          import hashlib, json, os, sys
-          from pathlib import Path
-          sys.path.insert(0,str(Path("hf_space").resolve()))
-          from swyrlz.backend import ensure_r39, RAW
-          state=ensure_r39()
-          assert state.get("modelReady"), state
-          assert RAW.stat().st_size==233637480
-          assert state["rawSha256"]=="65e4b5d730f66024c44da25aec27730db27aa0019df0df26c0997d17ce58bdee"
-          print(json.dumps({"modelReady":True,"rawBytes":RAW.stat().st_size,"sha256":state["rawSha256"],"source":state["source"]}))
-          import runpy
-          engine=runpy.run_path("hf_space/accepted_runtime/lalm/r39_engine.py")
-          status=engine["inspect_engine"]()
-          assert status.get("interactiveReady") or status.get("oneTokenReady"), status
-          assert callable(engine.get("generate_events"))
-          print(json.dumps({"acceptedEngineReady":True,"engineId":status.get("engineId"),"modelSha256":status.get("modelSha256")}))
-          PY
-      - name: Inspect R39 versus pinned stock GGUF compatibility (read only)
-        if: ${{ inputs.mode != 'inspect' }}
-        env:
-          SWRLZ_REPO_ROOT: ${{ github.workspace }}/hf_space
-          SWRLZ_R39_TRANSPORT_MANIFEST: ${{ github.workspace }}/hf_space/lalm§wyrlz.transport.json
-          SWRLZ_GITHUB_OWNER: kaministrator999-ui
-          SWRLZ_GITHUB_REPO: Swrlzkamico
-          SWRLZ_GITHUB_REF: ${{ github.sha }}
-        run: |
-          set -euo pipefail
-          PYTHONPATH=hf_space python scripts/inspect_r39_gguf.py --download-stock --output r39-gguf-compatibility.json
-      - uses: actions/upload-artifact@v4
-        if: ${{ inputs.mode != 'inspect' }}
-        with:
-          name: r39-gguf-compatibility
-          path: r39-gguf-compatibility.json
-          retention-days: 30
-      - name: Convert R39 weights and vocabulary into isolated llama.cpp GGUF candidate
-        if: ${{ inputs.mode == 'validate' }}
-        run: |
-          set -euo pipefail
-          PYTHONPATH=hf_space python - <<'PY'
-          from huggingface_hub import hf_hub_download
-          from swyrlz.backend import RAW
-          import subprocess,sys
-          stock=hf_hub_download('LiquidAI/LFM2-350M-GGUF','LFM2-350M-Q4_K_M.gguf',revision='31cd51db1365')
-          subprocess.run([sys.executable,'scripts/convert_r39_to_gguf.py','--r39',str(RAW),'--stock',stock,'--output','/tmp/swrlz-r39-llama-candidate.gguf'],check=True)
-          from llama_cpp import Llama
-          import time,json
-          start=time.perf_counter()
-          model=Llama(model_path='/tmp/swrlz-r39-llama-candidate.gguf',n_ctx=1024,n_threads=4,n_threads_batch=4,n_batch=128,n_gpu_layers=0,use_mmap=True,verbose=False)
-          load_ms=round((time.perf_counter()-start)*1000,3)
-          start=time.perf_counter()
-          result=model.create_chat_completion(messages=[{'role':'user','content':"What's your name?"}],max_tokens=32,temperature=0.0)
-          elapsed_ms=round((time.perf_counter()-start)*1000,3)
-          text=(result.get('choices') or [{}])[0].get('message',{}).get('content','')
-          assert isinstance(text,str) and text.strip(), 'Converted R39 generated no response'
-          print(json.dumps({'route':'r39-llama-experimental','loadMs':load_ms,'warmShortResponseMs':elapsed_ms,'response':text[:300]}))
-          PY
-      - uses: actions/upload-artifact@v4
-        if: ${{ inputs.mode == 'validate' }}
-        with:
-          name: r39-llama-candidate-provenance
-          path: /tmp/swrlz-r39-llama-candidate.gguf.provenance.json
-          retention-days: 30
       - name: Smoke test 700M assembled profile budget before publication
         if: ${{ inputs.mode == 'deploy' }}
         shell: bash
@@ -223,7 +149,7 @@ jobs:
           assert 'path="/legacy"' in app and 'path="/probe"' in app and 'station_app' in app, 'Required mounts missing'
           original_engine=Path('hf_space/original_engine.py').read_text(encoding='utf-8')
           assert 'LiquidAI/LFM2-350M-GGUF' in original_engine and 'LFM2-350M-Q4_K_M.gguf' in original_engine, 'Original GGUF route missing'
-          print('Additive preservation guard passed: original Test Bench, GGUF route, R39 probe, dragon Chat')
+          print('Additive preservation guard passed: original Test Bench, GGUF text routes, Qwen vision, dragon Chat')
           PY
       - name: Require explicit publish authorization
         if: ${{ inputs.mode == 'deploy' }}
