@@ -1,0 +1,50 @@
+name: One-shot §E v11.306 Sheep Tag pathfinding seal
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/one-shot-forge-v11-306-sheep-performance-seal.yml'
+permissions:
+  contents: read
+jobs:
+  focused-build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Parse new runtime and build the exact unsealed source
+        run: |
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_306_sheep_pursuit_performance.py
+          node --check projects/swrlz-forge-moba/runtime/sheep_pursuit_performance_v11_306.js
+          python - <<'PY'
+          import json,hashlib,subprocess,sys
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          m=json.loads((root/'source-manifest.json').read_text('utf8'))
+          assert m['name']=='§wyrl§ Engine v11.306'
+          assert len(m['patches'])==337
+          assert m['patches'][-1]=='patches/v11_306_sheep_pursuit_performance.py'
+          assert m['finalBytes']==0 and m['finalSha256']==''
+          out=Path('/tmp/swrlz-v11-306')
+          subprocess.run([sys.executable,str(root/'build_space.py'),'--output',str(out)],check=True)
+          raw=(out/'index.html').read_bytes()
+          assert raw==(out/'modeler.html').read_bytes()
+          html=raw.decode('utf8')
+          for token in ('SE306_WOLF_ROUTE_REUSE','SE306_SHEEP_SORTED_FLEE',
+                        'SE306_PLANNED_ROUTE_REUSE','SWYRL_ENGINE_SHEEP_PURSUIT_306',
+                        'SWYRL_ENGINE_DEPLOY_MARKER: V11_306_SHEEP_PURSUIT_PERFORMANCE',
+                        "window.SWRLZ_FORGE_BUILD={version:'v11.306'"):
+              assert token in html,token
+          subprocess.run([sys.executable,str(root/'scripts/check_inline_js_syntax_v11_266.py'),
+                          str(out/'index.html')],check=True)
+          rec=json.loads((out/'SOURCE.json').read_text('utf8'))
+          assert rec['sourceVersion']==m['name'] and len(rec['assets'])==71
+          print('SE306_EXACT_MEASUREMENT='+json.dumps({
+            'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest(),
+            'patches':len(rec['patches']),'assets':len(rec['assets'])
+          },sort_keys=True),flush=True)
+          PY
