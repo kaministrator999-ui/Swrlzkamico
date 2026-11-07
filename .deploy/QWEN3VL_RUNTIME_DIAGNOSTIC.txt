@@ -6,3 +6,4 @@ MODEL_ENV_CHECK=YES
 POST_DEPLOY_RUNTIME_HEALTH=Release 42349862830 success; verify RUNNING
 STARTUP_PREWARM_POST_DEPLOY_824331=Verify running stage and server-side warmup events after authorized prewarm release
 STARTUP_WARMUP_RECHECK_2=Check for model resident event after Space runtime boot
+STARTUP_WARMUP_EVENT_RECHECK=Read event names only after live Space startup
