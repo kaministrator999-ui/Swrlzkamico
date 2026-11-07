@@ -198,7 +198,7 @@ assert.match(html,/dialog\.scrollTop\+=after\.top\+fractionY\*after\.height-even
 assert.match(html,/image\.style\.height=image\.naturalHeight\+"px"/);
 assert.match(backend,/proposals = proposals\[:2\]/);
 assert.match(backend,/about 80 to 120 words/);
-assert.match(backend,/Focused image details/);
+assert.match(backend,/RAW_CROP_MARKER/);
 assert.ok(!backend.includes('"\\n\\nSource observations:\\n"'),"final response must not repeat the whole raw overview");
 assert.ok(!html.includes('Checking for contradictions'),"internal inference consistency checks stay hidden");
 assert.match(backend,/def vision_status\(/);
