@@ -1,8 +1,8 @@
 # Qwen3-VL-4B Image-Analysis Trial (isolated experiment)
 
-Status: **source prepared, offline validation not yet executed; live inference NOT verified**.
+Status: **source and CI trial prepared; live inference and deployment NOT verified**.
 Baseline: `fix/chat-vision-complete-crop-observations-20261106`.
-This branch changes only the optional vision model and its targeted tests; it does not deploy to `kamiloki/Swyrlz`.
+This branch adds an isolated Qwen local backend, pinned weights/build dependencies and regression checks; it has NOT deployed to `kamiloki/Swyrlz`.
 
 ## Motivation
 
@@ -17,9 +17,9 @@ Pinned Qwen model:
 - `Qwen/Qwen3-VL-4B-Instruct-GGUF`, revision `1cd86afb9a95c410a6038ab3b40d8b578c892266`
 - `Qwen3VL-4B-Instruct-Q4_K_M.gguf` (~2.5 GB)
 - `mmproj-Qwen3VL-4B-Instruct-Q8_0.gguf` (~454 MB)
-- 768px first whole-image view, max 224 new tokens, Qwen3-VL-specific handler with at least 1024 image tokens and no thinking output.
+- 768px first whole-image view, max 224 new tokens; model and projector are loaded by a separate official llama.cpp loopback server.
 
-**Blocking dependency:** the current production `llama-cpp-python==0.3.35` runtime does not expose the required `Qwen3VLChatHandler`. The experimental loader checks for a compatible handler *before downloading weights*. Do not flip this flag in the live Space or silently replace its production dependency. Validate a trusted Qwen3-VL-capable llama.cpp binding in an isolated environment first; then check the CPU and RAM footprint, initialization, genuine first image prefill, completion and cancellation.
+**Runtime separation:** Production still pins `llama-cpp-python==0.3.35`, which lacks a Qwen3-VL-specific handler. Instead of replacing the shared wheel, this trial builds official `ggml-org/llama.cpp` from commit `fd27b2034905f8dadd8bd6d2cc44595f4929d391`, starts `llama-server` bound to `127.0.0.1`, and adapts its OpenAI-compatible SSE results to the existing chat analyzer. Cold compilation/model startup and CPU performance are **not yet runtime-verified**; they must be inspected before claiming the trial is ready.
 
 ## Trial acceptance
 
