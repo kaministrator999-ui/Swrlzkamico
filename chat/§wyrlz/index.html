@@ -1701,7 +1701,7 @@
         const activity={
           root,originThreadId:activeThreadId,originDraft:draftThread,
           jobId:"",abort:new AbortController(),phase:"",phaseStart:initialTime,
-          serverTiming:null,interval:null,renderedLevels:"",renderedFindings:"",
+          serverTiming:null,interval:null,renderedLevels:"",renderedFindings:"",sourceRegions:[],
           showReferenceFindings(timing){
             // Show only completed model observations. Keep the entire first
             // output in an opt-in disclosure instead of filling the viewport
@@ -1788,6 +1788,14 @@
                 step:Math.max(0,Number(timing.phaseElapsedSeconds))};
             }
             this.tick();
+            if(Array.isArray(timing?.spatialRegionRecords)){
+              // These are source crop coordinates, not inferred object boxes.
+              this.sourceRegions=timing.spatialRegionRecords
+                .filter(x=>Array.isArray(x?.sourceBox)&&x.sourceBox.length===4)
+                .map(x=>({region:String(x.region||"Source crop"),
+                  description:String(x.description||"").slice(0,900),
+                  sourceBox:x.sourceBox.map(Number)})).slice(0,4);
+            }
             if(phase==="ERROR"||phase==="STOPPED"){
               root.dataset.state="error";title.textContent="Image not sent to chat";
               status.textContent=detail||"Image analysis did not finish. The image remains attached so you can retry.";
@@ -3581,9 +3589,44 @@
                 const expand=document.createElement("button");
                 expand.type="button";expand.className="user-image-preview-button";
                 expand.setAttribute("aria-label","Enlarge uploaded image");
-                expand.title="Tap to enlarge image";expand.append(image);
+                expand.title="Tap to enlarge image";
+                const frame=document.createElement("span");frame.className="vision-source-frame";
+                const highlight=document.createElement("span");
+                highlight.className="vision-source-region-box";highlight.hidden=true;
+                frame.append(image,highlight);expand.append(frame);
                 expand.addEventListener("click",()=>openVisionImagePreview(previewURL,"Uploaded image"));
                 bubble.appendChild(expand);
+                const regions=(imageRegionEvidence.get(msg.id||"")||[])
+                  .filter(x=>Array.isArray(x.sourceBox)&&x.sourceBox.length===4&&
+                    x.sourceBox.every(n=>Number.isFinite(n)&&n>=0&&n<=1)&&
+                    x.sourceBox[2]>x.sourceBox[0]&&x.sourceBox[3]>x.sourceBox[1]);
+                if(regions.length){
+                  const controls=document.createElement("div");controls.className="vision-source-controls";
+                  controls.setAttribute("aria-label","Actual source crop locations");
+                  const detail=document.createElement("div");
+                  detail.className="vision-source-observation";detail.hidden=true;
+                  const buttons=[];
+                  regions.forEach((region,index)=>{
+                    const button=document.createElement("button");button.type="button";
+                    button.textContent=region.region;
+                    button.setAttribute("aria-pressed","false");
+                    button.addEventListener("click",()=>{
+                      const active=button.getAttribute("aria-pressed")==="true";
+                      buttons.forEach(item=>item.setAttribute("aria-pressed","false"));
+                      if(active){highlight.hidden=true;detail.hidden=true;return;}
+                      button.setAttribute("aria-pressed","true");
+                      const [left,top,right,bottom]=region.sourceBox;
+                      highlight.style.left=(left*100)+"%";highlight.style.top=(top*100)+"%";
+                      highlight.style.width=((right-left)*100)+"%";
+                      highlight.style.height=((bottom-top)*100)+"%";
+                      highlight.hidden=false;
+                      detail.textContent="Unverified model observation from highlighted source crop: "+region.description;
+                      detail.hidden=false;
+                    });
+                    controls.append(button);buttons.push(button);
+                  });
+                  bubble.append(controls,detail);
+                }
               }
               const details=document.createElement("details");details.className="user-vision-summary";
               const summary=document.createElement("summary");
@@ -4354,9 +4397,12 @@
             // The composer was intentionally cleared when the vision job was
             // accepted; keep its original object URL for the committed turn.
             imagePreviews.set(userMessageId,attachment.url);
+            if(activity?.sourceRegions?.length)
+              imageRegionEvidence.set(userMessageId,activity.sourceRegions);
             while(imagePreviews.size>12){
               const oldest=imagePreviews.keys().next().value;
               URL.revokeObjectURL(imagePreviews.get(oldest));imagePreviews.delete(oldest);
+              imageRegionEvidence.delete(oldest);
             }
             if(selectedImage===attachment){selectedImage=null;updateImagePreview();}
             visionDraftHeld=false;
