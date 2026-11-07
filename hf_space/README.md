@@ -6,22 +6,29 @@ app_file: app.py
 pinned: false
 preload_from_hub:
   - "ggml-org/SmolVLM-500M-Instruct-GGUF SmolVLM-500M-Instruct-Q8_0.gguf,mmproj-SmolVLM-500M-Instruct-Q8_0.gguf 72e986006ef53e37cdd3f6d4241c90b0f01df376"
+  - "Qwen/Qwen3-VL-4B-Instruct-GGUF Qwen3VL-4B-Instruct-Q4_K_M.gguf,mmproj-Qwen3VL-4B-Instruct-Q8_0.gguf 1cd86afb9a95c410a6038ab3b40d8b578c892266"
 ---
 
 # §wyrlz R39 isolated candidate
 
-### Experimental model evaluation branch (NOT deployed)
+### Qwen3-VL-4B CPU image analysis trial (deployment still requires guarded release)
 
-This isolated branch pins the official ggml-org SmolVLM-500M-Instruct Q8_0
-GGUF and its matching projector, at a verified immutable model revision.
-The production §C vision baseline remains SmolVLM-256M until the new model
-is proven to load and improve real character-sheet recognition on the
-existing free CPU hardware. Changes are model-only to isolate the variable;
-existing crop sequencing, privacy, cancellation, and honest output receipts
-are intentionally preserved. The new model may increase inference latency.
+This source branch selects Qwen3-VL-4B-Instruct Q4_K_M plus its Q8 vision
+projector, pinned to the immutable official model revision above. Source
+image bytes stay inside the authenticated Space request. A pinned official
+llama.cpp executable runs Qwen on loopback only so the established Python
+llama-cpp text/model routes remain unchanged. SmolVLM-500M is still available
+via `SWRLZ_VISION_MODEL=smolvlm-500m`; this trial defaults to Qwen3-VL-4B.
 
+The server executable is compiled on the Space the first time Qwen warms up,
+using the exact llama.cpp commit in `qwen3vl_local_server.py`. This demands
+build tools and can extend cold startup. We do not claim the model or deploy
+works until the existing guarded release plus live image-request receipts
+confirm it. The current free CPU configuration may impose considerable delay.
 
-This is a migration candidate, not a claim of production Chat parity. The real R39 engine and its accepted overlays are staged from the canonical repository. The model is reconstructed on startup from 54 SHA-verified source chunks pinned to the exact source commit. A full clean-room Chat transport, account persistence, and queue migration require separate acceptance.
+This trial preserves the chat image source privacy boundary and existing
+per-pass observations. It does not enable an external inference API, publish
+images to third parties, or rewrite older release records.
 
 ### Chat v1.1.28 — original-image transport, native server crops
 
