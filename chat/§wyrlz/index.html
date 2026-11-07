@@ -948,6 +948,23 @@
     .vision-level-label select:focus-visible{outline:2px solid #67dfff}
     .composer-shell.collapsed .composer-media-tools{display:none}
     .user-image-attachment{display:block;max-width:min(240px,100%);max-height:180px;object-fit:contain;border-radius:9px}
+    /* One editorial answer in the assistant bubble, not nested reports. */
+    .assistant-body.vision-editorial{padding:14px 16px 18px!important}
+    .assistant-body.vision-editorial .message-text{line-height:1.55}
+    .assistant-body.vision-editorial .message-text h2{
+      margin:0 0 13px!important;padding:0 0 9px;border-bottom:1px solid rgba(132,220,250,.28);
+      color:#effcff;font-size:19px;letter-spacing:-.015em;line-height:1.25
+    }
+    .assistant-body.vision-editorial .message-text h3{
+      margin:14px 0 5px!important;padding:10px 0 0;
+      border-top:1px solid rgba(132,220,250,.15);
+      color:#b9e9fb;font-size:13px;letter-spacing:.02em;font-weight:750;line-height:1.35
+    }
+    .assistant-body.vision-editorial .message-text h3:first-of-type{border-top:0;padding-top:0}
+    .assistant-body.vision-editorial .message-text p{margin:0 0 10px;line-height:1.6}
+    .assistant-body.vision-editorial .message-text p:last-child{margin-bottom:0}
+    .assistant-body.vision-editorial .message-text p:last-child em{font-size:11px;color:#a1becd}
+    .vision-preview-unavailable{display:block;margin-top:6px;color:#a0bcca;font-size:11px}
     .user-image-preview-button,.vision-work-preview-button{display:inline-block;margin:8px 0 0;padding:0;border:0;background:none;color:inherit;text-align:left;cursor:zoom-in;max-width:100%;touch-action:pan-y}
     .user-image-preview-button:focus-visible,.vision-work-preview-button:focus-visible{outline:2px solid #91e6ff;outline-offset:3px;border-radius:8px}
     .vision-image-dialog{box-sizing:border-box;position:fixed;inset:0;margin:auto;padding:48px 12px 12px;width:min(100vw - 18px,1100px);max-width:calc(100vw - 18px);max-height:calc(100dvh - 18px);border:1px solid rgba(105,214,246,.42);border-radius:14px;background:#071827;color:#eafaff;overflow:auto;overscroll-behavior:contain}
@@ -2937,10 +2954,61 @@
         }else card.append(top,file,repo,facts,details);
         container.appendChild(card);
       };
+      // Past saved responses may contain the original unformatted vision
+      // output. Reformat presentation only; the original message and export
+      // are not rewritten or represented as newly re-analyzed pixels.
+      const formatLegacyVisionReply=value=>{
+        const source=String(value||"");
+        const prefix="Local image analyzer's description (not directly inspected by §C):";
+        if(!source.startsWith(prefix))return null;
+        let body=source.slice(prefix.length).trim()
+          .split("\n\n[Raw source-crop observations; accuracy unverified]\n",1)[0]
+          .split(/\n\s*Focused image details\s*\(unverified source-crop observations\):/i,1)[0]
+          .replace(/^Character reference[^\n]*\n\s*/i,"").trim();
+        if(!body)return null;
+        const aliases={
+          "subject and views":"Subject & views","views and subject":"Subject & views",
+          "shape and proportions":"Shape & proportions","shape and anatomy":"Shape & proportions",
+          "silhouette and anatomy":"Shape & proportions",
+          "geometry and layers":"Geometry & layers","shape and construction":"Geometry & layers",
+          "clothing and surfaces":"Clothing & surfaces",
+          "clothing and surface detail":"Clothing & surfaces",
+          "materials and markings":"Materials & markings",
+          "props and contact":"Props & contact",
+          "props and small features":"Props & details",
+          "props and fine details":"Props & details",
+          "visibility limits":"Visibility limits",
+          "visibility and uncertainty":"Visibility limits"
+        };
+        const labels=/^(Subject and views|Views and subject|Shape and proportions|Shape and anatomy|Silhouette and anatomy|Geometry and layers|Shape and construction|Clothing and surfaces|Clothing and surface detail|Materials and markings|Props and contact|Props and small features|Props and fine details|Visibility limits|Visibility and uncertainty):\s*/gim;
+        const matches=[...body.matchAll(labels)];
+        if(matches.length>=2){
+          const sections=[],seen=new Set();
+          matches.slice(0,8).forEach((match,index)=>{
+            const end=index+1<matches.length?matches[index+1].index:body.length;
+            const detail=body.slice(match.index+match[0].length,end).replace(/\s*\n\s*/g," ").trim();
+            if(!detail)return;
+            const heading=aliases[match[1].toLowerCase()]||match[1];
+            const key=heading.toLowerCase()+"|"+detail.toLowerCase().replace(/\s+/g," ");
+            if(seen.has(key))return;
+            seen.add(key);
+            sections.push("### "+heading+"\n\n"+detail);
+          });
+          if(sections.length)body=sections.join("\n\n");
+        }
+        return "## Image analysis\n\n"+body+
+          "\n\n*Based on the local image model's observations; not independently verified.*";
+      };
       const renderAssistantContent=(container,text,messageId="",presentationHint="",verifiedContext=null,archiveContext=null)=>{
         container.innerHTML="";
         const rawSource=String(text||"");
-        originalRenderedSources.set(container,rawSource);
+        const legacyVision=formatLegacyVisionReply(rawSource);
+        const visionFinal=legacyVision!==null||/^## Image analysis(?:\n|$)/.test(rawSource);
+        const displaySource=legacyVision||rawSource;
+        container.classList.toggle("vision-editorial",visionFinal);
+        // Copy the readable final answer. Original upstream text remains
+        // preserved in chat history and its provenance-labeled export.
+        originalRenderedSources.set(container,displaySource);
         // Rendering a repository browser requires Station-verified same-message
         // GitHub evidence. The model may output "## GitHub directory: /" as prose:
         // that alone must NEVER become a verified interactive file browser.
@@ -2971,7 +3039,7 @@
         }
         const sourceContext=splitGitHubSourcePreamble(rawSource)
           ||splitVerifiedGitHubFilePreamble(rawSource,verifiedContext);
-        const source=sourceContext?sourceContext.body:rawSource;
+        const source=sourceContext?sourceContext.body:displaySource;
         if(sourceContext)appendGitHubSourceCard(container,sourceContext);
         let cursor=0,match,codeIndex=0;
         const appendInlineStyles=(parent,value)=>{
