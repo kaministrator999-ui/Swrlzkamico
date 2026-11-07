@@ -56,7 +56,7 @@ def test_qwen_server_is_local_and_source_revision_immutable():
     import qwen3vl_local_server as server
     assert server.LLAMA_CPP_COMMIT == "fd27b2034905f8dadd8bd6d2cc44595f4929d391"
     assert server.SERVER_URL.startswith("http://127.0.0.1:")
-    assert "github.com/ggml-org/llama.cpp.git" == server.UPSTREAM_URL
+    assert "https://github.com/ggml-org/llama.cpp.git" == server.UPSTREAM_URL
 
 
 def test_qwen_server_sse_yields_real_choices_not_synthetic_output():
