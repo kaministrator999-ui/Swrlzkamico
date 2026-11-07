@@ -353,6 +353,6 @@
     "patches/v11_305_vanguard_complete_mesh_uv.py",
     "patches/v11_306_sheep_pursuit_performance.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 8397357,
+  "finalSha256": "a47415627055cda09f2152e9c6adc311347ed709971e6c0bea1be6bc7195910c"
 }

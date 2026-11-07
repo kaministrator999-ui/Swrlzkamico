@@ -28,19 +28,20 @@ jobs:
           assert m['name']=='§wyrl§ Engine v11.306'
           assert len(m['patches'])==337
           assert m['patches'][-1]=='patches/v11_306_sheep_pursuit_performance.py'
-          assert m['finalBytes']==0 and m['finalSha256']==''
+          assert m['finalBytes']==8397357 and m['finalSha256']=='a47415627055cda09f2152e9c6adc311347ed709971e6c0bea1be6bc7195910c'
           out=Path('/tmp/swrlz-v11-306')
           subprocess.run([sys.executable,str(root/'build_space.py'),'--output',str(out)],check=True)
           raw=(out/'index.html').read_bytes()
           assert raw==(out/'modeler.html').read_bytes()
           html=raw.decode('utf8')
           for token in ('SE306_SHARED_APPROACH_CACHE','SE306_CACHE_BOTH_CALLERS',
-                        'SE306_PLANNED_ROUTE_REUSE','SWYRL_ENGINE_SHEEP_PURSUIT_306',
+                        'SWYRL_ENGINE_SHEEP_PURSUIT_306',
                         'SWYRL_ENGINE_DEPLOY_MARKER: V11_306_SHEEP_PURSUIT_PERFORMANCE',
                         "window.SWRLZ_FORGE_BUILD={version:'v11.306'"):
               assert token in html,token
           subprocess.run([sys.executable,str(root/'scripts/check_inline_js_syntax_v11_266.py'),
                           str(out/'index.html')],check=True)
+          subprocess.run(['node',str(root/'tests/sheep_pursuit_cache_v11_306.cjs'),str(out/'index.html')],check=True)
           rec=json.loads((out/'SOURCE.json').read_text('utf8'))
           assert rec['sourceVersion']==m['name'] and len(rec['assets'])==71
           print('SE306_EXACT_MEASUREMENT='+json.dumps({

@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.305
+title: §wyrl§ Engine v11.306
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,11 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+## §E v11.306 · Sheep Tag wolf pursuit cache and simulation diagnostics (2026-11-06)
+
+The owner isolated two distinct stress cases: occasional stutter when **all sheep and all wolves** move, and sustained game-wide slowdown when three wolves switch from attacking maximum houses to pursuing the last surviving sheep. Review of the *effective* `sheep_lanes.js` route resolver identified an overstrict 0.2-unit moving-target cache that could repeat up to nine A* approach tests almost every frame during pursuit. The new shared 0.40–0.56-second cache reuses reachable and blocked approach decisions across both wolf AI and target resolution, with movement and navigation invalidation. Preserves existing v11.256 frame-budgeted sheep evasions, all building/capture rules and WebXR controls. Nerd Stats pages 7/8 and 8/8 report path CPU, cache reuse and the simulation/wall-clock ratio; GPU timing and live Quest acceptance are not claimed. Source sealed at 337 patches / 71 assets / 8,397,357 bytes (SHA-256 `a47415627055cda09f2152e9c6adc311347ed709971e6c0bea1be6bc7195910c`). [Focused checkpoint](docs/SHEEP_PURSUIT_CACHE_V11_306.md).
+
+
 ## §E v11.305 · Whole Hooded Vanguard mesh + UV reconstruction (2026-11-06)
 
 The owner requested a **whole-model sculpt and UV mapping fix together**, not just another face/texture patch. The new character factory replaces the old planar body projection with true front/back radial seam UVs for the torso, tapered arms/legs and swept forearms; builds a soft open hood, cowl and overlapping scarf, two-sided teal cloth, rounded boots, a buckled waist belt, shaped cartilage ears and naturally aligned five-digit hands. The existing successful chest and shoulder surfaces keep their original contour and UVs, gaining closed metal thickness. Retains the improved v11.303 768px face portrait and hair, all eleven dedicated painted color/normal/roughness material families, all **17 native editable part IDs** and previous v11.304 document synchronization. Other Modeler starters, Chat, VR, Sheep Tag and saved projects are unaffected. The owner will determine actual visual quality on Android/Quest. [Full checkpoint](docs/VANGUARD_COMPLETE_MESH_UV_V11_305.md).
