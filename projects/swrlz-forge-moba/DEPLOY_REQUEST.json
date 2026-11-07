@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.309",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_309_ARCANE_NATIVE_RAY_AIM",
-  "reason": "Owner Quest 2 report: §E controller raycast beams remain markedly left and slightly above native Meta pointers. Source showed v11.308 hid legacy se181 Line but not se192 separate tapered beam and reticle; se192 also applied a persisted yaw trim that could differ from native spell aim. v11.309 hides both ray graphics and reticle only in Blank VR Arcane Hands, zeros extra yaw in its hit tests to match raw WebXR targetRaySpace, and restores saved trim and tapered ray ownership in other VR editor projects. Native controller tracking, gesture animation, grip-space gloves, spell controls and Sheep Tag unchanged. Focused run 42344508450: exact HTML build, syntax check, and 4-scenario two-controller ray-visibility smoke passed. Sealed 340 patches, 71 assets, 8,402,089 bytes, SHA-256 f52a2e9838735d4bf0026d560a4bdf24e943b54d01c933bce9e05dfb6af90ec5. Quest 2 visual acceptance remains pending.",
-  "sourceCommit": "218fe88a8a2f2c1aecd4a214c3a024cade254076",
-  "sourceIntegritySha256": "f52a2e9838735d4bf0026d560a4bdf24e943b54d01c933bce9e05dfb6af90ec5"
+  "releaseVersion": "v11.320",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_320_STUDIO_NAVIGATION_LAYOUT",
+  "reason": "Owner-requested organization of Game, Model and Particle studios: distinct navigation/menu/action rows, reserved model category rail beside the inspector with reachable collapse/restore controls, readable mobile menus, non-overlapping Starter/My Projects tabs, and successful native project loads routed to their appropriate studio without replacing loaded content. Preserves all owner v11.309 Arcane and earlier runtime work. Strict ordered reconstruction, 341 patches, 71 assets, 8,445,313 HTML bytes; SHA-256 784249443e626d13740ada224b61f54358011c98678c6e6ee41f581660264347. Targeted routing/native geometry tests and desktop/phone browser interactions passed, including repeated studio switches and unchanged 59-part mage. Physical-device appearance/XR acceptance remains owner testing.",
+  "sourceCommit": "40a08cc0d67dd8cf43c6a98b20655e0a146a6a4f",
+  "sourceIntegritySha256": "784249443e626d13740ada224b61f54358011c98678c6e6ee41f581660264347"
 }
