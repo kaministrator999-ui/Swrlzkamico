@@ -304,6 +304,37 @@ _VISION_START = "\n\n[Uploaded image — vision description, not original pixels
 _VISION_END = "\n[/Uploaded image]"
 
 
+def _omit_unverifiable_turnaround_claims(body: str) -> str:
+    """Conservatively omit categorical negatives/visibility absolutes.
+
+    The formatter cannot inspect pixels. It must never "correct" visual
+    content by inventing another fact; the raw model handoff is preserved.
+    This guard is restricted to multi-view reference captions, where cropped
+    or rear views make universal visibility claims especially unreliable.
+    """
+    parts = re.split(r"(?<=[.!?;])\s+", body.strip())
+    clean = []
+    for raw in parts:
+        clause = raw.strip()
+        if not clause:
+            continue
+        # Pure absence statements on a reference sheet are not independently
+        # established, especially about small trim, buckles and occlusions.
+        if re.match(r"(?i)^(?:no|none|without)\b", clause):
+            continue
+        if re.search(r"(?i)\b(?:no|without|zero)\s+occlusion\b", clause):
+            continue
+        if re.search(r"(?i)\b(?:all|every)\s+(?:limbs|parts|hands|heads?|views?|angles?)\b", clause):
+            continue
+        if re.search(r"(?i)\b(?:in|across|from)\s+(?:all|every)\s+(?:views?|angles?)\b", clause):
+            continue
+        clause = clause.rstrip(";").strip()
+        if clause and clause[-1] not in ".!?":
+            clause += "."
+        clean.append(clause)
+    return " ".join(clean)
+
+
 def _format_direct_vision_report(description: str) -> str:
     """Present a single factual assistant answer, not duplicate raw model logs.
 
@@ -353,6 +384,9 @@ def _format_direct_vision_report(description: str) -> str:
         r"(?im)^(" + "|".join(re.escape(k) for k in labels) + r"):\s*"
     )
     matches = list(pattern.finditer(text))
+    # A heading-based report does not confer accuracy on crop observations.
+    # For multi-view reference sheets, abstain from overly broad absolutes.
+    turnaround = len(set(re.findall(r"\\b(?:front|back|top|side)\\b", text, re.I))) >= 3 and bool(re.search(r"\\bviews?\\b", text, re.I))
     sections = []
     if len(matches) >= 2:
         seen = set()
@@ -360,6 +394,8 @@ def _format_direct_vision_report(description: str) -> str:
             start = match.end()
             end = matches[i + 1].start() if i + 1 < len(matches) else len(text)
             body = re.sub(r"\s*\n\s*", " ", text[start:end]).strip()
+            if turnaround:
+                body = _omit_unverifiable_turnaround_claims(body)
             if not body:
                 continue
             name = labels[match.group(1).casefold()]
@@ -370,7 +406,9 @@ def _format_direct_vision_report(description: str) -> str:
             sections.append(f"### {name}\n\n{body}")
     # Unstructured and partial captions must still be readable; no invented
     # headings or reconstructed observations are added to their content.
-    content = "\n\n".join(sections) if sections else text
+    content = "\n\n".join(sections) if sections else (
+        _omit_unverifiable_turnaround_claims(text) if turnaround else text
+    )
     return (
         "## Image analysis\n\n" + content +
         "\n\n*Based on the local image model's observations; not independently verified.*"
