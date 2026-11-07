@@ -1606,17 +1606,40 @@
         const image=document.createElement("img");
         image.src=imageUrl;image.alt=alt;
         const hint=document.createElement("p");hint.className="vision-image-dialog-hint";
-        hint.textContent="Tap image to toggle original size. Swipe to pan when zoomed.";
+        hint.textContent="Tap where you want to zoom. Swipe to pan; tap again to fit.";
         dialog.append(close,image,hint);
         document.body.append(dialog);
         const dismiss=()=>dialog.close();
         close.addEventListener("click",dismiss);
         dialog.addEventListener("click",event=>{if(event.target===dialog)dismiss();});
         dialog.addEventListener("close",()=>dialog.remove(),{once:true});
-        image.addEventListener("click",()=>{
+        image.addEventListener("click",event=>{
           const actual=image.dataset.zoom==="actual";
-          if(actual){image.removeAttribute("data-zoom");image.style.width="";}
-          else {image.dataset.zoom="actual";image.style.width=image.naturalWidth+"px";}
+          if(actual){
+            image.removeAttribute("data-zoom");
+            image.style.width="";image.style.height="";
+            dialog.scrollLeft=0;dialog.scrollTop=0;
+            return;
+          }
+          if(!image.naturalWidth||!image.naturalHeight)return;
+          // Anchor original-size zoom to the actual tap point, NOT the image
+          // origin. Record the pixel position before changing its dimensions.
+          const before=image.getBoundingClientRect();
+          if(before.width<=0||before.height<=0)return;
+          const fractionX=Math.max(0,Math.min(1,(event.clientX-before.left)/before.width));
+          const fractionY=Math.max(0,Math.min(1,(event.clientY-before.top)/before.height));
+          image.dataset.zoom="actual";
+          image.style.width=image.naturalWidth+"px";
+          image.style.height=image.naturalHeight+"px";
+          requestAnimationFrame(()=>{
+            if(!image.isConnected||image.dataset.zoom!=="actual")return;
+            // After layout (including dialog recentering), scroll the native
+            // pan surface so the selected pixel remains beneath the finger,
+            // clamped naturally at image edges.
+            const after=image.getBoundingClientRect();
+            dialog.scrollLeft+=after.left+fractionX*after.width-event.clientX;
+            dialog.scrollTop+=after.top+fractionY*after.height-event.clientY;
+          });
         });
         dialog.showModal();close.focus();
       };
