@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.330
+title: §wyrl§ Engine v11.331
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,11 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.331 · Smooth Cliff Hand sandstone PBR repair (2026-11-07)
+
+The **Plain Hand Base · Smooth Cliff Hand** starter now uses neutral-white material tint over its supplied clean sandstone atlas, normalized ambient-occlusion strength, and explicit secondary texture-channel selection for compatible Three.js renderers. The existing rigged-mesh renderer already supplied `uv2`; this release preserves that working attribute and exposes the same UV coordinates as `uv1` for newer renderer conventions. Four mapped knuckle reliefs, wrist-only moss, normal/roughness maps, one connected tapered hand/gauntlet topology, and its 17-bone animated rig remain unchanged. Other starter models, saved scenes, Quest controls, and Material Studio are unaffected. Native/packaging checks precede release; final phone/Quest visual acceptance remains with the owner.
+
 
 ## §E v11.330 · Dedicated Material & Texture Studio (deployed)
 
