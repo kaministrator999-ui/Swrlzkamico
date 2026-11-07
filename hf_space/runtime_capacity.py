@@ -180,6 +180,7 @@ class ResponseResourceMeter:
             self._result = {
                 "schema": RESOURCE_USAGE_SCHEMA,
                 "scope": "shared-cgroup-v2",
+                "source": self._capacity["source"],
                 "isolatedModelAttribution": False,
                 "wallTimeMs": wall_ms,
                 "capacity": {
@@ -193,8 +194,19 @@ class ResponseResourceMeter:
                     "averageCgroupCpuCores": cpu_cores,
                     "memoryStartBytes": memory["currentBytes"],
                     "memoryEndBytes": end_memory,
+                    "memoryEndMinusStartBytes": (
+                        end_memory - memory["currentBytes"]
+                        if end_memory is not None and memory["currentBytes"] is not None
+                        else None),
                     "memoryPeakSampledBytes": self._max_memory,
+                    "memoryPeakAboveStartBytes": (
+                        max(0, self._max_memory - memory["currentBytes"])
+                        if self._max_memory is not None and memory["currentBytes"] is not None
+                        else None),
                     "memorySampleCount": self._samples,
+                    "memorySamplingIntervalMs": (
+                        round(self._interval * 1000) if self._interval is not None
+                        and self._interval > 0 else None),
                 },
                 "attribution": ("Shared container readings include concurrent work; "
                                 "they are not exclusive CPU/RAM use by this model."),
