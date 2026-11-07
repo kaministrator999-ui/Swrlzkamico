@@ -388,39 +388,77 @@ def _detail_regions(image_url: str, overview: str, question: str = "") -> list[t
     if edge_mean < (2.5 if model_mentions_sheet else 5.5 if image_looks_like_sheet else 13):
         return []
 
-    if reference_sheet and width > height * 1.2:
-        # Small figures in a wide turnaround deserve separate close views.
-        spans = [(i / 4, (i + 1) / 4) for i in range(4)]
-        # Character turnarounds commonly place full figures below a title
-        # and a separate color/prop palette below the figures. The old full-
-        # height vertical strips made each character tiny and mixed in text,
-        # swatches and unrelated panels. Focus the same four calls on the
-        # primary figure band; keep original pixels, no enlargement.
-        boxes = [(max(0, a - .035) * width, .08 * height,
-                  min(1, b + .035) * width, .76 * height) for a, b in spans]
-        labels = ["Far-left detail", "Center-left detail",
-                  "Center-right detail", "Far-right detail"]
-    elif reference_sheet and height > width * 1.2:
-        spans = [(i / 3, (i + 1) / 3) for i in range(3)]
-        boxes = [(0, max(0, a - .035) * height,
-                  width, min(1, b + .035) * height) for a, b in spans]
-        labels = ["Upper detail", "Middle detail", "Lower detail"]
-    elif reference_sheet:
-        boxes = [(0, 0, .55 * width, .55 * height),
-                 (.45 * width, 0, width, .55 * height),
-                 (0, .45 * height, .55 * width, height),
-                 (.45 * width, .45 * height, width, height)]
-        labels = ["Upper-left detail", "Upper-right detail",
-                  "Lower-left detail", "Lower-right detail"]
-    elif width >= height:
-        boxes = [(0, 0, .56 * width, height),
-                 (.44 * width, 0, width, height)]
-        labels = ["Left-side detail", "Right-side detail"]
-    else:
-        boxes = [(0, 0, width, .56 * height),
-                 (0, .44 * height, width, height)]
-        labels = ["Upper detail", "Lower detail"]
+    # Inspect small details only when the overview or the question warrants
+    # them. Four fixed strips of every turnaround were duplicating the same
+    # robe/staff notes, while spending minutes on CPU image prefill/decoding.
+    cues = (overview + " " + question).lower()
+    small_text = bool(re.search(
+        r"\b(read|legible|wording|label|caption|inscription|lettering|text|"
+        r"typography|writing)\b", question, re.I))
+    face_detail = bool(re.search(
+        r"\b(face|facial|eyes?|eyebrows?|hair|braids?|hood|head|"
+        r"helmet|horns?|ears?|expression|mask)\b", cues, re.I))
+    surface_detail = bool(re.search(
+        r"\b(armor|armour|robe|cloak|embroidery|trim|seam|engraving|"
+        r"pattern|symbol|marking|sigil|texture|material|staff|"
+        r"weapon|ornament|accessor|buckles?|satchel|pouch|belt)\b",
+        cues, re.I))
+    explicit_detail = bool(re.search(
+        r"\b(detail|zoom|close.?up|model|rig|texture|material|"
+        r"face|armor|armour|read|small text|fine)\b", question, re.I))
+    if not reference_sheet and not explicit_detail and not _needs_detail_retry(overview):
+        return []
 
+    # Geometric positions only: no assertion that a crop definitely contains
+    # a face, armor, or text. Labels describe where source pixels came from.
+    proposals = []
+    if reference_sheet and width > height * 1.2:
+        if face_detail or not surface_detail:
+            proposals.append(("Upper-left figure detail",
+                              (0, .09 * height, .32 * width, .53 * height)))
+        if surface_detail:
+            proposals.append(("Central outfit and prop detail",
+                              (.43 * width, .26 * height, .80 * width, .78 * height)))
+        if small_text:
+            proposals.insert(0, ("Lower label detail",
+                                  (0, .74 * height, .65 * width, height)))
+        # A generic but recognizable reference page receives one source-pixel
+        # close-up, not four full-figure copies with redundant descriptions.
+        if not proposals:
+            proposals.append(("Upper-left figure detail",
+                              (0, .09 * height, .32 * width, .53 * height)))
+    elif reference_sheet and height > width * 1.2:
+        if face_detail or not surface_detail:
+            proposals.append(("Upper figure detail",
+                              (0, 0, width, .39 * height)))
+        if surface_detail:
+            proposals.append(("Middle design detail",
+                              (0, .28 * height, width, .72 * height)))
+        if small_text:
+            proposals.insert(0, ("Lower label detail",
+                                  (0, .65 * height, width, height)))
+    elif reference_sheet:
+        if face_detail or not surface_detail:
+            proposals.append(("Upper-left design detail",
+                              (0, 0, .58 * width, .57 * height)))
+        if surface_detail:
+            proposals.append(("Lower-right design detail",
+                              (.40 * width, .36 * height, width, height)))
+        if small_text:
+            proposals.insert(0, ("Lower annotation detail",
+                                  (0, .70 * height, width, height)))
+    elif width >= height:
+        proposals.append(("Requested left-side detail",
+                          (0, 0, .55 * width, height)))
+    else:
+        proposals.append(("Requested upper detail",
+                          (0, 0, width, .56 * height)))
+    # Prioritize explicitly requested small text, then face/garment detail.
+    # At most two crop inferences, and no forced extra inference for a simple
+    # image. If one fails, the full overview still survives.
+    proposals = proposals[:2]
+    labels = [label for label, _ in proposals]
+    boxes = [(x0, y0, x1, y1) for _, (x0, y0, x1, y1) in proposals]
     regions = []
     for label, box in zip(labels, boxes):
         crop = original.crop(tuple(round(value) for value in box))
@@ -572,7 +610,7 @@ def _ask_vision_local(image_url: str, question: str, report_phase=None, should_c
                        if analysis_levels >= 2 else [])
         # Let the client display real completed observations progressively
         # for multi-view modeling sheets, not internal validation steps.
-        if len(region_plan) >= 3:
+        if region_plan:
             report_detail(referenceProgress=True, requestedRegions=len(region_plan))
         detail_attempted = False
         detail_selected = False
