@@ -946,38 +946,8 @@
     .vision-level-label{display:inline-flex;align-items:center;gap:5px;max-width:100%;color:#b8ddec;font:10px/1.3 var(--font-telemetry)}
     .vision-level-label select{min-width:106px;max-width:160px;border:1px solid rgba(86,207,248,.33);border-radius:7px;background:#071e31;color:#e0faff;padding:5px;font:inherit}
     .vision-level-label select:focus-visible{outline:2px solid #67dfff}
-    .vision-level-evidence{margin:8px 0 0;padding:6px 8px;border:1px solid rgba(105,214,246,.22);border-radius:8px;background:rgba(0,17,31,.44);font:10px/1.4 var(--font-telemetry)}
-    .vision-level-evidence[hidden]{display:none!important}
-    .vision-level-evidence summary{cursor:pointer;color:#b6e9f6}
-    .vision-level-entry{padding:7px 0;border-top:1px solid rgba(105,214,246,.13);white-space:pre-wrap;overflow-wrap:anywhere;color:#b7d4e2}
-    .vision-level-entry strong{display:block;margin-bottom:3px;color:#e3faff}
-    .vision-reference-findings{margin:10px 0 8px;padding:9px 10px;border-radius:9px;border:1px solid rgba(105,214,246,.24);background:rgba(0,14,28,.42);color:#d8f2ff}
-    .vision-reference-findings[hidden]{display:none!important}
-    .vision-reference-findings-title{display:block;margin-bottom:5px;color:#f0fbff;font-size:12px}
-    .vision-reference-findings ol{list-style:decimal;margin:0;padding-left:20px;display:grid;gap:8px}
-    .vision-reference-findings li{padding-left:2px;white-space:normal;overflow-wrap:anywhere}
-    .vision-reference-findings li strong{display:block;margin-bottom:2px;color:#c2eafb}
-    .vision-reference-findings li div{white-space:pre-wrap;line-height:1.5;color:#d9eaf4}
-    .vision-reference-final{border-top:1px solid rgba(105,214,246,.25);padding-top:10px!important}
-    .vision-reference-final>strong{color:#eaffff!important}
-    .vision-reference-more{margin-top:6px;font-size:11px;color:#9fd4ee}
-    .vision-reference-more summary{cursor:pointer}
-    .vision-reference-more>div{margin-top:6px}
-
     .composer-shell.collapsed .composer-media-tools{display:none}
     .user-image-attachment{display:block;max-width:min(240px,100%);max-height:180px;object-fit:contain;border-radius:9px}
-    .vision-source-frame{position:relative;display:block;width:fit-content;max-width:100%;overflow:hidden;border-radius:9px}
-    .vision-source-region-box{position:absolute;box-sizing:border-box;border:2px solid #71e9ff;background:rgba(68,201,255,.13);box-shadow:inset 0 0 0 1px rgba(0,15,30,.5);pointer-events:none}
-    .vision-source-controls{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 4px}
-    .vision-source-controls button{font-size:11px;line-height:1.3;min-height:30px;padding:6px 8px;border:1px solid rgba(115,217,247,.45);border-radius:16px;background:rgba(18,56,82,.7);color:#d9f7ff;cursor:pointer;text-align:left}
-    .vision-source-controls button[aria-pressed="true"]{background:#206384;border-color:#9aeaff;color:#fff}
-    .vision-source-observation{margin:5px 0 3px;padding:8px 9px;border-radius:8px;border:1px solid rgba(126,214,255,.23);font-size:11px;line-height:1.55;color:#cbe5f0;white-space:pre-wrap;overflow-wrap:anywhere}
-    .vision-model-report{display:grid;gap:9px;max-width:100%}
-    .vision-model-report-head{font-size:14px;font-weight:800;color:#e3f8ff;margin:0 0 2px}
-    .vision-model-report-note{font-size:11px;color:#b4d1df;line-height:1.45}
-    .vision-model-field{border:1px solid rgba(111,213,246,.24);border-radius:12px;padding:11px 12px;background:rgba(5,29,48,.55)}
-    .vision-model-field h3{font-size:13px!important;color:#e6faff!important;margin:0 0 7px!important}
-    .vision-model-field p{font-size:13px;line-height:1.55;margin:0!important;overflow-wrap:anywhere}
     .user-image-preview-button,.vision-work-preview-button{display:inline-block;margin:8px 0 0;padding:0;border:0;background:none;color:inherit;text-align:left;cursor:zoom-in;max-width:100%;touch-action:pan-y}
     .user-image-preview-button:focus-visible,.vision-work-preview-button:focus-visible{outline:2px solid #91e6ff;outline-offset:3px;border-radius:8px}
     .vision-image-dialog{box-sizing:border-box;position:fixed;inset:0;margin:auto;padding:48px 12px 12px;width:min(100vw - 18px,1100px);max-width:calc(100vw - 18px);max-height:calc(100dvh - 18px);border:1px solid rgba(105,214,246,.42);border-radius:14px;background:#071827;color:#eafaff;overflow:auto;overscroll-behavior:contain}
@@ -987,7 +957,6 @@
     .vision-image-dialog img[data-zoom="actual"]{max-width:none;max-height:none;cursor:zoom-out}
     .vision-image-dialog-hint{text-align:center;font-size:11px;margin:8px 0 0;color:#b7ddec}
 
-    .user-vision-summary{margin-top:8px;font-size:11px;color:#d4e9f7;white-space:pre-wrap}
     /* Image preflight stays in the chat viewport, not hidden in the composer. */
     /* Single scrollport: the chat viewport owns vertical dragging even when
        a swipe begins over analysis text, preview, or empty card space. */
@@ -1006,7 +975,6 @@
     .vision-work-timer[data-long="true"]{color:#ffd29b}
     .vision-work-status{color:#a4d4e9;font-size:11px;margin-top:6px}
     .vision-work-card[data-state="error"] .vision-work-status{color:#ffb3c2}
-    .user-vision-summary summary{cursor:pointer}
     @media(max-width:400px){.composer-media-tools{gap:4px;padding-left:3px;padding-right:3px}.composer-media-button{padding:3px 7px;font-size:10px}.image-attachment span{max-width:78px}}
   </style>
   <script src="/chat/§wyrlz/assets/forge-embed-v1.js"></script>
@@ -1380,7 +1348,6 @@
       const VISION_END="\n[/Uploaded image]";
       const imagePreviews=new Map();
       // Ephemeral source regions, paired with temporary image object URLs.
-      const imageRegionEvidence=new Map();
       let selectedImage=null, speechRecognition=null;
       const composerNotice=(message,error=false)=>{
         composerFeedback.textContent=message||"";
@@ -1681,16 +1648,10 @@
         const timer=document.createElement("div");timer.className="vision-work-timer";timer.setAttribute("aria-label","Elapsed processing time");
         const status=document.createElement("div");status.className="vision-work-status";status.setAttribute("role","status");status.setAttribute("aria-live","polite");
         const sourceInfo=document.createElement("div");sourceInfo.className="vision-work-status";sourceInfo.hidden=true;
-        const findings=document.createElement("section");findings.className="vision-reference-findings";findings.hidden=true;
-        findings.setAttribute("aria-label","Modeling reference analysis findings");
-        const findingsTitle=document.createElement("strong");findingsTitle.className="vision-reference-findings-title";
-        findingsTitle.textContent="Reference image observations";
-        const findingsList=document.createElement("ol");findingsList.setAttribute("aria-live","polite");
-        findings.append(findingsTitle,findingsList);
-        const evidence=document.createElement("details");evidence.className="vision-level-evidence";evidence.hidden=true;
-        const evidenceSummary=document.createElement("summary");evidenceSummary.textContent="Observed levels";
-        const evidenceContents=document.createElement("div");evidence.append(evidenceSummary,evidenceContents);
-        root.append(header,message,previewButton,steps,timer,sourceInfo,status,findings,evidence);messageList.appendChild(root);
+        // Only show job status here. The model's findings appear once in the
+        // assistant reply, never as intermediate duplicate report cards.
+        root.append(header,message,previewButton,steps,timer,sourceInfo,status);
+        messageList.appendChild(root);
         const initialTime=Date.now();
         const durationText=seconds=>{
           const n=Math.max(0,Math.floor(Number(seconds)||0)),m=Math.floor(n/60),sec=String(n%60).padStart(2,"0");
@@ -1701,70 +1662,7 @@
         const activity={
           root,originThreadId:activeThreadId,originDraft:draftThread,
           jobId:"",abort:new AbortController(),phase:"",phaseStart:initialTime,
-          serverTiming:null,interval:null,renderedLevels:"",renderedFindings:"",sourceRegions:[],
-          showReferenceFindings(timing){
-            // Show only completed model observations. Keep the entire first
-            // output in an opt-in disclosure instead of filling the viewport
-            // and repeating the same long text in the raw-output box.
-            if(timing?.referenceProgress!==true)return;
-            const overview=timing.levelRecords?.[0]?.description;
-            if(typeof overview!=="string"||!overview.trim())return;
-            const regions=Array.isArray(timing.spatialRegionRecords)?timing.spatialRegionRecords:[];
-            const entries=[["Whole-image overview",overview,false]];
-            for(const region of regions){
-              if(typeof region.description==="string"&&region.description.trim())
-                entries.push([String(region.region||"Focused detail"),region.description,false]);
-            }
-            const integrated=timing.integratedObservation?.description;
-            if(timing.integratedSelected===true&&typeof integrated==="string"&&integrated.trim())
-              entries.push(["Final modeling description",integrated,true]);
-            const signature=JSON.stringify(entries);
-            if(signature===this.renderedFindings)return;
-            this.renderedFindings=signature;findings.hidden=false;
-            findingsList.replaceChildren();
-            for(const [name,body,isFinal] of entries){
-              const item=document.createElement("li");
-              if(isFinal)item.classList.add("vision-reference-final");
-              const heading=document.createElement("strong");heading.textContent=name;
-              item.append(heading);
-              const content=document.createElement("div");
-              if(!isFinal&&body.length>420){
-                // Preview ends on a complete sentence or line whenever
-                // possible. The exact raw observation remains one tap away.
-                const cut=body.slice(0,390);
-                const boundary=Math.max(cut.lastIndexOf(". "),cut.lastIndexOf("\n"));
-                const preview=(boundary>180?cut.slice(0,boundary+1):cut).trimEnd();
-                content.textContent=preview+"…";
-                const more=document.createElement("details");
-                more.className="vision-reference-more";
-                const label=document.createElement("summary");label.textContent="Read full observation";
-                const full=document.createElement("div");full.textContent=body;
-                more.append(label,full);item.append(content,more);
-              }else{
-                content.textContent=body;item.append(content);
-              }
-              findingsList.append(item);
-            }
-          },
-          showLevels(records,selected){
-            if(!Array.isArray(records)||!records.length)return;
-            const signature=records.map(x=>[x.level,x.description,x.elapsedSeconds].join("|")).join("~")+"|"+selected;
-            if(signature===this.renderedLevels)return;
-            this.renderedLevels=signature;evidence.hidden=false;
-            evidenceSummary.textContent="Raw model output · "+records.length+" level"+(records.length===1?"":"s")+" (expand if needed)";
-            evidenceContents.replaceChildren();
-            for(const record of records){
-              const entry=document.createElement("div");entry.className="vision-level-entry";
-              const heading=document.createElement("strong");
-              const noDescriptors=records.every(item=>Number(item.descriptorCount||0)===0);
-              heading.textContent="L"+record.level+" · "+record.inputMaxSide+"px · "+
-                Number(record.elapsedSeconds||0).toFixed(2)+"s"+
-                (selected===record.level?(noDescriptors?" · fallback (no descriptors)":" · selected by heuristic"):"");
-              const body=document.createElement("div");
-              body.textContent=String(record.description||"");
-              entry.append(heading,body);evidenceContents.append(entry);
-            }
-          },
+          serverTiming:null,interval:null,
           tick(){
             const now=Date.now();
             const timing=this.serverTiming&&this.serverTiming.phase===this.phase
@@ -1788,14 +1686,6 @@
                 step:Math.max(0,Number(timing.phaseElapsedSeconds))};
             }
             this.tick();
-            if(Array.isArray(timing?.spatialRegionRecords)){
-              // These are source crop coordinates, not inferred object boxes.
-              this.sourceRegions=timing.spatialRegionRecords
-                .filter(x=>Array.isArray(x?.sourceBox)&&x.sourceBox.length===4)
-                .map(x=>({region:String(x.region||"Source crop"),
-                  description:String(x.description||"").slice(0,900),
-                  sourceBox:x.sourceBox.map(Number)})).slice(0,4);
-            }
             if(phase==="ERROR"||phase==="STOPPED"){
               root.dataset.state="error";title.textContent="Image not sent to chat";
               status.textContent=detail||"Image analysis did not finish. The image remains attached so you can retry.";
@@ -1830,8 +1720,6 @@
               if(!sourceInfo.textContent.includes("Loaded local vision model:"))
                 sourceInfo.textContent+=(sourceInfo.textContent?"\n":"")+line;
             }
-            if(timing?.levelRecords)this.showLevels(timing.levelRecords,Number(timing.selectedLevel)||1);
-            this.showReferenceFindings(timing);
             if(detail)status.textContent=detail;
             else if(timing?.integratedOutcome==="FAILED")status.textContent="Whole-image synthesis failed; retaining raw region observations.";
             else if(timing?.integratedOutcome==="NOT_SELECTED")status.textContent="Whole-image synthesis too generic; retaining raw region observations.";
@@ -3053,36 +2941,6 @@
         container.innerHTML="";
         const rawSource=String(text||"");
         originalRenderedSources.set(container,rawSource);
-        // Direct image answers are model observations, not secondhand prose
-        // to repeat under multiple layouts. Parse only the model's own labeled
-        // sections; text nodes never acquire tool authority or proven accuracy.
-        const visionPrefix="Local image analyzer's description (not directly inspected by §C):\n\n";
-        if(rawSource.startsWith(visionPrefix)&&rawSource.slice(visionPrefix.length).startsWith("Character reference · local model observation")){
-          const body=rawSource.slice(visionPrefix.length)
-            .split("\n\n[Raw source-crop observations; accuracy unverified]\n",1)[0]
-            .replace(/^Character reference[^\n]*\n\s*/i,"").trim();
-          const headings=/^(Subject and views|Shape and proportions|Silhouette and anatomy|Geometry and layers|Clothing and surface detail|Materials and markings|Props and contact|Props and small features|Visibility limits):\s*/gim;
-          const matches=[...body.matchAll(headings)];
-          if(matches.length>=2){
-            const report=document.createElement("section");report.className="vision-model-report";
-            const head=document.createElement("div");head.className="vision-model-report-head";
-            head.textContent="Modeling reference · local vision report";
-            const disclaimer=document.createElement("div");disclaimer.className="vision-model-report-note";
-            disclaimer.textContent="Unverified observations. Geometry/material distinctions are modeling suggestions, not measured 3D structure.";
-            report.append(head,disclaimer);
-            for(let i=0;i<matches.length;i++){
-              const entry=matches[i],start=entry.index+entry[0].length;
-              const end=i+1<matches.length?matches[i+1].index:body.length;
-              const content=body.slice(start,end).trim();
-              if(!content)continue;
-              const card=document.createElement("section");card.className="vision-model-field";
-              const title=document.createElement("h3");title.textContent=entry[1];
-              const detail=document.createElement("p");detail.textContent=content;
-              card.append(title,detail);report.append(card);
-            }
-            container.appendChild(report);return;
-          }
-        }
         // Rendering a repository browser requires Station-verified same-message
         // GitHub evidence. The model may output "## GitHub directory: /" as prose:
         // that alone must NEVER become a verified interactive file browser.
@@ -3589,51 +3447,17 @@
                 const expand=document.createElement("button");
                 expand.type="button";expand.className="user-image-preview-button";
                 expand.setAttribute("aria-label","Enlarge uploaded image");
-                expand.title="Tap to enlarge image";
-                const frame=document.createElement("span");frame.className="vision-source-frame";
-                const highlight=document.createElement("span");
-                highlight.className="vision-source-region-box";highlight.hidden=true;
-                frame.append(image,highlight);expand.append(frame);
+                expand.title="Tap to enlarge image";expand.append(image);
                 expand.addEventListener("click",()=>openVisionImagePreview(previewURL,"Uploaded image"));
                 bubble.appendChild(expand);
-                const regions=(imageRegionEvidence.get(msg.id||"")||[])
-                  .filter(x=>Array.isArray(x.sourceBox)&&x.sourceBox.length===4&&
-                    x.sourceBox.every(n=>Number.isFinite(n)&&n>=0&&n<=1)&&
-                    x.sourceBox[2]>x.sourceBox[0]&&x.sourceBox[3]>x.sourceBox[1]);
-                if(regions.length){
-                  const controls=document.createElement("div");controls.className="vision-source-controls";
-                  controls.setAttribute("aria-label","Actual source crop locations");
-                  const detail=document.createElement("div");
-                  detail.className="vision-source-observation";detail.hidden=true;
-                  const buttons=[];
-                  regions.forEach((region,index)=>{
-                    const button=document.createElement("button");button.type="button";
-                    button.textContent=region.region;
-                    button.setAttribute("aria-pressed","false");
-                    button.addEventListener("click",()=>{
-                      const active=button.getAttribute("aria-pressed")==="true";
-                      buttons.forEach(item=>item.setAttribute("aria-pressed","false"));
-                      if(active){highlight.hidden=true;detail.hidden=true;return;}
-                      button.setAttribute("aria-pressed","true");
-                      const [left,top,right,bottom]=region.sourceBox;
-                      highlight.style.left=(left*100)+"%";highlight.style.top=(top*100)+"%";
-                      highlight.style.width=((right-left)*100)+"%";
-                      highlight.style.height=((bottom-top)*100)+"%";
-                      highlight.hidden=false;
-                      detail.textContent="Unverified model observation from highlighted source crop: "+region.description;
-                      detail.hidden=false;
-                    });
-                    controls.append(button);buttons.push(button);
-                  });
-                  bubble.append(controls,detail);
-                }
+              }else{
+                // The pixel upload is intentionally not persisted in chat
+                // history. Do not show saved analyzer text in its place.
+                const unavailable=document.createElement("span");
+                unavailable.className="vision-preview-unavailable";
+                unavailable.textContent="Image preview unavailable after reload";
+                bubble.appendChild(unavailable);
               }
-              const details=document.createElement("details");details.className="user-vision-summary";
-              const summary=document.createElement("summary");
-              summary.textContent=previewURL?"Image analyzed":"Image analyzed · original image not stored";
-              const description=document.createElement("div");
-              description.textContent=imageText.slice(imageStart+VISION_START.length,-VISION_END.length);
-              details.append(summary,description);bubble.appendChild(details);
             }else if(persistedTag==="container:code"||persistedTag==="container:lyrics"){
               bubble.classList.add("user-container-message");
               const syntheticFence=(persistedTag==="container:lyrics"?"lyrics":"code")+"\n"+String(msg.text||"");
@@ -4397,12 +4221,9 @@
             // The composer was intentionally cleared when the vision job was
             // accepted; keep its original object URL for the committed turn.
             imagePreviews.set(userMessageId,attachment.url);
-            if(activity?.sourceRegions?.length)
-              imageRegionEvidence.set(userMessageId,activity.sourceRegions);
             while(imagePreviews.size>12){
               const oldest=imagePreviews.keys().next().value;
               URL.revokeObjectURL(imagePreviews.get(oldest));imagePreviews.delete(oldest);
-              imageRegionEvidence.delete(oldest);
             }
             if(selectedImage===attachment){selectedImage=null;updateImagePreview();}
             visionDraftHeld=false;
@@ -5295,7 +5116,7 @@
           // Model crop evidence and local upload previews belong to one account
           // session. Release both when the account projection changes.
           for(const previewUrl of imagePreviews.values())URL.revokeObjectURL(previewUrl);
-          imagePreviews.clear();imageRegionEvidence.clear();
+          imagePreviews.clear();
           chatThreads=[];activeThreadId="";pendingDraftThread=null;stationGeneration=null;stationAwaitingCommit="";stationAcknowledgedRequest=null;stationSubmission=null;stationCancellation=null;stationSyncOwner=null;stationSyncAgain=false;sending=false;streamAbortController=null;stationSettledRequests.clear();forgeNativeProgress.clear();syncStationControls();chatRevision=0;
           draftThread=!accountUser;window.SwrlzForgeEmbedV1?.setThread("");renderThreads();
         }
@@ -5474,7 +5295,7 @@
           // Model crop evidence and local upload previews belong to one account
           // session. Release both when the account projection changes.
           for(const previewUrl of imagePreviews.values())URL.revokeObjectURL(previewUrl);
-          imagePreviews.clear();imageRegionEvidence.clear();
+          imagePreviews.clear();
         chatThreads=[];activeThreadId="";pendingDraftThread=null;stationGeneration=null;stationAwaitingCommit="";stationAcknowledgedRequest=null;stationSubmission=null;stationCancellation=null;stationSyncOwner=null;stationSyncAgain=false;sending=false;streamAbortController=null;stationSettledRequests.clear();forgeNativeProgress.clear();syncStationControls();chatRevision=0;draftThread=true;
         renderThreads();renderConversation(null);refreshAccount();
       });
