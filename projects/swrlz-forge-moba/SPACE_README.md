@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.303
+title: §wyrl§ Engine v11.304
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,15 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.304 · Loaded models refresh the open Modeler (source and browser verified)
+
+Loading a saved native model into an already-open Model Atelier now rebuilds its derived mesh scene, mesh list and inspector in place. Previously, the document and JSON could contain every saved part while the old empty viewport and GLB export still contained no meshes. The synchronization follows the effective native/scratch model that was actually rendered, so valid empty scratch documents also clear the previous view correctly.
+
+The existing renderer, canvas, camera, render loop, native document and Undo/Redo history are retained. Stale document-specific selection, component and drag targets are cleared; repeated synchronization of the same rendered document preserves selection and global view preferences. It does not close/reopen Model Atelier or initialize Game. All owner Vanguard releases through v11.303 (image/UV, mesh, mapped PBR and anatomical portrait) and outward Chat-loft lighting are preserved. Focused real-Three scene/list/GLB tests and the exact package seal are recorded in [the checkpoint](docs/MODELER_DOCUMENT_VIEW_SYNC_V11_304.md); the fresh v11.304 browser automatically displayed all 59 parts and exported 59 exact named GLB meshes through the native buttons. Source publication, hosted confirmation and owner-device visual acceptance remain separate gates.
+
+The complete **Little Crystal Mage** has **59 editable parts**, all authored through embedded §c across66 receipt-backed native model operations. Its newest account save is a durable revision 2, independently cloud-reloaded at 59 parts under the earlier sync candidate. The final v11.304 check used the unchanged native-project file through the ordinary file picker because account resume returned 401 after a later Chat release. It automatically populated59 mesh rows and exported a 232,076-byte editable JSON plus 1,092,072-byte GLB with 59 exact mesh names. No geometry was injected during reload verification.
+
 ## §E v11.303 · Anatomical face sculpt + aligned 768px portrait (2026-11-06)
 
 Owner's latest real-device review found the face was still a flat oval with primitive, childlike facial markings. The new Hooded Vanguard starter uses one **continuous 80×144 facial topology** with recessed eye sockets, eyelid/brow ridges, cheekbones, a shaped nose bridge/tip/alar wings, philtrum, lips and chin, together with a purpose-painted **768px UV portrait** featuring detailed blue-gray irises, realistic eyelids, nuanced skin tones, subtle nostrils, brows and lips. The scalp silhouette, hairline and front locks are refitted to reveal the facial work. The **other fourteen mesh geometries stay unchanged**, including improved chest and pauldrons, forearm-aligned hands, scarf and teal coat. All 17 editable IDs, eleven mapped material families, existing saves and unrelated §E studios are preserved. Source/UV/JavaScript tests precede live release; visual quality remains subject to device inspection. See [face sculpt checkpoint](docs/VANGUARD_ANATOMICAL_PORTRAIT_V11_303.md).
@@ -48,11 +57,11 @@ After owner Android visual inspection exposed an oversized chin/mouth, rounded e
 
 This is still a **static character** without a full-body rig, bird or weapon. Source integrity, loaded model and actual owner phone/Quest appearance are separate verification gates. See [the v11.296 reconstruction checkpoint](docs/VANGUARD_REBUILD_V11_296.md).
 
-## §E v11.295 · Correct lighting on Chat-created curved meshes (candidate)
+## §E v11.295 · Correct lighting on Chat-created curved meshes (deployed)
 
 Plain loft meshes authored through §c now present outward-facing triangles and recomputed surface normals to the existing renderer. This corrects the inverted shading that made saved ivory hair and other curved parts catch the cyan backlight from the wrong side. The saved part colors, paths, radii, UVs and transforms remain unchanged.
 
-The repair is limited to plain Chat-authored lofts. Existing textured and styled surfaces keep their established rendering path; Hooded Vanguard's v11.294 loader repair, all model provenance, native editing/history, Chat progress and account saves are preserved. Focused real-Three geometry checks, the existing native character-tool checks and the exact source package seal are recorded in [the checkpoint](docs/CHAT_LOFT_SURFACE_NORMALS_V11_295.md). Publication and owner-device visual acceptance are separate gates.
+The repair is limited to plain Chat-authored lofts. Existing textured and styled surfaces keep their established rendering path; Hooded Vanguard's v11.294 loader repair, all model provenance, native editing/history, Chat progress and account saves are preserved. Focused real-Three geometry checks, the existing native character-tool checks and the exact source package seal are recorded in [the checkpoint](docs/CHAT_LOFT_SURFACE_NORMALS_V11_295.md). [Deployment run 42247315758](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/42247315758) succeeded. The RUNNING hosted v11.295 HTML and SOURCE receipt match the verified 8,263,130-byte, 326-patch, 71-asset seal. The final 59-part mage was subsequently viewed with corrected surfaces and passed fresh v11.304 import/display/native-export checks; owner-device visual acceptance remains pending.
 
 ## §E v11.294 · Hooded Vanguard Starter Models loader correction (2026-11-06)
 

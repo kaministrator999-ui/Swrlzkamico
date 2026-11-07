@@ -1,18 +1,19 @@
-# §c native character tools — deployed v11.293
+# §c native character tools — v11.293 with deployed v11.295 renderer repair
 
-Lifecycle: SOURCE_PUBLISHED; FEATURE_DEPLOYED. The native tool/progress flow and a
-saved character blockout are verified. Reference mage refinement is in progress;
-owner device and visual acceptance remain pending.
+Lifecycle: SOURCE_PUBLISHED; FEATURE_DEPLOYED for the character-tool/progress releases. The reference-inspired **Little Crystal Mage is complete as an editable low-poly model with 59 parts**, saved to the account, independently cloud-read back and exported. Its model construction used only embedded §c native tools; all 66 model operations have real per-operation UI progress and server/native completion receipts. Owner-device/reference-fidelity visual acceptance remains pending.
+
+The completed v11.304 document-sync candidate is SOURCE_VERIFIED and FRESH_BROWSER_VERIFIED, awaiting source publication/hosted confirmation. It preserves owner Engine releases through v11.303. Current canonical Chat has advanced beyond the d049 character-tool release recorded below; those receipts establish that release and are not a request to downgrade the later Chat source.
+
 The previous provisional v11.276/281/282/283 receipts below are historical and
 superseded by this integration over canonical v11.292, source commit `739486e1b`.
 The deployed release appends patch 324 and preserves all published source and
 model-authoring lineage; model-specific scene versions remain their original
 provenance rather than being relabeled as this application feature.
 
-Engine source: `de5992dc558b786e0ee90ead26f0305ac3ae310a`.
+v11.293 Engine source: `de5992dc558b786e0ee90ead26f0305ac3ae310a`.
 Its separate deployment-request-only commit is
 `605006d674cf6122b95cd85fea2a943cd98e2258`.
-Current paired Chat source: `d049c0216d7ae8ff2059ba363c0b93c51cc6f32c`, exact tested
+Character-tool Chat release source: `d049c0216d7ae8ff2059ba363c0b93c51cc6f32c`, exact tested
 tree `cd97fb2421e0135a7943f2396f449a1936826df4`. Its separate deployment request is
 `fd65fcf05d35b1bac08020e1d3de6c104d5570e6`.
 This follow-up applies bounded heartbeat compare-and-swap retries while staging a
@@ -31,7 +32,7 @@ revision `83dc4bb4ab05e54441fc3780ebc3890f7453703d`; its published `SOURCE.json`
 matched v11.293 and the exact HTML bytes/hash above. The owner subsequently
 advanced canonical Engine main to v11.294; this receipt remains the verified
 v11.293 publication record.
-Current Chat [deployment run 42187094749](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/42187094749)
+Character-tool Chat [deployment run 42187094749](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/42187094749)
 succeeded. Its public repository and RUNNING runtime both identify revision
 `9118666f32aaf1cce5dbc5852b93b99d8332186e`, and published `MODEL_PROVENANCE.json`
 selects source `d049c0216d7ae8ff2059ba363c0b93c51cc6f32c`.
@@ -77,26 +78,52 @@ revision 1** after protected-account resume, without another login or password.
 The exact preview, native backup and screenshot evidence are retained under
 `/workspace/scratch/mage-evidence/f7c6d4651949-*.json` and `*.png`.
 
-Cloud revision 1 was subsequently read back and confirmed. The face/hair
-follow-up approved through §c plan prefix `0c20ec827b8c` completed **17/17**
-operations. Native inspection then confirmed **23 editable parts**. Account
-revision **2** was saved and independently read back; the durable model SHA-256
-matches `2cc1bfbb52ec697b0c0aebb1279aa0ae2e5cd40bb76d07af2e10157e543625be`.
-An 18-part outfit request, `web-mw53xlmv-3477042090-113496695`, is planning;
-no outfit completion is claimed at this checkpoint.
+The staged §c-only authoring then completed:
 
-This remains a saved character blockout with a face/hair pass, not the completed
-reference mage. Source/runtime and native-progress acceptance are evidenced;
-reference fidelity and owner-device visual acceptance remain pending.
+| Stage | Reviewed plan/request | Completed native operations | Parts after stage |
+| --- | --- | ---: | ---: |
+| Base and seed removal/front frame | `f7c6d4651949` |8/8|6|
+| Face, eyes, ivory hair and twin braids | `0c20ec827b8c` |17/17|23|
+| Outfit, gold trim and satchel | `3b96d37b3797` |18/18|41|
+| Position corrections | `web-mw54cgr1-4224632094-1030981432` |3/3|41|
+| Cape, crescent, staff fork/crystal/leaves and frame | `985101ab2e81` |15/15|55|
+| Rounded boot details and frame | `4bc823a29e96` |5/5|59|
 
-## Current native renderer follow-up — candidate v11.295
+These are **66 completed native model operations**, plus the separately receipted project creation. Earlier expired previews, rejected previews and interrupted planning requests were not applied and are not counted. Exact reviewed plans, native snapshots and actual progress/completion screenshots remain in `/workspace/scratch/mage-evidence`.
+
+The final native model contains the plum pointed hood and robe, visible pale face/violet eyes and glints, ivory fringe/twin braids, gold edging/cuffs/hem/buckle, brown satchel and rounded fur-cuff boots, purple cape/back crescent, and bent wooden forked staff with a violet crystal and olive leaves. This is an editable low-poly interpretation of the reference, not a claim of professional sculpt or exact illustrated fidelity.
+
+The newest **Little Crystal Mage** cloud record is a verified durable **revision 2 with 59 parts**, 178,695 native bytes and SHA-256 `0c9a57c544f5e782b843336c97984999cfda3508075dfd05fbd9f0ea988e4d83`. It was independently reloaded through canonical My projects/Load under the earlier sealed document-sync candidate, automatically populating59 native/visible parts. An older41-part checkpoint with the same title is preserved; select the newest record.
+
+Fresh v11.304 verification then used the canonical file-picker import of the unchanged §c-created native project. Official account resume returned 401 after a later Chat release, so this gate does not claim a new authenticated v11.304 cloud readback. No geometry was authored or injected during import verification. The view/list synchronized automatically to59 parts; native export buttons and ordinary Playwright downloads produced:
+
+| Artifact | Bytes | SHA-256 |
+| --- | ---: | --- |
+| Editable `.model.json` |232076|`5449fda0db2d1255bbde5fadabfccde69daf3648e7a52f90da987589362e6a7b`|
+| `.glb`,59 exact native mesh names |1092072|`32cff7214f8a8ca7525f65973214a232fb444b6d3d8a447d7c95656966b2cb37`|
+
+Evidence: `/workspace/scratch/mage-evidence/final304/verification.json` and `Little_Crystal_Mage-preview.png`. Production export succeeded in one browser process; an earlier CDP disconnect during download was a harness/session failure. Source identity, completed authoring, persistence, export, hosted publication and owner visual acceptance are distinct receipts.
+
+## Current native renderer follow-up — deployed v11.295
 
 The real model inspection exposed incorrect loft winding, visible in the
-cyan/white hair rendering. A bounded native winding/normal repair is being
-verified as candidate v11.295 over the owner's latest v11.294 main (`e0d9c4c`).
-This checkpoint does not yet claim a passing candidate seal, publication or
-visual acceptance for v11.295. The 23-part model and revision-2 readback above
-are authoring/persistence evidence, separate from this renderer repair.
+cyan/white hair rendering. The bounded native winding/normal repair follows the
+owner's v11.294 main (`e0d9c4c`) as v11.295. Published source is
+`bbd4b769e53b5f9f6fd9cb9cdbf7d08a5a46c61c`, exact tested tree
+`88f0356b8e39436dc289a074a8b25d4635811401`. The separate deployment-request-only
+commit is `891427f323e0141cc7902228babcd6c2fe4ad765`.
+
+Engine [deployment run 42247315758](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/42247315758)
+completed **SUCCESS**. The public Space reports **RUNNING** at revision
+`1b721ac6162eb6b4412e2da0644226b6d6363f69`. Its published `SOURCE.json` records
+**326 patches, 71 assets, 8,263,130 HTML bytes**, SHA-256
+`b993cd47e55d42ae32315c3ff536e6adc5a7ca6f743d4d9f9d8d458eb374e5c8`.
+An independent streamed download of the public official-HF `index.html` matched
+those actual bytes and SHA exactly. The static Space API does not expose a
+separate `runtime.sha`; its repository revision and RUNNING stage are the public
+runtime evidence. This records the then-verified d049 Chat source/runtime; later owner Chat releases are preserved.
+
+The complete59-part mage has now been rendered with the corrected surfaces and passed automatic fresh v11.304 file-import/display/native-export verification. Earlier sync-candidate cloud readback also passed at 59 parts. See [the document-view checkpoint](MODELER_DOCUMENT_VIEW_SYNC_V11_304.md) for the exact preserved current-source seal and verification boundaries.
 
 Documentation impact: capability/protocol, UI, package identity, living release
 docs, checkpoint, compatibility and provenance. Native Undo remains the existing
