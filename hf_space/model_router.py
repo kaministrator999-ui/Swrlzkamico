@@ -614,7 +614,6 @@ def dispatch(model_id: str, payload: dict[str,Any], _retired_generator: Callable
         return
     payload=_ground_vision_handoff(_apply_personality(payload))
     if model_id=="stock":
-    elif model_id=="stock":
         if stock_generate is None: raise ModelUnavailable(model_id,"Original HF backend not installed")
         events=stock_generate(payload)
     elif model_id=="700m":
