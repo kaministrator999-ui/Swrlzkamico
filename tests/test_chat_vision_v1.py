@@ -480,13 +480,14 @@ with patch.object(vision, "_prepare_image", lambda x: x), patch.object(vision, "
 # An unwatched request triggers a cooperative cancellation flag. A poll on a
 # genuinely live request keeps its lease current, so the queue does not evict it.
 with vision._jobs_lock:
+    now = 100.0 + vision.WATCH_LEASE_SECONDS + 10.0
     active = {"phase": "QUEUED", "id": "a" * 32,
               "lastPolledAt": 100.0, "cancelEvent": threading.Event()}
     watched = {"phase": "ANALYZING", "id": "b" * 32,
-               "lastPolledAt": 205.0, "cancelEvent": threading.Event()}
+               "lastPolledAt": now - 5.0, "cancelEvent": threading.Event()}
     vision._jobs["a" * 32] = active
     vision._jobs["b" * 32] = watched
-    vision._cancel_unwatched_jobs(205.0)
+    vision._cancel_unwatched_jobs(now)
     assert active["cancelEvent"].is_set()
     assert not watched["cancelEvent"].is_set()
     vision._jobs.pop("a" * 32)
