@@ -13,3 +13,4 @@ PROGRESSIVE_REFERENCE_RUNTIME_RECHECK_2=Read only status after Space build warmu
 SELECTIVE_CROPS_FORMAT_RUNTIME_42363235021=Read-only verify Space running after selective crop and formatting rollout
 VISION_SCROLL_LIGHTBOX_RUNTIME_42388516597=Sanitized read-only runtime state after image card scroll and lightbox deployment
 TAP_ANCHOR_POST_DEPLOY_42391549812=Check sanitized live Hugging Face Space stage after tap-position zoom deployment
+TAP_ANCHOR_POST_DEPLOY_RECHECK_2=Check Space running state after background startup
