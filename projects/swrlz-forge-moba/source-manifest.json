@@ -354,6 +354,6 @@
     "patches/v11_306_sheep_pursuit_performance.py",
     "patches/v11_307_arcane_vr_glove_orientation.py"
   ],
-  "finalBytes": null,
-  "finalSha256": null
+  "finalBytes": 8397373,
+  "finalSha256": "6c3591a2e2261366de0f96f09517e5f933a770440a8d1b8a782bc8cd1b8f278a"
 }
