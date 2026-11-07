@@ -1,0 +1,50 @@
+name: One-shot §E v11.321 Sheep Tag sight and busy XR measurement
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/one-shot-forge-v11-321-sheep-sight-seal.yml'
+permissions:
+  contents: read
+jobs:
+  focused-build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Test live sightline and rebuild the unsealed current §E source
+        run: |
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_321_sheep_sight_xr_crowd.py
+          node --check projects/swrlz-forge-moba/runtime/sheep_sight_xr_crowd_v11_321.js
+          python - <<'PY'
+          import hashlib,json,subprocess,sys
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          m=json.loads((root/'source-manifest.json').read_text('utf8'))
+          assert m['name']=='§wyrl§ Engine v11.321'
+          assert len(m['patches'])==342 and m['patches'][-1]=='patches/v11_321_sheep_sight_xr_crowd.py'
+          assert m['finalBytes']==0 and m['finalSha256']==''
+          out=Path('/tmp/se321')
+          subprocess.run([sys.executable,str(root/'build_space.py'),'--output',str(out)],check=True)
+          raw=(out/'index.html').read_bytes()
+          assert raw==(out/'modeler.html').read_bytes()
+          html=raw.decode('utf8')
+          for token in ('SE321_LOS_CORE_START','SE321_LOS_CORE_END',
+                        'SWYRL_ENGINE_SHEEP_VISION_XR_321',
+                        'SWYRL_ENGINE_DEPLOY_MARKER: V11_321_SHEEP_SIGHT_XR_CROWD',
+                        "window.SWRLZ_FORGE_BUILD={version:'v11.321'"):
+            assert token in html,token
+          subprocess.run(['node',str(root/'tests/sheep_sight_xr_crowd_v11_321.cjs'),str(out/'index.html')],check=True)
+          subprocess.run([sys.executable,str(root/'scripts/check_inline_js_syntax_v11_266.py'),
+                          str(out/'index.html')],check=True)
+          rec=json.loads((out/'SOURCE.json').read_text('utf8'))
+          assert len(rec['assets'])==71 and rec['patches']==m['patches']
+          print('SE321_EXACT_MEASUREMENT='+json.dumps({
+            'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest(),
+            'patches':len(rec['patches']),'assets':len(rec['assets'])
+          },sort_keys=True),flush=True)
+          PY
