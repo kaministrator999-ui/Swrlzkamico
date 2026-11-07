@@ -125,8 +125,8 @@ assert.match(backend,/phaseElapsedSeconds/);
 assert.match(backend,/elapsedSeconds/);
 assert.match(backend,/max_tokens=tokens/);
 assert.match(backend,/generate\(image, prompt, MAX_VISION_OUTPUT_TOKENS\)/);
-assert.match(backend,/DETAIL_RETRY_SIDE = 640/);
-assert.match(backend,/DETAIL_RETRY_TOKENS = 144/);
+assert.ok(backend.includes('DETAIL_RETRY_SIDE = 768'));
+assert.ok(backend.includes('DETAIL_RETRY_TOKENS = 224'));
 assert.match(backend,/MAX_BODY_BYTES = 12_000_000/);
 assert.match(backend,/MAX_IMAGE_BYTES = 8 \* 1024 \* 1024/);
 assert.match(backend,/focus_center=True/);
@@ -134,21 +134,109 @@ assert.match(backend,/def _source_image_metadata\(/);
 assert.match(html,/observed==="DETAIL_RETRY"/);
 assert.match(html,/observed==="DETAIL_PREFILL"/);
 assert.match(html,/observed==="DETAIL_DECODING"/);
-assert.match(backend,/WATCH_LEASE_SECONDS = 90/);
+assert.match(backend,/WATCH_LEASE_SECONDS = 20 \* 60/);
+assert.match(html,/if\(event\.type==="HEARTBEAT"\)continue/);
+assert.match(html,/document\.addEventListener\("resume",keepStationHydrated\)/);
+assert.match(station,/next_heartbeat=time\.monotonic\(\)\+15\.0/);
 assert.match(backend,/def _cancel_unwatched_jobs\(/);
 assert.match(backend,/def cancel_vision\(/);
 assert.match(backend,/stream=True/);
 assert.match(backend,/raise VisionCancelled\(\)/);
-// Accept only the two pinned local SmolVLM CPU candidates; the dedicated
-// Python contract verifies the exact selected model/projector/revision pair.
-assert.match(backend,/^MODEL_REPO = "ggml-org\/SmolVLM-(?:256|500)M-Instruct-GGUF"$/m);
-assert.ok(backend.includes("MTMDChatHandler"));
+// The image analyzer has only Qwen3-VL, with no legacy alternate backend.
+assert.ok(backend.includes('MODEL_REPO = "Qwen/Qwen3-VL-4B-Instruct-GGUF"'));
+assert.ok(backend.includes('VISION_MODEL_VARIANT = "qwen3-vl-4b"'));
+assert.ok(!backend.includes("MTMDChatHandler"));
+assert.ok(!backend.includes("ggml-org/SmolVLM"));
 assert.ok(!backend.includes("SWRLZ_VISION_API_KEY"),"no paid inference credentials needed");
 assert.ok(!backend.includes("router.huggingface.co"),"no paid inference provider calls");
 assert.match(backend,/MAX_IMAGE_PIXELS = 16_000_000/);
 assert.match(backend,/def _run_vision_job\(/);
 assert.match(backend,/def _detail_regions\(/);
 assert.match(backend,/spatialRegionRecords/);
+assert.match(backend,/referenceProgress/);
+assert.match(html,/vision-reference-findings/);
+assert.match(html,/showReferenceFindings\(timing\)/);
+assert.match(html,/referenceProgress:state\.referenceProgress/);
+assert.match(html,/Final modeling description/);
+assert.match(html,/Read full observation/);
+assert.match(html,/vision-reference-more/);
+// The final image analysis is rendered into a semantic visual reference,
+// using ONLY the model's own text: no fabricated view counts or 3D geometry.
+assert.match(html,/const buildVisionReferenceReport=raw=>/);
+assert.match(html,/vision-report-grid/);
+assert.match(html,/vision-report-view/);
+assert.match(html,/vision-report-crops/);
+assert.match(html,/vision-report-raw/);
+assert.match(html,/imageText\.slice\(imageStart\+VISION_START\.length,-VISION_END\.length\)/);
+assert.match(html,/const visual=buildVisionReferenceReport\(originalText\)/);
+assert.match(html,/visionReportOpenState\.get\(stateKey\):true/);
+assert.match(html,/\.user-vision-plain\{white-space:pre-wrap/);
+assert.ok(!html.includes("crop.innerHTML="),"model observations must never be rendered as untrusted HTML");
+
+const visualStart=html.indexOf("const visionReportOpenState=new Map();");
+const visualEnd=html.indexOf("let visionActivity=null;",visualStart);
+assert.ok(visualStart>0&&visualEnd>visualStart,"extract the actual inline report builder");
+const element=(tag)=>({
+  tag,className:"",textContent:"",dataset:{},children:[],attrs:{},
+  append(...children){this.children.push(...children);},
+  setAttribute(key,value){this.attrs[key]=value;}
+});
+const renderReport=vm.runInNewContext(
+  html.slice(visualStart,visualEnd)+"\n buildVisionReferenceReport",
+  {document:{createElement:element}}
+);
+const fixture=[
+  "Character reference · local model observation (accuracy unverified)",
+  "Subject and views: One mage shown in front, left side, right side, back, and top.",
+  "Silhouette and anatomy: Chibi proportions and two white braids.",
+  "Clothing and surface detail: Purple robe with gold embroidery.",
+  "Props and small features: One purple crystal-topped staff.",
+  "Visibility limits: Some surfaces are obscured; do not infer invisible geometry.",
+  "",
+  "Focused image details (unverified source-crop observations):",
+  "- Upper-left figure detail: White braids and a crystal staff.",
+  "- Central outfit and prop detail: Robe trim and a pouch."
+].join("\n");
+const report=renderReport(fixture);
+assert.equal(report.className,"vision-report");
+const reportHead=report.children.find(x=>x.className==="vision-report-head");
+const angleStrip=reportHead.children.find(x=>x.className==="vision-report-views");
+assert.deepEqual(Array.from(angleStrip.children,x=>x.textContent),
+  ["Front","Left side","Right side","Back","Top"]);
+const reportGrid=report.children.find(x=>x.className==="vision-report-grid");
+assert.equal(reportGrid.children.length,5);
+assert.deepEqual(Array.from(reportGrid.children,x=>x.dataset.kind),
+  ["subject","anatomy","materials","props","limits"]);
+assert.equal(reportGrid.children[3].children[1].textContent,"One purple crystal-topped staff.");
+const cropGroup=report.children.find(x=>x.className==="vision-report-crops");
+assert.equal(cropGroup.children.length,3,"two actual crop records and one summary");
+const sourcePanel=report.children.find(x=>x.className==="vision-report-raw");
+assert.equal(sourcePanel.children[1].textContent,fixture,"raw model text remains inspectable");
+assert.equal(renderReport("A cat sitting on a table."),null,
+  "simple image results keep their ordinary text layout");
+// The image analysis card must not trap touch scrolling in a nested 72dvh
+// scrollport; swiping anywhere on it scrolls the single chat viewport.
+assert.match(html,/\.vision-work-card\{[^}]*max-height:none;overflow:visible;touch-action:pan-y/s);
+assert.ok(!html.includes('max-height:72dvh;overflow-y:auto;overscroll-behavior:contain'),"no nested image-card scroll trap");
+// Both an in-progress attachment and the committed chat image get the same
+// keyboard/Android-tappable expanded image preview, with native Escape close.
+assert.match(html,/const openVisionImagePreview=\(imageUrl/);
+assert.match(html,/dialog\.showModal\(\);close\.focus\(\)/);
+assert.match(html,/dialog\.addEventListener\("close",\(\)=>dialog\.remove\(\)/);
+assert.match(html,/previewButton\.addEventListener\("click",\(\)=>openVisionImagePreview\(attachment\.url/);
+assert.match(html,/expand\.addEventListener\("click",\(\)=>openVisionImagePreview\(previewURL/);
+assert.match(html,/vision-image-dialog-close/);
+// Zoom must preserve the pixel selected by the user's tap, not start at (0,0).
+assert.match(html,/const fractionX=Math\.max\(0,Math\.min\(1,\(event\.clientX-before\.left\)\/before\.width\)\)/);
+assert.match(html,/const fractionY=Math\.max\(0,Math\.min\(1,\(event\.clientY-before\.top\)\/before\.height\)\)/);
+assert.match(html,/dialog\.scrollLeft\+=after\.left\+fractionX\*after\.width-event\.clientX/);
+assert.match(html,/dialog\.scrollTop\+=after\.top\+fractionY\*after\.height-event\.clientY/);
+assert.match(html,/image\.style\.height=image\.naturalHeight\+"px"/);
+assert.match(backend,/proposals = proposals\[:2\]/);
+assert.match(backend,/about 80 to 120 words/);
+assert.match(backend,/Focused image details/);
+assert.ok(!backend.includes('"\\n\\nSource observations:\\n"'),"final response must not repeat the whole raw overview");
+assert.ok(!html.includes('Checking for contradictions'),"internal inference consistency checks stay hidden");
 assert.match(backend,/def vision_status\(/);
 assert.match(backend,/threading\.Thread\(/);
 assert.match(backend,/ACTIVE_PHASES/);

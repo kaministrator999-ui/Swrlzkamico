@@ -702,6 +702,7 @@ async def stream_generation(request:Request, requestId:str):
         sent_widgets=0
         sent_forge=0
         terminal_sent=False
+        next_heartbeat=time.monotonic()+15.0
         while True:
             if await request.is_disconnected():return
             with _lock:
@@ -734,6 +735,12 @@ async def stream_generation(request:Request, requestId:str):
                 terminal_sent=True
                 yield json.dumps({"type":str(g.get("terminalType") or "COMPLETE"),"phase":str(g.get("phase") or "COMPLETE"),"terminal":True,**progress_timeline_v238.forge_failure_fields(g.get("code"),g.get("phase")),"seq":int(g.get("lastSeq") or 0),"requestId":rid},ensure_ascii=False)+"\n"
                 return
+            # Keep idle NDJSON streams alive through proxies and temporary
+            # browser backgrounding. This is transport-only, never generation
+            # completion or synthetic model output.
+            if time.monotonic()>=next_heartbeat:
+                yield json.dumps({"type":"HEARTBEAT","requestId":rid})+"\n"
+                next_heartbeat=time.monotonic()+15.0
             await asyncio.sleep(0.025)
     return StreamingResponse(events(),media_type="application/x-ndjson",headers={"Cache-Control":"no-store, no-transform","X-Accel-Buffering":"no"})
 

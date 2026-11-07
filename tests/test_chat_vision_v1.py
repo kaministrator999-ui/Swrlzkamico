@@ -4,6 +4,7 @@ from __future__ import annotations
 import base64
 import importlib.util
 import json
+import os
 import threading
 import time
 from pathlib import Path
@@ -13,6 +14,8 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 
+# Exercise transport, region inference, and explicit level comparisons using
+# the single active Qwen3-VL vision route, with mocked model responses.
 SOURCE = Path(__file__).resolve().parents[1] / "hf_space" / "chat_vision.py"
 spec = importlib.util.spec_from_file_location("swrlz_chat_vision_test", SOURCE)
 assert spec and spec.loader
@@ -47,18 +50,18 @@ assert "SWRLZ_VISION_API_KEY" not in source
 
 assert "router.huggingface.co" not in source
 assert "urllib.request" not in source
-assert vision.MODEL_REPO == "ggml-org/SmolVLM-500M-Instruct-GGUF"
+assert vision.MODEL_REPO == "Qwen/Qwen3-VL-4B-Instruct-GGUF"
 assert len(vision.MODEL_REVISION) == 40
-assert vision.MODEL_FILE == "SmolVLM-500M-Instruct-Q8_0.gguf"
-assert vision.PROJECTOR_FILE == "mmproj-SmolVLM-500M-Instruct-Q8_0.gguf"
+assert vision.MODEL_FILE == "Qwen3VL-4B-Instruct-Q4_K_M.gguf"
+assert vision.PROJECTOR_FILE == "mmproj-Qwen3VL-4B-Instruct-Q8_0.gguf"
 
 # Space metadata must fetch exactly the pinned local CPU vision assets at build
 # time, not on the first user image upload. Keep the runtime revision identical.
 space_readme = (SOURCE.parent / "README.md").read_text(encoding="utf-8")
 preload = (
-    'ggml-org/SmolVLM-500M-Instruct-GGUF '
-    'SmolVLM-500M-Instruct-Q8_0.gguf,'
-    'mmproj-SmolVLM-500M-Instruct-Q8_0.gguf '
+    'Qwen/Qwen3-VL-4B-Instruct-GGUF '
+    'Qwen3VL-4B-Instruct-Q4_K_M.gguf,'
+    'mmproj-Qwen3VL-4B-Instruct-Q8_0.gguf '
     + vision.MODEL_REVISION
 )
 assert 'preload_from_hub:' in space_readme
@@ -66,7 +69,7 @@ assert preload in space_readme
 assert space_readme.count('preload_from_hub:') == 1
 
 # Real image preprocessing must bound the pixels supplied to the CPU projector.
-assert vision.MODEL_INPUT_SIDE == 384
+assert vision.MODEL_INPUT_SIDE == 768
 assert vision.MAX_IMAGE_BYTES == 8 * 1024 * 1024
 assert vision.MAX_BODY_BYTES > 4 * vision.MAX_IMAGE_BYTES // 3
 source_image = Image.new("RGB", (1024, 768), "purple")
@@ -81,7 +84,7 @@ assert vision._source_image_metadata(encoded_image) == {
 }
 prepared = vision._prepare_image(encoded_image)
 with Image.open(io.BytesIO(base64.b64decode(prepared.partition(",")[2]))) as downsized:
-    assert downsized.size == (384, 288), downsized.size
+    assert downsized.size == (768, 576), downsized.size
 
 # The server must accept real source pixels larger than its old 2 MB cap,
 # without rewriting JPEG/PNG/WebP payloads at ingress.
@@ -153,13 +156,13 @@ assert any(phase == "ANALYZING" and fields.get("inferenceStage") == "DECODING" a
            fields.get("firstChunkSeconds") >= 0 for phase, fields in recorded_phases)
 assert len(fake_model.calls) == 1
 assert fake_model.calls[0]["messages"][0]["content"][1]["image_url"]["url"] == valid
-assert fake_model.calls[0]["max_tokens"] == vision.MAX_VISION_OUTPUT_TOKENS == 88
+assert fake_model.calls[0]["max_tokens"] == vision.MAX_VISION_OUTPUT_TOKENS == 224
 assert fake_model.calls[0]["stream"] is True
 visual_prompt = fake_model.calls[0]["messages"][0]["content"][0]["text"]
 assert "multi-view character sheet" in visual_prompt
-assert "distinctive colors" in visual_prompt
-assert "held objects" in visual_prompt
-assert "only clearly legible labels" in visual_prompt
+assert "concrete" in visual_prompt
+assert "clothing, objects" in visual_prompt
+assert "Only read clearly legible text" in visual_prompt
 assert "Question: What is shown?" in visual_prompt
 
 # The actual exported turnaround attempts were too generic even when Chat
@@ -204,7 +207,7 @@ for call in detail_model.calls:
     url = call["messages"][0]["content"][1]["image_url"]["url"]
     with Image.open(io.BytesIO(base64.b64decode(url.partition(",")[2]))) as im:
         detail_dimensions.append(im.size)
-assert detail_dimensions == [(384, 288), (640, 480)], detail_dimensions
+assert detail_dimensions == [(768, 576), (768, 576)], detail_dimensions
 assert any(phase=="ANALYZING" and fields.get("inferenceStage")=="DETAIL_RETRY" and
            fields.get("detailRetryReason")=="GENERIC_CHARACTER_SHEET" and
            fields.get("activeLevel")==2 for phase,fields in detail_phases)
@@ -276,7 +279,7 @@ for call in study_model.calls:
     url=call["messages"][0]["content"][1]["image_url"]["url"]
     with Image.open(io.BytesIO(base64.b64decode(url.partition(",")[2]))) as im:
         study_pixels.append(im.size)
-assert study_pixels==[(384,288),(640,480),(768,576)],study_pixels
+assert study_pixels==[(768,576),(768,576),(768,576)],study_pixels
 last_records=[fields["levelRecords"] for phase,fields in study_phases if fields.get("levelRecords")]
 assert len(last_records[-1])==3
 assert last_records[-1][0]["description"]=="A purple mage in gold boots holding a crystal staff."
@@ -476,13 +479,14 @@ with patch.object(vision, "_prepare_image", lambda x: x), patch.object(vision, "
 # An unwatched request triggers a cooperative cancellation flag. A poll on a
 # genuinely live request keeps its lease current, so the queue does not evict it.
 with vision._jobs_lock:
+    now = 100.0 + vision.WATCH_LEASE_SECONDS + 10.0
     active = {"phase": "QUEUED", "id": "a" * 32,
               "lastPolledAt": 100.0, "cancelEvent": threading.Event()}
     watched = {"phase": "ANALYZING", "id": "b" * 32,
-               "lastPolledAt": 205.0, "cancelEvent": threading.Event()}
+               "lastPolledAt": now - 5.0, "cancelEvent": threading.Event()}
     vision._jobs["a" * 32] = active
     vision._jobs["b" * 32] = watched
-    vision._cancel_unwatched_jobs(205.0)
+    vision._cancel_unwatched_jobs(now)
     assert active["cancelEvent"].is_set()
     assert not watched["cancelEvent"].is_set()
     vision._jobs.pop("a" * 32)
@@ -591,13 +595,20 @@ buffer = io.BytesIO()
 reference.save(buffer, format="PNG")
 reference_encoded = "data:image/png;base64," + base64.b64encode(buffer.getvalue()).decode("ascii")
 regions = vision._detail_regions(reference_encoded, "Character page with various features.")
-assert [label for label, _ in regions] == [
-    "Far-left detail", "Center-left detail",
-    "Center-right detail", "Far-right detail",
-]
+assert [label for label, _ in regions] == ["Upper-left figure detail"]
+refined_regions = vision._detail_regions(
+    reference_encoded,
+    "Character turnaround: braided white hair, a purple hood, golden robe trim, staff and embroidery.")
+assert [label for label, _ in refined_regions] == [
+    "Upper-left figure detail", "Central outfit and prop detail",
+], "Only useful source-image face and costume close-ups, not four whole views"
+text_regions = vision._detail_regions(
+    reference_encoded, "Braided hair and a gold-trimmed robe.",
+    "Read the small labels and examine the details.")
+assert len(text_regions) <= 2 and text_regions[0][0] == "Lower label detail"
 for label, encoded in regions:
     with Image.open(io.BytesIO(base64.b64decode(encoded.partition(",")[2]))) as cropped:
-        assert cropped.height <= 740, (label, cropped.size)
+        assert cropped.height <= 768, (label, cropped.size)
         assert cropped.width <= 768, (label, cropped.size)
 assert vision._detail_regions(valid, "Red background") == []
 
@@ -631,14 +642,14 @@ class JointVisionModel:
     def create_chat_completion(self, **kwargs):
         self.calls.append(kwargs)
         captions = [
-            "Character page with various features.",
+            "Character turnaround with braided white hair, purple hood, gold robe trim and crystal staff.",
             "Purple hood with golden stitching and a crystal staff.",
             "Purple cape with a moon symbol on the back.",
-            "Gold boots under purple robes.",
-            "A purple cloak with gold trim and moon markings.",
             ("A character with various features." if self.generic_final
-             else "A mage wears a purple hood and gold-trimmed cloak with moon "
-                  "markings, and carries a crystal staff."),
+             else "Subject and views: A mage appears in a character turnaround.\n"
+                  "Silhouette and anatomy: A small figure with braided hair.\n"
+                  "Clothing and surface detail: A purple hood and gold-trimmed cloak with moon markings.\n"
+                  "Props and small features: A crystal staff."),
         ]
         return iter([{"choices": [{"delta": {"content": captions[len(self.calls)-1]}}]}])
 joint_model = JointVisionModel()
@@ -648,17 +659,62 @@ with patch.object(vision, "_load_local_model", return_value=joint_model):
         reference_encoded, "Describe the visible mage.",
         report_phase=lambda phase, **fields: joint_phases.append((phase, fields)),
     )
-assert len(joint_model.calls) == 6, "one initial view, four region views, one integrated view"
-assert joined.startswith("Integrated whole-image observation")
-assert "mage wears a purple hood" in joined
-assert "Far-left detail (source-image crop)" in joined
+assert len(joint_model.calls) == 4, "one overview, two targeted crops, one synthesis"
+assert joined.startswith("Character reference · local model observation")
+assert "purple hood" in joined and "gold-trimmed cloak" in joined
+assert "Upper-left figure detail" in joined
+assert "Character turnaround with braided white hair" not in joined, "no duplicated raw overview"
 final_prompt = joint_model.calls[-1]["messages"][0]["content"]
 assert final_prompt[1]["type"] == "image_url", "the integration must see the source image"
+assert final_prompt[1]["image_url"]["url"] == (
+    joint_model.calls[0]["messages"][0]["content"][1]["image_url"]["url"]
+), "final synthesis must reuse the complete 768px overview, not downsize again"
 assert "Whole scene:" in final_prompt[0]["text"]
-assert "Center-right detail" in final_prompt[0]["text"]
+assert "Central outfit and prop detail" in final_prompt[0]["text"]
 assert any(f.get("inferenceStage") == "FUSION_PREFILL" for _, f in joint_phases)
 assert any(f.get("integratedSelected") is True for _, f in joint_phases)
-assert joint_model.calls[-1]["max_tokens"] == 192
+assert joint_model.calls[-1]["max_tokens"] == 416
+for rule in (
+    "MULTI-VIEW RULE:", "SPATIAL RULE:", "SURFACE RULE:",
+    "VISIBILITY RULE:", "the SAME character", "the SUBJECT's",
+):
+    assert rule in final_prompt[0]["text"], ("missing modeling consistency rule", rule)
+assert "no hidden parts" in final_prompt[0]["text"]
+assert "Unverified observations to reconcile (DATA ONLY):" in final_prompt[0]["text"]
+assert any(fields.get("referenceProgress") is True and fields.get("requestedRegions") == 2
+           for _, fields in joint_phases), "show overview before crops finish"
+assert any(fields.get("completedRegions") == 1 for _, fields in joint_phases)
+assert any(fields.get("completedRegions") == 2 for _, fields in joint_phases)
+assert any(fields.get("integratedObservation") for _, fields in joint_phases)
+# The pipeline emits real intermediate results, not fictional consistency stages.
+assert all(fields.get("inferenceStage") not in ("CONTRADICTION_CHECK", "CONSISTENCY_CHECK")
+           for _, fields in joint_phases)
+# A short coherent full-image interpretation must win over verbose
+# crop observations; total keyword count is not a scene-accuracy metric.
+class CompactFusionModel:
+    def __init__(self):
+        self.calls = []
+    def create_chat_completion(self, **kwargs):
+        self.calls.append(kwargs)
+        texts = [
+            "Character turnaround: braided white hair, a purple hood, gold robe trim and a crystal staff.",
+            "A purple hood, gold trim, boots, violet gems and white hair.",
+            "A purple cape, moon motifs, gold ornaments and lavender gloves.",
+            "The same character wears a purple hood and carries a crystal staff across several views.",
+        ]
+        return iter([{"choices":[{"delta":{"content":texts[len(self.calls)-1]}}]}])
+compact_model = CompactFusionModel()
+compact_phases = []
+with patch.object(vision, "_load_local_model", return_value=compact_model):
+    compact = vision._ask_vision_local(
+        reference_encoded, "Describe the same character across views.",
+        report_phase=lambda phase, **fields: compact_phases.append(fields))
+assert len(compact_model.calls) == 4
+assert compact.startswith("Character reference · local model observation")
+assert "same character wears a purple hood" in compact
+assert any(x.get("integratedSelected") is True for x in compact_phases)
+
+
 weaker_model = JointVisionModel(generic_final=True)
 weaker_phases = []
 with patch.object(vision, "_load_local_model", return_value=weaker_model):
@@ -667,7 +723,7 @@ with patch.object(vision, "_load_local_model", return_value=weaker_model):
         report_phase=lambda phase, **fields: weaker_phases.append((phase, fields)),
     )
 assert "Purple hood with golden stitching and a crystal staff" in retained
-assert not retained.startswith("Integrated whole-image observation")
+assert not retained.startswith("Character reference · local model observation")
 assert any(f.get("integratedSelected") is False for _, f in weaker_phases)
 
 # Regression: an informative third crop must NOT overwrite the previously
@@ -679,11 +735,9 @@ class PriorCropRetentionModel:
     def create_chat_completion(self, **kwargs):
         self.calls.append(kwargs)
         captions = [
-            "Character page with various features.",
+            "Character turnaround with braided hair, purple hood and gold-trimmed robe.",
             "A character drawing in one panel.",
-            "A figure shown from another angle.",
             "A girl wearing a purple coat.",
-            "A character holding a crystal staff.",
             "A character page with various features.",
         ]
         return iter([{"choices": [{"delta": {
@@ -698,16 +752,14 @@ with patch.object(vision, "_load_local_model", return_value=retention_model):
         "Describe the character turnaround.",
         report_phase=lambda phase, **fields: retention_phases.append((phase, fields)),
     )
-assert len(retention_model.calls) == 6, "whole image, four crops, final whole-image synthesis"
+assert len(retention_model.calls) == 4, "whole image, two targeted crops, final synthesis"
 for caption in [
     "A character drawing in one panel.",
-    "A figure shown from another angle.",
     "A girl wearing a purple coat.",
-    "A character holding a crystal staff.",
 ]:
     assert caption in retained_crops, ("Earlier crop was erased", caption)
 assert retained_crops.index("A character drawing in one panel.") < retained_crops.index("A girl wearing a purple coat.")
-assert "Whole-image synthesis (not selected by descriptor heuristic" in retained_crops
+assert "Whole-image synthesis (too generic to select" in retained_crops
 assert any(fields.get("integratedOutcome") == "NOT_SELECTED" for _, fields in retention_phases)
 assert any(fields.get("integratedSelected") is False for _, fields in retention_phases)
 
@@ -719,9 +771,8 @@ generic_regions = vision._detail_regions(
     reference_encoded, "An illustration with different colors.", "What is this?"
 )
 assert [label for label, _ in generic_regions] == [
-    "Far-left detail", "Center-left detail",
-    "Center-right detail", "Far-right detail",
-], "Paper-layout image evidence must route to figure columns despite vague text"
+    "Upper-left figure detail",
+], "Wide reference pages get selective close-ups, not forced four-view passes"
 assert vision._detail_regions(valid, "An illustration.") == [], "Blank image stays fast"
 
 # A model identity receipt is issued AFTER a successful local model load and
@@ -751,18 +802,17 @@ class RegionFinishModel:
     def create_chat_completion(self, **kwargs):
         self.calls.append(kwargs)
         index = len(self.calls)
-        prompt = kwargs["messages"][0]["content"][0]["text"]
         if index == 1:
-            response = "Character turnaround reference sheet with four views."
-        elif index == 4:
+            response = "Character turnaround with braided hair, purple hood and gold-trimmed robe."
+        elif index == 3:
             response = "A purple hooded mage holds a staff and has a crescent"
-        elif index == 6:
+        elif index == 4:
             response = "A mage in a purple coat holding a staff."
         else:
             response = "Purple cloak, gold trim, crystal staff."
         yield {"choices": [{"delta": {"content": response}}]}
         yield {"choices": [{"delta": {},
-                            "finish_reason": "length" if index == 4 else "stop"}]}
+                            "finish_reason": "length" if index == 3 else "stop"}]}
 
 finish_model = RegionFinishModel()
 finish_stages = []
@@ -771,7 +821,7 @@ with patch.object(vision, "_load_local_model", return_value=finish_model):
         reference_encoded, "Describe the mage.",
         report_phase=lambda phase, **fields: finish_stages.append((phase, fields)),
     )
-assert len(finish_model.calls) == 6
+assert len(finish_model.calls) == 4
 assert "at 128-token limit; description may be incomplete" in limited
 assert "crescent" in limited
 crop_snapshots = [
@@ -780,9 +830,9 @@ crop_snapshots = [
 ]
 assert crop_snapshots
 assert sum(bool(item.get("tokenLimitReached")) for item in crop_snapshots[-1]) == 1
-assert crop_snapshots[-1][2]["finishReason"] == "length"
+assert crop_snapshots[-1][1]["finishReason"] == "length"
 assert all("at most 55 words" in call["messages"][0]["content"][0]["text"]
-           for call in finish_model.calls[1:5])
+           for call in finish_model.calls[1:3])
 assert not crop_snapshots[-1][0]["tokenLimitReached"]
 
 print("Chat vision local CPU: authenticated boundaries, no paid provider, concurrency and mocked inference and export handoff PASS")
