@@ -10,3 +10,4 @@ STARTUP_WARMUP_EVENT_RECHECK=Read event names only after live Space startup
 QWEN_ONLY_AFTER_DEPLOY_42354937087=Check live Space stage after Qwen-only deployment, no private payloads
 PROGRESSIVE_REFERENCE_RUNTIME_CHECK_42356653319=Read only status after approved progressive Qwen deployment
 PROGRESSIVE_REFERENCE_RUNTIME_RECHECK_2=Read only status after Space build warmup
+SELECTIVE_CROPS_FORMAT_RUNTIME_42363235021=Read-only verify Space running after selective crop and formatting rollout
