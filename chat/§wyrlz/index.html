@@ -1076,7 +1076,7 @@
         <section class="settings-pane" data-settings-pane="model">
           <h3>AI / Model</h3><p class="settings-pane-lead">Choose the inference model used by this clean-room Chat. The selected model is sent explicitly with every Station request.</p>
           <div class="setting-group">
-            <div class="setting-row"><div><div class="setting-label">Default model</div><div class="setting-help">Controls the actual Station inference route for new messages.</div></div><div class="setting-control"><select id="settingDefaultModel"><option value="700m">LFM2-700M Q4_K_M</option><option value="r39">§wyrlz R39</option><option value="stock">Original HF · LFM2-350M</option><option value="coder">Qwen · Coding</option></select></div></div>
+            <div class="setting-row"><div><div class="setting-label">Default model</div><div class="setting-help">Controls the actual Station inference route for new messages.</div></div><div class="setting-control"><select id="settingDefaultModel"><option value="700m">LFM2-700M Q4_K_M</option><option value="stock">Original HF · LFM2-350M</option><option value="coder">Qwen · Coding</option></select></div></div>
             <div class="setting-row" hidden><div><div class="setting-label">Effort preference</div><div class="setting-help">Saved as a model preference only until the LALM routing tier consumes it.</div></div><div class="setting-control"><select id="settingEffort"><option value="auto">Adaptive</option><option value="fast">Fast</option><option value="deep">Deep</option></select></div></div>
             <div class="setting-row" hidden><div><div class="setting-label">Response length</div><div class="setting-help">Your preferred answer depth; persistence does not itself enforce generation length.</div></div><div class="setting-control"><select id="settingResponseLength"><option value="adaptive">Adaptive</option><option value="concise">Concise</option><option value="expanded">Expanded</option></select></div></div>
           </div>
@@ -4280,7 +4280,7 @@
           transportCamera("before-fetch");
           let response;
           try{
-            response=await fetch(sendPath,{method:"POST",credentials:"same-origin",cache:"no-store",headers:{"Content-Type":"application/json","X-SWRLZ-Request-Id":requestId},body:JSON.stringify({protocolVersion:2,requestId,prompt:text,threadId:submission.threadId,messageId:userMessageId,assistantMessageId,contentTag,modelId:String(settingsState.model.defaultModel||"700m"),profileId:String(settingsState.general.personalityProfile||"default"),ingress:"SWRLZ_LALM_STATION",timeZone:(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"UTC"}catch(_){return "UTC"}})(),...(clientLocation?{clientLocation}:{}),...forgeBinding})});
+            response=await fetch(sendPath,{method:"POST",credentials:"same-origin",cache:"no-store",headers:{"Content-Type":"application/json","X-SWRLZ-Request-Id":requestId},body:JSON.stringify({protocolVersion:2,requestId,prompt:text,threadId:submission.threadId,messageId:userMessageId,assistantMessageId,contentTag,modelId:(["700m","stock","coder"].includes(settingsState.model.defaultModel)?settingsState.model.defaultModel:"700m"),profileId:String(settingsState.general.personalityProfile||"default"),ingress:"SWRLZ_LALM_STATION",timeZone:(()=>{try{return Intl.DateTimeFormat().resolvedOptions().timeZone||"UTC"}catch(_){return "UTC"}})(),...(clientLocation?{clientLocation}:{}),...forgeBinding})});
             transportCamera("fetch-response",{status:response.status,ok:response.ok});
           }catch(networkError){
             transportCamera("fetch-network-failed",{error:String(networkError?.message||networkError)});
@@ -4628,7 +4628,7 @@
       const applySettingsPreview = () => {
         settingsState.general.enterToSend=!!settingEnterSend.checked;
         settingsState.general.personalityProfile=["default","gegd"].includes(settingPersonalityProfile.value)?settingPersonalityProfile.value:"default";
-        settingsState.model.defaultModel=["700m","r39","stock","coder"].includes(settingDefaultModel.value)?settingDefaultModel.value:"700m";
+        settingsState.model.defaultModel=["700m","stock","coder"].includes(settingDefaultModel.value)?settingDefaultModel.value:"700m";
         settingsState.model.effort=settingEffort.value;
         settingsState.model.responseLength=settingResponseLength.value;
         settingsState.ui.density=settingDensity.value;
@@ -4675,7 +4675,7 @@
         settingCompanionLoreDensity.value=["adaptive","minimal","balanced","mythic"].includes(companion.loreDensity)?companion.loreDensity:"adaptive";
         settingEnterSend.checked=general.enterToSend!==false;
         settingDensity.value=["compact","comfortable"].includes(ui.density)?ui.density:"compact";
-        settingDefaultModel.value=["700m","r39","stock","coder"].includes(model.defaultModel)?model.defaultModel:"700m";
+        settingDefaultModel.value=["700m","stock","coder"].includes(model.defaultModel)?model.defaultModel:"700m";
         settingEffort.value=["auto","fast","deep"].includes(model.effort)?model.effort:"auto";
         settingResponseLength.value=["adaptive","concise","expanded"].includes(model.responseLength)?model.responseLength:"adaptive";
         settingGlass.value=["standard","low"].includes(ui.glass)?ui.glass:"standard";
