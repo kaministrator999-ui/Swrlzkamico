@@ -469,6 +469,79 @@ def _ground_vision_handoff(payload: dict[str, Any]) -> dict[str, Any]:
     return out
 
 
+def _natural_vision_fallback(description: str) -> str:
+    """Compose a concise factual reply from reported crop features only.
+
+    This is deterministic formatting, not new visual inference. Keep exact
+    source descriptions in the activity/provenance record instead of dumping
+    the feature index as the chat answer. Do not treat conflicting terms as
+    multiple independently verified objects.
+    """
+    digest = _vision_evidence_digest(description)
+    categories = {}
+    for line in digest.splitlines():
+        if ":" not in line:
+            continue
+        label, remainder = line.split(":", 1)
+        if label not in ("Hair", "Clothing", "Symbols", "Handheld items",
+                         "Other color clues"):
+            continue
+        phrases = []
+        for entry in remainder.split(";"):
+            # A region label is provenance metadata, not part of the trait.
+            phrase = re.sub(r"\\s*\\[[^\\]\\n]{1,75}\\]$", "", entry).strip()
+            if phrase and phrase.casefold() not in {p.casefold() for p in phrases}:
+                phrases.append(phrase)
+        if phrases:
+            categories[label] = phrases[:6]
+
+    def join_phrases(phrases):
+        if len(phrases) == 1:
+            return phrases[0]
+        if len(phrases) == 2:
+            return phrases[0] + " and " + phrases[1]
+        return ", ".join(phrases[:-1]) + ", and " + phrases[-1]
+
+    sentences = [
+        "This appears to be a character turnaround/reference sheet "
+        "showing the same illustrated subject from several angles."
+    ]
+    appearances = []
+    if categories.get("Hair"):
+        appearances.append("hair described as " +
+                           join_phrases(categories["Hair"]))
+    if categories.get("Clothing"):
+        appearances.append("clothing described as " +
+                           join_phrases(categories["Clothing"]))
+    if appearances:
+        sentences.append("The local vision model reports " +
+                         join_phrases(appearances) + ".")
+    if categories.get("Symbols"):
+        sentences.append("Reported decorative motifs include " +
+                         join_phrases(categories["Symbols"]) + ".")
+    items = categories.get("Handheld items", [])
+    if len(items) > 1:
+        sentences.append("A handheld accessory is described differently "
+                         "across the views—as " + join_phrases(items) + ".")
+    elif items:
+        sentences.append("A handheld item is described as " + items[0] + ".")
+    if categories.get("Other color clues"):
+        sentences.append("Another crop reports " +
+                         join_phrases(categories["Other color clues"]) + ".")
+    if len(sentences) == 1:
+        captions = [line.split("(source-image crop):", 1)[-1].strip()
+                    for line in digest.splitlines()
+                    if "(source-image crop):" in line]
+        if captions:
+            sentences.append("The local vision model reports: " +
+                             " ".join(captions[:3]))
+    sentences.append(
+        "These are unverified visual observations, not proof of any "
+        "specific powers, events, or symbolic meanings."
+    )
+    return " ".join(sentences)
+
+
 def _guard_vision_answer(events, original_source: str):
     """Only review plain image-inventory replies for unsupported story drift.
 
@@ -535,30 +608,7 @@ def _guard_vision_answer(events, original_source: str):
         r"(?:white|blank)\s+background[^.]{0,110}\b"
         r"(?:purity|clarity|transition|reflective|symboli[sz]))\b", answer, re.I))
     if unsupported:
-        digest = _vision_evidence_digest(description)
-        features = [
-            line for line in digest.splitlines()
-            if line.startswith(("Hair:", "Clothing:", "Symbols:",
-                                "Handheld items:", "Other color clues:"))
-        ]
-        region_lines = [line for line in digest.splitlines()
-                        if "(source-image crop):" in line]
-        if features:
-            body = "\n".join(features)
-        elif region_lines:
-            body = "\n".join(region_lines[:5])
-        else:
-            body = digest[:1200]
-        replacement = (
-            "The local vision model reports a character turnaround/reference "
-            "sheet: different views of what appears to be the same illustrated "
-            "subject, not a fragmented character or a sequence of events. "
-            "These details are unverified model observations, not pixels §C "
-            "independently inspected.\n\n"
-            + body + "\n\nSome crop descriptions may be incomplete or disagree. "
-            "Decorative moon and magic motifs do not independently establish "
-            "abilities, events, or symbolic meanings."
-        )
+        replacement = _natural_vision_fallback(description)
         yield {"type": "STATUS", "phase": "VISION_ANSWER_GROUNDING_GUARD",
                "reason": "Rejected unsupported narrative interpretation of a multi-view reference; preserved actual region observations.",
                "categories": ["VISION", "EVIDENCE", "GROUNDING_GUARD"]}
