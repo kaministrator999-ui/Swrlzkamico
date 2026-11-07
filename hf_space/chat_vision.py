@@ -12,6 +12,7 @@ import base64
 import binascii
 import io
 import json
+import os
 import re
 import threading
 import time
@@ -30,22 +31,35 @@ MAX_IMAGE_BYTES = 8 * 1024 * 1024
 MAX_QUESTION_CHARS = 2_000
 MAX_DESCRIPTION_CHARS = 6_000
 MAX_IMAGE_PIXELS = 16_000_000
-# Small-model CPU vision: bounded pixels reduce multimodal projector work.
-MODEL_INPUT_SIDE = 384
-# Bound CPU decoder work; longer descriptions remain possible in the text LALM.
-MAX_VISION_OUTPUT_TOKENS = 88
+# Explicit experimental selection. Default remains the working SmolVLM path.
+# Qwen requires a Qwen3-VL-capable llama-cpp-python build, which is NOT supplied
+# by the production 0.3.35 pin. Do not select it on the live Space until verified.
+VISION_MODEL_VARIANT = os.getenv("SWRLZ_VISION_MODEL", "smolvlm-500m").strip().lower()
+if VISION_MODEL_VARIANT not in ("smolvlm-500m", "qwen3-vl-4b"):
+    raise RuntimeError("SWRLZ_VISION_MODEL must be smolvlm-500m or qwen3-vl-4b")
+# Qwen sees a larger single view; all views still derive from original pixels.
+MODEL_INPUT_SIDE = 768 if VISION_MODEL_VARIANT == "qwen3-vl-4b" else 384
+# Avoid generic 88-token truncation when evaluating Qwen visual detail.
+MAX_VISION_OUTPUT_TOKENS = 224 if VISION_MODEL_VARIANT == "qwen3-vl-4b" else 88
 # A second local inference is reserved for demonstrably generic character sheets.
 # The initial 384px / 88-token fast path is left untouched.
-DETAIL_RETRY_SIDE = 640
-DETAIL_RETRY_TOKENS = 144
+DETAIL_RETRY_SIDE = 768 if VISION_MODEL_VARIANT == "qwen3-vl-4b" else 640
+DETAIL_RETRY_TOKENS = 224 if VISION_MODEL_VARIANT == "qwen3-vl-4b" else 144
 # Explicit level-comparison mode only: no automatic L3 CPU work.
 LEVEL3_SIDE = 768
 LEVEL3_TOKENS = 192
-MODEL_REPO = "ggml-org/SmolVLM-500M-Instruct-GGUF"
-# Immutable public upstream snapshot. No HF access token or inference credits.
-MODEL_REVISION = "72e986006ef53e37cdd3f6d4241c90b0f01df376"
-MODEL_FILE = "SmolVLM-500M-Instruct-Q8_0.gguf"
-PROJECTOR_FILE = "mmproj-SmolVLM-500M-Instruct-Q8_0.gguf"
+# Pin both public model families to immutable upstream revisions.
+# Qwen Q4_K_M + Q8 projector is nearly 3 GB on disk, plus runtime memory.
+if VISION_MODEL_VARIANT == "qwen3-vl-4b":
+    MODEL_REPO = "Qwen/Qwen3-VL-4B-Instruct-GGUF"
+    MODEL_REVISION = "1cd86afb9a95c410a6038ab3b40d8b578c892266"
+    MODEL_FILE = "Qwen3VL-4B-Instruct-Q4_K_M.gguf"
+    PROJECTOR_FILE = "mmproj-Qwen3VL-4B-Instruct-Q8_0.gguf"
+else:
+    MODEL_REPO = "ggml-org/SmolVLM-500M-Instruct-GGUF"
+    MODEL_REVISION = "72e986006ef53e37cdd3f6d4241c90b0f01df376"
+    MODEL_FILE = "SmolVLM-500M-Instruct-Q8_0.gguf"
+    PROJECTOR_FILE = "mmproj-SmolVLM-500M-Instruct-Q8_0.gguf"
 # Existing browser handoff markers are part of persisted text, not new storage.
 # Export derives a clearly labeled view of the exact text passed to Chat.
 VISION_START = "\n\n[Uploaded image — vision description, not original pixels]\n"
@@ -275,18 +289,36 @@ def _load_local_model():
         return _model
 
     from llama_cpp import Llama
-    from llama_cpp.llama_chat_format import MTMDChatHandler
+
+    # Check support BEFORE downloading 3 GB of weights. The pinned production
+    # llama-cpp-python 0.3.35 does not provide this specialized Qwen3 handler.
+    if VISION_MODEL_VARIANT == "qwen3-vl-4b":
+        try:
+            from llama_cpp.llama_multimodal import Qwen3VLChatHandler
+        except ImportError as exc:
+            raise RuntimeError(
+                "QWEN3_VL_BACKEND_UNAVAILABLE: requires a verified Qwen3-VL-capable "
+                "llama-cpp-python runtime; current production wheel is unsupported"
+            ) from exc
+    else:
+        from llama_cpp.llama_chat_format import MTMDChatHandler
 
     model_path = _cached_asset(MODEL_FILE)
     projector_path = _cached_asset(PROJECTOR_FILE)
-    handler = MTMDChatHandler(
-        clip_model_path=projector_path, use_gpu=False, verbose=False,
-    )
+    if VISION_MODEL_VARIANT == "qwen3-vl-4b":
+        handler = Qwen3VLChatHandler(
+            mmproj_path=projector_path, force_reasoning=False,
+            image_min_tokens=1024, use_gpu=False, verbose=False,
+        )
+    else:
+        handler = MTMDChatHandler(
+            clip_model_path=projector_path, use_gpu=False, verbose=False,
+        )
     instance = Llama(
         model_path=model_path,
         chat_handler=handler,
         n_gpu_layers=0,
-        n_ctx=2048,
+        n_ctx=10240 if VISION_MODEL_VARIANT == "qwen3-vl-4b" else 2048,
         # Larger prefill batches reduce overhead on image embedding tokens.
         n_batch=512,
         n_ubatch=256,
@@ -295,7 +327,8 @@ def _load_local_model():
         verbose=False,
     )
     _model = instance
-    print(json.dumps({"event": "LOCAL_VISION_MODEL_READY", "model": "SmolVLM-500M-Q8_0"}), flush=True)
+    print(json.dumps({"event": "LOCAL_VISION_MODEL_READY", "model": VISION_MODEL_VARIANT,
+                      "modelRevision": MODEL_REVISION}), flush=True)
     return instance
 
 
