@@ -1000,6 +1000,7 @@
     .vision-report-crop p{margin:0;line-height:1.5}
     .vision-report-raw{padding:6px 2px;color:#a8cadd}
     .vision-report-raw pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:45dvh;overflow:auto;padding:10px;border-radius:9px;background:rgba(1,14,28,.55);font-size:11px;line-height:1.5}
+    .user-vision-plain{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.5}
 
     /* Image preflight stays in the chat viewport, not hidden in the composer. */
     /* Single scrollport: the chat viewport owns vertical dragging even when
@@ -3670,6 +3671,7 @@
                 details.append(summary,visual);
               }else{
                 const description=document.createElement("div");
+                description.className="user-vision-plain";
                 description.textContent=originalText;
                 details.append(summary,description);
               }
