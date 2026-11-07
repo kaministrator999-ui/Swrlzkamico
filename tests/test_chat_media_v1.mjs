@@ -52,15 +52,18 @@ assert.match(html,/activity\.update\(activity\.abort\.signal\.aborted\?"STOPPED"
 assert.ok(!html.includes("Analyzing image…"),"no opaque composer-only image operation");
 assert.match(html,/prompt:text,threadId:submission\.threadId/);
 assert.match(html,/imagePreviews\.set\(userMessageId,attachment\.url\)/);
-assert.match(html,/const imageRegionEvidence=new Map\(\)/);
-assert.match(html,/imageRegionEvidence\.set\(userMessageId,activity\.sourceRegions\)/);
-assert.match(html,/imageRegionEvidence\.delete\(oldest\)/);
-assert.match(html,/sourceBox:x\.sourceBox\.map\(Number\)/);
-assert.match(html,/x\.sourceBox\.every\(n=>Number\.isFinite\(n\)&&n>=0&&n<=1\)/);
-assert.match(html,/vision-source-region-box/);
-assert.match(html,/vision-source-controls/);
-assert.match(html,/highlight\.style\.left=\(left\*100\)/);
-assert.match(html,/Unverified model observation from highlighted source crop/);
+// User image message stays an attachment; model report appears once as §C's reply.
+assert.ok(!html.includes("imageRegionEvidence"),"no source-crop card under the uploaded image");
+assert.ok(!html.includes("user-vision-summary"),"saved model output must not expand under the image");
+assert.ok(!html.includes("vision-model-report"),"no nested report-card stack");
+assert.ok(!html.includes("showReferenceFindings(timing)"),"no duplicate interim observations");
+assert.ok(!html.includes('const findings=document.createElement("section")'),"no interim final report");
+assert.match(html,/const formatLegacyVisionReply=value=>/);
+assert.match(html,/const visionFinal=legacyVision!==null/);
+assert.match(html,/container\.classList\.toggle\("vision-editorial",visionFinal\)/);
+assert.match(html,/originalRenderedSources\.set\(container,displaySource\)/);
+assert.match(html,/const source=sourceContext\?sourceContext\.body:displaySource/);
+assert.match(html,/vision-preview-unavailable/);
 assert.match(html,/recognition\.onresult=event=>/);
 assert.match(html,/prompt\.value=\(original\+separator\+transcript\)/);
 assert.match(html,/prompt\.dispatchEvent\(new Event\("input",\{bubbles:true\}\)\)/);
@@ -116,7 +119,6 @@ assert.match(html,/option value="2" selected/);
 assert.match(html,/option value="3"/);
 assert.match(html,/observed==="LEVEL3_PREFILL"/);
 assert.match(html,/observed==="LEVEL3_DECODING"/);
-assert.match(html,/showLevels\(records,selected\)/);
 assert.match(html,/levelRecords:state\.levelRecords/);
 
 assert.ok(!html.includes("1600/Math.max(img.naturalWidth"),"do not encode unused pixels at 1600px");
@@ -130,6 +132,12 @@ const station=fs.readFileSync("hf_space/station.py","utf8");
 assert.match(station,/install_chat_vision\(app, _require_vision_account\)/);
 assert.match(station,/startsWith\('google:'\)|startswith\('google:'\)/);
 const backend=fs.readFileSync("hf_space/chat_vision.py","utf8");
+const router=fs.readFileSync("hf_space/model_router.py","utf8");
+assert.match(router,/def _format_direct_vision_report\(/);
+assert.match(router,/return _format_direct_vision_report\(description\)/);
+assert.match(router,/## Image analysis/);
+assert.match(router,/Focused image details/);
+assert.ok(!router.includes("Raw\\n    # crop evidence"),"no invalid escaped newline in source router");
 assert.match(backend,/phaseElapsedSeconds/);
 assert.match(backend,/elapsedSeconds/);
 assert.match(backend,/max_tokens=tokens/);
@@ -168,12 +176,10 @@ assert.match(backend,/RAW_CROP_MARKER/);
 assert.match(backend,/Shape and proportions:/);
 assert.match(backend,/Materials and markings:/);
 assert.match(backend,/referenceProgress/);
-assert.match(html,/vision-reference-findings/);
-assert.match(html,/showReferenceFindings\(timing\)/);
 assert.match(html,/referenceProgress:state\.referenceProgress/);
-assert.match(html,/Final modeling description/);
-assert.match(html,/Read full observation/);
-assert.match(html,/vision-reference-more/);
+assert.match(backend,/spatialRegionRecords/);
+assert.match(html,/\.assistant-body\.vision-editorial/);
+assert.ok(!html.includes("vision-reference-findings"),"raw reports remain in JSON export, not chat cards");
 // The image analysis card must not trap touch scrolling in a nested 72dvh
 // scrollport; swiping anywhere on it scrolls the single chat viewport.
 assert.match(html,/\.vision-work-card\{[^}]*max-height:none;overflow:visible;touch-action:pan-y/s);
@@ -181,10 +187,10 @@ assert.ok(!html.includes('max-height:72dvh;overflow-y:auto;overscroll-behavior:c
 // Both an in-progress attachment and the committed chat image get the same
 // keyboard/Android-tappable expanded image preview, with native Escape close.
 assert.match(html,/const openVisionImagePreview=\(imageUrl/);
-assert.match(html,/const visionPrefix="Local image analyzer/);
-assert.match(html,/rawSource\.slice\(visionPrefix\.length\)\.startsWith\("Character reference · local model observation"\)/);
-assert.match(html,/vision-model-report/);
-assert.match(html,/Materials and markings/);
+assert.match(html,/const formatLegacyVisionReply=value=>/);
+assert.match(html,/const displaySource=legacyVision\|\|rawSource/);
+assert.match(html,/const source=sourceContext\?sourceContext\.body:displaySource/);
+assert.match(html,/\.assistant-body\.vision-editorial/);
 assert.match(html,/dialog\.showModal\(\);close\.focus\(\)/);
 assert.match(html,/dialog\.addEventListener\("close",\(\)=>dialog\.remove\(\)/);
 assert.match(html,/previewButton\.addEventListener\("click",\(\)=>openVisionImagePreview\(attachment\.url/);
