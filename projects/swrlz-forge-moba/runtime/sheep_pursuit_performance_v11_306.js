@@ -67,7 +67,7 @@ function se306Lines(page){
     'SHEEP-RADIUS A* '+s.sheep.calls+' / '+fmt(s.sheep.ms)+'ms CPU total',
     'SLOWEST PATH W '+fmt(s.wolf.max)+'ms / S '+fmt(s.sheep.max)+'ms',
     'NO-ROUTE RADIUS W '+s.wolf.misses+' / S '+s.sheep.misses,
-    'REUSED '+s.reuses+' · ADOPTED '+s.adoptions,
+    'CACHE HITS '+s.reuses+' · PLANS '+s.adoptions,
     'PAGE 7/8 · LAST '+fmt(s.seconds)+'s'
   ];
   return [

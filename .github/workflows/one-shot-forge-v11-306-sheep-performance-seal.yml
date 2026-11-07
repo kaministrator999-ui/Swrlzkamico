@@ -34,7 +34,7 @@ jobs:
           raw=(out/'index.html').read_bytes()
           assert raw==(out/'modeler.html').read_bytes()
           html=raw.decode('utf8')
-          for token in ('SE306_WOLF_ROUTE_REUSE','se256AIBudget',
+          for token in ('SE306_SHARED_APPROACH_CACHE','SE306_CACHE_BOTH_CALLERS',
                         'SE306_PLANNED_ROUTE_REUSE','SWYRL_ENGINE_SHEEP_PURSUIT_306',
                         'SWYRL_ENGINE_DEPLOY_MARKER: V11_306_SHEEP_PURSUIT_PERFORMANCE',
                         "window.SWRLZ_FORGE_BUILD={version:'v11.306'"):
@@ -54,3 +54,5 @@ jobs:
 # v11.256 sheep AI preservation is intentional.
 
 # Print current wolf implementation on anchor mismatch.
+
+# Measure actual shared wolf approach-cache implementation.
