@@ -602,6 +602,14 @@ refined_regions = vision._detail_regions(
 assert [label for label, _ in refined_regions] == [
     "Upper-left figure detail", "Central outfit and prop detail",
 ], "Only useful source-image face and costume close-ups, not four whole views"
+boxed_regions = vision._detail_regions(
+    reference_encoded, "A purple hood, braided hair, gold trim and a staff.",
+    with_boxes=True)
+assert len(boxed_regions) == 2
+for label, encoded, box in boxed_regions:
+    assert label and encoded.startswith("data:image/jpeg;base64,")
+    assert len(box) == 4 and all(0 <= n <= 1 for n in box)
+    assert box[0] < box[2] and box[1] < box[3], "source region, not invented object boundary"
 text_regions = vision._detail_regions(
     reference_encoded, "Braided hair and a gold-trimmed robe.",
     "Read the small labels and examine the details.")
@@ -664,6 +672,12 @@ assert joined.startswith("Character reference · local model observation")
 assert "purple hood" in joined and "gold-trimmed cloak" in joined
 assert "Upper-left figure detail" in joined
 assert "Character turnaround with braided white hair" not in joined, "no duplicated raw overview"
+assert vision.RAW_CROP_MARKER in joined, "original crop notes remain inspectable in the saved user handoff"
+direct_joined = direct({"prompt": "What do you see in this image?" +
+                        vision.VISION_START + joined + vision.VISION_END})
+assert "Subject and views:" in direct_joined
+assert "Upper-left figure detail" not in direct_joined, "no second raw-crop text dump in §C reply"
+assert vision.RAW_CROP_MARKER not in direct_joined
 final_prompt = joint_model.calls[-1]["messages"][0]["content"]
 assert final_prompt[1]["type"] == "image_url", "the integration must see the source image"
 assert final_prompt[1]["image_url"]["url"] == (
@@ -824,6 +838,8 @@ crop_snapshots = [
 assert crop_snapshots
 assert sum(bool(item.get("tokenLimitReached")) for item in crop_snapshots[-1]) == 1
 assert crop_snapshots[-1][1]["finishReason"] == "length"
+assert all(record["coordinateSpace"] == "exif-corrected-source-normalized"
+           and len(record["sourceBox"]) == 4 for record in crop_snapshots[-1])
 assert all("at most 55 words" in call["messages"][0]["content"][0]["text"]
            for call in finish_model.calls[1:3])
 assert not crop_snapshots[-1][0]["tokenLimitReached"]
