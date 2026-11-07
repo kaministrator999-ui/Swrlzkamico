@@ -2968,6 +2968,7 @@
         if(!body)return null;
         const aliases={
           "subject and views":"Subject & views","views and subject":"Subject & views",
+          "view comparisons":"View-by-view details","view comparison":"View-by-view details",
           "shape and proportions":"Shape & proportions","shape and anatomy":"Shape & proportions",
           "silhouette and anatomy":"Shape & proportions",
           "geometry and layers":"Geometry & layers","shape and construction":"Geometry & layers",
@@ -2980,7 +2981,7 @@
           "visibility limits":"Visibility limits",
           "visibility and uncertainty":"Visibility limits"
         };
-        const labels=/^(Subject and views|Views and subject|Shape and proportions|Shape and anatomy|Silhouette and anatomy|Geometry and layers|Shape and construction|Clothing and surfaces|Clothing and surface detail|Materials and markings|Props and contact|Props and small features|Props and fine details|Visibility limits|Visibility and uncertainty):\s*/gim;
+        const labels=/^(Subject and views|Views and subject|View comparisons|View comparison|Shape and proportions|Shape and anatomy|Silhouette and anatomy|Geometry and layers|Shape and construction|Clothing and surfaces|Clothing and surface detail|Materials and markings|Props and contact|Props and small features|Props and fine details|Visibility limits|Visibility and uncertainty):\s*/gim;
         const matches=[...body.matchAll(labels)];
         if(matches.length>=2){
           const sections=[],seen=new Set();
