@@ -15,7 +15,7 @@ class CoderModelSelection(unittest.TestCase):
             return runpy.run_path(str(PATH))
 
     def test_default_and_explicit_variants_have_matching_labels_and_pins(self):
-        for size in ('1.5B','3B','7B'):
+        for size in ('7B',):
             with self.subTest(size=size):
                 repo='Qwen/Qwen2.5-Coder-'+size+'-Instruct-GGUF'
                 config=self.configured(SWRLZ_CODER_MODEL_REPO=repo)
@@ -26,6 +26,7 @@ class CoderModelSelection(unittest.TestCase):
                 self.assertIn(size,config['MODEL_LABEL'])
                 self.assertIn(options['revision'],config['MODEL_CHECKPOINT'])
         self.assertIn('7B',self.configured()['MODEL_REPO'])
+        self.assertEqual(len(self.configured()['KNOWN_MODELS']),1)
 
     def test_unknown_explicit_selection_does_not_claim_an_official_pin(self):
         config=self.configured(SWRLZ_CODER_MODEL_REPO='example/custom',SWRLZ_CODER_MODEL_FILE='custom.gguf')

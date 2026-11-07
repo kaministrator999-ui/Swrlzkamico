@@ -10,7 +10,7 @@ from station import app as station_app, set_generator
 
 class Candidate(unittest.TestCase):
  def test_station_send_sync_and_route_rejection(self):
-  set_generator(lambda payload:iter([{"type":"DELTA","text":"R39 test output"},{"type":"COMPLETE"}]),lambda payload:iter([{"type":"DELTA","text":"Original test output"},{"type":"COMPLETED"}]))
+  set_generator(None,lambda payload:iter([{"type":"DELTA","text":"Original test output"},{"type":"COMPLETED"}]))
   with TestClient(station_app) as client:
    self.assertEqual(client.get("/").status_code,200)
    self.assertEqual(client.get("/api/lalm_station/sync").status_code,200)
@@ -25,15 +25,8 @@ class Candidate(unittest.TestCase):
    self.assertIsInstance(original["threads"][0]["messages"][0]["createdAt"],int)
    self.assertIsInstance(original["threads"][0]["messages"][-1]["createdAt"],int)
    self.assertIsInstance(original["activeGeneration"]["programmingIntent"],dict)
-   body["requestId"]="req-r39";body["messageId"]="user-r39";body["assistantMessageId"]="assistant-r39";body["modelId"]="r39"
-   self.assertEqual(client.post("/api/lalm_station/send",json=body).status_code,202)
-   for _ in range(100):
-    snap=client.get("/api/lalm_station/sync").json()
-    if snap["activeGeneration"] and snap["activeGeneration"]["terminal"]:break
-    time.sleep(.01)
-   self.assertEqual(snap["activeGeneration"]["terminalType"],"COMPLETE")
-   self.assertEqual(snap["threads"][0]["messages"][-1]["text"],"R39 test output")
-   self.assertEqual(snap["threads"][0]["messages"][-1]["meta"]["modelId"],"r39")
+   body["requestId"]="req-retired";body["messageId"]="user-retired";body["assistantMessageId"]="assistant-retired";body["modelId"]="r39"
+   self.assertEqual(client.post("/api/lalm_station/send",json=body).status_code,422)
 
  def test_station_derives_timezone_aware_turn_gaps(self):
   captured={}
@@ -266,16 +259,12 @@ class Candidate(unittest.TestCase):
   self.assertFalse(gh._read_stage_command("@GitHub confirm abc123XYZ"))
 
  def test_model_routes_fail_closed(self):
-  self.assertEqual([r.model_id for r in routes()],["r39","stock","700m","coder","compare"])
-  self.assertTrue(routes()[1].available)
-  self.assertTrue(routes()[2].available)
-  self.assertTrue(routes()[3].available)
-  self.assertFalse(routes()[4].available)
-  with self.assertRaises(ModelUnavailable): list(dispatch("stock",{},lambda p:iter([{"type":"DELTA","text":"wrong model"}])))
-  with self.assertRaises(ModelUnavailable): list(dispatch("compare",{},lambda p:iter([])))
-  events=list(dispatch("r39",{"prompt":"hello"},lambda p:iter([{"type":"DELTA","text":"real route"}])))
-  self.assertEqual(events[0]["type"],"PROGRAMMING_INTENT")
-  self.assertEqual(events[-1]["text"],"real route")
+  self.assertEqual([r.model_id for r in routes()],["stock","700m","coder","compare"])
+  self.assertTrue(all(r.available for r in routes()[:3]))
+  self.assertFalse(routes()[3].available)
+  with self.assertRaises(ModelUnavailable): list(dispatch("stock",{},None))
+  with self.assertRaises(ModelUnavailable): list(dispatch("compare",{},None))
+  with self.assertRaises(ModelUnavailable): list(dispatch("r39",{"prompt":"hello"},None))
 
  def test_v275_cross_domain_chat_output_and_evidence_contract(self):
   # Execute the shared 700M/Qwen cognition fixtures in the existing
@@ -320,18 +309,16 @@ class Candidate(unittest.TestCase):
 
  def test_model_provenance(self):
   p=json.loads((ROOT/"hf_space/MODEL_PROVENANCE.json").read_text(encoding="utf-8"))
-  m=json.loads((ROOT/"hf_space/lalm§wyrlz.transport.json").read_text(encoding="utf-8"))
-  self.assertEqual(p["transportSha256"],m["sha256"])
-  self.assertEqual(p["transportChunks"],54)
-  self.assertEqual(p["rawSha256"],"65e4b5d730f66024c44da25aec27730db27aa0019df0df26c0997d17ce58bdee")
+  self.assertEqual(p["modelFormat"],"GGUF")
+  self.assertEqual(p["textRoutes"],["stock","700m","coder"])
+  self.assertEqual(p["visionModel"],"Qwen/Qwen3-VL-4B-Instruct-GGUF")
+  self.assertNotIn("rawSha256",p)
 
  def test_canonical_source(self):
-  for rel in ("accepted_runtime/lalm/r39_engine.py","swyrlz/r39_inference.py","swyrlz/backend.py"):
-   self.assertEqual((ROOT/rel).read_bytes(),(ROOT/"hf_space"/rel).read_bytes())
-  self.assertEqual((ROOT/"chat/§wyrlz/index.html").read_bytes(),(ROOT/"hf_space/chat/§wyrlz/index.html").read_bytes(), "HF Chat must match canonical source byte-for-byte")
+  self.assertEqual((ROOT/"chat/§wyrlz/index.html").read_bytes(),(ROOT/"hf_space/chat/§wyrlz/index.html").read_bytes(),"HF Chat must match canonical source")
   self.assertNotIn('id="hfModel"',(ROOT/"hf_space/chat/§wyrlz/index.html").read_text(encoding="utf-8"))
   self.assertIn('href="/api/lalm_station/export"',(ROOT/"hf_space/chat/§wyrlz/index.html").read_text(encoding="utf-8"))
-  self.assertTrue((ROOT/"api/lalm_station.py").is_file(), "Canonical account-backed Chat bridge must remain available as migration reference")
+  self.assertTrue((ROOT/"api/lalm_station.py").is_file())
 
  def test_no_secret_or_billing_code(self):
   app=(ROOT/"hf_space/app.py").read_text(encoding="utf-8")

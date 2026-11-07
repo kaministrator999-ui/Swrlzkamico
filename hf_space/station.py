@@ -63,7 +63,7 @@ _github_diagnostic_lock=threading.Lock()
 _sessions={}
 # Trusted capabilities remain process-private; never part of persisted Chat data.
 _forge_contexts={}
-_pool=ThreadPoolExecutor(max_workers=2,thread_name_prefix="hf-r39")
+_pool=ThreadPoolExecutor(max_workers=2,thread_name_prefix="hf-chat")
 _generate=None
 _stock_generate=None
 _large_generate=None
@@ -1118,7 +1118,6 @@ def _run(key,request_id,model_id,payload,assistant_id,forge_context=None):
         g["queueWaitMs"]=max(0,g["startedAtUnixMs"]-int(g.get("acceptedAtUnixMs") or g["startedAtUnixMs"]))
         g["status"].append({"phase":"GENERATING","reason":"Workstation admitted generation","atUnixMs":g["startedAtUnixMs"]})
     try:
-        if forge_context is None and model_id=="r39" and _generate is None and not (payload.get("githubDirectTestTxt") or payload.get("githubChatFileAction") or payload.get("githubCreateTxtProposal") or payload.get("githubStart") or payload.get("githubAction") or payload.get("verifiedPrivateAnswer") or payload.get("suppliedGitHubReportExplanation")):raise RuntimeError("R39 generator is not installed")
         if forge_context is None and model_id=="stock" and _stock_generate is None and not (payload.get("githubDirectTestTxt") or payload.get("githubChatFileAction") or payload.get("verifiedPrivateAnswer") or payload.get("githubStart") or payload.get("githubAction") or payload.get("suppliedGitHubReportExplanation")):raise RuntimeError("Original HF generator is not installed")
         text=""; completed=False
         cancelled=False
@@ -1197,7 +1196,6 @@ def _run(key,request_id,model_id,payload,assistant_id,forge_context=None):
                           else github_connection.agent_events(
                               {**payload["githubAction"], "requestId": request_id},
                               model_generator={
-                                  "r39": _generate,
                                   "stock": _stock_generate,
                                   "700m": _large_generate,
                                   "coder": _coder_generate,
@@ -1436,7 +1434,7 @@ def _run(key,request_id,model_id,payload,assistant_id,forge_context=None):
                     g.update(terminal=True,terminalType="CANCELLED",phase="CANCELLED")
                     g["status"].append({"phase":"CANCELLED","reason":"Stopped by user"});_commit_revision(s)
             return
-        if not text:raise RuntimeError("R39 emitted no DELTA")
+        if not text:raise RuntimeError("Selected model emitted no DELTA")
         github_telemetry=None
         online_outcome=None
         knowledge_snapshot=None
