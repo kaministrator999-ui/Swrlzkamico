@@ -7,7 +7,7 @@ const end=html.indexOf('window.SWYRL_ENGINE_BLANK_VR_HANDS=',start);
 assert(start>0 && end>start,'compiled grip-frame source present');
 const src=html.slice(start,end);
 assert(src.includes('r.ray.visible=!se308Active'),'ray visibility scoped to starter');
-assert(src.includes('record.input?.gripSpace'),'grip-space support');
+assert(src.includes('record?.input?.gripSpace'),'grip-space support');
 assert(src.includes('se279Animate(hand,record)'),'unchanged analog gesture drive');
 assert(html.includes('poseGroup.position.set(side===\'left\'?-.012:.012,-.022,.116)'),'hand fit offset');
 assert(html.includes('modelGroup.scale.setScalar(.112)'),'hand fit scale');
