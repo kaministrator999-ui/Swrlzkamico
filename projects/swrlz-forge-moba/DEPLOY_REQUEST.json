@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.331",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_331_SMOOTH_CLIFF_MATERIAL_UV",
-  "reason": "Owner-directed Smooth Cliff Hand PBR repair: preserve already-working UV2, expose equivalent uv1 channel for newer Three.js, select AO texture channel 1, remove warm albedo double-tint, and return AO strength to 1.0. Existing source-provided stone/moss/normal/roughness maps, four painted knuckles, single connected gauntlet mesh, and 17-bone animation unchanged. Sealed 344-patch source: 8,485,047 HTML bytes, SHA-256 3d41dd32c8d80e1380bc2cafe05859b1179abc219b049e0ed791b0defe7aae23. Scoped static/build checks; owner handset/Quest visual acceptance separate.",
-  "sourceCommit": "45039314ac6747396db05a16f8ad1f8b6f1c80e6",
-  "sourceIntegritySha256": "3d41dd32c8d80e1380bc2cafe05859b1179abc219b049e0ed791b0defe7aae23"
+  "releaseVersion": "v11.332",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_332_CLIFF_CRACK_ATLAS",
+  "reason": "Owner reports Smooth Cliff Hand remains flat/missing intended cracks after v11.331. Inspected actual original 1536x768 PBR atlas and found a separate bright-on-black fracture mask in lower-right tile never composited into clean sandstone albedo. v11.332 uses that original aligned mask to darken mineral fault outlines with narrow mobile-friendly shoulder after wrist-only moss and before painted knuckles. Preserves connected hand/gauntlet geometry, 17-bone animation, original normal/roughness/AO/UV map, all other starters and studios. Focused real-atlas pixel test and full engine build passed: 345 patches,71 assets,8,487,373 bytes,SHA-256 0d84c3c8d7243db25a8f7406146eac54b7c23da8ab4771686d2bd96d656fc308. Final physical device visual acceptance separately owner-tested.",
+  "sourceCommit": "5c867c5347af5310dca5c70befd546b70fd0912d",
+  "sourceIntegritySha256": "0d84c3c8d7243db25a8f7406146eac54b7c23da8ab4771686d2bd96d656fc308"
 }
