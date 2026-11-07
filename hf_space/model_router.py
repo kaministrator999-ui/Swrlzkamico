@@ -393,6 +393,19 @@ def _vision_evidence_digest(description: str) -> str:
             # first title line. The next line may contain the actual details.
             overview.append(line[:320])
     selected = []
+    # A multi-view reference sheet is a PAGE LAYOUT, not evidence that a
+    # character is split into pieces, transformed or acting in a story.
+    # Preserve the vision model's tentative page-level identification even
+    # when its final synthesis was rejected for lacking appearance detail.
+    if re.search(r"\b(?:character\s+turn(?:around)?s?|model\s+sheet|"
+                 r"character\s+reference\s+sheet|multiple\s+views\s+of\s+"
+                 r"(?:the\s+)?same\s+(?:character|subject))\b",
+                 str(description or ""), flags=re.I):
+        selected.append(
+            "Page layout (vision-model suggestion, UNVERIFIED): a character "
+            "turnaround/reference sheet; separate view crops may depict "
+            "different angles of the SAME design, not narrative fragments."
+        )
     if index:
         selected.append("Reported visual feature phrases (with source regions):")
         selected.extend(index)
@@ -431,7 +444,14 @@ def _ground_vision_handoff(payload: dict[str, Any]) -> dict[str, Any]:
         "specific observed features to answer the user's question, not merely "
         "repeat labels or generic captions. Connect reported details across "
         "different views when the evidence supports one subject; NEVER "
-        "invent omitted details. Distinguish visual reports from your "
+        "mistake labeled crop REGIONS for broken body parts, narrative "
+        "fragments, stages, transformations, separate identities or scenes. "
+        "For a reported turnaround/reference sheet, describe the SAME design "
+        "from different angles. A direct 'what is in this picture' question "
+        "asks for a concrete visual inventory, NOT a list of hypothetical "
+        "stories, personalities, symbolism or magical powers. Only explore "
+        "story or meaning when the user asks for interpretation. "
+        "Do not speculate beyond observations. Distinguish visual reports from your "
         "own deductions. Use the actual conversation history and project "
         "context already supplied to you to reason about implications WHEN "
         "RELEVANT to the user's question, not to pretend you saw new details. "
@@ -446,6 +466,100 @@ def _ground_vision_handoff(payload: dict[str, Any]) -> dict[str, Any]:
         + evidence + "\n[/LOCAL VISION OBSERVATIONS]"
     )
     return out
+
+
+def _guard_vision_answer(events, original_source: str):
+    """Only review plain image-inventory replies for unsupported story drift.
+
+    Ordinary image inference still runs through §C, using its current model,
+    history and project context. Buffer the answer for this narrow case, and
+    replace only a demonstrably off-task story about a reported multi-view
+    reference sheet. Do not alter creative/interpretive questions, failures,
+    stored user turns, or the original local vision record.
+    """
+    source = str(original_source or "")
+    if _VISION_START not in source or not source.endswith(_VISION_END):
+        yield from events
+        return
+    question, separator, description = source[:-len(_VISION_END)].rpartition(_VISION_START)
+    if not separator or not description.strip():
+        yield from events
+        return
+    question = re.sub(r"\s+", " ", question.strip()).casefold()
+    # Scope to the user's literal image-inventory questions, not interpretive,
+    # storytelling or worldbuilding requests.
+    straightforward = bool(re.search(
+        r"\b(?:what\s+(?:do\s+you\s+see|is|can\s+you\s+see|does\s+this\s+(?:image|picture)\s+show)"
+        r"|(?:can\s+you\s+)?(?:tell\s+me\s+)?what(?:'s|\s+is)\s+in"
+        r"|(?:please\s+)?(?:describe|identify)\s+(?:this|the)\s+(?:image|picture))\b", question))
+    asks_story = bool(re.search(
+        r"\b(?:story|symboli[sz]e|meaning|interpret|lore|dream|plot|transform|"
+        r"psycholog|fantasy\s+setting|what\s+if)\b", question))
+    possible_turnaround = bool(re.search(
+        r"\b(?:character\s+turn(?:around)?s?|model\s+sheet|"
+        r"character\s+reference\s+sheet)\b", description, re.I))
+    if not (straightforward and possible_turnaround and not asks_story):
+        yield from events
+        return
+    chunks = []
+    buffered_terminal = None
+    for event in events:
+        if not isinstance(event, dict):
+            continue
+        kind = str(event.get("type") or "")
+        if kind == "DELTA":
+            chunks.append(str(event.get("text") or ""))
+        elif kind in ("COMPLETED", "FAILED", "CANCELLED", "CANDIDATE_REJECTED"):
+            buffered_terminal = event
+        else:
+            yield event
+    answer = "".join(chunks)
+    # If generation failed, keep the model's partial text and failure event.
+    if buffered_terminal and buffered_terminal.get("type") != "COMPLETED":
+        if answer:
+            yield {"type": "DELTA", "text": answer}
+        yield buffered_terminal
+        return
+    unsupported = bool(re.search(
+        r"\b(?:fragmented\s+(?:appearance|character|representation|nature|"
+        r"consciousness)|multiple\s+identit(?:y|ies)|dreamlike\s+(?:state|"
+        r"scene|context)|magical\s+transformation|storytelling\s+scene|"
+        r"artistic\s+experimentation)\b", answer, re.I))
+    if unsupported:
+        digest = _vision_evidence_digest(description)
+        features = [
+            line for line in digest.splitlines()
+            if line.startswith(("Hair:", "Clothing:", "Symbols:",
+                                "Handheld items:", "Other color clues:"))
+        ]
+        region_lines = [line for line in digest.splitlines()
+                        if "(source-image crop):" in line]
+        if features:
+            body = "\n".join(features)
+        elif region_lines:
+            body = "\n".join(region_lines[:5])
+        else:
+            body = digest[:1200]
+        replacement = (
+            "The local vision model reports a character turnaround/reference "
+            "sheet: different views of what appears to be the same illustrated "
+            "subject, not a fragmented character or a sequence of events. "
+            "These details are unverified model observations, not pixels §C "
+            "independently inspected.\n\n"
+            + body + "\n\nSome crop descriptions may be incomplete or disagree; "
+            "the evidence does not support a story, transformation or "
+            "psychological interpretation."
+        )
+        yield {"type": "STATUS", "phase": "VISION_ANSWER_GROUNDING_GUARD",
+               "reason": "Rejected unsupported narrative interpretation of a multi-view reference; preserved actual region observations.",
+               "categories": ["VISION", "EVIDENCE", "GROUNDING_GUARD"]}
+        yield {"type": "DELTA", "text": replacement}
+    elif answer:
+        yield {"type": "DELTA", "text": answer}
+    if buffered_terminal is not None:
+        yield buffered_terminal
+    else:
+        yield {"type": "COMPLETED", "phase": "COMPLETE"}
 
 
 def routes(stock_checkpoint: str | None = None) -> list[ModelRoute]:
@@ -674,6 +788,9 @@ def dispatch(model_id: str, payload: dict[str,Any], r39_generate: Callable[[dict
             yield {"type":"DELTA","text":lyrics_text}
             yield {"type":"COMPLETED","phase":"COMPLETE"}
             return
+    # Retain the original owner-scoped image/question for the narrow
+    # post-inference factual guard; the model gets only the compact digest.
+    original_vision_source = str(payload.get("prompt") or "")
     direct_vision = _direct_vision_description(payload)
     if direct_vision is not None:
         yield {"type":"STATUS","phase":"VISION_DESCRIPTION_DIRECT",
@@ -720,6 +837,8 @@ def dispatch(model_id: str, payload: dict[str,Any], r39_generate: Callable[[dict
             yield from guard_widget_companion(events,widget_plan["widget"])
         elif online_result and str(online_result.get("status") or "").upper()=="OK" and not intent.get("codingTask"):
             yield from _guard_successful_online_answer(events,online_result)
+        elif _VISION_START in original_vision_source:
+            yield from _guard_vision_answer(events, original_vision_source)
         else:
             yield from events
         return
