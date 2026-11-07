@@ -14,14 +14,15 @@ def once(html, old, new, label):
     return html.replace(old, new, 1)
 
 def apply(html):
-    # The native topology exporter only emitted UV0. Three's AO sampler uses
-    # UV1/uv2. Limit the extra attribute to this atlas-backed starter so the
-    # other, potentially large, native editable meshes remain untouched.
-    uv = "  out.setAttribute('uv',new THREE.Float32BufferAttribute(t.uvs,2));"
-    html = once(html, uv, uv + """
-  if(part.cliffPBR?.atlas==='cliff_pbr_atlas_384')
-    out.setAttribute('uv2',new THREE.Float32BufferAttribute(t.uvs,2));""",
-        "provide a second UV channel for the cliff AO texture")
+    # A later rigged-mesh pass ALREADY adds uv2 for cliff materials. Do not
+    # duplicate its working channel. Recent Three.js versions call the same
+    # second set "uv1"; alias the existing attribute just for this starter.
+    old = (" if(part.cliffPBR&&g.getAttribute('uv')&&!g.getAttribute('uv2'))\\n"
+           "  g.setAttribute('uv2',g.getAttribute('uv').clone());")
+    new = old + ("\\n if(part.cliffPBR?.atlas==='cliff_pbr_atlas_384'&&"
+                 "g.getAttribute('uv2')&&!g.getAttribute('uv1'))\\n"
+                 "  g.setAttribute('uv1',g.getAttribute('uv2'));")
+    html = once(html, old, new, "preserve existing AO uv2 and alias modern uv1")
 
     # Newer Three versions select the uv2 attribute using Texture.channel.
     # Older versions ignore this property and use the uv2 attribute directly.
