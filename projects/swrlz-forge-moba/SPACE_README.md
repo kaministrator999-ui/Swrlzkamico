@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.320
+title: §wyrl§ Engine v11.321
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,11 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+## §E v11.321 · Sheep Tag house sightlines and crowded Quest diagnostics (2026-11-07)
+
+The owner's Quest testing found the v11.306 last-sheep chase much smoother, but severe slowdown remains while turning the headset with living teammate sheep and many houses under construction. Gameplay source confirmed enemy sight used distance-only checks, not building obstruction. In fog-enabled matches, visible wolf/sheep pairs now test house line-of-sight, while true last-observed enemy memory, scent clues, allied shared sight and fog-off behavior remain intact. Sight results are reused within the same simulation update. Crowded Quest gameplay (2+ living sheep, 8+ houses) keeps the existing escape-search scoring but spreads its candidate checks across more frames. Nerd Stats adds pages **9/10 and 10/10** to compare head-turn versus still frame gaps and draw-call counts while busy, and show sight checks and AI budget. The v11.306 wolf-radius A* counter now uses the actual configured radius. Other studios, controllers, assets and saved projects are unchanged. **342 patches, 71 assets, 8,451,859 bytes**, SHA-256 `47e8cc9f9f54fb1592715961ecd4faab13fc94f56e0f8208c250efc3306b2079`. [Release checkpoint](docs/SHEEP_SIGHT_XR_CROWD_V11_321.md). Quest performance improvement and visibility fairness require owner-device confirmation.
+
+
 
 ## §E v11.320 · Organized studios and automatic project navigation (deployed)
 

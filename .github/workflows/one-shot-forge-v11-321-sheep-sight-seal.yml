@@ -27,7 +27,7 @@ jobs:
           m=json.loads((root/'source-manifest.json').read_text('utf8'))
           assert m['name']=='§wyrl§ Engine v11.321'
           assert len(m['patches'])==342 and m['patches'][-1]=='patches/v11_321_sheep_sight_xr_crowd.py'
-          assert m['finalBytes']==0 and m['finalSha256']==''
+          assert m['finalBytes']==8451859 and m['finalSha256']=='47e8cc9f9f54fb1592715961ecd4faab13fc94f56e0f8208c250efc3306b2079'
           out=Path('/tmp/se321')
           subprocess.run([sys.executable,str(root/'build_space.py'),'--output',str(out)],check=True)
           raw=(out/'index.html').read_bytes()

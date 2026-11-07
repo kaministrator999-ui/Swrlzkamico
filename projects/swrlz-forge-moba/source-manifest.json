@@ -358,6 +358,6 @@
     "patches/v11_320_studio_navigation_layout.py",
     "patches/v11_321_sheep_sight_xr_crowd.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 8451859,
+  "finalSha256": "47e8cc9f9f54fb1592715961ecd4faab13fc94f56e0f8208c250efc3306b2079"
 }
