@@ -7,7 +7,7 @@ from unittest.mock import patch
 
 from fastapi.testclient import TestClient
 
-from runtime_capacity import MAX_FILE_BYTES, parse_runtime_capacity, runtime_capacity_snapshot
+from runtime_capacity import MAX_FILE_BYTES, parse_runtime_capacity, runtime_capacity_snapshot, ResponseResourceMeter
 import station
 
 
@@ -75,6 +75,64 @@ class RuntimeCapacityParser(unittest.TestCase):
         self.assertIsNone(result["memory"]["peakBytes"])
         self.assertEqual(result["cpu"]["state"], "unavailable")
         self.assertEqual(runtime_capacity_snapshot(root)["source"], "unavailable")
+
+
+class PerResponseResourceUsage(unittest.TestCase):
+    def test_cpu_and_memory_window_are_measured_shared_not_model_exclusive(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root=Path(folder)
+            (root/"cpu.max").write_text("250000 100000\n")
+            (root/"memory.max").write_text("16000000000\n")
+            (root/"memory.current").write_text("1000\n")
+            (root/"memory.peak").write_text("9000\n")  # historical, not request peak
+            (root/"cpu.stat").write_text("usage_usec 100000\n")
+            meter=ResponseResourceMeter(root,sample_interval_seconds=None)
+            (root/"memory.current").write_text("1800\n")
+            meter.sample()
+            (root/"memory.current").write_text("1200\n")
+            (root/"cpu.stat").write_text("usage_usec 350000\n")
+            result=meter.finish()
+        self.assertEqual(result["schema"], "swrlz-response-resource-usage-v1")
+        self.assertEqual(result["scope"], "shared-cgroup-v2")
+        self.assertIs(result["isolatedModelAttribution"], False)
+        self.assertEqual(result["capacity"]["cpuLimitCores"], 2.5)
+        self.assertEqual(result["capacity"]["memoryLimitBytes"], 16000000000)
+        self.assertEqual(result["observed"]["memoryStartBytes"],1000)
+        self.assertEqual(result["observed"]["memoryEndBytes"],1200)
+        self.assertEqual(result["observed"]["memoryPeakSampledBytes"],1800)
+        self.assertEqual(result["observed"]["memorySampleCount"],3)
+        self.assertEqual(result["observed"]["cgroupCpuUsageUsecDelta"],250000)
+        self.assertGreaterEqual(result["wallTimeMs"],0)
+        self.assertNotEqual(result["observed"]["memoryPeakSampledBytes"],9000)
+        self.assertEqual(meter.finish(),result,"finish must not double count")
+
+    def test_missing_cgroup_counters_remain_unknown(self):
+        with tempfile.TemporaryDirectory() as folder:
+            meter=ResponseResourceMeter(Path(folder),sample_interval_seconds=None)
+            result=meter.finish()
+        self.assertIsNone(result["capacity"]["cpuLimitCores"])
+        self.assertEqual(result["capacity"]["cpuLimitState"],"unavailable")
+        self.assertEqual(result["capacity"]["memoryLimitState"],"unavailable")
+        self.assertIsNone(result["observed"]["cgroupCpuUsageUsecDelta"])
+        self.assertIsNone(result["observed"]["averageCgroupCpuCores"])
+        self.assertIsNone(result["observed"]["memoryPeakSampledBytes"])
+        self.assertEqual(result["observed"]["memorySampleCount"],0)
+
+    def test_unlimited_cap_is_not_reported_as_allocated_cores(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root=Path(folder)
+            (root/"cpu.max").write_text("max 100000\n")
+            (root/"memory.max").write_text("max\n")
+            (root/"memory.current").write_text("150\n")
+            (root/"cpu.stat").write_text("usage_usec 400\n")
+            meter=ResponseResourceMeter(root,sample_interval_seconds=None)
+            (root/"cpu.stat").write_text("usage_usec 600\n")
+            result=meter.finish()
+        self.assertIsNone(result["capacity"]["cpuLimitCores"])
+        self.assertEqual(result["capacity"]["cpuLimitState"],"unlimited")
+        self.assertIsNone(result["capacity"]["memoryLimitBytes"])
+        self.assertEqual(result["capacity"]["memoryLimitState"],"unlimited")
+        self.assertEqual(result["observed"]["cgroupCpuUsageUsecDelta"],200)
 
 
 class RuntimeCapacityHTTP(unittest.TestCase):
