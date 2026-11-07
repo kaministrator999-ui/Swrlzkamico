@@ -95,3 +95,7 @@ assets. This establishes the original hosted artifact. The later final 59-part m
 
 This receipt update is documentation-only. It does not change runtime code,
 source integrity, the release version or the deployment request.
+
+## Final document-sync release
+
+Deployment [run 42333988830](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/42333988830) succeeded. Hugging Face revision `97345e21b5c240d61e44fda90d806afacc42978a` is RUNNING; both official index and Modeler HTML independently match the verified 8,377,905-byte SHA-256 `c2f005b86f9c6e925272c052d429d8b01139d30cb121af7553d38a61788eac5b` seal (335 patches, 71 assets). Owner-device visual acceptance remains separate. The completed 59-part mage uses the corrected outward surfaces; its unchanged native JSON and 59-mesh GLB both passed actual fresh-browser native exports.
