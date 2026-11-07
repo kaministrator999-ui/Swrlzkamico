@@ -35,6 +35,16 @@ jobs:
           except Exception as e:
               print('LOG_FETCH_ERROR_TYPE:',type(e).__name__,flush=True)
           print('RUN_LOG_LINE_COUNT:',len(lines),flush=True)
+          # The chat itself has no model-status UI. Server logs are the proof.
+          for line in lines:
+              if '"modelId": "vision"' not in line and '"modelId":"vision"' not in line:
+                  continue
+              if '"HF_WARMUP_READY"' in line:
+                  print('VISION_STARTUP_PREWARM: READY',flush=True)
+              elif '"HF_WARMUP_FAILED"' in line:
+                  print('VISION_STARTUP_PREWARM: FAILED',flush=True)
+          if any('LOCAL_VISION_MODEL_READY' in line for line in lines):
+              print('VISION_MODEL_RESIDENT: READY_EVENT_SEEN',flush=True)
           allowed=re.compile(r'Traceback|^\s*(?:File |\^|(?:[A-Za-z_]+Error|Exception|Killed|Segmentation fault|fatal error|ERROR|Error|RuntimeError|MemoryError|OSError):)|QWEN3_VL_|LOCAL_VISION_FAILED|R39_NATIVE_BUILD_FAILED|exit code|signal: killed|memory limit|oom-kill|out.of.memory|CMake Error|Compilation failed',re.I)
           seen=[]
           for line in lines[-260:]:
