@@ -34,7 +34,7 @@ MAX_IMAGE_PIXELS = 16_000_000
 # Explicit experimental selection. Default remains the working SmolVLM path.
 # Qwen requires a Qwen3-VL-capable llama-cpp-python build, which is NOT supplied
 # by the production 0.3.35 pin. Do not select it on the live Space until verified.
-VISION_MODEL_VARIANT = os.getenv("SWRLZ_VISION_MODEL", "smolvlm-500m").strip().lower()
+VISION_MODEL_VARIANT = os.getenv("SWRLZ_VISION_MODEL", "qwen3-vl-4b").strip().lower()
 if VISION_MODEL_VARIANT not in ("smolvlm-500m", "qwen3-vl-4b"):
     raise RuntimeError("SWRLZ_VISION_MODEL must be smolvlm-500m or qwen3-vl-4b")
 # Qwen sees a larger single view; all views still derive from original pixels.
@@ -290,42 +290,30 @@ def _load_local_model():
 
     from llama_cpp import Llama
 
-    # Check support BEFORE downloading 3 GB of weights. The pinned production
-    # llama-cpp-python 0.3.35 does not provide this specialized Qwen3 handler.
-    if VISION_MODEL_VARIANT == "qwen3-vl-4b":
-        try:
-            from llama_cpp.llama_multimodal import Qwen3VLChatHandler
-        except ImportError as exc:
-            raise RuntimeError(
-                "QWEN3_VL_BACKEND_UNAVAILABLE: requires a verified Qwen3-VL-capable "
-                "llama-cpp-python runtime; current production wheel is unsupported"
-            ) from exc
-    else:
-        from llama_cpp.llama_chat_format import MTMDChatHandler
-
     model_path = _cached_asset(MODEL_FILE)
     projector_path = _cached_asset(PROJECTOR_FILE)
     if VISION_MODEL_VARIANT == "qwen3-vl-4b":
-        handler = Qwen3VLChatHandler(
-            mmproj_path=projector_path, force_reasoning=False,
-            image_min_tokens=1024, use_gpu=False, verbose=False,
-        )
+        # Qwen is isolated in a pinned official llama.cpp process, leaving
+        # the existing 0.3.35 llama-cpp-python wheel and text routes untouched.
+        from qwen3vl_local_server import load
+        instance = load(model_path, projector_path)
     else:
+        from llama_cpp import Llama
+        from llama_cpp.llama_chat_format import MTMDChatHandler
         handler = MTMDChatHandler(
             clip_model_path=projector_path, use_gpu=False, verbose=False,
         )
-    instance = Llama(
-        model_path=model_path,
-        chat_handler=handler,
-        n_gpu_layers=0,
-        n_ctx=10240 if VISION_MODEL_VARIANT == "qwen3-vl-4b" else 2048,
-        # Larger prefill batches reduce overhead on image embedding tokens.
-        n_batch=512,
-        n_ubatch=256,
-        n_threads=2,
-        n_threads_batch=2,
-        verbose=False,
-    )
+        instance = Llama(
+            model_path=model_path,
+            chat_handler=handler,
+            n_gpu_layers=0,
+            n_ctx=2048,
+            n_batch=512,
+            n_ubatch=256,
+            n_threads=2,
+            n_threads_batch=2,
+            verbose=False,
+        )
     _model = instance
     print(json.dumps({"event": "LOCAL_VISION_MODEL_READY", "model": VISION_MODEL_VARIANT,
                       "modelRevision": MODEL_REVISION}), flush=True)
