@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.306",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_306_SHEEP_PURSUIT_PERFORMANCE",
-  "reason": "Owner-directed Sheep Tag performance pass: preserve v11.256 frame-budgeted sheep AI while sharing a short-lived cached A* wolf approach across live targeting and AI decision paths. Reuse positive and blocked approach results for 0.40–0.56 seconds until significant sheep motion or navigation revisions. Add Nerd Stats pages 7/8 and 8/8 for A* CPU by radius, cache hits/plans and simulation-vs-wall-clock ratio. Preserve multiplayer authority, building/capture/collision rules, controls and 50ms simulation cap; owner tests Quest after deployment. Focused one-shot source integrity and inline JS syntax verified, targeted Node cache regression passed. v11.306 sealed 337-patch/71-asset HTML: 8,397,357 bytes, SHA-256 a47415627055cda09f2152e9c6adc311347ed709971e6c0bea1be6bc7195910c.",
-  "sourceCommit": "19f1776a4f8550bfa2bf782c35fe3be2b83caef1",
-  "sourceIntegritySha256": "a47415627055cda09f2152e9c6adc311347ed709971e6c0bea1be6bc7195910c"
+  "releaseVersion": "v11.307",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_307_ARCANE_VR_GLOVE_ORIENTATION",
+  "reason": "Owner-reported Arcane Spell Casting / Blank VR Arcane Hands gloves upside down on Quest 2. Append-only v11.307 source fix rotates the controller-mounted glove to fingers forward, armored backhand up and palm down; selects the opposite mirrored authored mesh on each side to preserve inward thumb anatomy. Retains existing editable source gloves, native skeleton/gestures, tracked WebXR controllers, raycast, Mage Spell Lab spell casts and unrelated Sheep Tag behavior. Focused source build/inline JavaScript syntax succeeded; 338 patches, 71 assets, 8,397,373 bytes, SHA-256 6c3591a2e2261366de0f96f09517e5f933a770440a8d1b8a782bc8cd1b8f278a. Owner Quest 2 fit acceptance pending.",
+  "sourceCommit": "bf05bbc4d4e3ef88604e383d20ba7f4a9f684a1e",
+  "sourceIntegritySha256": "6c3591a2e2261366de0f96f09517e5f933a770440a8d1b8a782bc8cd1b8f278a"
 }
