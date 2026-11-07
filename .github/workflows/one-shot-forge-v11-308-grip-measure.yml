@@ -1,0 +1,55 @@
+name: One-shot §E v11.308 Arcane grip/ray build measurement
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/one-shot-forge-v11-308-grip-measure.yml'
+permissions:
+  contents: read
+jobs:
+  focused-build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Measure exact unsealed assembly and run Arcane glove smoke
+        run: |
+          python - <<'PY'
+          import json,hashlib,subprocess,sys
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          mpath=root/'source-manifest.json'
+          m=json.loads(mpath.read_text('utf8'))
+          assert m['name']=='§wyrl§ Engine v11.308'
+          assert len(m['patches'])==339
+          assert m['patches'][-1]=='patches/v11_308_arcane_grip_fit_hide_rays.py'
+          # Unseal only the ephemeral CI checkout for measurement.
+          m['finalBytes']=None;m['finalSha256']=None
+          mpath.write_text(json.dumps(m,ensure_ascii=False,indent=2)+'\n','utf8')
+          subprocess.run([sys.executable,'-m','py_compile',
+            str(root/'patches/v11_308_arcane_grip_fit_hide_rays.py')],check=True)
+          out=Path('/tmp/swrlz-v11-308')
+          subprocess.run([sys.executable,str(root/'build_space.py'),'--output',str(out)],check=True)
+          raw=(out/'index.html').read_bytes()
+          assert raw==(out/'modeler.html').read_bytes()
+          html=raw.decode('utf8')
+          for key in (
+            'SE308_GRIP_ANCHOR','SE308_HIDE_XR_RAYS','SE308_GLOVE_FIT',
+            'SWYRL_ENGINE_DEPLOY_MARKER: V11_308_ARCANE_HAND_GRIP_FIT',
+            "window.SWRLZ_FORGE_BUILD={version:'v11.308'",
+            'SE307_DORSAL_UP_CONTROLLER_GLOVES'):
+            assert key in html,key
+          assert html.count('renderer.setAnimationLoop(tick);')==1
+          assert html.count('function se279BuildGlove(side){')==1
+          subprocess.run([sys.executable,str(root/'scripts/check_inline_js_syntax_v11_266.py'),
+            str(out/'index.html')],check=True)
+          subprocess.run(['node',str(root/'tests/arcane_grip_ray_v11_308.cjs'),
+            str(out/'index.html')],check=True)
+          print('SE308_EXACT_MEASUREMENT='+json.dumps({
+            'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest(),
+            'patches':len(m['patches'])},sort_keys=True),flush=True)
+          PY
