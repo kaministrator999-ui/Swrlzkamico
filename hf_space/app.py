@@ -264,15 +264,12 @@ app=gr.mount_gradio_app(app,legacy["demo"],path="/legacy",ssr_mode=False)
 
 def _warm_backends():
     """Prewarm primary text and CPU vision before optional model routes."""
-    from chat_vision import prewarm_local_model, VISION_MODEL_VARIANT
+    from chat_vision import prewarm_local_model
+    # The existing daemon worker starts with the Space, independently of
+    # accepting chat connections. Qwen stays loaded in its loopback server
+    # across subsequent image requests for this process lifetime.
     for name,loader in (("700m",large_load),("vision",prewarm_local_model),
                         ("coder",coder_load),("stock",original_load),("r39",engine)):
-        # Qwen's pinned llama-server build and 4B model allocation are costly:
-        # load only for an explicit image request, not on every Chat startup.
-        if name=="vision" and VISION_MODEL_VARIANT=="qwen3-vl-4b":
-            print(json.dumps({"event":"HF_WARMUP_DEFERRED","modelId":"vision",
-                              "reason":"QWEN3_VL_LOAD_ON_FIRST_IMAGE"}),flush=True)
-            continue
         start=time.perf_counter()
         try:
             loader()
