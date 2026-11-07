@@ -28,6 +28,19 @@ def test_smolvlm_fallback_preserved():
     assert vision.MAX_VISION_OUTPUT_TOKENS == 88
 
 
+def test_legacy_space_qwen_setting_migrates_to_approved_trial():
+    # The live Space's previously configured value must never crash import.
+    vision = _vision("Qwen/Qwen2.5-VL-3B-Instruct")
+    assert vision.VISION_MODEL_VARIANT == "qwen3-vl-4b"
+    assert vision.MODEL_REPO == "Qwen/Qwen3-VL-4B-Instruct-GGUF"
+    assert vision.WATCH_LEASE_SECONDS == 20 * 60
+
+
+def test_unknown_model_variant_keeps_chat_bootable():
+    vision = _vision("unrecognized-legacy-setting")
+    assert vision.VISION_MODEL_VARIANT == "smolvlm-500m"
+
+
 def test_qwen_trial_config_pinned():
     vision = _vision("qwen3-vl-4b")
     assert vision.MODEL_REPO == "Qwen/Qwen3-VL-4B-Instruct-GGUF"
