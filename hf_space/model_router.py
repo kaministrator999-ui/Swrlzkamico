@@ -349,7 +349,7 @@ def _direct_vision_description(payload: dict[str, Any]) -> str | None:
     }
     if question not in direct_questions:
         return None
-    return "Local image analyzer's description (not directly inspected by §C):\n\n" + description
+    # Direct visual-identification replies show ONE primary description. Raw\n    # crop evidence remains in the saved image handoff and its disclosure.\n    primary = description.split("\n\n[Raw source-crop observations; accuracy unverified]\n", 1)[0].strip()\n    return "Local image analyzer's description (not directly inspected by §C):\n\n" + primary
 
 
 def _ground_vision_handoff(payload: dict[str, Any]) -> dict[str, Any]:
