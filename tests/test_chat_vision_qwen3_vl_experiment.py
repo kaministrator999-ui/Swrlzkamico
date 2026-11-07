@@ -20,25 +20,23 @@ def _vision(variant):
     return module
 
 
-def test_smolvlm_fallback_preserved():
-    vision = _vision("smolvlm-500m")
-    assert vision.VISION_MODEL_VARIANT == "smolvlm-500m"
-    assert vision.MODEL_REPO == "ggml-org/SmolVLM-500M-Instruct-GGUF"
-    assert vision.MODEL_INPUT_SIDE == 384
-    assert vision.MAX_VISION_OUTPUT_TOKENS == 88
-
-
-def test_legacy_space_qwen_setting_migrates_to_approved_trial():
-    # The live Space's previously configured value must never crash import.
-    vision = _vision("Qwen/Qwen2.5-VL-3B-Instruct")
-    assert vision.VISION_MODEL_VARIANT == "qwen3-vl-4b"
-    assert vision.MODEL_REPO == "Qwen/Qwen3-VL-4B-Instruct-GGUF"
-    assert vision.WATCH_LEASE_SECONDS == 20 * 60
-
-
-def test_unknown_model_variant_keeps_chat_bootable():
-    vision = _vision("unrecognized-legacy-setting")
-    assert vision.VISION_MODEL_VARIANT == "smolvlm-500m"
+def test_qwen_is_the_only_vision_engine_and_ignores_stale_settings():
+    # Historical environment settings cannot select a retired model.
+    for old_value in ("smolvlm-500m", "Qwen/Qwen2.5-VL-3B-Instruct",
+                      "unrecognized-legacy-setting", "qwen3-vl-4b"):
+        vision = _vision(old_value)
+        assert vision.VISION_MODEL_VARIANT == "qwen3-vl-4b"
+        assert vision.MODEL_REPO == "Qwen/Qwen3-VL-4B-Instruct-GGUF"
+        assert vision.MODEL_INPUT_SIDE == 768
+        assert vision.MAX_VISION_OUTPUT_TOKENS == 224
+        assert vision.WATCH_LEASE_SECONDS == 20 * 60
+    source = SOURCE.read_text(encoding="utf-8")
+    assert "MTMDChatHandler" not in source
+    assert "ggml-org/SmolVLM" not in source
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    preload = readme.split("---", 2)[1]
+    assert "Qwen3VL-4B-Instruct-Q4_K_M.gguf" in preload
+    assert "SmolVLM" not in preload
 
 
 def test_qwen_trial_config_pinned():
