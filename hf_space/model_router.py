@@ -489,7 +489,7 @@ def _natural_vision_fallback(description: str) -> str:
         phrases = []
         for entry in remainder.split(";"):
             # A region label is provenance metadata, not part of the trait.
-            phrase = re.sub(r"\\s*\\[[^\\]\\n]{1,75}\\]$", "", entry).strip()
+            phrase = re.sub(r"\s*\[[^\]\n]{1,75}\]$", "", entry).strip()
             if phrase and phrase.casefold() not in {p.casefold() for p in phrases}:
                 phrases.append(phrase)
         if phrases:
