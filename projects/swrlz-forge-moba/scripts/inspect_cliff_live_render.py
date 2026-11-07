@@ -56,11 +56,12 @@ async def main():
             return {width:c.width,height:c.height,mean:s/(d.length/4),min,max,
               darkPixels:cracks,levels:distinct.size,center:[...d.slice((192*384+192)*4,(192*384+192)*4+4)]}
           }
+          const project=window.SWYRL_ENGINE_AGENT?.inspectScene?.()?.project;
           return {
             engine:window.SWRLZ_FORGE_BUILD?.version,
-            scene:{name:currentProject?.name,partCount:currentProject?.modelAtelier?.parts?.length,
-               cliffPBR:currentProject?.modelAtelier?.parts?.[0]?.cliffPBR,
-               uvCount:currentProject?.modelAtelier?.parts?.[0]?.topologyMesh?.uvs?.length},
+            scene:{name:project?.name,partCount:project?.modelAtelier?.parts?.length,
+               cliffPBR:project?.modelAtelier?.parts?.[0]?.cliffPBR,
+               uvCount:project?.modelAtelier?.parts?.[0]?.topologyMesh?.uvs?.length},
             state,native,viewport:window.SWYRL_ENGINE_MODEL_ATELIER?.status(),
             color:sample(mat.map),normal:sample(mat.normalMap),ao:sample(mat.aoMap),
             roughness:sample(mat.roughnessMap),
