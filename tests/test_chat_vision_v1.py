@@ -4,6 +4,7 @@ from __future__ import annotations
 import base64
 import importlib.util
 import json
+import os
 import threading
 import time
 from pathlib import Path
@@ -13,7 +14,7 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 
-SOURCE = Path(__file__).resolve().parents[1] / "hf_space" / "chat_vision.py"
+# The legacy baseline suite always exercises the existing SmolVLM mode.\n# Qwen is checked independently in the dedicated experiment suite.\nos.environ["SWRLZ_VISION_MODEL"] = "smolvlm-500m"\nSOURCE = Path(__file__).resolve().parents[1] / "hf_space" / "chat_vision.py"
 spec = importlib.util.spec_from_file_location("swrlz_chat_vision_test", SOURCE)
 assert spec and spec.loader
 vision = importlib.util.module_from_spec(spec)
