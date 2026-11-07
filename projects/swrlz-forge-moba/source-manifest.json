@@ -352,6 +352,6 @@
     "patches/v11_304_modeler_document_sync.py",
     "patches/v11_305_vanguard_complete_mesh_uv.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 8393289,
+  "finalSha256": "e38583c923ca16fa0b47dc079339716d988afddc365292c9d2eb4237eb788404"
 }
