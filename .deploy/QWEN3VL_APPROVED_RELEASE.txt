@@ -1,0 +1,5 @@
+APPROVED_BY_USER=YES
+TARGET_SPACE=kamiloki/Swyrlz
+DEPLOYMENT_WORKFLOW=manual-hf-space.yml
+REQUEST=qwen3-vl-4b image analysis in existing swyrlz chat
+SAFETY=snapshot existing space and rollback checkpoint before upload; preserve SmolVLM fallback
