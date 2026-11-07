@@ -92,8 +92,13 @@ assert(ps[4].name.includes('canopy'));
 assert(ps[5].name.includes('gathered'));
 assert(ps[6].name.includes('overlapping'));
 for(const i of [7,8,9]){
- assert(ps[i].topologyMesh.indices.length===2*baseGeometry.indices.length,
-  'preserve armor front contour and add thickness');
+ const mesh=ps[i].topologyMesh;
+ assert(mesh.indices.length>2*baseGeometry.indices.length,
+  'preserve front armor contour, add back and CLOSED trim rims');
+ assert.deepEqual(mesh.positions.slice(0,baseGeometry.positions.length),
+  baseGeometry.positions,'original approved armor surface must remain unchanged');
+ assert.deepEqual(mesh.uvs.slice(0,baseGeometry.uvs.length),
+  baseGeometry.uvs,'original authored armor UVs are intact');
 }
 function extentFor(i){
  const pos=ps[i].topologyMesh.positions;
