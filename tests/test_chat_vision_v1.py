@@ -14,9 +14,8 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 
-# The legacy baseline suite always exercises the existing SmolVLM mode.
-# Qwen is checked independently in the dedicated experiment suite.
-os.environ["SWRLZ_VISION_MODEL"] = "smolvlm-500m"
+# Exercise transport, region inference, and explicit level comparisons using
+# the single active Qwen3-VL vision route, with mocked model responses.
 SOURCE = Path(__file__).resolve().parents[1] / "hf_space" / "chat_vision.py"
 spec = importlib.util.spec_from_file_location("swrlz_chat_vision_test", SOURCE)
 assert spec and spec.loader
@@ -51,18 +50,18 @@ assert "SWRLZ_VISION_API_KEY" not in source
 
 assert "router.huggingface.co" not in source
 assert "urllib.request" not in source
-assert vision.MODEL_REPO == "ggml-org/SmolVLM-500M-Instruct-GGUF"
+assert vision.MODEL_REPO == "Qwen/Qwen3-VL-4B-Instruct-GGUF"
 assert len(vision.MODEL_REVISION) == 40
-assert vision.MODEL_FILE == "SmolVLM-500M-Instruct-Q8_0.gguf"
-assert vision.PROJECTOR_FILE == "mmproj-SmolVLM-500M-Instruct-Q8_0.gguf"
+assert vision.MODEL_FILE == "Qwen3VL-4B-Instruct-Q4_K_M.gguf"
+assert vision.PROJECTOR_FILE == "mmproj-Qwen3VL-4B-Instruct-Q8_0.gguf"
 
 # Space metadata must fetch exactly the pinned local CPU vision assets at build
 # time, not on the first user image upload. Keep the runtime revision identical.
 space_readme = (SOURCE.parent / "README.md").read_text(encoding="utf-8")
 preload = (
-    'ggml-org/SmolVLM-500M-Instruct-GGUF '
-    'SmolVLM-500M-Instruct-Q8_0.gguf,'
-    'mmproj-SmolVLM-500M-Instruct-Q8_0.gguf '
+    'Qwen/Qwen3-VL-4B-Instruct-GGUF '
+    'Qwen3VL-4B-Instruct-Q4_K_M.gguf,'
+    'mmproj-Qwen3VL-4B-Instruct-Q8_0.gguf '
     + vision.MODEL_REVISION
 )
 assert 'preload_from_hub:' in space_readme
@@ -70,7 +69,7 @@ assert preload in space_readme
 assert space_readme.count('preload_from_hub:') == 1
 
 # Real image preprocessing must bound the pixels supplied to the CPU projector.
-assert vision.MODEL_INPUT_SIDE == 384
+assert vision.MODEL_INPUT_SIDE == 768
 assert vision.MAX_IMAGE_BYTES == 8 * 1024 * 1024
 assert vision.MAX_BODY_BYTES > 4 * vision.MAX_IMAGE_BYTES // 3
 source_image = Image.new("RGB", (1024, 768), "purple")
@@ -85,7 +84,7 @@ assert vision._source_image_metadata(encoded_image) == {
 }
 prepared = vision._prepare_image(encoded_image)
 with Image.open(io.BytesIO(base64.b64decode(prepared.partition(",")[2]))) as downsized:
-    assert downsized.size == (384, 288), downsized.size
+    assert downsized.size == (768, 576), downsized.size
 
 # The server must accept real source pixels larger than its old 2 MB cap,
 # without rewriting JPEG/PNG/WebP payloads at ingress.
@@ -157,7 +156,7 @@ assert any(phase == "ANALYZING" and fields.get("inferenceStage") == "DECODING" a
            fields.get("firstChunkSeconds") >= 0 for phase, fields in recorded_phases)
 assert len(fake_model.calls) == 1
 assert fake_model.calls[0]["messages"][0]["content"][1]["image_url"]["url"] == valid
-assert fake_model.calls[0]["max_tokens"] == vision.MAX_VISION_OUTPUT_TOKENS == 88
+assert fake_model.calls[0]["max_tokens"] == vision.MAX_VISION_OUTPUT_TOKENS == 224
 assert fake_model.calls[0]["stream"] is True
 visual_prompt = fake_model.calls[0]["messages"][0]["content"][0]["text"]
 assert "multi-view character sheet" in visual_prompt
@@ -208,7 +207,7 @@ for call in detail_model.calls:
     url = call["messages"][0]["content"][1]["image_url"]["url"]
     with Image.open(io.BytesIO(base64.b64decode(url.partition(",")[2]))) as im:
         detail_dimensions.append(im.size)
-assert detail_dimensions == [(384, 288), (640, 480)], detail_dimensions
+assert detail_dimensions == [(768, 576), (768, 576)], detail_dimensions
 assert any(phase=="ANALYZING" and fields.get("inferenceStage")=="DETAIL_RETRY" and
            fields.get("detailRetryReason")=="GENERIC_CHARACTER_SHEET" and
            fields.get("activeLevel")==2 for phase,fields in detail_phases)
@@ -280,7 +279,7 @@ for call in study_model.calls:
     url=call["messages"][0]["content"][1]["image_url"]["url"]
     with Image.open(io.BytesIO(base64.b64decode(url.partition(",")[2]))) as im:
         study_pixels.append(im.size)
-assert study_pixels==[(384,288),(640,480),(768,576)],study_pixels
+assert study_pixels==[(768,576),(768,576),(768,576)],study_pixels
 last_records=[fields["levelRecords"] for phase,fields in study_phases if fields.get("levelRecords")]
 assert len(last_records[-1])==3
 assert last_records[-1][0]["description"]=="A purple mage in gold boots holding a crystal staff."
@@ -663,7 +662,7 @@ assert "Whole scene:" in final_prompt[0]["text"]
 assert "Center-right detail" in final_prompt[0]["text"]
 assert any(f.get("inferenceStage") == "FUSION_PREFILL" for _, f in joint_phases)
 assert any(f.get("integratedSelected") is True for _, f in joint_phases)
-assert joint_model.calls[-1]["max_tokens"] == 192
+assert joint_model.calls[-1]["max_tokens"] == 256
 weaker_model = JointVisionModel(generic_final=True)
 weaker_phases = []
 with patch.object(vision, "_load_local_model", return_value=weaker_model):
@@ -712,7 +711,7 @@ for caption in [
 ]:
     assert caption in retained_crops, ("Earlier crop was erased", caption)
 assert retained_crops.index("A character drawing in one panel.") < retained_crops.index("A girl wearing a purple coat.")
-assert "Whole-image synthesis (not selected by descriptor heuristic" in retained_crops
+assert "Whole-image synthesis (too generic to select" in retained_crops
 assert any(fields.get("integratedOutcome") == "NOT_SELECTED" for _, fields in retention_phases)
 assert any(fields.get("integratedSelected") is False for _, fields in retention_phases)
 
