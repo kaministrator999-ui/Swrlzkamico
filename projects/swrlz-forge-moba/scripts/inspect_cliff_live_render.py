@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Narrow, read-only source-backed browser diagnosis of Smooth Cliff Hand materials."""
-import argparse,asyncio,json,hashlib
+import argparse,asyncio,json,hashlib,base64
 from pathlib import Path
 from urllib.parse import urlsplit
 from playwright.async_api import async_playwright
@@ -114,6 +114,10 @@ async def main():
           }
         }""")
         print('CLIFF_BROWSER_INSPECTION='+json.dumps({'opened':opened,'details':detail,'errors':issues},default=str),flush=True)
+        viewport=page.locator('#modelAtelierViewport canvas').first
+        if await viewport.count():
+            png=await viewport.screenshot(type='jpeg',quality=70,timeout=15000)
+            print('CLIFF_VIEWPORT_JPEG_BASE64='+base64.b64encode(png).decode('ascii'),flush=True)
         live=detail.get('viewport',{}).get('liveMeshes',[])
         if not opened or len(live)!=1 or not live[0].get('map') or not live[0].get('normal'):
             raise AssertionError('LIVE_CLIFF_MESH_NOT_USING_PBR '+json.dumps(live))
