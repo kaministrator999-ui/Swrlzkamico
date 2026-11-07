@@ -356,6 +356,6 @@
     "patches/v11_308_arcane_grip_fit_hide_rays.py",
     "patches/v11_309_arcane_native_ray_aim.py"
   ],
-  "finalBytes": null,
-  "finalSha256": null
+  "finalBytes": 8402089,
+  "finalSha256": "f52a2e9838735d4bf0026d560a4bdf24e943b54d01c933bce9e05dfb6af90ec5"
 }
