@@ -2969,8 +2969,8 @@
         const aliases={
           "subject and views":"Subject & views","views and subject":"Subject & views",
           "view comparisons":"View-by-view details","view comparison":"View-by-view details",
-          "shape and proportions":"Shape & proportions","shape and anatomy":"Shape & proportions",
-          "silhouette and anatomy":"Shape & proportions",
+          "shape and proportions":"Shape & proportions","shape and anatomy":"Appearance & silhouette",
+          "silhouette and anatomy":"Appearance & silhouette",
           "geometry and layers":"Geometry & layers","shape and construction":"Geometry & layers",
           "clothing and surfaces":"Clothing & surfaces",
           "clothing and surface detail":"Clothing & surfaces",
@@ -2983,11 +2983,30 @@
         };
         const labels=/^(Subject and views|Views and subject|View comparisons|View comparison|Shape and proportions|Shape and anatomy|Silhouette and anatomy|Geometry and layers|Shape and construction|Clothing and surfaces|Clothing and surface detail|Materials and markings|Props and contact|Props and small features|Props and fine details|Visibility limits|Visibility and uncertainty):\s*/gim;
         const matches=[...body.matchAll(labels)];
+        const viewWords=new Set((body.match(/\b(?:front|back|top|side)\b/gi)||[]).map(x=>x.toLowerCase()));
+        const turnaround=viewWords.size>=3&&/\bviews?\b/i.test(body);
+        const filterClaim=sentence=>{
+          const line=sentence.trim();
+          if(!line)return"";
+          if(!turnaround)return line;
+          if(/^(?:no|none|without)\b/i.test(line)||
+              /\b(?:no|without|zero)\s+occlusion\b/i.test(line)||
+              /\b(?:all|every)\s+(?:limbs|parts|hands|heads?|views?|angles?)\b/i.test(line)||
+              /\b(?:in|across|from)\s+(?:all|every)\s+(?:views?|angles?)\b/i.test(line))return"";
+          return /[.!?]$/.test(line)?line:line.replace(/;$/,"")+".";
+        };
         if(matches.length>=2){
-          const sections=[],seen=new Set();
+          const sections=[],seen=new Set(),seenClaims=new Set();
           matches.slice(0,8).forEach((match,index)=>{
             const end=index+1<matches.length?matches[index+1].index:body.length;
-            const detail=body.slice(match.index+match[0].length,end).replace(/\s*\n\s*/g," ").trim();
+            let detail=body.slice(match.index+match[0].length,end).replace(/\s*\n\s*/g," ").trim();
+            if(!detail)return;
+            detail=detail.split(/(?<=[.!?;])\s+/).map(filterClaim).filter(Boolean)
+              .filter(sentence=>{
+                const claim=sentence.toLowerCase().replace(/[^\p{L}\p{N}]+/gu," ").trim();
+                if(!claim||seenClaims.has(claim))return false;
+                seenClaims.add(claim);return true;
+              }).join(" ");
             if(!detail)return;
             const heading=aliases[match[1].toLowerCase()]||match[1];
             const key=heading.toLowerCase()+"|"+detail.toLowerCase().replace(/\s+/g," ");
