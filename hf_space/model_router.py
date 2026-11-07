@@ -329,7 +329,7 @@ def _omit_unverifiable_turnaround_claims(body: str) -> str:
         if re.search(r"(?i)\b(?:in|across|from)\s+(?:all|every)\s+(?:views?|angles?)\b", clause):
             continue
         clause = clause.rstrip(";").strip()
-        if clause and clause[-1] not in ".!?":
+        if clause and not re.search(r"[.!?][\"'”’)\]]*$", clause):
             clause += "."
         clean.append(clause)
     return " ".join(clean)
