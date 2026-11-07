@@ -3888,13 +3888,23 @@
           }
         }
       };
-      const scheduleStationSync=(delay=700)=>{clearTimeout(stationPoll);stationPoll=setTimeout(syncStation,delay)};
+      const scheduleStationSync=(delay=700)=>{
+        // Avoid draining connections while Android throttles a background tab.
+        const interval=document.visibilityState==="hidden"?Math.max(delay,15000):delay;
+        clearTimeout(stationPoll);stationPoll=setTimeout(syncStation,interval);
+      };
       // Server owns conversation/generation state; keep the visible projection hydrated.
-      const keepStationHydrated=()=>{if(document.visibilityState==="visible")syncStation(true)};
+      const keepStationHydrated=()=>{
+        if(document.visibilityState!=="visible")return;
+        // Reconcile the accepted server response after tab/app restoration.
+        clearTimeout(stationPoll);
+        void syncStation(true);
+      };
       const loadChatState = ()=>syncStation(true);
       document.addEventListener("visibilitychange",keepStationHydrated);
       window.addEventListener("focus",keepStationHydrated);
       window.addEventListener("pageshow",keepStationHydrated);
+      document.addEventListener("resume",keepStationHydrated);
       window.addEventListener("online",keepStationHydrated);
       document.addEventListener("keydown",event=>{if(event.key==="Escape"&&document.body.classList.contains("work-open"))setWorkSurfaceOpen(false);});
       setInterval(()=>{if(document.visibilityState==="visible"&&!sending)syncStation()},2000);
@@ -3949,6 +3959,7 @@
             if(!line.trim())continue;
             let event;try{event=JSON.parse(line)}catch(_){continue}
             if(event.requestId&&event.requestId!==requestId)continue;
+            if(event.type==="HEARTBEAT")continue; // Keepalive, never fake status/model output.
             if(!stationGeneration)stationGeneration={requestId,threadId,text:"",status:[],widgets:[],terminal:false,lastSeq:0,createdAt:Date.now()};
             if(stationGeneration.requestId!==requestId||stationGeneration.threadId!==threadId||stationSettledRequests.has(stationRequestKey(requestId,threadId)))continue;
             stationGeneration.lastSeq=Number(event.seq||stationGeneration.lastSeq||0);
