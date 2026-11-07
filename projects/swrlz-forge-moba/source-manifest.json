@@ -360,6 +360,6 @@
     "patches/v11_330_material_studio_layout.py",
     "patches/v11_331_smooth_cliff_material_uv.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 8485047,
+  "finalSha256": "3d41dd32c8d80e1380bc2cafe05859b1179abc219b049e0ed791b0defe7aae23"
 }
