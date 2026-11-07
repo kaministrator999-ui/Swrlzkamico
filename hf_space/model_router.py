@@ -364,8 +364,8 @@ def _format_direct_vision_report(description: str) -> str:
         "overview": "Overview",
         "shape and proportions": "Shape & proportions",
         "relative proportions": "Shape & proportions",
-        "shape and anatomy": "Shape & proportions",
-        "silhouette and anatomy": "Shape & proportions",
+        "shape and anatomy": "Appearance & silhouette",
+        "silhouette and anatomy": "Appearance & silhouette",
         "geometry and layers": "Geometry & layers",
         "shape and construction": "Geometry & layers",
         "clothing and surface detail": "Clothing & surfaces",
@@ -395,12 +395,25 @@ def _format_direct_vision_report(description: str) -> str:
     sections = []
     if len(matches) >= 2:
         seen = set()
+        seen_sentences = set()
         for i, match in enumerate(matches[:8]):
             start = match.end()
             end = matches[i + 1].start() if i + 1 < len(matches) else len(text)
             body = re.sub(r"\s*\n\s*", " ", text[start:end]).strip()
             if turnaround:
                 body = _omit_unverifiable_turnaround_claims(body)
+            if not body:
+                continue
+            # Exact repetition across sections adds no visual information;
+            # remove only identical sentences, never guess semantic equivalence.
+            unique_sentences = []
+            for sentence in re.split(r"(?<=[.!?])\s+", body):
+                claim = re.sub(r"\W+", " ", sentence).casefold().strip()
+                if not claim or claim in seen_sentences:
+                    continue
+                seen_sentences.add(claim)
+                unique_sentences.append(sentence)
+            body = " ".join(unique_sentences).strip()
             if not body:
                 continue
             name = labels[match.group(1).casefold()]
