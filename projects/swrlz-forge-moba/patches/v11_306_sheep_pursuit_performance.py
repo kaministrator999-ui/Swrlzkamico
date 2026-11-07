@@ -9,7 +9,10 @@ MARKER='SWYRL_ENGINE_DEPLOY_MARKER: V11_306_SHEEP_PURSUIT_PERFORMANCE'
 
 def once(html,old,new,label):
     count=html.count(old)
-    if count!=1:raise AssertionError(('v11.306',label,count,old[:110]))
+    if count!=1:
+        start=html.find('function stBotSheep(unit){')
+        excerpt=html[start:start+1100] if start>=0 and label.startswith('reuse the highest') else ''
+        raise AssertionError(('v11.306',label,count,old[:110],'assembled excerpt',excerpt))
     return html.replace(old,new,1)
 
 def apply(html):
