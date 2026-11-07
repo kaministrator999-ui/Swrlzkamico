@@ -886,13 +886,23 @@ def _ask_vision_local(image_url: str, question: str, report_phase=None, should_c
                     if len(content) + len(summary) <= MAX_DESCRIPTION_CHARS:
                         content += summary
                 else:
-                    # Show the integrated interpretation first; keep the original
-                    # region text visible as provenance, not fabricated evidence.
-                    supporting = content
-                    content = ("Integrated whole-image observation "
-                               "(local vision model; accuracy unverified):\n"
-                               + fused_text + "\n\nSource observations:\n"
-                               + supporting)
+                    # The initial overview is already displayed progressively;
+                    # do NOT repeat its entire raw, possibly truncated text
+                    # underneath a polished final answer. Keep at most two
+                    # real crop observations as a clearly separated appendix.
+                    # Model inference notes are unverified, not factual receipts.
+                    content = ("Character reference · local model observation "
+                               "(accuracy unverified)\n\n" + fused_text)
+                    if region_records:
+                        crop_notes = "\n".join(
+                            "- " + item["region"] + ": " + item["description"]
+                            for item in region_records
+                        )
+                        appendix = ("\n\nFocused image details "
+                                    "(unverified source-crop observations):\n" +
+                                    crop_notes)
+                        if len(content) + len(appendix) <= MAX_DESCRIPTION_CHARS:
+                            content += appendix
                     content = content[:MAX_DESCRIPTION_CHARS]
             else:
                 # A rejected synthesis still happened. Preserve its actual
@@ -909,7 +919,7 @@ def _ask_vision_local(image_url: str, question: str, report_phase=None, should_c
             note = "\nWhole-image synthesis failed; original crop observations retained."
             if len(content) + len(note) <= MAX_DESCRIPTION_CHARS:
                 content += note
-        if region_records:
+        if region_records and (analysis_levels == 3 or not integrated or not integrated.get("description")):
             footer = "\nRegion descriptions are unverified local vision-model observations."
             if len(content) + len(footer) <= MAX_DESCRIPTION_CHARS:
                 content += footer
