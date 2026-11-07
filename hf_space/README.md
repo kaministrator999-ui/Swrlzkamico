@@ -5,7 +5,6 @@ sdk: gradio
 app_file: app.py
 pinned: false
 preload_from_hub:
-  - "ggml-org/SmolVLM-500M-Instruct-GGUF SmolVLM-500M-Instruct-Q8_0.gguf,mmproj-SmolVLM-500M-Instruct-Q8_0.gguf 72e986006ef53e37cdd3f6d4241c90b0f01df376"
   - "Qwen/Qwen3-VL-4B-Instruct-GGUF Qwen3VL-4B-Instruct-Q4_K_M.gguf,mmproj-Qwen3VL-4B-Instruct-Q8_0.gguf 1cd86afb9a95c410a6038ab3b40d8b578c892266"
 ---
 
@@ -17,8 +16,9 @@ This source branch selects Qwen3-VL-4B-Instruct Q4_K_M plus its Q8 vision
 projector, pinned to the immutable official model revision above. Source
 image bytes stay inside the authenticated Space request. A pinned official
 llama.cpp executable runs Qwen on loopback only so the established Python
-llama-cpp text/model routes remain unchanged. SmolVLM-500M is still available
-via `SWRLZ_VISION_MODEL=smolvlm-500m`; this trial defaults to Qwen3-VL-4B.
+llama-cpp text/model routes remain unchanged. **Qwen3-VL-4B is the sole active
+vision model.** The retired SmolVLM route and its build-time weight preload
+have been removed; historical notes below describe earlier versions only.
 
 Qwen is prewarmed once by the Space's background startup worker, using the
 exact llama.cpp commit pinned in `qwen3vl_local_server.py`. The worker builds
@@ -32,6 +32,21 @@ cold start; a live image inference receipt remains required to verify success.
 This trial preserves the chat image source privacy boundary and existing
 per-pass observations. It does not enable an external inference API, publish
 images to third parties, or rewrite older release records.
+
+### Current Qwen3-VL image analysis
+
+Default analysis uses the same loaded Qwen3-VL model for one full-image
+overview, focused crops of original source pixels, and one final full-image
+synthesis that compares the separate observations. For a wide four-view
+character sheet, this is one overview, four crops, and one synthesis. The
+final whole-image pass receives the same 768px overview pixels and has
+256 output tokens. Its coherent description leads when it contains actual
+visual details; crop observations remain available as fallible provenance.
+This is not a second model, a parallel model ensemble, or multiple image
+uploads. A basic image without qualifying regions still uses one pass.
+
+Earlier descriptions below are retained as historical release notes;
+they do not define the active Qwen-only configuration.
 
 ### Chat v1.1.28 — original-image transport, native server crops
 
