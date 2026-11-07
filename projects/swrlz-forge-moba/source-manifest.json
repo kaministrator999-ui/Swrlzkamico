@@ -361,6 +361,6 @@
     "patches/v11_331_smooth_cliff_material_uv.py",
     "patches/v11_332_smooth_cliff_crack_atlas.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 8487373,
+  "finalSha256": "0d84c3c8d7243db25a8f7406146eac54b7c23da8ab4771686d2bd96d656fc308"
 }
