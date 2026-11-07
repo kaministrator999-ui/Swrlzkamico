@@ -20,11 +20,14 @@ llama.cpp executable runs Qwen on loopback only so the established Python
 llama-cpp text/model routes remain unchanged. SmolVLM-500M is still available
 via `SWRLZ_VISION_MODEL=smolvlm-500m`; this trial defaults to Qwen3-VL-4B.
 
-The server executable is compiled on the Space the first time Qwen warms up,
-using the exact llama.cpp commit in `qwen3vl_local_server.py`. This demands
-build tools and can extend cold startup. We do not claim the model or deploy
-works until the existing guarded release plus live image-request receipts
-confirm it. The current free CPU configuration may impose considerable delay.
+Qwen is prewarmed once by the Space's background startup worker, using the
+exact llama.cpp commit pinned in `qwen3vl_local_server.py`. The worker builds
+the executable if needed, then holds the loaded local model server resident for
+subsequent images in that Space process. Chat startup does not wait for the
+prewarm; no additional frontend model-status UI is needed. A Space restart or
+runtime eviction requires a new load, and the first image can still wait if it
+arrives before prewarm finishes. The current CPU configuration can have a long
+cold start; a live image inference receipt remains required to verify success.
 
 This trial preserves the chat image source privacy boundary and existing
 per-pass observations. It does not enable an external inference API, publish
