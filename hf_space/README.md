@@ -44,11 +44,22 @@ requested by the user; they never pretend to identify objects semantically.
 No blanket four-crop pass is required for character turnarounds.
 The overview prompt targets 80–120 words rather than lengthy per-view
 lists that hit the decoder limit. The final modeling pass receives the full
-768px overview pixels and a 320-token budget, with concise labeled sections.
-The visible analysis card shows abbreviated progressive findings, has a
-bounded mobile height and optional expanded raw observations. The final
-chat handoff leads with the integrated description and up to two clearly
-labeled crop notes without repeating the full first-pass transcript.
+768px overview pixels and a 416-token budget. Instead of slicing every
+observation at 220 characters, it receives longer complete factual notes
+from the overview and selected crops. The synthesis instructions explicitly
+resolve repeated characters/props across different views, anatomical
+left/right uncertainty, geometric shape versus decorative markings and
+partially hidden surfaces. These are model instructions, not guarantees of
+image accuracy and not an additional inference pass.
+
+The live analysis card continues to show actual finished passes. On
+completion, the retained image transcript is presented in Chat as a
+structured **visual modeling report**: source-image thumbnail, model-reported
+view chips, separate anatomy/clothing/props/visibility cards, and optional
+crop/raw-text disclosures. Every displayed observation comes from the
+model's response, without invented pixel annotations or 3D reconstructions.
+The final chat handoff leads with the integrated description and up to two
+labeled source-crop notes without repeating the raw overview.
 This remains one model, not a parallel vision ensemble. Simple images
 without useful close-up regions take the one-pass route.
 
