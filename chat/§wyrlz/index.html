@@ -2993,7 +2993,7 @@
               /\b(?:no|without|zero)\s+occlusion\b/i.test(line)||
               /\b(?:all|every)\s+(?:limbs|parts|hands|heads?|views?|angles?)\b/i.test(line)||
               /\b(?:in|across|from)\s+(?:all|every)\s+(?:views?|angles?)\b/i.test(line))return"";
-          return /[.!?]$/.test(line)?line:line.replace(/;$/,"")+".";
+          return /[.!?][\\"\u201d\u2019\u0027)\]]*$/.test(line)?line:line.replace(/;$/,"")+".";
         };
         if(matches.length>=2){
           const sections=[],seen=new Set(),seenClaims=new Set();
