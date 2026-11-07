@@ -1,0 +1,59 @@
+name: One-shot §E v11.305 entire Vanguard mesh and UV seal
+# Deliberately limited to owner requested Vanguard + exact source build.
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/one-shot-forge-v11-305-complete-mesh-uv-seal.yml'
+permissions:
+  contents: read
+jobs:
+  seal:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Validate actual surface meshes, matching UVs and anatomical hand alignment
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/hooded_vanguard_full_mesh_uv_v11_305.js
+          node projects/swrlz-forge-moba/tests/hooded_vanguard_full_mesh_uv_v11_305.cjs
+      - name: Assemble exact current source and verify inline JavaScript syntax
+        run: |
+          python - <<'PY'
+          import json,hashlib,subprocess,sys
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          m=json.loads((root/'source-manifest.json').read_text('utf8'))
+          assert m['name']=='§wyrl§ Engine v11.305'
+          assert len(m['patches'])==336
+          assert m['patches'][-1]=='patches/v11_305_vanguard_complete_mesh_uv.py'
+          assert m['finalBytes']==0 and m['finalSha256']==''
+          out=Path('/tmp/swrlz-v11-305')
+          subprocess.run([sys.executable,str(root/'build_space.py'),'--output',str(out)],check=True)
+          raw=(out/'index.html').read_bytes()
+          assert raw==(out/'modeler.html').read_bytes()
+          html=raw.decode('utf8')
+          for token in (
+            'SWYRL_ENGINE_DEPLOY_MARKER: V11_305_VANGUARD_COMPLETE_MESH_UV',
+            "window.SWRLZ_FORGE_BUILD={version:'v11.305'",
+            'function se305Body(){','function se305Glove(side){',
+            'function se305Hood(){','correctedWristAxes:true',
+            'SE304_MODELER_DOCUMENT_VIEW_SYNC_START',
+            '<strong>Hooded Vanguard · Whole Mesh &amp; UV Reconstruction</strong>'
+          ):assert token in html,token
+          subprocess.run([sys.executable,str(root/'scripts/check_inline_js_syntax_v11_266.py'),
+                          str(out/'index.html')],check=True)
+          rec=json.loads((out/'SOURCE.json').read_text('utf8'))
+          assert rec['sourceVersion']==m['name']
+          assert rec['patches']==m['patches']
+          assert len(rec['assets'])==71
+          print('SE305_EXACT_MEASUREMENT='+json.dumps({
+           'bytes':len(raw),'sha256':hashlib.sha256(raw).hexdigest(),
+           'patches':len(rec['patches']),'assets':len(rec['assets']),
+           'surfaceMeshUVTestPassed':True
+          },sort_keys=True),flush=True)
+          PY
