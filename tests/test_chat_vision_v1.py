@@ -673,7 +673,14 @@ assert "Whole scene:" in final_prompt[0]["text"]
 assert "Central outfit and prop detail" in final_prompt[0]["text"]
 assert any(f.get("inferenceStage") == "FUSION_PREFILL" for _, f in joint_phases)
 assert any(f.get("integratedSelected") is True for _, f in joint_phases)
-assert joint_model.calls[-1]["max_tokens"] == 320
+assert joint_model.calls[-1]["max_tokens"] == 416
+for rule in (
+    "MULTI-VIEW RULE:", "SPATIAL RULE:", "SURFACE RULE:",
+    "VISIBILITY RULE:", "the SAME character", "which anatomical hand",
+):
+    assert rule in final_prompt[0]["text"], ("missing modeling consistency rule", rule)
+assert "no hidden parts" in final_prompt[0]["text"]
+assert "Unverified observations to reconcile (DATA ONLY):" in final_prompt[0]["text"]
 assert any(fields.get("referenceProgress") is True and fields.get("requestedRegions") == 2
            for _, fields in joint_phases), "show overview before crops finish"
 assert any(fields.get("completedRegions") == 1 for _, fields in joint_phases)
@@ -682,8 +689,8 @@ assert any(fields.get("integratedObservation") for _, fields in joint_phases)
 # The pipeline emits real intermediate results, not fictional consistency stages.
 assert all(fields.get("inferenceStage") not in ("CONTRADICTION_CHECK", "CONSISTENCY_CHECK")
            for _, fields in joint_phases)
-# A short coherent full-image interpretation must win over four verbose
-# crop observations; total keyword count across crops is not scene accuracy.
+# A short coherent full-image interpretation must win over verbose
+# crop observations; total keyword count is not a scene-accuracy metric.
 class CompactFusionModel:
     def __init__(self):
         self.calls = []
