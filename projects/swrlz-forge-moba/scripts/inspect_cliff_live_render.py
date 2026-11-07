@@ -16,6 +16,25 @@ async def handle(route):
         file=(root/p).resolve()
         if not file.is_relative_to(root) or not file.is_file():
             return await route.fulfill(status=404,body="missing:"+p)
+        if p=='modeler.html':
+            html=file.read_text('utf8')
+            needle='status:()=>({active:!!model(),open:!!panel&&!panel.hidden,count:model()?.parts?.length||0,selected:selection})'
+            extra="""status:()=>({active:!!model(),open:!!panel&&!panel.hidden,count:model()?.parts?.length||0,selected:selection,
+              liveMeshes:modelRoot?.children?.filter(o=>o.isMesh).map(o=>{
+                const m=o.material,g=o.geometry;
+                const texture=t=>t?({channel:t.channel,ready:!!t.image,imageWidth:t.image?.width,
+                  kind:t.constructor.name,version:t.version}):null;
+                const a=n=>g.getAttribute(n);
+                return {name:o.name,kind:o.type,visible:o.visible,
+                  materialType:m?.type,materialName:m?.name,color:m?.color?.getHexString(),
+                  map:texture(m?.map),normal:texture(m?.normalMap),ao:texture(m?.aoMap),
+                  roughness:texture(m?.roughnessMap),wireframe:m?.wireframe,
+                  opaque:m?.opacity,vertexColors:m?.vertexColors,needsUpdate:m?.version,
+                  uv:a('uv')?.count,uv1:a('uv1')?.count,uv2:a('uv2')?.count,
+                  position:a('position')?.count,meshUserData:o.userData,worldVisible:o.visible}
+              })||[]})"""
+            if html.count(needle)!=1:raise RuntimeError('Cannot install read-only Model Atelier mesh inspection')
+            return await route.fulfill(body=html.replace(needle,extra,1),content_type='text/html')
         return await route.fulfill(path=str(file))
     return await route.continue_()
 async def main():
@@ -63,6 +82,7 @@ async def main():
                cliffPBR:project?.modelAtelier?.parts?.[0]?.cliffPBR,
                uvCount:project?.modelAtelier?.parts?.[0]?.topologyMesh?.uvs?.length},
             state,native,viewport:window.SWYRL_ENGINE_MODEL_ATELIER?.status(),
+            fractures:window.SWYRL_ENGINE_CLIFF_FRACTURES_332?.status(),
             color:sample(mat.map),normal:sample(mat.normalMap),ao:sample(mat.aoMap),
             roughness:sample(mat.roughnessMap),
             map:!!mat.map,aoChannel:mat.aoMap?.channel,material:mat.name,
@@ -70,5 +90,8 @@ async def main():
           }
         }""")
         print('CLIFF_BROWSER_INSPECTION='+json.dumps({'opened':opened,'details':detail,'errors':issues},default=str),flush=True)
+        live=detail.get('viewport',{}).get('liveMeshes',[])
+        if not opened or len(live)!=1 or not live[0].get('map') or not live[0].get('normal'):
+            raise AssertionError('LIVE_CLIFF_MESH_NOT_USING_PBR '+json.dumps(live))
         await browser.close()
 asyncio.run(main())
