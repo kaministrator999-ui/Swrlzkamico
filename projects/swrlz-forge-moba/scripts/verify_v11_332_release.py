@@ -17,11 +17,12 @@ def main():
     args = cli.parse_args()
     manifest = json.loads((ROOT/'source-manifest.json').read_text('utf8'))
     assert manifest['name'] == '§wyrl§ Engine v11.332'
-    assert manifest['finalArtifact'] == 'swyrl_engine_v11_331.html'
+    assert manifest['finalArtifact'] == 'swyrl_engine_v11_332.html'
     assert len(manifest['patches']) == 345
-    assert manifest['patches'][-2:] == [
+    assert manifest['patches'][-3:] == [
         'patches/v11_330_material_studio_layout.py',
-        'patches/v11_331_smooth_cliff_material_uv.py']
+        'patches/v11_331_smooth_cliff_material_uv.py',
+        'patches/v11_332_smooth_cliff_crack_atlas.py']
     assert manifest['finalBytes'] > 0 and len(manifest['finalSha256']) == 64
     out=Path(args.output).resolve()
     subprocess.run([sys.executable,str(ROOT/'build_space.py'),'--output',str(out)],check=True)
