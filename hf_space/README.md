@@ -1,5 +1,5 @@
 ---
-title: Swyrlz R39 Candidate
+title: Swyrlz Chat Candidate
 emoji: 🐉
 sdk: gradio
 app_file: app.py
@@ -8,9 +8,9 @@ preload_from_hub:
   - "Qwen/Qwen3-VL-4B-Instruct-GGUF Qwen3VL-4B-Instruct-Q4_K_M.gguf,mmproj-Qwen3VL-4B-Instruct-Q8_0.gguf 1cd86afb9a95c410a6038ab3b40d8b578c892266"
 ---
 
-# §wyrlz R39 isolated candidate
+# §wyrlz Chat candidate
 
-### Qwen3-VL-4B CPU image analysis trial (deployment still requires guarded release)
+### Qwen3-VL-4B CPU image analysis candidate (guarded release required)
 
 This source branch selects Qwen3-VL-4B-Instruct Q4_K_M plus its Q8 vision
 projector, pinned to the immutable official model revision above. Source
@@ -18,7 +18,9 @@ image bytes stay inside the authenticated Space request. A pinned official
 llama.cpp executable runs Qwen on loopback only so the established Python
 llama-cpp text/model routes remain unchanged. **Qwen3-VL-4B is the sole active
 vision model.** The retired SmolVLM route and its build-time weight preload
-have been removed; historical notes below describe earlier versions only.
+have been removed. The separate custom R39 inference route and the 1.5B/3B
+coder alternatives are also retired from the active Chat package; historical
+sources remain in Git history. Historical notes below describe earlier versions only.
 
 Qwen is prewarmed once by the Space's background startup worker, using the
 exact llama.cpp commit pinned in `qwen3vl_local_server.py`. The worker builds
