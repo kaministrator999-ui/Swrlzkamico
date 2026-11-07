@@ -1,3 +1,4 @@
 DIAGNOSE_RUNTIME_ONLY=YES
 TARGET=kamiloki/Swyrlz
 NO_SPACE_MUTATION=YES
+RECHECK=Capture sanitized startup exception detail
