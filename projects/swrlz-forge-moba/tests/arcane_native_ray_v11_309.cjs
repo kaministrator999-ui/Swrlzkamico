@@ -3,10 +3,11 @@
 // No headset, no app-wide browser suite; verify the reported visual failure path.
 const fs=require('fs'),assert=require('node:assert/strict'),vm=require('node:vm');
 const html=fs.readFileSync(process.argv[2],'utf8');
-const begin=html.indexOf('// §E v11.309:');
-const end=html.indexOf('window.SWYRLZ_FORGE_BUILD=',begin);
-assert(begin>=0&&end>begin,'v11.309 source compiled once');
-const source=html.slice(begin,end);
+const source=fs.readFileSync(require('node:path').resolve(
+ __dirname,'../runtime/arcane_ray_alignment_v11_309.js'),'utf8');
+assert(html.includes('function se309HideRayGraphics(record){'),'v11.309 runtime assembled');
+assert(html.includes('const se309PreviousRenderRay=se192RenderRay;'),'ray renderer wrapper assembled');
+assert(html.includes('const se309PreviousVRFrame=se192VRFrame;'),'frame guard assembled');
 const records=[0,1].map(index=>({
  index,ray:{visible:true},
  se192:{pivot:{rotation:{y:index?.14:-.12}},
