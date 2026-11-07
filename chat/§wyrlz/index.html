@@ -1431,8 +1431,12 @@
         activity.update("PREPARING");
         const image=await encodeImageForVision(attachment);
         activity.note("Original image preserved for server-side processing.");
+        // Stable across HTTP retries, unique for each intentional Send. A
+        // repeat upload is a NEW inference, even with identical image/question.
+        const visionRequestId=uid("vision");
         const body=JSON.stringify({image,question:question||"Describe this image.",
-          analysisLevels:Math.max(1,Math.min(3,Number(attachment.analysisLevels)||2))});
+          analysisLevels:Math.max(1,Math.min(3,Number(attachment.analysisLevels)||2)),
+          visionRequestId});
         let jobId="",reconnects=0,pollingErrors=0;
         const acceptJob=async()=>{
           let attempted=false;
@@ -1468,6 +1472,8 @@
             }
             activity.jobId=String(result.jobId);
             activity.update(result.phase||"QUEUED");
+            if(result.resumedExistingJob===true)
+              activity.note("Resumed a previously accepted upload; no new inference started.");
             await activity.onAccepted?.(); // Accepted vision job; establish its real conversation now.
             return String(result.jobId);
           }
