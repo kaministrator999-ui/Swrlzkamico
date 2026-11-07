@@ -975,7 +975,32 @@
     .vision-image-dialog img[data-zoom="actual"]{max-width:none;max-height:none;cursor:zoom-out}
     .vision-image-dialog-hint{text-align:center;font-size:11px;margin:8px 0 0;color:#b7ddec}
 
-    .user-vision-summary{margin-top:8px;font-size:11px;color:#d4e9f7;white-space:pre-wrap}
+    .user-vision-summary{margin-top:10px;min-width:0;font-size:12px;color:#d4e9f7}
+    .user-vision-summary>summary{cursor:pointer;touch-action:pan-y;font-weight:700;color:#c5efff;padding:8px 0}
+    /* Source-backed modeling report: every card is authored from visible
+       model text; no decorative statuses imply independently verified facts. */
+    .vision-report{margin:10px 0 4px;display:grid;gap:10px;min-width:0;color:#e1f2ff}
+    .vision-report-head{padding:12px 13px;border:1px solid rgba(126,214,255,.28);border-radius:12px;background:linear-gradient(135deg,rgba(37,80,116,.46),rgba(14,36,61,.65))}
+    .vision-report-overline{font-size:10px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:#a8d8ec}
+    .vision-report-head strong{display:block;font-size:15px;line-height:1.35;margin-top:5px;color:#f5fcff}
+    .vision-report-head p{margin:6px 0 0;color:#b6d3e2;font-size:11px;line-height:1.5}
+    .vision-report-views{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}
+    .vision-report-view{padding:3px 7px;border-radius:100px;border:1px solid rgba(147,222,255,.30);background:rgba(54,102,137,.35);font-size:10px;color:#d4ecfa}
+    .vision-report-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));gap:8px}
+    .vision-report-card{min-width:0;border:1px solid rgba(122,214,249,.22);border-radius:10px;background:rgba(10,33,53,.68);padding:11px}
+    .vision-report-card[data-kind="subject"]{grid-column:1 / -1;background:rgba(16,55,77,.62)}
+    .vision-report-card[data-kind="limits"]{grid-column:1 / -1;border-style:dashed}
+    .vision-report-card-head{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:750;color:#ddf7ff}
+    .vision-report-icon{width:25px;height:25px;display:grid;place-items:center;border-radius:7px;background:rgba(109,194,231,.16);color:#ade7fb;font-size:14px}
+    .vision-report-card p{margin:8px 0 0;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}
+    .vision-report-crops{border:1px solid rgba(125,206,241,.22);border-radius:10px;padding:8px 10px}
+    .vision-report-crops>summary,.vision-report-raw>summary{cursor:pointer;color:#b9e8ff;font-weight:700}
+    .vision-report-crop{padding:9px 0;border-top:1px solid rgba(120,204,240,.15);overflow-wrap:anywhere}
+    .vision-report-crop strong{display:block;font-size:11px;color:#c9e8fa;margin-bottom:4px}
+    .vision-report-crop p{margin:0;line-height:1.5}
+    .vision-report-raw{padding:6px 2px;color:#a8cadd}
+    .vision-report-raw pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:45dvh;overflow:auto;padding:10px;border-radius:9px;background:rgba(1,14,28,.55);font-size:11px;line-height:1.5}
+
     /* Image preflight stays in the chat viewport, not hidden in the composer. */
     /* Single scrollport: the chat viewport owns vertical dragging even when
        a swipe begins over analysis text, preview, or empty card space. */
@@ -1642,6 +1667,96 @@
           });
         });
         dialog.showModal();close.focus();
+      };
+      const visionReportOpenState=new Map();
+      const buildVisionReferenceReport=raw=>{
+        // Render only real model text as a model-observation report.
+        // Never infer coordinates, separate characters, unique props or
+        // visual certainty from section names or presentation choices.
+        const source=String(raw||"");
+        const appendix=/\nFocused image details[^\n]*:\s*\n/i.exec(source);
+        const main=appendix?source.slice(0,appendix.index):source;
+        const notes=appendix?source.slice(appendix.index+appendix[0].length):"";
+        const pattern=/(?:^|\n)\s*(Subject and views|Silhouette and anatomy|Clothing and surface detail|Props and small features|Visibility limits)\s*:\s*/gi;
+        const found=[...main.matchAll(pattern)];
+        if(found.length<2)return null;
+        const groupNames={
+          "subject and views":["subject","Views and subject","▣"],
+          "silhouette and anatomy":["anatomy","Shape and anatomy","◇"],
+          "clothing and surface detail":["materials","Clothing and surfaces","◈"],
+          "props and small features":["props","Props and fine details","✧"],
+          "visibility limits":["limits","Visibility and uncertainty","◌"]
+        };
+        const fields=found.map((m,index)=>({
+          key:m[1].toLowerCase(),
+          text:main.slice(m.index+m[0].length,index+1<found.length?found[index+1].index:main.length).trim()
+        })).filter(x=>x.text);
+        if(!fields.length)return null;
+        const root=document.createElement("div");root.className="vision-report";
+        const header=document.createElement("div");header.className="vision-report-head";
+        const over=document.createElement("div");over.className="vision-report-overline";
+        over.textContent="Image analysis · Qwen3-VL · unverified";
+        const heading=document.createElement("strong");heading.textContent="Modeling reference";
+        const explain=document.createElement("p");
+        explain.textContent="Organized from the local model's observations, not independently inspected.";
+        header.append(over,heading,explain);
+        const subject=fields.find(x=>x.key==="subject and views");
+        if(subject){
+          // Only display angle names actually mentioned in Qwen's source text.
+          const views=[
+            ["Front",/\bfront\b/i],
+            ["Left side",/\bleft\s+side\b/i],
+            ["Right side",/\bright\s+side\b/i],
+            ["Back",/\bback\b/i],
+            ["Top",/\btop\b/i]
+          ].filter(([name,rx])=>rx.test(subject.text)).map(([name])=>name);
+          if(views.length>=2){
+            const strip=document.createElement("div");strip.className="vision-report-views";
+            strip.setAttribute("aria-label","Views named by the model");
+            for(const name of views){
+              const chip=document.createElement("span");chip.className="vision-report-view";
+              chip.textContent=name;strip.append(chip);
+            }
+            header.append(strip);
+          }
+        }
+        root.append(header);
+        const grid=document.createElement("div");grid.className="vision-report-grid";
+        for(const field of fields){
+          const [kind,title,symbol]=groupNames[field.key]||["misc",field.key,"•"];
+          const card=document.createElement("section");card.className="vision-report-card";
+          card.dataset.kind=kind;
+          const top=document.createElement("div");top.className="vision-report-card-head";
+          const icon=document.createElement("span");icon.className="vision-report-icon";
+          icon.textContent=symbol;icon.setAttribute("aria-hidden","true");
+          const name=document.createElement("span");name.textContent=title;
+          top.append(icon,name);
+          const body=document.createElement("p");body.textContent=field.text;
+          card.append(top,body);grid.append(card);
+        }
+        root.append(grid);
+        if(notes.trim()){
+          const crops=document.createElement("details");crops.className="vision-report-crops";
+          const summary=document.createElement("summary");
+          summary.textContent="Focused source observations (model-generated)";
+          crops.append(summary);
+          const parts=notes.split(/\n\s*-\s+/).map(x=>x.replace(/^\s*-\s*/,"").trim()).filter(Boolean);
+          for(const part of parts){
+            const line=part.indexOf(":");
+            const crop=document.createElement("div");crop.className="vision-report-crop";
+            const title=document.createElement("strong");
+            title.textContent=line>0?part.slice(0,line):"Source crop";
+            const body=document.createElement("p");
+            body.textContent=line>0?part.slice(line+1).trim():part;
+            crop.append(title,body);crops.append(crop);
+          }
+          root.append(crops);
+        }
+        const rawPanel=document.createElement("details");rawPanel.className="vision-report-raw";
+        const rawTitle=document.createElement("summary");rawTitle.textContent="Original model description";
+        const rawText=document.createElement("pre");rawText.textContent=source;
+        rawPanel.append(rawTitle,rawText);root.append(rawPanel);
+        return root;
       };
       let visionActivity=null;
       const startVisionActivity=(attachment,question)=>{
@@ -3543,10 +3658,22 @@
               }
               const details=document.createElement("details");details.className="user-vision-summary";
               const summary=document.createElement("summary");
-              summary.textContent=previewURL?"Image analyzed":"Image analyzed · original image not stored";
-              const description=document.createElement("div");
-              description.textContent=imageText.slice(imageStart+VISION_START.length,-VISION_END.length);
-              details.append(summary,description);bubble.appendChild(details);
+              const originalText=imageText.slice(imageStart+VISION_START.length,-VISION_END.length);
+              const visual=buildVisionReferenceReport(originalText);
+              const stateKey=String(thread.id||"")+"|"+String(msg.id||"");
+              summary.textContent=visual?"Modeling reference · visual report":
+                (previewURL?"Image analyzed":"Image analyzed · original image not stored");
+              if(visual){
+                details.open=visionReportOpenState.has(stateKey)?
+                  visionReportOpenState.get(stateKey):true;
+                details.addEventListener("toggle",()=>visionReportOpenState.set(stateKey,details.open));
+                details.append(summary,visual);
+              }else{
+                const description=document.createElement("div");
+                description.textContent=originalText;
+                details.append(summary,description);
+              }
+              bubble.appendChild(details);
             }else if(persistedTag==="container:code"||persistedTag==="container:lyrics"){
               bubble.classList.add("user-container-message");
               const syntheticFence=(persistedTag==="container:lyrics"?"lyrics":"code")+"\n"+String(msg.text||"");
