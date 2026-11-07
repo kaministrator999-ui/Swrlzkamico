@@ -8,3 +8,4 @@ STARTUP_PREWARM_POST_DEPLOY_824331=Verify running stage and server-side warmup e
 STARTUP_WARMUP_RECHECK_2=Check for model resident event after Space runtime boot
 STARTUP_WARMUP_EVENT_RECHECK=Read event names only after live Space startup
 QWEN_ONLY_AFTER_DEPLOY_42354937087=Check live Space stage after Qwen-only deployment, no private payloads
+PROGRESSIVE_REFERENCE_RUNTIME_CHECK_42356653319=Read only status after approved progressive Qwen deployment
