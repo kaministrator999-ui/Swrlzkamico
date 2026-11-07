@@ -965,14 +965,25 @@
     .vision-reference-more>div{margin-top:6px}
 
     .composer-shell.collapsed .composer-media-tools{display:none}
-    .user-image-attachment{display:block;max-width:min(240px,100%);max-height:180px;object-fit:contain;margin-top:9px;border-radius:9px}
+    .user-image-attachment{display:block;max-width:min(240px,100%);max-height:180px;object-fit:contain;border-radius:9px}
+    .user-image-preview-button,.vision-work-preview-button{display:inline-block;margin:8px 0 0;padding:0;border:0;background:none;color:inherit;text-align:left;cursor:zoom-in;max-width:100%;touch-action:pan-y}
+    .user-image-preview-button:focus-visible,.vision-work-preview-button:focus-visible{outline:2px solid #91e6ff;outline-offset:3px;border-radius:8px}
+    .vision-image-dialog{box-sizing:border-box;position:fixed;inset:0;margin:auto;padding:48px 12px 12px;width:min(100vw - 18px,1100px);max-width:calc(100vw - 18px);max-height:calc(100dvh - 18px);border:1px solid rgba(105,214,246,.42);border-radius:14px;background:#071827;color:#eafaff;overflow:auto;overscroll-behavior:contain}
+    .vision-image-dialog::backdrop{background:rgba(0,5,14,.88);backdrop-filter:blur(3px)}
+    .vision-image-dialog-close{position:sticky;top:-40px;float:right;z-index:2;min-height:36px;padding:7px 14px;border:1px solid rgba(142,225,255,.45);border-radius:9px;background:#113149;color:#eafaff;cursor:pointer}
+    .vision-image-dialog img{display:block;width:auto;height:auto;max-width:100%;max-height:calc(100dvh - 95px);margin:0 auto;object-fit:contain;touch-action:auto}
+    .vision-image-dialog img[data-zoom="actual"]{max-width:none;max-height:none;cursor:zoom-out}
+    .vision-image-dialog-hint{text-align:center;font-size:11px;margin:8px 0 0;color:#b7ddec}
+
     .user-vision-summary{margin-top:8px;font-size:11px;color:#d4e9f7;white-space:pre-wrap}
     /* Image preflight stays in the chat viewport, not hidden in the composer. */
-    .vision-work-card{align-self:flex-end;width:min(430px,94%);max-height:72dvh;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;border:1px solid rgba(100,211,247,.34);border-radius:14px;padding:10px 12px;background:rgba(7,28,48,.94);color:#e6f7ff;box-shadow:0 6px 24px rgba(0,0,0,.27);font-size:12px;line-height:1.45}
+    /* Single scrollport: the chat viewport owns vertical dragging even when
+       a swipe begins over analysis text, preview, or empty card space. */
+    .vision-work-card{align-self:flex-end;width:min(430px,94%);max-height:none;overflow:visible;touch-action:pan-y;border:1px solid rgba(100,211,247,.34);border-radius:14px;padding:10px 12px;background:rgba(7,28,48,.94);color:#e6f7ff;box-shadow:0 6px 24px rgba(0,0,0,.27);font-size:12px;line-height:1.45}
     .vision-work-header{display:flex;align-items:center;justify-content:space-between;gap:8px;font-weight:750}
     .vision-work-header button{flex:0 0 auto;background:transparent;border:1px solid rgba(135,218,248,.3);border-radius:7px;color:#b9eaff;padding:4px 7px;font-size:11px}
     .vision-work-prompt{font-size:13px;margin:8px 0;white-space:pre-wrap;overflow-wrap:anywhere}
-    .vision-work-preview{max-height:116px;max-width:100%;object-fit:contain;display:block;margin:5px 0 8px;border-radius:7px}
+    .vision-work-preview{max-height:116px;max-width:100%;object-fit:contain;display:block;border-radius:7px;pointer-events:none}
     .vision-work-steps{margin:7px 0 4px;padding:0;list-style:none;display:grid;gap:4px;font-size:11px;color:#90b6cb}
     .vision-work-steps li::before{content:"○";display:inline-block;width:20px;color:#7893ac}
     .vision-work-steps li[data-state="active"]{color:#d7f9ff;font-weight:750}
@@ -1583,6 +1594,32 @@
       const newThreadButton = document.getElementById("newThreadButton");
       const messageList = document.getElementById("messageList");
       const assistantTemplate = document.getElementById("assistantTemplate");
+      const openVisionImagePreview=(imageUrl,alt="Uploaded image")=>{
+        // Local, owner-selected attachment URL only; this preview does not
+        // upload, persist, alter or analyze the image a second time.
+        const dialog=document.createElement("dialog");
+        dialog.className="vision-image-dialog";
+        dialog.setAttribute("aria-label","Expanded image preview");
+        const close=document.createElement("button");
+        close.className="vision-image-dialog-close";close.type="button";
+        close.textContent="Close image";close.setAttribute("aria-label","Close expanded image");
+        const image=document.createElement("img");
+        image.src=imageUrl;image.alt=alt;
+        const hint=document.createElement("p");hint.className="vision-image-dialog-hint";
+        hint.textContent="Tap image to toggle original size. Swipe to pan when zoomed.";
+        dialog.append(close,image,hint);
+        document.body.append(dialog);
+        const dismiss=()=>dialog.close();
+        close.addEventListener("click",dismiss);
+        dialog.addEventListener("click",event=>{if(event.target===dialog)dismiss();});
+        dialog.addEventListener("close",()=>dialog.remove(),{once:true});
+        image.addEventListener("click",()=>{
+          const actual=image.dataset.zoom==="actual";
+          if(actual){image.removeAttribute("data-zoom");image.style.width="";}
+          else {image.dataset.zoom="actual";image.style.width=image.naturalWidth+"px";}
+        });
+        dialog.showModal();close.focus();
+      };
       let visionActivity=null;
       const startVisionActivity=(attachment,question)=>{
         if(visionActivity){visionActivity.stopClock();visionActivity.root.remove();}
@@ -1595,6 +1632,12 @@
         const message=document.createElement("div");message.className="vision-work-prompt";
         message.textContent=question||"Describe this image.";
         const preview=document.createElement("img");preview.className="vision-work-preview";preview.src=attachment.url;preview.alt="Image attached to pending message";
+        const previewButton=document.createElement("button");
+        previewButton.type="button";previewButton.className="vision-work-preview-button";
+        previewButton.setAttribute("aria-label","Enlarge attached image");
+        previewButton.title="Tap to enlarge image";
+        previewButton.append(preview);
+        previewButton.addEventListener("click",()=>openVisionImagePreview(attachment.url,"Image being analyzed"));
         const steps=document.createElement("ol");steps.className="vision-work-steps";
         const names=["Upload image","Prepare image and load model","Identify visual details","Pass description to §C","Generate chat response"];
         const entries=names.map(name=>{const li=document.createElement("li");li.textContent=name;li.dataset.state="pending";steps.appendChild(li);return li;});
@@ -1610,7 +1653,7 @@
         const evidence=document.createElement("details");evidence.className="vision-level-evidence";evidence.hidden=true;
         const evidenceSummary=document.createElement("summary");evidenceSummary.textContent="Observed levels";
         const evidenceContents=document.createElement("div");evidence.append(evidenceSummary,evidenceContents);
-        root.append(header,message,preview,steps,timer,sourceInfo,status,findings,evidence);messageList.appendChild(root);
+        root.append(header,message,previewButton,steps,timer,sourceInfo,status,findings,evidence);messageList.appendChild(root);
         const initialTime=Date.now();
         const durationText=seconds=>{
           const n=Math.max(0,Math.floor(Number(seconds)||0)),m=Math.floor(n/60),sec=String(n%60).padStart(2,"0");
@@ -3467,7 +3510,13 @@
               const previewURL=imagePreviews.get(msg.id||"");
               if(previewURL){
                 const image=document.createElement("img");image.className="user-image-attachment";
-                image.src=previewURL;image.alt="Uploaded image";bubble.appendChild(image);
+                image.src=previewURL;image.alt="Uploaded image";
+                const expand=document.createElement("button");
+                expand.type="button";expand.className="user-image-preview-button";
+                expand.setAttribute("aria-label","Enlarge uploaded image");
+                expand.title="Tap to enlarge image";expand.append(image);
+                expand.addEventListener("click",()=>openVisionImagePreview(previewURL,"Uploaded image"));
+                bubble.appendChild(expand);
               }
               const details=document.createElement("details");details.className="user-vision-summary";
               const summary=document.createElement("summary");
