@@ -63,10 +63,10 @@ function se306Lines(page){
   if(!s)return ['MEASURING SHEEP TAG GAMEPLAY','Run or chase wolves for at least 2 seconds',
     'Metrics measure JavaScript CPU, not GPU time','PAGE '+(page+1)+'/8 · WOLF/FRAME DIAGNOSTICS'];
   if(page===6)return [
-    'A* WOLVES '+s.wolf.calls+' / '+fmt(s.wolf.ms)+'ms CPU total',
-    'A* SHEEP '+s.sheep.calls+' / '+fmt(s.sheep.ms)+'ms CPU total',
+    'WOLF-RADIUS A* '+s.wolf.calls+' / '+fmt(s.wolf.ms)+'ms CPU total',
+    'SHEEP-RADIUS A* '+s.sheep.calls+' / '+fmt(s.sheep.ms)+'ms CPU total',
     'SLOWEST PATH W '+fmt(s.wolf.max)+'ms / S '+fmt(s.sheep.max)+'ms',
-    'NO-ROUTE W '+s.wolf.misses+' / S '+s.sheep.misses,
+    'NO-ROUTE RADIUS W '+s.wolf.misses+' / S '+s.sheep.misses,
     'REUSED '+s.reuses+' · ADOPTED '+s.adoptions,
     'PAGE 7/8 · LAST '+fmt(s.seconds)+'s'
   ];
@@ -87,5 +87,5 @@ se265Lines=function(snapshot,page){
 window.SWYRL_ENGINE_SHEEP_PURSUIT_306=Object.freeze({
   diagnose:()=>({...se306Perf.latest,active:!!stSession&&!paused,
     currentWolfPaths:se306Perf.wolf.calls,currentSheepPaths:se306Perf.sheep.calls,
-    meaning:'path CPU and simulation time are measured; GPU time is not'})
+    meaning:'path CPU grouped by path radius (not caller), simulation time measured; GPU time not measured'})
 });

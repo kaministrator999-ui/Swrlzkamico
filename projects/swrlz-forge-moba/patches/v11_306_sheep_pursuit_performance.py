@@ -19,7 +19,8 @@ def apply(html):
     for symbol in ('function stBotWolf(unit){','function stBotSheep(unit){',
                    'function stPath(start,target,radius){',
                    'SWYRL_ENGINE_DEPLOY_MARKER: V11_305_VANGUARD_COMPLETE_MESH_UV',
-                   'function se286Lines(page){','function se265Lines(s,page){'):
+                   'function se286Lines(page){','function se265Lines(s,page){',
+                   'const se256AIBudget'):
         if symbol not in html:raise AssertionError(('v11.306 prerequisite',symbol))
     helper="""// SE306_PLANNED_ROUTE_REUSE
 function stAdoptPlannedPath(unit,route,target,repathDelay=.8){
@@ -30,39 +31,7 @@ function stAdoptPlannedPath(unit,route,target,repathDelay=.8){
 """
     html=once(html,'function stBotSheep(unit){',helper+'function stBotSheep(unit){',
               'add route adoption helper')
-    old_flee="""  if(danger){
-    let best=null,score=-Infinity;
-    for(let i=0;i<12;i++){
-      const angle=i*Math.PI/6,x=unit.pos.x+Math.cos(angle)*7.5,z=unit.pos.z+Math.sin(angle)*7.5;
-      if(stBlocked(x,z,ST_SHEEP_RADIUS))continue;
-      const safety=Math.min(...wolves.map(w=>(x-w.pos.x)**2+(z-w.pos.z)**2));
-      if(safety>score&&stPath(unit.pos,new THREE.Vector3(x,0,z),ST_SHEEP_RADIUS)){score=safety;best={x,z};}
-    }
-    if(best)stSetOrder(unit,{action:'move',...best});return;
-  }
-"""
-    new_flee="""  if(danger){
-    // SE306_SHEEP_SORTED_FLEE: score 12 options cheaply, pathfind best first.
-    const choices=[];
-    for(let i=0;i<12;i++){
-      const angle=i*Math.PI/6,x=unit.pos.x+Math.cos(angle)*7.5,z=unit.pos.z+Math.sin(angle)*7.5;
-      if(stBlocked(x,z,ST_SHEEP_RADIUS))continue;
-      const safety=Math.min(...wolves.map(w=>(x-w.pos.x)**2+(z-w.pos.z)**2));
-      choices.push({x,z,safety});
-    }
-    choices.sort((a,b)=>b.safety-a.safety);
-    for(const choice of choices){
-      const point=new THREE.Vector3(choice.x,0,choice.z);
-      const route=stPath(unit.pos,point,ST_SHEEP_RADIUS);
-      if(!route)continue;
-      stSetOrder(unit,{action:'move',x:choice.x,z:choice.z});
-      stAdoptPlannedPath(unit,route,point);
-      break;
-    }
-    return;
-  }
-"""
-    html=once(html,old_flee,new_flee,'reuse the highest-safe reachable sheep escape path')
+    # Preserve the current v11.256 frame-budgeted sheep AI unchanged.
     old_wolf="""  if(stPath(unit.pos,target.pos,ST_WOLF_RADIUS)){stSetOrder(unit,{action:'attack',id:target.id});return;}
 """
     new_wolf="""  // SE306_WOLF_ROUTE_REUSE: do not discard a valid chase route each AI decision.
@@ -118,8 +87,8 @@ function stAdoptPlannedPath(unit,route,target,repathDelay=.8){
     notes.update(title='Sheep Tag pursuit pathfinding reuse and performance diagnostics',
       date='2026-11-06',changes=[
         'Owner Quest report: all sheep and all wolves moving sometimes stutter; three wolves attacking maximum houses remain smooth until the last sheep leaves shelter, when the whole simulation gradually slows.',
-        'Rank all twelve bot sheep escape directions cheaply, then A* the safest reachable route rather than performing repeated incremental-best route searches; reuse the actual calculated route.',
-        'Prevent wolf chase target refresh from discarding an already valid route; reuse reachability routes for sheep and house targets with small per-wolf stagger.',
+        'Preserve v11.256 globally frame-budgeted live sheep escape searches (maximum two candidates per update); diagnose their actual CPU burden instead of replacing their tactics.',
+        'Prevent wolf chase target refresh from discarding an already valid route; reuse wolf reachability routes toward sheep and house targets with small per-wolf stagger.',
         'Add 7/8 and 8/8 Nerd Stats pages measuring actual wolf/sheep A* CPU costs, reuse counts, simulation/wall-clock ratio and update time; no claimed GPU timing.',
         'Leave control, building health, collisions, WebXR input, game rules, multiplayer authority and the existing 50ms timestep cap untouched; the owner tests before any timing overhaul.'
       ])
