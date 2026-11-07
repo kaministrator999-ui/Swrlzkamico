@@ -22,7 +22,7 @@ const w=wolf(0,0),s=sheep(8,0);
 assert.equal(context.stPerceivesDirect(w,s),false,'house blocks wolf spotting sheep');
 assert.equal(context.stPerceivesDirect(s,w),false,'house blocks sheep spotting wolf');
 assert.equal(context.stPerceivesDirect(w,s),false,'same update is cached');
-assert(context.se321Sight.reused>=1,'cache hits counted');
+assert(vm.runInContext('se321Sight.reused',context)>=1,'cache hits counted');
 s.pos.z=5;session.elapsed+=.01;
 assert.equal(context.stPerceivesDirect(w,s),true,'clear side route restores sight');
 s.pos.z=0;session.navVersion++;

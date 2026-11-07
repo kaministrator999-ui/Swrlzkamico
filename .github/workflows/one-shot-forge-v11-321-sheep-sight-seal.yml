@@ -48,3 +48,5 @@ jobs:
             'patches':len(rec['patches']),'assets':len(rec['assets'])
           },sort_keys=True),flush=True)
           PY
+
+# Test harness checks lexical module counters via vm.runInContext.
