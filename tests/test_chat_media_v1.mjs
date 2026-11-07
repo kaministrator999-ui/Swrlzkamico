@@ -52,6 +52,15 @@ assert.match(html,/activity\.update\(activity\.abort\.signal\.aborted\?"STOPPED"
 assert.ok(!html.includes("Analyzing image…"),"no opaque composer-only image operation");
 assert.match(html,/prompt:text,threadId:submission\.threadId/);
 assert.match(html,/imagePreviews\.set\(userMessageId,attachment\.url\)/);
+assert.match(html,/const imageRegionEvidence=new Map\(\)/);
+assert.match(html,/imageRegionEvidence\.set\(userMessageId,activity\.sourceRegions\)/);
+assert.match(html,/imageRegionEvidence\.delete\(oldest\)/);
+assert.match(html,/sourceBox:x\.sourceBox\.map\(Number\)/);
+assert.match(html,/x\.sourceBox\.every\(n=>Number\.isFinite\(n\)&&n>=0&&n<=1\)/);
+assert.match(html,/vision-source-region-box/);
+assert.match(html,/vision-source-controls/);
+assert.match(html,/highlight\.style\.left=\(left\*100\)/);
+assert.match(html,/Unverified model observation from highlighted source crop/);
 assert.match(html,/recognition\.onresult=event=>/);
 assert.match(html,/prompt\.value=\(original\+separator\+transcript\)/);
 assert.match(html,/prompt\.dispatchEvent\(new Event\("input",\{bubbles:true\}\)\)/);
@@ -153,6 +162,11 @@ assert.match(backend,/MAX_IMAGE_PIXELS = 16_000_000/);
 assert.match(backend,/def _run_vision_job\(/);
 assert.match(backend,/def _detail_regions\(/);
 assert.match(backend,/spatialRegionRecords/);
+assert.match(backend,/with_boxes=True/);
+assert.match(backend,/coordinateSpace": "exif-corrected-source-normalized"/);
+assert.match(backend,/RAW_CROP_MARKER/);
+assert.match(backend,/Shape and proportions:/);
+assert.match(backend,/Materials and markings:/);
 assert.match(backend,/referenceProgress/);
 assert.match(html,/vision-reference-findings/);
 assert.match(html,/showReferenceFindings\(timing\)/);
@@ -167,6 +181,10 @@ assert.ok(!html.includes('max-height:72dvh;overflow-y:auto;overscroll-behavior:c
 // Both an in-progress attachment and the committed chat image get the same
 // keyboard/Android-tappable expanded image preview, with native Escape close.
 assert.match(html,/const openVisionImagePreview=\(imageUrl/);
+assert.match(html,/const visionPrefix="Local image analyzer/);
+assert.match(html,/rawSource\.slice\(visionPrefix\.length\)\.startsWith\("Character reference · local model observation"\)/);
+assert.match(html,/vision-model-report/);
+assert.match(html,/Materials and markings/);
 assert.match(html,/dialog\.showModal\(\);close\.focus\(\)/);
 assert.match(html,/dialog\.addEventListener\("close",\(\)=>dialog\.remove\(\)/);
 assert.match(html,/previewButton\.addEventListener\("click",\(\)=>openVisionImagePreview\(attachment\.url/);
