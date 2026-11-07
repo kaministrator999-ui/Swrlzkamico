@@ -59,8 +59,9 @@ jobs:
           python tests/test_archive_grounded_lyric_craft_v182.py
       - name: Verify Chat image understanding and voice dictation contracts
         run: |
-          python -m py_compile hf_space/chat_vision.py
+          python -m py_compile hf_space/chat_vision.py hf_space/qwen3vl_local_server.py
           python tests/test_chat_vision_v1.py
+          python tests/test_chat_vision_qwen3_vl_experiment.py
           node tests/test_chat_media_v1.mjs
       - name: Check syntax and contracts
         run: |
