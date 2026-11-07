@@ -20,7 +20,7 @@ def verify_native_view(html_path,module_path=None,native_project=None):
     def run(module):
         subprocess.run(['node',str(ROOT/'tests/chat_loft_surface_normals_v11_295.mjs'),
                         str(html_path),str(module)],check=True)
-        command=['node',str(ROOT/'tests/model_atelier_document_sync_v11_305.mjs'),
+        command=['node',str(ROOT/'tests/model_atelier_document_sync_v11_304.mjs'),
                  str(html_path),str(module)]
         if native_project:command.append(str(Path(native_project).resolve()))
         subprocess.run(command,check=True)
@@ -102,7 +102,7 @@ def main():
     subprocess.run(['node','--check',str(ROOT/'runtime/hooded_vanguard_painted_v11_297.js')],check=True)
     subprocess.run([sys.executable,str(ROOT/'scripts/check_inline_js_syntax_v11_266.py'),
                     str(out/'index.html')],check=True)
-    subprocess.run(['node','--check',str(ROOT/'runtime/model_atelier_document_sync_v11_305.js')],check=True)
+    subprocess.run(['node','--check',str(ROOT/'runtime/model_atelier_document_sync_v11_304.js')],check=True)
     subprocess.run(['node',str(ROOT/'tests/chat_character_tools_v11_293.mjs'),str(out/'index.html')],check=True)
     verify_native_view(out/'index.html',args.three_module,args.native_project)
     subprocess.run(['node',str(ROOT/'tests/hooded_vanguard_facial_sculpt_v11_303.cjs')],check=True)
