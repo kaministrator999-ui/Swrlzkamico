@@ -966,6 +966,18 @@
 
     .composer-shell.collapsed .composer-media-tools{display:none}
     .user-image-attachment{display:block;max-width:min(240px,100%);max-height:180px;object-fit:contain;border-radius:9px}
+    .vision-source-frame{position:relative;display:block;width:fit-content;max-width:100%;overflow:hidden;border-radius:9px}
+    .vision-source-region-box{position:absolute;box-sizing:border-box;border:2px solid #71e9ff;background:rgba(68,201,255,.13);box-shadow:inset 0 0 0 1px rgba(0,15,30,.5);pointer-events:none}
+    .vision-source-controls{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 4px}
+    .vision-source-controls button{font-size:11px;line-height:1.3;min-height:30px;padding:6px 8px;border:1px solid rgba(115,217,247,.45);border-radius:16px;background:rgba(18,56,82,.7);color:#d9f7ff;cursor:pointer;text-align:left}
+    .vision-source-controls button[aria-pressed="true"]{background:#206384;border-color:#9aeaff;color:#fff}
+    .vision-source-observation{margin:5px 0 3px;padding:8px 9px;border-radius:8px;border:1px solid rgba(126,214,255,.23);font-size:11px;line-height:1.55;color:#cbe5f0;white-space:pre-wrap;overflow-wrap:anywhere}
+    .vision-model-report{display:grid;gap:9px;max-width:100%}
+    .vision-model-report-head{font-size:14px;font-weight:800;color:#e3f8ff;margin:0 0 2px}
+    .vision-model-report-note{font-size:11px;color:#b4d1df;line-height:1.45}
+    .vision-model-field{border:1px solid rgba(111,213,246,.24);border-radius:12px;padding:11px 12px;background:rgba(5,29,48,.55)}
+    .vision-model-field h3{font-size:13px!important;color:#e6faff!important;margin:0 0 7px!important}
+    .vision-model-field p{font-size:13px;line-height:1.55;margin:0!important;overflow-wrap:anywhere}
     .user-image-preview-button,.vision-work-preview-button{display:inline-block;margin:8px 0 0;padding:0;border:0;background:none;color:inherit;text-align:left;cursor:zoom-in;max-width:100%;touch-action:pan-y}
     .user-image-preview-button:focus-visible,.vision-work-preview-button:focus-visible{outline:2px solid #91e6ff;outline-offset:3px;border-radius:8px}
     .vision-image-dialog{box-sizing:border-box;position:fixed;inset:0;margin:auto;padding:48px 12px 12px;width:min(100vw - 18px,1100px);max-width:calc(100vw - 18px);max-height:calc(100dvh - 18px);border:1px solid rgba(105,214,246,.42);border-radius:14px;background:#071827;color:#eafaff;overflow:auto;overscroll-behavior:contain}
@@ -1367,6 +1379,8 @@
       const VISION_START="\n\n[Uploaded image — vision description, not original pixels]\n";
       const VISION_END="\n[/Uploaded image]";
       const imagePreviews=new Map();
+      // Ephemeral source regions, paired with temporary image object URLs.
+      const imageRegionEvidence=new Map();
       let selectedImage=null, speechRecognition=null;
       const composerNotice=(message,error=false)=>{
         composerFeedback.textContent=message||"";
@@ -3031,6 +3045,36 @@
         container.innerHTML="";
         const rawSource=String(text||"");
         originalRenderedSources.set(container,rawSource);
+        // Direct image answers are model observations, not secondhand prose
+        // to repeat under multiple layouts. Parse only the model's own labeled
+        // sections; text nodes never acquire tool authority or proven accuracy.
+        const visionPrefix="Local image analyzer's description (not directly inspected by §C):\n\n";
+        if(rawSource.startsWith(visionPrefix)){
+          const body=rawSource.slice(visionPrefix.length)
+            .split("\n\n[Raw source-crop observations; accuracy unverified]\n",1)[0]
+            .replace(/^Character reference[^\n]*\n\s*/i,"").trim();
+          const headings=/^(Subject and views|Shape and proportions|Silhouette and anatomy|Geometry and layers|Clothing and surface detail|Materials and markings|Props and contact|Props and small features|Visibility limits):\s*/gim;
+          const matches=[...body.matchAll(headings)];
+          if(matches.length>=2){
+            const report=document.createElement("section");report.className="vision-model-report";
+            const head=document.createElement("div");head.className="vision-model-report-head";
+            head.textContent="Modeling reference · local vision report";
+            const disclaimer=document.createElement("div");disclaimer.className="vision-model-report-note";
+            disclaimer.textContent="Unverified observations. Geometry/material distinctions are modeling suggestions, not measured 3D structure.";
+            report.append(head,disclaimer);
+            for(let i=0;i<matches.length;i++){
+              const entry=matches[i],start=entry.index+entry[0].length;
+              const end=i+1<matches.length?matches[i+1].index:body.length;
+              const content=body.slice(start,end).trim();
+              if(!content)continue;
+              const card=document.createElement("section");card.className="vision-model-field";
+              const title=document.createElement("h3");title.textContent=entry[1];
+              const detail=document.createElement("p");detail.textContent=content;
+              card.append(title,detail);report.append(card);
+            }
+            container.appendChild(report);return;
+          }
+        }
         // Rendering a repository browser requires Station-verified same-message
         // GitHub evidence. The model may output "## GitHub directory: /" as prose:
         // that alone must NEVER become a verified interactive file browser.
