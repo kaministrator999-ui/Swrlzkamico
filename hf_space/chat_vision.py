@@ -22,6 +22,7 @@ from typing import Any
 from fastapi import Request
 from fastapi.responses import JSONResponse
 from runtime_capacity import ResponseResourceMeter
+from qwen3vl_local_server import DECODE_THREADS, BATCH_THREADS, PARALLEL_REQUESTS
 
 
 # JSON/base64 expands an 8 MiB original file to roughly 11.2 MiB.
@@ -148,6 +149,15 @@ def _run_vision_job(job_id: str, image: str, question: str, cancel_event: thread
     def complete_usage(state: str) -> dict:
         usage = meter.finish()
         usage["routeId"] = VISION_MODEL_VARIANT
+        with _jobs_lock:
+            job = _jobs.get(job_id)
+            loaded = bool(job and job.get("visionModelLoaded"))
+        # Configured llama.cpp threads, not CPU cores used by the model.
+        usage["configuredEngineThreadBudget"] = ({
+            "decodeThreads": DECODE_THREADS,
+            "batchThreads": BATCH_THREADS,
+            "parallelRequests": PARALLEL_REQUESTS,
+        } if loaded else None)
         usage["outcome"] = state
         print(json.dumps({"event": "VISION_RESPONSE_RESOURCE_USAGE",
                           "jobId": job_id[:8], "usage": usage}), flush=True)
