@@ -1,0 +1,188 @@
+/* §E v11.330 · a bounded native material workstation, including phone iframes. */
+body[data-se225-workspace=materials] .app>.workspace>.panel,
+body[data-se225-workspace=materials] .app>.workspace>.viewport-wrap>:not(#viewport),
+body[data-se225-workspace=materials] #se320GameHeader,
+body[data-se225-workspace=materials] #se320GameHeader *,
+body[data-se225-workspace=materials] #se249Root,
+body[data-se225-workspace=materials] #se240ParticleStageOrbit{visibility:hidden!important;pointer-events:none!important}
+body[data-se225-workspace=materials] #se225Shell[data-se330-ui]>#se248Library,
+body[data-se225-workspace=materials] #se225Shell[data-se330-ui] #se248Toolbar{display:none!important}
+body[data-se225-workspace=materials] #se225Shell[data-se330-ui]{
+ --se330-nav:48px;--se330-library:240px;--se330-inspector:320px;
+ background:transparent!important;color:#f0e8fa;font:14px/1.45 system-ui,sans-serif;
+ isolation:isolate;overflow:hidden;pointer-events:none}
+body[data-se225-workspace=materials] #se225Shell[data-se330-ui]>.se225-workspace-header{
+ position:absolute!important;inset:0 0 auto!important;height:var(--se330-nav)!important;
+ min-height:0!important;display:block!important;background:#141020!important;box-shadow:none!important}
+#se225Shell[data-se330-ui]>.se225-workspace-header .se225-workspace-heading,
+#se225Shell[data-se330-ui]>#se225ViewNote,
+#se225Shell[data-se330-ui]>.se251-resize-grip{display:none!important}
+#se225Shell[data-se330-ui] .se225-studio-tabs{height:48px;box-sizing:border-box;gap:6px;padding:5px 10px;overflow-y:hidden}
+#se225Shell[data-se330-ui] .se225-studio-tabs button{font-size:12px;min-height:36px}
+/* Extra scope deliberately supersedes saved v251 desktop/collapse positions. */
+body[data-se225-workspace=materials] #se225Shell[data-se330-ui] #se225MaterialsPanel[data-se330-ui][data-se330-pane]{
+ position:absolute!important;inset:var(--se330-nav) 0 0!important;left:0!important;right:0!important;top:var(--se330-nav)!important;bottom:0!important;
+ width:100%!important;height:auto!important;max-height:none!important;min-height:0!important;
+ border:0!important;border-top:1px solid #594271!important;border-radius:0!important;
+ display:flex!important;flex-direction:column!important;overflow:hidden!important;
+ background:transparent!important;box-shadow:none!important;pointer-events:auto}
+#se225MaterialsPanel[data-se330-ui] *{box-sizing:border-box}
+#se225MaterialsPanel[data-se330-ui] [hidden]{display:none!important}
+#se225MaterialsPanel[data-se330-ui] .se225-m-title{display:none!important}
+body[data-se225-workspace=materials] #se225Shell[data-se330-ui] #se225MaterialsPanel[data-se330-ui][data-se330-pane]>.se225-m-title{display:none!important}
+#se225MaterialsPanel[data-se330-ui] button,
+#se225MaterialsPanel[data-se330-ui] summary,
+#se225MaterialsPanel[data-se330-ui] input,
+#se225MaterialsPanel[data-se330-ui] select{font-size:13px;min-height:40px;border-radius:8px}
+#se225MaterialsPanel[data-se330-ui] :is(button,summary):focus-visible,
+#se330MaterialTabs button:focus-visible{outline:2px solid #d8b7ff;outline-offset:-3px}
+#se225MaterialsPanel[data-se330-ui] button:disabled{opacity:.45}
+#se225MaterialsPanel[data-se330-ui] .se330-material-header{
+ display:flex;align-items:center;justify-content:space-between;gap:16px;flex:none;
+ min-height:74px;padding:12px 16px;background:linear-gradient(110deg,#251a35,#171324);
+ border-bottom:1px solid #5e4676;z-index:6}
+#se225MaterialsPanel[data-se330-ui] .se330-identity{min-width:0;display:grid;gap:2px}
+#se225MaterialsPanel[data-se330-ui] .se330-identity strong{font-size:18px;letter-spacing:-.3px;color:#f8f0ff}
+#se330MaterialProject{color:#baa8cb;font-size:12px;max-width:32vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#se225MaterialsPanel[data-se330-ui] .se330-header-actions{display:flex;align-items:center;gap:8px;flex:none}
+#se225MaterialsPanel[data-se330-ui] #se330MaterialProjects{background:#61368c!important;border-color:#b783e6!important}
+#se225MaterialsPanel[data-se330-ui] .se330-library-menu{position:relative}
+#se225MaterialsPanel[data-se330-ui] .se330-library-menu>summary{
+ display:flex;align-items:center;padding:8px 12px;list-style:none;cursor:pointer;
+ background:#291d3c;border:1px solid #73518f;color:#eee3ff}
+#se225MaterialsPanel[data-se330-ui] .se330-library-menu>summary::-webkit-details-marker{display:none}
+#se225MaterialsPanel[data-se330-ui] .se330-library-options{
+ position:absolute;right:0;top:calc(100% + 7px);width:230px;max-width:calc(100vw - 20px);padding:8px;
+ display:grid;gap:6px;background:#21172f;border:1px solid #9570b6;border-radius:10px;box-shadow:0 10px 30px #0008;z-index:20}
+#se330MaterialTools{display:flex;align-items:center;min-height:0}
+#se330MaterialTools:empty{display:none}
+#se330MaterialTools .se320-diagnostics-slot{width:100%}
+#se330MaterialTools #se274HUD{width:100%;min-height:40px}
+#se330MaterialTabs{display:none;flex:none;background:#191224;border-bottom:1px solid #654b7c}
+body[data-se225-workspace=materials] #se225Shell[data-se330-ui] #se225MaterialsPanel[data-se330-ui][data-se330-pane]>.se330-panels{
+ display:grid!important;grid-template-columns:var(--se330-library) minmax(0,1fr)!important;
+ gap:0!important;flex:1!important;padding:0!important;min-height:0!important;overflow:hidden!important;
+ background:transparent!important;scrollbar-width:thin}
+body[data-se225-workspace=materials] #se225Shell[data-se330-ui] #se225MaterialsPanel[data-se330-ui][data-se330-pane] .se330-library{
+ display:flex!important;flex-direction:column!important;position:relative!important;inset:auto!important;
+ grid-column:1!important;grid-row:1!important;width:auto!important;min-width:0!important;max-width:none!important;
+ min-height:0!important;height:auto!important;overflow:hidden!important;background:#171222!important;
+ border:0!important;border-right:1px solid #5e4475!important}
+body[data-se225-workspace=materials] #se225Shell[data-se330-ui] #se225MaterialsPanel[data-se330-ui][data-se330-pane] .se330-library>:not([hidden]){display:flex!important}
+#se225MaterialsPanel[data-se330-ui] .se330-library>.se251-side-title{
+ justify-content:space-between;flex-wrap:wrap;gap:4px;padding:13px 14px;min-height:48px;
+ background:#21182e;border-color:#55416a;font-size:13px}
+#se225MaterialsPanel[data-se330-ui] #se225MCount{color:#b9a5cc;font-size:11px;font-weight:500}
+#se225MaterialsPanel[data-se330-ui] .se330-preset-card{
+ flex-wrap:nowrap;align-items:end;gap:7px;margin:12px 10px 3px;padding:10px;
+ background:#241a33;border:1px solid #654881;border-radius:10px}
+#se225MaterialsPanel[data-se330-ui] .se330-preset-card label{flex:1;min-width:0;font-size:11px;gap:7px}
+#se225MaterialsPanel[data-se330-ui] .se330-preset-card #se225MCreate{font-size:12px;flex:none;padding:8px;background:#63398b!important}
+#se225MaterialsPanel[data-se330-ui] .se330-library>input{margin:6px 10px;width:calc(100% - 20px);font-size:13px;min-height:40px}
+#se225MaterialsPanel[data-se330-ui] #se251MaterialsTree{display:flex;flex-direction:column;gap:7px;padding:9px 10px;overflow:auto;min-height:0}
+#se225MaterialsPanel[data-se330-ui] .se251-model-tree-item{
+ flex:none;min-height:48px!important;width:100%;font-size:13px;line-height:1.3;text-align:left;padding:10px 11px;
+ background:#23192f!important;border:1px solid #58436e!important;white-space:normal}
+#se225MaterialsPanel[data-se330-ui] .se251-model-tree-item[aria-pressed=true]{background:#58317d!important;border-color:#b78ce6!important}
+#se225MaterialsPanel[data-se330-ui] .se330-library-empty{font-size:13px;font-weight:400;line-height:1.6;color:#b9aac7;padding:4px 15px;flex:none}
+body[data-se225-workspace=materials] #se225Shell[data-se330-ui] #se225MaterialsPanel[data-se330-ui][data-se330-pane] #se225MEdit:not([hidden]){
+ display:grid!important;grid-template-columns:minmax(0,1fr) var(--se330-inspector)!important;grid-column:2!important;grid-row:1!important;
+ gap:0!important;min-height:0!important;overflow:hidden!important}
+#se225MaterialsPanel[data-se330-ui] .se330-preview{min-width:0;min-height:0;display:flex;flex-direction:column;background:#100e1b;overflow:hidden}
+#se225MaterialsPanel[data-se330-ui] .se330-preview-heading{
+ display:flex;justify-content:space-between;align-items:center;gap:10px;min-height:66px;padding:10px 15px;
+ border-bottom:1px solid #514064;background:#191421;flex:none;flex-wrap:wrap}
+#se330PreviewName{font-size:13px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#se330PreviewModes{display:flex;gap:3px;background:#100d19;border:1px solid #4e3b61;padding:3px;border-radius:10px}
+#se225MaterialsPanel[data-se330-ui] #se330PreviewModes button{min-height:32px;font-size:11px;padding:5px 8px;border:0!important;background:transparent!important}
+#se225MaterialsPanel[data-se330-ui] #se330PreviewModes button[aria-pressed=true]{background:#5c347e!important;color:#fff!important}
+#se225MaterialsPanel[data-se330-ui] .se330-texture-workspace{
+ display:flex!important;flex-direction:column;gap:10px;flex:1;overflow:auto;min-height:0;border:0!important;border-radius:0;
+ margin:0!important;padding:18px 20px;background:radial-gradient(ellipse at 50% 20%,#272039,#100e1b 70%)!important}
+#se225MaterialsPanel[data-se330-ui] .se330-texture-workspace>label{flex:none;margin:0 auto!important;width:min(100%,460px);font-size:12px}
+#se225MaterialsPanel[data-se330-ui] .se330-paint-surface{
+ display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;flex:1 0 240px;min-height:220px;
+ padding:15px 8px;background:linear-gradient(45deg,#ffffff04 25%,transparent 25%,transparent 75%,#ffffff04 75%),#0c0a13;border:1px solid #463450;border-radius:12px}
+#se225MaterialsPanel[data-se330-ui] #se225MCanvas{display:block!important;width:min(100%,360px)!important;max-width:100%!important;height:auto!important;aspect-ratio:1;margin:0!important;border:1px solid #a17ec4!important;border-radius:6px;box-shadow:0 8px 25px #0007}
+#se225MaterialsPanel[data-se330-ui] .se330-texture-caption{font-size:11px;color:#bdaacd;text-align:center}
+#se225MaterialsPanel[data-se330-ui] .se225-m-brush{flex:none;grid-template-columns:1fr 1.5fr;gap:12px;margin-top:2px}
+#se225MaterialsPanel[data-se330-ui] .se225-m-actions{flex:none;gap:7px}
+#se225MaterialsPanel[data-se330-ui] .se225-m-actions>button{font-size:12px;min-height:39px;flex:1 1 100px}
+#se225MaterialsPanel[data-se330-ui] .se330-texture-workspace>.se225-m-hint{font-size:11px;line-height:1.5;color:#b8a8c5}
+#se225MaterialsPanel[data-se330-ui] .se330-inspector{
+ min-width:0;min-height:0;overflow:auto;overscroll-behavior:contain;padding:14px;display:flex;flex-direction:column;gap:13px;
+ background:#191322;border-left:1px solid #604878;scrollbar-width:thin}
+#se225MaterialsPanel[data-se330-ui] .se330-inspector h2{font-size:13px;font-weight:700;margin:0;color:#dcc4f1}
+#se225MaterialsPanel[data-se330-ui] .se330-inspector .se225-m-section{flex:none;padding:12px;background:#21182f!important;border-color:#5a426f!important}
+#se225MaterialsPanel[data-se330-ui] .se330-inspector .se225-m-section summary{font-size:12px;min-height:26px;margin-bottom:6px}
+#se225MaterialsPanel[data-se330-ui] .se330-inspector label{font-size:12px;margin:10px 0}
+#se225MaterialsPanel[data-se330-ui] .se330-number-field{grid-template-columns:minmax(0,1fr) 94px;align-items:center;gap:10px}
+#se225MaterialsPanel[data-se330-ui] .se330-number-field input{font-variant-numeric:tabular-nums;min-height:38px}
+#se225MaterialsPanel[data-se330-ui] .se330-m-assign{font-size:12px}
+#se225MaterialsPanel[data-se330-ui] .se330-scene-stage{display:none;position:relative;flex:1;min-height:210px;pointer-events:none}
+#se225MaterialsPanel[data-se330-ui][data-se330-preview=scene] .se330-texture-workspace{display:none!important}
+#se225MaterialsPanel[data-se330-ui][data-se330-preview=scene] .se330-scene-stage{display:block}
+#se225MaterialsPanel[data-se330-ui][data-se330-preview=scene] .se330-preview{background:transparent}
+/* The live scene uses the existing canvas below this shell. Only the reserved
+   scene region passes input through; every studio control keeps its own hit box. */
+body[data-se225-workspace=materials] #se225Shell[data-se330-ui] #se225MaterialsPanel[data-se330-ui][data-se330-pane][data-se330-preview=scene],
+body[data-se225-workspace=materials] #se225Shell[data-se330-ui] #se225MaterialsPanel[data-se330-ui][data-se330-pane][data-se330-preview=scene]>.se330-panels,
+body[data-se225-workspace=materials] #se225Shell[data-se330-ui] #se225MaterialsPanel[data-se330-ui][data-se330-pane][data-se330-preview=scene] #se225MEdit,
+body[data-se225-workspace=materials] #se225Shell[data-se330-ui] #se225MaterialsPanel[data-se330-ui][data-se330-pane][data-se330-preview=scene] .se330-preview{pointer-events:none!important}
+#se225MaterialsPanel[data-se330-ui][data-se330-preview=scene] :is(.se330-material-header,#se330MaterialTabs,.se330-library,.se330-inspector,.se330-preview-heading,.se330-material-footer){pointer-events:auto!important}
+#se225MaterialsPanel[data-se330-ui] .se330-scene-caption{position:absolute;top:14px;left:14px;font-size:11px;border:1px solid #765895;border-radius:20px;background:#181124de;padding:6px 11px;color:#e1cdf3}
+#se225MaterialsPanel[data-se330-ui] .se330-scene-stage>p{position:absolute;bottom:12px;left:12px;right:12px;font-size:11px;background:#181124e8;padding:10px 12px;border:1px solid #71528d;border-radius:8px;color:#d7c4e8}
+body[data-se225-workspace=materials] #se225Shell[data-se330-ui] #se225MaterialsPanel[data-se330-ui][data-se330-pane] .se330-empty:not([hidden]){
+ display:flex!important;flex-direction:column;justify-content:center;align-items:center;text-align:center;
+ grid-column:2;grid-row:1;min-width:0;min-height:0;overflow:auto;padding:35px;background:radial-gradient(ellipse at 50% 30%,#2c2140,#100d19 75%)}
+#se225MaterialsPanel[data-se330-ui] .se330-empty-icon{display:grid;place-items:center;width:90px;height:90px;font-size:62px;color:#c7a5ed;border:1px solid #72538e;background:#302140;border-radius:24px;box-shadow:0 18px 40px #0005;margin-bottom:12px}
+#se225MaterialsPanel[data-se330-ui] .se330-empty h2{font-size:25px;letter-spacing:-.5px;font-weight:650;margin:16px 0 0;color:#f1e6fd}
+#se225MaterialsPanel[data-se330-ui] .se330-empty p{max-width:390px;font-size:14px;line-height:1.8;color:#baa8ce;margin:14px auto 22px}
+#se225MaterialsPanel[data-se330-ui] #se330MaterialFirst{background:#67408b!important;border-color:#b98ce7!important;padding:10px 18px;font-size:13px;min-height:44px}
+#se225MaterialsPanel[data-se330-ui] .se330-material-footer{flex:none;min-height:36px;padding:8px 16px;background:#15101e;border-top:1px solid #513d64;font-size:11px;z-index:2}
+#se225MaterialsPanel[data-se330-ui] #se225MStatus{font-size:11px;color:#c5b2d7;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media(min-width:1101px) and (max-width:1279px){
+ body[data-se225-workspace=materials] #se225Shell[data-se330-ui]{--se330-library:215px;--se330-inspector:285px}
+ #se225MaterialsPanel[data-se330-ui] .se330-preview-heading{align-items:flex-start;flex-direction:column}
+}
+/* A phone can report a desktop-width iframe. Portrait shape stays compact. */
+@media(max-width:800px),(max-width:1100px) and (orientation:portrait){
+ body[data-se225-workspace=materials] #se225Shell[data-se330-ui]{--se330-nav:48px}
+ #se225MaterialsPanel[data-se330-ui] .se330-material-header{padding:10px 12px;gap:9px;min-height:96px;align-items:flex-start;flex-direction:column}
+ #se225MaterialsPanel[data-se330-ui] .se330-identity{display:flex;align-items:baseline;gap:9px;width:100%}
+ #se225MaterialsPanel[data-se330-ui] .se330-identity strong{font-size:17px;white-space:nowrap}
+ #se330MaterialProject{font-size:11px;max-width:40vw}
+ #se225MaterialsPanel[data-se330-ui] .se330-header-actions{width:100%;gap:6px}
+ #se225MaterialsPanel[data-se330-ui] .se330-header-actions>button{flex:1;min-width:0;font-size:12px;min-height:38px}
+ #se225MaterialsPanel[data-se330-ui] .se330-library-menu{flex:1}
+ #se225MaterialsPanel[data-se330-ui] .se330-library-menu>summary{font-size:11px;min-height:38px;justify-content:center;white-space:nowrap;padding:7px 8px}
+ #se330MaterialTabs{display:flex;padding:7px 9px;gap:7px;min-height:53px}
+ #se225MaterialsPanel[data-se330-ui] #se330MaterialTabs button{flex:1;min-width:0;min-height:38px;padding:6px 8px;font-size:12px;background:#21172f!important}
+ #se225MaterialsPanel[data-se330-ui] #se330MaterialTabs button[aria-selected=true]{background:#603788!important;border-color:#c28bea!important}
+ body[data-se225-workspace=materials] #se225Shell[data-se330-ui] #se225MaterialsPanel[data-se330-ui][data-se330-pane]>.se330-panels{display:block!important;overflow:hidden!important}
+ body[data-se225-workspace=materials] #se225Shell[data-se330-ui] #se225MaterialsPanel[data-se330-ui][data-se330-pane] .se330-library{height:100%!important;max-width:none!important;border-right:0!important}
+ body[data-se225-workspace=materials] #se225Shell[data-se330-ui] #se225MaterialsPanel[data-se330-ui][data-se330-pane] #se225MEdit:not([hidden]){display:contents!important}
+ body[data-se225-workspace=materials] #se225Shell[data-se330-ui] #se225MaterialsPanel[data-se330-ui][data-se330-pane]:not([data-se330-pane=library]) .se330-library,
+ #se225MaterialsPanel[data-se330-ui]:not([data-se330-pane=texture]) .se330-preview,
+ #se225MaterialsPanel[data-se330-ui]:not([data-se330-pane=properties]) .se330-inspector{display:none!important}
+ #se225MaterialsPanel[data-se330-ui][data-se330-pane=texture] .se330-preview{height:100%;display:flex}
+ #se225MaterialsPanel[data-se330-ui][data-se330-pane=properties] .se330-inspector{height:100%;display:flex;border-left:0;padding:14px}
+ body[data-se225-workspace=materials] #se225Shell[data-se330-ui] #se225MaterialsPanel[data-se330-ui][data-se330-pane] .se330-empty:not([hidden]){display:none!important}
+ #se225MaterialsPanel[data-se330-ui] .se330-library>.se251-side-title{min-height:48px;font-size:14px}
+ #se225MaterialsPanel[data-se330-ui] .se330-preset-card{margin:12px;max-width:600px}
+ #se225MaterialsPanel[data-se330-ui] .se330-library>input{margin:5px 12px;width:calc(100% - 24px)}
+ #se225MaterialsPanel[data-se330-ui] .se330-library-empty{padding:3px 18px}
+ #se225MaterialsPanel[data-se330-ui] .se330-preview-heading{padding:10px 12px;gap:8px;min-height:62px}
+ #se225MaterialsPanel[data-se330-ui] .se330-texture-workspace{padding:12px;gap:10px}
+ #se225MaterialsPanel[data-se330-ui] .se330-paint-surface{flex:0 0 auto;min-height:0;padding:12px}
+ #se225MaterialsPanel[data-se330-ui] #se225MCanvas{width:min(100%,360px)!important}
+ #se225MaterialsPanel[data-se330-ui] .se330-material-footer{padding:7px 12px;min-height:32px}
+ #se225MaterialsPanel[data-se330-ui] .se330-inspector>.se225-m-section{width:100%;max-width:740px;margin-left:auto;margin-right:auto}
+}
+@media(max-width:420px){
+ #se330MaterialProject{display:none}
+ #se225MaterialsPanel[data-se330-ui] .se330-preview-heading{align-items:flex-start;flex-direction:column}
+ #se225MaterialsPanel[data-se330-ui] .se330-preview-heading #se330PreviewModes{align-self:stretch}
+ #se225MaterialsPanel[data-se330-ui] #se330PreviewModes button{flex:1}
+ #se225MaterialsPanel[data-se330-ui] .se330-texture-workspace .se225-m-actions>button{min-height:40px}
+}
