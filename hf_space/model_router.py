@@ -525,7 +525,15 @@ def _guard_vision_answer(events, original_source: str):
         r"\b(?:fragmented\s+(?:appearance|character|representation|nature|"
         r"consciousness)|multiple\s+identit(?:y|ies)|dreamlike\s+(?:state|"
         r"scene|context)|magical\s+transformation|storytelling\s+scene|"
-        r"artistic\s+experimentation)\b", answer, re.I))
+        r"artistic\s+experimentation|lunar\s+(?:powers?|magic|abilities)|"
+        r"control\s+over\s+tides|night\s+vision|reflective\s+state|"
+        r"symbolic\s+layering|versatility\s+in\s+representation|"
+        r"implications\s+and\s+assumptions|"
+        r"states?\s+or\s+with\s+different\s+abilities|"
+        r"(?:aspects|parts)\s+of\s+(?:her|their|the\s+character'?s)\s+"
+        r"(?:powers?|identit(?:y|ies)|abilities)|"
+        r"(?:white|blank)\s+background[^.]{0,110}\b"
+        r"(?:purity|clarity|transition|reflective|symboli[sz]))\b", answer, re.I))
     if unsupported:
         digest = _vision_evidence_digest(description)
         features = [
@@ -547,9 +555,9 @@ def _guard_vision_answer(events, original_source: str):
             "subject, not a fragmented character or a sequence of events. "
             "These details are unverified model observations, not pixels §C "
             "independently inspected.\n\n"
-            + body + "\n\nSome crop descriptions may be incomplete or disagree; "
-            "the evidence does not support a story, transformation or "
-            "psychological interpretation."
+            + body + "\n\nSome crop descriptions may be incomplete or disagree. "
+            "Decorative moon and magic motifs do not independently establish "
+            "abilities, events, or symbolic meanings."
         )
         yield {"type": "STATUS", "phase": "VISION_ANSWER_GROUNDING_GUARD",
                "reason": "Rejected unsupported narrative interpretation of a multi-view reference; preserved actual region observations.",
