@@ -81,6 +81,9 @@ async def main():
             state=await page.evaluate("""() => ({title:document.title,ready:document.readyState,body:document.body?.innerText?.slice(0,500),studio:window.SWYRL_ENGINE_STUDIOS?.active?.(),build:window.SWRLZ_FORGE_BUILD?.version,openType:typeof window.SWYRL_ENGINE_PLAIN_HAND_BASE?.open,material:!!window.SWYRL_ENGINE_CLIFF_MATERIAL_291,canvases:document.querySelectorAll('canvas').length})""")
             print('CLIFF_BROWSER_BOOT_FAILURE='+json.dumps({'state':state,'issues':issues[-35:],'error':str(error)}),flush=True)
             raise
+        if await page.locator('#seReleaseNotesDialog[open]').count():
+            await page.locator('#seReleaseNotesDialog[open] button').last.click()
+        assert not await page.locator('#seReleaseNotesDialog[open]').count(), 'Release notes obscured actual rendered viewport'
         opened=await page.evaluate("() => window.SWYRL_ENGINE_PLAIN_HAND_BASE.open(true)")
         await page.wait_for_timeout(3500)
         detail=await page.evaluate("""() => {
