@@ -1,0 +1,67 @@
+name: One-shot §E v11.332 rock fracture atlas seal
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/one-shot-forge-v11-332-crack-atlas-seal.yml'
+      - 'projects/swrlz-forge-moba/patches/v11_332_smooth_cliff_crack_atlas.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  focused:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 17
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Test original atlas crack pixels and full source rebuild
+        run: |
+          python -m pip install --quiet pillow
+          node --check projects/swrlz-forge-moba/runtime/cliff_fracture_overlay_v11_332.js
+          node projects/swrlz-forge-moba/scripts/test_v11_332_cliff_fractures.cjs
+          python - <<'PY'
+          from PIL import Image
+          from pathlib import Path
+          p=Path('projects/swrlz-forge-moba/assets/cliff-hand/cliff_pbr_atlas_384.jpg')
+          img=Image.open(p).convert('RGB')
+          assert img.size==(1536,768),img.size
+          fracture=img.crop((1152,384,1536,768))
+          light=sum(1 for px in fracture.getdata() if sum(px)/3>120)
+          assert 1000<light<85000,light
+          clean=img.crop((0,384,384,768))
+          assert clean.getpixel((190,190))!=fracture.getpixel((190,190))
+          print('SE332_REAL_ATLAS_FRACTURE_PIXELS='+str(light),flush=True)
+          PY
+          python - <<'PY'
+          import json,hashlib,subprocess,sys
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          manifest=json.loads((root/'source-manifest.json').read_text('utf8'))
+          assert manifest['name']=='§wyrl§ Engine v11.332'
+          assert len(manifest['patches'])==345
+          assert manifest['patches'][-1]=='patches/v11_332_smooth_cliff_crack_atlas.py'
+          out=Path('/tmp/se332')
+          subprocess.run([sys.executable,str(root/'build_space.py'),'--output',str(out)],check=True)
+          raw=(out/'index.html').read_bytes()
+          assert raw==(out/'modeler.html').read_bytes()
+          html=raw.decode('utf8')
+          for token in (
+              'function se332OverlayRockFractures(img,albedoCtx){',
+              'se332OverlayRockFractures(img,albedo);',
+              'm.drawImage(img,1152,384,size,size,0,0,size,size);',
+              'SWYRL_ENGINE_DEPLOY_MARKER: V11_332_CLIFF_CRACK_ATLAS',
+              "window.SWRLZ_FORGE_BUILD={version:'v11.332'",
+              '<title>§wyrl§ Engine · Maker v11.332</title>',
+              'model.parts=[stone];model.meshGroups=[];'):
+            assert token in html,token
+          assert len(json.loads((out/'SOURCE.json').read_text('utf8'))['assets'])==71
+          subprocess.run([sys.executable,str(root/'scripts/check_inline_js_syntax_v11_266.py'),str(out/'index.html')],check=True)
+          print('SE332_SHA256='+hashlib.sha256(raw).hexdigest(),flush=True)
+          print('SE332_BYTES='+str(len(raw)),flush=True)
+          print('SE332_PATCHES=345',flush=True)
+          print('SE332_ASSETS=71',flush=True)
+          PY
