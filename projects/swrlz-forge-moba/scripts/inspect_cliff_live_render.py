@@ -33,12 +33,12 @@ async def main():
         page.on('response',lambda r:issues.append('HTTP '+str(r.status)+' '+r.url) if r.status>=400 and 'cliff' in r.url else None)
         await page.goto(origin+'/modeler.html',wait_until='domcontentloaded',timeout=90000)
         try:
-            await page.wait_for_function("() => typeof createProjectFromTemplate==='function' && !!window.SWYRL_ENGINE_CLIFF_MATERIAL_291",timeout=35000)
+            await page.wait_for_function("() => !!window.SWYRL_ENGINE_PLAIN_HAND_BASE?.open && !!window.SWYRL_ENGINE_CLIFF_MATERIAL_291",timeout=35000)
         except Exception as error:
-            state=await page.evaluate("""() => ({title:document.title,ready:document.readyState,body:document.body?.innerText?.slice(0,500),studio:window.SWYRL_ENGINE_STUDIOS?.active?.(),build:window.SWRLZ_FORGE_BUILD?.version,createType:typeof createProjectFromTemplate,material:!!window.SWYRL_ENGINE_CLIFF_MATERIAL_291,canvases:document.querySelectorAll('canvas').length})""")
+            state=await page.evaluate("""() => ({title:document.title,ready:document.readyState,body:document.body?.innerText?.slice(0,500),studio:window.SWYRL_ENGINE_STUDIOS?.active?.(),build:window.SWRLZ_FORGE_BUILD?.version,openType:typeof window.SWYRL_ENGINE_PLAIN_HAND_BASE?.open,material:!!window.SWYRL_ENGINE_CLIFF_MATERIAL_291,canvases:document.querySelectorAll('canvas').length})""")
             print('CLIFF_BROWSER_BOOT_FAILURE='+json.dumps({'state':state,'issues':issues[-35:],'error':str(error)}),flush=True)
             raise
-        opened=await page.evaluate("() => createProjectFromTemplate('plain-hand-base',true)")
+        opened=await page.evaluate("() => window.SWYRL_ENGINE_PLAIN_HAND_BASE.open(true)")
         await page.wait_for_timeout(3500)
         detail=await page.evaluate("""() => {
           const state=window.SWYRL_ENGINE_CLIFF_MATERIAL_291.status();
