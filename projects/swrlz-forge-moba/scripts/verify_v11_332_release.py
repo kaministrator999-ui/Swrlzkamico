@@ -50,7 +50,7 @@ def main():
     ):
         assert token in html,token
     assert html.count("g.setAttribute('uv1',g.getAttribute('uv2'));")==1
-    assert html.count("source.engine='§wyrl§ Engine · Maker v11.332';source.version=11.331;")==3
+    assert html.count("source.engine='§wyrl§ Engine · Maker v11.332';source.version=11.332;")==3
     subprocess.run([sys.executable,str(ROOT/'scripts/check_inline_js_syntax_v11_266.py'),str(out/'index.html')],check=True)
     subprocess.run(['node',str(ROOT/'scripts/test_v11_332_cliff_fractures.cjs')],check=True)
     subprocess.run(['node',str(ROOT/'scripts/test_v11_292_cliff_material.cjs')],check=True)
