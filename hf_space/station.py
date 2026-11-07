@@ -41,7 +41,7 @@ import chatgpt_import_job
 import chatgpt_account_memory
 import personal_history_lookup
 import private_account_facts_v208
-from runtime_capacity import runtime_capacity_snapshot
+from runtime_capacity import runtime_capacity_snapshot, ResponseResourceMeter
 from chat_vision import export_threads_with_vision_handoffs
 import tempfile
 from project_archive import ProjectArchiveError, archive_filename, build_project_archive, parse_project_files, project_markdown, source_fences, validate_project_files
@@ -1117,6 +1117,19 @@ def _run(key,request_id,model_id,payload,assistant_id,forge_context=None):
         g["startedAtUnixMs"]=int(time.time()*1000)
         g["queueWaitMs"]=max(0,g["startedAtUnixMs"]-int(g.get("acceptedAtUnixMs") or g["startedAtUnixMs"]))
         g["status"].append({"phase":"GENERATING","reason":"Workstation admitted generation","atUnixMs":g["startedAtUnixMs"]})
+    # One meter per accepted response route. Counters are shared-cgroup
+    # observations, NOT an isolated model's memory or CPU allocation.
+    resource_meter=ResponseResourceMeter()
+    resource_usage=None
+    def finish_resource_usage(outcome):
+        nonlocal resource_usage
+        if resource_usage is None:
+            resource_usage=resource_meter.finish()
+            resource_usage["routeId"]=str(model_id or "unknown")[:80]
+            resource_usage["outcome"]=outcome
+            print(json.dumps({"event":"STATION_RESPONSE_RESOURCE_USAGE",
+                              "requestId":request_id,"usage":resource_usage}),flush=True)
+        return copy.deepcopy(resource_usage)
     try:
         if forge_context is None and model_id=="stock" and _stock_generate is None and not (payload.get("githubDirectTestTxt") or payload.get("githubChatFileAction") or payload.get("verifiedPrivateAnswer") or payload.get("githubStart") or payload.get("githubAction") or payload.get("suppliedGitHubReportExplanation")):raise RuntimeError("Original HF generator is not installed")
         text=""; completed=False
@@ -1428,13 +1441,16 @@ def _run(key,request_id,model_id,payload,assistant_id,forge_context=None):
             if kind=="FAILED":raise RuntimeError(str(event.get("reason") or "Generation failed"))
             if kind in ("COMPLETE","COMPLETED"):completed=True
         if cancelled:
+            cancelled_usage=finish_resource_usage("CANCELLED")
             with _lock:
                 g=s.get("activeGeneration")
                 if g and g.get("requestId")==request_id:
-                    g.update(terminal=True,terminalType="CANCELLED",phase="CANCELLED")
+                    g.update(terminal=True,terminalType="CANCELLED",phase="CANCELLED",
+                             responseResourceUsage=cancelled_usage)
                     g["status"].append({"phase":"CANCELLED","reason":"Stopped by user"});_commit_revision(s)
             return
         if not text:raise RuntimeError("Selected model emitted no DELTA")
+        complete_usage=finish_resource_usage("COMPLETE")
         github_telemetry=None
         online_outcome=None
         knowledge_snapshot=None
@@ -1446,6 +1462,7 @@ def _run(key,request_id,model_id,payload,assistant_id,forge_context=None):
             g["status"].append({"phase":"PERSISTING","reason":"Saving the response to the chat","atUnixMs":completed_ms})
             started_ms=int(g.get("startedAtUnixMs") or completed_ms)
             accepted_ms=int(g.get("acceptedAtUnixMs") or started_ms)
+            g["responseResourceUsage"]=complete_usage
             g["stationTiming"]={
                 "acceptedAtUnixMs":accepted_ms,
                 "startedAtUnixMs":started_ms,
@@ -1499,7 +1516,8 @@ def _run(key,request_id,model_id,payload,assistant_id,forge_context=None):
                 "behaviorLedger":behavior_camera,
                 "structuredReceipt":copy.deepcopy(((intent.get("failureEvidence") or {}).get("receiptSemantics") or {}).get("structuredReceipt") or {}),
             } if intent.get("codingTask") else None
-            telemetry_meta={"progressTrace":progress_timeline_v238.project(g.get("status"),accepted_ms,request_id)}
+            telemetry_meta={"progressTrace":progress_timeline_v238.project(g.get("status"),accepted_ms,request_id),
+                            "responseResourceUsage":copy.deepcopy(complete_usage)}
             if validation.get("status") == "SOURCE_VALIDATED_ONLY":
                 # Preserve exact proposal provenance after the next generation
                 # replaces activeGeneration. This is not an execution receipt.
@@ -1622,6 +1640,7 @@ def _run(key,request_id,model_id,payload,assistant_id,forge_context=None):
                     "engineCompletionTelemetry":copy.deepcopy(g.get("engineCompletionTelemetry") or {}),
                     "contextBudget":copy.deepcopy(g.get("contextBudget") or {}),
                     "resourcePlan":copy.deepcopy(g.get("resourcePlan") or {}),
+                    "responseResourceUsage":copy.deepcopy(complete_usage),
                     "finalResponse":str(text or "")[:24000],
                     "finalResponseSha256":hashlib.sha256(str(text or "").encode("utf-8")).hexdigest(),
                     "requestedModelId":str(g.get("requestedModelId") or model_id)[:80],
@@ -1642,6 +1661,7 @@ def _run(key,request_id,model_id,payload,assistant_id,forge_context=None):
                     "schema":"swrlz-station-programming-log-v1",
                     "generationTelemetry":generation_telemetry,
                     "stationTiming":station_timing,
+                    "responseResourceUsage":copy.deepcopy(complete_usage),
                     "candidateValidation":{
                         "status":validation.get("status"),
                         "reasons":[str(x)[:160] for x in (validation.get("reasons") or [])[:8]],
@@ -1732,11 +1752,13 @@ def _run(key,request_id,model_id,payload,assistant_id,forge_context=None):
                     _commit_revision(s)
             threading.Thread(target=persist_programming_log,daemon=True,name="programming-log-"+request_id[:8]).start()
     except Exception as exc:
+        failed_usage=finish_resource_usage("FAILED")
         failed_online_outcome=None
         with _lock:
             g=s["activeGeneration"]
             if g and g["requestId"]==request_id:
-                g.update(terminal=True,terminalType="FAILED",phase="FAILED")
+                g.update(terminal=True,terminalType="FAILED",phase="FAILED",
+                         responseResourceUsage=failed_usage)
                 g["status"].append({"phase":"FAILED","reason":str(exc)[:240],"atUnixMs":int(time.time()*1000),**progress_timeline_v238.forge_failure_fields(g.get("code"),"FAILED")})
                 if isinstance(g.get("onlineResearch"),dict) and g.get("onlineResearch"):
                     failed_online_outcome={
@@ -1753,12 +1775,15 @@ def _run(key,request_id,model_id,payload,assistant_id,forge_context=None):
                     }
                 thread=next((t for t in s["threads"] if t["id"]==payload["threadId"]),None)
                 if thread:
-                    thread["messages"].append({"id":assistant_id,"role":"assistant","text":(str(g.get("text") or "") if forge_context is not None and g.get("text") else "Generation failed: "+str(exc)[:240]),"createdAt":int(time.time()*1000),"meta":{"requestId":request_id,"modelId":model_id,"state":"FAILED","onlineResearch":copy.deepcopy(g.get("onlineResearch") or {}),"onlineTrace":copy.deepcopy((g.get("onlineTrace") or [])[-64:]),"progressTrace":progress_timeline_v238.project(g.get("status"),g.get("acceptedAtUnixMs"),request_id)}})
+                    thread["messages"].append({"id":assistant_id,"role":"assistant","text":(str(g.get("text") or "") if forge_context is not None and g.get("text") else "Generation failed: "+str(exc)[:240]),"createdAt":int(time.time()*1000),"meta":{"requestId":request_id,"modelId":model_id,"state":"FAILED","responseResourceUsage":copy.deepcopy(failed_usage),"onlineResearch":copy.deepcopy(g.get("onlineResearch") or {}),"onlineTrace":copy.deepcopy((g.get("onlineTrace") or [])[-64:]),"progressTrace":progress_timeline_v238.project(g.get("status"),g.get("acceptedAtUnixMs"),request_id)}})
                     _commit_revision(s)
         if failed_online_outcome is not None:
             threading.Thread(target=persist_runtime_diagnostic,args=(request_id,str(failed_online_outcome.get("selectedModelId") or model_id),"ONLINE_RESEARCH_OUTCOME",failed_online_outcome),daemon=True,name="online-failed-"+request_id[:8]).start()
 
     finally:
+        # Early cancellation, response replacement, and CAS failures also
+        # stop sampling; no private prompt/image content appears in logs.
+        finish_resource_usage("INTERRUPTED")
         _invalidate_forge(forge_context)
 
 def _container_content_tag(text):
