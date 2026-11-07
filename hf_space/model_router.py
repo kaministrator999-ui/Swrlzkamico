@@ -304,6 +304,75 @@ _VISION_START = "\n\n[Uploaded image — vision description, not original pixels
 _VISION_END = "\n[/Uploaded image]"
 
 
+def _format_direct_vision_report(description: str) -> str:
+    """Present a single factual assistant answer, not duplicate raw model logs.
+
+    This is a deterministic text layout transform, not a new image inference
+    or a claim that a second model reviewed the original pixels.
+    """
+    text = description.strip()
+    # Source-crop observations remain in the saved user handoff/export; only
+    # the selected whole-image narrative belongs in the assistant's answer.
+    text = text.split("\n\n[Raw source-crop observations; accuracy unverified]\n", 1)[0]
+    text = re.split(
+        r"\n\s*Focused image details\s*\(unverified source-crop observations\):",
+        text, maxsplit=1, flags=re.I,
+    )[0].strip()
+    text = re.sub(
+        r"^Character reference[^\n]*\n\s*", "", text, count=1, flags=re.I,
+    ).strip()
+    if not text:
+        return "## Image analysis\n\nThe local model produced no usable visual description."
+
+    labels = {
+        "subject and views": "Subject & views",
+        "views and subject": "Subject & views",
+        "overview": "Overview",
+        "shape and proportions": "Shape & proportions",
+        "shape and anatomy": "Shape & proportions",
+        "silhouette and anatomy": "Shape & proportions",
+        "geometry and layers": "Geometry & layers",
+        "shape and construction": "Geometry & layers",
+        "clothing and surface detail": "Clothing & surfaces",
+        "clothing and surfaces": "Clothing & surfaces",
+        "color and surface": "Clothing & surfaces",
+        "materials and markings": "Materials & markings",
+        "props and contact": "Props & contact",
+        "props and small features": "Props & details",
+        "props and fine details": "Props & details",
+        "accessories and contact": "Props & contact",
+        "visibility limits": "Visibility limits",
+        "visibility and uncertainty": "Visibility limits",
+        "limits": "Visibility limits",
+    }
+    pattern = re.compile(
+        r"(?im)^(" + "|".join(re.escape(k) for k in labels) + r"):\s*"
+    )
+    matches = list(pattern.finditer(text))
+    sections = []
+    if len(matches) >= 2:
+        seen = set()
+        for i, match in enumerate(matches[:8]):
+            start = match.end()
+            end = matches[i + 1].start() if i + 1 < len(matches) else len(text)
+            body = re.sub(r"\s*\n\s*", " ", text[start:end]).strip()
+            if not body:
+                continue
+            name = labels[match.group(1).casefold()]
+            signature = (name.casefold(), re.sub(r"\s+", " ", body.casefold()))
+            if signature in seen:
+                continue
+            seen.add(signature)
+            sections.append(f"### {name}\n\n{body}")
+    # Unstructured and partial captions must still be readable; no invented
+    # headings or reconstructed observations are added to their content.
+    content = "\n\n".join(sections) if sections else text
+    return (
+        "## Image analysis\n\n" + content +
+        "\n\n*Based on the local image model's observations; not independently verified.*"
+    )
+
+
 def _direct_vision_description(payload: dict[str, Any]) -> str | None:
     """Return the actual analyzer text for basic image identification requests.
 
@@ -349,7 +418,7 @@ def _direct_vision_description(payload: dict[str, Any]) -> str | None:
     }
     if question not in direct_questions:
         return None
-    # Direct visual-identification replies show ONE primary description. Raw\n    # crop evidence remains in the saved image handoff and its disclosure.\n    primary = description.split("\n\n[Raw source-crop observations; accuracy unverified]\n", 1)[0].strip()\n    return "Local image analyzer's description (not directly inspected by §C):\n\n" + primary
+    return _format_direct_vision_report(description)
 
 
 def _ground_vision_handoff(payload: dict[str, Any]) -> dict[str, Any]:
