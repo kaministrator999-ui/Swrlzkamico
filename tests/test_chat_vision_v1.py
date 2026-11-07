@@ -658,11 +658,42 @@ assert "mage wears a purple hood" in joined
 assert "Far-left detail (source-image crop)" in joined
 final_prompt = joint_model.calls[-1]["messages"][0]["content"]
 assert final_prompt[1]["type"] == "image_url", "the integration must see the source image"
+assert final_prompt[1]["image_url"]["url"] == (
+    joint_model.calls[0]["messages"][0]["content"][1]["image_url"]["url"]
+), "final synthesis must reuse the complete 768px overview, not downsize again"
 assert "Whole scene:" in final_prompt[0]["text"]
 assert "Center-right detail" in final_prompt[0]["text"]
 assert any(f.get("inferenceStage") == "FUSION_PREFILL" for _, f in joint_phases)
 assert any(f.get("integratedSelected") is True for _, f in joint_phases)
 assert joint_model.calls[-1]["max_tokens"] == 256
+# A short coherent full-image interpretation must win over four verbose
+# crop observations; total keyword count across crops is not scene accuracy.
+class CompactFusionModel:
+    def __init__(self):
+        self.calls = []
+    def create_chat_completion(self, **kwargs):
+        self.calls.append(kwargs)
+        texts = [
+            "Character turnaround with several angles of one design.",
+            "A purple hood, gold trim, boots, violet gems and white hair.",
+            "A purple cape, moon motifs, gold ornaments and lavender gloves.",
+            "A purple robe, brown boots, hat, necklace and crystal staff.",
+            "A violet hood, moon ornament, silver star and pale hair.",
+            "The same character wears a purple hood and carries a crystal staff across several views.",
+        ]
+        return iter([{"choices":[{"delta":{"content":texts[len(self.calls)-1]}}]}])
+compact_model = CompactFusionModel()
+compact_phases = []
+with patch.object(vision, "_load_local_model", return_value=compact_model):
+    compact = vision._ask_vision_local(
+        reference_encoded, "Describe the same character across views.",
+        report_phase=lambda phase, **fields: compact_phases.append(fields))
+assert len(compact_model.calls) == 6
+assert compact.startswith("Integrated whole-image observation")
+assert "same character wears a purple hood" in compact
+assert any(x.get("integratedSelected") is True for x in compact_phases)
+
+
 weaker_model = JointVisionModel(generic_final=True)
 weaker_phases = []
 with patch.object(vision, "_load_local_model", return_value=weaker_model):
