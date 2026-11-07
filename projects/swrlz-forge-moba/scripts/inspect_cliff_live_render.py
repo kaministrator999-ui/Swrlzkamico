@@ -2,6 +2,7 @@
 """Narrow, read-only source-backed browser diagnosis of Smooth Cliff Hand materials."""
 import argparse,asyncio,json,hashlib,base64
 from pathlib import Path
+from urllib.request import Request,urlopen
 from urllib.parse import urlsplit
 from playwright.async_api import async_playwright
 
@@ -124,5 +125,49 @@ async def main():
         live=detail.get('viewport',{}).get('liveMeshes',[])
         if not opened or len(live)!=1 or not live[0].get('map') or not live[0].get('normal'):
             raise AssertionError('LIVE_CLIFF_MESH_NOT_USING_PBR '+json.dumps(live))
+        # Compare a fresh Android-sized WebGL context, not merely desktop metadata.
+        mobile=await browser.new_context(viewport={'width':390,'height':844},
+            device_scale_factor=2.75,is_mobile=True,has_touch=True,
+            user_agent='Mozilla/5.0 (Linux; Android 16; moto g power - 2026) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Mobile Safari/537.36')
+        await mobile.route(origin+'/**',handle)
+        phone=await mobile.new_page()
+        mobile_errors=[]
+        phone.on('pageerror',lambda e:mobile_errors.append(str(e)))
+        await phone.goto(origin+'/modeler.html',wait_until='domcontentloaded',timeout=90000)
+        await phone.wait_for_function("() => !!window.SWYRL_ENGINE_PLAIN_HAND_BASE?.open && !!window.SWYRL_ENGINE_CLIFF_MATERIAL_291",timeout=50000)
+        if await phone.locator('#seReleaseNotesDialog[open]').count():
+            await phone.locator('#seReleaseNotesDialog[open] button').last.click()
+        phone_open=await phone.evaluate("() => window.SWYRL_ENGINE_PLAIN_HAND_BASE.open(true)")
+        await phone.wait_for_function("() => window.SWYRL_ENGINE_CLIFF_MATERIAL_291.status().ready===true",timeout=40000)
+        await phone.wait_for_timeout(700)
+        mobile_detail=await phone.evaluate("""() => ({
+            build:window.SWRLZ_FORGE_BUILD?.version,
+            model:window.SWYRL_ENGINE_MODEL_ATELIER?.status(),
+            texture:window.SWYRL_ENGINE_CLIFF_MATERIAL_291.status(),
+            fractures:window.SWYRL_ENGINE_CLIFF_FRACTURES_332?.status(),
+            releaseDialogVisible:!!document.querySelector('#seReleaseNotesDialog[open]')
+        })""")
+        print('CLIFF_ANDROID_BROWSER_INSPECTION='+json.dumps({
+            'opened':phone_open,'details':mobile_detail,'errors':mobile_errors},default=str),flush=True)
+        if await phone.locator('#modelAtelierViewport canvas').count():
+            image=await phone.locator('#modelAtelierViewport canvas').first.screenshot(type='jpeg',quality=70,timeout=20000)
+            print('CLIFF_MOBILE_VIEWPORT_JPEG_BASE64='+base64.b64encode(image).decode('ascii'),flush=True)
+        if not phone_open or mobile_errors or mobile_detail['texture']['failures']:
+            raise AssertionError('Android viewport could not render Smooth Cliff Hand '+str(mobile_detail))
+        await mobile.close()
+        # External hosting check: whether the actual static Space serves the sealed build.
+        for remote in ('https://kamiloki-swrlz-forge-moba.static.hf.space/SOURCE.json',
+                       'https://huggingface.co/spaces/kamiloki/swrlz-forge-moba/resolve/main/SOURCE.json'):
+            try:
+                def get_remote():
+                    with urlopen(Request(remote,headers={'Cache-Control':'no-cache','User-Agent':'SwrlzCliffDiagnostics/1.0'}),timeout=20) as response:
+                        return response.status,response.headers.get('Cache-Control'),response.read(100000)
+                code,cache,content=await asyncio.to_thread(get_remote)
+                obj=json.loads(content)
+                print('CLIFF_HOSTED_SOURCE='+json.dumps({'url':remote,'status':code,'cacheControl':cache,
+                    'version':obj.get('sourceVersion'),'sha256':obj.get('finalSha256'),
+                    'bytes':obj.get('finalBytes')}),flush=True)
+            except Exception as e:
+                print('CLIFF_HOSTED_SOURCE_ERROR='+json.dumps({'url':remote,'error':str(e)[:500]}),flush=True)
         await browser.close()
 asyncio.run(main())
