@@ -1,0 +1,55 @@
+name: One-shot §E v11.331 Smooth Cliff Hand PBR source measurement
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/one-shot-forge-v11-331-smooth-cliff-seal.yml'
+permissions:
+  contents: read
+jobs:
+  focused-measurement:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 17
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Build 344 patches, verify isolated UV/PBR fix and print exact content SHA
+        run: |
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_331_smooth_cliff_material_uv.py
+          node projects/swrlz-forge-moba/scripts/test_v11_292_cliff_material.cjs
+          python - <<'PY'
+          import hashlib,json,subprocess,sys
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          m=json.loads((root/'source-manifest.json').read_text('utf8'))
+          assert m['name']=='§wyrl§ Engine v11.331'
+          assert len(m['patches'])==344 and m['patches'][-1]=='patches/v11_331_smooth_cliff_material_uv.py'
+          out=Path('/tmp/se331')
+          subprocess.run([sys.executable,str(root/'build_space.py'),'--output',str(out)],check=True)
+          data=(out/'index.html').read_bytes()
+          assert data==(out/'modeler.html').read_bytes()
+          html=data.decode('utf8')
+          for token in (
+            'SWYRL_ENGINE_DEPLOY_MARKER: V11_331_SMOOTH_CLIFF_MATERIAL_UV',
+            "window.SWRLZ_FORGE_BUILD={version:'v11.331'",
+            "if(part.cliffPBR?.atlas==='cliff_pbr_atlas_384')",
+            "out.setAttribute('uv2',new THREE.Float32BufferAttribute(t.uvs,2));",
+            "if(kind==='ao')tex.channel=1;",
+            "function se292WristMossKnuckleMaterial(part){",
+            "aoMap:t.ao,aoMapIntensity:1,",
+            "<title>§wyrl§ Engine · Maker v11.331</title>",
+          ):
+            assert token in html,token
+          assert html.count("out.setAttribute('uv2',new THREE.Float32BufferAttribute(t.uvs,2));")==1
+          assert "color:'#fff2e6'" in html, 'preserve old historical material, change only the active one'
+          assert html.count("source.engine='§wyrl§ Engine · Maker v11.331';source.version=11.331;")==3
+          assert len(json.loads((out/'SOURCE.json').read_text('utf8'))['assets'])==71
+          subprocess.run([sys.executable,str(root/'scripts/check_inline_js_syntax_v11_266.py'),str(out/'index.html')],check=True)
+          print('SE331_SHA256='+hashlib.sha256(data).hexdigest(),flush=True)
+          print('SE331_BYTES='+str(len(data)),flush=True)
+          print('SE331_PATCHES=344',flush=True)
+          print('SE331_ASSETS=71',flush=True)
+          PY
