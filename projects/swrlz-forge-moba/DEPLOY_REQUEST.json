@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.330",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_330_MATERIAL_STUDIO_LAYOUT",
-  "reason": "Owner Materials screenshot repair: dedicated library/texture/inspector layout, phone and wide-portrait panel tabs, proper empty state, hidden legacy Particle/title overlap, native 3D sample placement and viewport input, scoped keyboard controls, and no covered main-canvas draws outside XR. Native material painting, PNG/image and JSON transfers, assignment/history/serialization retained; owner v11.321 and prior studios preserved. Strict source/native tests and real browser interactions passed on desktop1440x1000, phone390x844, portrait980x1800, including two full studio round trips, Delete isolation, actual render pause/resume and zero page errors. Canonical reconstructed HTML is byte-identical to tested HTML: 343 patches,71 assets,8,484,905 bytes,SHA-256 aa783d286c545bdeb13ea654f171e0915ab70ec975ab4a9e0c51f93649019ac9. Physical-device visual/XR acceptance remains separate.",
-  "sourceCommit": "244e1d9146dd6ed8dd4147604eba4965007d5fac",
-  "sourceIntegritySha256": "aa783d286c545bdeb13ea654f171e0915ab70ec975ab4a9e0c51f93649019ac9"
+  "releaseVersion": "v11.331",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_331_SMOOTH_CLIFF_MATERIAL_UV",
+  "reason": "Owner-directed Smooth Cliff Hand PBR repair: preserve already-working UV2, expose equivalent uv1 channel for newer Three.js, select AO texture channel 1, remove warm albedo double-tint, and return AO strength to 1.0. Existing source-provided stone/moss/normal/roughness maps, four painted knuckles, single connected gauntlet mesh, and 17-bone animation unchanged. Sealed 344-patch source: 8,485,047 HTML bytes, SHA-256 3d41dd32c8d80e1380bc2cafe05859b1179abc219b049e0ed791b0defe7aae23. Scoped static/build checks; owner handset/Quest visual acceptance separate.",
+  "sourceCommit": "45039314ac6747396db05a16f8ad1f8b6f1c80e6",
+  "sourceIntegritySha256": "3d41dd32c8d80e1380bc2cafe05859b1179abc219b049e0ed791b0defe7aae23"
 }
