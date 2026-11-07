@@ -21,6 +21,7 @@ from typing import Any
 
 from fastapi import Request
 from fastapi.responses import JSONResponse
+from runtime_capacity import ResponseResourceMeter
 
 
 # JSON/base64 expands an 8 MiB original file to roughly 11.2 MiB.
@@ -143,6 +144,14 @@ def _set_job_phase(job_id: str, phase: str, **fields) -> None:
 
 
 def _run_vision_job(job_id: str, image: str, question: str, cancel_event: threading.Event, analysis_levels: int = 2) -> None:
+    meter = ResponseResourceMeter()
+    def complete_usage(state: str) -> dict:
+        usage = meter.finish()
+        usage["routeId"] = VISION_MODEL_VARIANT
+        usage["outcome"] = state
+        print(json.dumps({"event": "VISION_RESPONSE_RESOURCE_USAGE",
+                          "jobId": job_id[:8], "usage": usage}), flush=True)
+        return usage
     try:
         description = _ask_vision_local(
             image, question,
@@ -151,20 +160,26 @@ def _run_vision_job(job_id: str, image: str, question: str, cancel_event: thread
         )
         if cancel_event.is_set():
             raise VisionCancelled()
-        _set_job_phase(job_id, "COMPLETE", description=description)
+        _set_job_phase(job_id, "COMPLETE", description=description,
+                       resourceUsage=complete_usage("COMPLETE"))
     except VisionCancelled:
-        _set_job_phase(job_id, "CANCELLED", code="VISION_CANCELLED",
+        _set_job_phase(job_id, "CANCELLED", resourceUsage=complete_usage("CANCELLED"),
+                       code="VISION_CANCELLED",
                        detail="Image analysis cancelled or no longer watched.")
     except ValueError as exc:
         code = str(exc)
         if code in ("IMAGE_FORMAT_INVALID", "IMAGE_PIXELS_TOO_LARGE"):
-            _set_job_phase(job_id, "FAILED", code=code, detail="Use a smaller, valid image.")
+            _set_job_phase(job_id, "FAILED", resourceUsage=complete_usage("FAILED"),
+                           code=code, detail="Use a smaller, valid image.")
         else:
-            _set_job_phase(job_id, "FAILED", code="LOCAL_VISION_FAILED", detail="Local image analysis did not complete.")
+            _set_job_phase(job_id, "FAILED", resourceUsage=complete_usage("FAILED"),
+                           code="LOCAL_VISION_FAILED", detail="Local image analysis did not complete.")
     except Exception as exc:
         # No prompts, source images or private data in logs or HTTP errors.
         print(json.dumps({"event": "LOCAL_VISION_FAILED", "errorType": type(exc).__name__}), flush=True)
-        _set_job_phase(job_id, "FAILED", code="LOCAL_VISION_UNAVAILABLE", detail="Local image analysis could not complete.")
+        _set_job_phase(job_id, "FAILED", resourceUsage=complete_usage("FAILED"),
+                       code="LOCAL_VISION_UNAVAILABLE",
+                       detail="Local image analysis could not complete.")
 
 
 class VisionCancelled(Exception):
@@ -1118,6 +1133,8 @@ def install(app, require_account) -> None:
                 "sourceHeight": job.get("sourceHeight"),
                 "sourceBytes": job.get("sourceBytes"),
                 "originalBytesPreserved": job.get("originalBytesPreserved", False),
+                "resourceUsage": (dict(job["resourceUsage"])
+                                  if isinstance(job.get("resourceUsage"), dict) else None),
             }
             if phase in ("ANALYZING", "COMPLETE"):
                 # Observed native inference progress only, never fabricated percentages.
