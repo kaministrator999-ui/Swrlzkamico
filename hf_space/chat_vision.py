@@ -895,7 +895,9 @@ def _ask_vision_local(image_url: str, question: str, report_phase=None, should_c
                                "(accuracy unverified)\n\n" + fused_text)
                     if region_records:
                         crop_notes = "\n".join(
-                            "- " + item["region"] + ": " + item["description"]
+                            "- " + item["region"] + ": " + item["description"] +
+                            (" [Generation stopped at 128-token limit; description may be incomplete.]"
+                             if item.get("tokenLimitReached") else "")
                             for item in region_records
                         )
                         appendix = ("\n\nFocused image details "
