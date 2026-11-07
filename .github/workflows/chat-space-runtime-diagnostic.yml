@@ -35,6 +35,11 @@ jobs:
           except Exception as e:
               print('LOG_FETCH_ERROR_TYPE:',type(e).__name__,flush=True)
           print('RUN_LOG_LINE_COUNT:',len(lines),flush=True)
+          # Event NAMES only; never expose request payloads or model text.
+          names=[]
+          for line in lines:
+              names.extend(re.findall(r'"event"\s*:\s*"([A-Z0-9_]{4,80})"',line))
+          print('SERVER_EVENT_NAMES:',json.dumps(names[-45:]),flush=True)
           # The chat itself has no model-status UI. Server logs are the proof.
           for line in lines:
               if '"modelId": "vision"' not in line and '"modelId":"vision"' not in line:
