@@ -35,15 +35,22 @@ images to third parties, or rewrite older release records.
 
 ### Current Qwen3-VL image analysis
 
-Default analysis uses the same loaded Qwen3-VL model for one full-image
-overview, focused crops of original source pixels, and one final full-image
-synthesis that compares the separate observations. For a wide four-view
-character sheet, this is one overview, four crops, and one synthesis. The
-final whole-image pass receives the same 768px overview pixels and has
-256 output tokens. Its coherent description leads when it contains actual
-visual details; crop observations remain available as fallible provenance.
-This is not a second model, a parallel model ensemble, or multiple image
-uploads. A basic image without qualifying regions still uses one pass.
+Default analysis uses the same prewarmed Qwen3-VL model for a concise
+whole-image overview (up to 768px), zero to two focused source-pixel
+close-ups *only when details are useful*, and one whole-image synthesis
+when close-ups were actually generated. Geometric detail regions emphasize
+face/hood features, outfit or armor ornamentation, or small annotations
+requested by the user; they never pretend to identify objects semantically.
+No blanket four-crop pass is required for character turnarounds.
+The overview prompt targets 80–120 words rather than lengthy per-view
+lists that hit the decoder limit. The final modeling pass receives the full
+768px overview pixels and a 320-token budget, with concise labeled sections.
+The visible analysis card shows abbreviated progressive findings, has a
+bounded mobile height and optional expanded raw observations. The final
+chat handoff leads with the integrated description and up to two clearly
+labeled crop notes without repeating the full first-pass transcript.
+This remains one model, not a parallel vision ensemble. Simple images
+without useful close-up regions take the one-pass route.
 
 Earlier descriptions below are retained as historical release notes;
 they do not define the active Qwen-only configuration.
