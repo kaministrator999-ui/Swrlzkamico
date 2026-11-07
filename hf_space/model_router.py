@@ -326,9 +326,13 @@ def _format_direct_vision_report(description: str) -> str:
 
     labels = {
         "subject and views": "Subject & views",
+        "view comparisons": "View-by-view details",
+        "view comparison": "View-by-view details",
+        "view-by-view details": "View-by-view details",
         "views and subject": "Subject & views",
         "overview": "Overview",
         "shape and proportions": "Shape & proportions",
+        "relative proportions": "Shape & proportions",
         "shape and anatomy": "Shape & proportions",
         "silhouette and anatomy": "Shape & proportions",
         "geometry and layers": "Geometry & layers",
@@ -341,8 +345,8 @@ def _format_direct_vision_report(description: str) -> str:
         "props and small features": "Props & details",
         "props and fine details": "Props & details",
         "accessories and contact": "Props & contact",
-        "visibility limits": "Visibility limits",
-        "visibility and uncertainty": "Visibility limits",
+        "visibility limits": "Visibility & uncertainties",
+        "visibility and uncertainty": "Visibility & uncertainties",
         "limits": "Visibility limits",
     }
     pattern = re.compile(
