@@ -998,6 +998,7 @@ def install(app, require_account) -> None:
                 "completedRegions": job.get("completedRegions", 0),
                 "spatialRegionRecords": [dict(item) for item in job.get("spatialRegionRecords", [])],
                 "spatialRegionFailures": list(job.get("spatialRegionFailures", [])),
+                "referenceProgress": bool(job.get("referenceProgress", False)),
                 "integratedOutcome": job.get("integratedOutcome"),
                 "integratedObservation": (dict(job["integratedObservation"])
                                           if isinstance(job.get("integratedObservation"), dict)
