@@ -160,9 +160,9 @@ assert fake_model.calls[0]["max_tokens"] == vision.MAX_VISION_OUTPUT_TOKENS == 2
 assert fake_model.calls[0]["stream"] is True
 visual_prompt = fake_model.calls[0]["messages"][0]["content"][0]["text"]
 assert "multi-view character sheet" in visual_prompt
-assert "distinctive colors" in visual_prompt
-assert "held objects" in visual_prompt
-assert "only clearly legible labels" in visual_prompt
+assert "concrete" in visual_prompt
+assert "clothing, objects" in visual_prompt
+assert "Only read clearly legible text" in visual_prompt
 assert "Question: What is shown?" in visual_prompt
 
 # The actual exported turnaround attempts were too generic even when Chat
