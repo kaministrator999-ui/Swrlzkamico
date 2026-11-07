@@ -3057,7 +3057,7 @@
         // to repeat under multiple layouts. Parse only the model's own labeled
         // sections; text nodes never acquire tool authority or proven accuracy.
         const visionPrefix="Local image analyzer's description (not directly inspected by §C):\n\n";
-        if(rawSource.startsWith(visionPrefix)){
+        if(rawSource.startsWith(visionPrefix)&&rawSource.slice(visionPrefix.length).startsWith("Character reference · local model observation")){
           const body=rawSource.slice(visionPrefix.length)
             .split("\n\n[Raw source-crop observations; accuracy unverified]\n",1)[0]
             .replace(/^Character reference[^\n]*\n\s*/i,"").trim();
