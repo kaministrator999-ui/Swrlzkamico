@@ -3,8 +3,10 @@ on:
   push:
     branches:
       - experiment/chat-vision-qwen3vl4b-20261106
+      - feature/chat-vision-grounded-visual-report-20261107
     paths:
       - .deploy/QWEN3VL_RUNTIME_DIAGNOSTIC.txt
+      - .deploy/CHAT_VISION_PR385_RUNTIME_DIAGNOSTIC.txt
 permissions:
   contents: read
 jobs:
