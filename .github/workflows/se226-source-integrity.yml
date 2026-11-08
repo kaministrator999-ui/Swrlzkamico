@@ -1,0 +1,28 @@
+name: §E v11.226 candidate source integrity
+on:
+  push:
+    branches:
+      - feature/se226-unified-popup-browser
+    paths:
+      - 'projects/swrlz-forge-moba/runtime/unified_popup_browser_v11_226.*'
+      - 'projects/swrlz-forge-moba/patches/v11_226_unified_popup_browser.py'
+      - 'projects/swrlz-forge-moba/scripts/candidate_v11_226_integrity.py'
+      - '.github/workflows/se226-source-integrity.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Compile browser JavaScript only
+        run: node --check projects/swrlz-forge-moba/runtime/unified_popup_browser_v11_226.js
+      - name: Compile Python patch and calculator only
+        run: python3 -m py_compile projects/swrlz-forge-moba/patches/v11_226_unified_popup_browser.py projects/swrlz-forge-moba/scripts/candidate_v11_226_integrity.py
+      - name: Reconstruct current governed §E and calculate candidate integrity
+        run: python3 projects/swrlz-forge-moba/scripts/candidate_v11_226_integrity.py
