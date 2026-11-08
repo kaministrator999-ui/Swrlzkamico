@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.344
+title: §wyrl§ Engine v11.345
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,17 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.345 · Linked multi-object UV atlas and true VR display modes (2026-11-08)
+
+The owner clarified that **VR Views** should control how the model is rendered (Wireframe, X-ray and other material/geometry modes), not primarily the camera perspective. The existing 12-button VR palette now presents **Views → Textured, Solid, Wireframe, X-ray, Normals**; **Angles** retains Front, Back, Left, Right, Top, Bottom, and Isometric model orientations. Every temporary display material is restored to its exact native reference on mode exit or VR closure, with no changes to stored part colors or textures.
+
+The previous UV Layout inspector only exported the current single mesh. Its new, collapsible **Whole-model UV atlas · linked parts** section supports Select All, per-group selection and individual checkboxes for every loaded editable mesh—including whole-character Hooded Vanguard/mage models. It exports a transparent **GUIDE.png** with source-authored UV triangles in separate, numbered 2048/4096px part cells, plus a matching **MAP.json** with exact cell pixel coordinates, original part IDs/names, UV bounds and stable mesh fingerprints. Tap an atlas cell or **Focus** in the list to select the corresponding 3D part. Send both files to ChatGPT when requesting aligned painting; the resulting artwork should preserve the cell placements and omit the guide labels/lines.
+
+A painted atlas PNG can later be imported and automatically cropped to the original UV space for every linked mesh in **one native Undo checkpoint**. Import checks part IDs and UV fingerprints first, rejects wrong model versions, and observes existing per-part texture size constraints. This is **mesh-part segmentation**, not automatic topological re-unwrapping: UV islands overlapping *inside* one part are still authored overlaps and must be manually corrected for fully unique painting. Original geometry, UV coordinates, rig and existing materials are preserved.
+
+The [focused real-Three.js candidate test](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/42457148584) passed for a 17-part source model, independent non-overlapping atlas cells, exact part linkage validation, stale-manifest rejection, all five VR model render modes, and restoration of native materials. Verified source: **356 patches, 9,162,827 bytes**, SHA-256 `39a192fc72c4eac1435a6bdec4a53039578196e6bb97040716fe6b64b3452cc5`. Owner browser/Quest 2 export/import UX remains unmeasured and must be tested on real hardware.
+
 
 ## §E v11.344 · Quest pointer calibration, modeling perspectives and faster click response (2026-11-08)
 
