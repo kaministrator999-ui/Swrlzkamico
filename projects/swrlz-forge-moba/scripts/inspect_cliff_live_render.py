@@ -115,6 +115,7 @@ async def main():
                uvCount:project?.modelAtelier?.parts?.[0]?.topologyMesh?.uvs?.length},
             state,native,viewport:window.SWYRL_ENGINE_MODEL_ATELIER?.status(),
             fractures:window.SWYRL_ENGINE_CLIFF_FRACTURES_332?.status(),
+            crystals:window.SWYRL_ENGINE_CLIFF_HAND_334?.status(),
             color:sample(mat.map),normal:sample(mat.normalMap),ao:sample(mat.aoMap),
             roughness:sample(mat.roughnessMap),
             map:!!mat.map,aoChannel:mat.aoMap?.channel,material:mat.name,
@@ -149,6 +150,7 @@ async def main():
             model:window.SWYRL_ENGINE_MODEL_ATELIER?.status(),
             texture:window.SWYRL_ENGINE_CLIFF_MATERIAL_291.status(),
             fractures:window.SWYRL_ENGINE_CLIFF_FRACTURES_332?.status(),
+            crystals:window.SWYRL_ENGINE_CLIFF_HAND_334?.status(),
             releaseDialogVisible:!!document.querySelector('#seReleaseNotesDialog[open]')
         })""")
         print('CLIFF_ANDROID_BROWSER_INSPECTION='+json.dumps({
@@ -185,9 +187,15 @@ async def main():
             'attempts':len(atlas_requests),'urls':atlas_requests[:4]}),flush=True)
         if args.block_atlas:
             assert not atlas_requests, 'Native cliff material still requires a separate atlas image fetch'
-            assert detail['engine']=='v11.333'
+            assert detail['engine']=='v11.334'
             assert detail['state'].get('atlasSource')=='embedded-original-jpeg'
             assert detail['fractures']['passes']>=1
             assert mobile_detail['texture'].get('atlasSource')=='embedded-original-jpeg'
+        if not detail.get('crystals') or detail['crystals']['shaderInstalls']<1:
+            raise AssertionError('Dorsal-only crystal shader was not installed in real WebGL renderer')
+        if not mobile_detail.get('crystals') or mobile_detail['crystals']['shaderInstalls']<1:
+            raise AssertionError('Dorsal crystal shader did not compile on Android-sized WebGL')
+        if issues or mobile_errors:
+            raise AssertionError('Model Atelier had WebGL shader errors: '+str(issues+mobile_errors))
         await browser.close()
 asyncio.run(main())
