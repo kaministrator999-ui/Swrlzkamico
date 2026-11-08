@@ -1,3 +1,9 @@
+## §E v11.350 · Two-hand VR modeling, live profiles and native surface tools (2026-11-08)
+
+Model VR now uses the active Controller Studio profile to drive real editing. Right-hand tools and left-hand view controls add multi-part selection, explicit two-hand geometry transforms, A/X hold wheels, focus/precision shortcuts and safe Undo/Redo. Native sculpt strokes, saved lasso masks, planar outline creation and signed closed extrusion stay inside the same immersive editor. Cancel and tracking loss discard previews; each completed operation commits one native history step. Camera/aim/display tools, UV sheets and the owner UV image import correction remain included.
+
+See [the v11.350 checkpoint](docs/MODEL_STUDIO_VR_V11_350.md) for controls, source integrity, targeted verification and deliberate geometry limits. Physical Quest feel and performance remain owner acceptance testing.
+
 ## §E v11.346 · Whole-character UV export across readable numbered sheets (2026-11-08)
 
 v11.345 introduced multi-object native UV guide export and Model VR display modes (Textured, Solid, Wireframe, X-ray, Normals), but a single guide was capped at 96 parts. A complex §E character may contain hundreds of native meshes. **Select All now includes the entire character** without shrinking every UV segment into an unreadable tile: the existing UV inspector shows Previous/Next sheet controls and exports up to 96 parts per numbered sheet, each with a matching **GUIDE.png + MAP.json**. Source model names, part IDs, UV rectangles and fingerprints remain linked to each sheet; importing a painted sheet changes only those exact source parts in one Undo step. The existing 3D mesh and source-authored UV coordinates remain unchanged. Overlapping islands within a single part are explicitly retained, not falsely described as auto-unwrapped.
