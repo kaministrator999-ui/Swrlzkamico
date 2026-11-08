@@ -1,6 +1,6 @@
 # Immersive Model Studio — v11.340
 
-Lifecycle: IMPLEMENTATION_APPROVED; SOURCE_VERIFIED; XR_EMULATION_VERIFIED. Source publication, hosted confirmation and physical-headset acceptance are recorded separately.
+Lifecycle: IMPLEMENTATION_APPROVED; SOURCE_VERIFIED; XR_EMULATION_VERIFIED; SOURCE_PUBLISHED; FEATURE_DEPLOYED; HOSTED_ARTIFACT_VERIFIED. Physical-headset acceptance remains separate.
 
 ## Workspace and supported controls
 
@@ -48,8 +48,16 @@ python projects/swrlz-forge-moba/scripts/verify_v11_340_release.py --output dist
 python projects/swrlz-forge-moba/scripts/check_model_vr_v11_340.py --html dist/swrlz-forge-moba/index.html --output /tmp/swrlz-model-vr340
 ```
 
+An additional read-only Quest Browser-profile run displayed the complete **59-part Little Crystal Mage** with **59 native mesh targets** in the actual emulated XR scene. Native model-part data and history stayed unchanged, the original Modeler parent was restored on exit, and no page errors occurred. Its tested HTML hash is the same exact release seal. Preview screenshots remain outside the engine package.
+
 The portable browser check uses isolated guest profiles, public native fixtures and verified-TLS CDN/guest Chat requests. It uses a checksum-pinned test emulator, never an account session or cloud save. Software emulation establishes session/controller/editing contracts and visual structure; physical Quest comfort, hand alignment, haptic feel and sustained performance remain owner headset acceptance.
 
 ## Publication
 
-Pending the cohesive source commit, separate request-only commit, deployment and independent hosted confirmation.
+- Published source: [`afa4d9eb716ba28c23a6e88d1aa79bf162b540df`](https://github.com/kaministrator999-ui/Swrlzkamico/commit/afa4d9eb716ba28c23a6e88d1aa79bf162b540df).
+- Separate request-only commit: [`13c3c8a96273180de3dd1a23d26639233b653d6c`](https://github.com/kaministrator999-ui/Swrlzkamico/commit/13c3c8a96273180de3dd1a23d26639233b653d6c); source-to-request comparison is exactly one commit changing only `projects/swrlz-forge-moba/DEPLOY_REQUEST.json`.
+- Dedicated deployment [run 42442450957](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/42442450957): **SUCCESS**. No unrelated game suite was dispatched.
+- Hugging Face revision **`3c8172998735427ebb75b96f60e3e491d8c0d052`**: **RUNNING**. Its official SOURCE receipt identifies v11.340 / 351 patches / 71 assets.
+- Independently streamed official revision-pinned index and Modeler HTML: each **9,118,381 bytes**, SHA-256 **`a940121424bf3cabd2336f51938a337922a3bbddc2aa021ea2c99e9bbde224ff`**. Both match canonical source, strict packaging and the full XR-emulation/59-part preview test artifacts.
+
+Live engine: https://huggingface.co/spaces/kamiloki/swrlz-forge-moba . Source, emulation and hosted verification are complete; physical headset comfort/alignment/haptics/performance remain owner acceptance. This documentation-only closure leaves runtime code, its manifest seal and the deployment request unchanged.

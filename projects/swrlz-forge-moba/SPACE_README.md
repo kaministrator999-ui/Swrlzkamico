@@ -10,11 +10,11 @@ header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
 
-## §E v11.340 · Immersive Model Studio and controller authoring (source and XR emulation verified)
+## §E v11.340 · Immersive Model Studio and controller authoring (deployed)
 
 Model Studio has its own Enter model VR action, a comfortable model presentation stage, native controller rays and selection feedback, and a readable world-space tool palette. Trigger selects model parts; choose Move, Rotate or Scale before gripping. Release applies one native history edit; cancel, tracking loss and session exit discard an uncommitted preview. Inspect mode and view framing preserve saved geometry.
 
-The actual native model root, geometry, materials and rigs are reused in an isolated Model VR scene through the existing main XR loop. Exit restores the browser Model Studio. Game/Arcane XR, the Materials workspace and owner hand/UV releases through v11.337 remain preserved. Controller emulation, source verification and physical headset acceptance are separate gates; current receipts and supported controls are recorded in [the checkpoint](https://github.com/kaministrator999-ui/Swrlzkamico/blob/main/projects/swrlz-forge-moba/docs/MODEL_STUDIO_VR_V11_340.md).
+The actual native model root, geometry, materials and rigs are reused in an isolated Model VR scene through the existing main XR loop. Exit restores the browser Model Studio. Game/Arcane XR, the Materials workspace and owner hand/UV releases through v11.337 remain preserved. Deployment [run 42442450957](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/42442450957) succeeded; the RUNNING hosted index and Modeler artifacts match the exact tested build. Controller emulation, source verification and physical headset acceptance are separate gates; current receipts and supported controls are recorded in [the checkpoint](https://github.com/kaministrator999-ui/Swrlzkamico/blob/main/projects/swrlz-forge-moba/docs/MODEL_STUDIO_VR_V11_340.md).
 
 ## §E v11.337 · Organic finger smoothing, natural wrist blend, inlaid aquamarine knuckles (2026-11-07)
 
