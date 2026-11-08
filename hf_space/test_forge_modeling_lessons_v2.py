@@ -7,6 +7,7 @@ import pathlib
 import unittest
 
 from forge_modeling_lessons import select_modeling_lesson
+from forge_chat_actions import operation_contract
 from online_tools import classify_online_request
 
 ROOT = pathlib.Path(__file__).resolve().parent
@@ -14,12 +15,12 @@ CTX = {"workspace": "model-atelier", "selectedId": None}
 
 
 class ModelingLearningV2(unittest.TestCase):
-    def test_rigging_is_real_in_new_starter_but_not_chat_native(self):
+    def test_rigging_is_real_in_new_starter_and_chat_requires_host_approval(self):
         result = select_modeling_lesson("§E modeler: rig the floating glove", CTX)
         self.assertIn("17-bone", result)
         self.assertIn("skin weights", result)
         self.assertIn("old saved gloves", result)
-        self.assertIn("NOT a new §C Chat-native", result)
+        self.assertIn("§C rig.pose/keyframe require exact", result)
         self.assertLessEqual(len(result), 1150)
 
     def test_animation_timeline_limits(self):
@@ -27,13 +28,13 @@ class ModelingLearningV2(unittest.TestCase):
         self.assertIn("32", result)
         self.assertIn("Open/Fist/Point/Pinch", result)
         self.assertIn("OBJ", result)
-        self.assertIn("§C Chat still cannot", result)
+        self.assertIn("§C can propose one rig.pose/keyframe only with", result)
 
     def test_skinning_is_distinct_from_rigid_part_motion(self):
         result = select_modeling_lesson("Why are skin weights deforming my §E hand?")
         self.assertIn("four-influence skin weights", result)
         self.assertIn("THREE.SkinnedMesh", result)
-        self.assertIn("NOT a new §C Chat-native", result)
+        self.assertIn("§C rig.pose/keyframe require exact", result)
 
     def test_pose_is_joint_not_mesh_id(self):
         result = select_modeling_lesson("How do I curl a finger on my §E glove?")
@@ -86,8 +87,16 @@ class ModelingLearningV2(unittest.TestCase):
         self.assertIn("disposition=clarify", planner)
         self.assertLessEqual(len(planner), 1150)
         actions = (ROOT / "forge_chat_actions.py").read_text(encoding="utf-8")
-        self.assertNotIn('"rig.pose":', actions)
-        self.assertNotIn('"rig.keyframe":', actions)
+        # Studio commands exist, but are not offered to an unadvertised host.
+        base = {"workspace": "model-atelier", "studio": "modeler", "studioCommands": {}}
+        unavailable = operation_contract(base)["operations"]
+        self.assertNotIn("rig.pose", unavailable)
+        self.assertNotIn("rig.keyframe", unavailable)
+        enabled = {**base, "studioCommands": {"rig": {"available": True}}}
+        allowed = operation_contract(enabled)["operations"]
+        self.assertIn("rig.pose", allowed)
+        self.assertIn("rig.keyframe", allowed)
+        self.assertIn("validate_studio_operation", actions)
         self.assertNotIn('"mesh.sculpt":', actions)
 
     def test_web_evidence_is_in_both_student_engines(self):
