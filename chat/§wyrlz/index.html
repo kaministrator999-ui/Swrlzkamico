@@ -3092,7 +3092,7 @@
         container.classList.toggle("vision-editorial",visionFinal);
         // Copy the readable final answer. Original upstream text remains
         // preserved in chat history and its provenance-labeled export.
-        originalRenderedSources.set(container,displaySource);
+        originalRenderedSources.set(container,rawSource);
         // Rendering a repository browser requires Station-verified same-message
         // GitHub evidence. The model may output "## GitHub directory: /" as prose:
         // that alone must NEVER become a verified interactive file browser.
