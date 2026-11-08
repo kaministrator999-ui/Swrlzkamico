@@ -781,6 +781,10 @@ def _ask_vision_local(image_url: str, question: str, report_phase=None, should_c
         # keyword score or paraphrase masquerading as visual recognition.
         if analysis_levels >= 2 and not region_plan:
             region_plan = _detail_regions(image_url, content, question, with_boxes=True)
+        # Layout detection lives in _detail_regions; infer its result from the
+        # finalized plan here, including the fallback planned after a detail retry.
+        has_view_panels = any(label.startswith("View panel ")
+                              for label, _, _ in region_plan)
         region_records = []
         region_failures = []
         region_blocks = []
@@ -810,7 +814,7 @@ def _ask_vision_local(image_url: str, question: str, report_phase=None, should_c
             )
             try:
                 detail, region_time, first_chunk, finish_reason = generate(
-                    crop, focus_prompt, 112 if layout_panels else 128, region=label)
+                    crop, focus_prompt, 112 if has_view_panels else 128, region=label)
             except VisionCancelled:
                 raise
             except Exception as exc:
@@ -1023,7 +1027,7 @@ def _ask_vision_local(image_url: str, question: str, report_phase=None, should_c
                         crop_notes = "\n".join(
                             "- " + item["region"] + ": " + item["description"] +
                             (" [Generation stopped at " +
-                             str(112 if layout_panels else 128) +
+                             str(112 if has_view_panels else 128) +
                              "-token limit; description may be incomplete.]"
                              if item.get("tokenLimitReached") else "")
                             for item in region_records
