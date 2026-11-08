@@ -19,7 +19,7 @@ def main():
     args = cli.parse_args()
     manifest = json.loads((ROOT/'source-manifest.json').read_text('utf8'))
     assert manifest['name'] == '§wyrl§ Engine v11.333'
-    assert manifest['finalArtifact'] == 'swyrl_engine_v11_332.html'
+    assert manifest['finalArtifact'] == 'swyrl_engine_v11_333.html'
     assert len(manifest['patches']) == 346
     assert manifest['patches'][-4:] == [
         'patches/v11_330_material_studio_layout.py',
@@ -62,7 +62,7 @@ def main():
     original=(ROOT/'assets/cliff-hand/cliff_pbr_atlas_384.jpg').read_bytes()
     assert decoded==original
     assert hashlib.sha256(decoded).hexdigest()=='fc56730c8019d8079794c7b7379c75c8c07381794104eb56a439a94588647cbe'
-    assert html.count("source.engine='§wyrl§ Engine · Maker v11.333';source.version=11.332;")==3
+    assert html.count("source.engine='§wyrl§ Engine · Maker v11.333';source.version=11.333;")==3
     subprocess.run([sys.executable,str(ROOT/'scripts/check_inline_js_syntax_v11_266.py'),str(out/'index.html')],check=True)
     subprocess.run(['node',str(ROOT/'scripts/test_v11_332_cliff_fractures.cjs')],check=True)
     subprocess.run(['node',str(ROOT/'scripts/test_v11_292_cliff_material.cjs')],check=True)
