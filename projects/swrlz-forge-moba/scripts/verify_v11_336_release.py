@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""§E v11.336: minimal, exact, source-backed Smooth Cliff Hand release verifier."""
+"""§E v11.336: minimal source-backed UV guide and existing mesh-material release verifier."""
 import argparse
 import base64
 import re
@@ -19,7 +19,7 @@ def main():
     args = cli.parse_args()
     manifest = json.loads((ROOT/'source-manifest.json').read_text('utf8'))
     assert manifest['name'] == '§wyrl§ Engine v11.336'
-    assert manifest['finalArtifact'] == 'swyrl_engine_v11_335.html'
+    assert manifest['finalArtifact'] == 'swyrl_engine_v11_336.html'
     assert len(manifest['patches']) == 349
     assert manifest['patches'][-7:] == [
         'patches/v11_330_material_studio_layout.py',
