@@ -34,7 +34,7 @@ def apply(html):
        'const triggerStarted=performance.now();const hit=se340Hit(record,false);record.hit=hit;')
     html=one(html,
        """if(hit?.id&&!se340XR.gesture){se340Bridge().select(hit.id);se340XR.frameEntries=null;se340XR.cachedEntries=null;se340XR.projectionRevision=-1;se343DropHoverSurfaces();se340XR.boxCache=new WeakMap();se340XR.lastAction='Selected '+hit.name;
-   se340Notice(se340XR.lastAction);se340Pulse(record,.3,25);se340Publish();}""",
+  se340Notice(se340XR.lastAction);se340Pulse(record,.3,25);se340Publish();}""",
        """if(hit?.id&&!se340XR.gesture){
    const bridge=se340Bridge(),native=bridge.inspect(),different=native.selectedId!==hit.id;
    if(different){
