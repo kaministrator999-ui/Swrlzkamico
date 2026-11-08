@@ -787,6 +787,7 @@ def _ask_vision_local(image_url: str, question: str, report_phase=None, should_c
         for label, crop, source_box in region_plan:
             check_cancel()
             focus_prompt = (
+                "Source region " + label + ". "
                 "Inspect ONLY THIS source-image region. It may depict one "
                 "view or supporting details; read its angle label only when "
                 "legible and never invent camera orientation. "
@@ -1016,7 +1017,9 @@ def _ask_vision_local(image_url: str, question: str, report_phase=None, should_c
                     if region_records:
                         crop_notes = "\n".join(
                             "- " + item["region"] + ": " + item["description"] +
-                            (" [Generation stopped at 128-token limit; description may be incomplete.]"
+                            (" [Generation stopped at " +
+                             str(112 if layout_panels else 128) +
+                             "-token limit; description may be incomplete.]"
                              if item.get("tokenLimitReached") else "")
                             for item in region_records
                         )
