@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.340",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_340_IMMERSIVE_MODEL_STUDIO",
-  "reason": "Owner-requested Model Studio VR/controller improvement: actual immersive Model workspace using the existing main XR loop and borrowed native Modeler root; stable readable spatial palette, selection/hover/rays, grip-space Move/Rotate/Scale, precision/snap/view controls and Undo/Redo. Saved data changes only on validated grip release with one native checkpoint; cancel/no-op/disconnect/session end restore previews and ownership. Includes fresh-hit safety, same-frame release, either-hand Cancel priority, native assembly coordinates, off-centre pivots and attached-skin live previews. Preserves all owner hand/UV work through v11.337. Strict source/asset checks, 13 real-Three cases and full IWER Quest 2 actual-session/controller tests passed with zero page errors, including return to native Modeler and legacy Game XR. 351 ordered patches,71 assets,9,118,381 HTML bytes,SHA-256 a940121424bf3cabd2336f51938a337922a3bbddc2aa021ea2c99e9bbde224ff; tested HTML exactly matches canonical source. Physical headset comfort/alignment/haptics/performance acceptance remains owner testing.",
-  "sourceCommit": "afa4d9eb716ba28c23a6e88d1aa79bf162b540df",
-  "sourceIntegritySha256": "a940121424bf3cabd2336f51938a337922a3bbddc2aa021ea2c99e9bbde224ff"
+  "releaseVersion": "v11.341",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_341_MODEL_VR_HOVER_ORBIT",
+  "reason": "Owner-requested native Model Studio VR performance fix and joystick camera refinement. Bounds-cull non-skinned triangle tests, cache per-frame model projection and world bounding boxes, throttle idle controller hover to ~18 Hz per hand while preserving exact immediate Trigger/Grip picking. Replace right-stick snap turn with continuous horizontal/vertical model-centred orbit; left-stick pan; hold right stick click plus vertical movement to zoom. Precision and recenter retain native behavior, with no edits to Game XR, model descriptors, native selection or Undo/Redo semantics. Focused syntax/source checks and 352-patch candidate source integrity verified in GitHub Actions run 42447030410. Package seals exact 9,119,871-byte HTML and 71 assets. Physical Quest 2 frame-time and comfort acceptance remains owner testing.",
+  "sourceCommit": "4002c34dff2d266b4d329002a9ee17252c556b0a",
+  "sourceIntegritySha256": "8806d47c59544600e189de33500d38f8c5c19b0dd8a09f20e3438c2492e1e8c0"
 }
