@@ -17,8 +17,9 @@ def apply(html):
     assert 'function se336UVLayout(mesh, canvas)' in js
     html = once(html, '  function ensurePanel(){',
         js + '\n  function ensurePanel(){', 'native Model Atelier closure')
-    html = once(html, '</head>',
-        '<style id="se336MeshUVStyle">\n' + css + '\n</style>\n</head>', 'UV tool style')
+    # Head-close text also occurs in embedded literals; patch the first real head close.
+    assert '</head>' in html and html.index('</head>') < html.index('<body')
+    html = html.replace('</head>', '<style id="se336MeshUVStyle">\n' + css + '\n</style>\n</head>', 1)
     old = " source.engine='§wyrl§ Engine · Maker v11.335';source.version=11.335;"
     if html.count(old) != 3:
         raise AssertionError(('v11.336 scene provenance', html.count(old)))
