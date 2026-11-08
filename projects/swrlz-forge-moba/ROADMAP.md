@@ -1,3 +1,7 @@
+## §E v11.352 · Model Studio transform accessibility (2026-11-08)
+
+Restore immediate Move / Rotate / Scale, axis selection and ± nudges in the unified Model Studio inspector by calling the existing native mesh handlers instead of introducing alternate transform state. Maintain mobile and desktop responsiveness and keep the section visible during active tool modes. No structural changes to the mage, native UV coordinates, or VR editor. Verify the source seal and deploy independently; owner acceptance follows on real devices.
+
 ## §E v11.350 · Two-hand VR modeling, live profiles and native surface tools (2026-11-08)
 
 Model VR now uses the active Controller Studio profile to drive real editing. Right-hand tools and left-hand view controls add multi-part selection, explicit two-hand geometry transforms, A/X hold wheels, focus/precision shortcuts and safe Undo/Redo. Native sculpt strokes, saved lasso masks, planar outline creation and signed closed extrusion stay inside the same immersive editor. Cancel and tracking loss discard previews; each completed operation commits one native history step. Camera/aim/display tools, UV sheets and the owner UV image import correction remain included.
