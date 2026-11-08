@@ -1,0 +1,72 @@
+name: One-shot §E v11.337 organic hand / geode source smoke
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/one-shot-forge-v11-337-hand-refinement.yml'
+      - 'projects/swrlz-forge-moba/patches/v11_337_cliff_organic_geodes.py'
+      - 'projects/swrlz-forge-moba/scripts/test_v11_337_cliff_organic_geodes.cjs'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  focused:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 19
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Test source-exact anatomy fields and compile source engine
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/cliff_hand_refinement_v11_337.js
+          node projects/swrlz-forge-moba/scripts/test_v11_337_cliff_organic_geodes.cjs
+          python - <<'PY'
+          import sys,json,hashlib,subprocess
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          manifest=json.loads((root/'source-manifest.json').read_text('utf8'))
+          assert manifest['name']=='§wyrl§ Engine v11.337'
+          assert manifest['finalArtifact']=='swyrl_engine_v11_337.html'
+          assert len(manifest['patches'])==350
+          assert manifest['patches'][-2:]==[
+            'patches/v11_336_model_uv_guide.py','patches/v11_337_cliff_organic_geodes.py']
+          out=Path('/tmp/se337')
+          subprocess.run([sys.executable,str(root/'build_space.py'),'--output',str(out)],check=True)
+          raw=(out/'index.html').read_bytes()
+          assert raw==(out/'modeler.html').read_bytes()
+          h=raw.decode('utf8')
+          for token in (
+            'SWYRL_ENGINE_DEPLOY_MARKER: V11_337_CLIFF_ORGANIC_GEODES',
+            "window.SWRLZ_FORGE_BUILD={version:'v11.337'",
+            '<title>§wyrl§ Engine · Maker v11.337</title>',
+            'function se337OrganicFingerSkin(digits,{ell,cap,blend}){',
+            'function se337HandField(math){',
+            'function se337PaintGeode(ctx,k,i){',
+            'function se337DorsalGeodeMaterial(mat){',
+            'const mesh=ops.weld(ops.surface(field,bounds,.044));',
+            ' const hand=se337HandField(math);',
+            ' return se337DorsalGeodeMaterial(mat);',
+            'function se336UVLayout(mesh, canvas)',
+            'modelAtelierUVLayout',
+            'model.parts=[stone];model.meshGroups=[];'):
+             assert token in h,token
+          assert h.count(' const hand=se337HandField(math);')==1
+          assert h.count("source.engine='§wyrl§ Engine · Maker v11.337';source.version=11.337;")==3
+          subprocess.run([sys.executable,str(root/'scripts/check_inline_js_syntax_v11_266.py'),str(out/'index.html')],check=True)
+          receipt=json.loads((out/'SOURCE.json').read_text('utf8'))
+          assert receipt['sourceVersion']==manifest['name']
+          assert len(receipt['assets'])==71
+          print('SE337_HTML_BYTES='+str(len(raw)),flush=True)
+          print('SE337_SHA256='+hashlib.sha256(raw).hexdigest(),flush=True)
+          print('SE337_PATCHES=350',flush=True)
+          print('SE337_ASSETS=71',flush=True)
+          print('SE337_SOURCE_PASS',flush=True)
+          PY
+      - name: Real desktop and Android WebGL geode + palm smoke
+        run: |
+          python -m pip install --quiet playwright
+          python -m playwright install --with-deps chromium
+          python projects/swrlz-forge-moba/scripts/inspect_cliff_live_render.py --package /tmp/se337 --block-atlas
