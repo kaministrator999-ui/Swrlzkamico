@@ -1,0 +1,22 @@
+/* §E v11.345 · multi-part UV atlas inside the existing UV inspector */
+#modelAtelierUVLayout .se345-uv-atlas{margin-top:6px;padding:10px;border:1px solid #4d8792;border-radius:10px;background:#102431;min-width:0}
+#modelAtelierUVLayout .se345-uv-atlas>summary{cursor:pointer;font-weight:700;color:#a7fff1;line-height:1.5}
+#modelAtelierUVLayout .se345-uv-atlas p{margin:7px 0}
+#modelAtelierUVLayout .se345-uv-help{font-size:.78rem;color:#acd5df;line-height:1.4;overflow-wrap:anywhere}
+#modelAtelierUVLayout .se345-uv-tools{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:8px 0}
+#modelAtelierUVLayout .se345-uv-tools button,
+#modelAtelierUVLayout .se345-uv-tools select{border:1px solid #598d9d;background:#214450;color:#efffff;border-radius:7px;min-height:36px;padding:6px 10px;font:inherit}
+#modelAtelierUVLayout .se345-uv-tools button{flex:1 1 114px;cursor:pointer}
+#modelAtelierUVLayout .se345-uv-tools button:disabled{opacity:.5}
+#modelAtelierUVLayout .se345-uv-tools label{display:flex;align-items:center;gap:8px;font-size:.8rem}
+#modelAtelierUVLayout .se345-uv-list{display:grid;gap:4px;max-height:242px;overflow-y:auto;overscroll-behavior:contain;padding:4px;border:1px solid #325966;border-radius:8px}
+#modelAtelierUVLayout .se345-uv-row{display:flex;align-items:center;gap:6px;min-width:0;padding:4px 6px;background:#173342;border-radius:6px}
+#modelAtelierUVLayout .se345-uv-row.se345-uv-current{outline:1px solid #efc76d;background:#29404c}
+#modelAtelierUVLayout .se345-uv-row label{display:flex;align-items:center;gap:8px;flex:1;min-width:0;font-size:.79rem;overflow-wrap:anywhere;cursor:pointer}
+#modelAtelierUVLayout .se345-uv-row input{width:17px;height:17px;flex:none}
+#modelAtelierUVLayout .se345-uv-row small{font-size:.64rem;padding:2px 4px;border-radius:4px}
+#modelAtelierUVLayout .se345-uv-good{color:#98f6dd}
+#modelAtelierUVLayout .se345-uv-missing{color:#ffc17b}
+#modelAtelierUVLayout .se345-uv-row button{min-height:29px;border:1px solid #578d9b;background:#2b5260;color:#e5ffff;border-radius:6px;font-size:.76rem;padding:3px 8px;cursor:pointer}
+#modelAtelierUVLayout #se345AtlasPreview{display:block;width:min(100%,342px);height:auto;aspect-ratio:1;margin:8px auto;border:1px solid #4e8595;border-radius:7px;background:#0a2330;touch-action:manipulation;cursor:crosshair}
+#modelAtelierUVLayout .se345-uv-atlas :focus-visible{outline:2px solid #61eddf;outline-offset:2px}

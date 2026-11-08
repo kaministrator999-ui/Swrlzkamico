@@ -1,0 +1,21 @@
+name: Seal v11.345 model UV atlas candidate
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/.candidate-v11-345"
+permissions:
+  contents: read
+jobs:
+  candidate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Model UV atlas and display modes source regression
+        run: python projects/swrlz-forge-moba/scripts/calc_v11_345_candidate.py
