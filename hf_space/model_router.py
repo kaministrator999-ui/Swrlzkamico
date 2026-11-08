@@ -321,7 +321,8 @@ def _conflicting_staff_handedness(description: str) -> bool:
 
 def _omit_unverifiable_turnaround_claims(
     body: str, *, conflicting_staff_hands: bool = False,
-    omit_boot_appearance: bool = False
+    omit_boot_appearance: bool = False,
+    omit_redundant_topics: tuple[str, ...] = ()
 ) -> str:
     """Conservatively omit categorical negatives/visibility absolutes.
 
@@ -358,6 +359,28 @@ def _omit_unverifiable_turnaround_claims(
                 and not re.search(
                     r"\b(?:stance|footprint|width|wide|size|proportion|silhouette|outline)\b",
                     clause, re.I)):
+            continue
+        # Restrict de-duplication to small, single-purpose clauses in a
+        # labeled multi-view report. Do not remove a sentence containing
+        # novel shape or view observations just because it mentions a prop.
+        topics = set(omit_redundant_topics)
+        if "staff" in topics and re.search(r"\bstaff\b", clause, re.I) and not re.search(
+                r"\b(?:silhouette|width|size|proportion|stance|outline)\b", clause, re.I):
+            continue
+        if "pouch" in topics and re.search(r"\b(?:pouch|satchel)\b", clause, re.I) and not re.search(
+                r"\b(?:belt|buckle|robe|trim|cape)\b", clause, re.I):
+            continue
+        if "belt" in topics and re.search(r"\b(?:belt|buckle)\b", clause, re.I) and not re.search(
+                r"\b(?:pouch|satchel|robe|cape|hem)\b", clause, re.I):
+            continue
+        if "hood" in topics and re.search(r"\bhood\b", clause, re.I) and not re.search(
+                r"\b(?:staff|pouch|satchel|stance|silhouette)\b", clause, re.I):
+            continue
+        if "hair" in topics and re.search(r"\b(?:hair|braids?)\b", clause, re.I) and not re.search(
+                r"\b(?:staff|pouch|satchel|hood)\b", clause, re.I):
+            continue
+        if "eyes" in topics and re.search(r"\beyes?\b", clause, re.I) and not re.search(
+                r"\b(?:staff|pouch|satchel|hood)\b", clause, re.I):
             continue
         # An illustration shows folds and overlap, not verified mesh topology.
         clause = re.sub(r"(?i)\bhas layered geometry with visible\b",
@@ -440,6 +463,20 @@ def _format_direct_vision_report(description: str) -> str:
         ) for i, match in enumerate(matches)
     )
     if len(matches) >= 2:
+        # These facts are classified into one primary section when possible.
+        # Preserve the more detailed prop description, appearance attributes,
+        # and clothing decorations rather than listing them a second time.
+        role_text = {}
+        for i, m in enumerate(matches):
+            name = labels[m.group(1).casefold()]
+            body_end = matches[i + 1].start() if i + 1 < len(matches) else len(text)
+            role_text[name] = role_text.get(name, "") + " " + text[m.end():body_end]
+        props = " ".join(value for name, value in role_text.items()
+                         if name.startswith("Props"))
+        clothing = " ".join(value for name, value in role_text.items()
+                            if name.startswith(("Clothing", "Materials")))
+        appearance = " ".join(value for name, value in role_text.items()
+                              if name.startswith(("Appearance", "Shape")))
         seen = set()
         seen_sentences = set()
         for i, match in enumerate(matches[:8]):
@@ -447,8 +484,25 @@ def _format_direct_vision_report(description: str) -> str:
             end = matches[i + 1].start() if i + 1 < len(matches) else len(text)
             body = re.sub(r"\s*\n\s*", " ", text[start:end]).strip()
             if turnaround:
+                heading = labels[match.group(1).casefold()]
+                topics = []
+                if heading.startswith(("Appearance", "Shape")) and re.search(r"\bstaff\b", props, re.I):
+                    topics.append("staff")
+                if heading.startswith(("Clothing", "Materials")) and re.search(
+                        r"\b(?:pouch|satchel)\b", props, re.I):
+                    topics.append("pouch")
+                if heading.startswith("Props"):
+                    if re.search(r"\b(?:belt|buckle)\b", clothing, re.I):
+                        topics.append("belt")
+                    if re.search(r"\bhood\b", clothing, re.I):
+                        topics.append("hood")
+                    if re.search(r"\b(?:hair|braids?)\b", appearance, re.I):
+                        topics.append("hair")
+                    if re.search(r"\beyes?\b", appearance, re.I):
+                        topics.append("eyes")
                 body = _omit_unverifiable_turnaround_claims(
                     body, conflicting_staff_hands=contradictory_staff_hands,
+                    omit_redundant_topics=tuple(topics),
                     omit_boot_appearance=(
                         clothing_mention_boots
                         and match.group(1).casefold() in {
