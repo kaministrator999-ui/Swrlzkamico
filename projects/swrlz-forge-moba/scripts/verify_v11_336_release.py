@@ -78,7 +78,7 @@ def main():
     original=(ROOT/'assets/cliff-hand/cliff_pbr_atlas_384.jpg').read_bytes()
     assert decoded==original
     assert hashlib.sha256(decoded).hexdigest()=='fc56730c8019d8079794c7b7379c75c8c07381794104eb56a439a94588647cbe'
-    assert html.count("source.engine='§wyrl§ Engine · Maker v11.336';source.version=11.335;")==3
+    assert html.count("source.engine='§wyrl§ Engine · Maker v11.336';source.version=11.336;")==3
     subprocess.run([sys.executable,str(ROOT/'scripts/check_inline_js_syntax_v11_266.py'),str(out/'index.html')],check=True)
     subprocess.run(['node',str(ROOT/'scripts/test_v11_335_cliff_ulnar_contour.cjs')],check=True)
     subprocess.run(['node',str(ROOT/'scripts/test_v11_332_cliff_fractures.cjs')],check=True)
