@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.336",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_336_MESH_UV_GUIDE",
-  "reason": "Owner requested a UV image layout extractor in native Model Atelier: export actual selected mesh triangle UVs as transparent 1024px guide PNG, paint independently, reimport PNG/JPEG to the same mesh using unchanged UV coordinates, persist bounded image on native model part with undo/save, and reject missing or out-of-range UVs. Existing model/material studios and game/Quest workflows retained. Scoped v11.336 package verification passed: 349 patches, 71 assets, 9045140 final HTML bytes, SHA-256 9af6daf11af47a50869a2db33f537cd6c7426da5c412ac1cd2aee42794037cd6. Physical Moto/Quest owner acceptance remains pending.",
-  "sourceCommit": "176c09ea032ce4ab71ca7c15384d8adebbb1eb70",
-  "sourceIntegritySha256": "9af6daf11af47a50869a2db33f537cd6c7426da5c412ac1cd2aee42794037cd6"
+  "releaseVersion": "v11.337",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_337_CLIFF_ORGANIC_GEODES",
+  "reason": "Owner physical Moto photos and existing hand screenshots show lower pinky-side palm still has a lump where it meets the wrist, finger PIP/DIP shafts and rounded tips are blocky, and old cyan crystal knuckles look like repeated flat spikes. §E v11.337 APPENDS to v11.336 mesh UV-layout extractor, preserves all other engine features, uses starter-only extra SDF heel remap so x of ulnar lower palm moves inward at y1.36 from 0.51149 to 0.40390, smooths only finger mid-joint and terminal radius blends while retaining thumb and all original 17 bone roots, and modestly refines connected gauntlet surface pitch .047→.044. Replaces bright repeated spikes with 4 different inset aquamarine geodes: dark stone sockets, individual polygonal gem facets, polished low roughness and restrained emission, masked to dorsal normals so palm side remains rock-only. Original owner photo not stored. Focused real SDF assertions, exact built HTML syntax, browser desktop + emulated Android WebGL, shaders and no-network atlas checks all passed. Package: 350 patches, 71 assets, 9055350 bytes, SHA-256 649c09b82d7ff0fee600c5b941be28da2bd77f54ee709d7bc635248857451ea6. Final Moto/Quest approval remains owner hands-on.",
+  "sourceCommit": "cfa60bbb19c602c37b4b530cb1698b443344419d",
+  "sourceIntegritySha256": "649c09b82d7ff0fee600c5b941be28da2bd77f54ee709d7bc635248857451ea6"
 }
