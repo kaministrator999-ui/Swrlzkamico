@@ -3,8 +3,10 @@ on:
   push:
     branches:
       - experiment/chat-vision-qwen3vl4b-20261106
+      - feature/chat-vision-grounded-visual-report-20261107
     paths:
       - .deploy/QWEN3VL_APPROVED_RELEASE.txt
+      - .deploy/CHAT_VISION_PR385_RELEASE.txt
 
 permissions:
   contents: read
@@ -20,10 +22,20 @@ jobs:
         run: |
           set -euo pipefail
           test "$GITHUB_REPOSITORY" = "kaministrator999-ui/Swrlzkamico"
-          test "$GITHUB_REF_NAME" = "experiment/chat-vision-qwen3vl4b-20261106"
-          grep -Fx "APPROVED_BY_USER=YES" .deploy/QWEN3VL_APPROVED_RELEASE.txt
-          grep -Fx "TARGET_SPACE=kamiloki/Swyrlz" .deploy/QWEN3VL_APPROVED_RELEASE.txt
-          grep -Fx "DEPLOYMENT_WORKFLOW=manual-hf-space.yml" .deploy/QWEN3VL_APPROVED_RELEASE.txt
+          # Select the exact approved source marker; never deploy a different branch.
+          case "$GITHUB_REF_NAME" in
+            experiment/chat-vision-qwen3vl4b-20261106)
+              marker=.deploy/QWEN3VL_APPROVED_RELEASE.txt ;;
+            feature/chat-vision-grounded-visual-report-20261107)
+              marker=.deploy/CHAT_VISION_PR385_RELEASE.txt
+              grep -Fx "SOURCE_PR=385" "$marker"
+              grep -Fx "SOURCE_BRANCH=$GITHUB_REF_NAME" "$marker" ;;
+            *)
+              echo "::error::Unapproved release source branch"; exit 1 ;;
+          esac
+          grep -Fx "APPROVED_BY_USER=YES" "$marker"
+          grep -Fx "TARGET_SPACE=kamiloki/Swyrlz" "$marker"
+          grep -Fx "DEPLOYMENT_WORKFLOW=manual-hf-space.yml" "$marker"
           grep -Fq 'MODEL_REPO = "Qwen/Qwen3-VL-4B-Instruct-GGUF"' hf_space/chat_vision.py
           grep -Fq 'VISION_MODEL_VARIANT = "qwen3-vl-4b"' hf_space/chat_vision.py
           ! grep -Fq 'SmolVLM' hf_space/chat_vision.py
