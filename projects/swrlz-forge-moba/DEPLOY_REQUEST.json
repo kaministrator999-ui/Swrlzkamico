@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.353",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_353_MODEL_VIEWPORT_TRANSFORM",
-  "reason": "Publish §E v11.353 viewport top-bar transforms for selected meshes, independent of inspector, using native handlers and Undo. Reconciled with concurrent source-of-truth UV importer changes already on main, without reverting them. Rebuilt current main in failed guarded release run 42532964659 to identify actual SHA-256 48847e4490959872239e86fb8b0646d317ea5f12a5bd2913d7392c253c5dcb12; exact 9,274,239 HTML bytes includes the UV source byte delta of +7,302. Complete sealed build and static HF upload must pass before live status. Owner phone/Quest acceptance pending.",
-  "sourceCommit": "2d67ce373deecf101b14de85336415d75687d409",
-  "sourceIntegritySha256": "48847e4490959872239e86fb8b0646d317ea5f12a5bd2913d7392c253c5dcb12"
+  "releaseVersion": "v11.354",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_354_MODEL_UV_SLIDE_HISTORY",
+  "reason": "Publish §E v11.354 from verified main source commit 6030cae5b1925f8665839100feb75ff06adb223b. Model Studio gains direct UV Slide mode on selected textured mesh (pointer drag, U/V nudges, reset), persistent native model texture offsets, one Undo checkpoint per drag, and in-viewport Undo/Redo alongside transform selectors. Full artifact seal: 9,283,827 HTML bytes and SHA-256 8e952dea0bc51c2d2ba3fdc033ae4257fbdeedeb2960fcfca342530e2d716c4b. Feature release verifier passed on GitHub Actions run 42536376088. Physical Moto/Quest acceptance pending.",
+  "sourceCommit": "6030cae5b1925f8665839100feb75ff06adb223b",
+  "sourceIntegritySha256": "8e952dea0bc51c2d2ba3fdc033ae4257fbdeedeb2960fcfca342530e2d716c4b"
 }
