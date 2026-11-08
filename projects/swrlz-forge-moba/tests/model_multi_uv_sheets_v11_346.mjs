@@ -7,13 +7,15 @@ import {fileURLToPath,pathToFileURL} from 'node:url';
 const ROOT=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const THREE=await import(pathToFileURL(path.resolve(process.argv[2])));
 assert.equal(THREE.REVISION,'169');
-const uv=fs.readFileSync(ROOT+'/runtime/model_atelier_multi_uv_atlas_v11_345.js','utf8');
-const pages=fs.readFileSync(ROOT+'/runtime/model_multi_uv_sheets_v11_346.js','utf8');
-const patch=fs.readFileSync(ROOT+'/patches/v11_346_model_multi_uv_sheets.py','utf8');
-new vm.Script(uv.replace('const SE345_ATLAS_MAX=96;','const SE345_ATLAS_MAX=96;\n'+pages));
-new vm.Script(pages);
-assert(patch.includes('Previous sheet')&&patch.includes('Next sheet'));
-assert(patch.includes('se346AtlasSuffix(plan)'));
+const html=fs.readFileSync(path.resolve(process.argv[3]),'utf8');
+const start=html.indexOf('let se345AtlasSelected=new Set()');
+const api=html.indexOf('window.SWYRL_ENGINE_UV_ATLAS=Object.freeze({',start);
+const end=html.indexOf('\n});',api)+4;
+assert(start>=0&&api>start&&end>api,'must find shipped UV atlas module');
+const runtime=html.slice(start,end);
+new vm.Script(runtime);
+assert(runtime.includes('SE346_MULTI_UV_SHEETS_START'));
+assert(runtime.includes('Previous sheet')&&runtime.includes('Next sheet'));
 const geometry=new THREE.BoxGeometry(.4,.5,.3),parts=[],scene=new THREE.Group();
 for(let i=0;i<811;i++){
  const part={id:'character-'+i,name:'Character part '+i,kind:'box',group:i<313?'Character':'Companions'};
@@ -25,7 +27,7 @@ const c={THREE,model:()=>current,modelRoot:scene,partById:id=>parts.find(x=>x.id
  selection:parts[0].id,ensurePanel(){},refreshInspector(){},window:{},
  currentProject:{name:current.name},document:{getElementById:()=>null},status(){}};
 vm.createContext(c);
-vm.runInContext(uv.replace('const SE345_ATLAS_MAX=96;','const SE345_ATLAS_MAX=96;\n'+pages)+
+vm.runInContext(runtime+
  '\nthis.test={init:se345AtlasCurrent,selected:se345AtlasSelectedParts,go:se346AtlasGo,info:se346AtlasPageInfo,suffix:se346AtlasSuffix,layout:se345AtlasLayout,api:window.SWYRL_ENGINE_UV_ATLAS};',c);
 c.test.init();
 assert.equal(c.test.api.selectAll(),811);
