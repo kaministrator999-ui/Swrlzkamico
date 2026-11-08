@@ -320,7 +320,8 @@ def _conflicting_staff_handedness(description: str) -> bool:
 
 
 def _omit_unverifiable_turnaround_claims(
-    body: str, *, conflicting_staff_hands: bool = False
+    body: str, *, conflicting_staff_hands: bool = False,
+    omit_boot_appearance: bool = False
 ) -> str:
     """Conservatively omit categorical negatives/visibility absolutes.
 
@@ -350,6 +351,13 @@ def _omit_unverifiable_turnaround_claims(
         if (conflicting_staff_hands
                 and re.search(r"\bstaff\b", clause, re.I)
                 and re.search(r"\b(?:left|right)\s+hand\b", clause, re.I)):
+            continue
+        # When appearance is also covered under clothing, don't re-list
+        # boot color/fur under anatomy (but preserve genuine stance geometry).
+        if (omit_boot_appearance and re.search(r"\bboots?\b", clause, re.I)
+                and not re.search(
+                    r"\b(?:stance|footprint|width|wide|size|proportion|silhouette|outline)\b",
+                    clause, re.I)):
             continue
         # An illustration shows folds and overlap, not verified mesh topology.
         clause = re.sub(r"(?i)\bhas layered geometry with visible\b",
@@ -422,6 +430,11 @@ def _format_direct_vision_report(description: str) -> str:
         and bool(re.search(r"\bviews?\b", text, re.I))
     )
     sections = []
+    clothing_mention_boots = any(
+        "clothing" in m.group(1).casefold()
+        or "materials" in m.group(1).casefold()
+        for m in matches
+    ) and bool(re.search(r"(?i)\bboots?\b", text))
     if len(matches) >= 2:
         seen = set()
         seen_sentences = set()
@@ -431,7 +444,14 @@ def _format_direct_vision_report(description: str) -> str:
             body = re.sub(r"\s*\n\s*", " ", text[start:end]).strip()
             if turnaround:
                 body = _omit_unverifiable_turnaround_claims(
-                    body, conflicting_staff_hands=contradictory_staff_hands
+                    body, conflicting_staff_hands=contradictory_staff_hands,
+                    omit_boot_appearance=(
+                        clothing_mention_boots
+                        and match.group(1).casefold() in {
+                            "shape and anatomy", "silhouette and anatomy",
+                            "shape and proportions", "relative proportions"
+                        }
+                    ),
                 )
             if not body:
                 continue
