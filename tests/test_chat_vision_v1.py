@@ -729,6 +729,47 @@ assert "Two identical figures" not in cleaned_mage
 assert "not independently verified" in cleaned_mage
 assert "Feet are clad" in redundant_mage, "source handoff must remain unchanged"
 
+# New real mage report: a richer satchel/hood detail belongs in the final
+# reply, but basic belt/hair/eye inventory must not be repeated across sections.
+latest_mage = (
+    "Character reference · local model observation (accuracy unverified)\n\n"
+    "Subject and views: Front, left side, right side, back, and top views of "
+    "a single Little Crystal Mage.\n"
+    "Silhouette and anatomy: Silver-white hair in two braids; purple eyes; "
+    "wears a hooded robe with cape; stands on two legs; holds a staff in the "
+    "right hand; left hand rests on a satchel in front view; back view "
+    "shows full cape and staff beside the figure; top view shows hood "
+    "shape and staff position.\n"
+    "Clothing and surface detail: Purple hooded robe with gold trim; "
+    "star, moon, leaf and magic symbols; fur-lined boots; belt with buckle; "
+    "satchel with leaf emblem; robe has layered geometry with visible "
+    "seams and folds.\n"
+    "Props and small features: Staff topped with glowing purple crystal; "
+    "satchel with brown leather and leaf emblem; belt with buckle; "
+    "hood with star and moon motifs; hair in two braids; eyes purple; "
+    "no other visible accessories.\n"
+    "Visibility limits: Back view shows the robe and staff; "
+    "top view shows hood and staff; no occlusion is implied for all views; "
+    "no hidden parts are visible.\n"
+    "\nFocused image details (unverified source-crop observations):\n"
+    "- Upper-left figure detail: Two identical figures in purple robes; "
+    "right side view shows left hand gripping a staff."
+)
+latest_report = direct({"prompt": "What do you see in this image?" +
+                        vision.VISION_START + latest_mage + vision.VISION_END})
+assert latest_report.count("belt with buckle") == 1, latest_report
+assert latest_report.count("hair in two braids") == 1, latest_report
+assert "eyes purple" not in latest_report
+assert "satchel with brown leather and leaf emblem" in latest_report
+assert "holds a staff in the right hand" not in latest_report
+assert "top view shows hood shape and staff position" in latest_report
+assert "hood with star and moon motifs" in latest_report, "do not discard unique location-specific details"
+assert "no occlusion is implied" not in latest_report
+assert "layered geometry" not in latest_report
+assert "Two identical figures" not in latest_report
+assert "belt with buckle" in latest_mage, "raw text is untouched"
+
+
 
 assert "not independently verified" in problematic_result
 
