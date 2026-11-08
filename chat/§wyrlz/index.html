@@ -2967,7 +2967,8 @@
         const source=String(value||"");
         const prefix="Local image analyzer's description (not directly inspected by §C):";
         if(!source.startsWith(prefix))return null;
-        let body=source.slice(prefix.length).trim()
+        const completeModelText=source.slice(prefix.length).trim();
+        let body=completeModelText
           .split("\n\n[Raw source-crop observations; accuracy unverified]\n",1)[0]
           .split(/\n\s*Focused image details\s*\(unverified source-crop observations\):/i,1)[0]
           .replace(/^Character reference[^\n]*\n\s*/i,"").trim();
@@ -2989,9 +2990,23 @@
         };
         const labels=/^(Subject and views|Views and subject|View comparisons|View comparison|Shape and proportions|Shape and anatomy|Silhouette and anatomy|Geometry and layers|Shape and construction|Clothing and surfaces|Clothing and surface detail|Materials and markings|Props and contact|Props and small features|Props and fine details|Visibility limits|Visibility and uncertainty):\s*/gim;
         const matches=[...body.matchAll(labels)];
+        // Report display is not a second visual inspection. Use the raw
+        // caption/crop notes only to detect uncertain page-relative hands.
+        const staffSides=new Set();
+        completeModelText.split(/(?<=[.!?;])\s+|\n+/).forEach(line=>{
+          if(!/\bstaff\b/i.test(line))return;
+          for(const side of line.matchAll(/\b(left|right)\s+hand\b/gi))
+            staffSides.add(side[1].toLowerCase());
+        });
+        const conflictingStaffHands=staffSides.size>1;
+        const clothingMentionsBoots=matches.some((match,index)=>{
+          if(!/clothing|materials/i.test(match[1]))return false;
+          const end=index+1<matches.length?matches[index+1].index:body.length;
+          return /\bboots?\b/i.test(body.slice(match.index+match[0].length,end));
+        });
         const viewWords=new Set((body.match(/\b(?:front|back|top|side)\b/gi)||[]).map(x=>x.toLowerCase()));
         const turnaround=viewWords.size>=3&&/\bviews?\b/i.test(body);
-        const filterClaim=sentence=>{
+        const filterClaim=(sentence,heading)=>{
           const line=sentence.trim();
           if(!line)return"";
           if(!turnaround)return line;
@@ -2999,7 +3014,15 @@
               /\b(?:no|without|zero)\s+occlusion\b/i.test(line)||
               /\b(?:all|every)\s+(?:limbs|parts|hands|heads?|views?|angles?)\b/i.test(line)||
               /\b(?:in|across|from)\s+(?:all|every)\s+(?:views?|angles?)\b/i.test(line))return"";
-          return /[.!?][\\"\u201d\u2019\u0027)\]]*$/.test(line)?line:line.replace(/;$/,"")+".";
+          if(conflictingStaffHands&&/\bstaff\b/i.test(line)&&
+              /\b(?:left|right)\s+hand\b/i.test(line))return"";
+          if(clothingMentionsBoots&&/shape|silhouette|anatomy|proportion/i.test(heading)&&
+              /\bboots?\b/i.test(line)&&
+              !/\b(?:stance|footprint|width|wide|size|proportion|silhouette|outline)\b/i.test(line))
+            return"";
+          const qualified=line.replace(/\bhas layered (?:geometry|construction) with visible\b/gi,
+                                       "appears layered, with");
+          return /[.!?][\\"\u201d\u2019\u0027)\]]*$/.test(qualified)?qualified:qualified.replace(/;$/,"")+".";
         };
         if(matches.length>=2){
           const sections=[],seen=new Set(),seenClaims=new Set();
@@ -3007,7 +3030,7 @@
             const end=index+1<matches.length?matches[index+1].index:body.length;
             let detail=body.slice(match.index+match[0].length,end).replace(/\s*\n\s*/g," ").trim();
             if(!detail)return;
-            detail=detail.split(/(?<=[.!?;])\s+/).map(filterClaim).filter(Boolean)
+            detail=detail.split(/(?<=[.!?;])\s+/).map(sentence=>filterClaim(sentence,match[1])).filter(Boolean)
               .filter(sentence=>{
                 const claim=sentence.toLowerCase().replace(/[^\p{L}\p{N}]+/gu," ").trim();
                 if(!claim||seenClaims.has(claim))return false;
