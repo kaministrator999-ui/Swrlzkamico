@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Verify the exact sealed Model VR v11.351 package and its native source lineage."""
+"""Verify the exact sealed §E v11.351 Game Engine quick-actions release."""
 from pathlib import Path
 import argparse,hashlib,json,subprocess,sys
 ROOT=Path(__file__).resolve().parents[1]
 MARKER='SWYRL_ENGINE_DEPLOY_MARKER: V11_351_GAME_QUICK_ACTIONS'
 ap=argparse.ArgumentParser();ap.add_argument('--output',required=True);ap.add_argument('--request',action='store_true');args=ap.parse_args()
 m=json.loads((ROOT/'source-manifest.json').read_text('utf8'))
-assert m['name']=='§wyrl§ Engine v11.351' and m['finalArtifact']=='swyrl_engine_v11_350.html'
+assert m['name']=='§wyrl§ Engine v11.351' and m['finalArtifact']=='swyrl_engine_v11_351.html'
 assert len(m['patches'])==359 and m['patches'][-1]=='patches/v11_351_game_quick_actions.py'
 assert m['finalBytes']>9_200_000 and len(m['finalSha256'])==64
 output=Path(args.output).resolve()
