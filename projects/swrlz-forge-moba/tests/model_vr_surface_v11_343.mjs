@@ -32,7 +32,7 @@ assert.equal(api.surface({id:'ring',name:'Ring',mesh:ring},ray),null,
  'bounding box intersects empty hole: reticle must NOT float in hole');
 const ringHit=api.surface({id:'ring',name:'Ring',mesh:ring},
  new THREE.Raycaster(new THREE.Vector3(1,0,3),new THREE.Vector3(0,0,-1),.01,5));
-assert(ringHit?.point.z>.12&&ringHit.point.z<.35,'ring reticle must hit real curved surface');
+assert(ringHit?.point.z>.12&&ringHit.point.z<.35,'ring reticle must hit real curved surface: '+JSON.stringify({point:ringHit?.point?.toArray(),faces:state.hoverSurfaceCache.get(ring)?.proxy?.geometry?.index?.count/3}));
 // The simplified hand proxy is still skinned by the original live skeleton.
 const geo=new THREE.SphereGeometry(.5,80,60),n=geo.getAttribute('position').count;
 const joints=new Uint16Array(n*4),weights=new Float32Array(n*4);
