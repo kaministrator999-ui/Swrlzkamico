@@ -3004,6 +3004,18 @@
           const end=index+1<matches.length?matches[index+1].index:body.length;
           return /\bboots?\b/i.test(body.slice(match.index+match[0].length,end));
         });
+        const roleText={};
+        matches.forEach((match,index)=>{
+          const end=index+1<matches.length?matches[index+1].index:body.length;
+          const role=aliases[match[1].toLowerCase()]||match[1];
+          roleText[role]=(roleText[role]||"")+" "+body.slice(match.index+match[0].length,end);
+        });
+        const roleContent=prefix=>Object.entries(roleText)
+          .filter(([name])=>prefix.some(p=>name.startsWith(p)))
+          .map(([,value])=>value).join(" ");
+        const propsText=roleContent(["Props"]);
+        const clothingText=roleContent(["Clothing","Materials"]);
+        const appearanceText=roleContent(["Appearance","Shape"]);
         const viewWords=new Set((body.match(/\b(?:front|back|top|side)\b/gi)||[]).map(x=>x.toLowerCase()));
         const turnaround=viewWords.size>=3&&/\bviews?\b/i.test(body);
         const filterClaim=(sentence,heading)=>{
@@ -3020,6 +3032,29 @@
               /\bboots?\b/i.test(line)&&
               !/\b(?:stance|footprint|width|wide|size|proportion|silhouette|outline)\b/i.test(line))
             return"";
+          const topics=[];
+          const role=aliases[heading.toLowerCase()]||heading;
+          if(/^(Appearance|Shape)/.test(role)&&/\bstaff\b/i.test(propsText))topics.push("staff");
+          if(/^(Clothing|Materials)/.test(role)&&/\b(?:satchel|pouch)\b/i.test(propsText))topics.push("pouch");
+          if(/^Props/.test(role)){
+            if(/\b(?:belt|buckle)\b/i.test(clothingText))topics.push("belt");
+            if(/\bhood\b/i.test(clothingText))topics.push("hood");
+            if(/\b(?:hair|braids?)\b/i.test(appearanceText))topics.push("hair");
+            if(/\beyes?\b/i.test(appearanceText))topics.push("eyes");
+          }
+          const has=(r)=>r.test(line);
+          if(topics.includes("staff")&&has(/\bstaff\b/i)&&
+              !has(/\b(?:silhouette|width|size|proportion|stance|outline)\b/i))return"";
+          if(topics.includes("pouch")&&has(/\b(?:pouch|satchel)\b/i)&&
+              !has(/\b(?:belt|buckle|robe|trim|cape)\b/i))return"";
+          if(topics.includes("belt")&&has(/\b(?:belt|buckle)\b/i)&&
+              !has(/\b(?:pouch|satchel|robe|cape|hem)\b/i))return"";
+          if(topics.includes("hood")&&has(/\bhood\b/i)&&
+              !has(/\b(?:staff|pouch|satchel|stance|silhouette)\b/i))return"";
+          if(topics.includes("hair")&&has(/\b(?:hair|braids?)\b/i)&&
+              !has(/\b(?:staff|pouch|satchel|hood)\b/i))return"";
+          if(topics.includes("eyes")&&has(/\beyes?\b/i)&&
+              !has(/\b(?:staff|pouch|satchel|hood)\b/i))return"";
           const qualified=line.replace(/\bhas layered (?:geometry|construction) with visible\b/gi,
                                        "appears layered, with");
           return /[.!?][\\"\u201d\u2019\u0027)\]]*$/.test(qualified)?qualified:qualified.replace(/;$/,"")+".";
