@@ -466,7 +466,12 @@ def _detail_regions(image_url: str, overview: str, question: str = "",
     # Geometric positions only: no assertion that a crop definitely contains
     # a face, armor, or text. Labels describe where source pixels came from.
     proposals = []
-    if reference_sheet and width > height * 1.2:
+    # Prefer actual source-pixel separation over guessed broad rectangles.
+    from vision_sheet_layout import discover_view_panels
+    layout_panels = discover_view_panels(original) if reference_sheet else []
+    if layout_panels:
+        proposals.extend(layout_panels)
+    elif reference_sheet and width > height * 1.2:
         if face_detail or not surface_detail:
             proposals.append(("Upper-left figure detail",
                               (0, .09 * height, .32 * width, .53 * height)))
@@ -507,10 +512,9 @@ def _detail_regions(image_url: str, overview: str, question: str = "",
     else:
         proposals.append(("Requested upper detail",
                           (0, 0, width, .56 * height)))
-    # Prioritize explicitly requested small text, then face/garment detail.
-    # At most two crop inferences, and no forced extra inference for a simple
-    # image. If one fails, the full overview still survives.
-    proposals = proposals[:2]
+    # Up to six detected view panels plus the support strip; ordinary
+    # images retain the two-crop limit and their fast path.
+    proposals = proposals[:7] if layout_panels else proposals[:2]
     labels = [label for label, _ in proposals]
     boxes = [(x0, y0, x1, y1) for _, (x0, y0, x1, y1) in proposals]
     regions = []
@@ -783,6 +787,9 @@ def _ask_vision_local(image_url: str, question: str, report_phase=None, should_c
         for label, crop, source_box in region_plan:
             check_cancel()
             focus_prompt = (
+                "Inspect ONLY THIS source-image region. It may depict one "
+                "view or supporting details; read its angle label only when "
+                "legible and never invent camera orientation. "
                 "Describe this focused image CROP in 1 or 2 SHORT factual "
                 "sentences (at most 55 words). Identify tiny details not "
                 "obvious in a full image. Focus on visible anatomical silhouette, "
@@ -800,7 +807,7 @@ def _ask_vision_local(image_url: str, question: str, report_phase=None, should_c
             )
             try:
                 detail, region_time, first_chunk, finish_reason = generate(
-                    crop, focus_prompt, 128, region=label)
+                    crop, focus_prompt, 112 if layout_panels else 128, region=label)
             except VisionCancelled:
                 raise
             except Exception as exc:
@@ -812,6 +819,11 @@ def _ask_vision_local(image_url: str, question: str, report_phase=None, should_c
                                   "errorType": type(exc).__name__}), flush=True)
                 continue
             region_records.append({"region": label, "description": detail,
+                                   "regionKind": ("view" if label.startswith("View panel ")
+                                                  else "support" if label == "Supporting reference panels"
+                                                  else "detail"),
+                                   "viewPanelIndex": (int(label.rsplit(" ", 1)[1])
+                                                      if label.startswith("View panel ") else None),
                                    "sourceBox": source_box,
                                    "coordinateSpace": "exif-corrected-source-normalized",
                                    "elapsedSeconds": region_time,
@@ -826,7 +838,7 @@ def _ask_vision_local(image_url: str, question: str, report_phase=None, should_c
             # a tracked color or garment. Empty model outputs remain visible.
             shown = detail if detail else "[Vision model returned no text]"
             if finish_reason == "length":
-                shown += " [Generation stopped at 128-token limit; description may be incomplete.]"
+                shown += " [Generation stopped at region token limit; description may be incomplete.]"
             region_blocks.append("\n" + label + " (source-image crop): " + shown)
         # Suppress a vague full-image caption only ONCE, after all raw
         # regional observations have been accumulated. The explicit L3
@@ -866,17 +878,25 @@ def _ask_vision_local(image_url: str, question: str, report_phase=None, should_c
                 "Whole scene: " + level_records[0]["description"][:220],
             ]
             evidence_lines.extend(
-                item["region"] + ": " + item["description"][:220]
+                item["region"] + " (" + item.get("regionKind", "detail") +
+                "): " + item["description"][:230]
                 for item in region_records
             )
-            evidence_notes = "\n".join(evidence_lines)[:1200]
+            # Include later views and the support strip rather than
+            # silently dropping them after inference under a 1200-char cap.
+            evidence_notes = "\n".join(evidence_lines)[:2400]
             report_detail(inferenceStage="FUSION_PREPARE",
                           activeRegion=None,
                           completedRegions=len(region_records),
                           requestedRegions=len(region_plan))
             fusion_prompt = (
                 "You are examining the original image pixels, plus fallible "
-                "notes from source crops. Write ONE useful, concise final "
+                "notes from source crops. Numbered View panel names are "
+                "POSITIONAL labels, not verified camera angles. Ground any "
+                "front/side/back/top assignment in the image or legible "
+                "panel label; do not guess. Lower supporting panels can "
+                "show detail closeups, palette swatches and motif symbols, "
+                "not additional characters. Write ONE useful, concise final "
                 "image analysis as direct visual observations, not a process "
                 "log or repeated caption. Treat the crop notes as guesses, "
                 "not independent verification: check each against the ENTIRE "
