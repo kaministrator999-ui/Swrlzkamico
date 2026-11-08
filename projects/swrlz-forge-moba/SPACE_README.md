@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.332
+title: §wyrl§ Engine v11.333
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,13 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.333 · Original Cliff Hand atlas guaranteed inside the page (2026-11-07)
+
+Owner phone screenshot showed the **Plain Hand Base · Smooth Cliff Hand** as a uniformly tan, undetailed surface despite source-level v11.332 fixes. A corrected end-to-end browser capture actually renders the intended mineral cracks on desktop and Android-sized Chromium, with the original 17-bone single connected hand. Hosted Hugging Face `SOURCE.json` and the separate 404,577-byte rock JPEG both returned HTTP 200 and exact SHA-256 matches. This narrowed the remaining fault to the mobile session/cache or a failed client image load, not the original UV or atlas artwork.
+
+The v11.333 patch verifies the **original owner-provided 404,577-byte JPEG** against SHA-256 `fc56730c8019d8079794c7b7379c75c8c07381794104eb56a439a94588647cbe`, then embeds it byte-for-byte as a data URI inside the sealed HTML for **this starter's PBR compositing loader**. Once the new page loads, the hand no longer needs a second HTTP request for rock textures. The exact color/normal/AO/roughness tiles, dark fault mask, wrist-only moss, four knuckle ridges, geometry, rig, and unrelated models remain unchanged. The 346-patch package is **9,027,112 bytes**, SHA-256 **`e3e46cfd23dc4cddaf9ecb5316de58e5f099277b848ab7f884968335c59cd5ce`**, 71 original assets. Source pixel, inline byte, no-network, and browser checks are scoped to the affected starter; final Moto/Quest visual acceptance remains the owner's test.
+
 
 ## §E v11.332 · Smooth Cliff Hand original fracture mask repair (2026-11-07)
 
