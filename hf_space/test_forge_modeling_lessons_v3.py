@@ -21,7 +21,8 @@ class ModelingLearningV3(unittest.TestCase):
         self.assertIn("opted-in hand-tracking XR session", s)
         self.assertIn("handedness", s)
         self.assertIn("null/occlusion", s)
-        self.assertIn("max 32 authored keys", s)
+        self.assertIn("Studio Commands v1 keyframe writes are manually", s)
+        self.assertIn("dense capture needs new work", s)
 
     def test_wave_bends_wrist_over_eight_keys_and_other_gestures_remain_three(self):
         s = select_modeling_lesson("Animate the Wave gesture of my §E glove")
