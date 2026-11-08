@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.345
+title: §wyrl§ Engine v11.346
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,13 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.346 · Whole-character UV export across readable numbered sheets (2026-11-08)
+
+v11.345 introduced multi-object native UV guide export and Model VR display modes (Textured, Solid, Wireframe, X-ray, Normals), but a single guide was capped at 96 parts. A complex §E character may contain hundreds of native meshes. **Select All now includes the entire character** without shrinking every UV segment into an unreadable tile: the existing UV inspector shows Previous/Next sheet controls and exports up to 96 parts per numbered sheet, each with a matching **GUIDE.png + MAP.json**. Source model names, part IDs, UV rectangles and fingerprints remain linked to each sheet; importing a painted sheet changes only those exact source parts in one Undo step. The existing 3D mesh and source-authored UV coordinates remain unchanged. Overlapping islands within a single part are explicitly retained, not falsely described as auto-unwrapped.
+
+The sheet navigation reuses the existing UV inspector without introducing a new global toolbar. Selecting all/groups refreshes checkboxes in place instead of rebuilding hundreds of UI rows. A bundled-source test [succeeded](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/42458051449): an **811-part character produced nine sheets**, each with no more than 96 native parts and the last with 43. The rebuilt §E source contains **357 ordered patches**, **9,165,566 bytes**, SHA-256 `77228e757f77977a35f0b9b74bf0f5efc9c82659d70178256b4b9c8f2919ed23`. Real-device export behavior and the user's privately saved mage UVs require owner verification in Model Studio.
+
 
 ## §E v11.345 · Linked multi-object UV atlas and true VR display modes (2026-11-08)
 
