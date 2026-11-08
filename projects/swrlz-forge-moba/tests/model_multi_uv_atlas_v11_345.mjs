@@ -21,7 +21,7 @@ for(let i=0;i<17;i++){
 const native={name:'Mage · UV source',parts},byId=id=>parts.find(p=>p.id===id);
 const ctx={THREE,model:()=>native,modelRoot:root,partById:byId,
  selection:parts[0].id,ensurePanel(){},refreshInspector(){},window:{},
- status(){},document:{},currentProject:{name:'Mage'}};
+ status(){},document:{getElementById(){return null;}},currentProject:{name:'Mage'}};
 vm.createContext(ctx);
 vm.runInContext(uvSource+'\nthis.uvTest={parts:se345AtlasParts,layout:se345AtlasLayout,metrics:se345AtlasMetrics,fingerprint:se345AtlasFingerprint,verify:se345AtlasVerify,inspect:window.SWYRL_ENGINE_UV_ATLAS.inspect,selectAll:window.SWYRL_ENGINE_UV_ATLAS.selectAll};',ctx);
 const uv=ctx.uvTest;
