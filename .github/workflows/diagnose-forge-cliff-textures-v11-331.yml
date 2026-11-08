@@ -1,4 +1,4 @@
-name: Focused §E Smooth Cliff Hand actual texture render diagnosis
+name: Focused §E Smooth Cliff Hand true offline texture render diagnosis
 on:
   push:
     branches: [main]
@@ -21,4 +21,4 @@ jobs:
           python -m pip install --quiet playwright
           python -m playwright install --with-deps chromium
           python projects/swrlz-forge-moba/build_space.py --output /tmp/se-cliff-inspect
-          python projects/swrlz-forge-moba/scripts/inspect_cliff_live_render.py --package /tmp/se-cliff-inspect
+          python projects/swrlz-forge-moba/scripts/inspect_cliff_live_render.py --package /tmp/se-cliff-inspect --block-atlas
