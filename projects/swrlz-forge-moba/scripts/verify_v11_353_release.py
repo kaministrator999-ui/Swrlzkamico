@@ -15,7 +15,7 @@ data=(output/'index.html').read_bytes();assert data==(output/'modeler.html').rea
 assert len(data)==m['finalBytes'] and hashlib.sha256(data).hexdigest()==m['finalSha256']
 html=data.decode('utf8')
 for needle in [MARKER,"window.SWRLZ_FORGE_BUILD={version:'v11.353'",'<title>§wyrl§ Engine · Maker v11.353</title>',
- 'SE351_GAME_QUICK_ACTIONS_START',"se320ModelTransformAccess(panel,q('.atelier-scene',panel));",'se320-native-transform-proxy',"const active=!!state?.open&&!!state?.selected&&!panel.hidden;",'data-se320-transform="move"','data-se320-transform="rotate"','data-se320-transform="scale"','data-se320-transform="minus"','data-se320-transform="plus"','source?.click();','se351GameQuickBar','se238GameTools','se320GameMore',
+ 'SE351_GAME_QUICK_ACTIONS_START',"se320ModelTransformAccess(panel,inspector);","const scene=q('.atelier-scene',panel);",'se320-native-transform-proxy',"const active=!!state?.open&&!!state?.selected&&!panel.hidden;",'data-se320-transform="move"','data-se320-transform="rotate"','data-se320-transform="scale"','data-se320-transform="minus"','data-se320-transform="plus"','source?.click();','se351GameQuickBar','se238GameTools','se320GameMore',
  'projectBtn','playBtn','stopBtn','se181EnterVR','More options','SE350_MODEL_VR_TWO_HAND_WORKSPACE','SE350_MODEL_VR_NATIVE_TOOLS_START','SE350_MODEL_VR_SURFACE_START',
  'vrTools:se350ModelTools,vrSurface:se350ModelSurface','se350CreateModelVRInput','currentProfile:()=>',
  'SE346_MULTI_UV_SHEETS_START','SE345_MODEL_VR_DISPLAY_MODES_START','SE344_MODEL_VR_AIM_VIEWS_START',
