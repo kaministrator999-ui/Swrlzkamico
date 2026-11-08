@@ -124,7 +124,7 @@ assert.ok(newReadable.includes("Staff topped with glowing purple crystal"),"keep
 assert.equal((newReadable.match(/belt with buckle/g)||[]).length,1,"do not repeat belt");
 assert.equal((newReadable.match(/hair in two braids/g)||[]).length,1,"do not repeat hair inventory");
 assert.ok(!newReadable.includes("eyes purple"),"eyes already under appearance");
-assert.ok(!newReadable.includes("hood with star and moon motifs"),"hood ornament belongs under clothing");
+assert.ok(newReadable.includes("hood with star and moon motifs"),"preserve a distinct location-specific ornament detail");
 assert.ok(newReadable.includes("satchel with brown leather and leaf emblem"),"keep richer satchel detail");
 assert.ok(!newReadable.includes("satchel with leaf emblem;"),"suppress weaker satchel inventory");
 assert.ok(!newReadable.includes("holds a staff in the right hand"),"no confident conflicting staff-hand assignment");
