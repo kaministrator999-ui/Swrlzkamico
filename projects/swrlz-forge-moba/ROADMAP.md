@@ -1,3 +1,7 @@
+## §E v11.354 · Selected-mesh texture sliding and viewport Undo/Redo (2026-11-08)
+
+Keep the original Model Studio mesh UV vertices unchanged while allowing visual placement of painted image textures directly on a selected 3D mesh. UV Slide provides surface drag, fine U/V adjustments and reset, and records one native Undo checkpoint per drag. Put Undo/Redo alongside existing viewport transform controls, preserving selection through history when valid. Verify generated source integrity and live deployment independently from owner's Moto/Quest acceptance.
+
 ## §E v11.353 · Modeler selection transform toolbar (2026-11-08)
 
 Display Move / Rotate / Scale and X/Y/Z nudges in the model viewport's top-bar region when a mesh is selected; hide on deselection. Keep these actions functional when the inspector is collapsed. Maintain the original mesh gizmo/Undo pipeline and hide only redundant sidebar action rows. The top bar stays compact and scrolls if viewport width is too narrow. Release validation and owner phone/Quest acceptance are independent.
