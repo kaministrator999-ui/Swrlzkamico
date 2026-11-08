@@ -14,7 +14,7 @@ short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 
 Model VR now uses the active Controller Studio profile to drive real editing. Right-hand tools and left-hand view controls add multi-part selection, explicit two-hand geometry transforms, A/X hold wheels, focus/precision shortcuts and safe Undo/Redo. Native sculpt strokes, saved lasso masks, planar outline creation and signed closed extrusion stay inside the same immersive editor. Cancel and tracking loss discard previews; each completed operation commits one native history step. Camera/aim/display tools, UV sheets and the owner UV image import correction remain included.
 
-See [the v11.350 checkpoint](docs/MODEL_STUDIO_VR_V11_350.md) for controls, source integrity, targeted verification and deliberate geometry limits. Physical Quest feel and performance remain owner acceptance testing.
+See [the v11.350 checkpoint](docs/MODEL_STUDIO_VR_V11_350.md) for controls, source integrity, targeted verification and deliberate geometry limits. Physical Quest feel and performance remain owner acceptance testing. Deployment [run 42461483101](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/42461483101) succeeded. The RUNNING hosted index and Modeler pages match the tested seal exactly; physical headset acceptance remains owner testing.
 
 
 

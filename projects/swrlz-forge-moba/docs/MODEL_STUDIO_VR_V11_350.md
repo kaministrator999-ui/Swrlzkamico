@@ -45,4 +45,15 @@ The new native/profile/workspace tests use actual Three.js r169 and the shipped 
 
 Source seal: **358 ordered patches, 9249898 HTML bytes, SHA-256 `5729bbee128f39cb7a97b73effb1e9d22cc51621f4377d206b68373b8cc1f3bf`**, 71 bundled assets. `index.html` and `modeler.html` are identical and agree with `SOURCE.json` and `source-manifest.json`.
 
-Local validation passed: 14 native group, 20 native surface, 12 input profile and 10 actual-workspace regression groups; the spatial UI ray-picking smoke; and 16 end-to-end IWER controller workflows with zero page errors. The browser-tested HTML SHA is identical to the source seal. Existing 811-part/nine-sheet UV export and five-mode display tests also passed. Final hosted receipts are recorded after deployment. Deployment follows the separate `DEPLOY_REQUEST.json` commit required by [RELEASE_PROCESS.md](../RELEASE_PROCESS.md).
+Local validation passed: 14 native group, 20 native surface, 12 input profile and 10 actual-workspace regression groups; the spatial UI ray-picking smoke; and 16 end-to-end IWER controller workflows with zero page errors. The browser-tested HTML SHA is identical to the source seal. Existing 811-part/nine-sheet UV export and five-mode display tests also passed. Hosted verification is complete. Deployment follows the separate `DEPLOY_REQUEST.json` commit required by [RELEASE_PROCESS.md](../RELEASE_PROCESS.md).
+
+
+### Confirmed hosted receipt
+
+- Coherent source commit: `9804253f1f080a491c853c9a3c775be4b6df554f`.
+- Separate request-only commit: `e1004bdae050c2e2489289e8ddec7ee283e47bbd` (one commit, one changed request file).
+- Deployment: [42461483101](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/42461483101), **SUCCESS**.
+- Hugging Face revision: `d5a67a835ff173b2658a1d9a7cc0e5a5aa224f25`, **RUNNING**.
+- Official revision-pinned `SOURCE.json` matches the full patch lineage, source version, HTML size/hash and 71 assets. Independently streamed hosted `index.html` and `modeler.html` each match **9,249,898 bytes** and SHA-256 `5729bbee128f39cb7a97b73effb1e9d22cc51621f4377d206b68373b8cc1f3bf`.
+- An additional read-only preview loaded the original 59-part mage with Quest browser profile: 59 native XR targets, no serialized data/history change, parent restored and no page errors. No account or cloud project mutations were needed.
+- This closure changes documentation only; it does not bump runtime identity or initiate another deployment.
