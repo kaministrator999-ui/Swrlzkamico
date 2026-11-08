@@ -177,7 +177,7 @@ function se336SurfaceAnalysis(mesh, canvas){
   const direction=new THREE.Vector3(),n=new THREE.Vector3();
   const report=SE336_SURFACE_REGIONS.map(r=>({
     key:r.key,label:r.label,color:r.color,faces:0,
-    uvArea:0,anchorUV:null,anchorPx:null
+    uvArea:0,bestTriangleArea:-1,anchorUV:null,anchorPx:null
   }));
   const eps=.00001;
   for(let face=0;face<faces;face++){
@@ -210,7 +210,8 @@ function se336SurfaceAnalysis(mesh, canvas){
                         (u1[1]-u0[1])*(u2[0]-u0[0]))/2;
     const sample=report[region];
     sample.faces++;
-    if(area>sample.uvArea/sample.faces){
+    if(area>sample.bestTriangleArea){
+      sample.bestTriangleArea=area;
       sample.anchorUV=[
         (u0[0]+u1[0]+u2[0])/3,
         (u0[1]+u1[1]+u2[1])/3
@@ -231,6 +232,7 @@ function se336SurfaceAnalysis(mesh, canvas){
       Math.round((1-item.anchorUV[1])*canvas.height)
     ];
     item.uvArea=Number(item.uvArea.toFixed(6));
+    delete item.bestTriangleArea;
   }
   return {faces,regions:report,axes:'World axes: FRONT=+Z, BACK=-Z, LEFT=-X, RIGHT=+X, TOP=+Y, BOTTOM=-Y'};
 }
