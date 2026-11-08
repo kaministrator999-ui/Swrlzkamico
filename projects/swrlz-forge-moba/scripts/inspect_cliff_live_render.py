@@ -6,14 +6,18 @@ from urllib.request import Request,urlopen
 from urllib.parse import urlsplit
 from playwright.async_api import async_playwright
 
-a=argparse.ArgumentParser();a.add_argument("--package",required=True);a.add_argument("--chromium");args=a.parse_args()
+a=argparse.ArgumentParser();a.add_argument("--package",required=True);a.add_argument("--chromium");a.add_argument("--block-atlas",action="store_true");args=a.parse_args()
 root=Path(args.package).resolve()
 origin="https://kamiloki-swrlz-forge-moba.static.hf.space"
+atlas_requests=[]
 async def handle(route):
     u=urlsplit(route.request.url)
     if u.scheme+'://'+u.netloc==origin:
         p=u.path.lstrip('/') or 'index.html'
         if p=='modeler.html':p='modeler.html'
+        if p=='assets/cliff-hand/cliff_pbr_atlas_384.jpg':
+            atlas_requests.append(route.request.url)
+            if args.block_atlas:return await route.fulfill(status=404,body='Deliberate offline atlas block')
         file=(root/p).resolve()
         if not file.is_relative_to(root) or not file.is_file():
             return await route.fulfill(status=404,body="missing:"+p)
@@ -177,5 +181,13 @@ async def main():
                         'bytes':obj.get('finalBytes')}),flush=True)
             except Exception as e:
                 print('CLIFF_HOSTED_SOURCE_ERROR='+json.dumps({'url':remote,'error':str(e)[:500]}),flush=True)
+        print('CLIFF_ATLAS_HTTP_REQUESTS='+json.dumps({'blockAtlas':args.block_atlas,
+            'attempts':len(atlas_requests),'urls':atlas_requests[:4]}),flush=True)
+        if args.block_atlas:
+            assert not atlas_requests, 'Native cliff material still requires a separate atlas image fetch'
+            assert detail['engine']=='v11.333'
+            assert detail['state'].get('atlasSource')=='embedded-original-jpeg'
+            assert detail['fractures']['passes']>=1
+            assert mobile_detail['texture'].get('atlasSource')=='embedded-original-jpeg'
         await browser.close()
 asyncio.run(main())
