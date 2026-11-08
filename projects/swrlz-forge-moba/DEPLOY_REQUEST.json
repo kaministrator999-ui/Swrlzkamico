@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.346",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_346_MODEL_MULTI_UV_SHEETS",
-  "reason": "User requested whole-mage multi-object segmented UV maps, linked exported guides and model VR wireframe views. v11.345 introduced linked per-native-mesh guide PNG+mapping JSON, grouping/multi-select, import, and VR Wireframe/Solid/X-ray/Normals/Textured. This v11.346 follow-up removes the single-sheet 96-part selection blocker on complex whole characters: Select All can include hundreds of native parts; Previous/Next sheet paging exports up to 96 readable UV cells per uniquely numbered GUIDE.png + MAP.json pair; each JSON includes sheet index/count and exact part IDs/fingerprints. Bulk select/group changes update checkbox UI in place; native UVs, Undo and model materials remain intact. Shipped HTML UV module tested with an 811-part real Three.js character: 9 pages, final sheet 43 parts. Candidate Actions run 42458051449 succeeded, source has 357 ordered patches, 9,165,566 HTML bytes, SHA-256 77228e757f77977a35f0b9b74bf0f5efc9c82659d70178256b4b9c8f2919ed23. Actual private mage model and device file downloads require owner verification.",
-  "sourceCommit": "6b399e25303a62e7e292a382a6db8c21dc993b94",
-  "sourceIntegritySha256": "77228e757f77977a35f0b9b74bf0f5efc9c82659d70178256b4b9c8f2919ed23"
+  "releaseVersion": "v11.350",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_350_MODEL_VR_TWO_HAND_TOOLS",
+  "reason": "Owner requested implementation of the Quest two-hand Model VR design. Adds live configurable profiles, additive selection, safe group/two-hand editing, presentation-only Inspect gestures, tool/brush/category wheels, native sculpt, saved lasso masks, planar draw and closed signed extrusion. Preserves latest UV sheets, image import correction, calibrated aim and display modes. Full source seal: 358 patches, 9249898 HTML bytes, 71 assets. All 56 native/input/workspace groups, spatial UI smoke, 16 real IWER Quest controller workflows, unchanged 59-part mage preview and UV/display regressions passed; zero browser errors. Physical headset acceptance remains owner testing.",
+  "sourceCommit": "9804253f1f080a491c853c9a3c775be4b6df554f",
+  "sourceIntegritySha256": "5729bbee128f39cb7a97b73effb1e9d22cc51621f4377d206b68373b8cc1f3bf"
 }
