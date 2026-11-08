@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.350
+title: §wyrl§ Engine v11.351
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.351 · Game Engine quick actions restored (2026-11-08)
+
+Projects, Play, Stop, Enter VR, and More options have an accessible Game Engine header row on phone, desktop and Quest Browser. Reuses native controls and the existing More options popover; avoids a second Quest Controls drawer. File → Projects remains a secondary path. Source-sealed package and owner phone/Quest acceptance are separate from this source change.
 
 ## §E v11.350 · Two-hand VR modeling, live profiles and native surface tools (2026-11-08)
 
