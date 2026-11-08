@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.352
+title: §wyrl§ Engine v11.353
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,11 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.353 · Viewport transform bar on mesh selection (2026-11-08)
+
+The existing Move, Rotate, Scale and X/Y/Z ± native transform controls now appear in a compact row at the top of the actual Model Studio viewport **only when a mesh is selected**. The bar remains visible with the inspector collapsed. The previous sidebar duplicate transform rows are hidden while their backing handlers remain active, preserving real gizmos, Undo, bounds checks and grouping. UI spacing avoids the top camera overlay and the bottom zoom controls. UVs, 3D eye geometry, VR and Game Engine behavior remain untouched. Physical phone/Quest acceptance remains with the owner.
+
 
 ## §E v11.352 · Model Studio transforms back in Tool settings (2026-11-08)
 
