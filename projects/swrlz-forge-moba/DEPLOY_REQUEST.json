@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.351",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_351_GAME_QUICK_ACTIONS",
-  "reason": "Owner requested Game Engine navigation repair: restore visible native Projects, Play, Stop, Enter VR and More options on mobile, desktop and Quest Browser without duplicating handlers. Existing Quest Controls drawer is replaced with the native More options popover. Full source seal verified: 359 patches, 9,259,038 HTML bytes, 71 assets; inline JS and native model-VR preservation checks passed. Physical phone/Quest acceptance remains owner testing.",
-  "sourceCommit": "ad7fe1628cfe123b978689a91dd5286bc35ce28e",
-  "sourceIntegritySha256": "c099ceb0d60281e2043845a03bda8d8d75876350160532e000a2b30c7b45cfa7"
+  "releaseVersion": "v11.352",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_352_MODEL_TRANSFORM_ACCESS",
+  "reason": "Owner requested merge/live: restore native Model Studio Move/Rotate/Scale mode controls and X/Y/Z axis/nudge buttons in the unified Tool settings inspector without duplicated transform logic or floating clutter. Preserves existing UV mapping, eye geometry, VR controls and Game Engine quick actions. Full sealed release verified: 360 patches, 9,264,839 HTML bytes, 71 assets; GitHub Actions source and independent verification succeeded (run 42528635665). Owner phone/Quest acceptance pending.",
+  "sourceCommit": "5cee12a132caf0a75309b74ea1eba42e1c69961e",
+  "sourceIntegritySha256": "98dd17dcb216f5528c0e1d2c405054cd581ba2dd7888ae9d3c60009c8c3ee6ff"
 }
