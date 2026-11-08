@@ -70,6 +70,39 @@ assert.match(html,/container\.classList\.toggle\("vision-editorial",visionFinal\
 assert.match(html,/originalRenderedSources\.set\(container,displaySource\)/);
 assert.match(html,/const source=sourceContext\?sourceContext\.body:displaySource/);
 assert.match(html,/vision-preview-unavailable/);
+
+assert.ok(!html.includes("Read full observation"),"interim caption must not repeat as expanded raw text");
+assert.ok(!html.includes("Raw model output · 1 level"),"no duplicate raw output panel in live progress");
+const legacyStart=html.indexOf("      const formatLegacyVisionReply=value=>{");
+const legacyEnd=html.indexOf("      const renderAssistantContent=",legacyStart);
+assert.ok(legacyStart>=0&&legacyEnd>legacyStart,"formatter is available");
+const legacyFormatter=new Function(html.slice(legacyStart,legacyEnd)+"return formatLegacyVisionReply;")();
+const screenshotCaption=[
+  "Local image analyzer's description (not directly inspected by §C):",
+  "",
+  "Character reference · local model observation (accuracy unverified)",
+  "",
+  "Subject and views: Front, left side, right side, back and top views of Little Crystal Mage.",
+  "Silhouette and anatomy: White braided hair and purple eyes. Feet are clad in brown boots with fur trim at top.",
+  "Clothing and surface detail: Purple hooded robe with gold trim. Robe has layered geometry with visible folds and creases. Boots are brown with fur trim at top. No buckles or hidden fastenings.",
+  "Props and small features: Staff with purple crystal. Staff is held by right hand in front view, left hand in side views.",
+  "Visibility limits: Top view shows the hood. No occlusion is implied for the staff or other features.",
+  "",
+  "Focused image details (unverified source-crop observations):",
+  "- Upper-left figure detail: Two identical figures; left hand gripping a staff."
+].join("\n");
+const readable=legacyFormatter(screenshotCaption);
+assert.match(readable,/^## Image analysis/);
+assert.ok(readable.includes("Staff with purple crystal"),"retain verified-as-text visual detail");
+assert.ok(!readable.includes("right hand in front"),"reject conflicting handedness");
+assert.ok(!readable.includes("left hand in side"),"reject conflicting handedness");
+assert.ok(!readable.includes("No occlusion is implied"),"discard unjustified absolutes");
+assert.ok(!readable.includes("No buckles or hidden fastenings"),"discard categorical absence");
+assert.ok(!readable.includes("layered geometry"),"do not claim source mesh topology");
+assert.ok(readable.includes("appears layered, with folds and creases"),"state observable layering cautiously");
+assert.equal((readable.match(/\bboots?\b/gi)||[]).length,1,"boots once under clothing, not again under anatomy");
+assert.ok(!readable.includes("Two identical figures"),"raw crop notes stay out of final response");
+
 assert.match(html,/recognition\.onresult=event=>/);
 assert.match(html,/prompt\.value=\(original\+separator\+transcript\)/);
 assert.match(html,/prompt\.dispatchEvent\(new Event\("input",\{bubbles:true\}\)\)/);
