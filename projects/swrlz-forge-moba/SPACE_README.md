@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.353
+title: §wyrl§ Engine v11.354
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.354 · UV Slide and in-viewport Undo / Redo (2026-11-08)
+
+The model viewport transform toolbar now provides Undo and Redo using native model history. Painted meshes also offer UV Slide: drag across the selected 3D surface to shift texture alignment without moving the model itself, use fine U/V buttons or Reset UV, and save the offset in the project. One completed drag is a single undoable edit. Existing UVs and project geometry are retained. Final source-integrity verification and hands-on phone/Quest acceptance are tracked separately.
 
 ## §E v11.353 · Viewport transform bar on mesh selection (2026-11-08)
 

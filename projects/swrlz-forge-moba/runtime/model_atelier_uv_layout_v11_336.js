@@ -4,6 +4,8 @@
 const se336BaseCheckPart = checkPart;
 checkPart = function(part) {
   if (!se336BaseCheckPart(part)) return false;
+  if (part.uvPaintOffset !== undefined && (!Array.isArray(part.uvPaintOffset) ||
+      part.uvPaintOffset.length !== 2 || !part.uvPaintOffset.every(v => Number.isFinite(v) && Math.abs(v) <= 2))) return false;
   if (part.uvPaintPNG === undefined) return true;
   return typeof part.uvPaintPNG === 'string' &&
     part.uvPaintPNG.length <= 360000 &&
@@ -18,8 +20,11 @@ material = function(part) {
   const texture = new THREE.TextureLoader().load(part.uvPaintPNG);
   texture.colorSpace = THREE.SRGBColorSpace;
   texture.flipY = true; // Canvas PNG top edge corresponds to UV v=1.
-  texture.wrapS = THREE.ClampToEdgeWrapping;
-  texture.wrapT = THREE.ClampToEdgeWrapping;
+  // Wrap safely when moving a painted image over unchanged mesh UVs.
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.RepeatWrapping;
+  const slide = Array.isArray(part.uvPaintOffset) ? part.uvPaintOffset : [0,0];
+  texture.offset.set(slide[0],slide[1]);
   result.map = texture;
   result.color.set('#ffffff');
   result.userData.se336PaintTexture = true;
@@ -34,6 +39,122 @@ wipeModel = function() {
   }
   return se336BaseWipe.apply(this, arguments);
 };
+
+
+// Texture placement is deliberately separate from mesh rotation and UV unwrapping.
+// Stored per part; each completed viewport drag is one native Undo checkpoint.
+let se336SlidePartId = null;
+// Native history normally deselects a part after any Undo/Redo. Keep the
+// same mesh selected when it still exists, so the viewport Redo remains usable.
+const se336OriginalHistoryStep=historyStep;
+historyStep=function(backward) {
+ const previous=selection;
+ se336OriginalHistoryStep(backward);
+ if(previous&&partById(previous))select(previous);
+};
+const se336SlideStep = 0.025;
+function se336SlideOffset(part) {
+  return Array.isArray(part?.uvPaintOffset) ? part.uvPaintOffset.slice() : [0,0];
+}
+function se336SlideState() {
+  const part=partById(selection), available=!!part?.uvPaintPNG;
+  return {available, enabled:available&&se336SlidePartId===selection,
+    offset:se336SlideOffset(part)};
+}
+function se336SlideNotify() {
+  panel?.classList.toggle('se336-uv-slide-active',se336SlideState().enabled);
+  panel?.dispatchEvent(new Event('swrlz:uv-slide-change'));
+}
+function se336SlidePreview(part) {
+  if(!part||!modelRoot)return;
+  const offset=se336SlideOffset(part);
+  for(const mesh of modelRoot.children) {
+    if(!mesh.isMesh||mesh.userData?.atelierId!==part.id)continue;
+    const materials=Array.isArray(mesh.material)?mesh.material:[mesh.material];
+    for(const material of materials)if(material?.map?.isTexture)
+      material.map.offset.set(offset[0],offset[1]);
+  }
+}
+function se336SlideSet(offset) {
+  const part=partById(selection);
+  if(!part?.uvPaintPNG||se336SlidePartId!==selection)return;
+  const next=offset.map(v=>Math.max(-2,Math.min(2,Math.round(v*10000)/10000)));
+  const old=se336SlideOffset(part);
+  if(next.every((value,i)=>Math.abs(value-old[i])<.00005))return;
+  checkpoint();
+  part.uvPaintOffset=next;
+  signalEdited();
+  se336SlideNotify();
+}
+function se336SlideToggle() {
+  const state=se336SlideState();
+  if(!state.available)return;
+  se336SlidePartId=state.enabled?null:selection;
+  se336SlideNotify();
+  status(state.enabled?'UV Slide off. Mesh transform controls restored.':
+    'UV Slide on: drag directly over this mesh to shift its painted texture; the mesh stays still.');
+}
+function se336SlideNudge(direction) {
+  if(!se336SlideState().enabled)return;
+  const [u,v]=se336SlideState().offset;
+  if(direction==='reset')se336SlideSet([0,0]);
+  if(direction==='left')se336SlideSet([u-se336SlideStep,v]);
+  if(direction==='right')se336SlideSet([u+se336SlideStep,v]);
+  if(direction==='down')se336SlideSet([u,v-se336SlideStep]);
+  if(direction==='up')se336SlideSet([u,v+se336SlideStep]);
+}
+function se336InstallSlideEvents() {
+  const viewport=panel?.querySelector('#modelAtelierViewport');
+  if(!viewport||viewport.dataset.se336SlideEvents)return;
+  viewport.dataset.se336SlideEvents='true';
+  let drag=null;
+  function stop(event) {event.preventDefault();event.stopImmediatePropagation();}
+  viewport.addEventListener('pointerdown',event=>{
+    if(event.button!==0||!se336SlideState().enabled||!camera||!modelRoot)return;
+    const target=modelRoot.children.find(mesh=>mesh.isMesh&&mesh.userData?.atelierId===selection);
+    const rect=viewport.getBoundingClientRect();
+    if(!target||rect.width<1||rect.height<1)return;
+    const ndc=new THREE.Vector2(
+      (event.clientX-rect.left)/rect.width*2-1,
+      1-(event.clientY-rect.top)/rect.height*2);
+    const picker=new THREE.Raycaster();
+    picker.setFromCamera(ndc,camera);
+    if(!picker.intersectObject(target,true).length)return;
+    drag={pointerId:event.pointerId,id:selection,x:event.clientX,y:event.clientY,
+      start:se336SlideOffset(partById(selection)),width:rect.width,height:rect.height,changed:false};
+    try{viewport.setPointerCapture(event.pointerId);}catch(_){}
+    stop(event);
+  },true);
+  viewport.addEventListener('pointermove',event=>{
+    if(!drag||event.pointerId!==drag.pointerId)return;
+    stop(event);
+    const part=partById(drag.id);
+    if(!part||selection!==drag.id||!se336SlideState().enabled){drag=null;return;}
+    const dx=event.clientX-drag.x,dy=event.clientY-drag.y;
+    if(!drag.changed&&Math.hypot(dx,dy)>2){checkpoint();drag.changed=true;}
+    if(!drag.changed)return;
+    // Negative U moves texture artwork right; positive V moves it down.
+    part.uvPaintOffset=[
+      Math.max(-2,Math.min(2,Math.round((drag.start[0]-dx/drag.width)*10000)/10000)),
+      Math.max(-2,Math.min(2,Math.round((drag.start[1]+dy/drag.height)*10000)/10000))
+    ];
+    se336SlidePreview(part);
+  },true);
+  const end=event=>{
+    if(!drag||event.pointerId!==drag.pointerId)return;
+    stop(event);
+    const changed=drag.changed,part=partById(drag.id);
+    drag=null;
+    try{if(viewport.hasPointerCapture(event.pointerId))viewport.releasePointerCapture(event.pointerId);}catch(_){}
+    if(changed&&part){signalEdited();se336SlideNotify();
+      status('UV texture position saved. Undo reverts the entire slide; Save Project keeps it.');}
+  };
+  viewport.addEventListener('pointerup',end,true);
+  viewport.addEventListener('pointercancel',end,true);
+}
+window.SWYRLZ_E_MODEL_UV_SLIDE=Object.freeze({
+  state:se336SlideState,toggle:se336SlideToggle,nudge:se336SlideNudge
+});
 
 function se336StripCyanGuide(canvas){
   const ctx=canvas.getContext('2d',{willReadFrequently:true});
@@ -419,6 +540,7 @@ function se336InstallUI() {
     await se336ImportPaint(file);
     event.target.value = '';
   });
+  se336InstallSlideEvents();
   se336UpdateUI();
 }
 const se336BaseEnsurePanel = ensurePanel;
@@ -431,5 +553,6 @@ const se336BaseRefreshInspector = refreshInspector;
 refreshInspector = function() {
   const result = se336BaseRefreshInspector.apply(this, arguments);
   se336UpdateUI();
+  se336SlideNotify();
   return result;
 };

@@ -28,6 +28,18 @@
   const active=!!state?.open&&!!state?.selected&&!panel.hidden;
   if(bar.hidden===active)bar.hidden=!active;
   bar.setAttribute('aria-hidden',String(!active));
+  const uv=window.SWYRLZ_E_MODEL_UV_SLIDE?.state?.();
+  const uvActions=bar.querySelector('.se320-uv-nudges');
+  if(uvActions)uvActions.hidden=!uv?.enabled;
+  for(const button of bar.querySelectorAll('[data-se320-history]')){
+   const original=q('#modelAtelier'+(button.dataset.se320History==='undo'?'Undo':'Redo'),panel);
+   button.disabled=!original||original.disabled||panel.hidden;
+  }
+  for(const button of bar.querySelectorAll('[data-se320-uv]')){
+   button.disabled=!active||!uv?.available;
+   if(button.dataset.se320Uv==='toggle')
+    button.setAttribute('aria-pressed',String(!!uv?.enabled));
+  }
   for(const button of bar.querySelectorAll('[data-se320-transform]')){
    const original=native?.querySelector(se320TransformSelectors[button.dataset.se320Transform]);
    button.disabled=!active||!original||original.disabled;
@@ -59,15 +71,24 @@
     '<button type="button" data-se320-transform="y" aria-pressed="false">Y</button>'+
     '<button type="button" data-se320-transform="z" aria-pressed="false">Z</button>'+
     '<button type="button" data-se320-transform="minus" aria-label="Nudge negative along selected axis">−</button>'+
-    '<button type="button" data-se320-transform="plus" aria-label="Nudge positive along selected axis">+</button></div>';
+    '<button type="button" data-se320-transform="plus" aria-label="Nudge positive along selected axis">+</button></div>'+    '<div class="se320-transform-history" role="group" aria-label="Edit history">'+    '<button type="button" data-se320-history="undo" title="Undo last edit" aria-label="Undo">↶ Undo</button>'+    '<button type="button" data-se320-history="redo" title="Redo last edit" aria-label="Redo">↷ Redo</button></div>'+    '<div class="se320-transform-uv" role="group" aria-label="Adjust texture on model">'+    '<button type="button" data-se320-uv="toggle" aria-pressed="false" title="Drag on the model to slide its painted texture, without moving the mesh">🎨 UV Slide</button>'+    '<div class="se320-uv-nudges" hidden>'+    '<button type="button" data-se320-uv="left" title="Shift texture U negative">U−</button>'+    '<button type="button" data-se320-uv="right" title="Shift texture U positive">U+</button>'+    '<button type="button" data-se320-uv="down" title="Shift texture V negative">V−</button>'+    '<button type="button" data-se320-uv="up" title="Shift texture V positive">V+</button>'+    '<button type="button" data-se320-uv="reset" title="Reset UV image alignment">Reset UV</button></div></div>';
    bar.addEventListener('pointerdown',event=>event.stopPropagation());
    bar.addEventListener('click',event=>{
-    const button=event.target.closest('button[data-se320-transform]');
+    const button=event.target.closest('button');
     if(!button||button.disabled||!bar.contains(button))return;
-    const source=q('#modelAtelierMeshQuickStrip',panel)?.querySelector(
-      se320TransformSelectors[button.dataset.se320Transform]);
-    // The original click path owns every mesh mutation, gizmo and Undo step.
-    source?.click();
+    if(button.dataset.se320History){
+     // Reuse the existing 50-step model history, including texture imports.
+     q('#modelAtelier'+(button.dataset.se320History==='undo'?'Undo':'Redo'),panel)?.click();
+    }else if(button.dataset.se320Uv){
+     const api=window.SWYRLZ_E_MODEL_UV_SLIDE;
+     if(button.dataset.se320Uv==='toggle')api?.toggle?.();
+     else api?.nudge?.(button.dataset.se320Uv);
+    }else if(button.dataset.se320Transform){
+     const source=q('#modelAtelierMeshQuickStrip',panel)?.querySelector(
+       se320TransformSelectors[button.dataset.se320Transform]);
+     // The original click path owns every mesh mutation and gizmo.
+     source?.click();
+    }
     se320RefreshTransformAccess(panel);
    });
    new MutationObserver(()=>se320RefreshTransformAccess(panel)).observe(native,{
@@ -78,6 +99,11 @@
    panel.addEventListener('change',event=>{
     if(event.target.closest('#modelAtelierParts'))queueMicrotask(()=>se320RefreshTransformAccess(panel));
    },true);
+   panel.addEventListener('swrlz:uv-slide-change',()=>se320RefreshTransformAccess(panel));
+   const history=q('#modelAtelierUndo',panel)?.parentElement;
+   if(history)new MutationObserver(()=>se320RefreshTransformAccess(panel)).observe(history,{
+    subtree:true,attributes:true,attributeFilter:['disabled']
+   });
   }
   if(bar.parentElement!==scene)scene.append(bar);
   // Remove duplicate buttons from the sidebar, but keep their original DOM
