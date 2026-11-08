@@ -1,2 +1,3 @@
 Verify the full v11.343 source chain and actual Three.js simplified surface hit behavior; do not deploy.
 Debug run to capture curved-surface hit point and face budget.
+Curved-surface regression after increasing continuous proxy detail to 3600 triangles.
