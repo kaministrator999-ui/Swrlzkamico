@@ -378,6 +378,6 @@
     "patches/v11_353_model_viewport_transform.py",
     "patches/v11_354_model_uv_slide_history.py"
   ],
-  "finalBytes": null,
-  "finalSha256": null
+  "finalBytes": 9283827,
+  "finalSha256": "8e952dea0bc51c2d2ba3fdc033ae4257fbdeedeb2960fcfca342530e2d716c4b"
 }
