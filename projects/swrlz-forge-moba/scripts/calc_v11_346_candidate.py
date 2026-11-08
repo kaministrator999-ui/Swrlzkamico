@@ -20,7 +20,7 @@ subprocess.run(['node','--check',str(ROOT/'runtime/model_multi_uv_sheets_v11_346
 subprocess.run(['npm','install','--silent','--prefix',str(out/'three-runtime'),
                 '--no-audit','--no-fund','--no-save','three@0.169.0'],check=True)
 three=out/'three-runtime/node_modules/three/build/three.module.js'
-subprocess.run(['node',str(ROOT/'tests/model_multi_uv_sheets_v11_346.mjs'),str(three)],check=True)
+subprocess.run(['node',str(ROOT/'tests/model_multi_uv_sheets_v11_346.mjs'),str(three),str(out/'index.html')],check=True)
 print('V11_346_FINAL_BYTES='+str(len(data)),flush=True)
 print('V11_346_FINAL_SHA256='+hashlib.sha256(data).hexdigest(),flush=True)
 print('V11_346_PATCH_COUNT='+str(len(m['patches'])),flush=True)
