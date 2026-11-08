@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.337",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_337_CLIFF_ORGANIC_GEODES",
-  "reason": "Owner physical Moto photos and existing hand screenshots show lower pinky-side palm still has a lump where it meets the wrist, finger PIP/DIP shafts and rounded tips are blocky, and old cyan crystal knuckles look like repeated flat spikes. §E v11.337 APPENDS to v11.336 mesh UV-layout extractor, preserves all other engine features, uses starter-only extra SDF heel remap so x of ulnar lower palm moves inward at y1.36 from 0.51149 to 0.40390, smooths only finger mid-joint and terminal radius blends while retaining thumb and all original 17 bone roots, and modestly refines connected gauntlet surface pitch .047→.044. Replaces bright repeated spikes with 4 different inset aquamarine geodes: dark stone sockets, individual polygonal gem facets, polished low roughness and restrained emission, masked to dorsal normals so palm side remains rock-only. Original owner photo not stored. Focused real SDF assertions, exact built HTML syntax, browser desktop + emulated Android WebGL, shaders and no-network atlas checks all passed. Package: 350 patches, 71 assets, 9055350 bytes, SHA-256 649c09b82d7ff0fee600c5b941be28da2bd77f54ee709d7bc635248857451ea6. Final Moto/Quest approval remains owner hands-on.",
-  "sourceCommit": "cfa60bbb19c602c37b4b530cb1698b443344419d",
-  "sourceIntegritySha256": "649c09b82d7ff0fee600c5b941be28da2bd77f54ee709d7bc635248857451ea6"
+  "releaseVersion": "v11.340",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_340_IMMERSIVE_MODEL_STUDIO",
+  "reason": "Owner-requested Model Studio VR/controller improvement: actual immersive Model workspace using the existing main XR loop and borrowed native Modeler root; stable readable spatial palette, selection/hover/rays, grip-space Move/Rotate/Scale, precision/snap/view controls and Undo/Redo. Saved data changes only on validated grip release with one native checkpoint; cancel/no-op/disconnect/session end restore previews and ownership. Includes fresh-hit safety, same-frame release, either-hand Cancel priority, native assembly coordinates, off-centre pivots and attached-skin live previews. Preserves all owner hand/UV work through v11.337. Strict source/asset checks, 13 real-Three cases and full IWER Quest 2 actual-session/controller tests passed with zero page errors, including return to native Modeler and legacy Game XR. 351 ordered patches,71 assets,9,118,381 HTML bytes,SHA-256 a940121424bf3cabd2336f51938a337922a3bbddc2aa021ea2c99e9bbde224ff; tested HTML exactly matches canonical source. Physical headset comfort/alignment/haptics/performance acceptance remains owner testing.",
+  "sourceCommit": "afa4d9eb716ba28c23a6e88d1aa79bf162b540df",
+  "sourceIntegritySha256": "a940121424bf3cabd2336f51938a337922a3bbddc2aa021ea2c99e9bbde224ff"
 }
