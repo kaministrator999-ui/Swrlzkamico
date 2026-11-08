@@ -23,7 +23,7 @@ const hit=api.surface({id:'sphere',name:'Sphere',mesh:sphere},ray);
 assert(hit?.hoverSurface,'high-resolution spherical model surface should hit');
 assert(Math.abs(hit.point.z-.5)<.08,'reticle should be on surface, not AABB face');
 const cached=state.hoverSurfaceCache.get(sphere);
-assert(cached.proxy.geometry.index.count/3<=1800,'simplification should be bounded');
+assert(cached.proxy.geometry.index.count/3<=3600,'simplification should be bounded');
 assert.equal(api.surface({id:'sphere',name:'Sphere',mesh:sphere},ray).point.z,hit.point.z);
 assert.equal(state.hoverGeometries.size,1,'surface must be cached, not recreated');
 const ring=new THREE.Mesh(new THREE.TorusGeometry(1,.25,30,100),material);

@@ -2,7 +2,7 @@
 // Simplified continuous picking skin for passive XR hover. These hidden
 // meshes are never rendered or persisted as part of the model document.
 // Only Trigger and Grip use the original, full-resolution editable geometry.
-const SE343_HOVER_FACE_BUDGET=1800;
+const SE343_HOVER_FACE_BUDGET=3600;
 function se343HoverGeometry(source,isSkinned){
  const pos=source?.getAttribute?.('position'),idx=source?.getIndex?.();
  if(!pos||pos.itemSize!==3)return null;
