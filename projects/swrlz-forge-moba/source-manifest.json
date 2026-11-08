@@ -364,6 +364,6 @@
     "patches/v11_334_cliff_photo_dorsal_crystals.py",
     "patches/v11_335_cliff_ulnar_contour.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 9034925,
+  "finalSha256": "f90898624ca109fd4ab2b09c6ab23562112d9b4864a1aedc185829b7d65c3637"
 }
