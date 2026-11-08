@@ -143,6 +143,147 @@ function se336UVLayout(mesh, canvas) {
   }
   return {triangles, vertices:uv.count};
 }
+
+// Surface direction guide: the exact SAME UV coordinates as the wireframe,
+// but each authored triangle identifies its outward direction in model space.
+// Diagnostic-only reference; it never changes UVs, meshes, or textures.
+const SE336_SURFACE_REGIONS = [
+  {key:'front', label:'FRONT (+Z)', color:'#3fb9eb'},
+  {key:'back', label:'BACK (-Z)', color:'#b678e4'},
+  {key:'left', label:'LEFT (-X)', color:'#55d2a6'},
+  {key:'right', label:'RIGHT (+X)', color:'#f49b79'},
+  {key:'top', label:'TOP (+Y)', color:'#ffe183'},
+  {key:'bottom', label:'BOTTOM (-Y)', color:'#6875a4'}
+];
+function se336SurfaceRegion(x,y,z){
+  const ax=Math.abs(x),ay=Math.abs(y),az=Math.abs(z);
+  if(ay>=ax&&ay>=az)return y>=0?4:5;
+  if(ax>=az)return x>=0?3:2;
+  return z>=0?0:1;
+}
+function se336SurfaceAnalysis(mesh, canvas){
+  const g=mesh.geometry,uv=g?.getAttribute('uv'),positions=g?.getAttribute('position');
+  const normals=g?.getAttribute('normal'),indices=g?.getIndex();
+  if(!uv||!positions||uv.count!==positions.count)
+    throw Error('Selected mesh needs complete UV and position attributes.');
+  const faces=Math.floor((indices?.count||positions.count)/3);
+  if(!faces||faces>180000)throw Error('Surface preview exceeds supported face limit.');
+  const context=canvas?.getContext('2d');
+  if(canvas&&!context)throw Error('2D surface guide unavailable.');
+  if(context){context.clearRect(0,0,canvas.width,canvas.height);}
+  mesh.updateWorldMatrix(true,false);
+  const matrix=new THREE.Matrix3().getNormalMatrix(mesh.matrixWorld);
+  const a=new THREE.Vector3(),b=new THREE.Vector3(),c=new THREE.Vector3();
+  const direction=new THREE.Vector3(),n=new THREE.Vector3();
+  const report=SE336_SURFACE_REGIONS.map(r=>({
+    key:r.key,label:r.label,color:r.color,faces:0,
+    uvArea:0,anchorUV:null,anchorPx:null
+  }));
+  const eps=.00001;
+  for(let face=0;face<faces;face++){
+    const i=face*3;
+    const ids=[0,1,2].map(j=>indices?indices.getX(i+j):i+j);
+    const uvPoints=ids.map(k=>{
+      const u=uv.getX(k),v=uv.getY(k);
+      if(!Number.isFinite(u)||!Number.isFinite(v)||
+         u< -eps||u>1+eps||v< -eps||v>1+eps)
+        throw Error('UV coordinates outside 0–1 need a repair before export.');
+      return [Math.max(0,Math.min(1,u)),Math.max(0,Math.min(1,v))];
+    });
+    a.fromBufferAttribute(positions,ids[0]);
+    b.fromBufferAttribute(positions,ids[1]);
+    c.fromBufferAttribute(positions,ids[2]);
+    if(normals&&normals.count===positions.count){
+      direction.set(0,0,0);
+      for(const k of ids){
+        n.fromBufferAttribute(normals,k);direction.add(n);
+      }
+    }else{
+      direction.subVectors(b,a);
+      n.subVectors(c,a);direction.cross(n);
+    }
+    if(direction.lengthSq()<1e-16)continue;
+    direction.applyMatrix3(matrix).normalize();
+    const region=se336SurfaceRegion(direction.x,direction.y,direction.z);
+    const [u0,u1,u2]=uvPoints;
+    const area=Math.abs((u1[0]-u0[0])*(u2[1]-u0[1])-
+                        (u1[1]-u0[1])*(u2[0]-u0[0]))/2;
+    const sample=report[region];
+    sample.faces++;
+    if(area>sample.uvArea/sample.faces){
+      sample.anchorUV=[
+        (u0[0]+u1[0]+u2[0])/3,
+        (u0[1]+u1[1]+u2[1])/3
+      ];
+    }
+    sample.uvArea+=area;
+    if(!context||area<1e-12)continue;
+    context.fillStyle=sample.color;
+    context.beginPath();
+    context.moveTo(u0[0]*canvas.width,(1-u0[1])*canvas.height);
+    context.lineTo(u1[0]*canvas.width,(1-u1[1])*canvas.height);
+    context.lineTo(u2[0]*canvas.width,(1-u2[1])*canvas.height);
+    context.closePath();context.fill();
+  }
+  for(const item of report){
+    if(item.anchorUV&&canvas)item.anchorPx=[
+      Math.round(item.anchorUV[0]*canvas.width),
+      Math.round((1-item.anchorUV[1])*canvas.height)
+    ];
+    item.uvArea=Number(item.uvArea.toFixed(6));
+  }
+  return {faces,regions:report,axes:'World axes: FRONT=+Z, BACK=-Z, LEFT=-X, RIGHT=+X, TOP=+Y, BOTTOM=-Y'};
+}
+function se336ExportSurfaceGuide(){
+  try{
+    const target=se336SelectedMesh();
+    if(!target)throw Error('Select a model mesh first.');
+    const canvas=document.createElement('canvas');
+    canvas.width=canvas.height=1024;
+    const result=se336SurfaceAnalysis(target.mesh,canvas);
+    se336SaveCanvas(canvas,target.part.name+'-uv-SURFACE-DIRECTIONS.png');
+    status('Exported '+target.part.name+' surface directions ('+result.faces+
+      ' triangles). Colors show FRONT/BACK/LEFT/RIGHT/TOP/BOTTOM; this is a reference, NOT a texture to import.');
+  }catch(error){status('UV surface guide: '+error.message,true);}
+}
+function se336ExportSurfaceInfo(){
+  try{
+    const target=se336SelectedMesh();
+    if(!target)throw Error('Select a model mesh first.');
+    const result=se336SurfaceAnalysis(target.mesh,null);
+    // Compact metadata travels with UV guide for accurate painting assistance.
+    // Do not serialize full geometry or unrelated/private project data.
+    const plan={
+      schema:'swyrl-model-uv-surface-reference-v1',
+      modelPart:{id:target.part.id,name:target.part.name,kind:target.part.kind,
+        position:target.part.position,rotation:target.part.rotation,scale:target.part.scale},
+      guideSize:1024,
+      imageUV:'Top-left pixel corresponds to U=0, V=1; bottom-right U=1, V=0.',
+      directions:result.axes,
+      note:'UV guide and SURFACE-DIRECTIONS PNG have the exact same UV coordinates. '+
+        'Color regions are derived from real mesh face normals, not a perspective screenshot. '+
+        'Curved surfaces can transition between color regions. Overlapping UVs share texels. '+
+        'Painted artwork must not include guide lines, colors, or labels.',
+      regions:result.regions.filter(r=>r.faces).map(r=>({
+        name:r.label,color:r.color,faces:r.faces,uvArea:r.uvArea,
+        sampleUV:r.anchorUV,
+        samplePixel:r.anchorUV?[
+          Math.round(r.anchorUV[0]*1024),
+          Math.round((1-r.anchorUV[1])*1024)
+        ]:null
+      }))
+    };
+    const blob=new Blob([JSON.stringify(plan,null,2)+'\n'],{type:'application/json'});
+    const url=URL.createObjectURL(blob),link=document.createElement('a');
+    try{
+      link.href=url;link.download=(target.part.name+'-uv-SURFACE-INFO.json')
+        .replace(/[^a-z0-9_.-]+/gi,'-').slice(0,85);
+      document.body.append(link);link.click();link.remove();
+    }finally{setTimeout(()=>URL.revokeObjectURL(url),1500);}
+    status('Exported mesh-linked UV direction legend. Send this JSON with both guide images when requesting a painted texture.');
+  }catch(error){status('UV surface info: '+error.message,true);}
+}
+
 function se336SaveCanvas(canvas, name) {
   const link = document.createElement('a');
   link.href = canvas.toDataURL('image/png');
@@ -255,14 +396,19 @@ function se336InstallUI() {
   root.innerHTML =
     '<h3>🎨 UV Layout · image guide</h3>' +
     '<p id="se336UVName"></p>' +
-    '<p class="se336-uv-hint">Export the actual mesh UV wireframe as a transparent 1024px PNG. Paint beneath that guide in an image editor, then import the artwork as PNG/JPEG (up to 5 MB). Baked cyan UV guide lines are automatically cleaned when detected. Large textures are resized to fit the model save format.</p>' +
+    '<p class="se336-uv-hint">Export the actual mesh UV wireframe as a transparent 1024px PNG. Paint beneath that guide in an image editor, then import the artwork as PNG/JPEG (up to 5 MB). For accurate painting, export both wireframe and colored surface-direction guides (plus UV info JSON); these share the same coordinates. Import only the finished art. Baked cyan guide lines are cleaned when detected. Large textures are resized to fit the model save format.</p>' +
     '<div class="se336-uv-actions"><button id="se336UVExport" type="button">Export UV guide PNG</button>' +
+    '<button id="se336UVSurface" type="button">Export surface directions</button>' +
+    '<button id="se336UVSurfaceInfo" type="button">Export UV info JSON</button>' +
     '<button id="se336UVImport" type="button">Import painted PNG</button>' +
     '<button id="se336UVRemove" type="button">Remove texture</button></div>' +
     '<input id="se336UVFile" type="file" accept="image/png,image/jpeg" hidden>' +
+    '<p class="se336-uv-hint">Surface guide colors: FRONT blue · BACK violet · LEFT green · RIGHT orange · TOP gold · BOTTOM slate. The color map is for placement reference, not for importing as artwork.</p>' +
     '<p id="se336UVHasPaint" class="se336-uv-hint"></p>';
   inspector.append(root);
   root.querySelector('#se336UVExport').addEventListener('click', se336ExportGuide);
+  root.querySelector('#se336UVSurface').addEventListener('click',se336ExportSurfaceGuide);
+  root.querySelector('#se336UVSurfaceInfo').addEventListener('click',se336ExportSurfaceInfo);
   root.querySelector('#se336UVImport').addEventListener('click', () =>
     root.querySelector('#se336UVFile').click());
   root.querySelector('#se336UVRemove').addEventListener('click', se336RemovePaint);
