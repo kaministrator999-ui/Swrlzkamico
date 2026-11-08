@@ -363,6 +363,6 @@
     "patches/v11_333_cliff_embedded_atlas.py",
     "patches/v11_334_cliff_photo_dorsal_crystals.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 9033432,
+  "finalSha256": "332911f48c24b60555197597bcdf626919e2affad49fd35743d7e7401907105d"
 }
