@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.336
+title: §wyrl§ Engine v11.337
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,13 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.337 · Organic finger smoothing, natural wrist blend, inlaid aquamarine knuckles (2026-11-07)
+
+Owner-provided close-up palm and finger photographs alongside real Moto screenshots identified three remaining modeling issues in **Plain Hand Base · Smooth Cliff Hand**: a sharp-looking hypothenar heel before the wrist, stacked/ridged middle-finger joints and angular tips, and simplistic repeated cyan spikes on the dorsal knuckles. This release corrects them **only for that starter**, extending v11.335's narrowed ulnar edge without changing the global base-hand generator or other projects. A feathered SDF sample offset gently rolls the bottom of the outer palm into the wrist. A starter-specific organic finger field smooth-blends PIP, DIP and distal fingertip pads, and the single connected gauntlet mesh receives a modest sampling improvement (.047→.044) while keeping all 17 native bones, poses and sculpting support.
+
+Four new **inlaid aquamarine geode textures** replace the flat repeated spike stencil: individually varied faceted gemstone cuts, recessed slate sockets, stony rims, internal color planes, polished roughness and restrained emissive reflections. These remain **dorsal-only**, composited via the native MeshStandardMaterial, without separate crystal meshes or palm bleed. Original fractured sandstone/albedo, normal/AO/roughness, wrist moss and the v11.336 **UV layout export/reimport** remain unchanged. Actual source-field checks measured the lower ulnar edge moving from x=0.51149 to x=0.40390 at y=1.36 while leaving the thumb and upper knuckle area unchanged. Both desktop and Android-sized WebGL shaders/viewport checks passed, including loading with the original atlas URL deliberately blocked. **350 patches, 71 packaged assets; 9,055,350 HTML bytes; SHA-256 `649c09b82d7ff0fee600c5b941be28da2bd77f54ee709d7bc635248857451ea6`.** Final physical Moto/Quest visual acceptance remains owner-controlled; the reference photos are not stored in the repository.
+
 
 ## §E v11.336 · Native mesh UV guide and painted texture round-trip (2026-11-07)
 
