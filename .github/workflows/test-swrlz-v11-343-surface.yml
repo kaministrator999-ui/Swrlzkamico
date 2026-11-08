@@ -1,0 +1,20 @@
+name: Focused v11.343 surface contact regression
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/.surface-test-v11-343"
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install test-only Three
+        run: npm install --silent --prefix /tmp/se343-three --no-audit --no-fund --no-save three@0.169.0
+      - name: Verify glove/ring ray contact
+        run: node projects/swrlz-forge-moba/tests/model_vr_surface_v11_343.mjs /tmp/se343-three/node_modules/three/build/three.module.js
