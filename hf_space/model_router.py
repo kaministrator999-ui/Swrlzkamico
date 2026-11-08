@@ -304,7 +304,24 @@ _VISION_START = "\n\n[Uploaded image — vision description, not original pixels
 _VISION_END = "\n[/Uploaded image]"
 
 
-def _omit_unverifiable_turnaround_claims(body: str) -> str:
+def _conflicting_staff_handedness(description: str) -> bool:
+    """Detect competing staff-hand labels in unverified whole/crop text.
+
+    This is a textual disagreement signal, NOT visual verification. A figure
+    rotated in a reference sheet can reverse page-relative appearances.
+    """
+    sides = set()
+    for sentence in re.split(r"(?<=[.!?;])\s+|\n+", description):
+        if re.search(r"\bstaff\b", sentence, re.I):
+            sides.update(side.lower() for side in re.findall(
+                r"\b(left|right)\s+hand\b", sentence, re.I
+            ))
+    return len(sides) > 1
+
+
+def _omit_unverifiable_turnaround_claims(
+    body: str, *, conflicting_staff_hands: bool = False
+) -> str:
     """Conservatively omit categorical negatives/visibility absolutes.
 
     The formatter cannot inspect pixels. It must never "correct" visual
@@ -328,6 +345,17 @@ def _omit_unverifiable_turnaround_claims(body: str) -> str:
             continue
         if re.search(r"(?i)\b(?:in|across|from)\s+(?:all|every)\s+(?:views?|angles?)\b", clause):
             continue
+        # A page-relative left/right mismatch in source captions is not
+        # trustworthy anatomical handedness. Do not fabricate a correction.
+        if (conflicting_staff_hands
+                and re.search(r"\bstaff\b", clause, re.I)
+                and re.search(r"\b(?:left|right)\s+hand\b", clause, re.I)):
+            continue
+        # An illustration shows folds and overlap, not verified mesh topology.
+        clause = re.sub(r"(?i)\bhas layered geometry with visible\b",
+                        "appears layered, with", clause)
+        clause = re.sub(r"(?i)\bhas layered construction with visible\b",
+                        "appears layered, with", clause)
         clause = clause.rstrip(";").strip()
         if clause and not re.search(r"[.!?][\"'”’)\]]*$", clause):
             clause += "."
@@ -342,6 +370,7 @@ def _format_direct_vision_report(description: str) -> str:
     or a claim that a second model reviewed the original pixels.
     """
     text = description.strip()
+    contradictory_staff_hands = _conflicting_staff_handedness(text)
     # Source-crop observations remain in the saved user handoff/export; only
     # the selected whole-image narrative belongs in the assistant's answer.
     text = text.split("\n\n[Raw source-crop observations; accuracy unverified]\n", 1)[0]
@@ -401,7 +430,9 @@ def _format_direct_vision_report(description: str) -> str:
             end = matches[i + 1].start() if i + 1 < len(matches) else len(text)
             body = re.sub(r"\s*\n\s*", " ", text[start:end]).strip()
             if turnaround:
-                body = _omit_unverifiable_turnaround_claims(body)
+                body = _omit_unverifiable_turnaround_claims(
+                    body, conflicting_staff_hands=contradictory_staff_hands
+                )
             if not body:
                 continue
             # Exact repetition across sections adds no visual information;
@@ -425,7 +456,9 @@ def _format_direct_vision_report(description: str) -> str:
     # Unstructured and partial captions must still be readable; no invented
     # headings or reconstructed observations are added to their content.
     content = "\n\n".join(sections) if sections else (
-        _omit_unverifiable_turnaround_claims(text) if turnaround else text
+        _omit_unverifiable_turnaround_claims(
+            text, conflicting_staff_hands=contradictory_staff_hands
+        ) if turnaround else text
     )
     return (
         "## Image analysis\n\n" + content +
