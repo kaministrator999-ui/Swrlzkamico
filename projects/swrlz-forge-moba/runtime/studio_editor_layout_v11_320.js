@@ -10,6 +10,67 @@
   const name=draft?'Untitled model':currentProject?.name||'Untitled model';
   if(label.textContent!==name)label.textContent=name;label.title=name;
  }
+ // Keep the native mesh transform modes visible without moving or cloning their
+ // original handlers. v11.320 tucked the native strip into a closed <details>
+ // panel; the unified category view then hid that entire section.
+ const se320TransformSelectors=Object.freeze({
+  move:'[data-mode="move"]',rotate:'[data-mode="rotate"]',
+  scale:'[data-mode="scale"]',x:'[data-axis="x"]',
+  y:'[data-axis="y"]',z:'[data-axis="z"]',
+  minus:'[data-mesh-minus]',plus:'[data-mesh-plus]'
+ });
+ function se320RefreshTransformAccess(panel){
+  const bar=q('#se320ModelTransform',panel);
+  const native=q('#modelAtelierMeshQuickStrip',panel);
+  if(!bar)return;
+  for(const button of bar.querySelectorAll('[data-se320-transform]')){
+   const original=native?.querySelector(se320TransformSelectors[button.dataset.se320Transform]);
+   button.disabled=!original||original.disabled;
+   if(button.hasAttribute('aria-pressed')){
+    const pressed=original?.getAttribute('aria-pressed')==='true';
+    button.setAttribute('aria-pressed',String(pressed));
+   }
+  }
+ }
+ function se320ModelTransformAccess(panel,inspector){
+  const native=q('#modelAtelierMeshQuickStrip',panel);
+  if(!native)return; // Native selection/gizmo module may mount after the layout.
+  let bar=q('#se320ModelTransform',inspector);
+  if(!bar){
+   bar=document.createElement('section');
+   bar.id='se320ModelTransform';
+   bar.className='se320-model-transform';
+   bar.setAttribute('aria-label','Selected mesh transform tools');
+   bar.innerHTML=
+    '<div class="se320-transform-label">Transform</div>'+
+    '<div class="se320-transform-modes" role="group" aria-label="Transform mode">'+
+    '<button type="button" data-se320-transform="move" aria-pressed="false">↔ Move</button>'+
+    '<button type="button" data-se320-transform="rotate" aria-pressed="false">⟳ Rotate</button>'+
+    '<button type="button" data-se320-transform="scale" aria-pressed="false">⤢ Scale</button></div>'+
+    '<div class="se320-transform-axes" role="group" aria-label="Transform axis and nudge">'+
+    '<button type="button" data-se320-transform="x" aria-pressed="false">X</button>'+
+    '<button type="button" data-se320-transform="y" aria-pressed="false">Y</button>'+
+    '<button type="button" data-se320-transform="z" aria-pressed="false">Z</button>'+
+    '<button type="button" data-se320-transform="minus" aria-label="Nudge negative along axis">−</button>'+
+    '<button type="button" data-se320-transform="plus" aria-label="Nudge positive along axis">+</button></div>';
+   const handle=q('.atelier-tool-handle',inspector);
+   if(handle)handle.after(bar);else inspector.prepend(bar);
+   bar.addEventListener('click',event=>{
+    const button=event.target.closest('button[data-se320-transform]');
+    if(!button||button.disabled||!bar.contains(button))return;
+    // Dispatch into the actual pre-existing control so gizmos, grouping,
+    // history and native validation all remain owned by Model Atelier.
+    const source=q('#modelAtelierMeshQuickStrip',panel)?.querySelector(
+     se320TransformSelectors[button.dataset.se320Transform]);
+    source?.click();
+    se320RefreshTransformAccess(panel);
+   });
+   new MutationObserver(()=>se320RefreshTransformAccess(panel)).observe(native,{
+    subtree:true,attributes:true,attributeFilter:['aria-pressed','disabled','hidden']
+   });
+  }
+  se320RefreshTransformAccess(panel);
+ }
  function modelLayout(){
   const panel=q('#modelAtelierPanel'),body=q('.atelier-body',panel||document);
   if(!panel||!body)return;
@@ -39,6 +100,7 @@
    new MutationObserver(schedule).observe(panel,{attributes:true,attributeFilter:['class','hidden','data-se251-layout','data-se251-right-collapsed','data-se251-collapsed']});
    new MutationObserver(schedule).observe(inspector,{attributes:true,attributeFilter:['class']});
   }
+  se320ModelTransformAccess(panel,inspector);
   const tree=q('#se251ModelLibrary',panel),treeHeading=tree&&q('.se251-side-title',tree);
   if(treeHeading&&!q('.se320-tree-toggle',treeHeading)){
    const existing=q('.se251-side-actions button',tree);

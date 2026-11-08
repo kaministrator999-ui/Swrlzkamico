@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.351
+title: §wyrl§ Engine v11.352
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,11 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.352 · Model Studio transforms back in Tool settings (2026-11-08)
+
+The existing native Move, Rotate and Scale tools are now directly accessible in Model Studio's Tool settings inspector, even while a category mode is active. X/Y/Z axis selection and ± nudge buttons reuse the original mesh transform, gizmo, grouping and Undo handlers. The selection and components disclosure remains organized below the transform row; no additional floating tool sheet or duplicate transform engine is introduced. VR, UV coordinates and existing project data are unchanged. Phone and headset acceptance remains owner testing.
+
 
 ## §E v11.351 · Game Engine quick actions restored (2026-11-08)
 

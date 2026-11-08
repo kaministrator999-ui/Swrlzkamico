@@ -1,3 +1,7 @@
+## §E v11.352 · Restore native Move / Rotate / Scale access (2026-11-08)
+
+Model Studio's v11.320 navigation work accidentally nested its native transform controls inside a collapsed selection disclosure, and the active tool-category mode hid that disclosure. A compact Transform section now provides Move, Rotate, Scale, X/Y/Z and ± nudge actions directly in the existing inspector, forwarding each press into the original handlers and retaining undo, gizmos and validation. No new floating editor panel, UV remap or VR control changes. The generated engine source and Hugging Face deployment are sealed separately.
+
 ## §E v11.351 · Game Engine quick actions restored (2026-11-08)
 
 The Game Engine header now keeps the original **Projects**, **Play**, **Stop**, **Enter VR**, and **More options** controls directly available at phone, desktop and Quest Browser widths. Quest's old Controls drawer no longer hides these actions; advanced scene/build actions move into More options without duplicating native handlers. File → Projects remains secondary access. v11.350 Model VR and saved project behavior are unchanged. Source-seal verification is required before release; physical phone/Quest acceptance remains with the owner.

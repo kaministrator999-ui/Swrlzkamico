@@ -172,3 +172,43 @@ html #modelAtelierPanel[data-se320-ui] .se320-tree-toggle{flex:0 0 auto;min-widt
 html #modelAtelierPanel[data-se320-ui][data-se251-collapsed=true] #se251ModelLibrary .se251-side-title{writing-mode:initial!important;flex-direction:column!important;justify-content:flex-start!important;padding:5px 2px!important}
 html #modelAtelierPanel[data-se320-ui][data-se251-collapsed=true] #se251ModelLibrary .se251-side-title>span{writing-mode:vertical-rl;order:2}
 html #modelAtelierPanel[data-se320-ui] .se320-selection-tools .atelier-group-details{position:relative!important;inset:auto!important;width:100%!important;min-width:0!important;max-width:100%!important;max-height:none!important;overflow:visible!important}
+
+
+/* Model Studio: native Move / Rotate / Scale + axis/nudge controls stay
+   immediately accessible even when the unified tool category is active. */
+html #modelAtelierPanel[data-se320-ui] #se320ModelTransform.se320-model-transform{
+ box-sizing:border-box!important;display:block!important;position:sticky!important;
+ top:0!important;z-index:4!important;flex:0 0 auto!important;min-width:0!important;
+ max-width:100%!important;margin:6px 0 9px!important;padding:7px!important;
+ background:#211830!important;border:1px solid #805ca0!important;border-radius:8px!important;
+}
+html #modelAtelierPanel.se-inspector-mode-view:not(.atelier-tools-closed) .atelier-inspector > #se320ModelTransform.se320-model-transform{
+ display:block!important;
+}
+html #modelAtelierPanel[data-se320-ui] #se320ModelTransform .se320-transform-label{
+ font:700 12px/1.3 system-ui,sans-serif!important;color:#e7d5f6!important;margin-bottom:6px!important;
+}
+html #modelAtelierPanel[data-se320-ui] #se320ModelTransform :is(.se320-transform-modes,.se320-transform-axes){
+ display:grid!important;gap:4px!important;min-width:0!important;max-width:100%!important;
+ grid-template-columns:repeat(3,minmax(0,1fr))!important;
+}
+html #modelAtelierPanel[data-se320-ui] #se320ModelTransform .se320-transform-axes{
+ grid-template-columns:repeat(5,minmax(0,1fr))!important;margin-top:5px!important;
+}
+html #modelAtelierPanel[data-se320-ui] #se320ModelTransform button{
+ box-sizing:border-box!important;min-width:0!important;width:100%!important;
+ min-height:36px!important;padding:5px 2px!important;
+ font:700 11px/1.15 system-ui,sans-serif!important;white-space:nowrap!important;
+ color:#f2e7fd!important;background:#2c2040!important;
+ border:1px solid #815ea0!important;border-radius:6px!important;
+}
+html #modelAtelierPanel[data-se320-ui] #se320ModelTransform button[aria-pressed=true]{
+ background:#654092!important;border-color:#edc4ff!important;
+ box-shadow:inset 0 -2px #edc4ff!important;
+}
+html #modelAtelierPanel[data-se320-ui] #se320ModelTransform button:focus-visible{
+ outline:2px solid #bff5ed!important;outline-offset:1px!important;
+}
+html #modelAtelierPanel[data-se320-ui] #se320ModelTransform button:disabled{
+ opacity:.5!important;cursor:not-allowed!important;
+}
