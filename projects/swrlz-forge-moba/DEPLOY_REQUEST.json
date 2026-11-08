@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.343",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_343_MODEL_VR_SURFACE_CAMERA",
-  "reason": "Owner Quest 2 report: v11.342 significantly improved FPS, but hover selector ray ends on glove bounding box rather than glove surface and joystick pan/orbit felt inverted. This release retains inexpensive AABB broadphase but adds cached simplified continuous surface ray intersections, with skinned glove proxies driven by the same live skeleton and target geometry drawn nowhere in scene; reduced hover geometry is built at session entry for visible parts, cleared on source revision and exit. Trigger/Grip continue precise original full-mesh intersection. Pan X/Y and orbit yaw/pitch signs reversed for camera-relative joystick navigation; right stick click+vertical zoom unchanged. Native source/undo preserved. 354-patch source built at 9,128,756 bytes SHA-256 7f34d4884d8491515789052b4c36a5564cdd298c5901debb9824cfe0b2dee2f6; independent actual Three.js r169 curved surface and moving skinned model test passed in Actions 42450424824 (5 hits within 0.00027–0.00349 scene units; empty ring center remains no-hit). Physical Quest 2 reticle comfort and framerate acceptance remains owner testing.",
-  "sourceCommit": "0dd84a700acffc0d7a5d648e6ac2d4dcda5c83d6",
-  "sourceIntegritySha256": "7f34d4884d8491515789052b4c36a5564cdd298c5901debb9824cfe0b2dee2f6"
+  "releaseVersion": "v11.344",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_344_MODEL_VR_AIM_VIEWS_TRIGGER",
+  "reason": "Owner's physical Quest 2 feedback after v11.343: Model Studio WebXR ray points at rock-hand middle finger knuckle while Meta OS ray shows thumb tip, requests in-VR perspective view mode changers, and notes momentary freeze on each trigger. New compact Views/Aim palette reuses original 12 button surfaces; 7 model perspective orientation presets, independent left/right yaw/pitch calibration (2° steps ±25°, local browser persistence) adjust both displayed ray and hit ray. Meta OS overlay ray itself is not exposed in WebXR, so owner must calibrate by visual comparison. Cached simplified hand-surface raycasting now serves trigger and grip hits instead of dense skinned mesh face picking. Repeated native selection of same part bypasses rebuild; trigger latency counters added. Native saved model/Undo/Redo ownership preserved. Candidate Actions run 42455530224 built all 355 patches and passed real Three.js r169 aim/view checks, source syntax and integrity; 9,135,955 HTML bytes, SHA-256 7adec1e91ee56f5eeda364c3d733de3d95d8fb5824753d943ef6382f27bc3d4f. Physical Quest 2 latency/alignment remains owner acceptance.",
+  "sourceCommit": "e4e0b2aed65f570b29104344a04b367a7cd1ac20",
+  "sourceIntegritySha256": "7adec1e91ee56f5eeda364c3d733de3d95d8fb5824753d943ef6382f27bc3d4f"
 }
