@@ -365,7 +365,8 @@ def _omit_unverifiable_turnaround_claims(
         # novel shape or view observations just because it mentions a prop.
         topics = set(omit_redundant_topics)
         if "staff" in topics and re.search(r"\bstaff\b", clause, re.I) and not re.search(
-                r"\b(?:silhouette|width|size|proportion|stance|outline)\b", clause, re.I):
+                r"\b(?:front|back|top|side|view|silhouette|width|size|proportion|stance|outline)\b",
+                clause, re.I):
             continue
         if "pouch" in topics and re.search(r"\b(?:pouch|satchel)\b", clause, re.I) and not re.search(
                 r"\b(?:belt|buckle|robe|trim|cape)\b", clause, re.I):
