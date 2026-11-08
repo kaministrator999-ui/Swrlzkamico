@@ -2,11 +2,11 @@
 # Manual-only: training never starts automatically; never invokes paid Jobs.
 set -euo pipefail
 
-if [ "$SWRLZ_FREE_GPU_APPROVED" != "yes" ]; then
+if [ "$(printenv SWRLZ_FREE_GPU_APPROVED 2>/dev/null || true)" != "yes" ]; then
   echo "Set SWRLZ_FREE_GPU_APPROVED=yes ONLY on a verified no-charge local/free GPU runtime." >&2
   exit 2
 fi
-if [ -z "$SWRLZ_VISION_DATA" ] || [ -z "$SWRLZ_VISION_OUTPUT" ]; then
+if [ -z "$(printenv SWRLZ_VISION_DATA 2>/dev/null || true)" ] || [ -z "$(printenv SWRLZ_VISION_OUTPUT 2>/dev/null || true)" ]; then
   echo "Provide SWRLZ_VISION_DATA (private prepared data) and SWRLZ_VISION_OUTPUT (private output)." >&2
   exit 2
 fi
