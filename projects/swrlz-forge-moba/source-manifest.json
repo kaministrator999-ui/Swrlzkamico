@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.340",
+  "name": "§wyrl§ Engine v11.341",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_340.html",
+  "finalArtifact": "swyrl_engine_v11_341.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -365,8 +365,9 @@
     "patches/v11_335_cliff_ulnar_contour.py",
     "patches/v11_336_model_uv_guide.py",
     "patches/v11_337_cliff_organic_geodes.py",
-    "patches/v11_340_immersive_model_studio.py"
+    "patches/v11_340_immersive_model_studio.py",
+    "patches/v11_341_model_vr_hover_orbit.py"
   ],
-  "finalBytes": 9118381,
-  "finalSha256": "a940121424bf3cabd2336f51938a337922a3bbddc2aa021ea2c99e9bbde224ff"
+  "finalBytes": 9119871,
+  "finalSha256": "8806d47c59544600e189de33500d38f8c5c19b0dd8a09f20e3438c2492e1e8c0"
 }

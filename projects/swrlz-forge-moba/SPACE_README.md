@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.340
+title: §wyrl§ Engine v11.341
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,13 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.341 · Optimized Model VR picking and analog model orbit (2026-11-08)
+
+In the immersive Model Studio, idle controller hover now samples at a bounded rate instead of launching full mesh raycasts on every headset frame. A shared per-frame model projection and cached world-space part boxes avoid repeated full-model traversals; ordinary meshes use bounds to reject misses before face tests. Trigger selection and grip-initiated editing remain immediate and precise, with native Undo/Redo and model ownership intact.
+
+Joysticks are now oriented around modelling: **left stick pans horizontally and vertically**, **right stick continuously orbits around the model's centre on both axes**, and **hold right-stick click plus vertical movement to zoom**. Orbit pitch is clamped, Precision reduces navigation sensitivity, and Recenter restores the neutral view. The physical Quest 2 performance and comfort check remains the owner's acceptance test. This fixes only Model Studio VR; Sheep Tag and other editor workspaces are unchanged.
+
 
 ## §E v11.340 · Immersive Model Studio and controller authoring (deployed)
 
