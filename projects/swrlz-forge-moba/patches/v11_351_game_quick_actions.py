@@ -13,8 +13,10 @@ def one(source, old, new):
 def apply(html):
     css = (ROOT/'runtime/game_quick_actions_v11_351.css').read_text('utf8')
     js = (ROOT/'runtime/game_quick_actions_v11_351.js').read_text('utf8')
-    html = one(html, '</head>',
-       '<style id="se351GameQuickActions">\n'+css+'\n</style>\n</head>')
+    if '</head>' not in html:
+        raise AssertionError('v11.351 missing document head')
+    html = html.replace('</head>',
+       '<style id="se351GameQuickActions">\n'+css+'\n</style>\n</head>', 1)
     html = one(html, 'window.SWRLZ_FORGE_BUILD=',
        js+'\nwindow.SWRLZ_FORGE_BUILD=')
     for before, after in [
