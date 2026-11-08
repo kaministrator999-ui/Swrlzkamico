@@ -13,7 +13,10 @@ SOURCE = ROOT / "chat_vision.py"
 
 
 def _vision(variant):
-    with patch.dict(os.environ, {"SWRLZ_VISION_MODEL": variant}):
+    # The real Space exposes hf_space as its module root. Reproduce that
+    # import context for isolated source loading without permanently editing sys.path.
+    with patch.dict(os.environ, {"SWRLZ_VISION_MODEL": variant}), \
+         patch.object(sys, "path", [str(ROOT), *sys.path]):
         spec = importlib.util.spec_from_file_location("swrlz_qwen3_vision_test", SOURCE)
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
