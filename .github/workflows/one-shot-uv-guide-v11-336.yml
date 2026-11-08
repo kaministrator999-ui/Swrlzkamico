@@ -36,7 +36,7 @@ jobs:
           assert len(original)==manifest['baseBytes']
           assert hashlib.sha256(original).hexdigest()==manifest['baseSha256']
           html=original.decode('utf8')
-          patches=manifest['patches']+['patches/v11_336_model_uv_guide.py']
+          patches=manifest['patches']
           for patch in patches:
               html=load_patch(root/patch)(html)
           assert html.count('SWYRL_ENGINE_DEPLOY_MARKER: V11_336_MESH_UV_GUIDE')==1
@@ -46,3 +46,5 @@ jobs:
           print('UV336_FINAL_SHA256='+hashlib.sha256(output).hexdigest())
           print('UV336_PATCHES='+str(len(patches)))
           PY
+      - name: Verify v11.336 sealed artifact and native inline JavaScript
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_336_release.py --output /tmp/se336-verified
