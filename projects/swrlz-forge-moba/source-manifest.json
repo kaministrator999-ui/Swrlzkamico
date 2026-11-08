@@ -366,6 +366,6 @@
     "patches/v11_336_model_uv_guide.py",
     "patches/v11_337_cliff_organic_geodes.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 9055350,
+  "finalSha256": "649c09b82d7ff0fee600c5b941be28da2bd77f54ee709d7bc635248857451ea6"
 }
