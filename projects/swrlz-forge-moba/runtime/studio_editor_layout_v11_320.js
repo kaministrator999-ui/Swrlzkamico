@@ -10,9 +10,8 @@
   const name=draft?'Untitled model':currentProject?.name||'Untitled model';
   if(label.textContent!==name)label.textContent=name;label.title=name;
  }
- // Keep the native mesh transform modes visible without moving or cloning their
- // original handlers. v11.320 tucked the native strip into a closed <details>
- // panel; the unified category view then hid that entire section.
+ // The source-of-truth transform buttons/gizmo still live in the native mesh
+ // quick strip. The viewport bar is the sole visible transform access point.
  const se320TransformSelectors=Object.freeze({
   move:'[data-mode="move"]',rotate:'[data-mode="rotate"]',
   scale:'[data-mode="scale"]',x:'[data-axis="x"]',
@@ -23,26 +22,33 @@
   const bar=q('#se320ModelTransform',panel);
   const native=q('#modelAtelierMeshQuickStrip',panel);
   if(!bar)return;
+  // ModelAtelier's selected part is authoritative. An inspector, native
+  // disclosure or floating-mesh-strip visibility toggle must not hide this bar.
+  const state=typeof ModelAtelier!=='undefined'&&ModelAtelier.status?.();
+  const active=!!state?.open&&!!state?.selected&&!panel.hidden;
+  if(bar.hidden===active)bar.hidden=!active;
+  bar.setAttribute('aria-hidden',String(!active));
   for(const button of bar.querySelectorAll('[data-se320-transform]')){
    const original=native?.querySelector(se320TransformSelectors[button.dataset.se320Transform]);
-   button.disabled=!original||original.disabled;
+   button.disabled=!active||!original||original.disabled;
    if(button.hasAttribute('aria-pressed')){
-    const pressed=original?.getAttribute('aria-pressed')==='true';
-    button.setAttribute('aria-pressed',String(pressed));
+    button.setAttribute('aria-pressed',String(!!active&&original?.getAttribute('aria-pressed')==='true'));
    }
   }
  }
- function se320ModelTransformAccess(panel,inspector){
+ function se320ModelTransformAccess(panel,scene){
   const native=q('#modelAtelierMeshQuickStrip',panel);
-  if(!native)return; // Native selection/gizmo module may mount after the layout.
-  let bar=q('#se320ModelTransform',inspector);
+  if(!native||!scene)return; // Native selection/gizmo may mount later.
+  let bar=q('#se320ModelTransform',panel);
   if(!bar){
    bar=document.createElement('section');
    bar.id='se320ModelTransform';
    bar.className='se320-model-transform';
-   bar.setAttribute('aria-label','Selected mesh transform tools');
+   bar.setAttribute('role','toolbar');
+   bar.setAttribute('aria-label','Selected mesh transforms');
+   bar.hidden=true;
    bar.innerHTML=
-    '<div class="se320-transform-label">Transform</div>'+
+    '<span class="se320-transform-label">Transform</span>'+
     '<div class="se320-transform-modes" role="group" aria-label="Transform mode">'+
     '<button type="button" data-se320-transform="move" aria-pressed="false">↔ Move</button>'+
     '<button type="button" data-se320-transform="rotate" aria-pressed="false">⟳ Rotate</button>'+
@@ -51,24 +57,32 @@
     '<button type="button" data-se320-transform="x" aria-pressed="false">X</button>'+
     '<button type="button" data-se320-transform="y" aria-pressed="false">Y</button>'+
     '<button type="button" data-se320-transform="z" aria-pressed="false">Z</button>'+
-    '<button type="button" data-se320-transform="minus" aria-label="Nudge negative along axis">−</button>'+
-    '<button type="button" data-se320-transform="plus" aria-label="Nudge positive along axis">+</button></div>';
-   const handle=q('.atelier-tool-handle',inspector);
-   if(handle)handle.after(bar);else inspector.prepend(bar);
+    '<button type="button" data-se320-transform="minus" aria-label="Nudge negative along selected axis">−</button>'+
+    '<button type="button" data-se320-transform="plus" aria-label="Nudge positive along selected axis">+</button></div>';
+   bar.addEventListener('pointerdown',event=>event.stopPropagation());
    bar.addEventListener('click',event=>{
     const button=event.target.closest('button[data-se320-transform]');
     if(!button||button.disabled||!bar.contains(button))return;
-    // Dispatch into the actual pre-existing control so gizmos, grouping,
-    // history and native validation all remain owned by Model Atelier.
     const source=q('#modelAtelierMeshQuickStrip',panel)?.querySelector(
-     se320TransformSelectors[button.dataset.se320Transform]);
+      se320TransformSelectors[button.dataset.se320Transform]);
+    // The original click path owns every mesh mutation, gizmo and Undo step.
     source?.click();
     se320RefreshTransformAccess(panel);
    });
    new MutationObserver(()=>se320RefreshTransformAccess(panel)).observe(native,{
     subtree:true,attributes:true,attributeFilter:['aria-pressed','disabled','hidden']
    });
+   // Keyboard/list changes are also supported, including selection before a
+   // native strip transition (the viewport raycast path updates native state).
+   panel.addEventListener('change',event=>{
+    if(event.target.closest('#modelAtelierParts'))queueMicrotask(()=>se320RefreshTransformAccess(panel));
+   },true);
   }
+  if(bar.parentElement!==scene)scene.append(bar);
+  // Remove duplicate buttons from the sidebar, but keep their original DOM
+  // controls/handlers as the backing for the viewport actions.
+  for(const source of native.querySelectorAll('[data-mode],[data-axis]'))
+   source.closest('.amq-line')?.classList.add('se320-native-transform-proxy');
   se320RefreshTransformAccess(panel);
  }
  function modelLayout(){
@@ -100,7 +114,7 @@
    new MutationObserver(schedule).observe(panel,{attributes:true,attributeFilter:['class','hidden','data-se251-layout','data-se251-right-collapsed','data-se251-collapsed']});
    new MutationObserver(schedule).observe(inspector,{attributes:true,attributeFilter:['class']});
   }
-  se320ModelTransformAccess(panel,inspector);
+  se320ModelTransformAccess(panel,q('.atelier-scene',panel));
   const tree=q('#se251ModelLibrary',panel),treeHeading=tree&&q('.se251-side-title',tree);
   if(treeHeading&&!q('.se320-tree-toggle',treeHeading)){
    const existing=q('.se251-side-actions button',tree);
