@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/one-shot-uv-guide-v11-336.yml"
+      - "projects/swrlz-forge-moba/patches/v11_336_model_uv_guide.py"
   workflow_dispatch:
 
 permissions:
