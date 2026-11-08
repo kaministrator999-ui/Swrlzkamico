@@ -6,7 +6,7 @@ ROOT=Path(__file__).resolve().parents[1]
 MARKER='SWYRL_ENGINE_DEPLOY_MARKER: V11_352_MODEL_TRANSFORM_ACCESS'
 ap=argparse.ArgumentParser();ap.add_argument('--output',required=True);ap.add_argument('--request',action='store_true');args=ap.parse_args()
 m=json.loads((ROOT/'source-manifest.json').read_text('utf8'))
-assert m['name']=='§wyrl§ Engine v11.352' and m['finalArtifact']=='swyrl_engine_v11_351.html'
+assert m['name']=='§wyrl§ Engine v11.352' and m['finalArtifact']=='swyrl_engine_v11_352.html'
 assert len(m['patches'])==360 and m['patches'][-1]=='patches/v11_352_model_transform_access.py'
 assert m['finalBytes']>9_200_000 and len(m['finalSha256'])==64
 output=Path(args.output).resolve()
