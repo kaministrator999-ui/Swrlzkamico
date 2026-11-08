@@ -431,10 +431,14 @@ def _format_direct_vision_report(description: str) -> str:
     )
     sections = []
     clothing_mention_boots = any(
-        "clothing" in m.group(1).casefold()
-        or "materials" in m.group(1).casefold()
-        for m in matches
-    ) and bool(re.search(r"(?i)\bboots?\b", text))
+        ("clothing" in match.group(1).casefold()
+         or "materials" in match.group(1).casefold())
+        and re.search(
+            r"(?i)\bboots?\b",
+            text[match.end() : matches[i + 1].start()
+                 if i + 1 < len(matches) else len(text)]
+        ) for i, match in enumerate(matches)
+    )
     if len(matches) >= 2:
         seen = set()
         seen_sentences = set()
