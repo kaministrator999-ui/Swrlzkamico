@@ -206,6 +206,23 @@ html #modelAtelierPanel[data-se320-ui] #se320ModelTransform :is(.se320-transform
 html #modelAtelierPanel[data-se320-ui] #se320ModelTransform .se320-transform-axes{
  border-left:1px solid #74558c!important;padding-left:6px!important;
 }
+/* Native edit history and optional image-alignment tools share the same
+   selected-object viewport bar; no floating duplicate panels. */
+html #modelAtelierPanel[data-se320-ui] #se320ModelTransform :is(.se320-transform-history,.se320-transform-uv,.se320-uv-nudges){
+ display:flex!important;flex:0 0 auto!important;align-items:center!important;gap:4px!important;
+}
+html #modelAtelierPanel[data-se320-ui] #se320ModelTransform :is(.se320-transform-history,.se320-transform-uv){
+ border-left:1px solid #74558c!important;padding-left:6px!important;
+}
+html #modelAtelierPanel[data-se320-ui] #se320ModelTransform .se320-uv-nudges[hidden]{display:none!important}
+html #modelAtelierPanel[data-se320-ui] #se320ModelTransform [data-se320-uv="toggle"][aria-pressed=true]{
+ color:#d8fff8!important;background:#31575a!important;border-color:#82eadd!important;
+}
+/* Keep native history reachable after deletion (when selection bar is hidden). */
+html #modelAtelierPanel[data-se320-ui]:has(#se320ModelTransform:not([hidden]))
+ .atelier-inspector :is(#modelAtelierUndo,#modelAtelierRedo){display:none!important}
+html #modelAtelierPanel.se336-uv-slide-active #modelAtelierViewport{cursor:move!important;touch-action:none!important}
+
 html #modelAtelierPanel[data-se320-ui] #se320ModelTransform button{
  box-sizing:border-box!important;display:block!important;flex:0 0 auto!important;
  width:auto!important;min-width:35px!important;min-height:34px!important;
