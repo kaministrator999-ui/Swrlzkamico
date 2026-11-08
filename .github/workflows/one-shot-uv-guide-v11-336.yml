@@ -5,6 +5,7 @@ on:
     paths:
       - ".github/workflows/one-shot-uv-guide-v11-336.yml"
       - "projects/swrlz-forge-moba/patches/v11_336_model_uv_guide.py"
+      - "projects/swrlz-forge-moba/source-manifest.json"
   workflow_dispatch:
 
 permissions:
@@ -18,33 +19,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: Check source syntax
+      - name: Check new module and patch syntax
         run: |
           node --check projects/swrlz-forge-moba/runtime/model_atelier_uv_layout_v11_336.js
           python -m py_compile projects/swrlz-forge-moba/patches/v11_336_model_uv_guide.py
-      - name: Rebuild appended patch lineage and compute exact integrity
-        run: |
-          python - <<'PY'
-          import base64, gzip, hashlib, json, sys
-          from pathlib import Path
-          root=Path('projects/swrlz-forge-moba')
-          sys.path.insert(0, str(root.resolve()))
-          from build_space import load_patch
-          manifest=json.loads((root/'source-manifest.json').read_text())
-          packed=''.join((root/n).read_text().strip() for n in manifest['chunks'])
-          original=gzip.decompress(base64.b64decode(packed))
-          assert len(original)==manifest['baseBytes']
-          assert hashlib.sha256(original).hexdigest()==manifest['baseSha256']
-          html=original.decode('utf8')
-          patches=manifest['patches']
-          for patch in patches:
-              html=load_patch(root/patch)(html)
-          assert html.count('SWYRL_ENGINE_DEPLOY_MARKER: V11_336_MESH_UV_GUIDE')==1
-          assert 'modelAtelierUVLayout' in html and 'function se336UVLayout' in html
-          output=html.encode('utf8')
-          print('UV336_FINAL_BYTES='+str(len(output)))
-          print('UV336_FINAL_SHA256='+hashlib.sha256(output).hexdigest())
-          print('UV336_PATCHES='+str(len(patches)))
-          PY
-      - name: Verify v11.336 sealed artifact and native inline JavaScript
+      - name: Verify manifest-sealed HTML, native inline JavaScript and focused model checks
         run: python projects/swrlz-forge-moba/scripts/verify_v11_336_release.py --output /tmp/se336-verified
