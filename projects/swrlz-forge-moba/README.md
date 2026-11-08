@@ -1,3 +1,7 @@
+## §E v11.353 · Direct viewport Move / Rotate / Scale toolbar (2026-11-08)
+
+After v11.352 restored selection transforms inside Tool settings, the owner clarified that those controls belong directly in the viewport top-bar area rather than the inspector. v11.353 relocates a single selection-only action row into `.atelier-scene`, independent of sidebar collapse, with mode, axis and ± nudge controls that call the same native mesh handlers. Inspector duplicate rows are hidden without removing native listeners. No UV, model or immersive renderer changes.
+
 ## §E v11.352 · Restore native Move / Rotate / Scale access (2026-11-08)
 
 Model Studio's v11.320 navigation work accidentally nested its native transform controls inside a collapsed selection disclosure, and the active tool-category mode hid that disclosure. A compact Transform section now provides Move, Rotate, Scale, X/Y/Z and ± nudge actions directly in the existing inspector, forwarding each press into the original handlers and retaining undo, gizmos and validation. No new floating editor panel, UV remap or VR control changes. The generated engine source and Hugging Face deployment are sealed separately.
