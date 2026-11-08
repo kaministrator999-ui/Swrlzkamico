@@ -101,8 +101,8 @@ function se336ExportGuide() {
 async function se336ImportPaint(file) {
   const original = se336SelectedMesh();
   if (!original || !file) { status('Select a model mesh first.', true); return; }
-  if (!['image/png', 'image/jpeg'].includes(file.type) || file.size > 2000000) {
-    status('Import a PNG/JPEG image smaller than 2 MB.', true); return;
+  if (!['image/png', 'image/jpeg'].includes(file.type) || file.size > 5000000) {
+    status('Import a PNG/JPEG image up to 5 MB.', true); return;
   }
   const {part, mesh} = original, id = part.id;
   const probe = document.createElement('canvas');
@@ -120,12 +120,22 @@ async function se336ImportPaint(file) {
       if (image.naturalWidth > 4096 || image.naturalHeight > 4096 ||
           !image.naturalWidth || !image.naturalHeight)
         throw Error('Texture image dimensions are unsupported.');
-      const canvas = document.createElement('canvas');
-      canvas.width = canvas.height = 512;
-      canvas.getContext('2d').drawImage(image, 0, 0, 512, 512);
-      const png = canvas.toDataURL('image/png');
-      if (png.length > 360000)
-        throw Error('Painted PNG exceeds the model save limit. Simplify/compress the artwork.');
+      // The model stores texture PNGs in JSON. Keep the native save-size cap,
+      // but reduce resolution when a detailed import would otherwise be rejected.
+      let png = null, storedSize = 0;
+      for (const size of [512, 384, 320, 256, 192]) {
+        const canvas = document.createElement('canvas');
+        canvas.width = canvas.height = size;
+        const context = canvas.getContext('2d');
+        if (!context) throw Error('2D texture canvas unavailable.');
+        context.drawImage(image, 0, 0, size, size);
+        const candidate = canvas.toDataURL('image/png');
+        if (candidate.length <= 360000) {
+          png = candidate; storedSize = size; break;
+        }
+      }
+      if (!png)
+        throw Error('Painted PNG exceeds the model save limit even at 192px. Simplify the artwork.');
       if (selection !== id || partById(id) !== part)
         throw Error('Selected mesh changed while the image was loading. Try again.');
       const before = part.uvPaintPNG;
@@ -137,7 +147,7 @@ async function se336ImportPaint(file) {
       part.uvPaintPNG = png;
       signalEdited();
       select(id);
-      status('Painted PNG applied to ' + part.name + ' using its existing UV coordinates. Save Project to keep it.');
+      status('Painted PNG applied to ' + part.name + ' using its existing UV coordinates (' + storedSize + 'px saved texture). Save Project to keep it.');
     } finally { URL.revokeObjectURL(url); }
   } catch (error) { status('Texture import: ' + error.message, true); }
 }
@@ -172,7 +182,7 @@ function se336InstallUI() {
   root.innerHTML =
     '<h3>🎨 UV Layout · image guide</h3>' +
     '<p id="se336UVName"></p>' +
-    '<p class="se336-uv-hint">Export the actual mesh UV wireframe as a transparent 1024px PNG. Paint beneath that guide in an image editor, then export only the artwork as PNG and import it here.</p>' +
+    '<p class="se336-uv-hint">Export the actual mesh UV wireframe as a transparent 1024px PNG. Paint beneath that guide in an image editor, then import the artwork as PNG/JPEG (up to 5 MB). Large textures are resized to fit the model save format.</p>' +
     '<div class="se336-uv-actions"><button id="se336UVExport" type="button">Export UV guide PNG</button>' +
     '<button id="se336UVImport" type="button">Import painted PNG</button>' +
     '<button id="se336UVRemove" type="button">Remove texture</button></div>' +
