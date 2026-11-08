@@ -5,6 +5,7 @@ import base64
 import importlib.util
 import json
 import os
+import sys
 import threading
 import time
 from pathlib import Path
@@ -17,6 +18,8 @@ from fastapi.testclient import TestClient
 # Exercise transport, region inference, and explicit level comparisons using
 # the single active Qwen3-VL vision route, with mocked model responses.
 SOURCE = Path(__file__).resolve().parents[1] / "hf_space" / "chat_vision.py"
+# The vision module loads the layout helper alongside the Space runtime.
+sys.path.insert(0, str(SOURCE.parent))
 spec = importlib.util.spec_from_file_location("swrlz_chat_vision_test", SOURCE)
 assert spec and spec.loader
 vision = importlib.util.module_from_spec(spec)
@@ -794,9 +797,87 @@ assert '"Cache-Control":"no-store"' in station_source
 station_source = (SOURCE.parent / "chat_vision.py").read_text(encoding="utf-8")
 assert station_source.index('job["lastPolledAt"] = now', station_source.index("def vision_status(")) < station_source.index('_cancel_unwatched_jobs(now)', station_source.index("def vision_status("))
 
-# Dense wide reference sheets need real source-pixel crops focused on the
-# figure band, not four full-height strips containing unrelated footer panels.
+# Genuine multi-panel image layout is discovered from original pixels, not
+# from the words "Little Crystal Mage" or hardcoded five equal-width columns.
 from PIL import ImageDraw
+from vision_sheet_layout import discover_view_panels
+
+sheet = Image.new("RGB", (1448, 1086), "white")
+sheet_paint = ImageDraw.Draw(sheet)
+for index in range(5):
+    left = 42 + index * 280
+    sheet_paint.rectangle((left, 165, left + 170, 690),
+                          fill="#7040ba", outline="#26103c", width=8)
+    sheet_paint.ellipse((left + 30, 190, left + 140, 330), fill="#e9d6af")
+    sheet_paint.rectangle((left + 60, 390, left + 115, 650), fill="#7253a9")
+sheet_paint.rectangle((50, 934, 1390, 1036), fill="#6e3e86")
+source_b = io.BytesIO()
+sheet.save(source_b, format="PNG")
+sheet_url = "data:image/png;base64," + base64.b64encode(source_b.getvalue()).decode("ascii")
+panel_layout = discover_view_panels(sheet)
+assert [name for name, _ in panel_layout] == [
+    "View panel 1", "View panel 2", "View panel 3",
+    "View panel 4", "View panel 5", "Supporting reference panels"
+], panel_layout
+assert all(0 <= x0 < x1 <= 1448 and 0 <= y0 < y1 <= 1086
+           for _, (x0, y0, x1, y1) in panel_layout)
+assert panel_layout[-1][1][1] > panel_layout[0][1][1], "Supporting row must be below figures"
+planned = vision._detail_regions(sheet_url, "Character turnaround of one character in five views.",
+                                  with_boxes=True)
+assert [name for name, _, _ in planned] == [name for name, _ in panel_layout]
+assert all(url.startswith("data:image/jpeg;base64,") for _, url, _ in planned)
+assert len({tuple(box) for _, _, box in planned}) == 6
+
+class PanelModel:
+    def __init__(self):
+        self.calls = []
+    def create_chat_completion(self, **kwargs):
+        self.calls.append(kwargs)
+        prompt = kwargs["messages"][0]["content"][0]["text"]
+        if "Unverified source-crop notes" in prompt:
+            observation = ("Subject and views: One illustrated character in several labeled views.\n"
+                           "View comparisons: Back and top are different source views.\n"
+                           "Materials and markings: A purple cloak with gold decoration.\n"
+                           "Props and contact: A staff appears in the character views.")
+        elif "Supporting reference panels" in prompt:
+            observation = "A bottom panel contains color samples and decorative reference shapes."
+        elif "Source region View panel" in prompt:
+            observation = "One figure occupies this view with a dark purple cloak and gold trim."
+        else:
+            observation = "Character turnaround of a purple-cloaked person shown in multiple views."
+        return iter([{"choices": [{"delta": {"content": observation}}]}])
+
+panel_model = PanelModel()
+panel_phases = []
+with patch.object(vision, "_load_local_model", return_value=panel_model):
+    panel_answer = vision._ask_vision_local(
+        sheet_url, "What do you see in this image?",
+        report_phase=lambda phase, **fields: panel_phases.append((phase, fields)),
+    )
+assert len(panel_model.calls) == 8, "whole overview + five panels + reference row + whole-image synthesis"
+assert panel_answer.startswith("Character reference · local model observation")
+assert any(f.get("requestedRegions") == 6 for _, f in panel_phases)
+panel_records = [f["spatialRegionRecords"] for _, f in panel_phases
+                 if f.get("spatialRegionRecords")]
+assert len(panel_records[-1]) == 6
+assert [record["regionKind"] for record in panel_records[-1]] == ["view"] * 5 + ["support"]
+assert [record["viewPanelIndex"] for record in panel_records[-1]] == [1, 2, 3, 4, 5, None]
+last_instructions = panel_model.calls[-1]["messages"][0]["content"][0]["text"]
+assert "View panel 5" in last_instructions
+assert "Supporting reference panels" in last_instructions
+assert "POSITIONAL labels" in last_instructions
+# Changing the number of panels should not force a 5-view result.
+three = Image.new("RGB", (1200, 880), "white")
+three_paint = ImageDraw.Draw(three)
+for index in range(3):
+    x = 60 + 390 * index
+    three_paint.rectangle((x, 160, x + 230, 650), fill="#5f34a3")
+assert len(discover_view_panels(three)) == 3
+assert discover_view_panels(Image.new("RGB", (1200, 900), "white")) == []
+
+# The older fallback still handles art with no clear separate whitespace
+# between figures, using selective closeups rather than invented panels.
+
 reference = Image.new("RGB", (1448, 1086), "white")
 painter = ImageDraw.Draw(reference)
 for index in range(4):
@@ -805,6 +886,8 @@ for index in range(4):
                       fill="#7040ba", outline="#202020", width=12)
     painter.line((left + 25, 200, left + 140, 625),
                  fill="#e5b744", width=14)
+# A continuous overlaid band defeats panel separation: exercise fallback.
+painter.rectangle((30, 350, 1410, 475), fill="#7040ba")
 # Palette below figures must not occupy each character-focused crop.
 painter.rectangle((0, 950, 1447, 1085), fill="#11aa22")
 buffer = io.BytesIO()
