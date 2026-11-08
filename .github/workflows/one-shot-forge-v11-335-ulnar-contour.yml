@@ -1,0 +1,64 @@
+name: Focused §E v11.335 pinky palm contour source seal
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/one-shot-forge-v11-335-ulnar-contour.yml'
+      - 'projects/swrlz-forge-moba/patches/v11_335_cliff_ulnar_contour.py'
+      - 'projects/swrlz-forge-moba/scripts/test_v11_335_cliff_ulnar_contour.cjs'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  focused:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - uses: actions/setup-node@v4
+        with: {node-version: '22'}
+      - name: Test actual SDF edge and sealed source without changing other models
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/cliff_ulnar_contour_v11_335.js
+          node projects/swrlz-forge-moba/scripts/test_v11_335_cliff_ulnar_contour.cjs
+          python - <<'PY'
+          import json,sys,hashlib,subprocess
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          manifest=json.loads((root/'source-manifest.json').read_text('utf8'))
+          assert manifest['name']=='§wyrl§ Engine v11.335'
+          assert manifest['finalArtifact']=='swyrl_engine_v11_335.html'
+          assert len(manifest['patches'])==348
+          assert manifest['patches'][-1]=='patches/v11_335_cliff_ulnar_contour.py'
+          out=Path('/tmp/se335')
+          subprocess.run([sys.executable,str(root/'build_space.py'),'--output',str(out)],check=True)
+          b=(out/'index.html').read_bytes()
+          assert b==(out/'modeler.html').read_bytes()
+          h=b.decode('utf8')
+          for token in (
+             'SWYRL_ENGINE_DEPLOY_MARKER: V11_335_CLIFF_ULNAR_CONTOUR',
+             "window.SWRLZ_FORGE_BUILD={version:'v11.335'",
+             '<title>§wyrl§ Engine · Maker v11.335</title>',
+             'function se335NarrowUlnarField(math){',
+             ' const hand=se335NarrowUlnarField(math);',
+             'const inward=.105*lower*upper*onUlnarSide;',
+             "source.engine='§wyrl§ Engine · Maker v11.335';source.version=11.335;",
+             'se332OverlayRockFractures(img,albedo);',
+             'return se334DorsalOnlyCrystalMaterial(mat);',
+             'image.src=SE333_EMBEDDED_CLIFF_ATLAS;',
+             'model.parts=[stone];model.meshGroups=[];'
+          ):
+             assert token in h,token
+          assert h.count(' const hand=se335NarrowUlnarField(math);')==1
+          subprocess.run([sys.executable,str(root/'scripts/check_inline_js_syntax_v11_266.py'),str(out/'index.html')],check=True)
+          receipt=json.loads((out/'SOURCE.json').read_text('utf8'))
+          assert receipt['sourceVersion']=='§wyrl§ Engine v11.335'
+          assert len(receipt['assets'])==71
+          print('SE335_HTML_BYTES='+str(len(b)),flush=True)
+          print('SE335_SHA256='+hashlib.sha256(b).hexdigest(),flush=True)
+          print('SE335_PATCHES=348',flush=True)
+          print('SE335_ASSETS=71',flush=True)
+          print('SE335_SOURCE_SEAL_PASS',flush=True)
+          PY
