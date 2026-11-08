@@ -724,7 +724,7 @@ assert "No occlusion is implied" not in cleaned_mage
 assert "No buckles or hidden fastenings" not in cleaned_mage
 assert "layered geometry" not in cleaned_mage
 assert "appears layered, with folds and creases" in cleaned_mage
-assert cleaned_mage.count("boots") == 1, cleaned_mage
+assert cleaned_mage.lower().count("boots") == 1, cleaned_mage
 assert "Two identical figures" not in cleaned_mage
 assert "not independently verified" in cleaned_mage
 assert "Feet are clad" in redundant_mage, "source handoff must remain unchanged"
