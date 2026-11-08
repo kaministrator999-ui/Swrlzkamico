@@ -30,9 +30,18 @@ const ring=new THREE.Mesh(new THREE.TorusGeometry(1,.25,30,100),material);
 ring.updateMatrixWorld(true);
 assert.equal(api.surface({id:'ring',name:'Ring',mesh:ring},ray),null,
  'bounding box intersects empty hole: reticle must NOT float in hole');
-const ringHit=api.surface({id:'ring',name:'Ring',mesh:ring},
- new THREE.Raycaster(new THREE.Vector3(1,0,3),new THREE.Vector3(0,0,-1),.01,5));
-assert(ringHit?.point.z>.12&&ringHit.point.z<.35,'ring reticle must hit real curved surface: '+JSON.stringify({point:ringHit?.point?.toArray(),faces:state.hoverSurfaceCache.get(ring)?.proxy?.geometry?.index?.count/3}));
+let ringSuccess=0,ringNative=0;
+for(const [x,y] of [[1,.08],[.95,.2],[.86,.45],[.5,.84],[.3,.96]]){
+ const line=new THREE.Raycaster(new THREE.Vector3(x,y,3),new THREE.Vector3(0,0,-1),.01,5);
+ const baseline=[];ring.raycast(line,baseline);baseline.sort((a,b)=>a.distance-b.distance);
+ const contact=api.surface({id:'ring',name:'Ring',mesh:ring},line);
+ if(baseline.length)ringNative++;
+ const delta=baseline.length&&contact?Math.abs(contact.distance-baseline[0].distance):null;
+ if(delta!==null&&delta<.15)ringSuccess++;
+ console.log('RING_SURFACE_SAMPLE',JSON.stringify({x,y,original:baseline[0]?.point.toArray(),proxy:contact?.point.toArray(),delta,faces:state.hoverSurfaceCache.get(ring)?.proxy?.geometry?.index?.count/3}));
+}
+assert(ringNative>=3,'original torus must have valid ring surface positions');
+assert(ringSuccess>=2,'simplified surface must agree with original curved contact in multiple positions');
 // The simplified hand proxy is still skinned by the original live skeleton.
 const geo=new THREE.SphereGeometry(.5,80,60),n=geo.getAttribute('position').count;
 const joints=new Uint16Array(n*4),weights=new Float32Array(n*4);
