@@ -1,3 +1,7 @@
+## §E v11.353 · Modeler selection transform toolbar (2026-11-08)
+
+Display Move / Rotate / Scale and X/Y/Z nudges in the model viewport's top-bar region when a mesh is selected; hide on deselection. Keep these actions functional when the inspector is collapsed. Maintain the original mesh gizmo/Undo pipeline and hide only redundant sidebar action rows. The top bar stays compact and scrolls if viewport width is too narrow. Release validation and owner phone/Quest acceptance are independent.
+
 ## §E v11.352 · Model Studio transform accessibility (2026-11-08)
 
 Restore immediate Move / Rotate / Scale, axis selection and ± nudges in the unified Model Studio inspector by calling the existing native mesh handlers instead of introducing alternate transform state. Maintain mobile and desktop responsiveness and keep the section visible during active tool modes. No structural changes to the mage, native UV coordinates, or VR editor. Verify the source seal and deploy independently; owner acceptance follows on real devices.
