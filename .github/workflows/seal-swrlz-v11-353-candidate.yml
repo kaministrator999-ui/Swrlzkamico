@@ -31,7 +31,8 @@ jobs:
           assert m['name']=='§wyrl§ Engine v11.353'
           assert len(m['patches'])==361
           assert m['patches'][-1]=='patches/v11_353_model_viewport_transform.py'
-          assert not m['finalSha256'] and not m['finalBytes']
+          assert m['finalSha256']=='d1a39f686cd9e7e2e4e91b2e045adf60b67fcc0959e75551f1178a4b00014e92'
+          assert m['finalBytes']==9266937
           out=Path('/tmp/se353')
           subprocess.run([sys.executable,str(root/'build_space.py'),'--output',str(out)],check=True)
           raw=(out/'index.html').read_bytes()
@@ -68,3 +69,5 @@ jobs:
           print('V11_353_PATCH_COUNT='+str(len(m['patches'])),flush=True)
           print('V11_353_SOURCE_SEAL_PASS',flush=True)
           PY
+      - name: Independent sealed release verification
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_353_release.py --output /tmp/se353-verified
