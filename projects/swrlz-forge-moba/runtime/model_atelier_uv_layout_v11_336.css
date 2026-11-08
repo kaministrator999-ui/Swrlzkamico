@@ -1,0 +1,9 @@
+/* v11.336: contained UV template controls in the native model inspector. */
+.se336-uv-layout{display:grid;gap:9px;margin:16px 0 4px;padding:12px;border:1px solid #416074;border-radius:12px;background:#132435;color:#d5f3f7}
+.se336-uv-layout h3{margin:0;color:#d3fbff;font-size:1rem}
+.se336-uv-layout p{margin:0;line-height:1.42;overflow-wrap:anywhere}
+.se336-uv-layout .se336-uv-hint{font-size:.82rem;color:#a9cbd5}
+.se336-uv-actions{display:flex;flex-wrap:wrap;gap:7px}
+.se336-uv-actions button{flex:1 1 135px;min-height:40px;padding:7px 10px;border:1px solid #5f90a3;border-radius:8px;background:#24475a;color:#f1fdff;font:inherit;cursor:pointer}
+.se336-uv-actions button:disabled{opacity:.44;cursor:default}
+.se336-uv-actions button:focus-visible{outline:2px solid #44e7f4;outline-offset:2px}
