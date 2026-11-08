@@ -1,3 +1,11 @@
+## §E v11.342 · Smooth dual-controller hover on skinned models (2026-11-08)
+
+A real Quest 2 Model Studio test of v11.341 exposed lingering frame-rate loss when aiming one controller at the native hand model, increasing with both controllers. The root issue was a skinned-mesh exception in the earlier broadphase: **hover still performed full skinned-triangle raycasts**, alongside repeated CPU skin bounds and native projection refreshes.
+
+**v11.342 removes those operations from idle pointing.** A tracked ray hits cached world-space part boxes (approximate hover guides) rather than model triangles; trigger selection and grip still perform immediate, exact mesh intersections, including individual finger gaps and overlapping parts. Both controllers share a native projection cache until the model revision changes, and unnecessary per-hover UI scene traversals are removed. Per-session read-only picking diagnostics report hover and precise counts with hover duration. Existing left-stick pan, right-stick X/Y orbit and press-to-zoom controls remain unchanged.
+
+The isolated candidate GitHub Actions [run 42448714716](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/42448714716) passed its two-controller no-triangle hover test and sealed the rebuilt 353-patch HTML at **9,122,053 bytes** and SHA-256 `ab1f1309ac860c540583db730c4ff1866be5fc074f73ca220181a6cf5029a4ad`. Physical Quest 2 frame-time, reticle alignment and click-accuracy acceptance is owner testing.
+
 ## §E v11.341 · Optimized Model VR picking and analog model orbit (2026-11-08)
 
 In the immersive Model Studio, idle controller hover now samples at a bounded rate instead of launching full mesh raycasts on every headset frame. A shared per-frame model projection and cached world-space part boxes avoid repeated full-model traversals; ordinary meshes use bounds to reject misses before face tests. Trigger selection and grip-initiated editing remain immediate and precise, with native Undo/Redo and model ownership intact.
