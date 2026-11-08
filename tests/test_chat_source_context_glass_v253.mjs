@@ -74,7 +74,7 @@ assert.ok(css.indexOf("/* v253: readable deep-navy")>css.indexOf("/* v199: conte
 assert.ok(css.includes(".assistant-body .github-source-card{"),"metadata visually separate from answer");
 assert.ok(css.includes("body.a11y-reduced-transparency .assistant-body"),"accessibility override preserved");
 assert.ok(page.includes("originalRenderedSources.set(container,rawSource)"),"raw response remains intact for copy/export");
-assert.ok(page.includes("const source=sourceContext?sourceContext.body:rawSource"),"content only split when fully verified");
+assert.ok(page.includes("const source=sourceContext?sourceContext.body:displaySource"),"verified source body is split only with provenance; unverified content uses the presentation view");
 assert.ok(page.includes("if(sourceContext)appendGitHubSourceCard(container,sourceContext)"),"same renderer handles live and archive");
 const inline=page.match(/<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/i);
 assert.ok(inline,"inline script present");
