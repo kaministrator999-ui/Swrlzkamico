@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.332",
+  "name": "§wyrl§ Engine v11.333",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_332.html",
+  "finalArtifact": "swyrl_engine_v11_333.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -359,8 +359,9 @@
     "patches/v11_321_sheep_sight_xr_crowd.py",
     "patches/v11_330_material_studio_layout.py",
     "patches/v11_331_smooth_cliff_material_uv.py",
-    "patches/v11_332_smooth_cliff_crack_atlas.py"
+    "patches/v11_332_smooth_cliff_crack_atlas.py",
+    "patches/v11_333_cliff_embedded_atlas.py"
   ],
-  "finalBytes": 8487373,
-  "finalSha256": "0d84c3c8d7243db25a8f7406146eac54b7c23da8ab4771686d2bd96d656fc308"
+  "finalBytes": 0,
+  "finalSha256": ""
 }
