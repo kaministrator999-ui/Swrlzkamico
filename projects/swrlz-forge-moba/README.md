@@ -1,3 +1,9 @@
+## §E v11.340 · Immersive Model Studio and controller authoring (source and XR emulation verified)
+
+Model Studio has its own Enter model VR action, a comfortable model presentation stage, native controller rays and selection feedback, and a readable world-space tool palette. Trigger selects model parts; choose Move, Rotate or Scale before gripping. Release applies one native history edit; cancel, tracking loss and session exit discard an uncommitted preview. Inspect mode and view framing preserve saved geometry.
+
+The actual native model root, geometry, materials and rigs are reused in an isolated Model VR scene through the existing main XR loop. Exit restores the browser Model Studio. Game/Arcane XR, the Materials workspace and owner hand/UV releases through v11.337 remain preserved. Controller emulation, source verification and physical headset acceptance are separate gates; current receipts and supported controls are recorded in [the checkpoint](docs/MODEL_STUDIO_VR_V11_340.md).
+
 ## §E v11.337 · Organic finger smoothing, natural wrist blend, inlaid aquamarine knuckles (2026-11-07)
 
 Owner-provided close-up palm and finger photographs alongside real Moto screenshots identified three remaining modeling issues in **Plain Hand Base · Smooth Cliff Hand**: a sharp-looking hypothenar heel before the wrist, stacked/ridged middle-finger joints and angular tips, and simplistic repeated cyan spikes on the dorsal knuckles. This release corrects them **only for that starter**, extending v11.335's narrowed ulnar edge without changing the global base-hand generator or other projects. A feathered SDF sample offset gently rolls the bottom of the outer palm into the wrist. A starter-specific organic finger field smooth-blends PIP, DIP and distal fingertip pads, and the single connected gauntlet mesh receives a modest sampling improvement (.047→.044) while keeping all 17 native bones, poses and sculpting support.

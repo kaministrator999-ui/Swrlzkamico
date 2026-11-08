@@ -1,0 +1,13 @@
+/* Model Studio's immersive entry remains in its native header. */
+#modelAtelierPanel .se340-model-vr-entry{display:flex;align-items:center;gap:7px;flex-wrap:wrap;min-width:0}
+#modelAtelierPanel #se340EnterModelVR{min-height:36px;padding:7px 11px;background:#513674!important;border-color:#bb8fea!important;font-weight:700;white-space:nowrap}
+#modelAtelierPanel #se340EnterModelVR[aria-pressed=true]{background:#6a3256!important;border-color:#f4b3d8!important}
+#modelAtelierPanel #se340EnterModelVR:disabled{opacity:.55;cursor:not-allowed}
+#modelAtelierPanel #se340ModelVRStatus{max-width:250px;font:11px/1.35 system-ui;color:#c8bbd7}
+#modelAtelierPanel #se340ModelVRStatus:empty{display:none}
+#modelAtelierPanel #se340ModelVRStatus[data-error=true]{color:#ffd1cc}
+@media(max-width:700px){
+ #modelAtelierPanel .se340-model-vr-entry{gap:5px}
+ #modelAtelierPanel #se340EnterModelVR{font-size:11px;min-height:36px;padding:6px 9px}
+ #modelAtelierPanel #se340ModelVRStatus{max-width:160px;font-size:10px}
+}

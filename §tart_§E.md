@@ -1,3 +1,9 @@
+## §E v11.340 · Immersive Model Studio and controller authoring (source and XR emulation verified)
+
+Model Studio has its own Enter model VR action, a comfortable model presentation stage, native controller rays and selection feedback, and a readable world-space tool palette. Trigger selects model parts; choose Move, Rotate or Scale before gripping. Release applies one native history edit; cancel, tracking loss and session exit discard an uncommitted preview. Inspect mode and view framing preserve saved geometry.
+
+The actual native model root, geometry, materials and rigs are reused in an isolated Model VR scene through the existing main XR loop. Exit restores the browser Model Studio. Game/Arcane XR, the Materials workspace and owner hand/UV releases through v11.337 remain preserved. Controller emulation, source verification and physical headset acceptance are separate gates; current receipts and supported controls are recorded in [the checkpoint](projects/swrlz-forge-moba/docs/MODEL_STUDIO_VR_V11_340.md).
+
 ## §E v11.330 · Dedicated Material & Texture Studio (deployed)
 
 Materials opens a dedicated library, preview/painting workspace and property inspector. Desktop uses reserved columns; phones and wider portrait frames use Library, Preview & paint and Properties tabs. An empty library hides unavailable fields and offers a clear first-material action. The default texture view covers the underlying game editor; an explicit native 3D scene preview remains available. Covered 3D drawing pauses while editing textures, then resumes for the visible scene preview; native updates and history continue.
