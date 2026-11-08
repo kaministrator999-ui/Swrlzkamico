@@ -375,6 +375,6 @@
     "patches/v11_350_model_vr_two_hand_tools.py",
     "patches/v11_351_game_quick_actions.py"
   ],
-  "finalBytes": 9249898,
-  "finalSha256": "5729bbee128f39cb7a97b73effb1e9d22cc51621f4377d206b68373b8cc1f3bf"
+  "finalBytes": 9259038,
+  "finalSha256": "c099ceb0d60281e2043845a03bda8d8d75876350160532e000a2b30c7b45cfa7"
 }
