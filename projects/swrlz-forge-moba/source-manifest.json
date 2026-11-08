@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.343",
+  "name": "§wyrl§ Engine v11.344",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_343.html",
+  "finalArtifact": "swyrl_engine_v11_344.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -368,8 +368,9 @@
     "patches/v11_340_immersive_model_studio.py",
     "patches/v11_341_model_vr_hover_orbit.py",
     "patches/v11_342_model_vr_proxy_picking.py",
-    "patches/v11_343_model_vr_surface_camera.py"
+    "patches/v11_343_model_vr_surface_camera.py",
+    "patches/v11_344_model_vr_aim_views_trigger.py"
   ],
-  "finalBytes": 9128756,
-  "finalSha256": "7f34d4884d8491515789052b4c36a5564cdd298c5901debb9824cfe0b2dee2f6"
+  "finalBytes": 9135955,
+  "finalSha256": "7adec1e91ee56f5eeda364c3d733de3d95d8fb5824753d943ef6382f27bc3d4f"
 }

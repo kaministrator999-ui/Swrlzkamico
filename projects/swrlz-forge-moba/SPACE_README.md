@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.343
+title: §wyrl§ Engine v11.344
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,17 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.344 · Quest pointer calibration, modeling perspectives and faster click response (2026-11-08)
+
+Quest 2 owner testing of v11.343 identified a substantial discrepancy between the WebXR Model Studio pointer direction and the Meta system-menu pointer, plus a synchronous stall each time a trigger selected the hand. This release adds an **Aim** panel for independently adjustable left/right controller yaw and pitch (2° increments, ±25°, with per-hand and all-hands reset), persisted locally in the headset browser. The visible ray mesh and its selection ray now use **the same correction quaternion**. WebXR cannot access Meta's OS ray, so offsets must be visually calibrated; no exact native alignment is claimed without owner testing.
+
+The existing Model Studio VR palette now has organized **Tools**, **Views**, and **Aim** pages reusing the same twelve spatial buttons, rather than growing overlapping controls. Views offers **Front, Back, Left, Right, Top, Bottom, Isometric** and Focus positions; these change the model presentation relative to the user while retaining genuine immersive stereo-perspective projection and free right-stick orbit.
+
+Trigger and grip selection now use the cached simplified glove-surface picker (rather than full-resolution skinned-triangle raycasting). Repeated clicks on an already-selected native part avoid redundant native selection/rebuilds. The native model remains authoritative for Move/Rotate/Scale commits, Undo and Redo; no saved mesh geometry is changed. Read-only `lastTriggerMs` and `maxTriggerMs` counters enable focused performance feedback.
+
+The [isolated candidate build](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/42455530224) passed native Three.js r169 aim/view/trigger source checks, producing 355 ordered patches, **9,135,955 HTML bytes**, SHA-256 `7adec1e91ee56f5eeda364c3d733de3d95d8fb5824753d943ef6382f27bc3d4f`. The software check does **not** measure physical Quest 2 frame timing, UI ray accuracy against Meta OS or actual trigger stall duration. Owner hardware testing is the acceptance gate.
+
 
 ## §E v11.343 · Surface-following VR selector and camera-oriented sticks (2026-11-08)
 
