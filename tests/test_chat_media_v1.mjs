@@ -67,7 +67,7 @@ assert.ok(!html.includes('const findings=document.createElement("section")'),"no
 assert.match(html,/const formatLegacyVisionReply=value=>/);
 assert.match(html,/const visionFinal=legacyVision!==null/);
 assert.match(html,/container\.classList\.toggle\("vision-editorial",visionFinal\)/);
-assert.match(html,/originalRenderedSources\.set\(container,displaySource\)/);
+assert.match(html,/originalRenderedSources\.set\(container,rawSource\)/,"Copy must retain unmodified source even when legacy vision display is reformatted");
 assert.match(html,/const source=sourceContext\?sourceContext\.body:displaySource/);
 assert.match(html,/vision-preview-unavailable/);
 
