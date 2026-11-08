@@ -44,6 +44,14 @@ wipeModel = function() {
 // Texture placement is deliberately separate from mesh rotation and UV unwrapping.
 // Stored per part; each completed viewport drag is one native Undo checkpoint.
 let se336SlidePartId = null;
+// Native history normally deselects a part after any Undo/Redo. Keep the
+// same mesh selected when it still exists, so the viewport Redo remains usable.
+const se336OriginalHistoryStep=historyStep;
+historyStep=function(backward) {
+ const previous=selection;
+ se336OriginalHistoryStep(backward);
+ if(previous&&partById(previous))select(previous);
+};
 const se336SlideStep = 0.025;
 function se336SlideOffset(part) {
   return Array.isArray(part?.uvPaintOffset) ? part.uvPaintOffset.slice() : [0,0];
