@@ -3044,7 +3044,7 @@
           }
           const has=(r)=>r.test(line);
           if(topics.includes("staff")&&has(/\bstaff\b/i)&&
-              !has(/\b(?:silhouette|width|size|proportion|stance|outline)\b/i))return"";
+              !has(/\b(?:front|back|top|side|view|silhouette|width|size|proportion|stance|outline)\b/i))return"";
           if(topics.includes("pouch")&&has(/\b(?:pouch|satchel)\b/i)&&
               !has(/\b(?:belt|buckle|robe|trim|cape)\b/i))return"";
           if(topics.includes("belt")&&has(/\b(?:belt|buckle)\b/i)&&
