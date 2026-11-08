@@ -1,2 +1,3 @@
 One-off no-publish candidate for native multi-part UV atlas and VR display mode source verification.
 Retest with null DOM harness for pure UV helpers; no production code change.
+Retest normalized native UV fixtures: full source unchanged.
