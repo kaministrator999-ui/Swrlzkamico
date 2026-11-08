@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.341",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_341_MODEL_VR_HOVER_ORBIT",
-  "reason": "Owner-requested native Model Studio VR performance fix and joystick camera refinement. Bounds-cull non-skinned triangle tests, cache per-frame model projection and world bounding boxes, throttle idle controller hover to ~18 Hz per hand while preserving exact immediate Trigger/Grip picking. Replace right-stick snap turn with continuous horizontal/vertical model-centred orbit; left-stick pan; hold right stick click plus vertical movement to zoom. Precision and recenter retain native behavior, with no edits to Game XR, model descriptors, native selection or Undo/Redo semantics. Focused syntax/source checks and 352-patch candidate source integrity verified in GitHub Actions run 42447030410. Package seals exact 9,119,871-byte HTML and 71 assets. Physical Quest 2 frame-time and comfort acceptance remains owner testing.",
-  "sourceCommit": "4002c34dff2d266b4d329002a9ee17252c556b0a",
-  "sourceIntegritySha256": "8806d47c59544600e189de33500d38f8c5c19b0dd8a09f20e3438c2492e1e8c0"
+  "releaseVersion": "v11.342",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_342_MODEL_VR_PROXY_PICKING",
+  "reason": "Owner Quest 2 confirms v11.341 still loses FPS while pointing at the native simple skinned hand, worse with two controllers. Fixed actual root cause: hover no longer calls high-poly/skinned mesh triangle intersections, nor computes skinned-vertex bounds on every hover; coarse cached world-space part boxes only. Actual trigger/grip selection still performs exact mesh raycast. Native model projection cached by revision, controller hover matrix refresh shared, redundant UI hit traversals removed. Added read-only picking diagnostics. Existing smooth orbit/pan/zoom and non-Model Studio XR features unchanged. Isolated 353-patch candidate build + controlled two-controller hover test passed in GitHub Actions 42448714716; exact 9,122,053 HTML bytes, SHA-256 ab1f1309ac860c540583db730c4ff1866be5fc074f73ca220181a6cf5029a4ad; physical Quest 2 acceptance remains owner testing.",
+  "sourceCommit": "9d868a8c870934fc0263bdc046d98f17b1aff256",
+  "sourceIntegritySha256": "ab1f1309ac860c540583db730c4ff1866be5fc074f73ca220181a6cf5029a4ad"
 }
