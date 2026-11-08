@@ -12,37 +12,52 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 8
     steps:
-      - name: Verify remote SOURCE and served HTML bytes, not only upload job
+      - name: Verify exact official source and inspect any static Space HTML injection
         run: |
           python - <<'PY'
-          import hashlib,json,time
+          import hashlib,json
           from urllib.request import Request,urlopen
-          from urllib.error import HTTPError,URLError
-          host='https://kamiloki-swrlz-forge-moba.static.hf.space'
+          host='https://kamiloki-swrlz-forge-moba.static.hf.space/'
+          rawrepo='https://huggingface.co/spaces/kamiloki/swrlz-forge-moba/resolve/main/'
           sha='e3e46cfd23dc4cddaf9ecb5316de58e5f099277b848ab7f884968335c59cd5ce'
           expected_bytes=9027112
-          files=['SOURCE.json','index.html','modeler.html']
-          def get(path):
-              url=host+'/'+path+'?source_probe=v11.333_embedded_rock_atlas'
-              with urlopen(Request(url,headers={'Cache-Control':'no-cache','User-Agent':'SwrlzForgeReleaseIntegrity/11.333'}),timeout=40) as r:
+          def get(url):
+              with urlopen(Request(url+'?source_probe=v11.333_embedded_rock_atlas',
+                headers={'Cache-Control':'no-cache','User-Agent':'SwrlzForgeReleaseIntegrity/11.333'}),timeout=40) as r:
                   body=r.read(12000000)
-                  assert r.status==200,(path,r.status)
+                  assert r.status==200,(url,r.status)
                   return body
-          for attempt in range(1,4):
-              try:
-                  source=json.loads(get('SOURCE.json'))
-                  assert source['sourceVersion']=='§wyrl§ Engine v11.333',source.get('sourceVersion')
-                  assert source['finalSha256']==sha
-                  assert source['finalBytes']==expected_bytes
-                  for path in ('index.html','modeler.html'):
-                      raw=get(path)
-                      assert len(raw)==expected_bytes,(path,len(raw))
-                      assert hashlib.sha256(raw).hexdigest()==sha,(path,hashlib.sha256(raw).hexdigest())
-                      print('SERVED_V11_333='+json.dumps({'path':path,'bytes':len(raw),'sha256':sha}),flush=True)
-                  print('HF_V11_333_SERVED_SOURCE_PASS',flush=True)
-                  break
-              except (AssertionError,HTTPError,URLError) as err:
-                  print('HF_V11_333_PROBE_RETRY='+str(attempt)+' '+str(err)[:400],flush=True)
-                  if attempt==3:raise
-                  time.sleep(8)
+          src=json.loads(get(host+'SOURCE.json'))
+          assert src['sourceVersion']=='§wyrl§ Engine v11.333',src.get('sourceVersion')
+          assert src['finalSha256']==sha
+          assert src['finalBytes']==expected_bytes
+          print('SERVED_RECEIPT_V11_333_PASS',flush=True)
+          for page in ('index.html','modeler.html'):
+              official=get(rawrepo+page)
+              assert len(official)==expected_bytes,(page,'repo source len',len(official))
+              assert hashlib.sha256(official).hexdigest()==sha,(page,'repo source hash')
+              print('RAW_OFFICIAL_V11_333='+json.dumps({'page':page,'bytes':len(official),'sha256':sha}),flush=True)
+              served=get(host+page)
+              if served==official:
+                  print('STATIC_V11_333_EXACT='+page,flush=True)
+                  continue
+              # The static Spaces HTTP server may inject a small host-owned
+              # script into the served HTML. Inspect and prove the sealed
+              # original bytes are otherwise UNMODIFIED.
+              prefix=0
+              while prefix<min(len(official),len(served)) and official[prefix]==served[prefix]:
+                  prefix+=1
+              suffix=0
+              while suffix<min(len(official)-prefix,len(served)-prefix) and official[-1-suffix]==served[-1-suffix]:
+                  suffix+=1
+              e=official[prefix:len(official)-suffix if suffix else len(official)]
+              a=served[prefix:len(served)-suffix if suffix else len(served)]
+              print('STATIC_V11_333_DIFF='+json.dumps({
+                  'page':page,'servedBytes':len(served),'sha256':hashlib.sha256(served).hexdigest(),
+                  'prefix':prefix,'suffix':suffix,'removedBytes':len(e),'addedBytes':len(a),
+                  'injectedSnippet':a[:250].decode('utf8','replace')}),flush=True)
+              assert not e and 0<len(a)<=3000,(page,'unexpected source modification',len(e),len(a))
+              assert official==served[:prefix]+served[prefix+len(a):],(page,'host changed sealed source beyond injection')
+              print('STATIC_V11_333_ONLY_HOST_INSERTION='+page,flush=True)
+          print('HF_V11_333_SERVED_SOURCE_PASS',flush=True)
           PY
