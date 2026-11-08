@@ -1,0 +1,63 @@
+name: One-shot §E v11.333 self-contained Cliff Hand source seal
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/one-shot-forge-v11-333-embedded-cliff-seal.yml'
+      - 'projects/swrlz-forge-moba/patches/v11_333_cliff_embedded_atlas.py'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.11'}
+      - name: Prove exact embedded original atlas and fully rebuilt engine
+        run: |
+          python - <<'PY'
+          import base64,hashlib,json,re,subprocess,sys
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          m=json.loads((root/'source-manifest.json').read_text('utf8'))
+          assert m['name']=='§wyrl§ Engine v11.333'
+          assert m['finalArtifact']=='swyrl_engine_v11_333.html'
+          assert len(m['patches'])==346
+          assert m['patches'][-1]=='patches/v11_333_cliff_embedded_atlas.py'
+          out=Path('/tmp/engine333')
+          subprocess.run([sys.executable,str(root/'build_space.py'),'--output',str(out)],check=True)
+          b=(out/'index.html').read_bytes()
+          assert b==(out/'modeler.html').read_bytes()
+          html=b.decode('utf8')
+          for token in (
+             'SWYRL_ENGINE_DEPLOY_MARKER: V11_333_CLIFF_EMBEDDED_ATLAS',
+             "window.SWRLZ_FORGE_BUILD={version:'v11.333'",
+             "<title>§wyrl§ Engine · Maker v11.333</title>",
+             'se332OverlayRockFractures(img,albedo);',
+             "se292State.atlasSource='embedded-original-jpeg';",
+             'image.src=SE333_EMBEDDED_CLIFF_ATLAS;',
+             "g.setAttribute('uv1',g.getAttribute('uv2'));",
+             "model.parts=[stone];model.meshGroups=[];"):
+            assert token in html,token
+          assert 'image.src=SE288_ATLAS;' not in html
+          hits=re.findall("const SE333_EMBEDDED_CLIFF_ATLAS='(data:image/jpeg;base64,[^']+)';",html)
+          assert len(hits)==1
+          embedded=base64.b64decode(hits[0].split(',',1)[1],validate=True)
+          original=(root/'assets/cliff-hand/cliff_pbr_atlas_384.jpg').read_bytes()
+          assert embedded==original,(len(embedded),len(original))
+          assert len(embedded)==404577
+          assert hashlib.sha256(embedded).hexdigest()=='fc56730c8019d8079794c7b7379c75c8c07381794104eb56a439a94588647cbe'
+          subprocess.run([sys.executable,str(root/'scripts/check_inline_js_syntax_v11_266.py'),str(out/'index.html')],check=True)
+          subprocess.run(['node',str(root/'scripts/test_v11_332_cliff_fractures.cjs')],check=True)
+          source=json.loads((out/'SOURCE.json').read_text('utf8'))
+          assert len(source['assets'])==71
+          print('SE333_EMBEDDED_ATLAS_BYTES='+str(len(embedded)),flush=True)
+          print('SE333_BYTES='+str(len(b)),flush=True)
+          print('SE333_SHA256='+hashlib.sha256(b).hexdigest(),flush=True)
+          print('SE333_PATCHES=346',flush=True)
+          print('SE333_ASSETS=71',flush=True)
+          print('SE333_ONE_SHOT_SEAL_PASS',flush=True)
+          PY
