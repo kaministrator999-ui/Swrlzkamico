@@ -120,7 +120,7 @@ class ForgeModelingLessonTests(unittest.TestCase):
             self.assertLess(source.index("modeling_lesson") if "modeling_lesson" in source else source.index("lesson = select_modeling_lesson("),
                             source.index('online_context=payload.get("onlineContext")'))
         planner_source = (ROOT / "forge_chat_actions.py").read_text(encoding="utf-8")
-        self.assertIn("native_plan_system(operation_contract(), prompt=prompt, summary=summary)", planner_source)
+        self.assertIn("native_plan_system(operation_contract(summary), prompt=prompt, summary=summary)", planner_source)
         self.assertIn("validate_operations(context, plan[\"operations\"])", planner_source)
         self.assertNotIn('"mesh.group":', planner_source)
         self.assertNotIn('"mesh.sculpt":', planner_source)
