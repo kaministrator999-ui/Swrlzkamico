@@ -365,6 +365,6 @@
     "patches/v11_335_cliff_ulnar_contour.py",
     "patches/v11_336_model_uv_guide.py"
   ],
-  "finalBytes": 9045871,
-  "finalSha256": "c09a20e1c983a8c8034c1070ab84ce10c11fc7fd79c831a4b865eb5c08f3fc0d"
+  "finalBytes": 9045140,
+  "finalSha256": "9af6daf11af47a50869a2db33f537cd6c7426da5c412ac1cd2aee42794037cd6"
 }
