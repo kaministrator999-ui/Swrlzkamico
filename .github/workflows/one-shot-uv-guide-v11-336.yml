@@ -1,0 +1,47 @@
+name: One-shot §E UV guide v11.336 source hash
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/one-shot-uv-guide-v11-336.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  hash-html:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Check source syntax
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/model_atelier_uv_layout_v11_336.js
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_336_model_uv_guide.py
+      - name: Rebuild appended patch lineage and compute exact integrity
+        run: |
+          python - <<'PY'
+          import base64, gzip, hashlib, json, sys
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          sys.path.insert(0, str(root.resolve()))
+          from build_space import load_patch
+          manifest=json.loads((root/'source-manifest.json').read_text())
+          packed=''.join((root/n).read_text().strip() for n in manifest['chunks'])
+          original=gzip.decompress(base64.b64decode(packed))
+          assert len(original)==manifest['baseBytes']
+          assert hashlib.sha256(original).hexdigest()==manifest['baseSha256']
+          html=original.decode('utf8')
+          patches=manifest['patches']+['patches/v11_336_model_uv_guide.py']
+          for patch in patches:
+              html=load_patch(root/patch)(html)
+          assert html.count('SWYRL_ENGINE_DEPLOY_MARKER: V11_336_MESH_UV_GUIDE')==1
+          assert 'modelAtelierUVLayout' in html and 'function se336UVLayout' in html
+          output=html.encode('utf8')
+          print('UV336_FINAL_BYTES='+str(len(output)))
+          print('UV336_FINAL_SHA256='+hashlib.sha256(output).hexdigest())
+          print('UV336_PATCHES='+str(len(patches)))
+          PY
