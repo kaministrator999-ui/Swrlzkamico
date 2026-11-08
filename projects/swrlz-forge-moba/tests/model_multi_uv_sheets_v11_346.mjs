@@ -25,7 +25,7 @@ const c={THREE,model:()=>current,modelRoot:scene,partById:id=>parts.find(x=>x.id
  selection:parts[0].id,ensurePanel(){},refreshInspector(){},window:{},
  currentProject:{name:current.name},document:{getElementById:()=>null},status(){}};
 vm.createContext(c);
-vm.runInContext(uv.replace('const SE345_ATLAS_MAX=96;','const SE345_ATLAS_MAX=96;\n'+pages')+
+vm.runInContext(uv.replace('const SE345_ATLAS_MAX=96;','const SE345_ATLAS_MAX=96;\n'+pages)+
  '\nthis.test={init:se345AtlasCurrent,selected:se345AtlasSelectedParts,go:se346AtlasGo,info:se346AtlasPageInfo,suffix:se346AtlasSuffix,layout:se345AtlasLayout,api:window.SWYRL_ENGINE_UV_ATLAS};',c);
 c.test.init();
 assert.equal(c.test.api.selectAll(),811);
