@@ -14,7 +14,7 @@ new vm.Script(uvSource);new vm.Script(displaySource);new vm.Script(uiSource);
 const root=new THREE.Group(),parts=[];
 for(let i=0;i<17;i++){
  const part={id:'mage-'+i,name:'Mage part '+i,group:i<15?'Character':'Staff',kind:'topologyMesh'};
- const mesh=new THREE.Mesh(i%2?new THREE.BoxGeometry(1,1,1):new THREE.SphereGeometry(.5,16,12),new THREE.MeshStandardMaterial());
+ const mesh=new THREE.Mesh(i%2?new THREE.BoxGeometry(1,1,1):new THREE.BoxGeometry(.75,.8,.6),new THREE.MeshStandardMaterial());
  mesh.userData.atelierId=part.id;
  root.add(mesh);parts.push(part);
 }
