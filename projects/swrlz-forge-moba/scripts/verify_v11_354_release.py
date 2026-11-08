@@ -6,7 +6,7 @@ ROOT=Path(__file__).resolve().parents[1]
 MARKER='SWYRL_ENGINE_DEPLOY_MARKER: V11_354_MODEL_UV_SLIDE_HISTORY'
 ap=argparse.ArgumentParser();ap.add_argument('--output',required=True);ap.add_argument('--request',action='store_true');args=ap.parse_args()
 m=json.loads((ROOT/'source-manifest.json').read_text('utf8'))
-assert m['name']=='§wyrl§ Engine v11.354' and m['finalArtifact']=='swyrl_engine_v11_353.html'
+assert m['name']=='§wyrl§ Engine v11.354' and m['finalArtifact']=='swyrl_engine_v11_354.html'
 assert len(m['patches'])==362 and m['patches'][-1]=='patches/v11_354_model_uv_slide_history.py'
 assert m['finalBytes']>9_200_000 and len(m['finalSha256'])==64
 output=Path(args.output).resolve()
