@@ -1,0 +1,57 @@
+name: §E v11.351 candidate quick-actions measurement
+on:
+  pull_request:
+    paths:
+      - 'projects/swrlz-forge-moba/**'
+      - '.github/workflows/se-v11-351-candidate.yml'
+permissions:
+  contents: read
+jobs:
+  source-and-ui:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check patch and script syntax
+        run: |
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_351_game_quick_actions.py
+          node --check projects/swrlz-forge-moba/runtime/game_quick_actions_v11_351.js
+      - name: Rebuild candidate with hash check bypassed only inside this isolated measure job
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          path=Path('projects/swrlz-forge-moba/source-manifest.json')
+          data=json.loads(path.read_text('utf8'))
+          assert data['name']=='§wyrl§ Engine v11.351'
+          assert data['patches'][-1]=='patches/v11_351_game_quick_actions.py'
+          data['finalSha256']=''
+          data['finalBytes']=0
+          path.write_text(json.dumps(data,ensure_ascii=False,indent=2)+'\n','utf8')
+          PY
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/se351-built
+          python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se351-built/index.html
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,re
+          built=Path('/tmp/se351-built/index.html').read_bytes()
+          text=built.decode('utf8')
+          assert Path('/tmp/se351-built/modeler.html').read_bytes()==built
+          for phrase in [
+              'SWYRL_ENGINE_DEPLOY_MARKER: V11_351_GAME_QUICK_ACTIONS',
+              "window.SWRLZ_FORGE_BUILD={version:'v11.351'",
+              'SE351_GAME_QUICK_ACTIONS_START',
+              'se351GameQuickBar',
+              'projectBtn','playBtn','stopBtn','se181EnterVR','se320GameMore',
+              'More options','se238GameTools',
+          ]:
+              assert phrase in text,phrase
+          print('SE351_SEAL_BYTES='+str(len(built)))
+          print('SE351_SEAL_SHA256='+hashlib.sha256(built).hexdigest())
+          print('SE351_SOURCE_CHECK=PASS')
+          PY
