@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.350",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_350_MODEL_VR_TWO_HAND_TOOLS",
-  "reason": "Owner requested implementation of the Quest two-hand Model VR design. Adds live configurable profiles, additive selection, safe group/two-hand editing, presentation-only Inspect gestures, tool/brush/category wheels, native sculpt, saved lasso masks, planar draw and closed signed extrusion. Preserves latest UV sheets, image import correction, calibrated aim and display modes. Full source seal: 358 patches, 9249898 HTML bytes, 71 assets. All 56 native/input/workspace groups, spatial UI smoke, 16 real IWER Quest controller workflows, unchanged 59-part mage preview and UV/display regressions passed; zero browser errors. Physical headset acceptance remains owner testing.",
-  "sourceCommit": "9804253f1f080a491c853c9a3c775be4b6df554f",
-  "sourceIntegritySha256": "5729bbee128f39cb7a97b73effb1e9d22cc51621f4377d206b68373b8cc1f3bf"
+  "releaseVersion": "v11.351",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_351_GAME_QUICK_ACTIONS",
+  "reason": "Owner requested Game Engine navigation repair: restore visible native Projects, Play, Stop, Enter VR and More options on mobile, desktop and Quest Browser without duplicating handlers. Existing Quest Controls drawer is replaced with the native More options popover. Full source seal verified: 359 patches, 9,259,038 HTML bytes, 71 assets; inline JS and native model-VR preservation checks passed. Physical phone/Quest acceptance remains owner testing.",
+  "sourceCommit": "ad7fe1628cfe123b978689a91dd5286bc35ce28e",
+  "sourceIntegritySha256": "c099ceb0d60281e2043845a03bda8d8d75876350160532e000a2b30c7b45cfa7"
 }
