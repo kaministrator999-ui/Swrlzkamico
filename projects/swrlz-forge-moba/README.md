@@ -1,3 +1,7 @@
+## §E v11.354 · On-model UV texture placement and viewport history (2026-11-08)
+
+Select a painted mesh and enable **UV Slide** in the existing viewport transform bar. Drag directly across the selected model surface to reposition its texture without moving its mesh or changing UV vertices. Use U−/U+/V−/V+ for fine positioning, Reset UV for the original mapping, and adjacent Undo/Redo for native edit history. Each completed slide is one undoable edit, and `uvPaintOffset` saves with the model. The controls share the compact, scrollable selection toolbar; no second panel or redundant transform widgets.
+
 ## §E v11.353 · Direct viewport Move / Rotate / Scale toolbar (2026-11-08)
 
 After v11.352 restored selection transforms inside Tool settings, the owner clarified that those controls belong directly in the viewport top-bar area rather than the inspector. v11.353 relocates a single selection-only action row into `.atelier-scene`, independent of sidebar collapse, with mode, axis and ± nudge controls that call the same native mesh handlers. Inspector duplicate rows are hidden without removing native listeners. No UV, model or immersive renderer changes.
