@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.335
+title: §wyrl§ Engine v11.336
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,12 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.336 · Native mesh UV guide and painted texture round-trip (2026-11-07)
+
+Model Atelier's selected-mesh inspector now offers **UV Layout**: export the actual indexed triangle UV wireframe to a transparent 1024×1024 PNG, paint the artwork on a separate layer using that template, and import a PNG/JPEG onto the exact same mesh via its original UV coordinates. The image is converted to a bounded 512×512 PNG embedded in the model part, retained by project save, JSON export and Undo/Redo; it previews as a color texture on the model itself. No generated geometry or new renderer. Meshes with absent or out-of-0–1 UV coordinates are rejected rather than silently projected. The exported cyan guide is a **reference overlay**, not artwork to be baked into the import. Existing Material Studio actor workflow, UV diagnostics, and Sheep Tag/Quest logic stay unchanged. An overlapping UV atlas still requires proper UV unwrapping; this tool accurately extracts existing coordinates and does not promise automatic seam correction. Phone/Quest acceptance remains owner-tested.
+
+
 
 ## §E v11.335 · Straighter pinky-side palm contour (2026-11-07)
 
