@@ -36,7 +36,8 @@
    }
   }
  }
- function se320ModelTransformAccess(panel,scene){
+ function se320ModelTransformAccess(panel,inspector){
+  const scene=q('.atelier-scene',panel);
   const native=q('#modelAtelierMeshQuickStrip',panel);
   if(!native||!scene)return; // Native selection/gizmo may mount later.
   let bar=q('#se320ModelTransform',panel);
@@ -114,7 +115,7 @@
    new MutationObserver(schedule).observe(panel,{attributes:true,attributeFilter:['class','hidden','data-se251-layout','data-se251-right-collapsed','data-se251-collapsed']});
    new MutationObserver(schedule).observe(inspector,{attributes:true,attributeFilter:['class']});
   }
-  se320ModelTransformAccess(panel,q('.atelier-scene',panel));
+  se320ModelTransformAccess(panel,inspector);
   const tree=q('#se251ModelLibrary',panel),treeHeading=tree&&q('.se251-side-title',tree);
   if(treeHeading&&!q('.se320-tree-toggle',treeHeading)){
    const existing=q('.se251-side-actions button',tree);
