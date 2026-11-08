@@ -1,4 +1,4 @@
-name: Focused §E Smooth Cliff Hand true offline texture render diagnosis
+name: Focused §E v11.333 mobile offline original atlas browser validation
 on:
   push:
     branches: [main]
