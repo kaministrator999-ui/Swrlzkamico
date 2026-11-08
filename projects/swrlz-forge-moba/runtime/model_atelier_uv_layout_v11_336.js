@@ -35,6 +35,71 @@ wipeModel = function() {
   return se336BaseWipe.apply(this, arguments);
 };
 
+function se336StripCyanGuide(canvas){
+  const ctx=canvas.getContext('2d',{willReadFrequently:true});
+  if(!ctx)throw Error('2D texture canvas unavailable.');
+  const w=canvas.width,h=canvas.height,image=ctx.getImageData(0,0,w,h),data=image.data;
+  const core=new Uint8Array(w*h),rowBands=new Uint8Array(12),colBands=new Uint8Array(12);
+  let cyan=0;
+  for(let y=0;y<h;y++)for(let x=0;x<w;x++){
+    const p=y*w+x,i=p*4,r=data[i],g=data[i+1],b=data[i+2];
+    if(data[i+3]<120||g<72||b<78||g<=r+26||b<=r+30||Math.abs(g-b)>95)continue;
+    core[p]=1;cyan++;rowBands[Math.floor(y*12/h)]=1;colBands[Math.floor(x*12/w)]=1;
+  }
+  // Only remove a spatially distributed thin cyan wireframe, not cyan artwork.
+  if(cyan<w*h*.003||cyan>w*h*.26||
+     rowBands.reduce((a,b)=>a+b,0)<7||colBands.reduce((a,b)=>a+b,0)<7)return 0;
+  let samples=0,thin=0;
+  for(let y=6;y<h-6;y+=3)for(let x=6;x<w-6;x+=3){
+    const p=y*w+x;
+    if(!core[p])continue;
+    samples++;
+    if((!core[p-5]&&!core[p+5])||
+       (!core[p-5*w]&&!core[p+5*w]))thin++;
+  }
+  if(!samples||thin<samples*.5)return 0;
+  // Remove softened one-pixel cyan fringes along the detected guides.
+  const mask=core.slice();
+  for(let y=1;y<h-1;y++)for(let x=1;x<w-1;x++){
+    const p=y*w+x;if(!core[p])continue;
+    for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){
+      const n=p+dy*w+dx,i=n*4;
+      if(data[i+3]>=120&&data[i+1]>data[i]*.83&&
+         data[i+2]>data[i]&&data[i+1]>38)mask[n]=1;
+    }
+  }
+  const original=new Uint8ClampedArray(data);
+  let removed=0;
+  for(let y=0;y<h;y++)for(let x=0;x<w;x++){
+    const p=y*w+x;if(!mask[p])continue;
+    let left=0,right=0,up=0,down=0;
+    for(let d=1;d<=16;d++){
+      if(!left&&x>=d&&!mask[p-d])left=d;
+      if(!right&&x+d<w&&!mask[p+d])right=d;
+      if(!up&&y>=d&&!mask[p-d*w])up=d;
+      if(!down&&y+d<h&&!mask[p+d*w])down=d;
+      if(left&&right&&up&&down)break;
+    }
+    let a=-1,b=-1,t=0;
+    const dx=left&&right?left+right:Infinity;
+    const dy=up&&down?up+down:Infinity;
+    if(dx<=dy&&Number.isFinite(dx)){a=p-left;b=p+right;t=left/dx;}
+    else if(Number.isFinite(dy)){a=p-up*w;b=p+down*w;t=up/dy;}
+    else if(left||right||up||down){
+      const options=[[left,p-left],[right,p+right],[up,p-up*w],[down,p+down*w]]
+        .filter(v=>v[0]>0).sort((a,b)=>a[0]-b[0]);
+      a=options[0][1];
+    }
+    if(a<0)continue;
+    for(let c=0;c<3;c++)
+      data[p*4+c]=b<0?original[a*4+c]:
+        Math.round(original[a*4+c]*(1-t)+original[b*4+c]*t);
+    removed++;
+  }
+  if(removed)ctx.putImageData(image,0,0);
+  return removed;
+}
+
 function se336SelectedMesh() {
   const part = partById(selection);
   const mesh = modelRoot?.children.find(x => x.isMesh && x.userData.atelierId === selection);
@@ -120,15 +185,22 @@ async function se336ImportPaint(file) {
       if (image.naturalWidth > 4096 || image.naturalHeight > 4096 ||
           !image.naturalWidth || !image.naturalHeight)
         throw Error('Texture image dimensions are unsupported.');
-      // The model stores texture PNGs in JSON. Keep the native save-size cap,
-      // but reduce resolution when a detailed import would otherwise be rejected.
+      // Clean the baked UV guide at higher resolution, before save-size downscaling.
+      const working = document.createElement('canvas');
+      working.width = working.height = Math.min(1024, Math.max(image.naturalWidth, image.naturalHeight));
+      const workingContext = working.getContext('2d');
+      if (!workingContext) throw Error('2D texture canvas unavailable.');
+      workingContext.drawImage(image, 0, 0, working.width, working.height);
+      const cleanedGuidePixels = se336StripCyanGuide(working);
+      const paintSource = cleanedGuidePixels ? working : image;
+      // Preserve the existing bounded PNG model-save format.
       let png = null, storedSize = 0;
       for (const size of [512, 384, 320, 256, 192]) {
         const canvas = document.createElement('canvas');
         canvas.width = canvas.height = size;
         const context = canvas.getContext('2d');
         if (!context) throw Error('2D texture canvas unavailable.');
-        context.drawImage(image, 0, 0, size, size);
+        context.drawImage(paintSource, 0, 0, size, size);
         const candidate = canvas.toDataURL('image/png');
         if (candidate.length <= 360000) {
           png = candidate; storedSize = size; break;
@@ -147,7 +219,8 @@ async function se336ImportPaint(file) {
       part.uvPaintPNG = png;
       signalEdited();
       select(id);
-      status('Painted PNG applied to ' + part.name + ' using its existing UV coordinates (' + storedSize + 'px saved texture). Save Project to keep it.');
+      status('Painted PNG applied to ' + part.name + ' using its existing UV coordinates (' + storedSize + 'px saved texture).' +
+        (cleanedGuidePixels ? ' Cyan UV guide lines automatically cleaned.' : '') + ' Save Project to keep it.');
     } finally { URL.revokeObjectURL(url); }
   } catch (error) { status('Texture import: ' + error.message, true); }
 }
@@ -182,7 +255,7 @@ function se336InstallUI() {
   root.innerHTML =
     '<h3>🎨 UV Layout · image guide</h3>' +
     '<p id="se336UVName"></p>' +
-    '<p class="se336-uv-hint">Export the actual mesh UV wireframe as a transparent 1024px PNG. Paint beneath that guide in an image editor, then import the artwork as PNG/JPEG (up to 5 MB). Large textures are resized to fit the model save format.</p>' +
+    '<p class="se336-uv-hint">Export the actual mesh UV wireframe as a transparent 1024px PNG. Paint beneath that guide in an image editor, then import the artwork as PNG/JPEG (up to 5 MB). Baked cyan UV guide lines are automatically cleaned when detected. Large textures are resized to fit the model save format.</p>' +
     '<div class="se336-uv-actions"><button id="se336UVExport" type="button">Export UV guide PNG</button>' +
     '<button id="se336UVImport" type="button">Import painted PNG</button>' +
     '<button id="se336UVRemove" type="button">Remove texture</button></div>' +
