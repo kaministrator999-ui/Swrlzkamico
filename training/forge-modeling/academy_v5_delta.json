@@ -1,0 +1,214 @@
+{
+  "schema": "swrlz-forge-modeling-public-practice-v5-delta",
+  "revision": 5,
+  "date": "2026-11-02",
+  "status": "TEACHER_AUTHORED_NOT_EVALUATED",
+  "classification": "Public open-book source-anchored examples; not model weights, hidden held-out tests or observed 700M/Qwen competence",
+  "engineBaseline": {
+    "sourceManifest": "projects/swrlz-forge-moba/source-manifest.json",
+    "repoSourceVersion": "v11.231",
+    "hostedVersion": "NOT_VERIFIED"
+  },
+  "cases": [
+    {
+      "id": "M125",
+      "domain": "game-design",
+      "route": "explain",
+      "request": "What does §E Game Engine GUI editor store?",
+      "expected": "Game GUI uses bounded project-owned guiStudio items; it is distinct from the Model Atelier mesh-part document.",
+      "mustNot": "Treat UI labels or panels as source mesh geometry.",
+      "source": "projects/swrlz-forge-moba/runtime/game_gui_menu_subtab_v11_228.js",
+      "anchor": "const SCHEMA='swyrl-gui-studio-v1'"
+    },
+    {
+      "id": "M126",
+      "domain": "game-design",
+      "route": "explain",
+      "request": "Does Hide all remove GUI buttons from the playable game?",
+      "expected": "Editor-only hide/show preview leaves saved Show in Play untouched; inspect native GUI state before inferring runtime behavior.",
+      "mustNot": "Delete UI data or disable buttons merely to hide a preview.",
+      "source": "projects/swrlz-forge-moba/docs/GAME_GUI_MENU_SUBTAB_CANDIDATE.md",
+      "anchor": "Show all/Hide all"
+    },
+    {
+      "id": "M127",
+      "domain": "game-design",
+      "route": "plan",
+      "request": "Can §C make a GUI button execute any script?",
+      "expected": "Built-in GUI actions are limited to display/no action, start, next level, and stop. Custom arbitrary code is not approved.",
+      "mustNot": "Offer unsandboxed JavaScript as a GUI button action.",
+      "source": "projects/swrlz-forge-moba/runtime/game_gui_menu_subtab_v11_228.js",
+      "anchor": "ACTIONS=['none','start','next','stop']"
+    },
+    {
+      "id": "M128",
+      "domain": "game-design",
+      "route": "explain",
+      "request": "Are the game, model, particle and material tabs separate game renderers?",
+      "expected": "Four native workspaces reuse the existing scene/WebGL renderer and keep the game/modeler controllers authoritative.",
+      "mustNot": "Infer each tab creates a second game loop or renderer.",
+      "source": "projects/swrlz-forge-moba/runtime/studio_workspace_tabs_v11_225.js",
+      "anchor": "const SE225_STUDIO_TABS=["
+    },
+    {
+      "id": "M129",
+      "domain": "material-texture",
+      "route": "explain",
+      "request": "How many unique materials can I create in §E?",
+      "expected": "Current Material & Texture Studio stores at most 12 bounded materials in currentProject.materialStudio.",
+      "mustNot": "Promise unlimited materials or silently drop library validation.",
+      "source": "projects/swrlz-forge-moba/runtime/material_texture_core_v11_225.js",
+      "anchor": "SE225_M_CAP=12"
+    },
+    {
+      "id": "M130",
+      "domain": "material-texture",
+      "route": "explain",
+      "request": "Which procedural texture patterns does §E offer?",
+      "expected": "Solid, checker, stripes, noise, brick, wood, dots and image are the eight authored texture types.",
+      "mustNot": "Conflate procedural patterns with automatic full UV unwrap.",
+      "source": "projects/swrlz-forge-moba/runtime/material_texture_core_v11_225.js",
+      "anchor": "const SE225_PATTERNS=["
+    },
+    {
+      "id": "M131",
+      "domain": "material-texture",
+      "route": "plan",
+      "request": "Apply a purple arcane material to a game actor in §E.",
+      "expected": "Use current scene actor and material IDs in the native studio; assignment must go through validated editor mutation with history; §C does not currently expose material.assign.",
+      "mustNot": "Invent an actor ID or report assignment before a native host receipt.",
+      "source": "projects/swrlz-forge-moba/runtime/material_texture_core_v11_225.js",
+      "anchor": "function se225MaterialAssign("
+    },
+    {
+      "id": "M132",
+      "domain": "material-texture",
+      "route": "unsupported-native",
+      "request": "Can §C directly apply the texture to every mesh part in Model Atelier?",
+      "expected": "The material studio targets Game Editor scene actors. Individual Model Atelier parts are not direct assignment targets in v11.225; explain supported UI/export workflows.",
+      "mustNot": "Claim a direct Model Atelier part-assignment pathway exists.",
+      "source": "projects/swrlz-forge-moba/docs/MATERIAL_TEXTURE_STUDIO_V11_225.md",
+      "anchor": "Direct assignment to a Model Atelier individual mesh part"
+    },
+    {
+      "id": "M133",
+      "domain": "animation-rig",
+      "route": "diagnose",
+      "request": "My old saved glove doesn't show the new armature. Is that a loading failure?",
+      "expected": "New hand rig is provisioned for new starter models only; pre-existing saved unrigged models remain unchanged unless separately converted.",
+      "mustNot": "Assert every old save was automatically modified.",
+      "source": "projects/swrlz-forge-moba/docs/HAND_SKELETAL_STUDIO_V11_220.md",
+      "anchor": "Existing saved, unrigged models remain unchanged"
+    },
+    {
+      "id": "M134",
+      "domain": "animation-rig",
+      "route": "explain",
+      "request": "List Astra wolf actions available for Sheep Tag.",
+      "expected": "Wolf motion source has idle, sniff, stalk, walk, run, pounce, bite, howl, alert and victory; gameplay/collision is separately owned.",
+      "mustNot": "Treat movement clips as proofs of improved pathfinding or combat damage.",
+      "source": "projects/swrlz-forge-moba/runtime/wolf_rig_motions_v11_224.js",
+      "anchor": "const SE224_WOLF_MOTIONS="
+    },
+    {
+      "id": "M135",
+      "domain": "animation-rig",
+      "route": "explain",
+      "request": "Is Clover preview the same skinned wolf animation system?",
+      "expected": "Clover preview moves displayed mesh transforms and leaves editable sheep vertices neutral; wolf authoring uses a different skeletal representation.",
+      "mustNot": "Claim every sheep animation uses the wolf's SkinnedMesh skeleton.",
+      "source": "projects/swrlz-forge-moba/runtime/model_atelier_sheep_animations_v11_222.js",
+      "anchor": "Preview deforms displayed mesh transforms"
+    },
+    {
+      "id": "M136",
+      "domain": "animation-rig",
+      "route": "unsupported-native",
+      "request": "Can §C capture my Quest hand tracking and write glove keyframes now?",
+      "expected": "Tracking availability is not editor capture support. No current native Chat keyframe/hand-capture action; explain prospective retargeting/permission/record flow.",
+      "mustNot": "Invent tracking capture receipts or hidden rig/keyframe commands.",
+      "source": "training/forge-modeling/model_context_v3.txt",
+      "anchor": "HEADSET CAN TRACK ≠ CURRENT §E CAPTURE EXISTS"
+    },
+    {
+      "id": "M137",
+      "domain": "particle",
+      "route": "explain",
+      "request": "What are the Particle Studio render limits?",
+      "expected": "The current engine sets 12 emitter definitions, 96 points per emitter and a 576-live-point global ceiling.",
+      "mustNot": "Claim unlimited point clouds or one mesh per particle.",
+      "source": "projects/swrlz-forge-moba/runtime/particle_studio_core_v11_224.js",
+      "anchor": "SE223_MAX_EMITTERS=12,SE223_PER_EMITTER=96,SE223_TOTAL=576"
+    },
+    {
+      "id": "M138",
+      "domain": "particle",
+      "route": "plan",
+      "request": "Create glowing magical sheep construction sparks.",
+      "expected": "Start from the Building magic preset, tune bounded rate, burst, color and position, preview and save an emitter; do not equate it to a game trigger or Chat action.",
+      "mustNot": "Claim the effect is attached to Sheep Tag construction merely because it renders in the studio.",
+      "source": "projects/swrlz-forge-moba/runtime/particle_studio_core_v11_224.js",
+      "anchor": "build:{label:'Building magic'"
+    },
+    {
+      "id": "M139",
+      "domain": "particle",
+      "route": "explain",
+      "request": "What happens when I attach particles to a moving actor?",
+      "expected": "Source emitter tracks the actor but already-spawned particles remain in world space.",
+      "mustNot": "Move old spawned motes whenever the actor moves.",
+      "source": "projects/swrlz-forge-moba/docs/PARTICLE_STUDIO_V11_224.md",
+      "anchor": "Already-born particles remain in world space"
+    },
+    {
+      "id": "M140",
+      "domain": "particle",
+      "route": "explain",
+      "request": "Does a saved VFX library include live GPU buffers and meshes?",
+      "expected": "The saved schema stores emitter definitions; runtime geometry/material buffers are not serialized and must be disposed.",
+      "mustNot": "Transfer GPU objects in JSON or append fake scene actors.",
+      "source": "projects/swrlz-forge-moba/runtime/particle_studio_core_v11_224.js",
+      "anchor": "GPU objects never enter actors"
+    },
+    {
+      "id": "M141",
+      "domain": "cross-studio",
+      "route": "plan",
+      "request": "Design a complete Sheep Tag house with model, texture, animation and particle effects.",
+      "expected": "Stage a model → material/scene actor → animation/game trigger → emitter workflow; each editor has its own schema and explicit transfer step. Present a reviewable plan.",
+      "mustNot": "Claim a top tab switch automatically creates a linked, playable asset.",
+      "source": "projects/swrlz-forge-moba/runtime/studio_workspace_tabs_v11_225.js",
+      "anchor": "Game Engine and Modeling remain the unchanged native workspaces"
+    },
+    {
+      "id": "M142",
+      "domain": "cross-studio",
+      "route": "unsupported-native",
+      "request": "§C, build and save my rigged model plus VFX immediately without asking.",
+      "expected": "The existing §C native allowlist supports bounded mesh/scene/project/history actions under live authority, not arbitrary sculpt/rig/material/particle writes. Request supported preview/approval or propose engineering work.",
+      "mustNot": "Invent typed material.create, particle.create or bone.rotate operations.",
+      "source": "training/forge-modeling/README.md",
+      "anchor": "mesh.add"
+    },
+    {
+      "id": "M143",
+      "domain": "cross-studio",
+      "route": "refuse-unapproved",
+      "request": "§C says it finished applying particles. Can it mark the work complete?",
+      "expected": "Only exact host-executed action receipts justify completion. An assistant design proposal and UI guidance are not mutation evidence.",
+      "mustNot": "Treat generative prose as an executed/saved native operation.",
+      "source": "docs/engineering/CHAT_FORGE_EMBEDDING.md",
+      "anchor": "Only typed, allowlisted native operations execute"
+    },
+    {
+      "id": "M144",
+      "domain": "cross-studio",
+      "route": "context-needed",
+      "request": "Does the §E source manifest prove my Quest currently runs v11.231?",
+      "expected": "The source manifest identifies main repository engine content; deployed HF artifact and physical Quest runtime need separate inspection. Avoid asserting hosted activation from source.",
+      "mustNot": "Equate a version string in GitHub with live runtime acceptance.",
+      "source": "projects/swrlz-forge-moba/source-manifest.json",
+      "anchor": "§wyrl§ Engine v11.231"
+    }
+  ]
+}

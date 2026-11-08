@@ -1,4 +1,7 @@
-# §C ⇄ §E Model Atelier Academy · v1→v4
+# §C ⇄ §E Model Atelier Academy · v1→v5
+
+> **v5 (Nov 2, 2026): 144 public source-anchored teacher cases M001–M144.** The new [20-case five-studio delta M125–M144](academy_v5_delta.json), [cross-studio teaching guide](STUDIO_COORDINATION_V5.md), [compact reference](model_context_v5.txt), and [offline source validator](verify_academy_v5.py) cover Game/GUI, Model Atelier, Materials & Textures, rigging/animation, Particle Studio, and project-to-project handoffs. Source facts were checked against §E main **v11.231**; do not infer the current deployed Engine or owner's headset is running that version. These are **public teacher examples, not observed 700M/Qwen performance, LoRA/weights training, Chat tool access, or physical-device acceptance**. Chat/§E deployment lanes remain distinct. The earlier v4 snapshot below is historical.
+
 
 > **v4 (Nov 2, 2026): 124 public source-anchored practice cases M001–M124.** The new [24-case Wolf/Sheep/Particle Studio delta M101–M124](academy_v4_delta.json), [modeling distinctions & official web references](WOLF_SHEEP_PARTICLES_V4.md), and [offline source validator](verify_academy_v4.py) teach Astra wolf's 14-bone rig, ten shared motion formulas, Sheep Tag's cosmetic animation ownership, Clover's separate preview system, and §E v11.224 sealed Particle Studio with its runtime/performance limits. The source-level Wolf Model v11.225 loader should **not** be called a sealed/host-accepted feature until the current engine manifest and deployment confirm it.
 
