@@ -1,3 +1,7 @@
+## §E v11.351 · Game Engine quick actions restored (2026-11-08)
+
+The Game Engine header now keeps the original **Projects**, **Play**, **Stop**, **Enter VR**, and **More options** controls directly available at phone, desktop and Quest Browser widths. Quest's old Controls drawer no longer hides these actions; advanced scene/build actions move into More options without duplicating native handlers. File → Projects remains secondary access. v11.350 Model VR and saved project behavior are unchanged. Source-seal verification is required before release; physical phone/Quest acceptance remains with the owner.
+
 ## §E v11.350 · Two-hand VR modeling, live profiles and native surface tools (2026-11-08)
 
 Model VR now uses the active Controller Studio profile to drive real editing. Right-hand tools and left-hand view controls add multi-part selection, explicit two-hand geometry transforms, A/X hold wheels, focus/precision shortcuts and safe Undo/Redo. Native sculpt strokes, saved lasso masks, planar outline creation and signed closed extrusion stay inside the same immersive editor. Cancel and tracking loss discard previews; each completed operation commits one native history step. Camera/aim/display tools, UV sheets and the owner UV image import correction remain included.
