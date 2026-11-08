@@ -1,0 +1,9 @@
+APPROVED_BY_USER=YES
+TARGET_SPACE=kamiloki/Swyrlz
+DEPLOYMENT_WORKFLOW=manual-hf-space.yml
+SOURCE_PR=385
+SOURCE_BRANCH=feature/chat-vision-grounded-visual-report-20261107
+CI_VERIFIED_SOURCE=f000c0d86a6751eff1b2b9e37522ab547daf940b
+RELEASE_SCOPE=Existing Hugging Face Space only; no Vercel, no hardware upgrades, no paid providers
+SAFETY=Pre-publish validation and snapshot; preserve Original Test Bench and rollback checkpoints
+USER_REQUEST=Finish the fully tested PR385 Chat multi-view analysis and resource telemetry
