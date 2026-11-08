@@ -4,7 +4,7 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.353",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_353_MODEL_VIEWPORT_TRANSFORM",
-  "reason": "Owner request: place native Model Studio Move/Rotate/Scale and X/Y/Z +/- transform controls in the 3D viewport top bar automatically when selecting a mesh, not inside the inspector. Display with inspector collapsed; hide upon deselection; suppress redundant sidebar buttons while retaining original native mesh handlers, gizmos and Undo. Preserve UVs, eyes, VR and Game Engine. Source seal independently verified in GitHub Actions run 42532793248: 361 patches, 9,266,937 HTML bytes, 71 assets. Owner phone/Quest acceptance pending.",
-  "sourceCommit": "85d1796ca89fbc378ca5813737b26bbe379f07a8",
-  "sourceIntegritySha256": "d1a39f686cd9e7e2e4e91b2e045adf60b67fcc0959e75551f1178a4b00014e92"
+  "reason": "Publish §E v11.353 viewport top-bar transforms for selected meshes, independent of inspector, using native handlers and Undo. Reconciled with concurrent source-of-truth UV importer changes already on main, without reverting them. Rebuilt current main in failed guarded release run 42532964659 to identify actual SHA-256 48847e4490959872239e86fb8b0646d317ea5f12a5bd2913d7392c253c5dcb12; exact 9,274,239 HTML bytes includes the UV source byte delta of +7,302. Complete sealed build and static HF upload must pass before live status. Owner phone/Quest acceptance pending.",
+  "sourceCommit": "2d67ce373deecf101b14de85336415d75687d409",
+  "sourceIntegritySha256": "48847e4490959872239e86fb8b0646d317ea5f12a5bd2913d7392c253c5dcb12"
 }
