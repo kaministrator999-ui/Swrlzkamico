@@ -103,6 +103,37 @@ assert.ok(readable.includes("appears layered, with folds and creases"),"state ob
 assert.equal((readable.match(/\bboots?\b/gi)||[]).length,1,"boots once under clothing, not again under anatomy");
 assert.ok(!readable.includes("Two identical figures"),"raw crop notes stay out of final response");
 
+// A newer live mage caption repeated belt, braid, eyes, pouch and hood
+// in multiple sections. Keep the most informative claim in its own section.
+const repeatedMage=[
+  "Local image analyzer's description (not directly inspected by §C):",
+  "",
+  "Character reference · local model observation (accuracy unverified)",
+  "",
+  "Subject and views: Front, left side, right side, back, and top views of a single Little Crystal Mage.",
+  "Silhouette and anatomy: Silver-white hair in two braids; purple eyes; wears a hooded robe with cape; stands on two legs; holds a staff in the right hand; left hand rests on a satchel in front view; back view shows full cape and staff beside the figure; top view shows hood shape and staff position.",
+  "Clothing and surface detail: Purple hooded robe with gold trim; star, moon, leaf and magic symbols; fur-lined boots; belt with buckle; satchel with leaf emblem; robe has layered geometry with visible seams and folds.",
+  "Props and small features: Staff topped with glowing purple crystal; satchel with brown leather and leaf emblem; belt with buckle; hood with star and moon motifs; hair in two braids; eyes purple; no other visible accessories.",
+  "Visibility limits: Back view shows the robe and staff; top view shows hood and staff; no occlusion is implied for all views; no hidden parts are visible.",
+  "",
+  "Focused image details (unverified source-crop observations):",
+  "- Upper-left figure detail: Two identical figures in purple robes; right side view shows left hand gripping a staff."
+].join("\n");
+const newReadable=legacyFormatter(repeatedMage);
+assert.ok(newReadable.includes("Staff topped with glowing purple crystal"),"keep richest staff description");
+assert.equal((newReadable.match(/belt with buckle/g)||[]).length,1,"do not repeat belt");
+assert.equal((newReadable.match(/hair in two braids/g)||[]).length,1,"do not repeat hair inventory");
+assert.ok(!newReadable.includes("eyes purple"),"eyes already under appearance");
+assert.ok(!newReadable.includes("hood with star and moon motifs"),"hood ornament belongs under clothing");
+assert.ok(newReadable.includes("satchel with brown leather and leaf emblem"),"keep richer satchel detail");
+assert.ok(!newReadable.includes("satchel with leaf emblem;"),"suppress weaker satchel inventory");
+assert.ok(!newReadable.includes("holds a staff in the right hand"),"no confident conflicting staff-hand assignment");
+assert.ok(newReadable.includes("top view shows hood shape and staff position"),"preserve unique angle observation");
+assert.ok(!newReadable.includes("layered geometry"),"no inferred mesh topology");
+assert.ok(!newReadable.includes("no occlusion"),"no unsupported universal visibility");
+assert.ok(!newReadable.includes("Two identical figures"),"crop evidence remains diagnostic, not repeated answer");
+
+
 assert.match(html,/recognition\.onresult=event=>/);
 assert.match(html,/prompt\.value=\(original\+separator\+transcript\)/);
 assert.match(html,/prompt\.dispatchEvent\(new Event\("input",\{bubbles:true\}\)\)/);
