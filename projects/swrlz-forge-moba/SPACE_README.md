@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.333
+title: §wyrl§ Engine v11.334
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,13 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.334 · Photo-guided Smooth Cliff Hand and dorsal-only crystal knuckles (2026-11-07)
+
+Owner's latest physical Android screenshots verified the sandstone and dark cracks now render, but reported that the old stone knuckle accents appeared through the **palmar** side. Owner also supplied a real left-palm photo for proportional study and requested tasteful crystals on the knuckles. The single connected starter now receives a **small, model-only** reference-guided refinement to finger length hierarchy, finger splay, metacarpal width and thenar pad volume, retaining the original 17-bone rig and all sculpt/animation features. No personal photograph is embedded or stored in the engine.
+
+**Material fix:** Shared front/back planar UVs made the previous albedo/normal/AO knuckle relief visible on both sides. Those shared knuckle stamps are removed from the original source atlas composition; rock cracks, normal/AO/roughness and wrist-only moss remain. A new transparent 384px **teal faceted crystal CanvasTexture** is composited into the existing native Three.js MeshStandardMaterial **only on dorsal-facing surface normals**; the photographed palm therefore remains uninterrupted stone instead of seeing imaginary dorsal rocks. No crystal or rock geometry is added. Both real-browser palm and rotated dorsal captures showed intended behavior; desktop and Android-sized WebGL loaded with no errors or external rock atlas requests. The 347-patch build is **9,033,432 HTML bytes**, SHA-256 **`332911f48c24b60555197597bcdf626919e2affad49fd35743d7e7401907105d`**, 71 assets. Final physical Moto/Quest approval belongs to owner testing.
+
 
 ## §E v11.333 · Original Cliff Hand atlas guaranteed inside the page (2026-11-07)
 
