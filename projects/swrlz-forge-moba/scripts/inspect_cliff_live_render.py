@@ -127,6 +127,21 @@ async def main():
         if await viewport.count():
             png=await viewport.screenshot(type='jpeg',quality=70,timeout=15000)
             print('CLIFF_VIEWPORT_JPEG_BASE64='+base64.b64encode(png).decode('ascii'),flush=True)
+        # Rotate the actual WebGL canvas around the hand to see the dorsal
+        # crystal texture (the initial camera shows the user's palm).
+        if await viewport.count():
+            box=await viewport.bounding_box()
+            if box:
+                y=box['y']+box['height']*.65
+                x0=box['x']+box['width']*.72
+                x1=max(box['x']+box['width']*.1,x0-365)
+                await page.mouse.move(x0,y)
+                await page.mouse.down()
+                await page.mouse.move(x1,y,steps=14)
+                await page.mouse.up()
+                await page.wait_for_timeout(650)
+                photo=await viewport.screenshot(type='jpeg',quality=74,timeout=15000)
+                print('CLIFF_DORSAL_VIEWPORT_JPEG_BASE64='+base64.b64encode(photo).decode('ascii'),flush=True)
         live=detail.get('viewport',{}).get('liveMeshes',[])
         if not opened or len(live)!=1 or not live[0].get('map') or not live[0].get('normal'):
             raise AssertionError('LIVE_CLIFF_MESH_NOT_USING_PBR '+json.dumps(live))
