@@ -244,7 +244,8 @@ class ForgeStationHTTP(unittest.TestCase):
             result = self.client.get("/api/hf/models")
         self.assertEqual(result.status_code, 200, result.text)
         models = result.json()["models"]
-        self.assertEqual([item["model_id"] for item in models], ["r39", "stock", "700m", "coder", "compare"])
+        self.assertEqual([item["model_id"] for item in models], ["stock", "700m", "coder", "compare"])
+        self.assertNotIn("r39", [item["model_id"] for item in models])
         self.assertFalse(next(item for item in models if item["model_id"] == "compare")["available"])
         self.assertEqual(next(item for item in models if item["model_id"] == "coder")["checkpoint"], model_router.CODER_CHECKPOINT)
         for item in models:
