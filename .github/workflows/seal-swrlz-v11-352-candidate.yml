@@ -31,7 +31,8 @@ jobs:
           assert manifest['name']=='§wyrl§ Engine v11.352'
           assert len(manifest['patches'])==360
           assert manifest['patches'][-1]=='patches/v11_352_model_transform_access.py'
-          assert not manifest['finalSha256'] and not manifest['finalBytes']
+          assert manifest['finalSha256']=='98dd17dcb216f5528c0e1d2c405054cd581ba2dd7888ae9d3c60009c8c3ee6ff'
+          assert manifest['finalBytes']==9264839
           out=Path('/tmp/se352')
           subprocess.run([sys.executable,str(root/'build_space.py'),'--output',str(out)],check=True)
           raw=(out/'index.html').read_bytes()
@@ -62,3 +63,5 @@ jobs:
           print('V11_352_ASSETS='+str(len(receipt['assets'])),flush=True)
           print('V11_352_SOURCE_SEAL_PASS',flush=True)
           PY
+      - name: Independently verify sealed v11.352 release
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_352_release.py --output /tmp/se352-release
