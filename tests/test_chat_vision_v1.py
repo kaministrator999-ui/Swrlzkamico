@@ -584,7 +584,7 @@ import typing
 router_source = (SOURCE.parent / "model_router.py").read_text(encoding="utf-8")
 tree = ast.parse(router_source)
 selected = [node for node in tree.body if isinstance(node, (ast.Assign, ast.FunctionDef)) and (
-    isinstance(node, ast.FunctionDef) and node.name in {"_ground_vision_handoff", "_direct_vision_description", "_format_direct_vision_report", "_omit_unverifiable_turnaround_claims"}
+    isinstance(node, ast.FunctionDef) and node.name in {"_ground_vision_handoff", "_direct_vision_description", "_format_direct_vision_report", "_omit_unverifiable_turnaround_claims", "_conflicting_staff_handedness"}
     or isinstance(node, ast.Assign) and any(isinstance(target, ast.Name) and target.id in {"_VISION_START","_VISION_END"} for target in node.targets)
 )]
 namespace = {"Any": typing.Any, "re": __import__("re")}
@@ -692,6 +692,43 @@ assert "Two identical chibi figures" not in formatted_newer
 assert "Brown satchel hangs at the hip" in formatted_newer
 assert "The back view does not show the face" in formatted_newer
 assert "not independently verified" in formatted_newer
+
+# Captured screenshot case: both left/right staff hands were guessed in one
+# turnaround, boots appeared in anatomy and clothing, and illustrations
+# were described as verified 3D geometry. The formatter may abstain from
+# these unsupported details, but must preserve the useful core features.
+redundant_mage = (
+    "Character reference · local model observation (accuracy unverified)\n\n"
+    "Subject and views: Five views — front, left side, right side, back, and top — "
+    "show Little Crystal Mage in a consistent outfit.\n"
+    "Silhouette and anatomy: Pale skin and white braids. Limbs are short. "
+    "Feet are clad in brown boots with fur trim at top.\n"
+    "Clothing and surface detail: Purple hooded robe with gold trim. "
+    "Robe has layered geometry with visible folds and creases. "
+    "Boots are brown with fur trim at top. No buckles or hidden fastenings.\n"
+    "Props and small features: Staff with purple crystal. "
+    "Staff is held by right hand in front view, left hand in side views. "
+    "Pouch attaches to belt.\n"
+    "Visibility limits: Top view shows the hood and staff. "
+    "No occlusion is implied for the staff or other features.\n"
+    "\nFocused image details (unverified source-crop observations):\n"
+    "- Upper-left figure detail: Two identical figures with staves. "
+    "Right side view shows left hand gripping a staff."
+)
+cleaned_mage = direct({"prompt":"What do you see in this image?" +
+                       vision.VISION_START + redundant_mage + vision.VISION_END})
+assert "Staff with purple crystal." in cleaned_mage
+assert "right hand in front" not in cleaned_mage
+assert "left hand in side" not in cleaned_mage
+assert "No occlusion is implied" not in cleaned_mage
+assert "No buckles or hidden fastenings" not in cleaned_mage
+assert "layered geometry" not in cleaned_mage
+assert "appears layered, with folds and creases" in cleaned_mage
+assert cleaned_mage.count("boots") == 1, cleaned_mage
+assert "Two identical figures" not in cleaned_mage
+assert "not independently verified" in cleaned_mage
+assert "Feet are clad" in redundant_mage, "source handoff must remain unchanged"
+
 
 assert "not independently verified" in problematic_result
 
