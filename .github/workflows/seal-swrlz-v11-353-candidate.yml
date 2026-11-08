@@ -40,7 +40,8 @@ jobs:
           for needle in (
             'SWYRL_ENGINE_DEPLOY_MARKER: V11_353_MODEL_VIEWPORT_TRANSFORM',
             "window.SWRLZ_FORGE_BUILD={version:'v11.353'",
-            "se320ModelTransformAccess(panel,q('.atelier-scene',panel));",
+            "se320ModelTransformAccess(panel,inspector);",
+            "const scene=q('.atelier-scene',panel);",
             "const active=!!state?.open&&!!state?.selected&&!panel.hidden;",
             'se320-native-transform-proxy',
             'data-se320-transform="move"',
