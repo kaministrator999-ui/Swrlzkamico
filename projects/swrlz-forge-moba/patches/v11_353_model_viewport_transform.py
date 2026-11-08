@@ -15,8 +15,9 @@ def apply(html):
     # This is still the same native transform editor, only a viewport access
     # point; no alternate gizmo implementation or change to the UV source.
     for needle in [
-      "function se320ModelTransformAccess(panel,scene)",
-      "se320ModelTransformAccess(panel,q('.atelier-scene',panel));",
+      "function se320ModelTransformAccess(panel,inspector)",
+      "const scene=q('.atelier-scene',panel);",
+      "se320ModelTransformAccess(panel,inspector);",
       "source.closest('.amq-line')?.classList.add('se320-native-transform-proxy');",
       "source?.click();",
       "const active=!!state?.open&&!!state?.selected&&!panel.hidden;"
