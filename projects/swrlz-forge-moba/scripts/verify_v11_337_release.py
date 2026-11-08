@@ -61,7 +61,7 @@ def main():
         'const original=se334ReferenceHandField(math,skinFactory);',
         'return se337DorsalGeodeMaterial(mat);',
         'function se335NarrowUlnarField(math,skinFactory=se217OrganicHandSkin){',
-        ' const hand=se335NarrowUlnarField(math);',
+        'const original=se335NarrowUlnarField(math,se337OrganicFingerSkin);',
         'const inward=.105*lower*upper*onUlnarSide;',
         'function se337OrganicFingerSkin(digits,{ell,cap,blend}){',
         'function se337HandField(math){',
