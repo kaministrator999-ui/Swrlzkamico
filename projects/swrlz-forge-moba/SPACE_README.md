@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.342
+title: §wyrl§ Engine v11.343
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,15 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.343 · Surface-following VR selector and camera-oriented sticks (2026-11-08)
+
+Owner Quest 2 feedback on v11.342 confirmed much better frame rate but identified two usability defects: the ray reticle slid across the glove's rectangular *bounding box*, not its visible fingers, and the left/right joystick view directions felt inverted. This release keeps the fast bounds-only broadphase, then places the hover reticle at the nearest intersection with a **cached, connected, reduced-polygon model surface** rather than the box. On skinned hand models, the pick surface shares the real skeleton and follows bone movement. True Trigger and Grip selection still raycast the original native mesh; temporary hover geometry is not saved to the model.
+
+The left stick's horizontal/vertical pan and right stick's horizontal/vertical orbit signs are reversed for camera-relative navigation; right-stick press plus vertical still zooms in/out. The reduced pick surfaces are built at session entry for the first few visible parts and reused across hover samples; model edits/rebuilds and VR exit invalidate or dispose them. No unrelated game, engine or AI chat editor behavior is changed.
+
+A real Three.js r169 surface test [passed](https://github.com/kaministrator999-ui/Swrlzkamico/actions/runs/42450424824): five curved-surface ray contacts differed from the full geometry by 0.00027–0.00349 **Three scene units**; the center hole was correctly unselectable; and a skinned model was correctly hit after a bone translation. The full source candidate rebuilt to **9,128,756 HTML bytes**, SHA-256 `7f34d4884d8491515789052b4c36a5564cdd298c5901debb9824cfe0b2dee2f6`, on 354 ordered patches. Physical Quest 2 FPS, controller comfort and final alignment acceptance remain owner testing.
+
 
 ## §E v11.342 · Smooth dual-controller hover on skinned models (2026-11-08)
 
