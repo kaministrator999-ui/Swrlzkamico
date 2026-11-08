@@ -21,7 +21,8 @@ def discover_view_panels(original: Image.Image) -> list[tuple[str, tuple[int, in
     small = original.copy()
     small.thumbnail((420, 420), Image.Resampling.BILINEAR)
     sw, sh = small.size
-    pix = small.convert("RGB").load()
+    small = small.convert("RGB")
+    pix = small.load()
 
     def ink(x: int, y: int) -> bool:
         red, green, blue = pix[x, y]
