@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.335",
+  "name": "§wyrl§ Engine v11.336",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_335.html",
+  "finalArtifact": "swyrl_engine_v11_336.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -362,8 +362,9 @@
     "patches/v11_332_smooth_cliff_crack_atlas.py",
     "patches/v11_333_cliff_embedded_atlas.py",
     "patches/v11_334_cliff_photo_dorsal_crystals.py",
-    "patches/v11_335_cliff_ulnar_contour.py"
+    "patches/v11_335_cliff_ulnar_contour.py",
+    "patches/v11_336_model_uv_guide.py"
   ],
-  "finalBytes": 9034925,
-  "finalSha256": "f90898624ca109fd4ab2b09c6ab23562112d9b4864a1aedc185829b7d65c3637"
+  "finalBytes": 9045871,
+  "finalSha256": "c09a20e1c983a8c8034c1070ab84ce10c11fc7fd79c831a4b865eb5c08f3fc0d"
 }
