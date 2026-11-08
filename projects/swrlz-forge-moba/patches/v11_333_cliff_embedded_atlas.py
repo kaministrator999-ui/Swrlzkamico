@@ -41,11 +41,11 @@ def apply(html):
     # delivers the exact same pixels without relying on browser iframe URLs,
     # network state, or a second asset request during editor startup.
     html=once(html,'function se292TextureSet(){',
-        "const SE333_EMBEDDED_CLIFF_ATLAS='"+image_url+"';\\n"+
+        "const SE333_EMBEDDED_CLIFF_ATLAS='"+image_url+"';\n"+
         'function se292TextureSet(){',
         'inline exact original JPEG bytes ahead of PBR texture loader')
     html=once(html,'  image.src=SE288_ATLAS;',
-        "  se292State.atlasSource='embedded-original-jpeg';\\n"+
+        "  se292State.atlasSource='embedded-original-jpeg';\n"+
         '  image.src=SE333_EMBEDDED_CLIFF_ATLAS;',
         'load original atlas within current HTML instead of a remote request')
 
