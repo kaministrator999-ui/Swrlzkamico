@@ -26,7 +26,7 @@ def apply(html):
     if len(image)!=EXPECTED_BYTES or hashlib.sha256(image).hexdigest()!=EXPECTED_SHA:
         raise AssertionError('Original owner-provided Cliff Hand atlas changed unexpectedly')
     image_url='data:image/jpeg;base64,'+base64.b64encode(image).decode('ascii')
-    if not image.startswith(b'\\xff\\xd8\\xff') or not image.endswith(b'\\xff\\xd9'):
+    if not image.startswith(b'\xff\xd8\xff') or not image.endswith(b'\xff\xd9'):
         raise AssertionError('Rock atlas must remain a complete original JPEG')
     for token in (
         'function se292TextureSet(){',
