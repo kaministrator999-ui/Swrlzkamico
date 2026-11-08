@@ -362,6 +362,6 @@
     "patches/v11_332_smooth_cliff_crack_atlas.py",
     "patches/v11_333_cliff_embedded_atlas.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 9027112,
+  "finalSha256": "e3e46cfd23dc4cddaf9ecb5316de58e5f099277b848ab7f884968335c59cd5ce"
 }
