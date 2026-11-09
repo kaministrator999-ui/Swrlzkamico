@@ -6,7 +6,7 @@ ROOT=Path(__file__).resolve().parents[1]
 MARKER='SWYRL_ENGINE_DEPLOY_MARKER: V11_356_UV_PREVIEW_VR_CAMERA_ORBIT'
 ap=argparse.ArgumentParser();ap.add_argument('--output',required=True);ap.add_argument('--request',action='store_true');args=ap.parse_args()
 m=json.loads((ROOT/'source-manifest.json').read_text('utf8'))
-assert m['name']=='§wyrl§ Engine v11.356' and m['finalArtifact']=='swyrl_engine_v11_355.html'
+assert m['name']=='§wyrl§ Engine v11.356' and m['finalArtifact']=='swyrl_engine_v11_356.html'
 assert len(m['patches'])==364 and m['patches'][-1]=='patches/v11_356_uv_preview_vr_camera_orbit.py'
 assert m['finalBytes']>9_200_000 and len(m['finalSha256'])==64
 output=Path(args.output).resolve()
