@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.363
+title: §wyrl§ Engine v11.364
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,11 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.364 · Export corrected UV image and calibration (2026-11-08)
+
+After positioning an imported texture directly on a selected model with UV Slide, open the existing UV Editor and expand **After UV Slide · save corrected reference**. Export the corrected **aligned PNG** for texture use at U/V offset 0,0 and the matching **correction JSON** recording exact mesh references and offsets. These are non-destructive downloads; the current project, original texture, Undo/Redo and geometry UV coordinates remain unchanged. Save Project continues storing the live offset. Physical device acceptance remains with the owner.
+
 
 
 ## §E v11.363 · WebXR reference hand/controller starter load fix (2026-11-08)
