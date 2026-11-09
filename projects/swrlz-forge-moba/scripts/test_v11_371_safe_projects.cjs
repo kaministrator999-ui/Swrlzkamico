@@ -44,7 +44,7 @@ vm.createContext(ctx);vm.runInContext(code,ctx,{filename:'safe-project-runtime.j
  // A stale account revision cannot become an overwrite target, even if the
  // local project metadata points to an account project with the same name.
  const savedId=ctx.getProjectId();
- ctx.se371CloudLinks.set(savedId,{id:'remote-3',revision:1});
+ vm.runInContext('se371CloudLinks',ctx).set(savedId,{id:'remote-3',revision:1});
  ctx.ready=true;ctx.se176AccountConnected=true;
  ctx.rpc=async()=>({projects:[{id:'remote-3',revision:2}]});
  const refused=await ctx.saveCloud();
