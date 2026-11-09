@@ -54,7 +54,7 @@ function se362DrawHint(hint,title,down=false,expanded=false){
  if(!label){hint.mesh.visible=false;return;}
  c.fillStyle=down?'rgba(29,101,94,.96)':'rgba(13,20,39,.88)';
  c.strokeStyle=down?'#adffee':'#a68bd9';c.lineWidth=5;
- c.beginPath();c.roundRect(5,7,502,130,22);c.fill();c.stroke();
+ c.beginPath();if(typeof c.roundRect==='function')c.roundRect(5,7,502,130,22);else c.rect(5,7,502,130);c.fill();c.stroke();
  c.fillStyle=down?'#eafff4':'#d7c9fc';
  c.font='bold 28px system-ui,sans-serif';c.textAlign='left';c.textBaseline='middle';
  c.fillText(hint.key,21,73);
