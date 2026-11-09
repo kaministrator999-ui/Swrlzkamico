@@ -1036,8 +1036,8 @@ assert "View comparisons:" in final_prompt[0]["text"]
 assert "visible belt buckle cannot" in final_prompt[0]["text"]
 assert "110 to 175 information-dense words" in final_prompt[0]["text"]
 assert "No props, hand-held objects" in final_prompt[0]["text"]
-assert "only when clearly" in final_prompt[0]["text"]
-assert "different crop" in final_prompt[0]["text"]
+assert "Omit ambiguous grip counts" in final_prompt[0]["text"]
+assert "do not propagate a staff" in final_prompt[0]["text"]
 assert "Do NOT narrate what each view fails to show" in final_prompt[0]["text"]
 assert any(f.get("inferenceStage") == "FUSION_PREFILL" for _, f in joint_phases)
 assert any(f.get("integratedSelected") is True for _, f in joint_phases)
