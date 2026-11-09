@@ -1,4 +1,5 @@
 name: §E v11.356 source integrity measurement
+# Recheck after exact document-head anchor correction.
 on:
   push:
     branches: [main]
