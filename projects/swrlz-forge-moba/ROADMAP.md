@@ -1,3 +1,9 @@
+## §E v11.360 · Spatial VR menus, tactile buttons and smoother feedback (2026-11-09)
+
+Model Studio VR gains a larger, clearer spatial console with persistent studio navigation, icon tool cards, stronger button states and polished controller wheels. Hover/press feedback and page/panel transitions run in the existing XR loop, respect reduced motion and pause when hidden. Menu ray feedback updates at headset frame cadence while native model-surface hover remains bounded. Current camera orbit, selected-only grip controls, native modeling history, wireframe-first UV painting and the new reference-hand starters stay intact.
+
+See [the v11.360 menu checkpoint](docs/MODEL_STUDIO_VR_MENUS_V11_360.md) for behavior, source integrity and verification. Physical Quest acceptance remains owner testing.
+
 ## §E v11.357 · Simplify UV painting without changing authored coordinates (2026-11-08)
 
 Make single-mesh UV painting simple again: actual UV wireframe export → illustrated image import → UV Slide on the existing mesh. The exact wireframe is the selected-mesh preview default. Keep supplementary color-coded regions and JSON under optional Advanced UV references for troubleshooting, without forcing multi-step correspondence or geometry reprojection. Retain the 5 MB image limit, save-size fallback, cyan guide cleanup, current Undo/Redo, and v11.356 VR changes. Seal and deploy v11.357 for real-device testing.

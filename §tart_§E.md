@@ -1,3 +1,9 @@
+## §E v11.360 · Spatial VR menus, tactile buttons and smoother feedback (2026-11-09)
+
+Model Studio VR gains a larger, clearer spatial console with persistent studio navigation, icon tool cards, stronger button states and polished controller wheels. Hover/press feedback and page/panel transitions run in the existing XR loop, respect reduced motion and pause when hidden. Menu ray feedback updates at headset frame cadence while native model-surface hover remains bounded. Current camera orbit, selected-only grip controls, native modeling history, wireframe-first UV painting and the new reference-hand starters stay intact.
+
+See [the v11.360 menu checkpoint](projects/swrlz-forge-moba/docs/MODEL_STUDIO_VR_MENUS_V11_360.md) for behavior, source integrity and verification. Physical Quest acceptance remains owner testing.
+
 ## §E v11.357 · Wireframe-first UV editor (2026-11-08)
 
 Selected-mesh texture work is again **export the ordinary UV wireframe → paint art → import image → slide UV placement on the mesh**. The exact UV wireframe is shown by default in the popup; directional guides and mapping JSON are optional advanced reference tools. This keeps the smooth artwork workflow and the original UV coordinates intact, without extra projection/baking steps. The latest VR, transforms, model JSON and Undo remain unchanged.

@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.358
+title: §wyrl§ Engine v11.360
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,14 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.360 · Spatial VR menus, tactile buttons and smoother feedback (2026-11-09)
+
+Model Studio VR gains a larger, clearer spatial console with persistent studio navigation, icon tool cards, stronger button states and polished controller wheels. Hover/press feedback and page/panel transitions run in the existing XR loop, respect reduced motion and pause when hidden. Menu ray feedback updates at headset frame cadence while native model-surface hover remains bounded. Current camera orbit, selected-only grip controls, native modeling history, wireframe-first UV painting and the new reference-hand starters stay intact.
+
+See [the v11.360 menu checkpoint](docs/MODEL_STUDIO_VR_MENUS_V11_360.md) for behavior, source integrity and verification. Physical Quest acceptance remains owner testing.
+
+
 
 ## §E v11.358 · WebXR anatomy reference hands (2026-11-08)
 
