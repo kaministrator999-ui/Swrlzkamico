@@ -391,6 +391,6 @@
     "patches/v11_367_stone_hand_anatomy.py",
     "patches/v11_368_uv_camera_alignment.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 9405696,
+  "finalSha256": "b7673a49dc5ce60bffe695ef73227bde5c93e83f6f2969cc88fdc3b9e7b3c222"
 }
