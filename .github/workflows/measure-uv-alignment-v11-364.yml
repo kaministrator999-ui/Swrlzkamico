@@ -33,3 +33,5 @@ jobs:
           PY
       - name: Validate generated inline JavaScript
         run: python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se364-measure/index.html
+
+# Re-measure after restoring a literal newline in the runtime header.
