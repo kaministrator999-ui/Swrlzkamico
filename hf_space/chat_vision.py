@@ -552,8 +552,19 @@ def _ask_vision_local(image_url: str, question: str, report_phase=None, should_c
             raise VisionCancelled()
 
     check_cancel()
+    lock_wait_started = time.monotonic()
+    queue_reported = False
     while not _inference_lock.acquire(timeout=0.25):
+        if not queue_reported:
+            # Distinguish actual worker contention/prewarm from active
+            # model inference; the client's elapsed clock keeps counting.
+            report("QUEUED", queueReason="inference-worker-busy")
+            queue_reported = True
         check_cancel()
+    lock_wait_seconds = round(time.monotonic() - lock_wait_started, 2)
+    if lock_wait_seconds >= 1:
+        print(json.dumps({"event": "LOCAL_VISION_LOCK_WAIT",
+                          "seconds": lock_wait_seconds}), flush=True)
     started = time.monotonic()
     try:
         check_cancel()
