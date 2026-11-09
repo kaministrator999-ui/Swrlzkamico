@@ -286,7 +286,8 @@ assert.match(backend,/vision_request_id = payload\.get\("visionRequestId", ""\)/
 assert.match(backend,/VISION_REQUEST_ID_INVALID/);
 assert.match(backend,/resumedExistingJob/);
 assert.match(backend,/bool\(vision_request_id\) and job\["phase"\] == "COMPLETE"/);
-assert.match(backend,/Shape and proportions:/);
+assert.match(backend,/Geometry and layers:/);
+assert.match(backend,/Do NOT output separate Shape, Geometry, and Props sections/);
 assert.match(backend,/Materials and markings:/);
 assert.match(backend,/referenceProgress/);
 assert.match(html,/referenceProgress:state\.referenceProgress/);
