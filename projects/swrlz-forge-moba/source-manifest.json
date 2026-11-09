@@ -387,6 +387,6 @@
     "patches/v11_363_webxr_starter_socket_fix.py",
     "patches/v11_364_uv_aligned_export.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 9364395,
+  "finalSha256": "f856799ea9bd657b08f46642e96e6021845f306f6351131139767d4bb2ec6403"
 }
