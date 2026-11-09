@@ -51,7 +51,12 @@ for token in [
     'se371HasSavedIdentity', 'se371ProjectNotice',
 ]:
     assert token in html,token
-assert html.count(" source.engine='§wyrl§ Engine · Maker v11.371';source.version=11.370;")==5
+assert html.count(" source.engine='§wyrl§ Engine · Maker v11.371';source.version=11.371;")==5
+# The project save handlers must be in the same authenticated Chat-host closure
+# as cloudRefs, RPC and the existing on-device library.
+assert html.index("const PROTOCOL='swrlz-forge-chat-v1'") < html.index('const se371CloudLinks=new Map();')
+assert html.index('const se371CloudLinks=new Map();') < html.index('if(ALLOWED_PARENTS.has(location.origin))queueMicrotask(')
+assert 'id="se371ProjectSave"' in html
 subprocess.run([sys.executable,str(ROOT/'scripts/check_inline_js_syntax_v11_266.py'),str(out/'index.html')],check=True)
 subprocess.run(['node','--check',str(ROOT/'runtime/model_uv_aligned_export_v11_364.js')],check=True)
 subprocess.run(['node','--check',str(ROOT/'runtime/hand_reference_fit_v11_365.js')],check=True)
