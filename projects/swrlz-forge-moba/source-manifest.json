@@ -381,6 +381,6 @@
     "patches/v11_356_uv_preview_vr_camera_orbit.py",
     "patches/v11_357_uv_guide_first.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 9317260,
+  "finalSha256": "5b88e14678fd6fce292b528cea1112aa7d98ff854f2212ce5a63776d1fc67e0b"
 }
