@@ -19,7 +19,7 @@ def apply(html):
     for token in ('function se175Snapshot()', 'function se175StampProject(',
                   'async function saveCloud()', 'async function loadCloud('):
         if token not in html:raise AssertionError(('missing native project prerequisite',token))
-    html=once(html,'</head>','<style id="se371ProjectSave">\n'+css+'\n</style>\n</head>','stylesheet')
+    html=html.replace('</head>','<style id="se371ProjectSave">\n'+css+'\n</style>\n</head>',1)
     html=once(html,'window.SWRLZ_FORGE_BUILD=',js+'\nwindow.SWRLZ_FORGE_BUILD=','runtime')
     for old,new,label in [
         ('SWYRL_ENGINE_DEPLOY_MARKER: V11_370_CLIFF_STONE_SURFACE_POLISH',MARKER,'release marker'),
