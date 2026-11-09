@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.369
+title: §wyrl§ Engine v11.370
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.370 · Anatomical stone texture polish on the WebXR Cliff Hand (2026-11-09)
+
+The **approved real WebXR hand geometry and its UV islands remain unchanged**. The existing Plain Hand Base / Cliff Hand starter now performs a one-time material bake when first opened: copy the original owner-provided clean sandstone, tangent-space normals, roughness, AO and moss/fracture mask tiles from the 1536×768 PBR atlas into aligned 384×384 CanvasTextures. Project the actual 1,360-vertex hand triangles into UV space, so stone moss concentrates on wrist, thumb web and subdued dorsal creases **based on 3D anatomy, not arbitrary atlas rows**; clean up fingertips and large palm surfaces. Gradually vary mineral fracture width/intensity, interrupt some continuous equal-dark tile seams, introduce subtle sandstone grain, slightly lower exaggerated normal relief, and add a visually weathered wrist-edge material band. No polygon or rig changes, no new cuffs or arbitrary crystals. The improved 89-rock Rock Hand, original WebXR reference hand projects, Quest 2 controllers, existing user saved projects and UV Editor are not touched. If the new baked material cannot load, original cliff PBR remains the fallback. Phone and Quest 2 visual acceptance remains with the owner.
 
 ## §E v11.369 · Cliff Hand uses real WebXR hand geometry and existing sandstone textures (2026-11-09)
 

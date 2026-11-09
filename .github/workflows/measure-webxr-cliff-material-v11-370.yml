@@ -1,0 +1,55 @@
+name: Verify §E v11.370 WebXR Cliff material-only polish
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/patches/v11_370_cliff_surface_polish.py"
+      - "projects/swrlz-forge-moba/runtime/webxr_cliff_material_polish_v11_370.js"
+      - "projects/swrlz-forge-moba/scripts/test_v11_370_cliff_material.cjs"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  cliff-material:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Check isolated Cliff material runtime syntax
+        run: node --check projects/swrlz-forge-moba/runtime/webxr_cliff_material_polish_v11_370.js
+      - name: Validate genuine WebXR UV raster, crack/moss/wrist material and original topology
+        run: node projects/swrlz-forge-moba/scripts/test_v11_370_cliff_material.cjs
+      - name: Measure precise 377-patch full §E source and material hook
+        run: |
+          python - <<'PY'
+          import base64,gzip,hashlib,json,sys
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          sys.path.insert(0,str(root.resolve()))
+          import build_space
+          m=json.loads((root/'source-manifest.json').read_text('utf8'))
+          assert m['name']=='§wyrl§ Engine v11.370'
+          assert len(m['patches'])==377
+          assert m['patches'][-1]=='patches/v11_370_cliff_surface_polish.py'
+          raw=gzip.decompress(base64.b64decode(''.join((root/x).read_text('utf8').strip() for x in m['chunks'])))
+          assert hashlib.sha256(raw).hexdigest()==m['baseSha256']
+          html=raw.decode('utf8')
+          for p in m['patches']:html=build_space.load_patch(root/p)(html)
+          for token in [
+            'SWYRL_ENGINE_DEPLOY_MARKER: V11_370_CLIFF_STONE_SURFACE_POLISH',
+            "window.SWRLZ_FORGE_BUILD={version:'v11.370'",
+            'function se370SurfaceUV(mesh,size){',
+            'function se370PolishedCliffMaterial(part){',
+            'SWYRL_ENGINE_CLIFF_POLISH_370',
+            "if(part?.cliffPBR?.variant==='webxr-cliff'){",
+            'return se370PolishedCliffMaterial(part);',
+            'se281RockScene=se367AnatomicalRockScene;',
+            'async function se369CliffFromXRScene(){',
+            'swyrl-model-uv-alignment-correction-v1'
+          ]:assert token in html,token
+          b=html.encode('utf8')
+          print('SEAL_V370 '+json.dumps({'bytes':len(b),'sha256':hashlib.sha256(b).hexdigest(),'patches':len(m['patches'])}))
+          PY
