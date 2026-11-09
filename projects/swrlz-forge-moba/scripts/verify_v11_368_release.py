@@ -41,7 +41,7 @@ for token in [
     'SE362_CONTROLLER_HINTS_START',
 ]:
     assert token in html,token
-assert html.count(" source.engine='§wyrl§ Engine · Maker v11.368';source.version=11.367;")==5
+assert html.count(" source.engine='§wyrl§ Engine · Maker v11.368';source.version=11.368;")==5
 subprocess.run([sys.executable,str(ROOT/'scripts/check_inline_js_syntax_v11_266.py'),str(out/'index.html')],check=True)
 subprocess.run(['node','--check',str(ROOT/'runtime/model_uv_aligned_export_v11_364.js')],check=True)
 subprocess.run(['node','--check',str(ROOT/'runtime/hand_reference_fit_v11_365.js')],check=True)
