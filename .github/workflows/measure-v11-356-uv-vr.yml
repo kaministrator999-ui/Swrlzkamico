@@ -1,5 +1,5 @@
 name: §E v11.356 source integrity measurement
-# Run full source/asset verifier on the sealed release.
+# Re-run full seal verification after correcting artifact filename assertion.
 on:
   push:
     branches: [main]
