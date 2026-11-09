@@ -385,6 +385,6 @@
     "patches/v11_361_webxr_hand_open_touch_starters.py",
     "patches/v11_362_quest_controller_hints.py"
   ],
-  "finalBytes": 9357828,
-  "finalSha256": "64ba5b3a71c4a450a065f8a13a0419864321ab3a05ab097ff0f75560833b39d8"
+  "finalBytes": 9357888,
+  "finalSha256": "4918e30e433953808f53d366c03793e7883c9421c8fdb09d5788113f63be3fd2"
 }
