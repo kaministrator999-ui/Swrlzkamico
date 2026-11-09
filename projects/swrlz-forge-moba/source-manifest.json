@@ -389,6 +389,6 @@
     "patches/v11_365_hand_reference_fit.py",
     "patches/v11_366_uv_authoring_marker.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 9391583,
+  "finalSha256": "f9c9707c7d5f5e61e32d1de522e30a8c08c7a9950bf8d3d44869d85f4065062a"
 }
