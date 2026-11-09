@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.370",
+  "name": "§wyrl§ Engine v11.371",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_370.html",
+  "finalArtifact": "swyrl_engine_v11_371.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -391,8 +391,9 @@
     "patches/v11_367_stone_hand_anatomy.py",
     "patches/v11_368_uv_camera_alignment.py",
     "patches/v11_369_webxr_cliff_stone_clone.py",
-    "patches/v11_370_cliff_surface_polish.py"
+    "patches/v11_370_cliff_surface_polish.py",
+    "patches/v11_371_safe_project_clone_save.py"
   ],
-  "finalBytes": 9420154,
-  "finalSha256": "3fba8f65dbf9bc1b84ddda64257dbfe1ea463fa19f33f57611aec44b4c68b512"
+  "finalBytes": 9432025,
+  "finalSha256": "c8a4d10717cd8fa83e4efe76635bd08568e470ca2513d7d4a385e267ebb92151"
 }
