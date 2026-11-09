@@ -520,6 +520,20 @@ def _detail_regions(image_url: str, overview: str, question: str = "",
     regions = []
     for label, box in zip(labels, boxes):
         crop = original.crop(tuple(round(value) for value in box))
+        if label == "Supporting reference panels" and crop.width > crop.height * 2.5:
+            # Wide legend/detail strips lose tiny line art when squeezed to
+            # the same 768px width as an entire turnaround. Fold the left
+            # and right source halves into two rows of ONE crop: no extra
+            # inference pass, no invented semantic segmentation, and every
+            # input pixel stays associated with the original source box.
+            split = crop.width // 2
+            top = crop.crop((0, 0, split, crop.height))
+            bottom = crop.crop((split, 0, crop.width, crop.height))
+            folded = Image.new("RGB", (max(top.width, bottom.width),
+                                       2 * crop.height + 8), (255, 255, 255))
+            folded.paste(top, (0, 0))
+            folded.paste(bottom, (0, crop.height + 8))
+            crop = folded
         crop.thumbnail((768, 768), Image.Resampling.LANCZOS)
         output = io.BytesIO()
         crop.save(output, format="JPEG", quality=82)
@@ -833,7 +847,12 @@ def _ask_vision_local(image_url: str, question: str, report_phase=None, should_c
                 "Do not assume a paw is a hand. If this crop only shows "
                 "a label or palette, report its distinctive visible swatches, "
                 "details or legible motif labels rather than just saying that "
-                "a legend exists. Do not describe "
+                "a legend exists. The supporting reference strip may be "
+                "folded into TWO rows: the upper half is the left portion "
+                "of the original strip, and the lower half is the adjacent "
+                "right portion, not two different subjects. Read details "
+                "from both halves without guessing obscured marks. "
+                "Do not describe "
                 "other viewpoints not visible in this crop, guess genders, "
                 "magic effects or stories. One turnaround may show multiple "
                 "angles of the SAME character. Do not treat separate "
@@ -946,6 +965,8 @@ def _ask_vision_local(image_url: str, question: str, report_phase=None, should_c
                 "not additional characters. Include these supporting reference "
                 "groups once when their details are clear; do not silently "
                 "drop the sheet's legend while repeating outfit inventory. "
+                "A supporting strip may have been folded into two stacked "
+                "halves for readability; it remains one source-image row. "
                 "For every spatial assertion mentally pair SUBJECT, "
                 "RELATION and TARGET with one specific visible panel. "
                 "If the contact or placement is not unambiguous in those "
