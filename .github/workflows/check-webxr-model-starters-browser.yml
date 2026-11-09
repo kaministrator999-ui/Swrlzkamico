@@ -30,7 +30,7 @@ jobs:
           m['patches']=m['patches'][:368]
           m['finalBytes']=9346125
           m['finalSha256']='20e0bb0183cd6fcc579d6f08cf8b126472bcf3a5dcfe043366e170dcb5fe9810'
-          file.write_text(json.dumps(m,ensure_ascii=False,indent=2)+'\\n')
+          file.write_text(json.dumps(m,ensure_ascii=False,indent=2))
           PY
       - name: Build the exact sealed v11.361 static package
         run: python projects/swrlz-forge-moba/scripts/verify_v11_361_release.py --output /tmp/se361-model-starters
