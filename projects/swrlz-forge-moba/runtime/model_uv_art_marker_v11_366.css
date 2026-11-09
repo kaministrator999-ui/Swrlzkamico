@@ -37,3 +37,8 @@
 #modelAtelierPanel #se366MarkerTools .se366-range output{
   color:#ffe8a2;font-variant-numeric:tabular-nums;
 }
+
+#modelAtelierPanel #se366MarkerTools .se366-actions .se366-wide{
+  grid-column:1/-1;min-height:42px;border-color:#e0ba6c;
+  background:#494566;color:#ffe8b6;font-weight:700;
+}
