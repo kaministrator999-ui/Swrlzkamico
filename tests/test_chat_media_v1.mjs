@@ -70,6 +70,11 @@ assert.match(html,/container\.classList\.toggle\("vision-editorial",visionFinal\
 assert.match(html,/originalRenderedSources\.set\(container,rawSource\)/,"Copy must retain unmodified source even when legacy vision display is reformatted");
 assert.match(html,/const source=sourceContext\?sourceContext\.body:displaySource/);
 assert.match(html,/vision-preview-unavailable/);
+assert.match(html,/msg\?\.meta\?\.visionResourceUsage/,"saved vision receipt participates in history DOM reuse");
+assert.match(html,/visionReceipt\?\.usage\?\.wallTimeMs/,"duration uses verified server wall time");
+assert.match(html,/visionReceipt\?\.source==="owner-and-description-verified-vision-job"/,"never accept unverified client duration");
+assert.match(html,/duration\.className="vision-completion-time"/,"completed image duration stays attached to its saved message");
+assert.match(html,/meta\.appendChild\(duration\)/,"duration is retained after the transient progress card is removed");
 
 assert.ok(!html.includes("Read full observation"),"interim caption must not repeat as expanded raw text");
 assert.ok(!html.includes("Raw model output · 1 level"),"no duplicate raw output panel in live progress");
