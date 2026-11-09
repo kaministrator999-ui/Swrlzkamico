@@ -166,6 +166,9 @@ assert "multi-view sheet" in visual_prompt
 assert "concrete" in visual_prompt
 assert "never generalize a pose or held object to" in visual_prompt
 assert "Detail-only, palette and overhead panels" in visual_prompt
+assert "supporting detail, color-swatch" in visual_prompt
+assert "motifs tied to the garment surface" in visual_prompt
+assert "faceted stone is a round orb" in visual_prompt
 assert "clothing layers, colors, patterns, props and accessories" in visual_prompt
 assert "Include only legible text and observable contacts" in visual_prompt
 assert "Question: What is shown?" in visual_prompt
@@ -914,6 +917,12 @@ last_instructions = panel_model.calls[-1]["messages"][0]["content"][0]["text"]
 assert "View panel 5" in last_instructions
 assert "Supporting reference panels" in last_instructions
 assert "POSITIONAL labels" in last_instructions
+assert "do not silently drop the sheet's legend" in last_instructions
+assert "opposite profiles exact mirrors" in last_instructions
+assert "hem length to visible legs and footwear" in last_instructions
+assert "each motif to the exact visible surface" in last_instructions
+assert "faceted gem mounted on a staff" in last_instructions
+assert "genuine crop-specific findings absent from the overview" in last_instructions
 # Changing the number of panels should not force a 5-view result.
 three = Image.new("RGB", (1200, 880), "white")
 three_paint = ImageDraw.Draw(three)
