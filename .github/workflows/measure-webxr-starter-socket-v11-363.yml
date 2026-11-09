@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - "projects/swrlz-forge-moba/patches/v11_363_webxr_starter_socket_fix.py"
+      - "projects/swrlz-forge-moba/scripts/test_webxr_starter_socket_fix_v11_363.cjs"
   workflow_dispatch:
 permissions:
   contents: read
