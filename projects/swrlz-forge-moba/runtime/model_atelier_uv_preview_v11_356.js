@@ -1,6 +1,6 @@
 // §E v11.356 — true selected-mesh UV preview and bidirectional surface link.
 // Injected inside native ModelAtelier closure; never mutates UV vertices/model.
-let se356UVMode='surface',se356UVPickMode=false,se356UVMarker=null,se356UVPending=false;
+let se356UVMode='guide',se356UVPickMode=false,se356UVMarker=null,se356UVPending=false;
 let se356UVImage=null,se356UVImageSource=null,se356UVPin=null,se356UVReport=null;
 function se356UVPreviewRoot(){return document.getElementById('se356UVPreview');}
 function se356UVPopupVisible(){
@@ -169,19 +169,19 @@ function se356UVInstallPreview(){
  const wrap=document.createElement('section');
  wrap.id='se356UVPreview';wrap.className='se356-uv-preview';
  wrap.innerHTML=
-  '<strong>Actual UV layout preview</strong>'+
+  '<strong>UV wireframe preview</strong>'+
   '<p id="se356UVInfo">Choose a mesh to inspect its UVs.</p>'+
   '<div class="se356-uv-preview-modes">'+
-   '<button type="button" data-se356-mode="guide" aria-pressed="false">Export wireframe</button>'+
-   '<button type="button" data-se356-mode="surface" aria-pressed="true">Surface map</button>'+
-   '<button type="button" data-se356-mode="paint" aria-pressed="false">Applied texture</button></div>'+
+   '<button type="button" data-se356-mode="guide" aria-pressed="true">UV wireframe</button>'+
+   '<button type="button" data-se356-mode="paint" aria-pressed="false">Applied texture</button>'+
+   '<button type="button" data-se356-mode="surface" aria-pressed="false">Surface map (optional)</button></div>'+
   '<canvas id="se356UVCanvas" width="512" height="512" aria-label="Actual native UV image layout; tap a triangle to locate it on the model"></canvas>'+
   '<p id="se356UVPinInfo">Tap a UV triangle to locate it on the 3D mesh.</p>'+
   '<div class="se356-uv-directions" aria-label="Mapped surface directions"></div>'+
   '<div class="se356-uv-preview-actions">'+
    '<button type="button" id="se356UVPick3D" aria-pressed="false">Pick on model → UV</button>'+
    '<button type="button" id="se356UVRefresh">Refresh preview</button></div>'+
-  '<p class="se356-uv-hint">The preview uses this mesh’s actual UV triangle coordinates, not a camera projection. Colored regions indicate world-facing normals. Overlapping UV islands may cover multiple surfaces; the highlight marks one matching triangle.</p>';
+  '<p class="se356-uv-hint">This preview matches the exported UV wireframe. Import your artwork and use UV Slide to align it on the model. Surface map diagnostics are optional; extra guide files are not required.</p>';
  root.querySelector('h3')?.after(wrap);
  const directions=wrap.querySelector('.se356-uv-directions');
  SE336_SURFACE_REGIONS.forEach((reg,index)=>{
