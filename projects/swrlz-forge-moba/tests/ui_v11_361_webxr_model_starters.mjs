@@ -32,6 +32,11 @@ try{
  await page.goto(host+'/index.html',{waitUntil:'domcontentloaded',timeout:90000});
  await page.waitForFunction(()=>window.SWYRL_ENGINE_WEBXR_MODEL_STARTERS_361?.status?.()?.templates?.length===4,
    null,{timeout:45000});
+ // Fresh §E releases intentionally show the native What's New modal.
+ // Dismiss it via the real Continue button before interacting with Projects.
+ const updates=page.locator('#seReleaseNotesDialog[open]');
+ if(await updates.count())await page.locator('#seReleaseNotesClose').click();
+
  for(const [id,count] of [['webxr-hand-left',1],['webxr-hand-right',1],['webxr-touch-left',7],['webxr-touch-right',7]]){
   await page.evaluate(()=>{
    const hub=document.getElementById('projectHub');if(!hub)throw Error('Project hub absent');
