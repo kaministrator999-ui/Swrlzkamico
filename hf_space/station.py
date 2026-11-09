@@ -1119,13 +1119,18 @@ def _history_projection(thread, current_prompt=""):
         # image answer, or later assistant echoes in the next model prompt.
         # This only changes the read-only inference projection: all saved
         # messages remain intact, and genuine visual follow-ups retain them.
-        last_image=next((
-            i for i in range(len(messages)-1,-1,-1)
+        # Repeated L1/L2 trials can create several image turns in the same
+        # thread. Cutting at only the LAST upload leaves the first mage
+        # analysis in context, causing an assistant greeting to repeat it.
+        # Use the earliest image in the recent active context window instead.
+        recent_start=max(0,len(messages)-24)
+        recent_images=[
+            i for i in range(recent_start,len(messages))
             if messages[i].get("role")=="user"
             and vision_handoff_from_message(messages[i]) is not None
-        ),None)
-        if last_image is not None and len(messages)-last_image<=12:
-            messages=messages[:last_image]
+        ]
+        if recent_images:
+            messages=messages[:recent_images[0]]
     projected=[]
     for message in messages:
         if message.get("role") not in ("user","assistant"):
