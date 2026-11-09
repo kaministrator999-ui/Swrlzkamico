@@ -3,6 +3,35 @@
 (function se355UVEditor(){
   'use strict';
   let panel=null,popup=null,button=null,scheduled=false,drag=null;
+  // Fit the UV window inside the actual 3D work area, *below* responsive
+  // viewport controls. Do not guess header height or overlap the left tree.
+  function safeBounds(){
+    const model=panel?.getBoundingClientRect(),scene=q('.atelier-scene',panel)?.getBoundingClientRect();
+    const header=q('.atelier-head',panel)?.getBoundingClientRect();
+    const tabs=q('.se187-model-tabs',panel)?.getBoundingClientRect();
+    const toolbar=q('#se320ModelTransform',panel);
+    const transform=toolbar&&!toolbar.hidden?toolbar.getBoundingClientRect():null;
+    const left=Math.max(6,(scene?.left??model?.left??0)+6);
+    const right=Math.min(innerWidth-6,(scene?.right??model?.right??innerWidth)-6);
+    const top=Math.max(6,(scene?.top??0)+6,(header?.bottom??0)+6,
+      (tabs?.bottom??0)+6,(transform?.bottom??0)+8);
+    const bottom=Math.min(innerHeight-6,(model?.bottom??innerHeight)-6);
+    return {left,right,top:Math.min(top,bottom-116),bottom};
+  }
+  function fitWindow(reset=false){
+    if(!popup||popup.hidden)return;
+    const b=safeBounds(),width=Math.max(120,Math.min(480,b.right-b.left));
+    const height=Math.max(116,Math.min(Math.round(innerHeight*.72),b.bottom-b.top));
+    popup.style.width=width+'px';popup.style.height=height+'px';
+    popup.style.maxWidth=width+'px';popup.style.maxHeight=height+'px';
+    const rect=popup.getBoundingClientRect();
+    const preferred=b.right-width;
+    const x=reset?preferred:rect.left;
+    const y=reset?b.top:rect.top;
+    popup.style.left=Math.max(b.left,Math.min(x,b.right-width))+'px';
+    popup.style.top=Math.max(b.top,Math.min(y,b.bottom-height))+'px';
+    popup.style.right='auto';popup.style.bottom='auto';
+  }
   const q=(selector,root=document)=>root?.querySelector(selector);
   function slideApi(){return window.SWYRLZ_E_MODEL_UV_SLIDE;}
   function isOpen(){return !!popup&&!popup.hidden;}
@@ -31,6 +60,7 @@
   function setOpen(open){
     if(!popup)return;
     popup.hidden=!open;
+    if(open)fitWindow(true);
     if(!open&&selectedState().enabled)slideApi()?.toggle?.();
     refresh();
     if(open){
@@ -116,8 +146,9 @@
       if(!drag||drag.id!==event.pointerId)return;
       const nextLeft=drag.left+event.clientX-drag.x;
       const nextTop=drag.top+event.clientY-drag.y;
-      el.style.left=Math.max(6,Math.min(nextLeft,innerWidth-el.offsetWidth-6))+'px';
-      el.style.top=Math.max(6,Math.min(nextTop,innerHeight-60))+'px';
+      const b=safeBounds();
+      el.style.left=Math.max(b.left,Math.min(nextLeft,b.right-el.offsetWidth))+'px';
+      el.style.top=Math.max(b.top,Math.min(nextTop,b.bottom-el.offsetHeight))+'px';
       el.style.right='auto';el.style.bottom='auto';
       event.preventDefault();event.stopPropagation();
     });
@@ -156,6 +187,7 @@
     }
     popup=q('#se355UVPopup',panel)||createPopup(panel);
     const host=q('#se355UVNativeHost',popup);
+    if(isOpen())fitWindow(false);
     const single=q('#modelAtelierUVLayout',panel);
     // Keep the original UV export/import and whole-model atlas as one unit.
     if(single&&single.parentElement!==host)host.append(single);
@@ -177,14 +209,11 @@
     new MutationObserver(records=>{
       if(records.some(record=>[...record.addedNodes].some(node=>node.nodeType===1)))schedule();
     }).observe(document.body,{subtree:true,childList:true});
-    window.addEventListener('resize',()=>{
-      if(!popup||popup.hidden)return;
-      const rect=popup.getBoundingClientRect();
-      if(rect.right>innerWidth||rect.bottom>innerHeight){
-        popup.style.left=Math.max(6,Math.min(rect.left,innerWidth-popup.offsetWidth-6))+'px';
-        popup.style.top=Math.max(6,Math.min(rect.top,innerHeight-60))+'px';
-      }
-    });
+    window.addEventListener('resize',()=>fitWindow(false));
+    if(typeof ResizeObserver!=='undefined'){
+      const host=q('#modelAtelierPanel');
+      if(host)new ResizeObserver(()=>fitWindow(false)).observe(host);
+    }
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install,{once:true});
   else queueMicrotask(install);
