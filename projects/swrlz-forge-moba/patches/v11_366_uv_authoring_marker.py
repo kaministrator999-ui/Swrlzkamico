@@ -40,9 +40,13 @@ def apply(html):
         if existing not in html:raise AssertionError(('v11.366 missing original UV flow',existing))
     html=once(html,'  function ensurePanel(){',
         js+'\n  function ensurePanel(){','inside same native Model Atelier closure')
-    html=once(html,'</head>',
-        '<style id="se366UVArtMarkerStyle">\n'+css+'\n</style>\n</head>',
-        'reuse existing popup styling')
+    assert html.index('</head>')<html.index('<body'), 'v11.366 real document header'
+    html=html.replace('</head>',
+        '<style id="se366UVArtMarkerStyle">\n'+css+'\n</style>\n</head>',1)
+    # Expose a successful native import result for the optional marker import.
+    # Without this, a reimport of identical pixels could leave the old UV slide active.
+    success="        (cleanedGuidePixels ? ' Cyan UV guide lines automatically cleaned.' : '') + ' Save Project to keep it.');"
+    html=once(html,success,success+'\n      return true;','native importer success signal')
     old='  if(se356UVPin?.id===target.part.id)se356UVDrawPin(ctx,canvas,se356UVPin.u,se356UVPin.v);'
     new=(old+'\n  const se366Overlay=document.getElementById("se366MarkerTools");\n'
         '  if(se366Overlay?.open)se366DrawMarker(ctx,size,se366Marker(target.part));')
