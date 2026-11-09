@@ -1,0 +1,52 @@
+name: Verify §E v11.361 hand and Quest Touch Model starters
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/patches/v11_361_webxr_hand_open_touch_starters.py"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-hand-and-touch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Validate JS and all four independent native starter open paths
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/webxr_model_starters_v11_361.js
+          node projects/swrlz-forge-moba/scripts/test_webxr_model_starters_v11_361.cjs
+      - name: Generate source bytes, SHA and license/mesh checks before sealing
+        run: |
+          python - <<'PY'
+          import base64,gzip,hashlib,json,sys
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          sys.path.insert(0,str(root.resolve()))
+          import build_space
+          m=json.loads((root/'source-manifest.json').read_text('utf8'))
+          assert m['name']=='§wyrl§ Engine v11.361' and len(m['patches'])==368
+          assert m['patches'][-1]=='patches/v11_361_webxr_hand_open_touch_starters.py'
+          b=gzip.decompress(base64.b64decode(''.join((root/p).read_text('utf8').strip() for p in m['chunks'])))
+          assert hashlib.sha256(b).hexdigest()==m['baseSha256']
+          html=b.decode('utf8')
+          for rel in m['patches']:html=build_space.load_patch(root/rel)(html)
+          for item in ['data-project-template="webxr-hand-left"','data-project-template="webxr-hand-right"',
+                       'data-project-template="webxr-touch-left"','data-project-template="webxr-touch-right"',
+                       "window.SWRLZ_FORGE_BUILD={version:'v11.361'",
+                       'SWYRL_ENGINE_DEPLOY_MARKER: V11_361_WEBXR_STARTERS_OPEN_AND_TOUCH']:
+              assert item in html,item
+          for side in ('left','right'):
+              data=json.loads((root/f'assets/models/webxr-touch-v3/{side}.json').read_text('utf8'))
+              assert data['schema']=='swrlz-webxr-controller-v1' and len(data['parts'])==7
+              assert data['colorTexturePNG'].startswith('data:image/png;base64,')
+              assert len(data['colorTexturePNG'])<360000
+              assert all(len(part['mesh']['positions'])//3<=9000 for part in data['parts'])
+          assert 'MIT License' in (root/'assets/models/webxr-touch-v3/LICENSE.md').read_text('utf8')
+          blob=html.encode('utf8')
+          print('SEAL_V361 '+json.dumps({'bytes':len(blob),'sha256':hashlib.sha256(blob).hexdigest(),
+                 'patches':len(m['patches']),'newControllerAssets':2}))
+          PY

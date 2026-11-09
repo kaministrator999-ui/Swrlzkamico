@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.360
+title: §wyrl§ Engine v11.361
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.361 · Reliable WebXR starter opening + Quest 2 Touch models (2026-11-08)
+
+**Projects → Starter Models** now includes the original WebXR Left/Right Hands and new **Quest 2 Touch · Left Controller** and **Quest 2 Touch · Right Controller**. The shared starter loader explicitly validates the native project, switches into the existing Model Studio and confirms the modeling viewport opened before reporting success; it also handles deep links and shows actionable errors. Each controller has seven editable native mesh sections for housing, trigger, grip, thumbstick and buttons, preserving real source triangles, UVs and the original 512px color texture. The models derive from the MIT-licensed public `oculus-touch-v3` WebXR GLBs; attribution and independent model assets are bundled. No special headset input implementation was added, and all existing model starters, UV workflows and current VR menus remain intact.
 
 ## §E v11.360 · Spatial VR menus, tactile buttons and smoother feedback (2026-11-09)
 

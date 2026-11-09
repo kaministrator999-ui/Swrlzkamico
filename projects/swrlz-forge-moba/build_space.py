@@ -137,6 +137,9 @@ def main():
     media_paths.append("assets/sheep-tag/grass-source-color-quest.webp")
     media_paths.append('assets/cliff-hand/cliff_pbr_atlas_128.jpg')
     media_paths.append('assets/cliff-hand/cliff_pbr_atlas_384.jpg')
+    media_paths.extend(('assets/models/webxr-touch-v3/left.json',
+                        'assets/models/webxr-touch-v3/right.json',
+                        'assets/models/webxr-touch-v3/LICENSE.md'))
     media_paths.extend(('assets/models/webxr-hands/left.json',
                         'assets/models/webxr-hands/right.json',
                         'assets/models/webxr-hands/LICENSE.md'))
