@@ -356,6 +356,38 @@ def _omit_unverifiable_turnaround_claims(
         ).strip()
         if not clause:
             continue
+        # For multi-view reports a text-only formatter cannot prove that
+        # two angles have identical grips/poses or that an obscured accessory
+        # is absent. Remove these comparative assertions, not the surrounding
+        # positive observations or their original saved inference records.
+        if (re.search(
+                r"(?i)\b(?:left\s+(?:and|or)\s+right|right\s+(?:and|or)\s+left)"
+                r"\s+side\s+views?\b", clause)
+                and re.search(
+                    r"(?i)\b(?:same|matching|identical)\b.{0,90}"
+                    r"\b(?:hand|grip|stance|pose|position)\b", clause)):
+            continue
+        clause = re.sub(
+            r"(?i)(?:,\s*|\s+but\s+)"
+            r"(?:absent|missing|not\s+(?:visible|shown|present))"
+            r"\s+(?:in|from|on)\s+.*$", "", clause,
+        ).strip()
+        # A staff base/ground-clearance inference is especially unreliable
+        # when deduced from an illustration's overlapping silhouettes.
+        if re.search(r"(?i)\b(?:staff|wand|rod|spear|pole)\b", clause):
+            clause = re.sub(
+                r"(?i),\s*(?:its|the|a)\s+(?:base|tip|end)\s+"
+                r"(?:is\s+)?(?:resting|touching|standing|hovering|lying|leaning)\b.*$",
+                "", clause,
+            ).strip()
+        # Keep the affirmative object description without the unsupported
+        # negative contact inference.
+        clause = re.sub(
+            r"(?i),\s*not\s+(?:touching|reaching|resting\s+on)"
+            r"\s+(?:the\s+)?(?:ground|floor)\b.*$", "", clause,
+        ).strip()
+        if not clause:
+            continue
         # Keep a useful standalone stance observation when a sentence
         # bundles it with an unsupported list of grips across views.
         clause = re.sub(
