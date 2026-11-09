@@ -18,7 +18,7 @@ html #modelAtelierPanel #se355UVPopup.se355-uv-popup{
   z-index:180!important;top:62px;right:12px;
   width:min(480px,calc(100vw - 24px));height:min(72dvh,740px);
   max-width:calc(100vw - 12px);max-height:calc(100dvh - 72px);
-  min-width:260px;min-height:230px;
+  min-width:0;min-height:116px;
   margin:0!important;padding:0!important;
   display:flex!important;flex-direction:column!important;
   overflow:hidden!important;resize:both;
