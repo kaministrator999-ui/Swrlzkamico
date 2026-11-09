@@ -277,6 +277,11 @@ with patch.object(vision,"_load_local_model",return_value=study_model):
 assert len(study_model.calls)==3
 assert "Level 1" in study and "Level 2" in study and "Level 3" in study
 assert "raw model outputs" in study and "accuracy unverified" in study
+assert "Level 1 is the whole-image comparison baseline" in study
+assert "Descriptor keyword counts measure wording only" in study
+assert "Selected by descriptor-count heuristic" not in study
+assert all(f.get("selectedLevel") == 1 for _, f in study_phases
+           if f.get("selectedLevel") is not None), "L3 should compare outputs without ranking verbosity"
 assert "Original source received: 1024 × 768px" in study
 assert "center-source-crop-if-large" in study
 assert "A purple mage in gold boots" in study
@@ -998,6 +1003,18 @@ planned = vision._detail_regions(sheet_url, "Character turnaround of one charact
 assert [name for name, _, _ in planned] == [name for name, _ in panel_layout]
 assert all(url.startswith("data:image/jpeg;base64,") for _, url, _ in planned)
 assert len({tuple(box) for _, _, box in planned}) == 6
+# The lower detail/palette strip is folded (left half above right half)
+# into ONE image input. Original full-source region coordinates stay intact,
+# so both halves get more source pixels without an additional vision call.
+support_url = planned[-1][1]
+with Image.open(io.BytesIO(base64.b64decode(support_url.partition(",")[2]))) as support_image:
+    assert support_image.width <= 768 and support_image.height <= 768
+    assert support_image.width < 2 * support_image.height, (
+        "wide reference strip must not be squeezed into a tiny panorama"
+    )
+assert planned[-1][0] == "Supporting reference panels"
+assert planned[-1][2][0] < .05 and planned[-1][2][2] > .95
+assert len(planned) == 6, "folding the support strip cannot add inference calls"
 
 class PanelModel:
     def __init__(self):
@@ -1038,8 +1055,10 @@ assert "View panel 5" in last_instructions
 assert "Supporting reference panels" in last_instructions
 assert "POSITIONAL labels" in last_instructions
 assert "headwear-only or ornament-detail crop" in panel_model.calls[1]["messages"][0]["content"][0]["text"]
+assert "folded into TWO rows" in panel_model.calls[-2]["messages"][0]["content"][0]["text"]
 assert "Layered cloth, seams and trim" in panel_model.calls[1]["messages"][0]["content"][0]["text"]
 assert "do not silently drop the sheet's legend" in last_instructions
+assert "folded into two stacked" in last_instructions
 assert "opposite profiles exact mirrors" in last_instructions
 assert "hem length to visible legs and footwear" in last_instructions
 assert "each motif to the exact visible surface" in last_instructions
