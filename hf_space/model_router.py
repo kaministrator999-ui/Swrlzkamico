@@ -454,7 +454,7 @@ def _omit_unverifiable_turnaround_claims(
             clause = re.sub(
                 r"(?i),?\s+and\s+(?:the\s+)?"
                 r"(?:character|figure|subject|person|they|it)\s+"
-                r"(?:wears|has|is\s+wearing)\s+[^.!?]*\bboots?\b[^.!?]*$",
+                r"(?:wears|has|is\s+wearing)\s+[^.!?]*\bboots?\b[^.!?]*[.!?]?$",
                 "", clause,
             ).strip()
             if re.search(r"\bboots?\b", clause, re.I) and not re.search(
