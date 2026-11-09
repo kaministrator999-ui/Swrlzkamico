@@ -166,8 +166,8 @@ assert "multi-view sheet" in visual_prompt
 assert "concrete" in visual_prompt
 assert "never generalize a pose or held object to" in visual_prompt
 assert "Detail-only, palette and overhead panels" in visual_prompt
-assert "clothing, objects" in visual_prompt
-assert "Only read clearly legible text" in visual_prompt
+assert "clothing layers, colors, patterns, props and accessories" in visual_prompt
+assert "Include only legible text and observable contacts" in visual_prompt
 assert "Question: What is shown?" in visual_prompt
 
 # The actual exported turnaround attempts were too generic even when Chat
