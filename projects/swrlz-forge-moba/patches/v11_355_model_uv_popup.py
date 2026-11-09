@@ -30,7 +30,8 @@ def apply(html):
         'window.SWYRLZ_E_MODEL_UV_SLIDE=Object.freeze'
     ]:
         if needle not in html:raise AssertionError(('v11.355 native editor linkage',needle))
-    html=once(html,'</head>','<style id="se355ModelUVPopupStyle">\n'+css+'\n</style>\n</head>')
+    assert html.index('</head>')<html.index('<body')
+    html=html.replace('</head>','<style id="se355ModelUVPopupStyle">\n'+css+'\n</style>\n</head>',1)
     html=once(html,'window.SWRLZ_FORGE_BUILD=',js+'\nwindow.SWRLZ_FORGE_BUILD=')
     for old,new in [
         ('SWYRL_ENGINE_DEPLOY_MARKER: V11_354_MODEL_UV_SLIDE_HISTORY',MARKER),
