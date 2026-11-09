@@ -89,7 +89,7 @@ class Candidate(unittest.TestCase):
    # ignores the now-irrelevant image episode.
    snap=client.get("/api/lalm_station/sync").json()
    saved=next(x for x in snap["threads"] if x["id"]=="two-image-social-boundary")
-   self.assertEqual(sum(mage_text in m["text"] for m in saved["messages"]),2)
+   self.assertEqual(sum(m.get("role")=="user" and mage_text in m["text"] for m in saved["messages"]),2)
    self.assertTrue(any("How are you doing §wyrlz?"==m["text"] for m in saved["messages"]))
 
  def test_station_send_sync_and_route_rejection(self):
