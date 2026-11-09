@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.365
+title: §wyrl§ Engine v11.366
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,11 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.366 · Paint alignment marker and rotated UV guide (2026-11-08)
+
+Inside the existing Model Studio UV popup, expand **UV alignment marker**. Select a mesh, choose **Pick center on model** or **Pick center on UV preview**, then tap its desired front/palm/face center. Adjust **Rotate guide** and **Artwork scale**, export the **marked UV guide** plus **marker JSON**, and design a normal clean artwork image against the centered orientation. **Import marker-aligned artwork** performs the inverse pixel transform against the original mesh UVs, clears the old UV Slide offset in the same Undo operation, and keeps original UV geometry unchanged. Marker settings persist per mesh in project JSON; the original direct paint import and UV Slide workflows remain unchanged. Owner-device validation follows the sealed source release.
+
 
 ## §E v11.365 · WebXR anatomy fit for Cliff Hand and multi-rock starter (2026-11-08)
 
