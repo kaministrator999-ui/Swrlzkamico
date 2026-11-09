@@ -390,6 +390,6 @@
     "patches/v11_366_uv_authoring_marker.py",
     "patches/v11_367_stone_hand_anatomy.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 9404323,
+  "finalSha256": "7ec38e5fa8ec81283066d2eebeae33be5c5356ddc23c35ef36cee79497e9a8db"
 }
