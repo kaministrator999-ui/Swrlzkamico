@@ -63,7 +63,15 @@ jobs:
                   usage=obj.get('usage')
                   if isinstance(usage,dict):
                       record['outcome']=usage.get('outcome')
-                      record['totalSeconds']=usage.get('elapsedSeconds')
+                      wall_ms=usage.get('wallTimeMs')
+                      record['totalSeconds']=(round(wall_ms/1000,2)
+                           if type(wall_ms) in (int,float) and wall_ms>=0 else None)
+                      capacity=usage.get('capacity') or {}
+                      observed=usage.get('observed') or {}
+                      for key,source in (('cpuLimitCores',capacity),('averageCgroupCpuCores',observed),
+                                         ('memoryPeakSampledBytes',observed)):
+                          value=source.get(key)
+                          if type(value) in (int,float):record[key]=value
               perf.append(record)
           print('SANITIZED_VISION_PERFORMANCE:',json.dumps(perf[-30:]),flush=True)
           # The chat itself has no model-status UI. Server logs are the proof.
