@@ -388,6 +388,37 @@ def _omit_unverifiable_turnaround_claims(
         ).strip()
         if not clause:
             continue
+        # A turnaround's reversed profile is not proof of reversed grip
+        # or anatomical hand position. Avoid certifying that comparison
+        # from the model's prose alone. Keep the raw source unchanged.
+        if (re.search(
+                r"(?i)\b(?:left|right)\s+side\s+views?\b.*"
+                r"\bmirrors?\b", clause)
+                and re.search(
+                    r"(?i)\b(?:reversed|opposite|swapped)\b.{0,50}"
+                    r"\b(?:hand|grip|pose|position)\b", clause)):
+            continue
+        # A visible draping textile is not evidence of hidden mechanical or
+        # armored construction. In ordinary descriptive answers, avoid
+        # promoting the model's inference about a concealed inner layer to
+        # an observation. Explicitly exposed/visible armor remains reportable.
+        if not re.search(r"(?i)\b(?:exposed|clearly\s+visible|uncovered)\b", clause):
+            hidden_structure = (
+                re.search(r"(?i)\b(?:beneath|under|underneath|inside)\b", clause)
+                and re.search(
+                    r"(?i)\b(?:armor|armour|armored|armoured|torso|skeleton|"
+                    r"chassis|mechanism|framework)\b", clause)
+                and re.search(
+                    r"(?i)\b(?:robe|cloak|cape|hood|garment|coat|fabric)\b", clause)
+            )
+            invented_layer = re.search(
+                r"(?i)\b(?:robe|cloak|cape|garment|coat|fabric)\b.{0,75}"
+                r"\b(?:drapes|covers|conceals|hides)\s+(?:over|around|under)?"
+                r"\s*(?:a|the|an)?\s*(?:segmented|armored|armoured|"
+                r"mechanical|skeletal|hidden)\b", clause
+            )
+            if hidden_structure or invented_layer:
+                continue
         # A multi-view synthesis sometimes attaches a guessed hand-held prop
         # to an overhead/headwear-only detail panel. A text formatter cannot
         # verify that contact from pixels. Preserve any preceding description
