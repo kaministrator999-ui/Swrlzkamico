@@ -1,0 +1,35 @@
+name: Measure §E v11.364 UV alignment release
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/measure-uv-alignment-v11-364.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Check additive code syntax
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/model_uv_aligned_export_v11_364.js
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_364_uv_aligned_export.py
+      - name: Build source from manifest and compute exact receipt
+        run: |
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/se364-measure
+          python - <<'PY'
+          import hashlib
+          from pathlib import Path
+          output=Path('/tmp/se364-measure/index.html').read_bytes()
+          print('V11_364_FINAL_BYTES='+str(len(output)))
+          print('V11_364_FINAL_SHA256='+hashlib.sha256(output).hexdigest())
+          PY
+      - name: Validate generated inline JavaScript
+        run: python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se364-measure/index.html
