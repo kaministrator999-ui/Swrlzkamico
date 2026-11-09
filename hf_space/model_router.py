@@ -393,7 +393,8 @@ def _omit_unverifiable_turnaround_claims(
         # verify that contact from pixels. Preserve any preceding description
         # of the top-view surface, but abstain from the contact assertion.
         # Raw inference text is retained in the original vision handoff.
-        if re.search(r"(?i)\b(?:top|overhead)\s+(?:view|panel)\b", clause):
+        top_panel = re.search(r"(?i)\b(?:top|overhead)\s+(?:view|panel)\b", clause)
+        if top_panel:
             contact = re.search(
                 r"(?i)\b(?:held|gripped|carried|clutched|grasped)"
                 r"\s+(?:in|by|with)\s+(?:(?:the|a|her|his|their)\s+)?"
@@ -404,7 +405,7 @@ def _omit_unverifiable_turnaround_claims(
                 r"(?:left|right)\s+hands?\b",
                 clause,
             )
-            if contact:
+            if contact and contact.start() >= top_panel.end():
                 head = clause[:contact.start()]
                 connectors = list(re.finditer(r"(?i)(?:,\s*|\s+and\s+)", head))
                 if connectors:
