@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.369",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_369_WEBXR_CLIFF_STONE_CLONE",
-  "reason": "Publish §E v11.369: replace the rejected procedural Cliff Hand starter with a real independently cloned 1360-vertex/2314-triangle WebXR right hand, keep exact source UVs and 25 transformed landmarks, map original owner Cliff stone PBR atlas color/normal/roughness/AO via native material, 17-bone pose rig retained. Bypass old mismapped crystal stamps. Leave the successful 89-part Rocky Anime Hand, independent WebXR hand references, Quest controllers, UV alignment tools, and saved projects unchanged. Native project-opening and source topology test passed, 376 ordered patches, sealed 9,411,617-byte HTML SHA-256 1602c46c664006e5d68071f1de4af292684eb6d9bff0e388a41043b1d8d8470e. User phone/Quest inspection remains final appearance acceptance.",
-  "sourceCommit": "096a3c86cb046a04d9b96e39f88b962cb9ce8c67",
-  "sourceIntegritySha256": "1602c46c664006e5d68071f1de4af292684eb6d9bff0e388a41043b1d8d8470e"
+  "releaseVersion": "v11.370",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_370_CLIFF_STONE_SURFACE_POLISH",
+  "reason": "Publish §E v11.370 Cliff Hand material-only refinement. The real cloned 1360-vertex WebXR hand anatomy, authored UVs and 17-bone rig remain unchanged, and the accepted 89-rock Rocky Hand remains untouched. Bake 384px Cliff PBR maps once from original owner atlas: imperfect graded/recessed cracks instead of equally outlined tiles, scattered localized moss using actual triangle-to-UV geometry near wrist/thenar/dorsal recesses, subtle sandstone grain, slightly restrained normal relief, original roughness/AO maps with localized weathering. Preserve independent WebXR hand references, Quest controllers, UV workflows and saved user projects. Unit test validated 54,286 real UV pixels, 4,109 seam pixels, 4,519 moss pixels; full 377-patch source seal exact 9,420,154 bytes SHA-256 3fba8f65dbf9bc1b84ddda64257dbfe1ea463fa19f33f57611aec44b4c68b512. Physical Moto/Quest rendering acceptance awaits user testing.",
+  "sourceCommit": "415ed6248c994a489c201b1a6c3360138c0bf43c",
+  "sourceIntegritySha256": "3fba8f65dbf9bc1b84ddda64257dbfe1ea463fa19f33f57611aec44b4c68b512"
 }
