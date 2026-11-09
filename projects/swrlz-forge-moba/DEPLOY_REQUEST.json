@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.370",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_370_CLIFF_STONE_SURFACE_POLISH",
-  "reason": "Publish §E v11.370 Cliff Hand material-only refinement. The real cloned 1360-vertex WebXR hand anatomy, authored UVs and 17-bone rig remain unchanged, and the accepted 89-rock Rocky Hand remains untouched. Bake 384px Cliff PBR maps once from original owner atlas: imperfect graded/recessed cracks instead of equally outlined tiles, scattered localized moss using actual triangle-to-UV geometry near wrist/thenar/dorsal recesses, subtle sandstone grain, slightly restrained normal relief, original roughness/AO maps with localized weathering. Preserve independent WebXR hand references, Quest controllers, UV workflows and saved user projects. Unit test validated 54,286 real UV pixels, 4,109 seam pixels, 4,519 moss pixels; full 377-patch source seal exact 9,420,154 bytes SHA-256 3fba8f65dbf9bc1b84ddda64257dbfe1ea463fa19f33f57611aec44b4c68b512. Physical Moto/Quest rendering acceptance awaits user testing.",
-  "sourceCommit": "415ed6248c994a489c201b1a6c3360138c0bf43c",
-  "sourceIntegritySha256": "3fba8f65dbf9bc1b84ddda64257dbfe1ea463fa19f33f57611aec44b4c68b512"
+  "releaseVersion": "v11.371",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_371_SAFE_SAVE_CLONE_PROJECTS",
+  "reason": "Publish validated §E v11.371 Save Project and Clone Project. Canonical Starter Projects are immutable: Save forks a starter into a separate independent My Projects record, while Save updates only the active project ID and Clone creates a new ID. Reuse existing browser IndexedDB and authenticated Google-account Chat project RPC with optimistic revision checks; preserve complete model meshes, UVs, materials, rigs, game levels and particle emitters. Distinguish download Export from native Save. Auth-host integration, model/particle clone simulation and stale-cloud-revision guard verified by sealed 378-patch source check run 42668214944. Full HTML source 9,431,740 bytes, SHA-256 4b5ca289b86a6a6dadc5c3685adefcdfe05e1ede03cbfed0cda9bcb557ef8b3a. Physical Moto/Quest acceptance remains owner testing.",
+  "sourceCommit": "c506faff46c044601762e5623753d94716a123c5",
+  "sourceIntegritySha256": "4b5ca289b86a6a6dadc5c3685adefcdfe05e1ede03cbfed0cda9bcb557ef8b3a"
 }
