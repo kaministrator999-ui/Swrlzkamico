@@ -1,3 +1,7 @@
+## §E v11.366 · Marked UV authoring without hand-aligning every image (2026-11-08)
+
+Implement a per-part UV art-center marker chosen by tapping the selected mesh or UV preview, with an editable image-plane angle and scale. Export the real UV wireframe transformed to that authoring frame and JSON mapping metadata. The matching import path must inverse-bake artwork back onto the model's source UVs without editing geometry, preserve seam wrapping, and reset any previous texture offset within the same Undo checkpoint. Use current Model Studio popup, original project persistence, and existing texture validation; no new global toolbar or duplicate UV tools. Verify deterministic affine mapping and complete source seal; physical phone/Quest acceptance remains owner testing.
+
 ## §E v11.364 · UV correction capture for AI-assisted iteration (2026-11-08)
 
 After manually aligning artwork on a selected mesh with UV Slide, the editor should export the aligned PNG and compact correction JSON, preserving the original UVs and project state. This supplies an exact before/after image pairing and transform metadata for improving future UV guides and generated textures without forcing new model projections or a secondary editor. The additive native UV panel buttons are optional, and mobile downloads are explicit separate taps.
