@@ -177,7 +177,7 @@ function se340CreateModelVRUI(options){
     ['RIGHT TRIGGER','Select · hold to sculpt / draw'],['LEFT TRIGGER','Add / remove selection'],
     ['RIGHT GRIP','Edit · pull an extruded face'],['LEFT GRIP','Reposition workbench'],
     ['A / B','A: next / hold wheel · B: cancel'],['X / Y','X: panel / hold studio · Y: Undo'],
-    ['RIGHT STICK','Orbit · click to focus'],['LEFT STICK','Pan · click for Precision'],
+    ['RIGHT STICK','Camera orbit ↑↓/←→ · click focus'],['LEFT STICK','Pan · click for Precision'],
     ['ZOOM','Left grip + right stick ↑↓'],['TWO HANDS','Choose Two hands · hold grips']
    ];
    rows.forEach(([key,value],i)=>{
