@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.356",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_356_UV_PREVIEW_VR_CAMERA_ORBIT",
-  "reason": "Publish §E v11.356 sealed from source commit 680f415c733adad3e6006ef7fe7a5da0c65f7f10. UV popup dynamically remains below viewport top toolbars and inside scene horizontal bounds, avoiding mesh hierarchy overlap. Native UV guide, surface-direction, imported paint preview and interactive UV-to-3D/3D-to-UV surface highlighting added without altering model UVs. Model VR right-stick orbit now uses XR offset reference-space to move tracked camera around stationary model rather than rotating mesh presentation, including vertical orbit. Grip transforms use the existing selected mesh group only; trigger remains explicit selection. Source seal verified in GitHub Actions run 42547826167: 9,317,435 HTML bytes, SHA-256 b9da650c67ef7ae030e483cc25a8def0be8ffd0fb0759943f6eafb79a23e8a58. Owner phone/Quest acceptance pending.",
-  "sourceCommit": "680f415c733adad3e6006ef7fe7a5da0c65f7f10",
-  "sourceIntegritySha256": "b9da650c67ef7ae030e483cc25a8def0be8ffd0fb0759943f6eafb79a23e8a58"
+  "releaseVersion": "v11.357",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_357_UV_GUIDE_FIRST",
+  "reason": "Owner requested revert to the easy paint-on-mesh workflow: exact selected-mesh UV wireframe is the default preview; Export UV wireframe → paint any illustration → Import painted image → UV Slide. Optional colored surface-direction and mapping JSON exports are collapsed under Advanced. Current VR camera orbit, floating UV panel, 5 MB import, cyan guide cleanup, native mesh UV coordinates and Undo/Redo retained. v11.357 source sealed in GitHub Actions runs 42550578218 and 42550717555: 365 patches, 9,317,260 HTML bytes, SHA-256 5b88e14678fd6fce292b528cea1112aa7d98ff854f2212ce5a63776d1fc67e0b. Physical phone and Quest validation pending.",
+  "sourceCommit": "fad728e346fcf1e5bdb64f08f6d5307ea7426c2b",
+  "sourceIntegritySha256": "5b88e14678fd6fce292b528cea1112aa7d98ff854f2212ce5a63776d1fc67e0b"
 }
