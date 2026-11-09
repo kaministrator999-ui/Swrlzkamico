@@ -347,6 +347,41 @@ def _omit_unverifiable_turnaround_claims(
             continue
         if re.search(r"(?i)\b(?:in|across|from)\s+(?:all|every)\s+(?:views?|angles?)\b", clause):
             continue
+        # Turnaround crop notes are fallible model observations rather than
+        # verification of exact hand counts or contacts in each viewpoint.
+        # Preserve the general visible props without promoting such guesses.
+        clause = re.sub(
+            r"(?i)\s*[—–]\s*all\s+(?:wearing|holding|carrying|gripping)\b.*$",
+            "", clause,
+        ).strip()
+        if not clause:
+            continue
+        # Keep a useful standalone stance observation when a sentence
+        # bundles it with an unsupported list of grips across views.
+        clause = re.sub(
+            r"(?i)(\b(?:stance|posture)\s+(?:is|appears)\s+\w+)\s*,"
+            r"\s*(?:holding|gripping|carrying)\b.*$",
+            r"\1", clause,
+        ).strip()
+        if re.search(r"(?i)\bhand\s+contact\s*:", clause):
+            continue
+        if re.search(r"(?i)\b(?:both|one|two)\s+hands?\b.{0,80}"
+                     r"\b(?:staff|wand|prop|object|tool|weapon)\b|"
+                     r"\b(?:staff|wand|prop|object|tool|weapon)\b.{0,80}"
+                     r"\b(?:both|one|two)\s+hands?\b", clause):
+            continue
+        if re.search(
+            r"(?i)\b(?:front|back|rear|top|side|overhead)\s+views?\b.{0,120}"
+            r"\bhand(?:s)?\s+(?:holding|gripping)\b", clause,
+        ):
+            continue
+        if re.search(
+            r"(?i)\b(?:staff|wand|weapon|tool)\s+(?:is\s+)?"
+            r"(?:held|gripped)\s+(?:in|by|with)\s+"
+            r"(?:(?:a|one|both|the)\s+)?(?:(?:left|right)\s+)?hands?\b",
+            clause,
+        ):
+            continue
         # A page-relative left/right mismatch in source captions is not
         # trustworthy anatomical handedness. Do not fabricate a correction.
         if (conflicting_staff_hands
