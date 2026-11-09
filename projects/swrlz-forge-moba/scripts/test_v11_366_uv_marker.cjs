@@ -113,17 +113,30 @@ context.camera={
  matrixWorld:{columns:[[1,0,0],[0,1,0],[0,0,1]]},
  updateWorldMatrix(){},getWorldPosition(v){v.x=0;v.y=0;v.z=4;return v;}
 };
-context.se366StopPick=undefined;
 const beforeCheckpoints=checkpoints;
 const initialOffset=part.uvPaintOffset=[.2494,-.0143];
 api.autoAlignCamera();
 assert.equal(checkpoints,beforeCheckpoints+1,'Auto-fit should commit one checkpoint');
 assert(Math.abs(part.uvArtMarker.centerUV[0]-.255556)<1e-6,'Front centered from raycast');
 assert.equal(part.uvArtMarker.angleDeg,-90,'Object roll handled in world tangent calculation');
-assert.deepEqual(part.uvPaintOffset,initialOffset,'Auto-fit must not silently alter original UV Slide');
+assert.equal(JSON.stringify(part.uvPaintOffset),JSON.stringify(initialOffset),'Auto-fit must not silently alter original UV Slide');
 const mapped=api.nativeToArt(...part.uvArtMarker.centerUV,part.uvArtMarker);
 assert(Math.abs(mapped[0]-.5)<1e-9&&Math.abs(mapped[1]-.5)<1e-9,
  'The quarter-offset mage front should land at artwork image center');
+
+
+const paintedOffset=[.2494,-.0143];
+part.uvPaintPNG='data:image/png;base64,AAAA';
+part.uvPaintOffset=paintedOffset.slice();
+api.captureSlide();
+assert(Math.abs(part.uvArtMarker.centerUV[0]-.2506)<1e-6,
+  'A positive quarter-width texture offset makes source mesh front U≈0.25');
+assert(Math.abs(part.uvArtMarker.centerUV[1]-.5143)<1e-6,
+  'V correction should be captured consistently');
+assert.equal(part.uvArtMarker.angleDeg,-90,
+  'Capturing the prior slide should preserve previously oriented marker');
+assert.equal(JSON.stringify(part.uvPaintOffset),JSON.stringify(paintedOffset),
+  'Capture must not modify previous artwork or UV placement');
 
 console.log('UV_MARKER_TESTS_OK',JSON.stringify({
   coordinateRoundTrips:evaluated,
@@ -134,5 +147,6 @@ console.log('UV_MARKER_TESTS_OK',JSON.stringify({
   tiledImageDraws:25,
   cameraOrientationChecks:5,
   cameraAlignedRotatedMesh:true,
-  sourceQuarterOffsetCentered:true
+  sourceQuarterOffsetCentered:true,
+  realSlideCapture:true
 }));
