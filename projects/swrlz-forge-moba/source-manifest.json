@@ -382,6 +382,6 @@
     "patches/v11_357_uv_guide_first.py",
     "patches/v11_358_webxr_hand_starters.py"
   ],
-  "finalBytes": 9317260,
-  "finalSha256": "5b88e14678fd6fce292b528cea1112aa7d98ff854f2212ce5a63776d1fc67e0b"
+  "finalBytes": 9323081,
+  "finalSha256": "8f3e1d431e95d8abd48c7f73176afa9faf41834bcb489c195855289b1420530d"
 }
