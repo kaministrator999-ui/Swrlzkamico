@@ -1,4 +1,5 @@
 name: Calculate clean §E v11.371 source seal
+# Verify authenticated-host insertion boundary
 on:
   push:
     branches: [main]
