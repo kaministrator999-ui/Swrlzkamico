@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.356",
+  "name": "§wyrl§ Engine v11.357",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_356.html",
+  "finalArtifact": "swyrl_engine_v11_357.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -378,8 +378,9 @@
     "patches/v11_353_model_viewport_transform.py",
     "patches/v11_354_model_uv_slide_history.py",
     "patches/v11_355_model_uv_popup.py",
-    "patches/v11_356_uv_preview_vr_camera_orbit.py"
+    "patches/v11_356_uv_preview_vr_camera_orbit.py",
+    "patches/v11_357_uv_guide_first.py"
   ],
-  "finalBytes": 9317435,
-  "finalSha256": "b9da650c67ef7ae030e483cc25a8def0be8ffd0fb0759943f6eafb79a23e8a58"
+  "finalBytes": 0,
+  "finalSha256": ""
 }
