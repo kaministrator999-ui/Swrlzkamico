@@ -1,5 +1,7 @@
 ## §E v11.366 · Marked UV authoring without hand-aligning every image (2026-11-08)
 
+
+Auto alignment is available inside the marker section: **Auto center + upright from view** raycasts the selected visible mesh and uses world-transformed UV tangents plus the current camera-up direction to orient artwork even when the object is rotated. **Capture corrected UV Slide position** extracts the proven manual U/V correction (a centered image with U offset +0.2494 maps to mesh U≈0.2506). Neither button silently changes mesh geometry, ordinary import behavior, or existing painted textures. A camera-relative visible side is not necessarily a semantic palm/front for arbitrary topology.
 Implement a per-part UV art-center marker chosen by tapping the selected mesh or UV preview, with an editable image-plane angle and scale. Export the real UV wireframe transformed to that authoring frame and JSON mapping metadata. The matching import path must inverse-bake artwork back onto the model's source UVs without editing geometry, preserve seam wrapping, and reset any previous texture offset within the same Undo checkpoint. Use current Model Studio popup, original project persistence, and existing texture validation; no new global toolbar or duplicate UV tools. Verify deterministic affine mapping and complete source seal; physical phone/Quest acceptance remains owner testing.
 
 ## §E v11.364 · UV correction capture for AI-assisted iteration (2026-11-08)
