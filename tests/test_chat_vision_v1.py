@@ -1155,8 +1155,8 @@ zero_model = ZeroDescriptorStudyModel()
 with patch.object(vision, "_load_local_model", return_value=zero_model):
     zero_study = vision._ask_vision_local(valid, "What do you see?", analysis_levels=3)
 assert zero_model.calls == 3
-assert "All level captions returned 0 tracked descriptors" in zero_study
-assert "Level 1 remains the fallback, not a quality winner" in zero_study
+assert "Descriptor keyword counts measure wording only" in zero_study
+assert "Level 1 is the whole-image comparison baseline" in zero_study
 
 # The whole-image integration pass must use BOTH actual pixels and
 # accumulated region observations. A generic final caption must not replace
