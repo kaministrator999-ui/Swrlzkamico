@@ -393,6 +393,6 @@
     "patches/v11_369_webxr_cliff_stone_clone.py",
     "patches/v11_370_cliff_surface_polish.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 9420154,
+  "finalSha256": "3fba8f65dbf9bc1b84ddda64257dbfe1ea463fa19f33f57611aec44b4c68b512"
 }
