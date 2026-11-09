@@ -33,7 +33,8 @@ def apply(html):
                    'se356UVPreviewSchedule()']:
         if needle not in js:raise AssertionError(('v11.356 UV preview',needle))
     html=once(html,'  function ensurePanel(){',js+'\n  function ensurePanel(){')
-    html=once(html,'</head>','<style id="se356UVPreviewStyle">\n'+css+'\n</style>\n</head>')
+    assert html.index('</head>')<html.index('<body')
+    html=html.replace('</head>','<style id="se356UVPreviewStyle">\n'+css+'\n</style>\n</head>',1)
     for old,new in [
       ('SWYRL_ENGINE_DEPLOY_MARKER: V11_355_MODEL_UV_POPUP',MARKER),
       ('ENGINE · MAKER v11.355','ENGINE · MAKER v11.356'),
