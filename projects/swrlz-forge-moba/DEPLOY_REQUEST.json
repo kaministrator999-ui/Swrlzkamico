@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.354",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_354_MODEL_UV_SLIDE_HISTORY",
-  "reason": "Publish §E v11.354 from verified main source commit 6030cae5b1925f8665839100feb75ff06adb223b. Model Studio gains direct UV Slide mode on selected textured mesh (pointer drag, U/V nudges, reset), persistent native model texture offsets, one Undo checkpoint per drag, and in-viewport Undo/Redo alongside transform selectors. Full artifact seal: 9,283,827 HTML bytes and SHA-256 8e952dea0bc51c2d2ba3fdc033ae4257fbdeedeb2960fcfca342530e2d716c4b. Feature release verifier passed on GitHub Actions run 42536376088. Physical Moto/Quest acceptance pending.",
-  "sourceCommit": "6030cae5b1925f8665839100feb75ff06adb223b",
-  "sourceIntegritySha256": "8e952dea0bc51c2d2ba3fdc033ae4257fbdeedeb2960fcfca342530e2d716c4b"
+  "releaseVersion": "v11.355",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_355_MODEL_UV_POPUP",
+  "reason": "Publish §E v11.355 from verified source commit 3539af8b49eda5a12c332edbe3b80638d398b049. Model Studio top-header UV Editor button now opens a movable, scrollable, independent UV editor window. Existing single-mesh UV guide, surface directions/info, texture import/remove and linked multi-mesh atlas are reparented with native listeners intact. UV Slide, U/V nudges, reset consolidated in popup; original transform and Undo/Redo remain in top viewport bar. Exact 9,298,924 generated HTML bytes, SHA-256 232d28f4773dcf94c19299f16b94a353a1ba003d6242600e8a76b2dcba9c4673 from successful guarded source measurement run 42540854317. Full version-specific verifier required by dedicated deploy workflow. Owner phone and Quest acceptance pending.",
+  "sourceCommit": "3539af8b49eda5a12c332edbe3b80638d398b049",
+  "sourceIntegritySha256": "232d28f4773dcf94c19299f16b94a353a1ba003d6242600e8a76b2dcba9c4673"
 }
