@@ -86,6 +86,11 @@ def test_qwen_server_is_local_and_source_revision_immutable():
     assert server.LLAMA_CPP_COMMIT == "fd27b2034905f8dadd8bd6d2cc44595f4929d391"
     assert server.SERVER_URL.startswith("http://127.0.0.1:")
     assert "https://github.com/ggml-org/llama.cpp.git" == server.UPSTREAM_URL
+    # On the measured 16-core Space quota, leave other model routes headroom
+    # while no longer constraining Qwen image prefill to the old 2/2 workers.
+    assert server.DECODE_THREADS == 4
+    assert server.BATCH_THREADS == 8
+    assert server.PARALLEL_REQUESTS == 1
 
 
 def test_qwen_server_sse_yields_real_choices_not_synthetic_output():
