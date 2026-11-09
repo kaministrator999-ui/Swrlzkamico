@@ -60,7 +60,7 @@ function se366UseUVPoint(event){
   const v=1-se366Clamp((event.clientY-rect.top)/rect.height,0,1);
   event.preventDefault();event.stopImmediatePropagation();
   se366StopPick();
-  try{se366MarkAt(u,v);}catch(error){status('UV marker: '+error.message,true);}
+  try{se366MarkAt(u,v);se356UVResolve(u,v);}catch(error){status('UV marker: '+error.message,true);}
 }
 function se366UseMeshPoint(event){
   if(!se366Pick||se366Pick.mode!=='mesh'||event.button!==0)return;
@@ -75,7 +75,7 @@ function se366UseMeshPoint(event){
   if(!hit?.uv)return;
   event.preventDefault();event.stopImmediatePropagation();
   se366StopPick();
-  try{se366MarkAt(hit.uv.x,hit.uv.y);}catch(error){status('UV marker: '+error.message,true);}
+  try{se366MarkAt(hit.uv.x,hit.uv.y);se356UVResolve(hit.uv.x,hit.uv.y);}catch(error){status('UV marker: '+error.message,true);}
 }
 function se366StartPick(mode){
   const target=se336SelectedMesh();
@@ -203,7 +203,7 @@ async function se366ImportAuthored(file){
   if(!['image/png','image/jpeg'].includes(file.type)||file.size>5000000){
     status('Select a PNG/JPEG authored image up to 5 MB.',true);return;
   }
-  const id=target.part.id,part=target.part,before=part.uvPaintPNG;
+  const id=target.part.id,part=target.part;
   const snapshot=JSON.stringify(marker),url=URL.createObjectURL(file),image=new Image();
   try{
     await new Promise((resolve,reject)=>{
@@ -223,8 +223,8 @@ async function se366ImportAuthored(file){
        JSON.stringify(se366Marker(part))!==snapshot)
       throw Error('Selected mesh or marker changed during conversion.');
     const bakedFile=new File([blob],part.name+'-uv-BAKED.png',{type:'image/png'});
-    await se336ImportPaint(bakedFile);
-    if(selection!==id||partById(id)!==part||part.uvPaintPNG===before)return;
+    const imported=await se336ImportPaint(bakedFile);
+    if(!imported||selection!==id||partById(id)!==part)return;
     // Native importer committed one Undo checkpoint, before replacing the art.
     // The previous slide and texture are restored TOGETHER by that Undo.
     part.uvPaintOffset=[0,0];
