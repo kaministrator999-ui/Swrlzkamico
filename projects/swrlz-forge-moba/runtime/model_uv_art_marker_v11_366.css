@@ -1,0 +1,39 @@
+/* §E v11.366: optional authoring marker inside existing scrollable UV editor. */
+#modelAtelierPanel #se366MarkerTools{
+  margin:8px 0;border:1px solid #776eac;border-radius:9px;
+  padding:8px;background:#1e2944;color:#ecf1ff;min-width:0;
+}
+#modelAtelierPanel #se366MarkerTools summary{
+  cursor:pointer;font-weight:750;font-size:12px;color:#f7e7aa;
+  padding:6px 2px;overflow-wrap:anywhere;
+}
+#modelAtelierPanel #se366MarkerTools .se366-hint,
+#modelAtelierPanel #se366MarkerTools .se366-info{
+  margin:6px 0 9px;font-size:11px;line-height:1.5;
+  color:#c5d5eb;overflow-wrap:anywhere;
+}
+#modelAtelierPanel #se366MarkerTools .se366-info{color:#ffebac}
+#modelAtelierPanel #se366MarkerTools .se366-actions{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:6px;margin:7px 0;
+}
+#modelAtelierPanel #se366MarkerTools button{
+  width:100%;min-width:0;min-height:39px;
+  border-radius:7px;border:1px solid #7589b5;
+  background:#303f60;color:#f1f7ff;
+  padding:7px 5px;font-size:11px;white-space:normal;overflow-wrap:anywhere;
+}
+#modelAtelierPanel #se366MarkerTools button[aria-pressed="true"]{
+  border-color:#ffd77a;background:#625132;
+}
+#modelAtelierPanel #se366MarkerTools button:disabled{opacity:.48}
+#modelAtelierPanel #se366MarkerTools .se366-range{
+  display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;
+  gap:5px;font-size:12px;margin:10px 0;color:#f0f6ff;
+}
+#modelAtelierPanel #se366MarkerTools .se366-range input[type="range"]{
+  grid-column:1/-1;width:100%;height:26px;accent-color:#f5ca74;
+}
+#modelAtelierPanel #se366MarkerTools .se366-range output{
+  color:#ffe8a2;font-variant-numeric:tabular-nums;
+}
