@@ -1,7 +1,6 @@
 /* SE362_MODEL_VR_CONTROLLER_LABELS_START */
 // Quest 2 controller models + labels. Presentation only: no input dispatch or native edits.
 const se362ControllerLabels=(()=>{
- const S=()=>se340XR;
  const models=new Map(), entries=new Map();
  let generation=0, currentLayer='', loadError='', disposed=true;
  const singleKeys=['RT','LT','RG','LG','RS','LS','A','B','X','Y'];
@@ -49,7 +48,7 @@ const se362ControllerLabels=(()=>{
   const c=b.canvas,ctx=c.getContext('2d');if(!ctx)return;
   ctx.clearRect(0,0,c.width,c.height);
   ctx.fillStyle='rgba(17,24,43,.91)';
-  ctx.beginPath();ctx.roundRect(2,3,380,105,18);ctx.fill();
+  ctx.beginPath();if(ctx.roundRect)ctx.roundRect(2,3,380,105,18);else ctx.rect(2,3,380,105);ctx.fill();
   ctx.lineWidth=3;ctx.strokeStyle='rgba(144,240,221,.62)';ctx.stroke();
   ctx.font='bold 25px system-ui,sans-serif';ctx.textBaseline='middle';ctx.textAlign='left';
   ctx.fillStyle='#84f3de';ctx.fillText(key,17,54);
@@ -74,7 +73,7 @@ const se362ControllerLabels=(()=>{
   if(asset?.schema!=='swrlz-webxr-controller-v1'||asset.side!==side||!Array.isArray(asset.parts)||asset.parts.length!==7)
    throw Error('Quest controller asset schema mismatch.');
   const texture=new THREE.TextureLoader().load(asset.colorTexturePNG);
-  texture.colorSpace=THREE.SRGBColorSpace||texture.colorSpace;
+  texture.flipY=false;texture.colorSpace=THREE.SRGBColorSpace||texture.colorSpace;
   const material=new THREE.MeshStandardMaterial({map:texture,color:0xffffff,roughness:.67,metalness:.07,side:THREE.DoubleSide});
   const model=new THREE.Group();model.name='Quest 2 Touch · '+side+' · WebXR reference mesh';
   model.position.set(0,-.21,0);model.scale.setScalar(.1);model.userData.editorOnly=true;
@@ -168,7 +167,7 @@ const se362ControllerLabels=(()=>{
     const down=!!s.inputSample?.buttons?.[key]?.physical;
     if(b.pressed!==down){
      b.pressed=down;b.material.color.setHex(down?0x86ffe8:0xffffff);
-     b.sprite.scale.set(down?.082:.073,down?.023:.021,1);
+     b.sprite.scale.set(down ? .082 : .073,down ? .023 : .021,1);
     }
     // All main inputs remain discoverable, but physically unused side buttons are hidden.
     b.sprite.visible=side==='left'?['LT','LG','LS','X','Y'].includes(key):
