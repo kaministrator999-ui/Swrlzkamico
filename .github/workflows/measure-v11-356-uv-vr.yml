@@ -1,5 +1,5 @@
 name: §E v11.356 source integrity measurement
-# Recheck after exact document-head anchor correction.
+# Run full source/asset verifier on the sealed release.
 on:
   push:
     branches: [main]
@@ -24,7 +24,7 @@ jobs:
           node --check projects/swrlz-forge-moba/runtime/model_atelier_uv_preview_v11_356.js
       - name: Build full append-only patch chain and measure sealed HTML
         run: |
-          python projects/swrlz-forge-moba/build_space.py --output /tmp/se356-build >/tmp/se356-build.log
+          python projects/swrlz-forge-moba/scripts/verify_v11_356_release.py --output /tmp/se356-build >/tmp/se356-build.log
           python - <<'PY'
           from pathlib import Path
           import hashlib,json
