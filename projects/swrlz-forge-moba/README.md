@@ -1,3 +1,7 @@
+## §E v11.371 · Native Save Project and Clone Project (2026-11-09)
+
+**Starter Projects are read-only templates.** The Save Project action on a starter automatically creates a new independent copy in My Projects; Clone Project explicitly names a second project even when editing an existing saved copy. Each copy has its own ID; Save updates only that active copy, never a name-matched starter or neighboring project. Model meshes, UV textures, materials, rigs, scene data, and particle emitters remain in the complete native project. The existing browser IndexedDB library is the local destination; a signed-in §wyrlz Chat account uses the same authenticated account RPC to save the project to My Projects with revision checks. If account storage is unavailable the on-device copy stays intact. Native controls are in Game, Model, Particle, and the Projects library. Account conflict handling blocks overwrites from stale local cloud metadata. Physical Quest/phone acceptance remains with the owner.
+
 ## §E v11.366 · Reusable per-mesh UV authoring marker (2026-11-08)
 
 
