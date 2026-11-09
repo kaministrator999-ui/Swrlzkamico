@@ -1050,7 +1050,7 @@ assert "genuine crop-specific findings absent from the overview" in last_instruc
 # anatomy, supported-object contact or the decorative legend.
 assert "Never claim views differ ONLY in orientation" in last_instructions
 assert "Do not claim a prop is resting" in last_instructions
-assert "do not infer shoulders, arms, or a full body" in last_instructions
+assert "do not infer shoulders, arms, a torso" in last_instructions
 assert "Do not guess concealed ears, neck surfaces, gloves" in last_instructions
 assert "supporting reference-strip closeups" in last_instructions
 assert "do not create a redundant props section" in last_instructions
