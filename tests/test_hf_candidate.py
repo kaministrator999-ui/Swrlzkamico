@@ -9,6 +9,42 @@ from fastapi.testclient import TestClient
 from station import app as station_app, set_generator
 
 class Candidate(unittest.TestCase):
+ def test_vision_history_stops_hijacking_companion_checkins(self):
+  from station import _history_projection, _companion_topic_shift_from_vision
+  from chat_vision import VISION_START, VISION_END
+  image_prompt=("What do you see in this image?"+VISION_START+
+                "Little Crystal Mage with purple robe and staff"+VISION_END)
+  messages=[
+   {"id":"old","role":"user","text":"Earlier ordinary conversation","createdAt":1},
+   {"id":"image","role":"user","text":image_prompt,"createdAt":2},
+   {"id":"image-answer","role":"assistant","text":"## Image analysis\\n\\nPurple robe and crystal staff","createdAt":3},
+   {"id":"social","role":"user","text":"How are you doing?","createdAt":4},
+   {"id":"echo","role":"assistant","text":"The image shows the mage in purple","createdAt":5},
+  ]
+  original=[item["text"] for item in messages]
+  thread={"messages":messages,"codeArtifacts":[]}
+  for greeting in (
+   "How are you doing?",
+   "How are you?",
+   "Hey §wyrlz, how are you doing?",
+   "No I didn't mean anything about the image was just curious how your doing.",
+   "No, I meant you, not the image.",
+  ):
+   self.assertTrue(_companion_topic_shift_from_vision(greeting),greeting)
+   projected=_history_projection(thread,current_prompt=greeting)
+   self.assertEqual([m["id"] for m in projected],["old"],greeting)
+  # Ordinary visual questions still have full source evidence available.
+  for visual_followup in (
+   "What color is the staff?",
+   "Can you compare the side views?",
+   "How are you doing in the picture?",
+  ):
+   self.assertFalse(_companion_topic_shift_from_vision(visual_followup),visual_followup)
+   projected=_history_projection(thread,current_prompt=visual_followup)
+   self.assertEqual([m["id"] for m in projected],[m["id"] for m in messages])
+  self.assertEqual([item["text"] for item in messages],original)
+  self.assertEqual(len(_history_projection(thread)),len(messages))
+
  def test_station_send_sync_and_route_rejection(self):
   set_generator(None,lambda payload:iter([{"type":"DELTA","text":"Original test output"},{"type":"COMPLETED"}]))
   with TestClient(station_app) as client:
