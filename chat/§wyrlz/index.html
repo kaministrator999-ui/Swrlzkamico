@@ -3508,7 +3508,8 @@
         const messages=(thread.messages||[]).map(msg=>[
           String(msg?.id||""),String(msg?.role||""),String(msg?.text||""),
           !!pins[String(msg?.id||"")],String(msg?.meta?.state||msg?.state||""),
-          String(msg?.meta?.artifactRevision||""),String(msg?.meta?.contentTag||""),JSON.stringify(msg?.meta?.widgets||[]),Number(msg?.createdAt||0)
+          String(msg?.meta?.artifactRevision||""),String(msg?.meta?.contentTag||""),JSON.stringify(msg?.meta?.widgets||[]),
+          JSON.stringify(msg?.meta?.visionResourceUsage||null),Number(msg?.createdAt||0)
         ]);
         const artifactState=artifacts.map(a=>[
           String(a?.id||""),Number(a?.currentRevision||0),String(a?.title||""),
