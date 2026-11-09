@@ -1,3 +1,7 @@
+## §E v11.357 · Wireframe-first UV editor (2026-11-08)
+
+Selected-mesh texture work is again **export the ordinary UV wireframe → paint art → import image → slide UV placement on the mesh**. The exact UV wireframe is shown by default in the popup; directional guides and mapping JSON are optional advanced reference tools. This keeps the smooth artwork workflow and the original UV coordinates intact, without extra projection/baking steps. The latest VR, transforms, model JSON and Undo remain unchanged.
+
 ## §E v11.350 · Two-hand VR modeling, live profiles and native surface tools (2026-11-08)
 
 Model VR now uses the active Controller Studio profile to drive real editing. Right-hand tools and left-hand view controls add multi-part selection, explicit two-hand geometry transforms, A/X hold wheels, focus/precision shortcuts and safe Undo/Redo. Native sculpt strokes, saved lasso masks, planar outline creation and signed closed extrusion stay inside the same immersive editor. Cancel and tracking loss discard previews; each completed operation commits one native history step. Camera/aim/display tools, UV sheets and the owner UV image import correction remain included.
