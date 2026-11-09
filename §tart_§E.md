@@ -1,3 +1,7 @@
+## §E v11.371 — Save Project, Clone Project, immutable starters (2026-11-09)
+
+The native project library supports full-document Save and Clone in the Game, Model, and Particle studios. Starters are read-only templates: first Save forks them into My Projects; future Save on a named project updates only that project ID. Clone always creates a separate copy and identity. The existing Google-authenticated Chat account project RPC is reused for account sync with optimistic revisions, and local IndexedDB always retains a full independent copy. v11.371's source manifest, actual SHA-256, and focused clone tests govern the release; mobile/Quest acceptance stays with the owner.
+
 ## §E v11.360 · Spatial VR menus, tactile buttons and smoother feedback (2026-11-09)
 
 Model Studio VR gains a larger, clearer spatial console with persistent studio navigation, icon tool cards, stronger button states and polished controller wheels. Hover/press feedback and page/panel transitions run in the existing XR loop, respect reduced motion and pause when hidden. Menu ray feedback updates at headset frame cadence while native model-surface hover remains bounded. Current camera orbit, selected-only grip controls, native modeling history, wireframe-first UV painting and the new reference-hand starters stay intact.
