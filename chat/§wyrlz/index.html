@@ -543,7 +543,12 @@
     /* Chat usability pass 1.0.88 */
     .jump-latest{position:fixed;z-index:5;right:16px;bottom:calc(var(--composer-visible-height,70px) + 12px);min-height:38px;padding:0 13px;border:1px solid rgba(56,232,255,.38);border-radius:999px;background:rgba(3,19,34,.94);color:#dffaff;box-shadow:0 8px 24px rgba(0,0,0,.32);cursor:pointer}.jump-latest[hidden]{display:none}
     #sendButton[hidden]{display:none!important}
-    .stop-button{display:inline-grid;place-items:center;width:36px;height:36px;border:1px solid rgba(255,107,122,.42);border-radius:50%;background:rgba(65,18,31,.92);color:#ffdce2;cursor:pointer;font-size:13px}.stop-button[hidden]{display:none}
+    .stop-button{display:inline-grid;place-items:center;width:36px;height:36px;flex-shrink:0;border:1px solid rgba(255,107,122,.42);border-radius:50%;background:rgba(65,18,31,.92);color:#ffdce2;cursor:pointer;font-size:13px}.stop-button[hidden]{display:none}
+    /* Keep the old Send tap location inert while Stop is active. Android touch
+       and a rapid second tap must never hit Stop just because Send vanished. */
+    .send-control-spacer{display:block;width:36px;height:36px;flex:0 0 36px;pointer-events:none}.send-control-spacer[hidden]{display:none}
+    body.swrlz-embed-composer .send-control-spacer{width:44px;height:44px;flex-basis:44px}
+    body.swrlz-embed-composer .stop-button{width:44px;height:44px}
     .send-button{width:36px!important;height:36px!important}.send-button svg{width:16px!important;height:16px!important}
 
     /* Embedded §E touch keyboard/clipboard controls; ordinary standalone Chat unchanged. */
@@ -1319,6 +1324,7 @@
           <button class="send-button" id="sendButton" type="button" aria-label="Send message">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12 20 4l-6 16-3-7-7-1Z"/><path d="m11 13 9-9"/></svg>
           </button>
+          <span class="send-control-spacer" id="sendControlSpacer" aria-hidden="true" hidden></span>
         </div>
       </div>
       <div class="composer-media-tools" aria-label="Message media">
@@ -1352,6 +1358,7 @@
       const embedPaste = document.getElementById("swrlzEmbedPaste");
       if(new URLSearchParams(location.search).get("forgeEmbed")==="1")document.body.classList.add("swrlz-embed-composer");
       const stopButton = document.getElementById("stopButton");
+      const sendControlSpacer=document.getElementById("sendControlSpacer");
       const imagePicker=document.getElementById("imagePicker");
       const imagePickButton=document.getElementById("imagePickButton");
       const imageRemoveButton=document.getElementById("imageRemoveButton");
@@ -3769,6 +3776,7 @@
         const active=stationGenerationActive()||(sending&&!stationGeneration?.terminal);
         sendButton.disabled=stationBusy();imagePickButton.disabled=stationBusy();micButton.disabled=stationBusy();
         sendButton.hidden=active;stopButton.hidden=!active;
+        sendControlSpacer.hidden=!active;
         const requestId=stationAcknowledgedRequest?.requestId||stationGeneration?.requestId;
         stopButton.disabled=!!stationCancellation&&stationCancellation.requestId===requestId;
       };
@@ -4483,6 +4491,10 @@
         }
       };
       stopButton.addEventListener("click",async()=>{
+        // A touch can synthesize a second click as Send is replaced by Stop.
+        // Suppress only the same immediate touch gesture; later intentional
+        // Stop presses still reach the authenticated cancel endpoint.
+        if(performance.now()-lastTouchSend<1000)return;
         const rid=String(stationAcknowledgedRequest?.requestId||stationGeneration?.requestId||"");if(!rid)return;
         if(stationCancellation?.requestId===rid)return;
         const projectionEpoch=accountProjectionEpoch,cancellation={projectionEpoch,requestId:rid};
