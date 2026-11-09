@@ -20,7 +20,7 @@ def apply(html):
                   'async function saveCloud()', 'async function loadCloud('):
         if token not in html:raise AssertionError(('missing native project prerequisite',token))
     html=html.replace('</head>','<style id="se371ProjectSave">\n'+css+'\n</style>\n</head>',1)
-    html=once(html,'window.SWRLZ_FORGE_BUILD=',js+'\nwindow.SWRLZ_FORGE_BUILD=','runtime')
+    html=once(html,'if(ALLOWED_PARENTS.has(location.origin))queueMicrotask(',js+'\nif(ALLOWED_PARENTS.has(location.origin))queueMicrotask(','Chat-host-closure runtime')
     for old,new,label in [
         ('SWYRL_ENGINE_DEPLOY_MARKER: V11_370_CLIFF_STONE_SURFACE_POLISH',MARKER,'release marker'),
         ('ENGINE · MAKER v11.370','ENGINE · MAKER v11.371','header'),
