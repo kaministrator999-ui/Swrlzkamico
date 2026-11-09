@@ -26,7 +26,7 @@ for token in [
     "window.SWRLZ_FORGE_BUILD={version:'v11.365'",
     '<title>§wyrl§ Engine · Maker v11.365</title>',
     'se364DrawAlignedPaint','se364ExportAlignedPaint','se364ExportSlideCorrection',
-    'SE365', 'SWYRL_ENGINE_HAND_REFERENCE_FIT_365',
+    'SWYRL_ENGINE_HAND_REFERENCE_FIT_365',
     'se365RefinedRockScene', 'se365WebXRAnatomy',
     'se364UVSaveAligned','se364UVSaveCorrection',
     'swyrl-model-uv-alignment-correction-v1',
