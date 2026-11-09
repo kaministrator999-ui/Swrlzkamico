@@ -1,0 +1,32 @@
+name: One-shot §E v11.366 UV auto-orientation seal
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/one-shot-uv-marker-auto-v11-366.yml"
+      - "projects/swrlz-forge-moba/source-manifest.json"
+      - "projects/swrlz-forge-moba/runtime/model_uv_art_marker_v11_366.js"
+permissions:
+  contents: read
+jobs:
+  uv-auto-source:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - name: Verify auto orientation and seal source candidate
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/model_uv_art_marker_v11_366.js
+          node projects/swrlz-forge-moba/scripts/test_v11_366_uv_marker.cjs
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/se366-auto-candidate
+          python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se366-auto-candidate/index.html
+          python - <<'PY'
+          from pathlib import Path
+          from hashlib import sha256
+          html=Path('/tmp/se366-auto-candidate/index.html').read_bytes()
+          for needle in [b'se366AutoAlignCamera',b'se366CaptureSlide',b'se366AngleFromView',b'Auto center + upright from view',b"window.SWRLZ_FORGE_BUILD={version:'v11.366'"]:
+              assert needle in html,needle
+          print('SE366_AUTO_BYTES='+str(len(html)),flush=True)
+          print('SE366_AUTO_SHA256='+sha256(html).hexdigest(),flush=True)
+          PY
