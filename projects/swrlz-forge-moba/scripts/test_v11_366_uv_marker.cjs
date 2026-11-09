@@ -11,7 +11,7 @@ const context={
   ensurePanel(){},refreshInspector(){},checkPart(){return true},
   se336SelectedMesh(){return {part,mesh:{geometry:{}}}},
   se336SlideState(){return {enabled:false}},
-  se336SlideOffset(){return [0,0]},
+  se336SlideOffset(p){return Array.isArray(p?.uvPaintOffset)?p.uvPaintOffset.slice():[0,0]},
   se356UVPreviewSchedule(){previewed++},
   se336UVLayout(){return {triangles:1260,vertices:713}},
   checkpoint(){checkpoints++},signalEdited(){edited++},
