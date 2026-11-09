@@ -1,0 +1,50 @@
+name: Calculate §E candidate source seal
+
+# Lightweight authoring receipt. It does not publish or change repository source.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/source-manifest.json"
+
+permissions:
+  contents: read
+
+jobs:
+  seal:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Syntax check for Quest Touch VR hints
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/model_vr_controller_hints_v11_362.js
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_362_quest_controller_hints.py
+      - name: Calculate proposed receipt in runner only
+        run: |
+          python - <<'PY'
+          import hashlib,json,subprocess,sys,tempfile
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          path=root/'source-manifest.json'
+          saved=json.loads(path.read_text('utf8'))
+          assert saved['patches'][-1]=='patches/v11_362_quest_controller_hints.py'
+          temporary=dict(saved,finalBytes=0,finalSha256='')
+          path.write_text(json.dumps(temporary,ensure_ascii=False,indent=2)+'\n','utf8')
+          try:
+              with tempfile.TemporaryDirectory() as folder:
+                  subprocess.run([sys.executable,str(root/'build_space.py'),'--output',folder],check=True)
+                  data=(Path(folder)/'index.html').read_bytes()
+                  assert data==(Path(folder)/'modeler.html').read_bytes()
+                  text=data.decode('utf8')
+                  for needle in ('SE362_CONTROLLER_HINTS_START','se362Frame(s);','se362ControllerConnected(r);',
+                    'SWYRL_ENGINE_DEPLOY_MARKER: V11_362_QUEST_CONTROLLER_HINTS',"window.SWRLZ_FORGE_BUILD={version:'v11.362'"):
+                      assert needle in text,needle
+                  print('CALCULATED_FINAL_BYTES='+str(len(data)),flush=True)
+                  print('CALCULATED_FINAL_SHA256='+hashlib.sha256(data).hexdigest(),flush=True)
+                  print('CALCULATED_ASSET_COUNT='+str(len(json.loads((Path(folder)/'SOURCE.json').read_text('utf8'))['assets'])),flush=True)
+          finally:
+              path.write_text(json.dumps(saved,ensure_ascii=False,indent=2)+'\n','utf8')
+          PY
