@@ -1,0 +1,56 @@
+name: Browser-check §E v11.363 WebXR starter socket repair
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/tests/ui_v11_363_webxr_starter_socket_fix.mjs"
+      - ".github/workflows/verify-webxr-starter-socket-browser-v11-363.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  model-starter-cards:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Reconstruct exact v11.363 snapshot without modifying main
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import json
+          root=Path('projects/swrlz-forge-moba')
+          file=root/'source-manifest.json'
+          m=json.loads(file.read_text('utf8'))
+          assert m['patches'][369]=='patches/v11_363_webxr_starter_socket_fix.py'
+          m.update(name='§wyrl§ Engine v11.363',
+                   finalArtifact='swyrl_engine_v11_363.html',
+                   patches=m['patches'][:370],
+                   finalBytes=9357896,
+                   finalSha256='92089daaa03f476c768494342dc931e852ac1fdc2f39027c4a238c1d616249c9')
+          file.write_text(json.dumps(m,ensure_ascii=False,indent=2))
+          r=root/'SPACE_README.md'
+          content=r.read_text('utf8')
+          import re
+          content=re.sub(r'^title: §wyrl§ Engine v[\d.]+$', 'title: §wyrl§ Engine v11.363',content,count=1,flags=re.M)
+          r.write_text(content)
+          PY
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/se363-model-starters
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib
+          b=Path('/tmp/se363-model-starters/index.html').read_bytes()
+          assert len(b)==9357896, len(b)
+          assert hashlib.sha256(b).hexdigest()=='92089daaa03f476c768494342dc931e852ac1fdc2f39027c4a238c1d616249c9'
+          print('SE363_SNAPSHOT_OK')
+          PY
+      - name: Install mobile Chromium browser
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps --only-shell chromium
+      - name: Click all 4 Starter Model cards and inspect actual Model Studio
+        run: node projects/swrlz-forge-moba/tests/ui_v11_363_webxr_starter_socket_fix.mjs
