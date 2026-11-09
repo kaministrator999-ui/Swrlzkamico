@@ -1,3 +1,7 @@
+## §E v11.364 · Save UV Slide-corrected texture references (2026-11-08)
+
+The existing Model Studio UV popup now includes an optional **After UV Slide · save corrected reference** disclosure for a painted selected mesh. **Save aligned PNG** exports the artwork with the live texture offset baked in; **Export correction JSON** records the exact signed U/V offsets, shift convention, mesh identity, and underlying UV topology count. A reimport of the aligned PNG uses UV offset 0,0 on the same UV layout. The mesh UVs are not rewritten, Undo/Redo remains unchanged, and **Save Project** still keeps the original artwork plus the live offset. Owner tests on phone and Quest follow verified HF release.
+
 ## §E v11.360 · Spatial VR menus, tactile buttons and smoother feedback (2026-11-09)
 
 Model Studio VR gains a larger, clearer spatial console with persistent studio navigation, icon tool cards, stronger button states and polished controller wheels. Hover/press feedback and page/panel transitions run in the existing XR loop, respect reduced motion and pause when hidden. Menu ray feedback updates at headset frame cadence while native model-surface hover remains bounded. Current camera orbit, selected-only grip controls, native modeling history, wireframe-first UV painting and the new reference-hand starters stay intact.
