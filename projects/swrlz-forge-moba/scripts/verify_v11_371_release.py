@@ -13,8 +13,8 @@ manifest=json.loads((ROOT/'source-manifest.json').read_text('utf8'))
 assert manifest['name']=='§wyrl§ Engine v11.371'
 assert manifest['finalArtifact']=='swyrl_engine_v11_371.html'
 assert len(manifest['patches'])==378 and manifest['patches'][-1]=='patches/v11_371_safe_project_clone_save.py'
-assert manifest['finalBytes']==9431223
-assert manifest['finalSha256']=='e22d7efc359ab648defb3980c89cbf91b3a8e982bdd6708147c081cd18e42a76'
+assert manifest['finalBytes']==9431740
+assert manifest['finalSha256']=='4b5ca289b86a6a6dadc5c3685adefcdfe05e1ede03cbfed0cda9bcb557ef8b3a'
 out=Path(args.output).resolve()
 subprocess.run([sys.executable,str(ROOT/'build_space.py'),'--output',str(out)],check=True)
 data=(out/'index.html').read_bytes()
