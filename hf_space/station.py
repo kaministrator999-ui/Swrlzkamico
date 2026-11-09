@@ -42,7 +42,7 @@ import chatgpt_account_memory
 import personal_history_lookup
 import private_account_facts_v208
 from runtime_capacity import runtime_capacity_snapshot, ResponseResourceMeter
-from chat_vision import export_threads_with_vision_handoffs, vision_job_resource_receipt
+from chat_vision import export_threads_with_vision_handoffs, vision_handoff_from_message, vision_job_resource_receipt
 import tempfile
 from project_archive import ProjectArchiveError, archive_filename, build_project_archive, parse_project_files, project_markdown, source_fences, validate_project_files
 from project_revision_workspace import RevisionWorkspaceError, merge_project_revision_files
