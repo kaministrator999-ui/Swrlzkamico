@@ -392,6 +392,6 @@
     "patches/v11_368_uv_camera_alignment.py",
     "patches/v11_369_webxr_cliff_stone_clone.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 9411617,
+  "finalSha256": "1602c46c664006e5d68071f1de4af292684eb6d9bff0e388a41043b1d8d8470e"
 }
