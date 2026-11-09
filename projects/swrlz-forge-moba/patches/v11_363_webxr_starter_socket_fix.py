@@ -20,10 +20,16 @@ def apply(html):
         ' m.meshGroups=[];m.poseFrames=[];m.poseNeutral=null;m.editedAt=\'local\';',
         ' m.meshGroups=[];m.assemblies=null;m.poseFrames=[];m.poseNeutral=null;m.editedAt=\'local\';',
         'hand model stale named sockets')
-    html=once(html,
+    # Several historical model starters use the same pose-frame line.
+    # Limit replacement to the new controller scene instead of modifying others.
+    controller_start=html.index('async function se361ControllerScene(side){')
+    controller_end=html.index('async function se361OpenStarter(id,force=false){',controller_start)
+    controller=html[controller_start:controller_end]
+    controller=once(controller,
         ' model.poseFrames=[];model.poseNeutral=null;model.editedAt=\'local\';',
         ' model.assemblies=null;model.poseFrames=[];model.poseNeutral=null;model.editedAt=\'local\';',
         'controller model stale named sockets')
+    html=html[:controller_start]+controller+html[controller_end:]
     html=once(html,
         '  const parts=source?.project?.modelAtelier?.parts;',
         "  // All four reference starters replace Prism Jester's original parts.\n"
