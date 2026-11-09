@@ -310,7 +310,8 @@ assert.match(backend,/proposals = proposals\[:7\] if layout_panels else proposal
 assert.match(backend,/from vision_sheet_layout import discover_view_panels/);
 assert.match(backend,/regionKind/);
 assert.match(backend,/evidence_notes = "\\n"\.join\(evidence_lines\)\[:2400\]/);
-assert.match(backend,/about 80 to 120 words/);
+assert.match(backend,/90-130 word overview/);
+assert.match(backend,/never generalize a pose or held object/);
 assert.match(backend,/RAW_CROP_MARKER/);
 assert.ok(!backend.includes('"\\n\\nSource observations:\\n"'),"final response must not repeat the whole raw overview");
 assert.ok(!html.includes('Checking for contradictions'),"internal inference consistency checks stay hidden");
