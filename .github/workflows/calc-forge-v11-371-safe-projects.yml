@@ -1,4 +1,5 @@
 name: Calculate final §E v11.371 full-source seal
+# Verify final Save-vs-Export labeling
 on:
   push:
     branches: [main]
