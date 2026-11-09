@@ -174,6 +174,28 @@ function se366AutoAlignCamera(){
   }catch(error){status('Auto UV center: '+error.message,true);}
 }
 
+
+function se366CaptureSlide(){
+  try{
+    const target=se336SelectedMesh();
+    if(!target?.part.uvPaintPNG)
+      throw Error('Import and align a texture with UV Slide first.');
+    const offset=se336SlideOffset(target.part);
+    const wrap01=x=>((x%1)+1)%1;
+    // A centered illustration samples at (0.5,0.5). In Three RepeatWrapping
+    // sampleUV = meshUV + slide; therefore the mesh center is sampleUV-slide.
+    const old=se366Marker(target.part);
+    const marker={version:1,
+      centerUV:[wrap01(.5-offset[0]),wrap01(.5-offset[1])]
+        .map(x=>Math.round(x*1e6)/1e6),
+      angleDeg:old?.angleDeg??0,scale:old?.scale??1};
+    se366SaveMarker(marker);
+    status('Captured current texture Slide as marker: U '+marker.centerUV[0].toFixed(3)+
+      ', V '+marker.centerUV[1].toFixed(3)+
+      '. Assumes your illustration subject is centered; mesh UVs were not changed.');
+  }catch(error){status('Capture UV slide: '+error.message,true);}
+}
+
 function se366DrawMarker(ctx,size,marker){
   if(!se366Valid(marker))return;
   const x=marker.centerUV[0]*size,y=(1-marker.centerUV[1])*size;
@@ -353,7 +375,8 @@ function se366Install(){
     '<div class="se366-actions">'+
       '<button type="button" id="se366PickMesh" data-se366-needs="mesh">Pick center on model</button>'+
       '<button type="button" id="se366PickUV" data-se366-needs="mesh">Pick center on UV preview</button>'+
-      '<button type="button" id="se366Auto" data-se366-needs="mesh" class="se366-wide">Auto center + upright from view</button></div>'+
+      '<button type="button" id="se366Auto" data-se366-needs="mesh" class="se366-wide">Auto center + upright from view</button>'+
+      '<button type="button" id="se366Capture" data-se366-needs="mesh" class="se366-wide">Capture corrected UV Slide position</button></div>'+
     '<p id="se366MarkerInfo" class="se366-info">Select a mesh to place a marker.</p>'+
     '<label class="se366-range">Rotate guide <output id="se366AngleValue">0°</output>'+
       '<input id="se366Angle" data-se366-needs="marker" type="range" min="-180" max="180" step="1" value="0"></label>'+
@@ -370,6 +393,7 @@ function se366Install(){
   box.querySelector('#se366PickMesh').addEventListener('click',()=>se366StartPick('mesh'));
   box.querySelector('#se366PickUV').addEventListener('click',()=>se366StartPick('uv'));
   box.querySelector('#se366Auto').addEventListener('click',se366AutoAlignCamera);
+  box.querySelector('#se366Capture').addEventListener('click',se366CaptureSlide);
   box.querySelector('#se366Angle').addEventListener('change',e=>{
     const target=se336SelectedMesh(),m=se366Marker(target?.part);if(!m)return;
     try{se366SaveMarker({...m,angleDeg:Number(e.target.value)});}
@@ -429,5 +453,6 @@ checkPart=function(part){
 window.SWYRLZ_E_UV_ART_MARKER=Object.freeze({
   current:()=>{const p=se336SelectedMesh()?.part;return se366Marker(p);},
   nativeToArt:se366NativeToArt,artToNative:se366ArtToNative,
-  angleFromView:se366AngleFromView,autoAlignCamera:se366AutoAlignCamera
+  angleFromView:se366AngleFromView,autoAlignCamera:se366AutoAlignCamera,
+  captureSlide:se366CaptureSlide
 });
