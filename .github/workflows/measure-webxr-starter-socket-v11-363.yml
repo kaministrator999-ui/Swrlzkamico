@@ -1,0 +1,45 @@
+name: Measure §E v11.363 WebXR named-socket starter repair
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/patches/v11_363_webxr_starter_socket_fix.py"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-starter-fix:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Validate all four model starts against stale named sockets
+        run: |
+          node projects/swrlz-forge-moba/scripts/test_webxr_starter_socket_fix_v11_363.cjs
+      - name: Compute exact v11.363 HTML bytes and SHA from full ordered lineage
+        run: |
+          python - <<'PY'
+          import base64,gzip,hashlib,json,sys
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          sys.path.insert(0,str(root.resolve()))
+          import build_space
+          manifest=json.loads((root/'source-manifest.json').read_text('utf8'))
+          assert manifest['name']=='§wyrl§ Engine v11.363' and manifest['patches'][-1]=='patches/v11_363_webxr_starter_socket_fix.py'
+          assert len(manifest['patches'])==370
+          data=gzip.decompress(base64.b64decode(''.join((root/p).read_text('utf8').strip() for p in manifest['chunks'])))
+          assert hashlib.sha256(data).hexdigest()==manifest['baseSha256']
+          html=data.decode('utf8')
+          for name in manifest['patches']:
+              html=build_space.load_patch(root/name)(html)
+          for needle in ['m.meshGroups=[];m.assemblies=null;','model.assemblies=null;model.poseFrames=[];',
+                         'source.project.modelAtelier.assemblies=null;',
+                         'SWYRL_ENGINE_DEPLOY_MARKER: V11_363_WEBXR_STARTER_SOCKET_FIX',
+                         "window.SWRLZ_FORGE_BUILD={version:'v11.363'"]:
+              assert needle in html,needle
+          print('SEAL_V363 '+json.dumps({'bytes':len(html.encode('utf8')),
+              'sha256':hashlib.sha256(html.encode('utf8')).hexdigest(),
+              'patches':len(manifest['patches'])}))
+          PY

@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.362
+title: §wyrl§ Engine v11.363
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -10,6 +10,10 @@ header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
 
+
+## §E v11.363 · WebXR reference hand/controller starter load fix (2026-11-08)
+
+The four Projects → Starter Models WebXR reference projects (left/right hands, Quest 2 Touch left/right controllers) now explicitly discard the outdated *Prism Jester* named socket/attachment graph before native project loading. Real mobile-browser validation identified `Invalid named socket` as the reason the first hand card did not open, despite valid bundled geometry; this is the same issue previously addressed for Hooded Vanguard in §E v11.294. The controller's independent seven-part native `meshGroups` assembly is preserved, as are original source UVs/textures, the entire existing Model Studio, and v11.362 tool-aware VR controller labels. Physical phone and Quest 2 confirmation remains owner acceptance.
 
 ## §E v11.362 · Live Quest 2 controller models and adaptive labels (2026-11-08)
 
