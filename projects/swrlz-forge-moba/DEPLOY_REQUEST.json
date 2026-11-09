@@ -4,7 +4,7 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.358",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_358_WEBXR_HAND_STARTERS",
-  "reason": "Publish sealed §E v11.358 from source commit c462b334cc11430e7cd39438ee47d95049ae490c. Two separate WebXR Left/Right Hand starter projects in Starter Models use bundled, independently editable native topology derived from the MIT-licensed generic-hand assets. Each retains 1,360 vertices, 2,314 triangles, original UVs and 25 reference landmarks (not a live-tracked rig). Existing hand and other game/model starters remain unchanged. Source seal verified: 9,323,081 HTML bytes, SHA-256 8f3e1d431e95d8abd48c7f73176afa9faf41834bcb489c195855289b1420530d. Owner phone/Quest acceptance pending.",
-  "sourceCommit": "c462b334cc11430e7cd39438ee47d95049ae490c",
+  "reason": "Publish sealed §E v11.358 from source commit 743bec2e7395d7b922c49f5bef234b9b331d665f. Retry after correcting the release verifier's finalArtifact comparison to swyrl_engine_v11_358.html. Two independently editable WebXR Left and Right Hand starter models in Starter Models, each with 1,360 vertices, 2,314 triangles, original UVs and 25 joint reference landmarks (not live XR-tracked). MIT attribution and both geometry assets bundled. Exact sealed HTML: 9,323,081 bytes, SHA-256 8f3e1d431e95d8abd48c7f73176afa9faf41834bcb489c195855289b1420530d. Owner phone/Quest acceptance pending.",
+  "sourceCommit": "743bec2e7395d7b922c49f5bef234b9b331d665f",
   "sourceIntegritySha256": "8f3e1d431e95d8abd48c7f73176afa9faf41834bcb489c195855289b1420530d"
 }
