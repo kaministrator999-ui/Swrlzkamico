@@ -34,6 +34,21 @@ def apply(html):
       "const forearm=cap(p,[.004,.20,-.004],[.004,1.29,-.009],.298,.232);",
       "const forearm=cap(p,[.004,.20,-.004],[.004,1.29,-.009],.270,.215);",
       'visible tapered wrist profile')
+    # One *smooth* connected SDF finger barrel per digit. The v11.365 radii
+    # remain too broad. Taper the actual native anatomy before remeshing, not
+    # through a discontinuous nearest-bone coordinate transform.
+    start=html.index('function se337OrganicFingerSkin(digits,{ell,cap,blend}){')
+    end=html.index('function se337HandField(math){',start)
+    skin=html[start:end]
+    for before,after,label in [
+      ('f.r*1.17,f.r*.90','f.r*1.06,f.r*.84','proximal barrel'),
+      ('f.r*.94,.080,f.r*.94','f.r*.89,.078,f.r*.89','PIP joint volume'),
+      ('f.r*.89,f.r*.74','f.r*.82,f.r*.68','middle barrel'),
+      ('f.r*.79,.068,f.r*.79','f.r*.73,.066,f.r*.73','DIP volume'),
+      ('f.r*.74,f.r*.59','f.r*.67,f.r*.51','distal taper'),
+      ('f.r*.65,.097,f.r*.65','f.r*.57,.093,f.r*.57','rounded fingertip')
+    ]:skin=once(skin,before,after,label)
+    html=html[:start]+skin+html[end:]
     for old,new,label in [
        ('SWYRL_ENGINE_DEPLOY_MARKER: V11_366_UV_AUTHORING_MARKER',MARKER,'marker'),
        ('ENGINE · MAKER v11.366','ENGINE · MAKER v11.367','header'),
