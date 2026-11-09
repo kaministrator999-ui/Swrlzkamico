@@ -1,4 +1,5 @@
 name: Calculate §E v11.371 safe-project source seal
+# Rerun with first-head insertion fix
 on:
   push:
     branches: [main]
