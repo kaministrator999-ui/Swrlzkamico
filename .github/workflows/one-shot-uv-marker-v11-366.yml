@@ -2,7 +2,11 @@ name: One-shot §E v11.366 UV marker source seal
 on:
   push:
     branches: [main]
-    paths: ["projects/swrlz-forge-moba/source-manifest.json"]
+    paths:
+      - "projects/swrlz-forge-moba/source-manifest.json"
+      - "projects/swrlz-forge-moba/patches/v11_366_uv_authoring_marker.py"
+      - "projects/swrlz-forge-moba/runtime/model_uv_art_marker_v11_366.js"
+      - ".github/workflows/one-shot-uv-marker-v11-366.yml"
 permissions:
   contents: read
 jobs:
