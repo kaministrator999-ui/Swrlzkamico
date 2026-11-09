@@ -380,6 +380,6 @@
     "patches/v11_355_model_uv_popup.py",
     "patches/v11_356_uv_preview_vr_camera_orbit.py"
   ],
-  "finalBytes": null,
-  "finalSha256": null
+  "finalBytes": 9317435,
+  "finalSha256": "b9da650c67ef7ae030e483cc25a8def0be8ffd0fb0759943f6eafb79a23e8a58"
 }
