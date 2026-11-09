@@ -1,3 +1,7 @@
+## §E v11.364 · UV correction capture for AI-assisted iteration (2026-11-08)
+
+After manually aligning artwork on a selected mesh with UV Slide, the editor should export the aligned PNG and compact correction JSON, preserving the original UVs and project state. This supplies an exact before/after image pairing and transform metadata for improving future UV guides and generated textures without forcing new model projections or a secondary editor. The additive native UV panel buttons are optional, and mobile downloads are explicit separate taps.
+
 ## §E v11.360 · Spatial VR menus, tactile buttons and smoother feedback (2026-11-09)
 
 Model Studio VR gains a larger, clearer spatial console with persistent studio navigation, icon tool cards, stronger button states and polished controller wheels. Hover/press feedback and page/panel transitions run in the existing XR loop, respect reduced motion and pause when hidden. Menu ray feedback updates at headset frame cadence while native model-surface hover remains bounded. Current camera orbit, selected-only grip controls, native modeling history, wireframe-first UV painting and the new reference-hand starters stay intact.
