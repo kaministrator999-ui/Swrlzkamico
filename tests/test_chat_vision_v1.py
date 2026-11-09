@@ -867,6 +867,45 @@ for grounded in (
     assert grounded in spatial_clean, (grounded, spatial_clean)
 assert "same hand position and stance" in spatial_claims_report, "source remains unmodified"
 
+# Live L2 regression: a useful overhead hood description was combined with
+# an invented hand-held object. Keep positive headwear observations while
+# abstaining from unverifiable top-panel contact. Do not alter raw evidence.
+overhead_contact_report = (
+    "Character reference · local model observation (accuracy unverified)\n\n"
+    "Subject and views: One subject shown in front, left side, right side, "
+    "back and top reference views.\n"
+    "View comparisons: The back view shows a crescent on the cape, "
+    "and the top view shows a pointed hood with leaf markings and "
+    "a glowing orb held in the right hand.\n"
+    "Geometry and layers: The cape drapes to mid-calf, "
+    "and the character wears brown fur-trimmed boots.\n"
+    "Materials and markings: Purple robe and brown fur-trimmed boots."
+)
+overhead_clean = direct({
+    "prompt": "What do you see in this image?" +
+              vision.VISION_START + overhead_contact_report + vision.VISION_END
+})
+assert "pointed hood with leaf markings" in overhead_clean, overhead_clean
+assert "crescent on the cape" in overhead_clean, overhead_clean
+assert "glowing orb held in the right hand" not in overhead_clean, overhead_clean
+assert "The cape drapes to mid-calf" in overhead_clean, overhead_clean
+assert overhead_clean.casefold().count("boots") == 1, overhead_clean
+assert "glowing orb held in the right hand" in overhead_contact_report
+
+# The guard does not suppress actual descriptions about another view just
+# because a separate overhead panel is mentioned.
+other_view_contact = (
+    "Subject and views: Front, left side, back, top views of one figure.\n"
+    "View comparisons: Front view shows a lantern held in the left hand. "
+    "Top view shows a textured helmet."
+)
+other_view_answer = direct({
+    "prompt": "Describe this image" +
+              vision.VISION_START + other_view_contact + vision.VISION_END
+})
+assert "lantern held in the left hand" in other_view_answer, other_view_answer
+assert "Top view shows a textured helmet" in other_view_answer, other_view_answer
+
 assert "not independently verified" in problematic_result
 
 assert direct({"prompt": "Describe this image" + vision.VISION_START + observed + vision.VISION_END}) is not None
@@ -959,6 +998,7 @@ last_instructions = panel_model.calls[-1]["messages"][0]["content"][0]["text"]
 assert "View panel 5" in last_instructions
 assert "Supporting reference panels" in last_instructions
 assert "POSITIONAL labels" in last_instructions
+assert "headwear-only or ornament-detail crop" in panel_model.calls[1]["messages"][0]["content"][0]["text"]
 assert "do not silently drop the sheet's legend" in last_instructions
 assert "opposite profiles exact mirrors" in last_instructions
 assert "hem length to visible legs and footwear" in last_instructions
