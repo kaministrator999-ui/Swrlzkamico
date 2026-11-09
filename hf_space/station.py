@@ -1079,9 +1079,55 @@ def _response_prose(text):
     return prose.strip()
 
 
-def _history_projection(thread):
+def _companion_topic_shift_from_vision(prompt):
+    """Spot an explicit conversation with the assistant, not an image follow-up.
+
+    This is a relevance gate for *model input*, never a generated greeting.
+    Ambiguous visual questions retain their entire saved image discussion.
+    """
+    text=" ".join(str(prompt or "").casefold().replace("’","'").split())
+    if not text or len(text)>280:
+        return False
+    social=bool(re.search(
+        r"\b(?:how (?:are you|your|you're|youre) doing|how are you|"
+        r"how (?:are you|your|you're) feeling|how(?:'s| is) it going|"
+        r"how(?:'s| is) (?:§wyrlz|swyrlz|swurlz) doing|"
+        r"what(?:'s| is) up with you|are you (?:doing )?(?:okay|ok|alright))\b",
+        text,
+    ))
+    image_reference=bool(re.search(r"\b(?:image|picture|photo|mage|character|drawing|artwork)\b",text))
+    rejected_image=bool(image_reference and re.search(
+        r"\b(?:didn't|did not|don't|do not|wasn't|was not|not|never)\b.{0,100}"
+        r"\b(?:image|picture|photo|mage|character|drawing|artwork)\b", text,
+    ))
+    explicit_redirect=bool(re.search(
+        r"\b(?:i meant (?:you|yourself|§wyrlz|swyrlz)|"
+        r"i was (?:asking|talking) (?:about|to) (?:you|§wyrlz|swyrlz))\b",
+        text,
+    ))
+    return (social and (not image_reference or rejected_image)) or (
+        explicit_redirect and rejected_image
+    )
+
+
+def _history_projection(thread, current_prompt=""):
+    messages=thread.get("messages") or []
+    if _companion_topic_shift_from_vision(current_prompt):
+        # A recent image upload is task evidence, not the assistant's own
+        # identity or conversational state. A correction like "I meant you,
+        # not the image" must not include the mage description, its direct
+        # image answer, or later assistant echoes in the next model prompt.
+        # This only changes the read-only inference projection: all saved
+        # messages remain intact, and genuine visual follow-ups retain them.
+        last_image=next((
+            i for i in range(len(messages)-1,-1,-1)
+            if messages[i].get("role")=="user"
+            and vision_handoff_from_message(messages[i]) is not None
+        ),None)
+        if last_image is not None and len(messages)-last_image<=12:
+            messages=messages[:last_image]
     projected=[]
-    for message in thread.get("messages") or []:
+    for message in messages:
         if message.get("role") not in ("user","assistant"):
             continue
         meta=copy.deepcopy(message.get("meta") or {})
@@ -2034,7 +2080,7 @@ async def _send_owned(request,body,forge_context):
                 feedback={"schema":"swrlz-knowledge-followup-v1","parentRequestId":prior_request,"turnIndex":followup_index,"userText":str(prompt)[:4000],"capturedAtUnixMs":now_ms}
                 event_type="KNOWLEDGE_ACQUISITION_FOLLOWUP_"+str(followup_index)
                 threading.Thread(target=persist_runtime_diagnostic,args=(prior_request,model_id,event_type,feedback),daemon=True,name="knowledge-followup-"+prior_request[:8]).start()
-        history=_history_projection(t)
+        history=_history_projection(t, current_prompt=prompt)
         pins=t.get("messagePins") if isinstance(t.get("messagePins"),dict) else {}
         pinned_context=[_artifact_context_item(t,m) for m in t["messages"] if pins.get(str(m.get("id") or "")) and m.get("role") in ("user","assistant")]
         t["messages"].append({"id":str(body.get("messageId") or uuid.uuid4().hex),"role":"user","text":prompt,"createdAt":now_ms,"meta":{"requestId":rid,"modelId":model_id,**({"contentTag":content_tag} if content_tag else {}),
