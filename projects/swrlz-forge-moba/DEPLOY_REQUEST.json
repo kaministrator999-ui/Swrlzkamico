@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.357",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_357_UV_GUIDE_FIRST",
-  "reason": "Owner requested revert to the easy paint-on-mesh workflow: exact selected-mesh UV wireframe is the default preview; Export UV wireframe → paint any illustration → Import painted image → UV Slide. Optional colored surface-direction and mapping JSON exports are collapsed under Advanced. Current VR camera orbit, floating UV panel, 5 MB import, cyan guide cleanup, native mesh UV coordinates and Undo/Redo retained. v11.357 source sealed in GitHub Actions runs 42550578218 and 42550717555: 365 patches, 9,317,260 HTML bytes, SHA-256 5b88e14678fd6fce292b528cea1112aa7d98ff854f2212ce5a63776d1fc67e0b. Physical phone and Quest validation pending.",
-  "sourceCommit": "fad728e346fcf1e5bdb64f08f6d5307ea7426c2b",
-  "sourceIntegritySha256": "5b88e14678fd6fce292b528cea1112aa7d98ff854f2212ce5a63776d1fc67e0b"
+  "releaseVersion": "v11.358",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_358_WEBXR_HAND_STARTERS",
+  "reason": "Publish sealed §E v11.358 from source commit c462b334cc11430e7cd39438ee47d95049ae490c. Two separate WebXR Left/Right Hand starter projects in Starter Models use bundled, independently editable native topology derived from the MIT-licensed generic-hand assets. Each retains 1,360 vertices, 2,314 triangles, original UVs and 25 reference landmarks (not a live-tracked rig). Existing hand and other game/model starters remain unchanged. Source seal verified: 9,323,081 HTML bytes, SHA-256 8f3e1d431e95d8abd48c7f73176afa9faf41834bcb489c195855289b1420530d. Owner phone/Quest acceptance pending.",
+  "sourceCommit": "c462b334cc11430e7cd39438ee47d95049ae490c",
+  "sourceIntegritySha256": "8f3e1d431e95d8abd48c7f73176afa9faf41834bcb489c195855289b1420530d"
 }
