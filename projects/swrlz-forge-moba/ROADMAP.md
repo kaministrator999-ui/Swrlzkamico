@@ -1,3 +1,7 @@
+## §E v11.355 · Separate popup UV workflow (2026-11-08)
+
+Relocate every native UV editor control from the Model Studio inspector to a single floating UV editor accessed through the modeler top-header button. Keep the selected-mesh UV guide export/import, surface info and whole-character linked atlas together, preserve their listeners, mesh IDs and Undo behavior, and consolidate UV Slide and fine adjustment there. Popup must remain usable with the inspector closed, be movable on desktop/Quest, independently scrollable on phone, and close without closing Model Studio. Validate the generated source and then publish to owner test hardware.
+
 ## §E v11.354 · Selected-mesh texture sliding and viewport Undo/Redo (2026-11-08)
 
 Keep the original Model Studio mesh UV vertices unchanged while allowing visual placement of painted image textures directly on a selected 3D mesh. UV Slide provides surface drag, fine U/V adjustments and reset, and records one native Undo checkpoint per drag. Put Undo/Redo alongside existing viewport transform controls, preserving selection through history when valid. Verify generated source integrity and live deployment independently from owner's Moto/Quest acceptance.
