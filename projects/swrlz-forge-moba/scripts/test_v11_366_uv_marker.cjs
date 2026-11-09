@@ -70,11 +70,69 @@ assert.equal(calls.filter(x=>x[0]==='drawImage').length,25);
 assert.equal(calls.filter(x=>x[0]==='translate').length,2);
 assert.equal(calls.filter(x=>x[0]==='rotate')[0][1],-markers[1].angleDeg*Math.PI/180);
 assert.equal(calls.filter(x=>x[0]==='scale')[0][1],1/markers[1].scale);
+
+// Camera-relative front/top are inferred from actual triangle tangents AFTER
+// mesh rotation, not from hardcoded +Z or a pre-assumed spherical UV quarter.
+const base=[0,0,0],uv0=[0,0],uv1=[1,0],uv2=[0,1];
+const angle=(p1,p2,right=[1,0,0],up=[0,1,0])=>
+  api.angleFromView(base,p1,p2,uv0,uv1,uv2,right,up);
+assert.equal(angle([1,0,0],[0,1,0]),0,'U/V aligned with camera');
+assert.equal(angle([0,1,0],[-1,0,0]),-90,'Rotated mesh changes paint-up angle');
+assert.equal(angle([-1,0,0],[0,-1,0]),-180,'Upside-down mesh should be rotated');
+assert.equal(angle([1,0,0],[0,1,0],[0,-1,0],[1,0,0]),-90,'Rolled camera changes screen-up');
+assert.equal(api.angleFromView(base,[1,0,0],[0,1,0],uv0,uv0,uv2,[1,0,0],[0,1,0]),null,
+  'Degenerate triangle must be reported');
+class Vec{
+ constructor(x=0,y=0,z=0){this.x=x;this.y=y;this.z=z;}
+ clone(){return new Vec(this.x,this.y,this.z);}
+ addScaledVector(v,s){this.x+=v.x*s;this.y+=v.y*s;this.z+=v.z*s;return this;}
+ sub(v){this.x-=v.x;this.y-=v.y;this.z-=v.z;return this;}
+ lengthSq(){return this.x*this.x+this.y*this.y+this.z*this.z;}
+ length(){return Math.sqrt(this.lengthSq());}
+ normalize(){const d=this.length()||1;this.x/=d;this.y/=d;this.z/=d;return this;}
+ setFromMatrixColumn(m,i){const v=m.columns[i];this.x=v[0];this.y=v[1];this.z=v[2];return this;}
+ applyMatrix4(m){const {x,y,z}=this;this.x=m[0][0]*x+m[0][1]*y+m[0][2]*z;
+   this.y=m[1][0]*x+m[1][1]*y+m[1][2]*z;
+   this.z=m[2][0]*x+m[2][1]*y+m[2][2]*z;return this;}
+ fromBufferAttribute(attr,i){const v=attr.vertices[i];this.x=v[0];this.y=v[1];this.z=v[2];return this;}
+ toArray(){return [this.x,this.y,this.z];}
+}
+const rotationZ90=[[0,-1,0],[1,0,0],[0,0,1]];
+const positions={count:3,vertices:[[0,0,0],[1,0,0],[0,1,0]]};
+const tex={count:3,uvs:[[0,0],[1,0],[0,1]],getX(i){return this.uvs[i][0];},getY(i){return this.uvs[i][1];}};
+const fakeMesh={
+ geometry:{getAttribute(name){return name==='position'?positions:tex;},
+   computeBoundingSphere(){this.boundingSphere={center:new Vec(0,0,0),radius:1};}},
+ matrixWorld:rotationZ90,updateWorldMatrix(){},getWorldScale(v){v.x=1;v.y=1;v.z=1;return v;}
+};
+context.se336SelectedMesh=()=>({part,mesh:fakeMesh});
+context.THREE={Vector3:Vec,Raycaster:class{
+ intersectObject(mesh){assert.equal(mesh,fakeMesh);return [{uv:{x:.255555565,y:.71},face:{a:0,b:1,c:2}}];}
+}};
+context.camera={
+ matrixWorld:{columns:[[1,0,0],[0,1,0],[0,0,1]]},
+ updateWorldMatrix(){},getWorldPosition(v){v.x=0;v.y=0;v.z=4;return v;}
+};
+context.se366StopPick=undefined;
+const beforeCheckpoints=checkpoints;
+const initialOffset=part.uvPaintOffset=[.2494,-.0143];
+api.autoAlignCamera();
+assert.equal(checkpoints,beforeCheckpoints+1,'Auto-fit should commit one checkpoint');
+assert(Math.abs(part.uvArtMarker.centerUV[0]-.255556)<1e-6,'Front centered from raycast');
+assert.equal(part.uvArtMarker.angleDeg,-90,'Object roll handled in world tangent calculation');
+assert.deepEqual(part.uvPaintOffset,initialOffset,'Auto-fit must not silently alter original UV Slide');
+const mapped=api.nativeToArt(...part.uvArtMarker.centerUV,part.uvArtMarker);
+assert(Math.abs(mapped[0]-.5)<1e-9&&Math.abs(mapped[1]-.5)<1e-9,
+ 'The quarter-offset mage front should land at artwork image center');
+
 console.log('UV_MARKER_TESTS_OK',JSON.stringify({
   coordinateRoundTrips:evaluated,
   nativeUVUnchanged:true,
   persistedOnPart:true,
   undoCheckpoint:true,
   authoringFrameInverse:true,
-  tiledImageDraws:25
+  tiledImageDraws:25,
+  cameraOrientationChecks:5,
+  cameraAlignedRotatedMesh:true,
+  sourceQuarterOffsetCentered:true
 }));
