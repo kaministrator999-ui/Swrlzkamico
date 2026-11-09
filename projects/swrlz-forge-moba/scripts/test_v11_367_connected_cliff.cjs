@@ -33,6 +33,19 @@ function make(anatomical){
  .replace('f.r*.91,f.r*.77','f.r*.89,f.r*.74')
  .replace('f.r*.76,f.r*.62','f.r*.74,f.r*.59')
  .replace('f.r*.67,.099,f.r*.67','f.r*.65,.097,f.r*.65');
+ if(anatomical){
+  for(const [before,after] of [
+   ['f.r*1.17,f.r*.90','f.r*1.06,f.r*.84'],
+   ['f.r*.94,.080,f.r*.94','f.r*.89,.078,f.r*.89'],
+   ['f.r*.89,f.r*.74','f.r*.82,f.r*.68'],
+   ['f.r*.79,.068,f.r*.79','f.r*.73,.066,f.r*.73'],
+   ['f.r*.74,f.r*.59','f.r*.67,f.r*.51'],
+   ['f.r*.65,.097,f.r*.65','f.r*.57,.093,f.r*.57']
+  ]){
+   assert.equal(geodes.split(before).length,2,'v11.367 finger geometry base changed '+before);
+   geodes=geodes.replace(before,after);
+  }
+ }
  for(const [file,src] of [
   ['base','runtime/model_atelier_hand_proportions_v11_217.js'],
   ['photo',photo],['ulnar',ulnar],['geodes',geodes],
