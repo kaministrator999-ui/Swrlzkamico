@@ -388,6 +388,6 @@
     "patches/v11_364_uv_aligned_export.py",
     "patches/v11_365_hand_reference_fit.py"
   ],
-  "finalBytes": 0,
-  "finalSha256": ""
+  "finalBytes": 9370404,
+  "finalSha256": "c7596236b43e132f47907da9b8349df171e1ba85b444bbee97f3186a134acf64"
 }
