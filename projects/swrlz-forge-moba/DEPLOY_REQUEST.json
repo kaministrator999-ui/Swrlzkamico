@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.362",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_362_QUEST_CONTROLLER_HINTS",
-  "reason": "Owner-requested §E Model Studio VR controller hints: display bundled MIT-licensed Quest 2 Touch models on the native tracked grips and small floating labels over each trigger, grip, thumbstick and face button. Labels follow the selected Inspect, Move, Rotate, Scale, Sculpt brush, Draw, Extrude, Lasso or Two-hand operation and the active Controller Studio bindings, highlighting pressed controls. No hand tracking, new renderer, system-button remaps, model mutations, or duplicate overlays. Exact candidate builder passed: 369 patches, 9,357,888 HTML bytes, SHA-256 4918e30e433953808f53d366c03793e7883c9421c8fdb09d5788113f63be3fd2 and 77 bundled assets. Native Quest 2 comfort/legibility remains owner testing.",
-  "sourceCommit": "774fbe03d56f2922f7fabb32cfdbe879674375e7",
-  "sourceIntegritySha256": "4918e30e433953808f53d366c03793e7883c9421c8fdb09d5788113f63be3fd2"
+  "releaseVersion": "v11.364",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_364_UV_ALIGNMENT_EXPORT",
+  "reason": "Owner-requested selected-mesh UV correction export: after manually positioning painted artwork using the existing UV Slide, optionally save the corrected aligned PNG plus exact offset/mesh-context JSON for comparison and future AI-assisted mapping. No changes to mesh topology, original UV coordinates, current texture positioning, project persistence, native Undo/Redo or unrelated VR and game work. Additive v11.364 verified source is 9,364,395 HTML bytes; SHA-256 f856799ea9bd657b08f46642e96e6021845f306f6351131139767d4bb2ec6403. Device acceptance remains owner testing.",
+  "sourceCommit": "42ae523a62a7ff0415e017aa2a55696fde811e78",
+  "sourceIntegritySha256": "f856799ea9bd657b08f46642e96e6021845f306f6351131139767d4bb2ec6403"
 }
