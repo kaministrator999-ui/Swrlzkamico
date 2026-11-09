@@ -41,5 +41,19 @@ vm.createContext(ctx);vm.runInContext(code,ctx,{filename:'safe-project-runtime.j
  assert.equal(db.size,3);
  assert.equal(db.get('copy-3').name,'Particle Starter Copy');
  assert.equal(ctx.se371HasSavedIdentity(),true);
+ // A stale account revision cannot become an overwrite target, even if the
+ // local project metadata points to an account project with the same name.
+ const savedId=ctx.getProjectId();
+ ctx.se371CloudLinks.set(savedId,{id:'remote-3',revision:1});
+ ctx.ready=true;ctx.se176AccountConnected=true;
+ ctx.rpc=async()=>({projects:[{id:'remote-3',revision:2}]});
+ const refused=await ctx.saveCloud();
+ assert.equal(refused,false,'stale account revision must not be overwritten');
+ assert.equal(cloudSaves,0,'stale account update must not hit the save RPC');
+ ctx.rpc=async()=>({projects:[{id:'remote-3',revision:1}]});
+ const accepted=await ctx.saveCloud();
+ assert.equal(accepted,true,'matching cloud revision can be saved');
+ assert.equal(cloudSaves,1);
+ assert.equal(db.get(savedId).cloudRef.id,'remote-3');
  console.log('SE371_SAVE_CLONE_PASS',JSON.stringify({copies:db.size,starterImmutable:true,modelUVPreserved:true,particlePreserved:true,saveUpdatesById:true}));
 })().catch(e=>{console.error(e);process.exitCode=1});
