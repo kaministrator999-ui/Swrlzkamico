@@ -733,7 +733,11 @@ def _ask_vision_local(image_url: str, question: str, report_phase=None, should_c
                        refined, elapsed, first_chunk, finish_reason)
                 # Retain the new result only when it actually adds visual
                 # specificity. A longer generic paragraph isn't an improvement.
-                if _visual_specificity(refined) > _visual_specificity(content):
+                # Descriptor keyword counts measure vocabulary, not accuracy.
+                # In explicit L3 study mode we present all real passes without
+                # promoting the more verbose result as the visual winner.
+                if (analysis_levels != 3 and
+                        _visual_specificity(refined) > _visual_specificity(content)):
                     content = refined
                     selected_level = 2
                     detail_selected = True
@@ -768,10 +772,9 @@ def _ask_vision_local(image_url: str, question: str, report_phase=None, should_c
                 record(3, LEVEL3_SIDE, LEVEL3_TOKENS, deep, elapsed, first_chunk, finish_reason)
                 level_records[-1]["view"] = "center-source-crop-if-large"
                 report_detail(levelRecords=[dict(item) for item in level_records])
-                if _visual_specificity(deep) > _visual_specificity(content):
-                    content = deep
-                    selected_level = 3
-                    report_detail(selectedLevel=selected_level)
+                # The third pass is an independent center crop, not a
+                # rankable replacement for the complete overview.
+                # Preserve it for comparison without auto-selecting it.
             except VisionCancelled:
                 raise
             except Exception as exc:
@@ -784,11 +787,10 @@ def _ask_vision_local(image_url: str, question: str, report_phase=None, should_c
                      "Original source received: {sourceWidth} × {sourceHeight}px, "
                      "{sourceBytes} encoded file bytes (preserved until server preprocessing).".format(
                          **source_meta),
-                     ("All level captions returned 0 tracked descriptors; "
-                      "Level 1 remains the fallback, not a quality winner."
-                      if max((item["descriptorCount"] for item in level_records), default=0) == 0
-                      else "Selected by descriptor-count heuristic: Level " + str(selected_level) +
-                           " (not a visual accuracy score).")]
+                     ("Level 1 is the whole-image comparison baseline; "
+                      "no level is automatically ranked by visual accuracy. "
+                      "Descriptor keyword counts measure wording only, "
+                      "not evidence or correctness.")]
             for item in level_records:
                 lines.append("\nLevel {level} · {inputMaxSide}px max side · {elapsedSeconds:.2f}s · "
                              "{descriptorCount} descriptor keywords{viewLabel}:\n{description}".format(
