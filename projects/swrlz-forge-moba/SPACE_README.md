@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.356
+title: §wyrl§ Engine v11.357
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.357 · Simple UV wireframe painting (2026-11-08)
+
+The selected-mesh UV Editor again opens on the exact exported UV wireframe by default. Export UV wireframe → paint an illustration → import painted image → align directly on the model with UV Slide. Colored surface-direction and JSON reference exports are tucked under an optional advanced disclosure, not required for normal texture painting. Original authored UVs, large-image acceptance, guide-line cleanup, model saves, Undo/Redo, whole-model atlas, and latest VR camera/selection fixes remain intact. Physical device acceptance follows hosted release.
 
 ## §E v11.356 · Accurate UV preview and stationary-model camera orbit (2026-11-08)
 
