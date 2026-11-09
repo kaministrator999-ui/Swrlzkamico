@@ -9,3 +9,4 @@ SLOW_IMAGE_REFERENCE_20261108=sanitized latency check for 1448x1086 reference sh
 FAST_DEFAULT_POST_RELEASE_20261108=Read-only runtime check after released 1-pass default; no private payload capture
 PERSISTENT_VISION_BADGE_POST_RELEASE=read-only hosted status after saved server-measured image duration deploy; no payloads
 VISION_CPU_CAPACITY_AUDIT_20261109=Read-only CPU limit and wall-time inspection; no user text or images
+FOUR_EIGHT_THREADS_CANCEL_GUARD_POST_RELEASE_20261109=Read-only RUNNING stage, model events, sanitized status after Qwen 4/8 and Send/Stop guard release; no user text or images
