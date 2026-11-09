@@ -3,7 +3,7 @@
 const SE350_MODEL_VR_BINDINGS=Object.freeze({
  model:[['select','tap:RT','Select part'],['multiselect','tap:LT','Add / remove part'],
   ['grab','hold:RG','Transform selection'],['pan','hold:LG','Move workbench'],
-  ['navigate','axis:LS','Pan model'],['orbit','axis:RS','Orbit model'],
+  ['navigate','axis:LS','Pan model'],['orbit','axis:RS','Orbit camera around stationary model'],
   ['tool','tap:A','Next tool'],['tool-wheel','hold:A','Quick tool wheel'],
   ['cancel','tap:B','Cancel / Inspect'],['palette','tap:X','Show tool palette'],
   ['category-wheel','hold:X','Studio categories'],['undo','tap:Y','Undo'],
@@ -11,7 +11,7 @@ const SE350_MODEL_VR_BINDINGS=Object.freeze({
  sculpt:[['stroke','hold:RT','Sculpt stroke'],['sample','tap:LT','Sample surface'],
   ['temporary-smooth','hold:LT','Temporary smooth'],['grab','hold:RG','Transform selection'],
   ['pan','hold:LG','Move workbench'],['radius','axis:LS','Brush radius / strength'],
-  ['orbit','axis:RS','Orbit model'],['tool','tap:A','Next brush'],
+  ['orbit','axis:RS','Orbit camera around stationary model'],['tool','tap:A','Next brush'],
   ['tool-wheel','hold:A','Quick brush wheel'],['cancel','tap:B','Cancel stroke / Inspect'],
   ['palette','tap:X','Show tool palette'],['category-wheel','hold:X','Studio categories'],
   ['undo','tap:Y','Undo stroke'],['two-hand','hold:LG+RG','Two-hand transform'],
