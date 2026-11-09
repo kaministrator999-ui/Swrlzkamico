@@ -826,6 +826,47 @@ for actual_observation in (
 assert cross_view_grip_guess.count("both hands") == 2, "raw evidence text must remain unchanged"
 assert "View panel 1:" not in cross_view_answer
 
+# A newer live L2 turnaround repeatedly invented spatial relationships while
+# identifying most visible objects correctly. A text-only presentation layer
+# must not upgrade uncertain cross-view absence, identical poses or a prop's
+# supposed ground clearance to reliable claims. Raw model data stays intact.
+spatial_claims_report = (
+    "Character reference · local model observation (accuracy unverified)\n\n"
+    "Subject and views: A character appears in Front, Left Side, Right Side, "
+    "Back and Top views with a cloak and a staff.\n"
+    "View comparisons: Left and Right Side Views show the character holding "
+    "the staff with the same hand position and stance. "
+    "The Left Side View reveals a satchel with a leaf emblem hanging from "
+    "the belt, absent in the Right Side View. "
+    "The Back View shows a scarf draped over the cloak's hem, "
+    "not visible in other views. "
+    "The Top View displays the hood's layered fabric and border.\n"
+    "Geometry and layers: The hood has visible trim. "
+    "The staff is held upright, its base resting near the hip, "
+    "not touching the ground. "
+    "The satchel is positioned at the hip in the Left Side View, "
+    "but not visible in others.\n"
+    "Materials and markings: Purple fabric and gold embroidery."
+)
+spatial_clean = direct({
+    "prompt": "What do you see in this image?" +
+              vision.VISION_START + spatial_claims_report + vision.VISION_END
+})
+for guessed in (
+    "same hand position and stance", "absent in the Right Side View",
+    "not visible in other views", "its base resting near the hip",
+    "not touching the ground", "but not visible in others",
+):
+    assert guessed.casefold() not in spatial_clean.casefold(), (guessed, spatial_clean)
+for grounded in (
+    "satchel with a leaf emblem hanging from the belt",
+    "Top View displays the hood's layered fabric and border",
+    "The staff is held upright",
+    "Purple fabric and gold embroidery",
+):
+    assert grounded in spatial_clean, (grounded, spatial_clean)
+assert "same hand position and stance" in spatial_claims_report, "source remains unmodified"
+
 assert "not independently verified" in problematic_result
 
 assert direct({"prompt": "Describe this image" + vision.VISION_START + observed + vision.VISION_END}) is not None
@@ -934,6 +975,11 @@ assert "Do not guess concealed ears, neck surfaces, gloves" in last_instructions
 assert "supporting reference-strip closeups" in last_instructions
 assert "do not create a redundant props section" in last_instructions
 assert "Do NOT output separate Shape, Geometry, and Props sections" in last_instructions
+assert "For every spatial assertion mentally pair SUBJECT" in last_instructions
+assert "absence is not established" in last_instructions
+assert "Do not declare identical grips, poses or hand positions" in last_instructions
+assert "Do not infer grip counts, handedness, a staff's base" in last_instructions
+assert "garment wrapped around the neck or shoulders" in last_instructions
 # The reference strip is included first in the evidence notes, without
 # altering the separately recorded per-panel chronological source order.
 assert last_instructions.index("\nSupporting reference panels (support):") < last_instructions.index("\nView panel 1 (view):")
