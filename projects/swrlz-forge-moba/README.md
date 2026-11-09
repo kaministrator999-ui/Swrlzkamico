@@ -1,5 +1,7 @@
 ## §E v11.366 · Reusable per-mesh UV authoring marker (2026-11-08)
 
+
+Auto alignment is available inside the marker section: **Auto center + upright from view** raycasts the selected visible mesh and uses world-transformed UV tangents plus the current camera-up direction to orient artwork even when the object is rotated. **Capture corrected UV Slide position** extracts the proven manual U/V correction (a centered image with U offset +0.2494 maps to mesh U≈0.2506). Neither button silently changes mesh geometry, ordinary import behavior, or existing painted textures. A camera-relative visible side is not necessarily a semantic palm/front for arbitrary topology.
 An optional marker tool is integrated into the same scrollable UV Editor. On the chosen 3D surface or UV preview, tap to define the 2D artwork center. Rotate the guide −180°…180° and scale it 0.5×…2×, export a source-accurate re-centered wireframe guide and compact JSON transform profile, then import artwork authored in that adjusted frame. §E applies the inverse transform to image pixels, preserves original UV vertices and geometry, resets stale texture Slide offsets with a single native Undo step, and retains marker settings in each model part. Original freeform **Import painted image**, **UV Slide**, and **Save aligned PNG** are unchanged. Model VR and game tools are unaffected.
 
 ## §E v11.364 · Save UV Slide-corrected texture references (2026-11-08)
