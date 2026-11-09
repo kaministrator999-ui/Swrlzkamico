@@ -137,6 +137,9 @@ def main():
     media_paths.append("assets/sheep-tag/grass-source-color-quest.webp")
     media_paths.append('assets/cliff-hand/cliff_pbr_atlas_128.jpg')
     media_paths.append('assets/cliff-hand/cliff_pbr_atlas_384.jpg')
+    media_paths.extend(('assets/models/webxr-hands/left.json',
+                        'assets/models/webxr-hands/right.json',
+                        'assets/models/webxr-hands/LICENSE.md'))
     media_paths.append("scenes/sheep-tag-vast-wildwood-v11-80.swyrl.json")
     media_paths.append('scenes/sheep-tag-wide-walkways-v11-84.swyrl.json')
     media_paths.append('scenes/sheep-tag-seven-minute-v11-85.swyrl.json')

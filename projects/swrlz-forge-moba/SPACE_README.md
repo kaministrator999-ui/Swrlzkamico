@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.357
+title: §wyrl§ Engine v11.358
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.358 · WebXR anatomy reference hands (2026-11-08)
+
+Projects → Starter Models now contains two separate **WebXR Left Hand** and **WebXR Right Hand** starter projects. Both use native editable mesh geometry converted directly from the public WebXR Input Profiles `generic-hand` GLBs, retaining 1,360 vertices, 2,314 triangles and UVs per hand. Each project also stores 25 named joint reference landmarks for anatomy study, but is not a live XR-tracked skin rig. Meshes and the MIT license are bundled locally, rather than fetched from an external host. Existing Plain Hand, Rock Hand, Arcane Glove and other starters remain unchanged. Model Studio editing, UV image painting and hand pose/animation of other models are unaffected. Physical phone/Quest acceptance pending.
 
 ## §E v11.357 · Simple UV wireframe painting (2026-11-08)
 
