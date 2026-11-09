@@ -45,8 +45,29 @@ const host={
  }
 };
 vm.createContext(host);
-for(const name of ['webxr_reference_hand_starters_v11_358.js','webxr_model_starters_v11_361.js'])
- vm.runInContext(fs.readFileSync(path.join(root,'runtime',name),'utf8'),host,{filename:name});
+// The v11.363 append-only patch changes the assembled HTML, not historical
+// v11.358/v11.361 runtime files. Apply its exact scoped replacements to these
+// two isolated runtime fragments so this pure Node test exercises the shipped logic.
+const transforms={
+ 'webxr_reference_hand_starters_v11_358.js':[
+  [" m.meshGroups=[];m.poseFrames=[];m.poseNeutral=null;m.editedAt='local';",
+   " m.meshGroups=[];m.assemblies=null;m.poseFrames=[];m.poseNeutral=null;m.editedAt='local';"]
+ ],
+ 'webxr_model_starters_v11_361.js':[
+  [" model.poseFrames=[];model.poseNeutral=null;model.editedAt='local';",
+   " model.assemblies=null;model.poseFrames=[];model.poseNeutral=null;model.editedAt='local';"],
+  ["  const parts=source?.project?.modelAtelier?.parts;",
+   "  if(source?.project?.modelAtelier)source.project.modelAtelier.assemblies=null;\\n  const parts=source?.project?.modelAtelier?.parts;"]
+ ]
+};
+for(const name of ['webxr_reference_hand_starters_v11_358.js','webxr_model_starters_v11_361.js']){
+ let script=fs.readFileSync(path.join(root,'runtime',name),'utf8');
+ for(const [before,after] of transforms[name]){
+  assert.equal(script.split(before).length,2,'missing expected v11.363 transform anchor in '+name);
+  script=script.replace(before,after);
+ }
+ vm.runInContext(script,host,{filename:name});
+}
 (async()=>{
   const api=host.window.SWYRL_ENGINE_WEBXR_MODEL_STARTERS_361;
   for(const id of ['webxr-hand-left','webxr-hand-right','webxr-touch-left','webxr-touch-right']){
