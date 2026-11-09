@@ -228,6 +228,8 @@ assert.match(capacity,/memoryPeakSampledBytes/);
 assert.match(station,/responseResourceUsage/);
 assert.match(station,/visionResourceUsage/);
 assert.match(station,/vision_job_resource_receipt/);
+assert.match(station,/STATION_CANCEL_REQUEST_ACCEPTED/,"server audits only accepted cancel requests");
+assert.equal((station.match(/g\["cancelRequested"\]=True/g)||[]).length,1,"cancellation state is set only in authenticated cancel endpoint");
 assert.match(backend,/VISION_RESPONSE_RESOURCE_USAGE/);
 assert.match(backend,/resourceUsage/);
 assert.match(backend,/vision_job_resource_receipt/);
