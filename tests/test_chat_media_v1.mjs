@@ -70,6 +70,13 @@ assert.match(html,/container\.classList\.toggle\("vision-editorial",visionFinal\
 assert.match(html,/originalRenderedSources\.set\(container,rawSource\)/,"Copy must retain unmodified source even when legacy vision display is reformatted");
 assert.match(html,/const source=sourceContext\?sourceContext\.body:displaySource/);
 assert.match(html,/vision-preview-unavailable/);
+// The mobile Send and Stop controls must not share a touch target after admission.
+assert.match(html,/id="sendControlSpacer"[^>]*aria-hidden="true" hidden/);
+assert.match(html,/sendControlSpacer\.hidden=!active/);
+assert.match(html,/\.send-control-spacer\{[^}]*pointer-events:none/);
+assert.match(html,/performance\.now\(\)-lastTouchSend<1000\)return/);
+assert.match(html,/stopButton\.addEventListener\("click",async\(\)=>\{/);
+
 assert.match(html,/msg\?\.meta\?\.visionResourceUsage/,"saved vision receipt participates in history DOM reuse");
 assert.match(html,/JSON\.stringify\(msg\?\.meta\?\.visionResourceUsage\|\|null\)/,"arrival of authoritative timing receipt triggers conversation repaint");
 assert.match(html,/visionReceipt\?\.usage\?\.wallTimeMs/,"duration uses verified server wall time");
