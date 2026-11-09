@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.364
+title: §wyrl§ Engine v11.365
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.365 · WebXR anatomy fit for Cliff Hand and multi-rock starter (2026-11-08)
+
+**Projects → Starter Models** keeps the two existing separate stone-hand projects: *Plain Hand Base · Smooth Cliff Hand* (one smooth connected stone-PBR shell) and *Rocky Anime Hand · Emberstone* (rigged multi-rock anatomy). Both receive restrained proportion corrections grounded in the bundled WebXR right-hand 25-joint reference: index/middle/ring/pinky tip-to-proximal ratios **0.943 / 1.000 / 0.920 / 0.746**. The connected Cliff Hand now has a less swollen palm, more natural index and pinky tip reach, a narrower distal wrist and refined finger taper, retaining its original stone cracks, UV paint, geodes and 17-bone rig. The multi-rock hand keeps its closed stone geometry and animated digits, but removes 28 redundant decorative overhangs/slabs (never the core structure), narrows oversized fingers/outer palm, and gently corrects the index/pinky reach. The two WebXR hand references, Quest controllers, older saved projects and other editor tools are untouched. Device visual acceptance is pending.
 
 ## §E v11.364 · Export corrected UV image and calibration (2026-11-08)
 

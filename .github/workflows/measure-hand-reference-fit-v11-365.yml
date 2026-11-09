@@ -1,0 +1,51 @@
+name: Measure §E v11.365 stone hand anatomy fit
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/patches/v11_365_hand_reference_fit.py"
+      - "projects/swrlz-forge-moba/scripts/test_v11_365_cliff_anatomy_fit.cjs"
+      - "projects/swrlz-forge-moba/scripts/test_v11_365_webxr_rock_anatomy.cjs"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  calibrated-hands:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Check anatomy JS syntax
+        run: node --check projects/swrlz-forge-moba/runtime/hand_reference_fit_v11_365.js
+      - name: Verify real imported WebXR ratios, stone topology and Cliff SDF
+        run: |
+          node projects/swrlz-forge-moba/scripts/test_v11_365_webxr_rock_anatomy.cjs
+          node projects/swrlz-forge-moba/scripts/test_v11_365_cliff_anatomy_fit.cjs
+      - name: Compute actual ordered HTML build seal
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import base64,gzip,hashlib,json,sys
+          root=Path('projects/swrlz-forge-moba')
+          sys.path.insert(0,str(root.resolve()))
+          import build_space
+          m=json.loads((root/'source-manifest.json').read_text('utf8'))
+          assert m['name']=='§wyrl§ Engine v11.365'
+          assert len(m['patches'])==372 and m['patches'][-1]=='patches/v11_365_hand_reference_fit.py'
+          raw=gzip.decompress(base64.b64decode(''.join((root/p).read_text('utf8').strip() for p in m['chunks'])))
+          assert hashlib.sha256(raw).hexdigest()==m['baseSha256']
+          h=raw.decode('utf8')
+          for name in m['patches']:h=build_space.load_patch(root/name)(h)
+          for term in ['SWYRL_ENGINE_HAND_REFERENCE_FIT_365',
+                       'SWYRL_ENGINE_DEPLOY_MARKER: V11_365_HAND_REFERENCE_FIT',
+                       "window.SWRLZ_FORGE_BUILD={version:'v11.365'",
+                       'const length={index:.074,middle:.037,ring:.020,pinky:.065};',
+                       'model.assemblies=null;model.poseFrames=[]']:
+            assert term in h,term
+          b=h.encode('utf8')
+          print('SEAL_V365 '+json.dumps({'bytes':len(b),'sha256':hashlib.sha256(b).hexdigest(),
+                       'patches':len(m['patches'])}))
+          PY
