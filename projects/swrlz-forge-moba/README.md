@@ -1,3 +1,7 @@
+## §E v11.355 · Standalone Model Studio UV Editor popup (2026-11-08)
+
+The Model Studio top header now has a persistent **🎨 UV Editor** button. It opens a movable, independently scrollable popup containing the existing selected-mesh UV wireframe, surface-direction and JSON exports, painted PNG import/removal, and linked whole-model UV atlas. The actual native DOM widgets and handlers move out of the inspector without duplicating them. UV Slide, U/V nudges and reset belong inside the popup; the selection viewport top bar retains Move / Rotate / Scale and native Undo / Redo. Close/Escape dismisses only the UV editor. Compact/Quest/desktop layouts constrain the popup to the available viewport; mesh UV coordinates and stored projects remain unchanged.
+
 ## §E v11.354 · On-model UV texture placement and viewport history (2026-11-08)
 
 Select a painted mesh and enable **UV Slide** in the existing viewport transform bar. Drag directly across the selected model surface to reposition its texture without moving its mesh or changing UV vertices. Use U−/U+/V−/V+ for fine positioning, Reset UV for the original mapping, and adjacent Undo/Redo for native edit history. Each completed slide is one undoable edit, and `uvPaintOffset` saves with the model. The controls share the compact, scrollable selection toolbar; no second panel or redundant transform widgets.
