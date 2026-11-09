@@ -1,0 +1,31 @@
+name: One-shot §E v11.366 UV marker source seal
+on:
+  push:
+    branches: [main]
+    paths: ["projects/swrlz-forge-moba/source-manifest.json"]
+permissions:
+  contents: read
+jobs:
+  marker-source-seal:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Verify marker logic and build candidate
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/model_uv_art_marker_v11_366.js
+          node projects/swrlz-forge-moba/scripts/test_v11_366_uv_marker.cjs
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/se366candidate
+          python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se366candidate/index.html
+          python - <<'PY'
+          from pathlib import Path
+          from hashlib import sha256
+          html=Path('/tmp/se366candidate/index.html').read_bytes()
+          assert b"window.SWRLZ_FORGE_BUILD={version:'v11.366'" in html
+          for x in (b'se366ImportAuthored',b'se366MarkAt',b'se366ExportProfile',b'se366BakeArtwork'):
+              assert x in html,x
+          print('SE366_BUILD_BYTES='+str(len(html)),flush=True)
+          print('SE366_BUILD_SHA256='+sha256(html).hexdigest(),flush=True)
+          PY
