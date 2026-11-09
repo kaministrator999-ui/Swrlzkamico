@@ -5,3 +5,4 @@ RELEASE_WORKFLOW_RUN=42503350834
 DEPLOYED_SOURCE_COMMIT=007a6afe1c6e8c3f5b2032f354c0bc21b53162c4
 NO_SPACE_MUTATION=YES
 CHECK_SCOPE=Runtime stage, configured vision route, sanitized startup events only
+SLOW_IMAGE_REFERENCE_20261108=sanitized latency check for 1448x1086 reference sheet, 6min plus; no personal payload capture
