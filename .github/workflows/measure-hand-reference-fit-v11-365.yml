@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - "projects/swrlz-forge-moba/patches/v11_365_hand_reference_fit.py"
+      - "projects/swrlz-forge-moba/runtime/hand_reference_fit_v11_365.js"
       - "projects/swrlz-forge-moba/scripts/test_v11_365_cliff_anatomy_fit.cjs"
       - "projects/swrlz-forge-moba/scripts/test_v11_365_webxr_rock_anatomy.cjs"
   workflow_dispatch:
