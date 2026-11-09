@@ -57,7 +57,7 @@ const transforms={
   [" model.poseFrames=[];model.poseNeutral=null;model.editedAt='local';",
    " model.assemblies=null;model.poseFrames=[];model.poseNeutral=null;model.editedAt='local';"],
   ["  const parts=source?.project?.modelAtelier?.parts;",
-   "  if(source?.project?.modelAtelier)source.project.modelAtelier.assemblies=null;\\n  const parts=source?.project?.modelAtelier?.parts;"]
+   "  if(source?.project?.modelAtelier)source.project.modelAtelier.assemblies=null;\n  const parts=source?.project?.modelAtelier?.parts;"]
  ]
 };
 for(const name of ['webxr_reference_hand_starters_v11_358.js','webxr_model_starters_v11_361.js']){
