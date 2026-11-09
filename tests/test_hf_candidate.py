@@ -49,6 +49,49 @@ class Candidate(unittest.TestCase):
   self.assertEqual([item["text"] for item in messages],original)
   self.assertEqual(len(_history_projection(thread)),len(messages))
 
+ def test_two_image_turns_then_assistant_greeting_reaches_text_route_without_mage(self):
+  """Exercise the actual Station send/sync boundary, not just history helper."""
+  from chat_vision import VISION_START,VISION_END
+  captured=[]
+  def stock(payload):
+   captured.append({"prompt":payload.get("prompt"),
+                    "history":[str(m.get("text") or "") for m in payload.get("history") or []]})
+   return iter([{"type":"DELTA","text":"I'm here and ready to chat."},{"type":"COMPLETED"}])
+  set_generator(None,stock)
+  def submit(client,rid,prompt):
+   suffix=rid.replace("-","")
+   body={"requestId":rid,"threadId":"two-image-social-boundary",
+         "messageId":"u-"+suffix,"assistantMessageId":"a-"+suffix,
+         "prompt":prompt,"modelId":"stock"}
+   response=client.post("/api/lalm_station/send",json=body)
+   self.assertEqual(response.status_code,202,response.text[:300])
+   for _ in range(150):
+    snap=client.get("/api/lalm_station/sync").json()
+    current=snap.get("activeGeneration") or {}
+    if current.get("requestId")==rid and current.get("terminal"):return snap
+    time.sleep(.01)
+   self.fail("Station did not finish request "+rid)
+  mage_text="Little Crystal Mage wearing a purple hood, white braids and crystal staff."
+  image_question="What do you see in this image?"
+  prompt=image_question+VISION_START+mage_text+VISION_END
+  with TestClient(station_app) as client:
+   submit(client,"social-img-1",prompt)
+   submit(client,"social-img-2",prompt)
+   # A genuine visual follow-up retains the original evidence.
+   submit(client,"social-view-detail","What color is the mage's hood in the image?")
+   self.assertTrue(any(mage_text in msg for msg in captured[-1]["history"]))
+   submit(client,"social-hello","How are you doing §wyrlz?")
+   self.assertEqual(captured[-1]["prompt"],"How are you doing §wyrlz?")
+   self.assertFalse(any(mage_text in msg or "mage" in msg.lower() for msg in captured[-1]["history"]))
+   self.assertEqual(captured[-1]["history"],[])
+   self.assertEqual(captured[-1]["prompt"],"How are you doing §wyrlz?")
+   # The saved conversation remains complete even though the model's input
+   # ignores the now-irrelevant image episode.
+   snap=client.get("/api/lalm_station/sync").json()
+   saved=next(x for x in snap["threads"] if x["id"]=="two-image-social-boundary")
+   self.assertEqual(sum(mage_text in m["text"] for m in saved["messages"]),2)
+   self.assertTrue(any("How are you doing §wyrlz?"==m["text"] for m in saved["messages"]))
+
  def test_station_send_sync_and_route_rejection(self):
   set_generator(None,lambda payload:iter([{"type":"DELTA","text":"Original test output"},{"type":"COMPLETED"}]))
   with TestClient(station_app) as client:
