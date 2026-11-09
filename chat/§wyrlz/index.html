@@ -3537,6 +3537,7 @@
         msg?.createdAt,msg?.meta?.state,msg?.state,msg?.meta?.requestId,
         msg?.meta?.contentTag,msg?.meta?.artifactRevision,
         msg?.meta?.widgets,msg?.meta?.progressTrace,msg?.meta?.githubContext,
+        msg?.meta?.visionResourceUsage,
         msg?.meta?.evidence, msg?.codeArtifact, thread?.messagePins?.[msg?.id],
         msg?.role==="assistant"?precedingPrompt:"",
         chatAccountUser?.displayName,chatAccountUser?.email,chatAccountUser?.picture
@@ -3593,6 +3594,23 @@
             const imageText=String(msg.text||"");
             const imageStart=imageText.indexOf(VISION_START);
             const hasVision=imageStart>=0&&imageText.endsWith(VISION_END);
+            // Native Station persists an owner/description-verified vision job
+            // resource receipt. Show its measured wall time even after the
+            // transient progress card is removed or the thread is reloaded.
+            // No client timing is trusted or written into the model's prompt.
+            const visionReceipt=msg?.meta?.visionResourceUsage;
+            const visionMs=visionReceipt?.usage?.wallTimeMs;
+            if(hasVision&&visionReceipt?.source==="owner-and-description-verified-vision-job"&&
+                visionReceipt?.usage?.outcome==="COMPLETE"&&Number.isFinite(visionMs)&&
+                visionMs>=0&&visionMs<86400000){
+              const minutes=Math.floor(visionMs/60000);
+              const seconds=String(Math.floor(visionMs/1000)%60).padStart(2,"0");
+              const duration=document.createElement("span");
+              duration.className="vision-completion-time";
+              duration.textContent=" · Vision "+minutes+":"+seconds;
+              duration.title="Server-measured image analysis time, excluding the follow-up chat response";
+              meta.appendChild(duration);
+            }
             if(hasVision){
               bubble.textContent=imageText.slice(0,imageStart)||"Image attached";
               const previewURL=imagePreviews.get(msg.id||"");
