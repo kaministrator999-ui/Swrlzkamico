@@ -519,14 +519,16 @@ function se336InstallUI() {
   root.innerHTML =
     '<h3>🎨 UV Layout · image guide</h3>' +
     '<p id="se336UVName"></p>' +
-    '<p class="se336-uv-hint">Export the actual mesh UV wireframe as a transparent 1024px PNG. Paint beneath that guide in an image editor, then import the artwork as PNG/JPEG (up to 5 MB). For accurate painting, export both wireframe and colored surface-direction guides (plus UV info JSON); these share the same coordinates. Import only the finished art. Baked cyan guide lines are cleaned when detected. Large textures are resized to fit the model save format.</p>' +
-    '<div class="se336-uv-actions"><button id="se336UVExport" type="button">Export UV guide PNG</button>' +
-    '<button id="se336UVSurface" type="button">Export surface directions</button>' +
-    '<button id="se336UVSurfaceInfo" type="button">Export UV info JSON</button>' +
-    '<button id="se336UVImport" type="button">Import painted PNG</button>' +
+    '<p class="se336-uv-hint">Export the actual mesh UV wireframe as a transparent 1024px PNG. Paint beneath that guide in an image editor, then import the artwork as PNG/JPEG (up to 5 MB). Export the simple UV wireframe, paint your artwork, then import it on the same mesh. Adjust texture placement using UV Slide without moving geometry. Cyan guide lines are cleaned when detected; large images are resized for model saves.</p>' +
+    '<div class="se336-uv-actions"><button id="se336UVExport" type="button">Export UV wireframe</button>' +
+    '<button id="se336UVImport" type="button">Import painted image</button>' +
     '<button id="se336UVRemove" type="button">Remove texture</button></div>' +
+    '<details class="se336-uv-extra"><summary>Advanced UV references (optional)</summary>' +
+    '<div class="se336-uv-actions"><button id="se336UVSurface" type="button">Export surface directions</button>' +
+    '<button id="se336UVSurfaceInfo" type="button">Export UV info JSON</button></div>' +
+    '<p class="se336-uv-hint">Diagnostic direction maps are only for troubleshooting. Normal UV painting never requires these extra files.</p></details>' +
     '<input id="se336UVFile" type="file" accept="image/png,image/jpeg" hidden>' +
-    '<p class="se336-uv-hint">Surface guide colors: FRONT blue · BACK violet · LEFT green · RIGHT orange · TOP gold · BOTTOM slate. The color map is for placement reference, not for importing as artwork.</p>' +
+    '<p class="se336-uv-hint">The exported wireframe is a paint guide, not a texture layer. Import your finished art, then use UV Slide on the model for quick alignment.</p>' +
     '<p id="se336UVHasPaint" class="se336-uv-hint"></p>';
   inspector.append(root);
   root.querySelector('#se336UVExport').addEventListener('click', se336ExportGuide);
