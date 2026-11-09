@@ -16,6 +16,8 @@ Owner review identified two failures in v11.365: the connected Cliff Hand looked
 
 ## §E v11.366 · Paint alignment marker and rotated UV guide (2026-11-08)
 
+
+Auto alignment is available inside the marker section: **Auto center + upright from view** raycasts the selected visible mesh and uses world-transformed UV tangents plus the current camera-up direction to orient artwork even when the object is rotated. **Capture corrected UV Slide position** extracts the proven manual U/V correction (a centered image with U offset +0.2494 maps to mesh U≈0.2506). Neither button silently changes mesh geometry, ordinary import behavior, or existing painted textures. A camera-relative visible side is not necessarily a semantic palm/front for arbitrary topology.
 Inside the existing Model Studio UV popup, expand **UV alignment marker**. Select a mesh, choose **Pick center on model** or **Pick center on UV preview**, then tap its desired front/palm/face center. Adjust **Rotate guide** and **Artwork scale**, export the **marked UV guide** plus **marker JSON**, and design a normal clean artwork image against the centered orientation. **Import marker-aligned artwork** performs the inverse pixel transform against the original mesh UVs, clears the old UV Slide offset in the same Undo operation, and keeps original UV geometry unchanged. Marker settings persist per mesh in project JSON; the original direct paint import and UV Slide workflows remain unchanged. Owner-device validation follows the sealed source release.
 
 
