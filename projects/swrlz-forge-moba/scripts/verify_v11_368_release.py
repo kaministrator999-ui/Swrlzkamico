@@ -11,7 +11,7 @@ ap.add_argument('--request',action='store_true')
 args=ap.parse_args()
 manifest=json.loads((ROOT/'source-manifest.json').read_text('utf8'))
 assert manifest['name']=='§wyrl§ Engine v11.368'
-assert manifest['finalArtifact']=='swyrl_engine_v11_367.html'
+assert manifest['finalArtifact']=='swyrl_engine_v11_368.html'
 assert len(manifest['patches'])==375 and manifest['patches'][-1]=='patches/v11_368_uv_camera_alignment.py'
 assert manifest['finalBytes']==9405696
 assert manifest['finalSha256']=='b7673a49dc5ce60bffe695ef73227bde5c93e83f6f2969cc88fdc3b9e7b3c222'
