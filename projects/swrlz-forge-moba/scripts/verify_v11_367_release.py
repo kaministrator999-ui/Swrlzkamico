@@ -13,8 +13,8 @@ manifest=json.loads((ROOT/'source-manifest.json').read_text('utf8'))
 assert manifest['name']=='§wyrl§ Engine v11.367'
 assert manifest['finalArtifact']=='swyrl_engine_v11_367.html'
 assert len(manifest['patches'])==374 and manifest['patches'][-1]=='patches/v11_367_stone_hand_anatomy.py'
-assert manifest['finalBytes']==9404323
-assert manifest['finalSha256']=='7ec38e5fa8ec81283066d2eebeae33be5c5356ddc23c35ef36cee79497e9a8db'
+assert manifest['finalBytes']==9405531
+assert manifest['finalSha256']=='d288cb18bc236db470b099ddee4f0b9624b4472f859efe68fd1c3655392ae860'
 out=Path(args.output).resolve()
 subprocess.run([sys.executable,str(ROOT/'build_space.py'),'--output',str(out)],check=True)
 data=(out/'index.html').read_bytes()
