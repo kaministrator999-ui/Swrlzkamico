@@ -9,7 +9,8 @@ const se340XR={session:null,busy:false,supported:null,scene:null,camera:null,
  helpVisible:false,gesture:null,page:'tools',viewMode:'orbit',aimHand:'right',aim:null,displayMode:'textured',displayOriginals:new Map(),displayMaterials:new Map(),fit:1,zoom:1,yaw:0,pan:new THREE.Vector2(),
  anchor:null,lastViewer:null,platformOffset:.38,right:new THREE.Vector3(1,0,0),forward:new THREE.Vector3(0,0,-1),
   selectedOutline:null,hoverOutline:null,hoverId:null,frameEntries:null,cachedEntries:null,projectionRevision:-1,pickMatrixFrame:-1,boxCache:new WeakMap(),hoverSurfaceCache:new WeakMap(),hoverGeometries:new Set(),hoverSurfaceMaterial:null,pickStats:{hoverCount:0,preciseCount:0,preciseCandidates:0,lastHoverMs:0,maxHoverMs:0},pitch:0,lastAction:'',error:'',
- ending:false,message:'',stateKey:'',lastPulse:0,reference:null,referenceReset:null};
+ ending:false,message:'',stateKey:'',lastPulse:0,reference:null,referenceReset:null,
+ baseYaw:0,orbitRefState:null,orbitCameraSpace:null};
 const SE340_MODES=['inspect','move','rotate','scale','two-hand','sculpt','draw'];
 const SE350_BRUSHES=['push','smooth','flatten','inflate','pinch','translate'];
 Object.assign(se340XR,{sculptTool:'push',brushRadius:.12,brushStrength:.3,wheel:null,drawLine:null,inputSample:null,frameDt:0});
@@ -274,6 +275,9 @@ function se340PlacePalette(viewer){
 function se340Recenter(viewer=null,focus=false){
  const s=se340XR;if(!s.scene)return false;
  se340CancelGesture('View recentered.');
+ // Restore the physical tracking reference before measuring a new camera orbit.
+ if(s.reference&&renderer.xr?.setReferenceSpace)renderer.xr.setReferenceSpace(s.reference);
+ s.orbitRefState=null;s.orbitCameraSpace=null;
  // Temporarily remove the presentation transform when measuring native units.
  s.rig.position.set(0,0,0);s.rig.quaternion.identity();s.presentation.scale.setScalar(1);s.pivot.position.set(0,0,0);s.scene.updateMatrixWorld(true);
  const native=se340Bridge().inspect(),entries=se340PartEntries();
@@ -291,7 +295,7 @@ function se340Recenter(viewer=null,focus=false){
  s.anchor={position:sourceViewer.position.clone(),forward:forward.clone()};s.forward.copy(forward);s.right.copy(right);
  s.rig.position.copy(sourceViewer.position).addScaledVector(forward,1.12).addScaledVector(right,.19);
  s.rig.position.y=THREE.MathUtils.clamp(sourceViewer.position.y-.22,.75,1.6);
-  s.yaw=Math.atan2(-forward.x,-forward.z);s.pitch=0;s.viewMode='orbit';s.rig.rotation.set(0,s.yaw,0);s.zoom=1;s.pan.set(0,0);s.presentation.scale.setScalar(s.fit);
+  s.yaw=Math.atan2(-forward.x,-forward.z);s.baseYaw=s.yaw;s.pitch=0;s.viewMode='orbit';s.rig.rotation.set(0,s.baseYaw,0);s.zoom=1;s.pan.set(0,0);s.presentation.scale.setScalar(s.fit);
  s.platform.position.copy(s.rig.position);s.platform.position.y-=s.platformOffset;
  se340PlacePalette(sourceViewer);
  s.anchored=true;s.scene.updateMatrixWorld(true);
@@ -383,7 +387,7 @@ function se344SetView(view){
   right:[Math.PI/2,0],top:[0,-Math.PI/2+.035],
   bottom:[0,Math.PI/2-.035],iso:[-Math.PI/4,-.62]
  };
- if(view==='orbit'){s.viewMode='orbit';se340Notice('Free orbit · use right joystick.');return true;}
+ if(view==='orbit'){s.viewMode='orbit';se340Notice('Camera orbit · right stick up/down raises/lowers the viewpoint around the stationary model.');return true;}
  const pose=presets[view];if(!pose)return false;
  s.yaw=yaw+pose[0];s.pitch=pose[1];s.viewMode=view;
  se340Notice(view[0].toUpperCase()+view.slice(1)+' model view · right stick resumes free orbit.');
@@ -540,18 +544,26 @@ function se340BeginGesture(record,purpose='grab'){
  if(purpose==='pan')return se350BeginView(record);
  if(s.mode==='inspect')return false;
  if(!['move','rotate','scale','extrude'].includes(s.mode))return false;
- const hit=se340Hit(record,false);if(hit?.ui||!hit?.id)return false;
+ const hit=se340Hit(record,false);
+ if(hit?.ui)return false;
  if(s.mode==='extrude'){
+  if(!hit?.id)return false;
   se350Tools().select(hit.id);
   const result=se350Surface().extrudeBegin(hit.id);if(result?.ok===false)return se350Result(result,'',record);
   result.mesh.updateWorldMatrix(true,false);se350Invalidate();
   s.gesture={kind:'extrude',record,id:hit.id,mode:'extrude',hand:pose,rootInverse:result.mesh.matrixWorld.clone().invert(),normal:new THREE.Vector3(...result.normal)};
   se340Notice('Pull grip away from the face to give it thickness · B cancels.');return true;
  }
- const tools=se350Tools();if(!tools.selection().ids.includes(hit.id))tools.select(hit.id);
+ const tools=se350Tools(),chosen=tools.selection();
+ // Grip never performs a raycast selection. Selection belongs exclusively to
+ // triggers/part list; rotating near another mesh must keep the current target.
+ if(!chosen.ids.length){
+  se340Notice('Select a mesh using the trigger first; grip edits only the existing selection.');
+  return false;
+ }
  const result=tools.beginGroup(undefined,s.mode);if(result?.ok===false)return se350Result(result,'',record);
  const root=se350Root();root.updateWorldMatrix(true,false);
- s.gesture={kind:'group',record,id:hit.id,mode:s.mode,hand:pose,rootInverse:root.matrixWorld.clone().invert(),rootQuaternion:root.getWorldQuaternion(new THREE.Quaternion())};
+ s.gesture={kind:'group',record,id:chosen.primaryId||chosen.ids[0],mode:s.mode,hand:pose,rootInverse:root.matrixWorld.clone().invert(),rootQuaternion:root.getWorldQuaternion(new THREE.Quaternion())};
  se340Notice(s.mode==='scale'?'Lift/lower grip to size selection · release applies; B cancels.':'Grip edits selection · release applies; B cancels.');se340Pulse(record,.25,25);return true;
 }
 function se340UpdateGesture(){
@@ -786,13 +798,43 @@ function se340Poll(record,frame,dt){
    if(hit?.point){record.dot.position.copy(hit.point);record.dot.quaternion.copy(se340XR.camera.quaternion);record.dot.lookAt(record.target.getWorldPosition(new THREE.Vector3()));}
   }else{record.hit=null;record.hoverKey=null;record.nextHoverAt=0;}
 }
+// True camera orbit for WebXR: move the tracked HMD/reference space around
+// the stationary presentation. A model rig rotation is NOT a camera orbit.
+// The offset reference transforms the HMD and both tracked controllers together,
+// preserving physical hand-to-head geometry and avoiding XR camera overrides.
+function se356ApplyCameraOrbit(){
+ const s=se340XR,base=s.reference;
+ if(!s.session||!se340VisibleSession()||!base?.getOffsetReferenceSpace||
+    !renderer.xr?.setReferenceSpace||typeof XRRigidTransform==='undefined')return;
+ const yaw=s.yaw-s.baseYaw,pitch=s.pitch,c=s.rig.position;
+ const old=s.orbitRefState;
+ if(old&&Math.abs(old.yaw-yaw)<.0003&&Math.abs(old.pitch-pitch)<.0003&&
+   old.center.distanceToSquared(c)<.000004)return;
+ if(Math.abs(yaw)<.00001&&Math.abs(pitch)<.00001){
+   renderer.xr.setReferenceSpace(base);
+   s.orbitCameraSpace=base;
+ }else{
+   // Reference-space offset T produces inverse(T) camera motion. The viewer
+   // revolves around fixed model center C; world geometry does not turn.
+   const q=new THREE.Quaternion().setFromEuler(new THREE.Euler(pitch,yaw,0,'YXZ'));
+   const t=c.clone().sub(c.clone().applyQuaternion(q));
+   const offset=new XRRigidTransform(
+     {x:t.x,y:t.y,z:t.z,w:1},{x:q.x,y:q.y,z:q.z,w:q.w});
+   const space=base.getOffsetReferenceSpace(offset);
+   renderer.xr.setReferenceSpace(space);
+   s.orbitCameraSpace=space;
+ }
+ s.orbitRefState={yaw,pitch,center:c.clone()};
+}
 function se340UpdateView(){
  const s=se340XR;if(!s.anchor)return;
  s.rig.position.copy(s.anchor.position).addScaledVector(s.forward,1.12).addScaledVector(s.right,.19+s.pan.x);
  s.rig.position.y=THREE.MathUtils.clamp(s.anchor.position.y-.22,.75,1.6)+s.pan.y;
-  s.rig.rotation.set(s.pitch,s.yaw,0,'YXZ');s.presentation.scale.setScalar(s.fit*s.zoom);
+ // Orientation is fixed for the entire orbit; only the camera reference moves.
+ s.rig.rotation.set(0,s.baseYaw,0,'YXZ');s.presentation.scale.setScalar(s.fit*s.zoom);
  s.platform.position.copy(s.rig.position);s.platform.position.y-=s.platformOffset*s.zoom;
  s.platform.scale.setScalar(THREE.MathUtils.clamp(s.zoom,.5,2));
+ se356ApplyCameraOrbit();
 }
 function se340SyncUI(){
  const s=se340XR,native=se340Bridge().inspect(),entries=se340PartEntries();
@@ -929,7 +971,8 @@ function se340Cleanup(expected){
  const s=se340XR;if(expected&&s.session!==expected)return;
  se340CancelGesture('VR ended · uncommitted preview canceled.');
  if(s.reference&&s.referenceReset)s.reference.removeEventListener?.('reset',s.referenceReset);
- s.reference=null;s.referenceReset=null;
+ if(s.reference&&renderer.xr?.setReferenceSpace)renderer.xr.setReferenceSpace(s.reference);
+ s.reference=null;s.referenceReset=null;s.orbitRefState=null;s.orbitCameraSpace=null;
  se345RestoreDisplay();
  try{se340Bridge()?.releaseRoot?.();se350Tools()?.refreshSelection?.();}catch(error){s.error=String(error?.message||error);}
  for(const r of s.controllers){
@@ -968,7 +1011,7 @@ async function se340ModelXREnter(){
   s.previous={xrEnabled:renderer.xr.enabled,orbitEnabled:orbit.enabled};
   se350Input.reset();s.wheel=null;
   s.session=requested;s.mode='inspect';s.precision=false;s.snap=false;s.paletteVisible=true;s.helpVisible=false;
-   s.page='tools';s.viewMode='orbit';s.aimHand='right';s.aim=se344ReadAim();s.displayMode='textured';s.displayOriginals=new Map();s.displayMaterials=new Map();
+   s.page='tools';s.viewMode='orbit';s.orbitRefState=null;s.orbitCameraSpace=null;s.aimHand='right';s.aim=se344ReadAim();s.displayMode='textured';s.displayOriginals=new Map();s.displayMaterials=new Map();
    s.frameCount=0;s.lastTime=0;s.stateKey='';s.anchored=false;s.ending=false;s.hoverId=null;s.frameEntries=null;s.cachedEntries=null;s.projectionRevision=-1;s.pickMatrixFrame=-1;se343DropHoverSurfaces();s.boxCache=new WeakMap();s.pickStats={hoverCount:0,preciseCount:0,preciseCandidates:0,lastHoverMs:0,maxHoverMs:0};s.pitch=0;
   se340MakeStage();s.controllers=[se340MakeController(0),se340MakeController(1)];
   requested.addEventListener('end',()=>queueMicrotask(()=>se340Cleanup(requested)),{once:true});
@@ -976,7 +1019,7 @@ async function se340ModelXREnter(){
   renderer.xr.enabled=true;renderer.xr.setReferenceSpaceType('local-floor');orbit.enabled=false;
   await renderer.xr.setSession(requested);
   s.reference=renderer.xr.getReferenceSpace();
-  s.referenceReset=()=>{se340CancelGesture('Tracking origin changed; preview canceled.');s.anchored=false;
+  s.referenceReset=()=>{se340CancelGesture('Tracking origin changed; preview canceled.');s.anchored=false;s.orbitRefState=null;s.orbitCameraSpace=null;
    for(const record of s.controllers)record.blockGrip=true;};
   s.reference?.addEventListener?.('reset',s.referenceReset);
   try{window.SWYRL_VR_CONTROLS?.attachSession?.(requested);}catch(_){}
