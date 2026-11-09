@@ -1,0 +1,59 @@
+name: Seal §E v11.362 controller-label source
+
+# One narrowly scoped source-integrity calculation. No game/VR browser suites.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/source-manifest.json"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: swrlz-forge-v11-362-source-seal
+  cancel-in-progress: false
+
+jobs:
+  seal:
+    if: github.event.head_commit.message == 'chore(§E): stage v11.362 source seal'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Build unsealed source and record its exact integrity
+        run: |
+          python - <<'PY'
+          import json,hashlib,subprocess,sys,tempfile
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          manifest=root/'source-manifest.json'
+          source=json.loads(manifest.read_text('utf8'))
+          assert source['name']=='§wyrl§ Engine v11.362'
+          assert source['finalArtifact']=='swyrl_engine_v11_362.html'
+          assert len(source['patches'])==369 and source['patches'][-1]=='patches/v11_362_controller_tool_labels.py'
+          assert not source.get('finalSha256') and not source.get('finalBytes')
+          with tempfile.TemporaryDirectory() as directory:
+              subprocess.run([sys.executable,str(root/'build_space.py'),'--output',directory],check=True)
+              data=(Path(directory)/'index.html').read_bytes()
+              assert 'SWYRL_ENGINE_DEPLOY_MARKER: V11_362_CONTROLLER_TOOL_LABELS' in data.decode('utf8')
+              source['finalBytes']=len(data)
+              source['finalSha256']=hashlib.sha256(data).hexdigest()
+          manifest.write_text(json.dumps(source,ensure_ascii=False,indent=2)+'\n','utf8')
+          print('EXACT SOURCE:',source['finalBytes'],source['finalSha256'])
+          PY
+      - name: Verify rebuilt HTML, JavaScript and bundled assets
+        run: |
+          python projects/swrlz-forge-moba/scripts/verify_v11_362_release.py --output dist/swrlz-forge-moba
+      - name: Commit exact manifest integrity without changing other sources
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add projects/swrlz-forge-moba/source-manifest.json
+          git commit -m "chore(§E): seal exact v11.362 controller labels source"
+          git push origin HEAD:main
