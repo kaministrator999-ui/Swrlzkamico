@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.368",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_368_UV_CAMERA_ALIGNMENT",
-  "reason": "§E v11.368 metadata sync only: publish matching Space title and release notes after successful sealed engine upload in run 42572138278. No changes to source-manifest, compiled HTML, UV marker functions, stone-hand geometry or previous accepted source integrity. Keep 375 patches; HTML 9,405,696 bytes SHA-256 b7673a49dc5ce60bffe695ef73227bde5c93e83f6f2969cc88fdc3b9e7b3c222. Phone/Quest functional acceptance remains owner validation.",
-  "sourceCommit": "abe7309b85c49fa0aac8a19e2e5018f4b2573560",
-  "sourceIntegritySha256": "b7673a49dc5ce60bffe695ef73227bde5c93e83f6f2969cc88fdc3b9e7b3c222"
+  "releaseVersion": "v11.369",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_369_WEBXR_CLIFF_STONE_CLONE",
+  "reason": "Publish §E v11.369: replace the rejected procedural Cliff Hand starter with a real independently cloned 1360-vertex/2314-triangle WebXR right hand, keep exact source UVs and 25 transformed landmarks, map original owner Cliff stone PBR atlas color/normal/roughness/AO via native material, 17-bone pose rig retained. Bypass old mismapped crystal stamps. Leave the successful 89-part Rocky Anime Hand, independent WebXR hand references, Quest controllers, UV alignment tools, and saved projects unchanged. Native project-opening and source topology test passed, 376 ordered patches, sealed 9,411,617-byte HTML SHA-256 1602c46c664006e5d68071f1de4af292684eb6d9bff0e388a41043b1d8d8470e. User phone/Quest inspection remains final appearance acceptance.",
+  "sourceCommit": "096a3c86cb046a04d9b96e39f88b962cb9ce8c67",
+  "sourceIntegritySha256": "1602c46c664006e5d68071f1de4af292684eb6d9bff0e388a41043b1d8d8470e"
 }
