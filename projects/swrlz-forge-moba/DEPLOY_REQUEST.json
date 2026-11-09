@@ -4,7 +4,7 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.365",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_365_HAND_REFERENCE_FIT",
-  "reason": "Publish §E v11.365: anatomy-corrected existing Cliff Hand and Rocky Anime Hand starter projects, grounded in bundled 25-joint WebXR hand reference. Cliff: slimmer metacarpal and wrist, natural index/pinky reach, subtle finger taper; one connected stone PBR model and 17-bone rig preserved. Rocky: 28 decorative slabs/overhangs/chips pruned, solid palm and all fingers/thumb segments preserved, rock geometry width/depth reshaped with original UVs, 17 bones, seams, sculpt/save intact. Confirmed focused native geometry/SDF regressions: 89 to 61 pieces in original standalone rock generator, 0.35064 to 0.30735 index root width, 0.5161 to 0.4839 cliff palm width, 0.306 to 0.287 wrist width. Exact sealed HTML 9,370,404 bytes, SHA-256 c7596236b43e132f47907da9b8349df171e1ba85b444bbee97f3186a134acf64, 372 ordered patches. Quest/phone visual acceptance belongs to owner.",
-  "sourceCommit": "c3c2b13820b897798ad5b4afcd5a138b5cc2ed5c",
+  "reason": "Retry sealed §E v11.365 after correcting the release verifier's source.version check from 11.364 to 11.365. No geometry or source changes; exact HTML 9,370,404 bytes SHA-256 c7596236b43e132f47907da9b8349df171e1ba85b444bbee97f3186a134acf64 and 372 patches. Verified Cliff Hand SDF palm/wrist/finger refinement and Rocky Anime Hand 28 redundant deco rocks removed while keeping 17-bone rig, closed solid stone segments, PBR and original UVs. Owner physical Moto/Quest acceptance pending.",
+  "sourceCommit": "d6adba431f9446149ecc5cd0977494ac0ac7990f",
   "sourceIntegritySha256": "c7596236b43e132f47907da9b8349df171e1ba85b444bbee97f3186a134acf64"
 }
