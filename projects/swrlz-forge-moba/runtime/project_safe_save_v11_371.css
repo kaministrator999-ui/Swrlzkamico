@@ -1,0 +1,11 @@
+/* §E safe Save and Clone controls, native to existing studio command bars. */
+.se371-project-actions{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap;min-width:0}
+.se371-project-button{min-height:34px;padding:5px 10px;border:1px solid #628b8b;border-radius:8px;background:#204b50;color:#e6f9f6;font:600 12px/1.2 system-ui;cursor:pointer;white-space:nowrap}
+.se371-project-button:hover{background:#32646a}
+.se371-project-button:focus-visible{outline:2px solid #b3e8e8;outline-offset:2px}
+.se371-project-button:disabled{opacity:.55;cursor:not-allowed}
+#se371ProjectNotice{margin:6px 14px 12px;padding:8px 10px;color:#b9e7d9;font:12px/1.4 system-ui}
+#se371ProjectNotice[data-error=true]{color:#ffb4b4}
+#modelAtelierPanel .atelier-head .se371-project-actions{margin-inline-start:6px}
+#se249Root .se249-commandbar .se371-project-actions{flex-shrink:0}
+@media(max-width:680px){.se371-project-actions{gap:4px}.se371-project-button{min-height:36px;padding:5px 8px;font-size:11px}}
