@@ -1,0 +1,54 @@
+name: Measure §E v11.367 complete rocky and Cliff hand geometry
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/patches/v11_367_stone_hand_anatomy.py"
+      - "projects/swrlz-forge-moba/runtime/stone_hand_anatomy_v11_367.js"
+      - "projects/swrlz-forge-moba/scripts/test_v11_367_full_rock_hand.cjs"
+      - "projects/swrlz-forge-moba/scripts/test_v11_367_connected_cliff.cjs"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  anatomy:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Validate precise hand runtime source
+        run: node --check projects/swrlz-forge-moba/runtime/stone_hand_anatomy_v11_367.js
+      - name: Prove all 89 rock pieces remain and form tighter real hand silhouette
+        run: node projects/swrlz-forge-moba/scripts/test_v11_367_full_rock_hand.cjs
+      - name: Compare actual connected Cliff Hand SDF before and after
+        run: node projects/swrlz-forge-moba/scripts/test_v11_367_connected_cliff.cjs
+      - name: Measure final 374-patch §E HTML build, assets and SHA-256
+        run: |
+          python - <<'PY'
+          import base64,gzip,hashlib,json,sys
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          sys.path.insert(0,str(root.resolve()))
+          import build_space
+          m=json.loads((root/'source-manifest.json').read_text('utf8'))
+          assert m['name']=='§wyrl§ Engine v11.367'
+          assert len(m['patches'])==374 and m['patches'][-1]=='patches/v11_367_stone_hand_anatomy.py'
+          raw=gzip.decompress(base64.b64decode(''.join((root/x).read_text('utf8').strip() for x in m['chunks'])))
+          assert hashlib.sha256(raw).hexdigest()==m['baseSha256']
+          html=raw.decode('utf8')
+          for name in m['patches']: html=build_space.load_patch(root/name)(html)
+          for needle in [
+           'SWYRL_ENGINE_DEPLOY_MARKER: V11_367_PROPER_STONE_HAND_ANATOMY',
+           'function se367CliffField(math){',
+           'function se367AnatomicalRockScene(){',
+           'se281RockScene=se367AnatomicalRockScene;',
+           'SWYRL_ENGINE_STONE_HAND_ANATOMY_367',
+           "window.SWRLZ_FORGE_BUILD={version:'v11.367'",
+           'se366NativeToArt','se366ArtToNative','se364ExportAlignedPaint'
+          ]: assert needle in html, needle
+          b=html.encode('utf8')
+          print('SEAL_V367 '+json.dumps({'bytes':len(b),'sha256':hashlib.sha256(b).hexdigest(),'patches':len(m['patches'])}))
+          PY

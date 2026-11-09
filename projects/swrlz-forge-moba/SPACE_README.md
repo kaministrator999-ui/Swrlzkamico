@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.366
+title: §wyrl§ Engine v11.367
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.367 · Visible Cliff Hand anatomy and full multi-rock silhouette (2026-11-08)
+
+Owner review identified two failures in v11.365: the connected Cliff Hand looked unchanged, and deleting decorative rocks made the multi-rock hand less true to its purpose. This release directly reshapes the connected Cliff signed-distance-field before generating the single UV-painted sculptable mesh: stronger palm narrowing, wrist/heel taper, separate finger barrel contours, natural thumb and nearly straight ulnar side. The second existing starter, *Rocky Anime Hand*, again starts from all **89 original stone meshes** (not the filtered 61), including 20 layered palm stones, 10 side stones, 12 finger chips, 12 solid finger shafts and the full angled rocky thumb, now drawn toward a credible hand silhouette rather than randomly overflowing the palm and fingers. The original PBR stone/moss/crystal artwork, 17-bone rigs, source UV attributes, editable rock groups, exported meshes, reference hands, saved projects and Quest controllers are preserved. Fresh starter names include *Anatomy* or *Anatomical Rock Formation* to distinguish updated geometry from older saved copies. Physical user visual acceptance remains separate from automated geometry tests.
 
 ## §E v11.366 · Paint alignment marker and rotated UV guide (2026-11-08)
 
