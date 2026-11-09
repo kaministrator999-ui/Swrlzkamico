@@ -776,6 +776,52 @@ assert "belt with buckle" in latest_mage, "raw text is untouched"
 
 
 
+
+# User-tested 6/12 L2 report: a longer response is not a better observation
+# when grip counts, rear-side staff positions and top-view contacts are
+# guessed. This is a deterministic formatting guard, not pixel verification.
+cross_view_grip_guess = (
+    "Character reference · local model observation (accuracy unverified)\n\n"
+    "Subject and views: One chibi mage in front, left side, right side, back, "
+    "and top views — all wearing identical purple hooded robes and holding staff.\n"
+    "View comparisons: Back view reveals stars and a crescent motif. "
+    "Top view shows a pointed hood with central emblem.\n"
+    "Shape and proportions: Large head relative to torso. "
+    "Stance is upright, holding staff with both hands in front view, "
+    "one hand in side views, and staff held vertically in back view.\n"
+    "Geometry and layers: Hood covers the shoulders. "
+    "Robe panels visibly overlap; pouch hangs from belt.\n"
+    "Materials and markings: Purple fabric with gold trim and embroidery. "
+    "Boots are brown with fur trim.\n"
+    "Props and contact: Staff held in hand. "
+    "Hand contact: front view shows both hands on staff. "
+    "Side views show one hand on staff. "
+    "Back view shows staff held with one hand. "
+    "Top view shows hand holding orb.\n"
+    "\n[Raw source-crop observations; accuracy unverified]\n"
+    "- View panel 1: Purple hood and staff."
+)
+cross_view_answer = direct({
+    "prompt": "What do you see in this image?" + vision.VISION_START +
+              cross_view_grip_guess + vision.VISION_END
+})
+for unsupported_contact in (
+    "both hands", "one hand on staff", "staff held with one hand",
+    "hand holding orb", "Hand contact:", "all wearing identical",
+):
+    assert unsupported_contact.casefold() not in cross_view_answer.casefold(), (
+        unsupported_contact, cross_view_answer
+    )
+for actual_observation in (
+    "pointed hood", "crescent motif", "Large head relative to torso",
+    "Stance is upright", "Robe panels visibly overlap", "Purple fabric with gold trim"
+):
+    assert actual_observation in cross_view_answer, (
+        actual_observation, cross_view_answer
+    )
+assert cross_view_grip_guess.count("both hands") == 2, "raw evidence text must remain unchanged"
+assert "View panel 1:" not in cross_view_answer
+
 assert "not independently verified" in problematic_result
 
 assert direct({"prompt": "Describe this image" + vision.VISION_START + observed + vision.VISION_END}) is not None
