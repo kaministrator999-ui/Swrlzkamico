@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 // Focused four-starter native project opening test. No browser/network dependencies.
+// §E v11.363 test uses the append-only patch replacements; canonical fixture has stale sockets.
 const fs=require('fs'),path=require('path'),vm=require('vm'),assert=require('assert/strict');
 const root=path.resolve(__dirname,'..');
 const native=JSON.parse(fs.readFileSync(path.join(root,'scenes/model-atelier-prism-jester.swyrl.json'),'utf8'));
