@@ -1,0 +1,41 @@
+name: §E v11.356 source integrity measurement
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/measure-v11-356-uv-vr.yml"
+permissions:
+  contents: read
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Check changed scripts syntax
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/model_vr_workspace_v11_350.js
+          node --check projects/swrlz-forge-moba/runtime/model_vr_input_profile_v11_350.js
+          node --check projects/swrlz-forge-moba/runtime/model_studio_vr_ui_v11_350.js
+          node --check projects/swrlz-forge-moba/runtime/model_studio_uv_popup_v11_355.js
+          node --check projects/swrlz-forge-moba/runtime/model_atelier_uv_preview_v11_356.js
+      - name: Build full append-only patch chain and measure sealed HTML
+        run: |
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/se356-build >/tmp/se356-build.log
+          python - <<'PY'
+          from pathlib import Path
+          import hashlib,json
+          data=Path('/tmp/se356-build/index.html').read_bytes()
+          html=data.decode('utf8')
+          for marker in [
+            'SWYRL_ENGINE_DEPLOY_MARKER: V11_356_UV_PREVIEW_VR_CAMERA_ORBIT',
+            'function se356ApplyCameraOrbit()',
+            'se356UVResolve(u,v)',
+            'se356UVPopup',
+            'function safeBounds(){'
+          ]:
+            assert marker in html,marker
+          print('SE356_SOURCE_RECEIPT '+json.dumps({'bytes':len(data),'sha256':hashlib.sha256(data).hexdigest()}))
+          PY
