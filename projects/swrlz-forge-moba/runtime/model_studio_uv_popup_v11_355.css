@@ -1,0 +1,107 @@
+/* §E v11.355: one portable UV Editor window, no inspector UV sections. */
+html #modelAtelierPanel #se355UVEditorOpen{
+  flex:0 0 auto!important;white-space:nowrap!important;
+  min-height:38px!important;padding:7px 12px!important;border-radius:8px!important;
+  border:1px solid #74d8dc!important;background:#215a64!important;
+  color:#f0ffff!important;font-size:12px!important;font-weight:750!important;
+}
+html #modelAtelierPanel #se355UVEditorOpen.se355-uv-active{
+  border-color:#c7fbff!important;background:#386d80!important;
+  box-shadow:inset 0 -2px #b7f9e8!important;
+}
+html #modelAtelierPanel #se355UVEditorOpen.se355-uv-sliding{
+  border-color:#ffd98a!important;color:#fff3cd!important;
+}
+html #modelAtelierPanel #se320ModelTransform .se320-transform-uv{display:none!important}
+html #modelAtelierPanel #se355UVPopup.se355-uv-popup{
+  box-sizing:border-box!important;position:absolute!important;
+  z-index:180!important;top:62px;right:12px;
+  width:min(480px,calc(100vw - 24px));height:min(72dvh,740px);
+  max-width:calc(100vw - 12px);max-height:calc(100dvh - 72px);
+  min-width:260px;min-height:230px;
+  margin:0!important;padding:0!important;
+  display:flex!important;flex-direction:column!important;
+  overflow:hidden!important;resize:both;
+  border:1px solid #70bbc3!important;border-radius:14px!important;
+  background:#102330!important;color:#ecfdff!important;
+  box-shadow:0 16px 50px #000c!important;
+  overscroll-behavior:contain;pointer-events:auto!important;
+}
+html #modelAtelierPanel #se355UVPopup[hidden]{display:none!important}
+html #modelAtelierPanel #se355UVPopup *{box-sizing:border-box;min-width:0}
+html #modelAtelierPanel #se355UVPopup .se355-uv-titlebar{
+  display:flex;align-items:center;gap:8px;flex:0 0 auto;min-height:48px;
+  padding:6px 10px;background:#223b51;border-bottom:1px solid #527b94;
+  touch-action:none;user-select:none;cursor:grab;
+}
+html #modelAtelierPanel #se355UVPopup .se355-uv-titlebar:active{cursor:grabbing}
+html #modelAtelierPanel #se355UVPopup .se355-uv-titlebar strong{
+  flex:0 0 auto;font:750 14px/1.3 system-ui,sans-serif;color:#d2faff;
+}
+html #modelAtelierPanel #se355UVPopup .se355-uv-grip{
+  flex:1 1 auto;text-align:right;color:#a6cbd5;font-size:10px;
+}
+html #modelAtelierPanel #se355UVPopup #se355UVClose{
+  flex:0 0 auto;min-height:35px;padding:6px 11px;
+  background:#422d48;border:1px solid #b087b0;color:#fff1ff;
+}
+html #modelAtelierPanel #se355UVPopup .se355-uv-nav{
+  flex:0 0 auto;display:flex;gap:6px;padding:8px 10px;
+  border-bottom:1px solid #3b6577;background:#152c3b;
+}
+html #modelAtelierPanel #se355UVPopup .se355-uv-nav button{
+  flex:1 1 0;min-height:38px;font-size:12px;white-space:normal;
+  background:#233d50;border:1px solid #5a8394;color:#e0f2ff;
+}
+html #modelAtelierPanel #se355UVPopup .se355-uv-nav button[aria-pressed=true]{
+  background:#315e70;border-color:#82e9dd;box-shadow:inset 0 -2px #a6efe6;
+}
+html #modelAtelierPanel #se355UVPopup .se355-uv-scroll{
+  flex:1 1 auto;min-height:0;overflow-y:auto;overflow-x:hidden;
+  overscroll-behavior:contain;scrollbar-width:thin;scroll-padding-top:10px;
+  display:flex;flex-direction:column;gap:10px;padding:10px;
+  touch-action:pan-y;
+}
+html #modelAtelierPanel #se355UVPopup .se355-uv-slide{
+  flex:0 0 auto;display:grid;gap:6px;padding:10px;
+  border:1px solid #3f7682;border-radius:10px;background:#183647;
+}
+html #modelAtelierPanel #se355UVPopup .se355-uv-slide strong{color:#cef9ff}
+html #modelAtelierPanel #se355UVPopup .se355-uv-slide p{
+  margin:0;color:#b8dce1;font-size:12px;line-height:1.4;
+}
+html #modelAtelierPanel #se355UVPopup .se355-uv-slide-buttons{
+  display:grid;gap:5px;grid-template-columns:repeat(3,minmax(0,1fr));
+}
+html #modelAtelierPanel #se355UVPopup .se355-uv-slide-buttons button{
+  min-height:38px;padding:6px;font-size:12px;white-space:normal;
+  background:#264b5b;border:1px solid #6a9aa6;color:#ecffff;
+}
+html #modelAtelierPanel #se355UVPopup [data-se355-slide="toggle"]{grid-column:1/-1}
+html #modelAtelierPanel #se355UVPopup [data-se355-slide="toggle"][aria-pressed=true]{
+  background:#355a57;border-color:#9be6d3;color:#d5ffef;
+}
+html #modelAtelierPanel #se355UVPopup #se355UVNativeHost{display:block;min-width:0}
+html #modelAtelierPanel #se355UVPopup #modelAtelierUVLayout{
+  margin:0!important;max-width:100%;min-width:0;
+  padding:10px;border-radius:10px;
+}
+html #modelAtelierPanel #se355UVPopup :is(#modelAtelierUVTools,.atelier-uv-tools){
+  position:relative;inset:auto;max-width:100%;margin:10px 0;
+}
+html #modelAtelierPanel #se355UVPopup :is(button,input,select,summary):focus-visible{
+  outline:2px solid #84f0e6!important;outline-offset:2px!important;
+}
+@media(max-width:699px),(pointer:coarse){
+  html #modelAtelierPanel #se355UVEditorOpen{
+    min-height:36px!important;padding:6px 8px!important;font-size:11px!important;
+  }
+  html #modelAtelierPanel #se355UVPopup.se355-uv-popup{
+    top:54px;right:6px;width:min(460px,calc(100vw - 12px));
+    max-width:calc(100vw - 12px);height:min(71dvh,670px);
+    max-height:calc(100dvh - 64px);min-width:0;resize:none;
+  }
+  html #modelAtelierPanel #se355UVPopup .se355-uv-scroll{padding:7px;gap:7px}
+  html #modelAtelierPanel #se355UVPopup .se355-uv-titlebar{min-height:44px}
+  html #modelAtelierPanel #se355UVPopup .se355-uv-slide-buttons button{min-height:39px}
+}
