@@ -388,6 +388,31 @@ def _omit_unverifiable_turnaround_claims(
         ).strip()
         if not clause:
             continue
+        # A multi-view synthesis sometimes attaches a guessed hand-held prop
+        # to an overhead/headwear-only detail panel. A text formatter cannot
+        # verify that contact from pixels. Preserve any preceding description
+        # of the top-view surface, but abstain from the contact assertion.
+        # Raw inference text is retained in the original vision handoff.
+        if re.search(r"(?i)\b(?:top|overhead)\s+(?:view|panel)\b", clause):
+            contact = re.search(
+                r"(?i)\b(?:held|gripped|carried|clutched|grasped)"
+                r"\s+(?:in|by|with)\s+(?:(?:the|a|her|his|their)\s+)?"
+                r"(?:(?:left|right)\s+)?hands?\b|"
+                r"\b(?:(?:left|right)\s+)?hands?\s+"
+                r"(?:holding|gripping|carrying|grasping)\b|"
+                r"\b(?:in|on)\s+(?:(?:the|a)\s+)?"
+                r"(?:left|right)\s+hands?\b",
+                clause,
+            )
+            if contact:
+                head = clause[:contact.start()]
+                connectors = list(re.finditer(r"(?i)(?:,\s*|\s+and\s+)", head))
+                if connectors:
+                    clause = head[:connectors[-1].start()].strip()
+                else:
+                    continue
+                if not clause:
+                    continue
         # Keep a useful standalone stance observation when a sentence
         # bundles it with an unsupported list of grips across views.
         clause = re.sub(
@@ -422,11 +447,19 @@ def _omit_unverifiable_turnaround_claims(
             continue
         # When appearance is also covered under clothing, don't re-list
         # boot color/fur under anatomy (but preserve genuine stance geometry).
-        if (omit_boot_appearance and re.search(r"\bboots?\b", clause, re.I)
-                and not re.search(
+        if omit_boot_appearance and re.search(r"\bboots?\b", clause, re.I):
+            # A mixed shape sentence can mention both a useful hem length
+            # and redundant boot appearance; retain its geometric claim.
+            clause = re.sub(
+                r"(?i),?\s+and\s+(?:the\s+)?"
+                r"(?:character|figure|subject|person|they|it)\s+"
+                r"(?:wears|has|is\s+wearing)\s+[^.!?]*\bboots?\b[^.!?]*$",
+                "", clause,
+            ).strip()
+            if re.search(r"\bboots?\b", clause, re.I) and not re.search(
                     r"\b(?:stance|footprint|width|wide|size|proportion|silhouette|outline)\b",
-                    clause, re.I)):
-            continue
+                    clause, re.I):
+                continue
         # Restrict de-duplication to small, single-purpose clauses in a
         # labeled multi-view report. Do not remove a sentence containing
         # novel shape or view observations just because it mentions a prop.
@@ -575,7 +608,8 @@ def _format_direct_vision_report(description: str) -> str:
                         clothing_mention_boots
                         and match.group(1).casefold() in {
                             "shape and anatomy", "silhouette and anatomy",
-                            "shape and proportions", "relative proportions"
+                            "shape and proportions", "relative proportions",
+                            "geometry and layers", "shape and construction"
                         }
                     ),
                 )
