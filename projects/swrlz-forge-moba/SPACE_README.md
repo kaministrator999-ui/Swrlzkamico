@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.355
+title: §wyrl§ Engine v11.356
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.356 · Accurate UV preview and stationary-model camera orbit (2026-11-08)
+
+The standalone UV Editor now stays below the real viewport toolbar bounds, without covering the mesh hierarchy, and offers image/UV surface preview with interactive 2D-to-3D linking. Wireframe, colored surface-direction map and applied texture previews use the model's actual UV triangles. Tap on a UV region to highlight its 3D location, or enable **Pick on model → UV** for the reverse mapping; UV overlaps are reported. In Quest Model VR, the right thumbstick orbits the tracked camera horizontally/vertically around a stationary model, and right grip transforms only the existing selection instead of ray-picking a different mesh. Verify on phone/headset after publishing.
 
 ## §E v11.355 · Dedicated UV Editor window (2026-11-08)
 
