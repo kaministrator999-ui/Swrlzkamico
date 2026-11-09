@@ -1,0 +1,45 @@
+name: Calculate §E v11.371 safe-project source seal
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/calc-forge-v11-371-safe-projects.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-seal:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Build and validate current sealed v11.370 source
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_370_release.py --output /tmp/forge-current
+      - name: Apply next patch, syntax-check, and calculate exact v11.371 source seal
+        run: |
+          python - <<'PY'
+          import importlib.util,hashlib,sys
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          patch=root/'patches/v11_371_safe_project_clone_save.py'
+          spec=importlib.util.spec_from_file_location('next_patch',patch)
+          module=importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(module)
+          original=Path('/tmp/forge-current/index.html').read_text('utf8')
+          updated=module.apply(original)
+          assert 'SWYRL_ENGINE_DEPLOY_MARKER: V11_371_SAFE_SAVE_CLONE_PROJECTS' in updated
+          assert "window.SWRLZ_FORGE_BUILD={version:'v11.371'" in updated
+          assert 'window.SWYRL_ENGINE_SAFE_PROJECTS_371' in updated
+          file=Path('/tmp/forge-v11-371.html')
+          file.write_bytes(updated.encode('utf8'))
+          b=file.read_bytes()
+          print('V11_371_FINAL_BYTES='+str(len(b)),flush=True)
+          print('V11_371_FINAL_SHA256='+hashlib.sha256(b).hexdigest(),flush=True)
+          PY
+          node --check projects/swrlz-forge-moba/runtime/project_safe_save_v11_371.js
+          python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/forge-v11-371.html
