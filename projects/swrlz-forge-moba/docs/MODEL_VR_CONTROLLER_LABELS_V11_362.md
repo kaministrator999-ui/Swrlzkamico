@@ -19,7 +19,7 @@ The source does **not** pretend UV Slide, advanced rigging, texture paint and ot
 ## Lifecycle and performance
 - Single XR session and renderer. No animation loop, hand tracking or extra raycasts.
 - A bundled controller JSON file is fetched lazily once per tracked hand and aborted on exit. Original source mesh geometry is not added to the saved model.
-- Texture and geometry are shared per hand; 10 label textures per controller are allocated once and only repainted when a tool, brush, menu page or profile changes. Button highlight uses sprite tint.
+- Texture and geometry are shared per hand; five label textures per controller are allocated once and only repainted when a tool, brush, menu page or profile changes. Button highlight uses sprite tint.
 - On exit/disconnect, labels and meshes are removed. If a mesh fails to load, the existing synthetic capsule remains and tool hints still appear.
 - Source provenance: `assets/models/webxr-touch-v3/LICENSE.md` (MIT-licensed WebXR Input Profiles reference model). Physical Quest 2 sizing, legibility and tracking need owner validation.
 
