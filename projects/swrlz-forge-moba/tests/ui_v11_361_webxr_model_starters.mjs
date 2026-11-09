@@ -29,6 +29,15 @@ try{
  });
  const page=await context.newPage();
  page.on('pageerror',e=>{errors.push(String(e));console.log('SE361_PAGE_ERROR',String(e).slice(0,500))});
+ page.on('dialog',dialog=>{
+  console.log('SE361_NATIVE_DIALOG',dialog.type(),dialog.message().slice(0,160));
+  void dialog.accept();
+ });
+ page.on('console',entry=>{
+  if(entry.type()==='error'||entry.text().includes('Could not open'))
+   console.log('SE361_CONSOLE',entry.type(),entry.text().slice(0,500));
+ });
+
  await page.goto(host+'/index.html',{waitUntil:'domcontentloaded',timeout:90000});
  await page.waitForFunction(()=>window.SWYRL_ENGINE_WEBXR_MODEL_STARTERS_361?.status?.()?.templates?.length===4,
    null,{timeout:45000});
@@ -48,13 +57,25 @@ try{
   const card=page.locator('#se236StarterModels button[data-project-template="'+id+'"]');
   await card.waitFor({state:'visible',timeout:12000});
   await card.click({timeout:15000});
-  await page.waitForFunction(target=>{
-   const editor=window.SWYRL_ENGINE_MODEL_ATELIER?.status?.();
-   const ws=window.SWYRL_ENGINE_WORKSPACES?.inspect?.();
-   const load=window.SWYRL_ENGINE_WEBXR_MODEL_STARTERS_361?.status?.();
-   return load&&!load.busy&&editor?.open===true&&editor.count===target&&
-     ws?.active==='modeler'&&ws?.projectKind==='model-atelier';
-  },count,{timeout:35000});
+  try{
+    await page.waitForFunction(target=>{
+     const editor=window.SWYRL_ENGINE_MODEL_ATELIER?.status?.();
+     const ws=window.SWYRL_ENGINE_WORKSPACES?.inspect?.();
+     const load=window.SWYRL_ENGINE_WEBXR_MODEL_STARTERS_361?.status?.();
+     return load&&!load.busy&&editor?.open===true&&editor.count===target&&
+       ws?.active==='modeler'&&ws?.projectKind==='model-atelier';
+    },count,{timeout:35000});
+  }catch(error){
+   console.log('SE361_OPEN_DIAG',id,JSON.stringify(await page.evaluate(()=>({
+    busy:window.SWYRL_ENGINE_WEBXR_MODEL_STARTERS_361?.status?.(),
+    workspace:window.SWYRL_ENGINE_WORKSPACES?.inspect?.(),
+    editor:window.SWYRL_ENGINE_MODEL_ATELIER?.status?.(),
+    notesOpen:document.getElementById('seReleaseNotesDialog')?.open,
+    projectHubOpen:document.getElementById('projectHub')?.classList.contains('show'),
+    status:document.getElementById('modelAtelierStatus')?.textContent
+   }))));
+   throw error;
+  }
   const info=await page.evaluate(()=>({
    workspace:window.SWYRL_ENGINE_WORKSPACES.inspect().active,
    editor:window.SWYRL_ENGINE_MODEL_ATELIER.status(),
