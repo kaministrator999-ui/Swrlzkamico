@@ -892,6 +892,45 @@ assert "The cape drapes to mid-calf" in overhead_clean, overhead_clean
 assert overhead_clean.casefold().count("boots") == 1, overhead_clean
 assert "glowing orb held in the right hand" in overhead_contact_report
 
+# Live image-sheet acceptance: fabric overlap was misreported as hidden
+# armor, then the hood-focused overhead view was said to confirm it.
+# Reverse-angle silhouettes were also upgraded to a made-up hand swap.
+# Preserve real exposed structure elsewhere instead of banning armor words.
+hidden_layer_report = (
+    "Character reference · local model observation (accuracy unverified)\n\n"
+    "Subject and views: One figure shown in Front, Left Side, Right Side, "
+    "Back and Top views wearing a robe.\n"
+    "View comparisons: The Right Side view mirrors Left with reversed "
+    "hand position. Back view shows a crescent on a cape. "
+    "Top view shows the segmented armored torso beneath the cloak.\n"
+    "Geometry and layers: Hooded cloak drapes over segmented armor torso. "
+    "Hem reaches mid-calf. Staff is held upright.\n"
+    "Materials and markings: The purple robe has gold trim. "
+    "Top view confirms armor beneath cloak. "
+    "Front view shows exposed plate armor over a visible tunic."
+)
+hidden_layer_clean = direct({
+    "prompt": "What do you see in this image?" +
+              vision.VISION_START + hidden_layer_report + vision.VISION_END
+})
+for unsupported in (
+    "mirrors Left with reversed hand position",
+    "segmented armored torso beneath the cloak",
+    "drapes over segmented armor torso",
+    "confirms armor beneath cloak",
+):
+    assert unsupported.casefold() not in hidden_layer_clean.casefold(), (
+        unsupported, hidden_layer_clean
+    )
+for supported in (
+    "Back view shows a crescent on a cape",
+    "Hem reaches mid-calf",
+    "Staff is held upright",
+    "Front view shows exposed plate armor over a visible tunic",
+):
+    assert supported in hidden_layer_clean, (supported, hidden_layer_clean)
+assert "segmented armored torso beneath the cloak" in hidden_layer_report
+
 # The guard does not suppress actual descriptions about another view just
 # because a separate overhead panel is mentioned.
 other_view_contact = (
@@ -999,6 +1038,7 @@ assert "View panel 5" in last_instructions
 assert "Supporting reference panels" in last_instructions
 assert "POSITIONAL labels" in last_instructions
 assert "headwear-only or ornament-detail crop" in panel_model.calls[1]["messages"][0]["content"][0]["text"]
+assert "Layered cloth, seams and trim" in panel_model.calls[1]["messages"][0]["content"][0]["text"]
 assert "do not silently drop the sheet's legend" in last_instructions
 assert "opposite profiles exact mirrors" in last_instructions
 assert "hem length to visible legs and footwear" in last_instructions
@@ -1020,6 +1060,9 @@ assert "absence is not established" in last_instructions
 assert "Do not declare identical grips, poses or hand positions" in last_instructions
 assert "Do not infer grip counts, handedness, a staff's base" in last_instructions
 assert "garment wrapped around the neck or shoulders" in last_instructions
+assert "internal rigid equipment" in last_instructions
+assert "concealed component" in last_instructions
+assert "Opposing profiles do not establish mirrored" in last_instructions
 # The reference strip is included first in the evidence notes, without
 # altering the separately recorded per-panel chronological source order.
 assert last_instructions.index("\nSupporting reference panels (support):") < last_instructions.index("\nView panel 1 (view):")
