@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.365",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_365_HAND_REFERENCE_FIT",
-  "reason": "Retry sealed §E v11.365 after correcting the release verifier's source.version check from 11.364 to 11.365. No geometry or source changes; exact HTML 9,370,404 bytes SHA-256 c7596236b43e132f47907da9b8349df171e1ba85b444bbee97f3186a134acf64 and 372 patches. Verified Cliff Hand SDF palm/wrist/finger refinement and Rocky Anime Hand 28 redundant deco rocks removed while keeping 17-bone rig, closed solid stone segments, PBR and original UVs. Owner physical Moto/Quest acceptance pending.",
-  "sourceCommit": "d6adba431f9446149ecc5cd0977494ac0ac7990f",
-  "sourceIntegritySha256": "c7596236b43e132f47907da9b8349df171e1ba85b444bbee97f3186a134acf64"
+  "releaseVersion": "v11.367",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_367_PROPER_STONE_HAND_ANATOMY",
+  "reason": "Release §E v11.367: user-corrected visible Cliff Hand anatomy and full multi-rock hand. Correct Cliff native single connected SDF shell is visibly tapered at palm/wrist/fingers and retains stone-PBR geodes and 17-bone rig. Restore all 89 original Rocky Hand stone meshes rather than prune 28, remapping all 89 relative to authentic palm, finger, thumb and wrist silhouette with existing UV indices and 17-bone rig. Focused geometry tests passed: complete rock part count and classes 89/89 and 48 exterior stones, Cliff palm positive edge 0.4785→0.363 and wrist 0.2876→0.261. Preserve v11.366 UV authoring marker, all other tools and saved projects. Source seal exact: 374 patches, 9,404,323 bytes HTML, SHA-256 7ec38e5fa8ec81283066d2eebeae33be5c5356ddc23c35ef36cee79497e9a8db. Physical Moto/Quest acceptance remains user-reviewed.",
+  "sourceCommit": "71201607eb31d9de64561e73aa8d5d6ae96be453",
+  "sourceIntegritySha256": "7ec38e5fa8ec81283066d2eebeae33be5c5356ddc23c35ef36cee79497e9a8db"
 }
