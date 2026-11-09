@@ -36,12 +36,12 @@ jobs:
           source=json.loads(manifest.read_text('utf8'))
           assert source['name']=='§wyrl§ Engine v11.362'
           assert source['finalArtifact']=='swyrl_engine_v11_362.html'
-          assert len(source['patches'])==369 and source['patches'][-1]=='patches/v11_362_controller_tool_labels.py'
+          assert len(source['patches'])==369 and source['patches'][-1]=='patches/v11_362_quest_controller_hints.py'
           assert not source.get('finalSha256') and not source.get('finalBytes')
           with tempfile.TemporaryDirectory() as directory:
               subprocess.run([sys.executable,str(root/'build_space.py'),'--output',directory],check=True)
               data=(Path(directory)/'index.html').read_bytes()
-              assert 'SWYRL_ENGINE_DEPLOY_MARKER: V11_362_CONTROLLER_TOOL_LABELS' in data.decode('utf8')
+              assert 'SWYRL_ENGINE_DEPLOY_MARKER: V11_362_QUEST_CONTROLLER_HINTS' in data.decode('utf8')
               source['finalBytes']=len(data)
               source['finalSha256']=hashlib.sha256(data).hexdigest()
           manifest.write_text(json.dumps(source,ensure_ascii=False,indent=2)+'\n','utf8')
