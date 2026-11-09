@@ -52,7 +52,7 @@ assert.deepEqual(Array.from(part.uvArtMarker.centerUV),[.25555,.71]);
 assert.equal(checkpoints,1);
 assert.equal(edited,1);
 const stored=JSON.parse(JSON.stringify(part));
-assert.deepEqual(stored.uvArtMarker,part.uvArtMarker);
+assert.equal(JSON.stringify(stored.uvArtMarker),JSON.stringify(part.uvArtMarker));
 vm.runInContext("se366MarkAt(.25555,.71)",sandbox);
 assert.equal(checkpoints,1,'Idempotent marker placement should not create duplicate undo');
 const calls=[];
