@@ -6,7 +6,7 @@ ROOT=Path(__file__).resolve().parents[1]
 MARKER='SWYRL_ENGINE_DEPLOY_MARKER: V11_358_WEBXR_HAND_STARTERS'
 ap=argparse.ArgumentParser();ap.add_argument('--output',required=True);ap.add_argument('--request',action='store_true');args=ap.parse_args()
 m=json.loads((ROOT/'source-manifest.json').read_text('utf8'))
-assert m['name']=='§wyrl§ Engine v11.358' and m['finalArtifact']=='swyrl_engine_v11_357.html'
+assert m['name']=='§wyrl§ Engine v11.358' and m['finalArtifact']=='swyrl_engine_v11_358.html'
 assert len(m['patches'])==366 and m['patches'][-1]=='patches/v11_358_webxr_hand_starters.py'
 assert m['finalBytes']==9323081 and m['finalSha256']=='8f3e1d431e95d8abd48c7f73176afa9faf41834bcb489c195855289b1420530d'
 output=Path(args.output).resolve()
