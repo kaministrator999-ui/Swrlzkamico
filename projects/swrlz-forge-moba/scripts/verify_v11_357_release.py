@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Verify the exact sealed §E v11.357 UV preview and XR camera orbit release."""
+"""Verify the exact sealed §E v11.357 simplified native UV import/export release."""
 from pathlib import Path
 import argparse,hashlib,json,subprocess,sys
 ROOT=Path(__file__).resolve().parents[1]
 MARKER='SWYRL_ENGINE_DEPLOY_MARKER: V11_357_UV_GUIDE_FIRST'
 ap=argparse.ArgumentParser();ap.add_argument('--output',required=True);ap.add_argument('--request',action='store_true');args=ap.parse_args()
 m=json.loads((ROOT/'source-manifest.json').read_text('utf8'))
-assert m['name']=='§wyrl§ Engine v11.357' and m['finalArtifact']=='swyrl_engine_v11_356.html'
+assert m['name']=='§wyrl§ Engine v11.357' and m['finalArtifact']=='swyrl_engine_v11_357.html'
 assert len(m['patches'])==365 and m['patches'][-1]=='patches/v11_357_uv_guide_first.py'
 assert m['finalBytes']==9317260 and m['finalSha256']=='5b88e14678fd6fce292b528cea1112aa7d98ff854f2212ce5a63776d1fc67e0b'
 output=Path(args.output).resolve()
