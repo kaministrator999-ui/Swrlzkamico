@@ -1,0 +1,52 @@
+name: Validate §E v11.369 WebXR Cliff Hand stone clone
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/runtime/webxr_cliff_stone_v11_369.js"
+      - "projects/swrlz-forge-moba/patches/v11_369_webxr_cliff_stone_clone.py"
+      - "projects/swrlz-forge-moba/scripts/test_v11_369_webxr_cliff_clone.cjs"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-webxr-cliff:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Validate JS syntax
+        run: node --check projects/swrlz-forge-moba/runtime/webxr_cliff_stone_v11_369.js
+      - name: Prove full WebXR topology, UVs, rig, and real project opening path
+        run: node projects/swrlz-forge-moba/scripts/test_v11_369_webxr_cliff_clone.cjs
+      - name: Validate exact ordered §E build without modifying the source manifest
+        run: |
+          python - <<'PY'
+          import base64,gzip,hashlib,json,sys
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          sys.path.insert(0,str(root.resolve()))
+          import build_space
+          m=json.loads((root/'source-manifest.json').read_text('utf8'))
+          assert m['name']=='§wyrl§ Engine v11.369'
+          assert len(m['patches'])==376 and m['patches'][-1]=='patches/v11_369_webxr_cliff_stone_clone.py'
+          raw=gzip.decompress(base64.b64decode(''.join((root/c).read_text('utf8').strip() for c in m['chunks'])))
+          assert hashlib.sha256(raw).hexdigest()==m['baseSha256']
+          html=raw.decode('utf8')
+          for patch in m['patches']:html=build_space.load_patch(root/patch)(html)
+          for token in ['SWYRL_ENGINE_DEPLOY_MARKER: V11_369_WEBXR_CLIFF_STONE_CLONE',
+           'async function se369CliffFromXRScene(){',
+           'SWYRL_ENGINE_WEBXR_CLIFF_369',
+           "window.SWRLZ_FORGE_BUILD={version:'v11.369'",
+           'se281RockScene=se367AnatomicalRockScene;',
+           'se366AutoAlignCamera',
+           "part?.cliffPBR?.variant==='webxr-cliff'",
+           'Cliff Hand · WebXR Anatomical Stone']:
+            assert token in html,token
+          b=html.encode('utf8')
+          print('SEAL_V369 '+json.dumps({'bytes':len(b),
+              'sha256':hashlib.sha256(b).hexdigest(),'patches':len(m['patches'])}))
+          PY

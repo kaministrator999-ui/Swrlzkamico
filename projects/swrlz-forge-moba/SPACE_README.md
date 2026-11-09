@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.368
+title: §wyrl§ Engine v11.369
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.369 · Cliff Hand uses real WebXR hand geometry and existing sandstone textures (2026-11-09)
+
+**Only** the Plain Hand Base / Cliff Hand project is replaced. It now asynchronously clones the locally bundled MIT-licensed WebXR right hand with its real 1,360 vertices, 2,314 triangles, all original UV islands and 25 joint reference landmarks; transforms axes and scale to match §E's native 17-bone rig; and maps the original owner-supplied 4-channel cliff sandstone color, tangent-space normals, roughness and AO from the same PBR atlas. Unlike v11.365/367, **there is no procedural SDF remeshing of the Cliff Hand**. The previous UV-specific dorsal crystal overlay is intentionally excluded because its texture coordinates belong to the old mesh. The native project card and save/UV/rig controls are retained. The independent WebXR hand starters remain untouched; **the improved 89-part Rocky Anime Hand remains unchanged**. The actual mesh is loaded using the native model project loader and named *Smooth Cliff Hand · WebXR Anatomy + Stone* so users can distinguish old saved projects. Phone/Quest inspection remains the user acceptance gate.
 
 ## §E v11.368 · Rotated UV auto-center and reusable Slide alignment
 
