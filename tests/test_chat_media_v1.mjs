@@ -183,10 +183,14 @@ assert.match(html,/Original received by server/);
 for(const id of ["imageVisionLevelSelect"]){
   assert.equal((html.match(new RegExp('id="'+id+'"','g'))||[]).length,1);
 }
-assert.match(html,/analysisLevels:Math\.max\(1,Math\.min\(3,Number\(attachment\.analysisLevels\)\|\|2\)\)/);
-assert.match(html,/option value="1"/);
-assert.match(html,/option value="2" selected/);
+assert.match(html,/analysisLevels:Math\.max\(1,Math\.min\(3,Number\(attachment\.analysisLevels\)\|\|1\)\)/);
+assert.match(html,/selectedImage=\{file,url:URL\.createObjectURL\(file\),analysisLevels:1\}/);
+assert.match(html,/option value="1" selected/);
+assert.match(html,/option value="2">L2 · Multi-view \(slow\)/);
 assert.match(html,/option value="3"/);
+assert.match(html,/observed==="REGION_PREFILL"/);
+assert.match(html,/observed==="REGION_DECODING"/);
+assert.match(html,/five-view reference can take 6\+ minutes/);
 assert.match(html,/observed==="LEVEL3_PREFILL"/);
 assert.match(html,/observed==="LEVEL3_DECODING"/);
 assert.match(html,/levelRecords:state\.levelRecords/);
