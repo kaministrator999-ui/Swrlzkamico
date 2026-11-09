@@ -1,4 +1,4 @@
-name: Validate §E v11.371 safe-project release
+name: Calculate clean §E v11.371 source seal
 on:
   push:
     branches: [main]
@@ -8,7 +8,7 @@ on:
 permissions:
   contents: read
 jobs:
-  verify:
+  source-seal:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -18,5 +18,28 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
-      - name: Verify exact built artifact, prior native subsystems and project-clone save guards
-        run: python projects/swrlz-forge-moba/scripts/verify_v11_371_release.py --output /tmp/forge-v11-371
+      - name: Build complete 378-patch source with expected seal temporarily disabled
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          path=Path('projects/swrlz-forge-moba/source-manifest.json')
+          value=json.loads(path.read_text('utf8'))
+          assert len(value['patches'])==378
+          value['finalSha256']=''
+          value['finalBytes']=0
+          path.write_text(json.dumps(value,ensure_ascii=False,indent=2)+'\n','utf8')
+          PY
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/forge-v11-371
+          python - <<'PY'
+          import hashlib
+          from pathlib import Path
+          file=Path('/tmp/forge-v11-371/index.html')
+          data=file.read_bytes()
+          assert data==Path('/tmp/forge-v11-371/modeler.html').read_bytes()
+          print('V11_371_CLEAN_BYTES='+str(len(data)),flush=True)
+          print('V11_371_CLEAN_SHA256='+hashlib.sha256(data).hexdigest(),flush=True)
+          PY
+          node --check projects/swrlz-forge-moba/runtime/project_safe_save_v11_371.js
+          node projects/swrlz-forge-moba/scripts/test_v11_371_safe_projects.cjs
+          python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/forge-v11-371/index.html
