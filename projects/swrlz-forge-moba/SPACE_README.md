@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.361
+title: §wyrl§ Engine v11.362
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,11 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+
+## §E v11.362 · Live Quest 2 controller models and adaptive labels (2026-11-08)
+
+In immersive **Model Studio VR**, tracked Quest 2 Touch controllers now show their bundled MIT-licensed WebXR reference models as the controller bodies, with small floating labels beside triggers, grips, thumbsticks and face buttons. Labels follow the tracked controller and switch automatically with the active Inspect/Move/Rotate/Scale/Sculpt/Draw/Lasso/Extrude tool, selected sculpt brush and Controller Studio profile. Pressed buttons highlight in place. No hand tracking is required; the Meta system button is never remapped. Controller meshes and label GPU textures are cleaned up when leaving VR; the existing synthetic body remains a fallback if an asset fails. VR-native controls, UV painting and model save/schema are unchanged. Physical Quest 2 fit and legibility remain owner-acceptance checks. See `docs/MODEL_VR_CONTROLLER_LABELS_V11_362.md` for mappings, scope and validation.
 
 ## §E v11.361 · Reliable WebXR starter opening + Quest 2 Touch models (2026-11-08)
 
