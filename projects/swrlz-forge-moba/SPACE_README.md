@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.354
+title: §wyrl§ Engine v11.355
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.355 · Dedicated UV Editor window (2026-11-08)
+
+Open **🎨 UV Editor** in the Model Studio top header to access single-mesh UV guide/image import, true surface directions, mesh-linked JSON and whole-model UV atlas in one movable, scrollable popup. Texture UV Slide and U/V nudges live there as well, while viewport Move/Rotate/Scale and Undo/Redo remain in the transform bar. The inspector no longer contains duplicate UV controls. UV surfaces, eye meshes and project assets are not rewritten by this UI move. Hands-on phone/Quest acceptance is a separate step.
 
 ## §E v11.354 · UV Slide and in-viewport Undo / Redo (2026-11-08)
 
