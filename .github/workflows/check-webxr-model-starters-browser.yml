@@ -1,0 +1,26 @@
+name: Browser-check §E v11.361 four modeling starter cards
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/tests/ui_v11_361_webxr_model_starters.mjs"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  four-model-starters:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Build the exact sealed v11.361 static package
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_361_release.py --output /tmp/se361-model-starters
+      - name: Install one mobile browser
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps --only-shell chromium
+      - name: Open all four projects by clicking their actual Model starter cards
+        run: node projects/swrlz-forge-moba/tests/ui_v11_361_webxr_model_starters.mjs

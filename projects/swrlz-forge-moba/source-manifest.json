@@ -384,6 +384,6 @@
     "patches/v11_360_model_vr_spatial_menus.py",
     "patches/v11_361_webxr_hand_open_touch_starters.py"
   ],
-  "finalBytes": 9337506,
-  "finalSha256": "a3c3fa85e5ab915968a833dc686c53fdf67d7a904bab416291ffd4f098560660"
+  "finalBytes": 9346125,
+  "finalSha256": "20e0bb0183cd6fcc579d6f08cf8b126472bcf3a5dcfe043366e170dcb5fe9810"
 }
