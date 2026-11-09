@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.358",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_358_WEBXR_HAND_STARTERS",
-  "reason": "Publish §E v11.358 WebXR hand starters from source commit daef9279065589a4c24348afa6c880f2a7e9dee7 after correcting the asset URL verification to inspect the existing dynamic left/right loader expression. Source content unchanged: 9,323,081 HTML bytes, SHA-256 8f3e1d431e95d8abd48c7f73176afa9faf41834bcb489c195855289b1420530d, 366 ordered patches and 74 packaged assets. Left/right MIT-licensed native anatomy meshes each have 1,360 vertices, 2,314 triangles, UVs and 25 joint reference landmarks. Existing project starters intact. Physical acceptance pending.",
-  "sourceCommit": "daef9279065589a4c24348afa6c880f2a7e9dee7",
-  "sourceIntegritySha256": "8f3e1d431e95d8abd48c7f73176afa9faf41834bcb489c195855289b1420530d"
+  "releaseVersion": "v11.360",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_360_MODEL_VR_SPATIAL_MENUS",
+  "reason": "Owner requested better visual menus, buttons, display, animation and effects in Model VR. Adds a larger spatial console, persistent navigation, custom icon cards, clear selected/disabled/hover/press states, polished tool/brush/studio wheels, subtle frame-driven depth and halo effects, concise operation guidance and reduced-motion support. Menu pointer feedback updates each XR frame while native model picking remains bounded. Preserves latest camera/selection/UV controls and v11.358 hand starters. Exact full seal: 367 patches, 9337506 HTML bytes, 74 assets, 78 package files. Eight actual-Three UI groups and nine end-to-end IWER Quest workflows passed with zero page errors; complete source/package and syntax checks passed. Physical headset acceptance remains owner testing.",
+  "sourceCommit": "700e9e34319189c9cde15d1386c8bcc5d3c20800",
+  "sourceIntegritySha256": "a3c3fa85e5ab915968a833dc686c53fdf67d7a904bab416291ffd4f098560660"
 }
