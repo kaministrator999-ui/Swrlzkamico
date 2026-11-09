@@ -84,6 +84,7 @@ const info={parts:p.length,glowingSeams:p.filter(x=>x.material==='emissive').len
 if(info.glowingSeams<12)throw Error('Cracked seams missing');
 console.log('SE283_WEATHERED_MODEL_SMOKE '+JSON.stringify({...info,weathered}));
 
+// Verify real 89-part baseline and subsequent derived extras without hardcoding it.
 load('hand_reference_fit_v11_365.js');
 const source=vm.runInContext('se365OriginalStoneScene()',ctx);
 const aligned=vm.runInContext('se281RockScene()',ctx);
