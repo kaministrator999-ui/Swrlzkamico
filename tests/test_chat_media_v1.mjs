@@ -71,6 +71,7 @@ assert.match(html,/originalRenderedSources\.set\(container,rawSource\)/,"Copy mu
 assert.match(html,/const source=sourceContext\?sourceContext\.body:displaySource/);
 assert.match(html,/vision-preview-unavailable/);
 assert.match(html,/msg\?\.meta\?\.visionResourceUsage/,"saved vision receipt participates in history DOM reuse");
+assert.match(html,/JSON\.stringify\(msg\?\.meta\?\.visionResourceUsage\|\|null\)/,"arrival of authoritative timing receipt triggers conversation repaint");
 assert.match(html,/visionReceipt\?\.usage\?\.wallTimeMs/,"duration uses verified server wall time");
 assert.match(html,/visionReceipt\?\.source==="owner-and-description-verified-vision-job"/,"never accept unverified client duration");
 assert.match(html,/duration\.className="vision-completion-time"/,"completed image duration stays attached to its saved message");
