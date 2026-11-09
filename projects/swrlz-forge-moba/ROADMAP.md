@@ -1,3 +1,7 @@
+## §E v11.371 · Safe named project saves and independent clones (2026-11-09)
+
+Delivered source: full native Save Project/Clone Project actions across Game, Model and Particle editors, plus both project-library tabs; original starters are immutable. A starter Save automatically forks into a named on-device project. Later Saves update only the same project ID. Clone creates a new ID for either starters or existing projects. The current authenticated account save RPC and revision guard are reused, with cloud-link metadata mirrored locally and checked against the signed-in account after reload. Exact artifact seal and focused clone/save simulation are in scripts/verify_v11_371_release.py. Phone and Quest usability must be accepted by the owner after deployment.
+
 ## §E v11.366 · Marked UV authoring without hand-aligning every image (2026-11-08)
 
 
