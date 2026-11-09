@@ -1854,6 +1854,12 @@ async def cancel_generation(request:Request):
         if not g or g.get("requestId")!=rid:return JSONResponse({"ok":False,"requestId":rid,"state":"NOT_ACTIVE"},status_code=409)
         if g.get("terminal"):return {"ok":True,"requestId":rid,"state":str(g.get("terminalType") or "TERMINAL")}
         g["cancelRequested"]=True;g["status"].append({"phase":"CANCEL_REQUESTED","reason":"User requested stop"})
+        # The cancellation flag is set ONLY by this authenticated endpoint.
+        # Log the accepting route and prior phase, never account data,
+        # user prompts, cookies, full IDs or generated text.
+        print(json.dumps({"event":"STATION_CANCEL_REQUEST_ACCEPTED",
+                          "requestId":rid[:8],
+                          "phaseBeforeCancel":str(g.get("phase") or "")[:40]}),flush=True)
     _invalidate_forge(_forge_contexts.get(key))
     return {"ok":True,"requestId":rid,"state":"CANCEL_REQUESTED"}
 
