@@ -22,6 +22,9 @@ def apply(html):
         'function se366UseMeshPoint(event)',
         'function se366UseUVPoint(event)',
         'function se366DrawMarker(ctx,size,marker)',
+        'function se366AutoAlignCamera()',
+        'function se366AngleFromView(pa,pb,pc,ta,tb,tc,screenRight,screenUp)',
+        'function se366CaptureSlide()',
         'window.SWYRLZ_E_UV_ART_MARKER=Object.freeze',
         "const se366BaseCheckPart=checkPart;"
     ]
@@ -74,6 +77,8 @@ def apply(html):
       title='Mesh-linked UV marker and rotated authoring guide',
       changes=[
         'Optional UV marker tools live inside the existing scrollable Model Studio UV Editor, not a new editor or floating toolbar.',
+        'Auto center + upright from view finds the camera-facing mesh triangle and derives visible up using world-space UV tangents, including rotated mesh transforms.',
+        'Capture corrected UV Slide position makes the existing quarter-width face placement reusable without rotating the original model or resetting painted textures.',
         'Tap the selected model surface or UV image preview to place an accurate image center marker on that mesh.',
         'Rotate the authoring guide ±180 degrees and scale 0.5–2x; position, rotation, and scale persist on each mesh in original project JSON with native Undo/Redo.',
         'Export a transparent UV wireframe guide shifted/rotated around the marker and a compact JSON correspondence profile for artwork creation.',
