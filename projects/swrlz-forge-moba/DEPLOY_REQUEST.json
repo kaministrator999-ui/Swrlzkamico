@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.355",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_355_MODEL_UV_POPUP",
-  "reason": "Publish §E v11.355 from verified source commit 3539af8b49eda5a12c332edbe3b80638d398b049. Model Studio top-header UV Editor button now opens a movable, scrollable, independent UV editor window. Existing single-mesh UV guide, surface directions/info, texture import/remove and linked multi-mesh atlas are reparented with native listeners intact. UV Slide, U/V nudges, reset consolidated in popup; original transform and Undo/Redo remain in top viewport bar. Exact 9,298,924 generated HTML bytes, SHA-256 232d28f4773dcf94c19299f16b94a353a1ba003d6242600e8a76b2dcba9c4673 from successful guarded source measurement run 42540854317. Full version-specific verifier required by dedicated deploy workflow. Owner phone and Quest acceptance pending.",
-  "sourceCommit": "3539af8b49eda5a12c332edbe3b80638d398b049",
-  "sourceIntegritySha256": "232d28f4773dcf94c19299f16b94a353a1ba003d6242600e8a76b2dcba9c4673"
+  "releaseVersion": "v11.356",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_356_UV_PREVIEW_VR_CAMERA_ORBIT",
+  "reason": "Publish §E v11.356 sealed from source commit 680f415c733adad3e6006ef7fe7a5da0c65f7f10. UV popup dynamically remains below viewport top toolbars and inside scene horizontal bounds, avoiding mesh hierarchy overlap. Native UV guide, surface-direction, imported paint preview and interactive UV-to-3D/3D-to-UV surface highlighting added without altering model UVs. Model VR right-stick orbit now uses XR offset reference-space to move tracked camera around stationary model rather than rotating mesh presentation, including vertical orbit. Grip transforms use the existing selected mesh group only; trigger remains explicit selection. Source seal verified in GitHub Actions run 42547826167: 9,317,435 HTML bytes, SHA-256 b9da650c67ef7ae030e483cc25a8def0be8ffd0fb0759943f6eafb79a23e8a58. Owner phone/Quest acceptance pending.",
+  "sourceCommit": "680f415c733adad3e6006ef7fe7a5da0c65f7f10",
+  "sourceIntegritySha256": "b9da650c67ef7ae030e483cc25a8def0be8ffd0fb0759943f6eafb79a23e8a58"
 }
