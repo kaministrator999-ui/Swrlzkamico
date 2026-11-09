@@ -190,6 +190,11 @@ function se371UpdateButtons(){
  document.querySelectorAll('[data-se371-action]').forEach(b=>{b.disabled=!!disabled;});
 }
 function se371Install(){
+ // Clarify legacy download-only controls; preserve their original handlers.
+ const fileExport=document.getElementById('hubSaveBtn');
+ if(fileExport&&/save current project/i.test(fileExport.textContent))fileExport.textContent='Export Project File';
+ const modelExport=document.getElementById('modelAtelierExport');
+ if(modelExport&&/save model json/i.test(modelExport.textContent))modelExport.textContent='Export Model JSON';
  se371Buttons(document.querySelector('#se170-pane-starter .project-actions')||document.querySelector('#projectHub .project-actions'),'library');
  se371Buttons(document.querySelector('#se170-pane-mine .se170-my-tools'),'my-projects');
  se371Buttons(document.querySelector('#modelAtelierPanel .atelier-head .atelier-actions'),'model');
