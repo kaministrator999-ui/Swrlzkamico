@@ -4,7 +4,7 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.367",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_367_PROPER_STONE_HAND_ANATOMY",
-  "reason": "Release §E v11.367: user-corrected visible Cliff Hand anatomy and full multi-rock hand. Correct Cliff native single connected SDF shell is visibly tapered at palm/wrist/fingers and retains stone-PBR geodes and 17-bone rig. Restore all 89 original Rocky Hand stone meshes rather than prune 28, remapping all 89 relative to authentic palm, finger, thumb and wrist silhouette with existing UV indices and 17-bone rig. Focused geometry tests passed: complete rock part count and classes 89/89 and 48 exterior stones, Cliff palm positive edge 0.4785→0.363 and wrist 0.2876→0.261. Preserve v11.366 UV authoring marker, all other tools and saved projects. Source seal exact: 374 patches, 9,404,323 bytes HTML, SHA-256 7ec38e5fa8ec81283066d2eebeae33be5c5356ddc23c35ef36cee79497e9a8db. Physical Moto/Quest acceptance remains user-reviewed.",
-  "sourceCommit": "71201607eb31d9de64561e73aa8d5d6ae96be453",
-  "sourceIntegritySha256": "7ec38e5fa8ec81283066d2eebeae33be5c5356ddc23c35ef36cee79497e9a8db"
+  "reason": "Retry exact sealed §E v11.367 after integrating the concurrently updated v11.366 UV authoring source. No changes to the tested anatomy logic. Exact combined HTML 9,405,531 bytes SHA-256 d288cb18bc236db470b099ddee4f0b9624b4472f859efe68fd1c3655392ae860, 374 patches. Cliff Hand connected field geometry and all 89 Rocky Hand stones passed exact source regressions; new Cliff palm and wrist visibly narrow and no rock parts or native 17 bones are deleted. Original UV editor marker and other features preserved; device acceptance by owner.",
+  "sourceCommit": "86054006295f4d9ead1edad0dae66ea64cb7dbbe",
+  "sourceIntegritySha256": "d288cb18bc236db470b099ddee4f0b9624b4472f859efe68fd1c3655392ae860"
 }
