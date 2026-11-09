@@ -1,3 +1,7 @@
+## §E v11.366 · Reusable per-mesh UV authoring marker (2026-11-08)
+
+An optional marker tool is integrated into the same scrollable UV Editor. On the chosen 3D surface or UV preview, tap to define the 2D artwork center. Rotate the guide −180°…180° and scale it 0.5×…2×, export a source-accurate re-centered wireframe guide and compact JSON transform profile, then import artwork authored in that adjusted frame. §E applies the inverse transform to image pixels, preserves original UV vertices and geometry, resets stale texture Slide offsets with a single native Undo step, and retains marker settings in each model part. Original freeform **Import painted image**, **UV Slide**, and **Save aligned PNG** are unchanged. Model VR and game tools are unaffected.
+
 ## §E v11.364 · Save UV Slide-corrected texture references (2026-11-08)
 
 The existing Model Studio UV popup now includes an optional **After UV Slide · save corrected reference** disclosure for a painted selected mesh. **Save aligned PNG** exports the artwork with the live texture offset baked in; **Export correction JSON** records the exact signed U/V offsets, shift convention, mesh identity, and underlying UV topology count. A reimport of the aligned PNG uses UV offset 0,0 on the same UV layout. The mesh UVs are not rewritten, Undo/Redo remains unchanged, and **Save Project** still keeps the original artwork plus the live offset. Owner tests on phone and Quest follow verified HF release.
