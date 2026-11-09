@@ -1,3 +1,7 @@
+## §E v11.356 · Live UV layout interpretation and native XR camera orbit (2026-11-08)
+
+Keep the UV popup below actual toolbar bounds and to the right of the model hierarchy even on landscape mobile. Add source-accurate wireframe/surface/painted preview, color-coded face-direction UV legend and interactive UV↔3D location markers without modifying original UV topology. Correct right-controller stick orbit to move the WebXR viewer's tracking reference around a stationary model, including vertical up/down orbit. Right-grip transforms must use the already-selected mesh/group instead of picking newly pointed-to meshes. Preserve native Undo/Redo, compact layout and selected geometry. Verify source integrity, then request dedicated HF deployment separately.
+
 ## §E v11.355 · Separate popup UV workflow (2026-11-08)
 
 Relocate every native UV editor control from the Model Studio inspector to a single floating UV editor accessed through the modeler top-header button. Keep the selected-mesh UV guide export/import, surface info and whole-character linked atlas together, preserve their listeners, mesh IDs and Undo behavior, and consolidate UV Slide and fine adjustment there. Popup must remain usable with the inspector closed, be movable on desktop/Quest, independently scrollable on phone, and close without closing Model Studio. Validate the generated source and then publish to owner test hardware.
