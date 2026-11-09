@@ -1,0 +1,36 @@
+name: §E v11.355 popup source measurement
+on:
+  push:
+    branches:
+      - verify/se355-uv-popup-integrity-20261108
+permissions:
+  contents: read
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Check UV popup JavaScript
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/model_studio_uv_popup_v11_355.js
+          node --check projects/swrlz-forge-moba/runtime/model_atelier_uv_layout_v11_336.js
+      - name: Verify patch rendering and record generated HTML identity
+        run: |
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/se355-build >/tmp/se355-build.log
+          python - <<'PY'
+          import hashlib,json,pathlib
+          root=pathlib.Path('/tmp/se355-build')
+          data=(root/'index.html').read_bytes()
+          assert data==(root/'modeler.html').read_bytes()
+          html=data.decode('utf8')
+          for marker in ('SWYRL_ENGINE_DEPLOY_MARKER: V11_355_MODEL_UV_POPUP',
+                         'window.SWYRLZ_E_UV_POPUP=Object.freeze',
+                         'id="se355ModelUVPopupStyle"',
+                         'se355UVNativeHost', 'se345UVAtlas',
+                         'data-se320-history="undo"','data-se320-history="redo"'):
+              assert marker in html,marker
+          print('SE355_SOURCE_RECEIPT '+json.dumps({'bytes':len(data),'sha256':hashlib.sha256(data).hexdigest()}))
+          PY
