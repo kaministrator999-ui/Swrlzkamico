@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.361",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_361_WEBXR_STARTERS_OPEN_AND_TOUCH",
-  "reason": "Release §E v11.361: repair the WebXR left/right hand Starter Model opening path and add independent Quest 2 Touch left/right controller starter projects with real editable shell/buttons/grip/trigger/thumbstick meshes, source UVs and original 512px controller color textures. Preserve all earlier modeling and VR tools. Native four-project open and source/package tests passed, 368 ordered patches, 9,346,125 bytes HTML, SHA-256 20e0bb0183cd6fcc579d6f08cf8b126472bcf3a5dcfe043366e170dcb5fe9810, 77 packaged assets. Source MIT license and provenance included. Browser/physical Quest acceptance tracked separately.",
-  "sourceCommit": "c410a3eb254e67df27c6541f03b150ce15eeee8e",
-  "sourceIntegritySha256": "20e0bb0183cd6fcc579d6f08cf8b126472bcf3a5dcfe043366e170dcb5fe9810"
+  "releaseVersion": "v11.362",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_362_QUEST_CONTROLLER_HINTS",
+  "reason": "Owner-requested §E Model Studio VR controller hints: display bundled MIT-licensed Quest 2 Touch models on the native tracked grips and small floating labels over each trigger, grip, thumbstick and face button. Labels follow the selected Inspect, Move, Rotate, Scale, Sculpt brush, Draw, Extrude, Lasso or Two-hand operation and the active Controller Studio bindings, highlighting pressed controls. No hand tracking, new renderer, system-button remaps, model mutations, or duplicate overlays. Exact candidate builder passed: 369 patches, 9,357,828 HTML bytes, SHA-256 64ba5b3a71c4a450a065f8a13a0419864321ab3a05ab097ff0f75560833b39d8 and 77 bundled assets. Native Quest 2 comfort/legibility remains owner testing.",
+  "sourceCommit": "6a7f233db26de47737bfe2974a2e1352a722da40",
+  "sourceIntegritySha256": "64ba5b3a71c4a450a065f8a13a0419864321ab3a05ab097ff0f75560833b39d8"
 }
