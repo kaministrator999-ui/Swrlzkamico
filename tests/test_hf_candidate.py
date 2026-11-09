@@ -20,6 +20,10 @@ class Candidate(unittest.TestCase):
    {"id":"image-answer","role":"assistant","text":"## Image analysis\\n\\nPurple robe and crystal staff","createdAt":3},
    {"id":"social","role":"user","text":"How are you doing?","createdAt":4},
    {"id":"echo","role":"assistant","text":"The image shows the mage in purple","createdAt":5},
+   {"id":"image-2","role":"user","text":image_prompt,"createdAt":6},
+   {"id":"image-2-answer","role":"assistant","text":"## Image analysis\\n\\nMore mage details","createdAt":7},
+   {"id":"social-2","role":"user","text":"how are you doing §wyrlz?","createdAt":8},
+   {"id":"echo-2","role":"assistant","text":"The image depicts §wyrlz as a mage","createdAt":9},
   ]
   original=[item["text"] for item in messages]
   thread={"messages":messages,"codeArtifacts":[]}
