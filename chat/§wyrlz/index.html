@@ -1334,8 +1334,8 @@
           <span id="imageAttachmentName"></span>
           <label class="vision-level-label" for="imageVisionLevelSelect">Vision
             <select id="imageVisionLevelSelect" aria-label="Vision analysis levels">
-              <option value="1">L1 · Fast</option>
-              <option value="2" selected>L2 · Adaptive</option>
+              <option value="1" selected>L1 · Fast (1 pass)</option>
+              <option value="2">L2 · Multi-view (slow)</option>
               <option value="3">L3 · Compare all (slow)</option>
             </select>
           </label>
@@ -1377,7 +1377,7 @@
         if(selectedImage){
           imageAttachmentThumbnail.src=selectedImage.url;
           imageAttachmentName.textContent=selectedImage.file.name;
-          imageVisionLevelSelect.value=String(selectedImage.analysisLevels||2);
+          imageVisionLevelSelect.value=String(selectedImage.analysisLevels||1);
         }
       };
       const removeSelectedImage=()=>{
@@ -1393,12 +1393,13 @@
           composerNotice("Choose a JPEG, PNG, or WebP under 8 MB.",true);return;
         }
         removeSelectedImage();
-        selectedImage={file,url:URL.createObjectURL(file),analysisLevels:2};
+        selectedImage={file,url:URL.createObjectURL(file),analysisLevels:1};
         updateImagePreview();composerNotice("");
       });
       imageVisionLevelSelect.addEventListener("change",()=>{
-        if(selectedImage)selectedImage.analysisLevels=Number(imageVisionLevelSelect.value)||2;
-        if(imageVisionLevelSelect.value==="3")composerNotice("L3 compares all three real CPU passes. This is slower; captions will be saved in the chat for comparison.");
+        if(selectedImage)selectedImage.analysisLevels=Number(imageVisionLevelSelect.value)||1;
+        if(imageVisionLevelSelect.value==="3")composerNotice("L3 compares three full-image passes plus optional details; local CPU processing can take several minutes.");
+        else if(imageVisionLevelSelect.value==="2")composerNotice("L2 analyzes individual views and then combines them; a five-view reference can take 6+ minutes on the local CPU.");
         else composerNotice("");
       });
       imageRemoveButton.addEventListener("click",()=>{removeSelectedImage();composerNotice("");});
@@ -1435,7 +1436,7 @@
         // repeat upload is a NEW inference, even with identical image/question.
         const visionRequestId=uid("vision");
         const body=JSON.stringify({image,question:question||"Describe this image.",
-          analysisLevels:Math.max(1,Math.min(3,Number(attachment.analysisLevels)||2)),
+          analysisLevels:Math.max(1,Math.min(3,Number(attachment.analysisLevels)||1)),
           visionRequestId});
         let jobId="",reconnects=0,pollingErrors=0;
         const acceptJob=async()=>{
@@ -1753,6 +1754,8 @@
             else if(observed==="DETAIL_PREFILL")status.textContent="Refining visual details from a higher-resolution image…";
             else if(observed==="DETAIL_DECODING")status.textContent="Level 2 · generating more specific details… first text after "+
                 durationText(timing.firstChunkSeconds??0);
+            else if(observed==="REGION_PREFILL")status.textContent="Analyzing view "+(Math.max(0,Number(timing.completedRegions)||0)+1)+"/"+(Math.max(1,Number(timing.requestedRegions)||1))+" · preparing image crop…";
+            else if(observed==="REGION_DECODING")status.textContent="Analyzing view "+(Math.max(0,Number(timing.completedRegions)||0)+1)+"/"+(Math.max(1,Number(timing.requestedRegions)||1))+" · generating visual details…";
             else if(observed==="LEVEL3_RETRY")status.textContent="Level 3 · preparing deep image comparison…";
             else if(observed==="LEVEL3_PREFILL")status.textContent="Level 3 · reading retained 768px image…";
             else if(observed==="LEVEL3_DECODING")status.textContent="Level 3 · generating deep description… first text after "+
