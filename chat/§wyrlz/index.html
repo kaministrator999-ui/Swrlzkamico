@@ -996,6 +996,13 @@
     .vision-work-timer{margin:8px 0 4px;font:11px var(--font-telemetry,monospace);font-variant-numeric:tabular-nums;color:#a6ecf8}
     .vision-work-timer[data-long="true"]{color:#ffd29b}
     .vision-work-status{color:#a4d4e9;font-size:11px;margin-top:6px}
+    /* One progressive, provisional analysis attached to the existing progress
+       card. The authoritative assistant answer replaces it on completion. */
+    .vision-progress-observation{margin-top:10px;padding:9px 10px;border:1px solid rgba(135,218,248,.24);border-radius:10px;background:rgba(7,19,34,.72);max-height:min(290px,44vh);overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y}
+    .vision-progress-observation[hidden]{display:none}
+    .vision-progress-title{font-weight:700;color:#c9f2ff;margin-bottom:6px}
+    .vision-progress-body{white-space:pre-wrap;overflow-wrap:anywhere;color:#e6f7ff;font-size:12px}
+    .vision-progress-note{color:#92c3d7;font-size:11px;margin-top:7px}
     .vision-work-card[data-state="error"] .vision-work-status{color:#ffb3c2}
     @media(max-width:400px){.composer-media-tools{gap:4px;padding-left:3px;padding-right:3px}.composer-media-button{padding:3px 7px;font-size:10px}.image-attachment span{max-width:78px}}
   </style>
@@ -1679,9 +1686,22 @@
         const timer=document.createElement("div");timer.className="vision-work-timer";timer.setAttribute("aria-label","Elapsed processing time");
         const status=document.createElement("div");status.className="vision-work-status";status.setAttribute("role","status");status.setAttribute("aria-live","polite");
         const sourceInfo=document.createElement("div");sourceInfo.className="vision-work-status";sourceInfo.hidden=true;
-        // Only show job status here. The model's findings appear once in the
-        // assistant reply, never as intermediate duplicate report cards.
-        root.append(header,message,previewButton,steps,timer,sourceInfo,status);
+        // Show L1 as the first useful provisional answer and append L2 crop
+        // observations inside this SAME live surface. No premature persisted
+        // assistant turn; the single final assistant message replaces it.
+        const progressive=document.createElement("section");
+        progressive.className="vision-progress-observation";
+        progressive.hidden=true;
+        progressive.setAttribute("aria-label","Provisional image observations");
+        const progressiveTitle=document.createElement("div");
+        progressiveTitle.className="vision-progress-title";
+        const progressiveBody=document.createElement("div");
+        progressiveBody.className="vision-progress-body";
+        const progressiveNote=document.createElement("div");
+        progressiveNote.className="vision-progress-note";
+        progressiveNote.textContent="Local model observations · unverified. The final reply will reconcile the views.";
+        progressive.append(progressiveTitle,progressiveBody,progressiveNote);
+        root.append(header,message,previewButton,steps,timer,sourceInfo,status,progressive);
         messageList.appendChild(root);
         const initialTime=Date.now();
         const durationText=seconds=>{
@@ -1750,6 +1770,28 @@
               const line="Loaded local vision model: "+actualModel+(revision?" · revision "+revision:"");
               if(!sourceInfo.textContent.includes("Loaded local vision model:"))
                 sourceInfo.textContent+=(sourceInfo.textContent?"\n":"")+line;
+            }
+            if(phase==="ANALYZING"&&Number(timing?.requestedLevels)>=2){
+              const first=Array.isArray(timing.levelRecords)
+                ?timing.levelRecords.find(item=>item?.level===1&&typeof item.description==="string")
+                :null;
+              const firstText=String(first?.description||"").trim();
+              if(firstText){
+                const crops=Array.isArray(timing.spatialRegionRecords)
+                  ?timing.spatialRegionRecords.filter(item=>item&&typeof item.description==="string")
+                  :[];
+                const additional=crops.slice(0,8).map(item=>{
+                  const label=String(item.region||"Source view").slice(0,65);
+                  const observation=String(item.description||"").trim().slice(0,420);
+                  return observation?label+": "+observation:"";
+                }).filter(Boolean);
+                progressive.hidden=false;
+                progressiveTitle.textContent=additional.length
+                  ?"Initial L1 overview · "+additional.length+" additional view observation"+(additional.length===1?"":"s")
+                  :"Initial L1 overview · analyzing additional views";
+                progressiveBody.textContent=firstText.slice(0,1100)+
+                  (additional.length?"\n\nMore observations (unverified):\n"+additional.join("\n\n"):"");
+              }
             }
             if(detail)status.textContent=detail;
             else if(timing?.integratedOutcome==="FAILED")status.textContent="Whole-image synthesis failed; retaining raw region observations.";
