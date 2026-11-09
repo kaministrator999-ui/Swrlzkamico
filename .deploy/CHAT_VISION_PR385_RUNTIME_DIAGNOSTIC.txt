@@ -12,3 +12,4 @@ VISION_CPU_CAPACITY_AUDIT_20261109=Read-only CPU limit and wall-time inspection;
 FOUR_EIGHT_THREADS_CANCEL_GUARD_POST_RELEASE_20261109=Read-only RUNNING stage, model events, sanitized status after Qwen 4/8 and Send/Stop guard release; no user text or images
 QWEN_6_12_POST_RELEASE_20261109=Read-only status and sanitized startup check after 6/12 Qwen CPU thread trial; no user data
 PROGRESSIVE_L1_L2_SOCIAL_POST_DEPLOY_20261109=Read-only hosted RUNNING and sanitized error check after progressive L1/L2 and companion-topic release; no private user data
+L2_VIEW_CONTACT_POST_RELEASE_20261109=Read-only hosted Space stage, Qwen warmup, sanitized startup checks after L2 view-contact grounding release; no user message content
