@@ -32,8 +32,7 @@ for needle in [
  'se358WebXRHandScene',
  'topologyMesh:structuredClone(asset.mesh)',
  'referenceJoints=structuredClone(asset.joints)',
- 'assets/models/webxr-hands/left.json',
- 'assets/models/webxr-hands/right.json'
+ "fetch('assets/models/webxr-hands/'+side+'.json')"
 ]:
  assert needle in html,needle
 subprocess.run(['node','--check',str(ROOT/'runtime/webxr_reference_hand_starters_v11_358.js')],check=True)
