@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.364",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_364_UV_ALIGNMENT_EXPORT",
-  "reason": "Owner-requested selected-mesh UV correction export: after manually positioning painted artwork using the existing UV Slide, optionally save the corrected aligned PNG plus exact offset/mesh-context JSON for comparison and future AI-assisted mapping. No changes to mesh topology, original UV coordinates, current texture positioning, project persistence, native Undo/Redo or unrelated VR and game work. Additive v11.364 verified source is 9,364,395 HTML bytes; SHA-256 f856799ea9bd657b08f46642e96e6021845f306f6351131139767d4bb2ec6403. Device acceptance remains owner testing.",
-  "sourceCommit": "42ae523a62a7ff0415e017aa2a55696fde811e78",
-  "sourceIntegritySha256": "f856799ea9bd657b08f46642e96e6021845f306f6351131139767d4bb2ec6403"
+  "releaseVersion": "v11.365",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_365_HAND_REFERENCE_FIT",
+  "reason": "Publish §E v11.365: anatomy-corrected existing Cliff Hand and Rocky Anime Hand starter projects, grounded in bundled 25-joint WebXR hand reference. Cliff: slimmer metacarpal and wrist, natural index/pinky reach, subtle finger taper; one connected stone PBR model and 17-bone rig preserved. Rocky: 28 decorative slabs/overhangs/chips pruned, solid palm and all fingers/thumb segments preserved, rock geometry width/depth reshaped with original UVs, 17 bones, seams, sculpt/save intact. Confirmed focused native geometry/SDF regressions: 89 to 61 pieces in original standalone rock generator, 0.35064 to 0.30735 index root width, 0.5161 to 0.4839 cliff palm width, 0.306 to 0.287 wrist width. Exact sealed HTML 9,370,404 bytes, SHA-256 c7596236b43e132f47907da9b8349df171e1ba85b444bbee97f3186a134acf64, 372 ordered patches. Quest/phone visual acceptance belongs to owner.",
+  "sourceCommit": "c3c2b13820b897798ad5b4afcd5a138b5cc2ed5c",
+  "sourceIntegritySha256": "c7596236b43e132f47907da9b8349df171e1ba85b444bbee97f3186a134acf64"
 }
