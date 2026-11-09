@@ -20,7 +20,7 @@ assert.match(html,/description=await requestVisionDescription\(attachment,draftT
 assert.match(html,/const visionRequestId=uid\("vision"\)/);
 assert.match(html,/\.\.\.\(attachment&&activity\?\.jobId\?\{visionJobId:activity\.jobId\}:\{\}\)/);
 assert.match(html,/const requestVisionDescription=async\(attachment,question,activity\)=>/);
-assert.match(html,/analysisLevels:Math\.max\(1,Math\.min\(3,Number\(attachment\.analysisLevels\)\|\|2\)\),\s*visionRequestId/);
+assert.match(html,/analysisLevels:Math\.max\(1,Math\.min\(3,Number\(attachment\.analysisLevels\)\|\|1\)\),\s*visionRequestId/);
 assert.match(html,/if\(result\.resumedExistingJob===true\)/);
 assert.match(html,/Resumed a previously accepted upload; no new inference started/);
 assert.match(html,/const startVisionActivity=\(attachment,question\)=>/);
