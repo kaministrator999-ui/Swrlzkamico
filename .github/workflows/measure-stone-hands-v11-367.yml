@@ -7,6 +7,9 @@ on:
       - "projects/swrlz-forge-moba/runtime/stone_hand_anatomy_v11_367.js"
       - "projects/swrlz-forge-moba/scripts/test_v11_367_full_rock_hand.cjs"
       - "projects/swrlz-forge-moba/scripts/test_v11_367_connected_cliff.cjs"
+      - "projects/swrlz-forge-moba/patches/v11_366_uv_authoring_marker.py"
+      - "projects/swrlz-forge-moba/runtime/model_uv_art_marker_v11_366.js"
+      - ".github/workflows/measure-stone-hands-v11-367.yml"
   workflow_dispatch:
 permissions:
   contents: read
