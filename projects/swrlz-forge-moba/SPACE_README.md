@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.367
+title: §wyrl§ Engine v11.368
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,11 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## §E v11.368 · Rotated UV auto-center and reusable Slide alignment
+
+Model Studio's optional UV alignment marker can automatically center and turn its artwork guide toward the visible 3D mesh surface using true triangle UVs, the world-transformed mesh and current camera-up direction. This also works when a sphere or hand is rotated; a camera-facing side is not necessarily an anatomical front. **Capture corrected UV Slide position** converts a completed manual correction such as +0.2494 U into a reusable centered marker near U=0.2506, without changing the original mesh or ordinary image import. Source v11.368 preserves all v11.367 stone-hand geometry fixes and VR/editor tools; physical phone/Quest acceptance remains the owner test.
+
 
 ## §E v11.367 · Visible Cliff Hand anatomy and full multi-rock silhouette (2026-11-08)
 
