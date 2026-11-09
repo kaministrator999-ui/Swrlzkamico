@@ -124,7 +124,7 @@ async function se371Clone(name){
  await se175Store([draft]);
  let switched=false;
  try{
-  loadProject(structuredClone(clone),{workspaceLocal:true});switched=true;
+  switched=true;loadProject(structuredClone(clone),{workspaceLocal:true});
   se175StampProject(newId,newName,clone.project.sourceStarterId);
   workspaceLocalAllowed=true;
   if(typeof ModelAtelier!=='undefined'){
@@ -169,7 +169,7 @@ async function se371Run(mode){
    if(ready&&se176AccountConnected)synced=await saveCloud()===true;
   }else synced=await se371Save();
   se371Display((mode==='clone'?'Cloned ':'Saved ')+se371ProjectName()+
-   (synced?' · saved to your account and this device.':' · saved on this device.'));
+   (synced?' · saved to your account and this device.':(ready&&se176AccountConnected?' · saved on this device; account sync was not completed.':' · saved on this device.')));
   await se175RefreshLocal().catch(()=>{});
  }catch(error){se371Display((mode==='clone'?'Clone':'Save')+' failed: '+error.message,true);}
  finally{se371ActionBusy=false;se371UpdateButtons();}
