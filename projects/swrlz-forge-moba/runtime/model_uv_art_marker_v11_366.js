@@ -93,6 +93,87 @@ function se366StartPick(mode){
   status(mode==='uv'?'Tap the desired center on the wireframe preview.':
     'Tap the desired center on the selected 3D surface. No geometry moves.');
 }
+
+// Infer a paint-frame rotation from the REAL UV triangle and camera-up.
+// Mesh transforms have already been applied to the triangle world positions.
+// This detects the camera-facing side (not anatomical palm/back or a named front).
+function se366AngleFromView(pa,pb,pc,ta,tb,tc,screenRight,screenUp){
+  const e1=pb.map((v,i)=>v-pa[i]),e2=pc.map((v,i)=>v-pa[i]);
+  const du1=tb[0]-ta[0],dv1=tb[1]-ta[1];
+  const du2=tc[0]-ta[0],dv2=tc[1]-ta[1];
+  const det=du1*dv2-du2*dv1;
+  if(Math.abs(det)<1e-10)return null;
+  const tangentU=e1.map((v,i)=>(v*dv2-e2[i]*dv1)/det);
+  const tangentV=e1.map((v,i)=>(e2[i]*du1-v*du2)/det);
+  const dot=(a,b)=>a.reduce((sum,value,i)=>sum+value*b[i],0);
+  // The image has Y pointing DOWN, whereas UV V and camera up point UP.
+  const a=dot(tangentU,screenRight),b=-dot(tangentV,screenRight);
+  const c=dot(tangentU,screenUp),d=-dot(tangentV,screenUp);
+  const projectedDet=a*d-b*c;
+  if(Math.abs(projectedDet)<1e-12)return null;
+  // UV image direction that appears straight UP in the current camera.
+  const x=-b/projectedDet,y=a/projectedDet;
+  const len=Math.hypot(x,y);
+  if(len<1e-10)return null;
+  let angle=-90-Math.atan2(y,x)*180/Math.PI;
+  angle=((angle+180)%360+360)%360-180;
+  return Math.round(angle*100)/100;
+}
+function se366AutoAlignCamera(){
+  try{
+    const target=se336SelectedMesh();
+    if(!target||!camera)throw Error('Select a visible mesh in the viewport.');
+    const mesh=target.mesh,geo=mesh.geometry;
+    const positions=geo?.getAttribute('position'),uv=geo?.getAttribute('uv');
+    if(!positions||!uv||positions.count!==uv.count)
+      throw Error('This mesh needs complete UVs to auto-align.');
+    mesh.updateWorldMatrix(true,false);camera.updateWorldMatrix(true,false);
+    if(!geo.boundingSphere)geo.computeBoundingSphere();
+    const bounds=geo.boundingSphere;
+    if(!bounds||!Number.isFinite(bounds.radius))throw Error('Invalid mesh bounds.');
+    const center=bounds.center.clone().applyMatrix4(mesh.matrixWorld);
+    const eye=new THREE.Vector3();camera.getWorldPosition(eye);
+    const right=new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld,0).normalize();
+    const up=new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld,1).normalize();
+    const radius=Math.max(.00001,bounds.radius*mesh.getWorldScale(new THREE.Vector3()).length()/Math.sqrt(3));
+    // Aim at the selected geometry center rather than the viewport center.
+    // Offset rays provide a fallback for open/concave meshes (e.g. hand fingers).
+    const aims=[center,center.clone().addScaledVector(right,radius*.18),
+      center.clone().addScaledVector(up,radius*.18),
+      center.clone().addScaledVector(right,-radius*.18),
+      center.clone().addScaledVector(up,-radius*.18)];
+    let hit=null;
+    for(const aim of aims){
+      const direction=aim.clone().sub(eye);
+      if(direction.lengthSq()<1e-12)continue;
+      const ray=new THREE.Raycaster(eye,direction.normalize(),0,Infinity);
+      const candidate=ray.intersectObject(mesh,false)[0];
+      if(candidate?.uv&&candidate.face){hit=candidate;break;}
+    }
+    if(!hit)throw Error('Could not find a visible UV triangle. Rotate the view toward the desired surface or pick manually.');
+    const face=hit.face,verts=[face.a,face.b,face.c];
+    const world=verts.map(i=>new THREE.Vector3()
+      .fromBufferAttribute(positions,i).applyMatrix4(mesh.matrixWorld).toArray());
+    const texcoords=verts.map(i=>[uv.getX(i),uv.getY(i)]);
+    const angle=se366AngleFromView(...world,...texcoords,right.toArray(),up.toArray());
+    if(angle===null)throw Error('Visible triangle has degenerate UV orientation. Pick the center manually.');
+    const previous=se366Marker(target.part);
+    se366SaveMarker({
+      version:1,
+      centerUV:[Math.round(se366Clamp(hit.uv.x,0,1)*1e6)/1e6,
+                Math.round(se366Clamp(hit.uv.y,0,1)*1e6)/1e6],
+      angleDeg:angle,
+      scale:previous?.scale??1
+    });
+    se366StopPick();
+    // Preserve current image/offset: auto-fit adjusts the authoring reference,
+    // never secretly reprojects or rotates user-painted textures.
+    status('Camera-facing UV center found at U '+hit.uv.x.toFixed(3)+
+      ', V '+hit.uv.y.toFixed(3)+'; guide upright angle '+angle+
+      '°. Mesh rotation accounted for. Export marked guide to paint without the quarter-width correction.');
+  }catch(error){status('Auto UV center: '+error.message,true);}
+}
+
 function se366DrawMarker(ctx,size,marker){
   if(!se366Valid(marker))return;
   const x=marker.centerUV[0]*size,y=(1-marker.centerUV[1])*size;
@@ -268,10 +349,11 @@ function se366Install(){
   box.id='se366MarkerTools';box.className='se336-uv-extra';
   box.innerHTML=
     '<summary>🎯 UV alignment marker · center / rotate / scale</summary>'+
-    '<p class="se366-hint">Mark the center of a face, palm or other surface. The guide is re-centered and turned for easy artwork creation; native mesh UVs stay unchanged.</p>'+
+    '<p class="se366-hint">Auto finds the visible front-facing surface in your current camera view and its screen-up angle—even on rotated meshes. Choose the palm/back or other desired side by turning the model toward the camera. Semantic front/top cannot be guessed for every shape. The mesh itself stays unchanged.</p>'+
     '<div class="se366-actions">'+
       '<button type="button" id="se366PickMesh" data-se366-needs="mesh">Pick center on model</button>'+
-      '<button type="button" id="se366PickUV" data-se366-needs="mesh">Pick center on UV preview</button></div>'+
+      '<button type="button" id="se366PickUV" data-se366-needs="mesh">Pick center on UV preview</button>'+
+      '<button type="button" id="se366Auto" data-se366-needs="mesh" class="se366-wide">Auto center + upright from view</button></div>'+
     '<p id="se366MarkerInfo" class="se366-info">Select a mesh to place a marker.</p>'+
     '<label class="se366-range">Rotate guide <output id="se366AngleValue">0°</output>'+
       '<input id="se366Angle" data-se366-needs="marker" type="range" min="-180" max="180" step="1" value="0"></label>'+
@@ -287,6 +369,7 @@ function se366Install(){
   preview.after(box);
   box.querySelector('#se366PickMesh').addEventListener('click',()=>se366StartPick('mesh'));
   box.querySelector('#se366PickUV').addEventListener('click',()=>se366StartPick('uv'));
+  box.querySelector('#se366Auto').addEventListener('click',se366AutoAlignCamera);
   box.querySelector('#se366Angle').addEventListener('change',e=>{
     const target=se336SelectedMesh(),m=se366Marker(target?.part);if(!m)return;
     try{se366SaveMarker({...m,angleDeg:Number(e.target.value)});}
@@ -345,5 +428,6 @@ checkPart=function(part){
 };
 window.SWYRLZ_E_UV_ART_MARKER=Object.freeze({
   current:()=>{const p=se336SelectedMesh()?.part;return se366Marker(p);},
-  nativeToArt:se366NativeToArt,artToNative:se366ArtToNative
+  nativeToArt:se366NativeToArt,artToNative:se366ArtToNative,
+  angleFromView:se366AngleFromView,autoAlignCamera:se366AutoAlignCamera
 });
