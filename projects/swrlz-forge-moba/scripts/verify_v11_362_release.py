@@ -3,7 +3,7 @@
 from pathlib import Path
 import argparse,hashlib,json,subprocess,sys
 ROOT=Path(__file__).resolve().parents[1]
-MARKER='SWYRL_ENGINE_DEPLOY_MARKER: V11_362_CONTROLLER_TOOL_LABELS'
+MARKER='SWYRL_ENGINE_DEPLOY_MARKER: V11_362_QUEST_CONTROLLER_HINTS'
 ap=argparse.ArgumentParser()
 ap.add_argument('--output',required=True)
 ap.add_argument('--request',action='store_true')
@@ -11,7 +11,7 @@ args=ap.parse_args()
 m=json.loads((ROOT/'source-manifest.json').read_text('utf8'))
 assert m['name']=='§wyrl§ Engine v11.362'
 assert m['finalArtifact']=='swyrl_engine_v11_362.html'
-assert len(m['patches'])==369 and m['patches'][-1]=='patches/v11_362_controller_tool_labels.py'
+assert len(m['patches'])==369 and m['patches'][-1]=='patches/v11_362_quest_controller_hints.py'
 assert isinstance(m['finalBytes'],int) and m['finalBytes']>9_340_000
 assert isinstance(m['finalSha256'],str) and len(m['finalSha256'])==64
 out=Path(args.output).resolve()
@@ -23,21 +23,20 @@ html=data.decode('utf8')
 for token in [
  MARKER,"window.SWRLZ_FORGE_BUILD={version:'v11.362'",
  '<title>§wyrl§ Engine · Maker v11.362</title>',
- 'SE362_MODEL_VR_CONTROLLER_LABELS_START','const se362ControllerLabels=',
- 'se362ControllerLabels.setup(s.controllers)','se362ControllerLabels.frame(s)',
- 'se362ControllerLabels.dispose()','!se362ControllerLabels.hasModel(record)',
- 'controllerLabels:se362ControllerLabels.inspect()',
- 'assets/models/webxr-touch-v3/','function renderAsset(entry,asset,side,epoch)',
- 'function bindings(s)','currentProfile?.()','entry.abort?.abort()',
+ 'SE362_CONTROLLER_HINTS_START','const se362LiveControllers=',
+ 'se362ControllerConnected(r);','se362ControllerDisconnected(r);','se362Frame(s);',
+ '!record.se362Visual?.ready','se362CurrentBindings(s)',
+ 'assets/models/webxr-touch-v3/','async function se362LoadVisual(record,visual)',
+ 'function se362CleanLabel(action,s)','currentProfile?.()',
  'se356ApplyCameraOrbit','SE350_MODEL_VR_NATIVE_TOOLS_START',
  'SE360_MODEL_VR_MENU_MOTION_START','SE360_MODEL_VR_UI_START',
  'se355UVPopup','window.SWYRLZ_E_UV_POPUP=Object.freeze',
  'SWYRL_ENGINE_WEBXR_MODEL_STARTERS_361',
 ]:
  assert token in html,token
-assert html.count(" source.engine='§wyrl§ Engine · Maker v11.362';source.version=11.362;")==4
+assert html.count(" source.engine='§wyrl§ Engine · Maker v11.362';source.version=11.362;")==5
 subprocess.run([sys.executable,str(ROOT/'scripts/check_inline_js_syntax_v11_266.py'),str(out/'index.html')],check=True)
-for source in ['runtime/model_vr_controller_labels_v11_362.js',
+for source in ['runtime/model_vr_controller_hints_v11_362.js',
                'runtime/model_vr_workspace_v11_350.js','runtime/model_vr_input_profile_v11_350.js',
                'runtime/model_studio_vr_ui_v11_360.js']:
  subprocess.run(['node','--check',str(ROOT/source)],check=True)
