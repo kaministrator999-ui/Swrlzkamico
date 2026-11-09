@@ -17,6 +17,21 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+      - name: Restore the deployed v11.361 source manifest for this isolated regression
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          file=Path('projects/swrlz-forge-moba/source-manifest.json')
+          m=json.loads(file.read_text('utf8'))
+          assert m['patches'][367]=='patches/v11_361_webxr_hand_open_touch_starters.py'
+          m['name']='§wyrl§ Engine v11.361'
+          m['finalArtifact']='swyrl_engine_v11_361.html'
+          m['patches']=m['patches'][:368]
+          m['finalBytes']=9346125
+          m['finalSha256']='20e0bb0183cd6fcc579d6f08cf8b126472bcf3a5dcfe043366e170dcb5fe9810'
+          file.write_text(json.dumps(m,ensure_ascii=False,indent=2)+'\\n')
+          PY
       - name: Build the exact sealed v11.361 static package
         run: python projects/swrlz-forge-moba/scripts/verify_v11_361_release.py --output /tmp/se361-model-starters
       - name: Install one mobile browser
