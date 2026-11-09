@@ -168,6 +168,7 @@ assert "never generalize a pose or held object to" in visual_prompt
 assert "Detail-only, palette and overhead panels" in visual_prompt
 assert "supporting detail, color-swatch" in visual_prompt
 assert "motifs tied to the garment surface" in visual_prompt
+assert "garment panel from decoration along its hem or border" in visual_prompt
 assert "prop's visible silhouette" in visual_prompt
 assert "clothing layers, colors, patterns, props and accessories" in visual_prompt
 assert "Include only legible text and observable contacts" in visual_prompt
@@ -923,6 +924,19 @@ assert "hem length to visible legs and footwear" in last_instructions
 assert "each motif to the exact visible surface" in last_instructions
 assert "ornament mounted on a prop" in last_instructions
 assert "genuine crop-specific findings absent from the overview" in last_instructions
+# Live L1/L2 visual acceptance regression: prevent the final pass from
+# filling redundant headings or inventing symmetrical panels, unseen
+# anatomy, supported-object contact or the decorative legend.
+assert "Never claim views differ ONLY in orientation" in last_instructions
+assert "Do not claim a prop is resting" in last_instructions
+assert "do not infer shoulders, arms, or a full body" in last_instructions
+assert "Do not guess concealed ears, neck surfaces, gloves" in last_instructions
+assert "supporting reference-strip closeups" in last_instructions
+assert "do not create a redundant props section" in last_instructions
+assert "Do NOT output separate Shape, Geometry, and Props sections" in last_instructions
+# The reference strip is included first in the evidence notes, without
+# altering the separately recorded per-panel chronological source order.
+assert last_instructions.index("\nSupporting reference panels (support):") < last_instructions.index("\nView panel 1 (view):")
 # Changing the number of panels should not force a 5-view result.
 three = Image.new("RGB", (1200, 880), "white")
 three_paint = ImageDraw.Draw(three)
