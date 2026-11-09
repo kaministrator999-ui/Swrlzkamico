@@ -53,7 +53,7 @@ def apply(html):
     ]:
       html=once(html,before,after,label)
     source=" source.engine='§wyrl§ Engine · Maker v11.361';source.version=11.361;"
-    if html.count(source)!=4:
+    if html.count(source)!=5:
         raise AssertionError(('v11.362 provenance',html.count(source)))
     html=html.replace(source," source.engine='§wyrl§ Engine · Maker v11.362';source.version=11.362;")
     key='const SE_RELEASE_NOTES='
