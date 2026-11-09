@@ -4,7 +4,7 @@
   "target": "kamiloki/swrlz-forge-moba",
   "releaseVersion": "v11.368",
   "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_368_UV_CAMERA_ALIGNMENT",
-  "reason": "§E v11.368: owner-requested auto UV authoring marker adds camera-facing visible surface center and mesh-rotation-aware up angle using real UV triangle tangents, plus Capture corrected UV Slide to reuse the proven quarter-width face texture correction (e.g. +0.2494 U -> marker centered at U 0.2506). The new optional marker tools provide an adjusted guide PNG/metadata and inverse image import without rewriting existing mesh UVs or the freeform UV Slide workflow. Preserve v11.367's full 89-stone Rocky Hand and revised connected Cliff Hand anatomy, all VR, model/game tools and existing projects. Exact source verified: 375 patches, 9,405,696 HTML bytes, SHA-256 b7673a49dc5ce60bffe695ef73227bde5c93e83f6f2969cc88fdc3b9e7b3c222. Node marker/hand geometry tests, complete inline JS syntax and source seal passed; phone/Quest acceptance is user testing. Corrected verifier to expect swyrl_engine_v11_368.html; sealed source bytes and hash unchanged. Source verifier now uses consistent artifact filename and scene provenance v11.368; no changes to the sealed engine.",
-  "sourceCommit": "d26d1a4c1170a466800e68382766e82cc9bbf9c4",
+  "reason": "§E v11.368 metadata sync only: publish matching Space title and release notes after successful sealed engine upload in run 42572138278. No changes to source-manifest, compiled HTML, UV marker functions, stone-hand geometry or previous accepted source integrity. Keep 375 patches; HTML 9,405,696 bytes SHA-256 b7673a49dc5ce60bffe695ef73227bde5c93e83f6f2969cc88fdc3b9e7b3c222. Phone/Quest functional acceptance remains owner validation.",
+  "sourceCommit": "abe7309b85c49fa0aac8a19e2e5018f4b2573560",
   "sourceIntegritySha256": "b7673a49dc5ce60bffe695ef73227bde5c93e83f6f2969cc88fdc3b9e7b3c222"
 }
