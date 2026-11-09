@@ -29,20 +29,9 @@ function se367CliffField(math){
   const thumbRoot=se367Smooth(1.35,1.56,y)*(1-se367Smooth(1.94,2.18,y))*
       (1-se367Smooth(-.52,-.27,x));
   if(x<-.45)xx+=(x+.45)*.09*thumbRoot;
-  // Refine each separate finger, never scale the entire row of MCP roots:
-  // this preserves recognizable spacing and the original knuckle arc.
-  if(finger>.0001){
-   const digits=se217FingerSpec;
-   let nearest=digits[0],difference=Infinity;
-   for(const d of digits){
-    const t=Math.max(0,Math.min(1,(y-d.from)/(d.to-d.from)));
-    const center=d.x+d.splay*t;
-    if(Math.abs(x-center)<difference){difference=Math.abs(x-center);nearest=d;}
-   }
-   const t=Math.max(0,Math.min(1,(y-nearest.from)/(nearest.to-nearest.from)));
-   const center=nearest.x+nearest.splay*t;
-   xx=center+(xx-center)*(1+.17*finger);
-  }
+  // Finger widths are refined inside the original connected organic field
+  // itself (by the append-only patch), avoiding discontinuous nearest-bone
+  // coordinate switches between the middle/index/ring finger web valleys.
   const zz=z*(1+.15*metacarpal+.10*finger+.045*heel);
   return original(xx,y,zz);
  };
