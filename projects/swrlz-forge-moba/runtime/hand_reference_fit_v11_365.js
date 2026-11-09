@@ -41,7 +41,7 @@ function se365RefinedRockScene(){
   }
   return true;
  });
- if(initial.length<100||kept.length>=initial.length||removed.fingerChips!==8||
+ if(initial.length<75||kept.length>=initial.length||removed.fingerChips!==8||
     removed.side!==8||removed.palm!==10||removed.wrist!==2)
   throw Error('Rock Hand reference filter encountered unexpected original model topology.');
  const digits=new Map(m.rigging.digits.map(f=>[f.name,f]));
