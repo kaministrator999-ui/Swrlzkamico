@@ -4,12 +4,13 @@ on:
     branches: [main]
     paths:
       - "projects/swrlz-forge-moba/tests/ui_v11_361_webxr_model_starters.mjs"
+      - ".github/workflows/check-webxr-model-starters-browser.yml"
   workflow_dispatch:
 permissions:
   contents: read
 jobs:
   four-model-starters:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
