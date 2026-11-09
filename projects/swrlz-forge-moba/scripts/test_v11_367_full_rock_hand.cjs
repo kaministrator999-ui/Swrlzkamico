@@ -86,6 +86,8 @@ console.log('SE283_WEATHERED_MODEL_SMOKE '+JSON.stringify({...info,weathered}));
 
 
 load('hand_reference_fit_v11_365.js');
+// This isolated stone-only fixture does not mount the separate Cliff renderer.
+vm.runInContext('function se288SmoothCliffHandScene(){throw Error("Cliff stub not to be used in rock test")}',ctx);
 load('stone_hand_anatomy_v11_367.js');
 const original=vm.runInContext('se365OriginalStoneScene()',ctx);
 const corrected=vm.runInContext('se281RockScene()',ctx);
