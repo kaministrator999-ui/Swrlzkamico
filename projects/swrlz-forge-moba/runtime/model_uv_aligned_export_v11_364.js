@@ -1,4 +1,6 @@
-/* §E v11.364 — export correctly aligned UV texture and the actual correction.\n   Adds controls to the existing native UV editor; no geometry or UV rewrite. */\n// Export the correction as an actual reusable PNG without changing mesh UVs,
+/* §E v11.364 — export correctly aligned UV texture and the actual correction.
+   Adds controls to the existing native UV editor; no geometry or UV rewrite. */
+// Export the correction as an actual reusable PNG without changing mesh UVs,
 // the current slide, or the project's original painted source image.
 // This is the same RepeatWrapping placement used by the 3D material and
 // the UV preview: canvas X = -offsetU; canvas Y = +offsetV.
