@@ -1,0 +1,33 @@
+name: One-shot §E v11.357 source seal
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/source-manifest.json"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  inspect-source:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Build candidate and print exact source integrity
+        run: |
+          python projects/swrlz-forge-moba/build_space.py --output /tmp/se-357-candidate
+          python - <<'PY'
+          from pathlib import Path
+          from hashlib import sha256
+          file=Path('/tmp/se-357-candidate/index.html')
+          content=file.read_bytes()
+          print('SE357_BUILD_BYTES='+str(len(content)),flush=True)
+          print('SE357_BUILD_SHA256='+sha256(content).hexdigest(),flush=True)
+          assert b"window.SWRLZ_FORGE_BUILD={version:'v11.357'" in content
+          assert b"Export UV wireframe" in content
+          assert b"Import painted image" in content
+          assert b"se356UVMode='guide'" in content
+          PY
+          python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se-357-candidate/index.html
