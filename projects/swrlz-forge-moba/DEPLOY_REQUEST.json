@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.367",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_367_PROPER_STONE_HAND_ANATOMY",
-  "reason": "Retry exact sealed §E v11.367 after integrating the concurrently updated v11.366 UV authoring source. No changes to the tested anatomy logic. Exact combined HTML 9,405,531 bytes SHA-256 d288cb18bc236db470b099ddee4f0b9624b4472f859efe68fd1c3655392ae860, 374 patches. Cliff Hand connected field geometry and all 89 Rocky Hand stones passed exact source regressions; new Cliff palm and wrist visibly narrow and no rock parts or native 17 bones are deleted. Original UV editor marker and other features preserved; device acceptance by owner.",
-  "sourceCommit": "86054006295f4d9ead1edad0dae66ea64cb7dbbe",
-  "sourceIntegritySha256": "d288cb18bc236db470b099ddee4f0b9624b4472f859efe68fd1c3655392ae860"
+  "releaseVersion": "v11.368",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_368_UV_CAMERA_ALIGNMENT",
+  "reason": "§E v11.368: owner-requested auto UV authoring marker adds camera-facing visible surface center and mesh-rotation-aware up angle using real UV triangle tangents, plus Capture corrected UV Slide to reuse the proven quarter-width face texture correction (e.g. +0.2494 U -> marker centered at U 0.2506). The new optional marker tools provide an adjusted guide PNG/metadata and inverse image import without rewriting existing mesh UVs or the freeform UV Slide workflow. Preserve v11.367's full 89-stone Rocky Hand and revised connected Cliff Hand anatomy, all VR, model/game tools and existing projects. Exact source verified: 375 patches, 9,405,696 HTML bytes, SHA-256 b7673a49dc5ce60bffe695ef73227bde5c93e83f6f2969cc88fdc3b9e7b3c222. Node marker/hand geometry tests, complete inline JS syntax and source seal passed; phone/Quest acceptance is user testing.",
+  "sourceCommit": "902f7e40270f918eb19c7a55002cd01afdfb5034",
+  "sourceIntegritySha256": "b7673a49dc5ce60bffe695ef73227bde5c93e83f6f2969cc88fdc3b9e7b3c222"
 }
