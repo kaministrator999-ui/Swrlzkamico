@@ -2,12 +2,12 @@
 // Native WebGL antialias is immutable after context creation. FXAA is browser
 // only; WebXR owns stereo framebuffer, foveation and compositor timing.
 const se380Key='swyrl.engine.graphics.advanced.v1';
-const se380Defaults=Object.freeze({aa:'native',anisotropy:4,foveation:'medium',vrScale:'preset',shadowDistance:'normal',lod:'default'});
+const se380Defaults=Object.freeze({aa:'native',anisotropy:'original',foveation:'medium',vrScale:'preset',shadowDistance:'normal',lod:'default'});
 let se380Prefs={...se380Defaults};
 try{const stored=JSON.parse(localStorage.getItem(se380Key)||'null');if(stored&&typeof stored==='object'){
  for(const key of Object.keys(se380Defaults))if(Object.prototype.hasOwnProperty.call(stored,key))se380Prefs[key]=stored[key];
 }}catch{}
-const se380Choices={aa:['native','fxaa'],anisotropy:[1,2,4,8,16],foveation:['off','low','medium','high'],vrScale:['preset','.55','.60','.65','.70','.75','.80','.85','.90'],shadowDistance:['near','normal','far'],lod:['near','default','far']};
+const se380Choices={aa:['native','fxaa'],anisotropy:['original',1,2,4,8,16],foveation:['off','low','medium','high'],vrScale:['preset','.55','.60','.65','.70','.75','.80','.85','.90'],shadowDistance:['near','normal','far'],lod:['near','default','far']};
 for(const [key,choices] of Object.entries(se380Choices)){
  if(!choices.includes(se380Prefs[key]))se380Prefs[key]=se380Defaults[key];
 }
@@ -16,6 +16,7 @@ const se380Stats={textures:0,lodObjects:0,nativeAA:!!renderer.getContext?.()?.ge
  xrFoveation:'not applied',xrScale:'preset',fxaaFrames:0,fxaaAllocations:0};
 const se380TexKeys=['map','alphaMap','aoMap','bumpMap','normalMap','roughnessMap','metalnessMap','emissiveMap','displacementMap','lightMap','envMap','specularMap','clearcoatMap'];
 const se380LODOriginal=new WeakMap();
+const se380TextureOriginal=new WeakMap();
 const se380ShadowCamera=sun?.shadow?.camera;
 const se380ShadowOriginal=se380ShadowCamera?{
  left:se380ShadowCamera.left,right:se380ShadowCamera.right,
@@ -41,7 +42,9 @@ function se380ScanScene(){
     textures.add(tex);
     // Changing the effective anisotropy is a texture sampler change only;
     // do not reload asset images, recalc UVs or modify material color.
-    if(tex.anisotropy!==limit){tex.anisotropy=limit;tex.needsUpdate=true;}
+    if(!se380TextureOriginal.has(tex))se380TextureOriginal.set(tex,tex.anisotropy);
+    const target=se380Prefs.anisotropy==='original'?se380TextureOriginal.get(tex):limit;
+    if(tex.anisotropy!==target){tex.anisotropy=target;tex.needsUpdate=true;}
    }
   }
  });
@@ -160,7 +163,7 @@ function se380Field(parent,label,options,key,help){
  const heading=document.createElement('label');heading.textContent=label;field.appendChild(heading);
  const select=document.createElement('select');select.id='se380-'+key;
  for(const [value,name] of options){const option=document.createElement('option');option.value=String(value);option.textContent=name;select.appendChild(option);}
- select.value=String(se380Prefs[key]);select.addEventListener('change',()=>se380Value(key,key==='anisotropy'?Number(select.value):select.value));
+ select.value=String(se380Prefs[key]);select.addEventListener('change',()=>se380Value(key,key==='anisotropy'&&select.value!=='original'?Number(select.value):select.value));
  field.appendChild(select);
  if(help){const hint=document.createElement('div');hint.className='se380-field-note';hint.textContent=help;field.appendChild(hint);}
  parent.appendChild(field);return select;
@@ -182,7 +185,7 @@ function se380RefreshStatus(){
  const foveation=renderer.xr?.isPresenting?se380Stats.xrFoveation:'applies during VR';
  const diag=window.SWYRL_ENGINE_SHEEP_VR_CADENCE_379?.diagnose?.();
  status.textContent='Browser native AA: '+browserAA+' · FXAA: '+(se380Prefs.aa==='fxaa'?'enabled (browser only)':'off')+
-  ' · texture filtering: '+Math.min(se380Prefs.anisotropy,se380Stats.maxAnisotropy)+'× / '+se380Stats.maxAnisotropy+'× max'+
+  ' · texture filtering: '+(se380Prefs.anisotropy==='original'?'as authored':Math.min(se380Prefs.anisotropy,se380Stats.maxAnisotropy)+'×')+' / '+se380Stats.maxAnisotropy+'× max'+
   '\nScene: '+se380Stats.textures+' textured maps · '+se380Stats.lodObjects+' authored LOD objects'+
   '\nXR foveation: '+foveation+' · XR scale: '+(diag?.xrFramebufferScaleAtEntry??'not sampled')+
   '\nWebGL draws: '+(se189Profile?.drawCalls??'n/a')+' · triangles: '+(se189Profile?.triangles??'n/a')+
@@ -217,7 +220,7 @@ function se380InstallUI(){
  panels.vr.appendChild(vrGrid);
  se380Field(graphicsGrid,'Anti-aliasing (browser)',[['native','Native MSAA (as available)'],['fxaa','Native + FXAA smoothing']],'aa',
   'WebGL native AA cannot be disabled without recreating the canvas; FXAA adds a browser-only GPU pass.');
- se380Field(graphicsGrid,'Texture filtering',[[1,'1× basic'],[2,'2×'],[4,'4×'],[8,'8×'],[16,'16×']],'anisotropy',
+ se380Field(graphicsGrid,'Texture filtering',[['original','As authored'],[1,'1× basic'],[2,'2×'],[4,'4×'],[8,'8×'],[16,'16×']],'anisotropy',
   'Limited to hardware capability; improves oblique terrain/material textures.');
  se380Field(graphicsGrid,'Shadow coverage',[["near",'Near · faster'],['normal','Normal'],['far','Far · more coverage']],'shadowDistance',
   'Adjusts the existing sunlight shadow camera; does not change shadows inside XR menus.');
