@@ -232,6 +232,8 @@ function se380InstallUI(){
   'Resolution changes take effect when re-entering VR; no mid-session stereo reallocations.');
  const browserNote=document.createElement('p');browserNote.className='perf-note';
  browserNote.textContent='Browser Auto already adjusts render resolution based on measured callback cadence. In VR the native headset owns display timing; the browser FPS cap does not set Quest refresh rate.';
+ const legacyNote=card.querySelector(':scope > .perf-note');
+ if(legacyNote)panels.performance.appendChild(legacyNote);
  panels.performance.appendChild(browserNote);
  const vrNote=document.createElement('p');vrNote.className='perf-note';
  vrNote.textContent='VR anti-aliasing is controlled by the XR compositor/framebuffer. Browser FXAA is intentionally disabled inside the headset.';
