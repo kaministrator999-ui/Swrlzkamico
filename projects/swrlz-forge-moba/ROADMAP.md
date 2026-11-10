@@ -1,3 +1,7 @@
+## §E v11.374 · Field-tested Phase 1 Quest VR manipulation follow-up (2026-11-10)
+
+Owner reports: Grip-on-menu hardly moves the panel; left-trigger multimesh selection needs an expanding combined boundary; aiming at the model transform gizmo needs a pointer/reticle; Save to Account is not discoverable. Solve within the original immersive Model Studio, retaining architecture and the existing controller models/labels. Ray-depth anchored Grip drag allows comfortable menu repositioning without head-following behavior. A distinct group outline encloses every selected mesh. Visible Move/Rotate/Scale handles are incorporated into hover picking, not a new edit mode. Add Projects as a first-level menu tab with Save to Account. Validate full source and v11.371 project save protections. Owner physical Quest 2 testing remains the UX gate; do not start Phase 2 geometry creation or new rigging/animation tooling here.
+
 ## §E v11.373 · Initial XR sweep hit survives selection refresh (2026-11-10)
 
 Phase 1 correctness repair: the original v11.372 trigger dispatcher selected a part then invalidated hover before opening the swipe session. Capture and forward the exact trigger hit instead; test forward multi-mesh selection, reverse-only newly added selections, preexisting selected IDs, and preservation of the distinct grip/menu/transform modes. Release verification: scripts/verify_v11_373_release.py. This does not advance the agreed roadmap: manipulation first, then building, rigging, animation.
