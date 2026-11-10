@@ -424,23 +424,25 @@ def _omit_unverifiable_turnaround_claims(
         # top-panel attribution, rigid torso construction, and draped garment
         # is an unverified inference in a multi-view caption. Abstain from
         # the clause rather than fabricate a soft-cloth replacement.
-        if (re.search(r"(?i)\\b(?:top|overhead)\\s+(?:view|panel)\\b", clause)
-                and re.search(r"(?i)\\b(?:hood|robe|cloak|cape|garment|cowl)\\b", clause)
-                and re.search(r"(?i)\\b(?:torso|chest)\\b", clause)
-                and re.search(r"(?i)\\b(?:armor|armour|armored|armoured|"
-                              r"segmented|mechanical|rigid)\\b", clause)):
+        if (re.search(r"(?i)\b(?:top|overhead)\s+(?:view|panel)\b", clause)
+                and re.search(r"(?i)\b(?:hood|robe|cloak|cape|garment|cowl)\b", clause)
+                and re.search(r"(?i)\b(?:torso|chest)\b", clause)
+                and re.search(r"(?i)\b(?:armor|armour|armored|armoured|"
+                              r"segmented|mechanical|rigid)\b", clause)):
             continue
         # Several distinct surface motifs cannot be reliably assigned to one
         # garment hem merely because the model lists them in one sentence.
         # Preserve the motif inventory and viewpoint, but remove an overly
         # broad shared hem-location claim. Exact individual owners belong to
         # the vision model's source-view comparison, not a text-only guard.
-        if (re.search(r"(?i)\\b(?:motifs|symbols|emblems|markings|patterns)\\b", clause)
-                and re.search(r",\\s*[^,.]+\\s+(?:and|&)\\s+[^,.]+\\s+"
-                              r"(?:motifs|symbols|emblems|markings|patterns)\\b", clause, re.I)):
+        if (re.search(r"(?i)\b(?:motifs|symbols|emblems|markings|patterns)\b", clause)
+                and re.search(r"\b[\w-]+(?:\s+[\w-]+)?\s*,\s*"
+                              r"[\w-]+(?:\s+[\w-]+)?\s*,\s*"
+                              r"(?:and\s+)?[\w-]+(?:\s+[\w-]+)?\s+"
+                              r"(?:motifs|symbols|emblems|markings|patterns)\b", clause, re.I)):
             clause = re.sub(
-                r"(?i)\\s+(?:on|along|at)\\s+(?:the|its|a)\\s+"
-                r"(?:[a-z-]+\\s+){0,3}hem\\b", "", clause,
+                r"(?i)\s+(?:on|along|at)\s+(?:the|its|a)\s+"
+                r"(?:[a-z-]+(?:['’]s)?\s+){0,3}hem\b", "", clause,
             ).strip()
         # A multi-view synthesis sometimes attaches a guessed hand-held prop
         # to an overhead/headwear-only detail panel. A text formatter cannot
