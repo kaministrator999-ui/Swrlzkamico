@@ -26,7 +26,8 @@ def apply(html):
                   'const se195OriginalFramebuffer=se191XRPrepareFramebuffer;',
                   "const PERFORMANCE_PREF_KEY='swyrl.engine.performance.v1'",'function openPerformanceSettings()'):
         if token not in html:raise AssertionError(('v11.380 missing prerequisite',token))
-    html=once(html,'</head>','<style id="se380AdvancedGraphicsStyles">\n'+css+'\n</style>\n</head>','inject responsive existing-panel styles')
+    if '</head>' not in html or 'id="se380AdvancedGraphicsStyles"' in html:raise AssertionError('v11.380 head insertion invalid')
+    html=html.replace('</head>','<style id="se380AdvancedGraphicsStyles">\n'+css+'\n</style>\n</head>',1)
     html=once(html,'window.SWRLZ_FORGE_BUILD=',runtime+'\nwindow.SWRLZ_FORGE_BUILD=',
               'inject settings after renderer and native XR adapters')
     for old,new,label in [
