@@ -1,0 +1,58 @@
+name: Measure §E v11.378 edited-outline 3D blockout
+on:
+  push:
+    branches: [main]
+    paths:
+      - "projects/swrlz-forge-moba/runtime/model_image_stable_lofts_v11_378.js"
+      - "projects/swrlz-forge-moba/patches/v11_378_stable_reference_lofts.py"
+      - "projects/swrlz-forge-moba/scripts/test_v11_378_stable_lofts.cjs"
+      - "projects/swrlz-forge-moba/scripts/verify_v11_378_release.py"
+      - "projects/swrlz-forge-moba/source-manifest.json"
+      - ".github/workflows/measure-engine-v11-378.yml"
+permissions:
+  contents: read
+jobs:
+  blockout:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Test 2D and improved 3D source
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/model_image_stable_lofts_v11_378.js
+          node projects/swrlz-forge-moba/scripts/test_v11_377_image_outlines.cjs
+          node projects/swrlz-forge-moba/scripts/test_v11_378_stable_lofts.cjs
+      - name: Measure built HTML and check full-script parsing
+        run: |
+          python - <<'PY'
+          import base64,gzip,hashlib,importlib.util,json
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          m=json.loads((root/'source-manifest.json').read_text())
+          assert m['patches'][-1]=='patches/v11_378_stable_reference_lofts.py'
+          encoded=''.join((root/name).read_text().strip() for name in m['chunks'])
+          html=gzip.decompress(base64.b64decode(encoded)).decode('utf-8')
+          for i,name in enumerate(m['patches']):
+              path=root/name
+              spec=importlib.util.spec_from_file_location('patch_'+str(i),path)
+              mod=importlib.util.module_from_spec(spec)
+              spec.loader.exec_module(mod)
+              html=mod.apply(html)
+          raw=html.encode('utf-8')
+          print('MEASURED_378_BYTES='+str(len(raw)))
+          print('MEASURED_378_SHA256='+hashlib.sha256(raw).hexdigest())
+          assert 'SE378_STABLE_LOFT_START' in html
+          assert 'SE377_IMAGE_PART_OUTLINES_START' in html
+          Path('/tmp/se378.html').write_bytes(raw)
+          PY
+          python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se378.html
+      - name: Verify full sealed release if ready
+        run: |
+          if test -f projects/swrlz-forge-moba/scripts/verify_v11_378_release.py; then
+            python projects/swrlz-forge-moba/scripts/verify_v11_378_release.py --output dist/swrlz-forge-moba
+          fi
