@@ -1,0 +1,60 @@
+name: Guarded HF Chat Live Voice Release
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".deploy/HF_CHAT_VOICE_REQUEST.txt"
+permissions:
+  contents: read
+concurrency:
+  group: swrlz-hf-space-deployment
+  cancel-in-progress: false
+jobs:
+  voice-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout approved request
+        uses: actions/checkout@v4
+      - name: Validate explicit scoped release approval
+        id: request
+        shell: bash
+        run: |
+          set -euo pipefail
+          file=".deploy/HF_CHAT_VOICE_REQUEST.txt"
+          test -f "$file"
+          get() { sed -n "s/^$1=//p" "$file" | tail -n 1; }
+          test "$(get TARGET)" = "kamiloki/Swyrlz"
+          test "$(get APPROVED)" = "1"
+          ref="$(get SOURCE_REF)"
+          nonce="$(get REQUEST_NONCE)"
+          [[ "$ref" =~ ^[a-f0-9]{40}$ ]] || { echo "::error::SOURCE_REF must be a pinned 40-char commit SHA"; exit 1; }
+          [[ "$nonce" =~ ^[A-Za-z0-9._-]{10,96}$ ]] || { echo "::error::Missing/invalid request nonce"; exit 1; }
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+      - name: Checkout exact reviewed voice candidate
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.request.outputs.ref }}
+          path: voice-source
+          fetch-depth: 1
+      - name: Install existing Hugging Face deployment client
+        run: python -m pip install 'huggingface_hub>=0.34,<2'
+      - name: Snapshot production and validate additive voice patch
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          set -euo pipefail
+          python voice-source/scripts/publish_hf_voice.py prepare
+      - name: Save complete rollback snapshot before publishing
+        uses: actions/upload-artifact@v4
+        with:
+          name: hf-live-voice-before
+          path: hf-voice-rollback/
+          retention-days: 90
+          if-no-files-found: error
+      - name: Publish only live Chat page and voice script atomically
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          set -euo pipefail
+          python voice-source/scripts/publish_hf_voice.py publish
