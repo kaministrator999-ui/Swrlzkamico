@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.380",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_380_ADVANCED_GRAPHICS_PERFORMANCE_TABS",
-  "reason": "Publish the governed §E v11.380 Graphics / Performance / VR settings and integrated Sheep Tag Quest visible-frame continuity fix. Existing graphics presets, saves, engine architecture, Quest input and XR compositor remain intact. Responsive controls add optional browser FXAA, anisotropic texture filtering, shadow coverage, authored LOD distances, foveation support and Sheep Tag XR entry resolution. Source reconstruction and full strict verifier passed in GitHub Actions run 42907770484: 387 patches, 9,524,157 exact HTML bytes, SHA-256 89392538043e679344ad5d20d31cd7e7a0522517e0209d5ba3d9f44b3c5cee9d. On-device Quest 2 hardware acceptance pending.",
-  "sourceCommit": "4a1ae440dd4f880c16ad240a7b4d2dbb4be82aee",
-  "sourceIntegritySha256": "89392538043e679344ad5d20d31cd7e7a0522517e0209d5ba3d9f44b3c5cee9d"
+  "releaseVersion": "v11.381",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_381_XR_GUEST_HOST_SYNC",
+  "reason": "Publish §E v11.381 Quest VR guest LAN movement fix. Owner found phone-hosted Sheep Tag game buildings synchronized but guest Quest 3S sheep remained frozen at spawn and Quest stick could not move, while Quest browser host + phone guest worked. On immersive guests, run existing host-snapshot sheep interpolation from existing WebXR frame, and route actual Quest left-stick intent via already-authorized guest-stick-v2 network packet. Preserve host authority, building sync, collisions, browser RAF, touch controls, all other game modes, graphics and saves. Full sealed source verifier SUCCESS GitHub run 42920418534: 388 ordered patches, 9,530,598 bytes, SHA-256 10d562b9eecfd12a8bd967ce393d1018d1a6aeaaad11a753207f1c87e845e33a. Physical phone host/Quest 3S VR client acceptance still required.",
+  "sourceCommit": "f09d2b52d1fc6f2972615e20265be47a1e51ce39",
+  "sourceIntegritySha256": "10d562b9eecfd12a8bd967ce393d1018d1a6aeaaad11a753207f1c87e845e33a"
 }
