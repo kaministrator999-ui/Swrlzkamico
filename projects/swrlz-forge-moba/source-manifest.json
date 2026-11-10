@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.372",
+  "name": "§wyrl§ Engine v11.373",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_372.html",
+  "finalArtifact": "swyrl_engine_v11_373.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -393,7 +393,8 @@
     "patches/v11_369_webxr_cliff_stone_clone.py",
     "patches/v11_370_cliff_surface_polish.py",
     "patches/v11_371_safe_project_clone_save.py",
-    "patches/v11_372_model_vr_phase1.py"
+    "patches/v11_372_model_vr_phase1.py",
+    "patches/v11_373_vr_sweep_handoff.py"
   ],
   "finalBytes": 9448883,
   "finalSha256": "6754aca2a32af1ace4cb22f90fd0d9e34bc49e5f9e6d7fbd10655ce86a750106"
