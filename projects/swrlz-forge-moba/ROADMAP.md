@@ -1,3 +1,7 @@
+## §E v11.381 · Quest multiplayer guest motion continuity (2026-11-10)
+
+Fix distinct VR-guest paths, not normal VR gameplay. When immersive as a non-host: advance replicated sheep actors from host snapshots on native XR callback (not page-only RAF); send headset joystick intent through current sequenced guest WebRTC command channel (not zero-strength pointer input). Avoid duplicate visual ticks, extra network loops, host-side position writes and changes to stable browser-host/phone-guest. Verify actual host snapshots, XR visual movement and controller return to neutral on exit. Owner to compare Quest 3S hosting browser versus joining phone-hosted immersive session, with real device acceptance.
+
 ## §E v11.380 · Practical and honest graphics quality/performance controls (2026-11-10)
 
 Integrate Graphics / Performance / VR tabs into the original settings window. Respect immutable WebGL hardware MSAA, offer optional non-VR FXAA, clamp anisotropy to device support and restore authored original texture settings, adjust only existing LOD entries and directional shadow coverage, and expose real WebXR foveation and Sheep Tag resolution at session entry. Do not introduce a duplicate renderer, an in-VR DOM panel, fake GPU timing, hidden gameplay actors or unsafely hot-swap XR eye buffers. Prioritize consistent Quest VR motion and verify phone/desktop layout as part of the same implementation.

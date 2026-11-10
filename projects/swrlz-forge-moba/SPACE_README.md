@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.380
+title: §wyrl§ Engine v11.381
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## v11.381 · Meta Quest as guest in phone-hosted Sheep Tag
+
+Fixed the mismatch between browser-only multiplayer guest animation and immersive WebXR guest rendering: sheep/wolf replicas now advance on existing headset frames, while the Quest left-stick sends input through the existing authoritative host command transport. Host-built farms and bot sheep should remain spatially synchronized. The browser-only guest/touch path, Quest-hosted game, match authority, game saves, graphics controls and all other studios are unchanged. Device A/B verification pending.
 
 ## v11.380 · Graphics, Performance, VR tabs
 
