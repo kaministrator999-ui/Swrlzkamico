@@ -395,6 +395,6 @@
     "patches/v11_371_safe_project_clone_save.py",
     "patches/v11_372_model_vr_phase1.py"
   ],
-  "finalBytes": 9431740,
-  "finalSha256": "4b5ca289b86a6a6dadc5c3685adefcdfe05e1ede03cbfed0cda9bcb557ef8b3a"
+  "finalBytes": 9446147,
+  "finalSha256": "fae56beff63b6d503fcca86984980db5b9bae4ed1ffd8c489fe50a3ae87195c4"
 }
