@@ -6,6 +6,9 @@ on:
       - .github/workflows/measure-engine-image-blockout-v11-375.yml
       - projects/swrlz-forge-moba/patches/v11_375_chat_turnaround_blockout.py
       - projects/swrlz-forge-moba/runtime/model_image_blockout_v11_375.js
+      - projects/swrlz-forge-moba/scripts/verify_v11_375_release.py
+      - projects/swrlz-forge-moba/scripts/test_v11_375_image_blockout.cjs
+      - projects/swrlz-forge-moba/source-manifest.json
   workflow_dispatch:
 permissions:
   contents: read
