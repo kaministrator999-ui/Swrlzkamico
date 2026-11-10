@@ -425,10 +425,11 @@ def _omit_unverifiable_turnaround_claims(
         # is an unverified inference in a multi-view caption. Abstain from
         # the clause rather than fabricate a soft-cloth replacement.
         if (re.search(r"(?i)\b(?:top|overhead)\s+(?:view|panel)\b", clause)
-                and re.search(r"(?i)\b(?:hood|robe|cloak|cape|garment|cowl)\b", clause)
-                and re.search(r"(?i)\b(?:torso|chest)\b", clause)
-                and re.search(r"(?i)\b(?:armor|armour|armored|armoured|"
-                              r"segmented|mechanical|rigid)\b", clause)):
+                and re.search(
+                    r"(?i)\b(?:hooded\s+)?(?:robe|cloak|cape|garment)\b"
+                    r".{0,45}\b(?:has|contains|includes)\b.{0,60}"
+                    r"\b(?:segmented|armored|armoured|rigid|mechanical)\b"
+                    r"(?:\s+\w+){0,3}\s+\b(?:torso|chest)\b", clause)):
             continue
         # Several distinct surface motifs cannot be reliably assigned to one
         # garment hem merely because the model lists them in one sentence.
