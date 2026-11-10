@@ -13,20 +13,26 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 7
     steps:
-      - name: Find canonical runtime host and exact Hub content
+      - name: Verify exact static Space pages and source integrity
         shell: bash
         run: |
           python - <<'PY'
-          import urllib.request,json,re,hashlib
-          meta='https://huggingface.co/api/spaces/kamiloki/swrlz-forge-moba'
-          with urllib.request.urlopen(meta,timeout=30) as r: m=json.load(r)
-          print('HF_KEYS',sorted(m.keys()),flush=True)
-          for k in ['id','sha','lastModified','sdk','subdomain','host','runtime','cardData','disabled','private']:
-            print('HF_META',k,repr(m.get(k))[:1600],flush=True)
-          with urllib.request.urlopen('https://huggingface.co/spaces/kamiloki/swrlz-forge-moba',timeout=30) as r:page=r.read().decode('utf8','replace')
-          print('HF_SPACE_PAGE_HFSPACE_LINKS',list(dict.fromkeys(re.findall(r'https?[^"<>\\s]{0,140}hf\\.space[^"<>\\s]{0,140}',page)))[:20],flush=True)
-          src='https://huggingface.co/spaces/kamiloki/swrlz-forge-moba/resolve/main/'
-          for name in ['SOURCE.json','index.html','modeler.html']:
-            with urllib.request.urlopen(src+name,timeout=80) as r:b=r.read()
-            print('HUB_FILE',name,'bytes',len(b),'sha256',hashlib.sha256(b).hexdigest(),flush=True)
+          import urllib.request,hashlib,json
+          expected='89392538043e679344ad5d20d31cd7e7a0522517e0209d5ba3d9f44b3c5cee9d'
+          base='https://kamiloki-swrlz-forge-moba.static.hf.space/'
+          with urllib.request.urlopen(base+'SOURCE.json',timeout=40) as r:receipt=json.load(r)
+          assert receipt['sourceVersion']=='§wyrl§ Engine v11.380',receipt['sourceVersion']
+          assert receipt['finalSha256']==expected,receipt['finalSha256']
+          assert receipt['finalBytes']==9524157
+          assert len(receipt['patches'])==387
+          print('HOSTED_SOURCE_MATCH',receipt['sourceVersion'],receipt['finalBytes'],len(receipt['patches']),flush=True)
+          for name in ['index.html','modeler.html']:
+            with urllib.request.urlopen(base+name,timeout=90) as r:bytes_=r.read()
+            sha=hashlib.sha256(bytes_).hexdigest()
+            print('HOSTED_PAGE_MATCH',name,len(bytes_),sha,flush=True)
+            assert len(bytes_)==9524157 and sha==expected
+          with urllib.request.urlopen(base,timeout=90) as r:
+            home=r.read()
+          assert hashlib.sha256(home).hexdigest()==expected
+          print('SE380_STATIC_SPACE_FULL_SOURCE_VERIFIED',flush=True)
           PY
