@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.370
+title: §wyrl§ Engine v11.372
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## v11.372 · Quest 2 model manipulation and in-VR project save
+
+In immersive Model Studio, the left trigger now supports press/tap selection and a reversible drag sweep over individual meshes, preserving preexisting selections when reversing. Selected Move/Rotate/Scale tools show a model-space gizmo and Grip displays a temporary controller-side transform feedback guide. The right thumbstick uses corrected lateral orbit with analog sensitivity. The side tool palette is independent of the loaded model and head movement, follows virtual orbit changes, may be Grip-dragged, hidden with its toolbar action or controller shortcut, and restores its stored placement. The native VR Studio menu and §E desktop toolbar expose account saving through the existing authenticated Chat connection without opening its chat UI. Save/Clone retain local project copies and account revision safeguards. Physical Quest 2 behavior and cross-device saves await owner acceptance.
 
 ## v11.371 · Safe Save Project and Clone Project
 
