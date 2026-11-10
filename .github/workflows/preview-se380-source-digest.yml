@@ -1,0 +1,60 @@
+name: §E v11.380 candidate source digest
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'projects/swrlz-forge-moba/**'
+      - '.github/workflows/preview-se380-source-digest.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  candidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Focused XR and graphics checks
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/sheep_vr_frame_cadence_v11_379.js
+          node --check projects/swrlz-forge-moba/runtime/engine_advanced_graphics_v11_380.js
+          node projects/swrlz-forge-moba/tests/test_sheep_vr_frame_cadence_v11_379.cjs
+          node projects/swrlz-forge-moba/tests/test_advanced_graphics_v11_380.cjs
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_379_sheep_vr_visible_frame_cadence.py
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_380_graphics_performance_tabs.py
+      - name: Compute candidate source bytes and SHA without changing release manifest
+        shell: bash
+        run: |
+          python - <<'PY'
+          import base64, gzip, hashlib, importlib.util, json
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba').resolve()
+          manifest=json.loads((root/'source-manifest.json').read_text(encoding='utf8'))
+          assert manifest['name']=='§wyrl§ Engine v11.378'
+          encoded=''.join((root/p).read_text().strip() for p in manifest['chunks'])
+          base=gzip.decompress(base64.b64decode(encoded))
+          assert len(base)==manifest['baseBytes']
+          assert hashlib.sha256(base).hexdigest()==manifest['baseSha256']
+          html=base.decode('utf8')
+          patches=manifest['patches']+[
+            'patches/v11_379_sheep_vr_visible_frame_cadence.py',
+            'patches/v11_380_graphics_performance_tabs.py']
+          for i,rel in enumerate(patches):
+            spec=importlib.util.spec_from_file_location('se380_candidate_'+str(i),root/rel)
+            module=importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+            html=module.apply(html)
+          assert "SWYRL_ENGINE_DEPLOY_MARKER: V11_380_ADVANCED_GRAPHICS_PERFORMANCE_TABS" in html
+          assert "window.SWRLZ_FORGE_BUILD={version:'v11.380'" in html
+          assert html.count("source.version=11.380;")==5
+          out=html.encode('utf8')
+          print('SE380_CANDIDATE_BYTES='+str(len(out)),flush=True)
+          print('SE380_CANDIDATE_SHA256='+hashlib.sha256(out).hexdigest(),flush=True)
+          print('SE380_CANDIDATE_PATCH_COUNT='+str(len(patches)),flush=True)
+          PY
