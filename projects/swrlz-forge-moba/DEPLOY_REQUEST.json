@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.374",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_374_QUEST_VR_FEEDBACK",
-  "reason": "Publish fully sealed §E v11.374 Quest 2 owner-feedback corrections. Floating Model Studio VR menu moves with controller raycast grip drag at its original hit distance, not barely perceptible direct Grip displacement, and remains independent of headset/model movement on release. Existing left trigger sweep shows explicit high-visibility, expanding combined selection Box3 bound around every selected mesh; single selections preserve existing outline. Transform gizmo hover returns raycast contact and visible controller reticle without selecting geometry behind handles. A top-level Projects menu tab exposes Save to account, Save project and Clone project in VR. Existing Quest Touch labels/models, X menu toggle, quick tools, native Undo/Redo, starter immutability, project IDs/revisions, UV artwork and account RPC guards are preserved. Candidate and sealed source verification #42774827188 SUCCESS; v11.374 381 patches, 9,452,192 HTML bytes, SHA-256 fa62b27dd99560a505014da0614bd96708b3a65b4b4419989951f3629949966a. Physical Quest 2 interaction acceptance remains owner testing.",
-  "sourceCommit": "ed94e717b639cd71256fe3acb97076393b0c2bc0",
-  "sourceIntegritySha256": "fa62b27dd99560a505014da0614bd96708b3a65b4b4419989951f3629949966a"
+  "releaseVersion": "v11.375",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_375_CHAT_TURNAROUND_BLOCKOUT",
+  "reason": "Publish sealed §E v11.375 integrated §C five-view image to editable native blockout. Starting in a blank Model Studio project, user can open integrated §C Image → editable 3D blockout, upload their own front/left/right/back/top character sheet, preview and adjust guides, and generate separate native loft mesh silhouettes in the viewport. Retain user-adjustable geometry, existing undo/save/clone protections, native material/UV/VR tooling, immutable starter, and existing Chat/account isolation. The image is sampled locally, not transmitted by this tool; this is an approximate silhouette blockout rather than exact image-to-3D reconstruction. Source verified by full v11.375 build/inline JS/model tests run 42779316576 SUCCESS; 382 ordered patches, 9467573 bytes, SHA-256 37453b2be4cbaa8db15e30ff4cff9a6739f0f5bca50bd9d7a16b0029449dff04. Owner-device viewport and reference likeness acceptance remain pending.",
+  "sourceCommit": "a353dcec1912bf4c2835027f6509d7a910cac82f",
+  "sourceIntegritySha256": "37453b2be4cbaa8db15e30ff4cff9a6739f0f5bca50bd9d7a16b0029449dff04"
 }
