@@ -1,10 +1,10 @@
 {
   "schema": "swrlz-forge-source-v2",
-  "name": "§wyrl§ Engine v11.376",
+  "name": "§wyrl§ Engine v11.377",
   "baseArtifact": "swrlz_forge_v4.html",
   "baseBytes": 99591,
   "baseSha256": "a8299fe89fbb98d15c6091751b7a66931a66efec8eec5cb464e1286f21895856",
-  "finalArtifact": "swyrl_engine_v11_376.html",
+  "finalArtifact": "swyrl_engine_v11_377.html",
   "encoding": "gzip+base64-chunks",
   "chunks": [
     "payload/part-01.txt",
@@ -397,7 +397,8 @@
     "patches/v11_373_vr_sweep_handoff.py",
     "patches/v11_374_vr_owner_feedback.py",
     "patches/v11_375_chat_turnaround_blockout.py",
-    "patches/v11_376_vr_selector_lasso.py"
+    "patches/v11_376_vr_selector_lasso.py",
+    "patches/v11_377_image_part_outlines.py"
   ],
   "finalBytes": 9477707,
   "finalSha256": "15363ce895a2b2787f83045972d3cd1aa044c3ec3f1d04c56918b3ae1e7dedad"
