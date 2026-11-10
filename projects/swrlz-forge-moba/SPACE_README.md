@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.375
+title: §wyrl§ Engine v11.376
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,10 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## v11.376 · Selector menu with Grip-drawn lasso
+
+A new **Select** tab in Model Studio VR offers the established reversible **Swipe · trigger** selection plus **Lasso · front** and **Lasso · through**. In an active lasso choice, hold Left Grip and trace a closed visual loop with the controller pointer; release Grip to add all model parts projected into the region, with front-layer filtering or full through-depth coverage. Existing single tap and swipe remain available. The original menu Grip still moves the floating window when targeted; otherwise Left Grip returns to workspace control outside Lasso. Existing source meshes, UV and project/cloud saves, controller models and §C image-to-model blockout are preserved. Owner headset acceptance remains required.
 
 ## v11.375 · Image → 3D blockout in integrated §C
 
