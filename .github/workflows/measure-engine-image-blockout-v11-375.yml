@@ -47,3 +47,5 @@ jobs:
           print('SE375_FINAL_SHA256='+hashlib.sha256(raw).hexdigest())
           print('SE375_PATCH_COUNT='+str(len(patches)))
           PY
+      - name: Verify sealed v11.375 production package, inline JavaScript and model tools
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_375_release.py --output dist/swrlz-forge-moba
