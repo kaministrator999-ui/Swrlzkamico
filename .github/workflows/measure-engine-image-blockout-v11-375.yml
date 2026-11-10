@@ -1,0 +1,48 @@
+name: Measure §E v11.375 source and image blockout
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/measure-engine-image-blockout-v11-375.yml
+      - projects/swrlz-forge-moba/patches/v11_375_chat_turnaround_blockout.py
+      - projects/swrlz-forge-moba/runtime/model_image_blockout_v11_375.js
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate native image blockout source
+        run: |
+          node --check projects/swrlz-forge-moba/runtime/model_image_blockout_v11_375.js
+          python -m py_compile projects/swrlz-forge-moba/patches/v11_375_chat_turnaround_blockout.py
+      - name: Rebuild append-only patch chain and print actual integrity
+        run: |
+          python - <<'PY'
+          import base64,gzip,hashlib,importlib.util,json
+          from pathlib import Path
+          root=Path('projects/swrlz-forge-moba')
+          manifest=json.loads((root/'source-manifest.json').read_text())
+          patches=list(manifest['patches'])
+          new='patches/v11_375_chat_turnaround_blockout.py'
+          assert patches[-1]=='patches/v11_374_vr_owner_feedback.py'
+          patches.append(new)
+          names=manifest.get('chunks') or sorted(x.relative_to(root).as_posix() for x in (root/'payload').glob('part-*.txt'))
+          original=gzip.decompress(base64.b64decode(''.join((root/name).read_text().strip() for name in names)))
+          assert hashlib.sha256(original).hexdigest()==manifest['baseSha256']
+          html=original.decode()
+          for name in patches:
+              path=root/name
+              spec=importlib.util.spec_from_file_location('patch_'+path.stem,path)
+              mod=importlib.util.module_from_spec(spec);spec.loader.exec_module(mod)
+              html=mod.apply(html)
+          raw=html.encode()
+          assert 'SWYRL_ENGINE_DEPLOY_MARKER: V11_375_CHAT_TURNAROUND_BLOCKOUT' in html
+          assert "window.SWRLZ_FORGE_BUILD={version:'v11.375'" in html
+          assert 'se375Install();' in html and 'function se375Blockout()' in html
+          print('SE375_FINAL_BYTES='+str(len(raw)))
+          print('SE375_FINAL_SHA256='+hashlib.sha256(raw).hexdigest())
+          print('SE375_PATCH_COUNT='+str(len(patches)))
+          PY
