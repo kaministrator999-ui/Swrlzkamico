@@ -265,7 +265,7 @@
     while (speechPending.trim()) {
       // Speak natural sentence boundaries as they stream. Very long sentences
       // get a bounded word-boundary fallback; do not wait for a full reply.
-      const sentence = /[.!?](?:["'”’)]]*)\s+/.exec(speechPending);
+      const sentence = /[.!?](?:["'”’)]*)\s+/.exec(speechPending);
       let cut = sentence ? sentence.index + sentence[0].length : -1;
       if (cut < 0 && !final && speechPending.length >= 170) {
         cut = speechPending.lastIndexOf(" ", 170);
