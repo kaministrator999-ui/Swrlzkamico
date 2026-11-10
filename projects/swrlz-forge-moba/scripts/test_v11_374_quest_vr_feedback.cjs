@@ -27,7 +27,7 @@ class Vec {
  length(){return Math.hypot(this.x,this.y,this.z)}
  multiplyScalar(n){this.x*=n;this.y*=n;this.z*=n;return this}
 }
-const box=()=>({copy(v){this.value=v;return this},expandByScalar(v){this.pad=v;return this},getSize(){return new Vec(1,1,1)},isEmpty(){return false}});
+const box=()=>({clone(){return box()},copy(v){this.value=v;return this},expandByScalar(v){this.pad=v;return this},getSize(){return new Vec(1,1,1)},isEmpty(){return false}});
 const s={scene:{add:x=>calls.push(x)},selectedOutline:{visible:true,box:box()},se374MultiOutline:null,
  ui:{root:{position:new Vec(0,1,1),updateWorldMatrix:()=>{}}}};
 const sandbox={
