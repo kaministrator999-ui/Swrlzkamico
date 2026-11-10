@@ -2,7 +2,7 @@
  * Opt-in native loft blockout from user-edited v11.377 silhouettes.
  * No semantic part recognition, hidden geometry reconstruction or UV mapping.
  */
-const se378Round=n=>Number(n.toFixed(4));
+const se378Round=n=>{const v=Number(n.toFixed(4));return v===0?0:v;};
 const se378Clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 function se378Primary(view){
  return se377.regions.filter(r=>r.view===view&&r.kind==='silhouette'&&r.visible!==false&&r.points.length>=3)
