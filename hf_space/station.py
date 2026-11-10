@@ -1105,7 +1105,7 @@ def _companion_topic_shift_from_vision(prompt):
     # Only explicit addresses/corrections trigger this inference-only gate.
     explicit_redirect=bool(re.search(
         r"\b(?:i (?:meant|mean) (?:you|yourself|§wyrlz|swyrlz|swurlz)|"
-        r"i(?: was| am|'m) (?:asking|talking|speaking) (?:about|to) "
+        r"i(?: was| am|'m) (?:asking|talking|speaking) (?:(?:about|to) )?"
         r"(?:you|yourself|§wyrlz|swyrlz|swurlz)|"
         r"i(?: was| am|'m) not (?:asking|talking) about (?:the )?"
         r"(?:image|picture|photo|mage|character|drawing|artwork))\b",
