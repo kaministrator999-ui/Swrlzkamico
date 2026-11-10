@@ -116,19 +116,28 @@ _lock=threading.RLock()
 _model=None
 
 def _cpu_capacity():
-    """Bound inference to CPUs available to this process, capped by the Workstation contract."""
+    """Constrain model threads to BOTH CPU affinity and cgroup CPU quota."""
     try:
         available=len(os.sched_getaffinity(0))
     except (AttributeError,OSError):
         available=os.cpu_count() or 1
-    return max(1,min(16,int(available)))
+    capacity=max(1,min(16,int(available)))
+    # Affinity can include host CPUs unavailable to the Space's actual quota.
+    # Never silently oversubscribe a 2-vCPU fallback during a trial.
+    from runtime_capacity import runtime_capacity_snapshot
+    cpu=runtime_capacity_snapshot().get("cpu") or {}
+    quota=cpu.get("limitCores")
+    if isinstance(quota,(int,float)) and not isinstance(quota,bool) and 0<quota<1e6:
+        capacity=min(capacity,max(1,int(quota)))
+    return capacity
 
 def _thread_plan():
-    """Favor broad prompt-prefill parallelism while keeping token decode conservative."""
+    """Aggressive 14/16 CPU experiment, limited by actual Space capacity."""
     capacity=_cpu_capacity()
-    # Trial 10 decode threads on the previously measured 16-core Space;
-    # batch prefill remains bounded by the affinity/capacity contract.
-    return min(10,capacity),capacity
+    # Prior passing profile was 10 decode / up to 16 prefill. This trial
+    # changes only decode thread fan-out, leaving model/context/batches intact.
+    # Token decode is memory-bandwidth bound; 14 may be slower than 10.
+    return min(14,capacity),capacity
 
 def load(context=CONTEXT_TOKENS):
     global _model
