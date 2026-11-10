@@ -1,3 +1,7 @@
+## §E v11.374 — Quest 2 feedback corrections for Phase 1 (2026-11-10)
+
+The VR Model Studio menu can be dragged using the controller pointer rather than tiny Grip-position differences. Multiselection now displays a clearly expanding group boundary, and raycast contact with active transformation gizmos displays the normal pointer indicator. A permanent **Projects** navigation tab makes Save to Account, Save Project and Clone Project easy to find without opening §C chat. Legacy controller hints, model manipulation, Undo/Redo and save/UV/account revision safeguards stay intact. Physical Quest 2 acceptance remains the owner's test after the protected release.
+
 ## §E v11.373 — Reversible VR sweep handoff correction (2026-11-10)
 
 The left-trigger multi-mesh gesture now receives the original target from the press before the native selector clears cached hover hits. It keeps tap-to-select and undo/redo, preserves preexisting selected parts on reverse swipes, and leaves VR menu grips, model transform grips, UV texture/account storage and Quest controller hints untouched. Automated source and regression checks are distinct from owner Quest 2 confirmation.
