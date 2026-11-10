@@ -50,3 +50,5 @@ jobs:
           Path('/tmp/se377.html').write_bytes(data)
           PY
           python projects/swrlz-forge-moba/scripts/check_inline_js_syntax_v11_266.py /tmp/se377.html
+      - name: Verify sealed deployable source and focused baseline
+        run: python projects/swrlz-forge-moba/scripts/verify_v11_377_release.py --output dist/swrlz-forge-moba
