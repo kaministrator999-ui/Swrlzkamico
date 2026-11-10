@@ -1,5 +1,5 @@
 ---
-title: §wyrl§ Engine v11.376
+title: §wyrl§ Engine v11.377
 emoji: 🐉
 colorFrom: purple
 colorTo: blue
@@ -9,6 +9,11 @@ fullWidth: true
 header: mini
 short_description: Maul, Sheep Tag, Model Atelier and Dragon Den
 ---
+
+## v11.377 · Reference images now trace editable 2D outlines first
+
+In the existing integrated §C image panel, import a five-view mage reference and review local color-connected outlines over each selected view. Select and rename regions, adjust/add/remove contour vertices with touch or mouse, toggle visibility, re-trace after changing view guides, and export visible vector shapes as SVG. This is local image segmentation, **not** semantic model recognition; outline labels require review and correction. The previous rough 3D loft generator remains tucked under an explicitly experimental disclosure and no longer represents the default next step. Reference pixels remain client-local. No automatic model-part creation or 3D mesh conversion occurs in this phase; saved model data, VR tools and chat transport remain unchanged. Physical phone/Quest acceptance pending.
+
 
 ## v11.376 · Selector menu with Grip-drawn lasso
 
