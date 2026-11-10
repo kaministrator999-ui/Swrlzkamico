@@ -23,13 +23,13 @@ UPSTREAM_URL = "https://github.com/ggml-org/llama.cpp.git"
 SERVER_PORT = 16943
 SERVER_URL = f"http://127.0.0.1:{SERVER_PORT}"
 START_TIMEOUT = 240
-# The current Space has a measured 16-core CPU quota. After the 2/2
-# baseline and faster 4/8 trial, test 6 decode / 12 image-prefill threads.
-# Keep four cores free for request handling and the companion text model.
-# These are configured llama.cpp threads, not measured CPU utilization.
-# Preserve the pinned model/revision and serialized single vision job.
-DECODE_THREADS = 6
-BATCH_THREADS = 12
+# The Space previously reported a 16-core CPU quota. Trial 8 decode / 14
+# image-prefill threads beyond the passing 6/12 profile; keep two cores of
+# quota headroom during prefill and retain a single serialized vision job.
+# Thread counts are configuration, NOT proof of speed or measured CPU usage.
+# Retain pinned weights, context, batch limits and cancellation semantics.
+DECODE_THREADS = 8
+BATCH_THREADS = 14
 PARALLEL_REQUESTS = 1
 
 _build_lock = threading.Lock()
