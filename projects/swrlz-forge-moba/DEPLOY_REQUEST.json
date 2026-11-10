@@ -2,9 +2,9 @@
   "schema": "swrlz-forge-deploy-request-v1",
   "requestedBy": "ChatGPT",
   "target": "kamiloki/swrlz-forge-moba",
-  "releaseVersion": "v11.372",
-  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_372_MODEL_VR_PHASE1",
-  "reason": "Publish sealed §E v11.372 Quest 2 Model Studio phase 1: left-trigger reversible sweep selection, model-side Move/Rotate/Scale gizmos, grip-only controller transform feedback and axis constraints, right-stick orbit direction/speed fixes, independent grip-draggable/hidden/restored spatial tool menu, explicit desktop and in-VR Save Project / Save to Account / detached Clone using native authenticated §E project library and conflict safeguards. 379 patches; complete reconstructed HTML 9,448,883 bytes SHA-256 6754aca2a32af1ace4cb22f90fd0d9e34bc49e5f9e6d7fbd10655ce86a750106. Preserve existing Quest controller models/labels and current starter projects. Physical Quest 2 acceptance remains owner testing.",
-  "sourceCommit": "0b86a6ef3d3d68e98e7ed33a89dd5329a6f7e2dc",
-  "sourceIntegritySha256": "6754aca2a32af1ace4cb22f90fd0d9e34bc49e5f9e6d7fbd10655ce86a750106"
+  "releaseVersion": "v11.373",
+  "deployMarker": "SWYRL_ENGINE_DEPLOY_MARKER: V11_373_VR_SWEEP_TRIGGER_HANDOFF",
+  "reason": "Publish sealed §E v11.373 targeted Model Studio VR left-trigger handoff repair. v11.372 native selection invalidated cached hover before the hold-swipe session could initialize; capture the same initial trigger hit before invalidation and forward it to reversible swipe processing. Preserve single-tap additive select, sweep-back deselection only for meshes added in the current hold, prior selections, menu-grip vs model-grip mutual exclusion, Quest Touch labels and quick controls, native Undo/Redo, starter-copy identity, local/cloud revision checks and UV artwork. Focused native invalidation regression, prior swipe test and v11.371 Save/Clone data-preservation checks passed in sealed source verification #42772724016. Exact source: 380 patches, 9,448,549 HTML bytes, SHA-256 829c7729237af858c37ed0aab1d4835b971b59c0db414ebd1f6b83f8b242e9ba; physical Quest 2 acceptance remains owner testing.",
+  "sourceCommit": "9a252c8d35bc566a212e4de87f3a5a0e59e83b97",
+  "sourceIntegritySha256": "829c7729237af858c37ed0aab1d4835b971b59c0db414ebd1f6b83f8b242e9ba"
 }
