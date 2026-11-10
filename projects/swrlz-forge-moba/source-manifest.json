@@ -399,6 +399,6 @@
     "patches/v11_375_chat_turnaround_blockout.py",
     "patches/v11_376_vr_selector_lasso.py"
   ],
-  "finalBytes": 9467573,
-  "finalSha256": "37453b2be4cbaa8db15e30ff4cff9a6739f0f5bca50bd9d7a16b0029449dff04"
+  "finalBytes": 9477707,
+  "finalSha256": "15363ce895a2b2787f83045972d3cd1aa044c3ec3f1d04c56918b3ae1e7dedad"
 }
