@@ -11,7 +11,7 @@ ap.add_argument('--request',action='store_true')
 args=ap.parse_args()
 manifest=json.loads((ROOT/'source-manifest.json').read_text('utf8'))
 assert manifest['name']=='§wyrl§ Engine v11.374'
-assert manifest['finalArtifact']=='swyrl_engine_v11_373.html'
+assert manifest['finalArtifact']=='swyrl_engine_v11_374.html'
 assert len(manifest['patches'])==381 and manifest['patches'][-1]=='patches/v11_374_vr_owner_feedback.py'
 assert manifest['finalBytes']==9452192
 assert manifest['finalSha256']=='fa62b27dd99560a505014da0614bd96708b3a65b4b4419989951f3629949966a'
