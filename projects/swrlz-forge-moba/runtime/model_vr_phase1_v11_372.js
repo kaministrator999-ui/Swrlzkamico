@@ -146,7 +146,7 @@ function se372GizmoHit(record){
  if(!p?.root.visible||!['move','rotate','scale'].includes(s.mode))return null;
  const cast=se340Cast(record);if(!cast)return null;
  const hits=cast.intersectObjects(p.handles,false);
- const closest=hits.find(h=>h.object.userData?.se372Axis);
+ const closest=hits.find(h=>h.object.visible&&h.object.userData?.se372Axis);
  if(!closest)return null;
  const axis=closest.object.userData.se372Axis;
  return axis==='uniform'&&s.mode!=='scale'?null:axis;
@@ -220,41 +220,30 @@ function se372Dispose(){
 }
 async function se372ProjectAction(action){
  const s=se340XR;
- if(s.se372ProjectBusy){se340Notice('Project save already in progress.');return;}
+ if(s.se372ProjectBusy){se340Notice('Project operation already in progress.');return;}
  if(s.gesture){se340Notice('Release the active model grip before saving.',true);return;}
+ const api=window.SWYRL_ENGINE_VR_PROJECTS_372;
+ if(!api){se340Notice('Project service unavailable · keep current model open.',true);return;}
  s.se372ProjectBusy=true;
  try{
+  let result;
   if(action==='save-account'){
-   if(!ready||!se176AccountConnected){
-    if(!ready&&frame&&!frame.src)frame.src=CHAT_ORIGIN+'/?forgeEmbed=1';
-    se340Notice('Account not connected. Sign in through §E first, then Save to account.',true);return;
+   const connection=api.connect();
+   if(!connection.connected){
+    se340Notice('Connect your account in §E before Save to Account.',true);return;
    }
    se340Notice('Saving model and UV textures to your account…');
-   const synced=await se371Save();
-   se340Notice(synced?'Saved to account · open this version on other devices.':
-    'Saved on this device; account sync not confirmed. Check account revision.',!synced);
+   result=await api.saveAccount();
   }else if(action==='save-local'){
-   if(!se371HasSavedIdentity())await se371Clone(se371NewName(se371ProjectName()));
-   else await se371SaveLocal();
-   se340Notice('Project saved on this device.');
+   se340Notice('Saving your VR model on this device…');
+   result=await api.saveLocal();
   }else if(action==='clone-project'){
-   // Keep the active XR document borrowed. Store an independent project snapshot,
-   // rather than replacing it while headset input is active.
-   const row=se175Snapshot(),copy=structuredClone(row.data),newId=id();
-   const name=se371NewName(se371ProjectName());
-   copy.project={...copy.project,instanceId:newId,name,projectName:name,
-     sourceStarterId:se371SourceId(),se371TemplateSource:false};
-   delete copy.project.cloudRef;
-   if(copy.project.levelPack?.schema==='se-levels-v1'){
-    copy.project.levelProjectRoot='project-'+newId;
-    for(const level of copy.project.levelPack.levels||[])if(level?.data?.project){
-     Object.assign(level.data.project,{instanceId:newId,projectName:name,name,levelProjectRoot:'project-'+newId});
-    }
-   }
-   await se175Store([{id:newId,name,starterId:se371SourceId(),
-      updatedAt:new Date().toISOString(),data:copy}]);
-   se340Notice('Cloned as '+name+' on this device · active VR model unchanged.');
-  }
+   result=await api.clone();
+  }else return;
+  se340Notice(result?.ok?(action==='save-account'?'Account save confirmed · ':action==='clone-project'?'Independent clone saved · ':'Device save confirmed · ')+result.name:
+   (result?.error==='ACCOUNT_NOT_CONNECTED'?'Sign in via §E before account saving.':
+   result?.error==='ACCOUNT_SYNC_NOT_CONFIRMED'?'Saved on this device; account sync not confirmed.':
+   'Project save was not confirmed.'),!result?.ok);
  }catch(error){se340Notice('Project operation failed: '+String(error?.message||error).slice(0,90),true);}
  finally{s.se372ProjectBusy=false;se340SyncUI();se340Publish();}
 }
