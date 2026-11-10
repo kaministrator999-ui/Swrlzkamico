@@ -63,7 +63,16 @@ function se377Outline(cells,nx,ny,box){
 }
 function se377Palette(samples,count){
  if(!samples.length)return [];
- const picks=[.05,.25,.45,.65,.85].slice(0,count).map(t=>samples[Math.floor((samples.length-1)*t)].slice());
+ const picks=[samples[Math.floor(samples.length/2)].slice()];
+ while(picks.length<count){
+  let far=null,score=-1;
+  for(let k=0;k<samples.length;k+=Math.max(1,Math.floor(samples.length/1400))){
+   const p=samples[k],nearest=Math.min(...picks.map(c=>(p[0]-c[0])**2+(p[1]-c[1])**2+(p[2]-c[2])**2));
+   if(nearest>score){score=nearest;far=p;}
+  }
+  if(score<100)break;
+  picks.push(far.slice());
+ }
  for(let iter=0;iter<7;iter++){
   const sums=picks.map(()=>[0,0,0,0]);
   for(const p of samples){
@@ -196,7 +205,10 @@ function se377Refresh(){
 }
 function se377Cursor(event){
  const canvas=se375Id('Preview'),rect=canvas.getBoundingClientRect();
- return [(event.clientX-rect.left)/Math.max(1,rect.width),(event.clientY-rect.top)/Math.max(1,rect.height)];
+ const scale=Math.min(rect.width/canvas.width,rect.height/canvas.height);
+ const w=canvas.width*scale,h=canvas.height*scale;
+ const x=rect.left+(rect.width-w)/2,y=rect.top+(rect.height-h)/2;
+ return [(event.clientX-x)/Math.max(1,w),(event.clientY-y)/Math.max(1,h)];
 }
 function se377NearVertex(region,p){
  let best=-1,dist=Infinity;
