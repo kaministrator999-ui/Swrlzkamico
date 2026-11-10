@@ -39,8 +39,8 @@ def apply(html):
   "function se372GizmoHit(record){return se374GizmoContact(record)?.axis||null;}\n",
   'share gizmo ray contact')
  html=once(html,
-  "if(hit)return finish({ui:true,target:hit.object,action:hit.object.userData.se340Action||null,\n     distance:hit.distance,point:hit.point});}\n const entries=se340PartEntries()",
-  "if(hit)return finish({ui:true,target:hit.object,action:hit.object.userData.se340Action||null,\n     distance:hit.distance,point:hit.point});}\n const gizmo=se374GizmoContact(record,cast);if(gizmo)return finish(gizmo);\n const entries=se340PartEntries()",
+  " const entries=se340PartEntries().filter(e=>e.mesh?.visible!==false);\n if(!precise){",
+  " const gizmo=se374GizmoContact(record,cast);if(gizmo)return finish(gizmo);\n const entries=se340PartEntries().filter(e=>e.mesh?.visible!==false);\n if(!precise){",
   'surface picker recognizes transformation handles')
  html=once(html,
   "if(hit?.ui){if(hit.action&&se340XR.ui.press(hit.target)!==false)se340ModelXRAction(hit.action,record);return;}\n if(se340XR.gesture)return;",
