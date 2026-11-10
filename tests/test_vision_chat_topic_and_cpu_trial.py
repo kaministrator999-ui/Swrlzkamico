@@ -75,13 +75,13 @@ class VisionConversationIsolationTests(unittest.TestCase):
         self.assertEqual(self.inference_prompt(image_question), image_question)
 
     def test_multiple_image_trials_are_isolated_only_when_conversation_shifts(self):
-        img = "[Uploaded image — vision description, not original pixels]"
+        img = "\n\n[Uploaded image — vision description, not original pixels]\n"
         messages = [
             {"role": "user", "text": "Hello there", "id": "a"},
             {"role": "assistant", "text": "Hi!", "id": "b"},
-            {"role": "user", "text": "What can you see?\n" + img + "Mage front view\n[/Uploaded image]", "id": "c"},
+            {"role": "user", "text": "What can you see?" + img + "Mage front view\n[/Uploaded image]", "id": "c"},
             {"role": "assistant", "text": "Mage image analysis L1", "id": "d"},
-            {"role": "user", "text": "What can you see?\n" + img + "Mage front view L2\n[/Uploaded image]", "id": "e"},
+            {"role": "user", "text": "What can you see?" + img + "Mage front view L2\n[/Uploaded image]", "id": "e"},
             {"role": "assistant", "text": "Mage image analysis L2", "id": "f"},
         ]
         original = copy.deepcopy(messages)
