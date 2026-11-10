@@ -87,9 +87,9 @@ def test_qwen_server_is_local_and_source_revision_immutable():
     assert server.SERVER_URL.startswith("http://127.0.0.1:")
     assert "https://github.com/ggml-org/llama.cpp.git" == server.UPSTREAM_URL
     # Staged performance trial under the measured 16-core Space quota.
-    # 6 decode / 12 batch leaves cores for concurrent chat infrastructure.
-    assert server.DECODE_THREADS == 6
-    assert server.BATCH_THREADS == 12
+    # Trial 8 decode / 14 batch; keep bounded by measured 16-core quota.
+    assert server.DECODE_THREADS == 8
+    assert server.BATCH_THREADS == 14
     assert server.PARALLEL_REQUESTS == 1
 
 
