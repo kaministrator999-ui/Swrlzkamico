@@ -98,7 +98,7 @@ function se380EnsureFXAA(w,h){
    depthTest:false,depthWrite:false,toneMapped:false,
    uniforms:{tDiffuse:{value:null},invSize:{value:new THREE.Vector2(1/w,1/h)}},
    vertexShader:'varying vec2 uv0; void main(){uv0=uv;gl_Position=vec4(position.xy,0.0,1.0);}',
-   fragmentShader:\`precision mediump float;
+   fragmentShader:`precision mediump float;
    varying vec2 uv0;uniform sampler2D tDiffuse;uniform vec2 invSize;
    float lum(vec3 c){return dot(c,vec3(0.299,0.587,0.114));}
    void main(){
@@ -120,7 +120,7 @@ function se380EnsureFXAA(w,h){
                       texture2D(tDiffuse,uv0+dir*.5).rgb);
     gl_FragColor=vec4(lum(b)<lMin||lum(b)>lMax?a:b,center.a);
     #include <colorspace_fragment>
-   }\`
+   }`
   });
   const quad=new THREE.Mesh(new THREE.PlaneGeometry(2,2),material);
   quad.frustumCulled=false;
@@ -183,10 +183,10 @@ function se380RefreshStatus(){
  const diag=window.SWYRL_ENGINE_SHEEP_VR_CADENCE_379?.diagnose?.();
  status.textContent='Browser native AA: '+browserAA+' · FXAA: '+(se380Prefs.aa==='fxaa'?'enabled (browser only)':'off')+
   ' · texture filtering: '+Math.min(se380Prefs.anisotropy,se380Stats.maxAnisotropy)+'× / '+se380Stats.maxAnisotropy+'× max'+
-  '\\nScene: '+se380Stats.textures+' textured maps · '+se380Stats.lodObjects+' authored LOD objects'+
-  '\\nXR foveation: '+foveation+' · XR scale: '+(diag?.xrFramebufferScaleAtEntry??'not sampled')+
-  '\\nWebGL draws: '+(se189Profile?.drawCalls??'n/a')+' · triangles: '+(se189Profile?.triangles??'n/a')+
-  '\\nMeasurements are CPU-submission/estimated frame cadence, not actual headset GPU time.';
+  '\nScene: '+se380Stats.textures+' textured maps · '+se380Stats.lodObjects+' authored LOD objects'+
+  '\nXR foveation: '+foveation+' · XR scale: '+(diag?.xrFramebufferScaleAtEntry??'not sampled')+
+  '\nWebGL draws: '+(se189Profile?.drawCalls??'n/a')+' · triangles: '+(se189Profile?.triangles??'n/a')+
+  '\nMeasurements are CPU-submission/estimated frame cadence, not actual headset GPU time.';
 }
 function se380InstallUI(){
  const modal=document.getElementById('performanceSettings');
@@ -219,13 +219,13 @@ function se380InstallUI(){
   'WebGL native AA cannot be disabled without recreating the canvas; FXAA adds a browser-only GPU pass.');
  se380Field(graphicsGrid,'Texture filtering',[[1,'1× basic'],[2,'2×'],[4,'4×'],[8,'8×'],[16,'16×']],'anisotropy',
   'Limited to hardware capability; improves oblique terrain/material textures.');
- se380Field(graphicsGrid,'Shadow coverage',[[\"near\",'Near · faster'],['normal','Normal'],['far','Far · more coverage']],'shadowDistance',
+ se380Field(graphicsGrid,'Shadow coverage',[["near",'Near · faster'],['normal','Normal'],['far','Far · more coverage']],'shadowDistance',
   'Adjusts the existing sunlight shadow camera; does not change shadows inside XR menus.');
- se380Field(graphicsGrid,'Authored LOD distance',[[\"near\",'Switch earlier'],['default','As authored'],['far','Switch later']],'lod',
+ se380Field(graphicsGrid,'Authored LOD distance',[["near",'Switch earlier'],['default','As authored'],['far','Switch later']],'lod',
   'Only changes actual Three.js LOD objects. Never removes interactive game actors.');
- se380Field(vrGrid,'Quest foveation',[[\"off\",'Off'],['low','Low'],['medium','Medium'],['high','High']],'foveation',
+ se380Field(vrGrid,'Quest foveation',[["off",'Off'],['low','Low'],['medium','Medium'],['high','High']],'foveation',
   'Only when WebXR runtime supports it. Does not change tracking or refresh rate.');
- se380Field(vrGrid,'Sheep Tag VR render scale',[[\"preset\",'Follow graphics preset'],['.55','55%'],['.60','60%'],['.65','65%'],['.70','70%'],['.75','75%'],['.80','80%'],['.85','85%'],['.90','90%']],'vrScale',
+ se380Field(vrGrid,'Sheep Tag VR render scale',[["preset",'Follow graphics preset'],['.55','55%'],['.60','60%'],['.65','65%'],['.70','70%'],['.75','75%'],['.80','80%'],['.85','85%'],['.90','90%']],'vrScale',
   'Resolution changes take effect when re-entering VR; no mid-session stereo reallocations.');
  const browserNote=document.createElement('p');browserNote.className='perf-note';
  browserNote.textContent='Browser Auto already adjusts render resolution based on measured callback cadence. In VR the native headset owns display timing; the browser FPS cap does not set Quest refresh rate.';
